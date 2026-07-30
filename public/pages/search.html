@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>러브트리 둘러보기 | 러브트리</title>
+    <link rel="icon" href="/assets/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="stylesheet" href="../css/global.css?v=20260618-2700-1">
+    <link rel="stylesheet" href="../css/shared/love-tree-card-composition.css?v=20260720-3578-1">
+    <link rel="stylesheet" href="../css/search.css?v=20260626-2929-hydrated-hub-parity-1">
+    <link rel="stylesheet" href="../css/search/search-preview-media-no-overlays.css?v=20260624-1">
+    <link rel="stylesheet" href="../css/tree-view-mode.css?v=20260725-3655-1">
+    <link rel="stylesheet" href="../css/page-transitions.css?v=20260430-1">
+    <link rel="stylesheet" href="../css/components/lovebud-ai-panel.css?v=20260616-ai-panel-1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+</head>
+<body class="bokeh-bg">
+    <div class="noise-overlay"></div>
+
+    <!-- Shared Header -->
+    <div id="shared-header"></div>
+
+    <main class="search-container lovetree-calm-two-column-shell page-transition-enter">
+        <section class="lovetree-calm-main-column">
+            <div class="browse-curation-shell reveal-up">
+                <div class="search-panel-header">
+                    <div class="search-panel-eyebrow page-hero-eyebrow shared-mobile-hero-eyebrow"><span data-i18n="search.eyebrow">러브트리 둘러보기</span></div>
+                    <h1 class="headline shared-mobile-hero-title" data-i18n="search.title" data-i18n-html><span class="title-line">다른 사람의</span><span class="title-line title-accent">러브트리를</span><span class="title-line">둘러보세요</span></h1>
+                    <p data-i18n="search.subtitle" data-i18n-html>첫 순간과 이어진 마음,<br class="pc-only">깊어진 감정의 흐름을 가볍게 살펴보세요.</p>
+                </div>
+            </div>
+
+            <div class="browse-utility-row lovetree-calm-utility-row reveal-up">
+                <div class="search-input-wrapper">
+                    <span class="material-symbols-outlined search-icon">search</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="아티스트, 첫 순간, 감정으로 찾아보기" required>
+                </div>
+
+                <div class="filter-row" aria-label="감상 보조 필터">
+                    <span class="tag-chip active" data-category="전체">전체</span>
+                    <span class="tag-chip" data-category="입덕">첫 순간</span>
+                    <span class="tag-chip" data-category="성장">이어진 마음</span>
+                    <span class="tag-chip" data-category="최애">깊어진 마음</span>
+                </div>
+            </div>
+
+            <!-- 결과 헤더: 제목 + owner CTA slot + 정렬 + 뷰모드 -->
+            <div class="browse-results-head lovetree-calm-results-head reveal-up">
+                <div class="browse-results-title-slot">
+                    <span class="browse-results-label">둘러볼 러브트리</span>
+                </div>
+                <div class="browse-results-owner-cta-slot" hidden></div>
+                <div class="browse-results-controls">
+                    <div id="browseSortControls"></div>
+                    <div id="browseViewModeMount"></div>
+                </div>
+            </div>
+
+            <div id="browseLoadingStatus" class="lt-loading-inline" role="status" aria-live="polite" aria-busy="false" hidden>
+                <span class="lt-spinner" aria-hidden="true"></span>
+                <span class="browse-loading-copy"></span>
+                <p class="lt-error-heading" hidden></p>
+                <p class="lt-error-body" hidden></p>
+                <button type="button" class="lt-retry-btn lt-error-retry-btn" hidden></button>
+            </div>
+
+            <div id="resultsList" class="reveal-up">
+                <div class="tree-card tree-card-featured search-skeleton-card" aria-hidden="true">
+                    <div class="tree-card-media search-skeleton-block"></div>
+                    <div class="tree-card-body">
+                        <div class="search-skeleton-line search-skeleton-title"></div>
+                        <div class="search-skeleton-line search-skeleton-copy"></div>
+                        <div class="tree-meta-row">
+                            <div class="tree-meta-left"><span class="tree-meta-chip search-skeleton-chip"></span></div>
+                            <div class="tree-meta-right"><span class="search-skeleton-line search-skeleton-count"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tree-card search-skeleton-card" aria-hidden="true">
+                    <div class="tree-card-media search-skeleton-block"></div>
+                    <div class="tree-card-body">
+                        <div class="search-skeleton-line search-skeleton-title"></div>
+                        <div class="search-skeleton-line search-skeleton-copy"></div>
+                        <div class="tree-meta-row">
+                            <div class="tree-meta-left"><span class="tree-meta-chip search-skeleton-chip"></span></div>
+                            <div class="tree-meta-right"><span class="search-skeleton-line search-skeleton-count"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tree-card search-skeleton-card" aria-hidden="true">
+                    <div class="tree-card-media search-skeleton-block"></div>
+                    <div class="tree-card-body">
+                        <div class="search-skeleton-line search-skeleton-title"></div>
+                        <div class="search-skeleton-line search-skeleton-copy"></div>
+                        <div class="tree-meta-row">
+                            <div class="tree-meta-left"><span class="tree-meta-chip search-skeleton-chip"></span></div>
+                            <div class="tree-meta-right"><span class="search-skeleton-line search-skeleton-count"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #3655 Story view navigation mount (Browse only; populated by
+                 js/search/search-story-view.js when Story mode is active) -->
+            <div id="browseStoryNavMount"></div>
+        </section>
+
+        <aside class="preview-sidebar preview-hub lovetree-calm-right-rail reveal-fade" id="previewSidebar">
+            <header class="preview-panel-header">
+                <div class="preview-panel-title-group">
+                    <h3>감상 허브</h3>
+                    <span class="preview-badge">선택한 트리</span>
+                </div>
+                <button type="button" class="preview-mobile-close" id="previewMobileClose" aria-label="감상 닫기">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </header>
+            <div id="previewVideoContainer" class="video-container">
+                <div class="preview-empty-state">
+                    <p>러브트리를 고르면 이어진 순간의 흐름이 여기에 열려요.</p>
+                </div>
+            </div>
+            <div id="previewDesc" class="preview-panel-desc" hidden>
+                <div id="previewTitle" class="headline preview-panel-title"></div>
+                <div id="previewHubMetaSlot">
+                    <div id="previewHubDynamicMetadataSlot"></div>
+                    <div id="previewTreeStats" class="tree-meta" hidden>
+                        <span class="tree-meta-item">
+                            <span class="material-symbols-outlined preview-panel-icon">account_tree</span>
+                            <span id="previewMemoriesCount"></span>
+                            <span>이어진 순간들</span>
+                        </span>
+                        <span class="tree-meta-item">
+                            <span class="material-symbols-outlined preview-panel-icon">schedule</span>
+                            <span id="previewTreeDuration"></span>
+                        </span>
+                    </div>
+                    <div id="previewEmotionSection" hidden>
+                        <div class="emotion-tags-label">
+                            <span class="material-symbols-outlined preview-panel-icon">favorite</span>
+                            <span>이어진 감정</span>
+                        </div>
+                        <div id="previewEmotionTags" class="preview-panel-emotion-tags">
+                            감정의 결이 이곳에 놓여요.
+                        </div>
+                    </div>
+                </div>
+                <div id="previewHubFlowSlot"></div>
+                <div id="previewHubSummarySlot" class="preview-summary-slot"></div>
+                <div id="previewHubActionsSlot" class="preview-actions"></div>
+                <div id="previewHubSocialSlot" class="preview-hub-social-slot"></div>
+            </div>
+        </aside>
+    </main>
+
+<script src="../js/page-shell.js?v=20260420-1"></script>
+<script src="../js/cache-utils.js?v=20260423-1"></script>
+<script src="../js/api/auth-policy.js?v=20260420-1"></script>
+<script src="../js/api/base-api-fetch.js?v=20260715-3517-1"></script>
+<script src="../js/api/public-tree-adapter.js?v=20260629-1"></script>
+<script src="../js/postgres-client.js?v=20260422-2"></script>
+    <script src="../js/utils/security.js?v=20260516-1"></script>
+    <!-- Search modules -->
+    <script src="../js/shared/tree-card-metrics.js?v=20260719-3578-1"></script>
+    <script src="../js/shared/tree-card-composition.js?v=20260720-3578-1"></script>
+    <script src="../js/search/search-title-helper.js?v=20260421-2"></script>
+    <script src="../js/search/search-public-metadata-helper.js?v=20260616-2536-1"></script>
+    <script src="../js/search/search-data-adapter.js?v=20260616-2534-1"></script>
+    <script src="../js/tree-view-mode-switcher.js?v=20260725-3655-1"></script>
+    <script src="../js/search/search-story-view.js?v=20260725-3655-1"></script>
+    <script src="../js/search/search-shared-utils.js?v=20260629-3035-1"></script>
+    <script src="../js/search/search-card-fallback.js?v=20260618-2689-1"></script>
+    <script src="../js/search/search-card-renderer.js?v=20260713-3482-1"></script>
+    <script src="../js/search/search-preview-media-helper.js?v=20260503-594"></script>
+    <script src="../js/search/search-preview-media-embed-patch.js?v=20260623-hide-native-controls-1"></script>
+    <script src="../js/search/search-preview-copy-helper.js?v=20260501-1"></script>
+    <script src="../js/search/search-preview-action-helper.js?v=20260508-618-rev1"></script>
+    <script src="../js/search/search-preview-renderer-builders.js?v=20260505-1"></script>
+    <script src="../js/search/search-preview-renderer.js?v=20260626-2923-hub-flow-baseline-1"></script>
+    <script src="../js/search/search-share-link.js?v=20260713-3482-1"></script>
+    <script src="../js/search/search-preview-playable-hub-patch.js?v=20260623-2841-2"></script>
+    <script src="../js/search/search-preview-hub-dom-patch.js?v=20260623-2841-2"></script>
+    <script src="../js/search/search-preview-cache.js?v=20260427-1"></script>
+    <script src="../js/search/search-copy.js?v=20260520-1281-1"></script>
+    <script src="../js/search/search-ui-copy.js?v=20260520-1281-2"></script>
+    <script src="../js/search/search-ui.js?v=20260520-1281-7"></script>
+    <script src="../js/search/search-card-events.js?v=20260520-1281-3"></script>
+    <script src="../js/search/search-preview-state.js?v=20260616-2532-1"></script>
+    <script src="../js/search/search-mobile-preview-sheet.js?v=20260520-1281-5"></script>
+    <script src="../js/search/search-scroll-load.js?v=20260520-1281-6"></script>
+    <script src="../js/search/search-url-state.js?v=20260713-3482-1"></script>
+     <script src="../js/search/search-controls.js?v=20260713-3482-2"></script>
+    <script src="../js/search/search-data.js?v=20260616-2539-1"></script>
+     <script src="../js/search/search-preview-controller.js?v=20260713-3482-2"></script>
+    <script src="../js/search/index.js?v=20260713-3482-2"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="../js/firebase-config.js?v=20260417-31"></script>
+    <script src="../js/i18n/i18n-core.js?v=20260421-1"></script>
+    <script src="../js/i18n/i18n-shared.js?v=20260629-5"></script>
+    <script src="../js/i18n/i18n-login.js?v=20260419-2"></script>
+    <script src="../js/i18n/i18n-intro.js?v=20260421-2"></script>
+    <script src="../js/i18n/i18n-search.js?v=20260725-3655-1"></script>
+    <script src="../js/i18n/i18n-detail.js?v=20260421-5"></script>
+    <script src="../js/i18n/i18n-editor.js?v=20260421-9"></script>
+    <script src="../js/i18n/i18n-my-trees.js?v=20260421-5"></script>
+    <script src="../js/i18n/i18n-index.js?v=20260421-1"></script>
+    <script src="../js/i18n.js?v=20260419-2"></script>
+    <script src="../js/shared-header.js?v=20260718-3577-1"></script>
+    <script src="../js/ai/lovebud-ai-local-stub.js?v=20260616-ai-panel-1"></script>
+    <script src="../js/ai/lovebud-ai-panel.js?v=20260616-ai-panel-1"></script>
+     <script src="../js/auth/auth-state.js?v=20260417-31"></script>
+     <script src="../js/auth/auth-callbacks.js?v=20260417-31"></script>
+     <script src="../js/auth/auth-cache.js?v=20260417-31"></script>
+     <script src="../js/auth/auth-ui.js?v=20260421-2"></script>
+     <script src="../js/auth/auth-session.js?v=20260417-31"></script>
+     <script src="../js/auth/auth-firebase.js?v=20260622-google-mode-1"></script>
+     <script src="../js/auth/auth-ui-templates.js?v=20260522-1283"></script>
+     <script src="../js/auth.js?v=20260422-3"></script>
+     <script src="../js/page-transitions.js?v=20260430-1"></script>
+     <script src="../js/search/search-page-shell-init.js?v=20260725-3655-1"></script>
+</body>
+</html>

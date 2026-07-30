@@ -1,0 +1,53 @@
+/* Mobile */
+@media (max-width: 640px) {
+  .settings-content {
+    padding: 24px 16px;
+  }
+
+  .settings-card {
+    padding: 32px 24px;
+  }
+
+  .settings-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .settings-close-btn {
+    top: 14px;
+    right: 14px;
+  }
+
+  .settings-profile-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .settings-profile-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .settings-profile-name {
+    font-size: 0.95rem;
+  }
+
+  .settings-account-row {
+    padding: 10px 0;
+  }
+
+  .settings-profile-edit-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .settings-profile-name-input {
+    flex: none;
+    width: 100%;
+  }
+
+  .settings-profile-edit-save,
+  .settings-profile-edit-cancel {
+    flex: 1;
+  }
+}

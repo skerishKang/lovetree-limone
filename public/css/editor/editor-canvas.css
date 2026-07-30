@@ -1,0 +1,382 @@
+/* Branch line (edge) styling */
+.branch-line {
+    pointer-events: stroke;
+    cursor: pointer;
+    transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
+}
+/* Selected-node immediate flow edges — primary color, higher opacity, wider */
+.branch-line.is-flow-related {
+    stroke: var(--primary) !important;
+    opacity: 0.8 !important;
+    stroke-width: 2.8 !important;
+}
+.branch-line.is-flow-inbound,
+.branch-line.is-flow-outbound {
+    /* Hook classes: reserved for future directional distinction */
+}
+.branch-line.is-selected {
+    stroke: var(--primary) !important;
+    stroke-width: 3.5 !important;
+    opacity: 0.85 !important;
+}
+
+/* Dashed preview line for connect-existing-moment flow */
+.branch-line-preview {
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Edge disconnect button */
+.edge-disconnect-btn {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(144, 73, 81, 0.45);
+    background: rgba(255, 255, 255, 0.92);
+    color: rgba(144, 73, 81, 0.8);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(75, 64, 57, 0.12);
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    padding: 0;
+}
+.edge-disconnect-btn:hover {
+    transform: translate(-50%, -50%) scale(1.15);
+    background: rgba(144, 73, 81, 0.92);
+    color: #fff;
+    border-color: rgba(144, 73, 81, 0.6);
+    box-shadow: 0 3px 10px rgba(144, 73, 81, 0.25);
+}
+
+.canvas-area {
+    flex: 1;
+    position: relative;
+    background-color: var(--surface-container-low);
+    background-image: radial-gradient(rgba(144, 73, 81, 0.035) 1px, transparent 1px);
+    background-size: 34px 34px;
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    transition: background-position 0.05s linear;
+}
+
+.canvas-area::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.0), rgba(255,255,255,0.24));
+    pointer-events: none;
+}
+
+.canvas-area.panning {
+    cursor: grabbing;
+    transition: none;
+}
+
+/* Zoom pulse overlay — brief flash when zoom changes */
+.canvas-area.zoom-pulse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(144, 73, 81, 0.03);
+    pointer-events: none;
+    z-index: 5;
+    animation: zoomPulseFade 0.3s ease-out forwards;
+}
+
+@keyframes zoomPulseFade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Recenter flash — brief highlight when fit-to-view is triggered */
+.canvas-area.recenter-flash::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(144, 73, 81, 0.04);
+    pointer-events: none;
+    z-index: 5;
+    animation: recenterFlashFade 0.35s ease-out forwards;
+}
+
+@keyframes recenterFlashFade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Focus node flash — brief highlight when focusing a node */
+.canvas-area.focus-flash::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--focus-x, 50%) var(--focus-y, 50%), rgba(144, 73, 81, 0.06), transparent 60%);
+    pointer-events: none;
+    z-index: 5;
+    animation: focusFlashFade 0.4s ease-out forwards;
+}
+
+@keyframes focusFlashFade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Memory node focus ring animation.
+ * #3561: animate box-shadow only — never transform.
+ * Node shell transform is reserved for viewport zoom (inline scale).
+ */
+.memory-node.focus-animate {
+    animation: nodeFocusPulse 0.6s ease-out backwards;
+}
+
+@keyframes nodeFocusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(144, 73, 81, 0.25); }
+    50% { box-shadow: 0 0 0 12px rgba(144, 73, 81, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(144, 73, 81, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .memory-node.focus-animate {
+        animation: none;
+    }
+}
+
+.canvas-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.canvas-svg circle {
+    display: none !important;
+}
+
+/* Branch port handles — 8-direction connection points on node edges */
+.branch-port-handle {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.branch-port-handle:focus-visible {
+    outline: 2px solid rgba(144, 73, 81, 0.85);
+    outline-offset: 3px;
+    opacity: 1 !important;
+    box-shadow: 0 0 0 4px rgba(144, 73, 81, 0.15) !important;
+}
+/* focus-visible: + 아이콘 표시, 도트 숨김 */
+.branch-port-handle:focus-visible span {
+    display: flex !important;
+}
+.branch-port-handle:focus-visible::before {
+    display: none !important;
+}
+.branch-port-handle::-moz-focus-inner {
+    border: 0;
+}
+
+/* Connection point dot decoration (pseudo-element ring) */
+.branch-port-handle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(144, 73, 81, 0.35);
+    transition: background 0.12s ease, transform 0.12s ease;
+    pointer-events: none;
+}
+.branch-port-handle:hover::before {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translate(-50%, -50%) scale(1.4);
+}
+
+/* Hide the + icon text on small port handles by default,
+   only show dot decoration, but show + on hover */
+.branch-port-handle span {
+    display: none !important;
+}
+.branch-port-handle:hover span {
+    display: flex !important;
+}
+.branch-port-handle:hover::before {
+    display: none !important;
+}
+
+.editor-canvas-empty-guide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(440px, calc(100% - 48px));
+    padding: 28px 26px 24px;
+    border-radius: 30px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(252,248,246,0.95));
+    border: 1px solid rgba(144,73,81,0.14);
+    box-shadow: 0 22px 56px rgba(75,64,57,0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    z-index: 3;
+    animation: editorCanvasGuideFadeIn 360ms ease-out both;
+}
+
+.editor-canvas-empty-guide-hidden {
+    display: none;
+}
+
+.editor-canvas-empty-guide__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(144,73,81,0.10);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.editor-canvas-empty-guide__title {
+    margin: 0;
+    font-size: 1.34rem;
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+    color: var(--on-surface);
+}
+
+.editor-canvas-empty-guide__desc {
+    margin: -4px 0 4px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--on-surface-variant);
+}
+
+.editor-canvas-empty-guide__structured {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.editor-canvas-empty-guide__section-heading {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--on-surface-variant);
+    text-align: center;
+}
+
+.editor-canvas-empty-guide__structured .btn-round,
+.editor-canvas-empty-guide__structured-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.editor-canvas-empty-guide__divider {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    color: rgba(144,73,81,0.38);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.editor-canvas-empty-guide__divider::before,
+.editor-canvas-empty-guide__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(144,73,81,0.12);
+}
+
+.editor-canvas-empty-guide__quick {
+    width: 100%;
+}
+
+.editor-canvas-empty-guide__input {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid rgba(144,73,81,0.16);
+    border-radius: 14px;
+    padding: 0 16px;
+    background: rgba(255,255,255,0.92);
+    color: var(--on-surface);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.editor-canvas-empty-guide__input::placeholder {
+    color: rgba(87,69,64,0.58);
+}
+
+.editor-canvas-empty-guide__input:focus {
+    border-color: rgba(144,73,81,0.46);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(144,73,81,0.10);
+}
+
+.editor-canvas-empty-guide__hint {
+    margin: -2px 0 0;
+    color: var(--on-surface-variant);
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+@keyframes editorCanvasGuideFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 12px));
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media (max-width: 1024px) {
+    .editor-canvas-empty-guide {
+        top: calc(50% + 32px);
+    }
+}
+
+@media (max-width: 768px) {
+    .editor-canvas-empty-guide {
+        top: calc(50% + 40px);
+        padding: 24px 18px 22px;
+    }
+
+    .editor-canvas-empty-guide__structured {
+        flex-direction: column;
+    }
+
+    .editor-canvas-empty-guide__input,
+    .editor-canvas-empty-guide__structured-btn {
+        width: 100%;
+    }
+}

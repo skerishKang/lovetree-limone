@@ -1,0 +1,111 @@
+.tree-card-body {
+    display: grid;
+    grid-template-rows: 2.98rem 2.46rem auto;
+    row-gap: 9px;
+    padding: 4px 6px 6px;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.tree-title {
+    font-size: 1.36rem;
+    font-weight: 900;
+    line-height: 1.18;
+    letter-spacing: 0;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    hyphens: auto;
+    min-height: 2.36em;
+    max-height: 2.36em;
+    flex-shrink: 0;
+}
+
+.tree-subtitle {
+    font-size: 0.9rem;
+    color: var(--on-surface-variant);
+    line-height: 1.52;
+    margin: 0;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    hyphens: auto;
+    min-height: 3.04em;
+    max-height: 3.04em;
+    align-self: start;
+}
+
+.tree-subtitle-derived {
+    color: var(--on-surface-variant);
+    font-weight: 720;
+}
+
+.tree-subtitle-fallback {
+    color: rgba(108, 89, 83, 0.72);
+    font-weight: 650;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-card-metadata-slot,
+#resultsList[data-tree-view-mode="compact"] .tree-card-metadata-slot {
+  min-height: 0;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-tags,
+#resultsList[data-tree-view-mode="compact"] .tree-public-tags {
+  display: flex;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  gap: 6px;
+  align-items: center;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-tag,
+#resultsList[data-tree-view-mode="compact"] .tree-public-tag {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--secondary);
+  background: rgba(122, 139, 110, 0.08);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-tag-overflow,
+#resultsList[data-tree-view-mode="compact"] .tree-public-tag-overflow {
+  flex: 0 0 auto;
+  cursor: default;
+  pointer-events: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  background: rgba(144, 73, 81, 0.08);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-tag:nth-of-type(n + 3),
+#resultsList[data-tree-view-mode="compact"] .tree-public-tag:nth-of-type(n + 3) {
+  display: none;
+}

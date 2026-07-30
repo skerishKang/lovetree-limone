@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // LoveBud static assets (third-party code, not linted)
+    "public/js/**",
+    "public/css/**",
+    "public/pages/**",
   ]),
 ]);
 

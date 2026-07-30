@@ -1,0 +1,107 @@
+/* ── Search responsive — browse/search controls ─────────── */
+
+@media (max-width: 768px) {
+    .search-container {
+        padding: 24px var(--page-pad-mobile) 36px;
+        gap: 22px;
+        width: 100%;
+    }
+
+    .browse-curation-shell {
+        margin-bottom: 8px;
+    }
+
+    .search-panel-header p {
+        font-size: 0.96rem;
+        line-height: 1.72;
+        max-width: 100%;
+    }
+
+    .search-input {
+        height: 40px;
+        min-height: 40px;
+        max-height: 40px;
+        padding: 10px 12px 10px 38px;
+        font-size: 0.86rem;
+        line-height: 1.15;
+    }
+
+    .search-icon {
+        font-size: 18px;
+        left: 12px;
+    }
+
+    #resultsList,
+    #growingTreesList {
+        grid-template-columns: 1fr;
+    }
+
+    .growing-trees-section {
+        padding: 22px 16px;
+        margin-top: 40px;
+        border-radius: 1.6rem;
+    }
+
+    .growing-trees-head {
+        flex-direction: column;
+        margin-bottom: 18px;
+        gap: 10px;
+    }
+
+    .tag-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 4px 8px;
+        font-size: 10.5px;
+        line-height: 1;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border-color: rgba(144, 73, 81, 0.06);
+        background: rgba(255, 255, 255, 0.58);
+    }
+
+    .tag-chip.active {
+        background: rgba(144, 73, 81, 0.10);
+        border-color: rgba(144, 73, 81, 0.14);
+    }
+
+    .filter-row {
+        width: 100%;
+        gap: 5px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 0;
+    }
+
+    .filter-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .browse-results-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-top: 14px;
+    }
+
+    .browse-results-head h3 {
+        font-size: 1.08rem;
+    }
+
+    .browse-utility-row {
+        gap: 8px;
+        margin-top: 8px;
+        padding: 10px;
+        border-radius: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .browse-results-head p {
+        display: none;
+    }
+}

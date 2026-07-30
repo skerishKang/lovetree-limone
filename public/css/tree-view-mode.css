@@ -1,0 +1,1109 @@
+/* LoveBud Tree View Mode Switcher
+ * Three user-selectable layouts for both Browse (#resultsList) and
+ * My LoveTree (.trees-grid): large, compact, list.
+ *
+ * Base styles live in css/search/* and css/my-trees/* — this file only
+ * overrides per-mode without removing the existing default columns.
+ *
+ * v20260721-3608-1 — #3608 Phase 1 compact convergence:
+ *   - Compact core geometry is canonical and shared by Browse + My Trees
+ *   - Obsolete My Trees-only compact asymmetry (140px thumb, auto height,
+ *     0.95rem title) is removed
+ *   - large/list remain surface-owned; geometry parity is Phase 2
+ *   - empty/invalid storage defaults: both pages compact (bootstrap)
+ */
+
+/* ── Control UI ───────────────────────────────────────────────────── */
+.tree-view-mode-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(255, 248, 245, 0.86);
+    border: 1px solid rgba(144, 73, 81, 0.16);
+    box-shadow: 0 6px 18px rgba(75, 64, 57, 0.05);
+    backdrop-filter: blur(6px);
+    flex-wrap: wrap;
+}
+
+.tree-view-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: transparent;
+    border: 0;
+    color: var(--on-surface-variant, #5b4b40);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+    line-height: 1.2;
+}
+
+.tree-view-mode-btn .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.tree-view-mode-btn:hover,
+.tree-view-mode-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--on-surface, #2a211c);
+    outline: none;
+}
+
+.tree-view-mode-btn.is-active {
+    background: var(--primary, #904951);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(144, 73, 81, 0.22);
+}
+
+.tree-view-mode-btn.is-active .material-symbols-outlined {
+    color: #fff;
+}
+
+@media (max-width: 640px) {
+    .tree-view-mode-label {
+        display: none;
+    }
+    .tree-view-mode-btn {
+        padding: 6px 10px;
+    }
+}
+
+
+/* ── Browse (#resultsList) — large / list (unchanged Phase 1) ──── */
+#resultsList[data-tree-view-mode="large"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--lovetree-card-grid-gap);
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-card {
+    height: 380px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-card-media {
+    height: 136px;
+    min-height: 136px;
+    margin: 0;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-card-body {
+    display: grid;
+    grid-template-rows: 3.25rem 2.4rem minmax(0, 1fr) auto;
+    row-gap: 8px;
+    padding: 10px 12px 12px;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-title {
+    font-size: 1.25rem;
+    line-height: 1.3;
+    height: 3.25rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    flex-shrink: 0;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    height: 2.4rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    flex-shrink: 0;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-card-metadata-slot {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 24px;
+  gap: 4px;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-metadata {
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-metadata-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-public-tags {
+  grid-row: 2;
+  height: 24px;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-meta-row {
+    flex-shrink: 0;
+}
+
+/* ── Compact (canonical) — #3608 Phase 1 ───────────────────────────
+ * Browse compact geometry is the source of truth.
+ * My Trees compact mirrors the same core values via parallel rules
+ * (standalone Browse blocks keep fixed-slot contract selectors).
+ */
+#resultsList[data-tree-view-mode="compact"],
+.trees-grid[data-tree-view-mode="compact"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--lovetree-card-grid-gap-compact);
+}
+
+/* Browse compact root card */
+#resultsList[data-tree-view-mode="compact"] .tree-card {
+    height: 290px;
+    min-height: 260px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* My Trees compact root card — same geometry as Browse */
+.trees-grid[data-tree-view-mode="compact"] .tree-card {
+    height: 290px;
+    min-height: 260px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Browse compact media wrapper */
+#resultsList[data-tree-view-mode="compact"] .tree-card-media,
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-media {
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* My Trees compact media wrapper — same geometry as Browse */
+.trees-grid[data-tree-view-mode="compact"] .tree-card-media,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-media {
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* Inner My Trees thumb must not exceed the compact media slot */
+.trees-grid[data-tree-view-mode="compact"] .tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-thumb {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Browse compact body (standalone .tree-card-body for fixed-slot contracts) */
+#resultsList[data-tree-view-mode="compact"] .tree-card-body {
+    display: grid;
+    grid-template-rows: 1.5rem 1.2rem minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+    padding: 8px 10px 10px;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-body,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-body,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-body {
+    display: grid;
+    grid-template-rows: 1.5rem 1.2rem minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+    padding: 8px 10px 10px;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Compact title-row / meta / CTA: stay inside card width on 2-col mobile */
+#resultsList[data-tree-view-mode="compact"] .tree-card-title-row,
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-title-row,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-title-row,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-title-row {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .tree-meta-left,
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-meta-left,
+#resultsList[data-tree-view-mode="compact"] .tree-meta-right,
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-meta-right,
+.trees-grid[data-tree-view-mode="compact"] .tree-meta-left,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-meta-left,
+.trees-grid[data-tree-view-mode="compact"] .tree-meta-right,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-meta-right {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .tree-card-open-link,
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-open-link,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-open-link,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-open-link {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Browse compact title — geometry only; font-weight stays on surface/shared (900) */
+#resultsList[data-tree-view-mode="compact"] .tree-title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    height: 1.5rem;
+    min-height: 0;
+    max-height: 1.5rem;
+    margin: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-title,
+.trees-grid[data-tree-view-mode="compact"] .tree-title,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-title,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    height: 1.5rem;
+    min-height: 0;
+    max-height: 1.5rem;
+    margin: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Browse compact subtitle */
+#resultsList[data-tree-view-mode="compact"] .tree-subtitle {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    height: 1.2rem;
+    min-height: 0;
+    max-height: 1.2rem;
+    margin: 0;
+    margin-top: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-line-clamp: unset;
+}
+
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-subtitle,
+#resultsList[data-tree-view-mode="compact"] .tree-card-subcopy,
+.trees-grid[data-tree-view-mode="compact"] .tree-subtitle,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-subtitle,
+.trees-grid[data-tree-view-mode="compact"] .tree-card-subcopy {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    height: 1.2rem;
+    min-height: 0;
+    max-height: 1.2rem;
+    margin: 0;
+    margin-top: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-line-clamp: unset;
+}
+
+/* Browse public metadata slots stay inside the flexible middle row */
+#resultsList[data-tree-view-mode="compact"] .tree-card-metadata-slot {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 22px;
+  gap: 4px;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .tree-public-metadata {
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .tree-public-metadata-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .tree-public-tags {
+  grid-row: 2;
+  height: 22px;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Compact footer / meta row — both surfaces */
+#resultsList[data-tree-view-mode="compact"] .tree-meta-row {
+    flex-shrink: 0;
+    margin-top: 0;
+    align-self: stretch;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="compact"] .love-tree-card-meta-row,
+.trees-grid[data-tree-view-mode="compact"] .tree-meta-row,
+.trees-grid[data-tree-view-mode="compact"] .love-tree-card-meta-row {
+    flex-shrink: 0;
+    margin-top: 0;
+    align-self: stretch;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* ── Browse list (unchanged Phase 1) ─────────────────────────────── */
+#resultsList[data-tree-view-mode="list"] {
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+#resultsList[data-tree-view-mode="list"] .tree-card {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    align-items: stretch;
+    height: auto;
+    min-height: 110px;
+    padding: 0;
+}
+
+#resultsList[data-tree-view-mode="list"] .tree-card-media,
+#resultsList[data-tree-view-mode="list"] .tree-card-thumb {
+    height: 100%;
+    min-height: 110px;
+    width: 100%;
+    border-radius: var(--lovetree-card-radius-lg) 0 0 var(--lovetree-card-radius-lg);
+    overflow: hidden;
+}
+
+#resultsList[data-tree-view-mode="list"] .tree-card-body,
+#resultsList[data-tree-view-mode="list"] .tree-card-info {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    overflow: hidden;
+}
+
+/* ── Compact → 2-col on tablet/mobile ────────────────────────────── */
+@media (max-width: 640px) {
+    #resultsList[data-tree-view-mode="compact"],
+    .trees-grid[data-tree-view-mode="compact"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card {
+        height: 280px;
+        min-height: 280px;
+    }
+
+    .trees-grid[data-tree-view-mode="compact"] .tree-card {
+        height: 280px;
+        min-height: 280px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card-media,
+    #resultsList[data-tree-view-mode="compact"] .love-tree-card-media {
+        height: 90px;
+        min-height: 90px;
+        max-height: 90px;
+    }
+
+    .trees-grid[data-tree-view-mode="compact"] .tree-card-media,
+    .trees-grid[data-tree-view-mode="compact"] .love-tree-card-media {
+        height: 90px;
+        min-height: 90px;
+        max-height: 90px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card-body {
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .love-tree-card-body,
+    .trees-grid[data-tree-view-mode="compact"] .tree-card-body,
+    .trees-grid[data-tree-view-mode="compact"] .love-tree-card-body {
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+}
+
+/* ── List view → narrow side-by-side then stacked ───────────── */
+@media (max-width: 768px) {
+    #resultsList[data-tree-view-mode="list"] .tree-card {
+        grid-template-columns: 110px minmax(0, 1fr);
+        height: auto;
+        min-height: 110px;
+    }
+
+    #resultsList[data-tree-view-mode="list"] .tree-card-media,
+    #resultsList[data-tree-view-mode="list"] .tree-card-thumb {
+        min-height: 110px;
+        border-radius: var(--lovetree-card-radius-lg) 0 0 var(--lovetree-card-radius-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Stack list card vertically on very small screens */
+    #resultsList[data-tree-view-mode="list"] .tree-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: 140px auto;
+        height: auto;
+        min-height: 0;
+    }
+
+    #resultsList[data-tree-view-mode="list"] .tree-card-media,
+    #resultsList[data-tree-view-mode="list"] .tree-card-thumb {
+        height: 140px;
+        min-height: 140px;
+        border-radius: var(--lovetree-card-radius-lg) var(--lovetree-card-radius-lg) 0 0;
+    }
+
+    #resultsList[data-tree-view-mode="list"] .tree-card-body {
+        padding: 12px 14px 14px;
+    }
+
+    /* Compact stays 2-col with tighter geometry on very small screens */
+    #resultsList[data-tree-view-mode="compact"],
+    .trees-grid[data-tree-view-mode="compact"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card {
+        height: 260px;
+        min-height: 260px;
+    }
+
+    .trees-grid[data-tree-view-mode="compact"] .tree-card {
+        height: 260px;
+        min-height: 260px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card-media,
+    #resultsList[data-tree-view-mode="compact"] .love-tree-card-media {
+        height: 80px;
+        min-height: 80px;
+        max-height: 80px;
+    }
+
+    .trees-grid[data-tree-view-mode="compact"] .tree-card-media,
+    .trees-grid[data-tree-view-mode="compact"] .love-tree-card-media {
+        height: 80px;
+        min-height: 80px;
+        max-height: 80px;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .tree-card-body {
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    #resultsList[data-tree-view-mode="compact"] .love-tree-card-body,
+    .trees-grid[data-tree-view-mode="compact"] .tree-card-body,
+    .trees-grid[data-tree-view-mode="compact"] .love-tree-card-body {
+        height: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+}
+
+/* ── My LoveTree (.trees-grid) — large / list ─────────────────
+ * #3608 Phase 2 PR-A: My Trees large core geometry mirrors Browse large
+ * (canonical). Grid-only large rule was insufficient; page-local base
+ * (336px card, thumb margin, dense body/title) is overridden here only.
+ */
+.trees-grid[data-tree-view-mode="large"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--lovetree-card-grid-gap);
+}
+
+/* My Trees large root card — match Browse large 380px */
+.trees-grid[data-tree-view-mode="large"] .tree-card {
+    height: 380px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Outer media wrapper — 136px slot */
+.trees-grid[data-tree-view-mode="large"] .tree-card-media,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-media {
+    height: 136px;
+    min-height: 136px;
+    max-height: 136px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* Inner thumb must fill media slot (no 14px bottom margin) */
+.trees-grid[data-tree-view-mode="large"] .tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="large"] .tree-card-thumb {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body: Browse large 4-row grid */
+.trees-grid[data-tree-view-mode="large"] .tree-card-body,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-body {
+    display: grid;
+    grid-template-rows: 3.25rem 2.4rem minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+    padding: 10px 12px 12px;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Title — cancel page-local 2.36em min/max */
+.trees-grid[data-tree-view-mode="large"] .tree-title,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-title,
+.trees-grid[data-tree-view-mode="large"] .tree-card-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    line-height: 1.3;
+    height: 3.25rem;
+    min-height: 0;
+    max-height: 3.25rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    flex-shrink: 0;
+}
+
+/* Subtitle — cancel page-local 3.04em min/max */
+.trees-grid[data-tree-view-mode="large"] .tree-subtitle,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-subtitle,
+.trees-grid[data-tree-view-mode="large"] .tree-card-subcopy {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    height: 2.4rem;
+    min-height: 0;
+    max-height: 2.4rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    flex-shrink: 0;
+}
+
+.trees-grid[data-tree-view-mode="large"] .tree-meta-row,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-meta-row {
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* ── My LoveTree list — Phase 2 PR-B ─────────────────────────────
+ * Browse list is canonical. Root card/media already paralleled;
+ * desktop body was missing and inherited page-local grid/pad 4px 6px 6px.
+ * Thumb margin-bottom from my-trees-cards.css is reset list-only.
+ */
+.trees-grid[data-tree-view-mode="list"] {
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.trees-grid[data-tree-view-mode="list"] .tree-card {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    align-items: stretch;
+    height: auto;
+    min-height: 110px;
+    padding: 0;
+}
+
+.trees-grid[data-tree-view-mode="list"] .tree-card-media,
+.trees-grid[data-tree-view-mode="list"] .love-tree-card-media,
+.trees-grid[data-tree-view-mode="list"] .tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="list"] .love-tree-card-media .tree-card-thumb,
+.trees-grid[data-tree-view-mode="list"] .tree-card-thumb {
+    height: 100%;
+    min-height: 110px;
+    max-height: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: var(--lovetree-card-radius-lg) 0 0 var(--lovetree-card-radius-lg);
+}
+
+/* Desktop list body — match Browse flex/center/pad 14px 16px */
+.trees-grid[data-tree-view-mode="list"] .tree-card-body,
+.trees-grid[data-tree-view-mode="list"] .love-tree-card-body,
+.trees-grid[data-tree-view-mode="list"] .tree-card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 14px 16px;
+    height: auto;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .trees-grid[data-tree-view-mode="list"] .tree-card {
+        grid-template-columns: 110px minmax(0, 1fr);
+        height: auto;
+        min-height: 110px;
+    }
+
+    .trees-grid[data-tree-view-mode="list"] .tree-card-media,
+    .trees-grid[data-tree-view-mode="list"] .love-tree-card-media,
+    .trees-grid[data-tree-view-mode="list"] .tree-card-media .tree-card-thumb,
+    .trees-grid[data-tree-view-mode="list"] .love-tree-card-media .tree-card-thumb,
+    .trees-grid[data-tree-view-mode="list"] .tree-card-thumb {
+        min-height: 110px;
+        border-radius: var(--lovetree-card-radius-lg) 0 0 var(--lovetree-card-radius-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .trees-grid[data-tree-view-mode="list"] .tree-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: 140px auto;
+        height: auto;
+        min-height: 0;
+    }
+
+    .trees-grid[data-tree-view-mode="list"] .tree-card-media,
+    .trees-grid[data-tree-view-mode="list"] .love-tree-card-media,
+    .trees-grid[data-tree-view-mode="list"] .tree-card-media .tree-card-thumb,
+    .trees-grid[data-tree-view-mode="list"] .love-tree-card-media .tree-card-thumb,
+    .trees-grid[data-tree-view-mode="list"] .tree-card-thumb {
+        height: 140px;
+        min-height: 140px;
+        border-radius: var(--lovetree-card-radius-lg) var(--lovetree-card-radius-lg) 0 0;
+    }
+
+    .trees-grid[data-tree-view-mode="list"] .tree-card-info,
+    .trees-grid[data-tree-view-mode="list"] .tree-card-body,
+    .trees-grid[data-tree-view-mode="list"] .love-tree-card-body {
+        padding: 12px 14px 14px;
+    }
+}
+
+/* ── Text truncation helpers ───────────────────────────────────── */
+.tree-card .tree-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.tree-card .tree-subtitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+#resultsList[data-tree-view-mode="large"] .tree-title,
+#resultsList[data-tree-view-mode="large"] .tree-subtitle,
+.trees-grid[data-tree-view-mode="large"] .tree-title,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-title,
+.trees-grid[data-tree-view-mode="large"] .tree-card-title,
+.trees-grid[data-tree-view-mode="large"] .tree-subtitle,
+.trees-grid[data-tree-view-mode="large"] .love-tree-card-subtitle,
+.trees-grid[data-tree-view-mode="large"] .tree-card-subcopy {
+  white-space: normal;
+}
+
+.tree-card .tree-tags {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+/* ── Browse Story root layout (#3655 foundation) ──────────────────
+ * Opt-in fourth mode for Browse ONLY — My Trees keeps large/compact/list
+ * and has no story selectors here. The column count is driven by
+ * data-story-group-size (set by js/search/search-story-view.js from the
+ * viewport breakpoint and the current group's card count), so the CSS
+ * column count always matches the number of visible cards: no empty
+ * trailing slot for a 2-card group, centered single card for 1.
+ */
+#resultsList[data-tree-view-mode="story"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--lovetree-card-grid-gap);
+    align-items: stretch;
+}
+
+#resultsList[data-tree-view-mode="story"][data-story-group-size="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#resultsList[data-tree-view-mode="story"][data-story-group-size="1"] {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ── Story visible card geometry ──────────────────────────────────
+ * Cards keep their canonical composition styling (radius, typography,
+ * CTA). The legacy base .tree-card height budget is released so the
+ * meta row / canonical CTA are never clipped inside a Story card;
+ * grid stretch keeps same-group heights visually even.
+ * [hidden] must win over the card's own display value so hidden
+ * cards leave both layout and the accessibility/tab order.
+ */
+#resultsList[data-tree-view-mode="story"] .tree-card {
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+}
+
+#resultsList[data-tree-view-mode="story"] .tree-card[hidden] {
+    display: none !important;
+}
+
+/* ── Story card hierarchy refinements (#3703) ────────────────────
+ * Tighter card gap and elevated media emphasis inside Story mode only
+ */
+#resultsList[data-tree-view-mode="story"] {
+    gap: 16px;
+}
+
+#resultsList[data-tree-view-mode="story"] .tree-card-media {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ── Story navigation ─────────────────────────────────────────────
+ * Previous / local position / next. The position is a LOCAL group index
+ * over the currently loaded results — not a backend page number.
+ */
+.browse-story-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    margin: 20px auto 4px;
+}
+
+.browse-story-navigation[hidden] {
+    display: none !important;
+}
+
+.browse-story-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    border: 1px solid var(--outline-variant);
+    background: rgba(255, 248, 245, 0.86);
+    color: var(--on-surface-variant);
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(75, 64, 57, 0.05);
+    transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.browse-story-nav-btn .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.browse-story-nav-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--on-surface);
+    box-shadow: 0 8px 20px rgba(75, 64, 57, 0.09);
+}
+
+.browse-story-nav-btn:focus-visible {
+    outline: 2px solid rgba(122, 139, 110, 0.48);
+    outline-offset: 3px;
+}
+
+.browse-story-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.browse-story-nav-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant, #5b4b40);
+    text-transform: uppercase;
+    margin-right: 4px;
+}
+
+.browse-story-indicator {
+    position: relative;
+    min-width: 78px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+}
+
+.browse-story-indicator-a11y {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Story bidirectional transition (outgoing + incoming simultaneous) ── */
+
+/* Transition stage layout: both layers occupy the same grid cell */
+/* During bidirectional transition, contain overflow and fix height */
+#resultsList[data-tree-view-mode="story"][aria-busy="true"] {
+    position: relative;
+    overflow: hidden;
+    min-height: var(--story-transition-height);
+}
+
+.browse-story-transition-stage {
+    display: grid;
+    grid-template-columns: inherit;
+    gap: inherit;
+    grid-column: 1 / -1;
+    animation-fill-mode: both;
+}
+
+.browse-story-transition-stage[data-story-layer-size="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.browse-story-transition-stage[data-story-layer-size="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.browse-story-transition-stage[data-story-layer-size="1"] {
+    grid-template-columns: minmax(0, 560px);
+    justify-content: center;
+}
+
+.browse-story-layer-outgoing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    animation: browse-story-exit-next 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    pointer-events: none;
+}
+
+.browse-story-layer-incoming {
+    animation: browse-story-enter-next 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#resultsList[data-tree-view-mode="story"][data-story-direction="prev"] .browse-story-layer-outgoing {
+    animation-name: browse-story-exit-prev;
+}
+
+#resultsList[data-tree-view-mode="story"][data-story-direction="prev"] .browse-story-layer-incoming {
+    animation-name: browse-story-enter-prev;
+}
+
+/* Outgoing cards inside the wrapper keep their layout */
+.browse-story-layer-outgoing .tree-card {
+    opacity: 1;
+}
+
+.browse-story-layer-incoming .tree-card {
+    opacity: 1;
+}
+
+@keyframes browse-story-exit-next {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-8%); }
+}
+
+@keyframes browse-story-exit-prev {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(8%); }
+}
+
+@keyframes browse-story-enter-next {
+    from { opacity: 0; transform: translateX(8%); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes browse-story-enter-prev {
+    from { opacity: 0; transform: translateX(-8%); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Legacy single-card entering class (kept for non-transition initial display) */
+#resultsList[data-tree-view-mode="story"] .tree-card.is-story-entering {
+    animation: browse-story-enter-next 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#resultsList[data-tree-view-mode="story"][data-story-direction="prev"] .tree-card.is-story-entering {
+    animation-name: browse-story-enter-prev;
+}
+
+#resultsList[data-tree-view-mode="story"]
+    .browse-story-transition-stage
+    .tree-card.is-story-entering {
+    animation: none;
+    transform: none;
+}
+
+/* ── Story responsive breakpoints ─────────────────────────────────
+ * Safety nets matching the controller breakpoints
+ * (>=1200 → 3, 768–1199 → 2, <768 → 1). The controller sets
+ * data-story-group-size synchronously on breakpoint changes; these rules
+ * only cap the column count if the attribute and viewport ever disagree.
+ */
+@media (max-width: 1199px) {
+    #resultsList[data-tree-view-mode="story"][data-story-group-size="3"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    #resultsList[data-tree-view-mode="story"],
+    #resultsList[data-tree-view-mode="story"][data-story-group-size="2"],
+    #resultsList[data-tree-view-mode="story"][data-story-group-size="3"] {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* ── Story reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    #resultsList[data-tree-view-mode="story"] .tree-card.is-story-entering,
+    .browse-story-layer-outgoing,
+    .browse-story-layer-incoming {
+        animation: none;
+        transform: none;
+        opacity: 1;
+    }
+
+    .browse-story-nav-btn {
+        transition: none;
+    }
+}

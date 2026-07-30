@@ -1,0 +1,792 @@
+/* Group A Status & Settings Panel selectors relocated to css/editor/status-settings.css
+   Issue #513 - Status & Settings Panel relocation */
+
+.sidebar-btn {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(144, 73, 81, 0.1);
+    background: white;
+    color: var(--on-surface);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(75, 64, 57, 0.03);
+    text-align: left;
+}
+
+.sidebar-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(144, 73, 81, 0.15);
+    border-color: rgba(144, 73, 81, 0.25);
+    background: white;
+}
+
+.sidebar-btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: transparent;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(144, 73, 81, 0.12);
+    opacity: 0.96;
+}
+
+.sidebar-btn-primary:hover {
+    background: var(--primary);
+    box-shadow: 0 4px 16px rgba(144, 73, 81, 0.16);
+    opacity: 1;
+}
+
+.btn-icon {
+    font-size: 14px;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
+.btn-label {
+    font-size: 13px;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+    line-height: 1.35;
+}
+
+.editor-status-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,244,0.96));
+    box-shadow: 0 8px 20px rgba(75, 64, 57, 0.05);
+}
+
+.editor-status-card,
+.editor-status-card strong,
+.editor-status-card p,
+.detail-panel h3,
+.detail-panel label,
+.detail-panel p,
+.detail-panel .tag,
+.detail-panel .diary-note,
+.detail-panel .diary-note *,
+.detail-panel input,
+.detail-panel textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.memory-node,
+.memory-node * {
+    user-select: none;
+}
+
+/* ==========================================================================
+   Editor paper tone pass 3
+   Goal: Scrapbook/Paper texture unification & tone polish
+   ========================================================================== */
+
+/* 1. Base Layout & Backgrounds */
+body .editor-layout {
+    background: var(--surface);
+    background-image: linear-gradient(180deg, var(--surface) 0%, var(--surface-container-low) 100%);
+}
+
+body .sidebar,
+body .detail-panel {
+    background: rgba(255, 253, 249, 0.94);
+    border: 1px solid rgba(144, 73, 81, 0.1);
+    box-shadow: 0 12px 40px rgba(75, 64, 57, 0.08);
+}
+
+body .canvas-area {
+    background-color: var(--surface-container-low);
+    background-image: radial-gradient(rgba(144, 73, 81, 0.03) 1px, transparent 1px);
+    border: 1px solid rgba(144, 73, 81, 0.08);
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.015);
+}
+
+body .canvas-area::before {
+    border-color: rgba(144, 73, 81, 0.08);
+}
+
+/* 2. Left Status Card (Scrapbook Cover/Paper) */
+body .editor-status-card {
+    background: var(--surface-container-lowest);
+    background-image: linear-gradient(165deg, var(--surface-container-lowest) 0%, var(--surface) 100%);
+    border: 1px solid rgba(144, 73, 81, 0.16);
+    box-shadow: 0 8px 24px rgba(75, 64, 57, 0.06), 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+body .editor-status-card strong {
+    color: var(--on-background);
+}
+
+body .editor-tree-quiet-note {
+    color: var(--on-surface-note);
+    border-top: 1px dashed rgba(190, 147, 127, 0.24);
+}
+
+/* 3. Node Card (Paper Scrap) */
+body .node-card {
+    background: var(--surface-container-lowest);
+    border: 1px solid rgba(144, 73, 81, 0.08);
+    box-shadow: 1px 2px 6px rgba(75, 64, 57, 0.05);
+    border-radius: 6px;
+    transition: box-shadow 0.24s ease, border-color 0.24s ease, background-color 0.24s ease;
+}
+
+body .memory-node:hover .node-card,
+body .memory-node.selected .node-card {
+    border-color: rgba(144, 73, 81, 0.35);
+    box-shadow: 0 12px 32px rgba(144, 73, 81, 0.12);
+}
+
+body .node-img-wrapper {
+    background: var(--surface-container-low);
+    border-radius: 4px;
+}
+
+/* 4. Right Detail Cards (Surface Unification) */
+body .editor-current-moment-card,
+body .editor-moment-info-card,
+body .editor-save-status-card {
+    background: rgba(255,253,249,0.56);
+    border: 1px solid rgba(144, 73, 81, 0.06);
+    box-shadow: 0 2px 8px rgba(75, 64, 57, 0.02);
+}
+
+body .editor-moment-info-card {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+body .diary-note {
+    background: rgba(253, 252, 251, 0.8);
+    border-left: 4px solid rgba(144, 73, 81, 0.15);
+    color: var(--on-surface);
+}
+
+/* 5. Button/Chip/Pill Tone */
+body .editor-tree-visibility-pill.is-private {
+    background: rgba(144, 73, 81, 0.06);
+    color: var(--primary);
+    border: 1px solid rgba(144, 73, 81, 0.12);
+}
+
+body .editor-mini-setting-btn {
+    background: rgba(255, 255, 255, 0.86);
+    border-color: rgba(144, 73, 81, 0.14);
+    color: var(--on-surface-variant);
+}
+
+body .editor-memory-mode-chip {
+    background: var(--surface-container-lowest);
+    border-color: rgba(144, 73, 81, 0.12);
+}
+
+body .editor-memory-mode-chip.is-active {
+    background: rgba(144, 73, 81, 0.08);
+    border-color: rgba(144, 73, 81, 0.24);
+    color: var(--primary);
+}
+
+/* 6. Mobile Polish (375px) */
+@media (max-width: 375px) {
+    body .editor-layout {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    body .sidebar,
+    body .detail-panel,
+    body .canvas-area {
+        border-radius: 20px;
+    }
+
+    body .editor-status-card {
+        padding: 18px 14px;
+    }
+
+    body .editor-status-card strong {
+        font-size: 1.35rem;
+    }
+
+}
+
+/* Editor page presentation overrides extracted from pages/editor.html */
+
+.editor-layout {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-container-low) 52%, var(--surface-container) 100%);
+    gap: 18px;
+    padding: 18px;
+    box-sizing: border-box;
+}
+
+.sidebar,
+.detail-panel {
+    border: 1px solid rgba(255,255,255,0.86);
+    border-radius: 32px;
+    background: linear-gradient(180deg,rgba(255,253,249,0.88),rgba(255,247,239,0.66));
+    box-shadow: 0 24px 62px rgba(156,116,94,0.13);
+}
+
+.sidebar {
+    border-right: 1px solid rgba(255,255,255,0.86);
+}
+
+.detail-panel {
+    border-left: 1px solid rgba(255,255,255,0.86);
+}
+
+.canvas-area {
+    border-radius: 34px;
+    background: radial-gradient(circle at 50% 26%,rgba(255,244,232,0.86),transparent 34%),linear-gradient(180deg,rgba(255,252,248,0.82),rgba(250,238,226,0.54));
+    border: 1px solid rgba(255,255,255,0.56);
+    box-shadow: 0 24px 62px rgba(156,116,94,0.10);
+}
+
+.canvas-area::before {
+    content: '';
+    position: absolute;
+    inset: 82px 28px 28px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.42);
+    background: radial-gradient(circle at 50% 28%,rgba(255,255,255,0.36),transparent 34%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.canvas-svg,
+.memory-node,
+#canvasEmptyGuide,
+#addMemoryForm {
+    z-index: 2;
+}
+
+.editor-reference-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: 100%;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(255,248,242,0.90);
+    border: 1px solid rgba(233,213,199,0.86);
+    color: var(--on-surface-soft);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.editor-status-card {
+    position: relative;
+    padding: 24px 20px 20px;
+    border-radius: 28px;
+    background: linear-gradient(180deg,rgba(255,253,249,0.96),rgba(255,246,239,0.88));
+    border: 1px solid rgba(233,215,201,0.82);
+    box-shadow: 0 18px 40px rgba(161,119,96,0.10);
+    margin-top: 0;
+}
+
+.editor-status-card .editor-reference-kicker {
+    margin-bottom: 14px;
+}
+
+.editor-status-card strong {
+    font-size: 1.62rem;
+    color: var(--on-surface);
+}
+
+.editor-rename-btn {
+    align-self: flex-start;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 32px;
+    padding: 0 11px;
+    margin-top: 2px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.78);
+    border-color: rgba(197,146,128,0.30);
+    color: var(--on-surface-soft);
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(165,124,101,0.08);
+}
+
+.editor-tree-visibility-pill {
+    min-height: 34px;
+    padding: 0 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    border-radius: 999px;
+}
+
+.editor-title-settings-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px;
+    margin-top: 14px;
+    width: 100% !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    pointer-events: auto !important;
+}
+
+.editor-mini-setting-btn {
+    display: inline-flex !important;
+    width: 100%;
+    min-height: 48px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.70);
+    border-color: rgba(221,198,184,0.84);
+    color: var(--on-surface-soft);
+    font-weight: 800;
+    box-shadow: 0 8px 16px rgba(165,124,101,0.06);
+}
+
+.editor-status-card #sidebarVisibilityToggleBtn.editor-mini-setting-btn {
+    display: inline-flex !important;
+}
+
+.editor-tree-quiet-note {
+    margin: 20px 0 0;
+    padding-top: 18px;
+    border-top: 1px dashed rgba(190,147,127,0.36);
+    color: var(--on-surface-note);
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.editor-status-section > h3,
+.editor-flow-lead,
+#sidebarMomentCount,
+.editor-add-section-bottom,
+.editor-tree-meta-section,
+#detailEmptyStartBtn {
+    display: none !important;
+}
+
+/* Public viewer restores tree-meta visibility without exposing other editor-only sections. */
+body.editor-readonly .editor-tree-meta-section {
+    display: block !important;
+}
+
+/*
+ * #3580 Owner appreciation (interaction mode=view, not editor-readonly) must show
+ * left-rail tree scope. Broad hide above still applies to authoring sections.
+ * Owner edit keeps tree-meta hidden by main policy; only add-section is restored.
+ */
+body:not(.editor-readonly)[data-editor-interaction-mode="view"] .editor-tree-meta-section {
+    display: block !important;
+}
+
+/* #3587 Owner edit restores tree-meta so secondary actions (copy link, detail, rename, visibility) are accessible. */
+body:not(.editor-readonly)[data-editor-interaction-mode="edit"] .editor-tree-meta-section {
+    display: block !important;
+}
+
+/* Editor edit mode restores add-section visibility only for owner edit. */
+body:not(.editor-readonly)[data-editor-interaction-mode="edit"] .editor-add-section-bottom {
+    display: flow-root !important;
+}
+
+.editor-sidebar-rail-note {
+    display: grid !important;
+}
+
+.editor-canvas-empty-guide__desc {
+    max-width: 260px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Editor selected moment social footer — soft card-like inline footer */
+.editor-moment-reactions-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 14px;
+    background: var(--surface-variant, #f5eae4);
+    color: var(--on-surface-soft);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.editor-moment-reaction {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.editor-moment-reaction:hover,
+.editor-moment-reaction:focus-visible {
+    background: rgba(144, 73, 81, 0.10);
+    color: var(--primary);
+}
+
+.editor-moment-reaction:active {
+    transform: translateY(1px);
+}
+
+.editor-moment-reactions-card.is-read-only {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.editor-moment-reactions-card.is-public-readonly .public-viewer-social-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-weight: 500;
+    cursor: default;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.editor-moment-reactions-card.is-public-readonly .public-viewer-social-status:hover,
+.editor-moment-reactions-card.is-public-readonly .public-viewer-social-status:focus-visible,
+.editor-moment-reactions-card.is-public-readonly .public-viewer-social-status:active {
+    background: transparent;
+    color: inherit;
+    transform: none;
+    box-shadow: none;
+}
+
+.editor-moment-reaction-readonly-note {
+    margin: 0 0 0 4px;
+    color: var(--on-surface-muted, #7c6f6a);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.editor-reaction-label {
+    font-weight: 600;
+}
+
+.editor-reaction-like-count,
+.editor-reaction-comment-count {
+    min-width: 1ch;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+/* #3184 — Social summary retry button in unavailable state */
+.editor-moment-reactions-card .editor-retry-button {
+    display: block;
+    margin: 8px 0 0 4px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--outline, #c0b8b4);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--primary, #b56a4f);
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s, color 0.15s;
+}
+.editor-moment-reactions-card .editor-retry-button:hover,
+.editor-moment-reactions-card .editor-retry-button:focus-visible {
+    background: var(--primary-container, #f5e1d9);
+    color: var(--on-primary-container, #4b2a1e);
+    outline: none;
+}
+.editor-moment-reactions-card .editor-retry-button:active {
+    background: var(--primary, #b56a4f);
+    color: var(--on-primary, #fff);
+}
+
+/* #3218 — Read-only moment comments panel toggle */
+.editor-moment-reactions-card .editor-comment-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 8px 4px;
+    font-family: inherit;
+    font-size: inherit;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--on-surface, #1c1b1a);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+.editor-moment-reactions-card .editor-comment-toggle:hover,
+.editor-moment-reactions-card .editor-comment-toggle:focus-visible {
+    background: var(--surface-variant, #e7e0dc);
+    outline: none;
+}
+.editor-moment-reactions-card .editor-comment-toggle:disabled {
+    cursor: default;
+    color: var(--on-surface-muted, #7c6f6a);
+    pointer-events: none;
+}
+.editor-moment-comments-panel {
+    margin: 4px 0 0 4px;
+    padding: 0;
+    border-top: 1px solid var(--outline, #c0b8b4);
+}
+.editor-moment-comments-panel[hidden] {
+    display: none;
+}
+.editor-moment-comments-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    max-height: 240px;
+    overflow-y: auto;
+}
+.editor-moment-comments-list li {
+    padding: 6px 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--on-surface, #1c1b1a);
+    border-bottom: 1px solid var(--outline-variant, #cac4c0);
+}
+.editor-moment-comments-list li:last-child {
+    border-bottom: none;
+}
+#momentCommentsPanelStatus {
+    margin: 0;
+    padding: 8px 0;
+    font-size: 0.85rem;
+    color: var(--on-surface-variant, #494543);
+}
+
+/* Editor tree rename modal — replaces native window.prompt */
+body.editor-rename-modal-open {
+    overflow: hidden;
+}
+
+.editor-rename-modal[hidden] {
+    display: none !important;
+}
+
+.editor-rename-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(49, 33, 27, 0.36);
+    backdrop-filter: blur(6px);
+}
+
+.editor-rename-modal-card {
+    width: min(430px, 100%);
+    border-radius: 28px;
+    background: rgba(255, 253, 249, 0.98);
+    border: 1px solid rgba(197, 146, 128, 0.28);
+    box-shadow: 0 24px 80px rgba(49, 33, 27, 0.24);
+    padding: 24px;
+}
+
+.editor-rename-modal-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(144, 73, 81, 0.08);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+}
+
+.editor-rename-modal-header h2 {
+    margin: 12px 0 6px;
+    color: var(--on-background);
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+}
+
+.editor-rename-modal-header p {
+    margin: 0;
+    color: var(--on-surface-note);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.editor-rename-modal-label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: var(--on-surface);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.editor-rename-modal-input {
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    border: 1px solid rgba(197, 146, 128, 0.34);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--on-background);
+    padding: 0 14px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.editor-rename-modal-input:focus {
+    border-color: rgba(144, 73, 81, 0.48);
+    box-shadow: 0 0 0 4px rgba(144, 73, 81, 0.10);
+    background: #fff;
+}
+
+.editor-rename-modal-error {
+    margin: 8px 0 0;
+    color: var(--danger);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.editor-rename-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.editor-rename-modal-btn {
+    min-height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(197, 146, 128, 0.32);
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.editor-rename-modal-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.editor-rename-modal-btn-secondary {
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--on-surface);
+}
+
+.editor-rename-modal-btn-primary {
+    background: var(--primary);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 8px 18px rgba(144, 73, 81, 0.18);
+}
+
+@media (max-width: 480px) {
+    .editor-rename-modal {
+        padding: 14px;
+        align-items: end;
+    }
+
+    .editor-rename-modal-card {
+        border-radius: 24px 24px 18px 18px;
+        padding: 20px;
+    }
+
+    .editor-rename-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .editor-rename-modal-btn {
+        width: 100%;
+    }
+}
+
+/* #3207 — Authenticated like button in public viewer */
+.editor-like-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--on-surface-soft, #7c6f6a);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.editor-like-button:hover,
+.editor-like-button:focus-visible {
+    background: rgba(144, 73, 81, 0.10);
+    color: var(--primary);
+    outline: none;
+}
+
+.editor-like-button:active {
+    transform: translateY(1px);
+}
+
+.editor-like-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.editor-like-button.is-pressed {
+    color: var(--primary, #b56a4f);
+    font-weight: 700;
+}
+
+.editor-like-button.is-pressed:hover,
+.editor-like-button.is-pressed:focus-visible {
+    background: rgba(144, 73, 81, 0.12);
+}
+
+.editor-like-button[aria-busy="true"] {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+}
+
+.editor-like-error {
+    margin: 4px 0 0 4px;
+    color: var(--danger, #c0392b);
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 600;
+}

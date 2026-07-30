@@ -1,0 +1,16 @@
+/**
+ * Search Tree Card Styles Manifest
+ * v20260524-1
+ *
+ * This file serves as a manifest for the search tree card CSS split.
+ * Do not add styles directly to this file.
+ */
+
+@import url("./search-tree-card/layout.css");
+@import url("./search-tree-card/media.css");
+@import url("./search-tree-card/preview.css");
+@import url("./search-tree-card/fallback.css");
+@import url("./search-tree-card/content.css");
+@import url("./search-tree-card/metadata.css");
+@import url("./search-tree-card/public-metadata.css");
+@import url("./search-tree-card/actions.css");

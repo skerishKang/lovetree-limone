@@ -1,0 +1,15 @@
+/**
+ * Search Tree Card Styles Manifest
+ * v20260524-1
+ *
+ * This file serves as a manifest for the editor canvas toolbar CSS split.
+ * Do not add styles directly to this file.
+ */
+
+@import url("./editor-canvas-toolbar/layout.css");
+@import url("./editor-canvas-toolbar/groups.css");
+@import url("./editor-canvas-toolbar/view-options.css");
+@import url("./editor-canvas-toolbar/buttons.css");
+@import url("./editor-canvas-toolbar/compact.css");
+@import url("./editor-canvas-toolbar/responsive.css");
+@import url("./editor-canvas-toolbar/drop-feedback.css");

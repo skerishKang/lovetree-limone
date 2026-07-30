@@ -1,0 +1,161 @@
+.my-trees-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 12px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.header-content { flex: 1; min-width: 0; }
+.my-trees-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--eyebrow-gap);
+    min-height: var(--eyebrow-min-height);
+    padding: var(--eyebrow-padding-y) var(--eyebrow-padding-x);
+    border-radius: var(--eyebrow-radius);
+    background: var(--eyebrow-bg);
+    border: var(--eyebrow-border);
+    color: var(--eyebrow-color);
+    font-size: var(--eyebrow-font-size);
+    font-weight: var(--eyebrow-font-weight);
+    letter-spacing: var(--eyebrow-letter-spacing);
+    text-transform: var(--eyebrow-text-transform);
+    margin-bottom: 14px;
+}
+.header-actions { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+.sort-control { position: relative; display: inline-flex; align-items: center; }
+.summary-sort-control {
+box-sizing: border-box;
+inline-size: var(--lovetree-results-sort-control-inline-size);
+min-height: 44px;
+padding: 0 38px 0 16px;
+border-radius: 999px;
+border: 1px solid var(--lovetree-chip-border);
+font-size: 14px;
+font-weight: 700;
+line-height: 1;
+cursor: pointer;
+background: var(--lovetree-chip-bg);
+color: var(--lovetree-chip-text);
+appearance: none;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 12px center;
+transition: all 0.2s ease;
+}
+.summary-sort-control:hover { border-color: var(--lovetree-pill-border); background-color: var(--lovetree-pill-hover-bg); color: var(--lovetree-pill-text); }
+.btn-header-create {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+box-sizing: border-box;
+min-height: 44px;
+padding: 0 20px;
+background: var(--primary);
+color: white;
+border: none;
+border-radius: 999px;
+font-size: 14px;
+font-weight: 800;
+line-height: 1;
+cursor: pointer;
+transition: all 0.2s ease;
+box-shadow: 0 4px 12px rgba(144, 73, 81, 0.2);
+white-space: nowrap;
+}
+.btn-header-create .material-symbols-outlined { font-size: 19px; }
+.btn-header-create:hover { background: var(--primary-vibrant); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(144, 73, 81, 0.3); }
+.btn-header-create:active { transform: translateY(0); }
+.btn-header-create:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── My Trees Results Head (controls row below search) ── */
+.my-trees-results-head {
+    margin: 0 0 16px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(144, 73, 81, 0.09);
+    min-width: 0;
+}
+
+.my-trees-results-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.my-trees-results-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 768px) {
+    .my-trees-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 12px;
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+    .header-content { width: 100%; }
+    .header-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .summary-sort-control { width: 100%; min-height: 40px; font-size: 13px; }
+    .btn-header-create { width: 100%; min-height: 40px; padding: 10px 14px; font-size: 13px; }
+
+    .my-trees-results-head {
+        flex-direction: column;
+        gap: 12px;
+        margin: 0 0 16px;
+        margin-top: 0;
+        padding-top: 14px;
+        border-top: 1px solid rgba(144, 73, 81, 0.09);
+    }
+    /* Compact the owner-cta-slot create CTA so it does not dominate the mobile row.
+       Higher specificity (0,2,0) overrides the responsive.css .btn-header-create (0,1,0) rule. */
+    .my-trees-results-head .browse-results-owner-cta-slot .btn-header-create {
+        flex: 0 0 auto;
+        width: auto;
+        min-height: 36px;
+        padding: 0 12px;
+        font-size: 12px;
+        gap: 4px;
+        box-shadow: 0 2px 8px rgba(144, 73, 81, 0.18);
+    }
+    .my-trees-results-head .browse-results-owner-cta-slot .btn-header-create .material-symbols-outlined {
+        font-size: 16px;
+    }
+    /* Switch results controls from stretching grid to flex:
+       sort select grows, view-mode segmented control shrinks to fit. */
+    .my-trees-results-controls {
+        flex: 1 1 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+    .my-trees-results-controls .sort-control {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .my-trees-results-controls .summary-sort-control {
+        width: 100%;
+        min-height: 40px;
+        font-size: 13px;
+    }
+    .my-trees-results-controls .my-trees-view-mode-mount {
+        flex: 0 0 auto;
+    }
+    /* view-mode segmented control stays shrink-to-fit on mobile */
+    .my-trees-view-mode-mount .tree-view-mode-control {
+        flex-wrap: nowrap;
+    }
+}

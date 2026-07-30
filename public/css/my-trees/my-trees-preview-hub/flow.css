@@ -1,0 +1,50 @@
+/* ── Hub moment flow list ── */
+/* Owner-specific surface for the My Trees flow card.
+   The shared .preview-flow-slot now owns padding/margin/box-sizing
+   and Browse flow.css owns .preview-flow-list/stage/stage-label/toggle
+   base geometry. This file keeps only My Trees owner-specific rules. */
+
+.my-trees-hub-flow {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 248, 245, 0.52)) !important;
+    border: 1px solid rgba(144, 73, 81, 0.10);
+    border-radius: 1rem;
+    box-shadow: 0 14px 28px rgba(75, 64, 57, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.my-trees-hub-flow-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--on-surface-variant);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.my-trees-hub-flow-label .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.my-trees-hub-flow-stage-index {
+    color: var(--primary);
+    font-weight: 800;
+    flex: 0 0 auto;
+}
+
+/* ── Hub flow controls ── */
+
+.my-trees-hub-flow-controls {
+    line-height: 1.2;
+}
+
+#myTreesHubFlowControls[hidden],
+#myTreesHubNoMoments[hidden] {
+    display: none !important;
+}
+
+.my-trees-hub-flow-controls:empty {
+    margin-top: 0 !important;
+    display: none !important;
+}

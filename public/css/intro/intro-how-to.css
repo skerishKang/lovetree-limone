@@ -1,0 +1,12 @@
+/**
+ * LoveBud Intro page styles - How-to Manifest
+ * Extracted from css/intro.css.
+ * Page-specific only. Do not move these rules into global.css.
+ */
+
+@import url("./intro-how-to/layout.css");
+@import url("./intro-how-to/what-is.css");
+@import url("./intro-how-to/cards.css");
+@import url("./intro-how-to/visual.css");
+@import url("./intro-how-to/animations.css");
+@import url("./intro-how-to/responsive.css");

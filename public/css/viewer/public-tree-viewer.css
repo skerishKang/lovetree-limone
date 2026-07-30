@@ -1,0 +1,15 @@
+/**
+ * Public Tree Viewer Styles Manifest
+ * v20260505-802-1
+ *
+ * This file serves as a manifest for the public tree viewer CSS split.
+ * Do not add styles directly to this file.
+ */
+
+@import url("./public-tree-viewer/shell.css");
+@import url("./public-tree-viewer/layout.css");
+@import url("./public-tree-viewer/tree.css");
+@import url("./public-tree-viewer/preview.css");
+@import url("./public-tree-viewer/state.css");
+@import url("./public-tree-viewer/responsive.css");
+@import url("./public-tree-viewer/print.css");

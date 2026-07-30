@@ -1,0 +1,5 @@
+# Wrangler dev environment variables
+# Copy to .dev.vars for local development (never committed)
+
+# D1 database name (configured in .openai/hosting.json)
+# No additional env vars needed for local dev if D1 binding is configured

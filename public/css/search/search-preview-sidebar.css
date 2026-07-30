@@ -1,0 +1,17 @@
+/**
+ * Search Preview Sidebar Styles Manifest
+ * v20260524-1
+ *
+ * This file serves as a manifest for the search preview sidebar CSS split.
+ * Do not add styles directly to this file.
+ */
+
+@import url("./search-preview.css");
+@import url("./search-preview-sidebar/layout.css");
+@import url("./search-preview-sidebar/header.css");
+@import url("./search-preview-sidebar/states.css");
+@import url("./search-preview-sidebar/metadata.css");
+@import url("./search-preview-sidebar/media.css");
+@import url("./search-preview-sidebar/flow.css");
+@import url("./search-preview-sidebar/actions.css");
+@import url("./search-preview-sidebar/responsive.css");

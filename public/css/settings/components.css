@@ -1,0 +1,406 @@
+.settings-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(144, 73, 81, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--on-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 10px 24px rgba(75, 64, 57, 0.08);
+  z-index: 2;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0;
+}
+
+.settings-close-btn:hover {
+  border-color: var(--primary-soft);
+  color: var(--primary);
+  background: var(--surface-container-low);
+  transform: translateY(-1px);
+}
+
+.settings-close-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.settings-close-glyph {
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
+.settings-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-section-title .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+/* Profile card */
+.settings-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius-default);
+  border: 1px solid rgba(144, 73, 81, 0.14);
+  background: rgba(255, 248, 249, 0.72);
+}
+
+.settings-profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: rgba(144, 73, 81, 0.10);
+  color: var(--primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.settings-profile-avatar-initials {
+  line-height: 1;
+}
+
+.settings-profile-avatar-img-wrap {
+  padding: 0;
+}
+
+.settings-profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.settings-profile-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-profile-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.settings-profile-email {
+  font-size: 0.88rem;
+  color: var(--on-surface-variant);
+  word-break: break-all;
+}
+
+.settings-deferred-note {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--surface-container-low);
+  color: var(--on-surface-variant);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+/* Account list */
+.settings-account-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-account-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.settings-account-row:last-child {
+  border-bottom: none;
+}
+
+.settings-account-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: none;
+  margin: 0;
+}
+
+.settings-account-value {
+  font-size: 0.95rem;
+  color: var(--on-surface);
+  margin: 0;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.settings-account-id {
+  font-family: var(--font-body, monospace);
+  font-size: 0.88rem;
+  color: var(--on-surface-variant);
+}
+
+.settings-account-password {
+  color: var(--on-surface-variant);
+  font-size: 0.88rem;
+}
+
+/* Password reset action (v20260724-3635) */
+.settings-password-reset {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-password-reset-btn {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--outline-variant);
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-password-reset-btn:hover:not(:disabled) {
+  background: var(--surface-container);
+  border-color: var(--primary-soft);
+}
+
+.settings-password-reset-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.settings-password-reset-status {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.settings-password-reset-status:empty {
+  display: none;
+}
+
+.settings-password-reset-status--sending {
+  color: var(--on-surface-variant);
+}
+
+.settings-password-reset-status--success {
+  color: var(--primary);
+}
+
+.settings-password-reset-status--error {
+  color: var(--error);
+}
+
+.settings-password-reset-note {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: 0.88rem;
+}
+
+/* Logout button */
+.logout-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--outline-variant);
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: var(--surface-container);
+  border-color: var(--primary-soft);
+}
+
+.logout-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.logout-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+
+/* --- Display name edit form --- */
+
+.settings-profile-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  background: var(--surface-color, #fff);
+  color: var(--text-color, #333);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.settings-profile-edit-btn:hover {
+  background: var(--hover-bg, #f5f5f5);
+  border-color: var(--text-secondary, #888);
+}
+
+.settings-profile-edit-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.settings-profile-edit-form {
+  margin-top: 12px;
+}
+
+.settings-profile-edit-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary, #666);
+  margin-bottom: 6px;
+}
+
+.settings-profile-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settings-profile-name-input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--surface-color, #fff);
+  color: var(--text-color, #333);
+}
+
+.settings-profile-name-input:focus {
+  outline: 2px solid var(--focus-color, #4a90d9);
+  outline-offset: -1px;
+  border-color: var(--focus-color, #4a90d9);
+}
+
+.settings-profile-edit-save,
+.settings-profile-edit-cancel {
+  padding: 8px 14px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.settings-profile-edit-save {
+  background: var(--primary-color, #4a90d9);
+  color: #fff;
+  border-color: var(--primary-color, #4a90d9);
+}
+
+.settings-profile-edit-save:hover {
+  opacity: 0.85;
+}
+
+.settings-profile-edit-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-profile-edit-cancel {
+  background: var(--surface-color, #fff);
+  color: var(--text-color, #333);
+}
+
+.settings-profile-edit-cancel:hover {
+  background: var(--hover-bg, #f5f5f5);
+}
+
+.settings-profile-edit-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-profile-result-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  min-height: 1.25rem;
+}
+
+.settings-profile-result-status:empty {
+  display: none;
+}
+
+.settings-profile-result-status--success {
+  color: #1b6b3a;
+}
+
+.settings-profile-result-status--info {
+  color: #5a5a5a;
+}
+
+.settings-profile-edit-status {
+  margin-top: 8px;
+  font-size: 13px;
+  min-height: 1.2em;
+}
+
+.settings-profile-edit-status--error {
+  color: #c0392b;
+}
+
+.settings-profile-edit-status--success {
+  color: #27ae60;
+}
+
+.settings-profile-edit-status--info {
+  color: var(--text-secondary, #666);
+}
+
+.settings-profile-edit-status--saving {
+  color: var(--text-secondary, #888);
+}

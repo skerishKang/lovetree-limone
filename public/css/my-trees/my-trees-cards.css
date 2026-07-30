@@ -1,0 +1,334 @@
+.trees-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--lovetree-card-grid-gap); }
+.tree-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: var(--lovetree-card-surface-browse);
+    border-radius: var(--lovetree-card-radius-lg);
+    padding: var(--lovetree-card-content-pad-compact);
+    box-shadow:
+        0 20px 48px rgba(75, 64, 57, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.62) inset;
+    border: 1px solid var(--lovetree-soft-surface-border);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+    height: var(--lovetree-card-media-height-browse);
+}
+
+/* Accent bars (top + right) — parity with Browse ::before / ::after.
+   Only visible on hover or when the card is selected. */
+.tree-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(200, 116, 128, 0.6), rgba(240, 193, 198, 0.6));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.tree-card::after {
+    content: '';
+    position: absolute;
+    top: 26px;
+    right: 0;
+    bottom: 26px;
+    width: 4px;
+    border-radius: 999px 0 0 999px;
+    background: linear-gradient(180deg, rgba(144, 73, 81, 0.80), rgba(122, 139, 110, 0.68));
+    box-shadow:
+        -10px 0 22px rgba(144, 73, 81, 0.12),
+        -4px 0 12px rgba(122, 139, 110, 0.10);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(4px);
+    transition: opacity 0.24s ease, transform 0.24s ease;
+    z-index: 2;
+}
+
+.tree-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--lovetree-card-border-hover);
+    box-shadow:
+        var(--lovetree-card-shadow-hover),
+        0 0 0 1px rgba(255, 255, 255, 0.82) inset;
+}
+
+.tree-card:focus-visible {
+    outline: 2px solid rgba(122, 139, 110, 0.48);
+    outline-offset: 4px;
+    border-color: rgba(122, 139, 110, 0.24);
+}
+
+.tree-card.is-selected,
+.tree-card[data-selected-tree-card="true"] {
+    background:
+        radial-gradient(circle at 30% 20%, rgba(255, 248, 245, 0.96), transparent 52%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 246, 243, 0.76)),
+        rgba(255, 255, 255, 0.86);
+    border-color: var(--lovetree-card-border-active);
+    box-shadow:
+        var(--lovetree-card-shadow-active),
+        var(--lovetree-card-ring-active);
+}
+
+.tree-card:hover::before,
+.tree-card.is-selected::before,
+.tree-card[data-selected-tree-card="true"]::before {
+    opacity: 1;
+}
+
+.tree-card.is-selected::after,
+.tree-card[data-selected-tree-card="true"]::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.tree-card.is-selected .tree-card-open-link,
+.tree-card[data-selected-tree-card="true"] .tree-card-open-link {
+    background: rgba(144, 73, 81, 0.92);
+    border-color: rgba(144, 73, 81, 0.22);
+    color: var(--surface-container-lowest);
+}
+.tree-card-thumb {
+    width: 100%;
+    height: var(--lovetree-card-image-height);
+    margin: 0 0 var(--lovetree-card-image-gap);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: var(--lovetree-card-image-radius);
+    background:
+        radial-gradient(circle at 20% 15%, rgba(255, 245, 246, 0.95), rgba(255,255,255,0.18) 46%),
+        radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.68), transparent 30%),
+        linear-gradient(135deg, rgba(144, 73, 81, 0.12), rgba(122, 139, 110, 0.12));
+    isolation: isolate;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    box-shadow:
+        0 0 0 1px rgba(144, 73, 81, 0.04) inset,
+        0 12px 24px rgba(75, 64, 57, 0.08);
+}
+.tree-card-thumb-image { width: 100%; height: 100%; }
+.tree-card-thumb::after { content: ""; position: absolute; inset: auto 0 0; height: 44%; background: linear-gradient(to top, rgba(75,64,57,0.18), transparent); pointer-events: none; z-index: 1; }
+.tree-card-thumb-glow { position: absolute; inset: auto auto 18px 18px; width: 128px; height: 128px; border-radius: 50%; filter: blur(10px); }
+.tree-card-thumb-initial { position: absolute; top: 16px; left: 16px; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; background: rgba(255,255,255,0.72); border: 1px solid rgba(255,255,255,0.55); backdrop-filter: blur(6px); z-index: 2; }
+.tree-card-thumb-topline { position: absolute; top: 16px; right: 16px; z-index: 2; }
+.tree-card-thumb-art { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.tree-card-thumb svg { width: 84%; height: 84%; opacity: 0.95; }
+.tree-card-thumb-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+.my-trees-container .tree-card-text-visual { position: relative; width: calc(100% - 20px); min-height: 126px; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 8px; padding: 16px 18px; box-sizing: border-box; border-radius: 24px; border: 1px solid var(--tree-card-text-border, transparent); background: var(--surface); box-shadow: 0 14px 34px rgba(75, 64, 57, 0.07); backdrop-filter: blur(10px); z-index: 1; text-align: left; }
+.my-trees-container .tree-card-text-kicker { font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px; color: var(--tree-card-text-accent, var(--primary)); }
+.my-trees-container .tree-card-text-title { font-size: 1rem; font-weight: 800; line-height: 1.4; color: var(--on-surface); word-break: keep-all; }
+.my-trees-container .tree-card-text-memo { font-size: 12px; line-height: 1.55; color: var(--on-surface-variant); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: keep-all; }
+.tree-card-thumb-caption { position: absolute; left: 16px; right: 16px; bottom: 12px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.82); backdrop-filter: blur(8px); font-size: 12px; font-weight: 700; color: var(--on-surface); text-align: center; z-index: 3; }
+.tree-card-flow-bridge { position: absolute; left: 18px; right: 18px; bottom: 50px; z-index: 3; display: flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(255,248,245,0.72), rgba(244,248,238,0.62)); border: 1px solid rgba(144,73,81,0.08); box-sizing: border-box; overflow: hidden; pointer-events: none; }
+.tree-card-flow-line { position: absolute; left: 16px; right: 16px; top: 50%; height: 2px; border-radius: 999px; transform: translateY(-50%); background: linear-gradient(90deg, rgba(144,73,81,0.34), rgba(122,139,110,0.30)); }
+.tree-card-flow-node { position: relative; z-index: 1; flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%; background: #c87480; box-shadow: 0 0 0 4px rgba(200,116,128,0.10); }
+.tree-card-flow-node + .tree-card-flow-node { margin-left: auto; }
+.tree-card-flow-node-root { background: #904951; }
+.tree-card-flow-node-end { background: #7a8b6e; box-shadow: 0 0 0 4px rgba(122,139,110,0.12); }
+.tree-card-flow-count-1 .tree-card-flow-line { right: 50%; opacity: 0.28; }
+.tree-card-info,
+.tree-card-footer,
+.tree-card-footer-left,
+.tree-card-footer-right,
+.tree-card-footer-metrics,
+.tree-card-footer-metric {
+    /* Step 3 follow-up: unified single-block card structure parity with Browse.
+       The legacy two-block (.tree-card-info + .tree-card-footer) split is
+       replaced by a single .tree-card-body container. The selectors above
+       remain as no-op rules so any stale DOM or cached paint does not break. */
+}
+.tree-card-body {
+    display: grid;
+    grid-template-rows: 2.98rem 2.46rem auto;
+    row-gap: 9px;
+    padding: 4px 6px 6px;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+.tree-card-title-row { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+.tree-card-title {
+    font-size: 1.36rem;
+    font-weight: 900;
+    color: var(--on-surface);
+    line-height: 1.18;
+    flex: 1;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    hyphens: auto;
+    min-height: 2.36em;
+    max-height: 2.36em;
+    flex-shrink: 0;
+}
+.tree-card-count-pill, .tree-card-moment-badge { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 999px; background: var(--lovetree-pill-bg); color: var(--lovetree-pill-text); border: 1px solid var(--lovetree-pill-border); font-size: 12px; font-weight: 800; white-space: nowrap; }
+.tree-card-subcopy {
+    font-size: 0.9rem;
+    color: var(--on-surface-variant);
+    line-height: 1.52;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    hyphens: auto;
+    min-height: 3.04em;
+    max-height: 3.04em;
+    align-self: start;
+}
+.tree-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--on-surface-variant); }
+.tree-card-keywords { display: inline; gap: 4px; }
+.tree-card-keyword { display: inline; font-size: 0.82rem; color: var(--primary); font-weight: 600; margin-left: 4px; }
+.tree-card-date { font-size: 12px; }
+.tree-card-visibility { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; padding: 0; border-radius: 0; background: transparent; border: none; box-shadow: none; color: var(--lovetree-chip-text); }
+.tree-card-visibility.public { background: transparent; color: var(--lovetree-chip-text); }
+.tree-card-visibility.private { background: transparent; color: var(--lovetree-chip-text); }
+
+.tree-card-title-row .tree-card-visibility {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+.tree-card-visibility .material-symbols-outlined {
+    font-size: 12px;
+    line-height: 1;
+}
+
+/* Step 3 follow-up: meta-row + reaction metrics shared with Browse.
+   Locks parity of the inner card body across both pages so the cards
+   read as one block, not two stacked sections. */
+.tree-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(144, 73, 81, 0.08);
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    margin-top: auto;
+    min-width: 0;
+}
+
+.tree-meta-left,
+.tree-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.tree-meta-right {
+    justify-content: flex-end;
+    overflow: hidden;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tree-card .tree-meta-left {
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.tree-card .tree-meta-right {
+    flex: 0 0 auto;
+}
+
+.tree-card-reaction-metrics {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 820;
+    white-space: nowrap;
+}
+
+.tree-card-reaction-metric {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+}
+
+.tree-card-reaction-metric .material-symbols-outlined {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Issue #1125: keep owner cards focused on representative cover content. */
+.tree-card-thumb-initial,
+.tree-card-thumb-topline,
+.tree-card-thumb-caption,
+.tree-card-flow-bridge {
+  display: none !important;
+}
+
+.tree-card-thumb-art .fallback-svg-container {
+    width: 100%;
+    height: 100%;
+    max-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.tree-card-thumb-art .fallback-pills {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    position: absolute;
+    bottom: 12px;
+    left: 8px;
+    right: 8px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.tree-card-thumb-art .fallback-pill {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(144, 73, 81, 0.08);
+    box-shadow: 0 4px 10px rgba(75, 64, 57, 0.04);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+}
