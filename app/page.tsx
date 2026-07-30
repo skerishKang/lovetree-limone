@@ -28,6 +28,71 @@ const galleryCards = [
 ];
 
 type PrivacyChoice = "private" | "later" | "public";
+type ViewMode = "tree" | "diary" | "story" | "album";
+
+const viewModes: Array<{ id: ViewMode; label: string; caption: string; icon: string }> = [
+  { id: "tree", label: "성장 트리", caption: "한 장에서 여러 가지로", icon: "⌘" },
+  { id: "diary", label: "마음 다이어리", caption: "시간순으로 차곡차곡", icon: "▤" },
+  { id: "story", label: "스토리", caption: "한 순간씩 크게 감상", icon: "◫" },
+  { id: "album", label: "앨범 보드", caption: "폴라로이드를 한눈에", icon: "▦" },
+];
+
+const sampleMoments = [
+  {
+    id: 1,
+    title: "처음 마음이 멈춘 장면",
+    memo: "우연히 보게 됐는데, 하루 종일 이 장면이 생각났어.",
+    relation: "첫 발견",
+    emotion: "설렘",
+    date: "2026.07.30",
+    image: "/moment-purple.jpg",
+  },
+  {
+    id: 2,
+    title: "댓글을 따라 찾은 무대",
+    memo: "팬들이 꼭 보라고 한 장면을 찾아보다 더 좋아졌어.",
+    relation: "댓글 따라감",
+    emotion: "벅참",
+    date: "2026.08.02",
+    image: "/moment-stage.jpg",
+  },
+  {
+    id: 3,
+    title: "우리의 계절이 피던 날",
+    memo: "그날의 공기와 색을 오래 기억하고 싶어.",
+    relation: "같은 계절",
+    emotion: "추억",
+    date: "2026.08.18",
+    image: "/moment-spring.jpg",
+  },
+  {
+    id: 4,
+    title: "함께여서 더 빛났던 시간",
+    memo: "좋아하는 마음을 나누니 기억이 더 선명해졌어.",
+    relation: "팬의 추천",
+    emotion: "응원",
+    date: "2026.09.03",
+    image: "/moment-friends.jpg",
+  },
+  {
+    id: 5,
+    title: "다시 꺼내 본 보랏빛 밤",
+    memo: "시간이 지나도 그날의 환호는 마음에 남아 있어.",
+    relation: "직접 검색",
+    emotion: "여운",
+    date: "2026.09.21",
+    image: "/moment-purple.jpg",
+  },
+  {
+    id: 6,
+    title: "오래 함께 걷고 싶은 마음",
+    memo: "좋아한 시간이 쌓여 이제는 한 그루의 이야기가 됐어.",
+    relation: "다른 모습",
+    emotion: "사랑",
+    date: "2026.10.11",
+    image: "/moment-stage.jpg",
+  },
+];
 
 function Brand({ onHome }: { onHome: () => void }) {
   return (
@@ -45,15 +110,411 @@ function Brand({ onHome }: { onHome: () => void }) {
   );
 }
 
+const growthStages = [
+  { count: 1, label: "첫 순간", copy: "마음의 씨앗" },
+  { count: 2, label: "두 장면", copy: "첫 가지" },
+  { count: 4, label: "작은 트리", copy: "이어진 마음" },
+  { count: 6, label: "풍성한 트리", copy: "한 그루의 이야기" },
+];
+
+function MomentCard({
+  moment,
+  index,
+  active,
+  onSelect,
+  className = "",
+}: {
+  moment: (typeof sampleMoments)[number];
+  index: number;
+  active: boolean;
+  onSelect: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      className={`workspace-moment-card ${active ? "active" : ""} ${className}`}
+      type="button"
+      onClick={onSelect}
+      aria-label={`${index + 1}번째 순간, ${moment.title}`}
+    >
+      <span className="moment-number">{String(index + 1).padStart(2, "0")}</span>
+      <span className="workspace-card-image">
+        <Image src={moment.image} alt="" fill sizes="190px" />
+        <i aria-hidden="true">▶</i>
+      </span>
+      <span className="workspace-card-copy">
+        <strong>{moment.title}</strong>
+        <small>{moment.memo}</small>
+        <em>{moment.date} · {moment.relation}</em>
+      </span>
+    </button>
+  );
+}
+
+function Workspace({
+  treeName,
+  initialMode,
+  onHome,
+  onEdit,
+}: {
+  treeName: string;
+  initialMode: ViewMode;
+  onHome: () => void;
+  onEdit: () => void;
+}) {
+  const [mode, setMode] = useState<ViewMode>(initialMode);
+  const [momentCount, setMomentCount] = useState(4);
+  const [activeId, setActiveId] = useState(4);
+  const [zoom, setZoom] = useState(90);
+  const [relation, setRelation] = useState("댓글 따라감");
+  const [emotion, setEmotion] = useState("설렘");
+  const [memo, setMemo] = useState("");
+  const [notice, setNotice] = useState("같은 순간을 네 가지 모습으로 볼 수 있어요.");
+
+  const moments = sampleMoments.slice(0, momentCount);
+  const activeMoment = moments.find((moment) => moment.id === activeId) ?? moments[moments.length - 1];
+  const activeMode = viewModes.find((item) => item.id === mode) ?? viewModes[0];
+
+  function chooseStage(count: number) {
+    setMomentCount(count);
+    setActiveId(Math.min(activeId, count));
+    setNotice(
+      count === 1
+        ? "첫 순간이 러브트리의 씨앗이 되었어요."
+        : count === 2
+          ? "두 장면 사이에 첫 가지가 이어졌어요."
+          : `${count}개의 순간이 한 그루의 이야기로 자랐어요.`,
+    );
+  }
+
+  function addMoment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (momentCount >= sampleMoments.length) {
+      setNotice("샘플 트리가 충분히 자랐어요. 보기 방식을 바꿔 감상해보세요.");
+      return;
+    }
+    const nextCount = momentCount + 1;
+    setMomentCount(nextCount);
+    setActiveId(nextCount);
+    setMemo("");
+    setNotice(`새 순간이 ${relation} 가지로 이어졌어요.`);
+  }
+
+  function toggleFullscreen() {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void document.documentElement.requestFullscreen?.();
+    }
+  }
+
+  return (
+    <div className="workspace-shell">
+      <header className="workspace-topbar">
+        <Brand onHome={onHome} />
+        <nav className="workspace-mode-tabs" aria-label="러브트리 보기 방식">
+          {viewModes.map((item) => (
+            <button
+              className={mode === item.id ? "active" : ""}
+              type="button"
+              key={item.id}
+              aria-pressed={mode === item.id}
+              onClick={() => {
+                setMode(item.id);
+                setNotice(`${item.label} 보기로 바꿨어요. 기록은 그대로 유지됩니다.`);
+              }}
+            >
+              <span aria-hidden="true">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
+        <div className="workspace-header-actions">
+          <button type="button" onClick={onEdit}>트리 설정</button>
+          <button className="workspace-profile" type="button" aria-label="프로필 메뉴">
+            <span aria-hidden="true">봄</span> 나의 하루
+          </button>
+        </div>
+      </header>
+
+      <main className="workspace-layout">
+        <aside className="workspace-rail">
+          <p className="workspace-overline">MY LOVE TREE</p>
+          <h1>{treeName}</h1>
+          <p className="workspace-privacy">♙ 나만 보는 러브트리</p>
+          <p className="workspace-intro">
+            한 번 남긴 순간은 그대로 두고,
+            <br />
+            보고 싶은 방식만 바꿔보세요.
+          </p>
+
+          <section className="growth-selector" aria-labelledby="growth-title">
+            <div>
+              <span id="growth-title">트리의 성장 단계</span>
+              <small>{momentCount} moments</small>
+            </div>
+            {growthStages.map((stage) => (
+              <button
+                className={momentCount === stage.count ? "active" : ""}
+                type="button"
+                key={stage.count}
+                onClick={() => chooseStage(stage.count)}
+              >
+                <b>{String(stage.count).padStart(2, "0")}</b>
+                <span><strong>{stage.label}</strong><small>{stage.copy}</small></span>
+                <i aria-hidden="true">›</i>
+              </button>
+            ))}
+          </section>
+
+          <section className="mode-note">
+            <span aria-hidden="true">{activeMode.icon}</span>
+            <div>
+              <strong>{activeMode.label}</strong>
+              <p>{activeMode.caption}</p>
+            </div>
+          </section>
+        </aside>
+
+        <section className="workspace-stage" aria-label={`${activeMode.label} 화면`}>
+          <header className="workspace-stage-head">
+            <div>
+              <p>WHOLE LOVETREE · 같은 기억, 다른 보기</p>
+              <span>{momentCount}개의 순간이 이어져 있어요</span>
+            </div>
+            <div className="canvas-controls" aria-label="화면 크기 조절">
+              {mode === "tree" && (
+                <>
+                  <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
+                  <span>{zoom}%</span>
+                  <button type="button" onClick={() => setZoom(Math.min(110, zoom + 10))}>＋</button>
+                  <button type="button" onClick={() => setZoom(90)}>맞춤</button>
+                </>
+              )}
+              <button type="button" onClick={toggleFullscreen}>전체 화면</button>
+            </div>
+          </header>
+
+          <div className={`workspace-view workspace-view-${mode}`}>
+            {mode === "tree" && (
+              <div className={`tree-canvas tree-count-${momentCount}`}>
+                <div className="tree-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
+                  <span className="tree-ring ring-one" aria-hidden="true" />
+                  <span className="tree-ring ring-two" aria-hidden="true" />
+                  <span className="tree-branch branch-a" aria-hidden="true" />
+                  <span className="tree-branch branch-b" aria-hidden="true" />
+                  <span className="tree-branch branch-c" aria-hidden="true" />
+                  <span className="tree-branch branch-d" aria-hidden="true" />
+
+                  <article className="tree-root">
+                    <span aria-hidden="true">♥</span>
+                    <small>MY LOVE TREE</small>
+                    <strong>{treeName}</strong>
+                    <em>{momentCount} moments</em>
+                  </article>
+
+                  {moments.map((moment, index) => (
+                    <MomentCard
+                      moment={moment}
+                      index={index}
+                      active={activeMoment.id === moment.id}
+                      onSelect={() => setActiveId(moment.id)}
+                      className={`tree-node tree-node-${index + 1}`}
+                      key={moment.id}
+                    />
+                  ))}
+                  {momentCount < sampleMoments.length && (
+                    <button
+                      className="tree-add-node"
+                      type="button"
+                      onClick={() => {
+                        const form = document.getElementById("moment-form");
+                        form?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }}
+                      aria-label="새 순간 추가하기"
+                    >
+                      ＋
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {mode === "diary" && (
+              <div className="diary-view">
+                <header>
+                  <p>OUR LOVE DIARY</p>
+                  <h2>마음을 이어가는 순간 다이어리</h2>
+                  <span>영상 아래에 그날의 감상을 적고, 다음 순간까지의 흐름을 가볍게 이어 보세요.</span>
+                </header>
+                <div className="diary-timeline">
+                  {moments.map((moment, index) => (
+                    <article className={activeMoment.id === moment.id ? "active" : ""} key={moment.id}>
+                      <button type="button" onClick={() => setActiveId(moment.id)}>
+                        <span className="diary-date">{moment.date}</span>
+                        <span className="diary-photo"><Image src={moment.image} alt="" fill sizes="260px" /></span>
+                        <span className="diary-entry">
+                          <small>{String(index + 1).padStart(2, "0")} · {moment.emotion}</small>
+                          <strong>{moment.title}</strong>
+                          <p>{moment.memo}</p>
+                          <em>다음 순간까지 · {moment.relation}</em>
+                        </span>
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {mode === "story" && (
+              <div className="story-view">
+                <div className="story-photo">
+                  <Image src={activeMoment.image} alt={activeMoment.title} fill sizes="(max-width: 900px) 90vw, 680px" />
+                  <span>{String(activeMoment.id).padStart(2, "0")} / {String(momentCount).padStart(2, "0")}</span>
+                  <button type="button" aria-label="영상 재생">▶</button>
+                </div>
+                <article>
+                  <p>{activeMoment.date} · {activeMoment.emotion}</p>
+                  <h2>{activeMoment.title}</h2>
+                  <blockquote>{activeMoment.memo}</blockquote>
+                  <span>이 순간으로 이어진 길 · {activeMoment.relation}</span>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveId(activeMoment.id === 1 ? momentCount : activeMoment.id - 1)}
+                    >
+                      ← 이전 순간
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveId(activeMoment.id === momentCount ? 1 : activeMoment.id + 1)}
+                    >
+                      다음 순간 →
+                    </button>
+                  </div>
+                </article>
+              </div>
+            )}
+
+            {mode === "album" && (
+              <div className="album-view">
+                <header>
+                  <p>LOVE TREE MOMENT BOARD</p>
+                  <h2>{treeName}의 장면들</h2>
+                </header>
+                <div className="album-grid">
+                  {moments.map((moment, index) => (
+                    <MomentCard
+                      moment={moment}
+                      index={index}
+                      active={activeMoment.id === moment.id}
+                      onSelect={() => setActiveId(moment.id)}
+                      className={`album-card album-card-${(index % 4) + 1}`}
+                      key={moment.id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <aside className="workspace-editor">
+          <section className="editor-summary">
+            <div>
+              <p>지금 선택한 순간</p>
+              <h2>{activeMoment.title}</h2>
+            </div>
+            <span>{String(activeMoment.id).padStart(2, "0")}</span>
+          </section>
+          <div className="editor-stats">
+            <span><strong>{momentCount}</strong> 이어진 순간</span>
+            <span><strong>{Math.max(0, momentCount - 2)}</strong> 피어난 꽃</span>
+            <span><strong>{momentCount >= 6 ? 1 : 0}</strong> 맺힌 열매</span>
+          </div>
+          <article className="selected-moment-preview">
+            <span><Image src={activeMoment.image} alt="" fill sizes="92px" /></span>
+            <div><small>{activeMoment.emotion} · {activeMoment.date}</small><p>{activeMoment.memo}</p></div>
+          </article>
+
+          <form className="moment-form" id="moment-form" onSubmit={addMoment}>
+            <div className="moment-form-heading">
+              <div><small>branch {String(momentCount + 1).padStart(2, "0")}</small><h3>다음 순간 이어보기</h3></div>
+              <span aria-hidden="true">❧</span>
+            </div>
+            <label>
+              영상 또는 사진 링크
+              <input type="url" placeholder="https://youtube.com/watch?v=..." />
+            </label>
+            <div className="moment-fields">
+              <label>기억할 시각<input type="text" defaultValue="00:00" /></label>
+              <label>기록 날짜<input type="text" defaultValue="2026. 07. 30." /></label>
+            </div>
+            <fieldset>
+              <legend>왜 이 순간으로 이어졌나요?</legend>
+              <div className="choice-chips">
+                {["첫 발견", "댓글 따라감", "팬의 추천", "다른 모습", "직접 검색"].map((item) => (
+                  <button
+                    className={relation === item ? "active" : ""}
+                    type="button"
+                    key={item}
+                    onClick={() => setRelation(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>그때 가장 가까웠던 감정</legend>
+              <div className="choice-chips emotion-chips">
+                {["설렘", "위로", "벅참", "여운", "추억"].map((item) => (
+                  <button
+                    className={emotion === item ? "active" : ""}
+                    type="button"
+                    key={item}
+                    onClick={() => setEmotion(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <label>
+              이 순간에 남기고 싶은 마음
+              <textarea
+                value={memo}
+                maxLength={140}
+                onChange={(event) => setMemo(event.target.value)}
+                placeholder="그 장면이 특별했던 이유를 짧게 남겨보세요."
+              />
+              <small>{memo.length} / 140</small>
+            </label>
+            <button className="moment-submit" type="submit">
+              {momentCount === 1 ? "두 순간을 가지로 잇기" : "새 가지를 피워내기"} <span aria-hidden="true">→</span>
+            </button>
+          </form>
+        </aside>
+      </main>
+
+      <div className="workspace-toast" role="status">
+        <span aria-hidden="true">✦</span>
+        {notice}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
-  const [view, setView] = useState<"home" | "builder">("home");
+  const [view, setView] = useState<"home" | "builder" | "workspace">("home");
   const [treeName, setTreeName] = useState("우리의 빛나는 순간들");
   const [privacy, setPrivacy] = useState<PrivacyChoice>("private");
+  const [selectedFormat, setSelectedFormat] = useState<ViewMode>("tree");
   const [savedTree, setSavedTree] = useState("");
 
   useEffect(() => {
     const returnHomeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && view === "builder") setView("home");
+      if (event.key === "Escape" && view !== "home") setView("home");
     };
     window.addEventListener("keydown", returnHomeOnEscape);
     return () => window.removeEventListener("keydown", returnHomeOnEscape);
@@ -64,6 +525,18 @@ export default function Home() {
     const nextName = treeName.trim();
     if (!nextName) return;
     setSavedTree(nextName);
+    setView("workspace");
+  }
+
+  if (view === "workspace") {
+    return (
+      <Workspace
+        treeName={treeName}
+        initialMode={selectedFormat}
+        onHome={() => setView("home")}
+        onEdit={() => setView("builder")}
+      />
+    );
   }
 
   if (view === "builder") {
@@ -166,6 +639,33 @@ export default function Home() {
                 </div>
                 <p className="privacy-hint">
                   <span aria-hidden="true">✣</span> 처음에는 비공개로 시작해도 괜찮아요. 천천히 쌓인 뒤에 공개해도 늦지 않아요.
+                </p>
+              </div>
+
+              <div className="format-block">
+                <div className="format-label">
+                  <span className="builder-label"><span aria-hidden="true">✿</span> 처음 보여줄 방식</span>
+                  <small>나중에 언제든 바꿀 수 있어요</small>
+                </div>
+                <div className="format-options" role="radiogroup" aria-label="러브트리 보기 방식 선택">
+                  {viewModes.map((item) => (
+                    <button
+                      className={selectedFormat === item.id ? "selected" : ""}
+                      type="button"
+                      role="radio"
+                      aria-checked={selectedFormat === item.id}
+                      key={item.id}
+                      onClick={() => setSelectedFormat(item.id)}
+                    >
+                      <span aria-hidden="true">{item.icon}</span>
+                      <strong>{item.label}</strong>
+                      <small>{item.caption}</small>
+                      {selectedFormat === item.id && <b aria-hidden="true">✓</b>}
+                    </button>
+                  ))}
+                </div>
+                <p className="format-hint">
+                  첫 사진, 두 장면, 여러 장면은 선택한 보기 안에서 트리가 자라는 단계로 이어져요.
                 </p>
               </div>
 

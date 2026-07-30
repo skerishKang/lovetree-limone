@@ -57,6 +57,12 @@ test("keeps finished-site assets and metadata wired", async () => {
   assert.match(page, /className="builder-shell"/);
   assert.match(page, /오래 품고 싶은 순간을/);
   assert.match(page, /공개 범위 선택/);
+  assert.match(page, /className="workspace-shell"/);
+  assert.match(page, /성장 트리/);
+  assert.match(page, /마음 다이어리/);
+  assert.match(page, /스토리/);
+  assert.match(page, /앨범 보드/);
+  assert.match(page, /setView\("workspace"\)/);
   assert.match(page, /setView\("builder"\)/);
   assert.match(layout, /generateMetadata/);
   assert.match(layout, /new URL\("\/og\.png", metadataBase\)/);
