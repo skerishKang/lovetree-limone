@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LoveTree · 이주연 트리</title>
+  <style>
+    :root{
+      --paper:#f7f0e8; --paper-2:#fbf8f3; --card:#fffdf9; --ink:#3f3433;
+      --muted:#927f7a; --rose:#c56e79; --rose-soft:#edd0ce; --deep:#8f4f5d;
+      --sage:#778c69; --sage-soft:#dce7d6; --line:#7d64552a; --shadow:0 22px 55px #553b3214;
+      --serif:"Noto Serif KR", "Gowun Batang", Georgia, serif;
+      --sans:"Pretendard", "Noto Sans KR", system-ui, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);font-family:var(--sans);background:
+      radial-gradient(circle at 8% 8%,#e5b6aa38,transparent 28rem),
+      radial-gradient(circle at 92% 86%,#a7ba8b35,transparent 30rem),var(--paper)}
+    button,input{font:inherit} button{cursor:pointer} a{color:inherit;text-decoration:none}
+    .app{width:min(1480px,calc(100% - 42px));margin:auto;padding:23px 0 70px}
+    .topbar{height:48px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--deep);font:1.45rem var(--serif);letter-spacing:-.05em}
+    .brand-mark{position:relative;width:25px;height:27px;border-left:2px solid var(--sage);transform:rotate(9deg)}
+    .brand-mark:before,.brand-mark:after{content:"";position:absolute;width:15px;height:9px;border-radius:100% 0;background:var(--sage)}
+    .brand-mark:before{left:-10px;top:4px;transform:rotate(-27deg)}
+    .brand-mark:after{right:-7px;top:1px;transform:scaleX(-1) rotate(-27deg);background:var(--rose)}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .top-hint{color:var(--muted);font-size:.72rem}
+    .btn{border:1px solid transparent;border-radius:999px;padding:10px 17px;transition:.2s;display:inline-flex;gap:8px;align-items:center;justify-content:center}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-main{background:var(--rose);color:#fffaf7;box-shadow:0 10px 23px #c56e7933}
+    .btn-main:hover{background:var(--deep)}
+    .btn-quiet{border-color:#778c6950;background:#fffdf976;color:var(--sage)}
+    .btn-quiet:hover{background:#fffdf9}
+    .grid{display:grid;grid-template-columns:236px minmax(0,1fr) 288px;gap:18px;align-items:start}
+    .side,.insight{position:sticky;top:18px}
+    .side-card,.insight-card,.hero,.tree-board,.detail{border:1px solid var(--line);background:#fffdf988;box-shadow:var(--shadow);border-radius:25px}
+    .side-card{padding:18px}
+    .side-title{display:flex;align-items:center;gap:9px;font-weight:700;font-size:.82rem}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 5px #c56e791c}
+    .side-card p{margin:10px 0 0;color:var(--muted);font-size:.67rem;line-height:1.65}
+    .side-nav{display:grid;gap:7px;margin-top:20px}
+    .side-nav button{border:0;border-radius:12px;padding:11px 12px;text-align:left;color:var(--muted);background:transparent;font-size:.72rem}
+    .side-nav button:hover,.side-nav button.active{color:var(--deep);background:#fffdf9c9}
+    .side-nav button.active{font-weight:700;box-shadow:0 6px 17px #553b320d}
+    .side-nav b{float:right;color:var(--rose);font-size:.68rem}
+    .side-note{margin:18px 3px 0;padding:14px 13px;border:1px dashed #c56e7960;border-radius:14px;color:var(--muted);font:400 .72rem/1.6 var(--serif);background:#fff9f55e}
+    .eyebrow{margin:0 0 9px;color:var(--deep);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800}
+    .hero{padding:28px 31px 26px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;overflow:hidden;position:relative}
+    .hero:after{content:"";position:absolute;right:-38px;top:-48px;width:180px;height:180px;border:1px solid #c56e7927;border-radius:50%;box-shadow:0 0 0 23px #c56e7907,0 0 0 47px #c56e7905}
+    .hero h1{margin:0;font:400 clamp(2.6rem,5vw,4.7rem)/.98 var(--serif);letter-spacing:-.12em;position:relative;z-index:1}
+    .hero h1 span{display:block;color:var(--rose);margin-left:32px}
+    .hero-copy>p:not(.eyebrow){max-width:560px;color:var(--muted);font:400 .78rem/1.75 var(--serif);margin:16px 0 0;position:relative;z-index:1}
+    .hero-right{position:relative;z-index:1;min-width:208px;text-align:right}
+    .stat-row{display:flex;justify-content:flex-end;gap:16px;margin-bottom:14px}
+    .stat strong{display:block;font:400 1.45rem var(--serif);color:var(--deep)}
+    .stat span{color:var(--muted);font-size:.6rem}
+    .hero-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    .hero-actions .btn{font-size:.68rem;padding:9px 13px}
+    .tree-board{margin-top:18px;padding:20px 22px 23px}
+    .board-head{display:flex;justify-content:space-between;align-items:center;margin:0 2px 14px;color:var(--muted);font-size:.64rem}
+    .board-head strong{color:var(--deep);font-size:.75rem}
+    .tree-canvas{position:relative;min-height:480px;overflow:hidden;border-radius:21px;padding:24px 20px 30px;background:
+      radial-gradient(circle at 50% 8%,#f5c5ad66,transparent 12rem),
+      linear-gradient(160deg,#f5e9dfb8,#edf1e3b5)}
+    .tree-canvas:before,.tree-canvas:after{content:"";position:absolute;left:50%;top:88px;border:1px solid #c56e7936;border-radius:50%;transform:translateX(-50%) rotate(-15deg);pointer-events:none}
+    .tree-canvas:before{width:72%;height:270px}
+    .tree-canvas:after{width:90%;height:385px;border-color:#778c6930;transform:translateX(-50%) rotate(15deg)}
+    .trunk{position:absolute;left:50%;top:74px;bottom:22px;width:4px;border-radius:10px;background:linear-gradient(#778c69aa,#778c6920);transform:translateX(-50%);z-index:1}
+    .root-node{position:relative;z-index:3;width:min(270px,90%);margin:0 auto 25px;padding:15px 17px;border:1px solid #c56e7951;border-radius:17px;background:#fffdf9e8;box-shadow:0 14px 27px #553b3217;display:flex;gap:13px;align-items:center}
+    .avatar{width:48px;height:48px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;color:#fffaf8;background:linear-gradient(145deg,#9c6c76,#d99b8f);font:1rem var(--serif);box-shadow:0 0 0 6px #fffdf985}
+    .root-node small,.branch-node small{display:block;color:var(--rose);font-size:.57rem;font-weight:800;letter-spacing:.08em}
+    .root-node strong{display:block;margin-top:3px;font:400 1.18rem var(--serif)}
+    .root-node span{display:block;margin-top:3px;color:var(--muted);font-size:.61rem}
+    .branch-grid{position:relative;z-index:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 16px}
+    .branch-node{position:relative;border:1px solid #7d64551f;border-radius:15px;padding:12px 13px 11px 16px;text-align:left;background:#fffdf9d6;box-shadow:0 9px 20px #553b320d;transition:.2s;min-height:75px}
+    .branch-node:before{content:"";position:absolute;top:26px;width:20px;height:1px;background:#778c6966}
+    .branch-node:nth-child(odd):before{right:-20px}.branch-node:nth-child(even):before{left:-20px}
+    .branch-node:hover,.branch-node.selected{transform:translateY(-3px);border-color:#c56e7970;background:#fffdf9;box-shadow:0 13px 25px #553b3219}
+    .branch-node.selected{outline:3px solid #c56e7918}
+    .branch-node:nth-child(3n) small{color:var(--sage)}
+    .branch-node:nth-child(4n) small{color:#aa7a55}
+    .branch-node strong{display:block;margin-top:5px;font:400 .95rem/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .branch-node .node-meta{display:flex;justify-content:space-between;gap:8px;margin-top:6px;color:var(--muted);font-size:.59rem}
+    .branch-node .node-meta b{color:var(--deep);font-weight:700}
+    .detail{margin-top:18px;padding:22px}
+    .detail-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;margin-bottom:15px}
+    .detail-head h2{margin:0;font:400 1.8rem var(--serif);letter-spacing:-.08em}
+    .detail-head p{margin:5px 0 0;color:var(--muted);font-size:.68rem}
+    .detail-count{color:var(--rose);font-size:.68rem;white-space:nowrap}
+    .video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .video-card{min-width:0;border:1px solid var(--line);border-radius:14px;background:#fffdf9b8;overflow:hidden;transition:.2s}
+    .video-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px #553b320e;border-color:#c56e7955}
+    .video-art{height:62px;display:flex;justify-content:space-between;align-items:flex-end;padding:9px;color:#fffaf6;background:linear-gradient(135deg,#8f6973,#da9b8d 58%,#e9c6aa);font-size:.56rem}
+    .video-card:nth-child(3n+1) .video-art{background:linear-gradient(135deg,#738c86,#bdc9a7 60%,#e4bfac)}
+    .video-card:nth-child(3n+2) .video-art{background:linear-gradient(135deg,#9d7888,#cfa3a0 57%,#eccea9)}
+    .video-art span{padding:3px 5px;border-radius:5px;background:#33292c57;letter-spacing:.08em}
+    .video-art b{font-weight:500}
+    .video-body{padding:10px 11px 11px}
+    .video-body h3{margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:400 .76rem/1.4 var(--serif)}
+    .video-body p{margin:7px 0 0;color:var(--muted);font-size:.59rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .more{grid-column:1/-1;padding:10px;text-align:center;color:var(--muted);font-size:.65rem}
+    .empty{grid-column:1/-1;padding:22px 14px;border:1px dashed #c56e7950;border-radius:14px;color:var(--muted);font:400 .76rem/1.7 var(--serif);text-align:center}
+    .insight-card{padding:20px}
+    .insight-card+.insight-card{margin-top:14px}
+    .insight-card h2{margin:0;font:400 1.15rem var(--serif);letter-spacing:-.07em}
+    .insight-card>p{margin:8px 0 0;color:var(--muted);font-size:.68rem;line-height:1.65}
+    .mood-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+    .mood{border-radius:99px;padding:6px 9px;background:#f2d9d6;color:var(--deep);font-size:.6rem}
+    .mood:nth-child(2n){background:#e4ecd9;color:#5e7354}.mood:nth-child(3n){background:#f2e5c9;color:#86633e}
+    .flow{display:flex;align-items:flex-end;gap:5px;height:95px;margin-top:17px;padding:0 3px 2px;border-bottom:1px solid var(--line)}
+    .bar{width:100%;min-width:5px;border-radius:8px 8px 0 0;background:linear-gradient(#c56e79,#dba090);opacity:.84}
+    .bar:nth-child(2n){background:linear-gradient(#778c69,#b6c9a1)}.bar:nth-child(3n){background:linear-gradient(#d09b64,#e4c99d)}
+    .flow-legend{display:flex;justify-content:space-between;margin-top:8px;color:#aa9790;font-size:.58rem}
+    .summary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+    .summary div{padding:10px 11px;border-radius:12px;background:#fffdf9a6}
+    .summary strong{display:block;color:var(--deep);font:400 1.18rem var(--serif)}.summary span{display:block;margin-top:2px;color:var(--muted);font-size:.58rem}
+    .privacy{padding:14px;border-radius:13px;background:#eef2e9;color:#5f7257;font:400 .7rem/1.65 var(--serif)}
+    .privacy b{font-weight:700}
+    .toast{position:fixed;left:50%;bottom:23px;z-index:10;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 16px;border-radius:999px;background:#433536;color:#fffaf8;font-size:.68rem;box-shadow:0 12px 28px #43353635;transition:.25s}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:1120px){.grid{grid-template-columns:205px minmax(0,1fr)}.insight{grid-column:2;position:static;display:grid;grid-template-columns:1fr 1fr;gap:14px}.insight-card+.insight-card{margin-top:0}}
+    @media(max-width:760px){.app{width:min(100% - 24px,600px);padding-top:13px}.topbar{margin-bottom:17px}.top-hint{display:none}.grid{display:block}.side,.insight{position:static}.side-card{margin-bottom:14px}.side-nav{display:flex;overflow:auto;margin-top:11px}.side-nav button{min-width:max-content}.hero{display:block;padding:23px 21px}.hero h1{font-size:3.25rem}.hero-right{text-align:left;margin-top:22px}.stat-row{justify-content:flex-start}.hero-actions{justify-content:flex-start}.tree-board{padding:14px 12px}.tree-canvas{padding:20px 10px;min-height:640px}.branch-grid{grid-template-columns:1fr;gap:9px;padding:0 15px}.branch-node:before{left:-15px!important;right:auto!important;width:15px}.branch-node:nth-child(2n):before{display:none}.trunk{left:15px;top:93px}.tree-canvas:before,.tree-canvas:after{left:52%;width:118%;}.root-node{margin-left:33px;margin-right:auto}.detail{padding:17px 14px}.detail-head{display:block}.detail-count{display:block;margin-top:8px}.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.insight{margin-top:14px;display:block}.insight-card+.insight-card{margin-top:14px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#top"><span class="brand-mark"></span>LoveTree</a>
+      <div class="top-actions"><span class="top-hint">내가 저장한 순간을, 내가 붙인 이름 그대로</span><button class="btn btn-main" id="import-top">북마크 HTML 불러오기</button><input id="file-input" type="file" accept=".html,text/html" hidden></div>
+    </header>
+
+    <div class="grid" id="top">
+      <aside class="side">
+        <section class="side-card">
+          <div class="side-title"><i class="live-dot"></i><span id="source-title">샘플로 그린 트리</span></div>
+          <p id="source-copy">내보낸 북마크를 불러오면 폴더와 영상 제목이 이 자리에 그대로 들어와요.</p>
+        </section>
+        <nav class="side-nav" aria-label="러브트리 메뉴">
+          <button class="active" data-filter="all">이주연 전체 <b id="side-total">613</b></button>
+          <button data-filter="chapters">이름 붙인 챕터 <b id="side-chapters">32</b></button>
+          <button data-filter="videos">영상 잎사귀 <b id="side-videos">588</b></button>
+        </nav>
+        <div class="side-note">폴더 이름은 메모가 아니라 이 트리의 <b>장면 제목</b>이 됩니다. 원본 제목과 URL은 따로 보존해요.</div>
+      </aside>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">one person · many moments</p>
+            <h1>이주연<span>러브트리</span></h1>
+            <p>내가 저장한 영상의 순서와, 그날 붙인 이름을 따라 한 사람을 좋아해 온 시간이 가지처럼 펼쳐집니다.</p>
+          </div>
+          <div class="hero-right">
+            <div class="stat-row"><div class="stat"><strong id="hero-total">613</strong><span>기록</span></div><div class="stat"><strong id="hero-chapters">32</strong><span>챕터</span></div><div class="stat"><strong id="hero-video">588</strong><span>영상</span></div></div>
+            <div class="hero-actions"><button class="btn btn-main" id="import-main">내 북마크로 채우기 ↓</button><button class="btn btn-quiet" id="reset-demo">샘플 다시 보기</button></div>
+          </div>
+        </section>
+
+        <section class="tree-board">
+          <div class="board-head"><strong>이름을 붙인 순서대로 자라는 나무</strong><span id="range-label">2023.11.24 — 2024.01.16</span></div>
+          <div class="tree-canvas">
+            <div class="trunk"></div>
+            <div class="root-node"><div class="avatar">JY</div><div><small>PERSON TREE</small><strong>이주연</strong><span id="root-meta">613개의 순간이 모였어요</span></div></div>
+            <div class="branch-grid" id="branch-grid"></div>
+          </div>
+        </section>
+
+        <section class="detail" id="detail">
+          <div class="detail-head"><div><p class="eyebrow">selected chapter</p><h2 id="detail-title">이주연</h2><p id="detail-subtitle">첫 번째 폴더에 저장한 영상들</p></div><span class="detail-count" id="detail-count">6개의 영상 잎</span></div>
+          <div class="video-grid" id="video-grid"></div>
+        </section>
+      </main>
+
+      <aside class="insight">
+        <section class="insight-card">
+          <p class="eyebrow">title-based reading</p><h2>제목이 말해준 흐름</h2>
+          <p>슬라이더를 억지로 조절하지 않아도, 내가 붙인 말이 감정의 흔적이 됩니다. 아래는 AI가 제안할 수 있는 첫 태그예요.</p>
+          <div class="mood-chips"><span class="mood">발견</span><span class="mood">설렘</span><span class="mood">몰입</span><span class="mood">애정</span><span class="mood">귀여움</span><span class="mood">다시 불타오름</span></div>
+          <div class="flow" aria-label="감정 흐름 예시"><i class="bar" style="height:27%"></i><i class="bar" style="height:37%"></i><i class="bar" style="height:46%"></i><i class="bar" style="height:60%"></i><i class="bar" style="height:82%"></i><i class="bar" style="height:68%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:73%"></i><i class="bar" style="height:91%"></i><i class="bar" style="height:78%"></i><i class="bar" style="height:64%"></i><i class="bar" style="height:88%"></i></div>
+          <div class="flow-legend"><span>처음 발견</span><span>깊어진 마음</span><span>지금</span></div>
+          <div class="summary"><div><strong id="right-chapters">32</strong><span>이름 붙인 챕터</span></div><div><strong id="right-youtube">588</strong><span>유튜브 잎</span></div></div>
+        </section>
+        <section class="insight-card"><div class="privacy"><b>원본 보존</b><br>내가 쓴 폴더명과 영상 제목은 그대로 남기고, AI 해석은 별도 태그로만 붙입니다.</div></section>
+      </aside>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const demoChapters = [
+      ['231124이주연',6],['231125주연이',32],['231126울주연이',2],['231127내사랑주연',1],['231128주연',31],['231129미친주연',12],['231130주연♥',67],['231201오늘도주연',27],['231202주연이가목표',69],['231203이쁜주여니',32],['231204귀염둥이주연',29],['231205주연늪',19],['231206주연에게사로잡히다',44],['231207내가조아라하는주연',26],['231208주연입덕부정기는없다',21],['231209웃겨주연이개그맨이야',20],['231210나참덥즈까지파네',21],['231211안정적주연덕질',15],['231212약간동력떨어진주연하지만좋아',17],['231213왜덥즈는빌보드1위아니냐주연아',19],['231214주연이내가데꼬살아야지',6],['231215논문끝난기념으로주연이보자',3],['231216주연아첫눈이야!',4],['231217주연이를공식남편으로선언',6],['231218헤헷주여니',17],['231220넘추워서주여니를못보겄네',8],['231222귀여웡내남친주연냥',4],['231225주여나크리스마스야!',7],['231226이제익숙한주여니',12],['231228다시불타올라주연사랑',11],['231229주연아1년만기다려',11],['240101새해에도주연',5],['240116간만에주연',9]
+    ].map(([key,count])=>({key,count,videoCount:count,date:prettyDate(key),title:stripDate(key)}));
+    const demoRows = [
+      ['231124이주연','[더보이즈/주연] 안무 연습 디테일 잡아주는 메댄 이주연 -1 - YouTube','https://www.youtube.com/watch?v=nqofkzQD19E'],
+      ['231124이주연','#주연 덩치 체감 .. 설레는 키차이 로어 챌린지 - YouTube','https://www.youtube.com/watch?v=MOOw4lywYsg'],
+      ['231124이주연','[더보이즈 주연] 다정한 이주연의 설렘 모먼트 💖 The Boyz Juyeon Boyfriend Heart Fluttering moments','https://www.youtube.com/watch?v=bcUfIpQ6aeA'],
+      ['231124이주연','신입 PD 님이 새로 오셨다 - YouTube','https://www.youtube.com/watch?v=kwHFG6mn0Og&t=121s'],
+      ['231124이주연','[더보이즈 주연] 이주연의 찐 성격 탐구하기 🔍👀','https://www.youtube.com/watch?v=mRppy-KnyNI'],
+      ['231124이주연','[더보이즈 주연 큐] 메댄 강하게 키우는 메댄','https://www.youtube.com/watch?v=k_xvpSjrn5o']
+    ].map(([chapter,title,url])=>({chapter,title,url,added:''}));
+    const state={chapters:demoChapters,rows:demoRows,totals:{total:613,youtube:588},imported:false,selected:'231124이주연'};
+
+    const $=s=>document.querySelector(s);
+    const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    function prettyDate(value){const m=String(value).match(/^(\d{2})(\d{2})(\d{2})/);return m?`20${m[1]}.${m[2]}.${m[3]}`:''}
+    function stripDate(value){return String(value).replace(/^\d{6}/,'').trim()||'첫 기록'}
+    function moodFor(value){const s=String(value);if(/울|눈물|맴찢/.test(s))return'애틋함';if(/입덕|발견|처음/.test(s))return'발견';if(/귀엽|귀염|냥|고양이/.test(s))return'귀여움';if(/설레|사랑|♥|남친|남편/.test(s))return'설렘';if(/지침|동력|말릴|안정/.test(s))return'숨 고르기';if(/불타|미친|목표|사로잡/.test(s))return'몰입';return'기록'}
+    function decodeHtml(value){const el=document.createElement('textarea');el.innerHTML=value;return el.value}
+    function parseAttrs(raw){const attrs={};for(const m of raw.matchAll(/([A-Z_]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi))attrs[m[1].toUpperCase()]=m[2]??m[3]??'';return attrs}
+    function parseBookmarkHtml(text){
+      const token=/<\/??DL\b[^>]*>|<H3\b[^>]*>[\s\S]*?<\/H3\s*>|<A\b[^>]*>[\s\S]*?<\/A\s*>/gi;
+      const stack=[];let pending='';const rows=[];let match;
+      while((match=token.exec(text))){const raw=match[0];
+        if(/^<DL/i.test(raw)){stack.push(pending);pending='';continue}
+        if(/^<\/DL/i.test(raw)){stack.pop();continue}
+        if(/^<H3/i.test(raw)){pending=decodeHtml(raw.replace(/^<H3\b[^>]*>/i,'').replace(/<\/H3\s*>$/i,'')).replace(/\s+/g,' ').trim();continue}
+        const open=raw.match(/^<A\b([^>]*)>/i);if(!open)continue;const attrs=parseAttrs(open[1]);const title=decodeHtml(raw.replace(/^<A\b[^>]*>/i,'').replace(/<\/A\s*>$/i,'').replace(/<[^>]+>/g,'')).replace(/\s+/g,' ').trim();const href=decodeHtml(attrs.HREF||'');
+        const path=stack.filter(Boolean);const likeIndex=path.findIndex(part=>part.trim().toUpperCase()==='LIKE');if(likeIndex<0)continue;const root=path[likeIndex+1];if(!root||!/^231124/.test(root))continue;const chapterParts=path.slice(likeIndex+2);const chapter=chapterParts.join(' / ')||root;const added=attrs.ADD_DATE?new Date(Number(attrs.ADD_DATE)*1000).toLocaleDateString('ko-KR'):'';rows.push({chapter,title,url:href,added})
+      }
+      const groups=new Map();for(const row of rows){if(!groups.has(row.chapter))groups.set(row.chapter,[]);groups.get(row.chapter).push(row)}
+      const chapters=[...groups].map(([key,items])=>({key,count:items.length,videoCount:items.filter(r=>/youtube\.com|youtu\.be/i.test(r.url)).length,date:prettyDate(key),title:stripDate(key)}));
+      chapters.sort((a,b)=>(a.key.match(/^\d{6}/)?.[0]||'999999').localeCompare(b.key.match(/^\d{6}/)?.[0]||'999999'));
+      return {chapters,rows,totals:{total:rows.length,youtube:rows.filter(r=>/youtube\.com|youtu\.be/i.test(r.url)).length}}
+    }
+    function setText(id,value){const node=$(id);if(node)node.textContent=value}
+    function render(){
+      const {chapters,rows,totals}=state;const total=totals.total;const youtube=totals.youtube;const chapterCount=Math.max(0,chapters.length-(state.imported?1:1));
+      setText('#hero-total',total.toLocaleString());setText('#hero-chapters',chapterCount);setText('#hero-video',youtube.toLocaleString());setText('#side-total',total.toLocaleString());setText('#side-chapters',chapterCount);setText('#side-videos',youtube.toLocaleString());setText('#right-chapters',chapterCount);setText('#right-youtube',youtube.toLocaleString());setText('#root-meta',`${total.toLocaleString()}개의 순간이 모였어요`);setText('#source-title',state.imported?'내 북마크에서 가져온 트리':'샘플로 그린 트리');setText('#source-copy',state.imported?'LIKE/231124이주연 경로의 폴더와 영상 제목을 그대로 읽었어요.':'내보낸 북마크를 불러오면 폴더와 영상 제목이 이 자리에 그대로 들어와요.');
+      const dates=chapters.map(c=>c.date).filter(Boolean);setText('#range-label',dates.length?`${dates[0]} — ${dates[dates.length-1]}`:'날짜 정보 없음');
+      $('#branch-grid').innerHTML=chapters.slice(state.imported?1:0).map(ch=>`<button class="branch-node ${ch.key===state.selected?'selected':''}" data-chapter="${escapeHtml(ch.key)}"><small>${escapeHtml(ch.date||'MOMENT')}</small><strong title="${escapeHtml(ch.title)}">${escapeHtml(ch.title)}</strong><span class="node-meta"><span>${moodFor(ch.title)}</span><b>${ch.count}개</b></span></button>`).join('');
+      document.querySelectorAll('.branch-node').forEach(btn=>btn.addEventListener('click',()=>{state.selected=btn.dataset.chapter;render();document.querySelector('#detail').scrollIntoView({behavior:'smooth',block:'start'})}));
+      const chapter=chapters.find(c=>c.key===state.selected)||chapters[0];if(!chapter)return;state.selected=chapter.key;setText('#detail-title',chapter.title);setText('#detail-subtitle',`${chapter.date||'날짜 미상'} · ${moodFor(chapter.title)}로 이름 붙인 챕터`);setText('#detail-count',`${chapter.count}개의 영상 잎`);
+      const items=rows.filter(r=>r.chapter===chapter.key);let cards=items.slice(0,9).map(row=>`<a class="video-card" href="${escapeHtml(row.url)}" target="_blank" rel="noreferrer"><div class="video-art"><span>YOUTUBE</span><b>${row.url.match(/[?&]t=(\d+)/)?.[1]?`${Math.floor(Number(row.url.match(/[?&]t=(\d+)/)[1])/60)}:${String(Number(row.url.match(/[?&]t=(\d+)/)[1])%60).padStart(2,'0')}`:'▶'}</b></div><div class="video-body"><h3>${escapeHtml(row.title)}</h3><p>${row.added?`북마크한 날 · ${escapeHtml(row.added)}`:'원본 제목 · URL 보존'}</p></div></a>`).join('');
+      if(!items.length)cards=`<div class="empty">이 챕터의 ${chapter.count}개 영상은 HTML을 불러오면 카드로 펼쳐집니다.<br>지금은 폴더명과 영상 수를 먼저 트리로 그려두었어요.</div>`;else if(items.length>9)cards+=`<div class="more">+ ${items.length-9}개의 영상 잎이 더 있어요</div>`;$('#video-grid').innerHTML=cards;
+    }
+    function toast(message){const node=$('#toast');node.textContent=message;node.classList.add('show');setTimeout(()=>node.classList.remove('show'),2600)}
+    function importFile(){ $('#file-input').click() }
+    $('#import-top').addEventListener('click',importFile);$('#import-main').addEventListener('click',importFile);
+    $('#file-input').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{const parsed=parseBookmarkHtml(await file.text());if(!parsed.chapters.length){toast('231124이주연 폴더를 찾지 못했어요');return}state.chapters=parsed.chapters;state.rows=parsed.rows;state.totals=parsed.totals;state.imported=true;state.selected=parsed.chapters[0].key;render();toast(`${parsed.totals.total.toLocaleString()}개의 기록을 트리에 담았어요`)}catch(error){console.error(error);toast('HTML을 읽는 중 문제가 생겼어요')}});
+    $('#reset-demo').addEventListener('click',()=>{state.chapters=demoChapters;state.rows=demoRows;state.totals={total:613,youtube:588};state.imported=false;state.selected='231124이주연';render();toast('샘플 트리로 돌아왔어요')});
+    document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(item=>item.classList.remove('active'));button.classList.add('active');if(button.dataset.filter==='chapters')document.querySelector('#tree-board')?.scrollIntoView({behavior:'smooth'});if(button.dataset.filter==='videos')document.querySelector('#detail')?.scrollIntoView({behavior:'smooth'})}));
+    render();
+  </script>
+</body>
+</html>
