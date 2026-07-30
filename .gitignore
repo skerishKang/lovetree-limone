@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build and generated output
+.next/
+dist/
+build/
+out/
+coverage/
+playwright-report/
+test-results/
+.turbo/
+.cache/
+
+# Runtime and local environment files
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+*.log
+logs/
+
+# IDE and OS metadata
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Cloudflare/local tool state
+.wrangler/
+.dev.vars
+
+# Temporary files
+tmp/
+temp/
