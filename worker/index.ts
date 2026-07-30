@@ -4,7 +4,7 @@ import { handleApiRequest } from "../api";
 
 interface Env {
   ASSETS: Fetcher;
-  DB: D1Database;
+  DATABASE_URL: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

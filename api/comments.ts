@@ -49,8 +49,7 @@ async function listMemoryComments(ctx: ApiContext): Promise<Response> {
       eq(comments.memoryId, memoryId),
       eq(comments.status, "visible")
     ))
-    .orderBy(desc(comments.createdAt))
-    .all();
+    .orderBy(desc(comments.createdAt));
 
   return json(rows);
 }
@@ -63,7 +62,7 @@ async function createMemoryComment(ctx: ApiContext): Promise<Response> {
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
   if (!body?.body) return errorResponse("Comment body is required", 400);
 
-  const now = new Date().toISOString();
+  const now = new Date();
   const comment = {
     id: crypto.randomUUID(),
     memoryId,
@@ -76,7 +75,7 @@ async function createMemoryComment(ctx: ApiContext): Promise<Response> {
     updatedAt: now,
   };
 
-  await ctx.db.insert(comments).values(comment).run();
+  await ctx.db.insert(comments).values(comment);
   return json(comment, 201);
 }
 
@@ -85,20 +84,14 @@ async function deleteMemoryComment(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const { id } = ctx.params;
-  const existing = await ctx.db
-    .select()
-    .from(comments)
-    .where(eq(comments.id, id))
-    .get();
+  const rows = await ctx.db.select().from(comments).where(eq(comments.id, id));
+  if (!rows[0]) return errorResponse("Comment not found", 404);
+  if (rows[0].ownerId !== user.uid) return errorResponse("Forbidden", 403);
 
-  if (!existing) return errorResponse("Comment not found", 404);
-  if (existing.ownerId !== user.uid) return errorResponse("Forbidden", 403);
-
-  const now = new Date().toISOString();
+  const now = new Date();
   await ctx.db.update(comments)
     .set({ status: "deleted", deletedAt: now, deletedBy: user.uid, updatedAt: now })
-    .where(eq(comments.id, id))
-    .run();
+    .where(eq(comments.id, id));
 
   return json({ success: true });
 }
@@ -109,8 +102,7 @@ async function listTreeComments(ctx: ApiContext): Promise<Response> {
     .select()
     .from(treeComments)
     .where(eq(treeComments.treeId, treeId))
-    .orderBy(desc(treeComments.createdAt))
-    .all();
+    .orderBy(desc(treeComments.createdAt));
 
   return json(rows);
 }
@@ -123,7 +115,7 @@ async function createTreeComment(ctx: ApiContext): Promise<Response> {
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
   if (!body?.body) return errorResponse("Comment body is required", 400);
 
-  const now = new Date().toISOString();
+  const now = new Date();
   const comment = {
     id: crypto.randomUUID(),
     treeId,
@@ -135,7 +127,7 @@ async function createTreeComment(ctx: ApiContext): Promise<Response> {
     updatedAt: now,
   };
 
-  await ctx.db.insert(treeComments).values(comment).run();
+  await ctx.db.insert(treeComments).values(comment);
   return json(comment, 201);
 }
 
@@ -144,15 +136,10 @@ async function deleteTreeComment(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const { id } = ctx.params;
-  const existing = await ctx.db
-    .select()
-    .from(treeComments)
-    .where(eq(treeComments.id, id))
-    .get();
+  const rows = await ctx.db.select().from(treeComments).where(eq(treeComments.id, id));
+  if (!rows[0]) return errorResponse("Comment not found", 404);
+  if (rows[0].ownerId !== user.uid) return errorResponse("Forbidden", 403);
 
-  if (!existing) return errorResponse("Comment not found", 404);
-  if (existing.ownerId !== user.uid) return errorResponse("Forbidden", 403);
-
-  await ctx.db.delete(treeComments).where(eq(treeComments.id, id)).run();
+  await ctx.db.delete(treeComments).where(eq(treeComments.id, id));
   return json({ success: true });
 }

@@ -46,8 +46,7 @@ async function listMemories(ctx: ApiContext): Promise<Response> {
     .select()
     .from(memories)
     .orderBy(desc(memories.createdAt))
-    .limit(limit)
-    .all();
+    .limit(limit);
 
   return json(rows);
 }
@@ -59,7 +58,7 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
   if (!body) return errorResponse("Invalid request body", 400);
 
-  const now = new Date().toISOString();
+  const now = new Date();
   const id = crypto.randomUUID();
 
   const memory = {
@@ -73,7 +72,7 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
     sourceUrl: String(body.sourceUrl || ""),
     sourceType: String(body.sourceType || "youtube"),
     thumbnail: String(body.thumbnail || ""),
-    emotionTags: body.emotionTags ? JSON.stringify(body.emotionTags) : "[]",
+    emotionTags: body.emotionTags ?? [],
     timestamp: String(body.timestamp || ""),
     visibility: String(body.visibility || "public"),
     channelId: body.channelId ? String(body.channelId) : null,
@@ -83,17 +82,17 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
     updatedAt: now,
   };
 
-  await ctx.db.insert(memories).values(memory).run();
+  await ctx.db.insert(memories).values(memory);
   return json(memory, 201);
 }
 
 async function getMemory(ctx: ApiContext): Promise<Response> {
   const { id } = ctx.params;
-  const row = await ctx.db
+  const rows = await ctx.db
     .select()
     .from(memories)
-    .where(eq(memories.id, id))
-    .get();
+    .where(eq(memories.id, id));
+  const row = rows[0];
 
   if (!row) return errorResponse("Memory not found", 404);
   return json(row);
@@ -104,37 +103,35 @@ async function updateMemory(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const { id } = ctx.params;
-  const existing = await ctx.db
+  const rows = await ctx.db
     .select()
     .from(memories)
-    .where(eq(memories.id, id))
-    .get();
+    .where(eq(memories.id, id));
 
-  if (!existing) return errorResponse("Memory not found", 404);
+  if (!rows[0]) return errorResponse("Memory not found", 404);
 
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
-  const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
 
-  const fields = [
-    "treeId", "parentId", "title", "memo", "artist", "source",
-    "sourceUrl", "sourceType", "thumbnail", "timestamp", "visibility",
-    "channelId", "channelName", "channelUrl",
-  ];
+  if (body?.title !== undefined) updates.title = String(body.title);
+  if (body?.memo !== undefined) updates.memo = String(body.memo);
+  if (body?.artist !== undefined) updates.artist = String(body.artist);
+  if (body?.source !== undefined) updates.source = String(body.source);
+  if (body?.sourceUrl !== undefined) updates.sourceUrl = String(body.sourceUrl);
+  if (body?.sourceType !== undefined) updates.sourceType = String(body.sourceType);
+  if (body?.thumbnail !== undefined) updates.thumbnail = String(body.thumbnail);
+  if (body?.emotionTags !== undefined) updates.emotionTags = body.emotionTags;
+  if (body?.timestamp !== undefined) updates.timestamp = String(body.timestamp);
+  if (body?.visibility !== undefined) updates.visibility = String(body.visibility);
+  if (body?.channelId !== undefined) updates.channelId = String(body.channelId);
+  if (body?.channelName !== undefined) updates.channelName = String(body.channelName);
+  if (body?.channelUrl !== undefined) updates.channelUrl = String(body.channelUrl);
+  if (body?.treeId !== undefined) updates.treeId = String(body.treeId);
+  if (body?.parentId !== undefined) updates.parentId = body.parentId ? String(body.parentId) : null;
 
-  for (const field of fields) {
-    if (body?.[field] !== undefined) {
-      updates[field] = field === "emotionTags"
-        ? JSON.stringify(body[field])
-        : String(body[field]);
-    }
-  }
-  if (body?.emotionTags !== undefined) {
-    updates.emotionTags = JSON.stringify(body.emotionTags);
-  }
-
-  await ctx.db.update(memories).set(updates).where(eq(memories.id, id)).run();
-  const updated = await ctx.db.select().from(memories).where(eq(memories.id, id)).get();
-  return json(updated);
+  await ctx.db.update(memories).set(updates).where(eq(memories.id, id));
+  const updated = await ctx.db.select().from(memories).where(eq(memories.id, id));
+  return json(updated[0]);
 }
 
 async function deleteMemory(ctx: ApiContext): Promise<Response> {
@@ -142,15 +139,13 @@ async function deleteMemory(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const { id } = ctx.params;
-  const existing = await ctx.db
+  const rows = await ctx.db
     .select()
     .from(memories)
-    .where(eq(memories.id, id))
-    .get();
+    .where(eq(memories.id, id));
 
-  if (!existing) return errorResponse("Memory not found", 404);
-
-  await ctx.db.delete(memories).where(eq(memories.id, id)).run();
+  if (!rows[0]) return errorResponse("Memory not found", 404);
+  await ctx.db.delete(memories).where(eq(memories.id, id));
   return json({ success: true });
 }
 
@@ -163,8 +158,7 @@ async function listTreeMemories(ctx: ApiContext): Promise<Response> {
     .from(memories)
     .where(eq(memories.treeId, treeId))
     .orderBy(desc(memories.createdAt))
-    .limit(limit)
-    .all();
+    .limit(limit);
 
   return json(rows);
 }
@@ -181,8 +175,7 @@ async function listCommunityMemories(ctx: ApiContext): Promise<Response> {
     .from(memories)
     .where(and(...conditions))
     .orderBy(desc(memories.createdAt))
-    .limit(limit)
-    .all();
+    .limit(limit);
 
   return json(rows);
 }

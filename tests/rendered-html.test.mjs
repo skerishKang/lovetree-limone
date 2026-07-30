@@ -15,8 +15,11 @@ test("app home page renders without errors", async () => {
   assert.match(page, /LoveTree/);
 });
 
-test("db schema has all required tables", async () => {
+test("db schema uses PostgreSQL (pgTable)", async () => {
   const schema = await readFile(new URL("../db/schema.ts", import.meta.url), "utf8");
+  assert.match(schema, /pgTable/);
+  assert.match(schema, /drizzle-orm\/pg-core/);
+  assert.match(schema, /jsonb/);
   assert.match(schema, /trees/);
   assert.match(schema, /memories/);
   assert.match(schema, /reactions/);
@@ -25,6 +28,13 @@ test("db schema has all required tables", async () => {
   assert.match(schema, /treeLikes/);
   assert.match(schema, /treeSocialCounts/);
   assert.match(schema, /socialIdempotency/);
+});
+
+test("db connection uses Neon HTTP driver", async () => {
+  const dbIndex = await readFile(new URL("../db/index.ts", import.meta.url), "utf8");
+  assert.match(dbIndex, /@neondatabase\/serverless/);
+  assert.match(dbIndex, /drizzle-orm\/neon-http/);
+  assert.match(dbIndex, /DATABASE_URL/);
 });
 
 test("api routes are properly structured", async () => {

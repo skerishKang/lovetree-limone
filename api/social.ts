@@ -1,4 +1,4 @@
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, isNull } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import {
@@ -43,10 +43,7 @@ async function listMemoryReactions(ctx: ApiContext): Promise<Response> {
   const rows = await ctx.db
     .select()
     .from(reactions)
-    .where(and(
-      eq(reactions.memoryId, memoryId),
-    ))
-    .all();
+    .where(eq(reactions.memoryId, memoryId));
 
   const counts: Record<string, number> = {};
   for (const row of rows) {
@@ -71,13 +68,10 @@ async function toggleReaction(ctx: ApiContext): Promise<Response> {
       eq(reactions.memoryId, memoryId),
       eq(reactions.ownerId, user.uid),
       eq(reactions.type, type)
-    ))
-    .get();
+    ));
 
-  if (existing) {
-    await ctx.db.delete(reactions)
-      .where(eq(reactions.id, existing.id))
-      .run();
+  if (existing[0]) {
+    await ctx.db.delete(reactions).where(eq(reactions.id, existing[0].id));
     return json({ toggled: false, type });
   }
 
@@ -86,10 +80,10 @@ async function toggleReaction(ctx: ApiContext): Promise<Response> {
     memoryId,
     ownerId: user.uid,
     type,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
   };
 
-  await ctx.db.insert(reactions).values(reaction).run();
+  await ctx.db.insert(reactions).values(reaction);
   return json({ toggled: true, type }, 201);
 }
 
@@ -102,9 +96,8 @@ async function listTreeLikes(ctx: ApiContext): Promise<Response> {
     .from(treeLikes)
     .where(and(
       eq(treeLikes.treeId, treeId),
-      sql`${treeLikes.deletedAt} IS NULL`
-    ))
-    .all();
+      isNull(treeLikes.deletedAt)
+    ));
 
   const count = rows.length;
   const userLiked = user ? rows.some((r) => r.ownerId === user.uid) : false;
@@ -123,25 +116,22 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
     .where(and(
       eq(treeLikes.treeId, treeId),
       eq(treeLikes.ownerId, user.uid),
-      sql`${treeLikes.deletedAt} IS NULL`
-    ))
-    .get();
+      isNull(treeLikes.deletedAt)
+    ));
 
-  const now = new Date().toISOString();
+  const now = new Date();
 
-  if (existing) {
+  if (existing[0]) {
     await ctx.db.update(treeLikes)
       .set({ deletedAt: now })
-      .where(eq(treeLikes.id, existing.id))
-      .run();
+      .where(eq(treeLikes.id, existing[0].id));
 
     await ctx.db.update(treeSocialCounts)
       .set({
         likeCount: sql`like_count - 1`,
         updatedAt: now,
       })
-      .where(eq(treeSocialCounts.treeId, treeId))
-      .run();
+      .where(eq(treeSocialCounts.treeId, treeId));
 
     return json({ liked: false });
   }
@@ -154,29 +144,27 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
     deletedAt: null,
   };
 
-  await ctx.db.insert(treeLikes).values(like).run();
+  await ctx.db.insert(treeLikes).values(like);
 
   const existingCount = await ctx.db
     .select()
     .from(treeSocialCounts)
-    .where(eq(treeSocialCounts.treeId, treeId))
-    .get();
+    .where(eq(treeSocialCounts.treeId, treeId));
 
-  if (existingCount) {
+  if (existingCount[0]) {
     await ctx.db.update(treeSocialCounts)
       .set({
         likeCount: sql`like_count + 1`,
         updatedAt: now,
       })
-      .where(eq(treeSocialCounts.treeId, treeId))
-      .run();
+      .where(eq(treeSocialCounts.treeId, treeId));
   } else {
     await ctx.db.insert(treeSocialCounts).values({
       treeId,
       likeCount: 1,
       viewCount: 0,
       updatedAt: now,
-    }).run();
+    });
   }
 
   return json({ liked: true }, 201);
@@ -185,41 +173,39 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
 async function recordTreeView(ctx: ApiContext): Promise<Response> {
   const { treeId } = ctx.params;
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
-  const now = new Date().toISOString();
+  const now = new Date();
 
   const view = {
     id: crypto.randomUUID(),
     treeId,
     actorKey: String(body?.actorKey || "anonymous"),
     actorKind: String(body?.actorKind || "anonymous"),
-    countedWindowStart: String(body?.windowStart || now),
+    countedWindowStart: now,
     source: String(body?.source || "public_tree_detail"),
     createdAt: now,
   };
 
-  await ctx.db.insert(treeViewDedupEvents).values(view).run();
+  await ctx.db.insert(treeViewDedupEvents).values(view);
 
   const existingCount = await ctx.db
     .select()
     .from(treeSocialCounts)
-    .where(eq(treeSocialCounts.treeId, treeId))
-    .get();
+    .where(eq(treeSocialCounts.treeId, treeId));
 
-  if (existingCount) {
+  if (existingCount[0]) {
     await ctx.db.update(treeSocialCounts)
       .set({
         viewCount: sql`view_count + 1`,
         updatedAt: now,
       })
-      .where(eq(treeSocialCounts.treeId, treeId))
-      .run();
+      .where(eq(treeSocialCounts.treeId, treeId));
   } else {
     await ctx.db.insert(treeSocialCounts).values({
       treeId,
       likeCount: 0,
       viewCount: 1,
       updatedAt: now,
-    }).run();
+    });
   }
 
   return json({ recorded: true }, 201);

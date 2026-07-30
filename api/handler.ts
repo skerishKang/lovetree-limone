@@ -1,5 +1,4 @@
-import { drizzle } from "drizzle-orm/d1";
-import * as schema from "../db/schema";
+import { getDb } from "../db";
 
 function stripTrailingSlash(value: string): string {
   return value.replace(/\/+$/, "");
@@ -18,8 +17,8 @@ export function errorResponse(message: string, status: number): Response {
 
 export interface ApiContext {
   request: Request;
-  env: { DB: D1Database };
-  db: ReturnType<typeof drizzle<typeof schema>>;
+  env: { DATABASE_URL: string };
+  db: ReturnType<ReturnType<typeof getDb>>;
   url: URL;
   method: string;
   path: string;
@@ -70,7 +69,7 @@ import { socialRouter } from "./social";
 
 export async function handleApiRequest(
   request: Request,
-  env: { DB: D1Database }
+  env: { DATABASE_URL: string }
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
@@ -78,7 +77,7 @@ export async function handleApiRequest(
 
   if (!path.startsWith("/api/")) return null;
 
-  const db = drizzle(env.DB, { schema }) as ReturnType<typeof drizzle<typeof schema>>;
+  const db = getDb(env.DATABASE_URL);
   const ctx: ApiContext = {
     request,
     env: env as ApiContext["env"],

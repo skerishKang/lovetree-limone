@@ -55,8 +55,7 @@ async function listTrees(ctx: ApiContext): Promise<Response> {
     .from(trees)
     .where(eq(trees.ownerId, user.uid))
     .orderBy(desc(trees.updatedAt))
-    .limit(limit)
-    .all();
+    .limit(limit);
 
   return json(rows);
 }
@@ -66,7 +65,7 @@ async function createTree(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
-  const now = new Date().toISOString();
+  const now = new Date();
   const id = crypto.randomUUID();
 
   const tree = {
@@ -77,18 +76,18 @@ async function createTree(ctx: ApiContext): Promise<Response> {
     artist: String(body?.artist || ""),
     visibility: String(body?.visibility || "public"),
     groupName: body?.groupName ? String(body.groupName) : null,
-    keywords: body?.keywords ? JSON.stringify(body.keywords) : "[]",
+    keywords: body?.keywords ?? [],
     createdAt: now,
     updatedAt: now,
   };
 
-  await ctx.db.insert(trees).values(tree).run();
+  await ctx.db.insert(trees).values(tree);
   await ctx.db.insert(treeSocialCounts).values({
     treeId: id,
     likeCount: 0,
     viewCount: 0,
     updatedAt: now,
-  }).run();
+  });
 
   return json(tree, 201);
 }
@@ -97,12 +96,12 @@ async function getTree(ctx: ApiContext): Promise<Response> {
   const { id } = ctx.params;
   const user = await requireAuthUser(ctx);
 
-  const row = await ctx.db
+  const rows = await ctx.db
     .select()
     .from(trees)
-    .where(eq(trees.id, id))
-    .get();
+    .where(eq(trees.id, id));
 
+  const row = rows[0];
   if (!row) return errorResponse("Tree not found", 404);
 
   if (row.visibility !== "public" && (!user || row.ownerId !== user.uid)) {
@@ -120,26 +119,25 @@ async function updateTree(ctx: ApiContext): Promise<Response> {
   const existing = await ctx.db
     .select()
     .from(trees)
-    .where(eq(trees.id, id))
-    .get();
+    .where(eq(trees.id, id));
 
-  if (!existing) return errorResponse("Tree not found", 404);
-  if (existing.ownerId !== user.uid) return errorResponse("Forbidden", 403);
+  if (!existing[0]) return errorResponse("Tree not found", 404);
+  if (existing[0].ownerId !== user.uid) return errorResponse("Forbidden", 403);
 
   const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
-  const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
 
   if (body?.title !== undefined) updates.title = String(body.title);
   if (body?.memo !== undefined) updates.memo = String(body.memo);
   if (body?.artist !== undefined) updates.artist = String(body.artist);
   if (body?.visibility !== undefined) updates.visibility = String(body.visibility);
   if (body?.groupName !== undefined) updates.groupName = String(body.groupName);
-  if (body?.keywords !== undefined) updates.keywords = JSON.stringify(body.keywords);
+  if (body?.keywords !== undefined) updates.keywords = body.keywords;
 
-  await ctx.db.update(trees).set(updates).where(eq(trees.id, id)).run();
+  await ctx.db.update(trees).set(updates).where(eq(trees.id, id));
 
-  const updated = await ctx.db.select().from(trees).where(eq(trees.id, id)).get();
-  return json(updated);
+  const updated = await ctx.db.select().from(trees).where(eq(trees.id, id));
+  return json(updated[0]);
 }
 
 async function deleteTree(ctx: ApiContext): Promise<Response> {
@@ -150,13 +148,12 @@ async function deleteTree(ctx: ApiContext): Promise<Response> {
   const existing = await ctx.db
     .select()
     .from(trees)
-    .where(eq(trees.id, id))
-    .get();
+    .where(eq(trees.id, id));
 
-  if (!existing) return errorResponse("Tree not found", 404);
-  if (existing.ownerId !== user.uid) return errorResponse("Forbidden", 403);
+  if (!existing[0]) return errorResponse("Tree not found", 404);
+  if (existing[0].ownerId !== user.uid) return errorResponse("Forbidden", 403);
 
-  await ctx.db.delete(trees).where(eq(trees.id, id)).run();
+  await ctx.db.delete(trees).where(eq(trees.id, id));
   return json({ success: true });
 }
 
@@ -168,33 +165,33 @@ async function forkTree(ctx: ApiContext): Promise<Response> {
   const original = await ctx.db
     .select()
     .from(trees)
-    .where(eq(trees.id, id))
-    .get();
+    .where(eq(trees.id, id));
 
-  if (!original) return errorResponse("Tree not found", 404);
+  if (!original[0]) return errorResponse("Tree not found", 404);
 
-  const now = new Date().toISOString();
+  const now = new Date();
   const newId = crypto.randomUUID();
+  const o = original[0];
   const forked = {
     id: newId,
     ownerId: user.uid,
-    title: original.title ? `${original.title} (fork)` : "",
-    memo: original.memo || "",
-    artist: original.artist || "",
+    title: o.title ? `${o.title} (fork)` : "",
+    memo: o.memo || "",
+    artist: o.artist || "",
     visibility: "public",
     groupName: null,
-    keywords: original.keywords || "[]",
+    keywords: o.keywords ?? [],
     createdAt: now,
     updatedAt: now,
   };
 
-  await ctx.db.insert(trees).values(forked).run();
+  await ctx.db.insert(trees).values(forked);
   await ctx.db.insert(treeSocialCounts).values({
     treeId: newId,
     likeCount: 0,
     viewCount: 0,
     updatedAt: now,
-  }).run();
+  });
 
   return json(forked, 201);
 }
@@ -216,25 +213,23 @@ async function listCommunityTrees(ctx: ApiContext): Promise<Response> {
       .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
       .where(eq(trees.visibility, "public"))
       .orderBy(desc(orderByCol))
-      .limit(limit)
-      .all();
+      .limit(limit);
 
-    type JoinRow = {
-      trees: typeof trees.$inferSelect;
-      tree_social_counts: typeof treeSocialCounts.$inferSelect | null;
-    };
-
-    return json((rows as JoinRow[]).map((r) => ({
-      id: r.trees.id,
-      title: r.trees.title,
-      artist: r.trees.artist,
-      memo: r.trees.memo,
-      groupName: r.trees.group_name,
-      keywords: r.trees.keywords,
-      createdAt: r.trees.created_at,
-      likeCount: r.tree_social_counts?.like_count ?? 0,
-      viewCount: r.tree_social_counts?.view_count ?? 0,
-    })));
+    return json(rows.map((r: Record<string, unknown>) => {
+      const t = r.trees as Record<string, unknown>;
+      const s = r.tree_social_counts as Record<string, unknown> | null;
+      return {
+        id: t.id,
+        title: t.title,
+        artist: t.artist,
+        memo: t.memo,
+        groupName: t.group_name,
+        keywords: t.keywords,
+        createdAt: t.created_at,
+        likeCount: (s?.like_count as number) ?? 0,
+        viewCount: (s?.view_count as number) ?? 0,
+      };
+    }));
   }
 
   return json([]);
@@ -249,18 +244,16 @@ async function listGrowingTrees(ctx: ApiContext): Promise<Response> {
     .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
     .where(eq(trees.visibility, "public"))
     .orderBy(desc(treeSocialCounts.likeCount))
-    .limit(limit)
-    .all();
+    .limit(limit);
 
-  type JoinRow = {
-    trees: typeof trees.$inferSelect;
-    tree_social_counts: typeof treeSocialCounts.$inferSelect | null;
-  };
-
-  return json((rows as JoinRow[]).map((r) => ({
-    id: r.trees.id,
-    title: r.trees.title,
-    artist: r.trees.artist,
-    likeCount: r.tree_social_counts?.like_count ?? 0,
-  })));
+  return json(rows.map((r: Record<string, unknown>) => {
+    const t = r.trees as Record<string, unknown>;
+    const s = r.tree_social_counts as Record<string, unknown> | null;
+    return {
+      id: t.id,
+      title: t.title,
+      artist: t.artist,
+      likeCount: (s?.like_count as number) ?? 0,
+    };
+  }));
 }
