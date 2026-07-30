@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
 
 const galleryCards = [
   {
@@ -28,10 +28,11 @@ const galleryCards = [
 ];
 
 type PrivacyChoice = "private" | "later" | "public";
-type ViewMode = "tree" | "diary" | "story" | "album";
+type ViewMode = "tree" | "flow" | "diary" | "story" | "album";
 
 const viewModes: Array<{ id: ViewMode; label: string; caption: string; icon: string }> = [
   { id: "tree", label: "성장 트리", caption: "한 장에서 여러 가지로", icon: "⌘" },
+  { id: "flow", label: "이어지는 트리", caption: "영상과 마음이 선으로", icon: "↝" },
   { id: "diary", label: "마음 다이어리", caption: "시간순으로 차곡차곡", icon: "▤" },
   { id: "story", label: "스토리", caption: "한 순간씩 크게 감상", icon: "◫" },
   { id: "album", label: "앨범 보드", caption: "폴라로이드를 한눈에", icon: "▦" },
@@ -92,6 +93,59 @@ const sampleMoments = [
     date: "2026.10.11",
     image: "/moment-stage.jpg",
   },
+  {
+    id: 7,
+    title: "다시 찾은 다정한 인터뷰",
+    memo: "무대와는 다른 조용한 말투가 오래 마음에 남았어.",
+    relation: "댓글 따라감",
+    emotion: "위로",
+    date: "2026.10.24",
+    image: "/moment-friends.jpg",
+  },
+  {
+    id: 8,
+    title: "우리만 아는 마지막 앙코르",
+    memo: "좋아한 순간들이 이어져 이제는 나만의 길이 되었어.",
+    relation: "같은 무대",
+    emotion: "벅참",
+    date: "2026.11.07",
+    image: "/moment-purple.jpg",
+  },
+];
+
+const communityTrees = [
+  {
+    title: "함께 쌓인 보랏빛 순간",
+    creator: "오랜 응원과 위로가 모인 트리",
+    description: "처음의 설렘에서 오래 남는 위로까지, 서로의 마음이 여섯 갈래로 이어졌어요.",
+    image: "/moment-purple.jpg",
+    count: 8,
+    emotion: "응원",
+  },
+  {
+    title: "우리가 사랑한 새로운 계절",
+    creator: "봄을 닮은 장면들의 기록",
+    description: "벚꽃처럼 가볍게 시작한 마음이 다정한 추억으로 피어난 공개 러브트리예요.",
+    image: "/moment-spring.jpg",
+    count: 6,
+    emotion: "추억",
+  },
+  {
+    title: "빛나던 무대와 그다음 이야기",
+    creator: "공연장에서 시작된 마음",
+    description: "한 무대에서 인터뷰와 새로운 노래로 이어진 좋아함의 경로를 담았어요.",
+    image: "/moment-stage.jpg",
+    count: 7,
+    emotion: "벅참",
+  },
+  {
+    title: "다정한 말들이 자란 나무",
+    creator: "함께라서 더 선명한 기억",
+    description: "팬의 추천과 댓글을 따라 찾은 순간들이 한 그루의 따뜻한 나무가 되었어요.",
+    image: "/moment-friends.jpg",
+    count: 5,
+    emotion: "위로",
+  },
 ];
 
 function Brand({ onHome }: { onHome: () => void }) {
@@ -115,6 +169,7 @@ const growthStages = [
   { count: 2, label: "두 장면", copy: "첫 가지" },
   { count: 4, label: "작은 트리", copy: "이어진 마음" },
   { count: 6, label: "풍성한 트리", copy: "한 그루의 이야기" },
+  { count: 8, label: "이어지는 숲", copy: "여덟 갈래의 흐름" },
 ];
 
 function MomentCard({
@@ -151,6 +206,208 @@ function MomentCard({
   );
 }
 
+type FlowPosition = { x: number; y: number };
+
+const initialFlowPositions: FlowPosition[] = [
+  { x: 62, y: 52 },
+  { x: 680, y: 58 },
+  { x: 35, y: 280 },
+  { x: 710, y: 286 },
+  { x: 185, y: 480 },
+  { x: 570, y: 485 },
+  { x: 290, y: 42 },
+  { x: 425, y: 505 },
+];
+
+function flowCopy(count: number) {
+  if (count <= 1) {
+    return {
+      eyebrow: "01 · 첫 순간이 심어진 단계",
+      lines: ["첫 순간이", "조용히", "심어졌어요."],
+      description: "영상과 그때의 감상이 첫 마음 일기에 함께 남았습니다.",
+    };
+  }
+  if (count === 2) {
+    return {
+      eyebrow: "02 · 두 장면이 하나의 길이 되는 단계",
+      lines: ["두 장면이", "하나의 길로", "이어졌어요."],
+      description: "새 영상과 연결선이 노란빛으로 반짝이며 처음의 경로를 보여줘요.",
+    };
+  }
+  if (count <= 4) {
+    return {
+      eyebrow: "04 · 이어진 마음에 꽃이 피는 단계",
+      lines: ["이어진 마음에", "조용히", "꽃이 피었어요."],
+      description: "카드를 직접 옮겨 나만의 흐름으로 정리할 수 있어요.",
+    };
+  }
+  if (count <= 6) {
+    return {
+      eyebrow: "06 · 좋아한 순간이 여섯 갈래로 퍼지는 단계",
+      lines: ["좋아한 시간이", "차곡차곡 쌓여", "열매를 맺고 있어요."],
+      description: "마음 일기와 전체 흐름이 함께 자라 한 그루의 이야기가 됐어요.",
+    };
+  }
+  return {
+    eyebrow: `08 · 좋아한 순간이 ${count}개로 늘어난 단계`,
+    lines: ["좋아한 순간이", `벌써 ${count}개까지`, "자라고 있어요."],
+    description: "순간이 늘어나도 일기와 연결선으로 좋아하게 된 길을 따라갈 수 있어요.",
+  };
+}
+
+function youtubeId(value: string) {
+  return value.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{6,})/)?.[1] ?? "";
+}
+
+function FlowCanvas({
+  moments,
+  treeName,
+  activeId,
+  newId,
+  positions,
+  onSelect,
+  onMove,
+  onMoveEnd,
+  onAdd,
+  readOnly = false,
+}: {
+  moments: typeof sampleMoments;
+  treeName: string;
+  activeId: number;
+  newId: number;
+  positions: FlowPosition[];
+  onSelect: (id: number) => void;
+  onMove?: (id: number, position: FlowPosition) => void;
+  onMoveEnd?: () => void;
+  onAdd?: () => void;
+  readOnly?: boolean;
+}) {
+  const drag = useRef<{
+    id: number;
+    pointerId: number;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+    moved: boolean;
+  } | null>(null);
+  const root = { x: 455, y: 327 };
+
+  function startDrag(event: ReactPointerEvent<HTMLButtonElement>, id: number, position: FlowPosition) {
+    if (readOnly || !onMove) return;
+    drag.current = {
+      id,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: position.x,
+      originY: position.y,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function moveDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const current = drag.current;
+    if (!current || !onMove) return;
+    const dx = event.clientX - current.startX;
+    const dy = event.clientY - current.startY;
+    if (Math.abs(dx) + Math.abs(dy) > 5) current.moved = true;
+    onMove(current.id, {
+      x: Math.max(10, Math.min(740, current.originX + dx)),
+      y: Math.max(10, Math.min(505, current.originY + dy)),
+    });
+  }
+
+  function endDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!drag.current) return;
+    if (event.currentTarget.hasPointerCapture(drag.current.pointerId)) {
+      event.currentTarget.releasePointerCapture(drag.current.pointerId);
+    }
+    const moved = drag.current.moved;
+    drag.current = null;
+    if (moved) onMoveEnd?.();
+  }
+
+  return (
+    <div className="flow-canvas">
+      <span className="flow-orbit flow-orbit-one" aria-hidden="true" />
+      <span className="flow-orbit flow-orbit-two" aria-hidden="true" />
+      {moments.map((moment, index) => {
+        const position = positions[index] ?? initialFlowPositions[index];
+        const target = { x: position.x + 84, y: position.y + 76 };
+        const dx = target.x - root.x;
+        const dy = target.y - root.y;
+        const length = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        const isNew = moment.id === newId;
+        return (
+          <span key={`branch-${moment.id}`}>
+            <i
+              className={`flow-branch-line ${isNew ? "new" : ""}`}
+              style={{
+                left: root.x,
+                top: root.y,
+                width: length,
+                transform: `rotate(${angle}deg)`,
+              }}
+              aria-hidden="true"
+            />
+            {index > 0 && (
+              <span
+                className="flow-relation"
+                style={{ left: root.x + dx * 0.68, top: root.y + dy * 0.68 }}
+              >
+                {moment.relation}
+              </span>
+            )}
+          </span>
+        );
+      })}
+
+      <article className={`flow-root ${newId ? "sparkle" : ""}`}>
+        <span aria-hidden="true">♥</span>
+        <small>MY LOVE TREE</small>
+        <strong>{treeName}</strong>
+        <em>{moments.length} moments</em>
+      </article>
+
+      {moments.map((moment, index) => {
+        const position = positions[index] ?? initialFlowPositions[index];
+        return (
+          <button
+            className={`flow-node ${activeId === moment.id ? "active" : ""} ${newId === moment.id ? "new" : ""}`}
+            style={{ left: position.x, top: position.y }}
+            type="button"
+            key={moment.id}
+            onClick={() => onSelect(moment.id)}
+            onPointerDown={(event) => startDrag(event, moment.id, position)}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+          >
+            <span className="flow-node-photo">
+              <Image src={moment.image} alt="" fill sizes="175px" draggable={false} />
+              <b>{String(index + 1).padStart(2, "0")}</b>
+              <i aria-hidden="true">▶</i>
+            </span>
+            <span className="flow-node-copy">
+              <strong>{moment.memo}</strong>
+              <small>{moment.date}{readOnly ? "" : " · 끌어서 위치 바꾸기"}</small>
+            </span>
+          </button>
+        );
+      })}
+
+      {onAdd && (
+        <button className="flow-add-end" type="button" onClick={onAdd} aria-label="새 영상 추가">
+          ＋
+        </button>
+      )}
+    </div>
+  );
+}
+
 function Workspace({
   treeName,
   initialMode,
@@ -169,15 +426,21 @@ function Workspace({
   const [relation, setRelation] = useState("댓글 따라감");
   const [emotion, setEmotion] = useState("설렘");
   const [memo, setMemo] = useState("");
-  const [notice, setNotice] = useState("같은 순간을 네 가지 모습으로 볼 수 있어요.");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [newMomentId, setNewMomentId] = useState(0);
+  const [flowExpanded, setFlowExpanded] = useState(false);
+  const [flowPositions, setFlowPositions] = useState(initialFlowPositions);
+  const [notice, setNotice] = useState("같은 순간을 다섯 가지 모습으로 볼 수 있어요.");
 
   const moments = sampleMoments.slice(0, momentCount);
   const activeMoment = moments.find((moment) => moment.id === activeId) ?? moments[moments.length - 1];
   const activeMode = viewModes.find((item) => item.id === mode) ?? viewModes[0];
+  const previewVideoId = youtubeId(videoUrl);
 
   function chooseStage(count: number) {
     setMomentCount(count);
     setActiveId(Math.min(activeId, count));
+    setNewMomentId(0);
     setNotice(
       count === 1
         ? "첫 순간이 러브트리의 씨앗이 되었어요."
@@ -196,8 +459,20 @@ function Workspace({
     const nextCount = momentCount + 1;
     setMomentCount(nextCount);
     setActiveId(nextCount);
+    setNewMomentId(nextCount);
     setMemo("");
+    setVideoUrl("");
     setNotice(`새 순간이 ${relation} 가지로 이어졌어요.`);
+  }
+
+  function moveFlowNode(id: number, position: FlowPosition) {
+    setFlowPositions((current) => current.map((item, index) => (index === id - 1 ? position : item)));
+  }
+
+  function focusMomentForm() {
+    const form = document.getElementById("moment-form");
+    form?.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.setTimeout(() => document.getElementById("moment-video-url")?.focus(), 350);
   }
 
   function toggleFullscreen() {
@@ -207,6 +482,15 @@ function Workspace({
       void document.documentElement.requestFullscreen?.();
     }
   }
+
+  useEffect(() => {
+    if (!flowExpanded) return;
+    const closeExpanded = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFlowExpanded(false);
+    };
+    window.addEventListener("keydown", closeExpanded);
+    return () => window.removeEventListener("keydown", closeExpanded);
+  }, [flowExpanded]);
 
   return (
     <div className="workspace-shell">
@@ -283,7 +567,7 @@ function Workspace({
               <span>{momentCount}개의 순간이 이어져 있어요</span>
             </div>
             <div className="canvas-controls" aria-label="화면 크기 조절">
-              {mode === "tree" && (
+              {(mode === "tree" || mode === "flow") && (
                 <>
                   <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
                   <span>{zoom}%</span>
@@ -291,7 +575,9 @@ function Workspace({
                   <button type="button" onClick={() => setZoom(90)}>맞춤</button>
                 </>
               )}
-              <button type="button" onClick={toggleFullscreen}>전체 화면</button>
+              <button type="button" onClick={mode === "flow" ? () => setFlowExpanded(true) : toggleFullscreen}>
+                {mode === "flow" ? "크게 펼쳐보기" : "전체 화면"}
+              </button>
             </div>
           </header>
 
@@ -337,6 +623,64 @@ function Workspace({
                     </button>
                   )}
                 </div>
+              </div>
+            )}
+
+            {mode === "flow" && (
+              <div className="connected-flow-view">
+                <aside className="flow-story-column">
+                  <section className="flow-intro">
+                    <p>{flowCopy(momentCount).eyebrow}</p>
+                    <h2 className={newMomentId ? "flow-h1 changed" : "flow-h1"}>
+                      <span>{flowCopy(momentCount).lines[0]}</span>
+                      <span>{flowCopy(momentCount).lines[1]}</span>
+                      <em>{flowCopy(momentCount).lines[2]}</em>
+                    </h2>
+                    <p>{flowCopy(momentCount).description}</p>
+                    <div className="flow-change-notice">
+                      <i aria-hidden="true">✦</i>
+                      <span>{newMomentId ? "새 영상과 선, 마음 일기가 함께 이어졌어요." : "카드를 끌어서 원하는 자리에 놓아보세요."}</span>
+                    </div>
+                  </section>
+                  <section className="flow-diary">
+                    <header><h3>마음 일기</h3><span>{momentCount} STORIES</span></header>
+                    <div>
+                      {moments.map((moment, index) => (
+                        <button
+                          className={`${activeMoment.id === moment.id ? "active" : ""} ${newMomentId === moment.id ? "new" : ""}`}
+                          type="button"
+                          key={moment.id}
+                          onClick={() => setActiveId(moment.id)}
+                        >
+                          <b>{String(index + 1).padStart(2, "0")}</b>
+                          <span><small>{moment.date}</small><strong>{moment.memo}</strong></span>
+                          <i aria-hidden="true">›</i>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                </aside>
+                <section className="flow-workbench">
+                  <header>
+                    <strong>WHOLE LOVETREE · 전체 영상 흐름</strong>
+                    <span>선은 좋아하게 된 순서를 보여줘요</span>
+                  </header>
+                  <div className="flow-viewport">
+                    <div className="flow-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
+                      <FlowCanvas
+                        moments={moments}
+                        treeName={treeName}
+                        activeId={activeMoment.id}
+                        newId={newMomentId}
+                        positions={flowPositions}
+                        onSelect={setActiveId}
+                        onMove={moveFlowNode}
+                        onMoveEnd={() => setNotice("카드를 원하는 자리로 옮겼어요. 연결선도 함께 따라왔어요.")}
+                        onAdd={focusMomentForm}
+                      />
+                    </div>
+                  </div>
+                </section>
               </div>
             )}
 
@@ -444,8 +788,21 @@ function Workspace({
             </div>
             <label>
               영상 또는 사진 링크
-              <input type="url" placeholder="https://youtube.com/watch?v=..." />
+              <input
+                id="moment-video-url"
+                type="url"
+                value={videoUrl}
+                onChange={(event) => setVideoUrl(event.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+                required
+              />
             </label>
+            <div
+              className={`moment-link-preview ${previewVideoId ? "ready" : ""}`}
+              style={previewVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${previewVideoId}/hqdefault.jpg)` } : undefined}
+            >
+              {previewVideoId ? <><span aria-hidden="true">▶</span><small>새 영상 미리보기</small></> : "링크를 붙여넣으면 영상이 바로 보여요."}
+            </div>
             <div className="moment-fields">
               <label>기억할 시각<input type="text" defaultValue="00:00" /></label>
               <label>기록 날짜<input type="text" defaultValue="2026. 07. 30." /></label>
@@ -497,6 +854,90 @@ function Workspace({
         </aside>
       </main>
 
+      {flowExpanded && (
+        <div className="flow-expanded" role="dialog" aria-modal="true" aria-label="이어지는 러브트리 전체 화면">
+          <section className="flow-expanded-shell">
+            <header>
+              <div>
+                <p>WHOLE LOVETREE · 전체 영상 흐름</p>
+                <h2>{treeName}</h2>
+              </div>
+              <div className="flow-expanded-tools">
+                <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
+                <span>{zoom}%</span>
+                <button type="button" onClick={() => setZoom(Math.min(110, zoom + 10))}>＋</button>
+                <button type="button" onClick={() => setZoom(90)}>맞춤</button>
+                <button className="flow-expanded-close" type="button" onClick={() => setFlowExpanded(false)}>×</button>
+              </div>
+            </header>
+            <div className="flow-expanded-body">
+              <div className="flow-expanded-viewport">
+                <div className="flow-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
+                  <FlowCanvas
+                    moments={moments}
+                    treeName={treeName}
+                    activeId={activeMoment.id}
+                    newId={newMomentId}
+                    positions={flowPositions}
+                    onSelect={setActiveId}
+                    onMove={moveFlowNode}
+                    onMoveEnd={() => setNotice("전체 화면에서도 카드 위치가 그대로 저장됐어요.")}
+                    onAdd={() => document.getElementById("flow-full-url")?.focus()}
+                  />
+                </div>
+              </div>
+              <aside className="flow-full-drawer">
+                <p>전체 화면에서도 이어보기</p>
+                <h3>새 영상과 마음을<br />바로 연결해보세요.</h3>
+                <article>
+                  <span><Image src={activeMoment.image} alt="" fill sizes="82px" /></span>
+                  <div><small>지금 선택한 순간</small><strong>{activeMoment.memo}</strong></div>
+                </article>
+                <form onSubmit={addMoment}>
+                  <label>
+                    영상 링크
+                    <input
+                      id="flow-full-url"
+                      type="url"
+                      value={videoUrl}
+                      onChange={(event) => setVideoUrl(event.target.value)}
+                      placeholder="https://youtube.com/watch?v=..."
+                      required
+                    />
+                  </label>
+                  <fieldset>
+                    <legend>이어진 이유</legend>
+                    <div className="choice-chips">
+                      {["댓글 따라감", "팬의 추천", "다른 모습", "같은 무대", "직접 검색"].map((item) => (
+                        <button
+                          className={relation === item ? "active" : ""}
+                          type="button"
+                          key={item}
+                          onClick={() => setRelation(item)}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <label>
+                    한줄 감상
+                    <textarea
+                      value={memo}
+                      maxLength={140}
+                      onChange={(event) => setMemo(event.target.value)}
+                      placeholder="이 순간에 남기고 싶은 마음"
+                    />
+                  </label>
+                  <button className="moment-submit" type="submit">새 가지 이어 붙이기 →</button>
+                </form>
+                <small>추가하면 새 카드와 연결선이 노란빛으로 표시되고 마음 일기에도 바로 남아요.</small>
+              </aside>
+            </div>
+          </section>
+        </div>
+      )}
+
       <div className="workspace-toast" role="status">
         <span aria-hidden="true">✦</span>
         {notice}
@@ -505,8 +946,212 @@ function Workspace({
   );
 }
 
+function Community({
+  onHome,
+  onStart,
+}: {
+  onHome: () => void;
+  onStart: () => void;
+}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("전체");
+  const [favorites, setFavorites] = useState<number[]>([0]);
+  const [expanded, setExpanded] = useState(false);
+  const [activeMomentId, setActiveMomentId] = useState(1);
+
+  const selectedTree = communityTrees[selectedIndex];
+  const publicMoments = sampleMoments.slice(0, selectedTree.count);
+  const activeMoment = publicMoments.find((moment) => moment.id === activeMomentId) ?? publicMoments[0];
+  const filteredTrees = communityTrees.filter((tree) => {
+    const matchesQuery = `${tree.title} ${tree.creator} ${tree.emotion}`.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery && (filter === "전체" || tree.emotion === filter);
+  });
+
+  function selectTree(tree: (typeof communityTrees)[number]) {
+    const index = communityTrees.indexOf(tree);
+    setSelectedIndex(index);
+    setActiveMomentId(1);
+  }
+
+  useEffect(() => {
+    if (!expanded) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExpanded(false);
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [expanded]);
+
+  return (
+    <div className="community-shell">
+      <header className="community-topbar">
+        <Brand onHome={onHome} />
+        <nav aria-label="주요 메뉴">
+          <button type="button" onClick={onHome}>첫 화면</button>
+          <button type="button" onClick={onHome}>LoveTree 소개 보기</button>
+          <button className="active" type="button">둘러보기</button>
+          <button type="button" onClick={onStart}>내 러브트리 시작하기</button>
+        </nav>
+        <button className="community-profile" type="button">
+          <span aria-hidden="true">봄</span> 오늘도 빛나는 하루 ⌄
+        </button>
+      </header>
+
+      <main className="community-layout">
+        <section className="community-list" aria-labelledby="community-title">
+          <div className="community-intro">
+            <p>공개 러브트리 둘러보기 ❧</p>
+            <h1 id="community-title">마음이 머무는 <em>순간들을</em><br />천천히 감상해보세요</h1>
+            <span>다른 팬들이 이어간 첫 순간과 감정의 흐름을 둘러보고, 마음이 닿는 트리를 만나보세요.</span>
+          </div>
+          <div className="community-controls">
+            <label>
+              <span aria-hidden="true">⌕</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="인물, 트리 제목, 감정으로 찾아보세요"
+              />
+            </label>
+            <div>
+              {["전체", "응원", "추억", "벅참", "위로"].map((item) => (
+                <button
+                  className={filter === item ? "active" : ""}
+                  type="button"
+                  key={item}
+                  onClick={() => setFilter(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="community-grid">
+            {filteredTrees.map((tree) => {
+              const index = communityTrees.indexOf(tree);
+              return (
+                <article className={selectedIndex === index ? "active" : ""} key={tree.title}>
+                  <button className="community-card-main" type="button" onClick={() => selectTree(tree)}>
+                    <span className="community-card-photo">
+                      <Image src={tree.image} alt="" fill sizes="150px" />
+                    </span>
+                    <span>
+                      <strong>{tree.title}</strong>
+                      <small>{tree.creator}</small>
+                      <em>순간 {tree.count}개 · {tree.emotion}</em>
+                    </span>
+                  </button>
+                  <button
+                    className={favorites.includes(index) ? "favorite active" : "favorite"}
+                    type="button"
+                    aria-label={`${tree.title} 좋아요`}
+                    onClick={() => setFavorites((current) => (
+                      current.includes(index) ? current.filter((item) => item !== index) : [...current, index]
+                    ))}
+                  >
+                    ♥
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+          <button className="community-more" type="button">더 많은 공개 러브트리 보기 ⌄</button>
+        </section>
+
+        <aside className="community-preview">
+          <article className="community-book">
+            <header>
+              <p>❧ 이 러브트리에 담긴 마음</p>
+              <h2>{selectedTree.title}</h2>
+              <span>{selectedTree.description}</span>
+            </header>
+            <div className="community-collage">
+              <span className="community-collage-branch" aria-hidden="true" />
+              <article className="community-paper community-hero-paper">
+                <b>01</b>
+                <span><Image src={publicMoments[0].image} alt="" fill sizes="260px" /></span>
+                <strong>{publicMoments[0].title}</strong>
+                <small>{publicMoments[0].memo}</small>
+              </article>
+              <article className="community-paper community-note-paper">
+                <b>03</b>
+                <p>그날의 떨림이<br />지금의 나를<br />따뜻하게 만들어줘서<br />고마워. ♡</p>
+              </article>
+              <article className="community-paper community-small-paper">
+                <b>02</b>
+                <span><Image src={publicMoments[1].image} alt="" fill sizes="190px" /></span>
+                <strong>{publicMoments[1].title}</strong>
+              </article>
+              <article className="community-paper community-memory-paper">
+                <b>04</b>
+                <strong>오래 남은 마음</strong>
+                <p>{publicMoments[Math.min(3, publicMoments.length - 1)].memo}</p>
+              </article>
+            </div>
+            <footer>
+              <div><span>대표 순간</span><strong>{selectedTree.count}개</strong><small>♡ {1024 + selectedIndex * 367}</small></div>
+              <div><span>이어진 감정</span><p>♡ 설렘　☾ 위로　✦ {selectedTree.emotion}</p></div>
+            </footer>
+            <button className="community-open-tree" type="button" onClick={() => setExpanded(true)}>
+              전체 러브트리 펼쳐보기 ✣
+            </button>
+          </article>
+          <p className="community-hint">
+            <span><strong>왼쪽 카드를 눌러</strong> 다른 트리를 미리 볼 수 있어요.</span>
+            <span>펼쳐보기에서는 모든 순간과 이어진 이유를 함께 볼 수 있어요.</span>
+          </p>
+        </aside>
+      </main>
+
+      {expanded && (
+        <div className="public-tree-expanded" role="dialog" aria-modal="true" aria-label="공개 러브트리 전체 보기">
+          <section>
+            <header>
+              <div><p>PUBLIC LOVE TREE</p><h2>{selectedTree.title}</h2><span>{selectedTree.count} moments · {selectedTree.emotion}</span></div>
+              <button type="button" onClick={() => setExpanded(false)} aria-label="펼쳐보기 닫기">×</button>
+            </header>
+            <div className="public-tree-body">
+              <div className="public-tree-canvas">
+                <FlowCanvas
+                  moments={publicMoments}
+                  treeName={selectedTree.title}
+                  activeId={activeMoment.id}
+                  newId={0}
+                  positions={initialFlowPositions}
+                  onSelect={setActiveMomentId}
+                  readOnly
+                />
+              </div>
+              <aside>
+                <p>{String(activeMoment.id).padStart(2, "0")} · {activeMoment.emotion}</p>
+                <h3>{activeMoment.title}</h3>
+                <article>
+                  <strong>이 순간에 남긴 마음</strong>
+                  <span>{activeMoment.memo}</span>
+                </article>
+                <article>
+                  <strong>이어진 이유</strong>
+                  <span>{activeMoment.relation}</span>
+                </article>
+                <article>
+                  <strong>이 순간에 달린 반응</strong>
+                  <span>“이 장면을 나도 오래 기억하고 있어요.”</span>
+                  <span>“다음 순간으로 이어진 길이 정말 다정해요.”</span>
+                </article>
+                <button type="button" onClick={onStart}>나도 러브트리 시작하기 →</button>
+              </aside>
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
-  const [view, setView] = useState<"home" | "builder" | "workspace">("home");
+  const [view, setView] = useState<"home" | "builder" | "workspace" | "community">("home");
   const [treeName, setTreeName] = useState("우리의 빛나는 순간들");
   const [privacy, setPrivacy] = useState<PrivacyChoice>("private");
   const [selectedFormat, setSelectedFormat] = useState<ViewMode>("tree");
@@ -514,7 +1159,7 @@ export default function Home() {
 
   useEffect(() => {
     const returnHomeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && view !== "home") setView("home");
+      if (event.key === "Escape" && view === "builder") setView("home");
     };
     window.addEventListener("keydown", returnHomeOnEscape);
     return () => window.removeEventListener("keydown", returnHomeOnEscape);
@@ -539,6 +1184,10 @@ export default function Home() {
     );
   }
 
+  if (view === "community") {
+    return <Community onHome={() => setView("home")} onStart={() => setView("builder")} />;
+  }
+
   if (view === "builder") {
     return (
       <div className="builder-shell">
@@ -551,7 +1200,7 @@ export default function Home() {
           <nav className="builder-nav" aria-label="주요 메뉴">
             <button type="button" onClick={() => setView("home")}>첫 화면</button>
             <a href="#builder-guide">LoveTree 소개 보기</a>
-            <button type="button" onClick={() => setView("home")}>둘러보기</button>
+            <button type="button" onClick={() => setView("community")}>둘러보기</button>
             <a className="active" href="#builder-form">내 러브트리 시작하기</a>
           </nav>
           <button className="builder-profile" type="button" aria-label="프로필 메뉴">
@@ -673,7 +1322,7 @@ export default function Home() {
                 <button className="builder-submit" type="submit">
                   내 러브트리 만들기 <span aria-hidden="true">✣</span>
                 </button>
-                <button className="builder-browse" type="button" onClick={() => setView("home")}>
+                <button className="builder-browse" type="button" onClick={() => setView("community")}>
                   공개 트리 먼저 둘러보기
                 </button>
               </div>
@@ -753,7 +1402,7 @@ export default function Home() {
               <div>
                 <p className="builder-overline"><span aria-hidden="true">✿</span> 이렇게 자라날 수 있어요.</p>
                 <strong>당신만의 감정과 기억들이<br />하나의 가지가 되어,<br />아름다운 이야기를 완성해요.</strong>
-                <button type="button" onClick={() => setView("home")}>예시 트리 둘러보기 <span aria-hidden="true">→</span></button>
+                <button type="button" onClick={() => setView("community")}>예시 트리 둘러보기 <span aria-hidden="true">→</span></button>
               </div>
               <div className="mini-tree" aria-hidden="true">
                 <i />
@@ -796,7 +1445,7 @@ export default function Home() {
         </a>
 
         <nav className="nav" aria-label="주요 메뉴">
-          <a href="#trees">둘러보기</a>
+          <button type="button" onClick={() => setView("community")}>둘러보기</button>
           <a href="#features">내 트리</a>
           <button className="login-button" type="button" onClick={() => setView("builder")}>
             로그인
@@ -832,9 +1481,9 @@ export default function Home() {
               <button className="button button-primary" type="button" onClick={() => setView("builder")}>
                 내 트리 시작하기 <span aria-hidden="true">✣</span>
               </button>
-              <a className="button button-secondary" href="#trees">
+              <button className="button button-secondary" type="button" onClick={() => setView("community")}>
                 공개 트리 둘러보기 <span aria-hidden="true">→</span>
-              </a>
+              </button>
             </div>
           </div>
 
@@ -947,7 +1596,7 @@ export default function Home() {
             <p className="eyebrow">PUBLIC LOVE TREES</p>
             <h2 id="gallery-title">마음이 닿은 트리들</h2>
             <p>다른 팬들이 가꾼 따뜻한 트리를 만나보세요.</p>
-            <a href="#top">천천히 둘러보기 <span aria-hidden="true">↗</span></a>
+            <button type="button" onClick={() => setView("community")}>천천히 둘러보기 <span aria-hidden="true">↗</span></button>
           </div>
           <div className="gallery-grid">
             {galleryCards.map((card) => (

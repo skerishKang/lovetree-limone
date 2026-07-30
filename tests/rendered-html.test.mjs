@@ -59,9 +59,14 @@ test("keeps finished-site assets and metadata wired", async () => {
   assert.match(page, /공개 범위 선택/);
   assert.match(page, /className="workspace-shell"/);
   assert.match(page, /성장 트리/);
+  assert.match(page, /이어지는 트리/);
   assert.match(page, /마음 다이어리/);
   assert.match(page, /스토리/);
   assert.match(page, /앨범 보드/);
+  assert.match(page, /flow-h1/);
+  assert.match(page, /className="community-shell"/);
+  assert.match(page, /전체 러브트리 펼쳐보기/);
+  assert.match(page, /setView\("community"\)/);
   assert.match(page, /setView\("workspace"\)/);
   assert.match(page, /setView\("builder"\)/);
   assert.match(layout, /generateMetadata/);
