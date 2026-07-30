@@ -408,6 +408,93 @@ function FlowCanvas({
   );
 }
 
+const diaryBoardPositions: FlowPosition[] = [
+  { x: 36, y: 72 },
+  { x: 300, y: 104 },
+  { x: 570, y: 64 },
+  { x: 130, y: 360 },
+  { x: 410, y: 388 },
+  { x: 650, y: 345 },
+  { x: 54, y: 615 },
+  { x: 360, y: 640 },
+];
+
+function DiaryBoard({
+  moments,
+  activeId,
+  newId,
+  onSelect,
+  onAdd,
+}: {
+  moments: typeof sampleMoments;
+  activeId: number;
+  newId: number;
+  onSelect: (id: number) => void;
+  onAdd: () => void;
+}) {
+  return (
+    <div className="diary-flow-board">
+      <span className="diary-board-title">순간을 이어가는 중 ♡</span>
+      <span className="diary-board-date">2026 — 지금</span>
+      <span className="diary-sprig diary-sprig-one" aria-hidden="true" />
+      <span className="diary-sprig diary-sprig-two" aria-hidden="true" />
+
+      {moments.slice(0, -1).map((moment, index) => {
+        const from = diaryBoardPositions[index];
+        const to = diaryBoardPositions[index + 1];
+        const x1 = from.x + 102;
+        const y1 = from.y + 105;
+        const x2 = to.x + 102;
+        const y2 = to.y + 105;
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        const nextMoment = moments[index + 1];
+        return (
+          <span key={`diary-wire-${moment.id}`}>
+            <i
+              className={`diary-wire ${nextMoment.id === newId ? "new" : ""}`}
+              style={{ left: x1, top: y1, width: length, transform: `rotate(${angle}deg)` }}
+              aria-hidden="true"
+            />
+            <span className="diary-wire-label" style={{ left: x1 + dx / 2, top: y1 + dy / 2 }}>
+              {nextMoment.relation}
+            </span>
+          </span>
+        );
+      })}
+
+      {moments.map((moment, index) => {
+        const position = diaryBoardPositions[index];
+        return (
+          <article
+            className={`diary-memory ${activeId === moment.id ? "active" : ""} ${newId === moment.id ? "new" : ""}`}
+            style={{ left: position.x, top: position.y }}
+            key={moment.id}
+          >
+            <span className="diary-tape" aria-hidden="true" />
+            <b>{String(index + 1).padStart(2, "0")}</b>
+            <button type="button" onClick={() => onSelect(moment.id)}>
+              <span className="diary-memory-photo">
+                <Image src={moment.image} alt="" fill sizes="210px" />
+                <i aria-hidden="true">▶</i>
+              </span>
+              <span className="diary-memory-body">
+                <span><em>{moment.emotion}</em><small>{moment.date}</small></span>
+                <strong>{moment.title}</strong>
+                <p>{moment.memo}</p>
+                <small>↝ {moment.relation}</small>
+              </span>
+            </button>
+          </article>
+        );
+      })}
+      <button className="diary-add-here" type="button" onClick={onAdd}>⊕ 이 다음 순간 이어가기</button>
+    </div>
+  );
+}
+
 function Workspace({
   treeName,
   initialMode,
@@ -427,6 +514,10 @@ function Workspace({
   const [emotion, setEmotion] = useState("설렘");
   const [memo, setMemo] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [entryKind, setEntryKind] = useState<"video" | "note">("video");
+  const [entryTitle, setEntryTitle] = useState("");
+  const [entryTime, setEntryTime] = useState("00:00");
+  const [entryDate, setEntryDate] = useState("2026-07-30");
   const [newMomentId, setNewMomentId] = useState(0);
   const [flowExpanded, setFlowExpanded] = useState(false);
   const [flowPositions, setFlowPositions] = useState(initialFlowPositions);
@@ -436,6 +527,7 @@ function Workspace({
   const activeMoment = moments.find((moment) => moment.id === activeId) ?? moments[moments.length - 1];
   const activeMode = viewModes.find((item) => item.id === mode) ?? viewModes[0];
   const previewVideoId = youtubeId(videoUrl);
+  const standaloneMode = mode === "flow" || mode === "diary";
 
   function chooseStage(count: number) {
     setMoments(sampleMoments.slice(0, count));
@@ -462,16 +554,19 @@ function Workspace({
       ...current,
       {
         ...template,
-        title: previewVideoId ? `새로 이어진 영상 ${String(nextCount).padStart(2, "0")}` : template.title,
+        title: entryTitle.trim() || (entryKind === "note" ? "오늘의 한 문장" : `새로 이어진 영상 ${String(nextCount).padStart(2, "0")}`),
         memo: memo.trim() || template.memo,
         relation,
         emotion,
+        date: entryDate.replaceAll("-", "."),
       },
     ]);
     setActiveId(nextCount);
     setNewMomentId(nextCount);
     setMemo("");
     setVideoUrl("");
+    setEntryTitle("");
+    setEntryTime("00:00");
     setNotice(`새 순간이 ${relation} 가지로 이어졌어요.`);
   }
 
@@ -482,7 +577,10 @@ function Workspace({
   function focusMomentForm() {
     const form = document.getElementById("moment-form");
     form?.scrollIntoView({ behavior: "smooth", block: "center" });
-    window.setTimeout(() => document.getElementById("moment-video-url")?.focus(), 350);
+    window.setTimeout(
+      () => document.getElementById(mode === "diary" && entryKind === "note" ? "moment-entry-title" : "moment-video-url")?.focus(),
+      350,
+    );
   }
 
   function toggleFullscreen() {
@@ -503,7 +601,7 @@ function Workspace({
   }, [flowExpanded]);
 
   return (
-    <div className="workspace-shell">
+    <div className={`workspace-shell workspace-mode-${mode} ${standaloneMode ? "workspace-standalone-mode" : ""}`}>
       <header className="workspace-topbar">
         <Brand onHome={onHome} />
         <nav className="workspace-mode-tabs" aria-label="러브트리 보기 방식">
@@ -531,43 +629,87 @@ function Workspace({
         </div>
       </header>
 
+      {standaloneMode && (
+        <nav className="standalone-progress" aria-label="러브트리 기록 단계">
+          <span className="done"><b>✓</b> 첫 순간</span>
+          <span className={mode === "diary" ? "active" : "done"}><b>{mode === "diary" ? "02" : "✓"}</b> 마음 기록</span>
+          <span className="done"><b>✓</b> 다음 영상 잇기</span>
+          <span className={mode === "flow" ? "active" : ""}><b>04</b> 전체 가지 보기</span>
+          <span><b>05</b> 꽃·열매 맺기</span>
+        </nav>
+      )}
+
       <main className="workspace-layout">
         <aside className="workspace-rail">
-          <p className="workspace-overline">MY LOVE TREE</p>
-          <h1>{treeName}</h1>
-          <p className="workspace-privacy">♙ 나만 보는 러브트리</p>
-          <p className="workspace-intro">
-            한 번 남긴 순간은 그대로 두고,
-            <br />
-            보고 싶은 방식만 바꿔보세요.
-          </p>
+          {mode === "diary" ? (
+            <>
+              <p className="workspace-overline">OUR LOVE DIARY</p>
+              <h1>{treeName}<em> 순간들</em></h1>
+              <p className="workspace-privacy">▣ 나만 보는 러브트리</p>
+              <div className="diary-summary-actions">
+                <button type="button" onClick={onEdit}>✎ 제목 수정</button>
+                <button type="button">◉ 공개 전환</button>
+              </div>
+              <p className="workspace-intro diary-summary-copy">
+                영상 하나와 그때의 마음을
+                <br />
+                다이어리 한 장처럼 남겨요.
+                <br />
+                선은 좋아하게 된 순서만 알려줍니다.
+              </p>
+              <div className="diary-summary-count">
+                <strong>{momentCount}</strong>
+                <span>개의 순간이 이어져 있어요</span>
+              </div>
+              <div className="diary-emotion-cloud">
+                {Array.from(new Set(moments.map((moment) => moment.emotion))).map((item) => (
+                  <span key={item}>{item} {moments.filter((moment) => moment.emotion === item).length}</span>
+                ))}
+              </div>
+              <div className="diary-summary-bottom">
+                <button type="button" onClick={() => setActiveId(moments[moments.length - 1].id)}>❦ 가장 최근 순간 보기</button>
+                <button type="button" onClick={() => chooseStage(4)}>↺ 예시 기록으로 되돌리기</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="workspace-overline">MY LOVE TREE</p>
+              <h1>{treeName}</h1>
+              <p className="workspace-privacy">♙ 나만 보는 러브트리</p>
+              <p className="workspace-intro">
+                한 번 남긴 순간은 그대로 두고,
+                <br />
+                보고 싶은 방식만 바꿔보세요.
+              </p>
 
-          <section className="growth-selector" aria-labelledby="growth-title">
-            <div>
-              <span id="growth-title">트리의 성장 단계</span>
-              <small>{momentCount} moments</small>
-            </div>
-            {growthStages.map((stage) => (
-              <button
-                className={momentCount === stage.count ? "active" : ""}
-                type="button"
-                key={stage.count}
-                onClick={() => chooseStage(stage.count)}
-              >
-                <b>{String(stage.count).padStart(2, "0")}</b>
-                <span><strong>{stage.label}</strong><small>{stage.copy}</small></span>
-                <i aria-hidden="true">›</i>
-              </button>
-            ))}
-          </section>
+              <section className="growth-selector" aria-labelledby="growth-title">
+                <div>
+                  <span id="growth-title">트리의 성장 단계</span>
+                  <small>{momentCount} moments</small>
+                </div>
+                {growthStages.map((stage) => (
+                  <button
+                    className={momentCount === stage.count ? "active" : ""}
+                    type="button"
+                    key={stage.count}
+                    onClick={() => chooseStage(stage.count)}
+                  >
+                    <b>{String(stage.count).padStart(2, "0")}</b>
+                    <span><strong>{stage.label}</strong><small>{stage.copy}</small></span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+                ))}
+              </section>
 
-          <section className="mode-note">
-            <span aria-hidden="true">{activeMode.icon}</span>
-            <div>
-              <strong>{activeMode.label}</strong>
-              <p>{activeMode.caption}</p>
-            </div>
-          </section>
+              <section className="mode-note">
+                <span aria-hidden="true">{activeMode.icon}</span>
+                <div>
+                  <strong>{activeMode.label}</strong>
+                  <p>{activeMode.caption}</p>
+                </div>
+              </section>
+            </>
+          )}
         </aside>
 
         <section className="workspace-stage" aria-label={`${activeMode.label} 화면`}>
@@ -672,8 +814,17 @@ function Workspace({
                 </aside>
                 <section className="flow-workbench">
                   <header>
-                    <strong>WHOLE LOVETREE · 전체 영상 흐름</strong>
-                    <span>선은 좋아하게 된 순서를 보여줘요</span>
+                    <div>
+                      <strong>WHOLE LOVETREE · 전체 영상 흐름</strong>
+                      <span>선은 좋아하게 된 순서를 보여줘요</span>
+                    </div>
+                    <div className="flow-inline-tools">
+                      <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
+                      <span>{zoom}%</span>
+                      <button type="button" onClick={() => setZoom(Math.min(110, zoom + 10))}>＋</button>
+                      <button type="button" onClick={() => setZoom(90)}>맞춤</button>
+                      <button type="button" onClick={() => setFlowExpanded(true)}>전체 화면</button>
+                    </div>
                   </header>
                   <div className="flow-viewport">
                     <div className="flow-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
@@ -697,26 +848,23 @@ function Workspace({
             {mode === "diary" && (
               <div className="diary-view">
                 <header>
-                  <p>OUR LOVE DIARY</p>
-                  <h2>마음을 이어가는 순간 다이어리</h2>
-                  <span>영상 아래에 그날의 감상을 적고, 다음 순간까지의 흐름을 가볍게 이어 보세요.</span>
+                  <div>
+                    <p>CONNECTED VIDEO DIARY</p>
+                    <h2>마음을 이어가는 <em>영상 다이어리</em></h2>
+                    <span>영상 아래에 그날의 감상을 적고, 다음 순간까지의 흐름을 가볍게 이어 보세요.</span>
+                  </div>
+                  <div className="diary-head-actions">
+                    <button type="button" onClick={() => setActiveId(moments[0].id)}>처음부터 보기</button>
+                    <button type="button" onClick={focusMomentForm}>＋ 새 순간</button>
+                  </div>
                 </header>
-                <div className="diary-timeline">
-                  {moments.map((moment, index) => (
-                    <article className={activeMoment.id === moment.id ? "active" : ""} key={moment.id}>
-                      <button type="button" onClick={() => setActiveId(moment.id)}>
-                        <span className="diary-date">{moment.date}</span>
-                        <span className="diary-photo"><Image src={moment.image} alt="" fill sizes="260px" /></span>
-                        <span className="diary-entry">
-                          <small>{String(index + 1).padStart(2, "0")} · {moment.emotion}</small>
-                          <strong>{moment.title}</strong>
-                          <p>{moment.memo}</p>
-                          <em>다음 순간까지 · {moment.relation}</em>
-                        </span>
-                      </button>
-                    </article>
-                  ))}
-                </div>
+                <DiaryBoard
+                  moments={moments}
+                  activeId={activeMoment.id}
+                  newId={newMomentId}
+                  onSelect={setActiveId}
+                  onAdd={focusMomentForm}
+                />
               </div>
             )}
 
@@ -774,48 +922,90 @@ function Workspace({
         </section>
 
         <aside className="workspace-editor">
-          <section className="editor-summary">
-            <div>
-              <p>지금 선택한 순간</p>
-              <h2>{activeMoment.title}</h2>
-            </div>
-            <span>{String(activeMoment.id).padStart(2, "0")}</span>
-          </section>
-          <div className="editor-stats">
-            <span><strong>{momentCount}</strong> 이어진 순간</span>
-            <span><strong>{Math.max(0, momentCount - 2)}</strong> 피어난 꽃</span>
-            <span><strong>{momentCount >= 6 ? 1 : 0}</strong> 맺힌 열매</span>
-          </div>
-          <article className="selected-moment-preview">
-            <span><Image src={activeMoment.image} alt="" fill sizes="92px" /></span>
-            <div><small>{activeMoment.emotion} · {activeMoment.date}</small><p>{activeMoment.memo}</p></div>
-          </article>
+          {mode === "diary" ? (
+            <section className="diary-composer-copy">
+              <p>지금 이어가는 순간 ♡</p>
+              <h2>오늘의 마음을<br />한 장 더 붙여볼까요?</h2>
+              <span>영상 링크와 감상 한 줄만 있으면 충분해요. 짧은 메모도 다이어리의 한 페이지가 됩니다.</span>
+            </section>
+          ) : (
+            <>
+              <section className="editor-summary">
+                <div>
+                  <p>지금 선택한 순간</p>
+                  <h2>{activeMoment.title}</h2>
+                </div>
+                <span>{String(activeMoment.id).padStart(2, "0")}</span>
+              </section>
+              <div className="editor-stats">
+                <span><strong>{momentCount}</strong> 이어진 순간</span>
+                <span><strong>{Math.max(0, momentCount - 2)}</strong> 피어난 꽃</span>
+                <span><strong>{momentCount >= 6 ? 1 : 0}</strong> 맺힌 열매</span>
+              </div>
+              <article className="selected-moment-preview">
+                <span><Image src={activeMoment.image} alt="" fill sizes="92px" /></span>
+                <div><small>{activeMoment.emotion} · {activeMoment.date}</small><p>{activeMoment.memo}</p></div>
+              </article>
+            </>
+          )}
 
           <form className="moment-form" id="moment-form" onSubmit={addMoment}>
             <div className="moment-form-heading">
-              <div><small>branch {String(momentCount + 1).padStart(2, "0")}</small><h3>다음 순간 이어보기</h3></div>
+              <div>
+                <small>{mode === "diary" ? "NEW DIARY PAGE" : `branch ${String(momentCount + 1).padStart(2, "0")}`}</small>
+                <h3>{mode === "diary" ? "이 순간 남기기" : "다음 순간 이어보기"}</h3>
+              </div>
               <span aria-hidden="true">❧</span>
             </div>
-            <label>
-              영상 또는 사진 링크
-              <input
-                id="moment-video-url"
-                type="url"
-                value={videoUrl}
-                onChange={(event) => setVideoUrl(event.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
-                required
-              />
-            </label>
-            <div
-              className={`moment-link-preview ${previewVideoId ? "ready" : ""}`}
-              style={previewVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${previewVideoId}/hqdefault.jpg)` } : undefined}
-            >
-              {previewVideoId ? <><span aria-hidden="true">▶</span><small>새 영상 미리보기</small></> : "링크를 붙여넣으면 영상이 바로 보여요."}
-            </div>
+            {mode === "diary" && (
+              <div className="diary-entry-tabs" aria-label="기록 종류 선택">
+                <button className={entryKind === "video" ? "active" : ""} type="button" onClick={() => setEntryKind("video")}>▣ 영상으로 남기기</button>
+                <button className={entryKind === "note" ? "active" : ""} type="button" onClick={() => setEntryKind("note")}>✎ 글로 남기기</button>
+              </div>
+            )}
+            {(mode !== "diary" || entryKind === "video") && (
+              <>
+                <label>
+                  영상 또는 사진 링크
+                  <input
+                    id="moment-video-url"
+                    type="url"
+                    value={videoUrl}
+                    onChange={(event) => setVideoUrl(event.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                    required={mode !== "diary" || entryKind === "video"}
+                  />
+                </label>
+                <div
+                  className={`moment-link-preview ${previewVideoId ? "ready" : ""}`}
+                  style={previewVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${previewVideoId}/hqdefault.jpg)` } : undefined}
+                >
+                  {previewVideoId ? <><span aria-hidden="true">▶</span><small>새 영상 미리보기</small></> : "링크를 붙여넣으면 영상이 바로 보여요."}
+                </div>
+              </>
+            )}
+            {mode === "diary" && (
+              <label className="diary-entry-title">
+                순간의 제목
+                <input
+                  id="moment-entry-title"
+                  type="text"
+                  value={entryTitle}
+                  maxLength={32}
+                  onChange={(event) => setEntryTitle(event.target.value)}
+                  placeholder={entryKind === "video" ? "예: 다시 듣게 된 노래" : "예: 오늘 오래 남은 한 문장"}
+                />
+              </label>
+            )}
             <div className="moment-fields">
-              <label>기억할 시각<input type="text" defaultValue="00:00" /></label>
-              <label>기록 날짜<input type="text" defaultValue="2026. 07. 30." /></label>
+              <label>
+                기억할 시각
+                <input type="text" value={entryTime} onChange={(event) => setEntryTime(event.target.value)} />
+              </label>
+              <label>
+                기록 날짜
+                <input type="date" value={entryDate} onChange={(event) => setEntryDate(event.target.value)} />
+              </label>
             </div>
             <fieldset>
               <legend>왜 이 순간으로 이어졌나요?</legend>
@@ -835,7 +1025,7 @@ function Workspace({
             <fieldset>
               <legend>그때 가장 가까웠던 감정</legend>
               <div className="choice-chips emotion-chips">
-                {["설렘", "위로", "벅참", "여운", "추억"].map((item) => (
+                {["설렘", "위로", "벅참", "여운", "추억", "귀여움"].map((item) => (
                   <button
                     className={emotion === item ? "active" : ""}
                     type="button"
@@ -858,7 +1048,12 @@ function Workspace({
               <small>{memo.length} / 140</small>
             </label>
             <button className="moment-submit" type="submit">
-              {momentCount === 1 ? "두 순간을 가지로 잇기" : "새 가지를 피워내기"} <span aria-hidden="true">→</span>
+              {mode === "diary"
+                ? "이 순간 다이어리에 붙이기"
+                : momentCount === 1
+                  ? "두 순간을 가지로 잇기"
+                  : "새 가지를 피워내기"}{" "}
+              <span aria-hidden="true">→</span>
             </button>
           </form>
         </aside>
