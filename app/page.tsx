@@ -27,25 +27,253 @@ const galleryCards = [
   },
 ];
 
+type PrivacyChoice = "private" | "later" | "public";
+
+function Brand({ onHome }: { onHome: () => void }) {
+  return (
+    <button className="brand brand-button" type="button" onClick={onHome} aria-label="러브트리 첫 화면">
+      <span className="brand-tree" aria-hidden="true">
+        <i />
+        <b />
+        <em />
+      </span>
+      <span className="brand-copy">
+        <strong>러브트리</strong>
+        <small>LoveTree</small>
+      </span>
+    </button>
+  );
+}
+
 export default function Home() {
-  const [isStartOpen, setIsStartOpen] = useState(false);
+  const [view, setView] = useState<"home" | "builder">("home");
   const [treeName, setTreeName] = useState("우리의 빛나는 순간들");
+  const [privacy, setPrivacy] = useState<PrivacyChoice>("private");
   const [savedTree, setSavedTree] = useState("");
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsStartOpen(false);
+    const returnHomeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && view === "builder") setView("home");
     };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, []);
+    window.addEventListener("keydown", returnHomeOnEscape);
+    return () => window.removeEventListener("keydown", returnHomeOnEscape);
+  }, [view]);
 
   function createTree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextName = treeName.trim();
     if (!nextName) return;
     setSavedTree(nextName);
-    setIsStartOpen(false);
+  }
+
+  if (view === "builder") {
+    return (
+      <div className="builder-shell">
+        <span className="builder-petal builder-petal-one" aria-hidden="true" />
+        <span className="builder-petal builder-petal-two" aria-hidden="true" />
+        <span className="builder-petal builder-petal-three" aria-hidden="true" />
+
+        <header className="builder-topbar">
+          <Brand onHome={() => setView("home")} />
+          <nav className="builder-nav" aria-label="주요 메뉴">
+            <button type="button" onClick={() => setView("home")}>첫 화면</button>
+            <a href="#builder-guide">LoveTree 소개 보기</a>
+            <button type="button" onClick={() => setView("home")}>둘러보기</button>
+            <a className="active" href="#builder-form">내 러브트리 시작하기</a>
+          </nav>
+          <button className="builder-profile" type="button" aria-label="프로필 메뉴">
+            <span className="profile-avatar" aria-hidden="true">봄</span>
+            <span>오늘도 빛나는 하루</span>
+            <span aria-hidden="true">⌄</span>
+          </button>
+        </header>
+
+        <main className="builder-main">
+          <section className="builder-left" aria-labelledby="builder-title">
+            <div className="builder-heading">
+              <p className="builder-overline"><span aria-hidden="true">✿</span> 내 러브트리 시작하기</p>
+              <h1 id="builder-title">
+                오래 품고 싶은 순간을,
+                <br />
+                하나의 <em>러브트리</em>로 시작해보세요
+              </h1>
+              <p>
+                거창하지 않아도 괜찮아요.
+                <br />
+                좋아하는 장면, 노래, 감정 하나만 있어도
+                <br />
+                당신의 러브트리는 충분히 시작될 수 있어요.
+              </p>
+            </div>
+
+            <form className="builder-form" id="builder-form" onSubmit={createTree}>
+              <label className="builder-label" htmlFor="builder-tree-name">
+                <span aria-hidden="true">✿</span> 러브트리 제목
+              </label>
+              <input
+                id="builder-tree-name"
+                value={treeName}
+                onChange={(event) => setTreeName(event.target.value)}
+                placeholder="예: 보랏빛으로 남은 순간들"
+                maxLength={32}
+                required
+              />
+              <div className="name-examples" aria-label="제목 예시">
+                <span>예: 우리가 사랑한 계절</span>
+                <i aria-hidden="true" />
+                <span>예: 오래 곁에 남은 문장들</span>
+              </div>
+
+              <div className="privacy-block">
+                <span className="builder-label"><span aria-hidden="true">✿</span> 공개 범위</span>
+                <div className="privacy-options" role="radiogroup" aria-label="공개 범위 선택">
+                  <button
+                    className={privacy === "private" ? "selected" : ""}
+                    type="button"
+                    role="radio"
+                    aria-checked={privacy === "private"}
+                    onClick={() => setPrivacy("private")}
+                  >
+                    <span aria-hidden="true">♙</span>
+                    <strong>비공개로 시작하기</strong>
+                    <small>나만 볼 수 있어요</small>
+                    {privacy === "private" && <b aria-hidden="true">✓</b>}
+                  </button>
+                  <button
+                    className={privacy === "later" ? "selected" : ""}
+                    type="button"
+                    role="radio"
+                    aria-checked={privacy === "later"}
+                    onClick={() => setPrivacy("later")}
+                  >
+                    <span aria-hidden="true">❧</span>
+                    <strong>나중에 공개할게요</strong>
+                    <small>준비되면 열어볼게요</small>
+                    {privacy === "later" && <b aria-hidden="true">✓</b>}
+                  </button>
+                  <button
+                    className={privacy === "public" ? "selected" : ""}
+                    type="button"
+                    role="radio"
+                    aria-checked={privacy === "public"}
+                    onClick={() => setPrivacy("public")}
+                  >
+                    <span aria-hidden="true">◎</span>
+                    <strong>공개 러브트리로 이어가기</strong>
+                    <small>다른 사람과 나눌 수 있어요</small>
+                    {privacy === "public" && <b aria-hidden="true">✓</b>}
+                  </button>
+                </div>
+                <p className="privacy-hint">
+                  <span aria-hidden="true">✣</span> 처음에는 비공개로 시작해도 괜찮아요. 천천히 쌓인 뒤에 공개해도 늦지 않아요.
+                </p>
+              </div>
+
+              <div className="builder-actions">
+                <button className="builder-submit" type="submit">
+                  내 러브트리 만들기 <span aria-hidden="true">✣</span>
+                </button>
+                <button className="builder-browse" type="button" onClick={() => setView("home")}>
+                  공개 트리 먼저 둘러보기
+                </button>
+              </div>
+              <p className="builder-form-note"><span aria-hidden="true">❧</span> 첫 순간은 다음 단계에서 천천히 남길 수 있어요.</p>
+            </form>
+
+            <div className="builder-steps" id="builder-guide" aria-label="러브트리 시작 단계">
+              <article>
+                <span className="step-book" aria-hidden="true">♡</span>
+                <div><strong>제목을 정해요</strong><p>마음이 머문 이름으로 시작해요.</p></div>
+                <b aria-hidden="true">›</b>
+              </article>
+              <article>
+                <span className="step-photo" aria-hidden="true">▧</span>
+                <div><strong>첫 순간을 남겨요</strong><p>좋아하는 장면 하나면 충분해요.</p></div>
+                <b aria-hidden="true">›</b>
+              </article>
+              <article>
+                <span className="step-branch" aria-hidden="true">⌇</span>
+                <div><strong>천천히 이어가요</strong><p>감정의 흐름이 하나의 트리로 자라나요.</p></div>
+                <b aria-hidden="true">›</b>
+              </article>
+            </div>
+          </section>
+
+          <section className="builder-right" aria-label="첫 러브트리 미리보기">
+            <div className="builder-vine" aria-hidden="true">
+              <i className="vine-main" />
+              <i className="vine-top" />
+              <i className="vine-bottom" />
+              <b className="vine-leaf leaf-a" />
+              <b className="vine-leaf leaf-b" />
+              <b className="vine-leaf leaf-c" />
+              <b className="vine-leaf leaf-d" />
+            </div>
+
+            <article className="start-note">
+              <span className="builder-tag">시작</span>
+              <p>이 마음의<br />시작을<br />남겨둘게.</p>
+              <span aria-hidden="true">♡</span>
+            </article>
+
+            <article className="first-polaroid">
+              <span className="paper-tape tape-left" aria-hidden="true" />
+              <span className="paper-tape tape-right" aria-hidden="true" />
+              <div className="empty-photo">
+                <span aria-hidden="true">✿</span>
+                <p>첫 순간을 기다리는 중</p>
+              </div>
+              <strong>첫 순간</strong>
+            </article>
+
+            <article className="small-note">
+              <span className="builder-tag">순간</span>
+              <span className="paper-clip" aria-hidden="true">∩</span>
+              <p>작은 순간<br />하나로도<br />충분해. ♡</p>
+            </article>
+
+            <article className="memory-polaroid">
+              <span className="paper-tape" aria-hidden="true" />
+              <div className="memory-photo">
+                <Image src="/moment-spring.jpg" alt="분홍빛 노을과 봄꽃이 어우러진 첫 순간" fill sizes="190px" priority />
+              </div>
+              <p>처음의 설렘이<br />오래 머물 수 있도록. ♡</p>
+            </article>
+
+            <article className="pressed-memory">
+              <span className="builder-tag">기억</span>
+              <span className="pressed-stem" aria-hidden="true">✿</span>
+              <span className="paper-tape" aria-hidden="true" />
+            </article>
+
+            <span className="builder-tag feeling-tag">감정</span>
+            <span className="builder-wax" aria-hidden="true">❦</span>
+
+            <article className="growth-card">
+              <div>
+                <p className="builder-overline"><span aria-hidden="true">✿</span> 이렇게 자라날 수 있어요.</p>
+                <strong>당신만의 감정과 기억들이<br />하나의 가지가 되어,<br />아름다운 이야기를 완성해요.</strong>
+                <button type="button" onClick={() => setView("home")}>예시 트리 둘러보기 <span aria-hidden="true">→</span></button>
+              </div>
+              <div className="mini-tree" aria-hidden="true">
+                <i />
+                <span className="mini-card mini-one"><Image src="/moment-purple.jpg" alt="" fill sizes="60px" /></span>
+                <span className="mini-card mini-two"><Image src="/moment-stage.jpg" alt="" fill sizes="60px" /></span>
+                <span className="mini-card mini-three"><Image src="/moment-spring.jpg" alt="" fill sizes="60px" /></span>
+                <span className="mini-card mini-four"><Image src="/moment-friends.jpg" alt="" fill sizes="60px" /></span>
+              </div>
+            </article>
+          </section>
+        </main>
+
+        {savedTree && (
+          <div className="toast" role="status">
+            <span>✿</span> ‘{savedTree}’ 러브트리를 만들었어요. 이제 첫 순간을 남겨보세요.
+            <button type="button" onClick={() => setSavedTree("")} aria-label="알림 닫기">×</button>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -70,10 +298,10 @@ export default function Home() {
         <nav className="nav" aria-label="주요 메뉴">
           <a href="#trees">둘러보기</a>
           <a href="#features">내 트리</a>
-          <button className="login-button" type="button" onClick={() => setIsStartOpen(true)}>
+          <button className="login-button" type="button" onClick={() => setView("builder")}>
             로그인
           </button>
-          <button className="nav-start" type="button" onClick={() => setIsStartOpen(true)}>
+          <button className="nav-start" type="button" onClick={() => setView("builder")}>
             시작하기
           </button>
         </nav>
@@ -101,7 +329,7 @@ export default function Home() {
             </p>
 
             <div className="hero-actions">
-              <button className="button button-primary" type="button" onClick={() => setIsStartOpen(true)}>
+              <button className="button button-primary" type="button" onClick={() => setView("builder")}>
                 내 트리 시작하기 <span aria-hidden="true">✣</span>
               </button>
               <a className="button button-secondary" href="#trees">
@@ -254,42 +482,6 @@ export default function Home() {
         </div>
       )}
 
-      {isStartOpen && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={() => setIsStartOpen(false)}>
-          <section
-            className="start-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="start-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <button className="modal-close" type="button" onClick={() => setIsStartOpen(false)} aria-label="창 닫기">
-              ×
-            </button>
-            <p className="eyebrow">PLANT YOUR FIRST MOMENT</p>
-            <h2 id="start-title">
-              어떤 러브트리를
-              <br />
-              <em>처음 심어볼까요?</em>
-            </h2>
-            <p>최애, 작품, 여행, 계절. 마음이 머문 주제라면 무엇이든 좋아요.</p>
-            <form onSubmit={createTree}>
-              <label htmlFor="tree-name">러브트리 이름</label>
-              <input
-                id="tree-name"
-                value={treeName}
-                onChange={(event) => setTreeName(event.target.value)}
-                autoFocus
-                maxLength={32}
-                required
-              />
-              <button className="button button-primary" type="submit">
-                이 이름으로 시작하기 <span aria-hidden="true">→</span>
-              </button>
-            </form>
-          </section>
-        </div>
-      )}
     </div>
   );
 }

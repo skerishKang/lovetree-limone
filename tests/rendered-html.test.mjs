@@ -54,8 +54,10 @@ test("keeps finished-site assets and metadata wired", async () => {
   ]);
 
   assert.match(page, /className="hero-collage"/);
-  assert.match(page, /className="start-modal"/);
-  assert.match(page, /setIsStartOpen\(true\)/);
+  assert.match(page, /className="builder-shell"/);
+  assert.match(page, /오래 품고 싶은 순간을/);
+  assert.match(page, /공개 범위 선택/);
+  assert.match(page, /setView\("builder"\)/);
   assert.match(layout, /generateMetadata/);
   assert.match(layout, /new URL\("\/og\.png", metadataBase\)/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
