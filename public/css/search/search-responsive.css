@@ -1,7 +1,0 @@
-/**
- * Search responsive — split by responsibility
- */
-@import url('search-responsive/layout.css');
-@import url('search-responsive/tree-cards.css');
-@import url('search-responsive/mobile-preview.css');
-@import url('search-responsive/browse.css');

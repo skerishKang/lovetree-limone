@@ -1,9 +1,0 @@
-/**
- * LoveBud Editor — Detail Panel Edit Form Styles
- * Issue #1279 — CSS split slice 2
- *
- * Split by responsibility.
- */
-@import url('editor-detail-edit/actions.css');
-@import url('editor-detail-edit/form-fields.css');
-@import url('editor-detail-edit/responsive.css');

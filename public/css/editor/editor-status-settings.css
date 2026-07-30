@@ -1,8 +1,0 @@
-/**
- * LoveBud Editor — Status & Settings Panel Styles
- * Issue #513 — CSS split by responsibility.
- */
-@import url('editor-status-settings/section-common.css');
-@import url('editor-status-settings/status-card.css');
-@import url('editor-status-settings/settings-panel.css');
-@import url('editor-status-settings/sidebar-actions.css');

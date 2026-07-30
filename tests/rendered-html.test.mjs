@@ -52,7 +52,11 @@ test("worker references api handler", async () => {
   assert.match(worker, /vinext\/server\/app-router-entry/);
 });
 
-test("LoveBud pages are copied", async () => {
-  const pages = await readFile(new URL("../public/pages/login.html", import.meta.url), "utf8");
-  assert.match(pages, /러브트리/);
+test("no LoveBud static pages remain in public", async () => {
+  try {
+    await readFile(new URL("../public/pages/login.html", import.meta.url), "utf8");
+    assert.fail("LoveBud pages should not exist in public/");
+  } catch {
+    assert.ok(true);
+  }
 });
