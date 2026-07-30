@@ -420,7 +420,7 @@ function Workspace({
   onEdit: () => void;
 }) {
   const [mode, setMode] = useState<ViewMode>(initialMode);
-  const [momentCount, setMomentCount] = useState(4);
+  const [moments, setMoments] = useState(() => sampleMoments.slice(0, 4));
   const [activeId, setActiveId] = useState(4);
   const [zoom, setZoom] = useState(90);
   const [relation, setRelation] = useState("댓글 따라감");
@@ -432,13 +432,13 @@ function Workspace({
   const [flowPositions, setFlowPositions] = useState(initialFlowPositions);
   const [notice, setNotice] = useState("같은 순간을 다섯 가지 모습으로 볼 수 있어요.");
 
-  const moments = sampleMoments.slice(0, momentCount);
+  const momentCount = moments.length;
   const activeMoment = moments.find((moment) => moment.id === activeId) ?? moments[moments.length - 1];
   const activeMode = viewModes.find((item) => item.id === mode) ?? viewModes[0];
   const previewVideoId = youtubeId(videoUrl);
 
   function chooseStage(count: number) {
-    setMomentCount(count);
+    setMoments(sampleMoments.slice(0, count));
     setActiveId(Math.min(activeId, count));
     setNewMomentId(0);
     setNotice(
@@ -457,7 +457,17 @@ function Workspace({
       return;
     }
     const nextCount = momentCount + 1;
-    setMomentCount(nextCount);
+    const template = sampleMoments[momentCount];
+    setMoments((current) => [
+      ...current,
+      {
+        ...template,
+        title: previewVideoId ? `새로 이어진 영상 ${String(nextCount).padStart(2, "0")}` : template.title,
+        memo: memo.trim() || template.memo,
+        relation,
+        emotion,
+      },
+    ]);
     setActiveId(nextCount);
     setNewMomentId(nextCount);
     setMemo("");
