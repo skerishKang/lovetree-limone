@@ -29,6 +29,18 @@ const galleryCards = [
 
 type PrivacyChoice = "private" | "later" | "public";
 type ViewMode = "tree" | "flow" | "diary" | "story" | "album";
+type Moment = {
+  id: number;
+  title: string;
+  memo: string;
+  relation: string;
+  emotion: string;
+  date: string;
+  image: string;
+  time: string;
+  sourceUrl?: string;
+  publicMemo?: boolean;
+};
 
 const viewModes: Array<{ id: ViewMode; label: string; caption: string; icon: string }> = [
   { id: "tree", label: "성장 트리", caption: "한 장에서 여러 가지로", icon: "⌘" },
@@ -38,7 +50,7 @@ const viewModes: Array<{ id: ViewMode; label: string; caption: string; icon: str
   { id: "album", label: "앨범 보드", caption: "폴라로이드를 한눈에", icon: "▦" },
 ];
 
-const sampleMoments = [
+const sampleMoments: Moment[] = [
   {
     id: 1,
     title: "처음 마음이 멈춘 장면",
@@ -47,6 +59,7 @@ const sampleMoments = [
     emotion: "설렘",
     date: "2026.07.30",
     image: "/moment-purple.jpg",
+    time: "01:30",
   },
   {
     id: 2,
@@ -56,6 +69,7 @@ const sampleMoments = [
     emotion: "벅참",
     date: "2026.08.02",
     image: "/moment-stage.jpg",
+    time: "00:48",
   },
   {
     id: 3,
@@ -65,6 +79,7 @@ const sampleMoments = [
     emotion: "추억",
     date: "2026.08.18",
     image: "/moment-spring.jpg",
+    time: "02:12",
   },
   {
     id: 4,
@@ -74,6 +89,7 @@ const sampleMoments = [
     emotion: "응원",
     date: "2026.09.03",
     image: "/moment-friends.jpg",
+    time: "00:44",
   },
   {
     id: 5,
@@ -83,6 +99,7 @@ const sampleMoments = [
     emotion: "여운",
     date: "2026.09.21",
     image: "/moment-purple.jpg",
+    time: "01:08",
   },
   {
     id: 6,
@@ -92,6 +109,7 @@ const sampleMoments = [
     emotion: "사랑",
     date: "2026.10.11",
     image: "/moment-stage.jpg",
+    time: "03:18",
   },
   {
     id: 7,
@@ -101,6 +119,7 @@ const sampleMoments = [
     emotion: "위로",
     date: "2026.10.24",
     image: "/moment-friends.jpg",
+    time: "02:26",
   },
   {
     id: 8,
@@ -110,6 +129,7 @@ const sampleMoments = [
     emotion: "벅참",
     date: "2026.11.07",
     image: "/moment-purple.jpg",
+    time: "04:07",
   },
 ];
 
@@ -121,6 +141,9 @@ const communityTrees = [
     image: "/moment-purple.jpg",
     count: 8,
     emotion: "응원",
+    likes: 2814,
+    comments: 126,
+    published: "2026-07-29",
   },
   {
     title: "우리가 사랑한 새로운 계절",
@@ -129,6 +152,9 @@ const communityTrees = [
     image: "/moment-spring.jpg",
     count: 6,
     emotion: "추억",
+    likes: 2420,
+    comments: 94,
+    published: "2026-07-27",
   },
   {
     title: "빛나던 무대와 그다음 이야기",
@@ -137,6 +163,9 @@ const communityTrees = [
     image: "/moment-stage.jpg",
     count: 7,
     emotion: "벅참",
+    likes: 3160,
+    comments: 182,
+    published: "2026-07-30",
   },
   {
     title: "다정한 말들이 자란 나무",
@@ -145,6 +174,9 @@ const communityTrees = [
     image: "/moment-friends.jpg",
     count: 5,
     emotion: "위로",
+    likes: 2196,
+    comments: 88,
+    published: "2026-07-22",
   },
 ];
 
@@ -167,8 +199,11 @@ function Brand({ onHome }: { onHome: () => void }) {
 const growthStages = [
   { count: 1, label: "첫 순간", copy: "마음의 씨앗" },
   { count: 2, label: "두 장면", copy: "첫 가지" },
-  { count: 4, label: "작은 트리", copy: "이어진 마음" },
-  { count: 6, label: "풍성한 트리", copy: "한 그루의 이야기" },
+  { count: 3, label: "작은 나무", copy: "한 그루가 된 순간" },
+  { count: 4, label: "피어난 가지", copy: "첫 꽃" },
+  { count: 5, label: "맺히는 마음", copy: "첫 열매" },
+  { count: 6, label: "풍성한 트리", copy: "오래 쌓인 시간" },
+  { count: 7, label: "무성한 트리", copy: "취향의 지도" },
   { count: 8, label: "이어지는 숲", copy: "여덟 갈래의 흐름" },
 ];
 
@@ -179,7 +214,7 @@ function MomentCard({
   onSelect,
   className = "",
 }: {
-  moment: (typeof sampleMoments)[number];
+  moment: Moment;
   index: number;
   active: boolean;
   onSelect: () => void;
@@ -229,30 +264,47 @@ function flowCopy(count: number) {
   }
   if (count === 2) {
     return {
-      eyebrow: "02 · 두 장면이 하나의 길이 되는 단계",
-      lines: ["두 장면이", "하나의 길로", "이어졌어요."],
-      description: "새 영상과 연결선이 노란빛으로 반짝이며 처음의 경로를 보여줘요.",
+      eyebrow: "03 · 첫 가지를 이어가는 시간",
+      lines: ["첫 마음이", "다음 장면을", "찾아갔어요."],
+      description: "첫 영상과 다음 영상 사이에 어떤 마음이 있었는지 남기면, 좋아하게 된 첫 경로가 보여요.",
     };
   }
-  if (count <= 4) {
+  if (count === 3) {
     return {
-      eyebrow: "04 · 이어진 마음에 꽃이 피는 단계",
-      lines: ["이어진 마음에", "조용히", "꽃이 피었어요."],
-      description: "카드를 직접 옮겨 나만의 흐름으로 정리할 수 있어요.",
+      eyebrow: "04 · 작은 나무의 모양이 생기는 단계",
+      lines: ["작은 가지가", "겹치며", "한 그루가 됐어요."],
+      description: "세 번째 순간부터 흩어진 영상이 작은 나무의 모습으로 모이고 전체 경로가 한눈에 보이기 시작해요.",
+    };
+  }
+  if (count === 4) {
+    return {
+      eyebrow: "05 · 이어진 마음에서 꽃이 피는 단계",
+      lines: ["이어진 마음이", "겹겹이 자라", "꽃이 피기 시작했어요."],
+      description: "네 번째 장면부터 가지 사이에 감정의 꽃이 피고, 추천과 검색을 따라온 길도 더 선명해져요.",
     };
   }
   if (count <= 6) {
     return {
-      eyebrow: "06 · 좋아한 순간이 여섯 갈래로 퍼지는 단계",
-      lines: ["좋아한 시간이", "차곡차곡 쌓여", "열매를 맺고 있어요."],
-      description: "마음 일기와 전체 흐름이 함께 자라 한 그루의 이야기가 됐어요.",
+      eyebrow: "06 · 오래 남은 마음이 열매가 되는 단계",
+      lines: ["좋아한 시간이", "쌓여서", "열매를 맺고 있어요."],
+      description: "장면, 댓글, 추천과 검색이 한 흐름으로 연결되며 오래 남은 마음이 열매가 됩니다.",
     };
   }
   return {
-    eyebrow: `08 · 좋아한 순간이 ${count}개로 늘어난 단계`,
-    lines: ["좋아한 순간이", `벌써 ${count}개까지`, "자라고 있어요."],
-    description: "순간이 늘어나도 일기와 연결선으로 좋아하게 된 길을 따라갈 수 있어요.",
+    eyebrow: `07 · ${count}개의 순간이 마음의 지도가 되는 단계`,
+    lines: ["취향의 가지가", "사방으로 뻗어", "무성하게 자라고 있어요."],
+    description: "영상이 더 쌓여도 첫 순간부터 지금까지의 흐름을 잃지 않고, 나만의 좋아함을 한눈에 볼 수 있어요.",
   };
+}
+
+function parseMomentTime(value: string) {
+  const match = value.trim().match(/^(\d{1,2}):([0-5]\d)$/);
+  return match ? Number(match[1]) * 60 + Number(match[2]) : null;
+}
+
+function formatMomentTime(seconds: number) {
+  const safe = Math.max(0, seconds);
+  return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
 }
 
 function youtubeId(value: string) {
@@ -498,27 +550,34 @@ function DiaryBoard({
 function Workspace({
   treeName,
   initialMode,
+  initialSeed,
   onHome,
   onEdit,
 }: {
   treeName: string;
   initialMode: ViewMode;
+  initialSeed: Moment | null;
   onHome: () => void;
   onEdit: () => void;
 }) {
   const [mode, setMode] = useState<ViewMode>(initialMode);
-  const [moments, setMoments] = useState(() => sampleMoments.slice(0, 4));
-  const [activeId, setActiveId] = useState(4);
+  const [moments, setMoments] = useState(() => initialSeed ? [initialSeed] : sampleMoments.slice(0, 4));
+  const [activeId, setActiveId] = useState(initialSeed ? 1 : 4);
   const [zoom, setZoom] = useState(90);
   const [relation, setRelation] = useState("댓글 따라감");
   const [emotion, setEmotion] = useState("설렘");
+  const [customEmotion, setCustomEmotion] = useState("");
   const [memo, setMemo] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [entryKind, setEntryKind] = useState<"video" | "note">("video");
   const [entryTitle, setEntryTitle] = useState("");
   const [entryTime, setEntryTime] = useState("00:00");
   const [entryDate, setEntryDate] = useState("2026-07-30");
+  const [publicMemo, setPublicMemo] = useState(false);
   const [newMomentId, setNewMomentId] = useState(0);
+  const [growthPulse, setGrowthPulse] = useState(0);
+  const [growthNotice, setGrowthNotice] = useState("연결 수에 따라 문장과 나무의 모습이 함께 달라져요.");
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [flowExpanded, setFlowExpanded] = useState(false);
   const [flowPositions, setFlowPositions] = useState(initialFlowPositions);
   const [notice, setNotice] = useState("같은 순간을 다섯 가지 모습으로 볼 수 있어요.");
@@ -532,14 +591,11 @@ function Workspace({
   function chooseStage(count: number) {
     setMoments(sampleMoments.slice(0, count));
     setActiveId(Math.min(activeId, count));
-    setNewMomentId(0);
-    setNotice(
-      count === 1
-        ? "첫 순간이 러브트리의 씨앗이 되었어요."
-        : count === 2
-          ? "두 장면 사이에 첫 가지가 이어졌어요."
-          : `${count}개의 순간이 한 그루의 이야기로 자랐어요.`,
-    );
+    setFlowPositions(initialFlowPositions);
+    setNewMomentId(count > momentCount ? count : 0);
+    setGrowthPulse((current) => current + 1);
+    setGrowthNotice(`${count}개의 영상에 맞춰 “${flowCopy(count).lines.join(" ")}”로 문장이 바뀌었어요.`);
+    setNotice(`${count}개의 순간과 성장 단계가 함께 바뀌었어요.`);
   }
 
   function addMoment(event: FormEvent<HTMLFormElement>) {
@@ -548,8 +604,14 @@ function Workspace({
       setNotice("샘플 트리가 충분히 자랐어요. 보기 방식을 바꿔 감상해보세요.");
       return;
     }
+    if (parseMomentTime(entryTime) === null) {
+      setNotice("기억할 시각은 01:30 형식으로 적어 주세요.");
+      document.getElementById("moment-entry-time")?.focus();
+      return;
+    }
     const nextCount = momentCount + 1;
     const template = sampleMoments[momentCount];
+    const finalEmotion = customEmotion.trim() || emotion;
     setMoments((current) => [
       ...current,
       {
@@ -557,21 +619,56 @@ function Workspace({
         title: entryTitle.trim() || (entryKind === "note" ? "오늘의 한 문장" : `새로 이어진 영상 ${String(nextCount).padStart(2, "0")}`),
         memo: memo.trim() || template.memo,
         relation,
-        emotion,
+        emotion: finalEmotion,
         date: entryDate.replaceAll("-", "."),
+        time: entryTime,
+        sourceUrl: videoUrl.trim() || undefined,
+        publicMemo,
       },
     ]);
     setActiveId(nextCount);
     setNewMomentId(nextCount);
+    setGrowthPulse((current) => current + 1);
+    setGrowthNotice(`새 영상이 이어져 “${flowCopy(nextCount).lines.join(" ")}”로 문장이 바뀌었어요.`);
     setMemo("");
     setVideoUrl("");
     setEntryTitle("");
     setEntryTime("00:00");
-    setNotice(`새 순간이 ${relation} 가지로 이어졌어요.`);
+    setCustomEmotion("");
+    setPublicMemo(false);
+    setNotice(`새 가지·카드·꽃${nextCount >= 5 ? "·열매" : ""}가 빛나며 반영됐어요.`);
   }
 
   function moveFlowNode(id: number, position: FlowPosition) {
-    setFlowPositions((current) => current.map((item, index) => (index === id - 1 ? position : item)));
+    const momentIndex = moments.findIndex((moment) => moment.id === id);
+    setFlowPositions((current) => current.map((item, index) => (index === momentIndex ? position : item)));
+  }
+
+  function adjustEntryTime(delta: number) {
+    setEntryTime((current) => formatMomentTime((parseMomentTime(current) ?? 0) + delta));
+  }
+
+  function deleteMoment() {
+    if (pendingDeleteId === null) return;
+    if (moments.length <= 1) {
+      setPendingDeleteId(null);
+      setNotice("러브트리의 첫 씨앗 한 개는 남겨두어야 해요.");
+      return;
+    }
+    const removedIndex = moments.findIndex((moment) => moment.id === pendingDeleteId);
+    const removed = moments[removedIndex];
+    const nextMoments = moments
+      .filter((moment) => moment.id !== pendingDeleteId)
+      .map((moment, index) => ({ ...moment, id: index + 1 }));
+    const nextActive = nextMoments[Math.min(Math.max(removedIndex, 0), nextMoments.length - 1)];
+    setMoments(nextMoments);
+    setActiveId(nextActive.id);
+    setFlowPositions(initialFlowPositions);
+    setNewMomentId(0);
+    setPendingDeleteId(null);
+    setGrowthPulse((current) => current + 1);
+    setGrowthNotice(`순간을 정리해 ${nextMoments.length}개 단계의 문장으로 돌아왔어요.`);
+    setNotice(`“${removed.title}”을 삭제하고 연결선과 성장 단계를 다시 정리했어요.`);
   }
 
   function focusMomentForm() {
@@ -599,6 +696,15 @@ function Workspace({
     window.addEventListener("keydown", closeExpanded);
     return () => window.removeEventListener("keydown", closeExpanded);
   }, [flowExpanded]);
+
+  useEffect(() => {
+    if (pendingDeleteId === null) return;
+    const closeDelete = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPendingDeleteId(null);
+    };
+    window.addEventListener("keydown", closeDelete);
+    return () => window.removeEventListener("keydown", closeDelete);
+  }, [pendingDeleteId]);
 
   return (
     <div className={`workspace-shell workspace-mode-${mode} ${standaloneMode ? "workspace-standalone-mode" : ""}`}>
@@ -735,14 +841,47 @@ function Workspace({
 
           <div className={`workspace-view workspace-view-${mode}`}>
             {mode === "tree" && (
-              <div className={`tree-canvas tree-count-${momentCount}`}>
-                <div className="tree-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
+              <div className="growth-tree-view">
+                <section className="growth-story-banner" key={`tree-copy-${growthPulse}`}>
+                  <div>
+                    <p>{flowCopy(momentCount).eyebrow}</p>
+                    <h2 className={growthPulse ? "changed" : ""}>
+                      <span>{flowCopy(momentCount).lines[0]}</span>
+                      <span>{flowCopy(momentCount).lines[1]}</span>
+                      <em>{flowCopy(momentCount).lines[2]}</em>
+                    </h2>
+                  </div>
+                  <div>
+                    <p>{flowCopy(momentCount).description}</p>
+                    <mark><span aria-hidden="true">✦</span> {growthNotice}</mark>
+                  </div>
+                </section>
+                <div className={`tree-canvas tree-count-${momentCount}`}>
+                  <div className="tree-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
                   <span className="tree-ring ring-one" aria-hidden="true" />
                   <span className="tree-ring ring-two" aria-hidden="true" />
                   <span className="tree-branch branch-a" aria-hidden="true" />
                   <span className="tree-branch branch-b" aria-hidden="true" />
                   <span className="tree-branch branch-c" aria-hidden="true" />
                   <span className="tree-branch branch-d" aria-hidden="true" />
+                  {Array.from({ length: Math.max(0, momentCount - 2) }, (_, index) => (
+                    <span
+                      className={`tree-growth-flower tree-growth-flower-${index + 1} ${newMomentId === momentCount ? "bloom" : ""}`}
+                      aria-hidden="true"
+                      key={`flower-${index}`}
+                    >
+                      ✿
+                    </span>
+                  ))}
+                  {Array.from({ length: momentCount >= 5 ? Math.max(1, Math.floor((momentCount - 3) / 2)) : 0 }, (_, index) => (
+                    <span
+                      className={`tree-growth-fruit tree-growth-fruit-${index + 1} ${newMomentId === momentCount ? "bloom" : ""}`}
+                      aria-hidden="true"
+                      key={`fruit-${index}`}
+                    >
+                      ●
+                    </span>
+                  ))}
 
                   <article className="tree-root">
                     <span aria-hidden="true">♥</span>
@@ -757,7 +896,7 @@ function Workspace({
                       index={index}
                       active={activeMoment.id === moment.id}
                       onSelect={() => setActiveId(moment.id)}
-                      className={`tree-node tree-node-${index + 1}`}
+                      className={`tree-node tree-node-${index + 1} ${newMomentId === moment.id ? "new" : ""}`}
                       key={moment.id}
                     />
                   ))}
@@ -774,6 +913,7 @@ function Workspace({
                       ＋
                     </button>
                   )}
+                  </div>
                 </div>
               </div>
             )}
@@ -781,7 +921,7 @@ function Workspace({
             {mode === "flow" && (
               <div className="connected-flow-view">
                 <aside className="flow-story-column">
-                  <section className="flow-intro">
+                  <section className="flow-intro" key={`flow-copy-${growthPulse}`}>
                     <p>{flowCopy(momentCount).eyebrow}</p>
                     <h2 className={newMomentId ? "flow-h1 changed" : "flow-h1"}>
                       <span>{flowCopy(momentCount).lines[0]}</span>
@@ -791,7 +931,7 @@ function Workspace({
                     <p>{flowCopy(momentCount).description}</p>
                     <div className="flow-change-notice">
                       <i aria-hidden="true">✦</i>
-                      <span>{newMomentId ? "새 영상과 선, 마음 일기가 함께 이어졌어요." : "카드를 끌어서 원하는 자리에 놓아보세요."}</span>
+                      <span>{growthPulse ? growthNotice : "카드를 끌어서 원하는 자리에 놓아보세요."}</span>
                     </div>
                   </section>
                   <section className="flow-diary">
@@ -911,7 +1051,7 @@ function Workspace({
                       index={index}
                       active={activeMoment.id === moment.id}
                       onSelect={() => setActiveId(moment.id)}
-                      className={`album-card album-card-${(index % 4) + 1}`}
+                      className={`album-card album-card-${(index % 4) + 1} ${newMomentId === moment.id ? "new" : ""}`}
                       key={moment.id}
                     />
                   ))}
@@ -949,6 +1089,20 @@ function Workspace({
             </>
           )}
 
+          <div className="selected-moment-actions">
+            <span>
+              <strong>{activeMoment.time}</strong>
+              {activeMoment.publicMemo ? "공개 메모" : "나만 보는 메모"}
+            </span>
+            <button
+              type="button"
+              disabled={momentCount <= 1}
+              onClick={() => setPendingDeleteId(activeMoment.id)}
+            >
+              이 순간 삭제
+            </button>
+          </div>
+
           <form className="moment-form" id="moment-form" onSubmit={addMoment}>
             <div className="moment-form-heading">
               <div>
@@ -984,23 +1138,32 @@ function Workspace({
                 </div>
               </>
             )}
-            {mode === "diary" && (
-              <label className="diary-entry-title">
-                순간의 제목
-                <input
-                  id="moment-entry-title"
-                  type="text"
-                  value={entryTitle}
-                  maxLength={32}
-                  onChange={(event) => setEntryTitle(event.target.value)}
-                  placeholder={entryKind === "video" ? "예: 다시 듣게 된 노래" : "예: 오늘 오래 남은 한 문장"}
-                />
-              </label>
-            )}
+            <label className="diary-entry-title">
+              순간의 제목
+              <input
+                id="moment-entry-title"
+                type="text"
+                value={entryTitle}
+                maxLength={32}
+                onChange={(event) => setEntryTitle(event.target.value)}
+                placeholder={entryKind === "video" ? "예: 다시 듣게 된 노래" : "예: 오늘 오래 남은 한 문장"}
+              />
+            </label>
             <div className="moment-fields">
               <label>
                 기억할 시각
-                <input type="text" value={entryTime} onChange={(event) => setEntryTime(event.target.value)} />
+                <span className="time-stepper">
+                  <button type="button" onClick={() => adjustEntryTime(-5)} aria-label="기억할 시각 5초 줄이기">−5초</button>
+                  <input
+                    id="moment-entry-time"
+                    type="text"
+                    value={entryTime}
+                    inputMode="numeric"
+                    onChange={(event) => setEntryTime(event.target.value)}
+                    aria-label="기억할 시각 분 초"
+                  />
+                  <button type="button" onClick={() => adjustEntryTime(5)} aria-label="기억할 시각 5초 늘리기">＋5초</button>
+                </span>
               </label>
               <label>
                 기록 날짜
@@ -1027,15 +1190,28 @@ function Workspace({
               <div className="choice-chips emotion-chips">
                 {["설렘", "위로", "벅참", "여운", "추억", "귀여움"].map((item) => (
                   <button
-                    className={emotion === item ? "active" : ""}
+                    className={!customEmotion && emotion === item ? "active" : ""}
                     type="button"
                     key={item}
-                    onClick={() => setEmotion(item)}
+                    onClick={() => {
+                      setEmotion(item);
+                      setCustomEmotion("");
+                    }}
                   >
                     {item}
                   </button>
                 ))}
               </div>
+              <label className="custom-emotion">
+                <span>다른 마음</span>
+                <input
+                  type="text"
+                  value={customEmotion}
+                  maxLength={10}
+                  onChange={(event) => setCustomEmotion(event.target.value)}
+                  placeholder="직접 적기"
+                />
+              </label>
             </fieldset>
             <label>
               이 순간에 남기고 싶은 마음
@@ -1047,6 +1223,47 @@ function Workspace({
               />
               <small>{memo.length} / 140</small>
             </label>
+            <div className="memory-visibility">
+              <button
+                className={publicMemo ? "active" : ""}
+                type="button"
+                role="switch"
+                aria-checked={publicMemo}
+                onClick={() => setPublicMemo((current) => !current)}
+              >
+                <i aria-hidden="true" />
+              </button>
+              <span>
+                <strong>{publicMemo ? "공개할 때 이 메모도 함께 보여요" : "공개할 때 이 메모는 나만 보여요"}</strong>
+                나중에 언제든 바꿀 수 있어요.
+              </span>
+            </div>
+            {(mode !== "diary" || entryKind === "video") && (
+              <section className={`next-connection-preview ${previewVideoId ? "ready" : ""}`} aria-label="두 장면 연결 미리보기">
+                <article>
+                  <span><Image src={activeMoment.image} alt="" fill sizes="76px" /></span>
+                  <small>지금 장면</small>
+                  <strong>{activeMoment.title}</strong>
+                  <em>{activeMoment.time}</em>
+                </article>
+                <div aria-hidden="true">
+                  <i />
+                  <b>{relation}</b>
+                  <span>→</span>
+                </div>
+                <article>
+                  <span
+                    className="next-preview-image"
+                    style={previewVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${previewVideoId}/hqdefault.jpg)` } : undefined}
+                  >
+                    {previewVideoId ? "▶" : "✦"}
+                  </span>
+                  <small>다음 장면</small>
+                  <strong>{entryTitle.trim() || "링크로 찾은 새 순간"}</strong>
+                  <em>{entryTime}</em>
+                </article>
+              </section>
+            )}
             <button className="moment-submit" type="submit">
               {mode === "diary"
                 ? "이 순간 다이어리에 붙이기"
@@ -1143,6 +1360,22 @@ function Workspace({
         </div>
       )}
 
+      {pendingDeleteId !== null && (
+        <div className="delete-confirm-backdrop" role="presentation">
+          <section role="dialog" aria-modal="true" aria-labelledby="delete-moment-title">
+            <span aria-hidden="true">✿</span>
+            <p>REMOVE THIS MOMENT</p>
+            <h2 id="delete-moment-title">이 순간을 트리에서<br />정말 떼어낼까요?</h2>
+            <strong>“{moments.find((moment) => moment.id === pendingDeleteId)?.title}”</strong>
+            <small>카드와 마음 일기가 함께 사라지고, 남은 가지는 순서에 맞춰 다시 이어집니다.</small>
+            <div>
+              <button type="button" onClick={() => setPendingDeleteId(null)}>그대로 둘게요</button>
+              <button type="button" onClick={deleteMoment}>삭제하고 가지 정리하기</button>
+            </div>
+          </section>
+        </div>
+      )}
+
       <div className="workspace-toast" role="status">
         <span aria-hidden="true">✦</span>
         {notice}
@@ -1161,6 +1394,7 @@ function Community({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("전체");
+  const [sort, setSort] = useState<"popular" | "recent" | "moments">("popular");
   const [favorites, setFavorites] = useState<number[]>([0]);
   const [expanded, setExpanded] = useState(false);
   const [activeMomentId, setActiveMomentId] = useState(1);
@@ -1168,10 +1402,16 @@ function Community({
   const selectedTree = communityTrees[selectedIndex];
   const publicMoments = sampleMoments.slice(0, selectedTree.count);
   const activeMoment = publicMoments.find((moment) => moment.id === activeMomentId) ?? publicMoments[0];
-  const filteredTrees = communityTrees.filter((tree) => {
-    const matchesQuery = `${tree.title} ${tree.creator} ${tree.emotion}`.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (filter === "전체" || tree.emotion === filter);
-  });
+  const filteredTrees = communityTrees
+    .filter((tree) => {
+      const matchesQuery = `${tree.title} ${tree.creator} ${tree.emotion}`.toLowerCase().includes(query.toLowerCase());
+      return matchesQuery && (filter === "전체" || tree.emotion === filter);
+    })
+    .sort((left, right) => {
+      if (sort === "recent") return right.published.localeCompare(left.published);
+      if (sort === "moments") return right.count - left.count;
+      return right.likes - left.likes;
+    });
 
   function selectTree(tree: (typeof communityTrees)[number]) {
     const index = communityTrees.indexOf(tree);
@@ -1232,6 +1472,14 @@ function Community({
                 </button>
               ))}
             </div>
+            <label className="community-sort">
+              <span>정렬</span>
+              <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
+                <option value="popular">인기순</option>
+                <option value="recent">최근 공개순</option>
+                <option value="moments">순간 많은순</option>
+              </select>
+            </label>
           </div>
           <div className="community-grid">
             {filteredTrees.map((tree) => {
@@ -1245,13 +1493,14 @@ function Community({
                     <span>
                       <strong>{tree.title}</strong>
                       <small>{tree.creator}</small>
-                      <em>순간 {tree.count}개 · {tree.emotion}</em>
+                      <em>순간 {tree.count}개 · {tree.emotion} · ♡ {tree.likes.toLocaleString()}</em>
                     </span>
                   </button>
                   <button
                     className={favorites.includes(index) ? "favorite active" : "favorite"}
                     type="button"
                     aria-label={`${tree.title} 좋아요`}
+                    aria-pressed={favorites.includes(index)}
                     onClick={() => setFavorites((current) => (
                       current.includes(index) ? current.filter((item) => item !== index) : [...current, index]
                     ))}
@@ -1261,6 +1510,9 @@ function Community({
                 </article>
               );
             })}
+            {filteredTrees.length === 0 && (
+              <p className="community-empty">마음에 맞는 트리를 찾지 못했어요. 검색어나 감정 필터를 바꿔보세요.</p>
+            )}
           </div>
           <button className="community-more" type="button">더 많은 공개 러브트리 보기 ⌄</button>
         </section>
@@ -1296,7 +1548,7 @@ function Community({
               </article>
             </div>
             <footer>
-              <div><span>대표 순간</span><strong>{selectedTree.count}개</strong><small>♡ {1024 + selectedIndex * 367}</small></div>
+              <div><span>대표 순간</span><strong>{selectedTree.count}개</strong><small>♡ {selectedTree.likes.toLocaleString()} · 댓글 {selectedTree.comments}</small></div>
               <div><span>이어진 감정</span><p>♡ 설렘　☾ 위로　✦ {selectedTree.emotion}</p></div>
             </footer>
             <button className="community-open-tree" type="button" onClick={() => setExpanded(true)}>
@@ -1361,6 +1613,12 @@ export default function Home() {
   const [privacy, setPrivacy] = useState<PrivacyChoice>("private");
   const [selectedFormat, setSelectedFormat] = useState<ViewMode>("tree");
   const [savedTree, setSavedTree] = useState("");
+  const [seedUrl, setSeedUrl] = useState("");
+  const [seedNote, setSeedNote] = useState("");
+  const [seedDate, setSeedDate] = useState("2026-07-30");
+  const [seedEmotion, setSeedEmotion] = useState("설렘");
+  const [initialSeed, setInitialSeed] = useState<Moment | null>(null);
+  const seedVideoId = youtubeId(seedUrl);
 
   useEffect(() => {
     const returnHomeOnEscape = (event: KeyboardEvent) => {
@@ -1374,6 +1632,16 @@ export default function Home() {
     event.preventDefault();
     const nextName = treeName.trim();
     if (!nextName) return;
+    setInitialSeed(seedUrl.trim() ? {
+      ...sampleMoments[0],
+      id: 1,
+      title: "처음 마음이 멈춘 장면",
+      memo: seedNote.trim() || "처음 발견한 순간의 마음을 여기에 남겼어요.",
+      emotion: seedEmotion,
+      date: seedDate.replaceAll("-", "."),
+      sourceUrl: seedUrl.trim(),
+      publicMemo: privacy === "public",
+    } : null);
     setSavedTree(nextName);
     setView("workspace");
   }
@@ -1383,6 +1651,7 @@ export default function Home() {
       <Workspace
         treeName={treeName}
         initialMode={selectedFormat}
+        initialSeed={initialSeed}
         onHome={() => setView("home")}
         onEdit={() => setView("builder")}
       />
@@ -1450,6 +1719,62 @@ export default function Home() {
                 <i aria-hidden="true" />
                 <span>예: 오래 곁에 남은 문장들</span>
               </div>
+
+              <section className="seed-builder" aria-labelledby="seed-builder-title">
+                <div className="seed-builder-heading">
+                  <div>
+                    <span>PLANT YOUR FIRST MOMENT</span>
+                    <h2 id="seed-builder-title">첫 순간을 미리 심어볼까요?</h2>
+                  </div>
+                  <small>선택 사항 · 비워두면 예시 트리로 시작해요</small>
+                </div>
+                <div className="seed-builder-grid">
+                  <div className="seed-builder-fields">
+                    <label>
+                      발견한 영상 링크
+                      <input
+                        type="url"
+                        value={seedUrl}
+                        onChange={(event) => setSeedUrl(event.target.value)}
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </label>
+                    <label>
+                      그때 어떤 마음이었나요?
+                      <textarea
+                        value={seedNote}
+                        maxLength={140}
+                        onChange={(event) => setSeedNote(event.target.value)}
+                        placeholder="예: 우연히 보게 됐는데, 하루 종일 이 장면이 생각났어."
+                      />
+                      <small>{seedNote.length} / 140</small>
+                    </label>
+                    <div className="seed-builder-meta">
+                      <label>
+                        발견한 날
+                        <input type="date" value={seedDate} onChange={(event) => setSeedDate(event.target.value)} />
+                      </label>
+                      <label>
+                        첫 감정
+                        <select value={seedEmotion} onChange={(event) => setSeedEmotion(event.target.value)}>
+                          {["설렘", "위로", "벅참", "여운", "추억", "응원"].map((item) => <option key={item}>{item}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  <div
+                    className={`seed-live-preview ${seedVideoId ? "ready" : ""}`}
+                    style={seedVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${seedVideoId}/hqdefault.jpg)` } : undefined}
+                  >
+                    <span>{seedVideoId ? "▶" : "✦"}</span>
+                    <div>
+                      <small>YOUR FIRST SEED</small>
+                      <strong>{seedVideoId ? "첫 순간으로 연결할 영상" : "링크를 넣으면 첫 카드가 보여요"}</strong>
+                      <p>{seedNote.trim() || "그때의 마음도 첫 뿌리로 함께 남습니다."}</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
 
               <div className="privacy-block">
                 <span className="builder-label"><span aria-hidden="true">✿</span> 공개 범위</span>
@@ -1573,11 +1898,14 @@ export default function Home() {
             <article className="first-polaroid">
               <span className="paper-tape tape-left" aria-hidden="true" />
               <span className="paper-tape tape-right" aria-hidden="true" />
-              <div className="empty-photo">
-                <span aria-hidden="true">✿</span>
-                <p>첫 순간을 기다리는 중</p>
+              <div
+                className={`empty-photo ${seedVideoId ? "seed-ready" : ""}`}
+                style={seedVideoId ? { backgroundImage: `url(https://img.youtube.com/vi/${seedVideoId}/hqdefault.jpg)` } : undefined}
+              >
+                <span aria-hidden="true">{seedVideoId ? "▶" : "✿"}</span>
+                <p>{seedVideoId ? "첫 순간 미리보기" : "첫 순간을 기다리는 중"}</p>
               </div>
-              <strong>첫 순간</strong>
+              <strong>{seedVideoId ? seedEmotion : "첫 순간"}</strong>
             </article>
 
             <article className="small-note">
