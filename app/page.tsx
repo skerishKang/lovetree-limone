@@ -1,85 +1,295 @@
 "use client";
 
+import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 
-const cards = [
-  { tag: "처음 발견한 순간", title: "처음 마음이 멈춘 장면", time: "01:30", note: "짧은 영상 하나가 이상하게 오래 마음에 남았어요." },
-  { tag: "팬의 추천", title: "다시 찾은 노래", time: "03:12", note: "이 장면을 보면 계속 생각나는 곡이에요." },
-  { tag: "내가 고른 다음 순간", title: "오래 간직할 문장", time: "07:48", note: "오늘의 마음을 잊지 않게 적어 두었어요." },
+const galleryCards = [
+  {
+    title: "보랏빛 순간",
+    description: "함께 만든 기억의 조각들",
+    image: "/moment-purple.jpg",
+    stat: "1,024",
+    tone: "violet",
+  },
+  {
+    title: "빛나던 무대",
+    description: "우리가 빛나던 그 계절",
+    image: "/moment-stage.jpg",
+    stat: "2,318",
+    tone: "gold",
+  },
+  {
+    title: "우리가 사랑한 계절",
+    description: "봄, 여름, 가을, 그리고 너",
+    image: "/moment-spring.jpg",
+    stat: "1,587",
+    tone: "coral",
+  },
 ];
 
 export default function Home() {
-  const [view, setView] = useState<"home" | "discovery">("home");
   const [isStartOpen, setIsStartOpen] = useState(false);
-  const [treeName, setTreeName] = useState("건호에게 입덕한 3일");
-  const [selectedKind, setSelectedKind] = useState("영상");
-  const [note, setNote] = useState("");
-  const [isComplete, setIsComplete] = useState(false);
+  const [treeName, setTreeName] = useState("우리의 빛나는 순간들");
+  const [savedTree, setSavedTree] = useState("");
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsStartOpen(false);
-        setView("home");
-      }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsStartOpen(false);
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
 
-  function startTree(event: FormEvent<HTMLFormElement>) {
+  function createTree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!treeName.trim()) return;
+    const nextName = treeName.trim();
+    if (!nextName) return;
+    setSavedTree(nextName);
     setIsStartOpen(false);
-    setView("discovery");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function plantMoment(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!note.trim()) return;
-    setIsComplete(true);
-  }
-
-  if (view === "discovery") {
-    return (
-      <section className="flow-screen" aria-labelledby="discovery-title">
-        <div className="flow-shell">
-          <div className="flow-top"><button className="flow-back" type="button" onClick={() => setView("home")}>← 처음 화면으로</button><span className="flow-step">plant your first moment</span></div>
-          <div className="flow-progress" aria-label="러브트리 만들기 진행률"><span /></div>
-          <div className="discovery-grid">
-            <div className="discovery-copy">
-              <p className="eyebrow">01 · 처음 발견</p>
-              <h1 id="discovery-title">마음이 처음 멈춘<br /><em>그 순간을 심어볼까요?</em></h1>
-              <p>완벽하게 설명하지 않아도 괜찮아요. 어디서 발견했는지, 어떤 감정이었는지만 남겨 두면 러브트리의 첫 가지가 자라기 시작해요.</p>
-              <form className="discovery-form" onSubmit={plantMoment}>
-                <span className="field-label">어디에서 발견했나요?</span>
-                <div className="kind-list" role="group" aria-label="발견한 곳 선택">
-                  {["영상", "노래", "책", "사람", "여행", "기타"].map((kind) => <button className={`kind${selectedKind === kind ? " selected" : ""}`} type="button" key={kind} onClick={() => setSelectedKind(kind)}>{kind}</button>)}
-                </div>
-                <label className="field-label" htmlFor="discovery-note">그때 어떤 마음이었나요?</label>
-                <textarea id="discovery-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="예: 우연히 보게 됐는데, 하루 종일 이 장면이 생각났어." />
-                <input type="date" aria-label="발견한 날짜" />
-                <div className="discovery-actions"><button className="button button-primary" type="submit">이 순간 심기 <span aria-hidden="true">→</span></button><span className="discovery-hint">나중에 다시 수정할 수 있어요.</span></div>
-                {isComplete && <p className="flow-success" role="status">첫 가지가 심어졌어요. 이제 러브트리가 자라기 시작합니다 ✦</p>}
-              </form>
-            </div>
-            <aside className="seed-preview" aria-label="첫 순간 미리보기"><div className="seed-window"><div className="seed-glow" /><div className="seed-orb">✦</div><div className="seed-preview-copy"><span>your first seed</span><strong>{treeName}</strong><p>지금 적은 순간이 러브트리의 뿌리가 됩니다.</p></div></div></aside>
-          </div>
-        </div>
-      </section>
-    );
   }
 
   return (
     <div className="site-shell">
-      <div className="ambient ambient-one" aria-hidden="true" /><div className="ambient ambient-two" aria-hidden="true" />
-      <header className="topbar"><a className="brand" href="#top" aria-label="LoveTree 홈"><span className="brand-mark" aria-hidden="true"><i /><b /></span><span>LoveTree</span></a><nav className="topnav" aria-label="주요 메뉴"><a href="#story">러브트리 소개</a><a href="#browse">둘러보기</a><button className="nav-login" type="button" onClick={() => setIsStartOpen(true)}>로그인</button></nav></header>
-      <main id="top"><section className="hero-section" aria-labelledby="hero-title"><div className="hero-copy"><p className="eyebrow">A little garden for every feeling</p><h1 id="hero-title">사랑에 빠지는 <span>순간을 하나의</span><em>러브트리로</em><strong>이어 보세요</strong></h1><p className="hero-description">처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을 한 그루의 나무처럼 이어 보세요.</p><div className="hero-actions"><button className="button button-primary" type="button" onClick={() => setIsStartOpen(true)}><span aria-hidden="true">+</span>첫 순간 심기</button><a className="button button-quiet" href="#browse">러브트리 둘러보기<span aria-hidden="true">→</span></a></div><p className="hero-note"><span aria-hidden="true">✦</span> 처음에는 단 하나의 순간만 있어도 충분해요.</p><div className="growth-proof" id="story"><div className="proof-label">러브트리는 이렇게 자라요</div><div className="proof-line" aria-label="발견, 기록, 연결, 성장"><span className="proof-item active"><b>01</b> 발견</span><i aria-hidden="true" /><span className="proof-item"><b>02</b> 기록</span><i aria-hidden="true" /><span className="proof-item"><b>03</b> 연결</span><i aria-hidden="true" /><span className="proof-item"><b>04</b> 성장</span></div></div></div>
-        <div className="tree-stage" aria-label="첫 순간에서 러브트리가 자라는 예시"><div className="stage-topline"><span><i className="live-dot" /> 러브트리 미리보기</span><span className="stage-season">season 01</span></div><div className="tree-canvas"><div className="sun-orbit orbit-one" /><div className="sun-orbit orbit-two" /><div className="trunk" /><div className="branch branch-left" /><div className="branch branch-right" /><div className="leaf leaf-one" /><div className="leaf leaf-two" /><div className="leaf leaf-three" />{cards.map((card, index) => <article className={`moment-card ${index === 0 ? "moment-root" : index === 1 ? "branch-card-a" : "branch-card-b"}`} key={card.tag}><div className={`moment-media media-${index === 0 ? "root" : index === 1 ? "a" : "b"}`}><span aria-hidden="true">{index === 0 ? "▶" : index === 1 ? "▶" : "↗"}</span><small>{card.time}</small></div><div className="moment-body"><span className="moment-tag">{card.tag}</span><h2>{card.title}</h2><p>{card.note}</p>{index === 0 && <span className="moment-source">YouTube · 나의 기록</span>}</div></article>)}<div className="recommend-pip pip-left"><span>♥</span> 팬의 추천</div><div className="recommend-pip pip-right"><span>✦</span> 내가 고른 다음 순간</div><div className="stage-seed" aria-hidden="true"><span>✦</span></div></div><div className="stage-caption"><span className="caption-rule" /><p>한 장면에서 시작한 마음이<br /><b>다음 장면과 연결되어 자라나요.</b></p></div></div>
-      </section><section className="story-strip" id="browse" aria-label="러브트리 특징"><div className="strip-card"><span>01</span><strong>첫 순간</strong><p>마음이 멈춘 정확한 장면을 심어 보세요.</p></div><div className="strip-card"><span>02</span><strong>감정 메모</strong><p>그때의 말과 감정을 짧게 기록해요.</p></div><div className="strip-card"><span>03</span><strong>다음 가지</strong><p>팬의 추천으로 이야기의 흐름을 이어가요.</p></div></section></main>
-      {isStartOpen && <div className="modal-backdrop" role="presentation" onClick={() => setIsStartOpen(false)}><div className="seed-modal" role="dialog" aria-modal="true" aria-labelledby="seed-title" onClick={(event) => event.stopPropagation()}><button className="modal-close" type="button" onClick={() => setIsStartOpen(false)} aria-label="닫기">×</button><p className="eyebrow">plant your first moment</p><h2 id="seed-title">어떤 러브트리를<br /><em>처음 심어볼까요?</em></h2><p>최애, 작품, 여행, 공부. 마음이 자란 주제라면 무엇이든 좋아요.</p><form onSubmit={startTree}><label htmlFor="tree-name">러브트리 이름</label><input id="tree-name" value={treeName} onChange={(event) => setTreeName(event.target.value)} required /><button className="button button-primary" type="submit">이 이름으로 시작하기 <span aria-hidden="true">→</span></button></form></div></div>}
-      <footer className="site-footer"><span>LoveTree</span><span>마음이 시작된 순간을 오래 간직하는 법</span></footer>
+      <span className="petal petal-one" aria-hidden="true" />
+      <span className="petal petal-two" aria-hidden="true" />
+      <span className="petal petal-three" aria-hidden="true" />
+
+      <header className="topbar">
+        <a className="brand" href="#top" aria-label="러브트리 홈">
+          <span className="brand-tree" aria-hidden="true">
+            <i />
+            <b />
+            <em />
+          </span>
+          <span className="brand-copy">
+            <strong>러브트리</strong>
+            <small>LoveTree</small>
+          </span>
+        </a>
+
+        <nav className="nav" aria-label="주요 메뉴">
+          <a href="#trees">둘러보기</a>
+          <a href="#features">내 트리</a>
+          <button className="login-button" type="button" onClick={() => setIsStartOpen(true)}>
+            로그인
+          </button>
+          <button className="nav-start" type="button" onClick={() => setIsStartOpen(true)}>
+            시작하기
+          </button>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-copy">
+            <p className="eyebrow">
+              <span aria-hidden="true">✿</span> 마음이 머문 곳에서 시작되는 이야기
+            </p>
+            <h1 id="hero-title">
+              좋아하는 순간을,
+              <br />
+              <em>러브트리</em>로 키워보세요
+            </h1>
+            <p className="hero-description">
+              사랑한 장면과 노래, 기억과 감정을 차곡차곡 모아 두면,
+              <br />
+              서로의 결이 이어져 하나의 트리로 자라납니다.
+              <br />
+              러브트리는 마음속 순간들을 오래 간직하고 천천히 돌볼 수 있는
+              <br />
+              나만의 감정 정원입니다.
+            </p>
+
+            <div className="hero-actions">
+              <button className="button button-primary" type="button" onClick={() => setIsStartOpen(true)}>
+                내 트리 시작하기 <span aria-hidden="true">✣</span>
+              </button>
+              <a className="button button-secondary" href="#trees">
+                공개 트리 둘러보기 <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="hero-collage" aria-label="러브트리에 담긴 추억 카드 미리보기">
+            <span className="collage-glow" aria-hidden="true" />
+            <span className="thread thread-one" aria-hidden="true" />
+            <span className="thread thread-two" aria-hidden="true" />
+
+            <article className="polaroid polaroid-friends">
+              <span className="label label-blush">감정</span>
+              <div className="photo-frame">
+                <Image src="/moment-friends.jpg" alt="함께 웃고 있는 친구들의 뒷모습" fill sizes="180px" priority />
+              </div>
+              <p>심장이 뛰던 그 순간</p>
+              <small>2024.04.20</small>
+            </article>
+
+            <article className="memo-card">
+              <span className="tape" aria-hidden="true" />
+              <p className="memo-kicker">오늘의 한 줄 ♡</p>
+              <p className="memo-copy">
+                그날의 떨림이
+                <br />
+                지금의 나를
+                <br />
+                따뜻하게
+                <br />
+                만들어줘서
+                <br />
+                고마워.
+              </p>
+              <span className="pressed-flower" aria-hidden="true">❀</span>
+            </article>
+
+            <article className="polaroid polaroid-purple">
+              <span className="label label-gold">순간</span>
+              <div className="photo-frame">
+                <Image src="/moment-purple.jpg" alt="보랏빛 조명과 종이 꽃가루가 펼쳐진 공연장" fill sizes="190px" priority />
+              </div>
+              <p>빛이 가장 가까웠던 날</p>
+              <small>2024.06.15</small>
+            </article>
+
+            <article className="note-paper">
+              <span className="label label-beige">기억</span>
+              <p>
+                너의 노래가
+                <br />
+                내 하루의 위로가
+                <br />
+                되어줘서
+                <br />
+                정말 고마워.
+              </p>
+              <span aria-hidden="true">♬</span>
+            </article>
+
+            <article className="music-player" aria-label="기억 속 노래 플레이어">
+              <div className="album-art">
+                <Image src="/moment-stage.jpg" alt="" fill sizes="54px" />
+              </div>
+              <div>
+                <strong>우리의 계절이 지나도</strong>
+                <small>LoveTree 플레이리스트</small>
+              </div>
+              <button type="button" aria-label="일시 정지">Ⅱ</button>
+              <span aria-hidden="true">♡</span>
+            </article>
+
+            <article className="polaroid polaroid-stage">
+              <span className="label label-sage">호흡</span>
+              <div className="photo-frame">
+                <Image src="/moment-stage.jpg" alt="함께 환호하는 공연장의 사람들" fill sizes="190px" priority />
+              </div>
+              <p>우리가 함께한 모든 시간</p>
+              <small>2024.08.03</small>
+            </article>
+
+            <span className="wax-seal" aria-hidden="true">❦</span>
+            <span className="heart-pin" aria-hidden="true">♥</span>
+          </div>
+        </section>
+
+        <section className="feature-band" id="features" aria-label="러브트리 특징">
+          <article>
+            <span className="feature-icon feature-gold" aria-hidden="true">☆</span>
+            <div>
+              <h2>대표 순간</h2>
+              <p>좋아하는 장면과 감정을 가장 먼저 남겨요</p>
+            </div>
+          </article>
+          <article>
+            <span className="feature-icon feature-rose" aria-hidden="true">♡</span>
+            <div>
+              <h2>이어진 감정</h2>
+              <p>순간과 순간이 감정의 흐름으로 연결돼요</p>
+            </div>
+          </article>
+          <article>
+            <span className="feature-icon feature-gold" aria-hidden="true">✣</span>
+            <div>
+              <h2>나만의 트리</h2>
+              <p>좋아하는 기억을 하나의 러브트리로 키워가요</p>
+            </div>
+          </article>
+        </section>
+
+        <section className="tree-gallery" id="trees" aria-labelledby="gallery-title">
+          <div className="gallery-intro">
+            <p className="eyebrow">PUBLIC LOVE TREES</p>
+            <h2 id="gallery-title">마음이 닿은 트리들</h2>
+            <p>다른 팬들이 가꾼 따뜻한 트리를 만나보세요.</p>
+            <a href="#top">천천히 둘러보기 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div className="gallery-grid">
+            {galleryCards.map((card) => (
+              <article className="tree-card" key={card.title}>
+                <div className="tree-card-image">
+                  <Image src={card.image} alt="" fill sizes="(max-width: 700px) 90vw, 300px" />
+                  <span className={`card-flower ${card.tone}`} aria-hidden="true">✦</span>
+                </div>
+                <div className="tree-card-copy">
+                  <h3>{card.title}</h3>
+                  <p>{card.description}</p>
+                  <small>♡ {card.stat} &nbsp;&nbsp; ○ {Number(card.stat.replace(",", "")) % 227 + 61}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <a className="brand footer-brand" href="#top">
+          <span className="brand-tree" aria-hidden="true"><i /><b /><em /></span>
+          <span className="brand-copy"><strong>러브트리</strong><small>LoveTree</small></span>
+        </a>
+        <p>마음이 시작된 순간을 오래 간직하는 법</p>
+      </footer>
+
+      {savedTree && (
+        <div className="toast" role="status">
+          <span>✿</span> ‘{savedTree}’ 트리의 첫 자리를 만들었어요.
+          <button type="button" onClick={() => setSavedTree("")} aria-label="알림 닫기">×</button>
+        </div>
+      )}
+
+      {isStartOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => setIsStartOpen(false)}>
+          <section
+            className="start-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="start-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button className="modal-close" type="button" onClick={() => setIsStartOpen(false)} aria-label="창 닫기">
+              ×
+            </button>
+            <p className="eyebrow">PLANT YOUR FIRST MOMENT</p>
+            <h2 id="start-title">
+              어떤 러브트리를
+              <br />
+              <em>처음 심어볼까요?</em>
+            </h2>
+            <p>최애, 작품, 여행, 계절. 마음이 머문 주제라면 무엇이든 좋아요.</p>
+            <form onSubmit={createTree}>
+              <label htmlFor="tree-name">러브트리 이름</label>
+              <input
+                id="tree-name"
+                value={treeName}
+                onChange={(event) => setTreeName(event.target.value)}
+                autoFocus
+                maxLength={32}
+                required
+              />
+              <button className="button button-primary" type="submit">
+                이 이름으로 시작하기 <span aria-hidden="true">→</span>
+              </button>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,7 +4,8 @@ node_modules/
 # Build and generated output
 .next/
 dist/
-build/
+build/*
+!build/sites-vite-plugin.ts
 out/
 coverage/
 playwright-report/
