@@ -24,11 +24,13 @@ Relative project paths were preserved. No absolute path rewrite was required.
 | --- | --- | --- |
 | Node.js | passed | `v22.19.0` |
 | npm | passed | `10.9.3` via `npm.cmd` |
-| `npm ci` | failed | npm reported corrupted cached package archives and terminated with `Exit handler never called` |
-| `npm run lint` | not run | Dependency installation did not complete |
-| `npm test` | not run | Dependency installation did not complete |
-| `npm run build` | not run | Dependency installation did not complete |
+| `npm ci` | passed | 507 packages installed; npm reported 18 audit vulnerabilities (1 low, 4 moderate, 13 high) |
+| `npm run lint` | passed | ESLint completed successfully |
+| `npm test` | failed | The package script's POSIX `WRANGLER_LOG_PATH=...` syntax is not recognized by Windows `cmd.exe` |
+| `npm run build` | failed | Same Windows environment-variable syntax issue |
+| Direct `vinext build` | failed | `vite.config.ts` imports missing `./build/sites-vite-plugin`; the `build/` directory was excluded by the import rules |
 | typecheck | not configured | No `typecheck` script exists in `package.json` |
 
-The failed dependency installation is recorded for follow-up; it does not change
-the imported source snapshot.
+The validation failures are recorded for follow-up; they do not change the
+imported source snapshot. No automatic vulnerability fix or build configuration
+change was applied.
