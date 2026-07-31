@@ -8,6 +8,7 @@ interface Env {
   FIREBASE_PROJECT_ID?: string;
   API_MUTATIONS_ENABLED?: string;
   APP_ENV?: string;
+  [key: string]: unknown;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

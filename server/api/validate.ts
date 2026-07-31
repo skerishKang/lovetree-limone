@@ -95,7 +95,7 @@ function validateString(value: unknown, rule: StringRule, field: string): string
   }
   if (typeof value !== "string") return `${field} must be a string`;
 
-  let candidate = rule.trim === false ? value : value.trim();
+  const candidate = rule.trim === false ? value : value.trim();
   if (rule.pattern && !rule.pattern.test(candidate)) {
     return `${field} has an invalid format`;
   }
