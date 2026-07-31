@@ -100,7 +100,7 @@ async function listTreeLikes(ctx: ApiContext): Promise<Response> {
     ));
 
   const count = rows.length;
-  const userLiked = user ? rows.some((r) => r.ownerId === user.uid) : false;
+  const userLiked = user ? rows.some((r: { ownerId: string }) => r.ownerId === user.uid) : false;
 
   return json({ count, liked: userLiked });
 }

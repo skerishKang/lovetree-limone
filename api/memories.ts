@@ -23,9 +23,11 @@ export async function memoriesRouter(ctx: ApiContext): Promise<Response | null> 
   }
 
   const treeMemories = matchRoute(path, "/api/trees/:treeId/memories");
-  if (treeMemories && method === "GET") {
+  if (treeMemories) {
     ctx.params = treeMemories;
-    return listTreeMemories(ctx);
+    if (method === "GET") return listTreeMemories(ctx);
+    if (method === "POST") return createTreeMemory(ctx);
+    return errorResponse("Method not allowed", 405);
   }
 
   const communityMemories = matchRoute(path, "/api/community/memories");
@@ -161,6 +163,42 @@ async function listTreeMemories(ctx: ApiContext): Promise<Response> {
     .limit(limit);
 
   return json(rows);
+}
+
+async function createTreeMemory(ctx: ApiContext): Promise<Response> {
+  const user = await requireAuthUser(ctx);
+  if (!user) return errorResponse("Authorization required", 401);
+
+  const { treeId } = ctx.params;
+  const body = (await parseBody(ctx.request)) as Record<string, unknown> | null;
+  if (!body) return errorResponse("Invalid request body", 400);
+
+  const now = new Date();
+  const id = crypto.randomUUID();
+
+  const memory = {
+    id,
+    treeId,
+    parentId: body.parentId ? String(body.parentId) : null,
+    title: String(body.title || ""),
+    memo: String(body.memo || body.note || ""),
+    artist: String(body.artist || ""),
+    source: String(body.source || ""),
+    sourceUrl: String(body.sourceUrl || ""),
+    sourceType: String(body.sourceType || body.kind || "youtube"),
+    thumbnail: String(body.thumbnail || ""),
+    emotionTags: body.emotionTags ?? [],
+    timestamp: String(body.timestamp || ""),
+    visibility: String(body.visibility || "public"),
+    channelId: body.channelId ? String(body.channelId) : null,
+    channelName: body.channelName ? String(body.channelName) : null,
+    channelUrl: body.channelUrl ? String(body.channelUrl) : null,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await ctx.db.insert(memories).values(memory);
+  return json(memory, 201);
 }
 
 async function listCommunityMemories(ctx: ApiContext): Promise<Response> {

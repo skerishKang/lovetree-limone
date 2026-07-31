@@ -30,6 +30,9 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Build artifacts
+tsconfig.tsbuildinfo
+
 # Cloudflare/local tool state
 .wrangler/
 .dev.vars

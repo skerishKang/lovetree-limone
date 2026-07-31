@@ -18,7 +18,7 @@ export function errorResponse(message: string, status: number): Response {
 export interface ApiContext {
   request: Request;
   env: { DATABASE_URL: string };
-  db: ReturnType<ReturnType<typeof getDb>>;
+  db: ReturnType<typeof getDb>;
   url: URL;
   method: string;
   path: string;
