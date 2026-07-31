@@ -21,9 +21,8 @@ import {
   type SourceTypeValue,
 } from "./validate";
 
-const MEMORY_RULES = {
+const MEMORY_CONTENT_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
-  treeId: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 100 },
   title: { kind: "string", trim: true, maxLength: 120 },
   memo: { kind: "string", trim: true, maxLength: 2000 },
   artist: { kind: "string", trim: true, maxLength: 120 },
@@ -40,7 +39,19 @@ const MEMORY_RULES = {
   parentId: { kind: "string", trim: true, maxLength: 100 },
 } as const;
 
-type MemoryUpdateRules = Omit<typeof MEMORY_RULES, "treeId">;
+const MEMORY_CREATE_RULES = {
+  ...MEMORY_CONTENT_RULES,
+  treeId: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 100 },
+} as const;
+
+const MEMORY_NESTED_CREATE_RULES = {
+  ...MEMORY_CONTENT_RULES,
+} as const;
+
+const MEMORY_UPDATE_RULES = {
+  ...MEMORY_CONTENT_RULES,
+  treeId: { kind: "string", trim: true, minLength: 1, maxLength: 100 },
+} as const;
 
 function buildMemoryRow(
   now: Date,
@@ -136,7 +147,7 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
   if (!user) return errorResponse("Authorization required", 401);
 
   const body = await parseBody(ctx.request);
-  const parsed = validate<Record<string, unknown>>(body, MEMORY_RULES);
+  const parsed = validate<Record<string, unknown>>(body, MEMORY_CREATE_RULES);
   if (!parsed.ok) return validationError(parsed.error);
 
   const treeId = parsed.value.treeId as string;
@@ -188,7 +199,7 @@ async function updateMemory(ctx: ApiContext): Promise<Response> {
   if (!existing) return errorResponse("Not found", 404);
 
   const body = await parseBody(ctx.request);
-  const parsed = validate<Record<string, unknown>>(body, MEMORY_RULES as MemoryUpdateRules);
+  const parsed = validate<Record<string, unknown>>(body, MEMORY_UPDATE_RULES);
   if (!parsed.ok) return validationError(parsed.error);
 
   let targetTreeId = existing.treeId;
@@ -272,7 +283,7 @@ async function createTreeMemory(ctx: ApiContext): Promise<Response> {
   if (!ownedTree) return errorResponse("Not found", 404);
 
   const body = await parseBody(ctx.request);
-  const parsed = validate<Record<string, unknown>>(body, MEMORY_RULES as MemoryUpdateRules);
+  const parsed = validate<Record<string, unknown>>(body, MEMORY_NESTED_CREATE_RULES);
   if (!parsed.ok) return validationError(parsed.error);
 
   const parentId = (parsed.value.parentId as string | null) ?? null;
