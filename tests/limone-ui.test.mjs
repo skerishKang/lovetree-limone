@@ -36,6 +36,8 @@ test("Limone UI integration keeps the requested visual modes and growth states",
   assert.match(styles, /next-connection-preview/);
   assert.match(styles, /emotion-hub/);
   assert.match(styles, /moment-viewer-player/);
+  assert.match(styles, /Let the growing canvas use the page height/);
+  assert.match(styles, /workspace-mode-tree \.workspace-stage/);
   assert.match(styles, /Readability and first-video quick start/);
   assert.match(styles, /font-size: 20px/);
 });

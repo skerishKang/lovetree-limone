@@ -8051,6 +8051,29 @@ footer {
   line-height: 1.55;
 }
 
+/* Let the growing canvas use the page height instead of being clipped by the stage shell. */
+.workspace-mode-tree .workspace-stage {
+  overflow: visible;
+}
+
+.workspace-mode-tree .workspace-view,
+.workspace-mode-tree .workspace-view-tree {
+  overflow: visible;
+}
+
+.workspace-mode-tree .growth-flow-viewport {
+  min-height: clamp(660px, calc(100vh - 180px), 1080px);
+}
+
+.workspace-mode-tree .workspace-layout {
+  padding-bottom: 24px;
+}
+
+.workspace-mode-tree .flow-canvas-space {
+  padding-bottom: 96px;
+  box-sizing: content-box;
+}
+
 @media (max-width: 900px) {
   .moment-viewer {
     overflow-y: auto;
