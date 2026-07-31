@@ -30,7 +30,9 @@ test("app home page wires real auth flow and guards mutations", async () => {
   assert.match(page, /apiFetch\(/);
   assert.match(page, /clientKey/);
   assert.match(page, /sourceType/);
-  assert.match(page, /disabled=\{saving\}/);
+  assert.match(page, /disabled=\{saving(?: \|\| loginPending)?\}/);
+  assert.match(page, /authError/);
+  assert.match(page, /aria-busy=\{loginPending\}/);
 });
 
 test("Escape key only closes the open modal, not the whole screen", async () => {
