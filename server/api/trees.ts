@@ -1,4 +1,4 @@
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import { trees, treeSocialCounts, memories } from "../../db/schema";
@@ -48,11 +48,6 @@ const MEMORY_RULES = {
 function sanitizeTree(row: Record<string, unknown>, isOwner: boolean): Record<string, unknown> {
   if (isOwner) return { ...row };
   const { ownerId: _ownerId, ...rest } = row;
-  return rest;
-}
-
-function sanitizeCommunityTree(t: Record<string, unknown>): Record<string, unknown> {
-  const { ownerId: _ownerId, ...rest } = t;
   return rest;
 }
 
@@ -248,68 +243,76 @@ async function forkTree(ctx: ApiContext): Promise<Response> {
   return json(forked, 201);
 }
 
-async function listCommunityTrees(ctx: ApiContext): Promise<Response> {
+export function buildCommunityTreesQuery(
+  db: ApiContext["db"],
+  sort: string,
+  limit: number,
+) {
+  const likeCount = sql<number>`coalesce(${treeSocialCounts.likeCount}, 0)`.mapWith(Number);
+  const viewCount = sql<number>`coalesce(${treeSocialCounts.viewCount}, 0)`.mapWith(Number);
+  const orderBy = sort === "popular" || sort === "likes"
+    ? desc(likeCount)
+    : sort === "views"
+      ? desc(viewCount)
+      : desc(trees.createdAt);
+  const orderBys = sort === "latest"
+    ? [orderBy]
+    : [orderBy, desc(trees.createdAt)];
+
+  return db
+    .select({
+      id: trees.id,
+      title: trees.title,
+      artist: trees.artist,
+      memo: trees.memo,
+      groupName: trees.groupName,
+      keywords: trees.keywords,
+      visibility: trees.visibility,
+      createdAt: trees.createdAt,
+      likeCount,
+      viewCount,
+    })
+    .from(trees)
+    .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
+    .where(eq(trees.visibility, VISIBILITY_PUBLIC))
+    .orderBy(...orderBys)
+    .limit(limit);
+}
+
+export async function listCommunityTrees(ctx: ApiContext): Promise<Response> {
   const view = ctx.url.searchParams.get("view") || "summary";
   const sort = ctx.url.searchParams.get("sort") || "latest";
   const limit = Math.min(Math.max(Number(ctx.url.searchParams.get("limit") || 12), 1), 60);
 
   if (view === "summary") {
-    const orderByCol = sort === "popular" || sort === "likes"
-      ? treeSocialCounts.likeCount
-      : sort === "views"
-        ? treeSocialCounts.viewCount
-        : trees.createdAt;
-
-    const rows = await ctx.db
-      .select()
-      .from(trees)
-      .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
-      .where(eq(trees.visibility, VISIBILITY_PUBLIC))
-      .orderBy(desc(orderByCol))
-      .limit(limit);
-
-    return json(rows.map((r: Record<string, unknown>) => {
-      const t = r.trees as Record<string, unknown>;
-      const s = r.tree_social_counts as Record<string, unknown> | null;
-      return sanitizeCommunityTree({
-        id: t.id,
-        title: t.title,
-        artist: t.artist,
-        memo: t.memo,
-        groupName: t.group_name,
-        keywords: t.keywords,
-        visibility: t.visibility,
-        createdAt: t.created_at,
-        likeCount: (s?.like_count as number) ?? 0,
-        viewCount: (s?.view_count as number) ?? 0,
-      });
-    }));
+    const rows = await buildCommunityTreesQuery(ctx.db, sort, limit);
+    return json(rows);
   }
 
-  return json([]);
+  return errorResponse("Unsupported community view", 400);
 }
 
-async function listGrowingTrees(ctx: ApiContext): Promise<Response> {
-  const limit = Math.min(Math.max(Number(ctx.url.searchParams.get("limit") || 6), 3), 12);
+export function buildGrowingTreesQuery(db: ApiContext["db"], limit: number) {
+  const likeCount = sql<number>`coalesce(${treeSocialCounts.likeCount}, 0)`.mapWith(Number);
 
-  const rows = await ctx.db
-    .select()
+  return db
+    .select({
+      id: trees.id,
+      title: trees.title,
+      artist: trees.artist,
+      likeCount,
+    })
     .from(trees)
     .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
     .where(eq(trees.visibility, VISIBILITY_PUBLIC))
-    .orderBy(desc(treeSocialCounts.likeCount))
+    .orderBy(desc(likeCount), desc(trees.createdAt))
     .limit(limit);
+}
 
-  return json(rows.map((r: Record<string, unknown>) => {
-    const t = r.trees as Record<string, unknown>;
-    const s = r.tree_social_counts as Record<string, unknown> | null;
-    return sanitizeCommunityTree({
-      id: t.id,
-      title: t.title,
-      artist: t.artist,
-      likeCount: (s?.like_count as number) ?? 0,
-    });
-  }));
+export async function listGrowingTrees(ctx: ApiContext): Promise<Response> {
+  const limit = Math.min(Math.max(Number(ctx.url.searchParams.get("limit") || 6), 3), 12);
+
+  return json(await buildGrowingTreesQuery(ctx.db, limit));
 }
 
 export async function deterministicId(...parts: string[]): Promise<string> {

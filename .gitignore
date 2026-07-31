@@ -36,6 +36,7 @@ tsconfig.tsbuildinfo
 # Cloudflare/local tool state
 .wrangler/
 .dev.vars
+.dev.vars.staging
 
 # Temporary files
 tmp/

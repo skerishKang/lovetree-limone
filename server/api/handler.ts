@@ -1,5 +1,6 @@
 import { getDb } from "../../db";
-import { json, errorResponse, matchRoute, parseBody, stripTrailingSlash } from "./http";
+import { json, errorResponse, stripTrailingSlash } from "./http";
+import { logApiError } from "./errors";
 import { treesRouter } from "./trees";
 import { memoriesRouter } from "./memories";
 import { commentsRouter } from "./comments";
@@ -23,6 +24,8 @@ export interface ApiContext {
   params: Record<string, string>;
 }
 
+export type ApiRouter = (ctx: ApiContext) => Promise<Response | null>;
+
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function areMutationsEnabled(env: ApiEnv): boolean {
@@ -31,7 +34,8 @@ function areMutationsEnabled(env: ApiEnv): boolean {
 
 export async function handleApiRequest(
   request: Request,
-  env: ApiEnv
+  env: ApiEnv,
+  router: ApiRouter = routeApiRequest
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
@@ -39,30 +43,41 @@ export async function handleApiRequest(
 
   if (!path.startsWith("/api/")) return null;
 
-  if (path === "/api/health" && method === "GET") {
-    return json({ status: "ok", env: env.APP_ENV ?? "unknown" });
+  const requestId = crypto.randomUUID();
+
+  try {
+    if (path === "/api/health" && method === "GET") {
+      return json({ status: "ok", env: env.APP_ENV ?? "unknown" });
+    }
+
+    if (MUTATION_METHODS.has(method) && !areMutationsEnabled(env)) {
+      return json(
+        { error: "Mutations are temporarily disabled in this staging preview" },
+        503
+      );
+    }
+
+    const db = getDb(env.DATABASE_URL);
+    const ctx: ApiContext = {
+      request,
+      env,
+      db: db as ApiContext["db"],
+      url,
+      method,
+      path,
+      params: {},
+    };
+
+    const response = await router(ctx);
+    return response ?? errorResponse("Route not found", 404);
+  } catch (error) {
+    logApiError({ requestId, method, path }, error);
+    return json({ error: "Internal server error", requestId }, 500);
   }
+}
 
-  if (MUTATION_METHODS.has(method) && !areMutationsEnabled(env)) {
-    return json(
-      { error: "Mutations are temporarily disabled in this staging preview" },
-      503
-    );
-  }
-
-  const db = getDb(env.DATABASE_URL);
-  const ctx: ApiContext = {
-    request,
-    env,
-    db: db as ApiContext["db"],
-    url,
-    method,
-    path,
-    params: {},
-  };
-
-  let resp: Response | null;
-  resp = await treesRouter(ctx);
+async function routeApiRequest(ctx: ApiContext): Promise<Response | null> {
+  let resp = await treesRouter(ctx);
   if (resp) return resp;
   resp = await memoriesRouter(ctx);
   if (resp) return resp;
@@ -70,8 +85,14 @@ export async function handleApiRequest(
   if (resp) return resp;
   resp = await socialRouter(ctx);
   if (resp) return resp;
-
-  return errorResponse("Route not found", 404);
+  return null;
 }
 
-export { json, errorResponse, matchRoute, parseBody, stripTrailingSlash, getAuthorizationToken } from "./http";
+export {
+  json,
+  errorResponse,
+  matchRoute,
+  parseBody,
+  stripTrailingSlash,
+  getAuthorizationToken,
+} from "./http";
