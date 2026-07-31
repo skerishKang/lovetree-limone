@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lovetree-limone-v2",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "APP_ENV": "staging",
+    "API_MUTATIONS_ENABLED": "true",
+    "FIREBASE_PROJECT_ID": "relovetree"
+  },
+  "secrets": {
+    "required": ["DATABASE_URL"]
+  }
+}
