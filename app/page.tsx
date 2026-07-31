@@ -19,9 +19,28 @@ const KIND_TO_SOURCE_TYPE: Record<string, string> = {
   기타: "other",
 };
 
+const BROWSE_SORTS = [
+  { value: "latest", label: "최신순" },
+  { value: "popular", label: "인기순" },
+  { value: "views", label: "조회순" },
+] as const;
+
+type BrowseSort = (typeof BROWSE_SORTS)[number]["value"];
+
+interface CommunityTree {
+  id: string;
+  title: string;
+  artist?: string;
+  memo?: string;
+  groupName?: string | null;
+  keywords?: string[];
+  likeCount?: number;
+  viewCount?: number;
+}
+
 export default function Home() {
   const { user, loading, login, logout } = useAuth();
-  const [view, setView] = useState<"home" | "discovery">("home");
+  const [view, setView] = useState<"home" | "discovery" | "browse">("home");
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [treeName, setTreeName] = useState("건호에게 입덕한 3일");
   const [selectedKind, setSelectedKind] = useState("영상");
@@ -33,6 +52,10 @@ export default function Home() {
   const [plantError, setPlantError] = useState<string | null>(null);
   const [treeClientKey, setTreeClientKey] = useState<string>(() => crypto.randomUUID());
   const [memoryClientKey, setMemoryClientKey] = useState<string>(() => crypto.randomUUID());
+  const [browseSort, setBrowseSort] = useState<BrowseSort>("latest");
+  const [communityTrees, setCommunityTrees] = useState<CommunityTree[]>([]);
+  const [browseLoading, setBrowseLoading] = useState(false);
+  const [browseError, setBrowseError] = useState<string | null>(null);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -43,6 +66,30 @@ export default function Home() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
+
+  async function loadCommunityTrees(sort: BrowseSort) {
+    setBrowseLoading(true);
+    setBrowseError(null);
+    try {
+      const res = await apiFetch(`/api/community/trees?view=summary&sort=${sort}&limit=24`);
+      const data = (await res.json().catch(() => [])) as CommunityTree[] | { error?: string };
+      if (!res.ok) {
+        setBrowseError("러브트리를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+        return;
+      }
+      setCommunityTrees(Array.isArray(data) ? data : []);
+    } catch {
+      setBrowseError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
+    } finally {
+      setBrowseLoading(false);
+    }
+  }
+
+  function openBrowse() {
+    setView("browse");
+    window.scrollTo({ top: 0 });
+    void loadCommunityTrees(browseSort);
+  }
 
   async function startTree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -143,11 +190,39 @@ export default function Home() {
     );
   }
 
+  if (view === "browse") {
+    return (
+      <section className="browse-screen" aria-labelledby="browse-title">
+        <div className="browse-shell">
+          <div className="flow-top"><button className="flow-back" type="button" onClick={() => { setView("home"); window.scrollTo({ top: 0 }); }}>← 처음 화면으로</button><span className="flow-step">community garden</span></div>
+          <header className="browse-header">
+            <div className="browse-heading">
+              <p className="eyebrow">02 · 함께 자라는 정원</p>
+              <h1 id="browse-title">마음이 자라는<br /><em>이웃의 러브트리</em></h1>
+              <p>공개된 러브트리를 둘러보세요. 누군가의 첫 순간이 당신의 다음 순간이 될지도 몰라요.</p>
+            </div>
+            {!browseLoading && communityTrees.length > 0 && <div className="browse-meta"><span className="browse-count"><b>{communityTrees.length}</b>그루의 러브트리</span></div>}
+          </header>
+          <div className="browse-toolbar"><div className="browse-sorts" role="group" aria-label="러브트리 정렬">{BROWSE_SORTS.map((s) => <button className={`kind${browseSort === s.value ? " selected" : ""}`} type="button" key={s.value} onClick={() => { setBrowseSort(s.value); void loadCommunityTrees(s.value); }}>{s.label}</button>)}</div></div>
+          {browseError ? (
+            <div className="browse-empty"><span aria-hidden="true">✦</span><p role="alert">{browseError}</p><button className="button button-quiet" type="button" onClick={() => void loadCommunityTrees(browseSort)}>다시 시도 <span aria-hidden="true">→</span></button></div>
+          ) : browseLoading && communityTrees.length === 0 ? (
+            <div className="browse-grid" aria-busy="true" aria-label="러브트리를 불러오는 중">{Array.from({ length: 8 }, (_, i) => <div className="tree-card tree-skeleton" key={i} aria-hidden="true"><div className="sk-media" /><div className="sk-line w70" /><div className="sk-line w90" /><div className="sk-line w45" /></div>)}</div>
+          ) : communityTrees.length === 0 ? (
+            <div className="browse-empty"><span aria-hidden="true">✦</span><p>아직 공개된 러브트리가 없어요.</p><p className="browse-empty-sub">첫 번째 러브트리를 심어 정원을 시작해 보세요.</p><button className="button button-primary" type="button" onClick={() => { setView("home"); setIsStartOpen(true); window.scrollTo({ top: 0 }); }}><span aria-hidden="true">+</span>첫 순간 심기</button></div>
+          ) : (
+            <div className="browse-grid">{communityTrees.map((tree, index) => <article className={`tree-card tilt-${index % 3}`} key={tree.id} style={{ animationDelay: `${Math.min(index, 11) * 55}ms` }}><div className={`tree-card-media tmedia-${index % 4}`}><span className="tree-glyph" aria-hidden="true">✦</span>{tree.groupName ? <span className="tree-group">{tree.groupName}</span> : null}</div><div className="tree-card-body"><h2>{tree.title}</h2>{tree.artist ? <p className="tree-artist">{tree.artist}</p> : null}{tree.memo ? <p className="tree-memo">{tree.memo}</p> : null}{tree.keywords && tree.keywords.length > 0 ? <div className="tree-keywords">{tree.keywords.slice(0, 3).map((k) => <span key={k}>#{k}</span>)}</div> : null}</div><div className="tree-card-foot"><span className="tree-like"><span aria-hidden="true">♥</span> {tree.likeCount ?? 0}</span><span className="tree-views">{tree.viewCount ?? 0}번 봤어요</span></div></article>)}</div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <div className="site-shell">
       <div className="ambient ambient-one" aria-hidden="true" /><div className="ambient ambient-two" aria-hidden="true" />
-      <header className="topbar"><a className="brand" href="#top" aria-label="LoveTree 홈"><span className="brand-mark" aria-hidden="true"><i /><b /></span><span>LoveTree</span></a><nav className="topnav" aria-label="주요 메뉴"><a href="#story">러브트리 소개</a><a href="#browse">둘러보기</a>{loading ? null : user ? <span className="nav-user"><span className="nav-user-name">{user.displayName || user.email}</span><button className="nav-login" type="button" onClick={logout}>로그아웃</button></span> : <button className="nav-login" type="button" onClick={login}>로그인</button>}</nav></header>
-      <main id="top"><section className="hero-section" aria-labelledby="hero-title"><div className="hero-copy"><p className="eyebrow">A little garden for every feeling</p><h1 id="hero-title">사랑에 빠지는 <span>순간을 하나의</span><em>러브트리로</em><strong>이어 보세요</strong></h1><p className="hero-description">처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을 한 그루의 나무처럼 이어 보세요.</p><div className="hero-actions"><button className="button button-primary" type="button" onClick={() => setIsStartOpen(true)}><span aria-hidden="true">+</span>첫 순간 심기</button><a className="button button-quiet" href="#browse">러브트리 둘러보기<span aria-hidden="true">→</span></a></div><p className="hero-note"><span aria-hidden="true">✦</span> 처음에는 단 하나의 순간만 있어도 충분해요.</p><div className="growth-proof" id="story"><div className="proof-label">러브트리는 이렇게 자라요</div><div className="proof-line" aria-label="발견, 기록, 연결, 성장"><span className="proof-item active"><b>01</b> 발견</span><i aria-hidden="true" /><span className="proof-item"><b>02</b> 기록</span><i aria-hidden="true" /><span className="proof-item"><b>03</b> 연결</span><i aria-hidden="true" /><span className="proof-item"><b>04</b> 성장</span></div></div></div>
+      <header className="topbar"><a className="brand" href="#top" aria-label="LoveTree 홈"><span className="brand-mark" aria-hidden="true"><i /><b /></span><span>LoveTree</span></a><nav className="topnav" aria-label="주요 메뉴"><a href="#story">러브트리 소개</a><button className="nav-link" type="button" onClick={openBrowse}>둘러보기</button>{loading ? null : user ? <span className="nav-user"><span className="nav-user-name">{user.displayName || user.email}</span><button className="nav-login" type="button" onClick={logout}>로그아웃</button></span> : <button className="nav-login" type="button" onClick={login}>로그인</button>}</nav></header>
+      <main id="top"><section className="hero-section" aria-labelledby="hero-title"><div className="hero-copy"><p className="eyebrow">A little garden for every feeling</p><h1 id="hero-title">사랑에 빠지는 <span>순간을 하나의</span><em>러브트리로</em><strong>이어 보세요</strong></h1><p className="hero-description">처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을 한 그루의 나무처럼 이어 보세요.</p><div className="hero-actions"><button className="button button-primary" type="button" onClick={() => setIsStartOpen(true)}><span aria-hidden="true">+</span>첫 순간 심기</button><button className="button button-quiet" type="button" onClick={openBrowse}>러브트리 둘러보기<span aria-hidden="true">→</span></button></div><p className="hero-note"><span aria-hidden="true">✦</span> 처음에는 단 하나의 순간만 있어도 충분해요.</p><div className="growth-proof" id="story"><div className="proof-label">러브트리는 이렇게 자라요</div><div className="proof-line" aria-label="발견, 기록, 연결, 성장"><span className="proof-item active"><b>01</b> 발견</span><i aria-hidden="true" /><span className="proof-item"><b>02</b> 기록</span><i aria-hidden="true" /><span className="proof-item"><b>03</b> 연결</span><i aria-hidden="true" /><span className="proof-item"><b>04</b> 성장</span></div></div></div>
         <div className="tree-stage" aria-label="첫 순간에서 러브트리가 자라는 예시"><div className="stage-topline"><span><i className="live-dot" /> 러브트리 미리보기</span><span className="stage-season">season 01</span></div><div className="tree-canvas"><div className="sun-orbit orbit-one" /><div className="sun-orbit orbit-two" /><div className="trunk" /><div className="branch branch-left" /><div className="branch branch-right" /><div className="leaf leaf-one" /><div className="leaf leaf-two" /><div className="leaf leaf-three" />{cards.map((card, index) => <article className={`moment-card ${index === 0 ? "moment-root" : index === 1 ? "branch-card-a" : "branch-card-b"}`} key={card.tag}><div className={`moment-media media-${index === 0 ? "root" : index === 1 ? "a" : "b"}`}><span aria-hidden="true">{index === 0 ? "▶" : index === 1 ? "▶" : "↗"}</span><small>{card.time}</small></div><div className="moment-body"><span className="moment-tag">{card.tag}</span><h2>{card.title}</h2><p>{card.note}</p>{index === 0 && <span className="moment-source">YouTube · 나의 기록</span>}</div></article>)}<div className="recommend-pip pip-left"><span>♥</span> 팬의 추천</div><div className="recommend-pip pip-right"><span>✦</span> 내가 고른 다음 순간</div><div className="stage-seed" aria-hidden="true"><span>✦</span></div></div><div className="stage-caption"><span className="caption-rule" /><p>한 장면에서 시작한 마음이<br /><b>다음 장면과 연결되어 자라나요.</b></p></div></div>
       </section><section className="story-strip" id="browse" aria-label="러브트리 특징"><div className="strip-card"><span>01</span><strong>첫 순간</strong><p>마음이 멈춘 정확한 장면을 심어 보세요.</p></div><div className="strip-card"><span>02</span><strong>감정 메모</strong><p>그때의 말과 감정을 짧게 기록해요.</p></div><div className="strip-card"><span>03</span><strong>다음 가지</strong><p>팬의 추천으로 이야기의 흐름을 이어가요.</p></div></section></main>
       {isStartOpen && <div className="modal-backdrop" role="presentation" onClick={() => setIsStartOpen(false)}><div className="seed-modal" role="dialog" aria-modal="true" aria-labelledby="seed-title" onClick={(event) => event.stopPropagation()}><button className="modal-close" type="button" onClick={() => setIsStartOpen(false)} aria-label="닫기">×</button><p className="eyebrow">plant your first moment</p><h2 id="seed-title">어떤 러브트리를<br /><em>처음 심어볼까요?</em></h2><p>최애, 작품, 여행, 공부. 마음이 자란 주제라면 무엇이든 좋아요.</p><form onSubmit={startTree}><label htmlFor="tree-name">러브트리 이름</label><input id="tree-name" value={treeName} onChange={(event) => setTreeName(event.target.value)} required /><button className="button button-primary" type="submit" disabled={saving}>{saving ? "시작 중…" : "이 이름으로 시작하기"} <span aria-hidden="true">→</span></button></form>{treeError && <p className="flow-error" role="alert">{treeError}</p>}</div></div>}
