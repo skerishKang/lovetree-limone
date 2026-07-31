@@ -1,0 +1,2036 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LoveTree | 마음이 머무는 트리 둘러보기</title>
+  <meta name="description" content="다른 사람의 러브트리를 천천히 둘러보고 마음이 닿는 순간을 감상하는 LoveTree 공개 트리 화면">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #fffdf8;
+      --paper-warm: #fbf5eb;
+      --ink: #41322d;
+      --ink-soft: #7f6c63;
+      --line: rgba(105, 78, 65, 0.16);
+      --rose: #cf717b;
+      --rose-deep: #aa5360;
+      --rose-pale: #f7dfe0;
+      --sage: #7c9473;
+      --sage-pale: #eaf0e4;
+      --violet: #8b6bb5;
+      --violet-pale: #eee7f6;
+      --gold: #c49a55;
+      --shadow: 0 24px 70px rgba(104, 77, 64, 0.13);
+      --shadow-soft: 0 12px 30px rgba(105, 78, 65, 0.11);
+      --serif: "Gowun Batang", "Batang", "Noto Serif KR", serif;
+      --sans: "Gowun Dodum", "Malgun Gothic", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 7% 8%, rgba(247, 202, 193, 0.44), transparent 24%),
+        radial-gradient(circle at 95% 12%, rgba(243, 214, 220, 0.48), transparent 25%),
+        radial-gradient(circle at 72% 95%, rgba(224, 232, 211, 0.56), transparent 28%),
+        #fbf5ec;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: -60px;
+      z-index: 1000;
+      padding: 10px 16px;
+      border-radius: 10px;
+      color: white;
+      background: var(--rose-deep);
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+    }
+
+    .page::before,
+    .page::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(0.2px);
+      opacity: 0.82;
+    }
+
+    .page::before {
+      width: 300px;
+      height: 420px;
+      left: -120px;
+      top: 84px;
+      background:
+        radial-gradient(ellipse at 55% 18%, rgba(224, 149, 149, 0.33) 0 12%, transparent 13%),
+        radial-gradient(ellipse at 76% 34%, rgba(229, 170, 159, 0.34) 0 10%, transparent 11%),
+        radial-gradient(ellipse at 48% 50%, rgba(226, 144, 145, 0.24) 0 11%, transparent 12%);
+      transform: rotate(-18deg);
+    }
+
+    .page::after {
+      width: 360px;
+      height: 460px;
+      right: -150px;
+      bottom: -110px;
+      background:
+        radial-gradient(ellipse at 40% 28%, rgba(219, 155, 161, 0.3) 0 13%, transparent 14%),
+        radial-gradient(ellipse at 64% 43%, rgba(239, 191, 183, 0.32) 0 12%, transparent 13%),
+        radial-gradient(ellipse at 36% 62%, rgba(209, 148, 156, 0.22) 0 11%, transparent 12%);
+      transform: rotate(24deg);
+    }
+
+    .petal {
+      position: fixed;
+      z-index: -1;
+      width: 15px;
+      height: 9px;
+      border-radius: 90% 10% 90% 10%;
+      background: rgba(225, 149, 154, 0.35);
+      box-shadow: 0 4px 10px rgba(153, 98, 91, 0.09);
+      pointer-events: none;
+      animation: drift 8s ease-in-out infinite alternate;
+    }
+
+    .petal.p1 { left: 3%; top: 42%; transform: rotate(24deg); }
+    .petal.p2 { left: 48%; top: 8%; transform: rotate(-28deg); animation-delay: -2s; }
+    .petal.p3 { right: 2%; top: 25%; transform: rotate(42deg); animation-delay: -4s; }
+    .petal.p4 { left: 52%; bottom: 8%; transform: rotate(12deg); animation-delay: -6s; }
+    .petal.p5 { right: 47%; top: 52%; transform: rotate(52deg); animation-delay: -1s; }
+
+    @keyframes drift {
+      from { translate: 0 0; rotate: -5deg; }
+      to { translate: 10px 16px; rotate: 13deg; }
+    }
+
+    .shell {
+      width: min(1480px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 24px 0 38px;
+    }
+
+    .topbar {
+      height: 74px;
+      display: grid;
+      grid-template-columns: 270px minmax(520px, 1fr) 250px;
+      align-items: center;
+      gap: 20px;
+      padding: 0 28px;
+      border: 1px solid rgba(110, 82, 68, 0.12);
+      border-radius: 24px;
+      background: rgba(255, 253, 248, 0.88);
+      box-shadow: 0 12px 35px rgba(96, 71, 61, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 34px;
+      height: 43px;
+      flex: 0 0 auto;
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      bottom: 3px;
+      width: 2px;
+      height: 31px;
+      border-radius: 999px;
+      background: #886b5e;
+      transform: rotate(-3deg);
+    }
+
+    .brand-mark span {
+      position: absolute;
+      width: 11px;
+      height: 12px;
+      border-radius: 70% 70% 45% 45%;
+      background: var(--rose);
+      transform: rotate(45deg);
+    }
+
+    .brand-mark span::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: inherit;
+      transform: rotate(90deg);
+      transform-origin: 50% 70%;
+    }
+
+    .brand-mark span:nth-child(1) { left: 3px; top: 5px; }
+    .brand-mark span:nth-child(2) { left: 19px; top: 1px; transform: rotate(56deg) scale(0.84); }
+    .brand-mark span:nth-child(3) { left: 23px; top: 18px; transform: rotate(76deg) scale(0.72); }
+
+    .brand-text strong {
+      display: block;
+      font: 700 23px/1 var(--serif);
+      letter-spacing: -0.04em;
+    }
+
+    .brand-text small {
+      display: block;
+      margin-top: 3px;
+      color: var(--ink-soft);
+      font: 400 10px/1 var(--serif);
+      letter-spacing: 0.08em;
+    }
+
+    .nav {
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 48px);
+    }
+
+    .nav a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      color: #695750;
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      border-radius: 99px;
+      background: var(--rose);
+      transform: translateX(-50%);
+      transition: width 0.2s ease;
+    }
+
+    .nav a:hover::after,
+    .nav a.active::after {
+      width: 100%;
+    }
+
+    .nav a.active {
+      color: var(--rose-deep);
+    }
+
+    .profile {
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px 6px 7px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .profile:hover {
+      background: #f7eee5;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(204, 120, 128, 0.24);
+      border-radius: 50%;
+      color: #7f5c53;
+      background:
+        radial-gradient(circle at 50% 34%, #725145 0 15%, transparent 16%),
+        radial-gradient(circle at 50% 62%, #e6b29f 0 25%, transparent 26%),
+        #f7ddd6;
+      font-size: 0;
+    }
+
+    .profile-label {
+      color: #5f504a;
+      white-space: nowrap;
+      font: 700 13px/1 var(--serif);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(540px, 0.94fr) minmax(590px, 1.06fr);
+      gap: 24px;
+      margin-top: 26px;
+      align-items: start;
+    }
+
+    .browse-pane,
+    .preview-pane {
+      min-width: 0;
+    }
+
+    .intro {
+      min-height: 120px;
+      padding: 4px 8px 10px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 7px;
+      color: #9a5b60;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .eyebrow::before {
+      content: "❧";
+      color: var(--rose);
+      font-size: 17px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #41322d;
+      font: 700 clamp(28px, 3vw, 42px)/1.25 var(--serif);
+      letter-spacing: -0.055em;
+    }
+
+    h1 em {
+      color: var(--rose);
+      font-style: normal;
+    }
+
+    .intro-copy {
+      max-width: 650px;
+      margin: 11px 0 0;
+      color: var(--ink-soft);
+      font: 400 14px/1.75 var(--serif);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(230px, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      margin: 13px 0 14px;
+    }
+
+    .search {
+      position: relative;
+    }
+
+    .search svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      color: #9a8a81;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .search input,
+    .sort-select {
+      width: 100%;
+      height: 43px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      outline: none;
+      color: var(--ink);
+      background: rgba(255, 253, 248, 0.78);
+      box-shadow: 0 7px 18px rgba(104, 77, 64, 0.05);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search input {
+      padding: 0 15px 0 42px;
+    }
+
+    .search input:focus,
+    .sort-select:focus {
+      border-color: rgba(207, 113, 123, 0.65);
+      box-shadow: 0 0 0 4px rgba(207, 113, 123, 0.1);
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, 0.75);
+      color: #74645d;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform 0.18s ease, color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .filter-chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(207, 113, 123, 0.38);
+    }
+
+    .filter-chip.active {
+      color: white;
+      border-color: var(--rose);
+      background: var(--rose);
+      box-shadow: 0 7px 16px rgba(185, 91, 102, 0.18);
+    }
+
+    .sort-select {
+      min-width: 112px;
+      padding: 0 34px 0 13px;
+      cursor: pointer;
+    }
+
+    .tree-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tree-card {
+      position: relative;
+      min-height: 155px;
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 13px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 253, 248, 0.74);
+      box-shadow: 0 8px 24px rgba(103, 76, 64, 0.06);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tree-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(103, 76, 64, 0.1);
+    }
+
+    .tree-card.selected {
+      border: 2px solid var(--tree-accent, var(--violet));
+      padding: 10px;
+      background: color-mix(in srgb, var(--tree-pale, var(--violet-pale)) 30%, #fffdf8 70%);
+      box-shadow: 0 11px 28px color-mix(in srgb, var(--tree-accent, var(--violet)) 19%, transparent);
+    }
+
+    .tree-card.selected::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 0 0 14px 0;
+      color: white;
+      background: var(--tree-accent, var(--violet));
+      font-size: 12px;
+      z-index: 3;
+    }
+
+    .tree-thumb {
+      position: relative;
+      min-height: 133px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #eadfd2;
+    }
+
+    .tree-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.83) contrast(0.96);
+      transform: scale(1.01);
+      transition: transform 0.45s ease, filter 0.45s ease;
+    }
+
+    .tree-card:hover .tree-thumb img {
+      transform: scale(1.055);
+      filter: saturate(1) contrast(1);
+    }
+
+    .tree-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(57, 38, 36, 0.2), transparent 50%);
+    }
+
+    .tree-info {
+      min-width: 0;
+      padding: 5px 2px 3px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tree-title-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .tree-title {
+      margin: 0;
+      overflow: hidden;
+      color: #493832;
+      font: 700 16px/1.35 var(--serif);
+      letter-spacing: -0.035em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .favorite {
+      width: 27px;
+      height: 27px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #ad9c94;
+      background: rgba(255, 255, 255, 0.55);
+      cursor: pointer;
+    }
+
+    .favorite svg {
+      width: 17px;
+      height: 17px;
+      fill: transparent;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      transition: fill 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .favorite:hover svg {
+      transform: scale(1.12);
+    }
+
+    .favorite.saved {
+      color: var(--rose);
+    }
+
+    .favorite.saved svg {
+      fill: currentColor;
+    }
+
+    .tree-description {
+      display: -webkit-box;
+      min-height: 37px;
+      margin: 6px 0 8px;
+      overflow: hidden;
+      color: #7e6d65;
+      font: 400 12px/1.55 var(--serif);
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .tree-meta {
+      margin-top: auto;
+      color: #9b8b82;
+      font-size: 10px;
+    }
+
+    .tree-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 9px;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: #806961;
+      background: #f3e8dc;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      min-height: 260px;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      border: 1px dashed rgba(126, 99, 84, 0.28);
+      border-radius: 22px;
+      color: var(--ink-soft);
+      background: rgba(255, 253, 248, 0.56);
+      text-align: center;
+      font-family: var(--serif);
+    }
+
+    .more-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .more-button {
+      min-width: 190px;
+      height: 42px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #6e5e56;
+      background: rgba(255, 253, 248, 0.74);
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(104, 77, 64, 0.05);
+    }
+
+    .more-button:hover {
+      border-color: rgba(207, 113, 123, 0.4);
+      color: var(--rose-deep);
+    }
+
+    .preview-pane {
+      position: sticky;
+      top: 20px;
+      padding-top: 4px;
+    }
+
+    .scrapbook {
+      --accent: var(--violet);
+      --pale: var(--violet-pale);
+      position: relative;
+      min-height: 690px;
+      padding: 32px 34px 26px;
+      border: 1px solid rgba(110, 82, 68, 0.13);
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at 22% 88%, color-mix(in srgb, var(--pale) 58%, transparent), transparent 30%),
+        radial-gradient(circle at 92% 15%, rgba(248, 221, 218, 0.45), transparent 26%),
+        rgba(255, 253, 248, 0.86);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: background 0.35s ease;
+    }
+
+    .scrapbook::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(85, 66, 58, 0.07) 0 1px, transparent 1px 4px),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0 1px, transparent 1.5px);
+      background-size: auto, 7px 7px;
+      mix-blend-mode: multiply;
+    }
+
+    .detail-copy {
+      position: relative;
+      z-index: 3;
+      width: 54%;
+      min-height: 128px;
+    }
+
+    .detail-kicker {
+      margin: 0 0 9px;
+      color: #8c7063;
+      font: 700 12px/1 var(--serif);
+      letter-spacing: 0.09em;
+    }
+
+    .detail-title {
+      margin: 0;
+      color: var(--accent);
+      font: 700 clamp(25px, 2.4vw, 34px)/1.25 var(--serif);
+      letter-spacing: -0.045em;
+    }
+
+    .detail-description {
+      max-width: 500px;
+      margin: 10px 0 0;
+      color: #75645c;
+      font: 400 13px/1.75 var(--serif);
+    }
+
+    .collage {
+      position: relative;
+      z-index: 2;
+      height: 390px;
+      margin-top: -4px;
+    }
+
+    .branch-line {
+      position: absolute;
+      left: 6%;
+      top: 48%;
+      width: 88%;
+      height: 2px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, transparent, rgba(119, 135, 100, 0.56) 12%, rgba(119, 135, 100, 0.58) 88%, transparent);
+      transform: rotate(-4deg);
+      transform-origin: center;
+    }
+
+    .branch-line::before,
+    .branch-line::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 2px;
+      border-radius: 99px;
+      background: rgba(119, 135, 100, 0.43);
+      transform-origin: left center;
+    }
+
+    .branch-line::before {
+      left: 24%;
+      transform: rotate(-36deg);
+    }
+
+    .branch-line::after {
+      left: 62%;
+      transform: rotate(42deg);
+    }
+
+    .leaf {
+      position: absolute;
+      z-index: 1;
+      width: 25px;
+      height: 12px;
+      border-radius: 100% 0 100% 0;
+      background: rgba(124, 148, 115, 0.45);
+      transform-origin: right center;
+    }
+
+    .leaf.l1 { left: 12%; top: 49%; transform: rotate(24deg); }
+    .leaf.l2 { left: 32%; top: 27%; transform: rotate(-28deg); }
+    .leaf.l3 { right: 23%; top: 49%; transform: rotate(168deg); }
+    .leaf.l4 { right: 8%; top: 31%; transform: rotate(124deg); }
+
+    .paper-card {
+      position: absolute;
+      border: 1px solid rgba(109, 80, 66, 0.16);
+      background: #fffdf8;
+      box-shadow: 0 13px 25px rgba(86, 63, 54, 0.14);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .paper-card:hover {
+      z-index: 8;
+      box-shadow: 0 18px 35px rgba(86, 63, 54, 0.2);
+    }
+
+    .tape::before {
+      content: "";
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      top: -10px;
+      width: 72px;
+      height: 23px;
+      background: rgba(226, 180, 150, 0.56);
+      box-shadow: inset 0 0 9px rgba(255,255,255,0.34);
+      transform: translateX(-50%) rotate(-5deg);
+      clip-path: polygon(2% 6%, 98% 0, 94% 100%, 4% 94%);
+    }
+
+    .hero-polaroid {
+      right: 5%;
+      top: -88px;
+      width: 46%;
+      min-width: 280px;
+      padding: 13px 13px 58px;
+      border-radius: 8px;
+      transform: rotate(4deg);
+    }
+
+    .hero-polaroid:hover {
+      transform: rotate(2deg) translateY(-3px);
+    }
+
+    .media-button {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 3px;
+      overflow: hidden;
+      background: #2f2632;
+      cursor: pointer;
+    }
+
+    .media-button img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: saturate(0.9) contrast(1.02);
+    }
+
+    .media-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(35, 27, 37, 0.32), transparent 55%);
+    }
+
+    .play {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      top: 50%;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.72);
+      border-radius: 50%;
+      color: white;
+      background: rgba(64, 46, 56, 0.52);
+      box-shadow: 0 6px 18px rgba(36, 24, 30, 0.2);
+      transform: translate(-50%, -50%);
+      backdrop-filter: blur(5px);
+    }
+
+    .play::before {
+      content: "";
+      width: 0;
+      height: 0;
+      margin-left: 4px;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 11px solid currentColor;
+    }
+
+    .duration {
+      position: absolute;
+      z-index: 4;
+      right: 7px;
+      bottom: 7px;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: white;
+      background: rgba(36, 27, 31, 0.74);
+      font-size: 9px;
+    }
+
+    .polaroid-caption {
+      position: absolute;
+      left: 17px;
+      right: 17px;
+      bottom: 14px;
+      overflow: hidden;
+      color: #5c4841;
+      font: 700 15px/1.25 var(--serif);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .note-card {
+      width: 28%;
+      min-width: 170px;
+      padding: 42px 19px 19px;
+      color: #665149;
+      background:
+        repeating-linear-gradient(to bottom, transparent 0 27px, rgba(121, 99, 85, 0.1) 28px),
+        #fffaf0;
+      font: 400 14px/1.95 var(--serif);
+      text-align: center;
+    }
+
+    .note-card::after {
+      content: "♡";
+      display: inline-block;
+      margin-left: 5px;
+      color: var(--accent);
+    }
+
+    .note-one {
+      left: 4%;
+      top: 56px;
+      transform: rotate(-6deg);
+    }
+
+    .note-one:hover {
+      transform: rotate(-3deg) translateY(-3px);
+    }
+
+    .small-polaroid {
+      left: 30%;
+      bottom: 5px;
+      width: 34%;
+      padding: 10px 10px 48px;
+      border-radius: 5px;
+      transform: rotate(-3deg);
+    }
+
+    .small-polaroid:hover {
+      transform: rotate(-1deg) translateY(-3px);
+    }
+
+    .small-polaroid .play {
+      width: 39px;
+      height: 39px;
+    }
+
+    .small-polaroid .polaroid-caption {
+      bottom: 12px;
+      font-size: 13px;
+    }
+
+    .memory-note {
+      right: 2%;
+      bottom: 7px;
+      width: 31%;
+      min-height: 138px;
+      padding: 35px 18px 18px;
+      border-radius: 6px;
+      transform: rotate(2deg);
+      color: #715c53;
+      background:
+        linear-gradient(90deg, rgba(232, 195, 188, 0.13), transparent 30%),
+        #fffaf4;
+      font: 400 13px/1.8 var(--serif);
+      text-align: center;
+    }
+
+    .memory-note:hover {
+      transform: rotate(0deg) translateY(-3px);
+    }
+
+    .memory-note strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+    }
+
+    .wax-seal {
+      position: absolute;
+      z-index: 10;
+      right: -13px;
+      bottom: -13px;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(255,255,255,0.33);
+      border-radius: 50%;
+      color: rgba(255,255,255,0.72);
+      background: #9c664d;
+      box-shadow: 0 5px 10px rgba(72, 44, 34, 0.25);
+      font: 700 15px/1 var(--serif);
+    }
+
+    .detail-footer {
+      position: relative;
+      z-index: 4;
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 22px;
+      align-items: end;
+      padding-top: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .moment-count {
+      color: #9b7062;
+      font: 400 15px/1.4 var(--serif);
+    }
+
+    .moment-count strong {
+      color: var(--accent);
+      font-size: 24px;
+    }
+
+    .emotion-flow {
+      min-width: 0;
+    }
+
+    .emotion-flow-title {
+      margin: 0 0 9px;
+      color: #7b675d;
+      font: 700 12px/1 var(--serif);
+      letter-spacing: 0.05em;
+    }
+
+    .emotion-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .emotion-tag {
+      padding: 7px 11px;
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      border-radius: 999px;
+      color: color-mix(in srgb, var(--accent) 75%, #493832);
+      background: color-mix(in srgb, var(--pale) 66%, #fff 34%);
+      font-size: 11px;
+    }
+
+    .emotion-arrow {
+      display: inline-flex;
+      align-items: center;
+      color: #b39f94;
+      font-size: 11px;
+    }
+
+    .open-tree {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 54px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(135deg, var(--rose), #d96372);
+      box-shadow: 0 12px 25px rgba(187, 85, 98, 0.22);
+      cursor: pointer;
+      font: 700 17px/1 var(--serif);
+      letter-spacing: -0.02em;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .open-tree:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(187, 85, 98, 0.28);
+    }
+
+    .preview-hint {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin: 11px 4px 0;
+      color: #9c8b83;
+      font-size: 11px;
+    }
+
+    .preview-hint strong {
+      color: var(--rose-deep);
+      font-weight: 400;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(53, 41, 38, 0.54);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal.open {
+      display: flex;
+      animation: fade-in 0.2s ease;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-dialog {
+      position: relative;
+      width: min(920px, 100%);
+      max-height: min(820px, calc(100vh - 48px));
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 28px;
+      background: #fffaf3;
+      box-shadow: 0 35px 90px rgba(35, 26, 24, 0.34);
+    }
+
+    .modal-close {
+      position: absolute;
+      z-index: 4;
+      right: 15px;
+      top: 15px;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      color: #65524c;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 6px 18px rgba(60,43,37,0.12);
+      cursor: pointer;
+      font-size: 22px;
+    }
+
+    .video-dialog {
+      overflow: hidden;
+      background: #181313;
+    }
+
+    .video-wrap {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+
+    .video-wrap iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+    }
+
+    .tree-dialog {
+      padding: 34px;
+      background:
+        radial-gradient(circle at 90% 8%, var(--dialog-pale, var(--violet-pale)), transparent 32%),
+        #fffaf3;
+    }
+
+    .tree-dialog-head {
+      padding-right: 55px;
+    }
+
+    .tree-dialog .detail-kicker {
+      color: var(--dialog-accent, var(--violet));
+    }
+
+    .tree-dialog h2 {
+      margin: 8px 0;
+      color: #493832;
+      font: 700 30px/1.25 var(--serif);
+    }
+
+    .tree-dialog p {
+      color: #7a6961;
+      font: 400 14px/1.7 var(--serif);
+    }
+
+    .moments {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-top: 24px;
+    }
+
+    .moment {
+      min-width: 0;
+      padding: 10px 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255,255,255,0.74);
+      box-shadow: 0 10px 24px rgba(91,65,54,0.08);
+    }
+
+    .moment button {
+      width: 100%;
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 11px;
+      overflow: hidden;
+      background: #eadfd5;
+      cursor: pointer;
+    }
+
+    .moment img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      display: block;
+      object-fit: cover;
+    }
+
+    .moment small {
+      display: block;
+      margin-top: 12px;
+      color: var(--dialog-accent, var(--violet));
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .moment h3 {
+      margin: 5px 0 4px;
+      overflow: hidden;
+      color: #54413a;
+      font: 700 15px/1.4 var(--serif);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .moment p {
+      display: -webkit-box;
+      margin: 0;
+      overflow: hidden;
+      font-size: 12px;
+      line-height: 1.6;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 150;
+      left: 50%;
+      bottom: 28px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(72, 53, 48, 0.92);
+      box-shadow: 0 12px 30px rgba(45,31,28,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 15px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 1240px) {
+      .shell {
+        width: min(1100px, calc(100% - 32px));
+      }
+
+      .topbar {
+        grid-template-columns: 220px 1fr auto;
+        padding: 0 20px;
+      }
+
+      .nav {
+        gap: 22px;
+      }
+
+      .nav a:nth-child(2) {
+        display: none;
+      }
+
+      .profile-label {
+        display: none;
+      }
+
+      .content {
+        grid-template-columns: minmax(470px, 0.92fr) minmax(500px, 1.08fr);
+      }
+
+      .controls {
+        grid-template-columns: 1fr auto;
+      }
+
+      .filter-row {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      .tree-card {
+        grid-template-columns: 100px minmax(0, 1fr);
+      }
+
+      .detail-copy {
+        width: 52%;
+      }
+
+      .hero-polaroid {
+        width: 48%;
+        min-width: 240px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-pane {
+        position: static;
+      }
+
+      .browse-pane {
+        order: 1;
+      }
+
+      .preview-pane {
+        order: 2;
+      }
+
+      .scrapbook {
+        min-height: 670px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(100% - 20px, 600px);
+        padding-top: 10px;
+      }
+
+      .topbar {
+        height: 62px;
+        padding: 0 14px;
+        border-radius: 18px;
+      }
+
+      .brand-mark {
+        width: 27px;
+        height: 35px;
+        transform: scale(0.85);
+      }
+
+      .brand-text strong {
+        font-size: 19px;
+      }
+
+      .brand-text small {
+        display: none;
+      }
+
+      .intro {
+        padding: 11px 4px 4px;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .filter-row {
+        width: 100%;
+        padding: 2px 0 5px;
+        overflow-x: auto;
+      }
+
+      .sort-select {
+        width: 100%;
+      }
+
+      .tree-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tree-card {
+        grid-template-columns: 112px minmax(0, 1fr);
+      }
+
+      .scrapbook {
+        min-height: 780px;
+        padding: 24px 18px 20px;
+        border-radius: 24px;
+      }
+
+      .detail-copy {
+        width: 100%;
+        min-height: 150px;
+        text-align: center;
+      }
+
+      .collage {
+        height: 470px;
+      }
+
+      .hero-polaroid {
+        top: 2px;
+        right: 6%;
+        width: 70%;
+        min-width: 0;
+      }
+
+      .note-one {
+        left: 0;
+        top: 125px;
+        width: 41%;
+        min-width: 0;
+      }
+
+      .small-polaroid {
+        left: 5%;
+        bottom: 5px;
+        width: 49%;
+      }
+
+      .memory-note {
+        right: 0;
+        bottom: 12px;
+        width: 43%;
+        min-height: 140px;
+      }
+
+      .detail-footer {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .moments {
+        grid-template-columns: 1fr;
+      }
+
+      .tree-dialog {
+        padding: 25px 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <div class="page">
+    <i class="petal p1" aria-hidden="true"></i>
+    <i class="petal p2" aria-hidden="true"></i>
+    <i class="petal p3" aria-hidden="true"></i>
+    <i class="petal p4" aria-hidden="true"></i>
+    <i class="petal p5" aria-hidden="true"></i>
+
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="LoveTree 첫 화면">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="brand-text">
+            <strong>러브트리</strong>
+            <small>LoveTree</small>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="주 메뉴">
+          <a href="#">첫 화면</a>
+          <a href="#">LoveTree 소개 보기</a>
+          <a class="active" href="#" aria-current="page">둘러보기</a>
+          <a href="#">내 러브트리 시작하기</a>
+        </nav>
+
+        <button class="profile" type="button" id="profileButton" aria-label="프로필 메뉴 열기">
+          <span class="avatar" aria-hidden="true"></span>
+          <span class="profile-label">오늘도 빛나는 하루</span>
+          <span aria-hidden="true">⌄</span>
+        </button>
+      </header>
+
+      <main class="content" id="main">
+        <section class="browse-pane" aria-labelledby="browseTitle">
+          <div class="intro">
+            <p class="eyebrow">공개 러브트리 둘러보기</p>
+            <h1 id="browseTitle">마음이 머무는 <em>순간들을</em><br>천천히 감상해보세요</h1>
+            <p class="intro-copy">다른 팬들이 정성껏 이어간 순간과 감정을 둘러보며, 마음이 닿는 러브트리를 천천히 만나보세요.</p>
+          </div>
+
+          <div class="controls" aria-label="러브트리 검색과 필터">
+            <label class="search">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.7" stroke="currentColor" stroke-width="1.8"></circle>
+                <path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+              <span class="sr-only" hidden>러브트리 검색</span>
+              <input id="searchInput" type="search" placeholder="인물, 제목, 감정으로 찾아보세요" autocomplete="off">
+            </label>
+
+            <div class="filter-row" id="filterRow" aria-label="감정 필터"></div>
+
+            <label>
+              <span hidden>정렬</span>
+              <select class="sort-select" id="sortSelect">
+                <option value="popular">인기순</option>
+                <option value="recent">최근 공개순</option>
+                <option value="moments">순간 많은순</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="tree-grid" id="treeGrid" aria-live="polite"></div>
+          <div class="more-row">
+            <button class="more-button" id="moreButton" type="button">더 많은 공개 러브트리 보기⌄</button>
+          </div>
+        </section>
+
+        <aside class="preview-pane" aria-label="선택한 러브트리 미리보기">
+          <article class="scrapbook" id="scrapbook">
+            <div class="detail-copy">
+              <p class="detail-kicker">❧ 감상 허브</p>
+              <h2 class="detail-title" id="detailTitle"></h2>
+              <p class="detail-description" id="detailDescription"></p>
+            </div>
+
+            <div class="collage">
+              <span class="branch-line" aria-hidden="true"></span>
+              <i class="leaf l1" aria-hidden="true"></i>
+              <i class="leaf l2" aria-hidden="true"></i>
+              <i class="leaf l3" aria-hidden="true"></i>
+              <i class="leaf l4" aria-hidden="true"></i>
+
+              <div class="paper-card note-card note-one tape" id="noteOne"></div>
+
+              <div class="paper-card hero-polaroid tape">
+                <button class="media-button" id="heroVideoButton" type="button" aria-label="대표 순간 영상 재생">
+                  <img id="heroImage" src="" alt="">
+                  <span class="play" aria-hidden="true"></span>
+                  <span class="duration" id="heroDuration"></span>
+                </button>
+                <div class="polaroid-caption" id="heroCaption"></div>
+                <span class="wax-seal" aria-hidden="true">L</span>
+              </div>
+
+              <div class="paper-card small-polaroid tape">
+                <button class="media-button" id="smallVideoButton" type="button" aria-label="두 번째 순간 영상 재생">
+                  <img id="smallImage" src="" alt="">
+                  <span class="play" aria-hidden="true"></span>
+                  <span class="duration" id="smallDuration"></span>
+                </button>
+                <div class="polaroid-caption" id="smallCaption"></div>
+              </div>
+
+              <div class="paper-card memory-note tape">
+                <strong>기억</strong>
+                <span id="memoryNote"></span>
+              </div>
+            </div>
+
+            <div class="detail-footer">
+              <div class="moment-count">❉ 대표 순간 <strong id="momentCount">0</strong>개</div>
+              <div class="emotion-flow">
+                <p class="emotion-flow-title">이어진 감정</p>
+                <div class="emotion-tags" id="emotionTags"></div>
+              </div>
+            </div>
+
+            <button class="open-tree" id="openTreeButton" type="button">이 트리 열기 ✣</button>
+          </article>
+          <div class="preview-hint">
+            <span><strong>카드를 눌러</strong> 다른 트리를 미리 볼 수 있어요.</span>
+            <span>영상 카드의 ▶를 눌러 재생해보세요.</span>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-label="영상 재생">
+    <div class="modal-dialog video-dialog">
+      <button class="modal-close" type="button" data-close="videoModal" aria-label="영상 닫기">×</button>
+      <div class="video-wrap" id="videoWrap"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="treeModal" role="dialog" aria-modal="true" aria-labelledby="treeModalTitle">
+    <div class="modal-dialog tree-dialog" id="treeDialog">
+      <button class="modal-close" type="button" data-close="treeModal" aria-label="트리 닫기">×</button>
+      <div class="tree-dialog-head">
+        <p class="detail-kicker">LOVE TREE · MOMENT DIARY</p>
+        <h2 id="treeModalTitle"></h2>
+        <p id="treeModalDescription"></p>
+      </div>
+      <div class="moments" id="moments"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const trees = [
+      {
+        id: "violet",
+        title: "함께 쌓인 보랏빛 순간",
+        description: "서로의 응원과 위로가 오랜 시간 차곡차곡 쌓여 만들어진 보랏빛 기록이에요.",
+        emotion: "위로",
+        tags: ["설렘", "위로", "응원", "사랑"],
+        moments: 24,
+        likes: 2814,
+        year: "2021–2024",
+        published: "2026-07-29",
+        accent: "#8b6bb5",
+        pale: "#eee7f6",
+        videos: [
+          { id: "nqofkzQD19E", title: "우리가 함께 빛난 밤", duration: "03:42", memo: "처음의 설렘에서 오래 남는 위로까지, 함께한 마음이 자라난 날." },
+          { id: "5dsm6m44cL4", title: "그날의 떨림이 지금의 나를", duration: "04:18", memo: "화면을 보자마자 그때의 공기까지 다시 떠올랐어." },
+          { id: "LlQEKB2H7z4", title: "마음을 다시 일으킨 장면", duration: "02:51", memo: "힘든 날마다 조용히 꺼내 보는 나만의 응원." }
+        ],
+        note: "네가 있어 준 날이<br>내게는 언제나<br>빛이 되었어.<br>고마워, 정말로.",
+        memory: "그날의 떨림이<br>지금의 나를<br>만들어줘서 고마워."
+      },
+      {
+        id: "redlight",
+        title: "레드와 별빛 사이",
+        description: "무대의 적색, 우리의 마음이 차올라 붉은 기록.",
+        emotion: "설렘",
+        tags: ["설렘", "추억", "무대"],
+        moments: 32,
+        likes: 3160,
+        year: "2023–2026",
+        published: "2026-07-30",
+        accent: "#c9616d",
+        pale: "#f6dfe1",
+        videos: [
+          { id: "bcUfIpQ6aeA", title: "심장이 먼저 알아본 무대", duration: "03:16", memo: "첫 소절이 시작되자 온몸이 먼저 반응했던 순간." },
+          { id: "mRppy-KnyNI", title: "붉은 조명 아래의 표정", duration: "02:47", memo: "빛과 눈빛이 겹친 몇 초를 계속 되돌려 봤어." },
+          { id: "nqofkzQD19E", title: "공연이 끝난 뒤에도", duration: "04:02", memo: "집에 오는 길에도 심장이 공연장에 남아 있었어." }
+        ],
+        note: "조명이 켜지고<br>네가 고개를 드는 순간,<br>내 마음도 같이<br>환해졌어.",
+        memory: "끝난 뒤에도 오래<br>귀에 남아 있던<br>그날의 첫 소절."
+      },
+      {
+        id: "story",
+        title: "완성형 아이돌의 서사",
+        description: "성장과 약속의 시간을 함께 눈부시게 수집한 이야기.",
+        emotion: "응원",
+        tags: ["설렘", "응원", "성장"],
+        moments: 28,
+        likes: 2671,
+        year: "2022–2024",
+        published: "2026-07-26",
+        accent: "#c69a56",
+        pale: "#f7ecd5",
+        videos: [
+          { id: "LlQEKB2H7z4", title: "처음보다 단단해진 얼굴", duration: "05:10", memo: "오래 걸어온 시간을 한 표정에서 알아본 것 같았어." },
+          { id: "5dsm6m44cL4", title: "약속을 지킨 무대", duration: "03:25", memo: "말했던 꿈이 진짜 장면이 된 날." },
+          { id: "mRppy-KnyNI", title: "다음 계절을 기다리는 이유", duration: "02:32", memo: "이 성장을 계속 지켜보고 싶어졌어." }
+        ],
+        note: "천천히 걸어온 길이<br>이렇게 멋진 장면이<br>되었다는 게<br>참 자랑스러워.",
+        memory: "꿈이 현실이 되는<br>과정을 함께 본<br>우리의 긴 시간."
+      },
+      {
+        id: "season",
+        title: "우리가 사랑하는 새로운 계절",
+        description: "계절을 선물처럼 건네준 너와 함께한 순간들.",
+        emotion: "계절",
+        tags: ["계절", "설렘", "추억"],
+        moments: 23,
+        likes: 2420,
+        year: "2024 봄",
+        published: "2026-07-27",
+        accent: "#d88791",
+        pale: "#fae5e4",
+        videos: [
+          { id: "5dsm6m44cL4", title: "벚꽃보다 먼저 온 마음", duration: "03:38", memo: "따뜻한 바람만 불어도 이 장면이 떠올라." },
+          { id: "bcUfIpQ6aeA", title: "새 계절의 첫 인사", duration: "03:07", memo: "처음 듣는 노래인데 오래 알던 마음 같았어." },
+          { id: "LlQEKB2H7z4", title: "봄밤을 오래 걷게 한 노래", duration: "04:22", memo: "이어폰을 빼기 아쉬워 한 정거장을 더 걸었어." }
+        ],
+        note: "꽃이 피면<br>그해의 네 웃음부터<br>생각나는 사람이<br>되어버렸어.",
+        memory: "계절이 돌아올 때마다<br>같이 돌아오는<br>한 장면."
+      },
+      {
+        id: "youth",
+        title: "반짝이는 우리의 청춘 기록",
+        description: "우리와 함께 반짝이던 웃음과 눈물을 모은 페이지.",
+        emotion: "추억",
+        tags: ["추억", "응원", "청춘"],
+        moments: 21,
+        likes: 2196,
+        year: "2022–2025",
+        published: "2026-07-22",
+        accent: "#7b9d91",
+        pale: "#e3eee9",
+        videos: [
+          { id: "mRppy-KnyNI", title: "웃음이 터졌던 첫 만남", duration: "03:12", memo: "별것 아닌 장난에도 같이 웃던 얼굴들이 좋았어." },
+          { id: "nqofkzQD19E", title: "우리의 한여름 페이지", duration: "04:11", memo: "바쁜 하루 속에서도 이 장면만 보면 마음이 가벼워져." },
+          { id: "bcUfIpQ6aeA", title: "다시 만날 날의 약속", duration: "02:58", memo: "기다리는 시간도 우리 이야기라고 생각하게 됐어." }
+        ],
+        note: "우리가 좋아했던<br>모든 순간은<br>사라지지 않고<br>여기 남아 있어.",
+        memory: "웃음과 눈물이<br>한 페이지에<br>나란히 남은 날."
+      },
+      {
+        id: "sentences",
+        title: "오래 곁에 남은 문장들",
+        description: "노래와 순간이 남긴 말들이 마음의 방향이 된 기록.",
+        emotion: "위로",
+        tags: ["위로", "추억", "문장"],
+        moments: 18,
+        likes: 1988,
+        year: "2020–2024",
+        published: "2026-07-21",
+        accent: "#a88973",
+        pale: "#f0e6dd",
+        videos: [
+          { id: "LlQEKB2H7z4", title: "괜찮다고 말해준 장면", duration: "03:49", memo: "내 마음을 대신 알아주는 문장을 만난 날." },
+          { id: "mRppy-KnyNI", title: "오늘을 버티게 한 한마디", duration: "02:44", memo: "짧은 말인데 하루 종일 마음에 남았어." },
+          { id: "5dsm6m44cL4", title: "다시 시작해도 된다는 마음", duration: "04:05", memo: "주저앉은 날에도 다음 페이지가 있다는 걸 알려줬어." }
+        ],
+        note: "네가 건넨 한 문장이<br>긴 하루 끝의<br>작은 의자가<br>되어주었어.",
+        memory: "다시 읽을 때마다<br>조금 다른 위로가<br>되는 말."
+      }
+    ];
+
+    const filters = ["전체", "설렘", "위로", "추억", "응원", "계절"];
+    const state = {
+      selectedId: "violet",
+      filter: "전체",
+      search: "",
+      sort: "popular",
+      favorites: new Set(JSON.parse(localStorage.getItem("lovetree-demo-favorites") || "[]"))
+    };
+
+    const els = {
+      filterRow: document.getElementById("filterRow"),
+      searchInput: document.getElementById("searchInput"),
+      sortSelect: document.getElementById("sortSelect"),
+      treeGrid: document.getElementById("treeGrid"),
+      scrapbook: document.getElementById("scrapbook"),
+      detailTitle: document.getElementById("detailTitle"),
+      detailDescription: document.getElementById("detailDescription"),
+      noteOne: document.getElementById("noteOne"),
+      heroVideoButton: document.getElementById("heroVideoButton"),
+      heroImage: document.getElementById("heroImage"),
+      heroDuration: document.getElementById("heroDuration"),
+      heroCaption: document.getElementById("heroCaption"),
+      smallVideoButton: document.getElementById("smallVideoButton"),
+      smallImage: document.getElementById("smallImage"),
+      smallDuration: document.getElementById("smallDuration"),
+      smallCaption: document.getElementById("smallCaption"),
+      memoryNote: document.getElementById("memoryNote"),
+      momentCount: document.getElementById("momentCount"),
+      emotionTags: document.getElementById("emotionTags"),
+      openTreeButton: document.getElementById("openTreeButton"),
+      moreButton: document.getElementById("moreButton"),
+      videoModal: document.getElementById("videoModal"),
+      videoWrap: document.getElementById("videoWrap"),
+      treeModal: document.getElementById("treeModal"),
+      treeDialog: document.getElementById("treeDialog"),
+      treeModalTitle: document.getElementById("treeModalTitle"),
+      treeModalDescription: document.getElementById("treeModalDescription"),
+      moments: document.getElementById("moments"),
+      toast: document.getElementById("toast")
+    };
+
+    const heartSvg = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path>
+      </svg>`;
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function thumb(videoId) {
+      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    function selectedTree() {
+      return trees.find(tree => tree.id === state.selectedId) || trees[0];
+    }
+
+    function renderFilters() {
+      els.filterRow.innerHTML = filters.map(filter => `
+        <button class="filter-chip ${state.filter === filter ? "active" : ""}" type="button" data-filter="${filter}" aria-pressed="${state.filter === filter}">
+          ${filter}
+        </button>
+      `).join("");
+    }
+
+    function filteredTrees() {
+      const query = state.search.trim().toLowerCase();
+      const matches = trees.filter(tree => {
+        const matchesFilter = state.filter === "전체" || tree.tags.includes(state.filter) || tree.emotion === state.filter;
+        const haystack = [tree.title, tree.description, tree.emotion, ...tree.tags].join(" ").toLowerCase();
+        return matchesFilter && (!query || haystack.includes(query));
+      });
+
+      return matches.sort((a, b) => {
+        if (state.sort === "recent") return b.published.localeCompare(a.published);
+        if (state.sort === "moments") return b.moments - a.moments;
+        return b.likes - a.likes;
+      });
+    }
+
+    function renderCards() {
+      const list = filteredTrees();
+
+      if (!list.length) {
+        els.treeGrid.innerHTML = `
+          <div class="empty-state">
+            <div>
+              <div style="font-size:34px;margin-bottom:10px">❧</div>
+              찾으시는 마음의 트리가 아직 없어요.<br>다른 검색어나 감정을 골라보세요.
+            </div>
+          </div>`;
+        return;
+      }
+
+      els.treeGrid.innerHTML = list.map(tree => {
+        const saved = state.favorites.has(tree.id);
+        return `
+          <article
+            class="tree-card ${tree.id === state.selectedId ? "selected" : ""}"
+            data-tree-id="${tree.id}"
+            tabindex="0"
+            role="button"
+            aria-label="${escapeHTML(tree.title)} 미리보기"
+            aria-pressed="${tree.id === state.selectedId}"
+            style="--tree-accent:${tree.accent};--tree-pale:${tree.pale}"
+          >
+            <div class="tree-thumb">
+              <img src="${thumb(tree.videos[0].id)}" alt="" loading="lazy">
+            </div>
+            <div class="tree-info">
+              <div class="tree-title-row">
+                <h3 class="tree-title">${escapeHTML(tree.title)}</h3>
+                <button class="favorite ${saved ? "saved" : ""}" type="button" data-favorite="${tree.id}" aria-label="${saved ? "찜 해제" : "찜하기"}" aria-pressed="${saved}">
+                  ${heartSvg}
+                </button>
+              </div>
+              <p class="tree-description">${escapeHTML(tree.description)}</p>
+              <div class="tree-meta">순간 ${tree.moments}개 · ${escapeHTML(tree.year)}</div>
+              <div class="tree-tags">${tree.tags.slice(0, 3).map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join("")}</div>
+            </div>
+          </article>`;
+      }).join("");
+    }
+
+    function renderDetail() {
+      const tree = selectedTree();
+      const [first, second] = tree.videos;
+      els.scrapbook.style.setProperty("--accent", tree.accent);
+      els.scrapbook.style.setProperty("--pale", tree.pale);
+      els.detailTitle.textContent = tree.title;
+      els.detailDescription.textContent = tree.description;
+      els.noteOne.innerHTML = tree.note;
+      els.heroImage.src = thumb(first.id);
+      els.heroImage.alt = `${first.title} 영상 미리보기`;
+      els.heroDuration.textContent = first.duration;
+      els.heroCaption.textContent = first.title;
+      els.heroVideoButton.dataset.videoId = first.id;
+      els.smallImage.src = thumb(second.id);
+      els.smallImage.alt = `${second.title} 영상 미리보기`;
+      els.smallDuration.textContent = second.duration;
+      els.smallCaption.textContent = second.title;
+      els.smallVideoButton.dataset.videoId = second.id;
+      els.memoryNote.innerHTML = tree.memory;
+      els.momentCount.textContent = tree.moments;
+      els.emotionTags.innerHTML = tree.tags.map((tag, index) => `
+        ${index ? '<span class="emotion-arrow" aria-hidden="true">···</span>' : ""}
+        <span class="emotion-tag">${escapeHTML(tag)}</span>
+      `).join("");
+      els.openTreeButton.setAttribute("aria-label", `${tree.title} 전체 트리 열기`);
+    }
+
+    function selectTree(id) {
+      if (!trees.some(tree => tree.id === id)) return;
+      state.selectedId = id;
+      renderCards();
+      renderDetail();
+
+      if (window.innerWidth < 981) {
+        document.querySelector(".preview-pane").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function toggleFavorite(id) {
+      if (state.favorites.has(id)) {
+        state.favorites.delete(id);
+        showToast("찜한 러브트리에서 뺐어요.");
+      } else {
+        state.favorites.add(id);
+        showToast("마음에 담아두었어요.");
+      }
+      localStorage.setItem("lovetree-demo-favorites", JSON.stringify([...state.favorites]));
+      renderCards();
+    }
+
+    function openVideo(videoId) {
+      els.videoWrap.innerHTML = `
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0"
+          title="LoveTree 순간 영상"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>`;
+      els.videoModal.classList.add("open");
+      document.body.style.overflow = "hidden";
+      els.videoModal.querySelector(".modal-close").focus();
+    }
+
+    function openTree() {
+      const tree = selectedTree();
+      els.treeDialog.style.setProperty("--dialog-accent", tree.accent);
+      els.treeDialog.style.setProperty("--dialog-pale", tree.pale);
+      els.treeModalTitle.textContent = tree.title;
+      els.treeModalDescription.textContent = `${tree.description} 대표 순간 세 장을 먼저 펼쳐봤어요. 영상과 그때 남긴 감상이 한 흐름으로 이어집니다.`;
+      els.moments.innerHTML = tree.videos.map((video, index) => `
+        <article class="moment">
+          <button type="button" data-modal-video="${video.id}" aria-label="${escapeHTML(video.title)} 영상 재생">
+            <img src="${thumb(video.id)}" alt="">
+          </button>
+          <small>0${index + 1} · ${index === 0 ? "처음 발견" : index === 1 ? "마음이 이어진 날" : "오래 남은 순간"}</small>
+          <h3>${escapeHTML(video.title)}</h3>
+          <p>${escapeHTML(video.memo)}</p>
+        </article>
+      `).join("");
+      els.treeModal.classList.add("open");
+      document.body.style.overflow = "hidden";
+      els.treeModal.querySelector(".modal-close").focus();
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.remove("open");
+      if (id === "videoModal") els.videoWrap.innerHTML = "";
+      if (!document.querySelector(".modal.open")) document.body.style.overflow = "";
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      toastTimer = setTimeout(() => els.toast.classList.remove("show"), 1800);
+    }
+
+    els.filterRow.addEventListener("click", event => {
+      const button = event.target.closest("[data-filter]");
+      if (!button) return;
+      state.filter = button.dataset.filter;
+      renderFilters();
+      renderCards();
+    });
+
+    els.searchInput.addEventListener("input", event => {
+      state.search = event.target.value;
+      renderCards();
+    });
+
+    els.sortSelect.addEventListener("change", event => {
+      state.sort = event.target.value;
+      renderCards();
+    });
+
+    els.treeGrid.addEventListener("click", event => {
+      const favorite = event.target.closest("[data-favorite]");
+      if (favorite) {
+        event.stopPropagation();
+        toggleFavorite(favorite.dataset.favorite);
+        return;
+      }
+      const card = event.target.closest("[data-tree-id]");
+      if (card) selectTree(card.dataset.treeId);
+    });
+
+    els.treeGrid.addEventListener("keydown", event => {
+      if (event.target.closest("[data-favorite]")) return;
+      const card = event.target.closest("[data-tree-id]");
+      if (card && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        selectTree(card.dataset.treeId);
+      }
+    });
+
+    els.heroVideoButton.addEventListener("click", () => openVideo(els.heroVideoButton.dataset.videoId));
+    els.smallVideoButton.addEventListener("click", () => openVideo(els.smallVideoButton.dataset.videoId));
+    els.openTreeButton.addEventListener("click", openTree);
+
+    els.moments.addEventListener("click", event => {
+      const button = event.target.closest("[data-modal-video]");
+      if (!button) return;
+      closeModal("treeModal");
+      openVideo(button.dataset.modalVideo);
+    });
+
+    document.addEventListener("click", event => {
+      const close = event.target.closest("[data-close]");
+      if (close) closeModal(close.dataset.close);
+      if (event.target.classList.contains("modal")) closeModal(event.target.id);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+      document.querySelectorAll(".modal.open").forEach(modal => closeModal(modal.id));
+    });
+
+    document.getElementById("profileButton").addEventListener("click", () => {
+      showToast("프로필 메뉴는 다음 화면에서 연결할 수 있어요.");
+    });
+
+    els.moreButton.addEventListener("click", () => {
+      showToast("다음 공개 트리 묶음이 이어질 자리예요.");
+    });
+
+    renderFilters();
+    renderCards();
+    renderDetail();
+  </script>
+</body>
+</html>

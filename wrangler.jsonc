@@ -1,0 +1,41 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lovetree-limone",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "APP_ENV": "staging",
+    "API_MUTATIONS_ENABLED": "false",
+    "FIREBASE_PROJECT_ID": "relovetree"
+  },
+  "secrets": {
+    "required": ["DATABASE_URL"]
+  },
+  "env": {
+    "staging": {
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "staging",
+        "API_MUTATIONS_ENABLED": "true",
+        "FIREBASE_PROJECT_ID": "relovetree"
+      },
+      "secrets": {
+        "required": ["DATABASE_URL"]
+      }
+    },
+    "production": {
+      "vars": {
+        "APP_ENV": "production",
+        "API_MUTATIONS_ENABLED": "true",
+        "FIREBASE_PROJECT_ID": "relovetree"
+      },
+      "secrets": {
+        "required": ["DATABASE_URL"]
+      }
+    }
+  }
+}
