@@ -19,3 +19,7 @@ const app = hasFirebaseConfig
 
 export const auth = app ? getAuth(app) : null;
 export const googleProvider = hasFirebaseConfig ? new GoogleAuthProvider() : null;
+
+// Firebase signOut clears the app session, but the browser may still have a
+// Google session. Ask Google to show the account chooser on the next popup.
+googleProvider?.setCustomParameters({ prompt: "select_account" });

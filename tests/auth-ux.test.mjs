@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { createSingleFlightAction, getAuthErrorCode, getAuthErrorMessage } from "../lib/auth-errors.ts";
 
 test("missing Firebase config produces a visible safe message", () => {
   assert.equal(getAuthErrorMessage(null, false), "로그인 설정을 불러오지 못했어요.");
+});
+
+test("Google login explicitly asks Google to show the account chooser", async () => {
+  const firebase = await readFile(new URL("../lib/firebase.ts", import.meta.url), "utf8");
+  assert.match(firebase, /setCustomParameters\(\{ prompt: "select_account" \}\)/);
 });
 
 test("Firebase popup errors map to safe user-facing messages", () => {
