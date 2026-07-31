@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 import "./flow.css";
+import "./tree-pages.css";
 
 export const metadata: Metadata = {
   title: "LoveTree | 사랑에 빠지는 순간을 이어 보세요",
