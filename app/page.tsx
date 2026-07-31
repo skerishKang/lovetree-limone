@@ -1614,10 +1614,9 @@ export default function Home() {
   const [selectedFormat, setSelectedFormat] = useState<ViewMode>("tree");
   const [savedTree, setSavedTree] = useState("");
   const [seedUrl, setSeedUrl] = useState("");
-  const [seedNote, setSeedNote] = useState("");
-  const [seedDate, setSeedDate] = useState("2026-07-30");
-  const [seedEmotion, setSeedEmotion] = useState("설렘");
+  const [seedDate] = useState("2026-07-31");
   const [initialSeed, setInitialSeed] = useState<Moment | null>(null);
+  const seedEmotion = "설렘";
   const seedVideoId = youtubeId(seedUrl);
 
   useEffect(() => {
@@ -1631,17 +1630,18 @@ export default function Home() {
   function createTree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextName = treeName.trim();
-    if (!nextName) return;
-    setInitialSeed(seedUrl.trim() ? {
+    const nextUrl = seedUrl.trim();
+    if (!nextName || !nextUrl) return;
+    setInitialSeed({
       ...sampleMoments[0],
       id: 1,
       title: "처음 마음이 멈춘 장면",
-      memo: seedNote.trim() || "처음 발견한 순간의 마음을 여기에 남겼어요.",
+      memo: "처음 발견한 영상에서 러브트리가 시작됐어요.",
       emotion: seedEmotion,
       date: seedDate.replaceAll("-", "."),
-      sourceUrl: seedUrl.trim(),
+      sourceUrl: nextUrl,
       publicMemo: privacy === "public",
-    } : null);
+    });
     setSavedTree(nextName);
     setView("workspace");
   }
@@ -1673,7 +1673,7 @@ export default function Home() {
           <Brand onHome={() => setView("home")} />
           <nav className="builder-nav" aria-label="주요 메뉴">
             <button type="button" onClick={() => setView("home")}>첫 화면</button>
-            <a href="#builder-guide">LoveTree 소개 보기</a>
+            <a href="#builder-preview">LoveTree 소개 보기</a>
             <button type="button" onClick={() => setView("community")}>둘러보기</button>
             <a className="active" href="#builder-form">내 러브트리 시작하기</a>
           </nav>
@@ -1687,18 +1687,16 @@ export default function Home() {
         <main className="builder-main">
           <section className="builder-left" aria-labelledby="builder-title">
             <div className="builder-heading">
-              <p className="builder-overline"><span aria-hidden="true">✿</span> 내 러브트리 시작하기</p>
+              <p className="builder-overline"><span aria-hidden="true">✿</span> 영상 하나로 바로 시작하기</p>
               <h1 id="builder-title">
-                오래 품고 싶은 순간을,
+                좋아하는 영상 하나를
                 <br />
-                하나의 <em>러브트리</em>로 시작해보세요
+                첫 <em>러브트리</em>로 심어보세요
               </h1>
               <p>
-                거창하지 않아도 괜찮아요.
+                제목을 정하고 영상 링크를 붙여넣으면 바로 첫 순간이 만들어져요.
                 <br />
-                좋아하는 장면, 노래, 감정 하나만 있어도
-                <br />
-                당신의 러브트리는 충분히 시작될 수 있어요.
+                감정 메모와 다음 영상은 트리를 만든 뒤 천천히 이어가면 됩니다.
               </p>
             </div>
 
@@ -1723,44 +1721,26 @@ export default function Home() {
               <section className="seed-builder" aria-labelledby="seed-builder-title">
                 <div className="seed-builder-heading">
                   <div>
-                    <span>PLANT YOUR FIRST MOMENT</span>
-                    <h2 id="seed-builder-title">첫 순간을 미리 심어볼까요?</h2>
+                    <span>STEP 01 · FIRST VIDEO</span>
+                    <h2 id="seed-builder-title">영상 링크를 붙여넣어 주세요</h2>
                   </div>
-                  <small>선택 사항 · 비워두면 예시 트리로 시작해요</small>
+                  <small>유튜브 링크를 넣으면 오른쪽에 바로 미리 보여요</small>
                 </div>
                 <div className="seed-builder-grid">
                   <div className="seed-builder-fields">
                     <label>
-                      발견한 영상 링크
+                      첫 영상 링크
                       <input
                         type="url"
                         value={seedUrl}
                         onChange={(event) => setSeedUrl(event.target.value)}
                         placeholder="https://youtube.com/watch?v=..."
+                        required
                       />
                     </label>
-                    <label>
-                      그때 어떤 마음이었나요?
-                      <textarea
-                        value={seedNote}
-                        maxLength={140}
-                        onChange={(event) => setSeedNote(event.target.value)}
-                        placeholder="예: 우연히 보게 됐는데, 하루 종일 이 장면이 생각났어."
-                      />
-                      <small>{seedNote.length} / 140</small>
-                    </label>
-                    <div className="seed-builder-meta">
-                      <label>
-                        발견한 날
-                        <input type="date" value={seedDate} onChange={(event) => setSeedDate(event.target.value)} />
-                      </label>
-                      <label>
-                        첫 감정
-                        <select value={seedEmotion} onChange={(event) => setSeedEmotion(event.target.value)}>
-                          {["설렘", "위로", "벅참", "여운", "추억", "응원"].map((item) => <option key={item}>{item}</option>)}
-                        </select>
-                      </label>
-                    </div>
+                    <p className="seed-builder-help">
+                      링크만 있으면 충분해요. 영상 제목, 감정, 기억할 시각은 트리를 만든 다음 화면에서 더 자세히 적을 수 있어요.
+                    </p>
                   </div>
                   <div
                     className={`seed-live-preview ${seedVideoId ? "ready" : ""}`}
@@ -1770,7 +1750,7 @@ export default function Home() {
                     <div>
                       <small>YOUR FIRST SEED</small>
                       <strong>{seedVideoId ? "첫 순간으로 연결할 영상" : "링크를 넣으면 첫 카드가 보여요"}</strong>
-                      <p>{seedNote.trim() || "그때의 마음도 첫 뿌리로 함께 남습니다."}</p>
+                      <p>{seedVideoId ? "이 영상이 내 러브트리의 첫 뿌리가 됩니다." : "좋아하는 영상 링크를 먼저 붙여넣어 주세요."}</p>
                     </div>
                   </div>
                 </div>
@@ -1850,32 +1830,14 @@ export default function Home() {
 
               <div className="builder-actions">
                 <button className="builder-submit" type="submit">
-                  내 러브트리 만들기 <span aria-hidden="true">✣</span>
+                  이 영상으로 내 트리 만들기 <span aria-hidden="true">✣</span>
                 </button>
                 <button className="builder-browse" type="button" onClick={() => setView("community")}>
                   공개 트리 먼저 둘러보기
                 </button>
               </div>
-              <p className="builder-form-note"><span aria-hidden="true">❧</span> 첫 순간은 다음 단계에서 천천히 남길 수 있어요.</p>
+              <p className="builder-form-note"><span aria-hidden="true">❧</span> 공개 범위와 보기 방식은 트리를 만든 뒤에도 언제든 바꿀 수 있어요.</p>
             </form>
-
-            <div className="builder-steps" id="builder-guide" aria-label="러브트리 시작 단계">
-              <article>
-                <span className="step-book" aria-hidden="true">♡</span>
-                <div><strong>제목을 정해요</strong><p>마음이 머문 이름으로 시작해요.</p></div>
-                <b aria-hidden="true">›</b>
-              </article>
-              <article>
-                <span className="step-photo" aria-hidden="true">▧</span>
-                <div><strong>첫 순간을 남겨요</strong><p>좋아하는 장면 하나면 충분해요.</p></div>
-                <b aria-hidden="true">›</b>
-              </article>
-              <article>
-                <span className="step-branch" aria-hidden="true">⌇</span>
-                <div><strong>천천히 이어가요</strong><p>감정의 흐름이 하나의 트리로 자라나요.</p></div>
-                <b aria-hidden="true">›</b>
-              </article>
-            </div>
           </section>
 
           <section className="builder-right" aria-label="첫 러브트리 미리보기">
@@ -1945,6 +1907,27 @@ export default function Home() {
                 <span className="mini-card mini-four"><Image src="/moment-friends.jpg" alt="" fill sizes="60px" /></span>
               </div>
             </article>
+          </section>
+
+          <section className="builder-preview-strip" id="builder-preview" aria-label="러브트리가 자라는 모습">
+            <div className="builder-preview-copy">
+              <span>AFTER YOUR FIRST VIDEO</span>
+              <h2>첫 영상 다음은<br />천천히 이어가면 돼요</h2>
+              <p>트리를 만든 뒤 감정 메모를 쓰고, 다음 영상을 한 장씩 연결해 보세요.</p>
+            </div>
+            {[
+              { image: "/moment-purple.jpg", step: "01", title: "첫 영상을 심어요" },
+              { image: "/moment-stage.jpg", step: "02", title: "마음을 한 줄 남겨요" },
+              { image: "/moment-friends.jpg", step: "03", title: "다음 영상으로 이어가요" },
+            ].map((item) => (
+              <article className="builder-preview-card" key={item.step}>
+                <div>
+                  <Image src={item.image} alt="" fill sizes="220px" />
+                  <span>{item.step}</span>
+                </div>
+                <strong>{item.title}</strong>
+              </article>
+            ))}
           </section>
         </main>
 
