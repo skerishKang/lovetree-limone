@@ -24,9 +24,18 @@ test("Limone UI integration keeps the requested visual modes and growth states",
   assert.match(page, /aespa · 카리나/);
   assert.match(page, /flow-node-like/);
   assert.match(page, /최근 공개순/);
+  assert.doesNotMatch(page, /momentCount >= sampleMoments\.length/);
+  assert.match(page, /flowCanvasSize/);
+  assert.match(page, /emotionFlowOffset/);
+  assert.match(page, /섹시함/);
+  assert.match(page, /moment-viewer/);
+  assert.match(page, /한눈에/);
+  assert.match(page, /diaryBoardPosition/);
   assert.match(styles, /growth-story-banner/);
   assert.match(styles, /delete-confirm-backdrop/);
   assert.match(styles, /next-connection-preview/);
+  assert.match(styles, /emotion-hub/);
+  assert.match(styles, /moment-viewer-player/);
   assert.match(styles, /Readability and first-video quick start/);
   assert.match(styles, /font-size: 20px/);
 });

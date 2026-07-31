@@ -7745,3 +7745,328 @@ footer {
     grid-template-columns: repeat(2, minmax(190px, 1fr));
   }
 }
+
+/* Infinite canvas and focused video viewing */
+.flow-canvas-space {
+  position: relative;
+  margin: 0 auto;
+}
+
+.flow-canvas-scale {
+  transform-origin: 0 0;
+}
+
+.growth-flow-viewport,
+.flow-expanded-viewport {
+  scrollbar-color: rgba(184, 102, 116, 0.55) rgba(255, 255, 255, 0.45);
+  scrollbar-width: thin;
+}
+
+.flow-node-photo.youtube-thumbnail {
+  background-position: center;
+  background-size: cover;
+}
+
+.tree-layout-toggle {
+  display: flex;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 11px;
+  background: #f5ebe4;
+}
+
+.tree-layout-toggle button {
+  min-width: 54px;
+  border: 0;
+  background: transparent;
+}
+
+.tree-layout-toggle button.active,
+.flow-expanded-tools button.active {
+  border-color: #d77b88;
+  background: #d77b88;
+  box-shadow: 0 5px 12px rgba(190, 86, 104, 0.2);
+  color: white;
+}
+
+.growth-selector > button:disabled {
+  cursor: default;
+  opacity: 0.58;
+}
+
+.growth-selector > button.reached {
+  opacity: 0.88;
+}
+
+.growth-selector > button.reached b {
+  background: #f4e3e5;
+  color: #bb6170;
+}
+
+.growth-selector > button.active:disabled {
+  opacity: 1;
+}
+
+.emotion-hub-line {
+  position: absolute;
+  z-index: 2;
+  height: 9px;
+  border-radius: 99px;
+  opacity: 0.72;
+  transform-origin: 0 50%;
+}
+
+.emotion-hub {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  min-width: 68px;
+  min-height: 36px;
+  padding: 0 12px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 20px;
+  background: #d96f83;
+  box-shadow: 0 8px 22px rgba(96, 59, 67, 0.2);
+  color: white;
+  font-family: var(--serif);
+  font-size: 0.63rem;
+  font-weight: 600;
+  transform: translate(-50%, -50%);
+}
+
+.emotion-hub-2 { background: #a96dcc; }
+.emotion-hub-3 { background: #ea87b8; }
+.emotion-hub-4 { background: #ef745c; }
+.emotion-hub-5 { background: #8f75d9; }
+
+.flow-layout-emotion .flow-relation {
+  max-width: 105px;
+}
+
+.moment-viewer-backdrop {
+  position: fixed;
+  z-index: 2600;
+  inset: 0;
+  display: grid;
+  padding: 18px;
+  place-items: center;
+  background: rgba(31, 23, 26, 0.76);
+  backdrop-filter: blur(18px);
+}
+
+.moment-viewer {
+  width: min(1320px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  background: #211a1d;
+  box-shadow: 0 34px 90px rgba(17, 10, 13, 0.5);
+}
+
+.moment-viewer > header {
+  display: flex;
+  min-height: 78px;
+  padding: 0 22px 0 28px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.moment-viewer > header p {
+  margin: 0 0 4px;
+  color: #ef9baa;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.moment-viewer > header h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.moment-viewer > header > button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.moment-viewer-body {
+  display: grid;
+  grid-template-columns: minmax(650px, 1fr) 320px;
+  min-height: 650px;
+}
+
+.moment-viewer-player {
+  position: relative;
+  min-height: 650px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(203, 109, 132, 0.22), transparent 42%),
+    #0d0a0b;
+}
+
+.moment-viewer-player iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 650px;
+  border: 0;
+}
+
+.moment-viewer-player img {
+  object-fit: contain;
+}
+
+.moment-viewer-player > span {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 250, 246, 0.9);
+  color: #a65f6c;
+  font-size: 1.2rem;
+  transform: translate(-50%, -50%);
+}
+
+.moment-viewer-player > small {
+  position: absolute;
+  z-index: 3;
+  bottom: 24px;
+  left: 50%;
+  padding: 9px 13px;
+  border-radius: 16px;
+  background: rgba(30, 23, 25, 0.72);
+  color: #eadcda;
+  font-size: 0.58rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.moment-viewer-body > aside {
+  padding: 28px 24px;
+  border-left: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(160deg, #2d2327, #20191c);
+  color: white;
+}
+
+.moment-viewer-emotion {
+  display: inline-flex;
+  min-height: 30px;
+  padding: 0 11px;
+  align-items: center;
+  border-radius: 15px;
+  background: #d87483;
+  font-size: 0.58rem;
+}
+
+.moment-viewer blockquote {
+  margin: 22px 0 13px;
+  color: #fff6f1;
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.moment-viewer-body > aside > p {
+  color: #cdbab5;
+  font-size: 0.58rem;
+}
+
+.moment-viewer-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 29px;
+  gap: 9px;
+}
+
+.moment-viewer-nav button {
+  display: grid;
+  min-height: 86px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  cursor: pointer;
+}
+
+.moment-viewer-nav button:last-child {
+  border-color: rgba(226, 117, 136, 0.54);
+  background: rgba(212, 103, 122, 0.18);
+}
+
+.moment-viewer-nav b {
+  font-size: 1.25rem;
+}
+
+.moment-viewer-nav span {
+  font-family: var(--serif);
+  font-size: 0.62rem;
+}
+
+.moment-viewer-body > aside > article {
+  display: grid;
+  margin-top: 22px;
+  padding: 15px;
+  gap: 7px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.moment-viewer-body > aside > article small {
+  color: #ee96a5;
+  font-size: 0.48rem;
+  font-weight: 700;
+}
+
+.moment-viewer-body > aside > article strong {
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.moment-viewer-body > aside > article span {
+  color: #cbb9b4;
+  font-size: 0.52rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .moment-viewer {
+    overflow-y: auto;
+  }
+
+  .moment-viewer-body {
+    grid-template-columns: 1fr;
+  }
+
+  .moment-viewer-player,
+  .moment-viewer-player iframe {
+    min-height: 52vh;
+  }
+
+  .moment-viewer-body > aside {
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border-left: 0;
+  }
+}

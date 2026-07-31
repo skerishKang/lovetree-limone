@@ -298,26 +298,80 @@ function Brand({ onHome }: { onHome: () => void }) {
 const growthStages = [
   { count: 1, label: "첫 순간", copy: "마음의 씨앗" },
   { count: 2, label: "두 장면", copy: "첫 가지" },
-  { count: 3, label: "작은 나무", copy: "한 그루가 된 순간" },
   { count: 4, label: "피어난 가지", copy: "첫 꽃" },
-  { count: 5, label: "맺히는 마음", copy: "첫 열매" },
-  { count: 6, label: "풍성한 트리", copy: "오래 쌓인 시간" },
-  { count: 7, label: "무성한 트리", copy: "취향의 지도" },
   { count: 8, label: "이어지는 숲", copy: "여덟 갈래의 흐름" },
+  { count: 20, label: "감정의 지도", copy: "취향별 작은 가지" },
+  { count: 50, label: "마음의 숲", copy: "넓게 펼친 마인드맵" },
+  { count: 100, label: "나만의 세계", copy: "백 개의 순간" },
 ];
 
 type FlowPosition = { x: number; y: number };
+type FlowLayout = "radial" | "emotion";
 
 const initialFlowPositions: FlowPosition[] = [
-  { x: 62, y: 52 },
-  { x: 680, y: 58 },
-  { x: 35, y: 280 },
-  { x: 710, y: 286 },
-  { x: 185, y: 480 },
-  { x: 570, y: 485 },
-  { x: 290, y: 42 },
-  { x: 425, y: 505 },
+  { x: -309, y: -199 },
+  { x: 309, y: -193 },
+  { x: -336, y: 29 },
+  { x: 339, y: 35 },
+  { x: -186, y: 229 },
+  { x: 199, y: 234 },
+  { x: -81, y: -209 },
+  { x: 54, y: 254 },
 ];
+
+function flowCanvasSize(count: number) {
+  const extraRings = Math.max(0, Math.ceil((count - 8) / 12));
+  return {
+    width: 920 + extraRings * 480,
+    height: 660 + extraRings * 380,
+  };
+}
+
+function radialFlowOffset(index: number) {
+  if (initialFlowPositions[index]) return initialFlowPositions[index];
+  const extraIndex = index - initialFlowPositions.length;
+  const ring = Math.floor(extraIndex / 12) + 1;
+  const slot = extraIndex % 12;
+  const angle = -Math.PI / 2 + slot * (Math.PI * 2 / 12) + ring * 0.11;
+  return {
+    x: Math.cos(angle) * (420 + (ring - 1) * 225),
+    y: Math.sin(angle) * (285 + (ring - 1) * 155),
+  };
+}
+
+function emotionGroups(moments: Moment[]) {
+  return Array.from(new Set(moments.map((moment) => moment.emotion || "기타")));
+}
+
+function emotionHubOffset(groupIndex: number, groupCount: number) {
+  const angle = -Math.PI / 2 + groupIndex * (Math.PI * 2 / Math.max(1, groupCount));
+  return {
+    x: Math.cos(angle) * 290,
+    y: Math.sin(angle) * 205,
+  };
+}
+
+function emotionFlowOffset(moments: Moment[], index: number) {
+  const groups = emotionGroups(moments);
+  const emotion = moments[index]?.emotion || "기타";
+  const groupIndex = Math.max(0, groups.indexOf(emotion));
+  const members = moments
+    .map((moment, momentIndex) => ({ emotion: moment.emotion || "기타", momentIndex }))
+    .filter((item) => item.emotion === emotion);
+  const memberIndex = Math.max(0, members.findIndex((item) => item.momentIndex === index));
+  const ring = Math.floor(memberIndex / 8);
+  const slot = memberIndex % 8;
+  const localAngle = -Math.PI / 2 + slot * (Math.PI * 2 / 8) + ring * 0.16;
+  const hub = emotionHubOffset(groupIndex, groups.length);
+  return {
+    x: hub.x + Math.cos(localAngle) * (135 + ring * 150),
+    y: hub.y + Math.sin(localAngle) * (105 + ring * 112),
+  };
+}
+
+function defaultFlowOffset(moments: Moment[], index: number, layout: FlowLayout) {
+  return layout === "emotion" ? emotionFlowOffset(moments, index) : radialFlowOffset(index);
+}
 
 function flowCopy(count: number) {
   if (count <= 1) {
@@ -379,10 +433,12 @@ function youtubeId(value: string) {
 function FlowCanvas({
   moments,
   treeName,
+  layout = "radial",
   activeId,
   newId,
   positions,
   onSelect,
+  onOpen,
   onMove,
   onMoveEnd,
   onAdd,
@@ -393,10 +449,12 @@ function FlowCanvas({
 }: {
   moments: typeof sampleMoments;
   treeName: string;
+  layout?: FlowLayout;
   activeId: number;
   newId: number;
   positions: FlowPosition[];
   onSelect: (id: number) => void;
+  onOpen?: (id: number) => void;
   onMove?: (id: number, position: FlowPosition) => void;
   onMoveEnd?: () => void;
   onAdd?: () => void;
@@ -414,17 +472,20 @@ function FlowCanvas({
     originY: number;
     moved: boolean;
   } | null>(null);
-  const root = { x: 455, y: 327 };
+  const ignoreClick = useRef(false);
+  const canvasSize = flowCanvasSize(moments.length);
+  const root = { x: canvasSize.width / 2, y: canvasSize.height / 2 };
+  const groups = emotionGroups(moments);
 
-  function startDrag(event: ReactPointerEvent<HTMLElement>, id: number, position: FlowPosition) {
+  function startDrag(event: ReactPointerEvent<HTMLElement>, id: number, offset: FlowPosition) {
     if (readOnly || !onMove) return;
     drag.current = {
       id,
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      originX: position.x,
-      originY: position.y,
+      originX: offset.x,
+      originY: offset.y,
       moved: false,
     };
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -437,8 +498,8 @@ function FlowCanvas({
     const dy = event.clientY - current.startY;
     if (Math.abs(dx) + Math.abs(dy) > 5) current.moved = true;
     onMove(current.id, {
-      x: Math.max(10, Math.min(740, current.originX + dx)),
-      y: Math.max(10, Math.min(505, current.originY + dy)),
+      x: Math.max(-root.x + 110, Math.min(root.x - 110, current.originX + dx)),
+      y: Math.max(-root.y + 95, Math.min(root.y - 95, current.originY + dy)),
     });
   }
 
@@ -449,18 +510,55 @@ function FlowCanvas({
     }
     const moved = drag.current.moved;
     drag.current = null;
-    if (moved) onMoveEnd?.();
+    if (moved) {
+      ignoreClick.current = true;
+      window.setTimeout(() => {
+        ignoreClick.current = false;
+      }, 0);
+      onMoveEnd?.();
+    }
   }
 
   return (
-    <div className="flow-canvas">
-      <span className="flow-orbit flow-orbit-one" aria-hidden="true" />
-      <span className="flow-orbit flow-orbit-two" aria-hidden="true" />
+    <div className={`flow-canvas flow-layout-${layout}`} style={{ width: canvasSize.width, height: canvasSize.height }}>
+      <span
+        className="flow-orbit flow-orbit-one"
+        style={{ left: root.x - 390, top: root.y - 235 }}
+        aria-hidden="true"
+      />
+      <span
+        className="flow-orbit flow-orbit-two"
+        style={{ left: root.x - 300, top: root.y - 205 }}
+        aria-hidden="true"
+      />
+      {layout === "emotion" && groups.map((group, groupIndex) => {
+        const hub = emotionHubOffset(groupIndex, groups.length);
+        const hubPoint = { x: root.x + hub.x, y: root.y + hub.y };
+        const length = Math.hypot(hub.x, hub.y);
+        const angle = Math.atan2(hub.y, hub.x) * 180 / Math.PI;
+        return (
+          <span key={`emotion-hub-${group}`}>
+            <i
+              className={`emotion-hub-line flow-branch-tone-${(groupIndex % 5) + 1}`}
+              style={{ left: root.x, top: root.y, width: length, transform: `rotate(${angle}deg)` }}
+              aria-hidden="true"
+            />
+            <b className={`emotion-hub emotion-hub-${(groupIndex % 5) + 1}`} style={{ left: hubPoint.x, top: hubPoint.y }}>
+              {group}
+            </b>
+          </span>
+        );
+      })}
       {moments.map((moment, index) => {
-        const position = positions[index] ?? initialFlowPositions[index];
+        const offset = positions[index] ?? defaultFlowOffset(moments, index, layout);
+        const position = { x: root.x + offset.x - 84, y: root.y + offset.y - 76 };
         const target = { x: position.x + 84, y: position.y + 76 };
-        const dx = target.x - root.x;
-        const dy = target.y - root.y;
+        const hub = layout === "emotion"
+          ? emotionHubOffset(Math.max(0, groups.indexOf(moment.emotion || "기타")), groups.length)
+          : { x: 0, y: 0 };
+        const branchRoot = { x: root.x + hub.x, y: root.y + hub.y };
+        const dx = target.x - branchRoot.x;
+        const dy = target.y - branchRoot.y;
         const length = Math.hypot(dx, dy);
         const angle = Math.atan2(dy, dx) * 180 / Math.PI;
         const isNew = moment.id === newId;
@@ -469,8 +567,8 @@ function FlowCanvas({
             <i
               className={`flow-branch-line flow-branch-tone-${(index % 5) + 1} ${isNew ? "new" : ""}`}
               style={{
-                left: root.x,
-                top: root.y,
+                left: branchRoot.x,
+                top: branchRoot.y,
                 width: length,
                 transform: `rotate(${angle}deg)`,
               }}
@@ -478,7 +576,7 @@ function FlowCanvas({
             />
             <span
               className={`flow-branch-heart flow-branch-heart-${(index % 4) + 1} ${isNew ? "new" : ""}`}
-              style={{ left: root.x + dx * 0.48, top: root.y + dy * 0.48 }}
+              style={{ left: branchRoot.x + dx * 0.48, top: branchRoot.y + dy * 0.48 }}
               aria-hidden="true"
             >
               ♥
@@ -486,7 +584,7 @@ function FlowCanvas({
             {index >= 2 && (
               <span
                 className={`flow-branch-flower ${isNew ? "new" : ""}`}
-                style={{ left: root.x + dx * 0.72, top: root.y + dy * 0.72 }}
+                style={{ left: branchRoot.x + dx * 0.72, top: branchRoot.y + dy * 0.72 }}
                 aria-hidden="true"
               >
                 ✿
@@ -495,7 +593,7 @@ function FlowCanvas({
             {index >= 4 && (
               <span
                 className={`flow-branch-fruit ${isNew ? "new" : ""}`}
-                style={{ left: root.x + dx * 0.61, top: root.y + dy * 0.61 }}
+                style={{ left: branchRoot.x + dx * 0.61, top: branchRoot.y + dy * 0.61 }}
                 aria-hidden="true"
               >
                 ●
@@ -504,7 +602,7 @@ function FlowCanvas({
             {index > 0 && (
               <span
                 className="flow-relation"
-                style={{ left: root.x + dx * 0.68, top: root.y + dy * 0.68 }}
+                style={{ left: branchRoot.x + dx * 0.68, top: branchRoot.y + dy * 0.68 }}
               >
                 {moment.relation}
               </span>
@@ -513,7 +611,10 @@ function FlowCanvas({
         );
       })}
 
-      <article className={`flow-root ${newId ? "sparkle" : ""}`}>
+      <article
+        className={`flow-root ${newId ? "sparkle" : ""}`}
+        style={{ left: root.x - 70, top: root.y - 66 }}
+      >
         <span aria-hidden="true">♥</span>
         <small>MY LOVE TREE</small>
         <strong>{treeName}</strong>
@@ -521,20 +622,33 @@ function FlowCanvas({
       </article>
 
       {moments.map((moment, index) => {
-        const position = positions[index] ?? initialFlowPositions[index];
+        const offset = positions[index] ?? defaultFlowOffset(moments, index, layout);
+        const position = { x: root.x + offset.x - 84, y: root.y + offset.y - 76 };
+        const videoId = youtubeId(moment.sourceUrl ?? "");
         return (
           <article
             className={`flow-node ${activeId === moment.id ? "active" : ""} ${newId === moment.id ? "new" : ""}`}
             style={{ left: position.x, top: position.y }}
             key={moment.id}
-            onPointerDown={(event) => startDrag(event, moment.id, position)}
+            onPointerDown={(event) => startDrag(event, moment.id, offset)}
             onPointerMove={moveDrag}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
           >
-            <button className="flow-node-select" type="button" onClick={() => onSelect(moment.id)}>
-              <span className="flow-node-photo">
-                <Image src={moment.image} alt="" fill sizes="175px" draggable={false} />
+            <button
+              className="flow-node-select"
+              type="button"
+              onClick={() => {
+                if (ignoreClick.current) return;
+                onSelect(moment.id);
+                onOpen?.(moment.id);
+              }}
+            >
+              <span
+                className={`flow-node-photo ${videoId ? "youtube-thumbnail" : ""}`}
+                style={videoId ? { backgroundImage: `url(https://img.youtube.com/vi/${videoId}/hqdefault.jpg)` } : undefined}
+              >
+                {!videoId && <Image src={moment.image} alt="" fill sizes="175px" draggable={false} />}
                 <b>{String(index + 1).padStart(2, "0")}</b>
                 <i aria-hidden="true">▶</i>
               </span>
@@ -596,6 +710,19 @@ const diaryBoardPositions: FlowPosition[] = [
   { x: 360, y: 640 },
 ];
 
+function diaryBoardPosition(index: number) {
+  if (diaryBoardPositions[index]) return diaryBoardPositions[index];
+  const extraIndex = index - diaryBoardPositions.length;
+  return {
+    x: 54 + (extraIndex % 3) * 285,
+    y: 890 + Math.floor(extraIndex / 3) * 275,
+  };
+}
+
+function diaryBoardHeight(count: number) {
+  return Math.max(900, 920 + Math.ceil(Math.max(0, count - diaryBoardPositions.length) / 3) * 275);
+}
+
 function DiaryBoard({
   moments,
   activeId,
@@ -612,15 +739,18 @@ function DiaryBoard({
   onAdd: () => void;
 }) {
   return (
-    <div className={`diary-flow-board diary-paper-${paper}`}>
+    <div
+      className={`diary-flow-board diary-paper-${paper}`}
+      style={{ height: diaryBoardHeight(moments.length) }}
+    >
       <span className="diary-board-title">순간을 이어가는 중 ♡</span>
       <span className="diary-board-date">2026 — 지금</span>
       <span className="diary-sprig diary-sprig-one" aria-hidden="true" />
       <span className="diary-sprig diary-sprig-two" aria-hidden="true" />
 
       {moments.slice(0, -1).map((moment, index) => {
-        const from = diaryBoardPositions[index];
-        const to = diaryBoardPositions[index + 1];
+        const from = diaryBoardPosition(index);
+        const to = diaryBoardPosition(index + 1);
         const x1 = from.x + 102;
         const y1 = from.y + 105;
         const x2 = to.x + 102;
@@ -645,7 +775,7 @@ function DiaryBoard({
       })}
 
       {moments.map((moment, index) => {
-        const position = diaryBoardPositions[index];
+        const position = diaryBoardPosition(index);
         return (
           <article
             className={`diary-memory ${activeId === moment.id ? "active" : ""} ${newId === moment.id ? "new" : ""}`}
@@ -715,6 +845,8 @@ function Workspace({
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [flowExpanded, setFlowExpanded] = useState(false);
   const [flowPositions, setFlowPositions] = useState(initialFlowPositions);
+  const [treeLayout, setTreeLayout] = useState<FlowLayout>("radial");
+  const [viewerMomentId, setViewerMomentId] = useState<number | null>(null);
   const [diaryPaper, setDiaryPaper] = useState<"blush" | "letter" | "sage">("blush");
   const [notice, setNotice] = useState("같은 순간을 네 가지 모습으로 볼 수 있어요.");
 
@@ -723,11 +855,18 @@ function Workspace({
   const activeMode = viewModes.find((item) => item.id === mode) ?? viewModes[0];
   const previewVideoId = youtubeId(videoUrl);
   const standaloneMode = mode === "diary";
+  const canvasSize = flowCanvasSize(momentCount);
+  const viewerMoment = viewerMomentId === null
+    ? null
+    : moments.find((moment) => moment.id === viewerMomentId) ?? null;
+  const viewerIndex = viewerMoment ? moments.findIndex((moment) => moment.id === viewerMoment.id) : -1;
+  const nextViewerMoment = viewerIndex >= 0 ? moments[(viewerIndex + 1) % moments.length] : null;
 
   function chooseStage(count: number) {
     setMoments(sampleMoments.slice(0, count));
     setActiveId(Math.min(activeId, count));
     setFlowPositions(initialFlowPositions);
+    setTreeLayout("radial");
     setNewMomentId(count > momentCount ? count : 0);
     setGrowthPulse((current) => current + 1);
     setGrowthNotice(`${count}개의 영상에 맞춰 “${flowCopy(count).lines.join(" ")}”로 문장이 바뀌었어요.`);
@@ -736,23 +875,20 @@ function Workspace({
 
   function addMoment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (momentCount >= sampleMoments.length) {
-      setNotice("샘플 트리가 충분히 자랐어요. 보기 방식을 바꿔 감상해보세요.");
-      return;
-    }
     if (parseMomentTime(entryTime) === null) {
       setNotice("기억할 시각은 01:30 형식으로 적어 주세요.");
       document.getElementById("moment-entry-time")?.focus();
       return;
     }
     const nextCount = momentCount + 1;
-    const template = sampleMoments[momentCount];
+    const template = sampleMoments[momentCount % sampleMoments.length];
     const finalEmotion = customEmotion.trim() || emotion;
     const finalKind = mode === "diary" ? entryKind : "video";
     setMoments((current) => [
       ...current,
       {
         ...template,
+        id: nextCount,
         title: entryTitle.trim() || (finalKind === "note" ? "오늘의 한 문장" : `새로 이어진 영상 ${String(nextCount).padStart(2, "0")}`),
         memo: memo.trim() || template.memo,
         relation,
@@ -779,7 +915,63 @@ function Workspace({
 
   function moveFlowNode(id: number, position: FlowPosition) {
     const momentIndex = moments.findIndex((moment) => moment.id === id);
-    setFlowPositions((current) => current.map((item, index) => (index === momentIndex ? position : item)));
+    setFlowPositions((current) => {
+      const next = Array.from(
+        { length: Math.max(current.length, momentIndex + 1) },
+        (_, index) => current[index] ?? defaultFlowOffset(moments, index, treeLayout),
+      );
+      next[momentIndex] = position;
+      return next;
+    });
+  }
+
+  function centerTree(viewportId: string, nextZoom = zoom) {
+    window.setTimeout(() => {
+      const viewport = document.getElementById(viewportId);
+      if (!viewport) return;
+      const scale = nextZoom / 100;
+      viewport.scrollTo({
+        left: Math.max(0, (canvasSize.width * scale - viewport.clientWidth) / 2),
+        top: Math.max(0, (canvasSize.height * scale - viewport.clientHeight) / 2),
+        behavior: "smooth",
+      });
+    }, 60);
+  }
+
+  function fitTree(viewportId: string) {
+    const viewport = document.getElementById(viewportId);
+    const availableWidth = viewport?.clientWidth ?? 820;
+    const availableHeight = viewport?.clientHeight ?? 620;
+    const nextZoom = Math.max(
+      18,
+      Math.min(100, Math.floor(Math.min(availableWidth / canvasSize.width, availableHeight / canvasSize.height) * 92)),
+    );
+    setZoom(nextZoom);
+    centerTree(viewportId, nextZoom);
+    setNotice(`${momentCount}개의 순간을 한눈에 보는 ${nextZoom}% 맞춤 화면이에요.`);
+  }
+
+  function changeTreeLayout(nextLayout: FlowLayout) {
+    setTreeLayout(nextLayout);
+    setFlowPositions([]);
+    setNotice(nextLayout === "emotion"
+      ? "설렘·귀여움·섹시함처럼 감정별 가지로 다시 펼쳤어요."
+      : "중앙에서 사방으로 자라는 방사형 트리로 펼쳤어요.");
+    centerTree("growth-flow-viewport");
+    centerTree("expanded-flow-viewport");
+  }
+
+  function openMomentViewer(id: number) {
+    setActiveId(id);
+    setViewerMomentId(id);
+  }
+
+  function moveViewer(direction: -1 | 1) {
+    if (viewerMomentId === null) return;
+    const currentIndex = moments.findIndex((moment) => moment.id === viewerMomentId);
+    const nextIndex = (currentIndex + direction + moments.length) % moments.length;
+    setActiveId(moments[nextIndex].id);
+    setViewerMomentId(moments[nextIndex].id);
   }
 
   function adjustEntryTime(delta: number) {
@@ -803,6 +995,7 @@ function Workspace({
     setActiveId(nextActive.id);
     setFlowPositions(initialFlowPositions);
     setNewMomentId(0);
+    if (viewerMomentId === pendingDeleteId) setViewerMomentId(null);
     setPendingDeleteId(null);
     setGrowthPulse((current) => current + 1);
     setGrowthNotice(`순간을 정리해 ${nextMoments.length}개 단계의 문장으로 돌아왔어요.`);
@@ -843,6 +1036,25 @@ function Workspace({
     window.addEventListener("keydown", closeDelete);
     return () => window.removeEventListener("keydown", closeDelete);
   }, [pendingDeleteId]);
+
+  useEffect(() => {
+    if (viewerMomentId === null) return;
+    const navigateViewer = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setViewerMomentId(null);
+      const direction = event.key === "ArrowUp" || event.key === "ArrowLeft"
+        ? -1
+        : event.key === "ArrowDown" || event.key === "ArrowRight"
+          ? 1
+          : 0;
+      if (!direction) return;
+      const currentIndex = moments.findIndex((moment) => moment.id === viewerMomentId);
+      const nextIndex = (currentIndex + direction + moments.length) % moments.length;
+      setActiveId(moments[nextIndex].id);
+      setViewerMomentId(moments[nextIndex].id);
+    };
+    window.addEventListener("keydown", navigateViewer);
+    return () => window.removeEventListener("keydown", navigateViewer);
+  }, [viewerMomentId, moments]);
 
   return (
     <div className={`workspace-shell workspace-mode-${mode} ${standaloneMode ? "workspace-standalone-mode" : ""}`}>
@@ -931,18 +1143,22 @@ function Workspace({
                   <span id="growth-title">트리의 성장 단계</span>
                   <small>{momentCount} moments</small>
                 </div>
-                {growthStages.map((stage) => (
+                {growthStages.map((stage, index) => {
+                  const nextStage = growthStages[index + 1];
+                  const isCurrent = momentCount >= stage.count && (!nextStage || momentCount < nextStage.count);
+                  return (
                   <button
-                    className={momentCount === stage.count ? "active" : ""}
+                    className={`${momentCount >= stage.count ? "reached" : ""} ${isCurrent ? "active" : ""}`}
                     type="button"
                     key={stage.count}
-                    onClick={() => chooseStage(stage.count)}
+                    disabled
                   >
                     <b>{String(stage.count).padStart(2, "0")}</b>
                     <span><strong>{stage.label}</strong><small>{stage.copy}</small></span>
-                    <i aria-hidden="true">›</i>
+                    <i aria-hidden="true">{momentCount >= stage.count ? "✓" : "›"}</i>
                   </button>
-                ))}
+                  );
+                })}
               </section>
 
               <section className="mode-note">
@@ -965,13 +1181,38 @@ function Workspace({
             <div className="canvas-controls" aria-label="화면 크기 조절">
               {mode === "tree" && (
                 <>
-                  <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
+                  <span className="tree-layout-toggle" aria-label="트리 펼침 방식">
+                    <button
+                      className={treeLayout === "radial" ? "active" : ""}
+                      type="button"
+                      onClick={() => changeTreeLayout("radial")}
+                    >
+                      방사형
+                    </button>
+                    <button
+                      className={treeLayout === "emotion" ? "active" : ""}
+                      type="button"
+                      onClick={() => changeTreeLayout("emotion")}
+                    >
+                      감정별
+                    </button>
+                  </span>
+                  <button type="button" onClick={() => setZoom(Math.max(18, zoom - 10))}>−</button>
                   <span>{zoom}%</span>
-                  <button type="button" onClick={() => setZoom(Math.min(110, zoom + 10))}>＋</button>
-                  <button type="button" onClick={() => setZoom(90)}>맞춤</button>
+                  <button type="button" onClick={() => setZoom(Math.min(160, zoom + 10))}>＋</button>
+                  <button type="button" onClick={() => fitTree("growth-flow-viewport")}>한눈에</button>
+                  <button type="button" onClick={() => centerTree("growth-flow-viewport")}>중앙</button>
                 </>
               )}
-              <button type="button" onClick={mode === "tree" ? () => setFlowExpanded(true) : toggleFullscreen}>
+              <button
+                type="button"
+                onClick={mode === "tree"
+                  ? () => {
+                      setFlowExpanded(true);
+                      fitTree("expanded-flow-viewport");
+                    }
+                  : toggleFullscreen}
+              >
                 {mode === "tree" ? "크게 펼쳐보기" : "전체 화면"}
               </button>
             </div>
@@ -994,23 +1235,33 @@ function Workspace({
                     <mark><span aria-hidden="true">✦</span> {growthNotice}</mark>
                   </div>
                 </section>
-                <div className="growth-flow-viewport">
-                  <div className="flow-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
-                    <FlowCanvas
-                      moments={moments}
-                      treeName={treeName}
-                      activeId={activeMoment.id}
-                      newId={newMomentId}
-                      positions={flowPositions}
-                      onSelect={setActiveId}
-                      onMove={moveFlowNode}
-                      onMoveEnd={() => setNotice("카드를 옮긴 자리까지 빛나는 가지가 따라왔어요.")}
-                      onAdd={focusMomentForm}
-                      onDelete={setPendingDeleteId}
-                    />
+                <div className="growth-flow-viewport" id="growth-flow-viewport">
+                  <div
+                    className="flow-canvas-space"
+                    style={{ width: canvasSize.width * zoom / 100, height: canvasSize.height * zoom / 100 }}
+                  >
+                    <div
+                      className="flow-canvas-scale"
+                      style={{ width: canvasSize.width, height: canvasSize.height, transform: `scale(${zoom / 100})` }}
+                    >
+                      <FlowCanvas
+                        moments={moments}
+                        treeName={treeName}
+                        layout={treeLayout}
+                        activeId={activeMoment.id}
+                        newId={newMomentId}
+                        positions={flowPositions}
+                        onSelect={setActiveId}
+                        onOpen={openMomentViewer}
+                        onMove={moveFlowNode}
+                        onMoveEnd={() => setNotice("카드를 옮긴 자리까지 빛나는 가지가 따라왔어요.")}
+                        onAdd={focusMomentForm}
+                        onDelete={setPendingDeleteId}
+                      />
+                    </div>
                   </div>
                 </div>
-                <p className="growth-drag-hint">카드를 끌어 움직여 보세요 · 새 영상은 다른 색의 가지와 하트로 반짝여요</p>
+                <p className="growth-drag-hint">카드 이동 · 18~160% 확대축소 · 방사형/감정별 전환 · 클릭하면 영상 집중 보기</p>
               </div>
             )}
 
@@ -1048,7 +1299,7 @@ function Workspace({
                   activeId={activeMoment.id}
                   newId={newMomentId}
                   paper={diaryPaper}
-                  onSelect={setActiveId}
+                  onSelect={openMomentViewer}
                   onAdd={focusMomentForm}
                 />
               </div>
@@ -1059,7 +1310,7 @@ function Workspace({
                 <div className="story-photo">
                   <Image src={activeMoment.image} alt={activeMoment.title} fill sizes="(max-width: 900px) 90vw, 680px" />
                   <span>{String(activeMoment.id).padStart(2, "0")} / {String(momentCount).padStart(2, "0")}</span>
-                  <button type="button" aria-label="영상 재생">▶</button>
+                  <button type="button" onClick={() => openMomentViewer(activeMoment.id)} aria-label="영상 크게 재생">▶</button>
                 </div>
                 <article>
                   <p>{activeMoment.date} · {activeMoment.emotion}</p>
@@ -1099,7 +1350,7 @@ function Workspace({
                       className={`album-photo-tile album-photo-tile-${(index % 5) + 1} ${activeMoment.id === moment.id ? "active" : ""} ${newMomentId === moment.id ? "new" : ""}`}
                       type="button"
                       key={moment.id}
-                      onClick={() => setActiveId(moment.id)}
+                      onClick={() => openMomentViewer(moment.id)}
                     >
                       <span className="album-photo-image">
                         <Image src={moment.image} alt="" fill sizes="(max-width: 900px) 45vw, 260px" />
@@ -1245,7 +1496,7 @@ function Workspace({
             <fieldset>
               <legend>그때 가장 가까웠던 감정</legend>
               <div className="choice-chips emotion-chips">
-                {["설렘", "위로", "벅참", "여운", "추억", "귀여움"].map((item) => (
+                {["설렘", "귀여움", "섹시함", "위로", "벅참", "여운", "추억"].map((item) => (
                   <button
                     className={!customEmotion && emotion === item ? "active" : ""}
                     type="button"
@@ -1342,28 +1593,53 @@ function Workspace({
                 <h2>{treeName}</h2>
               </div>
               <div className="flow-expanded-tools">
-                <button type="button" onClick={() => setZoom(Math.max(70, zoom - 10))}>−</button>
+                <button
+                  className={treeLayout === "radial" ? "active" : ""}
+                  type="button"
+                  onClick={() => changeTreeLayout("radial")}
+                >
+                  방사형
+                </button>
+                <button
+                  className={treeLayout === "emotion" ? "active" : ""}
+                  type="button"
+                  onClick={() => changeTreeLayout("emotion")}
+                >
+                  감정별
+                </button>
+                <button type="button" onClick={() => setZoom(Math.max(18, zoom - 10))}>−</button>
                 <span>{zoom}%</span>
-                <button type="button" onClick={() => setZoom(Math.min(110, zoom + 10))}>＋</button>
-                <button type="button" onClick={() => setZoom(90)}>맞춤</button>
+                <button type="button" onClick={() => setZoom(Math.min(160, zoom + 10))}>＋</button>
+                <button type="button" onClick={() => fitTree("expanded-flow-viewport")}>한눈에</button>
+                <button type="button" onClick={() => centerTree("expanded-flow-viewport")}>중앙</button>
                 <button className="flow-expanded-close" type="button" onClick={() => setFlowExpanded(false)}>×</button>
               </div>
             </header>
             <div className="flow-expanded-body">
-              <div className="flow-expanded-viewport">
-                <div className="flow-canvas-scale" style={{ transform: `scale(${zoom / 100})` }}>
-                  <FlowCanvas
-                    moments={moments}
-                    treeName={treeName}
-                    activeId={activeMoment.id}
-                    newId={newMomentId}
-                    positions={flowPositions}
-                    onSelect={setActiveId}
-                    onMove={moveFlowNode}
-                    onMoveEnd={() => setNotice("전체 화면에서도 카드 위치가 그대로 저장됐어요.")}
-                    onAdd={() => document.getElementById("flow-full-url")?.focus()}
-                    onDelete={setPendingDeleteId}
-                  />
+              <div className="flow-expanded-viewport" id="expanded-flow-viewport">
+                <div
+                  className="flow-canvas-space"
+                  style={{ width: canvasSize.width * zoom / 100, height: canvasSize.height * zoom / 100 }}
+                >
+                  <div
+                    className="flow-canvas-scale"
+                    style={{ width: canvasSize.width, height: canvasSize.height, transform: `scale(${zoom / 100})` }}
+                  >
+                    <FlowCanvas
+                      moments={moments}
+                      treeName={treeName}
+                      layout={treeLayout}
+                      activeId={activeMoment.id}
+                      newId={newMomentId}
+                      positions={flowPositions}
+                      onSelect={setActiveId}
+                      onOpen={openMomentViewer}
+                      onMove={moveFlowNode}
+                      onMoveEnd={() => setNotice("전체 화면에서도 카드 위치가 그대로 저장됐어요.")}
+                      onAdd={() => document.getElementById("flow-full-url")?.focus()}
+                      onDelete={setPendingDeleteId}
+                    />
+                  </div>
                 </div>
               </div>
               <aside className="flow-full-drawer">
@@ -1412,6 +1688,65 @@ function Workspace({
                   <button className="moment-submit" type="submit">새 가지 이어 붙이기 →</button>
                 </form>
                 <small>추가하면 새 카드와 연결선, 꽃과 하트가 서로 다른 색으로 반짝이며 바로 표시돼요.</small>
+              </aside>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {viewerMoment && (
+        <div
+          className="moment-viewer-backdrop"
+          role="presentation"
+          onWheel={(event) => {
+            if (Math.abs(event.deltaY) < 35) return;
+            moveViewer(event.deltaY > 0 ? 1 : -1);
+          }}
+        >
+          <section className="moment-viewer" role="dialog" aria-modal="true" aria-label={`${viewerMoment.title} 영상 집중 보기`}>
+            <header>
+              <div>
+                <p>FOCUS MOMENT · {String(viewerIndex + 1).padStart(2, "0")} / {String(momentCount).padStart(2, "0")}</p>
+                <h2>{viewerMoment.title}</h2>
+              </div>
+              <button type="button" onClick={() => setViewerMomentId(null)} aria-label="영상 집중 보기 닫기">×</button>
+            </header>
+            <div className="moment-viewer-body">
+              <div className="moment-viewer-player">
+                {youtubeId(viewerMoment.sourceUrl ?? "") ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeId(viewerMoment.sourceUrl ?? "")}?autoplay=1&rel=0`}
+                    title={viewerMoment.title}
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <>
+                    <Image src={viewerMoment.image} alt="" fill sizes="(max-width: 900px) 100vw, 950px" />
+                    <span aria-hidden="true">▶</span>
+                    <small>연결한 영상 링크가 있으면 이 자리에서 바로 재생돼요.</small>
+                  </>
+                )}
+              </div>
+              <aside>
+                <span className="moment-viewer-emotion">{viewerMoment.emotion}</span>
+                <blockquote>{viewerMoment.memo}</blockquote>
+                <p>{viewerMoment.date} · {viewerMoment.time} · {viewerMoment.relation}</p>
+                <div className="moment-viewer-nav">
+                  <button type="button" onClick={() => moveViewer(-1)}>
+                    <b>↑</b><span>이전 영상</span>
+                  </button>
+                  <button type="button" onClick={() => moveViewer(1)}>
+                    <b>↓</b><span>다음 영상</span>
+                  </button>
+                </div>
+                {nextViewerMoment && (
+                  <article>
+                    <small>NEXT MOMENT</small>
+                    <strong>{nextViewerMoment.title}</strong>
+                    <span>아래 방향키나 마우스 휠로 바로 넘겨보세요.</span>
+                  </article>
+                )}
               </aside>
             </div>
           </section>
