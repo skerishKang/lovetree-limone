@@ -20,7 +20,7 @@
       "workers_dev": true,
       "vars": {
         "APP_ENV": "staging",
-        "API_MUTATIONS_ENABLED": "false",
+        "API_MUTATIONS_ENABLED": "true",
         "FIREBASE_PROJECT_ID": "relovetree"
       },
       "secrets": {
