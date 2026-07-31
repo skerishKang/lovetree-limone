@@ -9,16 +9,25 @@
     "binding": "ASSETS"
   },
   "vars": {
+    "APP_ENV": "staging",
+    "API_MUTATIONS_ENABLED": "false",
+    "DATABASE_URL": "replace-with-database-url",
     "FIREBASE_PROJECT_ID": "replace-with-project-id"
   },
   "env": {
     "staging": {
       "vars": {
+        "APP_ENV": "staging",
+        "API_MUTATIONS_ENABLED": "false",
+        "DATABASE_URL": "replace-with-database-url",
         "FIREBASE_PROJECT_ID": "replace-with-project-id"
       }
     },
     "production": {
       "vars": {
+        "APP_ENV": "production",
+        "API_MUTATIONS_ENABLED": "true",
+        "DATABASE_URL": "replace-with-database-url",
         "FIREBASE_PROJECT_ID": "replace-with-project-id"
       }
     }
