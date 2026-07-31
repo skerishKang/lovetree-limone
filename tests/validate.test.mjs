@@ -4,14 +4,14 @@ import { validate, VISIBILITY_VALUES, SOURCE_TYPE_VALUES } from "../server/api/v
 
 const COMMENT_RULES = {
   body: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 1000 },
-} as const;
+}
 
 const TREE_RULES = {
   title: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 120 },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   keywords: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
   sourceUrl: { kind: "url", maxLength: 2048 },
-} as const;
+}
 
 test("invalid visibility rejected", () => {
   const result = validate({ title: "t", visibility: "secret" }, TREE_RULES);

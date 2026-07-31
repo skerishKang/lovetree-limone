@@ -8,20 +8,11 @@ import {
 
 const PROJECT_ID = "relovetree";
 
-function base64Url(input: Buffer | string): string {
+function base64Url(input) {
   return Buffer.from(input).toString("base64url");
 }
 
-interface JwtParts {
-  header: Record<string, unknown>;
-  payload: Record<string, unknown>;
-  signature: string;
-}
-
-function signJwt(
-  { header, payload, signature }: JwtParts,
-  privatePem: string
-): string {
+function signJwt({ header, payload, signature }, privatePem) {
   const headerB64 = base64Url(JSON.stringify(header));
   const payloadB64 = base64Url(JSON.stringify(payload));
   const data = `${headerB64}.${payloadB64}`;
@@ -40,12 +31,8 @@ function makeKeys() {
   return { privateKey, publicKey };
 }
 
-async function makeFetcher(publicPem: string, kid = "test-key-1") {
-  const jwk = createPublicKey(publicPem).export({ format: "jwk" }) as {
-    kty: string;
-    n: string;
-    e: string;
-  };
+async function makeFetcher(publicPem, kid = "test-key-1") {
+  const jwk = createPublicKey(publicPem).export({ format: "jwk" });
   const key = await crypto.subtle.importKey(
     "jwk",
     { kty: "RSA", n: jwk.n, e: jwk.e, alg: "RS256", use: "sig" },
@@ -56,7 +43,7 @@ async function makeFetcher(publicPem: string, kid = "test-key-1") {
   return async () => ({ [kid]: key });
 }
 
-function validPayload(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+function validPayload(overrides = {}) {
   const now = Math.floor(Date.now() / 1000);
   return {
     aud: PROJECT_ID,
@@ -218,7 +205,7 @@ test("empty project id fails closed", async () => {
 });
 
 test("extractBearerToken accepts only Bearer format", () => {
-  const req = (header: string | null) =>
+  const req = (header) =>
     new Request("https://example.com/api/trees", {
       headers: header ? { authorization: header } : undefined,
     });

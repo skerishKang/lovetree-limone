@@ -16,7 +16,7 @@ async function migrationSql() {
 
 test("migration creates all 11 tables", async () => {
   const sql = await migrationSql();
-  const tables = [...sql.matchAll(/CREATE TABLE "public"\."(\w+)"/g)].map((m) => m[1]);
+  const tables = [...sql.matchAll(/CREATE TABLE "(\w+)"/g)].map((m) => m[1]);
   const expected = [
     "trees",
     "memories",

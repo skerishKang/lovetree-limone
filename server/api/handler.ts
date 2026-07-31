@@ -5,9 +5,17 @@ import { memoriesRouter } from "./memories";
 import { commentsRouter } from "./comments";
 import { socialRouter } from "./social";
 
+export interface ApiEnv {
+  DATABASE_URL: string;
+  FIREBASE_PROJECT_ID?: string;
+  API_MUTATIONS_ENABLED?: string;
+  APP_ENV?: string;
+  [key: string]: unknown;
+}
+
 export interface ApiContext {
   request: Request;
-  env: { DATABASE_URL: string; FIREBASE_PROJECT_ID?: string };
+  env: ApiEnv;
   db: ReturnType<typeof getDb>;
   url: URL;
   method: string;
@@ -15,9 +23,15 @@ export interface ApiContext {
   params: Record<string, string>;
 }
 
+const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+function areMutationsEnabled(env: ApiEnv): boolean {
+  return env.API_MUTATIONS_ENABLED === "true";
+}
+
 export async function handleApiRequest(
   request: Request,
-  env: { DATABASE_URL: string; FIREBASE_PROJECT_ID?: string }
+  env: ApiEnv
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
@@ -25,10 +39,21 @@ export async function handleApiRequest(
 
   if (!path.startsWith("/api/")) return null;
 
+  if (path === "/api/health" && method === "GET") {
+    return json({ status: "ok", env: env.APP_ENV ?? "unknown" });
+  }
+
+  if (MUTATION_METHODS.has(method) && !areMutationsEnabled(env)) {
+    return json(
+      { error: "Mutations are temporarily disabled in this staging preview" },
+      503
+    );
+  }
+
   const db = getDb(env.DATABASE_URL);
   const ctx: ApiContext = {
     request,
-    env: env as ApiContext["env"],
+    env,
     db: db as ApiContext["db"],
     url,
     method,

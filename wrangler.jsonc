@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lovetree-limone",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "FIREBASE_PROJECT_ID": "replace-with-project-id"
+  },
+  "env": {
+    "staging": {
+      "vars": {
+        "FIREBASE_PROJECT_ID": "replace-with-project-id"
+      }
+    },
+    "production": {
+      "vars": {
+        "FIREBASE_PROJECT_ID": "replace-with-project-id"
+      }
+    }
+  }
+}

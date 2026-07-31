@@ -22,6 +22,24 @@ function mockDb(rows) {
   };
 }
 
+function mockDbSequence(seq) {
+  let i = 0;
+  return {
+    select() {
+      return {
+        from() {
+          return {
+            where: async () => {
+              const row = seq[Math.min(i++, seq.length - 1)];
+              return row ? [row] : [];
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
 function makeCtx(db, projectId = "relovetree") {
   return {
     request: new Request("https://example.com/api/trees/x"),
@@ -90,13 +108,15 @@ test("private tree fork denied", () => {
 });
 
 test("non-owner memory mutation denied via getOwnedMemory", async () => {
-  const ctx = makeCtx(mockDb([PRIVATE_TREE]));
+  const memory = { id: "mem-1", treeId: "tree-1" };
+  const ctx = makeCtx(mockDbSequence([memory, PRIVATE_TREE]));
   const ownedMemory = await getOwnedMemory(ctx, "mem-1", OTHER);
   assert.equal(ownedMemory, null);
 });
 
 test("owner memory mutation allowed via getOwnedMemory", async () => {
-  const ctx = makeCtx(mockDb([PRIVATE_TREE]));
+  const memory = { id: "mem-1", treeId: "tree-1" };
+  const ctx = makeCtx(mockDbSequence([memory, PRIVATE_TREE]));
   const ownedMemory = await getOwnedMemory(ctx, "mem-1", OWNER);
   assert.equal(ownedMemory?.id, "mem-1");
 });

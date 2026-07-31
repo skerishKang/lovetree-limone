@@ -5,6 +5,9 @@ import { handleApiRequest } from "../server/api";
 interface Env {
   ASSETS: Fetcher;
   DATABASE_URL: string;
+  FIREBASE_PROJECT_ID?: string;
+  API_MUTATIONS_ENABLED?: string;
+  APP_ENV?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
