@@ -1,6 +1,6 @@
 "use client";
 
-import type { MemoryRecord } from "@/lib/tree-types";
+import { resolveMemoryThumbnail, sourceTypeLabel, type MemoryRecord } from "@/lib/tree-types";
 
 interface V2AlbumViewProps {
   memories: MemoryRecord[];
@@ -22,15 +22,21 @@ export default function V2AlbumView({ memories }: V2AlbumViewProps) {
       <h2>앨범 보드</h2>
       <p>사진과 영상을 한눈에</p>
       <div className="v2-album-grid">
-        {memories.map((memory) => (
-          <div className="v2-album-item" key={memory.id}>
-            <div className="v2-album-image">
-              <span style={{ color: "rgba(255,253,248,.8)", fontSize: "1.5rem" }}>✦</span>
+        {memories.map((memory) => {
+          const thumbnail = resolveMemoryThumbnail(memory);
+          return (
+            <div className="v2-album-item" key={memory.id}>
+              <div className="v2-album-image">
+                <span aria-hidden="true" style={{ color: "rgba(255,253,248,.8)", fontSize: "1.5rem" }}>✦</span>
+                {thumbnail ? (
+                  <img src={thumbnail} alt="" loading="lazy" onError={(e) => e.currentTarget.remove()} />
+                ) : null}
+              </div>
+              <p>{memory.title || "제목 없음"}</p>
+              <small>{sourceTypeLabel(memory.sourceType)} · {memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</small>
             </div>
-            <p>{memory.title || "제목 없음"}</p>
-            <small>{memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</small>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

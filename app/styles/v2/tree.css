@@ -33,8 +33,8 @@
 .v2-memory-record:hover { box-shadow: 0 8px 20px rgba(98,68,58,.08); }
 .v2-memory-number { color: var(--v2-rose); font-size: .7rem; font-weight: 700; font-family: var(--v2-latin); padding-top: 4px; }
 .v2-memory-media { position: relative; min-height: 72px; border-radius: 10px; overflow: hidden; background: var(--v2-sage); display: grid; place-items: center; }
-.v2-memory-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.v2-memory-media span { color: rgba(255,253,248,.8); font-size: 1.2rem; }
+.v2-memory-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.v2-memory-media span { position: relative; z-index: 0; }
 .v2-memory-body { min-width: 0; }
 .v2-memory-kicker { display: flex; gap: 8px; align-items: center; }
 .v2-memory-kicker small { color: var(--v2-muted); font-size: .6rem; }
@@ -43,7 +43,12 @@
 .v2-memory-body > p { margin: 0; color: var(--v2-muted); font-size: .74rem; line-height: 1.55; white-space: pre-wrap; }
 .v2-memory-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
 .v2-memory-tags span { padding: 3px 7px; border-radius: 99px; background: rgba(138,154,117,.13); color: var(--v2-sage-deep); font-size: .58rem; }
-.v2-memory-source { display: inline-block; margin-top: 9px; color: var(--v2-rose-deep); font-size: .63rem; }
+.v2-memory-source { display: inline-block; margin-top: 9px; color: var(--v2-rose-deep); font-size: .63rem; text-decoration: underline; text-underline-offset: 2px; }
+.v2-memory-source:hover { text-decoration-thickness: 2px; }
+.v2-first-guide { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin: 18px 0 4px; padding: 16px 18px; border: 1px dashed var(--v2-rose); border-radius: 16px; background: rgba(226,201,165,.18); }
+.v2-first-guide strong { font-family: var(--v2-display); font-size: 1.05rem; font-weight: 400; }
+.v2-first-guide p { margin: 4px 0 0; color: var(--v2-muted); font-size: .78rem; }
+.v2-first-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .v2-memory-tools { display: flex; gap: 10px; margin-top: 11px; }
 .v2-memory-tools button { padding: 0; border: 0; background: transparent; color: var(--v2-muted); cursor: pointer; font-size: .63rem; }
 .v2-memory-tools button:hover { color: var(--v2-rose-deep); }

@@ -1,11 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
-import { formatTreeDate, type MemoryRecord, type TreeRecord } from "@/lib/tree-types";
+import {
+  formatTreeDate,
+  isSafeExternalUrl,
+  resolveMemoryThumbnail,
+  sourceTypeLabel,
+  youtubeThumbnail,
+  type MemoryRecord,
+  type TreeRecord,
+} from "@/lib/tree-types";
 import EmailAuthForm from "../EmailAuthForm";
 import V2GrowthTree from "./V2GrowthTree";
 import V2DiaryView from "./V2DiaryView";
@@ -15,6 +23,14 @@ import V2MomentEditor, { type MomentFormState } from "./V2MomentEditor";
 
 type ViewMode = "tree" | "diary" | "story" | "album";
 
+type LoadError =
+  | { kind: "unauthorized"; status: number }
+  | { kind: "forbidden"; status: number }
+  | { kind: "notfound"; status: number }
+  | { kind: "server"; status: number }
+  | { kind: "network" }
+  | { kind: "generic"; status: number };
+
 const viewModes: Array<{ id: ViewMode; label: string; icon: string }> = [
   { id: "tree", label: "성장 트리", icon: "⌘" },
   { id: "diary", label: "마음 다이어리", icon: "▤" },
@@ -22,14 +38,40 @@ const viewModes: Array<{ id: ViewMode; label: string; icon: string }> = [
   { id: "album", label: "앨범 보드", icon: "▦" },
 ];
 
+function errorMessage(err: LoadError): string {
+  switch (err.kind) {
+    case "unauthorized":
+      return "로그인 세션이 만료되었거나 로그인이 필요해요.";
+    case "forbidden":
+      return "이 러브트리에 접근할 권한이 없어요.";
+    case "notfound":
+      return "이 러브트리를 찾을 수 없거나 공개되지 않았어요.";
+    case "server":
+      return "서버에 일시적인 문제가 있어요. 잠시 후 다시 시도해 주세요.";
+    case "network":
+      return "네트워크 오류가 발생했어요. 다시 시도해 주세요.";
+    default:
+      return "러브트리를 불러오지 못했어요.";
+  }
+}
+
+function classifyError(status: number): LoadError {
+  if (status === 401) return { kind: "unauthorized", status };
+  if (status === 403) return { kind: "forbidden", status };
+  if (status === 404) return { kind: "notfound", status };
+  if (status >= 500) return { kind: "server", status };
+  return { kind: "generic", status };
+}
+
 export default function V2TreeDetail() {
   const params = useParams<{ id: string | string[] }>();
+  const router = useRouter();
   const { user, loading: authLoading, login, loginPending } = useAuth();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const [tree, setTree] = useState<TreeRecord | null>(null);
   const [memories, setMemories] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LoadError | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -37,6 +79,11 @@ export default function V2TreeDetail() {
   const [clientKey, setClientKey] = useState(() => crypto.randomUUID());
   const [viewMode, setViewMode] = useState<ViewMode>("tree");
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [firstGuide, setFirstGuide] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("first") === "1";
+  });
+  const composerRef = useRef<HTMLDivElement>(null);
 
   const loadTree = useCallback(async () => {
     if (!treeId) return;
@@ -50,17 +97,17 @@ export default function V2TreeDetail() {
       const treeData = (await treeResponse.json().catch(() => ({}))) as TreeRecord & { error?: string };
       const memoryData = (await memoryResponse.json().catch(() => [])) as MemoryRecord[] | { error?: string };
       if (!treeResponse.ok) {
-        setError(treeResponse.status === 404 ? "이 러브트리를 찾을 수 없어요." : "러브트리를 불러오지 못했어요.");
+        setError(classifyError(treeResponse.status));
         return;
       }
       if (!memoryResponse.ok) {
-        setError("러브트리의 순간을 불러오지 못했어요.");
+        setError(classifyError(memoryResponse.status));
         return;
       }
       setTree(treeData);
       setMemories(Array.isArray(memoryData) ? memoryData : []);
     } catch {
-      setError("네트워크 오류가 발생했어요.");
+      setError({ kind: "network" });
     } finally {
       setLoading(false);
     }
@@ -87,12 +134,26 @@ export default function V2TreeDetail() {
     setFormError(null);
   }
 
+  function clearFirstGuide() {
+    setFirstGuide(false);
+    if (treeId) router.replace(`/v2/trees/${encodeURIComponent(treeId)}`, { scroll: false });
+  }
+
+  function focusComposer() {
+    composerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => {
+      document.getElementById("v2-memory-title")?.focus();
+    }, 250);
+  }
+
   async function saveMemory(form: MomentFormState) {
     if (!treeId) return;
     setSaving(true);
     setFormError(null);
     try {
       const isEditing = Boolean(editingId);
+      const parentId = form.parentId && form.parentId !== editingId ? form.parentId : undefined;
+      const thumbnail = youtubeThumbnail(form.sourceUrl.trim());
       const url = isEditing
         ? `/api/memories/${encodeURIComponent(editingId!)}`
         : `/api/trees/${encodeURIComponent(treeId)}/memories`;
@@ -104,9 +165,10 @@ export default function V2TreeDetail() {
           source: form.source,
           sourceUrl: form.sourceUrl,
           sourceType: form.sourceType,
+          thumbnail: thumbnail ?? "",
           timestamp: form.timestamp,
           emotionTags: form.emotionTags.split(",").map((t) => t.trim()).filter(Boolean),
-          parentId: form.parentId || undefined,
+          parentId,
           clientKey: isEditing ? undefined : clientKey,
         }),
       });
@@ -115,9 +177,11 @@ export default function V2TreeDetail() {
         setFormError(data?.error || "저장하지 못했어요.");
         return;
       }
+      const wasFirstMemory = memories.length === 0;
       resetForm();
       setClientKey(crypto.randomUUID());
       await loadTree();
+      if (firstGuide && wasFirstMemory) clearFirstGuide();
     } catch {
       setFormError("네트워크 오류가 발생했어요.");
     } finally {
@@ -157,36 +221,55 @@ export default function V2TreeDetail() {
     } catch { /* ignore */ }
   }
 
+  const topbar = () => (
+    <div className="v2-topbar">
+      <Link className="v2-brand" href="/v2" aria-label="LoveTree 처음 화면으로">
+        <span className="v2-brand-mark"><i /><b /></span>
+        LoveTree
+      </Link>
+      <nav className="v2-topnav" aria-label="러브트리 메뉴">
+        <Link href="/v2/my-trees">내 러브트리</Link>
+        <Link href="/v2/community">둘러보기</Link>
+        {user ? (
+          <span className="v2-nav-user-name">{user.displayName || user.email || "내 계정"}</span>
+        ) : (
+          <button className="v2-nav-login" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">로그인</button>
+        )}
+      </nav>
+    </div>
+  );
+
   if (authLoading || loading) {
     return (
       <div className="v2-tree-page">
-        <div className="v2-topbar">
-          <Link className="v2-brand" href="/v2">LoveTree</Link>
-          <nav className="v2-topnav"><Link href="/v2">처음 화면</Link></nav>
-        </div>
+        {topbar()}
         <div className="v2-state">러브트리를 불러오는 중…</div>
       </div>
     );
   }
 
-  if (!user) {
+  if (error) {
+    const message = errorMessage(error);
     return (
       <div className="v2-tree-page">
-        <div className="v2-topbar">
-          <Link className="v2-brand" href="/v2">LoveTree</Link>
-          <nav className="v2-topnav"><Link href="/v2">처음 화면</Link></nav>
-        </div>
+        {topbar()}
         <div className="v2-state">
           <span className="v2-state-symbol" aria-hidden="true">✦</span>
-          <h1>로그인이 필요해요.</h1>
-          <p>러브트리를 보려면 로그인해 주세요.</p>
+          <h1>{message}</h1>
+          <p>권한과 세션 상태를 확인한 뒤 다시 시도해 주세요.</p>
           <div className="v2-state-actions">
-            <button className="v2-button v2-button-primary" type="button" onClick={() => void login()} disabled={loginPending}>
-              {loginPending ? "로그인 중…" : "Google로 로그인"}
-            </button>
-            <button className="v2-button v2-button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">
-              이메일로 로그인
-            </button>
+            <button className="v2-button v2-button-quiet" type="button" onClick={() => void loadTree()}>다시 시도</button>
+            {error.kind === "unauthorized" || error.kind === "forbidden" ? (
+              <>
+                <button className="v2-button v2-button-quiet" type="button" onClick={() => void login()} disabled={loginPending}>
+                  {loginPending ? "로그인 중…" : "Google로 로그인"}
+                </button>
+                <button className="v2-button v2-button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">이메일로 로그인</button>
+              </>
+            ) : null}
+            <Link className="v2-button v2-button-quiet" href="/v2/my-trees">내 러브트리</Link>
+            <Link className="v2-button v2-button-quiet" href="/v2/community">둘러보기</Link>
+            <Link className="v2-button v2-button-primary" href="/v2">처음 화면으로</Link>
           </div>
         </div>
         <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
@@ -194,52 +277,29 @@ export default function V2TreeDetail() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="v2-tree-page">
-        <div className="v2-topbar">
-          <Link className="v2-brand" href="/v2">LoveTree</Link>
-          <nav className="v2-topnav"><Link href="/v2">처음 화면</Link></nav>
-        </div>
-        <div className="v2-state">
-          <p role="alert">{error}</p>
-          <button className="v2-button v2-button-quiet" type="button" onClick={() => void loadTree()}>다시 시도 →</button>
-        </div>
-      </div>
-    );
-  }
-
   if (!tree) {
     return (
       <div className="v2-tree-page">
-        <div className="v2-topbar">
-          <Link className="v2-brand" href="/v2">LoveTree</Link>
-          <nav className="v2-topnav"><Link href="/v2">처음 화면</Link></nav>
-        </div>
+        {topbar()}
         <div className="v2-state">
           <span className="v2-state-symbol" aria-hidden="true">!</span>
           <h1>러브트리를 찾을 수 없어요.</h1>
-          <Link className="v2-button v2-button-primary" href="/v2">처음으로</Link>
+          <p>주소를 확인하거나 다른 러브트리를 둘러보세요.</p>
+          <div className="v2-state-actions">
+            <Link className="v2-button v2-button-quiet" href="/v2/community">둘러보기</Link>
+            <Link className="v2-button v2-button-primary" href="/v2">처음으로</Link>
+          </div>
         </div>
       </div>
     );
   }
 
   const editingMemory = editingId ? memories.find((m) => m.id === editingId) : null;
+  const showFirstGuide = isOwner && firstGuide && memories.length === 0;
 
   return (
     <div className="v2-tree-page">
-      <div className="v2-topbar">
-        <Link className="v2-brand" href="/v2" aria-label="LoveTree 처음 화면으로">
-          <span className="v2-brand-mark"><i /><b /></span>
-          LoveTree
-        </Link>
-        <nav className="v2-topnav" aria-label="러브트리 메뉴">
-          <Link href="/v2/my-trees">내 러브트리</Link>
-          <Link href="/v2/community">둘러보기</Link>
-          {user ? <span className="v2-nav-user-name">{user.displayName || user.email || "내 계정"}</span> : null}
-        </nav>
-      </div>
+      {topbar()}
 
       <div className="v2-tree-content">
         <div className="v2-tree-heading">
@@ -267,6 +327,19 @@ export default function V2TreeDetail() {
             </div>
           )}
         </div>
+
+        {showFirstGuide && (
+          <div className="v2-first-guide" role="region" aria-label="첫 순간 안내">
+            <div>
+              <strong>첫 순간을 기록해 볼까요?</strong>
+              <p>이 트리에 처음 남길 기록 하나가 성장 트리의 뿌리가 돼요.</p>
+            </div>
+            <div className="v2-first-guide-actions">
+              <button className="v2-button v2-button-primary" type="button" onClick={focusComposer}>첫 순간 기록하기</button>
+              <button className="v2-button v2-button-quiet" type="button" onClick={clearFirstGuide}>나중에 할게요</button>
+            </div>
+          </div>
+        )}
 
         <div className="v2-view-mode-tabs" role="tablist" aria-label="보기 모드">
           {viewModes.map((mode) => (
@@ -301,60 +374,81 @@ export default function V2TreeDetail() {
 
             {memories.length > 0 && viewMode === "tree" && (
               <div className="v2-memory-list">
-                {memories.map((memory, index) => (
-                  <div className="v2-memory-record" key={memory.id}>
-                    <span className="v2-memory-number">{String(index + 1).padStart(2, "0")}</span>
-                    <div className="v2-memory-media">
-                      <span>✦</span>
-                    </div>
-                    <div className="v2-memory-body">
-                      <div className="v2-memory-kicker">
-                        <small>{memory.sourceType || "기록"}</small>
-                        <time>{memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</time>
+                {memories.map((memory, index) => {
+                  const thumbnail = resolveMemoryThumbnail(memory);
+                  const safeSourceUrl = isSafeExternalUrl(memory.sourceUrl);
+                  return (
+                    <div className="v2-memory-record" key={memory.id}>
+                      <span className="v2-memory-number">{String(index + 1).padStart(2, "0")}</span>
+                      <div className="v2-memory-media">
+                        <span aria-hidden="true">✦</span>
+                        {thumbnail ? (
+                          <img
+                            src={thumbnail}
+                            alt=""
+                            loading="lazy"
+                            onError={(e) => e.currentTarget.remove()}
+                          />
+                        ) : null}
                       </div>
-                      <h3>{memory.title || "제목 없는 순간"}</h3>
-                      {memory.memo ? <p>{memory.memo}</p> : null}
-                      {memory.emotionTags && memory.emotionTags.length > 0 && (
-                        <div className="v2-memory-tags">
-                          {memory.emotionTags.map((tag) => <span key={tag}>{tag}</span>)}
+                      <div className="v2-memory-body">
+                        <div className="v2-memory-kicker">
+                          <small>{sourceTypeLabel(memory.sourceType)}</small>
+                          <time>{memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</time>
                         </div>
-                      )}
-                      {memory.sourceUrl && (
-                        <span className="v2-memory-source">
-                          {memory.sourceUrl.slice(0, 40)}…
-                        </span>
-                      )}
-                      {isOwner && (
-                        <div className="v2-memory-tools">
-                          <button type="button" onClick={() => beginEdit(memory)}>수정</button>
-                          <button
-                            type="button"
-                            onClick={() => void deleteMemory(memory.id)}
-                            disabled={removingId === memory.id}
+                        <h3>{memory.title || "제목 없는 순간"}</h3>
+                        {memory.memo ? <p>{memory.memo}</p> : null}
+                        {memory.emotionTags && memory.emotionTags.length > 0 && (
+                          <div className="v2-memory-tags">
+                            {memory.emotionTags.map((tag) => <span key={tag}>{tag}</span>)}
+                          </div>
+                        )}
+                        {safeSourceUrl ? (
+                          <a
+                            className="v2-memory-source"
+                            href={memory.sourceUrl!}
+                            target="_blank"
+                            rel="noreferrer noopener"
                           >
-                            {removingId === memory.id ? "삭제 중…" : "삭제"}
-                          </button>
-                        </div>
-                      )}
+                            {memory.source || "출처 열기"} ↗
+                          </a>
+                        ) : null}
+                        {isOwner && (
+                          <div className="v2-memory-tools">
+                            <button type="button" onClick={() => beginEdit(memory)}>수정</button>
+                            <button
+                              type="button"
+                              onClick={() => void deleteMemory(memory.id)}
+                              disabled={removingId === memory.id}
+                            >
+                              {removingId === memory.id ? "삭제 중…" : "삭제"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
 
           {isOwner && (
-            <V2MomentEditor
-              editingMemory={editingMemory}
-              parentOptions={parentOptions}
-              saving={saving}
-              error={formError}
-              onSave={saveMemory}
-              onCancel={resetForm}
-            />
+            <div ref={composerRef}>
+              <V2MomentEditor
+                editingMemory={editingMemory}
+                parentOptions={parentOptions}
+                saving={saving}
+                error={formError}
+                onSave={saveMemory}
+                onCancel={resetForm}
+              />
+            </div>
           )}
         </div>
       </div>
+
+      <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </div>
   );
 }

@@ -1,7 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import type { MemoryRecord } from "@/lib/tree-types";
+import {
+  isSafeExternalUrl,
+  resolveMemoryThumbnail,
+  sourceTypeLabel,
+  type MemoryRecord,
+} from "@/lib/tree-types";
 
 interface V2GrowthTreeProps {
   memories: MemoryRecord[];
@@ -51,6 +56,8 @@ export default function V2GrowthTree({ memories, treeName, onSelect }: V2GrowthT
             { left: "50%", top: "170px", transform: "translateX(-50%)" },
           ];
           const pos = positions[index % positions.length];
+          const thumbnail = resolveMemoryThumbnail(memory);
+          const safeSourceUrl = isSafeExternalUrl(memory.sourceUrl);
           return (
             <div
               key={memory.id}
@@ -63,11 +70,30 @@ export default function V2GrowthTree({ memories, treeName, onSelect }: V2GrowthT
             >
               <div className={`v2-moment-media ${index === 0 ? "v2-media-root" : index % 2 === 0 ? "v2-media-a" : "v2-media-b"}`}>
                 <small>{memory.timestamp ? memory.timestamp.slice(5, 10) : "-"}</small>
+                {thumbnail ? (
+                  <img
+                    src={thumbnail}
+                    alt=""
+                    loading="lazy"
+                    onError={(e) => e.currentTarget.remove()}
+                  />
+                ) : null}
               </div>
               <div className="v2-moment-body">
-                <span className="v2-moment-tag">{memory.sourceType || "기록"}</span>
+                <span className="v2-moment-tag">{sourceTypeLabel(memory.sourceType)}</span>
                 <h2>{memory.title || "제목 없는 순간"}</h2>
                 <p>{memory.memo || ""}</p>
+                {safeSourceUrl ? (
+                  <a
+                    className="v2-memory-source"
+                    href={memory.sourceUrl!}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {memory.source || "출처 열기"} ↗
+                  </a>
+                ) : null}
               </div>
             </div>
           );
