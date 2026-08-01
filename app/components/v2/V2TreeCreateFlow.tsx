@@ -1,26 +1,29 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 
 interface V2TreeCreateFlowProps {
   onClose: () => void;
   onCreated: (treeId: string) => void;
+  onRequireAuth?: () => void;
 }
 
-export default function V2TreeCreateFlow({ onClose, onCreated }: V2TreeCreateFlowProps) {
-  const { user, login, loginPending } = useAuth();
+export default function V2TreeCreateFlow({ onClose, onCreated, onRequireAuth }: V2TreeCreateFlowProps) {
+  const { user, loginPending } = useAuth();
   const [treeName, setTreeName] = useState("");
   const [treeMemo, setTreeMemo] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [clientKey] = useState(() => crypto.randomUUID());
+  const [pendingIntent, setPendingIntent] = useState(false);
+  const submitTreeRef = useRef<() => Promise<void>>(async () => {});
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
+  async function submitTree() {
     if (!user) {
-      await login();
+      setPendingIntent(true);
+      onRequireAuth?.();
       return;
     }
     if (!treeName.trim()) {
@@ -51,6 +54,25 @@ export default function V2TreeCreateFlow({ onClose, onCreated }: V2TreeCreateFlo
     } finally {
       setSaving(false);
     }
+  }
+
+  useEffect(() => {
+    submitTreeRef.current = submitTree;
+  });
+
+  useEffect(() => {
+    if (!pendingIntent || !user) return;
+    const timer = window.setTimeout(() => {
+      setPendingIntent(false);
+      void submitTreeRef.current();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [pendingIntent, user]);
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    if (saving) return;
+    void submitTree();
   }
 
   return (

@@ -78,3 +78,18 @@ export function youtubeThumbnail(value: string): string | undefined {
 export function sourceTypeLabel(sourceType: string | undefined): string {
   return SOURCE_TYPES.find(([value]) => value === sourceType)?.[1] ?? "기록";
 }
+
+export function isSafeExternalUrl(value: string | undefined | null): boolean {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+export function resolveMemoryThumbnail(memory: MemoryRecord): string | undefined {
+  if (memory.thumbnail) return memory.thumbnail;
+  return youtubeThumbnail(memory.sourceUrl ?? "");
+}

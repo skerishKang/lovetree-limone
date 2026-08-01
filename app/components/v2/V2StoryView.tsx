@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { MemoryRecord } from "@/lib/tree-types";
+import { isSafeExternalUrl, resolveMemoryThumbnail, sourceTypeLabel, type MemoryRecord } from "@/lib/tree-types";
 
 interface V2StoryViewProps {
   memories: MemoryRecord[];
@@ -28,18 +28,38 @@ export default function V2StoryView({ memories }: V2StoryViewProps) {
     <div className="v2-story-view">
       <h2>스토리</h2>
       <p>앨범처럼 한 장씩 감상</p>
-      {sorted.map((memory) => (
-        <article className="v2-story-card" key={memory.id}>
-          <div className="v2-story-media">
-            <span style={{ color: "rgba(255,253,248,.8)", fontSize: "2rem" }}>▶</span>
-          </div>
-          <div className="v2-story-body">
-            <time>{memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</time>
-            <h3>{memory.title || "제목 없는 순간"}</h3>
-            <p>{memory.memo || "기록이 없습니다."}</p>
-          </div>
-        </article>
-      ))}
+      {sorted.map((memory) => {
+        const thumbnail = resolveMemoryThumbnail(memory);
+        const safeSourceUrl = isSafeExternalUrl(memory.sourceUrl);
+        return (
+          <article className="v2-story-card" key={memory.id}>
+            <div className="v2-story-media">
+              <span style={{ color: "rgba(255,253,248,.8)", fontSize: "2rem" }}>▶</span>
+              {thumbnail ? (
+                <img src={thumbnail} alt="" loading="lazy" onError={(e) => e.currentTarget.remove()} />
+              ) : null}
+            </div>
+            <div className="v2-story-body">
+              <div className="v2-diary-entry-top">
+                <span className="v2-diary-source-type">{sourceTypeLabel(memory.sourceType)}</span>
+                <time>{memory.timestamp ? memory.timestamp.replace(/-/g, ". ") : "-"}</time>
+              </div>
+              <h3>{memory.title || "제목 없는 순간"}</h3>
+              <p>{memory.memo || "기록이 없습니다."}</p>
+              {safeSourceUrl ? (
+                <a
+                  className="v2-memory-source"
+                  href={memory.sourceUrl!}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  {memory.source || "출처 열기"} ↗
+                </a>
+              ) : null}
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }

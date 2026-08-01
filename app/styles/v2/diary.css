@@ -4,6 +4,10 @@
 .v2-diary-view > p { color: var(--v2-muted); font-size: .82rem; margin: 0 0 28px; }
 .v2-diary-entry { padding: 20px; margin-bottom: 16px; border: 1px solid var(--v2-line); border-radius: 18px; background: rgba(255,253,248,.85); }
 .v2-diary-entry time { color: var(--v2-rose-deep); font-size: .65rem; font-weight: 800; }
-.v2-diary-entry h3 { margin: 8px 0 6px; font-family: var(--v2-display); font-size: 1.1rem; font-weight: 400; }
+.v2-diary-entry-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.v2-diary-source-type { color: var(--v2-sage-deep); font-size: .6rem; font-weight: 800; letter-spacing: .04em; }
+.v2-diary-thumb { position: relative; margin: 10px 0 2px; height: 180px; border-radius: 14px; overflow: hidden; background: var(--v2-sage); }
+.v2-diary-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.v2-diary-entry h3 { margin: 8px 0 6px; font-family: var(--v2-display); font-size: 1.1rem; font-weight: 400; overflow-wrap: anywhere; }
 .v2-diary-entry p { margin: 0; color: var(--v2-muted); font-size: .78rem; line-height: 1.7; white-space: pre-wrap; }
 .v2-diary-empty { text-align: center; padding: 60px 20px; color: var(--v2-muted); }
