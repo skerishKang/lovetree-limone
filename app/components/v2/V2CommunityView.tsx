@@ -29,7 +29,10 @@ export default function V2CommunityView() {
     }
   }, [sort]);
 
-  useEffect(() => { loadTrees(); }, [loadTrees]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadTrees(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadTrees]);
 
   return (
     <div className="v2-community-screen">

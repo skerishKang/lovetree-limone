@@ -10,7 +10,7 @@ interface V2TreeCreateFlowProps {
 }
 
 export default function V2TreeCreateFlow({ onClose, onCreated }: V2TreeCreateFlowProps) {
-  const { user, loading: authLoading, login, loginPending } = useAuth();
+  const { user, login, loginPending } = useAuth();
   const [treeName, setTreeName] = useState("");
   const [treeMemo, setTreeMemo] = useState("");
   const [saving, setSaving] = useState(false);
@@ -40,7 +40,7 @@ export default function V2TreeCreateFlow({ onClose, onCreated }: V2TreeCreateFlo
           clientKey,
         }),
       });
-      const data = await response.json();
+      const data = (await response.json()) as { id: string; error?: string };
       if (!response.ok) {
         setError(data?.error || "러브트리를 만들지 못했어요.");
         return;

@@ -120,7 +120,7 @@ test("V2 tree detail calls real memory API", async () => {
   const page = await readFile(new URL("app/components/v2/V2TreeDetail.tsx", root), "utf8");
   assert.match(page, /apiFetch/);
   assert.match(page, /\/api\/trees\/.*memories/);
-  assert.match(page, /method:\s*"POST"/);
+  assert.match(page, /method:\s*isEditing \? "PUT" : "POST"/);
   assert.match(page, /clientKey/);
 });
 

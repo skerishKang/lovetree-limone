@@ -34,7 +34,10 @@ export default function V2Home() {
     } catch { /* silently fail */ }
   }, []);
 
-  useEffect(() => { loadCommunityTrees(); }, [loadCommunityTrees]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadCommunityTrees(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadCommunityTrees]);
 
   function handleCreated(treeId: string) {
     setIsStartOpen(false);

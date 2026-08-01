@@ -108,7 +108,7 @@ export default function V2TreeDetail() {
           clientKey: isEditing ? undefined : clientKey,
         }),
       });
-      const data = await response.json();
+      const data = (await response.json()) as { error?: string };
       if (!response.ok) {
         setFormError(data?.error || "저장하지 못했어요.");
         return;
@@ -129,7 +129,7 @@ export default function V2TreeDetail() {
     try {
       const response = await apiFetch(`/api/memories/${encodeURIComponent(memoryId)}`, { method: "DELETE" });
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = (await response.json().catch(() => ({}))) as { error?: string };
         setFormError(data?.error || "삭제하지 못했어요.");
         return;
       }
