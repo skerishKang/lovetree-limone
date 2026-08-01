@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
+import EmailAuthForm from "../../components/EmailAuthForm";
+import "../../styles/email-auth.css";
 import {
   formatTreeDate,
   localDateValue,
@@ -45,6 +47,7 @@ export default function TreeDetailPage() {
   const [memories, setMemories] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [form, setForm] = useState<MemoryFormState>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -196,7 +199,9 @@ export default function TreeDetailPage() {
           <div className="tree-page-actions">
             <button className="button button-quiet" type="button" onClick={() => void loadTree()}>다시 시도</button>
             {!user ? <button className="button button-primary" type="button" onClick={() => void login()} disabled={loginPending}>{loginPending ? "로그인 중…" : "로그인"}</button> : null}
+            {!user ? <button className="button button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">이메일로 로그인</button> : null}
           </div>
+          <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
         </div>
       </TreeDetailShell>
     );

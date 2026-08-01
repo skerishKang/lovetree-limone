@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+node_modules_old/
 
 # Build and generated output
 .next/
@@ -41,3 +42,6 @@ tsconfig.tsbuildinfo
 # Temporary files
 tmp/
 temp/
+
+# Local browser QA credentials (never commit)
+.kilo/qa-auth.env
