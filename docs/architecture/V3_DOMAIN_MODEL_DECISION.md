@@ -1,7 +1,7 @@
 ---
 status: PROPOSED_ARCHITECTURE_DECISION
 authority: Issue #16
-version: 0.3
+version: 0.4
 effective_date: pending independent approval
 source_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
 ---
@@ -154,6 +154,8 @@ Rules:
   - explicit → Moment visibility
   - then intersect with Tree status and visibility.
 - Public/community queries must use the effective expression, not raw `memories.visibility` alone.
+- A legacy V1/V2 write that changes `visibility` must atomically set `visibility_mode = explicit`.
+- A V3 write selecting `inherit` must atomically set `visibility_mode = inherit` and the raw legacy fallback to `private`.
 - After #20 introduces canonical V3 writes, V1/V2 serializers must return the computed effective legacy value. No V3 persistence may be enabled before that adapter exists.
 - `memoVisibility` uses a separate constrained type containing `private`, `tree`, and `public`.
 
@@ -357,11 +359,12 @@ Rules:
 5. Extend the current source-type storage additively with approved new values; keep legacy values readable. Do not drop its current non-null constraint.
 6. Do not infer `recordDate` or media intervals from ambiguous `timestamp` except strict, independently reviewed patterns; otherwise leave new fields null and preserve the legacy value.
 7. Backfill `thumbnailUrl` from `thumbnail` and explicit source fields only where semantics are unambiguous.
-8. For each valid same-tree `parentId`, create one active `legacy_parent` Connection with label `기존 연결` and `isPrimaryPath = true`. Missing or cross-tree parents are migration exceptions and must be reported.
-9. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections. The compatibility adapter projects the active primary incoming Connection to `parentId`; legacy V1/V2 parent updates atomically create/update that primary Connection.
-10. Add deterministic `sortOrder` per Tree using existing creation order with stable ID tie-breaking, without changing IDs.
-11. Stage new non-null constraints only after nullable addition, backfill, exception reporting, and validation.
-12. Validate clean install and upgrade on an isolated database. Production remains untouched.
+8. For each same-tree `parentId`, first detect self-links and cycles across the full legacy parent graph. Create an active `legacy_parent` Connection with label `기존 연결` and `isPrimaryPath = true` only for same-tree, non-self, acyclic edges. Missing, cross-tree, self-referential, or cycle-forming parents are migration exceptions: preserve the legacy `parentId`, omit the invalid Connection, and report the affected IDs for explicit remediation.
+9. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections. The compatibility adapter projects the active primary incoming Connection to `parentId`; legacy V1/V2 parent updates atomically create/update that primary Connection and must reject a self-link, cross-tree edge, or cycle.
+10. Legacy V1/V2 visibility updates atomically set `visibility_mode = explicit`. V3 inherit writes atomically set mode to inherit and the raw visibility fallback to private.
+11. Add deterministic `sortOrder` per Tree using existing creation order with stable ID tie-breaking, without changing IDs.
+12. Stage new non-null constraints only after nullable addition, backfill, exception reporting, and validation.
+13. Validate clean install and upgrade on an isolated database. Production remains untouched.
 
 ## 13. API and normalized read-model implications
 
@@ -376,6 +379,7 @@ Rules:
 
 - Do not expose physical table names in V3 UI contracts.
 - Server validation is authoritative for ownership, lifecycle, effective visibility, media intervals, safe URLs, relation taxonomy, same-tree constraints, primary-path rules, and cycle prevention.
+- Legacy V1/V2 visibility mutations set `visibility_mode = explicit`; canonical V3 mutations write the mode and raw fallback together.
 - All V3 lenses receive one normalized payload:
 
 ```ts
@@ -475,6 +479,7 @@ This document remains proposed until an independent architecture review confirms
 - composite same-tree and ownership constraints are implementable;
 - primary-path compatibility is deterministic;
 - visibility is enforceable without exposing `inherit` to legacy consumers;
+- legacy malformed parent graphs have a safe exception path;
 - migration and API compatibility are complete;
 - no fixture-only concept is treated as production truth.
 
