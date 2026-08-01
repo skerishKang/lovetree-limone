@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api";
 import type { TreeRecord } from "@/lib/tree-types";
 import EmailAuthForm from "../EmailAuthForm";
 import V2TreeCreateFlow from "./V2TreeCreateFlow";
+import V2HeroVideoShowcase from "./V2HeroVideoShowcase";
 
 export default function V2Home() {
   const { user, login, logout, loginPending, authError, clearAuthError } = useAuth();
@@ -138,33 +139,7 @@ export default function V2Home() {
             <div className="v2-leaf v2-leaf-one" />
             <div className="v2-leaf v2-leaf-two" />
             <div className="v2-leaf v2-leaf-three" />
-            <div className="v2-moment-card v2-moment-root">
-              <div className="v2-moment-media v2-media-root"><small>01:30</small></div>
-              <div className="v2-moment-body">
-                <span className="v2-moment-tag">처음 발견한 순간</span>
-                <h2>처음 마음이 멈춘 장면</h2>
-                <p>짧은 영상 하나가 이상하게 오래 마음에 남았어요.</p>
-              </div>
-            </div>
-            <div className="v2-moment-card v2-branch-card-a">
-              <div className="v2-moment-media v2-media-a"><small>03:12</small></div>
-              <div className="v2-moment-body">
-                <span className="v2-moment-tag">팬의 추천</span>
-                <h2>다시 찾은 노래</h2>
-                <p>이 장면을 보면 계속 생각나는 곡이에요.</p>
-              </div>
-            </div>
-            <div className="v2-moment-card v2-branch-card-b">
-              <div className="v2-moment-media v2-media-b"><small>07:48</small></div>
-              <div className="v2-moment-body">
-                <span className="v2-moment-tag">내가 고른 다음 순간</span>
-                <h2>오래 간직할 문장</h2>
-                <p>오늘의 마음을 잊지 않게 적어 두었어요.</p>
-              </div>
-            </div>
-            <div className="v2-pip v2-pip-left"><span>♥</span> 팬의 추천</div>
-            <div className="v2-pip v2-pip-right"><span>✦</span> 내가 고른 다음 순간</div>
-            <div className="v2-stage-seed" aria-hidden="true">✦</div>
+            <V2HeroVideoShowcase />
           </div>
           <div className="v2-stage-caption">
             <span className="caption-rule" />
