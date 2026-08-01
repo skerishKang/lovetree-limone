@@ -23,6 +23,21 @@ interface ExecutionContext {
   passThroughOnException(): void;
 }
 
+const DEFAULT_DYNAMIC_CACHE_CONTROL = "private, max-age=0, must-revalidate";
+
+function withDefaultDynamicCachePolicy(response: Response): Response {
+  if (response.headers.has("cache-control")) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", DEFAULT_DYNAMIC_CACHE_CONTROL);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -41,7 +56,8 @@ const worker = {
     const apiResponse = await handleApiRequest(request, env);
     if (apiResponse) return apiResponse;
 
-    return handler.fetch(request, env, ctx);
+    const appResponse = await handler.fetch(request, env, ctx);
+    return withDefaultDynamicCachePolicy(appResponse);
   },
 };
 
