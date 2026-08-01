@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { localDateValue, SOURCE_TYPES } from "@/lib/tree-types";
-import type { MemoryRecord } from "@/lib/tree-types";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { localDateValue, SOURCE_TYPES, type MemoryRecord } from "@/lib/tree-types";
 
 interface V2MomentEditorProps {
   editingMemory?: MemoryRecord | null;
@@ -35,22 +34,29 @@ const EMPTY_FORM: MomentFormState = {
   parentId: "",
 };
 
+function formFromMemory(memory: MemoryRecord): MomentFormState {
+  return {
+    sourceType: memory.sourceType || "youtube",
+    title: memory.title || "",
+    memo: memory.memo || "",
+    source: memory.source || "",
+    sourceUrl: memory.sourceUrl || "",
+    timestamp: memory.timestamp || localDateValue(),
+    emotionTags: memory.emotionTags?.join(", ") || "",
+    parentId: memory.parentId === memory.id ? "" : memory.parentId || "",
+  };
+}
+
 export default function V2MomentEditor({ editingMemory, parentOptions = [], saving, error, onSave, onCancel }: V2MomentEditorProps) {
-  const [form, setForm] = useState<MomentFormState>(() => {
-    if (editingMemory) {
-      return {
-        sourceType: editingMemory.sourceType || "youtube",
-        title: editingMemory.title || "",
-        memo: editingMemory.memo || "",
-        source: editingMemory.source || "",
-        sourceUrl: editingMemory.sourceUrl || "",
-        timestamp: editingMemory.timestamp || localDateValue(),
-        emotionTags: editingMemory.emotionTags?.join(", ") || "",
-        parentId: editingMemory.parentId || "",
-      };
-    }
-    return EMPTY_FORM;
-  });
+  const [form, setForm] = useState<MomentFormState>(() => (editingMemory ? formFromMemory(editingMemory) : EMPTY_FORM));
+  const editingIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const nextId = editingMemory?.id ?? null;
+    if (editingIdRef.current === nextId) return;
+    editingIdRef.current = nextId;
+    setForm(editingMemory ? formFromMemory(editingMemory) : EMPTY_FORM);
+  }, [editingMemory]);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -58,7 +64,7 @@ export default function V2MomentEditor({ editingMemory, parentOptions = [], savi
   }
 
   return (
-    <aside className="v2-composer" aria-labelledby="memory-composer-title">
+    <aside className="v2-composer" aria-labelledby="memory-composer-title" id="v2-moment-composer">
       <h2 id="memory-composer-title">
         {editingMemory ? "이 순간을 다시 다듬어요" : "다음 순간 이어가기"}
       </h2>

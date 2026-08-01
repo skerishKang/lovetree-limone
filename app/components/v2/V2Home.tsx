@@ -22,11 +22,11 @@ export default function V2Home() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsStartOpen(false);
+      if (event.key === "Escape" && !isAuthOpen) setIsStartOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [isAuthOpen]);
 
   const loadCommunityTrees = useCallback(async () => {
     try {
@@ -44,7 +44,7 @@ export default function V2Home() {
   function handleCreated(treeId: string) {
     setIsStartOpen(false);
     setToast("러브트리의 첫 자리를 만들었어요.");
-    router.push(`/v2/trees/${treeId}`);
+    router.push(`/v2/trees/${treeId}?first=1`);
   }
 
   return (
@@ -224,6 +224,7 @@ export default function V2Home() {
             router.replace("/v2");
           }}
           onCreated={handleCreated}
+          onRequireAuth={() => setIsAuthOpen(true)}
         />
       )}
 
