@@ -1,7 +1,7 @@
 ---
 status: PROPOSED_ARCHITECTURE_DECISION
 authority: Issue #16
-version: 0.2
+version: 0.3
 effective_date: pending independent approval
 source_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
 ---
@@ -68,7 +68,8 @@ A Tree is presented visually as a tree, but its canonical structure is a directe
 | `id` | text, non-null | generated | stable identity |
 | `ownerId` | text, non-null | none | ultimate owner |
 | `clientKey` | text, nullable | null | idempotent create compatibility |
-| `treeType` | `personal | official | collaborative`, non-null | `personal` | ownership/provenance class, orthogonal to subject type |
+| `treeType` | `personal | official`, non-null | `personal` | provenance/authority class; ordinary fan Trees are personal |
+| `collaborationMode` | `solo | collaborative`, non-null | `solo` | collaboration is orthogonal to official status |
 | `subjectType` | `person | work | travel | study | relationship | other`, nullable during migration | null | required for new V3 writes |
 | `subjectName` | text, nullable during migration | null | required for new V3 writes |
 | `title` | text, non-null | none | user-facing Tree title |
@@ -87,11 +88,14 @@ A Tree is presented visually as a tree, but its canonical structure is a directe
 
 - `personal`: ordinary user-created Tree, including fan journeys and non-fan subjects.
 - `official`: server/admin-assigned only; users cannot self-declare it.
-- `collaborative`: uses explicit membership and role checks.
-- `treeType` and `subjectType` are independent. A personal Tree may concern a person, work, trip, or any other approved subject.
+- `collaborationMode = collaborative`: uses explicit membership and role checks.
+- Official and collaborative are not mutually exclusive. An official Tree may also be collaborative.
+- `treeType`, `collaborationMode`, and `subjectType` express separate dimensions.
 - `description` is the canonical domain/API name. During compatibility, the physical `trees.memo` column may remain its sole backing storage; do not create two independently writable description columns.
 - `coverMomentId`, when present, must reference a Moment in the same Tree. A public cover may use that Moment's media only when the Moment is effectively public; otherwise use `coverUrl` or a safe generated cover.
-- `status = deleted` requires `deletedAt`; non-deleted status requires `deletedAt IS NULL`.
+- `status = draft`: owner/editor only and excluded from public/community queries.
+- `status = archived`: owner/editor readable, read-only by default, and excluded from public/community queries.
+- `status = deleted` requires `deletedAt`; every other status requires `deletedAt IS NULL`.
 
 Collaborative Trees use `tree_memberships(treeId, userId, role, createdAt, updatedAt)` with `role = owner | editor | viewer`. `ownerId` remains the ultimate owner. A unique membership constraint applies to `(treeId, userId)`.
 
@@ -106,7 +110,7 @@ The first migration must not destructively rename the physical `memories` table.
 | `clientKey` | text, nullable | null | retry/idempotency compatibility |
 | `title` | text, non-null | generated or supplied | non-empty in V3 API |
 | `recordDate` | date, nullable | null | user's remembered/recorded date |
-| `sourceType` | controlled text, nullable | null | source is optional |
+| `sourceType` | controlled text, non-null | new V3 API: `text` | evidence/context category; URL remains optional |
 | `sourceUrl` | text, nullable | null | submitted URL |
 | `sourceCanonicalUrl` | text, nullable | null | normalized canonical URL |
 | `sourceTitle` | text, nullable | null | external content title, distinct from Moment title |
@@ -119,7 +123,7 @@ The first migration must not destructively rename the physical `memories` table.
 | `primaryEmotion` | text, nullable | null | representative emotion |
 | `emotionTags` | string array/json array, non-null | `[]` | emotional states only |
 | `memo` | text, non-null | empty | user-authored narrative |
-| `visibility` | `inherit | private | unlisted | public`, non-null | new V3 API: `inherit` | effective access cannot exceed Tree access |
+| `visibility` | canonical API: `inherit | private | unlisted | public`, non-null | new V3 API: `inherit` | effective access cannot exceed Tree access |
 | `memoVisibility` | `private | tree | public`, non-null | new V3 API: `private` | independent memo exposure control |
 | `sortOrder` | integer, non-null | migration-assigned | deterministic ordering |
 | `canvasX` | integer, nullable | null | optional layout coordinate |
@@ -129,9 +133,33 @@ The first migration must not destructively rename the physical `memories` table.
 | `updatedAt` | timestamptz, non-null | DB now | database update time only |
 | `deletedAt` | timestamptz, nullable | null | soft deletion marker |
 
-### Moment physical-type decision
+### Moment visibility physical compatibility
 
-The current shared `visibility` PostgreSQL enum does not contain `inherit`. Issue #19 must not reuse that enum for the new canonical Moment field. Use a distinct `moment_visibility` enum or an equivalently constrained text field containing exactly `inherit`, `private`, `unlisted`, and `public`. Likewise, `memoVisibility` uses its own type containing `private`, `tree`, and `public`.
+The current `memories.visibility` column and shared PostgreSQL enum contain only `private`, `unlisted`, and `public`. They must remain compatible with V1/V2.
+
+Canonical Moment visibility is represented physically during transition by:
+
+```text
+memories.visibility       existing private|unlisted|public value
+memories.visibility_mode  new explicit|inherit value
+```
+
+Rules:
+
+- Existing rows backfill `visibility_mode = explicit`; their effective exposure does not change.
+- New V3 Moments default to `visibility_mode = inherit` and store `visibility = private` as the safe legacy fallback.
+- Canonical API output returns `inherit` when mode is inherit; otherwise it returns the existing visibility value.
+- Effective visibility is computed in an authorization-aware SQL/query mapper:
+  - inherit → Tree visibility
+  - explicit → Moment visibility
+  - then intersect with Tree status and visibility.
+- Public/community queries must use the effective expression, not raw `memories.visibility` alone.
+- After #20 introduces canonical V3 writes, V1/V2 serializers must return the computed effective legacy value. No V3 persistence may be enabled before that adapter exists.
+- `memoVisibility` uses a separate constrained type containing `private`, `tree`, and `public`.
+
+This avoids adding `inherit` to the shared legacy visibility enum and avoids exposing an unknown value to V1/V2.
+
+### Moment source categories
 
 Approved source categories for new writes describe evidence/media, not subjects:
 
@@ -140,7 +168,7 @@ youtube, video, song, audio, image, article, book, social,
 performance, event, offline, text, link, other
 ```
 
-Legacy enum values such as `person` and `travel` remain readable during migration but are not offered by the new V3 writer.
+Legacy enum values such as `person` and `travel` remain readable during migration but are not offered by the new V3 writer. A text-only Moment uses `sourceType = text`; an offline memory uses `sourceType = offline`; neither requires a URL.
 
 ### Moment rules
 
@@ -151,7 +179,8 @@ Legacy enum values such as `person` and `travel` remain readable during migratio
 - `startSeconds >= 0`.
 - `endSeconds` cannot exist without `startSeconds`.
 - `endSeconds >= startSeconds`.
-- `status = deleted` requires `deletedAt`; non-deleted status requires `deletedAt IS NULL`.
+- `status = archived`: owner/editor readable and excluded from public/community queries.
+- `status = deleted` requires `deletedAt`; active/archived status requires `deletedAt IS NULL`.
 - Add a unique key or unique index on `(treeId, id)` so same-tree composite Connection foreign keys are implementable.
 
 ## 6. Connection field catalog
@@ -205,27 +234,27 @@ return_after_rest, custom, other, legacy_parent
 
 ## 7. Visibility and access-control matrix
 
-Effective access is the intersection of Tree, Moment, and memo policy. A child entity never broadens its parent.
+Effective access is the intersection of Tree, Moment, memo, and lifecycle policy. A child entity never broadens its parent.
 
 | Context | Tree | Moment | Memo |
 |---|---|---|---|
 | owner | all non-purged | all non-purged | all non-purged |
 | editor | member-authorized | member-authorized | member-authorized |
 | viewer member | membership-authorized | effective Tree/Moment access | effective memo access |
-| unlisted link viewer | unlisted/public Tree only | `inherit`, `unlisted`, or `public` subject to Tree | `tree` or `public` |
-| anonymous public | public Tree only | effective public Moment only | public memo only |
-| community index/card | public Tree only | public Moment only | public memo only; `tree` memo excluded |
-| derivation | public Tree and public Moment only | public only | public-only fields and approved attribution |
+| unlisted link viewer | active unlisted/public Tree only | active `inherit`, `unlisted`, or `public` subject to Tree | `tree` or `public` |
+| anonymous public | active public Tree only | active effective-public Moment only | public memo only |
+| community index/card | active public Tree only | active public Moment only | public memo only; `tree` memo excluded |
+| derivation | active public Tree and active public Moment only | public only | public-only fields and approved attribution |
 
 Rules:
 
 - Private Tree: owner and authorized members only, regardless of Moment flags.
 - Unlisted Tree: link-authorized detail; no public indexing.
-- Public Tree: anonymously readable subject to child policy.
+- Public Tree: anonymously readable only when active and subject to child policy.
 - Moment `inherit`: follows Tree visibility.
 - Moment `private`: owner/editor only.
 - Moment `unlisted`: available only in authorized/unlisted Tree context and excluded from public indexes.
-- Moment `public`: public only when the Tree is also public.
+- Moment `public`: public only when the Tree is also active and public.
 - Memo `private`: owner/editor only.
 - Memo `tree`: visible in full Tree detail to an already authorized Tree viewer, but excluded from community cards, search indexes, exports, and derivation payloads.
 - Memo `public`: included only when the effective Tree and Moment are public.
@@ -235,7 +264,8 @@ Authorization predicates must run before community joins and aggregates. An inde
 ## 8. Lifecycle and deletion
 
 - Default deletion is soft deletion.
-- Soft-deleting a Tree immediately removes it and all children from normal reads; child rows remain for recovery/audit until a separately authorized purge.
+- Soft-deleting a Tree changes only the Tree lifecycle fields and immediately removes it and all children from normal reads; child statuses remain intact for recovery/audit.
+- Restoring a Tree restores access to children that are individually active, subject to their own visibility. Individually archived/deleted children remain excluded according to their status.
 - Soft-deleting a Moment soft-deletes all incident Connections in the same transaction.
 - Restoring a Moment does not automatically restore Connections; reconnection is explicit.
 - Hard purge may use FK cascade only after retention/restore policy authorizes it.
@@ -259,7 +289,12 @@ createdById
 createdAt
 ```
 
-A derivation can be created only from an effectively public source Tree and public source Moment. Snapshot only attribution and source metadata approved for public display; do not snapshot private/tree-only memo or owner/member data. If the source later becomes private or deleted, the derived Tree remains, the live link is suppressed, and only the approved attribution snapshot remains.
+Constraints and rules:
+
+- At least one live source reference or approved attribution snapshot must exist.
+- A derivation can be created only from an effectively public active source Tree and public active source Moment.
+- Snapshot only attribution and source metadata approved for public display; do not snapshot private/tree-only memo or owner/member data.
+- If the source later becomes private or deleted, the derived Tree remains, the live link is suppressed, and only the approved attribution snapshot remains.
 
 Ownership boundaries:
 
@@ -268,6 +303,8 @@ Ownership boundaries:
 - saves are private user state unless explicitly shared;
 - reports are never exposed through public product responses;
 - public serializers omit owner IDs, memberships, private memo, moderation, and internal audit fields.
+
+Legacy `memories.artist`, `channelId`, `channelName`, and `channelUrl` may inform source attribution only when their meaning is unambiguous; otherwise preserve them as legacy fields without speculative backfill.
 
 ## 10. Milestones
 
@@ -291,7 +328,7 @@ idempotency key
 Rules:
 
 - refresh, retries, and multiple tabs cannot create duplicate events;
-- use a unique idempotency constraint for the approved Tree/rule/version qualification identity;
+- use a unique constraint on `(treeId, milestoneKey, ruleVersion)` for one-time milestones unless a later rule explicitly defines repeatable sequence identity;
 - deleting a triggering Moment does not erase a historically earned event, although current counts may fall;
 - backfilled histories must not force old celebrations on first login; prior qualifying events are inserted as historical/already acknowledged;
 - the 300th Moment is dismissible and replayable and never a payment wall.
@@ -304,24 +341,27 @@ Rules:
 | `memories.parentId` | structural pointer without causal meaning | compatibility projection only; canonical relation is Connection |
 | `trees.artist` | may be subject name | use only as a conservative subject hint |
 | `trees.memo` | Tree description | canonical API alias is `description`; one physical source of truth during transition |
-| `memories.source` | title/provider ambiguity | split into explicit source fields |
+| `memories.artist` | may be source creator or subject hint | map to attribution only when unambiguous |
+| `memories.source` | title/provider ambiguity | split into explicit source fields only when unambiguous |
 | `memories.thumbnail` | URL field with legacy name | canonical name becomes `thumbnailUrl` |
+| `channelId/name/url` | provider attribution metadata | retain and map only with evidence |
 | `groupName` | organizational grouping | not a substitute for `subjectName` |
 | current `public` defaults | unsafe for new private-first flow | preserve existing rows; new V3 API sends explicit safe defaults |
 
 ## 12. Migration and backfill strategy for Issue #19
 
 1. Add fields and tables only; do not rename or drop in the first migration.
-2. Existing Trees: `treeType=personal`, `status=active`. Backfill `subjectName` from non-empty `artist`, then non-empty `groupName`; otherwise leave it null and let the compatibility read mapper display `title` as a fallback without inventing stored subject identity. Backfill `subjectType=other` only when `subjectName` is set but no deterministic category is available.
-3. Existing Moments: `status=active`; preserve current visibility; set memo visibility to preserve existing effective exposure (`private -> private`, `unlisted -> tree`, `public -> public`).
-4. Implement the canonical Moment visibility with a new physical enum/constrained field; do not extend the shared Tree visibility enum with `inherit`.
-5. Do not infer `recordDate` or media intervals from ambiguous `timestamp` except strict, independently reviewed patterns; otherwise leave new fields null and preserve the legacy value.
-6. Backfill `thumbnailUrl` from `thumbnail` and explicit source fields only where semantics are unambiguous.
-7. For each valid same-tree `parentId`, create one active `legacy_parent` Connection with label `기존 연결` and `isPrimaryPath = true`. Missing or cross-tree parents are migration exceptions and must be reported.
-8. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections. The compatibility adapter projects the active primary incoming Connection to `parentId`; legacy V1/V2 parent updates atomically create/update that primary Connection.
-9. Add deterministic `sortOrder` per Tree using existing creation order with stable ID tie-breaking, without changing IDs.
-10. Stage new non-null constraints only after nullable addition, backfill, exception reporting, and validation.
-11. Validate clean install and upgrade on an isolated database. Production remains untouched.
+2. Existing Trees: `treeType=personal`, `collaborationMode=solo`, `status=active`. Backfill `subjectName` from non-empty `artist`, then non-empty `groupName`; otherwise leave it null and let the compatibility read mapper display `title` as a fallback without inventing stored subject identity. Backfill `subjectType=other` only when `subjectName` is set but no deterministic category is available.
+3. Existing Moments: `status=active`, `visibility_mode=explicit`; preserve current visibility; set memo visibility to preserve existing effective exposure (`private -> private`, `unlisted -> tree`, `public -> public`).
+4. Keep the current shared visibility enum unchanged. Add only the `explicit|inherit` mode type and memo-visibility type required by this decision.
+5. Extend the current source-type storage additively with approved new values; keep legacy values readable. Do not drop its current non-null constraint.
+6. Do not infer `recordDate` or media intervals from ambiguous `timestamp` except strict, independently reviewed patterns; otherwise leave new fields null and preserve the legacy value.
+7. Backfill `thumbnailUrl` from `thumbnail` and explicit source fields only where semantics are unambiguous.
+8. For each valid same-tree `parentId`, create one active `legacy_parent` Connection with label `기존 연결` and `isPrimaryPath = true`. Missing or cross-tree parents are migration exceptions and must be reported.
+9. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections. The compatibility adapter projects the active primary incoming Connection to `parentId`; legacy V1/V2 parent updates atomically create/update that primary Connection.
+10. Add deterministic `sortOrder` per Tree using existing creation order with stable ID tie-breaking, without changing IDs.
+11. Stage new non-null constraints only after nullable addition, backfill, exception reporting, and validation.
+12. Validate clean install and upgrade on an isolated database. Production remains untouched.
 
 ## 13. API and normalized read-model implications
 
@@ -335,7 +375,7 @@ Rules:
 ```
 
 - Do not expose physical table names in V3 UI contracts.
-- Server validation is authoritative for ownership, visibility, media intervals, safe URLs, relation taxonomy, same-tree constraints, primary-path rules, and cycle prevention.
+- Server validation is authoritative for ownership, lifecycle, effective visibility, media intervals, safe URLs, relation taxonomy, same-tree constraints, primary-path rules, and cycle prevention.
 - All V3 lenses receive one normalized payload:
 
 ```ts
@@ -354,24 +394,26 @@ Growth tree, timeline, diary, story, album/archive, map, nebula, community, and 
 ## 14. Mandatory invariants
 
 - `recordDate`, DB timestamps, and media seconds remain separate typed fields.
-- A Moment may be source-less, but its canonical title must be meaningful or generated deterministically.
+- A Moment may lack an external URL, but its canonical title must be meaningful or generated deterministically.
 - Emotion fields contain emotional states only.
 - Connections are directed, same-tree, non-self, acyclic, ownership-validated, and concurrency-safe on creation.
 - At most one active primary incoming Connection exists per target Moment.
 - Effective child visibility never exceeds Tree visibility.
+- Draft, archived, or deleted entities do not enter public/community reads.
 - Public/community joins cannot reveal private memo, private Moment existence, ownership/member data, moderation data, or private derivation sources.
 - Every V3 view reads the same normalized entities.
 - Status and deletion timestamps remain internally consistent.
 
 ## 15. V1/V2 compatibility assessment
 
-The decision is backward-compatible only if Issue #19 follows the additive migration sequence.
+The decision is backward-compatible only if Issue #19 follows the additive migration sequence and Issue #20 installs the compatibility mappers before V3 persistence is enabled.
 
 - Existing IDs remain unchanged.
 - Existing `trees` and `memories` remain readable and writable.
 - Existing endpoints retain current response shapes.
 - V3 adapters map legacy rows into the normalized model without treating fixture-only fields as production truth.
 - `parentId` remains during transition and projects only the primary path; it is no longer the canonical causal model.
+- Existing raw visibility values remain valid; canonical inherit behavior is represented by a separate mode.
 - No existing row is silently made more public or more private during backfill.
 - Ambiguous `timestamp` values remain untouched until independently classified.
 
@@ -401,6 +443,10 @@ Recommendation: do not auto-restore when a Moment returns. Require explicit reco
 
 Recommendation: persist `isPrimaryPath`. The first incoming edge is primary, owners/editors may explicitly change it, deletion promotes the deterministic lowest remaining edge, and V1/V2 `parentId` projects only that edge.
 
+### Official collaborative Trees
+
+Recommendation: model official provenance and collaboration independently through `treeType` and `collaborationMode`; do not encode them as mutually exclusive Tree types.
+
 ## 17. Out of scope for this documentation PR
 
 - Drizzle schema edits or migrations
@@ -425,9 +471,10 @@ Recommendation: persist `isPrimaryPath`. The first incoming edge is primary, own
 This document remains proposed until an independent architecture review confirms:
 
 - field types, nullability, and defaults preserve existing rows;
+- official/collaborative dimensions and memberships are implementable;
 - composite same-tree and ownership constraints are implementable;
 - primary-path compatibility is deterministic;
-- visibility is representable without application-only assumptions;
+- visibility is enforceable without exposing `inherit` to legacy consumers;
 - migration and API compatibility are complete;
 - no fixture-only concept is treated as production truth.
 
