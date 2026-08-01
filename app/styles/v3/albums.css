@@ -309,3 +309,121 @@
   font-size: 0.64rem;
   white-space: nowrap;
 }
+
+/* album accordion (motion archive) */
+.v3-accordion-modal {
+  width: min(640px, 100%);
+}
+
+.v3-album-accordion {
+  display: grid;
+  gap: 16px;
+}
+
+.v3-accordion-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.v3-accordion-header h2 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.v3-accordion-tracklist {
+  display: grid;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.v3-accordion-row {
+  display: grid;
+  grid-template-columns: 34px 52px 1fr 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.9);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.v3-accordion-row:hover {
+  border-color: var(--v3-rose);
+}
+
+.v3-accordion-row[aria-pressed="true"] {
+  border-color: var(--v3-rose);
+  background: rgba(255, 246, 242, 0.92);
+}
+
+.v3-accordion-row-index {
+  color: var(--v3-rose-deep);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.v3-accordion-row-thumb {
+  width: 52px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: linear-gradient(140deg, #9b7e88, #c9b19a 57%, #a7b28c);
+}
+
+.v3-accordion-row-thumb-fallback {
+  display: grid;
+  place-items: center;
+  color: #fffaf6;
+  font-size: 0.7rem;
+}
+
+.v3-accordion-row-body {
+  display: grid;
+  gap: 3px;
+}
+
+.v3-accordion-row-body strong {
+  font-family: var(--v3-serif);
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+
+.v3-accordion-row-body small {
+  color: var(--v3-muted);
+  font-size: 0.66rem;
+}
+
+.v3-accordion-row-toggle {
+  color: var(--v3-rose);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.v3-accordion-spread {
+  padding: 16px;
+  border: 1px dashed rgba(138, 154, 117, 0.55);
+  border-radius: 16px;
+  background: rgba(238, 241, 222, 0.4);
+}
+
+@media (max-width: 720px) {
+  .v3-accordion-row {
+    grid-template-columns: 28px 44px 1fr 20px;
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .v3-accordion-row-thumb {
+    width: 44px;
+    height: 30px;
+  }
+}

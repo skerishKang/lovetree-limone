@@ -3,25 +3,29 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { V3SubjectAlbum } from "./v3-types";
-import { v3MemoriesByTree, v3SubjectAlbums } from "./fixtures/v3-fixtures";
+import {
+  v3MotionArchiveMemories,
+  v3SubjectAlbums,
+} from "./fixtures/v3-fixtures";
 import V3ShelfView from "./V3ShelfView";
+import V3AlbumStage from "./V3AlbumStage";
+import V3AlbumAccordion from "./V3AlbumAccordion";
 
 export default function V3SubjectAlbums() {
-  const [view, setView] = useState<"grid" | "shelf">("grid");
+  const [view, setView] = useState<"grid" | "shelf" | "motion">("grid");
   const [openAlbum, setOpenAlbum] = useState<V3SubjectAlbum | null>(null);
+  const [accordionAlbum, setAccordionAlbum] = useState<V3SubjectAlbum | null>(null);
   const [albumIndex, setAlbumIndex] = useState(0);
-
-  function openShelf(album: V3SubjectAlbum, index: number) {
-    setOpenAlbum(album);
-    setAlbumIndex(index);
-  }
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!openAlbum) return;
-      if (event.key === "Escape") {
+      if (openAlbum && event.key === "Escape") {
         setOpenAlbum(null);
       }
+      if (accordionAlbum && event.key === "Escape") {
+        setAccordionAlbum(null);
+      }
+      if (!openAlbum) return;
       if (event.key === "ArrowLeft") {
         setAlbumIndex((prev) => {
           const next = (prev - 1 + v3SubjectAlbums.length) % v3SubjectAlbums.length;
@@ -39,14 +43,7 @@ export default function V3SubjectAlbums() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [openAlbum]);
-
-  const relatedTrees = openAlbum
-    ? openAlbum.treeIds.map((treeId) => ({
-        treeId,
-        count: v3MemoriesByTree(treeId).length,
-      }))
-    : [];
+  }, [openAlbum, accordionAlbum]);
 
   return (
     <div className="v3-page">
@@ -73,18 +70,26 @@ export default function V3SubjectAlbums() {
           >
             3D 선반 보기
           </button>
+          <button
+            className="v3-chip"
+            type="button"
+            aria-pressed={view === "motion"}
+            onClick={() => setView("motion")}
+          >
+            모션 아카이브
+          </button>
         </div>
       </header>
 
       {view === "grid" ? (
         <>
           <div className="v3-subject-grid">
-            {v3SubjectAlbums.map((album, index) => (
+            {v3SubjectAlbums.map((album) => (
               <button
                 className="v3-subject-card"
                 type="button"
                 key={album.id}
-                onClick={() => openShelf(album, index)}
+                onClick={() => setAccordionAlbum(album)}
                 aria-haspopup="dialog"
               >
                 <div className="v3-subject-cover">
@@ -104,6 +109,8 @@ export default function V3SubjectAlbums() {
             </Link>
           </div>
         </>
+      ) : view === "motion" ? (
+        <V3AlbumStage memories={v3MotionArchiveMemories} />
       ) : (
         <V3ShelfView
           albumIndex={albumIndex}
@@ -113,51 +120,26 @@ export default function V3SubjectAlbums() {
         />
       )}
 
-      {openAlbum && view === "grid" && (
+      {accordionAlbum && view === "grid" && (
         <div
           className="v3-backdrop"
           role="presentation"
-          onClick={() => setOpenAlbum(null)}
+          onClick={() => setAccordionAlbum(null)}
         >
           <div
-            className="v3-modal"
+            className="v3-modal v3-accordion-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="v3-subject-modal-title"
+            aria-labelledby="v3-accordion-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              className="v3-modal-close"
-              type="button"
-              onClick={() => setOpenAlbum(null)}
-              aria-label="닫기"
-            >
-              ×
-            </button>
-            <p className="v3-eyebrow">subject album</p>
-            <h2 id="v3-subject-modal-title">{openAlbum.name}</h2>
-            {openAlbum.groupName && <p className="v3-muted">{openAlbum.groupName}</p>}
-            <div className="v3-diary-view">
-              {relatedTrees.map(({ treeId, count }) => (
-                <Link
-                  className="v3-diary-item"
-                  href={`/v3/trees/${treeId}`}
-                  key={treeId}
-                >
-                  <strong>관련 트리 열기</strong>
-                  <small>{count}개 순간이 담긴 트리</small>
-                </Link>
-              ))}
-            </div>
-            <div className="v3-onboarding-actions">
-              <button className="v3-btn v3-btn-quiet" type="button" onClick={() => setOpenAlbum(null)}>
-                닫기
-              </button>
-            </div>
+            <V3AlbumAccordion
+              album={accordionAlbum}
+              onBack={() => setAccordionAlbum(null)}
+            />
           </div>
         </div>
       )}
-
       <p className="v3-seed-note">
         기본 보기는 접근 가능한 그리드예요. 3D 선반은 선택형 보기입니다.
         V3 예시 데이터 · 실제 사용자 데이터가 아닙니다.

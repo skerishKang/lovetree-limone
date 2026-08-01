@@ -70,7 +70,7 @@ test("onboarding flow connects source -> heart -> connect -> tree", async () => 
 test("canonical journeys are wired with real links", async () => {
   const landing = await readApp("components/v3/V3Landing.tsx");
   const myGarden = await readApp("components/v3/V3MyGarden.tsx");
-  const subject = await readApp("components/v3/V3SubjectAlbums.tsx");
+  const accordion = await readApp("components/v3/V3AlbumAccordion.tsx");
   const communityPreview = await readApp("components/v3/V3CommunityPreview.tsx");
   const milestone = await readApp("components/v3/V3Milestone.tsx");
 
@@ -79,7 +79,7 @@ test("canonical journeys are wired with real links", async () => {
   assert.match(myGarden, /\/v3\/trees\/new/);
   assert.match(myGarden, /\/v3\/subjects\/demo/);
   assert.match(myGarden, /\/v3\/trees\/\$\{tree\.id\}/);
-  assert.match(subject, /\/v3\/trees\/\$\{treeId\}/);
+  assert.match(accordion, /\/v3\/trees\/\$\{album\.treeIds\[0\]\}/);
   assert.match(communityPreview, /\/v3\/community\/trees\/\$\{tree\.id\}/);
   assert.match(milestone, /\/v3\/trees\/demo/);
 });
