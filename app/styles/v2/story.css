@@ -7,6 +7,6 @@
 .v2-story-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .v2-story-body { padding: 20px; }
 .v2-story-body time { color: var(--v2-rose-deep); font-size: .65rem; font-weight: 800; }
-.v2-story-body h3 { margin: 8px 0 6px; font-family: var(--v2-display); font-size: 1.15rem; font-weight: 400; }
+.v2-story-body h3 { margin: 8px 0 6px; font-family: var(--v2-display); font-size: 1.15rem; font-weight: 400; overflow-wrap: anywhere; }
 .v2-story-body p { margin: 0; color: var(--v2-muted); font-size: .78rem; line-height: 1.7; }
 .v2-story-empty { text-align: center; padding: 60px 20px; color: var(--v2-muted); }

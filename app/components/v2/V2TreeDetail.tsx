@@ -85,6 +85,14 @@ export default function V2TreeDetail() {
   });
   const composerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const isFirst = new URLSearchParams(window.location.search).get("first") === "1";
+      setFirstGuide(isFirst);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const loadTree = useCallback(async () => {
     if (!treeId) return;
     setLoading(true);
@@ -213,7 +221,7 @@ export default function V2TreeDetail() {
     try {
       const response = await apiFetch(`/api/trees/${encodeURIComponent(treeId)}`, {
         method: "PUT",
-        body: JSON.stringify({ visibility: newVisibility }),
+        body: JSON.stringify({ visibility: newVisibility, title: tree.title }),
       });
       if (response.ok) {
         setTree((prev) => prev ? { ...prev, visibility: newVisibility } : prev);

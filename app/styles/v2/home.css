@@ -107,6 +107,7 @@
   position: relative; min-height: 640px; padding: 24px 24px 22px;
   border: 1px solid rgba(143,104,95,.16); border-radius: 34px;
   background: rgba(255,253,248,.58); box-shadow: var(--v2-shadow); transform: rotate(1.2deg);
+  overflow: hidden;
 }
 .v2-tree-stage::before {
   content: ""; position: absolute; inset: 12px -10px -10px 10px; z-index: -1;
