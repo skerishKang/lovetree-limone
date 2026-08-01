@@ -1,7 +1,7 @@
 ---
 status: PROPOSED_ARCHITECTURE_DECISION
 authority: Issue #16
-version: 0.1
+version: 0.2
 effective_date: pending independent approval
 source_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
 ---
@@ -68,12 +68,12 @@ A Tree is presented visually as a tree, but its canonical structure is a directe
 | `id` | text, non-null | generated | stable identity |
 | `ownerId` | text, non-null | none | ultimate owner |
 | `clientKey` | text, nullable | null | idempotent create compatibility |
-| `treeType` | `personal | official | collaborative`, non-null | `personal` | approved equivalent to fan/official/collaborative |
+| `treeType` | `personal | official | collaborative`, non-null | `personal` | ownership/provenance class, orthogonal to subject type |
 | `subjectType` | `person | work | travel | study | relationship | other`, nullable during migration | null | required for new V3 writes |
 | `subjectName` | text, nullable during migration | null | required for new V3 writes |
 | `title` | text, non-null | none | user-facing Tree title |
-| `description` | text, nullable | null | canonical Tree summary; current physical `memo` may remain as compatibility storage initially |
-| `coverMomentId` | text, nullable | null | preferred cover derived from a Moment |
+| `description` | text, nullable | null | canonical Tree summary |
+| `coverMomentId` | text, nullable | null | preferred cover derived from a Moment in the same Tree |
 | `coverUrl` | text, nullable | null | uploaded/external fallback |
 | `coverAlt` | text, nullable | null | accessibility text |
 | `visibility` | `private | unlisted | public`, non-null | new V3 API: `private` | existing rows retain their current value |
@@ -83,13 +83,17 @@ A Tree is presented visually as a tree, but its canonical structure is a directe
 | `publishedAt` | timestamptz, nullable | null | first public publication |
 | `deletedAt` | timestamptz, nullable | null | soft deletion marker |
 
-### Tree type rules
+### Tree rules
 
 - `personal`: ordinary user-created Tree, including fan journeys and non-fan subjects.
 - `official`: server/admin-assigned only; users cannot self-declare it.
 - `collaborative`: uses explicit membership and role checks.
+- `treeType` and `subjectType` are independent. A personal Tree may concern a person, work, trip, or any other approved subject.
+- `description` is the canonical domain/API name. During compatibility, the physical `trees.memo` column may remain its sole backing storage; do not create two independently writable description columns.
+- `coverMomentId`, when present, must reference a Moment in the same Tree. A public cover may use that Moment's media only when the Moment is effectively public; otherwise use `coverUrl` or a safe generated cover.
+- `status = deleted` requires `deletedAt`; non-deleted status requires `deletedAt IS NULL`.
 
-Collaborative Trees use `tree_memberships(treeId, userId, role, createdAt, updatedAt)` with `role = owner | editor | viewer`. `ownerId` remains the ultimate owner.
+Collaborative Trees use `tree_memberships(treeId, userId, role, createdAt, updatedAt)` with `role = owner | editor | viewer`. `ownerId` remains the ultimate owner. A unique membership constraint applies to `(treeId, userId)`.
 
 ## 5. Moment field catalog
 
@@ -125,6 +129,10 @@ The first migration must not destructively rename the physical `memories` table.
 | `updatedAt` | timestamptz, non-null | DB now | database update time only |
 | `deletedAt` | timestamptz, nullable | null | soft deletion marker |
 
+### Moment physical-type decision
+
+The current shared `visibility` PostgreSQL enum does not contain `inherit`. Issue #19 must not reuse that enum for the new canonical Moment field. Use a distinct `moment_visibility` enum or an equivalently constrained text field containing exactly `inherit`, `private`, `unlisted`, and `public`. Likewise, `memoVisibility` uses its own type containing `private`, `tree`, and `public`.
+
 Approved source categories for new writes describe evidence/media, not subjects:
 
 ```text
@@ -133,6 +141,18 @@ performance, event, offline, text, link, other
 ```
 
 Legacy enum values such as `person` and `travel` remain readable during migration but are not offered by the new V3 writer.
+
+### Moment rules
+
+- A source-less text or offline Moment is valid.
+- If the user omits `title`, the server may derive a deterministic title from `sourceTitle` or the first non-empty memo line; it must not persist an empty placeholder.
+- `sourceUrl` and `sourceCanonicalUrl` must pass approved URL/protocol validation.
+- `startSeconds` and `endSeconds` are permitted only for time-addressable source types.
+- `startSeconds >= 0`.
+- `endSeconds` cannot exist without `startSeconds`.
+- `endSeconds >= startSeconds`.
+- `status = deleted` requires `deletedAt`; non-deleted status requires `deletedAt IS NULL`.
+- Add a unique key or unique index on `(treeId, id)` so same-tree composite Connection foreign keys are implementable.
 
 ## 6. Connection field catalog
 
@@ -150,6 +170,7 @@ Add a first-class `connections` entity.
 | `relationEmotionBefore` | text, nullable | null | emotional state before transition |
 | `relationEmotionAfter` | text, nullable | null | emotional state after transition |
 | `sortOrder` | integer, non-null | assigned | deterministic outgoing-edge order |
+| `isPrimaryPath` | boolean, non-null | first incoming edge: true | designated Tree-layout and V1/V2 compatibility edge |
 | `createdById` | text, non-null | actor | collaborative audit/ownership |
 | `status` | `active | deleted`, non-null | `active` | soft deletion |
 | `createdAt` | timestamptz, non-null | DB now | lifecycle timestamp |
@@ -159,12 +180,18 @@ Add a first-class `connections` entity.
 ### Connection constraints
 
 1. `fromMomentId != toMomentId`.
-2. Both endpoints must belong to `treeId`; use composite keys/FKs such as `(tree_id, id)` rather than application-only checks.
+2. Both endpoints must belong to `treeId`. Implement composite foreign keys `(treeId, fromMomentId)` and `(treeId, toMomentId)` against the unique Moment key `(treeId, id)` rather than relying only on application joins.
 3. The actor must be the owner or an editor of the Tree.
-4. Only one active directed edge per `(treeId, fromMomentId, toMomentId)` unless a later approved decision permits parallel edges.
-5. The service layer rejects a write that creates a cycle.
-6. `custom` requires a trimmed non-empty `relationLabel`; placeholder values such as `직접 입력` are invalid persisted meanings.
-7. Relation/source/discovery categories cannot be written into `primaryEmotion` or `emotionTags`.
+4. Use a partial unique index for one active directed edge per `(treeId, fromMomentId, toMomentId)` unless a later approved decision permits parallel edges.
+5. Use a partial unique index for at most one active `isPrimaryPath = true` incoming Connection per `(treeId, toMomentId)`.
+6. A root Moment has no active primary incoming Connection.
+7. The first active incoming Connection for a non-root Moment defaults to `isPrimaryPath = true`; additional incoming Connections default false.
+8. If the primary Connection is deleted, the service promotes the remaining active incoming Connection with the lowest `(sortOrder, createdAt, id)` in the same transaction. If none remains, the Moment becomes a root.
+9. V1/V2 `parentId` projects only from the active primary Connection.
+10. The service rejects a write that creates a cycle. The check and insertion run in one transaction with per-Tree serialization or an equivalent concurrency-safe mechanism; a preflight check outside the write transaction is insufficient.
+11. `custom` requires a trimmed non-empty `relationLabel`; placeholder values such as `직접 입력` are invalid persisted meanings.
+12. Relation/source/discovery categories cannot be written into `primaryEmotion` or `emotionTags`.
+13. `status = deleted` requires `deletedAt`; active status requires `deletedAt IS NULL`.
 
 `relationType` remains an application-managed dictionary rather than a PostgreSQL enum so product language can evolve without destructive enum migrations.
 
@@ -173,7 +200,7 @@ Initial categories:
 ```text
 comment_follow, fan_recommendation, curiosity, skill_check,
 personality_check, same_work, direct_search, reaction_confirmation,
-return_after_rest, custom, other
+return_after_rest, custom, other, legacy_parent
 ```
 
 ## 7. Visibility and access-control matrix
@@ -212,7 +239,7 @@ Authorization predicates must run before community joins and aggregates. An inde
 - Soft-deleting a Moment soft-deletes all incident Connections in the same transaction.
 - Restoring a Moment does not automatically restore Connections; reconnection is explicit.
 - Hard purge may use FK cascade only after retention/restore policy authorizes it.
-- Derivation live references use nullable FKs plus approved attribution snapshots so source purge does not erase lawful attribution history and does not expose newly private content.
+- Derivation live references use nullable FKs with `ON DELETE SET NULL` plus approved attribution snapshots so source purge does not erase lawful attribution history and does not expose newly private content.
 
 ## 9. Community and derivation
 
@@ -232,7 +259,7 @@ createdById
 createdAt
 ```
 
-A derivation can be created only from an effectively public source Tree and public source Moment. Snapshot only information approved for public display at derivation time. If the source later becomes private or deleted, the derived Tree remains, the live link is suppressed, and only the approved attribution snapshot remains.
+A derivation can be created only from an effectively public source Tree and public source Moment. Snapshot only attribution and source metadata approved for public display; do not snapshot private/tree-only memo or owner/member data. If the source later becomes private or deleted, the derived Tree remains, the live link is suppressed, and only the approved attribution snapshot remains.
 
 Ownership boundaries:
 
@@ -264,6 +291,7 @@ idempotency key
 Rules:
 
 - refresh, retries, and multiple tabs cannot create duplicate events;
+- use a unique idempotency constraint for the approved Tree/rule/version qualification identity;
 - deleting a triggering Moment does not erase a historically earned event, although current counts may fall;
 - backfilled histories must not force old celebrations on first login; prior qualifying events are inserted as historical/already acknowledged;
 - the 300th Moment is dismissible and replayable and never a payment wall.
@@ -274,8 +302,8 @@ Rules:
 |---|---|---|
 | `memories.timestamp` | may mean date, DB time, or media position | preserve untouched initially; never blindly map |
 | `memories.parentId` | structural pointer without causal meaning | compatibility projection only; canonical relation is Connection |
-| `trees.artist` | may be subject name | migrate conservatively toward `subjectName` |
-| `trees.memo` | Tree description | distinguish from Moment memo and relation memo in APIs |
+| `trees.artist` | may be subject name | use only as a conservative subject hint |
+| `trees.memo` | Tree description | canonical API alias is `description`; one physical source of truth during transition |
 | `memories.source` | title/provider ambiguity | split into explicit source fields |
 | `memories.thumbnail` | URL field with legacy name | canonical name becomes `thumbnailUrl` |
 | `groupName` | organizational grouping | not a substitute for `subjectName` |
@@ -284,14 +312,16 @@ Rules:
 ## 12. Migration and backfill strategy for Issue #19
 
 1. Add fields and tables only; do not rename or drop in the first migration.
-2. Existing Trees: `treeType=personal`, `status=active`; derive `subjectName` conservatively from `artist`, then `groupName`, then `title`; use `subjectType=other` when deterministic mapping is unavailable.
+2. Existing Trees: `treeType=personal`, `status=active`. Backfill `subjectName` from non-empty `artist`, then non-empty `groupName`; otherwise leave it null and let the compatibility read mapper display `title` as a fallback without inventing stored subject identity. Backfill `subjectType=other` only when `subjectName` is set but no deterministic category is available.
 3. Existing Moments: `status=active`; preserve current visibility; set memo visibility to preserve existing effective exposure (`private -> private`, `unlisted -> tree`, `public -> public`).
-4. Do not infer `recordDate` or media intervals from ambiguous `timestamp` except strict, independently reviewed patterns; otherwise leave new fields null and preserve the legacy value.
-5. Backfill `thumbnailUrl` from `thumbnail` and explicit source fields only where semantics are unambiguous.
-6. For each valid same-tree `parentId`, create one `legacy_parent` Connection with label `기존 연결`. Missing or cross-tree parents are migration exceptions and must be reported.
-7. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections; a compatibility adapter may project one designated primary incoming Connection back to `parentId` until V1/V2 migration is complete.
-8. Add deterministic `sortOrder` per Tree using existing created order without changing IDs.
-9. Validate clean install and upgrade on an isolated database. Production remains untouched.
+4. Implement the canonical Moment visibility with a new physical enum/constrained field; do not extend the shared Tree visibility enum with `inherit`.
+5. Do not infer `recordDate` or media intervals from ambiguous `timestamp` except strict, independently reviewed patterns; otherwise leave new fields null and preserve the legacy value.
+6. Backfill `thumbnailUrl` from `thumbnail` and explicit source fields only where semantics are unambiguous.
+7. For each valid same-tree `parentId`, create one active `legacy_parent` Connection with label `기존 연결` and `isPrimaryPath = true`. Missing or cross-tree parents are migration exceptions and must be reported.
+8. Keep `parentId` readable/writable for V1/V2 during transition. New V3 writes create Connections. The compatibility adapter projects the active primary incoming Connection to `parentId`; legacy V1/V2 parent updates atomically create/update that primary Connection.
+9. Add deterministic `sortOrder` per Tree using existing creation order with stable ID tie-breaking, without changing IDs.
+10. Stage new non-null constraints only after nullable addition, backfill, exception reporting, and validation.
+11. Validate clean install and upgrade on an isolated database. Production remains untouched.
 
 ## 13. API and normalized read-model implications
 
@@ -305,7 +335,7 @@ Rules:
 ```
 
 - Do not expose physical table names in V3 UI contracts.
-- Server validation is authoritative for ownership, visibility, media intervals, safe URLs, relation taxonomy, same-tree constraints, and cycle prevention.
+- Server validation is authoritative for ownership, visibility, media intervals, safe URLs, relation taxonomy, same-tree constraints, primary-path rules, and cycle prevention.
 - All V3 lenses receive one normalized payload:
 
 ```ts
@@ -324,41 +354,40 @@ Growth tree, timeline, diary, story, album/archive, map, nebula, community, and 
 ## 14. Mandatory invariants
 
 - `recordDate`, DB timestamps, and media seconds remain separate typed fields.
-- `startSeconds >= 0`.
-- `endSeconds` cannot exist without `startSeconds`.
-- `endSeconds >= startSeconds`.
 - A Moment may be source-less, but its canonical title must be meaningful or generated deterministically.
 - Emotion fields contain emotional states only.
-- Connections are directed, same-tree, non-self, acyclic, and ownership-validated.
+- Connections are directed, same-tree, non-self, acyclic, ownership-validated, and concurrency-safe on creation.
+- At most one active primary incoming Connection exists per target Moment.
 - Effective child visibility never exceeds Tree visibility.
 - Public/community joins cannot reveal private memo, private Moment existence, ownership/member data, moderation data, or private derivation sources.
 - Every V3 view reads the same normalized entities.
+- Status and deletion timestamps remain internally consistent.
 
 ## 15. V1/V2 compatibility assessment
 
-The decision is backward-compatible only if Issue #19 follows an additive migration sequence.
+The decision is backward-compatible only if Issue #19 follows the additive migration sequence.
 
 - Existing IDs remain unchanged.
 - Existing `trees` and `memories` remain readable and writable.
 - Existing endpoints retain current response shapes.
 - V3 adapters map legacy rows into the normalized model without treating fixture-only fields as production truth.
-- `parentId` remains during transition but is no longer the canonical causal model.
+- `parentId` remains during transition and projects only the primary path; it is no longer the canonical causal model.
 - No existing row is silently made more public or more private during backfill.
 - Ambiguous `timestamp` values remain untouched until independently classified.
 
 ## 16. Open questions and recommended decisions
 
-### Partial/unknown remembered dates
+### Partial or unknown remembered dates
 
 Recommendation: Phase 1 stores nullable full dates only. Partial date precision is out of scope and requires a separate approved field before implementation.
 
 ### Multiple parallel Connections between the same two Moments
 
-Recommendation: disallow initially. Use one Connection with relation label/memo. Revisit only with demonstrated product need.
+Recommendation: disallow initially. Use one Connection with relation label and memo. Revisit only with demonstrated product need.
 
 ### Automatic cycle handling
 
-Recommendation: reject the mutation; never silently reorder or remove existing Connections.
+Recommendation: reject the mutation; never silently reorder or remove existing Connections. Perform cycle validation in the serialized write transaction.
 
 ### Official Tree verification
 
@@ -367,6 +396,10 @@ Recommendation: `treeType=official` is server/admin controlled. Verification wor
 ### Restoring deleted Connections
 
 Recommendation: do not auto-restore when a Moment returns. Require explicit reconnection.
+
+### Primary path selection
+
+Recommendation: persist `isPrimaryPath`. The first incoming edge is primary, owners/editors may explicitly change it, deletion promotes the deterministic lowest remaining edge, and V1/V2 `parentId` projects only that edge.
 
 ## 17. Out of scope for this documentation PR
 
@@ -392,7 +425,8 @@ Recommendation: do not auto-restore when a Moment returns. Require explicit reco
 This document remains proposed until an independent architecture review confirms:
 
 - field types, nullability, and defaults preserve existing rows;
-- same-tree and ownership constraints are implementable;
+- composite same-tree and ownership constraints are implementable;
+- primary-path compatibility is deterministic;
 - visibility is representable without application-only assumptions;
 - migration and API compatibility are complete;
 - no fixture-only concept is treated as production truth.
