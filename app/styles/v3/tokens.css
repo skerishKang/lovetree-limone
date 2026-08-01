@@ -1,0 +1,19 @@
+/* V3 design tokens — scoped under .v3-shell only. No global selectors. */
+.v3-shell {
+  --v3-paper: #f7f0e8;
+  --v3-paper-light: #fffdf8;
+  --v3-ink: #3f3535;
+  --v3-muted: #8e7d78;
+  --v3-rose: #c86e79;
+  --v3-rose-deep: #98505e;
+  --v3-sage: #8a9a75;
+  --v3-sage-deep: #596b4c;
+  --v3-gold: #e5c650;
+  --v3-lavender: #a980d1;
+  --v3-line: rgba(119, 91, 82, 0.18);
+  --v3-shadow: 0 24px 70px rgba(98, 68, 58, 0.13);
+  --v3-serif: "Gowun Batang", Georgia, "Times New Roman", serif;
+  --v3-sans: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+  --v3-radius: 18px;
+  --v3-radius-lg: 30px;
+}

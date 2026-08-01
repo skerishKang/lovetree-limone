@@ -1,0 +1,219 @@
+/* V3 milestone — celebration themes. Scoped under .v3-shell. */
+.v3-milestone {
+  display: grid;
+  gap: 20px;
+  padding: 24px 0 40px;
+}
+
+.v3-milestone-header {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.v3-milestone-header h1 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.v3-milestone-header h1 em {
+  color: var(--v3-rose);
+  font-style: normal;
+}
+
+.v3-milestone-header p {
+  margin: 0 auto;
+  max-width: 520px;
+  color: var(--v3-muted);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.v3-milestone-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.v3-milestone-theme {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 8px;
+  min-height: 220px;
+  padding: 20px;
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  border-radius: 20px;
+  background: rgba(255, 253, 248, 0.92);
+  box-shadow: 0 14px 28px rgba(98, 68, 58, 0.12);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.v3-milestone-theme:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 34px rgba(98, 68, 58, 0.18);
+}
+
+.v3-milestone-theme:focus-visible {
+  outline: 3px solid rgba(200, 110, 121, 0.5);
+  outline-offset: 2px;
+}
+
+.v3-milestone-theme[aria-pressed="true"] {
+  border-color: var(--v3-rose);
+  box-shadow: 0 0 0 3px rgba(200, 110, 121, 0.3);
+}
+
+.v3-theme-visual {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  border-radius: 14px;
+}
+
+.v3-theme-finale {
+  background: radial-gradient(circle at 50% 45%, rgba(216, 111, 125, 0.55), transparent 5rem),
+    linear-gradient(150deg, #f7efe8, #f3e4f0);
+  color: var(--v3-rose-deep);
+  font-size: 2.4rem;
+}
+
+.v3-theme-aurora {
+  background: radial-gradient(circle at 50% 45%, rgba(99, 215, 188, 0.5), transparent 5rem),
+    linear-gradient(150deg, #07130f, #0b2721);
+  color: #63d7bc;
+  font-size: 2.4rem;
+}
+
+.v3-theme-canopy {
+  background: radial-gradient(circle at 50% 45%, rgba(94, 164, 122, 0.4), transparent 5rem),
+    linear-gradient(150deg, #090b11, #19202a);
+  color: #6ec59a;
+  font-size: 2.4rem;
+}
+
+.v3-theme-bloom {
+  background: radial-gradient(circle at 50% 45%, rgba(179, 109, 255, 0.5), transparent 5rem),
+    linear-gradient(150deg, #100c18, #261631);
+  color: #bd76ff;
+  font-size: 2.4rem;
+}
+
+.v3-milestone-theme strong {
+  font-family: var(--v3-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.v3-milestone-theme p {
+  margin: 0;
+  color: var(--v3-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+/* stage player */
+.v3-milestone-stage {
+  position: relative;
+  overflow: hidden;
+  height: 460px;
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  border-radius: 24px;
+  background: linear-gradient(150deg, #0b0b16, #1a1430);
+}
+
+.v3-milestone-controls {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(20, 16, 34, 0.85);
+  color: #f2e9f8;
+}
+
+.v3-milestone-controls .v3-btn-icon {
+  width: 34px;
+  height: 34px;
+  color: #f2e9f8;
+}
+
+.v3-milestone-progress {
+  width: 180px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.v3-milestone-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--v3-rose), var(--v3-lavender));
+  transition: width 0.2s ease;
+}
+
+.v3-milestone-label {
+  color: rgba(242, 233, 248, 0.8);
+  font-size: 0.72rem;
+}
+
+.v3-milestone-back {
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* moment popover in milestone */
+.v3-milestone-popover {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(340px, calc(100% - 32px));
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(30, 24, 48, 0.92);
+  color: #f2e9f8;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.v3-milestone-popover strong {
+  display: block;
+  font-family: var(--v3-serif);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.v3-milestone-popover p {
+  margin: 8px 0 0;
+  color: rgba(242, 233, 248, 0.78);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.v3-milestone-popover small {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--v3-gold);
+  font-size: 0.66rem;
+}
+
+.v3-milestone-popover button {
+  margin-top: 12px;
+}
+
+/* reduced motion handled in responsive.css */

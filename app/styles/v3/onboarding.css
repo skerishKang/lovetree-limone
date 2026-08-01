@@ -1,0 +1,321 @@
+/* V3 onboarding — source / heart / connect steps. Scoped under .v3-shell. */
+.v3-onboarding {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+  gap: 48px;
+  align-items: start;
+  padding: 30px 0 10px;
+}
+
+.v3-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  color: #b4a5a0;
+  font-size: 0.66rem;
+}
+
+.v3-progress-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.v3-progress-step b {
+  font-size: 0.56rem;
+}
+
+.v3-progress-step.v3-progress-active {
+  color: var(--v3-rose-deep);
+}
+
+.v3-progress-step.v3-progress-active b {
+  color: var(--v3-rose);
+}
+
+.v3-progress-step.v3-progress-done {
+  color: var(--v3-sage-deep);
+}
+
+.v3-progress-line {
+  width: 24px;
+  height: 1px;
+  background: #d9cac2;
+}
+
+.v3-onboarding h1 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.v3-onboarding h1 em {
+  color: var(--v3-rose);
+  font-style: normal;
+}
+
+.v3-onboarding-intro {
+  margin: 18px 0 0;
+  max-width: 440px;
+  color: var(--v3-muted);
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
+.v3-onboarding-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.v3-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.v3-time-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.v3-counter {
+  text-align: right;
+  color: var(--v3-muted);
+  font-size: 0.68rem;
+}
+
+.v3-source-card {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 253, 248, 0.92);
+  box-shadow: 0 14px 28px rgba(98, 68, 58, 0.1);
+}
+
+.v3-source-card-thumb {
+  position: relative;
+  height: 168px;
+  background: linear-gradient(140deg, #82909a, #c9a491 60%, #e2c6b5);
+}
+
+.v3-source-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.v3-source-card-body {
+  padding: 14px 16px 16px;
+}
+
+.v3-source-card-tag {
+  color: var(--v3-rose-deep);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.v3-source-card-title {
+  display: block;
+  margin: 6px 0 4px;
+  font-family: var(--v3-serif);
+  font-size: 1.05rem;
+  color: var(--v3-ink);
+}
+
+.v3-source-card p {
+  margin: 0;
+  color: var(--v3-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.v3-source-card-empty {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: 24px;
+  text-align: center;
+  color: var(--v3-muted);
+  font-size: 0.8rem;
+}
+
+.v3-source-card-empty span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: var(--v3-rose);
+}
+
+.v3-onboarding-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.v3-onboarding-preview {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.v3-emotion-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.v3-emotion-swatch i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.v3-mood-dots {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.v3-mood-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(119, 91, 82, 0.2);
+}
+
+.v3-relation-summary {
+  padding: 14px 16px;
+  border: 1px dashed rgba(138, 154, 117, 0.55);
+  border-radius: 14px;
+  background: rgba(238, 241, 222, 0.4);
+  font-size: 0.78rem;
+  color: var(--v3-sage-deep);
+  line-height: 1.6;
+}
+
+.v3-relation-summary b {
+  color: var(--v3-rose-deep);
+  font-weight: 700;
+}
+
+.v3-branch-figure {
+  position: relative;
+  height: 44px;
+  margin-top: 4px;
+}
+
+.v3-branch-figure svg {
+  width: 100%;
+  height: 100%;
+}
+
+.v3-path-summary {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(138, 154, 117, 0.3);
+  border-radius: 16px;
+  background: rgba(238, 241, 222, 0.35);
+}
+
+.v3-path-pair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--v3-sage-deep);
+}
+
+.v3-path-pair b {
+  color: var(--v3-rose-deep);
+}
+
+.v3-connect-figure {
+  position: relative;
+  min-height: 330px;
+}
+
+.v3-connect-card {
+  position: absolute;
+  width: 210px;
+  overflow: hidden;
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: 0 14px 28px rgba(98, 68, 58, 0.12);
+}
+
+.v3-connect-first {
+  left: 0;
+  top: 8px;
+  transform: rotate(-3deg);
+}
+
+.v3-connect-next {
+  right: 0;
+  top: 130px;
+  transform: rotate(2deg);
+}
+
+.v3-connect-line {
+  position: absolute;
+  left: 50%;
+  top: 150px;
+  width: 70px;
+  height: 2px;
+  background: var(--v3-rose);
+  transform: rotate(18deg);
+  transform-origin: left;
+}
+
+.v3-connect-card-media {
+  height: 96px;
+  background: linear-gradient(140deg, #9b7e88, #c9b19a 57%, #a7b28c);
+}
+
+.v3-connect-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.v3-connect-card-body {
+  padding: 10px 12px 12px;
+}
+
+.v3-connect-card-body strong {
+  display: block;
+  font-family: var(--v3-serif);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.v3-connect-card-body p {
+  margin: 4px 0 0;
+  color: var(--v3-muted);
+  font-size: 0.62rem;
+  line-height: 1.45;
+}
+
+.v3-success-box {
+  padding: 20px;
+  border: 1px solid rgba(138, 154, 117, 0.35);
+  border-radius: 16px;
+  background: rgba(238, 241, 222, 0.45);
+  color: var(--v3-sage-deep);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}

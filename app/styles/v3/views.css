@@ -1,0 +1,384 @@
+/* V3 view modes — timeline / diary / story / album / connection map / nebula.
+   Scoped under .v3-shell. */
+.v3-view {
+  display: grid;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.v3-view h2 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.v3-view-note {
+  margin: 0;
+  color: var(--v3-muted);
+  font-size: 0.78rem;
+}
+
+/* timeline */
+.v3-timeline {
+  display: grid;
+  gap: 10px;
+}
+
+.v3-timeline-day {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(119, 91, 82, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.85);
+}
+
+.v3-timeline-date {
+  color: var(--v3-rose-deep);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.v3-timeline-list {
+  display: grid;
+  gap: 8px;
+}
+
+.v3-timeline-memory {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--v3-sage);
+  background: rgba(238, 241, 222, 0.3);
+  border-radius: 0 10px 10px 0;
+}
+
+.v3-timeline-memory strong {
+  font-family: var(--v3-serif);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.v3-timeline-memory small {
+  color: var(--v3-muted);
+  font-size: 0.66rem;
+}
+
+/* diary */
+.v3-diary-view {
+  display: grid;
+  gap: 12px;
+}
+
+.v3-diary-entry {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid rgba(119, 91, 82, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.85);
+}
+
+.v3-diary-entry time {
+  color: var(--v3-rose-deep);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.v3-diary-entry h3 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.v3-diary-entry p {
+  margin: 0;
+  color: var(--v3-muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+/* story */
+.v3-story-view {
+  display: grid;
+  gap: 26px;
+}
+
+.v3-story-scene {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.v3-story-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #9b7e88, #c9b19a 57%, #a7b28c);
+}
+
+.v3-story-media img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.v3-story-copy h3 {
+  margin: 0;
+  font-family: var(--v3-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.v3-story-copy p {
+  margin: 7px 0 0;
+  color: var(--v3-muted);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.v3-story-copy time {
+  color: var(--v3-sage-deep);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+/* album */
+.v3-album-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.v3-album-card {
+  overflow: hidden;
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 12px 24px rgba(98, 68, 58, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.v3-album-card:hover {
+  transform: translateY(-4px);
+}
+
+.v3-album-media {
+  height: 120px;
+  background: linear-gradient(140deg, #8d6971, #db9d91 62%, #f0c7a6);
+}
+
+.v3-album-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.v3-album-body {
+  padding: 12px 14px 14px;
+}
+
+.v3-album-body strong {
+  display: block;
+  font-family: var(--v3-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.v3-album-body small {
+  display: block;
+  margin-top: 4px;
+  color: var(--v3-muted);
+  font-size: 0.68rem;
+}
+
+/* connection map */
+.v3-map-canvas {
+  position: relative;
+  height: 560px;
+  overflow: hidden;
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  border-radius: var(--v3-radius-lg);
+  background: radial-gradient(circle at 50% 45%, rgba(156, 174, 130, 0.25), transparent 16rem),
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(138, 154, 117, 0.08) 28px),
+    repeating-linear-gradient(90deg, transparent, transparent 27px, rgba(138, 154, 117, 0.08) 28px),
+    #faf6ee;
+}
+
+.v3-map-canvas svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.v3-map-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  min-width: 74px;
+  min-height: 74px;
+  padding: 8px 12px;
+  border: 1px solid rgba(119, 91, 82, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.95);
+  box-shadow: 0 10px 22px rgba(98, 68, 58, 0.12);
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  transition: box-shadow 0.2s ease;
+}
+
+.v3-map-node:focus-visible {
+  outline: 3px solid rgba(200, 110, 121, 0.5);
+  outline-offset: 2px;
+}
+
+.v3-map-node.v3-node-selected {
+  box-shadow: 0 0 0 3px rgba(200, 110, 121, 0.55), 0 14px 26px rgba(98, 68, 58, 0.2);
+}
+
+.v3-map-node-root {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 246, 242, 0.9) 70%);
+  color: var(--v3-rose-deep);
+  font-family: var(--v3-serif);
+  font-size: 0.9rem;
+}
+
+.v3-map-node svg {
+  position: static;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.v3-map-controls {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 6px;
+}
+
+.v3-map-search {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: min(260px, 60%);
+}
+
+.v3-map-inspector {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  width: min(300px, calc(100% - 28px));
+  padding: 14px 16px;
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.96);
+  box-shadow: 0 14px 28px rgba(98, 68, 58, 0.14);
+}
+
+.v3-map-inspector strong {
+  display: block;
+  font-family: var(--v3-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.v3-map-inspector p {
+  margin: 6px 0 0;
+  color: var(--v3-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.v3-minimap {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 130px;
+  height: 90px;
+  border: 1px solid rgba(119, 91, 82, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 253, 248, 0.85);
+  overflow: hidden;
+}
+
+/* nebula */
+.v3-nebula-wrap {
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  border-radius: var(--v3-radius-lg);
+  background: radial-gradient(circle at 50% 50%, rgba(169, 128, 209, 0.18), transparent 20rem),
+    linear-gradient(155deg, #faf6ee, #f3ece2);
+}
+
+.v3-nebula-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.v3-nebula-star {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(216, 111, 125, 0.4);
+}
+
+.v3-nebula-metrics {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.v3-nebula-metric {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(119, 91, 82, 0.16);
+  font-size: 0.7rem;
+  color: var(--v3-sage-deep);
+}
+
+.v3-nebula-metric b {
+  color: var(--v3-rose-deep);
+}
+
+.v3-nebula-controls {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.v3-nebula-note {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  max-width: 240px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  font-size: 0.68rem;
+  color: var(--v3-muted);
+  line-height: 1.55;
+}
