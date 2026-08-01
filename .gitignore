@@ -42,3 +42,6 @@ tsconfig.tsbuildinfo
 # Temporary files
 tmp/
 temp/
+
+# Local browser QA credentials (never commit)
+.kilo/qa-auth.env

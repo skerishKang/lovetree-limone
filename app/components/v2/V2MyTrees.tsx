@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import { formatTreeDate, type TreeRecord } from "@/lib/tree-types";
+import EmailAuthForm from "../EmailAuthForm";
 
 interface ApiError { error?: string }
 
@@ -13,6 +14,7 @@ export default function V2MyTrees() {
   const [trees, setTrees] = useState<TreeRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const loadTrees = useCallback(async () => {
     if (!user) return;
@@ -63,10 +65,16 @@ export default function V2MyTrees() {
           <span className="v2-state-symbol" aria-hidden="true">✦</span>
           <h1>내 러브트리는 로그인 후 열려요.</h1>
           <p>저장한 순간을 안전하게 다시 만나려면 로그인해 주세요.</p>
-          <button className="v2-button v2-button-primary" type="button" onClick={() => void login()} disabled={loginPending}>
-            {loginPending ? "로그인 중…" : "Google로 로그인"}
-          </button>
+          <div className="v2-state-actions">
+            <button className="v2-button v2-button-primary" type="button" onClick={() => void login()} disabled={loginPending}>
+              {loginPending ? "로그인 중…" : "Google로 로그인"}
+            </button>
+            <button className="v2-button v2-button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">
+              이메일로 로그인
+            </button>
+          </div>
         </div>
+        <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
     );
   }

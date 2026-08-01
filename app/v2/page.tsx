@@ -2,6 +2,7 @@
 
 import { AuthProvider } from "@/lib/auth";
 import "../styles/v2/home.css";
+import "../styles/email-auth.css";
 import V2Home from "../components/v2/V2Home";
 
 export default function V2HomePage() {

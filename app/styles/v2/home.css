@@ -58,6 +58,7 @@
   color: var(--v2-rose-deep); cursor: pointer; box-shadow: 0 5px 15px rgba(98,68,58,.06); font-size: .86rem;
 }
 .v2-nav-login:disabled { cursor: wait; opacity: .65; }
+.v2-nav-login-quiet { background: transparent; box-shadow: none; border: 1px solid rgba(143,104,95,.35); }
 .v2-nav-user { display: inline-flex; align-items: center; gap: 10px; }
 .v2-nav-user-name { color: var(--v2-sage-deep); font-size: .8rem; font-weight: 600; }
 
@@ -195,6 +196,7 @@
 .v2-state h1, .v2-state h2 { font-family: var(--v2-display); font-weight: 400; }
 .v2-state p { color: var(--v2-muted); font-size: .82rem; line-height: 1.7; }
 .v2-state-symbol { color: var(--v2-rose); font-size: 1.7rem; }
+.v2-state-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
 
 .v2-skeleton { pointer-events: none; animation: v2-sk-shimmer 1.4s ease-in-out infinite; background: linear-gradient(100deg, rgba(119,91,82,.07) 40%, rgba(119,91,82,.15) 50%, rgba(119,91,82,.07) 60%); background-size: 200% 100%; }
 @keyframes v2-sk-shimmer { from { background-position: 130% 0; } to { background-position: -130% 0; } }

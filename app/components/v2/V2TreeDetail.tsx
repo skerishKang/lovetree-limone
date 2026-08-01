@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import { formatTreeDate, type MemoryRecord, type TreeRecord } from "@/lib/tree-types";
+import EmailAuthForm from "../EmailAuthForm";
 import V2GrowthTree from "./V2GrowthTree";
 import V2DiaryView from "./V2DiaryView";
 import V2StoryView from "./V2StoryView";
@@ -35,6 +36,7 @@ export default function V2TreeDetail() {
   const [formError, setFormError] = useState<string | null>(null);
   const [clientKey, setClientKey] = useState(() => crypto.randomUUID());
   const [viewMode, setViewMode] = useState<ViewMode>("tree");
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const loadTree = useCallback(async () => {
     if (!treeId) return;
@@ -178,10 +180,16 @@ export default function V2TreeDetail() {
           <span className="v2-state-symbol" aria-hidden="true">✦</span>
           <h1>로그인이 필요해요.</h1>
           <p>러브트리를 보려면 로그인해 주세요.</p>
-          <button className="v2-button v2-button-primary" type="button" onClick={() => void login()} disabled={loginPending}>
-            {loginPending ? "로그인 중…" : "Google로 로그인"}
-          </button>
+          <div className="v2-state-actions">
+            <button className="v2-button v2-button-primary" type="button" onClick={() => void login()} disabled={loginPending}>
+              {loginPending ? "로그인 중…" : "Google로 로그인"}
+            </button>
+            <button className="v2-button v2-button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">
+              이메일로 로그인
+            </button>
+          </div>
         </div>
+        <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </div>
     );
   }

@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import type { TreeRecord } from "@/lib/tree-types";
+import EmailAuthForm from "../EmailAuthForm";
 import V2TreeCreateFlow from "./V2TreeCreateFlow";
 
 export default function V2Home() {
   const { user, login, logout, loginPending, authError, clearAuthError } = useAuth();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const router = useRouter();
   const [isStartOpen, setIsStartOpen] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -70,14 +72,14 @@ export default function V2Home() {
               <button className="v2-nav-login" type="button" onClick={() => void logout()}>로그아웃</button>
             </span>
           ) : (
-            <button
-              className="v2-nav-login"
-              type="button"
-              onClick={() => void login()}
-              disabled={loginPending}
-            >
-              {loginPending ? "로그인 중…" : "로그인"}
-            </button>
+            <>
+              <button className="v2-nav-login" type="button" onClick={() => void login()} disabled={loginPending}>
+                {loginPending ? "로그인 중…" : "Google 로그인"}
+              </button>
+              <button className="v2-nav-login v2-nav-login-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">
+                이메일 로그인
+              </button>
+            </>
           )}
         </nav>
       </header>
@@ -224,6 +226,8 @@ export default function V2Home() {
           onCreated={handleCreated}
         />
       )}
+
+      <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
 
       {toast && (
         <div className="v2-toast" role="status">
