@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LoveTree · 날짜로 펼쳐보는 주연의 연혁</title>
+  <style>
+    :root{
+      --paper:#f8f0e8;--paper-2:#fffaf5;--paper-3:#f2e8dd;--ink:#493a37;
+      --muted:#9b827a;--rose:#cf707d;--rose-deep:#a95362;--rose-soft:#f3d9d6;
+      --sage:#748e6b;--sage-soft:#e4eddc;--gold:#d7a85f;--lav:#a984c8;
+      --line:#755e5527;--shadow:0 24px 70px #60443a17;
+      --display:"Noto Serif KR","Gowun Batang",Georgia,serif;
+      --body:"Pretendard","Noto Sans KR",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);font-family:var(--body);background:
+      radial-gradient(circle at 3% 14%,#efc1b944,transparent 24rem),
+      radial-gradient(circle at 92% 74%,#cbdab74a,transparent 28rem),var(--paper)}
+    button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+    .shell{width:min(1535px,calc(100% - 42px));margin:auto;padding:20px 0 42px}
+    .topbar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 19px 0 22px;border:1px solid var(--line);border-radius:24px;background:#fffdf9d8;box-shadow:0 14px 42px #69463b12;backdrop-filter:blur(9px)}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--rose-deep);font:400 1.28rem var(--display);letter-spacing:-.1em}
+    .brand-mark{position:relative;width:27px;height:34px;display:inline-block;transform:rotate(-5deg)}
+    .brand-mark:before{content:"";position:absolute;left:12px;top:4px;height:28px;width:2px;border-radius:2px;background:var(--sage);transform:rotate(16deg)}
+    .brand-mark:after{content:"✿";position:absolute;left:0;top:-5px;color:var(--rose);font-size:1.32rem}
+    .brand small{margin-left:1px;color:#b38c82;font:400 .53rem var(--body);letter-spacing:0}
+    .nav{display:flex;align-items:center;gap:4px;margin-left:auto;margin-right:20px}
+    .nav a{padding:10px 13px;border-radius:999px;color:var(--muted);font-size:.67rem;transition:.2s}
+    .nav a:hover,.nav a.active{color:var(--rose-deep);background:var(--rose-soft)}
+    .profile{display:flex;align-items:center;gap:8px;padding:6px 11px 6px 6px;border:1px solid var(--line);border-radius:999px;background:#fffaf6c4;color:var(--muted);font-size:.62rem}
+    .profile i{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:linear-gradient(145deg,#b87984,#e3ac9d);color:#fff;font:400 .82rem var(--display);font-style:normal}
+
+    .intro{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;padding:42px 16px 25px}
+    .eyebrow{margin:0 0 9px;color:var(--rose-deep);font-size:.59rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+    h1{margin:0;font:400 clamp(2.3rem,4.2vw,4.25rem)/.99 var(--display);letter-spacing:-.13em}
+    h1 em{font-style:normal;color:var(--rose)}
+    .intro-copy{max-width:640px;margin:14px 0 0;color:var(--muted);font:400 .78rem/1.75 var(--display)}
+    .intro-actions{display:flex;align-items:center;gap:8px;white-space:nowrap}
+    .pill{display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid #c7ab982e;border-radius:999px;background:#fffaf6bf;color:var(--muted);font-size:.65rem}
+    .pill strong{color:var(--rose-deep);font-weight:700}.pill.accent{border-color:#cf707d5b;background:var(--rose);color:#fff9f7;box-shadow:0 9px 22px #cf707d36}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:0 5px 17px}
+    .stat{display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid var(--line);border-radius:18px;background:#fffdf9a6;box-shadow:0 12px 30px #69463a0b}
+    .stat-icon{display:grid;place-items:center;width:38px;height:38px;flex:0 0 auto;border-radius:50%;color:#fff;font-size:1rem;background:linear-gradient(145deg,#deb070,#ca7a72)}
+    .stat:nth-child(2) .stat-icon{background:linear-gradient(145deg,#d99ca3,#c96576)}.stat:nth-child(3) .stat-icon{background:linear-gradient(145deg,#a9c19e,#6f8b68)}.stat:nth-child(4) .stat-icon{background:linear-gradient(145deg,#bba1d0,#8f6eb0)}
+    .stat strong{display:block;color:var(--rose-deep);font:400 1.31rem var(--display)}.stat span{display:block;margin-top:2px;color:var(--muted);font-size:.59rem}
+
+    .layout{display:grid;grid-template-columns:242px minmax(620px,1fr) 306px;gap:16px;align-items:start}
+    .panel{border:1px solid var(--line);border-radius:25px;background:#fffdf98d;box-shadow:var(--shadow)}
+    .left,.right{position:sticky;top:16px}
+    .left{padding:18px 15px}.left h2,.right h2{margin:0;font:400 1.3rem var(--display);letter-spacing:-.1em}.sub{margin:7px 0 15px;color:var(--muted);font:400 .66rem/1.6 var(--display)}
+    .person{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:15px;background:#fffaf5c7}.avatar{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:#fff;background:linear-gradient(145deg,#9e6c78,#d8908d);font:400 1rem var(--display)}.person strong{display:block;font:400 .91rem var(--display)}.person span{display:block;margin-top:3px;color:var(--muted);font-size:.57rem}
+    .side-label{display:flex;justify-content:space-between;margin:20px 3px 8px;color:var(--rose-deep);font-size:.59rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.side-label b{color:var(--rose);font-weight:700}
+    .chapters{display:grid;gap:4px;max-height:520px;overflow:auto;padding-right:3px}.chapter{display:flex;align-items:center;gap:9px;width:100%;padding:9px 8px;border:1px solid transparent;border-radius:13px;background:transparent;text-align:left;color:var(--muted);transition:.2s}.chapter:hover{background:#fffaf6}.chapter.active{border-color:#cf707d62;background:#fffaf7;color:var(--rose-deep);box-shadow:0 8px 17px #7f53450e}.chapter-date{display:grid;place-items:center;width:38px;height:34px;flex:0 0 auto;border-radius:11px;background:#f2e5dd;color:#a57e72;font-size:.54rem;line-height:1.05}.chapter.active .chapter-date{background:var(--rose);color:#fff}.chapter-copy{min-width:0}.chapter-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 .71rem var(--display)}.chapter-copy small{display:block;margin-top:3px;color:#b19990;font-size:.53rem}.chapter-count{margin-left:auto;color:var(--rose);font-size:.54rem;white-space:nowrap}.left-note{margin-top:17px;padding:12px 11px;border:1px dashed #cf707d4a;border-radius:14px;color:var(--muted);font:400 .65rem/1.65 var(--display)}.left-note b{color:var(--rose-deep)}
+
+    .center{min-width:0}.center-panel{padding:18px 18px 15px}.center-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px}.center-head h2{margin:0;font:400 1.56rem var(--display);letter-spacing:-.1em}.center-head p{margin:6px 0 0;color:var(--muted);font:400 .67rem/1.5 var(--display)}.center-meta{text-align:right;color:var(--muted);font-size:.58rem;white-space:nowrap}.center-meta strong{display:block;color:var(--rose-deep);font:400 1.55rem var(--display)}
+    .view-tabs{display:flex;gap:5px;margin:17px 0 10px;padding:4px;width:max-content;border:1px solid var(--line);border-radius:999px;background:#fffaf6a9}.view-tab{padding:7px 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font-size:.58rem}.view-tab.active{background:var(--rose);color:#fff}
+    .tree-stage{position:relative;min-height:650px;overflow:hidden;border:1px solid #7d675c1b;border-radius:21px;background:radial-gradient(circle at 50% 48%,#f6d4c05c,transparent 18rem),linear-gradient(145deg,#f3e9dfd9,#ecf0e4cc)}
+    .tree-stage:before,.tree-stage:after{content:"";position:absolute;left:50%;top:49%;border:1px solid #cf707d2c;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) rotate(-17deg)}.tree-stage:before{width:700px;height:470px}.tree-stage:after{width:930px;height:590px;border-color:#748e6b2d;transform:translate(-50%,-50%) rotate(15deg)}
+    .stage-caption{position:absolute;z-index:8;left:17px;top:16px;color:#a06f69;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase}.stage-caption b{color:var(--sage)}
+    .root-card{position:absolute;z-index:8;left:50%;top:50%;width:184px;padding:15px 16px;border:1px solid #cf707d65;border-radius:19px;background:#fffdf9ec;text-align:center;box-shadow:0 20px 34px #60443a25;transform:translate(-50%,-50%)}.root-card .avatar{width:51px;height:51px;margin:0 auto 8px;font-size:1.15rem}.root-card small{display:block;color:var(--rose);font-size:.52rem;font-weight:800;letter-spacing:.12em}.root-card strong{display:block;margin-top:4px;font:400 1.21rem var(--display)}.root-card span{display:block;margin-top:4px;color:var(--muted);font:400 .57rem var(--display)}
+    .branch{position:absolute;z-index:2;left:50%;top:50%;width:var(--len);height:2px;transform-origin:left center;border-radius:99px;background:linear-gradient(90deg,#cf707d80,var(--branch-color));box-shadow:0 0 8px color-mix(in srgb,var(--branch-color) 30%, transparent)}.branch:after{content:"";position:absolute;right:-3px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--branch-color);box-shadow:0 0 0 4px #fffaf675}.branch-heart{position:absolute;left:48%;top:-13px;color:var(--branch-color);font-size:.8rem;text-shadow:0 2px 8px #a9536242;animation:heartFloat 2.8s ease-in-out infinite}.branch-heart:nth-child(2){left:55%;top:-10px;font-size:.61rem;animation-delay:.7s}@keyframes heartFloat{0%,100%{transform:translateY(0);opacity:.62}50%{transform:translateY(-4px);opacity:1}}
+    .map-node{position:absolute;z-index:7;width:154px;padding:0;border:1px solid #d0b6a95e;border-radius:16px;background:#fffdf9ef;text-align:left;box-shadow:0 15px 26px #60443a18;transform:translate(-50%,-50%);transition:.25s}.map-node:hover{z-index:10;box-shadow:0 18px 30px #60443a2d;transform:translate(-50%,-50%) scale(1.04)}.map-node.active{border:2px solid var(--node-color);box-shadow:0 0 0 5px #fffdf9,0 0 0 8px color-mix(in srgb,var(--node-color) 35%, transparent),0 18px 30px #60443a28}
+    .node-image{height:57px;overflow:hidden;border-radius:14px 14px 0 0;background:var(--node-color)}.node-image img{width:100%;height:100%;object-fit:cover;display:block;mix-blend-mode:normal}.node-body{padding:8px 10px 9px}.node-date{display:flex;justify-content:space-between;align-items:center;color:#a1746b;font-size:.51rem}.node-date b{padding:3px 5px;border-radius:99px;color:var(--node-color);background:#f7e8e1;font-weight:700}.node-title{display:block;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font:400 .75rem var(--display)}.node-mood{display:block;margin-top:4px;color:var(--node-color);font-size:.54rem}.node-count{display:block;margin-top:3px;color:var(--muted);font-size:.51rem}
+    .stage-legend{position:absolute;z-index:8;right:16px;top:15px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:230px}.stage-legend span{padding:5px 7px;border-radius:999px;color:var(--muted);background:#fffdf9b5;font-size:.51rem}.stage-legend i{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--legend)}
+
+    .timeline-panel{margin-top:14px;padding:16px 18px 15px;border:1px solid var(--line);border-radius:20px;background:#fffdf99b}.section-head{display:flex;justify-content:space-between;align-items:end;gap:10px}.section-head h3{margin:0;font:400 1.22rem var(--display);letter-spacing:-.08em}.section-head p{margin:4px 0 0;color:var(--muted);font:400 .63rem var(--display)}.section-head span{color:var(--rose);font-size:.57rem;white-space:nowrap}.timeline-rail{display:flex;gap:8px;margin-top:17px;padding:0 0 7px;overflow-x:auto}.date-chip{position:relative;min-width:68px;padding:7px 8px;border:1px solid #d5b9a959;border-radius:12px;background:#fffaf5;color:var(--muted);text-align:left}.date-chip:after{content:"";position:absolute;left:18px;right:-10px;bottom:-8px;height:1px;background:#b993884d}.date-chip:last-child:after{display:none}.date-chip.active{border-color:var(--rose);background:var(--rose-soft);color:var(--rose-deep)}.date-chip strong{display:block;font-size:.59rem}.date-chip small{display:block;margin-top:4px;font-size:.51rem}.date-chip b{display:block;margin-top:4px;color:var(--rose);font:400 .82rem var(--display)}
+    .chart{height:175px;display:flex;align-items:flex-end;gap:9px;padding:14px 7px 0;border-top:1px solid var(--line);overflow-x:auto}.bar-col{min-width:48px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;color:var(--muted);font-size:.5rem}.bar-count{color:var(--rose-deep);font-size:.53rem}.bar{width:27px;min-height:8px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--bar),#fff0e7);box-shadow:0 5px 11px #8e5d4e20;transition:.25s}.bar-col:hover .bar,.bar-col.active .bar{box-shadow:0 0 0 3px #fffaf7,0 0 0 5px color-mix(in srgb,var(--bar) 42%, transparent)}.bar-date{font-size:.5rem;white-space:nowrap}
+
+    .right{padding:18px 16px}.right-title{display:flex;justify-content:space-between;gap:8px;align-items:start}.right-title span{display:grid;place-items:center;width:37px;height:37px;border-radius:13px;background:var(--rose-soft);color:var(--rose-deep);font:400 .78rem var(--display)}.selected-date{margin:7px 0 0;color:var(--rose);font-size:.57rem;letter-spacing:.1em}.selected-title{margin:4px 0 0;font:400 1.43rem/1.18 var(--display);letter-spacing:-.09em}.selected-copy{margin:8px 0 0;color:var(--muted);font:400 .69rem/1.65 var(--display)}.selected-image{position:relative;height:130px;margin:15px 0 12px;overflow:hidden;border-radius:16px;background:var(--paper-3)}.selected-image img{width:100%;height:100%;object-fit:cover;display:block}.selected-image figcaption{position:absolute;left:9px;bottom:9px;padding:5px 7px;border-radius:6px;background:#4d3a378c;color:#fff;font-size:.53rem}.detail-line{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.58rem}.detail-line b{color:var(--rose-deep);font:400 1.07rem var(--display)}.tag-title{margin:17px 0 7px;color:var(--rose-deep);font-size:.57rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{padding:6px 8px;border-radius:999px;color:#6c825f;background:var(--sage-soft);font-size:.56rem}.tag:nth-child(2n){color:#9c5f69;background:var(--rose-soft)}.tag:nth-child(3n){color:#8a683f;background:#f4e6c8}
+    .video-list{display:grid;gap:7px;margin-top:8px}.video-item{display:grid;grid-template-columns:57px 1fr;gap:8px;align-items:center;padding:7px;border:1px solid #d2b8aa3e;border-radius:12px;background:#fffaf6c7}.video-thumb{width:57px;height:40px;overflow:hidden;border-radius:8px;background:var(--paper-3)}.video-thumb img{width:100%;height:100%;object-fit:cover}.video-item strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 .65rem var(--display)}.video-item span{display:block;margin-top:3px;color:var(--muted);font-size:.51rem}.video-item b{color:var(--rose);font-size:.54rem}
+    .add-box{margin-top:16px;padding:12px;border:1px dashed #cf707d65;border-radius:14px;background:#fff9f4b8}.add-box h3{margin:0;font:400 .86rem var(--display)}.add-box p{margin:4px 0 9px;color:var(--muted);font-size:.56rem}.add-box input{width:100%;height:33px;margin-top:6px;padding:0 9px;border:1px solid #cbb2a444;border-radius:9px;outline:none;background:#fffdf9;color:var(--ink);font-size:.58rem}.add-box input:focus{border-color:var(--rose)}.add-btn{width:100%;margin-top:8px;padding:9px;border:0;border-radius:999px;background:var(--rose);color:#fff;font-size:.61rem;box-shadow:0 7px 14px #cf707d2e}.private-note{margin-top:13px;padding:10px;border-radius:11px;background:var(--sage-soft);color:#6b7f63;font:400 .61rem/1.55 var(--display)}
+    .empty{display:none;padding:50px 20px;text-align:center;color:var(--muted);font:400 .8rem var(--display)}
+    @media(max-width:1220px){.layout{grid-template-columns:220px minmax(560px,1fr)}.right{grid-column:2;position:static;display:grid;grid-template-columns:1fr 1fr;gap:14px}.right>*{margin-top:0}.right .right-title,.right .selected-copy,.right .selected-image,.right .video-list,.right .add-box,.right .private-note{grid-column:1/-1}.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){.shell{width:calc(100% - 22px);padding-top:11px}.topbar{height:57px;padding:0 13px}.nav{display:none}.intro{display:block;padding:32px 7px 21px}.intro-actions{margin-top:17px}.layout{display:block}.left,.right{position:static}.left{margin-bottom:13px}.chapters{display:flex;max-height:none;overflow-x:auto}.chapter{min-width:170px}.left-note{display:none}.center-panel{padding:14px 11px}.tree-stage{min-height:620px}.map-node{width:132px}.node-image{height:48px}.node-title{font-size:.67rem}.node-count{font-size:.48rem}.stats{margin-left:0;margin-right:0}.right{margin-top:13px}}
+    @media(max-width:600px){.shell{width:calc(100% - 14px)}.brand{font-size:1.05rem}.profile{padding-right:7px}.profile span{display:none}.stats{gap:7px}.stat{padding:9px 10px;gap:8px}.stat-icon{width:31px;height:31px;font-size:.8rem}.stat strong{font-size:1.05rem}.stat span{font-size:.52rem}.intro h1{font-size:2.55rem}.intro-copy{font-size:.69rem}.center-head h2{font-size:1.3rem}.center-meta strong{font-size:1.25rem}.tree-stage{min-height:570px}.tree-stage:before{width:540px;height:360px}.tree-stage:after{width:700px;height:450px}.root-card{width:150px;padding:12px}.root-card .avatar{width:42px;height:42px}.root-card strong{font-size:1rem}.map-node{width:106px}.node-image{height:39px}.node-body{padding:6px 7px}.node-title{font-size:.58rem}.node-mood,.node-count,.node-date{font-size:.44rem}.stage-legend{max-width:165px}.stage-legend span{font-size:.44rem;padding:4px 5px}.branch-heart{font-size:.61rem}.timeline-panel{padding:13px 11px}.chart{gap:5px}.right{padding:14px 11px}}
+  </style>
+</head>
+<body>
+  <div class="shell" id="top">
+    <header class="topbar">
+      <a class="brand" href="#top"><i class="brand-mark"></i><span>러브트리</span><small>LoveTree</small></a>
+      <nav class="nav" aria-label="주요 메뉴"><a href="#top" class="active">연혁 트리</a><a href="#timeline">날짜 그래프</a><a href="lovetree-growing-tree-v6-fullscreen-add.html">성장 트리</a><a href="lovetree-diary-flow-v1.html">마음 다이어리</a></nav>
+      <div class="profile"><i>JY</i><span>주연을 기록하는 하루⌄</span></div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">a chronology of the person i love</p>
+        <h1>주연을 좋아한 날들을,<br><em>러브트리의 연혁</em>으로 펼쳐보세요</h1>
+        <p class="intro-copy">북마크에 붙인 제목과 날짜가 하나의 연대기가 됩니다. 날짜를 누르면 그날의 영상 가지가 열리고, 아래 그래프에서는 마음이 얼마나 많이 쌓였는지 한눈에 보여요.</p>
+      </div>
+      <div class="intro-actions"><span class="pill"><strong>2023.11.24</strong> 첫 저장</span><span class="pill accent">+ 오늘의 순간</span></div>
+    </section>
+
+    <section class="stats" aria-label="러브트리 요약">
+      <div class="stat"><i class="stat-icon">✦</i><div><strong id="stat-days">17</strong><span>기록한 날짜</span></div></div>
+      <div class="stat"><i class="stat-icon">♥</i><div><strong id="stat-videos">0</strong><span>모아 둔 영상</span></div></div>
+      <div class="stat"><i class="stat-icon">✿</i><div><strong id="stat-peaks">4</strong><span>마음이 피어난 날</span></div></div>
+      <div class="stat"><i class="stat-icon">☾</i><div><strong id="stat-last">12.18</strong><span>가장 최근 기록</span></div></div>
+    </section>
+
+    <div class="layout">
+      <aside class="left panel">
+        <h2>나의 주연 연혁</h2><p class="sub">날짜마다 붙인 제목이 가지가 되어<br>한 사람의 숲을 만들어요.</p>
+        <div class="person"><div class="avatar">JY</div><div><strong>이주연</strong><span>좋아한 날들의 기록 · private</span></div></div>
+        <div class="side-label"><span>chapters</span><b id="chapter-count">17</b></div>
+        <div class="chapters" id="chapters"></div>
+        <div class="left-note">제목을 그대로 남겨두면, 그날의 말투와 마음이 <b>연혁의 이름</b>이 됩니다.</div>
+      </aside>
+
+      <main class="center">
+        <section class="center-panel panel">
+          <div class="center-head"><div><p class="eyebrow">love chronology · juyeon</p><h2>사랑이 쌓인 날짜별 가지</h2><p>가지를 누르면 해당 날짜의 영상과 메모가 오른쪽에 열려요.</p></div><div class="center-meta"><strong id="center-count">0</strong> moments</div></div>
+          <div class="view-tabs" role="tablist" aria-label="보기 방식"><button class="view-tab active" data-view="tree">연혁 트리</button><button class="view-tab" data-view="timeline">날짜 띠</button><button class="view-tab" data-view="chart">영상 그래프</button></div>
+          <div class="tree-stage" id="tree-stage"><span class="stage-caption">LOVE TREE · <b>DATE BY DATE</b></span><div class="stage-legend"><span><i style="--legend:#cf707d"></i>설렘</span><span><i style="--legend:#748e6b"></i>애정</span><span><i style="--legend:#a984c8"></i>몰입</span><span><i style="--legend:#d7a85f"></i>발견</span></div><div class="root-card"><div class="avatar">JY</div><small>MY LOVE TREE</small><strong>주연의 연혁</strong><span id="root-copy">처음부터 지금까지 · 17 moments</span></div><div id="branches"></div><div id="map-nodes"></div></div>
+          <div class="timeline-panel" id="timeline"><div class="section-head"><div><p class="eyebrow">date by date</p><h3>마음이 머문 날들의 그래프</h3><p>막대가 높을수록 그날 저장한 영상이 많아요.</p></div><span id="chart-range">2023.11 — 2023.12</span></div><div class="timeline-rail" id="date-rail"></div><div class="chart" id="chart"></div></div>
+          <div class="empty" id="empty-state">이 보기에는 아직 표시할 내용이 없어요.</div>
+        </section>
+      </main>
+
+      <aside class="right panel">
+        <div class="right-title"><div><p class="eyebrow">selected chapter</p><p class="selected-date" id="selected-date">2023.11.30 · THU</p><h2 class="selected-title" id="selected-title">주연♥</h2></div><span id="selected-index">07</span></div>
+        <p class="selected-copy" id="selected-copy">설렘이 한꺼번에 커져서, 하루 종일 이 장면만 다시 보게 된 날.</p>
+        <figure class="selected-image"><img id="selected-image" src="../public/moment-purple.jpg" alt="선택한 날짜의 대표 영상"><figcaption id="selected-caption">처음 마음이 멈춘 장면</figcaption></figure>
+        <div class="detail-line"><span>이날 남긴 영상</span><b id="selected-count">67</b></div>
+        <p class="tag-title">이 날짜의 감정</p><div class="tags" id="selected-tags"></div>
+        <p class="tag-title">대표 북마크</p><div class="video-list" id="video-list"></div>
+        <form class="add-box" id="add-form"><h3>이 날짜에 영상 더하기</h3><p>북마크 제목과 링크를 남기면 그래프에도 바로 쌓여요.</p><input id="add-title" required placeholder="예: 오늘도 주연이 목표야"><input id="add-url" type="url" placeholder="https://youtube.com/watch?v=..."><button class="add-btn" type="submit">이 연혁에 순간 추가하기 +</button></form>
+        <div class="private-note">이 화면은 <b>나만 보는 연혁</b>이에요. 제목은 원문 그대로 보존되고, 다른 사람에게 공개할 때만 별도의 트리로 보여줄 수 있어요.</div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const asset = name => `../public/${name}`;
+    const events = [
+      {date:'2023.11.24',day:'금',title:'처음 발견한 주연',bookmark:'이주연',mood:'발견',copy:'무대에서 처음 눈이 멈춘 순간. 이름을 검색하고 첫 영상을 저장했어요.',count:6,color:'#d7a85f',image:asset('moment-stage.jpg'),tags:['첫 발견','무대','호기심'],videos:['[더보이즈/주연] 처음 눈이 멈춘 무대','주연이라는 이름을 처음 저장한 날']},
+      {date:'2023.11.25',day:'토',title:'주연이',bookmark:'주연이',mood:'설렘',copy:'한 번 더 보려고 눌렀다가, 좋아한다는 걸 알아버린 날.',count:32,color:'#cf707d',image:asset('moment-purple.jpg'),tags:['설렘','다시 재생','첫 마음'],videos:['주연이의 표정 하나로 시작된 하루','이 장면은 몇 번을 봐도 좋아']},
+      {date:'2023.11.26',day:'일',title:'울 주연이',bookmark:'울 주연이',mood:'애틋함',copy:'괜히 이름 앞에 ‘울’을 붙이고 싶었던 날. 마음이 조금 더 가까워졌어요.',count:2,color:'#a984c8',image:asset('moment-friends.jpg'),tags:['애틋함','응원','마음'],videos:['우리 주연이 잘하고 있어','말없이 오래 바라본 순간']},
+      {date:'2023.11.27',day:'월',title:'내 사랑 주연',bookmark:'내 사랑 주연',mood:'애정',copy:'좋아한다는 말을 제목에 처음 적어본 날. 저장 버튼이 유난히 가벼웠어요.',count:1,color:'#cf707d',image:asset('moment-spring.jpg'),tags:['애정','사랑','기억'],videos:['내 사랑 주연에게 남기는 마음']},
+      {date:'2023.11.28',day:'화',title:'주연',bookmark:'주연',mood:'몰입',copy:'짧은 영상 하나를 보려고 들어갔다가 시간 전체를 건네준 날.',count:31,color:'#a984c8',image:asset('moment-purple.jpg'),tags:['몰입','반복 재생','시간'],videos:['주연의 춤선에 빠져버린 날','다시 봐도 새로 발견하는 디테일']},
+      {date:'2023.11.29',day:'수',title:'미친 주연',bookmark:'미친 주연',mood:'폭발',copy:'이건 진짜 미쳤다고 말하면서 친구에게 링크를 보낸 날.',count:12,color:'#cf707d',image:asset('moment-stage.jpg'),tags:['폭발','레전드','공유'],videos:['미친 주연이라는 말밖에 안 나오는 장면','친구에게 바로 보낸 그 영상']},
+      {date:'2023.11.30',day:'목',title:'주연♥',bookmark:'주연♥',mood:'설렘',copy:'설렘이 한꺼번에 커져서, 하루 종일 이 장면만 다시 보게 된 날.',count:67,color:'#cf707d',image:asset('moment-purple.jpg'),tags:['설렘','심장','다시 보기'],videos:['[더보이즈 주연] 다정한 이주연의 설렘 모먼트 💖','주연♥ 이 표정은 반칙이야','내 마음이 멈춘 장면 모음']},
+      {date:'2023.12.01',day:'금',title:'오늘도 주연',bookmark:'오늘도 주연',mood:'습관',copy:'아침에 일어나자마자 주연을 검색하는 것이 자연스러워진 날.',count:27,color:'#748e6b',image:asset('moment-friends.jpg'),tags:['습관','아침','일상'],videos:['오늘도 주연으로 시작하는 하루','출근 전에 꼭 보는 영상']},
+      {date:'2023.12.02',day:'토',title:'주연이가 목표',bookmark:'주연이가 목표',mood:'몰입',copy:'알고리즘이 데려온 영상까지 전부 주연으로 이어지던 날.',count:69,color:'#a984c8',image:asset('moment-stage.jpg'),tags:['몰입','알고리즘','목표'],videos:['주연이만 보이는 날','오늘의 저장 폴더를 가득 채운 장면']},
+      {date:'2023.12.03',day:'일',title:'이쁜 주여니',bookmark:'이쁜 주여니',mood:'귀여움',copy:'예쁜데 귀엽고, 귀여운데 또 멋있어서 제목을 여러 번 고친 날.',count:32,color:'#d7a85f',image:asset('moment-spring.jpg'),tags:['귀여움','예쁨','미소'],videos:['이쁜 주여니의 웃는 순간','귀여워서 저장할 수밖에 없었던 영상']},
+      {date:'2023.12.04',day:'월',title:'귀염둥이 주연',bookmark:'귀염둥이 주연',mood:'귀여움',copy:'작은 표정 하나에도 마음이 몽글몽글해진 날.',count:29,color:'#cf707d',image:asset('moment-friends.jpg'),tags:['귀여움','말랑함','표정'],videos:['귀염둥이 주연 모음','이 표정은 꼭 봐야 해']},
+      {date:'2023.12.05',day:'화',title:'주연 늪',bookmark:'주연 늪',mood:'몰입',copy:'나오려고 할수록 한 영상이 더 이어지는, 아주 달콤한 늪.',count:19,color:'#a984c8',image:asset('moment-purple.jpg'),tags:['늪','정주행','취향'],videos:['주연 늪에 빠진 사람의 기록','다음 영상으로 넘어갈 수 없는 이유']},
+      {date:'2023.12.06',day:'수',title:'주연에게 사로잡히다',bookmark:'주연에게 사로잡히다',mood:'애정',copy:'좋아하는 이유를 설명하지 않아도 이미 마음이 꽉 차 있던 날.',count:44,color:'#748e6b',image:asset('moment-stage.jpg'),tags:['사로잡힘','애정','팬심'],videos:['주연에게 사로잡힌 결정적 순간','이 사람을 좋아할 수밖에 없는 이유']},
+      {date:'2023.12.07',day:'목',title:'내가 좋아라하는 주연',bookmark:'내가 좋아라하는 주연',mood:'애정',copy:'남들이 좋아하는 모습과 내가 좋아하는 모습을 구분하기 시작한 날.',count:26,color:'#748e6b',image:asset('moment-friends.jpg'),tags:['취향','애정','나만의 이유'],videos:['내가 좋아라하는 주연','나만 알고 싶은 작은 디테일']},
+      {date:'2023.12.08',day:'금',title:'입덕 부정기는 없다',bookmark:'입덕 부정기는 없다',mood:'인정',copy:'이제는 인정할 수밖에 없었던 날. 주연을 좋아하는 마음은 이미 시작됐어요.',count:21,color:'#d7a85f',image:asset('moment-purple.jpg'),tags:['인정','입덕','확신'],videos:['입덕 부정기 없이 바로 좋아하게 된 장면','이제는 숨길 수 없는 마음']},
+      {date:'2023.12.10',day:'일',title:'나 참 덥즈까지 파네',bookmark:'나 참 덥즈까지 파네',mood:'확장',copy:'한 사람에서 팀으로, 장면에서 이야기로 마음의 가지가 넓어진 날.',count:21,color:'#a984c8',image:asset('moment-stage.jpg'),tags:['확장','더비','새로운 가지'],videos:['나 참 덥즈까지 파네','멤버 전체를 알아가기 시작한 날']},
+      {date:'2023.12.18',day:'월',title:'헤헷 주여니',bookmark:'헤헷 주여니',mood:'다시 설렘',copy:'시간이 지나도 다시 설레는 이름. 가장 최근에 남긴 작은 웃음.',count:17,color:'#cf707d',image:asset('moment-spring.jpg'),tags:['다시 설렘','웃음','오늘'],videos:['헤헷 주여니','오늘도 결국 주연으로 돌아왔다']}
+    ];
+    let selected = 6;
+    const $ = selector => document.querySelector(selector);
+    const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const totalVideos = () => events.reduce((sum,event) => sum + event.count, 0);
+    function dateShort(date){ return date.slice(5).replace('.','/'); }
+    function initials(){ return String(selected + 1).padStart(2,'0'); }
+    function selectEvent(index){ selected = Number(index); render(); }
+    function renderStats(){
+      $('#stat-days').textContent = events.length;
+      $('#stat-videos').textContent = totalVideos();
+      $('#center-count').textContent = totalVideos();
+      $('#stat-last').textContent = events.at(-1).date.slice(5);
+      $('#root-copy').textContent = `처음부터 지금까지 · ${totalVideos()} moments`;
+    }
+    function renderChapters(){
+      $('#chapter-count').textContent = events.length;
+      $('#chapters').innerHTML = events.map((event,index) => `<button class="chapter ${index===selected?'active':''}" data-index="${index}"><span class="chapter-date">${dateShort(event.date)}<br>${event.day}</span><span class="chapter-copy"><strong>${esc(event.bookmark)}</strong><small>${esc(event.mood)}</small></span><span class="chapter-count">${event.count}</span></button>`).join('');
+      document.querySelectorAll('.chapter').forEach(button => button.addEventListener('click', () => selectEvent(button.dataset.index)));
+    }
+    function renderTree(){
+      const stage = $('#tree-stage');
+      const width = stage.clientWidth || 850, height = stage.clientHeight || 650;
+      const cx = 50, cy = 50;
+      const radiusX = Math.min(43, (width / 2 - 100) / width * 100);
+      const radiusY = Math.min(40, (height / 2 - 80) / height * 100);
+      const branchHtml = [];
+      const nodeHtml = [];
+      events.forEach((event,index) => {
+        const angle = -Math.PI / 2 + index * (Math.PI * 2 / events.length);
+        const x = cx + radiusX * Math.cos(angle), y = cy + radiusY * Math.sin(angle);
+        const dx = (x - cx) * width / 100, dy = (y - cy) * height / 100;
+        const length = Math.hypot(dx,dy), deg = Math.atan2(dy,dx) * 180 / Math.PI;
+        const heart = index % 3 === 0 ? '♥' : '♡';
+        branchHtml.push(`<i class="branch" style="--branch-color:${event.color};--len:${length}px;transform:rotate(${deg}deg)"><span class="branch-heart">${heart}</span><span class="branch-heart">${index % 2 ? '♡' : '♥'}</span></i>`);
+        nodeHtml.push(`<button class="map-node ${index===selected?'active':''}" data-index="${index}" style="left:${x}%;top:${y}%;--node-color:${event.color}"><span class="node-image"><img src="${event.image}" alt=""></span><span class="node-body"><span class="node-date"><span>${event.date.slice(5)} · ${event.day}</span><b>${String(index+1).padStart(2,'0')}</b></span><span class="node-title">${esc(event.bookmark)}</span><span class="node-mood">${esc(event.mood)}</span><span class="node-count">${event.count}개의 영상 잎</span></span></button>`);
+      });
+      $('#branches').innerHTML = branchHtml.join('');
+      $('#map-nodes').innerHTML = nodeHtml.join('');
+      document.querySelectorAll('.map-node').forEach(button => button.addEventListener('click', () => selectEvent(button.dataset.index)));
+    }
+    function renderChart(){
+      const max = Math.max(...events.map(event => event.count));
+      $('#date-rail').innerHTML = events.map((event,index) => `<button class="date-chip ${index===selected?'active':''}" data-index="${index}"><strong>${dateShort(event.date)}</strong><small>${event.day}</small><b>${event.count}</b></button>`).join('');
+      $('#chart').innerHTML = events.map((event,index) => `<button class="bar-col ${index===selected?'active':''}" data-index="${index}" aria-label="${event.date} ${event.count}개"><span class="bar-count">${event.count}</span><i class="bar" style="height:${Math.max(8,event.count/max*128)}px;--bar:${event.color}"></i><span class="bar-date">${dateShort(event.date)}</span></button>`).join('');
+      document.querySelectorAll('.date-chip,.bar-col').forEach(button => button.addEventListener('click', () => selectEvent(button.dataset.index)));
+    }
+    function renderDetail(){
+      const event = events[selected];
+      $('#selected-date').textContent = `${event.date} · ${event.day.toUpperCase()}`;
+      $('#selected-title').textContent = event.bookmark;
+      $('#selected-index').textContent = String(selected+1).padStart(2,'0');
+      $('#selected-copy').textContent = event.copy;
+      $('#selected-count').textContent = event.count;
+      $('#selected-image').src = event.image;
+      $('#selected-image').alt = `${event.bookmark} 대표 영상`;
+      $('#selected-caption').textContent = event.title;
+      $('#selected-tags').innerHTML = event.tags.map(tag => `<span class="tag">${esc(tag)}</span>`).join('');
+      $('#video-list').innerHTML = event.videos.slice(0,4).map((video,index) => `<a class="video-item" href="https://www.youtube.com/results?search_query=${encodeURIComponent(video)}" target="_blank" rel="noreferrer"><span class="video-thumb"><img src="${event.image}" alt=""></span><span><strong>${esc(video)}</strong><span>${event.date} · 북마크 ${String(index+1).padStart(2,'0')}</span></span><b>↗</b></a>`).join('');
+    }
+    function render(){ renderStats(); renderChapters(); renderTree(); renderChart(); renderDetail(); }
+    document.querySelectorAll('.view-tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.view-tab').forEach(item => item.classList.remove('active')); tab.classList.add('active');
+      const view = tab.dataset.view;
+      $('#tree-stage').style.display = view === 'chart' ? 'none' : 'block';
+      $('#timeline').style.display = view === 'tree' ? 'block' : 'block';
+      if(view === 'timeline') $('#timeline').scrollIntoView({behavior:'smooth',block:'center'});
+      if(view === 'chart') $('#timeline').scrollIntoView({behavior:'smooth',block:'center'});
+    }));
+    $('#add-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const title = $('#add-title').value.trim();
+      if(!title) return;
+      const current = events[selected];
+      current.videos.unshift(title); current.count += 1;
+      $('#add-title').value = ''; $('#add-url').value = '';
+      render();
+    });
+    render();
+    window.addEventListener('resize', () => renderTree());
+  </script>
+</body>
+</html>

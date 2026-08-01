@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoveTree · 03 다음 영상 잇기</title>
+<meta name="description" content="처음 만든 마음 카드에서 다음 영상을 찾아 러브트리의 첫 가지로 연결하는 화면">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Manrope:wght@500;600;700&display=swap');
+
+:root{
+  --paper:#f7f0e8;
+  --paper-2:#fffaf3;
+  --white:#fffdf8;
+  --ink:#403536;
+  --soft-ink:#8f817d;
+  --muted:#9b8982;
+  --rose:#c86e79;
+  --rose-deep:#98505e;
+  --rose-pale:#f0d7d5;
+  --sage:#879975;
+  --sage-deep:#596b4c;
+  --sage-pale:#e1e9dc;
+  --sand:#d9bda4;
+  --line:rgba(119,91,82,.20);
+  --line-soft:rgba(119,91,82,.12);
+  --display:'Gowun Batang','Noto Serif KR',serif;
+  --body:'Gowun Dodum','Noto Sans KR',sans-serif;
+  --latin:'Manrope','Gowun Dodum',sans-serif;
+  --shadow-lg:0 30px 85px rgba(75,51,42,.16);
+  --shadow-md:0 18px 46px rgba(75,51,42,.12);
+  --shadow-sm:0 9px 24px rgba(75,51,42,.08);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:var(--body);
+  background:
+    radial-gradient(circle at 9% 16%,rgba(219,151,145,.22),transparent 27rem),
+    radial-gradient(circle at 92% 82%,rgba(156,174,130,.18),transparent 29rem),
+    linear-gradient(135deg,#f8f1e9,#fbf8f1 58%,#f1e8dc);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  opacity:.09;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.76' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.075'/%3E%3C/svg%3E");
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+
+.shell{
+  width:min(1210px,calc(100% - 54px));
+  margin:auto;
+  padding:24px 0 55px;
+}
+
+/* header */
+.top{
+  min-height:58px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+.back{
+  justify-self:start;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:.72rem;
+  padding:8px 0;
+}
+.back:hover{color:var(--rose-deep)}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:var(--rose-deep);
+  font:700 1.28rem var(--display);
+  letter-spacing:-.05em;
+}
+.brand-mark{position:relative;width:26px;height:27px}
+.brand-mark::before{
+  content:"";
+  position:absolute;
+  left:12px;
+  top:4px;
+  width:2px;
+  height:22px;
+  border-radius:99px;
+  background:var(--sage-deep);
+  transform:rotate(8deg);
+}
+.brand-mark i,.brand-mark b{
+  position:absolute;
+  width:13px;
+  height:8px;
+  border-radius:100% 0;
+}
+.brand-mark i{
+  left:1px;
+  top:6px;
+  background:var(--sage);
+  transform:rotate(-26deg);
+}
+.brand-mark b{
+  right:0;
+  top:2px;
+  background:var(--rose);
+  transform:scaleX(-1) rotate(-26deg);
+}
+.step-label{
+  justify-self:end;
+  color:var(--rose-deep);
+  font:700 .59rem var(--latin);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+/* progress */
+.journey-progress{
+  margin:22px 0 54px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  position:relative;
+}
+.journey-progress::before{
+  content:"";
+  position:absolute;
+  left:4%;
+  right:4%;
+  top:11px;
+  height:1px;
+  background:rgba(152,80,94,.15);
+}
+.progress-item{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  color:#b3a29b;
+  font-size:.59rem;
+}
+.progress-item i{
+  width:23px;
+  height:23px;
+  margin:0 auto 8px;
+  border:1px solid rgba(152,80,94,.18);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#f8f1e9;
+  color:#b49e97;
+  font:700 .49rem var(--latin);
+  font-style:normal;
+}
+.progress-item.done{color:var(--sage-deep)}
+.progress-item.done i{
+  border-color:rgba(89,107,76,.26);
+  background:var(--sage-pale);
+  color:var(--sage-deep);
+}
+.progress-item.active{
+  color:var(--rose-deep);
+  font-weight:700;
+}
+.progress-item.active i{
+  border-color:var(--rose);
+  background:var(--rose);
+  color:white;
+  box-shadow:0 0 0 7px rgba(200,110,121,.10),0 8px 20px rgba(200,110,121,.22);
+}
+
+/* main layout */
+.layout{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:58px;
+  align-items:start;
+}
+.eyebrow{
+  margin:0 0 17px;
+  color:var(--rose-deep);
+  font:700 .61rem var(--latin);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.copy h1{
+  margin:0;
+  font:400 clamp(2.72rem,5vw,4.65rem)/1.08 var(--display);
+  letter-spacing:-.095em;
+}
+.copy h1 span{display:block}
+.copy h1 .soft{color:#8f817d}
+.copy h1 .rose{
+  margin-left:30px;
+  color:var(--rose);
+}
+.copy>p:not(.eyebrow){
+  max-width:535px;
+  margin:23px 0 27px;
+  color:var(--muted);
+  font-size:.87rem;
+  line-height:1.85;
+}
+
+/* connection board */
+.connection-board{
+  position:relative;
+  min-height:515px;
+  padding:20px;
+  border:1px solid rgba(119,91,82,.18);
+  border-radius:31px;
+  background:rgba(255,253,248,.80);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+}
+.connection-board::after{
+  content:"";
+  position:absolute;
+  inset:9px -8px -8px 9px;
+  z-index:-1;
+  border:1px solid rgba(135,153,117,.20);
+  border-radius:31px;
+  transform:rotate(-1.2deg);
+}
+.board-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 4px 12px;
+  color:var(--sage-deep);
+  font:600 .56rem var(--latin);
+  letter-spacing:.08em;
+}
+.board-label span:last-child{color:#ab9991}
+.canvas{
+  position:relative;
+  height:425px;
+  overflow:hidden;
+  border-radius:23px;
+  background:
+    radial-gradient(circle at 50% 47%,rgba(245,199,175,.34),transparent 15rem),
+    linear-gradient(155deg,rgba(244,233,221,.90),rgba(238,242,224,.82));
+}
+.canvas::before,.canvas::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:49%;
+  border:1px solid rgba(200,110,121,.16);
+  border-radius:50%;
+  transform:translate(-50%,-50%) rotate(-18deg);
+}
+.canvas::before{width:410px;height:235px}
+.canvas::after{
+  width:510px;
+  height:330px;
+  border-color:rgba(89,107,76,.14);
+  transform:translate(-50%,-50%) rotate(18deg);
+}
+.branch-svg{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.branch-path{
+  fill:none;
+  stroke:url(#branch-gradient);
+  stroke-width:5;
+  stroke-linecap:round;
+  stroke-dasharray:7 8;
+  opacity:.54;
+  transition:.35s;
+  filter:drop-shadow(0 5px 7px rgba(75,51,42,.10));
+}
+.branch-path.connected{
+  stroke-dasharray:0;
+  opacity:1;
+}
+.branch-leaf{
+  opacity:.38;
+  transition:.35s;
+}
+.branch-leaf.connected{opacity:1}
+
+.moment{
+  position:absolute;
+  z-index:3;
+  overflow:hidden;
+  width:210px;
+  border:1px solid rgba(119,91,82,.17);
+  border-radius:18px;
+  background:rgba(255,253,248,.96);
+  box-shadow:0 16px 34px rgba(75,51,42,.15);
+}
+.moment.first{
+  left:25px;
+  top:38px;
+  transform:rotate(-1.5deg);
+}
+.moment.next{
+  right:23px;
+  bottom:35px;
+  transform:rotate(1.7deg);
+}
+.moment.next.waiting{
+  border-style:dashed;
+  box-shadow:0 13px 28px rgba(75,51,42,.08);
+}
+.card-number{
+  position:absolute;
+  z-index:3;
+  left:11px;
+  top:10px;
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(255,253,248,.88);
+  color:var(--rose-deep);
+  box-shadow:var(--shadow-sm);
+  font:700 .50rem var(--latin);
+}
+.thumb{
+  position:relative;
+  height:111px;
+  overflow:hidden;
+  background:linear-gradient(145deg,#5e687c,#a47b86 52%,#dea08e);
+  background-size:cover;
+  background-position:center;
+}
+.thumb::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,246,233,.05),rgba(52,38,39,.29));
+}
+.thumb .play{
+  position:absolute;
+  z-index:2;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:38px;
+  height:38px;
+  border:1px solid rgba(255,255,255,.74);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(255,253,248,.80);
+  color:#5b4a46;
+  font-size:.62rem;
+}
+.thumb time{
+  position:absolute;
+  z-index:2;
+  right:9px;
+  bottom:8px;
+  padding:4px 6px;
+  border-radius:5px;
+  background:rgba(52,39,40,.61);
+  color:white;
+  font:700 .50rem var(--latin);
+}
+.waiting .thumb{
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle,rgba(255,224,190,.72),transparent 46%),
+    linear-gradient(145deg,#f2e5da,#e8eddf);
+}
+.waiting .thumb::before{display:none}
+.empty-seed{
+  width:58px;
+  height:58px;
+  border:1px solid rgba(200,110,121,.30);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:var(--rose);
+  background:rgba(255,253,248,.74);
+  box-shadow:0 0 0 11px rgba(200,110,121,.07);
+  font:1.45rem var(--display);
+}
+.card-copy{padding:11px 12px 13px}
+.card-copy small{
+  display:block;
+  color:var(--rose-deep);
+  font:700 .51rem var(--latin);
+  letter-spacing:.07em;
+}
+.card-copy strong{
+  display:block;
+  margin-top:5px;
+  font:400 .91rem/1.35 var(--display);
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.card-copy p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:.59rem;
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.relation-bubble{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:49%;
+  transform:translate(-50%,-50%) rotate(-2deg);
+  max-width:190px;
+  padding:8px 11px;
+  border:1px solid rgba(89,107,76,.22);
+  border-radius:999px;
+  background:rgba(255,253,248,.92);
+  color:var(--sage-deep);
+  box-shadow:var(--shadow-sm);
+  font-size:.57rem;
+  font-weight:700;
+  text-align:center;
+}
+.board-caption{
+  position:absolute;
+  z-index:5;
+  left:21px;
+  bottom:14px;
+  color:#9f8e87;
+  font:400 .64rem/1.5 var(--display);
+}
+.board-caption b{color:var(--sage-deep);font-weight:400}
+
+/* form */
+.form-paper{
+  position:relative;
+  padding:30px 30px 26px;
+  border:1px solid rgba(119,91,82,.18);
+  border-radius:28px;
+  background:rgba(255,253,248,.88);
+  box-shadow:var(--shadow-lg);
+}
+.form-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:start;
+  gap:18px;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--line-soft);
+}
+.form-head h2{
+  margin:0;
+  font:400 1.53rem/1.32 var(--display);
+  letter-spacing:-.055em;
+}
+.form-head p{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:.66rem;
+  line-height:1.55;
+}
+.form-icon{
+  flex:0 0 auto;
+  width:43px;
+  height:43px;
+  border:1px solid rgba(135,153,117,.25);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(225,233,220,.65);
+  color:var(--sage-deep);
+  font:1.08rem var(--display);
+}
+.group{
+  padding:18px 0;
+  border-bottom:1px solid var(--line-soft);
+}
+.group:last-of-type{border-bottom:0}
+.label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:0 0 9px;
+  color:var(--sage-deep);
+  font-size:.67rem;
+  font-weight:700;
+}
+.label small{
+  color:#b09c95;
+  font-size:.56rem;
+  font-weight:400;
+}
+.input,.textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:rgba(255,250,243,.78);
+  color:var(--ink);
+  outline:0;
+}
+.input{
+  height:43px;
+  padding:0 12px;
+}
+.textarea{
+  min-height:93px;
+  padding:12px 13px 27px;
+  resize:vertical;
+  line-height:1.65;
+}
+.input:focus,.textarea:focus{
+  border-color:var(--rose);
+  box-shadow:0 0 0 4px rgba(200,110,121,.12);
+}
+.url-wrap{position:relative}
+.url-wrap .input{padding-left:37px}
+.url-mark{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--rose);
+}
+.url-status{
+  margin:7px 2px 0;
+  color:#ad9991;
+  font-size:.58rem;
+}
+.title-time{
+  display:grid;
+  grid-template-columns:1fr 100px;
+  gap:8px;
+  margin-top:9px;
+}
+.time-control{position:relative}
+.time-control .input{
+  text-align:center;
+  font:700 .67rem var(--latin);
+}
+.relations{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+.relation{
+  min-height:36px;
+  padding:0 11px;
+  border:1px solid rgba(119,91,82,.20);
+  border-radius:999px;
+  background:rgba(255,250,243,.72);
+  color:var(--muted);
+  font-size:.62rem;
+  transition:.16s;
+}
+.relation:hover{transform:translateY(-1px);border-color:rgba(135,153,117,.42)}
+.relation.selected{
+  border-color:var(--sage);
+  background:var(--sage-pale);
+  color:var(--sage-deep);
+  box-shadow:0 7px 17px rgba(89,107,76,.12);
+}
+.memo-wrap{position:relative}
+.counter{
+  position:absolute;
+  right:12px;
+  bottom:9px;
+  color:#b9a59d;
+  font:.53rem var(--latin);
+}
+.actions{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  margin-top:21px;
+}
+.submit{
+  min-height:49px;
+  padding:0 21px;
+  border:0;
+  border-radius:999px;
+  background:linear-gradient(135deg,#d27b86,#bd626e);
+  color:white;
+  box-shadow:0 13px 27px rgba(200,110,121,.28);
+  font-weight:700;
+}
+.submit:hover{transform:translateY(-2px)}
+.hint{
+  color:#ad9991;
+  font-size:.60rem;
+}
+
+/* success */
+.success{
+  text-align:center;
+  padding:8px 0 0;
+}
+.success-mark{
+  width:92px;
+  height:92px;
+  margin:12px auto 21px;
+  border:1px solid rgba(135,153,117,.30);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle,rgba(232,239,220,.92),rgba(232,239,220,0) 66%),
+    rgba(255,253,248,.80);
+  color:var(--sage-deep);
+  box-shadow:0 0 0 15px rgba(135,153,117,.07),var(--shadow-md);
+  font:2rem var(--display);
+}
+.success h2{
+  margin:0;
+  font:400 2rem/1.28 var(--display);
+  letter-spacing:-.065em;
+}
+.success h2 span{color:var(--rose)}
+.success p{
+  max-width:410px;
+  margin:13px auto 20px;
+  color:var(--muted);
+  font-size:.73rem;
+  line-height:1.75;
+}
+.path-summary{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 38px 1fr;
+  gap:8px;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,250,243,.74);
+  text-align:left;
+}
+.path-card{
+  min-width:0;
+}
+.path-card small{
+  color:var(--rose-deep);
+  font:700 .50rem var(--latin);
+}
+.path-card strong{
+  display:block;
+  margin-top:4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font:400 .83rem var(--display);
+}
+.path-arrow{
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--sage-pale);
+  color:var(--sage-deep);
+}
+.success-relation{
+  margin-top:9px;
+  color:var(--sage-deep);
+  font-size:.61rem;
+}
+.success-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+.success-actions button{
+  min-height:43px;
+  border-radius:999px;
+  font-size:.62rem;
+  font-weight:700;
+}
+.again{
+  border:1px solid rgba(89,107,76,.30);
+  background:var(--white);
+  color:var(--sage-deep);
+}
+.finish{
+  border:0;
+  background:var(--rose);
+  color:white;
+}
+
+/* toast */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  z-index:80;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,20px);
+  padding:11px 16px;
+  border-radius:999px;
+  background:#433536;
+  color:white;
+  font-size:.64rem;
+  box-shadow:0 13px 30px rgba(45,32,30,.24);
+  transition:.2s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:960px){
+  .layout{grid-template-columns:1fr;gap:38px}
+  .copy{max-width:700px}
+  .connection-board{width:min(680px,100%)}
+}
+@media(max-width:620px){
+  .shell{width:calc(100% - 30px);padding-top:15px}
+  .top{grid-template-columns:1fr auto}
+  .back{display:none}
+  .brand{justify-self:start}
+  .step-label{grid-column:2}
+  .journey-progress{margin:18px 0 42px}
+  .progress-item span{display:none}
+  .copy h1{font-size:clamp(2.42rem,13vw,3.62rem)}
+  .copy h1 .rose{margin-left:18px}
+  .connection-board{min-height:660px;padding:14px;border-radius:26px}
+  .canvas{height:590px}
+  .canvas::before,.canvas::after{display:none}
+  .moment.first{
+    left:50%;
+    top:25px;
+    transform:translateX(-50%) rotate(-1deg);
+  }
+  .moment.next{
+    left:50%;
+    right:auto;
+    bottom:34px;
+    transform:translateX(-50%) rotate(1deg);
+  }
+  .branch-svg{
+    transform:rotate(90deg) scale(.78);
+    transform-origin:center;
+  }
+  .relation-bubble{top:50%}
+  .board-caption{left:50%;bottom:9px;transform:translateX(-50%);white-space:nowrap}
+  .form-paper{padding:26px 20px 22px;border-radius:24px}
+  .title-time{grid-template-columns:1fr}
+  .actions{display:grid}
+  .submit{width:100%}
+  .hint{text-align:center}
+  .success-actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <button class="back" id="back" type="button">← 마음 카드로 돌아가기</button>
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+      LoveTree
+    </a>
+    <span class="step-label">03 · connect the next moment</span>
+  </header>
+
+  <nav class="journey-progress" aria-label="러브트리 시작 단계">
+    <div class="progress-item done"><i>✓</i><span>첫 순간</span></div>
+    <div class="progress-item done"><i>✓</i><span>마음 남기기</span></div>
+    <div class="progress-item active"><i>03</i><span>다음 영상 잇기</span></div>
+    <div class="progress-item"><i>04</i><span>러브트리 성장</span></div>
+  </nav>
+
+  <section class="layout">
+    <div class="copy">
+      <p class="eyebrow">03 · 첫 가지를 이어가는 시간</p>
+      <h1>
+        <span>첫 마음이</span>
+        <span class="soft">다음 장면을</span>
+        <span class="rose">찾아갔어요.</span>
+      </h1>
+      <p>
+        첫 영상을 본 뒤 무엇을 더 찾아봤는지 남겨 주세요.
+        댓글을 따라갔든, 팬의 추천을 받았든, 직접 검색했든 그 경로가 러브트리의 첫 가지가 됩니다.
+      </p>
+
+      <section class="connection-board" aria-label="첫 영상과 다음 영상의 연결 미리보기">
+        <div class="board-label">
+          <span>FIRST BRANCH · 첫 연결</span>
+          <span>01 → 02</span>
+        </div>
+
+        <div class="canvas">
+          <svg class="branch-svg" viewBox="0 0 620 425" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="branch-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#c86e79"/>
+                <stop offset="52%" stop-color="#d9bda4"/>
+                <stop offset="100%" stop-color="#879975"/>
+              </linearGradient>
+            </defs>
+            <path id="branch-path" class="branch-path" d="M205 148 C290 175 325 248 418 285"/>
+            <path id="branch-leaf" class="branch-leaf" d="M323 222 C301 207 290 219 302 236 C315 238 322 232 323 222Z" fill="#879975"/>
+          </svg>
+
+          <article class="moment first">
+            <span class="card-number">01</span>
+            <div class="thumb" id="first-thumb">
+              <span class="play">▶</span>
+              <time id="first-time">01:30</time>
+            </div>
+            <div class="card-copy">
+              <small>첫 마음 카드</small>
+              <strong id="first-title">처음 마음이 멈춘 장면</strong>
+              <p id="first-note">우연히 보게 됐는데 하루 종일 이 장면이 생각났어.</p>
+            </div>
+          </article>
+
+          <article class="moment next waiting" id="next-card">
+            <span class="card-number">02</span>
+            <div class="thumb" id="next-thumb">
+              <span class="empty-seed" id="empty-seed">✦</span>
+              <span class="play hidden" id="next-play">▶</span>
+              <time class="hidden" id="next-time-label">00:00</time>
+            </div>
+            <div class="card-copy">
+              <small>다음 영상</small>
+              <strong id="next-title-preview">아직 비어 있는 다음 가지</strong>
+              <p id="next-note-preview">링크를 넣으면 두 순간이 하나의 가지로 이어져요.</p>
+            </div>
+          </article>
+
+          <div class="relation-bubble" id="relation-bubble">다음 영상을 선택해 주세요</div>
+          <div class="board-caption">한 장면에서 다음 장면으로,<br><b>좋아하게 된 경로가 보여요.</b></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="form-paper">
+      <div id="form-view">
+        <header class="form-head">
+          <div>
+            <h2>어떤 영상으로<br>마음이 이어졌나요?</h2>
+            <p>다음 영상의 링크와 이어진 이유만 남기면 충분해요.</p>
+          </div>
+          <span class="form-icon">↝</span>
+        </header>
+
+        <form id="connect-form">
+          <div class="group">
+            <label class="label" for="next-url">
+              <span>다음으로 찾아본 영상</span>
+              <small>YouTube 링크</small>
+            </label>
+            <div class="url-wrap">
+              <span class="url-mark">↗</span>
+              <input class="input" id="next-url" type="url" placeholder="https://youtube.com/watch?v=..." required>
+            </div>
+            <p class="url-status" id="url-status">링크를 넣으면 오른쪽 카드에 썸네일이 나타나요.</p>
+
+            <div class="title-time">
+              <input class="input" id="next-title" placeholder="다음 영상의 제목">
+              <div class="time-control">
+                <input class="input" id="next-time" value="00:00" inputmode="numeric" aria-label="다음 영상의 기억할 시간">
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <label class="label">
+              <span>왜 이 영상으로 이어졌나요?</span>
+              <small>하나를 골라 주세요</small>
+            </label>
+            <div class="relations" id="relations">
+              <button class="relation selected" type="button" data-relation="댓글을 따라 찾아봤어요">댓글을 따라갔어요</button>
+              <button class="relation" type="button" data-relation="팬이 추천해 줬어요">팬의 추천</button>
+              <button class="relation" type="button" data-relation="같은 사람의 다른 모습을 더 보고 싶었어요">다른 모습이 궁금했어요</button>
+              <button class="relation" type="button" data-relation="같은 무대와 노래를 더 찾아봤어요">같은 무대·노래</button>
+              <button class="relation" type="button" data-relation="내가 직접 다시 검색했어요">직접 다시 검색</button>
+            </div>
+          </div>
+
+          <div class="group">
+            <label class="label" for="next-note">
+              <span>두 장면 사이에 있었던 마음</span>
+              <small>최대 140자</small>
+            </label>
+            <div class="memo-wrap">
+              <textarea class="textarea" id="next-note" maxlength="140" placeholder="예: 댓글에서 인터뷰를 꼭 보라는 말을 보고 바로 찾아봤어. 무대와는 또 다른 말투가 좋아졌어."></textarea>
+              <span class="counter" id="counter">0 / 140</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="submit" type="submit">두 순간을 가지로 잇기 →</button>
+            <span class="hint">첫 카드와 다음 카드가 그대로 연결됩니다.</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="success hidden" id="success-view">
+        <div class="success-mark">❦</div>
+        <h2>첫 가지가<br><span>다정하게 이어졌어요.</span></h2>
+        <p>처음 만든 영상과 다음 영상 사이에 이유와 마음이 생겼습니다. 이제 러브트리가 단순한 영상 목록이 아니라 좋아하게 된 경로를 보여줘요.</p>
+
+        <div class="path-summary">
+          <div class="path-card">
+            <small>01 · 첫 순간</small>
+            <strong id="summary-first">처음 마음이 멈춘 장면</strong>
+          </div>
+          <span class="path-arrow">→</span>
+          <div class="path-card">
+            <small>02 · 다음 영상</small>
+            <strong id="summary-next">다음으로 찾아본 영상</strong>
+          </div>
+        </div>
+        <div class="success-relation" id="success-relation">댓글을 따라 찾아봤어요</div>
+
+        <div class="success-actions">
+          <button class="again" id="again" type="button">이 영상에서 또 이어보기</button>
+          <button class="finish" id="finish" type="button">내 러브트리 보기 →</button>
+        </div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const fallbackFirst={
+  id:'nqofkzQD19E',
+  url:'https://youtube.com/watch?v=nqofkzQD19E',
+  title:'처음 마음이 멈춘 장면',
+  time:'01:30',
+  emotion:'설렘',
+  note:'우연히 보게 됐는데, 하루 종일 이 장면이 생각났어.',
+  date:'2026-07-30'
+};
+
+let firstRecord;
+try{
+  firstRecord=JSON.parse(localStorage.getItem('lovetree-step2-record')||'null')||fallbackFirst;
+}catch{
+  firstRecord=fallbackFirst;
+}
+
+const $=selector=>document.querySelector(selector);
+const toast=$('#toast');
+const nextUrl=$('#next-url');
+const nextTitle=$('#next-title');
+const nextTime=$('#next-time');
+const nextNote=$('#next-note');
+
+function showToast(message){
+  toast.textContent=message;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2200);
+}
+function youtubeId(value){
+  const match=(value||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{6,})/);
+  return match?match[1]:null;
+}
+function parseTime(value){
+  const match=(value||'').trim().match(/^(\d{1,2}):([0-5]\d)$/);
+  if(!match)return null;
+  return Number(match[1])*60+Number(match[2]);
+}
+function selectedRelation(){
+  return $('.relation.selected')?.dataset.relation||'댓글을 따라 찾아봤어요';
+}
+function applyFirstCard(){
+  const id=firstRecord.id||youtubeId(firstRecord.url)||fallbackFirst.id;
+  $('#first-thumb').style.backgroundImage=
+    `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.30)),url(https://img.youtube.com/vi/${id}/hqdefault.jpg)`;
+  $('#first-title').textContent=firstRecord.title||fallbackFirst.title;
+  $('#first-note').textContent=firstRecord.note||fallbackFirst.note;
+  $('#first-time').textContent=firstRecord.time||fallbackFirst.time;
+}
+function updateNextPreview(){
+  const id=youtubeId(nextUrl.value);
+  const title=nextTitle.value.trim()||'다음으로 찾아본 영상';
+  const note=nextNote.value.trim()||'왜 이 영상으로 이어졌는지 한 문장으로 남겨 보세요.';
+  const validTime=parseTime(nextTime.value)!==null?nextTime.value:'00:00';
+
+  $('#next-title-preview').textContent=title;
+  $('#next-note-preview').textContent=note;
+  $('#next-time-label').textContent=validTime;
+  $('#relation-bubble').textContent=selectedRelation();
+
+  if(id){
+    $('#next-thumb').style.backgroundImage=
+      `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.30)),url(https://img.youtube.com/vi/${id}/hqdefault.jpg)`;
+    $('#next-card').classList.remove('waiting');
+    $('#empty-seed').classList.add('hidden');
+    $('#next-play').classList.remove('hidden');
+    $('#next-time-label').classList.remove('hidden');
+    $('#url-status').textContent='다음 영상이 카드에 연결됐어요.';
+    $('#url-status').style.color='var(--sage-deep)';
+  }else{
+    $('#next-thumb').style.backgroundImage='';
+    $('#next-card').classList.add('waiting');
+    $('#empty-seed').classList.remove('hidden');
+    $('#next-play').classList.add('hidden');
+    $('#next-time-label').classList.add('hidden');
+    $('#url-status').textContent='링크를 넣으면 오른쪽 카드에 썸네일이 나타나요.';
+    $('#url-status').style.color='';
+  }
+}
+
+applyFirstCard();
+
+nextUrl.addEventListener('input',updateNextPreview);
+nextTitle.addEventListener('input',updateNextPreview);
+nextTime.addEventListener('input',updateNextPreview);
+nextNote.addEventListener('input',()=>{
+  $('#counter').textContent=`${nextNote.value.length} / 140`;
+  updateNextPreview();
+});
+
+document.querySelectorAll('.relation').forEach(button=>{
+  button.addEventListener('click',()=>{
+    document.querySelectorAll('.relation').forEach(item=>item.classList.remove('selected'));
+    button.classList.add('selected');
+    updateNextPreview();
+  });
+});
+
+$('#connect-form').addEventListener('submit',event=>{
+  event.preventDefault();
+
+  const id=youtubeId(nextUrl.value);
+  if(!id){
+    nextUrl.focus();
+    showToast('YouTube 링크를 확인해 주세요.');
+    return;
+  }
+  if(parseTime(nextTime.value)===null){
+    nextTime.focus();
+    showToast('영상 시간은 01:30 형식으로 적어 주세요.');
+    return;
+  }
+
+  const nextRecord={
+    id,
+    url:nextUrl.value.trim(),
+    title:nextTitle.value.trim()||'다음으로 찾아본 영상',
+    time:nextTime.value.trim(),
+    relation:selectedRelation(),
+    note:nextNote.value.trim()||'첫 장면을 본 뒤 이 영상까지 찾아보게 됐어요.'
+  };
+  const connection={
+    first:firstRecord,
+    next:nextRecord,
+    createdAt:new Date().toISOString()
+  };
+  localStorage.setItem('lovetree-step3-connection',JSON.stringify(connection));
+
+  $('#branch-path').classList.add('connected');
+  $('#branch-leaf').classList.add('connected');
+  $('#relation-bubble').textContent=nextRecord.relation;
+  $('#summary-first').textContent=firstRecord.title||fallbackFirst.title;
+  $('#summary-next').textContent=nextRecord.title;
+  $('#success-relation').textContent=nextRecord.relation;
+
+  $('#form-view').classList.add('hidden');
+  $('#success-view').classList.remove('hidden');
+  showToast('첫 가지가 이어졌어요 ✦');
+});
+
+$('#again').addEventListener('click',()=>{
+  let saved;
+  try{saved=JSON.parse(localStorage.getItem('lovetree-step3-connection')||'null')}catch{}
+  if(saved?.next){
+    firstRecord={
+      ...saved.next,
+      emotion:firstRecord.emotion||'설렘',
+      date:new Date().toISOString().slice(0,10)
+    };
+    localStorage.setItem('lovetree-step2-record',JSON.stringify(firstRecord));
+  }
+  applyFirstCard();
+
+  nextUrl.value='';
+  nextTitle.value='';
+  nextTime.value='00:00';
+  nextNote.value='';
+  $('#counter').textContent='0 / 140';
+  document.querySelectorAll('.relation').forEach((item,index)=>item.classList.toggle('selected',index===0));
+  $('#branch-path').classList.remove('connected');
+  $('#branch-leaf').classList.remove('connected');
+  $('#success-view').classList.add('hidden');
+  $('#form-view').classList.remove('hidden');
+  updateNextPreview();
+  nextUrl.focus();
+  showToast('방금 연결한 영상에서 다음 가지를 시작해요.');
+});
+
+$('#finish').addEventListener('click',()=>{
+  showToast('두 장면이 연결된 러브트리를 열어요.');
+  setTimeout(()=>location.href='relovetree-canvas(1).html',450);
+});
+
+$('#back').addEventListener('click',()=>{
+  if(history.length>1)history.back();
+  else location.href='lovetree-step2-emotion-refined.html';
+});
+
+updateNextPreview();
+</script>
+</body>
+</html>

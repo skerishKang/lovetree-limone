@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoveTree | 첫 순간 심기</title>
+<meta name="description" content="사랑에 빠지는 순간을 하나의 러브트리로 이어 보세요.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Manrope:wght@500;600;700&display=swap');
+
+:root{
+  --paper:#f7f0e8;
+  --white:#fffdf8;
+  --ink:#403536;
+  --muted:#93837d;
+  --soft-ink:#8f817d;
+  --rose:#c86e79;
+  --deep:#98505e;
+  --sage:#879975;
+  --sage-deep:#596b4c;
+  --sand:#d8bbaa;
+  --line:#775b522f;
+  --display:'Gowun Batang','Noto Serif KR',serif;
+  --body:'Gowun Dodum','Noto Sans KR',sans-serif;
+  --latin:'Manrope','Gowun Dodum',sans-serif;
+  --shadow:0 26px 76px rgba(98,68,58,.15);
+  --soft-shadow:0 15px 38px rgba(98,68,58,.12);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  font-family:var(--body);
+  background:var(--paper);
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  opacity:.09;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+
+.home{
+  min-height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 19%,rgba(232,187,178,.21),transparent 28rem),
+    radial-gradient(circle at 92% 70%,rgba(156,175,130,.18),transparent 29rem),
+    linear-gradient(132deg,#f8f1e9,#fbf8f1 55%,#f2e7dd);
+}
+.bar,.hero,.row,.foot{
+  width:min(1190px,calc(100% - 64px));
+  margin:auto;
+}
+.bar{
+  min-height:84px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid rgba(119,91,82,.15);
+}
+.logo{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  color:var(--deep);
+  font:700 1.44rem var(--display);
+  letter-spacing:-.045em;
+}
+.mark{
+  width:28px;
+  height:28px;
+  position:relative;
+  transform:rotate(7deg);
+}
+.mark:before{
+  content:"";
+  position:absolute;
+  left:12px;
+  top:3px;
+  width:2px;
+  height:22px;
+  border-radius:99px;
+  background:var(--sage-deep);
+}
+.mark:after{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:4px;
+  width:20px;
+  height:15px;
+  background:
+    radial-gradient(ellipse at 23% 58%,var(--sage) 0 34%,transparent 36%),
+    radial-gradient(ellipse at 78% 35%,var(--rose) 0 30%,transparent 32%);
+  transform:rotate(-14deg);
+}
+.nav{
+  display:flex;
+  gap:25px;
+  align-items:center;
+  color:var(--muted);
+  font:.76rem var(--latin);
+}
+.nav a{
+  position:relative;
+  padding:8px 0;
+}
+.nav a:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:100%;
+  bottom:2px;
+  height:1px;
+  background:var(--rose);
+  transition:.18s;
+}
+.nav a:hover:after{right:0}
+.login{
+  min-height:40px;
+  padding:0 16px;
+  border:1px solid rgba(119,91,82,.12);
+  border-radius:999px;
+  background:rgba(255,253,248,.72);
+  color:var(--deep);
+  box-shadow:0 6px 18px rgba(98,68,58,.07);
+  font-weight:700;
+}
+
+.hero{
+  min-height:680px;
+  padding:50px 0 72px;
+  display:grid;
+  grid-template-columns:.88fr 1.12fr;
+  align-items:center;
+  gap:62px;
+}
+.eyebrow{
+  margin:0 0 18px;
+  color:var(--deep);
+  font:700 .61rem var(--latin);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.hero h1{
+  margin:0;
+  max-width:560px;
+  font:400 clamp(3.2rem,5.3vw,5.35rem)/1.04 var(--display);
+  letter-spacing:-.095em;
+}
+.hero h1 span{
+  display:block;
+  white-space:nowrap;
+}
+.hero h1 .line-1{color:var(--ink)}
+.hero h1 .line-2{color:#8d7e79}
+.hero h1 .line-3{
+  margin-left:39px;
+  color:var(--rose);
+}
+.hero h1 .line-4{
+  margin-left:78px;
+  color:var(--sage-deep);
+  font-size:.84em;
+}
+.desc{
+  max-width:455px;
+  margin:28px 0 0;
+  color:var(--muted);
+  font-size:.88rem;
+  line-height:1.9;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:11px;
+  margin-top:30px;
+}
+.btn{
+  min-height:49px;
+  padding:0 21px;
+  border:1px solid transparent;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  font-weight:700;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.primary{
+  background:linear-gradient(135deg,#d27b86,#bd626e);
+  color:#fffaf6;
+  box-shadow:0 13px 28px rgba(200,110,121,.28);
+}
+.primary:hover{background:var(--deep)}
+.quiet{
+  border-color:rgba(89,107,76,.32);
+  background:rgba(255,253,248,.70);
+  color:var(--sage-deep);
+}
+.note{
+  margin-top:15px;
+  color:var(--muted);
+  font-size:.7rem;
+}
+.note b{color:var(--rose)}
+.proof{
+  margin-top:57px;
+  color:#b0a19b;
+  font-size:.64rem;
+}
+.proof small{display:block;margin-bottom:11px}
+.proof-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.proof-line i{
+  width:27px;
+  height:1px;
+  background:#d9cac2;
+}
+.proof-line b{
+  font:700 .52rem var(--latin);
+  color:#b7a59e;
+}
+.proof-line .active{color:var(--deep)}
+.proof-line .active b{color:var(--rose)}
+
+.board{
+  min-height:580px;
+  padding:22px 24px 20px;
+  border:1px solid rgba(143,104,95,.19);
+  border-radius:40px;
+  background:rgba(255,253,248,.80);
+  box-shadow:var(--shadow);
+  transform:rotate(.55deg);
+  position:relative;
+}
+.board:after{
+  content:"";
+  position:absolute;
+  inset:10px -9px -9px 10px;
+  z-index:-1;
+  border:1px solid rgba(138,154,117,.22);
+  border-radius:40px;
+  transform:rotate(-1.4deg);
+}
+.board-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:var(--sage-deep);
+  font:.59rem var(--latin);
+  padding:0 6px 10px;
+}
+.dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  margin-right:6px;
+  background:var(--rose);
+  box-shadow:0 0 0 5px rgba(200,110,121,.11);
+}
+.canvas{
+  height:470px;
+  position:relative;
+  overflow:hidden;
+  border-radius:27px;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(245,199,175,.33),transparent 15rem),
+    linear-gradient(155deg,rgba(244,233,221,.88),rgba(238,241,222,.82));
+}
+.orbit{
+  position:absolute;
+  left:50%;
+  top:47%;
+  width:410px;
+  height:250px;
+  border:1px solid rgba(200,110,121,.17);
+  border-radius:50%;
+  transform:translate(-50%,-50%) rotate(-18deg);
+}
+.orbit.two{
+  width:510px;
+  height:335px;
+  border-color:rgba(89,107,76,.14);
+  transform:translate(-50%,-50%) rotate(18deg);
+}
+.branch-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;
+}
+.branch-svg path{
+  fill:none;
+  stroke-linecap:round;
+  filter:drop-shadow(0 5px 7px rgba(74,55,48,.09));
+}
+.card{
+  position:absolute;
+  z-index:3;
+  overflow:hidden;
+  width:176px;
+  border:1px solid rgba(119,91,82,.17);
+  border-radius:16px;
+  background:rgba(255,253,248,.96);
+  box-shadow:0 15px 30px rgba(98,68,58,.15);
+  transform:rotate(-2deg);
+}
+.root{
+  left:50%;
+  top:30px;
+  width:220px;
+  transform:translateX(-50%) rotate(-1deg);
+}
+.card-a{left:20px;top:215px}
+.card-b{right:15px;top:242px;transform:rotate(2deg)}
+.media{
+  height:84px;
+  position:relative;
+  overflow:hidden;
+  background:#a88c91;
+}
+.root .media{height:108px}
+.media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:saturate(.72) brightness(1.08) contrast(.92) sepia(.08);
+}
+.media:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(255,246,233,.08),rgba(244,225,211,.22));
+}
+.media:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,transparent 48%,rgba(47,37,38,.34));
+}
+.media span{
+  position:absolute;
+  z-index:2;
+  left:10px;
+  bottom:8px;
+  width:25px;
+  height:25px;
+  border:1px solid rgba(255,255,255,.76);
+  border-radius:50%;
+  background:rgba(255,253,248,.86);
+  color:#604e49;
+  display:grid;
+  place-items:center;
+  font-size:.5rem;
+}
+.media small{
+  position:absolute;
+  z-index:2;
+  right:8px;
+  bottom:7px;
+  padding:3px 5px;
+  border-radius:4px;
+  background:rgba(58,46,47,.58);
+  color:white;
+  font:.5rem var(--latin);
+}
+.body{padding:10px 12px 13px}
+.tag{color:var(--deep);font:700 .52rem var(--latin)}
+.body h2{
+  margin:5px 0 4px;
+  font:400 .89rem/1.23 var(--display);
+}
+.body p{
+  margin:0;
+  color:var(--muted);
+  font-size:.59rem;
+  line-height:1.5;
+}
+.body small{
+  display:block;
+  margin-top:8px;
+  color:#b09d95;
+  font:.51rem var(--latin);
+}
+.pill{
+  position:absolute;
+  z-index:4;
+  padding:5px 8px;
+  border-radius:999px;
+  background:rgba(255,253,248,.91);
+  font:.51rem var(--latin);
+  box-shadow:0 7px 17px rgba(98,68,58,.09);
+}
+.pill.left{
+  left:72px;
+  top:193px;
+  color:var(--deep);
+  border:1px solid rgba(200,110,121,.24);
+  transform:rotate(-5deg);
+}
+.pill.right{
+  right:82px;
+  top:218px;
+  color:var(--sage-deep);
+  border:1px solid rgba(89,107,76,.23);
+  transform:rotate(5deg);
+}
+.seed{
+  position:absolute;
+  z-index:4;
+  left:46%;
+  bottom:24px;
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border:1px solid rgba(200,110,121,.34);
+  border-radius:50%;
+  background:rgba(255,253,248,.87);
+  color:var(--rose);
+  box-shadow:0 0 0 8px rgba(200,110,121,.08),0 11px 24px rgba(98,68,58,.12);
+}
+.caption{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin:14px 7px 0;
+  color:var(--muted);
+  font:400 .77rem/1.5 var(--display);
+}
+.caption b{
+  color:var(--sage-deep);
+  font-weight:400;
+}
+.rule{width:28px;height:1px;background:var(--rose)}
+
+.row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  padding-bottom:70px;
+}
+.mini{
+  padding:23px 24px;
+  border-top:1px solid var(--line);
+  min-height:135px;
+}
+.mini span{color:var(--rose);font:.57rem var(--latin)}
+.mini strong{
+  display:block;
+  margin-top:12px;
+  font:400 1.04rem var(--display);
+}
+.mini p{
+  margin:5px 0;
+  color:var(--muted);
+  font-size:.71rem;
+  line-height:1.5;
+}
+.foot{
+  border-top:1px solid var(--line);
+  padding:18px 0 28px;
+  display:flex;
+  justify-content:space-between;
+  color:#a29089;
+  font-size:.63rem;
+}
+.foot b{color:var(--deep);font:400 .92rem var(--display)}
+
+/* modal */
+.backdrop{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(57,41,39,.38);
+  backdrop-filter:blur(9px);
+}
+.modal{
+  position:relative;
+  width:min(460px,100%);
+  padding:36px;
+  border:1px solid rgba(143,104,95,.20);
+  border-radius:27px;
+  background:var(--white);
+  box-shadow:0 32px 94px rgba(57,41,39,.28);
+}
+.close{
+  position:absolute;
+  right:16px;
+  top:13px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:1.5rem;
+}
+.modal h2{
+  margin:0;
+  font:400 2.35rem/1.13 var(--display);
+  letter-spacing:-.07em;
+}
+.modal h2 em{color:var(--rose);font-style:normal}
+.modal p:not(.eyebrow){
+  margin:15px 0 22px;
+  color:var(--muted);
+  font-size:.77rem;
+  line-height:1.7;
+}
+.modal form{display:grid;gap:9px}
+.modal label,.field-label{
+  color:var(--sage-deep);
+  font-size:.67rem;
+  font-weight:700;
+}
+.modal input{
+  min-height:48px;
+  padding:0 13px;
+  border:1px solid rgba(119,91,82,.25);
+  border-radius:13px;
+  background:#fffaf4;
+  outline:0;
+}
+.modal input:focus,.url-row:focus-within,.form textarea:focus{
+  border-color:var(--rose);
+  box-shadow:0 0 0 4px rgba(200,110,121,.13);
+}
+.modal-note{
+  margin:4px 0 0!important;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(223,232,220,.62);
+  color:var(--sage-deep)!important;
+  font-size:.65rem!important;
+}
+.modal .btn{margin-top:7px}
+
+/* flow */
+.flow{
+  min-height:100vh;
+  padding:28px 28px 55px;
+  background:
+    radial-gradient(circle at 10% 20%,rgba(219,151,145,.20),transparent 24rem),
+    radial-gradient(circle at 90% 80%,rgba(156,174,130,.19),transparent 26rem),
+    linear-gradient(135deg,#f8f1e9,#fbf8f1 60%,#f1e8dc);
+}
+.shell{width:min(1120px,100%);margin:auto}
+.flow-top{display:flex;justify-content:space-between;align-items:center}
+.back{border:0;background:transparent;color:var(--muted);font-size:.72rem}
+.step{color:var(--deep);font:.61rem var(--latin);letter-spacing:.12em;text-transform:uppercase}
+.progress{height:2px;margin:25px 0 61px;background:rgba(152,80,94,.12)}
+.progress span{display:block;width:25%;height:100%;background:var(--rose)}
+.layout{
+  display:grid;
+  grid-template-columns:1.03fr .97fr;
+  align-items:center;
+  gap:76px;
+}
+.copy h1{
+  margin:0;
+  font:400 clamp(2.65rem,5vw,4.65rem)/1.12 var(--display);
+  letter-spacing:-.08em;
+}
+.copy h1 em{display:block;color:var(--rose);font-style:normal}
+.copy>p:not(.eyebrow){
+  max-width:510px;
+  margin:23px 0 30px;
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.82;
+}
+.form label{display:block;margin-bottom:10px}
+.url-row{
+  display:flex;
+  align-items:center;
+  border:1px solid rgba(119,91,82,.25);
+  border-radius:13px;
+  background:rgba(255,253,248,.79);
+}
+.url-icon{padding-left:13px;color:var(--rose)}
+.url-row input{
+  width:100%;
+  height:45px;
+  border:0;
+  outline:0;
+  padding:0 12px;
+  background:transparent;
+  color:var(--ink);
+  font-size:.77rem;
+}
+.url-hint{margin:7px 0 19px;color:#ad9890;font-size:.64rem}
+.form textarea,.form input[type=date]{
+  width:100%;
+  border:1px solid rgba(119,91,82,.25);
+  border-radius:13px;
+  background:rgba(255,253,248,.79);
+  outline:0;
+  color:var(--ink);
+}
+.form textarea{min-height:108px;padding:13px;resize:vertical;line-height:1.6}
+.form input[type=date]{height:45px;padding:0 12px;margin-top:9px}
+.flow-actions{display:flex;align-items:center;gap:14px;margin-top:23px}
+.hint{color:#ae9b94;font-size:.64rem}
+.preview{
+  position:relative;
+  min-height:500px;
+  padding:22px;
+  border:1px solid rgba(143,104,95,.20);
+  border-radius:34px;
+  background:rgba(255,253,248,.80);
+  box-shadow:var(--shadow);
+  transform:rotate(.7deg);
+}
+.preview-window{
+  position:relative;
+  min-height:450px;
+  overflow:hidden;
+  border-radius:24px;
+  background:linear-gradient(160deg,#eee3d9,#e8eedb);
+  display:grid;
+  place-items:center;
+  background-size:cover;
+  background-position:center;
+}
+.preview-window:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 48%,rgba(37,30,30,.20));
+  pointer-events:none;
+}
+.preview-tree-name{
+  position:absolute;
+  z-index:3;
+  left:18px;
+  top:17px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgba(255,250,242,.88);
+  color:var(--deep);
+  font:700 .54rem var(--latin);
+}
+.glow{
+  position:absolute;
+  width:125px;
+  height:125px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,224,189,.92),rgba(255,224,189,0));
+}
+.orb{
+  position:relative;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  width:94px;
+  height:94px;
+  border:1px solid rgba(200,110,121,.32);
+  border-radius:50%;
+  background:rgba(255,253,248,.85);
+  color:var(--rose);
+  font:2rem var(--display);
+  box-shadow:0 0 0 14px rgba(200,110,121,.08),0 18px 35px rgba(98,68,58,.13);
+}
+.preview-copy{
+  position:absolute;
+  z-index:3;
+  left:27px;
+  right:27px;
+  bottom:24px;
+  padding:13px 15px;
+  border:1px solid rgba(119,91,82,.16);
+  border-radius:14px;
+  background:rgba(255,253,248,.92);
+}
+.preview-copy span{
+  display:block;
+  color:var(--deep);
+  font:700 .52rem var(--latin);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.preview-copy strong{
+  display:block;
+  margin-top:5px;
+  font:400 1.03rem var(--display);
+}
+.preview-copy p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.64rem;
+}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  z-index:80;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  padding:11px 15px;
+  border-radius:999px;
+  background:#433536;
+  color:white;
+  font-size:.64rem;
+  transition:.2s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1050px){
+  .hero{grid-template-columns:1fr}
+  .hero>div:first-child{max-width:680px}
+  .board{width:min(700px,100%);justify-self:center}
+  .layout{grid-template-columns:1fr;gap:38px}
+  .preview{width:min(600px,100%);justify-self:center}
+}
+@media(max-width:680px){
+  .bar,.hero,.row,.foot{width:calc(100% - 32px)}
+  .nav a{display:none}
+  .hero{padding:49px 0 44px;min-height:auto}
+  .hero h1{font-size:clamp(2.75rem,14vw,4.45rem)}
+  .hero h1 .line-3{margin-left:23px}
+  .hero h1 .line-4{margin-left:44px}
+  .actions{display:grid}
+  .btn{width:100%}
+  .board{min-height:550px;padding:17px 13px;transform:none;border-radius:28px}
+  .canvas{height:435px;border-radius:21px}
+  .root{top:23px;width:193px}
+  .root .media{height:95px}
+  .card-a{left:6px;top:211px;width:146px}
+  .card-b{right:6px;top:242px;width:146px}
+  .pill.left{left:19px;top:192px}
+  .pill.right{right:15px;top:224px}
+  .row{grid-template-columns:1fr;padding-bottom:43px}
+  .mini{min-height:auto;padding:17px 0}
+  .foot{display:block;line-height:2}
+  .foot b{display:block}
+  .modal{padding:31px 22px 24px}
+  .modal h2{font-size:2.08rem}
+  .flow{padding:20px 16px 45px}
+  .progress{margin:22px 0 42px}
+  .layout{gap:29px}
+  .copy h1{font-size:clamp(2.4rem,13vw,3.55rem)}
+  .flow-actions{display:grid;gap:10px}
+  .hint{text-align:center}
+  .preview{min-height:430px;padding:14px}
+  .preview-window{min-height:400px}
+  .preview-copy{left:17px;right:17px;bottom:17px}
+}
+</style>
+</head>
+<body>
+
+<section class="home" id="home">
+<header class="bar">
+  <a class="logo" href="#home"><span class="mark" aria-hidden="true"></span>LoveTree</a>
+  <nav class="nav">
+    <a href="#browse">둘러보기</a>
+    <button class="login" type="button" data-open>로그인</button>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div>
+    <p class="eyebrow">A little garden for every feeling</p>
+    <h1>
+      <span class="line-1">사랑에 빠지는</span>
+      <span class="line-2">순간을 하나의</span>
+      <span class="line-3">러브트리로</span>
+      <span class="line-4">이어 보세요</span>
+    </h1>
+    <p class="desc">
+      처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을
+      한 그루의 나무처럼 이어 보세요.
+    </p>
+
+    <div class="actions">
+      <button class="btn primary" type="button" data-open>＋ 첫 순간 심기</button>
+      <a class="btn quiet" href="#browse">러브트리 둘러보기 →</a>
+    </div>
+
+    <p class="note"><b>✦</b> 처음에는 단 하나의 순간만 있어도 충분해요.</p>
+
+    <div class="proof">
+      <small>러브트리는 이렇게 자라요</small>
+      <div class="proof-line">
+        <span class="active"><b>01</b> 발견</span><i></i>
+        <span><b>02</b> 기록</span><i></i>
+        <span><b>03</b> 연결</span><i></i>
+        <span><b>04</b> 성장</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-top">
+      <span><i class="dot"></i>러브트리 미리보기</span>
+      <span>season 01</span>
+    </div>
+
+    <div class="canvas">
+      <div class="orbit"></div>
+      <div class="orbit two"></div>
+
+      <svg class="branch-svg" viewBox="0 0 600 470" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="branchGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#c86e79"/>
+            <stop offset="50%" stop-color="#d8bbaa"/>
+            <stop offset="100%" stop-color="#879975"/>
+          </linearGradient>
+        </defs>
+        <path d="M300 170 C285 238 205 270 112 316" stroke="url(#branchGradient)" stroke-width="4.5"/>
+        <path d="M300 170 C330 238 420 280 501 338" stroke="url(#branchGradient)" stroke-width="4.5"/>
+        <path d="M300 170 C310 260 307 350 320 435" stroke="#87997577" stroke-width="4"/>
+      </svg>
+
+      <article class="card root">
+        <div class="media">
+          <img src="https://img.youtube.com/vi/nqofkzQD19E/hqdefault.jpg" alt="처음 발견한 순간">
+          <span>▶</span><small>01:30</small>
+        </div>
+        <div class="body">
+          <span class="tag">처음 발견한 순간</span>
+          <h2>처음 마음이 멈춘 장면</h2>
+          <p>짧은 영상 하나가 이상하게 오래 마음에 남았어요.</p>
+          <small>YouTube · 나의 기록</small>
+        </div>
+      </article>
+
+      <div class="pill left">♥ 팬의 추천</div>
+      <article class="card card-a">
+        <div class="media">
+          <img src="https://img.youtube.com/vi/bcUfIpQ6aeA/hqdefault.jpg" alt="팬이 추천한 영상">
+          <span>▶</span><small>03:12</small>
+        </div>
+        <div class="body">
+          <span class="tag">팬의 추천</span>
+          <h2>다정한 말투가 남은 인터뷰</h2>
+          <p>다른 팬이 꼭 보라고 이어 준 영상이에요.</p>
+        </div>
+      </article>
+
+      <div class="pill right">✦ 내가 고른 다음 순간</div>
+      <article class="card card-b">
+        <div class="media">
+          <img src="https://img.youtube.com/vi/mRppy-KnyNI/hqdefault.jpg" alt="내가 선택한 다음 영상">
+          <span>▶</span><small>07:48</small>
+        </div>
+        <div class="body">
+          <span class="tag">내가 고른 다음 순간</span>
+          <h2>댓글을 따라 찾아본 장면</h2>
+          <p>이 순간부터 마음이 더 빠르게 자랐어요.</p>
+        </div>
+      </article>
+
+      <div class="seed">✦</div>
+    </div>
+
+    <div class="caption">
+      <span class="rule"></span>
+      <p>한 장면에서 시작한 마음이<br><b>다음 장면과 연결되어 자라나요.</b></p>
+    </div>
+  </div>
+</section>
+
+<section class="row" id="browse">
+  <div class="mini"><span>01</span><strong>첫 순간</strong><p>마음이 멈춘 정확한 장면을 심어 보세요.</p></div>
+  <div class="mini"><span>02</span><strong>감정 메모</strong><p>그때의 말과 감정을 짧게 기록해요.</p></div>
+  <div class="mini"><span>03</span><strong>다음 가지</strong><p>팬의 추천으로 이야기의 흐름을 이어가요.</p></div>
+</section>
+</main>
+
+<footer class="foot">
+  <b>LoveTree</b>
+  <span>마음이 시작된 순간을 오래 간직하는 법</span>
+</footer>
+</section>
+
+<section class="flow hidden" id="flow">
+<div class="shell">
+  <div class="flow-top">
+    <button class="back" type="button" data-home>← 처음 화면으로</button>
+    <span class="step">plant your first moment</span>
+  </div>
+
+  <div class="progress"><span></span></div>
+
+  <div class="layout">
+    <div class="copy">
+      <p class="eyebrow">01 · 처음 발견</p>
+      <h1>마음이 처음 멈춘<br><em>그 순간을 심어볼까요?</em></h1>
+      <p>
+        발견한 콘텐츠의 링크를 먼저 남겨 주세요.
+        링크와 함께 그때의 마음을 기록하면 러브트리의 첫 뿌리가 됩니다.
+      </p>
+
+      <form class="form" id="discovery-form">
+        <label class="field-label" for="content-url">발견한 콘텐츠 링크</label>
+        <div class="url-row">
+          <span class="url-icon">↗</span>
+          <input id="content-url" type="url" placeholder="https://youtube.com/watch?v=..." required>
+        </div>
+        <p class="url-hint">YouTube 링크를 넣으면 제목과 썸네일을 연결할 수 있어요.</p>
+
+        <label class="field-label" for="discovery-note">그때 어떤 마음이었나요?</label>
+        <textarea id="discovery-note" placeholder="예: 우연히 보게 됐는데, 하루 종일 이 장면이 생각났어."></textarea>
+
+        <label class="field-label" for="discovery-date">발견한 날짜</label>
+        <input id="discovery-date" type="date">
+
+        <div class="flow-actions">
+          <button class="btn primary" type="submit">이 순간 심기 →</button>
+          <span class="hint">나중에 다시 수정할 수 있어요.</span>
+        </div>
+      </form>
+    </div>
+
+    <aside class="preview">
+      <div class="preview-window" id="preview-window">
+        <span class="preview-tree-name" id="preview-tree-name">나의 첫 러브트리</span>
+        <div class="glow"></div>
+        <div class="orb">✦</div>
+        <div class="preview-copy">
+          <span>your first seed</span>
+          <strong id="preview-title">링크를 넣으면 콘텐츠가 보여요</strong>
+          <p id="preview-subtitle">YouTube 주소를 붙여 넣어 러브트리의 뿌리를 만들어 보세요.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</section>
+
+<div class="backdrop hidden" id="modal">
+  <div class="modal">
+    <button class="close" type="button" data-close>×</button>
+    <p class="eyebrow">plant your first moment</p>
+    <h2>어떤 러브트리를<br><em>처음 심어볼까요?</em></h2>
+    <p>최애, 배우, 작품, 노래, 여행처럼 마음이 자란 대상이라면 무엇이든 좋아요.</p>
+
+    <form id="name-form">
+      <label for="tree-name">러브트리 이름</label>
+      <input id="tree-name" value="건호에게 입덕한 3일" required>
+      <p class="modal-note">순간을 3개 이상 남기면 공개 러브트리로 소개할 수 있어요. 공개 범위는 나중에 바꿀 수 있습니다.</p>
+      <button class="btn primary" type="submit">이 이름으로 시작하기 →</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const home=document.querySelector('#home');
+const flow=document.querySelector('#flow');
+const modal=document.querySelector('#modal');
+const url=document.querySelector('#content-url');
+const win=document.querySelector('#preview-window');
+const title=document.querySelector('#preview-title');
+const sub=document.querySelector('#preview-subtitle');
+const treeNameBadge=document.querySelector('#preview-tree-name');
+const toast=document.querySelector('#toast');
+
+function openModal(){
+  modal.classList.remove('hidden');
+  document.querySelector('#tree-name').focus();
+}
+function closeModal(){
+  modal.classList.add('hidden');
+}
+function showToast(message){
+  toast.textContent=message;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2600);
+}
+
+document.querySelectorAll('[data-open]').forEach(button=>button.addEventListener('click',openModal));
+document.querySelector('[data-close]').addEventListener('click',closeModal);
+modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
+
+document.querySelector('#name-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  const name=document.querySelector('#tree-name').value.trim()||'나의 첫 러브트리';
+  treeNameBadge.textContent=name;
+  closeModal();
+  home.classList.add('hidden');
+  flow.classList.remove('hidden');
+  scrollTo(0,0);
+});
+
+document.querySelector('[data-home]').addEventListener('click',()=>{
+  flow.classList.add('hidden');
+  home.classList.remove('hidden');
+  scrollTo(0,0);
+});
+
+url.addEventListener('input',()=>{
+  const match=url.value.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{6,})/);
+  if(match){
+    win.style.backgroundImage='linear-gradient(180deg,rgba(255,244,231,.08),rgba(46,34,34,.27)),url(https://img.youtube.com/vi/'+match[1]+'/hqdefault.jpg)';
+    win.style.backgroundSize='cover';
+    win.style.backgroundPosition='center';
+    title.textContent='첫 순간으로 연결할 영상';
+    sub.textContent='이 장면에서 러브트리의 첫 뿌리가 시작됩니다.';
+  }else{
+    win.style.backgroundImage='';
+    title.textContent='링크를 넣으면 콘텐츠가 보여요';
+    sub.textContent='YouTube 주소를 붙여 넣어 러브트리의 뿌리를 만들어 보세요.';
+  }
+});
+
+document.querySelector('#discovery-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  showToast('첫 뿌리가 생겼어요 ✦');
+});
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape')closeModal();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoveTree · 마음 연결 트리 프로토타입</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum:wght@400;700&family=Manrope:wght@500;700;800&display=swap');
+
+    :root {
+      --paper: #f7efe5;
+      --paper-deep: #eee3d6;
+      --ink: #473c3b;
+      --muted: #8b7d78;
+      --line: #dfd1c5;
+      --card: rgba(255, 252, 247, .93);
+      --rose: #d97889;
+      --rose-deep: #bd5d72;
+      --sage: #91a98f;
+      --shadow: 0 18px 45px rgba(100, 73, 66, .14);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(255, 255, 255, .85), transparent 28%),
+        radial-gradient(circle at 90% 85%, rgba(242, 211, 211, .55), transparent 30%),
+        var(--paper);
+      font-family: var(--body);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app { height: 100%; display: flex; flex-direction: column; }
+
+    .topbar {
+      flex: 0 0 auto;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(180, 153, 142, .22);
+      background: rgba(255, 252, 248, .8);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 220px;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      color: var(--rose);
+      background: transparent;
+      font-size: 29px;
+      line-height: 1;
+      filter: drop-shadow(0 4px 7px rgba(201, 103, 122, .2));
+    }
+    .brand strong { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: -.06em; }
+    .brand small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: .08em; }
+
+    .toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .toolbar .group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid rgba(191, 165, 153, .45);
+      border-radius: 999px;
+      background: rgba(255, 252, 247, .74);
+    }
+    .toolbar button, .inspector button {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #756762;
+      background: transparent;
+      font-size: 12px;
+      transition: .2s ease;
+    }
+    .toolbar button:hover, .toolbar button.active, .inspector button:hover {
+      color: #fff;
+      border-color: var(--rose);
+      background: var(--rose);
+      box-shadow: 0 6px 12px rgba(217, 120, 137, .18);
+    }
+    .zoom-label { min-width: 50px; text-align: center; color: #8d8079; font-size: 11px; }
+    .help-text { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+    .workspace {
+      min-height: 0;
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .graph-panel, .inspector {
+      min-height: 0;
+      border: 1px solid rgba(194, 170, 157, .45);
+      border-radius: 22px;
+      background: rgba(255, 252, 248, .73);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .graph-panel { display: flex; flex-direction: column; }
+    .panel-head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 58px;
+      padding: 12px 17px;
+      border-bottom: 1px solid rgba(194, 170, 157, .32);
+      background: rgba(255, 252, 248, .66);
+    }
+    .eyebrow { margin: 0 0 3px; color: var(--rose-deep); font-size: 10px; letter-spacing: .1em; }
+    .panel-head h1 { margin: 0; font-family: Georgia, "Noto Serif KR", serif; font-size: 17px; font-weight: 500; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 11px; }
+
+    .canvas-wrap {
+      position: relative;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 48% 51%, rgba(248, 226, 225, .62), transparent 27%),
+        radial-gradient(ellipse at 70% 35%, rgba(228, 239, 221, .65), transparent 35%),
+        #f5f4ec;
+      touch-action: none;
+      user-select: none;
+    }
+    .canvas-wrap::before, .canvas-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 15% 20%;
+      border: 1px solid rgba(179, 172, 152, .22);
+      border-radius: 50%;
+      transform: rotate(-8deg);
+      pointer-events: none;
+    }
+    .canvas-wrap::after { inset: 22% 26%; transform: rotate(13deg); }
+    .canvas-space {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2200px;
+      height: 1500px;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+    #edgesSvg { position: absolute; inset: 0; width: 2200px; height: 1500px; overflow: visible; }
+    #nodesLayer { position: absolute; inset: 0; }
+
+    .edge-glow {
+      fill: none;
+      stroke-width: 13;
+      stroke-linecap: round;
+      opacity: .2;
+      filter: blur(5px);
+      animation: edge-breathe 2.8s ease-in-out infinite;
+    }
+    .edge-path {
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+      filter: drop-shadow(0 3px 4px rgba(115, 74, 76, .19));
+    }
+    .edge-path.edge-new { stroke-width: 6; filter: drop-shadow(0 0 8px rgba(217, 120, 137, .7)); }
+    .edge-spark { fill: #fffaf6; stroke: #fff; stroke-width: 2; filter: drop-shadow(0 0 5px rgba(255, 250, 246, .95)); }
+    .edge-heart { fill: var(--rose); stroke: #fff7f3; stroke-width: 1.4; paint-order: stroke; font-size: 24px; font-family: var(--display); filter: drop-shadow(0 2px 5px rgba(201, 91, 109, .45)); transform-box: fill-box; transform-origin: center; animation: heart-float 1.9s ease-in-out infinite; }
+    .edge-heart.edge-heart-alt { fill: #b878bd; }
+    .edge-heart.edge-heart-warm { fill: #e9a352; }
+    @keyframes edge-breathe { 0%, 100% { opacity: .14; } 50% { opacity: .34; } }
+    @keyframes heart-float { 0%, 100% { opacity: .76; transform: translateY(0) scale(.9); } 50% { opacity: 1; transform: translateY(-5px) scale(1.08); } }
+    .edge-label rect { fill: rgba(255, 252, 247, .95); stroke: rgba(214, 194, 183, .7); stroke-width: 1; }
+    .edge-label text { fill: #796964; font-size: 13px; font-family: "Noto Sans KR", system-ui, sans-serif; }
+    .temp-path { fill: none; stroke: var(--rose); stroke-width: 4; stroke-linecap: round; opacity: .8; filter: drop-shadow(0 0 5px rgba(202, 116, 128, .45)); }
+
+    .node {
+      position: absolute;
+      width: 205px;
+      min-height: 154px;
+      transform: translate(-50%, -50%);
+      border: 2px solid var(--node-color, #d5b4ad);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: 0 15px 30px rgba(98, 76, 69, .13);
+      transition: box-shadow .18s ease, border-color .18s ease;
+      cursor: grab;
+      overflow: visible;
+    }
+    .node:active { cursor: grabbing; }
+    .node:hover, .node.selected { box-shadow: 0 18px 40px rgba(91, 63, 63, .2); }
+    .node.selected { outline: 3px solid rgba(217, 120, 137, .24); }
+    .node-root { width: 225px; min-height: 180px; border-radius: 22px; background: rgba(255, 249, 247, .97); }
+    .node-end { border-style: solid; border-color: color-mix(in srgb, var(--node-color, var(--rose)) 75%, white); }
+    .node-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 11px 0; }
+    .node-kind { color: var(--node-color, var(--rose-deep)); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+    .node-index { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; background: color-mix(in srgb, var(--node-color, var(--rose)) 16%, white); color: var(--node-color, var(--rose-deep)); font-size: 10px; }
+    .node-symbol { display: grid; place-items: center; width: 42px; height: 42px; margin: 10px 12px 7px; border-radius: 13px; color: #fff; background: linear-gradient(145deg, color-mix(in srgb, var(--node-color, var(--rose)) 75%, white), var(--node-color, var(--rose))); font-size: 21px; box-shadow: 0 7px 15px color-mix(in srgb, var(--node-color, var(--rose)) 24%, transparent); }
+    .node h3 { margin: 0 12px 4px; font-family: var(--display); font-size: 16px; font-weight: 500; line-height: 1.25; }
+    .node p { min-height: 32px; margin: 0 12px; color: #86766f; font-size: 11px; line-height: 1.5; }
+    .node-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 11px 12px 12px; color: #a08f88; font-size: 10px; }
+    .node-foot-meta { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .node-time { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 12px 0; padding-top: 8px; border-top: 1px solid var(--line-soft); color: var(--muted); font: 10px var(--latin); }
+    .node-time strong { color: var(--rose-deep); font-weight: 700; white-space: nowrap; }
+    .node-time-link { color: var(--sage-deep); font-size: 9px; text-decoration: none; white-space: nowrap; }
+    .node-time-link:hover { color: var(--rose-deep); text-decoration: underline; }
+    .emotion-chip { padding: 4px 8px; border-radius: 999px; color: var(--node-color, var(--rose-deep)); background: color-mix(in srgb, var(--node-color, var(--rose)) 14%, white); }
+    .node-video { width: 232px; min-height: 265px; }
+    .node-thumb { position: relative; height: 112px; margin: 0; overflow: hidden; border-radius: 15px 15px 0 0; background: linear-gradient(135deg, color-mix(in srgb, var(--node-color, var(--rose)) 35%, #fff), #eaded7); }
+    .node-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .node-thumb::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(53, 36, 36, .25)); pointer-events: none; }
+    .node-play { position: absolute; z-index: 1; left: 50%; top: 50%; display: grid; place-items: center; width: 38px; height: 38px; transform: translate(-50%, -50%); border: 2px solid rgba(255,255,255,.85); border-radius: 50%; color: #fff; background: rgba(65, 45, 46, .35); backdrop-filter: blur(3px); font-size: 15px; text-decoration: none; }
+    .node-video .node-top { position: absolute; z-index: 2; inset: 0 0 auto 0; padding: 9px 10px; }
+    .node-video .node-kind, .node-video .node-index { color: #fff; text-shadow: 0 1px 3px rgba(42, 24, 25, .5); }
+    .node-video .node-index { background: rgba(255, 252, 247, .8); color: var(--node-color, var(--rose-deep)); text-shadow: none; }
+    .node-video h3 { margin-top: 12px; }
+    .node-actions { display: flex; align-items: center; gap: 4px; }
+    .node-action { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid rgba(255, 250, 245, .72); border-radius: 50%; color: var(--rose-deep); background: rgba(255, 250, 245, .88); font: 700 15px/1 var(--body); box-shadow: 0 3px 8px rgba(65, 44, 40, .10); }
+    .node-action:hover { color: #fff; border-color: var(--rose); background: var(--rose); }
+    .node-delete { display: grid; border: 0; color: var(--rose-deep); background: rgba(255, 250, 245, .88); font-size: 16px; line-height: 1; }
+    .node-add { color: var(--sage-deep); }
+    .node-root .node-delete { display: none; }
+    .node-video .node-actions { position: relative; z-index: 4; }
+    .node-video .node-action { border-color: rgba(255, 255, 255, .84); background: rgba(255, 250, 245, .88); }
+    .node-delete:hover { color: #fff; background: var(--rose-deep); }
+
+    .handle {
+      position: absolute;
+      z-index: 3;
+      width: 13px;
+      height: 13px;
+      border: 3px solid rgba(255, 252, 248, .95);
+      border-radius: 50%;
+      background: var(--node-color, var(--rose));
+      box-shadow: 0 2px 8px rgba(75, 49, 50, .2);
+      transition: transform .15s ease;
+    }
+    .handle:hover { transform: scale(1.35); }
+    .handle-top { top: -8px; left: 50%; transform: translateX(-50%); }
+    .handle-left { left: -8px; top: 50%; transform: translateY(-50%); }
+    .handle-right { right: -8px; top: 50%; transform: translateY(-50%); }
+    .handle-bottom { bottom: -8px; left: 50%; transform: translateX(-50%); }
+    .handle-top:hover, .handle-bottom:hover { transform: translateX(-50%) scale(1.35); }
+    .handle-left:hover, .handle-right:hover { transform: translateY(-50%) scale(1.35); }
+
+    .mini-map {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: 180px;
+      height: 116px;
+      overflow: hidden;
+      border: 1px solid rgba(189, 168, 157, .64);
+      border-radius: 13px;
+      background: rgba(255, 252, 247, .78);
+      box-shadow: 0 8px 22px rgba(92, 69, 64, .12);
+      pointer-events: none;
+    }
+    .mini-dot { position: absolute; width: 8px; height: 6px; border-radius: 4px; transform: translate(-50%, -50%); background: var(--dot, var(--rose)); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    .mini-viewport { position: absolute; border: 1px solid var(--rose); border-radius: 5px; background: rgba(217, 120, 137, .08); }
+
+    .canvas-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 17px;
+      transform: translateX(-50%);
+      padding: 9px 14px;
+      border: 1px solid rgba(207, 183, 170, .6);
+      border-radius: 999px;
+      color: #806f6a;
+      background: rgba(255, 252, 247, .84);
+      box-shadow: 0 7px 15px rgba(97, 73, 68, .09);
+      font-size: 11px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .inspector { display: flex; flex-direction: column; padding: 18px; overflow: auto; }
+    .inspector h2 { margin: 0 0 5px; font-family: Georgia, "Noto Serif KR", serif; font-size: 20px; font-weight: 500; }
+    .inspector > p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .inspector-card { padding: 14px; border: 1px solid rgba(207, 184, 171, .6); border-radius: 15px; background: rgba(255, 252, 247, .78); }
+    .inspector-card + .inspector-card { margin-top: 12px; }
+    .inspector-label { display: block; margin-bottom: 7px; color: #8d706a; font-size: 11px; }
+    .inspector input, .inspector select { width: 100%; border: 1px solid #decec2; border-radius: 10px; padding: 10px 11px; outline: 0; color: var(--ink); background: #fffdf9; font-size: 12px; }
+    .time-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .time-field label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 10px; }
+    .time-help { margin: 8px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .inspector input:focus, .inspector select:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(217, 120, 137, .12); }
+    .inspector .primary { width: 100%; margin-top: 11px; color: #fff; background: var(--rose); }
+    .inspector .primary:hover { background: var(--rose-deep); }
+    .selected-info { display: grid; gap: 7px; margin-top: 10px; color: #806f69; font-size: 12px; }
+    .selected-info strong { color: var(--ink); font-family: Georgia, "Noto Serif KR", serif; font-size: 16px; font-weight: 500; }
+    .selected-time { color: var(--rose-deep); font: 700 11px var(--latin); }
+    .selected-link { padding: 0; border: 0; color: var(--sage-deep); background: transparent; font: 700 11px var(--body); text-align: left; text-decoration: none; cursor: pointer; }
+    .selected-link:hover { color: var(--rose-deep); text-decoration: underline; }
+    .tag-choice-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag-choice { padding: 6px 9px; border: 1px solid rgba(182, 155, 147, .44); border-radius: 999px; color: var(--ink-soft); background: rgba(255, 253, 249, .74); font-size: 10px; }
+    .tag-choice:hover, .tag-choice.active { border-color: var(--rose); color: var(--rose-deep); background: var(--rose-pale); }
+    .tag-score-card { margin-top: 12px; }
+    .tag-score-list { display: grid; gap: 10px; margin-top: 10px; }
+    .tag-score-row { display: grid; grid-template-columns: 44px 1fr 32px; align-items: center; gap: 7px; color: var(--ink-soft); font-size: 10px; }
+    .tag-score-track { height: 7px; overflow: hidden; border-radius: 99px; background: var(--sage-pale); }
+    .tag-score-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--rose-pale), var(--rose)); transition: width .45s ease; }
+    .tag-score-value { color: var(--rose-deep); font: 700 10px var(--latin); text-align: right; }
+    .modal-open { overflow: hidden; }
+    .video-modal { position: fixed; inset: 0; z-index: 3000; display: none; place-items: center; padding: 28px; background: rgba(61, 50, 48, .52); backdrop-filter: blur(8px); }
+    .video-modal.open { display: grid; }
+    .video-modal-dialog { position: relative; width: min(1120px, 100%); max-height: min(760px, 92vh); overflow: auto; border: 1px solid rgba(255, 250, 245, .8); border-radius: 28px; background: var(--paper); box-shadow: var(--shadow-xl); }
+    .video-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 26px 14px; border-bottom: 1px solid var(--line-soft); }
+    .video-modal-head h2 { margin: 0; color: var(--ink); font: 700 26px/1.2 var(--display); letter-spacing: -.06em; }
+    .modal-close { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(182, 155, 147, .44); border-radius: 50%; color: var(--rose-deep); background: var(--card); font-size: 19px; }
+    .modal-close:hover { color: #fff; background: var(--rose); }
+    .video-modal-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .75fr); gap: 20px; padding: 22px 26px 26px; }
+    .modal-player { min-height: 420px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: #1f1818; box-shadow: var(--shadow-md); }
+    .modal-player iframe { display: block; width: 100%; height: 100%; min-height: 420px; border: 0; }
+    .modal-player-fallback { display: grid; place-items: center; min-height: 420px; padding: 30px; color: #fffaf5; text-align: center; }
+    .modal-detail { padding: 19px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255, 253, 249, .82); }
+    .modal-detail p { color: var(--ink-soft); font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+    .modal-time { display: inline-flex; margin: 10px 0 5px; padding: 7px 10px; border-radius: 999px; color: var(--rose-deep); background: var(--rose-pale); font: 700 11px var(--latin); }
+    .modal-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0; }
+    .modal-tag { padding: 7px 10px; border: 1px solid rgba(182, 155, 147, .42); border-radius: 999px; color: var(--ink-soft); background: var(--card); font-size: 11px; }
+    .modal-tag:hover, .modal-tag.voted { border-color: var(--rose); color: var(--rose-deep); background: var(--rose-pale); }
+    .modal-actions { display: grid; gap: 8px; margin-top: 18px; }
+    .modal-actions button { min-height: 42px; border: 1px solid rgba(182, 155, 147, .42); border-radius: 999px; color: var(--ink-soft); background: var(--card); font-family: var(--body); }
+    .modal-actions button:hover { border-color: var(--rose); color: var(--rose-deep); background: var(--rose-pale); }
+    .modal-actions .modal-like { color: #fffaf5; border-color: var(--rose); background: var(--rose); font-weight: 700; }
+    .modal-actions .modal-like:hover { background: var(--rose-deep); }
+    .modal-actions .modal-like.liked { box-shadow: 0 0 0 4px rgba(202, 116, 128, .16), 0 10px 22px rgba(202, 116, 128, .24); }
+    .modal-actions .modal-danger { color: var(--rose-deep); }
+    @media (max-width: 780px) {
+      .video-modal { padding: 10px; }
+      .video-modal-grid { grid-template-columns: 1fr; padding: 14px; }
+      .video-modal-head { padding: 18px 14px 12px; }
+      .modal-player, .modal-player iframe { min-height: 240px; }
+    }
+    .inspector .danger { width: 100%; margin-top: 10px; color: #b35d66; border-color: #e2b8b5; background: rgba(255, 244, 241, .7); }
+    .inspector .danger:hover { color: #fff; border-color: #c9757d; background: #c9757d; }
+    .legend { display: grid; gap: 9px; margin-top: auto; padding-top: 18px; color: #8d7b75; font-size: 11px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); }
+
+    @media (max-width: 980px) {
+      body { overflow: auto; }
+      .topbar { flex-wrap: wrap; }
+      .brand { min-width: auto; }
+      .help-text { width: 100%; margin-left: 0; }
+      .workspace { min-height: 720px; grid-template-columns: 1fr; }
+      .graph-panel { min-height: 640px; }
+      .inspector { min-height: 360px; }
+    }
+
+    /* Source-aligned LoveTree design tokens. The graph interactions remain
+       prototype-only, while typography, logo, palette and surfaces follow the
+       original growing-tree screens in this folder. */
+    :root {
+      --bg: #f8f2eb;
+      --paper: #fffaf5;
+      --card: #fffdf9;
+      --ink: #3d3230;
+      --ink-soft: #665955;
+      --muted: #7b6d68;
+      --rose: #ca7480;
+      --rose-deep: #9d5360;
+      --rose-pale: #f4dce0;
+      --sage: #809174;
+      --sage-deep: #5e7053;
+      --sage-pale: #e3ebdd;
+      --gold: #e5c650;
+      --gold-pale: #fbefbd;
+      --branch: #b69b93;
+      --line: rgba(102, 77, 70, .18);
+      --line-soft: rgba(102, 77, 70, .11);
+      --display: 'Gowun Batang', serif;
+      --body: 'Gowun Dodum', sans-serif;
+      --latin: 'Manrope', sans-serif;
+      --shadow-xl: 0 34px 82px rgba(66, 46, 40, .16);
+      --shadow-lg: 0 21px 52px rgba(66, 46, 40, .14);
+      --shadow-md: 0 14px 34px rgba(66, 46, 40, .11);
+      --shadow-sm: 0 8px 21px rgba(66, 46, 40, .09);
+      --paper-deep: #f3e8dc;
+      --line: rgba(119, 91, 82, .20);
+      --shadow: var(--shadow-md);
+    }
+
+    body {
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(255, 255, 255, .85), transparent 28%),
+        radial-gradient(circle at 90% 85%, rgba(244, 220, 224, .58), transparent 30%),
+        radial-gradient(circle at 52% 45%, rgba(227, 235, 221, .32), transparent 36%),
+        var(--bg);
+      font-family: var(--body);
+      letter-spacing: -.02em;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      pointer-events: none;
+      opacity: .055;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    }
+
+    .topbar {
+      min-height: 68px;
+      margin: 14px 18px 0;
+      padding: 10px 20px;
+      border: 1px solid rgba(119, 91, 82, .12);
+      border-bottom-color: rgba(119, 91, 82, .12);
+      border-radius: 999px;
+      background: rgba(255, 253, 249, .88);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      min-width: 230px;
+      gap: 9px;
+      color: var(--rose-deep);
+      text-decoration: none;
+    }
+    .brand-mark {
+      position: relative;
+      display: block;
+      width: 29px;
+      height: 30px;
+      color: transparent;
+      font-size: 0;
+      filter: none;
+    }
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 2px;
+      width: 2px;
+      height: 25px;
+      border-radius: 999px;
+      background: var(--sage-deep);
+      transform: rotate(7deg);
+    }
+    .brand-mark i,
+    .brand-mark b {
+      position: absolute;
+      display: block;
+      border-radius: 100% 0;
+    }
+    .brand-mark i {
+      left: 1px;
+      top: 8px;
+      width: 14px;
+      height: 8px;
+      background: var(--sage);
+      transform: rotate(-24deg);
+    }
+    .brand-mark b {
+      right: 0;
+      top: 2px;
+      width: 12px;
+      height: 8px;
+      background: var(--rose);
+      transform: scaleX(-1) rotate(-25deg);
+    }
+    .brand strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -.08em;
+      line-height: 1;
+    }
+    .brand small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font: 700 9px var(--latin);
+      letter-spacing: .08em;
+    }
+
+    .toolbar .group {
+      border-color: rgba(119, 91, 82, .18);
+      background: rgba(255, 250, 245, .78);
+    }
+    .toolbar button, .inspector button {
+      color: var(--ink-soft);
+      font-family: var(--body);
+    }
+    .toolbar button:hover, .toolbar button.active, .inspector button:hover {
+      color: #fffaf5;
+      border-color: var(--rose);
+      background: var(--rose);
+      box-shadow: 0 9px 18px rgba(202, 116, 128, .22);
+    }
+    .zoom-label, .help-text {
+      color: var(--muted);
+      font-family: var(--latin);
+    }
+
+    .workspace { gap: 16px; padding: 14px 18px 18px; }
+    .graph-panel, .inspector {
+      border-color: rgba(119, 91, 82, .18);
+      border-radius: 24px;
+      background: rgba(255, 253, 249, .84);
+      box-shadow: var(--shadow-lg);
+    }
+    .panel-head {
+      min-height: 68px;
+      padding: 14px 20px;
+      border-bottom-color: var(--line-soft);
+      background: rgba(255, 250, 245, .78);
+    }
+    .eyebrow {
+      color: var(--rose-deep);
+      font: 700 10px var(--latin);
+      letter-spacing: .08em;
+    }
+    .panel-head h1, .inspector h2, .selected-info strong {
+      color: var(--ink);
+      font-family: var(--display);
+    }
+    .panel-head h1 { font-size: 20px; font-weight: 700; letter-spacing: -.06em; }
+    .panel-head p { font-family: var(--body); }
+
+    .canvas-wrap {
+      background:
+        radial-gradient(ellipse at 48% 51%, rgba(244, 220, 224, .62), transparent 27%),
+        radial-gradient(ellipse at 70% 35%, rgba(227, 235, 221, .78), transparent 35%),
+        #f7f5ed;
+    }
+    .canvas-wrap::before, .canvas-wrap::after {
+      border-color: rgba(128, 145, 116, .22);
+    }
+
+    .edge-glow { opacity: .18; filter: blur(5px); }
+    .edge-path {
+      stroke-width: 8;
+      stroke: var(--branch);
+      filter: drop-shadow(0 4px 8px rgba(64, 44, 40, .10));
+    }
+    .edge-path.edge-new {
+      stroke-width: 9;
+      filter: drop-shadow(0 0 11px rgba(202, 116, 128, .72));
+    }
+    .edge-heart {
+      fill: var(--rose);
+      stroke: #fff7f3;
+      font-family: var(--display);
+    }
+    .edge-heart.edge-heart-alt { fill: #a980d1; }
+    .edge-heart.edge-heart-warm { fill: #dfb35c; }
+    .edge-label rect {
+      fill: rgba(255, 250, 245, .96);
+      stroke: rgba(182, 155, 147, .62);
+    }
+    .edge-label text {
+      fill: var(--ink-soft);
+      font: 13px var(--body);
+    }
+    .temp-path { stroke: var(--rose); }
+
+    .node {
+      border-width: 1.5px;
+      border-color: color-mix(in srgb, var(--node-color, var(--rose)) 72%, #fffaf5);
+      border-radius: 20px;
+      background: rgba(255, 253, 249, .96);
+      box-shadow: var(--shadow-md);
+    }
+    .node:hover, .node.selected { box-shadow: var(--shadow-lg); }
+    .node.selected { outline: 3px solid rgba(202, 116, 128, .20); }
+    .node-root {
+      border-color: var(--rose);
+      border-radius: 24px;
+      background: rgba(255, 250, 245, .98);
+    }
+    .node-kind, .node-foot, .node p, .inspector-label, .legend {
+      font-family: var(--body);
+    }
+    .node-kind {
+      color: var(--rose-deep);
+      font: 700 9px var(--latin);
+      letter-spacing: .08em;
+    }
+    .node h3 {
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.06em;
+    }
+    .node p { color: var(--ink-soft); font-size: 11px; }
+    .node-foot { color: var(--muted); }
+    .node-time { border-top-color: var(--line-soft); color: var(--muted); }
+    .node-time strong { color: var(--rose-deep); }
+    .node-time-link { padding: 0; border: 0; color: var(--sage-deep); background: transparent; font: 9px var(--body); cursor: pointer; }
+    .node-play { padding: 0; font-family: var(--latin); cursor: pointer; }
+    .node-thumb { border-radius: 18px 18px 0 0; background: var(--sage-pale); }
+    .node-symbol {
+      background: linear-gradient(145deg, color-mix(in srgb, var(--node-color, var(--rose)) 74%, #fffaf5), var(--node-color, var(--rose)));
+      box-shadow: 0 9px 18px color-mix(in srgb, var(--node-color, var(--rose)) 24%, transparent);
+    }
+    .node-index { font-family: var(--latin); }
+    .emotion-chip {
+      color: var(--rose-deep);
+      background: var(--rose-pale);
+    }
+    .node-delete { color: var(--rose-deep); }
+    .handle { background: var(--node-color, var(--rose)); }
+
+    .mini-map {
+      border-color: rgba(119, 91, 82, .24);
+      border-radius: 16px;
+      background: rgba(255, 250, 245, .86);
+      box-shadow: var(--shadow-sm);
+    }
+    .mini-viewport { border-color: var(--rose); background: rgba(202, 116, 128, .08); }
+    .canvas-hint {
+      border-color: rgba(182, 155, 147, .46);
+      color: var(--ink-soft);
+      background: rgba(255, 250, 245, .92);
+      box-shadow: var(--shadow-sm);
+      font-family: var(--body);
+    }
+
+    .inspector { padding: 20px; }
+    .inspector h2 { margin-bottom: 8px; font-size: 24px; font-weight: 700; letter-spacing: -.07em; }
+    .inspector > p { color: var(--ink-soft); font-size: 12px; }
+    .inspector-card {
+      padding: 16px;
+      border-color: rgba(119, 91, 82, .18);
+      border-radius: 18px;
+      background: rgba(255, 250, 245, .82);
+    }
+    .inspector-label { color: var(--rose-deep); font-size: 11px; }
+    .inspector input, .inspector select {
+      border-color: rgba(182, 155, 147, .44);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #fffdf9;
+      font-family: var(--body);
+    }
+    .inspector input:focus, .inspector select:focus { box-shadow: 0 0 0 3px rgba(202, 116, 128, .13); }
+    .inspector .primary { background: var(--rose); font-weight: 700; }
+    .inspector .primary:hover { background: var(--rose-deep); }
+    .selected-info { color: var(--ink-soft); }
+    .selected-info strong { font-size: 18px; font-weight: 700; }
+    .inspector .danger {
+      color: var(--rose-deep);
+      border-color: rgba(202, 116, 128, .42);
+      background: rgba(244, 220, 224, .42);
+    }
+    .legend-dot { box-shadow: 0 0 0 3px rgba(255, 250, 245, .7); }
+
+    @media (max-width: 980px) {
+      .topbar { margin: 10px 10px 0; border-radius: 24px; }
+      .workspace { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="LoveTree 홈">
+        <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+        <span>
+          <strong>러브트리</strong>
+          <small>LoveTree · LOVE MOMENT TREE</small>
+        </span>
+      </a>
+      <div class="toolbar" aria-label="러브트리 보기 방식">
+        <div class="group" role="group" aria-label="레이아웃">
+          <button data-layout="radial" class="active">마음 연결</button>
+          <button data-layout="tree">성장 트리</button>
+          <button data-layout="circle">원형 보기</button>
+          <button data-layout="grid">격자 보기</button>
+        </div>
+        <div class="group" role="group" aria-label="확대 축소">
+          <button id="zoomOut" aria-label="축소">−</button>
+          <span class="zoom-label" id="zoomLabel">100%</span>
+          <button id="zoomIn" aria-label="확대">＋</button>
+          <button id="fitView">한눈에</button>
+        </div>
+      </div>
+      <div class="help-text">카드의 네 점 중 하나를 끌어 다른 순간에 놓아 가지를 이어보세요.</div>
+    </header>
+
+    <main class="workspace">
+      <section class="graph-panel" aria-label="러브트리 마음 연결 캔버스">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">LOVE MOMENT TREE · 마음의 가지</p>
+            <h1>마음이 이어지는 한 그루</h1>
+          </div>
+          <p id="nodeCount">6개의 순간 · 5개의 가지</p>
+        </div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <div class="canvas-space" id="canvasSpace">
+            <svg id="edgesSvg" aria-hidden="true"></svg>
+            <div id="nodesLayer"></div>
+          </div>
+          <div class="mini-map" id="miniMap" aria-hidden="true"></div>
+          <div class="canvas-hint">카드의 네 점 중 하나를 끌어 다른 카드에 놓으면 새로운 마음이 이어져요 ✦</div>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-label="마음의 순간 추가 및 선택 정보">
+        <h2>마음 이어가기</h2>
+        <p>영상·장면·감정을 순간 카드로 남기고, 좋아한 흐름을 한 그루의 가지로 이어보세요.</p>
+
+        <form class="inspector-card" id="addForm">
+          <label class="inspector-label" for="nodeTitle">새 순간 이름</label>
+          <input id="nodeTitle" name="title" placeholder="예: 무대에서 웃던 순간" autocomplete="off" />
+          <label class="inspector-label" for="nodeUrl" style="margin-top:12px">영상 링크 <span style="color:#b79d92">(선택)</span></label>
+          <input id="nodeUrl" name="url" placeholder="https://youtu.be/..." autocomplete="off" />
+          <div class="time-fields">
+            <div class="time-field">
+              <label for="nodeStart">기억할 시작</label>
+              <input id="nodeStart" name="startTime" placeholder="00:00" inputmode="numeric" autocomplete="off" />
+            </div>
+            <div class="time-field">
+              <label for="nodeEnd">끝 시간 <span>(선택)</span></label>
+              <input id="nodeEnd" name="endTime" placeholder="02:30" inputmode="numeric" autocomplete="off" />
+            </div>
+          </div>
+          <p class="time-help">YouTube 공유 시간은 시작점으로 자동 연결돼요. 끝 시간은 카드에 구간으로 표시하고, 아래에서 다시 열 수 있어요.</p>
+          <label class="inspector-label" for="nodeEmotion" style="margin-top:12px">마음의 결</label>
+          <select id="nodeEmotion" name="emotion">
+            <option>섹시</option>
+            <option>큐트</option>
+            <option>청순</option>
+            <option>설렘</option>
+            <option>위로</option>
+            <option>몰입</option>
+          </select>
+          <label class="inspector-label" style="margin-top:12px">이 순간의 키워드</label>
+          <div class="tag-choice-row" id="tagChoices" role="group" aria-label="이 순간의 키워드">
+            <button class="tag-choice active" type="button" data-tag-choice="섹시">섹시</button>
+            <button class="tag-choice" type="button" data-tag-choice="큐트">큐트</button>
+            <button class="tag-choice" type="button" data-tag-choice="청순">청순</button>
+            <button class="tag-choice" type="button" data-tag-choice="설렘">설렘</button>
+            <button class="tag-choice" type="button" data-tag-choice="위로">위로</button>
+            <button class="tag-choice" type="button" data-tag-choice="몰입">몰입</button>
+          </div>
+          <button class="primary" type="submit">순간 카드 추가하기 +</button>
+        </form>
+
+        <section class="inspector-card">
+          <span class="inspector-label">지금 보고 있는 순간</span>
+          <div class="selected-info" id="selectedInfo">
+            <strong>주연이의 러브트리</strong>
+            <span>순간 카드를 선택하면 이어진 가지와 기억할 시간이 보여요.</span>
+          </div>
+          <button class="danger" id="deleteSelected" type="button" disabled>선택한 카드 삭제</button>
+        </section>
+
+        <section class="inspector-card tag-score-card">
+          <span class="inspector-label">주연이의 감정 온도</span>
+          <p style="margin:0;color:var(--muted);font-size:11px;line-height:1.5">사람들이 순간에 남긴 좋아요와 키워드 선택이 쌓여요.</p>
+          <div class="tag-score-list" id="tagScoreList" aria-live="polite"></div>
+        </section>
+
+        <div class="legend" aria-label="카드 종류 안내">
+          <div class="legend-row"><span class="legend-dot" style="--dot:var(--rose)"></span> 시작점 · 러브트리의 중심</div>
+          <div class="legend-row"><span class="legend-dot" style="--dot:#d7ad64"></span> 장면 · 영상이나 사진</div>
+          <div class="legend-row"><span class="legend-dot" style="--dot:#a980d1"></span> 감정 · 이어진 마음</div>
+          <div class="legend-row"><span class="legend-dot" style="--dot:#809b85"></span> 열매 · 완성된 이야기</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <section class="video-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="video-modal-head">
+        <div>
+          <p class="eyebrow" style="margin:0 0 7px">SELECTED LOVE MOMENT · 주연이의 순간</p>
+          <h2 id="modalTitle">처음 발견한 장면</h2>
+        </div>
+        <button class="modal-close" id="modalClose" type="button" aria-label="닫기">×</button>
+      </header>
+      <div class="video-modal-grid">
+        <div class="modal-player" id="modalPlayer"></div>
+        <aside class="modal-detail">
+          <span class="inspector-label">지금 선택한 순간</span>
+          <div class="modal-time" id="modalTime">기억할 구간 · 00:00</div>
+          <p id="modalMemo">이 장면에 남긴 마음이 여기에 보여요.</p>
+          <div class="modal-tags" id="modalTags" aria-label="감정 키워드"></div>
+          <div class="modal-actions">
+            <button class="modal-like" id="modalLike" type="button">♡ 이 순간 좋아요 <span id="modalLikeCount">0</span></button>
+            <button id="modalAdd" type="button">이어서 다음 순간 남기기 +</button>
+            <button class="modal-danger" id="modalDelete" type="button">이 순간 삭제하기</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const WORLD_W = 2200;
+      const WORLD_H = 1500;
+      const canvasWrap = document.getElementById('canvasWrap');
+      const canvasSpace = document.getElementById('canvasSpace');
+      const nodesLayer = document.getElementById('nodesLayer');
+      const edgesSvg = document.getElementById('edgesSvg');
+      const miniMap = document.getElementById('miniMap');
+      const nodeCount = document.getElementById('nodeCount');
+      const zoomLabel = document.getElementById('zoomLabel');
+      const selectedInfo = document.getElementById('selectedInfo');
+      const deleteSelected = document.getElementById('deleteSelected');
+      const tagScoreList = document.getElementById('tagScoreList');
+      const tagChoices = document.getElementById('tagChoices');
+      const videoModal = document.getElementById('videoModal');
+      const modalPlayer = document.getElementById('modalPlayer');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalTime = document.getElementById('modalTime');
+      const modalMemo = document.getElementById('modalMemo');
+      const modalTags = document.getElementById('modalTags');
+      const modalLike = document.getElementById('modalLike');
+      const modalLikeCount = document.getElementById('modalLikeCount');
+      const modalClose = document.getElementById('modalClose');
+      const modalAdd = document.getElementById('modalAdd');
+      const modalDelete = document.getElementById('modalDelete');
+
+      const palette = {
+        root: '#ca7480',
+        scene: '#d7ad64',
+        emotion: '#a980d1',
+        comfort: '#809b85',
+        memory: '#7e9fba',
+        end: '#b78664'
+      };
+      const icons = { root: '♥', video: '▶', emotion: '✦', end: '✿' };
+      const kindLabels = { root: 'MY LOVE TREE', video: 'MOMENT', emotion: 'FEELING', end: 'FRUIT' };
+      const tagOptions = ['섹시', '큐트', '청순', '설렘', '위로', '몰입'];
+      let selectedTag = '섹시';
+      const tagScores = { 섹시: 68, 큐트: 46, 청순: 54, 설렘: 61, 위로: 39, 몰입: 57 };
+      const votedTags = new Set();
+      const likedNodes = new Set();
+      let modalNodeId = null;
+
+      let nodes = [
+        { id: 'root', kind: 'root', title: '주연이의 러브트리', memo: '주연이의 장면과 마음을 한 그루로 이어보세요', emotion: '시작', x: 1100, y: 750, color: palette.root },
+        { id: 'moment-1', kind: 'video', title: '처음 발견한 주연이', memo: '우연히 보고 마음이 멈춘 순간', emotion: '청순', tags: ['청순', '설렘'], likes: 128, platform: 'YouTube', url: 'https://youtu.be/aqz-KE-bpKQ', startTime: '01:30', endTime: '02:18', thumbnail: 'https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg', x: 560, y: 380, color: palette.scene },
+        { id: 'feeling-1', kind: 'emotion', title: '주연이의 큐트한 순간', memo: '웃는 표정이 오래 남았어요', emotion: '큐트', tags: ['큐트'], likes: 94, x: 1630, y: 360, color: palette.emotion },
+        { id: 'moment-2', kind: 'video', title: '다시 보게 된 주연이의 무대', memo: '춤선과 눈빛이 좋아서 또 봤어요', emotion: '섹시', tags: ['섹시', '몰입'], likes: 236, platform: 'YouTube', url: 'https://youtu.be/dQw4w9WgXcQ', startTime: '00:42', endTime: '01:38', thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', x: 1680, y: 750, color: palette.root },
+        { id: 'moment-3', kind: 'video', title: '주연이의 따뜻한 인터뷰', memo: '팬을 향한 말이 위로가 되었어요', emotion: '위로', tags: ['위로', '청순'], likes: 82, platform: 'YouTube', url: 'https://youtu.be/9bZkp7q19f0', startTime: '02:10', endTime: '03:04', thumbnail: 'https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg', x: 570, y: 1110, color: palette.comfort },
+        { id: 'fruit-1', kind: 'end', title: '나만의 러브트리', memo: '좋아한 시간이 한 그루로 자랐어요', emotion: '완성', x: 1430, y: 1120, color: palette.end }
+      ];
+      let edges = [
+        { id: 'edge-1', source: 'root', target: 'moment-1', label: '첫 발견', color: palette.root, order: 1 },
+        { id: 'edge-2', source: 'root', target: 'feeling-1', label: '귀여워서', color: palette.emotion, order: 2 },
+        { id: 'edge-3', source: 'root', target: 'moment-2', label: '다시 재생', color: palette.scene, order: 3 },
+        { id: 'edge-4', source: 'root', target: 'moment-3', label: '마음이 놓여서', color: palette.comfort, order: 4 },
+        { id: 'edge-5', source: 'root', target: 'fruit-1', label: '좋아한 시간', color: palette.end, order: 5, recent: true }
+      ];
+
+      let selectedId = 'root';
+      let zoom = 0.72;
+      let pan = { x: 0, y: 0 };
+      let dragging = null;
+      let panning = null;
+      let connecting = null;
+      let layoutMode = 'radial';
+      let nextNumber = 1;
+
+      const ns = 'http://www.w3.org/2000/svg';
+      edgesSvg.setAttribute('viewBox', `0 0 ${WORLD_W} ${WORLD_H}`);
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+      }
+      function getNode(id) { return nodes.find((node) => node.id === id); }
+      function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+
+      function timeToSeconds(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return null;
+        if (/^\d+$/.test(raw)) return Number(raw);
+        const youtubeDuration = raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i);
+        if (youtubeDuration && youtubeDuration[0].match(/[hms]/i)) {
+          return Number(youtubeDuration[1] || 0) * 3600 + Number(youtubeDuration[2] || 0) * 60 + Number(youtubeDuration[3] || 0);
+        }
+        if (!/^\d{1,2}:\d{2}(?::\d{2})?$/.test(raw)) return null;
+        const parts = raw.split(':').map(Number);
+        if (parts.some((part) => !Number.isFinite(part))) return null;
+        if (parts.length === 2) return parts[0] * 60 + parts[1];
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      }
+
+      function secondsToTime(seconds) {
+        if (!Number.isFinite(seconds) || seconds < 0) return '';
+        const whole = Math.floor(seconds);
+        const hours = Math.floor(whole / 3600);
+        const minutes = Math.floor((whole % 3600) / 60);
+        const secs = whole % 60;
+        return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}` : `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      function normalizeTime(value) {
+        const seconds = timeToSeconds(value);
+        return seconds === null ? '' : secondsToTime(seconds);
+      }
+
+      function nodeStartTime(node) { return node?.startTime || node?.time || ''; }
+      function nodeEndTime(node) { return node?.endTime || ''; }
+
+      function timeFromUrl(value) {
+        try {
+          const parsed = new URL(value);
+          const hashTime = parsed.hash.match(/(?:^#|[?&])t=([^&]+)/i)?.[1] || '';
+          const raw = parsed.searchParams.get('t') || parsed.searchParams.get('start') || hashTime;
+          return raw ? normalizeTime(raw) : '';
+        } catch (error) {
+          return '';
+        }
+      }
+
+      function timeRangeLabel(node) {
+        const start = normalizeTime(nodeStartTime(node));
+        const end = normalizeTime(nodeEndTime(node));
+        if (!start && !end) return '';
+        if (start && end) return `${start} — ${end}`;
+        return `${start || '처음'}부터`;
+      }
+
+      function timedVideoUrl(url, startTime) {
+        if (!url) return '';
+        const seconds = timeToSeconds(startTime);
+        if (seconds === null) return url;
+        try {
+          const parsed = new URL(url);
+          parsed.searchParams.set('t', `${seconds}s`);
+          return parsed.toString();
+        } catch (error) {
+          return url;
+        }
+      }
+
+      function tagsForNode(node) {
+        return node?.tags?.length ? node.tags : (node?.emotion ? [node.emotion] : []);
+      }
+
+      function changeTagScore(tag, amount) {
+        if (!tagOptions.includes(tag)) return;
+        tagScores[tag] = Math.min(999, Math.max(0, (tagScores[tag] || 0) + amount));
+      }
+
+      function incrementTagScore(tag) {
+        changeTagScore(tag, 1);
+      }
+
+      function renderTagScores() {
+        tagScoreList.innerHTML = tagOptions.map((tag) => {
+          const value = Math.min(999, Math.max(0, tagScores[tag] || 0));
+          const width = Math.min(100, Math.max(4, value / 10));
+          return `<div class="tag-score-row"><span>${escapeHtml(tag)}</span><span class="tag-score-track"><span class="tag-score-fill" style="width:${width}%"></span></span><strong class="tag-score-value">${value}</strong></div>`;
+        }).join('');
+      }
+
+      function updateTagChoices() {
+        tagChoices.querySelectorAll('[data-tag-choice]').forEach((button) => {
+          button.classList.toggle('active', button.dataset.tagChoice === selectedTag);
+        });
+      }
+
+      function buildEmbedUrl(node) {
+        const youtubeId = youtubeIdFromUrl(node?.url);
+        if (!youtubeId) return '';
+        const params = new URLSearchParams({ autoplay: '1', rel: '0', modestbranding: '1' });
+        const start = timeToSeconds(nodeStartTime(node));
+        const end = timeToSeconds(nodeEndTime(node));
+        if (start !== null) params.set('start', String(start));
+        if (end !== null) params.set('end', String(end));
+        return `https://www.youtube-nocookie.com/embed/${youtubeId}?${params.toString()}`;
+      }
+
+      function renderModal(node) {
+        if (!node) return;
+        modalTitle.textContent = node.title;
+        modalTime.textContent = timeRangeLabel(node) ? `기억할 구간 · ${timeRangeLabel(node)}` : '기억할 시간은 아직 기록하지 않았어요';
+        modalMemo.textContent = node.memo || '이 장면에 남긴 마음이 여기에 보여요.';
+        modalLikeCount.textContent = String(node.likes || 0);
+        modalLike.classList.toggle('liked', likedNodes.has(node.id));
+        modalTags.innerHTML = tagOptions.map((tag) => {
+          const active = tagsForNode(node).includes(tag) || votedTags.has(`${node.id}:${tag}`);
+          return `<button class="modal-tag${active ? ' voted' : ''}" type="button" data-modal-tag="${escapeHtml(tag)}">${escapeHtml(tag)} · ${tagScores[tag] || 0}</button>`;
+        }).join('');
+        modalTags.querySelectorAll('[data-modal-tag]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const tag = button.dataset.modalTag;
+            const voteKey = `${node.id}:${tag}`;
+            if (votedTags.has(voteKey)) return;
+            votedTags.add(voteKey);
+            incrementTagScore(tag);
+            node.tags = Array.from(new Set([...(node.tags || []), tag]));
+            renderTagScores();
+            renderModal(node);
+            showToast(`${tag} 분위기가 주연이의 감정 온도에 더해졌어요 ✦`);
+          });
+        });
+      }
+
+      function openVideoModal(nodeId) {
+        const node = getNode(nodeId);
+        if (!node) return;
+        modalNodeId = node.id;
+        const embedUrl = buildEmbedUrl(node);
+        if (embedUrl) {
+          modalPlayer.innerHTML = `<iframe src="${escapeHtml(embedUrl)}" title="${escapeHtml(node.title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        } else {
+          const fallback = node.url
+            ? `<p>이 순간은 YouTube 미리보기를 만들 수 없어요.<br><a href="${escapeHtml(timedVideoUrl(node.url, nodeStartTime(node)))}" target="_blank" rel="noreferrer">원본 영상 열기 ↗</a></p>`
+            : '<p>아직 연결된 영상 링크가 없는 순간이에요.</p>';
+          modalPlayer.innerHTML = `<div class="modal-player-fallback">${fallback}</div>`;
+        }
+        renderModal(node);
+        videoModal.classList.add('open');
+        videoModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+      }
+
+      function closeVideoModal() {
+        videoModal.classList.remove('open');
+        videoModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        modalPlayer.innerHTML = '';
+        modalNodeId = null;
+      }
+
+      function focusAddForm(anchorId) {
+        selectedId = anchorId || selectedId;
+        renderNodes();
+        document.getElementById('addForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById('nodeTitle').focus();
+        showToast('이 순간에서 다음 장면을 이어갈 준비가 되었어요.');
+      }
+
+      function render() {
+        renderNodes();
+        renderEdges();
+        renderMiniMap();
+        renderTagScores();
+        updateMeta();
+        applyTransform();
+      }
+
+      function renderNodes() {
+        nodesLayer.innerHTML = '';
+        nodes.forEach((node, index) => {
+          const card = document.createElement('article');
+          card.className = `node node-${node.kind}${selectedId === node.id ? ' selected' : ''}`;
+          card.dataset.id = node.id;
+          card.style.left = `${node.x}px`;
+          card.style.top = `${node.y}px`;
+          card.style.setProperty('--node-color', node.color || palette.scene);
+          card.setAttribute('aria-label', node.title);
+          const range = timeRangeLabel(node);
+          const watchUrl = timedVideoUrl(node.url, nodeStartTime(node));
+          const playControl = watchUrl
+            ? `<button class="node-play" type="button" data-open-video="${escapeHtml(node.id)}" aria-label="${escapeHtml(node.title)} 구간 재생">▶</button>`
+            : '<span class="node-play">▶</span>';
+          const thumbnailImage = node.thumbnail ? `<img src="${escapeHtml(node.thumbnail)}" alt="${escapeHtml(node.title)} 썸네일" onerror="this.style.display='none'" />` : '';
+          const thumbnail = node.kind === 'video'
+            ? `<div class="node-thumb">${thumbnailImage}${playControl}</div>`
+            : '';
+          const symbol = node.kind === 'video' ? '' : `<div class="node-symbol">${icons[node.kind] || '✦'}</div>`;
+          const timing = node.kind === 'video' && range
+            ? `<div class="node-time"><span>기억할 구간</span><strong>${escapeHtml(range)}</strong>${watchUrl ? `<button class="node-time-link" type="button" data-open-video="${escapeHtml(node.id)}">구간 다시 보기 ↗</button>` : ''}</div>`
+            : '';
+          card.innerHTML = `
+            ${thumbnail}
+            <div class="node-top">
+              <span class="node-kind">${kindLabels[node.kind] || 'MOMENT'}</span>
+              <div class="node-actions">
+                <span class="node-index">${String(index).padStart(2, '0')}</span>
+                ${node.kind === 'video' ? `<button class="node-action node-add" type="button" data-add-from="${escapeHtml(node.id)}" aria-label="${escapeHtml(node.title)} 다음 순간 추가">＋</button>` : ''}
+                <button class="node-action node-delete" type="button" aria-label="${escapeHtml(node.title)} 삭제">×</button>
+              </div>
+            </div>
+            ${symbol}
+            <h3>${escapeHtml(node.title)}</h3>
+            <p>${escapeHtml(node.memo || '마음 한 줄을 남겨보세요.')}</p>
+            ${timing}
+            <div class="node-foot"><span class="emotion-chip">${escapeHtml(node.emotion || '마음')}</span><span class="node-foot-meta"><span>${escapeHtml(node.platform || 'LoveTree')}</span>${node.kind === 'video' ? `<span>♥ ${node.likes || 0}</span>` : ''}</span></div>
+            <span class="handle handle-source handle-target handle-top" data-port="top" title="이 점에서 다른 순간으로 이어보기"></span>
+            <span class="handle handle-source handle-target handle-left" data-port="left" title="이 점에서 다른 순간으로 이어보기"></span>
+            <span class="handle handle-source handle-target handle-right" data-port="right" title="이 점에서 다른 순간으로 이어보기"></span>
+            <span class="handle handle-source handle-target handle-bottom" data-port="bottom" title="이 점에서 다른 순간으로 이어보기"></span>
+          `;
+          card.addEventListener('pointerdown', handleNodePointerDown);
+          card.addEventListener('click', (event) => {
+            if (event.target.closest('.handle') || event.target.closest('.node-delete') || event.target.closest('.node-time-link') || event.target.closest('.node-play')) return;
+            selectedId = node.id;
+            renderNodes();
+            updateInspector();
+          });
+          card.querySelector('.node-delete').addEventListener('click', (event) => {
+            event.stopPropagation();
+            removeNode(node.id);
+          });
+          card.querySelector('[data-add-from]')?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            focusAddForm(node.id);
+          });
+          card.querySelectorAll('[data-open-video]').forEach((control) => control.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openVideoModal(node.id);
+          }));
+          card.querySelectorAll('.handle-source').forEach((handle) => handle.addEventListener('pointerdown', handleSourcePointerDown));
+          nodesLayer.appendChild(card);
+        });
+        updateInspector();
+      }
+
+      function createSvgElement(tag, attributes = {}) {
+        const element = document.createElementNS(ns, tag);
+        Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+        return element;
+      }
+
+      function getEdgeGeometry(source, target) {
+        const dx = target.x - source.x;
+        const dy = target.y - source.y;
+        const curve = Math.min(180, Math.max(45, Math.abs(dx) * .2));
+        const direction = dx >= 0 ? 1 : -1;
+        const c1 = Math.abs(dx) > 90
+          ? { x: source.x + curve * direction, y: source.y }
+          : { x: source.x + 80, y: source.y + dy * .25 };
+        const c2 = Math.abs(dx) > 90
+          ? { x: target.x - curve * direction, y: target.y }
+          : { x: target.x - 80, y: target.y - dy * .25 };
+        return {
+          d: `M ${source.x} ${source.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${target.x} ${target.y}`,
+          c1,
+          c2
+        };
+      }
+
+      function pointOnBezier(source, geometry, target, t) {
+        const u = 1 - t;
+        return {
+          x: (u ** 3) * source.x + 3 * (u ** 2) * t * geometry.c1.x + 3 * u * (t ** 2) * geometry.c2.x + (t ** 3) * target.x,
+          y: (u ** 3) * source.y + 3 * (u ** 2) * t * geometry.c1.y + 3 * u * (t ** 2) * geometry.c2.y + (t ** 3) * target.y
+        };
+      }
+
+      function renderEdges() {
+        edgesSvg.querySelectorAll('.edge-group, .temp-group').forEach((element) => element.remove());
+        edges.forEach((edge) => {
+          const source = getNode(edge.source);
+          const target = getNode(edge.target);
+          if (!source || !target) return;
+          const geometry = getEdgeGeometry(source, target);
+          const path = geometry.d;
+          const group = createSvgElement('g', { class: `edge-group${edge.recent ? ' edge-recent' : ''}` });
+          const glow = createSvgElement('path', { class: 'edge-glow', d: path, stroke: edge.color || palette.root });
+          const pathElement = createSvgElement('path', { class: `edge-path${edge.recent ? ' edge-new' : ''}`, d: path, stroke: edge.color || palette.root });
+          group.appendChild(glow);
+          group.appendChild(pathElement);
+
+          const heartCount = Math.min(12, Math.max(1, edge.order || 1));
+          const heartClass = edge.color === palette.emotion ? ' edge-heart-alt' : edge.color === palette.scene ? ' edge-heart-warm' : '';
+          for (let heartIndex = 0; heartIndex < heartCount; heartIndex += 1) {
+            const point = pointOnBezier(source, geometry, target, (heartIndex + 1) / (heartCount + 1));
+            const heart = createSvgElement('text', { class: `edge-heart${heartClass}`, x: point.x, y: point.y, 'text-anchor': 'middle', 'dominant-baseline': 'middle' });
+            heart.textContent = '♥';
+            heart.style.animationDelay = `${heartIndex * -0.17}s`;
+            group.appendChild(heart);
+          }
+
+          const spark = createSvgElement('circle', { class: 'edge-spark', r: edge.recent ? 8 : 5 });
+          spark.appendChild(createSvgElement('animateMotion', { dur: edge.recent ? '1.9s' : '3.4s', repeatCount: 'indefinite', path }));
+          group.appendChild(spark);
+          if (edge.recent) {
+            const sparkTwo = createSvgElement('circle', { class: 'edge-spark', r: 4, opacity: .78 });
+            sparkTwo.appendChild(createSvgElement('animateMotion', { dur: '2.6s', begin: '.8s', repeatCount: 'indefinite', path }));
+            group.appendChild(sparkTwo);
+          }
+
+          const mx = (source.x + target.x) / 2;
+          const my = (source.y + target.y) / 2 - 10;
+          const label = edge.label || '이어짐';
+          const width = Math.max(58, label.length * 14 + 24);
+          const labelGroup = createSvgElement('g', { class: 'edge-label', transform: `translate(${mx - width / 2} ${my - 15})` });
+          labelGroup.appendChild(createSvgElement('rect', { width, height: 29, rx: 14.5 }));
+          const text = createSvgElement('text', { x: width / 2, y: 19, 'text-anchor': 'middle' });
+          text.textContent = label;
+          labelGroup.appendChild(text);
+          group.appendChild(labelGroup);
+          edgesSvg.appendChild(group);
+        });
+        if (connecting) {
+          const source = getNode(connecting.sourceId);
+          if (source) {
+            const group = createSvgElement('g', { class: 'temp-group' });
+            const path = createSvgElement('path', { class: 'temp-path', d: `M ${source.x} ${source.y} C ${source.x + 80} ${source.y}, ${connecting.pointer.x - 80} ${connecting.pointer.y}, ${connecting.pointer.x} ${connecting.pointer.y}` });
+            group.appendChild(path);
+            edgesSvg.appendChild(group);
+          }
+        }
+        if (!edgesSvg.querySelector('#arrow')) {
+          const defs = createSvgElement('defs');
+          const marker = createSvgElement('marker', { id: 'arrow', markerWidth: 10, markerHeight: 10, refX: 8, refY: 3, orient: 'auto', markerUnits: 'strokeWidth' });
+          marker.appendChild(createSvgElement('path', { d: 'M0,0 L0,6 L8,3 z', fill: '#b78e8d' }));
+          defs.appendChild(marker);
+          edgesSvg.prepend(defs);
+        }
+      }
+
+      function renderMiniMap() {
+        miniMap.innerHTML = '';
+        nodes.forEach((node) => {
+          const dot = document.createElement('span');
+          dot.className = 'mini-dot';
+          dot.style.left = `${node.x / WORLD_W * 100}%`;
+          dot.style.top = `${node.y / WORLD_H * 100}%`;
+          dot.style.setProperty('--dot', node.color || palette.scene);
+          miniMap.appendChild(dot);
+        });
+        const rect = canvasWrap.getBoundingClientRect();
+        const visibleW = rect.width / zoom;
+        const visibleH = rect.height / zoom;
+        const left = clamp((-pan.x / zoom) / WORLD_W * 100, 0, 100);
+        const top = clamp((-pan.y / zoom) / WORLD_H * 100, 0, 100);
+        const viewport = document.createElement('span');
+        viewport.className = 'mini-viewport';
+        viewport.style.left = `${left}%`;
+        viewport.style.top = `${top}%`;
+        viewport.style.width = `${clamp(visibleW / WORLD_W * 100, 5, 100)}%`;
+        viewport.style.height = `${clamp(visibleH / WORLD_H * 100, 5, 100)}%`;
+        miniMap.appendChild(viewport);
+      }
+
+      function updateMeta() { nodeCount.textContent = `${nodes.length}개의 순간 · ${edges.length}개의 가지`; }
+      function updateInspector() {
+        const node = getNode(selectedId);
+        if (!node) {
+          selectedInfo.innerHTML = '<strong>선택된 순간 없음</strong><span>캔버스에서 순간 카드를 눌러보세요.</span>';
+          deleteSelected.disabled = true;
+          return;
+        }
+        const incoming = edges.filter((edge) => edge.target === node.id).length;
+        const outgoing = edges.filter((edge) => edge.source === node.id).length;
+        const range = timeRangeLabel(node);
+        const watchUrl = timedVideoUrl(node.url, nodeStartTime(node));
+        const timeLine = range ? `<span class="selected-time">기억할 구간 · ${escapeHtml(range)}</span>` : '';
+        const linkLine = watchUrl ? '<button class="selected-link" type="button" data-open-selected>이 구간 다시 보기 ↗</button>' : '';
+        selectedInfo.innerHTML = `<strong>${escapeHtml(node.title)}</strong><span>${kindLabels[node.kind]} · 받는 가지 ${incoming} · 보내는 가지 ${outgoing}${node.kind === 'video' ? ` · 좋아요 ${node.likes || 0}` : ''}</span>${timeLine}${linkLine}`;
+        selectedInfo.querySelector('[data-open-selected]')?.addEventListener('click', () => openVideoModal(node.id));
+        deleteSelected.disabled = node.id === 'root';
+      }
+
+      function applyTransform() {
+        canvasSpace.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
+        zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+        renderMiniMap();
+      }
+
+      function worldPoint(clientX, clientY) {
+        const rect = canvasWrap.getBoundingClientRect();
+        return { x: (clientX - rect.left - pan.x) / zoom, y: (clientY - rect.top - pan.y) / zoom };
+      }
+
+      function handleNodePointerDown(event) {
+        if (event.button !== 0 || event.target.closest('.handle') || event.target.closest('.node-delete') || event.target.closest('.node-time-link') || event.target.closest('.node-play')) return;
+        const id = event.currentTarget.dataset.id;
+        const node = getNode(id);
+        const point = worldPoint(event.clientX, event.clientY);
+        selectedId = id;
+        dragging = { id, dx: node.x - point.x, dy: node.y - point.y };
+        canvasWrap.classList.add('dragging');
+        event.preventDefault();
+      }
+
+      function handleSourcePointerDown(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const node = event.currentTarget.closest('.node');
+        connecting = { sourceId: node.dataset.id, pointer: worldPoint(event.clientX, event.clientY) };
+        renderEdges();
+      }
+
+      function removeNode(id) {
+        if (id === 'root') return;
+        nodes = nodes.filter((node) => node.id !== id);
+        edges = edges.filter((edge) => edge.source !== id && edge.target !== id);
+        if (selectedId === id) selectedId = 'root';
+        showToast('카드와 연결선이 삭제되었어요.');
+        render();
+      }
+
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        const inModal = videoModal.classList.contains('open');
+        Object.assign(toast.style, { position: inModal ? 'fixed' : 'absolute', left: '50%', top: '18px', transform: 'translateX(-50%)', zIndex: inModal ? 4000 : 20, padding: '9px 15px', border: '1px solid rgba(207,183,170,.65)', borderRadius: '999px', color: '#806f6a', background: 'rgba(255,252,247,.95)', boxShadow: '0 8px 18px rgba(97,73,68,.12)', fontSize: '11px' });
+        (inModal ? document.body : canvasWrap).appendChild(toast);
+        setTimeout(() => toast.remove(), 2100);
+      }
+
+      function addEdge(sourceId, targetId) {
+        if (sourceId === targetId || edges.some((edge) => edge.source === sourceId && edge.target === targetId)) return;
+        const target = getNode(targetId);
+        edges.forEach((edge) => { edge.recent = false; });
+        edges.push({ id: `edge-${Date.now()}`, source: sourceId, target: targetId, label: target?.emotion || '이어짐', color: target?.color || palette.root, order: edges.length + 1, recent: true });
+        showToast('새로운 마음의 가지가 이어졌어요 ✦');
+      }
+
+      function youtubeIdFromUrl(value) {
+        const match = String(value || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&#/]+)/i);
+        return match ? match[1] : '';
+      }
+
+      function applyLayout(mode) {
+        layoutMode = mode;
+        const others = nodes.filter((node) => node.id !== 'root');
+        const root = getNode('root');
+        root.x = 1100; root.y = 750;
+        if (mode === 'radial' || mode === 'circle') {
+          const radius = mode === 'circle' ? 460 : 380;
+          others.forEach((node, index) => {
+            const angle = -Math.PI / 2 + (index / Math.max(1, others.length)) * Math.PI * 2;
+            node.x = root.x + Math.cos(angle) * radius;
+            node.y = root.y + Math.sin(angle) * radius * .75;
+          });
+        } else if (mode === 'tree') {
+          root.x = 280; root.y = 750;
+          const columns = [580, 950, 1320, 1690];
+          others.forEach((node, index) => {
+            const column = index % columns.length;
+            const row = Math.floor(index / columns.length);
+            node.x = columns[column];
+            node.y = 250 + row * 300 + (column % 2) * 80;
+          });
+        } else {
+          root.x = 1100; root.y = 130;
+          const cols = 4;
+          others.forEach((node, index) => {
+            node.x = 370 + (index % cols) * 490;
+            node.y = 440 + Math.floor(index / cols) * 280;
+          });
+        }
+        document.querySelectorAll('[data-layout]').forEach((button) => button.classList.toggle('active', button.dataset.layout === mode));
+        render();
+        fitView();
+      }
+
+      function zoomAround(nextZoom) {
+        const rect = canvasWrap.getBoundingClientRect();
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const before = { x: (cx - pan.x) / zoom, y: (cy - pan.y) / zoom };
+        zoom = clamp(nextZoom, .35, 1.45);
+        pan.x = cx - before.x * zoom;
+        pan.y = cy - before.y * zoom;
+        applyTransform();
+      }
+
+      function fitView() {
+        const margin = 180;
+        const minX = Math.min(...nodes.map((node) => node.x)) - margin;
+        const maxX = Math.max(...nodes.map((node) => node.x)) + margin;
+        const minY = Math.min(...nodes.map((node) => node.y)) - margin;
+        const maxY = Math.max(...nodes.map((node) => node.y)) + margin;
+        const rect = canvasWrap.getBoundingClientRect();
+        zoom = clamp(Math.min(rect.width / (maxX - minX), rect.height / (maxY - minY)), .35, 1.15);
+        pan.x = (rect.width - (maxX - minX) * zoom) / 2 - minX * zoom;
+        pan.y = (rect.height - (maxY - minY) * zoom) / 2 - minY * zoom;
+        applyTransform();
+      }
+
+      document.querySelectorAll('[data-layout]').forEach((button) => button.addEventListener('click', () => applyLayout(button.dataset.layout)));
+      document.getElementById('zoomIn').addEventListener('click', () => zoomAround(zoom + .1));
+      document.getElementById('zoomOut').addEventListener('click', () => zoomAround(zoom - .1));
+      document.getElementById('fitView').addEventListener('click', fitView);
+      deleteSelected.addEventListener('click', () => removeNode(selectedId));
+      tagChoices.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-tag-choice]');
+        if (!button) return;
+        selectedTag = button.dataset.tagChoice;
+        document.getElementById('nodeEmotion').value = selectedTag;
+        updateTagChoices();
+      });
+      document.getElementById('nodeEmotion').addEventListener('change', (event) => {
+        selectedTag = event.target.value;
+        updateTagChoices();
+      });
+      modalClose.addEventListener('click', closeVideoModal);
+      videoModal.addEventListener('click', (event) => {
+        if (event.target === videoModal) closeVideoModal();
+      });
+      modalLike.addEventListener('click', () => {
+        const node = getNode(modalNodeId);
+        if (!node) return;
+        const primaryTag = tagsForNode(node)[0] || node.emotion;
+        if (likedNodes.has(node.id)) {
+          likedNodes.delete(node.id);
+          node.likes = Math.max(0, (node.likes || 0) - 1);
+          changeTagScore(primaryTag, -1);
+          showToast('좋아요를 취소했어요.');
+        } else {
+          likedNodes.add(node.id);
+          node.likes = (node.likes || 0) + 1;
+          incrementTagScore(primaryTag);
+          showToast(`${primaryTag || '이 순간'} 온도가 올라갔어요 ♥`);
+        }
+        renderTagScores();
+        renderModal(node);
+      });
+      modalAdd.addEventListener('click', () => {
+        const anchorId = modalNodeId;
+        closeVideoModal();
+        focusAddForm(anchorId);
+      });
+      modalDelete.addEventListener('click', () => {
+        const id = modalNodeId;
+        closeVideoModal();
+        if (id) removeNode(id);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal();
+      });
+      updateTagChoices();
+
+      document.getElementById('addForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const titleInput = document.getElementById('nodeTitle');
+        const urlInput = document.getElementById('nodeUrl');
+        const startInput = document.getElementById('nodeStart');
+        const endInput = document.getElementById('nodeEnd');
+        const emotionInput = document.getElementById('nodeEmotion');
+        const emotion = selectedTag || emotionInput.value;
+        emotionInput.value = emotion;
+        const url = urlInput.value.trim();
+        const youtubeId = youtubeIdFromUrl(url);
+        const rawStart = startInput.value.trim() || timeFromUrl(url);
+        const rawEnd = endInput.value.trim();
+        const startTime = normalizeTime(rawStart);
+        const endTime = normalizeTime(rawEnd);
+        if (rawStart && !startTime) {
+          showToast('시작 시간은 00:00 또는 01:02:30 형식으로 적어주세요.');
+          startInput.focus();
+          return;
+        }
+        if (rawEnd && !endTime) {
+          showToast('끝 시간은 00:00 또는 01:02:30 형식으로 적어주세요.');
+          endInput.focus();
+          return;
+        }
+        if (startTime && endTime && timeToSeconds(endTime) < timeToSeconds(startTime)) {
+          showToast('끝 시간은 시작 시간보다 뒤에 있어야 해요.');
+          endInput.focus();
+          return;
+        }
+        const anchor = getNode(selectedId) || getNode('root');
+        const id = `moment-${Date.now()}`;
+        const angle = (-.8 + (nextNumber % 5) * .37);
+        const color = emotion === '큐트' ? palette.emotion : emotion === '위로' || emotion === '청순' ? palette.comfort : emotion === '섹시' || emotion === '몰입' ? palette.root : palette.scene;
+        const newNode = { id, kind: 'video', title: titleInput.value.trim() || `새로운 순간 ${nextNumber}`, memo: '내가 남긴 마음이 다음 장면으로 이어져요', emotion, tags: [emotion], likes: 0, platform: youtubeId ? 'YouTube' : 'LoveTree', url, time: startTime, startTime, endTime, thumbnail: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : '', x: clamp(anchor.x + Math.cos(angle) * 360, 160, WORLD_W - 160), y: clamp(anchor.y + Math.sin(angle) * 300, 130, WORLD_H - 130), color };
+        nodes.push(newNode);
+        edges.forEach((edge) => { edge.recent = false; });
+        edges.push({ id: `edge-${Date.now()}`, source: anchor.id, target: id, label: emotion, color, order: edges.length + 1, recent: true });
+        nextNumber += 1;
+        selectedId = id;
+        titleInput.value = '';
+        urlInput.value = '';
+        startInput.value = '';
+        endInput.value = '';
+        render();
+        showToast('새 순간이 트리에 피어났어요 ✿');
+      });
+
+      canvasWrap.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0 || event.target.closest('.node')) return;
+        panning = { x: event.clientX, y: event.clientY, panX: pan.x, panY: pan.y };
+        event.preventDefault();
+      });
+
+      document.addEventListener('pointermove', (event) => {
+        if (dragging) {
+          const point = worldPoint(event.clientX, event.clientY);
+          const node = getNode(dragging.id);
+          if (node) {
+            node.x = clamp(point.x + dragging.dx, 100, WORLD_W - 100);
+            node.y = clamp(point.y + dragging.dy, 100, WORLD_H - 100);
+            render();
+          }
+          return;
+        }
+        if (panning) {
+          pan.x = panning.panX + event.clientX - panning.x;
+          pan.y = panning.panY + event.clientY - panning.y;
+          applyTransform();
+          return;
+        }
+        if (connecting) {
+          connecting.pointer = worldPoint(event.clientX, event.clientY);
+          renderEdges();
+        }
+      });
+
+      document.addEventListener('pointerup', (event) => {
+        if (dragging) { dragging = null; canvasWrap.classList.remove('dragging'); }
+        if (panning) panning = null;
+        if (connecting) {
+          const hitElements = document.elementsFromPoint(event.clientX, event.clientY);
+          const targetHandle = hitElements.find((element) => element.closest?.('.handle-target'))?.closest('.handle-target');
+          const targetNode = targetHandle?.closest('.node') || hitElements.find((element) => element.closest?.('.node'))?.closest('.node');
+          if (targetNode) addEdge(connecting.sourceId, targetNode.dataset.id);
+          connecting = null;
+          render();
+        }
+      });
+
+      canvasWrap.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        zoomAround(zoom + (event.deltaY < 0 ? .06 : -.06));
+      }, { passive: false });
+
+      window.addEventListener('resize', fitView);
+      render();
+      requestAnimationFrame(fitView);
+    })();
+  </script>
+</body>
+</html>
