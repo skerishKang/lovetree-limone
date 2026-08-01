@@ -18,6 +18,7 @@ export default function V3ConnectStep() {
   const { draft, update } = useV3ConnectDraft();
   const [customRelation, setCustomRelation] = useState("");
   const [connected, setConnected] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
 
   const youtubeId = parseYouTubeId(draft.nextUrl);
 
@@ -33,6 +34,13 @@ export default function V3ConnectStep() {
   }
 
   function finish() {
+    if (!draft.nextUrl.trim() || !draft.nextTitle.trim()) {
+      setConnectError(
+        "연결할 다음 순간의 URL과 제목을 입력해 주세요. (건너뛰려면 아래 링크를 사용해요)",
+      );
+      return;
+    }
+    setConnectError(null);
     setConnected(true);
   }
 
@@ -81,12 +89,12 @@ export default function V3ConnectStep() {
               />
             </div>
             <div className="v3-field">
-              <label className="v3-label" htmlFor="v3-connect-title">
+              <label className="v3-label" htmlFor="v3-connect-title-input">
                 다음 순간 제목
               </label>
               <input
                 className="v3-input"
-                id="v3-connect-title"
+                id="v3-connect-title-input"
                 value={draft.nextTitle}
                 onChange={(event) => update({ nextTitle: event.target.value })}
                 placeholder="예: 댓글을 따라 찾은 무대"
@@ -149,6 +157,11 @@ export default function V3ConnectStep() {
               두 순간이 <b>{draft.relationLabel}</b>로 연결됐어요. 이제 트리를 펼쳐
               확인할 수 있어요.
             </div>
+          )}
+          {connectError && (
+            <p className="v3-muted" role="alert">
+              {connectError}
+            </p>
           )}
           <div className="v3-onboarding-actions">
             {connected ? (

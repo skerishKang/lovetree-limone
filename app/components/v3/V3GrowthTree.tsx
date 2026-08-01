@@ -12,7 +12,7 @@ interface V3GrowthTreeProps {
   selectedId: string | null;
   onSelect: (id: string) => void;
   editMode: boolean;
-  counts: { total: number; flowers: number; fruits: number };
+  counts: { total: number; displayed: number; flowers: number; fruits: number };
 }
 
 const COLORS = ["#c86e79", "#8a9a75", "#a980d1", "#e2b35c", "#7a9cc4", "#69b99a"];
@@ -63,6 +63,7 @@ export default function V3GrowthTree({
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
   const [dragId, setDragId] = useState<string | null>(null);
   const dragOffset = useRef({ dx: 0, dy: 0 });
+  const didDrag = useRef(false);
 
   const layout = useMemo(() => layoutTree(roots, memories), [roots, memories]);
 
@@ -95,6 +96,8 @@ export default function V3GrowthTree({
       dx: event.clientX - rect.left - pos.x,
       dy: event.clientY - rect.top - pos.y,
     };
+    didDrag.current = false;
+    canvasRef.current?.setPointerCapture?.(event.pointerId);
     setDragId(memoryId);
   }
 
@@ -104,11 +107,30 @@ export default function V3GrowthTree({
     if (!rect) return;
     const x = Math.max(8, Math.min(event.clientX - rect.left - dragOffset.current.dx, rect.width - 160));
     const y = Math.max(8, Math.min(event.clientY - rect.top - dragOffset.current.dy, rect.height - 90));
+    didDrag.current = true;
     setPositions((prev) => ({ ...prev, [dragId]: { x, y } }));
   }
 
-  function endDrag() {
+  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    if (dragId) {
+      canvasRef.current?.releasePointerCapture?.(event.pointerId);
+    }
     setDragId(null);
+  }
+
+  function moveSelectedBy(dx: number, dy: number) {
+    if (!selectedId || !editMode) return;
+    setPositions((prev) => {
+      const current = prev[selectedId] ?? layout.find((n) => n.memory.id === selectedId);
+      if (!current) return prev;
+      return {
+        ...prev,
+        [selectedId]: {
+          x: Math.max(8, Math.min(current.x + dx, (canvasRef.current?.clientWidth ?? 800) - 160)),
+          y: Math.max(8, Math.min(current.y + dy, (canvasRef.current?.clientHeight ?? 500) - 90)),
+        },
+      };
+    });
   }
 
   const rootIds = new Set(roots.map((root) => root.id));
@@ -120,8 +142,8 @@ export default function V3GrowthTree({
         ref={canvasRef}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
+        onPointerCancel={endDrag}
         onPointerLeave={endDrag}
-        role={editMode ? "application" : undefined}
         aria-label="성장 트리 캔버스"
       >
         <svg aria-hidden="true">
@@ -156,13 +178,31 @@ export default function V3GrowthTree({
               role="button"
               tabIndex={0}
               aria-pressed={selectedId === memory.id}
-              aria-label={`${memory.title} 순간`}
+              aria-label={`${memory.title} 순간${editMode ? " · 배치 편집 중" : ""}`}
               style={{ left: pos.x, top: pos.y, zIndex: dragId === memory.id ? 5 : 2 }}
-              onClick={() => onSelect(memory.id)}
+              onClick={() => {
+                if (didDrag.current) return;
+                onSelect(memory.id);
+              }}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
                   onSelect(memory.id);
+                }
+                if (editMode) {
+                  if (event.key === "ArrowLeft") {
+                    event.preventDefault();
+                    moveSelectedBy(-12, 0);
+                  } else if (event.key === "ArrowRight") {
+                    event.preventDefault();
+                    moveSelectedBy(12, 0);
+                  } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    moveSelectedBy(0, -12);
+                  } else if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    moveSelectedBy(0, 12);
+                  }
                 }
               }}
               onPointerDown={(event) => onPointerDown(event, memory.id)}
@@ -202,7 +242,7 @@ export default function V3GrowthTree({
       <div className="v3-tree-legend" aria-label="트리 통계">
         <span>
           <i style={{ background: "#c86e79" }} aria-hidden="true" />
-          이어진 순간 {counts.total}개
+          표시된 순간 {counts.displayed} / {counts.total}개
         </span>
         <span>
           <i style={{ background: "#e5c650" }} aria-hidden="true" />

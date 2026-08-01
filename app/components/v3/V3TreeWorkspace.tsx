@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import type { V3PreviewMemory, V3PreviewTree, V3ViewMode } from "./v3-types";
 import {
-  v3ChildrenOf,
   v3EmotionLabel,
   v3MemoriesByTree,
   v3RootMemories,
@@ -54,16 +53,32 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
     });
   }, [memories, emotionFilter, sourceFilter]);
 
+  const filteredRoots = useMemo(() => {
+    return roots.filter((memory) => {
+      if (emotionFilter && !memory.emotionTags.includes(emotionFilter)) return false;
+      if (sourceFilter && memory.sourceType !== sourceFilter) return false;
+      return true;
+    });
+  }, [roots, emotionFilter, sourceFilter]);
+
+  const effectiveSelectedId =
+    selectedId && filteredMemories.some((memory) => memory.id === selectedId)
+      ? selectedId
+      : null;
+
   const selectedMemory =
-    memories.find((memory) => memory.id === selectedId) ?? null;
+    effectiveSelectedId
+      ? memories.find((memory) => memory.id === effectiveSelectedId) ?? null
+      : null;
 
   const treeCounts = useMemo(() => {
     return {
       total: memories.length,
+      displayed: filteredMemories.length,
       flowers: Math.max(0, memories.length - 3),
       fruits: Math.max(0, memories.length - 5),
     };
-  }, [memories]);
+  }, [memories, filteredMemories]);
 
   const relationFor = (memoryId: string) => {
     const memory = memories.find((m) => m.id === memoryId);
@@ -71,11 +86,8 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
   };
 
   const childCountFor = (memoryId: string) => {
-    const childTree = new Set(
-      v3ChildrenOf(memoryId).map((child) => child.id),
-    );
-    void childTree;
-    return v3ChildrenOf(memoryId).length;
+    // 숨겨진 노드는 개수에 포함하지 않는다 (필터 일관성)
+    return filteredMemories.filter((m) => m.parentId === memoryId).length;
   };
 
   const availableEmotions = useMemo(
@@ -98,7 +110,7 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
         sourceFilter={sourceFilter}
         onEmotionFilter={setEmotionFilter}
         onSourceFilter={setSourceFilter}
-        selectedId={selectedId}
+        selectedId={effectiveSelectedId}
         onSelect={setSelectedId}
       />
       <div className="v3-workspace-center">
@@ -139,10 +151,10 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
         {viewMode === "growth" && (
           <V3GrowthTree
             memories={filteredMemories}
-            roots={roots}
+            roots={filteredRoots}
             relationFor={relationFor}
             childCountFor={childCountFor}
-            selectedId={selectedId}
+            selectedId={effectiveSelectedId}
             onSelect={setSelectedId}
             editMode={editMode}
             counts={treeCounts}
@@ -155,7 +167,7 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
         {viewMode === "map" && (
           <V3ConnectionMap
             memories={filteredMemories}
-            roots={roots}
+            roots={filteredRoots}
             relationFor={relationFor}
           />
         )}
@@ -188,6 +200,8 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
         <V3FullscreenDrawer
           treeId={tree.id}
           onClose={() => setIsComposerOpen(false)}
+          variant="drawer"
+          memories={filteredMemories}
         />
       )}
       {isFullscreen && (
@@ -195,6 +209,8 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
           treeId={tree.id}
           onClose={() => setIsFullscreen(false)}
           title="전체 화면 트리"
+          variant="fullscreen"
+          memories={filteredMemories}
         />
       )}
     </div>

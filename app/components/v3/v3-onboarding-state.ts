@@ -59,8 +59,8 @@ export function useV3SourceDraft() {
         title: "",
         sourceName: "YouTube",
         recordDate: today,
-        startSeconds: "0:00",
-        endSeconds: "0:00",
+        startSeconds: "",
+        endSeconds: "",
       }
     );
   });

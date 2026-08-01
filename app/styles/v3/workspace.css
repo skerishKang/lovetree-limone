@@ -297,6 +297,17 @@
     linear-gradient(155deg, rgba(244, 233, 221, 0.72), rgba(238, 241, 222, 0.64));
 }
 
+.v3-fullscreen-tree {
+  position: absolute;
+  inset: 0;
+}
+
+.v3-fullscreen-tree-node {
+  position: absolute;
+  width: 168px;
+  transform: translate(-50%, -50%);
+}
+
 .v3-drawer {
   position: relative;
   display: grid;

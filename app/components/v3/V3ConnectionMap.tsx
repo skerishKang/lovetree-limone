@@ -54,6 +54,7 @@ export default function V3ConnectionMap({
   const [query, setQuery] = useState("");
   const [emotionFilter, setEmotionFilter] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
 
   const nodes = useMemo(() => layoutNodes(roots, memories), [roots, memories]);
 
@@ -102,8 +103,16 @@ export default function V3ConnectionMap({
         관계 이유를 확인할 수 있어요.
       </p>
       <div className="v3-map-canvas" aria-label="연결 지도 캔버스">
-        <svg aria-hidden="true">
-          {edges.map((edge) => {
+        <div
+          className="v3-map-world"
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: "50% 50%",
+            position: "absolute",
+            inset: 0,
+          }}
+        >
+        <svg aria-hidden="true">          {edges.map((edge) => {
             const from = nodeById.get(edge.from);
             const to = nodeById.get(edge.to);
             if (!from || !to) return null;
@@ -142,14 +151,45 @@ export default function V3ConnectionMap({
             </button>
           );
         })}
+        <div className="v3-minimap" aria-hidden="true">
+          {nodes.map((node) => (
+            <i
+              key={node.memory.id}
+              style={{
+                position: "absolute",
+                left: `${(node.x / 840) * 100}%`,
+                top: `${(node.y / 520) * 100}%`,
+                width: 4,
+                height: 4,
+                borderRadius: "50%",
+                background: visibleIds.has(node.memory.id) ? COLORS[0] : "#d9cac2",
+              }}
+            />
+          ))}
+        </div>
+        </div>
         <div className="v3-map-controls">
-          <button className="v3-btn v3-btn-icon v3-btn-ghost" type="button" aria-label="확대">
+          <button
+            className="v3-btn v3-btn-icon v3-btn-ghost"
+            type="button"
+            aria-label="확대"
+            onClick={() => setZoom((value) => Math.min(2, value + 0.2))}
+          >
             ＋
           </button>
-          <button className="v3-btn v3-btn-icon v3-btn-ghost" type="button" aria-label="축소">
+          <button
+            className="v3-btn v3-btn-icon v3-btn-ghost"
+            type="button"
+            aria-label="축소"
+            onClick={() => setZoom((value) => Math.max(0.5, value - 0.2))}
+          >
             −
           </button>
-          <button className="v3-btn v3-btn-quiet" type="button">
+          <button
+            className="v3-btn v3-btn-quiet"
+            type="button"
+            onClick={() => setZoom(1)}
+          >
             전체 맞춤
           </button>
         </div>
@@ -204,22 +244,6 @@ export default function V3ConnectionMap({
             </button>
           </div>
         )}
-        <div className="v3-minimap" aria-hidden="true">
-          {nodes.map((node) => (
-            <i
-              key={node.memory.id}
-              style={{
-                position: "absolute",
-                left: `${(node.x / 840) * 100}%`,
-                top: `${(node.y / 520) * 100}%`,
-                width: 4,
-                height: 4,
-                borderRadius: "50%",
-                background: visibleIds.has(node.memory.id) ? COLORS[0] : "#d9cac2",
-              }}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );

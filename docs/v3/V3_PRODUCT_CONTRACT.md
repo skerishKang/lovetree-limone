@@ -10,13 +10,28 @@ V3는 **V1/V2의 대체가 아니라 별도의 세 번째 제품 후보**입니�
 
 V1과 V2는 보존됩니다. V3는 V1/V2의 외형 복제본이 아닙니다.
 
-## 2. 핵심 제품 문장
+## 2. Canonical 문서 참조
+
+V3는 저장소의 제품 권위 문서를 따른다. 이 계약이 충돌하면 아래 문서가 우선한다.
+
+- `docs/product/LOVETREE_PRODUCT_SPEC.md` — 제품 헌법 (Moment/Connection 모델, 기본 공개 범위 등)
+- `docs/product/PRODUCT_DOCUMENT_HIERARCHY.md` — 문서 계층
+- `docs/v3/V3_HTML_TSX_INTEGRATION_ANALYSIS.md` — 16개 HTML 분석·공식 배치 근거
+
+특히 헌법의 핵심 결정을 준수한다.
+
+- 감정 모델: `primaryEmotion` + `emotionTags[]` — 태그는 **감정 상태만** 담는다 (탐색 계기·관계 이유는 `relationType`/`relationLabel`/`relationMemo`)
+- 관계 모델: `parentId` + `relationType` + 선택 설명 (상세: `V3_SHARED_CORE_GAPS.md`)
+- 기본 공개 범위: `private`, 사용자가 명시적으로 `unlisted`/`public` 선택
+- `recordDate`(기록 날짜)와 `startSeconds`/`endSeconds`(영상 내 시점) 분리
+
+## 3. 핵심 제품 문장
 
 > 한 순간을 발견하고, 그때의 마음을 남기고,
 > 왜 다음 순간으로 이어졌는지를 연결해
 > 시간이 쌓인 나만의 사랑 연혁을 만드는 서비스.
 
-## 3. 기본 시각 언어
+## 4. 기본 시각 언어
 
 - 따뜻한 종이 질감 (paper texture)
 - 식물·가지·꽃의 성장 은유

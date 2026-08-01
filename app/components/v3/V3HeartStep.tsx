@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { V3_EMOTION_PRESETS } from "./fixtures/v3-fixtures";
 import { useV3HeartDraft } from "./v3-onboarding-state";
 
-const TAG_PRESETS = ["첫 발견", "댓글 따라감", "팬의 추천", "다시 보기", "같은 작품"];
+const TAG_PRESETS = ["두근거림", "벅참", "여운", "편안함", "감동"];
 
 const VISIBILITY_OPTIONS: { id: "private" | "tree" | "public"; label: string }[] = [
   { id: "private", label: "나만 보기" },

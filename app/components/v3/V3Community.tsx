@@ -47,7 +47,7 @@ export default function V3Community() {
   }, [publicTrees, query, sort, emotion]);
 
   const selectedTree =
-    publicTrees.find((tree) => tree.id === selectedTreeId) ?? filtered[0] ?? null;
+    filtered.find((tree) => tree.id === selectedTreeId) ?? filtered[0] ?? null;
 
   return (
     <div className="v3-page">

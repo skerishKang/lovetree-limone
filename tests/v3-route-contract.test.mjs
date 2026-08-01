@@ -106,3 +106,39 @@ test("dynamic route file exists and renders from fixture", async () => {
   assert.match(dynamic, /v3TreesById/);
   assert.match(dynamic, /notFound\(\)/);
 });
+
+// 8. 중복 DOM ID 없음 — h1 id와 input id는 분리돼야 함
+test("onboarding steps do not reuse h1 id for inputs", async () => {
+  const source = await readApp("components/v3/V3SourceStep.tsx");
+  const connect = await readApp("components/v3/V3ConnectStep.tsx");
+  const heart = await readApp("components/v3/V3HeartStep.tsx");
+
+  for (const [name, sourceText] of [
+    ["source", source],
+    ["connect", connect],
+    ["heart", heart],
+  ]) {
+    const ids = [...sourceText.matchAll(/\bid="(v3-[a-z-]+)"/g)].map((m) => m[1]);
+    const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+    assert.deepEqual(
+      [...new Set(duplicates)],
+      [],
+      `${name} must not contain duplicate DOM ids: ${duplicates}`,
+    );
+  }
+});
+
+// 9. source step의 시점 검증 — start/end 모두 검증, 초 00-59, end<start 차단
+test("source step validates both start and end timestamps", async () => {
+  const source = await readApp("components/v3/V3SourceStep.tsx");
+  assert.match(source, /종료 시점이 시작 시점보다 빠를 수 없어요/);
+  assert.match(source, /초는 00~59/);
+  assert.match(source, /시작 시점을 먼저 입력해 주세요/);
+});
+
+// 10. connect step은 빈 연결로 성공 처리하지 않음
+test("connect step blocks empty next moment", async () => {
+  const connect = await readApp("components/v3/V3ConnectStep.tsx");
+  assert.match(connect, /연결할 다음 순간의 URL과 제목을 입력해 주세요/);
+  assert.match(connect, /건너뛰려면 아래 링크를 사용해요/);
+});

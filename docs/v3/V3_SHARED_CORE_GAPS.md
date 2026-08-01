@@ -27,6 +27,12 @@ auth/API/DB 스키마에 반영이 필요한 **후속 요구사항**입니다. �
 
 - `sourceMemoryId`, `targetMemoryId`, `relationType`, `relationLabel`,
   `bridgeMemo`, `createdAt`
+- 헌법의 관계 모델 보강: `relationMemo`, `relationEmotionBefore`,
+  `relationEmotionAfter` — "왜 이어졌는가"뿐 아니라 이어지면서 감정이 어떻게
+  변화했는지를 기록
+- `emotionTags`는 **감정 상태만** 담는다. 탐색 계기(댓글 따라감, 팬의 추천,
+  직접 검색 등)와 출처 유형(음원, 책, 라이브 등)은 `relationType`/`relationLabel`/
+  `relationMemo` 또는 별도 필드로 분리한다.
 
 ## 2. 커뮤니티 기능 (서버 CRUD 전환)
 

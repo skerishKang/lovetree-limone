@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { V3PreviewTree } from "./v3-types";
 import { v3Trees } from "./fixtures/v3-fixtures";
 
 const VISIBILITY_LABEL: Record<string, string> = {

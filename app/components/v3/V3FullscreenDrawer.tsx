@@ -8,12 +8,25 @@ interface V3FullscreenDrawerProps {
   treeId: string;
   onClose: () => void;
   title?: string;
+  variant?: "drawer" | "fullscreen";
+  memories?: V3PreviewMemory[];
 }
+
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "textarea:not([disabled])",
+  "select:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(", ");
 
 export default function V3FullscreenDrawer({
   treeId,
   onClose,
   title = "새 순간 추가",
+  variant = "drawer",
+  memories = [],
 }: V3FullscreenDrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const [url, setUrl] = useState("");
@@ -24,14 +37,43 @@ export default function V3FullscreenDrawer({
 
   useEffect(() => {
     const previousFocus = document.activeElement as HTMLElement | null;
+    const scrollY = window.scrollY;
+    const previousOverflow = document.body.style.overflow;
+
     drawerRef.current?.focus();
+    document.body.style.overflow = "hidden";
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const dialog = drawerRef.current;
+      if (!dialog) return;
+      const focusables = dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (focusables.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey && (active === first || !dialog.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !dialog.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      window.scrollTo(0, scrollY);
       previousFocus?.focus();
     };
   }, [onClose]);
@@ -66,9 +108,46 @@ export default function V3FullscreenDrawer({
       </div>
       <div className="v3-fullscreen-body">
         <div className="v3-fullscreen-canvas" aria-label="전체 화면 트리 캔버스">
-          <p className="v3-workspace-empty" style={{ position: "relative", top: "38%" }}>
-            treeId: {treeId} — 전체 화면에서는 성장 트리가 크게 표시돼요.
-          </p>
+          {variant === "fullscreen" && memories.length > 0 ? (
+            <div className="v3-fullscreen-tree">
+              {memories.map((memory, index) => {
+                const angle = (index / Math.max(memories.length, 1)) * Math.PI * 2;
+                const radius = 120 + (index % 3) * 60;
+                const x = 50 + (Math.cos(angle) * radius) / 4 + radius / 4;
+                const y = 50 + (Math.sin(angle) * radius) / 5;
+                return (
+                  <div
+                    className="v3-growth-node v3-fullscreen-tree-node"
+                    key={memory.id}
+                    style={{ left: `${x}%`, top: `${y}%` }}
+                    role="listitem"
+                  >
+                    {memory.thumbnailUrl ? (
+                      <img src={memory.thumbnailUrl} alt="" />
+                    ) : (
+                      <div
+                        className="v3-preview-media v3-media-b"
+                        style={{ height: 64 }}
+                        aria-hidden="true"
+                      >
+                        <span>✦</span>
+                      </div>
+                    )}
+                    <div className="v3-growth-node-meta">
+                      <span className="v3-growth-node-tag">
+                        {memory.primaryEmotion ?? "감정 없음"} · {memory.recordDate}
+                      </span>
+                      <span className="v3-growth-node-title">{memory.title}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="v3-workspace-empty" style={{ position: "relative", top: "38%" }}>
+              treeId: {treeId} — 전체 화면에서는 성장 트리가 크게 표시돼요.
+            </p>
+          )}
         </div>
         <div className="v3-drawer">
           <h2>{title}</h2>

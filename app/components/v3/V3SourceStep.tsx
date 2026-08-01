@@ -23,6 +23,19 @@ function parseYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
+function parseTime(value: string): { minutes: number; seconds: number } | null {
+  const match = value.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+  const minutes = Number(match[1]);
+  const seconds = Number(match[2]);
+  if (seconds > 59) return null;
+  return { minutes, seconds };
+}
+
+function timeToSeconds(time: { minutes: number; seconds: number }): number {
+  return time.minutes * 60 + time.seconds;
+}
+
 export default function V3SourceStep() {
   const router = useRouter();
   const { draft, update } = useV3SourceDraft();
@@ -32,10 +45,30 @@ export default function V3SourceStep() {
 
   function goNext() {
     const start = draft.startSeconds.trim();
-    if (start && !/^\d{1,2}:\d{2}$/.test(start)) {
-      setTimeError("시작 시점은 mm:ss 형식이어야 해요.");
+    const end = draft.endSeconds.trim();
+
+    if (start) {
+      const startTime = parseTime(start);
+      if (!startTime) {
+        setTimeError("시작 시점은 mm:ss 형식이어야 해요. (초는 00~59)");
+        return;
+      }
+      if (end) {
+        const endTime = parseTime(end);
+        if (!endTime) {
+          setTimeError("종료 시점은 mm:ss 형식이어야 해요. (초는 00~59)");
+          return;
+        }
+        if (timeToSeconds(endTime) < timeToSeconds(startTime)) {
+          setTimeError("종료 시점이 시작 시점보다 빠를 수 없어요.");
+          return;
+        }
+      }
+    } else if (end) {
+      setTimeError("시작 시점을 먼저 입력해 주세요.");
       return;
     }
+
     setTimeError(null);
     router.push("/v3/trees/demo/onboarding/heart");
   }
@@ -101,12 +134,12 @@ export default function V3SourceStep() {
               />
             </div>
             <div className="v3-field">
-              <label className="v3-label" htmlFor="v3-source-title">
+              <label className="v3-label" htmlFor="v3-source-title-input">
                 제목
               </label>
               <input
                 className="v3-input"
-                id="v3-source-title"
+                id="v3-source-title-input"
                 value={draft.title}
                 onChange={(event) => update({ title: event.target.value })}
                 placeholder="예: 마음이 처음 멈춘 장면"

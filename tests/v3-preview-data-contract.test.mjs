@@ -116,3 +116,50 @@ test("fixtures use only generalized example names", async () => {
   assert.doesNotMatch(fixtures, /이주연/);
   assert.match(fixtures, /예시 인물/);
 });
+
+// 12. emotionTags는 감정 상태만 포함 (관계/탐색 라벨 제외)
+test("fixture emotionTags contain only emotional states", async () => {
+  const fixtures = await readApp("components/v3/fixtures/v3-fixtures.ts");
+  const memoryObject = fixtures.match(
+    /export const v3Memories: V3PreviewMemory\[\] = \[([\s\S]*?)\n\];/,
+  )?.[1];
+  assert.ok(memoryObject, "memories fixture must exist");
+  // emotionTags 배열 값만 추출
+  const emotionTags = [
+    ...memoryObject.matchAll(/emotionTags: \[([^\]]*)\]/g),
+  ].flatMap((m) =>
+    [...m[1].matchAll(/"([^"]+)"/g)].map((tag) => tag[1]),
+  );
+  assert.ok(emotionTags.length >= 12, "must have many emotion tags");
+  const forbidden = [
+    "첫 발견",
+    "댓글 따라감",
+    "팬의 추천",
+    "다시 보기",
+    "같은 작품",
+    "라이브",
+    "음원",
+    "직캠",
+    "풀버전",
+    "앵콜",
+    "리마스터",
+    "책",
+    "인터뷰",
+    "회고",
+  ];
+  for (const label of forbidden) {
+    assert.ok(
+      !emotionTags.includes(label),
+      `emotionTags must not contain "${label}" (relation/discovery label)`,
+    );
+  }
+});
+
+// 13. heart step 태그 프리셋은 감정 상태만 사용
+test("heart step tag presets are emotional states", async () => {
+  const heart = await readApp("components/v3/V3HeartStep.tsx");
+  assert.match(heart, /두근거림/);
+  assert.match(heart, /벅참/);
+  assert.doesNotMatch(heart, /댓글 따라감/);
+  assert.doesNotMatch(heart, /팬의 추천/);
+});
