@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -157,8 +156,17 @@ test("V1 and V3 files are untouched", async () => {
   assert.match(v1Home, /첫 순간 심기/);
   const v1Detail = await readApp("trees/[id]/page.tsx");
   assert.match(v1Detail, /youtubeThumbnail/);
-  const v3 = new URL("app/components/v3/", root);
-  assert.equal(existsSync(v3), false, "no v3 components in main tree");
+  // V3 integration lives under app/v3, app/components/v3, app/styles/v3.
+  // V2 components must not depend on V3 modules.
+  const v2Files = await readdir(new URL("app/components/v2/", root));
+  for (const file of v2Files.filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"))) {
+    const source = await readFile(new URL(`app/components/v2/${file}`, root), "utf8");
+    assert.doesNotMatch(
+      source,
+      /components\/v3|styles\/v3|app\/v3/,
+      `V2 component ${file} must not import V3 modules`,
+    );
+  }
 });
 
 // ---- Accessibility ----
