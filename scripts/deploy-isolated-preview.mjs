@@ -128,11 +128,11 @@ async function main() {
       console.log(JSON.stringify(result, null, 2));
     } else {
       console.log(formatResult(result));
-    }
-    if (!execute) {
-      console.log(
-        "[isolated-preview-deploy-guard] DRY-RUN COMPLETE; no Cloudflare version was created"
-      );
+      if (!execute) {
+        console.log(
+          "[isolated-preview-deploy-guard] DRY-RUN COMPLETE; no Cloudflare version was created"
+        );
+      }
     }
   } catch (error) {
     if (json) {
