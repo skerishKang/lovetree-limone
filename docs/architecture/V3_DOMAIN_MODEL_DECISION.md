@@ -4,7 +4,7 @@ authority: Issue #16
 version: 0.5
 effective_date: pending independent approval
 source_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
-normative_companion: docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md
+normative_companion: docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md@0.2
 ---
 
 # LoveTree V3 Canonical Domain Model Decision
