@@ -1,10 +1,10 @@
 ---
 status: PROPOSED_ARCHITECTURE_DECISION
 authority: Issue #16
-version: 0.6
+version: 0.7
 effective_date: pending independent approval
 source_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
-normative_companion: docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md@0.3
+normative_companion: docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md@0.4
 repair_of_review_comment: 5155876362
 ---
 
@@ -17,19 +17,22 @@ This document defines the implementation-ready shared-core model for LoveTree V3
 Authority order:
 
 1. `docs/product/LOVETREE_PRODUCT_SPEC.md`
-2. this approved architecture decision and its normative implementation clarification after review and merge
-3. version-specific implementation contracts
-4. Issues and PR execution contracts
-5. supporting analyses and prototypes
+2. this approved architecture decision (`V3_DOMAIN_MODEL_DECISION.md`)
+3. `V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md` — enforcement location, sequencing detail, implementation examples only; does not override or modify this decision
+4. version-specific implementation contracts
+5. Issues and PR execution contracts
+6. supporting analyses and prototypes
+
+If a conflict is discovered between this decision and the clarification, implementation must stop, this decision must be amended first with a version bump, and the clarification must be aligned in the same commit. Implicit override is forbidden. A clarification section may control a narrower rule only when this decision explicitly delegates that scope by naming the section and its boundaries.
 
 Inputs reviewed:
 
 - `docs/product/LOVETREE_PRODUCT_SPEC.md`
 - `docs/product/PRODUCT_DOCUMENT_HIERARCHY.md`
 - `docs/v3/V3_HTML_TSX_INTEGRATION_ANALYSIS.md`
-- PR #11 draft `V3_PRODUCT_CONTRACT.md`, `V3_SHARED_CORE_GAPS.md`, and V3 preview types at `3532d689ee841eccdf92ce069cc0ac603b1e4c02`
+- PR #11 draft `V3_PRODUCT_CONTRACT.md`, `V3_SHARED_CORE_GAPS.md`, and V3 preview types at accepted Foundation head `31f784dd71c34ceea025fd1ec1c1dd2718869c35`
 - current `db/schema.ts` and API contracts at main `9b991409ccf017fbdd1b6c2750d1e6bb247048d2`
-- `docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md`, which closes implementation ambiguities found by the main-schema/API audit and controls where it is more specific
+- `docs/architecture/V3_DOMAIN_MODEL_IMPLEMENTATION_CLARIFICATIONS.md`, which closes implementation ambiguities found by the main-schema/API audit without modifying or overriding this decision
 
 This decision is architecture/documentation only. It does not itself modify schema, migrations, API handlers, UI code, or deployments.
 
@@ -151,11 +154,34 @@ memories.visibility       existing private|unlisted|public value
 memories.visibility_mode  new explicit|inherit value
 ```
 
-Rules:
+#### Physical default contract
 
-- Existing rows backfill `visibility_mode = explicit`; their stored visibility intent remains unchanged.
-- New V3 Moments default to `visibility_mode = inherit` and store `visibility = private` as the safe legacy fallback.
-- The physical database default for `visibility_mode` is `explicit`. A V1/V2 legacy insert that omits the field therefore stores `explicit`, preserving the legacy plain `visibility` semantics instead of silently flipping to `inherit`.
+The `visibility_mode` column is created with `NULL DEFAULT 'explicit'` from step 1 of the migration:
+
+```sql
+visibility_mode visibility_mode_type NULL DEFAULT 'explicit'
+```
+
+This means:
+- A V1/V2 legacy insert that omits `visibility_mode` stores `explicit`, preserving the legacy plain `visibility` semantics instead of silently flipping to `inherit`.
+- The column remains nullable through step 8 to allow additive migration rollback.
+- `NOT NULL` is applied only at step 9 after old-server drain and null-count = 0 verification.
+- The DB default exists from step 1; only the `NOT NULL` constraint is deferred to step 9.
+
+#### Read semantics for unexpected null
+
+During the mixed-version window, any unexpected null `visibility_mode` is interpreted as `explicit`:
+
+```text
+COALESCE(visibility_mode, 'explicit')
+```
+
+This safety contract covers: partial migration, failed backfill batches, manual legacy rows, nullable rows during rollback, and exception rows before recovery. Null must never be interpreted as `inherit`.
+
+#### Backfill and write rules
+
+- Existing rows are backfilled to `visibility_mode = explicit` via an idempotent batch. The backfill gate requires: null count is measured continuously; old-server inserts use the DB default `explicit` and therefore create no new nulls; null count must be 0 immediately before step 9; if any null is discovered after strict constraints are applied, constraint application is halted.
+- New V3 Moments write `visibility_mode = inherit` and store `visibility = private` as the safe legacy fallback.
 - V3 writers always send an explicit `visibility_mode`; V3 API contract only permits `inherit` or one of the existing visibility values, never an omitted mode.
 - Effective visibility for `explicit` rows uses the stored `visibility` value unchanged. Effective visibility for `inherit` rows uses Tree visibility, then applies status/library gating and the private-first fallback if Tree visibility is stricter than the raw stored value.
 - Legacy V1/V2 serializers never emit `visibility_mode = inherit` directly; they project the computed effective visibility in the existing `private|unlisted|public` enum.
@@ -169,7 +195,7 @@ Rules:
 - A V3 write selecting `inherit` must atomically set `visibility_mode = inherit` and the raw legacy fallback to `private`.
 - After #20 introduces canonical V3 writes, V1/V2 serializers must return the computed effective legacy value. No V3 persistence may be enabled before that adapter exists.
 - `memoVisibility` uses a separate constrained type containing `private`, `tree`, and `public`.
-- Existing endpoint overexposure is not a compatibility promise. The security-hardening rule in the companion clarification controls: no row becomes more public, while documented privacy reductions may correct legacy leaks.
+- Existing endpoint overexposure is not a compatibility promise. The security-hardening rule in the companion clarification applies: no row becomes more public, while documented privacy reductions may correct legacy leaks.
 
 This avoids adding `inherit` to the shared legacy visibility enum and avoids exposing an unknown value to V1/V2.
 
@@ -304,6 +330,83 @@ Authorization predicates must run before community joins and aggregates. An inde
 - Hard purge may use FK cascade only as a separate privileged retention operation after retention/restore policy authorizes it.
 - Derivation live references use nullable FKs with approved attribution snapshots so source purge does not erase lawful attribution history and does not expose newly private content. Composite source identity, derivation idempotency, and purge behavior are defined in the companion clarification.
 
+### Account deletion state machine
+
+Account deletion uses the following minimum state machine:
+
+```text
+active
+deletion_requested
+deletion_blocked
+deletion_committing
+tombstoned
+purge_eligible
+```
+
+Names may be adjusted but the semantics are fixed.
+
+### Account deletion — Phase 1: read-only preflight
+
+Before modifying any Tree, the deletion workflow performs a read-only preflight:
+
+1. enumerate all Trees where `trees.ownerId = :deletingUserId`
+2. fix Tree IDs in ascending order
+3. classify each Tree as personal solo, collaborative, or official
+4. for every collaborative Tree, determine a successor owner
+5. if any collaborative Tree has no eligible successor, block the entire deletion
+6. if any official Tree exists, block until the stewardship workflow completes
+7. check retention, legal, and moderation holds
+8. only when all preconditions pass does the workflow enter the commit phase
+
+If preflight fails:
+
+```text
+Tree changes: 0
+membership changes: 0
+ownerId changes: 0
+soft-deletes: 0
+credential revokes: 0
+tombstones: 0
+```
+
+### Account deletion — Phase 2: single database transaction
+
+After preflight passes, one database transaction performs:
+
+1. acquire account-level advisory lock
+2. lock all owned Trees in ascending Tree ID order
+3. re-verify preflight conditions
+4. execute all collaborative Tree owner transfers
+5. soft-delete all personal solo Trees
+6. set departing memberships to `status = removed`
+7. insert all ownership and delete audit rows
+8. set account state to `deletion_committing`
+9. insert credential-revoke outbox event
+10. commit
+
+If any step fails, the entire transaction rolls back:
+
+```text
+personal Tree soft-deletes roll back
+completed ownership transfers roll back
+audit rows roll back
+account state rolls back
+```
+
+Per-Tree independent commits followed by later failure are forbidden.
+
+### External authentication revoke
+
+External authentication revoke (Firebase etc.) cannot share the DB transaction. The outbox/retry contract is:
+
+- Immediately after DB commit, the application account state blocks login and mutations
+- An outbox worker performs credential and session revoke
+- If revoke fails, the account remains inaccessible at the application layer
+- Revoke is idempotent and retried
+- After successful revoke, the account transitions to `tombstoned`
+- Profile pseudonymization and tombstone marking occur at the `tombstoned` transition
+- Hard purge is a separate retention job
+
 ### Personal solo Tree owner deletion
 
 A personal solo Tree does not support ordinary ownership transfer; there are no other members to receive ownership. When the sole owner requests account deletion, the operation must follow one of these approved paths before allowing the account to finish deleting:
@@ -325,7 +428,7 @@ One transaction must atomically:
 3. select or confirm the new owner among active eligible members;
 4. update `trees.ownerId` to the new owner;
 5. update the new owner's membership role to `owner` (creating an active owner membership row if the approved membership write model requires role separation);
-6. update the departing owner's membership: demote to a non-owner terminal state, typically `status = removed` when the departure is the account deletion path, or the approved non-owner role when the departure is a voluntary transfer;
+6. update the departing owner's membership: set `status = removed` when the departure is the account deletion path; for voluntary transfer, set `role = editor` unless policy explicitly requires `viewer`;
 7. insert the audit event recording acting principal, prior owner, new owner, reason code, and timestamp.
 
 If any active collaborative Tree fails the transfer (no eligible member, constraint violation, or audit failure), the account deletion must abort for that account. An account deletion is complete only when no active collaborative Tree still references that account as owner. An active collaborative Tree must never be left owner-less; the constraint gate preventing that is the combination of the transfer precondition plus the account-deletion abort rule. The legacy direct owner-update path that bypasses this transfer is forbidden.
@@ -358,11 +461,44 @@ sourceMomentId nullable
 sourceUrlSnapshot nullable
 sourceTitleSnapshot nullable
 attributionSnapshot nullable
+idempotencyKey      text, non-null
+requestFingerprint  text, non-null
 createdById
 createdAt
 ```
 
-Constraints and rules:
+#### Unique constraint
+
+```text
+UNIQUE (createdById, idempotencyKey)
+```
+
+or a partial unique equivalent with the same meaning.
+
+The previous `(derivedTreeId, sourceTreeId, createdById)` constraint is removed because a new `derivedTreeId` is always different and therefore does not prevent retry duplicates.
+
+#### Request behavior
+
+A repeat request with the same `(createdById, idempotencyKey)`:
+
+- if `requestFingerprint` matches the existing row → return the existing derived Tree and derivation row
+- if `requestFingerprint` differs → return `409 IDEMPOTENCY_KEY_REUSED`
+- never creates a new row
+
+`requestFingerprint` must include at minimum the following normalized intent:
+
+```text
+sourceTreeId
+sourceMomentId nullable
+requested derived subject/title identity
+derivation operation type
+```
+
+#### Intentional second derivation
+
+The same user creating a second separate Tree from the same source is permitted with a new `idempotencyKey`. Idempotency blocks network retry duplicates; it does not permanently restrict the source+actor combination to one Tree. If the product later requires one Tree per source, that is a separate product uniqueness decision.
+
+#### Other constraints and rules
 
 - At least one live source reference or approved attribution snapshot must exist.
 - `sourceMomentId` requires `sourceTreeId`; when both exist, their composite identity must reference the same physical Moment.
@@ -424,25 +560,27 @@ The migration is a ten-step contract. Every step must complete observably before
 
 ```text
  1. additive nullable schema
-    - add createdById (null), sortOrder (null), visibility_mode (null),
+    - add createdById (null), sortOrder (null), visibility_mode (null DEFAULT 'explicit'),
       contributor-style tables, lifecycle columns, audit/exception ledgers
-    - no destructive rename/drop; no NOT NULL, no default-rewrite on legacy cols
+    - visibility_mode has DB DEFAULT 'explicit' from initial column creation
+    - no destructive rename/drop; no NOT NULL on new columns; no default-rewrite on legacy cols
  2. compatibility reads deployed on both old and new app versions
     - old version keeps reading legacy shape
     - new version's compatibility mapper projects legacy rows
+    - unexpected null visibility_mode is read as COALESCE(visibility_mode, 'explicit')
  3. new-server dual-write
     - new server writes new fields atomically with the legacy write
     - authorship: server assigns createdById from authenticated actor + membership
  4. old-server writes remain legal under the nullable/default contract
-    - visibility_mode default explicit (privacy-preserving)
+    - visibility_mode DB default explicit (privacy-preserving); column remains nullable
     - sortOrder left null (legacy-unassigned) for legacy insert
     - legacy writer never emits inherit; never fabricates createdById
  5. background deterministic backfill
     - createdById: solo Tree -> current tree ownerId; collaborative Tree ->
       deterministic audit-approved resolution from migration-era actor evidence
-    - sortOrder: Tree-local stable ordering (existing createdAt, existing
-      parent/path, then id) assigned deterministically and idempotently
+    - sortOrder: exact DFS pre-order traversal per Tree (see sortOrder migration contract)
     - memoVisibility: deterministic classifier (see below)
+    - visibility_mode: idempotent batch sets all null rows to 'explicit'; null count gate applies
  6. malformed-parent exception quarantine
     - rows classified into the exception registry; legacy raw parentId preserved
     - canonical primary-path Connection omitted until remediation
@@ -452,7 +590,7 @@ The migration is a ten-step contract. Every step must complete observably before
  8. old server drain confirmed
     - traffic / version heartbeat confirms old writers are no longer active
  9. strict constraints applied
-    - NOT NULL on createdById, sortOrder, visibility_mode
+    - NOT NULL on createdById, sortOrder, visibility_mode (DB default already exists from step 1)
     - partial unique indexes; composite FKs; updatedAt/version optimistic write guards
 10. V3 persistence enabled
     - only after the #20 compatibility mappers are in place and verified
@@ -475,9 +613,58 @@ The backfill records per-class counts plus prior-vs-new effective exposure delta
 
 ### `sortOrder` migration contract
 
+#### Input graph
+
+Each Tree uses legacy `parentId` to build a forest. The following edges are quarantined before traversal:
+
+- self edge (`parentId = own id`)
+- missing parent (parentId references a nonexistent row)
+- cross-tree parent
+- soft-deleted parent
+- cycle-forming edge
+- already quarantined edge
+
+The remaining legacy parent relation is a forest where each Moment has at most one parent.
+
+#### Exact traversal algorithm
+
+```text
+1. roots = valid active Moments with no valid legacy parent
+2. roots sort = (createdAt ASC, id ASC)
+3. each parent's children sort = (createdAt ASC, id ASC)
+4. depth-first pre-order traversal
+5. visit parent before all descendants
+6. each sibling subtree is completed before the next sibling
+7. quarantined and unreachable Moments append after the valid forest
+8. appended rows sort = (createdAt ASC, id ASC)
+9. assign dense integers 0..n-1 in traversal order
+```
+
+Diamond patterns or Moments with multiple incoming Connections are not used as input for legacy backfill ordering. This backfill uses only the legacy primary parent forest; additional V3 Connections are graph meaning after migration and do not alter the initial Moment sortOrder backfill.
+
+#### Stable snapshot
+
+The backfill must not recompute traversal per batch. The recommended approach:
+
+- Compute the full Moment→sortOrder mapping per Tree in a migration snapshot
+- Store the mapping in a staging/audit table
+- Batch updates apply the stored mapping
+- Retries reapply the same mapping
+
+If new rows appear during migration:
+- Old V1/V2 inserts write `sortOrder = null`
+- Compatibility reads show nulls in the tail
+- A deterministic incremental assignment batch handles them
+- After old-server drain, full mapping and null-count are re-verified
+- `NOT NULL` applies at step 9
+
+The same input must produce the same output regardless of batching, retries, or worker count.
+
+#### Schema and write rules
+
 - Schema: additive nullable integer column during the mixed-version window; no unsafe physical default that would fabricate order for legacy writers.
-- Legacy insert: a V1/V2 legacy insert that omits `sortOrder` must succeed and leave the field null (meaning legacy-unassigned). The compatibility read mapper deterministically orders rows by sorting non-null `sortOrder` ascending first, then ordering the null tail by `(createdAt, id)` ascending for stable output. If product review instead requires legacy-first display, the reverse policy is acceptable only if applied uniformly across both documents and the read mapper — this decision fixes the contract at non-null first, then `(createdAt, id)` tail.
-- Backfill: per Tree, assign deterministic sortOrder values using Tree-local stable ordering (existing `createdAt`, then existing legacy parent/path, then `id` as final tiebreaker). Re-running the backfill produces identical values; batched, idempotent, retry-safe. Null-count verification runs before cutover.
+- Legacy insert: a V1/V2 legacy insert that omits `sortOrder` must succeed and leave the field null (meaning legacy-unassigned). The compatibility read mapper deterministically orders rows by sorting non-null `sortOrder` ascending first, then ordering the null tail by `(createdAt, id)` ascending for stable output.
+- Backfill: per Tree, assign deterministic sortOrder values using the exact DFS pre-order traversal above. Re-running the backfill produces identical values; batched, idempotent, retry-safe. Null-count verification runs before cutover.
 - Strict constraint: `NOT NULL` applies only after old-server drain plus null-count = 0 verification, in step 9 of the migration contract.
 - Concurrent V3 writes: V3 server always writes an explicit `sortOrder` computed inside a Tree-scoped serialized transaction (advisory lock). Simple `MAX(sortOrder)+1` outside the lock is not permitted. Final tiebreaker for equal values is `(sortOrder, createdAt, id)`.
 - Rollback: the nullable additive column stays during application rollback and is ignored by older binaries. Strict constraint apply is a separate later migration step.
@@ -611,6 +798,46 @@ The decision is backward-compatible only if Issue #19 follows the additive migra
 - `createdById` remains nullable during migration; the compatibility read mapper returns the Tree owner as the compatibility author until backfill completes.
 - Application rollback at any pre-cutover step is safe; DB column/table drop is not the default rollback path.
 
+## 15.5. Additional closures for Issue #19 and #20
+
+### Long-term field inventory
+
+The following product-spec fields are classified for Issue #19 and #20. Implementers must not invent additional fields beyond this inventory.
+
+| Field | Classification |
+|---|---|
+| `discoveredAt` | deferred open question |
+| `relatedPeople` | deferred open question |
+| `tags` | represented by existing canonical field (`emotionTags` for emotions; no general tag field in Phase 1) |
+| `platformMetadata` | derived/read-model only |
+| `sourceAuthor` | represented by existing canonical field (`sourceAttribution`) |
+| `recommendedByUserId` | explicitly out of Phase 1 persistence |
+| `adoptedRecommendationId` | explicitly out of Phase 1 persistence |
+| `subjectId` | deferred open question |
+| `route` | deferred open question |
+| `restPeriod` | deferred open question |
+
+### `contributor` membership
+
+`contributor` is future-only:
+
+- not in the current canonical membership enum (`owner|editor|viewer`)
+- not implemented in Phase 1 schema or API
+- the permission matrix row for contributor-style membership in §5 is a future design illustration only
+
+### Milestone active-row count
+
+A canonical active Moment for milestone counting is:
+
+```text
+status = active
+deletedAt IS NULL
+Tree status = active
+Tree deletedAt IS NULL
+```
+
+Derived or imported Moments are not excluded from the count. Visibility does not exclude a Moment from owner milestone count qualification, but public milestone surfaces apply separate authorization.
+
 ## 16. Open questions and recommended decisions
 
 ### Partial or unknown remembered dates
@@ -651,7 +878,7 @@ These fields are not included in the current canonical model. Their semantics, i
 
 ### Derived Tree idempotency
 
-Recommendation: block duplicate derived-Tree creation for the same source+actor combination using an idempotency key or a partial unique constraint on `(derivedTreeId, sourceTreeId, createdById)`. Retrying a derivation request with the same key returns the existing derivation rather than creating a duplicate.
+Recommendation: block duplicate derived-Tree creation from network retries using an `idempotencyKey` with a unique constraint on `(createdById, idempotencyKey)`. The derivation request must also include a `requestFingerprint` capturing the normalized intent. Retrying a derivation request with the same key and same fingerprint returns the existing derivation rather than creating a duplicate. Retrying with the same key but different fingerprint returns `409 IDEMPOTENCY_KEY_REUSED`. The previous `(derivedTreeId, sourceTreeId, createdById)` constraint is ineffective because `derivedTreeId` is always new and does not prevent retry duplicates.
 
 ### Derived Tree deletion
 

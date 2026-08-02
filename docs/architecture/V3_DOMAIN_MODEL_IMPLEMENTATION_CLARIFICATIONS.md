@@ -1,7 +1,7 @@
 ---
 status: PROPOSED_ARCHITECTURE_CLARIFICATION
 authority: Issue #16 and PR #25
-version: 0.3
+version: 0.4
 effective_date: pending independent approval
 reviewed_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
 reviewed_sources:
@@ -20,7 +20,7 @@ This document is a normative companion to `V3_DOMAIN_MODEL_DECISION.md` for PR #
 
 It closes implementation ambiguities found by comparing the proposed V3 model with the current main schema and V1/V2 API behavior at `9b991409ccf017fbdd1b6c2750d1e6bb247048d2`.
 
-Where this clarification conflicts with an earlier sentence in `V3_DOMAIN_MODEL_DECISION.md`, this clarification controls. Both documents remain proposed until Issue #16 receives an independent architecture verdict and the approved authority is merged.
+This clarification does not override or modify `V3_DOMAIN_MODEL_DECISION.md`. If a conflict is discovered, implementation must stop, the Decision must be amended first with a version bump, and this clarification must be aligned in the same commit. Both documents remain proposed until Issue #16 receives an independent architecture verdict and the approved authority is merged.
 
 This change remains documentation-only. It does not modify schema, migrations, API handlers, authentication, UI, Worker configuration, Preview, or Production.
 
@@ -322,7 +322,7 @@ Enforcement location and order:
   2. select the new owner from active eligible members (editor seniority default, or explicit owner selection);
   3. update `trees.ownerId`;
   4. update the new owner's membership role to `owner`;
-  5. update the departing owner's membership to `status = removed` (account-deletion path) or the approved non-owner role (voluntary transfer);
+  5. update the departing owner's membership to `status = removed` (account-deletion path); for voluntary transfer, set `role = editor` unless policy explicitly requires `viewer`;
   6. insert audit row with `action = ownership_transfer`, prior owner, new owner, reason code.
 - Tombstone transition (#20 or account-service issue): revoke auth credentials; pseudonymize profile display fields; persist the application user row with a tombstone marker; do not hard-purge while any FK reference exists.
 - Hard purge (privileged retention job, separate issue): run only after all dependent reachability conditions are drained or re-referenced per the approved retention procedure.
@@ -333,10 +333,10 @@ Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §5 Moment visibility physical com
 
 Enforcement location and order:
 
-- Schema (#19, step 1): add `visibility_mode` as nullable text/enum column; no DB default yet.
-- Backfill (#19, step 5): set all existing rows to `explicit`.
-- Compatibility read/write mapper (#20, step 2-3): legacy V1/V2 writes that touch `visibility` atomically set `visibility_mode = explicit`. V3 writes always send an explicit mode.
-- DB default (#19, step 9): after null-count = 0 verification, set the physical column default to `explicit` and apply NOT NULL.
+- Schema (#19, step 1): add `visibility_mode` as nullable text/enum column with `DEFAULT 'explicit'` from initial column creation. The column remains nullable through step 8.
+- Backfill (#19, step 5): idempotent batch sets all null rows to `explicit`. Null count is measured continuously; old-server inserts use the DB default `explicit` and create no new nulls. Null count must be 0 immediately before step 9.
+- Compatibility read/write mapper (#20, step 2-3): legacy V1/V2 writes that touch `visibility` atomically set `visibility_mode = explicit`. V3 writes always send an explicit mode. Unexpected null is read as `COALESCE(visibility_mode, 'explicit')`.
+- Strict constraint (#19, step 9): apply NOT NULL after null-count = 0 verification. The DB default already exists from step 1.
 - Legacy serializer (#20): never emits `visibility_mode = inherit`; projects the computed effective visibility as `private|unlisted|public`.
 
 Privacy rationale: a V1/V2 legacy insert that omits `visibility_mode` stores `explicit`, preserving the legacy plain `visibility` semantics. A wrong default (e.g., `inherit`) would silently flip effective visibility for legacy writers that do not know about the field.
@@ -350,7 +350,7 @@ Enforcement location and order:
 - Schema (#19, step 1): add `sortOrder` as nullable integer; no unsafe physical default.
 - Legacy insert (#20, step 2-4): V1/V2 legacy insert that omits `sortOrder` succeeds and leaves the field null (legacy-unassigned).
 - Compatibility read mapper (#20, step 2): orders rows by non-null `sortOrder` ascending first, then null tail by `(createdAt, id)` ascending.
-- Backfill (#19, step 5): per Tree, assign deterministic values using Tree-local stable ordering (existing `createdAt`, then existing legacy parent/path, then `id`). Idempotent, batched, retry-safe. Null-count verification before cutover.
+- Backfill (#19, step 5): per Tree, assign deterministic values using the exact DFS pre-order traversal defined in the Decision. Quarantine self, missing-parent, cross-tree, soft-deleted-parent, and cycle-forming edges before traversal. Idempotent, batched, retry-safe. Null-count verification before cutover.
 - Strict constraint (#19, step 9): apply NOT NULL only after old-server drain and null-count = 0.
 - V3 write (#20): always writes explicit `sortOrder` computed inside the per-Tree serialized transaction. Simple `MAX+1` outside the lock is forbidden. Final tiebreaker: `(sortOrder, createdAt, id)`.
 - Rollback: nullable column stays during application rollback; older binaries ignore it.
@@ -395,7 +395,7 @@ Canonical rules are in `V3_DOMAIN_MODEL_DECISION.md` §13 (Serialization and con
 Enforcement locations:
 
 - Moment delete + Connection write serialization: #20 Moment delete handler acquires the same per-Tree advisory lock used by Connection mutation before soft-deleting incident Connections.
-- Derived Tree idempotency: #21 derivation create handler checks the idempotency key / partial unique constraint on `(derivedTreeId, sourceTreeId, createdById)` before inserting; retries return the existing row.
+- Derived Tree idempotency: #21 derivation create handler checks the unique constraint on `(createdById, idempotencyKey)` and compares `requestFingerprint` before inserting; same key + same fingerprint returns the existing row; same key + different fingerprint returns `409 IDEMPOTENCY_KEY_REUSED`.
 - Derived Tree deletion: #21 derived-Tree delete handler soft-deletes only the derived row; source attribution snapshot and source Tree/Moment state are not altered.
 - `recordDate` serialization: #20 API serializer emits `YYYY-MM-DD`; server validation rejects non-conforming payloads.
 - Legacy fields `trees.keywords`, `tree_social_counts`: #19 collision inventory records them as retained legacy display/projection fields; #20 does not expose them as V3 canonical search or engagement sources.
