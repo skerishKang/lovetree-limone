@@ -503,7 +503,12 @@ export function formatResult(result) {
   lines.push(
     `worktree:               ${result.sourceState.clean ? "clean" : `dirty${result.sourceState.patchSha256 ? ` (patch sha-256 ${result.sourceState.patchSha256})` : ""}`}`
   );
-  lines.push(`build output:           ${result.clientAssets}`);
+  lines.push(
+    `client assets:          ${result.clientAssets.clientAssets}`
+  );
+  lines.push(
+    `built worker config:    ${result.clientAssets.builtConfigPath}`
+  );
   lines.push(`generated config:       ${result.safeConfig.configPath}`);
   lines.push(`generated config sha-256: ${result.safeConfig.configSha256}`);
   lines.push(`protected workers blocked: ${PROTECTED_WORKER_NAMES.join(", ")}`);
