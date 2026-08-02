@@ -71,8 +71,11 @@ Cache-Control: public, max-age=31536000, immutable
 전제:
 
 - `/assets/*`의 JS·CSS 파일명에는 콘텐츠 해시가 포함돼야 한다.
+- 이미지·폰트·기타 build asset도 동일하다. `/assets/*`에 포함되는 모든 파일은 파일명에 콘텐츠 해시를 포함해야 한다.
 - 내용이 변경되면 새 URL이 생성돼야 한다.
 - 해시가 없는 고정 파일을 `/assets/*`에 두지 않는다.
+- 고정 파일은 `/assets/*` 밖(`dist/client` 루트 등)에 두어 기본 재검증 정책(`public, max-age=0, must-revalidate` + ETag)을 받도록 한다.
+- `/_headers`의 `/assets/*` immutable 규칙은 파일명을 구분하지 않으므로, build가 `/assets/*`에 고정 이름 파일을 내보내지 않음을 테스트로 강제한다.
 
 ### 3.2 HTML·RSC·동적 페이지 응답
 
@@ -109,6 +112,8 @@ Cache-Control: private, no-store
 
 API 응답은 브라우저 캐시와 공유 캐시에 저장하지 않는다.
 
+성공(2xx)뿐 아니라 4xx·5xx 오류 응답에도 동일하게 적용한다. 오류 응답이 공유 캐시에 남으면 이후 요청이 stale 오류를 재사용할 수 있기 때문이다.
+
 ### 3.4 고정 이름 정적 파일
 
 예:
@@ -127,6 +132,29 @@ ETag: <asset content hash>
 ```
 
 고정 파일에 장기 캐시가 필요하면 파일명 자체를 버전화한다.
+
+### 3.5 `/_vinext/image` 변환 라우트
+
+대상:
+
+```text
+/_vinext/image?url=...&w=...&q=...
+```
+
+정책:
+
+- 성공 응답은 vinext가 명시한 다음 헤더를 유지한다.
+
+  ```http
+  Cache-Control: public, max-age=31536000, immutable
+  Vary: Accept
+  Content-Security-Policy: script-src 'none'; frame-src 'none'; sandbox;
+  X-Content-Type-Options: nosniff
+  ```
+
+- `/_vinext/image`는 `/assets/*` static 규칙과 무관하며 `_headers`가 이 라우트를 대상으로 하지 않는다.
+- 명시적 `Cache-Control`이 없는 응답(400·404 등 오류)에는 Worker가 동적 기본 정책 `private, max-age=0, must-revalidate`를 적용한다. 오류가 잘못 public cache되지 않는다.
+- 이미지 응답은 API·인증·사용자별 데이터로 취급하지 않는다. 변환 파라미터가 URL에 인코딩되므로 성공 응답의 immutable 정책은 safe하다.
 
 ## 4. 저장소 구현 계약
 
@@ -156,6 +184,8 @@ Cache-Control: private, max-age=0, must-revalidate
 
 프레임워크가 이미 `no-store`, `private`, `s-maxage` 등 명시적 정책을 반환하면 그대로 보존한다.
 
+Cache-Control 결정 로직은 `worker/cache-policy.ts`의 순수 함수 `applyDefaultDynamicCachePolicy`로 분리한다. Worker의 앱 응답과 `/_vinext/image` 응답 모두 이 함수를 거친다. 헤더가 이미 있으면 그대로 두고, 없을 때만 동적 기본값을 추가하므로 static asset 응답(플랫폼이 이미 Cache-Control을 부여)에는 fallback이 적용되지 않는다.
+
 ### 4.4 stale manifest 방지
 
 `npm run build`는 `scripts/prune-rsc-assets.mjs`를 실행해야 한다.
@@ -169,12 +199,14 @@ Cache-Control: private, max-age=0, must-revalidate
 `npm test` 또는 동일 수준의 독립 검증에서 다음을 확인한다.
 
 1. `public/_headers`가 빌드 결과 `dist/client/_headers`에 포함된다.
-2. `/assets/*`에 `public, max-age=31536000, immutable`이 선언된다.
-3. 배포 대상 JS·CSS 파일명이 콘텐츠 해시를 포함한다.
-4. API JSON 응답이 `private, no-store`를 반환한다.
-5. Worker의 동적 응답 기본 정책이 `private, max-age=0, must-revalidate`이다.
-6. RSC manifest의 모든 자산 참조가 실제 파일과 일치한다.
-7. 일반 새로고침에서 asset 404, chunk load error, 이전 UI 잔존이 없다.
+2. `/assets/*`에 `public, max-age=31536000, immutable`이 선언된다. 전역 `/*` 규칙이나 `/_vinext` 대상 규칙은 없다.
+3. clean build 후 `dist/client/assets`에 내보내진 **모든** 파일(JS·CSS·이미지·폰트·기타)의 파일명이 콘텐츠 해시를 포함한다.
+4. `favicon.svg` 등 고정 이름 파일은 `/assets/*` 밖에 배포되며 immutable 규칙이 적용되지 않는다.
+5. API JSON 응답이 2xx·4xx·5xx 모두 `private, no-store`를 반환한다(헬퍼와 실제 handler 실행).
+6. Worker의 동적 응답 기본 정책이 `private, max-age=0, must-revalidate`이다. 명시적 헤더 보존, API no-store 보존, static asset 무변경, 오류 public 금지를 실행으로 검증한다.
+7. `/_vinext/image` 성공 응답은 vinext 명시 헤더를 유지하고, 헤더 없는 오류 응답은 Worker 기본 정책을 받는다. `/assets/*` immutable 규칙과 혼동되지 않는다.
+8. RSC manifest의 모든 자산 참조가 실제 파일과 일치한다.
+9. 일반 새로고침에서 asset 404, chunk load error, 이전 UI 잔존이 없다.
 
 ## 6. 배포 검증 절차
 
