@@ -10,6 +10,11 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "obsidian-graph1",
   "love-nebula",
   "juyeon-timeline",
+  "person-albums",
+  "motion-archive",
+  "liquid-orbit-video-gallery",
+  "accordion-album-archive",
+  "folding-person-archive",
 ]);
 
 export function v4SourceStatus(id: string): "planned" | "implemented" {
