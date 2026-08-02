@@ -61,6 +61,21 @@ const SOURCE_WRANGLER = `{
 }
 `;
 
+const BUILT_WRANGLER = JSON.stringify({
+  name: "lovetree-limone",
+  main: "index.js",
+  compatibility_date: "2026-07-01",
+  compatibility_flags: ["nodejs_compat"],
+  no_bundle: true,
+  assets: { directory: "../client", binding: "ASSETS" },
+  vars: {
+    APP_ENV: "staging",
+    API_MUTATIONS_ENABLED: "false",
+    FIREBASE_PROJECT_ID: "relovetree",
+  },
+  secrets: { required: ["DATABASE_URL"] },
+});
+
 const VALID_WORKER = "lovetree-limone-issue-26-preview";
 const VALID_WORKER_CACHE = "lovetree-limone-cache-pr12-preview";
 
@@ -79,6 +94,17 @@ async function makeScratchRepo() {
   await writeFile(
     path.join(dir, "dist", "client", "index.html"),
     "<!doctype html>\n",
+    "utf8"
+  );
+  await mkdir(path.join(dir, "dist", "server"), { recursive: true });
+  await writeFile(
+    path.join(dir, "dist", "server", "wrangler.json"),
+    BUILT_WRANGLER,
+    "utf8"
+  );
+  await writeFile(
+    path.join(dir, "dist", "server", "index.js"),
+    "export default { fetch() { return new Response('ok'); } };\n",
     "utf8"
   );
   spawnSync("git", ["-C", dir, "add", "."], { encoding: "utf8" });
@@ -329,11 +355,13 @@ test("config: generated config contains only the exact target and safe values", 
   });
   assert.equal(config.name, VALID_WORKER);
   assert.equal(config.workers_dev, true);
-  assert.equal(config.main, path.join(dir, "worker", "index.ts"));
+  assert.equal(config.main, path.join(dir, "dist", "server", "index.js"));
+  assert.equal(config.no_bundle, true);
   assert.deepEqual(config.assets, {
     directory: path.join(dir, "dist", "client"),
     binding: "ASSETS",
   });
+  assert.deepEqual(config.compatibility_flags, ["nodejs_compat"]);
   assert.equal(config.vars.APP_ENV, "staging");
   assert.equal(config.vars.API_MUTATIONS_ENABLED, "false");
   assert.equal(config.vars.FIREBASE_PROJECT_ID, "relovetree");

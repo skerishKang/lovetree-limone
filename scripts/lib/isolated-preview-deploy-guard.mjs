@@ -161,47 +161,29 @@ export async function validateSourceState({
 
 export function assertBuildOutputPresent(repoRoot) {
   const clientAssets = path.join(repoRoot, "dist", "client");
-  if (!existsSync(clientAssets)) {
+  const builtConfigPath = path.join(repoRoot, "dist", "server", "wrangler.json");
+  const missing = [];
+  if (!existsSync(clientAssets)) missing.push(clientAssets);
+  if (!existsSync(builtConfigPath)) missing.push(builtConfigPath);
+  if (missing.length > 0) {
     const error = new Error(
-      `build output not found at ${clientAssets}; run 'npm run build' first`
+      `build output not found; run 'npm run build' first\n` +
+        missing.map((entry) => `  - ${entry}`).join("\n")
     );
     error.code = "BUILD_OUTPUT_MISSING";
     throw error;
   }
-  return clientAssets;
+  return { clientAssets, builtConfigPath };
 }
 
-function pickSafeCommon(source, repoRoot) {
-  const allowed = {};
-  if (source.$schema !== undefined) allowed.$schema = source.$schema;
-  if (source.compatibility_date !== undefined) {
-    allowed.compatibility_date = source.compatibility_date;
+async function readBuiltWorkerConfig(repoRoot, builtConfigPath) {
+  if (!existsSync(builtConfigPath)) return null;
+  try {
+    const parsed = JSON.parse(await readFile(builtConfigPath, "utf8"));
+    return typeof parsed?.main === "string" ? parsed : null;
+  } catch {
+    return null;
   }
-  if (source.compatibility_flags !== undefined) {
-    allowed.compatibility_flags = structuredClone(source.compatibility_flags);
-  }
-  if (source.main !== undefined) {
-    allowed.main = path.resolve(repoRoot, source.main);
-  }
-  if (source.assets !== undefined) {
-    const { directory, binding, ...rest } = source.assets;
-    if (directory !== undefined) {
-      allowed.assets = {
-        ...structuredClone(rest),
-        directory: path.resolve(repoRoot, directory),
-        ...(binding !== undefined ? { binding } : {}),
-      };
-    } else {
-      allowed.assets = structuredClone(source.assets);
-    }
-  }
-  if (source.node_compat !== undefined) {
-    allowed.node_compat = structuredClone(source.node_compat);
-  }
-  if (source.observability !== undefined) {
-    allowed.observability = structuredClone(source.observability);
-  }
-  return allowed;
 }
 
 export async function buildSafePreviewConfig({
@@ -210,15 +192,41 @@ export async function buildSafePreviewConfig({
   outputDir,
 }) {
   const source = await readWranglerConfig(repoRoot);
+  const { clientAssets, builtConfigPath } = assertBuildOutputPresent(repoRoot);
+  const built = await readBuiltWorkerConfig(repoRoot, builtConfigPath);
+  if (!built) {
+    const error = new Error(
+      `built worker config missing or invalid at ${builtConfigPath}; run 'npm run build' first`
+    );
+    error.code = "BUILD_OUTPUT_MISSING";
+    throw error;
+  }
+
+  const distServer = path.dirname(builtConfigPath);
   const safe = {
-    ...pickSafeCommon(source, repoRoot),
+    $schema: typeof source.$schema === "string"
+      ? source.$schema
+      : "node_modules/wrangler/config-schema.json",
     name: workerName,
+    main: path.resolve(distServer, built.main),
     workers_dev: true,
+    no_bundle: built.no_bundle ?? false,
+    assets: {
+      directory: clientAssets,
+      binding: built.assets?.binding ?? "ASSETS",
+    },
     vars: {
       APP_ENV: "staging",
       API_MUTATIONS_ENABLED: "false",
     },
   };
+
+  if (typeof built.compatibility_date === "string") {
+    safe.compatibility_date = built.compatibility_date;
+  }
+  if (Array.isArray(built.compatibility_flags) && built.compatibility_flags.length > 0) {
+    safe.compatibility_flags = [...built.compatibility_flags];
+  }
 
   const firebaseProjectId = source?.vars?.FIREBASE_PROJECT_ID;
   if (typeof firebaseProjectId === "string" && firebaseProjectId.length > 0) {
