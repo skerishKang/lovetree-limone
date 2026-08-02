@@ -104,15 +104,15 @@ Required fields:
 
 ```text
 id
- treeId
- userId
- role = owner|editor|viewer
- status = active|removed
- invitedById nullable
- createdAt
- updatedAt
- removedAt nullable
- removedById nullable
+treeId
+userId
+role = owner|editor|viewer
+status = active|removed
+invitedById nullable
+createdAt
+updatedAt
+removedAt nullable
+removedById nullable
 ```
 
 Required invariants:
@@ -177,13 +177,13 @@ A collaborative Tree requires Tree-level qualification and user-level acknowledg
 
 ```text
 id
- treeId
- milestoneKey
- ruleVersion
- triggerMomentId nullable
- triggerConnectionId nullable
- qualifiedAt
- createdAt
+treeId
+milestoneKey
+ruleVersion
+triggerMomentId nullable
+triggerConnectionId nullable
+qualifiedAt
+createdAt
 ```
 
 - unique one-time event on `(treeId, milestoneKey, ruleVersion)` unless a later rule defines repeatable sequence identity;
@@ -194,13 +194,13 @@ id
 
 ```text
 id
- milestoneEventId
- userId
- acknowledgedAt nullable
- dismissedAt nullable
- lastReplayedAt nullable
- createdAt
- updatedAt
+milestoneEventId
+userId
+acknowledgedAt nullable
+dismissedAt nullable
+lastReplayedAt nullable
+createdAt
+updatedAt
 ```
 
 - unique receipt on `(milestoneEventId, userId)`;
