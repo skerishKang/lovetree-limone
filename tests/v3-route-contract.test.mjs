@@ -79,7 +79,7 @@ test("canonical journeys are wired with real links", async () => {
   assert.match(myGarden, /\/v3\/trees\/new/);
   assert.match(myGarden, /\/v3\/subjects\/demo/);
   assert.match(myGarden, /\/v3\/trees\/\$\{tree\.id\}/);
-  assert.match(accordion, /\/v3\/trees\/\$\{album\.treeIds\[0\]\}/);
+  assert.match(accordion, /\/v3\/trees\/\$\{subject\.treeIds\[0\]\}/);
   assert.match(communityPreview, /\/v3\/community\/trees\/\$\{tree\.id\}/);
   assert.match(milestone, /\/v3\/trees\/demo/);
 });
