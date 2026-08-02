@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "vinext dev",
+    "preview:deploy:safe": "node scripts/deploy-isolated-preview.mjs",
     "build": "vinext build && node scripts/prune-rsc-assets.mjs",
     "start": "vinext start",
     "test": "npm run build && node --import tsx --test 'tests/*.test.mjs'",
