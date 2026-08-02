@@ -77,7 +77,11 @@ function usage() {
 function formatSnapshotForIncident(snapshot) {
   if (!snapshot) return "unavailable";
   if (snapshot.state === "absent") return "absent";
-  return snapshot.versionId ?? "unknown";
+  if (typeof snapshot.deploymentId !== "string") return "unknown";
+  const versionsText = (snapshot.versions ?? [])
+    .map((entry) => `${entry.versionId}@${entry.percentage}%`)
+    .join(",");
+  return `deploy ${snapshot.deploymentId} [${versionsText}]`;
 }
 
 async function main() {

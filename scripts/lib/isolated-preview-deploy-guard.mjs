@@ -11,12 +11,22 @@
 // remote upload, and the execute path is fail-closed.
 //
 // Fail-closed guarantees (Web CTO audit 2026-08-02):
-//   R1: before/after version snapshots are structured and required; any
+//   R1: before/after deployment snapshots are structured and required; any
 //       unavailable snapshot blocks the deploy command (VERSION_SNAPSHOT_UNAVAILABLE).
 //   R2: `--allow-dirty` permits only tracked A/B marker modifications;
 //       untracked files/directories are rejected (UNTRACKED_FILES_NOT_ALLOWED).
 //   R3: the generated temporary config is cleaned up by this core on every
 //       exit path; `--keep-config` is the only opt-out.
+//
+// Real Cloudflare deployments schema (Web CTO follow-up 2026-08-02):
+//   GET /accounts/{account_id}/workers/scripts/{script_name}/deployments
+//   returns an envelope `payload.result.deployments[]`, NOT a direct array.
+//   Each deployment has `versions[]` (each `{ version_id, percentage }`),
+//   never a top-level `version_id`. The first deployment entry is the
+//   current active deployment per the API contract. Snapshots carry a
+//   deterministic `deploymentFingerprint` (deployment id, created_on,
+//   strategy, and sorted versionId+percentage pairs) so weighted
+//   deployments are compared without losing information.
 
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -427,7 +437,7 @@ export function runCommand(command) {
   };
 }
 
-function snapshotUnavailableError(worker, reason, extra = {}) {
+export function snapshotUnavailableError(worker, reason, extra = {}) {
   const error = new Error(
     `version snapshot unavailable for '${worker}': ${reason}`
   );
@@ -453,6 +463,128 @@ export function assertCredentialsPresent({
     );
   }
   return { apiToken, accountId };
+}
+
+export function absentSnapshot(workerName) {
+  return {
+    worker: workerName,
+    state: "absent",
+    deploymentId: null,
+    createdOn: null,
+    strategy: null,
+    versions: [],
+    deploymentFingerprint: null,
+  };
+}
+
+export function sortVersions(versions) {
+  return [...versions].sort(
+    (a, b) =>
+      b.percentage - a.percentage ||
+      a.versionId.localeCompare(b.versionId)
+  );
+}
+
+// Deterministic fingerprint of a deployment. Independent of the versions
+// array order from the API because versions are sorted first.
+export function computeDeploymentFingerprint({
+  deploymentId,
+  createdOn,
+  strategy,
+  versions,
+}) {
+  const payload = JSON.stringify({
+    deploymentId,
+    createdOn,
+    strategy,
+    versions: sortVersions(versions),
+  });
+  return sha256Hex(payload);
+}
+
+// Validates one deployment entry from `result.deployments[]` and returns a
+// structured snapshot. Any malformed field is fail-closed with
+// VERSION_SNAPSHOT_UNAVAILABLE; malformed responses are never silently
+// accepted.
+export function normalizeDeploymentSnapshot({ workerName, deployment }) {
+  if (!deployment || typeof deployment !== "object") {
+    throw snapshotUnavailableError(workerName, "deployment entry is malformed");
+  }
+
+  const deploymentId = deployment.id;
+  if (typeof deploymentId !== "string" || deploymentId.length === 0) {
+    throw snapshotUnavailableError(workerName, "deployment id missing");
+  }
+
+  const createdOn = deployment.created_on;
+  if (
+    typeof createdOn !== "string" ||
+    createdOn.length === 0 ||
+    Number.isNaN(Date.parse(createdOn))
+  ) {
+    throw snapshotUnavailableError(workerName, "deployment created_on missing or invalid");
+  }
+
+  const strategy = deployment.strategy;
+  if (typeof strategy !== "string" || strategy.length === 0) {
+    throw snapshotUnavailableError(workerName, "deployment strategy missing");
+  }
+
+  if (!Array.isArray(deployment.versions) || deployment.versions.length === 0) {
+    throw snapshotUnavailableError(workerName, "deployment has no versions");
+  }
+
+  const versions = [];
+  const seenVersionIds = new Set();
+  let percentageTotal = 0;
+  for (const entry of deployment.versions) {
+    if (!entry || typeof entry !== "object") {
+      throw snapshotUnavailableError(workerName, "version entry is malformed");
+    }
+    const versionId = entry.version_id;
+    if (typeof versionId !== "string" || versionId.length === 0) {
+      throw snapshotUnavailableError(workerName, "version id missing or empty");
+    }
+    if (seenVersionIds.has(versionId)) {
+      throw snapshotUnavailableError(workerName, `duplicate version id '${versionId}'`);
+    }
+    seenVersionIds.add(versionId);
+    const percentage = entry.percentage;
+    if (typeof percentage !== "number" || !Number.isFinite(percentage)) {
+      throw snapshotUnavailableError(workerName, "version percentage is not a number");
+    }
+    if (percentage <= 0 || percentage > 100) {
+      throw snapshotUnavailableError(
+        workerName,
+        `version percentage out of range (${percentage})`
+      );
+    }
+    percentageTotal += percentage;
+    versions.push({ versionId, percentage });
+  }
+
+  if (Math.abs(percentageTotal - 100) > 1e-6) {
+    throw snapshotUnavailableError(
+      workerName,
+      `version percentages do not sum to 100 (${percentageTotal})`
+    );
+  }
+
+  const sortedVersions = sortVersions(versions);
+  return {
+    worker: workerName,
+    state: "present",
+    deploymentId,
+    createdOn,
+    strategy,
+    versions: sortedVersions,
+    deploymentFingerprint: computeDeploymentFingerprint({
+      deploymentId,
+      createdOn,
+      strategy,
+      versions: sortedVersions,
+    }),
+  };
 }
 
 export async function collectWorkerVersion(workerName, options = {}) {
@@ -494,13 +626,7 @@ export async function collectWorkerVersion(workerName, options = {}) {
   }
 
   if (response.status === 404) {
-    return {
-      worker: workerName,
-      state: "absent",
-      versionId: null,
-      deploymentId: null,
-      createdOn: null,
-    };
+    return absentSnapshot(workerName);
   }
   if (response.status === 401) {
     throw snapshotUnavailableError(workerName, "authentication failure (HTTP 401)");
@@ -521,61 +647,32 @@ export async function collectWorkerVersion(workerName, options = {}) {
   } catch {
     throw snapshotUnavailableError(workerName, "invalid JSON in response");
   }
+
+  // Real Cloudflare deployments envelope:
+  // { success, errors, messages, result: { deployments: [...] } }
   if (
     !payload ||
     typeof payload !== "object" ||
     payload.success === false ||
-    !Array.isArray(payload.result)
+    !payload.result ||
+    typeof payload.result !== "object" ||
+    !Array.isArray(payload.result.deployments)
   ) {
     throw snapshotUnavailableError(
       workerName,
-      "malformed payload (missing success/result)"
+      "malformed payload (missing result.deployments array)"
     );
   }
 
-  const deployments = payload.result.filter(
-    (entry) => entry && typeof entry === "object"
-  );
+  const deployments = payload.result.deployments;
   if (deployments.length === 0) {
-    throw snapshotUnavailableError(
-      workerName,
-      "present worker has no identifiable deployment/version"
-    );
+    throw snapshotUnavailableError(workerName, "present worker has no deployments");
   }
 
-  let latest;
-  if (deployments.length === 1) {
-    latest = deployments[0];
-  } else {
-    const allTimestamped = deployments.every(
-      (entry) => typeof entry?.created_on === "string"
-    );
-    if (!allTimestamped) {
-      throw snapshotUnavailableError(
-        workerName,
-        "malformed payload (cannot order deployments without created_on)"
-      );
-    }
-    latest = [...deployments].sort((a, b) =>
-      b.created_on.localeCompare(a.created_on)
-    )[0];
-  }
-
-  const versionId = latest?.version_id;
-  if (typeof versionId !== "string" || versionId.length === 0) {
-    throw snapshotUnavailableError(
-      workerName,
-      "present worker version id not identifiable"
-    );
-  }
-
-  return {
-    worker: workerName,
-    state: "present",
-    versionId,
-    deploymentId: typeof latest?.id === "string" ? latest.id : null,
-    createdOn: typeof latest?.created_on === "string" ? latest.created_on : null,
-  };
+  // Per the API contract the first deployment is the current active
+  // deployment; do not re-order by fabricated timestamp sorting.
+  const active = deployments[0];
+  return normalizeDeploymentSnapshot({ workerName, deployment: active });
 }
 
 export async function collectWorkerVersions(workerNames, options = {}) {
@@ -589,7 +686,13 @@ export async function collectWorkerVersions(workerNames, options = {}) {
 export function formatSnapshot(snapshot) {
   if (!snapshot) return "unavailable";
   if (snapshot.state === "absent") return "absent";
-  return typeof snapshot.versionId === "string" ? snapshot.versionId : "unknown";
+  if (typeof snapshot.deploymentId !== "string" || snapshot.deploymentId.length === 0) {
+    return "unknown";
+  }
+  const versionsText = (snapshot.versions ?? [])
+    .map((entry) => `${entry.versionId}@${entry.percentage}%`)
+    .join(",");
+  return `deploy ${snapshot.deploymentId} [${versionsText}]`;
 }
 
 export function assertPreflightSnapshot(snapshots, { workerName, protectedNames }) {
@@ -600,12 +703,14 @@ export function assertPreflightSnapshot(snapshots, { workerName, protectedNames 
     }
     if (
       snapshot.state !== "present" ||
-      typeof snapshot.versionId !== "string" ||
-      snapshot.versionId.length === 0
+      typeof snapshot.deploymentId !== "string" ||
+      snapshot.deploymentId.length === 0 ||
+      typeof snapshot.deploymentFingerprint !== "string" ||
+      snapshot.deploymentFingerprint.length === 0
     ) {
       throw snapshotUnavailableError(
         name,
-        `protected worker must be present with an exact version id (state=${snapshot.state})`
+        `protected worker must be present with an exact deployment fingerprint (state=${snapshot.state})`
       );
     }
   }
@@ -646,16 +751,22 @@ export function assertPostflightVerification(before, after, { workerName, protec
     );
   }
 
-  const targetChanged =
-    targetBefore.state === "absent"
-      ? targetAfter.state === "present" &&
-        typeof targetAfter.versionId === "string"
-      : targetAfter.state === "present" &&
-        targetAfter.versionId !== targetBefore.versionId;
+  let targetChanged;
+  if (targetBefore.state === "absent") {
+    targetChanged =
+      targetAfter.state === "present" &&
+      typeof targetAfter.deploymentFingerprint === "string" &&
+      targetAfter.deploymentFingerprint.length > 0;
+  } else {
+    targetChanged =
+      targetAfter.state === "present" &&
+      (targetAfter.deploymentId !== targetBefore.deploymentId ||
+        targetAfter.deploymentFingerprint !== targetBefore.deploymentFingerprint);
+  }
 
   if (!targetChanged) {
     const error = new Error(
-      `TARGET_VERSION_NOT_CHANGED: '${workerName}' did not gain a new version\n` +
+      `TARGET_VERSION_NOT_CHANGED: '${workerName}' did not gain a new deployment\n` +
         `  before: ${formatSnapshot(targetBefore)}\n` +
         `  after:  ${formatSnapshot(targetAfter)}`
     );
@@ -665,17 +776,55 @@ export function assertPostflightVerification(before, after, { workerName, protec
 
   const protectedDeltas = [];
   for (const name of protectedNames) {
-    const beforeVersion = before[name]?.versionId;
-    const afterVersion = after[name]?.versionId;
-    if (beforeVersion !== afterVersion) {
+    const beforeSnapshot = before[name];
+    const afterSnapshot = after[name];
+    const changed =
+      beforeSnapshot?.deploymentId !== afterSnapshot?.deploymentId ||
+      beforeSnapshot?.deploymentFingerprint !== afterSnapshot?.deploymentFingerprint;
+    if (changed) {
       protectedDeltas.push({
         name,
-        before: beforeVersion,
-        after: afterVersion,
+        before: formatSnapshot(beforeSnapshot),
+        after: formatSnapshot(afterSnapshot),
       });
     }
   }
   return { targetChanged, protectedDeltas };
+}
+
+// Rollback guidance. Automatic rollback stays forbidden. A single-version
+// deployment at 100% can print an exact rollback candidate; weighted
+// deployments require a manual weighted restore.
+export function buildRollbackInfo(snapshot, configPath) {
+  if (
+    snapshot?.state === "present" &&
+    Array.isArray(snapshot.versions) &&
+    snapshot.versions.length === 1 &&
+    snapshot.versions[0].percentage === 100
+  ) {
+    const versionId = snapshot.versions[0].versionId;
+    const rollbackCommand = buildRollbackCommand({ configPath, versionId });
+    return {
+      kind: "single",
+      message:
+        `Exact rollback command (run manually after triage):` +
+        `\n  ${rollbackCommand.join(" ")}` +
+        `\nPrior version id: ${versionId}`,
+      rollbackCommand,
+    };
+  }
+  return {
+    kind: "weighted",
+    message:
+      `MANUAL_WEIGHTED_DEPLOYMENT_RESTORE_REQUIRED` +
+      `\nprior deployment id: ${snapshot?.deploymentId ?? "unknown"}` +
+      `\nprior versions and percentages:\n` +
+      (snapshot?.versions ?? [])
+        .map((entry) => `  - ${entry.versionId} (${entry.percentage}%)`)
+        .join("\n") +
+      `\nDo not fabricate a single-version rollback for a weighted deployment.`,
+    rollbackCommand: null,
+  };
 }
 
 export async function runGuardedPreviewDeploy({
@@ -823,14 +972,14 @@ export async function runGuardedPreviewDeploy({
     result.protectedDeltas = verification.protectedDeltas;
 
     if (verification.protectedDeltas.length > 0) {
-      const priorVersionId = verification.protectedDeltas[0].before;
-      const rollback = buildRollbackCommand({
-        configPath: safeConfig.configPath,
-        versionId: priorVersionId,
-      });
+      const firstDelta = verification.protectedDeltas[0];
+      const rollbackInfo = buildRollbackInfo(
+        before[firstDelta.name],
+        safeConfig.configPath
+      );
       const error = new Error(
         `PROTECTED_WORKER_CHANGED\n` +
-          `A protected Worker gained a new version during this deployment:\n` +
+          `A protected Worker gained a new deployment during this deployment:\n` +
           verification.protectedDeltas
             .map(
               (delta) =>
@@ -838,13 +987,11 @@ export async function runGuardedPreviewDeploy({
             )
             .join("\n") +
           `\nDo NOT perform an automated rollback; this is a second-order incident risk.` +
-          `\nExact rollback command (run manually after triage):` +
-          `\n  ${rollback.join(" ")}` +
-          `\nPrior version id: ${priorVersionId}`
+          `\n${rollbackInfo.message}`
       );
       error.code = "PROTECTED_WORKER_CHANGED";
       error.protectedDeltas = verification.protectedDeltas;
-      error.rollbackCommand = rollback;
+      error.rollbackCommand = rollbackInfo.rollbackCommand ?? null;
       throw error;
     }
 
@@ -905,12 +1052,25 @@ export function formatResult(result) {
     lines.push(`deploy result:          exit ${result.deploy.exitCode}`);
   }
   if (result.before && result.after) {
-    lines.push(`target before:          ${formatSnapshot(result.before[result.worker])}`);
-    lines.push(`target after:           ${formatSnapshot(result.after[result.worker])}`);
+    const targetBefore = result.before[result.worker];
+    const targetAfter = result.after[result.worker];
+    lines.push(`target before:          ${formatSnapshot(targetBefore)}`);
+    if (targetBefore?.deploymentFingerprint) {
+      lines.push(`target before fp:       ${targetBefore.deploymentFingerprint}`);
+    }
+    lines.push(`target after:           ${formatSnapshot(targetAfter)}`);
+    if (targetAfter?.deploymentFingerprint) {
+      lines.push(`target after fp:        ${targetAfter.deploymentFingerprint}`);
+    }
     for (const name of PROTECTED_WORKER_NAMES) {
+      const beforeSnapshot = result.before[name];
+      const afterSnapshot = result.after[name];
       lines.push(
-        `protected ${name}:       ${formatSnapshot(result.before[name])} -> ${formatSnapshot(result.after[name])}`
+        `protected ${name}:       ${formatSnapshot(beforeSnapshot)} -> ${formatSnapshot(afterSnapshot)}`
       );
+      if (beforeSnapshot?.deploymentFingerprint) {
+        lines.push(`protected ${name} fp:    ${beforeSnapshot.deploymentFingerprint}`);
+      }
     }
   }
   if (result.warning) lines.push(`warning:                ${result.warning}`);
