@@ -54,7 +54,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo",
     role: "드래그·다이어리·가지 기능 원형",
     preserve: ["트리·다이어리 동기화", "노트 드래그", "삭제", "팬·줌·맞춤", "관계 선택"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "growing-tree-v6-fullscreen-add",
@@ -63,7 +63,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo",
     role: "공식 3열 일상 성장 작업공간",
     preserve: ["3열 구조", "전체화면", "전체화면 추가 드로어", "같은 입력 폼 재사용", "v5 드래그 기능"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "rest-return-flow-v2-simple",
