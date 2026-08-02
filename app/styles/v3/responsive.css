@@ -329,4 +329,34 @@
   .v3-nebula-wrap {
     background-attachment: scroll !important;
   }
+
+  /* archive: stage orbit/wave/card transitions are removed, state remains visible */
+  .v3-album-stage {
+    perspective: none;
+  }
+
+  .v3-album-stage-card {
+    transition: none !important;
+  }
+
+  /* archive: shelf 3D book transforms removed */
+  .v3-shelf {
+    perspective: none;
+  }
+
+  .v3-shelf-book,
+  .v3-shelf-book:hover,
+  .v3-shelf-book.v3-shelf-center {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* archive: folding page-turn becomes a simple instant swap (no 3D flip) */
+  .v3-folding-page {
+    animation: none !important;
+  }
+
+  .v3-folding-book {
+    perspective: none;
+  }
 }

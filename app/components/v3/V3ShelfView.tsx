@@ -1,71 +1,104 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import type { V3SubjectAlbum } from "./v3-types";
-import { v3MemoriesByTree, v3SubjectAlbums } from "./fixtures/v3-fixtures";
+import { useEffect, useMemo, useRef } from "react";
+import type { V3PreviewMemory, V3SubjectAlbum } from "./v3-types";
+import V3AlbumAccordion from "./V3AlbumAccordion";
 
 interface V3ShelfViewProps {
-  albumIndex: number;
-  setAlbumIndex: (index: number) => void;
-  openAlbum: V3SubjectAlbum | null;
-  onOpenAlbum: (album: V3SubjectAlbum | null) => void;
+  subjects: V3SubjectAlbum[];
+  memories: V3PreviewMemory[];
+  selectedSubjectId: string | null;
+  onSelectSubject: (id: string) => void;
+  selectedMomentId: string | null;
+  onSelectMoment: (id: string) => void;
+  onOpenViewer: (id: string) => void;
 }
 
 export default function V3ShelfView({
-  albumIndex,
-  setAlbumIndex,
-  openAlbum,
-  onOpenAlbum,
+  subjects,
+  memories,
+  selectedSubjectId,
+  onSelectSubject,
+  selectedMomentId,
+  onSelectMoment,
+  onOpenViewer,
 }: V3ShelfViewProps) {
-  const [focusedIndex, setFocusedIndex] = useState(albumIndex);
+  const selectedIndex = useMemo(() => {
+    const index = subjects.findIndex((subject) => subject.id === selectedSubjectId);
+    return index === -1 ? 0 : index;
+  }, [subjects, selectedSubjectId]);
+
+  const bookRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (openAlbum) return;
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        setFocusedIndex((prev) => (prev - 1 + v3SubjectAlbums.length) % v3SubjectAlbums.length);
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        setFocusedIndex((prev) => (prev + 1) % v3SubjectAlbums.length);
-      }
-      if (event.key === "Enter") {
-        event.preventDefault();
-        setAlbumIndex(focusedIndex);
-        onOpenAlbum(v3SubjectAlbums[focusedIndex]);
-      }
-      if (event.key === "Escape") {
-        onOpenAlbum(null);
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [openAlbum, focusedIndex, setAlbumIndex, onOpenAlbum]);
+    if (mountedRef.current) {
+      bookRefs.current[selectedIndex]?.focus();
+    } else {
+      mountedRef.current = true;
+    }
+  }, [selectedIndex]);
 
-  const centerAlbum = v3SubjectAlbums[focusedIndex];
-  const tracks = openAlbum
-    ? v3MemoriesByTree(openAlbum.treeIds[0] ?? "")
-    : [];
+  const selectedSubject = subjects[selectedIndex];
+
+  const subjectMemories = useMemo(() => {
+    if (!selectedSubject) return [];
+    const treeIds = selectedSubject.treeIds;
+    return memories.filter((memory) => treeIds.includes(memory.treeId));
+  }, [memories, selectedSubject]);
+
+  function focusBook(delta: number) {
+    const next = (selectedIndex + delta + subjects.length) % subjects.length;
+    bookRefs.current[next]?.focus();
+    onSelectSubject(subjects[next].id);
+  }
+
+  if (subjects.length === 0) {
+    return (
+      <section className="v3-view" aria-label="앨범 서가">
+        <h2>앨범 서가</h2>
+        <div className="v3-empty">
+          <span aria-hidden="true">✦</span>
+          아직 앨범이 없어요.
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div>
-      <div className="v3-shelf-wrap" aria-label="사람·주제 앨범 3D 선반">
-        <div className="v3-shelf">
-          {v3SubjectAlbums.map((album, index) => (
+    <section className="v3-view" aria-label="앨범 서가">
+      <h2>앨범 서가</h2>
+      <p className="v3-view-note">
+        사람·주제별로 묶인 앨범을 서가처럼 둘러봐요. 좌우 방향키로 책을 고르고
+        Enter로 펼쳐 보세요.
+      </p>
+      <div className="v3-shelf-wrap">
+        <div
+          className="v3-shelf"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") {
+              event.preventDefault();
+              focusBook(-1);
+            } else if (event.key === "ArrowRight") {
+              event.preventDefault();
+              focusBook(1);
+            }
+          }}
+        >
+          {subjects.map((subject, index) => (
             <button
-              className={`v3-shelf-book${index === focusedIndex ? " v3-shelf-center" : ""}`}
+              className={`v3-shelf-book${index === selectedIndex ? " v3-shelf-center" : ""}`}
               type="button"
-              key={album.id}
-              onClick={() => {
-                setFocusedIndex(index);
-                setAlbumIndex(index);
-                onOpenAlbum(album);
+              key={subject.id}
+              ref={(node) => {
+                bookRefs.current[index] = node;
               }}
-              aria-label={`${album.name} 앨범 펼치기`}
+              tabIndex={index === selectedIndex ? 0 : -1}
+              onClick={() => onSelectSubject(subject.id)}
+              aria-label={`${subject.name} 앨범 펼치기`}
+              aria-current={index === selectedIndex ? "true" : undefined}
             >
-              <span className="v3-shelf-book-title">{album.name}</span>
+              <span className="v3-shelf-book-title">{subject.name}</span>
             </button>
           ))}
         </div>
@@ -75,9 +108,7 @@ export default function V3ShelfView({
             className="v3-btn v3-btn-icon v3-btn-ghost"
             type="button"
             aria-label="이전 앨범"
-            onClick={() =>
-              setFocusedIndex((prev) => (prev - 1 + v3SubjectAlbums.length) % v3SubjectAlbums.length)
-            }
+            onClick={() => focusBook(-1)}
           >
             ←
           </button>
@@ -85,66 +116,27 @@ export default function V3ShelfView({
             className="v3-btn v3-btn-icon v3-btn-ghost"
             type="button"
             aria-label="다음 앨범"
-            onClick={() => setFocusedIndex((prev) => (prev + 1) % v3SubjectAlbums.length)}
+            onClick={() => focusBook(1)}
           >
             →
           </button>
         </div>
         <p className="v3-shelf-hint">
-          좌우 방향키로 이동, Enter로 펼치기, Escape로 닫기 — {centerAlbum.name} 앨범이
-          선택됨
+          {selectedSubject.name} 앨범이 선택됨 · 순간 {subjectMemories.length}개
         </p>
       </div>
 
-      {openAlbum && (
-        <div className="v3-shelf-spread" aria-label={`${openAlbum.name} 앨범 상세`}>
-          <div className="v3-shelf-spread-cover">
-            <span aria-hidden="true">{openAlbum.kind === "person" ? "♥" : "✦"}</span>
-            <div>{openAlbum.name}</div>
-            <div style={{ fontSize: "0.72rem", opacity: 0.8 }}>
-              {openAlbum.groupName ?? "subject album"}
-            </div>
-          </div>
-          <div>
-            <h2 className="v3-workspace-heading">관련 트리</h2>
-            <div className="v3-diary-list">
-              {openAlbum.treeIds.map((treeId) => (
-                <Link
-                  className="v3-diary-item"
-                  href={`/v3/trees/${treeId}`}
-                  key={treeId}
-                >
-                  <strong>트리 열기</strong>
-                  <small>{v3MemoriesByTree(treeId).length}개 순간</small>
-                </Link>
-              ))}
-            </div>
-            <h2 className="v3-workspace-heading" style={{ marginTop: 14 }}>
-              관련 순간
-            </h2>
-            <div className="v3-shelf-spread-list">
-              {tracks.map((memory) => (
-                <button
-                  className="v3-shelf-track"
-                  type="button"
-                  key={memory.id}
-                  onClick={() => onOpenAlbum(null)}
-                >
-                  <strong>{memory.title}</strong>
-                  <small>
-                    {memory.primaryEmotion ?? ""} · {memory.recordDate}
-                  </small>
-                </button>
-              ))}
-            </div>
-            <div className="v3-onboarding-actions">
-              <button className="v3-btn v3-btn-quiet" type="button" onClick={() => onOpenAlbum(null)}>
-                선반으로 돌아가기
-              </button>
-            </div>
-          </div>
+      {selectedSubject && (
+        <div className="v3-shelf-spread" aria-label={`${selectedSubject.name} 앨범 상세`}>
+          <V3AlbumAccordion
+            subject={selectedSubject}
+            memories={subjectMemories}
+            selectedMomentId={selectedMomentId}
+            onSelectMoment={onSelectMoment}
+            onOpenViewer={onOpenViewer}
+          />
         </div>
       )}
-    </div>
+    </section>
   );
 }
