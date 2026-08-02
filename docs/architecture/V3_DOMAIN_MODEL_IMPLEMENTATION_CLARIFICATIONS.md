@@ -1,9 +1,14 @@
 ---
 status: PROPOSED_ARCHITECTURE_CLARIFICATION
 authority: Issue #16 and PR #25
-version: 0.1
+version: 0.2
 effective_date: pending independent approval
 reviewed_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
+reviewed_sources:
+  - db/schema.ts
+  - server/api/access.ts
+  - server/api/memories.ts
+  - server/api/trees.ts
 ---
 
 # LoveTree V3 Domain Model — Implementation Clarifications
