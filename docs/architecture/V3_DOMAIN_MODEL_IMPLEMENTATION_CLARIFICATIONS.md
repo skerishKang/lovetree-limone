@@ -1,7 +1,7 @@
 ---
 status: PROPOSED_ARCHITECTURE_CLARIFICATION
 authority: Issue #16 and PR #25
-version: 0.2
+version: 0.3
 effective_date: pending independent approval
 reviewed_main_sha: 9b991409ccf017fbdd1b6c2750d1e6bb247048d2
 reviewed_sources:
@@ -9,6 +9,7 @@ reviewed_sources:
   - server/api/access.ts
   - server/api/memories.ts
   - server/api/trees.ts
+repair_of_review_comment: 5155876362
 ---
 
 # LoveTree V3 Domain Model — Implementation Clarifications
@@ -22,6 +23,8 @@ It closes implementation ambiguities found by comparing the proposed V3 model wi
 Where this clarification conflicts with an earlier sentence in `V3_DOMAIN_MODEL_DECISION.md`, this clarification controls. Both documents remain proposed until Issue #16 receives an independent architecture verdict and the approved authority is merged.
 
 This change remains documentation-only. It does not modify schema, migrations, API handlers, authentication, UI, Worker configuration, Preview, or Production.
+
+Canonical rules (field definitions, mutation authority matrix, ownership transfer policy, visibility_mode default, sortOrder transitional contract, memoVisibility classifier, parentId exception projection, mixed-version sequencing) are defined in `V3_DOMAIN_MODEL_DECISION.md`. This document specifies enforcement location, implementation order, and operational detail only.
 
 ## 2. Security hardening takes precedence over accidental legacy exposure
 
@@ -126,11 +129,12 @@ Required invariants:
 - `trees.ownerId` is the ultimate owner and has exactly one active `owner` membership;
 - an owner membership cannot be removed or demoted by an editor;
 - ordinary membership writes cannot change `trees.ownerId`;
-- ownership transfer, if later approved, is a dedicated transaction that updates `ownerId` and both owner memberships atomically;
+- ownership transfer is a dedicated transaction that updates `ownerId` and both owner memberships atomically (enforcement location: #20 auth/API adapter);
 - `collaborationMode = solo` permits only the owner membership;
 - switching from collaborative to solo requires all non-owner memberships to be removed first;
 - removed memberships are excluded from authorization but retained for audit;
-- official status does not grant membership and membership does not grant official status.
+- official status does not grant membership and membership does not grant official status;
+- Moment mutation authority is resolved from the actor's active membership role and the Moment's preserved `createdById` per the canonical matrix in the Decision document; member removal revokes authority immediately without rewriting authorship.
 
 Invitations and organization verification remain out of scope; #20 may initially create only already-accepted active memberships through an owner-authorized operation.
 
@@ -260,7 +264,22 @@ The independent reviewer of PR #25 must additionally verify:
 6. derived-source Tree/Moment identity cannot drift;
 7. milestone acknowledgement is actor-specific on collaborative Trees;
 8. soft-delete endpoint semantics and hard-purge separation are complete;
-9. per-Tree Connection serialization is sufficient under concurrent writes.
+9. per-Tree Connection serialization is sufficient under concurrent writes;
+10. Moment authorship (`createdById`) is server-assigned from authenticated actor + membership, never client-supplied, and mutation authority is deterministic from the membership role matrix;
+11. ownership transfer prevents orphaned active collaborative Trees and blocks account deletion when transfer fails;
+12. personal solo Tree owner deletion follows an approved soft-delete/retention path without orphaning;
+13. official Tree ownership changes are server/admin-authorized only;
+14. application user identity is tombstoned rather than hard-purged while references exist;
+15. `visibility_mode` physical default is `explicit` and legacy inserts cannot silently flip to `inherit`;
+16. `sortOrder` is nullable during migration, legacy inserts succeed without it, and `NOT NULL` applies only after verified drain;
+17. the ten-step mixed-version sequencing contract is implementable and rollback-safe;
+18. `memoVisibility` backfill uses a deterministic classifier with reported exposure deltas;
+19. quarantined `parentId` exceptions project `null` until approved remediation;
+20. `recordDate` serializes as `YYYY-MM-DD` and legacy serializers never emit `inherit`;
+21. optimistic concurrency uses conditional write on `updatedAt` or version;
+22. derived Tree creation is idempotent and deletion does not alter source attribution;
+23. milestone counts include derived/imported Moments per the canonical count definition;
+24. `stage` and `completionDeclaredAt` are deferred to #22 decision gate and not introduced earlier.
 
 Required final verdict remains exactly one of:
 
@@ -273,3 +292,113 @@ or
 ```text
 CHANGES_REQUIRED
 ```
+
+## 14. Moment authorship enforcement (R1)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §5 Moment field catalog (`createdById`) and §5 Moment mutation authority matrix.
+
+Enforcement location and order:
+
+- Schema (#19): add `createdById` as nullable text column on `memories`; no NOT NULL until step 9 of the sequencing contract.
+- API adapter (#20): V3 Moment create handler resolves the authenticated principal, verifies active membership (owner or editor), and assigns `createdById` from the verified identity. Client payload cannot supply or override `createdById`; a payload that attempts to do so is rejected as a contract violation.
+- Compatibility read mapper (#20): until backfill completes, the mapper returns the Tree owner as the compatibility author for rows where `createdById IS NULL`. After backfill, the mapper returns the stored value.
+- Mutation authority check (#20): every Moment update/delete handler resolves the actor's active membership role and the Moment's `createdById`, then applies the canonical matrix. Removed memberships are rejected before any mutation logic runs.
+- Audit (#20): owner-initiated edit/delete of another member's Moment inserts an audit row recording both the acting owner membership and the preserved original `createdById`.
+
+Backfill (#19, step 5): solo Tree Moments backfill `createdById = trees.ownerId`. Collaborative Tree Moments backfill from migration-era actor evidence (audit logs, membership history) using a deterministic resolution approved in the migration evidence report. Rows with no resolvable evidence backfill to the Tree owner with `backfillConfidence = low` recorded in the audit ledger.
+
+## 15. Ownership transfer and account deletion enforcement (R2)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §8 (Personal solo Tree owner deletion, Collaborative Tree ownership transfer, Official Tree ownership, Application user identity retention).
+
+Enforcement location and order:
+
+- Account deletion workflow (#20 or dedicated account-service issue): before completing account deletion, enumerate all Trees where `trees.ownerId = :deletingUserId`.
+  - Personal solo Trees: transition each to `status = deleted`, `deletedAt = now()`, insert audit row with `action = tree_soft_delete`, `reasonCode = account_deletion`.
+  - Collaborative Trees: execute the ownership-transfer transaction (see below). If any collaborative Tree fails transfer, abort the entire account deletion with a stable error.
+  - Official Trees: interrupt the deletion; place the Tree under server-side stewardship review; do not transfer or delete via the user-initiated path.
+- Ownership-transfer transaction (#20): one serialized transaction per Tree under the per-Tree advisory lock:
+  1. verify the departing account is currently the active owner;
+  2. select the new owner from active eligible members (editor seniority default, or explicit owner selection);
+  3. update `trees.ownerId`;
+  4. update the new owner's membership role to `owner`;
+  5. update the departing owner's membership to `status = removed` (account-deletion path) or the approved non-owner role (voluntary transfer);
+  6. insert audit row with `action = ownership_transfer`, prior owner, new owner, reason code.
+- Tombstone transition (#20 or account-service issue): revoke auth credentials; pseudonymize profile display fields; persist the application user row with a tombstone marker; do not hard-purge while any FK reference exists.
+- Hard purge (privileged retention job, separate issue): run only after all dependent reachability conditions are drained or re-referenced per the approved retention procedure.
+
+## 16. `visibility_mode` physical default enforcement (R3)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §5 Moment visibility physical compatibility.
+
+Enforcement location and order:
+
+- Schema (#19, step 1): add `visibility_mode` as nullable text/enum column; no DB default yet.
+- Backfill (#19, step 5): set all existing rows to `explicit`.
+- Compatibility read/write mapper (#20, step 2-3): legacy V1/V2 writes that touch `visibility` atomically set `visibility_mode = explicit`. V3 writes always send an explicit mode.
+- DB default (#19, step 9): after null-count = 0 verification, set the physical column default to `explicit` and apply NOT NULL.
+- Legacy serializer (#20): never emits `visibility_mode = inherit`; projects the computed effective visibility as `private|unlisted|public`.
+
+Privacy rationale: a V1/V2 legacy insert that omits `visibility_mode` stores `explicit`, preserving the legacy plain `visibility` semantics. A wrong default (e.g., `inherit`) would silently flip effective visibility for legacy writers that do not know about the field.
+
+## 17. `sortOrder` transitional contract enforcement (R4)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §5 Moment field catalog (`sortOrder`) and §12 `sortOrder` migration contract.
+
+Enforcement location and order:
+
+- Schema (#19, step 1): add `sortOrder` as nullable integer; no unsafe physical default.
+- Legacy insert (#20, step 2-4): V1/V2 legacy insert that omits `sortOrder` succeeds and leaves the field null (legacy-unassigned).
+- Compatibility read mapper (#20, step 2): orders rows by non-null `sortOrder` ascending first, then null tail by `(createdAt, id)` ascending.
+- Backfill (#19, step 5): per Tree, assign deterministic values using Tree-local stable ordering (existing `createdAt`, then existing legacy parent/path, then `id`). Idempotent, batched, retry-safe. Null-count verification before cutover.
+- Strict constraint (#19, step 9): apply NOT NULL only after old-server drain and null-count = 0.
+- V3 write (#20): always writes explicit `sortOrder` computed inside the per-Tree serialized transaction. Simple `MAX+1` outside the lock is forbidden. Final tiebreaker: `(sortOrder, createdAt, id)`.
+- Rollback: nullable column stays during application rollback; older binaries ignore it.
+
+## 18. `parentId` exception projection enforcement (A)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §6 Connection constraints (item 10) and §12 `parentId` malformed-row exception quarantine.
+
+Enforcement location and order:
+
+- Migration (#19, step 6): classify each legacy `parentId` row; insert quarantined rows into the exception registry with the raw legacy value preserved verbatim.
+- Compatibility read mapper (#20): for quarantined rows, project `parentId = null` on the legacy API response. Expose `exceptionState`/reason code on the V3 read-model view for operator audit.
+- Remediation (#20 or operator workflow): only an owner/editor-authorized Connection create with standard cycle/same-tree validation resolves the exception. The projection becomes deterministic only after an active primary Connection exists.
+- Legacy serializer (#20): never invents a synthetic parent; never exposes the raw quarantined value on the public API.
+
+## 19. `memoVisibility` deterministic backfill enforcement (B)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §12 Deterministic `memoVisibility` backfill.
+
+Enforcement location and order:
+
+- Backfill job (#19, step 5): run the priority-ordered classifier over each existing Moment's memo-bearing row. Produce exactly one of `private | tree | public` per row.
+- Audit ledger (#19): record per-class counts and prior-vs-new effective exposure deltas. Any row whose public exposure class is reduced is logged as an intentional privacy-hardening change in the migration evidence report.
+- Verification (#19, step 7): confirm zero rows remain unclassified; confirm no row was broadened.
+- Compatibility read mapper (#20): applies the parent-child security intersection using the backfilled `memoVisibility` value.
+
+## 20. Mixed-version migration enforcement (C)
+
+Canonical rule: `V3_DOMAIN_MODEL_DECISION.md` §12 Mixed-version sequencing contract.
+
+Enforcement location and order:
+
+- #19 implements steps 1, 5, 6, 7, 9 (schema, backfill, quarantine, metrics, strict constraints).
+- #20 implements steps 2, 3, 4, 10 (compatibility reads, dual-write, legacy-write contract, V3 persistence enable).
+- Step 8 (old-server drain) is an operational gate verified by traffic/version heartbeat before #19 step 9 runs.
+- Rollback policy: application rollback at any pre-step-10 point removes binaries/flags; additive columns stay. DB column/table drop is not the default rollback path; any drop requires a separate privileged approval.
+
+## 21. Non-blocking findings enforcement
+
+Canonical rules are in `V3_DOMAIN_MODEL_DECISION.md` §13 (Serialization and concurrency) and §16 (Open questions: Derived Tree idempotency, Derived Tree deletion, Stage and completionDeclaredAt).
+
+Enforcement locations:
+
+- Moment delete + Connection write serialization: #20 Moment delete handler acquires the same per-Tree advisory lock used by Connection mutation before soft-deleting incident Connections.
+- Derived Tree idempotency: #21 derivation create handler checks the idempotency key / partial unique constraint on `(derivedTreeId, sourceTreeId, createdById)` before inserting; retries return the existing row.
+- Derived Tree deletion: #21 derived-Tree delete handler soft-deletes only the derived row; source attribution snapshot and source Tree/Moment state are not altered.
+- `recordDate` serialization: #20 API serializer emits `YYYY-MM-DD`; server validation rejects non-conforming payloads.
+- Legacy fields `trees.keywords`, `tree_social_counts`: #19 collision inventory records them as retained legacy display/projection fields; #20 does not expose them as V3 canonical search or engagement sources.
+- Optimistic concurrency: #20 V3 update handlers issue conditional writes `WHERE updatedAt = :observed` (or `WHERE version = :observed` if an explicit version field is introduced); non-matching precondition returns `409 Conflict`.
+- Milestone count scope: #22 milestone qualification counts include derived/imported Moments per the canonical active-row count definition; the count definition is documented in the #22 implementation contract.
+- `stage` and `completionDeclaredAt`: deferred to #22 decision gate; no schema, API, or UI code may introduce them before that gate passes.
