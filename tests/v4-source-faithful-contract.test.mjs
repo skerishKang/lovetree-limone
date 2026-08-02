@@ -43,7 +43,7 @@ const SOURCE_FILES = [
   "lovetree-growing-tree-season-archive-v3(1).html",
 ];
 
-const IMPLEMENTED_PHASE_ONE_ROUTES = [
+const IMPLEMENTED_ROUTES = [
   "app/v4/page.tsx",
   "app/v4/trees/new/page.tsx",
   "app/v4/trees/demo/onboarding/emotion/page.tsx",
@@ -55,8 +55,9 @@ const V4_VISUAL_FILES = [
   "app/components/v4/V4Landing.tsx",
   "app/components/v4/V4EmotionStep.tsx",
   "app/components/v4/V4ConnectStep.tsx",
-  "app/components/v4/V4PhaseBoundary.tsx",
+  "app/components/v4/V4TreeWorkspace.tsx",
   "app/styles/v4/onboarding.css",
+  "app/styles/v4/workspace.css",
 ];
 
 test("V4 manifest covers every one of the 23 supplied UI HTML sources", async () => {
@@ -88,8 +89,8 @@ test("all four separately supplied archive HTMLs remain first-class sources", as
   assert.equal((manifest.match(/separatelySupplied: true/g) ?? []).length, 4);
 });
 
-test("phase-one V4 routes and source-faithful components exist", async () => {
-  for (const path of IMPLEMENTED_PHASE_ONE_ROUTES) {
+test("implemented V4 routes and source-faithful components exist", async () => {
+  for (const path of IMPLEMENTED_ROUTES) {
     assert.ok(await exists(path), `${path} must exist`);
   }
   for (const path of V4_VISUAL_FILES) {
@@ -104,7 +105,7 @@ test("V4 visual implementation does not import V3 components or styles", async (
   }
 });
 
-test("V4 phase-one implementation is a React port, not iframe delivery", async () => {
+test("V4 implementation is a React port, not iframe delivery", async () => {
   for (const path of V4_VISUAL_FILES.filter((path) => path.endsWith(".tsx"))) {
     const source = await read(path);
     assert.doesNotMatch(source, /<iframe\b/i, `${path} must not use an iframe shortcut`);
@@ -148,14 +149,30 @@ test("connection port preserves two-card board, branch and relation flow", async
   assert.match(connect, /\/v4\/trees\/demo/);
 });
 
-test("workspace boundary cannot be mistaken for completed source implementation", async () => {
-  const boundary = await read("app/v4/trees/demo/page.tsx");
+test("growing-tree port preserves v6 workspace and retained v5 mechanics", async () => {
+  const workspace = await read("app/components/v4/V4TreeWorkspace.tsx");
+  const workspacePage = await read("app/v4/trees/demo/page.tsx");
   const manifest = await read("app/components/v4/v4-source-manifest.ts");
-  assert.match(boundary, /임시 상태/);
+
+  assert.match(workspacePage, /V4TreeWorkspace/);
+  assert.match(workspace, /v4-workspace-grid/);
+  assert.match(workspace, /v4-diary-list/);
+  assert.match(workspace, /onPointerDown/);
+  assert.match(workspace, /onPointerMove/);
+  assert.match(workspace, /curvePath/);
+  assert.match(workspace, /removeSelected/);
+  assert.match(workspace, /setZoom/);
+  assert.match(workspace, /resetView/);
+  assert.match(workspace, /requestFullscreen/);
+  assert.match(workspace, /v4-fullscreen-drawer/);
+  assert.match(workspace, /renderComposer\("v4-side"\)/);
+  assert.match(workspace, /renderComposer\("v4-drawer"\)/);
+  assert.match(workspace, /lovetree-v4-workspace/);
+
   for (const sourceId of ["growing-tree-v5-draggable-notes", "growing-tree-v6-fullscreen-add"]) {
     const start = manifest.indexOf(`id: \"${sourceId}\"`);
     const next = manifest.indexOf("\n  {", start + 1);
     const block = manifest.slice(start, next === -1 ? undefined : next);
-    assert.match(block, /status: \"planned\"/, `${sourceId} must remain planned until the source design is actually ported`);
+    assert.match(block, /status: \"implemented\"/, `${sourceId} must be implemented after the workspace source port`);
   }
 });
