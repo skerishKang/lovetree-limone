@@ -329,8 +329,11 @@ test("config: generated config contains only the exact target and safe values", 
   });
   assert.equal(config.name, VALID_WORKER);
   assert.equal(config.workers_dev, true);
-  assert.equal(config.main, "worker/index.ts");
-  assert.deepEqual(config.assets, { directory: "dist/client", binding: "ASSETS" });
+  assert.equal(config.main, path.join(dir, "worker", "index.ts"));
+  assert.deepEqual(config.assets, {
+    directory: path.join(dir, "dist", "client"),
+    binding: "ASSETS",
+  });
   assert.equal(config.vars.APP_ENV, "staging");
   assert.equal(config.vars.API_MUTATIONS_ENABLED, "false");
   assert.equal(config.vars.FIREBASE_PROJECT_ID, "relovetree");

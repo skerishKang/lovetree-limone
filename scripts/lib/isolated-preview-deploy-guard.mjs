@@ -171,18 +171,35 @@ export function assertBuildOutputPresent(repoRoot) {
   return clientAssets;
 }
 
-function pickSafeCommon(source) {
+function pickSafeCommon(source, repoRoot) {
   const allowed = {};
-  for (const key of [
-    "$schema",
-    "compatibility_date",
-    "compatibility_flags",
-    "main",
-    "assets",
-    "node_compat",
-    "observability",
-  ]) {
-    if (source[key] !== undefined) allowed[key] = structuredClone(source[key]);
+  if (source.$schema !== undefined) allowed.$schema = source.$schema;
+  if (source.compatibility_date !== undefined) {
+    allowed.compatibility_date = source.compatibility_date;
+  }
+  if (source.compatibility_flags !== undefined) {
+    allowed.compatibility_flags = structuredClone(source.compatibility_flags);
+  }
+  if (source.main !== undefined) {
+    allowed.main = path.resolve(repoRoot, source.main);
+  }
+  if (source.assets !== undefined) {
+    const { directory, binding, ...rest } = source.assets;
+    if (directory !== undefined) {
+      allowed.assets = {
+        ...structuredClone(rest),
+        directory: path.resolve(repoRoot, directory),
+        ...(binding !== undefined ? { binding } : {}),
+      };
+    } else {
+      allowed.assets = structuredClone(source.assets);
+    }
+  }
+  if (source.node_compat !== undefined) {
+    allowed.node_compat = structuredClone(source.node_compat);
+  }
+  if (source.observability !== undefined) {
+    allowed.observability = structuredClone(source.observability);
   }
   return allowed;
 }
@@ -194,7 +211,7 @@ export async function buildSafePreviewConfig({
 }) {
   const source = await readWranglerConfig(repoRoot);
   const safe = {
-    ...pickSafeCommon(source),
+    ...pickSafeCommon(source, repoRoot),
     name: workerName,
     workers_dev: true,
     vars: {
