@@ -1,0 +1,330 @@
+.v4-graph-page {
+  min-height: 100vh;
+  color: #ece8e5;
+  font-family: "Gowun Dodum", "Noto Sans KR", sans-serif;
+  background: #111416;
+}
+
+.v4-graph-page * { box-sizing: border-box; }
+.v4-graph-page button,
+.v4-graph-page input { font: inherit; }
+.v4-graph-page button { cursor: pointer; }
+
+.v4-graph-shell {
+  width: min(1560px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 12px 0 26px;
+}
+
+.v4-graph-topbar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 17px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 20px;
+  background: rgba(21,24,27,.86);
+  box-shadow: 0 18px 50px rgba(0,0,0,.28);
+  backdrop-filter: blur(14px);
+}
+
+.v4-graph-back,
+.v4-graph-brand,
+.v4-graph-nav { color: inherit; text-decoration: none; }
+.v4-graph-back { color: #a8a2a0; font-size: .6rem; }
+.v4-graph-brand {
+  margin-left: 8px;
+  color: #f0b3bd;
+  font: 700 1.12rem "Gowun Batang", serif;
+}
+
+.v4-graph-title {
+  min-width: 0;
+  margin-right: auto;
+  padding-left: 14px;
+  border-left: 1px solid rgba(255,255,255,.1);
+}
+.v4-graph-title strong,
+.v4-graph-title small { display: block; }
+.v4-graph-title strong { font-size: .7rem; }
+.v4-graph-title small { margin-top: 2px; color: #847e7c; font-size: .46rem; letter-spacing: .08em; }
+
+.v4-graph-nav {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 999px;
+  color: #aaa4a1;
+  font-size: .51rem;
+}
+.v4-graph-nav.is-active { border-color: rgba(240,179,189,.4); background: rgba(240,179,189,.1); color: #f0b3bd; }
+
+.v4-graph-button {
+  min-height: 35px;
+  padding: 0 11px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: #b9b2af;
+  font-size: .52rem;
+  font-weight: 700;
+}
+.v4-graph-button:hover,
+.v4-graph-button.is-active { border-color: rgba(240,179,189,.42); color: #f0b3bd; }
+.v4-graph-button.is-primary { border-color: #c87583; background: #a95e6c; color: white; }
+
+/* Light free graph editor */
+.v4-freegraph-page {
+  min-height: 100vh;
+  color: #403637;
+  font-family: "Gowun Dodum", "Noto Sans KR", sans-serif;
+  background:
+    radial-gradient(circle at 12% 15%, rgba(211,139,146,.19), transparent 29rem),
+    radial-gradient(circle at 87% 84%, rgba(128,151,111,.17), transparent 31rem),
+    linear-gradient(145deg,#f5eee6,#fbf8f1 58%,#eee8dd);
+}
+.v4-freegraph-page * { box-sizing: border-box; }
+.v4-freegraph-page button,
+.v4-freegraph-page input { font: inherit; }
+
+.v4-freegraph-app {
+  width: min(1580px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 12px 0 24px;
+}
+
+.v4-freegraph-toolbar {
+  min-height: 67px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid rgba(111,86,79,.17);
+  border-radius: 21px;
+  background: rgba(255,253,249,.85);
+  box-shadow: 0 17px 46px rgba(64,46,42,.1);
+}
+
+.v4-freegraph-toolbar a { color: #8e7e79; text-decoration: none; font-size: .58rem; }
+.v4-freegraph-heading { min-width: 0; margin: 0 auto 0 10px; padding-left: 14px; border-left: 1px solid rgba(111,86,79,.13); }
+.v4-freegraph-heading strong,
+.v4-freegraph-heading small { display: block; }
+.v4-freegraph-heading strong { font: 700 .88rem "Gowun Batang",serif; }
+.v4-freegraph-heading small { color: #9b8982; font-size: .48rem; }
+
+.v4-freegraph-button {
+  min-height: 35px;
+  padding: 0 11px;
+  border: 1px solid rgba(111,86,79,.17);
+  border-radius: 999px;
+  background: rgba(255,250,244,.78);
+  color: #786a65;
+  font-size: .52rem;
+  font-weight: 700;
+}
+.v4-freegraph-button.is-active { border-color: #879975; background: #e1e9dc; color: #596b4c; }
+.v4-freegraph-button.is-primary { border-color: #98505e; background: #98505e; color: white; }
+
+.v4-freegraph-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 286px;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.v4-freegraph-board {
+  position: relative;
+  height: 770px;
+  overflow: auto;
+  border: 1px solid rgba(111,86,79,.17);
+  border-radius: 27px;
+  background:
+    linear-gradient(rgba(89,107,76,.055) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(89,107,76,.055) 1px,transparent 1px),
+    radial-gradient(circle at 50% 45%,rgba(255,255,255,.86),transparent 30rem),
+    linear-gradient(145deg,rgba(245,235,224,.9),rgba(232,238,222,.86));
+  background-size: 34px 34px,34px 34px,auto,auto;
+  box-shadow: 0 19px 52px rgba(64,46,42,.1);
+}
+
+.v4-freegraph-stage {
+  position: relative;
+  width: 1250px;
+  height: 760px;
+  transform-origin: 0 0;
+}
+.v4-freegraph-lines { position:absolute; inset:0; width:1250px; height:760px; pointer-events:none; }
+.v4-freegraph-edge { fill:none; stroke:#768969; stroke-width:3.5; stroke-linecap:round; opacity:.72; }
+.v4-freegraph-edge.is-selected { stroke:#c86e79; stroke-width:5; opacity:1; filter:drop-shadow(0 4px 7px rgba(200,110,121,.2)); }
+
+.v4-freegraph-node {
+  position:absolute;
+  z-index:3;
+  width:168px;
+  min-height:111px;
+  padding:12px;
+  border:1px solid rgba(111,86,79,.19);
+  border-radius:17px 7px 16px 8px;
+  background:rgba(255,253,249,.95);
+  color:#403637;
+  text-align:left;
+  box-shadow:0 15px 34px rgba(64,46,42,.14);
+  user-select:none;
+  cursor:grab;
+}
+.v4-freegraph-node:active { cursor:grabbing; }
+.v4-freegraph-node.is-selected { border-color:#c86e79; box-shadow:0 20px 43px rgba(64,46,42,.2),0 0 0 3px rgba(200,110,121,.11); }
+.v4-freegraph-node::before { content:""; position:absolute; left:50%; top:-6px; width:45px; height:15px; transform:translateX(-50%) rotate(-2deg); background:rgba(221,190,153,.57); }
+.v4-freegraph-node small { display:block; color:#98505e; font-size:.44rem; font-weight:700; letter-spacing:.07em; }
+.v4-freegraph-node strong { display:block; margin-top:5px; font:400 .72rem/1.4 "Gowun Batang",serif; }
+.v4-freegraph-node p { display:-webkit-box; margin:5px 0 0; overflow:hidden; color:#8e7f7a; font-size:.5rem; line-height:1.45; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.v4-node-handle { position:absolute; top:50%; width:13px; height:13px; border:2px solid #fffaf4; border-radius:50%; background:#879975; box-shadow:0 4px 8px rgba(70,84,61,.18); transform:translateY(-50%); }
+.v4-node-handle.in { left:-7px; }
+.v4-node-handle.out { right:-7px; background:#c86e79; }
+
+.v4-freegraph-inspector {
+  min-height:770px;
+  padding:20px;
+  border:1px solid rgba(111,86,79,.17);
+  border-radius:25px;
+  background:rgba(255,253,249,.85);
+  box-shadow:0 19px 52px rgba(64,46,42,.1);
+}
+.v4-freegraph-inspector h2 { margin:0; font:400 1.4rem "Gowun Batang",serif; letter-spacing:-.05em; }
+.v4-freegraph-inspector > p { color:#8e7f7a; font-size:.59rem; line-height:1.6; }
+.v4-inspector-media { height:168px; margin:17px 0; border-radius:16px; background:linear-gradient(145deg,#667287,#9c7582 52%,#dc9f8c); background-size:cover; background-position:center; }
+.v4-inspector-row { padding:13px 0; border-bottom:1px solid rgba(111,86,79,.1); }
+.v4-inspector-row small { display:block; color:#596b4c; font-size:.49rem; font-weight:700; }
+.v4-inspector-row strong { display:block; margin-top:4px; font:400 .72rem "Gowun Batang",serif; }
+.v4-inspector-row p { margin:5px 0 0; color:#8e7f7a; font-size:.54rem; line-height:1.55; }
+.v4-minimap { position:absolute; right:17px; bottom:17px; width:170px; height:110px; border:1px solid rgba(111,86,79,.2); border-radius:13px; background:rgba(255,253,249,.82); box-shadow:0 12px 28px rgba(64,46,42,.12); overflow:hidden; }
+.v4-minimap-dot { position:absolute; width:9px; height:9px; border-radius:50%; background:#879975; }
+
+/* Obsidian map */
+.v4-obsidian-layout { display:grid; grid-template-columns:240px minmax(0,1fr) 310px; gap:10px; margin-top:10px; }
+.v4-dark-panel { min-height:760px; border:1px solid rgba(255,255,255,.08); border-radius:20px; background:rgba(19,22,25,.9); box-shadow:0 22px 60px rgba(0,0,0,.28); overflow:hidden; }
+.v4-dark-panel-head { padding:17px; border-bottom:1px solid rgba(255,255,255,.07); }
+.v4-dark-panel-head h2 { margin:0; font:600 .78rem "Gowun Batang",serif; }
+.v4-dark-panel-head p { margin:5px 0 0; color:#767170; font-size:.49rem; line-height:1.5; }
+.v4-dark-controls { padding:14px; }
+.v4-dark-input { width:100%; height:38px; padding:0 11px; border:1px solid rgba(255,255,255,.1); border-radius:11px; outline:0; background:#171a1d; color:#e9e4e1; font-size:.57rem; }
+.v4-dark-input:focus { border-color:rgba(240,179,189,.45); box-shadow:0 0 0 4px rgba(240,179,189,.07); }
+.v4-filter-title { display:block; margin:17px 2px 8px; color:#8c8582; font-size:.47rem; font-weight:700; letter-spacing:.08em; }
+.v4-filter-chip { min-height:31px; margin:0 4px 5px 0; padding:0 9px; border:1px solid rgba(255,255,255,.09); border-radius:999px; background:rgba(255,255,255,.025); color:#8e8987; font-size:.48rem; }
+.v4-filter-chip.is-selected { border-color:rgba(174,135,209,.48); background:rgba(174,135,209,.12); color:#d5b7ee; }
+.v4-obsidian-canvas { position:relative; height:760px; overflow:hidden; background:radial-gradient(circle at 50% 45%,rgba(88,67,110,.16),transparent 24rem),linear-gradient(145deg,#111417,#171a1d); }
+.v4-obsidian-canvas::before { content:""; position:absolute; inset:0; opacity:.32; background-image:radial-gradient(circle,rgba(255,255,255,.22) 1px,transparent 1px); background-size:31px 31px; }
+.v4-obsidian-svg { position:absolute; inset:0; width:100%; height:100%; }
+.v4-obsidian-edge { stroke:rgba(183,157,205,.38); stroke-width:1.7; }
+.v4-obsidian-node { position:absolute; z-index:2; display:grid; place-items:center; width:76px; height:76px; border:1px solid rgba(205,185,224,.34); border-radius:50%; background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.14),rgba(111,82,139,.44)); color:#e4d7ed; box-shadow:0 0 28px rgba(155,113,190,.16); font-size:.5rem; font-weight:700; text-align:center; }
+.v4-obsidian-node.is-selected { border-color:#f0b3bd; box-shadow:0 0 0 5px rgba(240,179,189,.08),0 0 38px rgba(240,179,189,.25); color:white; }
+.v4-obsidian-node.is-hidden { opacity:.13; pointer-events:none; }
+.v4-inspector-dark { padding:18px; }
+.v4-inspector-dark .v4-inspector-media { background:linear-gradient(145deg,#372f48,#76547d 52%,#bd7d8b); }
+.v4-dark-stat { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:15px; }
+.v4-dark-stat div { padding:12px; border:1px solid rgba(255,255,255,.07); border-radius:12px; background:rgba(255,255,255,.025); }
+.v4-dark-stat b { display:block; color:#f0b3bd; font:700 .78rem "Manrope",sans-serif; }
+.v4-dark-stat span { color:#716c6a; font-size:.45rem; }
+
+/* Nebula */
+.v4-nebula-page { min-height:100vh; overflow:hidden; color:#f0edf3; font-family:"Gowun Dodum",sans-serif; background:radial-gradient(circle at 50% 42%,#1d1830,#090b12 62%,#05070b); }
+.v4-nebula-page * { box-sizing:border-box; }
+.v4-nebula-header { position:relative; z-index:8; min-height:72px; display:flex; align-items:center; gap:12px; padding:0 22px; border-bottom:1px solid rgba(255,255,255,.07); background:rgba(7,9,14,.5); backdrop-filter:blur(15px); }
+.v4-nebula-header a { color:#a69eaa; text-decoration:none; font-size:.55rem; }
+.v4-nebula-header h1 { margin:0 auto 0 12px; font:400 1.05rem "Gowun Batang",serif; letter-spacing:-.04em; }
+.v4-nebula-mode { min-height:33px; padding:0 10px; border:1px solid rgba(255,255,255,.1); border-radius:999px; background:rgba(255,255,255,.03); color:#918a99; font-size:.48rem; }
+.v4-nebula-mode.is-selected { border-color:rgba(133,213,194,.43); background:rgba(99,215,188,.09); color:#8fe0cb; }
+.v4-nebula-stage { position:relative; height:calc(100vh - 72px); min-height:650px; overflow:hidden; }
+.v4-nebula-stage::before { content:""; position:absolute; inset:-18%; background:conic-gradient(from 20deg at 50% 48%,transparent,rgba(126,86,166,.14),transparent 19%,rgba(60,177,172,.12),transparent 42%,rgba(218,112,138,.12),transparent 65%); filter:blur(38px); animation:v4-nebula-turn 28s linear infinite; }
+@keyframes v4-nebula-turn { to { transform:rotate(360deg); } }
+.v4-nebula-ring { position:absolute; left:50%; top:48%; border:1px solid rgba(175,143,207,.13); border-radius:50%; transform:translate(-50%,-50%) rotate(var(--ring-rotate)); }
+.v4-nebula-point { position:absolute; z-index:2; width:var(--point-size); height:var(--point-size); border:0; border-radius:50%; background:var(--point-color); box-shadow:0 0 calc(var(--point-size)*3) var(--point-color); opacity:var(--point-opacity); transition:transform 180ms ease,opacity 180ms ease; }
+.v4-nebula-point:hover,.v4-nebula-point.is-selected { z-index:5; transform:scale(2.6); opacity:1; }
+.v4-nebula-cluster-label { position:absolute; z-index:3; color:rgba(235,225,241,.68); font:400 .64rem "Gowun Batang",serif; letter-spacing:.06em; pointer-events:none; }
+.v4-nebula-detail { position:absolute; z-index:9; right:24px; top:24px; width:min(330px,calc(100% - 48px)); padding:20px; border:1px solid rgba(255,255,255,.11); border-radius:22px; background:rgba(13,15,23,.82); box-shadow:0 25px 70px rgba(0,0,0,.36); backdrop-filter:blur(17px); }
+.v4-nebula-detail small { color:#8fe0cb; font-size:.47rem; font-weight:700; letter-spacing:.09em; }
+.v4-nebula-detail h2 { margin:8px 0 0; font:400 1.35rem "Gowun Batang",serif; }
+.v4-nebula-detail p { color:#aaa2ad; font-size:.57rem; line-height:1.65; }
+.v4-nebula-legend { position:absolute; z-index:8; left:24px; bottom:23px; display:flex; flex-wrap:wrap; gap:7px; max-width:460px; }
+.v4-nebula-legend button { min-height:34px; padding:0 10px; border:1px solid rgba(255,255,255,.09); border-radius:999px; background:rgba(10,12,18,.62); color:#99919c; font-size:.48rem; backdrop-filter:blur(10px); }
+.v4-nebula-legend button.is-selected { color:white; border-color:var(--legend-color); box-shadow:inset 0 0 16px color-mix(in srgb,var(--legend-color) 18%,transparent); }
+
+/* Timeline */
+.v4-timeline-page { min-height:100vh; color:#403536; font-family:"Gowun Dodum",sans-serif; background:radial-gradient(circle at 11% 15%,rgba(211,139,146,.19),transparent 28rem),radial-gradient(circle at 88% 84%,rgba(128,151,111,.16),transparent 30rem),linear-gradient(145deg,#f6eee6,#fbf8f1 57%,#eee8dd); }
+.v4-timeline-page * { box-sizing:border-box; }
+.v4-timeline-shell { width:min(1320px,calc(100% - 38px)); margin:0 auto; padding:22px 0 50px; }
+.v4-timeline-header { min-height:59px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
+.v4-timeline-header a { color:#8f817d; text-decoration:none; font-size:.62rem; }
+.v4-timeline-header strong { color:#98505e; font:700 1.25rem "Gowun Batang",serif; }
+.v4-timeline-header span { justify-self:end; color:#596b4c; font-size:.5rem; font-weight:700; letter-spacing:.1em; }
+.v4-timeline-hero { display:grid; grid-template-columns:.8fr 1.2fr; gap:45px; align-items:end; margin:34px 0 26px; }
+.v4-timeline-hero h1 { margin:0; font:400 clamp(2.7rem,5vw,4.8rem)/1.08 "Gowun Batang",serif; letter-spacing:-.09em; }
+.v4-timeline-hero h1 em { color:#c86e79; font-style:normal; }
+.v4-timeline-hero p { margin:0 0 9px; color:#8f817d; font-size:.73rem; line-height:1.8; }
+.v4-date-strip { display:flex; gap:8px; overflow-x:auto; padding:9px 0 18px; }
+.v4-date-chip { flex:0 0 auto; min-width:116px; padding:12px; border:1px solid rgba(111,86,79,.16); border-radius:13px; background:rgba(255,252,247,.72); color:#8f817d; text-align:left; }
+.v4-date-chip.is-selected { border-color:#c86e79; background:#f0d7d5; color:#98505e; box-shadow:0 11px 25px rgba(152,80,94,.11); }
+.v4-date-chip small,.v4-date-chip strong { display:block; }
+.v4-date-chip small { font-size:.44rem; }
+.v4-date-chip strong { margin-top:4px; font:400 .68rem "Gowun Batang",serif; }
+.v4-timeline-layout { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr); gap:18px; }
+.v4-timeline-paper,.v4-timeline-detail { border:1px solid rgba(111,86,79,.17); border-radius:27px; background:rgba(255,253,249,.82); box-shadow:0 20px 55px rgba(64,46,42,.1); }
+.v4-timeline-paper { position:relative; min-height:680px; padding:35px 34px; overflow:hidden; }
+.v4-timeline-paper::before { content:""; position:absolute; left:50%; top:24px; bottom:24px; width:2px; background:linear-gradient(#c86e79,#879975); opacity:.42; }
+.v4-timeline-chapter { position:relative; width:47%; margin-bottom:30px; padding:18px; border:1px solid rgba(111,86,79,.15); border-radius:17px 7px 17px 7px; background:rgba(255,250,244,.86); box-shadow:0 12px 28px rgba(64,46,42,.08); }
+.v4-timeline-chapter:nth-child(even) { margin-left:53%; }
+.v4-timeline-chapter::after { content:""; position:absolute; top:24px; width:14px; height:14px; border:4px solid #f7efe7; border-radius:50%; background:#c86e79; }
+.v4-timeline-chapter:nth-child(odd)::after { right:-9.4%; }
+.v4-timeline-chapter:nth-child(even)::after { left:-9.4%; background:#879975; }
+.v4-timeline-chapter.is-selected { border-color:#c86e79; transform:rotate(-.4deg); }
+.v4-timeline-chapter time { color:#98505e; font-size:.48rem; font-weight:700; }
+.v4-timeline-chapter h2 { margin:6px 0 0; font:400 .9rem "Gowun Batang",serif; }
+.v4-timeline-chapter p { margin:7px 0 0; color:#8f817d; font-size:.54rem; line-height:1.55; }
+.v4-timeline-detail { position:sticky; top:18px; align-self:start; overflow:hidden; }
+.v4-timeline-video { height:245px; background:linear-gradient(145deg,#5d687c,#a37682 52%,#dc9e8b); background-size:cover; background-position:center; }
+.v4-timeline-detail-copy { padding:22px; }
+.v4-timeline-detail-copy small { color:#596b4c; font-size:.48rem; font-weight:700; letter-spacing:.08em; }
+.v4-timeline-detail-copy h2 { margin:7px 0 0; font:400 1.35rem "Gowun Batang",serif; }
+.v4-timeline-detail-copy p { color:#8f817d; font-size:.61rem; line-height:1.7; }
+.v4-timeline-relation { margin-top:14px; padding:12px; border:1px dashed rgba(89,107,76,.27); border-radius:13px; background:rgba(225,233,220,.55); color:#596b4c; font-size:.56rem; line-height:1.55; }
+
+.v4-video-modal { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:22px; background:rgba(15,12,13,.67); backdrop-filter:blur(12px); }
+.v4-video-dialog { width:min(780px,100%); overflow:hidden; border:1px solid rgba(255,255,255,.18); border-radius:24px; background:#17191d; color:#eee9e7; box-shadow:0 35px 110px rgba(0,0,0,.5); }
+.v4-video-dialog-media { aspect-ratio:16/9; display:grid; place-items:center; background:linear-gradient(145deg,#323946,#785b71 52%,#b8757f); font-size:2rem; }
+.v4-video-dialog-copy { display:flex; align-items:center; gap:15px; padding:17px 20px; }
+.v4-video-dialog-copy div { margin-right:auto; }
+.v4-video-dialog-copy strong { display:block; font:400 .9rem "Gowun Batang",serif; }
+.v4-video-dialog-copy small { color:#968f8d; font-size:.5rem; }
+
+@media (max-width:1000px) {
+  .v4-freegraph-layout,.v4-timeline-layout { grid-template-columns:1fr; }
+  .v4-freegraph-inspector { min-height:auto; }
+  .v4-obsidian-layout { grid-template-columns:210px minmax(620px,1fr); overflow:auto; }
+  .v4-obsidian-layout > :last-child { grid-column:1/-1; min-height:auto; }
+  .v4-timeline-hero { grid-template-columns:1fr; gap:16px; }
+}
+@media (max-width:700px) {
+  .v4-graph-shell,.v4-freegraph-app,.v4-timeline-shell { width:min(100% - 14px,1560px); }
+  .v4-graph-topbar { flex-wrap:wrap; padding:10px 12px; }
+  .v4-graph-title { width:100%; order:3; border-left:0; padding:8px 0 0; border-top:1px solid rgba(255,255,255,.07); }
+  .v4-graph-nav { display:none; }
+  .v4-freegraph-toolbar { flex-wrap:wrap; padding:10px 12px; }
+  .v4-freegraph-heading { width:100%; order:3; border-left:0; padding:8px 0 0; border-top:1px solid rgba(111,86,79,.1); }
+  .v4-freegraph-board { height:650px; }
+  .v4-nebula-header { flex-wrap:wrap; padding:10px 13px; }
+  .v4-nebula-header h1 { width:100%; order:3; }
+  .v4-nebula-detail { right:12px; top:12px; width:min(300px,calc(100% - 24px)); }
+  .v4-timeline-header { grid-template-columns:1fr auto; }
+  .v4-timeline-header strong { grid-column:1/-1; grid-row:1; justify-self:center; }
+  .v4-timeline-header a,.v4-timeline-header span { grid-row:1; z-index:2; }
+  .v4-timeline-paper::before { left:17px; }
+  .v4-timeline-chapter,.v4-timeline-chapter:nth-child(even) { width:calc(100% - 28px); margin-left:28px; }
+  .v4-timeline-chapter:nth-child(odd)::after,.v4-timeline-chapter:nth-child(even)::after { left:-27px; right:auto; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .v4-nebula-stage::before { animation:none; }
+  .v4-graph-page *, .v4-freegraph-page *, .v4-nebula-page *, .v4-timeline-page * { transition-duration:.001ms!important; animation-duration:.001ms!important; }
+}
