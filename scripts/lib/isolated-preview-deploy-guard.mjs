@@ -358,6 +358,7 @@ export async function runGuardedPreviewDeploy({
   collectVersions,
   canonicalName,
   protectedNames = PROTECTED_WORKER_NAMES,
+  outputDir,
 }) {
   const canonical = canonicalName ?? (await canonicalWranglerName(repoRoot));
   validatePreviewWorkerName({
@@ -378,6 +379,7 @@ export async function runGuardedPreviewDeploy({
   const safeConfig = await buildSafePreviewConfig({
     repoRoot,
     workerName,
+    outputDir,
   });
   const commands = buildWranglerCommands({
     configPath: safeConfig.configPath,

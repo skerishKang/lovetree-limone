@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, writeFile, mkdir } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -137,6 +137,15 @@ function sequenceVersions(before, after) {
     const map = invocation === 1 ? before : after;
     return Object.fromEntries(names.map((name) => [name, map[name] ?? null]));
   };
+}
+
+async function withConfigDir(fn) {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "guard-config-"));
+  try {
+    return await fn(outputDir);
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
 }
 
 test("parseWranglerConfig strips jsonc comments", () => {
@@ -431,14 +440,17 @@ test("rollback command embeds the exact prior version id", () => {
 test("deploy flow: default is dry-run and never runs an upload", async () => {
   const { dir, head } = await makeScratchRepo();
   const runner = mockRunner();
-  const result = await runGuardedPreviewDeploy({
-    workerName: VALID_WORKER,
-    confirmWorker: VALID_WORKER,
-    sourceSha: head,
-    repoRoot: dir,
-    execute: false,
-    runCommand: runner.runCommand,
-  });
+  const result = await withConfigDir((outputDir) =>
+    runGuardedPreviewDeploy({
+      workerName: VALID_WORKER,
+      confirmWorker: VALID_WORKER,
+      sourceSha: head,
+      repoRoot: dir,
+      execute: false,
+      runCommand: runner.runCommand,
+      outputDir,
+    })
+  );
   assert.equal(result.dryRunDefault, true);
   assert.equal(result.execute, false);
   assert.equal(result.deploy, undefined);
@@ -453,15 +465,18 @@ test("deploy flow: dry-run runs before deploy in execute mode", async () => {
     { [VALID_WORKER]: "v1", ...Object.fromEntries(PROTECTED_WORKER_NAMES.map((n) => [n, "unchanged"])) },
     { [VALID_WORKER]: "v2", ...Object.fromEntries(PROTECTED_WORKER_NAMES.map((n) => [n, "unchanged"])) }
   );
-  const result = await runGuardedPreviewDeploy({
-    workerName: VALID_WORKER,
-    confirmWorker: VALID_WORKER,
-    sourceSha: head,
-    repoRoot: dir,
-    execute: true,
-    runCommand: runner.runCommand,
-    collectVersions,
-  });
+  const result = await withConfigDir((outputDir) =>
+    runGuardedPreviewDeploy({
+      workerName: VALID_WORKER,
+      confirmWorker: VALID_WORKER,
+      sourceSha: head,
+      repoRoot: dir,
+      execute: true,
+      runCommand: runner.runCommand,
+      collectVersions,
+      outputDir,
+    })
+  );
   assert.deepEqual(
     result.run.map((entry) => entry.kind),
     ["dryRun", "deploy"]
@@ -473,19 +488,22 @@ test("deploy flow: dry-run runs before deploy in execute mode", async () => {
 test("deploy flow: dry-run failure blocks the upload", async () => {
   const { dir, head } = await makeScratchRepo();
   const runner = mockRunner({ dryRunPlan: { exitCode: 1, stderr: "boom" } });
-  await assert.rejects(
-    () =>
-      runGuardedPreviewDeploy({
-        workerName: VALID_WORKER,
-        confirmWorker: VALID_WORKER,
-        sourceSha: head,
-        repoRoot: dir,
-        execute: true,
-        runCommand: runner.runCommand,
-        collectVersions: async () => ({}),
-      }),
-    (error) => error.code === "DRY_RUN_FAILED"
-  );
+  await withConfigDir(async (outputDir) => {
+    await assert.rejects(
+      () =>
+        runGuardedPreviewDeploy({
+          workerName: VALID_WORKER,
+          confirmWorker: VALID_WORKER,
+          sourceSha: head,
+          repoRoot: dir,
+          execute: true,
+          runCommand: runner.runCommand,
+          collectVersions: async () => ({}),
+          outputDir,
+        }),
+      (error) => error.code === "DRY_RUN_FAILED"
+    );
+  });
   const kinds = runner.calls.map((command) =>
     command.includes("--dry-run") ? "dryRun" : "deploy"
   );
@@ -499,41 +517,47 @@ test("deploy flow: protected worker version delta triggers PROTECTED_WORKER_CHAN
     { [VALID_WORKER]: "v1", "lovetree-limone": "cc92d036-5868-4bb6-b4f4-dfd747ea6485" },
     { [VALID_WORKER]: "v2", "lovetree-limone": "dd93e147-9999-4bb6-b4f4-000000000000" }
   );
-  await assert.rejects(
-    () =>
-      runGuardedPreviewDeploy({
-        workerName: VALID_WORKER,
-        confirmWorker: VALID_WORKER,
-        sourceSha: head,
-        repoRoot: dir,
-        execute: true,
-        runCommand: runner.runCommand,
-        collectVersions,
-      }),
-    (error) => {
-      assert.equal(error.code, "PROTECTED_WORKER_CHANGED");
-      assert.ok(/lovetree-limone: before cc92d036/.test(error.message));
-      assert.ok(error.rollbackCommand.join(" ").includes("cc92d036-5868-4bb6-b4f4-dfd747ea6485"));
-      return true;
-    }
-  );
+  await withConfigDir(async (outputDir) => {
+    await assert.rejects(
+      () =>
+        runGuardedPreviewDeploy({
+          workerName: VALID_WORKER,
+          confirmWorker: VALID_WORKER,
+          sourceSha: head,
+          repoRoot: dir,
+          execute: true,
+          runCommand: runner.runCommand,
+          collectVersions,
+          outputDir,
+        }),
+      (error) => {
+        assert.equal(error.code, "PROTECTED_WORKER_CHANGED");
+        assert.ok(/lovetree-limone: before cc92d036/.test(error.message));
+        assert.ok(error.rollbackCommand.join(" ").includes("cc92d036-5868-4bb6-b4f4-dfd747ea6485"));
+        return true;
+      }
+    );
+  });
 });
 
 test("deploy flow: deploy command uses the generated config path and no --name", async () => {
   const { dir, head } = await makeScratchRepo();
   const runner = mockRunner();
-  const result = await runGuardedPreviewDeploy({
-    workerName: VALID_WORKER,
-    confirmWorker: VALID_WORKER,
-    sourceSha: head,
-    repoRoot: dir,
-    execute: true,
-    runCommand: runner.runCommand,
-    collectVersions: sequenceVersions(
-      { [VALID_WORKER]: "v1" },
-      { [VALID_WORKER]: "v2" }
-    ),
-  });
+  const result = await withConfigDir((outputDir) =>
+    runGuardedPreviewDeploy({
+      workerName: VALID_WORKER,
+      confirmWorker: VALID_WORKER,
+      sourceSha: head,
+      repoRoot: dir,
+      execute: true,
+      runCommand: runner.runCommand,
+      collectVersions: sequenceVersions(
+        { [VALID_WORKER]: "v1" },
+        { [VALID_WORKER]: "v2" }
+      ),
+      outputDir,
+    })
+  );
   const deployCommand = runner.calls.find((command) => !command.includes("--dry-run"));
   const configIndex = deployCommand.indexOf("--config");
   assert.ok(configIndex !== -1);
