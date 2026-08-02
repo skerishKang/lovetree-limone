@@ -29,6 +29,8 @@ export interface V3ConnectDraft {
 
 const DRAFT_KEY = "v3-onboarding-draft";
 
+const DEFAULT_RECORD_DATE = "2026-08-01";
+
 function loadDraft<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
   try {
@@ -51,14 +53,13 @@ function saveDraft<T>(key: string, value: T) {
 export function useV3SourceDraft() {
   const [draft, setDraft] = useState<V3SourceDraft>(() => {
     const saved = loadDraft<V3SourceDraft>("source");
-    const today = new Date().toISOString().slice(0, 10);
     return (
       saved ?? {
         sourceType: "youtube",
         sourceUrl: "",
         title: "",
         sourceName: "YouTube",
-        recordDate: today,
+        recordDate: DEFAULT_RECORD_DATE,
         startSeconds: "",
         endSeconds: "",
       }

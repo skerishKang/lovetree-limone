@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { V3_RELATION_PRESETS } from "./fixtures/v3-fixtures";
 import { useV3ConnectDraft } from "./v3-onboarding-state";
+import { validateConnectDraft, CUSTOM_RELATION_PRESET_LABEL } from "./v3-validation";
 
 function parseYouTubeId(url: string): string | null {
   const match = url.match(
@@ -24,7 +25,7 @@ export default function V3ConnectStep() {
 
   function selectRelation(relationId: string) {
     if (relationId === "custom") {
-      update({ relationType: "custom", relationLabel: customRelation || "직접 입력" });
+      update({ relationType: "custom", relationLabel: customRelation });
       return;
     }
     const preset = V3_RELATION_PRESETS.find((r) => r.id === relationId);
@@ -34,10 +35,14 @@ export default function V3ConnectStep() {
   }
 
   function finish() {
-    if (!draft.nextUrl.trim() || !draft.nextTitle.trim()) {
-      setConnectError(
-        "연결할 다음 순간의 URL과 제목을 입력해 주세요. (건너뛰려면 아래 링크를 사용해요)",
-      );
+    const result = validateConnectDraft({
+      nextUrl: draft.nextUrl,
+      nextTitle: draft.nextTitle,
+      relationType: draft.relationType,
+      relationLabel: draft.relationLabel,
+    });
+    if (!result.valid) {
+      setConnectError(result.error);
       return;
     }
     setConnectError(null);
@@ -123,7 +128,7 @@ export default function V3ConnectStep() {
                   value={customRelation}
                   onChange={(event) => {
                     setCustomRelation(event.target.value);
-                    update({ relationLabel: event.target.value || "직접 입력" });
+                    update({ relationLabel: event.target.value });
                   }}
                   placeholder="이어진 이유를 직접 적어 보세요"
                   aria-label="연결 이유 직접 입력"
@@ -231,7 +236,7 @@ export default function V3ConnectStep() {
             </div>
           </div>
           <div className="v3-relation-summary">
-            <b>{draft.relationLabel}</b>로 이어진 두 순간 — 01 → 02
+            <b>{draft.relationLabel || CUSTOM_RELATION_PRESET_LABEL}</b>로 이어진 두 순간 — 01 → 02
             <div className="v3-branch-figure" aria-hidden="true">
               <svg viewBox="0 0 200 44" preserveAspectRatio="none">
                 <path

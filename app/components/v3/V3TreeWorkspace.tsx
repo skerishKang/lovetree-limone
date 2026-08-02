@@ -172,7 +172,10 @@ export default function V3TreeWorkspace({ tree }: V3TreeWorkspaceProps) {
           />
         )}
         {viewMode === "nebula" && (
-          <V3NebulaView memories={memories} total={memories.length} />
+          <V3NebulaView
+            memories={filteredMemories}
+            total={filteredMemories.length}
+          />
         )}
       </div>
       <div className="v3-workspace-panel">

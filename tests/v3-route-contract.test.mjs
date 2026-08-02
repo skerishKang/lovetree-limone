@@ -128,17 +128,62 @@ test("onboarding steps do not reuse h1 id for inputs", async () => {
   }
 });
 
-// 9. source step의 시점 검증 — start/end 모두 검증, 초 00-59, end<start 차단
-test("source step validates both start and end timestamps", async () => {
+// 9. source step의 시점 검증 — runtime validation 함수 실행 (초 00-59, end-only, end<start 차단)
+test("source step uses runtime interval validation", async () => {
   const source = await readApp("components/v3/V3SourceStep.tsx");
-  assert.match(source, /종료 시점이 시작 시점보다 빠를 수 없어요/);
-  assert.match(source, /초는 00~59/);
-  assert.match(source, /시작 시점을 먼저 입력해 주세요/);
+  assert.match(source, /validateSourceInterval/, "source step must call the runtime validator");
+  const { parseTime, timeToSeconds, validateSourceInterval } = await import(
+    "../app/components/v3/v3-validation.ts"
+  );
+  assert.deepEqual(parseTime("1:30"), { minutes: 1, seconds: 30 });
+  assert.equal(parseTime("1:75"), null, "01:75 must be rejected");
+  assert.equal(parseTime("999:00"), null, "minutes above two digits must be rejected");
+  assert.equal(timeToSeconds({ minutes: 1, seconds: 30 }), 90);
+  assert.equal(validateSourceInterval("1:75", "").valid, false, "invalid start rejected");
+  assert.equal(validateSourceInterval("", "0:30").valid, false, "end-only rejected");
+  assert.equal(validateSourceInterval("0:30", "").valid, true, "start-only allowed");
+  assert.equal(
+    validateSourceInterval("1:00", "0:30").valid,
+    false,
+    "end before start rejected",
+  );
+  assert.equal(validateSourceInterval("1:00", "1:30").valid, true, "valid interval passes");
 });
 
-// 10. connect step은 빈 연결로 성공 처리하지 않음
-test("connect step blocks empty next moment", async () => {
+// 10. connect step은 runtime validation으로 빈 다음 Moment와 blank custom relation을 차단
+test("connect step uses runtime connect validation", async () => {
   const connect = await readApp("components/v3/V3ConnectStep.tsx");
-  assert.match(connect, /연결할 다음 순간의 URL과 제목을 입력해 주세요/);
-  assert.match(connect, /건너뛰려면 아래 링크를 사용해요/);
+  assert.match(connect, /validateConnectDraft/, "connect step must call the runtime validator");
+  const { validateConnectDraft } = await import("../app/components/v3/v3-validation.ts");
+  const presetOk = {
+    nextUrl: "https://youtube.com/watch?v=nqofkzQD19E",
+    nextTitle: "다음으로 이어진 무대",
+    relationType: "follow-comment",
+    relationLabel: "댓글을 따라갔어요",
+  };
+  assert.equal(validateConnectDraft({ ...presetOk, nextUrl: "" }).valid, false, "empty URL rejected");
+  assert.equal(validateConnectDraft({ ...presetOk, nextTitle: "" }).valid, false, "empty title rejected");
+  assert.equal(
+    validateConnectDraft({ ...presetOk, nextUrl: "   " }).valid,
+    false,
+    "whitespace URL rejected",
+  );
+  assert.equal(validateConnectDraft(presetOk).valid, true, "valid preset connect passes");
+  const customBlank = { ...presetOk, relationType: "custom", relationLabel: "" };
+  const customSpace = { ...presetOk, relationType: "custom", relationLabel: "   " };
+  const customPlaceholder = {
+    ...presetOk,
+    relationType: "custom",
+    relationLabel: "이어진 이유를 직접 적어 보세요",
+  };
+  const customPresetLabel = { ...presetOk, relationType: "custom", relationLabel: "직접 입력" };
+  assert.equal(validateConnectDraft(customBlank).valid, false, "blank custom relation rejected");
+  assert.equal(validateConnectDraft(customSpace).valid, false, "whitespace custom relation rejected");
+  assert.equal(validateConnectDraft(customPlaceholder).valid, false, "placeholder custom relation rejected");
+  assert.equal(validateConnectDraft(customPresetLabel).valid, false, "preset label as custom value rejected");
+  assert.equal(
+    validateConnectDraft({ ...presetOk, relationType: "custom", relationLabel: "그날의 이유" }).valid,
+    true,
+    "real custom relation passes",
+  );
 });

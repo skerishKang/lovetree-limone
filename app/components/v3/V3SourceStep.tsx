@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useV3SourceDraft } from "./v3-onboarding-state";
+import { validateSourceInterval } from "./v3-validation";
 
 const SOURCE_TYPES = ["youtube", "song", "book", "person", "travel", "other"] as const;
 
@@ -23,19 +24,6 @@ function parseYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-function parseTime(value: string): { minutes: number; seconds: number } | null {
-  const match = value.match(/^(\d{1,2}):(\d{2})$/);
-  if (!match) return null;
-  const minutes = Number(match[1]);
-  const seconds = Number(match[2]);
-  if (seconds > 59) return null;
-  return { minutes, seconds };
-}
-
-function timeToSeconds(time: { minutes: number; seconds: number }): number {
-  return time.minutes * 60 + time.seconds;
-}
-
 export default function V3SourceStep() {
   const router = useRouter();
   const { draft, update } = useV3SourceDraft();
@@ -44,28 +32,9 @@ export default function V3SourceStep() {
   const youtubeId = parseYouTubeId(draft.sourceUrl);
 
   function goNext() {
-    const start = draft.startSeconds.trim();
-    const end = draft.endSeconds.trim();
-
-    if (start) {
-      const startTime = parseTime(start);
-      if (!startTime) {
-        setTimeError("시작 시점은 mm:ss 형식이어야 해요. (초는 00~59)");
-        return;
-      }
-      if (end) {
-        const endTime = parseTime(end);
-        if (!endTime) {
-          setTimeError("종료 시점은 mm:ss 형식이어야 해요. (초는 00~59)");
-          return;
-        }
-        if (timeToSeconds(endTime) < timeToSeconds(startTime)) {
-          setTimeError("종료 시점이 시작 시점보다 빠를 수 없어요.");
-          return;
-        }
-      }
-    } else if (end) {
-      setTimeError("시작 시점을 먼저 입력해 주세요.");
+    const result = validateSourceInterval(draft.startSeconds, draft.endSeconds);
+    if (!result.valid) {
+      setTimeError(result.error);
       return;
     }
 
