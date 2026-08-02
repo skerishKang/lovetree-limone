@@ -358,10 +358,13 @@ test("source: explicit dirty allow emits a patch sha-256", async () => {
 
 test("config: generated config contains only the exact target and safe values", async () => {
   const { dir } = await makeScratchRepo();
-  const { config, configSha256 } = await buildSafePreviewConfig({
-    repoRoot: dir,
-    workerName: VALID_WORKER,
-  });
+  const { config, configSha256 } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
   assert.equal(config.name, VALID_WORKER);
   assert.equal(config.workers_dev, true);
   assert.equal(config.main, path.join(dir, "dist", "server", "index.js"));
@@ -379,10 +382,13 @@ test("config: generated config contains only the exact target and safe values", 
 
 test("config: no routes, custom domains, env blocks, or production/mutation-true values", async () => {
   const { dir } = await makeScratchRepo();
-  const { content } = await buildSafePreviewConfig({
-    repoRoot: dir,
-    workerName: VALID_WORKER,
-  });
+  const { content } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
   assert.equal(content.includes("routes"), false);
   assert.equal(content.includes("custom_domains"), false);
   assert.equal(content.includes('"env"'), false);
@@ -394,17 +400,26 @@ test("config: no routes, custom domains, env blocks, or production/mutation-true
 
 test("config: generated name is never a protected name", async () => {
   const { dir } = await makeScratchRepo();
-  const { config } = await buildSafePreviewConfig({
-    repoRoot: dir,
-    workerName: VALID_WORKER,
-  });
+  const { config } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
   assert.equal(PROTECTED_WORKER_NAMES.includes(config.name), false);
 });
 
 test("config: source wrangler.jsonc is not modified", async () => {
   const { dir } = await makeScratchRepo();
   const before = await readFile(path.join(dir, "wrangler.jsonc"), "utf8");
-  await buildSafePreviewConfig({ repoRoot: dir, workerName: VALID_WORKER });
+  await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
   const after = await readFile(path.join(dir, "wrangler.jsonc"), "utf8");
   assert.equal(after, before);
 });
