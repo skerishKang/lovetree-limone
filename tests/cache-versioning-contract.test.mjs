@@ -214,6 +214,108 @@ test("error responses are never publicly cached by the worker fallback", async (
   }
 });
 
+test("worker fallback preserves a streaming RSC body end to end", async () => {
+  const chunks = ["RSC-chunk-1", "RSC-chunk-2", "RSC-chunk-3"];
+  const stream = new ReadableStream({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(new TextEncoder().encode(chunk));
+      controller.close();
+    },
+  });
+  const response = new Response(stream, {
+    status: 200,
+    headers: { "content-type": "text/x-component" },
+  });
+
+  const out = applyDefaultDynamicCachePolicy(response);
+  assert.equal(out.headers.get("cache-control"), DYNAMIC_REVALIDATION_POLICY);
+  assert.equal(out.headers.get("content-type"), "text/x-component");
+
+  const reader = out.body.getReader();
+  let received = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += new TextDecoder().decode(value);
+  }
+  assert.equal(received, chunks.join(""));
+  assert.equal(out.status, 200);
+});
+
+test("worker fallback keeps bodyless 204 responses valid", async () => {
+  const response = new Response(null, { status: 204, headers: { "x-custom": "v1" } });
+  const out = applyDefaultDynamicCachePolicy(response);
+  assert.equal(out.status, 204);
+  assert.equal(out.body, null);
+  assert.equal(out.headers.get("x-custom"), "v1");
+  assert.equal(out.headers.get("cache-control"), DYNAMIC_REVALIDATION_POLICY);
+});
+
+test("worker fallback keeps bodyless 304 responses valid", async () => {
+  const response = new Response(null, {
+    status: 304,
+    headers: { etag: '"abc123"', "x-custom": "v2" },
+  });
+  const out = applyDefaultDynamicCachePolicy(response);
+  assert.equal(out.status, 304);
+  assert.equal(out.body, null);
+  assert.equal(out.headers.get("etag"), '"abc123"');
+  assert.equal(out.headers.get("x-custom"), "v2");
+  assert.equal(out.headers.get("cache-control"), DYNAMIC_REVALIDATION_POLICY);
+});
+
+test("worker fallback preserves status, statusText, and ordinary headers", async () => {
+  const response = new Response("body", {
+    status: 418,
+    statusText: "I'm a teapot",
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "x-request-id": "req-123",
+      "x-cache": "MISS",
+    },
+  });
+  const out = applyDefaultDynamicCachePolicy(response);
+  assert.equal(out.status, 418);
+  assert.equal(out.statusText, "I'm a teapot");
+  assert.equal(out.headers.get("content-type"), "text/plain; charset=utf-8");
+  assert.equal(out.headers.get("x-request-id"), "req-123");
+  assert.equal(out.headers.get("x-cache"), "MISS");
+  assert.equal(await out.text(), "body");
+});
+
+test("worker fallback preserves multiple Set-Cookie values", async () => {
+  const response = new Response("body", {
+    status: 200,
+    headers: { "set-cookie": "session=abc; Path=/; HttpOnly" },
+  });
+  response.headers.append("set-cookie", "theme=dark; Path=/; Max-Age=31536000");
+
+  const out = applyDefaultDynamicCachePolicy(response);
+  assert.ok(out.headers.getSetCookie, "current Headers API must expose getSetCookie()");
+  assert.deepEqual(out.headers.getSetCookie(), [
+    "session=abc; Path=/; HttpOnly",
+    "theme=dark; Path=/; Max-Age=31536000",
+  ]);
+  assert.equal(out.headers.get("cache-control"), DYNAMIC_REVALIDATION_POLICY);
+});
+
+test("worker fallback adds the default policy only when Cache-Control is absent", async () => {
+  const withHeader = new Response("x", {
+    status: 200,
+    headers: { "cache-control": "no-cache" },
+  });
+  assert.equal(
+    applyDefaultDynamicCachePolicy(withHeader).headers.get("cache-control"),
+    "no-cache",
+  );
+
+  const withoutHeader = new Response("x", { status: 200 });
+  assert.equal(
+    applyDefaultDynamicCachePolicy(withoutHeader).headers.get("cache-control"),
+    DYNAMIC_REVALIDATION_POLICY,
+  );
+});
+
 test("_vinext/image route is not covered by the /assets/* immutable rule", async () => {
   const headers = await readFile(sourceHeaders, "utf8");
   assert.doesNotMatch(headers, /_vinext/u, "_headers must not target the image transform route");
