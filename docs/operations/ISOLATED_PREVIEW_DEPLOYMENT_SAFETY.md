@@ -194,36 +194,84 @@ intended Worker
 source SHA
 worktree state / patch SHA-256
 generated config SHA-256
-target snapshot  { worker, state: present|absent, versionId }
-protected Worker snapshots (must all be present with exact version ids)
+target snapshot  { worker, state: present|absent, deploymentId, createdOn, strategy, versions[], deploymentFingerprint }
+protected Worker snapshots (must all be present with exact deployment fingerprints)
 ```
 
 and after deployment:
 
 ```text
-target snapshot (must be present with a changed version id)
-protected Worker snapshots (must be byte-identical to before)
+target snapshot (must be present with a changed deployment id or fingerprint)
+protected Worker snapshots (must be byte-identical to before: same deploymentId and deploymentFingerprint)
 ```
 
-Snapshot states are explicit — `present` with an exact version id, or
-`absent` (only allowed for a brand-new isolated target). Every failure mode —
-missing credentials, authentication/permission/rate-limit failures, network
-failure, timeout, invalid JSON, malformed payload, or a present Worker
-without an identifiable version — is a `VERSION_SNAPSHOT_UNAVAILABLE` error
-that blocks the deploy command. If any snapshot is unavailable, the deploy
-command is invoked zero times.
+Snapshot states are explicit — `present` with a full deployment, or `absent`
+(only allowed for a brand-new isolated target). Every failure mode — missing
+credentials, authentication/permission/rate-limit failures, network failure,
+timeout, invalid JSON, malformed payload, an empty deployments array, a
+malformed first deployment, or version percentages that do not sum to 100 —
+is a `VERSION_SNAPSHOT_UNAVAILABLE` error that blocks the deploy command. If
+any snapshot is unavailable, the deploy command is invoked zero times.
+
+### Real Cloudflare deployments schema
+
+`GET /accounts/{account_id}/workers/scripts/{script_name}/deployments` returns
+a REST envelope, NOT a direct array:
+
+```json
+{
+  "success": true,
+  "result": {
+    "deployments": [
+      {
+        "id": "deployment-id",
+        "created_on": "2026-08-02T00:00:00.000000Z",
+        "strategy": "percentage",
+        "versions": [
+          { "version_id": "version-a", "percentage": 60 },
+          { "version_id": "version-b", "percentage": 40 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- The first deployment entry is the current active deployment per the API
+  contract. The guard uses `deployments[0]` directly and never re-determines
+  the active deployment by fabricated timestamp sorting.
+- Each deployment carries a nested `versions[]` array
+  (`versions[n].version_id`, `versions[n].percentage`); there is no top-level
+  `version_id`.
+- The test suite pins this shape with the sanitized
+  `CLOUDFLARE_DEPLOYMENTS_RESPONSE_FIXTURE` contract fixture. If the response
+  envelope ever drifts back to a direct `result` array, the fixture tests fail
+  and the parser stays fail-closed (`VERSION_SNAPSHOT_UNAVAILABLE`).
+
+### Deployment fingerprint and weighted deployments
+
+A deployment may split traffic across two or more versions. The guard never
+reduces a weighted deployment to a single `versionId`. Each snapshot carries a
+deterministic `deploymentFingerprint` computed from:
+
+```text
+deployment id
+created_on
+strategy
+sorted versionId + percentage pairs (percentage descending, versionId ascending)
+```
+
+Identical deployments always produce the same fingerprint; deployments with
+different percentages or version sets produce different fingerprints.
 
 Pass conditions after deploy:
 
 - a target that was `absent` becomes `present`;
-- a target that was `present` gains a different version id
-  (otherwise `TARGET_VERSION_NOT_CHANGED`);
-- every protected Worker version id is byte-identical to before
+- a target that was `present` changes its deployment id or its deployment
+  fingerprint (otherwise `TARGET_VERSION_NOT_CHANGED`);
+- every protected Worker keeps the same deploymentId and deploymentFingerprint
   (otherwise `PROTECTED_WORKER_CHANGED`);
 - every postflight snapshot is complete.
-
-The latest version is selected by explicit `created_on` timestamp sorting,
-never by assuming the last array item is newest.
 
 If the deploy command succeeded but the postflight snapshot is impossible,
 the guard reports an explicit incident state — it never reports success, never
@@ -240,12 +288,19 @@ run further deploy commands.
 
 - No automated rollback. An automatic rollback can turn a single incident
   into a second-order incident.
-- On `PROTECTED_WORKER_CHANGED`, the guard prints the exact rollback command
-  and the prior version ID for a human to run after triage:
+- On `PROTECTED_WORKER_CHANGED`, the guard prints rollback guidance. When the
+  preflight deployment has exactly one version at 100%, it prints an exact
+  rollback command and the prior version ID for a human to run after triage:
 
   ```text
   npx wrangler rollback <PRIOR_VERSION_ID> --config <generated-safe-config>
   ```
+
+- When the preflight deployment is weighted (two or more versions, or a
+  version below 100%), the guard never fabricates a single-version rollback
+  command. It prints `MANUAL_WEIGHTED_DEPLOYMENT_RESTORE_REQUIRED` with the
+  prior deployment id and the prior version/percentage set so a human can
+  restore the exact weighted deployment.
 
 - The 2026-08-02 prior version for `lovetree-limone` was
   `cc92d036-5868-4bb6-b4f4-dfd747ea6485`; Cloudflare deployment history
@@ -262,9 +317,9 @@ source SHA
 worktree state / patch SHA-256
 generated config SHA-256
 deploy command used
-target snapshot before / after (state + version id)
-protected Worker snapshots before / after
-rollback command and prior version ID
+target snapshot before / after (deployment id + fingerprint + versions)
+protected Worker snapshots before / after (deployment id + fingerprint)
+rollback command / manual weighted restore requirement
 PROTECTED_WORKER_CHANGED: YES/NO
 TARGET_VERSION_NOT_CHANGED: YES/NO
 VERSION_SNAPSHOT_UNAVAILABLE: YES/NO
