@@ -63,7 +63,12 @@ export default function V3GrowthTree({
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
   const [dragId, setDragId] = useState<string | null>(null);
   const dragOffset = useRef({ dx: 0, dy: 0 });
+  const dragStartPoint = useRef<{ x: number; y: number } | null>(null);
+  const dragCandidateId = useRef<string | null>(null);
+  const activeDragId = useRef<string | null>(null);
   const didDrag = useRef(false);
+
+  const DRAG_THRESHOLD = 4;
 
   const layout = useMemo(() => layoutTree(roots, memories), [roots, memories]);
 
@@ -85,36 +90,50 @@ export default function V3GrowthTree({
     return list;
   }, [memories]);
 
-  function onPointerDown(event: ReactPointerEvent<HTMLDivElement>, memoryId: string) {
-    if (!editMode) return;
-    event.preventDefault();
+  function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const node = layout.find((n) => n.memory.id === memoryId);
+    const node = layout.find((n) => n.memory.id === dragCandidateId.current);
     const pos = node ? nodeByMemory(node.memory) : { x: 60, y: 60 };
     dragOffset.current = {
       dx: event.clientX - rect.left - pos.x,
       dy: event.clientY - rect.top - pos.y,
     };
-    didDrag.current = false;
+    activeDragId.current = dragCandidateId.current;
+    didDrag.current = true;
     canvasRef.current?.setPointerCapture?.(event.pointerId);
-    setDragId(memoryId);
+    setDragId(dragCandidateId.current);
+  }
+
+  function onPointerDown(event: ReactPointerEvent<HTMLDivElement>, memoryId: string) {
+    if (!editMode) return;
+    didDrag.current = false;
+    dragStartPoint.current = { x: event.clientX, y: event.clientY };
+    dragCandidateId.current = memoryId;
   }
 
   function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!dragId) return;
+    if (!editMode || !dragStartPoint.current) return;
+    if (!activeDragId.current) {
+      const dx = event.clientX - dragStartPoint.current.x;
+      const dy = event.clientY - dragStartPoint.current.y;
+      if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+      beginDrag(event);
+    }
     const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    const id = activeDragId.current;
+    if (!rect || !id) return;
     const x = Math.max(8, Math.min(event.clientX - rect.left - dragOffset.current.dx, rect.width - 160));
     const y = Math.max(8, Math.min(event.clientY - rect.top - dragOffset.current.dy, rect.height - 90));
-    didDrag.current = true;
-    setPositions((prev) => ({ ...prev, [dragId]: { x, y } }));
+    setPositions((prev) => ({ ...prev, [id]: { x, y } }));
   }
 
   function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (dragId) {
+    if (activeDragId.current) {
       canvasRef.current?.releasePointerCapture?.(event.pointerId);
     }
+    activeDragId.current = null;
+    dragStartPoint.current = null;
     setDragId(null);
   }
 
@@ -183,8 +202,7 @@ export default function V3GrowthTree({
               onClick={() => {
                 if (didDrag.current) return;
                 onSelect(memory.id);
-              }}
-              onKeyDown={(event) => {
+              }}              onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
                   onSelect(memory.id);
@@ -208,7 +226,7 @@ export default function V3GrowthTree({
               onPointerDown={(event) => onPointerDown(event, memory.id)}
             >
               {memory.thumbnailUrl ? (
-                <img src={memory.thumbnailUrl} alt="" />
+                <img src={memory.thumbnailUrl} alt="" draggable={false} />
               ) : (
                 <div className="v3-preview-media v3-media-b" style={{ height: 72 }} aria-hidden="true">
                   <span>{isRoot ? "♥" : "✦"}</span>
