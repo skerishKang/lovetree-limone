@@ -1,0 +1,323 @@
+/* V3 shell — topbar, badge, footer. Scoped under .v3-shell. */
+.v3-shell {
+  min-height: 100vh;
+  overflow-x: clip;
+  background: radial-gradient(circle at 22% 12%, rgba(219, 151, 145, 0.22), transparent 30rem),
+    radial-gradient(circle at 84% 33%, rgba(156, 174, 130, 0.18), transparent 32rem),
+    linear-gradient(132deg, #f8f1e9 0%, #fbf8f1 55%, #f2e7dd 100%);
+  color: var(--v3-ink);
+  font-family: var(--v3-sans);
+  position: relative;
+}
+
+.v3-topbar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 26px 0 16px;
+}
+
+.v3-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--v3-rose-deep);
+  font-family: var(--v3-serif);
+  font-size: 1.35rem;
+  letter-spacing: -0.04em;
+}
+
+.v3-brand-mark {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 28px;
+}
+
+.v3-brand-mark::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  width: 2px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--v3-sage-deep);
+  transform: rotate(10deg);
+}
+
+.v3-brand-mark i,
+.v3-brand-mark b {
+  position: absolute;
+  display: block;
+  width: 12px;
+  height: 8px;
+  border-radius: 100% 0 100% 0;
+  background: var(--v3-sage);
+}
+
+.v3-brand-mark i {
+  top: 5px;
+  left: 1px;
+  transform: rotate(-26deg);
+}
+
+.v3-brand-mark b {
+  top: 1px;
+  right: 0;
+  transform: scaleX(-1) rotate(-26deg);
+  background: var(--v3-rose);
+}
+
+.v3-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--v3-muted);
+  font-size: 0.86rem;
+}
+
+.v3-nav a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.v3-nav a:hover {
+  color: var(--v3-rose-deep);
+}
+
+.v3-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid rgba(152, 80, 94, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.9);
+  color: var(--v3-rose-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.v3-preview-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--v3-gold);
+  box-shadow: 0 0 0 4px rgba(229, 198, 80, 0.2);
+}
+
+.v3-main {
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.v3-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 20px 0 30px;
+  border-top: 1px solid var(--v3-line);
+  color: #a29089;
+  font-size: 0.68rem;
+}
+
+.v3-footer span:first-child {
+  color: var(--v3-rose-deep);
+  font-family: var(--v3-serif);
+  font-size: 0.95rem;
+}
+
+.v3-page {
+  padding: 26px 0 56px;
+}
+
+.v3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.v3-btn:hover {
+  transform: translateY(-2px);
+}
+
+.v3-btn:focus-visible {
+  outline: 3px solid rgba(200, 110, 121, 0.45);
+  outline-offset: 2px;
+}
+
+.v3-btn-primary {
+  background: var(--v3-rose);
+  color: #fffaf6;
+  box-shadow: 0 12px 24px rgba(200, 110, 121, 0.26);
+}
+
+.v3-btn-primary:hover {
+  background: var(--v3-rose-deep);
+}
+
+.v3-btn-quiet {
+  border-color: rgba(89, 107, 76, 0.26);
+  background: rgba(255, 253, 248, 0.5);
+  color: var(--v3-sage-deep);
+}
+
+.v3-btn-quiet:hover {
+  background: rgba(255, 253, 248, 0.85);
+}
+
+.v3-btn-ghost {
+  background: transparent;
+  color: var(--v3-muted);
+}
+
+.v3-btn-ghost:hover {
+  color: var(--v3-rose-deep);
+  background: rgba(255, 253, 248, 0.6);
+}
+
+.v3-btn-icon {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.v3-btn[aria-pressed="true"] {
+  background: var(--v3-sage);
+  color: #fffaf6;
+}
+
+.v3-eyebrow {
+  margin: 0 0 16px;
+  color: var(--v3-rose-deep);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.v3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border: 1px solid rgba(119, 91, 82, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.7);
+  color: var(--v3-ink);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.v3-chip:hover {
+  border-color: var(--v3-rose);
+  color: var(--v3-rose-deep);
+}
+
+.v3-chip[aria-pressed="true"] {
+  background: var(--v3-rose);
+  border-color: var(--v3-rose);
+  color: #fffaf6;
+}
+
+.v3-field {
+  display: grid;
+  gap: 7px;
+}
+
+.v3-label {
+  color: var(--v3-sage-deep);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.v3-input,
+.v3-textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgba(119, 91, 82, 0.2);
+  border-radius: 12px;
+  outline: none;
+  background: #fffaf4;
+  color: var(--v3-ink);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.v3-textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.v3-input:focus,
+.v3-textarea:focus {
+  border-color: var(--v3-rose);
+  box-shadow: 0 0 0 4px rgba(200, 110, 121, 0.12);
+}
+
+.v3-card {
+  border: 1px solid rgba(119, 91, 82, 0.14);
+  border-radius: var(--v3-radius);
+  background: rgba(255, 253, 248, 0.88);
+  box-shadow: 0 14px 28px rgba(98, 68, 58, 0.1);
+}
+
+.v3-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--v3-muted);
+  font-size: 0.86rem;
+}
+
+.v3-empty span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--v3-rose);
+  font-size: 1.3rem;
+}
+
+.v3-muted {
+  color: var(--v3-muted);
+}
+
+.v3-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+}
+
+.v3-skip-link:focus {
+  left: 12px;
+  top: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--v3-paper-light);
+  color: var(--v3-rose-deep);
+  font-weight: 700;
+}
