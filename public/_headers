@@ -1,0 +1,5 @@
+# Fingerprinted Vite/vinext build assets.
+# Fixed-name files keep Cloudflare Workers Static Assets' default
+# `public, max-age=0, must-revalidate` + ETag behavior.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
