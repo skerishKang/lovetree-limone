@@ -19,6 +19,9 @@ import {
   collectWorkerVersion,
   assertPreflightSnapshot,
   assertPostflightVerification,
+  computeDeploymentFingerprint,
+  buildRollbackInfo,
+  absentSnapshot,
   runCommand,
 } from "../scripts/lib/isolated-preview-deploy-guard.mjs";
 
@@ -155,11 +158,69 @@ async function withConfigDir(fn) {
   }
 }
 
-function deployment(versionId, createdOn, id = `deployment-${versionId}`) {
-  return { id, version_id: versionId, created_on: createdOn, source: "wrangler" };
+// Real Cloudflare deployments envelope helpers.
+//
+// GET /accounts/{account_id}/workers/scripts/{script_name}/deployments
+// returns `result.deployments[]` where each deployment carries a nested
+// `versions[]` array. These helpers reproduce that exact shape so tests
+// cannot drift from the real API again.
+
+// Synthetic sanitized shape contract fixture mirroring the live response.
+const CLOUDFLARE_DEPLOYMENTS_RESPONSE_FIXTURE = {
+  success: true,
+  errors: [],
+  messages: [],
+  result: {
+    deployments: [
+      {
+        id: "00000000-0000-4000-8000-000000000001",
+        created_on: "2026-08-02T00:00:00.000000Z",
+        source: "wrangler",
+        strategy: "percentage",
+        versions: [
+          {
+            version_id: "00000000-0000-4000-8000-000000000002",
+            percentage: 100,
+          },
+        ],
+      },
+    ],
+  },
+};
+
+function version(versionId, percentage = 100) {
+  return { version_id: versionId, percentage };
 }
 
-function okResponse(result) {
+function deploymentEntry({
+  id,
+  createdOn,
+  strategy = "percentage",
+  versions,
+}) {
+  return {
+    id,
+    created_on: createdOn,
+    source: "wrangler",
+    strategy,
+    versions,
+  };
+}
+
+function okResponse(deployments) {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({
+      success: true,
+      errors: [],
+      messages: [],
+      result: { deployments },
+    }),
+  };
+}
+
+function rawOkResponse(result) {
   return {
     ok: true,
     status: 200,
@@ -171,7 +232,7 @@ function errorResponse(status) {
   return {
     ok: status >= 200 && status < 300,
     status,
-    json: async () => ({ success: false, errors: [], messages: [], result: [] }),
+    json: async () => ({ success: false, errors: [], messages: [], result: null }),
   };
 }
 
@@ -189,7 +250,7 @@ function malformedResponse() {
   return {
     ok: true,
     status: 200,
-    json: async () => ({ success: true, result: "not-an-array" }),
+    json: async () => ({ success: true, result: { deployments: "not-an-array" } }),
   };
 }
 
@@ -214,21 +275,60 @@ function makeApiPlan({ before, after, beforeError, afterError }) {
   return fetchImpl;
 }
 
+function deploymentFor(targetVersion) {
+  return deploymentEntry({
+    id: `deployment-${targetVersion}`,
+    createdOn: "2026-08-02T00:00:00Z",
+    versions: [version(targetVersion)],
+  });
+}
+
 function presentSnapshots(targetVersion, protectedVersionFn = (name) => `ver-${name}`) {
   const before = {};
-  before[VALID_WORKER] = okResponse([
-    deployment(targetVersion, "2026-08-02T00:00:00Z"),
-  ]);
+  before[VALID_WORKER] = okResponse([deploymentFor(targetVersion)]);
   for (const name of PROTECTED_WORKER_NAMES) {
-    before[name] = okResponse([
-      deployment(protectedVersionFn(name), "2026-08-02T00:00:00Z"),
-    ]);
+    const protectedVersion = protectedVersionFn(name);
+    before[name] = okResponse([deploymentFor(protectedVersion)]);
   }
   return before;
 }
 
 function presentAfter(targetVersion) {
   return { ...presentSnapshots(targetVersion) };
+}
+
+// Builds a structured snapshot object for preflight/postflight tests.
+// Accepts versions in raw API shape ({ version_id, percentage }) or the
+// normalized shape ({ versionId, percentage }).
+function snapshotFor({
+  workerName,
+  state,
+  deploymentId,
+  createdOn = "2026-08-02T00:00:00Z",
+  strategy = "percentage",
+  versions,
+}) {
+  if (state === "absent") {
+    return absentSnapshot(workerName);
+  }
+  const normalizedVersions = (versions ?? []).map((entry) => ({
+    versionId: entry.versionId ?? entry.version_id,
+    percentage: entry.percentage,
+  }));
+  return {
+    worker: workerName,
+    state: "present",
+    deploymentId,
+    createdOn,
+    strategy,
+    versions: normalizedVersions,
+    deploymentFingerprint: computeDeploymentFingerprint({
+      deploymentId,
+      createdOn,
+      strategy,
+      versions: normalizedVersions,
+    }),
+  };
 }
 
 test("parseWranglerConfig strips jsonc comments", () => {
@@ -646,27 +746,128 @@ test("collectWorkerVersion: 404 yields explicit absent snapshot", async () => {
   assert.deepEqual(snapshot, {
     worker: VALID_WORKER,
     state: "absent",
-    versionId: null,
     deploymentId: null,
     createdOn: null,
+    strategy: null,
+    versions: [],
+    deploymentFingerprint: null,
   });
 });
 
-test("collectWorkerVersion: latest version is selected by timestamp regardless of array order", async () => {
+test("collectWorkerVersion: single deployment with single 100% version parses", async () => {
+  const snapshot = await collectWorkerVersion(VALID_WORKER, {
+    apiToken: API_TOKEN,
+    accountId: ACCOUNT_ID,
+    fetchImpl: async () => okResponse([deploymentFor("v1")]),
+  });
+  assert.equal(snapshot.state, "present");
+  assert.equal(snapshot.deploymentId, "deployment-v1");
+  assert.equal(snapshot.createdOn, "2026-08-02T00:00:00Z");
+  assert.equal(snapshot.strategy, "percentage");
+  assert.deepEqual(snapshot.versions, [{ versionId: "v1", percentage: 100 }]);
+  assert.match(snapshot.deploymentFingerprint, /^[0-9a-f]{64}$/);
+});
+
+test("collectWorkerVersion: first deployment is the active deployment per API contract", async () => {
   const deployments = [
-    deployment("older", "2026-08-01T00:00:00Z"),
-    deployment("newer", "2026-08-02T00:00:00Z"),
+    deploymentEntry({
+      id: "deployment-first",
+      createdOn: "2026-08-02T00:00:00Z",
+      versions: [version("first-v")],
+    }),
+    deploymentEntry({
+      id: "deployment-second",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("second-v")],
+    }),
   ];
-  const reversed = [...deployments].reverse();
-  for (const result of [deployments, reversed]) {
-    const snapshot = await collectWorkerVersion(VALID_WORKER, {
+  const snapshot = await collectWorkerVersion(VALID_WORKER, {
+    apiToken: API_TOKEN,
+    accountId: ACCOUNT_ID,
+    fetchImpl: async () => okResponse(deployments),
+  });
+  assert.equal(snapshot.deploymentId, "deployment-first");
+  assert.equal(snapshot.versions[0].versionId, "first-v");
+});
+
+test("collectWorkerVersion: weighted deployment with two versions parses", async () => {
+  const snapshot = await collectWorkerVersion(VALID_WORKER, {
+    apiToken: API_TOKEN,
+    accountId: ACCOUNT_ID,
+    fetchImpl: async () =>
+      okResponse([
+        deploymentEntry({
+          id: "deployment-weighted",
+          createdOn: "2026-08-02T00:00:00Z",
+          versions: [version("a", 60), version("b", 40)],
+        }),
+      ]),
+  });
+  assert.equal(snapshot.state, "present");
+  assert.deepEqual(snapshot.versions, [
+    { versionId: "a", percentage: 60 },
+    { versionId: "b", percentage: 40 },
+  ]);
+});
+
+test("collectWorkerVersion: versions input order does not change the fingerprint", async () => {
+  const run = (order) =>
+    collectWorkerVersion(VALID_WORKER, {
       apiToken: API_TOKEN,
       accountId: ACCOUNT_ID,
-      fetchImpl: async () => okResponse(result),
+      fetchImpl: async () =>
+        okResponse([
+          deploymentEntry({
+            id: "deployment-weighted",
+            createdOn: "2026-08-02T00:00:00Z",
+            versions: order,
+          }),
+        ]),
     });
-    assert.equal(snapshot.state, "present");
-    assert.equal(snapshot.versionId, "newer");
-  }
+  const first = await run([version("a", 40), version("b", 60)]);
+  const second = await run([version("b", 60), version("a", 40)]);
+  assert.equal(first.deploymentFingerprint, second.deploymentFingerprint);
+  assert.deepEqual(first.versions, second.versions);
+});
+
+test("collectWorkerVersion: identical responses produce a deterministic fingerprint", async () => {
+  const run = () =>
+    collectWorkerVersion(VALID_WORKER, {
+      apiToken: API_TOKEN,
+      accountId: ACCOUNT_ID,
+      fetchImpl: async () => okResponse([deploymentFor("v1")]),
+    });
+  const first = await run();
+  const second = await run();
+  assert.equal(first.deploymentFingerprint, second.deploymentFingerprint);
+});
+
+test("collectWorkerVersion: sanitized live-shape fixture parses", async () => {
+  const snapshot = await collectWorkerVersion(VALID_WORKER, {
+    apiToken: API_TOKEN,
+    accountId: ACCOUNT_ID,
+    fetchImpl: async () => rawOkResponse(CLOUDFLARE_DEPLOYMENTS_RESPONSE_FIXTURE.result),
+  });
+  assert.equal(snapshot.state, "present");
+  assert.equal(snapshot.deploymentId, "00000000-0000-4000-8000-000000000001");
+  assert.deepEqual(snapshot.versions, [
+    { versionId: "00000000-0000-4000-8000-000000000002", percentage: 100 },
+  ]);
+});
+
+test("collectWorkerVersion: direct result array is rejected as malformed", async () => {
+  await assert.rejects(
+    () =>
+      collectWorkerVersion(VALID_WORKER, {
+        apiToken: API_TOKEN,
+        accountId: ACCOUNT_ID,
+        fetchImpl: async () =>
+          rawOkResponse([
+            { id: "d1", version_id: "v1", created_on: "2026-08-02T00:00:00Z" },
+          ]),
+      }),
+    (error) => error.code === "VERSION_SNAPSHOT_UNAVAILABLE"
+  );
 });
 
 test("collectWorkerVersion: authentication failure is unavailable", async () => {
@@ -757,16 +958,94 @@ test("collectWorkerVersion: malformed payload is unavailable", async () => {
   );
 });
 
-test("collectWorkerVersion: present worker without identifiable version is unavailable", async () => {
+test("collectWorkerVersion: present worker with empty deployments is unavailable", async () => {
   await assert.rejects(
     () =>
       collectWorkerVersion(VALID_WORKER, {
         apiToken: API_TOKEN,
         accountId: ACCOUNT_ID,
-        fetchImpl: async () => okResponse([{ id: "d1", created_on: "2026-08-02T00:00:00Z" }]),
+        fetchImpl: async () => okResponse([]),
       }),
     (error) => error.code === "VERSION_SNAPSHOT_UNAVAILABLE"
   );
+});
+
+test("collectWorkerVersion: envelope errors are unavailable", async () => {
+  const cases = [
+    async () => ({ ok: true, status: 200, json: async () => null }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: false, result: { deployments: [] } }) }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: true }) }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: true, result: "nope" }) }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: true, result: {} }) }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: true, result: { deployments: "nope" } }) }),
+    async () => ({ ok: true, status: 200, json: async () => ({ success: true, result: { deployments: [] } }) }),
+  ];
+  for (const fetchImpl of cases) {
+    await assert.rejects(
+      () =>
+        collectWorkerVersion(VALID_WORKER, {
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          fetchImpl,
+        }),
+      (error) => error.code === "VERSION_SNAPSHOT_UNAVAILABLE"
+    );
+  }
+});
+
+test("collectWorkerVersion: first deployment malformed is unavailable", async () => {
+  const cases = [
+    null,
+    { created_on: "2026-08-02T00:00:00Z", versions: [version("v1")] },
+    { id: "d1", versions: [version("v1")] },
+    { id: "d1", created_on: "not-a-date", versions: [version("v1")] },
+    { id: "d1", created_on: "2026-08-02T00:00:00Z" },
+    { id: "d1", created_on: "2026-08-02T00:00:00Z", versions: [] },
+    { id: "d1", created_on: "2026-08-02T00:00:00Z", versions: [version("v1")], strategy: "" },
+  ];
+  for (const deployment of cases) {
+    await assert.rejects(
+      () =>
+        collectWorkerVersion(VALID_WORKER, {
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          fetchImpl: async () => okResponse([deployment]),
+        }),
+      (error) => error.code === "VERSION_SNAPSHOT_UNAVAILABLE"
+    );
+  }
+});
+
+test("collectWorkerVersion: version errors are unavailable", async () => {
+  const versionCases = [
+    [{ percentage: 100 }],
+    [{ version_id: "v1" }],
+    [{ version_id: "v1", percentage: "100" }],
+    [{ version_id: "v1", percentage: 0 }],
+    [{ version_id: "v1", percentage: -10 }],
+    [{ version_id: "v1", percentage: 101 }],
+    [{ version_id: "v1", percentage: 50 }],
+    [{ version_id: "v1", percentage: 50 }, { version_id: "v2", percentage: 50.0001 }],
+    [{ version_id: "v1", percentage: 100 }, { version_id: "v1", percentage: 100 }],
+  ];
+  for (const versions of versionCases) {
+    await assert.rejects(
+      () =>
+        collectWorkerVersion(VALID_WORKER, {
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          fetchImpl: async () =>
+            okResponse([
+              deploymentEntry({
+                id: "deployment-bad",
+                createdOn: "2026-08-02T00:00:00Z",
+                versions,
+              }),
+            ]),
+        }),
+      (error) => error.code === "VERSION_SNAPSHOT_UNAVAILABLE"
+    );
+  }
 });
 
 test("collectWorkerVersion: missing credentials are unavailable", async () => {
@@ -788,13 +1067,13 @@ test("collectWorkerVersion: missing credentials are unavailable", async () => {
   );
 });
 
-test("preflight: protected worker must be present with an exact version", () => {
+test("preflight: protected worker must be present with an exact deployment", () => {
   assert.throws(
     () =>
       assertPreflightSnapshot(
         {
-          [VALID_WORKER]: { worker: VALID_WORKER, state: "absent", versionId: null },
-          [PROTECTED_WORKER_NAMES[0]]: { worker: PROTECTED_WORKER_NAMES[0], state: "absent", versionId: null },
+          [VALID_WORKER]: absentSnapshot(VALID_WORKER),
+          [PROTECTED_WORKER_NAMES[0]]: absentSnapshot(PROTECTED_WORKER_NAMES[0]),
         },
         { workerName: VALID_WORKER, protectedNames: PROTECTED_WORKER_NAMES }
       ),
@@ -804,11 +1083,16 @@ test("preflight: protected worker must be present with an exact version", () => 
 
 test("preflight: target may be present or absent", () => {
   const snapshots = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "absent", versionId: null },
+    [VALID_WORKER]: absentSnapshot(VALID_WORKER),
     ...Object.fromEntries(
       PROTECTED_WORKER_NAMES.map((name) => [
         name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
+        snapshotFor({
+          workerName: name,
+          state: "present",
+          deploymentId: `deployment-${name}`,
+          versions: [version(`ver-${name}`)],
+        }),
       ])
     ),
   };
@@ -820,23 +1104,29 @@ test("preflight: target may be present or absent", () => {
 });
 
 test("postflight: target must change and protected workers must stay byte-identical", () => {
+  const protectedSnapshots = Object.fromEntries(
+    PROTECTED_WORKER_NAMES.map((name) => [
+      name,
+      snapshotFor({
+        workerName: name,
+        state: "present",
+        deploymentId: `deployment-${name}`,
+        versions: [version(`ver-${name}`)],
+      }),
+    ])
+  );
   const before = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "absent", versionId: null },
-    ...Object.fromEntries(
-      PROTECTED_WORKER_NAMES.map((name) => [
-        name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
-      ])
-    ),
+    [VALID_WORKER]: absentSnapshot(VALID_WORKER),
+    ...protectedSnapshots,
   };
   const after = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "present", versionId: "v-2" },
-    ...Object.fromEntries(
-      PROTECTED_WORKER_NAMES.map((name) => [
-        name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
-      ])
-    ),
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v2",
+      versions: [version("v2")],
+    }),
+    ...protectedSnapshots,
   };
   const verification = assertPostflightVerification(before, after, {
     workerName: VALID_WORKER,
@@ -846,24 +1136,28 @@ test("postflight: target must change and protected workers must stay byte-identi
   assert.deepEqual(verification.protectedDeltas, []);
 });
 
-test("postflight: unchanged target version fails", () => {
+test("postflight: unchanged target deployment fails", () => {
   const before = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "present", versionId: "same" },
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-same",
+      versions: [version("same")],
+    }),
     ...Object.fromEntries(
       PROTECTED_WORKER_NAMES.map((name) => [
         name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
+        snapshotFor({
+          workerName: name,
+          state: "present",
+          deploymentId: `deployment-${name}`,
+          versions: [version(`ver-${name}`)],
+        }),
       ])
     ),
   };
   const after = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "present", versionId: "same" },
-    ...Object.fromEntries(
-      PROTECTED_WORKER_NAMES.map((name) => [
-        name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
-      ])
-    ),
+    ...before,
   };
   assert.throws(
     () =>
@@ -877,24 +1171,41 @@ test("postflight: unchanged target version fails", () => {
 
 test("postflight: protected worker delta is detected", () => {
   const before = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "present", versionId: "v1" },
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v1",
+      versions: [version("v1")],
+    }),
     ...Object.fromEntries(
       PROTECTED_WORKER_NAMES.map((name) => [
         name,
-        { worker: name, state: "present", versionId: `ver-${name}` },
+        snapshotFor({
+          workerName: name,
+          state: "present",
+          deploymentId: `deployment-${name}`,
+          versions: [version(`ver-${name}`)],
+        }),
       ])
     ),
   };
   const after = {
-    [VALID_WORKER]: { worker: VALID_WORKER, state: "present", versionId: "v2" },
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v2",
+      versions: [version("v2")],
+    }),
     ...Object.fromEntries(
       PROTECTED_WORKER_NAMES.map((name) => [
         name,
-        {
-          worker: name,
+        snapshotFor({
+          workerName: name,
           state: "present",
-          versionId: name === PROTECTED_WORKER_NAMES[0] ? "CHANGED" : `ver-${name}`,
-        },
+          deploymentId: name === PROTECTED_WORKER_NAMES[0] ? "deployment-changed" : `deployment-${name}`,
+          createdOn: name === PROTECTED_WORKER_NAMES[0] ? "2026-08-02T00:00:01Z" : "2026-08-02T00:00:00Z",
+          versions: [version(name === PROTECTED_WORKER_NAMES[0] ? "CHANGED" : `ver-${name}`)],
+        }),
       ])
     ),
   };
@@ -905,8 +1216,166 @@ test("postflight: protected worker delta is detected", () => {
   assert.equal(verification.targetChanged, true);
   assert.equal(verification.protectedDeltas.length, 1);
   assert.equal(verification.protectedDeltas[0].name, PROTECTED_WORKER_NAMES[0]);
-  assert.equal(verification.protectedDeltas[0].before, `ver-${PROTECTED_WORKER_NAMES[0]}`);
-  assert.equal(verification.protectedDeltas[0].after, "CHANGED");
+  assert.equal(
+    verification.protectedDeltas[0].before,
+    `deploy deployment-${PROTECTED_WORKER_NAMES[0]} [ver-${PROTECTED_WORKER_NAMES[0]}@100%]`
+  );
+  assert.equal(verification.protectedDeltas[0].after, "deploy deployment-changed [CHANGED@100%]");
+});
+
+test("postflight: protected percentage change is detected", () => {
+  const shared = {
+    workerName: PROTECTED_WORKER_NAMES[0],
+    state: "present",
+    deploymentId: "deployment-weighted",
+    createdOn: "2026-08-02T00:00:00Z",
+  };
+  const before = {
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v1",
+      versions: [version("v1")],
+    }),
+    [PROTECTED_WORKER_NAMES[0]]: snapshotFor({
+      ...shared,
+      versions: [version("a", 60), version("b", 40)],
+    }),
+    [PROTECTED_WORKER_NAMES[1]]: snapshotFor({
+      workerName: PROTECTED_WORKER_NAMES[1],
+      state: "present",
+      deploymentId: "deployment-s",
+      versions: [version("vs")],
+    }),
+    [PROTECTED_WORKER_NAMES[2]]: snapshotFor({
+      workerName: PROTECTED_WORKER_NAMES[2],
+      state: "present",
+      deploymentId: "deployment-v2w",
+      versions: [version("vv")],
+    }),
+  };
+  const after = {
+    ...before,
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v2",
+      versions: [version("v2")],
+    }),
+    [PROTECTED_WORKER_NAMES[0]]: snapshotFor({
+      ...shared,
+      versions: [version("a", 40), version("b", 60)],
+    }),
+  };
+  const verification = assertPostflightVerification(before, after, {
+    workerName: VALID_WORKER,
+    protectedNames: PROTECTED_WORKER_NAMES,
+  });
+  assert.equal(verification.targetChanged, true);
+  assert.equal(verification.protectedDeltas.length, 1);
+  assert.equal(verification.protectedDeltas[0].name, PROTECTED_WORKER_NAMES[0]);
+});
+
+test("postflight: protected deployment id change is detected", () => {
+  const before = {
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v1",
+      versions: [version("v1")],
+    }),
+    [PROTECTED_WORKER_NAMES[0]]: snapshotFor({
+      workerName: PROTECTED_WORKER_NAMES[0],
+      state: "present",
+      deploymentId: "deployment-before",
+      versions: [version("same-v")],
+    }),
+  };
+  const after = {
+    ...before,
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-v2",
+      versions: [version("v2")],
+    }),
+    [PROTECTED_WORKER_NAMES[0]]: snapshotFor({
+      workerName: PROTECTED_WORKER_NAMES[0],
+      state: "present",
+      deploymentId: "deployment-after",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("same-v")],
+    }),
+  };
+  const verification = assertPostflightVerification(before, after, {
+    workerName: VALID_WORKER,
+    protectedNames: PROTECTED_WORKER_NAMES.slice(0, 1),
+  });
+  assert.equal(verification.protectedDeltas.length, 1);
+});
+
+test("postflight: weighted target change is a success", () => {
+  const before = {
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-weighted-before",
+      versions: [version("a", 60), version("b", 40)],
+    }),
+    ...Object.fromEntries(
+      PROTECTED_WORKER_NAMES.map((name) => [
+        name,
+        snapshotFor({
+          workerName: name,
+          state: "present",
+          deploymentId: `deployment-${name}`,
+          versions: [version(`ver-${name}`)],
+        }),
+      ])
+    ),
+  };
+  const after = {
+    ...before,
+    [VALID_WORKER]: snapshotFor({
+      workerName: VALID_WORKER,
+      state: "present",
+      deploymentId: "deployment-weighted-after",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("a", 40), version("b", 60)],
+    }),
+  };
+  const verification = assertPostflightVerification(before, after, {
+    workerName: VALID_WORKER,
+    protectedNames: PROTECTED_WORKER_NAMES,
+  });
+  assert.equal(verification.targetChanged, true);
+  assert.deepEqual(verification.protectedDeltas, []);
+});
+
+test("rollback: single 100% preflight prints an exact rollback candidate", () => {
+  const snapshot = snapshotFor({
+    workerName: PROTECTED_WORKER_NAMES[0],
+    state: "present",
+    deploymentId: "deployment-before",
+    versions: [version("prior-v")],
+  });
+  const info = buildRollbackInfo(snapshot, "/tmp/cfg.json");
+  assert.equal(info.kind, "single");
+  assert.ok(info.rollbackCommand.join(" ").includes("prior-v"));
+});
+
+test("rollback: weighted preflight requires a manual weighted restore", () => {
+  const snapshot = snapshotFor({
+    workerName: PROTECTED_WORKER_NAMES[0],
+    state: "present",
+    deploymentId: "deployment-weighted",
+    versions: [version("a", 60), version("b", 40)],
+  });
+  const info = buildRollbackInfo(snapshot, "/tmp/cfg.json");
+  assert.equal(info.kind, "weighted");
+  assert.equal(info.rollbackCommand, null);
+  assert.match(info.message, /MANUAL_WEIGHTED_DEPLOYMENT_RESTORE_REQUIRED/);
+  assert.match(info.message, /deployment-weighted/);
 });
 
 test("deploy flow: default is dry-run and never runs an upload", async () => {
@@ -955,8 +1424,8 @@ test("deploy flow: dry-run runs before deploy in execute mode", async () => {
     result.run.map((entry) => entry.kind),
     ["dryRun", "deploy"]
   );
-  assert.equal(result.before[VALID_WORKER].versionId, "v1");
-  assert.equal(result.after[VALID_WORKER].versionId, "v2");
+  assert.equal(result.before[VALID_WORKER].deploymentId, "deployment-v1");
+  assert.equal(result.after[VALID_WORKER].deploymentId, "deployment-v2");
 });
 
 test("deploy flow: dry-run failure blocks the upload", async () => {
@@ -1136,7 +1605,7 @@ test("deploy flow: invalid JSON and malformed payload block the deploy command",
 
 test("deploy flow: protected worker absent or incomplete blocks the deploy command", async () => {
   const absentPlan = {
-    [VALID_WORKER]: okResponse([deployment("v1", "2026-08-02T00:00:00Z")]),
+    [VALID_WORKER]: okResponse([deploymentFor("v1")]),
     [PROTECTED_WORKER_NAMES[0]]: errorResponse(404),
   };
   const { dir, head } = await makeScratchRepo();
@@ -1173,7 +1642,7 @@ test("deploy flow: new target absent transitions to present and passes", async (
       ...Object.fromEntries(
         PROTECTED_WORKER_NAMES.map((name) => [
           name,
-          okResponse([deployment(`ver-${name}`, "2026-08-02T00:00:00Z")]),
+          okResponse([deploymentFor(`ver-${name}`)]),
         ])
       ),
     },
@@ -1221,7 +1690,7 @@ test("deploy flow: existing target present is allowed", async () => {
     })
   );
   assert.equal(result.before[VALID_WORKER].state, "present");
-  assert.equal(result.after[VALID_WORKER].versionId, "v2");
+  assert.equal(result.after[VALID_WORKER].deploymentId, "deployment-v2");
 });
 
 test("deploy flow: postflight unavailable is never reported as success", async () => {
@@ -1293,7 +1762,11 @@ test("deploy flow: protected worker delta triggers PROTECTED_WORKER_CHANGED", as
   const before = presentSnapshots("v1");
   const after = presentAfter("v2");
   after[PROTECTED_WORKER_NAMES[0]] = okResponse([
-    deployment("CHANGED-PROTECTED", "2026-08-02T00:00:01Z"),
+    deploymentEntry({
+      id: "deployment-CHANGED-PROTECTED",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("CHANGED-PROTECTED")],
+    }),
   ]);
   const fetchImpl = makeApiPlan({ before, after });
   await withConfigDir(async (outputDir) => {
@@ -1313,8 +1786,97 @@ test("deploy flow: protected worker delta triggers PROTECTED_WORKER_CHANGED", as
         }),
       (error) => {
         assert.equal(error.code, "PROTECTED_WORKER_CHANGED");
-        assert.ok(/lovetree-limone: before ver-lovetree-limone/.test(error.message));
+        assert.ok(
+          /lovetree-limone: before deploy deployment-ver-lovetree-limone/.test(error.message)
+        );
         assert.ok(error.rollbackCommand.join(" ").includes("ver-lovetree-limone"));
+        return true;
+      }
+    );
+  });
+});
+
+test("deploy flow: weighted target deployment change passes and protected stay identical", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const runner = mockRunner();
+  const before = presentSnapshots("v1");
+  before[VALID_WORKER] = okResponse([
+    deploymentEntry({
+      id: "deployment-weighted-before",
+      createdOn: "2026-08-02T00:00:00Z",
+      versions: [version("a", 60), version("b", 40)],
+    }),
+  ]);
+  const after = presentAfter("v1");
+  after[VALID_WORKER] = okResponse([
+    deploymentEntry({
+      id: "deployment-weighted-after",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("a", 40), version("b", 60)],
+    }),
+  ]);
+  const fetchImpl = makeApiPlan({ before, after });
+  const result = await withConfigDir((outputDir) =>
+    runGuardedPreviewDeploy({
+      workerName: VALID_WORKER,
+      confirmWorker: VALID_WORKER,
+      sourceSha: head,
+      repoRoot: dir,
+      execute: true,
+      apiToken: API_TOKEN,
+      accountId: ACCOUNT_ID,
+      fetchImpl,
+      runCommand: runner.runner,
+      outputDir,
+    })
+  );
+  assert.equal(result.before[VALID_WORKER].deploymentId, "deployment-weighted-before");
+  assert.equal(result.after[VALID_WORKER].deploymentId, "deployment-weighted-after");
+  assert.notEqual(
+    result.before[VALID_WORKER].deploymentFingerprint,
+    result.after[VALID_WORKER].deploymentFingerprint
+  );
+});
+
+test("deploy flow: protected worker percentage change triggers PROTECTED_WORKER_CHANGED", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const runner = mockRunner();
+  const before = presentSnapshots("v1");
+  before[PROTECTED_WORKER_NAMES[0]] = okResponse([
+    deploymentEntry({
+      id: "deployment-weighted-protected",
+      createdOn: "2026-08-02T00:00:00Z",
+      versions: [version("a", 60), version("b", 40)],
+    }),
+  ]);
+  const after = presentAfter("v2");
+  after[PROTECTED_WORKER_NAMES[0]] = okResponse([
+    deploymentEntry({
+      id: "deployment-weighted-protected",
+      createdOn: "2026-08-02T00:00:00Z",
+      versions: [version("a", 40), version("b", 60)],
+    }),
+  ]);
+  const fetchImpl = makeApiPlan({ before, after });
+  await withConfigDir(async (outputDir) => {
+    await assert.rejects(
+      () =>
+        runGuardedPreviewDeploy({
+          workerName: VALID_WORKER,
+          confirmWorker: VALID_WORKER,
+          sourceSha: head,
+          repoRoot: dir,
+          execute: true,
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          fetchImpl,
+          runCommand: runner.runner,
+          outputDir,
+        }),
+      (error) => {
+        assert.equal(error.code, "PROTECTED_WORKER_CHANGED");
+        assert.equal(error.rollbackCommand, null);
+        assert.match(error.message, /MANUAL_WEIGHTED_DEPLOYMENT_RESTORE_REQUIRED/);
         return true;
       }
     );
@@ -1496,7 +2058,11 @@ test("cleanup: config removed after protected delta", async () => {
   const before = presentSnapshots("v1");
   const after = presentAfter("v2");
   after[PROTECTED_WORKER_NAMES[0]] = okResponse([
-    deployment("CHANGED", "2026-08-02T00:00:01Z"),
+    deploymentEntry({
+      id: "deployment-CHANGED",
+      createdOn: "2026-08-02T00:00:01Z",
+      versions: [version("CHANGED")],
+    }),
   ]);
   const fetchImpl = makeApiPlan({ before, after });
   await withConfigDir(async (outputDir) => {
