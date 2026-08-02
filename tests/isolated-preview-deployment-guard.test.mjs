@@ -12,6 +12,7 @@ import {
   validatePreviewWorkerName,
   validateSourceState,
   buildSafePreviewConfig,
+  sanitizeBuiltModuleRules,
   buildWranglerCommands,
   buildRollbackCommand,
   runGuardedPreviewDeploy,
@@ -75,6 +76,7 @@ const BUILT_WRANGLER = JSON.stringify({
   compatibility_date: "2026-07-01",
   compatibility_flags: ["nodejs_compat"],
   no_bundle: true,
+  rules: [{ type: "ESModule", globs: ["**/*.js", "**/*.mjs"] }],
   assets: { directory: "../client", binding: "ASSETS" },
   vars: {
     APP_ENV: "staging",
@@ -94,7 +96,7 @@ function git(dir, args) {
   return result;
 }
 
-async function makeScratchRepo() {
+async function makeScratchRepo({ builtConfig = BUILT_WRANGLER } = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), "guard-test-repo-"));
   git(dir, ["init", "-b", "main"]);
   git(dir, ["config", "user.email", "guard-test@example.com"]);
@@ -110,7 +112,7 @@ async function makeScratchRepo() {
   await mkdir(path.join(dir, "dist", "server"), { recursive: true });
   await writeFile(
     path.join(dir, "dist", "server", "wrangler.json"),
-    BUILT_WRANGLER,
+    builtConfig,
     "utf8"
   );
   await writeFile(
@@ -691,6 +693,281 @@ test("config: source wrangler.jsonc is not modified", async () => {
   );
   const after = await readFile(path.join(dir, "wrangler.jsonc"), "utf8");
   assert.equal(after, before);
+});
+
+// --- Built module rules contract (R1-R5, 2026-08-02 rules omission repair) ---
+//
+// The built worker config (`dist/server/wrangler.json`) carries module-discovery
+// `rules` that Wrangler needs when `no_bundle: true`. Without them Wrangler does
+// not upload sibling ES modules (e.g. `__vite_rsc_assets_manifest.js`) and
+// Cloudflare rejects the deployment with error 10021. These tests pin the
+// sanitizer contract: built rules only, strict validation, order preservation,
+// and fail-closed behavior before any command is invoked.
+
+function builtConfigWith(overrides) {
+  return JSON.stringify({
+    name: "lovetree-limone",
+    main: "index.js",
+    compatibility_date: "2026-07-01",
+    compatibility_flags: ["nodejs_compat"],
+    no_bundle: true,
+    assets: { directory: "../client", binding: "ASSETS" },
+    vars: {
+      APP_ENV: "staging",
+      API_MUTATIONS_ENABLED: "false",
+      FIREBASE_PROJECT_ID: "relovetree",
+    },
+    ...overrides,
+  });
+}
+
+test("rules T1: valid ESModule rules are preserved semantically (sanitizer)", () => {
+  const rules = [{ type: "ESModule", globs: ["**/*.js", "**/*.mjs"] }];
+  const result = sanitizeBuiltModuleRules(rules, { noBundle: true });
+  assert.deepEqual(result, [
+    { type: "ESModule", globs: ["**/*.js", "**/*.mjs"] },
+  ]);
+});
+
+test("rules T1: generated config preserves built ESModule rules", async () => {
+  const { dir } = await makeScratchRepo();
+  const { config } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
+  assert.deepEqual(config.rules, [
+    { type: "ESModule", globs: ["**/*.js", "**/*.mjs"] },
+  ]);
+  assert.equal(config.rules[0].type, "ESModule");
+  assert.deepEqual(config.rules[0].globs, ["**/*.js", "**/*.mjs"]);
+});
+
+test("rules T2: multiple rules, rule order, glob order, and fallthrough preserved", () => {
+  const rules = [
+    { type: "ESModule", globs: ["**/*.js"], fallthrough: true },
+    { type: "Text", globs: ["**/*.txt"] },
+  ];
+  const result = sanitizeBuiltModuleRules(rules, { noBundle: true });
+  assert.deepEqual(result, [
+    { type: "ESModule", globs: ["**/*.js"], fallthrough: true },
+    { type: "Text", globs: ["**/*.txt"] },
+  ]);
+  assert.deepEqual(Object.keys(result[0]).sort(), ["fallthrough", "globs", "type"]);
+  assert.deepEqual(Object.keys(result[1]).sort(), ["globs", "type"]);
+});
+
+test("rules T2: duplicate rules are not merged and order is stable", () => {
+  const rules = [
+    { type: "ESModule", globs: ["**/*.js"] },
+    { type: "ESModule", globs: ["**/*.js"] },
+  ];
+  const result = sanitizeBuiltModuleRules(rules, { noBundle: true });
+  assert.equal(result.length, 2);
+  assert.deepEqual(result[0], result[1]);
+});
+
+test("rules T3: no_bundle with missing rules fails closed before any command", async () => {
+  const { dir, head } = await makeScratchRepo({
+    builtConfig: builtConfigWith({ rules: undefined }),
+  });
+  const runner = mockRunner();
+  await withConfigDir(async (outputDir) => {
+    await assert.rejects(
+      () =>
+        runGuardedPreviewDeploy({
+          workerName: VALID_WORKER,
+          confirmWorker: VALID_WORKER,
+          sourceSha: head,
+          repoRoot: dir,
+          execute: true,
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          runCommand: runner.runner,
+          outputDir,
+        }),
+      (error) => error.code === "BUILD_MODULE_RULES_MISSING"
+    );
+  });
+  assert.equal(runner.calls.length, 0);
+});
+
+test("rules T3: missing-rules sanitizer error carries BUILD_MODULE_RULES_MISSING", () => {
+  assert.throws(
+    () => sanitizeBuiltModuleRules(undefined, { noBundle: true }),
+    (error) => error.code === "BUILD_MODULE_RULES_MISSING"
+  );
+  assert.throws(
+    () => sanitizeBuiltModuleRules(null, { noBundle: true }),
+    (error) => error.code === "BUILD_MODULE_RULES_MISSING"
+  );
+});
+
+test("rules T4: no_bundle with empty rules array fails closed", () => {
+  assert.throws(
+    () => sanitizeBuiltModuleRules([], { noBundle: true }),
+    (error) => error.code === "BUILD_MODULE_RULES_MISSING"
+  );
+});
+
+test("rules T4: no_bundle with empty rules fails closed before any command", async () => {
+  const { dir, head } = await makeScratchRepo({
+    builtConfig: builtConfigWith({ rules: [] }),
+  });
+  const runner = mockRunner();
+  await withConfigDir(async (outputDir) => {
+    await assert.rejects(
+      () =>
+        runGuardedPreviewDeploy({
+          workerName: VALID_WORKER,
+          confirmWorker: VALID_WORKER,
+          sourceSha: head,
+          repoRoot: dir,
+          execute: true,
+          apiToken: API_TOKEN,
+          accountId: ACCOUNT_ID,
+          runCommand: runner.runner,
+          outputDir,
+        }),
+      (error) => error.code === "BUILD_MODULE_RULES_MISSING"
+    );
+  });
+  assert.equal(runner.calls.length, 0);
+});
+
+test("rules T5: malformed rules fail closed with BUILD_MODULE_RULES_INVALID", () => {
+  const malformedCases = [
+    { label: "rules is object", rules: { type: "ESModule", globs: ["**/*.js"] } },
+    { label: "rule is null", rules: [null] },
+    { label: "rule is array", rules: [["ESModule"]] },
+    { label: "unsupported type", rules: [{ type: "Python", globs: ["**/*.py"] }] },
+    { label: "type missing", rules: [{ globs: ["**/*.js"] }] },
+    { label: "globs missing", rules: [{ type: "ESModule" }] },
+    { label: "globs empty", rules: [{ type: "ESModule", globs: [] }] },
+    { label: "glob non-string", rules: [{ type: "ESModule", globs: [42] }] },
+    { label: "glob empty string", rules: [{ type: "ESModule", globs: [""] }] },
+    { label: "glob whitespace only", rules: [{ type: "ESModule", globs: ["   "] }] },
+    { label: "glob NUL", rules: [{ type: "ESModule", globs: ["**\0*.js"] }] },
+    { label: "fallthrough non-boolean", rules: [{ type: "ESModule", globs: ["**/*.js"], fallthrough: "yes" }] },
+    { label: "unknown rule key", rules: [{ type: "ESModule", globs: ["**/*.js"], extra: 1 }] },
+  ];
+  for (const { label, rules } of malformedCases) {
+    assert.throws(
+      () => sanitizeBuiltModuleRules(rules, { noBundle: true }),
+      (error) => error.code === "BUILD_MODULE_RULES_INVALID",
+      `expected BUILD_MODULE_RULES_INVALID for: ${label}`
+    );
+  }
+});
+
+test("rules T5: malformed rules fail closed even when no_bundle is false", () => {
+  assert.throws(
+    () =>
+      sanitizeBuiltModuleRules([{ type: "Python", globs: ["**/*.py"] }], {
+        noBundle: false,
+      }),
+    (error) => error.code === "BUILD_MODULE_RULES_INVALID"
+  );
+});
+
+test("rules T6: no_bundle false allows missing rules (returns null)", () => {
+  assert.equal(sanitizeBuiltModuleRules(undefined, { noBundle: false }), null);
+  assert.equal(sanitizeBuiltModuleRules(null, { noBundle: false }), null);
+  assert.equal(sanitizeBuiltModuleRules(undefined, {}), null);
+});
+
+test("rules T6: no_bundle false preserves valid rules through the sanitizer", () => {
+  const rules = [{ type: "ESModule", globs: ["**/*.js"] }];
+  const result = sanitizeBuiltModuleRules(rules, { noBundle: false });
+  assert.deepEqual(result, [{ type: "ESModule", globs: ["**/*.js"] }]);
+});
+
+test("rules T6: no_bundle false omits rules from generated config when absent", async () => {
+  const { dir } = await makeScratchRepo({
+    builtConfig: builtConfigWith({ no_bundle: false, rules: undefined }),
+  });
+  const { config } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
+  assert.equal(config.no_bundle, false);
+  assert.equal(config.rules, undefined);
+});
+
+test("rules T7: forbidden fields stay absent after rules preservation", async () => {
+  const { dir } = await makeScratchRepo();
+  const { config, content } = await withConfigDir((outputDir) =>
+    buildSafePreviewConfig({
+      repoRoot: dir,
+      workerName: VALID_WORKER,
+      outputDir,
+    })
+  );
+  assert.ok(Array.isArray(config.rules) && config.rules.length > 0);
+  for (const forbidden of [
+    "routes",
+    "custom_domains",
+    "env",
+    "secrets",
+    "triggers",
+    "queues",
+    "queues_producers",
+    "queues_consumers",
+    "workflows",
+  ]) {
+    assert.equal(config[forbidden], undefined, `config must not contain ${forbidden}`);
+  }
+  assert.equal(content.includes("routes"), false);
+  assert.equal(content.includes("custom_domains"), false);
+  assert.equal(content.includes('"env"'), false);
+  assert.equal(content.includes("secrets"), false);
+  assert.equal(content.includes("triggers"), false);
+  assert.equal(content.includes("queues"), false);
+  assert.equal(content.includes("workflows"), false);
+});
+
+test("rules T8: distinct rules produce distinct generated config SHA-256", async () => {
+  const buildSha = async (rules) => {
+    const { dir } = await makeScratchRepo({
+      builtConfig: builtConfigWith({ rules }),
+    });
+    const { configSha256 } = await withConfigDir((outputDir) =>
+      buildSafePreviewConfig({
+        repoRoot: dir,
+        workerName: VALID_WORKER,
+        outputDir,
+      })
+    );
+    return configSha256;
+  };
+  const base = await buildSha([{ type: "ESModule", globs: ["**/*.js", "**/*.mjs"] }]);
+  const differentGlob = await buildSha([{ type: "ESModule", globs: ["**/*.js"] }]);
+  const differentType = await buildSha([{ type: "CommonJS", globs: ["**/*.js", "**/*.mjs"] }]);
+  const withFallthrough = await buildSha([
+    { type: "ESModule", globs: ["**/*.js", "**/*.mjs"], fallthrough: true },
+  ]);
+  assert.notEqual(base, differentGlob);
+  assert.notEqual(base, differentType);
+  assert.notEqual(base, withFallthrough);
+});
+
+test("rules T9: mutating sanitizer output does not affect the built input", () => {
+  const rules = [{ type: "ESModule", globs: ["**/*.js", "**/*.mjs"] }];
+  const result = sanitizeBuiltModuleRules(rules, { noBundle: true });
+  assert.notEqual(result, rules);
+  assert.notEqual(result[0], rules[0]);
+  assert.notEqual(result[0].globs, rules[0].globs);
+  result[0].type = "Text";
+  result[0].globs.push("**/*.cjs");
+  result.push({ type: "Data", globs: ["**/*.bin"] });
+  assert.deepEqual(rules, [
+    { type: "ESModule", globs: ["**/*.js", "**/*.mjs"] },
+  ]);
 });
 
 test("commands: dry-run precedes deploy and neither carries --name", () => {

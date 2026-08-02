@@ -102,6 +102,10 @@ Workers (requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`).
 8. The generated safe config must pass `wrangler deploy --dry-run` first.
 9. In `--execute` mode, the before-deployment version snapshot must be
    complete for the target and every protected Worker.
+10. The built module-discovery `rules` must be valid. With `no_bundle: true` a
+    non-empty, strictly-validated `rules` array is required; missing or
+    malformed rules fail closed (`BUILD_MODULE_RULES_MISSING` /
+    `BUILD_MODULE_RULES_INVALID`) before any dry-run or deploy command runs.
 
 ## Generated config policy
 
@@ -115,6 +119,7 @@ main                    = built dist/server output (index.js)
 assets.directory        = dist/client
 assets.binding          = ASSETS
 no_bundle               = true
+rules                   = built module-discovery rules (validated, order preserved)
 compatibility_flags     = nodejs_compat
 APP_ENV                 = staging
 API_MUTATIONS_ENABLED   = false
@@ -127,13 +132,71 @@ routes
 custom_domains
 env (production and staging blocks, including staging mutation-true values)
 secrets (no secret metadata or values are copied into the generated config)
+triggers
+queues / queues_producers / queues_consumers
+workflows
 ```
 
 Only safe common values (compatibility date/flags, `main`, `assets`,
-`FIREBASE_PROJECT_ID`) are copied from the source config. No secret values or
-`secrets.required` metadata are carried into the generated config; the
-Worker name is specified only inside the generated config. The generated
-config file path and its SHA-256 are printed.
+`FIREBASE_PROJECT_ID`) are copied from the source config, and the built
+module-discovery `rules` are copied from the built artifact (see below). No
+secret values or `secrets.required` metadata are carried into the generated
+config; the Worker name is specified only inside the generated config. The
+generated config file path and its SHA-256 are printed.
+
+### Built module-discovery rules (2026-08-02 rules omission repair)
+
+During the 2026-08-02 native-ext4 independent A validation, a real isolated
+Preview deployment failed with Cloudflare error code `10021`:
+
+```text
+No such module "__vite_rsc_assets_manifest.js" imported from "index.js"
+```
+
+Root cause: the generated safe config copied `main`, `no_bundle`, `assets`,
+`compatibility_date`, `compatibility_flags`, and safe vars from the built
+config but **omitted `rules`**. With `no_bundle: true`, Wrangler relies on the
+module-discovery `rules` to classify and upload sibling ES modules. Without the
+`ESModule` rule (`**/*.js`, `**/*.mjs`), Wrangler did not upload
+`__vite_rsc_assets_manifest.js`, so Cloudflare rejected the deployment. A
+diagnostic config that preserved only `rules` against the same build and target
+deployed successfully, isolating the defect to the omitted field.
+
+Why the dry-run did not catch it: `wrangler deploy --dry-run` validates the
+config shape and prints a plan, but it does not verify that every module
+imported at runtime is present in the upload set. Module-upload completeness is
+only enforced by Cloudflare at actual upload time, which is why a real A/B/C
+acceptance (not dry-run alone) is mandatory.
+
+The guard now preserves the built `rules` under this contract:
+
+- `rules` are read **only** from the built artifact `dist/server/wrangler.json`,
+  never from the source `wrangler.jsonc`.
+- Each rule is strictly validated and copied into a fresh object/array by
+  `sanitizeBuiltModuleRules(rules, { noBundle })`. Allowed module types:
+  `ESModule`, `CommonJS`, `CompiledWasm`, `Text`, `Data`.
+- Each rule must be a plain object of exactly `{ type, globs, fallthrough? }`:
+  `type` is an allowed value, `globs` is a non-empty array of non-empty,
+  non-whitespace-only strings with no NUL character, and `fallthrough`, when
+  present, is a boolean. Any unknown key fails closed.
+- Rule order, glob order, and duplicate rules are preserved exactly (Wrangler
+  rules are order-sensitive and `fallthrough` is significant). The sanitizer
+  never sorts, rewrites, or merges rules, and never returns the input
+  references.
+- Fail-closed with `no_bundle: true`: a valid non-empty `rules` array is
+  mandatory. `undefined`/`null`/empty array → `BUILD_MODULE_RULES_MISSING`;
+  type/shape/glob/fallthrough/unknown-key errors → `BUILD_MODULE_RULES_INVALID`.
+  Either error blocks the deployment **before** `wrangler dry-run`, the
+  Cloudflare version snapshot, and `wrangler deploy` — the upload command is
+  invoked zero times.
+- With `no_bundle: false`: missing rules are allowed (omitted from the generated
+  config), valid rules are preserved through the same sanitizer, and malformed
+  rules still fail closed.
+
+The diagnostic rules-variant deployment lives only on the isolated review target
+`lovetree-limone-issue-26-final-review-preview`. The protected Workers
+(`lovetree-limone`, `lovetree-limone-staging`, `lovetree-limone-v2`) were not
+modified by the diagnostic deployment and are never modified by this guard.
 
 The deploy command never passes `--name`, so it cannot fall back to the
 repository default name. Command results distinguish process spawn errors,

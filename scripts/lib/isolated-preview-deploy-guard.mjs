@@ -283,6 +283,101 @@ async function readBuiltWorkerConfig(repoRoot, builtConfigPath) {
   }
 }
 
+export const ALLOWED_MODULE_RULE_TYPES = Object.freeze([
+  "ESModule",
+  "CommonJS",
+  "CompiledWasm",
+  "Text",
+  "Data",
+]);
+
+function moduleRuleError(index, reason) {
+  const error = new Error(
+    `invalid built worker module rule at index ${index}: ${reason}`
+  );
+  error.code = "BUILD_MODULE_RULES_INVALID";
+  return error;
+}
+
+// Validates and normalizes the module-discovery `rules` from the built worker
+// config (`dist/server/wrangler.json`). Wrangler rules are order-sensitive and
+// `fallthrough` is significant, so rule order, glob order, and duplicate rules
+// are preserved exactly. Anything malformed fails closed before any command is
+// invoked. With `no_bundle: true` a valid non-empty rules array is mandatory:
+// without it Wrangler classifies uploaded modules incorrectly and Cloudflare
+// rejects the upload (e.g. error 10021 for a missing sibling module).
+export function sanitizeBuiltModuleRules(rules, { noBundle = false } = {}) {
+  if (rules === undefined || rules === null) {
+    if (noBundle === true) {
+      const error = new Error(
+        "built worker config enables no_bundle but provides no module rules; " +
+          "a non-empty rules array is required to classify uploaded modules"
+      );
+      error.code = "BUILD_MODULE_RULES_MISSING";
+      throw error;
+    }
+    return null;
+  }
+  if (!Array.isArray(rules)) {
+    const error = new Error("built worker module rules must be an array");
+    error.code = "BUILD_MODULE_RULES_INVALID";
+    throw error;
+  }
+  if (noBundle === true && rules.length === 0) {
+    const error = new Error(
+      "built worker config enables no_bundle but provides an empty module rules array"
+    );
+    error.code = "BUILD_MODULE_RULES_MISSING";
+    throw error;
+  }
+
+  const allowedKeys = new Set(["type", "globs", "fallthrough"]);
+  const sanitized = rules.map((rule, index) => {
+    if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+      throw moduleRuleError(index, "rule must be a plain object");
+    }
+    for (const key of Object.keys(rule)) {
+      if (!allowedKeys.has(key)) {
+        throw moduleRuleError(index, `unknown rule key '${key}'`);
+      }
+    }
+    if (!ALLOWED_MODULE_RULE_TYPES.includes(rule.type)) {
+      throw moduleRuleError(
+        index,
+        `unsupported module type '${String(rule.type)}'`
+      );
+    }
+    if (!Array.isArray(rule.globs) || rule.globs.length === 0) {
+      throw moduleRuleError(index, "globs must be a non-empty array");
+    }
+    const globs = rule.globs.map((glob) => {
+      if (typeof glob !== "string" || glob.length === 0) {
+        throw moduleRuleError(index, "each glob must be a non-empty string");
+      }
+      if (glob.trim().length === 0) {
+        throw moduleRuleError(index, "glob must not be whitespace-only");
+      }
+      if (glob.includes("\0")) {
+        throw moduleRuleError(index, "glob contains a NUL character");
+      }
+      return glob;
+    });
+    if (
+      rule.fallthrough !== undefined &&
+      typeof rule.fallthrough !== "boolean"
+    ) {
+      throw moduleRuleError(index, "fallthrough must be a boolean when present");
+    }
+    const sanitizedRule = { type: rule.type, globs };
+    if (typeof rule.fallthrough === "boolean") {
+      sanitizedRule.fallthrough = rule.fallthrough;
+    }
+    return sanitizedRule;
+  });
+
+  return sanitized;
+}
+
 export async function buildSafePreviewConfig({
   repoRoot,
   workerName,
@@ -300,6 +395,7 @@ export async function buildSafePreviewConfig({
   }
 
   const distServer = path.dirname(builtConfigPath);
+  const noBundle = built.no_bundle ?? false;
   const safe = {
     $schema: typeof source.$schema === "string"
       ? source.$schema
@@ -307,7 +403,7 @@ export async function buildSafePreviewConfig({
     name: workerName,
     main: path.resolve(distServer, built.main),
     workers_dev: true,
-    no_bundle: built.no_bundle ?? false,
+    no_bundle: noBundle,
     assets: {
       directory: clientAssets,
       binding: built.assets?.binding ?? "ASSETS",
@@ -323,6 +419,11 @@ export async function buildSafePreviewConfig({
   }
   if (Array.isArray(built.compatibility_flags) && built.compatibility_flags.length > 0) {
     safe.compatibility_flags = [...built.compatibility_flags];
+  }
+
+  const moduleRules = sanitizeBuiltModuleRules(built.rules, { noBundle });
+  if (moduleRules !== null) {
+    safe.rules = moduleRules;
   }
 
   const firebaseProjectId = source?.vars?.FIREBASE_PROJECT_ID;
