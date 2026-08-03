@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>LoveTree · 시즌 1 완성과 팬 온도 v4</title>
+  <meta name="description" content="100번째 순간 완성부터 시즌 회고, 다음 기록 방식 선택, 101번째 순간 기록까지 이어지는 LoveTree 인터랙티브 HTML 디자인 데모">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum:wght@400;700&family=Manrope:wght@500;700;800&display=swap');
+
+    :root{
+      --paper:#f8f1e8;
+      --paper-2:#fffaf4;
+      --paper-3:#f2e7db;
+      --card:#fffdf9;
+      --ink:#433836;
+      --ink-soft:#665955;
+      --muted:#8b7b75;
+      --line:rgba(119,91,82,.18);
+      --line-soft:rgba(119,91,82,.10);
+      --rose:#cf7886;
+      --rose-deep:#a95465;
+      --rose-pale:#f5dde1;
+      --sage:#839777;
+      --sage-deep:#5c7052;
+      --sage-pale:#e4eddf;
+      --gold:#d7ad64;
+      --gold-pale:#f8edcf;
+      --violet:#a184bf;
+      --violet-pale:#ede5f4;
+      --blue:#7895aa;
+      --display:'Gowun Batang','Noto Serif KR',serif;
+      --body:'Gowun Dodum','Noto Sans KR',sans-serif;
+      --latin:'Manrope',sans-serif;
+      --shadow-xl:0 30px 78px rgba(75,51,42,.17);
+      --shadow-lg:0 21px 52px rgba(75,51,42,.13);
+      --shadow-md:0 13px 31px rgba(75,51,42,.10);
+      --shadow-sm:0 7px 18px rgba(75,51,42,.08);
+      --top-h:74px;
+    }
+    *{box-sizing:border-box}
+    html{min-width:320px;height:100%;scroll-behavior:smooth}
+    body{
+      margin:0;min-width:320px;height:100%;overflow:hidden;color:var(--ink);font-family:var(--body);
+      background:
+        radial-gradient(circle at 6% 8%,rgba(232,174,171,.22),transparent 30rem),
+        radial-gradient(circle at 94% 88%,rgba(155,181,137,.17),transparent 30rem),
+        linear-gradient(138deg,#f8f1e8,#fcf9f4 56%,#f1e7dc);
+    }
+    body.overlay-open{overflow:hidden!important}
+    body::before{
+      content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.055;mix-blend-mode:multiply;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.46}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%}
+    [hidden],.hidden{display:none!important}
+    :focus-visible{outline:3px solid rgba(207,120,134,.34);outline-offset:3px}
+
+    .app{height:100%;display:flex;flex-direction:column;position:relative}
+    .topbar{
+      flex:0 0 var(--top-h);display:flex;align-items:center;gap:18px;padding:10px 20px;
+      border-bottom:1px solid var(--line);background:rgba(255,252,247,.84);backdrop-filter:blur(16px);z-index:80;
+    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:210px;color:var(--rose-deep)}
+    .brand-mark{position:relative;width:36px;height:38px;flex:0 0 auto}
+    .brand-mark::before{content:"";position:absolute;left:17px;top:8px;width:2px;height:28px;border-radius:4px;background:var(--sage-deep);transform:rotate(8deg)}
+    .brand-mark i,.brand-mark b,.brand-mark em{position:absolute;display:block;font-style:normal}
+    .brand-mark i{left:1px;top:7px;width:16px;height:10px;border-radius:100% 0;background:var(--sage);transform:rotate(-26deg)}
+    .brand-mark b{right:0;top:2px;width:15px;height:10px;border-radius:100% 0;background:var(--rose);transform:scaleX(-1) rotate(-28deg)}
+    .brand-mark em{left:13px;top:0;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(215,173,100,.14)}
+    .brand strong{display:block;font:700 1.3rem/1 var(--display);letter-spacing:-.055em}
+    .brand small{display:block;margin-top:4px;color:var(--muted);font:700 .51rem var(--latin);letter-spacing:.13em;text-transform:uppercase}
+    .toolbar{display:flex;align-items:center;gap:7px;min-width:0;flex:1}
+    .tool-group{display:flex;align-items:center;gap:3px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,250,244,.76);white-space:nowrap}
+    .tool-btn,.view-btn{
+      min-height:32px;padding:0 10px;border:0;border-radius:999px;color:var(--muted);background:transparent;font-size:.65rem;font-weight:700;white-space:nowrap;transition:.18s ease;
+    }
+    .tool-btn:hover,.view-btn:hover,.view-btn.active{color:var(--rose-deep);background:var(--rose-pale)}
+    .zoom-label{min-width:44px;text-align:center;color:var(--muted);font:700 .59rem var(--latin)}
+    .top-status{margin-left:auto;display:flex;align-items:center;gap:9px;flex:0 0 auto}
+    .season-return{
+      display:flex;align-items:center;gap:9px;min-height:43px;padding:7px 12px;border:1px solid rgba(207,120,134,.25);border-radius:16px;
+      color:var(--rose-deep);background:rgba(255,250,244,.86);box-shadow:var(--shadow-sm);text-align:left;
+    }
+    .season-return i{width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--rose-pale);font-style:normal}
+    .season-return strong{display:block;font-size:.64rem}
+    .season-return small{display:block;margin-top:2px;color:var(--muted);font-size:.52rem}
+    .season-live{display:none;padding:7px 10px;border-radius:999px;color:var(--sage-deep);background:var(--sage-pale);font-size:.6rem;font-weight:700}
+    body[data-season="season2"] .season-live{display:inline-flex}
+
+    .workspace{
+      flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 352px;gap:14px;padding:14px;position:relative;
+    }
+    .panel{min-height:0;border:1px solid var(--line);border-radius:25px;background:rgba(255,253,249,.84);box-shadow:var(--shadow-lg);overflow:hidden}
+    .graph-panel{display:flex;flex-direction:column;min-width:0}
+    .graph-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:68px;padding:10px 16px;border-bottom:1px solid var(--line-soft);background:rgba(255,253,249,.74)}
+    .graph-title{min-width:0}
+    .eyebrow{margin:0 0 4px;color:var(--rose-deep);font:700 .55rem var(--latin);letter-spacing:.15em;text-transform:uppercase}
+    .graph-head h1{margin:0;font:400 1.18rem var(--display);letter-spacing:-.06em}
+    .graph-head p{margin:4px 0 0;color:var(--muted);font-size:.61rem}
+    .path-switch{display:flex;gap:3px;padding:4px;border:1px solid var(--line);border-radius:999px;background:#fffaf5}
+    .path-switch button{min-height:31px;padding:0 10px;border:0;border-radius:999px;color:var(--muted);background:transparent;font-size:.58rem;font-weight:700}
+    .path-switch button.active{color:#fff;background:var(--rose);box-shadow:0 6px 14px rgba(207,120,134,.2)}
+    .graph-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+    .view-state{padding:7px 10px;border-radius:999px;color:var(--sage-deep);background:var(--sage-pale);font-size:.55rem;font-weight:700}
+    .moment-count{padding:7px 10px;border-radius:999px;color:var(--rose-deep);background:var(--rose-pale);font:700 .54rem var(--latin)}
+
+    .canvas-wrap{
+      position:relative;flex:1;min-height:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;
+      background:
+        radial-gradient(circle at 38% 45%,rgba(228,237,219,.74),transparent 27rem),
+        radial-gradient(circle at 82% 28%,rgba(245,221,225,.68),transparent 23rem),
+        linear-gradient(145deg,#f7f1e8,#fbf8f3 62%,#eef0e7);
+    }
+    .canvas-wrap.dragging{cursor:grabbing}
+    .canvas-wrap::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.36;background-image:radial-gradient(circle,rgba(111,95,89,.18) 1px,transparent 1px);background-size:27px 27px}
+    .canvas-space{position:absolute;left:0;top:0;width:2400px;height:1500px;transform-origin:0 0;will-change:transform}
+    #edgesSvg{position:absolute;inset:0;width:2400px;height:1500px;overflow:visible;pointer-events:none}
+    #nodesLayer{position:absolute;inset:0}
+    .edge-back{fill:none;stroke:rgba(169,139,128,.15);stroke-width:15;stroke-linecap:round;filter:blur(4px)}
+    .edge-path{fill:none;stroke:var(--edge,#aa8f84);stroke-width:6;stroke-linecap:round;opacity:.68;filter:drop-shadow(0 2px 3px rgba(104,73,67,.16))}
+    .edge-path.recent{stroke-width:7;stroke-dasharray:14 10;opacity:.94;animation:edgeFlow 2.1s linear infinite;filter:drop-shadow(0 0 7px rgba(207,120,134,.44))}
+    .edge-shine{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-dasharray:2 20;opacity:.82;animation:edgeFlow 1.7s linear infinite}
+    .temp-path{fill:none;stroke:var(--rose);stroke-width:4;stroke-linecap:round;stroke-dasharray:10 8;opacity:.86}
+    @keyframes edgeFlow{to{stroke-dashoffset:-48}}
+    .edge-label rect{fill:rgba(255,253,249,.94);stroke:rgba(194,170,157,.6)}
+    .edge-label text{fill:#796963;font:700 12px var(--body)}
+
+    .node{
+      position:absolute;z-index:5;width:218px;min-height:162px;transform:translate(-50%,-50%);border:2px solid var(--node-color,#d5b4ad);border-radius:19px;
+      background:rgba(255,253,249,.95);box-shadow:0 15px 30px rgba(98,76,69,.14);cursor:grab;transition:box-shadow .18s,outline .18s,transform .18s;overflow:visible;
+    }
+    .node:hover,.node.selected{z-index:12;box-shadow:0 23px 48px rgba(91,63,63,.22)}
+    .node.selected{outline:4px solid rgba(207,120,134,.22)}
+    .node.dragging{cursor:grabbing;z-index:20}
+    .node.root{width:236px;min-height:188px;border-radius:25px;--node-color:var(--rose)}
+    .node.milestone{border-width:3px}
+    .node.milestone::after{content:"✿";position:absolute;right:-10px;bottom:-10px;width:29px;height:29px;display:grid;place-items:center;border-radius:50%;color:#fff;background:var(--node-color);box-shadow:0 7px 17px rgba(90,63,58,.2)}
+    .node.video{min-height:278px}
+    .node-head{display:flex;align-items:center;justify-content:space-between;padding:10px 11px 0}
+    .node-kind{color:var(--node-color);font:800 .47rem var(--latin);letter-spacing:.1em;text-transform:uppercase}
+    .node-actions{display:flex;align-items:center;gap:4px}
+    .node-index{display:grid;place-items:center;min-width:25px;height:24px;padding:0 5px;border-radius:999px;color:var(--node-color);background:color-mix(in srgb,var(--node-color) 15%,white);font:700 .52rem var(--latin)}
+    .node-icon-btn{width:25px;height:25px;display:grid;place-items:center;border:1px solid rgba(207,120,134,.18);border-radius:50%;color:var(--sage-deep);background:rgba(255,253,249,.9);font-size:.72rem}
+    .node-icon-btn:hover{color:#fff;background:var(--rose)}
+    .node-thumb{position:relative;height:112px;margin:0;overflow:hidden;border-radius:16px 16px 0 0;background:linear-gradient(135deg,var(--rose-pale),var(--sage-pale))}
+    .node-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+    .node-thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(45,29,31,.35));pointer-events:none}
+    .node-play{position:absolute;z-index:3;left:50%;top:50%;width:38px;height:38px;display:grid;place-items:center;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.86);border-radius:50%;color:#fff;background:rgba(62,42,45,.42);font-size:.76rem}
+    .node.video .node-head{position:absolute;z-index:4;inset:0 0 auto 0;padding:9px 10px}
+    .node.video .node-kind{color:#fff;text-shadow:0 1px 4px rgba(42,24,25,.7)}
+    .node.video .node-index{background:rgba(255,253,249,.86)}
+    .node-symbol{width:45px;height:45px;display:grid;place-items:center;margin:11px 12px 8px;border-radius:14px;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--node-color) 72%,white),var(--node-color));font-size:1.3rem;box-shadow:0 8px 17px color-mix(in srgb,var(--node-color) 24%,transparent)}
+    .node-copy{padding:10px 12px 12px}
+    .node-copy h3{margin:0;font:700 .88rem/1.25 var(--display);letter-spacing:-.04em}
+    .node-copy p{min-height:31px;margin:5px 0 0;color:var(--muted);font:400 .62rem/1.45 var(--display)}
+    .node-meta{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:9px;color:var(--muted);font-size:.51rem}
+    .emotion-chip{padding:4px 7px;border-radius:999px;color:var(--node-color);background:color-mix(in srgb,var(--node-color) 13%,white)}
+    .node-time{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font:.5rem var(--latin)}
+    .node-time strong{color:var(--rose-deep)}
+    .handle{position:absolute;z-index:15;width:14px;height:14px;border:3px solid rgba(255,253,249,.96);border-radius:50%;background:var(--node-color);box-shadow:0 2px 8px rgba(75,49,50,.22)}
+    .handle:hover{transform:scale(1.3)}
+    .handle.out{right:-8px;top:50%;transform:translateY(-50%)}
+    .handle.in{left:-8px;top:50%;transform:translateY(-50%)}
+
+    .mini-node{
+      position:absolute;z-index:3;width:22px;height:22px;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.94);border-radius:50%;background:var(--node-color,var(--sage));box-shadow:0 5px 12px rgba(74,55,50,.18);cursor:pointer;transition:.16s;
+    }
+    .mini-node:hover,.mini-node.selected{z-index:10;transform:translate(-50%,-50%) scale(1.45);outline:4px solid rgba(207,120,134,.18)}
+    .mini-node.representative{width:34px;height:34px;border-width:4px;box-shadow:0 0 0 6px rgba(255,253,249,.55),0 9px 22px rgba(74,55,50,.22)}
+    .mini-node span{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);padding:3px 6px;border-radius:999px;color:var(--muted);background:rgba(255,253,249,.9);font:700 .42rem var(--latin);white-space:nowrap;opacity:0;pointer-events:none}
+    .mini-node:hover span,.mini-node.selected span,.mini-node.representative span{opacity:1}
+
+    .minimap{position:absolute;z-index:25;right:14px;bottom:14px;width:148px;height:95px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:rgba(255,253,249,.88);box-shadow:var(--shadow-sm);pointer-events:none}
+    .mini-dot{position:absolute;width:4px;height:4px;transform:translate(-50%,-50%);border-radius:50%;background:var(--dot,var(--rose))}
+    .mini-viewport{position:absolute;border:1px solid var(--rose);border-radius:4px;background:rgba(207,120,134,.08)}
+    .canvas-hint{position:absolute;z-index:20;left:15px;bottom:14px;max-width:320px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;color:var(--muted);background:rgba(255,253,249,.86);font-size:.55rem;box-shadow:var(--shadow-sm)}
+
+    .inspector{display:flex;flex-direction:column;min-width:0}
+    .inspector-head{flex:0 0 auto;padding:14px 14px 10px;border-bottom:1px solid var(--line-soft);background:rgba(255,253,249,.72)}
+    .inspector-head h2{margin:0;font:700 1rem var(--display);letter-spacing:-.05em}
+    .inspector-head p{margin:4px 0 0;color:var(--muted);font-size:.6rem;line-height:1.45}
+    .inspector-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:11px;padding:4px;border:1px solid var(--line);border-radius:14px;background:#fffaf5}
+    .inspector-tabs button{min-height:35px;border:0;border-radius:10px;color:var(--muted);background:transparent;font-size:.62rem;font-weight:700}
+    .inspector-tabs button.active{color:#fff;background:var(--rose);box-shadow:0 7px 17px rgba(207,120,134,.2)}
+    .tab-panels{flex:1;min-height:0;overflow:auto;scrollbar-width:thin}
+    .tab-panel{padding:14px}
+    .section-card{padding:13px;border:1px solid var(--line);border-radius:17px;background:rgba(255,253,249,.82);box-shadow:var(--shadow-sm)}
+    .section-card+.section-card{margin-top:10px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+    .section-title strong{font:700 .78rem var(--display)}
+    .section-title small{color:var(--muted);font-size:.5rem}
+    .field{display:grid;gap:6px;margin-top:10px}
+    .field:first-child{margin-top:0}
+    .field label{color:var(--ink-soft);font-size:.6rem;font-weight:700}
+    .field label span{color:var(--muted);font-weight:400}
+    .input,.field input,.field textarea,.field select{
+      width:100%;border:1px solid var(--line);border-radius:12px;background:#fffaf6;color:var(--ink);outline:0;font-size:.67rem;
+    }
+    .field input,.field select{min-height:40px;padding:0 11px}
+    .field textarea{min-height:77px;padding:10px 11px;resize:vertical;line-height:1.55}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(207,120,134,.12)}
+    .choice-row{display:flex;gap:6px;flex-wrap:wrap}
+    .choice-btn{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:#fffaf6;font-size:.56rem;font-weight:700}
+    .choice-btn.active{color:#fff;border-color:var(--rose);background:var(--rose);box-shadow:0 6px 14px rgba(207,120,134,.16)}
+    .choice-btn.recommended::after{content:"추천";margin-left:5px;color:var(--gold);font-size:.46rem}
+    .source-types{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+    .source-types button{min-height:43px;padding:5px;border:1px solid var(--line);border-radius:11px;color:var(--muted);background:#fffaf6;font-size:.54rem}
+    .source-types button.active{color:var(--rose-deep);border-color:rgba(207,120,134,.42);background:var(--rose-pale);font-weight:700}
+    .anchor-card{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid rgba(131,151,119,.25);border-radius:13px;background:var(--sage-pale)}
+    .anchor-card i{width:29px;height:29px;display:grid;place-items:center;border-radius:50%;color:#fff;background:var(--sage);font-style:normal;font-size:.62rem}
+    .anchor-card strong{display:block;font-size:.62rem}
+    .anchor-card small{display:block;margin-top:3px;color:var(--muted);font-size:.5rem}
+    .anchor-card button{margin-left:auto;border:0;color:var(--sage-deep);background:transparent;font-size:.52rem;text-decoration:underline}
+    .metadata-preview{display:flex;gap:9px;padding:9px;border:1px dashed rgba(207,120,134,.34);border-radius:13px;background:rgba(245,221,225,.35)}
+    .metadata-preview img,.metadata-fallback{width:78px;height:48px;flex:0 0 auto;border-radius:9px;object-fit:cover;background:linear-gradient(135deg,var(--rose-pale),var(--sage-pale))}
+    .metadata-preview strong{display:block;font-size:.59rem;line-height:1.35}
+    .metadata-preview small{display:block;margin-top:4px;color:var(--muted);font-size:.48rem;line-height:1.4}
+    .time-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .keyword-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .keyword-btn{position:relative;min-height:37px;border:1px solid var(--line);border-radius:11px;color:var(--muted);background:#fffaf6;font-size:.56rem;font-weight:700}
+    .keyword-btn.active{color:var(--rose-deep);border-color:rgba(207,120,134,.42);background:var(--rose-pale)}
+    .keyword-btn .order{position:absolute;right:5px;top:5px;width:17px;height:17px;display:none;place-items:center;border-radius:50%;color:#fff;background:var(--rose);font:700 .45rem var(--latin)}
+    .keyword-btn.active .order{display:grid}
+    .keyword-note{margin:7px 0 0;color:var(--muted);font-size:.5rem;line-height:1.45}
+    .primary-btn,.secondary-btn,.quiet-btn,.danger-btn{
+      width:100%;min-height:43px;border-radius:999px;font-size:.66rem;font-weight:700;transition:.18s ease;
+    }
+    .primary-btn{border:1px solid var(--rose);color:#fff;background:linear-gradient(135deg,var(--rose),var(--rose-deep));box-shadow:0 10px 22px rgba(207,120,134,.23)}
+    .primary-btn:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(207,120,134,.28)}
+    .secondary-btn{border:1px solid rgba(131,151,119,.34);color:var(--sage-deep);background:var(--sage-pale)}
+    .quiet-btn{border:1px solid var(--line);color:var(--muted);background:#fffaf6}
+    .danger-btn{border:1px solid rgba(169,84,101,.25);color:var(--rose-deep);background:var(--rose-pale)}
+    .form-error{display:none;margin:8px 0 0;color:var(--rose-deep);font-size:.55rem;line-height:1.45}
+    .form-error.show{display:block}
+
+    .selected-hero{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fffaf6}
+    .selected-media{position:relative;height:138px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,var(--rose-pale),var(--sage-pale))}
+    .selected-media img{width:100%;height:100%;object-fit:cover}
+    .selected-media .symbol{font-size:2.3rem;color:var(--rose-deep)}
+    .selected-body{padding:12px}
+    .selected-kicker{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--rose-deep);font-size:.52rem;font-weight:700}
+    .selected-body h3{margin:6px 0 5px;font:700 .94rem var(--display)}
+    .selected-body p{margin:0;color:var(--muted);font:400 .64rem/1.55 var(--display)}
+    .detail-list{display:grid;gap:8px;margin:11px 0 0}
+    .detail-row{display:grid;grid-template-columns:92px 1fr;gap:9px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:.56rem;line-height:1.4}
+    .detail-row span:first-child{color:var(--muted)}
+    .tag-list{display:flex;gap:5px;flex-wrap:wrap}
+    .tag{padding:5px 7px;border-radius:999px;color:var(--rose-deep);background:var(--rose-pale);font-size:.51rem}
+    .selected-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+    .selected-actions button{min-height:36px;border:1px solid var(--line);border-radius:11px;color:var(--muted);background:#fffaf6;font-size:.55rem;font-weight:700}
+    .selected-actions button.wide{grid-column:1/-1;color:#fff;border-color:var(--rose);background:var(--rose)}
+    .selected-actions button.danger{color:var(--rose-deep);background:var(--rose-pale)}
+    .selected-actions button:disabled{color:#aaa;background:#f2eee9}
+    .like-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:39px;margin-top:9px;border:1px solid rgba(207,120,134,.28);border-radius:999px;color:var(--rose-deep);background:#fffaf6;font-size:.6rem;font-weight:700}
+    .like-button.active{color:#fff;background:var(--rose)}
+
+    .temperature-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border:1px solid var(--line);border-radius:13px;background:#fffaf5}
+    .temperature-tabs button{min-height:36px;border:0;border-radius:9px;color:var(--muted);background:transparent;font-size:.52rem;font-weight:700;line-height:1.25}
+    .temperature-tabs button.active{color:var(--rose-deep);background:var(--rose-pale)}
+    .temp-description{margin:9px 0;color:var(--muted);font-size:.53rem;line-height:1.55}
+    .filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+    .filter-row button{min-height:29px;padding:0 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:#fffaf6;font-size:.49rem}
+    .filter-row button.active{color:#fff;border-color:var(--sage);background:var(--sage)}
+    .temperature-list{display:grid;gap:8px}
+    .temp-item{display:grid;grid-template-columns:44px 1fr 34px;gap:7px;align-items:center;font-size:.54rem}
+    .temp-bar{height:8px;overflow:hidden;border-radius:999px;background:#eee6de}
+    .temp-bar i{display:block;height:100%;width:var(--value);border-radius:inherit;background:linear-gradient(90deg,var(--bar,var(--rose)),color-mix(in srgb,var(--bar,var(--rose)) 65%,white))}
+    .temp-item strong{text-align:right;color:var(--rose-deep);font:700 .57rem var(--latin)}
+    .empty-temp{padding:20px 10px;text-align:center;color:var(--muted);font:400 .68rem/1.65 var(--display)}
+    .empty-temp i{display:block;margin-bottom:6px;color:var(--rose);font-style:normal;font-size:1.35rem}
+    .reaction-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+    .reaction-choices button{min-height:35px;border:1px solid var(--line);border-radius:11px;color:var(--muted);background:#fffaf6;font-size:.54rem;font-weight:700}
+    .reaction-choices button.active{color:#fff;border-color:var(--violet);background:var(--violet)}
+    .temperature-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
+    .temperature-meta div{padding:9px;border-radius:12px;background:rgba(228,237,223,.65)}
+    .temperature-meta strong{display:block;color:var(--sage-deep);font:700 .77rem var(--latin)}
+    .temperature-meta span{display:block;margin-top:3px;color:var(--muted);font-size:.47rem}
+
+    .workspace-overlay{
+      position:fixed;z-index:300;left:0;right:0;top:var(--top-h);bottom:0;display:grid;place-items:center;padding:24px;overflow:auto;
+      background:
+        radial-gradient(circle at 10% 15%,rgba(239,183,177,.31),transparent 27rem),
+        radial-gradient(circle at 87% 80%,rgba(159,184,139,.23),transparent 28rem),
+        linear-gradient(145deg,rgba(249,241,232,.97),rgba(255,251,246,.98) 58%,rgba(242,232,222,.97));
+      backdrop-filter:blur(12px);
+    }
+    .workspace-overlay[aria-hidden="true"]{display:none}
+    .completion-card{position:relative;width:min(1180px,100%);min-height:min(730px,calc(100vh - 120px));display:grid;grid-template-columns:.88fr 1.12fr;gap:36px;align-items:center;padding:38px;border:1px solid rgba(207,120,134,.20);border-radius:38px;background:rgba(255,251,246,.82);box-shadow:var(--shadow-xl);overflow:hidden}
+    .completion-card::before{content:"";position:absolute;inset:12px;border:1px solid rgba(131,151,119,.13);border-radius:30px;pointer-events:none}
+    .completion-copy{position:relative;z-index:3;padding:16px 8px}
+    .completion-copy .eyebrow{font-size:.62rem}
+    .completion-copy h1{margin:0;font:400 clamp(2.7rem,5.1vw,5.2rem)/1.02 var(--display);letter-spacing:-.095em}
+    .completion-copy h1 span{display:block;color:var(--rose)}
+    .completion-copy>p{max-width:520px;margin:20px 0 0;color:var(--muted);font:400 .88rem/1.8 var(--display)}
+    .completion-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:26px}
+    .completion-actions .primary{min-height:51px;padding:0 25px;border:0;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--rose),var(--rose-deep));font-size:.76rem;font-weight:700;box-shadow:0 14px 28px rgba(207,120,134,.27)}
+    .completion-actions .secondary{min-height:49px;padding:0 20px;border:1px solid rgba(131,151,119,.34);border-radius:999px;color:var(--sage-deep);background:rgba(255,253,249,.72);font-size:.7rem;font-weight:700}
+    .completion-link{display:inline-block;margin-top:14px;border:0;color:var(--muted);background:transparent;font-size:.61rem;text-decoration:underline;text-underline-offset:4px}
+    .stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:28px}
+    .stat-pill{min-width:0;padding:11px 8px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(255,253,249,.57)}
+    .stat-pill span{display:block;color:var(--muted);font-size:.46rem;line-height:1.35}
+    .stat-pill strong{display:block;overflow:hidden;margin-top:5px;color:var(--ink-soft);font:700 .63rem var(--display);text-overflow:ellipsis;white-space:nowrap}
+    .completion-art{position:relative;min-height:585px}
+    .completion-branch{position:absolute;inset:48px 30px 32px 22px;opacity:.72}
+    .completion-branch path{fill:none;stroke:#9b887a;stroke-width:3;stroke-linecap:round}
+    .completion-branch .twig{stroke:#b9a799;stroke-width:1.5}
+    .paper-note,.polaroid{position:absolute;border:1px solid rgba(132,100,91,.15);background:#fffaf2;box-shadow:0 16px 34px rgba(79,55,47,.14)}
+    .paper-note{width:210px;min-height:170px;padding:24px 19px;border-radius:8px;transform:rotate(-2deg);font:400 .78rem/1.9 var(--display)}
+    .paper-note::before,.polaroid::before{content:"";position:absolute;left:50%;top:-10px;width:70px;height:22px;transform:translateX(-50%) rotate(-3deg);background:rgba(222,181,155,.54);box-shadow:0 2px 3px rgba(73,51,43,.05)}
+    .paper-note.main-note{left:34%;top:16%;width:260px;min-height:255px;padding:45px 34px;font-size:.92rem;transform:rotate(1deg)}
+    .paper-note.small-note{left:7%;bottom:10%;width:175px;min-height:138px;transform:rotate(-5deg);font-size:.68rem}
+    .polaroid{width:180px;padding:10px 10px 18px;border-radius:9px}
+    .polaroid img{display:block;width:100%;height:145px;object-fit:cover;border-radius:5px;background:var(--rose-pale)}
+    .polaroid strong{display:block;margin-top:9px;font:700 .72rem var(--display)}
+    .polaroid small{display:block;margin-top:4px;color:var(--muted);font-size:.48rem}
+    .polaroid.one{right:4%;top:5%;transform:rotate(7deg)}
+    .polaroid.two{right:1%;bottom:7%;transform:rotate(-5deg)}
+    .polaroid.three{left:2%;top:1%;width:165px;transform:rotate(-8deg)}
+    .pressed-flower{position:absolute;color:var(--rose);font-family:Georgia,serif;filter:drop-shadow(0 5px 6px rgba(111,77,70,.16))}
+    .flower-a{left:25%;top:10%;font-size:3rem;transform:rotate(-22deg)}
+    .flower-b{right:31%;bottom:4%;font-size:2.4rem;color:var(--sage)}
+    .flower-c{right:2%;top:48%;font-size:2rem;color:var(--gold)}
+
+    .review-shell{width:min(1180px,100%);min-height:min(730px,calc(100vh - 120px));display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px}
+    .review-stage,.review-side{border:1px solid var(--line);border-radius:29px;background:rgba(255,253,249,.88);box-shadow:var(--shadow-xl);overflow:hidden}
+    .review-stage{position:relative;display:flex;flex-direction:column;min-height:0}
+    .review-stage-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;border-bottom:1px solid var(--line-soft)}
+    .review-stage-head h2{margin:0;font:400 1.45rem var(--display)}
+    .review-modes{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:#fffaf5}
+    .review-modes button{min-height:31px;padding:0 10px;border:0;border-radius:999px;color:var(--muted);background:transparent;font-size:.54rem;font-weight:700}
+    .review-modes button.active{color:#fff;background:var(--rose)}
+    .review-canvas{position:relative;flex:1;min-height:490px;overflow:hidden;background:radial-gradient(circle at 47% 48%,rgba(245,221,225,.54),transparent 24rem),linear-gradient(145deg,#f8f1e8,#f3f5eb)}
+    .review-path{position:absolute;inset:0;width:100%;height:100%}
+    .review-path path{fill:none;stroke:#b69b93;stroke-width:4;stroke-linecap:round;stroke-dasharray:8 8}
+    .review-card{position:absolute;width:155px;padding:9px;border:2px solid var(--node-color,var(--rose));border-radius:16px;background:#fffdf9;box-shadow:var(--shadow-md);transform:translate(-50%,-50%) scale(.88);opacity:.62;transition:.35s ease}
+    .review-card.active{z-index:5;transform:translate(-50%,-50%) scale(1.12);opacity:1;box-shadow:0 24px 52px rgba(91,63,63,.25)}
+    .review-card img{display:block;width:100%;height:86px;object-fit:cover;border-radius:10px;background:var(--rose-pale)}
+    .review-card strong{display:block;margin-top:7px;font:700 .68rem var(--display)}
+    .review-card span{display:block;margin-top:3px;color:var(--muted);font-size:.47rem}
+    .review-side{display:flex;flex-direction:column;padding:22px}
+    .review-index{color:var(--rose-deep);font:800 .6rem var(--latin);letter-spacing:.14em}
+    .review-side h3{margin:11px 0 7px;font:400 1.8rem/1.15 var(--display)}
+    .review-side>p{margin:0;color:var(--muted);font:400 .76rem/1.75 var(--display)}
+    .review-detail{margin-top:17px;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fffaf5}
+    .review-detail div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:.58rem}
+    .review-detail div:last-child{border-bottom:0}
+    .review-detail span{color:var(--muted)}
+    .review-controls{margin-top:auto}
+    .progress-track{height:6px;overflow:hidden;border-radius:999px;background:#eee4db}
+    .progress-track i{display:block;height:100%;width:var(--progress);border-radius:inherit;background:linear-gradient(90deg,var(--rose),var(--gold));transition:.3s}
+    .review-buttons{display:grid;grid-template-columns:43px 1fr 43px;gap:6px;margin-top:10px}
+    .review-buttons button{min-height:41px;border:1px solid var(--line);border-radius:12px;color:var(--muted);background:#fffaf6;font-weight:700}
+    .review-buttons .play{color:#fff;border-color:var(--rose);background:var(--rose)}
+    .review-exit{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+    .review-exit button{min-height:39px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:#fffaf6;font-size:.57rem;font-weight:700}
+    .review-exit button:last-child{color:var(--sage-deep);background:var(--sage-pale)}
+
+    .dialog-backdrop{position:fixed;z-index:600;inset:0;display:grid;place-items:center;padding:20px;background:rgba(61,43,40,.28);backdrop-filter:blur(8px)}
+    .dialog-backdrop[aria-hidden="true"]{display:none}
+    .dialog{position:relative;width:min(850px,100%);max-height:min(820px,calc(100vh - 36px));overflow:auto;padding:28px;border:1px solid rgba(207,120,134,.20);border-radius:28px;background:#fffaf5;box-shadow:0 34px 100px rgba(52,36,34,.28)}
+    .dialog.small{width:min(620px,100%)}
+    .dialog.wide{width:min(1050px,100%)}
+    .dialog-close{position:absolute;right:15px;top:14px;width:34px;height:34px;border:0;border-radius:50%;color:var(--muted);background:transparent;font-size:1.3rem}
+    .dialog h2{margin:6px 42px 7px 0;font:400 clamp(1.7rem,3.2vw,2.75rem)/1.15 var(--display);letter-spacing:-.06em}
+    .dialog>p{margin:0;color:var(--muted);font-size:.7rem;line-height:1.65}
+    .decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+    .decision-card{display:flex;flex-direction:column;min-height:225px;padding:18px;border:1px solid var(--line);border-radius:19px;color:var(--ink);background:#fffdf9;text-align:left;box-shadow:var(--shadow-sm);transition:.18s}
+    .decision-card:hover,.decision-card.selected{transform:translateY(-3px);border-color:rgba(207,120,134,.45);box-shadow:var(--shadow-md)}
+    .decision-card i{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;color:#fff;background:var(--choice,var(--rose));font-style:normal;font-size:1.2rem}
+    .decision-card strong{display:block;margin-top:14px;font:700 .94rem var(--display)}
+    .decision-card span{display:block;margin-top:8px;color:var(--muted);font-size:.61rem;line-height:1.55}
+    .decision-common{margin-top:12px;padding:12px 14px;border-radius:15px;color:var(--sage-deep);background:var(--sage-pale);font-size:.59rem;line-height:1.6}
+    .dialog-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:18px}
+    .dialog-actions button{min-height:42px;padding:0 17px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:#fffdf9;font-size:.62rem;font-weight:700}
+    .dialog-actions button.primary{color:#fff;border-color:var(--rose);background:var(--rose)}
+    .season-options{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px}
+    .season-option{position:relative;min-height:126px;padding:13px;border:1px solid var(--line);border-radius:16px;color:var(--muted);background:#fffdf9;text-align:left;font-size:.6rem;line-height:1.45}
+    .season-option strong{display:block;color:var(--ink);font:700 .72rem var(--display)}
+    .season-option em{display:inline-block;margin-bottom:7px;padding:4px 7px;border-radius:999px;color:#9b6e29;background:var(--gold-pale);font-style:normal;font-size:.48rem;font-weight:700}
+    .season-option.selected{color:var(--rose-deep);border-color:var(--rose);background:var(--rose-pale)}
+    .season-hint{margin-top:12px;padding:11px 13px;border-radius:14px;color:var(--muted);background:var(--paper-3);font-size:.56rem;line-height:1.55}
+
+    .course-builder{display:grid;grid-template-columns:1fr 1.05fr;gap:14px;margin-top:18px}
+    .course-pool,.course-order{padding:15px;border:1px solid var(--line);border-radius:18px;background:#fffdf9}
+    .course-pool h3,.course-order h3{margin:0 0 10px;font:700 .84rem var(--display)}
+    .course-check{display:grid;grid-template-columns:20px 58px 1fr;gap:8px;align-items:center;padding:8px;border:1px solid var(--line-soft);border-radius:12px;background:#fffaf6}
+    .course-check+.course-check{margin-top:6px}
+    .course-check img{width:58px;height:40px;border-radius:8px;object-fit:cover;background:var(--rose-pale)}
+    .course-check strong{display:block;font-size:.58rem}
+    .course-check small{display:block;margin-top:3px;color:var(--muted);font-size:.47rem}
+    .course-list{display:grid;gap:6px}
+    .course-item{display:grid;grid-template-columns:27px 1fr auto;gap:7px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:12px;background:#fffaf6}
+    .course-item b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;color:#fff;background:var(--rose);font:.55rem var(--latin)}
+    .course-item strong{font-size:.57rem}
+    .course-item button{width:27px;height:27px;border:1px solid var(--line);border-radius:8px;color:var(--muted);background:#fff}
+    .course-error{margin:8px 0 0;color:var(--rose-deep);font-size:.55rem}
+    .course-result{margin-top:18px}
+    .course-cover{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:center;padding:20px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,var(--rose-pale),#fffaf5 58%,var(--sage-pale));box-shadow:var(--shadow-md)}
+    .course-cover-art{position:relative;height:190px;border:10px solid #fff;border-bottom-width:38px;border-radius:8px;background-size:cover;background-position:center;box-shadow:0 18px 34px rgba(74,51,45,.18);transform:rotate(-3deg)}
+    .course-cover-art::after{content:"LoveTree course";position:absolute;left:0;right:0;bottom:-28px;text-align:center;color:var(--muted);font:700 .52rem var(--latin)}
+    .course-cover h3{margin:0;font:400 2rem var(--display)}
+    .course-cover p{margin:8px 0;color:var(--muted);font-size:.68rem;line-height:1.6}
+    .course-meta{display:flex;gap:6px;flex-wrap:wrap}
+    .course-meta span{padding:6px 9px;border-radius:999px;color:var(--rose-deep);background:rgba(255,255,255,.7);font-size:.52rem}
+    .course-preview-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .course-preview-card{padding:9px;border:1px solid var(--line);border-radius:13px;background:#fffdf9}
+    .course-preview-card img{width:100%;height:70px;border-radius:9px;object-fit:cover;background:var(--rose-pale)}
+    .course-preview-card strong{display:block;margin-top:7px;font:700 .58rem var(--display)}
+    .course-preview-card p{margin:4px 0 0;color:var(--muted);font-size:.48rem;line-height:1.4}
+    .demo-note{margin-top:11px;padding:10px;border-radius:12px;color:var(--muted);background:var(--paper-3);font-size:.53rem;text-align:center}
+
+    .video-dialog{width:min(970px,100%);padding:0;overflow:hidden}
+    .video-head{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-bottom:1px solid var(--line);background:#fffaf5}
+    .video-head h2{margin:0;font:700 1rem var(--display)}
+    .video-grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;min-height:470px}
+    .video-player{position:relative;display:grid;place-items:center;background:#241d1f}
+    .video-player iframe{width:100%;height:100%;min-height:470px;border:0}
+    .video-detail{padding:19px;overflow:auto;background:#fffdf9}
+    .video-detail h3{margin:5px 0 8px;font:400 1.45rem var(--display)}
+    .video-detail p{margin:0;color:var(--muted);font:400 .68rem/1.65 var(--display)}
+
+    .anchor-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:14px}
+    .anchor-choice{padding:10px;border:1px solid var(--line);border-radius:13px;color:var(--muted);background:#fffdf9;text-align:left;font-size:.55rem}
+    .anchor-choice strong{display:block;color:var(--ink);font:700 .65rem var(--display)}
+    .anchor-choice.selected{border-color:var(--rose);background:var(--rose-pale)}
+
+    .toast{position:fixed;z-index:1000;left:50%;bottom:24px;max-width:min(90vw,520px);padding:11px 16px;border:1px solid rgba(207,120,134,.22);border-radius:999px;color:var(--rose-deep);background:rgba(255,253,249,.96);box-shadow:var(--shadow-lg);font-size:.65rem;font-weight:700;transform:translate(-50%,18px);opacity:0;pointer-events:none;transition:.25s}
+    .toast.show{transform:translate(-50%,0);opacity:1}
+
+    @media (max-width:1180px){
+      .brand{min-width:175px}.topbar{gap:10px;padding-inline:14px}.toolbar{overflow-x:auto;scrollbar-width:none}.toolbar::-webkit-scrollbar{display:none}.help-copy{display:none}
+      .workspace{grid-template-columns:minmax(0,1fr) 320px}.completion-card{grid-template-columns:.95fr 1.05fr;padding:28px}.stat-strip{grid-template-columns:repeat(3,1fr)}
+      .season-options{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (max-width:960px){
+      body{height:auto;min-height:100%;overflow:auto}.app{height:auto;min-height:100vh}.topbar{position:sticky;top:0;min-height:var(--top-h);flex-wrap:wrap;height:auto}.brand{min-width:auto}.toolbar{order:3;width:100%;padding-bottom:2px}.top-status{margin-left:auto}
+      .workspace{grid-template-columns:1fr;min-height:1200px}.graph-panel{min-height:690px}.inspector{min-height:650px}.tab-panels{overflow:visible}
+      .workspace-overlay{top:0;padding-top:92px}.completion-card{grid-template-columns:1fr;min-height:0}.completion-art{min-height:520px;order:0}.review-shell{grid-template-columns:1fr}.review-stage{min-height:610px}.review-side{min-height:450px}
+      .course-builder{grid-template-columns:1fr}.video-grid{grid-template-columns:1fr}.video-player iframe{min-height:420px}.video-detail{max-height:280px}
+    }
+    @media (max-width:680px){
+      :root{--top-h:64px}.topbar{padding:8px 10px}.brand strong{font-size:1.08rem}.brand small{display:none}.brand-mark{width:30px;height:31px}.season-return{padding:6px 8px}.season-return small,.season-live{display:none!important}
+      .workspace{padding:8px;gap:8px;min-height:1150px}.panel{border-radius:20px}.graph-panel{min-height:610px}.graph-head{align-items:flex-start;flex-wrap:wrap;padding:10px}.graph-meta{width:100%;margin-left:0}.path-switch{width:100%}.path-switch button{flex:1}.canvas-wrap{min-height:520px;touch-action:pan-y pinch-zoom}.minimap{width:110px;height:70px}.canvas-hint{max-width:200px;font-size:.5rem}
+      .inspector{min-height:620px}.inspector-head{padding:11px}.inspector-tabs button{font-size:.54rem}.tab-panel{padding:10px}.source-types{grid-template-columns:repeat(2,1fr)}
+      .workspace-overlay{padding:74px 9px 18px}.completion-card{padding:19px;border-radius:25px}.completion-copy{padding:4px}.completion-copy h1{font-size:2.65rem}.completion-actions{display:grid}.completion-actions button{width:100%}.stat-strip{grid-template-columns:1fr 1fr}.completion-art{min-height:430px}.paper-note.main-note{left:24%;top:14%;width:225px}.polaroid{width:135px}.polaroid img{height:102px}.polaroid.three{width:125px}.paper-note.small-note{width:145px}
+      .review-shell{gap:9px}.review-stage,.review-side{border-radius:22px}.review-stage-head{align-items:flex-start;flex-direction:column;padding:13px}.review-modes{width:100%;overflow-x:auto}.review-modes button{flex:0 0 auto}.review-canvas{min-height:430px}.review-card{width:125px}.review-card img{height:66px}.review-side{padding:15px;min-height:400px}
+      .dialog-backdrop{padding:9px}.dialog{padding:20px 15px;border-radius:22px}.decision-grid{grid-template-columns:1fr}.decision-card{min-height:150px}.season-options{grid-template-columns:1fr 1fr}.dialog-actions{flex-direction:column}.dialog-actions button{width:100%}.course-cover{grid-template-columns:1fr}.course-cover-art{width:210px;margin:auto}.course-preview-list{grid-template-columns:1fr 1fr}.anchor-list{grid-template-columns:1fr}.video-player iframe{min-height:260px}.video-grid{min-height:0}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+    }
+  </style>
+</head>
+<body data-season="undecided">
+<div class="app" id="app">
+  <header class="topbar">
+    <a class="brand" href="#" id="brandHome" aria-label="LoveTree 시즌 완성 화면으로 돌아가기">
+      <span class="brand-mark" aria-hidden="true"><i></i><b></b><em></em></span>
+      <span><strong>러브트리</strong><small>LoveTree · Juyoun</small></span>
+    </a>
+
+    <div class="toolbar" id="toolbar" aria-label="트리 보기 도구">
+      <div class="tool-group" role="group" aria-label="트리 보기">
+        <button class="view-btn active" type="button" data-layout="radial">마음 연결</button>
+        <button class="view-btn" type="button" data-layout="tree">성장 트리</button>
+        <button class="view-btn" type="button" data-layout="circle">원형 보기</button>
+        <button class="view-btn" type="button" data-layout="grid">격자 보기</button>
+        <button class="view-btn" type="button" data-layout="timeline">시간 흐름</button>
+      </div>
+      <div class="tool-group" role="group" aria-label="확대 축소">
+        <button class="tool-btn" id="zoomOut" type="button" aria-label="축소">−</button>
+        <span class="zoom-label" id="zoomLabel">72%</span>
+        <button class="tool-btn" id="zoomIn" type="button" aria-label="확대">＋</button>
+        <button class="tool-btn" id="fitView" type="button">한눈에</button>
+      </div>
+    </div>
+
+    <div class="top-status">
+      <span class="season-live" id="seasonLive">시즌 2 · 성장 중</span>
+      <button class="season-return" id="seasonReturn" type="button">
+        <i aria-hidden="true">✿</i>
+        <span><strong id="seasonReturnTitle">시즌 1 완성 ✓</strong><small>다시 돌아보기</small></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace" id="workspace">
+    <section class="graph-panel panel" aria-labelledby="graphTitle">
+      <header class="graph-head">
+        <div class="graph-title">
+          <p class="eyebrow">ONE PERSON · ONE LOVETREE</p>
+          <h1 id="graphTitle">주연이의 러브트리</h1>
+          <p id="layoutHelp">감정적 인과관계를 중심으로 자유롭게 펼쳐 봅니다.</p>
+        </div>
+        <div class="graph-meta">
+          <div class="path-switch" role="group" aria-label="표시 범위">
+            <button class="active" type="button" data-density="representative">대표 경로</button>
+            <button type="button" data-density="all">전체 100개</button>
+          </div>
+          <span class="view-state" id="viewState">대표 순간 5개를 보는 중</span>
+          <span class="moment-count" id="momentCount">100 moments</span>
+        </div>
+      </header>
+      <div class="canvas-wrap" id="canvasWrap" tabindex="0" aria-label="러브트리 그래프. 드래그하여 이동하고 휠 또는 버튼으로 확대 축소할 수 있습니다.">
+        <div class="canvas-space" id="canvasSpace">
+          <svg id="edgesSvg" viewBox="0 0 2400 1500" aria-hidden="true"></svg>
+          <div id="nodesLayer"></div>
+        </div>
+        <div class="minimap" id="miniMap" aria-hidden="true"></div>
+        <div class="canvas-hint" id="canvasHint">카드를 선택하면 오른쪽에서 상세·팬 반응·다음 순간을 확인할 수 있어요.</div>
+      </div>
+    </section>
+
+    <aside class="inspector panel" id="inspector" aria-labelledby="inspectorTitle">
+      <header class="inspector-head">
+        <h2 id="inspectorTitle">다음 마음 이어가기</h2>
+        <p>입력·선택 정보·온도를 탭으로 나누어 필요한 일만 빠르게 처리합니다.</p>
+        <div class="inspector-tabs" role="tablist" aria-label="오른쪽 작업 패널">
+          <button class="active" type="button" role="tab" aria-selected="true" aria-controls="panelPlant" data-inspector-tab="plant">순간 심기</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="panelSelected" data-inspector-tab="selected">선택한 순간</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="panelTemperature" data-inspector-tab="temperature">온도</button>
+        </div>
+      </header>
+
+      <div class="tab-panels">
+        <section class="tab-panel" id="panelPlant" role="tabpanel">
+          <form id="addForm" novalidate>
+            <div class="section-card">
+              <div class="section-title"><strong>1 · 이어질 출발점</strong><small>가지의 시작</small></div>
+              <div class="anchor-card">
+                <i id="anchorNumber">100</i>
+                <span><strong id="anchorTitle">100번째 마음이 피어난 날</strong><small id="anchorSubtitle">이 순간에서 다음 마음을 이어갑니다.</small></span>
+                <button id="changeAnchor" type="button">다른 순간 선택</button>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <div class="section-title"><strong>2 · 영상 또는 콘텐츠 링크</strong><small>데모 자동 채움</small></div>
+              <div class="source-types" role="group" aria-label="콘텐츠 종류">
+                <button class="active" type="button" data-source-type="video">YouTube</button>
+                <button type="button" data-source-type="photo">사진 링크</button>
+                <button type="button" data-source-type="post">게시물 링크</button>
+                <button type="button" data-source-type="note">직접 기록</button>
+              </div>
+              <div class="field" id="urlField">
+                <label for="nodeUrl">링크 <span>붙여 넣으면 제목과 썸네일을 데모로 채워요</span></label>
+                <input id="nodeUrl" type="url" placeholder="https://youtube.com/watch?v=...&t=1m30s">
+              </div>
+              <div class="metadata-preview" id="metadataPreview" hidden>
+                <img id="metadataThumb" alt="자동 채움 썸네일">
+                <span><strong id="metadataTitle">링크에서 불러온 순간 제목</strong><small>HTML 데모 자동 채움 · 실제 메타데이터 연결은 제품 구현 단계에서 처리합니다.</small></span>
+              </div>
+              <div class="field">
+                <label for="nodeTitle">3 · 순간 이름 <span>자동 제목을 수정할 수 있어요</span></label>
+                <input id="nodeTitle" placeholder="비워두면 자동 제목을 사용해요">
+              </div>
+              <div class="time-grid">
+                <div class="field"><label for="nodeStart">4 · 시작 시간</label><input id="nodeStart" inputmode="numeric" placeholder="01:30"></div>
+                <div class="field"><label for="nodeEnd">끝 시간 <span>선택</span></label><input id="nodeEnd" inputmode="numeric" placeholder="02:05"></div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <div class="section-title"><strong>5 · 이 순간의 느낌</strong><small>최소 1개 · 최대 2개</small></div>
+              <div class="keyword-grid" id="creatorKeywords">
+                <button class="keyword-btn active" type="button" data-creator-tag="섹시">섹시<span class="order">1</span></button>
+                <button class="keyword-btn" type="button" data-creator-tag="큐트">큐트<span class="order"></span></button>
+                <button class="keyword-btn" type="button" data-creator-tag="청순">청순<span class="order"></span></button>
+                <button class="keyword-btn active" type="button" data-creator-tag="설렘">설렘<span class="order">2</span></button>
+                <button class="keyword-btn" type="button" data-creator-tag="위로">위로<span class="order"></span></button>
+                <button class="keyword-btn" type="button" data-creator-tag="울림">울림<span class="order"></span></button>
+              </div>
+              <p class="keyword-note" id="creatorKeywordNote">대표 느낌 · 섹시 / 보조 느낌 · 설렘</p>
+              <div class="field">
+                <label for="nodeMemo">6 · 이 순간에 남길 한 줄</label>
+                <textarea id="nodeMemo" placeholder="왜 마음이 움직였는지 짧게 남겨주세요."></textarea>
+              </div>
+              <div class="field">
+                <label>7 · 왜 이 순간으로 이어졌나요?</label>
+                <div class="choice-row" id="relationChoices">
+                  <button class="choice-btn active" type="button" data-relation="표정이 궁금해서">표정이 궁금해서</button>
+                  <button class="choice-btn" type="button" data-relation="다른 모습이 보고 싶어서">다른 모습이 보고 싶어서</button>
+                  <button class="choice-btn" type="button" data-relation="팬 추천을 보고">팬 추천을 보고</button>
+                  <button class="choice-btn" type="button" data-relation="힘든 날 다시 찾아서">힘든 날 다시 찾아서</button>
+                  <button class="choice-btn" type="button" data-relation="실력이 더 궁금해서">실력이 더 궁금해서</button>
+                  <button class="choice-btn" type="button" data-relation="관계가 궁금해서">관계가 궁금해서</button>
+                  <button class="choice-btn" type="button" data-relation="직접 입력">직접 입력</button>
+                </div>
+                <input id="customRelation" hidden placeholder="연결 이유를 직접 적어주세요">
+              </div>
+              <p class="form-error" id="formError" role="alert"></p>
+              <button class="primary-btn" id="submitMoment" type="submit">101번째 순간 심기</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="tab-panel" id="panelSelected" role="tabpanel" hidden>
+          <div id="selectedContent"></div>
+        </section>
+
+        <section class="tab-panel" id="panelTemperature" role="tabpanel" hidden>
+          <div class="temperature-tabs" role="tablist" aria-label="온도 데이터 범위">
+            <button class="active" type="button" data-temperature-view="creator">나의 트리 결</button>
+            <button type="button" data-temperature-view="moment">이 순간의 팬 반응</button>
+            <button type="button" data-temperature-view="subject">주연 전체 팬 온도</button>
+          </div>
+          <div id="temperatureContent"></div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <section class="workspace-overlay" id="completionOverlay" aria-hidden="false" aria-labelledby="completionTitle">
+    <div class="completion-card">
+      <div class="completion-copy">
+        <p class="eyebrow">SEASON 01 · 100 MOMENTS COMPLETE</p>
+        <h1 id="completionTitle">100개의 순간이<br><span>첫 번째 계절이 되었어요</span></h1>
+        <p>처음 마음이 멈춘 장면부터 위로가 된 순간까지, 주연이를 좋아하게 된 마음의 흐름이 한 계절로 완성되었습니다.</p>
+        <div class="completion-actions">
+          <button class="primary" id="startReview" type="button">시즌 1 돌아보기 ✿</button>
+          <button class="secondary" id="plant101Now" type="button">바로 101번째 순간 심기</button>
+        </div>
+        <button class="completion-link" id="openTreeOnly" type="button">트리만 먼저 보기 →</button>
+        <div class="stat-strip" aria-label="시즌 1 완성 통계">
+          <div class="stat-pill"><span>대표 감정</span><strong>설렘</strong></div>
+          <div class="stat-pill"><span>가장 많이 자란 결</span><strong>섹시 · 34%</strong></div>
+          <div class="stat-pill"><span>마음의 전환점</span><strong>50번째 순간</strong></div>
+          <div class="stat-pill"><span>가장 사랑받은 순간</span><strong>24번째 무대</strong></div>
+          <div class="stat-pill"><span>나와 팬의 반응 차이</span><strong>78번째 위로</strong></div>
+        </div>
+      </div>
+      <div class="completion-art" aria-hidden="true">
+        <svg class="completion-branch" viewBox="0 0 650 560"><path d="M310 540 C320 410 290 350 330 250 C370 160 450 120 540 60"/><path class="twig" d="M330 300 C250 250 180 235 100 185"/><path class="twig" d="M345 260 C430 250 500 265 605 220"/><path class="twig" d="M305 390 C220 370 150 390 70 355"/><path class="twig" d="M370 215 C350 150 320 110 280 65"/></svg>
+        <div class="paper-note main-note">오늘의 한 줄 ♡<br><br>처음의 낯선 설렘이<br>지금의 나를 따뜻하게<br>만들어줘서 고마워.</div>
+        <div class="paper-note small-note">기억<br><br>네가 웃던 장면이<br>내 하루의 위로가 되었어.</div>
+        <div class="polaroid one"><img src="https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg" alt=""><strong>처음 발견한 순간</strong><small>2026.04.20 · 01</small></div>
+        <div class="polaroid two"><img src="https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg" alt=""><strong>100번째 마음이 핀 날</strong><small>2026.08.02 · 100</small></div>
+        <div class="polaroid three"><img src="https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg" alt=""><strong>위로가 된 순간</strong><small>02:10–03:04</small></div>
+        <span class="pressed-flower flower-a">❀</span><span class="pressed-flower flower-b">❁</span><span class="pressed-flower flower-c">✿</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace-overlay" id="reviewOverlay" aria-hidden="true" aria-labelledby="reviewTitle">
+    <div class="review-shell">
+      <section class="review-stage">
+        <header class="review-stage-head">
+          <div><p class="eyebrow">SEASON 01 REPLAY</p><h2 id="reviewTitle">처음부터 다시 걷는 마음</h2></div>
+          <div class="review-modes" role="group" aria-label="회고 보기">
+            <button class="active" type="button" data-review-mode="play">처음부터 재생</button>
+            <button type="button" data-review-mode="timeline">시간 흐름으로 보기</button>
+            <button type="button" data-review-mode="connection">마음 연결로 보기</button>
+            <button type="button" data-review-mode="representative">대표 순간만 보기</button>
+          </div>
+        </header>
+        <div class="review-canvas" id="reviewCanvas">
+          <svg class="review-path" viewBox="0 0 900 520" preserveAspectRatio="none"><path d="M110 410 C220 300 245 180 360 215 C470 250 520 410 620 335 C720 260 710 120 820 95"/></svg>
+          <div id="reviewCards"></div>
+        </div>
+      </section>
+      <aside class="review-side">
+        <span class="review-index" id="reviewIndex">01 / 05</span>
+        <h3 id="reviewMomentTitle">처음 발견한 순간</h3>
+        <p id="reviewMomentMemo">이상하게 계속 생각나서 이름을 찾아보기 시작했어요.</p>
+        <div class="review-detail">
+          <div><span>순간 번호</span><strong id="reviewMomentNumber">1번째</strong></div>
+          <div><span>감정</span><strong id="reviewMomentEmotion">호기심</strong></div>
+          <div><span>영상 구간</span><strong id="reviewMomentTime">00:42–01:08</strong></div>
+          <div><span>다음으로 이어진 이유</span><strong id="reviewMomentRelation">계속 생각나서</strong></div>
+        </div>
+        <div class="review-controls">
+          <div class="progress-track"><i id="reviewProgress" style="--progress:20%"></i></div>
+          <div class="review-buttons">
+            <button id="reviewPrev" type="button" aria-label="이전 순간">←</button>
+            <button class="play" id="reviewPlay" type="button">재생</button>
+            <button id="reviewNext" type="button" aria-label="다음 순간">→</button>
+          </div>
+          <div class="review-exit">
+            <button id="reviewFinish" type="button">회고 종료</button>
+            <button id="reviewDecision" type="button">다음 결정으로 이동</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div class="dialog-backdrop" id="decisionDialog" aria-hidden="true">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="decisionTitle">
+    <button class="dialog-close" type="button" data-close-dialog="decisionDialog" aria-label="닫기">×</button>
+    <p class="eyebrow">AFTER SEASON 01</p>
+    <h2 id="decisionTitle">다음 마음은 어떻게 이어갈까요?</h2>
+    <p>기존 러브트리는 그대로 유지됩니다. 지금 필요한 기록 방식만 선택해 주세요.</p>
+    <div class="decision-grid">
+      <button class="decision-card" type="button" data-decision="season2" style="--choice:var(--rose)"><i>❀</i><strong>시즌 2로 이어가기</strong><span>101번째부터 새로운 회고 구간으로 묶어요.<br>러브트리와 전체 시간 흐름은 그대로 이어집니다.</span></button>
+      <button class="decision-card" type="button" data-decision="continuous" style="--choice:var(--sage)"><i>↝</i><strong>시즌 구분 없이 계속 기록</strong><span>구간을 나누지 않고 1번째부터 계속 이어 기록해요.<br>나중에 시즌으로 나눌 수도 있어요.</span></button>
+      <button class="decision-card" type="button" data-decision="course" style="--choice:var(--violet)"><i>✦</i><strong>입덕 코스 만들기</strong><span>대표 순간을 골라 다른 사람이 따라볼 수 있는<br>짧은 감상 경로를 만들어요.</span></button>
+    </div>
+    <div class="decision-common">세 선택 모두 새 LoveTree를 만들지 않습니다. 한 인물의 LoveTree는 하나이며, 시즌은 같은 나무 안의 회고 구간이고 입덕 코스는 기존 순간을 골라 만든 공유용 경로입니다.</div>
+    <div class="dialog-actions"><button id="decideLater" type="button">나중에 정하기 · 트리 보기</button></div>
+  </section>
+</div>
+
+<div class="dialog-backdrop" id="seasonDirectionDialog" aria-hidden="true">
+  <section class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="seasonDirectionTitle">
+    <button class="dialog-close" type="button" data-close-dialog="seasonDirectionDialog" aria-label="닫기">×</button>
+    <p class="eyebrow">SEASON 02 · SAME LOVETREE</p>
+    <h2 id="seasonDirectionTitle">다음 계절은 어떤 방향으로 자랄까요?</h2>
+    <p>추천과 실제 선택은 다릅니다. 아무 방향도 고르지 않고 시작한 뒤 나중에 바꿀 수도 있습니다.</p>
+    <div class="season-options" id="seasonOptions">
+      <button class="season-option" type="button" data-season-direction="더 섹시한 무대"><em>추천</em><strong>더 섹시한 무대</strong>시즌 1에서 가장 많이 자란 결을 바탕으로 추천했어요.</button>
+      <button class="season-option" type="button" data-season-direction="큐트한 일상"><strong>큐트한 일상</strong>무대 밖 표정과 편안한 하루를 더 모아요.</button>
+      <button class="season-option" type="button" data-season-direction="위로가 된 인터뷰"><strong>위로가 된 인터뷰</strong>마음을 다독인 말과 장면을 이어갑니다.</button>
+      <button class="season-option" type="button" data-season-direction="아직 보지 못한 새로운 모습"><strong>새로운 모습</strong>아직 보지 못한 결을 탐색해요.</button>
+      <button class="season-option" type="button" data-season-direction="방향 없이 자유롭게 계속"><strong>자유롭게 계속</strong>미리 정하지 않고 마음이 가는 대로 심어요.</button>
+    </div>
+    <div class="season-hint" id="seasonDirectionHint">아직 방향을 선택하지 않았어요. ‘나중에 정하기’를 눌러도 시즌 2는 시작되며 방향은 언제든 바꿀 수 있습니다.</div>
+    <div class="dialog-actions">
+      <button id="seasonLater" type="button">나중에 정하기</button>
+      <button class="primary" id="startSeason2" type="button" disabled>선택한 방향으로 시즌 2 시작</button>
+    </div>
+  </section>
+</div>
+
+<div class="dialog-backdrop" id="courseDialog" aria-hidden="true">
+  <section class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="courseTitle">
+    <button class="dialog-close" type="button" data-close-dialog="courseDialog" aria-label="닫기">×</button>
+    <div id="courseBuilderView">
+      <p class="eyebrow">MAKE AN IPDEOK COURSE</p>
+      <h2 id="courseTitle">친구에게 보여줄 입덕 코스</h2>
+      <p>대표 순간 중 최소 2개를 고르고, 따라볼 순서를 정해 짧은 감상 경로를 만듭니다.</p>
+      <div class="field" style="margin-top:15px"><label for="courseName">코스 이름</label><input id="courseName" value="주연이를 처음 보는 친구를 위한 15분 코스"></div>
+      <div class="course-builder">
+        <section class="course-pool"><h3>대표 순간 고르기</h3><div id="coursePool"></div></section>
+        <section class="course-order"><h3>감상 순서</h3><div class="course-list" id="courseOrder"></div><p class="course-error" id="courseError"></p></section>
+      </div>
+      <div class="dialog-actions"><button class="primary" id="createCourse" type="button">입덕 코스 결과 보기</button></div>
+    </div>
+    <div id="courseResultView" hidden>
+      <p class="eyebrow">COURSE PREVIEW · HTML DEMO</p>
+      <h2>입덕 코스가 준비되었어요</h2>
+      <div class="course-result" id="courseResult"></div>
+      <div class="dialog-actions"><button id="editCourse" type="button">다시 편집</button><button id="courseInTree" type="button">내 트리에서 보기</button><button class="primary" id="copyCourseLink" type="button">링크 복사 데모</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="dialog-backdrop" id="videoModal" aria-hidden="true">
+  <section class="dialog video-dialog" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+    <header class="video-head"><h2 id="videoTitle">영상 순간</h2><button class="dialog-close" id="videoClose" type="button" aria-label="닫기">×</button></header>
+    <div class="video-grid"><div class="video-player" id="videoPlayer"></div><aside class="video-detail" id="videoDetail"></aside></div>
+  </section>
+</div>
+
+<div class="dialog-backdrop" id="anchorDialog" aria-hidden="true">
+  <section class="dialog small" role="dialog" aria-modal="true" aria-labelledby="anchorDialogTitle">
+    <button class="dialog-close" type="button" data-close-dialog="anchorDialog" aria-label="닫기">×</button>
+    <p class="eyebrow">CHOOSE A STARTING MOMENT</p><h2 id="anchorDialogTitle">어느 순간에서 이어갈까요?</h2><p>선택한 카드가 새 순간의 이전 순간이 됩니다.</p><div class="anchor-list" id="anchorList"></div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  const WORLD_W = 2400;
+  const WORLD_H = 1500;
+  const tags = ['섹시','큐트','청순','설렘','위로','울림'];
+  const palette = { root:'#cf7886', scene:'#d7ad64', emotion:'#a184bf', comfort:'#839777', blue:'#7895aa', end:'#bd5d72' };
+  const icons = { root:'✿', photo:'▧', note:'✎', quote:'“', turning:'♡', end:'❀', video:'▶', post:'▤' };
+  const kindLabels = { root:'ROOT', video:'VIDEO MOMENT', photo:'PHOTO', note:'MEMO', quote:'INTERVIEW LINE', turning:'TURNING POINT', end:'SEASON COMPLETE', post:'POST' };
+
+  const representativeMoments = [
+    { id:'moment-1', number:1, kind:'video', title:'처음 발견한 순간', memo:'이상하게 계속 생각나서 이름을 찾아보기 시작했어요.', emotion:'호기심', tags:['설렘'], platform:'YouTube', url:'https://www.youtube.com/watch?v=ScMzIvxBSi4', startTime:'00:42', endTime:'01:08', thumbnail:'https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg', date:'2026.04.20', x:420, y:480, color:palette.root, relation:'계속 생각나서', likes:318 },
+    { id:'moment-24', number:24, kind:'video', title:'계속 찾아보게 된 무대', memo:'표정 하나가 궁금해서 다른 직캠과 무대를 계속 열어봤어요.', emotion:'설렘', tags:['섹시','설렘'], platform:'YouTube', url:'https://www.youtube.com/watch?v=aqz-KE-bpKQ', startTime:'01:14', endTime:'01:52', thumbnail:'https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg', date:'2026.04.21', x:930, y:300, color:palette.scene, relation:'다른 모습이 보고 싶어서', likes:518 },
+    { id:'moment-50', number:50, kind:'turning', title:'좋아하는 이유가 선명해진 순간', memo:'호기심이 좋아하는 마음으로 바뀌었다는 걸 처음 인정했어요.', emotion:'몰입', tags:['울림','설렘'], platform:'LoveTree', url:'', startTime:'', endTime:'', thumbnail:'', date:'2026.04.22', x:1380, y:620, color:palette.emotion, relation:'마음이 깊어져서', likes:401 },
+    { id:'moment-78', number:78, kind:'video', title:'오늘도 위로가 된 장면', memo:'좋아하는 마음이 힘든 하루를 버티게 해 준 순간이에요.', emotion:'위로', tags:['위로'], platform:'YouTube', url:'https://www.youtube.com/watch?v=9bZkp7q19f0', startTime:'02:10', endTime:'03:04', thumbnail:'https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg', date:'2026.06.18', x:800, y:1080, color:palette.comfort, relation:'힘든 날 다시 찾아서', likes:92 },
+    { id:'moment-100', number:100, kind:'end', title:'100번째 마음이 피어난 날', memo:'처음부터 지금까지의 흐름이 하나의 완성본이 되었어요.', emotion:'완성', tags:['설렘','울림'], platform:'LoveTree', url:'', startTime:'', endTime:'', thumbnail:'', date:'2026.08.02', x:1580, y:1080, color:palette.end, relation:'100번째 완성', likes:600 }
+  ];
+
+  const rootNode = { id:'root', number:0, kind:'root', title:'주연이의 LoveTree', memo:'한 인물을 좋아하게 된 모든 순간이 한 나무에서 이어집니다.', emotion:'시작', tags:['설렘'], platform:'LoveTree', date:'2026.04.20', x:1160, y:760, color:palette.root, relation:'첫 발견', likes:0 };
+  const genericKinds = ['video','photo','note','quote','post'];
+  const genericTitles = ['다시 보고 싶던 표정','팬이 추천한 장면','마음에 남은 인터뷰','조용히 웃던 순간','무대 뒤 작은 장면','처음 알게 된 문장','새벽에 다시 찾은 영상','같이 웃게 된 사진','오래 남은 한마디','또 보고 싶은 무대'];
+  const genericRelations = ['표정이 궁금해서','팬 추천을 보고','다른 모습이 보고 싶어서','실력이 더 궁금해서','힘든 날 다시 찾아서','관계가 궁금해서'];
+  const genericNodes = [];
+  for (let n=1;n<=100;n++) {
+    if ([1,24,50,78,100].includes(n)) continue;
+    const angle = (n/95)*Math.PI*2 - Math.PI/2;
+    const ring = 310 + (n%5)*54;
+    const emotion = tags[n%tags.length];
+    const kind = genericKinds[n%genericKinds.length];
+    genericNodes.push({
+      id:`moment-${n}`, number:n, kind, title:`${n}번째 · ${genericTitles[n%genericTitles.length]}`,
+      memo:'이 순간에 남긴 짧은 마음과 다음으로 이어진 이유가 있어요.', emotion, tags:[emotion], platform:kind==='video'?'YouTube':'LoveTree',
+      url:kind==='video'?'https://www.youtube.com/watch?v=ScMzIvxBSi4':'', startTime:kind==='video'?`0${n%5}:${String((n*7)%60).padStart(2,'0')}`:'', endTime:'', thumbnail:kind==='video'?'https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg':'',
+      date:`2026.${String(4+Math.floor(n/25)).padStart(2,'0')}.${String(1+n%27).padStart(2,'0')}`,
+      x:1160+Math.cos(angle)*ring, y:760+Math.sin(angle)*ring*.72, color:[palette.root,palette.scene,palette.emotion,palette.comfort,palette.blue][n%5], relation:genericRelations[n%genericRelations.length], likes:20+(n*13)%280
+    });
+  }
+  let nodes = [rootNode, ...representativeMoments, ...genericNodes];
+  let edges = [
+    {id:'edge-1',source:'root',target:'moment-1',label:'첫 발견',color:palette.root},
+    {id:'edge-2',source:'moment-1',target:'moment-24',label:'계속 찾아봄',color:palette.scene},
+    {id:'edge-3',source:'moment-24',target:'moment-50',label:'마음이 깊어짐',color:palette.emotion},
+    {id:'edge-4',source:'moment-50',target:'moment-78',label:'위로가 됨',color:palette.comfort},
+    {id:'edge-5',source:'moment-78',target:'moment-100',label:'100번째 완성',color:palette.end,recent:true}
+  ];
+
+  let selectedId = 'moment-100';
+  let anchorId = 'moment-100';
+  let density = 'representative';
+  let layout = 'radial';
+  let zoom = .72;
+  let pan = {x:0,y:0};
+  let dragging = null;
+  let panning = null;
+  let connecting = null;
+  let selectedCreatorTags = ['섹시','설렘'];
+  let selectedRelation = '표정이 궁금해서';
+  let sourceType = 'video';
+  let inspectorTab = 'plant';
+  let temperatureView = 'creator';
+  let creatorScope = 'all';
+  let subjectSource = 'all';
+  let subjectPeriod = 'year';
+  let seasonDirection = '';
+  let seasonMode = 'undecided';
+  let nextNumber = 101;
+  let totalMomentCount = 100;
+  let reviewIndex = 0;
+  let reviewTimer = null;
+  let reviewPlaying = false;
+  let reviewMode = 'play';
+  let modalNodeId = null;
+  let lastFocused = null;
+  let courseSelection = ['moment-1','moment-24','moment-50'];
+
+  const creatorMomentTags = Object.fromEntries(nodes.map(n => [n.id,[...(n.tags||[])] ]));
+  const likes = Object.fromEntries(nodes.map(n => [n.id,{count:n.likes||0,likedByMe:false}]));
+  const viewerMomentReactions = {
+    'moment-1':{scores:{섹시:36,큐트:48,청순:42,설렘:78,위로:12,울림:31},participants:164,my:[]},
+    'moment-24':{scores:{섹시:82,큐트:46,청순:41,설렘:76,위로:18,울림:55},participants:342,my:[]},
+    'moment-50':{scores:{섹시:32,큐트:39,청순:47,설렘:72,위로:54,울림:84},participants:251,my:[]},
+    'moment-78':{scores:{섹시:12,큐트:27,청순:50,설렘:58,위로:88,울림:72},participants:96,my:[]},
+    'moment-100':{scores:{섹시:0,큐트:0,청순:0,설렘:0,위로:0,울림:0},participants:0,my:[]}
+  };
+  const creatorTagScopeData = {
+    all:{label:'전체 · 100개의 순간',scores:{섹시:34,큐트:18,청순:12,설렘:22,위로:9,울림:5}},
+    season1:{label:'시즌 1 · 1~100번째',scores:{섹시:34,큐트:18,청순:12,설렘:22,위로:9,울림:5}},
+    season2:{label:'시즌 2 · 아직 심은 순간 없음',scores:{섹시:0,큐트:0,청순:0,설렘:0,위로:0,울림:0}},
+    branch:{label:'현재 가지 · 24→50→78→100',scores:{섹시:25,큐트:8,청순:11,설렘:27,위로:18,울림:11}},
+    theme:{label:'섹시한 주연 가지 · 16개의 순간',scores:{섹시:72,큐트:5,청순:4,설렘:13,위로:2,울림:4}}
+  };
+  const subjectFanAggregate = {
+    all:{year:{moments:8421,participants:21406,scores:{섹시:78,큐트:54,청순:43,설렘:71,위로:38,울림:65}},month:{moments:1284,participants:4920,scores:{섹시:80,큐트:57,청순:40,설렘:75,위로:35,울림:62}},week:{moments:318,participants:1146,scores:{섹시:81,큐트:59,청순:38,설렘:77,위로:34,울림:64}},all:{moments:19231,participants:38772,scores:{섹시:76,큐트:55,청순:45,설렘:70,위로:41,울림:63}}},
+    official:{year:{moments:1310,participants:12410,scores:{섹시:74,큐트:58,청순:49,설렘:73,위로:43,울림:68}},month:{moments:221,participants:3010,scores:{섹시:76,큐트:61,청순:46,설렘:75,위로:40,울림:69}},week:{moments:61,participants:862,scores:{섹시:77,큐트:63,청순:44,설렘:78,위로:39,울림:70}},all:{moments:3240,participants:18544,scores:{섹시:73,큐트:59,청순:50,설렘:72,위로:45,울림:67}}},
+    fan:{year:{moments:7111,participants:17880,scores:{섹시:80,큐트:52,청순:40,설렘:70,위로:36,울림:64}},month:{moments:1063,participants:4108,scores:{섹시:82,큐트:55,청순:37,설렘:74,위로:33,울림:60}},week:{moments:257,participants:972,scores:{섹시:83,큐트:57,청순:35,설렘:76,위로:32,울림:62}},all:{moments:15991,participants:31520,scores:{섹시:78,큐트:53,청순:42,설렘:69,위로:39,울림:62}}}
+  };
+
+  const canvasWrap = $('#canvasWrap');
+  const canvasSpace = $('#canvasSpace');
+  const nodesLayer = $('#nodesLayer');
+  const edgesSvg = $('#edgesSvg');
+  const miniMap = $('#miniMap');
+  const workspace = $('#workspace');
+  const toolbar = $('#toolbar');
+  const inspector = $('#inspector');
+  const toast = $('#toast');
+
+  function escapeHtml(value){return String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
+  function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+  function getNode(id){return nodes.find(n=>n.id===id);}
+  function isRepresentative(node){return node.id==='root'||[1,24,50,78,100].includes(node.number);}
+  function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),2400);}
+  function timeToSeconds(value){
+    const raw=String(value||'').trim(); if(!raw)return null;
+    if(/^\d+$/.test(raw))return Number(raw);
+    const yt=raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i); if(yt&&/[hms]/i.test(raw))return Number(yt[1]||0)*3600+Number(yt[2]||0)*60+Number(yt[3]||0);
+    if(!/^\d{1,2}:\d{2}(?::\d{2})?$/.test(raw))return null;
+    const p=raw.split(':').map(Number); if(p.some(x=>!Number.isFinite(x)))return null; return p.length===2?p[0]*60+p[1]:p[0]*3600+p[1]*60+p[2];
+  }
+  function secondsToTime(seconds){if(!Number.isFinite(seconds)||seconds<0)return'';const s=Math.floor(seconds),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),r=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;}
+  function normalizeTime(value){const seconds=timeToSeconds(value);return seconds===null?null:secondsToTime(seconds);}
+  function youtubeIdFromUrl(value){const m=String(value||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{6,})/);return m?.[1]||null;}
+  function timeFromUrl(value){try{const u=new URL(value);const t=u.searchParams.get('t')||u.searchParams.get('start');return t?secondsToTime(timeToSeconds(t)||Number(t)):'';}catch{return'';}}
+  function rangeLabel(node){if(!node.startTime)return'';return node.endTime?`${node.startTime}–${node.endTime}`:node.startTime;}
+  function nodeStartSeconds(node){return timeToSeconds(node.startTime)||0;}
+  function nodeEndSeconds(node){return timeToSeconds(node.endTime);}
+  function videoEmbed(node){const id=youtubeIdFromUrl(node.url);if(!id)return'';const params=new URLSearchParams({autoplay:'1',start:String(nodeStartSeconds(node)),rel:'0'});const end=nodeEndSeconds(node);if(end!==null)params.set('end',String(end));return `https://www.youtube.com/embed/${id}?${params}`;}
+
+  function createSvg(tag,attrs={}){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));return el;}
+  function visibleNodes(){if(density==='all')return nodes;return nodes.filter(isRepresentative);}
+  function visibleEdges(){if(density==='representative')return edges;const all=[...edges];for(let n=2;n<=100;n++){if([24,50,78,100].includes(n))continue;const prev=n===2?'moment-1':`moment-${n-1}`;if(getNode(prev)&&getNode(`moment-${n}`))all.push({id:`generic-edge-${n}`,source:prev,target:`moment-${n}`,label:'',color:'rgba(141,121,113,.24)',generic:true});}return all;}
+
+  function render(){renderNodes();renderEdges();renderMiniMap();updateSelectedPanel();updateTemperature();updateMeta();applyTransform();}
+
+  function renderNodes(){
+    nodesLayer.innerHTML='';
+    visibleNodes().forEach((node,index)=>{
+      if(density==='all'&&!isRepresentative(node)){
+        const dot=document.createElement('button');dot.type='button';dot.className=`mini-node${selectedId===node.id?' selected':''}`;dot.dataset.id=node.id;dot.style.left=`${node.x}px`;dot.style.top=`${node.y}px`;dot.style.setProperty('--node-color',node.color);dot.setAttribute('aria-label',`${node.number}번째 순간 · ${node.title}`);dot.innerHTML=`<span>${node.number}</span>`;dot.addEventListener('click',()=>selectNode(node.id,'selected'));dot.addEventListener('pointerdown',handleNodePointerDown);nodesLayer.appendChild(dot);return;
+      }
+      const card=document.createElement('article');card.className=`node ${node.kind}${node.kind==='video'?' video':''}${node.kind==='end'||node.kind==='turning'?' milestone':''}${selectedId===node.id?' selected':''}`;card.dataset.id=node.id;card.style.left=`${node.x}px`;card.style.top=`${node.y}px`;card.style.setProperty('--node-color',node.color);card.setAttribute('aria-label',node.title);
+      const thumb=node.kind==='video'?`<div class="node-thumb">${node.thumbnail?`<img src="${escapeHtml(node.thumbnail)}" alt="${escapeHtml(node.title)} 썸네일">`:''}<button class="node-play" type="button" data-open-video="${escapeHtml(node.id)}" aria-label="${escapeHtml(node.title)} 구간 재생">▶</button></div>`:'';
+      const symbol=node.kind==='video'?'':`<div class="node-symbol">${icons[node.kind]||'✦'}</div>`;
+      card.innerHTML=`${thumb}<div class="node-head"><span class="node-kind">${kindLabels[node.kind]||'MOMENT'}</span><div class="node-actions"><span class="node-index">${node.id==='root'?'ROOT':String(node.number).padStart(2,'0')}</span><button class="node-icon-btn" type="button" data-node-add="${escapeHtml(node.id)}" aria-label="이 순간에서 다음 순간 추가">＋</button></div></div>${symbol}<div class="node-copy"><h3>${escapeHtml(node.title)}</h3><p>${escapeHtml(node.memo)}</p><div class="node-meta"><span class="emotion-chip">${escapeHtml(node.emotion)}</span><span>${escapeHtml(node.date||'날짜 미정')}</span></div>${rangeLabel(node)?`<div class="node-time"><span>기억할 구간</span><strong>${escapeHtml(rangeLabel(node))}</strong></div>`:''}</div><span class="handle in" aria-hidden="true"></span><button class="handle out" type="button" aria-label="연결선 시작"></button>`;
+      card.addEventListener('pointerdown',handleNodePointerDown);card.addEventListener('click',event=>{if(event.target.closest('button'))return;selectNode(node.id,'selected');});nodesLayer.appendChild(card);
+    });
+    $$('[data-open-video]',nodesLayer).forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();openVideo(btn.dataset.openVideo);}));
+    $$('[data-node-add]',nodesLayer).forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();anchorId=btn.dataset.nodeAdd;selectedId=anchorId;updateAnchorCard();setInspectorTab('plant');render();$('#nodeUrl').focus();showToast('이 순간에서 다음 마음을 이어갈 준비가 되었어요.');}));
+    $$('.handle.out',nodesLayer).forEach(btn=>btn.addEventListener('pointerdown',event=>{event.stopPropagation();const card=event.target.closest('[data-id]');connecting={sourceId:card.dataset.id,pointer:worldPoint(event.clientX,event.clientY)};event.preventDefault();}));
+  }
+
+  function renderEdges(){
+    edgesSvg.innerHTML='';
+    const defs=createSvg('defs');const marker=createSvg('marker',{id:'arrow',markerWidth:10,markerHeight:10,refX:8,refY:3,orient:'auto',markerUnits:'strokeWidth'});marker.appendChild(createSvg('path',{d:'M0,0 L0,6 L8,3 z',fill:'#b78e8d'}));defs.appendChild(marker);edgesSvg.appendChild(defs);
+    visibleEdges().forEach(edge=>{
+      const s=getNode(edge.source),t=getNode(edge.target);if(!s||!t)return;
+      const dx=t.x-s.x;const c1x=s.x+dx*.42,c2x=t.x-dx*.42;const path=`M ${s.x} ${s.y} C ${c1x} ${s.y}, ${c2x} ${t.y}, ${t.x} ${t.y}`;
+      if(!edge.generic)edgesSvg.appendChild(createSvg('path',{d:path,class:'edge-back'}));
+      const main=createSvg('path',{d:path,class:`edge-path${edge.recent?' recent':''}`,stroke:edge.generic?'rgba(143,122,114,.25)':edge.color,'marker-end':edge.generic?'':'url(#arrow)'});edgesSvg.appendChild(main);
+      if(!edge.generic){edgesSvg.appendChild(createSvg('path',{d:path,class:'edge-shine'}));const mx=(s.x+t.x)/2,my=(s.y+t.y)/2-12,w=Math.max(64,(edge.label||'이어짐').length*13+26);const g=createSvg('g',{class:'edge-label',transform:`translate(${mx-w/2} ${my-15})`});g.appendChild(createSvg('rect',{width:w,height:29,rx:14.5}));const text=createSvg('text',{x:w/2,y:19,'text-anchor':'middle'});text.textContent=edge.label||'이어짐';g.appendChild(text);edgesSvg.appendChild(g);}
+    });
+    if(connecting){const s=getNode(connecting.sourceId);if(s)edgesSvg.appendChild(createSvg('path',{class:'temp-path',d:`M ${s.x} ${s.y} C ${s.x+90} ${s.y}, ${connecting.pointer.x-90} ${connecting.pointer.y}, ${connecting.pointer.x} ${connecting.pointer.y}`}));}
+  }
+
+  function renderMiniMap(){miniMap.innerHTML='';visibleNodes().forEach(node=>{const d=document.createElement('span');d.className='mini-dot';d.style.left=`${node.x/WORLD_W*100}%`;d.style.top=`${node.y/WORLD_H*100}%`;d.style.setProperty('--dot',node.color);miniMap.appendChild(d);});const rect=canvasWrap.getBoundingClientRect();const v=document.createElement('span');v.className='mini-viewport';v.style.left=`${clamp((-pan.x/zoom)/WORLD_W*100,0,95)}%`;v.style.top=`${clamp((-pan.y/zoom)/WORLD_H*100,0,95)}%`;v.style.width=`${clamp((rect.width/zoom)/WORLD_W*100,5,100)}%`;v.style.height=`${clamp((rect.height/zoom)/WORLD_H*100,5,100)}%`;miniMap.appendChild(v);}
+  function applyTransform(){canvasSpace.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoom})`;$('#zoomLabel').textContent=`${Math.round(zoom*100)}%`;renderMiniMap();}
+  function worldPoint(clientX,clientY){const r=canvasWrap.getBoundingClientRect();return{x:(clientX-r.left-pan.x)/zoom,y:(clientY-r.top-pan.y)/zoom};}
+  function zoomAround(next){zoom=clamp(next,.26,1.35);applyTransform();}
+  function fitView(){const vis=visibleNodes();if(!vis.length)return;const xs=vis.map(n=>n.x),ys=vis.map(n=>n.y),minX=Math.min(...xs)-180,maxX=Math.max(...xs)+180,minY=Math.min(...ys)-180,maxY=Math.max(...ys)+180,r=canvasWrap.getBoundingClientRect();zoom=clamp(Math.min(r.width/(maxX-minX),r.height/(maxY-minY)),.28,1.05);pan.x=(r.width-(maxX-minX)*zoom)/2-minX*zoom;pan.y=(r.height-(maxY-minY)*zoom)/2-minY*zoom;applyTransform();}
+  function handleNodePointerDown(event){if(event.button!==0||event.target.closest('button')||event.target.closest('.handle'))return;const el=event.currentTarget;const node=getNode(el.dataset.id);const p=worldPoint(event.clientX,event.clientY);selectedId=node.id;dragging={id:node.id,dx:node.x-p.x,dy:node.y-p.y};el.classList.add('dragging');canvasWrap.classList.add('dragging');event.preventDefault();}
+
+  canvasWrap.addEventListener('pointerdown',event=>{if(event.button!==0||event.target.closest('[data-id]'))return;panning={x:event.clientX,y:event.clientY,panX:pan.x,panY:pan.y};canvasWrap.classList.add('dragging');event.preventDefault();});
+  document.addEventListener('pointermove',event=>{
+    if(dragging){const node=getNode(dragging.id),p=worldPoint(event.clientX,event.clientY);if(node){node.x=clamp(p.x+dragging.dx,80,WORLD_W-80);node.y=clamp(p.y+dragging.dy,80,WORLD_H-80);render();}return;}
+    if(panning){pan.x=panning.panX+event.clientX-panning.x;pan.y=panning.panY+event.clientY-panning.y;applyTransform();return;}
+    if(connecting){connecting.pointer=worldPoint(event.clientX,event.clientY);renderEdges();}
+  });
+  document.addEventListener('pointerup',event=>{
+    if(dragging){$$('.dragging',nodesLayer).forEach(el=>el.classList.remove('dragging'));dragging=null;canvasWrap.classList.remove('dragging');}
+    if(panning){panning=null;canvasWrap.classList.remove('dragging');}
+    if(connecting){const target=document.elementsFromPoint(event.clientX,event.clientY).map(el=>el.closest?.('[data-id]')).find(Boolean);if(target&&target.dataset.id!==connecting.sourceId)addEdge(connecting.sourceId,target.dataset.id);connecting=null;render();}
+  });
+  canvasWrap.addEventListener('wheel',event=>{event.preventDefault();zoomAround(zoom+(event.deltaY<0?.06:-.06));},{passive:false});
+
+  function addEdge(source,target){if(edges.some(e=>e.source===source&&e.target===target)){showToast('이미 이어진 가지예요.');return;}edges.push({id:`edge-${Date.now()}`,source,target,label:'새롭게 이어짐',color:palette.root,recent:true});edges.forEach(e=>{if(e.target!==target)e.recent=false;});showToast('두 순간 사이에 새 가지가 이어졌어요.');}
+  function removeNode(id){const node=getNode(id);if(!node)return;if(id==='root'||node.kind==='end'){showToast('뿌리와 시스템 완성 순간은 삭제할 수 없어요.');return;}if(!confirm(`${node.number}번째 순간을 삭제할까요?`))return;nodes=nodes.filter(n=>n.id!==id);edges=edges.filter(e=>e.source!==id&&e.target!==id);selectedId='moment-100';if(anchorId===id)anchorId='moment-100';render();showToast('순간을 트리에서 삭제했어요.');}
+
+  const layouts={
+    radial(){
+      const reps=[rootNode,...representativeMoments];const pos={root:[1160,760],'moment-1':[420,480],'moment-24':[930,300],'moment-50':[1380,620],'moment-78':[800,1080],'moment-100':[1580,1080]};reps.forEach(n=>{[n.x,n.y]=pos[n.id];});genericNodes.forEach((n,i)=>{const a=(i/genericNodes.length)*Math.PI*2-Math.PI/2,ring=335+(i%5)*55;n.x=1160+Math.cos(a)*ring;n.y=760+Math.sin(a)*ring*.72;});
+    },
+    tree(){rootNode.x=250;rootNode.y=750;representativeMoments.forEach((n,i)=>{n.x=570+i*355;n.y=750+[-250,-90,120,-160,100][i];});genericNodes.forEach((n,i)=>{const col=Math.floor((n.number-1)/20),row=(n.number-1)%20;n.x=520+col*370+(row%2)*90;n.y=90+row*66;});},
+    circle(){rootNode.x=1160;rootNode.y=750;representativeMoments.forEach((n,i)=>{const a=-Math.PI/2+i*Math.PI*2/5;n.x=1160+Math.cos(a)*470;n.y=750+Math.sin(a)*380;});genericNodes.forEach((n,i)=>{const a=(i/genericNodes.length)*Math.PI*2-Math.PI/2;n.x=1160+Math.cos(a)*610;n.y=750+Math.sin(a)*500;});},
+    grid(){rootNode.x=160;rootNode.y=120;nodes.filter(n=>n.id!=='root').sort((a,b)=>a.number-b.number).forEach((n,i)=>{n.x=230+(i%10)*215;n.y=180+Math.floor(i/10)*125;});},
+    timeline(){rootNode.x=140;rootNode.y=750;nodes.filter(n=>n.id!=='root').sort((a,b)=>a.number-b.number).forEach((n,i)=>{n.x=220+i*21.2;n.y=750+Math.sin(i*.42)*190;});}
+  };
+  function applyLayout(name){layout=name;layouts[name]();$$('[data-layout]').forEach(b=>b.classList.toggle('active',b.dataset.layout===name));const label={radial:'감정적 인과관계를 중심으로 자유롭게 펼쳐 봅니다.',tree:'뿌리에서 가지가 자라듯 계층형 구조로 봅니다.',circle:'중심 주위에 모든 순간을 모아 전체 결을 조망합니다.',grid:'순간 카드를 번호 순서로 비교하기 쉽게 정렬합니다.',timeline:'기록 순서와 날짜 흐름을 따라 이동합니다.'}[name];$('#layoutHelp').textContent=label;render();setTimeout(fitView,40);}
+
+  function updateMeta(){$('#viewState').textContent=density==='all'?`전체 ${totalMomentCount}개의 순간을 보는 중`:'대표 순간 5개를 보는 중';$('#momentCount').textContent=`${totalMomentCount} moments`;$('#canvasHint').textContent=density==='all'?'작은 노드도 선택·포커스할 수 있으며 대표 순간은 꽃과 큰 테두리로 구분됩니다.':'큰 카드와 관계 이유를 따라 시즌 1의 대표 경로를 감상할 수 있습니다.';}
+  function selectNode(id,tab){selectedId=id;if(tab)setInspectorTab(tab);render();}
+
+  function setInspectorTab(name){inspectorTab=name;$$('[data-inspector-tab]').forEach(btn=>{const active=btn.dataset.inspectorTab===name;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active));});$('#panelPlant').hidden=name!=='plant';$('#panelSelected').hidden=name!=='selected';$('#panelTemperature').hidden=name!=='temperature';if(name==='temperature'&&temperatureView==='moment')updateTemperature();}
+  function updateAnchorCard(){const n=getNode(anchorId)||getNode('moment-100');$('#anchorNumber').textContent=n.id==='root'?'R':n.number;$('#anchorTitle').textContent=n.title;$('#anchorSubtitle').textContent=`${n.number||'뿌리'}번째 순간에서 다음 마음을 이어갑니다.`;}
+
+  function selectedMomentHtml(node){
+    if(!node)return'<div class="empty-temp"><i>✿</i>순간 카드를 하나 선택해 주세요.</div>';
+    const type=node.kind==='video'?'영상':node.kind==='photo'?'사진':node.kind==='note'?'메모':node.kind==='quote'?'인터뷰 문장':node.kind==='turning'?'감정 전환점':node.kind==='end'?'완성 순간':node.kind==='root'?'러브트리 뿌리':'게시물';
+    const incoming=edges.find(e=>e.target===node.id);const outgoing=edges.filter(e=>e.source===node.id);const like=likes[node.id]||{count:0,likedByMe:false};
+    const media=node.kind==='video'&&node.thumbnail?`<img src="${escapeHtml(node.thumbnail)}" alt="${escapeHtml(node.title)} 썸네일">`:`<span class="symbol">${icons[node.kind]||'✦'}</span>`;
+    return `<div class="selected-hero"><div class="selected-media">${media}</div><div class="selected-body"><div class="selected-kicker"><span>${escapeHtml(type)} · ${node.id==='root'?'ROOT':node.number+'번째'}</span><span>${escapeHtml(node.date||'날짜 미정')}</span></div><h3>${escapeHtml(node.title)}</h3><p>${escapeHtml(node.memo)}</p><div class="detail-list"><div class="detail-row"><span>기억할 시간</span><strong>${escapeHtml(rangeLabel(node)||'해당 없음')}</strong></div><div class="detail-row"><span>작성자가 붙인 느낌</span><div class="tag-list">${(creatorMomentTags[node.id]||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')||'<span>없음</span>'}</div></div><div class="detail-row"><span>이전 순간</span><strong>${incoming?escapeHtml(getNode(incoming.source)?.title||'없음'):'없음'}</strong></div><div class="detail-row"><span>다음 순간</span><strong>${outgoing.length?outgoing.map(e=>escapeHtml(getNode(e.target)?.title||'')).join(', '):'아직 없음'}</strong></div><div class="detail-row"><span>연결 이유</span><strong>${escapeHtml(incoming?.label||node.relation||'첫 시작')}</strong></div></div><button class="like-button${like.likedByMe?' active':''}" id="selectedLike" type="button">${like.likedByMe?'♥ 좋아요 취소':'♡ 좋아요'} <span>${like.count}</span></button><div class="selected-actions">${node.kind==='video'?`<button type="button" id="selectedPlay">지정 구간 재생</button>`:''}<button type="button" id="showFanReaction">팬 반응 보기</button><button class="wide" type="button" id="selectedAdd">다음 순간 이어 붙이기</button><button type="button" id="selectedEdit">수정</button><button class="danger" type="button" id="selectedDelete" ${(node.id==='root'||node.kind==='end')?'disabled':''}>삭제</button></div></div></div>`;
+  }
+  function updateSelectedPanel(){const node=getNode(selectedId);$('#selectedContent').innerHTML=selectedMomentHtml(node);$('#selectedLike')?.addEventListener('click',()=>toggleLike(node.id));$('#selectedPlay')?.addEventListener('click',()=>openVideo(node.id));$('#showFanReaction')?.addEventListener('click',()=>{temperatureView='moment';setInspectorTab('temperature');updateTemperatureTabs();updateTemperature();});$('#selectedAdd')?.addEventListener('click',()=>{anchorId=node.id;updateAnchorCard();setInspectorTab('plant');$('#nodeUrl').focus();});$('#selectedEdit')?.addEventListener('click',()=>{anchorId=node.id;updateAnchorCard();setInspectorTab('plant');$('#nodeTitle').value=node.title;$('#nodeMemo').value=node.memo;showToast('데모 폼에 선택한 순간의 내용을 불러왔어요.');});$('#selectedDelete')?.addEventListener('click',()=>removeNode(node.id));}
+  function toggleLike(id){const state=likes[id]||(likes[id]={count:0,likedByMe:false});state.likedByMe=!state.likedByMe;state.count=Math.max(0,state.count+(state.likedByMe?1:-1));updateSelectedPanel();showToast(state.likedByMe?'좋아요를 남겼어요. 팬 온도는 변하지 않습니다.':'좋아요를 취소했어요. 팬 온도는 변하지 않습니다.');}
+
+  function tempBars(scores){return `<div class="temperature-list">${tags.map(tag=>`<div class="temp-item"><span>${tag}</span><div class="temp-bar"><i style="--value:${scores[tag]||0}%;--bar:${tag==='섹시'?palette.root:tag==='큐트'?palette.scene:tag==='청순'?palette.blue:tag==='설렘'?palette.emotion:tag==='위로'?palette.comfort:palette.end}"></i></div><strong>${scores[tag]||0}${temperatureView==='creator'?'%':'°'}</strong></div>`).join('')}</div>`;}
+  function updateTemperatureTabs(){$$('[data-temperature-view]').forEach(b=>b.classList.toggle('active',b.dataset.temperatureView===temperatureView));}
+  function updateTemperature(){
+    const box=$('#temperatureContent');if(!box)return;
+    if(temperatureView==='creator'){
+      const scope=creatorTagScopeData[creatorScope];box.innerHTML=`<p class="temp-description">내가 이 러브트리에 심은 순간과 키워드가 어떤 분위기로 쌓였는지 보여줘요. 해당 인물의 객관적 평가가 아닙니다.</p><div class="filter-row">${[['all','전체'],['season1','시즌 1'],['season2','시즌 2'],['branch','현재 가지'],['theme','테마 가지']].map(([k,l])=>`<button type="button" data-creator-scope="${k}" class="${creatorScope===k?'active':''}">${l}</button>`).join('')}</div><div class="section-card"><div class="section-title"><strong>나의 트리 결</strong><small>${escapeHtml(scope.label)}</small></div>${tempBars(scope.scores)}</div>`;$$('[data-creator-scope]',box).forEach(b=>b.addEventListener('click',()=>{creatorScope=b.dataset.creatorScope;updateTemperature();}));return;
+    }
+    if(temperatureView==='moment'){
+      const node=getNode(selectedId);if(!node||node.id==='root'){box.innerHTML='<div class="empty-temp"><i>✿</i>순간 카드를 하나 선택해 주세요.</div>';return;}
+      const data=viewerMomentReactions[node.id]||(viewerMomentReactions[node.id]={scores:Object.fromEntries(tags.map(t=>[t,0])),participants:0,my:[]});const like=likes[node.id]||{count:0};
+      if(data.participants===0&&data.my.length===0){box.innerHTML=`<p class="temp-description">작성자가 붙인 느낌과 팬이 선택한 반응은 분리되어 집계됩니다. 한 사람당 최대 2개까지 선택할 수 있어요.</p><div class="section-card"><div class="section-title"><strong>${escapeHtml(node.title)}</strong><small>좋아요 ${like.count}</small></div><div class="empty-temp"><i>♡</i>아직 팬 반응이 없어요.<br>첫 느낌을 남겨주세요.</div><div class="reaction-choices">${tags.map(t=>`<button type="button" data-reaction="${t}">${t}</button>`).join('')}</div></div>`;
+      }else{box.innerHTML=`<p class="temp-description">현재 선택한 Moment 하나에 대한 팬 반응입니다. 좋아요 ${like.count}개는 아래 온도에 포함되지 않습니다.</p><div class="section-card"><div class="section-title"><strong>이 순간의 팬 반응</strong><small>키워드 참여 ${data.participants.toLocaleString()}명</small></div><div class="detail-row"><span>내가 남긴 마음</span><div class="tag-list">${(creatorMomentTags[node.id]||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>${tempBars(data.scores)}<div class="reaction-choices">${tags.map(t=>`<button type="button" data-reaction="${t}" class="${data.my.includes(t)?'active':''}">${t}</button>`).join('')}</div><p class="keyword-note">팬 느낌은 최대 2개이며 선택 취소·변경이 가능합니다.</p></div>`;}
+      $$('[data-reaction]',box).forEach(b=>b.addEventListener('click',()=>toggleReaction(node.id,b.dataset.reaction)));return;
+    }
+    const data=subjectFanAggregate[subjectSource][subjectPeriod];const periodLabel={week:'최근 7일',month:'최근 30일',year:'최근 1년',all:'전체 기간'}[subjectPeriod];box.innerHTML=`<p class="temp-description">공개된 모든 주연이 Moment에서 팬이 선택한 반응을 종합한 데모 데이터입니다.</p><div class="filter-row">${[['all','전체'],['official','공식 트리'],['fan','팬 트리']].map(([k,l])=>`<button type="button" data-subject-source="${k}" class="${subjectSource===k?'active':''}">${l}</button>`).join('')}</div><div class="filter-row">${[['week','7일'],['month','30일'],['year','1년'],['all','전체 기간']].map(([k,l])=>`<button type="button" data-subject-period="${k}" class="${subjectPeriod===k?'active':''}">${l}</button>`).join('')}</div><div class="section-card"><div class="section-title"><strong>주연 전체 팬 온도</strong><small>데모 데이터 · ${periodLabel}</small></div><div class="temperature-meta"><div><strong>${data.moments.toLocaleString()}</strong><span>공개 순간 수</span></div><div><strong>${data.participants.toLocaleString()}</strong><span>고유 참여자 수</span></div></div>${tempBars(data.scores)}</div>`;$$('[data-subject-source]',box).forEach(b=>b.addEventListener('click',()=>{subjectSource=b.dataset.subjectSource;updateTemperature();}));$$('[data-subject-period]',box).forEach(b=>b.addEventListener('click',()=>{subjectPeriod=b.dataset.subjectPeriod;updateTemperature();}));
+  }
+  function toggleReaction(id,tag){const data=viewerMomentReactions[id]||(viewerMomentReactions[id]={scores:Object.fromEntries(tags.map(t=>[t,0])),participants:0,my:[]});const index=data.my.indexOf(tag);if(index>=0){data.my.splice(index,1);data.scores[tag]=Math.max(0,data.scores[tag]-1);if(data.my.length===0&&data.participants===1)data.participants=0;showToast(`${tag} 반응을 취소했어요.`);}else{if(data.my.length>=2){showToast('팬 느낌은 최대 2개까지 선택할 수 있어요.');return;}data.my.push(tag);data.scores[tag]=Math.min(100,(data.scores[tag]||0)+1);if(data.participants===0)data.participants=1;showToast(`${tag} 느낌을 남겼어요. 좋아요 수는 변하지 않습니다.`);}updateTemperature();}
+
+  function openVideo(id){const node=getNode(id);if(!node||node.kind!=='video'){showToast('이 순간은 영상이 아니라 카드 원문으로 감상합니다.');return;}modalNodeId=id;$('#videoTitle').textContent=node.title;const embed=videoEmbed(node);$('#videoPlayer').innerHTML=embed?`<iframe src="${escapeHtml(embed)}" title="${escapeHtml(node.title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`:'<div style="color:white">영상 링크를 확인해 주세요.</div>';$('#videoDetail').innerHTML=`<p class="eyebrow">${node.number}번째 순간 · ${escapeHtml(node.platform)}</p><h3>${escapeHtml(node.title)}</h3><p>${escapeHtml(node.memo)}</p><div class="detail-list"><div class="detail-row"><span>기억할 구간</span><strong>${escapeHtml(rangeLabel(node)||'전체')}</strong></div><div class="detail-row"><span>작성자 느낌</span><strong>${escapeHtml((creatorMomentTags[node.id]||[]).join(' · '))}</strong></div><div class="detail-row"><span>연결 이유</span><strong>${escapeHtml(node.relation||'이어짐')}</strong></div></div>`;openDialog('videoModal');}
+  function closeVideo(){closeDialog('videoModal');$('#videoPlayer').innerHTML='';modalNodeId=null;}
+
+  function updateKeywordButtons(){$$('[data-creator-tag]').forEach(btn=>{const i=selectedCreatorTags.indexOf(btn.dataset.creatorTag);btn.classList.toggle('active',i>=0);$('.order',btn).textContent=i>=0?String(i+1):'';});$('#creatorKeywordNote').textContent=`대표 느낌 · ${selectedCreatorTags[0]||'선택 필요'}${selectedCreatorTags[1]?` / 보조 느낌 · ${selectedCreatorTags[1]}`:''}`;}
+  $$('[data-creator-tag]').forEach(btn=>btn.addEventListener('click',()=>{const tag=btn.dataset.creatorTag,i=selectedCreatorTags.indexOf(tag);if(i>=0){if(selectedCreatorTags.length===1){showToast('이 순간의 느낌은 최소 1개를 남겨주세요.');return;}selectedCreatorTags.splice(i,1);}else{if(selectedCreatorTags.length>=2){showToast('이 순간의 느낌은 최대 2개까지 선택할 수 있어요.');return;}selectedCreatorTags.push(tag);}updateKeywordButtons();}));
+  $$('[data-source-type]').forEach(btn=>btn.addEventListener('click',()=>{sourceType=btn.dataset.sourceType;$$('[data-source-type]').forEach(b=>b.classList.toggle('active',b===btn));$('#urlField').hidden=sourceType==='note';if(sourceType==='note')$('#metadataPreview').hidden=true;}));
+  $$('#relationChoices [data-relation]').forEach(btn=>btn.addEventListener('click',()=>{selectedRelation=btn.dataset.relation;$$('#relationChoices .choice-btn').forEach(b=>b.classList.toggle('active',b===btn));$('#customRelation').hidden=selectedRelation!=='직접 입력';if(selectedRelation==='직접 입력')$('#customRelation').focus();}));
+  $('#nodeUrl').addEventListener('input',event=>{const value=event.target.value.trim();if(!value){$('#metadataPreview').hidden=true;return;}const id=youtubeIdFromUrl(value);let title='링크에서 불러온 새로운 순간';if(sourceType==='video'&&id){$('#metadataThumb').src=`https://img.youtube.com/vi/${id}/hqdefault.jpg`;title='다시 보고 싶었던 영상 속 순간';const fromUrl=timeFromUrl(value);if(fromUrl&&!$('#nodeStart').value)$('#nodeStart').value=fromUrl;}else{$('#metadataThumb').removeAttribute('src');title=sourceType==='photo'?'사진에서 발견한 마음':'게시물에서 발견한 한 장면';}$('#metadataTitle').textContent=title;$('#metadataPreview').hidden=false;if(!$('#nodeTitle').value)$('#nodeTitle').placeholder=title;});
+  $('#metadataThumb').addEventListener('error',event=>{event.currentTarget.style.visibility='hidden';});
+
+  $('#addForm').addEventListener('submit',event=>{
+    event.preventDefault();const error=$('#formError');error.classList.remove('show');error.textContent='';const url=$('#nodeUrl').value.trim();if(sourceType!=='note'&&!url){error.textContent='영상·사진·게시물 링크를 입력하거나 직접 기록을 선택해 주세요.';error.classList.add('show');$('#nodeUrl').focus();return;}
+    const rawStart=$('#nodeStart').value.trim()||timeFromUrl(url),rawEnd=$('#nodeEnd').value.trim();const start=rawStart?normalizeTime(rawStart):'';const end=rawEnd?normalizeTime(rawEnd):'';if(rawStart&&!start){error.textContent='시작 시간은 01:30 또는 01:02:30 형식으로 적어주세요.';error.classList.add('show');$('#nodeStart').focus();return;}if(rawEnd&&!end){error.textContent='끝 시간은 01:30 또는 01:02:30 형식으로 적어주세요.';error.classList.add('show');$('#nodeEnd').focus();return;}if(start&&end&&timeToSeconds(end)<timeToSeconds(start)){error.textContent='끝 시간은 시작 시간보다 뒤에 있어야 해요.';error.classList.add('show');$('#nodeEnd').focus();return;}if(!selectedCreatorTags.length){error.textContent='이 순간의 느낌을 최소 1개 선택해 주세요.';error.classList.add('show');return;}
+    const anchor=getNode(anchorId)||getNode('moment-100');const id=`moment-${Date.now()}`,yt=youtubeIdFromUrl(url),kind=sourceType==='video'?'video':sourceType==='photo'?'photo':sourceType==='post'?'post':'note';const title=$('#nodeTitle').value.trim()||$('#metadataTitle').textContent||`${nextNumber}번째 이어진 순간`;const relation=selectedRelation==='직접 입력'?($('#customRelation').value.trim()||'직접 이어진 이유'):selectedRelation;const color=selectedCreatorTags[0]==='섹시'?palette.root:selectedCreatorTags[0]==='큐트'?palette.scene:selectedCreatorTags[0]==='청순'?palette.blue:selectedCreatorTags[0]==='설렘'?palette.emotion:selectedCreatorTags[0]==='위로'?palette.comfort:palette.end;const angle=-.8+(nextNumber%5)*.38;
+    const node={id,number:nextNumber,kind,title,memo:$('#nodeMemo').value.trim()||'왜 마음이 움직였는지 남긴 한 줄',emotion:selectedCreatorTags[0],tags:[...selectedCreatorTags],platform:kind==='video'?'YouTube':'LoveTree',url,startTime:start,endTime:end,thumbnail:yt?`https://img.youtube.com/vi/${yt}/hqdefault.jpg`:'',date:new Date().toISOString().slice(0,10),x:clamp(anchor.x+Math.cos(angle)*370,140,WORLD_W-140),y:clamp(anchor.y+Math.sin(angle)*310,120,WORLD_H-120),color,relation,likes:0};
+    nodes.push(node);creatorMomentTags[id]=[...selectedCreatorTags];likes[id]={count:0,likedByMe:false};viewerMomentReactions[id]={scores:Object.fromEntries(tags.map(t=>[t,0])),participants:0,my:[]};edges.forEach(e=>e.recent=false);edges.push({id:`edge-${Date.now()}`,source:anchor.id,target:id,label:relation,color,recent:true});totalMomentCount++;nextNumber++;selectedId=id;anchorId=id;if(seasonMode==='season2'){creatorTagScopeData.season2.label=`시즌 2 · ${totalMomentCount-100}개의 순간`;selectedCreatorTags.forEach(t=>creatorTagScopeData.season2.scores[t]=Math.min(100,(creatorTagScopeData.season2.scores[t]||0)+1));}
+    $('#nodeUrl').value='';$('#nodeTitle').value='';$('#nodeStart').value='';$('#nodeEnd').value='';$('#nodeMemo').value='';$('#metadataPreview').hidden=true;updateAnchorCard();updateSubmitLabel();density='representative';$$('[data-density]').forEach(b=>b.classList.toggle('active',b.dataset.density===density));setInspectorTab('selected');render();showToast(`${node.number}번째 순간이 같은 LoveTree에 이어졌어요 ✿`);setTimeout(fitView,50);
+  });
+  function updateSubmitLabel(){$('#submitMoment').textContent=seasonMode==='season2'?`시즌 2의 첫 순간 심기`:`${nextNumber}번째 순간 심기`;}
+
+  function openDialog(id){const el=$(`#${id}`);if(!el)return;lastFocused=document.activeElement;el.setAttribute('aria-hidden','false');document.body.classList.add('modal-open','overlay-open');const focusable=getFocusable(el);setTimeout(()=>focusable[0]?.focus(),0);}
+  function closeDialog(id){const el=$(`#${id}`);if(!el)return;el.setAttribute('aria-hidden','true');if(!$$('.dialog-backdrop[aria-hidden="false"]').length){document.body.classList.remove('modal-open');if($('#completionOverlay').getAttribute('aria-hidden')==='true'&&$('#reviewOverlay').getAttribute('aria-hidden')==='true'){document.body.classList.remove('overlay-open');setWorkspaceCovered(false);setInspectorTab('selected');setTimeout(fitView,40);}}lastFocused?.focus?.();}
+  function getFocusable(root){return $$('button:not(:disabled),a[href],input:not(:disabled),textarea:not(:disabled),select:not(:disabled),[tabindex]:not([tabindex="-1"])',root).filter(el=>!el.hidden&&el.offsetParent!==null);}
+  function trapFocus(event){const dialog=event.target.closest('.dialog-backdrop[aria-hidden="false"],.workspace-overlay[aria-hidden="false"]');if(!dialog||event.key!=='Tab')return;const items=getFocusable(dialog);if(!items.length)return;const first=items[0],last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}
+  document.addEventListener('keydown',event=>{trapFocus(event);if(event.key==='Escape'){if($('#videoModal').getAttribute('aria-hidden')==='false')closeVideo();else{const open=$$('.dialog-backdrop[aria-hidden="false"]').at(-1);if(open)closeDialog(open.id);}}});
+  $$('[data-close-dialog]').forEach(btn=>btn.addEventListener('click',()=>closeDialog(btn.dataset.closeDialog)));
+  $$('.dialog-backdrop').forEach(back=>back.addEventListener('click',event=>{if(event.target===back){if(back.id==='videoModal')closeVideo();else closeDialog(back.id);}}));
+  $('#videoClose').addEventListener('click',closeVideo);
+
+  function setWorkspaceCovered(covered){workspace.inert=covered;toolbar.inert=covered;inspector.setAttribute('aria-hidden',String(covered));toolbar.setAttribute('aria-hidden',String(covered));}
+  function showCompletion(){clearReviewTimer();document.body.classList.add('overlay-open');$('#reviewOverlay').setAttribute('aria-hidden','true');$('#completionOverlay').setAttribute('aria-hidden','false');setWorkspaceCovered(true);setTimeout(()=>$('#startReview').focus(),0);}
+  function openWorkspace(tab='selected'){ document.body.classList.remove('overlay-open');$('#completionOverlay').setAttribute('aria-hidden','true');$('#reviewOverlay').setAttribute('aria-hidden','true');setWorkspaceCovered(false);setInspectorTab(tab);setTimeout(()=>{fitView();if(tab==='plant')$('#nodeUrl').focus();},50); }
+
+  const reviewMoments=representativeMoments;
+  function renderReviewCards(){const positions=[[12,78],[31,35],[51,58],[70,72],[89,19]];$('#reviewCards').innerHTML=reviewMoments.map((n,i)=>`<button class="review-card${i===reviewIndex?' active':''}" type="button" data-review-index="${i}" style="left:${positions[i][0]}%;top:${positions[i][1]}%;--node-color:${n.color}">${n.thumbnail?`<img src="${escapeHtml(n.thumbnail)}" alt="">`:`<div style="height:86px;display:grid;place-items:center;color:${n.color};font-size:2rem">${icons[n.kind]}</div>`}<strong>${escapeHtml(n.title)}</strong><span>${n.number}번째 · ${escapeHtml(n.emotion)}</span></button>`).join('');$$('[data-review-index]').forEach(b=>b.addEventListener('click',()=>{reviewIndex=Number(b.dataset.reviewIndex);updateReview();}));}
+  function updateReview(){const n=reviewMoments[reviewIndex];renderReviewCards();$('#reviewIndex').textContent=`${String(reviewIndex+1).padStart(2,'0')} / 05`;$('#reviewMomentTitle').textContent=n.title;$('#reviewMomentMemo').textContent=n.memo;$('#reviewMomentNumber').textContent=`${n.number}번째`;$('#reviewMomentEmotion').textContent=n.emotion;$('#reviewMomentTime').textContent=rangeLabel(n)||'카드 기록';$('#reviewMomentRelation').textContent=n.relation;$('#reviewProgress').style.setProperty('--progress',`${(reviewIndex+1)/reviewMoments.length*100}%`);$('#reviewPrev').disabled=reviewIndex===0;$('#reviewNext').disabled=reviewIndex===reviewMoments.length-1;}
+  function clearReviewTimer(){clearInterval(reviewTimer);reviewTimer=null;reviewPlaying=false;$('#reviewPlay').textContent='재생';}
+  function startReview(){document.body.classList.add('overlay-open');setWorkspaceCovered(true);$('#completionOverlay').setAttribute('aria-hidden','true');$('#reviewOverlay').setAttribute('aria-hidden','false');reviewIndex=0;updateReview();setTimeout(()=>$('#reviewPlay').focus(),0);}
+  function playReview(){if(reviewPlaying){clearReviewTimer();return;}reviewPlaying=true;$('#reviewPlay').textContent='일시 정지';reviewTimer=setInterval(()=>{if(reviewIndex>=reviewMoments.length-1){clearReviewTimer();openDecision();return;}reviewIndex++;updateReview();},1800);}
+  function openDecision(){clearReviewTimer();$('#reviewOverlay').setAttribute('aria-hidden','true');openDialog('decisionDialog');}
+  $('#startReview').addEventListener('click',startReview);$('#plant101Now').addEventListener('click',()=>{anchorId='moment-100';updateAnchorCard();openWorkspace('plant');});$('#openTreeOnly').addEventListener('click',()=>{selectedId='moment-100';openWorkspace('selected');});$('#seasonReturn').addEventListener('click',showCompletion);$('#brandHome').addEventListener('click',event=>{event.preventDefault();showCompletion();});
+  $('#reviewPlay').addEventListener('click',playReview);$('#reviewPrev').addEventListener('click',()=>{clearReviewTimer();reviewIndex=Math.max(0,reviewIndex-1);updateReview();});$('#reviewNext').addEventListener('click',()=>{clearReviewTimer();reviewIndex=Math.min(reviewMoments.length-1,reviewIndex+1);updateReview();});$('#reviewFinish').addEventListener('click',openDecision);$('#reviewDecision').addEventListener('click',openDecision);
+  $$('[data-review-mode]').forEach(btn=>btn.addEventListener('click',()=>{reviewMode=btn.dataset.reviewMode;$$('[data-review-mode]').forEach(b=>b.classList.toggle('active',b===btn));if(reviewMode==='timeline')showToast('기록 순서 1→24→50→78→100으로 시간 흐름을 따라봅니다.');if(reviewMode==='connection')showToast('왜 다음 순간으로 이동했는지 관계 이유를 중심으로 봅니다.');if(reviewMode==='representative')showToast('시즌 1의 대표 순간 5개만 집중해서 봅니다.');}));
+
+  $$('[data-decision]').forEach(btn=>btn.addEventListener('click',()=>{const decision=btn.dataset.decision;closeDialog('decisionDialog');if(decision==='season2')openDialog('seasonDirectionDialog');if(decision==='continuous'){seasonMode='continuous';document.body.dataset.season='continuous';updateSubmitLabel();anchorId='moment-100';updateAnchorCard();openWorkspace('plant');showToast('시즌 구분 없이 101번째 순간부터 계속 이어갑니다.');}if(decision==='course')openCourseBuilder();}));
+  $('#decideLater').addEventListener('click',()=>{closeDialog('decisionDialog');openWorkspace('selected');});
+  $$('#seasonOptions .season-option').forEach(btn=>btn.addEventListener('click',()=>{seasonDirection=btn.dataset.seasonDirection;$$('#seasonOptions .season-option').forEach(b=>b.classList.toggle('selected',b===btn));$('#startSeason2').disabled=false;$('#seasonDirectionHint').textContent=`선택한 방향 · ${seasonDirection}. 시즌 2를 시작한 뒤에도 방향을 바꿀 수 있습니다.`;}));
+  function beginSeason2(direction=''){seasonMode='season2';seasonDirection=direction;document.body.dataset.season='season2';$('#seasonReturnTitle').textContent='시즌 1 완성본';$('#seasonLive').textContent='시즌 2 · 성장 중';creatorScope='season2';updateSubmitLabel();anchorId='moment-100';updateAnchorCard();closeDialog('seasonDirectionDialog');openWorkspace('plant');showToast(direction?`시즌 2를 ‘${direction}’ 방향으로 시작했어요.`:'시즌 2를 방향 없이 시작했어요. 나중에 방향을 정할 수 있습니다.');}
+  $('#startSeason2').addEventListener('click',()=>beginSeason2(seasonDirection));$('#seasonLater').addEventListener('click',()=>beginSeason2(''));
+
+  function buildAnchorList(){$('#anchorList').innerHTML=representativeMoments.map(n=>`<button class="anchor-choice${anchorId===n.id?' selected':''}" type="button" data-anchor-choice="${n.id}"><strong>${n.number} · ${escapeHtml(n.title)}</strong>${escapeHtml(n.relation)}</button>`).join('');$$('[data-anchor-choice]').forEach(b=>b.addEventListener('click',()=>{anchorId=b.dataset.anchorChoice;selectedId=anchorId;updateAnchorCard();closeDialog('anchorDialog');render();showToast('이어질 출발점을 바꿨어요.');}));}
+  $('#changeAnchor').addEventListener('click',()=>{buildAnchorList();openDialog('anchorDialog');});
+
+  function openCourseBuilder(){courseSelection=['moment-1','moment-24','moment-50'];$('#courseBuilderView').hidden=false;$('#courseResultView').hidden=true;renderCourseBuilder();openDialog('courseDialog');}
+  function renderCourseBuilder(){
+    $('#coursePool').innerHTML=reviewMoments.map(n=>`<label class="course-check"><input type="checkbox" value="${n.id}" ${courseSelection.includes(n.id)?'checked':''}><img src="${escapeHtml(n.thumbnail||'')}" alt=""><span><strong>${n.number} · ${escapeHtml(n.title)}</strong><small>${escapeHtml(n.memo)}</small></span></label>`).join('');
+    $('#courseOrder').innerHTML=courseSelection.map((id,i)=>{const n=getNode(id);return`<div class="course-item" data-course-id="${id}"><b>${i+1}</b><strong>${escapeHtml(n.title)}</strong><span><button type="button" data-course-up="${id}" aria-label="위로">↑</button><button type="button" data-course-down="${id}" aria-label="아래로">↓</button></span></div>`;}).join('')||'<div class="empty-temp">대표 순간을 선택해 주세요.</div>';
+    $$('#coursePool input').forEach(input=>input.addEventListener('change',()=>{if(input.checked){if(!courseSelection.includes(input.value))courseSelection.push(input.value);}else courseSelection=courseSelection.filter(id=>id!==input.value);renderCourseBuilder();}));
+    $$('[data-course-up]').forEach(b=>b.addEventListener('click',()=>moveCourse(b.dataset.courseUp,-1)));$$('[data-course-down]').forEach(b=>b.addEventListener('click',()=>moveCourse(b.dataset.courseDown,1)));
+  }
+  function moveCourse(id,delta){const i=courseSelection.indexOf(id),next=clamp(i+delta,0,courseSelection.length-1);if(i===next)return;courseSelection.splice(i,1);courseSelection.splice(next,0,id);renderCourseBuilder();}
+  $('#createCourse').addEventListener('click',()=>{if(courseSelection.length<2){$('#courseError').textContent='입덕 코스에는 최소 2개 이상의 순간이 필요합니다.';return;}const name=$('#courseName').value.trim()||'주연이 입덕 코스';const selected=courseSelection.map(getNode);const duration=selected.reduce((sum,n)=>{const start=nodeStartSeconds(n),end=nodeEndSeconds(n);return sum+(end!==null?Math.max(20,end-start):75);},0);$('#courseResult').innerHTML=`<div class="course-cover"><div class="course-cover-art" style="background-image:url('${escapeHtml(selected.find(n=>n.thumbnail)?.thumbnail||'')}')"></div><div><h3>${escapeHtml(name)}</h3><p>처음 발견한 마음부터 좋아하는 이유가 선명해진 순간까지 따라가는 공유용 감상 경로입니다.</p><div class="course-meta"><span>${selected.length}개의 순간</span><span>예상 ${Math.max(1,Math.round(duration/60))}분</span><span>대표 썸네일 1장</span></div></div></div><div class="course-preview-list">${selected.map((n,i)=>`<div class="course-preview-card"><img src="${escapeHtml(n.thumbnail||'')}" alt=""><strong>${i+1}. ${escapeHtml(n.title)}</strong><p>${escapeHtml(n.memo)}</p></div>`).join('')}</div><div class="demo-note">HTML 데모 · 실제 공유 링크는 제품 구현 단계에서 연결</div>`;$('#courseBuilderView').hidden=true;$('#courseResultView').hidden=false;});
+  $('#editCourse').addEventListener('click',()=>{$('#courseBuilderView').hidden=false;$('#courseResultView').hidden=true;renderCourseBuilder();});$('#courseInTree').addEventListener('click',()=>{closeDialog('courseDialog');density='representative';$$('[data-density]').forEach(b=>b.classList.toggle('active',b.dataset.density===density));openWorkspace('selected');render();});$('#copyCourseLink').addEventListener('click',async()=>{const value='https://lovetree.demo/course/juyoun-season-1';try{await navigator.clipboard.writeText(value);showToast('데모 링크를 클립보드에 복사했어요.');}catch{showToast(`데모 링크: ${value}`);}});
+
+  $$('[data-inspector-tab]').forEach(btn=>btn.addEventListener('click',()=>setInspectorTab(btn.dataset.inspectorTab)));
+  $$('[data-temperature-view]').forEach(btn=>btn.addEventListener('click',()=>{temperatureView=btn.dataset.temperatureView;updateTemperatureTabs();updateTemperature();}));
+  $$('[data-density]').forEach(btn=>btn.addEventListener('click',()=>{density=btn.dataset.density;$$('[data-density]').forEach(b=>b.classList.toggle('active',b===btn));render();setTimeout(fitView,30);}));
+  $$('[data-layout]').forEach(btn=>btn.addEventListener('click',()=>applyLayout(btn.dataset.layout)));
+  $('#zoomIn').addEventListener('click',()=>zoomAround(zoom+.1));$('#zoomOut').addEventListener('click',()=>zoomAround(zoom-.1));$('#fitView').addEventListener('click',fitView);
+  window.addEventListener('resize',()=>{if($('#completionOverlay').getAttribute('aria-hidden')==='true'&&$('#reviewOverlay').getAttribute('aria-hidden')==='true')fitView();});
+
+  updateKeywordButtons();updateAnchorCard();updateSubmitLabel();updateTemperatureTabs();applyLayout('radial');setWorkspaceCovered(true);showCompletion();
+})();
+</script>
+</body>
+</html>

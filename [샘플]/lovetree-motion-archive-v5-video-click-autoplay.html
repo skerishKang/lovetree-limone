@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoveTree · Motion Archive</title>
+<meta name="description" content="영상과 메모를 물결, 원형, 비닐 케이스, 사선 흐름으로 감상하는 LoveTree 모션 아카이브">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum:wght@400;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0ea;
+  --paper:#fffdf9;
+  --paper2:#f8f3ec;
+  --ink:#24201f;
+  --soft:#7d716c;
+  --line:rgba(56,44,40,.13);
+  --rose:#d37783;
+  --rose2:#a54f5f;
+  --sage:#7f9577;
+  --violet:#8d72b6;
+  --shadow:0 30px 80px rgba(48,36,32,.18);
+  --serif:"Gowun Batang","Noto Serif KR",serif;
+  --sans:"Gowun Dodum","Noto Sans KR",sans-serif;
+  --latin:"Manrope",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overflow-x:hidden}
+body{
+  color:var(--ink);
+  font-family:var(--sans);
+  background:
+    radial-gradient(circle at 5% 12%,rgba(227,166,158,.20),transparent 27rem),
+    radial-gradient(circle at 92% 88%,rgba(152,179,135,.16),transparent 30rem),
+    linear-gradient(145deg,#f8f3ed,#f1ece5);
+}
+button{font:inherit;color:inherit}
+button,[role=button]{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.app{width:min(1560px,calc(100% - 28px));margin:auto;padding:14px 0 34px}
+.topbar{
+  height:68px;display:flex;align-items:center;gap:18px;padding:0 22px;
+  border:1px solid var(--line);border-radius:24px;background:rgba(255,253,249,.84);
+  box-shadow:0 15px 42px rgba(46,34,30,.09);backdrop-filter:blur(14px);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:max-content}
+.logo{position:relative;width:32px;height:38px}
+.logo:before{content:"";position:absolute;left:15px;top:9px;width:2px;height:26px;background:var(--sage);border-radius:99px;transform:rotate(8deg)}
+.logo i,.logo b,.logo span{position:absolute;width:10px;height:10px;border:1.5px solid var(--rose);border-radius:50% 50% 50% 0;background:#fffaf6;transform:rotate(-45deg)}
+.logo i{left:2px;top:6px}.logo b{left:20px;top:1px}.logo span{left:23px;top:17px}
+.brand strong{font:700 1.3rem/1 var(--serif);letter-spacing:-.07em}
+.brand small{color:#b48f87;font:600 .52rem/1 var(--latin);letter-spacing:.08em}
+.mode-dock{
+  position:relative;z-index:80;
+  display:grid;grid-template-columns:minmax(235px,.72fr) minmax(620px,1.28fr);
+  gap:18px;align-items:center;
+  margin:0 0 16px;padding:15px 17px;
+  border:1px solid var(--line);border-radius:22px;
+  background:rgba(255,253,249,.86);
+  box-shadow:0 13px 35px rgba(46,34,30,.08);
+  backdrop-filter:blur(14px)
+}
+.mode-dock-copy{padding:2px 6px}
+.mode-dock-copy>span{display:block;color:var(--rose2);font:800 .49rem var(--latin);letter-spacing:.16em}
+.mode-dock-copy strong{display:block;margin-top:5px;font:700 .92rem/1.35 var(--serif)}
+.mode-dock-copy small{display:block;margin-top:4px;color:var(--soft);font:400 .54rem/1.55 var(--serif)}
+.mode-tabs{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;
+  padding:5px;border:1px solid var(--line);border-radius:18px;
+  background:rgba(247,241,235,.78)
+}
+.mode-tab{
+  min-height:58px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;
+  gap:2px 7px;align-content:center;text-align:left;
+  border:1px solid transparent;border-radius:14px;padding:8px 9px;
+  background:transparent;color:var(--soft);transition:.2s
+}
+.mode-tab b{
+  grid-row:1/3;align-self:center;width:26px;height:26px;display:grid;place-items:center;
+  border-radius:50%;background:rgba(211,119,131,.10);color:var(--rose2);
+  font:800 .46rem var(--latin)
+}
+.mode-tab span{font:700 .64rem/1.15 var(--serif);color:#554a46}
+.mode-tab small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.45rem;color:#948680}
+.mode-tab:hover{border-color:rgba(211,119,131,.23);background:rgba(255,253,249,.72);transform:translateY(-1px)}
+.mode-tab.active{
+  color:white;border-color:#272223;background:#272223;
+  box-shadow:0 9px 20px rgba(28,23,23,.17)
+}
+.mode-tab.active b{background:var(--rose);color:white}
+.mode-tab.active span,.mode-tab.active small{color:white}
+.header-note{margin-left:auto;color:var(--soft);font:400 .65rem/1.5 var(--serif)}
+.header-count{padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:#fffaf6;color:var(--rose2);font:700 .56rem var(--latin)}
+
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;padding:30px 10px 18px}
+.eyebrow{margin:0 0 8px;color:var(--rose2);font:800 .57rem var(--latin);letter-spacing:.17em}
+.intro h1{margin:0;font:400 clamp(2.3rem,4.2vw,4.05rem)/1.04 var(--serif);letter-spacing:-.085em}
+.intro h1 em{font-style:normal;color:var(--rose)}
+.intro p{max-width:690px;margin:11px 0 0;color:var(--soft);font:400 .78rem/1.75 var(--serif)}
+.guide{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.guide span{padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,249,.62);color:var(--soft);font-size:.56rem}
+.guide b{color:var(--rose2)}
+
+.archive{
+  position:relative;min-height:730px;overflow:hidden;border:1px solid var(--line);border-radius:30px;
+  background:
+    radial-gradient(circle at 50% 47%,rgba(255,255,255,.70),transparent 27rem),
+    linear-gradient(145deg,rgba(248,244,239,.96),rgba(238,238,231,.94));
+  box-shadow:var(--shadow);isolation:isolate;
+}
+.archive::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;
+  background-image:linear-gradient(rgba(58,46,41,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(58,46,41,.07) 1px,transparent 1px);
+  background-size:42px 42px
+}
+.archive-head{
+  position:absolute;z-index:60;left:0;right:0;top:0;height:70px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;border-bottom:1px solid var(--line);background:rgba(255,253,249,.72);backdrop-filter:blur(10px)
+}
+.archive-head h2{margin:0;font:700 1.05rem var(--serif)}
+.archive-head p{margin:4px 0 0;color:var(--soft);font-size:.55rem}
+.view-status{display:flex;align-items:center;gap:9px;color:var(--soft);font-size:.53rem}
+.view-status i{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 7px rgba(211,119,131,.13)}
+
+.stage{
+  position:absolute;inset:70px 0 78px;overflow:hidden;perspective:1800px;
+  user-select:none;touch-action:none
+}
+.stage-message{
+  position:absolute;z-index:3;left:50%;top:23px;transform:translateX(-50%);
+  color:#8d807a;font:400 .62rem var(--serif);white-space:nowrap
+}
+.card{
+  --x:0px;--y:0px;--z:0px;--rx:0deg;--ry:0deg;--rz:0deg;--s:1;
+  position:absolute;left:50%;top:50%;width:178px;height:260px;padding:0;
+  border:0;background:transparent;transform-style:preserve-3d;outline:none;
+  transform:translate(-50%,-50%) translate3d(var(--x),var(--y),var(--z)) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)) scale(var(--s));
+  transition:transform .78s cubic-bezier(.16,.84,.18,1),opacity .42s,filter .35s;
+}
+.card-inner{
+  position:absolute;inset:0;overflow:hidden;border-radius:18px;background:#191618;
+  box-shadow:0 22px 50px rgba(33,25,25,.22),inset 0 0 0 1px rgba(255,255,255,.18);
+  transition:border-radius .55s,box-shadow .35s,transform .35s
+}
+.card:hover .card-inner{box-shadow:0 30px 62px rgba(33,25,25,.31)}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s,filter .5s}
+.card:hover img{transform:scale(1.06)}
+.card-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(18,13,16,.74));pointer-events:none}
+.card-num{position:absolute;z-index:4;left:11px;top:11px;min-width:30px;height:30px;display:grid;place-items:center;padding:0 8px;border-radius:999px;background:rgba(255,253,249,.86);color:#504442;font:800 .52rem var(--latin);backdrop-filter:blur(6px)}
+.card-copy{position:absolute;z-index:4;left:14px;right:14px;bottom:14px;color:white;text-align:left}
+.card-copy small{font:700 .46rem var(--latin);letter-spacing:.12em;opacity:.72}
+.card-copy strong{display:block;margin-top:4px;font:400 .8rem/1.35 var(--serif)}
+.card.active .card-inner{box-shadow:0 35px 80px rgba(40,28,29,.34),0 0 0 2px rgba(211,119,131,.62)}
+.card.active .card-num{color:white;background:var(--rose)}
+.card.mirrored img{transform:scaleY(-1)}
+.card.mirrored .card-copy,.card.mirrored .card-num{transform:scaleY(-1)}
+.stage.entering .card{transition:none!important}
+.stage.entering .card:nth-of-type(3n+1){transform:translate(-50%,-50%) translate3d(-180px,-210px,-350px) rotateX(180deg) rotateZ(-34deg) scale(.38);opacity:.1}
+.stage.entering .card:nth-of-type(3n+2){transform:translate(-50%,-50%) translate3d(160px,190px,-420px) rotateX(-180deg) rotateZ(29deg) scale(.32);opacity:.1}
+.stage.entering .card:nth-of-type(3n){transform:translate(-50%,-50%) translate3d(20px,-260px,-380px) rotateY(180deg) scale(.35);opacity:.1}
+
+/* Wave */
+.stage[data-mode="wave"] .card-inner{border-radius:6px}
+.stage[data-mode="wave"] .card.active .card-inner{border-radius:30px 8px 30px 8px}
+.stage[data-mode="wave"] .card:not(.active){filter:saturate(.75) brightness(.86)}
+.stage[data-mode="wave"] .card[data-edge="left"] .card-inner{border-radius:70% 5px 5px 70%}
+.stage[data-mode="wave"] .card[data-edge="right"] .card-inner{border-radius:5px 70% 70% 5px}
+
+/* Orbit */
+.stage[data-mode="orbit"] .card{width:128px;height:184px}
+.stage[data-mode="orbit"] .card-inner{border-radius:13px}
+.stage[data-mode="orbit"] .card.active{z-index:20}
+.stage[data-mode="orbit"] .card.active .card-inner{border-radius:50% 50% 18px 18px}
+.orbit-core{
+  position:absolute;left:50%;top:50%;width:184px;height:184px;transform:translate(-50%,-50%);
+  border:1px solid rgba(211,119,131,.25);border-radius:50%;display:none;place-items:center;text-align:center;
+  color:#705f59;background:radial-gradient(circle,rgba(255,253,249,.93),rgba(255,253,249,.28) 70%,transparent 72%);
+  box-shadow:0 0 0 36px rgba(127,149,119,.05),0 0 0 72px rgba(211,119,131,.04);pointer-events:none
+}
+.stage[data-mode="orbit"] .orbit-core{display:grid}
+.orbit-core strong{font:400 1.15rem var(--serif)}
+.orbit-core span{display:block;margin-top:4px;font:700 .48rem var(--latin);letter-spacing:.12em;color:var(--rose2)}
+
+/* Vinyl */
+.stage[data-mode="vinyl"] .card{width:235px;height:310px}
+.stage[data-mode="vinyl"] .card-inner{
+  padding:14px;border-radius:23px;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,255,255,.16));
+  border:1px solid rgba(255,255,255,.78);box-shadow:0 24px 60px rgba(45,34,30,.18),inset 0 0 0 1px rgba(68,55,50,.08);
+  backdrop-filter:blur(8px)
+}
+.stage[data-mode="vinyl"] .card-inner::before{
+  content:"";position:absolute;inset:8px;border-radius:17px;border:1px solid rgba(255,255,255,.72);z-index:5;pointer-events:none
+}
+.stage[data-mode="vinyl"] .card img{border-radius:14px}
+.stage[data-mode="vinyl"] .card.active .card-inner{box-shadow:0 34px 78px rgba(38,28,29,.28),0 0 0 2px rgba(255,255,255,.75)}
+.stage[data-mode="vinyl"] .card.extracting .card-inner{overflow:visible}
+.stage[data-mode="vinyl"] .card.extracting img{animation:pullOut .78s cubic-bezier(.16,.84,.18,1) forwards}
+@keyframes pullOut{0%{transform:translateY(0) scale(1)}55%{transform:translateY(-88px) scale(.94) rotate(-2deg)}100%{transform:translateY(-32px) scale(1.04)}}
+
+/* Cascade */
+.stage[data-mode="cascade"] .card{width:210px;height:285px}
+.stage[data-mode="cascade"] .card-inner{border-radius:14px 34px 14px 34px}
+.stage[data-mode="cascade"] .card:not(.active){filter:saturate(.65) contrast(.9)}
+.stage[data-mode="cascade"] .card.active .card-inner{border-radius:34px 12px 34px 12px}
+
+.ripple{
+  position:absolute;z-index:50;width:20px;height:20px;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(255,255,255,.82),rgba(148,187,202,.26) 38%,rgba(211,119,131,.14) 56%,transparent 70%);
+  transform:translate(-50%,-50%) scale(.1)
+}
+.ripple.go{animation:ripple .82s ease-out forwards}
+@keyframes ripple{0%{opacity:.9;transform:translate(-50%,-50%) scale(.1)}70%{opacity:.48}100%{opacity:0;transform:translate(-50%,-50%) scale(48)}}
+
+.nav-arrow{
+  position:absolute;z-index:55;top:50%;width:48px;height:48px;border:1px solid var(--line);border-radius:50%;
+  display:grid;place-items:center;background:rgba(255,253,249,.76);color:var(--rose2);box-shadow:0 10px 24px rgba(44,32,29,.10);backdrop-filter:blur(8px)
+}
+.nav-arrow:hover{background:#fff}
+.nav-arrow.prev{left:18px}.nav-arrow.next{right:18px}
+
+.bottom-player{
+  position:absolute;z-index:70;left:50%;bottom:16px;width:min(780px,calc(100% - 42px));min-height:54px;
+  display:flex;align-items:center;gap:10px;padding:8px 13px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(255,253,249,.91);box-shadow:0 15px 38px rgba(43,31,28,.20);backdrop-filter:blur(12px);transform:translateX(-50%)
+}
+.player-thumb{width:38px;height:38px;flex:0 0 auto;border-radius:50%;object-fit:cover;border:2px solid white;box-shadow:0 5px 12px rgba(35,25,29,.18)}
+.player-copy{min-width:0;flex:1}
+.player-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 .67rem var(--serif)}
+.player-copy span{display:block;margin-top:2px;color:var(--soft);font-size:.47rem}
+.control{width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--rose2)}
+.control.main{color:white;background:var(--rose);box-shadow:0 8px 18px rgba(191,88,104,.24)}
+.progress{width:120px;height:4px;border-radius:99px;overflow:hidden;background:#e9ddd5}
+.progress i{display:block;width:27%;height:100%;background:linear-gradient(90deg,var(--sage),var(--rose))}
+.index{min-width:54px;text-align:right;color:var(--soft);font:700 .48rem var(--latin)}
+
+.viewer{
+  position:absolute;z-index:90;inset:70px 0 0;display:grid;grid-template-columns:minmax(0,1.42fr) minmax(330px,.58fr);
+  opacity:0;pointer-events:none;transform:translateY(30px) scale(.97);transition:.55s cubic-bezier(.18,.84,.2,1);
+  background:rgba(247,243,238,.96)
+}
+.archive.viewer-open .viewer{opacity:1;pointer-events:auto;transform:none}
+.archive.viewer-open .stage,.archive.viewer-open .nav-arrow{opacity:0;pointer-events:none}
+.video-panel{position:relative;overflow:hidden;background:#151215;cursor:pointer}
+.video-panel img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.92);transform:scale(1.03)}
+.video-panel::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,14,17,.04),rgba(19,14,17,.08) 54%,rgba(19,14,17,.72));pointer-events:none}
+.video-meta{position:absolute;z-index:5;left:32px;bottom:30px;max-width:65%;color:white}
+.video-meta small{font:700 .52rem var(--latin);letter-spacing:.15em;opacity:.74}
+.video-meta h3{margin:6px 0 5px;font:400 clamp(1.8rem,3vw,2.8rem)/1.1 var(--serif);letter-spacing:-.07em}
+.video-meta p{margin:0;font-size:.6rem;opacity:.75}
+.video-click-label{
+  position:absolute;z-index:8;left:50%;top:calc(50% + 58px);transform:translateX(-50%);
+  padding:7px 11px;border:1px solid rgba(255,255,255,.34);border-radius:999px;
+  background:rgba(28,21,24,.38);color:white;font-size:.5rem;white-space:nowrap;
+  backdrop-filter:blur(7px);pointer-events:none
+}
+.video-panel.playing>.video-click-label{display:none}
+.video-play{position:absolute;z-index:8;left:50%;top:50%;width:76px;height:76px;border:1px solid rgba(255,255,255,.55);border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);background:rgba(255,253,249,.86);color:var(--rose2);font-size:1.06rem;box-shadow:0 0 0 15px rgba(255,255,255,.10),0 18px 42px rgba(24,17,20,.32)}
+.video-frame{position:absolute;z-index:7;inset:0;width:100%;height:100%;border:0;display:none;background:#000}
+.video-panel.playing .video-frame{display:block;pointer-events:auto}
+.video-panel.playing>img,.video-panel.playing>.video-meta,.video-panel.playing>.video-play,.video-panel.playing::after{visibility:hidden}
+.viewer-zone{position:absolute;z-index:9;top:0;bottom:0;width:17%;border:0;background:transparent;color:white;opacity:0;transition:.2s}
+.viewer-zone:hover{opacity:1}
+.viewer-zone.prev{left:0;background:linear-gradient(90deg,rgba(20,14,17,.55),transparent)}
+.viewer-zone.next{right:0;background:linear-gradient(-90deg,rgba(20,14,17,.55),transparent)}
+.viewer-zone span{width:43px;height:43px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(255,255,255,.12);font-size:1.1rem}
+.viewer-zone.prev span{margin-left:18px}.viewer-zone.next span{margin-left:auto;margin-right:18px}
+.memo-panel{
+  position:relative;padding:28px 27px 24px;overflow:auto;background:
+  linear-gradient(rgba(220,189,176,.09) 1px,transparent 1px) 0 0/34px 34px,
+  linear-gradient(90deg,rgba(220,189,176,.09) 1px,transparent 1px) 0 0/34px 34px,#fffaf5
+}
+.memo-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,rgba(69,47,39,.14),transparent)}
+.viewer-close{position:absolute;z-index:12;right:15px;top:15px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:rgba(255,253,249,.90);font-size:1.1rem}
+.memo-kicker{color:var(--rose2);font:800 .52rem var(--latin);letter-spacing:.14em}
+.memo-panel h3{margin:8px 45px 0 0;font:400 1.58rem/1.3 var(--serif);letter-spacing:-.06em}
+.memo-card{position:relative;margin-top:22px;padding:23px 20px 20px;border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,.72);box-shadow:0 14px 32px rgba(63,45,38,.08);transform:rotate(-.45deg)}
+.memo-card::before{content:"";position:absolute;left:50%;top:-10px;width:72px;height:20px;background:rgba(225,184,166,.43);transform:translateX(-50%) rotate(-2deg)}
+.memo-label{color:var(--soft);font-size:.51rem}
+.memo-text{margin:12px 0 0;font:400 1rem/1.86 var(--serif)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.tags span{padding:6px 8px;border-radius:999px;background:#f5dfdf;color:var(--rose2);font-size:.49rem}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.info-grid div{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.58)}
+.info-grid small{display:block;color:var(--soft);font-size:.47rem}
+.info-grid strong{display:block;margin-top:4px;font:400 .7rem var(--serif)}
+.viewer-help{margin-top:18px;color:var(--soft);font:400 .58rem/1.6 var(--serif)}
+
+.wipe{
+  position:absolute;z-index:20;inset:0;pointer-events:none;display:flex;opacity:0;perspective:1600px
+}
+.wipe.go{opacity:1}
+.wipe i{width:16.666%;height:100%;background-size:600% 100%;opacity:0;transform-origin:left center}
+.wipe i:nth-child(1){background-position:0 0}.wipe i:nth-child(2){background-position:20% 0}.wipe i:nth-child(3){background-position:40% 0}.wipe i:nth-child(4){background-position:60% 0}.wipe i:nth-child(5){background-position:80% 0}.wipe i:nth-child(6){background-position:100% 0}
+.wipe.go.next i{animation:foldNext .68s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(var(--i)*.055s)}
+.wipe.go.prev i{animation:foldPrev .68s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc((5 - var(--i))*.055s)}
+@keyframes foldNext{0%{opacity:1;transform:rotateY(0)}55%{opacity:1;transform:rotateY(-86deg);filter:brightness(.68)}100%{opacity:0;transform:rotateY(-170deg)}}
+@keyframes foldPrev{0%{opacity:1;transform:rotateY(0)}55%{opacity:1;transform:rotateY(86deg);filter:brightness(.68)}100%{opacity:0;transform:rotateY(170deg)}}
+
+.mode-description{
+  width:max-content;max-width:100%;margin:12px auto 0;padding:9px 14px;border:1px solid rgba(127,149,119,.28);border-radius:999px;
+  background:#f3f7ef;color:#687e61;font:400 .61rem var(--serif);text-align:center
+}
+.mode-description b{color:var(--rose2)}
+
+@media(max-width:1080px){
+  .header-note{display:none}.header-count{display:none}\n  .mode-dock{grid-template-columns:1fr;padding:13px}\n  .mode-tabs{grid-template-columns:repeat(4,minmax(120px,1fr));overflow-x:auto}
+  .intro{display:block}.guide{justify-content:flex-start;margin-top:14px}
+  .archive{min-height:850px}
+  .viewer{grid-template-columns:1fr;grid-template-rows:500px auto;overflow:auto}
+  .memo-panel{min-height:360px}
+}
+@media(max-width:700px){
+  .app{width:calc(100% - 12px);padding-top:7px}
+  .topbar{height:auto;min-height:58px;padding:8px 10px;flex-wrap:wrap}
+  .brand strong{font-size:1.1rem}.brand small{display:none}
+  .mode-dock{margin-bottom:11px;padding:11px;border-radius:18px}\n  .mode-dock-copy{padding:0 2px}\n  .mode-tabs{grid-template-columns:repeat(4,150px);overflow-x:auto;padding:4px}\n  .mode-tab{min-height:54px;padding:7px 8px}
+  .intro{padding:25px 7px 16px}.intro h1{font-size:2.45rem}
+  .archive{min-height:760px;border-radius:22px}
+  .stage{inset:70px 0 76px}
+  .stage-message{font-size:.54rem}
+  .card{width:145px;height:218px}
+  .stage[data-mode="vinyl"] .card{width:185px;height:250px}
+  .stage[data-mode="cascade"] .card{width:165px;height:230px}
+  .nav-arrow{width:40px;height:40px}.nav-arrow.prev{left:7px}.nav-arrow.next{right:7px}
+  .bottom-player{width:calc(100% - 16px);gap:5px;padding:7px 8px}
+  .progress,.index{display:none}.player-copy span{display:none}
+  .viewer{grid-template-rows:400px auto}
+  .video-meta{left:18px;bottom:18px;max-width:75%}.video-meta h3{font-size:1.5rem}
+  .video-play{width:62px;height:62px}
+  .memo-panel{padding:23px 17px}.memo-panel h3{font-size:1.38rem}.memo-text{font-size:.88rem}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="logo" aria-hidden="true"><i></i><b></b><span></span></span>
+      <strong>러브트리</strong><small>LoveTree</small>
+    </a>
+    <p class="header-note">마우스와 손끝으로 영상 사이를 움직이고, 한 순간을 눌러 영상과 메모를 펼쳐보세요.</p>
+    <span class="header-count">09 MOMENTS</span>
+  </header>
+
+  <section class="intro">
+    <div>
+      <p class="eyebrow">LOVETREE · INTERACTIVE MOTION ARCHIVE</p>
+      <h1>좋아한 순간들이,<br><em>움직이는 러브트리</em>가 되었어요.</h1>
+      <p>사진처럼 반전되어 흩어진 순간들이 물결과 원, 투명한 케이스와 사선의 흐름으로 다시 모입니다. 한 장면을 선택하면 영상과 그때 적어둔 마음이 함께 열립니다.</p>
+    </div>
+    <div class="guide">
+      <span><b>01</b> 보기 방식 선택</span>
+      <span><b>02</b> 마우스·휠로 이동</span>
+      <span><b>03</b> 영상 카드 한 번 눌러 열기</span>
+    </div>
+  </section>
+
+
+  <section class="mode-dock" aria-labelledby="modeDockTitle">
+    <div class="mode-dock-copy">
+      <span>VIEW STYLE</span>
+      <strong id="modeDockTitle">러브트리를 어떤 움직임으로 볼까요?</strong>
+      <small>아래 보기 방식을 누르면 같은 9개의 영상이 서로 다른 러브트리 모양으로 다시 배열됩니다.</small>
+    </div>
+    <div class="mode-tabs" role="tablist" aria-label="러브트리 모션 보기">
+      <button class="mode-tab active" data-mode="wave" type="button"><b>01</b><span>물결 리본</span><small>양끝이 반대로 휘는 가로 흐름</small></button>
+      <button class="mode-tab" data-mode="orbit" type="button"><b>02</b><span>마음 궤도</span><small>마우스에 반응하는 원형 배열</small></button>
+      <button class="mode-tab" data-mode="vinyl" type="button"><b>03</b><span>비닐 케이스</span><small>물을 번지듯 영상을 꺼내기</small></button>
+      <button class="mode-tab" data-mode="cascade" type="button"><b>04</b><span>사선 흐름</span><small>위아래로 흐르는 대각선 배열</small></button>
+    </div>
+  </section>
+
+  <section class="archive" id="archive">
+    <header class="archive-head">
+      <div><h2 id="viewTitle">물결 리본 러브트리</h2><p id="viewSub">상하 반전된 순간들이 일렬로 모인 뒤, 양끝이 물결처럼 휘어집니다.</p></div>
+      <div class="view-status"><i></i><span id="selectedStatus">01번째 순간을 보고 있어요</span></div>
+    </header>
+
+    <section class="stage entering" id="stage" data-mode="wave" aria-label="영상 순간 탐색">
+      <p class="stage-message" id="stageMessage">좌우로 넘기거나 카드를 눌러 영상과 메모를 펼쳐보세요.</p>
+      <div class="orbit-core"><div><strong>마음의 중심</strong><span>09 CONNECTED MOMENTS</span></div></div>
+      <span class="ripple" id="ripple"></span>
+    </section>
+
+    <button class="nav-arrow prev" id="stagePrev" type="button" aria-label="이전 순간">←</button>
+    <button class="nav-arrow next" id="stageNext" type="button" aria-label="다음 순간">→</button>
+
+    <div class="bottom-player">
+      <img class="player-thumb" id="playerThumb" alt="현재 영상">
+      <div class="player-copy"><strong id="playerTitle"></strong><span id="playerSub"></span></div>
+      <button class="control" id="playerPrev" type="button" aria-label="이전">‹</button>
+      <button class="control main" id="playerOpen" type="button" aria-label="영상과 메모 열기">▶</button>
+      <button class="control" id="playerNext" type="button" aria-label="다음">›</button>
+      <div class="progress"><i></i></div>
+      <span class="index" id="playerIndex">01 / 09</span>
+    </div>
+
+    <section class="viewer" id="viewer" aria-label="선택한 영상과 메모">
+      <div class="video-panel" id="videoPanel">
+        <img id="viewerImage" alt="선택한 영상 미리보기">
+        <div class="video-meta">
+          <small id="viewerKicker"></small>
+          <h3 id="viewerTitle"></h3>
+          <p id="viewerSub"></p>
+        </div>
+        <iframe class="video-frame" id="videoFrame" title="LoveTree 영상" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>
+        <button class="video-play" id="videoPlay" type="button" aria-label="영상 재생">▶</button><span class="video-click-label">영상 화면을 누르면 바로 재생</span>
+        <button class="viewer-zone prev" id="viewerPrev" type="button" aria-label="이전 순간"><span>‹</span></button>
+        <button class="viewer-zone next" id="viewerNext" type="button" aria-label="다음 순간"><span>›</span></button>
+        <div class="wipe" id="wipe" aria-hidden="true">
+          <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i>
+        </div>
+      </div>
+      <aside class="memo-panel">
+        <button class="viewer-close" id="viewerClose" type="button" aria-label="닫기">×</button>
+        <span class="memo-kicker" id="memoKicker"></span>
+        <h3 id="memoTitle"></h3>
+        <article class="memo-card">
+          <span class="memo-label">그때 내가 적어둔 마음</span>
+          <p class="memo-text" id="memoText"></p>
+          <div class="tags" id="memoTags"></div>
+        </article>
+        <div class="info-grid">
+          <div><small>기억할 장면</small><strong id="memoTime"></strong></div>
+          <div><small>마음을 남긴 날</small><strong id="memoDate"></strong></div>
+        </div>
+        <p class="viewer-help">영상 화면의 왼쪽과 오른쪽을 눌러도 다음 순간으로 넘어갑니다. 이동할 때 장면이 여러 조각으로 접히며 바뀝니다.</p>
+      </aside>
+    </section>
+  </section>
+
+  <div class="mode-description" id="modeDescription">✦ 가운데 영상은 크게, 양끝은 서로 반대 방향으로 휘어져 <b>계속 좌우로 넘길 수 있어요.</b></div>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const moments = [
+    {id:"ldfmc4lnwoY",title:"처음 마음이 멈춘 장면",memo:"처음 눌러본 영상인데 눈빛과 목소리가 오래 남아서, 그날의 첫 마음으로 저장했어.",mood:"설렘",start:"00:18",end:"00:39",date:"2026.07.30"},
+    {id:"ldfmc4lnwoY",title:"같은 영상을 다시 본 밤",memo:"같은 영상인데 두 번째로 볼 때는 처음 보이지 않던 표정이 보여서 또 다른 순간으로 남겼어.",mood:"여운",start:"01:12",end:"01:34",date:"2026.08.01"},
+    {id:"faILSGYuDUI",title:"말투가 다정했던 인터뷰",memo:"대답하기 전에 잠깐 생각하는 모습과 조용한 말투가 좋아서 몇 번이나 되돌려 봤어.",mood:"다정",start:"00:43",end:"01:02",date:"2026.08.03"},
+    {id:"JU0CLaT3Bfs",title:"무대가 시작되던 순간",memo:"첫 조명이 켜지는 순간 공기가 달라졌고, 화면 너머인데도 심장이 먼저 반응했어.",mood:"벅참",start:"00:27",end:"00:49",date:"2026.08.08"},
+    {id:"s3_uirvnSdI",title:"웃는 얼굴이 오래 남은 날",memo:"무대가 끝난 뒤 자연스럽게 웃는 장면이 더 다정해서 하루 종일 생각났어.",mood:"웃음",start:"01:05",end:"01:24",date:"2026.08.12"},
+    {id:"MaksUMjeGdk",title:"팬을 바라보던 눈빛",memo:"멀리 있는 팬들을 한 사람씩 바라보는 것 같아서 마음이 조용히 따뜻해졌어.",mood:"사랑",start:"00:56",end:"01:17",date:"2026.08.18"},
+    {id:"8WmCiTzmw_U",title:"오늘을 밝혀준 노래",memo:"힘들었던 날 우연히 들은 목소리가 작은 불빛처럼 남아서 오래 간직하고 싶었어.",mood:"위로",start:"02:08",end:"02:31",date:"2026.08.26"},
+    {id:"yj87Vy8GUNg",title:"다시 찾아본 무대 뒤 이야기",memo:"화려한 장면 뒤에 있던 노력과 시간을 알고 나니 같은 영상이 전보다 더 깊게 보였어.",mood:"응원",start:"01:37",end:"01:59",date:"2026.09.02"},
+    {id:"25QJ5FKqDvk",title:"좋아한 시간이 하나가 된 밤",memo:"여러 영상을 이어서 보다 보니 내가 왜 좋아했는지가 하나의 길처럼 보였어.",mood:"고마움",start:"00:32",end:"00:54",date:"2026.09.10"}
+  ];
+
+  const modeCopy = {
+    wave:{
+      title:"물결 리본 러브트리",
+      sub:"상하 반전되어 흩어진 순간들이 일렬로 모인 뒤, 양끝이 반대 방향으로 휘어집니다.",
+      desc:"✦ 가운데 영상은 크게, 양끝은 서로 반대 방향으로 휘어져 <b>계속 좌우로 넘길 수 있어요.</b>",
+      message:"휠·드래그·좌우 버튼으로 물결을 넘겨보세요."
+    },
+    orbit:{
+      title:"마음 궤도 러브트리",
+      sub:"순간들이 원형 궤도를 돌고, 마우스를 움직이면 각 영상이 자유롭게 반응합니다.",
+      desc:"✦ 마우스를 움직이면 궤도가 기울고, 한 장면을 누르면 <b>그 영상과 메모가 중심으로 열려요.</b>",
+      message:"마우스를 움직여 궤도의 깊이와 방향을 바꿔보세요."
+    },
+    vinyl:{
+      title:"투명 비닐 케이스 러브트리",
+      sub:"영상이 투명한 케이스 안에 담겨 있고, 누르면 물결이 번지며 속의 장면이 빠져나옵니다.",
+      desc:"✦ 케이스를 누르면 물이 번지듯 화면이 퍼지고, <b>안쪽 영상이 위로 빠져나와 재생됩니다.</b>",
+      message:"가운데 비닐 케이스를 눌러 안쪽 영상을 꺼내보세요."
+    },
+    cascade:{
+      title:"사선 흐름 러브트리",
+      sub:"영상이 대각선 방향으로 위아래를 오가며 이어지고, 선택한 순간이 가운데로 이동합니다.",
+      desc:"✦ 사선으로 흐르는 영상을 위아래로 넘기며 <b>원하는 순간을 가운데로 가져올 수 있어요.</b>",
+      message:"휠이나 화살표로 사선의 영상을 위아래로 흘려보세요."
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+  const archive = $("archive");
+  const stage = $("stage");
+  const ripple = $("ripple");
+  const cards = [];
+  let active = 0;
+  let mode = "wave";
+  let orbitTiltX = 0;
+  let orbitTiltY = 0;
+  let dragging = false;
+  let dragStartX = 0;
+  let dragMoved = 0;
+  let turning = false;
+
+  function thumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+  function toSeconds(t){ const p=t.split(":").map(Number); return p[0]*60+p[1]; }
+
+  function makeCards(){
+    moments.forEach((m,i)=>{
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "card" + (i%3===1 ? " mirrored" : "");
+      card.dataset.index = i;
+      card.innerHTML = `
+        <span class="card-inner">
+          <img src="${thumb(m.id)}" alt="${m.title}">
+          <span class="card-shade"></span>
+          <span class="card-num">${String(i+1).padStart(2,"0")}</span>
+          <span class="card-copy"><small>${m.mood.toUpperCase()} MOMENT</small><strong>${m.title}</strong></span>
+        </span>`;
+      card.addEventListener("click",e=>{
+        e.stopPropagation();
+        const idx=Number(card.dataset.index);
+        active=idx;
+        layout();
+        updateCurrent();
+
+        if(mode==="vinyl"){
+          showVinylRipple(card,e);
+        }
+
+        openViewer(true);
+      });
+      stage.appendChild(card);
+      cards.push(card);
+    });
+  }
+
+  function relative(i){
+    let d=i-active;
+    const half=Math.floor(moments.length/2);
+    if(d>half)d-=moments.length;
+    if(d<-half)d+=moments.length;
+    return d;
+  }
+
+  function layout(){
+    cards.forEach((card,i)=>{
+      const d=relative(i);
+      card.classList.toggle("active",d===0);
+      card.dataset.edge="";
+      let x=0,y=0,z=0,rx=0,ry=0,rz=0,s=1,opacity=1;
+      if(mode==="wave"){
+        x=d*135;
+        y=-Math.sin(d*.72)*72;
+        if(d<0)y+=Math.abs(d)*7;
+        if(d>0)y-=Math.abs(d)*7;
+        z=-Math.abs(d)*58;
+        ry=d===0?0:(d<0?28:-28);
+        rz=d*2.3;
+        s=d===0?1.36:Math.max(.55,1-Math.abs(d)*.085);
+        opacity=Math.abs(d)>4?0:1;
+        if(d===-4)card.dataset.edge="left";
+        if(d===4)card.dataset.edge="right";
+      }else if(mode==="orbit"){
+        const angle=(d/moments.length)*Math.PI*2-Math.PI/2;
+        const radiusX=330,radiusY=225;
+        x=Math.cos(angle)*radiusX + orbitTiltX*(.25+Math.abs(d)*.025);
+        y=Math.sin(angle)*radiusY + orbitTiltY*(.25+Math.abs(d)*.02);
+        z=Math.sin(angle)*180;
+        ry=-Math.cos(angle)*22 + orbitTiltX*.02;
+        rx=orbitTiltY*.02;
+        rz=Math.cos(angle)*8;
+        s=d===0?1.12:.82 + ((z+180)/360)*.13;
+        opacity=.9;
+      }else if(mode==="vinyl"){
+        x=d*210;
+        y=Math.abs(d)*24;
+        z=-Math.abs(d)*120;
+        ry=d===0?0:(d<0?35:-35);
+        rz=d*3;
+        s=d===0?1.08:Math.max(.68,1-Math.abs(d)*.1);
+        opacity=Math.abs(d)>3?0:1;
+      }else{
+        x=d*155;
+        y=d*72;
+        z=-Math.abs(d)*50;
+        ry=d===0?0:(d<0?19:-19);
+        rz=-10+d*2.4;
+        s=d===0?1.24:Math.max(.58,1-Math.abs(d)*.095);
+        opacity=Math.abs(d)>4?0:1;
+      }
+      card.style.setProperty("--x",`${x}px`);
+      card.style.setProperty("--y",`${y}px`);
+      card.style.setProperty("--z",`${z}px`);
+      card.style.setProperty("--rx",`${rx}deg`);
+      card.style.setProperty("--ry",`${ry}deg`);
+      card.style.setProperty("--rz",`${rz}deg`);
+      card.style.setProperty("--s",s);
+      card.style.opacity=opacity;
+      card.style.zIndex=String(30-Math.abs(d)+(d===0?30:0));
+      card.setAttribute("aria-current",d===0?"true":"false");
+    });
+  }
+
+  function animateEntry(){
+    stage.classList.add("entering");
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        stage.classList.remove("entering");
+        layout();
+      });
+    });
+  }
+
+  function setMode(next){
+    mode=next;
+    stage.dataset.mode=mode;
+    document.querySelectorAll(".mode-tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+    const c=modeCopy[mode];
+    $("viewTitle").textContent=c.title;
+    $("viewSub").textContent=c.sub;
+    $("stageMessage").textContent=c.message;
+    $("modeDescription").innerHTML=c.desc;
+    animateEntry();
+  }
+
+  function move(step){
+    active=(active+step+moments.length)%moments.length;
+    layout();
+    updateCurrent();
+  }
+
+  function updateCurrent(){
+    const m=moments[active];
+    $("selectedStatus").textContent=`${String(active+1).padStart(2,"0")}번째 순간을 보고 있어요`;
+    $("playerThumb").src=thumb(m.id);
+    $("playerTitle").textContent=m.title;
+    $("playerSub").textContent=`${m.mood} · ${m.start} — ${m.end}`;
+    $("playerIndex").textContent=`${String(active+1).padStart(2,"0")} / ${String(moments.length).padStart(2,"0")}`;
+  }
+
+  function showVinylRipple(card,event){
+    const rect=stage.getBoundingClientRect();
+    ripple.style.left=`${event.clientX-rect.left}px`;
+    ripple.style.top=`${event.clientY-rect.top}px`;
+    ripple.classList.remove("go");
+    void ripple.offsetWidth;
+    ripple.classList.add("go");
+    card.classList.add("extracting");
+    setTimeout(()=>card.classList.remove("extracting"),900);
+  }
+
+  function fillViewer(){
+    const m=moments[active];
+    $("viewerImage").src=thumb(m.id);
+    $("viewerKicker").textContent=`${String(active+1).padStart(2,"0")} · ${m.mood.toUpperCase()} MOMENT`;
+    $("viewerTitle").textContent=m.title;
+    $("viewerSub").textContent=`${m.start}부터 ${m.end}까지 기억한 장면`;
+    $("memoKicker").textContent=`LOVETREE NOTE · ${m.mood}`;
+    $("memoTitle").textContent=m.title;
+    $("memoText").textContent=m.memo;
+    $("memoTags").innerHTML=`<span>#${m.mood}</span><span>#영상기록</span><span>#러브트리</span>`;
+    $("memoTime").textContent=`${m.start} — ${m.end}`;
+    $("memoDate").textContent=m.date;
+    stopVideo();
+  }
+
+  function openViewer(autoplay = false){
+    fillViewer();
+    archive.classList.add("viewer-open");
+    if(autoplay){
+      playVideo();
+    }
+  }
+
+  function closeViewer(){
+    archive.classList.remove("viewer-open");
+    stopVideo();
+  }
+
+  function playVideo(){
+    const m=moments[active];
+    const panel=$("videoPanel");
+    if(panel.classList.contains("playing")){stopVideo();return;}
+    $("videoFrame").src=`https://www.youtube-nocookie.com/embed/${m.id}?autoplay=1&start=${toSeconds(m.start)}&rel=0`;
+    panel.classList.add("playing");
+    $("videoPlay").textContent="Ⅱ";
+  }
+
+  function stopVideo(){
+    $("videoFrame").src="";
+    $("videoPanel").classList.remove("playing");
+    $("videoPlay").textContent="▶";
+  }
+
+  function turnViewer(step){
+    if(turning)return;
+    turning=true;
+    const current=thumb(moments[active].id);
+    const wipe=$("wipe");
+    wipe.querySelectorAll("i").forEach(x=>x.style.backgroundImage=`url('${current}')`);
+    wipe.className=`wipe go ${step>0?"next":"prev"}`;
+    setTimeout(()=>{
+      active=(active+step+moments.length)%moments.length;
+      layout();updateCurrent();fillViewer();
+    },310);
+    setTimeout(()=>{wipe.className="wipe";turning=false;},820);
+  }
+
+  document.querySelectorAll(".mode-tab").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+  $("stagePrev").addEventListener("click",()=>move(-1));
+  $("stageNext").addEventListener("click",()=>move(1));
+  $("playerPrev").addEventListener("click",()=>archive.classList.contains("viewer-open")?turnViewer(-1):move(-1));
+  $("playerNext").addEventListener("click",()=>archive.classList.contains("viewer-open")?turnViewer(1):move(1));
+  $("playerOpen").addEventListener("click",()=>openViewer(true));
+  $("viewerClose").addEventListener("click",closeViewer);
+  $("videoPlay").addEventListener("click",e=>{e.stopPropagation();playVideo();});
+  $("videoPanel").addEventListener("click",e=>{
+    if(e.target.closest(".viewer-zone") || e.target.closest("iframe")) return;
+    playVideo();
+  });
+  $("viewerPrev").addEventListener("click",e=>{e.stopPropagation();turnViewer(-1);});
+  $("viewerNext").addEventListener("click",e=>{e.stopPropagation();turnViewer(1);});
+
+  stage.addEventListener("wheel",e=>{
+    e.preventDefault();
+    if(Math.abs(e.deltaY)+Math.abs(e.deltaX)<8)return;
+    move((e.deltaY||e.deltaX)>0?1:-1);
+  },{passive:false});
+
+  stage.addEventListener("pointerdown",e=>{
+    dragging=true;dragStartX=e.clientX;dragMoved=0;stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove",e=>{
+    if(mode==="orbit"){
+      const r=stage.getBoundingClientRect();
+      orbitTiltX=(e.clientX-r.left-r.width/2)/r.width*180;
+      orbitTiltY=(e.clientY-r.top-r.height/2)/r.height*130;
+      layout();
+    }
+    if(dragging)dragMoved=e.clientX-dragStartX;
+  });
+  stage.addEventListener("pointerup",()=>{
+    if(dragging&&Math.abs(dragMoved)>45)move(dragMoved<0?1:-1);
+    dragging=false;dragMoved=0;
+  });
+  stage.addEventListener("pointerleave",()=>{
+    if(mode==="orbit"){orbitTiltX*=.35;orbitTiltY*=.35;layout();}
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowLeft")archive.classList.contains("viewer-open")?turnViewer(-1):move(-1);
+    if(e.key==="ArrowRight")archive.classList.contains("viewer-open")?turnViewer(1):move(1);
+    if(e.key==="Escape"&&archive.classList.contains("viewer-open"))closeViewer();
+    if(e.key===" "&&archive.classList.contains("viewer-open")){e.preventDefault();playVideo();}
+  });
+
+  makeCards();
+  updateCurrent();
+  animateEntry();
+})();
+</script>
+</body>
+</html>
