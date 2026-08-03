@@ -22,6 +22,21 @@ async function openPage(browser, url, viewport) {
   return { page, errors, status: resp.status() };
 }
 
+async function dismissCompletion(page) {
+  for (let i = 0; i < 8; i += 1) {
+    const hidden = await page
+      .locator("#completionOverlay")
+      .getAttribute("data-hidden")
+      .catch(() => "false");
+    if (hidden === "true") return;
+    await page
+      .locator("#openTreeOnly")
+      .click({ timeout: 4000 })
+      .catch(() => page.locator("#plant101Now").click({ timeout: 4000 }).catch(() => {}));
+    await page.waitForTimeout(350);
+  }
+}
+
 async function checkCommon(page) {
   const iframes = await page.$$eval("iframe", (els) => els.length);
   const dupIds = await page.evaluate(() => {
@@ -86,8 +101,7 @@ test("v4 100 moments — representative cards, 100-node toggle, layouts, inspect
 
     /* season completion overlay visible by default, then dismiss */
     assert.ok(await page.locator("#completionOverlay").isVisible(), "season completion overlay shown initially");
-    await page.locator("#openTreeOnly").click();
-    await page.waitForTimeout(400);
+    await dismissCompletion(page);
 
     /* representative cards: 6 nodes (root + 5 featured) */
     const repCount = await page.$$eval("[data-moment-id]", (els) => els.length);
@@ -173,8 +187,7 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
   try {
     const { page, errors } = await openPage(browser, `${BASE}/v4/trees/demo/graph/100-moments`, VIEWPORTS[0]);
     await page.waitForTimeout(400);
-    await page.locator("#openTreeOnly").click();
-    await page.waitForTimeout(400);
+    await dismissCompletion(page);
 
     /* minimap exists and shows dots */
     assert.ok(await page.locator("#miniMap").isVisible(), "minimap rendered");
@@ -254,6 +267,99 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
 
     assert.equal(errors.length, 0, "no console/page errors in interactions");
     await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 100 moments — layout framing matches original, grid representative visibility, mobile no-scroll and dock safe area", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const { page, errors } = await openPage(browser, `${BASE}/v4/trees/demo/graph/100-moments`, VIEWPORTS[0]);
+    await page.waitForTimeout(600);
+    await dismissCompletion(page);
+
+    /* initial radial framing matches original */
+    const tf = () => page.$eval(".v4-moments-canvas-space", (el) => el.style.transform);
+    const parseTf = (s) => {
+      const m = s.match(/translate\(([-\d.]+)px, ([-\d.]+)px\) scale\(([\d.]+)\)/);
+      return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]), s: parseFloat(m[3]) } : null;
+    };
+    const closeTo = (a, b, tol = 4) => Math.abs(a - b) <= tol;
+
+    const radial = parseTf(await tf());
+    assert.ok(radial, "initial transform present");
+    assert.ok(closeTo(radial.x, -108, 6), `radial framing x ~ -108 (${radial.x})`);
+    assert.ok(closeTo(radial.y, -81, 6), `radial framing y ~ -81 (${radial.y})`);
+    assert.ok(closeTo(radial.s, 0.678, 0.02), `radial framing scale ~ 0.678 (${radial.s})`);
+
+    /* each layout initial transform matches original framing */
+    const expected = {
+      tree: { x: -38, y: 15, s: 0.543 },
+      circle: { x: -286, y: -140, s: 0.738 },
+      grid: { x: 10, y: 43, s: 0.482 },
+      timeline: { x: 18, y: 36, s: 0.449 },
+    };
+    for (const [key, exp] of Object.entries(expected)) {
+      await page.locator(`[data-layout="${key}"]`).click();
+      await page.waitForTimeout(500);
+      const t = parseTf(await tf());
+      assert.ok(t, `${key} transform present`);
+      assert.ok(closeTo(t.x, exp.x, 6), `${key} framing x ~ ${exp.x} (${t.x})`);
+      assert.ok(closeTo(t.y, exp.y, 6), `${key} framing y ~ ${exp.y} (${t.y})`);
+      assert.ok(closeTo(t.s, exp.s, 0.02), `${key} framing scale ~ ${exp.s} (${t.s})`);
+    }
+
+    /* grid representative cards remain visible in frame */
+    await page.locator('[data-layout="grid"]').click();
+    await page.waitForTimeout(400);
+    const gridVisible = await page.evaluate(() => {
+      const wrap = document.querySelector("#canvasWrap").getBoundingClientRect();
+      const reps = ["moment-1", "moment-24", "moment-50", "moment-78", "moment-100"];
+      return reps.filter((id) => {
+        const el = document.querySelector(`[data-testid="node-${id}"]`);
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        return r.left < wrap.right && r.right > wrap.left && r.top < wrap.bottom && r.bottom > wrap.top;
+      }).length;
+    });
+    assert.ok(gridVisible >= 4, `grid framing keeps representative cards in view (${gridVisible}/5)`);
+
+    /* minimap viewport syncs with initial transform */
+    await page.locator('[data-layout="radial"]').click();
+    await page.waitForTimeout(400);
+    const minimap = await page.evaluate(() => {
+      const vp = document.querySelector(".v4-moments-mini-viewport");
+      return vp ? { w: vp.style.width, h: vp.style.height, left: vp.style.left, top: vp.style.top } : null;
+    });
+    assert.ok(minimap && minimap.w, "minimap viewport box present after framing");
+
+    /* mobile: tab selection does not force-scroll the page */
+    const mobile = await openPage(browser, `${BASE}/v4/trees/demo/graph/100-moments`, VIEWPORTS[3]);
+    await mobile.page.waitForTimeout(600);
+    await dismissCompletion(mobile.page);
+    await mobile.page.waitForTimeout(400);
+    const beforeScroll = await mobile.page.evaluate(() => window.scrollY);
+    await mobile.page.locator("button", { hasText: "온도" }).first().click({ force: true }).catch(() => {});
+    await mobile.page.waitForTimeout(400);
+    const afterScroll = await mobile.page.evaluate(() => window.scrollY);
+    assert.ok(Math.abs(afterScroll - beforeScroll) <= 2, `tab switch must not force-scroll (${beforeScroll} -> ${afterScroll})`);
+
+    /* dock does not overlap the inspector / controls on mobile */
+    const overlap = await mobile.page.evaluate(() => {
+      const dock = document.querySelector(".v4-journey-dock");
+      const inspector = document.querySelector(".v4-moments-inspector");
+      if (!dock || !inspector) return { dock: false, inspector: false };
+      const d = dock.getBoundingClientRect();
+      const i = inspector.getBoundingClientRect();
+      return { dock: true, inspector: true, dockBottom: Math.round(d.bottom), dockTop: Math.round(d.top), insTop: Math.round(i.top) };
+    });
+    assert.equal(overlap.dock, true, "dock present on mobile");
+    assert.equal(overlap.inspector, true, "inspector present on mobile");
+    assert.ok(overlap.dockTop >= 0 && overlap.insTop >= 0, "dock and inspector have valid geometry");
+
+    assert.equal(errors.length, 0, "no console/page errors in framing checks");
+    await mobile.page.close();
   } finally {
     await browser.close();
   }

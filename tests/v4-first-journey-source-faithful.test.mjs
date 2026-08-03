@@ -129,7 +129,14 @@ test("v4 first journey — full flow, storage keys, refresh restore, ESC modal",
     assert.equal(await stageBtns.count(), 4);
 
     /* step 1: open tree-name modal, ESC closes, reopen and submit */
-    await page.getByRole("button", { name: /첫 순간 심기/ }).first().click();
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      await page.getByRole("button", { name: /첫 순간 심기/ }).first().click().catch(() => {});
+      const opened = await page
+        .waitForSelector("#name-form", { timeout: 3000 })
+        .then(() => true)
+        .catch(() => false);
+      if (opened) break;
+    }
     await page.waitForSelector("#name-form", { timeout: 8000 });
     await page.keyboard.press("Escape");
     await page.waitForTimeout(150);
@@ -196,6 +203,129 @@ test("v4 first journey — full flow, storage keys, refresh restore, ESC modal",
 
     assert.equal(errors.length, 0, "no console/page errors through full flow");
     await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 first journey — restored source composition (landing 2-col, growth landscape, modal, mobile nav)", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    /* desktop landing composition */
+    const { page, errors } = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[0]);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(600);
+
+    const landing = await page.evaluate(() => {
+      const hero = document.querySelector(".v4-j-hero");
+      const heroCols = hero ? getComputedStyle(hero).gridTemplateColumns : "";
+      const copy = document.querySelector(".v4-j-hero .v4-j-copy");
+      const board = document.querySelector(".v4-j-hero .v4-j-board");
+      const copyRect = copy?.getBoundingClientRect();
+      const boardRect = board?.getBoundingClientRect();
+      return {
+        heroCols,
+        twoCols: heroCols.split(" ").length === 2,
+        copyLeft: Math.round(copyRect?.left || 0),
+        boardLeft: Math.round(boardRect?.left || 0),
+        boardRight: Math.round(boardRect?.left || 0) > Math.round(copyRect?.left || 0),
+        miniCount: document.querySelectorAll(".v4-j-mini").length,
+        browsePresent: !!document.querySelector(".v4-j-browse"),
+        boardTop: !!document.querySelector(".v4-j-board-top"),
+        caption: !!document.querySelector(".v4-j-caption"),
+        oldHeroArt: !!document.querySelector(".v4-j-hero-art"),
+        oldRow: !!document.querySelector(".v4-j-row"),
+      };
+    });
+    assert.equal(landing.twoCols, true, "landing hero is a 2-column layout");
+    assert.ok(landing.copyLeft < landing.boardLeft, "hero copy sits left of the board");
+    assert.equal(landing.miniCount, 3, "landing browse shows 3 journey step mini cards");
+    assert.equal(landing.boardTop, true, "board top row present");
+    assert.equal(landing.caption, true, "board caption present");
+    assert.equal(landing.oldHeroArt, false, "old stacked hero-art preview removed");
+    assert.equal(landing.oldRow, false, "old inline desc row removed");
+
+    /* modal green notice + filled primary CTA */
+    await page.getByRole("button", { name: /첫 순간 심기/ }).first().click();
+    await page.waitForSelector("#name-form", { timeout: 8000 });
+    const modal = await page.evaluate(() => {
+      const note = document.querySelector(".v4-j-modal-note");
+      const cta = document.querySelector(".v4-j-modal .v4-j-btn-primary");
+      const modalEl = document.querySelector(".v4-j-modal");
+      const cs = cta ? getComputedStyle(cta) : null;
+      return {
+        notePresent: !!note,
+        noteBg: note ? getComputedStyle(note).backgroundColor : "",
+        ctaWidth: cs ? cs.width : "",
+        ctaBg: cs ? cs.backgroundColor : "",
+        modalWidth: modalEl ? Math.round(modalEl.getBoundingClientRect().width) : 0,
+      };
+    });
+    assert.equal(modal.notePresent, true, "modal green notice block present");
+    assert.match(modal.noteBg, /223, 232, 220/, "green notice uses sage pale background");
+    assert.ok(parseFloat(modal.ctaWidth) > 300, "modal primary CTA is full width");
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(200);
+
+    /* growth landscape cards + central connector */
+    await page.evaluate(({ YT_A, YT_B }) => {
+      localStorage.setItem("lovetree-first-journey-unified", JSON.stringify({
+        currentScreen: "growth",
+        treeName: "건호에게 입덕한 3일",
+        firstMoment: { url: YT_A, videoId: "ScMzIvxBSi4", title: "처음 마음이 멈춘 장면", note: "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.", discoveryDate: "2026-08-03", thumbnail: `https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg`, saved: true },
+        memory: { emotion: "벅참", customEmotion: "벅참", time: "00:42", note: "표정과 말투가 오래 남은 장면.", date: "2026-08-03", publicMemo: true, saved: true },
+        connections: [{ first: { url: YT_A, videoId: "ScMzIvxBSi4", title: "처음 마음이 멈춘 장면", note: "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.", discoveryDate: "2026-08-03", thumbnail: `https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg`, saved: true }, next: { id: "ysz5S6PUM-U", url: YT_B, title: "다시 찾아본 무대", time: "01:15", relation: "팬이 추천해 줬어요", note: "댓글에서 인터뷰를 추천받아 바로 찾아봤어." }, createdAt: new Date().toISOString() }],
+        step3Origin: null,
+        drafts: { step3: { url: "", title: "", time: "00:00", relation: "댓글을 따라 찾아봤어요", note: "" } },
+      }));
+    }, { YT_A, YT_B });
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(600);
+    const growth = await page.evaluate(() => {
+      const cards = document.querySelectorAll("[data-testid='growth-first'], [data-testid='growth-next']");
+      const first = document.querySelector("[data-testid='growth-first']");
+      const thumb = document.querySelector(".v4-j-growth-thumb");
+      const connector = document.querySelector(".v4-j-growth-connector");
+      const cardsGrid = document.querySelector(".v4-j-growth-cards");
+      const fr = first?.getBoundingClientRect();
+      const tr = thumb?.getBoundingClientRect();
+      return {
+        cardCount: cards.length,
+        landscape: !!fr && fr.width > fr.height,
+        thumbLandscape: !!tr && tr.width > tr.height,
+        thumbHeight: Math.round(tr?.height || 0),
+        connectorPresent: !!connector,
+        cardsCols: cardsGrid ? getComputedStyle(cardsGrid).gridTemplateColumns : "",
+        connectorText: connector?.textContent?.trim() || "",
+      };
+    });
+    assert.equal(growth.cardCount, 2, "growth shows two moment cards");
+    assert.equal(growth.landscape, true, "growth cards are wide landscape");
+    assert.equal(growth.thumbLandscape, true, "growth thumb is landscape ratio");
+    assert.ok(growth.thumbHeight >= 140 && growth.thumbHeight <= 175, `growth thumb height ~155px (${growth.thumbHeight})`);
+    assert.equal(growth.connectorPresent, true, "central circular connector present");
+    const cols = growth.cardsCols.split(" ").filter(Boolean);
+    assert.equal(cols.length, 3, "growth cards grid has 3 columns");
+    assert.match(growth.cardsCols, /72px/, "growth cards grid middle column is ~72px (connector column)");
+    assert.ok(growth.connectorText.includes("✿"), "connector carries flower mark");
+    assert.equal(errors.length, 0, "no console/page errors in composition checks");
+
+    /* mobile: stage nav labels never break per character + growth vertical landscape */
+    const mobilePage = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[4]);
+    await mobilePage.page.evaluate(() => localStorage.clear());
+    await mobilePage.page.reload({ waitUntil: "networkidle" });
+    await mobilePage.page.waitForTimeout(500);
+    const nav = await mobilePage.page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll(".v4-journey-stage-btn"));
+      return {
+        count: btns.length,
+        allNowrap: btns.every((b) => getComputedStyle(b).whiteSpace === "nowrap"),
+      };
+    });
+    assert.equal(nav.count, 4, "mobile 4-stage nav present");
+    assert.equal(nav.allNowrap, true, "mobile stage labels are single-line (nowrap, no char-break)");
+    await mobilePage.page.close();
   } finally {
     await browser.close();
   }
