@@ -103,6 +103,15 @@ function youtubeId(value: string) {
   }
 }
 
+function getSavedWorkspace() {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(localStorage.getItem("lovetree-v4-workspace") || "null") as { moments?: V4Moment[]; selectedId?: string } | null;
+  } catch {
+    return null;
+  }
+}
+
 function curvePath(fromX: number, fromY: number, toX: number, toY: number) {
   const distance = Math.max(80, Math.abs(toX - fromX) * 0.46);
   return `M ${fromX} ${fromY} C ${fromX + distance} ${fromY}, ${toX - distance} ${toY}, ${toX} ${toY}`;
@@ -118,12 +127,19 @@ export default function V4TreeWorkspace() {
     originX: number;
     originY: number;
   } | null>(null);
-  const [moments, setMoments] = useState<V4Moment[]>(INITIAL_MOMENTS);
-  const [selectedId, setSelectedId] = useState("m1");
+  const saved = getSavedWorkspace();
+  const [moments, setMoments] = useState<V4Moment[]>(() => {
+    if (saved?.moments?.length) return saved.moments;
+    return INITIAL_MOMENTS;
+  });
+  const [selectedId, setSelectedId] = useState<string>(() => {
+    if (saved?.selectedId && saved.moments?.some((m) => m.id === saved.selectedId)) return saved.selectedId;
+    if (saved?.moments?.length) return saved.moments[0].id;
+    return "m1";
+  });
   const [zoom, setZoom] = useState(0.9);
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
   const [toast, setToast] = useState("");
 
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=jNQXAC9IVRw");
@@ -134,23 +150,8 @@ export default function V4TreeWorkspace() {
   const [relation, setRelation] = useState(RELATIONS[0]);
 
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("lovetree-v4-workspace") || "null") as { moments?: V4Moment[]; selectedId?: string } | null;
-      if (stored?.moments?.length) {
-        setMoments(stored.moments);
-        setSelectedId(stored.selectedId && stored.moments.some((moment) => moment.id === stored.selectedId) ? stored.selectedId : stored.moments[0].id);
-      }
-    } catch {
-      // The deterministic source-faithful fixture remains available.
-    } finally {
-      setHydrated(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
     localStorage.setItem("lovetree-v4-workspace", JSON.stringify({ moments, selectedId }));
-  }, [hydrated, moments, selectedId]);
+  }, [moments, selectedId]);
 
   useEffect(() => {
     const onFullscreen = () => {

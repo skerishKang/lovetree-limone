@@ -21,22 +21,21 @@ const ISSUES = [
   { date: "2026.06.20", title: "공개 범위 다시 정리", detail: "개인 메모와 공개 카드를 분리했어요." },
 ];
 
-export default function V4TreeState() {
-  const [treeState, setTreeState] = useState<(typeof TREE_STATES)[number]["id"]>("resting");
-  const [visibility, setVisibility] = useState<(typeof VISIBILITY)[number]["id"]>("link");
-  const [privateNote, setPrivateNote] = useState("지금의 감정은 공개하지 않고 나만 보는 기록으로 남긴다. 나무를 지우지 말고, 충분히 쉬었다가 돌아오기.");
-  const [toast, setToast] = useState("");
+function getSavedTreeState() {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(localStorage.getItem("lovetree-v4-tree-state") || "null") as { treeState?: (typeof TREE_STATES)[number]["id"]; visibility?: (typeof VISIBILITY)[number]["id"]; privateNote?: string } | null;
+  } catch {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("lovetree-v4-tree-state") || "null") as { treeState?: typeof treeState; visibility?: typeof visibility; privateNote?: string } | null;
-      if (saved?.treeState) setTreeState(saved.treeState);
-      if (saved?.visibility) setVisibility(saved.visibility);
-      if (saved?.privateNote) setPrivateNote(saved.privateNote);
-    } catch {
-      // Keep deterministic state fixture.
-    }
-  }, []);
+export default function V4TreeState() {
+  const saved = getSavedTreeState();
+  const [treeState, setTreeState] = useState<(typeof TREE_STATES)[number]["id"]>(() => saved?.treeState ?? "resting");
+  const [visibility, setVisibility] = useState<(typeof VISIBILITY)[number]["id"]>(() => saved?.visibility ?? "link");
+  const [privateNote, setPrivateNote] = useState(() => saved?.privateNote ?? "지금의 감정은 공개하지 않고 나만 보는 기록으로 남긴다. 나무를 지우지 말고, 충분히 쉬었다가 돌아오기.");
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
     if (!toast) return;

@@ -16,22 +16,21 @@ const LEAVES = [
   ["79%", "43%", "-18deg", "is-gold"], ["41%", "68%", "22deg", ""], ["68%", "72%", "9deg", "is-rose"],
 ] as const;
 
-export default function V4RestFlow() {
-  const [status, setStatus] = useState<"active" | "resting">("active");
-  const [note, setNote] = useState("지금은 새로운 순간을 더하기보다, 이미 쌓인 마음을 천천히 돌아보고 싶어요.");
-  const [returnNote, setReturnNote] = useState("다시 마음이 움직이는 날, 이 자리에서 이어갈게요.");
-  const [toast, setToast] = useState("");
+function getSavedRestState() {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(localStorage.getItem("lovetree-v4-rest-state") || "null") as { status?: "active" | "resting"; note?: string; returnNote?: string } | null;
+  } catch {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("lovetree-v4-rest-state") || "null") as { status?: "active" | "resting"; note?: string; returnNote?: string } | null;
-      if (stored?.status) setStatus(stored.status);
-      if (stored?.note) setNote(stored.note);
-      if (stored?.returnNote) setReturnNote(stored.returnNote);
-    } catch {
-      // Keep the deterministic lifecycle fixture.
-    }
-  }, []);
+export default function V4RestFlow() {
+  const saved = getSavedRestState();
+  const [status, setStatus] = useState<"active" | "resting">(() => saved?.status ?? "active");
+  const [note, setNote] = useState(() => saved?.note ?? "지금은 새로운 순간을 더하기보다, 이미 쌓인 마음을 천천히 돌아보고 싶어요.");
+  const [returnNote, setReturnNote] = useState(() => saved?.returnNote ?? "다시 마음이 움직이는 날, 이 자리에서 이어갈게요.");
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
     if (!toast) return;

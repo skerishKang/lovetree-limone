@@ -61,6 +61,7 @@ export function V4FreeGraph() {
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const dragRef = useRef<{ id: string; pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
+  const edgeIdRef = useRef(1000);
 
   const selected = nodes.find((node) => node.id === selectedId) ?? nodes[0];
 
@@ -88,7 +89,8 @@ export function V4FreeGraph() {
       return;
     }
     if (!connectFrom || connectFrom === nodeId) return;
-    const id = `edge-${Date.now()}`;
+    edgeIdRef.current += 1;
+    const id = `edge-${edgeIdRef.current}`;
     setEdges((current) => [...current, { id, from: connectFrom, to: nodeId, relation: "직접 연결한 순간" }]);
     setSelectedEdge(id);
     setConnectFrom(null);
@@ -306,7 +308,7 @@ export function V4LoveNebula() {
             type="button"
             aria-label={`${point.group.id} 순간 ${point.index + 1}`}
             key={point.index}
-            style={{ left: `${point.x}%`, top: `${point.y}%`, "--point-size": `${point.size}px`, "--point-color": point.group.color, "--point-opacity": cluster === "전체" || cluster === point.group.id ? point.opacity : .06 } as CSSProperties}
+            style={{ left: `${Number(point.x).toFixed(2)}%`, top: `${Number(point.y).toFixed(2)}%`, "--point-size": `${point.size}px`, "--point-color": point.group.color, "--point-opacity": Number(cluster === "전체" || cluster === point.group.id ? point.opacity : .06).toFixed(4) } as CSSProperties}
             onClick={() => setSelectedIndex(point.index)}
           />
         ))}

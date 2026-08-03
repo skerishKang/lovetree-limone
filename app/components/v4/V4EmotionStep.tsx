@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 
 const EMOTIONS = ["설렘", "궁금함", "따뜻함", "벅참", "위로", "그리움"] as const;
 
+function getSavedDiscovery(): DiscoveryRecord | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return JSON.parse(localStorage.getItem("lovetree-v4-discovery") || "null") as DiscoveryRecord | null;
+  } catch {
+    return null;
+  }
+}
+
 function parseTime(value: string) {
   const match = value.trim().match(/^(\d{1,3}):(\d{2})$/);
   if (!match) return null;
@@ -30,13 +39,17 @@ interface DiscoveryRecord {
 
 export default function V4EmotionStep() {
   const router = useRouter();
-  const [discovery, setDiscovery] = useState<DiscoveryRecord>({
-    treeName: "주연에게 마음이 멈춘 순간들",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    videoId: "dQw4w9WgXcQ",
-    title: "처음 마음이 멈춘 장면",
-    note: "우연히 보게 됐는데, 하루 종일 이 장면이 생각났어요.",
-    date: "2026-07-28",
+  const savedDiscovery = getSavedDiscovery();
+  const [discovery, setDiscovery] = useState<DiscoveryRecord>(() => {
+    const base: DiscoveryRecord = {
+      treeName: "주연에게 마음이 멈춘 순간들",
+      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      videoId: "dQw4w9WgXcQ",
+      title: "처음 마음이 멈춘 장면",
+      note: "우연히 보게 됐는데, 하루 종일 이 장면이 생각났어요.",
+      date: "2026-07-28",
+    };
+    return savedDiscovery ? { ...base, ...savedDiscovery } : base;
   });
   const [time, setTime] = useState("01:30");
   const [emotion, setEmotion] = useState<(typeof EMOTIONS)[number]>("설렘");
@@ -46,18 +59,6 @@ export default function V4EmotionStep() {
   const [publicMemo, setPublicMemo] = useState(false);
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState("");
-
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("lovetree-v4-discovery") || "null") as DiscoveryRecord | null;
-      if (saved) {
-        setDiscovery((current) => ({ ...current, ...saved }));
-        if (saved.date) setDate(saved.date);
-      }
-    } catch {
-      // Fixture fallback remains visible when stored preview data is malformed.
-    }
-  }, []);
 
   useEffect(() => {
     if (!toast) return;

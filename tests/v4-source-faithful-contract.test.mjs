@@ -66,7 +66,7 @@ test("V4 manifest covers every one of the 23 supplied UI HTML sources", async ()
   for (const filename of SOURCE_FILES) {
     assert.match(manifest, new RegExp(filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${filename} must be present in the V4 source manifest`);
   }
-  const sourceFileEntries = manifest.match(/sourceFile:/g) ?? [];
+  const sourceFileEntries = manifest.match(/sourceFile:\s*"/g) ?? [];
   assert.equal(sourceFileEntries.length, 23, "manifest must contain exactly 23 source entries");
 });
 

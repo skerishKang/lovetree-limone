@@ -72,7 +72,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/rest",
     role: "삭제하지 않고 쉬기·돌아오기",
     preserve: ["active/resting 전환", "기존 기록 보존", "휴식 메모", "복귀 메모", "조용해지는 시각 상태"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "tree-pause-issue-state-v1",
@@ -81,7 +81,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/state",
     role: "이슈 순간·트리 상태·공개 범위 분리",
     preserve: ["상태와 공개 범위 분리", "개인 메모 비공개", "이슈 순간 보존", "휴식은 삭제가 아님"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "community-discovery-v2",
@@ -90,7 +90,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/community",
     role: "공개 트리 검색·필터·상세 탐색",
     preserve: ["검색·감정 필터·정렬", "빠른 비교", "큰 미리보기", "전체 트리 오버레이", "팬·줌"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "node-graph-prototype",
@@ -99,7 +99,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/graph",
     role: "고급 연결 그래프 편집",
     preserve: ["노드 드래그", "연결 핸들", "시작·종료 시점", "미니맵", "팬·줌", "영상 모달"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "obsidian-graph1",
@@ -108,7 +108,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/map",
     role: "검색·필터 중심 관계 지도",
     preserve: ["감정 필터", "검색", "연결 모드", "레이아웃 전환", "검사 패널"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "love-nebula",
@@ -117,7 +117,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/nebula",
     role: "대규모 감정 성운 조망",
     preserve: ["100·300·1000 밀도", "감정 클러스터", "성운·꽃망울·나선", "선택 상세", "팬·줌"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "juyeon-timeline",
@@ -126,7 +126,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/timeline",
     role: "날짜 중심 연혁",
     preserve: ["날짜 챕터", "연혁 트리", "날짜 띠", "영상 그래프", "상세 패널 동기화"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "person-albums",
@@ -135,7 +135,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/subjects",
     role: "사람·대상별 앨범 라이브러리",
     preserve: ["검색", "사람 필터", "요약 통계", "사람 카드", "선택 트리", "앨범 복귀"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "motion-archive",
@@ -144,7 +144,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/subjects/demo/motion",
     role: "네 가지 모션 아카이브",
     preserve: ["물결 리본", "마음 궤도", "비닐 케이스", "사선 흐름", "클릭 재생 상세", "이전·다음 동기화"],
-    status: "planned",
+    status: "implemented",
     separatelySupplied: true,
   },
   {
@@ -154,7 +154,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/subjects/demo/orbit",
     role: "3D 액체 궤도 영상 갤러리",
     preserve: ["wave·orbit·free·diagonal", "드래그·휠·키보드", "액체 확산", "비닐 케이스 개봉", "영상·메모 결합"],
-    status: "planned",
+    status: "implemented",
     separatelySupplied: true,
   },
   {
@@ -164,7 +164,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/subjects/demo/accordion",
     role: "접히는 아코디언 앨범",
     preserve: ["3D 서가", "앨범 열기", "아코디언 목록", "영상 뷰어", "상·하 플레이어 동기화"],
-    status: "planned",
+    status: "implemented",
     separatelySupplied: true,
   },
   {
@@ -174,7 +174,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/subjects/demo/folding",
     role: "사람별 책을 펼치는 몰입 앨범",
     preserve: ["사람 서가", "표지 폭발·접힘", "트랙 선택", "비디오 페이지", "메모 페이지", "영상 종료 처리"],
-    status: "planned",
+    status: "implemented",
     separatelySupplied: true,
   },
   {
@@ -184,7 +184,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/celebrate/300",
     role: "300번째 순간 완성 축하",
     preserve: ["트리·심장·마음꽃·기억은하", "성장 재생", "순간 팝오버", "완료 모달", "300번째 심기"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "aurora-particle-heart",
@@ -193,7 +193,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/celebrate/aurora",
     role: "오로라 입자 심장",
     preserve: ["하트·궤도·꽃·은하", "에너지 슬라이더", "팔레트", "입자 폭발"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "rainbow-memory-canopy",
@@ -202,7 +202,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/celebrate/canopy",
     role: "무지개 기억 수관",
     preserve: ["범주별 포커스", "성장 재생", "진행 탐색", "팬·줌", "다시 자라기"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "purple-bloom-graph",
@@ -211,7 +211,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/celebrate/bloom",
     role: "보랏빛 마음꽃",
     preserve: ["꽃잎 선택", "상세 패널", "진행 재생", "개화 버튼", "맞춤"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "growing-tree-300-plus-freegraph",
@@ -220,7 +220,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/growth/300-plus",
     role: "300개 이후 자유 성장",
     preserve: ["301+ 실제 연결", "자유 드래그", "미니맵", "전체화면 추가", "500·750·1000 표시"],
-    status: "planned",
+    status: "implemented",
   },
   {
     id: "growing-tree-season-archive",
@@ -229,7 +229,7 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     route: "/v4/trees/demo/seasons",
     role: "한 트리·여러 시즌 아카이브",
     preserve: ["시즌 1 보호", "보관은 종료가 아님", "301+ 계속 성장", "다음 시즌 이름·날짜·문장·테마", "대표 기억 연결"],
-    status: "planned",
+    status: "implemented",
   },
 ] as const;
 

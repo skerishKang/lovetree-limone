@@ -137,6 +137,7 @@
 .v4-tree-panel,
 .v4-composer-panel {
   min-height: 760px;
+  max-width: 100%;
   border: 1px solid rgba(119, 91, 82, 0.17);
   border-radius: 26px;
   background: rgba(255, 253, 249, 0.82);
@@ -186,6 +187,7 @@
   max-height: 687px;
   overflow: auto;
   padding: 13px;
+  max-width: 100%;
 }
 
 .v4-diary-entry {
@@ -260,6 +262,7 @@
   gap: 7px;
   padding: 0 16px;
   border-bottom: 1px solid rgba(119, 91, 82, 0.12);
+  max-width: 100%;
 }
 
 .v4-tree-toolbar-copy {
@@ -292,7 +295,9 @@
 .v4-tree-viewport {
   position: relative;
   height: 687px;
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
   touch-action: none;
   background:
     linear-gradient(rgba(89, 107, 76, 0.055) 1px, transparent 1px),
@@ -322,6 +327,7 @@
 .v4-tree-stage {
   position: relative;
   width: 1120px;
+  min-width: 1120px;
   height: 680px;
   transform-origin: 0 0;
   transition: transform 180ms ease;
@@ -708,7 +714,7 @@
 
   .v4-composer-form {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0 18px;
     max-height: none;
   }
@@ -759,10 +765,12 @@
     gap: 9px;
     max-height: none;
     overflow-x: auto;
+    max-width: 100%;
   }
 
   .v4-diary-entry {
     flex: 0 0 220px;
+    max-width: 220px;
   }
 
   .v4-tree-viewport {
@@ -794,6 +802,27 @@
 
   .v4-tree-viewport {
     height: 560px;
+  }
+
+  .v4-composer-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .v4-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .v4-tree-viewport {
+    max-width: 100%;
+    overflow-x: auto;
+    width: 100%;
+  }
+  .v4-tree-stage {
+    min-width: 1120px;
+  }
+  .v4-workspace-app {
+    overflow-x: hidden;
   }
 }
 

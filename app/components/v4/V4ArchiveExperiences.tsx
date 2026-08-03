@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 interface ArchiveMoment {
@@ -107,7 +107,7 @@ export function V4MotionArchive() {
             <div className="v4-motion-core"><div><strong>주연의<br />마음 궤도</strong><small>{MOMENTS.length} MOMENTS</small></div></div>
             {MOMENTS.map((item, index) => {
               const p = motionTransform(mode, index, active, MOMENTS.length);
-              const style = { "--x": `${p.x}px`, "--y": `${p.y}px`, "--z": `${p.z}px`, "--rx": `${p.rx}deg`, "--ry": `${p.ry}deg`, "--rz": `${p.rz}deg`, "--s": p.s } as CSSProperties;
+              const style = { "--x": `${Number(p.x).toFixed(2)}px`, "--y": `${Number(p.y).toFixed(2)}px`, "--z": `${p.z}px`, "--rx": `${Number(p.rx).toFixed(2)}deg`, "--ry": `${Number(p.ry).toFixed(2)}deg`, "--rz": `${Number(p.rz).toFixed(2)}deg`, "--s": Number(p.s).toFixed(4) } as CSSProperties;
               return <button className={`v4-motion-card${index === active ? " is-active" : ""}${extracting && index === active ? " is-extracting" : ""}`} style={style} type="button" key={item.id} onClick={() => open(index)}><div className="v4-motion-card-inner"><img src={thumb(item)} alt="" /><div className="v4-motion-shade" /><span className="v4-motion-num">{String(index + 1).padStart(2, "0")}</span><div className="v4-motion-card-copy"><small>{item.emotion.toUpperCase()} · {item.time}</small><strong>{item.title}</strong></div></div></button>;
             })}
           </div>
@@ -185,7 +185,7 @@ export function V4LiquidOrbitGallery() {
             <span className="v4-liquid-halo" />
             {MOMENTS.map((item, index) => {
               const p = liquidTransform(mode, index, active, rotation);
-              const style = { "--x": `${p.x}px`, "--y": `${p.y}px`, "--z": `${p.z}px`, "--rx": `${p.rx}deg`, "--ry": `${p.ry}deg`, "--rz": `${p.rz}deg`, "--s": p.s, "--accent": item.accent } as CSSProperties;
+              const style = { "--x": `${Number(p.x).toFixed(2)}px`, "--y": `${Number(p.y).toFixed(2)}px`, "--z": `${p.z}px`, "--rx": `${Number(p.rx).toFixed(2)}deg`, "--ry": `${Number(p.ry).toFixed(2)}deg`, "--rz": `${Number(p.rz).toFixed(2)}deg`, "--s": Number(p.s).toFixed(4), "--accent": item.accent } as CSSProperties;
               return <button className={`v4-liquid-card${index === active ? " is-selected" : ""}`} style={style} type="button" key={item.id} onPointerDown={(event) => event.stopPropagation()} onClick={() => { if (index === active) setViewer(true); else setActive(index); }}><div className="v4-liquid-media"><img src={thumb(item)} alt="" /><span className="v4-liquid-index">{String(index + 1).padStart(2, "0")}</span></div><div className="v4-liquid-copy"><small>{item.emotion.toUpperCase()} · {item.time}</small><strong>{item.title}</strong><p>{item.note}</p></div></button>;
             })}
           </div>

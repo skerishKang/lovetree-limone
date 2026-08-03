@@ -6,6 +6,7 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "growing-tree-v6-fullscreen-add",
   "rest-return-flow-v2-simple",
   "tree-pause-issue-state-v1",
+  "community-discovery-v2",
   "node-graph-prototype",
   "obsidian-graph1",
   "love-nebula",
@@ -15,6 +16,12 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "liquid-orbit-video-gallery",
   "accordion-album-archive",
   "folding-person-archive",
+  "300-moments-finale",
+  "aurora-particle-heart",
+  "rainbow-memory-canopy",
+  "purple-bloom-graph",
+  "growing-tree-300-plus-freegraph",
+  "growing-tree-season-archive",
 ]);
 
 export function v4SourceStatus(id: string): "planned" | "implemented" {
