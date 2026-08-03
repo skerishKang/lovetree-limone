@@ -240,6 +240,15 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     preserve: ["4단계 통합 내비게이션", "영상·시점·감정·메모·공개 여부", "두 순간 가지 연결·실시간 미리보기", "성장 보드", "3개 storage key 구조"],
     status: "implemented",
   },
+  {
+    id: "100-moments-season-temperature-v4",
+    sourceFile: "lovetree-100-moments-season-temperature-v4.html",
+    area: "graph",
+    route: "/v4/trees/demo/graph/100-moments",
+    role: "100개 순간 그래프·계절·온도",
+    preserve: ["실제 100개 노드·대표 카드 6개", "레이아웃 5종", "352px 인스펙터 3탭", "나의 트리 결·팬 반응·주연 전체 팬 온도", "시즌 완료 오버레이·회고·다음 선택"],
+    status: "implemented",
+  },
 ] as const;
 
 export const V4_SEPARATELY_SUPPLIED_SOURCES = V4_SOURCE_MANIFEST.filter(

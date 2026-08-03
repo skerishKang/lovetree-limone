@@ -23,6 +23,7 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "growing-tree-300-plus-freegraph",
   "growing-tree-season-archive",
   "first-journey-unified-v1",
+  "100-moments-season-temperature-v4",
 ]);
 
 export function v4SourceStatus(id: string): "planned" | "implemented" {
