@@ -641,17 +641,17 @@ export default function V4FirstJourney() {
               </div>
             ) : (
               <div className="v4-j-shell">
-                <div className="v4-j-hero">
+                <section className="v4-j-hero">
                   <div className="v4-j-copy">
-                    <p className="v4-j-eyebrow">First Roots · LoveTree</p>
+                    <p className="v4-j-eyebrow">A little garden for every feeling</p>
                     <h1>
                       마음이 처음 멈춘
                       <br />
                       <em>그 순간을 심어볼까요?</em>
                     </h1>
                     <p className="v4-j-hero-desc">
-                      좋아하게 된 순간을 하나씩 심으면, 언젠가 그 경로가 한 그루의
-                      러브트리로 자라나요. 오늘 발견한 한 장면이면 충분합니다.
+                      처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을 한 그루의
+                      나무처럼 이어 보세요.
                     </p>
                     <div className="v4-j-actions">
                       <button
@@ -665,112 +665,122 @@ export default function V4FirstJourney() {
                         러브트리 둘러보기 →
                       </a>
                     </div>
-                    <p className="v4-j-hero-note">✦ 처음에는 단 하나의 순간만 있어도 충분해요.</p>
+                    <p className="v4-j-hero-note">
+                      ✦ 처음에는 단 하나의 순간만 있어도 충분해요.
+                    </p>
                     <div className="v4-j-proof-line">
                       <span>
-                        <i>01</i> 발견
+                        <i>01</i> 첫 순간
                       </span>
                       <span>
-                        <i>02</i> 기록
+                        <i>02</i> 감정 메모
                       </span>
                       <span>
-                        <i>03</i> 연결
+                        <i>03</i> 다음 가지
                       </span>
                       <span>
                         <i>04</i> 성장
                       </span>
                     </div>
-                    <div className="v4-j-row" id="v4-j-browse">
-                      <a className="v4-j-mini" href="#v4-j-browse">
-                        <small>01 · 첫 순간</small>
-                        <strong>처음 발견한 그 장면</strong>
-                        <p>콘텐츠 링크와 그때의 마음이 러브트리의 첫 뿌리가 돼요.</p>
-                      </a>
-                      <a className="v4-j-mini" href="#v4-j-browse">
-                        <small>02 · 감정 메모</small>
-                        <strong>마음을 한 잎으로</strong>
-                        <p>기억하고 싶은 시간과 한 문장을 첫 카드로 남겨요.</p>
-                      </a>
-                      <a className="v4-j-mini" href="#v4-j-browse">
-                        <small>03 · 다음 가지</small>
-                        <strong>두 순간을 잇기</strong>
-                        <p>이어진 이유를 선택하면 좋아하게 된 경로가 보여요.</p>
-                      </a>
-                    </div>
                   </div>
-                  <aside className="v4-j-hero-art">
-                    <div className="v4-j-board">
-                      <div className="v4-j-canvas">
-                        <svg
-                          className="v4-j-branch-svg"
-                          viewBox="0 0 620 470"
-                          preserveAspectRatio="none"
-                          aria-hidden="true"
-                        >
-                          <defs>
-                            <linearGradient
-                              id="v4j-hero-branch"
-                              x1="0"
-                              y1="0"
-                              x2="1"
-                              y2="1"
-                            >
-                              <stop offset="0%" stopColor="#c86e79" />
-                              <stop offset="52%" stopColor="#d9bda4" />
-                              <stop offset="100%" stopColor="#879975" />
-                            </linearGradient>
-                          </defs>
-                          <path
-                            d="M310 320 C250 280 250 180 205 148 C180 130 160 138 150 160"
-                            fill="none"
-                            stroke="url(#v4j-hero-branch)"
-                            strokeWidth="7"
-                            strokeLinecap="round"
-                          />
-                          <path
-                            d="M310 320 C360 290 380 210 418 285"
-                            fill="none"
-                            stroke="url(#v4j-hero-branch)"
-                            strokeWidth="5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <div className="v4-j-orbit" />
-                        <div className="v4-j-orbit two" />
-                        <article className="v4-j-card root">
-                          <div className="v4-j-media">
-                            <i />
-                          </div>
-                          <div className="v4-j-card-copy">
-                            <small>my first moment</small>
-                            <strong>처음 마음이 멈춘 장면</strong>
-                          </div>
-                        </article>
-                        <article className="v4-j-card card-a">
-                          <div className="v4-j-media" />
-                          <div className="v4-j-card-copy">
-                            <small>02 · 다음 영상</small>
-                            <strong>또 다른 모습이 궁금했어요</strong>
-                          </div>
-                        </article>
-                        <article className="v4-j-card card-b">
-                          <div className="v4-j-media" />
-                          <div className="v4-j-card-copy">
-                            <small>03 · 이어진 마음</small>
-                            <strong>좋아하게 된 경로</strong>
-                          </div>
-                        </article>
-                        <span className="v4-j-pill left">✿ 설렘</span>
-                        <span className="v4-j-pill right">❦ 연결</span>
-                        <span className="v4-j-seed">✦</span>
-                      </div>
+                  <aside className="v4-j-board" data-testid="v4-j-board">
+                    <div className="v4-j-board-top">
+                      <span className="v4-j-board-title">my first LoveTree</span>
+                      <span className="v4-j-board-meta">first seed</span>
+                    </div>
+                    <div className="v4-j-canvas">
+                      <svg
+                        className="v4-j-branch-svg"
+                        viewBox="0 0 586 476"
+                        preserveAspectRatio="xMidYMid meet"
+                        aria-hidden="true"
+                      >
+                        <defs>
+                          <linearGradient id="v4j-board-branch" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stopColor="#c86e79" />
+                            <stop offset="52%" stopColor="#d9bda4" />
+                            <stop offset="100%" stopColor="#879975" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M293 410 C240 360 220 260 200 200 C180 140 160 120 130 130"
+                          fill="none"
+                          stroke="url(#v4j-board-branch)"
+                          strokeWidth="7"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M293 410 C340 380 380 290 430 220"
+                          fill="none"
+                          stroke="url(#v4j-board-branch)"
+                          strokeWidth="6"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M293 410 C320 380 360 320 400 280"
+                          fill="none"
+                          stroke="url(#v4j-board-branch)"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          opacity=".6"
+                        />
+                      </svg>
+                      <div className="v4-j-orbit" />
+                      <div className="v4-j-orbit two" />
+                      <article className="v4-j-card root">
+                        <div className="v4-j-media">
+                          <i />
+                        </div>
+                        <div className="v4-j-card-copy">
+                          <small>my first moment</small>
+                          <strong>처음 마음이 멈춘 장면</strong>
+                        </div>
+                      </article>
+                      <article className="v4-j-card card-a">
+                        <div className="v4-j-media" />
+                        <div className="v4-j-card-copy">
+                          <small>02 · 다음 영상</small>
+                          <strong>또 다른 모습이 궁금했어요</strong>
+                        </div>
+                      </article>
+                      <article className="v4-j-card card-b">
+                        <div className="v4-j-media" />
+                        <div className="v4-j-card-copy">
+                          <small>03 · 이어진 마음</small>
+                          <strong>좋아하게 된 경로</strong>
+                        </div>
+                      </article>
+                      <span className="v4-j-pill left">✿ 설렘</span>
+                      <span className="v4-j-pill right">❦ 연결</span>
+                      <span className="v4-j-seed">✦</span>
+                    </div>
+                    <div className="v4-j-caption">
+                      <span className="v4-j-caption-dot" style={{ background: "var(--j-rose)" }} />
+                      <span>발견</span>
+                      <span className="v4-j-caption-dot" style={{ background: "var(--j-sand)" }} />
+                      <span>기록</span>
+                      <span className="v4-j-caption-dot" style={{ background: "var(--j-sage)" }} />
+                      <span>연결</span>
                     </div>
                   </aside>
-                </div>
-                <div className="v4-j-foot">
-                  <span className="v4-j-back">← 뒤로</span>
-                  <span className="v4-j-url-mark">lovetree first journey</span>
-                </div>
+                </section>
+                <section className="v4-j-browse" id="v4-j-browse">
+                  <div className="v4-j-mini" data-testid="v4-j-mini-step1">
+                    <span>01</span>
+                    <strong>첫 순간</strong>
+                    <p>마음이 멈춘 정확한 장면을 심어 보세요.</p>
+                  </div>
+                  <div className="v4-j-mini" data-testid="v4-j-mini-step2">
+                    <span>02</span>
+                    <strong>감정 메모</strong>
+                    <p>그때의 말과 감정을 짧게 기록해요.</p>
+                  </div>
+                  <div className="v4-j-mini" data-testid="v4-j-mini-step3">
+                    <span>03</span>
+                    <strong>다음 가지</strong>
+                    <p>팬의 추천으로 이야기의 흐름을 이어가요.</p>
+                  </div>
+                </section>
               </div>
             )}
           </section>
@@ -1324,83 +1334,86 @@ export default function V4FirstJourney() {
 
         {currentStage === "growth" && (
           <section className="v4-journey-stage v4-journey-growth">
-            <div className="v4-j-growth-shell">
-              <p className="v4-j-eyebrow">04 · 러브트리 성장</p>
-              <h1>
-                첫 가지가
-                <br />
-                <em>다정하게 이어졌어요.</em>
-              </h1>
-              <p className="v4-j-growth-intro">
-                처음 만든 영상과 다음 영상 사이에 이유와 마음이 생겼습니다. 이제 러브트리가
-                단순한 영상 목록이 아니라 좋아하게 된 경로를 보여줘요.
-              </p>
-              <div className="v4-j-growth-board">
-                <div className="v4-j-growth-cards">
-                  <article className="v4-j-growth-card" data-testid="growth-first">
-                    <div
-                      className="v4-j-moment-thumb"
-                      style={
-                        firstId
-                          ? {
-                              backgroundImage: `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.28)),url(${thumb(firstId)})`,
-                            }
-                          : undefined
-                      }
-                    >
-                      {!firstId && "✿"}
-                    </div>
-                    <div className="v4-j-card-copy">
-                      <small>01 · 첫 순간</small>
-                      <strong>
-                        {(lastConnection?.first.title as string) ||
-                          appState.firstMoment.title ||
-                          "처음 마음이 멈춘 장면"}
-                      </strong>
-                      <p>
-                        {(lastConnection?.first.note as string) ||
-                          appState.firstMoment.note ||
-                          "처음 마음이 머문 장면"}
-                      </p>
-                    </div>
-                  </article>
-                  <span className="v4-j-growth-arrow">→</span>
-                  <article className="v4-j-growth-card" data-testid="growth-next">
-                    <div
-                      className="v4-j-moment-thumb"
-                      style={
-                        lastConnection?.next.id
-                          ? {
-                              backgroundImage: `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.28)),url(${thumb(lastConnection.next.id)})`,
-                            }
-                          : undefined
-                      }
-                    >
-                      {!lastConnection?.next.id && "✿"}
-                    </div>
-                    <div className="v4-j-card-copy">
-                      <small>02 · 다음 영상</small>
-                      <strong>{lastConnection?.next.title || "다음으로 찾아본 영상"}</strong>
-                      <p>{lastConnection?.next.note || "두 장면 사이에 있었던 마음"}</p>
-                    </div>
-                  </article>
+            <div className="v4-j-growth-screen">
+              <div className="v4-j-growth-shell">
+                <p className="v4-j-eyebrow">04 · first branch</p>
+                <h1>
+                  첫 가지가
+                  <span>다정하게 이어졌어요.</span>
+                </h1>
+                <p className="v4-j-growth-intro">
+                  처음 만든 영상과 다음 영상 사이에 이유와 마음이 생겼습니다. 이제 러브트리가
+                  단순한 영상 목록이 아니라 좋아하게 된 경로를 보여줘요.
+                </p>
+                <div className="v4-j-growth-board">
+                  <div className="v4-j-growth-cards">
+                    <article className="v4-j-growth-card" data-testid="growth-first">
+                      <div
+                        className="v4-j-growth-thumb"
+                        style={
+                          firstId
+                            ? {
+                                backgroundImage: `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.30)),url(${thumb(firstId)})`,
+                              }
+                            : undefined
+                        }
+                      >
+                        {!firstId && "✿"}
+                      </div>
+                      <div className="v4-j-growth-copy">
+                        <small>01 · 첫 순간</small>
+                        <strong>
+                          {(lastConnection?.first.title as string) ||
+                            appState.firstMoment.title ||
+                            "처음 마음이 멈춘 장면"}
+                        </strong>
+                        <p>
+                          {(lastConnection?.first.note as string) ||
+                            appState.firstMoment.note ||
+                            "처음 마음이 머문 장면"}
+                        </p>
+                      </div>
+                    </article>
+                    <span className="v4-j-growth-connector" data-testid="growth-connector">
+                      <i aria-hidden="true">✿</i>
+                    </span>
+                    <article className="v4-j-growth-card" data-testid="growth-next">
+                      <div
+                        className="v4-j-growth-thumb"
+                        style={
+                          lastConnection?.next.id
+                            ? {
+                                backgroundImage: `linear-gradient(180deg,rgba(255,245,233,.05),rgba(44,32,34,.30)),url(${thumb(lastConnection.next.id)})`,
+                              }
+                            : undefined
+                        }
+                      >
+                        {!lastConnection?.next.id && "✿"}
+                      </div>
+                      <div className="v4-j-growth-copy">
+                        <small>02 · 다음 영상</small>
+                        <strong>{lastConnection?.next.title || "다음으로 찾아본 영상"}</strong>
+                        <p>{lastConnection?.next.note || "두 장면 사이에 있었던 마음"}</p>
+                      </div>
+                    </article>
+                  </div>
                 </div>
-              </div>
-              <div className="v4-j-growth-actions">
-                <button
-                  className="v4-j-btn-quiet v4-j-again"
-                  type="button"
-                  onClick={againConnect}
-                >
-                  이 영상에서 또 이어보기
-                </button>
-                <button
-                  className="v4-j-btn-primary v4-j-home"
-                  type="button"
-                  onClick={() => showScreen("landing")}
-                >
-                  처음 화면으로
-                </button>
+                <div className="v4-j-growth-actions">
+                  <button
+                    className="v4-j-btn-quiet v4-j-again"
+                    type="button"
+                    onClick={againConnect}
+                  >
+                    이 영상에서 또 이어보기
+                  </button>
+                  <button
+                    className="v4-j-btn-primary v4-j-home"
+                    type="button"
+                    onClick={() => showScreen("landing")}
+                  >
+                    처음 화면으로
+                  </button>
+                </div>
               </div>
             </div>
           </section>
@@ -1456,11 +1469,11 @@ export default function V4FirstJourney() {
                 ref={nameInputRef}
                 required
               />
-              <p className="v4-j-hint">
+              <p className="v4-j-modal-note">
                 순간을 3개 이상 남기면 공개 러브트리로 소개할 수 있어요. 공개 범위는 나중에
                 바꿀 수 있습니다.
               </p>
-              <button className="v4-j-btn-primary" type="submit" style={{ marginTop: 16 }}>
+              <button className="v4-j-btn-primary" type="submit">
                 이 이름으로 시작하기 →
               </button>
             </form>
