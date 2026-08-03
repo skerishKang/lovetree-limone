@@ -874,10 +874,10 @@
   .bsv2a2-book-rail { display: grid; place-items: center; }
   .bsv2a2-book-slot { position: absolute; left: 50%; top: 42%; margin: 0; }
 
-  /* focus / open: book sits centered, no left-right desktop offset */
-  .bsv2a2-book-slot.is-focused,
-  .bsv2a2-book-slot.is-open,
-  .bsv2a2-book-slot.is-opening {
+  /* focus / open: book moves right so the opened cover stays inside the viewport */
+  .bsv2a2-motion-app .bsv2a2-book-slot.is-focused,
+  .bsv2a2-motion-app .bsv2a2-book-slot.is-open,
+  .bsv2a2-motion-app .bsv2a2-book-slot.is-opening {
     --sx: 0px !important;
     --sy: -150px !important;
     --sz: 0px !important;
@@ -886,9 +886,19 @@
     left: 50% !important;
     top: 30% !important;
     margin: 0 !important;
-    transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important;
+    /* translateX(var(--open-x)) appended after scale keeps the shift in
+       real screen pixels, so it stays effective even when --ss scales the
+       open spread (mobile). Causes the opened cover to clear the viewport. */
+    transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) translateX(var(--open-x, 0px)) !important;
   }
   .bsv2a2-book-slot.is-selected { left: 50% !important; top: 30% !important; margin: 0 !important; transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important; }
+
+  /* 390px and below: shift the open book right so the left cover edge clears 8px */
+  .bsv2a2-motion-app[data-state="OPEN"] .bsv2a2-book-slot.is-open,
+  .bsv2a2-motion-app[data-state="FLIPPING_NEXT"] .bsv2a2-book-slot.is-open,
+  .bsv2a2-motion-app[data-state="FLIPPING_PREV"] .bsv2a2-book-slot.is-open {
+    --open-x: 66px;
+  }
 
   /* smaller book on narrow screens so the 2-page spread fits */
   .bsv2a2-motion-app { --book-w: 166px; --book-h: 244px; }
@@ -962,6 +972,18 @@
 
   .bsv2a2-topbar .bsv2a2-brand small { display: none; }
   .bsv2a2-ground-shadow { display: none; }
+}
+
+@media (max-width: 340px) {
+  /* very narrow phones: shift the open book a touch further right so the
+     cover's left edge stays >= 8px inside the viewport without pushing the
+     right page out of view */
+  .bsv2a2-motion-app[data-state="OPEN"] .bsv2a2-book-slot.is-open,
+  .bsv2a2-motion-app[data-state="FLIPPING_NEXT"] .bsv2a2-book-slot.is-open,
+  .bsv2a2-motion-app[data-state="FLIPPING_PREV"] .bsv2a2-book-slot.is-open {
+    --open-x: 78px;
+    --ss: 0.88 !important;
+  }
 }
 
 @media (min-width: 761px) and (max-width: 1000px) {
