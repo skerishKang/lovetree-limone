@@ -19,6 +19,7 @@ async function exists(path) {
 
 const SOURCE_ROUTE_FILES = [
   "app/v4/page.tsx",
+  "app/v4/journey/page.tsx",
   "app/v4/trees/demo/onboarding/emotion/page.tsx",
   "app/v4/trees/demo/onboarding/connect/page.tsx",
   "app/v4/trees/demo/page.tsx",
@@ -26,6 +27,7 @@ const SOURCE_ROUTE_FILES = [
   "app/v4/trees/demo/state/page.tsx",
   "app/v4/community/page.tsx",
   "app/v4/trees/demo/graph/page.tsx",
+  "app/v4/trees/demo/graph/100-moments/page.tsx",
   "app/v4/trees/demo/map/page.tsx",
   "app/v4/trees/demo/nebula/page.tsx",
   "app/v4/trees/demo/timeline/page.tsx",
@@ -62,10 +64,13 @@ const VISUAL_IMPLEMENTATION_FILES = [
   "app/components/v4/V4CommunityDiscovery.tsx",
   "app/components/v4/V4MilestoneExperiences.tsx",
   "app/components/v4/V4JourneyDock.tsx",
+  "app/components/v4/V4FirstJourney.tsx",
+  "app/components/v4/V4Moments100.tsx",
 ];
 
 const SOURCE_ROUTES = [
   "/v4",
+  "/v4/journey",
   "/v4/trees/demo/onboarding/emotion",
   "/v4/trees/demo/onboarding/connect",
   "/v4/trees/demo",
@@ -73,6 +78,7 @@ const SOURCE_ROUTES = [
   "/v4/trees/demo/state",
   "/v4/community",
   "/v4/trees/demo/graph",
+  "/v4/trees/demo/graph/100-moments",
   "/v4/trees/demo/map",
   "/v4/trees/demo/nebula",
   "/v4/trees/demo/timeline",
@@ -89,19 +95,19 @@ const SOURCE_ROUTES = [
   "/v4/trees/demo/seasons",
 ];
 
-test("all 22 unique source routes and integration aliases exist", async () => {
-  assert.equal(SOURCE_ROUTE_FILES.length, 22);
+test("all 24 unique source routes and integration aliases exist", async () => {
+  assert.equal(SOURCE_ROUTE_FILES.length, 24);
   for (const path of [...SOURCE_ROUTE_FILES, ...EXTRA_INTEGRATION_ROUTES]) {
     assert.ok(await exists(path), `${path} must exist`);
   }
 });
 
-test("canonical V4 registry requires all 23 source designs implemented", async () => {
+test("canonical V4 registry requires all 25 source designs implemented", async () => {
   const implemented = await read("app/components/v4/v4-implemented-sources.ts");
   const registry = await read("app/components/v4/v4-source-registry.ts");
   const ids = implemented.match(/^  "[^"]+",$/gm) ?? [];
-  assert.equal(ids.length, 23, "implemented source ID set must contain all 23 source designs");
-  assert.match(registry, /V4_SOURCE_COUNT !== 23/);
+  assert.equal(ids.length, 25, "implemented source ID set must contain all 25 source designs");
+  assert.match(registry, /V4_SOURCE_COUNT !== 25/);
   assert.match(registry, /V4_IMPLEMENTED_SOURCE_IDS\.size !== V4_SOURCE_COUNT/);
   assert.match(registry, /V4_UNIMPLEMENTED_SOURCES/);
 });
