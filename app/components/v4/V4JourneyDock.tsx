@@ -9,6 +9,7 @@ const GROUPS = [
     label: "시작",
     links: [
       ["랜딩·첫 발견", "/v4"],
+      ["첫 여정 통합", "/v4/journey"],
       ["마음 남기기", "/v4/trees/demo/onboarding/emotion"],
       ["다음 순간 연결", "/v4/trees/demo/onboarding/connect"],
     ],
@@ -25,6 +26,7 @@ const GROUPS = [
     label: "탐색",
     links: [
       ["자유 노드 그래프", "/v4/trees/demo/graph"],
+      ["100개의 순간", "/v4/trees/demo/graph/100-moments"],
       ["관계 지도", "/v4/trees/demo/map"],
       ["감정 성운", "/v4/trees/demo/nebula"],
       ["날짜 타임라인", "/v4/trees/demo/timeline"],
@@ -63,7 +65,7 @@ export default function V4JourneyDock() {
       <button className="v4-journey-toggle" type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
         <span aria-hidden="true">✦</span>
         <strong>V4 여정</strong>
-        <small>23 designs</small>
+        <small>25 designs</small>
       </button>
       {open ? (
         <div className="v4-journey-panel">
