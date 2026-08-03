@@ -14,9 +14,9 @@
 
 | # | source | classification | design match | interaction match | new implementation |
 |---|---|---|---|---|---|
-| 1 | lovetree-100-moments-season-temperature-v4 | NEW_SCREEN_REQUIRED | MISSING | MISSING | REQUIRED |
+| 1 | lovetree-100-moments-season-temperature-v4 | NEW_SCREEN_REQUIRED | MATCH | MATCH | DONE (P1) |
 | 2 | lovetree-accordion-album-archive-v3-fixed | EXACT_DUPLICATE | PARTIAL_MATCH | PARTIAL_MATCH | refinement |
-| 3 | lovetree-first-journey-unified-v1 | NEW_SCREEN_REQUIRED | PARTIAL_MATCH | PARTIAL_MATCH | REQUIRED |
+| 3 | lovetree-first-journey-unified-v1 | NEW_SCREEN_REQUIRED | PARTIAL_MATCH | MATCH | DONE (P1) |
 | 4 | lovetree-folding-person-archive | EXACT_DUPLICATE | PARTIAL_MATCH | PARTIAL_MATCH | refinement |
 | 5 | lovetree-liquid-orbit-video-gallery | EXACT_DUPLICATE | PARTIAL_MATCH | PARTIAL_MATCH | refinement |
 | 6 | lovetree-motion-archive-v5-video-click-autoplay | EXACT_DUPLICATE | PARTIAL_MATCH | PARTIAL_MATCH | refinement |
@@ -26,7 +26,8 @@
 | 10 | lovetree-people-book-shelf-v2a-2-interaction-stable | NEW_SCREEN_REQUIRED | MISSING | MISSING | REQUIRED |
 | 11 | lovetree-tree-pause-issue-state-v1 | EXISTING_SCREEN_SOURCE | PARTIAL_MATCH | PARTIAL_MATCH | refinement |
 
-- MATCH: 0 / PARTIAL_MATCH: 6 / MISSING: 5 / NOT_TESTED: 0
+- MATCH: 1 / PARTIAL_MATCH: 6 / MISSING: 4 / NOT_TESTED: 0
+  (P1 구현 후 재판정: 100-moments MATCH, first-journey 설계 PARTIAL_MATCH·상호작용 MATCH. bookshelf 4종은 여전히 MISSING.)
 - 원본 실행 검증: 11개 파일 모두 1536×960 / 390×844 뷰포트에서 렌더 성공. pageerror 0건.
   발생한 console error는 Google Fonts·favicon 등 외부 리소스 404(오프라인 환경)뿐이며 렌더링과 무관.
   대표 화면 스크린샷 22장을 `/tmp/kilo/source-shots/`에 캡처(리포지토리에 미포함).
@@ -75,6 +76,11 @@
 - storage: 없음(모두 메모리 상태).
 - 고유 요소: 노이즈 종이 질감, 점 그리드 캔버스, minimap, 드래그 노드/연결선, `edgeFlow` 점선 간선.
 
+- IMPLEMENTATION_RESULT (P1, 2026-08-03): **MATCH**
+- 구현: `/v4/trees/demo/graph/100-moments` + `V4Moments100`(`app/styles/v4/moments-100.css`). 원본 구조·상호작용을 React로 이식.
+- 설계 비교: 원본 대비 스크린샷 RMSE 3.5~6.3%(radial·tree·circle·grid·timeline·온도 탭·시즌 오버레이, `/tmp/lovetree-p1-screens/`) → 핵심 구조·비율 근접.
+- 상호작용: 100개 노드 토글·대표 6카드·레이아웃 5종 위치 변화·팬/줌/fit·노드 드래그·연결선 드래그·minimap·밀도 전환·인스펙터 3탭·온도 3지표·시즌 오버레이·회고·결정 다이얼로그(시즌2/무구분/입덕 코스) 테스트 통과. console/pageerror 0.
+
 ### 2.2 lovetree-accordion-album-archive-v3-fixed
 
 - SOURCE_PRESENT: 예 (기존 `reference/v3/sibling-prototypes/`와 **md5 동일** `19dbd82c…`)
@@ -110,6 +116,11 @@
 - 통합 온보딩 별도 route: **채택**(`/v4/journey` 신규 컴포넌트 `V4FirstJourney`) — 원본은 단일 페이지 4스테이지(landing→step1→step2→step3→growth)를 순차 잠금으로 진행하므로 독립 화면이 정확.
 - 기존 여러 단계에 기능 병합: 부분(emotion/connect 단계는 원본 step2/step3 폼을 보완하는 형태로 재사용 가능).
 - 독립 reference route: 별도 추가보다 위 통합 route로 충분.
+
+- IMPLEMENTATION_RESULT (P1, 2026-08-03): **PARTIAL_MATCH (설계) / MATCH (상호작용)**
+- 구현: `/v4/journey` + `V4FirstJourney`(`app/styles/v4/first-journey.css`). unified 4단계 nav·순차 잠금·step1~4·이름 모달·growth를 React로 이식.
+- 설계 비교: 원본 대비 스크린샷 RMSE step1 10%·growth 25%(썸네일/텍스트 내용 차이 가능성, `/tmp/lovetree-p1-screens/`) → 구조·비율은 근접하나 최종 성장 화면 픽셀 확인 필요.
+- 상호작용: 4단계 nav·잠금 접근 방지·step1→2→3→growth 전체 흐름·ESC 모달·새로고침 복원·storage 3키 구조 보존(`lovetree-first-journey-unified`, `lovetree-step2-record`, `lovetree-step3-connection`) 테스트 통과. console/pageerror 0.
 
 ### 2.4 lovetree-folding-person-archive
 
