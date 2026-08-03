@@ -608,12 +608,12 @@
 .bsv2a2-reader-controls {
   position: absolute;
   left: 50%;
-  bottom: -52px;
+  bottom: 20px;
   z-index: 18;
   display: flex;
   align-items: center;
   gap: 8px;
-  transform: translateX(-50%) translateZ(22px);
+  transform: translateX(-50%);
   white-space: nowrap;
 }
 .bsv2a2-reader-controls button {
@@ -849,8 +849,6 @@
 }
 
 @media (max-width: 1000px) {
-  .bsv2a2-motion-app { --book-w: 190px; --book-h: 280px; }
-  .bsv2a2-info-panel { right: 4%; width: 36vw; }
   .bsv2a2-info-panel h1 { font-size: 38px; }
   .bsv2a2-chapter-list { display: none; }
   .bsv2a2-info-stats { grid-template-columns: 1fr 1fr; }
@@ -859,39 +857,146 @@
 }
 
 @media (max-width: 760px) {
-  .bsv2a2-motion-app { min-height: 860px; }
-  .bsv2a2-topbar { left: 10px; right: 10px; top: 10px; }
+  .bsv2a2-motion-app { min-height: 100vh; height: 100%; }
+  .bsv2a2-topbar { left: 8px; right: 8px; top: 8px; height: 50px; padding: 0 14px; }
   .bsv2a2-proof-label, .bsv2a2-state-readout { display: none; }
-  .bsv2a2-stage { position: absolute; min-height: 860px; }
+
+  /* stage fills the viewport; page scrolls naturally instead of absolute clipping */
+  .bsv2a2-stage { position: absolute; inset: 0; min-height: 100vh; height: 100%; }
+  .bsv2a2-motion-app.focus-mode .bsv2a2-stage { position: fixed; }
+
+  /* shelf world occupies full height so the selected book can center */
+  .bsv2a2-shelf-world { height: 100%; bottom: 0; }
+  .bsv2a2-shelf-back, .bsv2a2-shelf-plank, .bsv2a2-shelf-glow { display: none; }
+  .bsv2a2-hot-zone { display: none; }
+
+  /* book rail centers the single selected book in the viewport */
+  .bsv2a2-book-rail { display: grid; place-items: center; }
+  .bsv2a2-book-slot { position: absolute; left: 50%; top: 42%; margin: 0; }
+
+  /* focus / open: book sits centered, no left-right desktop offset */
+  .bsv2a2-book-slot.is-focused,
+  .bsv2a2-book-slot.is-open,
+  .bsv2a2-book-slot.is-opening {
+    --sx: 0px !important;
+    --sy: -150px !important;
+    --sz: 0px !important;
+    --sr: 0deg !important;
+    --ss: 1 !important;
+    left: 50% !important;
+    top: 30% !important;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important;
+  }
+  .bsv2a2-book-slot.is-selected { left: 50% !important; top: 30% !important; margin: 0 !important; transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important; }
+
+  /* smaller book on narrow screens so the 2-page spread fits */
+  .bsv2a2-motion-app { --book-w: 166px; --book-h: 244px; }
+
+  /* reader: 2-page spread centered on the book, scaled to fit the viewport width */
+  .bsv2a2-reader {
+    left: -50%;
+    top: 0;
+    width: 200%;
+    height: 100%;
+    margin: 0;
+    transform: scale(.56);
+    transform-origin: center center;
+  }
+  .bsv2a2-book-slot.is-open .bsv2a2-reader { opacity: 1; pointer-events: auto; }
+  .bsv2a2-reader-position { top: -16px; font-size: 8px; left: 50%; }
+
+  /* only the active (open/focused) book exposes reader controls on mobile */
+  .bsv2a2-book-slot:not(.is-open):not(.is-focused) .bsv2a2-reader-controls,
+  .bsv2a2-book-slot:not(.is-open):not(.is-focused) .bsv2a2-reader-position { display: none !important; }
+
+  /* controls: full-width row pinned inside viewport, above info panel */
+  .bsv2a2-reader-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    right: auto;
+    transform: translateX(-50%);
+    width: calc(100vw - 16px);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 7px;
+    z-index: 40;
+    padding: 0 8px;
+  }
+  .bsv2a2-reader-controls button { min-width: 0; width: 100%; height: 46px; font-size: 11px; }
+
+  /* info panel: separate bottom sheet, never overlapping the book */
   .bsv2a2-info-panel {
-    left: 15px;
-    right: 15px;
+    left: 10px;
+    right: 10px;
     top: auto;
-    bottom: 22px;
+    bottom: 78px;
     width: auto;
-    transform: translateY(25px);
-    padding: 17px;
+    transform: translateY(0);
+    padding: 14px 15px;
     border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 18px;
-    background: rgba(15, 14, 18, .62);
+    border-radius: 16px;
+    background: rgba(15, 14, 18, .86);
     backdrop-filter: blur(18px);
     pointer-events: none !important;
+    z-index: 30;
+    max-height: 34vh;
+    overflow: auto;
   }
-  .bsv2a2-motion-app.focus-mode .bsv2a2-info-panel { transform: translateY(0); }
-  .bsv2a2-info-panel h1 { font-size: 32px; margin: 6px 0; }
+  .bsv2a2-motion-app.focus-mode .bsv2a2-info-panel { transform: translateY(0); pointer-events: auto !important; }
+  .bsv2a2-info-panel h1 { font-size: 25px; margin: 4px 0; }
   .bsv2a2-info-panel > p { display: none; }
-  .bsv2a2-info-stats { margin: 10px 0; }
-  .bsv2a2-panel-actions { gap: 6px; }
-  .bsv2a2-primary, .bsv2a2-secondary { height: 38px; padding: 0 13px; font-size: 11px; }
+  .bsv2a2-info-stats { margin: 8px 0; gap: 6px; }
+  .bsv2a2-info-stat { padding-top: 8px; }
+  .bsv2a2-panel-actions { gap: 6px; margin-top: 6px; }
+  .bsv2a2-primary, .bsv2a2-secondary { height: 38px; padding: 0 12px; font-size: 11px; }
   .bsv2a2-info-panel .bsv2a2-panel-actions, .bsv2a2-info-panel button { pointer-events: auto; }
-  .bsv2a2-shelf-world { height: 43%; bottom: 255px; }
-  .bsv2a2-shelf-caption { bottom: 282px; }
-  .bsv2a2-hot-zone { bottom: 340px; }
-  .bsv2a2-page-corner { width: 80px; height: 80px; }
-  .bsv2a2-reader-controls { gap: 6px; bottom: -66px; }
-  .bsv2a2-reader-controls button { min-width: 106px; height: 48px; font-size: 11px; }
-  .bsv2a2-reader-controls .bsv2a2-close-reader { min-width: 84px; }
+  .bsv2a2-focus-click-hint { font-size: 10px; }
+
+  /* shelf caption stays inside */
+  .bsv2a2-shelf-caption { bottom: 70px; top: auto; }
+
+  /* corner targets stay touchable */
+  .bsv2a2-page-corner { width: 88px; height: 88px; }
+
   .bsv2a2-topbar .bsv2a2-brand small { display: none; }
+  .bsv2a2-ground-shadow { display: none; }
+}
+
+@media (min-width: 761px) and (max-width: 1000px) {
+  /* tablet: stack the reader and the info panel vertically so they never overlap */
+  .bsv2a2-motion-app { --book-w: 200px; --book-h: 294px; }
+  .bsv2a2-info-panel { left: 5%; right: 5%; top: auto; bottom: 12px; width: auto; transform: translateY(0); }
+  .bsv2a2-shelf-world { height: 100%; }
+  .bsv2a2-book-slot.is-focused,
+  .bsv2a2-book-slot.is-open,
+  .bsv2a2-book-slot.is-opening {
+    --sx: 0px !important;
+    --sy: -170px !important;
+    --sz: 0px !important;
+    --ss: 0.9 !important;
+    --sr: 0deg !important;
+    left: 50% !important;
+    top: 36% !important;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important;
+  }
+  .bsv2a2-book-slot.is-selected {
+    left: 50% !important;
+    top: 40% !important;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) scale(var(--ss, 1)) rotateY(var(--sr, 0deg)) !important;
+  }
+  .bsv2a2-reader { left: -50%; transform: scale(.78); transform-origin: center center; }
+  .bsv2a2-book-slot:not(.is-open):not(.is-focused) .bsv2a2-reader-controls,
+  .bsv2a2-book-slot:not(.is-open):not(.is-focused) .bsv2a2-reader-position { display: none !important; }
+  .bsv2a2-reader-controls { bottom: auto; top: 540px; }
+  .bsv2a2-shelf-caption { top: 70px; }
+  .bsv2a2-info-panel h1 { font-size: 30px; margin: 4px 0; }
+  .bsv2a2-info-panel > p { display: none; }
+  .bsv2a2-info-stats { margin: 8px 0; }
+  .bsv2a2-focus-click-hint { font-size: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

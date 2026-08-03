@@ -763,8 +763,7 @@ export default function V4BookShelfV2A2() {
                       <div className="bsv2a2-reader-position">
                         {String(page + 1).padStart(2, "0")} / {String(b.chapters.length).padStart(2, "0")}
                       </div>
-                      <div className="bsv2a2-spread-stack">
-                        {b.chapters.map((ch, pageIndex) => (
+                      <div className="bsv2a2-spread-stack">                        {b.chapters.map((ch, pageIndex) => (
                           <div
                             key={`${b.id}-${pageIndex}`}
                             className={`bsv2a2-spread-layer${pageIndex === page ? " active" : ""}`}
@@ -843,26 +842,6 @@ export default function V4BookShelfV2A2() {
                           </div>
                         ))}
                       </div>
-                      <div className="bsv2a2-reader-controls">
-                        <button className="bsv2a2-prev-page" type="button" aria-label="이전 페이지" disabled={mode === "OPEN" && page <= 0} onClick={(e) => {
-                          e.stopPropagation();
-                          requestPageTurn("prev");
-                        }}>
-                          ← 이전 장
-                        </button>
-                        <button className="bsv2a2-close-reader" type="button" onClick={(e) => {
-                          e.stopPropagation();
-                          closeBook();
-                        }}>
-                          책 닫기
-                        </button>
-                        <button className="bsv2a2-next-page" type="button" aria-label="다음 페이지" disabled={mode === "OPEN" && page >= b.chapters.length - 1} onClick={(e) => {
-                          e.stopPropagation();
-                          requestPageTurn("next");
-                        }}>
-                          다음 장 →
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -874,6 +853,18 @@ export default function V4BookShelfV2A2() {
         <div className="bsv2a2-shelf-caption">
           <strong>{book.name}의 LoveTree</strong>
           <span>중앙 책을 선택하면 같은 책이 선반에서 앞으로 나옵니다.</span>
+        </div>
+
+        <div className={`bsv2a2-reader-controls${mode === "OPEN" || mode === "FLIPPING_NEXT" || mode === "FLIPPING_PREV" ? " is-active" : ""}`}>
+          <button className="bsv2a2-prev-page" type="button" aria-label="이전 페이지" disabled={mode === "OPEN" && page <= 0} onClick={() => requestPageTurn("prev")}>
+            ← 이전 장
+          </button>
+          <button className="bsv2a2-close-reader" type="button" onClick={() => closeBook()}>
+            책 닫기
+          </button>
+          <button className="bsv2a2-next-page" type="button" aria-label="다음 페이지" disabled={mode === "OPEN" && page >= BASE_BOOKS[selected].chapters.length - 1} onClick={() => requestPageTurn("next")}>
+            다음 장 →
+          </button>
         </div>
 
         <aside className="bsv2a2-info-panel" aria-live="polite">
