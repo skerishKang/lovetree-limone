@@ -498,14 +498,14 @@ export default function V4Moments100() {
   const fitView = useCallback(() => {
     const vis = visibleNodes;
     if (!vis.length) return;
+    const r = canvasRef.current?.getBoundingClientRect();
+    if (!r) return;
     const xs = vis.map((n) => n.x);
     const ys = vis.map((n) => n.y);
     const minX = Math.min(...xs) - 180;
     const maxX = Math.max(...xs) + 180;
     const minY = Math.min(...ys) - 180;
     const maxY = Math.max(...ys) + 180;
-    const r = canvasRef.current?.getBoundingClientRect();
-    if (!r) return;
     const z = clamp(Math.min(r.width / (maxX - minX), r.height / (maxY - minY)), 0.28, 1.05);
     setZoom(z);
     setPan({
@@ -514,11 +514,30 @@ export default function V4Moments100() {
     });
   }, [visibleNodes]);
 
+  const computeFit = useCallback((list: MomentNode[]) => {
+    const r = canvasRef.current?.getBoundingClientRect();
+    if (!r) return { zoom, pan };
+    const xs = list.map((n) => n.x);
+    const ys = list.map((n) => n.y);
+    const minX = Math.min(...xs) - 180;
+    const maxX = Math.max(...xs) + 180;
+    const minY = Math.min(...ys) - 180;
+    const maxY = Math.max(...ys) + 180;
+    const z = clamp(Math.min(r.width / (maxX - minX), r.height / (maxY - minY)), 0.28, 1.05);
+    return {
+      zoom: z,
+      pan: {
+        x: (r.width - (maxX - minX) * z) / 2 - minX * z,
+        y: (r.height - (maxY - minY) * z) / 2 - minY * z,
+      },
+    };
+  }, [pan, zoom]);
+
   const applyLayout = useCallback(
     (name: string) => {
       setLayout(name);
-      setNodes((prev) => {
-        const next = prev.map((n) => ({ ...n }));
+      const positioned = (() => {
+        const next = nodes.map((n) => ({ ...n }));
         const genIndex = (n: MomentNode) =>
           next.filter((m) => m.id !== "root" && ![1, 24, 50, 78, 100].includes(m.number)).findIndex((m) => m.id === n.id);
         if (name === "radial") {
@@ -606,11 +625,36 @@ export default function V4Moments100() {
           });
         }
         return next;
-      });
-      setTimeout(() => fitView(), 40);
+      })();
+      const fitList = density === "all" ? positioned : positioned.filter((n) => n.id === "root" || [1, 24, 50, 78, 100].includes(n.number));
+      const fit = computeFit(fitList);
+      setZoom(fit.zoom);
+      setPan(fit.pan);
+      setNodes(positioned);
     },
-    [fitView],
+    [computeFit, density, nodes],
   );
+
+  const initialFitDone = useRef(false);
+  useEffect(() => {
+    if (initialFitDone.current) return;
+    let tries = 0;
+    const tryFit = () => {
+      const r = canvasRef.current?.getBoundingClientRect();
+      if (r && r.width > 0 && r.height > 0) {
+        initialFitDone.current = true;
+        fitView();
+        return true;
+      }
+      tries += 1;
+      return tries > 15;
+    };
+    if (tryFit()) return;
+    const timer = window.setInterval(() => {
+      if (tryFit()) window.clearInterval(timer);
+    }, 90);
+    return () => window.clearInterval(timer);
+  }, [fitView]);
 
   /* ── pointer interactions ─────────────────────────────── */
   const [connecting, setConnecting] = useState<{ x: number; y: number; sourceId: string } | null>(null);
