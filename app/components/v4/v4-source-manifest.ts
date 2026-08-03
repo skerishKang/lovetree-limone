@@ -231,6 +231,15 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     preserve: ["시즌 1 보호", "보관은 종료가 아님", "301+ 계속 성장", "다음 시즌 이름·날짜·문장·테마", "대표 기억 연결"],
     status: "implemented",
   },
+  {
+    id: "first-journey-unified-v1",
+    sourceFile: "lovetree-first-journey-unified-v1.html",
+    area: "onboarding",
+    route: "/v4/journey",
+    role: "첫 발견부터 연결·성장까지 통합 여정",
+    preserve: ["4단계 통합 내비게이션", "영상·시점·감정·메모·공개 여부", "두 순간 가지 연결·실시간 미리보기", "성장 보드", "3개 storage key 구조"],
+    status: "implemented",
+  },
 ] as const;
 
 export const V4_SEPARATELY_SUPPLIED_SOURCES = V4_SOURCE_MANIFEST.filter(
