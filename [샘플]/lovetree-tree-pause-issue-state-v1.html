@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoveTree · 트리 휴식과 공개 범위</title>
+<meta name="description" content="좋아한 기록은 지우지 않고, 트리 상태·공개 범위·개인 메모를 분리해 잠시 거리를 두는 LoveTree UI/UX 시안">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum:wght@400;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbf8f1;
+  --paper-2:#f4ede2;
+  --paper-3:#fffdf8;
+  --ink:#2f332f;
+  --muted:#7d8079;
+  --line:rgba(71,85,69,.14);
+  --moss:#70866a;
+  --moss-deep:#4f664f;
+  --leaf:#a8bc8f;
+  --leaf-pale:#edf3e5;
+  --rose:#d99989;
+  --rose-deep:#a9665d;
+  --rose-pale:#f7e5df;
+  --brown:#886d60;
+  --brown-pale:#f1e7df;
+  --gold:#d4ad6f;
+  --shadow:0 24px 70px rgba(60,65,50,.11);
+  --serif:"Gowun Batang","Noto Serif KR",serif;
+  --sans:"Gowun Dodum","Noto Sans KR",sans-serif;
+  --latin:"Manrope",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-width:320px;color:var(--ink);font-family:var(--sans);
+  background:
+    radial-gradient(circle at 8% 2%,rgba(217,153,137,.18),transparent 27rem),
+    radial-gradient(circle at 100% 15%,rgba(168,188,143,.20),transparent 29rem),
+    var(--paper);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(112,134,106,.28);outline-offset:3px}
+.hidden{display:none!important}
+.app{min-height:100vh;display:grid;grid-template-columns:230px minmax(0,1fr)}
+.sidebar{
+  position:sticky;top:0;height:100vh;padding:25px 18px;border-right:1px solid var(--line);
+  background:rgba(255,255,255,.52);backdrop-filter:blur(17px)
+}
+.brand{display:flex;align-items:center;gap:10px;margin:0 7px 29px}
+.brand-mark{
+  width:38px;height:38px;display:grid;place-items:center;border-radius:50%;
+  color:var(--moss-deep);background:var(--leaf-pale);border:1px solid rgba(79,102,79,.14);font-size:19px
+}
+.brand strong{display:block;font:700 17px/1.1 var(--serif)}
+.brand small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.tree-card{padding:17px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.66)}
+.eyebrow{color:var(--moss-deep);font:800 9px/1 var(--latin);letter-spacing:.15em}
+.tree-card h2{margin:8px 0 5px;font:700 15px/1.45 var(--serif)}
+.tree-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.65}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.state-chip,.visibility-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border-radius:999px;
+  font-size:9px;font-weight:700
+}
+.state-chip{color:var(--moss-deep);background:var(--leaf-pale)}
+.visibility-chip{color:#70645e;background:var(--paper-2)}
+.state-chip i,.visibility-chip i{width:6px;height:6px;border-radius:50%;background:currentColor}
+body[data-status="paused"] .state-chip{color:var(--brown);background:var(--rose-pale)}
+.nav{display:grid;gap:5px;margin-top:24px}
+.nav button{width:100%;display:flex;align-items:center;gap:10px;padding:12px;border:0;border-radius:12px;color:var(--muted);background:transparent;text-align:left}
+.nav button:hover,.nav button.active{color:var(--ink);background:rgba(168,188,143,.18)}
+.nav span{width:20px;text-align:center}.nav strong{font-size:12px}
+.sidebar-note{position:absolute;left:18px;right:18px;bottom:23px;padding:14px;border-radius:15px;background:rgba(244,237,226,.84);color:var(--muted);font-size:10px;line-height:1.65}
+.sidebar-note strong{display:block;margin-bottom:4px;color:var(--ink);font-size:11px}
+
+.main{min-width:0;padding:25px clamp(18px,3.6vw,50px) 48px}
+.topbar{max-width:1450px;margin:0 auto 23px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.breadcrumb{color:var(--muted);font-size:11px}.breadcrumb strong{color:var(--ink)}
+.top-actions{display:flex;gap:8px;align-items:center}
+.ghost,.primary,.soft,.danger-soft{
+  border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.76);
+  color:var(--ink);font-size:11px;font-weight:700
+}
+.primary{border-color:var(--moss-deep);color:white;background:var(--moss-deep);box-shadow:0 9px 20px rgba(79,102,79,.18)}
+.primary:hover{background:#425943}
+.soft:hover,.ghost:hover{background:white}
+.danger-soft{border-color:rgba(217,153,137,.26);color:var(--rose-deep);background:var(--rose-pale)}
+body[data-status="paused"] #addMomentBtn{opacity:.48}
+.hero{max-width:1450px;margin:0 auto 18px}
+.hero h1{margin:8px 0 8px;font:400 clamp(32px,4vw,53px)/1.08 var(--serif);letter-spacing:-.055em}
+.hero h1 em{color:var(--rose);font-style:normal}
+.hero p{max-width:790px;margin:0;color:var(--muted);font:400 13px/1.75 var(--serif)}
+
+.layout{max-width:1450px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px}
+.workspace{overflow:hidden;min-height:688px;border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.61);box-shadow:var(--shadow)}
+.workspace-head{height:61px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;border-bottom:1px solid var(--line)}
+.workspace-label{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.workspace-label strong{color:var(--ink)}
+.tools{display:flex;gap:6px}.tools button{width:31px;height:31px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.75);color:var(--muted)}
+.tools button:hover{background:white;color:var(--ink)}
+.stage{
+  position:relative;min-height:627px;overflow:hidden;
+  background:
+    radial-gradient(circle at 27% 34%,rgba(168,188,143,.25),transparent 24rem),
+    radial-gradient(circle at 83% 78%,rgba(217,153,137,.20),transparent 23rem),
+    linear-gradient(150deg,#f3f7ed,#fbf7ef 58%,#faebe4)
+}
+.stage-copy{position:absolute;z-index:9;left:27px;top:24px}
+.stage-copy strong{display:block;margin-top:5px;font:400 22px/1.3 var(--serif)}
+.stage-copy span:last-child{display:block;margin-top:5px;color:var(--muted);font-size:11px}
+.stage-status{
+  position:absolute;z-index:12;right:23px;top:21px;display:flex;align-items:center;gap:7px;
+  padding:9px 12px;border:1px solid rgba(79,102,79,.16);border-radius:999px;background:rgba(255,253,248,.86);
+  color:var(--moss-deep);font-size:10px;font-weight:700
+}
+.stage-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
+body[data-status="paused"] .stage-status{color:var(--brown);background:rgba(255,244,239,.89)}
+
+.tree-scene{position:absolute;inset:76px 28px 28px}
+.tree-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transition:.35s}
+.tree-trunk{fill:none;stroke:#846d5d;stroke-width:26;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+.tree-branch{fill:none;stroke:#927969;stroke-width:12;stroke-linecap:round;opacity:.76}
+.tree-twig{fill:none;stroke:#a58c7b;stroke-width:5;stroke-linecap:round;opacity:.68}
+.leaf{fill:#9caf82;opacity:.82}.leaf.soft{fill:#c5d5ae}.leaf.rose{fill:#e1aa9e}
+.ground{fill:#d9dec8;opacity:.42}
+.memory{
+  position:absolute;z-index:6;width:154px;padding:12px 13px;border:1px solid rgba(79,102,79,.15);
+  border-radius:17px;background:rgba(255,255,255,.88);box-shadow:0 12px 28px rgba(60,65,50,.08);
+  transition:.2s;text-align:left
+}
+.memory:hover{transform:translateY(-3px);box-shadow:0 17px 34px rgba(60,65,50,.13)}
+.memory small{display:block;color:var(--moss-deep);font-size:9px;font-weight:800;letter-spacing:.08em}
+.memory strong{display:block;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.memory span{display:block;margin-top:6px;color:var(--muted);font-size:9px}
+.m1{left:5%;top:22%}.m2{right:4%;top:21%}.m3{left:7%;bottom:16%}.m4{right:5%;bottom:14%}.m5{left:43%;top:3%}
+.center-card{
+  position:absolute;z-index:7;left:50%;top:54%;width:194px;padding:18px;transform:translate(-50%,-50%);
+  border:1px solid rgba(79,102,79,.24);border-radius:24px;background:rgba(249,252,244,.93);
+  box-shadow:0 16px 38px rgba(60,65,50,.11);text-align:center
+}
+.center-card small{color:var(--moss-deep);font:800 9px var(--latin);letter-spacing:.12em}
+.center-card strong{display:block;margin-top:6px;font:700 17px/1.35 var(--serif)}
+.center-card span{display:block;margin-top:5px;color:var(--muted);font-size:9px}
+.issue-node{
+  position:absolute;z-index:9;left:58%;bottom:4%;width:180px;padding:13px 14px;border:1px solid rgba(217,153,137,.48);
+  border-radius:17px;background:#fff2ed;box-shadow:0 17px 35px rgba(119,77,66,.12);text-align:left
+}
+.issue-node::before{
+  content:"";position:absolute;left:-93px;top:-47px;width:111px;height:2px;background:rgba(139,111,96,.35);
+  transform:rotate(27deg);transform-origin:right center
+}
+.issue-node small{display:block;color:var(--rose-deep);font-size:9px;font-weight:800}
+.issue-node strong{display:block;margin-top:5px;font-size:12px}
+.issue-node span{display:block;margin-top:6px;color:var(--muted);font-size:9px}
+.issue-actions{display:flex;gap:5px;margin-top:9px}
+.issue-actions button{padding:6px 8px;border:1px solid rgba(217,153,137,.22);border-radius:999px;background:white;color:var(--rose-deep);font-size:8px;font-weight:700}
+body:not([data-has-issue="true"]) .issue-node{display:none}
+
+.pause-overlay{
+  position:absolute;z-index:11;inset:0;display:none;pointer-events:none;
+  background:linear-gradient(180deg,rgba(248,246,239,.18),rgba(248,246,239,.56))
+}
+body[data-status="paused"] .pause-overlay{display:block}
+body[data-status="paused"] .tree-svg{filter:saturate(.57);opacity:.67}
+body[data-status="paused"] .memory{opacity:.46}
+body[data-status="paused"] .memory.quiet{opacity:1;z-index:13}
+body[data-status="paused"] .center-card{opacity:.52}
+body[data-status="paused"] .issue-node{z-index:15}
+.pause-banner{
+  position:absolute;z-index:16;left:50%;bottom:24px;width:min(570px,calc(100% - 42px));padding:15px 17px;
+  transform:translateX(-50%);display:none;grid-template-columns:1fr auto;gap:14px;align-items:center;
+  border:1px solid rgba(139,109,96,.19);border-radius:17px;background:rgba(255,249,245,.93);box-shadow:0 14px 32px rgba(75,56,49,.10)
+}
+body[data-status="paused"] .pause-banner{display:grid}
+.pause-banner strong{display:block;color:var(--brown);font-size:12px}
+.pause-banner span{display:block;margin-top:4px;color:#8b7c75;font:400 10px/1.6 var(--serif)}
+.pause-banner button{padding:9px 12px;border:1px solid rgba(79,102,79,.16);border-radius:999px;background:white;color:var(--moss-deep);font-size:10px;font-weight:700}
+
+.side{display:grid;align-content:start;gap:14px}
+.panel{padding:18px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.70);box-shadow:0 10px 27px rgba(60,65,50,.05)}
+.panel h2{margin:7px 0 7px;font:400 20px/1.35 var(--serif)}
+.panel p{margin:0;color:var(--muted);font-size:11px;line-height:1.7}
+.status-grid{display:grid;gap:8px;margin-top:14px}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px;border-radius:13px;background:var(--paper-2)}
+.status-row span{color:var(--muted);font-size:9px}.status-row strong{font-size:10px}
+.status-row button{padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--moss-deep);font-size:8px;font-weight:700}
+.reason-box{
+  display:none;margin-top:13px;padding:13px;border-radius:14px;background:linear-gradient(145deg,#fff1eb,#f5eee5)
+}
+body[data-status="paused"] .reason-box{display:block}
+.reason-box small{display:block;color:var(--rose-deep);font:800 8px var(--latin);letter-spacing:.12em}
+.reason-box strong{display:block;margin-top:6px;font:700 12px/1.5 var(--serif)}
+.reason-box p{margin-top:7px;color:var(--brown)}
+.private-tag{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:6px 8px;border-radius:999px;background:white;color:#776862;font-size:8px}
+.preview-card{margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:15px;background:rgba(255,253,248,.82)}
+.preview-card small{color:var(--muted);font-size:8px}
+.preview-card strong{display:block;margin-top:5px;font:700 13px/1.4 var(--serif)}
+.preview-card p{margin-top:6px}
+.preview-badge{display:inline-flex;margin-top:9px;padding:6px 8px;border-radius:999px;background:var(--rose-pale);color:var(--rose-deep);font-size:8px;font-weight:700}
+.preview-lock{display:none;padding:18px 10px;text-align:center;color:var(--muted);font:400 11px/1.65 var(--serif)}
+body[data-visibility="private"] .preview-content{display:none}
+body[data-visibility="private"] .preview-lock{display:block}
+.quiet-list{display:grid;gap:8px;margin-top:12px}
+.quiet-list button{
+  width:100%;display:grid;grid-template-columns:31px 1fr;gap:9px;align-items:center;padding:10px;border:0;border-radius:12px;
+  background:rgba(244,237,226,.76);text-align:left
+}
+.quiet-list button:hover{background:white;box-shadow:0 8px 18px rgba(60,65,50,.07)}
+.quiet-list b{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;color:var(--moss-deep);background:var(--leaf-pale);font:800 9px var(--latin)}
+.quiet-list strong{display:block;font-size:10px}.quiet-list span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+
+.modal-backdrop{
+  position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:18px;
+  background:rgba(45,51,45,.35);backdrop-filter:blur(9px)
+}
+.modal-backdrop.open{display:grid}
+.modal{
+  width:min(560px,100%);max-height:91vh;overflow:auto;padding:25px;border:1px solid rgba(255,255,255,.67);
+  border-radius:27px;background:var(--paper-3);box-shadow:0 32px 90px rgba(45,51,45,.24)
+}
+.modal.wide{width:min(680px,100%)}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal h2{margin:7px 0 8px;font:400 27px/1.25 var(--serif)}
+.modal p{margin:0;color:var(--muted);font:400 12px/1.72 var(--serif)}
+.close{flex:0 0 33px;width:33px;height:33px;border:1px solid var(--line);border-radius:50%;background:white;color:var(--muted)}
+.field{margin-top:17px}.field>label,.field-title{display:block;margin-bottom:7px;color:#676962;font-size:10px;font-weight:700}
+input[type="text"],input[type="url"],textarea,select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:13px;color:var(--ink);background:white
+}
+textarea{min-height:78px;resize:vertical}
+.help{margin-top:6px;color:#98918d;font-size:9px;line-height:1.55}
+.choice-grid{display:grid;gap:8px}
+.choice{
+  display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:12px;border:1px solid var(--line);
+  border-radius:14px;background:rgba(247,244,237,.58)
+}
+.choice:has(input:checked){border-color:rgba(217,153,137,.42);background:var(--rose-pale)}
+.choice input{margin-top:3px;accent-color:var(--rose)}
+.choice strong{display:block;font-size:11px}.choice span{display:block;margin-top:3px;color:var(--muted);font-size:9px;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);
+  border-radius:14px;background:rgba(247,244,237,.58)
+}
+.toggle-copy strong{display:block;font-size:11px}.toggle-copy span{display:block;margin-top:3px;color:var(--muted);font-size:9px;line-height:1.5}
+.switch{position:relative;width:42px;height:24px;flex:0 0 auto}
+.switch input{position:absolute;opacity:0}
+.switch i{position:absolute;inset:0;border-radius:999px;background:#d9d5cf;transition:.2s}
+.switch i::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:white;box-shadow:0 2px 6px rgba(0,0,0,.14);transition:.2s}
+.switch input:checked+i{background:var(--moss)}
+.switch input:checked+i::after{transform:translateX(18px)}
+.section-card{margin-top:17px;padding:14px;border-radius:16px;background:var(--leaf-pale)}
+.section-card strong{display:block;color:#5b7057;font-size:11px}
+.section-card span{display:block;margin-top:5px;color:#6c7b68;font:400 10px/1.65 var(--serif)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:19px}
+.modal-actions button{padding:11px 15px}
+.emotions{display:flex;gap:7px;flex-wrap:wrap}
+.emotion{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--muted);font-size:10px}
+.emotion.active{border-color:rgba(217,153,137,.44);color:var(--rose-deep);background:var(--rose-pale)}
+.add-preview{
+  display:grid;grid-template-columns:130px 1fr;gap:12px;margin-top:16px;padding:12px;border:1px solid var(--line);
+  border-radius:16px;background:rgba(247,244,237,.52)
+}
+.add-preview img{width:130px;height:76px;object-fit:cover;border-radius:10px;background:#eee}
+.add-preview strong{display:block;font-size:11px}.add-preview span{display:block;margin-top:5px;color:var(--muted);font-size:9px;line-height:1.5}
+.memory-card{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#fff,#f7f0e7)}
+.memory-card small{color:var(--moss-deep);font-size:9px;font-weight:800}
+.memory-card h3{margin:7px 0 8px;font:700 18px/1.35 var(--serif)}
+.memory-card p{color:#655f5b}
+.toast{
+  position:fixed;right:22px;bottom:22px;z-index:120;max-width:350px;padding:13px 15px;border:1px solid rgba(79,102,79,.16);
+  border-radius:13px;color:#486048;background:#f0f6e9;box-shadow:var(--shadow);font-size:11px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.24s
+}
+.toast.show{opacity:1;transform:none}
+
+@media(max-width:1080px){
+  .app{grid-template-columns:74px minmax(0,1fr)}
+  .sidebar{padding:22px 11px}.brand{justify-content:center;margin:0 0 25px}
+  .brand>div,.tree-card,.sidebar-note,.nav strong{display:none}
+  .nav button{justify-content:center;padding:12px 6px}
+  .layout{grid-template-columns:1fr}.side{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .app{display:block}.sidebar{position:static;height:auto;display:flex;align-items:center;padding:11px 14px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{margin:0}.brand-mark{width:32px;height:32px}.nav{display:flex;margin:0 0 0 auto}.nav button{width:auto}
+  .main{padding:18px 12px 35px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .hero h1{font-size:35px}.workspace{min-height:650px}.stage{min-height:589px}.tree-scene{inset:80px 6px 20px}
+  .memory{width:112px;padding:9px}.memory strong{font-size:10px}.memory span{display:none}
+  .m1{left:1%}.m2{right:1%}.m3{left:1%}.m4{right:1%}.m5{left:36%}
+  .center-card{width:154px;padding:13px}.center-card strong{font-size:14px}
+  .issue-node{left:48%;width:148px}.pause-banner{grid-template-columns:1fr}
+  .side{grid-template-columns:1fr}.tools{display:none}
+  .two-col{grid-template-columns:1fr}.modal{padding:21px}.modal h2{font-size:24px}
+  .modal-actions{display:grid;grid-template-columns:1fr 1fr}.modal-actions button{width:100%}
+  .add-preview{grid-template-columns:1fr}.add-preview img{width:100%;height:160px}
+}
+</style>
+</head>
+<body data-status="active" data-visibility="public" data-has-issue="false">
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">❈</div>
+      <div><strong>러브트리</strong><small>마음의 정원</small></div>
+    </div>
+    <section class="tree-card">
+      <span class="eyebrow">MY LOVETREE</span>
+      <h2>우리의 빛나는 순간들</h2>
+      <p>좋아한 마음도, 잠시 멈춘 마음도 함께 보관해요.</p>
+      <div class="chip-row">
+        <div class="state-chip"><i></i><span id="sideStatus">활동 중</span></div>
+        <div class="visibility-chip"><i></i><span id="sideVisibility">공개</span></div>
+      </div>
+    </section>
+    <nav class="nav">
+      <button class="active" type="button"><span>⌘</span><strong>성장 트리</strong></button>
+      <button type="button"><span>▤</span><strong>마음 다이어리</strong></button>
+      <button type="button"><span>◫</span><strong>처음부터 다시 걷기</strong></button>
+      <button type="button"><span>◌</span><strong>내 정원</strong></button>
+    </nav>
+    <div class="sidebar-note"><strong>기록을 지우지 않는 선택</strong>마음이 복잡해졌을 때는 삭제 대신 휴식·비공개·개인 메모를 따로 선택할 수 있어요.</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="breadcrumb">내 정원 / <strong>우리의 빛나는 순간들</strong></div>
+      <div class="top-actions">
+        <button class="soft" id="addMomentBtn" type="button">＋ 새 순간 추가</button>
+        <button class="primary" id="stateButton" type="button">트리 상태 바꾸기</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <span class="eyebrow" id="heroEyebrow">KEEP THE MEMORIES · CHOOSE THE DISTANCE</span>
+      <h1 id="heroTitle">좋아한 마음을 지우지 않고,<br><em>잠시 거리를 둘 수 있어요</em></h1>
+      <p id="heroText">무슨 일이 생겼다고 해서 지나온 184개의 순간까지 없앨 필요는 없어요. 새 기록을 멈출지, 공개만 잠시 닫을지, 내 생각을 어디까지 남길지 각각 따로 정할 수 있습니다.</p>
+    </section>
+
+    <div class="layout">
+      <section class="workspace">
+        <header class="workspace-head">
+          <div class="workspace-label"><span>✦</span><span><strong>WHOLE LOVETREE</strong> · 기록은 남기고 상태만 바꿔요</span></div>
+          <div class="tools"><button type="button">⌗</button><button type="button">−</button><button type="button">＋</button></div>
+        </header>
+
+        <div class="stage">
+          <div class="stage-copy">
+            <span class="eyebrow">A TREE THAT REMEMBERS</span>
+            <strong id="stageTitle">184개의 순간이 이어져 있어요</strong>
+            <span id="stageSub">지금은 새 순간을 계속 기록할 수 있어요.</span>
+          </div>
+          <div class="stage-status"><i></i><span id="stageStatus">활동 중 · 공개</span></div>
+
+          <div class="tree-scene">
+            <svg class="tree-svg" viewBox="0 0 900 520" aria-label="러브트리">
+              <ellipse class="ground" cx="450" cy="472" rx="300" ry="34"/>
+              <path class="tree-trunk" d="M445 444 C430 360 450 300 444 230 C438 174 458 126 468 80"/>
+              <path class="tree-branch" d="M448 306 C370 272 315 225 252 172"/>
+              <path class="tree-branch" d="M449 286 C515 260 570 210 640 154"/>
+              <path class="tree-branch" d="M449 230 C380 194 352 150 327 106"/>
+              <path class="tree-branch" d="M455 210 C520 181 554 140 585 96"/>
+              <path class="tree-twig" d="M322 218 C265 218 218 198 176 162"/>
+              <path class="tree-twig" d="M566 212 C640 215 690 190 735 148"/>
+              <path class="tree-twig" d="M367 169 C332 131 303 106 274 77"/>
+              <path class="tree-twig" d="M538 164 C575 124 606 98 650 68"/>
+              <ellipse class="leaf" cx="174" cy="151" rx="58" ry="33"/>
+              <ellipse class="leaf soft" cx="255" cy="105" rx="74" ry="41"/>
+              <ellipse class="leaf" cx="341" cy="93" rx="78" ry="43"/>
+              <ellipse class="leaf soft" cx="471" cy="72" rx="92" ry="48"/>
+              <ellipse class="leaf" cx="588" cy="88" rx="83" ry="43"/>
+              <ellipse class="leaf soft" cx="682" cy="132" rx="68" ry="39"/>
+              <ellipse class="leaf" cx="732" cy="178" rx="48" ry="30"/>
+              <ellipse class="leaf rose" cx="276" cy="158" rx="30" ry="18"/>
+              <ellipse class="leaf rose" cx="618" cy="154" rx="27" ry="17"/>
+            </svg>
+
+            <button class="memory m1 quiet" data-memory="0" type="button"><small>01 · 처음</small><strong>첫 마음의 씨앗</strong><span>2024.02.11</span></button>
+            <button class="memory m2" data-memory="1" type="button"><small>58 · 설렘</small><strong>그 표정이 좋았던 날</strong><span>2024.03.28</span></button>
+            <button class="memory m3 quiet" data-memory="2" type="button"><small>05 · 변화</small><strong>완전히 빠지기 전</strong><span>2024.02.28</span></button>
+            <button class="memory m4 quiet" data-memory="3" type="button"><small>184 · 최근</small><strong>가장 최근의 마음</strong><span>3일 전</span></button>
+            <button class="memory m5" data-memory="4" type="button"><small>167 · 위로</small><strong>오늘의 나를 안아준 노래</strong><span>2024.05.06</span></button>
+
+            <article class="center-card">
+              <small>MY LOVE TREE</small>
+              <strong>우리의 빛나는 순간들</strong>
+              <span id="centerCount">184 moments · 7 branches</span>
+            </article>
+
+            <article class="issue-node">
+              <small id="issueKicker">185 · 복잡함</small>
+              <strong id="issueTitle">최근 이슈를 본 날</strong>
+              <span id="issueDate">방금 기록함</span>
+              <div class="issue-actions">
+                <button id="openIssueMoment" type="button">내용 보기</button>
+                <button id="pauseAfterMoment" type="button">이 순간 뒤 잠시 멈추기</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="pause-overlay"></div>
+          <div class="pause-banner">
+            <div><strong>이 트리는 잠시 멈춰 있어요</strong><span id="pauseBannerText">기록은 그대로 보관되고, 새 순간 추가만 잠시 쉬고 있습니다.</span></div>
+            <button id="returnButton" type="button">다시 이어가기</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="panel">
+          <span class="eyebrow">TREE STATUS</span>
+          <h2>지금의 트리 상태</h2>
+          <p>휴식 여부와 공개 범위는 서로 다른 설정입니다.</p>
+          <div class="status-grid">
+            <div class="status-row"><span>기록 상태</span><strong id="panelStatus">활동 중</strong></div>
+            <div class="status-row"><span>공개 범위</span><strong id="panelVisibility">전체 공개</strong><button id="visibilityButton" type="button">변경</button></div>
+          </div>
+          <div class="reason-box">
+            <small>PRIVATE NOTE</small>
+            <strong id="panelReason">최근 상황을 더 지켜보는 중</strong>
+            <p id="panelPrivateNote">내 마음이 정리될 때까지 조금 거리를 두기로 했어요.</p>
+            <span class="private-tag">🔒 나만 보는 메모</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <span class="eyebrow">PUBLIC PREVIEW</span>
+          <h2>다른 사람에게 보이는 모습</h2>
+          <p>공개 트리일 때만 아래 상태 문구가 보입니다.</p>
+          <div class="preview-card">
+            <div class="preview-content">
+              <small>우리의 빛나는 순간들</small>
+              <strong id="previewTitle">184개의 순간이 이어진 공개 트리</strong>
+              <p id="previewMessage">좋아한 순간을 계속 기록하고 있어요.</p>
+              <span class="preview-badge" id="previewBadge">활동 중</span>
+            </div>
+            <div class="preview-lock">🔒 이 트리는 현재 나만 볼 수 있어요.<br>기록과 개인 메모는 그대로 보존됩니다.</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <span class="eyebrow">QUIET ARCHIVE</span>
+          <h2>마음을 다시 살펴볼 때</h2>
+          <p>처음·변화·최근의 마음을 바로 꺼내볼 수 있어요.</p>
+          <div class="quiet-list">
+            <button data-memory="0" type="button"><b>01</b><span><strong>첫 마음의 씨앗</strong><span>내가 왜 처음 멈췄는지</span></span></button>
+            <button data-memory="2" type="button"><b>05</b><span><strong>완전히 빠지기 전</strong><span>마음이 달라지기 시작한 순간</span></span></button>
+            <button data-memory="3" type="button"><b>184</b><span><strong>가장 최근의 마음</strong><span>지금과 가장 가까운 기록</span></span></button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- 새 순간 추가 -->
+<div class="modal-backdrop" id="addModal">
+  <section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow">A NEW MOMENT</span><h2 id="addTitle">지금 본 장면도 기록할까요?</h2><p>좋았던 영상만 남길 필요는 없어요. 마음이 복잡해진 장면도 감정 경로의 일부로 기록할 수 있습니다.</p></div>
+      <button class="close" data-close="addModal" type="button">×</button>
+    </div>
+    <div class="two-col">
+      <div class="field"><label for="videoUrl">영상 링크</label><input id="videoUrl" type="url" value="https://youtu.be/JU0CLaT3Bfs" placeholder="YouTube 링크"></div>
+      <div class="field"><label for="momentTitle">이 순간을 부를 말</label><input id="momentTitle" type="text" value="최근 이슈를 본 날"></div>
+    </div>
+    <div class="field">
+      <span class="field-title">지금 감정</span>
+      <div class="emotions" id="emotionButtons">
+        <button class="emotion active" type="button">복잡함</button>
+        <button class="emotion" type="button">실망</button>
+        <button class="emotion" type="button">혼란</button>
+        <button class="emotion" type="button">거리두기</button>
+      </div>
+    </div>
+    <div class="field"><label for="momentMemo">내가 느낀 마음</label><textarea id="momentMemo">관련 영상을 보고 마음이 복잡해졌어요. 바로 판단하기보다 조금 지켜보고 싶어요.</textarea></div>
+    <div class="toggle-row">
+      <div class="toggle-copy"><strong>이 순간을 저장한 뒤 트리를 잠시 멈추기</strong><span>저장 후 휴식 이유와 공개 범위를 이어서 선택합니다.</span></div>
+      <label class="switch"><input id="pauseAfterSave" type="checkbox" checked><i></i></label>
+    </div>
+    <div class="add-preview">
+      <img id="addThumb" src="https://img.youtube.com/vi/JU0CLaT3Bfs/hqdefault.jpg" alt="">
+      <div><strong id="addPreviewTitle">최근 이슈를 본 날</strong><span id="addPreviewMemo">관련 영상을 보고 마음이 복잡해졌어요. 바로 판단하기보다 조금 지켜보고 싶어요.</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" data-close="addModal" type="button">취소</button>
+      <button class="primary" id="saveMoment" type="button">이 순간 저장하기</button>
+    </div>
+  </section>
+</div>
+
+<!-- 트리 상태 -->
+<div class="modal-backdrop" id="stateModal">
+  <section class="modal wide" role="dialog" aria-modal="true" aria-labelledby="stateTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow">TREE PAUSE</span><h2 id="stateTitle">이 트리와 잠시 거리를 둘까요?</h2><p>트리를 삭제하지 않고 기록만 멈출 수 있어요. 휴식 이유·공개 범위·공개 문구는 각각 따로 정합니다.</p></div>
+      <button class="close" data-close="stateModal" type="button">×</button>
+    </div>
+
+    <div class="field">
+      <span class="field-title">지금 쉬고 싶은 이유</span>
+      <div class="choice-grid">
+        <label class="choice"><input type="radio" name="pauseReason" value="최근 이슈를 더 지켜보는 중" checked><span><strong>최근 이슈를 더 지켜보는 중</strong><span>사실관계와 상황이 정리될 때까지 기록을 멈춰요.</span></span></label>
+        <label class="choice"><input type="radio" name="pauseReason" value="마음이 복잡해짐"><span><strong>마음이 복잡해짐</strong><span>좋아했던 마음과 지금의 감정을 천천히 분리해봐요.</span></span></label>
+        <label class="choice"><input type="radio" name="pauseReason" value="잠시 거리를 두고 싶음"><span><strong>잠시 거리를 두고 싶음</strong><span>추천과 새 영상 추가에서 잠깐 벗어나요.</span></span></label>
+        <label class="choice"><input type="radio" name="pauseReason" value="좋아하는 마음을 다시 살펴보는 중"><span><strong>좋아하는 마음을 다시 살펴보는 중</strong><span>처음·변화·최근의 마음을 다시 확인해요.</span></span></label>
+      </div>
+    </div>
+
+    <div class="field"><label for="privateNote">내 생각 정리</label><textarea id="privateNote">내 마음이 정리될 때까지 조금 거리를 두기로 했어요.</textarea><div class="help">이 메모는 항상 나만 볼 수 있습니다.</div></div>
+
+    <div class="field">
+      <span class="field-title">휴식 중 공개 범위</span>
+      <div class="choice-grid">
+        <label class="choice"><input type="radio" name="pauseVisibility" value="public" checked><span><strong>공개 상태 유지</strong><span>트리는 계속 보이지만 ‘잠시 쉬는 중’ 상태만 표시합니다.</span></span></label>
+        <label class="choice"><input type="radio" name="pauseVisibility" value="private"><span><strong>나만 보기로 전환</strong><span>다른 사람에게는 숨기고 내 정원에만 보관합니다.</span></span></label>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-copy"><strong>공개 상태 문구 남기기</strong><span>공개 트리일 때만 중립적인 한 문장을 보여줍니다.</span></div>
+      <label class="switch"><input id="publicMessageToggle" type="checkbox" checked><i></i></label>
+    </div>
+    <div class="field" id="publicMessageField">
+      <label for="publicMessage">다른 사람에게 보일 문구</label>
+      <textarea id="publicMessage">최근 상황을 더 지켜보며 이 트리는 잠시 쉬고 있어요.</textarea>
+      <div class="help">확인되지 않은 사실을 단정하거나 다른 사람을 공격하는 문장은 공개하지 않는 방향입니다.</div>
+    </div>
+
+    <div class="section-card">
+      <strong>휴식 중에도 그대로 남는 것</strong>
+      <span>기존 영상·메모·감정 경로·처음의 마음·마음이 바뀐 순간·가장 최근의 마음은 모두 보존됩니다. 새 순간 추가만 잠시 멈춥니다.</span>
+    </div>
+
+    <div class="modal-actions">
+      <button class="ghost" data-close="stateModal" type="button">계속 기록할게요</button>
+      <button class="primary" id="confirmPause" type="button">트리 잠시 멈추기</button>
+    </div>
+  </section>
+</div>
+
+<!-- 공개 범위 -->
+<div class="modal-backdrop" id="visibilityModal">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="visibilityTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow">VISIBILITY</span><h2 id="visibilityTitle">누가 이 트리를 볼 수 있을까요?</h2><p>휴식 상태와 공개 범위는 별개입니다. 언제든 바꿀 수 있어요.</p></div>
+      <button class="close" data-close="visibilityModal" type="button">×</button>
+    </div>
+    <div class="field choice-grid">
+      <label class="choice"><input type="radio" name="visibilityOnly" value="public" checked><span><strong>전체 공개</strong><span>다른 사람이 트리와 공개 상태 문구를 볼 수 있어요.</span></span></label>
+      <label class="choice"><input type="radio" name="visibilityOnly" value="private"><span><strong>나만 보기</strong><span>내 정원에서만 기록을 확인할 수 있어요.</span></span></label>
+    </div>
+    <div class="modal-actions"><button class="ghost" data-close="visibilityModal" type="button">취소</button><button class="primary" id="saveVisibility" type="button">공개 범위 저장</button></div>
+  </section>
+</div>
+
+<!-- 다시 이어가기 -->
+<div class="modal-backdrop" id="returnModal">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="returnTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow">RETURN TO THE TREE</span><h2 id="returnTitle">다시 이어가기 시작할까요?</h2><p>돌아온 사실만 상태 기록으로 남기고, 새로운 영상은 마음이 움직일 때 따로 추가합니다.</p></div>
+      <button class="close" data-close="returnModal" type="button">×</button>
+    </div>
+    <div class="field"><label for="returnNote">지금의 마음</label><textarea id="returnNote" placeholder="예: 조금 더 지켜본 뒤 다시 기록해보려고 해요."></textarea><div class="help">영상 순간 수에는 포함되지 않는 개인 상태 메모입니다.</div></div>
+    <div class="toggle-row">
+      <div class="toggle-copy"><strong>공개 범위는 현재 설정 유지</strong><span id="returnVisibilityText">현재 전체 공개 상태입니다.</span></div>
+    </div>
+    <div class="modal-actions"><button class="ghost" data-close="returnModal" type="button">조금 더 쉴게요</button><button class="primary" id="confirmReturn" type="button">다시 기록 시작하기</button></div>
+  </section>
+</div>
+
+<!-- 기억 보기 -->
+<div class="modal-backdrop" id="memoryModal">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="memoryTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow" id="memoryEyebrow"></span><h2 id="memoryTitle"></h2><p id="memoryIntro"></p></div>
+      <button class="close" data-close="memoryModal" type="button">×</button>
+    </div>
+    <article class="memory-card"><small id="memoryDate"></small><h3 id="memoryCardTitle"></h3><p id="memoryMemo"></p></article>
+    <div class="modal-actions"><button class="primary" data-close="memoryModal" type="button">조용히 덮기</button></div>
+  </section>
+</div>
+
+<!-- 이슈 순간 보기 -->
+<div class="modal-backdrop" id="issueModal">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="issueModalTitle">
+    <div class="modal-head">
+      <div><span class="eyebrow" id="issueModalKicker">185 · 복잡함</span><h2 id="issueModalTitle">최근 이슈를 본 날</h2><p>좋았던 순간뿐 아니라 마음이 달라진 장면도 감정 경로에 남길 수 있어요.</p></div>
+      <button class="close" data-close="issueModal" type="button">×</button>
+    </div>
+    <article class="memory-card"><small>PRIVATE MOMENT NOTE</small><h3 id="issueModalEmotion">복잡함</h3><p id="issueModalMemo">관련 영상을 보고 마음이 복잡해졌어요. 바로 판단하기보다 조금 지켜보고 싶어요.</p></article>
+    <div class="modal-actions"><button class="ghost" data-close="issueModal" type="button">닫기</button><button class="primary" id="issuePauseButton" type="button">이 순간 뒤 잠시 멈추기</button></div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const storageKey="lovetree-tree-pause-issue-state-v1";
+  const memories=[
+    {kicker:"01 · 처음",title:"첫 마음의 씨앗",date:"2024.02.11",intro:"내가 왜 처음 이 사람에게 마음이 멈췄는지 확인하는 순간이에요.",memo:"처음 봤을 때는 이렇게 오래 좋아할 줄 몰랐어. 그래서 이 장면은 아직도 가장 조심스럽고 선명하게 남아 있어."},
+    {kicker:"58 · 설렘",title:"그 표정이 좋았던 날",date:"2024.03.28",intro:"좋아하는 이유가 조금 더 분명해진 순간이에요.",memo:"짧게 웃는 표정 하나를 몇 번이나 되돌려 봤어. 그때부터 다음 영상을 찾아보는 일이 자연스러워졌어."},
+    {kicker:"05 · 변화",title:"완전히 빠지기 전",date:"2024.02.28",intro:"아직 팬이라고 부르기 전, 마음이 이미 달라지고 있던 장면이에요.",memo:"하루에 한 번은 꼭 떠올렸어. 지금 생각하면 이때 이미 마음이 바뀌고 있었던 것 같아."},
+    {kicker:"184 · 최근",title:"가장 최근의 마음",date:"3일 전",intro:"지금의 복잡한 마음과 가장 가까운 이전 기록이에요.",memo:"계속 좋아해야 한다는 부담보다, 내가 좋아했던 순간이 이미 충분히 소중하다는 마음을 남겼어."},
+    {kicker:"167 · 위로",title:"오늘의 나를 안아준 노래",date:"2024.05.06",intro:"지친 날 다시 찾아본 위로의 순간이에요.",memo:"아무것도 하지 않아도 괜찮다고 말해주는 것 같아서 오래 간직했어."}
+  ];
+
+  const defaults={
+    status:"active",
+    visibility:"public",
+    hasIssue:false,
+    momentCount:184,
+    selectedEmotion:"복잡함",
+    issueTitle:"최근 이슈를 본 날",
+    issueMemo:"관련 영상을 보고 마음이 복잡해졌어요. 바로 판단하기보다 조금 지켜보고 싶어요.",
+    issueVideoId:"JU0CLaT3Bfs",
+    reason:"최근 이슈를 더 지켜보는 중",
+    privateNote:"내 마음이 정리될 때까지 조금 거리를 두기로 했어요.",
+    showPublicMessage:true,
+    publicMessage:"최근 상황을 더 지켜보며 이 트리는 잠시 쉬고 있어요.",
+    pausedAt:null,
+    returnedAt:null,
+    returnNote:""
+  };
+
+  const state=Object.assign({},defaults,JSON.parse(localStorage.getItem(storageKey)||"{}"));
+  const $=s=>document.querySelector(s);
+  const body=document.body;
+  const toast=$("#toast");
+
+  function save(){localStorage.setItem(storageKey,JSON.stringify(state))}
+  function notify(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove("show"),2800)}
+  function openModal(id){const el=$("#"+id);el.classList.add("open");requestAnimationFrame(()=>el.querySelector("button,input,textarea")?.focus())}
+  function closeModal(id){$("#"+id).classList.remove("open")}
+  function checked(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
+  function videoId(url){
+    try{
+      const u=new URL(url);
+      if(u.hostname.includes("youtu.be"))return u.pathname.slice(1);
+      if(u.hostname.includes("youtube.com"))return u.searchParams.get("v")||u.pathname.split("/").pop();
+    }catch(e){}
+    return "JU0CLaT3Bfs"
+  }
+
+  function render(){
+    body.dataset.status=state.status;
+    body.dataset.visibility=state.visibility;
+    body.dataset.hasIssue=String(state.hasIssue);
+    const paused=state.status==="paused";
+    const publicTree=state.visibility==="public";
+
+    $("#sideStatus").textContent=paused?"잠시 쉬는 중":"활동 중";
+    $("#sideVisibility").textContent=publicTree?"공개":"나만 보기";
+    $("#panelStatus").textContent=paused?"잠시 쉬는 중":"활동 중";
+    $("#panelVisibility").textContent=publicTree?"전체 공개":"나만 보기";
+    $("#stageStatus").textContent=`${paused?"잠시 쉬는 중":"활동 중"} · ${publicTree?"공개":"나만 보기"}`;
+    $("#stageTitle").textContent=`${state.momentCount}개의 순간이 ${paused?"조용히 멈춰":"이어져"} 있어요`;
+    $("#stageSub").textContent=paused?"기록은 보존되고 새 순간 추가만 잠시 멈췄어요.":"지금은 새 순간을 계속 기록할 수 있어요.";
+    $("#centerCount").textContent=`${state.momentCount} moments · 7 branches`;
+
+    $("#heroEyebrow").textContent=paused?"TREE ON PAUSE · MEMORIES KEPT":"KEEP THE MEMORIES · CHOOSE THE DISTANCE";
+    $("#heroTitle").innerHTML=paused?"이 트리는 잠시 멈췄지만,<br><em>지나온 마음은 그대로예요</em>":"좋아한 마음을 지우지 않고,<br><em>잠시 거리를 둘 수 있어요</em>";
+    $("#heroText").textContent=paused
+      ?"새 순간 추가는 멈췄고 기존 영상·메모·감정 경로는 그대로 보관되어 있습니다. 처음의 마음, 마음이 바뀐 순간, 가장 최근의 마음을 조용히 돌아볼 수 있어요."
+      :"무슨 일이 생겼다고 해서 지나온 순간까지 없앨 필요는 없어요. 새 기록을 멈출지, 공개만 잠시 닫을지, 내 생각을 어디까지 남길지 각각 따로 정할 수 있습니다.";
+
+    $("#stateButton").textContent=paused?"휴식 설정 보기":"트리 상태 바꾸기";
+    $("#addMomentBtn").textContent=paused?"＋ 새 순간 추가 · 휴식 중":"＋ 새 순간 추가";
+    $("#panelReason").textContent=state.reason;
+    $("#panelPrivateNote").textContent=state.privateNote||"남긴 개인 메모가 없습니다.";
+    $("#pauseBannerText").textContent=publicTree?"기록은 그대로 보관되고, 공개 트리에는 휴식 상태만 표시됩니다.":"기록은 그대로 보관되고, 현재 이 트리는 나만 볼 수 있습니다.";
+
+    $("#previewTitle").textContent=`${state.momentCount}개의 순간이 이어진 공개 트리`;
+    $("#previewBadge").textContent=paused?"잠시 쉬는 중":"활동 중";
+    $("#previewMessage").textContent=paused
+      ?(state.showPublicMessage&&state.publicMessage?state.publicMessage:"이 트리는 잠시 쉬고 있어요.")
+      :"좋아한 순간을 계속 기록하고 있어요.";
+
+    $("#issueKicker").textContent=`${state.momentCount} · ${state.selectedEmotion}`;
+    $("#issueTitle").textContent=state.issueTitle;
+    $("#issueModalKicker").textContent=`${state.momentCount} · ${state.selectedEmotion}`;
+    $("#issueModalTitle").textContent=state.issueTitle;
+    $("#issueModalEmotion").textContent=state.selectedEmotion;
+    $("#issueModalMemo").textContent=state.issueMemo;
+
+    $("#returnVisibilityText").textContent=publicTree?"현재 전체 공개 상태입니다.":"현재 나만 보기 상태입니다.";
+  }
+
+  $("#addMomentBtn").addEventListener("click",()=>{
+    if(state.status==="paused"){notify("지금은 휴식 중이에요. 다시 이어가기를 선택하면 새 순간을 추가할 수 있어요.");return}
+    openModal("addModal");
+  });
+  $("#stateButton").addEventListener("click",()=>openModal("stateModal"));
+  $("#visibilityButton").addEventListener("click",()=>{
+    document.querySelectorAll('input[name="visibilityOnly"]').forEach(r=>r.checked=r.value===state.visibility);
+    openModal("visibilityModal");
+  });
+  $("#returnButton").addEventListener("click",()=>openModal("returnModal"));
+
+  document.querySelectorAll(".emotion").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll(".emotion").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    state.selectedEmotion=btn.textContent.trim();
+  }));
+
+  $("#videoUrl").addEventListener("input",()=>{
+    const id=videoId($("#videoUrl").value);
+    $("#addThumb").src=`https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  });
+  $("#momentTitle").addEventListener("input",()=>$("#addPreviewTitle").textContent=$("#momentTitle").value||"이 순간");
+  $("#momentMemo").addEventListener("input",()=>$("#addPreviewMemo").textContent=$("#momentMemo").value||"마음을 한 줄 남겨보세요.");
+
+  $("#saveMoment").addEventListener("click",()=>{
+    state.hasIssue=true;
+    state.momentCount=185;
+    state.issueTitle=$("#momentTitle").value.trim()||"최근 이슈를 본 날";
+    state.issueMemo=$("#momentMemo").value.trim()||"마음이 복잡해진 장면을 기록했어요.";
+    state.issueVideoId=videoId($("#videoUrl").value);
+    save();closeModal("addModal");render();
+    notify("좋았던 순간이 아닌 지금의 복잡한 마음도 트리에 기록했습니다.");
+    if($("#pauseAfterSave").checked)setTimeout(()=>openModal("stateModal"),280);
+  });
+
+  $("#publicMessageToggle").addEventListener("change",()=>{
+    $("#publicMessageField").classList.toggle("hidden",!$("#publicMessageToggle").checked)
+  });
+
+  $("#confirmPause").addEventListener("click",()=>{
+    state.status="paused";
+    state.reason=checked("pauseReason")||defaults.reason;
+    state.privateNote=$("#privateNote").value.trim();
+    state.visibility=checked("pauseVisibility")||"public";
+    state.showPublicMessage=$("#publicMessageToggle").checked;
+    state.publicMessage=$("#publicMessage").value.trim();
+    state.pausedAt=new Date().toISOString();
+    save();closeModal("stateModal");render();
+    notify(state.visibility==="private"?"트리를 나만 보기로 보관하고 잠시 멈췄어요.":"공개 기록은 남기고 트리를 잠시 멈췄어요.");
+  });
+
+  $("#saveVisibility").addEventListener("click",()=>{
+    state.visibility=checked("visibilityOnly")||state.visibility;
+    save();closeModal("visibilityModal");render();
+    notify(state.visibility==="private"?"이 트리를 나만 보기로 전환했어요.":"이 트리를 다시 공개했어요.");
+  });
+
+  $("#confirmReturn").addEventListener("click",()=>{
+    state.status="active";
+    state.returnNote=$("#returnNote").value.trim();
+    state.returnedAt=new Date().toISOString();
+    save();closeModal("returnModal");render();
+    notify("휴식 상태를 끝냈어요. 새 영상은 마음이 움직일 때 천천히 이어가세요.");
+  });
+
+  $("#pauseAfterMoment").addEventListener("click",()=>openModal("stateModal"));
+  $("#issuePauseButton").addEventListener("click",()=>{closeModal("issueModal");openModal("stateModal")});
+  $("#openIssueMoment").addEventListener("click",()=>openModal("issueModal"));
+
+  document.querySelectorAll("[data-memory]").forEach(btn=>btn.addEventListener("click",()=>{
+    const m=memories[Number(btn.dataset.memory)];
+    $("#memoryEyebrow").textContent=m.kicker;
+    $("#memoryTitle").textContent=m.title;
+    $("#memoryIntro").textContent=m.intro;
+    $("#memoryDate").textContent=m.date;
+    $("#memoryCardTitle").textContent=m.title;
+    $("#memoryMemo").textContent=m.memo;
+    openModal("memoryModal");
+  }));
+
+  document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>closeModal(btn.dataset.close)));
+  document.querySelectorAll(".modal-backdrop").forEach(bg=>bg.addEventListener("click",e=>{if(e.target===bg)bg.classList.remove("open")}));
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(x=>x.classList.remove("open"))});
+
+  render();
+})();
+</script>
+</body>
+</html>
