@@ -865,6 +865,15 @@
   .bsv2a2-stage { position: absolute; inset: 0; min-height: 100vh; height: 100%; }
   .bsv2a2-motion-app.focus-mode .bsv2a2-stage { position: fixed; }
 
+  /* The stage's wide 3D book spread (scrollWidth ~596px) overflows this narrow
+     viewport, making the stage a horizontally scrollable container even though
+     `overflow: hidden` clips it visually. During the FOCUSED -> OPEN transition
+     the browser scrolls that container (stage.scrollLeft ~77px), which shifts the
+     whole stage subtree (book, pages and the bottom UI) off-screen to the left.
+     `overflow: clip` cuts identically to `hidden` but does NOT create a scrollable
+     axis, so scrollLeft stays 0 and every child keeps its in-viewport position. */
+  .bsv2a2-stage { overflow: clip; overflow-anchor: none; }
+
   /* shelf world occupies full height so the selected book can center */
   .bsv2a2-shelf-world { height: 100%; bottom: 0; }
   .bsv2a2-shelf-back, .bsv2a2-shelf-plank, .bsv2a2-shelf-glow { display: none; }
@@ -984,6 +993,19 @@
     --open-x: 78px;
     --ss: 0.88 !important;
   }
+
+  /* bottom UI fit on very narrow phones: pin the reader controls to the actual
+     viewport width with equal buttons so all three stay fully inside 8..312px,
+     and keep the info panel edges >= 8px. 390px+ keeps the design above. */
+  .bsv2a2-reader-controls {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    transform: none;
+    display: flex;
+    gap: 6px;
+  }
+  .bsv2a2-reader-controls button { flex: 1 1 0; min-width: 0; width: 100%; }
 }
 
 @media (min-width: 761px) and (max-width: 1000px) {
