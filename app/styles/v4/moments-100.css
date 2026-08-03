@@ -2795,6 +2795,7 @@
     padding: 8px;
     gap: 8px;
     min-height: 1150px;
+    padding-bottom: 64px;
   }
   .v4-moments-panel {
     border-radius: 20px;
