@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { chromium } from "playwright";
 
-const BASE = "http://localhost:3000";
+const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
 const VIEWPORTS = [
   { name: "desktop", width: 1536, height: 960 },
   { name: "laptop", width: 1280, height: 800 },
@@ -224,6 +224,13 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
       const board = document.querySelector(".v4-j-hero .v4-j-board");
       const copyRect = copy?.getBoundingClientRect();
       const boardRect = board?.getBoundingClientRect();
+      const h1Lines = Array.from(hero?.querySelectorAll("h1 > span") || []).map(
+        (s) => s.textContent.trim(),
+      );
+      const proofSmall = document.querySelector(".v4-j-proof small")?.textContent?.trim() || "";
+      const proofSpans = Array.from(
+        document.querySelectorAll(".v4-j-proof-line span"),
+      ).map((s) => s.textContent.replace(/\s+/g, " ").trim());
       return {
         heroCols,
         twoCols: heroCols.split(" ").length === 2,
@@ -236,6 +243,9 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
         caption: !!document.querySelector(".v4-j-caption"),
         oldHeroArt: !!document.querySelector(".v4-j-hero-art"),
         oldRow: !!document.querySelector(".v4-j-row"),
+        h1Lines,
+        proofSmall,
+        proofSpans,
       };
     });
     assert.equal(landing.twoCols, true, "landing hero is a 2-column layout");
@@ -245,6 +255,17 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
     assert.equal(landing.caption, true, "board caption present");
     assert.equal(landing.oldHeroArt, false, "old stacked hero-art preview removed");
     assert.equal(landing.oldRow, false, "old inline desc row removed");
+    assert.deepEqual(
+      landing.h1Lines,
+      ["사랑에 빠지는", "순간을 하나의", "러브트리로", "이어 보세요"],
+      "landing hero title is the source 4-line copy",
+    );
+    assert.equal(landing.proofSmall, "러브트리는 이렇게 자라요", "proof small caption present");
+    assert.deepEqual(
+      landing.proofSpans,
+      ["01 발견", "02 기록", "03 연결", "04 성장"],
+      "proof line shows source 발견/기록/연결/성장",
+    );
 
     /* modal green notice + filled primary CTA */
     await page.getByRole("button", { name: /첫 순간 심기/ }).first().click();
@@ -258,13 +279,16 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
         notePresent: !!note,
         noteBg: note ? getComputedStyle(note).backgroundColor : "",
         ctaWidth: cs ? cs.width : "",
-        ctaBg: cs ? cs.backgroundColor : "",
+        ctaBg: cs ? cs.backgroundImage : "",
+        ctaColor: cs ? cs.color : "",
         modalWidth: modalEl ? Math.round(modalEl.getBoundingClientRect().width) : 0,
       };
     });
     assert.equal(modal.notePresent, true, "modal green notice block present");
     assert.match(modal.noteBg, /223, 232, 220/, "green notice uses sage pale background");
     assert.ok(parseFloat(modal.ctaWidth) > 300, "modal primary CTA is full width");
+    assert.match(modal.ctaBg, /linear-gradient/, "modal primary CTA is a filled gradient");
+    assert.equal(modal.ctaColor, "rgb(255, 253, 248)", "modal primary CTA uses light text");
     await page.keyboard.press("Escape");
     await page.waitForTimeout(200);
 
@@ -318,14 +342,120 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
     await mobilePage.page.waitForTimeout(500);
     const nav = await mobilePage.page.evaluate(() => {
       const btns = Array.from(document.querySelectorAll(".v4-journey-stage-btn"));
+      const navEl = document.querySelector(".v4-journey-stage-nav");
+      const doc = document.documentElement;
+      const last = btns[btns.length - 1];
       return {
         count: btns.length,
         allNowrap: btns.every((b) => getComputedStyle(b).whiteSpace === "nowrap"),
+        navClipped: navEl ? navEl.scrollWidth > navEl.clientWidth : false,
+        lastVisible: last
+          ? last.getBoundingClientRect().right <= doc.clientWidth
+          : false,
+        pageOverflow: doc.scrollWidth > doc.clientWidth,
       };
     });
     assert.equal(nav.count, 4, "mobile 4-stage nav present");
     assert.equal(nav.allNowrap, true, "mobile stage labels are single-line (nowrap, no char-break)");
+    assert.equal(nav.navClipped, false, "mobile stage nav is not horizontally clipped");
+    assert.equal(nav.lastVisible, true, "mobile last stage button is fully visible");
+    assert.equal(nav.pageOverflow, false, "mobile page has no horizontal overflow");
     await mobilePage.page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 first journey — success states use centered large success panels", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    /* step 2 success panel */
+    const step2 = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[0]);
+    await step2.page.evaluate(({ YT_A }) => {
+      localStorage.setItem("lovetree-first-journey-unified", JSON.stringify({
+        currentScreen: "step2-success",
+        treeName: "건호에게 입덕한 3일",
+        firstMoment: { url: YT_A, videoId: "ScMzIvxBSi4", title: "처음 마음이 멈춘 장면", note: "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.", discoveryDate: "2026-08-03", thumbnail: `https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg`, saved: true },
+        memory: { emotion: "벅참", customEmotion: "벅참", time: "00:42", note: "표정과 말투가 오래 남은 장면.", date: "2026-08-03", publicMemo: true, saved: true },
+        connections: [],
+        step3Origin: null,
+        drafts: { step3: { url: "", title: "", time: "00:00", relation: "댓글을 따라 찾아봤어요", note: "" } },
+      }));
+    }, { YT_A });
+    await step2.page.reload({ waitUntil: "networkidle" });
+    await step2.page.waitForTimeout(500);
+    const s2 = await step2.page.evaluate(() => {
+      const panel = document.querySelector("[data-testid='step2-success']");
+      const shell = document.querySelector(".v4-j-shell");
+      const layout = document.querySelector(".v4-j-layout-two");
+      const pr = panel?.getBoundingClientRect();
+      const sr = shell?.getBoundingClientRect();
+      return {
+        panelPresent: !!panel,
+        centered: pr && sr
+          ? Math.abs(pr.left + pr.width / 2 - (sr.left + sr.width / 2)) < 8
+          : false,
+        wide: pr ? pr.width > 460 : false,
+        layoutHidden: !layout,
+        flower: !!panel?.querySelector(".v4-j-success-flower"),
+        resultCard: !!panel?.querySelector(".v4-j-result-card"),
+        actionCount: panel?.querySelectorAll(".v4-j-success-actions button").length || 0,
+        overlayLeft: pr ? pr.left < 0 : false,
+      };
+    });
+    assert.equal(s2.panelPresent, true, "step2 success panel present");
+    assert.equal(s2.centered, true, "step2 success panel is centered in the shell");
+    assert.equal(s2.wide, true, "step2 success panel is a wide panel");
+    assert.equal(s2.layoutHidden, true, "step2 two-column layout hidden in success state");
+    assert.equal(s2.flower, true, "step2 success flower mark present");
+    assert.equal(s2.resultCard, true, "step2 success result card present");
+    assert.equal(s2.actionCount, 2, "step2 success shows edit + next actions");
+    assert.equal(s2.overlayLeft, false, "step2 success panel stays within the viewport");
+    assert.equal(step2.errors.length, 0, "step2 success produces no console/page errors");
+    await step2.page.close();
+
+    /* step 3 success panel */
+    const step3 = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[0]);
+    await step3.page.evaluate(({ YT_A, YT_B }) => {
+      localStorage.setItem("lovetree-first-journey-unified", JSON.stringify({
+        currentScreen: "step3-success",
+        treeName: "건호에게 입덕한 3일",
+        firstMoment: { url: YT_A, videoId: "ScMzIvxBSi4", title: "처음 마음이 멈춘 장면", note: "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.", discoveryDate: "2026-08-03", thumbnail: `https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg`, saved: true },
+        memory: { emotion: "벅참", customEmotion: "벅참", time: "00:42", note: "표정과 말투가 오래 남은 장면.", date: "2026-08-03", publicMemo: true, saved: true },
+        connections: [{ first: { url: YT_A, videoId: "ScMzIvxBSi4", title: "처음 마음이 멈춘 장면", note: "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.", discoveryDate: "2026-08-03", thumbnail: `https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg`, saved: true }, next: { id: "ysz5S6PUM-U", url: YT_B, title: "다시 찾아본 무대", time: "01:15", relation: "팬이 추천해 줬어요", note: "댓글에서 인터뷰를 추천받아 바로 찾아봤어." }, createdAt: new Date().toISOString() }],
+        step3Origin: null,
+        drafts: { step3: { url: "", title: "", time: "00:00", relation: "댓글을 따라 찾아봤어요", note: "" } },
+      }));
+    }, { YT_A, YT_B });
+    await step3.page.reload({ waitUntil: "networkidle" });
+    await step3.page.waitForTimeout(500);
+    const s3 = await step3.page.evaluate(() => {
+      const panel = document.querySelector("[data-testid='step3-success']");
+      const shell = document.querySelector(".v4-j-shell");
+      const layout = document.querySelector(".v4-j-layout-three");
+      const pr = panel?.getBoundingClientRect();
+      const sr = shell?.getBoundingClientRect();
+      return {
+        panelPresent: !!panel,
+        centered: pr && sr
+          ? Math.abs(pr.left + pr.width / 2 - (sr.left + sr.width / 2)) < 8
+          : false,
+        wide: pr ? pr.width > 460 : false,
+        layoutHidden: !layout,
+        pathSummary: !!panel?.querySelector(".v4-j-path-summary"),
+        relation: panel?.querySelector("[data-testid='success-relation']")?.textContent?.trim() || "",
+        actionCount: panel?.querySelectorAll(".v4-j-success-actions button").length || 0,
+      };
+    });
+    assert.equal(s3.panelPresent, true, "step3 success panel present");
+    assert.equal(s3.centered, true, "step3 success panel is centered in the shell");
+    assert.equal(s3.wide, true, "step3 success panel is a wide panel");
+    assert.equal(s3.layoutHidden, true, "step3 three-column layout hidden in success state");
+    assert.equal(s3.pathSummary, true, "step3 success path summary present");
+    assert.equal(s3.relation, "팬이 추천해 줬어요", "step3 success relation carried through");
+    assert.equal(s3.actionCount, 2, "step3 success shows again + finish actions");
+    assert.equal(step3.errors.length, 0, "step3 success produces no console/page errors");
+    await step3.page.close();
   } finally {
     await browser.close();
   }

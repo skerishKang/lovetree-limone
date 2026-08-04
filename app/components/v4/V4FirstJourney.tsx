@@ -645,9 +645,10 @@ export default function V4FirstJourney() {
                   <div className="v4-j-copy">
                     <p className="v4-j-eyebrow">A little garden for every feeling</p>
                     <h1>
-                      마음이 처음 멈춘
-                      <br />
-                      <em>그 순간을 심어볼까요?</em>
+                      <span className="v4-j-hero-line-1">사랑에 빠지는</span>
+                      <span className="v4-j-hero-line-2">순간을 하나의</span>
+                      <span className="v4-j-hero-line-3">러브트리로</span>
+                      <span className="v4-j-hero-line-4">이어 보세요</span>
                     </h1>
                     <p className="v4-j-hero-desc">
                       처음 발견한 영상, 다시 찾은 장면, 그때의 마음과 다음 순간을 한 그루의
@@ -666,21 +667,27 @@ export default function V4FirstJourney() {
                       </a>
                     </div>
                     <p className="v4-j-hero-note">
-                      ✦ 처음에는 단 하나의 순간만 있어도 충분해요.
+                      <b>✦</b> 처음에는 단 하나의 순간만 있어도 충분해요.
                     </p>
-                    <div className="v4-j-proof-line">
-                      <span>
-                        <i>01</i> 첫 순간
-                      </span>
-                      <span>
-                        <i>02</i> 감정 메모
-                      </span>
-                      <span>
-                        <i>03</i> 다음 가지
-                      </span>
-                      <span>
-                        <i>04</i> 성장
-                      </span>
+                    <div className="v4-j-proof">
+                      <small>러브트리는 이렇게 자라요</small>
+                      <div className="v4-j-proof-line">
+                        <span className="is-active">
+                          <b>01</b> 발견
+                        </span>
+                        <i aria-hidden="true" />
+                        <span>
+                          <b>02</b> 기록
+                        </span>
+                        <i aria-hidden="true" />
+                        <span>
+                          <b>03</b> 연결
+                        </span>
+                        <i aria-hidden="true" />
+                        <span>
+                          <b>04</b> 성장
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <aside className="v4-j-board" data-testid="v4-j-board">
@@ -819,8 +826,47 @@ export default function V4FirstJourney() {
                 </div>
               </nav>
 
-              <div className="v4-j-layout-two">
-                <div className="v4-j-copy">
+              {appState.currentScreen === "step2-success" ? (
+                <section className="v4-j-success-panel" data-testid="step2-success">
+                  <div className="v4-j-success-flower">✦</div>
+                  <h2>
+                    첫 마음 카드가
+                    <br />
+                    <em>조용히 피어났어요.</em>
+                  </h2>
+                  <p className="v4-j-hero-desc">
+                    처음 발견한 장면과 그때의 마음이 한 장의 카드로 연결됐습니다. 이제
+                    여기에서 다음 가지가 자라기 시작해요.
+                  </p>
+                  <div className="v4-j-result-card">
+                    <small data-testid="result-emotion">
+                      {appState.memory.emotion} · {appState.memory.time}
+                    </small>
+                    <strong data-testid="result-memory">{appState.memory.note}</strong>
+                    <span data-testid="result-date">{appState.memory.date}</span>
+                  </div>
+                  <div className="v4-j-success-actions">
+                    <button
+                      className="v4-j-btn-quiet"
+                      type="button"
+                      onClick={() =>
+                        update((prev) => ({ ...prev, currentScreen: "step2" }))
+                      }
+                    >
+                      다시 다듬기
+                    </button>
+                    <button
+                      className="v4-j-btn-primary"
+                      type="button"
+                      onClick={() => showScreen("step3")}
+                    >
+                      첫 여정 보기 →
+                    </button>
+                  </div>
+                </section>
+              ) : (
+                <div className="v4-j-layout-two">
+                  <div className="v4-j-copy">
                   <p className="v4-j-eyebrow">02 · 마음을 잎으로 남기는 시간</p>
                   <h1>
                     첫 가지가
@@ -881,45 +927,7 @@ export default function V4FirstJourney() {
                   </article>
                 </div>
 
-                {appState.currentScreen === "step2-success" ? (
-                  <div className="v4-j-form-paper v4-j-success-view" data-testid="step2-success">
-                    <div className="v4-j-success-flower">✦</div>
-                    <h2>
-                      첫 마음 카드가
-                      <br />
-                      조용히 피어났어요.
-                    </h2>
-                    <p className="v4-j-hero-desc">
-                      처음 발견한 장면과 그때의 마음이 한 장의 카드로 연결됐습니다.
-                    </p>
-                    <div className="v4-j-result-card">
-                      <small data-testid="result-emotion">
-                        {appState.memory.emotion} · {appState.memory.time}
-                      </small>
-                      <strong data-testid="result-memory">{appState.memory.note}</strong>
-                      <span data-testid="result-date">{appState.memory.date}</span>
-                    </div>
-                    <div className="v4-j-success-actions">
-                      <button
-                        className="v4-j-btn-quiet"
-                        type="button"
-                        onClick={() =>
-                          update((prev) => ({ ...prev, currentScreen: "step2" }))
-                        }
-                      >
-                        다시 다듬기
-                      </button>
-                      <button
-                        className="v4-j-btn-primary"
-                        type="button"
-                        onClick={() => showScreen("step3")}
-                      >
-                        첫 여정 보기 →
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <section className="v4-j-form-paper" data-testid="step2-form">
+                <section className="v4-j-form-paper" data-testid="step2-form">
                     <header className="v4-j-form-head">
                       <div>
                         <h2>
@@ -1053,9 +1061,9 @@ export default function V4FirstJourney() {
                       </div>
                     </form>
                   </section>
+                </div>
                 )}
               </div>
-            </div>
           </section>
         )}
 
@@ -1092,8 +1100,48 @@ export default function V4FirstJourney() {
                 </div>
               </nav>
 
-              <div className="v4-j-layout-three">
-                <div className="v4-j-copy">
+              {appState.currentScreen === "step3-success" && lastConnection ? (
+                <section className="v4-j-success-panel" data-testid="step3-success">
+                  <div className="v4-j-success-flower">❦</div>
+                  <h2>
+                    첫 가지가
+                    <br />
+                    <em>다정하게 이어졌어요.</em>
+                  </h2>
+                  <p className="v4-j-hero-desc">
+                    처음 만든 영상과 다음 영상 사이에 이유와 마음이 생겼습니다. 이제
+                    러브트리가 단순한 영상 목록이 아니라 좋아하게 된 경로를 보여줘요.
+                  </p>
+                  <div className="v4-j-path-summary">
+                    <div className="v4-j-path-card">
+                      <small>01 · 첫 순간</small>
+                      <strong>{lastConnection.first.title || "처음 마음이 멈춘 장면"}</strong>
+                    </div>
+                    <span className="v4-j-path-arrow">→</span>
+                    <div className="v4-j-path-card">
+                      <small>02 · 다음 영상</small>
+                      <strong>{lastConnection.next.title}</strong>
+                    </div>
+                  </div>
+                  <p className="v4-j-hero-note" data-testid="success-relation">
+                    {lastConnection.next.relation}
+                  </p>
+                  <div className="v4-j-success-actions">
+                    <button className="v4-j-btn-quiet" type="button" onClick={againConnect}>
+                      이 영상에서 또 이어보기
+                    </button>
+                    <button
+                      className="v4-j-btn-primary"
+                      type="button"
+                      onClick={() => showScreen("growth")}
+                    >
+                      내 러브트리 보기 →
+                    </button>
+                  </div>
+                </section>
+              ) : (
+                <div className="v4-j-layout-three">
+                  <div className="v4-j-copy">
                   <p className="v4-j-eyebrow">03 · 첫 연결을 만드는 시간</p>
                   <h1>
                     다음 영상으로
@@ -1189,46 +1237,7 @@ export default function V4FirstJourney() {
                   </section>
                 </div>
 
-                {appState.currentScreen === "step3-success" && lastConnection ? (
-                  <div className="v4-j-form-paper v4-j-success-view" data-testid="step3-success">
-                    <div className="v4-j-success-flower">❦</div>
-                    <h2>
-                      첫 가지가
-                      <br />
-                      다정하게 이어졌어요.
-                    </h2>
-                    <p className="v4-j-hero-desc">
-                      처음 만든 영상과 다음 영상 사이에 이유와 마음이 생겼습니다.
-                    </p>
-                    <div className="v4-j-path-summary">
-                      <div className="v4-j-path-card">
-                        <small>01 · 첫 순간</small>
-                        <strong>{lastConnection.first.title || "처음 마음이 멈춘 장면"}</strong>
-                      </div>
-                      <span className="v4-j-path-arrow">→</span>
-                      <div className="v4-j-path-card">
-                        <small>02 · 다음 영상</small>
-                        <strong>{lastConnection.next.title}</strong>
-                      </div>
-                    </div>
-                    <p className="v4-j-hero-note" data-testid="success-relation">
-                      {lastConnection.next.relation}
-                    </p>
-                    <div className="v4-j-success-actions">
-                      <button className="v4-j-btn-quiet" type="button" onClick={againConnect}>
-                        이 영상에서 또 이어보기
-                      </button>
-                      <button
-                        className="v4-j-btn-primary"
-                        type="button"
-                        onClick={() => showScreen("growth")}
-                      >
-                        내 러브트리 보기 →
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <section className="v4-j-form-paper" data-testid="step3-form">
+                <section className="v4-j-form-paper" data-testid="step3-form">
                     <header className="v4-j-form-head">
                       <div>
                         <h2>
@@ -1326,9 +1335,9 @@ export default function V4FirstJourney() {
                       </div>
                     </form>
                   </section>
+                </div>
                 )}
               </div>
-            </div>
           </section>
         )}
 
