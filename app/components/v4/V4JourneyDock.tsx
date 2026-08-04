@@ -41,6 +41,10 @@ const GROUPS = [
       ["Liquid Orbit", "/v4/subjects/demo/orbit"],
       ["Accordion Album", "/v4/subjects/demo/accordion"],
       ["Folding Person Book", "/v4/subjects/demo/folding"],
+      ["Bookshelf V1", "/v4/subjects/bookshelf/v1"],
+      ["Bookshelf V2-1", "/v4/subjects/bookshelf/v2-1"],
+      ["Bookshelf V2-3D", "/v4/subjects/bookshelf/v2-3d"],
+      ["Bookshelf V2A-2", "/v4/subjects/bookshelf/v2a-2"],
     ],
   },
   {
@@ -65,7 +69,7 @@ export default function V4JourneyDock() {
       <button className="v4-journey-toggle" type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
         <span aria-hidden="true">✦</span>
         <strong>V4 여정</strong>
-        <small>25 designs</small>
+        <small>29 designs</small>
       </button>
       {open ? (
         <div className="v4-journey-panel">
