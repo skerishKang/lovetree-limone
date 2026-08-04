@@ -1,0 +1,7 @@
+# V4 HTML Intake SHA-256 Checksums — TELEGRAM_20260804_B
+# Batch: TELEGRAM_20260804_B
+# Generated: 2026-08-04
+# Format: <filename>  <telegram-original-sha256>  <G-add-sha256>  <WSL-add-sha256>
+# All three locations verified identical for every ingested file.
+
+lovetree-cinematic-reference-motion-v5-1-refined.html	cbc9b3651fe0ee63e67b5c05543b63d6a9851482244be51b3e6bb8ab4b6e6430	cbc9b3651fe0ee63e67b5c05543b63d6a9851482244be51b3e6bb8ab4b6e6430	cbc9b3651fe0ee63e67b5c05543b63d6a9851482244be51b3e6bb8ab4b6e6430
