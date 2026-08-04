@@ -1,7 +1,7 @@
 "use client";
 
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -69,6 +69,36 @@ export default function V4CommunityDiscovery() {
   const preview = TREES.find((tree) => tree.id === previewId) ?? null;
   const compared = compare.map((id) => TREES.find((tree) => tree.id === id)).filter(Boolean) as CommunityTree[];
 
+  const previewRef = useRef<HTMLElement>(null);
+  const compareRef = useRef<HTMLElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+
+  const dialogOpen = preview !== null || compareOpen;
+
+  const closeDialogs = () => {
+    setPreviewId(null);
+    setCompareOpen(false);
+    restoreFocusRef.current?.focus();
+  };
+
+  useEffect(() => {
+    if (!dialogOpen) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+    const dialog = compareOpen ? compareRef.current : previewRef.current;
+    if (dialog) {
+      const focusable = dialog.querySelector<HTMLElement>("button, a[href]");
+      focusable?.focus();
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeDialogs();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [compareOpen, dialogOpen]);
+
   function toggleCompare(id: string) {
     setCompare((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length >= 3 ? [...current.slice(1), id] : [...current, id]);
   }
@@ -113,9 +143,9 @@ export default function V4CommunityDiscovery() {
         </div>
       </div>
 
-      {preview ? <div className="v4-community-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setPreviewId(null); }}><section className="v4-community-preview" role="dialog" aria-modal="true" aria-label="공개 트리 큰 미리보기"><div className="v4-preview-grid"><div className="v4-preview-tree"><TreeSketch tree={preview} large /></div><aside className="v4-preview-detail"><small>{preview.owner.toUpperCase()} · {preview.emotion.toUpperCase()}</small><h2>{preview.title}</h2><p>{preview.summary}</p><div className="v4-preview-meta"><div><b>{preview.moments}</b><span>순간</span></div><div><b>{preview.branches}</b><span>가지</span></div><div><b>{preview.likes}</b><span>좋아요</span></div></div><p>큰 미리보기에서는 대표 가지와 흐름만 보여 줍니다. 전체 트리에서는 모든 공개 순간을 팬·줌으로 둘러볼 수 있습니다.</p><div className="v4-preview-actions"><button className="v4-community-action" type="button" onClick={() => setPreviewId(null)}>닫기</button><button className="v4-community-action is-primary" type="button" onClick={() => router.push("/v4/community/trees/demo")}>전체 트리 열기 →</button></div></aside></div></section></div> : null}
+      {preview ? <div className="v4-community-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) closeDialogs(); }}><section className="v4-community-preview" role="dialog" aria-modal="true" aria-label="공개 트리 큰 미리보기" ref={previewRef}><div className="v4-preview-grid"><div className="v4-preview-tree"><TreeSketch tree={preview} large /></div><aside className="v4-preview-detail"><small>{preview.owner.toUpperCase()} · {preview.emotion.toUpperCase()}</small><h2>{preview.title}</h2><p>{preview.summary}</p><div className="v4-preview-meta"><div><b>{preview.moments}</b><span>순간</span></div><div><b>{preview.branches}</b><span>가지</span></div><div><b>{preview.likes}</b><span>좋아요</span></div></div><p>큰 미리보기에서는 대표 가지와 흐름만 보여 줍니다. 전체 트리에서는 모든 공개 순간을 팬·줌으로 둘러볼 수 있습니다.</p><div className="v4-preview-actions"><button className="v4-community-action" type="button" onClick={closeDialogs}>닫기</button><button className="v4-community-action is-primary" type="button" onClick={() => router.push("/v4/community/trees/demo")}>전체 트리 열기 →</button></div></aside></div></section></div> : null}
 
-      {compareOpen ? <div className="v4-community-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setCompareOpen(false); }}><section className="v4-community-preview" role="dialog" aria-modal="true" aria-label="트리 비교"><div style={{ padding: 28 }}><p style={{ color: "var(--c-rose2)", fontSize: ".48rem", fontWeight: 700, letterSpacing: ".1em" }}>QUICK COMPARE</p><h2 style={{ margin: "7px 0 18px", font: "400 2rem 'Gowun Batang',serif" }}>선택한 러브트리 비교</h2><div style={{ display: "grid", gridTemplateColumns: `repeat(${compared.length},minmax(0,1fr))`, gap: 12 }}>{compared.map((tree) => <article key={tree.id} style={{ padding: 17, border: "1px solid var(--c-line)", borderRadius: 18, background: "#fffdf9" }}><div style={{ height: 150, borderRadius: 12, background: `url(https://img.youtube.com/vi/${tree.videoId}/hqdefault.jpg) center/cover` }} /><h3 style={{ font: "400 1rem 'Gowun Batang',serif" }}>{tree.title}</h3><p style={{ color: "var(--c-muted)", fontSize: ".55rem", lineHeight: 1.6 }}>{tree.summary}</p><strong style={{ color: "var(--c-rose2)", fontSize: ".58rem" }}>{tree.emotion} · {tree.moments} 순간 · {tree.branches} 가지</strong></article>)}</div><button className="v4-community-action is-primary" style={{ marginTop: 18 }} type="button" onClick={() => setCompareOpen(false)}>비교 닫기</button></div></section></div> : null}
+      {compareOpen ? <div className="v4-community-overlay" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) closeDialogs(); }}><section className="v4-community-preview" role="dialog" aria-modal="true" aria-label="트리 비교" ref={compareRef}><div style={{ padding: 28 }}><p style={{ color: "var(--c-rose2)", fontSize: ".48rem", fontWeight: 700, letterSpacing: ".1em" }}>QUICK COMPARE</p><h2 style={{ margin: "7px 0 18px", font: "400 2rem 'Gowun Batang',serif" }}>선택한 러브트리 비교</h2><div style={{ display: "grid", gridTemplateColumns: `repeat(${compared.length},minmax(0,1fr))`, gap: 12 }}>{compared.map((tree) => <article key={tree.id} style={{ padding: 17, border: "1px solid var(--c-line)", borderRadius: 18, background: "#fffdf9" }}><div style={{ height: 150, borderRadius: 12, background: `url(https://img.youtube.com/vi/${tree.videoId}/hqdefault.jpg) center/cover` }} /><h3 style={{ font: "400 1rem 'Gowun Batang',serif" }}>{tree.title}</h3><p style={{ color: "var(--c-muted)", fontSize: ".55rem", lineHeight: 1.6 }}>{tree.summary}</p><strong style={{ color: "var(--c-rose2)", fontSize: ".58rem" }}>{tree.emotion} · {tree.moments} 순간 · {tree.branches} 가지</strong></article>)}</div><button className="v4-community-action is-primary" style={{ marginTop: 18 }} type="button" onClick={closeDialogs}>비교 닫기</button></div></section></div> : null}
     </main>
   );
 }
