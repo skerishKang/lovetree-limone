@@ -319,14 +319,14 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
       return {
         count: list.length,
         ariaHidden: document.querySelector(".cin-shard-field")?.getAttribute("aria-hidden"),
-        firstBg: list[0] ? getComputedStyle(list[0]).backgroundImage.slice(0, 80) : null,
+        firstBg: list[0] ? getComputedStyle(list[0]).backgroundImage : null,
         hasClip: list[0] ? (getComputedStyle(list[0]).clipPath || "").length > 10 : false,
         transform: list[0] ? getComputedStyle(list[0]).transform : null,
       };
     });
     assert.equal(shards.count, 12, "scene 12 has exactly 12 shards");
     assert.equal(shards.ariaHidden, "true", "shard layer aria-hidden");
-    assert.match(shards.firstBg, /workshop\.webp/, "shards use workshop external asset");
+    assert.ok(shards.firstBg && shards.firstBg.endsWith("/workshop.webp\")"), "shards use workshop external asset");
     assert.equal(shards.hasClip, true, "shards use clip-path fragments");
 
     // scroll-driven scatter: move within scene 12 and confirm transform changes
