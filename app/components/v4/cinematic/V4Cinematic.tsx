@@ -32,6 +32,16 @@ interface Leaf {
   spin: number;
   side: number;
 }
+interface AutoplaySession {
+  sessionStartScrollY: number;
+  currentScrollY: number;
+  targetScrollY: number;
+  totalDurationMs: number;
+  accumulatedElapsedMs: number;
+  lastStartedAt: number;
+  running: boolean;
+  paused: boolean;
+}
 
 function useReducedMotion(): [boolean, React.MutableRefObject<boolean>] {
   const [reduced, setReduced] = useState<boolean>(() =>
@@ -77,6 +87,7 @@ export default function V4Cinematic() {
   const railBtnsRef = useRef<HTMLButtonElement[]>([]);
   const playingRef = useRef(false);
   const autoIdRef = useRef(0);
+  const sessionRef = useRef<AutoplaySession | null>(null);
   const fxIdRef = useRef(0);
   const visibleRef = useRef(true);
   const rootVisibleRef = useRef(true);
@@ -103,41 +114,128 @@ export default function V4Cinematic() {
     else if (idx >= n) ratio = 1;
     else ratio = (idx + 0.5) / n;
     window.scrollTo(0, ratio * maxScroll);
+    // Programmatic scrollTo does not always fire a scroll event promptly in
+    // throttled/headless renderers; dispatch so the update pass runs now.
+    window.dispatchEvent(new Event("scroll"));
   }, [clamp]);
 
   const stopAuto = useCallback(() => {
     cancelAnimationFrame(autoIdRef.current);
     autoIdRef.current = 0;
+    sessionRef.current = null;
     playingRef.current = false;
     setPlaying(false);
   }, []);
 
-  const startAuto = useCallback((fromY: number, elapsedMs: number) => {
-    cancelAnimationFrame(autoIdRef.current);
+  const startAuto = useCallback(() => {
+    // create one explicit autoplay session
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const sessionStartScrollY = Math.min(window.scrollY, maxScroll);
+    const targetScrollY = maxScroll;
+    const remaining = Math.max(1, targetScrollY - sessionStartScrollY);
+    const totalDurationMs = AUTOPLAY_MS * (remaining / maxScroll);
+    sessionRef.current = {
+      sessionStartScrollY,
+      currentScrollY: sessionStartScrollY,
+      targetScrollY,
+      totalDurationMs,
+      accumulatedElapsedMs: 0,
+      lastStartedAt: performance.now(),
+      running: true,
+      paused: false,
+    };
     playingRef.current = true;
     setPlaying(true);
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const autoFrom = Math.min(fromY, maxScroll);
-    const remaining = Math.max(1, maxScroll - autoFrom);
-    // scale the reference 70s duration by remaining fraction; subtract elapsed
-    const fullDuration = AUTOPLAY_MS * (remaining / maxScroll);
-    const duration = Math.max(1, fullDuration - elapsedMs);
-    const autoStart = performance.now();
+
+    cancelAnimationFrame(autoIdRef.current);
     const step = (now: number) => {
+      const session = sessionRef.current;
+      if (!session) return;
+      // pause (not stop) when hidden or root inactive
       if (!playingRef.current || !visibleRef.current || !rootVisibleRef.current) {
-        // pause (not stop): cancel the frame and retain elapsed progress
+        if (session.running) {
+          session.accumulatedElapsedMs += now - session.lastStartedAt;
+          session.lastStartedAt = now;
+          session.running = false;
+          session.paused = true;
+        }
         cancelAnimationFrame(autoIdRef.current);
         autoIdRef.current = 0;
         return;
       }
-      const t = clamp((now - autoStart) / duration);
-      window.scrollTo(0, autoFrom + remaining * t);
-      if (t < 1) {
+      session.accumulatedElapsedMs += now - session.lastStartedAt;
+      session.lastStartedAt = now;
+      session.running = true;
+      session.paused = false;
+      const progress = clamp(session.accumulatedElapsedMs / session.totalDurationMs);
+      session.currentScrollY =
+        session.sessionStartScrollY + (session.targetScrollY - session.sessionStartScrollY) * progress;
+      window.scrollTo(0, session.currentScrollY);
+      if (progress < 1) {
         autoIdRef.current = requestAnimationFrame(step);
       } else {
         // natural completion
-        playingRef.current = false;
+        session.running = false;
+        sessionRef.current = null;
         autoIdRef.current = 0;
+        playingRef.current = false;
+        setPlaying(false);
+      }
+    };
+    autoIdRef.current = requestAnimationFrame(step);
+  }, [clamp]);
+
+  const pauseAuto = useCallback(() => {
+    const session = sessionRef.current;
+    if (session && session.running) {
+      session.accumulatedElapsedMs += performance.now() - session.lastStartedAt;
+      session.lastStartedAt = performance.now();
+      session.running = false;
+      session.paused = true;
+    }
+    cancelAnimationFrame(autoIdRef.current);
+    autoIdRef.current = 0;
+    // playing + aria-pressed stay true while paused
+  }, []);
+
+  const resumeAuto = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session || !playingRef.current) return;
+    // remaining = totalDuration - accumulatedElapsed
+    session.lastStartedAt = performance.now();
+    session.running = true;
+    session.paused = false;
+    cancelAnimationFrame(autoIdRef.current);
+    const step = (now: number) => {
+      const s = sessionRef.current;
+      if (!s) return;
+      if (!playingRef.current || !visibleRef.current || !rootVisibleRef.current) {
+        if (s.running) {
+          s.accumulatedElapsedMs += now - s.lastStartedAt;
+          s.lastStartedAt = now;
+          s.running = false;
+          s.paused = true;
+        }
+        cancelAnimationFrame(autoIdRef.current);
+        autoIdRef.current = 0;
+        return;
+      }
+      s.accumulatedElapsedMs += now - s.lastStartedAt;
+      s.lastStartedAt = now;
+      s.running = true;
+      s.paused = false;
+      const progress = clamp(s.accumulatedElapsedMs / s.totalDurationMs);
+      // resume from the retained current scroll position, not a jump to maxScroll
+      s.currentScrollY =
+        s.sessionStartScrollY + (s.targetScrollY - s.sessionStartScrollY) * progress;
+      window.scrollTo(0, s.currentScrollY);
+      if (progress < 1) {
+        autoIdRef.current = requestAnimationFrame(step);
+      } else {
+        s.running = false;
+        sessionRef.current = null;
+        autoIdRef.current = 0;
+        playingRef.current = false;
         setPlaying(false);
       }
     };
@@ -149,18 +247,8 @@ export default function V4Cinematic() {
       stopAuto();
       return;
     }
-    startAuto(window.scrollY, 0);
+    startAuto();
   }, [startAuto, stopAuto]);
-
-  // Resume autoplay from retained progress when the document becomes visible
-  // again. elapsed is inferred from current scroll position (proportional).
-  const resumeAutoIfPlaying = useCallback(() => {
-    if (!playingRef.current) return;
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const ratio = clamp(window.scrollY / maxScroll);
-    // estimate elapsed from position so a hidden pause resumes near where it left off
-    startAuto(window.scrollY, AUTOPLAY_MS * ratio);
-  }, [clamp, startAuto]);
 
   // ------------------------------------------------------------------ setup
   useEffect(() => {
@@ -474,13 +562,11 @@ export default function V4Cinematic() {
       visibleRef.current = !document.hidden;
       if (document.hidden) {
         stopFxLoop();
-        // pause autoplay without resetting the button state
-        cancelAnimationFrame(autoIdRef.current);
-        autoIdRef.current = 0;
+        pauseAuto();
       } else {
         update();
         startFxLoop();
-        resumeAutoIfPlaying();
+        resumeAuto();
       }
     };
 
@@ -525,7 +611,7 @@ export default function V4Cinematic() {
       visibleRef.current = true;
       rootVisibleRef.current = true;
     };
-  }, [clamp, lerp, smooth, stopAuto, resumeAutoIfPlaying]);
+  }, [clamp, lerp, smooth, stopAuto, pauseAuto, resumeAuto]);
 
   // reduced-motion ref is managed inside useReducedMotion
   useEffect(() => {

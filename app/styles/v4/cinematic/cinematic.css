@@ -227,8 +227,8 @@ html:has(.cin-page) {
   position: absolute;
   z-index: 35;
   left: 57px;
-  top: 53%;
-  transform: translateY(-48%);
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -236,6 +236,7 @@ html:has(.cin-page) {
 }
 
 .cin-rail button {
+  position: relative;
   width: 48px;
   border: 0;
   background: transparent;
@@ -247,7 +248,7 @@ html:has(.cin-page) {
   grid-template-columns: 18px 1fr;
   gap: 5px;
   align-items: center;
-  padding: 2px 0;
+  padding: 12px 0;
 }
 
 .cin-rail button::after {
@@ -941,25 +942,34 @@ html:has(.cin-page) {
     transform: translateX(-50%);
     flex-direction: row;
     gap: 3px;
-    width: 68%;
+    width: 92%;
     justify-content: center;
   }
 
   .cin-rail button {
-    width: 11px;
-    height: 11px;
+    position: relative;
+    width: 18px;
+    height: 18px;
     padding: 0;
-    display: block;
-    border: 1px solid rgba(255, 235, 190, 0.45);
-    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
     font-size: 0;
   }
 
+  /* dot inside the hit area; both sized to fit all 16 dots on small screens */
   .cin-rail button::after {
-    display: none;
+    content: "";
+    display: block;
+    width: 11px;
+    height: 11px;
+    border: 1px solid rgba(255, 235, 190, 0.45);
+    border-radius: 50%;
+    background: transparent;
   }
 
-  .cin-rail button.is-active {
+  .cin-rail button.is-active::after {
     background: #ffe0a0;
     box-shadow: 0 0 9px #ffd15c;
   }

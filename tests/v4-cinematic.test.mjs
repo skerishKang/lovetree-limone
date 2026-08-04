@@ -23,7 +23,6 @@ async function openPage(browser, url, viewport) {
   await page.waitForTimeout(400);
   return { page, errors, resp };
 }
-
 test("v4 cinematic — route 200 and no errors across all viewports", async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -84,7 +83,7 @@ test("v4 cinematic — rail navigation reaches every scene and final CTA is a re
   try {
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
     // jump directly to final scene via rail; wait for smooth scroll to settle
-    await page.locator('.cin-rail button[aria-label="16번 장면"]').click({ force: true });
+    await page.locator('.cin-rail button[aria-label="16번 장면"]').click();
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "16",
       { timeout: 8000 },
@@ -195,7 +194,7 @@ test("v4 cinematic — full 16-scene scroll pass stays within bounds and rAF doe
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
     // walk through all scenes
     for (let i = 0; i < 16; i += 1) {
-      await page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`).click({ force: true });
+      await page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`).click();
       await page.waitForTimeout(250);
     }
     const after = await page.evaluate(() => ({
@@ -302,7 +301,7 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     await page.waitForTimeout(300);
 
     // navigate to scene 12 and wait for it to become active
-    await page.locator('.cin-rail button[aria-label="12번 장면"]').click({ force: true });
+    await page.locator('.cin-rail button[aria-label="12번 장면"]').click();
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "12",
       { timeout: 8000 },
@@ -341,7 +340,7 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload({ waitUntil: "networkidle" });
     await page.waitForTimeout(300);
-    await page.locator('.cin-rail button[aria-label="12번 장면"]').click({ force: true });
+    await page.locator('.cin-rail button[aria-label="12번 장면"]').click();
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "12",
       { timeout: 8000 },
@@ -477,6 +476,114 @@ test("v4 cinematic — autoplay state machine (Space toggle, wheel stop, menu is
   }
 });
 
+test("v4 cinematic — autoplay hidden pause keeps scroll/aria and resumes forward from retained position", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const { page } = await openPage(browser, URL, VIEWPORTS[0]);
+    const playBtn = page.locator(".cin-play");
+
+    // Space starts autoplay
+    await page.keyboard.press(" ");
+    await page.waitForTimeout(300);
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "Space starts autoplay");
+
+    // let it make measurable progress
+    await page.waitForTimeout(400);
+    const scrollBeforeHide = await page.evaluate(() => Math.round(scrollY));
+    assert.ok(scrollBeforeHide > 0, `autoplay made progress before hide (scrollY=${scrollBeforeHide})`);
+
+    // hide: scroll must remain stable and aria-pressed stays true
+    const hiddenState = await page.evaluate(() => new Promise((resolve) => {
+      Object.defineProperty(document, "hidden", { value: true, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+      const s1 = Math.round(scrollY);
+      setTimeout(() => {
+        const s2 = Math.round(scrollY);
+        resolve({ s1, s2 });
+      }, 400);
+    }));
+    assert.equal(hiddenState.s1, hiddenState.s2, "scroll remains stable while hidden");
+    const ariaWhilePaused = await playBtn.getAttribute("aria-pressed");
+    assert.equal(ariaWhilePaused, "true", "aria-pressed remains true while paused");
+
+    // restore visible: resumes forward from retained position, no jump to maxScroll
+    const maxScrollBefore = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: false, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForTimeout(350);
+    const resumeState = await page.evaluate(() => ({
+      scrollY: Math.round(scrollY),
+      maxScroll: document.documentElement.scrollHeight - innerHeight,
+    }));
+    assert.ok(
+      resumeState.scrollY > hiddenState.s2,
+      `resumes forward from retained position (${hiddenState.s2} -> ${resumeState.scrollY})`,
+    );
+    assert.ok(
+      resumeState.scrollY < maxScrollBefore,
+      `does not jump immediately to maxScroll (${resumeState.scrollY} < ${maxScrollBefore})`,
+    );
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "still playing after resume");
+
+    // wheel stops and clears
+    await page.mouse.move(700, 400);
+    await page.mouse.wheel(0, 60);
+    await page.waitForTimeout(400);
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "false", "wheel stops autoplay");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — touchstart stops autoplay and natural completion resets aria-pressed", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: VIEWPORTS[0], hasTouch: true });
+    const errors = [];
+    page.on("pageerror", (err) => errors.push(err.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(`console:${msg.text()}`);
+    });
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
+    await page.waitForTimeout(400);
+    const playBtn = page.locator(".cin-play");
+
+    // touchstart stops autoplay
+    await page.keyboard.press(" ");
+    await page.waitForTimeout(300);
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "Space starts autoplay");
+    await page.touchscreen.tap(700, 400);
+    await page.waitForTimeout(400);
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "false", "touchstart stops autoplay");
+
+    // natural completion resets aria-pressed
+    // start autoplay near the very end so the remaining duration is short and
+    // it completes naturally within the test window
+    await page.evaluate(() => {
+      const maxScroll = document.documentElement.scrollHeight - innerHeight;
+      window.scrollTo(0, maxScroll * 0.985);
+    });
+    await page.waitForTimeout(300);
+    await page.keyboard.press(" ");
+    await page.waitForTimeout(300);
+    assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "autoplay running near completion");
+    await page.waitForTimeout(4000);
+    const state = await page.evaluate(() => ({
+      pressed: document.querySelector(".cin-play").getAttribute("aria-pressed"),
+      counter: document.querySelector(".cin-counter span").textContent,
+      scrollY: Math.round(scrollY),
+    }));
+    assert.equal(state.pressed, "false", "natural completion resets aria-pressed");
+    assert.equal(state.counter, "16", "natural completion reaches scene 16");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
 test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -497,7 +604,7 @@ test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", a
     );
 
     // after scene navigation, more assets load
-    await page.locator('.cin-rail button[aria-label="8번 장면"]').click({ force: true });
+    await page.locator('.cin-rail button[aria-label="8번 장면"]').click();
     await page.waitForTimeout(600);
     const afterNavUnique = new Set(webpUrls).size;
     assert.ok(afterNavUnique > initialUnique.length, "more WebP requests after scene navigation");
@@ -507,6 +614,94 @@ test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", a
     await page.waitForTimeout(800);
     const afterMenuUnique = new Set(webpUrls).size;
     assert.ok(afterMenuUnique > afterNavUnique, "menu open triggers additional thumbnail requests");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — rail is ordinarily clickable without force at desktop and mobile", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const targets = [
+      { label: "2번 장면", expected: "02" },
+      { label: "8번 장면", expected: "08" },
+      { label: "12번 장면", expected: "12" },
+      { label: "15번 장면", expected: "15" },
+      { label: "16번 장면", expected: "16" },
+    ];
+    for (const vp of [VIEWPORTS[0], VIEWPORTS[3], VIEWPORTS[4]]) {
+      const { page, errors } = await openPage(browser, URL, vp);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(300);
+      for (const t of targets) {
+        const btn = page.locator(`.cin-rail button[aria-label="${t.label}"]`);
+        // ordinary pointer click via the button's real center coordinates
+        // (Playwright locator.click mis-positions transformed fixed rail in
+        // some headless builds; pointer coords match a real user click)
+        const box = await btn.boundingBox();
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+        try {
+          await page.waitForFunction(
+            (expected) => document.querySelector(".cin-counter span")?.textContent === expected,
+            t.expected,
+            { timeout: 8000 },
+          );
+        } catch (err) {
+          const state = await page.evaluate(() => ({
+            counter: document.querySelector(".cin-counter span")?.textContent,
+            scrollY: Math.round(scrollY),
+            maxScroll: document.documentElement.scrollHeight - innerHeight,
+          }));
+          assert.fail(
+            `${vp.name}: click on ${t.label} did not reach ${t.expected} (state=${JSON.stringify(state)})`,
+          );
+        }
+        const counter = await page.evaluate(
+          () => document.querySelector(".cin-counter span")?.textContent,
+        );
+        assert.equal(counter, t.expected, `${vp.name}: ordinary click on ${t.label} reaches counter ${t.expected}`);
+      }
+      assert.equal(errors.length, 0, `${vp.name}: no errors`);
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — rail keyboard activation with Enter and Space", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
+    // Enter activates a focused rail button
+    const btn8 = page.locator('.cin-rail button[aria-label="8번 장면"]');
+    await btn8.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(
+      () => document.querySelector(".cin-counter span")?.textContent === "08",
+      { timeout: 8000 },
+    );
+    assert.equal(
+      await page.evaluate(() => document.querySelector(".cin-counter span")?.textContent),
+      "08",
+      "Enter activates rail scene 8",
+    );
+
+    // Space activates a focused rail button without hijacking
+    const btn15 = page.locator('.cin-rail button[aria-label="15번 장면"]');
+    await btn15.focus();
+    await page.keyboard.press(" ");
+    await page.waitForFunction(
+      () => document.querySelector(".cin-counter span")?.textContent === "15",
+      { timeout: 8000 },
+    );
+    assert.equal(
+      await page.evaluate(() => document.querySelector(".cin-counter span")?.textContent),
+      "15",
+      "Space activates rail scene 15 (focused control, not hijacked)",
+    );
+    assert.equal(errors.length, 0, "no errors");
     await page.close();
   } finally {
     await browser.close();
