@@ -1,0 +1,1072 @@
+/* ─────────────────────────────────────────────────────────────
+   V4 Cinematic — Telegram B brand film (source-faithful port)
+   Source: add/lovetree-cinematic-reference-motion-v5-1-refined.html
+   All visual composition, 16-scene order and effects preserved.
+   Inline base64 removed; assets live in /v4/cinematic/telegram-b/.
+   ───────────────────────────────────────────────────────────── */
+
+.cin-page {
+  --navy: #031526;
+  --navy2: #062b4b;
+  --gold: #e7b85f;
+  --gold2: #fff0b6;
+  --cream: #f6edda;
+  --ink: #102235;
+  --frame: rgba(2, 8, 14, 0.92);
+  --serif: "GFS Didot", "Noto Serif CJK KR", "NanumMyeongjo", Georgia, serif;
+  --sans: "Noto Sans CJK KR", "NanumBarunGothic", Arial, sans-serif;
+  position: relative;
+  min-height: 100vh;
+  background: #020912;
+  color: white;
+  font-family: var(--sans);
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+}
+
+/* The cinematic controls its own scroll timing (rail/auto-play). Neutralize
+   the global smooth scroll-behavior only while this page is mounted. */
+html:has(.cin-page) {
+  scroll-behavior: auto;
+}
+
+/* scroll track keeps the 16-scene page height; each scene is 118vh */
+.cin-scroll-track {
+  height: calc(118vh * 16);
+  position: relative;
+  pointer-events: none;
+}
+
+.cin-page *,
+.cin-page *::before,
+.cin-page *::after {
+  box-sizing: border-box;
+}
+
+/* scroll track keeps the 16-scene page height; each scene is 118vh */
+.cin-scroll-track {
+  height: calc(118vh * 16);
+  position: relative;
+}
+
+.cin-experience {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  background: #04182a;
+}
+
+.cin-scene-stack,
+.cin-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.cin-scene {
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: paint;
+  visibility: hidden;
+}
+
+.cin-scene.is-rendering {
+  visibility: visible;
+}
+
+.cin-scene.is-visible {
+  pointer-events: auto;
+}
+
+.cin-scene.is-preload .cin-scene-copy,
+.cin-scene.is-preload .cin-sky-copy,
+.cin-scene.is-preload .cin-question-layer,
+.cin-scene.is-preload .cin-constellation-caption,
+.cin-scene.is-preload .cin-final-logo,
+.cin-scene.is-preload .cin-final-cta {
+  opacity: 0 !important;
+}
+
+.cin-media {
+  position: absolute;
+  inset: -2%;
+  overflow: hidden;
+  background: linear-gradient(145deg, #062747, #0d5b91);
+}
+
+.cin-media img.cin-bg,
+.cin-media img.cin-motion-mask {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+  object-position: var(--cin-pos, 50% 50%);
+}
+
+.cin-media img.cin-motion-mask {
+  opacity: 0.22;
+  mix-blend-mode: screen;
+  filter: saturate(1.25) brightness(1.2);
+  mask-image: radial-gradient(circle at var(--mx, 60%) var(--my, 55%), #000 0 9%, rgba(0, 0, 0, 0.9) 12%, transparent 22%);
+  -webkit-mask-image: radial-gradient(circle at var(--mx, 60%) var(--my, 55%), #000 0 9%, rgba(0, 0, 0, 0.9) 12%, transparent 22%);
+}
+
+.cin-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 12, 24, 0.78) 0%, rgba(0, 12, 24, 0.28) 42%, rgba(0, 12, 24, 0.02) 72%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.45), transparent 48%);
+  pointer-events: none;
+}
+
+.cin-scene.is-light .cin-shade {
+  background:
+    linear-gradient(90deg, rgba(251, 244, 225, 0.88) 0%, rgba(251, 244, 225, 0.23) 54%, rgba(251, 244, 225, 0.04) 80%),
+    linear-gradient(0deg, rgba(243, 224, 188, 0.25), transparent 55%);
+}
+
+.cin-chrome {
+  position: absolute;
+  left: 58px;
+  top: 42px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--gold2);
+  font-family: var(--serif);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.cin-brand {
+  border: 0;
+  background: transparent;
+  color: var(--gold2);
+  font-family: var(--serif);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 6px 4px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.cin-chrome-right {
+  position: absolute;
+  left: auto;
+  right: -20px;
+  top: 6px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.cin-sound,
+.cin-menu-btn {
+  border: 0;
+  background: transparent;
+  color: #fff4cf;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 10px 4px;
+}
+
+.cin-sound:hover,
+.cin-menu-btn:hover,
+.cin-brand:hover {
+  color: white;
+}
+
+.cin-rail {
+  position: absolute;
+  z-index: 35;
+  left: 57px;
+  top: 53%;
+  transform: translateY(-48%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.cin-rail button {
+  width: 48px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 242, 205, 0.32);
+  font-family: var(--serif);
+  font-size: 10px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 5px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.cin-rail button::after {
+  content: "";
+  height: 1px;
+  background: currentColor;
+}
+
+.cin-rail button.is-active {
+  color: var(--gold2);
+  font-size: 14px;
+}
+
+.cin-rail-line {
+  height: 13px;
+  width: 1px;
+  background: rgba(238, 200, 119, 0.35);
+}
+
+.cin-scene-copy {
+  position: absolute;
+  z-index: 25;
+  left: 12.5vw;
+  top: 50%;
+  width: min(520px, 39vw);
+  transform: translateY(-44%);
+  color: white;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.38);
+  will-change: transform, opacity, filter;
+}
+
+.cin-scene.is-light .cin-scene-copy {
+  color: #302515;
+  text-shadow: 0 2px 12px rgba(255, 255, 255, 0.5);
+}
+
+.cin-eyebrow {
+  font: 600 11px/1.4 var(--sans);
+  letter-spacing: 0.22em;
+  color: var(--gold2);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.cin-scene.is-light .cin-eyebrow {
+  color: #8c5d19;
+}
+
+.cin-scene-copy h1 {
+  font: 400 clamp(48px, 6.4vw, 104px) / 0.94 var(--serif);
+  letter-spacing: -0.035em;
+  margin: 0 0 25px;
+  max-width: 850px;
+}
+
+.cin-scene-copy h2 {
+  font: 400 clamp(38px, 4.7vw, 77px) / 1.04 var(--serif);
+  letter-spacing: -0.025em;
+  margin: 0 0 22px;
+}
+
+.cin-scene-copy p {
+  font: 400 clamp(14px, 1.28vw, 20px) / 1.75 var(--serif);
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 249, 232, 0.87);
+}
+
+.cin-scene.is-light .cin-scene-copy p {
+  color: rgba(55, 40, 20, 0.78);
+}
+
+.cin-gold-rule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 130px;
+  margin: 22px 0;
+}
+
+.cin-gold-rule::before,
+.cin-gold-rule::after {
+  content: "";
+  height: 1px;
+  background: var(--gold);
+  flex: 1;
+}
+
+.cin-gold-rule i {
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+}
+
+.cin-scene-copy.is-right {
+  left: auto;
+  right: 8vw;
+  width: min(460px, 34vw);
+}
+
+.cin-scene-copy.is-center {
+  left: 50%;
+  top: auto;
+  bottom: 9vh;
+  width: min(760px, 82vw);
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.cin-scene-copy.is-center p {
+  margin: auto;
+}
+
+.cin-counter {
+  position: absolute;
+  z-index: 36;
+  left: 57px;
+  bottom: 40px;
+  font: 400 19px/1 var(--serif);
+  color: var(--gold2);
+}
+
+.cin-progress {
+  position: absolute;
+  z-index: 45;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  width: min(44vw, 620px);
+  height: 2px;
+  background: rgba(255, 235, 191, 0.25);
+}
+
+.cin-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #b67a29, #fff0a7);
+  box-shadow: 0 0 12px #ffda76;
+}
+
+/* ── per-scene decorative layers ──────────────────────────── */
+.cin-ambient-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 10vw 10vw;
+  mask-image: linear-gradient(to right, transparent 0, #000 35%, #000 80%, transparent);
+}
+
+.cin-pear-glow {
+  position: absolute;
+  z-index: 7;
+  width: 18vw;
+  height: 24vw;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  border-radius: 48%;
+  background: radial-gradient(circle, rgba(255, 231, 139, 0.65), rgba(255, 183, 42, 0.13) 40%, transparent 72%);
+  filter: blur(16px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.cin-sprout-aura {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  top: 62%;
+  width: 35vw;
+  height: 26vw;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(255, 208, 79, 0.46), transparent 68%);
+  filter: blur(17px);
+  mix-blend-mode: screen;
+}
+
+.cin-blade-glint {
+  position: absolute;
+  z-index: 15;
+  width: 32vw;
+  height: 3px;
+  left: 50%;
+  top: 49%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, #fff9d2, #e3ad46, transparent);
+  box-shadow: 0 0 18px white;
+  opacity: 0;
+}
+
+.cin-blue-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #0879c4 0%, #0a91dd 48%, #085797 100%);
+}
+
+.cin-blue-sky .cin-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.87);
+  filter: blur(2px);
+  box-shadow:
+    35px 6px 0 10px rgba(255, 255, 255, 0.84),
+    70px -4px 0 4px rgba(255, 255, 255, 0.78),
+    96px 8px 0 -2px rgba(255, 255, 255, 0.72);
+  opacity: 0.85;
+}
+
+.cin-blue-sky .c1 {
+  width: 80px;
+  height: 28px;
+  left: 14%;
+  top: 22%;
+}
+
+.cin-blue-sky .c2 {
+  width: 110px;
+  height: 34px;
+  right: 19%;
+  top: 62%;
+  transform: scale(0.8);
+}
+
+.cin-blue-sky .c3 {
+  width: 90px;
+  height: 30px;
+  left: 45%;
+  top: 79%;
+  transform: scale(0.6);
+}
+
+.cin-sky-copy {
+  position: absolute;
+  z-index: 18;
+  right: 11%;
+  top: 20%;
+  width: min(470px, 37vw);
+  color: white;
+}
+
+.cin-sky-copy article {
+  margin-bottom: 12vh;
+}
+
+.cin-sky-copy h3 {
+  font: 400 clamp(29px, 3.6vw, 60px) / 1.05 var(--serif);
+  margin: 0 0 16px;
+}
+
+.cin-sky-copy p {
+  font: 400 15px/1.7 var(--serif);
+  max-width: 410px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.cin-blueprint-lines {
+  position: absolute;
+  inset: 8%;
+  z-index: 11;
+  opacity: 0.5;
+}
+
+.cin-blueprint-lines svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cin-blueprint-lines path,
+.cin-blueprint-lines circle {
+  stroke: #ffd37e;
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 9 8;
+}
+
+.cin-worker-lights {
+  position: absolute;
+  inset: 0;
+  z-index: 14;
+  pointer-events: none;
+}
+
+.cin-worker-lights i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffeaa4;
+  box-shadow: 0 0 13px #ffc344;
+  animation: cinWorker 2.1s ease-in-out infinite alternate;
+}
+
+@keyframes cinWorker {
+  to {
+    transform: translate(15px, -7px);
+    opacity: 0.45;
+  }
+}
+
+.cin-shard-field {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.cin-question-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 24;
+  pointer-events: none;
+  color: #fff4d0;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+
+.cin-question-title {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  transform: translateX(-50%);
+  width: min(760px, 72vw);
+  text-align: center;
+  font: 400 clamp(38px, 4.8vw, 76px) / 1.03 var(--serif);
+  letter-spacing: -0.03em;
+}
+
+.cin-question-item {
+  position: absolute;
+  width: min(290px, 24vw);
+  font: 400 clamp(15px, 1.35vw, 21px) / 1.42 var(--serif);
+  opacity: 0;
+}
+
+.cin-question-item small {
+  display: block;
+  margin-top: 8px;
+  font: 500 10px/1.5 var(--sans);
+  letter-spacing: 0.12em;
+  color: rgba(255, 238, 192, 0.72);
+}
+
+.cin-question-item.q1 {
+  left: 13%;
+  top: 55%;
+}
+
+.cin-question-item.q2 {
+  left: 43%;
+  top: 69%;
+}
+
+.cin-question-item.q3 {
+  right: 9%;
+  top: 49%;
+}
+
+.cin-question-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cin-question-lines path {
+  fill: none;
+  stroke: rgba(255, 230, 164, 0.7);
+  stroke-width: 1;
+  stroke-dasharray: 460;
+  stroke-dashoffset: 460;
+  filter: drop-shadow(0 0 5px rgba(255, 199, 74, 0.6));
+}
+
+.cin-question-lines circle {
+  fill: #ffe9ad;
+  filter: drop-shadow(0 0 7px #ffc24f);
+  opacity: 0;
+}
+
+.cin-constellation-svg {
+  position: absolute;
+  inset: 8% 7% 8% 30%;
+  z-index: 12;
+  overflow: visible;
+}
+
+.cin-constellation-svg path {
+  fill: none;
+  stroke: #ffe7a4;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 7px #ffd05a);
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+}
+
+.cin-constellation-svg circle {
+  fill: #fff4bd;
+  filter: drop-shadow(0 0 9px #ffc542);
+  opacity: 0;
+}
+
+.cin-constellation-caption {
+  position: absolute;
+  z-index: 25;
+  right: 8%;
+  top: 18%;
+  width: min(390px, 31vw);
+  color: #fff3cf;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.42);
+  opacity: 0;
+}
+
+.cin-constellation-caption h2 {
+  font: 400 clamp(36px, 4vw, 68px) / 1.04 var(--serif);
+  margin: 0 0 17px;
+  letter-spacing: -0.025em;
+}
+
+.cin-constellation-caption p {
+  font: 400 clamp(14px, 1.15vw, 18px) / 1.7 var(--serif);
+  color: rgba(255, 246, 220, 0.8);
+  margin: 0;
+}
+
+.cin-final-logo {
+  position: absolute;
+  z-index: 27;
+  left: 50%;
+  top: 13%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff3c8;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cin-final-logo h1 {
+  font: 400 clamp(70px, 10vw, 158px) / 0.8 var(--serif);
+  margin: 0;
+}
+
+.cin-final-logo p {
+  font: 500 12px var(--sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.cin-final-cta {
+  position: absolute;
+  z-index: 28;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255, 230, 166, 0.65);
+  border-radius: 999px;
+  background: rgba(2, 13, 22, 0.63);
+  backdrop-filter: blur(10px);
+  color: #fff0bd;
+  padding: 14px 25px;
+  cursor: pointer;
+  font: 600 12px var(--sans);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cin-final-cta:hover,
+.cin-final-cta:focus-visible {
+  background: rgba(2, 13, 22, 0.85);
+  color: #fff6d8;
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
+.cin-cloud-curtain {
+  position: absolute;
+  z-index: 31;
+  inset: -15%;
+  background:
+    radial-gradient(ellipse at 20% 40%, rgba(255, 255, 255, 0.96) 0 9%, transparent 23%),
+    radial-gradient(ellipse at 54% 54%, rgba(255, 255, 255, 0.92) 0 13%, transparent 31%),
+    radial-gradient(ellipse at 85% 33%, rgba(255, 255, 255, 0.94) 0 11%, transparent 27%);
+  filter: blur(2px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* ── play control ─────────────────────────────────────────── */
+.cin-play {
+  position: absolute;
+  z-index: 60;
+  right: 56px;
+  bottom: 65px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 232, 179, 0.55);
+  border-radius: 50%;
+  background: rgba(1, 12, 20, 0.42);
+  color: white;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+}
+
+.cin-play:hover,
+.cin-play:focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
+/* ── menu overlay ─────────────────────────────────────────── */
+.cin-menu-overlay {
+  position: absolute;
+  z-index: 90;
+  inset: 0;
+  background: rgba(1, 9, 16, 0.94);
+  backdrop-filter: blur(16px);
+  padding: 74px 6vw 50px;
+  overflow: auto;
+}
+
+.cin-menu-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+
+.cin-menu-head small {
+  font: 500 10px/1.5 var(--sans);
+  letter-spacing: 0.2em;
+  color: rgba(255, 236, 190, 0.6);
+  text-transform: uppercase;
+}
+
+.cin-menu-head strong {
+  display: block;
+  font: 400 clamp(45px, 6vw, 90px) / 0.9 var(--serif);
+  color: #ffe6a5;
+  margin-top: 8px;
+}
+
+.cin-menu-close {
+  border: 1px solid rgba(255, 231, 175, 0.5);
+  background: transparent;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.cin-menu-close:hover,
+.cin-menu-close:focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
+.cin-menu-tiles {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+}
+
+.cin-menu-tile {
+  min-height: 150px;
+  border: 1px solid rgba(255, 230, 170, 0.28);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background: #06243d;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: left;
+  padding: 0;
+}
+
+.cin-menu-tile:hover,
+.cin-menu-tile:focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
+.cin-menu-tile-num {
+  position: absolute;
+  top: 12px;
+  left: 13px;
+  font: 400 13px var(--serif);
+  color: var(--gold2);
+}
+
+.cin-menu-tile-title {
+  padding: 30px 13px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  font: 400 14px var(--serif);
+  color: white;
+}
+
+.cin-fx-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ── focus visibility ─────────────────────────────────────── */
+.cin-page :is(button, a):focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
+/* ── responsive ───────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .cin-chrome {
+    left: 24px;
+    top: 23px;
+    font-size: 20px;
+  }
+
+  .cin-brand {
+    font-size: 20px;
+  }
+
+  .cin-chrome-right {
+    right: 22px;
+    top: 2px;
+    gap: 10px;
+  }
+
+  .cin-sound,
+  .cin-menu-btn {
+    font-size: 9px;
+  }
+
+  .cin-rail {
+    left: 50%;
+    top: auto;
+    bottom: 20px;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 3px;
+    width: 68%;
+    justify-content: center;
+  }
+
+  .cin-rail button {
+    width: 11px;
+    height: 11px;
+    padding: 0;
+    display: block;
+    border: 1px solid rgba(255, 235, 190, 0.45);
+    border-radius: 50%;
+    font-size: 0;
+  }
+
+  .cin-rail button::after {
+    display: none;
+  }
+
+  .cin-rail button.is-active {
+    background: #ffe0a0;
+    box-shadow: 0 0 9px #ffd15c;
+  }
+
+  .cin-scene-copy,
+  .cin-scene-copy.is-right {
+    left: 25px;
+    right: 25px;
+    top: auto;
+    bottom: 100px;
+    width: auto;
+    transform: none;
+    padding: 18px 18px 17px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, rgba(2, 19, 33, 0.69), rgba(2, 19, 33, 0.24));
+    backdrop-filter: blur(6px);
+  }
+
+  .cin-scene.is-light .cin-scene-copy {
+    background: linear-gradient(135deg, rgba(255, 249, 233, 0.74), rgba(255, 249, 233, 0.2));
+  }
+
+  .cin-scene-copy h1 {
+    font-size: 53px;
+  }
+
+  .cin-scene-copy h2 {
+    font-size: 39px;
+  }
+
+  .cin-scene-copy p {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .cin-scene-copy .cin-eyebrow {
+    margin-bottom: 10px;
+    font-size: 9px;
+  }
+
+  .cin-gold-rule {
+    margin: 12px 0;
+    width: 88px;
+  }
+
+  .cin-counter {
+    left: 24px;
+    bottom: 47px;
+    font-size: 14px;
+  }
+
+  .cin-progress {
+    bottom: 49px;
+    width: 48%;
+  }
+
+  .cin-play {
+    right: 22px;
+    bottom: 32px;
+  }
+
+  .cin-media img.cin-bg,
+  .cin-media img.cin-motion-mask {
+    object-position: var(--cin-mpos, var(--cin-pos, 50% 50%));
+  }
+
+  .cin-shade {
+    background: linear-gradient(0deg, rgba(0, 8, 15, 0.72) 0%, transparent 60%);
+  }
+
+  .cin-scene.is-light .cin-shade {
+    background: linear-gradient(0deg, rgba(248, 235, 207, 0.72), transparent 58%);
+  }
+
+  .cin-sky-copy {
+    right: 22px;
+    left: 22px;
+    width: auto;
+    top: 18%;
+  }
+
+  .cin-sky-copy article {
+    margin-bottom: 17vh;
+  }
+
+  .cin-constellation-caption {
+    left: 24px;
+    right: 24px;
+    top: 18%;
+    width: auto;
+  }
+
+  .cin-constellation-svg {
+    inset: 12% 4% 35% 4%;
+  }
+
+  .cin-question-title {
+    top: 15%;
+    width: 82vw;
+    font-size: 38px;
+  }
+
+  .cin-question-item {
+    width: 42vw;
+    font-size: 14px;
+  }
+
+  .cin-question-item.q1 {
+    left: 8%;
+    top: 54%;
+  }
+
+  .cin-question-item.q2 {
+    left: 28%;
+    top: 70%;
+  }
+
+  .cin-question-item.q3 {
+    right: 5%;
+    top: 48%;
+  }
+
+  .cin-final-logo {
+    top: 16%;
+  }
+
+  .cin-final-logo h1 {
+    font-size: 76px;
+  }
+
+  .cin-final-cta {
+    bottom: 92px;
+    white-space: nowrap;
+  }
+
+  .cin-menu-tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cin-menu-tile {
+    min-height: 120px;
+  }
+
+  .cin-menu-overlay {
+    padding: 70px 20px 40px;
+  }
+
+  .cin-menu-head {
+    display: block;
+  }
+
+  .cin-menu-head strong {
+    font-size: 42px;
+  }
+
+  .cin-menu-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+/* ── reduced motion: CSS handles decorative animations ────── */
+@media (prefers-reduced-motion: reduce) {
+  .cin-page *,
+  .cin-page *::before,
+  .cin-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .cin-page[data-cin-reduced="true"] .cin-fx-canvas {
+    display: none;
+  }
+}
+
+/* JS-managed reduced-motion: freeze continuous transforms */
+.cin-page[data-cin-reduced="true"] .cin-scene .cin-media img,
+.cin-page[data-cin-reduced="true"] .cin-blade-glint,
+.cin-page[data-cin-reduced="true"] .cin-pear-glow,
+.cin-page[data-cin-reduced="true"] .cin-sprout-aura,
+.cin-page[data-cin-reduced="true"] .cin-question-item,
+.cin-page[data-cin-reduced="true"] .cin-constellation-svg circle {
+  transition: none !important;
+  animation: none !important;
+}
