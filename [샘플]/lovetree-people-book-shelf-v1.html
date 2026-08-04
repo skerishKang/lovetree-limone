@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoveTree · 사람별 기억 책장</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum:wght@400;700&family=Manrope:wght@500;700;800&display=swap');
+
+    :root {
+      --paper: #f7efe5;
+      --paper-strong: #fffaf5;
+      --paper-deep: #eadfd3;
+      --ink: #493d3a;
+      --muted: #8d7d77;
+      --line: rgba(119, 91, 82, .18);
+      --rose: #d97889;
+      --rose-deep: #bd5d72;
+      --sage: #91a98f;
+      --sage-deep: #5e7053;
+      --gold: #d9ad61;
+      --night: #212023;
+      --night-soft: #2d2a2d;
+      --display: 'Gowun Batang', serif;
+      --body: 'Gowun Dodum', sans-serif;
+      --latin: 'Manrope', sans-serif;
+      --shadow-xl: 0 34px 82px rgba(41, 28, 28, .21);
+      --shadow-lg: 0 21px 52px rgba(66, 46, 40, .14);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 6%, rgba(255, 255, 255, .9), transparent 26%),
+        radial-gradient(circle at 90% 85%, rgba(244, 220, 224, .58), transparent 31%),
+        var(--paper);
+      font-family: var(--body);
+      letter-spacing: -.02em;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      opacity: .055;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid rgba(217, 120, 137, .36); outline-offset: 2px; }
+    .hidden { display: none !important; }
+    .app { min-height: 100vh; padding: 14px 18px 28px; }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 20px;
+      border: 1px solid rgba(119, 91, 82, .13);
+      border-radius: 999px;
+      background: rgba(255, 253, 249, .88);
+      box-shadow: 0 8px 21px rgba(66, 46, 40, .09);
+      backdrop-filter: blur(14px);
+    }
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 220px; color: var(--rose-deep); text-decoration: none; }
+    .brand-mark { position: relative; display: block; width: 29px; height: 30px; flex: 0 0 auto; }
+    .brand-mark::before { content: ""; position: absolute; left: 13px; top: 2px; width: 2px; height: 25px; border-radius: 999px; background: var(--sage-deep); transform: rotate(7deg); }
+    .brand-mark i, .brand-mark b { position: absolute; display: block; border-radius: 100% 0; }
+    .brand-mark i { left: 1px; top: 8px; width: 14px; height: 8px; background: var(--sage); transform: rotate(-24deg); }
+    .brand-mark b { right: 0; top: 2px; width: 12px; height: 8px; background: var(--rose); transform: scaleX(-1) rotate(-25deg); }
+    .brand strong { display: block; color: var(--ink); font: 700 21px/1 var(--display); letter-spacing: -.08em; }
+    .brand small { display: block; margin-top: 5px; color: var(--muted); font: 700 9px var(--latin); letter-spacing: .08em; }
+    .crumbs { color: var(--muted); font-size: 12px; }
+    .crumbs span { padding: 0 8px; color: #c3aaa0; }
+    .top-actions { display: flex; gap: 8px; margin-left: auto; }
+    .ghost { min-height: 38px; padding: 0 15px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: rgba(255, 250, 245, .74); font-size: 12px; }
+    .ghost:hover { border-color: var(--rose); color: var(--rose-deep); background: #fffaf5; }
+
+    .page { position: relative; z-index: 1; max-width: 1480px; margin: 16px auto 0; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(280px, .72fr) minmax(480px, 1.28fr);
+      gap: 18px;
+      align-items: stretch;
+      min-height: 345px;
+      padding: 29px 32px;
+      border: 1px solid rgba(119, 91, 82, .15);
+      border-radius: 28px;
+      background: rgba(255, 252, 247, .86);
+      box-shadow: var(--shadow-lg);
+    }
+    .hero-copy { align-self: center; max-width: 470px; padding-left: 12px; }
+    .eyebrow { margin: 0 0 10px; color: var(--rose-deep); font: 800 10px var(--latin); letter-spacing: .12em; }
+    .hero h1 { margin: 0 0 13px; font: 400 clamp(31px, 3.7vw, 53px)/1.2 var(--display); letter-spacing: -.08em; }
+    .hero h1 em { color: var(--rose-deep); font-style: normal; }
+    .hero-copy p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .hero-note { display: flex; align-items: center; gap: 10px; max-width: 420px; margin-top: 18px; padding: 10px 13px; border: 1px solid rgba(145, 169, 143, .35); border-radius: 14px; color: var(--sage-deep); background: rgba(227, 235, 221, .58); font-size: 11px; line-height: 1.5; }
+    .hero-note strong { white-space: nowrap; }
+
+    .shelf-stage {
+      position: relative;
+      min-height: 285px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 22px;
+      color: #f9f2e8;
+      background:
+        radial-gradient(circle at 68% 24%, rgba(201, 122, 107, .34), transparent 24%),
+        radial-gradient(circle at 30% 72%, rgba(93, 112, 147, .22), transparent 30%),
+        linear-gradient(135deg, #29272a, #161517 82%);
+      box-shadow: inset 0 0 70px rgba(0, 0, 0, .3), 0 18px 35px rgba(44, 31, 31, .22);
+      perspective: 1200px;
+    }
+    .shelf-stage::before { content: ""; position: absolute; inset: 0; opacity: .2; background-image: linear-gradient(115deg, transparent 43%, rgba(255,255,255,.08) 44%, transparent 45%), linear-gradient(25deg, transparent 74%, rgba(255,255,255,.06) 75%, transparent 76%); }
+    .stage-label { position: absolute; top: 18px; left: 21px; z-index: 2; color: rgba(255, 249, 239, .62); font: 700 9px var(--latin); letter-spacing: .13em; }
+    .stage-hint { position: absolute; right: 20px; top: 17px; z-index: 2; color: rgba(255, 249, 239, .52); font-size: 10px; }
+    .mini-shelf { position: absolute; left: 4%; right: 4%; bottom: 35px; height: 11px; border-radius: 3px; background: linear-gradient(#6e4536, #2d1c1a); box-shadow: 0 9px 0 #151214, 0 17px 22px rgba(0,0,0,.55); }
+    .mini-books { position: absolute; left: 8%; right: 8%; bottom: 45px; display: flex; align-items: end; justify-content: center; gap: clamp(8px, 2vw, 18px); }
+    .mini-book { position: relative; width: clamp(60px, 8vw, 90px); height: clamp(122px, 16vw, 178px); border-radius: 3px 7px 5px 3px; border-left: 7px solid rgba(255,255,255,.13); background: var(--book); box-shadow: 8px 11px 15px rgba(0,0,0,.3); transform: rotateY(-15deg) rotateZ(var(--tilt)); transition: .35s ease; }
+    .mini-book:nth-child(2) { transform: translateY(-12px) rotateY(-10deg) rotateZ(var(--tilt)); }
+    .mini-book:nth-child(4) { transform: translateY(-6px) rotateY(-12deg) rotateZ(var(--tilt)); }
+    .mini-book:hover { transform: translateY(-19px) rotateY(-2deg) rotateZ(0); }
+    .mini-book::after { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(255,255,255,.38); border-radius: 2px; opacity: .78; }
+    .mini-book span { position: absolute; left: 13px; right: 13px; bottom: 15px; z-index: 1; color: rgba(255,255,255,.86); font: 700 clamp(8px, 1.1vw, 12px) var(--display); text-align: center; text-shadow: 0 2px 3px rgba(0,0,0,.32); }
+    .mini-book i { position: absolute; left: 50%; top: 36%; z-index: 1; display: block; width: 27px; height: 27px; border: 2px solid rgba(255,255,255,.65); border-radius: 50% 0 50% 0; transform: translate(-50%, -50%) rotate(45deg); }
+    .mini-book i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; border-radius: 50%; background: white; transform: translate(-50%, -50%); }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0 11px;
+    }
+    .search { position: relative; flex: 1; max-width: 390px; }
+    .search input { width: 100%; min-height: 43px; padding: 0 15px 0 39px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: rgba(255, 252, 247, .86); font-size: 12px; }
+    .search::before { content: "⌕"; position: absolute; left: 15px; top: 7px; color: var(--muted); font-size: 22px; pointer-events: none; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 5px; }
+    .filter { min-height: 37px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: rgba(255, 252, 247, .7); font-size: 11px; }
+    .filter.active, .filter:hover { border-color: var(--rose); color: var(--rose-deep); background: #fff8f4; }
+    .result-count { margin-left: auto; color: var(--muted); font-size: 11px; white-space: nowrap; }
+
+    .shelf-view { display: block; }
+    .bookshelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 15px;
+      padding: 20px 18px 28px;
+      border: 1px solid rgba(119, 91, 82, .14);
+      border-radius: 25px;
+      background:
+        linear-gradient(180deg, rgba(247,239,229,.68), rgba(234,223,211,.75)),
+        var(--paper-deep);
+      box-shadow: var(--shadow-lg);
+    }
+    .book-item {
+      position: relative;
+      min-height: 290px;
+      padding: 16px 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 252, 247, .52);
+      transition: .25s ease;
+    }
+    .book-item:hover { background: rgba(255, 252, 247, .86); transform: translateY(-3px); }
+    .book-button { display: grid; place-items: center; width: 100%; border: 0; background: transparent; }
+    .book-cover {
+      position: relative;
+      width: 132px;
+      height: 194px;
+      overflow: hidden;
+      border-radius: 3px 8px 7px 3px;
+      color: var(--cover-ink, #fff9ef);
+      background: var(--cover, #6b5873);
+      box-shadow: 10px 14px 20px rgba(62, 42, 39, .24), inset 8px 0 0 rgba(0,0,0,.12);
+      transform: rotateY(-8deg) rotateZ(var(--tilt, 0deg));
+      transform-style: preserve-3d;
+      transition: .35s ease;
+    }
+    .book-cover::before { content: ""; position: absolute; inset: 11px; border: 1px solid rgba(255, 255, 255, .48); }
+    .book-cover::after { content: ""; position: absolute; left: 14px; top: 16px; bottom: 16px; width: 1px; background: rgba(255, 255, 255, .28); }
+    .book-button:hover .book-cover { transform: rotateY(0) rotateZ(0) translateY(-7px) scale(1.03); box-shadow: 12px 19px 25px rgba(62, 42, 39, .28); }
+    .cover-number { position: absolute; left: 20px; top: 18px; font: 700 9px var(--latin); letter-spacing: .12em; opacity: .78; }
+    .cover-symbol { position: absolute; left: 50%; top: 44%; display: grid; place-items: center; width: 54px; height: 54px; border: 1px solid rgba(255,255,255,.62); border-radius: 50% 0 50% 0; transform: translate(-50%, -50%) rotate(45deg); }
+    .cover-symbol span { display: block; font-size: 24px; transform: rotate(-45deg); }
+    .cover-title { position: absolute; left: 20px; right: 13px; bottom: 32px; z-index: 1; font: 700 17px/1.15 var(--display); text-align: center; letter-spacing: -.06em; }
+    .cover-subtitle { position: absolute; left: 17px; right: 17px; bottom: 14px; z-index: 1; font: 700 8px var(--latin); letter-spacing: .08em; text-align: center; opacity: .76; }
+    .book-meta { display: grid; gap: 4px; width: 100%; margin-top: 13px; text-align: center; }
+    .book-meta strong { font: 700 17px var(--display); }
+    .book-meta span { color: var(--muted); font-size: 10px; }
+    .book-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .book-tags span { padding: 4px 7px; border-radius: 999px; color: var(--cover-accent, var(--rose-deep)); background: rgba(255,255,255,.64); font-size: 9px; }
+
+    .empty-state { grid-column: 1 / -1; padding: 50px 20px; color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 7px; color: var(--ink); font: 700 20px var(--display); }
+
+    .detail-view { display: none; }
+    .detail-view.active { display: block; }
+    .detail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 7px 0 13px; }
+    .back-button { display: inline-flex; align-items: center; gap: 6px; border: 0; color: var(--muted); background: transparent; font-size: 12px; }
+    .back-button:hover { color: var(--rose-deep); }
+    .detail-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; }
+    .detail-book {
+      display: grid;
+      place-items: center;
+      min-height: 580px;
+      padding: 25px;
+      border-radius: 24px;
+      color: #fff9ef;
+      background:
+        radial-gradient(circle at 72% 16%, rgba(255,255,255,.15), transparent 26%),
+        linear-gradient(145deg, #2b292c, #161517);
+      box-shadow: var(--shadow-xl);
+    }
+    .detail-book .book-cover { width: 202px; height: 300px; transform: rotateY(-17deg) rotateZ(-2deg); }
+    .detail-book .cover-title { font-size: 23px; }
+    .detail-book .cover-subtitle { font-size: 9px; }
+    .detail-book .cover-symbol { width: 75px; height: 75px; }
+    .detail-book .cover-symbol span { font-size: 34px; }
+    .detail-label { margin-top: 22px; color: rgba(255, 249, 239, .58); font: 700 9px var(--latin); letter-spacing: .12em; }
+    .detail-book h2 { margin: 8px 0 0; color: #fff9ef; font: 400 24px var(--display); letter-spacing: -.06em; text-align: center; }
+    .detail-book p { margin: 6px 0 0; color: rgba(255, 249, 239, .62); font-size: 11px; text-align: center; }
+    .chapter-area { min-width: 0; padding: 24px; border: 1px solid rgba(119, 91, 82, .14); border-radius: 24px; background: rgba(255, 252, 247, .86); box-shadow: var(--shadow-lg); }
+    .chapter-area h2 { margin: 0 0 7px; font: 400 29px var(--display); letter-spacing: -.07em; }
+    .chapter-area > p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .chapter-tree { position: relative; display: flex; align-items: center; gap: 0; min-height: 92px; margin-bottom: 17px; padding: 10px 6px; overflow-x: auto; }
+    .chapter-tree::before { content: ""; position: absolute; left: 31px; right: 31px; top: 50%; height: 2px; background: linear-gradient(90deg, var(--rose), var(--sage)); opacity: .43; }
+    .chapter-node { position: relative; z-index: 1; display: grid; justify-items: center; gap: 6px; min-width: 82px; border: 0; color: var(--muted); background: transparent; font-size: 10px; }
+    .chapter-node span { display: grid; place-items: center; width: 37px; height: 37px; border: 4px solid var(--paper-strong); border-radius: 50%; color: #fff; background: var(--node, var(--rose)); box-shadow: 0 5px 12px rgba(66,46,40,.15); font: 800 9px var(--latin); transition: .2s ease; }
+    .chapter-node.active { color: var(--rose-deep); }
+    .chapter-node.active span { width: 45px; height: 45px; box-shadow: 0 0 0 7px rgba(217,120,137,.1), 0 8px 15px rgba(66,46,40,.17); }
+    .chapter-node:hover span { transform: translateY(-3px); }
+    .chapter-page { display: grid; grid-template-columns: minmax(220px, .75fr) minmax(230px, 1.25fr); gap: 17px; padding: 18px; border: 1px solid rgba(217, 120, 137, .18); border-radius: 19px; background: linear-gradient(135deg, rgba(255, 246, 240, .86), rgba(233, 241, 227, .58)); }
+    .chapter-media { position: relative; min-height: 170px; overflow: hidden; border-radius: 15px; background: linear-gradient(145deg, #d9a3a4, #876878); }
+    .chapter-media::after { content: "▶"; position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 53px; height: 53px; border: 5px solid rgba(255,255,255,.8); border-radius: 50%; color: white; background: rgba(73,61,58,.5); transform: translate(-50%,-50%); font-size: 17px; }
+    .chapter-media img { display: block; width: 100%; height: 100%; min-height: 170px; object-fit: cover; opacity: .78; }
+    .chapter-copy { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .chapter-copy .chapter-kicker { margin: 0 0 6px; color: var(--rose-deep); font: 800 9px var(--latin); letter-spacing: .12em; }
+    .chapter-copy h3 { margin: 0 0 8px; font: 700 23px/1.3 var(--display); letter-spacing: -.06em; }
+    .chapter-copy p { margin: 0 0 13px; color: #7c6c65; font-size: 12px; line-height: 1.65; }
+    .chapter-source { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; }
+    .chapter-source b { color: var(--sage-deep); }
+    .chapter-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+    .open-video { min-height: 40px; padding: 0 15px; border: 1px solid var(--rose); border-radius: 999px; color: white; background: var(--rose); font-size: 11px; }
+    .open-video:hover { background: var(--rose-deep); }
+    .chapter-secondary { min-height: 40px; padding: 0 13px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: rgba(255,255,255,.5); font-size: 11px; }
+    .chapter-secondary:hover { color: var(--rose-deep); border-color: var(--rose); }
+    .detail-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; color: var(--muted); font-size: 10px; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; z-index: 40; max-width: calc(100vw - 40px); padding: 12px 17px; border: 1px solid rgba(255,255,255,.62); border-radius: 999px; color: #fffaf5; background: rgba(73,61,58,.9); box-shadow: 0 14px 34px rgba(66,46,40,.11); opacity: 0; pointer-events: none; transform: translate(-50%, 12px); transition: .25s ease; font-size: 12px; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; padding: 20px; background: rgba(37, 30, 31, .38); backdrop-filter: blur(8px); }
+    .modal { position: relative; width: min(680px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: 28px; border: 1px solid rgba(255,255,255,.68); border-radius: 25px; background: var(--paper-strong); box-shadow: var(--shadow-xl); }
+    .modal h2 { margin: 0 0 9px; font: 400 28px var(--display); letter-spacing: -.07em; }
+    .modal > p { color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .modal-close { position: absolute; top: 13px; right: 14px; width: 33px; height: 33px; border: 0; border-radius: 50%; color: var(--muted); background: #f3e9df; font-size: 20px; }
+    .new-book-form { display: grid; gap: 12px; margin-top: 18px; }
+    .new-book-form label { display: grid; gap: 6px; color: #7d6c65; font-size: 11px; }
+    .new-book-form input { min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink); background: white; font-size: 12px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 18px; }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-copy { padding-left: 0; }
+      .shelf-stage { min-height: 270px; }
+      .detail-layout { grid-template-columns: 230px minmax(0, 1fr); }
+      .detail-book .book-cover { width: 155px; height: 230px; }
+      .chapter-page { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .app { padding: 8px 8px 22px; }
+      .topbar { min-height: 60px; margin: 0; padding: 8px 12px; border-radius: 18px; }
+      .brand { min-width: auto; }
+      .brand small, .crumbs { display: none; }
+      .ghost { min-height: 34px; padding: 0 10px; font-size: 10px; }
+      .hero { padding: 21px 17px; border-radius: 22px; }
+      .hero h1 { font-size: 36px; }
+      .shelf-stage { min-height: 235px; }
+      .mini-book { height: 146px; width: 69px; }
+      .controls { align-items: stretch; flex-direction: column; }
+      .search { max-width: none; }
+      .result-count { margin-left: 0; }
+      .bookshelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 11px 9px 17px; border-radius: 20px; }
+      .book-item { min-height: 260px; padding: 12px 7px; }
+      .book-cover { width: 111px; height: 165px; }
+      .cover-title { left: 15px; right: 10px; bottom: 28px; font-size: 14px; }
+      .detail-layout { grid-template-columns: 1fr; }
+      .detail-book { min-height: 365px; }
+      .detail-book .book-cover { width: 170px; height: 250px; }
+      .chapter-area { padding: 17px; }
+      .chapter-page { padding: 12px; }
+      .chapter-media { min-height: 145px; }
+      .chapter-media img { min-height: 145px; }
+      .detail-foot { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="LoveTree 홈">
+        <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+        <span><strong>러브트리</strong><small>LoveTree · LOVE MOMENT TREE</small></span>
+      </a>
+      <div class="crumbs"><span id="crumbLabel">사람별 기억 책장</span></div>
+      <div class="top-actions">
+        <button class="ghost" id="newBookButton" type="button">새 책 만들기 +</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">LOVE MOMENT LIBRARY · PEOPLE</p>
+          <h1>좋아한 사람마다<br /><em>한 권의 책</em>이 있어요.</h1>
+          <p>사람을 고르면 그 사람에게 남긴 영상들이 챕터가 되어 펼쳐져요. 책장을 넘기듯, 내가 좋아하게 된 경로를 다시 따라가 보세요.</p>
+          <div class="hero-note"><strong>한 사람 · 한 나무</strong><span>책은 앨범이고, 책 안의 챕터는 LoveTree의 가지예요.</span></div>
+        </div>
+        <div class="shelf-stage" aria-label="사람별 LoveTree 책장 미리보기">
+          <span class="stage-label">LOVE TREE LIBRARY · SELECT A VOLUME</span>
+          <span class="stage-hint">책을 고르면 열립니다</span>
+          <div class="mini-books">
+            <div class="mini-book" style="--book:#bf6a66;--tilt:-4deg"><i></i><span>주연</span></div>
+            <div class="mini-book" style="--book:#4265a8;--tilt:2deg"><i></i><span>플레이브</span></div>
+            <div class="mini-book" style="--book:#9a7966;--tilt:-2deg"><i></i><span>이준혁</span></div>
+            <div class="mini-book" style="--book:#6f8a76;--tilt:4deg"><i></i><span>허드슨</span></div>
+            <div class="mini-shelf"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="shelf-view" id="shelfView" aria-labelledby="shelfTitle">
+        <div class="controls">
+          <div class="search"><input id="searchInput" type="search" placeholder="사람이나 챕터를 검색해보세요" aria-label="책 검색" /></div>
+          <div class="filter-row" role="group" aria-label="책 분류">
+            <button class="filter active" type="button" data-filter="all">전체</button>
+            <button class="filter" type="button" data-filter="kpop">K-pop</button>
+            <button class="filter" type="button" data-filter="actor">배우</button>
+            <button class="filter" type="button" data-filter="series">작품·캐릭터</button>
+          </div>
+          <span class="result-count" id="resultCount"></span>
+        </div>
+        <div class="bookshelf" id="bookshelf" aria-live="polite"></div>
+      </section>
+
+      <section class="detail-view" id="detailView" aria-labelledby="detailTitle">
+        <div class="detail-head">
+          <button class="back-button" id="backToShelf" type="button">← 책장으로 돌아가기</button>
+          <span class="result-count" id="detailCount"></span>
+        </div>
+        <div class="detail-layout">
+          <aside class="detail-book" id="detailBook"></aside>
+          <section class="chapter-area">
+            <p class="eyebrow" id="detailEyebrow">VOLUME · LOVE TREE</p>
+            <h2 id="detailTitle">책 제목</h2>
+            <p id="detailDescription">책 안의 챕터를 골라보세요.</p>
+            <div class="chapter-tree" id="chapterTree" aria-label="챕터 연결 트리"></div>
+            <article class="chapter-page" id="chapterPage"></article>
+            <div class="detail-foot"><span id="detailSource">북마크에서 가져온 링크</span><span>챕터를 누르면 가지가 바뀌어요</span></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-backdrop hidden" id="newBookModal" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="newBookTitle">
+      <button class="modal-close" type="button" data-close="newBookModal" aria-label="닫기">×</button>
+      <p class="eyebrow">NEW LOVE TREE VOLUME</p>
+      <h2 id="newBookTitle">새로운 사람의<br />책을 만들어요.</h2>
+      <p>사람 이름과 첫 영상 링크만 넣으면 책이 만들어져요. 다음 챕터는 책 안에서 계속 추가할 수 있어요.</p>
+      <form class="new-book-form" id="newBookForm">
+        <label>사람 이름<input id="newBookName" required placeholder="예: 새로운 LoveTree" /></label>
+        <label>첫 영상 링크<input id="newBookUrl" required type="url" placeholder="https://youtu.be/..." /></label>
+        <label>첫 챕터 이름<input id="newBookChapter" placeholder="예: 처음 마음이 움직인 장면" /></label>
+        <div class="modal-actions"><button class="ghost" type="button" data-close="newBookModal">취소</button><button class="open-video" type="submit">책 만들기 →</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="videoModal" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+      <button class="modal-close" type="button" data-close="videoModal" aria-label="닫기">×</button>
+      <p class="eyebrow">CHAPTER · VIDEO MOMENT</p>
+      <h2 id="videoTitle">챕터 영상</h2>
+      <div style="position:relative;overflow:hidden;border-radius:16px;background:#252226;aspect-ratio:16/9;margin-top:15px"><iframe id="videoFrame" title="LoveTree 챕터 영상" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+      <p id="videoFallback">영상이 재생되지 않으면 아래 링크로 열어보세요.</p>
+      <div class="modal-actions"><a class="open-video" id="videoExternal" href="#" target="_blank" rel="noopener noreferrer">YouTube에서 열기 ↗</a><button class="ghost" type="button" data-close="videoModal">닫기</button></div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      var $ = function (selector) { return document.querySelector(selector); };
+      var $$ = function (selector) { return Array.prototype.slice.call(document.querySelectorAll(selector)); };
+      var sourceLabel = 'bookmarks_LIKE_only_2026-07-28.html';
+      var books = [
+        {
+          id: 'juyeon', name: '주연', english: 'JUYEON · THE BOYZ', category: 'kpop', color: '#a84f5d', accent: '#a84f5d', symbol: '✦',
+          description: '무대와 표정, 말투 사이에서 계속 새로 발견한 주연의 순간들.',
+          tags: ['무대', '직캠', '새로운 표정'],
+          chapters: [
+            { title: 'Miljyu in 2025', url: 'https://www.youtube.com/watch?v=MUKjhyAl_Ig&t=586s', mood: '설렘', note: '짧은 장면 안에서도 표정과 분위기가 오래 남은 순간' },
+            { title: 'Cute to hot in seconds', url: 'https://www.youtube.com/shorts/zmOI_XujTsU', mood: '반전', note: '한 장면 안에서 분위기가 바뀌는 그 순간을 기록' },
+            { title: 'Ain’t Salty 직캠', url: 'https://www.youtube.com/shorts/35j5aBM2Yck?si=bYeR6EdT-gwuWhzw', mood: '몰입', note: '무대의 에너지와 시선이 한꺼번에 들어온 챕터' },
+            { title: 'THE BLAZE · Paris', url: 'https://www.youtube.com/watch?v=C9VVlr_Zik8&t=113s', mood: '자랑스러움', note: '무대 밖의 모습까지 좋아하게 된 연결점' },
+            { title: 'Paris Balenciaga after party', url: 'https://www.youtube.com/shorts/PiimgtLtdlE', mood: '새로움', note: '다음 영상을 찾게 만든 새로운 가지' }
+          ]
+        },
+        {
+          id: 'plave', name: '플레이브', english: 'PLAVE', category: 'kpop', color: '#4265a8', accent: '#4265a8', symbol: '✧',
+          description: '노래와 장난, 멤버 사이의 작은 반응을 모아둔 플레이브의 책.',
+          tags: ['노래', '멤버 케미', '쇼츠'],
+          chapters: [
+            { title: '킬링보이스 예준 댓글모음', url: 'https://www.youtube.com/shorts/ydoa30a-0Xw', mood: '기쁨', note: '목소리와 댓글 반응이 함께 기억된 첫 장' },
+            { title: '은호한테 유독 단호한 예준', url: 'https://www.youtube.com/shorts/BkRV7CgvA0M', mood: '웃음', note: '멤버 사이의 관계가 다음 영상을 부른 순간' },
+            { title: '바로 노래 나오는 예준은호', url: 'https://www.youtube.com/shorts/PBFzNM8vx8c', mood: '설렘', note: '짧지만 반복해서 보게 되는 노래의 가지' },
+            { title: '늑대 강아지라고 부르기로 했어요', url: 'https://www.youtube.com/shorts/f1mEHyRRowM', mood: '귀여움', note: '한 문장이 캐릭터의 이미지로 남은 챕터' },
+            { title: '여기보세요 우르르르까꿍', url: 'https://www.youtube.com/shorts/x_uv2v7EfCc', mood: '장난', note: '보고 나서 또 다른 멤버 영상을 찾게 된 연결' }
+          ]
+        },
+        {
+          id: 'lee-junhyuk', name: '이준혁', english: 'LEE JUNHYUK', category: 'actor', color: '#906b5a', accent: '#906b5a', symbol: '◌',
+          description: '배우의 말투, 역할의 결, 장난스러운 순간까지 이어진 이준혁의 기록.',
+          tags: ['배우', '인터뷰', '캐릭터'],
+          chapters: [
+            { title: '게임을 안 하는 이유는?', url: 'https://www.youtube.com/watch?v=a1gsq3jC0Tg', mood: '호기심', note: '배우가 아닌 사람의 말에 귀 기울인 시작' },
+            { title: '이준혁의 손 크기는?', url: 'https://www.youtube.com/watch?v=17UP5Pfmduo', mood: '귀여움', note: '사소한 질문이 기억에 남은 가벼운 챕터' },
+            { title: '가을엔 영화처럼', url: 'https://www.youtube.com/watch?v=2SDl278ezBQ', mood: '차분함', note: '목소리와 이야기가 천천히 스며든 순간' },
+            { title: '꼬시는 로봇 서강준', url: 'https://www.youtube.com/watch?v=vv-adRSM9xY', mood: '웃음', note: '캐릭터와 배우를 함께 보게 된 가지' },
+            { title: '쓰리피스 입은 서동재', url: 'https://www.youtube.com/watch?v=-uYx6joIm0g', mood: '몰입', note: '역할의 분위기가 좋아함으로 바뀐 챕터' }
+          ]
+        },
+        {
+          id: 'lee-junyoung', name: '이준영', english: 'LEE JUNYOUNG', category: 'actor', color: '#6f8a76', accent: '#5e7053', symbol: '☘',
+          description: '강한 캐릭터와 장난스러운 얼굴 사이의 폭을 따라간 이준영의 책.',
+          tags: ['연기', '캐릭터', '반전'],
+          chapters: [
+            { title: '학교 일진 이준영', url: 'https://www.youtube.com/shorts/2EPecZDETs4', mood: '긴장', note: '연기와 캐릭터의 힘으로 시선을 잡은 시작' },
+            { title: 'D.P. 연기', url: 'https://www.youtube.com/watch?v=D3GEii5gC0E', mood: '몰입', note: '한 장면을 더 찾아보게 만든 연기 챕터' },
+            { title: '래퍼 짬바 나와버림', url: 'https://www.youtube.com/shorts/ojiKDGpsujk', mood: '웃음', note: '배우 밖의 리듬감이 보인 순간' },
+            { title: '연기하는 강아지', url: 'https://www.youtube.com/watch?v=uQVm-r7de8w', mood: '귀여움', note: '반전의 표정이 다음 가지로 이어진 장면' },
+            { title: '금성제의 차가운 순간', url: 'https://www.youtube.com/shorts/LvSELb6ADpA', mood: '서늘함', note: '캐릭터의 결을 더 깊게 들여다본 챕터' }
+          ]
+        },
+        {
+          id: 'nicholas', name: '니콜라스 갈리친', english: 'NICHOLAS GALITZINE', category: 'actor', color: '#68748c', accent: '#68748c', symbol: '✦',
+          description: '작품, 인터뷰, 패션과 사람 사이에서 발견한 니콜라스의 순간들.',
+          tags: ['영화', '인터뷰', '패션'],
+          chapters: [
+            { title: '10 Things · Can’t Live Without', url: 'https://www.youtube.com/watch?v=tKF_OrRO7Uk', mood: '호기심', note: '취향을 통해 사람을 더 알고 싶어진 시작' },
+            { title: 'Mary & George 인터뷰', url: 'https://www.youtube.com/watch?v=ABSmGe0QUUI', mood: '깊이', note: '작품과 배우의 생각을 함께 본 챕터' },
+            { title: 'Vogue Met Gala 준비', url: 'https://www.youtube.com/watch?v=n8wjtCBglPM', mood: '설렘', note: '무대 밖의 준비 과정이 인상 깊었던 순간' },
+            { title: '패션의 밤에 도착한 순간', url: 'https://www.youtube.com/shorts/yUSNwqxqLhE', mood: '빛남', note: '짧은 영상이 긴 감상으로 이어진 가지' },
+            { title: 'Bottoms · Jeff interview', url: 'https://www.youtube.com/watch?v=kreZrxW97QA', mood: '유쾌함', note: '역할의 매력과 실제 말투가 겹쳐 보인 챕터' }
+          ]
+        },
+        {
+          id: 'cooper', name: '쿠퍼 코치', english: 'COOPER KOCH', category: 'series', color: '#a06d59', accent: '#a06d59', symbol: '◎',
+          description: '작품 속 관계와 배우의 실제 인터뷰를 함께 모은 쿠퍼 코치의 책.',
+          tags: ['작품', '관계', '인터뷰'],
+          chapters: [
+            { title: 'Lyle & Erik', url: 'https://www.youtube.com/watch?v=OlStajYFKyk', mood: '관계', note: '두 인물의 관계를 처음 따라간 챕터' },
+            { title: 'Monsters interview', url: 'https://www.youtube.com/watch?v=izXxxPszHOY', mood: '집중', note: '작품 밖에서 관계를 설명하는 목소리' },
+            { title: 'Janet Nepales interview', url: 'https://www.youtube.com/watch?v=noB2B8w8lsQ', mood: '호기심', note: '배우가 역할을 만든 과정을 들여다본 순간' },
+            { title: 'The Lyle and Erik story', url: 'https://www.youtube.com/watch?v=LUvq_09O1As', mood: '몰입', note: '이야기의 감정선을 더 깊게 따라간 가지' },
+            { title: 'Swallowed · independent filmmaking', url: 'https://www.youtube.com/watch?v=9HqAqjjvPW8', mood: '발견', note: '다른 작품으로 관심이 확장된 챕터' }
+          ]
+        },
+        {
+          id: 'hudson', name: '허드슨', english: 'HUDSON WILLIAMS', category: 'series', color: '#58728e', accent: '#58728e', symbol: '◇',
+          description: 'Heated Rivalry와 인터뷰, 장난스러운 순간까지 이어진 허드슨의 기록.',
+          tags: ['Heated Rivalry', '인터뷰', '비하인드'],
+          chapters: [
+            { title: 'GQ BTS · Hudson & Connor', url: 'https://www.youtube.com/shorts/DRK7cuaRri0', mood: '설렘', note: '두 사람의 관계를 더 보고 싶어진 시작' },
+            { title: 'Jimmy와 hockey stretch', url: 'https://www.youtube.com/watch?v=SfLq1eE_20A', mood: '웃음', note: '작품 밖의 유머와 자연스러움이 남은 순간' },
+            { title: 'Heated Rivalry fight', url: 'https://www.youtube.com/watch?v=SqZLCMFVKlU', mood: '긴장', note: '캐릭터의 감정이 크게 흔들린 챕터' },
+            { title: 'Media training 7 minutes', url: 'https://www.youtube.com/watch?v=_VCN2ckG4Ak', mood: '귀여움', note: '사람 자체를 좋아하게 된 인터뷰 가지' },
+            { title: 'Dangerously attractive', url: 'https://www.youtube.com/watch?v=7qkfWK2Y_Kg', mood: '반짝임', note: '짧은 감탄이 다음 영상으로 이어진 기록' }
+          ]
+        }
+      ];
+      var state = { filter: 'all', query: '', selectedId: null, chapterIndex: 0, customBooks: [] };
+      var storageKey = 'lovetree-people-book-shelf-v1';
+
+      try {
+        var stored = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        state.selectedId = stored.selectedId || null;
+        state.chapterIndex = Number.isInteger(stored.chapterIndex) ? stored.chapterIndex : 0;
+        state.customBooks = Array.isArray(stored.customBooks) ? stored.customBooks : [];
+      } catch (error) {}
+
+      function allBooks() { return books.concat(state.customBooks); }
+      function getBook(id) { return allBooks().find(function (book) { return book.id === id; }); }
+      function save() { localStorage.setItem(storageKey, JSON.stringify({ selectedId: state.selectedId, chapterIndex: state.chapterIndex, customBooks: state.customBooks })); }
+      function esc(value) { return String(value || '').replace(/[&<>"']/g, function (char) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[char]; }); }
+      function youtubeId(url) { var match = String(url || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&/]+)/i); return match ? match[1] : ''; }
+      function showToast(message) { var toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 2400); }
+      function openModal(id) { $('#' + id).classList.remove('hidden'); }
+      function closeModal(id) { $('#' + id).classList.add('hidden'); if (id === 'videoModal') $('#videoFrame').src = ''; }
+      function categoryLabel(category) { return category === 'kpop' ? 'K-pop' : category === 'actor' ? '배우' : category === 'series' ? '작품·캐릭터' : 'LoveTree'; }
+      function coverStyle(book) { return '--cover:' + book.color + ';--cover-accent:' + book.accent + ';--tilt:' + ((book.id.length % 5) - 2) + 'deg;'; }
+
+      function renderShelf() {
+        var query = state.query.trim().toLowerCase();
+        var list = allBooks().filter(function (book) {
+          var matchesFilter = state.filter === 'all' || book.category === state.filter;
+          var matchesQuery = !query || [book.name, book.english, book.description].concat(book.tags).concat(book.chapters.map(function (chapter) { return chapter.title; })).join(' ').toLowerCase().indexOf(query) >= 0;
+          return matchesFilter && matchesQuery;
+        });
+        $('#resultCount').textContent = list.length + '권의 LoveTree';
+        $('#bookshelf').innerHTML = list.length ? list.map(function (book, index) {
+          return '<article class="book-item">' +
+            '<button class="book-button" type="button" data-book-id="' + esc(book.id) + '" aria-label="' + esc(book.name) + ' 책 열기">' +
+              '<div class="book-cover" style="' + coverStyle(book) + '">' +
+                '<span class="cover-number">VOLUME · ' + String(index + 1).padStart(2, '0') + '</span>' +
+                '<span class="cover-symbol"><span>' + esc(book.symbol) + '</span></span>' +
+                '<strong class="cover-title">' + esc(book.name) + '</strong>' +
+                '<small class="cover-subtitle">' + esc(book.english) + '</small>' +
+              '</div>' +
+              '<span class="book-meta"><strong>' + esc(book.name) + '</strong><span>' + book.chapters.length + '개의 챕터 · ' + esc(categoryLabel(book.category)) + '</span></span>' +
+            '</button>' +
+            '<div class="book-tags">' + book.tags.slice(0, 3).map(function (tag) { return '<span>' + esc(tag) + '</span>'; }).join('') + '</div>' +
+          '</article>';
+        }).join('') : '<div class="empty-state"><strong>아직 이 책장에는 없어요.</strong><span>다른 검색어를 입력하거나 새 책을 만들어보세요.</span></div>';
+        $$('.book-button').forEach(function (button) { button.addEventListener('click', function () { openBook(button.dataset.bookId); }); });
+      }
+
+      function renderDetail() {
+        var book = getBook(state.selectedId);
+        if (!book) return;
+        if (state.chapterIndex >= book.chapters.length) state.chapterIndex = 0;
+        var chapter = book.chapters[state.chapterIndex];
+        $('#crumbLabel').textContent = book.name + ' · LoveTree 책';
+        $('#detailCount').textContent = book.chapters.length + ' chapters';
+        $('#detailEyebrow').textContent = 'VOLUME · ' + book.english;
+        $('#detailTitle').textContent = book.name + '의 LoveTree';
+        $('#detailDescription').textContent = book.description;
+        $('#detailSource').textContent = sourceLabel + ' · ' + book.chapters.length + ' links';
+        $('#detailBook').innerHTML =
+          '<div class="book-cover" style="' + coverStyle(book) + '">' +
+            '<span class="cover-number">LOVE MOMENT TREE</span>' +
+            '<span class="cover-symbol"><span>' + esc(book.symbol) + '</span></span>' +
+            '<strong class="cover-title">' + esc(book.name) + '</strong>' +
+            '<small class="cover-subtitle">' + esc(book.english) + '</small>' +
+          '</div>' +
+          '<span class="detail-label">ONE PERSON · ONE LOVETREE</span>' +
+          '<h2>' + esc(book.name) + '</h2><p>' + book.chapters.length + '개의 기억 챕터</p>';
+        $('#chapterTree').innerHTML = '<button class="chapter-node root active" type="button" data-chapter-index="-1"><span style="--node:' + book.color + '">♥</span><b>첫 마음</b></button>' +
+          book.chapters.map(function (item, index) {
+            return '<button class="chapter-node ' + (index === state.chapterIndex ? 'active' : '') + '" type="button" data-chapter-index="' + index + '">' +
+              '<span style="--node:' + (index % 2 ? book.accent : book.color) + '">' + String(index + 1).padStart(2, '0') + '</span><b>챕터 ' + (index + 1) + '</b></button>';
+          }).join('');
+        $('#chapterPage').innerHTML =
+          '<div class="chapter-media"><img src="https://img.youtube.com/vi/' + esc(youtubeId(chapter.url)) + '/hqdefault.jpg" alt="" loading="lazy" /></div>' +
+          '<div class="chapter-copy">' +
+            '<p class="chapter-kicker">CHAPTER ' + String(state.chapterIndex + 1).padStart(2, '0') + ' · ' + esc(chapter.mood) + '</p>' +
+            '<h3>' + esc(chapter.title) + '</h3>' +
+            '<p>' + esc(chapter.note) + '</p>' +
+            '<div class="chapter-source"><b>내가 남긴 결</b><span>' + esc(chapter.mood) + '</span></div>' +
+            '<div class="chapter-actions"><button class="open-video" id="openCurrentVideo" type="button">이 챕터 영상 보기 ↗</button><a class="chapter-secondary" href="' + esc(chapter.url) + '" target="_blank" rel="noopener noreferrer">링크 새 창에서 열기</a></div>' +
+          '</div>';
+        $$('.chapter-node').forEach(function (node) {
+          node.addEventListener('click', function () {
+            var index = Number(node.dataset.chapterIndex);
+            if (index >= 0) {
+              state.chapterIndex = index;
+              save();
+              renderDetail();
+            } else {
+              showToast(book.name + '의 첫 마음에서 시작한 LoveTree예요.');
+            }
+          });
+        });
+        $('#openCurrentVideo').addEventListener('click', function () { openVideo(book, chapter); });
+      }
+
+      function openBook(id) {
+        state.selectedId = id;
+        state.chapterIndex = 0;
+        save();
+        $('#shelfView').style.display = 'none';
+        $('#detailView').classList.add('active');
+        renderDetail();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      function backToShelf() {
+        state.selectedId = null;
+        save();
+        $('#detailView').classList.remove('active');
+        $('#shelfView').style.display = 'block';
+        $('#crumbLabel').textContent = '사람별 기억 책장';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      function openVideo(book, chapter) {
+        var id = youtubeId(chapter.url);
+        $('#videoTitle').textContent = book.name + ' · ' + chapter.title;
+        $('#videoFrame').src = id ? 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0' : '';
+        $('#videoExternal').href = chapter.url;
+        openModal('videoModal');
+      }
+      function bind() {
+        $('#searchInput').addEventListener('input', function (event) { state.query = event.target.value; renderShelf(); });
+        $$('.filter').forEach(function (button) {
+          button.addEventListener('click', function () {
+            state.filter = button.dataset.filter;
+            $$('.filter').forEach(function (item) { item.classList.toggle('active', item === button); });
+            renderShelf();
+          });
+        });
+        $('#backToShelf').addEventListener('click', backToShelf);
+        $('#newBookButton').addEventListener('click', function () { openModal('newBookModal'); });
+        $$('[data-close]').forEach(function (button) { button.addEventListener('click', function () { closeModal(button.dataset.close); }); });
+        $$('.modal-backdrop').forEach(function (backdrop) { backdrop.addEventListener('click', function (event) { if (event.target === backdrop) closeModal(backdrop.id); }); });
+        $('#newBookForm').addEventListener('submit', function (event) {
+          event.preventDefault();
+          var name = $('#newBookName').value.trim();
+          var url = $('#newBookUrl').value.trim();
+          if (!name || !url) return;
+          var custom = {
+            id: 'custom-' + Date.now(),
+            name: name,
+            english: 'MY LOVE TREE',
+            category: 'all',
+            color: '#8c6d83',
+            accent: '#8c6d83',
+            symbol: '♡',
+            description: '새롭게 기록하기 시작한 LoveTree 책.',
+            tags: ['새 책', '첫 마음'],
+            chapters: [{ title: $('#newBookChapter').value.trim() || '처음 마음이 움직인 장면', url: url, mood: '첫 마음', note: '이 사람을 처음 책으로 만들게 된 순간' }]
+          };
+          state.customBooks.push(custom);
+          save();
+          closeModal('newBookModal');
+          $('#newBookForm').reset();
+          renderShelf();
+          showToast(name + '의 LoveTree 책을 만들었어요.');
+        });
+      }
+
+      renderShelf();
+      bind();
+      if (state.selectedId && getBook(state.selectedId)) {
+        $('#shelfView').style.display = 'none';
+        $('#detailView').classList.add('active');
+        renderDetail();
+      }
+    }());
+  </script>
+</body>
+</html>

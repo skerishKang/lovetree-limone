@@ -65,3 +65,21 @@ change was applied.
 - **Local `foundation/pr-2-hardening` assessment**: at `7683f3e`, content-identical to backup `4fc29ea`; left untouched
 - **Canonical branch**: `foundation/pr-2-hardening-recovered` at `531befb`, pushed to remote, Draft PR [#5](https://github.com/skerishKang/lovetree-limone/pull/5)
 - **Cloudflare deployment**: not performed
+
+## V4 final integrated candidate validation
+(`feat/v4-final-integrated-candidate`)
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Node.js | passed | `v22.23.1` |
+| `npm ci` | passed | 413 packages installed |
+| `npm run lint` | passed | 0 errors, 55 warnings (pre-existing unused vars) |
+| `npm run typecheck` | passed | No TypeScript errors |
+| `npm test` | passed | 505 tests, 0 fail (`V4_BASE_URL=http://localhost:3416`) |
+| source-faithful suites | passed | first-journey 5, bookshelf 15, moments-100 4, baseline 4 |
+| `npm run build` | passed | vinext build complete |
+| `npm run db:check` | passed | Everything's fine |
+| registry consistency | passed | manifest = implemented = registry = 29; unimplemented 0; duplicate source ID 0; duplicate route 0 (v5/v6 shared `/v4/trees/demo` is intentional); iframe wrapper 0 |
+| hydration 5 routes | passed | save→reload restores state, 0 hydration errors, malformed JSON safe |
+| a11y dialogs | passed | Journey Dock and Community preview/compare close on Escape and restore focus |
+| route matrix | passed | 31 /v4 routes HTTP 200, pageerror 0, unexpected console error 0, same-origin failure 0, horizontal overflow 0, duplicate ID 0 |

@@ -1,0 +1,35 @@
+export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
+  "complete-manga-refinement",
+  "step2-emotion-refined",
+  "step3-connect-next-video",
+  "growing-tree-v5-draggable-notes",
+  "growing-tree-v6-fullscreen-add",
+  "rest-return-flow-v2-simple",
+  "tree-pause-issue-state-v1",
+  "community-discovery-v2",
+  "node-graph-prototype",
+  "obsidian-graph1",
+  "love-nebula",
+  "juyeon-timeline",
+  "person-albums",
+  "motion-archive",
+  "liquid-orbit-video-gallery",
+  "accordion-album-archive",
+  "folding-person-archive",
+  "300-moments-finale",
+  "aurora-particle-heart",
+  "rainbow-memory-canopy",
+  "purple-bloom-graph",
+  "growing-tree-300-plus-freegraph",
+  "growing-tree-season-archive",
+  "first-journey-unified-v1",
+  "100-moments-season-temperature-v4",
+  "people-book-shelf-v1",
+  "people-book-shelf-v2-1-true-page-motion",
+  "people-book-shelf-v2-3d",
+  "people-book-shelf-v2a-2-interaction-stable",
+]);
+
+export function v4SourceStatus(id: string): "planned" | "implemented" {
+  return V4_IMPLEMENTED_SOURCE_IDS.has(id) ? "implemented" : "planned";
+}

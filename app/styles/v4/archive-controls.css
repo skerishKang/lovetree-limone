@@ -1,0 +1,21 @@
+.v4-archive-page .v4-graph-button {
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: #d8d0d2;
+  font-size: .52rem;
+  font-weight: 700;
+}
+
+.v4-archive-page .v4-graph-button:hover {
+  border-color: rgba(231,178,189,.48);
+  color: #f1c4cd;
+}
+
+.v4-archive-page .v4-graph-button.is-primary {
+  border-color: #c87583;
+  background: #a95e6c;
+  color: #fff;
+}
