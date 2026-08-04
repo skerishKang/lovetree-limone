@@ -108,6 +108,7 @@ export default function V4MemoryWindowComposer() {
 
   return (
     <main className={`mwc-app mwc-style-${style.toLowerCase().replace(" ", "-")}`} ref={containerRef}>
+      <div className="mwc-lab-banner">제품 미확정 실험안 · Lab Preview · 공식 V4 여정에 연결되지 않음</div>
       <div className="mwc-background">
         <img src={background.thumb} alt="" className="mwc-bg-img" style={{ transform: mirrored ? "scaleX(-1)" : "" }} />
         <div className="mwc-bg-scrim" />

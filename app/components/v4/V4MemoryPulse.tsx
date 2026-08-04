@@ -61,6 +61,7 @@ export default function V4MemoryPulse() {
 
   return (
     <main className="mp-stage">
+      <div className="mp-lab-banner">제품 미확정 실험안 · Lab Preview · 공식 V4 여정에 연결되지 않음</div>
       <div className="mp-shell">
         <div className="mp-artboard">
           <canvas className="mp-ambient" ref={(c) => { if (c) { const ctx = c.getContext("2d"); if (ctx) { c.width = 840; c.height = 990; const dots = Array.from({length:70},()=>({x:Math.random()*840,y:Math.random()*990,r:Math.random()*1.5+0.3,o:Math.random()*0.3+0.05,s:Math.random()*0.3+0.1})); const draw=()=>{ctx.clearRect(0,0,840,990);dots.forEach(d=>{d.y-=d.s;if(d.y<0)d.y=990;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,7);ctx.fillStyle=`rgba(167,108,255,${d.o})`;ctx.fill();});requestAnimationFrame(draw);};draw(); } } }} />

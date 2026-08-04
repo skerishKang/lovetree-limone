@@ -60,12 +60,12 @@ const GROUPS = [
     ],
   },
   {
-    label: "메모리",
+    label: "실험실 · 4 designs",
     links: [
-      ["Memory Pulse", "/v4/memory/pulse"],
-      ["Scene Recipes", "/v4/memory/recipes"],
-      ["Polish Lab", "/v4/memory/polish-lab"],
-      ["Window Composer", "/v4/memory/window-composer"],
+      ["Memory Pulse", "/v4/labs/memory/pulse"],
+      ["Scene Recipes", "/v4/labs/memory/recipes"],
+      ["Polish Lab", "/v4/labs/memory/polish-lab"],
+      ["Window Composer", "/v4/labs/memory/window-composer"],
     ],
   },
 ] as const;
@@ -128,7 +128,7 @@ export default function V4JourneyDock() {
       >
         <span aria-hidden="true">✦</span>
         <strong>V4 여정</strong>
-        <small>33 designs</small>
+        <small>29 official + 4 lab designs</small>
       </button>
       {open ? (
         <div className="v4-journey-panel" id="v4-journey-panel" ref={panelRef} role="dialog" aria-modal="true" aria-label="LoveTree V4 전체 화면">

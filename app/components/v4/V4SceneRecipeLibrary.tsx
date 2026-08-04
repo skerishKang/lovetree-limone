@@ -48,6 +48,7 @@ export default function V4SceneRecipeLibrary() {
 
   return (
     <main className="srl-app">
+      <div className="srl-lab-banner">제품 미확정 실험안 · Lab Preview · 공식 V4 여정에 연결되지 않음</div>
       <div className="srl-brand">
         <span className="srl-mark" aria-hidden="true">✦</span>
         <b>LoveTree</b>

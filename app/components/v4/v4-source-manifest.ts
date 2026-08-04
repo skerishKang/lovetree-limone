@@ -285,42 +285,6 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     preserve: ["풀뷰포트 3D 씬", "상태 머신", "세그먼트 곡면 플립", "코너 드래그", "테마 전환 배경"],
     status: "implemented",
   },
-  {
-    id: "memory-pulse-dashboard-v1",
-    sourceFile: "lovetree-memory-pulse-dashboard-v1.html",
-    area: "people",
-    route: "/v4/memory/pulse",
-    role: "다크 테마 메모리 펄스 대시보드",
-    preserve: ["벤토 카드 레이아웃", "실시간 펄스 애니메이션", "기간·소스 필터", "바 차트·월드맵·리듬 차트", "트리 카드"],
-    status: "implemented",
-  },
-  {
-    id: "memory-scene-recipe-library-v1",
-    sourceFile: "lovetree-memory-scene-recipe-library-v1.html",
-    area: "people",
-    route: "/v4/memory/recipes",
-    role: "메모리 씬 레시피 라이브러리",
-    preserve: ["앰버 다크 테마", "레시피 보드·검색·필터", "레시피 타일 그리드", "상세 시트 모달", "적용·저장"],
-    status: "implemented",
-  },
-  {
-    id: "moment-polish-lab-v1",
-    sourceFile: "lovetree-moment-polish-lab-v1.html",
-    area: "people",
-    route: "/v4/memory/polish-lab",
-    role: "모먼트 폴리시 랩",
-    preserve: ["라이트 페이퍼 테마", "12 원칙 카드 그리드", "라이브 데모 토글", "큐 스트립·진행 바", "적용 바"],
-    status: "implemented",
-  },
-  {
-    id: "memory-window-composer-v2",
-    sourceFile: "lovetree-memory-window-composer-v2.html",
-    area: "people",
-    route: "/v4/memory/window-composer",
-    role: "메모리 윈도우 컴포저 v2",
-    preserve: ["글래스모피즘 다크 에디터", "코너 드래그 투명 변형", "배경·모먼트 선택", "스타일 모드 독", "프리셋·툴바"],
-    status: "implemented",
-  },
 ] as const;
 
 export const V4_SEPARATELY_SUPPLIED_SOURCES = V4_SOURCE_MANIFEST.filter(

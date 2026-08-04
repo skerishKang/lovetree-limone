@@ -102,6 +102,7 @@ export default function V4MomentPolishLab() {
 
   return (
     <main className="mpl-stage">
+      <div className="mpl-lab-banner">제품 미확정 실험안 · Lab Preview · 공식 V4 여정에 연결되지 않음</div>
       <div className="mpl-shell">
         <div className="mpl-board">
           <section className="mpl-hero">
