@@ -31,11 +31,21 @@ function getSavedTreeState() {
 }
 
 export default function V4TreeState() {
-  const saved = getSavedTreeState();
-  const [treeState, setTreeState] = useState<(typeof TREE_STATES)[number]["id"]>(() => saved?.treeState ?? "resting");
-  const [visibility, setVisibility] = useState<(typeof VISIBILITY)[number]["id"]>(() => saved?.visibility ?? "link");
-  const [privateNote, setPrivateNote] = useState(() => saved?.privateNote ?? "지금의 감정은 공개하지 않고 나만 보는 기록으로 남긴다. 나무를 지우지 말고, 충분히 쉬었다가 돌아오기.");
+  const [treeState, setTreeState] = useState<(typeof TREE_STATES)[number]["id"]>("resting");
+  const [visibility, setVisibility] = useState<(typeof VISIBILITY)[number]["id"]>("link");
+  const [privateNote, setPrivateNote] = useState("지금의 감정은 공개하지 않고 나만 보는 기록으로 남긴다. 나무를 지우지 말고, 충분히 쉬었다가 돌아오기.");
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    const saved = getSavedTreeState();
+    if (!saved) return;
+    const timer = window.setTimeout(() => {
+      if (TREE_STATES.some((item) => item.id === saved.treeState)) setTreeState(saved.treeState as (typeof TREE_STATES)[number]["id"]);
+      if (VISIBILITY.some((item) => item.id === saved.visibility)) setVisibility(saved.visibility as (typeof VISIBILITY)[number]["id"]);
+      if (saved.privateNote) setPrivateNote(saved.privateNote);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

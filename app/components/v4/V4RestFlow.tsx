@@ -26,11 +26,21 @@ function getSavedRestState() {
 }
 
 export default function V4RestFlow() {
-  const saved = getSavedRestState();
-  const [status, setStatus] = useState<"active" | "resting">(() => saved?.status ?? "active");
-  const [note, setNote] = useState(() => saved?.note ?? "지금은 새로운 순간을 더하기보다, 이미 쌓인 마음을 천천히 돌아보고 싶어요.");
-  const [returnNote, setReturnNote] = useState(() => saved?.returnNote ?? "다시 마음이 움직이는 날, 이 자리에서 이어갈게요.");
+  const [status, setStatus] = useState<"active" | "resting">("active");
+  const [note, setNote] = useState("지금은 새로운 순간을 더하기보다, 이미 쌓인 마음을 천천히 돌아보고 싶어요.");
+  const [returnNote, setReturnNote] = useState("다시 마음이 움직이는 날, 이 자리에서 이어갈게요.");
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    const saved = getSavedRestState();
+    if (!saved) return;
+    const timer = window.setTimeout(() => {
+      if (saved.status === "active" || saved.status === "resting") setStatus(saved.status);
+      if (saved.note) setNote(saved.note);
+      if (saved.returnNote) setReturnNote(saved.returnNote);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

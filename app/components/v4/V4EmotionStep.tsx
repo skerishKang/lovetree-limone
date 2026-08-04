@@ -39,17 +39,13 @@ interface DiscoveryRecord {
 
 export default function V4EmotionStep() {
   const router = useRouter();
-  const savedDiscovery = getSavedDiscovery();
-  const [discovery, setDiscovery] = useState<DiscoveryRecord>(() => {
-    const base: DiscoveryRecord = {
-      treeName: "주연에게 마음이 멈춘 순간들",
-      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      videoId: "dQw4w9WgXcQ",
-      title: "처음 마음이 멈춘 장면",
-      note: "우연히 보게 됐는데, 하루 종일 이 장면이 생각났어요.",
-      date: "2026-07-28",
-    };
-    return savedDiscovery ? { ...base, ...savedDiscovery } : base;
+  const [discovery, setDiscovery] = useState<DiscoveryRecord>({
+    treeName: "주연에게 마음이 멈춘 순간들",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoId: "dQw4w9WgXcQ",
+    title: "처음 마음이 멈춘 장면",
+    note: "우연히 보게 됐는데, 하루 종일 이 장면이 생각났어요.",
+    date: "2026-07-28",
   });
   const [time, setTime] = useState("01:30");
   const [emotion, setEmotion] = useState<(typeof EMOTIONS)[number]>("설렘");
@@ -59,6 +55,13 @@ export default function V4EmotionStep() {
   const [publicMemo, setPublicMemo] = useState(false);
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    const saved = getSavedDiscovery();
+    if (!saved) return;
+    const timer = window.setTimeout(() => setDiscovery((base) => ({ ...base, ...saved })), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

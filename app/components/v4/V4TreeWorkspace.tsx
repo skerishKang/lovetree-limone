@@ -127,20 +127,27 @@ export default function V4TreeWorkspace() {
     originX: number;
     originY: number;
   } | null>(null);
-  const saved = getSavedWorkspace();
-  const [moments, setMoments] = useState<V4Moment[]>(() => {
-    if (saved?.moments?.length) return saved.moments;
-    return INITIAL_MOMENTS;
-  });
-  const [selectedId, setSelectedId] = useState<string>(() => {
-    if (saved?.selectedId && saved.moments?.some((m) => m.id === saved.selectedId)) return saved.selectedId;
-    if (saved?.moments?.length) return saved.moments[0].id;
-    return "m1";
-  });
+  const [moments, setMoments] = useState<V4Moment[]>(INITIAL_MOMENTS);
+  const [selectedId, setSelectedId] = useState("m1");
   const [zoom, setZoom] = useState(0.9);
   const [fullscreen, setFullscreen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    const saved = getSavedWorkspace();
+    if (!saved?.moments?.length) return;
+    const savedMoments = saved.moments;
+    const timer = window.setTimeout(() => {
+      setMoments(savedMoments);
+      if (saved.selectedId && savedMoments.some((m) => m.id === saved.selectedId)) {
+        setSelectedId(saved.selectedId);
+      } else {
+        setSelectedId(savedMoments[0].id);
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=jNQXAC9IVRw");
   const [title, setTitle] = useState("새로 발견한 순간");

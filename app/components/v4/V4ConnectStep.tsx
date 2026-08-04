@@ -49,17 +49,13 @@ function getSavedEmotion(): EmotionRecord | null {
 
 export default function V4ConnectStep() {
   const router = useRouter();
-  const savedEmotion = getSavedEmotion();
-  const [first, setFirst] = useState<EmotionRecord>(() => {
-    const base: EmotionRecord = {
-      videoId: "dQw4w9WgXcQ",
-      title: "처음 마음이 멈춘 장면",
-      note: "처음엔 한 장면이었는데, 그 표정과 목소리가 계속 생각났어요.",
-      time: "01:30",
-      emotion: "설렘",
-      date: "2026-07-28",
-    };
-    return savedEmotion ? { ...base, ...savedEmotion } : base;
+  const [first, setFirst] = useState<EmotionRecord>({
+    videoId: "dQw4w9WgXcQ",
+    title: "처음 마음이 멈춘 장면",
+    note: "처음엔 한 장면이었는데, 그 표정과 목소리가 계속 생각났어요.",
+    time: "01:30",
+    emotion: "설렘",
+    date: "2026-07-28",
   });
   const [nextUrl, setNextUrl] = useState("https://www.youtube.com/watch?v=ysz5S6PUM-U");
   const [nextTitle, setNextTitle] = useState("그 장면 뒤에 다시 찾아본 영상");
@@ -68,6 +64,13 @@ export default function V4ConnectStep() {
   const [nextNote, setNextNote] = useState("첫 장면을 본 뒤 이 영상까지 찾아보게 됐어요.");
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    const saved = getSavedEmotion();
+    if (!saved) return;
+    const timer = window.setTimeout(() => setFirst((base) => ({ ...base, ...saved })), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
