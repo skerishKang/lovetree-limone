@@ -28,6 +28,10 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "people-book-shelf-v2-1-true-page-motion",
   "people-book-shelf-v2-3d",
   "people-book-shelf-v2a-2-interaction-stable",
+  "memory-pulse-dashboard-v1",
+  "memory-scene-recipe-library-v1",
+  "moment-polish-lab-v1",
+  "memory-window-composer-v2",
 ]);
 
 export function v4SourceStatus(id: string): "planned" | "implemented" {

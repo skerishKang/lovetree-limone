@@ -15,8 +15,8 @@ export const V4_UNIMPLEMENTED_SOURCES = V4_SOURCE_REGISTRY.filter(
   (source) => source.status !== "implemented",
 );
 
-if (V4_SOURCE_COUNT !== 29) {
-  throw new Error(`V4 source registry must contain exactly 29 sources, received ${V4_SOURCE_COUNT}.`);
+if (V4_SOURCE_COUNT !== 33) {
+  throw new Error(`V4 source registry must contain exactly 33 sources, received ${V4_SOURCE_COUNT}.`);
 }
 
 if (V4_IMPLEMENTED_SOURCE_IDS.size !== V4_SOURCE_COUNT) {

@@ -59,6 +59,15 @@ const GROUPS = [
       ["여러 시즌 아카이브", "/v4/trees/demo/seasons"],
     ],
   },
+  {
+    label: "메모리",
+    links: [
+      ["Memory Pulse", "/v4/memory/pulse"],
+      ["Scene Recipes", "/v4/memory/recipes"],
+      ["Polish Lab", "/v4/memory/polish-lab"],
+      ["Window Composer", "/v4/memory/window-composer"],
+    ],
+  },
 ] as const;
 
 export default function V4JourneyDock() {
@@ -119,7 +128,7 @@ export default function V4JourneyDock() {
       >
         <span aria-hidden="true">✦</span>
         <strong>V4 여정</strong>
-        <small>29 designs</small>
+        <small>33 designs</small>
       </button>
       {open ? (
         <div className="v4-journey-panel" id="v4-journey-panel" ref={panelRef} role="dialog" aria-modal="true" aria-label="LoveTree V4 전체 화면">

@@ -1,0 +1,437 @@
+:root {
+  --mpl-black: #030303;
+  --mpl-hero: #0b0b0c;
+  --mpl-paper: #f3f1ea;
+  --mpl-paper-2: #ebe9e2;
+  --mpl-ink: #111113;
+  --mpl-muted: #79766f;
+  --mpl-blue: #2f73ff;
+  --mpl-blue-2: #73a5ff;
+  --mpl-line: #d8d5ce;
+  --mpl-board-w: 810px;
+  --mpl-board-h: 1048px;
+  --mpl-scale: 1;
+  --mpl-sans: Inter, "Helvetica Neue", Arial, sans-serif;
+  --mpl-serif: Georgia, "Times New Roman", serif;
+  --mpl-mono: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.mpl-stage {
+  position: fixed;
+  inset: 0;
+  background: var(--mpl-black);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(47, 115, 255, 0.06), transparent 60%);
+}
+
+.mpl-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mpl-board {
+  width: min(var(--mpl-board-w) * 1px, 100%);
+  max-width: 810px;
+  background: var(--mpl-paper);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mpl-hero {
+  background: var(--mpl-hero);
+  color: #fff;
+  padding: 32px 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mpl-cue-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-family: var(--mpl-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.mpl-cue-count {
+  color: var(--mpl-blue-2);
+  font-weight: 600;
+}
+
+.mpl-cue-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mpl-cue-note {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+}
+
+.mpl-cue-rail {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.mpl-cue-fill {
+  height: 100%;
+  background: var(--mpl-blue);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.mpl-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.mpl-eyebrow {
+  display: inline-block;
+  font-family: var(--mpl-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--mpl-blue-2);
+  background: rgba(47, 115, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.mpl-hero h1 {
+  font-family: var(--mpl-serif);
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.mpl-hero h1 em {
+  font-style: italic;
+  color: var(--mpl-blue-2);
+}
+
+.mpl-hero p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  max-width: 480px;
+}
+
+.mpl-ghost-num {
+  position: absolute;
+  right: -20px;
+  bottom: -40px;
+  font-family: var(--mpl-serif);
+  font-size: 180px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.03);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.mpl-apply-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  background: var(--mpl-paper-2);
+  border-bottom: 1px solid var(--mpl-line);
+  font-family: var(--mpl-mono);
+  font-size: 11px;
+  color: var(--mpl-muted);
+}
+
+.mpl-apply-btn {
+  border: 1px solid var(--mpl-blue);
+  background: var(--mpl-blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mpl-apply-btn:hover {
+  background: var(--mpl-blue-2);
+}
+
+.mpl-playground-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 28px 12px;
+}
+
+.mpl-title-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--mpl-line);
+}
+
+.mpl-playground-title small {
+  font-family: var(--mpl-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--mpl-muted);
+  text-transform: uppercase;
+}
+
+.mpl-principle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--mpl-line);
+  padding: 0 1px;
+}
+
+.mpl-card {
+  background: var(--mpl-paper);
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 140px;
+}
+
+.mpl-card:hover {
+  background: var(--mpl-paper-2);
+}
+
+.mpl-card.is-active {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--mpl-blue);
+}
+
+.mpl-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mpl-card-num {
+  font-family: var(--mpl-mono);
+  font-size: 10px;
+  color: var(--mpl-muted);
+}
+
+.mpl-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mpl-ink);
+}
+
+.mpl-card-demo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+
+.mpl-card-note {
+  font-size: 11px;
+  color: var(--mpl-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Demo styles */
+.mpl-demo-radius {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.mpl-radius-shells {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.mpl-shell {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--mpl-blue);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: mpl-shell-pulse 2s ease-in-out infinite;
+}
+
+.mpl-radius-full .mpl-shell:nth-child(2) { transform: scale(0.7); }
+.mpl-radius-compact .mpl-shell:nth-child(2) { transform: scale(0.55); }
+
+@keyframes mpl-shell-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+.mpl-toggle {
+  border: 1px solid var(--mpl-line);
+  background: transparent;
+  color: var(--mpl-muted);
+  font-family: var(--mpl-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mpl-focus-disc {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mpl-blue), transparent 70%);
+}
+
+.mpl-focus-geom { border-radius: 50%; }
+.mpl-focus-optic { border-radius: 30% 70% 70% 30%; }
+
+.mpl-demo-depth {
+  display: flex;
+  gap: 4px;
+}
+
+.mpl-depth-thumb {
+  width: 24px;
+  height: 18px;
+  background: var(--mpl-blue);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.mpl-demo-memory {
+  display: flex;
+  gap: 4px;
+}
+
+.mpl-memory-card {
+  width: 20px;
+  height: 14px;
+  background: var(--mpl-muted);
+  border-radius: 2px;
+}
+
+.mpl-hit {
+  border: 1px solid var(--mpl-blue);
+  background: transparent;
+  color: var(--mpl-blue);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mpl-time-num {
+  font-family: var(--mpl-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mpl-ink);
+}
+
+.mpl-motion-track {
+  width: 40px;
+  height: 3px;
+  background: var(--mpl-blue);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.mpl-motion-track-2 {
+  width: 28px;
+  margin-top: 3px;
+  opacity: 0.3;
+}
+
+.mpl-save-btn {
+  border: 1px solid var(--mpl-blue);
+  background: transparent;
+  color: var(--mpl-blue);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.mpl-heart {
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.mpl-tag {
+  font-size: 9px;
+  background: rgba(47, 115, 255, 0.1);
+  color: var(--mpl-blue);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.mpl-title-balanced {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mpl-ink);
+}
+
+.mpl-transition-box {
+  width: 30px;
+  height: 20px;
+  background: linear-gradient(90deg, var(--mpl-blue), var(--mpl-blue-2));
+  border-radius: 3px;
+  transition: transform 0.3s ease;
+}
+
+.mpl-card:hover .mpl-transition-box {
+  transform: translateX(4px);
+}
+
+.mpl-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 28px;
+  font-family: var(--mpl-mono);
+  font-size: 10px;
+  color: var(--mpl-muted);
+  border-top: 1px solid var(--mpl-line);
+}
+
+.mpl-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--mpl-ink);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  z-index: 100;
+}
+
+@media (max-width: 700px) {
+  .mpl-principle-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mpl-hero h1 {
+    font-size: 1.5rem;
+  }
+}

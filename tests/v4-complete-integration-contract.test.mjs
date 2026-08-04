@@ -46,6 +46,10 @@ const SOURCE_ROUTE_FILES = [
   "app/v4/subjects/bookshelf/v2-1/page.tsx",
   "app/v4/subjects/bookshelf/v2-3d/page.tsx",
   "app/v4/subjects/bookshelf/v2a-2/page.tsx",
+  "app/v4/memory/pulse/page.tsx",
+  "app/v4/memory/recipes/page.tsx",
+  "app/v4/memory/polish-lab/page.tsx",
+  "app/v4/memory/window-composer/page.tsx",
 ];
 
 const EXTRA_INTEGRATION_ROUTES = [
@@ -105,21 +109,25 @@ const SOURCE_ROUTES = [
   "/v4/subjects/bookshelf/v2-1",
   "/v4/subjects/bookshelf/v2-3d",
   "/v4/subjects/bookshelf/v2a-2",
+  "/v4/memory/pulse",
+  "/v4/memory/recipes",
+  "/v4/memory/polish-lab",
+  "/v4/memory/window-composer",
 ];
 
-test("all 28 unique source routes and integration aliases exist", async () => {
-  assert.equal(SOURCE_ROUTE_FILES.length, 28);
+test("all 32 unique source routes and integration aliases exist", async () => {
+  assert.equal(SOURCE_ROUTE_FILES.length, 32);
   for (const path of [...SOURCE_ROUTE_FILES, ...EXTRA_INTEGRATION_ROUTES]) {
     assert.ok(await exists(path), `${path} must exist`);
   }
 });
 
-test("canonical V4 registry requires all 29 source designs implemented", async () => {
+test("canonical V4 registry requires all 33 source designs implemented", async () => {
   const implemented = await read("app/components/v4/v4-implemented-sources.ts");
   const registry = await read("app/components/v4/v4-source-registry.ts");
   const ids = implemented.match(/^  "[^"]+",$/gm) ?? [];
-  assert.equal(ids.length, 29, "implemented source ID set must contain all 29 source designs");
-  assert.match(registry, /V4_SOURCE_COUNT !== 29/);
+  assert.equal(ids.length, 33, "implemented source ID set must contain all 33 source designs");
+  assert.match(registry, /V4_SOURCE_COUNT !== 33/);
   assert.match(registry, /V4_IMPLEMENTED_SOURCE_IDS\.size !== V4_SOURCE_COUNT/);
   assert.match(registry, /V4_UNIMPLEMENTED_SOURCES/);
 });
