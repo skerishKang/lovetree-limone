@@ -82,4 +82,4 @@ change was applied.
 | registry consistency | passed | manifest = implemented = registry = 29; unimplemented 0; duplicate source ID 0; duplicate route 0 (v5/v6 shared `/v4/trees/demo` is intentional); iframe wrapper 0 |
 | hydration 5 routes | passed | save→reload restores state, 0 hydration errors, malformed JSON safe |
 | a11y dialogs | passed | Journey Dock and Community preview/compare close on Escape and restore focus |
-| route matrix | passed | all /v4 routes HTTP 200, pageerror 0, unexpected console error 0, same-origin failure 0, horizontal overflow 0, duplicate ID 0 |
+| route matrix | passed | 31 /v4 routes HTTP 200, pageerror 0, unexpected console error 0, same-origin failure 0, horizontal overflow 0, duplicate ID 0 |
