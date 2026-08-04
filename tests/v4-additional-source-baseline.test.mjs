@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { chromium } from "playwright";
 
-const BASE = "http://localhost:3000";
+const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
 const VIEWPORTS = [
   { name: "desktop", width: 1536, height: 960 },
   { name: "tablet", width: 390, height: 844 },
