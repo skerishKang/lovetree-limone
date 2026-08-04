@@ -101,6 +101,8 @@ Route pages: `app/v4/journey/page.tsx`, `app/v4/trees/demo/graph/100-moments/pag
 - 기존 baseline(`tests/v4-additional-source-baseline.test.mjs`) 4개 + 기존 contract 테스트 24개 전부 통과.
 - manifest: 23 → 25 source(`first-journey-unified-v1`, `100-moments-season-temperature-v4`, status `implemented`).
   관련 count 문서·테스트를 25로 일관 반영.
+- 최종 통합(`feat/v4-final-integrated-candidate`): bookshelf 4종(§9 P2)을 중앙 등록하여
+  manifest = implemented = registry = 29 source, unimplemented 0. dock badge·landing copy 29로 갱신.
 
 ## 10. 아직 미구현인 나머지 source
 

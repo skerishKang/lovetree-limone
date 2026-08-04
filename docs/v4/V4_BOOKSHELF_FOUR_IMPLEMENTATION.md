@@ -110,6 +110,18 @@ and interactions.
 - `prefers-reduced-motion` handled in every screen.
 - Pointer and touch both supported (pointer events + pointer capture + cancel).
 
+## Central File Registration (final integration)
+
+The four bookshelf sources are registered in the central V4 system:
+
+- `app/components/v4/v4-source-manifest.ts` — 4 new entries (`people-book-shelf-v1`, `people-book-shelf-v2-1-true-page-motion`, `people-book-shelf-v2-3d`, `people-book-shelf-v2a-2-interaction-stable`), all `implemented`.
+- `app/components/v4/v4-implemented-sources.ts` — the 4 source IDs added.
+- `app/components/v4/v4-source-registry.ts` — registry count raised to 29, implemented = manifest = registry, unimplemented 0.
+- `app/components/v4/V4JourneyDock.tsx` — 앨범 group gains the 4 bookshelf links; badge now "29 designs".
+- `app/components/v4/V4Landing.tsx` — 살펴보기 copy updated to 29 sources.
+- Contract tests (`v4-complete-integration-contract.test.mjs`, `v4-source-faithful-contract.test.mjs`) updated to 29 sources / 28 route files.
+- No duplicate source IDs, no accidental duplicate routes, no iframe wrapper.
+
 ## Verification Commands
 
 ```bash
@@ -124,7 +136,7 @@ npm run db:check
 
 ## Central File Isolation
 
-The central registry files are intentionally left untouched for the integrator:
+The bookshelf components are isolated from the central registry files; they never import them. The central files were updated once during the final integration (see "Central File Registration" above):
 
 - `app/components/v4/v4-source-manifest.ts`
 - `app/components/v4/v4-implemented-sources.ts`

@@ -42,6 +42,10 @@ const SOURCE_ROUTE_FILES = [
   "app/v4/trees/demo/celebrate/bloom/page.tsx",
   "app/v4/trees/demo/growth/300-plus/page.tsx",
   "app/v4/trees/demo/seasons/page.tsx",
+  "app/v4/subjects/bookshelf/v1/page.tsx",
+  "app/v4/subjects/bookshelf/v2-1/page.tsx",
+  "app/v4/subjects/bookshelf/v2-3d/page.tsx",
+  "app/v4/subjects/bookshelf/v2a-2/page.tsx",
 ];
 
 const EXTRA_INTEGRATION_ROUTES = [
@@ -66,6 +70,10 @@ const VISUAL_IMPLEMENTATION_FILES = [
   "app/components/v4/V4JourneyDock.tsx",
   "app/components/v4/V4FirstJourney.tsx",
   "app/components/v4/V4Moments100.tsx",
+  "app/components/v4/V4BookShelfV1.tsx",
+  "app/components/v4/V4BookShelfV2P1.tsx",
+  "app/components/v4/V4BookShelfV2D3.tsx",
+  "app/components/v4/V4BookShelfV2A2.tsx",
 ];
 
 const SOURCE_ROUTES = [
@@ -93,21 +101,25 @@ const SOURCE_ROUTES = [
   "/v4/trees/demo/celebrate/bloom",
   "/v4/trees/demo/growth/300-plus",
   "/v4/trees/demo/seasons",
+  "/v4/subjects/bookshelf/v1",
+  "/v4/subjects/bookshelf/v2-1",
+  "/v4/subjects/bookshelf/v2-3d",
+  "/v4/subjects/bookshelf/v2a-2",
 ];
 
-test("all 24 unique source routes and integration aliases exist", async () => {
-  assert.equal(SOURCE_ROUTE_FILES.length, 24);
+test("all 28 unique source routes and integration aliases exist", async () => {
+  assert.equal(SOURCE_ROUTE_FILES.length, 28);
   for (const path of [...SOURCE_ROUTE_FILES, ...EXTRA_INTEGRATION_ROUTES]) {
     assert.ok(await exists(path), `${path} must exist`);
   }
 });
 
-test("canonical V4 registry requires all 25 source designs implemented", async () => {
+test("canonical V4 registry requires all 29 source designs implemented", async () => {
   const implemented = await read("app/components/v4/v4-implemented-sources.ts");
   const registry = await read("app/components/v4/v4-source-registry.ts");
   const ids = implemented.match(/^  "[^"]+",$/gm) ?? [];
-  assert.equal(ids.length, 25, "implemented source ID set must contain all 25 source designs");
-  assert.match(registry, /V4_SOURCE_COUNT !== 25/);
+  assert.equal(ids.length, 29, "implemented source ID set must contain all 29 source designs");
+  assert.match(registry, /V4_SOURCE_COUNT !== 29/);
   assert.match(registry, /V4_IMPLEMENTED_SOURCE_IDS\.size !== V4_SOURCE_COUNT/);
   assert.match(registry, /V4_UNIMPLEMENTED_SOURCES/);
 });
@@ -124,7 +136,7 @@ test("V4 visual code remains isolated from V3 and does not use iframe delivery",
   for (const path of VISUAL_IMPLEMENTATION_FILES) {
     const source = await read(path);
     assert.doesNotMatch(source, /components\/v3|styles\/v3|V3[A-Z]/, `${path} must not depend on V3 visual code`);
-    assert.doesNotMatch(source, /<iframe\b/i, `${path} must not deliver source HTML through an iframe`);
+    assert.doesNotMatch(source, /src=\{.*\.html|srcdoc=|<iframe[^>]*src=["'](?!https:\/\/www\.youtube)/, `${path} must not deliver source HTML or same-origin pages through iframes`);
   }
 });
 

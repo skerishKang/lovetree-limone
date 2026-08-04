@@ -43,6 +43,10 @@ const SOURCE_FILES = [
   "lovetree-growing-tree-season-archive-v3(1).html",
   "lovetree-first-journey-unified-v1.html",
   "lovetree-100-moments-season-temperature-v4.html",
+  "lovetree-people-book-shelf-v1.html",
+  "lovetree-people-book-shelf-v2-1-true-page-motion.html",
+  "lovetree-people-book-shelf-v2-3d.html",
+  "lovetree-people-book-shelf-v2a-2-interaction-stable.html",
 ];
 
 const IMPLEMENTED_ROUTES = [
@@ -62,14 +66,14 @@ const V4_VISUAL_FILES = [
   "app/styles/v4/workspace.css",
 ];
 
-test("V4 manifest covers every one of the 25 supplied UI HTML sources", async () => {
+test("V4 manifest covers every one of the 29 supplied UI HTML sources", async () => {
   const manifest = await read("app/components/v4/v4-source-manifest.ts");
-  assert.equal(SOURCE_FILES.length, 25);
+  assert.equal(SOURCE_FILES.length, 29);
   for (const filename of SOURCE_FILES) {
     assert.match(manifest, new RegExp(filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${filename} must be present in the V4 source manifest`);
   }
   const sourceFileEntries = manifest.match(/sourceFile:\s*"/g) ?? [];
-  assert.equal(sourceFileEntries.length, 25, "manifest must contain exactly 25 source entries");
+  assert.equal(sourceFileEntries.length, 29, "manifest must contain exactly 29 source entries");
 });
 
 test("all four separately supplied archive HTMLs remain first-class sources", async () => {

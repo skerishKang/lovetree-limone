@@ -249,6 +249,42 @@ export const V4_SOURCE_MANIFEST: readonly V4SourceEntry[] = [
     preserve: ["실제 100개 노드·대표 카드 6개", "레이아웃 5종", "352px 인스펙터 3탭", "나의 트리 결·팬 반응·주연 전체 팬 온도", "시즌 완료 오버레이·회고·다음 선택"],
     status: "implemented",
   },
+  {
+    id: "people-book-shelf-v1",
+    sourceFile: "lovetree-people-book-shelf-v1.html",
+    area: "people",
+    route: "/v4/subjects/bookshelf/v1",
+    role: "정적 그리드 책장",
+    preserve: ["정적 그리드 책장(190px auto-fill)", "챕터 트리", "영상 모달", "필터/검색", "새 책 만들기"],
+    status: "implemented",
+  },
+  {
+    id: "people-book-shelf-v2-1-true-page-motion",
+    sourceFile: "lovetree-people-book-shelf-v2-1-true-page-motion.html",
+    area: "people",
+    route: "/v4/subjects/bookshelf/v2-1",
+    role: "3D 캐러셀·컬 페이지 책장",
+    preserve: ["3D 캐러셀", "책 비행 전환", "드래그 점진 펼침", "10-strip 컬 페이지 넘김", "underPage"],
+    status: "implemented",
+  },
+  {
+    id: "people-book-shelf-v2-3d",
+    sourceFile: "lovetree-people-book-shelf-v2-3d.html",
+    area: "people",
+    route: "/v4/subjects/bookshelf/v2-3d",
+    role: "가로 스크롤 3D 책장",
+    preserve: ["가로 스크롤 플렉스 책장", "표지 −164° CSS 오픈", "CSS keyframe 플립", "페이지 내 영상"],
+    status: "implemented",
+  },
+  {
+    id: "people-book-shelf-v2a-2-interaction-stable",
+    sourceFile: "lovetree-people-book-shelf-v2a-2-interaction-stable.html",
+    area: "people",
+    route: "/v4/subjects/bookshelf/v2a-2",
+    role: "풀뷰포트 3D 책장 상태 머신",
+    preserve: ["풀뷰포트 3D 씬", "상태 머신", "세그먼트 곡면 플립", "코너 드래그", "테마 전환 배경"],
+    status: "implemented",
+  },
 ] as const;
 
 export const V4_SEPARATELY_SUPPLIED_SOURCES = V4_SOURCE_MANIFEST.filter(

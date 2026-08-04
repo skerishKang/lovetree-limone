@@ -108,7 +108,7 @@ export default function V4Landing() {
               </p>
               <div className="v4-hero-actions">
                 <button className="v4-primary" type="button" onClick={() => setModalOpen(true)}>첫 순간 심기 →</button>
-                <button className="v4-secondary" type="button" onClick={() => setToast("V4는 25개 원본 디자인을 차례로 연결하고 있습니다.")}>LoveTree 살펴보기</button>
+                <button className="v4-secondary" type="button" onClick={() => setToast("V4는 29개 원본 디자인을 차례로 연결하고 있습니다.")}>LoveTree 살펴보기</button>
               </div>
             </div>
 

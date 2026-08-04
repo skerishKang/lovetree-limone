@@ -24,6 +24,10 @@ export const V4_IMPLEMENTED_SOURCE_IDS = new Set<string>([
   "growing-tree-season-archive",
   "first-journey-unified-v1",
   "100-moments-season-temperature-v4",
+  "people-book-shelf-v1",
+  "people-book-shelf-v2-1-true-page-motion",
+  "people-book-shelf-v2-3d",
+  "people-book-shelf-v2a-2-interaction-stable",
 ]);
 
 export function v4SourceStatus(id: string): "planned" | "implemented" {
