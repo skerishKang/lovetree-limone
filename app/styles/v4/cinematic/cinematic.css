@@ -936,20 +936,24 @@ html:has(.cin-page) {
   }
 
   .cin-rail {
-    left: 50%;
+    left: 0;
+    right: 0;
     top: auto;
-    bottom: 20px;
-    transform: translateX(-50%);
-    flex-direction: row;
-    gap: 3px;
-    width: 92%;
+    bottom: 16px;
+    transform: none;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 4px 6px;
+    width: 100%;
+    padding: 0 6px;
     justify-content: center;
+    align-items: center;
   }
 
   .cin-rail button {
     position: relative;
-    width: 18px;
-    height: 18px;
+    width: 100%;
+    height: 30px;
     padding: 0;
     display: grid;
     place-items: center;
@@ -958,12 +962,13 @@ html:has(.cin-page) {
     font-size: 0;
   }
 
-  /* dot inside the hit area; both sized to fit all 16 dots on small screens */
+  /* dot inside the hit area; two-row 8×2 layout keeps every control on-screen
+     with a ~30px hit target at 320px width */
   .cin-rail button::after {
     content: "";
     display: block;
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     border: 1px solid rgba(255, 235, 190, 0.45);
     border-radius: 50%;
     background: transparent;
@@ -979,7 +984,7 @@ html:has(.cin-page) {
     left: 25px;
     right: 25px;
     top: auto;
-    bottom: 100px;
+    bottom: 150px;
     width: auto;
     transform: none;
     padding: 18px 18px 17px;
@@ -1017,18 +1022,18 @@ html:has(.cin-page) {
 
   .cin-counter {
     left: 24px;
-    bottom: 47px;
+    bottom: 130px;
     font-size: 14px;
   }
 
   .cin-progress {
-    bottom: 49px;
+    bottom: 130px;
     width: 48%;
   }
 
   .cin-play {
     right: 22px;
-    bottom: 32px;
+    bottom: 84px;
   }
 
   .cin-media img.cin-bg,
@@ -1101,7 +1106,7 @@ html:has(.cin-page) {
   }
 
   .cin-final-cta {
-    bottom: 92px;
+    bottom: 150px;
     white-space: nowrap;
   }
 

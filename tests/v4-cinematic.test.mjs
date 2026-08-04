@@ -82,8 +82,10 @@ test("v4 cinematic — rail navigation reaches every scene and final CTA is a re
   const browser = await chromium.launch({ headless: true });
   try {
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
-    // jump directly to final scene via rail; wait for smooth scroll to settle
-    await page.locator('.cin-rail button[aria-label="16번 장면"]').click();
+    // jump directly to final scene via rail (pointer coords match a real click)
+    const btn = page.locator('.cin-rail button[aria-label="16번 장면"]');
+    const box = await btn.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "16",
       { timeout: 8000 },
@@ -194,7 +196,9 @@ test("v4 cinematic — full 16-scene scroll pass stays within bounds and rAF doe
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
     // walk through all scenes
     for (let i = 0; i < 16; i += 1) {
-      await page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`).click();
+      const rb = page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`);
+      const rbox = await rb.boundingBox();
+      await page.mouse.click(rbox.x + rbox.width / 2, rbox.y + rbox.height / 2);
       await page.waitForTimeout(250);
     }
     const after = await page.evaluate(() => ({
@@ -301,7 +305,9 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     await page.waitForTimeout(300);
 
     // navigate to scene 12 and wait for it to become active
-    await page.locator('.cin-rail button[aria-label="12번 장면"]').click();
+    const sbtn = page.locator('.cin-rail button[aria-label="12번 장면"]');
+    const sbox = await sbtn.boundingBox();
+    await page.mouse.click(sbox.x + sbox.width / 2, sbox.y + sbox.height / 2);
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "12",
       { timeout: 8000 },
@@ -340,7 +346,9 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload({ waitUntil: "networkidle" });
     await page.waitForTimeout(300);
-    await page.locator('.cin-rail button[aria-label="12번 장면"]').click();
+    const rbtn = page.locator('.cin-rail button[aria-label="12번 장면"]');
+    const rbox = await rbtn.boundingBox();
+    await page.mouse.click(rbox.x + rbox.width / 2, rbox.y + rbox.height / 2);
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "12",
       { timeout: 8000 },
@@ -604,7 +612,9 @@ test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", a
     );
 
     // after scene navigation, more assets load
-    await page.locator('.cin-rail button[aria-label="8번 장면"]').click();
+    const nbtn = page.locator('.cin-rail button[aria-label="8번 장면"]');
+    const nbox = await nbtn.boundingBox();
+    await page.mouse.click(nbox.x + nbox.width / 2, nbox.y + nbox.height / 2);
     await page.waitForTimeout(600);
     const afterNavUnique = new Set(webpUrls).size;
     assert.ok(afterNavUnique > initialUnique.length, "more WebP requests after scene navigation");
@@ -702,6 +712,72 @@ test("v4 cinematic — rail keyboard activation with Enter and Space", async () 
       "Space activates rail scene 15 (focused control, not hijacked)",
     );
     assert.equal(errors.length, 0, "no errors");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — all 16 rail controls pointer-clickable at 320x720", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const vp = VIEWPORTS[4]; // 320x720
+    const { page, errors } = await openPage(browser, URL, vp);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    for (let i = 1; i <= 16; i += 1) {
+      const label = `${i}번 장면`;
+      const expected = String(i).padStart(2, "0");
+      const btn = page.locator(`.cin-rail button[aria-label="${label}"]`);
+      const box = await btn.boundingBox();
+      assert.ok(box, `rail button ${label} has a bounding box`);
+      // must be inside the viewport
+      assert.ok(
+        box.x >= 0 && box.x + box.width <= vp.width,
+        `rail button ${label} fully inside viewport width (x=${box.x}, right=${box.x + box.width}, vp=${vp.width})`,
+      );
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      await page.waitForFunction(
+        (e) => document.querySelector(".cin-counter span")?.textContent === e,
+        expected,
+        { timeout: 8000 },
+      );
+    }
+    assert.equal(errors.length, 0, "no errors clicking all 16 at 320x720");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — all 16 rail controls keyboard-activatable at 320x720", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const vp = VIEWPORTS[4]; // 320x720
+    const { page, errors } = await openPage(browser, URL, vp);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    // Enter activation
+    for (let i = 1; i <= 16; i += 1) {
+      const label = `${i}번 장면`;
+      const expected = String(i).padStart(2, "0");
+      const btn = page.locator(`.cin-rail button[aria-label="${label}"]`);
+      await btn.focus();
+      await page.keyboard.press("Enter");
+      await page.waitForFunction(
+        (e) => document.querySelector(".cin-counter span")?.textContent === e,
+        expected,
+        { timeout: 8000 },
+      );
+    }
+    // Space activation for a subset (focused control should not be hijacked)
+    await page.locator('.cin-rail button[aria-label="9번 장면"]').focus();
+    await page.keyboard.press(" ");
+    await page.waitForFunction(
+      () => document.querySelector(".cin-counter span")?.textContent === "09",
+      { timeout: 8000 },
+    );
+    assert.equal(errors.length, 0, "no errors during keyboard activation at 320x720");
     await page.close();
   } finally {
     await browser.close();
