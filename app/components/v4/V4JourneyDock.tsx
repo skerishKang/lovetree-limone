@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -63,19 +64,62 @@ const GROUPS = [
 export default function V4JourneyDock() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  const closeDock = () => {
+    setOpen(false);
+    toggleRef.current?.focus();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeDock();
+      }
+      if (event.key === "Tab" && panelRef.current) {
+        const nodes = panelRef.current.querySelectorAll<HTMLElement>(
+          "a[href], button",
+        );
+        if (!nodes.length) return;
+        const first = nodes[0];
+        const last = nodes[nodes.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   return (
     <aside className={`v4-journey-dock${open ? " is-open" : ""}`} aria-label="V4 전체 사용자 여정">
-      <button className="v4-journey-toggle" type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+      <button
+        ref={toggleRef}
+        className="v4-journey-toggle"
+        type="button"
+        aria-expanded={open}
+        aria-controls="v4-journey-panel"
+        onClick={() => setOpen((value) => !value)}
+      >
         <span aria-hidden="true">✦</span>
         <strong>V4 여정</strong>
         <small>29 designs</small>
       </button>
       {open ? (
-        <div className="v4-journey-panel">
+        <div className="v4-journey-panel" id="v4-journey-panel" ref={panelRef} role="dialog" aria-modal="true" aria-label="LoveTree V4 전체 화면">
           <div className="v4-journey-head">
             <div><small>SOURCE-FAITHFUL NAVIGATION</small><strong>LoveTree V4 전체 화면</strong></div>
-            <button type="button" aria-label="여정 도크 닫기" onClick={() => setOpen(false)}>×</button>
+            <button ref={closeRef} type="button" aria-label="여정 도크 닫기" onClick={closeDock}>×</button>
           </div>
           <div className="v4-journey-groups">
             {GROUPS.map((group) => (
@@ -83,7 +127,7 @@ export default function V4JourneyDock() {
                 <h2>{group.label}</h2>
                 <div>
                   {group.links.map(([label, href]) => (
-                    <Link className={pathname === href ? "is-current" : ""} href={href} key={href} onClick={() => setOpen(false)}>
+                    <Link className={pathname === href ? "is-current" : ""} href={href} key={href} onClick={closeDock}>
                       <span>{label}</span><b aria-hidden="true">→</b>
                     </Link>
                   ))}
