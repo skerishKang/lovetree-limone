@@ -170,6 +170,7 @@ export default function V4FirstJourney() {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   const reducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -260,6 +261,7 @@ export default function V4FirstJourney() {
 
   const openModal = useCallback(() => {
     setTreeNameInput(appState.treeName || "건호에게 입덕한 3일");
+    triggerRef.current = document.activeElement as HTMLElement | null;
     setModalOpen(true);
   }, [appState.treeName]);
 
@@ -286,6 +288,13 @@ export default function V4FirstJourney() {
       };
       window.addEventListener("keydown", onKeyDown);
       return () => window.removeEventListener("keydown", onKeyDown);
+    }
+  }, [modalOpen]);
+
+  useEffect(() => {
+    if (!modalOpen && triggerRef.current) {
+      triggerRef.current.focus();
+      triggerRef.current = null;
     }
   }, [modalOpen]);
 
