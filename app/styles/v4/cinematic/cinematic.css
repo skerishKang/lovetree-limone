@@ -130,17 +130,24 @@ html:has(.cin-page) {
 
 .cin-chrome {
   position: absolute;
-  left: 58px;
-  top: 42px;
+  left: 0;
+  right: 0;
+  top: 0;
   z-index: 40;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  padding: 42px 58px 0;
   color: var(--gold2);
   font-family: var(--serif);
   font-size: 24px;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.cin-chrome > * {
+  pointer-events: auto;
 }
 
 .cin-brand {
@@ -152,13 +159,47 @@ html:has(.cin-page) {
   cursor: pointer;
   padding: 6px 4px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cin-brand-mark {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(231, 184, 95, 0.9);
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+}
+
+.cin-brand-mark::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 19px;
+  background: var(--gold);
+  border-radius: 2px;
+  box-shadow: -6px -5px 0 -1px var(--gold), 6px -8px 0 -1px var(--gold);
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.cin-brand-mark::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold2);
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: -8px 5px 0 var(--gold), 8px 2px 0 var(--gold), 0 9px 0 var(--gold);
 }
 
 .cin-chrome-right {
-  position: absolute;
-  left: auto;
-  right: -20px;
-  top: 6px;
   display: flex;
   gap: 20px;
   align-items: center;
@@ -520,6 +561,15 @@ html:has(.cin-page) {
   pointer-events: none;
 }
 
+.cin-shard {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
 .cin-question-layer {
   position: absolute;
   inset: 0;
@@ -752,11 +802,19 @@ html:has(.cin-page) {
   text-transform: uppercase;
 }
 
-.cin-menu-head strong {
+.cin-menu-title {
   display: block;
   font: 400 clamp(45px, 6vw, 90px) / 0.9 var(--serif);
   color: #ffe6a5;
-  margin-top: 8px;
+  margin: 8px 0 0;
+}
+
+.cin-menu-head p {
+  max-width: 500px;
+  color: rgba(255, 255, 255, 0.64);
+  line-height: 1.7;
+  font-size: 14px;
+  margin: 12px 0 0;
 }
 
 .cin-menu-close {
@@ -768,6 +826,7 @@ html:has(.cin-page) {
   color: white;
   cursor: pointer;
   font-size: 20px;
+  flex: none;
 }
 
 .cin-menu-close:hover,
@@ -805,15 +864,32 @@ html:has(.cin-page) {
   outline-offset: 2px;
 }
 
+.cin-menu-tile-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.cin-menu-tile:hover .cin-menu-tile-img {
+  transform: scale(1.07);
+}
+
 .cin-menu-tile-num {
   position: absolute;
   top: 12px;
   left: 13px;
+  z-index: 2;
   font: 400 13px var(--serif);
   color: var(--gold2);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
 }
 
 .cin-menu-tile-title {
+  position: relative;
+  z-index: 2;
   padding: 30px 13px 12px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
   font: 400 14px var(--serif);
@@ -836,8 +912,7 @@ html:has(.cin-page) {
 /* ── responsive ───────────────────────────────────────────── */
 @media (max-width: 760px) {
   .cin-chrome {
-    left: 24px;
-    top: 23px;
+    padding: 23px 24px 0;
     font-size: 20px;
   }
 
@@ -845,9 +920,12 @@ html:has(.cin-page) {
     font-size: 20px;
   }
 
+  .cin-brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
   .cin-chrome-right {
-    right: 22px;
-    top: 2px;
     gap: 10px;
   }
 
@@ -1033,7 +1111,8 @@ html:has(.cin-page) {
     display: block;
   }
 
-  .cin-menu-head strong {
+  .cin-menu-head strong,
+  .cin-menu-title {
     font-size: 42px;
   }
 

@@ -10,6 +10,12 @@ const AUTOPLAY_MS = 70000;
 const PARTICLE_DUST = 38;
 const PARTICLE_LEAVES = 24;
 
+/** Deterministic pseudo-random in [0,1) used for stable shard placement. */
+function shardNoise(seed: number): number {
+  const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
+
 interface Particle {
   x: number;
   y: number;
@@ -88,31 +94,51 @@ export default function V4Cinematic() {
 
   const go = useCallback((i: number) => {
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const ratio = clamp(i / (SCENES.length - 1));
-    const target = ratio * maxScroll;
-    window.scrollTo(0, target);
+    // Land at the center of the target scene so the scroll-driven crossfade
+    // definitively reaches it (scene boundaries are exact multiples of 118vh).
+    const n = SCENES.length - 1;
+    const idx = clamp(i, 0, n);
+    let ratio: number;
+    if (idx <= 0) ratio = 0;
+    else if (idx >= n) ratio = 1;
+    else ratio = (idx + 0.5) / n;
+    window.scrollTo(0, ratio * maxScroll);
   }, [clamp]);
 
   const stopAuto = useCallback(() => {
     cancelAnimationFrame(autoIdRef.current);
+    autoIdRef.current = 0;
     playingRef.current = false;
+    setPlaying(false);
   }, []);
 
-  const startAuto = useCallback((currentY: number, maxScroll: number) => {
+  const startAuto = useCallback((fromY: number, elapsedMs: number) => {
     cancelAnimationFrame(autoIdRef.current);
     playingRef.current = true;
-    const autoStart = performance.now();
-    const autoFrom = currentY;
+    setPlaying(true);
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const autoFrom = Math.min(fromY, maxScroll);
     const remaining = Math.max(1, maxScroll - autoFrom);
-    const duration = AUTOPLAY_MS * (remaining / maxScroll);
+    // scale the reference 70s duration by remaining fraction; subtract elapsed
+    const fullDuration = AUTOPLAY_MS * (remaining / maxScroll);
+    const duration = Math.max(1, fullDuration - elapsedMs);
+    const autoStart = performance.now();
     const step = (now: number) => {
-      if (!playingRef.current || !visibleRef.current || !rootVisibleRef.current) return;
+      if (!playingRef.current || !visibleRef.current || !rootVisibleRef.current) {
+        // pause (not stop): cancel the frame and retain elapsed progress
+        cancelAnimationFrame(autoIdRef.current);
+        autoIdRef.current = 0;
+        return;
+      }
       const t = clamp((now - autoStart) / duration);
       window.scrollTo(0, autoFrom + remaining * t);
       if (t < 1) {
         autoIdRef.current = requestAnimationFrame(step);
       } else {
+        // natural completion
         playingRef.current = false;
+        autoIdRef.current = 0;
+        setPlaying(false);
       }
     };
     autoIdRef.current = requestAnimationFrame(step);
@@ -123,9 +149,18 @@ export default function V4Cinematic() {
       stopAuto();
       return;
     }
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    startAuto(window.scrollY, maxScroll);
+    startAuto(window.scrollY, 0);
   }, [startAuto, stopAuto]);
+
+  // Resume autoplay from retained progress when the document becomes visible
+  // again. elapsed is inferred from current scroll position (proportional).
+  const resumeAutoIfPlaying = useCallback(() => {
+    if (!playingRef.current) return;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const ratio = clamp(window.scrollY / maxScroll);
+    // estimate elapsed from position so a hidden pause resumes near where it left off
+    startAuto(window.scrollY, AUTOPLAY_MS * ratio);
+  }, [clamp, startAuto]);
 
   // ------------------------------------------------------------------ setup
   useEffect(() => {
@@ -234,6 +269,18 @@ export default function V4Cinematic() {
           break;
         case "workshop":
           setImageTransform(bg, lerp(1.03, 1.33, p), lerp(0, -4, p), lerp(0, 3, p), 0, lerp(0.92, 1.1, p));
+          {
+            const scatter = smooth((p - 0.68) / 0.28);
+            const shards = el.querySelectorAll<HTMLElement>(".cin-shard");
+            shards.forEach((sh) => {
+              const dx = parseFloat(sh.style.getPropertyValue("--sdx") || "0");
+              const dy = parseFloat(sh.style.getPropertyValue("--sdy") || "0");
+              const rot = parseFloat(sh.style.getPropertyValue("--srot") || "0");
+              sh.style.opacity = String(scatter);
+              sh.style.transform = `translate(${dx * scatter}px, ${dy * scatter}px) rotate(${rot * scatter}deg) scale(${1 + scatter * 0.18})`;
+            });
+            if (bg) bg.style.opacity = String(1 - scatter * 0.85);
+          }
           break;
         case "prune":
           setImageTransform(bg, lerp(1.03, 1.16, p), lerp(0, -2, p), 0, 0, 1.05);
@@ -343,9 +390,24 @@ export default function V4Cinematic() {
     initParticles();
 
     let last = 0;
+    let fxActive = false;
+
+    // test instrumentation: deterministic counters for the fx loop
+    (window as unknown as Record<string, unknown>).__cinFxTicks = 0;
+    (window as unknown as Record<string, unknown>).__cinFxActive = false;
+
+    const clearCanvasOnce = () => {
+      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
     const drawFx = (now: number) => {
+      if (!fxActive) return;
+      if (document.hidden || !rootVisibleRef.current || reducedRef.current) {
+        stopFxLoop();
+        return;
+      }
+      (window as unknown as Record<string, number>).__cinFxTicks += 1;
       fxIdRef.current = requestAnimationFrame(drawFx);
-      if (document.hidden || !rootVisibleRef.current || reducedRef.current) return;
       if (!ctx || !canvas) return;
       const { idx } = stateRef.current;
       // particles only run for decorative scenes (1..16 non-sky/final to reduce load)
@@ -383,6 +445,21 @@ export default function V4Cinematic() {
       ctx.restore();
     };
 
+    const startFxLoop = () => {
+      if (fxActive) return; // exactly one loop
+      if (document.hidden || !rootVisibleRef.current || reducedRef.current) return;
+      fxActive = true;
+      (window as unknown as Record<string, boolean>).__cinFxActive = true;
+      fxIdRef.current = requestAnimationFrame(drawFx);
+    };
+
+    const stopFxLoop = () => {
+      fxActive = false;
+      (window as unknown as Record<string, boolean>).__cinFxActive = false;
+      cancelAnimationFrame(fxIdRef.current);
+      clearCanvasOnce();
+    };
+
     let ticking = false;
     const onScroll = () => {
       if (!ticking) {
@@ -395,18 +472,32 @@ export default function V4Cinematic() {
     const onTouch = () => stopAuto();
     const onVisibility = () => {
       visibleRef.current = !document.hidden;
-      if (!document.hidden) {
+      if (document.hidden) {
+        stopFxLoop();
+        // pause autoplay without resetting the button state
+        cancelAnimationFrame(autoIdRef.current);
+        autoIdRef.current = 0;
+      } else {
         update();
+        startFxLoop();
+        resumeAutoIfPlaying();
       }
     };
 
     resize();
     update();
+    startFxLoop();
 
     const io = new IntersectionObserver(
       (entries) => {
-        rootVisibleRef.current = entries.some((e) => e.isIntersecting);
-        if (rootVisibleRef.current) update();
+        const visible = entries.some((e) => e.isIntersecting);
+        rootVisibleRef.current = visible;
+        if (visible) {
+          update();
+          startFxLoop();
+        } else {
+          stopFxLoop();
+        }
       },
       { threshold: 0 },
     );
@@ -417,11 +508,13 @@ export default function V4Cinematic() {
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("touchstart", onTouch, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
-    drawFx(performance.now());
 
     return () => {
+      fxActive = false;
+      (window as unknown as Record<string, boolean>).__cinFxActive = false;
       cancelAnimationFrame(autoIdRef.current);
       cancelAnimationFrame(fxIdRef.current);
+      clearCanvasOnce();
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", resize);
@@ -432,32 +525,12 @@ export default function V4Cinematic() {
       visibleRef.current = true;
       rootVisibleRef.current = true;
     };
-  }, [clamp, lerp, smooth, stopAuto]);
+  }, [clamp, lerp, smooth, stopAuto, resumeAutoIfPlaying]);
 
   // reduced-motion ref is managed inside useReducedMotion
   useEffect(() => {
     rootRef.current?.setAttribute("data-cin-reduced", reduced ? "true" : "false");
   }, [reduced]);
-  // --- keyboard -----------------------------------------------------------
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown") {
-        e.preventDefault();
-        go(Math.min(SCENES.length - 1, stateRef.current.idx + 1));
-      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") {
-        e.preventDefault();
-        go(Math.max(0, stateRef.current.idx - 1));
-      } else if (e.key === " ") {
-        e.preventDefault();
-        togglePlay();
-      } else if (e.key === "Escape") {
-        setMenuOpen(false);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [go, togglePlay]);
-
   // --- menu focus trap + restore -------------------------------------------
   useEffect(() => {
     if (!menuOpen) return;
@@ -512,8 +585,53 @@ export default function V4Cinematic() {
 
   const handlePlayClick = useCallback(() => {
     togglePlay();
-    setPlaying((v) => !v);
   }, [togglePlay]);
+
+  // --- keyboard -----------------------------------------------------------
+  useEffect(() => {
+    const isEditableTarget = (el: Element | null) => {
+      if (!el) return false;
+      const tag = el.tagName.toLowerCase();
+      if (tag === "button" || tag === "a" || tag === "input" || tag === "textarea" || tag === "select") {
+        return true;
+      }
+      return (el as HTMLElement).isContentEditable === true;
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target instanceof Element ? e.target : null;
+      // Menu is open: only Escape may act globally; don't hijack menu controls.
+      if (menuOpenRef.current) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeMenu();
+        }
+        return;
+      }
+      // Space / arrows must not hijack focused interactive controls.
+      if (
+        (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowRight" ||
+          e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageDown" || e.key === "PageUp") &&
+        isEditableTarget(target)
+      ) {
+        return;
+      }
+      if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown") {
+        e.preventDefault();
+        go(Math.min(SCENES.length - 1, stateRef.current.idx + 1));
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        go(Math.max(0, stateRef.current.idx - 1));
+      } else if (e.key === " ") {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go, togglePlay, closeMenu]);
 
   return (
     <div
@@ -527,36 +645,37 @@ export default function V4Cinematic() {
       <div className="cin-experience">
         {/* header chrome */}
         <header className="cin-chrome" aria-label="시네마틱 헤더">
-        <button
-          type="button"
-          className="cin-brand"
-          onClick={() => go(0)}
-          aria-label="처음 장면으로"
-        >
-          LoveTree
-        </button>
-        <div className="cin-chrome-right">
           <button
             type="button"
-            className="cin-sound"
-            aria-label="배경 음향 (동작 없음)"
-            disabled
+            className="cin-brand"
+            onClick={() => go(0)}
+            aria-label="처음 장면으로"
           >
-            SOUND OFF
+            <span className="cin-brand-mark" aria-hidden="true" />
+            <span>LoveTree</span>
           </button>
-          <button
-            type="button"
-            className="cin-menu-btn"
-            ref={menuBtnRef}
-            onClick={openMenu}
-            aria-haspopup="dialog"
-            aria-expanded={menuOpen}
-            aria-controls="cin-menu-overlay"
-          >
-            MENU
-          </button>
-        </div>
-      </header>
+          <div className="cin-chrome-right">
+            <button
+              type="button"
+              className="cin-sound"
+              aria-label="배경 음향 (동작 없음)"
+              disabled
+            >
+              SOUND OFF
+            </button>
+            <button
+              type="button"
+              className="cin-menu-btn"
+              ref={menuBtnRef}
+              onClick={openMenu}
+              aria-haspopup="dialog"
+              aria-expanded={menuOpen}
+              aria-controls="cin-menu-overlay"
+            >
+              MENU
+            </button>
+          </div>
+        </header>
 
       <nav className="cin-rail" aria-label="장면 이동">
         {SCENES.map((s, i) => (
@@ -583,7 +702,7 @@ export default function V4Cinematic() {
 
       <main className="cin-scene-stack" id="cin-scene-stack" aria-label="LoveTree 시네마틱 여정">
         {SCENES.map((scene, i) => (
-          <CinematicScene key={scene.n} index={i} />
+          <CinematicScene key={scene.n} index={i} active={Math.abs(i - currentIdx) <= 1} />
         ))}
       </main>
 
@@ -605,14 +724,18 @@ export default function V4Cinematic() {
           ref={menuOverlayRef}
           role="dialog"
           aria-modal="true"
-          aria-label="시네마틱 장면 메뉴"
+          aria-label="LoveTree Chapters"
           onMouseDown={handleMenuBackdrop}
         >
           <div className="cin-menu-panel">
             <div className="cin-menu-head">
               <div>
                 <small>SOURCE-FAITHFUL CINEMATIC</small>
-                <strong>LoveTree 시네마틱 여정</strong>
+                <h2 className="cin-menu-title">LoveTree Chapters</h2>
+                <p>
+                  사랑의 기억이 자라는 여정. 첫 발견부터 완성된 나무까지 16개의
+                  장면을 차례로 돌아봅니다.
+                </p>
               </div>
               <button
                 type="button"
@@ -625,17 +748,29 @@ export default function V4Cinematic() {
               </button>
             </div>
             <div className="cin-menu-tiles">
-              {SCENES.map((scene, i) => (
-                <button
-                  type="button"
-                  className="cin-menu-tile"
-                  key={scene.n}
-                  onClick={() => handleTileGo(i)}
-                >
-                  <span className="cin-menu-tile-num">{scene.n}</span>
-                  <span className="cin-menu-tile-title">{scene.title}</span>
-                </button>
-              ))}
+              {SCENES.map((scene, i) => {
+                const url = assetUrl(scene.asset);
+                return (
+                  <button
+                    type="button"
+                    className="cin-menu-tile"
+                    key={scene.n}
+                    onClick={() => handleTileGo(i)}
+                  >
+                    {url ? (
+                      <img
+                        className="cin-menu-tile-img"
+                        src={url}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
+                    <span className="cin-menu-tile-num">{scene.n}</span>
+                    <span className="cin-menu-tile-title">{scene.title}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -652,9 +787,9 @@ export default function V4Cinematic() {
 }
 
 /** Decorative + semantic-free scene art, drawn from external assets. */
-function CinematicScene({ index }: { index: number }) {
+function CinematicScene({ index, active }: { index: number; active: boolean }) {
   const scene = SCENES[index];
-  const url = assetUrl(scene.asset);
+  const url = active ? assetUrl(scene.asset) : null;
   const needsMask = MOTION_MASK_EFFECTS.has(scene.effect);
   const eager = index === 0;
   const isLight = scene.tone === "light";
@@ -682,15 +817,50 @@ function CinematicScene({ index }: { index: number }) {
         </svg>
       );
       break;
-    case "workshop":
+    case "workshop": {
       extras = (
-        <div className="cin-worker-lights" aria-hidden="true">
-          {Array.from({ length: 24 }, (_, k) => (
-            <i key={k} style={{ left: `${12 + ((k * 37) % 78)}%`, top: `${18 + ((k * 53) % 67)}%`, animationDelay: `${(k % 7) * 0.21}s` }} />
-          ))}
-        </div>
+        <>
+          <div className="cin-worker-lights" aria-hidden="true">
+            {Array.from({ length: 24 }, (_, k) => (
+              <i key={k} style={{ left: `${12 + ((k * 37) % 78)}%`, top: `${18 + ((k * 53) % 67)}%`, animationDelay: `${(k % 7) * 0.21}s` }} />
+            ))}
+          </div>
+          {url ? (
+            <div className="cin-shard-field" aria-hidden="true">
+              {Array.from({ length: 12 }, (_, k) => {
+                const x0 = (k % 4) * 25;
+                const y0 = Math.floor(k / 4) * 33.34;
+                const x1 = x0 + 25;
+                const y1 = y0 + 33.34;
+                // deterministic pseudo-random (seeded) so shards are stable
+                const r1 = shardNoise(k * 3);
+                const r2 = shardNoise(k * 3 + 1);
+                const r3 = shardNoise(k * 3 + 2);
+                const dx = ((k % 4) - 2.5) * 110 + (r1 - 0.5) * 90;
+                const dy = -160 - (Math.floor(k / 4)) * 55 + (r2 - 0.5) * 90;
+                const rot = (r3 - 0.5) * 70;
+                return (
+                  <span
+                    key={k}
+                    className="cin-shard"
+                    data-shard={k}
+                    style={{
+                      backgroundImage: `url(${url})`,
+                      clipPath: `polygon(${x0}% ${y0}%,${x1}% ${y0}%,${x1}% ${y1}%,${x0}% ${y1}%)`,
+                      WebkitClipPath: `polygon(${x0}% ${y0}%,${x1}% ${y0}%,${x1}% ${y1}%,${x0}% ${y1}%)`,
+                      ["--sdx" as string]: `${dx.toFixed(1)}px`,
+                      ["--sdy" as string]: `${dy.toFixed(1)}px`,
+                      ["--srot" as string]: `${rot.toFixed(1)}deg`,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          ) : null}
+        </>
       );
       break;
+    }
     case "questions":
       extras = (
         <div className="cin-question-layer" aria-hidden="true">

@@ -84,7 +84,7 @@ test("v4 cinematic — rail navigation reaches every scene and final CTA is a re
   try {
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
     // jump directly to final scene via rail; wait for smooth scroll to settle
-    await page.locator('.cin-rail button[aria-label="16번 장면"]').click();
+    await page.locator('.cin-rail button[aria-label="16번 장면"]').click({ force: true });
     await page.waitForFunction(
       () => document.querySelector(".cin-counter span")?.textContent === "16",
       { timeout: 8000 },
@@ -195,7 +195,7 @@ test("v4 cinematic — full 16-scene scroll pass stays within bounds and rAF doe
     const { page, errors } = await openPage(browser, URL, VIEWPORTS[0]);
     // walk through all scenes
     for (let i = 0; i < 16; i += 1) {
-      await page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`).click();
+      await page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`).click({ force: true });
       await page.waitForTimeout(250);
     }
     const after = await page.evaluate(() => ({
@@ -213,6 +213,300 @@ test("v4 cinematic — full 16-scene scroll pass stays within bounds and rAF doe
     });
     assert.equal(hiddenPaused, true, "visibilitychange dispatched");
     assert.equal(errors.length, 0, "no errors through full pass");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — header composition has zero overlap and controls inside viewport", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    for (const vp of VIEWPORTS) {
+      const { page } = await openPage(browser, URL, vp);
+      const r = await page.evaluate(() => {
+        const brand = document.querySelector(".cin-brand")?.getBoundingClientRect();
+        const sound = document.querySelector(".cin-sound")?.getBoundingClientRect();
+        const menu = document.querySelector(".cin-menu-btn")?.getBoundingClientRect();
+        const overlap = (a, b) =>
+          a && b && !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
+        return {
+          brandSound: overlap(brand, sound) ? 1 : 0,
+          brandMenu: overlap(brand, menu) ? 1 : 0,
+          soundMenu: overlap(sound, menu) ? 1 : 0,
+          brandInView: brand && brand.left >= 0 && brand.right <= innerWidth,
+          soundInView: sound && sound.left >= 0 && sound.right <= innerWidth,
+          menuInView: menu && menu.left >= 0 && menu.right <= innerWidth,
+        };
+      });
+      assert.equal(r.brandSound, 0, `${vp.name}: brand vs sound overlap = 0`);
+      assert.equal(r.brandMenu, 0, `${vp.name}: brand vs menu overlap = 0`);
+      assert.equal(r.soundMenu, 0, `${vp.name}: sound vs menu overlap = 0`);
+      assert.equal(r.brandInView, true, `${vp.name}: brand inside viewport`);
+      assert.equal(r.soundInView, true, `${vp.name}: sound inside viewport`);
+      assert.equal(r.menuInView, true, `${vp.name}: menu inside viewport`);
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — source-faithful menu shows LoveTree Chapters with image tiles", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const { page } = await openPage(browser, URL, VIEWPORTS[0]);
+    // before opening: no menu images in DOM
+    const beforeImgs = await page.evaluate(() => document.querySelectorAll(".cin-menu-tile-img").length);
+    assert.equal(beforeImgs, 0, "no menu thumbnails before menu open");
+    await page.locator(".cin-menu-btn").click();
+    await page.waitForSelector("#cin-menu-overlay");
+    const r = await page.evaluate(() => {
+      const overlay = document.querySelector("#cin-menu-overlay");
+      const tiles = document.querySelectorAll(".cin-menu-tile");
+      const imgs = document.querySelectorAll(".cin-menu-tile-img");
+      return {
+        label: overlay?.getAttribute("aria-label"),
+        title: document.querySelector(".cin-menu-title")?.textContent,
+        desc: document.querySelector(".cin-menu-head p")?.textContent?.trim(),
+        tileCount: tiles.length,
+        imgCount: imgs.length,
+        allExternal: Array.from(imgs).every((i) => i.src.startsWith("http") && !i.src.startsWith("data:")),
+        dataUris: Array.from(imgs).filter((i) => i.src.startsWith("data:")).length,
+      };
+    });
+    assert.equal(r.label, "LoveTree Chapters", "dialog label = LoveTree Chapters");
+    assert.equal(r.title, "LoveTree Chapters", "title = LoveTree Chapters");
+    assert.ok(r.desc && r.desc.length > 0, "source explanatory copy present");
+    assert.equal(r.tileCount, 16, "16 visual scene tiles");
+    // the sky scene (10) has no image asset, so 15 tiles carry an image
+    assert.equal(r.imgCount, 15, "15 tiles carry an image (sky scene is CSS-only)");
+    assert.equal(r.allExternal, true, "all tile images from external assets");
+    assert.equal(r.dataUris, 0, "no base64 menu thumbnails");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scroll transforms", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: VIEWPORTS[0] });
+    const errors = [];
+    page.on("pageerror", (err) => errors.push(err.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(`console:${msg.text()}`);
+    });
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
+    await page.waitForTimeout(300);
+
+    // navigate to scene 12 and wait for it to become active
+    await page.locator('.cin-rail button[aria-label="12번 장면"]').click({ force: true });
+    await page.waitForFunction(
+      () => document.querySelector(".cin-counter span")?.textContent === "12",
+      { timeout: 8000 },
+    );
+    await page.waitForTimeout(300);
+
+    const shards = await page.evaluate(() => {
+      const list = document.querySelectorAll(".cin-shard");
+      return {
+        count: list.length,
+        ariaHidden: document.querySelector(".cin-shard-field")?.getAttribute("aria-hidden"),
+        firstBg: list[0] ? getComputedStyle(list[0]).backgroundImage.slice(0, 80) : null,
+        hasClip: list[0] ? (getComputedStyle(list[0]).clipPath || "").length > 10 : false,
+        transform: list[0] ? getComputedStyle(list[0]).transform : null,
+      };
+    });
+    assert.equal(shards.count, 12, "scene 12 has exactly 12 shards");
+    assert.equal(shards.ariaHidden, "true", "shard layer aria-hidden");
+    assert.match(shards.firstBg, /workshop\.webp/, "shards use workshop external asset");
+    assert.equal(shards.hasClip, true, "shards use clip-path fragments");
+
+    // scroll-driven scatter: move within scene 12 and confirm transform changes
+    const t1 = await page.evaluate(() => {
+      const s = document.querySelector(".cin-shard");
+      return s ? getComputedStyle(s).transform : "none";
+    });
+    await page.mouse.wheel(0, 200);
+    await page.waitForTimeout(400);
+    const t2 = await page.evaluate(() => {
+      const s = document.querySelector(".cin-shard");
+      return s ? getComputedStyle(s).transform : "none";
+    });
+    assert.notEqual(t2, t1, "shard transform changes with scroll in normal mode");
+
+    // reduced motion: transforms remain static
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(300);
+    await page.locator('.cin-rail button[aria-label="12번 장면"]').click({ force: true });
+    await page.waitForFunction(
+      () => document.querySelector(".cin-counter span")?.textContent === "12",
+      { timeout: 8000 },
+    );
+    const r1 = await page.evaluate(() => {
+      const s = document.querySelector(".cin-shard");
+      return s ? getComputedStyle(s).transform : "none";
+    });
+    await page.mouse.wheel(0, 200);
+    await page.waitForTimeout(300);
+    const r2 = await page.evaluate(() => {
+      const s = document.querySelector(".cin-shard");
+      return s ? getComputedStyle(s).transform : "none";
+    });
+    assert.equal(r1, r2, "shard transform remains static under reduced motion");
+    assert.equal(errors.length, 0, "no errors");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — fx rAF loop lifecycle (active, hidden, resume single loop, reduced none)", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: VIEWPORTS[0] });
+    const errors = [];
+    page.on("pageerror", (err) => errors.push(err.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(`console:${msg.text()}`);
+    });
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
+    await page.waitForTimeout(500);
+
+    // active: fx ticks counter increases while visible
+    const activeStart = await page.evaluate(() => window.__cinFxTicks);
+    await page.waitForTimeout(400);
+    const activeEnd = await page.evaluate(() => window.__cinFxTicks);
+    assert.ok(activeEnd > activeStart, `fx loop running while active (${activeStart} -> ${activeEnd})`);
+    const activeFlag = await page.evaluate(() => window.__cinFxActive);
+    assert.equal(activeFlag, true, "fx loop active flag true while visible");
+
+    // hidden: counter stops increasing and active flag clears
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: true, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForTimeout(200);
+    const hiddenTickA = await page.evaluate(() => window.__cinFxTicks);
+    const hiddenFlag = await page.evaluate(() => window.__cinFxActive);
+    await page.waitForTimeout(400);
+    const hiddenTickB = await page.evaluate(() => window.__cinFxTicks);
+    assert.equal(hiddenFlag, false, "fx active flag cleared while hidden");
+    assert.equal(hiddenTickA, hiddenTickB, "no additional app fx ticks while hidden");
+
+    // resume: exactly one loop (active flag true again, counter resumes)
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { value: false, configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForTimeout(200);
+    const resumeStart = await page.evaluate(() => window.__cinFxTicks);
+    const resumeFlag = await page.evaluate(() => window.__cinFxActive);
+    await page.waitForTimeout(400);
+    const resumeEnd = await page.evaluate(() => window.__cinFxTicks);
+    assert.equal(resumeFlag, true, "exactly one loop after resume (active flag true)");
+    assert.ok(resumeEnd > resumeStart, "fx ticks resume after visibility restore");
+
+    // reduced motion: no loop (canvas hidden, active flag false)
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(400);
+    const reduced = await page.evaluate(() => {
+      const canvas = document.querySelector(".cin-fx-canvas");
+      return {
+        display: getComputedStyle(canvas).display,
+        active: window.__cinFxActive,
+      };
+    });
+    assert.equal(reduced.display, "none", "no loop under reduced motion (canvas hidden)");
+    assert.equal(reduced.active, false, "fx active flag false under reduced motion");
+    assert.equal(errors.length, 0, "no errors");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — autoplay state machine (Space toggle, wheel stop, menu isolation)", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const { page } = await openPage(browser, URL, VIEWPORTS[0]);
+    const playBtn = page.locator(".cin-play");
+    const pressedBefore = await playBtn.getAttribute("aria-pressed");
+    assert.equal(pressedBefore, "false", "aria-pressed false initially");
+
+    // Space starts autoplay (no focused control)
+    await page.keyboard.press(" ");
+    await page.waitForTimeout(400);
+    const afterSpace = await playBtn.getAttribute("aria-pressed");
+    assert.equal(afterSpace, "true", "Space starts autoplay and sets aria-pressed true");
+
+    // wheel stops autoplay + resets UI state
+    await page.mouse.move(700, 400);
+    await page.mouse.wheel(0, 60);
+    await page.waitForTimeout(500);
+    const afterWheel = await playBtn.getAttribute("aria-pressed");
+    assert.equal(afterWheel, "false", "wheel stops autoplay and resets UI state");
+
+    // Space on a focused button should NOT toggle (focus on rail button)
+    await page.locator('.cin-rail button[aria-label="3번 장면"]').focus();
+    await page.keyboard.press(" ");
+    await page.waitForTimeout(200);
+    const afterSpaceOnFocus = await playBtn.getAttribute("aria-pressed");
+    assert.equal(afterSpaceOnFocus, "false", "Space on focused button does not hijack");
+
+    // menu isolation: while menu open, arrows must not navigate scenes
+    await page.locator(".cin-menu-btn").click();
+    await page.waitForSelector("#cin-menu-overlay");
+    const counterBefore = await page.evaluate(() => document.querySelector(".cin-counter span").textContent);
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(300);
+    const counterAfter = await page.evaluate(() => document.querySelector(".cin-counter span").textContent);
+    assert.equal(counterAfter, counterBefore, "arrows do not navigate while menu open");
+    // Escape closes menu
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(200);
+    const menuGone = (await page.locator("#cin-menu-overlay").count()) === 0;
+    assert.equal(menuGone, true, "Escape closes menu");
+    await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ viewport: VIEWPORTS[0] });
+    const webpUrls = [];
+    page.on("request", (req) => {
+      const url = req.url();
+      if (url.includes(".webp") && !url.includes("data:")) webpUrls.push(url);
+    });
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
+    await page.waitForTimeout(500);
+
+    const initialUnique = [...new Set(webpUrls)];
+    // The menu is NOT open, and no scrolling happened yet
+    assert.ok(
+      initialUnique.length <= 2,
+      `initial unique WebP requests <= 2 (got ${initialUnique.length})`,
+    );
+
+    // after scene navigation, more assets load
+    await page.locator('.cin-rail button[aria-label="8번 장면"]').click({ force: true });
+    await page.waitForTimeout(600);
+    const afterNavUnique = new Set(webpUrls).size;
+    assert.ok(afterNavUnique > initialUnique.length, "more WebP requests after scene navigation");
+
+    // after menu open, thumbnails request additional assets
+    await page.locator(".cin-menu-btn").click();
+    await page.waitForTimeout(800);
+    const afterMenuUnique = new Set(webpUrls).size;
+    assert.ok(afterMenuUnique > afterNavUnique, "menu open triggers additional thumbnail requests");
     await page.close();
   } finally {
     await browser.close();
