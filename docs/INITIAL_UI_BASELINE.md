@@ -83,3 +83,21 @@ change was applied.
 | hydration 5 routes | passed | save→reload restores state, 0 hydration errors, malformed JSON safe |
 | a11y dialogs | passed | Journey Dock and Community preview/compare close on Escape and restore focus |
 | route matrix | passed | all /v4 routes HTTP 200, pageerror 0, unexpected console error 0, same-origin failure 0, horizontal overflow 0, duplicate ID 0 |
+
+## V4 Telegram P1 validation
+(`feat/v4-telegram-p1-dashboard-tearoff`, HEAD `11843bf577f4cb9a161f7cc3e3b9a50744e10464`, base `62e0abf`)
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| Node.js | passed | `v22.23.1` |
+| `npm run lint` | passed | 0 errors, 58 warnings (all pre-existing `@next/next/no-img-element` + unused vars; within branch scope) |
+| `npm run db:check` | passed | drizzle-kit check — Everything's fine |
+| `npm run build` | passed | vinext build complete |
+| `npm test` (full suite) | passed | 524 tests, 0 fail (`V4_BASE_URL=http://localhost:3418`) |
+| source-faithful suite | passed | `tests/v4-telegram-p1-source-faithful.test.mjs` — 19/19 pass |
+| route: `GET /v4/labs/whole-picture-memory-dashboard` | passed | HTTP 200, 0 pageerror, 0 unexpected console error |
+| route: `GET /v4/labs/video-tearoff-memory-pad` | passed | HTTP 200, 0 pageerror, 0 unexpected console error |
+| browser console errors (12 shots) | 0 errors | 0 across desktop + mobile + reduced-motion captures |
+| registry isolation | passed | components do not import protected v4 central registry or v4 components |
+| central files unchanged | passed | `db/schema.ts`, `api/` handlers, integration candidate SHA `62e0abf` all unchanged |
+| artifact delivery | passed | 12 screenshots + source-comparison.json + SHA256SUMS.txt + final-report.md → `v4-telegram-p1-11843bf.zip` (7.2 MB)
