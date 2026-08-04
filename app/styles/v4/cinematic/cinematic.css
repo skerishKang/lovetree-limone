@@ -897,6 +897,30 @@ html:has(.cin-page) {
   color: white;
 }
 
+.cin-menu-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 13px 26px;
+  border: 1px solid rgba(255, 230, 166, 0.55);
+  border-radius: 999px;
+  background: rgba(2, 13, 22, 0.5);
+  color: #fff0bd;
+  font: 600 12px var(--sans);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cin-menu-cta:hover,
+.cin-menu-cta:focus-visible {
+  background: rgba(2, 13, 22, 0.8);
+  color: #fff6d8;
+  outline: 2px solid var(--gold2);
+  outline-offset: 2px;
+}
+
 .cin-fx-canvas {
   position: absolute;
   inset: 0;
