@@ -101,6 +101,12 @@ export default function V4JourneyDock() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
+  // The cinematic experience is full-screen immersive. Suppress the dock
+  // only on /v4/cinematic so it never overlaps the film.
+  if (pathname === "/v4/cinematic") {
+    return null;
+  }
+
   return (
     <aside className={`v4-journey-dock${open ? " is-open" : ""}`} aria-label="V4 전체 사용자 여정">
       <button
