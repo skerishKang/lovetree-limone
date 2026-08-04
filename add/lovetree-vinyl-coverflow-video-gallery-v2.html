@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LoveTree · Vinyl Coverflow Video Gallery v2</title>
+  <style>
+    :root{--ink:#171515;--muted:#756e6a;--bg-a:#f7ebe9;--bg-b:#e6f1f3;--accent:#e86c91;--label:url('');--cover:url('')}
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:clip;background:#eee;color:var(--ink);font-family:Inter,"Pretendard","Noto Sans KR",Arial,sans-serif}
+    button{font:inherit;color:inherit;cursor:pointer}
+    .gallery{position:relative;width:100%;height:100%;overflow:clip;background:linear-gradient(125deg,var(--bg-a),#f9f8f5 47%,var(--bg-b));transition:background 1s ease}
+    .gallery:before{content:"";position:absolute;inset:-20%;pointer-events:none;opacity:.24;background:radial-gradient(circle at 32% 22%,#fff 0 10%,transparent 31%),radial-gradient(circle at 77% 80%,var(--accent),transparent 27%);filter:blur(35px);transition:background 1s}
+    .gallery:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E")}
+    .topbar{position:absolute;z-index:20;left:0;right:0;top:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 34px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+    .brand-mark{position:relative;width:24px;height:29px}.brand-mark:before{content:"";position:absolute;width:3px;height:27px;left:11px;top:1px;border-radius:5px;background:linear-gradient(#6f9e74,#45704f);transform:rotate(8deg)}
+    .brand-mark i,.brand-mark i:before,.brand-mark i:after{content:"";position:absolute;width:12px;height:8px;border-radius:100% 0 100% 0;background:#ed7396}.brand-mark i{left:1px;top:3px;transform:rotate(24deg)}.brand-mark i:before{left:9px;top:4px;transform:rotate(75deg);background:#f49db5}.brand-mark i:after{left:7px;top:12px;transform:rotate(145deg);background:#cf587b}
+    .brand strong{font-family:Georgia,"Noto Serif KR",serif;font-size:18px;font-weight:500;letter-spacing:-.04em}.brand small{font-size:7px;text-transform:uppercase;letter-spacing:.17em;color:#8d827c;margin-left:-4px}
+    .top-right{display:flex;align-items:center;gap:12px;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:#736a65}.top-right i{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 18%,transparent)}
+    .track-head{position:absolute;z-index:10;left:50%;top:8.8%;transform:translateX(-50%);width:min(760px,88vw);text-align:center;transition:opacity .3s,transform .45s}
+    .track-head.changing{opacity:0;transform:translate(-50%,-12px)}
+    .track-head small{display:block;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#837a75;margin-bottom:10px}
+    .track-head h1{font-size:clamp(28px,3.3vw,48px);line-height:1.04;margin:0;font-weight:760;letter-spacing:-.055em}
+    .track-head p{margin:10px 0 0;font-size:11px;color:#867d78;letter-spacing:.01em}
+    .stage{position:absolute;z-index:4;inset:18% 0 14%;perspective:1500px;display:grid;place-items:center;--tilt-x:0deg;--tilt-y:0deg}
+    .coverflow{position:absolute;width:min(930px,92vw);height:min(400px,54vh);transform-style:preserve-3d;transition:opacity .5s,transform .75s cubic-bezier(.2,.78,.2,1);opacity:1}
+    .vinyl-mode .coverflow{opacity:0;transform:scale(.72) rotateX(22deg);pointer-events:none}
+    .cover-card{position:absolute;left:50%;top:50%;width:min(290px,29vw);aspect-ratio:1;transform-style:preserve-3d;transform-origin:50% 50%;transition:transform .62s cubic-bezier(.2,.78,.22,1),opacity .45s,filter .45s;will-change:transform;cursor:pointer}
+    .cover-face{position:absolute;inset:0;border-radius:4px;overflow:hidden;background:#222;box-shadow:0 28px 48px rgba(67,53,48,.18);backface-visibility:hidden}
+    .cover-face img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.02)}
+    .cover-face:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.34),transparent 28%,transparent 68%,rgba(0,0,0,.28));mix-blend-mode:soft-light}
+    .cover-face .stripe{position:absolute;left:0;right:0;bottom:0;padding:13px 14px 11px;background:linear-gradient(transparent,rgba(10,8,8,.88));color:#fff;transform:translateZ(2px)}
+    .stripe small{font-size:7px;letter-spacing:.13em;text-transform:uppercase;opacity:.72}.stripe strong{display:block;margin-top:4px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cover-spine{position:absolute;top:3%;bottom:3%;width:14px;right:-10px;background:linear-gradient(90deg,#171313,#3c3430);transform:rotateY(90deg);transform-origin:left;opacity:.65}
+    .cover-card.active .cover-face{box-shadow:0 38px 60px rgba(67,53,48,.24),0 0 0 2px rgba(255,255,255,.82)}
+    .cover-reflection{position:absolute;left:50%;top:calc(50% + min(160px,18vw));width:min(300px,31vw);height:95px;transform:translateX(-50%) rotateX(72deg);background:radial-gradient(ellipse,rgba(49,36,32,.22),transparent 68%);filter:blur(8px);transition:opacity .4s}.vinyl-mode .cover-reflection{opacity:0}
+    .vinyl-stage{position:absolute;width:min(720px,72vw);height:min(590px,70vh);display:grid;place-items:center;opacity:0;transform:scale(.38) rotateX(18deg);pointer-events:none;transition:opacity .46s,transform .82s cubic-bezier(.18,.82,.2,1);perspective:1200px}
+    .vinyl-mode .vinyl-stage{opacity:1;transform:none;pointer-events:auto}
+    .disc-wrap{position:relative;width:min(690px,66vw,73vh);aspect-ratio:1;transition:transform .78s cubic-bezier(.2,.76,.18,1),opacity .52s;will-change:transform,opacity}
+    .disc-wrap.exit-up{transform:translateY(-115vh) rotate(-16deg) scale(.9);opacity:0}.disc-wrap.exit-down{transform:translateY(115vh) rotate(16deg) scale(.9);opacity:0}.disc-wrap.prepare-bottom{transition:none;transform:translateY(110vh) rotate(13deg) scale(.93);opacity:0}.disc-wrap.prepare-top{transition:none;transform:translateY(-110vh) rotate(-13deg) scale(.93);opacity:0}
+    .disc-plane{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(calc(47deg + var(--tilt-x))) rotateZ(var(--tilt-y));filter:drop-shadow(0 46px 42px rgba(66,51,45,.24));transition:transform .28s ease-out}
+    .disc-rotor{position:absolute;inset:0;border-radius:50%;animation:spin 13s linear infinite;animation-play-state:paused;background:
+      repeating-radial-gradient(circle at center,#171717 0 2px,#0b0b0b 3px 5px,#232323 6px 7px,#0b0b0b 8px 11px),
+      radial-gradient(circle,#181818 0 12%,#050505 13% 100%);box-shadow:inset 0 0 0 2px #020202,inset 0 0 25px rgba(255,255,255,.06)}
+    .vinyl-mode .disc-rotor{animation-play-state:running}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .vinyl-label{position:absolute;left:50%;top:50%;width:29%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background-image:var(--label);background-position:center;background-size:cover;box-shadow:0 0 0 3px rgba(255,255,255,.08),0 0 0 5px #101010;overflow:hidden}
+    .vinyl-label:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 36% 28%,rgba(255,255,255,.4),transparent 28%,rgba(0,0,0,.16) 78%)}
+    .vinyl-hole{position:absolute;z-index:3;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);border-radius:50%;background:#e9e5df;box-shadow:inset 0 1px 2px #666}
+    .disc-shine{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:conic-gradient(from 205deg,transparent 0 8%,rgba(255,255,255,.34) 13%,rgba(255,255,255,.04) 23%,transparent 31% 62%,rgba(255,255,255,.2) 70%,transparent 78%);mix-blend-mode:screen;opacity:.85}
+    .disc-edge{position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(255,255,255,.09);box-shadow:inset 0 -12px 20px rgba(255,255,255,.035);pointer-events:none}
+    .open-video{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.66);background:rgba(17,15,15,.36);backdrop-filter:blur(5px);color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;opacity:0;transition:.25s}.disc-wrap:hover .open-video,.open-video:focus-visible{opacity:1}.open-video span{display:block;font-size:19px;margin-bottom:4px;padding-left:3px}
+    .controls{position:absolute;z-index:15;left:50%;bottom:6.2%;transform:translateX(-50%);display:flex;align-items:center;gap:16px}
+    .controls button{border:0;background:rgba(255,255,255,.28);width:39px;height:39px;border-radius:50%;font-size:13px;display:grid;place-items:center;transition:.2s}.controls button:hover{background:rgba(255,255,255,.72);transform:scale(1.06)}
+    .controls .main-control{width:52px;height:52px;background:#111;color:#fff;font-size:16px;box-shadow:0 10px 25px rgba(47,36,31,.2)}.controls .main-control:hover{background:#282323}.main-control .pause{display:none}.vinyl-mode .main-control .play{display:none}.vinyl-mode .main-control .pause{display:block}
+    .counter{position:absolute;z-index:10;left:33px;bottom:27px;font-size:9px;letter-spacing:.16em;color:#817772;text-transform:uppercase}.counter strong{font-size:18px;color:var(--ink);font-weight:500;margin-right:5px}
+    .view-hint{position:absolute;z-index:10;right:31px;bottom:27px;text-align:right;font-size:8px;line-height:1.6;letter-spacing:.08em;color:#8d837d;text-transform:uppercase}.view-hint b{color:var(--accent)}
+    .dots{position:absolute;z-index:14;left:50%;bottom:2.7%;transform:translateX(-50%);display:flex;gap:6px}.dots button{width:5px;height:5px;padding:0;border:0;border-radius:50%;background:rgba(45,37,34,.23);transition:.25s}.dots button.active{width:18px;border-radius:4px;background:var(--accent)}
+    .video-modal{position:fixed;z-index:80;inset:0;display:grid;place-items:center;padding:25px;background:rgba(38,30,29,.44);backdrop-filter:blur(15px);opacity:0;pointer-events:none;transition:.25s}.video-modal.open{opacity:1;pointer-events:auto}
+    .video-card{width:min(880px,94vw);padding:13px;border-radius:22px;background:#fffaf7;box-shadow:0 34px 100px rgba(48,34,31,.35);transform:translateY(18px) scale(.985);transition:.3s}.video-modal.open .video-card{transform:none}.video-frame{aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#151212}.video-frame iframe{width:100%;height:100%;border:0;display:block}.video-foot{display:flex;align-items:center;justify-content:space-between;padding:13px 4px 2px;gap:17px}.video-foot small{font-size:8px;font-weight:800;letter-spacing:.15em;color:var(--accent)}.video-foot strong{display:block;margin-top:4px;font-size:16px}.close-video{width:38px;height:38px;border:0;border-radius:50%;background:#f0e5e1;font-size:18px}
+    @media(max-height:760px){.track-head{top:8%}.stage{inset:17% 0 16%}.vinyl-stage{height:520px}.controls{bottom:5%}.counter,.view-hint{bottom:18px}}
+    @media(max-width:700px){.topbar{padding:0 18px}.top-right span{display:none}.track-head{top:10%;width:92vw}.track-head h1{font-size:30px}.stage{inset:22% 0 18%}.cover-card{width:52vw}.coverflow{height:360px}.vinyl-stage{width:94vw}.disc-wrap{width:min(92vw,65vh)}.counter{left:17px}.view-hint{right:17px}.view-hint span{display:none}.controls{bottom:7%}.dots{display:none}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="gallery cover-mode" id="gallery">
+    <header class="topbar"><a class="brand" href="#" aria-label="LoveTree"><span class="brand-mark"><i></i></span><strong>러브트리</strong><small>LoveTree Vinyl</small></a><div class="top-right"><i></i><span>video moments pressed on memory vinyl</span></div></header>
+    <section class="track-head" id="trackHead"><small id="artistName">FELIX · STRAY KIDS</small><h1 id="trackTitle">처음 마음을 멈추게 한 神메뉴</h1><p id="trackNote">낮게 울리는 목소리와 강한 눈빛을 처음 오래 바라본 순간.</p></section>
+    <section class="stage" id="stage" aria-label="LoveTree LP 영상 갤러리">
+      <div class="coverflow" id="coverflow"></div><i class="cover-reflection"></i>
+      <div class="vinyl-stage"><div class="disc-wrap" id="discWrap"><div class="disc-plane"><div class="disc-rotor"><div class="vinyl-label"></div><i class="vinyl-hole"></i></div><i class="disc-shine"></i><i class="disc-edge"></i></div><button class="open-video" id="openVideo" type="button" aria-label="현재 영상 열기"><span>▶</span>영상 열기</button></div></div>
+    </section>
+    <div class="controls"><button id="prevButton" type="button" aria-label="이전 영상">|◀</button><button class="main-control" id="mainControl" type="button" aria-label="LP로 재생"><span class="play">▶</span><span class="pause">Ⅱ</span></button><button id="nextButton" type="button" aria-label="다음 영상">▶|</button></div>
+    <div class="dots" id="dots"></div><div class="counter"><strong id="countNow">01</strong><span id="countTotal">/ 07 moments</span></div><div class="view-hint"><b id="viewName">cover flow</b><br><span>drag · wheel · arrows · center play</span></div>
+  </main>
+
+  <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="LoveTree 영상 플레이어"><div class="video-card"><div class="video-frame" id="videoFrame"></div><div class="video-foot"><div><small id="modalPerson"></small><strong id="modalTitle"></strong></div><button class="close-video" id="closeVideo" type="button" aria-label="영상 닫기">×</button></div></div></div>
+
+  <script>
+    const tracks=[
+      {person:'필릭스',artist:'FELIX · STRAY KIDS',title:'처음 마음을 멈추게 한 神메뉴',note:'낮게 울리는 목소리와 강한 눈빛을 처음 오래 바라본 순간.',id:'nOrDWTMSR0w',a:'#f6dfe7',b:'#d9eef0',accent:'#e56d93'},
+      {person:'이주연',artist:'JUYEON · THE BOYZ',title:'WHISPER로 시작된 마음',note:'정확한 동작과 부드러운 선을 자꾸 다시 보게 된 날.',id:'qKkJ6YHLhak',a:'#e7e1f5',b:'#f4dfe7',accent:'#b26adb'},
+      {person:'이준혁',artist:'LEE JUN HYUK · ACTOR',title:'말투가 좋아진 인터뷰',note:'조용히 답하는 방식에서 예상 밖의 귀여움을 발견한 날.',id:'a1gsq3jC0Tg',a:'#dceee8',b:'#edf1df',accent:'#63a887'},
+      {person:'필릭스',artist:'FELIX · STRAY KIDS',title:'계속 다시 본 Back Door',note:'짧게 지나가도 이상하게 다시 돌아오게 되는 움직임.',id:'ts_xlXdsl4M',a:'#e2edf6',b:'#f5dfdf',accent:'#62a8d4'},
+      {person:'이주연',artist:'JUYEON · THE BOYZ',title:'한 사람의 춤에 빠진 순간',note:'무대가 아니라 한 편의 이야기처럼 남은 퍼포먼스.',id:'ePAi-0qKEio',a:'#f6e0e7',b:'#eee8d9',accent:'#d56086'},
+      {person:'이준혁',artist:'LEE JUN HYUK · ACTOR',title:'윙크하고 사라진 순간',note:'짧아서 더 오래 기억에 남은 장난스러운 한 장면.',id:'O3ptaX7-G8w',a:'#e5edf2',b:'#f3e6dc',accent:'#7c9db4'},
+      {person:'필릭스',artist:'FELIX · STRAY KIDS',title:'표정이 바뀌는 Easy',note:'무대 한가운데서 분위기가 완전히 달라진 몇 초.',id:'IaWoxBn4kDo',a:'#f4e1dd',b:'#dfe7f5',accent:'#e07f6d'}
+    ];
+    const gallery=document.getElementById('gallery'),coverflow=document.getElementById('coverflow'),discWrap=document.getElementById('discWrap'),head=document.getElementById('trackHead');
+    const state={index:0,flowPos:0,mode:'cover',dragging:false,startX:0,startPos:0,moved:0,transitioning:false,wheelLock:false};
+    function thumb(id){return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+    function wrap(n){return((n%tracks.length)+tracks.length)%tracks.length}
+    function distance(index,pos){let d=index-pos;while(d>tracks.length/2)d-=tracks.length;while(d<-tracks.length/2)d+=tracks.length;return d}
+    function createCovers(){
+      coverflow.innerHTML=tracks.map((t,i)=>`<article class="cover-card" data-index="${i}" role="button" tabindex="0" aria-label="${t.person} · ${t.title}"><div class="cover-face"><img src="${thumb(t.id)}" alt="${t.title}" draggable="false"><div class="stripe"><small>${t.artist}</small><strong>${t.title}</strong></div></div><i class="cover-spine"></i></article>`).join('');
+      document.getElementById('dots').innerHTML=tracks.map((_,i)=>`<button type="button" data-dot="${i}" aria-label="${i+1}번째 영상"></button>`).join('');renderCovers()
+    }
+    function renderCovers(){
+      [...coverflow.children].forEach((card,i)=>{const d=distance(i,state.flowPos),abs=Math.abs(d),visible=abs<=3.15;const x=d*205,z=-abs*128,y=abs*7,rot=-d*31,scale=1-Math.min(.28,abs*.085);card.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateY(${rot}deg) scale(${scale})`;card.style.opacity=visible?String(Math.max(.08,1-abs*.23)):'0';card.style.zIndex=String(20-Math.round(abs*3));card.style.filter=`saturate(${1-abs*.12}) brightness(${1-abs*.08})`;card.style.pointerEvents=visible?'auto':'none';card.classList.toggle('active',abs<.48)})
+    }
+    function setTheme(track){gallery.style.setProperty('--bg-a',track.a);gallery.style.setProperty('--bg-b',track.b);gallery.style.setProperty('--accent',track.accent);gallery.style.setProperty('--label',`url("${thumb(track.id)}")`)}
+    function updateTrack(animate=true){
+      state.index=wrap(state.index);state.flowPos=state.index;const t=tracks[state.index];if(animate)head.classList.add('changing');setTimeout(()=>{document.getElementById('artistName').textContent=t.artist;document.getElementById('trackTitle').textContent=t.title;document.getElementById('trackNote').textContent=t.note;document.getElementById('countNow').textContent=String(state.index+1).padStart(2,'0');document.getElementById('modalPerson').textContent=`${t.person} · LOVETREE VIDEO VINYL`;document.getElementById('modalTitle').textContent=t.title;setTheme(t);document.querySelectorAll('[data-dot]').forEach((dot,i)=>dot.classList.toggle('active',i===state.index));renderCovers();head.classList.remove('changing')},animate?180:0)
+    }
+    function selectIndex(index){if(state.transitioning)return;state.index=wrap(index);updateTrack()}
+    function enterVinyl(){if(state.transitioning||state.mode==='vinyl')return;state.mode='vinyl';gallery.classList.remove('cover-mode');gallery.classList.add('vinyl-mode');document.getElementById('mainControl').setAttribute('aria-label','커버로 돌아가기');document.getElementById('viewName').textContent='video vinyl';discWrap.className='disc-wrap'}
+    function exitVinyl(){if(state.transitioning||state.mode==='cover')return;state.mode='cover';gallery.classList.remove('vinyl-mode');gallery.classList.add('cover-mode');document.getElementById('mainControl').setAttribute('aria-label','LP로 재생');document.getElementById('viewName').textContent='cover flow';state.flowPos=state.index;renderCovers()}
+    function changeTrack(delta){
+      if(state.transitioning)return;if(state.mode==='cover'){selectIndex(state.index+delta);return}
+      state.transitioning=true;discWrap.className=`disc-wrap ${delta>0?'exit-up':'exit-down'}`;head.classList.add('changing');
+      setTimeout(()=>{state.index=wrap(state.index+delta);const t=tracks[state.index];setTheme(t);document.getElementById('artistName').textContent=t.artist;document.getElementById('trackTitle').textContent=t.title;document.getElementById('trackNote').textContent=t.note;document.getElementById('countNow').textContent=String(state.index+1).padStart(2,'0');document.getElementById('modalPerson').textContent=`${t.person} · LOVETREE VIDEO VINYL`;document.getElementById('modalTitle').textContent=t.title;document.querySelectorAll('[data-dot]').forEach((dot,i)=>dot.classList.toggle('active',i===state.index));discWrap.className=`disc-wrap ${delta>0?'prepare-bottom':'prepare-top'}`;void discWrap.offsetWidth;discWrap.className='disc-wrap';head.classList.remove('changing');setTimeout(()=>state.transitioning=false,790)},510)
+    }
+    function openVideo(){const t=tracks[state.index];document.getElementById('videoFrame').innerHTML=`<iframe src="https://www.youtube.com/embed/${t.id}?autoplay=1&rel=0" title="${t.title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;document.getElementById('videoModal').classList.add('open')}
+    function closeVideo(){document.getElementById('videoModal').classList.remove('open');setTimeout(()=>document.getElementById('videoFrame').innerHTML='',260)}
+    coverflow.addEventListener('pointerdown',e=>{if(state.mode!=='cover')return;state.dragging=true;state.startX=e.clientX;state.startPos=state.flowPos;state.moved=0;coverflow.setPointerCapture(e.pointerId)});
+    coverflow.addEventListener('pointermove',e=>{if(!state.dragging)return;const dx=e.clientX-state.startX;state.moved=Math.abs(dx);state.flowPos=state.startPos-dx/185;renderCovers()});
+    coverflow.addEventListener('pointerup',e=>{if(!state.dragging)return;state.dragging=false;try{coverflow.releasePointerCapture(e.pointerId)}catch(_){ }if(state.moved<7){const card=e.target.closest('[data-index]');if(card)selectIndex(Number(card.dataset.index))}else{state.index=wrap(Math.round(state.flowPos));updateTrack()}});
+    coverflow.addEventListener('pointercancel',()=>{state.dragging=false;state.flowPos=state.index;renderCovers()});
+    coverflow.addEventListener('keydown',e=>{const card=e.target.closest('[data-index]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectIndex(Number(card.dataset.index))}});
+    document.getElementById('mainControl').addEventListener('click',()=>state.mode==='cover'?enterVinyl():exitVinyl());document.getElementById('prevButton').addEventListener('click',()=>changeTrack(-1));document.getElementById('nextButton').addEventListener('click',()=>changeTrack(1));document.getElementById('openVideo').addEventListener('click',openVideo);
+    document.getElementById('dots').addEventListener('click',e=>{const dot=e.target.closest('[data-dot]');if(dot){if(state.mode==='vinyl'){const target=Number(dot.dataset.dot),forward=((target-state.index+tracks.length)%tracks.length)<=tracks.length/2;changeTrack(forward?1:-1)}else selectIndex(Number(dot.dataset.dot))}});
+    window.addEventListener('wheel',e=>{e.preventDefault();if(state.wheelLock||state.transitioning)return;state.wheelLock=true;changeTrack(e.deltaY>0||e.deltaX>0?1:-1);setTimeout(()=>state.wheelLock=false,850)},{passive:false});
+    document.addEventListener('keydown',e=>{if(document.getElementById('videoModal').classList.contains('open')){if(e.key==='Escape')closeVideo();return}if(e.key==='ArrowLeft')changeTrack(-1);if(e.key==='ArrowRight')changeTrack(1);if(e.key==='ArrowUp'&&state.mode==='vinyl')changeTrack(-1);if(e.key==='ArrowDown'&&state.mode==='vinyl')changeTrack(1);if(e.key===' '){e.preventDefault();state.mode==='cover'?enterVinyl():exitVinyl()}});
+    document.getElementById('closeVideo').addEventListener('click',closeVideo);document.getElementById('videoModal').addEventListener('click',e=>{if(e.target.id==='videoModal')closeVideo()});
+    document.getElementById('stage').addEventListener('pointermove',e=>{const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;e.currentTarget.style.setProperty('--tilt-x',`${Math.max(-4,Math.min(4,y/r.height*7))}deg`);e.currentTarget.style.setProperty('--tilt-y',`${Math.max(-3,Math.min(3,x/r.width*5))}deg`)});
+    document.getElementById('stage').addEventListener('pointerleave',e=>{e.currentTarget.style.setProperty('--tilt-x','0deg');e.currentTarget.style.setProperty('--tilt-y','0deg')});
+    createCovers();updateTrack(false);
+  </script>
+</body>
+</html>
