@@ -19,8 +19,6 @@ import {
   type SourceTypeValue,
 } from "./validate";
 
-const MAX_SAFE_SORT_ORDER = 0;
-
 const TREE_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
   title: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 120 },
@@ -41,7 +39,6 @@ const MEMORY_RULES = {
   thumbnail: { kind: "url", maxLength: 2048 },
   emotionTags: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
   timestamp: { kind: "string", trim: true, maxLength: 100 },
-  sortOrder: { kind: "integer", min: 0, max: MAX_SAFE_SORT_ORDER },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
