@@ -44,3 +44,27 @@ Timeline and Album views fetch memories via the existing
 using the canonical moment model. This is sufficient for the current data
 volume. If server-side pagination becomes necessary, dedicated endpoints
 can be added later.
+
+### 6. Moment detail modal edit/delete requires owner auth
+
+The `MomentDetailModal` component calls `PUT /api/memories/:id` and
+`DELETE /api/memories/:id` which require the authenticated user to be the
+tree owner. Non-owner viewers see the detail modal in read-only mode
+(edit/delete buttons hidden).
+
+### 7. Database connection required for full UI testing
+
+Screenshots were captured against a dev server without `DATABASE_URL`
+configured. The tree/timeline/album pages correctly show error states
+("이 러브트리를 찾을 수 없어요.") when the API is unavailable. Full
+end-to-end testing with real data requires a Neon PostgreSQL connection.
+
+### 8. Expected API contracts used by UI
+
+- `GET /api/trees/:id` — tree metadata
+- `GET /api/trees/:id/memories` — sorted memory list
+- `POST /api/trees/:id/memories` — create memory (no sortOrder from client)
+- `PUT /api/memories/:id` — update memory
+- `DELETE /api/memories/:id` — delete memory
+- Sorting: `sortOrder ASC, timestamp ASC, createdAt ASC, id ASC`
+- Validation: title or memo required, timestamp YYYY-MM-DD, sortOrder server-assigned
