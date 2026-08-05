@@ -1,11 +1,13 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { apiFetch } from "@/lib/api";
+import { useTreeMoments } from "@/lib/use-tree-moments";
 import EmailAuthForm from "../../components/EmailAuthForm";
+import { TreeViewShell } from "../../components/TreeViewShell";
+import { MomentDetailModal } from "../../components/MomentDetailModal";
 import "../../styles/email-auth.css";
 import {
   formatTreeDate,
@@ -13,7 +15,6 @@ import {
   sourceTypeLabel,
   SOURCE_TYPES,
   type MemoryRecord,
-  type TreeRecord,
   youtubeThumbnail,
 } from "@/lib/tree-types";
 
@@ -41,12 +42,27 @@ const EMPTY_FORM: MemoryFormState = {
 
 export default function TreeDetailPage() {
   const params = useParams<{ id: string | string[] }>();
+  const searchParams = useSearchParams();
+  const highlightParam = searchParams.get("highlight");
   const { user, loading: authLoading, login, loginPending } = useAuth();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
-  const [tree, setTree] = useState<TreeRecord | null>(null);
-  const [memories, setMemories] = useState<MemoryRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    tree,
+    moments,
+    treeMoments,
+    loading,
+    error,
+    isOwner,
+    selectedMomentId,
+    selectedMoment,
+    selectMoment,
+    refresh,
+    createMoment,
+    updateMoment,
+    deleteMoment,
+    highlightMomentId,
+  } = useTreeMoments(treeId, highlightParam ?? undefined);
+
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [form, setForm] = useState<MemoryFormState>(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -55,45 +71,7 @@ export default function TreeDetailPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [clientKey, setClientKey] = useState(() => crypto.randomUUID());
 
-  const loadTree = useCallback(async () => {
-    if (!treeId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const [treeResponse, memoryResponse] = await Promise.all([
-        apiFetch(`/api/trees/${encodeURIComponent(treeId)}`),
-        apiFetch(`/api/trees/${encodeURIComponent(treeId)}/memories`),
-      ]);
-      const treeData = (await treeResponse.json().catch(() => ({}))) as TreeRecord & { error?: string };
-      const memoryData = (await memoryResponse.json().catch(() => [])) as MemoryRecord[] | { error?: string };
-      if (!treeResponse.ok) {
-        setError(treeResponse.status === 404 ? "이 러브트리를 찾을 수 없어요." : "러브트리를 불러오지 못했어요.");
-        return;
-      }
-      if (!memoryResponse.ok) {
-        setError("러브트리의 순간을 불러오지 못했어요. 다시 시도해 주세요.");
-        return;
-      }
-      setTree(treeData);
-      setMemories(Array.isArray(memoryData) ? memoryData : []);
-    } catch {
-      setError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
-    } finally {
-      setLoading(false);
-    }
-  }, [treeId]);
-
-  useEffect(() => {
-    if (authLoading) return;
-    const timer = window.setTimeout(() => void loadTree(), 0);
-    return () => window.clearTimeout(timer);
-  }, [authLoading, loadTree]);
-
-  const isOwner = Boolean(tree && user && tree.ownerId === user.uid);
-  const parentOptions = useMemo(
-    () => memories.filter((memory) => memory.id !== editingId),
-    [editingId, memories]
-  );
+  const parentOptions = moments;
 
   function beginEdit(memory: MemoryRecord) {
     setEditingId(memory.id);
@@ -127,41 +105,43 @@ export default function TreeDetailPage() {
     setSaving(true);
     setFormError(null);
     const sourceUrl = form.sourceUrl.trim();
-    const payload: Record<string, unknown> = {
-      sourceType: form.sourceType,
-      title: form.title.trim(),
-      memo: form.memo.trim(),
-      source: form.source.trim(),
-      timestamp: form.timestamp,
-      emotionTags: form.emotionTags.split(",").map((tag) => tag.trim()).filter(Boolean),
-      parentId: form.parentId || undefined,
-    };
-    if (sourceUrl) {
-      payload.sourceUrl = sourceUrl;
-      const thumbnail = youtubeThumbnail(sourceUrl);
-      if (thumbnail) payload.thumbnail = thumbnail;
-    }
-    if (!editingId) payload.clientKey = clientKey;
-
-    try {
-      const response = await apiFetch(
-        editingId ? `/api/memories/${encodeURIComponent(editingId)}` : `/api/trees/${encodeURIComponent(tree.id)}/memories`,
-        { method: editingId ? "PUT" : "POST", body: JSON.stringify(payload) }
-      );
-      const data = (await response.json().catch(() => ({}))) as MemoryRecord & { error?: string };
-      if (!response.ok || !data.id) {
-        setFormError(data.error || "순간을 저장하지 못했어요. 다시 시도해 주세요.");
-        return;
+    if (editingId) {
+      const result = await updateMoment(editingId, {
+        title: form.title,
+        memo: form.memo,
+        sourceType: form.sourceType,
+        source: form.source,
+        sourceUrl,
+        thumbnail: sourceUrl ? youtubeThumbnail(sourceUrl) : undefined,
+        timestamp: form.timestamp,
+        emotionTags: form.emotionTags.split(",").map((t) => t.trim()).filter(Boolean),
+        parentId: form.parentId || undefined,
+      });
+      if (!result) {
+        setFormError("순간을 저장하지 못했어요. 다시 시도해 주세요.");
+      } else {
+        resetForm();
       }
-      setMemories((current) => editingId
-        ? current.map((memory) => memory.id === data.id ? data : memory)
-        : [data, ...current]);
-      resetForm();
-    } catch {
-      setFormError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
-    } finally {
-      setSaving(false);
+    } else {
+      const result = await createMoment({
+        title: form.title,
+        memo: form.memo,
+        sourceType: form.sourceType,
+        source: form.source,
+        sourceUrl,
+        thumbnail: sourceUrl ? youtubeThumbnail(sourceUrl) : undefined,
+        timestamp: form.timestamp,
+        emotionTags: form.emotionTags.split(",").map((t) => t.trim()).filter(Boolean),
+        parentId: form.parentId || undefined,
+        clientKey,
+      });
+      if (!result) {
+        setFormError("순간을 저장하지 못했어요. 다시 시도해 주세요.");
+      } else {
+        resetForm();
+      }
     }
+    setSaving(false);
   }
 
   async function removeMemory(memoryId: string) {
@@ -169,46 +149,38 @@ export default function TreeDetailPage() {
     if (!window.confirm("이 순간을 러브트리에서 지울까요?")) return;
     setRemovingId(memoryId);
     setFormError(null);
-    try {
-      const response = await apiFetch(`/api/memories/${encodeURIComponent(memoryId)}`, { method: "DELETE" });
-      if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
-        setFormError(data.error || "순간을 지우지 못했어요.");
-        return;
-      }
-      setMemories((current) => current.filter((memory) => memory.id !== memoryId));
-      if (editingId === memoryId) resetForm();
-    } catch {
-      setFormError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
-    } finally {
-      setRemovingId(null);
+    const ok = await deleteMoment(memoryId);
+    if (!ok) {
+      setFormError("순간을 지우지 못했어요.");
     }
+    if (editingId === memoryId) resetForm();
+    setRemovingId(null);
   }
 
   if (authLoading || loading) {
-    return <TreeDetailShell><div className="tree-page-state" aria-busy="true">러브트리를 불러오고 있어요…</div></TreeDetailShell>;
+    return <TreeViewShell treeId={treeId} activeView="tree"><div className="tree-page-state" aria-busy="true">러브트리를 불러오고 있어요…</div></TreeViewShell>;
   }
 
   if (error || !tree) {
     return (
-      <TreeDetailShell>
+      <TreeViewShell treeId={treeId} activeView="tree">
         <div className="tree-page-state">
           <span className="tree-page-symbol" aria-hidden="true">!</span>
           <h1>{error || "러브트리를 찾을 수 없어요."}</h1>
           <p>공개 상태가 바뀌었거나 주소를 확인해 주세요.</p>
           <div className="tree-page-actions">
-            <button className="button button-quiet" type="button" onClick={() => void loadTree()}>다시 시도</button>
+            <button className="button button-quiet" type="button" onClick={() => void refresh()}>다시 시도</button>
             {!user ? <button className="button button-primary" type="button" onClick={() => void login()} disabled={loginPending}>{loginPending ? "로그인 중…" : "로그인"}</button> : null}
             {!user ? <button className="button button-quiet" type="button" onClick={() => setIsAuthOpen(true)} aria-haspopup="dialog">이메일로 로그인</button> : null}
           </div>
           <EmailAuthForm open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
         </div>
-      </TreeDetailShell>
+      </TreeViewShell>
     );
   }
 
   return (
-    <TreeDetailShell userLabel={user?.displayName || user?.email || undefined}>
+    <TreeViewShell treeId={treeId} activeView="tree" userLabel={user?.displayName || user?.email || undefined}>
       <section className="tree-detail-content" aria-labelledby="tree-detail-title">
         <div className="tree-detail-heading">
           <div>
@@ -218,7 +190,7 @@ export default function TreeDetailPage() {
           </div>
           <div className="tree-detail-meta">
             <span>{tree.visibility === "private" ? "▣ 비공개" : "◉ 공개 러브트리"}</span>
-            <strong>{memories.length}개의 순간</strong>
+            <strong>{moments.length}개의 순간</strong>
             <small>시작 {formatTreeDate(tree.createdAt)}</small>
           </div>
         </div>
@@ -227,28 +199,37 @@ export default function TreeDetailPage() {
           <section className="memory-board" aria-labelledby="memory-list-title">
             <div className="memory-board-heading">
               <div><p className="eyebrow">connected moments</p><h2 id="memory-list-title">이어진 순간들</h2></div>
-              <span>{memories.length} moments</span>
+              <span>{moments.length} moments</span>
             </div>
-            {memories.length === 0 ? (
+            {moments.length === 0 ? (
               <div className="memory-empty"><span aria-hidden="true">✦</span><p>아직 기록된 순간이 없어요.</p>{isOwner ? <span>오른쪽에서 첫 순간을 남겨 보세요.</span> : null}</div>
             ) : (
               <div className="memory-list">
-                {memories.map((memory, index) => (
-                  <article className={`memory-record${index === 0 ? " memory-root" : ""}`} key={memory.id}>
-                    <div className="memory-record-index">{String(memories.length - index).padStart(2, "0")}</div>
-                    <div className={`memory-record-media memory-media-${index % 4}`}>
-                      {memory.thumbnail ? <img src={memory.thumbnail} alt="" /> : <span aria-hidden="true">{memory.sourceType === "song" ? "♫" : memory.sourceType === "book" ? "▤" : "✦"}</span>}
-                    </div>
-                    <div className="memory-record-body">
-                      <div className="memory-record-meta"><span>{sourceTypeLabel(memory.sourceType)}</span><time>{formatTreeDate(memory.timestamp || memory.createdAt)}</time></div>
-                      <h3>{memory.title || `순간 ${memories.length - index}`}</h3>
-                      <p>{memory.memo || "이 순간에 남긴 마음"}</p>
-                      {memory.emotionTags && memory.emotionTags.length > 0 ? <div className="memory-tags">{memory.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}
-                      {memory.sourceUrl ? <a className="memory-source" href={memory.sourceUrl} target="_blank" rel="noreferrer">출처 열기 ↗</a> : null}
-                      {isOwner ? <div className="memory-tools"><button type="button" onClick={() => beginEdit(memory)}>수정</button><button type="button" onClick={() => void removeMemory(memory.id)} disabled={removingId === memory.id}>{removingId === memory.id ? "지우는 중…" : "삭제"}</button></div> : null}
-                    </div>
-                  </article>
-                ))}
+                {treeMoments.map((moment, index) => {
+                  const memory: MemoryRecord = moments.find((m) => m.id === moment.id) ?? moment as unknown as MemoryRecord;
+                  const isHighlighted = moment.id === highlightMomentId;
+                  return (
+                    <article
+                      className={`memory-record${index === 0 ? " memory-root" : ""}${isHighlighted ? " highlighted" : ""}`}
+                      key={moment.id}
+                      onClick={() => selectMoment(moment.id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="memory-record-index">{String(treeMoments.length - index).padStart(2, "0")}</div>
+                      <div className={`memory-record-media memory-media-${index % 4}`}>
+                        {memory.thumbnail ? <img src={memory.thumbnail} alt="" /> : <span aria-hidden="true">{memory.sourceType === "song" ? "♫" : memory.sourceType === "book" ? "▤" : "✦"}</span>}
+                      </div>
+                      <div className="memory-record-body">
+                        <div className="memory-record-meta"><span>{sourceTypeLabel(memory.sourceType)}</span><time>{formatTreeDate(memory.timestamp || memory.createdAt)}</time></div>
+                        <h3>{moment.title || `순간 ${treeMoments.length - index}`}</h3>
+                        <p>{moment.memo || "이 순간에 남긴 마음"}</p>
+                        {memory.emotionTags && memory.emotionTags.length > 0 ? <div className="memory-tags">{memory.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}
+                        {memory.sourceUrl ? <a className="memory-source" href={memory.sourceUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>출처 열기 ↗</a> : null}
+                        {isOwner ? <div className="memory-tools" onClick={(e) => e.stopPropagation()}><button type="button" onClick={() => beginEdit(memory)}>수정</button><button type="button" onClick={() => void removeMemory(memory.id)} disabled={removingId === memory.id}>{removingId === memory.id ? "지우는 중…" : "삭제"}</button></div> : null}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>
@@ -278,7 +259,7 @@ export default function TreeDetailPage() {
                 <label htmlFor="memory-parent">어떤 순간에서 이어졌나요?</label>
                 <select id="memory-parent" value={form.parentId} onChange={(event) => setForm((current) => ({ ...current, parentId: event.target.value }))}>
                   <option value="">처음 가지로 남기기</option>
-                  {parentOptions.map((memory) => <option value={memory.id} key={memory.id}>{memory.title || "이전 순간"}</option>)}
+                  {parentOptions.filter((m) => m.id !== editingId).map((memory) => <option value={memory.id} key={memory.id}>{memory.title || "이전 순간"}</option>)}
                 </select>
                 {formError ? <p className="tree-form-error" role="alert">{formError}</p> : null}
                 <div className="memory-composer-actions"><button className="button button-primary" type="submit" disabled={saving}>{saving ? "저장 중…" : editingId ? "수정한 순간 저장" : "이 순간 이어 붙이기"}</button>{editingId ? <button className="button button-quiet" type="button" onClick={resetForm}>취소</button> : null}</div>
@@ -287,22 +268,16 @@ export default function TreeDetailPage() {
           ) : null}
         </div>
       </section>
-    </TreeDetailShell>
-  );
-}
 
-function TreeDetailShell({ children, userLabel }: { children: React.ReactNode; userLabel?: string }) {
-  return (
-    <main className="tree-page">
-      <header className="tree-page-topbar">
-        <Link className="tree-page-brand" href="/" aria-label="LoveTree 처음 화면으로">LoveTree</Link>
-        <nav className="tree-page-nav" aria-label="러브트리 메뉴">
-          <Link href="/my-trees">내 러브트리</Link>
-          <Link href="/?view=browse">둘러보기</Link>
-          {userLabel ? <span>{userLabel}</span> : null}
-        </nav>
-      </header>
-      {children}
-    </main>
+      <MomentDetailModal
+        key={selectedMomentId ?? "none"}
+        moment={selectedMoment}
+        isOwner={isOwner}
+        onClose={() => selectMoment(null)}
+        onUpdate={updateMoment}
+        onDelete={deleteMoment}
+        parentOptions={parentOptions}
+      />
+    </TreeViewShell>
   );
 }

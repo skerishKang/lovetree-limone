@@ -182,7 +182,6 @@ export default function Home() {
           memo: note,
           clientKey: memoryClientKey,
           timestamp: momentDate,
-          sortOrder: "0",
         }),
       });
       const data = (await res.json()) as { id?: string; error?: string };
@@ -190,7 +189,7 @@ export default function Home() {
         setPlantError(data.error || "이 순간을 심지 못했어요. 다시 시도해 주세요.");
         return;
       }
-      router.push(`/trees/${currentTreeId}`);
+      router.push(`/trees/${currentTreeId}?highlight=${data.id}`);
     } catch {
       setPlantError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
     } finally {
