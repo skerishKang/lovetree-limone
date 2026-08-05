@@ -858,6 +858,9 @@ export default function V4Cinematic() {
                 );
               })}
             </div>
+            <Link href="/v4/journey" className="cin-menu-cta" aria-label="V4 전체 화면 보기로 이동">
+              V4 화면 보기 <span aria-hidden="true">→</span>
+            </Link>
           </div>
         </div>
       )}
