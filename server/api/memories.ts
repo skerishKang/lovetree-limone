@@ -44,11 +44,13 @@ const MEMORY_CONTENT_RULES = {
 
 const MEMORY_CREATE_RULES = {
   ...MEMORY_CONTENT_RULES,
+  sortOrder: { kind: "integer", min: 0, max: 10_000_000 },
   treeId: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 100 },
 } as const;
 
 const MEMORY_NESTED_CREATE_RULES = {
   ...MEMORY_CONTENT_RULES,
+  sortOrder: { kind: "integer", min: 0, max: 10_000_000 },
 } as const;
 
 const MEMORY_UPDATE_RULES = {
