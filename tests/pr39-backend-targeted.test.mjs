@@ -94,6 +94,8 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
   const updated = [];
   const deleted = [];
   let insertFailCount = 0;
+  let sortOrderBarrier = null;
+  let uniqueCollisionCount = 0;
 
   function getTableData(table) {
     if (table === memories || table === dbMemories) return dbMemories;
@@ -167,6 +169,19 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
           });
         }
 
+        // Concurrency test hook: when a sortOrder-computation SELECT is armed
+        // with a barrier, wait until every expected request has read the same
+        // MAX(sortOrder) before resolving. This forces two concurrent requests
+        // to observe the same next sortOrder and then collide on the UNIQUE
+        // (tree_id, sort_order) constraint, exercising the real retry path.
+        if (sortOrderBarrier && this._fieldAliases && this._fieldAliases.sortOrder !== undefined) {
+          sortOrderBarrier.arrivals++;
+          if (sortOrderBarrier.arrivals >= sortOrderBarrier.expected) {
+            sortOrderBarrier.release();
+          }
+          return sortOrderBarrier.promise.then(() => resolve(result));
+        }
+
         Promise.resolve(result).then(resolve, reject);
       },
     };
@@ -180,6 +195,12 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
     _dbTrees: dbTrees,
     _dbMemories: dbMemories,
     setInsertShouldFail(times) { insertFailCount = times; },
+    armSortOrderBarrier(expected) {
+      let release;
+      const promise = new Promise((resolve) => { release = resolve; });
+      sortOrderBarrier = { expected, arrivals: 0, promise, release };
+    },
+    getUniqueCollisionCount() { return uniqueCollisionCount; },
     select(...fields) {
       const q = makeSelectQuery();
       if (fields.length > 0 && typeof fields[0] === "object" && fields[0] !== null) {
@@ -197,6 +218,18 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
           insertFailCount--;
           const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq"');
           return Promise.reject(err);
+        }
+        // Real UNIQUE (tree_id, sort_order) check so a concurrent request that
+        // computed the same next sortOrder collides and must retry.
+        if ((table === memories || table === dbMemories) && !onConflict) {
+          const collision = dbMemories.find(
+            (row) => row.treeId === value.treeId && row.sortOrder === value.sortOrder
+          );
+          if (collision) {
+            uniqueCollisionCount++;
+            const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq"');
+            return Promise.reject(err);
+          }
         }
         inserted.push({ table, value });
         const data = getTableData(table);
@@ -698,4 +731,68 @@ test("0003_sort_order_backfill.sql does not exist", async () => {
     /ENOENT/,
     "0003 file should be removed"
   );
+});
+
+test("two different clientKeys created concurrently both succeed with distinct consecutive sortOrders", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeStatefulDb({ treeRows: [OWNER_TREE] });
+
+    // Force both requests to read the same MAX(sortOrder) before either
+    // inserts. Without this, the stateful fake's synchronous inserts would let
+    // the second request already see the first row and never exercise the
+    // UNIQUE-collision retry path.
+    db.armSortOrderBarrier(2);
+
+    const [r1, r2] = await Promise.all([
+      memoriesRouter(makeContext({
+        method: "POST",
+        path: "/api/trees/tree-owner/memories",
+        body: { memo: "concurrent A", clientKey: "ck-concurrent-a" },
+        db,
+      })),
+      memoriesRouter(makeContext({
+        method: "POST",
+        path: "/api/trees/tree-owner/memories",
+        body: { memo: "concurrent B", clientKey: "ck-concurrent-b" },
+        db,
+      })),
+    ]);
+
+    assert.equal(r1.status, 201, `request A status ${r1.status}`);
+    assert.equal(r2.status, 201, `request B status ${r2.status}`);
+
+    const b1 = await r1.json();
+    const b2 = await r2.json();
+
+    assert.notEqual(b1.id, b2.id, "moment IDs must differ");
+    assert.notEqual(b1.sortOrder, b2.sortOrder, "sortOrders must differ");
+
+    const finalOrders = [b1.sortOrder, b2.sortOrder].sort((a, b) => a - b);
+    assert.deepEqual(
+      finalOrders,
+      [0, 1],
+      `final sortOrders must be consecutive 0 and 1, got ${JSON.stringify(finalOrders)}`
+    );
+
+    // Exactly two rows persisted, one per clientKey, no duplicate sortOrder.
+    assert.equal(db.inserted.length, 2, "two rows inserted");
+    const rowsByOrder = [...db._dbMemories].sort((a, b) => a.sortOrder - b.sortOrder);
+    assert.equal(rowsByOrder.length, 2, "two stored rows");
+    assert.equal(rowsByOrder[0].sortOrder, 0);
+    assert.equal(rowsByOrder[1].sortOrder, 1);
+    const uniqueOrders = new Set(db._dbMemories.map((m) => m.sortOrder));
+    assert.equal(uniqueOrders.size, 2, "no permanently duplicated sortOrder");
+
+    const storedClientKeys = new Set(db._dbMemories.map((m) => m.clientKey));
+    assert.ok(storedClientKeys.has("ck-concurrent-a"), "row A stored");
+    assert.ok(storedClientKeys.has("ck-concurrent-b"), "row B stored");
+
+    // The UNIQUE (tree_id, sort_order) collision retry path must actually have
+    // been exercised — both requests read the same MAX, the second collided,
+    // re-read the latest MAX, and persisted the next consecutive sortOrder.
+    assert.ok(
+      db.getUniqueCollisionCount() >= 1,
+      `expected at least one UNIQUE collision retry, got ${db.getUniqueCollisionCount()}`
+    );
+  });
 });
