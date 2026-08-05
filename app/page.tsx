@@ -125,7 +125,10 @@ export default function Home() {
   async function startTree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
-    if (!treeName.trim()) return;
+    if (!treeName.trim()) {
+      setTreeError("러브트리 이름을 입력해 주세요.");
+      return;
+    }
     if (!user) {
       await login();
       return;
@@ -157,7 +160,10 @@ export default function Home() {
   async function plantMoment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
-    if (!note.trim()) return;
+    if (!note.trim()) {
+      setPlantError("마음에 남은 순간을 적어 주세요.");
+      return;
+    }
     if (!user) {
       await login();
       return;
@@ -176,6 +182,7 @@ export default function Home() {
           memo: note,
           clientKey: memoryClientKey,
           timestamp: momentDate,
+          sortOrder: "0",
         }),
       });
       const data = (await res.json()) as { id?: string; error?: string };

@@ -1,4 +1,4 @@
-import { eq, desc, and, inArray } from "drizzle-orm";
+import { eq, desc, asc, and, inArray } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import { memories, trees } from "../../db/schema";
@@ -32,6 +32,7 @@ const MEMORY_CONTENT_RULES = {
   thumbnail: { kind: "url", maxLength: 2048 },
   emotionTags: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
   timestamp: { kind: "string", trim: true, maxLength: 100 },
+  sortOrder: { kind: "string", trim: true, maxLength: 10 },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
@@ -76,6 +77,7 @@ function buildMemoryRow(
     thumbnail: (body.thumbnail as string | undefined) ?? "",
     emotionTags: (body.emotionTags as string[] | undefined) ?? [],
     timestamp: (body.timestamp as string | undefined) ?? "",
+    sortOrder: Number(body.sortOrder as string | undefined) || 0,
     visibility: ((body.visibility as string | undefined) ?? "public") as VisibilityValue,
     channelId: (body.channelId as string | undefined) ?? null,
     channelName: (body.channelName as string | undefined) ?? null,
@@ -136,7 +138,7 @@ async function listMemories(ctx: ApiContext): Promise<Response> {
     .select()
     .from(memories)
     .where(inArray(memories.treeId, myTreeIds.map((t) => t.id)))
-    .orderBy(desc(memories.createdAt))
+    .orderBy(asc(memories.sortOrder), desc(memories.createdAt))
     .limit(limit);
 
   return json(rows);
@@ -268,7 +270,7 @@ async function listTreeMemories(ctx: ApiContext): Promise<Response> {
     .select()
     .from(memories)
     .where(eq(memories.treeId, treeId))
-    .orderBy(desc(memories.createdAt))
+    .orderBy(asc(memories.sortOrder), desc(memories.createdAt))
     .limit(limit);
 
   return json(rows);
