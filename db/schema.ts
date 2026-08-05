@@ -90,7 +90,7 @@ export const memories = pgTable(
   (table) => [
     index("memories_tree_id_idx").on(table.treeId),
     index("memories_visibility_created_at_idx").on(table.visibility, table.createdAt),
-    index("memories_tree_sort_order_idx").on(table.treeId, table.sortOrder),
+    uniqueIndex("memories_tree_sort_order_uniq").on(table.treeId, table.sortOrder),
     uniqueIndex("memories_tree_client_key_uniq").on(table.treeId, table.clientKey),
   ]
 );

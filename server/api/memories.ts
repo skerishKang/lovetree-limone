@@ -22,7 +22,7 @@ import {
   type SourceTypeValue,
 } from "./validate";
 
-const MAX_SAFE_SORT_ORDER = 10_000_000;
+const SORT_ORDER_MAX_RETRIES = 5;
 
 const MEMORY_CONTENT_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
@@ -35,7 +35,6 @@ const MEMORY_CONTENT_RULES = {
   thumbnail: { kind: "url", maxLength: 2048 },
   emotionTags: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
   timestamp: { kind: "string", trim: true, maxLength: 100 },
-  sortOrder: { kind: "integer", min: 0, max: MAX_SAFE_SORT_ORDER },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
@@ -54,6 +53,7 @@ const MEMORY_NESTED_CREATE_RULES = {
 
 const MEMORY_UPDATE_RULES = {
   ...MEMORY_CONTENT_RULES,
+  sortOrder: { kind: "integer", min: 0, max: 10_000_000 },
   treeId: { kind: "string", trim: true, minLength: 1, maxLength: 100 },
 } as const;
 
@@ -102,6 +102,74 @@ function validateMemoryContent(body: Record<string, unknown>): string | null {
   if (tsError) return tsError;
 
   return null;
+}
+
+interface InsertResult {
+  row: MemoryRow;
+  status: 201 | 200;
+}
+
+async function findExistingByClientKey(
+  ctx: ApiContext,
+  treeId: string,
+  clientKey: string
+): Promise<MemoryRow | null> {
+  const existing = await ctx.db
+    .select()
+    .from(memories)
+    .where(and(eq(memories.treeId, treeId), eq(memories.clientKey, clientKey)));
+  return existing[0] ?? null;
+}
+
+async function computeNextSortOrder(ctx: ApiContext, treeId: string): Promise<number> {
+  const rows = await ctx.db
+    .select({ sortOrder: memories.sortOrder })
+    .from(memories)
+    .where(eq(memories.treeId, treeId))
+    .orderBy(desc(memories.sortOrder))
+    .limit(1);
+  return (rows[0]?.sortOrder ?? -1) + 1;
+}
+
+async function insertMemoryWithRetry(
+  ctx: ApiContext,
+  treeId: string,
+  body: Record<string, unknown>,
+  clientKey: string | undefined
+): Promise<Response> {
+  if (clientKey) {
+    const existing = await findExistingByClientKey(ctx, treeId, clientKey);
+    if (existing) return json(existing, 200);
+  }
+
+  for (let attempt = 0; attempt < SORT_ORDER_MAX_RETRIES; attempt++) {
+    if (clientKey) {
+      const existing = await findExistingByClientKey(ctx, treeId, clientKey);
+      if (existing) return json(existing, 200);
+    }
+
+    const nextSortOrder = await computeNextSortOrder(ctx, treeId);
+    const now = new Date();
+    const memory = buildMemoryRow(now, {
+      id: crypto.randomUUID(),
+      treeId,
+      body,
+      sortOrder: nextSortOrder,
+    });
+
+    try {
+      await ctx.db.insert(memories).values(memory);
+      return json(memory, 201);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("unique") || message.includes("duplicate") || message.includes("23505")) {
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  return errorResponse("Sort order conflict — please retry", 409);
 }
 
 export async function memoriesRouter(ctx: ApiContext): Promise<Response | null> {
@@ -180,36 +248,8 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
     return validationError("parentId must reference a memory in the same tree");
   }
 
-  const existingRows = await ctx.db
-    .select({ sortOrder: memories.sortOrder })
-    .from(memories)
-    .where(eq(memories.treeId, treeId))
-    .orderBy(desc(memories.sortOrder))
-    .limit(1);
-  const nextSortOrder = (existingRows[0]?.sortOrder ?? -1) + 1;
-
-  const now = new Date();
-  const memory = buildMemoryRow(now, {
-    id: crypto.randomUUID(),
-    treeId,
-    body: parsed.value,
-    sortOrder: nextSortOrder,
-  });
-
   const clientKey = parsed.value.clientKey as string | undefined;
-  if (clientKey) {
-    const existing = await ctx.db
-      .select()
-      .from(memories)
-      .where(and(
-        eq(memories.treeId, treeId),
-        eq(memories.clientKey, clientKey)
-      ));
-    if (existing[0]) return json(existing[0]);
-  }
-
-  await ctx.db.insert(memories).values(memory);
-  return json(memory, 201);
+  return insertMemoryWithRetry(ctx, treeId, parsed.value, clientKey);
 }
 
 async function getMemory(ctx: ApiContext): Promise<Response> {
@@ -262,6 +302,7 @@ async function updateMemory(ctx: ApiContext): Promise<Response> {
     "thumbnail",
     "emotionTags",
     "timestamp",
+    "sortOrder",
     "visibility",
     "channelId",
     "channelName",
@@ -325,36 +366,8 @@ async function createTreeMemory(ctx: ApiContext): Promise<Response> {
     return validationError("parentId must reference a memory in the same tree");
   }
 
-  const existingRows = await ctx.db
-    .select({ sortOrder: memories.sortOrder })
-    .from(memories)
-    .where(eq(memories.treeId, treeId))
-    .orderBy(desc(memories.sortOrder))
-    .limit(1);
-  const nextSortOrder = (existingRows[0]?.sortOrder ?? -1) + 1;
-
-  const now = new Date();
-  const memory = buildMemoryRow(now, {
-    id: crypto.randomUUID(),
-    treeId,
-    body: parsed.value,
-    sortOrder: nextSortOrder,
-  });
-
   const clientKey = parsed.value.clientKey as string | undefined;
-  if (clientKey) {
-    const existing = await ctx.db
-      .select()
-      .from(memories)
-      .where(and(
-        eq(memories.treeId, treeId),
-        eq(memories.clientKey, clientKey)
-      ));
-    if (existing[0]) return json(existing[0]);
-  }
-
-  await ctx.db.insert(memories).values(memory);
-  return json(memory, 201);
+  return insertMemoryWithRetry(ctx, treeId, parsed.value, clientKey);
 }
 
 async function listCommunityMemories(ctx: ApiContext): Promise<Response> {
