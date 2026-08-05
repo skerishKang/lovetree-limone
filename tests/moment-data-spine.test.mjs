@@ -59,9 +59,15 @@ function makeDb({ treeRows = [], memoryRows = [] } = {}) {
     const query = {
       table,
       from(t) { this.table = t; return this; },
-      where() { return this; },
+      where(...conditions) {
+        this._conditions = conditions;
+        return this;
+      },
       orderBy() { return this; },
-      limit() { return this._resolve(); },
+      limit(n) {
+        this._limit = n;
+        return this._resolve();
+      },
       _resolve() {
         if (this.table === trees) return Promise.resolve(treeResponses.shift() ?? []);
         if (this.table === memories) return Promise.resolve(memoryResponses.shift() ?? []);
@@ -329,7 +335,6 @@ test("first tree + first moment creation via with-first-memory", async () => {
           memo: "첫 순간",
           sourceType: "youtube",
           timestamp: "2026-01-15",
-          sortOrder: "0",
         },
       },
       db,
@@ -356,7 +361,6 @@ test("existing tree memory creation via nested endpoint", async () => {
         memo: "second moment",
         sourceType: "song",
         timestamp: "2026-02-01",
-        sortOrder: "1",
         clientKey: "mem-key-2",
       },
       db,
@@ -366,7 +370,7 @@ test("existing tree memory creation via nested endpoint", async () => {
     const body = await response.json();
     assert.equal(body.treeId, "tree-owner");
     assert.equal(body.memo, "second moment");
-    assert.equal(body.sortOrder, 1);
+    assert.equal(body.sortOrder, 0);
     assert.equal(db.inserted.length, 1);
   });
 });
@@ -486,11 +490,243 @@ test("empty memo and title are rejected by validation", async () => {
       db,
     }));
 
+    assert.equal(response.status, 400);
+    const body = await response.json();
+    assert.ok(body.error);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("whitespace-only memo and title are rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "   ", title: "   " },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("invalid timestamp is rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "test", timestamp: "not-a-date" },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("non-existent date like 2026-02-31 is rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "test", timestamp: "2026-02-31" },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("negative sortOrder is rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "test", sortOrder: -1 },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("decimal sortOrder is rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "test", sortOrder: 1.5 },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("string sortOrder is rejected by validation", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "test", sortOrder: "abc" },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("server assigns sortOrder on append, ignoring client value", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb({ treeRows: [[OWNER_TREE]] });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: {
+        memo: "first moment",
+        sortOrder: 999,
+        timestamp: "2026-01-15",
+      },
+      db,
+    }));
+
     assert.equal(response.status, 201);
     const body = await response.json();
-    assert.equal(body.memo, "");
-    assert.equal(body.title, "");
+    assert.equal(body.sortOrder, 0);
+    assert.equal(db.inserted.length, 1);
+    assert.equal(db.inserted[0].value.sortOrder, 0);
   });
+});
+
+test("server assigns incrementing sortOrder for consecutive appends", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const existingMemories = [
+      { id: "mem-1", treeId: "tree-owner", sortOrder: 1, timestamp: "2026-01-16", createdAt: "2026-01-16T00:00:00Z" },
+      { id: "mem-0", treeId: "tree-owner", sortOrder: 0, timestamp: "2026-01-15", createdAt: "2026-01-15T00:00:00Z" },
+    ];
+    const db = makeDb({
+      treeRows: [[OWNER_TREE]],
+      memoryRows: [existingMemories],
+    });
+    const response = await memoriesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/tree-owner/memories",
+      body: { memo: "next moment", timestamp: "2026-01-17" },
+      db,
+    }));
+
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.sortOrder, 2);
+    assert.equal(db.inserted.length, 1);
+    assert.equal(db.inserted[0].value.sortOrder, 2);
+  });
+});
+
+test("with-first-memory rejects empty memory title and memo", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb();
+    const response = await treesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/with-first-memory",
+      body: {
+        clientKey: "test-key-empty",
+        title: "My Tree",
+        memory: {
+          memo: "",
+          title: "",
+          sourceType: "youtube",
+        },
+      },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("with-first-memory rejects invalid memory timestamp", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb();
+    const response = await treesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/with-first-memory",
+      body: {
+        clientKey: "test-key-bad-ts",
+        title: "My Tree",
+        memory: {
+          memo: "first",
+          timestamp: "bad-date",
+          sourceType: "youtube",
+        },
+      },
+      db,
+    }));
+
+    assert.equal(response.status, 400);
+    assert.equal(db.inserted.length, 0);
+  });
+});
+
+test("with-first-memory assigns sortOrder 0 for first moment", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = makeDb();
+    const response = await treesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/with-first-memory",
+      body: {
+        clientKey: "test-key-first",
+        title: "My Love Tree",
+        memory: {
+          memo: "첫 순간",
+          sourceType: "youtube",
+          timestamp: "2026-01-15",
+        },
+      },
+      db,
+    }));
+
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.memory.sortOrder, 0);
+    assert.equal(body.memory.treeId, body.tree.id);
+  });
+});
+
+test("sortMoments uses id as final tie-breaker for deterministic ordering", () => {
+  const moments = [
+    { id: "m-b", treeId: "t1", parentId: null, title: "", memo: "", artist: "", source: "", sourceUrl: "", sourceType: "youtube", thumbnail: "", emotionTags: [], timestamp: "", sortOrder: 0, visibility: "public", channelId: null, channelName: null, channelUrl: null, createdAt: "2026-01-01T00:00:00Z", updatedAt: null },
+    { id: "m-a", treeId: "t1", parentId: null, title: "", memo: "", artist: "", source: "", sourceUrl: "", sourceType: "youtube", thumbnail: "", emotionTags: [], timestamp: "", sortOrder: 0, visibility: "public", channelId: null, channelName: null, channelUrl: null, createdAt: "2026-01-01T00:00:00Z", updatedAt: null },
+  ].map((m) => toCanonicalMoment(m, USER_ID));
+
+  const sorted = sortMoments(moments);
+  assert.equal(sorted[0].id, "m-a");
+  assert.equal(sorted[1].id, "m-b");
+});
+
+test("API and selector sorting produce identical results", () => {
+  const memories = [
+    { id: "m3", treeId: "t1", parentId: null, title: "", memo: "", artist: "", source: "", sourceUrl: "", sourceType: "youtube", thumbnail: "", emotionTags: [], timestamp: "2026-03-01", sortOrder: 2, visibility: "public", channelId: null, channelName: null, channelUrl: null, createdAt: "2026-03-01T00:00:00Z", updatedAt: null },
+    { id: "m1", treeId: "t1", parentId: null, title: "", memo: "", artist: "", source: "", sourceUrl: "", sourceType: "youtube", thumbnail: "", emotionTags: [], timestamp: "2026-01-01", sortOrder: 0, visibility: "public", channelId: null, channelName: null, channelUrl: null, createdAt: "2026-01-01T00:00:00Z", updatedAt: null },
+    { id: "m2", treeId: "t1", parentId: null, title: "", memo: "", artist: "", source: "", sourceUrl: "", sourceType: "youtube", thumbnail: "", emotionTags: [], timestamp: "2026-02-01", sortOrder: 1, visibility: "public", channelId: null, channelName: null, channelUrl: null, createdAt: "2026-02-01T00:00:00Z", updatedAt: null },
+  ];
+  const moments = memories.map((m) => toCanonicalMoment(m, USER_ID));
+  const sorted = sortMoments(moments);
+  assert.equal(sorted[0].id, "m1");
+  assert.equal(sorted[1].id, "m2");
+  assert.equal(sorted[2].id, "m3");
 });
 
 test("duplicate submission with same clientKey returns existing memory", async () => {
@@ -518,7 +754,7 @@ test("duplicate submission with same clientKey returns existing memory", async (
     };
     const db = makeDb({
       treeRows: [[OWNER_TREE]],
-      memoryRows: [[existingMemory]],
+      memoryRows: [[existingMemory], [existingMemory]],
     });
 
     const response = await memoriesRouter(makeContext({
@@ -589,7 +825,6 @@ test("with-first-memory is idempotent with same clientKey", async () => {
           memo: "첫 순간",
           sourceType: "youtube",
           timestamp: "2026-01-15",
-          sortOrder: "0",
         },
       },
       db,
@@ -604,27 +839,7 @@ test("with-first-memory is idempotent with same clientKey", async () => {
   });
 });
 
-test("sortOrder is stored and returned correctly", async () => {
-  await withFirebaseKeyFetch(async () => {
-    const db = makeDb({ treeRows: [[OWNER_TREE]] });
-    const response = await memoriesRouter(makeContext({
-      method: "POST",
-      path: "/api/trees/tree-owner/memories",
-      body: {
-        memo: "ordered moment",
-        sortOrder: "5",
-        timestamp: "2026-03-01",
-      },
-      db,
-    }));
-
-    assert.equal(response.status, 201);
-    const body = await response.json();
-    assert.equal(body.sortOrder, 5);
-  });
-});
-
-test("sortOrder defaults to 0 when not provided", async () => {
+test("sortOrder defaults to server-assigned next value when not provided", async () => {
   await withFirebaseKeyFetch(async () => {
     const db = makeDb({ treeRows: [[OWNER_TREE]] });
     const response = await memoriesRouter(makeContext({
@@ -632,6 +847,7 @@ test("sortOrder defaults to 0 when not provided", async () => {
       path: "/api/trees/tree-owner/memories",
       body: {
         memo: "default order",
+        timestamp: "2026-01-15",
       },
       db,
     }));

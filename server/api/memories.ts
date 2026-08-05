@@ -17,9 +17,12 @@ import {
   validationError,
   VISIBILITY_VALUES,
   SOURCE_TYPE_VALUES,
+  validateTimestamp,
   type VisibilityValue,
   type SourceTypeValue,
 } from "./validate";
+
+const MAX_SAFE_SORT_ORDER = 10_000_000;
 
 const MEMORY_CONTENT_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
@@ -32,7 +35,7 @@ const MEMORY_CONTENT_RULES = {
   thumbnail: { kind: "url", maxLength: 2048 },
   emotionTags: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
   timestamp: { kind: "string", trim: true, maxLength: 100 },
-  sortOrder: { kind: "string", trim: true, maxLength: 10 },
+  sortOrder: { kind: "integer", min: 0, max: MAX_SAFE_SORT_ORDER },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
@@ -60,9 +63,10 @@ function buildMemoryRow(
     id: string;
     treeId: string;
     body: Record<string, unknown>;
+    sortOrder: number;
   }
 ): MemoryRow {
-  const { id, treeId, body } = values;
+  const { id, treeId, body, sortOrder } = values;
   return {
     id,
     treeId,
@@ -77,7 +81,7 @@ function buildMemoryRow(
     thumbnail: (body.thumbnail as string | undefined) ?? "",
     emotionTags: (body.emotionTags as string[] | undefined) ?? [],
     timestamp: (body.timestamp as string | undefined) ?? "",
-    sortOrder: Number(body.sortOrder as string | undefined) || 0,
+    sortOrder,
     visibility: ((body.visibility as string | undefined) ?? "public") as VisibilityValue,
     channelId: (body.channelId as string | undefined) ?? null,
     channelName: (body.channelName as string | undefined) ?? null,
@@ -85,6 +89,19 @@ function buildMemoryRow(
     createdAt: now,
     updatedAt: now,
   };
+}
+
+function validateMemoryContent(body: Record<string, unknown>): string | null {
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const memo = typeof body.memo === "string" ? body.memo.trim() : "";
+  if (title.length === 0 && memo.length === 0) {
+    return "title or memo is required";
+  }
+
+  const tsError = validateTimestamp(body.timestamp, "timestamp");
+  if (tsError) return tsError;
+
+  return null;
 }
 
 export async function memoriesRouter(ctx: ApiContext): Promise<Response | null> {
@@ -138,7 +155,7 @@ async function listMemories(ctx: ApiContext): Promise<Response> {
     .select()
     .from(memories)
     .where(inArray(memories.treeId, myTreeIds.map((t) => t.id)))
-    .orderBy(asc(memories.sortOrder), desc(memories.createdAt))
+    .orderBy(asc(memories.sortOrder), asc(memories.timestamp), asc(memories.createdAt), asc(memories.id))
     .limit(limit);
 
   return json(rows);
@@ -152,6 +169,9 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
   const parsed = validate<Record<string, unknown>>(body, MEMORY_CREATE_RULES);
   if (!parsed.ok) return validationError(parsed.error);
 
+  const contentError = validateMemoryContent(parsed.value);
+  if (contentError) return validationError(contentError);
+
   const treeId = parsed.value.treeId as string;
   const ownedTree = await getOwnedTree(ctx, treeId, user);
   if (!ownedTree) return errorResponse("Not found", 404);
@@ -160,11 +180,20 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
     return validationError("parentId must reference a memory in the same tree");
   }
 
+  const existingRows = await ctx.db
+    .select({ sortOrder: memories.sortOrder })
+    .from(memories)
+    .where(eq(memories.treeId, treeId))
+    .orderBy(desc(memories.sortOrder))
+    .limit(1);
+  const nextSortOrder = (existingRows[0]?.sortOrder ?? -1) + 1;
+
   const now = new Date();
   const memory = buildMemoryRow(now, {
     id: crypto.randomUUID(),
     treeId,
     body: parsed.value,
+    sortOrder: nextSortOrder,
   });
 
   const clientKey = parsed.value.clientKey as string | undefined;
@@ -270,7 +299,7 @@ async function listTreeMemories(ctx: ApiContext): Promise<Response> {
     .select()
     .from(memories)
     .where(eq(memories.treeId, treeId))
-    .orderBy(asc(memories.sortOrder), desc(memories.createdAt))
+    .orderBy(asc(memories.sortOrder), asc(memories.timestamp), asc(memories.createdAt), asc(memories.id))
     .limit(limit);
 
   return json(rows);
@@ -288,16 +317,28 @@ async function createTreeMemory(ctx: ApiContext): Promise<Response> {
   const parsed = validate<Record<string, unknown>>(body, MEMORY_NESTED_CREATE_RULES);
   if (!parsed.ok) return validationError(parsed.error);
 
+  const contentError = validateMemoryContent(parsed.value);
+  if (contentError) return validationError(contentError);
+
   const parentId = (parsed.value.parentId as string | null) ?? null;
   if (!(await isParentInSameTree(ctx, treeId, parentId))) {
     return validationError("parentId must reference a memory in the same tree");
   }
+
+  const existingRows = await ctx.db
+    .select({ sortOrder: memories.sortOrder })
+    .from(memories)
+    .where(eq(memories.treeId, treeId))
+    .orderBy(desc(memories.sortOrder))
+    .limit(1);
+  const nextSortOrder = (existingRows[0]?.sortOrder ?? -1) + 1;
 
   const now = new Date();
   const memory = buildMemoryRow(now, {
     id: crypto.randomUUID(),
     treeId,
     body: parsed.value,
+    sortOrder: nextSortOrder,
   });
 
   const clientKey = parsed.value.clientKey as string | undefined;

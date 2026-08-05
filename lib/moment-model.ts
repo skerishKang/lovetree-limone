@@ -170,7 +170,10 @@ export function sortMoments(moments: CanonicalMoment[]): CanonicalMoment[] {
     if (ta !== tb) return ta < tb ? -1 : 1;
     const ca = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt ?? 0).getTime();
     const cb = b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt ?? 0).getTime();
-    return ca - cb;
+    if (ca !== cb) return ca - cb;
+    if (a.id < b.id) return -1;
+    if (a.id > b.id) return 1;
+    return 0;
   });
 }
 

@@ -133,7 +133,6 @@ export default function TreeDetailPage() {
       memo: form.memo.trim(),
       source: form.source.trim(),
       timestamp: form.timestamp,
-      sortOrder: String(memories.length),
       emotionTags: form.emotionTags.split(",").map((tag) => tag.trim()).filter(Boolean),
       parentId: form.parentId || undefined,
     };
