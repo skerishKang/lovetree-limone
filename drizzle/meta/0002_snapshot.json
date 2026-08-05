@@ -297,27 +297,6 @@
           "method": "btree",
           "with": {}
         },
-        "memories_tree_sort_order_idx": {
-          "name": "memories_tree_sort_order_idx",
-          "columns": [
-            {
-              "expression": "tree_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "sort_order",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "memories_tree_client_key_uniq": {
           "name": "memories_tree_client_key_uniq",
           "columns": [
@@ -329,6 +308,27 @@
             },
             {
               "expression": "client_key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "memories_tree_sort_order_uniq": {
+          "name": "memories_tree_sort_order_uniq",
+          "columns": [
+            {
+              "expression": "tree_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sort_order",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
