@@ -8,10 +8,21 @@ interface TreeViewShellProps {
   treeId: string;
   activeView: ViewKind;
   userLabel?: string;
+  momentId?: string | null;
+  onAddMoment?: () => void;
+  isOwner?: boolean;
   children: ReactNode;
 }
 
-export function TreeViewShell({ treeId, activeView, userLabel, children }: TreeViewShellProps) {
+export function TreeViewShell({
+  treeId,
+  activeView,
+  userLabel,
+  momentId,
+  onAddMoment,
+  isOwner,
+  children,
+}: TreeViewShellProps) {
   return (
     <main className="tree-page">
       <header className="tree-page-topbar">
@@ -23,7 +34,10 @@ export function TreeViewShell({ treeId, activeView, userLabel, children }: TreeV
         </nav>
       </header>
       <div className="tree-view-switcher-bar">
-        <ViewSwitcher treeId={treeId} active={activeView} />
+        <ViewSwitcher treeId={treeId} active={activeView} momentId={momentId} />
+        {isOwner && onAddMoment ? (
+          <button className="view-add-moment" type="button" onClick={onAddMoment}>+ 새 순간</button>
+        ) : null}
       </div>
       {children}
     </main>

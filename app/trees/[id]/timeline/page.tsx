@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useTreeMoments } from "@/lib/use-tree-moments";
+import { useMomentUrlState } from "@/lib/use-moment-url";
 import EmailAuthForm from "../../../components/EmailAuthForm";
 import { TreeViewShell } from "../../../components/TreeViewShell";
 import { MomentDetailModal } from "../../../components/MomentDetailModal";
+import { MomentComposerModal } from "../../../components/MomentComposerModal";
+import { MomentThumbnail } from "../../../components/MomentThumbnail";
 import "../../../styles/email-auth.css";
 import {
   formatTreeDate,
@@ -16,9 +19,13 @@ import {
 
 export default function TimelinePage() {
   const params = useParams<{ id: string | string[] }>();
+  const searchParams = useSearchParams();
+  const highlightParam = searchParams.get("highlight");
+  const momentParam = searchParams.get("moment");
   const { user, loading: authLoading, login, loginPending } = useAuth();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
   const {
     tree,
     moments,
@@ -30,9 +37,17 @@ export default function TimelinePage() {
     selectedMoment,
     selectMoment,
     refresh,
+    createMoment,
     updateMoment,
     deleteMoment,
-  } = useTreeMoments(treeId);
+  } = useTreeMoments(treeId, highlightParam ?? undefined, momentParam ?? undefined);
+
+  const { handleSelectMoment } = useMomentUrlState({
+    treeId,
+    moments,
+    loading,
+    onSelect: selectMoment,
+  });
 
   if (authLoading || loading) {
     return <TreeViewShell treeId={treeId} activeView="timeline"><div className="tree-page-state" aria-busy="true">타임라인을 불러오고 있어요…</div></TreeViewShell>;
@@ -57,7 +72,14 @@ export default function TimelinePage() {
   }
 
   return (
-    <TreeViewShell treeId={treeId} activeView="timeline" userLabel={user?.displayName || user?.email || undefined}>
+    <TreeViewShell
+      treeId={treeId}
+      activeView="timeline"
+      userLabel={user?.displayName || user?.email || undefined}
+      momentId={selectedMomentId}
+      isOwner={isOwner}
+      onAddMoment={() => setIsComposerOpen(true)}
+    >
       <section className="timeline-content" aria-labelledby="timeline-title">
         <div className="timeline-heading">
           <div>
@@ -74,11 +96,13 @@ export default function TimelinePage() {
           <div className="timeline-empty">
             <span aria-hidden="true">✦</span>
             <p>아직 기록된 순간이 없어요.</p>
+            {isOwner ? <button className="button button-quiet" type="button" onClick={() => setIsComposerOpen(true)}>첫 순간 남기기</button> : null}
           </div>
         ) : (
           <ol className="timeline-list" aria-label={`${timelineMoments.length}개의 순간`}>
             {timelineMoments.map((moment, index) => {
               const memory = moments.find((m) => m.id === moment.id) ?? moment as unknown as MemoryRecord;
+              const isSelected = moment.id === selectedMomentId;
               return (
                 <li className="timeline-item" key={moment.id}>
                   <div className="timeline-rail">
@@ -86,9 +110,13 @@ export default function TimelinePage() {
                     {index < timelineMoments.length - 1 ? <span className="timeline-line" aria-hidden="true" /> : null}
                   </div>
                   <article
-                    className="timeline-card"
-                    onClick={() => selectMoment(moment.id)}
-                    style={{ cursor: "pointer" }}
+                    className={`timeline-card${isSelected ? " selected" : ""}`}
+                    onClick={() => handleSelectMoment(moment.id)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSelectMoment(moment.id); } }}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
+                    aria-label={`${moment.title || "이름 없는 순간"} 상세 보기`}
                   >
                     <div className="timeline-card-meta">
                       <span className="timeline-source">{sourceTypeLabel(moment.sourceType)}</span>
@@ -98,7 +126,7 @@ export default function TimelinePage() {
                     <p>{moment.memo || "이 순간에 남긴 마음"}</p>
                     {memory.thumbnail ? (
                       <div className="timeline-thumb">
-                        <img src={memory.thumbnail} alt="" />
+                        <MomentThumbnail src={memory.thumbnail} alt="" sourceType={memory.sourceType} className="timeline-thumb-img" placeholderClassName="timeline-thumb-placeholder" />
                       </div>
                     ) : null}
                     {moment.emotionTags && moment.emotionTags.length > 0 ? (
@@ -118,11 +146,20 @@ export default function TimelinePage() {
         key={selectedMomentId ?? "none"}
         moment={selectedMoment}
         isOwner={isOwner}
-        onClose={() => selectMoment(null)}
+        onClose={() => handleSelectMoment(null)}
         onUpdate={updateMoment}
         onDelete={deleteMoment}
         parentOptions={moments}
       />
+
+      {isComposerOpen ? (
+        <MomentComposerModal
+          onClose={() => setIsComposerOpen(false)}
+          parentMoment={selectedMoment}
+          parentOptions={moments}
+          onCreate={createMoment}
+        />
+      ) : null}
     </TreeViewShell>
   );
 }

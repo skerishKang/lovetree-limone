@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "./api";
 import { useAuth } from "./auth";
 import {
@@ -65,14 +65,25 @@ export interface TreeMomentsState {
   clearHighlight: () => void;
 }
 
-export function useTreeMoments(treeId: string, initialHighlightId?: string): TreeMomentsState {
+const HIGHLIGHT_MS = 3200;
+
+export function useTreeMoments(
+  treeId: string,
+  initialHighlightId?: string,
+  initialMomentId?: string
+): TreeMomentsState {
   const { user, loading: authLoading } = useAuth();
   const [tree, setTree] = useState<TreeRecord | null>(null);
   const [moments, setMoments] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMomentId, setSelectedMomentId] = useState<string | null>(null);
-  const [highlightMomentId, setHighlightMomentId] = useState<string | null>(initialHighlightId ?? null);
+  const [selectedMomentId, setSelectedMomentId] = useState<string | null>(
+    initialMomentId ?? null
+  );
+  const [highlightMomentId, setHighlightMomentId] = useState<string | null>(
+    initialHighlightId ?? null
+  );
+  const highlightTimerRef = useRef<number | null>(null);
 
   const refresh = useCallback(async () => {
     if (!treeId) return;
@@ -94,7 +105,12 @@ export function useTreeMoments(treeId: string, initialHighlightId?: string): Tre
         return;
       }
       setTree(treeData);
-      setMoments(Array.isArray(memoryData) ? memoryData : []);
+      const rows = Array.isArray(memoryData) ? memoryData : [];
+      setMoments(rows);
+      setSelectedMomentId((current) => {
+        if (current === null) return null;
+        return rows.some((m) => m.id === current) ? current : null;
+      });
     } catch {
       setError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
     } finally {
@@ -107,6 +123,17 @@ export function useTreeMoments(treeId: string, initialHighlightId?: string): Tre
     const timer = window.setTimeout(() => void refresh(), 0);
     return () => window.clearTimeout(timer);
   }, [authLoading, refresh]);
+
+  useEffect(() => {
+    if (!highlightMomentId) return;
+    if (highlightTimerRef.current) window.clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = window.setTimeout(() => {
+      setHighlightMomentId(null);
+    }, HIGHLIGHT_MS);
+    return () => {
+      if (highlightTimerRef.current) window.clearTimeout(highlightTimerRef.current);
+    };
+  }, [highlightMomentId]);
 
   const isOwner = Boolean(tree && user && tree.ownerId === user.uid);
   const ownerId = tree?.ownerId ?? "";
@@ -129,7 +156,9 @@ export function useTreeMoments(treeId: string, initialHighlightId?: string): Tre
     setSelectedMomentId(id);
   }, []);
 
-  const clearHighlight = useCallback(() => setHighlightMomentId(null), []);
+  const clearHighlight = useCallback(() => {
+    setHighlightMomentId(null);
+  }, []);
 
   const createMoment = useCallback(async (input: CreateMomentInput): Promise<MemoryRecord | null> => {
     if (!tree || !isOwner) return null;
@@ -158,6 +187,7 @@ export function useTreeMoments(treeId: string, initialHighlightId?: string): Tre
       const data = (await response.json().catch(() => ({}))) as MemoryRecord & { error?: string };
       if (!response.ok || !data.id) return null;
       setMoments((current) => [...current, data]);
+      setSelectedMomentId(data.id);
       setHighlightMomentId(data.id);
       return data;
     } catch {
@@ -208,6 +238,7 @@ export function useTreeMoments(treeId: string, initialHighlightId?: string): Tre
       if (!response.ok) return false;
       setMoments((current) => current.filter((m) => m.id !== id));
       setSelectedMomentId((current) => (current === id ? null : current));
+      setHighlightMomentId((current) => (current === id ? null : current));
       return true;
     } catch {
       return false;
