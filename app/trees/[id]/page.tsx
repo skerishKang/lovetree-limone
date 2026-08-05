@@ -220,6 +220,10 @@ export default function TreeDetailPage() {
             <span>{tree.visibility === "private" ? "▣ 비공개" : "◉ 공개 러브트리"}</span>
             <strong>{memories.length}개의 순간</strong>
             <small>시작 {formatTreeDate(tree.createdAt)}</small>
+            <div className="tree-view-links">
+              <Link href={`/trees/${encodeURIComponent(tree.id)}/timeline`}>타임라인</Link>
+              <Link href={`/trees/${encodeURIComponent(tree.id)}/album`}>앨범</Link>
+            </div>
           </div>
         </div>
 

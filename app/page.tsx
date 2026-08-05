@@ -182,7 +182,6 @@ export default function Home() {
           memo: note,
           clientKey: memoryClientKey,
           timestamp: momentDate,
-          sortOrder: "0",
         }),
       });
       const data = (await res.json()) as { id?: string; error?: string };
