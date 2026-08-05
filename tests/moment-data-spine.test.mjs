@@ -542,7 +542,7 @@ test("non-existent date like 2026-02-31 is rejected by validation", async () => 
   });
 });
 
-test("negative sortOrder is rejected by validation", async () => {
+test("negative client sortOrder on create is ignored; server assigns 0", async () => {
   await withFirebaseKeyFetch(async () => {
     const db = makeDb({ treeRows: [[OWNER_TREE]] });
     const response = await memoriesRouter(makeContext({
@@ -552,12 +552,15 @@ test("negative sortOrder is rejected by validation", async () => {
       db,
     }));
 
-    assert.equal(response.status, 400);
-    assert.equal(db.inserted.length, 0);
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.sortOrder, 0);
+    assert.equal(db.inserted.length, 1);
+    assert.equal(db.inserted[0].value.sortOrder, 0);
   });
 });
 
-test("decimal sortOrder is rejected by validation", async () => {
+test("decimal client sortOrder on create is ignored; server assigns 0", async () => {
   await withFirebaseKeyFetch(async () => {
     const db = makeDb({ treeRows: [[OWNER_TREE]] });
     const response = await memoriesRouter(makeContext({
@@ -567,12 +570,15 @@ test("decimal sortOrder is rejected by validation", async () => {
       db,
     }));
 
-    assert.equal(response.status, 400);
-    assert.equal(db.inserted.length, 0);
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.sortOrder, 0);
+    assert.equal(db.inserted.length, 1);
+    assert.equal(db.inserted[0].value.sortOrder, 0);
   });
 });
 
-test("string sortOrder is rejected by validation", async () => {
+test("string client sortOrder on create is ignored; server assigns 0", async () => {
   await withFirebaseKeyFetch(async () => {
     const db = makeDb({ treeRows: [[OWNER_TREE]] });
     const response = await memoriesRouter(makeContext({
@@ -582,8 +588,11 @@ test("string sortOrder is rejected by validation", async () => {
       db,
     }));
 
-    assert.equal(response.status, 400);
-    assert.equal(db.inserted.length, 0);
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(body.sortOrder, 0);
+    assert.equal(db.inserted.length, 1);
+    assert.equal(db.inserted[0].value.sortOrder, 0);
   });
 });
 
