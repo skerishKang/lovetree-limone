@@ -19,7 +19,7 @@ import {
   type SourceTypeValue,
 } from "./validate";
 
-const MAX_SAFE_SORT_ORDER = 0;
+const MAX_SAFE_SORT_ORDER = 10_000_000;
 
 const TREE_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
