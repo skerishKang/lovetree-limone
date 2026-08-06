@@ -11,6 +11,7 @@ import {
   FORBIDDEN_WORKER_NAME,
   EXPECTED_VARS,
 } from "../scripts/lib/production-deploy-guard.mjs";
+import { buildManifest } from "../scripts/lib/build-provenance.mjs";
 
 const ACTIVE_VERSION = "9b09919c-8fb6-4f01-9872-57b493525918";
 const NEW_VERSION = "new-version-456-8fb6-4f01-9872-57b493525918";
@@ -84,31 +85,103 @@ function git(dir, args) {
   return spawnSync("git", ["-C", dir, ...args], { encoding: "utf8" });
 }
 
-async function makeScratchRepo({ source = SOURCE, built = builtConfig() } = {}) {
+// Mirrors the real repository flow: source files are committed, `dist/` is
+// gitignored and lives only in the working tree, and the build manifest is
+// stamped with the exact committed HEAD. HEAD === origin/main === sourceSha ===
+// manifest.sourceSha, and the worktree stays clean because dist/ is ignored.
+async function makeScratchRepo({ source = SOURCE, built = builtConfig(), withManifest = true } = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), "prod-guard-repo-"));
   git(dir, ["init", "-b", "main"]);
   git(dir, ["config", "user.email", "guard-test@example.com"]);
   git(dir, ["config", "user.name", "Guard Test"]);
   await writeFile(path.join(dir, "wrangler.jsonc"), source, "utf8");
+  await writeFile(path.join(dir, ".gitignore"), "dist/\nnode_modules/\n", "utf8");
   await writeFile(path.join(dir, "placeholder.txt"), "placeholder\n", "utf8");
+  git(dir, ["add", "-A"]);
+  git(dir, ["commit", "-m", "base"]);
+  const head = git(dir, ["rev-parse", "HEAD"]).stdout.trim();
+  git(dir, ["update-ref", "refs/remotes/origin/main", head]);
+  // Build output: untracked + ignored, exactly like the real repository.
   await mkdir(path.join(dir, "dist", "client", "assets"), { recursive: true });
   await writeFile(path.join(dir, "dist", "client", "assets", "app.js"), "console.log('asset');\n", "utf8");
   await mkdir(path.join(dir, "dist", "server"), { recursive: true });
   await writeFile(path.join(dir, "dist", "server", "wrangler.json"), built, "utf8");
   await writeFile(path.join(dir, "dist", "server", "index.js"), "export default {};\n", "utf8");
-  git(dir, ["add", "-A"]);
-  git(dir, ["commit", "-m", "base"]);
-  const head = git(dir, ["rev-parse", "HEAD"]).stdout.trim();
-  git(dir, ["update-ref", "refs/remotes/origin/main", head]);
+  if (withManifest) {
+    const manifest = await buildManifest({ repoRoot: dir, sourceSha: head });
+    await writeFile(
+      path.join(dir, "dist", "server", "lovetree-build-manifest.json"),
+      JSON.stringify(manifest, null, 2),
+      "utf8"
+    );
+  }
   return { dir, head };
 }
 
-// Scripted wrangler fake. Returns { run, calls, state }.
+// ── live Cloudflare metadata fake (fetchImpl) ─────────────────────────────
+
+function liveSettingsBody({ bindings, compatibilityDate }) {
+  return {
+    success: true,
+    result: {
+      bindings,
+      compatibility_date: compatibilityDate,
+      compatibility_flags: ["nodejs_compat"],
+      usage_model: "standard",
+      placement: {},
+      observability: null,
+    },
+  };
+}
+
+function defaultLiveBindings() {
+  // Matches the CURRENT live production worker (staging preview): the two
+  // intended transitions APP_ENV staging→production and mutations false→true.
+  return [
+    { type: "plain_text", name: "APP_ENV", text: "staging" },
+    { type: "plain_text", name: "API_MUTATIONS_ENABLED", text: "false" },
+    { type: "assets", name: "ASSETS" },
+    { type: "secret_text", name: "DATABASE_URL" },
+    { type: "plain_text", name: "FIREBASE_PROJECT_ID", text: "relovetree" },
+  ];
+}
+
+function makeFakeLiveFetch(options = {}) {
+  const bindings = options.bindings ?? defaultLiveBindings();
+  const compatibilityDate = options.compatibilityDate ?? "2026-07-01";
+  const settingsError = options.settingsError ?? null;
+  const subdomainError = options.subdomainError ?? null;
+  const domainsError = options.domainsError ?? null;
+  const fetchImpl = async (url) => {
+    if (settingsError) {
+      return { ok: false, json: async () => ({ success: false, errors: [{ message: settingsError }] }) };
+    }
+    if (url.includes("/settings")) {
+      return { ok: true, json: async () => liveSettingsBody({ bindings, compatibilityDate }) };
+    }
+    if (url.includes("/subdomain")) {
+      if (subdomainError) return { ok: false, json: async () => ({ success: false, errors: [{ message: subdomainError }] }) };
+      return { ok: true, json: async () => ({ success: true, result: { enabled: true, previews_enabled: true } }) };
+    }
+    if (url.includes("/domains")) {
+      if (domainsError) return { ok: false, json: async () => ({ success: false, errors: [{ message: domainsError }] }) };
+      return { ok: true, json: async () => ({ success: true, result: [] }) };
+    }
+    throw new Error("unexpected live fetch url: " + url);
+  };
+  return fetchImpl;
+}
+
+// ── scripted wrangler fake ────────────────────────────────────────────────
+
 function makeFakeRun(options = {}) {
   const state = {
     activeVersion: options.activeVersion ?? ACTIVE_VERSION,
     forbiddenExists: options.forbiddenExists ?? false,
+    forbiddenError: options.forbiddenError ?? null,
+    currentError: options.currentError ?? null,
     secrets: options.secrets ?? ["DATABASE_URL"],
+    secretsError: options.secretsError ?? null,
     deployExit: options.deployExit ?? 0,
     dryRunExit: options.dryRunExit ?? 0,
     dryRunOut: options.dryRunOut ?? DRY_RUN_OUT,
@@ -118,9 +191,15 @@ function makeFakeRun(options = {}) {
   const run = (command, opts = {}) => {
     const joined = command.join(" ");
     calls.push({ command, env: opts.env ?? {} });
+    if (joined.startsWith("npx wrangler whoami")) {
+      return { exitCode: 0, stdout: "Account ID: 00000000000000000000000000000000\n", stderr: "" };
+    }
     if (joined.startsWith(`npx wrangler deployments list --name ${FORBIDDEN_WORKER_NAME}`)) {
+      if (state.forbiddenError) {
+        return { exitCode: -1, stdout: "", stderr: state.forbiddenError };
+      }
       if (!state.forbiddenExists) {
-        return { exitCode: 1, stdout: "", stderr: "This Worker does not exist on your account. [code: 10007]" };
+        return { exitCode: 1, stdout: "", stderr: "Could not find Worker with name 'lovetree-limone-production'. [code: 10007]" };
       }
       return {
         exitCode: 0,
@@ -131,6 +210,9 @@ function makeFakeRun(options = {}) {
       };
     }
     if (joined.startsWith(`npx wrangler deployments list --name ${PRODUCTION_WORKER_NAME}`)) {
+      if (state.currentError) {
+        return { exitCode: -1, stdout: "", stderr: state.currentError };
+      }
       return {
         exitCode: 0,
         stdout: JSON.stringify([
@@ -140,6 +222,9 @@ function makeFakeRun(options = {}) {
       };
     }
     if (joined.startsWith("npx wrangler secret list")) {
+      if (state.secretsError) {
+        return { exitCode: -1, stdout: "", stderr: state.secretsError };
+      }
       return {
         exitCode: 0,
         stdout: JSON.stringify(state.secrets.map((name) => ({ name, type: "secret_text" }))),
@@ -162,7 +247,8 @@ function makeFakeRun(options = {}) {
   return { run, calls, state };
 }
 
-// Fake `pg` client factory backed by canned rows.
+// ── fake `pg` client factory (index semantics aware) ──────────────────────
+
 function makeFakePg(rows = {}) {
   const queryCalls = [];
   class FakeClient {
@@ -176,14 +262,39 @@ function makeFakePg(rows = {}) {
       if (trimmed.includes("information_schema.columns") && trimmed.includes("'sort_order'")) {
         return { rows: rows.noSortColumn ? [] : [{ column_name: "sort_order", data_type: "integer", is_nullable: "YES", column_default: null }] };
       }
-      if (trimmed.includes("memories_tree_sort_order_uniq_partial")) {
-        return { rows: rows.noPartial ? [] : [{ found: 1 }] };
-      }
-      if (trimmed.includes("memories_tree_sort_order_uniq")) {
-        return { rows: rows.hasFullIndex ? [{ found: 1 }] : [] };
-      }
-      if (trimmed.includes("memories_tree_client_key_uniq")) {
-        return { rows: rows.noClientKeyIndex ? [] : [{ found: 1 }] };
+      if (trimmed.includes("pg_get_expr")) {
+        const out = [];
+        if (!rows.noPartial) {
+          out.push({
+            index_name: "memories_tree_sort_order_uniq_partial",
+            indisunique: rows.partialNotUnique ? false : true,
+            indisvalid: rows.partialInvalid ? false : true,
+            indisready: rows.partialNotReady ? false : true,
+            predicate: rows.partialWrongPredicate === "IS_NULL" ? "(sort_order IS NULL)" : rows.partialWrongPredicate === "NONE" ? null : "(sort_order IS NOT NULL)",
+            columns: ["tree_id", "sort_order"],
+          });
+        }
+        if (rows.hasFullIndex) {
+          out.push({
+            index_name: "memories_tree_sort_order_uniq",
+            indisunique: true,
+            indisvalid: true,
+            indisready: true,
+            predicate: null,
+            columns: ["tree_id", "sort_order"],
+          });
+        }
+        if (!rows.noClientKeyIndex) {
+          out.push({
+            index_name: "memories_tree_client_key_uniq",
+            indisunique: rows.clientKeyNotUnique ? false : true,
+            indisvalid: rows.clientKeyInvalid ? false : true,
+            indisready: rows.clientKeyNotReady ? false : true,
+            predicate: null,
+            columns: rows.clientKeyWrongColumns ? ["client_key", "tree_id"] : ["tree_id", "client_key"],
+          });
+        }
+        return { rows: out };
       }
       if (trimmed.includes("NOT EXISTS")) return { rows: [{ c: rows.orphans ?? 0 }] };
       if (trimmed.includes("HAVING count(*) > 1")) return { rows: [{ c: rows.dupSort ?? 0 }] };
@@ -212,6 +323,8 @@ async function runGuard({
   execute = false,
   fake,
   pgRows = {},
+  liveFetch = makeFakeLiveFetch(),
+  cloudflareCredentials = { accountId: "acct", apiToken: "tok" },
 }) {
   const pg = makeFakePg(pgRows);
   return {
@@ -224,11 +337,345 @@ async function runGuard({
       dbConnectionString: DB_URL,
       runCommandImpl: fake.run,
       pgFactory: pg.Client,
+      fetchImpl: liveFetch,
+      cloudflareCredentials,
     }),
     fake,
     pg,
   };
 }
+
+// ── F1: Cloudflare lookup fail-closed ─────────────────────────────────────
+
+test("F1: forbidden Worker truly absent (10007) passes the absent check", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  const check = result.checks.find((c) => c.name === "forbidden-worker-absent");
+  assert.equal(check.ok, true);
+});
+
+test("F1: forbidden Worker lookup network failure must BLOCK (not treated as absent)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun({ forbiddenError: "network error: ECONNRESET" });
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("forbidden-worker-absent"));
+});
+
+test("F1: forbidden Worker lookup auth/permission failure must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun({ forbiddenError: "A request to the Cloudflare API failed (401) Unauthorized" });
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("forbidden-worker-absent"));
+});
+
+test("F1: current Worker lookup failure must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun({ currentError: "OAuth token expired" });
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("current-version"));
+});
+
+test("F1: malformed deployments JSON must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  fake.run = (command, opts) => {
+    const joined = command.join(" ");
+    if (joined.includes("deployments list")) return { exitCode: 0, stdout: "not json at all", stderr: "" };
+    return makeFakeRun().run(command, opts);
+  };
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("current-version"));
+});
+
+test("F1: empty deployment list must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  fake.run = (command, opts) => {
+    const joined = command.join(" ");
+    if (joined.includes("deployments list") && joined.includes(PRODUCTION_WORKER_NAME)) {
+      return { exitCode: 0, stdout: "[]", stderr: "" };
+    }
+    return makeFakeRun().run(command, opts);
+  };
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("current-version"));
+});
+
+test("F1: secret list failure must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun({ secretsError: "A request to the Cloudflare API failed (403) Forbidden" });
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("secret-database-url"));
+});
+
+test("F1: malformed secret list JSON must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  fake.run = (command, opts) => {
+    const joined = command.join(" ");
+    if (joined.includes("secret list")) return { exitCode: 0, stdout: "[[[", stderr: "" };
+    return makeFakeRun().run(command, opts);
+  };
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("secret-database-url"));
+});
+
+// ── F2: DB index semantics ────────────────────────────────────────────────
+
+test("F2: partial index without predicate must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { partialWrongPredicate: "NONE" } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+});
+
+test("F2: predicate sort_order IS NULL must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { partialWrongPredicate: "IS_NULL" } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+});
+
+test("F2: non-unique partial index must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { partialNotUnique: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+});
+
+test("F2: invalid partial index must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { partialInvalid: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+});
+
+test("F2: not-ready partial index must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { partialNotReady: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+});
+
+test("F2: full unique index present must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { hasFullIndex: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-fullUniqueIndexAbsent"));
+});
+
+test("F2: clientKey index with wrong columns must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { clientKeyWrongColumns: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-clientKeyUniqueIndex"));
+});
+
+test("F2: clientKey index non-unique must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { clientKeyNotUnique: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-clientKeyUniqueIndex"));
+});
+
+test("F2: correct partial + clientKey indexes PASS", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("db-partialUniqueIndex"));
+  assert.ok(!problemNames(result).includes("db-clientKeyUniqueIndex"));
+});
+
+// ── F3: build provenance ──────────────────────────────────────────────────
+
+test("F3: missing build manifest must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo({ withManifest: false });
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-present"));
+});
+
+test("F3: manifest with wrong source SHA must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  // run with a sourceSha that does not match HEAD or origin/main
+  const { result } = await runGuard({ dir, head, sourceSha: "deadbeef".repeat(5), fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-source-sha"));
+  assert.ok(problemNames(result).includes("source-sha-head"));
+  assert.ok(problemNames(result).includes("source-sha-origin-main"));
+});
+
+test("F3: stale server entry hash must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  await writeFile(path.join(dir, "dist", "server", "index.js"), "export default { changed: true };\n", "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-server-entry"));
+});
+
+test("F3: stale client assets digest must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  await writeFile(path.join(dir, "dist", "client", "assets", "extra.js"), "console.log('extra');\n", "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-assets"));
+});
+
+test("F3: manifest with wrong environment must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const manifestPath = path.join(dir, "dist", "server", "lovetree-build-manifest.json");
+  const manifest = JSON.parse(await readManifest(dir));
+  manifest.environment = "staging";
+  await writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-env"));
+});
+
+test("F3: valid manifest PASSES", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).some((name) => name.startsWith("build-manifest")));
+});
+
+// ── F6: live Worker drift ─────────────────────────────────────────────────
+
+test("F6: live metadata lookup error must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ settingsError: "permission denied" }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: missing live binding must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const bindings = defaultLiveBindings().filter((b) => b.name !== "DATABASE_URL");
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ bindings }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: extra live binding must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const bindings = [...defaultLiveBindings(), { type: "plain_text", name: "EXTRA", text: "x" }];
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ bindings }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: binding type mismatch must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const bindings = defaultLiveBindings().map((b) => (b.name === "ASSETS" ? { ...b, type: "plain_text", text: "x" } : b));
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ bindings }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: compatibility date mismatch must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ compatibilityDate: "2025-01-01" }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: expected mutation transition only PASSES", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: workers.dev subdomain lookup failure must BLOCK (fail-closed)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ subdomainError: "internal error" }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: custom domains lookup failure must BLOCK (fail-closed)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, liveFetch: makeFakeLiveFetch({ domainsError: "internal error" }) });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: no Cloudflare credentials must BLOCK (fail-closed)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const pg = makeFakePg();
+  const result = await runGuardedProductionDeploy({
+    sourceSha: head,
+    expectedCurrentVersion: ACTIVE_VERSION,
+    confirmWorker: PRODUCTION_WORKER_NAME,
+    repoRoot: dir,
+    execute: false,
+    dbConnectionString: DB_URL,
+    runCommandImpl: fake.run,
+    pgFactory: pg.Client,
+    fetchImpl: makeFakeLiveFetch(),
+    cloudflareCredentials: { error: "no credentials" },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-metadata-credentials"));
+});
+
+// ── F7: real PR state (origin/main != head) ───────────────────────────────
+
+test("F7: real PR state — origin/main differs from HEAD must BLOCK on source-sha-origin-main", async () => {
+  const { dir, head } = await makeScratchRepo();
+  // Simulate the untouched PR clone: origin/main points at the base, HEAD at
+  // the PR head. Write a second commit so the refs genuinely differ.
+  await writeFile(path.join(dir, "extra.txt"), "extra\n", "utf8");
+  git(dir, ["add", "-A"]);
+  git(dir, ["commit", "-m", "second"]);
+  const prHead = git(dir, ["rev-parse", "HEAD"]).stdout.trim();
+  // origin/main stays at the first commit (the base) — do NOT update it.
+  const base = git(dir, ["rev-parse", "HEAD~1"]).stdout.trim();
+  assert.notEqual(base, prHead);
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head: prHead, sourceSha: prHead, fake });
+  assert.equal(result.status, "BLOCKED");
+  const headCheck = result.checks.find((c) => c.name === "source-sha-head");
+  const originCheck = result.checks.find((c) => c.name === "source-sha-origin-main");
+  assert.equal(headCheck.ok, true);
+  assert.equal(originCheck.ok, false);
+  assert.ok(problemNames(result).includes("source-sha-origin-main"));
+});
+
+// ── existing guard behaviors (regression) ─────────────────────────────────
 
 test("dry-run blocks on wrong source SHA", async () => {
   const { dir, head } = await makeScratchRepo();
@@ -281,8 +728,6 @@ test("dry-run blocks when the required secret is missing", async () => {
 });
 
 test("dry-run blocks on binding drift (extra var in the production env)", async () => {
-  // The trailing "}\n  }\n}" makes this unique to the production block
-  // (the staging block ends with ",").
   const source = SOURCE.replace(
     '        "FIREBASE_PROJECT_ID": "relovetree"\n      },\n      "secrets": { "required": ["DATABASE_URL"] }\n    }\n  }\n}',
     '        "FIREBASE_PROJECT_ID": "relovetree",\n        "EXTRA_BINDING": "x"\n      },\n      "secrets": { "required": ["DATABASE_URL"] }\n    }\n  }\n}'
@@ -315,6 +760,8 @@ test("dry-run blocks when DATABASE_URL is unavailable (fail-closed)", async () =
     dbConnectionString: null,
     runCommandImpl: fake.run,
     pgFactory: pg.Client,
+    fetchImpl: makeFakeLiveFetch(),
+    cloudflareCredentials: { accountId: "acct", apiToken: "tok" },
   });
   assert.equal(result.status, "BLOCKED");
   assert.ok(problemNames(result).includes("db-expand-state"));
@@ -374,3 +821,9 @@ test("guard result carries the exact expected production config target", async (
   assert.equal(result.configTarget.vars.APP_ENV, EXPECTED_VARS.APP_ENV);
   assert.equal(result.configTarget.vars.FIREBASE_PROJECT_ID, EXPECTED_VARS.FIREBASE_PROJECT_ID);
 });
+
+// helper used by the F3 environment test
+async function readManifest(dir) {
+  const { readFile } = await import("node:fs/promises");
+  return readFile(path.join(dir, "dist", "server", "lovetree-build-manifest.json"), "utf8");
+}

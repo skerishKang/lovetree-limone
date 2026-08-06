@@ -21,9 +21,51 @@
 //   - any incomplete cleanup returns `ok: false` — a success marker is never
 //     emitted for a failed cleanup.
 
+import { createHash } from "node:crypto";
 import { chmod, readFile, rm, writeFile } from "node:fs/promises";
 
 export const IDENTITYKIT_BASE = "https://identitytoolkit.googleapis.com/v1";
+
+// Structured reason codes surfaced in CLI output (never raw API messages).
+export const CLEANUP_REASON_CODES = Object.freeze([
+  "VERIFIED",
+  "NO_RETAINED_TOKEN",
+  "DELETE_FAILED",
+  "LOOKUP_FAILED",
+  "DELETE_UNVERIFIED",
+]);
+
+export function sha256(input) {
+  return createHash("sha256").update(String(input ?? "")).digest("hex");
+}
+
+export function emailSha256(email) {
+  return sha256(email);
+}
+
+// Maps an arbitrary error (including API payloads) to a safe, stable code.
+// Raw error messages are never surfaced to stdout/stderr.
+export function safeErrorCode(error, fallback = "UNKNOWN_ERROR") {
+  const message = String(error?.message ?? error ?? "");
+  const known = [
+    "INVALID_ID_TOKEN",
+    "TOKEN_EXPIRED",
+    "USER_NOT_FOUND",
+    "EMAIL_NOT_FOUND",
+    "INVALID_LOGIN_CREDENTIALS",
+    "USER_DISABLED",
+    "OPERATION_NOT_ALLOWED",
+    "TOO_MANY_ATTEMPTS_TRY_LATER",
+    "EMAIL_EXISTS",
+    "ACCOUNT_DELETE_FAILED",
+    "ACCOUNT_LOOKUP_FAILED",
+    "SIGN_IN_FAILED",
+  ];
+  for (const code of known) {
+    if (message.includes(code)) return code;
+  }
+  return fallback;
+}
 
 export function redactSecrets(text, secrets = []) {
   let output = String(text ?? "");
@@ -114,9 +156,37 @@ export async function lookupUsers({ apiKey, idToken, fetchImpl = fetch }) {
   return Array.isArray(payload?.users) ? payload.users : [];
 }
 
-export async function verifyUserDeleted({ apiKey, idToken, fetchImpl = fetch }) {
-  const users = await lookupUsers({ apiKey, idToken, fetchImpl });
-  return users.length === 0;
+// Confirms deletion using two independent signals (F4):
+//   1. primary — accounts:lookup with the retained idToken returns 200 + users=[];
+//   2. corroboration — if the token is expired/invalid (TOKEN_EXPIRED,
+//      INVALID_ID_TOKEN), a sign-in attempt with the retained password must
+//      fail with EMAIL_NOT_FOUND (the documented error for a deleted user).
+// Returns { deleted, reasonCode, detail } where reasonCode is one of
+// VERIFIED / DELETE_UNVERIFIED / LOOKUP_FAILED.
+export async function verifyUserDeleted({ apiKey, email, password, idToken, fetchImpl = fetch }) {
+  // Primary signal: lookup with the retained idToken.
+  try {
+    const users = await lookupUsers({ apiKey, idToken, fetchImpl });
+    if (users.length === 0) {
+      return { deleted: true, reasonCode: "VERIFIED", detail: "lookup returns no users" };
+    }
+    return { deleted: false, reasonCode: "DELETE_UNVERIFIED", detail: "lookup still returns the user" };
+  } catch (lookupError) {
+    // Corroboration signal: re-sign-in must be rejected for a deleted account.
+    if (email && password) {
+      try {
+        await signInWithPassword({ apiKey, email, password, fetchImpl });
+        return { deleted: false, reasonCode: "DELETE_UNVERIFIED", detail: "sign-in still succeeds" };
+      } catch (signInError) {
+        const code = safeErrorCode(signInError);
+        if (code === "EMAIL_NOT_FOUND" || code === "USER_NOT_FOUND") {
+          return { deleted: true, reasonCode: "VERIFIED", detail: `lookup+sign-in confirm deletion (${code})` };
+        }
+        return { deleted: false, reasonCode: "LOOKUP_FAILED", detail: `lookup ${safeErrorCode(lookupError)} / sign-in ${code}` };
+      }
+    }
+    return { deleted: false, reasonCode: "LOOKUP_FAILED", detail: `lookup ${safeErrorCode(lookupError)}` };
+  }
 }
 
 export async function writeCredentialsFile({
@@ -185,26 +255,30 @@ export async function runDisposableCleanup({
     }
 
     // 2. Delete + verify every user while idToken is still in memory.
-    for (const user of users) {
+    for (let index = 0; index < users.length; index += 1) {
+      const user = users[index];
+      const userRef = `user-${index + 1}`;
       const email = user.email ?? "<unknown>";
+      const emailHash = emailSha256(email);
       const idToken = user.idToken;
       if (typeof idToken !== "string" || idToken.length === 0) {
-        errors.push(`${email}: no retained idToken`);
-        results.push({ email, deleted: false, reason: "no retained idToken" });
+        errors.push({ userRef, code: "NO_RETAINED_TOKEN", message: safeErrorCode(new Error("NO_RETAINED_TOKEN")) });
+        results.push({ userRef, emailSha256: emailHash, deleted: false, reasonCode: "NO_RETAINED_TOKEN", detail: "no retained idToken" });
         continue;
       }
       try {
         await deleteAccount({ apiKey, idToken, fetchImpl });
-        const gone = await verifyUserDeleted({ apiKey, idToken, fetchImpl });
-        results.push({ email, deleted: gone, reason: gone ? "verified" : "lookup still returns the user" });
+        const verdict = await verifyUserDeleted({ apiKey, email, password: user.password, idToken, fetchImpl });
+        results.push({ userRef, emailSha256: emailHash, deleted: verdict.deleted, reasonCode: verdict.reasonCode, detail: verdict.detail });
         speak(
-          gone
-            ? `[cleanup] verified deleted: ${email}`
-            : `[cleanup] DELETE UNVERIFIED: ${email}`
+          verdict.deleted
+            ? `[cleanup] verified deleted: ${userRef} (${emailHash.slice(0, 12)})`
+            : `[cleanup] DELETE UNVERIFIED: ${userRef} (${emailHash.slice(0, 12)})`
         );
       } catch (error) {
-        errors.push(`${email}: ${error.message}`);
-        results.push({ email, deleted: false, reason: error.message });
+        const code = safeErrorCode(error);
+        errors.push({ userRef, code, message: code });
+        results.push({ userRef, emailSha256: emailHash, deleted: false, reasonCode: "DELETE_FAILED", detail: code });
       }
     }
     allDeleted =

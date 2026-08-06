@@ -14,7 +14,7 @@
 
 import { readFile } from "node:fs/promises";
 
-import { runDisposableCleanup } from "./lib/firebase-disposable-auth.mjs";
+import { runDisposableCleanup, safeErrorCode } from "./lib/firebase-disposable-auth.mjs";
 
 async function main() {
   const [credsPath] = process.argv.slice(2);
@@ -25,30 +25,41 @@ async function main() {
     process.exitCode = 2;
     return;
   }
-  const creds = JSON.parse(await readFile(credsPath, "utf8"));
+  let creds;
+  try {
+    creds = JSON.parse(await readFile(credsPath, "utf8"));
+  } catch (error) {
+    console.error(`[firebase-disposable-cleanup] ${safeErrorCode(error, "CREDS_READ_FAILED")}`);
+    process.exitCode = 2;
+    return;
+  }
   const result = await runDisposableCleanup({
     users: creds.users ?? [],
     apiKey: creds.apiKey,
     credsFile: credsPath,
     log: (line) => console.log(line),
   });
+  // No email/uid/password/token/API key values are ever printed: only the
+  // user index (userRef), a SHA-256 of the email, and a structured reason
+  // code. Raw API error payloads are reduced to safe codes.
   console.log(
     JSON.stringify({
       ok: result.ok,
       users: result.results.map((entry) => ({
-        email: entry.email,
+        userRef: entry.userRef,
+        emailSha256: entry.emailSha256,
         deleted: entry.deleted,
-        reason: entry.reason,
+        reasonCode: entry.reasonCode,
       })),
       dbCleaned: result.dbCleaned,
       fileRemoved: result.fileRemoved,
-      errors: result.errors,
+      errors: result.errors.map((entry) => ({ userRef: entry.userRef, code: entry.code })),
     })
   );
   process.exitCode = result.ok ? 0 : 1;
 }
 
 main().catch((error) => {
-  console.error(`[firebase-disposable-cleanup] ${error.message}`);
+  console.error(`[firebase-disposable-cleanup] ${safeErrorCode(error, "CLEANUP_ERROR")}`);
   process.exitCode = 2;
 });
