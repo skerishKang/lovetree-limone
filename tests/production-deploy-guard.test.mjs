@@ -285,13 +285,18 @@ function makeFakePg(rows = {}) {
           });
         }
         if (!rows.noClientKeyIndex) {
+          const columns = rows.clientKeyWrongColumns
+            ? ["client_key", "tree_id"]
+            : rows.stringCols
+              ? "{tree_id,client_key}"
+              : ["tree_id", "client_key"];
           out.push({
             index_name: "memories_tree_client_key_uniq",
             indisunique: rows.clientKeyNotUnique ? false : true,
             indisvalid: rows.clientKeyInvalid ? false : true,
             indisready: rows.clientKeyNotReady ? false : true,
             predicate: null,
-            columns: rows.clientKeyWrongColumns ? ["client_key", "tree_id"] : ["tree_id", "client_key"],
+            columns,
           });
         }
         return { rows: out };
@@ -501,6 +506,14 @@ test("F2: correct partial + clientKey indexes PASS", async () => {
   const { result } = await runGuard({ dir, head, fake });
   assert.equal(result.status, "DRY_RUN_GO");
   assert.ok(!problemNames(result).includes("db-partialUniqueIndex"));
+  assert.ok(!problemNames(result).includes("db-clientKeyUniqueIndex"));
+});
+
+test("F2: clientKey index columns as PG array literal string PASS", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, pgRows: { stringCols: true } });
+  assert.equal(result.status, "DRY_RUN_GO");
   assert.ok(!problemNames(result).includes("db-clientKeyUniqueIndex"));
 });
 

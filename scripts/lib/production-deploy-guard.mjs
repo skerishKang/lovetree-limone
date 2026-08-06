@@ -316,8 +316,16 @@ export function resolveCloudflareReadCredentials({ repoRoot, runCommandImpl = ru
   if (runCommandImpl) {
     try {
       const whoami = runCommandImpl(["npx", "wrangler", "whoami"], { cwd: repoRoot });
-      const match = /account\s+id\s*[:=]?\s*([0-9a-f]{32})/i.exec(`${whoami.stdout ?? ""}\n${whoami.stderr ?? ""}`);
-      if (match) accountFromWhoami = match[1];
+      // `wrangler whoami` prints a table:
+      //   │ Account Name                    │ Account ID                       │
+      //   │ Charliekant@gmail.com's Account │ 9be14bb7b8974e65d0afba647ab16932 │
+      // so extract the 32-hex inside the table pipe row; fall back to the
+      // first 32-hex anywhere in the output.
+      const whoamiText = `${whoami.stdout ?? ""}\n${whoami.stderr ?? ""}`;
+      const tableMatch = /\|\s*([0-9a-f]{32})\s*\|/.exec(whoamiText);
+      const anyMatch = /[0-9a-f]{32}/.exec(whoamiText);
+      if (tableMatch) accountFromWhoami = tableMatch[1];
+      else if (anyMatch) accountFromWhoami = anyMatch[0];
     } catch {
       // A runCommandImpl that throws simply means "no account from whoami".
     }
@@ -507,6 +515,26 @@ function isSortOrderNotNullPredicate(predicate) {
   return normalized === SORT_NOT_NULL_NORMALIZED || normalized === NOT_SORT_NULL_NORMALIZED;
 }
 
+// The pg driver sometimes returns Postgres array literals as strings
+// ("{tree_id,client_key}") instead of JS arrays when the result column type
+// OID is not resolved; accept both forms.
+function parsePgArrayLiteral(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+    const inner = value.slice(1, -1).trim();
+    if (inner.length === 0) return [];
+    return inner.split(",").map((part) => {
+      const trimmed = part.trim();
+      if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+        return trimmed.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+      }
+      return trimmed;
+    });
+  }
+  return null;
+}
+
 const INDEX_SEMANTICS_SQL = `
   SELECT i.relname AS index_name,
          ix.indisunique,
@@ -575,9 +603,7 @@ export async function verifyProductionDbExpandState({
       partial.indisvalid === true &&
       partial.indisready === true &&
       isSortOrderNotNullPredicate(partial.predicate);
-    const clientKeyColumns = Array.isArray(clientKey?.columns)
-      ? clientKey.columns
-      : [];
+    const clientKeyColumns = parsePgArrayLiteral(clientKey?.columns) ?? [];
     const clientKeyOk =
       clientKey !== undefined &&
       clientKey.indisunique === true &&
