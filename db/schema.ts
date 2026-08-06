@@ -9,6 +9,7 @@ import {
   uniqueIndex,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const visibilityEnum = pgEnum("visibility", ["private", "unlisted", "public"]);
 export const sourceTypeEnum = pgEnum("source_type", [
@@ -79,7 +80,7 @@ export const memories = pgTable(
     thumbnail: text("thumbnail").notNull().default(""),
     emotionTags: jsonb("emotion_tags").$type<string[]>().notNull().default([]),
     timestamp: text("timestamp").notNull().default(""),
-    sortOrder: integer("sort_order").notNull().default(0),
+    sortOrder: integer("sort_order"),
     visibility: visibilityEnum("visibility").notNull().default("public"),
     channelId: text("channel_id"),
     channelName: text("channel_name"),
@@ -90,7 +91,9 @@ export const memories = pgTable(
   (table) => [
     index("memories_tree_id_idx").on(table.treeId),
     index("memories_visibility_created_at_idx").on(table.visibility, table.createdAt),
-    uniqueIndex("memories_tree_sort_order_uniq").on(table.treeId, table.sortOrder),
+    uniqueIndex("memories_tree_sort_order_uniq_partial")
+      .on(table.treeId, table.sortOrder)
+      .where(sql`${table.sortOrder} IS NOT NULL`),
     uniqueIndex("memories_tree_client_key_uniq").on(table.treeId, table.clientKey),
   ]
 );

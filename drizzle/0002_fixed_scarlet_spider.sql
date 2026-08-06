@@ -1,4 +1,4 @@
-ALTER TABLE "memories" ADD COLUMN "sort_order" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "memories" ADD COLUMN "sort_order" integer;--> statement-breakpoint
 WITH ranked AS (
   SELECT
     id,
@@ -13,4 +13,4 @@ SET sort_order = ranked.new_sort_order
 FROM ranked
 WHERE m.id = ranked.id
   AND m.sort_order IS DISTINCT FROM ranked.new_sort_order;--> statement-breakpoint
-CREATE UNIQUE INDEX "memories_tree_sort_order_uniq" ON "memories" USING btree ("tree_id","sort_order");
+CREATE UNIQUE INDEX "memories_tree_sort_order_uniq_partial" ON "memories" USING btree ("tree_id","sort_order") WHERE "sort_order" IS NOT NULL;

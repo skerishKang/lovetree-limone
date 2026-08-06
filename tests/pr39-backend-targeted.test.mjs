@@ -216,7 +216,7 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
       const doInsert = (value, onConflict) => {
         if (insertFailCount > 0 && !onConflict) {
           insertFailCount--;
-          const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq"');
+          const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq_partial"');
           return Promise.reject(err);
         }
         // Real UNIQUE (tree_id, sort_order) check so a concurrent request that
@@ -227,7 +227,7 @@ function makeStatefulDb({ treeRows = [], memoryRows = [] } = {}) {
           );
           if (collision) {
             uniqueCollisionCount++;
-            const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq"');
+            const err = new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq_partial"');
             return Promise.reject(err);
           }
         }
@@ -561,7 +561,9 @@ test("retry exhaustion returns 409", async () => {
       treeRows: [OWNER_TREE],
       memoryRows: [makeMemoryRow({ id: "m0", sortOrder: 0, memo: "first" })],
     });
-    db.setInsertShouldFail(10);
+    // Fail every insert attempt: retry budget is 16, so 20 forced failures
+    // guarantee exhaustion and the 409 contract.
+    db.setInsertShouldFail(20);
 
     const response = await memoriesRouter(makeContext({
       method: "POST",
@@ -712,16 +714,23 @@ test("update can set sortOrder with ownership check", async () => {
   });
 });
 
-test("migration 0002 includes unique index and backfill", async () => {
+test("migration 0002 adds nullable sort_order, partial unique index, and backfill", async () => {
   const fs = await import("node:fs/promises");
   const sql = await fs.readFile("./drizzle/0002_fixed_scarlet_spider.sql", "utf8");
   assert.ok(sql.includes("ADD COLUMN"), "adds sort_order column");
-  assert.ok(sql.includes("DEFAULT 0 NOT NULL"), "sets default 0 and NOT NULL");
+  assert.ok(!/DEFAULT\s+0\s+NOT\s+NULL/.test(sql), "does NOT apply DEFAULT 0 NOT NULL (Expand)");
   assert.ok(sql.includes("ROW_NUMBER"), "backfills with ROW_NUMBER");
   assert.ok(sql.includes("PARTITION BY tree_id"), "partitions by tree_id");
   assert.ok(sql.includes("ORDER BY created_at ASC, id ASC"), "orders by created_at ASC, id ASC");
   assert.ok(sql.includes("CREATE UNIQUE INDEX"), "creates UNIQUE index");
-  assert.ok(sql.includes("memories_tree_sort_order_uniq"), "index name matches schema");
+  assert.ok(
+    sql.includes("memories_tree_sort_order_uniq_partial"),
+    "index name matches schema (partial unique)"
+  );
+  assert.ok(
+    sql.includes("WHERE"),
+    "partial unique index has a WHERE predicate (sort_order IS NOT NULL)"
+  );
 });
 
 test("0003_sort_order_backfill.sql does not exist", async () => {

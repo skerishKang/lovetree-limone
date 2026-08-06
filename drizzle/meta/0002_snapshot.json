@@ -1,5 +1,5 @@
 {
-  "id": "b8aa4a2e-f25a-41a1-8e82-bd64bca617e1",
+  "id": "6f3d0e2f-073f-4c94-b29d-10e750c20bc0",
   "prevId": "d695a0eb-e1cd-4e32-b677-82b3720b6d29",
   "version": "7",
   "dialect": "postgresql",
@@ -216,8 +216,7 @@
           "name": "sort_order",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "default": 0
+          "notNull": false
         },
         "visibility": {
           "name": "visibility",
@@ -297,6 +296,28 @@
           "method": "btree",
           "with": {}
         },
+        "memories_tree_sort_order_uniq_partial": {
+          "name": "memories_tree_sort_order_uniq_partial",
+          "columns": [
+            {
+              "expression": "tree_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sort_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"memories\".\"sort_order\" IS NOT NULL",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "memories_tree_client_key_uniq": {
           "name": "memories_tree_client_key_uniq",
           "columns": [
@@ -308,27 +329,6 @@
             },
             {
               "expression": "client_key",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "memories_tree_sort_order_uniq": {
-          "name": "memories_tree_sort_order_uniq",
-          "columns": [
-            {
-              "expression": "tree_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "sort_order",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
