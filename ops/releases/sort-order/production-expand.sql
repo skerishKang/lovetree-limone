@@ -20,7 +20,16 @@
 --   - full unique index (that is the future Contract step)
 --
 -- This mirrors drizzle/0002_fixed_scarlet_spider.sql and must be kept in sync.
+--
+-- Execution:
+--   psql -v ON_ERROR_STOP=1 -f ops/releases/sort-order/production-expand.sql
+--
+-- The whole migration is wrapped in an explicit transaction. On any failure
+-- the transaction rolls back completely: no column, no backfill, no index.
+-- Do NOT run the statements individually under autocommit.
 -- ============================================================================
+
+BEGIN;
 
 ALTER TABLE "memories" ADD COLUMN "sort_order" integer;
 
@@ -42,3 +51,5 @@ WHERE m.id = ranked.id
 CREATE UNIQUE INDEX "memories_tree_sort_order_uniq_partial"
   ON "memories" USING btree ("tree_id","sort_order")
   WHERE "sort_order" IS NOT NULL;
+
+COMMIT;

@@ -19,10 +19,23 @@ separate, manually-approved future step.
      `sort_order` (column + index). Record the Production Worker version ID
      (`wrangler deployments list`).
 2. **Expand migration**
-   - Run `production-expand.sql` against Production (single transaction or the
-     exact statements in order). This adds nullable `sort_order`, deterministic
-     backfill per tree (`created_at ASC, id ASC`), and the partial unique index.
-3. **Schema verification**
+   - Run the file as one transaction. The file itself opens a `BEGIN` and ends
+     with `COMMIT`, so a single command is safe:
+
+     ```
+     psql -v ON_ERROR_STOP=1 -f ops/releases/sort-order/production-expand.sql
+     ```
+
+   - Never execute the statements one by one under autocommit. If any statement
+     fails the whole transaction rolls back (no column, no backfill, no index).
+   - The file already opens its own transaction: do NOT wrap it in an outer
+     transaction from the client (a nested `BEGIN` would fail).
+   - With `-v ON_ERROR_STOP=1`, psql stops on the first error; the still-open
+     transaction is rolled back when the session ends — that is the safety net.
+   - On failure: confirm the rollback left no `sort_order` column, fix the root
+     cause, and re-run the entire file. Do NOT try to manually complete a
+     partially applied migration.
+3. **Schema verification (only after the migration succeeds)**
    - Confirm: `sort_order` nullable, default NULL, existing rows have no NULL
      (all backfilled 0..N per tree), partial unique index present, full unique
      index absent, `client_key` unique preserved, row count unchanged.
@@ -34,6 +47,37 @@ separate, manually-approved future step.
      idempotency; A/B permission isolation.
 6. **Rollback window maintained**
    - Keep the Expand schema in place. Do not apply the Contract step.
+
+## Production vs existing Preview/rehearsal databases
+
+**Production (initial release):** has no `sort_order` column at all. It is the
+normal target of `production-expand.sql` and of the modified
+`drizzle/0002_fixed_scarlet_spider.sql` on a fresh database.
+
+**Existing Preview / rehearsal databases:** an earlier `0002` may already have
+been applied with `sort_order` as `NOT NULL DEFAULT 0` plus the **full** unique
+index `memories_tree_sort_order_uniq`. In that case:
+
+- Do NOT re-run `production-expand.sql` or the modified `0002` against them —
+  `ALTER TABLE ... ADD COLUMN` fails with "column already exists" and can leave
+  a mixed index state.
+- Do NOT reuse such a database for this release without first converting it
+  from the old contract to the Expand state:
+
+  ```
+  BEGIN;
+  DROP INDEX IF EXISTS memories_tree_sort_order_uniq;
+  ALTER TABLE memories ALTER COLUMN sort_order DROP NOT NULL;
+  ALTER TABLE memories ALTER COLUMN sort_order DROP DEFAULT;
+  CREATE UNIQUE INDEX memories_tree_sort_order_uniq_partial
+    ON memories (tree_id, sort_order) WHERE sort_order IS NOT NULL;
+  COMMIT;
+  ```
+
+  This transition SQL is for preview environments only — it is NOT part of the
+  automatic migration chain and must never be run on Production.
+- The simplest option for verification is a fresh database: run the migration
+  chain (`0000` + `0001` + `0002`) from scratch.
 
 ## Worker rollback (only if needed)
 
@@ -68,6 +112,6 @@ separate, manually-approved future step.
 
 | File | Purpose |
 |---|---|
-| `production-expand.sql` | Initial release Expand migration (mirrors `drizzle/0002_fixed_scarlet_spider.sql`) |
+| `production-expand.sql` | Initial release Expand migration, wrapped in an explicit transaction (mirrors `drizzle/0002_fixed_scarlet_spider.sql`) |
 | `reforward-backfill.sql` | Manual NULL-row backfill during re-forward |
 | `contract.sql` | Future Contract migration (NOT run by this release) |
