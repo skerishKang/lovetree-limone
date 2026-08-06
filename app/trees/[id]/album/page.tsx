@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useTreeMoments } from "@/lib/use-tree-moments";
+import { useMomentUrlState } from "@/lib/use-moment-url";
 import EmailAuthForm from "../../../components/EmailAuthForm";
 import { TreeViewShell } from "../../../components/TreeViewShell";
 import { MomentDetailModal } from "../../../components/MomentDetailModal";
+import { MomentComposerModal } from "../../../components/MomentComposerModal";
+import { MomentThumbnail } from "../../../components/MomentThumbnail";
 import "../../../styles/email-auth.css";
 import {
   formatTreeDate,
@@ -16,9 +19,13 @@ import {
 
 export default function AlbumPage() {
   const params = useParams<{ id: string | string[] }>();
+  const searchParams = useSearchParams();
+  const highlightParam = searchParams.get("highlight");
+  const momentParam = searchParams.get("moment");
   const { user, loading: authLoading, login, loginPending } = useAuth();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
   const {
     tree,
     moments,
@@ -30,9 +37,17 @@ export default function AlbumPage() {
     selectedMoment,
     selectMoment,
     refresh,
+    createMoment,
     updateMoment,
     deleteMoment,
-  } = useTreeMoments(treeId);
+  } = useTreeMoments(treeId, highlightParam ?? undefined, momentParam ?? undefined);
+
+  const { handleSelectMoment } = useMomentUrlState({
+    treeId,
+    moments,
+    loading,
+    onSelect: selectMoment,
+  });
 
   if (authLoading || loading) {
     return <TreeViewShell treeId={treeId} activeView="album"><div className="tree-page-state" aria-busy="true">앨범을 불러오고 있어요…</div></TreeViewShell>;
@@ -57,7 +72,14 @@ export default function AlbumPage() {
   }
 
   return (
-    <TreeViewShell treeId={treeId} activeView="album" userLabel={user?.displayName || user?.email || undefined}>
+    <TreeViewShell
+      treeId={treeId}
+      activeView="album"
+      userLabel={user?.displayName || user?.email || undefined}
+      momentId={selectedMomentId}
+      isOwner={isOwner}
+      onAddMoment={() => setIsComposerOpen(true)}
+    >
       <section className="album-content" aria-labelledby="album-title">
         <div className="album-heading">
           <div>
@@ -74,21 +96,27 @@ export default function AlbumPage() {
           <div className="album-empty">
             <span aria-hidden="true">✦</span>
             <p>아직 기록된 순간이 없어요.</p>
+            {isOwner ? <button className="button button-quiet" type="button" onClick={() => setIsComposerOpen(true)}>첫 순간 남기기</button> : null}
           </div>
         ) : (
           <div className="album-grid">
             {albumMoments.map((moment, index) => {
               const memory = moments.find((m) => m.id === moment.id) ?? moment as unknown as MemoryRecord;
+              const isSelected = moment.id === selectedMomentId;
               return (
                 <article
-                  className="album-card"
+                  className={`album-card${isSelected ? " selected" : ""}`}
                   key={moment.id}
-                  onClick={() => selectMoment(moment.id)}
-                  style={{ cursor: "pointer" }}
+                  onClick={() => handleSelectMoment(moment.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSelectMoment(moment.id); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                  aria-label={`${moment.title || "이름 없는 순간"} 상세 보기`}
                 >
                   <div className={`album-card-media album-media-${index % 4}`}>
                     {memory.thumbnail ? (
-                      <img src={memory.thumbnail} alt="" />
+                      <MomentThumbnail src={memory.thumbnail} alt="" sourceType={memory.sourceType} className="album-card-img" placeholderClassName="album-card-placeholder" />
                     ) : (
                       <span aria-hidden="true">{moment.sourceType === "song" ? "♫" : moment.sourceType === "book" ? "▤" : "✦"}</span>
                     )}
@@ -120,11 +148,20 @@ export default function AlbumPage() {
         key={selectedMomentId ?? "none"}
         moment={selectedMoment}
         isOwner={isOwner}
-        onClose={() => selectMoment(null)}
+        onClose={() => handleSelectMoment(null)}
         onUpdate={updateMoment}
         onDelete={deleteMoment}
         parentOptions={moments}
       />
+
+      {isComposerOpen ? (
+        <MomentComposerModal
+          onClose={() => setIsComposerOpen(false)}
+          parentMoment={selectedMoment}
+          parentOptions={moments}
+          onCreate={createMoment}
+        />
+      ) : null}
     </TreeViewShell>
   );
 }

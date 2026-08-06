@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   formatTreeDate,
   sourceTypeLabel,
@@ -8,6 +8,7 @@ import {
   localDateValue,
   type MemoryRecord,
 } from "@/lib/tree-types";
+import { MomentThumbnail } from "./MomentThumbnail";
 
 interface MomentDetailModalProps {
   moment: MemoryRecord | null;
@@ -38,17 +39,6 @@ interface EditFormState {
   parentId: string;
 }
 
-const EMPTY_FORM: EditFormState = {
-  sourceType: "youtube",
-  title: "",
-  memo: "",
-  source: "",
-  sourceUrl: "",
-  timestamp: localDateValue(),
-  emotionTags: "",
-  parentId: "",
-};
-
 function buildFormFromMoment(moment: MemoryRecord): EditFormState {
   return {
     sourceType: moment.sourceType || "youtube",
@@ -62,6 +52,8 @@ function buildFormFromMoment(moment: MemoryRecord): EditFormState {
   };
 }
 
+type PanelMode = "view" | "edit" | "delete-confirm";
+
 export function MomentDetailModal({
   moment,
   isOwner,
@@ -70,13 +62,23 @@ export function MomentDetailModal({
   onDelete,
   parentOptions,
 }: MomentDetailModalProps) {
-  const [editing, setEditing] = useState(false);
+  const [mode, setMode] = useState<PanelMode>("view");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [form, setForm] = useState<EditFormState>(() =>
-    moment ? buildFormFromMoment(moment) : EMPTY_FORM
+    moment ? buildFormFromMoment(moment) : buildFormFromMoment({} as MemoryRecord)
   );
-  const [formError, setFormError] = useState<string | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!moment) return;
+    const timer = window.setTimeout(() => {
+      (dialogRef.current?.querySelector<HTMLElement>("h2, button") ?? closeButtonRef.current)?.focus();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [moment]);
 
   useEffect(() => {
     if (!moment) return;
@@ -92,11 +94,11 @@ export function MomentDetailModal({
   async function handleSave() {
     if (!moment || saving) return;
     if (!form.memo.trim() && !form.title.trim()) {
-      setFormError("제목이나 메모를 하나는 남겨 주세요.");
+      setFeedback("제목이나 메모를 하나는 남겨 주세요.");
       return;
     }
     setSaving(true);
-    setFormError(null);
+    setFeedback(null);
     const result = await onUpdate(moment.id, {
       title: form.title,
       memo: form.memo,
@@ -109,23 +111,24 @@ export function MomentDetailModal({
     });
     setSaving(false);
     if (!result) {
-      setFormError("저장하지 못했어요. 다시 시도해 주세요.");
+      setFeedback("저장하지 못했어요. 다시 시도해 주세요.");
     } else {
-      setEditing(false);
+      setMode("view");
+      setFeedback("저장했어요.");
     }
   }
 
   async function handleDelete() {
     if (!moment || deleting) return;
-    if (!window.confirm("이 순간을 러브트리에서 지울까요?")) return;
     setDeleting(true);
-    setFormError(null);
+    setFeedback(null);
     const ok = await onDelete(moment.id);
     setDeleting(false);
     if (ok) {
       onClose();
     } else {
-      setFormError("삭제하지 못했어요. 다시 시도해 주세요.");
+      setMode("view");
+      setFeedback("삭제하지 못했어요. 다시 시도해 주세요.");
     }
   }
 
@@ -133,47 +136,37 @@ export function MomentDetailModal({
 
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
-      <div className="moment-detail-modal" role="dialog" aria-modal="true" aria-labelledby="moment-detail-title" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" type="button" onClick={onClose} aria-label="닫기">×</button>
+      <div
+        ref={dialogRef}
+        className="moment-detail-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="moment-detail-title"
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button ref={closeButtonRef} className="modal-close" type="button" onClick={onClose} aria-label="닫기">×</button>
 
-        {!editing ? (
-          <>
-            <div className="moment-detail-header">
-              <span className="moment-detail-source">{sourceTypeLabel(moment.sourceType)}</span>
-              <time className="moment-detail-date">{formatTreeDate(moment.timestamp || moment.createdAt)}</time>
+        {feedback ? <p className="moment-feedback" role="status" aria-live="polite">{feedback}</p> : null}
+
+        {mode === "delete-confirm" ? (
+          <div className="moment-delete-confirm">
+            <span className="moment-detail-source">delete moment</span>
+            <h2 id="moment-detail-title" className="moment-detail-title">이 순간을 지울까요?</h2>
+            <p className="moment-detail-memo">“{moment.title || "이름 없는 순간"}”을 러브트리에서 영구히 지워요.</p>
+            <div className="moment-delete-actions">
+              <button className="button button-primary" type="button" onClick={handleDelete} disabled={deleting}>
+                {deleting ? "지우는 중…" : "영구히 삭제"}
+              </button>
+              <button className="button button-quiet" type="button" onClick={() => setMode("view")} disabled={deleting}>
+                취소
+              </button>
             </div>
-            <h2 id="moment-detail-title" className="moment-detail-title">{moment.title || "이름 없는 순간"}</h2>
-            <p className="moment-detail-memo">{moment.memo || "이 순간에 남긴 마음"}</p>
-            {moment.thumbnail ? (
-              <div className="moment-detail-thumb">
-                <img src={moment.thumbnail} alt="" />
-              </div>
-            ) : null}
-            {moment.emotionTags && moment.emotionTags.length > 0 ? (
-              <div className="memory-tags">
-                {moment.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}
-              </div>
-            ) : null}
-            {moment.sourceUrl ? (
-              <a className="moment-detail-link" href={moment.sourceUrl} target="_blank" rel="noreferrer">출처 열기 ↗</a>
-            ) : null}
-            {parentMoment ? (
-              <div className="moment-detail-parent">
-                <span className="moment-detail-parent-label">이전 순간에서 이어짐</span>
-                <span className="moment-detail-parent-title">{parentMoment.title || "이전 순간"}</span>
-              </div>
-            ) : null}
-            {isOwner ? (
-              <div className="moment-detail-actions">
-                <button className="button button-quiet" type="button" onClick={() => setEditing(true)}>수정</button>
-                <button className="button button-quiet" type="button" onClick={handleDelete} disabled={deleting}>{deleting ? "지우는 중…" : "삭제"}</button>
-              </div>
-            ) : null}
-          </>
-        ) : (
+          </div>
+        ) : mode === "edit" ? (
           <div className="moment-detail-edit">
             <p className="eyebrow">edit moment</p>
-            <h2 className="moment-detail-title">순간 다듬기</h2>
+            <h2 id="moment-detail-title" className="moment-detail-title">순간 다듬기</h2>
             <form onSubmit={(e) => { e.preventDefault(); void handleSave(); }}>
               <label htmlFor="md-source-type">어디에서 발견했나요?</label>
               <select id="md-source-type" value={form.sourceType} onChange={(e) => setForm((c) => ({ ...c, sourceType: e.target.value }))}>
@@ -196,13 +189,47 @@ export function MomentDetailModal({
                 <option value="">처음 가지로 남기기</option>
                 {parentOptions.filter((m) => m.id !== moment.id).map((m) => <option value={m.id} key={m.id}>{m.title || "이전 순간"}</option>)}
               </select>
-              {formError ? <p className="tree-form-error" role="alert">{formError}</p> : null}
+              {feedback ? <p className="tree-form-error" role="alert">{feedback}</p> : null}
               <div className="moment-detail-edit-actions">
                 <button className="button button-primary" type="submit" disabled={saving}>{saving ? "저장 중…" : "수정 저장"}</button>
-                <button className="button button-quiet" type="button" onClick={() => setEditing(false)}>취소</button>
+                <button className="button button-quiet" type="button" onClick={() => { setMode("view"); setFeedback(null); }} disabled={saving}>취소</button>
               </div>
             </form>
           </div>
+        ) : (
+          <>
+            <div className="moment-detail-header">
+              <span className="moment-detail-source">{sourceTypeLabel(moment.sourceType)}</span>
+              <time className="moment-detail-date">{formatTreeDate(moment.timestamp || moment.createdAt)}</time>
+            </div>
+            <h2 id="moment-detail-title" className="moment-detail-title" tabIndex={-1}>{moment.title || "이름 없는 순간"}</h2>
+            <p className="moment-detail-memo">{moment.memo || "이 순간에 남긴 마음"}</p>
+            {moment.thumbnail ? (
+              <div className="moment-detail-thumb">
+                <MomentThumbnail src={moment.thumbnail} alt="" sourceType={moment.sourceType} placeholderClassName="moment-thumb-placeholder" />
+              </div>
+            ) : null}
+            {moment.emotionTags && moment.emotionTags.length > 0 ? (
+              <div className="memory-tags">
+                {moment.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}
+              </div>
+            ) : null}
+            {moment.sourceUrl ? (
+              <a className="moment-detail-link" href={moment.sourceUrl} target="_blank" rel="noreferrer">출처 열기 ↗</a>
+            ) : null}
+            {parentMoment ? (
+              <div className="moment-detail-parent">
+                <span className="moment-detail-parent-label">이전 순간에서 이어짐</span>
+                <span className="moment-detail-parent-title">{parentMoment.title || "이전 순간"}</span>
+              </div>
+            ) : null}
+            {isOwner ? (
+              <div className="moment-detail-actions">
+                <button className="button button-quiet" type="button" onClick={() => { setMode("edit"); setFeedback(null); }}>수정</button>
+                <button className="button button-quiet" type="button" onClick={() => { setMode("delete-confirm"); setFeedback(null); }}>삭제</button>
+              </div>
+            ) : null}
+          </>
         )}
       </div>
     </div>

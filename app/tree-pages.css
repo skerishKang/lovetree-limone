@@ -229,6 +229,57 @@
 .view-tab-active { background: var(--rose); color: #fffaf6; }
 .view-tab-active:hover { color: #fffaf6; }
 
+/* ─── Add moment button in switcher bar ─── */
+.tree-view-switcher-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.view-switcher { flex: 1 1 auto; }
+.view-add-moment { flex: 0 0 auto; padding: 8px 18px; border: 1px solid rgba(200, 110, 121, .34); border-radius: 999px; background: rgba(255, 253, 248, .7); color: var(--rose-deep); font-size: .72rem; font-weight: 800; cursor: pointer; transition: background .18s ease, transform .18s ease; white-space: nowrap; }
+.view-add-moment:hover { background: rgba(200, 110, 121, .1); transform: translateY(-1px); }
+.view-add-moment:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+
+/* ─── Selected moment state ─── */
+.memory-record.selected, .timeline-card.selected, .album-card.selected { border-color: var(--rose); box-shadow: 0 0 0 2px rgba(200, 110, 121, .35), 0 14px 30px rgba(200, 110, 121, .12); }
+
+/* ─── Shared thumbnail fallback ─── */
+.memory-record-placeholder, .timeline-thumb-placeholder, .album-card-placeholder, .moment-thumb-placeholder { display: grid; place-items: center; gap: 3px; width: 100%; height: 100%; min-height: 160px; background: linear-gradient(140deg, rgba(200, 110, 121, .16), rgba(138, 154, 117, .16)); color: var(--rose-deep); font-size: 1.4rem; }
+.memory-record-placeholder { min-height: 0; }
+.timeline-thumb-placeholder, .moment-thumb-placeholder { min-height: 120px; border-radius: 12px; }
+.album-card-placeholder { min-height: 160px; }
+.memory-record-placeholder small, .timeline-thumb-placeholder small, .album-card-placeholder small, .moment-thumb-placeholder small { color: rgba(152, 80, 94, .8); font-size: .56rem; font-weight: 800; }
+.memory-record-media img.memory-record-img { width: 100%; height: 100%; min-height: 96px; object-fit: cover; display: block; }
+.timeline-thumb-img { width: 100%; max-height: 280px; object-fit: cover; display: block; }
+.album-card-img { width: 100%; height: 100%; min-height: 160px; object-fit: cover; display: block; }
+
+/* ─── Moment composer modal ─── */
+.moment-composer-modal { position: relative; width: min(480px, 100%); max-height: 90vh; overflow-y: auto; padding: 32px; border: 1px solid rgba(143, 104, 95, .19); border-radius: 26px; background: var(--paper-light); box-shadow: 0 30px 90px rgba(57, 41, 39, .24); }
+.moment-composer-modal h2 { margin: 0 0 12px; font-family: var(--serif); font-size: 1.7rem; font-weight: 400; line-height: 1.15; }
+.moment-composer-intro { margin: 0 0 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; }
+.moment-composer-child-hint { margin: 0 0 20px; padding: 10px 12px; border: 1px solid rgba(138, 154, 117, .2); border-radius: 12px; background: rgba(138, 154, 117, .06); color: var(--sage-deep); font-size: .76rem; line-height: 1.5; }
+.moment-composer-modal form { display: grid; gap: 8px; }
+.moment-composer-modal label { margin-top: 5px; color: var(--sage-deep); font-size: .67rem; font-weight: 800; }
+.moment-composer-modal label span { color: var(--muted); font-weight: 400; }
+.moment-composer-modal input, .moment-composer-modal select, .moment-composer-modal textarea { width: 100%; border: 1px solid rgba(119, 91, 82, .18); border-radius: 11px; outline: none; background: rgba(255, 253, 248, .85); color: var(--ink); font-size: .76rem; }
+.moment-composer-modal input, .moment-composer-modal select { min-height: 43px; padding: 0 11px; }
+.moment-composer-modal textarea { padding: 11px; resize: vertical; line-height: 1.5; }
+.moment-composer-modal input:focus, .moment-composer-modal select:focus, .moment-composer-modal textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 4px rgba(200, 110, 121, .1); }
+.moment-composer-parent-options { display: grid; gap: 8px; margin-top: 6px; }
+.moment-composer-check { display: flex; align-items: center; gap: 8px; margin: 0 !important; color: var(--ink) !important; font-weight: 600 !important; font-size: .74rem !important; cursor: pointer; }
+.moment-composer-check input { width: auto; min-height: auto; }
+.moment-composer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.moment-composer-actions .button { min-height: 43px; padding: 0 15px; font-size: .72rem; }
+
+/* ─── Detail modal UX states ─── */
+.moment-feedback { margin: 0 0 12px; padding: 9px 12px; border-radius: 10px; background: rgba(138, 154, 117, .12); color: var(--sage-deep); font-size: .72rem; font-weight: 700; }
+.moment-delete-confirm { padding: 6px 0 2px; }
+.moment-delete-confirm .moment-detail-title { margin-bottom: 8px; }
+.moment-delete-confirm .moment-detail-memo { margin-bottom: 20px; }
+.moment-delete-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.moment-delete-actions .button { min-height: 43px; padding: 0 15px; font-size: .72rem; }
+.moment-detail-modal:focus { outline: none; }
+
+/* ─── Moment highlight ─── */
+.memory-record.highlighted, .timeline-card.highlighted, .album-card.highlighted { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(200, 110, 121, .15), 0 14px 30px rgba(200, 110, 121, .14); animation: highlight-pulse 1.6s ease-in-out 2; }
+@keyframes highlight-pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(200, 110, 121, .18), 0 14px 30px rgba(200, 110, 121, .1); } 50% { box-shadow: 0 0 0 6px rgba(200, 110, 121, .32), 0 18px 40px rgba(200, 110, 121, .2); } }
+
 /* ─── Moment detail modal ─── */
 .moment-detail-modal { position: relative; width: min(520px, 100%); max-height: 90vh; overflow-y: auto; padding: 32px; border: 1px solid rgba(143, 104, 95, .19); border-radius: 26px; background: var(--paper-light); box-shadow: 0 30px 90px rgba(57, 41, 39, .24); }
 .moment-detail-header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
@@ -260,11 +311,14 @@
 @media (max-width: 800px) {
   .view-switcher { justify-content: center; }
   .moment-detail-modal { padding: 24px 20px; }
+  .tree-view-switcher-bar { flex-wrap: wrap; }
+  .view-add-moment { width: 100%; }
 }
 
 @media (max-width: 520px) {
   .view-tab { padding: 6px 14px; font-size: .68rem; }
   .moment-detail-title { font-size: 1.4rem; }
+  .moment-composer-modal { padding: 24px 20px; }
 }
 
 /* ─── Timeline view ─── */

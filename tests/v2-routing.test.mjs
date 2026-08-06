@@ -31,7 +31,10 @@ test("V1 routes unchanged: tree detail page exists", async () => {
   const page = await readApp("trees/[id]/page.tsx");
   assert.match(page, /"use client"/);
   assert.match(page, /useAuth/);
-  assert.match(page, /apiFetch/);
+  // Data fetching moved to the shared hook in Slice 2/3; the page consumes it.
+  assert.match(page, /useTreeMoments/);
+  const hook = await readFile(new URL("lib/use-tree-moments.ts", root), "utf8");
+  assert.match(hook, /apiFetch/);
 });
 
 test("V1 layout unchanged with AuthProvider", async () => {
