@@ -35,6 +35,13 @@ export interface StringRule {
   allowed?: readonly string[];
 }
 
+export interface IntegerRule {
+  kind: "integer";
+  required?: boolean;
+  min?: number;
+  max?: number;
+}
+
 export interface StringArrayRule {
   kind: "stringArray";
   maxItems?: number;
@@ -53,7 +60,7 @@ export interface ObjectRule {
   rules: Rules;
 }
 
-export type FieldRule = StringRule | StringArrayRule | UrlRule | ObjectRule;
+export type FieldRule = StringRule | StringArrayRule | UrlRule | ObjectRule | IntegerRule;
 
 export type Rules = Record<string, FieldRule>;
 
@@ -144,6 +151,59 @@ function validateUrl(value: unknown, rule: UrlRule, field: string): string | nul
   return null;
 }
 
+function validateInteger(value: unknown, rule: IntegerRule, field: string): string | null {
+  if (value === undefined || value === null) {
+    return rule.required ? `${field} is required` : null;
+  }
+  if (typeof value === "string") {
+    if (value.trim() === "") {
+      return rule.required ? `${field} is required` : null;
+    }
+    if (!/^-?\d+$/.test(value.trim())) {
+      return `${field} must be an integer`;
+    }
+  }
+  if (typeof value !== "number" && typeof value !== "string") {
+    return `${field} must be an integer`;
+  }
+  const num = typeof value === "string" ? parseInt(value.trim(), 10) : value;
+  if (!Number.isInteger(num) || !Number.isFinite(num)) {
+    return `${field} must be an integer`;
+  }
+  if (rule.min !== undefined && num < rule.min) {
+    return `${field} must be at least ${rule.min}`;
+  }
+  if (rule.max !== undefined && num > rule.max) {
+    return `${field} must be at most ${rule.max}`;
+  }
+  return null;
+}
+
+export function isValidTimestamp(value: string): boolean {
+  if (typeof value !== "string") return false;
+  const trimmed = value.trim();
+  if (trimmed === "") return true;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+  if (!match) return false;
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10);
+  const day = parseInt(match[3], 10);
+  if (month < 1 || month > 12) return false;
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
+export function validateTimestamp(value: unknown, field: string): string | null {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string") return `${field} must be a string`;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  if (!isValidTimestamp(trimmed)) {
+    return `${field} must be a valid YYYY-MM-DD date`;
+  }
+  return null;
+}
+
 /**
  * Validates a request body against an explicit whitelist of fields. Values are
  * never blindly coerced with String(); wrong types are rejected with a 400
@@ -179,6 +239,11 @@ export function validate<T extends Record<string, unknown>>(
       const candidate = source[field];
       if (error === null && candidate !== undefined && candidate !== null && typeof candidate === "string") {
         value[field] = rule.trim === false ? candidate : candidate.trim();
+      }
+    } else if (rule.kind === "integer") {
+      error = validateInteger(source[field], rule, field);
+      if (error === null && source[field] !== undefined && source[field] !== null) {
+        value[field] = typeof source[field] === "string" ? parseInt(source[field].trim(), 10) : source[field];
       }
     } else if (rule.kind === "stringArray") {
       error = validateStringArray(source[field], rule, field);

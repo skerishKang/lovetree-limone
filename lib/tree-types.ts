@@ -28,6 +28,7 @@ export interface MemoryRecord {
   thumbnail?: string;
   emotionTags?: string[];
   timestamp?: string;
+  sortOrder?: number;
   visibility?: "private" | "unlisted" | "public" | string;
   channelId?: string | null;
   channelName?: string | null;

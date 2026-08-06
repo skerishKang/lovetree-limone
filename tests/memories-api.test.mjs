@@ -54,17 +54,18 @@ function makeDb({ treeRows = [], memoryRows = [] } = {}) {
           return this;
         },
         where() {
-          if (this.table === trees) return Promise.resolve(treeResponses.shift() ?? []);
-          if (this.table === memories) return Promise.resolve(memoryResponses.shift() ?? []);
-          return Promise.resolve([]);
+          return this;
         },
         orderBy() {
           return this;
         },
         limit() {
-          return this.where();
+          if (this.table === trees) return Promise.resolve(treeResponses.shift() ?? []);
+          if (this.table === memories) return Promise.resolve(memoryResponses.shift() ?? []);
+          return Promise.resolve([]);
         },
       };
+      query.then = (resolve, reject) => query.limit().then(resolve, reject);
       return query;
     },
     insert(table) {

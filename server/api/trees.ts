@@ -14,6 +14,7 @@ import {
   validationError,
   VISIBILITY_VALUES,
   SOURCE_TYPE_VALUES,
+  validateTimestamp,
   type VisibilityValue,
   type SourceTypeValue,
 } from "./validate";
@@ -353,6 +354,16 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   });
   if (!parsed.ok) return validationError(parsed.error);
 
+  const memory = parsed.value.memory as Record<string, unknown>;
+  const memTitle = typeof memory.title === "string" ? memory.title.trim() : "";
+  const memMemo = typeof memory.memo === "string" ? memory.memo.trim() : "";
+  if (memTitle.length === 0 && memMemo.length === 0) {
+    return validationError("memory.title or memory.memo is required");
+  }
+
+  const tsError = validateTimestamp(memory.timestamp, "memory.timestamp");
+  if (tsError) return validationError(tsError);
+
   const now = new Date();
   const treeId = await deterministicId(user.uid, "tree", parsed.value.clientKey as string);
   const memoryId = await deterministicId(user.uid, "tree", treeId, parsed.value.clientKey as string);
@@ -372,13 +383,12 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     updatedAt: now,
   };
 
-  const memory = parsed.value.memory as Record<string, unknown>;
   const memoryRow = {
     id: memoryId,
     treeId,
     parentId: (memory.parentId as string | undefined) ?? null,
-    title: (memory.title as string | undefined) ?? "",
-    memo: (memory.memo as string | undefined) ?? "",
+    title: memTitle,
+    memo: memMemo,
     artist: (memory.artist as string | undefined) ?? "",
     source: (memory.source as string | undefined) ?? "",
     sourceUrl: (memory.sourceUrl as string | undefined) ?? "",
@@ -386,6 +396,7 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     thumbnail: (memory.thumbnail as string | undefined) ?? "",
     emotionTags: (memory.emotionTags as string[] | undefined) ?? [],
     timestamp: (memory.timestamp as string | undefined) ?? "",
+    sortOrder: 0,
     visibility: ((memory.visibility as string | undefined) ?? "public") as VisibilityValue,
     channelId: (memory.channelId as string | undefined) ?? null,
     channelName: (memory.channelName as string | undefined) ?? null,

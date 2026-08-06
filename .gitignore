@@ -45,3 +45,7 @@ temp/
 
 # Local browser QA credentials (never commit)
 .kilo/qa-auth.env
+
+# Agent and MCP working directories
+.kilo/
+.playwright-mcp/
