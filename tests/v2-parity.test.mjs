@@ -164,8 +164,13 @@ test("shared auth, API, and DB core are unchanged", async () => {
 test("V1 routes and files are untouched", async () => {
   const v1Home = await readApp("page.tsx");
   assert.match(v1Home, /첫 순간 심기/);
+  // Tree detail is a real App Router page wired to the shared hook;
+  // thumbnail derivation moved into the shared moment layer in Slice 3.
   const v1Detail = await readApp("trees/[id]/page.tsx");
-  assert.match(v1Detail, /youtubeThumbnail/);
+  assert.match(v1Detail, /"use client"/);
+  assert.match(v1Detail, /useTreeMoments/);
+  const hook = await readRoot("lib/use-tree-moments.ts");
+  assert.match(hook, /youtubeThumbnail/);
 });
 
 test("PR #4 source is not copied into V2 files", async () => {
