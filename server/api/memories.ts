@@ -1,4 +1,4 @@
-import { eq, desc, asc, and, inArray } from "drizzle-orm";
+import { eq, desc, asc, and, inArray, isNotNull } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import { memories, trees } from "../../db/schema";
@@ -120,10 +120,30 @@ async function computeNextSortOrder(ctx: ApiContext, treeId: string): Promise<nu
   const rows = await ctx.db
     .select({ sortOrder: memories.sortOrder })
     .from(memories)
-    .where(eq(memories.treeId, treeId))
+    .where(and(eq(memories.treeId, treeId), isNotNull(memories.sortOrder)))
     .orderBy(desc(memories.sortOrder))
     .limit(1);
   return (rows[0]?.sortOrder ?? -1) + 1;
+}
+
+export function isUniqueViolation(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  if (
+    message.includes("unique") ||
+    message.includes("duplicate") ||
+    message.includes("23505")
+  ) {
+    return true;
+  }
+
+  let current: unknown = error;
+  for (let depth = 0; depth < 3 && current !== null && current !== undefined; depth += 1) {
+    const candidate = current as { code?: unknown };
+    if (candidate.code === "23505") return true;
+    current = (current as { cause?: unknown }).cause;
+  }
+
+  return false;
 }
 
 async function insertMemoryWithRetry(
@@ -156,8 +176,7 @@ async function insertMemoryWithRetry(
       await ctx.db.insert(memories).values(memory);
       return json(memory, 201);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes("unique") || message.includes("duplicate") || message.includes("23505")) {
+      if (isUniqueViolation(error)) {
         continue;
       }
       throw error;
