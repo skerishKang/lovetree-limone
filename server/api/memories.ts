@@ -22,7 +22,24 @@ import {
   type SourceTypeValue,
 } from "./validate";
 
-const SORT_ORDER_MAX_RETRIES = 5;
+const SORT_ORDER_MAX_RETRIES = 16;
+const SORT_ORDER_RETRY_BASE_DELAY_MS = 10;
+const SORT_ORDER_RETRY_MAX_DELAY_MS = 100;
+
+function retryDelayMs(attempt: number): number {
+  // Bounded exponential backoff with jitter. Capping keeps the worst-case
+  // request latency small even when the retry budget is exhausted.
+  const exponential = Math.min(
+    SORT_ORDER_RETRY_MAX_DELAY_MS,
+    SORT_ORDER_RETRY_BASE_DELAY_MS * 2 ** attempt
+  );
+  const jitter = Math.random() * SORT_ORDER_RETRY_BASE_DELAY_MS;
+  return Math.min(SORT_ORDER_RETRY_MAX_DELAY_MS, exponential + jitter);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const MEMORY_CONTENT_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
@@ -126,24 +143,53 @@ async function computeNextSortOrder(ctx: ApiContext, treeId: string): Promise<nu
   return (rows[0]?.sortOrder ?? -1) + 1;
 }
 
-export function isUniqueViolation(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  if (
-    message.includes("unique") ||
-    message.includes("duplicate") ||
-    message.includes("23505")
-  ) {
-    return true;
-  }
+const UNIQUE_VIOLATION_SQLSTATE = "23505";
+const UNIQUE_MESSAGE_PATTERNS = [
+  /duplicate key value violates unique constraint/i,
+  /sqlstate\s*23505/i,
+  /\b23505\b/,
+];
 
+export function isUniqueViolation(error: unknown): boolean {
+  // Prefer the structured SQLSTATE on the error and its cause chain. An
+  // explicit non-23505 code (e.g. 08006, 23503) always wins over the message.
+  const seen = new Set<unknown>();
   let current: unknown = error;
-  for (let depth = 0; depth < 3 && current !== null && current !== undefined; depth += 1) {
+  for (
+    let depth = 0;
+    depth < 4 && current !== null && current !== undefined;
+    depth += 1
+  ) {
+    if (seen.has(current)) break; // guard against circular cause chains
+    seen.add(current);
     const candidate = current as { code?: unknown };
-    if (candidate.code === "23505") return true;
+    if (
+      candidate.code !== undefined &&
+      candidate.code !== null &&
+      String(candidate.code) === UNIQUE_VIOLATION_SQLSTATE
+    ) {
+      return true;
+    }
+    if (
+      candidate.code !== undefined &&
+      candidate.code !== null &&
+      String(candidate.code).length > 0
+    ) {
+      return false;
+    }
     current = (current as { cause?: unknown }).cause;
   }
 
-  return false;
+  // Fall back to message matching only when no structured code was found.
+  // Scan the message on the error and its cause chain (same depth, cycle-safe
+  // because the walk above already bounded the chain length).
+  const messages: string[] = [];
+  let node: unknown = error;
+  for (let depth = 0; depth < 4 && node !== null && node !== undefined; depth += 1) {
+    messages.push(node instanceof Error ? node.message : String(node));
+    node = (node as { cause?: unknown }).cause;
+  }
+  return messages.some((message) => UNIQUE_MESSAGE_PATTERNS.some((pattern) => pattern.test(message)));
 }
 
 async function insertMemoryWithRetry(
@@ -177,6 +223,11 @@ async function insertMemoryWithRetry(
       return json(memory, 201);
     } catch (error) {
       if (isUniqueViolation(error)) {
+        // Back off between attempts so a burst of concurrent creates spreads
+        // out instead of stampeding the same next sortOrder repeatedly.
+        if (attempt < SORT_ORDER_MAX_RETRIES - 1) {
+          await sleep(retryDelayMs(attempt));
+        }
         continue;
       }
       throw error;

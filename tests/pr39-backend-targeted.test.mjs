@@ -561,7 +561,9 @@ test("retry exhaustion returns 409", async () => {
       treeRows: [OWNER_TREE],
       memoryRows: [makeMemoryRow({ id: "m0", sortOrder: 0, memo: "first" })],
     });
-    db.setInsertShouldFail(10);
+    // Fail every insert attempt: retry budget is 16, so 20 forced failures
+    // guarantee exhaustion and the 409 contract.
+    db.setInsertShouldFail(20);
 
     const response = await memoriesRouter(makeContext({
       method: "POST",

@@ -162,10 +162,39 @@ test("isUniqueViolation: true for nested cause.cause.code 23505", () => {
   assert.equal(isUniqueViolation(err), true);
 });
 
-test("isUniqueViolation: true for message containing unique/duplicate/23505", () => {
-  assert.equal(isUniqueViolation(new Error("unique constraint violated")), true);
-  assert.equal(isUniqueViolation(new Error("duplicate key value")), true);
-  assert.equal(isUniqueViolation(new Error("23505")), true);
+test("isUniqueViolation: message fallback matches only concrete pg patterns", () => {
+  assert.equal(
+    isUniqueViolation(new Error('duplicate key value violates unique constraint "memories_tree_sort_order_uniq_partial"')),
+    true
+  );
+  assert.equal(isUniqueViolation(new Error("SQLSTATE 23505")), true);
+  assert.equal(isUniqueViolation(new Error("insert failed with 23505")), true);
+  assert.equal(isUniqueViolation(new Error("unique constraint violated")), false);
+  assert.equal(isUniqueViolation(new Error("duplicate key value")), false);
+  assert.equal(isUniqueViolation(new Error("a unique operation failed")), false);
+});
+
+test("isUniqueViolation: explicit non-23505 code wins over message", () => {
+  const err = new Error("duplicate key value violates unique constraint");
+  err.cause = { code: "08006", message: "connection failed" };
+  assert.equal(isUniqueViolation(err), false);
+  const err2 = new Error("duplicate key value violates unique constraint");
+  err2.code = "23503";
+  assert.equal(isUniqueViolation(err2), false);
+});
+
+test("isUniqueViolation: circular cause chain terminates without infinite loop", () => {
+  const loop = { code: "23505" };
+  loop.cause = loop;
+  const err = new Error("wrapped");
+  err.cause = loop;
+  assert.equal(isUniqueViolation(err), true);
+
+  const plainLoop = { message: "nope" };
+  plainLoop.cause = plainLoop;
+  const plain = new Error("wrapped");
+  plain.cause = plainLoop;
+  assert.equal(isUniqueViolation(plain), false);
 });
 
 test("isUniqueViolation: false for unrelated DB error 08006", () => {
@@ -308,37 +337,39 @@ test("D: unrelated DB error propagates (not treated as sortOrder conflict)", asy
 // ---------------------------------------------------------------------------
 // E. Concurrent creates: 5 in the same tree -> all 201, consecutive, no dup
 // ---------------------------------------------------------------------------
-test("E: 5 concurrent creates all 201 with consecutive unique sortOrders", async () => {
+test("E: 10 concurrent creates (x3 rounds) all 201 with consecutive unique sortOrders", async () => {
   await withFirebaseKeyFetch(async () => {
-    const used = new Map();
-    const db = makeStatefulDb({
-      treeLimitFn: () => [OWNER_TREE],
-      memoryLimitFn() {
-        const max = Math.max(-1, ...used.keys());
-        return [{ sortOrder: max }];
-      },
-      insertImpl(value, inserted) {
-        const so = value.sortOrder;
-        if (used.has(so)) {
-          const err = new Error("Failed query: insert ...");
-          err.cause = { code: "23505", message: "duplicate key value" };
-          return Promise.reject(err);
-        }
-        used.set(so, value.id);
-        inserted.push(value);
-        return Promise.resolve();
-      },
-    });
-    const results = await Promise.all(
-      Array.from({ length: 5 }, (_, i) =>
-        createNestedMemory(db, { title: `c${i}`, memo: `c${i}`, timestamp: "2026-01-07" })
-      )
-    );
-    const bodies = await Promise.all(results.map((r) => r.json()));
-    assert.deepEqual(results.map((r) => r.status), [201, 201, 201, 201, 201]);
-    const orders = bodies.map((b) => b.sortOrder).sort((a, b) => a - b);
-    assert.deepEqual(orders, [0, 1, 2, 3, 4]);
-    assert.equal(new Set(orders).size, orders.length);
+    for (let round = 0; round < 3; round++) {
+      const used = new Map();
+      const db = makeStatefulDb({
+        treeLimitFn: () => [OWNER_TREE],
+        memoryLimitFn() {
+          const max = Math.max(-1, ...used.keys());
+          return [{ sortOrder: max }];
+        },
+        insertImpl(value, inserted) {
+          const so = value.sortOrder;
+          if (used.has(so)) {
+            const err = new Error("Failed query: insert ...");
+            err.cause = { code: "23505", message: "duplicate key value" };
+            return Promise.reject(err);
+          }
+          used.set(so, value.id);
+          inserted.push(value);
+          return Promise.resolve();
+        },
+      });
+      const results = await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          createNestedMemory(db, { title: `c${i}`, memo: `c${i}`, timestamp: "2026-01-07" })
+        )
+      );
+      const bodies = await Promise.all(results.map((r) => r.json()));
+      assert.deepEqual(results.map((r) => r.status), Array(10).fill(201), `round ${round}: all 201`);
+      const orders = bodies.map((b) => b.sortOrder).sort((a, b) => a - b);
+      assert.deepEqual(orders, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], `round ${round}: consecutive`);
+      assert.equal(new Set(orders).size, orders.length);
+    }
   });
 });
 
