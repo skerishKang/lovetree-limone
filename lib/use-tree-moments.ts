@@ -154,6 +154,9 @@ export function useTreeMoments(
 
   const selectMoment = useCallback((id: string | null) => {
     setSelectedMomentId(id);
+    // Selecting a different moment (or deselecting) drops the transient
+    // highlight immediately instead of waiting for the expiry timer.
+    setHighlightMomentId((current) => (id === current ? current : null));
   }, []);
 
   const clearHighlight = useCallback(() => {
