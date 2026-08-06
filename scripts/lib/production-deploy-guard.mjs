@@ -236,7 +236,9 @@ export function collectActiveVersion(runCommandImpl, workerName, repoRoot) {
 
 export function collectSecrets(runCommandImpl, workerName, repoRoot) {
   const result = runCommandImpl(
-    ["npx", "wrangler", "secret", "list", "--name", workerName, "--json"],
+    // wrangler >=4.9x rejects `--json` for `secret list`; `--format json` is the
+    // supported flag (and the default output format for this command).
+    ["npx", "wrangler", "secret", "list", "--name", workerName, "--format", "json"],
     { cwd: repoRoot }
   );
   if (result.exitCode !== 0) return [];
