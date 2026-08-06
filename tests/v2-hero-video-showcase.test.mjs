@@ -154,8 +154,16 @@ test("exactly four showcase cards render, not three", async () => {
 test("V1 and V3 files are untouched", async () => {
   const v1Home = await readApp("page.tsx");
   assert.match(v1Home, /첫 순간 심기/);
+  // The tree detail page is preserved; thumbnail derivation moved to the
+  // shared moment layer in Slice 3.
   const v1Detail = await readApp("trees/[id]/page.tsx");
-  assert.match(v1Detail, /youtubeThumbnail/);
+  assert.match(v1Detail, /MomentDetailModal/);
+  assert.match(v1Detail, /MomentComposerModal/);
+  assert.match(v1Detail, /MomentThumbnail/);
+  const hook = await readFile(new URL("lib/use-tree-moments.ts", root), "utf8");
+  assert.match(hook, /youtubeThumbnail/);
+  const types = await readFile(new URL("lib/tree-types.ts", root), "utf8");
+  assert.match(types, /youtubeThumbnail/);
   // V3 integration lives under app/v3, app/components/v3, app/styles/v3.
   // V2 components must not depend on V3 modules.
   const v2Files = await readdir(new URL("app/components/v2/", root));
