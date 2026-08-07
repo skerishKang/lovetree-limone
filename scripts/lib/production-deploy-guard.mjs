@@ -422,13 +422,16 @@ export function verifyLiveWorkerDrift({
   }
   // Route / workers.dev target state must be *readable* (fail-closed): a
   // lookup failure for the workers.dev subdomain or the custom-domains list is
-  // a BLOCK, never a silent pass. Route drift itself is additionally covered by
-  // the dry-run + forbidden-Worker checks.
+  // a BLOCK, never a silent pass. Additionally, the production Worker is a
+  // workers.dev Worker with no custom routes — any custom domain attached to
+  // it is a route mismatch (BLOCK).
   if (live.subdomainOk !== true) {
     problems.push("workers.dev subdomain state could not be verified (lookup failed)");
   }
   if (live.domainsOk !== true) {
     problems.push("custom domains list could not be verified (lookup failed)");
+  } else if (Array.isArray(live.domains) && live.domains.length > 0) {
+    problems.push(`unexpected custom domains on production Worker (expected none): ${live.domains.length} domain(s)`);
   }
   return { ok: problems.length === 0, problems };
 }
@@ -772,11 +775,15 @@ export async function runGuardedProductionDeploy({
 
   // I. production DB Expand state (read-only, fail-closed)
   if (dbConnectionString) {
-    const db = await verifyProductionDbExpandState({ connectionString: dbConnectionString, pgFactory });
-    for (const check of Object.entries(db.checks)) {
-      record(`db-${check[0]}`, check[1], check[0]);
+    try {
+      const db = await verifyProductionDbExpandState({ connectionString: dbConnectionString, pgFactory });
+      for (const check of Object.entries(db.checks)) {
+        record(`db-${check[0]}`, check[1], check[0]);
+      }
+      record("db-expand-state", db.problems.length === 0, `trees=${db.counts.trees} memories=${db.counts.memories} problems=${JSON.stringify(db.problems)}`);
+    } catch (error) {
+      record("db-expand-state", false, `DB Expand state verification failed (fail-closed): ${error.message}`);
     }
-    record("db-expand-state", db.problems.length === 0, `trees=${db.counts.trees} memories=${db.counts.memories} problems=${JSON.stringify(db.problems)}`);
   } else {
     record("db-expand-state", false, "DATABASE_URL not available locally; Production DB Expand state could not be verified (fail-closed)");
   }

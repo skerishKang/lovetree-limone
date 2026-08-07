@@ -158,3 +158,54 @@ test("credentials file is written with restrictive permissions (mode 0600)", asy
   assert.equal(mode, 0o600, "credentials file must be readable/writable by the owner only");
   await rm(dir, { recursive: true, force: true });
 });
+
+test("F5: final JSON output never contains raw email, uid, password, idToken, or API key", async () => {
+  const { fetchImpl } = makeFetchMock();
+  const result = await runDisposableCleanup({ users: USERS, apiKey: API_KEY, fetchImpl });
+  assert.equal(result.ok, true);
+  // The results array must only carry userRef + emailSha256 + deleted + reasonCode.
+  for (const entry of result.results) {
+    assert.ok(typeof entry.userRef === "string" && entry.userRef.startsWith("user-"));
+    assert.ok(typeof entry.emailSha256 === "string" && /^[0-9a-f]{64}$/.test(entry.emailSha256));
+    assert.ok(!("email" in entry) || entry.email === undefined);
+    assert.ok(!("uid" in entry) || entry.uid === undefined);
+    assert.ok(!("password" in entry) || entry.password === undefined);
+    assert.ok(!("idToken" in entry) || entry.idToken === undefined);
+  }
+  // The errors array must only carry userRef + code (no raw messages).
+  for (const err of result.errors) {
+    assert.ok(typeof err.userRef === "string");
+    assert.ok(typeof err.code === "string");
+    assert.ok(!("message" in err) || err.message === err.code);
+  }
+  // Stringify the entire result and verify no secret leaks.
+  const serialized = JSON.stringify(result);
+  for (const secret of [API_KEY, "pw-secret-a-123456", "pw-secret-b-123456", "tok-a", "tok-b", "smoke-a@example.invalid", "smoke-b@example.invalid", "uid-a", "uid-b"]) {
+    assert.ok(!serialized.includes(secret), `result JSON must not contain raw secret: ${secret}`);
+  }
+});
+
+test("F5: API error payload containing a secret does not leak into output", async () => {
+  // Simulate an API error whose message embeds a secret value (e.g. the API
+  // key or idToken echoed back in the error). safeErrorCode must reduce this
+  // to a stable code; the raw message must never appear in results or errors.
+  const secretInError = `auth failed for token tok-a with key ${API_KEY}`;
+  const fetchImpl = async (url) => {
+    if (url.includes("accounts:delete")) {
+      return jsonResponse(400, { error: { message: secretInError } });
+    }
+    if (url.includes("accounts:lookup")) {
+      return jsonResponse(200, { users: [{ localId: "u1" }] });
+    }
+    throw new Error("unexpected url: " + url);
+  };
+  const result = await runDisposableCleanup({ users: USERS, apiKey: API_KEY, fetchImpl });
+  assert.equal(result.ok, false);
+  const serialized = JSON.stringify(result);
+  assert.ok(!serialized.includes("tok-a"), "result must not leak idToken from API error");
+  assert.ok(!serialized.includes(API_KEY), "result must not leak API key from API error");
+  assert.ok(!serialized.includes(secretInError), "raw API error message must not appear in output");
+  for (const err of result.errors) {
+    assert.ok(typeof err.code === "string" && err.code === err.code, "error code must be a safe stable string");
+  }
+});

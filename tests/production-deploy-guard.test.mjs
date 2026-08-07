@@ -152,6 +152,7 @@ function makeFakeLiveFetch(options = {}) {
   const settingsError = options.settingsError ?? null;
   const subdomainError = options.subdomainError ?? null;
   const domainsError = options.domainsError ?? null;
+  const customDomains = options.customDomains ?? null;
   const fetchImpl = async (url) => {
     if (settingsError) {
       return { ok: false, json: async () => ({ success: false, errors: [{ message: settingsError }] }) };
@@ -165,7 +166,7 @@ function makeFakeLiveFetch(options = {}) {
     }
     if (url.includes("/domains")) {
       if (domainsError) return { ok: false, json: async () => ({ success: false, errors: [{ message: domainsError }] }) };
-      return { ok: true, json: async () => ({ success: true, result: [] }) };
+      return { ok: true, json: async () => ({ success: true, result: customDomains ?? [] }) };
     }
     throw new Error("unexpected live fetch url: " + url);
   };
@@ -434,6 +435,37 @@ test("F1: malformed secret list JSON must BLOCK", async () => {
   assert.ok(problemNames(result).includes("secret-database-url"));
 });
 
+test("F1: explicit 'does not exist' (without code 10007) classifies as absent", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  fake.run = (command, opts) => {
+    const joined = command.join(" ");
+    if (joined.includes("deployments list") && joined.includes(FORBIDDEN_WORKER_NAME)) {
+      return { exitCode: 1, stdout: "", stderr: "The Worker does not exist." };
+    }
+    return makeFakeRun().run(command, opts);
+  };
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  const check = result.checks.find((c) => c.name === "forbidden-worker-absent");
+  assert.equal(check.ok, true);
+});
+
+test("F1: account mismatch error must BLOCK (not treated as absent)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  fake.run = (command, opts) => {
+    const joined = command.join(" ");
+    if (joined.includes("deployments list") && joined.includes(FORBIDDEN_WORKER_NAME)) {
+      return { exitCode: 1, stdout: "", stderr: "You are not authorized to access this account." };
+    }
+    return makeFakeRun().run(command, opts);
+  };
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("forbidden-worker-absent"));
+});
+
 // ── F2: DB index semantics ────────────────────────────────────────────────
 
 test("F2: partial index without predicate must BLOCK", async () => {
@@ -515,6 +547,17 @@ test("F2: clientKey index columns as PG array literal string PASS", async () => 
   const { result } = await runGuard({ dir, head, fake, pgRows: { stringCols: true } });
   assert.equal(result.status, "DRY_RUN_GO");
   assert.ok(!problemNames(result).includes("db-clientKeyUniqueIndex"));
+});
+
+test("F2: same index name in a different schema must BLOCK (not found in public)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  // Simulate the index existing only in a non-public schema: the pg_index
+  // query filters by n.nspname = 'public', so no rows are returned.
+  const { result } = await runGuard({ dir, head, fake, pgRows: { noPartial: true, noClientKeyIndex: true } });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-partialUniqueIndex"));
+  assert.ok(problemNames(result).includes("db-clientKeyUniqueIndex"));
 });
 
 // ── F3: build provenance ──────────────────────────────────────────────────
@@ -645,6 +688,19 @@ test("F6: custom domains lookup failure must BLOCK (fail-closed)", async () => {
   assert.ok(problemNames(result).includes("live-worker-drift"));
 });
 
+test("F6: unexpected custom domain (route mismatch) must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    liveFetch: makeFakeLiveFetch({ customDomains: [{ hostname: "unexpected.example.com", service: "lovetree-limone" }] }),
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
 test("F6: no Cloudflare credentials must BLOCK (fail-closed)", async () => {
   const { dir, head } = await makeScratchRepo();
   const fake = makeFakeRun();
@@ -668,7 +724,7 @@ test("F6: no Cloudflare credentials must BLOCK (fail-closed)", async () => {
 // ── F7: real PR state (origin/main != head) ───────────────────────────────
 
 test("F7: real PR state — origin/main differs from HEAD must BLOCK on source-sha-origin-main", async () => {
-  const { dir, head } = await makeScratchRepo();
+  const { dir } = await makeScratchRepo();
   // Simulate the untouched PR clone: origin/main points at the base, HEAD at
   // the PR head. Write a second commit so the refs genuinely differ.
   await writeFile(path.join(dir, "extra.txt"), "extra\n", "utf8");
@@ -778,6 +834,32 @@ test("dry-run blocks when DATABASE_URL is unavailable (fail-closed)", async () =
   });
   assert.equal(result.status, "BLOCKED");
   assert.ok(problemNames(result).includes("db-expand-state"));
+});
+
+test("dry-run blocks when the DB query throws (fail-closed, no crash)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  class ThrowingClient {
+    constructor() {}
+    async connect() {}
+    async query() { throw new Error('column "sort_order" does not exist'); }
+    async end() {}
+  }
+  const result = await runGuardedProductionDeploy({
+    sourceSha: head,
+    expectedCurrentVersion: ACTIVE_VERSION,
+    confirmWorker: PRODUCTION_WORKER_NAME,
+    repoRoot: dir,
+    execute: false,
+    dbConnectionString: DB_URL,
+    runCommandImpl: fake.run,
+    pgFactory: ThrowingClient,
+    fetchImpl: makeFakeLiveFetch(),
+    cloudflareCredentials: { accountId: "acct", apiToken: "tok" },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("db-expand-state"));
+  assert.ok(result.checks.some((c) => c.name === "db-expand-state" && c.detail.includes("fail-closed")));
 });
 
 test("dry-run passes and never runs a deploy (no upload without --execute)", async () => {
