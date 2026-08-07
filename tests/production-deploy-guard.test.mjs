@@ -1,20 +1,34 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, writeFile, mkdir } from "node:fs/promises";
+import { mkdtemp, writeFile, mkdir, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
 import {
   runGuardedProductionDeploy,
+  formatResult,
   PRODUCTION_WORKER_NAME,
   FORBIDDEN_WORKER_NAME,
   EXPECTED_VARS,
 } from "../scripts/lib/production-deploy-guard.mjs";
 import { buildManifest } from "../scripts/lib/build-provenance.mjs";
+import {
+  firebaseConfigFingerprint,
+  FIREBASE_PROJECT_ID,
+} from "../scripts/lib/firebase-build-config.mjs";
 
 const ACTIVE_VERSION = "9b09919c-8fb6-4f01-9872-57b493525918";
 const NEW_VERSION = "new-version-456-8fb6-4f01-9872-57b493525918";
+
+// Test Firebase client config (fake apiKey, public projectId/authDomain).
+// The apiKey is NOT a real key — it exists only for fingerprinting in tests.
+const TEST_FIREBASE_CONFIG = {
+  apiKey: "test-fake-api-key-not-real-1234567890",
+  authDomain: "relovetree.firebaseapp.com",
+  projectId: FIREBASE_PROJECT_ID,
+};
+const TEST_FIREBASE_FINGERPRINT = firebaseConfigFingerprint(TEST_FIREBASE_CONFIG);
 
 // Mirrors the repository wrangler.jsonc after the fix.
 const SOURCE = `{
@@ -89,7 +103,14 @@ function git(dir, args) {
 // gitignored and lives only in the working tree, and the build manifest is
 // stamped with the exact committed HEAD. HEAD === origin/main === sourceSha ===
 // manifest.sourceSha, and the worktree stays clean because dist/ is ignored.
-async function makeScratchRepo({ source = SOURCE, built = builtConfig(), withManifest = true } = {}) {
+// `bundleContent` lets tests control the emitted client bundle so the build
+// manifest's client-assets digest is computed over that exact content.
+async function makeScratchRepo({
+  source = SOURCE,
+  built = builtConfig(),
+  withManifest = true,
+  bundleContent = null,
+} = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), "prod-guard-repo-"));
   git(dir, ["init", "-b", "main"]);
   git(dir, ["config", "user.email", "guard-test@example.com"]);
@@ -103,12 +124,24 @@ async function makeScratchRepo({ source = SOURCE, built = builtConfig(), withMan
   git(dir, ["update-ref", "refs/remotes/origin/main", head]);
   // Build output: untracked + ignored, exactly like the real repository.
   await mkdir(path.join(dir, "dist", "client", "assets"), { recursive: true });
-  await writeFile(path.join(dir, "dist", "client", "assets", "app.js"), "console.log('asset');\n", "utf8");
+  // The client bundle must contain the inlined Firebase config (apiKey +
+  // authDomain + projectId) so the deploy guard's bundle scan passes.
+  await writeFile(
+    path.join(dir, "dist", "client", "assets", "app.js"),
+    bundleContent ??
+      `console.log('asset'); var c={apiKey:"${TEST_FIREBASE_CONFIG.apiKey}",authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
+    "utf8"
+  );
   await mkdir(path.join(dir, "dist", "server"), { recursive: true });
   await writeFile(path.join(dir, "dist", "server", "wrangler.json"), built, "utf8");
   await writeFile(path.join(dir, "dist", "server", "index.js"), "export default {};\n", "utf8");
   if (withManifest) {
-    const manifest = await buildManifest({ repoRoot: dir, sourceSha: head });
+    const manifest = await buildManifest({
+      repoRoot: dir,
+      sourceSha: head,
+      firebaseConfigFingerprint: TEST_FIREBASE_FINGERPRINT,
+      firebaseProjectId: FIREBASE_PROJECT_ID,
+    });
     await writeFile(
       path.join(dir, "dist", "server", "lovetree-build-manifest.json"),
       JSON.stringify(manifest, null, 2),
@@ -331,6 +364,13 @@ async function runGuard({
   pgRows = {},
   liveFetch = makeFakeLiveFetch(),
   cloudflareCredentials = { accountId: "acct", apiToken: "tok" },
+  firebaseClientConfig = {
+    ok: true,
+    problems: [],
+    config: TEST_FIREBASE_CONFIG,
+    fingerprint: TEST_FIREBASE_FINGERPRINT,
+    projectId: FIREBASE_PROJECT_ID,
+  },
 }) {
   const pg = makeFakePg(pgRows);
   return {
@@ -345,6 +385,7 @@ async function runGuard({
       pgFactory: pg.Client,
       fetchImpl: liveFetch,
       cloudflareCredentials,
+      firebaseClientConfig,
     }),
     fake,
     pg,
@@ -619,6 +660,209 @@ test("F3: valid manifest PASSES", async () => {
   assert.ok(!problemNames(result).some((name) => name.startsWith("build-manifest")));
 });
 
+// ── F4: Firebase client config guard ──────────────────────────────────────
+
+test("F4: Firebase client config present PASSES all Firebase checks", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("firebase-client-config-present"));
+  assert.ok(!problemNames(result).includes("firebase-client-config-inlined"));
+  assert.ok(!problemNames(result).includes("build-manifest-firebase-config-fingerprint"));
+  assert.ok(!problemNames(result).includes("build-manifest-firebase-project-id"));
+});
+
+test("F4: Firebase client config missing (apiKey) must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    firebaseClientConfig: {
+      ok: false,
+      problems: ["NEXT_PUBLIC_FIREBASE_API_KEY is missing or empty"],
+      config: { apiKey: "", authDomain: "relovetree.firebaseapp.com", projectId: "relovetree" },
+      fingerprint: null,
+      projectId: "relovetree",
+    },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-present"));
+  assert.ok(problemNames(result).includes("firebase-client-config-inlined"));
+});
+
+test("F4: Firebase client config missing (authDomain) must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    firebaseClientConfig: {
+      ok: false,
+      problems: ["NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN is missing or empty"],
+      config: { apiKey: "key", authDomain: "", projectId: "relovetree" },
+      fingerprint: null,
+      projectId: "relovetree",
+    },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-present"));
+});
+
+test("F4: Firebase client config missing (projectId) must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    firebaseClientConfig: {
+      ok: false,
+      problems: ["NEXT_PUBLIC_FIREBASE_PROJECT_ID is missing or empty"],
+      config: { apiKey: "key", authDomain: "relovetree.firebaseapp.com", projectId: "" },
+      fingerprint: null,
+      projectId: null,
+    },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-present"));
+});
+
+test("F4: Firebase projectId != relovetree must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const wrongConfig = {
+    apiKey: "key",
+    authDomain: "wrong.firebaseapp.com",
+    projectId: "wrong-project",
+  };
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    firebaseClientConfig: {
+      ok: false,
+      problems: ["NEXT_PUBLIC_FIREBASE_PROJECT_ID does not match expected project 'relovetree'"],
+      config: wrongConfig,
+      fingerprint: null,
+      projectId: "wrong-project",
+    },
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-present"));
+});
+
+test("F4: client bundle without inlined Firebase config must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo();
+  // Overwrite the client bundle with content that does NOT contain the config.
+  await writeFile(
+    path.join(dir, "dist", "client", "assets", "app.js"),
+    "console.log('no firebase config here');\n",
+    "utf8"
+  );
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-inlined"));
+});
+
+test("F4: manifest without Firebase config fingerprint must BLOCK", async () => {
+  const { dir, head } = await makeScratchRepo({ withManifest: false });
+  // Write a manifest WITHOUT the firebaseConfigFingerprint (simulates a build
+  // that ran without the Firebase config guard).
+  const manifest = await buildManifest({ repoRoot: dir, sourceSha: head });
+  await writeFile(
+    path.join(dir, "dist", "server", "lovetree-build-manifest.json"),
+    JSON.stringify(manifest, null, 2),
+    "utf8"
+  );
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-firebase-config-fingerprint"));
+});
+
+test("F4: manifest with wrong Firebase config fingerprint must BLOCK (stale build)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  // Rewrite the manifest with a DIFFERENT fingerprint (simulates a stale build
+  // done with different Firebase config).
+  const manifestPath = path.join(dir, "dist", "server", "lovetree-build-manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  manifest.firebaseConfigFingerprint = "deadbeef".repeat(16);
+  await writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("build-manifest-firebase-config-match"));
+});
+
+test("F4: guard output never contains the raw API key", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  const serialized = JSON.stringify(result);
+  assert.ok(!serialized.includes(TEST_FIREBASE_CONFIG.apiKey), "raw API key must not appear in guard output");
+});
+
+test("F4: formatted guard output never contains the raw API key", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  const formatted = formatResult(result);
+  assert.ok(!formatted.includes(TEST_FIREBASE_CONFIG.apiKey), "raw API key must not appear in formatted guard output");
+});
+
+test("F4: client bundle with apiKey missing (authDomain+projectId present) must BLOCK", async () => {
+  // Bundle is built WITHOUT the apiKey but with the two public values — the
+  // exact fault-injection scenario this PR closes (env has the apiKey, but it
+  // was not baked into the artifact). Using bundleContent keeps the manifest's
+  // client-assets digest consistent so only the inlined check trips.
+  const { dir, head } = await makeScratchRepo({
+    bundleContent: `console.log('asset'); var c={authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
+  });
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-inlined"));
+  assert.ok(!problemNames(result).includes("build-manifest-assets"), "bundle digest must stay consistent");
+  // The blocking detail must not contain the raw apiKey either.
+  const inlinedCheck = result.checks.find((c) => c.name === "firebase-client-config-inlined");
+  assert.ok(!inlinedCheck.detail.includes(TEST_FIREBASE_CONFIG.apiKey), "raw apiKey must not appear in check detail");
+});
+
+test("F4: guard validates config↔artifact match, not Firebase key validity", async () => {
+  // A consistently wrong (but matching) apiKey across env, bundle, and
+  // manifest must PASS this guard: it only checks build-input↔artifact
+  // agreement. Real Firebase apiKey validity is the auth smoke test's job.
+  const wrongButConsistentKey = "wrong-but-consistent-key-000000";
+  const consistentConfig = {
+    ok: true,
+    problems: [],
+    config: { ...TEST_FIREBASE_CONFIG, apiKey: wrongButConsistentKey },
+    fingerprint: firebaseConfigFingerprint({ ...TEST_FIREBASE_CONFIG, apiKey: wrongButConsistentKey }),
+    projectId: FIREBASE_PROJECT_ID,
+  };
+  // Build the bundle + manifest with the same (wrong) key so everything is
+  // consistent with the build env: the guard must not try to validate key
+  // validity, only input↔artifact agreement.
+  const { dir, head } = await makeScratchRepo({
+    bundleContent: `console.log('asset'); var c={apiKey:"${wrongButConsistentKey}",authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
+  });
+  const manifestPath = path.join(dir, "dist", "server", "lovetree-build-manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  manifest.firebaseConfigFingerprint = consistentConfig.fingerprint;
+  await writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, firebaseClientConfig: consistentConfig });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("firebase-client-config-inlined"));
+  assert.ok(!problemNames(result).includes("firebase-client-config-present"));
+  assert.ok(!problemNames(result).includes("build-manifest-firebase-config-match"));
+});
+
 // ── F6: live Worker drift ─────────────────────────────────────────────────
 
 test("F6: live metadata lookup error must BLOCK", async () => {
@@ -716,6 +960,13 @@ test("F6: no Cloudflare credentials must BLOCK (fail-closed)", async () => {
     pgFactory: pg.Client,
     fetchImpl: makeFakeLiveFetch(),
     cloudflareCredentials: { error: "no credentials" },
+    firebaseClientConfig: {
+      ok: true,
+      problems: [],
+      config: TEST_FIREBASE_CONFIG,
+      fingerprint: TEST_FIREBASE_FINGERPRINT,
+      projectId: FIREBASE_PROJECT_ID,
+    },
   });
   assert.equal(result.status, "BLOCKED");
   assert.ok(problemNames(result).includes("live-metadata-credentials"));
@@ -831,6 +1082,13 @@ test("dry-run blocks when DATABASE_URL is unavailable (fail-closed)", async () =
     pgFactory: pg.Client,
     fetchImpl: makeFakeLiveFetch(),
     cloudflareCredentials: { accountId: "acct", apiToken: "tok" },
+    firebaseClientConfig: {
+      ok: true,
+      problems: [],
+      config: TEST_FIREBASE_CONFIG,
+      fingerprint: TEST_FIREBASE_FINGERPRINT,
+      projectId: FIREBASE_PROJECT_ID,
+    },
   });
   assert.equal(result.status, "BLOCKED");
   assert.ok(problemNames(result).includes("db-expand-state"));
@@ -856,6 +1114,13 @@ test("dry-run blocks when the DB query throws (fail-closed, no crash)", async ()
     pgFactory: ThrowingClient,
     fetchImpl: makeFakeLiveFetch(),
     cloudflareCredentials: { accountId: "acct", apiToken: "tok" },
+    firebaseClientConfig: {
+      ok: true,
+      problems: [],
+      config: TEST_FIREBASE_CONFIG,
+      fingerprint: TEST_FIREBASE_FINGERPRINT,
+      projectId: FIREBASE_PROJECT_ID,
+    },
   });
   assert.equal(result.status, "BLOCKED");
   assert.ok(problemNames(result).includes("db-expand-state"));

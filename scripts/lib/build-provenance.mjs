@@ -60,7 +60,19 @@ export async function computeClientAssetsDigest(clientDir) {
 
 // Builds the manifest object for the current dist tree. Throws when the
 // expected build outputs are missing.
-export async function buildManifest({ repoRoot, sourceSha, builtAt = new Date().toISOString() }) {
+//
+// firebaseConfigFingerprint (optional): a sha256 digest of the Firebase client
+// config (apiKey, authDomain, projectId) passed in via the
+// LOVETREE_FIREBASE_CONFIG_FINGERPRINT env var by production:build:safe. Only
+// the digest is stored — never the raw API key — so the deploy guard can
+// detect a stale or mismatched config without leaking secrets.
+export async function buildManifest({
+  repoRoot,
+  sourceSha,
+  builtAt = new Date().toISOString(),
+  firebaseConfigFingerprint = process.env.LOVETREE_FIREBASE_CONFIG_FINGERPRINT ?? null,
+  firebaseProjectId = process.env.LOVETREE_FIREBASE_PROJECT_ID ?? null,
+}) {
   const serverDir = path.join(repoRoot, "dist", "server");
   const clientDir = path.join(repoRoot, "dist", "client");
   const wranglerConfigPath = path.join(serverDir, "wrangler.json");
@@ -83,6 +95,14 @@ export async function buildManifest({ repoRoot, sourceSha, builtAt = new Date().
     serverEntrySha256: await sha256File(serverEntryPath),
     wranglerConfigSha256: sha256(wranglerConfig),
     clientAssetsDigest: await computeClientAssetsDigest(clientDir),
+    firebaseConfigFingerprint:
+      typeof firebaseConfigFingerprint === "string" && firebaseConfigFingerprint.length > 0
+        ? firebaseConfigFingerprint
+        : null,
+    firebaseProjectId:
+      typeof firebaseProjectId === "string" && firebaseProjectId.length > 0
+        ? firebaseProjectId
+        : null,
   };
 }
 
@@ -98,7 +118,16 @@ export function readManifest(repoRoot) {
 
 // Fail-closed provenance checks: manifest must exist and every hash must match
 // the *current* dist tree. Returns an array of [name, ok, detail] checks.
-export async function verifyBuildProvenance({ repoRoot, sourceSha, expectedWorker }) {
+//
+// firebaseConfigFingerprint (optional): when provided, the manifest's
+// firebaseConfigFingerprint must match this digest, proving the build was done
+// with the same Firebase client config that the deploy environment expects.
+export async function verifyBuildProvenance({
+  repoRoot,
+  sourceSha,
+  expectedWorker,
+  expectedFirebaseConfigFingerprint = null,
+}) {
   const checks = [];
   const manifest = readManifest(repoRoot);
   if (!manifest) {
@@ -119,6 +148,38 @@ export async function verifyBuildProvenance({ repoRoot, sourceSha, expectedWorke
     "build-manifest-worker",
     manifest.worker === expectedWorker,
     `worker=${manifest.worker} expected=${expectedWorker}`,
+  ]);
+
+  // Firebase client config fingerprint: the manifest must carry a non-null
+  // fingerprint (proving the build ran with a valid Firebase config), and
+  // when an expected fingerprint is supplied it must match (detecting a stale
+  // build done with different config). Only the digest is compared — never the
+  // raw config values.
+  const hasFingerprint =
+    typeof manifest.firebaseConfigFingerprint === "string" &&
+    manifest.firebaseConfigFingerprint.length > 0;
+  checks.push([
+    "build-manifest-firebase-config-fingerprint",
+    hasFingerprint,
+    hasFingerprint
+      ? "manifest carries a Firebase config fingerprint"
+      : "manifest is missing firebaseConfigFingerprint (build ran without Firebase config guard)",
+  ]);
+  if (expectedFirebaseConfigFingerprint) {
+    const matches = hasFingerprint && manifest.firebaseConfigFingerprint === expectedFirebaseConfigFingerprint;
+    checks.push([
+      "build-manifest-firebase-config-match",
+      matches,
+      matches
+        ? "manifest Firebase config fingerprint matches expected"
+        : "manifest Firebase config fingerprint does not match expected (stale build or config drift)",
+    ]);
+  }
+  // The projectId in the manifest must be the expected Firebase project.
+  checks.push([
+    "build-manifest-firebase-project-id",
+    manifest.firebaseProjectId === "relovetree",
+    `firebaseProjectId=${manifest.firebaseProjectId ?? "(missing)"} expected=relovetree`,
   ]);
 
   const serverEntry = path.join(repoRoot, "dist", "server", "index.js");

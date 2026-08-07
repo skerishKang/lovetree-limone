@@ -40,6 +40,10 @@ import path from "node:path";
 import pg from "pg";
 
 import { verifyBuildProvenance } from "./build-provenance.mjs";
+import {
+  checkFirebaseBuildConfig,
+  verifyClientBundleHasFirebaseConfig,
+} from "./firebase-build-config.mjs";
 
 export const PRODUCTION_WORKER_NAME = "lovetree-limone";
 export const FORBIDDEN_WORKER_NAME = "lovetree-limone-production";
@@ -479,7 +483,7 @@ export function verifyBuiltConfig({ repoRoot }) {
     })();
   checks.push(["built-client-assets", hasClientAssets, "dist/client/assets present and non-empty"]);
   checks.push(["built-worker-entry", existsSync(path.join(serverDir, "index.js")), "dist/server/index.js present"]);
-  return { checks };
+  return { checks, clientDir };
 }
 
 // ── wrangler dry-run ───────────────────────────────────────────────────────
@@ -665,6 +669,7 @@ export async function runGuardedProductionDeploy({
   pgFactory = pg.Client,
   fetchImpl = fetch,
   cloudflareCredentials = null,
+  firebaseClientConfig = null,
   log = () => {},
 }) {
   const checks = [];
@@ -762,8 +767,49 @@ export async function runGuardedProductionDeploy({
   const built = verifyBuiltConfig({ repoRoot });
   for (const [name, ok, detail] of built.checks) record(name, ok, detail);
 
-  // G. build provenance manifest (content hashes)
-  const provenance = await verifyBuildProvenance({ repoRoot, sourceSha, expectedWorker: PRODUCTION_WORKER_NAME });
+  // F2. Firebase client config in the build (fail-closed).
+  // The production build must have inlined the three NEXT_PUBLIC_FIREBASE_*
+  // env vars into the client bundle. This guard verifies:
+  //   - the build environment has the Firebase client config (present, non-empty,
+  //     projectId === relovetree);
+  //   - the emitted client bundle actually contains the apiKey, authDomain, and
+  //     projectId (proving the config was inlined, not left as empty
+  //     placeholders); the apiKey is compared in-memory only and never printed;
+  //   - the build manifest carries a Firebase config fingerprint and the
+  //     expected projectId.
+  // No raw config value (apiKey, authDomain) is ever printed.
+  const fbConfig = firebaseClientConfig ?? checkFirebaseBuildConfig();
+  record(
+    "firebase-client-config-present",
+    fbConfig.ok,
+    fbConfig.ok
+      ? `Firebase client config present (projectId=${fbConfig.projectId})`
+      : `Firebase client config incomplete: ${fbConfig.problems.join("; ")}`,
+  );
+  if (built.clientDir && fbConfig.ok) {
+    const bundleCheck = await verifyClientBundleHasFirebaseConfig({
+      clientDir: built.clientDir,
+      config: fbConfig.config,
+    });
+    record(
+      "firebase-client-config-inlined",
+      bundleCheck.ok,
+      bundleCheck.ok
+        ? "client bundle contains the inlined Firebase config"
+        : `client bundle Firebase config check failed: ${bundleCheck.problems.join("; ")}`,
+    );
+  } else if (!fbConfig.ok) {
+    record("firebase-client-config-inlined", false, "skipped — Firebase client config not present in build environment");
+  }
+
+  // G. build provenance manifest (content hashes + Firebase config fingerprint)
+  const expectedFingerprint = fbConfig.ok ? fbConfig.fingerprint : null;
+  const provenance = await verifyBuildProvenance({
+    repoRoot,
+    sourceSha,
+    expectedWorker: PRODUCTION_WORKER_NAME,
+    expectedFirebaseConfigFingerprint: expectedFingerprint,
+  });
   for (const [name, ok, detail] of provenance.checks) record(name, ok, detail);
 
   // H. wrangler dry-run with the production environment
