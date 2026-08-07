@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>LoveTree · Season Aquarelle Bloom · Cinematic HTML Preview</title>
+<style>
+  :root {
+    --paper: #f4efe3;
+    --paper-2: #ebe2d3;
+    --ink: #2d2825;
+    --muted: #746c65;
+    --rose: #aa5269;
+    --rose-deep: #7f354c;
+    --teal: #1f7475;
+    --blue: #55768d;
+    --gold: #b38a4c;
+    --lavender: #7e6287;
+    --ui: rgba(41, 35, 31, .82);
+    --ui-line: rgba(255,255,255,.24);
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --script: "Segoe Script", "Brush Script MT", cursive;
+  }
+  * { box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #15110f; }
+  body { font-family: var(--sans); color: var(--ink); }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  .app { position: relative; width: 100%; height: 100%; min-height: 520px; overflow: hidden; isolation: isolate; background: var(--paper); }
+  .film { position: absolute; inset: 0; overflow: hidden; background:
+      linear-gradient(135deg, rgba(255,255,255,.72), rgba(244,236,220,.42)),
+      url("lovetree-season-aquarelle-bloom-v3-preview-assets/paper-grain.jpg");
+    background-size: cover, 512px 512px;
+  }
+  .film::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:90; opacity:.28; mix-blend-mode:multiply;
+    background-image:url("lovetree-season-aquarelle-bloom-v3-preview-assets/paper-grain.jpg"); background-size:420px 420px; }
+  #fx { position:absolute; inset:0; z-index:36; width:100%; height:100%; pointer-events:none; }
+  .scene { position:absolute; inset:0; opacity:0; overflow:hidden; pointer-events:none; transform:translateZ(0); }
+  .scene.active { pointer-events:auto; }
+  .scene::before { content:""; position:absolute; inset:-12%; z-index:0; background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.88), transparent 40%),
+    radial-gradient(circle at 86% 82%, rgba(217,188,167,.28), transparent 38%); }
+  .paper-wash { position:absolute; z-index:2; width:68vw; max-width:1100px; opacity:.48; filter:saturate(.75) blur(.2px); mix-blend-mode:multiply; pointer-events:none; }
+  .wash-rose { content:url("lovetree-season-aquarelle-bloom-v3-preview-assets/wash-rose.png"); }
+  .wash-teal { content:url("lovetree-season-aquarelle-bloom-v3-preview-assets/wash-teal.png"); }
+  .wash-blue { content:url("lovetree-season-aquarelle-bloom-v3-preview-assets/wash-blue.png"); }
+  .wash-gold { content:url("lovetree-season-aquarelle-bloom-v3-preview-assets/wash-gold.png"); }
+  .woman { position:absolute; z-index:12; object-fit:cover; user-select:none; pointer-events:none; filter:saturate(.92) contrast(.98); transform-origin:50% 60%; }
+  .flower { position:absolute; z-index:24; object-fit:contain; pointer-events:none; user-select:none; filter:saturate(.9); mix-blend-mode:multiply; -webkit-mask-image:radial-gradient(ellipse at 50% 55%,#000 24%,rgba(0,0,0,.88) 56%,transparent 87%); mask-image:radial-gradient(ellipse at 50% 55%,#000 24%,rgba(0,0,0,.88) 56%,transparent 87%); }
+  .petal { position:absolute; z-index:48; width:110px; pointer-events:none; filter:drop-shadow(0 12px 12px rgba(94,52,42,.08)); }
+  .brand { position:absolute; z-index:60; top:5.5vh; left:5.2vw; font-size:12px; letter-spacing:.28em; font-weight:700; }
+  .scene-number { position:absolute; z-index:60; top:5.5vh; right:5.2vw; font-size:10px; letter-spacing:.18em; color:var(--muted); text-transform:uppercase; }
+  .display { font-family:var(--serif); font-weight:400; letter-spacing:-.028em; line-height:.98; }
+  .script { font-family:var(--script); font-weight:400; color:var(--rose); }
+  .eyebrow { font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--teal); }
+  .copy-panel { position:absolute; z-index:62; }
+  .copy-panel h1, .copy-panel h2, .copy-panel p { margin:0; }
+  .reveal { opacity:var(--r,0); transform:translate3d(0, calc((1 - var(--r,0)) * 22px), 0); filter:blur(calc((1 - var(--r,0)) * 3px)); }
+  .reveal.no-blur { filter:none; }
+  .moment-card { position:absolute; z-index:58; width:210px; padding:13px 14px 15px; border:1px solid rgba(58,45,38,.18); border-radius:3px; background:rgba(250,247,239,.93); box-shadow:0 18px 40px rgba(74,54,45,.13); backdrop-filter:blur(3px); }
+  .moment-card::before { content:""; position:absolute; top:-9px; left:50%; width:48px; height:17px; transform:translateX(-50%) rotate(-2deg); background:rgba(222,207,178,.58); border:1px solid rgba(106,83,64,.08); }
+  .moment-card .time { font-size:11px; letter-spacing:.08em; color:var(--teal); font-weight:700; }
+  .moment-card .title { margin-top:7px; font-family:var(--serif); font-size:16px; line-height:1.15; }
+  .moment-card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin-bottom:12px; filter:saturate(.86); }
+  .moment-card.compact { width:180px; padding:10px; }
+  .moment-card.compact .title { font-size:14px; }
+  .subtitle { font-size:14px; line-height:1.55; color:#5d5550; }
+  .meta-line { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#655c56; }
+  .count { font-family:var(--serif); font-size:clamp(38px,4.8vw,84px); line-height:.9; }
+  .count small { font-family:var(--sans); font-size:.18em; letter-spacing:.08em; text-transform:uppercase; margin-left:.35em; }
+
+  /* Scene 01 */
+  .s1 .woman { right:-1vw; top:-7vh; width:min(62vw,980px); height:112vh; object-position:53% 36%; transform:translate3d(calc(var(--p,0) * -16px), calc(sin(var(--p,0) * 6.283) * 4px),0) scale(calc(1 + var(--p,0)*.025)); }
+  .s1 .flower-a { left:-11vw; bottom:-23vh; width:min(55vw,860px); opacity:.58; }
+  .s1 .flower-b { right:-18vw; bottom:-24vh; width:min(48vw,730px); opacity:.42; transform:rotate(-9deg); }
+  .s1 .paper-wash { left:-14vw; top:18vh; }
+  .s1 .copy-panel { left:5.6vw; top:24vh; width:min(43vw,680px); padding:30px 34px 28px; background:linear-gradient(120deg,rgba(248,244,235,.94),rgba(248,244,235,.72)); border:1px solid rgba(90,62,52,.10); box-shadow:0 24px 60px rgba(72,48,39,.08); backdrop-filter:blur(5px); }
+  .s1 h1 { font-size:clamp(42px,5.3vw,92px); max-width:11ch; }
+  .s1 h1 em { display:block; color:var(--rose); font-family:var(--script); font-size:.72em; font-weight:400; margin-top:.16em; }
+  .s1 .subtitle { margin-top:22px; max-width:390px; }
+  .s1 .season-tag { margin-top:30px; padding-top:13px; border-top:1px solid rgba(99,61,65,.45); width:260px; }
+
+  /* Scene 02 */
+  .s2 .woman { left:-4vw; top:-7vh; width:min(68vw,1100px); height:116vh; object-position:58% 48%; transform:translate3d(calc(var(--p,0)*-34px), calc(var(--p,0)*8px),0) scale(calc(1.01 + var(--p,0)*.014)); }
+  .s2 .paper-wash { right:-10vw; top:8vh; transform:rotate(6deg); }
+  .s2 .moment-card:nth-of-type(1) { right:10vw; top:17vh; transform:rotate(-2deg) translateY(calc((1 - var(--r,0))*20px)); }
+  .s2 .moment-card:nth-of-type(2) { right:26vw; top:42vh; transform:rotate(2deg) translateY(calc((1 - var(--r,0))*20px)); }
+  .s2 .moment-card:nth-of-type(3) { right:7vw; top:66vh; transform:rotate(-1deg) translateY(calc((1 - var(--r,0))*20px)); }
+  .s2 .small-copy { position:absolute; left:6vw; bottom:7vh; z-index:62; font-family:var(--serif); font-size:clamp(22px,2.2vw,36px); max-width:360px; }
+
+  /* Scene 03 */
+  .s3 .woman { left:0; top:-2vh; width:min(45vw,720px); height:104vh; object-position:50% 36%; transform:translate3d(calc(var(--p,0)*38px), calc(var(--p,0)*-5px),0) scale(1.02); }
+  .s3 .paper-wash { left:26vw; bottom:-8vh; width:62vw; transform:rotate(-5deg); }
+  .s3 .copy-panel { right:5vw; top:22vh; width:min(39vw,625px); padding:28px 30px 30px; background:rgba(248,244,235,.84); border:1px solid rgba(74,58,50,.10); box-shadow:0 20px 55px rgba(61,45,38,.08); backdrop-filter:blur(4px); }
+  .s3 h2 { font-size:clamp(40px,4.8vw,80px); line-height:1.02; max-width:12ch; }
+  .s3 .flow { margin-top:22px; font-size:clamp(14px,1.25vw,20px); letter-spacing:.04em; color:var(--teal); }
+  .s3 .path-card-1 { left:34vw; top:15vh; }
+  .s3 .path-card-2 { left:49vw; top:54vh; }
+  .s3 .path-card-3 { left:70vw; top:10vh; }
+  .ribbon-svg { position:absolute; inset:0; z-index:42; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .ribbon-svg path { fill:none; stroke-linecap:round; stroke-linejoin:round; filter:url(#softPigment); }
+  .ribbon-main { stroke:rgba(34,115,115,.66); stroke-width:12; }
+  .ribbon-rose { stroke:rgba(172,79,105,.58); stroke-width:10; }
+  .ribbon-lav { stroke:rgba(116,92,135,.48); stroke-width:9; }
+
+  /* Scene 04 */
+  .s4 .woman { left:-3vw; top:-7vh; width:min(56vw,880px); height:114vh; object-position:52% 40%; transform:translate3d(calc(var(--p,0)*-12px), calc(var(--p,0)*7px),0) scale(calc(1 + var(--p,0)*.018)); }
+  .s4 .flower-a { left:13vw; bottom:-17vh; width:min(46vw,720px); opacity:.82; }
+  .s4 .paper-wash { right:-6vw; top:2vh; width:64vw; }
+  .s4 .words { position:absolute; z-index:65; right:7vw; top:13vh; width:min(42vw,660px); }
+  .word-row { display:grid; grid-template-columns:150px 1fr; align-items:baseline; gap:20px; padding:9px 0; border-bottom:1px solid rgba(92,72,65,.13); }
+  .word-row .name { font-family:var(--script); font-size:clamp(28px,3.2vw,54px); }
+  .word-row .line { font-family:var(--serif); font-size:clamp(16px,1.55vw,25px); }
+  .word-row:nth-child(1) .name { color:var(--blue); }
+  .word-row:nth-child(2) .name { color:var(--lavender); }
+  .word-row:nth-child(3) .name { color:var(--teal); }
+  .word-row:nth-child(4) .name { color:var(--rose); }
+  .writing-zone { position:absolute; z-index:68; right:4vw; bottom:4vh; width:min(48vw,760px); height:35vh; }
+  .write-svg { width:100%; height:100%; overflow:visible; }
+  .ink-path { fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:7; }
+  .ink-shadow { fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:18; opacity:.08; filter:blur(4px); }
+  .brush-tip { fill:#a4546c; opacity:.9; filter:drop-shadow(0 1px 3px rgba(80,32,45,.35)); }
+  .ink-bloom { position:absolute; border-radius:50%; width:120px; height:70px; background:radial-gradient(ellipse, rgba(174,79,105,.2), rgba(174,79,105,0) 70%); filter:blur(5px); opacity:0; }
+
+  /* Scene 05 */
+  .s5 { background:linear-gradient(145deg,#f6f0e4,#e9dfd0); }
+  .s5 .orbit-stage { position:absolute; inset:0; z-index:10; overflow:hidden; }
+  .orbit-angle { position:absolute; top:-8vh; left:-5vw; width:61vw; height:116vh; object-fit:cover; object-position:50% 35%; opacity:0; transform-origin:50% 48%; filter:saturate(.9) contrast(.98); }
+  .orbit-angle.rear { left:4vw; width:48vw; object-position:50% 22%; }
+  .orbit-angle.hero { left:-2vw; width:58vw; }
+  .orbit-angle.cover { left:0; width:53vw; }
+  .orbit-copy { position:absolute; z-index:65; left:6vw; bottom:10vh; width:320px; padding:26px 26px 30px; background:rgba(247,242,232,.91); box-shadow:0 20px 60px rgba(74,52,40,.12); }
+  .orbit-copy h2 { font-size:clamp(35px,4vw,67px); }
+  .orbit-copy p { margin-top:14px; font-family:var(--serif); font-size:clamp(18px,1.6vw,26px); line-height:1.2; }
+  .orbit-label { position:absolute; z-index:72; top:6vh; left:50%; transform:translateX(-50%); padding:7px 12px; border:1px solid rgba(53,50,47,.15); background:rgba(248,244,236,.72); font-size:10px; letter-spacing:.17em; text-transform:uppercase; }
+  .orbit-occluder { position:absolute; z-index:55; top:-20vh; left:-70vw; width:120vw; height:140vh; opacity:0; transform:rotate(-8deg); mix-blend-mode:multiply; }
+  .orbit-moment { position:absolute; z-index:51; width:130px; padding:8px; background:#f8f3e9; box-shadow:0 16px 34px rgba(64,44,35,.16); transform-origin:center; }
+  .orbit-moment img { width:100%; display:block; aspect-ratio:4/5; object-fit:cover; }
+  .om1 { right:24vw; top:12vh; transform:rotate(8deg); }
+  .om2 { right:8vw; top:42vh; transform:rotate(-5deg); }
+  .om3 { right:30vw; bottom:8vh; transform:rotate(2deg); }
+
+  /* Scene 06 */
+  .s6 .woman { right:7vw; top:-4vh; width:min(44vw,700px); height:82vh; object-position:50% 32%; -webkit-mask-image:radial-gradient(ellipse at 54% 34%,#000 36%,rgba(0,0,0,.9) 58%,transparent 88%); mask-image:radial-gradient(ellipse at 54% 34%,#000 36%,rgba(0,0,0,.9) 58%,transparent 88%); transform:translate3d(calc(var(--p,0)*-20px), calc(var(--p,0)*-12px),0) scale(calc(1.02 + var(--p,0)*.018)) rotate(calc(-1deg + var(--p,0)*1.5deg)); }
+  .s6 .bloom-field { position:absolute; left:-2vw; bottom:-10vh; z-index:18; width:104vw; height:80vh; object-fit:cover; object-position:48% 70%; opacity:.88; mask-image:linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.25) 13%, #000 38%); }
+  .s6 .flower { transform-origin:50% 75%; }
+  .s6 .f1 { left:-3vw; bottom:-12vh; width:44vw; }
+  .s6 .f2 { left:30vw; bottom:-17vh; width:46vw; }
+  .s6 .f3 { right:-7vw; bottom:-12vh; width:42vw; }
+  .s6 .copy-panel { left:5vw; top:11vh; width:min(39vw,610px); padding:24px 28px 28px; background:linear-gradient(120deg,rgba(249,245,236,.95),rgba(249,245,236,.68)); border:1px solid rgba(88,59,49,.10); box-shadow:0 20px 52px rgba(63,43,36,.08); backdrop-filter:blur(4px); }
+  .s6 .stats { display:flex; gap:32px; align-items:flex-end; margin-bottom:28px; }
+  .s6 h2 { font-size:clamp(38px,4.4vw,72px); max-width:10ch; }
+  .s6 .bloom-line { margin-top:22px; font-family:var(--script); font-size:clamp(27px,3.1vw,51px); color:var(--rose); }
+
+  /* Scene 07 */
+  .s7 { background:linear-gradient(145deg,#e9ddcb,#f7f1e5 55%,#dfd2bf); }
+  .assembly { position:absolute; inset:0; z-index:8; perspective:1500px; }
+  .desk-paper { position:absolute; width:68vw; height:83vh; left:16vw; top:8vh; object-fit:fill; filter:drop-shadow(0 30px 45px rgba(68,45,34,.18)); }
+  .assembly-note { position:absolute; z-index:13; width:26vw; height:64vh; left:11vw; top:18vh; object-fit:fill; transform:rotate(-6deg); filter:drop-shadow(0 20px 28px rgba(67,47,38,.14)); }
+  .cover-card { position:absolute; z-index:32; width:min(37vw,610px); aspect-ratio:4/5; left:34vw; top:6vh; background:#f6f0e5; border:1px solid rgba(80,55,45,.14); box-shadow:0 34px 70px rgba(70,45,35,.22); overflow:hidden; transform-style:preserve-3d; }
+  .cover-card .cover-woman { position:absolute; right:-1%; bottom:0; width:82%; height:75%; object-fit:cover; object-position:50% 22%; mask-image:linear-gradient(to top,#000 65%,transparent 100%); }
+  .cover-card .cover-flower { position:absolute; left:-11%; bottom:-10%; width:78%; }
+  .cover-card .cover-brand { position:absolute; top:6%; left:7%; font-size:10px; letter-spacing:.24em; font-weight:700; }
+  .cover-card .cover-title { position:absolute; top:16%; left:7%; width:78%; font-family:var(--serif); font-size:clamp(23px,2.5vw,44px); line-height:.94; }
+  .cover-card .cover-title em { display:block; color:var(--rose); font-family:var(--script); font-size:1.35em; margin-top:.06em; }
+  .cover-card .cover-desc { position:absolute; left:7%; bottom:8%; width:48%; font-family:var(--serif); font-size:clamp(12px,1.05vw,17px); line-height:1.28; }
+  .cover-card .cover-meta { position:absolute; right:5%; bottom:8%; font-size:9px; line-height:1.55; letter-spacing:.06em; text-align:right; }
+  .assembly-metrics { position:absolute; z-index:38; right:9vw; top:25vh; font-family:var(--serif); font-size:clamp(22px,2.5vw,41px); line-height:1.35; }
+  .assembly-seal { position:absolute; z-index:36; right:15vw; bottom:12vh; width:120px; }
+  .assembly-petal { position:absolute; z-index:44; width:80px; }
+  .ap1 { left:23vw; top:10vh; transform:rotate(25deg); }
+  .ap2 { right:17vw; top:8vh; transform:rotate(-20deg); }
+  .ap3 { right:9vw; bottom:12vh; transform:rotate(8deg); }
+
+  /* Scene 08 */
+  .s8 { background:#efe7d9; }
+  .poster { position:absolute; inset:0; z-index:12; display:grid; grid-template-columns:44% 56%; overflow:hidden; background:
+      linear-gradient(110deg, rgba(250,246,237,.99) 0 45%, rgba(246,239,226,.66) 63%, rgba(238,224,209,.55)),
+      url("lovetree-season-aquarelle-bloom-v3-preview-assets/paper-grain.jpg"); background-size:cover,420px; }
+  .poster-copy { position:relative; z-index:30; padding:7vh 4vw 6vh 7vw; display:flex; flex-direction:column; }
+  .poster .poster-brand { font-size:12px; letter-spacing:.27em; font-weight:700; }
+  .poster h1 { margin:8vh 0 0; font-family:var(--serif); font-size:clamp(48px,6.1vw,106px); line-height:.87; letter-spacing:-.045em; }
+  .poster h1 span { display:block; }
+  .poster h1 .stay { color:var(--rose); font-family:var(--script); font-size:1.18em; margin-top:.08em; letter-spacing:-.02em; }
+  .poster .poster-desc { margin-top:auto; max-width:560px; font-family:var(--serif); font-size:clamp(15px,1.25vw,21px); line-height:1.34; }
+  .poster .poster-meta { margin-top:24px; font-size:11px; letter-spacing:.13em; line-height:1.6; }
+  .poster-visual { position:relative; overflow:hidden; }
+  .poster-woman { position:absolute; inset:-3% -2% -4% -8%; width:110%; height:108%; object-fit:cover; object-position:53% 24%; -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 16%,#000 100%),linear-gradient(0deg,transparent 0%,#000 15%,#000 100%); -webkit-mask-composite:source-in; mask-image:linear-gradient(90deg,transparent 0%,#000 16%,#000 100%); }
+  .poster-flower { position:absolute; left:-20%; bottom:-18%; width:95%; z-index:16; mix-blend-mode:multiply; -webkit-mask-image:radial-gradient(ellipse at 45% 70%,#000 28%,rgba(0,0,0,.82) 56%,transparent 86%); mask-image:radial-gradient(ellipse at 45% 70%,#000 28%,rgba(0,0,0,.82) 56%,transparent 86%); }
+  .poster-wash { position:absolute; left:-35%; bottom:-18%; width:110%; z-index:10; opacity:.58; mix-blend-mode:multiply; }
+  .poster::after { content:""; position:absolute; inset:0; z-index:60; pointer-events:none; box-shadow:inset 0 0 120px rgba(103,71,54,.09); }
+
+  /* Interface */
+  .preview-status { position:absolute; z-index:220; top:14px; left:50%; transform:translateX(-50%); padding:7px 12px; border:1px solid rgba(57,48,43,.14); background:rgba(249,245,237,.78); backdrop-filter:blur(10px); color:#5d524c; font-size:9px; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; }
+  .controls { position:absolute; z-index:240; left:50%; bottom:max(15px, env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(920px,calc(100% - 28px)); padding:11px 12px 10px; border:1px solid var(--ui-line); border-radius:14px; background:var(--ui); color:#fff; backdrop-filter:blur(14px); box-shadow:0 16px 50px rgba(0,0,0,.22); }
+  .controls-row { display:flex; align-items:center; gap:8px; }
+  .control-btn { min-height:34px; border:1px solid rgba(255,255,255,.22); border-radius:8px; padding:7px 11px; color:#fff; background:rgba(255,255,255,.08); font-size:10px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+  .control-btn:hover, .control-btn:focus-visible { background:rgba(255,255,255,.17); outline:none; }
+  .control-btn[disabled] { opacity:.5; cursor:not-allowed; }
+  .progress-wrap { flex:1; display:grid; grid-template-columns:1fr auto; align-items:center; gap:10px; min-width:120px; }
+  .seek { width:100%; accent-color:#d88ca0; }
+  .timecode { font-variant-numeric:tabular-nums; font-size:10px; color:rgba(255,255,255,.74); min-width:74px; text-align:right; }
+  .scene-track { display:flex; margin-top:8px; gap:2px; height:3px; }
+  .scene-segment { height:3px; border-radius:3px; background:rgba(255,255,255,.22); transition:background .2s; }
+  .scene-segment.active { background:#f0a4b7; }
+  .begin-overlay { position:absolute; inset:0; z-index:300; display:grid; place-items:center; background:rgba(28,22,19,.36); backdrop-filter:blur(5px); transition:opacity .55s ease, visibility .55s; }
+  .begin-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+  .begin-card { width:min(520px,calc(100% - 36px)); padding:34px; text-align:center; border:1px solid rgba(255,255,255,.28); border-radius:18px; background:rgba(247,241,231,.94); box-shadow:0 35px 90px rgba(24,17,14,.28); }
+  .begin-card .kicker { font-size:10px; letter-spacing:.21em; text-transform:uppercase; color:var(--rose); }
+  .begin-card h1 { margin:15px 0 12px; font-family:var(--serif); font-size:clamp(34px,5vw,60px); line-height:.98; }
+  .begin-card p { margin:0 auto 22px; max-width:390px; color:#655b55; line-height:1.5; font-size:13px; }
+  .begin-btn { border:0; padding:13px 21px; border-radius:999px; color:white; background:#6f3748; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; box-shadow:0 12px 25px rgba(106,54,72,.22); }
+  .sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }
+
+  @media (max-width: 680px), (orientation: portrait) and (max-width: 900px) {
+    .app { min-height:100%; }
+    .preview-status { top:8px; font-size:7px; max-width:94vw; overflow:hidden; text-overflow:ellipsis; }
+    .brand { top:5.8vh; left:7vw; font-size:10px; }
+    .scene-number { top:5.8vh; right:7vw; font-size:8px; }
+    .controls { bottom:max(8px,env(safe-area-inset-bottom)); width:calc(100% - 14px); padding:8px; border-radius:12px; }
+    .controls-row { gap:5px; flex-wrap:wrap; }
+    .control-btn { min-height:29px; padding:5px 8px; font-size:8px; border-radius:6px; }
+    .progress-wrap { order:5; flex-basis:100%; grid-template-columns:1fr auto; }
+    .scene-track { display:none; }
+    .timecode { font-size:9px; }
+    .paper-wash { width:118vw; }
+
+    .s1 .woman { top:-2vh; right:-33vw; width:120vw; height:67vh; object-position:47% 28%; }
+    .s1 .flower-a { width:105vw; left:-20vw; bottom:25vh; opacity:.7; }
+    .s1 .flower-b { display:none; }
+    .s1 .paper-wash { left:-45vw; top:16vh; }
+    .s1 .copy-panel { left:7vw; right:7vw; top:auto; bottom:12vh; width:auto; padding:20px 18px; background:rgba(247,242,232,.91); }
+    .s1 h1 { font-size:clamp(36px,11.8vw,54px); max-width:9ch; }
+    .s1 .subtitle { margin-top:14px; font-size:12px; max-width:320px; }
+    .s1 .season-tag { margin-top:16px; }
+
+    .s2 .woman { left:-25vw; top:1vh; width:130vw; height:66vh; object-position:56% 34%; }
+    .s2 .paper-wash { right:-50vw; top:20vh; width:130vw; }
+    .s2 .moment-card { width:148px; padding:9px; }
+    .s2 .moment-card img { margin-bottom:7px; }
+    .s2 .moment-card .title { font-size:12px; }
+    .s2 .moment-card:nth-of-type(1) { right:6vw; top:10vh; }
+    .s2 .moment-card:nth-of-type(2) { right:44vw; top:43vh; }
+    .s2 .moment-card:nth-of-type(3) { right:7vw; top:57vh; }
+    .s2 .small-copy { left:7vw; bottom:12vh; font-size:21px; width:78vw; }
+
+    .s3 .woman { left:8vw; top:7vh; width:68vw; height:50vh; object-position:50% 28%; }
+    .s3 .paper-wash { left:-34vw; bottom:17vh; width:135vw; }
+    .s3 .copy-panel { left:7vw; right:7vw; top:auto; bottom:12vh; width:auto; padding:18px 20px; }
+    .s3 h2 { font-size:clamp(33px,10.5vw,48px); max-width:11ch; }
+    .s3 .flow { margin-top:14px; font-size:12px; }
+    .s3 .moment-card.compact { width:108px; padding:6px; }
+    .s3 .moment-card.compact .time { font-size:8px; }
+    .s3 .moment-card.compact .title { font-size:9px; }
+    .s3 .path-card-1 { left:5vw; top:39vh; }
+    .s3 .path-card-2 { left:39vw; top:46vh; }
+    .s3 .path-card-3 { left:69vw; top:35vh; }
+
+    .s4 .woman { left:-31vw; top:-2vh; width:119vw; height:66vh; object-position:54% 30%; opacity:.78; }
+    .s4 .flower-a { width:110vw; left:-26vw; bottom:26vh; opacity:.58; }
+    .s4 .paper-wash { right:-43vw; top:8vh; width:130vw; }
+    .s4 .words { left:7vw; right:7vw; top:9vh; width:auto; }
+    .word-row { grid-template-columns:100px 1fr; gap:9px; padding:7px 0; }
+    .word-row .name { font-size:25px; }
+    .word-row .line { font-size:13px; }
+    .writing-zone { right:1vw; left:1vw; bottom:9vh; width:auto; height:28vh; }
+
+    .orbit-angle { top:3vh; left:-36vw; width:135vw; height:70vh; object-position:50% 25%; }
+    .orbit-angle.rear { left:5vw; width:74vw; height:60vh; }
+    .orbit-angle.hero { left:-32vw; width:130vw; }
+    .orbit-angle.cover { left:-25vw; width:118vw; }
+    .orbit-copy { left:7vw; right:7vw; bottom:11vh; width:auto; padding:18px 20px; }
+    .orbit-copy h2 { font-size:42px; }
+    .orbit-copy p { font-size:17px; }
+    .orbit-label { top:5.5vh; font-size:7px; }
+    .orbit-moment { width:80px; padding:5px; }
+    .om1 { right:6vw; top:11vh; }
+    .om2 { right:7vw; top:38vh; }
+    .om3 { right:51vw; bottom:27vh; }
+
+    .s6 .woman { right:-24vw; top:3vh; width:105vw; height:57vh; object-position:49% 22%; }
+    .s6 .bloom-field { left:-30vw; width:160vw; height:68vh; bottom:3vh; }
+    .s6 .f1 { width:85vw; left:-24vw; bottom:7vh; }
+    .s6 .f2 { width:95vw; left:20vw; bottom:0; }
+    .s6 .f3 { width:84vw; right:-31vw; bottom:11vh; }
+    .s6 .copy-panel { left:6vw; top:8vh; width:70vw; padding:16px 18px; }
+    .s6 .stats { gap:12px; margin-bottom:15px; }
+    .s6 .count { font-size:42px; }
+    .s6 h2 { font-size:34px; max-width:9ch; }
+    .s6 .bloom-line { margin-top:13px; font-size:27px; }
+
+    .desk-paper { width:112vw; height:80vh; left:-5vw; top:7vh; }
+    .assembly-note { width:65vw; height:55vh; left:-14vw; top:17vh; }
+    .cover-card { width:72vw; left:14vw; top:9vh; }
+    .cover-card .cover-title { font-size:23px; }
+    .cover-card .cover-desc { font-size:10px; }
+    .cover-card .cover-meta { font-size:7px; }
+    .assembly-metrics { right:6vw; top:auto; bottom:15vh; font-size:17px; background:rgba(247,241,231,.88); padding:12px; }
+    .assembly-seal { width:72px; right:8vw; bottom:24vh; }
+    .assembly-petal { width:55px; }
+
+    .poster { grid-template-columns:1fr; grid-template-rows:41% 59%; }
+    .poster-copy { padding:6.5vh 7vw 2.5vh; z-index:40; }
+    .poster h1 { margin:3.8vh 0 0; font-size:clamp(42px,13vw,62px); line-height:.88; }
+    .poster .poster-desc { position:absolute; left:7vw; right:7vw; bottom:-52vh; z-index:45; padding:13px 15px; background:rgba(247,242,233,.9); font-size:12px; }
+    .poster .poster-meta { position:absolute; left:7vw; bottom:-58.5vh; z-index:46; margin:0; font-size:8px; background:rgba(247,242,233,.92); padding:9px 12px; }
+    .poster-visual { grid-row:2; }
+    .poster-woman { inset:-14% -7% -8% -11%; width:118%; height:118%; object-position:50% 18%; }
+    .poster-flower { left:-25%; bottom:-22%; width:120%; }
+    .poster-wash { left:-50%; bottom:-25%; width:145%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .woman, .flower, .petal, .orbit-angle, .orbit-moment, .cover-card, .assembly-note, .assembly-metrics { transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app" aria-label="LoveTree Season Aquarelle Bloom cinematic HTML preview">
+  <div class="film" id="film">
+    <canvas id="fx" aria-hidden="true"></canvas>
+
+    <section class="scene s1" data-scene="0" aria-label="Quiet Opening">
+      <div class="brand">LOVETREE</div><div class="scene-number">01 · Quiet Opening</div>
+      <img class="paper-wash wash-rose" alt="" aria-hidden="true">
+      <img class="woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-profile.png" alt="Woman surrounded by watercolor flowers">
+      <img class="flower flower-a" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-01.png" alt="" aria-hidden="true">
+      <img class="flower flower-b" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-02.png" alt="" aria-hidden="true">
+      <div class="copy-panel">
+        <div class="eyebrow reveal" data-reveal="0.03,0.22">A LoveTree Season</div>
+        <h1 class="display reveal" data-reveal="0.13,0.56">Some seasons begin <em>with one moment that stays.</em></h1>
+      </div>
+    </section>
+
+    <section class="scene s2" data-scene="1" aria-label="First Moment">
+      <div class="brand">LOVETREE</div><div class="scene-number">02 · First Moment</div>
+      <img class="paper-wash wash-gold" alt="" aria-hidden="true">
+      <img class="woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-hands.png" alt="Woman holding a saved paper moment">
+      <article class="moment-card reveal" data-reveal="0.10,0.35"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-01.png" alt="Saved clip still"><div class="time">00:18</div><div class="title">The first clip I saved</div></article>
+      <article class="moment-card reveal" data-reveal="0.28,0.58"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-02.png" alt="Replay memory still"><div class="time">01:24</div><div class="title">The voice I replayed</div></article>
+      <article class="moment-card reveal" data-reveal="0.48,0.82"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-03.png" alt="Return memory still"><div class="time">02:11</div><div class="title">The moment I came back for</div></article>
+    </section>
+
+    <section class="scene s3" data-scene="2" aria-label="Moment Ribbons">
+      <div class="brand">LOVETREE</div><div class="scene-number">03 · Moment Path</div>
+      <img class="paper-wash wash-teal" alt="" aria-hidden="true">
+      <img class="woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-rear-approved.png" alt="Approved rear-angle portrait">
+      <article class="moment-card compact path-card-1 reveal" data-reveal="0.04,0.25"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-01.png" alt="Saved Moment"><div class="time">00:18</div><div class="title">Saved</div></article>
+      <article class="moment-card compact path-card-2 reveal" data-reveal="0.18,0.42"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-02.png" alt="Replayed Moment"><div class="time">01:24</div><div class="title">Replayed</div></article>
+      <article class="moment-card compact path-card-3 reveal" data-reveal="0.33,0.57"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-03.png" alt="Returned Moment"><div class="time">02:11</div><div class="title">Returned</div></article>
+      <svg class="ribbon-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+        <defs><filter id="softPigment"><feGaussianBlur stdDeviation="0.7"/></filter></defs>
+        <path class="ribbon-main" pathLength="1" data-ribbon="0.02,0.62" d="M 280 430 C 460 320, 470 575, 680 500 S 980 230, 1240 270"/>
+        <path class="ribbon-rose" pathLength="1" data-ribbon="0.18,0.78" d="M 330 510 C 510 650, 650 380, 810 480 S 1040 650, 1300 420"/>
+        <path class="ribbon-lav" pathLength="1" data-ribbon="0.34,0.93" d="M 390 575 C 590 690, 710 600, 830 390 S 1120 170, 1420 300"/>
+      </svg>
+      <div class="copy-panel">
+        <h2 class="display reveal" data-reveal="0.48,0.79">Every saved moment opened the next path.</h2>
+        <p class="flow reveal" data-reveal="0.68,0.94">Curiosity → Search → Return → Staying</p>
+      </div>
+    </section>
+
+    <section class="scene s4" data-scene="3" aria-label="Emotional Words">
+      <div class="brand">LOVETREE</div><div class="scene-number">04 · Emotional Words</div>
+      <img class="paper-wash wash-blue" alt="" aria-hidden="true">
+      <img class="woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-hero.png" alt="Woman holding flowers">
+      <img class="flower flower-a" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-03.png" alt="" aria-hidden="true">
+      <div class="words">
+        <div class="word-row reveal" data-reveal="0.03,0.2"><span class="name">Curiosity</span><span class="line">I watched again.</span></div>
+        <div class="word-row reveal" data-reveal="0.14,0.34"><span class="name">Wonder</span><span class="line">I searched for more.</span></div>
+        <div class="word-row reveal" data-reveal="0.25,0.48"><span class="name">Return</span><span class="line">I came back.</span></div>
+        <div class="word-row reveal" data-reveal="0.39,0.64"><span class="name">Staying</span><span class="line">I stayed.</span></div>
+      </div>
+      <div class="writing-zone">
+        <svg class="write-svg" viewBox="0 0 800 320" aria-label="Watercolor ribbon writes Return and Staying">
+          <path class="ink-shadow" id="returnShadow" pathLength="1" d="M55 108 C70 34 85 34 90 103 C93 145 66 151 52 127 C98 114 131 94 149 67 M149 67 C150 132 174 139 194 103 C206 81 212 105 221 116 C232 131 253 130 266 102 C272 90 269 76 260 77 C247 78 242 96 251 109 C264 129 293 124 305 100 M310 69 C311 111 314 132 326 133 C340 135 344 105 344 87 C345 121 354 135 368 130 C382 126 386 102 388 84 C389 115 396 132 408 132 C423 132 432 111 434 90 C435 120 443 135 457 131 C474 127 480 103 482 83 C486 109 491 128 507 128 C524 128 531 105 532 88 C532 113 538 129 553 130 C572 132 580 107 581 84 C586 110 596 126 612 126 C629 126 640 104 639 84"/>
+          <path class="ink-path" id="returnPath" pathLength="1" stroke="#287a78" d="M55 108 C70 34 85 34 90 103 C93 145 66 151 52 127 C98 114 131 94 149 67 M149 67 C150 132 174 139 194 103 C206 81 212 105 221 116 C232 131 253 130 266 102 C272 90 269 76 260 77 C247 78 242 96 251 109 C264 129 293 124 305 100 M310 69 C311 111 314 132 326 133 C340 135 344 105 344 87 C345 121 354 135 368 130 C382 126 386 102 388 84 C389 115 396 132 408 132 C423 132 432 111 434 90 C435 120 443 135 457 131 C474 127 480 103 482 83 C486 109 491 128 507 128 C524 128 531 105 532 88 C532 113 538 129 553 130 C572 132 580 107 581 84 C586 110 596 126 612 126 C629 126 640 104 639 84"/>
+          <path class="ink-shadow" id="stayShadow" pathLength="1" d="M100 230 C70 194 25 221 54 244 C76 262 123 245 121 276 C119 309 57 304 38 278 M150 208 C142 245 145 286 161 288 C179 290 187 254 185 225 C184 252 191 279 207 280 C224 282 233 251 231 229 C230 256 238 282 254 282 C271 282 279 250 278 229 C280 252 287 276 303 277 C321 279 333 248 331 226 C329 251 339 273 356 274 C374 275 385 247 383 226 C387 254 396 276 414 275 C430 274 440 248 439 227 M470 219 C467 253 473 278 488 278 C506 278 516 250 516 227 C518 255 527 275 545 274 C561 273 572 247 571 226 C575 254 585 274 603 272 C621 271 631 241 628 218 C627 252 637 273 655 272 C673 271 685 243 680 218 C684 246 694 266 711 264 C727 262 739 238 733 216"/>
+          <path class="ink-path" id="stayPath" pathLength="1" stroke="#aa5269" d="M100 230 C70 194 25 221 54 244 C76 262 123 245 121 276 C119 309 57 304 38 278 M150 208 C142 245 145 286 161 288 C179 290 187 254 185 225 C184 252 191 279 207 280 C224 282 233 251 231 229 C230 256 238 282 254 282 C271 282 279 250 278 229 C280 252 287 276 303 277 C321 279 333 248 331 226 C329 251 339 273 356 274 C374 275 385 247 383 226 C387 254 396 276 414 275 C430 274 440 248 439 227 M470 219 C467 253 473 278 488 278 C506 278 516 250 516 227 C518 255 527 275 545 274 C561 273 572 247 571 226 C575 254 585 274 603 272 C621 271 631 241 628 218 C627 252 637 273 655 272 C673 271 685 243 680 218 C684 246 694 266 711 264 C727 262 739 238 733 216"/>
+          <text id="returnWord" x="58" y="125" fill="#287a78" font-family="Segoe Script, Brush Script MT, cursive" font-size="68" font-style="italic" opacity="0">Return</text>
+          <text id="stayWord" x="60" y="292" fill="#aa5269" font-family="Segoe Script, Brush Script MT, cursive" font-size="72" font-style="italic" opacity="0">Staying</text>
+          <circle class="brush-tip" id="brushTip" r="7" cx="0" cy="0"/>
+        </svg>
+        <div class="ink-bloom" id="returnBloom" style="left:57%; top:18%;"></div>
+        <div class="ink-bloom" id="stayBloom" style="left:66%; top:62%;"></div>
+      </div>
+    </section>
+
+    <section class="scene s5" data-scene="4" aria-label="Editorial 360 degree Orbit Preview">
+      <div class="brand">LOVETREE</div><div class="scene-number">05 · Connection Swirl</div>
+      <div class="orbit-label">Editorial 360° Orbit Preview · Human motion not final</div>
+      <div class="orbit-stage">
+        <img class="orbit-angle profile" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-profile.png" alt="Profile angle">
+        <img class="orbit-angle rear" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-rear-approved.png" alt="Approved rear angle">
+        <img class="orbit-angle hero" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-hero.png" alt="Three-quarter angle">
+        <img class="orbit-angle cover" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-cover.png" alt="Opposite editorial angle">
+      </div>
+      <img class="orbit-occluder" id="orbitOccluder" src="lovetree-season-aquarelle-bloom-v3-preview-assets/wash-rose.png" alt="" aria-hidden="true">
+      <article class="orbit-moment om1"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-01.png" alt="Moment fragment"></article>
+      <article class="orbit-moment om2"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-02.png" alt="Moment fragment"></article>
+      <article class="orbit-moment om3"><img src="lovetree-season-aquarelle-bloom-v3-preview-assets/moment-03.png" alt="Moment fragment"></article>
+      <img class="petal" data-float="1" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-01.png" style="right:42vw;top:12vh;" alt="" aria-hidden="true">
+      <img class="petal" data-float="2" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-03.png" style="right:12vw;top:20vh;" alt="" aria-hidden="true">
+      <img class="petal" data-float="3" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-04.png" style="right:20vw;bottom:10vh;" alt="" aria-hidden="true">
+      <div class="orbit-copy reveal" data-reveal="0.14,0.38"><div class="eyebrow">Connection</div><h2 class="display">23 <small>connections</small></h2><p>Why one moment led to the next.</p></div>
+    </section>
+
+    <section class="scene s6" data-scene="5" aria-label="Season Bloom">
+      <div class="brand">LOVETREE</div><div class="scene-number">06 · Season Bloom</div>
+      <img class="woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-profile.png" alt="Approved woman profile angled upward">
+      <img class="bloom-field" src="lovetree-season-aquarelle-bloom-v3-preview-assets/bloom-field.png" alt="Watercolor flower field">
+      <img class="flower f1" data-bloom="0.16,0.48" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-01.png" alt="" aria-hidden="true">
+      <img class="flower f2" data-bloom="0.25,0.62" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-02.png" alt="" aria-hidden="true">
+      <img class="flower f3" data-bloom="0.34,0.74" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-03.png" alt="" aria-hidden="true">
+      <div class="copy-panel">
+        <div class="stats reveal" data-reveal="0.08,0.32"><div class="count">24<small>moments</small></div><div class="count">23<small>connections</small></div></div>
+        <h2 class="display reveal" data-reveal="0.27,0.58">One season I can walk again.</h2>
+        <div class="bloom-line reveal" data-reveal="0.54,0.86">The path blooms into a Season.</div>
+      </div>
+    </section>
+
+    <section class="scene s7" data-scene="6" aria-label="Cover Assembly">
+      <div class="brand">LOVETREE</div><div class="scene-number">07 · Cover Assembly</div>
+      <div class="assembly">
+        <img class="desk-paper reveal no-blur" data-reveal="0.02,0.18" src="lovetree-season-aquarelle-bloom-v3-preview-assets/paper-piece-02.png" alt="Deckled paper background">
+        <img class="assembly-note reveal no-blur" data-reveal="0.12,0.32" src="lovetree-season-aquarelle-bloom-v3-preview-assets/paper-piece-03.png" alt="Paper note layer">
+        <article class="cover-card" data-assembly="0.18,0.66" aria-label="Assembled LoveTree Season cover">
+          <div class="cover-brand reveal no-blur" data-reveal="0.38,0.57">LOVETREE</div>
+          <div class="cover-title reveal no-blur" data-reveal="0.45,0.68">The moments I kept<br>became a path<br><em>I can return to.</em></div>
+          <img class="cover-woman reveal no-blur" data-reveal="0.23,0.49" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-cover.png" alt="Woman on season cover">
+          <img class="cover-flower reveal no-blur" data-reveal="0.31,0.56" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-01.png" alt="Watercolor flowers">
+          <div class="cover-meta reveal no-blur" data-reveal="0.66,0.84">24 MOMENTS<br>23 CONNECTIONS<br>SPRING 2026</div>
+        </article>
+        <div class="assembly-metrics reveal" data-reveal="0.54,0.81">24 moments<br>23 connections<br>1 Season</div>
+        <img class="assembly-seal reveal no-blur" data-reveal="0.65,0.88" src="lovetree-season-aquarelle-bloom-v3-preview-assets/wax-seal.png" alt="Wax seal">
+        <img class="assembly-petal ap1 reveal no-blur" data-reveal="0.25,0.46" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-02.png" alt="" aria-hidden="true">
+        <img class="assembly-petal ap2 reveal no-blur" data-reveal="0.34,0.55" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-04.png" alt="" aria-hidden="true">
+        <img class="assembly-petal ap3 reveal no-blur" data-reveal="0.43,0.65" src="lovetree-season-aquarelle-bloom-v3-preview-assets/petal-01.png" alt="" aria-hidden="true">
+      </div>
+    </section>
+
+    <section class="scene s8" data-scene="7" aria-label="Final Poster">
+      <div class="poster" aria-label="Final LoveTree Season poster">
+        <div class="poster-copy">
+          <div class="poster-brand">LOVETREE</div>
+          <h1><span>THE MOMENTS</span><span>THAT MADE ME</span><span class="stay">STAY</span></h1>
+          <p class="poster-desc">A LoveTree Season made from the moments I kept and the paths I followed.</p>
+          <div class="poster-meta">24 MOMENTS · 23 CONNECTIONS<br>SPRING 2026</div>
+        </div>
+        <div class="poster-visual">
+          <img class="poster-wash" src="lovetree-season-aquarelle-bloom-v3-preview-assets/wash-rose.png" alt="" aria-hidden="true">
+          <img class="poster-woman" src="lovetree-season-aquarelle-bloom-v3-preview-assets/woman-cover.png" alt="Woman surrounded by watercolor flowers">
+          <img class="poster-flower" src="lovetree-season-aquarelle-bloom-v3-preview-assets/flower-cluster-02.png" alt="Watercolor flower cluster">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="preview-status">Cinematic HTML Preview · Visual Design Approved · Human Motion Not Final</div>
+  <div class="controls" aria-label="Playback controls">
+    <div class="controls-row">
+      <button class="control-btn" id="pauseBtn" type="button">Pause</button>
+      <button class="control-btn" id="replayBtn" type="button">Replay</button>
+      <button class="control-btn" id="coverBtn" type="button">Skip to Cover</button>
+      <button class="control-btn" type="button" disabled aria-disabled="true">Sound Coming Later</button>
+      <div class="progress-wrap">
+        <input class="seek" id="seek" type="range" min="0" max="19.2" step="0.01" value="0" aria-label="Seek through the 19.2 second film">
+        <div class="timecode" id="timecode">00.0 / 19.2</div>
+      </div>
+    </div>
+    <div class="scene-track" id="sceneTrack" aria-hidden="true"></div>
+  </div>
+
+  <div class="begin-overlay" id="beginOverlay">
+    <div class="begin-card">
+      <div class="kicker">LoveTree · Season Aquarelle Bloom</div>
+      <h1>Cinematic HTML Preview</h1>
+      <p>19.2 seconds of approved visual design, official LoveTree copy, watercolor motion and editorial camera movement.</p>
+      <button class="begin-btn" id="beginBtn" type="button">Begin Season</button>
+    </div>
+  </div>
+  <div class="sr-only" id="live" aria-live="polite"></div>
+</div>
+<script>
+(() => {
+  'use strict';
+  const DURATION = 19.2;
+  const scenes = [
+    {name:'Quiet Opening', start:0, end:2.3},
+    {name:'First Moment', start:2.3, end:4.5},
+    {name:'Moment Ribbons', start:4.5, end:6.7},
+    {name:'Emotional Words', start:6.7, end:9.0},
+    {name:'Editorial Orbit', start:9.0, end:12.1},
+    {name:'Season Bloom', start:12.1, end:15.0},
+    {name:'Cover Assembly', start:15.0, end:17.2},
+    {name:'Final Poster', start:17.2, end:19.2}
+  ];
+  const app = document.getElementById('app');
+  const sceneEls = [...document.querySelectorAll('.scene')];
+  const pauseBtn = document.getElementById('pauseBtn');
+  const replayBtn = document.getElementById('replayBtn');
+  const coverBtn = document.getElementById('coverBtn');
+  const beginBtn = document.getElementById('beginBtn');
+  const beginOverlay = document.getElementById('beginOverlay');
+  const seek = document.getElementById('seek');
+  const timecode = document.getElementById('timecode');
+  const live = document.getElementById('live');
+  const canvas = document.getElementById('fx');
+  const ctx = canvas.getContext('2d', {alpha:true});
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || new URLSearchParams(location.search).get('reduced') === '1';
+  let current = 0;
+  let playing = false;
+  let begun = false;
+  let lastTs = performance.now();
+  let activeIndex = -1;
+  let resumeAfterVisible = false;
+  let dpr = 1;
+  const clamp = (v,a=0,b=1) => Math.min(b,Math.max(a,v));
+  const smooth = (a,b,x) => { const t=clamp((x-a)/(b-a)); return t*t*(3-2*t); };
+  const pulse = (center,width,x) => clamp(1-Math.abs(x-center)/width);
+  const fmt = v => v.toFixed(1).padStart(4,'0');
+
+  const track = document.getElementById('sceneTrack');
+  scenes.forEach((s,i)=>{
+    const seg=document.createElement('div'); seg.className='scene-segment'; seg.dataset.i=i;
+    seg.style.flex=String(s.end-s.start); track.appendChild(seg);
+  });
+
+  function resizeCanvas(){
+    const r=app.getBoundingClientRect();
+    dpr=Math.min(devicePixelRatio||1, innerWidth<700?1.35:2);
+    canvas.width=Math.round(r.width*dpr); canvas.height=Math.round(r.height*dpr);
+    canvas.style.width=r.width+'px'; canvas.style.height=r.height+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  addEventListener('resize', resizeCanvas, {passive:true});
+  resizeCanvas();
+
+  function getSceneIndex(t){
+    for(let i=0;i<scenes.length;i++) if(t>=scenes[i].start && (t<scenes[i].end || i===scenes.length-1)) return i;
+    return scenes.length-1;
+  }
+  function sceneOpacity(i,t){
+    const s=scenes[i], fade=reduced?.12:.36;
+    let a=i===0?1:smooth(s.start,s.start+fade,t);
+    let b=i===scenes.length-1?1:1-smooth(s.end-fade,s.end,t);
+    return clamp(Math.min(a,b));
+  }
+  function setReveal(el,p){
+    const [a,b]=(el.dataset.reveal||'0,1').split(',').map(Number);
+    const r=reduced ? (p>=a?1:0) : smooth(a,b,p);
+    el.style.setProperty('--r',r.toFixed(4));
+  }
+  function updateRibbons(scene,p){
+    scene.querySelectorAll('[data-ribbon]').forEach(path=>{
+      const [a,b]=path.dataset.ribbon.split(',').map(Number);
+      const r=reduced?(p>=a?1:0):smooth(a,b,p);
+      path.style.strokeDasharray='1'; path.style.strokeDashoffset=String(1-r);
+      path.style.opacity=String(.25+.75*r);
+    });
+  }
+  function updateWriting(p){
+    const ret=document.getElementById('returnPath'), retS=document.getElementById('returnShadow');
+    const stay=document.getElementById('stayPath'), stayS=document.getElementById('stayShadow');
+    const tip=document.getElementById('brushTip');
+    const rb=document.getElementById('returnBloom'), sb=document.getElementById('stayBloom');
+    const rw=document.getElementById('returnWord'), sw=document.getElementById('stayWord');
+    const r1=reduced?(p>.28?1:0):smooth(.20,.56,p);
+    const r2=reduced?(p>.58?1:0):smooth(.50,.89,p);
+    [ret,retS].forEach(x=>{x.style.strokeDasharray='1';x.style.strokeDashoffset=String(1-r1);});
+    [stay,stayS].forEach(x=>{x.style.strokeDasharray='1';x.style.strokeDashoffset=String(1-r2);});
+    const active = r2>0 && r2<.999 ? stay : ret;
+    const rp = active===stay?r2:r1;
+    try {
+      const len=active.getTotalLength(), pt=active.getPointAtLength(len*clamp(rp));
+      tip.setAttribute('cx',pt.x); tip.setAttribute('cy',pt.y); tip.style.opacity=(rp>0&&rp<.999)?'.9':'0';
+    } catch(e){ tip.style.opacity='0'; }
+    rb.style.opacity=String(smooth(.56,.68,p)*(1-smooth(.78,.96,p))*.9);
+    rb.style.transform=`scale(${.7+smooth(.56,.72,p)*.8})`;
+    sb.style.opacity=String(smooth(.89,.97,p)*.9);
+    sb.style.transform=`scale(${.7+smooth(.89,1,p)*.8})`;
+    const rwO=reduced?(p>.28?1:0):smooth(.48,.62,p);
+    const swO=reduced?(p>.58?1:0):smooth(.82,.96,p);
+    rw.style.opacity=String(rwO); sw.style.opacity=String(swO);
+    ret.style.opacity=String(1-rwO); retS.style.opacity=String(.06*(1-rwO));
+    stay.style.opacity=String(1-swO); stayS.style.opacity=String(.06*(1-swO));
+  }
+  function updateOrbit(scene,p){
+    const imgs=[...scene.querySelectorAll('.orbit-angle')];
+    const centers=[.10,.38,.66,.90], widths=[.25,.24,.24,.24];
+    imgs.forEach((img,i)=>{
+      const op=clamp(pulse(centers[i],widths[i],p)*1.45);
+      img.style.opacity=String(op);
+      const travel=(p-centers[i])*110;
+      const roll=(p-.5)*6 + (i-1.5)*1.2;
+      img.style.transform=`translate3d(${travel}px,${Math.sin((p+i)*Math.PI)*5}px,0) scale(${1.03+op*.025}) rotate(${roll}deg)`;
+    });
+    const trans=[.25,.51,.76].map(c=>pulse(c,.10,p));
+    const q=Math.max(...trans);
+    const c=trans.indexOf(q);
+    const occ=document.getElementById('orbitOccluder');
+    occ.style.opacity=String(q*.92);
+    occ.style.transform=`translate3d(${(-18 + ((p-[.25,.51,.76][c])/.10)*62)}vw,0,0) rotate(${-8+c*4}deg) scale(1.12)`;
+    scene.querySelectorAll('[data-float]').forEach((el,i)=>{
+      const k=Number(el.dataset.float);
+      el.style.transform=`translate3d(${Math.sin(p*8+k)*38}px,${Math.cos(p*6+k)*28}px,0) rotate(${p*180+k*20}deg) scale(${.72+.25*Math.sin(p*4+k)})`;
+      el.style.opacity=String(.3+.55*pulse(.5,.6,p));
+    });
+    scene.querySelectorAll('.orbit-moment').forEach((el,i)=>{
+      const a=p*Math.PI*2+i*2.12;
+      const rx=innerWidth<700?80:150, ry=innerWidth<700?55:110;
+      el.style.transform=`translate3d(${Math.cos(a)*rx}px,${Math.sin(a)*ry}px,0) rotate(${(i-1)*5+p*14}deg) scale(${.88+.12*Math.sin(a)})`;
+    });
+  }
+  function updateBloom(scene,p){
+    scene.querySelectorAll('[data-bloom]').forEach((el,i)=>{
+      const [a,b]=el.dataset.bloom.split(',').map(Number);
+      const r=reduced?(p>=a?1:0):smooth(a,b,p);
+      el.style.opacity=String(r*.96);
+      el.style.transform=`translate3d(0,${(1-r)*42}px,0) scale(${.72+r*.32}) rotate(${(i-1)*2*(1-r)}deg)`;
+      el.style.filter=`saturate(${.72+r*.28}) blur(${(1-r)*2.2}px)`;
+    });
+  }
+  function updateAssembly(scene,p){
+    const card=scene.querySelector('[data-assembly]');
+    const [a,b]=card.dataset.assembly.split(',').map(Number);
+    const r=reduced?(p>=a?1:0):smooth(a,b,p);
+    const mobile=innerWidth<700;
+    card.style.opacity=String(r);
+    card.style.transform= reduced ? 'none' : `translate3d(${(1-r)*(mobile?40:180)}px,${(1-r)*65}px,${(1-r)*180}px) rotateX(${(1-r)*13}deg) rotateZ(${(1-r)*7}deg) scale(${.82+r*.18})`;
+  }
+
+  function drawParticles(w,h,t,alpha=.25){
+    for(let i=0;i<24;i++){
+      const x=(i*137.3 + t*11*(i%3+1))%w, y=(i*83.7 + Math.sin(t*.8+i)*40 + h*.1)%h;
+      const r=1.2+(i%5)*.45;
+      ctx.fillStyle=`rgba(${i%2?172:52},${i%2?91:119},${i%2?112:119},${alpha*(.25+(i%4)/5)})`;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+  }
+  function drawScene3(w,h,p){
+    const a=smooth(.18,.92,p);
+    ctx.save(); ctx.globalCompositeOperation='multiply';
+    for(let k=0;k<5;k++){
+      ctx.strokeStyle=`rgba(${k%2?170:39},${k%2?82:115},${k%2?105:116},${.055*a})`;
+      ctx.lineWidth=14+k*3; ctx.beginPath();
+      ctx.moveTo(w*.18,h*(.35+k*.06));
+      ctx.bezierCurveTo(w*.42,h*(.2+k*.04),w*.56,h*(.78-k*.06),w*.87,h*(.25+k*.07));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawOrbit(w,h,p){
+    const cx=w*(innerWidth<700?.53:.70), cy=h*(innerWidth<700?.38:.48);
+    ctx.save(); ctx.translate(cx,cy); ctx.globalCompositeOperation='multiply';
+    for(let ring=0;ring<8;ring++){
+      const rr=(44+ring*28)*(0.45+smooth(.04,.68,p));
+      ctx.strokeStyle=`rgba(${ring%3===0?170:ring%3===1?41:87},${ring%3===0?82:ring%3===1?117:111},${ring%3===0?103:ring%3===1?117:138},${.11+.03*(ring%2)})`;
+      ctx.lineWidth=1.5+(ring%3)*.8; ctx.beginPath();
+      const start=-Math.PI*.75 + p*3.8 + ring*.35;
+      ctx.ellipse(0,0,rr,rr*.72,ring*.13,start,start+Math.PI*(1.1+p*.9)); ctx.stroke();
+      for(let j=0;j<4;j++){
+        const a=start+j*1.43+p*(.8+ring*.04), x=Math.cos(a)*rr, y=Math.sin(a)*rr*.72;
+        ctx.fillStyle=`rgba(${ring%2?176:48},${ring%2?89:118},${ring%2?112:120},${.22+.15*p})`;
+        ctx.beginPath();ctx.arc(x,y,2.5+(j%2)*2,0,Math.PI*2);ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+  function drawBloom(w,h,p){
+    const cx=w*(innerWidth<700?.50:.55), cy=h*(innerWidth<700?.58:.63);
+    const r=smooth(.08,.82,p);
+    ctx.save();ctx.globalCompositeOperation='multiply';
+    const colors=[[170,79,105],[43,119,117],[91,118,140],[178,138,80]];
+    for(let i=0;i<18;i++){
+      const a=i*2.399+p*.3, dist=(18+i*11)*r;
+      const x=cx+Math.cos(a)*dist, y=cy+Math.sin(a)*dist*.55;
+      const rad=(12+(i%5)*8)*r;
+      const g=ctx.createRadialGradient(x,y,0,x,y,rad);
+      const c=colors[i%colors.length];
+      g.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},${.08+.03*(i%4)})`);g.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawCanvas(i,p){
+    const w=canvas.width/dpr,h=canvas.height/dpr; ctx.clearRect(0,0,w,h);
+    if(!reduced && i<7) drawParticles(w,h,current,.16);
+    if(i===2) drawScene3(w,h,p);
+    if(i===4) drawOrbit(w,h,p);
+    if(i===5) drawBloom(w,h,p);
+  }
+
+  function update(t){
+    current=clamp(t,0,DURATION);
+    const i=getSceneIndex(current); activeIndex=i;
+    sceneEls.forEach((el,idx)=>{
+      const s=scenes[idx], p=clamp((current-s.start)/(s.end-s.start));
+      const op=sceneOpacity(idx,current);
+      el.style.opacity=String(op);
+      el.classList.toggle('active',idx===i);
+      el.style.setProperty('--p',p.toFixed(5));
+      el.querySelectorAll('[data-reveal]').forEach(x=>setReveal(x,p));
+      if(idx===2) updateRibbons(el,p);
+      if(idx===3) updateWriting(p);
+      if(idx===4) updateOrbit(el,p);
+      if(idx===5) updateBloom(el,p);
+      if(idx===6) updateAssembly(el,p);
+    });
+    drawCanvas(i,clamp((current-scenes[i].start)/(scenes[i].end-scenes[i].start)));
+    seek.value=String(current);
+    timecode.textContent=`${fmt(current)} / 19.2`;
+    [...track.children].forEach((x,idx)=>x.classList.toggle('active',idx<=i));
+    if(i!==Number(app.dataset.scene)){
+      app.dataset.scene=String(i); live.textContent=scenes[i].name;
+    }
+  }
+
+  function frame(ts){
+    const dt=Math.min(.1,(ts-lastTs)/1000); lastTs=ts;
+    if(playing){
+      current+=dt;
+      if(current>=DURATION){ current=DURATION; playing=false; pauseBtn.textContent='Replay'; }
+      update(current);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  update(0);
+
+  function begin(){ begun=true; beginOverlay.classList.add('hidden'); current=0; playing=true; pauseBtn.textContent='Pause'; lastTs=performance.now(); update(current); }
+  function toggle(){
+    if(!begun){ begin(); return; }
+    if(current>=DURATION){ current=0; playing=true; }
+    else playing=!playing;
+    pauseBtn.textContent=playing?'Pause':'Resume'; lastTs=performance.now(); update(current);
+  }
+  function replay(){ begun=true; beginOverlay.classList.add('hidden'); current=0; playing=true; pauseBtn.textContent='Pause'; lastTs=performance.now(); update(current); }
+  function skipCover(){ begun=true; beginOverlay.classList.add('hidden'); current=15; playing=true; pauseBtn.textContent='Pause'; lastTs=performance.now(); update(current); }
+  beginBtn.addEventListener('click',begin);
+  pauseBtn.addEventListener('click',toggle);
+  replayBtn.addEventListener('click',replay);
+  coverBtn.addEventListener('click',skipCover);
+  seek.addEventListener('input',e=>{ begun=true; beginOverlay.classList.add('hidden'); current=Number(e.target.value); playing=false; pauseBtn.textContent='Resume'; update(current); });
+  addEventListener('keydown',e=>{
+    if(e.code==='Space'){e.preventDefault();toggle();}
+    else if(e.key.toLowerCase()==='r') replay();
+    else if(e.key.toLowerCase()==='c') skipCover();
+    else if(e.key==='ArrowRight'){current=clamp(current+.5,0,DURATION);playing=false;update(current);}
+    else if(e.key==='ArrowLeft'){current=clamp(current-.5,0,DURATION);playing=false;update(current);}
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){resumeAfterVisible=playing;playing=false;pauseBtn.textContent='Resume';}
+    else if(resumeAfterVisible){resumeAfterVisible=false;playing=true;pauseBtn.textContent='Pause';lastTs=performance.now();}
+  });
+
+  const params=new URLSearchParams(location.search);
+  if(params.has('time')){
+    begun=true; beginOverlay.classList.add('hidden'); current=clamp(Number(params.get('time'))||0,0,DURATION); playing=params.get('autoplay')==='1'; pauseBtn.textContent=playing?'Pause':'Resume'; update(current);
+  } else if(params.get('autoplay')==='1') begin();
+
+  window.__LOVETREE_PREVIEW__={
+    duration:DURATION, scenes, reducedMotion:reduced,
+    getState:()=>({time:current,playing,sceneIndex:activeIndex,scene:scenes[activeIndex]?.name}),
+    seekTo:(t)=>{begun=true;beginOverlay.classList.add('hidden');playing=false;current=clamp(Number(t)||0,0,DURATION);pauseBtn.textContent='Resume';update(current);return current;},
+    play:()=>{begun=true;beginOverlay.classList.add('hidden');playing=true;pauseBtn.textContent='Pause';lastTs=performance.now();},
+    pause:()=>{playing=false;pauseBtn.textContent='Resume';},
+    replay, skipToCover:skipCover
+  };
+})();
+</script>
+</body>
+</html>

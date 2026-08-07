@@ -1,0 +1,227 @@
+/* V4 Incoming · Living Memory Terrain v1.2 (source-faithful port) */
+.incoming-terrain {
+  --bg: #0a0c10;
+  --ink: #eef2f5;
+  --muted: #7f8b96;
+  --teal: #4fe0c1;
+  --violet: #9b7cff;
+  --rose: #ff6f9f;
+  --panel: rgba(12, 16, 21, 0.72);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 620px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(79, 224, 193, 0.06), transparent 40%),
+    linear-gradient(160deg, #0b0e13, #0a0d11 55%, #0c1016);
+  color: var(--ink);
+  font-family: Inter, Manrope, "Pretendard", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.incoming-terrain * { box-sizing: border-box; }
+.incoming-terrain button { font: inherit; color: inherit; cursor: pointer; }
+
+.incoming-terrain-topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 64px; padding: 0 22px; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  border-bottom: 1px solid rgba(140, 165, 185, 0.14);
+  background: rgba(9, 12, 16, 0.82); backdrop-filter: blur(16px);
+}
+.incoming-terrain-brand { display: flex; align-items: center; gap: 12px; }
+.incoming-terrain-brand-mark {
+  width: 30px; height: 30px; border-radius: 11px 11px 11px 3px; position: relative;
+  background: linear-gradient(145deg, #5ee6c4, #2a7f6c); box-shadow: 0 0 20px rgba(79, 224, 193, 0.3);
+}
+.incoming-terrain-brand-mark::before, .incoming-terrain-brand-mark::after {
+  content: ""; position: absolute; width: 8px; height: 15px;
+  border-radius: 8px 8px 2px 8px; border: 1.4px solid rgba(6, 32, 30, 0.8); top: 7px;
+}
+.incoming-terrain-brand-mark::before { left: 7px; transform: rotate(-34deg); }
+.incoming-terrain-brand-mark::after { right: 7px; transform: rotate(34deg); }
+.incoming-terrain-brand strong { font: 600 13px/1 Georgia, serif; letter-spacing: 0.14em; }
+.incoming-terrain-brand span { margin-left: 4px; color: var(--muted); font-size: 8px; letter-spacing: 0.18em; }
+.incoming-terrain-header-status { display: flex; align-items: center; gap: 11px; color: #9db0bd; font-size: 9px; letter-spacing: 0.12em; }
+.incoming-terrain-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 10px var(--teal); animation: incomingTerrainPulse 1.6s ease-in-out infinite; }
+@keyframes incomingTerrainPulse { 50% { opacity: 0.4; transform: scale(0.7); } }
+.incoming-terrain-desktop-only { color: #5f707c; }
+.incoming-terrain-status-pill { padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(79, 224, 193, 0.25); background: rgba(79, 224, 193, 0.08); color: #baf8e9; font-size: 8px; letter-spacing: 0.14em; }
+
+.incoming-terrain-stage { position: absolute; inset: 64px 0 0; overflow: hidden; }
+.incoming-terrain-canvas {
+  position: absolute; inset: 0; transform-style: preserve-3d;
+  transition: transform 0.35s ease-out; touch-action: none;
+}
+.incoming-terrain-base { position: absolute; inset: -8% -4% -30%; }
+.incoming-terrain-grid {
+  position: absolute; inset: 0; opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(120, 150, 165, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 150, 165, 0.09) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse at 50% 44%, #000 30%, transparent 78%);
+  transform: rotateX(58deg) translateZ(-60px);
+  transform-origin: 50% 60%;
+}
+.incoming-terrain-ridge {
+  position: absolute; left: -6%; right: -6%; height: 42%;
+  background: linear-gradient(180deg, rgba(79, 224, 193, 0.05), rgba(10, 14, 18, 0.95));
+  border-radius: 50% 50% 0 0;
+  transform: rotateX(58deg);
+  transform-origin: 50% 100%;
+}
+.incoming-terrain-ridge.r1 { bottom: 30%; opacity: 0.5; }
+.incoming-terrain-ridge.r2 { bottom: 16%; background: linear-gradient(180deg, rgba(155, 124, 255, 0.06), rgba(10, 14, 18, 0.95)); }
+.incoming-terrain-ridge.r3 { bottom: 2%; background: linear-gradient(180deg, rgba(255, 111, 159, 0.07), rgba(10, 14, 18, 0.95)); }
+
+.incoming-terrain-layer { position: absolute; left: 4%; right: 4%; height: 40%; transform: rotateX(58deg); transform-origin: 50% 100%; border-radius: 40% 40% 0 0; opacity: 0.8; pointer-events: none; }
+.incoming-terrain-layer.layer-0 { bottom: 36%; background: radial-gradient(ellipse at 50% 0%, rgba(79, 224, 193, 0.14), transparent 70%); }
+.incoming-terrain-layer.layer-1 { bottom: 22%; background: radial-gradient(ellipse at 50% 0%, rgba(155, 124, 255, 0.16), transparent 70%); }
+.incoming-terrain-layer.layer-2 { bottom: 8%; background: radial-gradient(ellipse at 50% 0%, rgba(255, 111, 159, 0.16), transparent 70%); }
+.incoming-terrain-layer-label {
+  position: absolute; top: -18px; left: 8%; font-size: 8px; letter-spacing: 0.22em; color: rgba(170, 190, 200, 0.4);
+}
+
+.incoming-terrain-season-boundary {
+  position: absolute; left: 18%; right: 18%; top: 12%; bottom: 16%;
+  border: 1px dashed rgba(255, 201, 107, 0.25); border-radius: 46% 46% 42% 42%;
+  opacity: 0.6; transform: rotateX(58deg); transform-origin: 50% 100%; pointer-events: none;
+}
+.incoming-terrain-season-boundary.formed { border-color: rgba(255, 201, 107, 0.85); box-shadow: 0 0 40px rgba(255, 201, 107, 0.14), inset 0 0 60px rgba(255, 201, 107, 0.06); opacity: 1; }
+
+.incoming-terrain-path { position: absolute; left: 12%; top: 8%; width: 76%; height: 76%; overflow: visible; pointer-events: none; transform: rotateX(58deg) translateZ(20px); transform-origin: 50% 90%; }
+.incoming-terrain-path-line { fill: none; stroke: rgba(255, 210, 130, 0.65); stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 1; transition: stroke-dashoffset 0.2s linear; filter: drop-shadow(0 0 6px rgba(255, 201, 107, 0.4)); }
+.incoming-terrain-path-node { fill: rgba(255, 201, 107, 0.7); }
+
+.incoming-terrain-moment {
+  position: absolute; transform: translate(-50%, -50%); border: 0; background: transparent; color: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 54px; padding: 0;
+}
+.incoming-terrain-moment-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 4px rgba(var(--accent-rgb, 79, 224, 193), 0.12), 0 0 16px var(--accent);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.incoming-terrain-moment:hover .incoming-terrain-moment-dot { transform: scale(1.35); }
+.incoming-terrain-moment.selected .incoming-terrain-moment-dot { transform: scale(1.5); box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.12), 0 0 24px var(--accent); }
+.incoming-terrain-moment-label { font-size: 8px; letter-spacing: 0.08em; color: #c6d4dd; white-space: nowrap; }
+.incoming-terrain-moment-count { font-size: 7px; color: var(--accent); }
+.incoming-terrain-moment.pulsing .incoming-terrain-moment-dot { animation: incomingTerrainMomentPulse 1.1s ease-in-out infinite; }
+@keyframes incomingTerrainMomentPulse { 50% { transform: scale(1.7); opacity: 0.6; } }
+
+.incoming-terrain-hero-copy {
+  position: absolute; left: 50%; top: 18%; transform: translateX(-50%); text-align: center; z-index: 8; pointer-events: none; max-width: 560px;
+}
+.incoming-terrain-eyebrow { font-size: 8px; letter-spacing: 0.24em; color: rgba(140, 165, 180, 0.55); text-transform: uppercase; }
+.incoming-terrain-hero-copy h1 { margin: 12px 0 0; font: 500 clamp(26px, 3.6vw, 48px)/1.05 Georgia, serif; letter-spacing: -0.02em; color: #eef3f5; }
+.incoming-terrain-hero-copy p { margin: 14px auto 0; max-width: 420px; font-size: 11px; line-height: 1.65; color: rgba(150, 170, 185, 0.75); }
+
+.incoming-terrain-panel {
+  position: absolute; z-index: 9; width: 218px; padding: 14px 16px; border-radius: 14px;
+  border: 1px solid rgba(140, 165, 185, 0.14); background: var(--panel); backdrop-filter: blur(12px);
+  transition: border-color 0.3s;
+}
+.incoming-terrain-panel:hover { border-color: rgba(79, 224, 193, 0.3); }
+.incoming-terrain-panel.tl { left: 22px; top: 96px; }
+.incoming-terrain-panel.tr { right: 22px; top: 96px; }
+.incoming-terrain-panel.bl { left: 22px; bottom: 120px; }
+.incoming-terrain-panel.br { right: 22px; bottom: 120px; }
+.incoming-terrain-panel-chip { padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(79, 224, 193, 0.2); background: rgba(79, 224, 193, 0.08); color: #baf8e9; font-size: 7px; letter-spacing: 0.14em; }
+.incoming-terrain-panel h2 { margin: 10px 0 6px; font: 500 15px Georgia, serif; }
+.incoming-terrain-panel p { margin: 0; font-size: 9px; line-height: 1.55; color: #8295a2; }
+.incoming-terrain-micro { display: flex; align-items: center; gap: 8px; margin-top: 11px; opacity: 0.5; }
+.incoming-terrain-micro-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(79, 224, 193, 0.5), transparent); }
+.incoming-terrain-micro-nodes { display: flex; gap: 4px; }
+.incoming-terrain-micro-nodes i { width: 4px; height: 4px; border-radius: 50%; background: var(--teal); }
+
+.incoming-terrain-legend {
+  position: absolute; left: 22px; bottom: 84px; z-index: 9; display: flex; gap: 14px;
+  font-size: 8px; letter-spacing: 0.14em; color: rgba(150, 170, 185, 0.6);
+}
+.incoming-terrain-legend-row { display: flex; align-items: center; gap: 6px; }
+.incoming-terrain-legend-row i { width: 6px; height: 6px; border-radius: 50%; }
+
+.incoming-terrain-connection-card {
+  position: absolute; left: 50%; bottom: 118px; transform: translateX(-50%); z-index: 10;
+  min-width: 260px; max-width: 420px; padding: 12px 16px; border-radius: 13px;
+  border: 1px solid rgba(79, 224, 193, 0.22); background: rgba(10, 18, 24, 0.86); backdrop-filter: blur(10px);
+  text-align: center;
+}
+.incoming-terrain-connection-card strong { display: block; font: 500 14px Georgia, serif; color: #d8fff5; }
+.incoming-terrain-connection-card span { display: block; margin-top: 5px; font-size: 9px; color: #7f95a4; }
+
+.incoming-terrain-layer-controls {
+  position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); z-index: 9;
+  display: flex; gap: 6px; padding: 5px; border-radius: 13px; border: 1px solid rgba(140, 165, 185, 0.14);
+  background: rgba(9, 13, 18, 0.7); backdrop-filter: blur(10px);
+}
+.incoming-terrain-layer-toggle {
+  border: 0; background: transparent; border-radius: 9px; padding: 8px 11px;
+  font-size: 8px; letter-spacing: 0.12em; color: #6f8492;
+}
+.incoming-terrain-layer-toggle.on { background: rgba(79, 224, 193, 0.14); color: #c9fff3; box-shadow: inset 0 0 0 1px rgba(79, 224, 193, 0.25); }
+
+.incoming-terrain-sample-note {
+  position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 8;
+  color: rgba(140, 160, 175, 0.42); font-size: 7px; letter-spacing: 0.14em; pointer-events: none;
+}
+
+.incoming-terrain-mobile-tabs { display: none; }
+.incoming-terrain-mobile-panel { display: none; }
+
+.incoming-terrain-control-dock {
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 20;
+  display: flex; align-items: center; gap: 7px; padding: 7px;
+  border-radius: 999px; border: 1px solid rgba(140, 165, 185, 0.16);
+  background: rgba(9, 13, 18, 0.82); backdrop-filter: blur(14px);
+}
+.incoming-terrain-control-dock button {
+  border: 1px solid rgba(140, 165, 185, 0.18); background: rgba(255, 255, 255, 0.03); color: #9db0bd;
+  border-radius: 999px; padding: 9px 13px; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.incoming-terrain-control-dock button.primary { background: rgba(79, 224, 193, 0.12); color: #c9fff3; border-color: rgba(79, 224, 193, 0.3); }
+.incoming-terrain-state-dots { display: flex; gap: 5px; padding: 0 4px; }
+.incoming-terrain-state-dot { width: 30px !important; height: 30px !important; padding: 0 !important; display: grid; place-items: center; font-size: 8px !important; }
+.incoming-terrain-state-dot.active { background: rgba(79, 224, 193, 0.16) !important; color: #d8fff5 !important; box-shadow: inset 0 0 0 1px rgba(79, 224, 193, 0.4); }
+
+@media (max-width: 1000px) {
+  .incoming-terrain-panel { width: 176px; padding: 11px 13px; }
+  .incoming-terrain-panel p { font-size: 8px; }
+  .incoming-terrain-hero-copy { top: 14%; }
+}
+@media (max-width: 780px) {
+  .incoming-terrain { min-height: 540px; }
+  .incoming-terrain-desktop-only { display: none; }
+  .incoming-terrain-topbar { height: 58px; padding: 0 14px; }
+  .incoming-terrain-stage { inset: 58px 0 0; }
+  .incoming-terrain-panel { display: none; }
+  .incoming-terrain-hero-copy { top: 12%; padding: 0 20px; }
+  .incoming-terrain-hero-copy h1 { font-size: 26px; }
+  .incoming-terrain-hero-copy p { font-size: 10px; }
+  .incoming-terrain-legend { display: none; }
+  .incoming-terrain-layer-controls { bottom: auto; top: 84px; left: 50%; }
+  .incoming-terrain-connection-card { bottom: 150px; min-width: 220px; }
+  .incoming-terrain-sample-note { display: none; }
+  .incoming-terrain-mobile-tabs {
+    display: flex; position: absolute; left: 12px; right: 12px; bottom: 88px; z-index: 18;
+    gap: 5px; padding: 4px; border-radius: 13px; border: 1px solid rgba(140, 165, 185, 0.16);
+    background: rgba(9, 13, 18, 0.8);
+  }
+  .incoming-terrain-mobile-tabs button { flex: 1; border: 0; background: transparent; color: #6f8492; padding: 9px 4px; font-size: 8px; letter-spacing: 0.08em; border-radius: 9px; }
+  .incoming-terrain-mobile-tabs button.active { background: rgba(79, 224, 193, 0.14); color: #c9fff3; }
+  .incoming-terrain-mobile-panel {
+    display: block; position: absolute; left: 12px; right: 12px; bottom: 128px; z-index: 17;
+    padding: 13px 15px; border-radius: 14px; border: 1px solid rgba(140, 165, 185, 0.16);
+    background: rgba(10, 15, 20, 0.86); backdrop-filter: blur(12px);
+  }
+  .incoming-terrain-mobile-panel h2 { margin: 9px 0 5px; font: 500 16px Georgia, serif; }
+  .incoming-terrain-mobile-panel p { margin: 0; font-size: 9px; line-height: 1.55; color: #8295a2; }
+  .incoming-terrain-mobile-meta { margin-top: 9px; font-size: 8px; letter-spacing: 0.1em; color: #5f7583; }
+  .incoming-terrain-walk { margin-top: 10px; border: 1px solid rgba(79, 224, 193, 0.3); background: rgba(79, 224, 193, 0.1); color: #c9fff3; border-radius: 999px; padding: 8px 12px; font-size: 8px; letter-spacing: 0.1em; }
+  .incoming-terrain-control-dock { bottom: 12px; padding: 5px; }
+  .incoming-terrain-hide-mobile { display: none; }
+  .incoming-terrain-control-dock button { padding: 8px 10px; font-size: 7px; }
+  .incoming-terrain-state-dots { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .incoming-terrain * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree Structure Unfold</title>
+<style>
+:root{
+  --paper:#f7f1e8;--paper-2:#fffaf4;--ink:#4e3f3b;--muted:#8e7f7a;
+  --rose:#c86e79;--rose-deep:#98505e;--sage:#879975;--sage-deep:#596b4c;
+  --lav:#9a87b8;--gold:#d7ad65;--mist:#e8e1dc;--line:#bdaea7;
+  --ui:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Noto Sans KR",sans-serif;
+  --serif:"Iowan Old Style","Noto Serif KR","Gowun Batang",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink)}
+body{font-family:var(--ui);-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit}
+button{color:inherit}
+.app{position:relative;width:100%;height:100%;isolation:isolate;overflow:hidden;background:
+ radial-gradient(circle at 12% 14%,rgba(255,255,255,.92),transparent 28%),
+ radial-gradient(circle at 88% 18%,rgba(222,186,192,.23),transparent 26%),
+ radial-gradient(circle at 64% 92%,rgba(135,153,117,.16),transparent 28%),
+ linear-gradient(135deg,#faf6ef 0%,#f4ede4 54%,#f8f3ec 100%)}
+.app:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.52;background-image:
+ linear-gradient(rgba(100,79,70,.035) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(100,79,70,.035) 1px,transparent 1px),
+ radial-gradient(rgba(120,90,76,.14) .45px,transparent .75px);
+ background-size:34px 34px,34px 34px,5px 5px;mix-blend-mode:multiply}
+.app:after{content:"";position:absolute;inset:-20%;pointer-events:none;background:conic-gradient(from 210deg at 50% 52%,transparent,rgba(255,255,255,.2),transparent 22%,rgba(200,110,121,.05),transparent 45%);animation:paperLight 18s ease-in-out infinite alternate}
+@keyframes paperLight{to{transform:translate3d(2.5%,-1.8%,0) rotate(.8deg)}}
+
+.topbar{position:absolute;z-index:20;top:0;left:0;right:0;height:86px;padding:20px 28px;display:flex;align-items:center;gap:24px;pointer-events:none}
+.brand{display:flex;align-items:center;gap:12px;pointer-events:auto;min-width:255px}
+.brand-mark{width:38px;height:38px;border-radius:50%;position:relative;display:grid;place-items:center;background:rgba(255,250,244,.76);border:1px solid rgba(152,80,94,.2);box-shadow:0 12px 38px rgba(100,69,60,.13)}
+.brand-mark:before,.brand-mark:after{content:"";position:absolute;width:11px;height:17px;border-radius:70% 30% 68% 32%;background:linear-gradient(145deg,#d98b98,#b55f70);transform-origin:bottom center}
+.brand-mark:before{transform:translate(-4px,-2px) rotate(-28deg)}
+.brand-mark:after{transform:translate(4px,-2px) rotate(28deg);background:linear-gradient(145deg,#9bab8c,#6f8868)}
+.brand-copy strong{display:block;font-family:var(--serif);font-size:17px;letter-spacing:.035em;font-weight:650}
+.brand-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px;letter-spacing:.17em;text-transform:uppercase}
+
+.template-tabs{pointer-events:auto;margin-left:auto;display:flex;align-items:center;padding:4px;border:1px solid rgba(103,82,75,.12);border-radius:999px;background:rgba(255,251,246,.68);box-shadow:0 12px 36px rgba(91,66,60,.08);backdrop-filter:blur(16px)}
+.template-tab{border:0;background:transparent;border-radius:999px;padding:9px 15px;font-size:11px;letter-spacing:.045em;cursor:pointer;color:#7d6f69;transition:.24s ease;white-space:nowrap}
+.template-tab:hover{color:var(--rose-deep)}
+.template-tab.active{background:#fffaf4;color:var(--rose-deep);box-shadow:0 5px 18px rgba(107,75,68,.12),inset 0 0 0 1px rgba(152,80,94,.12)}
+
+.toolbar{pointer-events:auto;display:flex;align-items:center;gap:7px;background:rgba(255,251,246,.68);border:1px solid rgba(103,82,75,.12);border-radius:999px;padding:4px;box-shadow:0 12px 36px rgba(91,66,60,.08);backdrop-filter:blur(16px)}
+.tool-btn,.speed-select{height:36px;border:0;background:transparent;border-radius:999px;cursor:pointer;color:#746660}
+.tool-btn{min-width:36px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:11px;letter-spacing:.035em}
+.tool-btn:hover,.speed-select:hover{background:rgba(200,110,121,.08);color:var(--rose-deep)}
+.tool-btn.primary{background:var(--rose-deep);color:#fffaf7;box-shadow:0 7px 22px rgba(152,80,94,.23)}
+.tool-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.speed-select{appearance:none;padding:0 29px 0 12px;font-size:10px;background-image:linear-gradient(45deg,transparent 50%,#8c7c76 50%),linear-gradient(135deg,#8c7c76 50%,transparent 50%);background-position:calc(100% - 14px) 15px,calc(100% - 10px) 15px;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+
+.stage-shell{position:absolute;z-index:2;inset:78px 22px 72px;border-radius:31px;border:1px solid rgba(117,94,85,.12);background:rgba(255,252,247,.42);box-shadow:0 34px 90px rgba(82,61,53,.1),inset 0 1px 0 rgba(255,255,255,.8);overflow:hidden;backdrop-filter:blur(5px)}
+.stage-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.8),transparent 45%),linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent);opacity:.82}
+.stage-shell.dragging{cursor:grabbing}
+.stage-shell:not(.dragging){cursor:grab}
+#mapSvg{display:block;width:100%;height:100%;touch-action:none;user-select:none}
+#viewportGroup{transform-origin:0 0}
+
+.edge-path{fill:none;stroke:var(--line);stroke-width:1.35;stroke-linecap:round;filter:url(#softLine);opacity:.83;vector-effect:non-scaling-stroke;transition:stroke .25s,opacity .25s,stroke-width .25s}
+.edge-path.level-1{stroke-width:1.7;stroke:rgba(152,80,94,.52)}
+.edge-path.level-2{stroke:rgba(89,107,76,.46)}
+.edge-path.level-3{stroke:rgba(154,135,184,.4)}
+.edge-path.related{stroke:var(--rose-deep);stroke-width:2.25;opacity:.95}
+.edge-path.dimmed{opacity:.17}
+.edge-trail{fill:none;stroke:url(#trailGradient);stroke-width:5;stroke-linecap:round;opacity:0;filter:url(#trailGlow);vector-effect:non-scaling-stroke}
+.edge-trail.running{animation:trailFade .75s ease-out both}
+@keyframes trailFade{0%{opacity:0}25%{opacity:.42}100%{opacity:0}}
+
+.connection-label{pointer-events:none}
+.connection-label rect{fill:rgba(255,251,246,.92);stroke:rgba(136,111,101,.15);stroke-width:1;rx:8;filter:url(#labelShadow)}
+.connection-label text{font-family:var(--ui);font-size:10px;letter-spacing:.025em;fill:#8c7770;text-anchor:middle;dominant-baseline:central}
+.connection-label.dimmed{opacity:.15}
+
+.node{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:filter .25s,opacity .25s}
+.node .node-shadow{fill:rgba(109,76,67,.09);filter:url(#nodeBlur)}
+.node .node-card{fill:rgba(255,251,246,.96);stroke:rgba(116,91,82,.16);stroke-width:1;vector-effect:non-scaling-stroke}
+.node .node-accent{stroke-width:2.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.node .node-dot{stroke:rgba(255,255,255,.88);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.node .eyebrow{font-family:var(--ui);font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;fill:#9c8d87}
+.node .title{font-family:var(--serif);font-size:15px;font-weight:620;fill:#4f403c;letter-spacing:-.012em}
+.node .subtitle{font-family:var(--ui);font-size:9.6px;fill:#8b7c76;letter-spacing:.012em}
+.node.moment .node-accent,.node.root .node-accent{stroke:var(--rose)}
+.node.moment .node-dot,.node.root .node-dot{fill:var(--rose)}
+.node.emotion .node-card{fill:rgba(250,232,232,.95);stroke:rgba(200,110,121,.24)}
+.node.emotion .node-accent{stroke:var(--rose-deep)}
+.node.emotion .node-dot{fill:var(--rose-deep)}
+.node.cluster .node-card,.node.season .node-card{fill:rgba(238,242,232,.95);stroke:rgba(89,107,76,.2)}
+.node.cluster .node-accent,.node.season .node-accent{stroke:var(--sage-deep)}
+.node.cluster .node-dot,.node.season .node-dot{fill:var(--sage)}
+.node.note .node-card{fill:rgba(242,237,248,.96);stroke:rgba(154,135,184,.2)}
+.node.note .node-accent{stroke:var(--lav)}
+.node.note .node-dot{fill:var(--lav)}
+.node.media .node-card{fill:rgba(250,245,232,.97);stroke:rgba(215,173,101,.25)}
+.node.media .node-accent{stroke:var(--gold)}
+.node.media .node-dot{fill:var(--gold)}
+.node.root .node-card{fill:rgba(255,250,244,.98);stroke:rgba(152,80,94,.23);stroke-width:1.2;filter:url(#rootShadow)}
+.node.root .title{font-size:22px;color:var(--ink)}
+.node.root .subtitle{font-size:10.5px}
+.node.root .seed-leaf{fill:none;stroke:var(--rose-deep);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
+.node:hover{filter:drop-shadow(0 10px 17px rgba(96,65,58,.15))}
+.node:hover .node-card{stroke:rgba(152,80,94,.38)}
+.node.selected{filter:drop-shadow(0 12px 22px rgba(152,80,94,.2))}
+.node.selected .node-card{stroke:var(--rose-deep);stroke-width:1.6}
+.node.dimmed{opacity:.29}
+.node.branch-pulse{animation:branchPulse 1.15s ease-out}
+@keyframes branchPulse{0%{filter:drop-shadow(0 0 0 rgba(200,110,121,0))}35%{filter:drop-shadow(0 0 17px rgba(200,110,121,.42))}100%{filter:drop-shadow(0 0 0 rgba(200,110,121,0))}}
+
+.root-aura{fill:none;stroke:rgba(200,110,121,.16);stroke-width:1.1;transform-origin:center;vector-effect:non-scaling-stroke}
+.root-aura.a1{animation:aura 4.4s ease-in-out infinite}
+.root-aura.a2{animation:aura 4.4s 1.15s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.93);opacity:.25}50%{transform:scale(1.08);opacity:.7}}
+.map-complete .node.breathe-1{animation:nodeBreathe 5.4s ease-in-out infinite}
+.map-complete .node.breathe-2{animation:nodeBreathe 6.1s .8s ease-in-out infinite}
+.map-complete .node.breathe-3{animation:nodeBreathe 5.8s 1.6s ease-in-out infinite}
+@keyframes nodeBreathe{0%,100%{translate:0 0}50%{translate:0 -1.4px}}
+.capture-mode .map-complete .node,.capture-mode .root-aura{animation:none!important}
+
+.petals{pointer-events:none;opacity:.6}
+.petal{fill:rgba(200,110,121,.16);transform-origin:center;animation:petalDrift 9s ease-in-out infinite alternate}
+.petal:nth-child(2n){fill:rgba(135,153,117,.15);animation-duration:11s}
+.petal:nth-child(3n){fill:rgba(154,135,184,.13);animation-delay:-4s}
+@keyframes petalDrift{to{transform:translate(8px,-9px) rotate(10deg)}}
+.capture-mode .petal{animation:none!important}
+
+.intro-copy{position:absolute;z-index:8;left:46px;bottom:36px;pointer-events:none;max-width:450px}
+.intro-copy .kicker{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--rose-deep);font-weight:650}
+.intro-copy h1{margin:8px 0 7px;font-family:var(--serif);font-size:clamp(22px,2.6vw,42px);font-weight:530;letter-spacing:-.035em;line-height:1.05;color:#4d3d39}
+.intro-copy p{margin:0;color:#8a7b75;font-size:11px;line-height:1.6;letter-spacing:.02em}
+
+.progress-rail{position:absolute;z-index:9;right:42px;bottom:34px;width:min(330px,28vw);pointer-events:none}
+.progress-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#8c7e78;font-size:9px;letter-spacing:.11em;text-transform:uppercase}
+.progress-meta strong{color:var(--rose-deep);font-weight:700}
+.progress-track{height:2px;background:rgba(100,78,70,.12);border-radius:999px;overflow:hidden}
+.progress-fill{width:0;height:100%;background:linear-gradient(90deg,var(--rose-deep),var(--rose),var(--sage));border-radius:999px;box-shadow:0 0 12px rgba(200,110,121,.28)}
+
+.mode-caption{position:absolute;z-index:9;left:50%;top:25px;transform:translateX(-50%);text-align:center;pointer-events:none}
+.mode-caption .label{font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:#a08f88}
+.mode-caption .title{margin-top:5px;font-family:var(--serif);font-size:16px;color:#6a5650}
+
+.toast{position:absolute;z-index:30;left:50%;bottom:92px;transform:translate(-50%,18px);padding:10px 15px;border-radius:999px;background:rgba(78,63,59,.92);color:#fffaf6;font-size:10px;letter-spacing:.025em;opacity:0;pointer-events:none;transition:.25s ease;box-shadow:0 12px 32px rgba(75,55,49,.18)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1050px){
+ .topbar{padding:16px 18px;height:76px}.brand{min-width:auto}.brand-copy span{display:none}
+ .template-tab{padding:8px 10px}.tool-btn span{display:none}.tool-btn{padding:0;min-width:34px}
+ .stage-shell{inset:70px 12px 68px;border-radius:24px}.intro-copy{left:28px;bottom:26px}.progress-rail{right:28px;bottom:26px}
+}
+@media(max-width:700px){
+ html,body{overflow:hidden}.app{min-height:100svh}
+ .topbar{height:auto;min-height:104px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;grid-template-rows:40px 40px;gap:7px 8px}
+ .brand{grid-column:1;grid-row:1}.brand-mark{width:34px;height:34px}.brand-copy strong{font-size:15px}
+ .toolbar{grid-column:2;grid-row:1}.speed-select{display:none}
+ .template-tabs{grid-column:1/3;grid-row:2;margin:0;overflow:auto;justify-content:flex-start;scrollbar-width:none}.template-tabs::-webkit-scrollbar{display:none}
+ .template-tab{flex:0 0 auto;padding:8px 12px;font-size:10px}
+ .stage-shell{inset:104px 8px 82px;border-radius:22px}
+ .mode-caption{top:17px}.mode-caption .title{font-size:14px}
+ .intro-copy{left:21px;right:21px;bottom:25px;max-width:none}.intro-copy h1{font-size:26px;margin-top:6px}.intro-copy p{display:none}
+ .progress-rail{left:21px;right:21px;bottom:12px;width:auto}.progress-meta{margin-bottom:6px}
+ .toast{bottom:96px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand" aria-label="LoveTree Structure Unfold">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-copy"><strong>LoveTree Structure Unfold</strong><span>Reusable emotional map form</span></div>
+    </div>
+    <nav class="template-tabs" aria-label="전개 템플릿">
+      <button class="template-tab active" data-template="basic">Basic</button>
+      <button class="template-tab" data-template="person">Person</button>
+      <button class="template-tab" data-template="emotion">Emotion</button>
+      <button class="template-tab" data-template="season">Season</button>
+    </nav>
+    <div class="toolbar" aria-label="애니메이션 조작">
+      <button class="tool-btn primary" id="replayBtn" type="button" aria-label="다시 펼치기">
+        <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg><span>다시 펼치기</span>
+      </button>
+      <select class="speed-select" id="speedSelect" aria-label="전개 속도">
+        <option value="0.72">0.7×</option><option value="1" selected>1.0×</option><option value="1.35">1.35×</option>
+      </select>
+      <button class="tool-btn" id="zoomOutBtn" type="button" aria-label="축소"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16 16l5 5"/></svg></button>
+      <button class="tool-btn" id="zoomInBtn" type="button" aria-label="확대"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M16 16l5 5"/></svg></button>
+      <button class="tool-btn" id="fitBtn" type="button" aria-label="화면 맞춤"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
+    </div>
+  </header>
+
+  <main class="stage-shell" id="stageShell">
+    <div class="mode-caption"><div class="label" id="modeLabel">LOVE UNFOLDS</div><div class="title" id="modeTitle">A tree of moments</div></div>
+    <svg id="mapSvg" viewBox="-600 -370 1200 740" role="img" aria-label="LoveTree 자동 전개 마인드맵">
+      <defs>
+        <filter id="softLine" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".18"/></filter>
+        <filter id="trailGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+        <filter id="nodeBlur" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="7"/></filter>
+        <filter id="rootShadow" x="-30%" y="-40%" width="160%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#6e5148" flood-opacity=".13"/></filter>
+        <filter id="labelShadow" x="-25%" y="-40%" width="150%" height="180%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#6e5148" flood-opacity=".09"/></filter>
+        <linearGradient id="trailGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c86e79" stop-opacity="0"/><stop offset=".52" stop-color="#c86e79" stop-opacity=".75"/><stop offset="1" stop-color="#879975" stop-opacity="0"/></linearGradient>
+      </defs>
+      <g id="viewportGroup">
+        <g class="petals" id="petalLayer"></g>
+        <g id="edgeLayer"></g>
+        <g id="labelLayer"></g>
+        <g id="nodeLayer"></g>
+      </g>
+    </svg>
+    <section class="intro-copy" aria-live="polite">
+      <div class="kicker" id="copyKicker">FROM SEED TO MEMORY</div>
+      <h1 id="copyTitle">기억이 트리로 열립니다</h1>
+      <p id="copyBody">루트에서 시작해 Moment와 Connection이 순차적으로 살아나는 재사용형 구조 애니메이션.</p>
+    </section>
+    <div class="progress-rail" aria-hidden="true">
+      <div class="progress-meta"><strong id="phaseLabel">SEED</strong><span id="progressText">00%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </main>
+  <div class="toast" id="toast">선택한 가지가 다시 살아납니다.</div>
+</div>
+<script>
+(() => {
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const qs=new URLSearchParams(location.search);
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const smooth=t=>t*t*(3-2*t);
+const easeOutCubic=t=>1-Math.pow(1-t,3);
+const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const backOut=t=>{const c1=1.15,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const svgEl=(tag,attrs={})=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e};
+const palettes={moment:'#c86e79',emotion:'#98505e',cluster:'#879975',season:'#596b4c',note:'#9a87b8',media:'#d7ad65',root:'#c86e79'};
+
+const templates={
+ basic:{
+  label:'LOVE UNFOLDS',title:'A tree of moments',kicker:'FROM SEED TO MEMORY',copy:'기억이 트리로 열립니다',body:'첫 순간에서 시작해 감정의 인과관계가 가지와 노드로 차분히 맺힙니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:224,h:112,eyebrow:'LOVE TREE',title:'First spark',sub:'the moment that started everything'},
+   {id:'m1',type:'moment',x:-360,y:-155,w:178,h:82,eyebrow:'MOMENT 01',title:'The first song',sub:'2:14 · wonder'},
+   {id:'m2',type:'moment',x:350,y:-178,w:190,h:84,eyebrow:'MOMENT 02',title:'Stayed a little longer',sub:'late summer · warmth'},
+   {id:'m3',type:'moment',x:-385,y:180,w:188,h:84,eyebrow:'MOMENT 03',title:'Found my way back',sub:'a quiet return'},
+   {id:'m4',type:'moment',x:365,y:185,w:190,h:84,eyebrow:'MOMENT 04',title:'Shared it with someone',sub:'the memory grew'},
+   {id:'e1',type:'emotion',x:-520,y:-280,w:126,h:56,eyebrow:'EMOTION',title:'Wonder',sub:''},
+   {id:'e2',type:'emotion',x:510,y:-295,w:132,h:56,eyebrow:'EMOTION',title:'Comfort',sub:''},
+   {id:'e3',type:'emotion',x:-535,y:305,w:128,h:56,eyebrow:'EMOTION',title:'Courage',sub:''},
+   {id:'n1',type:'note',x:520,y:306,w:150,h:62,eyebrow:'NOTE',title:'“Keep this.”',sub:'private reflection'}
+  ],
+  edges:[
+   {from:'root',to:'m1',label:'made me look closer',curve:-20},{from:'root',to:'m2',label:'felt unexpectedly warm',curve:24},
+   {from:'root',to:'m3',label:'I returned because',curve:22},{from:'root',to:'m4',label:'became ours',curve:-24},
+   {from:'m1',to:'e1',label:'before → after',curve:18},{from:'m2',to:'e2',label:'stayed with me',curve:-15},
+   {from:'m3',to:'e3',label:'a little braver',curve:-16},{from:'m4',to:'n1',label:'held in words',curve:16}
+  ]
+ },
+ person:{
+  label:'PERSON MEMORY',title:'One person, many seasons',kicker:'A LIVING MEMORY SHELF',copy:'한 사람의 계절이 펼쳐집니다',body:'같은 사람을 향한 여러 순간과 감정이 하나의 경로로 이어집니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:230,h:112,eyebrow:'PERSON TREE',title:'Mina',sub:'one person · four seasons'},
+   {id:'s1',type:'season',x:-360,y:-205,w:176,h:78,eyebrow:'SEASON 01',title:'First light',sub:'when I first noticed'},
+   {id:'s2',type:'season',x:360,y:-210,w:176,h:78,eyebrow:'SEASON 02',title:'Closer days',sub:'small things became dear'},
+   {id:'s3',type:'season',x:-365,y:205,w:176,h:78,eyebrow:'SEASON 03',title:'Quiet winter',sub:'distance and return'},
+   {id:'s4',type:'season',x:365,y:205,w:176,h:78,eyebrow:'SEASON 04',title:'New chapter',sub:'the feeling stayed'},
+   {id:'m1',type:'moment',x:-540,y:-305,w:160,h:68,eyebrow:'MOMENT',title:'A passing smile',sub:'curiosity'},
+   {id:'m2',type:'moment',x:-520,y:-95,w:164,h:68,eyebrow:'MOMENT',title:'The long message',sub:'trust'},
+   {id:'m3',type:'moment',x:540,y:-315,w:164,h:68,eyebrow:'MOMENT',title:'Shared playlist',sub:'belonging'},
+   {id:'m4',type:'moment',x:535,y:-90,w:164,h:68,eyebrow:'MOMENT',title:'Sunday walk',sub:'ease'},
+   {id:'m5',type:'moment',x:-540,y:305,w:164,h:68,eyebrow:'MOMENT',title:'Silence between us',sub:'uncertain'},
+   {id:'e1',type:'emotion',x:-520,y:92,w:124,h:54,eyebrow:'EMOTION',title:'Missing',sub:''},
+   {id:'m6',type:'moment',x:540,y:310,w:164,h:68,eyebrow:'MOMENT',title:'We met again',sub:'relief'},
+   {id:'n1',type:'note',x:525,y:92,w:150,h:60,eyebrow:'NOTE',title:'Still here',sub:'a private line'}
+  ],
+  edges:[
+   {from:'root',to:'s1',label:'the beginning',curve:-28},{from:'root',to:'s2',label:'grew closer',curve:26},{from:'root',to:'s3',label:'a quiet distance',curve:26},{from:'root',to:'s4',label:'returned gently',curve:-26},
+   {from:'s1',to:'m1',label:'first noticed',curve:12},{from:'s1',to:'m2',label:'wanted to know more',curve:-16},
+   {from:'s2',to:'m3',label:'shared worlds',curve:-14},{from:'s2',to:'m4',label:'felt ordinary and rare',curve:14},
+   {from:'s3',to:'m5',label:'could not say',curve:-12},{from:'s3',to:'e1',label:'became longing',curve:13},
+   {from:'s4',to:'m6',label:'found each other',curve:12},{from:'s4',to:'n1',label:'kept the feeling',curve:-12}
+  ]
+ },
+ emotion:{
+  label:'EMOTIONAL MAP',title:'From feeling to connection',kicker:'THE PATH BENEATH A MEMORY',copy:'감정의 인과가 길이 됩니다',body:'첫 순간이 기록되고, 연결되고, 다시 돌아오는 감정 경로를 보여줍니다.',
+  nodes:[
+   {id:'root',type:'root',x:-410,y:0,w:214,h:108,eyebrow:'FIRST MOMENT',title:'I noticed',sub:'a small movement of the heart'},
+   {id:'a1',type:'moment',x:-165,y:-185,w:168,h:76,eyebrow:'CAPTURE',title:'Saved the moment',sub:'time · source · note'},
+   {id:'a2',type:'emotion',x:90,y:-205,w:144,h:58,eyebrow:'EMOTION',title:'Wonder',sub:''},
+   {id:'a3',type:'cluster',x:320,y:-105,w:172,h:76,eyebrow:'CONNECTION',title:'Why it led onward',sub:'emotion before → after'},
+   {id:'a4',type:'moment',x:390,y:145,w:170,h:76,eyebrow:'NEXT MOMENT',title:'Looked again',sub:'the path continued'},
+   {id:'a5',type:'emotion',x:130,y:220,w:146,h:58,eyebrow:'EMOTION',title:'Belonging',sub:''},
+   {id:'a6',type:'note',x:-150,y:195,w:164,h:66,eyebrow:'REFLECTION',title:'“This changed me.”',sub:'private note'},
+   {id:'a7',type:'season',x:560,y:-260,w:158,h:68,eyebrow:'EXPANSION',title:'New branch',sub:'a derived path'},
+   {id:'a8',type:'media',x:565,y:285,w:156,h:68,eyebrow:'RETURN',title:'Played again',sub:'the feeling revives'}
+  ],
+  edges:[
+   {from:'root',to:'a1',label:'first saved',curve:-18},{from:'a1',to:'a2',label:'named the feeling',curve:17},{from:'a2',to:'a3',label:'made me curious',curve:-16},
+   {from:'a3',to:'a4',label:'led to the next moment',curve:23},{from:'a4',to:'a5',label:'changed into',curve:18},{from:'a5',to:'a6',label:'held as words',curve:-18},
+   {from:'a3',to:'a7',label:'another route opened',curve:-22},{from:'a4',to:'a8',label:'returned through replay',curve:20},
+   {from:'a6',to:'root',label:'the path can begin again',curve:58}
+  ]
+ },
+ season:{
+  label:'SEASON MAP',title:'A season becomes a living archive',kicker:'ONE TREE · MANY CHAPTERS',copy:'한 시즌의 전체 구조가 피어납니다',body:'오프닝, 전환점, 깊어짐, 여운이 같은 나무 안의 장으로 정리됩니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:234,h:112,eyebrow:'SEASON 03',title:'The season we stayed',sub:'18 moments · 4 emotional clusters'},
+   {id:'c1',type:'cluster',x:-380,y:-210,w:176,h:78,eyebrow:'CHAPTER 01',title:'Opening',sub:'the first three moments'},
+   {id:'c2',type:'cluster',x:380,y:-215,w:182,h:78,eyebrow:'CHAPTER 02',title:'Turning point',sub:'the feeling changed'},
+   {id:'c3',type:'cluster',x:-390,y:215,w:176,h:78,eyebrow:'CHAPTER 03',title:'Deepening',sub:'the path grew roots'},
+   {id:'c4',type:'cluster',x:390,y:215,w:176,h:78,eyebrow:'CHAPTER 04',title:'Afterglow',sub:'what remained'},
+   {id:'m1',type:'moment',x:-555,y:-315,w:150,h:64,eyebrow:'MOMENT',title:'First glance',sub:'wonder'},
+   {id:'m2',type:'moment',x:-545,y:-100,w:150,h:64,eyebrow:'MOMENT',title:'A small sign',sub:'curiosity'},
+   {id:'m3',type:'moment',x:550,y:-325,w:154,h:64,eyebrow:'MOMENT',title:'The honest line',sub:'surprise'},
+   {id:'e1',type:'emotion',x:545,y:-95,w:132,h:54,eyebrow:'EMOTION',title:'Trust',sub:''},
+   {id:'m4',type:'moment',x:-555,y:325,w:154,h:64,eyebrow:'MOMENT',title:'Stayed through rain',sub:'comfort'},
+   {id:'n1',type:'note',x:-545,y:100,w:148,h:60,eyebrow:'NOTE',title:'Closer now',sub:'private'},
+   {id:'m5',type:'moment',x:550,y:325,w:154,h:64,eyebrow:'MOMENT',title:'Last evening',sub:'grateful'},
+   {id:'e2',type:'emotion',x:545,y:100,w:132,h:54,eyebrow:'EMOTION',title:'Afterglow',sub:''}
+  ],
+  edges:[
+   {from:'root',to:'c1',label:'the season opened',curve:-28},{from:'root',to:'c2',label:'something shifted',curve:28},{from:'root',to:'c3',label:'we stayed longer',curve:26},{from:'root',to:'c4',label:'what remained',curve:-26},
+   {from:'c1',to:'m1',label:'first spark',curve:12},{from:'c1',to:'m2',label:'looked closer',curve:-14},
+   {from:'c2',to:'m3',label:'said aloud',curve:-12},{from:'c2',to:'e1',label:'became trust',curve:14},
+   {from:'c3',to:'m4',label:'felt safe',curve:-12},{from:'c3',to:'n1',label:'held privately',curve:14},
+   {from:'c4',to:'m5',label:'the final evening',curve:12},{from:'c4',to:'e2',label:'stayed after',curve:-14}
+  ]
+ }
+};
+
+const app=$('#app'), svg=$('#mapSvg'), viewport=$('#viewportGroup'), edgeLayer=$('#edgeLayer'), labelLayer=$('#labelLayer'), nodeLayer=$('#nodeLayer'), petalLayer=$('#petalLayer');
+const stage=$('#stageShell'), progressFill=$('#progressFill'), progressText=$('#progressText'), phaseLabel=$('#phaseLabel'), toast=$('#toast');
+let current=templates[qs.get('template')]?qs.get('template'):'basic';
+let nodesById=new Map(), edges=[], nodeEls=new Map(), edgeEls=new Map(), labelEls=new Map(), schedule={nodes:new Map(),edges:new Map()};
+let progress=0, raf=0, playing=false, startedAt=0, speed=Number(qs.get('speed')||1), duration=6500;
+let camera={scale:1,x:0,y:0}, drag=null, selectedId=null, breathTime=0;
+const capture=qs.get('capture')==='1'; if(capture) document.body.classList.add('capture-mode');
+const isMobile=()=>innerWidth<=700;
+
+function layoutNode(n,index){
+ if(!isMobile()) return {x:n.x,y:n.y};
+ if(n.id==='root') return {x:0,y:-470};
+ const tpl=templates[current];
+ const parents=new Map(tpl.edges.map(e=>[e.to,e.from]));
+ let level=0,p=n.id; while(parents.has(p)&&level<5){level++;p=parents.get(p)}
+ const same=tpl.nodes.filter(nn=>{let l=0,q=nn.id;while(parents.has(q)&&l<5){l++;q=parents.get(q)}return l===level&&nn.id!=='root'});
+ const idx=same.findIndex(nn=>nn.id===n.id);
+ if(level===1){const cols=2;return {x:(idx%cols?168:-168),y:-230+Math.floor(idx/cols)*235}}
+ const parentId=parents.get(n.id), parent=nodesById.get(parentId); const pp=parent?layoutNode(parent,0):{x:0,y:0};
+ const siblings=tpl.nodes.filter(nn=>parents.get(nn.id)===parentId); const si=siblings.findIndex(nn=>nn.id===n.id);
+ return {x:pp.x+(si%2?105:-105),y:pp.y+118+Math.floor(si/2)*98};
+}
+function setViewBox(){
+ svg.setAttribute('viewBox',isMobile()?'-360 -520 720 1050':'-600 -370 1200 740');
+}
+function nodeRadius(n,ux,uy){return Math.min(Math.abs(ux)>Math.abs(uy)?n.w*.46:n.h*.46,92)}
+function pathFor(a,b,i,curve=0){
+ const pa=layoutNode(a),pb=layoutNode(b),dx=pb.x-pa.x,dy=pb.y-pa.y,d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d;
+ const rs=nodeRadius(a,ux,uy),rt=nodeRadius(b,ux,uy); const sx=pa.x+ux*rs,sy=pa.y+uy*rs,tx=pb.x-ux*rt,ty=pb.y-uy*rt;
+ const nx=-uy,ny=ux,c=curve||((i%2?1:-1)*Math.min(42,d*.1));
+ const c1x=sx+(tx-sx)*.34+nx*c,c1y=sy+(ty-sy)*.34+ny*c,c2x=sx+(tx-sx)*.68+nx*c,c2y=sy+(ty-sy)*.68+ny*c;
+ return `M ${sx.toFixed(2)} ${sy.toFixed(2)} C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${tx.toFixed(2)} ${ty.toFixed(2)}`;
+}
+function getLevels(tpl){
+ const parent=new Map(tpl.edges.map(e=>[e.to,e.from]));const levels=new Map([['root',0]]);
+ const level=id=>{if(levels.has(id))return levels.get(id);const p=parent.get(id);const l=p?level(p)+1:1;levels.set(id,l);return l};
+ tpl.nodes.forEach(n=>level(n.id));return levels;
+}
+function createPetals(){
+ petalLayer.replaceChildren();
+ const pts=[[-520,-300,8,14,-18],[530,-260,7,13,24],[-560,270,6,12,14],[510,300,8,14,-25],[-70,-320,5,10,12],[85,315,5,11,-10]];
+ pts.forEach(([x,y,rx,ry,r])=>{const p=svgEl('ellipse',{class:'petal',cx:x,cy:y,rx,ry,transform:`rotate(${r} ${x} ${y})`});petalLayer.append(p)});
+}
+function buildSchedule(tpl){
+ schedule={nodes:new Map(),edges:new Map()};const levels=getLevels(tpl);schedule.nodes.set('root',{s:.025,d:.12});
+ const groups={1:[],2:[],3:[],4:[]};tpl.edges.forEach((e,i)=>{const l=levels.get(e.to)||1;(groups[l]||(groups[l]=[])).push({e,i})});
+ const windows={1:[.15,.42],2:[.44,.72],3:[.68,.88],4:[.78,.94]};
+ Object.entries(groups).forEach(([ls,arr])=>{if(!arr.length)return;const [a,b]=windows[ls]||[.5,.9];arr.forEach((o,j)=>{const s=a+(arr.length===1?0:(b-a)*(j/(arr.length-1))*.7);schedule.edges.set(o.i,{s,d:.13});schedule.nodes.set(o.e.to,{s:s+.072,d:.105})})});
+}
+function makeNode(n,i){
+ const p=layoutNode(n); const g=svgEl('g',{class:`node ${n.type} breathe-${i%3+1}`,'data-id':n.id,'data-base-x':p.x,'data-base-y':p.y,tabindex:'0','aria-label':`${n.eyebrow} ${n.title}`});
+ const shadow=svgEl('rect',{class:'node-shadow',x:-n.w/2+4,y:-n.h/2+8,width:n.w-8,height:n.h-4,rx:Math.min(20,n.h*.24)});
+ const card=svgEl('rect',{class:'node-card',x:-n.w/2,y:-n.h/2,width:n.w,height:n.h,rx:Math.min(19,n.h*.24)});
+ const accent=svgEl('line',{class:'node-accent',x1:-n.w/2+18,y1:-n.h/2+13,x2:-n.w/2+48,y2:-n.h/2+13});
+ const dot=svgEl('circle',{class:'node-dot',cx:-n.w/2+21,cy:n.type==='root'?-2:-1,r:n.type==='root'?7:5});
+ g.append(shadow,card,accent,dot);
+ if(n.type==='root'){
+  g.append(svgEl('path',{class:'seed-leaf',d:'M -91 4 C -82 -15 -64 -20 -54 -11 C -58 3 -71 10 -88 8 M -88 8 C -76 8 -65 14 -59 25'}));
+  const ey=svgEl('text',{class:'eyebrow',x:-n.w/2+44,y:-22});ey.textContent=n.eyebrow;
+  const tt=svgEl('text',{class:'title',x:-n.w/2+44,y:6});tt.textContent=n.title;
+  const st=svgEl('text',{class:'subtitle',x:-n.w/2+44,y:27});st.textContent=n.sub;
+  g.append(ey,tt,st);
+ }else{
+  const textX=-n.w/2+38;
+  const ey=svgEl('text',{class:'eyebrow',x:textX,y:n.sub?-14:-8});ey.textContent=n.eyebrow;
+  const tt=svgEl('text',{class:'title',x:textX,y:n.sub?8:13});tt.textContent=n.title;
+  g.append(ey,tt);
+  if(n.sub){const st=svgEl('text',{class:'subtitle',x:textX,y:27});st.textContent=n.sub;g.append(st)}
+ }
+ g.addEventListener('click',ev=>{ev.stopPropagation();selectBranch(n.id,true)});
+ g.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectBranch(n.id,true)}});
+ nodeLayer.append(g);nodeEls.set(n.id,g);return g;
+}
+function makeEdge(e,i,levels){
+ const a=nodesById.get(e.from),b=nodesById.get(e.to),d=pathFor(a,b,i,e.curve);const level=levels.get(e.to)||1;
+ const trail=svgEl('path',{class:'edge-trail',d});
+ const path=svgEl('path',{class:`edge-path level-${level}`,d,'data-edge':i,'data-from':e.from,'data-to':e.to});
+ edgeLayer.append(trail,path); const len=path.getTotalLength();path.style.strokeDasharray=len;path.style.strokeDashoffset=len;
+ edgeEls.set(i,{path,trail,len});
+ const pt=path.getPointAtLength(len*(e.labelPos||.53));const w=Math.max(68,e.label.length*5.35+18);const lg=svgEl('g',{class:'connection-label','data-edge':i,transform:`translate(${pt.x} ${pt.y})`});
+ const rect=svgEl('rect',{x:-w/2,y:-10,width:w,height:20,rx:8});const text=svgEl('text',{x:0,y:.7});text.textContent=e.label;lg.append(rect,text);labelLayer.append(lg);labelEls.set(i,lg);
+}
+function build(name,{autoplay=true}={}){
+ current=name; selectedId=null;cancelAnimationFrame(raf);playing=false;progress=0;camera={scale:1,x:0,y:0};applyCamera();
+ const tpl=templates[name];nodesById=new Map(tpl.nodes.map(n=>[n.id,n]));edges=tpl.edges;
+ edgeLayer.replaceChildren();labelLayer.replaceChildren();nodeLayer.replaceChildren();createPetals();setViewBox();buildSchedule(tpl);
+ const levels=getLevels(tpl);
+ // Root aura lives beneath nodes.
+ const root=nodesById.get('root'),rp=layoutNode(root);for(let k=0;k<2;k++){const a=svgEl('ellipse',{class:`root-aura a${k+1}`,cx:rp.x,cy:rp.y,rx:root.w*.58+k*18,ry:root.h*.67+k*12});edgeLayer.append(a)}
+ tpl.edges.forEach((e,i)=>makeEdge(e,i,levels));tpl.nodes.forEach(makeNode);
+ $('#modeLabel').textContent=tpl.label;$('#modeTitle').textContent=tpl.title;$('#copyKicker').textContent=tpl.kicker;$('#copyTitle').textContent=tpl.copy;$('#copyBody').textContent=tpl.body;
+ $$('.template-tab').forEach(b=>b.classList.toggle('active',b.dataset.template===name));
+ render(0); if(autoplay&&!capture) setTimeout(play,260);
+}
+function localProgress(p,s,d){return clamp((p-s)/d)}
+function phaseFor(p){if(p<.14)return'SEED';if(p<.43)return'CONNECTIONS';if(p<.76)return'MOMENTS';if(p<.98)return'SETTLING';return'FORM COMPLETE'}
+function render(p){
+ progress=clamp(p); const tpl=templates[current];
+ nodeEls.forEach((g,id)=>{const sch=schedule.nodes.get(id)||{s:.5,d:.1};const t=localProgress(progress,sch.s,sch.d);const e=id==='root'?backOut(t):backOut(t);const pos=layoutNode(nodesById.get(id));const sx=.16+.84*e,sy=.7+.3*e;g.style.opacity=smooth(t);g.setAttribute('transform',`translate(${pos.x} ${pos.y}) scale(${sx.toFixed(4)} ${sy.toFixed(4)})`);g.style.pointerEvents=t>.82?'auto':'none'});
+ edgeEls.forEach((obj,i)=>{const sch=schedule.edges.get(i)||{s:.4,d:.1};const t=easeInOut(localProgress(progress,sch.s,sch.d));obj.path.style.strokeDashoffset=obj.len*(1-t);obj.path.style.opacity=.15+.78*t;const lg=labelEls.get(i);const lt=smooth(localProgress(progress,sch.s+sch.d*.56,.08));lg.style.opacity=lt;lg.style.transform=`${lg.getAttribute('transform')} scale(${(.82+.18*lt).toFixed(3)})`;});
+ const done=progress>=.999;viewport.classList.toggle('map-complete',done);progressFill.style.width=`${(progress*100).toFixed(1)}%`;progressText.textContent=`${String(Math.round(progress*100)).padStart(2,'0')}%`;phaseLabel.textContent=phaseFor(progress);
+ window.__lovetreeState={template:current,progress,phase:phaseFor(progress),nodeCount:tpl.nodes.length,edgeCount:tpl.edges.length,playing,camera:{...camera},mobile:isMobile(),selectedId};
+}
+function play(){
+ cancelAnimationFrame(raf);playing=true;startedAt=performance.now()-progress*(duration/speed);
+ const tick=now=>{const p=(now-startedAt)/(duration/speed);render(p);if(p<1&&playing)raf=requestAnimationFrame(tick);else{playing=false;render(1)}};raf=requestAnimationFrame(tick);
+}
+function replay(){selectedId=null;clearSelection();render(0);setTimeout(play,120)}
+function descendants(id){const out=new Set([id]);let changed=true;while(changed){changed=false;edges.forEach(e=>{if(out.has(e.from)&&!out.has(e.to)){out.add(e.to);changed=true}})}return out}
+function selectBranch(id,notify=false){
+ selectedId=id;const rel=descendants(id);nodeEls.forEach((g,nid)=>{g.classList.toggle('selected',nid===id);g.classList.toggle('dimmed',!rel.has(nid));if(rel.has(nid)){g.classList.remove('branch-pulse');void g.getBBox();g.classList.add('branch-pulse')}});
+ edges.forEach((e,i)=>{const yes=rel.has(e.from)&&rel.has(e.to);edgeEls.get(i).path.classList.toggle('related',yes);edgeEls.get(i).path.classList.toggle('dimmed',!yes);labelEls.get(i).classList.toggle('dimmed',!yes);if(yes){const tr=edgeEls.get(i).trail;tr.classList.remove('running');void tr.getBBox();tr.classList.add('running')}});
+ if(notify){toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500)}
+ render(progress);
+}
+function clearSelection(){selectedId=null;nodeEls.forEach(g=>g.classList.remove('selected','dimmed','branch-pulse'));edgeEls.forEach(o=>o.path.classList.remove('related','dimmed'));labelEls.forEach(g=>g.classList.remove('dimmed'))}
+function applyCamera(){viewport.setAttribute('transform',`translate(${camera.x} ${camera.y}) scale(${camera.scale})`)}
+function zoomBy(f){camera.scale=clamp(camera.scale*f,.66,1.75);applyCamera()}
+function fit(){camera={scale:1,x:0,y:0};applyCamera()}
+
+$('#replayBtn').addEventListener('click',replay);$('#speedSelect').addEventListener('change',e=>{speed=Number(e.target.value);if(playing)play()});
+$('#zoomInBtn').addEventListener('click',()=>zoomBy(1.12));$('#zoomOutBtn').addEventListener('click',()=>zoomBy(.89));$('#fitBtn').addEventListener('click',fit);
+$$('.template-tab').forEach(b=>b.addEventListener('click',()=>{stage.animate([{opacity:1},{opacity:.35},{opacity:1}],{duration:420,easing:'ease-in-out'});setTimeout(()=>build(b.dataset.template,{autoplay:true}),120)}));
+stage.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY<0?1.08:.92)},{passive:false});
+stage.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('.node'))return;drag={x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y};stage.setPointerCapture(e.pointerId);stage.classList.add('dragging');clearSelection()});
+stage.addEventListener('pointermove',e=>{if(!drag)return;camera.x=drag.cx+(e.clientX-drag.x)/camera.scale;camera.y=drag.cy+(e.clientY-drag.y)/camera.scale;applyCamera()});
+stage.addEventListener('pointerup',()=>{drag=null;stage.classList.remove('dragging')});
+addEventListener('resize',()=>{setViewBox();build(current,{autoplay:false});render(progress)});
+
+window.LoveTreeUnfold={
+ setProgress:p=>{cancelAnimationFrame(raf);playing=false;render(Number(p))},
+ play,replay,build:(name,auto=false)=>build(name,{autoplay:auto}),
+ select:id=>selectBranch(id,false),clearSelection,zoomBy,fit,
+ state:()=>window.__lovetreeState,
+ templates:()=>Object.keys(templates)
+};
+
+build(current,{autoplay:qs.get('autoplay')!=='0'});
+if(qs.has('progress')){setTimeout(()=>window.LoveTreeUnfold.setProgress(Number(qs.get('progress'))),0)}
+})();
+</script>
+</body>
+</html>
