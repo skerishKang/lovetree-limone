@@ -772,8 +772,9 @@ export async function runGuardedProductionDeploy({
   // env vars into the client bundle. This guard verifies:
   //   - the build environment has the Firebase client config (present, non-empty,
   //     projectId === relovetree);
-  //   - the emitted client bundle actually contains the projectId and authDomain
-  //     (proving the config was inlined, not left as empty placeholders);
+  //   - the emitted client bundle actually contains the apiKey, authDomain, and
+  //     projectId (proving the config was inlined, not left as empty
+  //     placeholders); the apiKey is compared in-memory only and never printed;
   //   - the build manifest carries a Firebase config fingerprint and the
   //     expected projectId.
   // No raw config value (apiKey, authDomain) is ever printed.

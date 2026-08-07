@@ -69,8 +69,9 @@ if (build.status !== 0) {
 }
 
 // ── Post-build: verify the client bundle inlined the Firebase config ───────
-// Scans dist/client for the projectId and authDomain substrings to confirm
-// the config was baked in (not left as ""). No raw API key is searched for.
+// Scans dist/client for the apiKey, authDomain, and projectId substrings to
+// confirm the config was baked in (not left as ""). The apiKey is compared
+// in-memory only and is never printed by the guard.
 const clientDir = path.join(repoRoot, "dist", "client");
 const bundleCheck = await verifyClientBundleHasFirebaseConfig({
   clientDir,

@@ -14,9 +14,10 @@
 //     build manifest can prove which config was baked in WITHOUT storing the
 //     raw API key.
 //   - verifyClientBundleHasFirebaseConfig() scans the emitted client assets to
-//     confirm the projectId and authDomain were actually inlined (not left as
-//     empty string placeholders), proving the build artifact is not carrying a
-//     blank Firebase config.
+//     confirm the apiKey, authDomain, and projectId were actually inlined (not
+//     left as empty string placeholders), proving the build artifact is not
+//     carrying a blank Firebase config. The apiKey is compared in-memory only;
+//     it never appears in problem messages, logs, or the manifest.
 //
 // No raw Firebase config value (apiKey, authDomain) is ever written to the
 // manifest, logs, or returned in a way that could leak. Only the projectId
@@ -113,11 +114,21 @@ async function readClientBundleText(clientDir) {
 }
 
 // Scans the emitted client bundle to confirm the Firebase config was actually
-// inlined (not left as empty string placeholders). Checks for the projectId
-// and authDomain substrings — both are public values already present in
-// wrangler.jsonc. The apiKey is NOT searched for by value (to avoid handling
-// it in logs); instead we confirm the bundle is non-trivial and contains the
-// projectId marker.
+// inlined (not left as empty string placeholders). All three values — the
+// apiKey, authDomain, and projectId — must appear as string literals in the
+// bundle:
+//
+//   - projectId/authDomain are public values (already present in
+//     wrangler.jsonc), so their problem messages may echo them;
+//   - the apiKey is compared only in memory. If it is missing, a *safe*
+//     problem message is emitted that never contains the raw apiKey.
+//
+// Guard contract: this function verifies that the build-time input config and
+// the emitted artifact match — i.e. that the config was actually inlined. It
+// does NOT verify that the apiKey is a valid Firebase key: a build whose env,
+// manifest fingerprint, and bundle are all consistently built with the same
+// (possibly invalid) key will pass here by design. Real Firebase API key
+// validity is established only by a runtime auth smoke test.
 //
 // Returns { ok, problems }.
 export async function verifyClientBundleHasFirebaseConfig({ clientDir, config }) {
@@ -149,13 +160,18 @@ export async function verifyClientBundleHasFirebaseConfig({ clientDir, config })
     problems.push("client bundle does not contain the Firebase authDomain — config was not inlined at build time");
   }
 
-  // Detect the empty-config fallback pattern: lib/firebase.ts uses
-  // `process.env.NEXT_PUBLIC_FIREBASE_API_KEY || ""`. When the bundler
-  // inlines a missing env var, it may produce `""` for the apiKey. We cannot
-  // search for the apiKey value (it must not appear in logs), but we can
-  // detect the degenerate case where the entire config object is empty by
-  // checking that the projectId appears at least once outside of comments.
-  // The projectId check above already covers this.
+  // The apiKey must ALSO appear in the bundle. This closes the gap where a
+  // build with a valid projectId/authDomain but a missing apiKey would pass
+  // even though UI auth would still be broken. The comparison is internal
+  // only: the safe message below never contains the raw apiKey, and the value
+  // is never written to stdout/stderr, problem text, or the manifest. An
+  // empty config apiKey is treated as missing (fail-closed) — the pre-build
+  // validation would already have blocked that case.
+  if (!config.apiKey || !bundleText.includes(config.apiKey)) {
+    problems.push(
+      "client bundle does not contain the Firebase apiKey — config was not fully inlined at build time"
+    );
+  }
 
   return { ok: problems.length === 0, problems };
 }

@@ -7,6 +7,7 @@ import path from "node:path";
 
 import {
   runGuardedProductionDeploy,
+  formatResult,
   PRODUCTION_WORKER_NAME,
   FORBIDDEN_WORKER_NAME,
   EXPECTED_VARS,
@@ -102,7 +103,14 @@ function git(dir, args) {
 // gitignored and lives only in the working tree, and the build manifest is
 // stamped with the exact committed HEAD. HEAD === origin/main === sourceSha ===
 // manifest.sourceSha, and the worktree stays clean because dist/ is ignored.
-async function makeScratchRepo({ source = SOURCE, built = builtConfig(), withManifest = true } = {}) {
+// `bundleContent` lets tests control the emitted client bundle so the build
+// manifest's client-assets digest is computed over that exact content.
+async function makeScratchRepo({
+  source = SOURCE,
+  built = builtConfig(),
+  withManifest = true,
+  bundleContent = null,
+} = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), "prod-guard-repo-"));
   git(dir, ["init", "-b", "main"]);
   git(dir, ["config", "user.email", "guard-test@example.com"]);
@@ -116,11 +124,12 @@ async function makeScratchRepo({ source = SOURCE, built = builtConfig(), withMan
   git(dir, ["update-ref", "refs/remotes/origin/main", head]);
   // Build output: untracked + ignored, exactly like the real repository.
   await mkdir(path.join(dir, "dist", "client", "assets"), { recursive: true });
-  // The client bundle must contain the inlined Firebase config (projectId +
-  // authDomain) so the deploy guard's bundle scan passes.
+  // The client bundle must contain the inlined Firebase config (apiKey +
+  // authDomain + projectId) so the deploy guard's bundle scan passes.
   await writeFile(
     path.join(dir, "dist", "client", "assets", "app.js"),
-    `console.log('asset'); var c={projectId:"${TEST_FIREBASE_CONFIG.projectId}",authDomain:"${TEST_FIREBASE_CONFIG.authDomain}"};\n`,
+    bundleContent ??
+      `console.log('asset'); var c={apiKey:"${TEST_FIREBASE_CONFIG.apiKey}",authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
     "utf8"
   );
   await mkdir(path.join(dir, "dist", "server"), { recursive: true });
@@ -796,6 +805,62 @@ test("F4: guard output never contains the raw API key", async () => {
   const { result } = await runGuard({ dir, head, fake });
   const serialized = JSON.stringify(result);
   assert.ok(!serialized.includes(TEST_FIREBASE_CONFIG.apiKey), "raw API key must not appear in guard output");
+});
+
+test("F4: formatted guard output never contains the raw API key", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  const formatted = formatResult(result);
+  assert.ok(!formatted.includes(TEST_FIREBASE_CONFIG.apiKey), "raw API key must not appear in formatted guard output");
+});
+
+test("F4: client bundle with apiKey missing (authDomain+projectId present) must BLOCK", async () => {
+  // Bundle is built WITHOUT the apiKey but with the two public values — the
+  // exact fault-injection scenario this PR closes (env has the apiKey, but it
+  // was not baked into the artifact). Using bundleContent keeps the manifest's
+  // client-assets digest consistent so only the inlined check trips.
+  const { dir, head } = await makeScratchRepo({
+    bundleContent: `console.log('asset'); var c={authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
+  });
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("firebase-client-config-inlined"));
+  assert.ok(!problemNames(result).includes("build-manifest-assets"), "bundle digest must stay consistent");
+  // The blocking detail must not contain the raw apiKey either.
+  const inlinedCheck = result.checks.find((c) => c.name === "firebase-client-config-inlined");
+  assert.ok(!inlinedCheck.detail.includes(TEST_FIREBASE_CONFIG.apiKey), "raw apiKey must not appear in check detail");
+});
+
+test("F4: guard validates config↔artifact match, not Firebase key validity", async () => {
+  // A consistently wrong (but matching) apiKey across env, bundle, and
+  // manifest must PASS this guard: it only checks build-input↔artifact
+  // agreement. Real Firebase apiKey validity is the auth smoke test's job.
+  const wrongButConsistentKey = "wrong-but-consistent-key-000000";
+  const consistentConfig = {
+    ok: true,
+    problems: [],
+    config: { ...TEST_FIREBASE_CONFIG, apiKey: wrongButConsistentKey },
+    fingerprint: firebaseConfigFingerprint({ ...TEST_FIREBASE_CONFIG, apiKey: wrongButConsistentKey }),
+    projectId: FIREBASE_PROJECT_ID,
+  };
+  // Build the bundle + manifest with the same (wrong) key so everything is
+  // consistent with the build env: the guard must not try to validate key
+  // validity, only input↔artifact agreement.
+  const { dir, head } = await makeScratchRepo({
+    bundleContent: `console.log('asset'); var c={apiKey:"${wrongButConsistentKey}",authDomain:"${TEST_FIREBASE_CONFIG.authDomain}",projectId:"${TEST_FIREBASE_CONFIG.projectId}"};\n`,
+  });
+  const manifestPath = path.join(dir, "dist", "server", "lovetree-build-manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  manifest.firebaseConfigFingerprint = consistentConfig.fingerprint;
+  await writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+  const fake = makeFakeRun();
+  const { result } = await runGuard({ dir, head, fake, firebaseClientConfig: consistentConfig });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("firebase-client-config-inlined"));
+  assert.ok(!problemNames(result).includes("firebase-client-config-present"));
+  assert.ok(!problemNames(result).includes("build-manifest-firebase-config-match"));
 });
 
 // ── F6: live Worker drift ─────────────────────────────────────────────────

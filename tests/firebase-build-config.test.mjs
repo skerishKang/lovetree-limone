@@ -137,43 +137,122 @@ test("checkFirebaseBuildConfig returns null fingerprint for invalid env", () => 
 
 // ── verifyClientBundleHasFirebaseConfig ────────────────────────────────────
 
-async function makeClientDir(withConfig = true) {
+// Writes a fake client bundle with the given object-literal content (defaults
+// to the full inlined config). `bundleText` lets tests simulate missing values.
+async function makeClientDir(content = null) {
   const dir = await mkdtemp(path.join(tmpdir(), "fb-bundle-"));
   await mkdir(path.join(dir, "assets"), { recursive: true });
-  const content = withConfig
-    ? `var c={apiKey:"${VALID_CONFIG.apiKey}",authDomain:"${VALID_CONFIG.authDomain}",projectId:"${VALID_CONFIG.projectId}"};`
-    : `var c={apiKey:"",authDomain:"",projectId:""};`;
-  await writeFile(path.join(dir, "assets", "app.js"), content, "utf8");
+  const body =
+    content ??
+    `var c={apiKey:"${VALID_CONFIG.apiKey}",authDomain:"${VALID_CONFIG.authDomain}",projectId:"${VALID_CONFIG.projectId}"};`;
+  await writeFile(path.join(dir, "assets", "app.js"), body, "utf8");
   return dir;
 }
 
-test("client bundle with inlined config → PASS", async () => {
-  const dir = await makeClientDir(true);
+test("A: client bundle with all three inlined (apiKey+authDomain+projectId) → PASS", async () => {
+  const dir = await makeClientDir();
   const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: VALID_CONFIG });
   assert.equal(result.ok, true);
   await rm(dir, { recursive: true, force: true });
 });
 
-test("client bundle with empty config (projectId missing) → BLOCK", async () => {
-  const dir = await makeClientDir(false);
+test("B: client bundle with apiKey missing (authDomain+projectId present) → BLOCK", async () => {
+  const dir = await makeClientDir(
+    `var c={authDomain:"${VALID_CONFIG.authDomain}",projectId:"${VALID_CONFIG.projectId}"};`
+  );
   const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: VALID_CONFIG });
   assert.equal(result.ok, false);
-  assert.ok(result.problems.some((p) => p.includes("projectId")));
+  assert.ok(result.problems.some((p) => p.includes("apiKey")));
+  assert.ok(!result.problems.some((p) => p.includes("authDomain")));
+  assert.ok(!result.problems.some((p) => p.includes("projectId")));
   await rm(dir, { recursive: true, force: true });
 });
 
-test("client bundle with authDomain missing → BLOCK", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "fb-bundle-"));
-  await mkdir(path.join(dir, "assets"), { recursive: true });
-  // projectId present but authDomain absent
-  await writeFile(
-    path.join(dir, "assets", "app.js"),
-    `var c={projectId:"${VALID_CONFIG.projectId}"};`,
-    "utf8"
+test("B2: bundle check with empty config apiKey (fail-closed even if called directly) → BLOCK", async () => {
+  const dir = await makeClientDir();
+  const result = await verifyClientBundleHasFirebaseConfig({
+    clientDir: dir,
+    config: { ...VALID_CONFIG, apiKey: "" },
+  });
+  assert.equal(result.ok, false);
+  assert.ok(result.problems.some((p) => p.includes("apiKey")));
+  await rm(dir, { recursive: true, force: true });
+});
+
+test("C: apiKey empty in env → pre-build BLOCK (validateFirebaseClientConfig)", () => {
+  const result = validateFirebaseClientConfig(envWith({ NEXT_PUBLIC_FIREBASE_API_KEY: "" }));
+  assert.equal(result.ok, false);
+  assert.ok(result.problems.some((p) => p.includes("API_KEY")));
+});
+
+test("C2: apiKey env var entirely absent → pre-build BLOCK (checkFirebaseBuildConfig)", () => {
+  const env = envWith();
+  delete env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const result = checkFirebaseBuildConfig(env);
+  assert.equal(result.ok, false);
+  assert.equal(result.fingerprint, null);
+  assert.ok(result.problems.some((p) => p.includes("API_KEY")));
+});
+
+test("D: client bundle with authDomain missing only (apiKey+projectId present) → BLOCK", async () => {
+  const dir = await makeClientDir(
+    `var c={apiKey:"${VALID_CONFIG.apiKey}",projectId:"${VALID_CONFIG.projectId}"};`
   );
   const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: VALID_CONFIG });
   assert.equal(result.ok, false);
   assert.ok(result.problems.some((p) => p.includes("authDomain")));
+  assert.ok(!result.problems.some((p) => p.includes("apiKey")));
+  await rm(dir, { recursive: true, force: true });
+});
+
+test("E: client bundle with projectId missing only (apiKey+authDomain present) → BLOCK", async () => {
+  // Note: the production projectId "relovetree" is a substring of authDomain
+  // "relovetree.firebaseapp.com", so this test uses a distinct synthetic
+  // projectId to prove the projectId check actually inspects the bundle.
+  const distinctProjectId = "distinct-project-id-0000";
+  const eConfig = { ...VALID_CONFIG, projectId: distinctProjectId };
+  const dir = await makeClientDir(
+    `var c={apiKey:"${VALID_CONFIG.apiKey}",authDomain:"${VALID_CONFIG.authDomain}"};`
+  );
+  const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: eConfig });
+  assert.equal(result.ok, false);
+  assert.ok(result.problems.some((p) => p.includes("projectId")));
+  assert.ok(!result.problems.some((p) => p.includes("apiKey")));
+  assert.ok(!result.problems.some((p) => p.includes("authDomain")));
+  await rm(dir, { recursive: true, force: true });
+});
+
+test("F: apiKey-missing problem text never contains the raw synthetic apiKey", async () => {
+  const dir = await makeClientDir(
+    `var c={authDomain:"${VALID_CONFIG.authDomain}",projectId:"${VALID_CONFIG.projectId}"};`
+  );
+  const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: VALID_CONFIG });
+  assert.equal(result.ok, false);
+  const apiKeyProblem = result.problems.find((p) => p.includes("apiKey"));
+  assert.ok(apiKeyProblem, "expected an apiKey-related problem");
+  assert.ok(!apiKeyProblem.includes(VALID_CONFIG.apiKey), "raw apiKey must not appear in problem text");
+  // And the safe message must not contain the raw value either.
+  assert.ok(!JSON.stringify(result.problems).includes(VALID_CONFIG.apiKey));
+  await rm(dir, { recursive: true, force: true });
+});
+
+test("G: guard validates input-config↔artifact match, NOT Firebase key validity", async () => {
+  // A build env, manifest fingerprint, and bundle that are ALL consistently
+  // built with the same (synthetic, non-real) apiKey must PASS this guard: it
+  // only checks that the build-time config and the emitted artifact agree.
+  // Whether that apiKey is actually a valid Firebase key is out of scope and
+  // is established by a runtime auth smoke test, not by this build guard.
+  const fakeKey = "consistently-wrong-but-matching-key-abcdef";
+  const consistentConfig = {
+    apiKey: fakeKey,
+    authDomain: VALID_CONFIG.authDomain,
+    projectId: VALID_CONFIG.projectId,
+  };
+  const dir = await makeClientDir(
+    `var c={apiKey:"${fakeKey}",authDomain:"${VALID_CONFIG.authDomain}",projectId:"${VALID_CONFIG.projectId}"};`
+  );
+  const result = await verifyClientBundleHasFirebaseConfig({ clientDir: dir, config: consistentConfig });
+  assert.equal(result.ok, true, "consistent-but-possibly-invalid key must pass (validity is out of scope)");
   await rm(dir, { recursive: true, force: true });
 });
 
