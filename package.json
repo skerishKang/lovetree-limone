@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "vinext dev",
     "preview:deploy:safe": "node scripts/deploy-isolated-preview.mjs",
+    "production:build:safe": "node scripts/build-production-safe.mjs",
+    "production:deploy:safe": "node scripts/deploy-production-safe.mjs",
     "build": "vinext build && node scripts/prune-rsc-assets.mjs",
     "start": "vinext start",
     "test": "npm run build && node --import tsx --test 'tests/*.test.mjs'",

@@ -57,6 +57,7 @@ const SOURCE_WRANGLER = `{
       }
     },
     "production": {
+      "name": "lovetree-limone",
       "vars": {
         "APP_ENV": "production",
         "API_MUTATIONS_ENABLED": "true",
