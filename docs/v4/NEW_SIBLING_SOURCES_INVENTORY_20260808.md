@@ -70,7 +70,6 @@
 | lovetree-cosmic-video-memory-atlas-v1.html | 35,935 | `9d5b4b36…526` | LoveTree · Cosmic Video Memory Atlas | VISUAL_VARIANT (atlas/그래프) |
 | lovetree-global-discovery-home-v1.html | 4,898,093 | `8c8a4c78…dd02` | LoveTree Discovery Home | VISUAL_VARIANT (랜딩/탐색) |
 | lovetree-golden-heart-scroll-story-v1.html | 43,910 | `2adc32fd…898d` | LoveTree · Golden Heart Story | VISUAL_VARIANT (스크롤 스토리) |
-| lovetree-living-video-memory-graph-v1.html | 36,008 | `c6e1dccc…8da061` | LoveTree · Living Video Memory Graph | VISUAL_VARIANT (그래프) |
 | lovetree-memory-core-reactor-v2-lava-neon.html | 53,947 | `e86e0489…6f74d` | LoveTree Memory Core Reactor · Lava Neon | VISUAL_VARIANT (메모리 시각화) |
 | lovetree-memory-film-studio-v1.html | 48,201 | `52bf3308…93d6` | LoveTree Memory Film Studio | **NEW_SCREEN** |
 | lovetree-memory-graph-observatory-v1.html | 37,551 | `c5ea3a90…e753` | LoveTree Memory Graph Observatory | VISUAL_VARIANT (그래프) |
