@@ -42,6 +42,45 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
 
+      - name: Target current first-journey browser failure
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/a-track-p0-target-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..60}; do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/v4 > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/a-track-p0-target-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/a-track-p0-target-server.log
+            exit 1
+          fi
+
+          node --import tsx --test tests/v4-first-journey-source-faithful.test.mjs 2>&1 | tee /tmp/a-track-targeted-first-journey.log
+
+      - name: Upload targeted first-journey TAP log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-track-targeted-first-journey-log
+          path: /tmp/a-track-targeted-first-journey.log
+          if-no-files-found: warn
+
       - name: Unit and integration tests
         shell: bash
         run: |
