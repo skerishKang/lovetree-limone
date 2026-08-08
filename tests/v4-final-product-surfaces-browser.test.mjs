@@ -78,10 +78,22 @@ for (const viewport of [{ name: "desktop", width: 1280, height: 800 }, { name: "
         if (route === "overview") {
           assert.equal(await opened.page.getByText("좋아한 마음을", { exact: false }).count(), 1);
           assert.equal(await opened.page.getByText("3", { exact: true }).count() > 0, true);
+          await opened.page.getByRole("button", { name: /처음과 지금 사이/ }).click();
+          const recentCard = opened.page.locator(".v4-overview-moments article").first();
+          await recentCard.focus();
+          assert.equal(await recentCard.getAttribute("role"), "link");
+          await opened.page.keyboard.press("Enter");
+          await opened.page.waitForURL(new RegExp(`/trees/${TREE_ID}\\?moment=m3`));
         }
         if (route === "story") {
           assert.equal(await opened.page.getByText("PUBLIC STORY", { exact: true }).count(), 1);
           assert.equal(await opened.page.getByText("비공개 메모", { exact: true }).count(), 0);
+          assert.equal(await opened.page.locator(".v4-story-scroll-space").getAttribute("data-story-chapters"), "3");
+          const sticky = await opened.page.locator(".v4-story-sticky").evaluate((node) => getComputedStyle(node).position);
+          assert.equal(sticky, "sticky");
+          await opened.page.locator(".v4-story-rail button").nth(2).click();
+          await opened.page.waitForTimeout(650);
+          assert.ok(await opened.page.getByRole("heading", { name: "여름 여행", exact: true }).count());
         }
         if (route === "graph") {
           await opened.page.getByRole("button", { name: "Constellation", exact: true }).click();
