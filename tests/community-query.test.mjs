@@ -33,7 +33,7 @@ test("community sort expressions coalesce missing social rows", () => {
   for (const [sort, orderPattern] of sorts) {
     const query = buildCommunityTreesQuery(db, sort, 12).toSQL();
     assert.match(query.sql, orderPattern);
-    assert.deepEqual(query.params, ["public", 12]);
+    assert.deepEqual(query.params, ["public", "public", 3, 12]);
   }
 });
 
