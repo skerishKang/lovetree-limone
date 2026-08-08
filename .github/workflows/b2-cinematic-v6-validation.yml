@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - ci/v4-b2-cinematic-v6-validation-20260808
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
