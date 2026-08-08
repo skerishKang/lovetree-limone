@@ -49,8 +49,11 @@ jobs:
           npm start > /tmp/b2-cinematic-v6-server.log 2>&1 &
           server_pid=$!
           cleanup() {
-            kill "$server_pid" 2>/dev/null || true
-            wait "$server_pid" 2>/dev/null || true
+            pkill -TERM -P "$server_pid" 2>/dev/null || true
+            kill -TERM "$server_pid" 2>/dev/null || true
+            sleep 1
+            pkill -KILL -P "$server_pid" 2>/dev/null || true
+            kill -KILL "$server_pid" 2>/dev/null || true
           }
           trap cleanup EXIT
 
@@ -72,7 +75,7 @@ jobs:
           fi
 
           set +e
-          node --input-type=module <<'NODE'
+          timeout --signal=KILL 45s node --input-type=module <<'NODE'
           import { chromium } from 'playwright';
           const browser = await chromium.launch({ headless: true });
           const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -82,27 +85,36 @@ jobs:
             if (msg.type() === 'error') consoleErrors.push(msg.text());
           });
           page.on('pageerror', (err) => pageErrors.push(err.stack || err.message));
-          const response = await page.goto('http://127.0.0.1:3000/v4/cinematic', {
-            waitUntil: 'domcontentloaded',
-            timeout: 20000,
-          });
-          await page.waitForTimeout(4000);
-          const snapshot = await page.evaluate(() => ({
-            title: document.title,
-            url: location.href,
-            root: Boolean(document.querySelector('[data-cinematic-root]')),
-            menu: Boolean(document.querySelector('.cin-menu-btn')),
-            shell: Boolean(document.querySelector('[data-cinematic-v6-shell]')),
-            text: document.body?.innerText?.slice(0, 3000) || '',
-            html: document.body?.innerHTML?.slice(0, 8000) || '',
-            scripts: Array.from(document.scripts).map((s) => s.src || '[inline]'),
-          }));
-          console.log('HTTP_STATUS', response?.status());
+          let response = null;
+          let snapshot = null;
+          let fatal = null;
+          try {
+            response = await page.goto('http://127.0.0.1:3000/v4/cinematic', {
+              waitUntil: 'domcontentloaded',
+              timeout: 20000,
+            });
+            await page.waitForTimeout(4000);
+            snapshot = await page.evaluate(() => ({
+              title: document.title,
+              url: location.href,
+              root: Boolean(document.querySelector('[data-cinematic-root]')),
+              menu: Boolean(document.querySelector('.cin-menu-btn')),
+              shell: Boolean(document.querySelector('[data-cinematic-v6-shell]')),
+              text: document.body?.innerText?.slice(0, 3000) || '',
+              html: document.body?.innerHTML?.slice(0, 8000) || '',
+              scripts: Array.from(document.scripts).map((s) => s.src || '[inline]'),
+            }));
+          } catch (error) {
+            fatal = error?.stack || String(error);
+          }
+          console.log('HTTP_STATUS', response?.status?.() ?? null);
           console.log('SNAPSHOT', JSON.stringify(snapshot, null, 2));
+          console.log('FATAL', fatal ?? 'NONE');
           console.log('PAGE_ERRORS', JSON.stringify(pageErrors, null, 2));
           console.log('CONSOLE_ERRORS', JSON.stringify(consoleErrors, null, 2));
-          await browser.close();
-          if (!response?.ok() || !snapshot.root || !snapshot.menu) process.exit(2);
+          const ok = Boolean(response?.ok?.() && snapshot?.root && snapshot?.menu);
+          await browser.close().catch(() => {});
+          process.exit(ok ? 0 : 2);
           NODE
           status=$?
           set -e
