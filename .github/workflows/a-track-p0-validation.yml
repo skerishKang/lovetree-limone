@@ -1,6 +1,9 @@
 name: A-track P0 validation
 
 on:
+  push:
+    branches:
+      - ci/v4-global-discovery-live-validation3-20260809
   pull_request:
     branches:
       - main
@@ -34,8 +37,8 @@ jobs:
       - name: Build test prerequisites
         run: npm run build
 
-      - name: Targeted A-track contract tests
-        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs
+      - name: Targeted A+B contract tests
+        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs tests/v4-global-discovery-live.test.mjs
 
       - name: Prepare Playwright runtime
         run: |
