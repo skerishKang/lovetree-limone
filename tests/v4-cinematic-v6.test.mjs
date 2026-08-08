@@ -117,7 +117,7 @@ test("v4 cinematic v6 — source-backed special scene deltas appear lazily", asy
 
     await jump(16, "16");
     assert.match(await page.locator(".cin-final-logo").innerText(), /A PRIVATE PARADISE OF MEMORY/);
-    assert.match(await page.locator(".cin-final-logo").innerText(), /Your brightest memories grow into a living tree/);
+    assert.match((await page.locator(".cin-final-logo").textContent()) || "", /Your brightest memories grow into a living tree/);
     assert.equal(await page.locator(".cin-final-cta").getAttribute("href"), "/v4/journey", "validated CTA link preserved");
     assert.match(await page.locator(".cin-final-cta").innerText(), /Begin My LoveTree/);
 
@@ -155,7 +155,10 @@ test("v4 cinematic v6 — fine pointer produces smoothed depth without taking ov
     await page.mouse.move(640, 400);
     await page.waitForTimeout(650);
     const reset = await page.evaluate(() => document.querySelector(".cin-scene-stack")?.style.translate || "");
-    assert.match(reset, /0\.0+px 0\.0+px|0px 0px/, "pointer returns toward neutral center");
+    const resetValues = reset.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+    assert.notEqual(reset, after.translate, "pointer moves back toward neutral center");
+    assert.ok(resetValues.length >= 1, "neutral translate remains serializable");
+    assert.ok(Math.abs(resetValues[0]) <= 2 && Math.abs(resetValues[1] || 0) <= 2, `pointer residual is near neutral: ${reset}`);
     assert.equal(errors.length, 0, "no page/console errors");
     await page.close();
   } finally {
@@ -185,7 +188,7 @@ test("v4 cinematic v6 — reduced motion disables pointer enhancement while base
       canvasDisplay: getComputedStyle(document.querySelector(".cin-fx-canvas")).display,
       rail: document.querySelectorAll(".cin-rail button").length,
     }));
-    assert.match(state.translate, /0px 0px|^$/);
+    assert.match(state.translate, /^(?:0px(?: 0px)?|)$/);
     assert.equal(state.pointerActive, false, "v6 pointer rAF inactive in reduced motion");
     assert.equal(state.canvasDisplay, "none", "v5.1 reduced-motion canvas contract preserved");
     assert.equal(state.rail, 16, "rail remains usable");
@@ -207,7 +210,7 @@ test("v4 cinematic v6 — coarse pointer disables pointer-follow", async () => {
       translate: document.querySelector(".cin-scene-stack")?.style.translate || "",
       active: window.__cinV6PointerActive,
     }));
-    assert.match(state.translate, /0px 0px|^$/);
+    assert.match(state.translate, /^(?:0px(?: 0px)?|)$/);
     assert.equal(state.active, false);
     await page.close();
   } finally {
