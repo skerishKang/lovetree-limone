@@ -195,10 +195,16 @@ test("v4 first journey — full flow, storage keys, refresh restore, ESC modal",
       assert.ok(value, `${key} must be stored`);
     }
 
+    const storedScreen = await page.evaluate(() => {
+      const raw = localStorage.getItem("lovetree-first-journey-unified");
+      return raw ? JSON.parse(raw).currentScreen : null;
+    });
+    assert.equal(storedScreen, "growth", "growth stage persisted before refresh");
+
     /* refresh restores the growth stage */
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(400);
-    const restoredGrowth = await page.locator('[data-testid="growth-first"]').isVisible().catch(() => false);
+    await page.waitForSelector('[data-testid="growth-first"]', { state: "visible", timeout: 8000 });
+    const restoredGrowth = await page.locator('[data-testid="growth-first"]').isVisible();
     assert.ok(restoredGrowth, "refresh restores completed flow (growth stage)");
 
     assert.equal(errors.length, 0, "no console/page errors through full flow");
