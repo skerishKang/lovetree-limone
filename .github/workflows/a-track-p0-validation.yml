@@ -32,7 +32,18 @@ jobs:
         run: npm run typecheck
 
       - name: Unit and integration tests
-        run: node --import tsx --test 'tests/*.test.mjs'
+        shell: bash
+        run: |
+          set -o pipefail
+          node --import tsx --test 'tests/*.test.mjs' 2>&1 | tee /tmp/a-track-p0-test.log
+
+      - name: Upload unit test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-track-p0-test-log
+          path: /tmp/a-track-p0-test.log
+          if-no-files-found: error
 
       - name: Build
         run: npm run build
