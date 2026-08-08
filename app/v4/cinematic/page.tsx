@@ -1,9 +1,9 @@
-import V4Cinematic from "@/app/components/v4/cinematic/V4Cinematic";
+import V4CinematicV6International from "@/app/components/v4/cinematic/V4CinematicV6International";
 
 export const metadata = {
-  title: "LoveTree — 사랑의 기억이 자라는 시네마틱 여정",
+  title: "LoveTree — International cinematic edition",
 };
 
 export default function CinematicPage() {
-  return <V4Cinematic />;
+  return <V4CinematicV6International />;
 }
