@@ -1,0 +1,27 @@
+name: V4 final security audit
+
+on:
+  push:
+    branches:
+      - ci/v4-final-security-audit-20260809
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install exact lockfile
+        run: npm ci
+      - name: Full dependency audit evidence
+        continue-on-error: true
+        run: npm audit --audit-level=high
+      - name: Production dependency high-severity gate
+        run: npm audit --omit=dev --audit-level=high
