@@ -71,7 +71,15 @@ jobs:
             exit 1
           fi
 
-          node --import tsx --test 'tests/*.test.mjs'
+          node --import tsx --test 'tests/*.test.mjs' 2>&1 | tee /tmp/a-track-full-test.log
+
+      - name: Upload full test TAP log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-track-full-test-log
+          path: /tmp/a-track-full-test.log
+          if-no-files-found: warn
 
       - name: Build
         run: npm run build
