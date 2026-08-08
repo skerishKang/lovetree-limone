@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { and } from "drizzle-orm";
 import { getDb } from "../db/index.ts";
 import { memories, trees } from "../db/schema.ts";
 import {
