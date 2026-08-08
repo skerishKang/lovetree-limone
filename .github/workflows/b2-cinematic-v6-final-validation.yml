@@ -1,4 +1,4 @@
-name: B2 cinematic v6 source-integrity diagnosis
+name: B2 source-integrity generation diagnosis
 
 on:
   push:
@@ -14,26 +14,61 @@ permissions:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 12
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print source integrity blocker
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Inspect checkout
         shell: bash
         run: |
           set -euo pipefail
-          echo '=== app/api/tree/import/route.ts ==='
-          if [ -f app/api/tree/import/route.ts ]; then
-            nl -ba app/api/tree/import/route.ts | sed -n '1,220p'
-          else
-            echo 'route.ts missing at checkout'
-            find app -maxdepth 6 -type f -path '*tree*import*' -print || true
-          fi
-          echo '=== tests/v4-source-integrity.test.mjs relevant section ==='
-          if [ -f tests/v4-source-integrity.test.mjs ]; then
-            nl -ba tests/v4-source-integrity.test.mjs | sed -n '220,285p'
-          else
-            echo 'v4-source-integrity.test.mjs missing at checkout'
-            find tests -maxdepth 2 -type f -iname '*integrity*' -print || true
-          fi
+          echo '=== checkout status ==='
+          git status --short
+          for file in app/api/tree/import/route.ts tests/v4-source-integrity.test.mjs; do
+            if [ -f "$file" ]; then echo "PRESENT $file"; else echo "MISSING $file"; fi
+          done
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Inspect after npm ci
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== after npm ci ==='
+          git status --short
+          for file in app/api/tree/import/route.ts tests/v4-source-integrity.test.mjs; do
+            if [ -f "$file" ]; then
+              echo "PRESENT $file"
+              nl -ba "$file" | sed -n '1,285p'
+            else
+              echo "MISSING $file"
+            fi
+          done
+
+      - name: Build
+        run: npm run build
+
+      - name: Inspect after build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== after build ==='
+          git status --short
+          for file in app/api/tree/import/route.ts tests/v4-source-integrity.test.mjs; do
+            if [ -f "$file" ]; then
+              echo "PRESENT $file"
+              nl -ba "$file" | sed -n '1,285p'
+            else
+              echo "MISSING $file"
+            fi
+          done
+          echo '=== new untracked files outside build output ==='
+          git ls-files --others --exclude-standard | sed -n '1,240p'
