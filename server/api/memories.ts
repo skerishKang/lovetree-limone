@@ -1,4 +1,4 @@
-import { eq, desc, asc, and, inArray, isNotNull } from "drizzle-orm";
+import { eq, desc, asc, and, inArray, isNotNull, sql } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import { memories, trees } from "../../db/schema";
@@ -9,6 +9,8 @@ import {
   getOwnedMemory,
   getReadableMemory,
   isParentInSameTree,
+  isTreeOwner,
+  resolveMemoryVisibility,
   VISIBILITY_PUBLIC,
   type MemoryRow,
 } from "./access";
@@ -18,7 +20,6 @@ import {
   VISIBILITY_VALUES,
   SOURCE_TYPE_VALUES,
   validateTimestamp,
-  type VisibilityValue,
   type SourceTypeValue,
 } from "./validate";
 
@@ -81,9 +82,10 @@ function buildMemoryRow(
     treeId: string;
     body: Record<string, unknown>;
     sortOrder: number;
+    parentVisibility: string;
   }
 ): MemoryRow {
-  const { id, treeId, body, sortOrder } = values;
+  const { id, treeId, body, sortOrder, parentVisibility } = values;
   return {
     id,
     treeId,
@@ -99,7 +101,10 @@ function buildMemoryRow(
     emotionTags: (body.emotionTags as string[] | undefined) ?? [],
     timestamp: (body.timestamp as string | undefined) ?? "",
     sortOrder,
-    visibility: ((body.visibility as string | undefined) ?? "public") as VisibilityValue,
+    visibility: resolveMemoryVisibility(
+      body.visibility as string | undefined,
+      parentVisibility
+    ),
     channelId: (body.channelId as string | undefined) ?? null,
     channelName: (body.channelName as string | undefined) ?? null,
     channelUrl: (body.channelUrl as string | undefined) ?? null,
@@ -196,7 +201,8 @@ async function insertMemoryWithRetry(
   ctx: ApiContext,
   treeId: string,
   body: Record<string, unknown>,
-  clientKey: string | undefined
+  clientKey: string | undefined,
+  parentVisibility: string
 ): Promise<Response> {
   if (clientKey) {
     const existing = await findExistingByClientKey(ctx, treeId, clientKey);
@@ -216,6 +222,7 @@ async function insertMemoryWithRetry(
       treeId,
       body,
       sortOrder: nextSortOrder,
+      parentVisibility,
     });
 
     try {
@@ -314,7 +321,13 @@ async function createMemory(ctx: ApiContext): Promise<Response> {
   }
 
   const clientKey = parsed.value.clientKey as string | undefined;
-  return insertMemoryWithRetry(ctx, treeId, parsed.value, clientKey);
+  return insertMemoryWithRetry(
+    ctx,
+    treeId,
+    parsed.value,
+    clientKey,
+    ownedTree.visibility
+  );
 }
 
 async function getMemory(ctx: ApiContext): Promise<Response> {
@@ -401,10 +414,15 @@ async function listTreeMemories(ctx: ApiContext): Promise<Response> {
   if (!tree) return errorResponse("Not found", 404);
 
   const limit = Math.min(Math.max(Number(ctx.url.searchParams.get("limit") || 100), 1), 200);
+  const conditions = [eq(memories.treeId, treeId)];
+  if (!isTreeOwner(tree, user)) {
+    conditions.push(eq(memories.visibility, VISIBILITY_PUBLIC));
+  }
+
   const rows = await ctx.db
     .select()
     .from(memories)
-    .where(eq(memories.treeId, treeId))
+    .where(and(...conditions))
     .orderBy(asc(memories.sortOrder), asc(memories.timestamp), asc(memories.createdAt), asc(memories.id))
     .limit(limit);
 
@@ -432,22 +450,43 @@ async function createTreeMemory(ctx: ApiContext): Promise<Response> {
   }
 
   const clientKey = parsed.value.clientKey as string | undefined;
-  return insertMemoryWithRetry(ctx, treeId, parsed.value, clientKey);
+  return insertMemoryWithRetry(
+    ctx,
+    treeId,
+    parsed.value,
+    clientKey,
+    ownedTree.visibility
+  );
+}
+
+export function buildCommunityMemoriesQuery(
+  db: ApiContext["db"],
+  treeId: string | null,
+  limit: number
+) {
+  const parentTreeIsPublic = sql`exists (
+    select 1
+    from ${trees}
+    where ${trees.id} = ${memories.treeId}
+      and ${trees.visibility} = ${VISIBILITY_PUBLIC}
+  )`;
+  const conditions = [
+    eq(memories.visibility, VISIBILITY_PUBLIC),
+    parentTreeIsPublic,
+  ];
+  if (treeId) conditions.push(eq(memories.treeId, treeId));
+
+  return db
+    .select()
+    .from(memories)
+    .where(and(...conditions))
+    .orderBy(desc(memories.createdAt))
+    .limit(limit);
 }
 
 async function listCommunityMemories(ctx: ApiContext): Promise<Response> {
   const treeId = ctx.url.searchParams.get("treeId");
   const limit = Math.min(Math.max(Number(ctx.url.searchParams.get("limit") || 100), 1), 200);
 
-  const conditions = [eq(memories.visibility, VISIBILITY_PUBLIC)];
-  if (treeId) conditions.push(eq(memories.treeId, treeId));
-
-  const rows = await ctx.db
-    .select()
-    .from(memories)
-    .where(and(...conditions))
-    .orderBy(desc(memories.createdAt))
-    .limit(limit);
-
-  return json(rows);
+  return json(await buildCommunityMemoriesQuery(ctx.db, treeId, limit));
 }
