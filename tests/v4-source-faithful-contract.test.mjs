@@ -51,7 +51,6 @@ const SOURCE_FILES = [
 
 const IMPLEMENTED_ROUTES = [
   "app/v4/page.tsx",
-  "app/v4/trees/new/page.tsx",
   "app/v4/trees/demo/onboarding/emotion/page.tsx",
   "app/v4/trees/demo/onboarding/connect/page.tsx",
   "app/v4/trees/demo/page.tsx",
@@ -126,8 +125,9 @@ test("landing preserves modal, discovery form and live preview mechanics", async
   assert.match(landing, /v4-discovery-date/);
   assert.match(landing, /v4-seed-preview-card/);
   assert.match(landing, /Escape/);
-  assert.match(landing, /lovetree-v4-discovery/);
-  assert.match(landing, /\/v4\/trees\/demo\/onboarding\/emotion/);
+  assert.doesNotMatch(landing, /lovetree-v4-discovery/);
+  assert.match(landing, /apiFetch\("\/api\/trees\/with-first-memory"/);
+  assert.match(landing, /router\.push\(`\/trees\/\$\{encodeURIComponent\(treeId\)\}\?highlight=/);
 });
 
 test("emotion port preserves time, emotion, memo, visibility and success states", async () => {
