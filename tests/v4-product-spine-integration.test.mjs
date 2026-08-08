@@ -36,7 +36,8 @@ test("current Memory.timestamp contract remains YYYY-MM-DD while video point is 
     read("server/api/trees.ts"),
   ]);
 
-  assert.match(validate, /\^\(\\d\{4\}\)-\(\\d\{2\}\)-\(\\d\{2\}\)\$/);
+  assert.ok(validate.includes("export const DATE_YMD_RE = /^\\d{4}-\\d{2}-\\d{2}$/;"));
+  assert.ok(validate.includes("DATE_YMD_RE.test(timestamp)"));
   assert.match(treesApi, /validateTimestamp\(memory\.timestamp, "memory\.timestamp"\)/);
   assert.match(source, /parsed\.searchParams\.set\("t", `\$\{seconds\}s`\)/);
   assert.match(source, /youtubeTimeFromUrl\(memory\.sourceUrl\)/);
