@@ -16,12 +16,18 @@ export default function TreeOverviewPage() {
   const recent = useMemo(() => [...moments].slice(-4).reverse(), [moments]);
 
   useEffect(() => {
-    const cards = document.querySelectorAll<HTMLElement>(".v4-overview-moments article");
-    cards.forEach((card) => {
-      card.tabIndex = 0;
-      card.setAttribute("role", "link");
-      card.setAttribute("aria-label", `${card.querySelector("strong")?.textContent || "최근 순간"} 상세 보기`);
-    });
+    const decorateCards = () => {
+      const cards = document.querySelectorAll<HTMLElement>(".v4-overview-moments article");
+      cards.forEach((card) => {
+        card.tabIndex = 0;
+        card.setAttribute("role", "link");
+        card.setAttribute("aria-label", `${card.querySelector("strong")?.textContent || "최근 순간"} 상세 보기`);
+      });
+    };
+    decorateCards();
+    const observer = new MutationObserver(decorateCards);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, [recent]);
 
   const openRecent = (target: EventTarget | null) => {
