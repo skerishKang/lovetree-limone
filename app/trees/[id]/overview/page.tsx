@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import V4FinalTreeSurface from "@/app/components/v4/product/V4FinalTreeSurface";
 import { useTreeMoments } from "@/lib/use-tree-moments";
 import "@/app/styles/v4/product-surfaces.css";
+import "@/app/styles/v4/product-surfaces-fidelity.css";
 
 export default function TreeOverviewPage() {
   const params = useParams<{ id: string | string[] }>();
