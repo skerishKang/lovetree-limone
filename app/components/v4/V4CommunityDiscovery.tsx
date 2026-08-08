@@ -163,12 +163,6 @@ export default function V4CommunityDiscovery() {
 
   const preview = trees.find((tree) => tree.id === previewId) ?? null;
   const compared = compare.map((id) => trees.find((tree) => tree.id === id)).filter(Boolean) as CommunityTree[];
-
-  useEffect(() => {
-    setCompare((current) => current.filter((id) => trees.some((tree) => tree.id === id)));
-    if (previewId && !trees.some((tree) => tree.id === previewId)) setPreviewId(null);
-  }, [previewId, trees]);
-
   const previewRef = useRef<HTMLElement>(null);
   const compareRef = useRef<HTMLElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
