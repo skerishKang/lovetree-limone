@@ -8,7 +8,6 @@ import { useAuth } from "@/lib/auth";
 import {
   type MemoryRecord,
   type TreeRecord,
-  resolveMemoryThumbnail,
   youtubeId,
 } from "@/lib/tree-types";
 
@@ -26,12 +25,6 @@ function localDateValue(): string {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${now.getFullYear()}-${month}-${day}`;
-}
-
-function getInitialTreeName(): string {
-  if (typeof window === "undefined") return "나의 첫 러브트리";
-  const value = new URLSearchParams(window.location.search).get("name")?.trim();
-  return value || "나의 첫 러브트리";
 }
 
 function getOrCreateClientKey(): string {
@@ -61,7 +54,7 @@ export default function V4ProductSpineStart() {
   } = useAuth();
 
   const [authOpen, setAuthOpen] = useState(false);
-  const [treeName, setTreeName] = useState(getInitialTreeName);
+  const [treeName, setTreeName] = useState("나의 첫 러브트리");
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
   const [title, setTitle] = useState("처음 마음이 멈춘 장면");
   const [discoveryNote, setDiscoveryNote] = useState("");
@@ -77,6 +70,12 @@ export default function V4ProductSpineStart() {
 
   const videoId = useMemo(() => youtubeId(url) || "", [url]);
   const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
+  const persisted = Boolean(persistedTree && persistedMemory);
+
+  useEffect(() => {
+    const queryName = new URLSearchParams(window.location.search).get("name")?.trim();
+    if (queryName) setTreeName(queryName);
+  }, []);
 
   const applyServerData = useCallback((tree: TreeRecord, memory: MemoryRecord | null) => {
     setPersistedTree(tree);
@@ -91,6 +90,8 @@ export default function V4ProductSpineStart() {
       setTimestamp(memory.timestamp || "01:30");
       setMemo(memory.memo || "");
       setDiscoveryDate(dateFromServer(memory.createdAt));
+    } else {
+      setPersistedMemory(null);
     }
   }, []);
 
@@ -148,7 +149,7 @@ export default function V4ProductSpineStart() {
 
   async function saveFirstMoment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (saving) return;
+    if (saving || hydrating) return;
     setError(null);
     clearAuthError();
 
@@ -157,6 +158,12 @@ export default function V4ProductSpineStart() {
       setError("첫 순간을 실제 LoveTree에 저장하려면 로그인해 주세요.");
       return;
     }
+
+    if (persistedTree && persistedMemory) {
+      await hydrateFromServer();
+      return;
+    }
+
     if (!treeName.trim()) {
       setError("러브트리 이름을 적어 주세요.");
       return;
@@ -216,8 +223,6 @@ export default function V4ProductSpineStart() {
     setPersistedMemory(null);
     setError(null);
   }
-
-  const persisted = Boolean(persistedTree && persistedMemory);
 
   return (
     <main className="v4-page">
@@ -283,7 +288,7 @@ export default function V4ProductSpineStart() {
 
               <div className="v4-group">
                 <span className="v4-label">가장 가까운 감정 <small>emotionTags</small></span>
-                <div className="v4-actions-row" role="radiogroup" aria-label="감정 선택">
+                <div className="v4-actions-row" role="radiogroup" aria-label="감정 선택" style={{ flexWrap: "wrap" }}>
                   {EMOTIONS.map((item) => (
                     <button key={item} className={emotion === item ? "v4-primary" : "v4-secondary"} type="button" role="radio" aria-checked={emotion === item} onClick={() => setEmotion(item)}>{item}</button>
                   ))}
@@ -315,10 +320,11 @@ export default function V4ProductSpineStart() {
 
               <div className="v4-actions-row">
                 <button className="v4-primary" type="submit" disabled={saving || hydrating || authLoading} aria-busy={saving || hydrating}>
-                  {hydrating ? "서버에서 복원 중…" : saving ? "실제 LoveTree에 저장 중…" : persisted ? "같은 첫 순간 다시 확인 →" : "실제 LoveTree에 첫 순간 저장 →"}
+                  {hydrating ? "서버에서 복원 중…" : saving ? "실제 LoveTree에 저장 중…" : persisted ? "서버 저장 내용 다시 불러오기 →" : "실제 LoveTree에 첫 순간 저장 →"}
                 </button>
                 <Link className="v4-secondary" href="/v4">V4 홈으로</Link>
               </div>
+              {persisted ? <p className="v4-field-status">P0에서는 생성된 루트 기록을 서버 원본으로 고정합니다. 수정/삭제 저장은 P1 workspace wiring에서 연결합니다.</p> : null}
             </form>
           </div>
 
