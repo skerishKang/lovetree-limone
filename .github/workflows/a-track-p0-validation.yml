@@ -1,6 +1,9 @@
 name: A-track P0 validation
 
 on:
+  push:
+    branches:
+      - ci/v4-final-product-surfaces-validation-20260809
   pull_request:
     branches:
       - main
@@ -11,7 +14,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,8 +37,8 @@ jobs:
       - name: Build test prerequisites
         run: npm run build
 
-      - name: Targeted A-track contract tests
-        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs
+      - name: Targeted final V4 contracts
+        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs tests/v4-global-discovery-live.test.mjs tests/v4-final-product-surfaces.test.mjs tests/v4-cinematic-v6.test.mjs
 
       - name: Prepare Playwright runtime
         run: |
@@ -46,7 +49,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm start > /tmp/a-track-p0-server.log 2>&1 &
+          npm start > /tmp/v4-final-server.log 2>&1 &
           server_pid=$!
           cleanup() {
             kill "$server_pid" 2>/dev/null || true
@@ -61,13 +64,13 @@ jobs:
               break
             fi
             if ! kill -0 "$server_pid" 2>/dev/null; then
-              cat /tmp/a-track-p0-server.log
+              cat /tmp/v4-final-server.log
               exit 1
             fi
             sleep 1
           done
           if [ "$ready" -ne 1 ]; then
-            cat /tmp/a-track-p0-server.log
+            cat /tmp/v4-final-server.log
             exit 1
           fi
 
