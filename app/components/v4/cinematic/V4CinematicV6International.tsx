@@ -61,7 +61,7 @@ function ensureV6QuestionLayer(root: HTMLElement) {
       kicker = document.createElement("small");
       title.insertBefore(kicker, title.firstChild);
     }
-    kicker.textContent = V6_QUESTION_KICKER;
+    if (kicker.textContent !== V6_QUESTION_KICKER) kicker.textContent = V6_QUESTION_KICKER;
     const textNodes = Array.from(title.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
     const visibleTitle = textNodes.map((node) => node.textContent || "").join("").trim();
     if (visibleTitle !== V6_QUESTION_TITLE) {
@@ -189,25 +189,25 @@ function ensureV6SceneLayers(root: HTMLElement) {
     if (logo) {
       const strap = logo.querySelector<HTMLElement>("p");
       if (strap) {
-        strap.classList.add("cin-final-strap");
-        strap.textContent = V6_FINAL.strap;
+        if (!strap.classList.contains("cin-final-strap")) strap.classList.add("cin-final-strap");
+        if (strap.textContent !== V6_FINAL.strap) strap.textContent = V6_FINAL.strap;
       }
       const title = logo.querySelector("h1");
-      if (title) title.textContent = V6_FINAL.title;
+      if (title && title.textContent !== V6_FINAL.title) title.textContent = V6_FINAL.title;
       let subtitle = logo.querySelector<HTMLElement>(".cin-final-sub");
       if (!subtitle) {
         subtitle = document.createElement("p");
         subtitle.className = "cin-final-sub cin-v6-generated";
         logo.appendChild(subtitle);
       }
-      subtitle.textContent = V6_FINAL.subtitle;
+      if (subtitle.textContent !== V6_FINAL.subtitle) subtitle.textContent = V6_FINAL.subtitle;
       let note = logo.querySelector<HTMLElement>(".cin-final-note");
       if (!note) {
         note = document.createElement("p");
         note.className = "cin-final-note cin-v6-generated";
         logo.appendChild(note);
       }
-      note.textContent = V6_FINAL.note;
+      if (note.textContent !== V6_FINAL.note) note.textContent = V6_FINAL.note;
     }
     const cta = finalScene.querySelector<HTMLElement>(".cin-final-cta");
     if (cta && cta.textContent !== V6_FINAL.cta) cta.textContent = V6_FINAL.cta;
@@ -217,9 +217,11 @@ function ensureV6SceneLayers(root: HTMLElement) {
 function enhanceMenu(root: HTMLElement) {
   const panel = root.querySelector<HTMLElement>(".cin-menu-panel");
   if (!panel) return;
-  panel.dataset.cinV6Menu = "true";
+  if (panel.dataset.cinV6Menu !== "true") panel.dataset.cinV6Menu = "true";
   const kicker = panel.querySelector<HTMLElement>(".cin-menu-head small");
-  if (kicker) kicker.textContent = "INTERNATIONAL CINEMATIC";
+  if (kicker && kicker.textContent !== "INTERNATIONAL CINEMATIC") {
+    kicker.textContent = "INTERNATIONAL CINEMATIC";
+  }
   const description = panel.querySelector<HTMLElement>(".cin-menu-head p");
   if (description && description.textContent !== V6_MENU_DESCRIPTION) {
     description.textContent = V6_MENU_DESCRIPTION;
