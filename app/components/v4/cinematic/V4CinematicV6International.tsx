@@ -59,7 +59,7 @@ function ensureV6QuestionLayer(root: HTMLElement) {
     let kicker = title.querySelector<HTMLElement>("small");
     if (!kicker) {
       kicker = document.createElement("small");
-      title.prepend(kicker);
+      title.insertBefore(kicker, title.firstChild);
     }
     kicker.textContent = V6_QUESTION_KICKER;
     const textNodes = Array.from(title.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
@@ -79,7 +79,8 @@ function ensureV6QuestionLayer(root: HTMLElement) {
     q4 = document.createElement("div");
     q4.className = "cin-question-item q4 cin-v6-generated";
     const small = document.createElement("small");
-    q4.append(document.createTextNode(V6_QUESTIONS[3].text), small);
+    q4.appendChild(document.createTextNode(V6_QUESTIONS[3].text));
+    q4.appendChild(small);
     layer.appendChild(q4);
   }
   setQuestionCopy(q4, V6_QUESTIONS[3].text, V6_QUESTIONS[3].note);
@@ -101,7 +102,8 @@ function ensureV6QuestionLayer(root: HTMLElement) {
     circle.setAttribute("cy", "205");
     circle.setAttribute("r", "4.5");
     circle.setAttribute("data-cin-v6-line", "4");
-    svg.append(path, circle);
+    svg.appendChild(path);
+    svg.appendChild(circle);
   }
 }
 
@@ -131,7 +133,10 @@ function ensureV6SceneLayers(root: HTMLElement) {
       orb1.className = "cin-v6-sky-orb o1";
       const orb2 = document.createElement("i");
       orb2.className = "cin-v6-sky-orb o2";
-      canopy.append(left, right, orb1, orb2);
+      canopy.appendChild(left);
+      canopy.appendChild(right);
+      canopy.appendChild(orb1);
+      canopy.appendChild(orb2);
       sky.appendChild(canopy);
     }
   }
