@@ -22,9 +22,14 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 
 function setTextWithBreaks(element: Element | null, value: string) {
   if (!element) return;
-  const expected = value.replace(/\s+/g, " ").trim();
-  const current = (element.textContent || "").replace(/\s+/g, " ").trim();
-  if (current === expected) return;
+  const expected = value.replace(/\r\n/g, "\n").trim();
+  const current = Array.from(element.childNodes)
+    .map((node) => (node.nodeName === "BR" ? "\n" : node.textContent || ""))
+    .join("")
+    .replace(/\r\n/g, "\n")
+    .trim();
+  const needsExplicitBreak = expected.includes("\n") && !element.querySelector("br");
+  if (current === expected && !needsExplicitBreak) return;
   element.replaceChildren();
   value.split("\n").forEach((part, index) => {
     if (index) element.appendChild(document.createElement("br"));
