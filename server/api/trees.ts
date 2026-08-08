@@ -7,6 +7,7 @@ import {
   getOwnedTree,
   getReadableTree,
   isTreeOwner,
+  resolveMemoryVisibility,
   VISIBILITY_PUBLIC,
 } from "./access";
 import {
@@ -45,6 +46,27 @@ const MEMORY_RULES = {
   channelUrl: { kind: "url", maxLength: 2048 },
   parentId: { kind: "string", trim: true, maxLength: 100 },
 } as const;
+
+export const BROWSE_MIN_PUBLIC_MOMENTS = 3;
+
+export function isBrowseEligible(
+  treeVisibility: string | null,
+  publicMomentCount: number
+): boolean {
+  return (
+    treeVisibility === VISIBILITY_PUBLIC &&
+    publicMomentCount >= BROWSE_MIN_PUBLIC_MOMENTS
+  );
+}
+
+function browseEligibilityCondition() {
+  return sql`(
+    select count(*)
+    from ${memories}
+    where ${memories.treeId} = ${trees.id}
+      and ${memories.visibility} = ${VISIBILITY_PUBLIC}
+  ) >= ${BROWSE_MIN_PUBLIC_MOMENTS}`;
+}
 
 function sanitizeTree(row: Record<string, unknown>, isOwner: boolean): Record<string, unknown> {
   if (isOwner) return { ...row };
@@ -275,7 +297,10 @@ export function buildCommunityTreesQuery(
     })
     .from(trees)
     .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
-    .where(eq(trees.visibility, VISIBILITY_PUBLIC))
+    .where(and(
+      eq(trees.visibility, VISIBILITY_PUBLIC),
+      browseEligibilityCondition()
+    ))
     .orderBy(...orderBys)
     .limit(limit);
 }
@@ -305,7 +330,10 @@ export function buildGrowingTreesQuery(db: ApiContext["db"], limit: number) {
     })
     .from(trees)
     .leftJoin(treeSocialCounts, eq(trees.id, treeSocialCounts.treeId))
-    .where(eq(trees.visibility, VISIBILITY_PUBLIC))
+    .where(and(
+      eq(trees.visibility, VISIBILITY_PUBLIC),
+      browseEligibilityCondition()
+    ))
     .orderBy(desc(likeCount), desc(trees.createdAt))
     .limit(limit);
 }
@@ -397,7 +425,10 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     emotionTags: (memory.emotionTags as string[] | undefined) ?? [],
     timestamp: (memory.timestamp as string | undefined) ?? "",
     sortOrder: 0,
-    visibility: ((memory.visibility as string | undefined) ?? "public") as VisibilityValue,
+    visibility: resolveMemoryVisibility(
+      memory.visibility as string | undefined,
+      tree.visibility
+    ),
     channelId: (memory.channelId as string | undefined) ?? null,
     channelName: (memory.channelName as string | undefined) ?? null,
     channelUrl: (memory.channelUrl as string | undefined) ?? null,
