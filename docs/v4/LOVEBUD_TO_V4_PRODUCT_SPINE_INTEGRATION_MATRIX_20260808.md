@@ -5,23 +5,23 @@
 **Baseline:** `lovetree-limone` main `97aa06294d328ed0e816ee8518699d735ac41231`  
 **Implementation branch:** `feat/v4-product-spine-integration-20260808`
 
-## 1. Decision rule
+## 1. Integration principle
 
-V4 is the final UI baseline. LoveBud is the product intent / behavior / API-contract source of truth, not a runtime to copy wholesale.
+V4 is the final UI/UX baseline. LoveBud is the source of truth for product intent, behavioral rules and product/API contracts. The final runtime remains the current `lovetree-limone` stack wherever it already provides stable Auth/API/DB/production capability.
 
-Integration decisions use the following labels:
+This audit therefore does **not** copy the LoveBud UI or replace the current backend wholesale. Every capability is classified using one or more of:
 
-- `REUSE_CURRENT_LOVETREE_BACKEND` — current `lovetree-limone` Auth/API/DB capability already satisfies the runtime need.
-- `PORT_LOVEBUD_BEHAVIOR` — preserve LoveBud product behavior/policy in the V4 integration.
-- `PORT_LOVEBUD_API_CONTRACT` — bring a LoveBud response/request/privacy contract into the current runtime without replacing the runtime.
-- `ADAPT_EXISTING_API` — current API is close but requires a compatibility/policy adjustment.
-- `MISSING_BACKEND_CAPABILITY` — current runtime lacks a required persisted capability.
-- `FRONTEND_ONLY_WIRING` — backend exists; the V4 surface is still fixture/local state/localStorage and needs wiring.
-- `DEFER_POST_MVP` — not required for the first shippable product spine.
+- `REUSE_CURRENT_LOVETREE_BACKEND`
+- `PORT_LOVEBUD_BEHAVIOR`
+- `PORT_LOVEBUD_API_CONTRACT`
+- `ADAPT_EXISTING_API`
+- `MISSING_BACKEND_CAPABILITY`
+- `FRONTEND_ONLY_WIRING`
+- `DEFER_POST_MVP`
 
 ## 2. Sources inspected
 
-### LoveBud product / design / engineering contracts
+### LoveBud product / design / engineering sources
 
 - `README.md`
 - `AGENTS.md`
@@ -43,210 +43,254 @@ Integration decisions use the following labels:
 - `lib/moment-model.ts`
 - `db/schema.ts`
 - `server/api/access.ts`
+- `server/api/validate.ts`
 - `server/api/trees.ts`
 - `server/api/memories.ts`
-- `app/page.tsx`
-- `app/my-trees/page.tsx`
-- `app/trees/[id]/page.tsx`
+- existing non-V4 authenticated Tree/Browse surfaces
 
 ### Current V4 surfaces
 
-- `app/v4/page.tsx`
-- `app/v4/journey/page.tsx`
-- `app/v4/trees/new/page.tsx`
-- `app/v4/community/page.tsx`
-- `app/components/v4/V4Landing.tsx`
-- `app/components/v4/V4FirstJourney.tsx`
-- `app/components/v4/V4EmotionStep.tsx`
-- `app/components/v4/V4ConnectStep.tsx`
-- `app/components/v4/V4TreeWorkspace.tsx`
-- `app/components/v4/V4CommunityDiscovery.tsx`
-- V4 timeline / album / graph / archive experience components and routes
+- `/v4` → `V4Landing`
+- `/v4/journey` → `V4FirstJourney`
+- `/v4/trees/new`
+- V4 Tree workspace routes/components
+- `/v4/community` → `V4CommunityDiscovery`
+- V4 public-tree demo/detail surfaces
+- V4 Diary / Timeline / Album / Graph / Archive experiences
 
-## 3. Integration matrix
+## 3. Product contract that must survive integration
+
+LoveTree is a **Digital Scrapbook of Emotions**, not a generic bookmark manager or CRUD dashboard. The core loop is:
+
+> first moment → emotional record → connected next moment → LoveTree growth → re-view → public-tree appreciation
+
+The important LoveBud rules retained by A-track are:
+
+1. the minimum product unit is a **Moment**, not a link;
+2. the first Moment is the emotional root of a Tree;
+3. later Moments can point to a previous Moment through `parentId`;
+4. new Trees are public-first;
+5. direct public readability and Browse eligibility are separate concepts;
+6. omitted Memory visibility should inherit the parent Tree policy;
+7. a private Tree must never become community-discoverable through a public child Memory;
+8. the LoveBud Browse baseline requires a public Tree to have at least three public Moments before discovery eligibility.
+
+## 4. Critical current-runtime semantic finding
+
+The current `lovetree-limone` field named `Memory.timestamp` is **not a video MM:SS position**. `server/api/validate.ts` validates it as `YYYY-MM-DD`, and Tree/Memory create paths invoke that validator. Existing runtime semantics therefore treat it as a record/discovery date.
+
+V4, however, asks for both:
+
+- a discovery/record date; and
+- an exact YouTube video point such as `01:30`.
+
+For the migration-free P0 slice:
+
+- discovery date → current `memories.timestamp` (`YYYY-MM-DD`);
+- exact video point → canonical `memories.sourceUrl` as a YouTube deep-link with `t=<seconds>s`;
+- V4 re-hydration reconstructs `MM:SS` from that URL.
+
+This preserves both values without a destructive migration. A dedicated `videoOffsetSeconds`/`videoTimestampSeconds` field remains a P1 contract candidate if URL-level persistence is not sufficient for later Graph/Timeline/editor behavior.
+
+## 5. Capability integration matrix
 
 | Product capability | LoveBud source | LoveBud behavior | LoveBud API/data | Current lovetree backend | Current V4 screen | Current V4 data mode | Gap | Integration decision | Priority | Acceptance test |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 비로그인 랜딩 | `PRODUCT_IDENTITY`, `BRAND_EXPERIENCE`, `index.html` | 감정 서비스 정체성 → 첫 순간/공개 감상 CTA | public read requires no token | Public routes can run without auth | `/v4`, `V4Landing` | fixture + local state | UI exists; auth-aware CTA/navigation not wired | `FRONTEND_ONLY_WIRING` | P0 | signed-out user can load `/v4` without API/auth error |
-| 회원가입 | LoveBud login/auth runtime | 시작 장벽이 아니라 LoveTree 진입 | Firebase email/password + token | `AuthProvider.signUpWithEmailPassword` exists | no dedicated V4 auth surface | none | V4 has no signup UI | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | create account, user state becomes authenticated, API token accepted |
-| 로그인 | LoveBud auth + protected-route behavior | Google/email login, then continue intended action | Firebase ID token | Google + email sign-in exist | V4 has no canonical login view | none | V4 CTA does not use shared auth | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | login from V4 and continue creation without switching product runtime |
-| 로그아웃 | LoveBud auth runtime | clear app auth session | Firebase sign-out | `AuthProvider.logout` exists | no V4 account action | none | no visible V4 logout action | `FRONTEND_ONLY_WIRING` | P0 | logout makes private owner APIs return unauthenticated state |
-| 재로그인 | LoveBud auth runtime | same account recovers server data | Firebase UID + server DB | already supported | V4 localStorage journey hides server source | localStorage | no server re-hydration | `FRONTEND_ONLY_WIRING` | P0 | logout → login → same tree/memory visible |
-| 인증 상태 복원 | protected-route/auth cache behavior | reload must not destroy session | Firebase auth state listener | `onAuthStateChanged` exists globally in `AuthProvider` | all V4 under root provider | provider exists but unused | V4 product state not hydrated after auth restore | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | hard refresh restores signed-in state then loads server product data |
-| 내 Tree 목록 | `js/my-trees.js` | owner trees load from API; empty/create/rename/delete/visibility actions | `GET /trees` owner list | `GET /api/trees` owner-only exists | no production V4 My Trees screen | fixture/demo navigation | missing V4 data binding | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | authenticated user sees actual trees from DB |
-| Tree 생성 | My Trees actions / editor start | new tree begins public-first | `POST /trees`, title, visibility | `POST /api/trees`; idempotent `clientKey`; default public | `V4Landing`, `V4FirstJourney` | localStorage/local state | save does not hit API | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | submit once creates exactly one owner tree |
-| Tree 읽기 | editor initial load / public detail | owner or readable public/unlisted tree | `GET /trees/:id` | `GET /api/trees/:id` with read guard exists | workspace/detail demos | fixtures | V4 does not hydrate by real id | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0/P1 | refresh by real tree id reproduces title + moments |
-| Tree 수정 | My Trees/editor actions | owner may edit tree metadata | `PUT /trees/:id` | owner-guarded `PUT /api/trees/:id` exists | workspace controls are local | local state | no API call | `FRONTEND_ONLY_WIRING` | P1 | edit title/metadata persists after refresh |
-| Tree 삭제 | My Trees actions | owner-only delete | `DELETE /trees/:id` | owner-guarded delete exists; memory FK cascade | V4 local delete patterns only | local state | no API call | `FRONTEND_ONLY_WIRING` | P1 | delete removes owner tree and dependent moments |
-| visibility | `PRODUCT_IDENTITY`, API contract | public-first; private storage policy separated | tree `visibility` | enum supports private/unlisted/public; create defaults public | V4 does not own persisted visibility | local UI/fixtures | V4 not wired; Plus-private entitlement parity not established here | `ADAPT_EXISTING_API` + `FRONTEND_ONLY_WIRING` | P2 | persisted visibility matches policy and access behavior |
-| public/private 정책 | product/API contract | public access and Browse eligibility are distinct | tree/memory visibility + entitlement | read guards exist, but policy parity incomplete | community/detail demos | fixtures | no full Plus-private contract in V4 runtime | `PORT_LOVEBUD_BEHAVIOR` | P2 | public direct read works; private is owner-only; Browse remains separate |
-| 첫 순간 생성 | `PRODUCT_IDENTITY`, editor | first moment is product root, not a generic item | Tree + root Memory | `POST /api/trees/with-first-memory` already exists | `V4FirstJourney` | localStorage | V4 does not call atomic endpoint | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | first journey creates one tree + root memory atomically/idempotently |
-| YouTube URL | editor / API contract | source URL is part of the remembered moment | `sourceUrl`, `sourceType=youtube` | schema/API support | V4 validates/extracts YouTube id | local state | not persisted | `FRONTEND_ONLY_WIRING` | P0 | saved Memory returns same `sourceUrl` |
-| 특정 timestamp | API contract / editor | exact video point is core emotional anchor | Memory `timestamp` | schema/API validation support | V4 step2 `MM:SS` | localStorage | not persisted | `FRONTEND_ONLY_WIRING` | P0 | save `01:30`, reload returns `01:30` |
-| 제목 | API contract | human-readable moment title | Memory `title` | supported | V4 first moment/title + workspace composer | local state | not persisted in V4 | `FRONTEND_ONLY_WIRING` | P0 | title survives refresh/relogin |
-| 감정 | `PRODUCT_IDENTITY` Emotion Over Archive | emotion is core content | `emotionTags[]` | supported JSONB array | V4 emotion selection | localStorage | not persisted | `FRONTEND_ONLY_WIRING` | P0 | selected emotion appears in server Memory `emotionTags` |
-| memo | product/editor contract | why this moment mattered is first-class | Memory `memo` | supported | V4 step2 note | localStorage | not persisted | `FRONTEND_ONLY_WIRING` | P0 | memo survives refresh/relogin |
-| date | first-moment UX | discovery/record date is distinct from video timestamp | product requires date semantics | no dedicated occurrence/discovery-date column in canonical Memory | V4 has date input | localStorage | current schema conflates/omits distinct date semantics | `MISSING_BACKEND_CAPABILITY` | P1 | persisted discovery date is independent from video `timestamp` |
-| first moment visibility | product/API contract | omitted Memory visibility inherits parent Tree | memory visibility optional/inherited | current create paths default Memory to `public` independently | V4 publicMemo/local controls | localStorage | inheritance contract not guaranteed for private parent | `ADAPT_EXISTING_API` + `PORT_LOVEBUD_API_CONTRACT` | P2 | omitted child visibility resolves to parent visibility |
-| 저장 후 실제 DB persistence | product baseline | server is truth; local cache is optional acceleration | authenticated write/read | Neon + Drizzle write/read exists | V4 journey | localStorage only | central P0 gap | `FRONTEND_ONLY_WIRING` | P0 | API create → hard refresh → API read returns same root moment |
-| 다음 순간 추가 | editor | grow tree by adding another moment | `POST /memories` | nested `POST /api/trees/:treeId/memories` exists | `V4FirstJourney` step3, `V4TreeWorkspace` composer | localStorage/local state | no server write | `FRONTEND_ONLY_WIRING` | P1 | second memory is persisted with stable ordering |
-| parent/connection 관계 | Connected Love Path | child moment records which prior moment it follows | `parentId` | self-FK + same-tree parent validation exists | V4 step3/workspace | local parent ids | local id is not server id | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P1 | child `parentId` equals real parent Memory id |
-| 관계 이유 | editor/connected-moment UX | connection has a human reason, not only graph edge | product behavior requires reason | no dedicated persisted edge/relation-reason field | V4 relation selector | localStorage | no canonical DB field for relation reason | `MISSING_BACKEND_CAPABILITY` | P1 | connection reason survives refresh independently of memo |
-| 감정 연결 | Connected Love Path | later moments continue emotional trajectory | emotion tags + parent relation | emotionTags + parentId available | V4 step3/workspace | local | wiring only for basic tags/parent | `FRONTEND_ONLY_WIRING` | P1 | connected child has parentId + its own emotion data |
-| 다음 순간으로 계속 성장 | editor | repeated append/growth loop | memory create/list/update | backend supports repeated create | V4 growth/workspace | local state | no server loop | `FRONTEND_ONLY_WIRING` | P1 | append several moments, refresh restores ordered graph |
-| Tree workspace | editor | current tree + current moment + emotional flow | tree detail + memory list/write | APIs exist | `V4TreeWorkspace` | `INITIAL_MOMENTS` + localStorage | entire workspace remains fixture/local source | `FRONTEND_ONLY_WIRING` | P1 | opening real id renders server moments, not fixture set |
-| Diary | editor / emotional scrapbook behavior | moments can be re-read as diary | same canonical memories | `lib/moment-model.ts` can project one source | V4 workspace diary | fixture | selector not bound to API | `FRONTEND_ONLY_WIRING` | P1/P3 | Diary and Tree show identical real Memory ids/content |
-| Timeline | product experience | time-oriented re-view of same moments | same canonical memories | timeline selector exists | V4 timeline route | fixture/local | not bound | `FRONTEND_ONLY_WIRING` | P3 | Timeline uses same IDs and source records as Tree |
-| Album | product experience | visual scrapbook view of same moments | same canonical memories | album selector exists | V4 album routes | fixture/local | not bound | `FRONTEND_ONLY_WIRING` | P3 | Album uses same IDs/source records as Tree |
-| Graph | Connected Love Path | visualize emotional relationships, not generic flowchart | `parentId` tree edges | backend stores parentId | V4 graph/100-moments routes | fixture/local | graph not hydrated | `FRONTEND_ONLY_WIRING` | P3 | graph edges derive from real parentId relationships |
-| Memory 수정 | editor | owner edits moment content | `PUT /memories/:id` | owner-guarded update exists | workspace local controls | local state | not wired | `FRONTEND_ONLY_WIRING` | P1 | edit persists and appears in all views after reload |
-| Memory 삭제 | editor | owner removes moment with safe relationship handling | `DELETE /memories/:id` | owner-guarded delete exists; child `parentId` set null by FK | V4 local delete/reparent behavior | local state | UI behavior differs from DB set-null semantics | `ADAPT_EXISTING_API` + `FRONTEND_ONLY_WIRING` | P1 | deletion has explicitly tested child-edge outcome |
-| 재배치/연결 | editor desktop curation | visual placement and relationship curation | relationship persisted; layout contract separate | parentId/sortOrder persist, canvas x/y do not | V4 drag/reposition | localStorage | spatial layout has no persisted model | `MISSING_BACKEND_CAPABILITY` | P3 | after reload, intended layout/relation contract is preserved |
-| 공개 Tree | product/API contract | readable by unauthenticated visitor | public tree read | `GET /api/trees/:id` permits public/unlisted | V4 community/detail demo | fixtures | route not bound to real id | `FRONTEND_ONLY_WIRING` | P2 | signed-out visitor opens real public tree |
-| 공개 Memory | API contract | only publicly visible memory under publicly readable tree is community material | public memory + public parent tree | single-memory read checks tree readability, but list endpoints need stricter child/tree filters | V4 public preview/detail | fixtures | public list privacy contract incomplete | `ADAPT_EXISTING_API` + `PORT_LOVEBUD_API_CONTRACT` | P2 | private child never leaks; private-tree child never appears in community |
-| Browse eligibility | `PRODUCT_IDENTITY`, API contract | public Tree enters Browse only after enough public moments; baseline `publicMomentCount >= 3` | summary quality/display filter | current `/api/community/trees` filters only Tree visibility | V4 Community | fixtures | eligibility missing | `PORT_LOVEBUD_BEHAVIOR` + `ADAPT_EXISTING_API` | P2 | public tree with 0–2 public moments absent; 3+ eligible tree present |
-| 공개 Tree 둘러보기 | browse API/client | appreciation hub, not generic feed | `/community/trees` summary | endpoint exists | `V4CommunityDiscovery` | hard-coded `TREES` | backend reusable; frontend fixture | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P2 | V4 cards come from real eligible public trees |
-| 공개 Tree detail | detail/editor read-only | representative moment + emotional path | tree + community/public memories | public tree/memory read APIs exist with noted list gap | `/v4/community/trees/demo` | fixture | real-id detail absent | `FRONTEND_ONLY_WIRING` | P2 | `/v4/community/trees/<id>` renders only public content |
-| 비로그인 감상 | product public loop | anonymous visitor can browse/read | no auth for public read | access model supports public/unlisted tree reads | V4 community demos | fixture | data wiring only + privacy fix | `FRONTEND_ONLY_WIRING` + `ADAPT_EXISTING_API` | P2 | signed-out browse/detail works without exposing owner-private data |
-| 새로고침 | persistence contract | server data survives browser reload | GET after write | Neon persistence exists | V4 journey/workspace | localStorage | current apparent persistence is browser-only | `FRONTEND_ONLY_WIRING` | P0 | hard reload rehydrates from API/DB |
-| logout → login | persistence contract | same UID recovers same trees/moments | owner GET by Firebase UID | supported | V4 has no rehydration | localStorage | current product state tied to browser cache | `FRONTEND_ONLY_WIRING` | P0 | logout/login restores exact server ids |
-| 다른 브라우저 세션 | persistence contract | same account sees same server data | UID-bound DB records | supported by API/Auth architecture | V4 no server My Trees flow | localStorage cannot transfer | V4 hydration/list route missing | `FRONTEND_ONLY_WIRING` | P0/P1 | clean browser + same account lists same tree and root memory |
-| 서버 데이터 복원 | product persistence | local state is not source of truth | Tree/Memory list/detail | supported | V4 first journey/workspace | localStorage | no canonical restore mapper | `FRONTEND_ONLY_WIRING` | P0 | deleting localStorage does not delete/lose server records |
+| 비로그인 랜딩 | `PRODUCT_IDENTITY`, `BRAND_EXPERIENCE` | product identity first; public appreciation/start CTA | public read does not require user token | public routes and root `AuthProvider` already exist | `/v4`, `V4Landing` | mostly visual/local navigation | landing was not connected to real creation/auth spine | `FRONTEND_ONLY_WIRING` | P0 | signed-out user loads `/v4` and can enter real creation/auth path |
+| 회원가입 | LoveBud auth flow | account creation is a transition into the first Tree, not a separate product | Firebase identity → bearer token | shared `AuthProvider.signUpWithEmailPassword` exists | V4 had no canonical signup surface | none | V4 must reuse shared auth rather than make a second auth runtime | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | email signup produces authenticated user accepted by owner API |
+| 로그인 | LoveBud protected editor/My Trees | login resumes intended product action | Firebase ID token | Google + email sign-in exist | V4 had no real login action | none | V4 CTA was disconnected | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | V4 login succeeds and authenticated API calls carry bearer token |
+| 로그아웃 | LoveBud auth | clear auth session, leave public experience usable | Firebase sign-out | shared `logout` exists | no persisted V4 account action before A-track | none | wiring | `FRONTEND_ONLY_WIRING` | P0 | logout clears authenticated user and owner-only calls no longer succeed anonymously |
+| 재로그인 | LoveBud auth + server persistence | same identity gets same Trees/Moments | UID-owned server records | supported by current Auth/API/DB | V4 localStorage flows masked server source | localStorage | server re-hydration needed | `FRONTEND_ONLY_WIRING` | P0 | logout → same account login → same Tree/root Memory ids restored |
+| 인증 상태 복원 | LoveBud protected-route behavior | refresh must not destroy session/product state | Firebase auth-state restoration | `onAuthStateChanged` in root provider | all V4 runs under provider | provider unused by many V4 demos | product hydration must follow auth restoration | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | hard refresh restores auth then reloads server Tree/Memory |
+| 내 Tree 목록 | `js/my-trees.js` | owner sees actual Trees with empty/create/manage states | `GET /trees` owner list | `GET /api/trees` owner list exists | no final V4 My Trees product surface yet | fixture/demo links | visual list still missing real binding | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 continuation | same user sees real DB Trees, including from a clean browser |
+| Tree 생성 | My Trees/editor start | create a named public-first emotional Tree | Tree create with title/visibility | `POST /api/trees`; atomic `with-first-memory`; client-key idempotence | `/v4`, `/v4/trees/new` | previously localStorage | real write missing in V4 | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | one submit creates exactly one owner Tree |
+| Tree 읽기 | editor | hydrate real Tree by id | `GET /trees/:id` | owner/public readable Tree GET exists | V4 workspace/detail demos | fixtures/local | real-id hydration absent in final workspace | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0/P1 | reload real id returns same Tree metadata |
+| Tree 수정 | My Trees/editor | owner edits metadata | Tree update | owner-guarded `PUT /api/trees/:id` | V4 controls/local forms | local state | not wired | `FRONTEND_ONLY_WIRING` | P1 | edit survives hard refresh |
+| Tree 삭제 | My Trees | owner deletes Tree | Tree delete | owner-guarded DELETE + dependent Memory handling exists | local/demo delete affordances | local state | not wired | `FRONTEND_ONLY_WIRING` | P1 | delete removes Tree and no stale V4 entry remains |
+| visibility | Product/API contract | public-first; private policy is a product decision | Tree visibility + Memory visibility | `private/unlisted/public` enum supported; Tree create defaults public | V4 visibility affordances are not authoritative | local/fixture | frontend wiring plus policy parity work | `ADAPT_EXISTING_API` + `FRONTEND_ONLY_WIRING` | P2 | persisted visibility drives read authorization and community eligibility |
+| public/private 정책 | Product/API contract | direct read, storage privacy, Browse eligibility are distinct | parent/child visibility contract | tree read guards exist; child-list policy incomplete | community/public demos | fixtures | LoveBud privacy inheritance/discovery contract not fully enforced | `PORT_LOVEBUD_BEHAVIOR` + `PORT_LOVEBUD_API_CONTRACT` | P2 | private Tree is owner-only and never discoverable; private child never leaks |
+| 첫 순간 생성 | `PRODUCT_IDENTITY`, editor | first Moment is the emotional root | Tree + root Memory | deterministic `POST /api/trees/with-first-memory` exists | V4 First Journey / new Tree flow | previously localStorage | V4 did not call atomic endpoint | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | exactly one Tree + root Memory created atomically/idempotently |
+| YouTube URL | editor/API contract | source is part of remembered Moment | `sourceUrl`, `sourceType=youtube` | supported | V4 YouTube inputs | local state | persistence wiring | `FRONTEND_ONLY_WIRING` | P0 | server Memory returns same canonical YouTube source |
+| 특정 영상 시점 | Connected/first-Moment UX | exact scene point is part of why the Moment matters | LoveBud product requires exact point; current field naming is not sufficient evidence of MM:SS | **no dedicated MM:SS field**; current `timestamp` validator is date-only | V4 `MM:SS` inputs | local state | backend data shape has no first-class video offset | `ADAPT_EXISTING_API` now; `MISSING_BACKEND_CAPABILITY` candidate later | P0/P1 | P0 `sourceUrl` contains `t=<seconds>s`; reload reconstructs same MM:SS; P1 decides dedicated offset field |
+| 제목 | API contract | readable title for Moment | `title` | supported | V4 first/next Moment forms | local | wiring | `FRONTEND_ONLY_WIRING` | P0 | title survives refresh/relogin |
+| 감정 | Emotion Over Archive | emotion is first-class product data | `emotionTags[]` | JSON/array support exists | V4 emotion chooser | localStorage/local | wiring | `FRONTEND_ONLY_WIRING` | P0 | selected emotion persists in `emotionTags` |
+| memo | editor/product contract | why the moment mattered is first-class | `memo` | supported | V4 notes | local | wiring | `FRONTEND_ONLY_WIRING` | P0 | memo survives refresh/relogin |
+| date | first-Moment UX | preserve when the Moment was discovered/recorded | current LoveTree contract uses `timestamp` as date | `validateTimestamp` enforces `YYYY-MM-DD`; create/update support it | V4 date input | local | V4 had not wired the existing date contract | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P0 | chosen date is returned as `Memory.timestamp` after refresh/relogin |
+| Memory visibility | API/product contract | omitted child visibility inherits Tree policy | optional/inherited child policy | current Memory builders independently default to `public` | V4 memo visibility UI | local | inheritance mismatch | `ADAPT_EXISTING_API` + `PORT_LOVEBUD_API_CONTRACT` | P2 | omitted child visibility resolves to parent Tree visibility |
+| 저장 후 실제 DB persistence | product baseline | server is source of truth | authenticated writes and reads | Neon/Drizzle persistence exists | V4 creation | localStorage before A-track | central P0 frontend gap | `FRONTEND_ONLY_WIRING` | P0 | create → hard refresh → same server Tree/root Memory |
+| 다음 순간 추가 | editor | keep growing after first root | Memory create | nested `POST /api/trees/:treeId/memories` exists | V4 step3/workspace composer | local state | no server write | `FRONTEND_ONLY_WIRING` | P1 | second/third Moments persist with stable order |
+| parent/connection 관계 | Connected Love Path | child records which prior Moment led to it | `parentId` | self-FK + same-Tree validation exists | V4 step3/workspace | local ids | convert UI ids to canonical server ids | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P1 | child `parentId` equals real parent Memory id |
+| 관계 이유 | Connected Love Path | edge has a human reason, not only topology | behavior requires reason | no dedicated relation-reason field identified | V4 relation selector | localStorage | canonical persistence missing | `MISSING_BACKEND_CAPABILITY` | P1 | relation reason survives reload without overloading memo |
+| 감정 연결 | Connected Love Path | later Moment continues emotional trajectory | child emotion + parent relation | `emotionTags` + `parentId` exist | V4 step3/workspace | local | wiring | `FRONTEND_ONLY_WIRING` | P1 | connected child retains its own emotion and parent id |
+| 계속 성장 | editor | repeated append, not one-shot form | Memory create/list | repeated create supported | V4 growth/workspace | local | server loop absent | `FRONTEND_ONLY_WIRING` | P1 | several appended Moments restore in deterministic order |
+| Tree workspace | editor | Tree is primary emotional workspace | Tree detail + Memory list/write | APIs exist | `V4TreeWorkspace` | `INITIAL_MOMENTS` + localStorage | entire workspace still noncanonical | `FRONTEND_ONLY_WIRING` | P1 | real Tree id renders server Moments, not fixtures |
+| Diary | product experience | re-read same canonical Moments as diary | same Memory source | shared moment-model projection exists | V4 workspace/Diary | fixture | selector/API binding missing | `FRONTEND_ONLY_WIRING` | P1/P3 | Diary and Tree show same canonical Memory ids |
+| Timeline | product experience | chronological re-view of same emotional records | same Memory source/date | selector support exists | V4 Timeline | fixture/local | hydration | `FRONTEND_ONLY_WIRING` | P3 | Timeline derives from canonical server records |
+| Album | product experience | visual scrapbook projection of same records | same Memory source | selector support exists | V4 Album variants | fixture/local | hydration | `FRONTEND_ONLY_WIRING` | P3 | Album uses same ids/content as Tree |
+| Graph | Connected Love Path | visualize emotional relationship graph | `parentId` edges | parent relation persisted | V4 Graph/100 Moments | fixtures | hydration | `FRONTEND_ONLY_WIRING` | P3 | graph edges derive from real parentIds |
+| Memory 수정 | editor | owner refines Moment | Memory PUT | owner-guarded update exists | V4 workspace local edits | local | wiring | `FRONTEND_ONLY_WIRING` | P1 | edit survives reload and updates all projections |
+| Memory 삭제 | editor | owner removes Moment safely | Memory DELETE | owner-guarded delete; DB child-edge semantics must be reconciled with V4 | V4 local delete/reparent | local | V4 reparent behavior may differ from DB set-null behavior | `ADAPT_EXISTING_API` + `FRONTEND_ONLY_WIRING` | P1 | deletion has explicit tested child-edge result |
+| 재배치/연결 | editor desktop curation | user can curate visual relation/layout | relationship is durable; spatial contract separate | `parentId`/sortOrder persist; no x/y layout fields | V4 drag canvas | localStorage | spatial placement persistence missing | `MISSING_BACKEND_CAPABILITY` | P3 | reload preserves approved durable layout contract if product requires it |
+| 공개 Tree | product/API contract | anonymous visitor can appreciate readable public Tree | public Tree read | public/unlisted direct-read guard exists | V4 community/public demos | fixtures | real-id V4 binding absent | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P2 | signed-out visitor opens real public Tree |
+| 공개 Memory | product/API contract | public child of public-readable Tree is public material | child + parent visibility | single readable access exists; collection/community filtering needs hardening | V4 public preview/detail | fixtures | child-list privacy contract incomplete | `ADAPT_EXISTING_API` + `PORT_LOVEBUD_API_CONTRACT` | P2 | private child and child of private Tree never leak |
+| Browse eligibility | `PRODUCT_IDENTITY`, API contract | visibility alone is insufficient; baseline public Moment count >= 3 | community summary eligibility | current community Tree query filters Tree visibility but not public-Moment threshold | `/v4/community` | fixtures | threshold missing | `PORT_LOVEBUD_BEHAVIOR` + `ADAPT_EXISTING_API` | P2 | public Tree with 0–2 public Moments absent; eligible 3+ Tree present |
+| 공개 Tree 둘러보기 | Browse client/API | appreciation/discovery hub, not generic feed | community Tree summaries | `/api/community/trees` exists | `V4CommunityDiscovery` | hard-coded `TREES` | backend partially reusable, frontend fixture | `REUSE_CURRENT_LOVETREE_BACKEND` + `FRONTEND_ONLY_WIRING` | P2 | V4 cards originate from eligible server Trees |
+| 공개 Tree detail | public read-only editor/detail | representative Moment and emotional path, no private editor data | Tree + public Moments | constituent APIs largely exist | V4 public demo detail | fixture | real route/data binding + privacy filter needed | `FRONTEND_ONLY_WIRING` + `ADAPT_EXISTING_API` | P2 | `/v4/community/trees/<real-id>` renders only public material |
+| 비로그인 감상 | public loop | no login required to appreciate public Tree | anonymous public read | supported at Tree access layer | V4 Community/detail demos | fixtures | frontend wiring/privacy completion | `FRONTEND_ONLY_WIRING` + `ADAPT_EXISTING_API` | P2 | signed-out Browse/detail works without owner-private data |
+| 새로고침 | persistence contract | server data survives browser reload | GET after write | supported | V4 local flows | localStorage before A-track | server hydration | `FRONTEND_ONLY_WIRING` | P0 | hard reload rehydrates persisted Tree/root Memory from API |
+| logout → login | persistence contract | same UID sees same data | owner list/detail | supported | V4 had no server restore | browser-local | re-hydration | `FRONTEND_ONLY_WIRING` | P0 | logout/login restores same server ids/data |
+| 다른 브라우저 세션 | persistence contract | account identity, not browser cache, owns data | owner list/detail | current API supports it | V4 had no real My Trees | localStorage cannot transfer | need server-list fallback and final My Trees UI | `FRONTEND_ONLY_WIRING` | P0/P1 | clean browser + same account can discover same Tree through server list |
+| 서버 데이터 복원 | persistence contract | local cache is never authoritative product storage | Tree/Memory list/detail | supported | V4 local journey/workspace | localStorage | canonical restore mapping | `FRONTEND_ONLY_WIRING` | P0 | clearing local product cache does not delete server record; server list restores it |
 
-## 4. Current architecture verdict
+## 6. Current architecture verdict
 
-### Reuse now
+### Reuse the current runtime
 
-The current `lovetree-limone` runtime already has the correct foundation for the P0 spine:
+The existing `lovetree-limone` runtime already provides the correct P0 foundation:
 
-1. Firebase Authentication in the React root (`AuthProvider`).
-2. Bearer-token authenticated `apiFetch`.
+1. Firebase Authentication in the React root.
+2. authenticated `apiFetch` using Firebase ID tokens.
 3. Neon/PostgreSQL + Drizzle persistence.
-4. Owner-guarded Tree CRUD.
-5. Owner-guarded Memory CRUD.
-6. `parentId` relationship validation within a Tree.
+4. owner-guarded Tree CRUD.
+5. owner-guarded Memory CRUD.
+6. same-Tree `parentId` validation.
 7. deterministic/idempotent `POST /api/trees/with-first-memory`.
-8. stable `sortOrder` for canonical Moment projections.
-9. shared canonical moment selectors for Tree / Timeline / Album.
+8. stable `sortOrder` for canonical projections.
+9. canonical moment projection helpers for multiple views.
+10. current `timestamp` date validation and persistence.
 
-Therefore a new backend stack is **not** warranted for P0.
+A new backend/auth/database stack is therefore not justified.
 
-### Fix/adapt later, not replace runtime
+### Current gaps that require adaptation, not a runtime replacement
 
-1. Memory visibility inheritance is not yet equivalent to the LoveBud contract.
-2. Community Tree summary currently lacks the LoveBud `>= 3 public moments` Browse eligibility gate.
-3. Community/public Memory list paths need explicit parent-tree visibility enforcement and private-child filtering.
-4. Distinct discovery/record date is not represented independently from video `timestamp` in canonical Memory storage.
-5. Connection reason and canvas x/y layout do not have dedicated persisted fields.
+1. Memory visibility omission does not currently inherit Tree visibility.
+2. community Tree summaries do not enforce the LoveBud `>= 3 public Moments` Browse baseline.
+3. public/community Memory list paths require parent-Tree visibility + child visibility enforcement.
+4. no first-class persisted video-offset field exists; P0 preserves it through YouTube deep-link semantics in `sourceUrl`.
+5. no dedicated connection-reason field has been identified.
+6. no durable canvas x/y layout contract has been identified.
 
-The first three are product/privacy contract work. The latter two are data-model capability gaps and must not be hidden by abusing unrelated columns.
+## 7. MVP scenarios mapped to code
 
-## 5. MVP scenario → code map
+### 7.1 Signed-out loop
 
-### A. Signed-out loop
+`/v4` (`V4Landing`)
+→ `/v4/community` (`V4CommunityDiscovery`, real-data completion is P2)
+→ public Tree detail by real id (P2)
+→ `첫 순간 심기`
+→ `/v4/trees/new`
+→ shared `EmailAuthForm` / Firebase login or signup
 
-`/v4` (`V4Landing` / V4 journey landing)
-→ `/v4/community` (`V4CommunityDiscovery`, P2 real API wiring)
-→ public V4 Tree detail by real id (P2)
-→ start CTA
-→ shared Firebase Auth through `AuthProvider`
+P0 does not pretend the fixture Community page is production-ready. It establishes the authenticated creation spine while preserving signed-out V4 entry.
 
-P0 only needs to ensure the V4 entry remains usable signed-out and can transition into the authenticated creation path. Public Browse becomes the P2 completion of this loop.
-
-### B. Signed-in creation loop
+### 7.2 Signed-in creation loop
 
 `AuthProvider`
-→ V4 first journey
+→ `/v4/trees/new`
+→ V4 Tree name + YouTube URL + exact video point + emotion + memo + discovery date
+→ YouTube URL normalized with `t=<seconds>s`
 → `POST /api/trees/with-first-memory`
-→ `trees` + root `memories` rows in Neon
-→ `GET /api/trees`
-→ `GET /api/trees/:treeId`
-→ `GET /api/trees/:treeId/memories`
-→ V4 re-hydration
-→ later P1 `POST /api/trees/:treeId/memories` with real `parentId`
-→ later P1 edit/delete
+→ Neon-backed `trees` + root `memories`
+→ store only last Tree id/client idempotency key locally
+→ refresh
+→ `GET /api/trees/:id`
+→ `GET /api/trees/:id/memories`
+→ server values re-hydrate V4
+→ logout
+→ login
+→ same API hydration
+→ if browser has no last-tree pointer, fallback `GET /api/trees` locates owner data
 
-Canonical field map for the first persisted root moment:
+P1 continues from that root with `POST /api/trees/:treeId/memories`, real `parentId`, edit/delete and full `V4TreeWorkspace` binding.
 
-| V4 concept | Canonical API/DB field |
+### 7.3 Canonical P0 field map
+
+| V4 concept | P0 canonical persistence |
 |---|---|
 | Tree name | `trees.title` |
 | public-first Tree | `trees.visibility = public` |
-| YouTube URL | `memories.sourceUrl` |
-| YouTube type | `memories.sourceType = youtube` |
-| YouTube thumbnail | `memories.thumbnail` |
-| Moment title | `memories.title` |
-| Emotion | `memories.emotionTags[]` |
-| Why it mattered | `memories.memo` |
-| Video point | `memories.timestamp` |
-| Root relation | `memories.parentId = null` |
+| first-Moment title | `memories.title` |
+| YouTube video | `memories.sourceUrl`, `sourceType = youtube` |
+| exact video point | YouTube `sourceUrl` deep-link `t=<seconds>s` |
+| discovery date | `memories.timestamp` (`YYYY-MM-DD` current runtime contract) |
+| emotion | `memories.emotionTags[]` |
+| why it mattered | `memories.memo` |
+| root relationship | `memories.parentId = null` |
 | canonical first position | `memories.sortOrder = 0` |
+| first-Moment visibility | explicit `public` for P0 public-first slice; inheritance parity is P2 contract work |
 
-The V4 discovery-date input remains a draft/UI field until a dedicated persisted date contract is approved; it must not overwrite video `timestamp`.
+## 8. Public product loop mapping
 
-### C. Public product loop
-
-Tree visibility `public`
+Tree is persisted as `public`
 → public Memories accumulate
-→ eligibility requires public Tree + minimum three public Memories + applicable quality/display filter
-→ `/api/community/trees` summary
+→ eligibility must become: public Tree + minimum three public Memories + applicable quality/display rules
+→ `/api/community/trees`
 → V4 Community discovery
-→ V4 public Tree detail
+→ public V4 Tree detail
 → emotional path appreciation
 
-The current API only completes the first and part of the last steps. P2 must add LoveBud-equivalent eligibility and privacy filtering before V4 Community is treated as production-complete.
+The current backend completes public Tree readability and community summary basics, but **does not yet complete Browse eligibility or collection-level privacy parity**. Those items are P2 release gates, not reasons to replace the runtime.
 
-## 6. A-track P0 vertical slice selected
+## 9. P0 vertical slice implemented on this branch
 
-The first implementation slice is deliberately smaller than the entire P0 backlog:
+The smallest complete product-spine implementation is:
 
-> **V4 First Journey → shared Firebase Auth → atomic real Tree + root Memory write → server re-hydration after refresh/relogin.**
+> **V4 entry → shared Firebase Auth → atomic real Tree + root Memory write → server re-hydration after refresh/relogin.**
 
-Implementation constraints:
+Implementation rules:
 
-- keep V4 visual structure intact;
-- do not import LoveBud UI;
-- use current `lovetree-limone` Firebase/Auth/API/Neon runtime;
-- use `POST /api/trees/with-first-memory` instead of re-creating Tree/Memory transactional behavior in the UI;
-- keep localStorage only for draft/navigation hints or a last-tree pointer, never as the authoritative persisted product record;
-- server data wins during authenticated hydration;
-- no Production write/deploy or schema migration in this slice.
+- V4 visual language remains the UI baseline.
+- no LoveBud UI is copied.
+- no replacement Firebase/Auth/API/DB runtime is introduced.
+- `POST /api/trees/with-first-memory` is reused.
+- localStorage is used only for a last-Tree pointer and idempotency key, never the Moment payload.
+- server data wins during authenticated hydration.
+- no Production deploy, Production DB write, Auth config change or schema migration is part of this branch.
+- no Telegram/B-track implementation is included.
 
-## 7. P0 acceptance contract for this branch
+## 10. P0 acceptance contract
 
-1. V4 renders for signed-out users.
-2. Persist action requires/shared Firebase authentication.
-3. One submission creates exactly one Tree and one root Memory through the existing idempotent endpoint.
-4. Root Memory persists YouTube URL, thumbnail, title, emotion tag, memo and video timestamp.
-5. On hard refresh, an authenticated user re-hydrates the persisted Tree/root Memory from API data.
-6. After logout and login with the same account, the same persisted server record can be recovered.
-7. No Production deployment or Production DB write is performed as part of validation.
-8. No Telegram source, PR #37, PR #44, or intake-design branch is modified.
+Code/static/integration gates for this slice:
 
-## 8. Deferred backlog produced by this audit
+1. V4 signed-out entry remains renderable.
+2. save requires the shared Firebase authentication path.
+3. one create request targets the existing atomic/idempotent Tree + first-Memory endpoint.
+4. root Memory persists title, emotion, memo, discovery date and YouTube source.
+5. exact video point is preserved as `sourceUrl?t=<seconds>s` and reconstructed as MM:SS on hydration.
+6. hard refresh rehydrates Tree/root Memory from server API rather than from a local JSON payload.
+7. logout followed by login can rehydrate the same server record.
+8. no-local-pointer path falls back to owner `GET /api/trees`, enabling cross-browser server recovery in the product spine even before the final My Trees UI is wired.
+9. no protected PR/Telegram design branch is modified or merged.
+
+Runtime release gate still requires a **non-production** authenticated environment to execute signup/login → Tree/Memory create → refresh → logout → relogin against a disposable/test database. Production writes are explicitly prohibited for this track.
+
+## 11. Deferred backlog produced by this audit
 
 ### P0 continuation
 
-- V4-visible auth entry/logout controls.
-- Real V4 My Trees list and real-id Tree read route.
-- clean-browser restore through My Trees, independent of local pointer state.
+- final V4 My Trees screen bound to owner `/api/trees`.
+- real-id V4 Tree read shell/workspace entry.
+- non-production authenticated persistence E2E fixture/environment if one is not already available.
 
-### P1
+### P1 — Connected Growth
 
-- connect V4 workspace to canonical real memories;
-- add second/next Memory with real `parentId`;
-- persist/edit/delete moments and trees;
-- define a first-class persisted connection-reason contract;
-- define a first-class discovery/record-date contract.
+- bind `V4TreeWorkspace` to canonical Tree/Memories.
+- append second and later Memory with real `parentId`.
+- Memory edit/delete and Tree edit/delete.
+- define/persist connection reason.
+- decide whether video offset graduates from `sourceUrl?t=` to a dedicated `videoOffsetSeconds` field.
+- explicitly reconcile child behavior on parent-Memory deletion.
 
-### P2
+### P2 — Public Product Loop
 
-- enforce public parent + public child privacy on community reads;
-- implement Browse eligibility (`>= 3` public moments baseline);
-- wire V4 Community and public detail to real APIs;
-- complete visibility policy/Plus-private parity.
+- implement Tree-visibility inheritance for omitted Memory visibility.
+- enforce public parent + public child on community/public Memory collections.
+- implement Browse eligibility (`>= 3` public Moments baseline).
+- wire `V4CommunityDiscovery` to real summaries.
+- add real-id public V4 Tree detail.
+- finish private/unlisted/public product-policy parity.
 
-### P3
+### P3 — Rich Experiences
 
-- hydrate Timeline / Album / Graph / Archive from the same canonical Moment source;
-- decide whether canvas x/y placement is durable product data and, if yes, add a dedicated layout persistence contract.
+- hydrate Timeline, Album, Graph and Archive from the same canonical Moment source.
+- decide whether V4 canvas x/y placement is durable product data; if yes, add a dedicated layout persistence contract rather than hiding it in unrelated fields.
