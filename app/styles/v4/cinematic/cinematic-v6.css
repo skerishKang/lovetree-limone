@@ -1,0 +1,444 @@
+/* LoveTree V4 Cinematic — v6 International evolution layer.
+   Keeps the validated v5.1 scene/autoplay engine intact and applies only
+   source-backed v6 copy/pointer/presentation deltas. */
+
+.cin-v6-shell {
+  position: relative;
+}
+
+.cin-v6-shell .cin-scene-copy h2,
+.cin-v6-shell .cin-menu-tile-title {
+  white-space: pre-line;
+}
+
+/* v6 pointer depth composes through the individual translate property so the
+   v5.1 engine remains the sole owner of scroll-driven transform values. */
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-scene-stack,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-media,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-scene-copy,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-motion-mask,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-blue-sky,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-question-title,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-question-item,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-v6-question-core,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-constellation-caption,
+.cin-v6-shell [data-cin-v6-pointer="enabled"] .cin-final-logo {
+  will-change: translate;
+}
+
+/* Chapter poster: source v6 uses a22 as the visual entry to the chapter grid.
+   It is a pseudo-layer, so the asset is requested only while the menu exists. */
+.cin-v6-shell .cin-menu-panel[data-cin-v6-menu="true"] {
+  position: relative;
+  isolation: isolate;
+}
+
+.cin-v6-shell .cin-menu-panel[data-cin-v6-menu="true"]::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  right: -1vw;
+  top: -38px;
+  width: min(520px, 39vw);
+  height: 255px;
+  border-radius: 32px;
+  background:
+    linear-gradient(90deg, rgba(1, 9, 16, 0.96), rgba(1, 9, 16, 0.18)),
+    url("/v4/cinematic/telegram-b/a22.webp") center 42% / cover no-repeat;
+  opacity: 0.34;
+  filter: saturate(1.08) contrast(1.04);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 28%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 28%, #000 100%);
+  pointer-events: none;
+}
+
+.cin-v6-shell .cin-menu-head,
+.cin-v6-shell .cin-menu-tiles,
+.cin-v6-shell .cin-menu-cta {
+  position: relative;
+  z-index: 2;
+}
+
+.cin-v6-shell .cin-menu-head p {
+  max-width: 560px;
+}
+
+/* Additional v6 image treatment. Alt shots are inserted lazily only when the
+   corresponding scene begins rendering, preserving the current initial-load
+   budget. */
+.cin-v6-shell .cin-v6-alt-shot {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+  object-position: var(--cin-pos, 50% 50%);
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: saturate(1.08) brightness(1.04);
+  transition: opacity 0.8s ease, transform 1.1s ease;
+}
+
+.cin-v6-shell .cin-scene[data-effect="growth"].is-visible .cin-v6-alt-growth {
+  opacity: 0.2;
+  transform: translate3d(-1.5%, -2%, 0) scale(1.025);
+}
+
+.cin-v6-shell .cin-scene[data-effect="prune"].is-visible .cin-v6-alt-prune {
+  opacity: 0.16;
+  transform: translate3d(1%, -1.5%, 0) scale(1.035);
+}
+
+/* Sky scene: subtle orchard traces and light orbs from the exact v6 source. */
+.cin-v6-sky-canopy {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.cin-v6-sky-canopy img {
+  position: absolute;
+  object-fit: cover;
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  filter: blur(1px) saturate(1.16) brightness(1.14);
+}
+
+.cin-v6-sky-canopy img.left {
+  left: -4%;
+  top: -6%;
+  width: 36%;
+  height: 54%;
+  transform: scaleX(-1) rotate(-4deg);
+}
+
+.cin-v6-sky-canopy img.right {
+  right: -4%;
+  top: 46%;
+  width: 30%;
+  height: 42%;
+  transform: rotate(5deg);
+}
+
+.cin-v6-sky-orb {
+  position: absolute;
+  z-index: 9;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 220, 120, 0.56), rgba(255, 199, 97, 0.18) 44%, transparent 72%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+}
+
+.cin-v6-sky-orb.o1 {
+  width: 18vw;
+  height: 18vw;
+  left: 9%;
+  top: 56%;
+  opacity: 0.36;
+}
+
+.cin-v6-sky-orb.o2 {
+  width: 12vw;
+  height: 12vw;
+  right: 15%;
+  top: 18%;
+  opacity: 0.28;
+}
+
+/* v6 question composition upgrades the three plain labels into four glass
+   chips around a visible question core while leaving the original scroll
+   drawing engine in charge of the SVG paths. */
+.cin-v6-shell .cin-question-title {
+  top: 14%;
+  width: min(820px, 76vw);
+  font-size: clamp(40px, 5vw, 82px);
+}
+
+.cin-v6-shell .cin-question-title small {
+  display: block;
+  margin-bottom: 16px;
+  font: 600 11px/1.3 var(--sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 238, 193, 0.88);
+}
+
+.cin-v6-shell .cin-question-item {
+  min-width: min(24vw, 330px);
+  width: auto;
+  padding: 17px 22px 16px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(7, 32, 55, 0.78), rgba(9, 44, 74, 0.48));
+  backdrop-filter: blur(9px);
+  border: 1px solid rgba(255, 230, 170, 0.48);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24), inset 0 0 0 1px rgba(255, 234, 190, 0.06);
+  font-size: clamp(19px, 1.8vw, 30px);
+  line-height: 1.15;
+}
+
+.cin-v6-shell .cin-question-item small {
+  margin-top: 7px;
+  font: 600 10px/1.5 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.cin-v6-shell .cin-question-item.q1 {
+  left: 12%;
+  top: 56%;
+}
+
+.cin-v6-shell .cin-question-item.q2 {
+  left: 34%;
+  top: 72%;
+}
+
+.cin-v6-shell .cin-question-item.q3 {
+  right: 12%;
+  top: 50%;
+}
+
+.cin-v6-shell .cin-question-item.q4 {
+  right: 19%;
+  top: 24%;
+  opacity: 0;
+  transition: opacity 0.45s ease, translate 0.16s ease-out;
+}
+
+.cin-v6-shell .cin-scene[data-effect="questions"].is-visible .cin-question-item.q4 {
+  opacity: 0.94;
+}
+
+.cin-v6-question-core {
+  position: absolute;
+  left: 49%;
+  top: 47%;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 230, 167, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px rgba(255, 210, 108, 0.08), 0 0 24px rgba(255, 195, 74, 0.42);
+}
+
+.cin-v6-shell .cin-scene[data-effect="questions"].is-visible .cin-question-lines circle {
+  opacity: 0.72;
+}
+
+/* v6 transition accents. They remain decorative and are suppressed by the
+   existing reduced-motion contract below. */
+.cin-v6-prune-glitter,
+.cin-v6-flash-bloom {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.cin-v6-prune-glitter {
+  z-index: 16;
+  background:
+    radial-gradient(circle at 74% 26%, rgba(255, 241, 196, 0.34), transparent 26%),
+    radial-gradient(circle at 67% 34%, rgba(255, 224, 138, 0.26), transparent 20%),
+    radial-gradient(circle at 58% 19%, rgba(255, 208, 92, 0.16), transparent 24%);
+}
+
+.cin-v6-flash-bloom {
+  z-index: 18;
+  inset: -8%;
+  background: radial-gradient(circle at 57% 44%, rgba(255, 255, 255, 0.96), rgba(255, 244, 214, 0.62) 17%, rgba(255, 228, 153, 0.22) 34%, transparent 62%);
+}
+
+.cin-v6-shell .cin-scene[data-effect="prune"].is-visible .cin-v6-prune-glitter {
+  animation: cinV6PruneGlitter 1.7s ease-out both;
+}
+
+.cin-v6-shell .cin-scene[data-effect="constellation"].is-visible .cin-v6-flash-bloom {
+  animation: cinV6FlashBloom 1.45s ease-out both;
+}
+
+@keyframes cinV6PruneGlitter {
+  0% { opacity: 0; transform: scale(0.98); }
+  42% { opacity: 0.7; }
+  100% { opacity: 0.2; transform: scale(1.035); }
+}
+
+@keyframes cinV6FlashBloom {
+  0% { opacity: 0.78; transform: scale(0.9); }
+  36% { opacity: 0.3; }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+/* International final hierarchy from v6. The existing final CTA remains a
+   real link to /v4/journey instead of regressing to the source prototype's
+   inert button. */
+.cin-v6-shell .cin-final-logo {
+  width: min(980px, 86vw);
+}
+
+.cin-v6-shell .cin-final-logo .cin-final-strap {
+  margin: 0 0 16px;
+  font: 600 11px/1.3 var(--sans);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 242, 203, 0.84);
+}
+
+.cin-v6-shell .cin-final-logo .cin-final-sub {
+  margin: 12px auto 10px;
+  max-width: 920px;
+  font: 400 clamp(24px, 2.2vw, 38px) / 1.22 var(--serif);
+  color: #fff9e5;
+  letter-spacing: -0.015em;
+}
+
+.cin-v6-shell .cin-final-logo .cin-final-note {
+  max-width: 780px;
+  margin: 0 auto;
+  font: 400 15px/1.75 var(--serif);
+  color: rgba(255, 248, 227, 0.8);
+}
+
+@media (max-width: 760px) {
+  .cin-v6-shell .cin-menu-panel[data-cin-v6-menu="true"]::before {
+    right: -25%;
+    top: -18px;
+    width: 86vw;
+    height: 190px;
+    opacity: 0.22;
+  }
+
+  .cin-v6-sky-canopy img.left {
+    width: 48%;
+    height: 38%;
+  }
+
+  .cin-v6-sky-canopy img.right {
+    width: 42%;
+    height: 28%;
+  }
+
+  .cin-v6-shell .cin-question-title {
+    top: 14%;
+    width: 88vw;
+    font-size: 34px;
+  }
+
+  .cin-v6-shell .cin-question-title small {
+    margin-bottom: 10px;
+    font-size: 9px;
+  }
+
+  .cin-v6-shell .cin-question-item {
+    min-width: 42vw;
+    max-width: 46vw;
+    padding: 12px 14px;
+    border-radius: 18px;
+    font-size: 16px;
+  }
+
+  .cin-v6-shell .cin-question-item small {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .cin-v6-shell .cin-question-item.q1 {
+    left: 5%;
+    top: 52%;
+  }
+
+  .cin-v6-shell .cin-question-item.q2 {
+    left: 7%;
+    top: 69%;
+  }
+
+  .cin-v6-shell .cin-question-item.q3 {
+    right: 5%;
+    top: 46%;
+  }
+
+  .cin-v6-shell .cin-question-item.q4 {
+    right: 7%;
+    top: 27%;
+  }
+
+  .cin-v6-question-core {
+    left: 49%;
+    top: 43%;
+    transform: scale(0.8);
+  }
+
+  .cin-v6-shell .cin-final-logo {
+    top: 14%;
+    width: 88vw;
+  }
+
+  .cin-v6-shell .cin-final-logo h1 {
+    font-size: clamp(58px, 20vw, 76px);
+  }
+
+  .cin-v6-shell .cin-final-logo .cin-final-strap {
+    margin-bottom: 10px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .cin-v6-shell .cin-final-logo .cin-final-sub {
+    margin-top: 10px;
+    font-size: 20px;
+  }
+
+  .cin-v6-shell .cin-final-logo .cin-final-note {
+    max-width: 84vw;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+}
+
+@media (pointer: coarse) {
+  .cin-v6-shell [data-cin-v6-pointer] .cin-scene-stack,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-media,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-scene-copy,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-motion-mask,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-blue-sky,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-question-title,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-question-item,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-v6-question-core,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-constellation-caption,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-final-logo {
+    translate: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin-v6-shell .cin-v6-alt-shot,
+  .cin-v6-shell .cin-v6-prune-glitter,
+  .cin-v6-shell .cin-v6-flash-bloom,
+  .cin-v6-shell .cin-v6-sky-canopy,
+  .cin-v6-shell .cin-v6-sky-orb,
+  .cin-v6-shell .cin-question-item.q4 {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cin-v6-shell [data-cin-v6-pointer] .cin-scene-stack,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-media,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-scene-copy,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-motion-mask,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-blue-sky,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-question-title,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-question-item,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-v6-question-core,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-constellation-caption,
+  .cin-v6-shell [data-cin-v6-pointer] .cin-final-logo {
+    translate: none !important;
+  }
+
+  .cin-v6-shell .cin-v6-alt-shot,
+  .cin-v6-shell .cin-v6-prune-glitter,
+  .cin-v6-shell .cin-v6-flash-bloom {
+    opacity: 0 !important;
+  }
+}
