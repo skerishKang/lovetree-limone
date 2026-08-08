@@ -35,7 +35,7 @@ jobs:
         run: npm run build
 
       - name: Targeted A-track contract tests
-        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs
+        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs
 
       - name: Prepare Playwright runtime
         run: |
