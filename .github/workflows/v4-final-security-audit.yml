@@ -19,7 +19,7 @@ jobs:
       - name: Checkout exact product head
         uses: actions/checkout@v4
         with:
-          ref: 71dd1b677badb3f0c5c417a49eaa37b3d63dd7e4
+          ref: 3bf83737eca835bf6e855af179330b76eb082351
           fetch-depth: 1
 
       - uses: actions/setup-node@v4
@@ -28,7 +28,7 @@ jobs:
           cache: npm
 
       - name: Verify exact product SHA
-        run: test "$(git rev-parse HEAD)" = "71dd1b677badb3f0c5c417a49eaa37b3d63dd7e4"
+        run: test "$(git rev-parse HEAD)" = "3bf83737eca835bf6e855af179330b76eb082351"
 
       - name: Install exact lockfile
         run: npm ci
