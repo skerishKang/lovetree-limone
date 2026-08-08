@@ -74,6 +74,25 @@ jobs:
           fi
           timeout --signal=KILL 8m node --import tsx --test tests/v4-cinematic-v6.test.mjs
 
+      - name: Diagnose source integrity blocker
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== app/api/tree/import/route.ts ==='
+          if [ -f app/api/tree/import/route.ts ]; then
+            nl -ba app/api/tree/import/route.ts | sed -n '1,220p'
+          else
+            echo 'route.ts missing'
+            find app -maxdepth 6 -type f -path '*tree*import*' -print || true
+          fi
+          echo '=== tests/v4-source-integrity.test.mjs relevant section ==='
+          if [ -f tests/v4-source-integrity.test.mjs ]; then
+            nl -ba tests/v4-source-integrity.test.mjs | sed -n '220,285p'
+          else
+            echo 'v4-source-integrity.test.mjs missing'
+            find tests -maxdepth 2 -type f -iname '*integrity*' -print || true
+          fi
+
       - name: Full wildcard tests
         shell: bash
         run: |
