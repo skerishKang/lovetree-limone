@@ -14,17 +14,36 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact product head
+        uses: actions/checkout@v4
+        with:
+          ref: 71dd1b677badb3f0c5c417a49eaa37b3d63dd7e4
+          fetch-depth: 1
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
+      - name: Verify exact product SHA
+        run: test "$(git rev-parse HEAD)" = "71dd1b677badb3f0c5c417a49eaa37b3d63dd7e4"
+
       - name: Install exact lockfile
         run: npm ci
+
       - name: Full dependency audit evidence
         continue-on-error: true
         run: npm audit --audit-level=high
+
       - name: Production dependency high-severity gate
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Isolated Preview deploy dry-run guard
+        run: |
+          npm run preview:deploy:safe -- \
+            --worker lovetree-limone-v4-final-20260809-preview \
+            --confirm-worker lovetree-limone-v4-final-20260809-preview \
+            --source-sha "$(git rev-parse HEAD)" \
+            --json
