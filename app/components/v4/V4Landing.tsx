@@ -146,7 +146,6 @@ export default function V4Landing() {
 
   useEffect(() => {
     if (!pendingSave || authLoading || !user || saving) return;
-    setAuthOpen(false);
     void persistDiscovery();
   }, [authLoading, pendingSave, persistDiscovery, saving, user]);
 
