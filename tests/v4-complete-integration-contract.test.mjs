@@ -49,7 +49,6 @@ const SOURCE_ROUTE_FILES = [
 ];
 
 const EXTRA_INTEGRATION_ROUTES = [
-  "app/v4/trees/new/page.tsx",
   "app/v4/subjects/demo/page.tsx",
   "app/v4/community/trees/demo/page.tsx",
   "app/v4/layout.tsx",
