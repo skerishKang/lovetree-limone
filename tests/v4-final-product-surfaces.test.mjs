@@ -9,27 +9,43 @@ test("final V4 Tree family exposes Overview Story Graph Replay and owner-only St
   const switcher = await read("app/components/ViewSwitcher.tsx");
   for (const kind of ["overview", "story", "graph", "replay", "studio"]) {
     assert.match(switcher, new RegExp(`kind: \\\"${kind}\\\"`));
+  }
+  for (const kind of ["overview", "graph", "replay", "studio"]) {
     assert.match(await read(`app/trees/[id]/${kind}/page.tsx`), new RegExp(`mode=\\\"${kind}\\\"`));
   }
+  assert.match(await read("app/trees/[id]/story/page.tsx"), /V4PublicStorySticky/);
   assert.match(switcher, /ownerOnly: true/);
   assert.match(switcher, /!view\.ownerOnly \|\| isOwner/);
 });
 
-test("Overview derives presentation metrics from real Tree Moments without DB writes", async () => {
+test("Overview derives safe metrics and recent Moment rows open canonical detail", async () => {
   const source = await read("app/components/v4/product/V4FinalTreeSurface.tsx");
+  const page = await read("app/trees/[id]/overview/page.tsx");
   assert.match(source, /function OverviewSurface/);
   assert.match(source, /emotionCounts\(moments\)/);
   assert.match(source, /connectedCount/);
   assert.match(source, /presentation metric/);
   assert.doesNotMatch(source, /method:\s*["'](?:POST|PUT|DELETE)["']/);
+  assert.match(page, /\.v4-overview-moments article/);
+  assert.match(page, /role", "link"/);
+  assert.match(page, /\?moment=\$\{encodeURIComponent\(memory\.id\)\}/);
+  assert.match(page, /event\.key !== "Enter" && event\.key !== " "/);
 });
 
-test("Public Story reads only the privacy-filtered Community Moment endpoint", async () => {
-  const source = await read("app/components/v4/product/V4FinalTreeSurface.tsx");
-  assert.match(source, /function PublicStorySurface/);
-  assert.match(source, /tree\.visibility !== "public"/);
+test("Public Story is a sticky scroll exhibition over privacy-filtered Community Moments", async () => {
+  const route = await read("app/trees/[id]/story/page.tsx");
+  const source = await read("app/components/v4/product/V4PublicStorySticky.tsx");
+  assert.match(route, /V4PublicStorySticky/);
   assert.match(source, /\/api\/community\/memories\?treeId=/);
-  assert.doesNotMatch(source, /PublicStorySurface[\s\S]*?\/api\/trees\/\$\{[^}]+\}\/memories/);
+  assert.match(source, /treeData\.visibility !== "public"/);
+  assert.match(source, /v4-story-scroll-space/);
+  assert.match(source, /v4-story-sticky/);
+  assert.match(source, /window\.scrollY - root\.offsetTop/);
+  assert.match(source, /scrollToChapter/);
+  assert.match(source, /ArrowDown/);
+  assert.match(source, /ArrowUp/);
+  assert.match(source, /Moment detail →/);
+  assert.doesNotMatch(source, /\/api\/trees\/\$\{encodeURIComponent\(treeId\)\}\/memories/);
 });
 
 test("one Graph product contains the adopted internal modes and derives edges from parentId", async () => {
