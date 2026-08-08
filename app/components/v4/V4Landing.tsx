@@ -144,11 +144,6 @@ export default function V4Landing() {
     }
   }, [clearAuthError, date, note, router, saving, thumbnail, treeName, url, user, videoId]);
 
-  useEffect(() => {
-    if (!pendingSave || authLoading || !user || saving) return;
-    void persistDiscovery();
-  }, [authLoading, pendingSave, persistDiscovery, saving, user]);
-
   function saveDiscovery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSaveError(null);
@@ -163,6 +158,15 @@ export default function V4Landing() {
       return;
     }
     void persistDiscovery();
+  }
+
+  function closeAuth() {
+    setAuthOpen(false);
+    if (pendingSave && user) {
+      void persistDiscovery();
+      return;
+    }
+    if (!user) setPendingSave(false);
   }
 
   const displayError = saveError || (!authOpen ? authError : null);
@@ -299,13 +303,7 @@ export default function V4Landing() {
         </div>
       ) : null}
 
-      <EmailAuthForm
-        open={authOpen}
-        onClose={() => {
-          setAuthOpen(false);
-          if (!user) setPendingSave(false);
-        }}
-      />
+      <EmailAuthForm open={authOpen} onClose={closeAuth} />
 
       {toast ? <div className="v4-toast" role="status" aria-live="polite">{toast}</div> : null}
     </main>
