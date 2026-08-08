@@ -37,11 +37,53 @@ function getOrCreateClientKey(): string {
 
 function dateFromServer(value: string | Date | null | undefined): string {
   if (!value) return localDateValue();
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return localDateValue();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${date.getFullYear()}-${month}-${day}`;
+}
+
+function secondsFromMomentTime(value: string): number | null {
+  const match = value.trim().match(/^(\d{1,3}):([0-5]\d)$/);
+  if (!match) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function momentTimeFromSeconds(value: number): string {
+  const seconds = Math.max(0, Math.floor(value));
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function youtubeUrlAtTime(value: string, momentTime: string): string {
+  const seconds = secondsFromMomentTime(momentTime);
+  if (seconds === null) return value.trim();
+  try {
+    const parsed = new URL(value.trim());
+    parsed.searchParams.set("t", `${seconds}s`);
+    return parsed.toString();
+  } catch {
+    return value.trim();
+  }
+}
+
+function youtubeTimeFromUrl(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    const parsed = new URL(value);
+    const raw = parsed.searchParams.get("t") || parsed.searchParams.get("start") || "";
+    if (!raw) return null;
+    if (/^\d+s?$/.test(raw)) {
+      return momentTimeFromSeconds(Number(raw.replace(/s$/, "")));
+    }
+    const match = raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+    if (!match) return null;
+    const seconds = Number(match[1] || 0) * 3600 + Number(match[2] || 0) * 60 + Number(match[3] || 0);
+    return momentTimeFromSeconds(seconds);
+  } catch {
+    return null;
+  }
 }
 
 export default function V4ProductSpineStart() {
@@ -59,7 +101,7 @@ export default function V4ProductSpineStart() {
   const [title, setTitle] = useState("처음 마음이 멈춘 장면");
   const [discoveryNote, setDiscoveryNote] = useState("");
   const [emotion, setEmotion] = useState<(typeof EMOTIONS)[number]>("설렘");
-  const [timestamp, setTimestamp] = useState("01:30");
+  const [videoTime, setVideoTime] = useState("01:30");
   const [memo, setMemo] = useState("이 장면을 다시 보고 싶어서 첫 마음으로 남겼어요.");
   const [discoveryDate, setDiscoveryDate] = useState(localDateValue);
   const [saving, setSaving] = useState(false);
@@ -87,9 +129,9 @@ export default function V4ProductSpineStart() {
       setUrl(memory.sourceUrl || "");
       setTitle(memory.title || "처음 마음이 멈춘 장면");
       setEmotion((memory.emotionTags?.[0] as (typeof EMOTIONS)[number] | undefined) || "설렘");
-      setTimestamp(memory.timestamp || "01:30");
+      setVideoTime(youtubeTimeFromUrl(memory.sourceUrl) || "00:00");
       setMemo(memory.memo || "");
-      setDiscoveryDate(dateFromServer(memory.createdAt));
+      setDiscoveryDate(dateFromServer(memory.timestamp || memory.createdAt));
     } else {
       setPersistedMemory(null);
     }
@@ -172,8 +214,12 @@ export default function V4ProductSpineStart() {
       setError("YouTube 링크를 확인해 주세요.");
       return;
     }
-    if (!/^\d{1,2}:[0-5]\d$/.test(timestamp.trim())) {
+    if (secondsFromMomentTime(videoTime) === null) {
       setError("영상 시점은 01:30 같은 분:초 형식으로 적어 주세요.");
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(discoveryDate)) {
+      setError("발견한 날짜를 확인해 주세요.");
       return;
     }
     if (!title.trim() && !memo.trim()) {
@@ -183,6 +229,7 @@ export default function V4ProductSpineStart() {
 
     setSaving(true);
     try {
+      const timedSourceUrl = youtubeUrlAtTime(url, videoTime);
       const response = await apiFetch("/api/trees/with-first-memory", {
         method: "POST",
         body: JSON.stringify({
@@ -194,11 +241,11 @@ export default function V4ProductSpineStart() {
             title: title.trim(),
             memo: memo.trim(),
             source: "YouTube",
-            sourceUrl: url.trim(),
+            sourceUrl: timedSourceUrl,
             sourceType: "youtube",
             thumbnail,
             emotionTags: [emotion],
-            timestamp: timestamp.trim(),
+            timestamp: discoveryDate,
             visibility: "public",
           },
         }),
@@ -273,7 +320,7 @@ export default function V4ProductSpineStart() {
               <div className="v4-group">
                 <label className="v4-label" htmlFor="v4-spine-url">YouTube URL <small>첫 뿌리</small></label>
                 <input id="v4-spine-url" className="v4-input" value={url} onChange={(event) => setUrl(event.target.value)} />
-                <p className="v4-field-status">{videoId ? "영상이 실제 Memory sourceUrl에 저장됩니다." : "올바른 YouTube 링크를 넣어 주세요."}</p>
+                <p className="v4-field-status">{videoId ? "영상과 선택한 시점을 sourceUrl deep-link로 함께 보존합니다." : "올바른 YouTube 링크를 넣어 주세요."}</p>
               </div>
 
               <div className="v4-group">
@@ -296,8 +343,8 @@ export default function V4ProductSpineStart() {
               </div>
 
               <div className="v4-group">
-                <label className="v4-label" htmlFor="v4-spine-time">영상에서 기억할 시점 <small>MM:SS</small></label>
-                <input id="v4-spine-time" className="v4-input" value={timestamp} onChange={(event) => setTimestamp(event.target.value)} placeholder="01:30" />
+                <label className="v4-label" htmlFor="v4-spine-time">영상에서 기억할 시점 <small>MM:SS · YouTube deep-link</small></label>
+                <input id="v4-spine-time" className="v4-input" value={videoTime} onChange={(event) => setVideoTime(event.target.value)} placeholder="01:30" />
               </div>
 
               <div className="v4-group">
@@ -306,9 +353,9 @@ export default function V4ProductSpineStart() {
               </div>
 
               <div className="v4-group">
-                <label className="v4-label" htmlFor="v4-spine-date">발견한 날짜 <small>P1 persisted-date contract pending</small></label>
+                <label className="v4-label" htmlFor="v4-spine-date">발견한 날짜 <small>current API Memory.timestamp</small></label>
                 <input id="v4-spine-date" className="v4-input" type="date" value={discoveryDate} onChange={(event) => setDiscoveryDate(event.target.value)} />
-                <p className="v4-field-status">영상 시점과 발견 날짜를 같은 DB 필드에 섞지 않기 위해, 날짜는 이번 P0에서 서버 저장 필드로 가장하지 않습니다.</p>
+                <p className="v4-field-status">현재 API의 `timestamp`는 YYYY-MM-DD 날짜 계약입니다. 영상 시점은 sourceUrl의 `t=` deep-link로 별도 보존해 두 의미를 섞지 않습니다.</p>
               </div>
 
               {error ? <p className="v4-field-status" role="alert">{error}</p> : null}
@@ -332,7 +379,7 @@ export default function V4ProductSpineStart() {
             <article className="v4-seed-preview-card">
               <div className="v4-preview-image" style={thumbnail ? { backgroundImage: `linear-gradient(180deg,rgba(255,248,239,.04),rgba(62,41,42,.24)),url(${thumbnail})` } : undefined} />
               <div className="v4-preview-meta">
-                <small>{persisted ? "PERSISTED ROOT" : "YOUR FIRST ROOT"} · {timestamp}</small>
+                <small>{persisted ? "PERSISTED ROOT" : "YOUR FIRST ROOT"} · {videoTime}</small>
                 <strong>{treeName || "나의 첫 러브트리"}</strong>
                 <p>{emotion} · {memo || discoveryNote || "그날의 마음을 남겨 주세요."}</p>
               </div>
@@ -347,7 +394,7 @@ export default function V4ProductSpineStart() {
                   : "비로그인 상태입니다. 저장 시 기존 Firebase 로그인/회원가입 흐름을 사용합니다."}
               </p>
               {persistedMemory ? (
-                <p className="v4-field-status">sourceUrl: {persistedMemory.sourceUrl}<br />timestamp: {persistedMemory.timestamp}<br />emotion: {persistedMemory.emotionTags?.join(", ") || "-"}</p>
+                <p className="v4-field-status">sourceUrl: {persistedMemory.sourceUrl}<br />date(timestamp): {persistedMemory.timestamp}<br />video time: {youtubeTimeFromUrl(persistedMemory.sourceUrl) || "00:00"}<br />emotion: {persistedMemory.emotionTags?.join(", ") || "-"}</p>
               ) : null}
             </div>
           </aside>
