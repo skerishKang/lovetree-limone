@@ -113,10 +113,14 @@ export default function V4ProductSpineStart() {
   const videoId = useMemo(() => youtubeId(url) || "", [url]);
   const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
   const persisted = Boolean(persistedTree && persistedMemory);
+  const displayError = error || authError;
 
   useEffect(() => {
-    const queryName = new URLSearchParams(window.location.search).get("name")?.trim();
-    if (queryName) setTreeName(queryName);
+    const timer = window.setTimeout(() => {
+      const queryName = new URLSearchParams(window.location.search).get("name")?.trim();
+      if (queryName) setTreeName(queryName);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const applyServerData = useCallback((tree: TreeRecord, memory: MemoryRecord | null) => {
@@ -182,12 +186,12 @@ export default function V4ProductSpineStart() {
   }, [fetchTreeBundle, user]);
 
   useEffect(() => {
-    if (!authLoading && user) void hydrateFromServer();
+    if (authLoading || !user) return;
+    const timer = window.setTimeout(() => {
+      void hydrateFromServer();
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [authLoading, hydrateFromServer, user]);
-
-  useEffect(() => {
-    if (authError) setError(authError);
-  }, [authError]);
 
   async function saveFirstMoment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -265,6 +269,7 @@ export default function V4ProductSpineStart() {
   }
 
   async function signOutCurrentUser() {
+    clearAuthError();
     await logout();
     setPersistedTree(null);
     setPersistedMemory(null);
@@ -358,7 +363,7 @@ export default function V4ProductSpineStart() {
                 <p className="v4-field-status">현재 API의 `timestamp`는 YYYY-MM-DD 날짜 계약입니다. 영상 시점은 sourceUrl의 `t=` deep-link로 별도 보존해 두 의미를 섞지 않습니다.</p>
               </div>
 
-              {error ? <p className="v4-field-status" role="alert">{error}</p> : null}
+              {displayError ? <p className="v4-field-status" role="alert">{displayError}</p> : null}
               {persisted ? (
                 <p className="v4-field-status" role="status">
                   서버 저장 완료 · Tree {persistedTree?.id} · Memory {persistedMemory?.id}
