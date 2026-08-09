@@ -32,6 +32,7 @@ const PROTOTYPE_ROUTES: Readonly<Record<string, string>> = {
   "source-media-inspection-deck": "/design-lab/capabilities/media-inspection",
   "question-lens-recomposition": "/design-lab/capabilities/question-lens",
   "narrative-to-structured-moment-assembly": "/design-lab/capabilities/narrative-assembly",
+  "interruptible-cinematic-story-playback": "/design-lab/capabilities/cinematic-playback",
 };
 
 type ScenarioFilter = "all" | DesignScenarioId;
