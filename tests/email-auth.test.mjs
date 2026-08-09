@@ -34,8 +34,8 @@ test("Google login is retained in the shared auth layer", async () => {
   assert.match(auth, /login/);
 });
 
-test("Google login buttons retained in V1 UI", async () => {
-  const home = await readApp("page.tsx");
+test("Google login buttons retained in Legacy V1 UI", async () => {
+  const home = await readApp("legacy/page.tsx");
   assert.match(home, /Google로 로그인|login\(\)/);
   const myTrees = await readApp("my-trees/page.tsx");
   assert.match(myTrees, /Google로 로그인/);
@@ -67,9 +67,9 @@ test("no separate auth backend or session introduced", async () => {
   assert.doesNotMatch(schema, /UserAccount|user_session|email_login/i);
 });
 
-// 5. V1 이메일 로그인 UI
-test("V1 home exposes an email login entry", async () => {
-  const page = await readApp("page.tsx");
+// 5. Legacy V1 이메일 로그인 UI
+test("Legacy V1 home exposes an email login entry", async () => {
+  const page = await readApp("legacy/page.tsx");
   assert.match(page, /EmailAuthForm/);
   assert.match(page, /email-auth\.css/);
   assert.match(page, /isAuthOpen/);
@@ -150,9 +150,9 @@ test("email auth error codes map to friendly messages", async () => {
   assert.match(errors, /이미 사용 중인 이메일 주소입니다\./);
 });
 
-// 11. 기존 V1/V2 API 비회귀
-test("V1 and V2 still use the shared api client", async () => {
-  const v1Home = await readApp("page.tsx");
+// 11. 기존 Legacy V1/V2 API 비회귀
+test("Legacy V1 and V2 still use the shared api client", async () => {
+  const v1Home = await readApp("legacy/page.tsx");
   assert.match(v1Home, /apiFetch/);
   const v2Home = await readApp("components/v2/V2Home.tsx");
   assert.match(v2Home, /apiFetch/);
@@ -183,8 +183,9 @@ test("no QA credentials are hardcoded in source files", async () => {
     assert.doesNotMatch(content, /lovetree\.dev/, `QA account email leaked into ${file}`);
   }
   const appFiles = [
-    "components/EmailAuthForm.tsx",
     "page.tsx",
+    "legacy/page.tsx",
+    "components/EmailAuthForm.tsx",
     "my-trees/page.tsx",
     "trees/[id]/page.tsx",
     "components/v2/V2Home.tsx",
