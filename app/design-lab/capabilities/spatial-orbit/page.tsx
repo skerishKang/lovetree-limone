@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent } from "react";
 import {
   DEFAULT_ORBIT_CAMERA,
   ORBIT_CONNECTIONS,
@@ -9,6 +9,7 @@ import {
   projectOrbitNode,
   updateOrbitCamera,
   type OrbitCameraState,
+  type OrbitViewport,
 } from "@/lib/capability-prototypes-core";
 import "@/app/styles/capability-prototypes-core.css";
 
@@ -17,11 +18,28 @@ function useReducedMotion() {
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(query.matches);
-    update();
+    const frame = window.requestAnimationFrame(update);
     query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      query.removeEventListener("change", update);
+    };
   }, []);
   return reduced;
+}
+
+function useOrbitViewport() {
+  const [viewport, setViewport] = useState<OrbitViewport>("desktop");
+  useEffect(() => {
+    const update = () => setViewport(window.innerWidth < 700 ? "mobile" : "desktop");
+    const frame = window.requestAnimationFrame(update);
+    window.addEventListener("resize", update);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+  return viewport;
 }
 
 function StarfieldCanvas({ onUnavailable }: { onUnavailable: () => void }) {
@@ -121,10 +139,9 @@ function StarfieldCanvas({ onUnavailable }: { onUnavailable: () => void }) {
       gl.drawArrays(gl.POINTS, 0, stars.length / 3);
     };
     draw();
-    const resize = () => draw();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", draw);
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", draw);
       if (buffer) gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
       gl.deleteShader(vertex);
@@ -137,14 +154,12 @@ function StarfieldCanvas({ onUnavailable }: { onUnavailable: () => void }) {
 
 export default function SpatialOrbitPrototypePage() {
   const reducedMotion = useReducedMotion();
+  const viewport = useOrbitViewport();
   const [camera, setCamera] = useState<OrbitCameraState>(DEFAULT_ORBIT_CAMERA);
   const [selected, setSelected] = useState(ORBIT_MOMENTS[0].id);
   const [webglUnavailable, setWebglUnavailable] = useState(false);
   const drag = useRef<{ x: number; y: number } | null>(null);
-
-  useEffect(() => {
-    setCamera((current) => ({ ...current, reducedMotion }));
-  }, [reducedMotion]);
+  const handleWebglUnavailable = useCallback(() => setWebglUnavailable(true), []);
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -160,7 +175,6 @@ export default function SpatialOrbitPrototypePage() {
     return () => window.cancelAnimationFrame(frame);
   }, [reducedMotion]);
 
-  const viewport = typeof window !== "undefined" && window.innerWidth < 700 ? "mobile" : "desktop";
   const positions = useMemo(
     () => new Map(ORBIT_MOMENTS.map((node) => [node.id, projectOrbitNode(node, camera, viewport)])),
     [camera, viewport],
@@ -208,7 +222,7 @@ export default function SpatialOrbitPrototypePage() {
           tabIndex={0}
           aria-label="Spatial orbit prototype. Drag to rotate and use wheel to change distance."
         >
-          {!webglUnavailable ? <StarfieldCanvas onUnavailable={() => setWebglUnavailable(true)} /> : null}
+          {!webglUnavailable ? <StarfieldCanvas onUnavailable={handleWebglUnavailable} /> : null}
           <div className="lt-cap-proto__orbit-core" aria-hidden="true" />
           <svg className="lt-cap-proto__orbit-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {ORBIT_CONNECTIONS.map((route) => {
