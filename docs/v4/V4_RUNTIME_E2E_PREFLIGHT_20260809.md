@@ -2,7 +2,7 @@
 
 Date: 2026-08-09  
 Scope: V4 authenticated mutable Runtime E2E preparation  
-Status: `RUNTIME_E2E_PREFLIGHT_READY / FIREBASE_TARGET_BLOCKED`
+Status: `RUNTIME_E2E_PREFLIGHT_READY / SERVER_GUARD_READY / FIREBASE_TARGET_BLOCKED`
 
 ## 1. Purpose
 
@@ -11,6 +11,8 @@ This document narrows the remaining non-production Runtime E2E blocker after the
 The mutable journey must never fall back to Production infrastructure merely because a staging/test binding is missing. Before any signup, authenticated API mutation, Tree creation, Memory creation, or cleanup mutation, all target identities and the actual database endpoint binding must pass the repository preflight.
 
 The preflight performs no Cloudflare, Firebase, or Neon network request. It validates configured identities and parses only the hostname from the `DATABASE_URL` secret; the URL, credentials, tokens, API keys, and passwords are never returned or printed.
+
+The API also applies the same critical Firebase/DB deny rules again at runtime whenever `APP_ENV=e2e`, so bypassing the CLI does not automatically authorize mutations.
 
 ## 2. Current readiness
 
@@ -118,19 +120,57 @@ The mutable Runtime E2E preflight rejects all of the following:
 
 No network call or product mutation is attempted by the preflight itself.
 
-## 5. Why mutations require `true` here
+## 5. Server-side defense in depth
+
+For non-E2E environments, the existing mutation configuration behavior is preserved.
+
+For `APP_ENV=e2e`, `API_MUTATIONS_ENABLED=true` is no longer sufficient by itself. Before the API constructs a DB context or invokes a mutation router, the server rechecks:
+
+1. `FIREBASE_PROJECT_ID` exists;
+2. `FIREBASE_PROJECT_ID != relovetree`;
+3. `DATABASE_URL` parses as a Postgres URL;
+4. its hostname is not the Production Neon endpoint;
+5. its hostname exactly equals the approved isolated endpoint.
+
+If any runtime binding check fails, POST/PUT/PATCH/DELETE returns the existing mutation-disabled `503` before router or DB work.
+
+The stricter rules are scoped only to the dedicated `e2e` runtime class; current Production and shared staging behavior is not silently changed by this safety addition.
+
+### E2E health response
+
+Outside `APP_ENV=e2e`, `/api/health` keeps the legacy response shape.
+
+Inside E2E it adds only non-secret runtime identity status:
+
+```json
+{
+  "status": "ok",
+  "env": "e2e",
+  "e2e": {
+    "firebaseProjectId": "<non-production project id>",
+    "mutationsEnabled": true,
+    "databaseBinding": "approved"
+  }
+}
+```
+
+No database URL, database credential, Firebase API key, token, or password is returned.
+
+This gives the later live runner a runtime observation point before signup or mutation.
+
+## 6. Why mutations require `true` here
 
 The standard public Preview deployment deliberately forces mutations off. Mutable Runtime E2E is a separate target class: mutations may be enabled only after Worker, Firebase, Neon project, Neon branch, actual DB endpoint, and environment identity all pass the denylist and exact-match checks.
 
-Therefore a successful preflight means only:
+Therefore a successful CLI preflight plus safe E2E health response means only:
 
 ```text
-IDENTITY AND DB BINDING ARE ELIGIBLE FOR MUTABLE E2E SETUP
+IDENTITY AND RUNTIME BINDINGS ARE ELIGIBLE FOR MUTABLE E2E
 ```
 
-It does not mean a Worker has been deployed, a Firebase user exists, credentials are valid, or the end-to-end journey has passed.
+It does not mean a Firebase user exists, credentials are valid, or the end-to-end journey has passed.
 
-## 6. Remaining setup before Runtime E2E
+## 7. Remaining setup before Runtime E2E
 
 The remaining external setup is deliberately narrow:
 
@@ -140,10 +180,11 @@ The remaining external setup is deliberately narrow:
 4. authorize the exact isolated Worker hostname where required;
 5. bind the same non-production Firebase project ID to browser and Worker;
 6. bind `DATABASE_URL` to the prepared isolated Neon endpoint in a non-production secret scope;
-7. run this preflight before any signup or mutation;
-8. only after the preflight passes, run the desktop/mobile authenticated journey and exact-ID cleanup.
+7. run the CLI preflight before deployment/mutation;
+8. verify `/api/health` reports `env=e2e`, the expected Firebase project, `mutationsEnabled=true`, and `databaseBinding=approved`;
+9. only then run the desktop/mobile authenticated journey and exact-ID cleanup.
 
-## 7. Explicit prohibitions
+## 8. Explicit prohibitions
 
 Until the dedicated Firebase target exists:
 
@@ -155,14 +196,16 @@ Until the dedicated Firebase target exists:
 - do not copy Production secrets into a Preview environment;
 - do not report Runtime E2E as passed from mocked browser tests or HTTP-only checks.
 
-## 8. Gate state
+## 9. Gate state
 
-Current state after this preflight work:
+Current state after the preflight and runtime defense work:
 
 ```text
 V4_CODE_GATE=GREEN
 V4_E2E_ISOLATED_NEON=READY
 V4_E2E_IDENTITY_AND_DB_PREFLIGHT=READY
+V4_E2E_SERVER_MUTATION_GUARD=READY
+V4_E2E_RUNTIME_HEALTH_IDENTITY=READY
 V4_E2E_FIREBASE=BLOCKED
 V4_MUTABLE_RUNTIME_E2E=BLOCKED
 PRODUCTION_FALLBACK=FORBIDDEN
