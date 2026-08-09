@@ -118,12 +118,12 @@ test("Drive audit batch three records CAP-13 as prototyped after prototype valid
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
 });
 
-test("Drive audit batch four records CAP-14 as observed until prototype validation completes", () => {
+test("Drive audit batch four records CAP-14 as prototyped after prototype validation", () => {
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH4.length, 1);
   const capability = AUDITED_EXPERIENCE_CAPABILITIES_BATCH4[0];
 
   assert.equal(capability.id, "directed-connection-path-replay");
-  assert.equal(capability.status, "observed");
+  assert.equal(capability.status, "prototyped");
   assert.equal(capability.issue, 120);
   assert.ok(capability.evidence.length > 0);
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
