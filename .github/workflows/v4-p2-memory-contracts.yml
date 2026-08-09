@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - feat/v4-p2-memory-contracts-20260809
+  pull_request:
+    branches:
+      - feat/v4-final-release-candidate-20260809
 
 permissions:
   contents: write
@@ -47,11 +50,17 @@ jobs:
             git push origin HEAD:feat/v4-p2-memory-contracts-20260809
           fi
 
+      - name: P2 contract tests
+        run: node --import tsx --test tests/v4-p2-memory-contracts.test.mjs
+
       - name: Lint
         run: npm run lint
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Build
+        run: npm run build
 
       - name: Database schema check
         run: npm run db:check
