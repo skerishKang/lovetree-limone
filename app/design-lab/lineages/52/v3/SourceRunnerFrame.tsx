@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 type SourceState = "checking" | "ready" | "missing";
+type MotionPreference = "checking" | "full" | "reduced";
 
 interface SourceRunnerFrameProps {
   sourceAssetPath: string;
@@ -21,6 +22,26 @@ export default function SourceRunnerFrame({
 }: SourceRunnerFrameProps) {
   const [sourceState, setSourceState] = useState<SourceState>("checking");
   const [verifiedSourceUrl, setVerifiedSourceUrl] = useState<string | null>(null);
+  const [motionPreference, setMotionPreference] = useState<MotionPreference>("checking");
+  const [motionOverride, setMotionOverride] = useState(false);
+  const [interactionEnabled, setInteractionEnabled] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const syncMotionPreference = () => {
+      const reduced = query.matches;
+      setMotionPreference(reduced ? "reduced" : "full");
+      if (reduced) {
+        setMotionOverride(false);
+        setInteractionEnabled(false);
+      }
+    };
+
+    syncMotionPreference();
+    query.addEventListener("change", syncMotionPreference);
+    return () => query.removeEventListener("change", syncMotionPreference);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -60,17 +81,76 @@ export default function SourceRunnerFrame({
     };
   }, [sourceAssetPath, sourceBytes, sourceSha256]);
 
-  if (sourceState === "ready" && verifiedSourceUrl) {
+  const motionAllowed = motionPreference === "full" || motionOverride;
+
+  if (sourceState === "ready" && verifiedSourceUrl && motionPreference === "reduced" && !motionOverride) {
     return (
-      <div className="lt-orbit-runner__viewport" data-source-state="ready">
+      <div
+        className="lt-orbit-runner__viewport lt-orbit-runner__viewport--pending"
+        data-source-state="ready"
+        data-motion-state="reduced"
+        role="status"
+      >
+        <div className="lt-orbit-runner__pending-card lt-orbit-runner__motion-gate">
+          <p className="lt-orbit-runner__pending-kicker">REDUCED MOTION ACTIVE</p>
+          <h2>원본 모션은 자동 실행하지 않습니다.</h2>
+          <p>
+            검증된 52 V3 원본 바이트는 그대로 유지됩니다. 현재 시스템 설정이 모션 감소를 요청하고 있어
+            source iframe을 시작하지 않았습니다.
+          </p>
+          <button type="button" onClick={() => setMotionOverride(true)}>
+            원본 모션 실행
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (sourceState === "ready" && verifiedSourceUrl && motionPreference === "checking") {
+    return (
+      <div
+        className="lt-orbit-runner__viewport lt-orbit-runner__viewport--pending"
+        data-source-state="ready"
+        data-motion-state="checking"
+        role="status"
+      >
+        <div className="lt-orbit-runner__pending-card">
+          <p className="lt-orbit-runner__pending-kicker">CHECKING MOTION PREFERENCE</p>
+          <h2>모션 접근성 설정을 확인하고 있습니다.</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (sourceState === "ready" && verifiedSourceUrl && motionAllowed) {
+    return (
+      <div
+        className="lt-orbit-runner__viewport"
+        data-source-state="ready"
+        data-motion-state={motionOverride ? "override" : "full"}
+        data-interaction-state={interactionEnabled ? "interactive" : "scroll"}
+      >
         <iframe
-          className="lt-orbit-runner__iframe"
+          className={`lt-orbit-runner__iframe ${interactionEnabled ? "lt-orbit-runner__iframe--interactive" : "lt-orbit-runner__iframe--passive"}`}
           src={verifiedSourceUrl}
           title="LoveTree 52 V3 Reference Earth Orbit source runner"
           sandbox="allow-scripts"
           referrerPolicy="no-referrer"
           allow="fullscreen"
+          tabIndex={interactionEnabled ? 0 : -1}
         />
+        <div className="lt-orbit-runner__interaction-controls">
+          <button
+            type="button"
+            aria-pressed={interactionEnabled}
+            onClick={() => setInteractionEnabled((enabled) => !enabled)}
+          >
+            {interactionEnabled ? "페이지 스크롤 모드" : "오비트 인터랙션 켜기"}
+          </button>
+          {!interactionEnabled && (
+            <span>기본 상태에서는 wheel/swipe가 바깥 페이지 스크롤에 남습니다.</span>
+          )}
+        </div>
       </div>
     );
   }
