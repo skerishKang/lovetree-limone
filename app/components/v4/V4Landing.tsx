@@ -1,13 +1,25 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import EmailAuthForm from "@/app/components/EmailAuthForm";
+import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+
+const LAST_TREE_KEY = "lovetree-v4-product-spine-last-tree-id";
+const CLIENT_KEY = "lovetree-v4-product-spine-create-client-key";
 
 const sampleMoments = [
   { label: "처음 발견한 순간", title: "한 장면이 오래 마음에 남았어요." },
   { label: "다음으로 찾아본 순간", title: "그 마음이 다른 영상으로 이어졌어요." },
   { label: "오래 간직할 문장", title: "시간이 지나도 다시 보고 싶은 기록." },
 ];
+
+interface FirstMomentResponse {
+  tree?: { id?: string };
+  memory?: { id?: string };
+  error?: string;
+}
 
 function youtubeId(value: string) {
   const trimmed = value.trim();
@@ -21,15 +33,28 @@ function youtubeId(value: string) {
   }
 }
 
+function getOrCreateClientKey(): string {
+  const existing = localStorage.getItem(CLIENT_KEY);
+  if (existing) return existing;
+  const value = crypto.randomUUID();
+  localStorage.setItem(CLIENT_KEY, value);
+  return value;
+}
+
 export default function V4Landing() {
   const router = useRouter();
+  const { user, loading: authLoading, authError, clearAuthError } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [pendingSave, setPendingSave] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [view, setView] = useState<"home" | "discovery">("home");
   const [treeName, setTreeName] = useState("주연에게 마음이 멈춘 순간들");
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
   const [note, setNote] = useState("우연히 보게 됐는데, 하루 종일 이 장면이 생각났어요.");
   const [date, setDate] = useState("2026-07-28");
   const [toast, setToast] = useState("");
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const videoId = useMemo(() => youtubeId(url), [url]);
   const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
@@ -55,30 +80,96 @@ export default function V4Landing() {
       setToast("러브트리 이름을 적어 주세요.");
       return;
     }
-    localStorage.setItem("lovetree-v4-tree-name", name);
     setModalOpen(false);
     setView("discovery");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  const persistDiscovery = useCallback(async () => {
+    if (!user || saving) return;
+    if (!videoId) {
+      setToast("YouTube 링크를 확인해 주세요.");
+      setPendingSave(false);
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      setToast("발견한 날짜를 확인해 주세요.");
+      setPendingSave(false);
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    clearAuthError();
+    try {
+      const response = await apiFetch("/api/trees/with-first-memory", {
+        method: "POST",
+        body: JSON.stringify({
+          clientKey: getOrCreateClientKey(),
+          title: treeName.trim(),
+          visibility: "public",
+          memory: {
+            title: "처음 마음이 멈춘 장면",
+            memo: note.trim() || "이 장면을 첫 순간으로 남겼어요.",
+            source: "YouTube",
+            sourceUrl: url.trim(),
+            sourceType: "youtube",
+            thumbnail,
+            emotionTags: [],
+            timestamp: date,
+            visibility: "public",
+          },
+        }),
+      });
+      const data = (await response.json().catch(() => ({}))) as FirstMomentResponse;
+      const treeId = data.tree?.id;
+      const memoryId = data.memory?.id;
+      if (!response.ok || !treeId || !memoryId) {
+        throw new Error(data.error || "첫 순간을 저장하지 못했어요.");
+      }
+
+      localStorage.setItem(LAST_TREE_KEY, treeId);
+      localStorage.removeItem(CLIENT_KEY);
+      setPendingSave(false);
+      setAuthOpen(false);
+      setToast("첫 순간이 뿌리로 심어졌어요 ✦");
+      window.setTimeout(() => {
+        router.push(`/trees/${encodeURIComponent(treeId)}?highlight=${encodeURIComponent(memoryId)}`);
+      }, 420);
+    } catch (cause) {
+      setPendingSave(false);
+      setSaveError(cause instanceof Error ? cause.message : "네트워크 오류가 발생했어요.");
+    } finally {
+      setSaving(false);
+    }
+  }, [clearAuthError, date, note, router, saving, thumbnail, treeName, url, user, videoId]);
+
   function saveDiscovery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSaveError(null);
+    clearAuthError();
     if (!videoId) {
       setToast("YouTube 링크를 확인해 주세요.");
       return;
     }
-    const discovery = {
-      treeName: treeName.trim(),
-      url: url.trim(),
-      videoId,
-      title: "처음 마음이 멈춘 장면",
-      note: note.trim() || "이 장면을 첫 순간으로 남겼어요.",
-      date,
-    };
-    localStorage.setItem("lovetree-v4-discovery", JSON.stringify(discovery));
-    setToast("첫 순간이 뿌리로 심어졌어요 ✦");
-    window.setTimeout(() => router.push("/v4/trees/demo/onboarding/emotion"), 420);
+    if (!user) {
+      setPendingSave(true);
+      setAuthOpen(true);
+      return;
+    }
+    void persistDiscovery();
   }
+
+  function closeAuth() {
+    setAuthOpen(false);
+    if (pendingSave && user) {
+      void persistDiscovery();
+      return;
+    }
+    if (!user) setPendingSave(false);
+  }
+
+  const displayError = saveError || (!authOpen ? authError : null);
 
   return (
     <main className="v4-page">
@@ -88,8 +179,8 @@ export default function V4Landing() {
             <span className="v4-brand-mark" aria-hidden="true"><i /><b /></span>
             LoveTree
           </div>
-          <button className="v4-nav-link" type="button" onClick={() => setToast("공개 러브트리는 V4 커뮤니티 단계에서 연결됩니다.")}>공개 트리</button>
-          <button className="v4-nav-link" type="button" onClick={() => setToast("사람별 앨범은 V4 아카이브 단계에서 연결됩니다.")}>사람 앨범</button>
+          <button className="v4-nav-link" type="button" onClick={() => router.push("/v4/community")}>공개 트리</button>
+          <button className="v4-nav-link" type="button" onClick={() => setToast("사람별 앨범은 V4 아카이브 단계에서 실제 데이터와 연결합니다.")}>사람 앨범</button>
           <button className="v4-secondary" type="button" onClick={() => setModalOpen(true)}>첫 순간 심기</button>
         </nav>
 
@@ -108,7 +199,7 @@ export default function V4Landing() {
               </p>
               <div className="v4-hero-actions">
                 <button className="v4-primary" type="button" onClick={() => setModalOpen(true)}>첫 순간 심기 →</button>
-                <button className="v4-secondary" type="button" onClick={() => setToast("V4는 29개 원본 디자인을 차례로 연결하고 있습니다.")}>LoveTree 살펴보기</button>
+                <button className="v4-secondary" type="button" onClick={() => router.push("/v4/community")}>LoveTree 살펴보기</button>
               </div>
             </div>
 
@@ -156,23 +247,25 @@ export default function V4Landing() {
 
                 <div className="v4-group">
                   <label className="v4-label" htmlFor="v4-content-url">콘텐츠 URL <small>YouTube 링크</small></label>
-                  <input id="v4-content-url" className="v4-input" value={url} onChange={(event) => setUrl(event.target.value)} />
+                  <input id="v4-content-url" className="v4-input" value={url} onChange={(event) => setUrl(event.target.value)} disabled={saving} />
                   <p className="v4-field-status">{videoId ? "영상이 첫 순간 카드에 연결됐어요." : "링크를 넣으면 카드에 장면이 나타나요."}</p>
                 </div>
 
                 <div className="v4-group">
                   <label className="v4-label" htmlFor="v4-discovery-note">처음 어떤 마음이 들었나요? <small>{note.length} / 140</small></label>
-                  <textarea id="v4-discovery-note" className="v4-textarea" maxLength={140} value={note} onChange={(event) => setNote(event.target.value)} />
+                  <textarea id="v4-discovery-note" className="v4-textarea" maxLength={140} value={note} onChange={(event) => setNote(event.target.value)} disabled={saving} />
                 </div>
 
                 <div className="v4-group">
                   <label className="v4-label" htmlFor="v4-discovery-date">발견한 날짜 <small>나중에 수정 가능</small></label>
-                  <input id="v4-discovery-date" className="v4-input" type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+                  <input id="v4-discovery-date" className="v4-input" type="date" value={date} onChange={(event) => setDate(event.target.value)} disabled={saving} />
                 </div>
 
+                {displayError ? <p className="v4-field-status" role="alert">{displayError}</p> : null}
+
                 <div className="v4-actions-row">
-                  <button className="v4-primary" type="submit">이 순간 심기 →</button>
-                  <button className="v4-secondary" type="button" onClick={() => setView("home")}>처음 화면</button>
+                  <button className="v4-primary" type="submit" disabled={saving || authLoading} aria-busy={saving}>{saving ? "이 순간 심는 중…" : "이 순간 심기 →"}</button>
+                  <button className="v4-secondary" type="button" onClick={() => setView("home")} disabled={saving}>처음 화면</button>
                 </div>
               </form>
             </div>
@@ -209,6 +302,8 @@ export default function V4Landing() {
           </section>
         </div>
       ) : null}
+
+      <EmailAuthForm open={authOpen} onClose={closeAuth} />
 
       {toast ? <div className="v4-toast" role="status" aria-live="polite">{toast}</div> : null}
     </main>

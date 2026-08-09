@@ -195,10 +195,16 @@ test("v4 first journey — full flow, storage keys, refresh restore, ESC modal",
       assert.ok(value, `${key} must be stored`);
     }
 
+    const storedScreen = await page.evaluate(() => {
+      const raw = localStorage.getItem("lovetree-first-journey-unified");
+      return raw ? JSON.parse(raw).currentScreen : null;
+    });
+    assert.equal(storedScreen, "growth", "growth stage persisted before refresh");
+
     /* refresh restores the growth stage */
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(400);
-    const restoredGrowth = await page.locator('[data-testid="growth-first"]').isVisible().catch(() => false);
+    await page.waitForSelector('[data-testid="growth-first"]', { state: "visible", timeout: 8000 });
+    const restoredGrowth = await page.locator('[data-testid="growth-first"]').isVisible();
     assert.ok(restoredGrowth, "refresh restores completed flow (growth stage)");
 
     assert.equal(errors.length, 0, "no console/page errors through full flow");
@@ -305,7 +311,8 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
       }));
     }, { YT_A, YT_B });
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(600);
+    await page.waitForSelector('[data-testid="growth-first"]', { state: "visible", timeout: 8000 });
+    await page.waitForSelector('[data-testid="growth-next"]', { state: "visible", timeout: 8000 });
     const growth = await page.evaluate(() => {
       const cards = document.querySelectorAll("[data-testid='growth-first'], [data-testid='growth-next']");
       const first = document.querySelector("[data-testid='growth-first']");
@@ -383,7 +390,7 @@ test("v4 first journey — success states use centered large success panels", as
       }));
     }, { YT_A });
     await step2.page.reload({ waitUntil: "networkidle" });
-    await step2.page.waitForTimeout(500);
+    await step2.page.waitForSelector('[data-testid="step2-success"]', { state: "visible", timeout: 8000 });
     const s2 = await step2.page.evaluate(() => {
       const panel = document.querySelector("[data-testid='step2-success']");
       const shell = document.querySelector(".v4-j-shell");
@@ -428,7 +435,7 @@ test("v4 first journey — success states use centered large success panels", as
       }));
     }, { YT_A, YT_B });
     await step3.page.reload({ waitUntil: "networkidle" });
-    await step3.page.waitForTimeout(500);
+    await step3.page.waitForSelector('[data-testid="step3-success"]', { state: "visible", timeout: 8000 });
     const s3 = await step3.page.evaluate(() => {
       const panel = document.querySelector("[data-testid='step3-success']");
       const shell = document.querySelector(".v4-j-shell");

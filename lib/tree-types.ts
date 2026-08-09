@@ -19,6 +19,7 @@ export interface MemoryRecord {
   treeId: string;
   clientKey?: string | null;
   parentId?: string | null;
+  connectionReason?: string | null;
   title?: string;
   memo?: string;
   artist?: string;
@@ -28,6 +29,8 @@ export interface MemoryRecord {
   thumbnail?: string;
   emotionTags?: string[];
   timestamp?: string;
+  discoveryDate?: string | null;
+  videoOffsetSeconds?: number | null;
   sortOrder?: number;
   visibility?: "private" | "unlisted" | "public" | string;
   channelId?: string | null;
@@ -59,6 +62,10 @@ export function formatTreeDate(value: string | Date | null | undefined): string 
   }).format(date);
 }
 
+export function memoryDiscoveryDate(memory: MemoryRecord): string | Date | null | undefined {
+  return memory.discoveryDate || memory.timestamp || memory.createdAt;
+}
+
 export function localDateValue(): string {
   const now = new Date();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -74,6 +81,20 @@ export function youtubeId(value: string): string | null {
 export function youtubeThumbnail(value: string): string | undefined {
   const id = youtubeId(value);
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : undefined;
+}
+
+export function videoOffsetSecondsFromUrl(value: string): number | undefined {
+  try {
+    const url = new URL(value);
+    const raw = url.searchParams.get("t") || url.searchParams.get("start");
+    if (!raw) return undefined;
+    if (/^\d+$/.test(raw)) return Number(raw);
+    const match = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i.exec(raw.trim());
+    if (!match) return undefined;
+    return Number(match[1] || 0) * 3600 + Number(match[2] || 0) * 60 + Number(match[3] || 0);
+  } catch {
+    return undefined;
+  }
 }
 
 export function sourceTypeLabel(sourceType: string | undefined): string {
