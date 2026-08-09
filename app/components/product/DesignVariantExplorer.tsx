@@ -37,6 +37,8 @@ function matchesSearch(candidate: DesignCandidate, search: string) {
   const haystack = [
     candidate.id,
     candidate.label,
+    candidate.lineageId,
+    candidate.revisionId,
     candidate.sourceFile,
     candidate.role,
     candidate.notes,
@@ -93,7 +95,7 @@ export default function DesignVariantExplorer() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="후보명, 원본 파일, 인터랙션 검색"
+            placeholder="후보명, 계보, 원본 파일, 인터랙션 검색"
           />
         </label>
 
@@ -154,6 +156,9 @@ export default function DesignVariantExplorer() {
                         <span className="lt-lab__kind">{KIND_LABELS[candidate.kind]}</span>
                       </div>
                       <h3>{candidate.label}</h3>
+                      {candidate.lineageId && candidate.revisionId ? (
+                        <p className="lt-lab__lineage-link">{candidate.lineageId} · {candidate.revisionId}</p>
+                      ) : null}
                       {candidate.sourceFile ? <code>{candidate.sourceFile}</code> : null}
                       {candidate.notes ? <p>{candidate.notes}</p> : null}
                       {candidate.preserve && candidate.preserve.length > 0 ? (
@@ -161,9 +166,13 @@ export default function DesignVariantExplorer() {
                           {candidate.preserve.slice(0, 4).map((itemToPreserve) => <li key={itemToPreserve}>{itemToPreserve}</li>)}
                         </ul>
                       ) : null}
-                      <Link className="lt-lab__open" href={candidate.route}>
-                        실제 구현 보기 <span aria-hidden="true">↗</span>
-                      </Link>
+                      {candidate.route ? (
+                        <Link className="lt-lab__open" href={candidate.route}>
+                          실제 구현 보기 <span aria-hidden="true">↗</span>
+                        </Link>
+                      ) : (
+                        <span className="lt-lab__open lt-lab__open--pending">React 포팅 대기 <span aria-hidden="true">○</span></span>
+                      )}
                     </article>
                   ))}
                 </div>
