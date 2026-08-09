@@ -22,12 +22,22 @@ test("LoveTree 48 revisions remain inside one closed lineage", () => {
   assert.equal(lineage.revisions.find((revision) => revision.id === "48-10")?.decision, "rejected");
 });
 
-test("active and incoming numbered design work is represented as lineages, not V5/V6 products", () => {
-  assert.equal(lineageByNumber(49)?.status, "active");
-  assert.equal(lineageByNumber(50)?.status, "active");
-  assert.equal(lineageByNumber(51)?.status, "active");
-  assert.equal(lineageByNumber(52)?.status, "incoming");
+test("numbered design work remains lineages, not V5/V6 products", () => {
+  for (const number of [49, 50, 51, 52]) {
+    assert.equal(lineageByNumber(number)?.status, "active", `lineage ${number} should be active in the latest Drive snapshot`);
+  }
   assert.equal(PRODUCT_FAMILIES.length, 2);
+});
+
+test("latest Drive decisions are represented without overwriting prior revisions", () => {
+  const lineage49 = lineageByNumber(49);
+  const lineage50 = lineageByNumber(50);
+  const lineage52 = lineageByNumber(52);
+
+  assert.equal(lineage49?.revisions.find((revision) => revision.id === "49-v2-locked-storyboard")?.decision, "approved-plan");
+  assert.equal(lineage50?.revisions.find((revision) => revision.id === "50-existing-supernova-storyboard")?.decision, "approved-plan");
+  assert.equal(lineage52?.revisions.find((revision) => revision.id === "52-v2-cosmic-core")?.decision, "superseded");
+  assert.equal(lineage52?.revisions.find((revision) => revision.id === "52-v3-reference-earth-orbit")?.decision, "candidate");
 });
 
 test("each lineage has unique revision ids and at least one mapped LoveTree scenario", () => {
