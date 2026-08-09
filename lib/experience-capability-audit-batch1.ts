@@ -1,4 +1,34 @@
-import type { ExperienceCapability } from "./experience-capabilities";
+import type { DesignScenarioId } from "./design-lab";
+import type { ExperienceCapabilityStatus } from "./experience-capabilities";
+
+export type AuditedExperienceCapabilityId =
+  | "intent-to-path-navigation"
+  | "source-media-inspection-deck"
+  | "question-lens-recomposition";
+
+export type AuditedExperienceCapabilitySourceProject =
+  | "광주 북구 AI Navigator"
+  | "사실로"
+  | "이어온";
+
+export interface AuditedExperienceCapabilityEvidence {
+  project: AuditedExperienceCapabilitySourceProject;
+  artifact: string;
+  observed: readonly string[];
+}
+
+export interface AuditedExperienceCapability {
+  id: AuditedExperienceCapabilityId;
+  label: string;
+  status: ExperienceCapabilityStatus;
+  summary: string;
+  applicableScenarios: readonly DesignScenarioId[];
+  dataNeeds: readonly string[];
+  integrationRule: string;
+  risks: readonly string[];
+  evidence: readonly AuditedExperienceCapabilityEvidence[];
+  issue?: number;
+}
 
 export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 = [
   {
@@ -112,4 +142,4 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 = [
     ],
     issue: 78,
   },
-] as const satisfies readonly ExperienceCapability[];
+] as const satisfies readonly AuditedExperienceCapability[];
