@@ -1,0 +1,130 @@
+import type { DesignScenarioId } from "./design-lab";
+
+export type DesignLineageStatus = "active" | "closed" | "hold" | "incoming";
+export type DesignRevisionDecision =
+  | "baseline"
+  | "candidate"
+  | "approved-plan"
+  | "rejected"
+  | "reference"
+  | "superseded";
+
+export interface DesignRevision {
+  id: string;
+  label: string;
+  decision: DesignRevisionDecision;
+  executable: boolean;
+  notes?: string;
+}
+
+export interface DesignLineage {
+  id: string;
+  number: number;
+  label: string;
+  status: DesignLineageStatus;
+  summary: string;
+  scenarios: readonly DesignScenarioId[];
+  currentDecision: string;
+  sourceLabel: string;
+  revisions: readonly DesignRevision[];
+}
+
+export const DESIGN_LINEAGES: readonly DesignLineage[] = [
+  {
+    id: "lt-48-neon-pilot",
+    number: 48,
+    label: "Idol LoveTree Neon Pilot",
+    status: "closed",
+    summary: "공격적인 리듬과 예측 불가능한 시각 충격을 탐색한 시네마틱 계보입니다.",
+    scenarios: ["cinematic-brand", "entry-onboarding"],
+    currentDecision: "추가 revision 제작 중단. 01 V1을 기준 후보로 보존하고 10은 비교/반려 이력으로 유지합니다.",
+    sourceLabel: "LoveTree 48 네온파일럿 버전목록 / 차기 설계팀장 인수인계",
+    revisions: [
+      { id: "48-01", label: "V1 최초 시네마틱 원형", decision: "baseline", executable: true, notes: "현재 fallback/기준 후보" },
+      { id: "48-02", label: "V2 시네마틱 리듬 강화", decision: "reference", executable: true },
+      { id: "48-03", label: "V3 스토리보드 마스터 복귀", decision: "reference", executable: true },
+      { id: "48-04", label: "V4 V2 리듬 + V3 구조 통합", decision: "reference", executable: true },
+      { id: "48-05", label: "V4.1 품질 수정 최종 검토", decision: "reference", executable: true },
+      { id: "48-06", label: "V4.2 Storyboard 1", decision: "rejected", executable: false },
+      { id: "48-07", label: "V4.2 Storyboard 2", decision: "approved-plan", executable: false },
+      { id: "48-08", label: "V4.2 참고영상 리셋", decision: "reference", executable: true },
+      { id: "48-09", label: "V4.2b 인물 분석 복귀", decision: "reference", executable: true },
+      { id: "48-10", label: "FINAL GATE V1 정밀복원 인물분석 티저", decision: "rejected", executable: true, notes: "01보다 약해 비교/반려본으로 보존" },
+    ],
+  },
+  {
+    id: "lt-49-moment-reveal-portal",
+    number: 49,
+    label: "Idol Moment Reveal Portal",
+    status: "active",
+    summary: "한 PRIMARY의 여러 Moment가 감정적 Connection을 거쳐 Tree로 누적되는 남성 아이돌 시네마틱 계보입니다.",
+    scenarios: ["cinematic-brand", "entry-onboarding", "relationship-retrospective"],
+    currentDecision: "V2 Storyboard와 PRIMARY identity를 LOCK. 영상 복원을 먼저 하고 Full HTML은 승인 이후로 HOLD합니다.",
+    sourceLabel: "49 4-3기 V2 PRIMARY 승인 / STORYBOARD LOCK 최종 실행지시",
+    revisions: [
+      { id: "49-v1-v1.1", label: "V1 / V1.1 visual & product concept", decision: "rejected", executable: true, notes: "최신 지시에서 신규 V2의 코드·시각 베이스로 사용 금지" },
+      { id: "49-v2-locked-storyboard", label: "V2 Semantic Master / Locked Storyboard + PRIMARY", decision: "approved-plan", executable: false, notes: "STORYBOARD IS THE SPEC · VIDEO FIRST · HTML LAST" },
+    ],
+  },
+  {
+    id: "lt-50-dream-memory-cinematic",
+    number: 50,
+    label: "Dream Memory Cinematic",
+    status: "active",
+    summary: "여성 cast의 서로 다른 Moment Scene이 빛과 Connection으로 수렴해 Tree bloom으로 이어지는 시네마틱 계보입니다.",
+    scenarios: ["cinematic-brand", "relationship-retrospective", "growth-milestones"],
+    currentDecision: "기존 Supernova Storyboard를 최종 Visual Master로 LOCK. 새 캐스팅·새 콘티 없이 영상 복원부터 진행하고 Full HTML은 HOLD합니다.",
+    sourceLabel: "50 4-2기 Existing Supernova Storyboard LOCK 최종 실행지시",
+    revisions: [
+      { id: "50-v1-v1.1", label: "V1 / V1.1 HTML visual implementation", decision: "rejected", executable: true, notes: "REJECTED_VISUAL_IMPLEMENTATION" },
+      { id: "50-existing-supernova-storyboard", label: "Existing Supernova Storyboard Master", decision: "approved-plan", executable: false, notes: "Visual Master LOCK · video production next · Full HTML hold" },
+    ],
+  },
+  {
+    id: "lt-51-neon-human-analysis",
+    number: 51,
+    label: "Neon Human Analysis Interactive Promo",
+    status: "hold",
+    summary: "48에서 분리된 interactive promo 연구 계보입니다. 독립 계보는 유지하되 현재 분류대기 폴더에 직접 실행 자산이 없어 구현 상태를 과장하지 않습니다.",
+    scenarios: ["cinematic-brand", "relationship-retrospective"],
+    currentDecision: "48 Neon Pilot과 별도 계보로 보존. 현재 분류대기 폴더가 비어 있으므로 새 실행 자산/지시가 들어올 때까지 HOLD합니다.",
+    sourceLabel: "LoveTree 차기 설계팀장 인수인계 51 / 51 분류대기 폴더 2026-08-09 확인",
+    revisions: [],
+  },
+  {
+    id: "lt-52-global-moment-orbit",
+    number: 52,
+    label: "Global Moment Orbit / 3D Network",
+    status: "active",
+    summary: "Earth, Moment node와 luminous Connection arc를 느리고 거대한 3D orbit 공간에서 탐색하는 계보입니다.",
+    scenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
+    currentDecision: "V2/V2.1의 LoveTree Core 재해석을 중단하고 V3 Reference Earth Orbit을 현재 기준으로 진행합니다.",
+    sourceLabel: "52 4-1기 V3 REFERENCE-FIRST EARTH ORBIT 최종 방향정정",
+    revisions: [
+      { id: "52-v2-cosmic-core", label: "V2 Cosmic LoveTree Core POC", decision: "superseded", executable: true, notes: "LoveTree Core/Crystal/Seed Heart 중심 재해석 방향 중단" },
+      { id: "52-v3-reference-earth-orbit", label: "V3 Reference Earth Orbit", decision: "candidate", executable: true, notes: "Reference fidelity build · Earth 유지 · Moment node/Connection arc 의미만 최소 치환" },
+    ],
+  },
+] as const;
+
+export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
+  const problems: string[] = [];
+  const ids = new Set<string>();
+  const numbers = new Set<number>();
+
+  for (const lineage of lineages) {
+    if (ids.has(lineage.id)) problems.push(`duplicate lineage id: ${lineage.id}`);
+    ids.add(lineage.id);
+    if (numbers.has(lineage.number)) problems.push(`duplicate lineage number: ${lineage.number}`);
+    numbers.add(lineage.number);
+    if (lineage.scenarios.length === 0) problems.push(`lineage has no scenario: ${lineage.id}`);
+
+    const revisionIds = new Set<string>();
+    for (const revision of lineage.revisions) {
+      if (revisionIds.has(revision.id)) problems.push(`duplicate revision id in ${lineage.id}: ${revision.id}`);
+      revisionIds.add(revision.id);
+    }
+  }
+
+  return problems;
+}

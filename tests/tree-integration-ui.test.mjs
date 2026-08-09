@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { existsSync, readFileSync } from "node:fs";
 
-const home = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+const home = readFileSync(new URL("../app/legacy/page.tsx", import.meta.url), "utf8");
 const myTrees = readFileSync(new URL("../app/my-trees/page.tsx", import.meta.url), "utf8");
 const detail = readFileSync(new URL("../app/trees/[id]/page.tsx", import.meta.url), "utf8");
 const timeline = readFileSync(new URL("../app/trees/[id]/timeline/page.tsx", import.meta.url), "utf8");
@@ -16,7 +16,6 @@ test("real tree routes exist and use the App Router shape", () => {
   assert.equal(existsSync(new URL("../app/trees/[id]/timeline/page.tsx", import.meta.url)), true);
   assert.equal(existsSync(new URL("../app/trees/[id]/album/page.tsx", import.meta.url)), true);
   assert.match(myTrees, /\/api\/trees\?limit=/);
-  // Tree + memories fetching lives in the shared hook every view consumes.
   assert.match(hook, /\/api\/trees\/\$\{encodeURIComponent\(treeId\)\}/);
   assert.match(hook, /\/api\/trees\/\$\{encodeURIComponent\(treeId\)\}\/memories/);
   for (const page of [detail, timeline, album]) {
@@ -35,8 +34,6 @@ test("my-trees has authenticated loading, empty, error, retry, and keyboard-acce
 });
 
 test("tree detail loads real records and exposes owner-only memory mutation controls", () => {
-  // Mutation payloads, idempotency keys, and owner gating live in the
-  // shared hook; the composer submits the parent relationship.
   assert.match(hook, /method: "POST"/);
   assert.match(hook, /method: "PUT"/);
   assert.match(hook, /method: "DELETE"/);
@@ -46,7 +43,6 @@ test("tree detail loads real records and exposes owner-only memory mutation cont
   assert.match(hook, /parentId/);
   assert.match(composer, /parentId/);
   assert.match(composer, /clientKey/);
-  // Every tree view wires owner-gated create/update/delete from the hook.
   for (const page of [detail, timeline, album]) {
     assert.match(page, /isOwner/);
     assert.match(page, /createMoment/);
@@ -58,8 +54,6 @@ test("tree detail loads real records and exposes owner-only memory mutation cont
 test("first moment stores the selected local date and redirects to the real tree", () => {
   assert.match(home, /timestamp: momentDate/);
   assert.match(home, /value={momentDate}/);
-  // Home redirects to the new tree with the created moment selected and
-  // highlighted in the URL.
   assert.match(home, /router\.push\(`\/trees\/\$\{currentTreeId\}\?moment=\$\{data\.id\}&highlight=\$\{data\.id\}`\)/);
 });
 

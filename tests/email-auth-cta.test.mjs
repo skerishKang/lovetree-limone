@@ -98,9 +98,9 @@ test("email CTA still submits via the shared auth methods", async () => {
   assert.match(form, /disabled=\{busy\}/);
 });
 
-// 9. V1/V2 모두 공유 스타일 사용
-test("V1 pages use the shared email auth stylesheet and component", async () => {
-  for (const file of ["page.tsx", "my-trees/page.tsx", "trees/[id]/page.tsx"]) {
+// 9. Legacy V1/V2 모두 공유 스타일 사용
+test("Legacy V1 pages use the shared email auth stylesheet and component", async () => {
+  for (const file of ["legacy/page.tsx", "my-trees/page.tsx", "trees/[id]/page.tsx"]) {
     const page = await readApp(file);
     assert.match(page, /email-auth\.css/, `${file} missing email-auth.css`);
     assert.match(page, /EmailAuthForm/, `${file} missing EmailAuthForm`);

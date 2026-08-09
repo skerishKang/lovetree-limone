@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+const legacyHomeUrl = new URL("../app/legacy/page.tsx", import.meta.url);
+
 test("app layout has proper LoveTree metadata", async () => {
   const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
   assert.match(layout, /LoveTree/);
@@ -16,14 +18,14 @@ test("app layout wires Firebase auth provider", async () => {
   assert.match(layout, /@\/lib\/auth/);
 });
 
-test("app home page renders without errors", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("Legacy home page renders without errors", async () => {
+  const page = await readFile(legacyHomeUrl, "utf8");
   assert.match(page, /"use client"/);
   assert.match(page, /LoveTree/);
 });
 
-test("app home page wires real auth flow and guards mutations", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("Legacy home page wires real auth flow and guards mutations", async () => {
+  const page = await readFile(legacyHomeUrl, "utf8");
   assert.match(page, /useAuth\(\)/);
   assert.match(page, /login\(\)/);
   assert.match(page, /logout/);
@@ -35,15 +37,15 @@ test("app home page wires real auth flow and guards mutations", async () => {
   assert.match(page, /aria-busy=\{loginPending\}/);
 });
 
-test("Escape key only closes the open modal, not the whole screen", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("Escape key only closes the open Legacy modal, not the whole screen", async () => {
+  const page = await readFile(legacyHomeUrl, "utf8");
   assert.match(page, /if \(event\.key === "Escape"\)/);
   assert.doesNotMatch(page, /setView\("home"\);\s*$/m);
   assert.match(page, /setIsStartOpen\(false\)/);
 });
 
-test("API failures surface in the UI", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("Legacy API failures surface in the UI", async () => {
+  const page = await readFile(legacyHomeUrl, "utf8");
   assert.match(page, /setTreeError/);
   assert.match(page, /setPlantError/);
   assert.match(page, /role="alert"/);
