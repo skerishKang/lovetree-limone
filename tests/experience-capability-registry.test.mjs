@@ -10,6 +10,7 @@ import {
 } from "../lib/experience-capabilities.ts";
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 } from "../lib/experience-capability-audit-batch1.ts";
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH2 } from "../lib/experience-capability-audit-batch2.ts";
+import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH3 } from "../lib/experience-capability-audit-batch3.ts";
 import {
   EXPERIENCE_CAPABILITY_REGISTRY,
   registryCapabilitiesForScenario,
@@ -68,7 +69,8 @@ test("combined Design Lab capability registry preserves the original eight and a
   assert.equal(EXPERIENCE_CAPABILITIES.length, 8, "base registry remains immutable in this audit stack");
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.length, 3);
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH2.length, 1);
-  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 12);
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH3.length, 1);
+  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 13);
   assert.deepEqual(validateExperienceCapabilityRegistry(), []);
 
   const ids = EXPERIENCE_CAPABILITY_REGISTRY.map((capability) => capability.id);
@@ -103,10 +105,22 @@ test("Drive audit batch two records CAP-12 as prototyped after prototype validat
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
 });
 
+test("Drive audit batch three records CAP-13 as observed until prototype validation completes", () => {
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH3.length, 1);
+  const capability = AUDITED_EXPERIENCE_CAPABILITIES_BATCH3[0];
+
+  assert.equal(capability.id, "interruptible-cinematic-story-playback");
+  assert.equal(capability.status, "observed");
+  assert.equal(capability.issue, 116);
+  assert.ok(capability.evidence.length > 0);
+  assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
+});
+
 test("audited capability provenance pins the exact Drive artifacts without storing Drive URLs", () => {
   const audited = [
     ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH1,
     ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
+    ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH3,
   ];
   const sourceText = audited
     .flatMap((capability) => capability.evidence.map((evidence) => `${evidence.project} ${evidence.artifact}`))
@@ -121,6 +135,9 @@ test("audited capability provenance pins the exact Drive artifacts without stori
   assert.match(sourceText, /10\.SASILRO_시민사건원장_CINEMATIC_PREMIUM_v1\.html/);
   assert.match(sourceText, /15cwP3_0T6inN0Z0vazaQyWL6_Kp6SrvE/);
   assert.match(sourceText, /e0c82fb5548ad5fa0f5bb8a5660086c3992c929d5e35d917bf3d9f76e03355e0/);
+  assert.match(sourceText, /lovetree-editorial-memory-home-v3\.html/);
+  assert.match(sourceText, /1ZKbV9dClSpf4R3cqoU3Xz8VzYcjrKxvR/);
+  assert.match(sourceText, /a5f462c4ff9a541531cef0f0b010a2189622a97085e171cef83bc94b500239dc/);
 
   for (const capability of audited) {
     for (const evidence of capability.evidence) {
@@ -133,15 +150,20 @@ test("audited capabilities map to the intended LoveTree scenarios", () => {
   const onboardingIds = registryCapabilitiesForScenario("entry-onboarding").map((capability) => capability.id);
   const workspaceIds = registryCapabilitiesForScenario("tree-workspace").map((capability) => capability.id);
   const retrospectiveIds = registryCapabilitiesForScenario("relationship-retrospective").map((capability) => capability.id);
+  const milestoneIds = registryCapabilitiesForScenario("growth-milestones").map((capability) => capability.id);
 
   assert.ok(onboardingIds.includes("intent-to-path-navigation"));
   assert.ok(onboardingIds.includes("narrative-to-structured-moment-assembly"));
+  assert.ok(onboardingIds.includes("interruptible-cinematic-story-playback"));
   assert.ok(workspaceIds.includes("source-media-inspection-deck"));
   assert.ok(workspaceIds.includes("question-lens-recomposition"));
   assert.ok(workspaceIds.includes("narrative-to-structured-moment-assembly"));
+  assert.ok(workspaceIds.includes("interruptible-cinematic-story-playback"));
   assert.ok(retrospectiveIds.includes("intent-to-path-navigation"));
   assert.ok(retrospectiveIds.includes("source-media-inspection-deck"));
   assert.ok(retrospectiveIds.includes("question-lens-recomposition"));
+  assert.ok(retrospectiveIds.includes("interruptible-cinematic-story-playback"));
+  assert.ok(milestoneIds.includes("interruptible-cinematic-story-playback"));
 });
 
 test("Design Lab component consumes the combined capability registry", async () => {
@@ -152,4 +174,6 @@ test("Design Lab component consumes the combined capability registry", async () 
 
   assert.match(component, /EXPERIENCE_CAPABILITY_REGISTRY as EXPERIENCE_CAPABILITIES/);
   assert.match(component, /ExperienceCapabilityRegistrySourceProject/);
+  assert.match(component, /interruptible-cinematic-story-playback/);
+  assert.match(component, /\/design-lab\/capabilities\/cinematic-playback/);
 });
