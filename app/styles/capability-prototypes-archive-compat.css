@@ -1,0 +1,15 @@
+.lt-cap-proto__archive-object {
+  transform:
+    translateX(calc(var(--archive-offset) * 128px))
+    translateZ(calc(var(--archive-abs) * -28px))
+    rotateY(calc(var(--archive-offset) * -5deg));
+}
+
+@media (max-width: 620px) {
+  .lt-cap-proto__archive-object {
+    transform:
+      translateX(calc(var(--archive-offset) * 106px))
+      translateZ(calc(var(--archive-abs) * -20px))
+      rotateY(calc(var(--archive-offset) * -4deg));
+  }
+}
