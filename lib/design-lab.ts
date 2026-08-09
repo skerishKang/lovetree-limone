@@ -70,7 +70,7 @@ export const PRODUCT_FAMILIES: readonly ProductFamily[] = [
     id: "next",
     label: "Next LoveTree",
     route: "/v4",
-    description: "동생이 공급하는 디자인 후보를 공통 Auth·API·DB·Tree·Moment 기능 위에서 비교하는 차세대 제품입니다.",
+    description: "새로운 디자인 후보를 공통 Auth·API·DB·Tree·Moment 기능 위에서 검증하고 조합하는 차세대 제품입니다.",
   },
 ] as const;
 
