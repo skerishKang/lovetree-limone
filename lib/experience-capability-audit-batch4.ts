@@ -27,7 +27,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH4 = [
   {
     id: "directed-connection-path-replay",
     label: "Directed Connection Path Replay",
-    status: "observed",
+    status: "prototyped",
     summary: "선택한 Moment에서 시작해 실제 directed Connection 순서를 따라가며 Moment와 Connection을 번갈아 재생하고, 이미 지난 경로를 traversed memory로 남기는 회고 메커니즘입니다.",
     applicableScenarios: ["tree-workspace", "relationship-retrospective"],
     dataNeeds: [
