@@ -9,6 +9,7 @@ function format(result) {
     `firebaseProjectId=${result.firebaseProjectId}`,
     `neonProjectId=${result.neonProjectId}`,
     `neonBranchId=${result.neonBranchId}`,
+    `databaseHost=${result.databaseHost}`,
     `appEnv=${result.appEnv}`,
     `apiMutationsEnabled=${result.apiMutationsEnabled}`,
   ].join("\n");
