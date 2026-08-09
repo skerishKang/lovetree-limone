@@ -8,6 +8,7 @@ import {
   transitionArchiveState,
 } from "@/lib/capability-prototypes-core";
 import "@/app/styles/capability-prototypes-core.css";
+import "@/app/styles/capability-prototypes-archive-compat.css";
 
 type ArchiveStyle = CSSProperties & {
   "--archive-offset"?: number;
