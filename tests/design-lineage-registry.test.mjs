@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { PRODUCT_FAMILIES } from "../lib/design-lab.ts";
+import { DESIGN_CANDIDATES, PRODUCT_FAMILIES } from "../lib/design-lab.ts";
 import { DESIGN_LINEAGES, validateDesignLineages } from "../lib/design-lineages.ts";
 
 const lineageByNumber = (number) => DESIGN_LINEAGES.find((lineage) => lineage.number === number);
@@ -49,4 +49,28 @@ test("each lineage has unique revision ids and at least one mapped LoveTree scen
     const revisionIds = lineage.revisions.map((revision) => revision.id);
     assert.equal(new Set(revisionIds).size, revisionIds.length, `${lineage.id} revision ids must be unique`);
   }
+});
+
+test("every lineage-linked Scenario Variant points to an existing Lineage revision", () => {
+  const linked = DESIGN_CANDIDATES.filter((candidate) => candidate.lineageId || candidate.revisionId);
+  assert.ok(linked.length > 0, "at least one live intake candidate should exercise Lineage/Revision linkage");
+
+  for (const candidate of linked) {
+    assert.ok(candidate.lineageId && candidate.revisionId, `${candidate.id} must provide lineageId and revisionId together`);
+    const lineage = DESIGN_LINEAGES.find((item) => item.id === candidate.lineageId);
+    assert.ok(lineage, `${candidate.id} references missing lineage ${candidate.lineageId}`);
+    assert.ok(
+      lineage.revisions.some((revision) => revision.id === candidate.revisionId),
+      `${candidate.id} references missing revision ${candidate.revisionId}`,
+    );
+  }
+});
+
+test("LoveTree 52 V3 is visible for review before its React route exists", () => {
+  const candidate = DESIGN_CANDIDATES.find((item) => item.id === "lineage:52-v3-reference-earth-orbit");
+  assert.ok(candidate);
+  assert.equal(candidate.status, "mapped");
+  assert.equal(candidate.route, undefined);
+  assert.equal(candidate.lineageId, "lt-52-global-moment-orbit");
+  assert.equal(candidate.revisionId, "52-v3-reference-earth-orbit");
 });
