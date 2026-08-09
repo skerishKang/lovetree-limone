@@ -33,6 +33,7 @@ const PROTOTYPE_ROUTES: Readonly<Record<string, string>> = {
   "question-lens-recomposition": "/design-lab/capabilities/question-lens",
   "narrative-to-structured-moment-assembly": "/design-lab/capabilities/narrative-assembly",
   "interruptible-cinematic-story-playback": "/design-lab/capabilities/cinematic-playback",
+  "directed-connection-path-replay": "/design-lab/capabilities/connection-replay",
 };
 
 type ScenarioFilter = "all" | DesignScenarioId;
