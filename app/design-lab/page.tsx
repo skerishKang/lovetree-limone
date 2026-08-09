@@ -20,7 +20,7 @@ const STATUS_LABELS = {
 
 export default function DesignLabPage() {
   const grouped = candidatesByScenario();
-  const siblingCount = DESIGN_CANDIDATES.filter((candidate) => candidate.origin === "sibling-html").length;
+  const sourceCount = DESIGN_CANDIDATES.filter((candidate) => candidate.origin === "sibling-html").length;
   const implementedCount = DESIGN_CANDIDATES.filter((candidate) => candidate.status === "implemented").length;
 
   return (
@@ -37,7 +37,7 @@ export default function DesignLabPage() {
         </div>
         <div className="lt-lab__summary" aria-label="Design Lab 후보 요약">
           <span><b>{DESIGN_SCENARIOS.length}</b>시나리오</span>
-          <span><b>{siblingCount}</b>동생 원본</span>
+          <span><b>{sourceCount}</b>디자인 원본</span>
           <span><b>{implementedCount}</b>구현 후보</span>
         </div>
       </header>
