@@ -76,12 +76,12 @@ test("combined Design Lab capability registry preserves the original eight and a
   }
 });
 
-test("Drive audit batch records CAP-09 and CAP-10 as prototyped while keeping CAP-11 conservative", () => {
+test("Drive audit batch records CAP-09, CAP-10 and CAP-11 as prototyped", () => {
   const byId = new Map(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.map((capability) => [capability.id, capability]));
 
   assert.equal(byId.get("intent-to-path-navigation")?.status, "prototyped");
   assert.equal(byId.get("source-media-inspection-deck")?.status, "prototyped");
-  assert.equal(byId.get("question-lens-recomposition")?.status, "observed");
+  assert.equal(byId.get("question-lens-recomposition")?.status, "prototyped");
 
   for (const capability of AUDITED_EXPERIENCE_CAPABILITIES_BATCH1) {
     assert.equal(capability.issue, 78);

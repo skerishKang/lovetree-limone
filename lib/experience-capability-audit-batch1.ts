@@ -110,7 +110,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 = [
   {
     id: "question-lens-recomposition",
     label: "Question-Lens Recomposition",
-    status: "observed",
+    status: "prototyped",
     summary: "하나의 canonical data space를 여러 사용자 질문 렌즈로 재구성해 hero, issue, entity, timeline과 next-action 초점을 함께 바꾸는 패턴입니다.",
     applicableScenarios: ["tree-workspace", "relationship-retrospective", "growth-milestones"],
     dataNeeds: [
