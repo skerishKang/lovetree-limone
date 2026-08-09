@@ -1,28 +1,15 @@
 import Link from "next/link";
 import DesignLineageOverview from "@/app/components/product/DesignLineageOverview";
+import DesignVariantExplorer from "@/app/components/product/DesignVariantExplorer";
 import ExperienceCapabilityLibrary from "@/app/components/product/ExperienceCapabilityLibrary";
-import {
-  DESIGN_CANDIDATES,
-  DESIGN_SCENARIOS,
-  candidatesByScenario,
-} from "@/lib/design-lab";
+import { DESIGN_CANDIDATES, DESIGN_SCENARIOS } from "@/lib/design-lab";
 import { DESIGN_LINEAGES } from "@/lib/design-lineages";
 import "@/app/styles/design-lab.css";
 import "@/app/styles/design-lineages.css";
+import "@/app/styles/design-variant-explorer.css";
 import "@/app/styles/experience-capabilities.css";
 
-const STATUS_LABELS = {
-  received: "접수",
-  mapped: "분류됨",
-  implemented: "구현됨",
-  validated: "검증됨",
-  shortlisted: "최종후보",
-  selected: "채택",
-  superseded: "보관",
-} as const;
-
 export default function DesignLabPage() {
-  const grouped = candidatesByScenario();
   const sourceCount = DESIGN_CANDIDATES.filter((candidate) => candidate.origin === "sibling-html").length;
   const implementedCount = DESIGN_CANDIDATES.filter((candidate) => candidate.status === "implemented").length;
 
@@ -47,6 +34,7 @@ export default function DesignLabPage() {
 
       <nav className="lt-lab__jump" aria-label="Design Lab 바로가기">
         <a href="#design-lineages">Design Lineages</a>
+        <a href="#scenario-variants">Scenario Variants</a>
         {DESIGN_SCENARIOS.map((scenario) => (
           <a key={scenario.id} href={`#${scenario.id}`}>{scenario.label}</a>
         ))}
@@ -54,48 +42,7 @@ export default function DesignLabPage() {
       </nav>
 
       <DesignLineageOverview />
-
-      <div className="lt-lab__scenarios">
-        {DESIGN_SCENARIOS.map((scenario) => {
-          const candidates = grouped.get(scenario.id) ?? [];
-          return (
-            <section className="lt-lab__scenario" id={scenario.id} key={scenario.id}>
-              <div className="lt-lab__scenario-heading">
-                <div>
-                  <span>{String(scenario.order).padStart(2, "0")}</span>
-                  <h2>{scenario.label}</h2>
-                </div>
-                <p>{scenario.description}</p>
-              </div>
-
-              <div className="lt-lab__grid">
-                {candidates.map((candidate) => (
-                  <article className="lt-lab__card" key={candidate.id}>
-                    <div className="lt-lab__card-topline">
-                      <span className={`lt-lab__status lt-lab__status--${candidate.status}`}>
-                        {STATUS_LABELS[candidate.status]}
-                      </span>
-                      <span className="lt-lab__kind">{candidate.kind}</span>
-                    </div>
-                    <h3>{candidate.label}</h3>
-                    {candidate.sourceFile ? <code>{candidate.sourceFile}</code> : null}
-                    {candidate.notes ? <p>{candidate.notes}</p> : null}
-                    {candidate.preserve && candidate.preserve.length > 0 ? (
-                      <ul>
-                        {candidate.preserve.slice(0, 4).map((item) => <li key={item}>{item}</li>)}
-                      </ul>
-                    ) : null}
-                    <Link className="lt-lab__open" href={candidate.route}>
-                      실제 구현 보기 <span aria-hidden="true">↗</span>
-                    </Link>
-                  </article>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-
+      <DesignVariantExplorer />
       <ExperienceCapabilityLibrary />
 
       <footer className="lt-lab__footer">
