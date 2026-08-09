@@ -9,15 +9,25 @@ import {
   type AuditedExperienceCapability,
   type AuditedExperienceCapabilitySourceProject,
 } from "./experience-capability-audit-batch1";
+import {
+  AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
+  type AuditedExperienceCapabilityBatch2,
+  type AuditedExperienceCapabilityBatch2SourceProject,
+} from "./experience-capability-audit-batch2";
 
-export type ExperienceCapabilityRegistryItem = ExperienceCapability | AuditedExperienceCapability;
+export type ExperienceCapabilityRegistryItem =
+  | ExperienceCapability
+  | AuditedExperienceCapability
+  | AuditedExperienceCapabilityBatch2;
 export type ExperienceCapabilityRegistrySourceProject =
   | ExperienceCapabilitySourceProject
-  | AuditedExperienceCapabilitySourceProject;
+  | AuditedExperienceCapabilitySourceProject
+  | AuditedExperienceCapabilityBatch2SourceProject;
 
 export const EXPERIENCE_CAPABILITY_REGISTRY: readonly ExperienceCapabilityRegistryItem[] = [
   ...BASE_EXPERIENCE_CAPABILITIES,
   ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH1,
+  ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
 ];
 
 export function validateExperienceCapabilityRegistry(

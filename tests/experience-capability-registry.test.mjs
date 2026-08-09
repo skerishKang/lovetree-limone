@@ -9,6 +9,7 @@ import {
   validateExperienceCapabilities,
 } from "../lib/experience-capabilities.ts";
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 } from "../lib/experience-capability-audit-batch1.ts";
+import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH2 } from "../lib/experience-capability-audit-batch2.ts";
 import {
   EXPERIENCE_CAPABILITY_REGISTRY,
   registryCapabilitiesForScenario,
@@ -63,10 +64,11 @@ test("capability governance keeps backend rewrites out of visual adoption by def
   assert.match(history.integrationRule, /판단|검증/);
 });
 
-test("combined Design Lab capability registry preserves the original eight and adds audit batch one", () => {
+test("combined Design Lab capability registry preserves the original eight and adds audited batches", () => {
   assert.equal(EXPERIENCE_CAPABILITIES.length, 8, "base registry remains immutable in this audit stack");
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.length, 3);
-  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 11);
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH2.length, 1);
+  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 12);
   assert.deepEqual(validateExperienceCapabilityRegistry(), []);
 
   const ids = EXPERIENCE_CAPABILITY_REGISTRY.map((capability) => capability.id);
@@ -76,7 +78,7 @@ test("combined Design Lab capability registry preserves the original eight and a
   }
 });
 
-test("Drive audit batch records CAP-09, CAP-10 and CAP-11 as prototyped", () => {
+test("Drive audit batch one records CAP-09 CAP-10 and CAP-11 as prototyped", () => {
   const byId = new Map(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.map((capability) => [capability.id, capability]));
 
   assert.equal(byId.get("intent-to-path-navigation")?.status, "prototyped");
@@ -90,8 +92,23 @@ test("Drive audit batch records CAP-09, CAP-10 and CAP-11 as prototyped", () => 
   }
 });
 
+test("Drive audit batch two records CAP-12 as observed until prototype validation", () => {
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH2.length, 1);
+  const capability = AUDITED_EXPERIENCE_CAPABILITIES_BATCH2[0];
+
+  assert.equal(capability.id, "narrative-to-structured-moment-assembly");
+  assert.equal(capability.status, "observed");
+  assert.equal(capability.issue, 107);
+  assert.ok(capability.evidence.length > 0);
+  assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
+});
+
 test("audited capability provenance pins the exact Drive artifacts without storing Drive URLs", () => {
-  const sourceText = AUDITED_EXPERIENCE_CAPABILITIES_BATCH1
+  const audited = [
+    ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH1,
+    ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
+  ];
+  const sourceText = audited
     .flatMap((capability) => capability.evidence.map((evidence) => `${evidence.project} ${evidence.artifact}`))
     .join("\n");
 
@@ -101,8 +118,11 @@ test("audited capability provenance pins the exact Drive artifacts without stori
   assert.match(sourceText, /1bxgbIAlS4zyu1765ZsbyXZUukQNCqMkl/);
   assert.match(sourceText, /01_이어온_오늘의회사_v1_기능형\.html/);
   assert.match(sourceText, /1BBMWVJlZOSdNkb2ZHuQIigcAjCX7fnh8/);
+  assert.match(sourceText, /10\.SASILRO_시민사건원장_CINEMATIC_PREMIUM_v1\.html/);
+  assert.match(sourceText, /15cwP3_0T6inN0Z0vazaQyWL6_Kp6SrvE/);
+  assert.match(sourceText, /e0c82fb5548ad5fa0f5bb8a5660086c3992c929d5e35d917bf3d9f76e03355e0/);
 
-  for (const capability of AUDITED_EXPERIENCE_CAPABILITIES_BATCH1) {
+  for (const capability of audited) {
     for (const evidence of capability.evidence) {
       assert.doesNotMatch(evidence.artifact, /https?:\/\//);
     }
@@ -115,8 +135,10 @@ test("audited capabilities map to the intended LoveTree scenarios", () => {
   const retrospectiveIds = registryCapabilitiesForScenario("relationship-retrospective").map((capability) => capability.id);
 
   assert.ok(onboardingIds.includes("intent-to-path-navigation"));
+  assert.ok(onboardingIds.includes("narrative-to-structured-moment-assembly"));
   assert.ok(workspaceIds.includes("source-media-inspection-deck"));
   assert.ok(workspaceIds.includes("question-lens-recomposition"));
+  assert.ok(workspaceIds.includes("narrative-to-structured-moment-assembly"));
   assert.ok(retrospectiveIds.includes("intent-to-path-navigation"));
   assert.ok(retrospectiveIds.includes("source-media-inspection-deck"));
   assert.ok(retrospectiveIds.includes("question-lens-recomposition"));
