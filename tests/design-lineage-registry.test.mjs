@@ -23,19 +23,22 @@ test("LoveTree 48 revisions remain inside one closed lineage", () => {
 });
 
 test("numbered design work remains lineages, not V5/V6 products", () => {
-  for (const number of [49, 50, 51, 52]) {
+  for (const number of [49, 50, 52]) {
     assert.equal(lineageByNumber(number)?.status, "active", `lineage ${number} should be active in the latest Drive snapshot`);
   }
+  assert.equal(lineageByNumber(51)?.status, "hold", "lineage 51 is preserved but held while its intake folder has no executable assets");
   assert.equal(PRODUCT_FAMILIES.length, 2);
 });
 
 test("latest Drive decisions are represented without overwriting prior revisions", () => {
   const lineage49 = lineageByNumber(49);
   const lineage50 = lineageByNumber(50);
+  const lineage51 = lineageByNumber(51);
   const lineage52 = lineageByNumber(52);
 
   assert.equal(lineage49?.revisions.find((revision) => revision.id === "49-v2-locked-storyboard")?.decision, "approved-plan");
   assert.equal(lineage50?.revisions.find((revision) => revision.id === "50-existing-supernova-storyboard")?.decision, "approved-plan");
+  assert.equal(lineage51?.revisions.length, 0);
   assert.equal(lineage52?.revisions.find((revision) => revision.id === "52-v2-cosmic-core")?.decision, "superseded");
   assert.equal(lineage52?.revisions.find((revision) => revision.id === "52-v3-reference-earth-orbit")?.decision, "candidate");
 });
