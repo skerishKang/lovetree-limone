@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { DESIGN_SCENARIOS, type DesignScenarioId } from "@/lib/design-lab";
 import { type ExperienceCapabilityStatus } from "@/lib/experience-capabilities";
@@ -16,6 +17,21 @@ const STATUS_LABELS: Record<ExperienceCapabilityStatus, string> = {
   validated: "검증됨",
   adopted: "채택",
   rejected: "보류/반려",
+};
+
+const PROTOTYPE_ROUTES: Readonly<Record<string, string>> = {
+  "spatial-orbit-3d": "/design-lab/capabilities/spatial-orbit",
+  "cinematic-scene-transition": "/design-lab/capabilities/cinematic-convergence",
+  "memory-fragment-convergence": "/design-lab/capabilities/cinematic-convergence",
+  "relationship-spatial-map": "/design-lab/capabilities/relationship-history",
+  "temporal-version-history": "/design-lab/capabilities/relationship-history",
+  "physical-object-navigation": "/design-lab/capabilities/spatial-archive",
+  "spatial-document-exploration": "/design-lab/capabilities/spatial-archive",
+  "longform-milestone-navigation": "/design-lab/capabilities/milestone-index",
+  "intent-to-path-navigation": "/design-lab/capabilities/intent-to-path",
+  "source-media-inspection-deck": "/design-lab/capabilities/media-inspection",
+  "question-lens-recomposition": "/design-lab/capabilities/question-lens",
+  "narrative-to-structured-moment-assembly": "/design-lab/capabilities/narrative-assembly",
 };
 
 type ScenarioFilter = "all" | DesignScenarioId;
@@ -100,60 +116,69 @@ export default function ExperienceCapabilityLibrary() {
         </div>
       ) : (
         <div className="lt-capabilities__grid">
-          {filtered.map((capability) => (
-            <article className="lt-capability" key={capability.id}>
-              <div className="lt-capability__topline">
-                <span className={`lt-capability__status lt-capability__status--${capability.status}`}>
-                  {STATUS_LABELS[capability.status]}
-                </span>
-                <code>{capability.id}</code>
-              </div>
-
-              <h3>{capability.label}</h3>
-              <p className="lt-capability__summary">{capability.summary}</p>
-
-              <div className="lt-capability__section">
-                <strong>LoveTree 적용 후보</strong>
-                <div className="lt-capability__chips">
-                  {capability.applicableScenarios.map((scenarioId) => <span key={scenarioId}>{scenarioLabel(scenarioId)}</span>)}
+          {filtered.map((capability) => {
+            const prototypeRoute = PROTOTYPE_ROUTES[capability.id];
+            return (
+              <article className="lt-capability" key={capability.id}>
+                <div className="lt-capability__topline">
+                  <span className={`lt-capability__status lt-capability__status--${capability.status}`}>
+                    {STATUS_LABELS[capability.status]}
+                  </span>
+                  <code>{capability.id}</code>
                 </div>
-              </div>
 
-              <div className="lt-capability__section">
-                <strong>필요 데이터</strong>
-                <ul>
-                  {capability.dataNeeds.map((need) => <li key={need}>{need}</li>)}
-                </ul>
-              </div>
+                <h3>{capability.label}</h3>
+                <p className="lt-capability__summary">{capability.summary}</p>
 
-              <div className="lt-capability__section">
-                <strong>추출 원칙</strong>
-                <p>{capability.integrationRule}</p>
-              </div>
-
-              <details className="lt-capability__evidence">
-                <summary>출처와 관찰 증거</summary>
-                {capability.evidence.map((evidence) => (
-                  <div key={`${capability.id}:${evidence.project}:${evidence.artifact}`}>
-                    <b>{evidence.project}</b>
-                    <code>{evidence.artifact}</code>
-                    <ul>{evidence.observed.map((item) => <li key={item}>{item}</li>)}</ul>
+                <div className="lt-capability__section">
+                  <strong>LoveTree 적용 후보</strong>
+                  <div className="lt-capability__chips">
+                    {capability.applicableScenarios.map((scenarioId) => <span key={scenarioId}>{scenarioLabel(scenarioId)}</span>)}
                   </div>
-                ))}
-              </details>
+                </div>
 
-              <div className="lt-capability__risks">
-                <strong>검증 포인트</strong>
-                <p>{capability.risks.join(" · ")}</p>
-              </div>
+                <div className="lt-capability__section">
+                  <strong>필요 데이터</strong>
+                  <ul>
+                    {capability.dataNeeds.map((need) => <li key={need}>{need}</li>)}
+                  </ul>
+                </div>
 
-              {capability.issue ? (
-                <a className="lt-capability__issue" href={`https://github.com/skerishKang/lovetree-limone/issues/${capability.issue}`}>
-                  Prototype / research issue #{capability.issue} ↗
-                </a>
-              ) : null}
-            </article>
-          ))}
+                <div className="lt-capability__section">
+                  <strong>추출 원칙</strong>
+                  <p>{capability.integrationRule}</p>
+                </div>
+
+                <details className="lt-capability__evidence">
+                  <summary>출처와 관찰 증거</summary>
+                  {capability.evidence.map((evidence) => (
+                    <div key={`${capability.id}:${evidence.project}:${evidence.artifact}`}>
+                      <b>{evidence.project}</b>
+                      <code>{evidence.artifact}</code>
+                      <ul>{evidence.observed.map((item) => <li key={item}>{item}</li>)}</ul>
+                    </div>
+                  ))}
+                </details>
+
+                <div className="lt-capability__risks">
+                  <strong>검증 포인트</strong>
+                  <p>{capability.risks.join(" · ")}</p>
+                </div>
+
+                {prototypeRoute ? (
+                  <Link className="lt-capability__issue" href={prototypeRoute}>
+                    Internal prototype 열기 →
+                  </Link>
+                ) : null}
+
+                {capability.issue ? (
+                  <a className="lt-capability__issue" href={`https://github.com/skerishKang/lovetree-limone/issues/${capability.issue}`}>
+                    Prototype / research issue #{capability.issue} ↗
+                  </a>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>
