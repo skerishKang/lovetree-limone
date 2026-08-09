@@ -1,4 +1,4 @@
-# Design Variant & Capability Intake Template
+# Design Lineage, Variant & Capability Intake Template
 
 Use this template whenever a new sibling-supplied design arrives in Google Drive or another approved source.
 
@@ -20,7 +20,22 @@ What is the design actually helping the user do?
 
 Do not infer missing behavior without labeling it as an inference.
 
-## Classification
+## First classification: Lineage or Revision?
+
+Before creating a new Variant, decide whether the item belongs to an existing numbered/design lineage.
+
+- Existing Lineage id/number:
+- New Lineage needed: yes / no
+- Revision id/version label:
+- Revision decision: `baseline` / `candidate` / `approved-plan` / `rejected` / `reference`
+- Executable implementation exists: yes / no
+- Current lineage status: `active` / `closed` / `hold` / `incoming`
+
+**A V1/V2/V3/V4 label inside one design track is a Revision, not a new LoveTree product generation.**
+
+Create a new Lineage only when the work has a genuinely separate design thesis, benchmark lineage, product job or interaction direction. Cosmetic fixes and iterative refinements stay inside the existing Lineage.
+
+## Second classification: Variant / Capability / Reference
 
 Select every classification that applies:
 
@@ -50,6 +65,8 @@ New Scenario justification, only if truly necessary:
 ## Variant record, when applicable
 
 - Candidate id:
+- Parent Lineage id, when applicable:
+- Revision id, when applicable:
 - Candidate route:
 - Kind: `screen` / `mechanic` / `experience` / `historical`
 - Status: `received` / `mapped` / `implemented` / `validated` / `shortlisted` / `selected` / `superseded`
@@ -94,6 +111,13 @@ If a capability appears to require schema/backend changes, record the need and o
 
 ## Validation
 
+Revision/Lineage checks:
+
+- [ ] revision is attached to the correct lineage
+- [ ] baseline/candidate/rejected status is explicit
+- [ ] earlier approved/baseline files remain preserved
+- [ ] a cosmetic revision did not create a new product family
+
 Variant-owned checks:
 
 - [ ] renders
@@ -115,7 +139,7 @@ Capability-owned checks:
 
 - Strongest characteristic:
 - Weakest characteristic:
-- Better/worse than which existing candidate:
+- Better/worse than which existing revision/candidate:
 - Recommendation: observe / prototype / implement / shortlist / select / reject
 - User review:
 - Sibling review:
