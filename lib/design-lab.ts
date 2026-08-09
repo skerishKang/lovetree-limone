@@ -170,6 +170,24 @@ export const SIBLING_SOURCE_CANDIDATES: readonly DesignCandidate[] = V4_SOURCE_M
 
 export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
   {
+    id: "lineage:48-01-v1-cinematic-baseline",
+    label: "48 V1 First Cinematic Baseline",
+    scenarioId: "cinematic-brand",
+    status: "mapped",
+    origin: "lineage-intake",
+    kind: "experience",
+    lineageId: "lt-48-neon-pilot",
+    revisionId: "48-01",
+    sourceFile: "01_V1_최초시네마틱_원형_바로보기.html",
+    role: "48 Neon Pilot 계보의 최초 시네마틱 원형이자 현재 fallback/비교 기준 Variant",
+    preserve: [
+      "aggressive cinematic rhythm",
+      "unpredictable visual shock",
+      "V1 baseline composition and motion",
+    ],
+    notes: "48 추가 revision 제작은 중단됐습니다. 01 V1을 실행 가능한 기준 원본으로 보존하되 아직 저장소 React route로 포팅하지 않습니다.",
+  },
+  {
     id: "lineage:52-v3-reference-earth-orbit",
     label: "52 V3 Reference Earth Orbit",
     scenarioId: "relationship-retrospective",
