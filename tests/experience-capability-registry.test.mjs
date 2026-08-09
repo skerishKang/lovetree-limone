@@ -11,6 +11,7 @@ import {
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 } from "../lib/experience-capability-audit-batch1.ts";
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH2 } from "../lib/experience-capability-audit-batch2.ts";
 import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH3 } from "../lib/experience-capability-audit-batch3.ts";
+import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH4 } from "../lib/experience-capability-audit-batch4.ts";
 import {
   EXPERIENCE_CAPABILITY_REGISTRY,
   registryCapabilitiesForScenario,
@@ -70,7 +71,8 @@ test("combined Design Lab capability registry preserves the original eight and a
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.length, 3);
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH2.length, 1);
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH3.length, 1);
-  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 13);
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH4.length, 1);
+  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 14);
   assert.deepEqual(validateExperienceCapabilityRegistry(), []);
 
   const ids = EXPERIENCE_CAPABILITY_REGISTRY.map((capability) => capability.id);
@@ -116,11 +118,23 @@ test("Drive audit batch three records CAP-13 as prototyped after prototype valid
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
 });
 
+test("Drive audit batch four records CAP-14 as observed until prototype validation completes", () => {
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH4.length, 1);
+  const capability = AUDITED_EXPERIENCE_CAPABILITIES_BATCH4[0];
+
+  assert.equal(capability.id, "directed-connection-path-replay");
+  assert.equal(capability.status, "observed");
+  assert.equal(capability.issue, 120);
+  assert.ok(capability.evidence.length > 0);
+  assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
+});
+
 test("audited capability provenance pins the exact Drive artifacts without storing Drive URLs", () => {
   const audited = [
     ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH1,
     ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
     ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH3,
+    ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH4,
   ];
   const sourceText = audited
     .flatMap((capability) => capability.evidence.map((evidence) => `${evidence.project} ${evidence.artifact}`))
@@ -138,6 +152,9 @@ test("audited capability provenance pins the exact Drive artifacts without stori
   assert.match(sourceText, /lovetree-editorial-memory-home-v3\.html/);
   assert.match(sourceText, /1ZKbV9dClSpf4R3cqoU3Xz8VzYcjrKxvR/);
   assert.match(sourceText, /a5f462c4ff9a541531cef0f0b010a2189622a97085e171cef83bc94b500239dc/);
+  assert.match(sourceText, /53_LOVETREE_NODE_LIGHT_FLOW_v1\.html/);
+  assert.match(sourceText, /1TwqJox-xpBSC-I3nbroxGee7v4HCC9E-/);
+  assert.match(sourceText, /ed3701b33e5a3afc96c9210162f664bbc32d0d800907bf7f8f702cc6a8021519/);
 
   for (const capability of audited) {
     for (const evidence of capability.evidence) {
@@ -159,10 +176,12 @@ test("audited capabilities map to the intended LoveTree scenarios", () => {
   assert.ok(workspaceIds.includes("question-lens-recomposition"));
   assert.ok(workspaceIds.includes("narrative-to-structured-moment-assembly"));
   assert.ok(workspaceIds.includes("interruptible-cinematic-story-playback"));
+  assert.ok(workspaceIds.includes("directed-connection-path-replay"));
   assert.ok(retrospectiveIds.includes("intent-to-path-navigation"));
   assert.ok(retrospectiveIds.includes("source-media-inspection-deck"));
   assert.ok(retrospectiveIds.includes("question-lens-recomposition"));
   assert.ok(retrospectiveIds.includes("interruptible-cinematic-story-playback"));
+  assert.ok(retrospectiveIds.includes("directed-connection-path-replay"));
   assert.ok(milestoneIds.includes("interruptible-cinematic-story-playback"));
 });
 
@@ -176,4 +195,6 @@ test("Design Lab component consumes the combined capability registry", async () 
   assert.match(component, /ExperienceCapabilityRegistrySourceProject/);
   assert.match(component, /interruptible-cinematic-story-playback/);
   assert.match(component, /\/design-lab\/capabilities\/cinematic-playback/);
+  assert.match(component, /directed-connection-path-replay/);
+  assert.match(component, /\/design-lab\/capabilities\/connection-replay/);
 });
