@@ -98,12 +98,8 @@ function isHttpUrl(value: string): boolean {
 }
 
 function validateString(value: unknown, rule: StringRule, field: string): string | null {
-  if (value === undefined) {
+  if (value === undefined || value === null) {
     return rule.required ? `${field} is required` : null;
-  }
-  if (value === null) {
-    if (rule.required) return `${field} is required`;
-    return rule.nullable ? null : `${field} must be a string`;
   }
   if (typeof value !== "string") return `${field} must be a string`;
 
