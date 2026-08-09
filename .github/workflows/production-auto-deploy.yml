@@ -1,0 +1,230 @@
+name: Guarded Production deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lovetree-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  production:
+    if: ${{ vars.LOVETREE_PRODUCTION_AUTO_DEPLOY == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: relovetree
+      PRODUCTION_BASE_URL: ${{ vars.LOVETREE_PRODUCTION_BASE_URL }}
+
+    steps:
+      - name: Checkout exact main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fail closed on missing deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DATABASE_URL NEXT_PUBLIC_FIREBASE_API_KEY NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN; do
+            if [ -z "${!name:-}" ]; then
+              missing+=("$name")
+            fi
+          done
+          if [ -z "${PRODUCTION_BASE_URL:-}" ]; then
+            missing+=("LOVETREE_PRODUCTION_BASE_URL")
+          fi
+          if [ "${#missing[@]}" -ne 0 ]; then
+            printf 'BLOCKED: missing required Production configuration name(s): %s\n' "${missing[*]}" >&2
+            exit 1
+          fi
+          case "$PRODUCTION_BASE_URL" in
+            https://*) ;;
+            *) echo "BLOCKED: LOVETREE_PRODUCTION_BASE_URL must use https://" >&2; exit 1 ;;
+          esac
+
+      - name: Pin origin/main and source SHA
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          source_sha="$(git rev-parse HEAD)"
+          origin_main="$(git rev-parse origin/main)"
+          if [ "$source_sha" != "$origin_main" ]; then
+            echo "BLOCKED: workflow HEAD does not equal origin/main" >&2
+            exit 1
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "BLOCKED: worktree is dirty before validation" >&2
+            exit 1
+          fi
+          echo "sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build test prerequisites
+        run: npm run build
+
+      - name: Targeted A-track contract tests
+        run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Unit and integration tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/production-validation-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..60}; do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/v4 > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/production-validation-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/production-validation-server.log
+            exit 1
+          fi
+
+          node --import tsx --test 'tests/*.test.mjs'
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Build exact Production artifact
+        run: npm run production:build:safe
+
+      - name: Resolve current Production Worker version
+        id: current
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import process from 'node:process';
+          import {
+            collectActiveVersion,
+            runCommandEnv,
+          } from './scripts/lib/production-deploy-guard.mjs';
+
+          const current = collectActiveVersion(runCommandEnv, 'lovetree-limone', process.cwd());
+          if (current.state !== 'present' || !current.versionId) {
+            console.error(`BLOCKED: unable to resolve current Production Worker version (${current.state}/${current.errorCode ?? 'UNKNOWN'})`);
+            process.exit(1);
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version_id=${current.versionId}\n`);
+          NODE
+
+      - name: Guarded Production dry-run
+        run: |
+          npm run production:deploy:safe -- \
+            --source-sha "${{ steps.source.outputs.sha }}" \
+            --expected-current-version "${{ steps.current.outputs.version_id }}" \
+            --confirm-worker lovetree-limone
+
+      - name: Guarded Production deploy
+        run: |
+          npm run production:deploy:safe -- \
+            --source-sha "${{ steps.source.outputs.sha }}" \
+            --expected-current-version "${{ steps.current.outputs.version_id }}" \
+            --confirm-worker lovetree-limone \
+            --execute
+
+      - name: Verify new active Worker version
+        id: deployed
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import process from 'node:process';
+          import {
+            collectActiveVersion,
+            runCommandEnv,
+          } from './scripts/lib/production-deploy-guard.mjs';
+
+          const previous = process.env.PREVIOUS_VERSION;
+          const current = collectActiveVersion(runCommandEnv, 'lovetree-limone', process.cwd());
+          if (current.state !== 'present' || !current.versionId) {
+            console.error(`BLOCKED: unable to verify deployed Production Worker version (${current.state}/${current.errorCode ?? 'UNKNOWN'})`);
+            process.exit(1);
+          }
+          if (current.versionId === previous) {
+            console.error('BLOCKED: Production active version did not change after deploy');
+            process.exit(1);
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version_id=${current.versionId}\n`);
+          NODE
+        env:
+          PREVIOUS_VERSION: ${{ steps.current.outputs.version_id }}
+
+      - name: Post-deploy smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${PRODUCTION_BASE_URL%/}"
+          for route in / /v4 /v4/trees/demo /v4/trees/demo/graph /v4/trees/demo/timeline /v4/subjects /v4/community /design-lab; do
+            url="${base}${route}"
+            code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 30 "$url")"
+            case "$code" in
+              200|301|302|307|308) ;;
+              *) echo "BLOCKED: smoke failed for $route with HTTP $code" >&2; exit 1 ;;
+            esac
+          done
+
+      - name: Publish deployment summary
+        shell: bash
+        run: |
+          {
+            echo '## LoveTree Production deployment'
+            echo
+            echo "- source SHA: \`${{ steps.source.outputs.sha }}\`"
+            echo '- Worker: `lovetree-limone`'
+            echo "- previous version: \`${{ steps.current.outputs.version_id }}\`"
+            echo "- deployed version: \`${{ steps.deployed.outputs.version_id }}\`"
+            echo "- base URL: ${PRODUCTION_BASE_URL%/}"
+            echo "- rollback: \`npx wrangler rollback ${{ steps.current.outputs.version_id }} --name lovetree-limone\`"
+            echo '- smoke: PASS'
+          } >> "$GITHUB_STEP_SUMMARY"
