@@ -50,7 +50,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "spatial-orbit-3d",
     label: "Spatial Orbit / 3D Connection Arcs",
-    status: "prototype-requested",
+    status: "prototyped",
     summary: "Moment node와 Connection route를 깊이·occlusion·camera orbit이 있는 3D 공간에서 탐색하는 재사용 메커니즘입니다.",
     applicableScenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
     dataNeeds: ["Moment node identity", "parent/relationship edges", "creation/discovery time", "activation state", "optional detail overlay adapter"],
@@ -73,7 +73,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "cinematic-scene-transition",
     label: "Cinematic Scene Transition",
-    status: "prototype-requested",
+    status: "prototyped",
     summary: "제품 상태를 단순 route 전환이 아니라 연속적인 장면 변화로 전달하는 시네마틱 전환 문법입니다.",
     applicableScenarios: ["entry-onboarding", "relationship-retrospective", "growth-milestones", "cinematic-brand"],
     dataNeeds: ["scene state", "transition direction", "optional progress index"],
@@ -91,7 +91,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "memory-fragment-convergence",
     label: "Memory Fragment Convergence",
-    status: "prototype-requested",
+    status: "prototyped",
     summary: "흩어진 기억 조각이 사용자 동작을 계기로 중심축과 관계 구조로 응집되는 연출 메커니즘입니다.",
     applicableScenarios: ["entry-onboarding", "relationship-retrospective", "cinematic-brand"],
     dataNeeds: ["Moment snippets", "person/date/media labels", "target relationship axis"],
@@ -109,7 +109,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "relationship-spatial-map",
     label: "Relationship Spatial Map",
-    status: "prototype-requested",
+    status: "prototyped",
     summary: "사람·시간·장소·자료처럼 서로 다른 객체를 보드 위에 배치하고 연결선으로 관계를 설명하는 패턴입니다.",
     applicableScenarios: ["relationship-retrospective", "people-archive"],
     dataNeeds: ["Moment", "Person", "date/time", "media/evidence-like attachments", "relationship edges"],
@@ -127,7 +127,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "temporal-version-history",
     label: "Memory Evolution / Version History",
-    status: "prototype-requested",
+    status: "prototyped",
     summary: "최초 기록을 덮어쓰지 않고 이후 보완·회고·관계 변화가 시간순으로 누적되는 기록 패턴입니다.",
     applicableScenarios: ["tree-workspace", "relationship-retrospective", "people-archive"],
     dataNeeds: ["original Moment payload", "subsequent annotations/edits", "timestamps", "actor/source metadata"],
@@ -145,7 +145,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "physical-object-navigation",
     label: "Physical Book / Object Navigation",
-    status: "observed",
+    status: "prototyped",
     summary: "사람·시즌·아카이브를 평면 메뉴가 아니라 책/오브젝트처럼 집고 열고 닫는 공간 탐색 문법입니다.",
     applicableScenarios: ["people-archive", "growth-milestones"],
     dataNeeds: ["Person or Season identity", "cover/preview media", "item count", "archive metadata"],
@@ -163,7 +163,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "spatial-document-exploration",
     label: "Spatial Archive Exploration",
-    status: "observed",
+    status: "prototyped",
     summary: "깊은 자료 계층을 사용자가 위치감각을 잃지 않고 공간적으로 탐색하도록 만드는 통합 탐색 패턴입니다.",
     applicableScenarios: ["people-archive", "relationship-retrospective"],
     dataNeeds: ["hierarchical archive nodes", "breadcrumbs/parent context", "preview metadata"],
@@ -181,7 +181,7 @@ export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "longform-milestone-navigation",
     label: "Long-form Chapter / Milestone Navigation",
-    status: "observed",
+    status: "prototyped",
     summary: "수십~수백 개 단위를 완료/대기 상태와 함께 한눈에 탐색하는 장기 콘텐츠 인덱스 패턴입니다.",
     applicableScenarios: ["people-archive", "growth-milestones"],
     dataNeeds: ["ordered units", "completion state", "deep link", "progress summary"],
