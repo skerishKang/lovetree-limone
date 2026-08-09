@@ -8,6 +8,10 @@ export const PRODUCTION_FIREBASE_PROJECT_ID = "relovetree";
 export const EXPECTED_NEON_PROJECT_ID = "autumn-cherry-54971674";
 export const PRODUCTION_NEON_BRANCH_ID = "br-holy-scene-azwi84gb";
 export const APPROVED_E2E_NEON_BRANCH_ID = "br-purple-violet-azsxemfv";
+export const APPROVED_E2E_NEON_HOST =
+  "ep-red-paper-azsjzfte.c-3.ap-southeast-1.aws.neon.tech";
+export const PRODUCTION_NEON_HOST =
+  "ep-old-sky-az0qftwa.c-3.ap-southeast-1.aws.neon.tech";
 export const REQUIRED_E2E_APP_ENV = "e2e";
 
 const SAFE_OUTPUT_KEYS = Object.freeze([
@@ -15,6 +19,7 @@ const SAFE_OUTPUT_KEYS = Object.freeze([
   "firebaseProjectId",
   "neonProjectId",
   "neonBranchId",
+  "databaseHost",
   "appEnv",
   "apiMutationsEnabled",
 ]);
@@ -47,6 +52,20 @@ function isTrue(value) {
   return value === true || clean(value).toLowerCase() === "true";
 }
 
+export function parsePostgresHost(databaseUrl) {
+  const raw = clean(databaseUrl);
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "postgresql:" && parsed.protocol !== "postgres:") {
+      return null;
+    }
+    return parsed.hostname || null;
+  } catch {
+    return null;
+  }
+}
+
 export function validateRuntimeE2EIdentity(input = {}) {
   const worker = clean(input.E2E_EXPECTED_WORKER);
   const expectedFirebase = clean(input.E2E_FIREBASE_PROJECT_ID);
@@ -54,6 +73,8 @@ export function validateRuntimeE2EIdentity(input = {}) {
   const workerFirebase = clean(input.FIREBASE_PROJECT_ID);
   const neonProjectId = clean(input.E2E_NEON_PROJECT_ID);
   const neonBranchId = clean(input.E2E_NEON_BRANCH_ID);
+  const databaseUrl = clean(input.DATABASE_URL);
+  const databaseHost = parsePostgresHost(databaseUrl);
   const appEnv = clean(input.APP_ENV);
   const mutationsEnabled = isTrue(input.API_MUTATIONS_ENABLED);
 
@@ -127,6 +148,28 @@ export function validateRuntimeE2EIdentity(input = {}) {
     }
   }
 
+  if (pushMissing(issues, databaseUrl, "DATABASE_URL") === false) {
+    if (!databaseHost) {
+      issues.push({
+        code: "DATABASE_URL_INVALID",
+        message: "DATABASE_URL must be a valid postgres/postgresql URL",
+      });
+    } else {
+      if (databaseHost === PRODUCTION_NEON_HOST) {
+        issues.push({
+          code: "PRODUCTION_DATABASE_HOST_BLOCKED",
+          message: `Production Neon endpoint '${PRODUCTION_NEON_HOST}' is forbidden`,
+        });
+      }
+      if (databaseHost !== APPROVED_E2E_NEON_HOST) {
+        issues.push({
+          code: "DATABASE_HOST_MISMATCH",
+          message: `DATABASE_URL hostname must equal approved isolated endpoint '${APPROVED_E2E_NEON_HOST}'`,
+        });
+      }
+    }
+  }
+
   if (pushMissing(issues, appEnv, "APP_ENV") === false && appEnv !== REQUIRED_E2E_APP_ENV) {
     issues.push({
       code: "APP_ENV_NOT_E2E",
@@ -152,13 +195,16 @@ export function validateRuntimeE2EIdentity(input = {}) {
     firebaseProjectId: expectedFirebase,
     neonProjectId,
     neonBranchId,
+    databaseHost,
     appEnv,
     apiMutationsEnabled: true,
     workerPattern: ISOLATED_PREVIEW_WORKER_PATTERN.source,
   };
 
   return Object.fromEntries(
-    Object.entries(result).filter(([key]) => key === "ok" || key === "workerPattern" || SAFE_OUTPUT_KEYS.includes(key))
+    Object.entries(result).filter(
+      ([key]) => key === "ok" || key === "workerPattern" || SAFE_OUTPUT_KEYS.includes(key)
+    )
   );
 }
 
@@ -170,6 +216,7 @@ export function preflightFromEnv(env = process.env) {
     FIREBASE_PROJECT_ID: env.FIREBASE_PROJECT_ID,
     E2E_NEON_PROJECT_ID: env.E2E_NEON_PROJECT_ID,
     E2E_NEON_BRANCH_ID: env.E2E_NEON_BRANCH_ID,
+    DATABASE_URL: env.DATABASE_URL,
     APP_ENV: env.APP_ENV,
     API_MUTATIONS_ENABLED: env.API_MUTATIONS_ENABLED,
   });
