@@ -105,6 +105,25 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       { id: "52-v3-reference-earth-orbit", label: "V3 Reference Earth Orbit", decision: "candidate", executable: true, notes: "Reference fidelity build · Earth 유지 · Moment node/Connection arc 의미만 최소 치환" },
     ],
   },
+  {
+    id: "lt-53-emotional-path-replay",
+    number: 53,
+    label: "Moment Node Light Flow / Emotional Path Replay",
+    status: "active",
+    summary: "선택한 Moment에서 시작해 directed Connection을 따라 node perimeter pulse와 path travel을 순차 재생하고, 지나온 경로를 memory trail로 남기는 2D SVG 회고 계보입니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace"],
+    currentDecision: "V1 실행본을 design-review 후보로 보존합니다. Lineage 52의 3D Orbit 수정판으로 합치지 않고 별도 계보로 유지하며, 제품 채택 전에는 path replay 메커니즘만 CAP-14에서 독립 검증합니다.",
+    sourceLabel: "53_LOVETREE_NODE_LIGHT_FLOW_v1 / Drive intake 2026-08-10 / Issue #119 source review",
+    revisions: [
+      {
+        id: "53-v1-node-light-flow",
+        label: "V1 Moment Node Light Flow",
+        decision: "candidate",
+        executable: true,
+        notes: "AREA replay-motion · SCREEN moment-node-connection-light · primary/standalone bytes identical · 31,131 B · SHA256 ed3701b33e5a3afc96c9210162f664bbc32d0d800907bf7f8f702cc6a8021519",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
