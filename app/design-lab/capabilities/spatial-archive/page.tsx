@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import {
   ARCHIVE_ITEMS,
   DEFAULT_ARCHIVE_STATE,
   transitionArchiveState,
 } from "@/lib/capability-prototypes-core";
 import "@/app/styles/capability-prototypes-core.css";
+
+type ArchiveStyle = CSSProperties & {
+  "--archive-offset"?: number;
+  "--archive-abs"?: number;
+  "--archive-accent"?: string;
+};
 
 export default function SpatialArchivePrototypePage() {
   const [state, setState] = useState(DEFAULT_ARCHIVE_STATE);
@@ -70,6 +76,11 @@ export default function SpatialArchivePrototypePage() {
             const selectedIndex = ARCHIVE_ITEMS.findIndex((candidate) => candidate.id === state.selectedId);
             const offset = index - selectedIndex;
             const active = item.id === state.selectedId;
+            const style: ArchiveStyle = {
+              "--archive-offset": offset,
+              "--archive-abs": Math.abs(offset),
+              "--archive-accent": item.accent,
+            };
             return (
               <button
                 type="button"
@@ -77,10 +88,7 @@ export default function SpatialArchivePrototypePage() {
                 className="lt-cap-proto__archive-object"
                 aria-pressed={active}
                 onClick={() => active ? open() : select(item.id)}
-                style={{
-                  "--archive-offset": offset,
-                  "--archive-accent": item.accent,
-                } as React.CSSProperties}
+                style={style}
               >
                 <span>{item.subtitle}</span>
                 <strong>{item.label}</strong>
@@ -100,7 +108,7 @@ export default function SpatialArchivePrototypePage() {
 
       {detailOpen ? (
         <section className={`lt-cap-proto__archive-detail ${state.phase === "returning" ? "is-returning" : ""}`} aria-labelledby="archive-detail-title">
-          <div className="lt-cap-proto__opened-object" style={{ "--archive-accent": selected.accent } as React.CSSProperties} aria-hidden="true">
+          <div className="lt-cap-proto__opened-object" style={{ "--archive-accent": selected.accent } as ArchiveStyle} aria-hidden="true">
             <span>{selected.subtitle}</span><strong>{selected.label}</strong>
           </div>
           <div className="lt-cap-proto__archive-reader">
