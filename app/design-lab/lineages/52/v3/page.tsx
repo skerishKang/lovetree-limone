@@ -5,6 +5,7 @@ import {
   LINEAGE_52_V3_SOURCE,
 } from "@/lib/lineage-52-v3-source";
 import "@/app/styles/lineage-52-source-runner.css";
+import "@/app/styles/lineage-52-source-runner-controls.css";
 
 export default function Lineage52V3SourceRunnerPage() {
   return (
