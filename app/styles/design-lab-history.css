@@ -1,0 +1,6 @@
+/* Design Lab history restoration must be immediate.
+   The global smooth-scroll rule is useful for explicit in-page navigation,
+   but it should not animate the browser's Back/Forward scroll restoration. */
+html:has(.lt-lab) {
+  scroll-behavior: auto;
+}
