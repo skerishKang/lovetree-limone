@@ -27,7 +27,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH2 = [
   {
     id: "narrative-to-structured-moment-assembly",
     label: "Narrative-to-Structured Moment Assembly",
-    status: "observed",
+    status: "prototyped",
     summary: "자유 서술을 원문 그대로 보존하면서 날짜·장소·사람·요약·미디어 힌트가 있는 Moment 초안으로 투영하고, 사용자가 교정·확인한 뒤 다음 단계로 넘기는 재사용 메커니즘입니다.",
     applicableScenarios: ["entry-onboarding", "tree-workspace", "people-archive"],
     dataNeeds: [
