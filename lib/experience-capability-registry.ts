@@ -19,23 +19,31 @@ import {
   type AuditedExperienceCapabilityBatch3,
   type AuditedExperienceCapabilityBatch3SourceProject,
 } from "./experience-capability-audit-batch3";
+import {
+  AUDITED_EXPERIENCE_CAPABILITIES_BATCH4,
+  type AuditedExperienceCapabilityBatch4,
+  type AuditedExperienceCapabilityBatch4SourceProject,
+} from "./experience-capability-audit-batch4";
 
 export type ExperienceCapabilityRegistryItem =
   | ExperienceCapability
   | AuditedExperienceCapability
   | AuditedExperienceCapabilityBatch2
-  | AuditedExperienceCapabilityBatch3;
+  | AuditedExperienceCapabilityBatch3
+  | AuditedExperienceCapabilityBatch4;
 export type ExperienceCapabilityRegistrySourceProject =
   | ExperienceCapabilitySourceProject
   | AuditedExperienceCapabilitySourceProject
   | AuditedExperienceCapabilityBatch2SourceProject
-  | AuditedExperienceCapabilityBatch3SourceProject;
+  | AuditedExperienceCapabilityBatch3SourceProject
+  | AuditedExperienceCapabilityBatch4SourceProject;
 
 export const EXPERIENCE_CAPABILITY_REGISTRY: readonly ExperienceCapabilityRegistryItem[] = [
   ...BASE_EXPERIENCE_CAPABILITIES,
   ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH1,
   ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH2,
   ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH3,
+  ...AUDITED_EXPERIENCE_CAPABILITIES_BATCH4,
 ];
 
 export function validateExperienceCapabilityRegistry(
