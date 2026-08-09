@@ -47,7 +47,7 @@ export interface UpdateMomentInput {
   discoveryDate?: string;
   videoOffsetSeconds?: number;
   emotionTags?: string[];
-  parentId?: string;
+  parentId?: string | null;
   connectionReason?: string;
 }
 
@@ -207,7 +207,7 @@ export function useTreeMoments(
     const discoveryDate = input.discoveryDate ?? input.timestamp;
     if (discoveryDate !== undefined) payload.discoveryDate = discoveryDate;
     if (input.emotionTags !== undefined) payload.emotionTags = input.emotionTags;
-    if (input.parentId !== undefined) payload.parentId = input.parentId || undefined;
+    if (input.parentId !== undefined) payload.parentId = input.parentId || null;
     if (input.connectionReason !== undefined) payload.connectionReason = input.connectionReason.trim();
 
     try {
