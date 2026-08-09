@@ -105,12 +105,12 @@ test("Drive audit batch two records CAP-12 as prototyped after prototype validat
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
 });
 
-test("Drive audit batch three records CAP-13 as observed until prototype validation completes", () => {
+test("Drive audit batch three records CAP-13 as prototyped after prototype validation", () => {
   assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH3.length, 1);
   const capability = AUDITED_EXPERIENCE_CAPABILITIES_BATCH3[0];
 
   assert.equal(capability.id, "interruptible-cinematic-story-playback");
-  assert.equal(capability.status, "observed");
+  assert.equal(capability.status, "prototyped");
   assert.equal(capability.issue, 116);
   assert.ok(capability.evidence.length > 0);
   assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
