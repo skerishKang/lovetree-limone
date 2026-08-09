@@ -23,8 +23,11 @@ export default function QuestionLensPrototypePage() {
   const view = useMemo(() => deriveQuestionLensView(state), [state]);
 
   useEffect(() => {
-    setState(parseQuestionLensState(window.location.search));
-    setHydrated(true);
+    const frame = requestAnimationFrame(() => {
+      setState(parseQuestionLensState(window.location.search));
+      setHydrated(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
