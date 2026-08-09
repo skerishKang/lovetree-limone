@@ -25,7 +25,7 @@ interface MomentDetailModalProps {
     discoveryDate?: string;
     videoOffsetSeconds?: number;
     emotionTags?: string[];
-    parentId?: string;
+    parentId?: string | null;
     connectionReason?: string;
   }) => Promise<MemoryRecord | null>;
   onDelete: (id: string) => Promise<boolean>;
@@ -119,7 +119,7 @@ export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete
       discoveryDate: form.discoveryDate,
       videoOffsetSeconds: form.sourceUrl ? videoOffsetSecondsFromUrl(form.sourceUrl) : undefined,
       emotionTags: form.emotionTags.split(",").map((t) => t.trim()).filter(Boolean),
-      parentId: form.parentId || undefined,
+      parentId: form.parentId || null,
       connectionReason: form.parentId ? form.connectionReason : "",
     });
     setSaving(false);
