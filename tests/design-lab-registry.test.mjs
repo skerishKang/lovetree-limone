@@ -11,6 +11,7 @@ import {
   registerDesignCandidate,
   validateDesignCandidateRegistry,
 } from "../lib/design-lab.ts";
+import { EXPERIENCE_CAPABILITIES } from "../lib/experience-capabilities.ts";
 
 const root = new URL("../", import.meta.url);
 
@@ -67,6 +68,14 @@ test("future sibling designs can be registered as variants without a new product
     () => registerDesignCandidate(DESIGN_CANDIDATES[0]),
     /duplicate candidate id/,
   );
+});
+
+test("cross-project interaction research is modeled as capabilities, not extra product families", () => {
+  assert.ok(EXPERIENCE_CAPABILITIES.length >= 8);
+  assert.equal(PRODUCT_FAMILIES.length, 2);
+  assert.ok(EXPERIENCE_CAPABILITIES.some((capability) => capability.id === "spatial-orbit-3d"));
+  assert.ok(EXPERIENCE_CAPABILITIES.some((capability) => capability.id === "memory-fragment-convergence"));
+  assert.ok(EXPERIENCE_CAPABILITIES.some((capability) => capability.id === "physical-object-navigation"));
 });
 
 test("every currently implemented Design Lab route resolves to an app page", async () => {
