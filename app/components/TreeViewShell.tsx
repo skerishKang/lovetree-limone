@@ -20,21 +20,21 @@ export function TreeViewShell({
   userLabel,
   momentId,
   onAddMoment,
-  isOwner,
+  isOwner = false,
   children,
 }: TreeViewShellProps) {
   return (
     <main className="tree-page">
       <header className="tree-page-topbar">
-        <Link className="tree-page-brand" href="/" aria-label="LoveTree 처음 화면으로">LoveTree</Link>
+        <Link className="tree-page-brand" href="/v4" aria-label="LoveTree 처음 화면으로">LoveTree</Link>
         <nav className="tree-page-nav" aria-label="러브트리 메뉴">
           <Link href="/my-trees">내 러브트리</Link>
-          <Link href="/?view=browse">둘러보기</Link>
+          <Link href="/v4/community">둘러보기</Link>
           {userLabel ? <span>{userLabel}</span> : null}
         </nav>
       </header>
       <div className="tree-view-switcher-bar">
-        <ViewSwitcher treeId={treeId} active={activeView} momentId={momentId} />
+        <ViewSwitcher treeId={treeId} active={activeView} momentId={momentId} isOwner={isOwner} />
         {isOwner && onAddMoment ? (
           <button className="view-add-moment" type="button" onClick={onAddMoment}>+ 새 순간</button>
         ) : null}

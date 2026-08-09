@@ -15,6 +15,7 @@ import {
 } from "./moment-model";
 import {
   youtubeThumbnail,
+  videoOffsetSecondsFromUrl,
   type MemoryRecord,
   type TreeRecord,
 } from "./tree-types";
@@ -27,8 +28,11 @@ export interface CreateMomentInput {
   sourceUrl?: string;
   thumbnail?: string;
   timestamp?: string;
+  discoveryDate?: string;
+  videoOffsetSeconds?: number;
   emotionTags?: string[];
   parentId?: string;
+  connectionReason?: string;
   clientKey?: string;
 }
 
@@ -40,8 +44,11 @@ export interface UpdateMomentInput {
   sourceUrl?: string;
   thumbnail?: string;
   timestamp?: string;
+  discoveryDate?: string;
+  videoOffsetSeconds?: number;
   emotionTags?: string[];
-  parentId?: string;
+  parentId?: string | null;
+  connectionReason?: string;
 }
 
 export interface TreeMomentsState {
@@ -77,12 +84,8 @@ export function useTreeMoments(
   const [moments, setMoments] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMomentId, setSelectedMomentId] = useState<string | null>(
-    initialMomentId ?? null
-  );
-  const [highlightMomentId, setHighlightMomentId] = useState<string | null>(
-    initialHighlightId ?? null
-  );
+  const [selectedMomentId, setSelectedMomentId] = useState<string | null>(initialMomentId ?? null);
+  const [highlightMomentId, setHighlightMomentId] = useState<string | null>(initialHighlightId ?? null);
   const highlightTimerRef = useRef<number | null>(null);
 
   const refresh = useCallback(async () => {
@@ -107,10 +110,7 @@ export function useTreeMoments(
       setTree(treeData);
       const rows = Array.isArray(memoryData) ? memoryData : [];
       setMoments(rows);
-      setSelectedMomentId((current) => {
-        if (current === null) return null;
-        return rows.some((m) => m.id === current) ? current : null;
-      });
+      setSelectedMomentId((current) => current === null ? null : rows.some((m) => m.id === current) ? current : null);
     } catch {
       setError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
     } finally {
@@ -127,9 +127,7 @@ export function useTreeMoments(
   useEffect(() => {
     if (!highlightMomentId) return;
     if (highlightTimerRef.current) window.clearTimeout(highlightTimerRef.current);
-    highlightTimerRef.current = window.setTimeout(() => {
-      setHighlightMomentId(null);
-    }, HIGHLIGHT_MS);
+    highlightTimerRef.current = window.setTimeout(() => setHighlightMomentId(null), HIGHLIGHT_MS);
     return () => {
       if (highlightTimerRef.current) window.clearTimeout(highlightTimerRef.current);
     };
@@ -137,56 +135,47 @@ export function useTreeMoments(
 
   const isOwner = Boolean(tree && user && tree.ownerId === user.uid);
   const ownerId = tree?.ownerId ?? "";
-
-  const canonicalMoments = useMemo(
-    () => moments.map((m) => toCanonicalMoment(m, ownerId)),
-    [moments, ownerId]
-  );
-
+  const canonicalMoments = useMemo(() => moments.map((m) => toCanonicalMoment(m, ownerId)), [moments, ownerId]);
   const treeMoments = useMemo(() => selectTreeMoments(canonicalMoments), [canonicalMoments]);
   const timelineMoments = useMemo(() => selectTimelineMoments(canonicalMoments), [canonicalMoments]);
   const albumMoments = useMemo(() => selectAlbumMoments(canonicalMoments), [canonicalMoments]);
-
-  const selectedMoment = useMemo(
-    () => moments.find((m) => m.id === selectedMomentId) ?? null,
-    [moments, selectedMomentId]
-  );
+  const selectedMoment = useMemo(() => moments.find((m) => m.id === selectedMomentId) ?? null, [moments, selectedMomentId]);
 
   const selectMoment = useCallback((id: string | null) => {
     setSelectedMomentId(id);
-    // Selecting a different moment (or deselecting) drops the transient
-    // highlight immediately instead of waiting for the expiry timer.
     setHighlightMomentId((current) => (id === current ? current : null));
   }, []);
 
-  const clearHighlight = useCallback(() => {
-    setHighlightMomentId(null);
-  }, []);
+  const clearHighlight = useCallback(() => setHighlightMomentId(null), []);
 
   const createMoment = useCallback(async (input: CreateMomentInput): Promise<MemoryRecord | null> => {
     if (!tree || !isOwner) return null;
     const sourceUrl = input.sourceUrl?.trim() ?? "";
+    const discoveryDate = input.discoveryDate ?? input.timestamp ?? "";
     const payload: Record<string, unknown> = {
       sourceType: input.sourceType ?? "youtube",
       title: input.title?.trim() ?? "",
       memo: input.memo?.trim() ?? "",
       source: input.source?.trim() ?? "",
-      timestamp: input.timestamp ?? "",
+      discoveryDate,
       emotionTags: input.emotionTags ?? [],
       parentId: input.parentId || undefined,
+      connectionReason: input.parentId ? input.connectionReason?.trim() ?? "" : "",
     };
     if (sourceUrl) {
       payload.sourceUrl = sourceUrl;
       const thumb = input.thumbnail || youtubeThumbnail(sourceUrl);
       if (thumb) payload.thumbnail = thumb;
+      const offset = input.videoOffsetSeconds ?? videoOffsetSecondsFromUrl(sourceUrl);
+      if (offset !== undefined) payload.videoOffsetSeconds = offset;
     }
     if (input.clientKey) payload.clientKey = input.clientKey;
 
     try {
-      const response = await apiFetch(
-        `/api/trees/${encodeURIComponent(tree.id)}/memories`,
-        { method: "POST", body: JSON.stringify(payload) }
-      );
+      const response = await apiFetch(`/api/trees/${encodeURIComponent(tree.id)}/memories`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
       const data = (await response.json().catch(() => ({}))) as MemoryRecord & { error?: string };
       if (!response.ok || !data.id) return null;
       setMoments((current) => [...current, data]);
@@ -211,17 +200,21 @@ export function useTreeMoments(
         payload.sourceUrl = url;
         const thumb = input.thumbnail || youtubeThumbnail(url);
         if (thumb) payload.thumbnail = thumb;
+        const offset = input.videoOffsetSeconds ?? videoOffsetSecondsFromUrl(url);
+        if (offset !== undefined) payload.videoOffsetSeconds = offset;
       }
     }
-    if (input.timestamp !== undefined) payload.timestamp = input.timestamp;
+    const discoveryDate = input.discoveryDate ?? input.timestamp;
+    if (discoveryDate !== undefined) payload.discoveryDate = discoveryDate;
     if (input.emotionTags !== undefined) payload.emotionTags = input.emotionTags;
-    if (input.parentId !== undefined) payload.parentId = input.parentId || undefined;
+    if (input.parentId !== undefined) payload.parentId = input.parentId || null;
+    if (input.connectionReason !== undefined) payload.connectionReason = input.connectionReason.trim();
 
     try {
-      const response = await apiFetch(
-        `/api/memories/${encodeURIComponent(id)}`,
-        { method: "PUT", body: JSON.stringify(payload) }
-      );
+      const response = await apiFetch(`/api/memories/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
       const data = (await response.json().catch(() => ({}))) as MemoryRecord & { error?: string };
       if (!response.ok || !data.id) return null;
       setMoments((current) => current.map((m) => (m.id === data.id ? data : m)));
@@ -234,10 +227,7 @@ export function useTreeMoments(
   const deleteMoment = useCallback(async (id: string): Promise<boolean> => {
     if (!tree || !isOwner) return false;
     try {
-      const response = await apiFetch(
-        `/api/memories/${encodeURIComponent(id)}`,
-        { method: "DELETE" }
-      );
+      const response = await apiFetch(`/api/memories/${encodeURIComponent(id)}`, { method: "DELETE" });
       if (!response.ok) return false;
       setMoments((current) => current.filter((m) => m.id !== id));
       setSelectedMomentId((current) => (current === id ? null : current));

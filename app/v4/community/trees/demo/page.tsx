@@ -1,6 +1,5 @@
-import { V4PublicTree } from "@/app/components/v4/V4CommunityDiscovery";
-import "@/app/styles/v4/community.css";
+import { redirect } from "next/navigation";
 
-export default function V4PublicTreePage() {
-  return <V4PublicTree />;
+export default function V4CommunityDemoRedirectPage() {
+  redirect("/v4/community");
 }

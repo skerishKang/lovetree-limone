@@ -5,6 +5,7 @@ import { treesRouter } from "./trees";
 import { memoriesRouter } from "./memories";
 import { commentsRouter } from "./comments";
 import { socialRouter } from "./social";
+import { e2eHealthIdentity, evaluateMutationGate } from "./e2e-safety";
 
 export interface ApiEnv {
   DATABASE_URL: string;
@@ -29,7 +30,8 @@ export type ApiRouter = (ctx: ApiContext) => Promise<Response | null>;
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function areMutationsEnabled(env: ApiEnv): boolean {
-  return env.API_MUTATIONS_ENABLED === "true";
+  if (env.API_MUTATIONS_ENABLED !== "true") return false;
+  return evaluateMutationGate(env).enabled;
 }
 
 export async function handleApiRequest(
@@ -47,7 +49,9 @@ export async function handleApiRequest(
 
   try {
     if (path === "/api/health" && method === "GET") {
-      return json({ status: "ok", env: env.APP_ENV ?? "unknown" });
+      const base = { status: "ok", env: env.APP_ENV ?? "unknown" };
+      const e2eIdentity = e2eHealthIdentity(env);
+      return json(e2eIdentity ? { ...base, e2e: e2eIdentity } : base);
     }
 
     if (MUTATION_METHODS.has(method) && !areMutationsEnabled(env)) {

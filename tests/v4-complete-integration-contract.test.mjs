@@ -49,8 +49,8 @@ const SOURCE_ROUTE_FILES = [
 ];
 
 const EXTRA_INTEGRATION_ROUTES = [
-  "app/v4/trees/new/page.tsx",
   "app/v4/subjects/demo/page.tsx",
+  "app/v4/community/trees/[id]/page.tsx",
   "app/v4/community/trees/demo/page.tsx",
   "app/v4/layout.tsx",
 ];
@@ -200,11 +200,13 @@ test("all four separately supplied archive designs are full React experiences", 
   assert.match(source, /setPlaying\(false\)/);
 });
 
-test("community preserves compare, large preview and read-only full-tree stages", async () => {
+test("community preserves compare, large preview and dynamic read-only full-tree stages", async () => {
   const source = await read("app/components/v4/V4CommunityDiscovery.tsx");
+  const route = await read("app/v4/community/trees/[id]/page.tsx");
   assert.match(source, /toggleCompare/);
   assert.match(source, /v4-community-preview/);
-  assert.match(source, /\/v4\/community\/trees\/demo/);
+  assert.match(source, /router\.push\(`\/v4\/community\/trees\/\$\{encodeURIComponent\(preview\.id\)\}`\)/);
+  assert.match(route, /<V4PublicTree treeId=\{id\} \/>/);
   assert.match(source, /export function V4PublicTree/);
   assert.match(source, /읽기 전용 공개 트리/);
   assert.match(source, /setZoom/);

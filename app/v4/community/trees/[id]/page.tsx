@@ -1,0 +1,11 @@
+import { V4PublicTree } from "@/app/components/v4/V4CommunityDiscovery";
+import "@/app/styles/v4/community.css";
+
+export default async function V4PublicTreePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <V4PublicTree treeId={id} />;
+}

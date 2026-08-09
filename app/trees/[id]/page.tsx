@@ -13,6 +13,7 @@ import { MomentThumbnail } from "../../components/MomentThumbnail";
 import "../../styles/email-auth.css";
 import {
   formatTreeDate,
+  memoryDiscoveryDate,
   sourceTypeLabel,
   type MemoryRecord,
 } from "@/lib/tree-types";
@@ -129,7 +130,7 @@ export default function TreeDetailPage() {
                       )}
                     </div>
                     <div className="memory-record-body">
-                      <div className="memory-record-meta"><span>{sourceTypeLabel(memory.sourceType)}</span><time>{formatTreeDate(memory.timestamp || memory.createdAt)}</time></div>
+                      <div className="memory-record-meta"><span>{sourceTypeLabel(memory.sourceType)}</span><time>{formatTreeDate(memoryDiscoveryDate(memory))}</time></div>
                       <h3>{moment.title || `순간 ${treeMoments.length - index}`}</h3>
                       <p>{moment.memo || "이 순간에 남긴 마음"}</p>
                       {memory.emotionTags && memory.emotionTags.length > 0 ? <div className="memory-tags">{memory.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}

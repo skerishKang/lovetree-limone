@@ -5,6 +5,7 @@ import {
   SOURCE_TYPES,
   localDateValue,
   youtubeThumbnail,
+  videoOffsetSecondsFromUrl,
   type MemoryRecord,
 } from "@/lib/tree-types";
 import type { CreateMomentInput } from "@/lib/use-tree-moments";
@@ -22,9 +23,10 @@ interface ComposerForm {
   memo: string;
   source: string;
   sourceUrl: string;
-  timestamp: string;
+  discoveryDate: string;
   emotionTags: string;
   parentId: string;
+  connectionReason: string;
   asChildOfSelected: boolean;
 }
 
@@ -35,9 +37,10 @@ function emptyForm(parentMoment: MemoryRecord | null): ComposerForm {
     memo: "",
     source: "",
     sourceUrl: "",
-    timestamp: localDateValue(),
+    discoveryDate: localDateValue(),
     emotionTags: "",
     parentId: parentMoment?.id ?? "",
+    connectionReason: "",
     asChildOfSelected: Boolean(parentMoment),
   };
 }
@@ -77,6 +80,10 @@ export function MomentComposerModal({
       setError("제목이나 메모를 하나는 남겨 주세요.");
       return;
     }
+    if (form.asChildOfSelected && form.parentId && !form.connectionReason.trim()) {
+      setError("이전 순간에서 왜 이어졌는지 한 문장으로 남겨 주세요.");
+      return;
+    }
     setSaving(true);
     setError(null);
     const sourceUrl = form.sourceUrl.trim();
@@ -87,9 +94,11 @@ export function MomentComposerModal({
       source: form.source,
       sourceUrl,
       thumbnail: sourceUrl ? youtubeThumbnail(sourceUrl) : undefined,
-      timestamp: form.timestamp,
+      discoveryDate: form.discoveryDate,
+      videoOffsetSeconds: sourceUrl ? videoOffsetSecondsFromUrl(sourceUrl) : undefined,
       emotionTags: form.emotionTags.split(",").map((t) => t.trim()).filter(Boolean),
       parentId: form.asChildOfSelected ? form.parentId || undefined : undefined,
+      connectionReason: form.asChildOfSelected && form.parentId ? form.connectionReason : undefined,
       clientKey,
     };
     const created = await onCreate(input);
@@ -123,12 +132,7 @@ export function MomentComposerModal({
         )}
         <form onSubmit={handleSubmit}>
           <label htmlFor="mc-source-type">어디에서 발견했나요?</label>
-          <select
-            id="mc-source-type"
-            ref={firstFieldRef}
-            value={form.sourceType}
-            onChange={(e) => setForm((c) => ({ ...c, sourceType: e.target.value }))}
-          >
+          <select id="mc-source-type" ref={firstFieldRef} value={form.sourceType} onChange={(e) => setForm((c) => ({ ...c, sourceType: e.target.value }))}>
             {SOURCE_TYPES.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
           </select>
 
@@ -141,8 +145,8 @@ export function MomentComposerModal({
           <label htmlFor="mc-source-url">출처 링크 <span>(선택)</span></label>
           <input id="mc-source-url" type="url" value={form.sourceUrl} onChange={(e) => setForm((c) => ({ ...c, sourceUrl: e.target.value }))} placeholder="https://…" />
 
-          <label htmlFor="mc-timestamp">기록 날짜</label>
-          <input id="mc-timestamp" type="date" value={form.timestamp} onChange={(e) => setForm((c) => ({ ...c, timestamp: e.target.value }))} required />
+          <label htmlFor="mc-discovery-date">발견한 날짜</label>
+          <input id="mc-discovery-date" type="date" value={form.discoveryDate} onChange={(e) => setForm((c) => ({ ...c, discoveryDate: e.target.value }))} required />
 
           <label htmlFor="mc-memo">그때의 마음</label>
           <textarea id="mc-memo" value={form.memo} onChange={(e) => setForm((c) => ({ ...c, memo: e.target.value }))} placeholder="이 순간이 왜 마음에 남았는지 적어 보세요." rows={4} />
@@ -152,32 +156,29 @@ export function MomentComposerModal({
 
           <div className="moment-composer-parent-options">
             <label className="moment-composer-check">
-              <input
-                type="checkbox"
-                checked={form.asChildOfSelected}
-                onChange={(e) => setForm((c) => ({ ...c, asChildOfSelected: e.target.checked }))}
-              />
+              <input type="checkbox" checked={form.asChildOfSelected} onChange={(e) => setForm((c) => ({ ...c, asChildOfSelected: e.target.checked }))} />
               {parentMoment ? "선택한 순간의 자식으로 추가" : "다른 순간의 자식으로 추가"}
             </label>
             {form.asChildOfSelected ? (
-              <select
-                id="mc-parent"
-                value={form.parentId}
-                onChange={(e) => setForm((c) => ({ ...c, parentId: e.target.value }))}
-                aria-label="부모 순간 선택"
-              >
-                <option value="">처음 가지로 남기기</option>
-                {parentOptions.map((m) => <option value={m.id} key={m.id}>{m.title || "이전 순간"}</option>)}
-              </select>
+              <>
+                <select id="mc-parent" value={form.parentId} onChange={(e) => setForm((c) => ({ ...c, parentId: e.target.value }))} aria-label="부모 순간 선택">
+                  <option value="">처음 가지로 남기기</option>
+                  {parentOptions.map((m) => <option value={m.id} key={m.id}>{m.title || "이전 순간"}</option>)}
+                </select>
+                {form.parentId ? (
+                  <>
+                    <label htmlFor="mc-connection-reason">왜 이 순간에서 이어졌나요?</label>
+                    <textarea id="mc-connection-reason" value={form.connectionReason} onChange={(e) => setForm((c) => ({ ...c, connectionReason: e.target.value }))} maxLength={500} rows={3} placeholder="예: 이 무대를 보고 다음 인터뷰까지 찾아봤어요." required />
+                  </>
+                ) : null}
+              </>
             ) : null}
           </div>
 
           {error ? <p className="tree-form-error" role="alert">{error}</p> : null}
 
           <div className="moment-composer-actions">
-            <button className="button button-primary" type="submit" disabled={saving}>
-              {saving ? "저장 중…" : "이 순간 이어 붙이기"}
-            </button>
+            <button className="button button-primary" type="submit" disabled={saving}>{saving ? "저장 중…" : "이 순간 이어 붙이기"}</button>
             <button className="button button-quiet" type="button" onClick={onClose} disabled={saving}>취소</button>
           </div>
         </form>

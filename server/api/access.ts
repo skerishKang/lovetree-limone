@@ -10,6 +10,51 @@ export const VISIBILITY_PRIVATE = "private";
 export const VISIBILITY_UNLISTED = "unlisted";
 export const VISIBILITY_PUBLIC = "public";
 
+export type VisibilityValue =
+  | typeof VISIBILITY_PRIVATE
+  | typeof VISIBILITY_UNLISTED
+  | typeof VISIBILITY_PUBLIC;
+
+/**
+ * A newly-created memory inherits its parent tree visibility when the client
+ * does not provide an explicit value. Explicit child visibility remains a
+ * stored state; public/community exposure is decided separately.
+ */
+export function resolveMemoryVisibility(
+  requestedVisibility: string | null | undefined,
+  parentTreeVisibility: string | null | undefined
+): VisibilityValue {
+  if (
+    requestedVisibility === VISIBILITY_PRIVATE ||
+    requestedVisibility === VISIBILITY_UNLISTED ||
+    requestedVisibility === VISIBILITY_PUBLIC
+  ) {
+    return requestedVisibility;
+  }
+  if (
+    parentTreeVisibility === VISIBILITY_PRIVATE ||
+    parentTreeVisibility === VISIBILITY_UNLISTED ||
+    parentTreeVisibility === VISIBILITY_PUBLIC
+  ) {
+    return parentTreeVisibility;
+  }
+  return VISIBILITY_PUBLIC;
+}
+
+/**
+ * Community/anonymous exposure is stricter than stored visibility: both the
+ * child memory and its parent tree must be explicitly public.
+ */
+export function isCommunityMemoryReadable(
+  memoryVisibility: string | null,
+  parentTreeVisibility: string | null
+): boolean {
+  return (
+    memoryVisibility === VISIBILITY_PUBLIC &&
+    parentTreeVisibility === VISIBILITY_PUBLIC
+  );
+}
+
 /**
  * Read access policy:
  * - public: anyone
@@ -30,6 +75,25 @@ export function isTreeReadable(
 
 export function isTreeOwner(tree: TreeRow | null | undefined, user: AuthUser | null): boolean {
   return tree !== null && tree !== undefined && user !== null && tree.ownerId === user.uid;
+}
+
+/**
+ * Memory read policy is evaluated against both the child and its parent.
+ * Owners retain access to every child in their own tree. Non-owners can read
+ * only public/unlisted children of a tree that is itself readable. Collection
+ * and community routes apply stricter enumeration/exposure rules separately.
+ */
+export function isMemoryReadable(
+  memory: MemoryRow,
+  parentTree: TreeRow,
+  user: AuthUser | null
+): boolean {
+  if (isTreeOwner(parentTree, user)) return true;
+  if (!isTreeReadable(parentTree.visibility, parentTree.ownerId, user)) return false;
+  return (
+    memory.visibility === VISIBILITY_PUBLIC ||
+    memory.visibility === VISIBILITY_UNLISTED
+  );
 }
 
 /**
@@ -87,9 +151,9 @@ export async function getOwnedMemory(
 }
 
 /**
- * Fetches a memory and returns it only when the current user may read the
- * tree it belongs to. Returns null when the memory does not exist or the
- * tree is not readable.
+ * Fetches a memory and returns it only when both the child visibility and its
+ * parent tree access policy allow the current reader. Owners can always read
+ * memories in their own tree, including private children.
  */
 export async function getReadableMemory(
   ctx: ApiContext,
@@ -102,6 +166,7 @@ export async function getReadableMemory(
   if (!row) return null;
   const readableTree = await getReadableTree(ctx, row.treeId, user);
   if (!readableTree) return null;
+  if (!isMemoryReadable(row, readableTree, user)) return null;
   return row;
 }
 

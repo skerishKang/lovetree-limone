@@ -28,6 +28,7 @@ export type ReactionTypeValue = (typeof REACTION_TYPE_VALUES)[number];
 export interface StringRule {
   kind: "string";
   required?: boolean;
+  nullable?: boolean;
   trim?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -237,7 +238,9 @@ export function validate<T extends Record<string, unknown>>(
     } else if (rule.kind === "string") {
       error = validateString(source[field], rule, field);
       const candidate = source[field];
-      if (error === null && candidate !== undefined && candidate !== null && typeof candidate === "string") {
+      if (error === null && candidate === null && rule.nullable) {
+        value[field] = null;
+      } else if (error === null && candidate !== undefined && candidate !== null && typeof candidate === "string") {
         value[field] = rule.trim === false ? candidate : candidate.trim();
       }
     } else if (rule.kind === "integer") {
