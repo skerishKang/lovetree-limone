@@ -34,7 +34,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 = [
   {
     id: "intent-to-path-navigation",
     label: "Intent-to-Path Navigation",
-    status: "mapped",
+    status: "prototyped",
     summary: "자유 질문이나 추천 질문을 명시적인 경로 상태로 바꾸고, 그 경로를 단계적으로 설명한 뒤 다음 행동까지 연결하는 재사용 탐색 메커니즘입니다.",
     applicableScenarios: ["entry-onboarding", "relationship-retrospective", "community"],
     dataNeeds: [
