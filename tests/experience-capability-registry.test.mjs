@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { DESIGN_SCENARIOS } from "../lib/design-lab.ts";
@@ -7,6 +8,12 @@ import {
   capabilitiesForScenario,
   validateExperienceCapabilities,
 } from "../lib/experience-capabilities.ts";
+import { AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 } from "../lib/experience-capability-audit-batch1.ts";
+import {
+  EXPERIENCE_CAPABILITY_REGISTRY,
+  registryCapabilitiesForScenario,
+  validateExperienceCapabilityRegistry,
+} from "../lib/experience-capability-registry.ts";
 
 test("experience capability registry starts from the eight evidence-backed cross-project patterns", () => {
   assert.equal(EXPERIENCE_CAPABILITIES.length, 8);
@@ -54,4 +61,73 @@ test("capability governance keeps backend rewrites out of visual adoption by def
   assert.ok(history);
   assert.match(history.integrationRule, /backend|read-model|annotation/i);
   assert.match(history.integrationRule, /판단|검증/);
+});
+
+test("combined Design Lab capability registry preserves the original eight and adds audit batch one", () => {
+  assert.equal(EXPERIENCE_CAPABILITIES.length, 8, "base registry remains immutable in this audit stack");
+  assert.equal(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.length, 3);
+  assert.equal(EXPERIENCE_CAPABILITY_REGISTRY.length, 11);
+  assert.deepEqual(validateExperienceCapabilityRegistry(), []);
+
+  const ids = EXPERIENCE_CAPABILITY_REGISTRY.map((capability) => capability.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const base of EXPERIENCE_CAPABILITIES) {
+    assert.ok(ids.includes(base.id), `${base.id} must remain in the combined registry`);
+  }
+});
+
+test("Drive audit batch is registered with conservative research states", () => {
+  const byId = new Map(AUDITED_EXPERIENCE_CAPABILITIES_BATCH1.map((capability) => [capability.id, capability]));
+
+  assert.equal(byId.get("intent-to-path-navigation")?.status, "mapped");
+  assert.equal(byId.get("source-media-inspection-deck")?.status, "mapped");
+  assert.equal(byId.get("question-lens-recomposition")?.status, "observed");
+
+  for (const capability of AUDITED_EXPERIENCE_CAPABILITIES_BATCH1) {
+    assert.equal(capability.issue, 78);
+    assert.ok(capability.evidence.length > 0);
+    assert.ok(capability.evidence.every((evidence) => evidence.observed.length > 0));
+  }
+});
+
+test("audited capability provenance pins the exact Drive artifacts without storing Drive URLs", () => {
+  const sourceText = AUDITED_EXPERIENCE_CAPABILITIES_BATCH1
+    .flatMap((capability) => capability.evidence.map((evidence) => `${evidence.project} ${evidence.artifact}`))
+    .join("\n");
+
+  assert.match(sourceText, /02_광주북구_AI내비게이터_시네마틱홈_v1\.html/);
+  assert.match(sourceText, /1jqUERqZ8DIZku441gmMQcDAA-UTXh-IP/);
+  assert.match(sourceText, /01_사실로_증거검사실_v1\.html/);
+  assert.match(sourceText, /1bxgbIAlS4zyu1765ZsbyXZUukQNCqMkl/);
+  assert.match(sourceText, /01_이어온_오늘의회사_v1_기능형\.html/);
+  assert.match(sourceText, /1BBMWVJlZOSdNkb2ZHuQIigcAjCX7fnh8/);
+
+  for (const capability of AUDITED_EXPERIENCE_CAPABILITIES_BATCH1) {
+    for (const evidence of capability.evidence) {
+      assert.doesNotMatch(evidence.artifact, /https?:\/\//);
+    }
+  }
+});
+
+test("audited capabilities map to the intended LoveTree scenarios", () => {
+  const onboardingIds = registryCapabilitiesForScenario("entry-onboarding").map((capability) => capability.id);
+  const workspaceIds = registryCapabilitiesForScenario("tree-workspace").map((capability) => capability.id);
+  const retrospectiveIds = registryCapabilitiesForScenario("relationship-retrospective").map((capability) => capability.id);
+
+  assert.ok(onboardingIds.includes("intent-to-path-navigation"));
+  assert.ok(workspaceIds.includes("source-media-inspection-deck"));
+  assert.ok(workspaceIds.includes("question-lens-recomposition"));
+  assert.ok(retrospectiveIds.includes("intent-to-path-navigation"));
+  assert.ok(retrospectiveIds.includes("source-media-inspection-deck"));
+  assert.ok(retrospectiveIds.includes("question-lens-recomposition"));
+});
+
+test("Design Lab component consumes the combined capability registry", async () => {
+  const component = await readFile(
+    new URL("../app/components/product/ExperienceCapabilityLibrary.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(component, /EXPERIENCE_CAPABILITY_REGISTRY as EXPERIENCE_CAPABILITIES/);
+  assert.match(component, /ExperienceCapabilityRegistrySourceProject/);
 });
