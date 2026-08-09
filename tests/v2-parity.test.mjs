@@ -161,11 +161,9 @@ test("shared auth, API, and DB core are unchanged", async () => {
   assert.match(schema, /pgTable/);
 });
 
-test("V1 routes and files are untouched", async () => {
-  const v1Home = await readApp("page.tsx");
+test("Legacy V1 routes and files are preserved", async () => {
+  const v1Home = await readApp("legacy/page.tsx");
   assert.match(v1Home, /첫 순간 심기/);
-  // Tree detail is a real App Router page wired to the shared hook;
-  // thumbnail derivation moved into the shared moment layer in Slice 3.
   const v1Detail = await readApp("trees/[id]/page.tsx");
   assert.match(v1Detail, /"use client"/);
   assert.match(v1Detail, /useTreeMoments/);
