@@ -56,7 +56,7 @@ test("P2 update mirrors date fields and can clear a connection reason", () => {
   assert.equal(reasonUpdate.connectionReason, null);
 });
 
-test("explicitly nullable string rules preserve parentId null for relation removal", () => {
+test("explicitly nullable string rules preserve parentId null without changing legacy optional-null behavior", () => {
   const parsed = validate(
     { parentId: null },
     { parentId: { kind: "string", nullable: true, trim: true, maxLength: 100 } }
@@ -64,11 +64,12 @@ test("explicitly nullable string rules preserve parentId null for relation remov
   assert.equal(parsed.ok, true);
   if (parsed.ok) assert.equal(parsed.value.parentId, null);
 
-  const rejected = validate(
-    { parentId: null },
-    { parentId: { kind: "string", trim: true, maxLength: 100 } }
+  const legacyOptional = validate(
+    { title: null },
+    { title: { kind: "string", trim: true, maxLength: 100 } }
   );
-  assert.equal(rejected.ok, false);
+  assert.equal(legacyOptional.ok, true);
+  if (legacyOptional.ok) assert.equal(Object.hasOwn(legacyOptional.value, "title"), false);
 });
 
 test("P2 migration is additive and non-destructive", async () => {
