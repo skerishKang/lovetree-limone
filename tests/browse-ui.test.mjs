@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 
-const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+const page = readFileSync(new URL("../app/legacy/page.tsx", import.meta.url), "utf8");
 
 test("hero browse CTA is an action button, not an anchor", () => {
   assert.match(page, /onClick={openBrowse}>러브트리 둘러보기/);
