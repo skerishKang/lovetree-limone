@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 import {
   APPROVED_E2E_NEON_BRANCH_ID,
+  APPROVED_E2E_NEON_HOST,
   EXPECTED_NEON_PROJECT_ID,
   PRODUCTION_FIREBASE_PROJECT_ID,
   PRODUCTION_NEON_BRANCH_ID,
+  PRODUCTION_NEON_HOST,
+  parsePostgresHost,
   validateRuntimeE2EIdentity,
 } from "../scripts/lib/v4-runtime-e2e-preflight.mjs";
 
@@ -16,6 +20,7 @@ const SAFE = Object.freeze({
   FIREBASE_PROJECT_ID: "lovetree-e2e",
   E2E_NEON_PROJECT_ID: EXPECTED_NEON_PROJECT_ID,
   E2E_NEON_BRANCH_ID: APPROVED_E2E_NEON_BRANCH_ID,
+  DATABASE_URL: `postgresql://e2e-user:e2e-password@${APPROVED_E2E_NEON_HOST}/neondb?sslmode=require`,
   APP_ENV: "e2e",
   API_MUTATIONS_ENABLED: "true",
 });
@@ -30,15 +35,23 @@ function issueCodes(input) {
   }
 }
 
-test("approved isolated Runtime E2E identities pass", () => {
+test("approved isolated Runtime E2E identities and actual DB endpoint pass", () => {
   const result = validateRuntimeE2EIdentity(SAFE);
   assert.equal(result.ok, true);
   assert.equal(result.worker, SAFE.E2E_EXPECTED_WORKER);
   assert.equal(result.firebaseProjectId, SAFE.E2E_FIREBASE_PROJECT_ID);
   assert.equal(result.neonProjectId, EXPECTED_NEON_PROJECT_ID);
   assert.equal(result.neonBranchId, APPROVED_E2E_NEON_BRANCH_ID);
+  assert.equal(result.databaseHost, APPROVED_E2E_NEON_HOST);
   assert.equal(result.appEnv, "e2e");
   assert.equal(result.apiMutationsEnabled, true);
+});
+
+test("postgres URL parsing extracts only hostname", () => {
+  assert.equal(parsePostgresHost(SAFE.DATABASE_URL), APPROVED_E2E_NEON_HOST);
+  assert.equal(parsePostgresHost("postgres://user:pass@example.invalid/db"), "example.invalid");
+  assert.equal(parsePostgresHost("https://example.invalid/db"), null);
+  assert.equal(parsePostgresHost("not-a-url"), null);
 });
 
 test("every protected Worker is rejected", () => {
@@ -98,6 +111,24 @@ test("wrong Neon project or unapproved branch is rejected", () => {
   assert.equal(branchCodes.has("UNAPPROVED_NEON_BRANCH"), true);
 });
 
+test("DATABASE_URL must point to the approved isolated Neon endpoint", () => {
+  const productionCodes = issueCodes({
+    ...SAFE,
+    DATABASE_URL: `postgresql://user:secret@${PRODUCTION_NEON_HOST}/neondb`,
+  });
+  assert.equal(productionCodes.has("PRODUCTION_DATABASE_HOST_BLOCKED"), true);
+  assert.equal(productionCodes.has("DATABASE_HOST_MISMATCH"), true);
+
+  const otherCodes = issueCodes({
+    ...SAFE,
+    DATABASE_URL: "postgresql://user:secret@other-project.neon.tech/neondb",
+  });
+  assert.equal(otherCodes.has("DATABASE_HOST_MISMATCH"), true);
+
+  const invalidCodes = issueCodes({ ...SAFE, DATABASE_URL: "not-a-postgres-url" });
+  assert.equal(invalidCodes.has("DATABASE_URL_INVALID"), true);
+});
+
 test("mutable Runtime E2E requires exact e2e environment and mutations enabled", () => {
   for (const appEnv of ["production", "staging", "preview", ""]) {
     const codes = issueCodes({ ...SAFE, APP_ENV: appEnv });
@@ -122,6 +153,7 @@ test("missing required identities fail closed", () => {
     "FIREBASE_PROJECT_ID",
     "E2E_NEON_PROJECT_ID",
     "E2E_NEON_BRANCH_ID",
+    "DATABASE_URL",
     "APP_ENV",
   ]) {
     const codes = issueCodes({ ...SAFE, [field]: "" });
@@ -129,14 +161,17 @@ test("missing required identities fail closed", () => {
   }
 });
 
-test("preflight result never echoes unrelated secrets", () => {
+test("preflight result never echoes credentials, tokens, or full DATABASE_URL", () => {
+  const databaseUrl = `postgresql://very-secret-user:very-secret-password@${APPROVED_E2E_NEON_HOST}/neondb?sslmode=require`;
   const result = validateRuntimeE2EIdentity({
     ...SAFE,
-    DATABASE_URL: "postgresql://secret@example.invalid/db",
+    DATABASE_URL: databaseUrl,
     CLOUDFLARE_API_TOKEN: "secret-cloudflare-token",
     NEXT_PUBLIC_FIREBASE_API_KEY: "secret-api-key",
   });
   const serialized = JSON.stringify(result);
+  assert.doesNotMatch(serialized, /very-secret-user/);
+  assert.doesNotMatch(serialized, /very-secret-password/);
   assert.doesNotMatch(serialized, /postgresql:\/\//);
   assert.doesNotMatch(serialized, /secret-cloudflare-token/);
   assert.doesNotMatch(serialized, /secret-api-key/);
@@ -145,6 +180,7 @@ test("preflight result never echoes unrelated secrets", () => {
     [
       "apiMutationsEnabled",
       "appEnv",
+      "databaseHost",
       "firebaseProjectId",
       "neonBranchId",
       "neonProjectId",
@@ -153,4 +189,33 @@ test("preflight result never echoes unrelated secrets", () => {
       "workerPattern",
     ].sort()
   );
+});
+
+test("CLI passes with safe identities and fails closed for Production Firebase without leaking DB credentials", () => {
+  const pass = spawnSync(process.execPath, ["scripts/check-v4-runtime-e2e-preflight.mjs"], {
+    cwd: new URL("../", import.meta.url),
+    env: { ...process.env, ...SAFE },
+    encoding: "utf8",
+  });
+  assert.equal(pass.status, 0, pass.stderr || pass.stdout);
+  assert.match(pass.stdout, /V4_RUNTIME_E2E_PREFLIGHT_PASS/);
+  assert.match(pass.stdout, new RegExp(`databaseHost=${APPROVED_E2E_NEON_HOST.replaceAll(".", "\\.")}`));
+  assert.doesNotMatch(pass.stdout, /e2e-password/);
+  assert.doesNotMatch(pass.stdout, /postgresql:\/\//);
+
+  const fail = spawnSync(process.execPath, ["scripts/check-v4-runtime-e2e-preflight.mjs"], {
+    cwd: new URL("../", import.meta.url),
+    env: {
+      ...process.env,
+      ...SAFE,
+      E2E_FIREBASE_PROJECT_ID: PRODUCTION_FIREBASE_PROJECT_ID,
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: PRODUCTION_FIREBASE_PROJECT_ID,
+      FIREBASE_PROJECT_ID: PRODUCTION_FIREBASE_PROJECT_ID,
+    },
+    encoding: "utf8",
+  });
+  assert.notEqual(fail.status, 0);
+  assert.match(fail.stderr, /PRODUCTION_FIREBASE_BLOCKED/);
+  assert.doesNotMatch(fail.stderr, /e2e-password/);
+  assert.doesNotMatch(fail.stderr, /postgresql:\/\//);
 });
