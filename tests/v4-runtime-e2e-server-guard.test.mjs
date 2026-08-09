@@ -15,8 +15,22 @@ import {
   PRODUCTION_NEON_HOST,
 } from "../scripts/lib/v4-runtime-e2e-preflight.mjs";
 
-const SAFE_DATABASE_URL =
-  `postgresql://e2e-user:e2e-password@${APPROVED_E2E_DATABASE_HOST}/neondb?sslmode=require`;
+function fixtureDatabaseUrl(
+  host,
+  {
+    protocol = "postgresql:",
+    username = "fixture-user",
+    password = "fixture-password",
+  } = {}
+) {
+  const url = new URL(`${protocol}//${host}/neondb`);
+  url.username = username;
+  url.password = password;
+  url.searchParams.set("sslmode", "require");
+  return url.toString();
+}
+
+const SAFE_DATABASE_URL = fixtureDatabaseUrl(APPROVED_E2E_DATABASE_HOST);
 
 const SAFE_E2E_ENV = Object.freeze({
   APP_ENV: "e2e",
@@ -42,7 +56,7 @@ test("existing non-E2E mutation configuration behavior is preserved", () => {
       APP_ENV: appEnv,
       API_MUTATIONS_ENABLED: "true",
       FIREBASE_PROJECT_ID: PRODUCTION_FIREBASE_PROJECT_ID,
-      DATABASE_URL: `postgresql://user:password@${PRODUCTION_DATABASE_HOST}/neondb`,
+      DATABASE_URL: fixtureDatabaseUrl(PRODUCTION_DATABASE_HOST),
     });
     assert.equal(decision.enabled, true, String(appEnv));
     assert.equal(decision.reason, "configured-enabled", String(appEnv));
@@ -92,14 +106,14 @@ test("E2E runtime blocks invalid, Production, and unapproved DB bindings", () =>
 
   const production = evaluateMutationGate({
     ...SAFE_E2E_ENV,
-    DATABASE_URL: `postgresql://user:secret@${PRODUCTION_DATABASE_HOST}/neondb`,
+    DATABASE_URL: fixtureDatabaseUrl(PRODUCTION_DATABASE_HOST),
   });
   assert.equal(production.enabled, false);
   assert.equal(production.reason, "e2e-production-database-blocked");
 
   const other = evaluateMutationGate({
     ...SAFE_E2E_ENV,
-    DATABASE_URL: "postgresql://user:secret@other-endpoint.neon.tech/neondb",
+    DATABASE_URL: fixtureDatabaseUrl("other-endpoint.neon.tech"),
   });
   assert.equal(other.enabled, false);
   assert.equal(other.reason, "e2e-database-host-mismatch");
@@ -132,7 +146,7 @@ test("/api/health preserves legacy shape outside E2E and exposes safe E2E gate s
       APP_ENV: "staging",
       API_MUTATIONS_ENABLED: "false",
       FIREBASE_PROJECT_ID: PRODUCTION_FIREBASE_PROJECT_ID,
-      DATABASE_URL: "postgresql://unused:unused@example.invalid/neondb",
+      DATABASE_URL: "not-used-by-health-route",
     }
   );
   assert.ok(staging);
@@ -154,7 +168,7 @@ test("/api/health preserves legacy shape outside E2E and exposes safe E2E gate s
     },
   });
   assert.doesNotMatch(JSON.stringify(body), /postgresql:\/\//);
-  assert.doesNotMatch(JSON.stringify(body), /e2e-password/);
+  assert.doesNotMatch(JSON.stringify(body), /fixture-password/);
 });
 
 test("every mutating API method is rejected before router/DB work when E2E bindings are unsafe", async () => {
