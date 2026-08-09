@@ -79,6 +79,19 @@
 
 .lt-variant-explorer .lt-lab__scenarios { margin-top: 44px; }
 
+.lt-lab__lineage-link {
+  margin: 4px 0 8px !important;
+  color: rgba(64, 38, 206, .76) !important;
+  font: 750 10px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+
+.lt-lab__open--pending {
+  cursor: default;
+  color: rgba(22, 19, 15, .48);
+  font-weight: 700;
+}
+
 .lt-variant-empty {
   display: flex;
   justify-content: space-between;
