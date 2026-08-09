@@ -49,18 +49,23 @@ export interface ExperienceCapability {
 export const EXPERIENCE_CAPABILITIES: readonly ExperienceCapability[] = [
   {
     id: "spatial-orbit-3d",
-    label: "Cosmic Orbit / Spatial 3D",
+    label: "Spatial Orbit / 3D Connection Arcs",
     status: "prototype-requested",
-    summary: "Moment와 연결을 3D 공간에서 탐색하고 성장시키는 orbit 기반 공간 경험입니다.",
+    summary: "Moment node와 Connection route를 깊이·occlusion·camera orbit이 있는 3D 공간에서 탐색하는 재사용 메커니즘입니다.",
     applicableScenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
-    dataNeeds: ["Moment node identity", "parent/relationship edges", "creation/discovery time", "optional media preview"],
-    integrationRule: "WebGL scene shell을 제품 데이터와 분리해 재사용하고, Graph/Replay/Milestone 후보가 같은 adapter contract를 통해 소비하게 합니다.",
-    risks: ["WebGL/browser support", "GPU/mobile performance", "touch gesture conflict", "reduced-motion/fallback required"],
+    dataNeeds: ["Moment node identity", "parent/relationship edges", "creation/discovery time", "activation state", "optional detail overlay adapter"],
+    integrationRule: "재사용 대상은 camera orbit, node activation, 3D route/arc, pulse, occlusion과 depth입니다. Earth/Crystal 같은 중심 오브젝트 미감은 각 Variant의 표현으로 남기고 공통 Capability에 강제하지 않습니다.",
+    risks: ["WebGL/browser support", "GPU/mobile performance", "touch gesture conflict", "large graph density", "reduced-motion/fallback required"],
     evidence: [
       {
         project: "LoveTree",
-        artifact: "52_글로벌모먼트오빗_3D네트워크 / lovetree-52-v2-cosmic-core-poc.html",
-        observed: ["WebGL canvas", "drag/swipe orbit", "wheel dolly", "Moment seeds", "connection growth events", "particle field", "glass/emissive material language"],
+        artifact: "52 / lovetree-52-v2-cosmic-core-poc.html (superseded visual direction, retained interaction evidence)",
+        observed: ["WebGL canvas", "drag/swipe orbit", "wheel dolly", "Moment seeds", "connection growth events", "particle field", "glass/emissive material experiments"],
+      },
+      {
+        project: "LoveTree",
+        artifact: "52 / lovetree-52-v3-reference-earth-orbit.html",
+        observed: ["large Earth spatial anchor", "slow camera orbit/yaw/dolly", "foreground/rear 3D objects", "front/back luminous arc occlusion", "moving route pulse", "surface Moment node activation", "desktop drag", "mobile swipe"],
       },
     ],
     issue: 81,
