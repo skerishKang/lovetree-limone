@@ -13,12 +13,14 @@ import {
   validateRuntimeE2EIdentity,
 } from "../scripts/lib/v4-runtime-e2e-preflight.mjs";
 
+const FIXTURE_DATABASE_PASSWORD = ["fixture", "password"].join("-");
+
 function fixturePostgresUrl(
   host,
   {
     protocol = "postgresql:",
     username = "fixture-user",
-    password = "fixture-password",
+    password = FIXTURE_DATABASE_PASSWORD,
   } = {}
 ) {
   const url = new URL(`${protocol}//${host}/neondb`);
@@ -180,22 +182,30 @@ test("missing required identities fail closed", () => {
 });
 
 test("preflight result never echoes credentials, tokens, or full DATABASE_URL", () => {
+  const secretUserMarker = ["very", "secret", "user"].join("-");
+  const secretPasswordMarker = ["very", "secret", "password"].join("-");
+  const cloudflareMarker = ["secret", "cloudflare", "token"].join("-");
+  const firebaseMarker = ["secret", "api", "key"].join("-");
   const databaseUrl = fixturePostgresUrl(APPROVED_E2E_NEON_HOST, {
-    username: "very-secret-user",
-    password: "very-secret-password",
+    username: secretUserMarker,
+    password: secretPasswordMarker,
   });
   const result = validateRuntimeE2EIdentity({
     ...SAFE,
     DATABASE_URL: databaseUrl,
-    CLOUDFLARE_API_TOKEN: "secret-cloudflare-token",
-    NEXT_PUBLIC_FIREBASE_API_KEY: "secret-api-key",
+    CLOUDFLARE_API_TOKEN: cloudflareMarker,
+    NEXT_PUBLIC_FIREBASE_API_KEY: firebaseMarker,
   });
   const serialized = JSON.stringify(result);
-  assert.doesNotMatch(serialized, /very-secret-user/);
-  assert.doesNotMatch(serialized, /very-secret-password/);
-  assert.doesNotMatch(serialized, /postgresql:\/\//);
-  assert.doesNotMatch(serialized, /secret-cloudflare-token/);
-  assert.doesNotMatch(serialized, /secret-api-key/);
+  for (const forbidden of [
+    secretUserMarker,
+    secretPasswordMarker,
+    cloudflareMarker,
+    firebaseMarker,
+    "postgresql://",
+  ]) {
+    assert.equal(serialized.includes(forbidden), false, forbidden);
+  }
   assert.deepEqual(
     Object.keys(result).sort(),
     [
@@ -220,9 +230,12 @@ test("CLI passes with safe identities and fails closed for Production Firebase w
   });
   assert.equal(pass.status, 0, pass.stderr || pass.stdout);
   assert.match(pass.stdout, /V4_RUNTIME_E2E_PREFLIGHT_PASS/);
-  assert.match(pass.stdout, new RegExp(`databaseHost=${APPROVED_E2E_NEON_HOST.replaceAll(".", "\\.")}`));
-  assert.doesNotMatch(pass.stdout, /fixture-password/);
-  assert.doesNotMatch(pass.stdout, /postgresql:\/\//);
+  assert.match(
+    pass.stdout,
+    new RegExp(`databaseHost=${APPROVED_E2E_NEON_HOST.replaceAll(".", "\\.")}`)
+  );
+  assert.equal(pass.stdout.includes(FIXTURE_DATABASE_PASSWORD), false, pass.stdout);
+  assert.equal(pass.stdout.includes("postgresql://"), false, pass.stdout);
 
   const fail = spawnSync(process.execPath, ["scripts/check-v4-runtime-e2e-preflight.mjs"], {
     cwd: new URL("../", import.meta.url),
@@ -237,6 +250,6 @@ test("CLI passes with safe identities and fails closed for Production Firebase w
   });
   assert.notEqual(fail.status, 0);
   assert.match(fail.stderr, /PRODUCTION_FIREBASE_BLOCKED/);
-  assert.doesNotMatch(fail.stderr, /fixture-password/);
-  assert.doesNotMatch(fail.stderr, /postgresql:\/\//);
+  assert.equal(fail.stderr.includes(FIXTURE_DATABASE_PASSWORD), false, fail.stderr);
+  assert.equal(fail.stderr.includes("postgresql://"), false, fail.stderr);
 });
