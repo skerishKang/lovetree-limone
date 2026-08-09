@@ -30,7 +30,9 @@ const CONNECTIONS = [
   { id: "c5", fromMomentId: "m5", toMomentId: "m6", label: "이제 내가 직접 찾고 있어서", order: 5 },
 ] as const satisfies readonly DirectedReplayConnection[];
 
-const pointById = new Map(MOMENTS.map((moment) => [moment.id, moment]));
+const pointById = new Map<string, (typeof MOMENTS)[number]>(
+  MOMENTS.map((moment) => [moment.id, moment] as const),
+);
 const initialPlan = deriveDirectedConnectionReplayPlan(MOMENTS, CONNECTIONS, MOMENTS[0].id);
 
 export default function ConnectionReplayPrototypePage() {
