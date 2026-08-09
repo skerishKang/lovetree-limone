@@ -5,6 +5,7 @@ import ExperienceCapabilityLibrary from "@/app/components/product/ExperienceCapa
 import { DESIGN_CANDIDATES, DESIGN_SCENARIOS } from "@/lib/design-lab";
 import { DESIGN_LINEAGES } from "@/lib/design-lineages";
 import "@/app/styles/design-lab.css";
+import "@/app/styles/design-lab-history.css";
 import "@/app/styles/design-lineages.css";
 import "@/app/styles/design-variant-explorer.css";
 import "@/app/styles/experience-capabilities.css";
