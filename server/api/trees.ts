@@ -424,6 +424,7 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   const memoryRow = {
     id: memoryId,
     treeId,
+    clientKey: null,
     parentId: (normalizedMemory.parentId as string | undefined) ?? null,
     connectionReason: (normalizedMemory.connectionReason as string | null | undefined) ?? null,
     title: memTitle,
