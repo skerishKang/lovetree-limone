@@ -29,6 +29,12 @@ replaceOnce(
 );
 
 replaceOnce(
+`  const memoryRow = {\n    id: memoryId,\n    treeId,`,
+`  const memoryRow = {\n    id: memoryId,\n    treeId,\n    clientKey: null,`,
+"atomic first-memory client key"
+);
+
+replaceOnce(
 `    parentId: (memory.parentId as string | undefined) ?? null,\n    title: memTitle,`,
 `    parentId: (normalizedMemory.parentId as string | undefined) ?? null,\n    connectionReason: (normalizedMemory.connectionReason as string | null | undefined) ?? null,\n    title: memTitle,`,
 "connection reason row"
