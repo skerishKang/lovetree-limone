@@ -64,7 +64,7 @@ const MEMORY_CONTENT_RULES = {
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
   channelUrl: { kind: "url", maxLength: 2048 },
-  parentId: { kind: "string", trim: true, maxLength: 100 },
+  parentId: { kind: "string", nullable: true, trim: true, maxLength: 100 },
   connectionReason: { kind: "string", trim: true, maxLength: CONNECTION_REASON_MAX_LENGTH },
 } as const;
 
