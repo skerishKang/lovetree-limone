@@ -13,6 +13,21 @@ import {
   validateRuntimeE2EIdentity,
 } from "../scripts/lib/v4-runtime-e2e-preflight.mjs";
 
+function fixturePostgresUrl(
+  host,
+  {
+    protocol = "postgresql:",
+    username = "fixture-user",
+    password = "fixture-password",
+  } = {}
+) {
+  const url = new URL(`${protocol}//${host}/neondb`);
+  url.username = username;
+  url.password = password;
+  url.searchParams.set("sslmode", "require");
+  return url.toString();
+}
+
 const SAFE = Object.freeze({
   E2E_EXPECTED_WORKER: "lovetree-limone-v4-runtime-e2e-preview",
   E2E_FIREBASE_PROJECT_ID: "lovetree-e2e",
@@ -20,7 +35,7 @@ const SAFE = Object.freeze({
   FIREBASE_PROJECT_ID: "lovetree-e2e",
   E2E_NEON_PROJECT_ID: EXPECTED_NEON_PROJECT_ID,
   E2E_NEON_BRANCH_ID: APPROVED_E2E_NEON_BRANCH_ID,
-  DATABASE_URL: `postgresql://e2e-user:e2e-password@${APPROVED_E2E_NEON_HOST}/neondb?sslmode=require`,
+  DATABASE_URL: fixturePostgresUrl(APPROVED_E2E_NEON_HOST),
   APP_ENV: "e2e",
   API_MUTATIONS_ENABLED: "true",
 });
@@ -49,7 +64,10 @@ test("approved isolated Runtime E2E identities and actual DB endpoint pass", () 
 
 test("postgres URL parsing extracts only hostname", () => {
   assert.equal(parsePostgresHost(SAFE.DATABASE_URL), APPROVED_E2E_NEON_HOST);
-  assert.equal(parsePostgresHost("postgres://user:pass@example.invalid/db"), "example.invalid");
+  assert.equal(
+    parsePostgresHost(fixturePostgresUrl("example.invalid", { protocol: "postgres:" })),
+    "example.invalid"
+  );
   assert.equal(parsePostgresHost("https://example.invalid/db"), null);
   assert.equal(parsePostgresHost("not-a-url"), null);
 });
@@ -114,14 +132,14 @@ test("wrong Neon project or unapproved branch is rejected", () => {
 test("DATABASE_URL must point to the approved isolated Neon endpoint", () => {
   const productionCodes = issueCodes({
     ...SAFE,
-    DATABASE_URL: `postgresql://user:secret@${PRODUCTION_NEON_HOST}/neondb`,
+    DATABASE_URL: fixturePostgresUrl(PRODUCTION_NEON_HOST),
   });
   assert.equal(productionCodes.has("PRODUCTION_DATABASE_HOST_BLOCKED"), true);
   assert.equal(productionCodes.has("DATABASE_HOST_MISMATCH"), true);
 
   const otherCodes = issueCodes({
     ...SAFE,
-    DATABASE_URL: "postgresql://user:secret@other-project.neon.tech/neondb",
+    DATABASE_URL: fixturePostgresUrl("other-project.neon.tech"),
   });
   assert.equal(otherCodes.has("DATABASE_HOST_MISMATCH"), true);
 
@@ -162,7 +180,10 @@ test("missing required identities fail closed", () => {
 });
 
 test("preflight result never echoes credentials, tokens, or full DATABASE_URL", () => {
-  const databaseUrl = `postgresql://very-secret-user:very-secret-password@${APPROVED_E2E_NEON_HOST}/neondb?sslmode=require`;
+  const databaseUrl = fixturePostgresUrl(APPROVED_E2E_NEON_HOST, {
+    username: "very-secret-user",
+    password: "very-secret-password",
+  });
   const result = validateRuntimeE2EIdentity({
     ...SAFE,
     DATABASE_URL: databaseUrl,
@@ -200,7 +221,7 @@ test("CLI passes with safe identities and fails closed for Production Firebase w
   assert.equal(pass.status, 0, pass.stderr || pass.stdout);
   assert.match(pass.stdout, /V4_RUNTIME_E2E_PREFLIGHT_PASS/);
   assert.match(pass.stdout, new RegExp(`databaseHost=${APPROVED_E2E_NEON_HOST.replaceAll(".", "\\.")}`));
-  assert.doesNotMatch(pass.stdout, /e2e-password/);
+  assert.doesNotMatch(pass.stdout, /fixture-password/);
   assert.doesNotMatch(pass.stdout, /postgresql:\/\//);
 
   const fail = spawnSync(process.execPath, ["scripts/check-v4-runtime-e2e-preflight.mjs"], {
@@ -216,6 +237,6 @@ test("CLI passes with safe identities and fails closed for Production Firebase w
   });
   assert.notEqual(fail.status, 0);
   assert.match(fail.stderr, /PRODUCTION_FIREBASE_BLOCKED/);
-  assert.doesNotMatch(fail.stderr, /e2e-password/);
+  assert.doesNotMatch(fail.stderr, /fixture-password/);
   assert.doesNotMatch(fail.stderr, /postgresql:\/\//);
 });
