@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import {
   INTENT_PATHS,
   momentsForIntent,
@@ -104,7 +104,7 @@ export default function IntentToPathPrototypePage() {
 
         <ol className="lt-intent-path__route" aria-label="질문에서 다음 행동까지의 경로">
           {stages.map((stage, index) => (
-            <li key={stage.label} style={{ "--route-index": index } as React.CSSProperties}>
+            <li key={stage.label} style={{ "--route-index": index } as CSSProperties}>
               <span>{stage.label}</span>
               <strong>{stage.title}</strong>
               <p>{stage.body}</p>
@@ -135,7 +135,7 @@ export default function IntentToPathPrototypePage() {
           ))}
         </div>
 
-        <button type="button" className="lt-intent-path__next" onClick={() => undefined}>
+        <button type="button" className="lt-intent-path__next">
           {resolved.path.nextAction} →
         </button>
         <p className="lt-intent-path__prototype-note">
