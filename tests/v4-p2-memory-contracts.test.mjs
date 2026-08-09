@@ -7,6 +7,7 @@ import {
   parseVideoOffsetSeconds,
   validateMemoryDateCompatibility,
 } from "../server/api/memory-contract.ts";
+import { validate } from "../server/api/validate.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
@@ -55,6 +56,21 @@ test("P2 update mirrors date fields and can clear a connection reason", () => {
   assert.equal(reasonUpdate.connectionReason, null);
 });
 
+test("explicitly nullable string rules preserve parentId null for relation removal", () => {
+  const parsed = validate(
+    { parentId: null },
+    { parentId: { kind: "string", nullable: true, trim: true, maxLength: 100 } }
+  );
+  assert.equal(parsed.ok, true);
+  if (parsed.ok) assert.equal(parsed.value.parentId, null);
+
+  const rejected = validate(
+    { parentId: null },
+    { parentId: { kind: "string", trim: true, maxLength: 100 } }
+  );
+  assert.equal(rejected.ok, false);
+});
+
 test("P2 migration is additive and non-destructive", async () => {
   const migration = await read("drizzle/0003_peaceful_radioactive_man.sql");
   assert.match(migration, /ADD COLUMN "connection_reason" text/);
@@ -75,9 +91,11 @@ test("schema and all Memory write paths include the P2 fields", async () => {
   assert.match(memories, /serializeMemoryContract/);
   assert.match(trees, /serializeMemoryContract\(memoryRow\)/);
   assert.match(trees, /normalizeMemoryCreateInput\(memory\)/);
+  assert.match(memories, /parentId: \{ kind: "string", nullable: true/);
+  assert.match(trees, /parentId: \{ kind: "string", nullable: true/);
 });
 
-test("client Moment UX uses discoveryDate and captures connection reason", async () => {
+test("client Moment UX uses discoveryDate, connection reason and removable parent relations", async () => {
   const types = await read("lib/tree-types.ts");
   const hook = await read("lib/use-tree-moments.ts");
   const composer = await read("app/components/MomentComposerModal.tsx");
@@ -89,9 +107,11 @@ test("client Moment UX uses discoveryDate and captures connection reason", async
   assert.match(types, /videoOffsetSeconds\?: number \| null/);
   assert.match(hook, /payload\.discoveryDate/);
   assert.match(hook, /payload\.connectionReason/);
+  assert.match(hook, /payload\.parentId = input\.parentId \|\| null/);
   assert.match(hook, /videoOffsetSecondsFromUrl/);
   assert.match(composer, /왜 이 순간에서 이어졌나요\?/);
   assert.match(composer, /discoveryDate: form\.discoveryDate/);
+  assert.match(detail, /parentId: form\.parentId \|\| null/);
   assert.match(detail, /moment\.connectionReason/);
   assert.match(detail, /memoryDiscoveryDate\(moment\)/);
   assert.match(treePage, /memoryDiscoveryDate\(memory\)/);
