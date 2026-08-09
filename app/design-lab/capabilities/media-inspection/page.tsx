@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 import {
-  MOMENT_INSPECTION_ADAPTERS,
   PROTOTYPE_INSPECTION_MOMENTS,
   adapterForKind,
   adjacentInspectionMomentId,
@@ -92,7 +91,7 @@ export default function MediaInspectionPrototypePage() {
             <div className="lt-media-inspection__viewer-core" aria-hidden="true">
               <span className="lt-media-inspection__viewer-symbol">{moment.kind.slice(0, 2).toUpperCase()}</span>
               <div className="lt-media-inspection__viewer-lines">
-                {Array.from({ length: 18 }, (_, index) => <i key={index} style={{ "--bar-index": index } as React.CSSProperties} />)}
+                {Array.from({ length: 18 }, (_, index) => <i key={index} style={{ "--bar-index": index } as CSSProperties} />)}
               </div>
             </div>
             <div className="lt-media-inspection__preview-copy">
