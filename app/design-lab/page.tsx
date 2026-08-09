@@ -1,10 +1,12 @@
 import Link from "next/link";
+import ExperienceCapabilityLibrary from "@/app/components/product/ExperienceCapabilityLibrary";
 import {
   DESIGN_CANDIDATES,
   DESIGN_SCENARIOS,
   candidatesByScenario,
 } from "@/lib/design-lab";
 import "@/app/styles/design-lab.css";
+import "@/app/styles/experience-capabilities.css";
 
 const STATUS_LABELS = {
   received: "접수",
@@ -30,7 +32,7 @@ export default function DesignLabPage() {
           <h1>제품을 복제하지 않고,<br />디자인 후보를 전부 비교합니다.</h1>
           <p className="lt-lab__lede">
             모든 후보는 Legacy/Next 두 제품군 아래에서 관리합니다. Next 후보는 같은 Auth·API·DB·Tree·Moment
-            계약을 공유하고, 시나리오별 화면과 인터랙션만 독립 Variant로 비교합니다.
+            계약을 공유하고, 시나리오별 Variant와 여러 Variant가 재사용할 Experience Capability를 분리해서 비교합니다.
           </p>
         </div>
         <div className="lt-lab__summary" aria-label="Design Lab 후보 요약">
@@ -40,10 +42,11 @@ export default function DesignLabPage() {
         </div>
       </header>
 
-      <nav className="lt-lab__jump" aria-label="시나리오 바로가기">
+      <nav className="lt-lab__jump" aria-label="Design Lab 바로가기">
         {DESIGN_SCENARIOS.map((scenario) => (
           <a key={scenario.id} href={`#${scenario.id}`}>{scenario.label}</a>
         ))}
+        <a href="#experience-capabilities">Experience Capabilities</a>
       </nav>
 
       <div className="lt-lab__scenarios">
@@ -87,8 +90,10 @@ export default function DesignLabPage() {
         })}
       </div>
 
+      <ExperienceCapabilityLibrary />
+
       <footer className="lt-lab__footer">
-        <p>새 디자인은 새 V5/V6 제품을 만드는 대신 해당 시나리오에 Variant로 등록합니다.</p>
+        <p>새 디자인은 새 V5/V6 제품을 만드는 대신 Scenario Variant와 재사용 Capability로 분류합니다.</p>
         <Link href="/v4">현재 Next LoveTree 열기 →</Link>
       </footer>
     </main>
