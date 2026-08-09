@@ -1,7 +1,7 @@
-# LoveTree Product Families & Design Variant Operating Model
+# LoveTree Product Families, Variants & Experience Capabilities
 
 Date: 2026-08-09
-Issue: #74
+Issues: #74, #77
 
 ## 1. Product model
 
@@ -10,12 +10,12 @@ LoveTree is managed as **two product families only**.
 1. **Legacy LoveTree**
    - Route: `/legacy`
    - Purpose: preserve the first implemented product as a stable comparison baseline.
-   - The previous `/` implementation is preserved byte-for-byte as the Legacy page body.
+   - The previous `/` implementation is preserved as the Legacy page body.
 
 2. **Next LoveTree**
    - Route: `/v4`
    - Purpose: build the next product by connecting sibling-supplied UI/UX candidates to the shared functional core.
-   - Shared core means Auth, API, DB, Tree, Moment, Community, visibility/privacy and canonical product routes are not duplicated for every visual candidate.
+   - Shared core means Auth, API, DB, Tree, Moment, Relation, Community and privacy/visibility are not duplicated for every visual candidate.
 
 `/v2` and `/v3` remain reachable as historical comparison routes, but they are **not** additional product families.
 
@@ -29,15 +29,33 @@ It provides three review paths:
 - Next LoveTree
 - Design Lab
 
-`/gateway` is an explicit alias for the same gateway so the entry point can always be linked directly.
+`/gateway` is an explicit alias for the same gateway.
 
-## 3. Design Lab rule
+## 3. Three-layer Next architecture
+
+Next LoveTree is organized as:
+
+1. **Product Core** — shared product truth and behavior.
+2. **Experience Capabilities** — reusable interaction/visual mechanics that may originate in LoveTree or another sibling project.
+3. **Scenario Variants** — candidate screens/experiences that consume the common Core and selected Capabilities.
+
+This separates two decisions:
+
+- **Variant selection:** which candidate surface should the final product use?
+- **Capability adoption:** which reusable mechanism is valuable across one or more surfaces?
+
+A Capability can be adopted even if its source Variant is not selected. Selecting a Variant does not automatically adopt every experimental mechanic present in its source.
+
+## 4. Design Lab rule
 
 Sibling designs are not promoted to V5/V6/V7 complete products merely because more files arrive.
 
-Every new design is registered under:
+Every new design is classified as one or more of:
 
-`Scenario -> Variant`
+- `Scenario -> Variant`
+- Experience Capability evidence/contribution
+- reference-only benchmark
+- superseded/history
 
 Current scenarios:
 
@@ -50,39 +68,44 @@ Current scenarios:
 - Milestones / 300+ Growth
 - Cinematic / Brand
 
-The existing `V4_SOURCE_MANIFEST` is the source inventory authority for sibling HTML sources. Design Lab derives candidates from that manifest automatically, so future source additions do not require maintaining a second parallel list.
+The existing `V4_SOURCE_MANIFEST` is the source inventory authority for sibling LoveTree HTML sources. Design Lab derives LoveTree candidates from that manifest automatically.
 
-## 4. Candidate kinds
+Cross-project capabilities are registered separately with provenance in `lib/experience-capabilities.ts`.
+
+## 5. Candidate kinds
 
 A Variant does not have to be a full screen.
 
-- `screen`: an independently rendered screen candidate
-- `mechanic`: a behavior that may be embedded into another screen (for example draggable notes)
-- `experience`: an immersive archive/milestone/cinematic experience
-- `historical`: a preserved technical baseline such as V2/V3
+- `screen`: independently rendered screen candidate
+- `mechanic`: behavior embedded into another screen
+- `experience`: immersive archive/milestone/cinematic experience
+- `historical`: preserved technical baseline such as V2/V3
 
 This prevents a mechanic source and a full visual surface from being misclassified as two competing complete products.
 
-## 5. Candidate lifecycle
+## 6. Variant lifecycle
 
-Use the following review lifecycle:
+Use:
 
 `received -> mapped -> implemented -> validated -> shortlisted -> selected`
 
-A candidate that is no longer active becomes `superseded`; it is preserved for traceability rather than deleted.
+A candidate that is no longer active becomes `superseded`; it is retained for traceability rather than deleted.
 
-This lifecycle aligns with the design-asset operating folders:
+## 7. Capability lifecycle
 
-- `00_기준문서`: rules, manifests, selection criteria
-- `10_채택본`: selected/adopted designs
-- `20_진행중_후보`: received through shortlisted candidates
-- `90_미채택_보관`: superseded candidates retained for comparison/history
+Use:
 
-## 6. Selection policy
+`observed -> mapped -> prototype-requested -> prototyped -> validated -> adopted`
+
+Use `rejected` for a researched mechanism that should remain visible as history but should not enter the product.
+
+Initial capability evidence is documented in `CROSS_PROJECT_EXPERIENCE_CAPABILITY_LIBRARY.md`.
+
+## 8. Selection policy
 
 Do not choose the final Next LoveTree combination before the candidate set is adequately implemented and reviewable.
 
-Selection is per scenario, not per whole-product clone. A final combination may therefore choose, for example:
+Selection is per Scenario, not per whole-product clone. A final composition may choose, for example:
 
 - Onboarding: Variant B
 - Workspace: Variant A
@@ -90,13 +113,15 @@ Selection is per scenario, not per whole-product clone. A final combination may 
 - Archive: Motion + Accordion
 - Milestone: Aurora
 
-Only the selected cross-scenario combination needs full end-to-end journey validation as a final release candidate.
+The composition can additionally adopt shared Capabilities such as spatial orbit, cinematic convergence or physical-object navigation without cloning the original source product.
 
-## 7. Testing model
+Only the selected or near-final composition needs full end-to-end journey validation.
+
+## 9. Testing model
 
 ### Shared functional tests
 
-Run once against the common product core:
+Run once against the common Product Core:
 
 - Auth
 - Tree CRUD
@@ -108,37 +133,78 @@ Run once against the common product core:
 
 ### Per-Variant tests
 
-Each candidate must prove only the behavior it owns:
+Each candidate proves only the behavior it owns:
 
 - renderability
 - primary interactions
 - responsive behavior
 - overflow/modal lifecycle
 - animation/reduced-motion expectations where applicable
-- compatibility with the shared data contract
+- shared-data compatibility
 
-### Final combination
+### Per-Capability tests
 
-After sibling/user selection, run the complete desktop/mobile journey only against the selected final combination.
+Validate the reusable mechanic independently:
 
-This avoids combinatorial testing of every possible cross-scenario combination.
+- input/data adapter contract
+- desktop/mobile interaction
+- fallback behavior
+- accessibility/reduced-motion
+- browser/performance risk where relevant
 
-## 8. Future sibling design intake
+### Final composition
+
+After user/sibling selection, run the complete desktop/mobile journey only against the final or near-final composition.
+
+Do not test the Cartesian product of every Variant and every Capability.
+
+## 10. Future sibling design intake
 
 When a new design arrives:
 
-1. Preserve the original source asset.
-2. Add it to the source manifest with source file, route, role and preservation contract.
-3. Assign it to one existing Scenario whenever possible.
-4. Register it as a Variant; do not create a new product-generation number.
-5. Implement it against shared data/function contracts.
-6. Expose it in Design Lab.
-7. Validate it independently.
-8. Shortlist/select only during the later joint review.
+1. Preserve the original source asset unchanged.
+2. Record source project/folder/file and observed behavior.
+3. Decide whether the item is a Variant, a Capability contribution, both, reference-only, or history.
+4. For LoveTree HTML variants, update the source manifest with source file, route, role and preservation contract.
+5. Assign existing Scenario(s) whenever possible.
+6. If it contributes a reusable mechanic, update the Capability registry with data needs, integration rule, risk and provenance.
+7. Implement against shared Core contracts rather than forking Auth/API/DB.
+8. Expose the result in Design Lab.
+9. Validate independently.
+10. Shortlist/select only during later joint review.
 
 Create a new Scenario only if the design represents a genuinely new product job, not merely a new visual treatment.
 
-## 9. Deployment model
+Use `DESIGN_VARIANT_AND_CAPABILITY_INTAKE_TEMPLATE.md` for future handoffs.
+
+## 11. Parallel model roles
+
+### Drive-connected web model
+
+Best for:
+
+- broad sibling Drive audit
+- source comparison
+- extracting reusable mechanics
+- evidence/provenance cataloging
+
+Tracked in #78.
+
+### Local/browser model
+
+Use only when local execution materially helps:
+
+- Chromium desktop/mobile validation
+- WebGL performance/fallback
+- touch gestures
+- focus/keyboard lifecycle
+- resize/orientation
+
+Tracked in #79.
+
+Local access is not required for Drive research.
+
+## 12. Deployment model
 
 Deployment automation is tracked separately in #75.
 
@@ -146,12 +212,14 @@ Desired final state:
 
 `merge main -> automated validation -> guarded Cloudflare build/deploy -> production smoke -> rollback path`
 
-The repository currently has a PR validation workflow and guarded production deployment scripts. Enabling a new automatic Production trigger is intentionally separate from the Design Lab architecture and final design selection.
+The repository currently has PR validation and guarded Production deployment scripts. Production trigger configuration is separate from Design Lab architecture and final design selection.
 
-## 10. Non-goals of this architecture phase
+## 13. Non-goals of this architecture phase
 
 - no deletion of V2/V3 candidate history
 - no final design selection
 - no destructive DB migration
 - no Production Worker mutation
+- no Production Firebase mutation
 - no duplication of Auth/API/DB per visual candidate
+- no wholesale copying of unrelated sibling products into LoveTree
