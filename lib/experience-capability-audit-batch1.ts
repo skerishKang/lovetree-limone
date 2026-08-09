@@ -71,7 +71,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH1 = [
   {
     id: "source-media-inspection-deck",
     label: "Source / Media Inspection Deck",
-    status: "mapped",
+    status: "prototyped",
     summary: "하나의 상세 검사 shell 안에서 media type별 viewer와 control adapter를 교체하면서 공통 Moment 문맥과 메타데이터를 유지하는 패턴입니다.",
     applicableScenarios: ["tree-workspace", "relationship-retrospective", "people-archive"],
     dataNeeds: [
