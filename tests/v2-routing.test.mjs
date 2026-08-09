@@ -12,9 +12,9 @@ async function exists(path) {
   try { await stat(new URL(path, root)); return true; } catch { return false; }
 }
 
-// 1. V1 라우트가 변경되지 않음
-test("V1 routes unchanged: home page exists", async () => {
-  const page = await readApp("page.tsx");
+// 1. Legacy V1 홈은 /legacy에 보존되고 나머지 V1 기능 라우트는 유지됨
+test("Legacy V1 home exists at /legacy", async () => {
+  const page = await readApp("legacy/page.tsx");
   assert.match(page, /"use client"/);
   assert.match(page, /useAuth/);
   assert.match(page, /apiFetch/);
@@ -31,7 +31,6 @@ test("V1 routes unchanged: tree detail page exists", async () => {
   const page = await readApp("trees/[id]/page.tsx");
   assert.match(page, /"use client"/);
   assert.match(page, /useAuth/);
-  // Data fetching moved to the shared hook in Slice 2/3; the page consumes it.
   assert.match(page, /useTreeMoments/);
   const hook = await readFile(new URL("lib/use-tree-moments.ts", root), "utf8");
   assert.match(hook, /apiFetch/);
