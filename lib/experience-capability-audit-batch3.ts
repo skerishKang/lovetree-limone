@@ -27,7 +27,7 @@ export const AUDITED_EXPERIENCE_CAPABILITIES_BATCH3 = [
   {
     id: "interruptible-cinematic-story-playback",
     label: "Interruptible Cinematic Story Playback",
-    status: "observed",
+    status: "prototyped",
     summary: "긴 Moment 서사를 하나의 시간축 재생으로 안내하되 chapter·progress·time을 같은 위치 상태에서 계산하고, wheel/touch/seek 같은 수동 입력이 들어오면 자동재생권을 즉시 사용자에게 넘기는 메커니즘입니다.",
     applicableScenarios: ["entry-onboarding", "tree-workspace", "relationship-retrospective", "growth-milestones"],
     dataNeeds: [
