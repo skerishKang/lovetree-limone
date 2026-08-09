@@ -1,4 +1,4 @@
-# LoveTree Product Families, Variants & Experience Capabilities
+# LoveTree Product Families, Design Lineages, Variants & Experience Capabilities
 
 Date: 2026-08-09
 Issues: #74, #77
@@ -15,15 +15,13 @@ LoveTree is managed as **two product families only**.
 2. **Next LoveTree**
    - Route: `/v4`
    - Purpose: build the next product by connecting sibling-supplied UI/UX candidates to the shared functional core.
-   - Shared core means Auth, API, DB, Tree, Moment, Relation, Community and privacy/visibility are not duplicated for every visual candidate.
+   - Auth, API, DB, Tree, Moment, Relation, Community and privacy/visibility remain shared product truth.
 
 `/v2` and `/v3` remain reachable as historical comparison routes, but they are **not** additional product families.
 
 ## 2. Root gateway
 
-The root route `/` is the Product Gateway.
-
-It provides three review paths:
+The root route `/` is the Product Gateway with three review paths:
 
 - Legacy LoveTree
 - Next LoveTree
@@ -31,31 +29,69 @@ It provides three review paths:
 
 `/gateway` is an explicit alias for the same gateway.
 
-## 3. Three-layer Next architecture
+## 3. Next architecture: Product → Lineage/Revision → Variant → Capability
 
-Next LoveTree is organized as:
+Next LoveTree separates four concepts that were previously easy to confuse.
 
-1. **Product Core** — shared product truth and behavior.
-2. **Experience Capabilities** — reusable interaction/visual mechanics that may originate in LoveTree or another sibling project.
-3. **Scenario Variants** — candidate screens/experiences that consume the common Core and selected Capabilities.
+### Product Core
 
-This separates two decisions:
+The one shared functional product: Auth, API, DB, Tree, Moment, Relation, Community, privacy/visibility and canonical routes.
 
-- **Variant selection:** which candidate surface should the final product use?
-- **Capability adoption:** which reusable mechanism is valuable across one or more surfaces?
+### Design Lineage / Revision
 
-A Capability can be adopted even if its source Variant is not selected. Selecting a Variant does not automatically adopt every experimental mechanic present in its source.
+A numbered or otherwise coherent design track is a **Lineage**. Iterative V1/V2/V3/V4 files inside that track are **Revisions**.
 
-## 4. Design Lab rule
+Example:
 
-Sibling designs are not promoted to V5/V6/V7 complete products merely because more files arrive.
+`LoveTree 48 Neon Pilot -> 01 V1 -> 02 V2 -> ... -> 10 Final Gate`
 
-Every new design is classified as one or more of:
+These revisions are not V1/V2/V3/V4 LoveTree products. They are preserved attempts inside one design thesis.
 
-- `Scenario -> Variant`
-- Experience Capability evidence/contribution
-- reference-only benchmark
-- superseded/history
+Lineage registry: `lib/design-lineages.ts`.
+
+### Scenario Variant
+
+A Variant is a candidate surface/experience for one LoveTree product job, such as Onboarding, Graph or Archive.
+
+Variant question: **which candidate surface should the final product use?**
+
+### Experience Capability
+
+A Capability is a reusable interaction/visual mechanism that one or more Variants may consume, even when the mechanism was discovered in another sibling project.
+
+Capability question: **which reusable mechanism is worth adopting across surfaces?**
+
+A Capability may be adopted even when the source visual Variant is not selected. Selecting a Variant does not automatically adopt every experimental mechanic in its source.
+
+## 4. Why the Lineage layer is necessary
+
+Sibling design work is iterative. One design direction may contain many revisions, fallback candidates, approved storyboards, executable HTMLs and rejected attempts.
+
+Without Lineages, those revisions look like separate product versions and the review space becomes misleading.
+
+Lineage rules:
+
+- new visual polish or correction -> new Revision inside the current Lineage;
+- fallback/baseline/rejected attempts remain preserved inside the Lineage;
+- create a new Lineage only for a genuinely separate design thesis, benchmark lineage, product job or interaction direction;
+- a Lineage never creates a third LoveTree product family;
+- Lineage lifecycle: `incoming / active / hold / closed`;
+- Revision decisions: `baseline / candidate / approved-plan / rejected / reference`.
+
+The initial evidence snapshot includes numbered LoveTree design tracks 48-52.
+
+## 5. Design Lab rule
+
+Every new design artifact is classified as one or more of:
+
+- existing/new Design Lineage;
+- Revision inside that Lineage;
+- `Scenario -> Variant`;
+- Experience Capability evidence/contribution;
+- reference-only benchmark;
+- superseded/history.
+
+Do **not** create a new V5/V6/V7 whole LoveTree product merely because more files arrive.
 
 Current scenarios:
 
@@ -68,11 +104,11 @@ Current scenarios:
 - Milestones / 300+ Growth
 - Cinematic / Brand
 
-The existing `V4_SOURCE_MANIFEST` is the source inventory authority for sibling LoveTree HTML sources. Design Lab derives LoveTree candidates from that manifest automatically.
+The existing `V4_SOURCE_MANIFEST` is the source inventory authority for LoveTree HTML sources already ported into the repository. Design Lab derives those implementation candidates from that manifest automatically; it does not depend on a hardcoded source count.
 
 Cross-project capabilities are registered separately with provenance in `lib/experience-capabilities.ts`.
 
-## 5. Candidate kinds
+## 6. Variant kinds and lifecycle
 
 A Variant does not have to be a full screen.
 
@@ -81,11 +117,7 @@ A Variant does not have to be a full screen.
 - `experience`: immersive archive/milestone/cinematic experience
 - `historical`: preserved technical baseline such as V2/V3
 
-This prevents a mechanic source and a full visual surface from being misclassified as two competing complete products.
-
-## 6. Variant lifecycle
-
-Use:
+Variant lifecycle:
 
 `received -> mapped -> implemented -> validated -> shortlisted -> selected`
 
@@ -97,13 +129,13 @@ Use:
 
 `observed -> mapped -> prototype-requested -> prototyped -> validated -> adopted`
 
-Use `rejected` for a researched mechanism that should remain visible as history but should not enter the product.
+Use `rejected` for a researched mechanism that remains visible as history but should not enter the product.
 
 Initial capability evidence is documented in `CROSS_PROJECT_EXPERIENCE_CAPABILITY_LIBRARY.md`.
 
 ## 8. Selection policy
 
-Do not choose the final Next LoveTree combination before the candidate set is adequately implemented and reviewable.
+Do not choose the final Next composition before the candidate set is adequately implemented and reviewable.
 
 Selection is per Scenario, not per whole-product clone. A final composition may choose, for example:
 
@@ -115,13 +147,13 @@ Selection is per Scenario, not per whole-product clone. A final composition may 
 
 The composition can additionally adopt shared Capabilities such as spatial orbit, cinematic convergence or physical-object navigation without cloning the original source product.
 
-Only the selected or near-final composition needs full end-to-end journey validation.
+A baseline/fallback revision may remain preserved even if another revision is later selected.
 
 ## 9. Testing model
 
-### Shared functional tests
+### Shared Product Core
 
-Run once against the common Product Core:
+Run once against:
 
 - Auth
 - Tree CRUD
@@ -131,9 +163,18 @@ Run once against the common Product Core:
 - Community
 - API/DB contracts
 
-### Per-Variant tests
+### Per-Lineage / Revision
 
-Each candidate proves only the behavior it owns:
+Check that:
+
+- revisions stay attached to the correct Lineage;
+- baseline/candidate/rejected state is explicit;
+- earlier baseline/approved files are not overwritten;
+- a cosmetic revision does not create another product family.
+
+### Per-Variant
+
+Validate only behavior the Variant owns:
 
 - renderability
 - primary interactions
@@ -142,7 +183,7 @@ Each candidate proves only the behavior it owns:
 - animation/reduced-motion expectations where applicable
 - shared-data compatibility
 
-### Per-Capability tests
+### Per-Capability
 
 Validate the reusable mechanic independently:
 
@@ -156,7 +197,7 @@ Validate the reusable mechanic independently:
 
 After user/sibling selection, run the complete desktop/mobile journey only against the final or near-final composition.
 
-Do not test the Cartesian product of every Variant and every Capability.
+Do not test the Cartesian product of every Revision × Variant × Capability.
 
 ## 10. Future sibling design intake
 
@@ -164,20 +205,33 @@ When a new design arrives:
 
 1. Preserve the original source asset unchanged.
 2. Record source project/folder/file and observed behavior.
-3. Decide whether the item is a Variant, a Capability contribution, both, reference-only, or history.
-4. For LoveTree HTML variants, update the source manifest with source file, route, role and preservation contract.
-5. Assign existing Scenario(s) whenever possible.
-6. If it contributes a reusable mechanic, update the Capability registry with data needs, integration rule, risk and provenance.
-7. Implement against shared Core contracts rather than forking Auth/API/DB.
-8. Expose the result in Design Lab.
-9. Validate independently.
-10. Shortlist/select only during later joint review.
+3. Attach it to an existing Lineage or justify a genuinely new Lineage.
+4. Record its Revision state if it is an iteration of that Lineage.
+5. Decide whether it is a Variant, a Capability contribution, both, reference-only, or history.
+6. For LoveTree HTML implementation candidates, update the source manifest with source file, route, role and preservation contract when the port begins.
+7. Assign existing Scenario(s) whenever possible.
+8. If it contributes a reusable mechanic, update the Capability registry with data needs, integration rule, risk and provenance.
+9. Implement against shared Core contracts rather than forking Auth/API/DB.
+10. Expose the result in Design Lab and validate independently.
+11. Shortlist/select only during later joint review.
 
-Create a new Scenario only if the design represents a genuinely new product job, not merely a new visual treatment.
+Use `DESIGN_VARIANT_AND_CAPABILITY_INTAKE_TEMPLATE.md` for handoffs; despite the historical filename, the template now includes Lineage/Revision classification.
 
-Use `DESIGN_VARIANT_AND_CAPABILITY_INTAKE_TEMPLATE.md` for future handoffs.
+## 11. Design Lab usability
 
-## 11. Parallel model roles
+Design Lab is an internal review surface, not another public product.
+
+It provides:
+
+- Lineage cards with revision history and current decisions;
+- searchable/filterable Scenario Variants;
+- searchable/filterable Experience Capabilities by source project and LoveTree scenario;
+- direct links to implemented candidate routes;
+- provenance and validation-risk visibility.
+
+This allows the candidate pool to grow without turning the UI into one unstructured list.
+
+## 12. Parallel model roles
 
 ### Drive-connected web model
 
@@ -185,7 +239,8 @@ Best for:
 
 - broad sibling Drive audit
 - source comparison
-- extracting reusable mechanics
+- Lineage/Revision classification
+- reusable mechanic extraction
 - evidence/provenance cataloging
 
 Tracked in #78.
@@ -204,17 +259,17 @@ Tracked in #79.
 
 Local access is not required for Drive research.
 
-## 12. Deployment model
+## 13. Deployment model
 
-Deployment automation is tracked separately in #75.
+Deployment automation remains tracked separately in #75.
 
-Desired final state:
+Desired eventual state:
 
 `merge main -> automated validation -> guarded Cloudflare build/deploy -> production smoke -> rollback path`
 
 The repository currently has PR validation and guarded Production deployment scripts. Production trigger configuration is separate from Design Lab architecture and final design selection.
 
-## 13. Non-goals of this architecture phase
+## 14. Non-goals of this architecture phase
 
 - no deletion of V2/V3 candidate history
 - no final design selection
@@ -223,3 +278,4 @@ The repository currently has PR validation and guarded Production deployment scr
 - no Production Firebase mutation
 - no duplication of Auth/API/DB per visual candidate
 - no wholesale copying of unrelated sibling products into LoveTree
+- no treating a Lineage revision label as a new LoveTree product generation
