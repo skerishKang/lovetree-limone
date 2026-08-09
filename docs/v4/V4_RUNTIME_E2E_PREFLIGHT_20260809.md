@@ -8,9 +8,9 @@ Status: `RUNTIME_E2E_PREFLIGHT_READY / FIREBASE_TARGET_BLOCKED`
 
 This document narrows the remaining non-production Runtime E2E blocker after the V4 + P2 code gate.
 
-The mutable journey must never fall back to Production infrastructure merely because a staging/test binding is missing. Before any signup, authenticated API mutation, Tree creation, Memory creation, or cleanup mutation, all target identities must pass the repository preflight.
+The mutable journey must never fall back to Production infrastructure merely because a staging/test binding is missing. Before any signup, authenticated API mutation, Tree creation, Memory creation, or cleanup mutation, all target identities and the actual database endpoint binding must pass the repository preflight.
 
-The preflight is intentionally local/pure: it validates non-secret identity values only and performs no Cloudflare, Firebase, or Neon request.
+The preflight performs no Cloudflare, Firebase, or Neon network request. It validates configured identities and parses only the hostname from the `DATABASE_URL` secret; the URL, credentials, tokens, API keys, and passwords are never returned or printed.
 
 ## 2. Current readiness
 
@@ -25,17 +25,21 @@ Approved non-production database identity:
 ```text
 E2E_NEON_PROJECT_ID=autumn-cherry-54971674
 E2E_NEON_BRANCH_ID=br-purple-violet-azsxemfv
+approved endpoint=ep-red-paper-azsjzfte.c-3.ap-southeast-1.aws.neon.tech
 ```
 
 Branch name: `foundation-migration-check`.
 
 The branch is non-default/non-Production. It was verified with zero Tree and Memory rows, received only the approved additive current-schema deltas, and remained Tree/Memory `0/0` after schema preparation.
 
-Forbidden Production Neon branch:
+Forbidden Production database identity:
 
 ```text
-br-holy-scene-azwi84gb
+Production branch=br-holy-scene-azwi84gb
+Production endpoint=ep-old-sky-az0qftwa.c-3.ap-southeast-1.aws.neon.tech
 ```
+
+The preflight validates both declared branch identity and the hostname parsed from the actual `DATABASE_URL`, so a Production URL cannot pass merely because `E2E_NEON_BRANCH_ID` was set to a non-production value.
 
 ### Ready — isolated Preview deployment guard
 
@@ -73,9 +77,9 @@ The repository exposes:
 npm run v4:e2e:preflight
 ```
 
-It reads identity values from environment variables and exits non-zero on any missing, Production, unapproved, or mismatched target.
+It reads configured identity values plus `DATABASE_URL` and exits non-zero on any missing, Production, unapproved, mismatched, or misbound target.
 
-Required non-secret identity variables:
+Required values:
 
 ```text
 E2E_EXPECTED_WORKER=<isolated worker matching the preview pattern>
@@ -84,11 +88,12 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=<same Firebase project>
 FIREBASE_PROJECT_ID=<same Firebase project>
 E2E_NEON_PROJECT_ID=autumn-cherry-54971674
 E2E_NEON_BRANCH_ID=br-purple-violet-azsxemfv
+DATABASE_URL=<secret URL whose hostname is ep-red-paper-azsjzfte.c-3.ap-southeast-1.aws.neon.tech>
 APP_ENV=e2e
 API_MUTATIONS_ENABLED=true
 ```
 
-Secrets such as `DATABASE_URL`, Firebase API keys, Cloudflare tokens, passwords, and ID tokens are intentionally outside the preflight result and must never be printed by this command.
+The PASS output may report the database hostname because it is a non-secret target identity. It never reports the full URL, username, password, query string, Firebase API key, Cloudflare token, or ID token.
 
 ## 4. Fail-closed rules
 
@@ -104,20 +109,23 @@ The mutable Runtime E2E preflight rejects all of the following:
 5. any Neon project other than `autumn-cherry-54971674`;
 6. Production Neon branch `br-holy-scene-azwi84gb`;
 7. any Neon branch other than approved isolated branch `br-purple-violet-azsxemfv`;
-8. any `APP_ENV` other than exact `e2e`;
-9. `API_MUTATIONS_ENABLED` that is absent or not true;
-10. any missing required identity.
+8. missing or malformed `DATABASE_URL`;
+9. Production Neon endpoint `ep-old-sky-az0qftwa.c-3.ap-southeast-1.aws.neon.tech`;
+10. any database hostname other than approved isolated endpoint `ep-red-paper-azsjzfte.c-3.ap-southeast-1.aws.neon.tech`;
+11. any `APP_ENV` other than exact `e2e`;
+12. `API_MUTATIONS_ENABLED` that is absent or not true;
+13. any missing required identity.
 
 No network call or product mutation is attempted by the preflight itself.
 
 ## 5. Why mutations require `true` here
 
-The standard public Preview deployment deliberately forces mutations off. Mutable Runtime E2E is a separate target class: mutations may be enabled only after Worker, Firebase, Neon project, Neon branch, and environment identity all pass the denylist and exact-match checks.
+The standard public Preview deployment deliberately forces mutations off. Mutable Runtime E2E is a separate target class: mutations may be enabled only after Worker, Firebase, Neon project, Neon branch, actual DB endpoint, and environment identity all pass the denylist and exact-match checks.
 
 Therefore a successful preflight means only:
 
 ```text
-IDENTITY SET IS ELIGIBLE FOR MUTABLE E2E SETUP
+IDENTITY AND DB BINDING ARE ELIGIBLE FOR MUTABLE E2E SETUP
 ```
 
 It does not mean a Worker has been deployed, a Firebase user exists, credentials are valid, or the end-to-end journey has passed.
@@ -131,7 +139,7 @@ The remaining external setup is deliberately narrow:
 3. enable the approved disposable Email/Password test-account path;
 4. authorize the exact isolated Worker hostname where required;
 5. bind the same non-production Firebase project ID to browser and Worker;
-6. bind the prepared isolated Neon branch using a non-production secret scope;
+6. bind `DATABASE_URL` to the prepared isolated Neon endpoint in a non-production secret scope;
 7. run this preflight before any signup or mutation;
 8. only after the preflight passes, run the desktop/mobile authenticated journey and exact-ID cleanup.
 
@@ -141,6 +149,7 @@ Until the dedicated Firebase target exists:
 
 - do not use `relovetree` for disposable E2E accounts;
 - do not point mutable Preview traffic at Production Neon;
+- do not trust a declared branch ID without verifying the actual `DATABASE_URL` hostname;
 - do not enable mutations on the ordinary read-only safe Preview as a shortcut;
 - do not deploy to the canonical, staging, or V2 Worker;
 - do not copy Production secrets into a Preview environment;
@@ -153,7 +162,7 @@ Current state after this preflight work:
 ```text
 V4_CODE_GATE=GREEN
 V4_E2E_ISOLATED_NEON=READY
-V4_E2E_IDENTITY_PREFLIGHT=READY
+V4_E2E_IDENTITY_AND_DB_PREFLIGHT=READY
 V4_E2E_FIREBASE=BLOCKED
 V4_MUTABLE_RUNTIME_E2E=BLOCKED
 PRODUCTION_FALLBACK=FORBIDDEN
