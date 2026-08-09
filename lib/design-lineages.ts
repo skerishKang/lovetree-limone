@@ -6,7 +6,8 @@ export type DesignRevisionDecision =
   | "candidate"
   | "approved-plan"
   | "rejected"
-  | "reference";
+  | "reference"
+  | "superseded";
 
 export interface DesignRevision {
   id: string;
@@ -48,7 +49,7 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       { id: "48-07", label: "V4.2 Storyboard 2", decision: "approved-plan", executable: false },
       { id: "48-08", label: "V4.2 참고영상 리셋", decision: "reference", executable: true },
       { id: "48-09", label: "V4.2b 인물 분석 복귀", decision: "reference", executable: true },
-      { id: "48-10", label: "FINAL GATE V1 정밀복원 인물분석 티저", decision: "rejected", executable: true, notes: "01보다 약하면 반려한다는 Final Gate 원칙에 따라 비교본으로 보존" },
+      { id: "48-10", label: "FINAL GATE V1 정밀복원 인물분석 티저", decision: "rejected", executable: true, notes: "01보다 약해 비교/반려본으로 보존" },
     ],
   },
   {
@@ -56,22 +57,28 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     number: 49,
     label: "Idol Moment Reveal Portal",
     status: "active",
-    summary: "남성 fictional idol cast와 portal/glass/liquid 계열을 이용한 Moment reveal 시네마틱입니다.",
-    scenarios: ["cinematic-brand", "entry-onboarding"],
-    currentDecision: "NCT 127 Superhuman teaser를 주원본으로 shot-by-shot 대응하는 독립 계보로 진행합니다.",
-    sourceLabel: "LoveTree 차기 설계팀장 인수인계 49",
-    revisions: [],
+    summary: "한 PRIMARY의 여러 Moment가 감정적 Connection을 거쳐 Tree로 누적되는 남성 아이돌 시네마틱 계보입니다.",
+    scenarios: ["cinematic-brand", "entry-onboarding", "relationship-retrospective"],
+    currentDecision: "V2 Storyboard와 PRIMARY identity를 LOCK. 영상 복원을 먼저 하고 Full HTML은 승인 이후로 HOLD합니다.",
+    sourceLabel: "49 4-3기 V2 PRIMARY 승인 / STORYBOARD LOCK 최종 실행지시",
+    revisions: [
+      { id: "49-v1-v1.1", label: "V1 / V1.1 visual & product concept", decision: "rejected", executable: true, notes: "최신 지시에서 신규 V2의 코드·시각 베이스로 사용 금지" },
+      { id: "49-v2-locked-storyboard", label: "V2 Semantic Master / Locked Storyboard + PRIMARY", decision: "approved-plan", executable: false, notes: "STORYBOARD IS THE SPEC · VIDEO FIRST · HTML LAST" },
+    ],
   },
   {
     id: "lt-50-dream-memory-cinematic",
     number: 50,
     label: "Dream Memory Cinematic",
     status: "active",
-    summary: "여성 fictional idol cast와 고해상도 scene-specific asset을 이용한 cinematic entry 연구입니다.",
-    scenarios: ["cinematic-brand", "relationship-retrospective"],
-    currentDecision: "기존 v1.5 visual은 반려. aespa Supernova teaser의 shot structure를 기준으로 새 계보를 진행합니다.",
-    sourceLabel: "LoveTree 차기 설계팀장 인수인계 50",
-    revisions: [],
+    summary: "여성 cast의 서로 다른 Moment Scene이 빛과 Connection으로 수렴해 Tree bloom으로 이어지는 시네마틱 계보입니다.",
+    scenarios: ["cinematic-brand", "relationship-retrospective", "growth-milestones"],
+    currentDecision: "기존 Supernova Storyboard를 최종 Visual Master로 LOCK. 새 캐스팅·새 콘티 없이 영상 복원부터 진행하고 Full HTML은 HOLD합니다.",
+    sourceLabel: "50 4-2기 Existing Supernova Storyboard LOCK 최종 실행지시",
+    revisions: [
+      { id: "50-v1-v1.1", label: "V1 / V1.1 HTML visual implementation", decision: "rejected", executable: true, notes: "REJECTED_VISUAL_IMPLEMENTATION" },
+      { id: "50-existing-supernova-storyboard", label: "Existing Supernova Storyboard Master", decision: "approved-plan", executable: false, notes: "Visual Master LOCK · video production next · Full HTML hold" },
+    ],
   },
   {
     id: "lt-51-neon-human-analysis",
@@ -88,13 +95,14 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     id: "lt-52-global-moment-orbit",
     number: 52,
     label: "Global Moment Orbit / 3D Network",
-    status: "incoming",
-    summary: "Moment seed와 Connection growth를 WebGL orbit 공간에서 탐색하는 신규 3D 계보입니다.",
+    status: "active",
+    summary: "Earth, Moment node와 luminous Connection arc를 느리고 거대한 3D orbit 공간에서 탐색하는 계보입니다.",
     scenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
-    currentDecision: "Cosmic core POC를 전체 제품으로 승격하지 않고 Spatial 3D Capability와 시각 Variant 양쪽에서 평가합니다.",
-    sourceLabel: "52 글로벌모먼트오빗 / V2_COSMIC_LOVETREE_CORE_POC",
+    currentDecision: "V2/V2.1의 LoveTree Core 재해석을 중단하고 V3 Reference Earth Orbit을 현재 기준으로 진행합니다.",
+    sourceLabel: "52 4-1기 V3 REFERENCE-FIRST EARTH ORBIT 최종 방향정정",
     revisions: [
-      { id: "52-v2-cosmic-core", label: "V2 Cosmic LoveTree Core POC", decision: "candidate", executable: true },
+      { id: "52-v2-cosmic-core", label: "V2 Cosmic LoveTree Core POC", decision: "superseded", executable: true, notes: "LoveTree Core/Crystal/Seed Heart 중심 재해석 방향 중단" },
+      { id: "52-v3-reference-earth-orbit", label: "V3 Reference Earth Orbit", decision: "candidate", executable: true, notes: "Reference fidelity build · Earth 유지 · Moment node/Connection arc 의미만 최소 치환" },
     ],
   },
 ] as const;
