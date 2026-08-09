@@ -5,6 +5,7 @@ export interface CanonicalMoment {
   treeId: string;
   ownerId: string;
   parentId: string | null;
+  connectionReason: string | null;
   title: string;
   memo: string;
   artist: string;
@@ -14,6 +15,8 @@ export interface CanonicalMoment {
   thumbnail: string;
   emotionTags: string[];
   timestamp: string;
+  discoveryDate: string;
+  videoOffsetSeconds: number | null;
   sortOrder: number;
   visibility: string;
   channelId: string | null;
@@ -27,12 +30,14 @@ export interface TreeMomentView {
   id: string;
   treeId: string;
   parentId: string | null;
+  connectionReason: string | null;
   title: string;
   memo: string;
   sourceType: string;
   thumbnail: string;
   emotionTags: string[];
   timestamp: string;
+  discoveryDate: string;
   sortOrder: number;
   isRoot: boolean;
   depth: number;
@@ -45,6 +50,7 @@ export interface TimelineMomentView {
   title: string;
   memo: string;
   timestamp: string;
+  discoveryDate: string;
   sortOrder: number;
   sourceType: string;
   thumbnail: string;
@@ -62,6 +68,7 @@ export interface AlbumMomentView {
   sourceUrl: string;
   emotionTags: string[];
   timestamp: string;
+  discoveryDate: string;
   sortOrder: number;
   createdAt: string | Date | null;
 }
@@ -70,11 +77,13 @@ export function toCanonicalMoment(
   memory: MemoryRecord & { ownerId?: string; sortOrder?: number },
   treeOwnerId: string
 ): CanonicalMoment {
+  const discoveryDate = memory.discoveryDate || memory.timestamp || "";
   return {
     id: memory.id,
     treeId: memory.treeId,
     ownerId: treeOwnerId,
     parentId: memory.parentId ?? null,
+    connectionReason: memory.connectionReason ?? null,
     title: memory.title ?? "",
     memo: memory.memo ?? "",
     artist: memory.artist ?? "",
@@ -83,7 +92,9 @@ export function toCanonicalMoment(
     sourceType: memory.sourceType ?? "youtube",
     thumbnail: memory.thumbnail ?? "",
     emotionTags: memory.emotionTags ?? [],
-    timestamp: memory.timestamp ?? "",
+    timestamp: memory.timestamp ?? discoveryDate,
+    discoveryDate,
+    videoOffsetSeconds: memory.videoOffsetSeconds ?? null,
     sortOrder: memory.sortOrder ?? 0,
     visibility: memory.visibility ?? "public",
     channelId: memory.channelId ?? null,
@@ -118,12 +129,14 @@ export function toTreeMoment(
     id: moment.id,
     treeId: moment.treeId,
     parentId: moment.parentId,
+    connectionReason: moment.connectionReason,
     title: moment.title,
     memo: moment.memo,
     sourceType: moment.sourceType,
     thumbnail: moment.thumbnail,
     emotionTags: moment.emotionTags,
     timestamp: moment.timestamp,
+    discoveryDate: moment.discoveryDate,
     sortOrder: moment.sortOrder,
     isRoot: moment.parentId === null,
     depth,
@@ -138,6 +151,7 @@ export function toTimelineMoment(moment: CanonicalMoment): TimelineMomentView {
     title: moment.title,
     memo: moment.memo,
     timestamp: moment.timestamp,
+    discoveryDate: moment.discoveryDate,
     sortOrder: moment.sortOrder,
     sourceType: moment.sourceType,
     thumbnail: moment.thumbnail,
@@ -157,6 +171,7 @@ export function toAlbumMoment(moment: CanonicalMoment): AlbumMomentView {
     sourceUrl: moment.sourceUrl,
     emotionTags: moment.emotionTags,
     timestamp: moment.timestamp,
+    discoveryDate: moment.discoveryDate,
     sortOrder: moment.sortOrder,
     createdAt: moment.createdAt,
   };
@@ -165,8 +180,8 @@ export function toAlbumMoment(moment: CanonicalMoment): AlbumMomentView {
 export function sortMoments(moments: CanonicalMoment[]): CanonicalMoment[] {
   return [...moments].sort((a, b) => {
     if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
-    const ta = a.timestamp || "";
-    const tb = b.timestamp || "";
+    const ta = a.discoveryDate || a.timestamp || "";
+    const tb = b.discoveryDate || b.timestamp || "";
     if (ta !== tb) return ta < tb ? -1 : 1;
     const ca = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt ?? 0).getTime();
     const cb = b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt ?? 0).getTime();
