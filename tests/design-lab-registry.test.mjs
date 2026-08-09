@@ -6,6 +6,7 @@ import { V4_SOURCE_MANIFEST } from "../app/components/v4/v4-source-manifest.ts";
 import {
   DESIGN_CANDIDATES,
   DESIGN_SCENARIOS,
+  LINEAGE_INTAKE_CANDIDATES,
   PRODUCT_FAMILIES,
   SIBLING_SOURCE_CANDIDATES,
   registerDesignCandidate,
@@ -50,6 +51,23 @@ test("Design Lab registry invariants are clean and scenarios are unique", () => 
   assert.equal(new Set(scenarioIds).size, scenarioIds.length);
   const candidateIds = DESIGN_CANDIDATES.map((candidate) => candidate.id);
   assert.equal(new Set(candidateIds).size, candidateIds.length);
+});
+
+test("lineage intake includes the locked 48 V1 baseline and current 52 V3 candidate", () => {
+  const byId = new Map(LINEAGE_INTAKE_CANDIDATES.map((candidate) => [candidate.id, candidate]));
+
+  const neonBaseline = byId.get("lineage:48-01-v1-cinematic-baseline");
+  assert.ok(neonBaseline, "48 V1 baseline must be represented as a lineage-linked Design Lab variant");
+  assert.equal(neonBaseline.lineageId, "lt-48-neon-pilot");
+  assert.equal(neonBaseline.revisionId, "48-01");
+  assert.equal(neonBaseline.status, "mapped");
+  assert.equal(neonBaseline.route, undefined);
+  assert.equal(neonBaseline.sourceFile, "01_V1_최초시네마틱_원형_바로보기.html");
+
+  const earthOrbit = byId.get("lineage:52-v3-reference-earth-orbit");
+  assert.ok(earthOrbit, "52 V3 must remain represented as a lineage-linked Design Lab variant");
+  assert.equal(earthOrbit.lineageId, "lt-52-global-moment-orbit");
+  assert.equal(earthOrbit.revisionId, "52-v3-reference-earth-orbit");
 });
 
 test("future sibling designs can be registered as variants without a new product version", () => {
