@@ -46,10 +46,6 @@ export default function CinematicPlaybackPrototypePage() {
     return () => window.clearInterval(timer);
   }, [state.mode]);
 
-  useEffect(() => {
-    if (state.mode === "ended") setAnnouncement("스토리가 끝났습니다. 다시 재생하면 처음부터 시작합니다.");
-  }, [state.mode]);
-
   const playPause = () => {
     if (state.mode === "playing") {
       dispatch({ type: "pause" });
