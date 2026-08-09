@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   production:
-    if: ${{ vars.LOVETREE_PRODUCTION_AUTO_DEPLOY == 'true' }}
+    if: ${{ vars.LOVETREE_PRODUCTION_AUTO_DEPLOY != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -25,7 +25,7 @@ jobs:
       NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
       NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
       NEXT_PUBLIC_FIREBASE_PROJECT_ID: relovetree
-      PRODUCTION_BASE_URL: ${{ vars.LOVETREE_PRODUCTION_BASE_URL }}
+      PRODUCTION_BASE_URL: https://lovetree-limone.charliekant.workers.dev
 
     steps:
       - name: Checkout exact main
@@ -52,16 +52,13 @@ jobs:
               missing+=("$name")
             fi
           done
-          if [ -z "${PRODUCTION_BASE_URL:-}" ]; then
-            missing+=("LOVETREE_PRODUCTION_BASE_URL")
-          fi
           if [ "${#missing[@]}" -ne 0 ]; then
             printf 'BLOCKED: missing required Production configuration name(s): %s\n' "${missing[*]}" >&2
             exit 1
           fi
           case "$PRODUCTION_BASE_URL" in
             https://*) ;;
-            *) echo "BLOCKED: LOVETREE_PRODUCTION_BASE_URL must use https://" >&2; exit 1 ;;
+            *) echo "BLOCKED: PRODUCTION_BASE_URL must use https://" >&2; exit 1 ;;
           esac
 
       - name: Pin origin/main and source SHA
@@ -144,11 +141,7 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           import process from 'node:process';
-          import {
-            collectActiveVersion,
-            runCommandEnv,
-          } from './scripts/lib/production-deploy-guard.mjs';
-
+          import { collectActiveVersion, runCommandEnv } from './scripts/lib/production-deploy-guard.mjs';
           const current = collectActiveVersion(runCommandEnv, 'lovetree-limone', process.cwd());
           if (current.state !== 'present' || !current.versionId) {
             console.error(`BLOCKED: unable to resolve current Production Worker version (${current.state}/${current.errorCode ?? 'UNKNOWN'})`);
@@ -180,11 +173,7 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           import process from 'node:process';
-          import {
-            collectActiveVersion,
-            runCommandEnv,
-          } from './scripts/lib/production-deploy-guard.mjs';
-
+          import { collectActiveVersion, runCommandEnv } from './scripts/lib/production-deploy-guard.mjs';
           const previous = process.env.PREVIOUS_VERSION;
           const current = collectActiveVersion(runCommandEnv, 'lovetree-limone', process.cwd());
           if (current.state !== 'present' || !current.versionId) {
