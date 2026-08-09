@@ -15,10 +15,16 @@ import {
   validationError,
   VISIBILITY_VALUES,
   SOURCE_TYPE_VALUES,
-  validateTimestamp,
   type VisibilityValue,
   type SourceTypeValue,
 } from "./validate";
+import {
+  CONNECTION_REASON_MAX_LENGTH,
+  VIDEO_OFFSET_SECONDS_MAX,
+  normalizeMemoryCreateInput,
+  serializeMemoryContract,
+  validateMemoryDateCompatibility,
+} from "./memory-contract";
 
 const TREE_RULES = {
   clientKey: { kind: "string", trim: true, maxLength: 100 },
@@ -39,7 +45,10 @@ const MEMORY_RULES = {
   sourceType: { kind: "string", trim: true, allowed: SOURCE_TYPE_VALUES },
   thumbnail: { kind: "url", maxLength: 2048 },
   emotionTags: { kind: "stringArray", maxItems: 20, maxItemLength: 40 },
-  timestamp: { kind: "string", trim: true, maxLength: 100 },
+  timestamp: { kind: "string", trim: true, maxLength: 10 },
+  discoveryDate: { kind: "string", trim: true, maxLength: 10 },
+  videoOffsetSeconds: { kind: "integer", min: 0, max: VIDEO_OFFSET_SECONDS_MAX },
+  connectionReason: { kind: "string", trim: true, maxLength: CONNECTION_REASON_MAX_LENGTH },
   visibility: { kind: "string", trim: true, allowed: VISIBILITY_VALUES },
   channelId: { kind: "string", trim: true, maxLength: 200 },
   channelName: { kind: "string", trim: true, maxLength: 200 },
@@ -389,8 +398,9 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     return validationError("memory.title or memory.memo is required");
   }
 
-  const tsError = validateTimestamp(memory.timestamp, "memory.timestamp");
-  if (tsError) return validationError(tsError);
+  const dateError = validateMemoryDateCompatibility(memory, "memory.");
+  if (dateError) return validationError(dateError);
+  const normalizedMemory = normalizeMemoryCreateInput(memory);
 
   const now = new Date();
   const treeId = await deterministicId(user.uid, "tree", parsed.value.clientKey as string);
@@ -414,24 +424,27 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   const memoryRow = {
     id: memoryId,
     treeId,
-    parentId: (memory.parentId as string | undefined) ?? null,
+    parentId: (normalizedMemory.parentId as string | undefined) ?? null,
+    connectionReason: (normalizedMemory.connectionReason as string | null | undefined) ?? null,
     title: memTitle,
     memo: memMemo,
-    artist: (memory.artist as string | undefined) ?? "",
-    source: (memory.source as string | undefined) ?? "",
-    sourceUrl: (memory.sourceUrl as string | undefined) ?? "",
-    sourceType: ((memory.sourceType as string | undefined) ?? "youtube") as SourceTypeValue,
-    thumbnail: (memory.thumbnail as string | undefined) ?? "",
-    emotionTags: (memory.emotionTags as string[] | undefined) ?? [],
-    timestamp: (memory.timestamp as string | undefined) ?? "",
+    artist: (normalizedMemory.artist as string | undefined) ?? "",
+    source: (normalizedMemory.source as string | undefined) ?? "",
+    sourceUrl: (normalizedMemory.sourceUrl as string | undefined) ?? "",
+    sourceType: ((normalizedMemory.sourceType as string | undefined) ?? "youtube") as SourceTypeValue,
+    thumbnail: (normalizedMemory.thumbnail as string | undefined) ?? "",
+    emotionTags: (normalizedMemory.emotionTags as string[] | undefined) ?? [],
+    timestamp: (normalizedMemory.timestamp as string | undefined) ?? "",
+    discoveryDate: (normalizedMemory.discoveryDate as string | null | undefined) ?? null,
+    videoOffsetSeconds: (normalizedMemory.videoOffsetSeconds as number | null | undefined) ?? null,
     sortOrder: 0,
     visibility: resolveMemoryVisibility(
-      memory.visibility as string | undefined,
+      normalizedMemory.visibility as string | undefined,
       tree.visibility
     ),
-    channelId: (memory.channelId as string | undefined) ?? null,
-    channelName: (memory.channelName as string | undefined) ?? null,
-    channelUrl: (memory.channelUrl as string | undefined) ?? null,
+    channelId: (normalizedMemory.channelId as string | undefined) ?? null,
+    channelName: (normalizedMemory.channelName as string | undefined) ?? null,
+    channelUrl: (normalizedMemory.channelUrl as string | undefined) ?? null,
     createdAt: now,
     updatedAt: now,
   };
@@ -440,7 +453,7 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   await ensureSocialCounts(ctx, treeId, now);
   await ctx.db.insert(memories).values(memoryRow).onConflictDoNothing();
 
-  return json({ tree, memory: memoryRow }, 201);
+  return json({ tree, memory: serializeMemoryContract(memoryRow) }, 201);
 }
 
 export { TREE_RULES, MEMORY_RULES };
