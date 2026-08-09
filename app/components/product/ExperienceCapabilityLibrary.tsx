@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { DESIGN_SCENARIOS, type DesignScenarioId } from "@/lib/design-lab";
+import { type ExperienceCapabilityStatus } from "@/lib/experience-capabilities";
 import {
-  EXPERIENCE_CAPABILITIES,
-  type ExperienceCapabilitySourceProject,
-  type ExperienceCapabilityStatus,
-} from "@/lib/experience-capabilities";
+  EXPERIENCE_CAPABILITY_REGISTRY as EXPERIENCE_CAPABILITIES,
+  type ExperienceCapabilityRegistrySourceProject as ExperienceCapabilitySourceProject,
+} from "@/lib/experience-capability-registry";
 
 const STATUS_LABELS: Record<ExperienceCapabilityStatus, string> = {
   observed: "관찰됨",
