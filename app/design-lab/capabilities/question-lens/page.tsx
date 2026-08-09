@@ -57,7 +57,7 @@ export default function QuestionLensPrototypePage() {
           <h1>데이터를 복제하지 않고,<br />질문이 보는 각도만 바꿉니다.</h1>
           <p className="lt-question-lens__lede">
             하나의 synthetic Moment 공간을 네 가지 질문 렌즈로 다시 투영합니다. 각 렌즈는 같은 canonical records를
-            사용하고, 상태는 URL query로 복원할 수 있습니다. 이어온의 회사·대표자 의미론은 가져오지 않습니다.
+            사용하고, 상태는 URL query로 복원할 수 있습니다. 이어온의 원본 도메인 의미론은 가져오지 않습니다.
           </p>
         </div>
         <span className="lt-question-lens__status">PROTOTYPE · NOT PRODUCT-READY</span>
