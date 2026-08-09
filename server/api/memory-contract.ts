@@ -4,6 +4,10 @@ import { validateTimestamp } from "./validate";
 export const CONNECTION_REASON_MAX_LENGTH = 500;
 export const VIDEO_OFFSET_SECONDS_MAX = 2_147_483_647;
 
+type MemoryContractRow = Omit<MemoryRow, "clientKey"> & {
+  clientKey?: string | null;
+};
+
 export function parseVideoOffsetSeconds(sourceUrl: unknown): number | null {
   if (typeof sourceUrl !== "string" || sourceUrl.trim() === "") return null;
   try {
@@ -77,9 +81,10 @@ export function normalizeMemoryUpdateInput(body: Record<string, unknown>): Recor
   return next;
 }
 
-export function serializeMemoryContract(row: MemoryRow): Record<string, unknown> {
+export function serializeMemoryContract(row: MemoryContractRow): Record<string, unknown> {
   return {
     ...row,
+    clientKey: row.clientKey ?? null,
     discoveryDate: row.discoveryDate || row.timestamp || null,
     videoOffsetSeconds: row.videoOffsetSeconds ?? parseVideoOffsetSeconds(row.sourceUrl),
   };
