@@ -26,6 +26,7 @@ export type DesignCandidateStatus =
 
 export type DesignCandidateOrigin =
   | "sibling-html"
+  | "lineage-intake"
   | "historical-route"
   | "integrated-experience";
 
@@ -49,10 +50,12 @@ export interface DesignCandidate {
   id: string;
   label: string;
   scenarioId: DesignScenarioId;
-  route: string;
+  route?: string;
   status: DesignCandidateStatus;
   origin: DesignCandidateOrigin;
   kind: DesignVariantKind;
+  lineageId?: string;
+  revisionId?: string;
   sourceFile?: string;
   role?: string;
   preserve?: readonly string[];
@@ -165,6 +168,30 @@ export const SIBLING_SOURCE_CANDIDATES: readonly DesignCandidate[] = V4_SOURCE_M
   }),
 );
 
+export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
+  {
+    id: "lineage:52-v3-reference-earth-orbit",
+    label: "52 V3 Reference Earth Orbit",
+    scenarioId: "relationship-retrospective",
+    status: "mapped",
+    origin: "lineage-intake",
+    kind: "experience",
+    lineageId: "lt-52-global-moment-orbit",
+    revisionId: "52-v3-reference-earth-orbit",
+    sourceFile: "lovetree-52-v3-reference-earth-orbit.html",
+    role: "Earth를 중심으로 Moment node와 luminous Connection arc를 탐색하는 reference-first 3D orbit 후보",
+    preserve: [
+      "Earth spatial anchor",
+      "slow orbit/yaw/dolly camera",
+      "front/back arc occlusion",
+      "moving connection pulse",
+      "surface Moment node activation",
+      "desktop drag / mobile swipe",
+    ],
+    notes: "Drive 실행 원본은 존재하지만 아직 저장소 React route로 포팅하지 않았습니다. 원본 충실도 분석 후 route를 부여합니다.",
+  },
+] as const;
+
 export const HISTORICAL_CANDIDATES: readonly DesignCandidate[] = [
   {
     id: "historical:v2",
@@ -204,6 +231,7 @@ export const INTEGRATED_EXPERIENCE_CANDIDATES: readonly DesignCandidate[] = [
 export const DESIGN_CANDIDATES: readonly DesignCandidate[] = [
   ...HISTORICAL_CANDIDATES,
   ...SIBLING_SOURCE_CANDIDATES,
+  ...LINEAGE_INTAKE_CANDIDATES,
   ...INTEGRATED_EXPERIENCE_CANDIDATES,
 ];
 
@@ -222,11 +250,17 @@ export function validateDesignCandidateRegistry(
     if (!scenarioIds.has(candidate.scenarioId)) {
       problems.push(`unknown scenario '${candidate.scenarioId}' for ${candidate.id}`);
     }
-    if (!candidate.route.startsWith("/")) {
+    if (candidate.route && !candidate.route.startsWith("/")) {
       problems.push(`route must start with '/': ${candidate.id} -> ${candidate.route}`);
     }
-    if (candidate.origin === "sibling-html" && !candidate.sourceFile) {
-      problems.push(`sibling HTML candidate must include sourceFile: ${candidate.id}`);
+    if (candidate.status === "implemented" && !candidate.route) {
+      problems.push(`implemented candidate must have a route: ${candidate.id}`);
+    }
+    if ((candidate.origin === "sibling-html" || candidate.origin === "lineage-intake") && !candidate.sourceFile) {
+      problems.push(`source-backed candidate must include sourceFile: ${candidate.id}`);
+    }
+    if ((candidate.lineageId && !candidate.revisionId) || (!candidate.lineageId && candidate.revisionId)) {
+      problems.push(`lineageId and revisionId must be supplied together: ${candidate.id}`);
     }
   }
 
