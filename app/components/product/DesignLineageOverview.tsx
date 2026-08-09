@@ -1,3 +1,4 @@
+import { DESIGN_SCENARIOS } from "@/lib/design-lab";
 import { DESIGN_LINEAGES, type DesignLineageStatus, type DesignRevisionDecision } from "@/lib/design-lineages";
 
 const STATUS_LABELS: Record<DesignLineageStatus, string> = {
@@ -13,7 +14,10 @@ const DECISION_LABELS: Record<DesignRevisionDecision, string> = {
   "approved-plan": "계획 승인",
   rejected: "반려/보관",
   reference: "비교 자료",
+  superseded: "대체됨/보관",
 };
+
+const scenarioLabel = (id: string) => DESIGN_SCENARIOS.find((scenario) => scenario.id === id)?.label ?? id;
 
 export default function DesignLineageOverview() {
   return (
@@ -39,7 +43,7 @@ export default function DesignLineageOverview() {
             <h3>{lineage.label}</h3>
             <p>{lineage.summary}</p>
             <div className="lt-lineage__scenarios">
-              {lineage.scenarios.map((scenario) => <code key={scenario}>{scenario}</code>)}
+              {lineage.scenarios.map((scenario) => <code key={scenario}>{scenarioLabel(scenario)}</code>)}
             </div>
             <div className="lt-lineage__decision">
               <strong>현재 판단</strong>
