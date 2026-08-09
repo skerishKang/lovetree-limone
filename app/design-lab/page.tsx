@@ -8,6 +8,7 @@ import {
 } from "@/lib/design-lab";
 import { DESIGN_LINEAGES } from "@/lib/design-lineages";
 import "@/app/styles/design-lab.css";
+import "@/app/styles/design-lineages.css";
 import "@/app/styles/experience-capabilities.css";
 
 const STATUS_LABELS = {
