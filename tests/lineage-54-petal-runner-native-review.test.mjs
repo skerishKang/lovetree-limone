@@ -6,6 +6,7 @@ const component = fs.readFileSync("app/design-lab/lineages/54/v4/Lineage54PetalR
 const page = fs.readFileSync("app/design-lab/lineages/54/v4/page.tsx", "utf8");
 const css = fs.readFileSync("app/styles/lineage-54-petal-runner-v4.css", "utf8");
 const registry = fs.readFileSync("lib/design-lineages.ts", "utf8");
+const browserQa = fs.readFileSync("tests/lineage-54-route-browser-qa.mjs", "utf8");
 
 test("Lineage 54 native review keeps all four source chapters and exact asset paths", () => {
   for (const label of ["FIRST MOMENT", "FEELING GROWS", "CONNECTION", "LOVE BLOOMS"]) {
@@ -91,4 +92,19 @@ test("Lineage 54 mobile source composition keeps the 760px safe-floor contract",
   assert.match(css, /\.lt54-side--right \{ position: fixed;/);
   assert.match(css, /width: 72%; left: 14%; bottom: 8%;/);
   assert.match(css, /\.lt54-timeline \{ left: 8px; right: 8px; \}/);
+});
+
+test("Lineage 54 post-transfer browser gate stays fail-closed and covers required review states", () => {
+  assert.match(browserQa, /1280x800/);
+  assert.match(browserQa, /390x844/);
+  assert.match(browserQa, /exact asset HOLD must be absent/);
+  assert.match(browserQa, /petal-runner-open-v3\\\.png/);
+  assert.match(browserQa, /vehicle remains above the timeline safe floor/);
+  assert.match(browserQa, /desktop drag changes free vehicle view/);
+  assert.match(browserQa, /mobile touch drag changes free vehicle view/);
+  assert.match(browserQa, /Input\.dispatchTouchEvent/);
+  assert.match(browserQa, /mobile service panel fits viewport when open/);
+  assert.match(browserQa, /arrival bloom cleans itself up after source lifetime/);
+  assert.match(browserQa, /reduced motion never enters travel animation state/);
+  assert.doesNotMatch(browserQa, /\.skip\(/);
 });
