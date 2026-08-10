@@ -71,17 +71,13 @@ function parseStoredState() {
 }
 
 function dispatchStorageRefresh() {
-  try {
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key: STORAGE_KEY,
-        newValue: localStorage.getItem(STORAGE_KEY),
-        storageArea: localStorage,
-      }),
-    );
-  } catch {
-    window.dispatchEvent(new Event("storage"));
-  }
+  window.dispatchEvent(
+    new StorageEvent("storage", {
+      key: STORAGE_KEY,
+      newValue: localStorage.getItem(STORAGE_KEY),
+      url: window.location.href,
+    }),
+  );
 }
 
 export default function V4FirstJourneyFidelityBridge() {
@@ -220,7 +216,7 @@ export default function V4FirstJourneyFidelityBridge() {
       if (copy) {
         text(copy.querySelector(".v4-j-eyebrow"), "03 · 첫 가지를 이어가는 시간");
         const heading = copy.querySelector<HTMLElement>("h1");
-        const expectedHeading = "첫 마음이다음 장면을찾아갔어요.";
+        const expectedHeading = "첫마음이다음장면을찾아갔어요.";
         if (heading && heading.textContent?.replace(/\s+/g, "") !== expectedHeading) {
           heading.dataset.sourceHeading = "true";
           heading.replaceChildren();
