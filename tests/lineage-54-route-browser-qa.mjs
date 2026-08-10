@@ -35,8 +35,10 @@ async function openRoute(browser, viewport, options = {}) {
 }
 
 async function assertExactAssetsReady(page, label) {
+  const hold = page.locator('[data-testid="lineage-54-asset-hold"]');
+  await hold.waitFor({ state: "detached", timeout: 15000 }).catch(() => {});
   assert.equal(
-    await page.locator('[data-testid="lineage-54-asset-hold"]').count(),
+    await hold.count(),
     0,
     `${label}: exact asset HOLD must be absent; transfer/verification is not complete`,
   );
@@ -82,6 +84,21 @@ async function assertNoHorizontalOverflow(page, label) {
   assert.ok(overflow.stage <= 1, `${label}: stage horizontal overflow ${overflow.stage}px`);
 }
 
+async function assertOuterScrollPriority(page) {
+  const stage = page.locator(".lt54-stage");
+  await stage.scrollIntoViewIfNeeded();
+  const before = await page.evaluate(() => Math.round(window.scrollY));
+  const box = await stage.boundingBox();
+  assert.ok(box, "desktop stage has a bounding box for scroll-priority QA");
+  const x = Math.max(1, Math.min(1279, box.x + box.width * 0.5));
+  const y = Math.max(1, Math.min(799, box.y + Math.min(box.height * 0.35, 260)));
+  await page.mouse.move(x, y);
+  await page.mouse.wheel(0, 420);
+  await page.waitForTimeout(220);
+  const after = await page.evaluate(() => Math.round(window.scrollY));
+  assert.ok(after > before + 40, `outer page retains wheel scrolling over the stage: ${before} -> ${after}`);
+}
+
 async function assertVehicleInsideStage(page, label) {
   const stage = await page.locator(".lt54-stage").boundingBox();
   const vehicle = await page.locator(".lt54-car").boundingBox();
@@ -95,38 +112,79 @@ async function assertVehicleInsideStage(page, label) {
   assert.ok(vehicle.y + vehicle.height <= timeline.y + epsilon, `${label}: vehicle remains above the timeline safe floor`);
 }
 
+async function assertActivePathNodes(page, expected, label) {
+  const active = await page.locator(".lt54-memory-path i").evaluateAll((nodes) =>
+    nodes.filter((node) => Number.parseFloat(getComputedStyle(node).opacity) > 0.9).length,
+  );
+  assert.equal(active, expected, `${label}: ${expected} memory path node(s) are active`);
+}
+
 async function screenshot(page, name) {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, `${name}.png`), fullPage: true });
 }
 
-async function driveToChapter(page, chapterName) {
+async function waitForTravelEnd(page) {
+  await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2600 });
+}
+
+async function clickStoryChapter(page, chapterName) {
   await page.locator(".lt54-story-list button").filter({ hasText: chapterName }).click();
   await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
 }
 
-async function assertDesktopTravelAndArrival(page) {
-  await driveToChapter(page, "FEELING GROWS");
-  await page.waitForTimeout(750);
-  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-side-v3\.png$/);
-  assert.equal(await page.locator(".lt54-speed-field").evaluate((node) => getComputedStyle(node).opacity), "1");
-  await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2500 });
-  assert.match(await page.locator(".lt54-chapter-count").innerText(), /SIDE · DEPARTING/);
+async function clickTimelineChapter(page, chapterName) {
+  await page.locator(".lt54-timeline button").filter({ hasText: chapterName }).click();
+  await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
+}
 
-  await driveToChapter(page, "LOVE BLOOMS");
-  await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2500 });
+async function assertDesktopJourneyControls(page) {
+  await page.getByRole("button", { name: "START THE FEELING", exact: true }).click();
+  await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
+  await page.waitForTimeout(600);
+  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-front-v3\.png$/, "vehicle remains front during the source fade window before replacement loads");
+  assert.equal(await page.locator(".lt54-car").evaluate((node) => getComputedStyle(node).opacity), "0.15", "source fade state is active after the 520ms trigger");
+  await page.waitForTimeout(180);
+  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-side-v3\.png$/, "170ms source swap delay reaches the side view");
+  assert.equal(await page.locator(".lt54-speed-field").evaluate((node) => getComputedStyle(node).opacity), "1");
+  await waitForTravelEnd(page);
+  assert.match(await page.locator(".lt54-chapter-count").innerText(), /SIDE · DEPARTING/);
+  await assertActivePathNodes(page, 2, "main drive advances to Feeling Grows");
+
+  await clickTimelineChapter(page, "CONNECT");
+  await waitForTravelEnd(page);
+  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-rear-v3\.png$/);
+  assert.match(await page.locator(".lt54-chapter-count").innerText(), /REAR · TRAVELLING/);
+  await assertActivePathNodes(page, 3, "bottom timeline advances to Connection");
+
+  await page.getByRole("button", { name: "RETURN TO FIRST MOMENT", exact: true }).click();
+  await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
+  await waitForTravelEnd(page);
+  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-front-v3\.png$/);
+  assert.match(await page.locator(".lt54-chapter-count").innerText(), /FRONT · PARKED/);
+  await assertActivePathNodes(page, 1, "restart returns to First Moment");
+}
+
+async function assertDesktopArrivalAndReplay(page) {
+  await clickStoryChapter(page, "LOVE BLOOMS");
+  await waitForTravelEnd(page);
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-open-v3\.png$/);
   assert.match(await page.locator(".lt54-chapter-count").innerText(), /DOORS OPEN · ARRIVED/);
+  await assertActivePathNodes(page, 4, "final arrival");
   assert.ok(await page.locator(".lt54-petals i").count() > 0, "arrival bloom renders particles");
   await assertVehicleInsideStage(page, "1280x800 final arrival");
   await screenshot(page, "desktop-final-arrival");
   await page.waitForTimeout(2500);
   assert.equal(await page.locator(".lt54-petals i").count(), 0, "arrival bloom cleans itself up after source lifetime");
+
+  await page.getByRole("button", { name: "REPLAY THE JOURNEY", exact: true }).click();
+  await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
+  await waitForTravelEnd(page);
+  assert.match(await page.locator(".lt54-chapter-count").innerText(), /FRONT · PARKED/);
+  assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-front-v3\.png$/);
 }
 
 async function assertDesktopDrag(page) {
-  await page.locator(".lt54-story-list button").filter({ hasText: "FIRST MOMENT" }).click();
-  await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2500 }).catch(() => {});
   const wrap = page.locator(".lt54-car-wrap");
   const box = await wrap.boundingBox();
   assert.ok(box, "desktop drag target exists");
@@ -208,16 +266,20 @@ test("Lineage 54 V4 — exact-asset native route satisfies desktop/mobile source
         await assertStaticContract(page, scenario.label);
         await assertNoHorizontalOverflow(page, scenario.label);
         await assertVehicleInsideStage(page, `${scenario.label} first moment`);
+        await assertActivePathNodes(page, 1, `${scenario.label} first moment`);
         await screenshot(page, scenario.label === "1280x800" ? "desktop-first-moment" : "mobile-first-moment");
 
         if (scenario.hasTouch) {
           await assertMobilePanelAndTouch(page);
-          await page.locator(".lt54-story-list button").filter({ hasText: "LOVE BLOOMS" }).click();
-          await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2500 });
+          await clickStoryChapter(page, "LOVE BLOOMS");
+          await waitForTravelEnd(page);
+          await assertActivePathNodes(page, 4, "390x844 final arrival");
           await assertVehicleInsideStage(page, "390x844 final arrival");
           await screenshot(page, "mobile-final-arrival");
         } else {
-          await assertDesktopTravelAndArrival(page);
+          await assertOuterScrollPriority(page);
+          await assertDesktopJourneyControls(page);
+          await assertDesktopArrivalAndReplay(page);
           await assertDesktopDrag(page);
         }
 
@@ -242,6 +304,7 @@ test("Lineage 54 V4 — reduced motion changes chapters immediately without trav
       assert.equal(await page.locator(".lt54-stage.is-driving").count(), 0, "reduced motion never enters travel animation state");
       assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-rear-v3\.png$/);
       assert.match(await page.locator(".lt54-motion-policy").innerText(), /Reduced motion:/);
+      await assertActivePathNodes(page, 3, "reduced-motion Connection state");
       assert.equal(errors.length, 0, `reduced motion has no runtime/console errors: ${errors.join(" | ")}`);
     } finally {
       await page.close();
