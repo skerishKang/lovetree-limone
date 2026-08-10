@@ -40,7 +40,11 @@ function rangeFromModal(modal: HTMLElement): { start: number; end: number | null
 }
 
 function embedUrl(id: string, start: number, end: number | null): string {
-  const params = new URLSearchParams({ autoplay: "1", start: String(Math.max(0, start)), rel: "0" });
+  const params = new URLSearchParams({
+    autoplay: "1",
+    start: String(Math.max(0, start)),
+    rel: "0",
+  });
   if (end !== null && end > start) params.set("end", String(end));
   return `https://www.youtube.com/embed/${id}?${params.toString()}`;
 }
@@ -60,7 +64,9 @@ export default function V4Moments100ExactRangePlayback() {
       const external = modal.querySelector<HTMLAnchorElement>(".v4-moments-video-open");
       if (!player || !poster) return;
 
-      const current = player.querySelector<HTMLIFrameElement>("iframe[data-exact-range-player='true']");
+      const current = player.querySelector<HTMLIFrameElement>(
+        "iframe[data-exact-range-player='true']",
+      );
       if (!open) {
         current?.remove();
         poster.hidden = false;
@@ -92,7 +98,7 @@ export default function V4Moments100ExactRangePlayback() {
       iframe.allow = "autoplay; encrypted-media; picture-in-picture";
       iframe.allowFullscreen = true;
       iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      player.prepend(iframe);
+      player.insertBefore(iframe, player.firstChild);
       poster.hidden = true;
       player.dataset.playerState = "exact-range";
       player.dataset.videoId = id;
@@ -112,7 +118,9 @@ export default function V4Moments100ExactRangePlayback() {
 
     return () => {
       observer.disconnect();
-      root.querySelectorAll("iframe[data-exact-range-player='true']").forEach((frame) => frame.remove());
+      root
+        .querySelectorAll("iframe[data-exact-range-player='true']")
+        .forEach((frame) => frame.remove());
       delete root.dataset.exactRangePlayback;
     };
   }, []);
