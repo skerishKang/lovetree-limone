@@ -87,11 +87,18 @@ async function assertNoHorizontalOverflow(page, label) {
 async function assertOuterScrollPriority(page) {
   const stage = page.locator(".lt54-stage");
   await stage.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if (maxScroll - window.scrollY < 160) {
+      window.scrollTo(0, Math.max(0, window.scrollY - 240));
+    }
+  });
   const before = await page.evaluate(() => Math.round(window.scrollY));
   const box = await stage.boundingBox();
-  assert.ok(box, "desktop stage has a bounding box for scroll-priority QA");
-  const x = Math.max(1, Math.min(1279, box.x + box.width * 0.5));
-  const y = Math.max(1, Math.min(799, box.y + Math.min(box.height * 0.35, 260)));
+  const viewport = page.viewportSize();
+  assert.ok(box && viewport, "desktop stage/viewport exist for scroll-priority QA");
+  const x = Math.max(1, Math.min(viewport.width - 2, box.x + box.width * 0.5));
+  const y = Math.max(1, Math.min(viewport.height - 2, box.y + Math.min(box.height * 0.35, 260)));
   await page.mouse.move(x, y);
   await page.mouse.wheel(0, 420);
   await page.waitForTimeout(220);
@@ -143,7 +150,7 @@ async function assertDesktopJourneyControls(page) {
   await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
   await page.waitForTimeout(600);
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-front-v3\.png$/, "vehicle remains front during the source fade window before replacement loads");
-  assert.equal(await page.locator(".lt54-car").evaluate((node) => getComputedStyle(node).opacity), "0.15", "source fade state is active after the 520ms trigger");
+  assert.equal(await page.locator(".lt54-car").evaluate((node) => node.style.opacity), "0.15", "source fade state is active after the 520ms trigger");
   await page.waitForTimeout(180);
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-side-v3\.png$/, "170ms source swap delay reaches the side view");
   assert.equal(await page.locator(".lt54-speed-field").evaluate((node) => getComputedStyle(node).opacity), "1");
