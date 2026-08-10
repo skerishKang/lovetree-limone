@@ -67,6 +67,9 @@ function collectConditions(condition, out = []) {
         if (/^=\s*$/.test(trimmed)) {
           const last = out[out.length - 1];
           if (last) last.op = "eq";
+        } else if (/is not null/i.test(trimmed)) {
+          const last = out[out.length - 1];
+          if (last) last.op = "isNotNull";
         } else if (/is null/i.test(trimmed)) {
           const last = out[out.length - 1];
           if (last) last.op = "isNull";
@@ -88,7 +91,10 @@ function collectConditions(condition, out = []) {
 // Faithful in-memory model of the real store:
 // - tree_likes has a unique index on (treeId, ownerId); an "unlike" is a soft
 //   delete (deletedAt set) that still occupies the unique key.
-// - tree_social_counts. likeCount/viewCount are updated with SQL expressions.
+// - SELECT returns snapshots rather than live row references.
+// - conditional UPDATE is evaluated when the query executes; RETURNING reports
+//   only rows this request actually changed, matching the Postgres restore race.
+// - tree_social_counts.likeCount/viewCount are updated with SQL expressions.
 function makeDb() {
   const state = {
     trees: [],
@@ -104,7 +110,8 @@ function makeDb() {
     if (treeC && row.treeId !== treeC.val) return false;
     if (ownerC && row.ownerId !== ownerC.val) return false;
     if (idC && row.id !== idC.val) return false;
-    if (delC && delC.op === "isNull" && row.deletedAt != null) return false;
+    if (delC?.op === "isNull" && row.deletedAt != null) return false;
+    if (delC?.op === "isNotNull" && row.deletedAt == null) return false;
     return true;
   }
 
@@ -139,11 +146,13 @@ function makeDb() {
           return this._resolveRows();
         },
         _resolveRows() {
-          if (this.table === trees) return state.trees;
+          if (this.table === trees) return state.trees.map((row) => ({ ...row }));
           if (this.table === treeLikes) {
-            return state.likes.filter((row) => this.conditions.length === 0 || matchLike(row, this.conditions));
+            return state.likes
+              .filter((row) => this.conditions.length === 0 || matchLike(row, this.conditions))
+              .map((row) => ({ ...row }));
           }
-          if (this.table === treeSocialCounts) return state.counts;
+          if (this.table === treeSocialCounts) return state.counts.map((row) => ({ ...row }));
           return [];
         },
       };
@@ -180,27 +189,48 @@ function makeDb() {
           return {
             where(condition) {
               const conditions = collectConditions(condition);
-              const idC = conditions.find((c) => c.col === "id");
-              const treeC = conditions.find((c) => c.col === "tree_id");
-              if (table === treeLikes) {
-                const row = state.likes.find((like) => !idC || like.id === idC.val);
-                if (row) Object.assign(row, value);
-              } else if (table === treeSocialCounts) {
-                const row = state.counts.find((count) => !treeC || count.treeId === treeC.val);
-                if (row) {
-                  for (const [key, next] of Object.entries(value)) {
-                    const text = sqlText(next);
-                    if (key === "likeCount" && (text.includes("like_count") || text.includes("likeCount"))) {
-                      applyArithmetic(row, "likeCount", text);
-                    } else if (key === "viewCount" && (text.includes("view_count") || text.includes("viewCount"))) {
-                      applyArithmetic(row, "viewCount", text);
-                    } else {
-                      row[key] = next;
+              let executed = false;
+              let affected = [];
+
+              function execute() {
+                if (executed) return affected;
+                executed = true;
+
+                if (table === treeLikes) {
+                  affected = state.likes.filter((row) => matchLike(row, conditions));
+                  for (const row of affected) Object.assign(row, value);
+                  return affected;
+                }
+
+                if (table === treeSocialCounts) {
+                  const treeC = conditions.find((c) => c.col === "tree_id");
+                  affected = state.counts.filter((row) => !treeC || row.treeId === treeC.val);
+                  for (const row of affected) {
+                    for (const [key, next] of Object.entries(value)) {
+                      const text = sqlText(next);
+                      if (key === "likeCount" && (text.includes("like_count") || text.includes("likeCount"))) {
+                        applyArithmetic(row, "likeCount", text);
+                      } else if (key === "viewCount" && (text.includes("view_count") || text.includes("viewCount"))) {
+                        applyArithmetic(row, "viewCount", text);
+                      } else {
+                        row[key] = next;
+                      }
                     }
                   }
+                  return affected;
                 }
+
+                return affected;
               }
-              return Promise.resolve();
+
+              return {
+                returning() {
+                  return Promise.resolve(execute().map((row) => ({ id: row.id })));
+                },
+                then(resolve, reject) {
+                  return Promise.resolve(execute()).then(() => undefined).then(resolve, reject);
+                },
+              };
             },
           };
         },
@@ -317,6 +347,35 @@ test("like, unlike, re-like keeps the persisted like active and count recovered"
 
     const count = db.state.counts.find((row) => row.treeId === "tree-1");
     assert.equal(count.likeCount, 1, "like count is recovered after re-like");
+
+    const get = await socialRouter(makeContext({ method: "GET", path: "/api/trees/tree-1/likes", db }));
+    assert.deepEqual(await get.json(), { count: 1, liked: true });
+  });
+});
+
+test("concurrent re-like restores once and increments the persisted count once", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const db = setupTree();
+
+    await socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db }));
+    const unlike = await socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db }));
+    assert.deepEqual(await unlike.json(), { liked: false });
+    assert.equal(activeLikes(db).length, 0);
+    assert.equal(db.state.counts.find((row) => row.treeId === "tree-1").likeCount, 0);
+
+    const [first, second] = await Promise.all([
+      socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db })),
+      socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db })),
+    ]);
+
+    assert.deepEqual(await first.json(), { liked: true });
+    assert.deepEqual(await second.json(), { liked: true });
+    assert.equal(activeLikes(db).length, 1, "the unique like row is restored exactly once");
+    assert.equal(
+      db.state.counts.find((row) => row.treeId === "tree-1").likeCount,
+      1,
+      "concurrent re-like requests increment likeCount only for the request that restored the row"
+    );
 
     const get = await socialRouter(makeContext({ method: "GET", path: "/api/trees/tree-1/likes", db }));
     assert.deepEqual(await get.json(), { count: 1, liked: true });
