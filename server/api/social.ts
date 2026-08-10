@@ -172,6 +172,38 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
 
   const inserted = await ctx.db.insert(treeLikes).values(like).onConflictDoNothing();
   if ((inserted as unknown as { rowCount?: number }).rowCount === 0) {
+    // The unique (treeId, ownerId) key is already occupied. When the existing
+    // row was soft-deleted by an earlier unlike, re-liking must restore it and
+    // re-increment the count instead of silently reporting success while
+    // leaving the like permanently inactive.
+    const existingRows = await ctx.db
+      .select()
+      .from(treeLikes)
+      .where(and(
+        eq(treeLikes.treeId, treeId),
+        eq(treeLikes.ownerId, user.uid)
+      ));
+
+    if (existingRows[0]?.deletedAt) {
+      await ctx.db.batch([
+        ctx.db.update(treeLikes)
+          .set({ deletedAt: null })
+          .where(eq(treeLikes.id, existingRows[0].id)),
+        ctx.db.insert(treeSocialCounts).values({
+          treeId,
+          likeCount: 1,
+          viewCount: 0,
+          updatedAt: now,
+        }).onConflictDoNothing(),
+        ctx.db.update(treeSocialCounts)
+          .set({
+            likeCount: sql`like_count + 1`,
+            updatedAt: now,
+          })
+          .where(eq(treeSocialCounts.treeId, treeId)),
+      ]);
+    }
+
     return json({ liked: true });
   }
 
