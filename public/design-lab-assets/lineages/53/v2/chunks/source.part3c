@@ -1,0 +1,17 @@
+(84,Math.max(28,(Math.abs(dx)+Math.abs(dy))*.12));
+      let c1x=sx+dx*.31,c1y=sy+dy*.18,c2x=sx+dx*.70,c2y=sy+dy*.82;
+      if(horizontal){c1y+=branchSign*bend;c2y-=branchSign*bend*.42}else{c1x+=branchSign*bend;c2x-=branchSign*bend*.42}
+      if(i===0||i===4){c1x=sx+dx*.18;c1y=sy+dy*.38;c2x=sx+dx*.56;c2y=sy+dy*.82}
+      const pathD=`M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${tx} ${ty}`;
+      const [c0,c1]=edgePair(e),grad=svgEl('linearGradient',{id:`grad-${e.id}`,class:'edge-gradient',gradientUnits:'userSpaceOnUse',x1:sx,y1:sy,x2:tx,y2:ty});grad.append(svgEl('stop',{offset:'0%','stop-color':c0}),svgEl('stop',{offset:'100%','stop-color':c1}));el.defs.appendChild(grad);
+      const stroke=`url(#grad-${e.id})`,track=svgEl('path',{d:pathD,class:'connection-track',stroke,'data-edge':e.id}),outer=svgEl('path',{d:pathD,class:'connection-active-outer',stroke,'data-edge-active-outer':e.id}),inner=svgEl('path',{d:pathD,class:'connection-active-inner',stroke,'data-edge-active-inner':e.id}),mem=svgEl('path',{d:pathD,class:'connection-memory',stroke,'data-edge-memory':e.id}),hit=svgEl('path',{d:pathD,class:'connection-hit','data-edge-hit':e.id});
+      hit.addEventListener('mouseenter',()=>showRelation(e,mem));hit.addEventListener('mouseleave',hideRelation);el.connectionLayer.append(track,hit);el.activeGlowLayer.appendChild(outer);el.activePathLayer.appendChild(inner);el.memoryLayer.appendChild(mem);edgePaths.set(e.id,track);edgeBase.set(e.id,track);edgeActive.set(e.id,{outer,inner});edgeMemory.set(e.id,mem)
+    });
+    applyParamStyles();
+  }
+  function mixColor(a,b,t){const p=s=>s.match(/\w\w/g).map(x=>parseInt(x,16)),A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+  function showRelation(e,path){const L=path.getTotalLength(),pt=path.getPointAtLength(L*.5),rb=el.wrap.getBoundingClientRect();el.relationPop.textContent=e.label;el.relationPop.style.left=pt.x+'px';el.relationPop.style.top=pt.y+'px';el.relationPop.classList.add('show')}
+  function hideRelation(){el.relationPop.classList.remove('show')}
+  function applyParamStyles(){
+    document.documentElement.style.setProperty('--node-radius',params.borderRadius+'px');document.documentElement.style.setProperty('--track-opacity',params.trackOpacity);document.documentElement.style.setProperty('--stroke-width',params.strokeWidth);
+    const impact=params.arrivalImpact;document.documentElement.style.setProperty(

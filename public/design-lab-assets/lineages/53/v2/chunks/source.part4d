@@ -1,0 +1,58 @@
+iveConnectionOpacity','Active Connection Opacity',.2,.95,.01],['memoryTraceOpacity','Memory Trace Opacity',.08,.6,.01],['colorSaturation','Color Saturation',.4,1.8,.05],['arrivalImpact','Arrival Impact',.6,2.2,.05],['completedTreeGlow','Completed Tree Glow',.4,2,.05]];
+  function buildDebug(){controlDefs.forEach(([key,label,min,max,step])=>{const wrap=document.createElement('div');wrap.className='row';wrap.innerHTML=`<label for="dbg-${key}">${label}</label><span class="value" id="val-${key}"></span><input id="dbg-${key}" type="range" min="${min}" max="${max}" step="${step}">`;const inp=wrap.querySelector('input');inp.addEventListener('input',()=>{params[key]=Number(inp.value);wrap.querySelecto┼	к²≤[YIйK²^шш²[²S²[X≥\┼[°²≤[YJK²я ^Y
+щ\Oйщ\OOK▄Oл▌▄JN▄
+NзY┼иь⌡э≥\■≤Y]\ик	эщ⌡зыUзY	к	щ≤XзсэXз]Iк	ь≤\ыPшш⌡≥Xщ[ш⌠эXз]Iк	ьшшэ■ь]\≤][ш┴вK [≤шY\йы^JJYы[шJ
+Nы[ыH\T\≤[Tщ[\й
+_JNы[°⌡щэк≤\[≥з[
+э≤\
+_JNэч[≤яX²Yй
+_B┬²[≤щ[ш┬ч[≤яX²Yй
+^ьшш²⌡шY°к≥⌡э▒XXз
+
+зы^Kщ\JOO·ьшш°щ[°Yьщ[Y[²≥ы][[Y[²·RY
+	ы≥кIйзы^JK▐Yьщ[Y[²≥ы][[Y[²·RY
+	щ≤[Iйзы^JNзY┼Z[°
+\≥]\⌡▌з[°²≤[YO\\≤[\жзы^WNщ▀²^шш²[²S²[X≥\┼\≤[\жзы^WJK²я ^Y
+щ\Oйщ\OOK▄Oл▌▄JN▄
+_J_B┬[°^K≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO°щ\²≥\^J
+JNы[°]\ыK≤Y]≥[²\щ[≥\┼	ьшXзикыышT]\ыJNы[°≥\^K≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO°щ\²≥\^J
+JNы[°эYY≤Y]≥[²\щ[≥\┼	ьшXзикчXшTэYY
+Nы[⌡[ыP≥[≤зX\ к≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO°ы][ыJ	ь≥[≤зX\ ийJNы[⌡[ыSщ≥U≥YK≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO°ы][ыJ	шщ≥]≥YIйJNыьщ[Y[²≥ы][[Y[²·RY
+	э≥\ы]X²YийK≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO°ы][ыJщ]K⌡[ыJJNыьщ[Y[²≥ы][[Y[²·RY
+	ьшэыQX²YийK≤Y]≥[²\щ[≥\┼	ьшXзик
+
+OO≥[≥X²Yк≤ш\эс\щ°≥[[щ≥J	щ \зX⌡IйJNб┬э≥X]S⌡ы\й
+Nь²Z[X²Yй
+NзY┼K≥ы]
+	ыX²YийOOOIлIйY[≥X²Yк≤ш\эс\щ≤Y
+	щ \зX⌡IйNзY┼K≥ы]
+	ш[ыIйOOOIь≥[≤зX\ ий\ы][ыJ	ь≥[≤зX\ ийNб┬шш°щ⌡о[≥]х≥\з^≥Sь°ы\²≥\┼
+
+OO·ыы[шJ
+_JNэ⌡к⌡ь°ы\²≥J[²э≤\
+Nэ≥\]Y\щ[ [X][ш▒°≤[YJ
+
+OO·ыы[шJ
+NзY┼K≥ы]
+	ь]]э^IйHOOIл	и┴┬[X]зYYXJ	й≥Y≥\°к\≥YXыY[[щ[ш▌┬≥YXыJIйK⌡X]з\й\ы][Y[щ]
+
+
+OO°щ\²≥\^J
+Kл
+_JNб┬ьщ[Y[²≤Y]≥[²\щ[≥\┼	зы^Yщш┴к]▐O·зY┼]▀≤шыOOOIтэXыIи┴≥]▀²\≥ы]OOYьщ[Y[²≤⌡ыJ^ы]▀°≥]≥[²Y≤][
+
+Nэщ]K°²[⌡ [≥ощыышT]\ыJ
+N°щ\²≥\^J
+_ZY┼]▀ ы^OOOIэ┴ъ]▀ ы^OOOIт┴й\щ\²≥\^J
+_JNб┬з[≥щк≈всу▒Wу▒QWсSуSс≈во^э\≤[\кщ]Kщ\²≥\^K≥\ы] \щX[ы[шKы][ыK⌡ы\я]KYы\я]_Nб÷JJ
+Nб▐эьэ \┌▐ь⌡ыO┌▐з[┌
