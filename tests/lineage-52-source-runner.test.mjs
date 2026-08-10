@@ -93,19 +93,9 @@ test("source runner defaults to outer-page scroll and requires explicit orbit in
   assert.match(pageSource, /lineage-52-source-runner-controls\.css/);
 });
 
-test("exact source asset, when committed, must retain the verified byte identity", async (t) => {
+test("exact source asset must retain the verified byte identity", async () => {
   const sourceUrl = new URL(`public${LINEAGE_52_V3_SOURCE.sourceAssetPath}`, root);
-  let bytes;
-
-  try {
-    bytes = await readFile(sourceUrl);
-  } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") {
-      t.skip("exact source asset transfer is still pending; runner must remain fail-closed");
-      return;
-    }
-    throw error;
-  }
+  const bytes = await readFile(sourceUrl);
 
   assert.equal(bytes.byteLength, LINEAGE_52_V3_SOURCE.sourceBytes);
   assert.equal(createHash("sha256").update(bytes).digest("hex"), LINEAGE_52_V3_SOURCE.sourceSha256);
