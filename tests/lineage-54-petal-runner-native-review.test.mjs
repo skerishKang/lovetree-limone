@@ -33,6 +33,8 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(component, /const PETAL_LIFETIME_MS = 2400/);
   assert.match(component, /swapVehicle\(chapter\.image\)/);
   assert.match(component, /swapVehicle\(VEHICLE_FILES\[next\]\)/);
+  assert.match(component, /onLoad=\{\(\) => setVehicleFading\(false\)\}/);
+  assert.doesNotMatch(component, /setVehicleFile\(file\);\s*setVehicleFading\(false\)/);
   assert.match(component, /dragTilt === 0 \? "none"/);
   assert.match(component, /opacity: vehicleFading \? 0\.15 : 1/);
   assert.match(component, /setPointerCapture/);
