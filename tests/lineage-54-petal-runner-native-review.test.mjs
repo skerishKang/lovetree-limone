@@ -106,6 +106,12 @@ test("Lineage 54 post-transfer browser gate stays fail-closed and covers require
   assert.match(browserQa, /1280x800/);
   assert.match(browserQa, /390x844/);
   assert.match(browserQa, /exact asset HOLD must be absent/);
+  assert.match(browserQa, /START THE FEELING/);
+  assert.match(browserQa, /REPLAY THE JOURNEY/);
+  assert.match(browserQa, /RETURN TO FIRST MOMENT/);
+  assert.match(browserQa, /bottom timeline advances to Connection/);
+  assert.match(browserQa, /memory path node\(s\) are active/);
+  assert.match(browserQa, /outer page retains wheel scrolling over the stage/);
   assert.match(browserQa, /petal-runner-open-v3\\\.png/);
   assert.match(browserQa, /vehicle remains above the timeline safe floor/);
   assert.match(browserQa, /desktop drag changes free vehicle view/);
