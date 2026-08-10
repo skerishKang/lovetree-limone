@@ -68,6 +68,8 @@ test("lineage intake includes the locked 48 V1 baseline and current 52 V3 candid
   assert.ok(earthOrbit, "52 V3 must remain represented as a lineage-linked Design Lab variant");
   assert.equal(earthOrbit.lineageId, "lt-52-global-moment-orbit");
   assert.equal(earthOrbit.revisionId, "52-v3-reference-earth-orbit");
+  assert.equal(earthOrbit.route, "/design-lab/lineages/52/v3");
+  assert.equal(earthOrbit.status, "mapped");
 });
 
 test("future sibling designs can be registered as variants without a new product version", () => {
