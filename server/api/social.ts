@@ -1,4 +1,4 @@
-import { eq, and, sql, isNull, gt } from "drizzle-orm";
+import { eq, and, sql, isNull, isNotNull, gt } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import {
@@ -172,23 +172,21 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
 
   const inserted = await ctx.db.insert(treeLikes).values(like).onConflictDoNothing();
   if ((inserted as unknown as { rowCount?: number }).rowCount === 0) {
-    // The unique (treeId, ownerId) key is already occupied. When the existing
-    // row was soft-deleted by an earlier unlike, re-liking must restore it and
-    // re-increment the count instead of silently reporting success while
-    // leaving the like permanently inactive.
-    const existingRows = await ctx.db
-      .select()
-      .from(treeLikes)
+    // A conflicting unique (treeId, ownerId) row may be a prior soft-deleted
+    // like or an already-active concurrent like. Claim restoration atomically
+    // so only the request that actually changes deletedAt may increment count.
+    const restored = await ctx.db
+      .update(treeLikes)
+      .set({ deletedAt: null })
       .where(and(
         eq(treeLikes.treeId, treeId),
-        eq(treeLikes.ownerId, user.uid)
-      ));
+        eq(treeLikes.ownerId, user.uid),
+        isNotNull(treeLikes.deletedAt)
+      ))
+      .returning({ id: treeLikes.id });
 
-    if (existingRows[0]?.deletedAt) {
+    if (restored[0]) {
       await ctx.db.batch([
-        ctx.db.update(treeLikes)
-          .set({ deletedAt: null })
-          .where(eq(treeLikes.id, existingRows[0].id)),
         ctx.db.insert(treeSocialCounts).values({
           treeId,
           likeCount: 1,
