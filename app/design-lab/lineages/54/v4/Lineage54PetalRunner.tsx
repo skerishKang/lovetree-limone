@@ -111,6 +111,9 @@ const STORY_SUBTITLES = [
 ] as const;
 
 const TRAVEL_MS = 1800;
+const SOURCE_RELEASE_PAD_MS = 80;
+const VEHICLE_SWAP_TRIGGER_MS = 520;
+const VEHICLE_FADE_MS = 170;
 const BACKGROUND_FILE = "lovetree-arrival-garden-v3.png" as const;
 const EXPECTED_ASSETS = [BACKGROUND_FILE, ...VEHICLE_FILES] as const;
 
@@ -122,6 +125,7 @@ export default function Lineage54PetalRunner() {
   const [serviceOpen, setServiceOpen] = useState(false);
   const [driving, setDriving] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [vehicleFading, setVehicleFading] = useState(false);
   const [dragTilt, setDragTilt] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [burstToken, setBurstToken] = useState(0);
@@ -178,6 +182,14 @@ export default function Lineage54PetalRunner() {
     schedule(() => setToast(null), 1900);
   };
 
+  const swapVehicle = (file: VehicleFile) => {
+    setVehicleFading(true);
+    schedule(() => {
+      setVehicleFile(file);
+      setVehicleFading(false);
+    }, VEHICLE_FADE_MS);
+  };
+
   const showChapter = (requested: number, animate = true) => {
     if (transitioning) return;
     const next = (requested + CHAPTERS.length) % CHAPTERS.length;
@@ -190,15 +202,16 @@ export default function Lineage54PetalRunner() {
     if (animate && reducedMotion === false) {
       setTransitioning(true);
       setDriving(true);
-      schedule(() => setVehicleFile(chapter.image), 520);
+      schedule(() => swapVehicle(chapter.image), VEHICLE_SWAP_TRIGGER_MS);
       schedule(() => {
         setDriving(false);
         setTransitioning(false);
         triggerBloom();
-      }, TRAVEL_MS);
+      }, TRAVEL_MS + SOURCE_RELEASE_PAD_MS);
       return;
     }
 
+    setVehicleFading(false);
     setVehicleFile(chapter.image);
     setDriving(false);
     setTransitioning(false);
@@ -226,7 +239,7 @@ export default function Lineage54PetalRunner() {
     if (Math.abs(delta) < 48) return;
     const next = (freeIndex + (delta < 0 ? 1 : -1) + VEHICLE_FILES.length) % VEHICLE_FILES.length;
     setFreeIndex(next);
-    setVehicleFile(VEHICLE_FILES[next]);
+    swapVehicle(VEHICLE_FILES[next]);
     setFreeViewLabel(FREE_VIEW_LABELS[next]);
     dragRef.current.lastX = event.clientX;
   };
@@ -319,9 +332,22 @@ export default function Lineage54PetalRunner() {
               onPointerMove={onPointerMove}
               onPointerUp={endPointerDrag}
               onPointerCancel={endPointerDrag}
-              style={{ "--lt54-drag-tilt": `${dragTilt}deg` } as CSSProperties}
+              style={{
+                "--lt54-drag-tilt": `${dragTilt}deg`,
+                transform: dragTilt === 0 ? "none" : `rotateY(${dragTilt}deg) translateY(-3px)`,
+              } as CSSProperties}
             >
-              <img className="lt54-car" src={LINEAGE_54_ASSET_PATHS[vehicleFile]} alt={`Petal Runner ${freeViewLabel ?? chapter.view}`} draggable={false} />
+              <img
+                className="lt54-car"
+                src={LINEAGE_54_ASSET_PATHS[vehicleFile]}
+                alt={`Petal Runner ${freeViewLabel ?? chapter.view}`}
+                draggable={false}
+                style={{
+                  opacity: vehicleFading ? 0.15 : 1,
+                  transform: vehicleFading ? "scale(0.94)" : "scale(1)",
+                  transition: "opacity 180ms, transform 350ms",
+                }}
+              />
               <img className="lt54-car-reflection" src={LINEAGE_54_ASSET_PATHS[vehicleFile]} alt="" draggable={false} aria-hidden="true" />
             </div>
           </div>
