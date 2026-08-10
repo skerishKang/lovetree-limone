@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Lineage54PetalRunner from "./Lineage54PetalRunner";
 import { LINEAGE_54_PETAL_RUNNER_SOURCE } from "@/lib/lineage-54-petal-runner-source";
+import "@/app/styles/lineage-53-source-runner.css";
 import "@/app/styles/lineage-54-petal-runner-v4.css";
 
 export default function Lineage54PetalRunnerV4Page() {
