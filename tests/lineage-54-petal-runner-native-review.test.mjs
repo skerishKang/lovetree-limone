@@ -46,9 +46,15 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(component, /lt54-memory-path/);
   assert.match(component, /triggerBloom/);
   assert.doesNotMatch(component, /setCurrent\(next\);\s*setFreeIndex\(next\);/);
+  assert.match(css, /\.lt54-stage\.is-driving \{ animation: lt54-camera-travel 1\.8s cubic-bezier\(0\.22,0\.68,0\.23,1\) both; \}/);
   assert.match(css, /@keyframes lt54-camera-travel/);
+  assert.match(css, /filter: saturate\(0\.88\) brightness\(0\.92\)/);
+  assert.match(css, /filter: saturate\(1\.13\) brightness\(1\.06\)/);
+  assert.match(css, /@keyframes lt54-background-pan/);
+  assert.match(css, /object-position: 42% 50%/);
+  assert.match(css, /object-position: 58% 49%/);
+  assert.match(css, /object-position: 50% 50%/);
   assert.match(css, /@keyframes lt54-route-drive/);
-  assert.match(css, /1\.8s cubic-bezier/);
   assert.match(css, /lt54-speed-field/);
   assert.match(css, /chapter-3 \.lt54-car-wrap/);
   assert.match(css, /\.lt54-car-wrap\.is-dragging \{ cursor: grabbing; \}/);
