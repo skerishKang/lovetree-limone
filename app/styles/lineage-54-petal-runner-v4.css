@@ -82,7 +82,7 @@
 .lt54-story-list { display: grid; gap: 7px; }
 .lt54-story-list button { display: grid; grid-template-columns: 31px 1fr; gap: 8px; text-align: left; border: 1px solid var(--lt54-line); border-radius: 13px; background: rgba(255,255,255,0.34); padding: 11px; position: relative; z-index: 30; }
 .lt54-story-list button.is-active { background: var(--lt54-deep); color: #fff; }
-.lt54-story-list button > span:first-child { font-family: Georgia, serif; font-size: 16px; }
+.lt54-story-list button > span { font-family: Georgia, serif; font-size: 16px; }
 .lt54-story-list button b { font-size: 9px; }
 .lt54-story-list button small { display: block; margin-top: 3px; font-size: 6px; opacity: 0.67; font-weight: 400; }
 .lt54-fuel { margin-top: 18px; }
