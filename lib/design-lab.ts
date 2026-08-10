@@ -191,6 +191,7 @@ export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
     id: "lineage:52-v3-reference-earth-orbit",
     label: "52 V3 Reference Earth Orbit",
     scenarioId: "relationship-retrospective",
+    route: "/design-lab/lineages/52/v3",
     status: "mapped",
     origin: "lineage-intake",
     kind: "experience",
@@ -206,7 +207,7 @@ export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
       "surface Moment node activation",
       "desktop drag / mobile swipe",
     ],
-    notes: "Drive 실행 원본은 존재하지만 아직 저장소 React route로 포팅하지 않았습니다. 원본 충실도 분석 후 route를 부여합니다.",
+    notes: "내부 source-runner route에서 원본 충실도를 검수합니다. 이 route는 native Next 구현이 아니며 exact source asset이 없으면 fail-closed 상태를 표시합니다.",
   },
 ] as const;
 
