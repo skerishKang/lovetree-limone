@@ -117,7 +117,7 @@ async function assertDesktopTravelAndArrival(page) {
   await page.locator(".lt54-stage.is-driving").waitFor({ state: "detached", timeout: 2500 });
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-open-v3\.png$/);
   assert.match(await page.locator(".lt54-chapter-count").innerText(), /DOORS OPEN · ARRIVED/);
-  assert.equal(await page.locator(".lt54-petals i").count() > 0, true, "arrival bloom renders particles");
+  assert.ok(await page.locator(".lt54-petals i").count() > 0, "arrival bloom renders particles");
   await assertVehicleInsideStage(page, "1280x800 final arrival");
   await screenshot(page, "desktop-final-arrival");
   await page.waitForTimeout(2500);
@@ -144,6 +144,34 @@ async function assertDesktopDrag(page) {
   assert.equal(await wrap.evaluate((node) => node.style.transform), "none", "resting drag transform resets");
 }
 
+async function dispatchTouchDrag(page, locator) {
+  const box = await locator.boundingBox();
+  assert.ok(box, "mobile touch target exists");
+  const session = await page.context().newCDPSession(page);
+  const start = { x: box.x + box.width * 0.35, y: box.y + box.height * 0.55 };
+  const end = { x: box.x + box.width * 0.75, y: box.y + box.height * 0.55 };
+  await session.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [{ ...start, radiusX: 3, radiusY: 3, force: 1, id: 54 }],
+  });
+  for (let step = 1; step <= 5; step += 1) {
+    const progress = step / 5;
+    await session.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{
+        x: start.x + (end.x - start.x) * progress,
+        y: start.y + (end.y - start.y) * progress,
+        radiusX: 3,
+        radiusY: 3,
+        force: 1,
+        id: 54,
+      }],
+    });
+  }
+  await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await session.detach();
+}
+
 async function assertMobilePanelAndTouch(page) {
   const panel = page.locator(".lt54-side--right");
   const before = await panel.boundingBox();
@@ -159,24 +187,12 @@ async function assertMobilePanelAndTouch(page) {
   await page.waitForTimeout(380);
   const wrap = page.locator(".lt54-car-wrap");
   const beforeSrc = await page.locator(".lt54-car").getAttribute("src");
-  await wrap.evaluate((node) => {
-    const rect = node.getBoundingClientRect();
-    const dispatch = (type, x, buttons) => node.dispatchEvent(new PointerEvent(type, {
-      bubbles: true,
-      pointerId: 54,
-      pointerType: "touch",
-      isPrimary: true,
-      clientX: x,
-      clientY: rect.top + rect.height / 2,
-      buttons,
-    }));
-    dispatch("pointerdown", rect.left + rect.width * 0.35, 1);
-    dispatch("pointermove", rect.left + rect.width * 0.75, 1);
-    dispatch("pointerup", rect.left + rect.width * 0.75, 0);
-  });
+  await dispatchTouchDrag(page, wrap);
   await page.waitForTimeout(220);
   const afterSrc = await page.locator(".lt54-car").getAttribute("src");
-  assert.notEqual(afterSrc, beforeSrc, "mobile pointer drag changes free vehicle view");
+  assert.notEqual(afterSrc, beforeSrc, "mobile touch drag changes free vehicle view");
+  assert.match(await page.locator(".lt54-chapter-count").innerText(), /FREE ORBIT/);
+  assert.equal(await wrap.evaluate((node) => node.classList.contains("is-dragging")), false, "touch pointer end clears dragging state");
 }
 
 test("Lineage 54 V4 — exact-asset native route satisfies desktop/mobile source-fidelity browser contracts", { timeout: 180000 }, async () => {
