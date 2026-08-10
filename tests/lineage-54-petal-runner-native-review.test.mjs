@@ -34,10 +34,13 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(component, /swapVehicle\(chapter\.image\)/);
   assert.match(component, /swapVehicle\(VEHICLE_FILES\[next\]\)/);
   assert.match(component, /onLoad=\{\(\) => setVehicleFading\(false\)\}/);
-  assert.doesNotMatch(component, /setVehicleFile\(file\);\s*setVehicleFading\(false\)/);
   assert.match(component, /const freeIndexRef = useRef\(0\)/);
   assert.match(component, /freeIndexRef\.current = next/);
   assert.doesNotMatch(component, /const \[freeIndex, setFreeIndex\]/);
+  assert.match(component, /const vehicleFileRef = useRef<VehicleFile>\(VEHICLE_FILES\[0\]\)/);
+  assert.match(component, /vehicleFileRef\.current = file/);
+  assert.match(component, /vehicleFileRef\.current = chapter\.image/);
+  assert.doesNotMatch(component, /if \(vehicleFile === file\)/);
   assert.doesNotMatch(component, /--lt54-path-progress/);
   assert.match(component, /dragTilt === 0 \? "none"/);
   assert.match(component, /opacity: vehicleFading \? 0\.15 : 1/);
