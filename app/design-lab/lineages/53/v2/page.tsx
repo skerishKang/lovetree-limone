@@ -2,6 +2,7 @@ import Link from "next/link";
 import Lineage53V2Motion from "./Lineage53V2Motion";
 import { LINEAGE_53_V2_REVIEW_LABEL, LINEAGE_53_V2_SOURCE } from "@/lib/lineage-53-v2-source";
 import "@/app/styles/lineage-53-source-runner.css";
+import "@/app/styles/lineage-53-v2-viewport.css";
 
 export default function Lineage53V2ReviewPage() {
   return (
