@@ -35,6 +35,10 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(component, /swapVehicle\(VEHICLE_FILES\[next\]\)/);
   assert.match(component, /onLoad=\{\(\) => setVehicleFading\(false\)\}/);
   assert.doesNotMatch(component, /setVehicleFile\(file\);\s*setVehicleFading\(false\)/);
+  assert.match(component, /const freeIndexRef = useRef\(0\)/);
+  assert.match(component, /freeIndexRef\.current = next/);
+  assert.doesNotMatch(component, /const \[freeIndex, setFreeIndex\]/);
+  assert.doesNotMatch(component, /--lt54-path-progress/);
   assert.match(component, /dragTilt === 0 \? "none"/);
   assert.match(component, /opacity: vehicleFading \? 0\.15 : 1/);
   assert.match(component, /setPointerCapture/);
@@ -45,7 +49,6 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(component, /onPointerCancel=/);
   assert.match(component, /lt54-memory-path/);
   assert.match(component, /triggerBloom/);
-  assert.doesNotMatch(component, /setCurrent\(next\);\s*setFreeIndex\(next\);/);
   assert.match(css, /\.lt54-stage\.is-driving \{ animation: lt54-camera-travel 1\.8s cubic-bezier\(0\.22,0\.68,0\.23,1\) both; \}/);
   assert.match(css, /@keyframes lt54-camera-travel/);
   assert.match(css, /filter: saturate\(0\.88\) brightness\(0\.92\)/);
