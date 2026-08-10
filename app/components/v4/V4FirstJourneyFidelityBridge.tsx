@@ -167,8 +167,8 @@ export default function V4FirstJourneyFidelityBridge() {
       const caption = board.querySelector<HTMLElement>(".v4-j-caption");
       if (
         caption &&
-        caption.textContent?.replace(/\s+/g, " ").trim() !==
-          "한 장면에서 시작한 마음이 다음 장면과 연결되어 자라나요."
+        caption.textContent?.replace(/\s+/g, "") !==
+          "한장면에서시작한마음이다음장면과연결되어자라나요."
       ) {
         caption.dataset.sourceCaption = "true";
         while (caption.firstChild) caption.removeChild(caption.firstChild);
