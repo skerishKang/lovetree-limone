@@ -100,6 +100,7 @@ function makeDb() {
     trees: [],
     likes: [],
     counts: [],
+    activeLikeSelectBarrier: null,
   };
 
   function matchLike(row, conditions) {
@@ -122,8 +123,22 @@ function makeDb() {
     else if (/view_count \+ 1/.test(text)) row.viewCount += 1;
   }
 
+  function syncNextActiveLikeSelects(expected = 2) {
+    let release;
+    const promise = new Promise((resolve) => {
+      release = resolve;
+    });
+    state.activeLikeSelectBarrier = {
+      expected,
+      arrived: 0,
+      promise,
+      release,
+    };
+  }
+
   return {
     state,
+    syncNextActiveLikeSelects,
     select() {
       const query = {
         table: null,
@@ -148,9 +163,23 @@ function makeDb() {
         _resolveRows() {
           if (this.table === trees) return state.trees.map((row) => ({ ...row }));
           if (this.table === treeLikes) {
-            return state.likes
+            const rows = state.likes
               .filter((row) => this.conditions.length === 0 || matchLike(row, this.conditions))
               .map((row) => ({ ...row }));
+
+            const barrier = state.activeLikeSelectBarrier;
+            const ownerScoped = this.conditions.some((c) => c.col === "owner_id");
+            const activeOnly = this.conditions.some((c) => c.col === "deleted_at" && c.op === "isNull");
+            if (barrier && ownerScoped && activeOnly) {
+              barrier.arrived += 1;
+              if (barrier.arrived >= barrier.expected) {
+                state.activeLikeSelectBarrier = null;
+                barrier.release();
+              }
+              return barrier.promise.then(() => rows);
+            }
+
+            return rows;
           }
           if (this.table === treeSocialCounts) return state.counts.map((row) => ({ ...row }));
           return [];
@@ -363,6 +392,11 @@ test("concurrent re-like restores once and increments the persisted count once",
     assert.equal(activeLikes(db).length, 0);
     assert.equal(db.state.counts.find((row) => row.treeId === "tree-1").likeCount, 0);
 
+    // Force both toggle requests to take their initial active-like SELECT from
+    // the same soft-deleted snapshot. This isolates the real conflict/restore
+    // race instead of allowing one request to observe the other's restore and
+    // legitimately interpret its own toggle as an unlike.
+    db.syncNextActiveLikeSelects(2);
     const [first, second] = await Promise.all([
       socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db })),
       socialRouter(makeContext({ method: "POST", path: "/api/trees/tree-1/likes", db })),
