@@ -113,8 +113,10 @@
 .lt54-chapter-count b { display: block; font-family: Georgia, serif; font-size: 36px; }
 .lt54-chapter-count span { font-size: 7px; letter-spacing: 0.12em; }
 
-.lt54-memory-path { position: absolute; left: 8%; right: 7%; bottom: 23%; height: 3px; z-index: 5; }
-.lt54-memory-path::before { content: ""; display: block; width: var(--lt54-path-progress); height: 100%; background: linear-gradient(90deg, rgba(255,255,255,0.05), #ffc5d5, #fff, #ff8eb2); box-shadow: 0 0 17px 4px rgba(255,150,184,0.7); transition: width 1.4s ease; }
+.lt54-memory-path { position: absolute; left: 8%; right: 7%; bottom: 23%; height: 3px; z-index: 5; background: linear-gradient(90deg, rgba(255,255,255,0.05), #ffc5d5, #fff, #ff8eb2); box-shadow: 0 0 17px 4px rgba(255,150,184,0.7); transform: scaleX(0.08); transform-origin: left; transition: transform 1.4s ease; }
+.chapter-1 .lt54-memory-path { transform: scaleX(0.38); }
+.chapter-2 .lt54-memory-path { transform: scaleX(0.72); }
+.chapter-3 .lt54-memory-path { transform: scaleX(1); }
 .lt54-memory-path i { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 5px rgba(255,166,195,0.2), 0 0 17px #ff9cbc; transform: translate(-50%,-50%); opacity: 0.2; transition: opacity 0.6s; }
 .lt54-memory-path i:nth-child(1) { left: 8%; }
 .lt54-memory-path i:nth-child(2) { left: 38%; }
@@ -234,5 +236,5 @@
   .lt54-stage.is-driving .lt54-speed-field i,
   .lt54-petals i { animation: none !important; }
   .lt54-stage.is-driving .lt54-speed-field { opacity: 0; }
-  .lt54-car-wrap, .lt54-memory-path::before, .lt54-side--right, .lt54-toast { transition-duration: 0.001ms !important; }
+  .lt54-car-wrap, .lt54-memory-path, .lt54-side--right, .lt54-toast { transition-duration: 0.001ms !important; }
 }
