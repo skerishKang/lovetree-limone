@@ -92,13 +92,19 @@
 .lt54-fuel small { font-size: 7px; color: #987080; }
 
 .lt54-stage { position: relative; isolation: isolate; overflow: hidden; min-height: 700px; perspective: 1200px; background: #b7777f; }
-.lt54-stage__background { position: absolute; inset: -3%; width: 106%; height: 106%; object-fit: cover; object-position: 50% 50%; z-index: 0; filter: saturate(1) brightness(1); transform: translate3d(0,0,0) scale(1.01); }
+.lt54-stage__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; z-index: 0; }
 .lt54-stage__shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(69,26,45,0.12), transparent 30% 72%, rgba(73,29,46,0.12)), linear-gradient(0deg, rgba(255,224,218,0.2), transparent 30%), linear-gradient(rgba(255,221,216,0.08), rgba(255,231,224,0.04)); }
-.lt54-stage.is-driving .lt54-stage__background { animation: lt54-camera-travel 1.8s cubic-bezier(0.22,0.68,0.23,1) both; }
+.lt54-stage.is-driving { animation: lt54-camera-travel 1.8s cubic-bezier(0.22,0.68,0.23,1) both; }
+.lt54-stage.is-driving .lt54-stage__background { animation: lt54-background-pan 1.8s cubic-bezier(0.22,0.68,0.23,1) both; }
 @keyframes lt54-camera-travel {
-  0% { transform: translate3d(-4%,0,0) scale(1.05); filter: saturate(0.88) brightness(0.92); }
-  42% { transform: translate3d(4%,-0.4%,0) scale(1.06); filter: saturate(1.13) brightness(1.06); }
-  100% { transform: translate3d(0,0,0) scale(1.01); filter: saturate(1) brightness(1); }
+  0% { filter: saturate(0.88) brightness(0.92); }
+  42% { filter: saturate(1.13) brightness(1.06); }
+  100% { filter: none; }
+}
+@keyframes lt54-background-pan {
+  0% { object-position: 42% 50%; }
+  42% { object-position: 58% 49%; }
+  100% { object-position: 50% 50%; }
 }
 .lt54-chapter-label { position: absolute; left: 24px; top: 20px; z-index: 18; color: #fff; text-shadow: 0 2px 16px rgba(79,28,48,0.5); }
 .lt54-chapter-label span { font-size: 8px; letter-spacing: 0.2em; }
@@ -222,6 +228,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .lt54-shell *, .lt54-shell *::before, .lt54-shell *::after { scroll-behavior: auto !important; }
+  .lt54-stage.is-driving,
   .lt54-stage.is-driving .lt54-stage__background,
   .lt54-stage.is-driving .lt54-car-wrap,
   .lt54-stage.is-driving .lt54-speed-field i,
