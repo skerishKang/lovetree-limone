@@ -24,8 +24,15 @@ test("Lineage 54 native review keeps all four source chapters and exact asset pa
   assert.match(component, /FIRST MOMENT → DEPART → TRAVEL → ARRIVE/);
 });
 
-test("Lineage 54 native review preserves travel, drag, path and arrival mechanics", () => {
+test("Lineage 54 native review preserves travel, drag, source swap, path and arrival mechanics", () => {
   assert.match(component, /const TRAVEL_MS = 1800/);
+  assert.match(component, /const SOURCE_RELEASE_PAD_MS = 80/);
+  assert.match(component, /const VEHICLE_SWAP_TRIGGER_MS = 520/);
+  assert.match(component, /const VEHICLE_FADE_MS = 170/);
+  assert.match(component, /swapVehicle\(chapter\.image\)/);
+  assert.match(component, /swapVehicle\(VEHICLE_FILES\[next\]\)/);
+  assert.match(component, /dragTilt === 0 \? "none"/);
+  assert.match(component, /opacity: vehicleFading \? 0\.15 : 1/);
   assert.match(component, /setPointerCapture/);
   assert.match(component, /releasePointerCapture/);
   assert.match(component, /onPointerCancel=/);
