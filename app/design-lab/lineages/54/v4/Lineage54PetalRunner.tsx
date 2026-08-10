@@ -121,7 +121,6 @@ const EXPECTED_ASSETS = [BACKGROUND_FILE, ...VEHICLE_FILES] as const;
 export default function Lineage54PetalRunner() {
   const [current, setCurrent] = useState(0);
   const [vehicleFile, setVehicleFile] = useState<VehicleFile>(VEHICLE_FILES[0]);
-  const [freeIndex, setFreeIndex] = useState(0);
   const [freeViewLabel, setFreeViewLabel] = useState<string | null>(null);
   const [serviceOpen, setServiceOpen] = useState(false);
   const [driving, setDriving] = useState(false);
@@ -136,6 +135,7 @@ export default function Lineage54PetalRunner() {
   const [failedAssets, setFailedAssets] = useState<Set<string>>(() => new Set());
   const timersRef = useRef<number[]>([]);
   const bloomTokenRef = useRef(0);
+  const freeIndexRef = useRef(0);
   const dragRef = useRef({ active: false, pointerId: -1, startX: 0, lastX: 0 });
 
   useEffect(() => {
@@ -249,8 +249,8 @@ export default function Lineage54PetalRunner() {
     setDragTilt(Math.max(-13, Math.min(13, total * 0.08)));
 
     if (Math.abs(delta) < 48) return;
-    const next = (freeIndex + (delta < 0 ? 1 : -1) + VEHICLE_FILES.length) % VEHICLE_FILES.length;
-    setFreeIndex(next);
+    const next = (freeIndexRef.current + (delta < 0 ? 1 : -1) + VEHICLE_FILES.length) % VEHICLE_FILES.length;
+    freeIndexRef.current = next;
     swapVehicle(VEHICLE_FILES[next]);
     setFreeViewLabel(FREE_VIEW_LABELS[next]);
     dragRef.current.lastX = event.clientX;
@@ -268,7 +268,6 @@ export default function Lineage54PetalRunner() {
 
   const chapter = CHAPTERS[current];
   const assetReady = failedAssets.size === 0 && loadedAssets.size === EXPECTED_ASSETS.length;
-  const pathProgress = [8, 38, 72, 100][current];
   const petalCount = current === CHAPTERS.length - 1 ? 46 : 18;
   const petals = useMemo(
     () => burstToken === 0 ? [] : Array.from({ length: petalCount }, (_, index) => ({
@@ -332,7 +331,7 @@ export default function Lineage54PetalRunner() {
           <div className="lt54-moment-note lt54-moment-note--2"><b>HEARTBEAT</b>자꾸 다시 보고 싶은 이유</div>
           <div className="lt54-moment-note lt54-moment-note--3"><b>CONNECTION</b>다음 기억으로 이어진 빛</div>
 
-          <div className="lt54-memory-path" style={{ "--lt54-path-progress": `${pathProgress}%` } as CSSProperties}>
+          <div className="lt54-memory-path">
             <i /><i /><i /><i />
           </div>
           <div className="lt54-speed-field" aria-hidden="true"><i /><i /><i /><i /></div>
