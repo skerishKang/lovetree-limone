@@ -114,6 +114,7 @@ const TRAVEL_MS = 1800;
 const SOURCE_RELEASE_PAD_MS = 80;
 const VEHICLE_SWAP_TRIGGER_MS = 520;
 const VEHICLE_FADE_MS = 170;
+const PETAL_LIFETIME_MS = 2400;
 const BACKGROUND_FILE = "lovetree-arrival-garden-v3.png" as const;
 const EXPECTED_ASSETS = [BACKGROUND_FILE, ...VEHICLE_FILES] as const;
 
@@ -126,6 +127,7 @@ export default function Lineage54PetalRunner() {
   const [driving, setDriving] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [vehicleFading, setVehicleFading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [dragTilt, setDragTilt] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [burstToken, setBurstToken] = useState(0);
@@ -133,6 +135,7 @@ export default function Lineage54PetalRunner() {
   const [loadedAssets, setLoadedAssets] = useState<Set<string>>(() => new Set());
   const [failedAssets, setFailedAssets] = useState<Set<string>>(() => new Set());
   const timersRef = useRef<number[]>([]);
+  const bloomTokenRef = useRef(0);
   const dragRef = useRef({ active: false, pointerId: -1, startX: 0, lastX: 0 });
 
   useEffect(() => {
@@ -175,7 +178,13 @@ export default function Lineage54PetalRunner() {
     });
   };
 
-  const triggerBloom = () => setBurstToken((token) => token + 1);
+  const triggerBloom = () => {
+    const token = ++bloomTokenRef.current;
+    setBurstToken(token);
+    schedule(() => {
+      setBurstToken((currentToken) => currentToken === token ? 0 : currentToken);
+    }, PETAL_LIFETIME_MS);
+  };
 
   const announce = (message: string) => {
     setToast(message);
@@ -195,7 +204,6 @@ export default function Lineage54PetalRunner() {
     const next = (requested + CHAPTERS.length) % CHAPTERS.length;
     const chapter = CHAPTERS[next];
     setCurrent(next);
-    setFreeIndex(next);
     setFreeViewLabel(null);
     announce(chapter.toast);
 
@@ -226,6 +234,7 @@ export default function Lineage54PetalRunner() {
       startX: event.clientX,
       lastX: event.clientX,
     };
+    setDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
@@ -250,6 +259,7 @@ export default function Lineage54PetalRunner() {
       event.currentTarget.releasePointerCapture(drag.pointerId);
     }
     dragRef.current.active = false;
+    setDragging(false);
     setDragTilt(0);
   };
 
@@ -326,7 +336,7 @@ export default function Lineage54PetalRunner() {
 
           <div className="lt54-car-zone">
             <div
-              className="lt54-car-wrap"
+              className={`lt54-car-wrap${dragging ? " is-dragging" : ""}`}
               title="Drag left or right to rotate the vehicle"
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
@@ -379,14 +389,15 @@ export default function Lineage54PetalRunner() {
           <button className="lt54-action" type="button" onClick={() => showChapter(current === 3 ? 0 : current + 1, true)}>{chapter.action}</button>
           <button className="lt54-action lt54-action--alt" type="button" onClick={() => showChapter(0, true)}>RETURN TO FIRST MOMENT</button>
           <div className="lt54-service-note"><b>Premium Journey</b><p>100개 저장 시 차량과 첫 경로, 200개 시 복수 감정 경로, 365개 시 1년의 영상을 자동 연결한 Annual Journey를 제공합니다.</p></div>
-          <div className="lt54-product-boundary"><b>Review boundary</b><p>위 threshold는 sibling source story 값이며 canonical product policy로 승인된 값이 아닙니다.</p></div>
         </aside>
       </div>
 
       <div className={`lt54-toast${toast ? " is-visible" : ""}`} role="status">{toast}</div>
-      <div className="lt54-motion-policy" aria-live="polite">
-        {reducedMotion ? "Reduced motion: chapter changes are immediate; travel/camera animation is disabled." : "Motion review: 1.8s travel sequence enabled."}
-      </div>
+      {reducedMotion ? (
+        <div className="lt54-motion-policy" aria-live="polite">
+          Reduced motion: chapter changes are immediate; travel/camera animation is disabled.
+        </div>
+      ) : null}
     </div>
   );
 }
