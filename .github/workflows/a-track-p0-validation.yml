@@ -71,7 +71,20 @@ jobs:
             exit 1
           fi
 
-          node --import tsx --test 'tests/*.test.mjs'
+          mapfile -t standard_tests < <(
+            find tests -maxdepth 1 -type f -name '*.test.mjs' \
+              ! -name 'lineage-52-route-browser-qa.test.mjs' \
+              -print | sort
+          )
+          if [ "${#standard_tests[@]}" -eq 0 ]; then
+            echo "No standard tests discovered" >&2
+            exit 1
+          fi
+
+          node --import tsx --test "${standard_tests[@]}"
+
+          echo "Running Lineage 52 actual-route browser QA in isolation"
+          node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs
 
       - name: Build
         run: npm run build
