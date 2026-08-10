@@ -136,6 +136,7 @@ export default function Lineage54PetalRunner() {
   const timersRef = useRef<number[]>([]);
   const bloomTokenRef = useRef(0);
   const freeIndexRef = useRef(0);
+  const vehicleFileRef = useRef<VehicleFile>(VEHICLE_FILES[0]);
   const dragRef = useRef({ active: false, pointerId: -1, startX: 0, lastX: 0 });
 
   useEffect(() => {
@@ -194,10 +195,11 @@ export default function Lineage54PetalRunner() {
   const swapVehicle = (file: VehicleFile) => {
     setVehicleFading(true);
     schedule(() => {
-      if (vehicleFile === file) {
+      if (vehicleFileRef.current === file) {
         setVehicleFading(false);
         return;
       }
+      vehicleFileRef.current = file;
       setVehicleFile(file);
     }, VEHICLE_FADE_MS);
   };
@@ -223,6 +225,7 @@ export default function Lineage54PetalRunner() {
     }
 
     setVehicleFading(false);
+    vehicleFileRef.current = chapter.image;
     setVehicleFile(chapter.image);
     setDriving(false);
     setTransitioning(false);
