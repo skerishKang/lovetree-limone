@@ -10,6 +10,17 @@
 - Design Lab route: `/design-lab/lineages/54/v4`
 - Product boundary: internal source-fidelity review first; no automatic production adoption
 
+## Authoritative Drive location
+
+The authoritative V4 folder was re-listed directly from Google Drive during the implementation audit. Use the object IDs from this folder, not same-name duplicate objects discovered elsewhere in Drive.
+
+- folder: `12_LoveTree_Petal_Runner_LoveJourney_V4`
+- Drive folder id: `1Gtw1cU-aFFUFINNYAm-okP2CtWcSEASf`
+- `01_HTML` folder id: `13_k13PHVHsCROQ_p6IM9fc0Pw5mj7Wy_`
+- `03_ASSETS` folder id: `1_-hJsE-H5oH8HTc2YAsTZn-r5DeNdwgz`
+- `03_ASSETS/transparent` folder id: `1cs0mUbMmEjA7J_jWf7HsSSBps5GE2tXp`
+- `README-V4.md` Drive id: `15qLtIZZ8k3DO1hwrQr7OnAOXNuzOiu-l`
+
 ## Authoritative runtime
 
 Primary sibling source:
@@ -24,7 +35,10 @@ Runtime alias:
 
 - `01_HTML/index.html`
 - Drive id: `11VevtUfc2AaKzJn7fwgqCLNZ8p542YrL`
-- raw-download comparison: byte-identical to `index-v4.html`
+- bytes: `21,337`
+- fresh raw-download SHA-256: `ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9`
+- fresh Git blob SHA: `4dd2bd69cee22cca24b87ccaf4bae23534be5523`
+- byte-for-byte comparison: identical to `index-v4.html`
 
 The sibling `README-V4.md` says V3 is preserved and V4 redesigns the vehicle/travel staging rather than replacing the product story.
 
@@ -41,74 +55,121 @@ Top narrative:
 
 The counts `184 / 200`, `184 Moments`, `12 Connections`, and the Premium Journey thresholds are sibling source-story values. They are not canonical business rules merely because they exist in the source.
 
-## V4 motion delta
+## V4 motion and interaction contract
 
 The V4 source and README require:
 
 - smaller vehicle and a safe floor line above the timeline;
 - no bottom clipping;
 - offscreen entry → acceleration → curved travel → deceleration/stop;
-- `1.8s` travel sequence;
+- `1.8s` route animation with source driving-state cleanup at approximately `1880ms`;
+- vehicle swap trigger at `520ms` and source image fade/swap delay at `170ms`;
 - background camera panning and brightness changes;
 - speed streaks during travel;
 - wider per-chapter vehicle displacement;
 - final open-door vehicle fully inside the viewport;
 - left/right drag through four vehicle views;
-- four story buttons and four bottom timeline buttons.
+- `48px` per-view drag threshold and ±`13deg` drag tilt;
+- pointer capture, pointer cancel recovery and drag-only `translateY(-3px)` lift;
+- free-view index persists across chapter navigation;
+- four story buttons and four bottom timeline buttons;
+- toast lifetime `1900ms`;
+- bloom particles removed after `2400ms`.
 
-The native review route implements those mechanics and adds an explicit reduced-motion policy: when `prefers-reduced-motion: reduce` is active, chapter state changes immediately and travel/camera/speed animation is disabled.
+The native review route preserves these source mechanics and adds one explicit native-product difference required by #129: when `prefers-reduced-motion: reduce` is active, chapter state changes immediately and travel/camera/speed animation is disabled.
+
+Review-only policy explanation stays outside the sibling composition. It must not be inserted into the source-faithful right-side content panel as extra visual chrome.
+
+## Source viewport contract
+
+Relevant source layout values are pinned in the native review implementation and regression tests:
+
+- source font stack: `Inter, Arial, sans-serif`;
+- header: `76px`;
+- desktop main: `height: calc(100vh - 76px)` with `min-height: 700px`;
+- desktop columns: `270px minmax(540px,1fr) 290px`;
+- toast: `position: fixed`;
+- ≤1100px service panel: `285px` wide with `height: calc(100vh - 112px)`;
+- ≤760px main becomes auto-height, stage becomes `680px`, service panel becomes fixed, vehicle uses `72%` width / `14%` left / `8%` bottom, timeline uses `8px` left/right.
 
 ## Exact image contract
 
-All six raw local source files were re-hashed immediately before implementation. The HTML and all five PNG SHA-256 values match Issue #129 exactly.
+The five authoritative PNG objects were re-listed from the V4 folder, freshly raw-downloaded, and re-hashed during the implementation audit. All filename, bytes, SHA-256 and Git blob fingerprints match Issue #129 and `lib/lineage-54-petal-runner-source.ts` exactly.
 
-| Asset | Bytes | Dimensions | SHA-256 | Git blob SHA |
-|---|---:|---:|---|---|
-| `lovetree-arrival-garden-v3.png` | 2,458,998 | 1672×941 RGB | `731ce39ccd9bbb9fe20fa1ba98a390ca8691d16f92110502a16cbcfee161ea35` | `e8009e58ccb42617ee3ba3d59fc97da68ed7340a` |
-| `petal-runner-front-v3.png` | 178,894 | 627×627 RGBA | `391b77902d26b89eeea892f7847dc1a99212456e80ff7aec918dd17f580c9826` | `eed19757463401eba0913dfd35e9c7fa14445249` |
-| `petal-runner-side-v3.png` | 135,739 | 627×627 RGBA | `84014bf23b44194a00f85093d0dfac6ba6736fbe91aaff6cf70c3db130a0d0a3` | `1326fe2b6f66fd696cecd5688693f299f5c26434` |
-| `petal-runner-rear-v3.png` | 168,905 | 627×627 RGBA | `2708fe6625bd87da61de3e30e8b034766f0df5ccd5fef584d405c5e05d3ca37d` | `28b5859e3b9d7e0e02228e4703b347aa85218f24` |
-| `petal-runner-open-v3.png` | 261,150 | 627×627 RGBA | `96b53667e2f2fc71498238ff1403035b1c7c0f454049dadfa07da421eff7838a` | `c1a51d939275bf5706c65815fb77c12feb8c35d3` |
+| Asset | Authoritative Drive id | Bytes | Dimensions | SHA-256 | Git blob SHA |
+|---|---|---:|---:|---|---|
+| `lovetree-arrival-garden-v3.png` | `11zYOY2S8jbFi96M5WmCQFvdlc-kbllvY` | 2,458,998 | 1672×941 RGB | `731ce39ccd9bbb9fe20fa1ba98a390ca8691d16f92110502a16cbcfee161ea35` | `e8009e58ccb42617ee3ba3d59fc97da68ed7340a` |
+| `petal-runner-front-v3.png` | `1nBUZJbDt4m3AhHgYSDkMFf_-ViZqSRD9` | 178,894 | 627×627 RGBA | `391b77902d26b89eeea892f7847dc1a99212456e80ff7aec918dd17f580c9826` | `eed19757463401eba0913dfd35e9c7fa14445249` |
+| `petal-runner-side-v3.png` | `1m_Nkn0H06jh4eVV0caRYHJcv7fZwaC_9` | 135,739 | 627×627 RGBA | `84014bf23b44194a00f85093d0dfac6ba6736fbe91aaff6cf70c3db130a0d0a3` | `1326fe2b6f66fd696cecd5688693f299f5c26434` |
+| `petal-runner-rear-v3.png` | `1u68PFIT96V86VyJyywrP3Egj4FNvSx5E` | 168,905 | 627×627 RGBA | `2708fe6625bd87da61de3e30e8b034766f0df5ccd5fef584d405c5e05d3ca37d` | `28b5859e3b9d7e0e02228e4703b347aa85218f24` |
+| `petal-runner-open-v3.png` | `1C9ogxrGU4MIeo9D6RfRbUFfvlZnoI-7s` | 261,150 | 627×627 RGBA | `96b53667e2f2fc71498238ff1403035b1c7c0f454049dadfa07da421eff7838a` | `c1a51d939275bf5706c65815fb77c12feb8c35d3` |
 
 Target asset path:
 
-`/public/reference/lineage-54-petal-runner-v4/assets/`
+`public/reference/lineage-54-petal-runner-v4/assets/`
 
 The review component uses this exact path contract and shows `ASSET TRANSFER HOLD` when any expected asset is missing.
 
 ## Binary transfer gate
 
-The current connected GitHub API can write UTF-8 content and can create blobs from supplied text/base64 content, but it does not accept the locally materialized Drive file as a binary file parameter. The largest source image is 2.46 MB, so embedding the binary as conversational base64 is not an acceptable or robust transfer mechanism.
+The connected GitHub API can create blobs only from supplied text/base64 strings; it does not accept the locally materialized Drive file as a binary file parameter. The largest source image is 2.46 MB, so conversational base64 is not an acceptable byte-exact transfer mechanism.
 
-Direct HTTPS `git` access from this execution container is also unavailable because the container cannot resolve `github.com`. The exact background/front Git blob SHAs were queried against the target repository and returned `404`, so the files cannot be recovered by simply reconnecting an existing target-repo blob.
-
-Therefore:
+Direct HTTPS `git` access from this execution container is also unavailable. Therefore:
 
 - native structural/motion implementation may proceed;
 - exact source metadata and asset paths are pinned;
 - no approximate image substitution is allowed;
-- no source-fidelity PASS is allowed until all five exact PNG files are transferred to Git and hash-verified.
+- no source-fidelity PASS is allowed until all five exact PNG files are transferred to Git and verified.
 
-## Acceptance gate after binary transfer
+`scripts/verify-lineage-54-assets.mjs` fails closed and verifies, for every transferred asset:
 
-Minimum browser QA:
+- file presence;
+- byte count;
+- SHA-256;
+- Git blob SHA;
+- PNG IHDR dimensions;
+- PNG color type (`RGB` / `RGBA`).
 
-- `1280×800`
-- `390×844`
+Only a complete 5/5 match prints `LINEAGE_54_EXACT_ASSET_GATE_PASS`.
 
-Required checks:
+## Post-transfer actual-route browser gate
 
-- four chapters and correct chapter vehicle view;
-- entire vehicle visible, especially final open-door arrival;
-- no horizontal or bottom clipping;
-- 1.8s travel sequence;
-- camera pan / brightness / speed streaks;
-- memory path and node growth;
-- story and timeline controls;
-- drive/replay/restart behavior;
-- left/right pointer drag through four views;
-- pointer capture and pointer cancel recovery;
-- final bloom;
-- responsive service panel;
-- reduced-motion behavior;
-- no outer-page scroll lock or runtime errors.
+`tests/lineage-54-route-browser-qa.mjs` is intentionally **not** part of normal `*.test.mjs` discovery before the binaries arrive. It is a standalone fail-closed gate to execute after exact transfer with Playwright installed and the app running.
+
+Example execution after the asset verifier passes:
+
+```bash
+node --import tsx --test tests/lineage-54-route-browser-qa.mjs
+```
+
+It does not skip a missing asset gate. It requires `ASSET TRANSFER HOLD` to disappear and checks:
+
+- `1280×800` desktop;
+- `390×844` mobile/touch;
+- all five exact asset paths decode;
+- four chapter/story and four timeline controls;
+- no horizontal overflow;
+- first/final vehicle bounding boxes remain inside the stage and above the timeline safe floor;
+- 1.8s travel state, 520ms+170ms image choreography and speed-field activation;
+- final open-door image and bloom cleanup;
+- desktop drag/free-orbit behavior;
+- Chromium CDP touch drag on mobile;
+- mobile service panel off-canvas/open positioning;
+- reduced-motion immediate chapter switching;
+- page/console runtime errors;
+- screenshots for first/final desktop/mobile review states under `LINEAGE54_SCREENSHOT_DIR` or `/tmp/lineage-54-browser-qa`.
+
+Automated browser assertions and screenshots are evidence for the review, not a substitute for direct visual comparison by the CTO/user.
+
+## Remaining acceptance gate
+
+Before Ready/merge:
+
+1. transfer all five authoritative PNG files byte-for-byte to the registered Git paths;
+2. run `scripts/verify-lineage-54-assets.mjs` and require 5/5 PASS;
+3. run the standalone Lineage 54 actual-route browser gate;
+4. directly inspect the generated 1280×800 and 390×844 screenshots against the authoritative source, especially final open-door clipping, travel/camera/speed behavior and service panel;
+5. run exact-head full CI and require GREEN;
+6. recheck current `origin/main` and unresolved review threads immediately before Ready/merge.
+
+No Auth/API/DB/Firebase/Worker/Production mutation is part of this Design Lab lineage review.
