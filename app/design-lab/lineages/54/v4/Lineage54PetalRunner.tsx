@@ -194,8 +194,11 @@ export default function Lineage54PetalRunner() {
   const swapVehicle = (file: VehicleFile) => {
     setVehicleFading(true);
     schedule(() => {
+      if (vehicleFile === file) {
+        setVehicleFading(false);
+        return;
+      }
       setVehicleFile(file);
-      setVehicleFading(false);
     }, VEHICLE_FADE_MS);
   };
 
@@ -352,6 +355,7 @@ export default function Lineage54PetalRunner() {
                 src={LINEAGE_54_ASSET_PATHS[vehicleFile]}
                 alt={`Petal Runner ${freeViewLabel ?? chapter.view}`}
                 draggable={false}
+                onLoad={() => setVehicleFading(false)}
                 style={{
                   opacity: vehicleFading ? 0.15 : 1,
                   transform: vehicleFading ? "scale(0.94)" : "scale(1)",
