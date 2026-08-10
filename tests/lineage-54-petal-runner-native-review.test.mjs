@@ -77,6 +77,7 @@ test("Lineage 54 is registered as the executable V4 Design Lab candidate", () =>
 });
 
 test("Lineage 54 source composition preserves viewport and fixed overlay contracts", () => {
+  assert.match(css, /font-family: Inter, Arial, sans-serif;/);
   assert.match(css, /\.lt54-layout \{\s*height: calc\(100vh - 76px\);\s*min-height: 700px;/);
   assert.match(css, /\.lt54-toast \{ position: fixed;/);
   assert.match(css, /height: calc\(100vh - 112px\)/);
