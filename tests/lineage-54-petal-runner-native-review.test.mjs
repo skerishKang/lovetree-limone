@@ -58,6 +58,11 @@ test("Lineage 54 native review preserves travel, drag, source swap, path and arr
   assert.match(css, /lt54-speed-field/);
   assert.match(css, /chapter-3 \.lt54-car-wrap/);
   assert.match(css, /\.lt54-car-wrap\.is-dragging \{ cursor: grabbing; \}/);
+  assert.match(css, /\.lt54-story-list button > span \{ font-family: Georgia, serif; font-size: 16px; \}/);
+  assert.match(css, /transform: scaleX\(0\.08\)/);
+  assert.match(css, /\.chapter-1 \.lt54-memory-path \{ transform: scaleX\(0\.38\); \}/);
+  assert.match(css, /\.chapter-2 \.lt54-memory-path \{ transform: scaleX\(0\.72\); \}/);
+  assert.match(css, /\.chapter-3 \.lt54-memory-path \{ transform: scaleX\(1\); \}/);
 });
 
 test("Lineage 54 keeps review policy outside the normal source composition", () => {
