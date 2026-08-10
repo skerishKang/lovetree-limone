@@ -46,16 +46,16 @@ function thumbnail(id: string): string {
   return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 }
 
-function text(el: Element | null, value: string) {
+function text(el: HTMLElement | SVGElement | null, value: string) {
   if (el && el.textContent !== value) el.textContent = value;
 }
 
-function upsertTextNode(parent: Element, className: string, value: string, tag = "p") {
+function upsertTextNode(parent: HTMLElement, className: string, value: string, tag = "p") {
   let node = parent.querySelector<HTMLElement>(`.${className}`);
   if (!node) {
     node = document.createElement(tag);
     node.className = className;
-    parent.append(node);
+    parent.appendChild(node);
   }
   text(node, value);
   return node;
@@ -122,14 +122,14 @@ export default function V4FirstJourneyFidelityBridge() {
           if (!play) {
             play = document.createElement("span");
             play.className = "v4-j-source-play";
-            media.append(play);
+            media.appendChild(play);
           }
           text(play, "▶");
           let time = media.querySelector<HTMLElement>(".v4-j-source-time");
           if (!time) {
             time = document.createElement("small");
             time.className = "v4-j-source-time";
-            media.append(time);
+            media.appendChild(time);
           }
           text(time, item.time);
         }
@@ -141,8 +141,8 @@ export default function V4FirstJourneyFidelityBridge() {
         const oldProvenance = copy.querySelector<HTMLElement>(".v4-j-source-story-provenance");
         if (item.provenance) {
           upsertTextNode(copy, "v4-j-source-story-provenance", item.provenance, "small");
-        } else {
-          oldProvenance?.remove();
+        } else if (oldProvenance?.parentNode) {
+          oldProvenance.parentNode.removeChild(oldProvenance);
         }
       });
 
@@ -171,15 +171,17 @@ export default function V4FirstJourneyFidelityBridge() {
           "한 장면에서 시작한 마음이 다음 장면과 연결되어 자라나요."
       ) {
         caption.dataset.sourceCaption = "true";
-        caption.replaceChildren();
+        while (caption.firstChild) caption.removeChild(caption.firstChild);
         const rule = document.createElement("span");
         rule.className = "v4-j-source-caption-rule";
         const copy = document.createElement("p");
-        copy.append("한 장면에서 시작한 마음이", document.createElement("br"));
+        copy.appendChild(document.createTextNode("한 장면에서 시작한 마음이"));
+        copy.appendChild(document.createElement("br"));
         const strong = document.createElement("b");
         strong.textContent = "다음 장면과 연결되어 자라나요.";
-        copy.append(strong);
-        caption.append(rule, copy);
+        copy.appendChild(strong);
+        caption.appendChild(rule);
+        caption.appendChild(copy);
       }
     };
 
@@ -219,7 +221,7 @@ export default function V4FirstJourneyFidelityBridge() {
         const expectedHeading = "첫마음이다음장면을찾아갔어요.";
         if (heading && heading.textContent?.replace(/\s+/g, "") !== expectedHeading) {
           heading.dataset.sourceHeading = "true";
-          heading.replaceChildren();
+          while (heading.firstChild) heading.removeChild(heading.firstChild);
           const line1 = document.createElement("span");
           line1.textContent = "첫 마음이";
           const line2 = document.createElement("span");
@@ -227,7 +229,9 @@ export default function V4FirstJourneyFidelityBridge() {
           line2.textContent = "다음 장면을";
           const line3 = document.createElement("em");
           line3.textContent = "찾아갔어요.";
-          heading.append(line1, line2, line3);
+          heading.appendChild(line1);
+          heading.appendChild(line2);
+          heading.appendChild(line3);
         }
         const desc = copy.querySelector<HTMLElement>(".v4-j-hero-desc");
         text(
@@ -245,19 +249,25 @@ export default function V4FirstJourneyFidelityBridge() {
         left.textContent = "FIRST BRANCH · 첫 연결";
         const right = document.createElement("span");
         right.textContent = "01 → 02";
-        label.append(left, right);
-        board.prepend(label);
+        label.appendChild(left);
+        label.appendChild(right);
+        board.insertBefore(label, board.firstChild);
       }
       const canvas = board.querySelector<HTMLElement>(".v4-j-connect-canvas");
       if (!canvas) return;
 
       const stored = parseStoredState();
-      const firstNote = stored?.firstMoment?.note || "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.";
-      const firstCopy = canvas.querySelector<HTMLElement>(".v4-j-moment.first .v4-j-moment-copy");
+      const firstNote =
+        stored?.firstMoment?.note || "우연히 보게 됐는데 하루 종일 이 장면이 생각났어.";
+      const firstCopy = canvas.querySelector<HTMLElement>(
+        ".v4-j-moment.first .v4-j-moment-copy",
+      );
       if (firstCopy) upsertTextNode(firstCopy, "v4-j-source-moment-note", firstNote);
 
       const nextNote = root.querySelector<HTMLTextAreaElement>("#next-note")?.value.trim();
-      const nextCopy = canvas.querySelector<HTMLElement>(".v4-j-moment.next .v4-j-moment-copy");
+      const nextCopy = canvas.querySelector<HTMLElement>(
+        ".v4-j-moment.next .v4-j-moment-copy",
+      );
       if (nextCopy) {
         upsertTextNode(
           nextCopy,
@@ -269,11 +279,12 @@ export default function V4FirstJourneyFidelityBridge() {
       if (!canvas.querySelector(".v4-j-source-board-caption")) {
         const caption = document.createElement("div");
         caption.className = "v4-j-source-board-caption";
-        caption.append("한 장면에서 다음 장면으로,", document.createElement("br"));
+        caption.appendChild(document.createTextNode("한 장면에서 다음 장면으로,"));
+        caption.appendChild(document.createElement("br"));
         const strong = document.createElement("b");
         strong.textContent = "좋아하게 된 경로가 보여요.";
-        caption.append(strong);
-        canvas.append(caption);
+        caption.appendChild(strong);
+        canvas.appendChild(caption);
       }
     };
 
