@@ -12,6 +12,7 @@
   border: 1px solid var(--lt54-line);
   border-radius: 28px;
   color: var(--lt54-ink);
+  font-family: Inter, Arial, sans-serif;
   background:
     radial-gradient(circle at 70% 8%, #fff8f2, transparent 35%),
     linear-gradient(135deg, #f9e8e2, #eabebd);
