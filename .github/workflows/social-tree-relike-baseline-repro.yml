@@ -1,0 +1,33 @@
+name: Social Tree Re-Like Baseline Reproduction
+
+on:
+  push:
+    branches:
+      - fix/social-tree-relike-baseline
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build backend test prerequisites
+        run: npm run build:test
+
+      - name: Run social tree-like tests exactly
+        run: node --import tsx --test tests/social-tree-likes.test.mjs
