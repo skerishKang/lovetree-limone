@@ -73,7 +73,10 @@ test("Moment Orbit Carousel component — selection, autoplay takeover and selec
   assert.match(component, /nearestEquivalentMomentPosition/);
   assert.match(component, /setPointerCapture/);
   assert.match(component, /releasePointerCapture/);
-  assert.match(component, /onWheel=\{wheel\}/);
+  assert.match(component, /addEventListener\("wheel", onWheel, \{ passive: false \}\)/);
+  assert.match(component, /removeEventListener\("wheel", onWheel\)/);
+  assert.match(component, /event\.preventDefault\(\)/);
+  assert.doesNotMatch(component, /onWheel=\{/);
   assert.match(component, /ArrowRight/);
   assert.match(component, /ArrowLeft/);
   assert.match(component, /scrollIntoView/);
