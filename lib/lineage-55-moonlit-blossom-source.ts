@@ -3,7 +3,7 @@ export const LINEAGE_55_MOONLIT_BLOSSOM_SOURCE = {
   revisionId: "55-v1-moonlit-blossom-hero",
   issue: 134,
   provenanceStatus: "PROVENANCE_UNRESOLVED",
-  rootCauseClass: "INTAKE_SOURCE_PROVENANCE_MIS_ASSOCIATION",
+  rootCauseClass: "INTAKE_SOURCE_PROVENANCE_MIS-ASSOCIATION",
   driveFolder: {
     name: "14_LoveTree_Moonlit_Blossom_Hero_V1",
     id: "151yoYBj7rVaQbZuKvSbt8D5_LZC6vpqs",
