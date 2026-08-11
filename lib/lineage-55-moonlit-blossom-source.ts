@@ -56,8 +56,7 @@ export const LINEAGE_55_MOONLIT_BLOSSOM_SOURCE = {
     bytes: 22_260,
     sha256: "1c682715a193ae9b1670f4a415d555a27ee7ad49a4dd58fecfa83e9f14da5f41",
     gitBlobSha: "0fa3066680a556e9f6c0ee50780f39abe0f98cfc",
-    repositoryEvidencePath:
-      "reference/lineage-55-moonlit-blossom-v1/source/drive-r3-index-v1.html",
+    repositoryEvidenceMaterialization: "NOT_COMMITTED_EXACT_FILE_TRANSFER_UNAVAILABLE",
   },
   v2Revision: {
     state: "LINEAGE_55_REVISION",
