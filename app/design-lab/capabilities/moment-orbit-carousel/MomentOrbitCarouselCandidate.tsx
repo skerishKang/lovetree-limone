@@ -9,7 +9,6 @@ import {
   useState,
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
-  type WheelEvent as ReactWheelEvent,
 } from "react";
 import {
   MOMENT_ORBIT_AUTOPLAY_MS,
@@ -97,6 +96,17 @@ export default function MomentOrbitCarouselCandidate() {
     setSoundOn(false);
     setInteractionEpoch((value) => value + 1);
   }, [count]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      stepSelection(event.deltaY > 0 ? 1 : -1);
+    };
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", onWheel);
+  }, [stepSelection]);
 
   useEffect(() => {
     if (!auto || dragging) return;
@@ -221,11 +231,6 @@ export default function MomentOrbitCarouselCandidate() {
     }
   }
 
-  function wheel(event: ReactWheelEvent<HTMLDivElement>) {
-    event.preventDefault();
-    stepSelection(event.deltaY > 0 ? 1 : -1);
-  }
-
   function selectCard(index: number) {
     if (suppressClickRef.current) {
       suppressClickRef.current = false;
@@ -315,7 +320,6 @@ export default function MomentOrbitCarouselCandidate() {
             onPointerMove={pointerMove}
             onPointerUp={finishPointer}
             onPointerCancel={finishPointer}
-            onWheel={wheel}
             tabIndex={0}
             aria-label="Drag or swipe the Moment orbit. Wheel and arrow keys move between Moments."
           >
