@@ -133,6 +133,40 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
+  {
+    id: "lt-56-crystal-memory-atelier",
+    number: 56,
+    label: "Crystal Memory Atelier",
+    status: "active",
+    summary: "누적 Moments를 하나의 premium living Memory Relic으로 기념·감상하고 재질·표정·각인으로 개인화하는 reward/collectible 계보입니다.",
+    scenarios: ["growth-milestones", "people-archive"],
+    currentDecision: "V1 collectible viewer와 V2 living premium Moment relic을 revision history로 보존하고, V3 direct expression + discrete rotation을 Design Lab source-fidelity candidate로 검토합니다. 100/200/365와 148/200은 source demo value이며 canonical V4 policy가 아닙니다.",
+    sourceLabel: "08_LoveTree_Crystal_Memory_Atelier_V3 Drive intake 2026-08-11 / Issue #137",
+    revisions: [
+      {
+        id: "56-v1-collectible-viewer",
+        label: "V1 Crystal Collectible Viewer",
+        decision: "superseded",
+        executable: true,
+        notes: "4 neutral angle stills · drag/wheel/auto turntable · material/light/inscription/Bloom",
+      },
+      {
+        id: "56-v2-living-premium-relic",
+        label: "V2 Living Premium Moment Relic",
+        decision: "superseded",
+        executable: true,
+        notes: "expression awakening · heart light · on-crystal engraving · 100/200/365 source-demo reward framing",
+      },
+      {
+        id: "56-v3-direct-expression-rotation",
+        label: "V3 Direct Expression + Rotation Living Relic",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/56/v3",
+        notes: "19,262 B · SHA256 9a7bb3415dade7d6fd04cecfe1be6ae04595d3b46d326f2b596dab819633a66c · 4 neutral angles + 4 frontal expression frames · no 16-state mesh",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
