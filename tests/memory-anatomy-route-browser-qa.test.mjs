@@ -150,10 +150,17 @@ async function exerciseTouchDrag(page, label) {
 }
 
 async function exerciseSpatialLayerSelection(page, label) {
+  await page.getByRole("button", { name: "EXPLODE", exact: true }).click();
   const stage = page.locator('[data-spatial-authority="true"]');
-  await stage.locator('[data-spatial-layer="my-note"]').click({ force: true });
-  await page.getByRole("heading", { name: "MY NOTE", exact: true }).waitFor();
-  assert.match(await page.getByRole("heading", { name: "MY NOTE", exact: true }).locator("xpath=ancestor::aside[1]").innerText(), /USER AUTHORED/, `${label}: spatial click and 2D inspector share selected state`);
+  await stage.scrollIntoViewIfNeeded();
+  const sourceLayer = stage.locator('[data-spatial-layer="source-video"]');
+  const box = await sourceLayer.boundingBox();
+  assert.ok(box, `${label}: exploded source layer has a visible layout box`);
+  // Higher-Z layers shift up/right in the source contract. At 100% explosion,
+  // the lower-left edge of layer 01 is physically exposed and user-clickable.
+  await page.mouse.click(box.x + 4, box.y + box.height - 4);
+  await page.getByRole("heading", { name: "SOURCE VIDEO", exact: true }).waitFor();
+  assert.match(await page.getByRole("heading", { name: "SOURCE VIDEO", exact: true }).locator("xpath=ancestor::aside[1]").innerText(), /ORIGIN/, `${label}: exposed spatial layer click and 2D inspector share selected state`);
 }
 
 async function exercisePlaybackAndTakeover(page, label) {
