@@ -16,6 +16,7 @@ import {
 import {
   VIDEOFIGURE_ANGLES,
   createVideoFigureTurntableState,
+  normalizeVideoFigureLookIndex,
   reduceVideoFigureTurntable,
 } from "../lib/videofigure-turntable.ts";
 
@@ -77,6 +78,19 @@ test("autoplay completes eight ordered angles before advancing to the next Look"
   state = reduceVideoFigureTurntable(state, { type: "auto-tick" }, config);
   assert.equal(state.lookIndex, 1);
   assert.equal(state.angleIndex, 0);
+});
+
+test("canonical Look selection wraps safely and resets to the 000-degree authority", () => {
+  const config = { lookCount: 10, resumePolicy: "resume-after-idle" };
+  assert.equal(normalizeVideoFigureLookIndex(10, 10), 0);
+  assert.equal(normalizeVideoFigureLookIndex(-1, 10), 9);
+  let state = createVideoFigureTurntableState(config, 9);
+  state = reduceVideoFigureTurntable(state, { type: "select-angle", index: 6, manual: true }, config);
+  assert.equal(state.angleIndex, 6);
+  state = reduceVideoFigureTurntable(state, { type: "select-look", index: 10 }, config);
+  assert.equal(state.lookIndex, 0);
+  assert.equal(state.angleIndex, 0);
+  assert.equal(state.manuallyOwned, true);
 });
 
 test("manual authority immediately blocks autoplay and resume-after-idle restores guided transport", () => {
