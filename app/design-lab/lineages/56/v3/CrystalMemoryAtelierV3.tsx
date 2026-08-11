@@ -65,6 +65,7 @@ export default function CrystalMemoryAtelierV3() {
   const autoplayIndex = useRef(0);
   const drawerButtonRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLElement | null>(null);
+  const drawerWasOpenRef = useRef(false);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -91,16 +92,21 @@ export default function CrystalMemoryAtelierV3() {
   }, [autoplayRunning]);
 
   useLayoutEffect(() => {
-    if (!drawerOpen) return;
-    drawerRef.current?.querySelector<HTMLButtonElement>(".lt56__drawer-close")?.focus();
+    if (drawerOpen) {
+      drawerWasOpenRef.current = true;
+      drawerRef.current?.querySelector<HTMLButtonElement>(".lt56__drawer-close")?.focus();
+      return;
+    }
+    if (!drawerWasOpenRef.current) return;
+    drawerWasOpenRef.current = false;
+    drawerButtonRef.current?.focus();
   }, [drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setDrawerOpen(false);
-        requestAnimationFrame(() => drawerButtonRef.current?.focus());
+        closeDrawer();
         return;
       }
       if (event.key !== "Tab") return;
@@ -187,6 +193,10 @@ export default function CrystalMemoryAtelierV3() {
     setDrawerOpen(true);
   }
 
+  function closeDrawer() {
+    setDrawerOpen(false);
+  }
+
   return (
     <section className={`lt56 ${material === "rose" ? "" : `lt56--${material}`} ${reducedMotion ? "lt56--reduced" : ""}`} style={style} data-visual-mode={visualMode}>
       <div className="lt56__world" aria-hidden="true" />
@@ -252,7 +262,7 @@ export default function CrystalMemoryAtelierV3() {
         </div>
 
         <aside ref={drawerRef} className={`lt56__panel lt56__right ${drawerOpen ? "is-open" : ""}`} aria-label="Material and Service" aria-hidden={!drawerOpen ? undefined : false}>
-          <button className="lt56__drawer-close" onClick={() => { setDrawerOpen(false); requestAnimationFrame(() => drawerButtonRef.current?.focus()); }}>CLOSE</button>
+          <button className="lt56__drawer-close" onClick={closeDrawer}>CLOSE</button>
           <span className="lt56__eyebrow">MATERIAL LAB</span>
           <h3>Change the way<br />memory catches light.</h3>
           <p className="lt56__desc">같은 조각도 재질과 굴절에 따라 완전히 다른 기억으로 보입니다.</p>
@@ -265,7 +275,7 @@ export default function CrystalMemoryAtelierV3() {
         </aside>
       </div>
       <button ref={drawerButtonRef} className="lt56__drawer-open" onClick={openDrawer} aria-expanded={drawerOpen}>MATERIAL &amp; SERVICE</button>
-      {drawerOpen ? <button className="lt56__drawer-backdrop" aria-label="Close Material and Service" onClick={() => { setDrawerOpen(false); requestAnimationFrame(() => drawerButtonRef.current?.focus()); }} /> : null}
+      {drawerOpen ? <button className="lt56__drawer-backdrop" aria-label="Close Material and Service" onClick={closeDrawer} /> : null}
     </section>
   );
 }
