@@ -56,13 +56,14 @@ State: `V1_DRIVE_AUTHORITATIVE_R3`
 - SHA-256: `1c682715a193ae9b1670f4a415d555a27ee7ad49a4dd58fecfa83e9f14da5f41`
 - Git blob: `0fa3066680a556e9f6c0ee50780f39abe0f98cfc`
 - identity: `LoveTree — Moonlit Blossom`
-- repository evidence copy: `reference/lineage-55-moonlit-blossom-v1/source/drive-r3-index-v1.html`
+
+The raw Drive file was re-downloaded and rehashed during remediation. No repository evidence copy is committed because the available GitHub connector cannot accept the raw file reference directly; re-serializing the text through a connector string would not satisfy the exact-byte evidence standard. The historical Git path remains untouched.
 
 R3 predates PR #135. It is explicitly **not** a later post-PR snapshot.
 
 ## PNG provenance split
 
-Each of the five V1 assets now has three independently represented identities:
+Each of the five V1 assets now has independently represented identities:
 
 1. Drive object identity — current V1 Drive ID and visible revision ID.
 2. Historical recorded fingerprint — the old #135 bytes/dimensions/SHA/blob, retained as unverified historical evidence.
