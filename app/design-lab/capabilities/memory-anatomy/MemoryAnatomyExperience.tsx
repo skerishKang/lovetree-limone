@@ -17,6 +17,12 @@ import styles from "./memory-anatomy.module.css";
 
 const COLORS = ["#52d9ff", "#8d7cff", "#ff5eaa", "#ffb35e", "#fd6b7d", "#d8a4ff", "#59f0c0"] as const;
 
+function spatialLayerIdFromTarget(target: EventTarget | null): MemoryAnatomyLayerId | null {
+  if (!(target instanceof Element)) return null;
+  const id = target.closest<HTMLElement>("[data-spatial-layer]")?.dataset.spatialLayer;
+  return MEMORY_ANATOMY_LAYER_IDS.find((layerId) => layerId === id) ?? null;
+}
+
 export function MemoryAnatomyExperience() {
   const layers = useMemo(() => projectMomentToMemoryAnatomy(SYNTHETIC_MEMORY_FIXTURE), []);
   const [state, dispatch] = useReducer(memoryAnatomyReducer, undefined, createMemoryAnatomyState);
@@ -77,6 +83,8 @@ export function MemoryAnatomyExperience() {
 
   function onPointerDown(event: PointerEvent<HTMLDivElement>) {
     if (!spatialAuthority) return;
+    const layerId = spatialLayerIdFromTarget(event.target);
+    if (layerId) selectLayer(layerId);
     dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
     event.currentTarget.setPointerCapture(event.pointerId);
     dispatch({ type: "pause" });
