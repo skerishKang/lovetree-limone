@@ -55,7 +55,7 @@ export function MemoryAnatomyExperience() {
   function focusAdjacent(current: MemoryAnatomyLayerId, delta: -1 | 1) {
     const next = adjacentLayerId(current, delta);
     dispatch({ type: "select-layer", id: next });
-    window.requestAnimationFrame(() => layerRefs.current[next]?.focus());
+    layerRefs.current[next]?.focus();
   }
 
   function onLayerKeyDown(event: KeyboardEvent<HTMLButtonElement>, id: MemoryAnatomyLayerId) {
