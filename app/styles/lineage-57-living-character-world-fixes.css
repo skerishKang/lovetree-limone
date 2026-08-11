@@ -2,13 +2,11 @@
 .lcw-lubt:not(.dragging){animation:lcwLubtWander 16s ease-in-out infinite}
 .lcw-lubt.dragging{animation:none!important}
 @keyframes lcwLubtWander{0%,100%{transform:translate(0,0) rotate(-2deg)}25%{transform:translate(min(24vw,220px),4vh) rotate(4deg)}50%{transform:translate(min(34vw,320px),38vh) rotate(-3deg)}75%{transform:translate(min(10vw,100px),44vh) rotate(3deg)}}
-@media(max-width:1050px){
-  /* Keep the fixed Design Lab provenance note clear of the mobile EMOTION ENGINE button
-     (bottom-right, z-index 70): anchor it as a top strip after the cast rail instead. */
-  .lcw57-provenance-note{left:132px!important;right:8px!important;bottom:auto!important;top:88px!important;max-width:none!important}
-}
 @media(max-width:720px){
   .lcw-grid{display:block}
+  /* Drive source hides its .source provenance annotation on mobile; the 54/54 gate stays
+     visible via .lcw-asset-status and the source-demo boundary via .lcw-boundaries. */
+  .lcw57-provenance-note{display:none!important}
   .lcw-cast-panel{position:absolute;z-index:30;left:0;top:0;width:106px;height:100%}
   .lcw-stage{z-index:10;width:100%;height:100%}
   .lcw-nameplate{left:118px}
