@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import {
   LINEAGE_58_VIDEOFIGURE_SOURCE,
   VIDEOFIGURE_LOOKS,
@@ -35,6 +35,14 @@ export default function Lineage58VideoFigure() {
   const [saved, setSaved] = useState<Set<string>>(() => new Set());
   const [reducedMotion, setReducedMotion] = useState(false);
   const [failedAssetKey, setFailedAssetKey] = useState<string | null>(null);
+  // Hydration gate: the frame <img> must not start loading until React has attached its
+  // onError listener, otherwise a first-frame decode failure (e.g. aborted request during
+  // SSR parse) fires before hydration and is silently lost.
+  const hydrated = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [localFilename, setLocalFilename] = useState("");
   const [announcement, setAnnouncement] = useState("");
@@ -165,12 +173,12 @@ export default function Lineage58VideoFigure() {
   const closeModal = useCallback(() => {
     setModalOpen(false);
     scheduleResume(900);
-    requestAnimationFrame(() => triggerRef.current?.focus());
+    triggerRef.current?.focus();
   }, [scheduleResume]);
 
   useEffect(() => {
     if (!modalOpen) return;
-    requestAnimationFrame(() => closeRef.current?.focus());
+    closeRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -237,11 +245,16 @@ export default function Lineage58VideoFigure() {
         onPointerMove={onPointerMove}
         onPointerUp={releasePointer}
         onPointerCancel={releasePointer}
-        onLostPointerCapture={() => { dragRef.current = null; scheduleResume(700); }}
+        onLostPointerCapture={(event) => {
+          const drag = dragRef.current;
+          if (!drag || drag.pointerId !== event.pointerId) return;
+          if (!drag.active) dragRef.current = null;
+          scheduleResume(700);
+        }}
         onWheel={onWheel}
       >
         <div className="lt58-videofigure__viewport">
-          {!assetError ? <img key={currentAssetKey} src={currentAsset.path} alt={`${look.name} ${angle}도 source Figure`} onError={() => setFailedAssetKey(currentAssetKey)} draggable={false} /> : (
+          {!assetError ? <img key={currentAssetKey} src={hydrated ? currentAsset.path : undefined} alt={`${look.name} ${angle}도 source Figure`} onError={() => { setFailedAssetKey(currentAssetKey); dispatch({ type: "pause" }); }} draggable={false} /> : (
             <div className="lt58-videofigure__asset-hold" role="status">
               <b>EXACT SOURCE FRAME HOLD</b>
               <span>{look.id}_{angle}.png</span>

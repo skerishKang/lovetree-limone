@@ -165,8 +165,12 @@ async function assertAutoplayAndManualTakeover(page) {
   assert.match(await page.locator(".lt58-videofigure__drag-hint").innerText(), /AUTO AUTHORITY/, "resume-after-idle policy restores autoplay authority");
 }
 
-async function assertModalKeyboard(page) {
-  const trigger = page.locator(".lt58-videofigure__actions button").nth(1);
+async function assertModalKeyboard(page, usePanelFoot = false) {
+  // The top-bar IMPORT trigger is intentionally desktop-only (source CSS hides it <=980px);
+  // on mobile the modal is reached through the panel-foot IMPORT button.
+  const trigger = usePanelFoot
+    ? page.locator(".lt58-videofigure__panel-foot button")
+    : page.locator(".lt58-videofigure__actions button").nth(1);
   await trigger.focus();
   await trigger.click();
   const dialog = page.getByRole("dialog");
@@ -202,6 +206,10 @@ async function assertMobileTouchAuthority(context, page, label) {
   await selectAngle(page, 0);
   const zone = page.locator(".lt58-videofigure__figure-zone");
   assert.equal(await zone.evaluate((node) => getComputedStyle(node).touchAction), "pan-y", `${label}: vertical page scroll retains CSS touch authority`);
+  // Real touch begins where the figure is visible; the look/angle clicks above may have
+  // scrolled the zone off-viewport, so bring it back on-screen before measuring/ swiping.
+  await zone.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(80);
   const box = await zone.boundingBox();
   assert.ok(box, `${label}: touch figure zone exists`);
   await dispatchTouchSwipe(context, page, box, { x: 0.70, y: 0.50 }, { x: 0.30, y: 0.50 });
@@ -283,7 +291,7 @@ try {
     try {
       await assertNoHorizontalOverflow(mobile.page, spec.label);
       await assertMobileTouchAuthority(mobile.context, mobile.page, spec.label);
-      await assertModalKeyboard(mobile.page);
+      await assertModalKeyboard(mobile.page, true);
       await mobile.page.screenshot({ path: `${OUTPUT}/mobile-${spec.label}.png`, fullPage: true });
       assert.deepEqual(mobile.errors, [], `${spec.label}: no console/page errors: ${mobile.errors.join(" | ")}`);
     } finally {
