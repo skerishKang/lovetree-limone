@@ -3,105 +3,82 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import {
-  LINEAGE_55_APPROVAL_BOUNDARY,
-  LINEAGE_55_MOONLIT_BLOSSOM_SOURCE,
-} from "../lib/lineage-55-moonlit-blossom-source.ts";
-
+import { LINEAGE_55_APPROVAL_BOUNDARY, LINEAGE_55_MOONLIT_BLOSSOM_SOURCE } from "../lib/lineage-55-moonlit-blossom-source.ts";
 const root = new URL("../", import.meta.url);
-
 function gitBlobSha(buffer) {
   const header = Buffer.from(`blob ${buffer.length}\0`);
   return createHash("sha1").update(header).update(buffer).digest("hex");
 }
 
-test("Lineage 55 exact sibling HTML is preserved byte-for-byte in Git", async () => {
-  const source = LINEAGE_55_MOONLIT_BLOSSOM_SOURCE.source;
-  const bytes = await readFile(new URL(source.repositoryPath, root));
-
-  assert.equal(bytes.byteLength, 22_260);
-  assert.equal(createHash("sha256").update(bytes).digest("hex"), source.sha256);
-  assert.equal(gitBlobSha(bytes), source.gitBlobSha);
-  assert.equal(source.driveId, "11VCsXcP2OlOH1pOAwFmhD4HwIU1blc6M");
-});
-
-test("Lineage 55 source identity and five authoritative assets stay pinned", () => {
+test("Lineage 55 separates historical recorded claim from actual Git snapshot", async () => {
   const source = LINEAGE_55_MOONLIT_BLOSSOM_SOURCE;
-  assert.equal(source.lineageId, "lt-55-moonlit-blossom-hero");
-  assert.equal(source.revisionId, "55-v1-moonlit-blossom-hero");
-  assert.equal(source.issue, 134);
-  assert.equal(source.driveFolder.id, "151yoYBj7rVaQbZuKvSbt8D5_LZC6vpqs");
+  const claim = source.historicalRecordedClaim;
+  const git = source.gitPreservedSnapshot;
+  const bytes = await readFile(new URL(git.repositoryPath, root));
+  assert.equal(claim.state, "HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT");
+  assert.equal(claim.currentDriveTruth, false);
+  assert.equal(git.origin, "UNRESOLVED");
+  assert.equal(git.identity, "LoveTree Memory Blossom Hero v1");
+  assert.equal(git.canonicalDriveV1, false);
+  assert.equal(gitBlobSha(bytes), "3590e5fbe3af35c364f9ca3444901ee2671e18e5");
+  assert.notEqual(gitBlobSha(bytes), claim.gitBlobSha);
+});
+
+test("Lineage 55 pins Drive-authoritative observable V1 R3 independently", async () => {
+  const drive = LINEAGE_55_MOONLIT_BLOSSOM_SOURCE.driveAuthoritativeRevision;
+  assert.equal(drive.state, "V1_DRIVE_AUTHORITATIVE_R3");
+  assert.equal(drive.driveId, "11VCsXcP2OlOH1pOAwFmhD4HwIU1blc6M");
+  assert.equal(drive.revisionId, "0B-UtbwYpFaMJZWpzeVE0eGU4MDNWR1pTTVRzZWlZbHBIM3dJPQ");
+  assert.equal(drive.temporalRelationToPr135, "PRE_DATES_PR_135_NOT_LATER_POST_PR_SNAPSHOT");
+  assert.equal(drive.sha256, "1c682715a193ae9b1670f4a415d555a27ee7ad49a4dd58fecfa83e9f14da5f41");
+  assert.equal(drive.gitBlobSha, "0fa3066680a556e9f6c0ee50780f39abe0f98cfc");
+  const bytes = await readFile(new URL(drive.repositoryEvidencePath, root));
+  assert.equal(bytes.byteLength, drive.bytes);
+  assert.equal(createHash("sha256").update(bytes).digest("hex"), drive.sha256);
+  assert.equal(gitBlobSha(bytes), drive.gitBlobSha);
+  assert.match(bytes.toString("utf8"), /<title>LoveTree — Moonlit Blossom<\/title>/);
+});
+
+test("Lineage 55 keeps five historical/current asset records separate and V2 aliases exact", () => {
+  const source = LINEAGE_55_MOONLIT_BLOSSOM_SOURCE;
   assert.equal(source.assets.length, 5);
-  assert.deepEqual(source.assets.map((asset) => asset.file), [
-    "lovetree-memory-blossom-hero-v1.png",
-    "lovetree-memory-blossom-detail-v1.png",
-    "memory-cast-a.png",
-    "memory-cast-b.png",
-    "memory-cast-c.png",
-  ]);
-  assert.equal(source.assetBasePath, "/reference/lineage-55-moonlit-blossom-v1/assets");
-  assert.equal(source.disposition, "source-intake-complete-binary-assets-pending");
-  assert.match(LINEAGE_55_APPROVAL_BOUNDARY, /exact binary assets and browser\/visual QA are required/);
-});
-
-test("Lineage 55 exact source keeps staged growth and product interaction contracts", async () => {
-  const html = await readFile(
-    new URL(LINEAGE_55_MOONLIT_BLOSSOM_SOURCE.source.repositoryPath, root),
-    "utf8",
-  );
-
-  for (const label of [
-    "01 · SEED",
-    "02 · FEELING",
-    "03 · MOMENTS",
-    "04 · BLOOM",
-    "PLAY THE BLOOM",
-    "PAUSE BLOOM",
-    "BLOSSOM",
-    "MOMENTS",
-    "INVITATION",
-    "ENTER MY TREE",
-    "127 / 150 MOMENTS",
-    "85%",
-  ]) {
-    assert.match(html, new RegExp(label.replaceAll(" ", "\\s")));
+  assert.equal(source.historicalAssetSourceState, "HISTORICAL_ASSET_SOURCE_UNRESOLVED");
+  assert.equal(source.v2AssetAliasState, "V1_V2_5_OF_5_BYTE_IDENTICAL_DIFFERENT_DRIVE_OBJECTS");
+  for (const asset of source.assets) {
+    assert.equal(asset.historicalPinnedFingerprint.state, "HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT");
+    assert.equal(asset.currentDriveFingerprint.state, "CURRENT_DRIVE_V1_VERIFIED_FINGERPRINT");
+    assert.equal(asset.v2Alias.byteIdenticalToCurrentDriveV1, true);
+    assert.equal(asset.v2Alias.relation, "BYTE_IDENTICAL_COPY_DIFFERENT_DRIVE_OBJECT");
+    assert.notEqual(asset.driveObject.id, asset.v2Alias.driveId);
+    assert.notEqual(asset.historicalPinnedFingerprint.sha256, asset.currentDriveFingerprint.sha256);
   }
-
-  assert.match(html, /setInterval\(nextState,2100\)/);
-  assert.match(html, /now-lastWheel<700/);
-  assert.match(html, /for\(let i=0;i<36;i\+\+\)/);
-  assert.match(html, /e\.code==='Space'/);
-  assert.match(html, /e\.code==='ArrowRight'/);
-  assert.match(html, /e\.code==='ArrowLeft'/);
-  assert.match(html, /window\.addEventListener\('wheel'/);
-  assert.match(html, /onclick="nextState\(\)"/);
-  assert.match(html, /onclick="jump\(1\)"/);
-  assert.match(html, /onclick="jump\(2\)"/);
-  assert.match(html, /onclick="jump\(3\)"/);
 });
 
-test("Lineage 55 source only references approved sibling flower and Memory Cast files", async () => {
-  const html = await readFile(
-    new URL(LINEAGE_55_MOONLIT_BLOSSOM_SOURCE.source.repositoryPath, root),
-    "utf8",
-  );
-
-  assert.match(html, /lovetree-memory-blossom-hero-v1\.png/);
-  for (const portrait of ["memory-cast-a.png", "memory-cast-b.png", "memory-cast-c.png"]) {
-    assert.match(html, new RegExp(portrait.replaceAll(".", "\\.")));
-  }
-  assert.doesNotMatch(html, /https?:\/\//);
+test("Lineage 55 V2 remains a revision and source fixtures do not define product policy", () => {
+  const source = LINEAGE_55_MOONLIT_BLOSSOM_SOURCE;
+  assert.equal(source.v2Revision.state, "LINEAGE_55_REVISION");
+  assert.equal(source.v2Revision.lineageId, source.lineageId);
+  assert.equal(source.v2Revision.newLineage, false);
+  assert.equal(source.productPolicyInference, "NONE_FROM_SOURCE_FIXTURE");
+  assert.match(LINEAGE_55_APPROVAL_BOUNDARY, /No source fixture is canonical V4 product policy/);
 });
 
-test("Lineage 55 post-transfer asset verifier is hard-fail and has no skip path", async () => {
+test("Lineage 55 verifier keeps unresolved historical provenance fail-closed", async () => {
   const verifier = await readFile(new URL("scripts/verify-lineage-55-assets.mjs", root), "utf8");
-  assert.match(verifier, /LINEAGE_55_EXACT_ASSET_GATE_PASS/);
-  assert.match(verifier, /gitBlobSha/);
-  assert.match(verifier, /pngIdentity/);
-  assert.match(verifier, /process\.exit\(1\)/);
+  assert.match(verifier, /HISTORICAL_ASSET_SOURCE_UNRESOLVED/);
+  assert.match(verifier, /LINEAGE_55_CURRENT_DRIVE_V1_ASSET_SET_PASS/);
+  assert.match(verifier, /LINEAGE_55_CURRENT_DRIVE_ONLY_GATE_PASS/);
+  assert.match(verifier, /process\.exit\(2\)/);
+  assert.doesNotMatch(verifier, /LINEAGE_55_EXACT_ASSET_GATE_PASS/);
   assert.doesNotMatch(verifier, /\.skip\(/);
-  for (const asset of LINEAGE_55_MOONLIT_BLOSSOM_SOURCE.assets) {
-    assert.match(verifier, new RegExp(asset.sha256));
-    assert.match(verifier, new RegExp(asset.gitBlobSha));
-  }
+});
+
+test("Lineage 55 documentation retracts false exact-Drive claim without deleting history", async () => {
+  const doc = await readFile(new URL("docs/product/lineages/55_MOONLIT_BLOSSOM_HERO_V1_SOURCE_ANALYSIS.md", root), "utf8");
+  assert.match(doc, /INTAKE_SOURCE_PROVENANCE_MIS_ASSOCIATION/);
+  assert.match(doc, /HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT/);
+  assert.match(doc, /V1_DRIVE_AUTHORITATIVE_R3/);
+  assert.match(doc, /PROVENANCE_UNRESOLVED/);
+  assert.doesNotMatch(doc, /byte-exact HTML preservation confirmed/i);
+  assert.doesNotMatch(doc, /proving byte-exact text preservation/i);
 });
