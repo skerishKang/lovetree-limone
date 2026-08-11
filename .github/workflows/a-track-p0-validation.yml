@@ -105,6 +105,7 @@ jobs:
           mapfile -t standard_tests < <(
             find tests -maxdepth 1 -type f -name '*.test.mjs' \
               ! -name 'lineage-53-v2-route-browser-qa.test.mjs' \
+              ! -name 'v4-cinematic-v6.test.mjs' \
               -print | sort
           )
           if [ "${#standard_tests[@]}" -eq 0 ]; then
@@ -113,6 +114,7 @@ jobs:
           fi
 
           node --import tsx --test "${standard_tests[@]}"
+          node --import tsx --test tests/v4-cinematic-v6.test.mjs
 
       - name: Build
         run: npm run build
