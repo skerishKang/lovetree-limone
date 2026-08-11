@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -132,12 +133,12 @@ export default function MomentOrbitCarouselCandidate() {
     setInspectorOpen(true);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!inspectorOpen || viewport !== "mobile") return;
     const panel = inspectorRef.current;
     if (!panel) return;
 
-    window.requestAnimationFrame(() => inspectorCloseRef.current?.focus());
+    inspectorCloseRef.current?.focus();
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -374,7 +375,7 @@ export default function MomentOrbitCarouselCandidate() {
         <button
           className={`lt-moc__backdrop${inspectorOpen ? " is-open" : ""}`}
           type="button"
-          aria-label="Close selected Moment inspector"
+          aria-label="Dismiss selected Moment inspector"
           tabIndex={inspectorOpen ? 0 : -1}
           onClick={closeInspector}
         />
