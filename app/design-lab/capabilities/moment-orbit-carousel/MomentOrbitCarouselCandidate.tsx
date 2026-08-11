@@ -60,11 +60,12 @@ export default function MomentOrbitCarouselCandidate() {
   const [position, setPosition] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [auto, setAuto] = useState(true);
+  const [autoPreference, setAutoPreference] = useState<boolean | null>(null);
   const [soundOn, setSoundOn] = useState(false);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [interactionEpoch, setInteractionEpoch] = useState(0);
 
+  const auto = autoPreference ?? !reducedMotion;
   const stageRef = useRef<HTMLDivElement>(null);
   const inspectorRef = useRef<HTMLElement>(null);
   const inspectorCloseRef = useRef<HTMLButtonElement>(null);
@@ -76,14 +77,9 @@ export default function MomentOrbitCarouselCandidate() {
     startCoordinate: number;
     startPosition: number;
     latestPosition: number;
-    moved: boolean;
   } | null>(null);
 
   const selectedMoment = MOMENT_ORBIT_CANDIDATE_MOMENTS[selectedIndex];
-
-  useEffect(() => {
-    if (reducedMotion) setAuto(false);
-  }, [reducedMotion]);
 
   const manualSelect = useCallback((index: number) => {
     setSelectedIndex(index);
@@ -193,7 +189,6 @@ export default function MomentOrbitCarouselCandidate() {
       startCoordinate,
       startPosition: position,
       latestPosition: position,
-      moved: false,
     };
     suppressClickRef.current = false;
     setDragging(true);
@@ -207,10 +202,7 @@ export default function MomentOrbitCarouselCandidate() {
     const delta = coordinate(event) - drag.startCoordinate;
     const nextPosition = drag.startPosition - delta / MOMENT_ORBIT_DRAG_PX_PER_STEP;
     drag.latestPosition = nextPosition;
-    if (Math.abs(delta) > MOMENT_ORBIT_CLICK_SLOP_PX) {
-      drag.moved = true;
-      suppressClickRef.current = true;
-    }
+    if (Math.abs(delta) > MOMENT_ORBIT_CLICK_SLOP_PX) suppressClickRef.current = true;
     setPosition(nextPosition);
   }
 
@@ -289,11 +281,15 @@ export default function MomentOrbitCarouselCandidate() {
         <button type="button" onClick={toggleAxis} aria-pressed={axis === "vertical"}>
           AXIS · {axis === "horizontal" ? "HORIZONTAL" : "VERTICAL"}
         </button>
-        <button type="button" onClick={() => setAuto((value) => !value)} aria-pressed={auto}>
+        <button
+          type="button"
+          onClick={() => setAutoPreference((current) => !(current ?? !reducedMotion))}
+          aria-pressed={auto}
+        >
           AUTO · {auto ? "ON" : "OFF"}
         </button>
         <span className="lt-moc__policy">
-          {reducedMotion && !auto
+          {reducedMotion && autoPreference === null
             ? "Reduced motion: autoplay defaults off; manual selection remains complete."
             : `Manual input resets the autoplay clock; next advance occurs after ${MOMENT_ORBIT_AUTOPLAY_MS / 1000}s.`}
         </span>
@@ -352,13 +348,12 @@ export default function MomentOrbitCarouselCandidate() {
 
           <p className="lt-moc__gesture-guide">DRAG / SWIPE · SNAP &nbsp; · &nbsp; WHEEL · STEP &nbsp; · &nbsp; ARROWS · STEP &nbsp; · &nbsp; CLICK · SELECT</p>
 
-          <div className="lt-moc__shelf" role="list" aria-label="Direct Moment selection shelf">
+          <div className="lt-moc__shelf" aria-label="Direct Moment selection shelf">
             {MOMENT_ORBIT_CANDIDATE_MOMENTS.map((moment, index) => (
               <button
                 ref={(node) => { shelfRefs.current[index] = node; }}
                 className={index === selectedIndex ? "is-selected" : ""}
                 type="button"
-                role="listitem"
                 key={moment.id}
                 aria-pressed={index === selectedIndex}
                 onClick={() => manualSelect(index)}
