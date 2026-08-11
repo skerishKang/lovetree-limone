@@ -178,6 +178,22 @@ async function copyExtraEvidence() {
   return copied;
 }
 
+function terminateProcessTree(child, signal) {
+  if (!child?.pid) return;
+
+  if (process.platform !== "win32") {
+    try {
+      process.kill(-child.pid, signal);
+      return;
+    } catch (error) {
+      if (error?.code === "ESRCH") return;
+      throw error;
+    }
+  }
+
+  if (!child.killed) child.kill(signal);
+}
+
 for (const browserGate of target.browserGates) {
   requireConfiguredFile(browserGate, "browser gate");
 }
@@ -215,6 +231,7 @@ try {
   server = spawn("npm", ["start"], {
     cwd: root,
     env,
+    detached: process.platform !== "win32",
     stdio: ["ignore", "pipe", "pipe"],
   });
   server.stdout.pipe(serverLog, { end: false });
@@ -248,11 +265,13 @@ try {
     if (!failure) failure = copyError;
   }
 
-  if (server && !serverState.exited) {
-    server.kill("SIGTERM");
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    if (!serverState.exited) server.kill("SIGKILL");
+  if (server?.pid) {
+    terminateProcessTree(server, "SIGTERM");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    terminateProcessTree(server, "SIGKILL");
   }
+  server?.stdout?.destroy();
+  server?.stderr?.destroy();
   if (serverLog) serverLog.end();
 
   await writeFile(
