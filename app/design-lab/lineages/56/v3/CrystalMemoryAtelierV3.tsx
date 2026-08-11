@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CRYSTAL_ANGLE_ORDER,
   CRYSTAL_ANGLE_STEP_PX,
@@ -89,6 +89,11 @@ export default function CrystalMemoryAtelierV3() {
     const timer = window.setInterval(apply, CRYSTAL_EXPRESSION_INTERVAL_MS);
     return () => window.clearInterval(timer);
   }, [autoplayRunning]);
+
+  useLayoutEffect(() => {
+    if (!drawerOpen) return;
+    drawerRef.current?.querySelector<HTMLButtonElement>(".lt56__drawer-close")?.focus();
+  }, [drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -180,7 +185,6 @@ export default function CrystalMemoryAtelierV3() {
 
   function openDrawer() {
     setDrawerOpen(true);
-    requestAnimationFrame(() => drawerRef.current?.querySelector<HTMLButtonElement>(".lt56__drawer-close")?.focus());
   }
 
   return (
