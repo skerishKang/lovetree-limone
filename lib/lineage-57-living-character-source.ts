@@ -6,6 +6,7 @@ export const LINEAGE_57 = {
   driveFolderV2: "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
   driveFolderV1: "1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F",
   assetHold: "EXACT_CHARACTER_ASSET_TRANSFER_HOLD",
+  assetTransferComplete: false,
 } as const;
 
 export const LINEAGE_57_SOURCES = {
@@ -13,25 +14,25 @@ export const LINEAGE_57_SOURCES = {
     driveId: "1X2TXWCXCe8wFIf7NsQk5jMiOw7T2JmAQ",
     bytes: 22_218,
     sha256: "d71197cf97db913a7498e8ce732acf4f094e13d83fde06129d04c265fd1b6710",
-    gitArchivePath: "reference/lineage-57-living-character-world-v1/source/index.html.xz",
+    gitArchivePath: "reference/lineage-57-living-character-world-v1/source/index.html.xz.b64",
   },
   v2Index: {
     driveId: "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
     bytes: 22_310,
     sha256: "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
-    gitArchivePath: "reference/lineage-57-living-character-world-v2/source/index.html.xz",
+    gitArchivePath: "reference/lineage-57-living-character-world-v2/source/index.html.xz.b64",
   },
   v2Js: {
     driveId: "1fd42ni1Y287_v1yHGjhc5zdw2Pn_CQTc",
     bytes: 14_449,
     sha256: "6c0d33c96fc507d2732bb92d4d0b0a65e66014fb5ede159d5862e359b51e1838",
-    gitPath: "reference/lineage-57-living-character-world-v2/source/living-world-v2.js",
+    gitArchivePath: "reference/lineage-57-living-character-world-v2/source/living-world-v2.js.xz.b64",
   },
   v2Css: {
     driveId: "1_ajrjUZby-689e8qblcyawX-BT3xfHqy",
     bytes: 2_736,
     sha256: "b8c3a829ebeef1432ef01edf633bb6b2da184bf0147eed0047489cfe9b0f2214",
-    gitPath: "reference/lineage-57-living-character-world-v2/source/living-world-v2.css",
+    gitArchivePath: "reference/lineage-57-living-character-world-v2/source/living-world-v2.css.xz.b64",
   },
 } as const;
 
