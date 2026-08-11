@@ -45,6 +45,7 @@ A Figure is not a Person record. The Design Lab fixture uses projection-only dat
 - Resume policy in this candidate: `resume-after-idle` after the manual interaction lifecycle completes.
 - Look selection atomically changes selected Figure, accent, background/light/ring treatment and provenance metadata.
 - The figure viewport uses `object-fit: contain` + stable bottom/center anchoring because natural source dimensions vary.
+- Verified natural dimensions across the exact source set are `378×506`, `412×464`, and `412×465`.
 
 ## Shared runtime evidence (#141)
 
@@ -58,8 +59,8 @@ Implemented or locally proven as extractable boundaries:
 - P4 Canonical Selection — one turntable state owns Look + angle; cards/hero/provenance project from it.
 - P5 Responsive archive/detail — desktop right rail becomes flow content on narrow screens; provenance remains visible.
 - P7 Motion/Accessibility — reduced motion disables automatic 360 and continuous decorative motion.
-- P8 Exact Asset Gate — 80-entry Drive registry + hard-fail verifier.
-- P9 Fidelity Harness evidence — route exposes source fingerprints, gate state and source-delta boundaries for browser review.
+- P8 Exact Asset Gate — 80-entry Drive fingerprint registry + hard-fail local binary verifier.
+- P9 Fidelity Harness evidence — route exposes source fingerprints, transfer gate state and source-delta boundaries for browser review.
 
 Do not create a Capsule-specific turntable engine. Memory Capsule and VideoFigure should converge on a future narrow shared `OrderedFrameTurntable`/interaction authority boundary after two consumers are proven.
 
@@ -74,9 +75,12 @@ Registry state in this branch:
 - 80/80 runtime filenames registered.
 - 80/80 Drive IDs registered.
 - 80/80 Drive byte sizes registered.
-- 4/80 authoritative dimensions + SHA256 already pinned from independent source analysis.
-- 76/80 dimensions + SHA256 remain pending local binary/fingerprint pass.
-- Git binary transfer: 0/80 by this worker.
+- 80/80 authoritative dimensions registered from downloaded Drive source binaries.
+- 80/80 authoritative SHA256 registered from downloaded Drive source binaries.
+- byte-size mismatch during source verification: 0/80.
+- the four previously pinned fingerprints (`A_000`, `A_090`, `F_000`, `J_315`) reproduced exactly.
+- Git binary transfer: **0/80** by this worker.
+- exact product/source-fidelity gate: **HOLD** until the binaries exist at the repository target paths and the verifier passes.
 
 Target directory for the local worker:
 
@@ -86,7 +90,7 @@ Run:
 
 `node scripts/verify-lineage-58-videofigure-assets.mjs`
 
-The verifier must remain red until all 80 binaries are present and all 80 authoritative SHA256/dimension fingerprints are registered. No source-fidelity visual PASS before that gate is green.
+The verifier has two separate responsibilities: the fingerprint registry must be 80/80 complete, and the local repository must contain all 80 exact binaries matching bytes, dimensions, and SHA256. The current web PR satisfies the first condition only. No source-fidelity visual PASS before the second condition is green.
 
 ## Fake extraction boundary
 
