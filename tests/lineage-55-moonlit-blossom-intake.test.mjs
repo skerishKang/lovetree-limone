@@ -15,6 +15,8 @@ test("Lineage 55 separates historical recorded claim from actual Git snapshot", 
   const claim = source.historicalRecordedClaim;
   const git = source.gitPreservedSnapshot;
   const bytes = await readFile(new URL(git.repositoryPath, root));
+  assert.equal(source.provenanceStatus, "PROVENANCE_UNRESOLVED");
+  assert.equal(source.rootCauseClass, "INTAKE_SOURCE_PROVENANCE_MIS-ASSOCIATION");
   assert.equal(claim.state, "HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT");
   assert.equal(claim.currentDriveTruth, false);
   assert.equal(git.origin, "UNRESOLVED");
@@ -72,7 +74,7 @@ test("Lineage 55 verifier keeps unresolved historical provenance fail-closed", a
 
 test("Lineage 55 documentation retracts false exact-Drive claim without deleting history", async () => {
   const doc = await readFile(new URL("docs/product/lineages/55_MOONLIT_BLOSSOM_HERO_V1_SOURCE_ANALYSIS.md", root), "utf8");
-  assert.match(doc, /INTAKE_SOURCE_PROVENANCE_MIS_ASSOCIATION/);
+  assert.match(doc, /INTAKE_SOURCE_PROVENANCE_MIS-ASSOCIATION/);
   assert.match(doc, /HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT/);
   assert.match(doc, /V1_DRIVE_AUTHORITATIVE_R3/);
   assert.match(doc, /PROVENANCE_UNRESOLVED/);
