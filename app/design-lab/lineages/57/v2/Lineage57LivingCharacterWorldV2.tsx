@@ -2,9 +2,9 @@
 
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
@@ -37,6 +37,10 @@ const REST: CharacterReactionState = {
   lubtMessage: "나는 럽트. 순간과 감정 사이를 함께 다녀.",
 };
 const DEFAULT_LUBT = { left: 300, top: 95 };
+const FX_SYMBOLS: Record<Lineage57Expression, string> = {
+  neutral: "·", smile: "♥", laugh: "✦", wink: "✧", shy: "♥", surprise: "◉",
+  angry: "◆", sing: "♪", talk: "•", cry: "◇", touched: "♥", sleepy: "Z",
+};
 
 export default function Lineage57LivingCharacterWorldV2({ assetGatePassed }: { assetGatePassed: boolean }) {
   const [characterIndex, setCharacterIndex] = useState(0);
@@ -63,22 +67,17 @@ export default function Lineage57LivingCharacterWorldV2({ assetGatePassed }: { a
 
   const character = LINEAGE_57_CHARACTERS[characterIndex];
   const expressionAsset = lineage57CharacterAssetPath(character.id, reaction.expression);
-  const fxSymbol = useMemo(() => ({
-    neutral: "·", smile: "♥", laugh: "✦", wink: "✧", shy: "♥", surprise: "◉",
-    angry: "◆", sing: "♪", talk: "•", cry: "◇", touched: "♥", sleepy: "Z",
-  } satisfies Record<Lineage57Expression, string>)[reaction.expression], [reaction.expression]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(media.matches);
-    sync();
+    const sync = () => {
+      setReducedMotion(media.matches);
+      if (media.matches) setAutoLife(false);
+    };
+    queueMicrotask(sync);
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
-
-  useEffect(() => {
-    if (reducedMotion) setAutoLife(false);
-  }, [reducedMotion]);
 
   useEffect(() => {
     if (!autoLife || reducedMotion || reaction.special || lubt.dragging) return;
@@ -99,7 +98,7 @@ export default function Lineage57LivingCharacterWorldV2({ assetGatePassed }: { a
   const publishReaction = (next: CharacterReactionState, label?: string) => {
     setReaction(next);
     setLubt((current) => ({ ...current, pose: next.lubtPose }));
-    setFx({ symbol: ({ touched: "♥", cry: "◇", sing: "♪", angry: "◆" } as Record<string, string>)[next.expression] ?? fxSymbol, key: Date.now() });
+    setFx({ symbol: FX_SYMBOLS[next.expression], key: Date.now() });
     setAnnouncement(label ?? `${character.name}: ${next.expression}; Lubt: ${next.lubtMessage}`);
   };
 
@@ -247,7 +246,7 @@ export default function Lineage57LivingCharacterWorldV2({ assetGatePassed }: { a
   );
 
   return (
-    <section className={`lcw-world${reducedMotion ? " reduced-motion" : ""}`} style={{ "--accent": character.accent } as React.CSSProperties}>
+    <section className={`lcw-world${reducedMotion ? " reduced-motion" : ""}`} style={{ "--accent": character.accent } as CSSProperties}>
       <header className="lcw-topbar"><strong>LOVETREE</strong><span>LIVING CHARACTER WORLD · V2</span><button aria-pressed={autoLife} onClick={() => setAutoLife((value) => !value)}>AUTO LIFE · {autoLife ? "ON" : "OFF"}</button></header>
       <main className="lcw-grid">
         <aside className="lcw-panel lcw-cast-panel">
@@ -269,7 +268,7 @@ export default function Lineage57LivingCharacterWorldV2({ assetGatePassed }: { a
           <button className="lcw-face-target" aria-label="React with character face" onPointerEnter={onFaceEnter} onPointerLeave={onFaceLeave} onPointerDown={onFacePointerDown} onPointerUp={clearFaceHold} onPointerCancel={clearFaceHold} onClick={onFaceClick} onDoubleClick={onFaceDoubleClick} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); runPrimaryReaction(); } }} />
           <div className="lcw-gesture-tip">FACE · CLICK RANDOM / HOLD OR DOUBLE CLICK · SECRET MOMENT</div>
           <button className="lcw-special-access" onClick={runSpecial}>SPECIAL INTERACTION</button>
-          {fx && <div key={fx.key} className="lcw-fx" aria-hidden="true">{Array.from({ length: reducedMotion ? 3 : 12 }, (_, index) => <i key={index} style={{ "--i": index } as React.CSSProperties}>{fx.symbol}</i>)}</div>}
+          {fx && <div key={fx.key} className="lcw-fx" aria-hidden="true">{Array.from({ length: reducedMotion ? 3 : 12 }, (_, index) => <i key={index} style={{ "--i": index } as CSSProperties}>{fx.symbol}</i>)}</div>}
           <div className="lcw-emotions" aria-label="Expression selector">{LINEAGE_57_EXPRESSIONS.map((expression) => <button key={expression} className={reaction.expression === expression ? "on" : ""} onClick={() => selectExpression(expression)}>{expression}</button>)}</div>
           <button className={`lcw-lubt${lubt.dragging ? " dragging" : ""}`} style={{ left: lubt.left, top: lubt.top }} aria-label="Lubt Memory Guide. Drag to move." onPointerDown={onLubtPointerDown} onPointerMove={onLubtPointerMove} onPointerUp={finishLubtDrag} onPointerCancel={finishLubtDrag}>
             {assetGatePassed ? <img src={lineage57LubtAssetPath(lubt.pose)} alt="Lubt Memory Guide" /> : <span className="lcw-lubt-placeholder">LUBT<br />{lubt.pose.toUpperCase()}</span>}
