@@ -11,44 +11,19 @@ on:
       - "docs/product/capabilities/MOMENT_ORBIT_CAROUSEL_CAPABILITY_SOURCE.md"
       - "tests/moment-orbit-carousel-capability.test.mjs"
       - "tests/moment-orbit-carousel-browser-qa.mjs"
+      - "tests/moment-orbit-carousel-inspector-open-qa.mjs"
       - ".github/workflows/moment-orbit-carousel-candidate-qa.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   candidate-qa:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout feature head
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-
-      - name: One-time merge-forward latest main
-        if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feat/moment-orbit-carousel-capability-candidate'
-        shell: bash
-        run: |
-          set -euo pipefail
-          branch="feat/moment-orbit-carousel-capability-candidate"
-          git fetch --no-tags origin main "$branch"
-          git checkout -B "$branch" "origin/$branch"
-          latest_main="$(git rev-parse origin/main)"
-          current_head="$(git rev-parse HEAD)"
-          echo "RECONCILE_PRE_HEAD=$current_head"
-          echo "RECONCILE_MAIN=$latest_main"
-          if git merge-base --is-ancestor "$latest_main" "$current_head"; then
-            echo "RECONCILE_ALREADY_CURRENT=true"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git merge --no-ff --no-edit origin/main
-          merged_head="$(git rev-parse HEAD)"
-          echo "RECONCILE_POST_HEAD=$merged_head"
-          git push origin "HEAD:$branch"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -106,6 +81,7 @@ jobs:
           fi
 
           node --import tsx --test tests/moment-orbit-carousel-browser-qa.mjs
+          node --import tsx --test tests/moment-orbit-carousel-inspector-open-qa.mjs
 
       - name: Upload browser evidence
         if: always()
