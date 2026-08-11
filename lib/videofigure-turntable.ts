@@ -17,6 +17,7 @@ export interface VideoFigureTurntableConfig {
 
 export type VideoFigureTurntableAction =
   | { type: "select-look"; index: number }
+  | { type: "select-angle"; index: number; manual?: boolean }
   | { type: "step-angle"; delta: -1 | 1; manual?: boolean }
   | { type: "auto-tick" }
   | { type: "manual-start" }
@@ -27,12 +28,21 @@ export type VideoFigureTurntableAction =
 
 const wrap = (value: number, count: number) => ((value % count) + count) % count;
 
+export function normalizeVideoFigureLookIndex(index: number, lookCount: number): number {
+  if (lookCount < 1) throw new Error("VideoFigure requires at least one Look/Figure set");
+  return wrap(index, lookCount);
+}
+
 export function createVideoFigureTurntableState(
   config: VideoFigureTurntableConfig,
   lookIndex = 0,
 ): VideoFigureTurntableState {
-  if (config.lookCount < 1) throw new Error("VideoFigure requires at least one Look/Figure set");
-  return { lookIndex: wrap(lookIndex, config.lookCount), angleIndex: 0, playing: true, manuallyOwned: false };
+  return {
+    lookIndex: normalizeVideoFigureLookIndex(lookIndex, config.lookCount),
+    angleIndex: 0,
+    playing: true,
+    manuallyOwned: false,
+  };
 }
 
 export function reduceVideoFigureTurntable(
@@ -46,9 +56,15 @@ export function reduceVideoFigureTurntable(
     case "select-look":
       return {
         ...state,
-        lookIndex: wrap(action.index, config.lookCount),
+        lookIndex: normalizeVideoFigureLookIndex(action.index, config.lookCount),
         angleIndex: 0,
         manuallyOwned: true,
+      };
+    case "select-angle":
+      return {
+        ...state,
+        angleIndex: wrap(action.index, VIDEOFIGURE_ANGLES.length),
+        manuallyOwned: action.manual ? true : state.manuallyOwned,
       };
     case "step-angle":
       return {
@@ -62,7 +78,7 @@ export function reduceVideoFigureTurntable(
       if (nextAngle < VIDEOFIGURE_ANGLES.length) return { ...state, angleIndex: nextAngle };
       return {
         ...state,
-        lookIndex: wrap(state.lookIndex + 1, config.lookCount),
+        lookIndex: normalizeVideoFigureLookIndex(state.lookIndex + 1, config.lookCount),
         angleIndex: 0,
       };
     }
