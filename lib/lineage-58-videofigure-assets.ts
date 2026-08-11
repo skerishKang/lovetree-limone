@@ -110,6 +110,10 @@ export const LINEAGE_58_VIDEOFIGURE_ASSETS: readonly VideoFigureAssetFingerprint
   return { figureId, angle, filename, driveId, bytes, width, height, sha256, targetPath: `${LINEAGE_58_VIDEOFIGURE_ASSET_ROOT}/${filename}`, role: "runtime-required", rightsStatus: "design-fixture-only" };
 });
 
+function isBinaryTransferComplete(status: string): boolean {
+  return status === "complete";
+}
+
 export function validateLineage58VideoFigureAssetRegistry() {
   const expectedKeys = new Set<string>();
   for (const figureId of "ABCDEFGHIJ") for (const angle of VIDEOFIGURE_ANGLES) expectedKeys.add(`${figureId}_${angle}`);
@@ -118,5 +122,6 @@ export function validateLineage58VideoFigureAssetRegistry() {
   const unexpected = [...actualKeys].filter((key) => !expectedKeys.has(key));
   const metadataComplete = LINEAGE_58_VIDEOFIGURE_ASSETS.filter((asset) => asset.sha256 && asset.width > 0 && asset.height > 0).length;
   const fingerprintComplete = missing.length === 0 && unexpected.length === 0 && LINEAGE_58_VIDEOFIGURE_ASSETS.length === 80 && metadataComplete === 80;
-  return { expected: 80, registered: LINEAGE_58_VIDEOFIGURE_ASSETS.length, metadataComplete, fingerprintComplete, binaryTransferStatus: LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS, exactGatePass: false, missing, unexpected, holdMarker: LINEAGE_58_VIDEOFIGURE_ASSET_HOLD } as const;
+  const exactGatePass = fingerprintComplete && isBinaryTransferComplete(LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS);
+  return { expected: 80, registered: LINEAGE_58_VIDEOFIGURE_ASSETS.length, metadataComplete, fingerprintComplete, binaryTransferStatus: LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS, exactGatePass, missing, unexpected, holdMarker: LINEAGE_58_VIDEOFIGURE_ASSET_HOLD } as const;
 }
