@@ -52,6 +52,21 @@ test("direct candidate changes select only their matching fidelity target", () =
   );
 });
 
+test("source-only authoritative asset changes select the exact fidelity target", () => {
+  assert.deepEqual(
+    selectImpactedTargets([
+      "public/design-lab-assets/lineages/52/v3/lovetree-52-v3-reference-earth-orbit.html",
+    ]).map((target) => target.id),
+    ["lineage-52-v3"],
+  );
+  assert.deepEqual(
+    selectImpactedTargets([
+      "reference/design-lab/capabilities/memory-anatomy/02-memory-stack.html",
+    ]).map((target) => target.id),
+    ["memory-anatomy"],
+  );
+});
+
 test("orchestration changes self-validate against materialized browser targets", () => {
   const selected = selectImpactedTargets([".github/workflows/design-fidelity-validation.yml"])
     .map((target) => target.id);
