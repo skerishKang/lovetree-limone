@@ -6,7 +6,7 @@ export const LINEAGE_57 = {
   driveFolderV2: "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
   driveFolderV1: "1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F",
   assetHold: "EXACT_CHARACTER_ASSET_TRANSFER_HOLD",
-  assetTransferComplete: false,
+  assetTransferComplete: true,
 } as const;
 
 export const LINEAGE_57_SOURCES = {
