@@ -80,7 +80,8 @@ test("Moment Orbit Carousel component — selection, autoplay takeover and selec
   assert.match(component, /data-selected-index=\{selectedIndex\}/);
   assert.match(component, /data-selected-id=\{selectedMoment\.id\}/);
   assert.match(component, /data-shelf-index=\{index\}/);
-  assert.match(component, /setAuto\(false\)/);
+  assert.match(component, /const auto = autoPreference \?\? !reducedMotion/);
+  assert.match(component, /setAutoPreference/);
   assert.match(component, /muted=\{!soundOn\}/);
   assert.match(component, /data-audio-authority=/);
   assert.match(component, /selectedMoment\.mediaType === "video"/);
