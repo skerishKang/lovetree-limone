@@ -74,6 +74,7 @@ try {
     if (spec.touch) {
       await page.locator('.lt56__drawer-open').click();
       assert.equal(await page.locator('.lt56__right').evaluate((el) => el.classList.contains('is-open')), true);
+      assert.equal(await page.locator('.lt56__drawer-close').evaluate((el) => document.activeElement === el), true, 'mobile drawer moves focus inside');
       const panel = page.locator('.lt56__right');
       assert.ok((await panel.evaluate((el) => el.scrollHeight)) <= (await panel.evaluate((el) => el.clientHeight)) || (await panel.evaluate((el) => getComputedStyle(el).overflowY)) === 'auto');
       await page.locator('.lt56__drawer-close').click();
