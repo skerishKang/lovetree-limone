@@ -34,7 +34,7 @@ export default function Lineage58VideoFigure() {
   const [filter, setFilter] = useState<Filter>("all");
   const [saved, setSaved] = useState<Set<string>>(() => new Set());
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [assetError, setAssetError] = useState(false);
+  const [failedAssetKey, setFailedAssetKey] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [localFilename, setLocalFilename] = useState("");
   const [announcement, setAnnouncement] = useState("");
@@ -48,6 +48,8 @@ export default function Lineage58VideoFigure() {
   const moment = VIDEOFIGURE_MOMENTS[state.lookIndex];
   const angle = videoFigureAngleForState(state);
   const currentAsset = look.angleAssets[state.angleIndex];
+  const currentAssetKey = `${look.id}_${angle}`;
+  const assetError = failedAssetKey === currentAssetKey;
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -68,7 +70,6 @@ export default function Lineage58VideoFigure() {
   }, [state.playing, state.manuallyOwned, state.angleIndex, state.lookIndex, reducedMotion, modalOpen]);
 
   useEffect(() => {
-    setAssetError(false);
     const preload = look.angleAssets.slice(state.angleIndex + 1, state.angleIndex + 3);
     const images = preload.map((asset) => {
       const image = new Image();
@@ -240,7 +241,7 @@ export default function Lineage58VideoFigure() {
         onWheel={onWheel}
       >
         <div className="lt58-videofigure__viewport">
-          {!assetError ? <img key={`${look.id}-${angle}`} src={currentAsset.path} alt={`${look.name} ${angle}도 source Figure`} onError={() => setAssetError(true)} draggable={false} /> : (
+          {!assetError ? <img key={currentAssetKey} src={currentAsset.path} alt={`${look.name} ${angle}도 source Figure`} onError={() => setFailedAssetKey(currentAssetKey)} draggable={false} /> : (
             <div className="lt58-videofigure__asset-hold" role="status">
               <b>EXACT SOURCE FRAME HOLD</b>
               <span>{look.id}_{angle}.png</span>
