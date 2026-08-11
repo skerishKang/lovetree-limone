@@ -222,6 +222,22 @@ export function MemoryAnatomyExperience() {
                 </div>
               ))}
             </div>
+            <div className={styles.spatialHandles} aria-label="Spatial layer edge handles">
+              {layers.map((layer) => (
+                <button
+                  key={layer.id}
+                  type="button"
+                  data-spatial-handle={layer.id}
+                  className={`${styles.spatialHandle} ${layer.id === state.selectedLayerId ? styles.activeHandle : ""}`}
+                  style={{ "--layer-color": COLORS[layer.index] } as CSSProperties}
+                  aria-label={`Select spatial layer ${layer.index + 1}`}
+                  onPointerDown={(event) => { event.stopPropagation(); dispatch({ type: "pause" }); selectLayer(layer.id); }}
+                  onClick={(event) => { event.stopPropagation(); selectLayer(layer.id); }}
+                >
+                  {String(layer.index + 1).padStart(2, "0")}
+                </button>
+              ))}
+            </div>
             <div className={styles.stageStatus} aria-live="polite">
               {spatialAuthority ? "SPATIAL CONTROL ACTIVE" : "OUTER PAGE SCROLL ACTIVE"} · {state.playback.toUpperCase()}
             </div>
