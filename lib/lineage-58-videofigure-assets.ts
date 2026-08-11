@@ -2,7 +2,7 @@ import { VIDEOFIGURE_ANGLES, type VideoFigureAngle } from "./videofigure-turntab
 
 export const LINEAGE_58_VIDEOFIGURE_ASSET_ROOT = "public/design-lab/lineages/58/videofigure/frames";
 export const LINEAGE_58_VIDEOFIGURE_ASSET_HOLD = "EXACT_VIDEOFIGURE_ASSET_TRANSFER_HOLD" as const;
-export const LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS = "hold" as const;
+export const LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS = "complete" as const;
 
 export interface VideoFigureAssetFingerprint {
   figureId: string;
