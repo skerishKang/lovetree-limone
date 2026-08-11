@@ -64,6 +64,7 @@ export default function CrystalMemoryAtelierV3() {
   const pointerRef = useRef<{ id: number; startX: number; lastStepX: number; dragged: boolean } | null>(null);
   const autoplayIndex = useRef(0);
   const drawerButtonRef = useRef<HTMLButtonElement | null>(null);
+  const drawerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -97,7 +98,16 @@ export default function CrystalMemoryAtelierV3() {
       if (event.key === "Escape") {
         setDrawerOpen(false);
         requestAnimationFrame(() => drawerButtonRef.current?.focus());
+        return;
       }
+      if (event.key !== "Tab") return;
+      const items = Array.from(drawerRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled),input:not(:disabled),a[href],[tabindex]:not([tabindex='-1'])") ?? [])
+        .filter((element) => element.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -166,7 +176,13 @@ export default function CrystalMemoryAtelierV3() {
   }
 
   function bloom() {
+    setAutoplay(false);
     setBloomToken((value) => value + 1);
+  }
+
+  function openDrawer() {
+    setDrawerOpen(true);
+    requestAnimationFrame(() => drawerRef.current?.querySelector<HTMLButtonElement>(".lt56__drawer-close")?.focus());
   }
 
   return (
@@ -233,20 +249,20 @@ export default function CrystalMemoryAtelierV3() {
           </div>
         </div>
 
-        <aside className={`lt56__panel lt56__right ${drawerOpen ? "is-open" : ""}`} aria-label="Material and Service" aria-hidden={!drawerOpen ? undefined : false}>
+        <aside ref={drawerRef} className={`lt56__panel lt56__right ${drawerOpen ? "is-open" : ""}`} aria-label="Material and Service" aria-hidden={!drawerOpen ? undefined : false}>
           <button className="lt56__drawer-close" onClick={() => { setDrawerOpen(false); requestAnimationFrame(() => drawerButtonRef.current?.focus()); }}>CLOSE</button>
           <span className="lt56__eyebrow">MATERIAL LAB</span>
           <h3>Change the way<br />memory catches light.</h3>
           <p className="lt56__desc">같은 조각도 재질과 굴절에 따라 완전히 다른 기억으로 보입니다.</p>
           <div className="lt56__materials">
-            {MATERIALS.map((id) => <button key={id} className={material === id ? "is-on" : ""} onClick={() => setMaterial(id)}>{id.toUpperCase()}</button>)}
+            {MATERIALS.map((id) => <button key={id} className={material === id ? "is-on" : ""} onClick={() => { setAutoplay(false); setMaterial(id); }}>{id.toUpperCase()}</button>)}
           </div>
-          <div className="lt56__control"><label><span>REFRACTION LIGHT</span><b>{light}</b></label><input aria-label="Refraction light" type="range" min="65" max="140" value={light} onChange={(event) => setLight(Number(event.target.value))} /></div>
+          <div className="lt56__control"><label><span>REFRACTION LIGHT</span><b>{light}</b></label><input aria-label="Refraction light" type="range" min="65" max="140" value={light} onChange={(event) => { setAutoplay(false); setLight(Number(event.target.value)); }} /></div>
           <div className="lt56__inscribe"><label htmlFor="lt56-inscription">MEMORY INSCRIPTION</label><input id="lt56-inscription" value={engravingInput} onChange={(event) => setEngravingInput(event.target.value)} /><button className="lt56__action" onClick={engrave}>ENGRAVE ON CRYSTAL</button><button className="lt56__action lt56__action--ghost" onClick={bloom}>CRYSTAL BLOOM</button></div>
           <div className="lt56__service"><b>Premium Memory Relic</b><p>저장한 순간이 쌓일수록 열리는 소장형 기념 경험입니다.</p><ul><li>100 Moments · digital Atelier access</li><li>200 Moments · source-demo emotion awakening</li><li>365 Moments · source-demo annual relic</li></ul><small>DESIGN SOURCE HYPOTHESIS · NOT BACKEND ENTITLEMENT</small></div>
         </aside>
       </div>
-      <button ref={drawerButtonRef} className="lt56__drawer-open" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>MATERIAL &amp; SERVICE</button>
+      <button ref={drawerButtonRef} className="lt56__drawer-open" onClick={openDrawer} aria-expanded={drawerOpen}>MATERIAL &amp; SERVICE</button>
       {drawerOpen ? <button className="lt56__drawer-backdrop" aria-label="Close Material and Service" onClick={() => { setDrawerOpen(false); requestAnimationFrame(() => drawerButtonRef.current?.focus()); }} /> : null}
     </section>
   );
