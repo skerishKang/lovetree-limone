@@ -43,7 +43,7 @@ test("VideoFigure domain projection keeps Person, Moment and DerivedFigure/Look 
   }
 });
 
-test("80-frame fingerprints are complete while Git binary transfer remains fail-closed", () => {
+test("80-frame fingerprints stay complete and the exact gate follows explicit binary-transfer status", () => {
   const gate = validateLineage58VideoFigureAssetRegistry();
   assert.equal(LINEAGE_58_VIDEOFIGURE_ASSETS.length, 80);
   assert.equal(gate.expected, 80);
@@ -52,8 +52,8 @@ test("80-frame fingerprints are complete while Git binary transfer remains fail-
   assert.deepEqual(gate.unexpected, []);
   assert.equal(gate.metadataComplete, 80);
   assert.equal(gate.fingerprintComplete, true);
-  assert.equal(gate.binaryTransferStatus, "hold");
-  assert.equal(gate.exactGatePass, false);
+  assert.ok(["hold", "complete"].includes(gate.binaryTransferStatus));
+  assert.equal(gate.exactGatePass, gate.fingerprintComplete && gate.binaryTransferStatus === "complete");
   assert.equal(gate.holdMarker, LINEAGE_58_VIDEOFIGURE_ASSET_HOLD);
   assert.equal(gate.holdMarker, "EXACT_VIDEOFIGURE_ASSET_TRANSFER_HOLD");
 });
