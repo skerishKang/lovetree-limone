@@ -1,189 +1,96 @@
-# Lineage 55 — Moonlit Blossom Hero V1 source analysis
+# Lineage 55 — Moonlit Blossom V1 provenance split
 
-## Classification
-
-`14_LoveTree_Moonlit_Blossom_Hero_V1` is a direct LoveTree sibling product/story artifact, not a generic floral reference pack.
-
-The source itself exposes LoveTree product surfaces (`MOMENTS`, `BLOSSOM`, `INVITATION`, `ENTER MY TREE`), a staged Memory-growth journey, approved Memory Cast portraits, and a final bloom state.
+## Status
 
 - Lineage: `lt-55-moonlit-blossom-hero`
-- Revision: `55-v1-moonlit-blossom-hero`
 - Tracking issue: #134
-- Intake branch: `feat/lineage-55-moonlit-blossom-intake`
-- Current disposition: source intake complete; exact binary assets pending Git transfer
+- Draft intake PR: #135
+- Provenance status: `PROVENANCE_UNRESOLVED`
+- Root-cause class: `INTAKE_SOURCE_PROVENANCE_MIS_ASSOCIATION`
+- Product policy inference: none. Source fixtures are evidence, not canonical V4 business rules.
 
-This phase is provenance/source registration only. It does **not** declare the sibling counts, invitation behavior, growth thresholds, or flower metaphor canonical V4 product policy.
+The earlier intake combined an historical recorded fingerprint, the Git-preserved HTML, and the currently observable Drive V1 object as if they were one byte-exact identity. Forensic review disproved that association. This document preserves the historical claim but separates all three identities.
 
-## Authoritative Drive package
+## Record A — historical recorded claim
 
-Root:
-- `14_LoveTree_Moonlit_Blossom_Hero_V1`
-- Drive folder `151yoYBj7rVaQbZuKvSbt8D5_LZC6vpqs`
+State: `HISTORICALLY_RECORDED_UNVERIFIED_FINGERPRINT`
 
-Folders:
-- `00_REFERENCES` — `1OzCy_TuxS1LYa4rENhzXNWC5bYQZc8Mu`
-- `01_HTML` — `1D8h9AtYG5czBj6AcTrpDrsUqjCCPm6rd`
-- `02_ASSETS` — `1xPxCzrOp-JaC2VWT3H-I1qMKTRFH4hcw`
-- `02_ASSETS/flowers` — `1MOebKe_x8ErHZpzpaa-sElBsmDbZpUVD`
-- `02_ASSETS/portraits` — `1iG9ersPJXHGZ117XVLPtVVZT1qdFkxP2`
+The original #135 intake recorded `index-v1.html` against Drive ID `11VCsXcP2OlOH1pOAwFmhD4HwIU1blc6M` as:
 
-Sibling support:
-- `README.md` — Drive `1yngLqgB9HrY4NEz5KMab6__gwrg_1hYM`
-- `ANALYSIS.md` — Drive `10PNF2LrfNpit4REHOVBv0jxTwOmGBZCu`
+- 22,260 bytes
+- SHA-256 `1c68271530d426237c122249ef27cb9f7ad6057d1dd245c3739740ef4836ae38`
+- Git blob `7dbad6aa26f77a576da0aa13af9b884a52fd944b`
 
-The sibling README explicitly says the still PNGs are approved visual assets and that character imagery must use the approved Memory Cast portraits rather than recognizable celebrities.
+These values are retained as forensic history. They are **not** verified current Drive truth, and their originating source remains unresolved.
 
-## Exact runtime source
+## Record B — actual Git-preserved snapshot
 
-- `01_HTML/index-v1.html`
-- Drive `11VCsXcP2OlOH1pOAwFmhD4HwIU1blc6M`
-- exact bytes: `22,260`
-- SHA-256: `1c68271530d426237c122249ef27cb9f7ad6057d1dd245c3739740ef4836ae38`
-- Git blob SHA: `7dbad6aa26f77a576da0aa13af9b884a52fd944b`
+State: `UNVERIFIED_HISTORICAL_GIT_SNAPSHOT`
 
-The exact UTF-8 source is preserved at:
+Repository path:
 
 `reference/lineage-55-moonlit-blossom-v1/source/index-v1.html`
 
-GitHub's resulting content blob was independently re-read after upload and equals the expected Git blob SHA above, proving byte-exact text preservation.
+Observed identity: `LoveTree Memory Blossom Hero v1`
 
-## Exact image contract
+Actual Git blob:
 
-| Asset | Group | Authoritative Drive id | Bytes | Dimensions | SHA-256 | Git blob SHA |
-|---|---|---|---:|---:|---|---|
-| `lovetree-memory-blossom-hero-v1.png` | flowers | `1XSakvKw04G_of1s6WWPL45Nu_YKYlDkR` | 1,150,427 | 1536×1024 RGB | `c6587ae2d37628a5c003cbd44fd96f6ed649579ad92104f2e08a101e6e59f230` | `17c791ed5a4624c3dabeb35c6affb26d76c03fca` |
-| `lovetree-memory-blossom-detail-v1.png` | flowers | `17AVNADRaU41bXCjrYnwED5PStYQTRkQ7` | 1,405,653 | 1536×1024 RGB | `52a3456b89a1406f87ba3a40ffcc61ff296851f819fe44f89a06d2f98c059d0e` | `9160c4581517ba844456bef6698c4c20c0db5c3c` |
-| `memory-cast-a.png` | portraits | `1EyyAfqoJlaUvx7W4-USwdbmCB5DGuEhS` | 334,419 | 1024×1536 RGB | `7bf8cc570880b5eff35c4a951f15199b3fc1eb11aec7a6126fa6b25425334f48` | `320708c979c300fd87b1cdf03c53105ec748397f` |
-| `memory-cast-b.png` | portraits | `1cxMQs-sO-MK1GCI2HSWa-_1WHu7Cg8u5` | 327,151 | 1024×1536 RGB | `fd34eb40759538d6369a0dfe0bf151e2f2864357a8f234376d242250603c6cf7` | `a2959d33b0beb576ee0ca27b2181e95fbbbfac4f` |
-| `memory-cast-c.png` | portraits | `1q0ZiW9Rr61junOZmUvV3wE0gk1h9QHnf` | 332,328 | 1024×1536 RGB | `9f939a071b0ddfcd9c7ebd173bf0dd3f49ba4506b691a0a1b370812671c63d85` | `ebda9a45399a30fb1260ad1c30a849c7d1b80cb5` |
+`3590e5fbe3af35c364f9ca3444901ee2671e18e5`
 
-Target binary paths for a later review implementation:
-- `/reference/lineage-55-moonlit-blossom-v1/assets/flowers/*`
-- `/reference/lineage-55-moonlit-blossom-v1/assets/portraits/*`
+Origin: `UNRESOLVED`
 
-No approximate/generated replacement may be called source-faithful.
+This file must remain preserved as historical forensic evidence. It must not be overwritten with current Drive bytes and must not be described as the canonical Drive V1 source.
 
-## Source story states
+Its staged states, 2100ms autoplay, 700ms wheel throttle, 36-petal burst, displayed `127 / 150 MOMENTS`, and related UI surfaces are facts about this Git fixture only. They do not define canonical LoveTree V4 product policy.
 
-The exact runtime defines four states:
+## Record C — Drive-authoritative observable V1 R3
 
-1. `01 · SEED` / `A feeling begins.`
-2. `02 · FEELING` / `It starts to grow.`
-3. `03 · MOMENTS` / `Memories gather.`
-4. `04 · BLOOM` / `Love becomes visible.`
+State: `V1_DRIVE_AUTHORITATIVE_R3`
 
-The body class drives the visual scale/brightness/reveal state:
-- state 0: flower `scale(.18)`, reduced brightness/saturation;
-- state 1: flower `scale(.48)`;
-- state 2: flower `scale(.76)`, first two floating memories revealed;
-- state 3: flower full scale, all three floating memories revealed, faster aura pulse.
+- Drive folder: `14_LoveTree_Moonlit_Blossom_Hero_V1` / `151yoYBj7rVaQbZuKvSbt8D5_LZC6vpqs`
+- file: `index-v1.html`
+- Drive ID: `11VCsXcP2OlOH1pOAwFmhD4HwIU1blc6M`
+- revision ID: `0B-UtbwYpFaMJZWpzeVE0eGU4MDNWR1pTTVRzZWlZbHBIM3dJPQ`
+- modified: `2026-08-10T19:43:06.020Z`
+- bytes: `22,260`
+- SHA-256: `1c682715a193ae9b1670f4a415d555a27ee7ad49a4dd58fecfa83e9f14da5f41`
+- Git blob: `0fa3066680a556e9f6c0ee50780f39abe0f98cfc`
+- identity: `LoveTree — Moonlit Blossom`
+- repository evidence copy: `reference/lineage-55-moonlit-blossom-v1/source/drive-r3-index-v1.html`
 
-The final bloom creates 36 petal elements from the current flower center.
+R3 predates PR #135. It is explicitly **not** a later post-PR snapshot.
 
-## Source interactions
+## PNG provenance split
 
-### Flower / progression
-- clicking the main flower advances to the next state;
-- `Space` advances;
-- `ArrowRight` advances;
-- `ArrowLeft` goes backward;
-- wheel down advances and wheel up goes backward;
-- wheel progression is throttled to one state change per `700ms`.
+Each of the five V1 assets now has three independently represented identities:
 
-### Autoplay
-- `PLAY THE BLOOM` toggles autoplay;
-- active text becomes `PAUSE BLOOM`;
-- state advances every `2100ms` while playing.
+1. Drive object identity — current V1 Drive ID and visible revision ID.
+2. Historical recorded fingerprint — the old #135 bytes/dimensions/SHA/blob, retained as unverified historical evidence.
+3. Current Drive fingerprint — raw downloaded bytes independently rehashed during remediation.
+4. V2 alias — a different Drive object in `15_LoveTree_Moonlit_Blossom_Journey_V2` whose bytes are identical to the current V1 object.
 
-### Direct jumps
-- header `MOMENTS` jumps to state 2;
-- header `BLOSSOM` jumps to state 3;
-- Memory Cast cards jump to states 1, 2, and 3.
+The five current V1 assets and five V2 aliases are 5/5 byte-identical, including SHA-256, Git blob SHA, PNG dimensions, and color type. Their Drive object IDs are distinct.
 
-### Product/story values shown by sibling
-- `127 / 150 MOMENTS`
-- `85%`
-- `INVITATION`
-- `ENTER MY TREE`
+The historical five-asset source remains `HISTORICAL_ASSET_SOURCE_UNRESOLVED`.
 
-These are preserved as sibling-source facts, not accepted canonical business rules.
+## Verifier semantics
 
-## Layout / responsive behavior
+`scripts/verify-lineage-55-assets.mjs` no longer treats the historical fingerprint as the expected bytes of the current Drive IDs.
 
-Desktop source:
-- 86px sidebar;
-- 68px header;
-- main visual stage plus 365px right detail panel;
-- right panel contains progress and three Memory Cast cards.
+- Default mode verifies any transferred current-Drive V1 binaries, then remains fail-closed with `HISTORICAL_ASSET_SOURCE_UNRESOLVED` and exit code 2.
+- `--current-drive-only` may emit `LINEAGE_55_CURRENT_DRIVE_ONLY_GATE_PASS` when the current observable V1 set is byte-exact. This is not a historical provenance pass.
+- The former `LINEAGE_55_EXACT_ASSET_GATE_PASS` marker is removed because it conflated current Drive identity with unresolved historical evidence.
 
-At ≤1050px:
-- sidebar narrows to 70px;
-- right panel is hidden;
-- flower uses `min(68vw,520px)`.
+## V2 boundary
 
-At ≤650px:
-- sidebar is hidden;
-- only primary header action remains;
-- main stage expands;
-- flower uses `88vw` square;
-- memory cards shrink/reposition;
-- timeline uses 14px side insets;
-- interaction hint is hidden.
+`15_LoveTree_Moonlit_Blossom_Journey_V2` remains a **Lineage 55 Revision**, not a new lineage. Its asset reuse relationship is now explicit and does not depend on resolving the foreign historical snapshot origin.
 
-The source does not implement a reduced-motion media policy. A native review/adoption must define one explicitly rather than silently preserving perpetual orbit/aura/petal motion for reduced-motion users.
+After this provenance split is verified by tests, V2 provenance work may proceed. Native V2 UI implementation is not part of this remediation.
 
-## Product-specific vs reusable capability boundary
+## Remaining unresolved evidence
 
-### LoveTree-specific Revision material
-- Moonlit Blossom flower imagery;
-- approved Memory Cast portraits;
-- exact state labels and copy;
-- three Memory cards and their copy;
-- displayed Moment counts/progress;
-- `BLOSSOM` / `MOMENTS` / `INVITATION` / `ENTER MY TREE` surface treatment.
+- origin of the Git-preserved `LoveTree Memory Blossom Hero v1` snapshot;
+- origin of historical HTML fingerprint `1c68271530d4...ae38` / `7dbad6aa...`;
+- origin of the five historical PNG fingerprints.
 
-### Candidate reusable capabilities
-- staged growth-state controller;
-- autoplay/pause/replay controller;
-- keyboard/wheel/click progression adapter;
-- memory-card staged reveal;
-- focal-object bloom/particle response;
-- responsive hero + detail-panel composition.
-
-Do not hard-code the flower metaphor as the universal LoveTree renderer merely because this sibling uses it.
-
-## Intake validation contract
-
-Normal CI should always prove:
-- exact source file exists in Git;
-- exact source bytes, SHA-256 and Git blob SHA match Drive provenance;
-- source retains all four states and key interactions;
-- source references only the approved sibling flower/Memory Cast filenames;
-- asset verifier remains hard-fail/no-skip.
-
-Binary verification is intentionally standalone until the files are physically transferred:
-
-```bash
-node scripts/verify-lineage-55-assets.mjs
-```
-
-A complete 5/5 match is the only path to:
-
-`LINEAGE_55_EXACT_ASSET_GATE_PASS`
-
-## Future review acceptance
-
-Before any source-fidelity approval or Ready/merge of a native review implementation:
-
-1. transfer all five exact PNGs byte-for-byte to the registered paths;
-2. require the exact asset verifier PASS marker;
-3. implement/review the four-stage experience without changing sibling story semantics;
-4. validate 1280×800 and 390×844;
-5. test autoplay, pause, replay, flower click, Space, arrows, wheel throttling, direct jumps and Memory cards;
-6. verify mobile composition, no horizontal/bottom clipping and no outer-page scroll trap;
-7. define and test reduced-motion behavior;
-8. directly compare screenshots with the authoritative source/reference material;
-9. require exact-head full CI GREEN;
-10. recheck current main and concurrent PR ownership immediately before any Ready/merge.
-
-No Auth/API/DB/Firebase/Worker/Production mutation belongs in this intake.
+These unknowns remain recorded and fail-closed; they are not silently converted into verified Drive provenance.
