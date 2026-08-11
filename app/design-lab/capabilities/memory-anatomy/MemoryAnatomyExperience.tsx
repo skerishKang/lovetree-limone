@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type WheelEvent } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import Link from "next/link";
 import {
   MEMORY_ANATOMY_LAYER_IDS,
@@ -29,6 +29,7 @@ export function MemoryAnatomyExperience() {
   const [spatialAuthority, setSpatialAuthority] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const layerRefs = useRef<Record<MemoryAnatomyLayerId, HTMLButtonElement | null>>({
     "source-video": null,
     "moment-cut": null,
@@ -53,6 +54,18 @@ export function MemoryAnatomyExperience() {
     const timer = window.setTimeout(() => dispatch({ type: "playback-tick" }), 850);
     return () => window.clearTimeout(timer);
   }, [state.playback, state.playbackStep]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const handleWheel = (event: WheelEvent) => {
+      if (!spatialAuthority) return;
+      event.preventDefault();
+      dispatch({ type: "set-explosion", value: state.explosion + event.deltaY * 0.0008 });
+    };
+    stage.addEventListener("wheel", handleWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", handleWheel);
+  }, [spatialAuthority, state.explosion]);
 
   function selectLayer(id: MemoryAnatomyLayerId) {
     dispatch({ type: "select-layer", id });
@@ -101,12 +114,6 @@ export function MemoryAnatomyExperience() {
   function onPointerEnd(event: PointerEvent<HTMLDivElement>) {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     stopDragging(event.pointerId);
-  }
-
-  function onWheel(event: WheelEvent<HTMLDivElement>) {
-    if (!spatialAuthority) return;
-    event.preventDefault();
-    dispatch({ type: "set-explosion", value: state.explosion + event.deltaY * 0.0008 });
   }
 
   function togglePlayback() {
@@ -189,6 +196,7 @@ export function MemoryAnatomyExperience() {
 
         <section className={styles.stageShell} aria-label="Spatial memory anatomy renderer">
           <div
+            ref={stageRef}
             className={`${styles.stage} ${spatialAuthority ? styles.stageActive : ""}`}
             data-spatial-authority={spatialAuthority ? "true" : "false"}
             tabIndex={0}
@@ -197,7 +205,6 @@ export function MemoryAnatomyExperience() {
             onPointerUp={onPointerEnd}
             onPointerCancel={onPointerEnd}
             onLostPointerCapture={(event) => stopDragging(event.pointerId)}
-            onWheel={onWheel}
             onKeyDown={(event) => {
               if (event.key === "Escape") { setSpatialAuthority(false); stopDragging(); }
             }}
