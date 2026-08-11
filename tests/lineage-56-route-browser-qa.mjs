@@ -42,11 +42,28 @@ try {
     const relic = page.locator('.lt56__sculpture-wrap');
     const box = await relic.boundingBox();
     assert.ok(box);
-    await page.mouse.move(box.x + box.width * .65, box.y + box.height * .5);
-    await page.mouse.down();
-    await page.mouse.move(box.x + box.width * .35, box.y + box.height * .5, { steps: 6 });
-    await page.mouse.up();
+    if (spec.touch) {
+      const session = await context.newCDPSession(page);
+      const y = box.y + box.height * .5;
+      const x1 = box.x + box.width * .70;
+      const x2 = box.x + box.width * .30;
+      await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: x1, y, radiusX: 4, radiusY: 4, force: 1, id: 1 }] });
+      for (let step = 1; step <= 6; step += 1) {
+        const x = x1 + (x2 - x1) * (step / 6);
+        await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y, radiusX: 4, radiusY: 4, force: 1, id: 1 }] });
+      }
+      await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    } else {
+      await page.mouse.move(box.x + box.width * .65, box.y + box.height * .5);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * .35, box.y + box.height * .5, { steps: 6 });
+      await page.mouse.up();
+    }
     assert.match(await page.locator('.lt56__status').innerText(), /VIEW/);
+    if (spec.touch) {
+      const sculptureBox = await page.locator('.lt56__sculpture').boundingBox();
+      assert.ok(sculptureBox && sculptureBox.y < spec.viewport.height, "mobile: Crystal begins within the first viewport");
+    }
 
     await page.locator('.lt56__stage-actions .is-primary').click();
     await page.waitForTimeout(1250);
