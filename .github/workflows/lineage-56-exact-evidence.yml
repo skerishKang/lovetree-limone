@@ -1,0 +1,103 @@
+name: Lineage 56 exact evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    name: Lineage 56 exact-head evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact Lineage 56 head
+        uses: actions/checkout@v4
+        with:
+          ref: 24605bd46c552188ff00d6760c849931d6a3de15
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify exact 8/8 assets
+        run: node scripts/verify-lineage-56-assets.mjs
+
+      - name: Build exact runtime
+        run: npm run build
+
+      - name: Prepare Playwright
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact route QA and capture evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/lineage-56-exact
+          setsid npm start > test-results/lineage-56-exact/server.log 2>&1 &
+          SERVER_PID=$!
+          cleanup() {
+            kill -TERM -- -"$SERVER_PID" 2>/dev/null || true
+            sleep 1
+            kill -KILL -- -"$SERVER_PID" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/design-lab/lineages/56/v3 >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:3000/design-lab/lineages/56/v3 >/dev/null
+          LOVETREE_QA_BASE_URL=http://127.0.0.1:3000 node tests/lineage-56-route-browser-qa.mjs | tee test-results/lineage-56-exact/browser-qa.log
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          import { mkdir } from 'node:fs/promises';
+          const out='test-results/lineage-56-exact';
+          await mkdir(out,{recursive:true});
+          const browser=await chromium.launch({headless:true});
+          async function shot(name, viewport, action) {
+            const context=await browser.newContext({viewport,isMobile:viewport.width<=390,hasTouch:viewport.width<=390});
+            const page=await context.newPage();
+            const errors=[];
+            page.on('pageerror',e=>errors.push(`page:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:${m.text()}`)});
+            const res=await page.goto('http://127.0.0.1:3000/design-lab/lineages/56/v3',{waitUntil:'networkidle'});
+            if(!res?.ok()) throw new Error(`${name}: HTTP ${res?.status()}`);
+            if(action) await action(page);
+            await page.screenshot({path:`${out}/${name}.png`,fullPage:false});
+            const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+            if(overflow>1) throw new Error(`${name}: horizontal overflow ${overflow}px`);
+            if(errors.length) throw new Error(`${name}: ${errors.join(' | ')}`);
+            await context.close();
+          }
+          await shot('desktop-1280x800-initial',{width:1280,height:800});
+          await shot('desktop-1280x800-expression',{width:1280,height:800},async p=>{await p.locator('.lt56__expressions button').nth(3).click();});
+          await shot('desktop-1280x800-profile',{width:1280,height:800},async p=>{await p.locator('.lt56__angles button').nth(2).click();});
+          await shot('mobile-390x844-initial',{width:390,height:844});
+          await shot('mobile-390x844-drawer',{width:390,height:844},async p=>{await p.locator('.lt56__drawer-open').click();});
+          const reduced=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+          const rp=await reduced.newPage();
+          await rp.goto('http://127.0.0.1:3000/design-lab/lineages/56/v3',{waitUntil:'networkidle'});
+          await rp.screenshot({path:`${out}/mobile-390x844-reduced-motion.png`,fullPage:false});
+          await reduced.close();
+          await browser.close();
+          console.log('LINEAGE_56_SCREENSHOT_EVIDENCE_PASS');
+          NODE
+
+      - name: Upload Lineage 56 exact evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lineage-56-exact-evidence-24605bd46c552188ff00d6760c849931d6a3de15
+          path: test-results/lineage-56-exact/
+          if-no-files-found: warn
+          retention-days: 14
