@@ -6,7 +6,7 @@
 - Tracking issue: #134
 - Draft intake PR: #135
 - Provenance status: `PROVENANCE_UNRESOLVED`
-- Root-cause class: `INTAKE_SOURCE_PROVENANCE_MIS_ASSOCIATION`
+- Root-cause class: `INTAKE_SOURCE_PROVENANCE_MIS-ASSOCIATION`
 - Product policy inference: none. Source fixtures are evidence, not canonical V4 business rules.
 
 The earlier intake combined an historical recorded fingerprint, the Git-preserved HTML, and the currently observable Drive V1 object as if they were one byte-exact identity. Forensic review disproved that association. This document preserves the historical claim but separates all three identities.
