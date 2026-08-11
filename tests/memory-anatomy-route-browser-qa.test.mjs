@@ -151,7 +151,7 @@ async function exerciseTouchDrag(page, label) {
 
 async function exerciseSpatialLayerSelection(page, label) {
   const stage = page.locator('[data-spatial-authority="true"]');
-  await stage.getByText("MY NOTE", { exact: true }).first().click({ force: true });
+  await stage.locator('[data-spatial-layer="my-note"]').click({ force: true });
   await page.getByRole("heading", { name: "MY NOTE", exact: true }).waitFor();
   assert.match(await page.getByRole("heading", { name: "MY NOTE", exact: true }).locator("xpath=ancestor::aside[1]").innerText(), /USER AUTHORED/, `${label}: spatial click and 2D inspector share selected state`);
 }
