@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import {
   LINEAGE_58_VIDEOFIGURE_SOURCE,
   VIDEOFIGURE_LOOKS,
@@ -15,6 +15,7 @@ import {
   VIDEOFIGURE_ANGLES,
   angleStepFromHorizontalDelta,
   createVideoFigureTurntableState,
+  normalizeVideoFigureLookIndex,
   reduceVideoFigureTurntable,
   videoFigureAngleForState,
 } from "@/lib/videofigure-turntable";
@@ -82,15 +83,16 @@ export default function Lineage58VideoFigure() {
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
   }, []);
 
-  const scheduleResume = (delay = 900) => {
+  const scheduleResume = useCallback((delay = 900) => {
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
     if (reducedMotion) return;
     resumeTimer.current = setTimeout(() => dispatch({ type: "manual-end" }), delay);
-  };
+  }, [reducedMotion]);
 
   const selectLook = (index: number) => {
-    dispatch({ type: "select-look", index });
-    setAnnouncement(`${VIDEOFIGURE_LOOKS[index].name} 선택, 000도`);
+    const normalizedIndex = normalizeVideoFigureLookIndex(index, VIDEOFIGURE_LOOKS.length);
+    dispatch({ type: "select-look", index: normalizedIndex });
+    setAnnouncement(`${VIDEOFIGURE_LOOKS[normalizedIndex].name} 선택, 000도`);
     scheduleResume();
   };
 
@@ -98,6 +100,13 @@ export default function Lineage58VideoFigure() {
     dispatch({ type: "manual-start" });
     dispatch({ type: "step-angle", delta, manual: true });
     setAnnouncement(`${look.name} 각도 수동 변경`);
+    scheduleResume(700);
+  };
+
+  const selectAngle = (index: number) => {
+    dispatch({ type: "manual-start" });
+    dispatch({ type: "select-angle", index, manual: true });
+    setAnnouncement(`${look.name} ${VIDEOFIGURE_ANGLES[index]}도 선택`);
     scheduleResume(700);
   };
 
@@ -152,11 +161,11 @@ export default function Lineage58VideoFigure() {
     setModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setModalOpen(false);
     scheduleResume(900);
     requestAnimationFrame(() => triggerRef.current?.focus());
-  };
+  }, [scheduleResume]);
 
   useEffect(() => {
     if (!modalOpen) return;
@@ -177,7 +186,7 @@ export default function Lineage58VideoFigure() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [modalOpen]);
+  }, [modalOpen, closeModal]);
 
   const filtered = VIDEOFIGURE_LOOKS.map((item, index) => ({ item, index })).filter(({ item }) => {
     if (filter === "all") return true;
@@ -241,7 +250,7 @@ export default function Lineage58VideoFigure() {
         </div>
         <div className="lt58-videofigure__angle-controls" role="group" aria-label="Figure angle controls">
           <button type="button" onClick={(event) => { event.stopPropagation(); stepAngle(-1); }} aria-label="이전 각도">←</button>
-          <div>{VIDEOFIGURE_ANGLES.map((item, index) => <button key={item} type="button" className={index === state.angleIndex ? "is-active" : ""} aria-pressed={index === state.angleIndex} onClick={(event) => { event.stopPropagation(); dispatch({ type: "manual-start" }); for (let i = 0; i < VIDEOFIGURE_ANGLES.length; i += 1) { if (i === index) break; } const delta = index - state.angleIndex; if (delta !== 0) { const direction: -1 | 1 = delta > 0 ? 1 : -1; for (let count = 0; count < Math.abs(delta); count += 1) dispatch({ type: "step-angle", delta: direction, manual: true }); } scheduleResume(700); }} aria-label={`${item}도`}>{item}</button>)}</div>
+          <div>{VIDEOFIGURE_ANGLES.map((item, index) => <button key={item} type="button" className={index === state.angleIndex ? "is-active" : ""} aria-pressed={index === state.angleIndex} onClick={(event) => { event.stopPropagation(); selectAngle(index); }} aria-label={`${item}도`}>{item}</button>)}</div>
           <button type="button" onClick={(event) => { event.stopPropagation(); stepAngle(1); }} aria-label="다음 각도">→</button>
         </div>
         <small className="lt58-videofigure__drag-hint">DRAG HORIZONTALLY · ANGLE {angle}° · {state.manuallyOwned ? "MANUAL AUTHORITY" : state.playing ? "AUTO AUTHORITY" : "PAUSED"}</small>
