@@ -43,14 +43,16 @@ test("VideoFigure domain projection keeps Person, Moment and DerivedFigure/Look 
   }
 });
 
-test("80-frame registry is complete by Drive identity and remains fail-closed until all fingerprints are known", () => {
+test("80-frame fingerprints are complete while Git binary transfer remains fail-closed", () => {
   const gate = validateLineage58VideoFigureAssetRegistry();
   assert.equal(LINEAGE_58_VIDEOFIGURE_ASSETS.length, 80);
   assert.equal(gate.expected, 80);
   assert.equal(gate.registered, 80);
   assert.deepEqual(gate.missing, []);
   assert.deepEqual(gate.unexpected, []);
-  assert.equal(gate.metadataComplete, 4);
+  assert.equal(gate.metadataComplete, 80);
+  assert.equal(gate.fingerprintComplete, true);
+  assert.equal(gate.binaryTransferStatus, "hold");
   assert.equal(gate.exactGatePass, false);
   assert.equal(gate.holdMarker, LINEAGE_58_VIDEOFIGURE_ASSET_HOLD);
   assert.equal(gate.holdMarker, "EXACT_VIDEOFIGURE_ASSET_TRANSFER_HOLD");
@@ -65,6 +67,7 @@ test("representative exact fingerprints remain pinned", () => {
   assert.equal(byName("A_090.png")?.sha256, "2f25c7e3d9f41440fe625015cc6a8354afcd365982a856c514f7292e5e725933");
   assert.equal(byName("F_000.png")?.sha256, "635edc36c4db1869c18bfe3c0ab64d9b309e00ca0c60f67b7ee2e3f34503b19c");
   assert.equal(byName("J_315.png")?.sha256, "9cd73e2c1d9cb5119976eb2c4a456fd49be28cda587217b3c5e740bb1c0690ae");
+  assert.deepEqual([...new Set(LINEAGE_58_VIDEOFIGURE_ASSETS.map((asset) => `${asset.width}x${asset.height}`))].sort(), ["378x506", "412x464", "412x465"]);
 });
 
 test("autoplay completes eight ordered angles before advancing to the next Look", () => {
