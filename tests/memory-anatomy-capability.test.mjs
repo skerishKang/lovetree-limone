@@ -27,6 +27,17 @@ const EXPECTED_ORDER = [
   ["connection", "CONNECTION", "NEXT PATH"],
 ];
 
+// Continuous pointer-rotation products (delta * sensitivity) are IEEE-754
+// approximations of their semantic values, so compare within machine
+// precision instead of demanding exact integer equality.
+function assertNearlyEqual(actual, expected) {
+  const tolerance = Number.EPSILON * Math.max(1, Math.abs(expected)) * 16;
+  assert.ok(
+    Math.abs(actual - expected) <= tolerance,
+    `expected ${actual} to be within ${tolerance} of ${expected}`,
+  );
+}
+
 test("Memory Stack source provenance is byte exact", async () => {
   const bytes = await readFile(SOURCE);
   assert.equal(bytes.byteLength, 15578);
@@ -75,8 +86,8 @@ test("assemble explode and arbitrary explosion are deterministic and clamped", (
 test("rotation state is pure and bounded", () => {
   const initial = createMemoryAnatomyState();
   const moved = memoryAnatomyReducer(initial, { type: "rotate-by", deltaX: 100, deltaY: -100 });
-  assert.equal(moved.rotationY, initial.rotationY + 18);
-  assert.equal(moved.rotationX, 2);
+  assertNearlyEqual(moved.rotationY, initial.rotationY + 18);
+  assertNearlyEqual(moved.rotationX, 2);
   assert.match(memoryLayerTransform(6, moved), /translate3d/);
 });
 
