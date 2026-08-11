@@ -7,7 +7,7 @@ import "@/app/styles/lineage-58-videofigure.css";
 export default function Lineage58VideoFigurePage() {
   const gate = validateLineage58VideoFigureAssetRegistry();
   return (
-    <main style={{ minHeight: "100vh", background: "#06070b", padding: 14 }}>
+    <main style={{ minHeight: "100vh", width: "100%", overflowX: "clip", background: "#06070b", padding: 14 }}>
       <header style={{ maxWidth: 1480, margin: "0 auto 12px", color: "#f7f2ec", display: "flex", gap: 16, justifyContent: "space-between", alignItems: "end", flexWrap: "wrap" }}>
         <div>
           <Link href="/design-lab" style={{ color: "#b9b1aa", fontSize: 13 }}>← Design Lab</Link>
