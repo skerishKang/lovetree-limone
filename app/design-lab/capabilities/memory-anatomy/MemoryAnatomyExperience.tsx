@@ -200,6 +200,7 @@ export function MemoryAnatomyExperience() {
               {layers.map((layer) => (
                 <div
                   key={layer.id}
+                  data-spatial-layer={layer.id}
                   className={`${styles.spatialLayer} ${layer.id === state.selectedLayerId ? styles.activeLayer : ""}`}
                   style={{
                     "--layer-color": COLORS[layer.index],
