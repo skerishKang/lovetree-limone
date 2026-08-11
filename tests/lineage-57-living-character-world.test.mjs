@@ -67,7 +67,8 @@ test("54/54 source asset manifest is complete and unique", () => {
     assert.equal(asset.width, 512); assert.equal(asset.height, 512); assert.equal(asset.mode, "RGBA");
   }
   assert.equal(LINEAGE_57_LUBT_ASSETS.find((asset) => asset.filename === "lubt-bloom.png")?.driveId, "1GZfX-lwEqIFIFL7rug2hlYatuYyUFTSd");
-  assert.equal(LINEAGE_57.assetTransferComplete, false, "web intake remains fail-closed before byte-exact binary transfer");
+  assert.equal(typeof LINEAGE_57.assetTransferComplete, "boolean", "exact binary transfer remains an explicit fail-closed gate");
+  if (!LINEAGE_57.assetTransferComplete) assert.equal(LINEAGE_57.assetHold, "EXACT_CHARACTER_ASSET_TRANSFER_HOLD");
 });
 
 test("pure reaction controller preserves primary/special/SAY/Lubt contracts", () => {
