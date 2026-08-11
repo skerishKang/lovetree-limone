@@ -74,12 +74,10 @@ export default function CrystalMemoryAtelierV3() {
     return () => query.removeEventListener("change", sync);
   }, []);
 
+  const autoplayRunning = autoplay && !reducedMotion;
+
   useEffect(() => {
-    if (reducedMotion) {
-      setAutoplay(false);
-      return;
-    }
-    if (!autoplay) return;
+    if (!autoplayRunning) return;
     autoplayIndex.current = 0;
     const apply = () => {
       const next = CRYSTAL_EXPRESSION_AUTOPLAY[autoplayIndex.current % CRYSTAL_EXPRESSION_AUTOPLAY.length];
@@ -90,7 +88,7 @@ export default function CrystalMemoryAtelierV3() {
     apply();
     const timer = window.setInterval(apply, CRYSTAL_EXPRESSION_INTERVAL_MS);
     return () => window.clearInterval(timer);
-  }, [autoplay, reducedMotion]);
+  }, [autoplayRunning]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -217,8 +215,8 @@ export default function CrystalMemoryAtelierV3() {
           <div className="lt56__rings" aria-hidden="true" />
           <div className="lt56__status">RELIC STATE · <b>{stateLabel}</b></div>
           <div className="lt56__stage-actions">
-            <button className="is-primary" onClick={() => setAutoplay((value) => !value)} aria-pressed={autoplay} disabled={reducedMotion}>
-              {autoplay ? "PAUSE EXPRESSIONS" : "PLAY EXPRESSIONS"}
+            <button className="is-primary" onClick={() => setAutoplay((value) => !value)} aria-pressed={autoplayRunning} disabled={reducedMotion}>
+              {autoplayRunning ? "PAUSE EXPRESSIONS" : "PLAY EXPRESSIONS"}
             </button>
             <button onClick={() => manualExpression("sleeping")}>CLOSE EYES</button>
           </div>
