@@ -2,6 +2,7 @@ import { VIDEOFIGURE_ANGLES, type VideoFigureAngle } from "./videofigure-turntab
 
 export const LINEAGE_58_VIDEOFIGURE_ASSET_ROOT = "public/design-lab/lineages/58/videofigure/frames";
 export const LINEAGE_58_VIDEOFIGURE_ASSET_HOLD = "EXACT_VIDEOFIGURE_ASSET_TRANSFER_HOLD" as const;
+export const LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS = "hold" as const;
 
 export interface VideoFigureAssetFingerprint {
   figureId: string;
@@ -9,47 +10,104 @@ export interface VideoFigureAssetFingerprint {
   filename: string;
   driveId: string;
   bytes: number;
-  width: number | null;
-  height: number | null;
-  sha256: string | null;
+  width: number;
+  height: number;
+  sha256: string;
   targetPath: string;
   role: "runtime-required";
   rightsStatus: "design-fixture-only";
 }
 
-type Registered = readonly [driveId: string, bytes: number, width?: number, height?: number, sha256?: string];
+type Registered = readonly [driveId: string, bytes: number, width: number, height: number, sha256: string];
 
 const REGISTRY: Record<string, Registered> = {
   A_000: ["1D9B38Hr_r8O49z-SQPS9qHN4L79hGxGX",85587,378,506,"3d2a75387485ead8a468dd89f0f21cb548b580d70094816b16c15fd2af3dda22"],
-  A_045: ["19v0Q1MZtDXvhk1cGp89ihLxjfJHj19p7",79567], A_090: ["1_sMPkN_AHGdBXNIlts_WM8PXRzVRpdQJ",59409,378,506,"2f25c7e3d9f41440fe625015cc6a8354afcd365982a856c514f7292e5e725933"], A_135: ["1Jf3Ejmi3BIbClbjpix-5fgWbKzDlqUiw",76359], A_180: ["1hxw3C_IwyUneC_xre0BWBu2vgne2V7JT",84078], A_225: ["1aKC6puMdis_-okdPsmw8ZhVL2E-Mwb5y",75558], A_270: ["1qtb82gczOKcnRb21l_cHHw7sfhIy544j",59296], A_315: ["14JmThFzDByS1xGRtULAYKQhjdutZpmRR",81759],
-  B_000: ["1DEcsf3Hmw79pdXFK7zSFbcTmUiuq2JhI",98978], B_045: ["1BIGHipPsIJrjRJ6CGbfdUhLddtImhNMT",93299], B_090: ["1GEtFKguASDg7AEJWcPF3cp8d9AMNLU1Y",67089], B_135: ["1cOmlt5xxo4qbIVvDkmb41KkDdmeOY8pC",81853], B_180: ["1K2LgD8bIUyUjvcG5jEZ0qxJwNCUen2jR",90894], B_225: ["1Uqd-aXI5ob_0aPnrCWlcBdSZVQEvCl1J",84954], B_270: ["1GowQ3lhRAvI7sFCBELMuzmpPkraHWBxw",65313], B_315: ["11RBdI6gY3PJyTDmrKLVb0kfG5mccLVbx",94590],
-  C_000: ["1_RpJNqMSxbeyPbF9xpHP-Es9q2KwqRuR",85002], C_045: ["1_psMeo6vIGHorNkwrDgKMCq0Nb9R9NNu",76219], C_090: ["1x0hrs9OR9RayakmbYzHhsRNAdcAkdCTS",55147], C_135: ["1D7dMIUsoX9B7MjPnapnHJf7c0SCRZxHL",71430], C_180: ["1shkODpqvQ-iTEwFW2cGaGV6jp5PkvYwk",83365], C_225: ["1NMXejuZ_A1BhlW9LOeEeL51nHmTGAEIC",72698], C_270: ["1SwXkgkNW6wDerrZymZzHpEH-nuvwSAdt",57973], C_315: ["1rIzAZ_tCB3KmT95oeyBzzNp_QcDXzbjf",78076],
-  D_000: ["1jtIUpXgWLRo6VtojTPeyI1GCv5kbcKD1",87576], D_045: ["1b_WOWztjRc3pY1d4bmLG5bPMIhnuZu5z",83938], D_090: ["1kOXbajqGLglX9fR9i97sRo-EAMP8X3cH",60622], D_135: ["1-0va4ymv_n1mnisWfHHKqw_NaO_nkg1o",83147], D_180: ["1l5Mnv61y7VK17HKeBsUbwiD3WskKZAGC",83711], D_225: ["1KEDxv7Ykn0g6Tow5iGiJlQZ7_hpsCujc",79840], D_270: ["18PAOoVdGjNZgGxl95PNbCZp69vQgbQcq",59005], D_315: ["1e-AvM2y50eekKOy0ELsCV4UqQIz-b7ZR",83454],
-  E_000: ["1HJzWQUh0oq14WEOMWs1ruh4Ci0Tq9_dL",109002], E_045: ["1cSjBXPFf-yLht8QBJF_U2yOyE2Mnm6lh",99512], E_090: ["1fHIYInV7ANREvwaUteN346SIeeN4g5YN",74029], E_135: ["1BJFt2dbfF6FSyLuRqNsOsPIDsqhooH_j",97812], E_180: ["1n4P--wi_c8TQoF1q7Pp_JCA9DzRlsh_3",108105], E_225: ["12f2_MTtFpQDC4ltNQ1VyGgxSr2rMhLp_",95962], E_270: ["15WUzbZWjgT-hGpFWGH_m9BKkCU6hVX58",77070], E_315: ["1q0PbGTulQXei7TL9l-Wg4iSSffsW-g46",101774],
-  F_000: ["1tXGC4CQCl0sto04rDl0ttt9YCiscQFtn",72623,412,464,"635edc36c4db1869c18bfe3c0ab64d9b309e00ca0c60f67b7ee2e3f34503b19c"], F_045: ["1Jc_ND8gPBpN5esvK4cAr33udA9Gj9hcx",69592], F_090: ["1EtSYg2grNUHeACjqdXytoXRZfe8OmOfj",60510], F_135: ["1OIxzfdpkOICLT5wN7ob7odQ13eUvRM50",63769], F_180: ["1sy7ffV0em7wo0se3d-ujrkmkdYkooaTP",67627], F_225: ["14wKRAba3M8a3RUPdNOyBupU0DHvaoBBE",61095], F_270: ["17UCiCrfKcEnOiomUaBR_Yds4yTvr5081",55380], F_315: ["1B-xf0keWR_I24iGh-QH19wVwXuv4Wzqk",68282],
-  G_000: ["1arg_v64jfEOzmStdxJUnIN6JR_Jm2yNa",87570], G_045: ["10pFESS7n0fFdcBXJxzEJU9gNxg_KbDi_",85530], G_090: ["1kcylVPvr0Y0zmYUuz_qvHVwJ8lyCXRHg",62129], G_135: ["1GZbz3_1XU4UjX0fim2KEYIhvyMPvDA5b",77212], G_180: ["1OTi6xMJnp4vuNbw986ceRW7jBq_BJjYu",79600], G_225: ["147dU8UzvvPo9ctcWQlOVkKILy5BGJ5Op",74143], G_270: ["1AbZhwDrs8_S39KZeNHzUktWVCn-47wio",58932], G_315: ["1IxHcqpnyj4qioyAQfUzuPCA2Yos8UlnU",81525],
-  H_000: ["1R9tTuowLfm3vSF9IPpoTdJMteaV7db0z",84572], H_045: ["1fbN3PWId3Qf-ACEY0uXgFZBWDkNYyilg",82154], H_090: ["1xV-JhqngtgA57U0zKAAbsbE7vfQSMjBh",58795], H_135: ["1LflYOcPX-CKmWo-RyEcuukOhXsjcjaMD",72826], H_180: ["1_gOmuX4sKFMNwOjle-8ue0nvwSgAZ8Hf",80322], H_225: ["1217mFNjv-opOBlzoJSAAdCG7DeBjE_9r",73445], H_270: ["1kmbYNdAm1S4943yj7CaVffckN7WSG5oD",56603], H_315: ["11nrdszb9T-omlXZkiGWxlt_WVQukS31f",87305],
-  I_000: ["1OZViE0kMr0hTIt6atnLsdt00ActPDF9a",86137], I_045: ["1kWWZTdSS6dmBRhfylPaq_8ZUp2qxReLX",85759], I_090: ["1U_pvMi_JO70NaWfgtVTwycfbRDcm16r7",59168], I_135: ["10yJWt-ZnGzIU5hiwHfedJEx0ACMXsDHV",76377], I_180: ["17ce3taFN0i5h71mC82-5p_a-1vBkaS30",80506], I_225: ["1sgL7Ri4YNSXb63ULki2FAvfNSY7gGKI2",76192], I_270: ["1-0QdEGfmfqDQB3flxc7FrpyC58hBTxrB",59569], I_315: ["1Mwn_MN-DG265t18RSoEHRj4OURTiul8N",79909],
-  J_000: ["1jc1Q6jAgst5ztyB4q-gvwO65mPc9UBFF",109532], J_045: ["109L58uF9O6cYEud3ZhRNKb6qB0a9qfHg",106445], J_090: ["1QE5h3mhsAvKBNajyo3Be8eChvXNASB8K",78247], J_135: ["1lHkqv7fI9-2iGPt51-y_7_fb9BXanaj9",101793], J_180: ["1sB6ItEzZqxZy3O_O72wbXHDIBpqocDIh",107823], J_225: ["19sw7l4hd61PpOeDswAXsWN1WA0ouwD-u",104639], J_270: ["18c644DRQ3Saf-2J7fzwTxweEs4nluoGi",79667], J_315: ["1u4Ro6QmBouVdbtNPvV-beVZxYl1Bu0K3",107432,378,506,"9cd73e2c1d9cb5119976eb2c4a456fd49be28cda587217b3c5e740bb1c0690ae"],
+  A_045: ["19v0Q1MZtDXvhk1cGp89ihLxjfJHj19p7",79567,378,506,"54ea07747dff646881333443b6d991d10e808688923ddbf22404477853f095a5"],
+  A_090: ["1_sMPkN_AHGdBXNIlts_WM8PXRzVRpdQJ",59409,378,506,"2f25c7e3d9f41440fe625015cc6a8354afcd365982a856c514f7292e5e725933"],
+  A_135: ["1Jf3Ejmi3BIbClbjpix-5fgWbKzDlqUiw",76359,378,506,"c05591977e539eef34c3e4431225750d56b9d17cf10ff6d542c357d5ec56c9e2"],
+  A_180: ["1hxw3C_IwyUneC_xre0BWBu2vgne2V7JT",84078,378,506,"7006f733161e789d0e82bba36d24781f5a652844c0d6e3045d775f4f84ddcb5c"],
+  A_225: ["1aKC6puMdis_-okdPsmw8ZhVL2E-Mwb5y",75558,378,506,"1e177951e460d0e3088f4aacc7685d351c616e06299c3659de11afd9504e2cc2"],
+  A_270: ["1qtb82gczOKcnRb21l_cHHw7sfhIy544j",59296,378,506,"65074b948ef70864d81622e6c1046a6d8039700eab50827d9d105b8dadb6d3ec"],
+  A_315: ["14JmThFzDByS1xGRtULAYKQhjdutZpmRR",81759,378,506,"7e1cedabf4122e1dc5d15d31d5ae386271c93a081c509f757aa13c5a617a79a3"],
+  B_000: ["1DEcsf3Hmw79pdXFK7zSFbcTmUiuq2JhI",98978,378,506,"6c191f87c4ad757ef4cb71d91bdbd8902b3036d80932e7c1dd7f7bb03202fe7e"],
+  B_045: ["1BIGHipPsIJrjRJ6CGbfdUhLddtImhNMT",93299,378,506,"0e4732fbe5e9da3d7b4abe11be536ef57d0e4961494f5c284296b7a5281d26fb"],
+  B_090: ["1GEtFKguASDg7AEJWcPF3cp8d9AMNLU1Y",67089,378,506,"2208320b15d73593bf76fede18893a2050a851dcf7b0bdacc9e718a1131bc23e"],
+  B_135: ["1cOmlt5xxo4qbIVvDkmb41KkDdmeOY8pC",81853,378,506,"16f171102aa68f79ef07ea12d8c93ffc50b0ee7e827e3bbf5be506c4bfd8c749"],
+  B_180: ["1K2LgD8bIUyUjvcG5jEZ0qxJwNCUen2jR",90894,378,506,"fd5516d210e8536ca1863ae157f2c55f8252668b9174d764c2519dd83c5a1aa8"],
+  B_225: ["1Uqd-aXI5ob_0aPnrCWlcBdSZVQEvCl1J",84954,378,506,"252e3d40ae5109fcc1299098f464db05807088467761d84383a710f8ada287a8"],
+  B_270: ["1GowQ3lhRAvI7sFCBELMuzmpPkraHWBxw",65313,378,506,"fdf65fe539fa30c667adcd7d3d500bf5ad367c8ad3654d8f4249c078600a033e"],
+  B_315: ["11RBdI6gY3PJyTDmrKLVb0kfG5mccLVbx",94590,378,506,"3ecce85172b4044742e00adff9c7ba409c80ba97fa8ee483eab4bdf92f7ba19e"],
+  C_000: ["1_RpJNqMSxbeyPbF9xpHP-Es9q2KwqRuR",85002,412,464,"c4036acf05883ed72955f4c841c1213217025711b061be9f1e0f9d289a5ae2de"],
+  C_045: ["1_psMeo6vIGHorNkwrDgKMCq0Nb9R9NNu",76219,412,464,"fbd6181e55dc8f1d98e73c76ec48dfe5fbafc745d423f748d002f97f2939cc63"],
+  C_090: ["1x0hrs9OR9RayakmbYzHhsRNAdcAkdCTS",55147,412,464,"3fde31b409ca23d7241d642e0b6a68aa429ef84c94d612547c25f67fc23a559b"],
+  C_135: ["1D7dMIUsoX9B7MjPnapnHJf7c0SCRZxHL",71430,412,464,"253e24b8011333141a17fa7d602653324130c6bb13fe241c3ec074984ffbd90f"],
+  C_180: ["1shkODpqvQ-iTEwFW2cGaGV6jp5PkvYwk",83365,412,465,"6f6b0538313b4dee80c9c1d7162134802634020a1fbb5b740724dd881d29245f"],
+  C_225: ["1NMXejuZ_A1BhlW9LOeEeL51nHmTGAEIC",72698,412,465,"1185f3a84e8a42880fa87aa2950c1d6aa7f39805b8f1195985eb7168b82c76a4"],
+  C_270: ["1SwXkgkNW6wDerrZymZzHpEH-nuvwSAdt",57973,412,465,"496261bbd33b95f4ed0868632f023aa5a74751f222a2db9f5b36fbb2f6cad408"],
+  C_315: ["1rIzAZ_tCB3KmT95oeyBzzNp_QcDXzbjf",78076,412,465,"7d3f5a92175fb44c81972807792b27d15b1f292abac47f5a74f1b7293f1f8d7f"],
+  D_000: ["1jtIUpXgWLRo6VtojTPeyI1GCv5kbcKD1",87576,412,464,"7c260c1df9518aaf83eb1ee795015d04f2428d7690aee8e209a05c60b28e71b2"],
+  D_045: ["1b_WOWztjRc3pY1d4bmLG5bPMIhnuZu5z",83938,412,464,"d899c87196029b60b3e0afab02b1eadbda38adbb1ccb2c79c57ccba058ab8723"],
+  D_090: ["1kOXbajqGLglX9fR9i97sRo-EAMP8X3cH",60622,412,464,"fb2a100ae6926dc6ad8b7e3a2902df9d7bd397e07b35643bf837f928ab0fdb2c"],
+  D_135: ["1-0va4ymv_n1mnisWfHHKqw_NaO_nkg1o",83147,412,464,"96dd47725a4e7887150e42ec330d9722ba1856e195f79510e301961853935952"],
+  D_180: ["1l5Mnv61y7VK17HKeBsUbwiD3WskKZAGC",83711,412,465,"9bc3c10a74505a99f83266db601076ff0dcc60613914463a6f143025a44571cf"],
+  D_225: ["1KEDxv7Ykn0g6Tow5iGiJlQZ7_hpsCujc",79840,412,465,"4673865faa02b42772a29a6ec12529077a3746df262f55a0628330a806e218a9"],
+  D_270: ["18PAOoVdGjNZgGxl95PNbCZp69vQgbQcq",59005,412,465,"23afc382c42f2c9433fe9b2f75be5e25687a605b3c6699c74083586a553f94dd"],
+  D_315: ["1e-AvM2y50eekKOy0ELsCV4UqQIz-b7ZR",83454,412,465,"abca5ee2d40c0dd639e71a1cc88ff99084ff81bf3a985b4be821a157c5dc0d08"],
+  E_000: ["1HJzWQUh0oq14WEOMWs1ruh4Ci0Tq9_dL",109002,378,506,"a6c762ce3adea4d2113f09461fe72b2961ba625ad63379626cc70ea1537d275e"],
+  E_045: ["1cSjBXPFf-yLht8QBJF_U2yOyE2Mnm6lh",99512,378,506,"4795391336ce1b165d151ea51c061d1d5ce7d651d873c10650bbb345b67e046e"],
+  E_090: ["1fHIYInV7ANREvwaUteN346SIeeN4g5YN",74029,378,506,"0250860949aaf1a9bd76aa7ec41fe344c662774dd24f70aa7ad7e9f761c1964f"],
+  E_135: ["1BJFt2dbfF6FSyLuRqNsOsPIDsqhooH_j",97812,378,506,"9c075061c78fe73db93a4e27d40f7e830146dbdcfb88df47349b57878db25c19"],
+  E_180: ["1n4P--wi_c8TQoF1q7Pp_JCA9DzRlsh_3",108105,378,506,"4cf1e1bef1509df9243921e4810b11f939f6fecf8a7685cf6ec35a6df46f74ed"],
+  E_225: ["12f2_MTtFpQDC4ltNQ1VyGgxSr2rMhLp_",95962,378,506,"4c2509114d28781f7cede2494b3bd69ba1d9e40d47b0677dba359927d5e1dda3"],
+  E_270: ["15WUzbZWjgT-hGpFWGH_m9BKkCU6hVX58",77070,378,506,"6f443aa27afa69ea2a8e060813db6e33a1418656d02e99824e19731a341c4fd9"],
+  E_315: ["1q0PbGTulQXei7TL9l-Wg4iSSffsW-g46",101774,378,506,"1bb7f7d8d1ffe6cbf0c7d452224f423e648fcc6c9eae3339a039335c0b5609c6"],
+  F_000: ["1tXGC4CQCl0sto04rDl0ttt9YCiscQFtn",72623,412,464,"635edc36c4db1869c18bfe3c0ab64d9b309e00ca0c60f67b7ee2e3f34503b19c"],
+  F_045: ["1Jc_ND8gPBpN5esvK4cAr33udA9Gj9hcx",69592,412,464,"8b9839d344961a82eb2212e10945d86c00135a93ee8a3d8d0ec7b32bbee243c2"],
+  F_090: ["1EtSYg2grNUHeACjqdXytoXRZfe8OmOfj",60510,412,464,"dbfdbb09c8f9866519e2a538b3a75e2e012f558ec0d9921954e90902393c66bf"],
+  F_135: ["1OIxzfdpkOICLT5wN7ob7odQ13eUvRM50",63769,412,464,"a367374e62ab4de2f68386421dcf926c3796a414d688390954b48cca1378c556"],
+  F_180: ["1sy7ffV0em7wo0se3d-ujrkmkdYkooaTP",67627,412,465,"b4f615eb8cc25fe3a74295b86e38231a32cae565edb4c33a260d541ab764555d"],
+  F_225: ["14wKRAba3M8a3RUPdNOyBupU0DHvaoBBE",61095,412,465,"d7316e58a1e79853a3f55e0c2bc1a76f05d68efb74a25ab5b68a8a5c992d72c4"],
+  F_270: ["17UCiCrfKcEnOiomUaBR_Yds4yTvr5081",55380,412,465,"b6c79629a984985cfb8494e32bd497dbcd35b3733d77ff87d5061fa8d2fe91da"],
+  F_315: ["1B-xf0keWR_I24iGh-QH19wVwXuv4Wzqk",68282,412,465,"e845b8904914ab88724baf1287fb6b73286d28ea88a14aae373ba706d8f1d724"],
+  G_000: ["1arg_v64jfEOzmStdxJUnIN6JR_Jm2yNa",87570,378,506,"087220a45e34dad9c57608fa05993f6d3239bf6a6585b5dfb2a1f69c8bcd75be"],
+  G_045: ["10pFESS7n0fFdcBXJxzEJU9gNxg_KbDi_",85530,378,506,"2926793324b2cf1b554cefa0b75ffa147e297b5c3d5f0d571826efa104347ead"],
+  G_090: ["1kcylVPvr0Y0zmYUuz_qvHVwJ8lyCXRHg",62129,378,506,"948ac5fe3e93e15681aaebbf42b0eeb11cddf0e7c27821215af2a81a4c4daac2"],
+  G_135: ["1GZbz3_1XU4UjX0fim2KEYIhvyMPvDA5b",77212,378,506,"3e30a8dd33c3130793779e9896964bfb4837b91d998dfcae37280f69687b8333"],
+  G_180: ["1OTi6xMJnp4vuNbw986ceRW7jBq_BJjYu",79600,378,506,"c230c9378678bb4d26774db4e3731e276bc59714b8a3f7d04eb7368d265412b6"],
+  G_225: ["147dU8UzvvPo9ctcWQlOVkKILy5BGJ5Op",74143,378,506,"3f0133fdeae47904a6ca73d2a2288678b4d5325f2f39b28f248e2e070075ed13"],
+  G_270: ["1AbZhwDrs8_S39KZeNHzUktWVCn-47wio",58932,378,506,"bf9ccbb0deea075c7b658b46d8f99d6831977296dd2c426a1a30088f599bcb04"],
+  G_315: ["1IxHcqpnyj4qioyAQfUzuPCA2Yos8UlnU",81525,378,506,"aa3f678fb9e16816e366c6da9d241c6c58fe0fd2bc4c1dc81b0618e231f12297"],
+  H_000: ["1R9tTuowLfm3vSF9IPpoTdJMteaV7db0z",84572,378,506,"ed0129151f13bdd2ff1ef9f46b8851a7dfcb4797193a77ba9d0e04489e05e285"],
+  H_045: ["1fbN3PWId3Qf-ACEY0uXgFZBWDkNYyilg",82154,378,506,"f9e20e43308d3ccd0f053e264327d60d06b87923c037925cbc17b64d41f8f485"],
+  H_090: ["1xV-JhqngtgA57U0zKAAbsbE7vfQSMjBh",58795,378,506,"09ea6db15b9b00f5a131094625c6049836a4fdf60f700656bb0fa31f99500015"],
+  H_135: ["1LflYOcPX-CKmWo-RyEcuukOhXsjcjaMD",72826,378,506,"a813ac89149b73c4c29bcc0d48a258dcc2270f156abf189fdcc37a98bb47c086"],
+  H_180: ["1_gOmuX4sKFMNwOjle-8ue0nvwSgAZ8Hf",80322,378,506,"b858b469c924bf56cc7a2452bbd011a499cf62f2243684b7a4b44fe661119c7f"],
+  H_225: ["1217mFNjv-opOBlzoJSAAdCG7DeBjE_9r",73445,378,506,"3cbb1d84b08c941930e4bad2fc15b56557b0e2a452c344c09c12a10d25fe8c95"],
+  H_270: ["1kmbYNdAm1S4943yj7CaVffckN7WSG5oD",56603,378,506,"4079f61b79c63156c6789f8d60369ebf5891a4ebb59941ad94437f30b459a791"],
+  H_315: ["11nrdszb9T-omlXZkiGWxlt_WVQukS31f",87305,378,506,"73d7da4fe132b05efdca82e522ffea2df564bd0eea341130e3121f7192bef8c2"],
+  I_000: ["1OZViE0kMr0hTIt6atnLsdt00ActPDF9a",86137,412,464,"c34213ab213ea49e208be9a37c0041e7e60aa2745dfba1eb4350ff6755b8f99d"],
+  I_045: ["1kWWZTdSS6dmBRhfylPaq_8ZUp2qxReLX",85759,412,464,"ac182697409e599bcc00faff437888d24d46aaceeea63fc4c58ba8fedcc74533"],
+  I_090: ["1U_pvMi_JO70NaWfgtVTwycfbRDcm16r7",59168,412,464,"28bf9be59fc716ecea966c0d1a08d5462c3db22680207dc1ff9af98d784072f8"],
+  I_135: ["10yJWt-ZnGzIU5hiwHfedJEx0ACMXsDHV",76377,412,464,"d40d3ee25d7d4e2befac8821c020580f5b75e2cf3a9ad213379fd111b0a04389"],
+  I_180: ["17ce3taFN0i5h71mC82-5p_a-1vBkaS30",80506,412,465,"c51921adc838fb0fa05d4e6fa0bda480b1f579d9912989d8ad8b45fc426634bf"],
+  I_225: ["1sgL7Ri4YNSXb63ULki2FAvfNSY7gGKI2",76192,412,465,"9e260d440494115fcfee8e3510545b42029774f2a360452744f260d36014282b"],
+  I_270: ["1-0QdEGfmfqDQB3flxc7FrpyC58hBTxrB",59569,412,465,"75c2fc18b0057e74dd5066263a278f8f957e15a3dc9fb3018c65ec2e0efee84f"],
+  I_315: ["1Mwn_MN-DG265t18RSoEHRj4OURTiul8N",79909,412,465,"399f5334d86066f9ebf81a6b595853c62e0ff6f422deab1f5609168ec7cd5cd7"],
+  J_000: ["1jc1Q6jAgst5ztyB4q-gvwO65mPc9UBFF",109532,378,506,"268675f60ab4b7c869c4743636bf8f0cc6b655261e8e0d6ea847b5341e79bd97"],
+  J_045: ["109L58uF9O6cYEud3ZhRNKb6qB0a9qfHg",106445,378,506,"a2e66968b69e8f24074962e58221853e709248250f9347a0e0c5e108e57d4466"],
+  J_090: ["1QE5h3mhsAvKBNajyo3Be8eChvXNASB8K",78247,378,506,"0dbbe338b8d1ff25783ee3fa137d5278d4422f174e5f07c37cb5cdd430f85fb4"],
+  J_135: ["1lHkqv7fI9-2iGPt51-y_7_fb9BXanaj9",101793,378,506,"6784d3b9a8b06bcc51a582f96e147055fa70758c5845f3eadd98d8b906a7321f"],
+  J_180: ["1sB6ItEzZqxZy3O_O72wbXHDIBpqocDIh",107823,378,506,"3042cf2cf161ce43bffcdabc51e03bd2b568af650ea77b9f200022a38f4a6e11"],
+  J_225: ["19sw7l4hd61PpOeDswAXsWN1WA0ouwD-u",104639,378,506,"1265cada128cf008048efb5bef2c2886de62758954699e5392ff2295dd798de9"],
+  J_270: ["18c644DRQ3Saf-2J7fzwTxweEs4nluoGi",79667,378,506,"762d1f9c5c348d37a722ddbc39461b892392734982d930cabddccc693e272d75"],
+  J_315: ["1u4Ro6QmBouVdbtNPvV-beVZxYl1Bu0K3",107432,378,506,"9cd73e2c1d9cb5119976eb2c4a456fd49be28cda587217b3c5e740bb1c0690ae"],
 };
 
 export const LINEAGE_58_VIDEOFIGURE_ASSETS: readonly VideoFigureAssetFingerprint[] = Object.entries(REGISTRY).map(([key, value]) => {
   const [figureId, angle] = key.split("_") as [string, VideoFigureAngle];
   const [driveId, bytes, width, height, sha256] = value;
   const filename = `${figureId}_${angle}.png`;
-  return {
-    figureId,
-    angle,
-    filename,
-    driveId,
-    bytes,
-    width: width ?? null,
-    height: height ?? null,
-    sha256: sha256 ?? null,
-    targetPath: `${LINEAGE_58_VIDEOFIGURE_ASSET_ROOT}/${filename}`,
-    role: "runtime-required",
-    rightsStatus: "design-fixture-only",
-  };
+  return { figureId, angle, filename, driveId, bytes, width, height, sha256, targetPath: `${LINEAGE_58_VIDEOFIGURE_ASSET_ROOT}/${filename}`, role: "runtime-required", rightsStatus: "design-fixture-only" };
 });
 
 export function validateLineage58VideoFigureAssetRegistry() {
@@ -58,14 +116,7 @@ export function validateLineage58VideoFigureAssetRegistry() {
   const actualKeys = new Set(LINEAGE_58_VIDEOFIGURE_ASSETS.map((asset) => `${asset.figureId}_${asset.angle}`));
   const missing = [...expectedKeys].filter((key) => !actualKeys.has(key));
   const unexpected = [...actualKeys].filter((key) => !expectedKeys.has(key));
-  const metadataComplete = LINEAGE_58_VIDEOFIGURE_ASSETS.filter((asset) => asset.sha256 && asset.width && asset.height).length;
-  return {
-    expected: 80,
-    registered: LINEAGE_58_VIDEOFIGURE_ASSETS.length,
-    metadataComplete,
-    exactGatePass: missing.length === 0 && unexpected.length === 0 && LINEAGE_58_VIDEOFIGURE_ASSETS.length === 80 && metadataComplete === 80,
-    missing,
-    unexpected,
-    holdMarker: LINEAGE_58_VIDEOFIGURE_ASSET_HOLD,
-  } as const;
+  const metadataComplete = LINEAGE_58_VIDEOFIGURE_ASSETS.filter((asset) => asset.sha256 && asset.width > 0 && asset.height > 0).length;
+  const fingerprintComplete = missing.length === 0 && unexpected.length === 0 && LINEAGE_58_VIDEOFIGURE_ASSETS.length === 80 && metadataComplete === 80;
+  return { expected: 80, registered: LINEAGE_58_VIDEOFIGURE_ASSETS.length, metadataComplete, fingerprintComplete, binaryTransferStatus: LINEAGE_58_VIDEOFIGURE_BINARY_TRANSFER_STATUS, exactGatePass: false, missing, unexpected, holdMarker: LINEAGE_58_VIDEOFIGURE_ASSET_HOLD } as const;
 }
