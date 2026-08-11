@@ -3,10 +3,12 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const componentPath = new URL("../app/design-lab/lineages/58/v2/Lineage58VideoFigure.tsx", import.meta.url);
+const pagePath = new URL("../app/design-lab/lineages/58/v2/page.tsx", import.meta.url);
 const cssPath = new URL("../app/styles/lineage-58-videofigure.css", import.meta.url);
 
-const [component, css] = await Promise.all([
+const [component, page, css] = await Promise.all([
   readFile(componentPath, "utf8"),
+  readFile(pagePath, "utf8"),
   readFile(cssPath, "utf8"),
 ]);
 
@@ -46,6 +48,7 @@ test("responsive fidelity surface covers required and narrow mobile viewports wi
   assert.match(css, /@media\(max-width:330px\)/);
   assert.match(css, /\.lt58-videofigure__provenance\{position:relative/);
   assert.doesNotMatch(css, /\.lt58-videofigure__provenance[^}]*display:none/);
+  assert.match(page, /overflowX: "clip"/);
 });
 
 test("exact-source image failure renders a hold instead of an approximate substitute", () => {
