@@ -207,7 +207,34 @@ async function assertMobileTouchAuthority(context, page, label) {
   await dispatchTouchSwipe(context, page, box, { x: 0.70, y: 0.50 }, { x: 0.30, y: 0.50 });
   await page.waitForTimeout(80);
   assert.notEqual(await page.locator(".lt58-videofigure__angle-controls > div button").first().getAttribute("aria-pressed"), "true", `${label}: real horizontal touch changes angle`);
+
+  const scrollCapacity = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+  if (scrollCapacity > 40) {
+    const beforeScroll = await page.evaluate(() => window.scrollY);
+    await dispatchTouchSwipe(context, page, box, { x: 0.50, y: 0.74 }, { x: 0.50, y: 0.26 });
+    await page.waitForTimeout(160);
+    const afterScroll = await page.evaluate(() => window.scrollY);
+    assert.ok(afterScroll > beforeScroll + 4, `${label}: vertical touch remains owned by page scroll`);
+  }
   assert.ok(await page.locator(".lt58-videofigure__provenance").isVisible(), `${label}: provenance remains reachable on mobile`);
+}
+
+async function assertDecodeErrorFallback(browser) {
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await context.newPage();
+  try {
+    await page.route("**/A_000.png", (route) => route.abort("failed"));
+    const response = await page.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
+    assert.ok(response?.ok(), `decode fallback route HTTP ${response?.status()}`);
+    assert.equal(await page.locator(".lt58-videofigure__gate").getAttribute("data-pass"), "true", "decode fallback is tested only after exact transfer gate PASS");
+    const hold = page.locator(".lt58-videofigure__asset-hold");
+    await hold.waitFor({ timeout: 10000 });
+    assert.match(await hold.innerText(), /EXACT SOURCE FRAME HOLD/);
+    assert.match(await hold.innerText(), /A_000\.png/);
+    assert.match(await hold.innerText(), /Approximate\/generated substitute is intentionally blocked/);
+  } finally {
+    await context.close();
+  }
 }
 
 async function assertReducedMotion(browser) {
@@ -264,6 +291,7 @@ try {
     }
   }
 
+  await assertDecodeErrorFallback(browser);
   await assertReducedMotion(browser);
   console.log("LINEAGE_58_ROUTE_BROWSER_QA_PASS");
 } finally {
