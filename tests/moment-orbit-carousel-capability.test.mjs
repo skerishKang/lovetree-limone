@@ -95,9 +95,12 @@ test("Moment Orbit Carousel component — axis state and mobile/reduced-motion p
   assert.match(component, /setPosition\(\(current\) => nearestEquivalentMomentPosition\(current, selectedIndex, count\)\)/);
   assert.match(component, /aria-modal=/);
   assert.match(component, /previousFocusRef/);
+  assert.match(component, /useLayoutEffect/);
   assert.match(component, /event\.key !== "Tab"/);
   assert.match(css, /overflow-x:auto/);
   assert.match(css, /@media\(max-width:759px\)/);
+  assert.match(css, /visibility:hidden;pointer-events:none/);
+  assert.match(css, /\.lt-moc__inspector\.is-open\{transform:none;visibility:visible;pointer-events:auto\}/);
   assert.match(css, /@media\(max-width:360px\)/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
   assert.match(css, /transition:none!important/);
