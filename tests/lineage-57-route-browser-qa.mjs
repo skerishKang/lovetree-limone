@@ -61,6 +61,17 @@ async function assertExpressionMatrix(page, label) {
       await expressions.nth(expression).click();
       const image = page.locator(".lcw-portrait img");
       await image.waitFor({ timeout: 5000 });
+      // The portrait <img> src swaps on every expression click; the decode lands a
+      // frame after the element exists, so await the 362x362 decode deterministically
+      // (same assertion, no weakening) before proceeding.
+      await page.waitForFunction(
+        () => {
+          const node = document.querySelector(".lcw-portrait img");
+          return !!node && node.complete && node.naturalWidth === 362 && node.naturalHeight === 362;
+        },
+        undefined,
+        { timeout: 5000 }
+      );
       assert.ok(await image.evaluate((node) => node.complete && node.naturalWidth === 362 && node.naturalHeight === 362), `${label}: character ${character + 1} expression ${expression + 1} decodes 362x362`);
     }
   }
@@ -128,8 +139,8 @@ async function assertMobileParity(page) {
   for (const name of ["TALK", "SING", "HEART", "SURPRISE", "CALL LUBT", "SAY"]) {
     assert.ok(await dialog.getByRole("button", { name, exact: true }).isVisible(), `mobile: ${name} remains reachable`);
   }
-  assert.ok(await dialog.getByLabel("Intensity").isVisible(), "mobile: intensity remains reachable");
-  assert.ok(await dialog.getByLabel("Liveliness").isVisible(), "mobile: liveliness remains reachable");
+  assert.ok(await dialog.getByRole("slider", { name: "Intensity" }).isVisible(), "mobile: intensity remains reachable");
+  assert.ok(await dialog.getByRole("slider", { name: "Liveliness" }).isVisible(), "mobile: liveliness remains reachable");
   assert.ok(await dialog.getByRole("button", { name: /SAVE THIS LIVING MOMENT/ }).isVisible(), "mobile: SAVE demo remains reachable");
   await dialog.getByRole("button", { name: "CLOSE" }).click();
 

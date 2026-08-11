@@ -13,7 +13,7 @@ export default function Lineage57V2Page() {
   return (
     <>
       <Lineage57LivingCharacterWorldV2 assetGatePassed={assetGatePassed} />
-      <aside style={{ position: "fixed", zIndex: 200, left: 8, bottom: 8, maxWidth: 350, padding: 8, borderRadius: 12, background: "#07070be8", border: "1px solid #ffffff24", color: "#bfb3c0", font: "7px/1.5 Arial" }}>
+      <aside className="lcw57-provenance-note" style={{ position: "fixed", zIndex: 200, left: 8, bottom: 8, maxWidth: 350, padding: 8, borderRadius: 12, background: "#07070be8", border: "1px solid #ffffff24", color: "#bfb3c0", font: "7px/1.5 Arial" }}>
         <Link href="/design-lab" style={{ color: "white" }}>← Design Lab</Link><br />
         LINEAGE 57 · V1 BASELINE → V2 INTERACTION REVISION · PARTIAL IMPLEMENT<br />
         Product job: {LINEAGE_57_SOURCE_BOUNDARIES.productJob}<br />
