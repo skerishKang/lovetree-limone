@@ -42,6 +42,13 @@ test("gesture and accessibility boundaries are represented explicitly", () => {
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
 
+test("progressive angle preload stays bounded to nearby exact frames", () => {
+  assert.match(component, /look\.angleAssets\.slice\(state\.angleIndex \+ 1, state\.angleIndex \+ 3\)/);
+  assert.match(component, /image\.decoding = "async"/);
+  assert.match(component, /image\.src = asset\.path/);
+  assert.match(component, /images\.forEach\(\(image\) => \{ image\.src = ""; \}\)/);
+});
+
 test("responsive fidelity surface covers required and narrow mobile viewports without hiding provenance", () => {
   assert.match(css, /@media\(max-width:720px\)/);
   assert.match(css, /@media\(max-width:390px\)/);
