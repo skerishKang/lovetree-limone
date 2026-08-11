@@ -17,7 +17,7 @@ jobs:
       - name: Checkout exact Lineage 56 head
         uses: actions/checkout@v4
         with:
-          ref: 2649fc105a280b5f3179759e62a2b773de56a8d8
+          ref: 7095fd2c395fae5e52fb9566a0de7a1299553bbb
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -97,7 +97,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lineage-56-exact-evidence-2649fc105a280b5f3179759e62a2b773de56a8d8
+          name: lineage-56-exact-evidence-7095fd2c395fae5e52fb9566a0de7a1299553bbb
           path: test-results/lineage-56-exact/
           if-no-files-found: warn
           retention-days: 14
