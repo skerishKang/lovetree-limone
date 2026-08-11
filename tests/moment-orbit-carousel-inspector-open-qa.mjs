@@ -33,6 +33,12 @@ test("Moment Orbit Carousel candidate — 390x844 inspector-open evidence", { ti
     await page.getByRole("button", { name: /SELECTED MOMENT ·/ }).click();
     const inspector = page.locator(".lt-moc__inspector.is-open");
     await inspector.waitFor();
+    await page.waitForFunction(() => {
+      const panel = document.querySelector(".lt-moc__inspector.is-open");
+      if (!(panel instanceof HTMLElement)) return false;
+      const box = panel.getBoundingClientRect();
+      return box.left >= -1 && box.top >= -1 && box.right <= window.innerWidth + 1 && box.bottom <= window.innerHeight + 1;
+    });
 
     const inspectorBox = await inspector.boundingBox();
     assert.ok(inspectorBox, "inspector-open: panel has geometry");
