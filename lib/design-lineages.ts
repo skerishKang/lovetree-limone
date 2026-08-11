@@ -133,6 +133,33 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
+  {
+    id: "lt-57-living-character-world",
+    number: 57,
+    label: "Living Character World",
+    status: "active",
+    summary: "Person/Subject representation의 감정 반응과 Lubt Memory Guide의 문맥 응답을 결합한 reactive-character 계보입니다. 3D world/navigation 계보가 아닙니다.",
+    scenarios: ["people-archive", "relationship-retrospective"],
+    currentDecision: "V1을 baseline으로 보존하고 V2를 V1 base composition 위의 interaction Revision으로 검토합니다. Native candidate는 PARTIAL IMPLEMENT이며 exact 54개 binary asset gate 통과 전에는 visual source-fidelity PASS를 주장하지 않습니다.",
+    sourceLabel: "07_LoveTree_Living_Character_World_V2 / Drive 1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH / Issue #138",
+    revisions: [
+      {
+        id: "57-v1-living-character-world",
+        label: "V1 Baseline Living Character World",
+        decision: "baseline",
+        executable: true,
+        notes: "V1 source baseline · index.html 22,218 B · SHA256 d71197cf97db913a7498e8ce732acf4f094e13d83fde06129d04c265fd1b6710",
+      },
+      {
+        id: "57-v2-reactive-character-lubt",
+        label: "V2 Reactive Character + Lubt",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/57/v2",
+        notes: "V1 base + V2 interaction overlay · Reactive Character + Memory Guide · PARTIAL IMPLEMENT · EXACT_CHARACTER_ASSET_TRANSFER_HOLD until 54/54 byte-exact binaries land",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
