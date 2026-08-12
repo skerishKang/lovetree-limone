@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LoveTree Memory Blossom Hero v1</title>
+<style>
+*{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Arial,"Noto Sans KR",sans-serif;background:#050615;color:#fff;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 40%,#0f1638 0%,#080b22 35%,#03040d 82%);z-index:-4}
+#stars{position:fixed;inset:0;z-index:-3;background-image:radial-gradient(#ffffffcc 1px,transparent 1px);background-size:38px 38px;opacity:.13}
+#stars2{position:fixed;inset:0;z-index:-2;background-image:radial-gradient(#ffd6ff99 1px,transparent 1px);background-size:73px 73px;opacity:.09;transform:translate(15px,22px)}
+.app{height:100%;display:grid;grid-template-columns:86px 1fr 365px;grid-template-rows:68px 1fr;gap:0}
+.sidebar{grid-row:1/3;grid-column:1/2;border-right:1px solid #ffffff18;background:#050711dd;backdrop-filter:blur(18px);padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:20px;z-index:10}
+.logo{width:46px;height:46px;border:1px solid #ffffff2a;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:-1px;background:linear-gradient(180deg,#ffffff12,#ffffff05)}
+.navdot{width:44px;height:44px;border-radius:15px;border:1px solid transparent;display:flex;align-items:center;justify-content:center;color:#8b8faa;cursor:pointer;transition:.3s}
+.navdot:hover,.navdot.active{color:#fff;border-color:#ffffff1e;background:#ffffff08;box-shadow:0 0 25px #9977ff22}
+.spacer{flex:1}
+.header{grid-column:2/4;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid #ffffff15;background:#070916aa;backdrop-filter:blur(16px);z-index:9}
+.brand{font-size:13px;letter-spacing:5px;font-weight:700}.brand small{color:#9b9fb8;letter-spacing:1px;margin-left:12px;font-weight:400}
+.headerBtns{margin-left:auto;display:flex;gap:10px}.pill{border:1px solid #ffffff22;background:#ffffff08;color:#e8e8f6;border-radius:22px;padding:9px 15px;font-size:11px;cursor:pointer;transition:.25s}.pill:hover{background:#ffffff14}.pill.primary{background:#fff;color:#111;border-color:#fff}
+.main{grid-column:2/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.panel{grid-column:3/4;border-left:1px solid #ffffff18;background:#080a18dd;backdrop-filter:blur(22px);padding:30px 28px;overflow:auto;z-index:8}
+.eyebrow{color:#b8a6ff;font-size:10px;letter-spacing:3px;margin-bottom:10px}.panel h1{font-family:Georgia,serif;font-size:34px;line-height:1.05;margin:0 0 13px}.panel h1 em{font-style:italic;color:#e5b9ff}.desc{font-size:12px;line-height:1.75;color:#9fa3bd;margin-bottom:22px}.section{margin-top:22px;padding-top:20px;border-top:1px solid #ffffff16}.section-title{font-size:10px;letter-spacing:2px;color:#777d9e;margin-bottom:11px}
+.memoryCard{border:1px solid #ffffff1d;border-radius:18px;padding:12px;background:#ffffff07;display:grid;grid-template-columns:60px 1fr;gap:12px;margin-bottom:10px;align-items:center;cursor:pointer;transition:.25s}.memoryCard:hover{background:#ffffff0d;transform:translateX(-2px)}.avatar{width:60px;height:60px;border-radius:15px;object-fit:cover}.memoryCard b{font-size:12px}.memoryCard p{margin:5px 0 0;font-size:10px;line-height:1.5;color:#9297b6}
+.progressLabel{display:flex;justify-content:space-between;font-size:10px;color:#9fa3bd}.bar{height:6px;border-radius:99px;background:#ffffff14;margin-top:9px;overflow:hidden}.bar i{display:block;height:100%;width:85%;background:linear-gradient(90deg,#9980ff,#e5aaff,#ffccdf);box-shadow:0 0 15px #c8a6ff88}
+.stage{width:min(880px,92%);height:min(700px,84%);position:relative;display:flex;align-items:center;justify-content:center}
+.aura{position:absolute;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,#ceb5ff20 0%,#9e71ff0e 32%,transparent 68%);filter:blur(10px);animation:aura 4s ease-in-out infinite}.orbit{position:absolute;width:610px;height:610px;border-radius:50%;border:1px solid #d5c2ff18;animation:spin 30s linear infinite}.orbit:before,.orbit:after{content:"";position:absolute;width:11px;height:11px;border-radius:50%;background:#d8c6ff;box-shadow:0 0 18px #bca4ff}.orbit:before{top:52px;left:126px}.orbit:after{right:68px;bottom:118px}
+.flowerWrap{position:relative;width:520px;height:520px;display:flex;align-items:center;justify-content:center;transition:transform 1.2s cubic-bezier(.2,.8,.2,1),filter 1s;cursor:pointer}.flowerWrap img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 26px 55px #a675ff26);transition:opacity .8s,transform 1.1s}.flowerWrap:hover{transform:scale(1.015)}
+.centerGlow{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff5 0%,#ffd6ff2b 30%,transparent 70%);filter:blur(7px);animation:pulse 2.8s ease-in-out infinite;pointer-events:none}
+.memoryFloat{position:absolute;width:120px;padding:10px;border-radius:15px;border:1px solid #ffffff22;background:#080b1dbb;backdrop-filter:blur(14px);box-shadow:0 12px 35px #0007;opacity:0;transform:scale(.7) translateY(20px);transition:.8s;pointer-events:none}.memoryFloat img{width:100%;height:105px;border-radius:11px;object-fit:cover;margin-bottom:8px}.memoryFloat b{font-size:10px}.memoryFloat p{font-size:9px;color:#9ea4c5;margin:4px 0 0;line-height:1.4}
+.m1{left:2%;top:16%}.m2{right:2%;top:24%}.m3{left:12%;bottom:9%}
+.controls{position:absolute;left:24px;top:24px;z-index:4}.step{font-size:10px;letter-spacing:3px;color:#8b91b4;margin-bottom:7px}.stageTitle{font-family:Georgia,serif;font-size:26px}.play{margin-top:12px;display:inline-flex;gap:8px;align-items:center;border:1px solid #ffffff1c;background:#ffffff08;border-radius:18px;padding:7px 11px;font-size:10px;color:#bbbfd5;cursor:pointer}
+.timeline{position:absolute;left:30px;right:30px;bottom:14px;height:42px;border-top:1px solid #ffffff18;display:grid;grid-template-columns:repeat(4,1fr);align-items:center}.titem{font-size:8px;letter-spacing:1.8px;color:#646985;position:relative;padding-top:10px}.titem:before{content:"";position:absolute;top:-4px;width:7px;height:7px;border-radius:50%;background:#474d68;box-shadow:0 0 0 3px #0b0d1b}.titem.active{color:#fff}.titem.active:before{background:#d9c8ff;box-shadow:0 0 15px #bca3ff}
+.hint{position:absolute;right:24px;bottom:76px;font-size:9px;color:#747996;letter-spacing:1px}.hint kbd{border:1px solid #ffffff22;padding:3px 6px;border-radius:5px;background:#ffffff08}
+
+/* staged states */
+body.state-0 .flowerWrap{transform:scale(.18);filter:brightness(.55) saturate(.5)}
+body.state-0 .flowerWrap img{opacity:.45;transform:rotate(-3deg)}
+body.state-0 .orbit{opacity:.25}
+body.state-1 .flowerWrap{transform:scale(.48);filter:brightness(.76) saturate(.72)}
+body.state-1 .flowerWrap img{opacity:.7}
+body.state-2 .flowerWrap{transform:scale(.76);filter:brightness(.9) saturate(.9)}
+body.state-2 .m1,body.state-2 .m2{opacity:.7;transform:scale(.9) translateY(0)}
+body.state-3 .flowerWrap{transform:scale(1);filter:brightness(1.05) saturate(1.05)}
+body.state-3 .m1,body.state-3 .m2,body.state-3 .m3{opacity:1;transform:scale(1) translateY(0)}
+body.state-3 .aura{animation:aura 2.6s ease-in-out infinite}
+
+.bloomBurst{position:absolute;inset:0;pointer-events:none;overflow:hidden}.petal{position:absolute;width:9px;height:15px;border-radius:70% 30% 70% 30%;background:linear-gradient(180deg,#f7dcff,#b69aff);opacity:0;animation:petal 3s ease-out forwards}
+@keyframes petal{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.2)}10%{opacity:.9}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(420deg) scale(1)}}
+@keyframes aura{0%,100%{transform:scale(.94);opacity:.5}50%{transform:scale(1.07);opacity:.95}}
+@keyframes pulse{0%,100%{transform:scale(.85);opacity:.5}50%{transform:scale(1.18);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:1050px){.app{grid-template-columns:70px 1fr;grid-template-rows:60px 1fr}.sidebar{grid-row:1/3}.header{grid-column:2/3}.main{grid-column:2/3}.panel{display:none}.stage{height:88%;}.flowerWrap{width:min(68vw,520px);height:min(68vw,520px)}}
+@media(max-width:650px){.app{grid-template-columns:1fr;grid-template-rows:58px 1fr}.sidebar{display:none}.header{grid-column:1/2;padding:0 14px}.brand{letter-spacing:3px}.brand small{display:none}.headerBtns .pill:not(.primary){display:none}.main{grid-column:1/2}.stage{width:96%;height:92%}.controls{left:14px;top:18px}.stageTitle{font-size:22px}.flowerWrap{width:88vw;height:88vw}.orbit{width:86vw;height:86vw}.aura{width:92vw;height:92vw}.memoryFloat{width:100px}.memoryFloat img{height:84px}.m1{left:0;top:18%}.m2{right:0;top:25%}.m3{left:7%;bottom:12%}.timeline{left:14px;right:14px}.hint{display:none}}
+</style>
+</head>
+<body class="state-0">
+<div id="stars"></div><div id="stars2"></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">LT</div>
+    <div class="navdot active" title="Home">✦</div>
+    <div class="navdot" title="Memories">◫</div>
+    <div class="navdot" title="Blossom">❀</div>
+    <div class="navdot" title="Share">↗</div>
+    <div class="spacer"></div>
+    <div class="navdot" title="Settings">⚙</div>
+  </aside>
+  <header class="header">
+    <div class="brand">LOVETREE <small>MEMORY BLOSSOM · HERO V1</small></div>
+    <div class="headerBtns">
+      <button class="pill" onclick="jump(2)">MOMENTS</button>
+      <button class="pill" onclick="jump(3)">BLOSSOM</button>
+      <button class="pill">INVITATION</button>
+      <button class="pill primary">ENTER MY TREE</button>
+    </div>
+  </header>
+  <main class="main">
+    <div class="stage">
+      <div class="controls">
+        <div class="step" id="stepLabel">01 · SEED</div>
+        <div class="stageTitle" id="stageTitle">A feeling begins.</div>
+        <div class="play" onclick="toggleAuto()"><span id="playIcon">▶</span><span id="playText">PLAY THE BLOOM</span></div>
+      </div>
+      <div class="aura"></div><div class="orbit"></div>
+      <div class="flowerWrap" id="flower" onclick="nextState()">
+        <img id="flowerImg" src="../02_ASSETS/flowers/lovetree-memory-blossom-hero-v1.png" alt="LoveTree memory blossom"/>
+        <div class="centerGlow"></div>
+      </div>
+      <div class="memoryFloat m1"><img src="../02_ASSETS/portraits/memory-cast-a.png"/><b>THE FIRST MOMENT</b><p>처음 마음이 멈춘 순간.</p></div>
+      <div class="memoryFloat m2"><img src="../02_ASSETS/portraits/memory-cast-b.png"/><b>A QUIET LIGHT</b><p>조용히 오래 남은 기억.</p></div>
+      <div class="memoryFloat m3"><img src="../02_ASSETS/portraits/memory-cast-c.png"/><b>LOVE BLOOMS</b><p>기억이 한 송이의 꽃이 되는 장면.</p></div>
+      <div class="bloomBurst" id="burst"></div>
+      <div class="timeline">
+        <div class="titem active">SEED</div><div class="titem">FEELING</div><div class="titem">MOMENTS</div><div class="titem">BLOOM</div>
+      </div>
+      <div class="hint">CLICK FLOWER · <kbd>SPACE</kbd> · SCROLL</div>
+    </div>
+  </main>
+  <aside class="panel">
+    <div class="eyebrow">A MEMORY BECOMES A FLOWER</div>
+    <h1>Your moments<br/><em>bloom together.</em></h1>
+    <div class="desc">좋아했던 순간, 오래 남은 표정, 다시 꺼내 보고 싶은 장면이 하나의 꽃으로 자랍니다. LoveTree는 기억의 개수를 보여주는 곳이 아니라, 감정이 어떻게 하나의 형태가 되었는지를 다시 만나는 공간입니다.</div>
+    <div class="section">
+      <div class="section-title">BLOSSOM PROGRESS</div>
+      <div class="progressLabel"><span>127 / 150 MOMENTS</span><span>85%</span></div><div class="bar"><i></i></div>
+    </div>
+    <div class="section">
+      <div class="section-title">MEMORY CAST</div>
+      <div class="memoryCard" onclick="jump(1)"><img class="avatar" src="../02_ASSETS/portraits/memory-cast-a.png"/><div><b>First Spark</b><p>설렘의 시작이 된 장면</p></div></div>
+      <div class="memoryCard" onclick="jump(2)"><img class="avatar" src="../02_ASSETS/portraits/memory-cast-b.png"/><div><b>Quiet Light</b><p>마음을 오래 밝힌 순간</p></div></div>
+      <div class="memoryCard" onclick="jump(3)"><img class="avatar" src="../02_ASSETS/portraits/memory-cast-c.png"/><div><b>Full Bloom</b><p>모든 기억이 연결된 장면</p></div></div>
+    </div>
+  </aside>
+</div>
+<script>
+const states=[
+  {step:'01 · SEED',title:'A feeling begins.'},
+  {step:'02 · FEELING',title:'It starts to grow.'},
+  {step:'03 · MOMENTS',title:'Memories gather.'},
+  {step:'04 · BLOOM',title:'Love becomes visible.'}
+];
+let state=0,auto=false,autoTimer=null,lastWheel=0;
+const body=document.body, stepLabel=document.getElementById('stepLabel'), stageTitle=document.getElementById('stageTitle');
+function apply(){body.className='state-'+state;stepLabel.textContent=states[state].step;stageTitle.textContent=states[state].title;document.querySelectorAll('.titem').forEach((x,i)=>x.classList.toggle('active',i===state));if(state===3)burst()}
+function nextState(){state=(state+1)%4;apply()}
+function jump(n){state=n;apply()}
+function toggleAuto(){auto=!auto;document.getElementById('playIcon').textContent=auto?'Ⅱ':'▶';document.getElementById('playText').textContent=auto?'PAUSE BLOOM':'PLAY THE BLOOM';clearInterval(autoTimer);if(auto)autoTimer=setInterval(nextState,2100)}
+function burst(){const box=document.getElementById('burst');box.innerHTML='';const r=document.getElementById('flower').getBoundingClientRect(),s=document.querySelector('.stage').getBoundingClientRect(),cx=r.left-s.left+r.width/2,cy=r.top-s.top+r.height/2;for(let i=0;i<36;i++){const p=document.createElement('i');p.className='petal';p.style.left=cx+'px';p.style.top=cy+'px';const a=Math.random()*Math.PI*2,d=90+Math.random()*290;p.style.setProperty('--x',Math.cos(a)*d+'px');p.style.setProperty('--y',Math.sin(a)*d+'px');p.style.animationDelay=(Math.random()*.18)+'s';box.appendChild(p)}}
+window.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();nextState()}if(e.code==='ArrowRight')nextState();if(e.code==='ArrowLeft'){state=(state+3)%4;apply()}})
+window.addEventListener('wheel',e=>{const now=Date.now();if(now-lastWheel<700)return;lastWheel=now;if(e.deltaY>0)nextState();else{state=(state+3)%4;apply()}},{passive:true})
+apply();
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+name: Design Fidelity Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: Plan design fidelity validation
+    runs-on: ubuntu-latest
+    outputs:
+      has_targets: ${{ steps.plan.outputs.has_targets }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+      target_ids: ${{ steps.plan.outputs.target_ids }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Registry contract tests
+        run: node --test tests/design-fidelity-validation-orchestration.test.mjs
+
+      - name: Plan impacted target matrix
+        id: plan
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/plan-design-fidelity-validation.mjs "$BASE_SHA" "$HEAD_SHA"
+
+  validate:
+    name: Fidelity · ${{ matrix.id }}
+    needs: plan
+    if: needs.plan.outputs.has_targets == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build runtime
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact asset and actual-route fidelity gates
+        run: node scripts/run-design-fidelity-target.mjs "${{ matrix.id }}"
+
+      - name: Upload fidelity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-fidelity-${{ matrix.id }}-${{ github.event.pull_request.head.sha }}
+          path: test-results/design-fidelity/${{ matrix.id }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+  result:
+    name: Design Fidelity Validation
+    needs:
+      - plan
+      - validate
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve required-check result
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+          HAS_TARGETS: ${{ needs.plan.outputs.has_targets }}
+          TARGET_IDS: ${{ needs.plan.outputs.target_ids }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "$PLAN_RESULT" != "success" ]; then
+            echo "DESIGN_FIDELITY_PLAN_FAIL"
+            exit 1
+          fi
+
+          if [ "$HAS_TARGETS" = "true" ]; then
+            if [ "$VALIDATE_RESULT" != "success" ]; then
+              echo "DESIGN_FIDELITY_VALIDATION_FAIL targets=$TARGET_IDS"
+              exit 1
+            fi
+            echo "DESIGN_FIDELITY_VALIDATION_PASS targets=$TARGET_IDS"
+            exit 0
+          fi
+
+          echo "DESIGN_FIDELITY_NO_IMPACTED_TARGETS"
