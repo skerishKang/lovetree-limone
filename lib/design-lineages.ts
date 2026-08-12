@@ -14,6 +14,7 @@ export interface DesignRevision {
   label: string;
   decision: DesignRevisionDecision;
   executable: boolean;
+  route?: string;
   notes?: string;
 }
 
@@ -105,6 +106,33 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       { id: "52-v3-reference-earth-orbit", label: "V3 Reference Earth Orbit", decision: "candidate", executable: true, notes: "Reference fidelity build · Earth 유지 · Moment node/Connection arc 의미만 최소 치환" },
     ],
   },
+  {
+    id: "lt-53-emotional-path-replay",
+    number: 53,
+    label: "Moment Node Light Flow / Emotional Path Replay",
+    status: "active",
+    summary: "선택한 Moment에서 시작해 directed Connection을 따라 perimeter light와 path travel을 순차 재생하고, 지나온 관계를 빛의 기억으로 남기는 2D SVG 계보입니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace"],
+    currentDecision: "V1 motion engine을 보존한 V2를 현재 design-review 후보로 진행합니다. V2는 Connection skeleton을 항상 보이게 하고 색·광량·arrival impact·Living Tree climax를 강화합니다. CAP-14의 재사용 mechanic과 V2 시각 Revision의 제품 채택은 별도 검증합니다.",
+    sourceLabel: "53 V2 Drive intake 2026-08-10 / Issue #80 continuous intake · V1 source review #119",
+    revisions: [
+      {
+        id: "53-v1-node-light-flow",
+        label: "V1 Moment Node Light Flow",
+        decision: "superseded",
+        executable: true,
+        notes: "초기 replay-motion 기준 · 31,131 B · SHA256 ed3701b33e5a3afc96c9210162f664bbc32d0d800907bf7f8f702cc6a8021519",
+      },
+      {
+        id: "53-v2-node-light-flow",
+        label: "V2 Connection Skeleton + Saturated Living Tree",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/53/v2",
+        notes: "V1 engine preserved · visible Connection skeleton · saturated energy · Living Tree climax · 39,162 B · SHA256 9dff1d204b6d09bb7198b5f61965c2bd81e08d04dec8b6b59d4c07807d07b847",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
@@ -123,6 +151,7 @@ export function validateDesignLineages(lineages: readonly DesignLineage[] = DESI
     for (const revision of lineage.revisions) {
       if (revisionIds.has(revision.id)) problems.push(`duplicate revision id in ${lineage.id}: ${revision.id}`);
       revisionIds.add(revision.id);
+      if (revision.route && !revision.route.startsWith("/")) problems.push(`revision route must start with '/': ${revision.id}`);
     }
   }
 
