@@ -121,6 +121,9 @@ jobs:
           echo "Running Lineage 52 actual-route browser QA in isolation"
           node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs
 
+          echo "Running Lineage 52 direct-navigation browser security QA"
+          node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs
+
       - name: Build
         run: npm run build
 
