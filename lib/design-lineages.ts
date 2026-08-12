@@ -168,6 +168,33 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     ],
   },
   {
+    id: "lt-57-living-character-world",
+    number: 57,
+    label: "Living Character World",
+    status: "active",
+    summary: "사람의 Moment를 분절된 창이 아니라 하나의 live/touchable character world에서 연속적으로 탐색하는 R&D 계보입니다.",
+    scenarios: ["people-archive", "relationship-retrospective"],
+    currentDecision: "V2 source를 provenance-anchored PARTIAL IMPLEMENT 후보로 보존합니다. route shell·world panorama·overlay·desktop interactions는 구현됐고, exact 54-PNG mirror가 repo에 들어오기 전까지 source-fidelity FULL PASS는 HOLD합니다.",
+    sourceLabel: "Issue #147 Track A source intake / R&D_PRODUCTS_SPEC §7.8 / exact V2 source SHA256 6990160d186cdd66fdd7a8d05ed2ae2440dae355169bee577656560309bc5158",
+    revisions: [
+      {
+        id: "57-v1-living-character-world",
+        label: "V1 Source Baseline",
+        decision: "baseline",
+        executable: false,
+        notes: "exact source SHA256 e29121f05a99d2071ad1f7c9807a81755a382b1d07c806335add140af5ad2f6b · provenance only",
+      },
+      {
+        id: "57-v2-reactive-character-lubt",
+        label: "V2 Interactive World Panorama",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/57/v2",
+        notes: "PARTIAL IMPLEMENT · exact source SHA256 6990160d186cdd66fdd7a8d05ed2ae2440dae355169bee577656560309bc5158 · exact 54-PNG mirror required before source-fidelity FULL PASS",
+      },
+    ],
+  },
+  {
     id: "lt-58-videofigure-atelier",
     number: 58,
     label: "VideoFigure Atelier",
