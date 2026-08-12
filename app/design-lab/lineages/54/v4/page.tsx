@@ -42,8 +42,8 @@ export default function Lineage54PetalRunnerV4Page() {
         </article>
         <article>
           <span>APPROVAL BOUNDARY</span>
-          <h2>정확한 PNG 5개가 Git에 들어오기 전에는 fidelity PASS가 아닙니다.</h2>
-          <p>현재 source와 fingerprint는 검증됐지만 binary asset transfer는 별도 gate입니다. Premium Journey 수치 역시 source story 예시이며 canonical 정책으로 자동 채택하지 않습니다.</p>
+          <h2>정확한 PNG 5개는 Git에서 fingerprint까지 검증됐습니다.</h2>
+          <p>binary asset transfer와 fingerprint gate는 닫혔습니다. Source-fidelity review와 canonical product adoption은 별도이며, Premium Journey 수치 역시 source story 예시로만 유지합니다.</p>
         </article>
       </section>
     </main>
