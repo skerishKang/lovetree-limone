@@ -167,7 +167,6 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
-,
   {
     id: "lt-56-crystal-memory-atelier",
     number: 56,

@@ -151,24 +151,6 @@ export default function Lineage54PetalRunner() {
     for (const timer of timersRef.current) window.clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    // SSR hydration may complete after the preload images have already
-    // finished loading, so their load events can fire before React attaches
-    // the onLoad handlers. Reconcile already-decoded images here so the exact
-    // asset gate clears once all five PNGs are present at the Git paths.
-    const preloadImages = Array.from(
-      document.querySelectorAll<HTMLImageElement>(".lt54-preload img"),
-    );
-    for (const image of preloadImages) {
-      if (image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) {
-        const file = image.getAttribute("src")?.split("/").pop();
-        if (file && EXPECTED_ASSETS.includes(file as (typeof EXPECTED_ASSETS)[number])) {
-          markAssetLoaded(file);
-        }
-      }
-    }
-  }, []);
-
   const schedule = (callback: () => void, delay: number) => {
     const timer = window.setTimeout(callback, delay);
     timersRef.current.push(timer);
@@ -196,6 +178,24 @@ export default function Lineage54PetalRunner() {
       return next;
     });
   };
+
+  useEffect(() => {
+    // SSR hydration may complete after the preload images have already
+    // finished loading, so their load events can fire before React attaches
+    // the onLoad handlers. Reconcile already-decoded images here so the exact
+    // asset gate clears once all five PNGs are present at the Git paths.
+    const preloadImages = Array.from(
+      document.querySelectorAll<HTMLImageElement>(".lt54-preload img"),
+    );
+    for (const image of preloadImages) {
+      if (image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) {
+        const file = image.getAttribute("src")?.split("/").pop();
+        if (file && EXPECTED_ASSETS.includes(file as (typeof EXPECTED_ASSETS)[number])) {
+          queueMicrotask(() => markAssetLoaded(file));
+        }
+      }
+    }
+  }, []);
 
   const triggerBloom = () => {
     const token = ++bloomTokenRef.current;
