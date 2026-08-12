@@ -19,6 +19,8 @@ import {
 import "../../../styles/v4/cinematic/cinematic-v6.css";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+const POINTER_SMOOTHING_PER_60HZ_FRAME = 0.08;
+const POINTER_REFERENCE_FRAME_MS = 1000 / 60;
 
 function setTextWithBreaks(element: Element | null, value: string) {
   if (!element) return;
@@ -283,6 +285,7 @@ export default function V4CinematicV6International() {
     let currentY = 0;
     let raf = 0;
     let pointerRunning = false;
+    let pointerFrameTime = 0;
 
     const windowRecord = window as unknown as Record<string, unknown>;
     windowRecord.__cinV6PointerTicks = 0;
@@ -329,16 +332,25 @@ export default function V4CinematicV6International() {
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
       pointerRunning = false;
+      pointerFrameTime = 0;
       windowRecord.__cinV6PointerActive = false;
     };
 
-    const tickPointer = () => {
+    const tickPointer = (now: number) => {
       if (!pointerRunning || document.hidden || !isPointerEnabled()) {
         stopPointerLoop();
         return;
       }
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
+      const elapsedMs = pointerFrameTime > 0
+        ? Math.max(0, now - pointerFrameTime)
+        : POINTER_REFERENCE_FRAME_MS;
+      pointerFrameTime = now;
+      const smoothing = 1 - Math.pow(
+        1 - POINTER_SMOOTHING_PER_60HZ_FRAME,
+        elapsedMs / POINTER_REFERENCE_FRAME_MS,
+      );
+      currentX += (targetX - currentX) * smoothing;
+      currentY += (targetY - currentY) * smoothing;
       windowRecord.__cinV6PointerTicks = Number(windowRecord.__cinV6PointerTicks || 0) + 1;
       applyPointer();
       if (Math.abs(targetX - currentX) < 0.0005 && Math.abs(targetY - currentY) < 0.0005) {
@@ -354,6 +366,7 @@ export default function V4CinematicV6International() {
     const startPointerLoop = () => {
       if (pointerRunning || document.hidden || !isPointerEnabled()) return;
       pointerRunning = true;
+      pointerFrameTime = performance.now();
       windowRecord.__cinV6PointerActive = true;
       raf = requestAnimationFrame(tickPointer);
     };
