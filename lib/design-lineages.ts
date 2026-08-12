@@ -180,12 +180,12 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       {
         id: "57-v1-living-character-world",
         label: "V1 Source Baseline",
-        decision: "reference",
+        decision: "baseline",
         executable: false,
         notes: "exact source SHA256 e29121f05a99d2071ad1f7c9807a81755a382b1d07c806335add140af5ad2f6b · provenance only",
       },
       {
-        id: "57-v2-living-character-world",
+        id: "57-v2-reactive-character-lubt",
         label: "V2 Interactive World Panorama",
         decision: "candidate",
         executable: true,
