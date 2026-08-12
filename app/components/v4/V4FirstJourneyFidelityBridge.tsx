@@ -292,7 +292,7 @@ export default function V4FirstJourneyFidelityBridge() {
       const growth = root.querySelector<HTMLElement>(".v4-journey-growth");
       if (!growth) return;
       text(growth.querySelector(".v4-j-eyebrow"), "04 · 러브트리 성장");
-      text(growth.querySelector(".v4-j-growth-connector i"), "→");
+      text(growth.querySelector(".v4-j-growth-connector i"), "✿");
     };
 
     const applyAll = () => {
@@ -339,11 +339,15 @@ export default function V4FirstJourneyFidelityBridge() {
     };
 
     const onSubmitCapture = (event: Event) => {
-      if (reducedMotion()) return;
       const form = event.target as HTMLFormElement | null;
       if (!form || form.id !== "discovery-form" || form.dataset.fidelityReplay === "true") return;
+      if (reducedMotion()) {
+        root.dataset.fidelityDwell = "bypassed";
+        return;
+      }
       const url = form.querySelector<HTMLInputElement>("#content-url")?.value || "";
       if (!youtubeId(url)) return;
+      root.dataset.fidelityDwell = "480";
       const rawNote = form.querySelector<HTMLTextAreaElement>("#discovery-note")?.value || "";
       event.preventDefault();
       event.stopPropagation();
@@ -398,6 +402,7 @@ export default function V4FirstJourneyFidelityBridge() {
       timers.forEach((id) => window.clearTimeout(id));
       timers.clear();
       delete root.dataset.sourceFidelity;
+      delete root.dataset.fidelityDwell;
     };
   }, []);
 
