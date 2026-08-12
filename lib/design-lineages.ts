@@ -133,6 +133,67 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
+  {
+    id: "lt-56-crystal-memory-atelier",
+    number: 56,
+    label: "Crystal Memory Atelier",
+    status: "active",
+    summary: "누적 Moments를 하나의 premium living Memory Relic으로 기념·감상하고 재질·표정·각인으로 개인화하는 reward/collectible 계보입니다.",
+    scenarios: ["growth-milestones", "people-archive"],
+    currentDecision: "V1 collectible viewer와 V2 living premium Moment relic을 revision history로 보존하고, V3 direct expression + discrete rotation을 Design Lab source-fidelity candidate로 검토합니다. 100/200/365와 148/200은 source demo value이며 canonical V4 policy가 아닙니다.",
+    sourceLabel: "08_LoveTree_Crystal_Memory_Atelier_V3 Drive intake 2026-08-11 / Issue #137",
+    revisions: [
+      {
+        id: "56-v1-collectible-viewer",
+        label: "V1 Crystal Collectible Viewer",
+        decision: "superseded",
+        executable: true,
+        notes: "4 neutral angle stills · drag/wheel/auto turntable · material/light/inscription/Bloom",
+      },
+      {
+        id: "56-v2-living-premium-relic",
+        label: "V2 Living Premium Moment Relic",
+        decision: "superseded",
+        executable: true,
+        notes: "expression awakening · heart light · on-crystal engraving · 100/200/365 source-demo reward framing",
+      },
+      {
+        id: "56-v3-direct-expression-rotation",
+        label: "V3 Direct Expression + Rotation Living Relic",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/56/v3",
+        notes: "19,262 B · SHA256 9a7bb3415dade7d6fd04cecfe1be6ae04595d3b46d326f2b596dab819633a66c · 4 neutral angles + 4 frontal expression frames · no 16-state mesh",
+      },
+    ],
+  },
+  {
+    id: "lt-58-videofigure-atelier",
+    number: 58,
+    label: "VideoFigure Atelier",
+    status: "active",
+    summary: "source video의 Moment를 Person과 분리된 DerivedFigure/Look으로 투영하고 8방향 회전형 Figure Memory로 탐색하는 people/archive 계보입니다.",
+    scenarios: ["people-archive"],
+    currentDecision: "V1을 baseline으로 보존하고 V2를 current Revision으로 Design Lab에서 PARTIAL IMPLEMENT합니다. canonical /v4 채택은 승인되지 않았고 exact 80-frame gate 전에는 source-fidelity PASS를 주장하지 않습니다.",
+    sourceLabel: "Issue #145 · 05_LoveTree_VideoFigure_Atelier_V2 / LoveTree_VideoFigure_Atelier_V1",
+    revisions: [
+      {
+        id: "58-v1-videofigure-atelier",
+        label: "V1 Video Moment → curated Look → Figure Memory baseline",
+        decision: "baseline",
+        executable: true,
+        notes: "30,604 B · SHA256 cbb981c2796944b2c8988949ae9bc2249480fe2cd566616ee702cd5363c85953 · Drive 1eqNaaDsEKSFLIKCddee4rNGyGW6y5v15",
+      },
+      {
+        id: "58-v2-videofigure-atelier",
+        label: "V2 Complete 8-view Cinematic Figure Archive",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/58/v2",
+        notes: "27,918 B · SHA256 ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466 · PARTIAL IMPLEMENT · exact asset gate fail-closed",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
