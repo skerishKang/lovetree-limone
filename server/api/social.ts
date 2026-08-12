@@ -1,4 +1,4 @@
-import { eq, and, sql, isNull, gt } from "drizzle-orm";
+import { eq, and, sql, isNull, isNotNull, gt } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import {
@@ -172,6 +172,36 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
 
   const inserted = await ctx.db.insert(treeLikes).values(like).onConflictDoNothing();
   if ((inserted as unknown as { rowCount?: number }).rowCount === 0) {
+    // A conflicting unique (treeId, ownerId) row may be a prior soft-deleted
+    // like or an already-active concurrent like. Claim restoration atomically
+    // so only the request that actually changes deletedAt may increment count.
+    const restored = await ctx.db
+      .update(treeLikes)
+      .set({ deletedAt: null })
+      .where(and(
+        eq(treeLikes.treeId, treeId),
+        eq(treeLikes.ownerId, user.uid),
+        isNotNull(treeLikes.deletedAt)
+      ))
+      .returning({ id: treeLikes.id });
+
+    if (restored[0]) {
+      await ctx.db.batch([
+        ctx.db.insert(treeSocialCounts).values({
+          treeId,
+          likeCount: 1,
+          viewCount: 0,
+          updatedAt: now,
+        }).onConflictDoNothing(),
+        ctx.db.update(treeSocialCounts)
+          .set({
+            likeCount: sql`like_count + 1`,
+            updatedAt: now,
+          })
+          .where(eq(treeSocialCounts.treeId, treeId)),
+      ]);
+    }
+
     return json({ liked: true });
   }
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DESIGN_SCENARIOS } from "@/lib/design-lab";
 import { DESIGN_LINEAGES, type DesignLineageStatus, type DesignRevisionDecision } from "@/lib/design-lineages";
 
@@ -59,6 +60,7 @@ export default function DesignLineageOverview() {
                       <span>
                         <b>{revision.label}</b>
                         {revision.notes ? <small>{revision.notes}</small> : null}
+                        {revision.route ? <Link href={revision.route}>실행본 열기 →</Link> : null}
                       </span>
                       <span className="lt-lineage__revision-meta">
                         <em>{DECISION_LABELS[revision.decision]}</em>

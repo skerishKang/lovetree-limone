@@ -209,6 +209,28 @@ export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
     ],
     notes: "내부 source-runner route에서 원본 충실도를 검수합니다. 이 route는 native Next 구현이 아니며 exact source asset이 없으면 fail-closed 상태를 표시합니다.",
   },
+  {
+    id: "lineage:57-v2-reactive-character-lubt",
+    label: "57 V2 Reactive Character + Lubt",
+    scenarioId: "people-archive",
+    route: "/design-lab/lineages/57/v2",
+    status: "implemented",
+    origin: "lineage-intake",
+    kind: "experience",
+    lineageId: "lt-57-living-character-world",
+    revisionId: "57-v2-reactive-character-lubt",
+    sourceFile: "07_LoveTree_Living_Character_World_V2/index.html + living-world-v2.css + living-world-v2.js",
+    role: "Person/Subject representation의 감정 반응과 Lubt Memory Guide의 문맥 응답을 검토하는 V1-base + V2-overlay native candidate",
+    preserve: [
+      "V1 three-column character / stage / Emotion Engine composition",
+      "four original source subject characters and twelve expression states",
+      "hover/single/double/hold character reaction controller",
+      "Lubt contextual response and draggable auto-return companion",
+      "SAY/Enter → TALK → Lubt reply chain",
+      "source-labelled SECRET MOMENT as non-canonical review copy",
+    ],
+    notes: "PARTIAL IMPLEMENT. SOURCE DELTA mobile parity/accessibility/reduced-motion hardening is explicit. SAVE is non-persistent. Visual source-fidelity remains blocked by EXACT_CHARACTER_ASSET_TRANSFER_HOLD until 54/54 exact binaries land.",
+  },
 ] as const;
 
 export const HISTORICAL_CANDIDATES: readonly DesignCandidate[] = [

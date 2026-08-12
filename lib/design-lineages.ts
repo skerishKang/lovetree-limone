@@ -14,6 +14,7 @@ export interface DesignRevision {
   label: string;
   decision: DesignRevisionDecision;
   executable: boolean;
+  route?: string;
   notes?: string;
 }
 
@@ -105,6 +106,156 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       { id: "52-v3-reference-earth-orbit", label: "V3 Reference Earth Orbit", decision: "candidate", executable: true, notes: "Reference fidelity build · Earth 유지 · Moment node/Connection arc 의미만 최소 치환" },
     ],
   },
+  {
+    id: "lt-53-emotional-path-replay",
+    number: 53,
+    label: "Moment Node Light Flow / Emotional Path Replay",
+    status: "active",
+    summary: "선택한 Moment에서 시작해 directed Connection을 따라 perimeter light와 path travel을 순차 재생하고, 지나온 관계를 빛의 기억으로 남기는 2D SVG 계보입니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace"],
+    currentDecision: "V1 motion engine을 보존한 V2를 현재 design-review 후보로 진행합니다. V2는 Connection skeleton을 항상 보이게 하고 색·광량·arrival impact·Living Tree climax를 강화합니다. CAP-14의 재사용 mechanic과 V2 시각 Revision의 제품 채택은 별도 검증합니다.",
+    sourceLabel: "53 V2 Drive intake 2026-08-10 / Issue #80 continuous intake · V1 source review #119",
+    revisions: [
+      {
+        id: "53-v1-node-light-flow",
+        label: "V1 Moment Node Light Flow",
+        decision: "superseded",
+        executable: true,
+        notes: "초기 replay-motion 기준 · 31,131 B · SHA256 ed3701b33e5a3afc96c9210162f664bbc32d0d800907bf7f8f702cc6a8021519",
+      },
+      {
+        id: "53-v2-node-light-flow",
+        label: "V2 Connection Skeleton + Saturated Living Tree",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/53/v2",
+        notes: "V1 engine preserved · visible Connection skeleton · saturated energy · Living Tree climax · 39,162 B · SHA256 9dff1d204b6d09bb7198b5f61965c2bd81e08d04dec8b6b59d4c07807d07b847",
+      },
+    ],
+  },
+  {
+    id: "lt-54-petal-runner-love-journey",
+    number: 54,
+    label: "Petal Runner / Love Journey",
+    status: "active",
+    summary: "첫 Moment가 감정으로 자라고 Connection path를 따라 Petal Runner가 이동해 LoveTree에 도착하는 4-stage cinematic memory journey 계보입니다.",
+    scenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
+    currentDecision: "V4를 현재 source-fidelity candidate로 구현합니다. Source runtime과 fingerprints는 검증됐고 exact background + vehicle PNG 5개도 Git transfer/hash-verify를 완료했습니다. Source-fidelity 검증과 canonical product adoption은 별도 결정으로 유지합니다.",
+    sourceLabel: "Lineage 54 sibling Drive intake 2026-08-10 · Issue #129 · README-V4 / index-v4.html",
+    revisions: [
+      {
+        id: "54-v2-petal-runner-love-journey",
+        label: "V2 Petal Runner Love Journey",
+        decision: "reference",
+        executable: false,
+        notes: "prior source evidence · 21,011 B · retained in sibling Drive",
+      },
+      {
+        id: "54-v3-petal-runner-love-journey",
+        label: "V3 Petal Runner Love Journey",
+        decision: "superseded",
+        executable: false,
+        notes: "preserved prior staging · 19,647 B · V4 redesigns vehicle/travel staging",
+      },
+      {
+        id: "54-v4-petal-runner-love-journey",
+        label: "V4 Petal Runner Travel + Arrival Staging",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/54/v4",
+        notes: "source runtime 21,337 B · SHA256 ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9 · exact PNG transfer gate closed · product adoption remains separate",
+      },
+    ],
+  },
+  {
+    id: "lt-56-crystal-memory-atelier",
+    number: 56,
+    label: "Crystal Memory Atelier",
+    status: "active",
+    summary: "누적 Moments를 하나의 premium living Memory Relic으로 기념·감상하고 재질·표정·각인으로 개인화하는 reward/collectible 계보입니다.",
+    scenarios: ["growth-milestones", "people-archive"],
+    currentDecision: "V1 collectible viewer와 V2 living premium Moment relic을 revision history로 보존하고, V3 direct expression + discrete rotation을 Design Lab source-fidelity candidate로 검토합니다. 100/200/365와 148/200은 source demo value이며 canonical V4 policy가 아닙니다.",
+    sourceLabel: "08_LoveTree_Crystal_Memory_Atelier_V3 Drive intake 2026-08-11 / Issue #137",
+    revisions: [
+      {
+        id: "56-v1-collectible-viewer",
+        label: "V1 Crystal Collectible Viewer",
+        decision: "superseded",
+        executable: true,
+        notes: "4 neutral angle stills · drag/wheel/auto turntable · material/light/inscription/Bloom",
+      },
+      {
+        id: "56-v2-living-premium-relic",
+        label: "V2 Living Premium Moment Relic",
+        decision: "superseded",
+        executable: true,
+        notes: "expression awakening · heart light · on-crystal engraving · 100/200/365 source-demo reward framing",
+      },
+      {
+        id: "56-v3-direct-expression-rotation",
+        label: "V3 Direct Expression + Rotation Living Relic",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/56/v3",
+        notes: "19,262 B · SHA256 9a7bb3415dade7d6fd04cecfe1be6ae04595d3b46d326f2b596dab819633a66c · 4 neutral angles + 4 frontal expression frames · no 16-state mesh",
+      },
+    ],
+  },
+  {
+    id: "lt-57-living-character-world",
+    number: 57,
+    label: "Living Character World",
+    status: "active",
+    summary: "사람의 Moment를 분절된 창이 아니라 하나의 live/touchable character world에서 연속적으로 탐색하는 R&D 계보입니다.",
+    scenarios: ["people-archive", "relationship-retrospective"],
+    currentDecision: "V2 source를 provenance-anchored PARTIAL IMPLEMENT 후보로 보존합니다. route shell·world panorama·overlay·desktop interactions는 구현됐고, exact 54-PNG mirror가 repo에 들어오기 전까지 source-fidelity FULL PASS는 HOLD합니다.",
+    sourceLabel: "Issue #147 Track A source intake / R&D_PRODUCTS_SPEC §7.8 / exact V2 source SHA256 6990160d186cdd66fdd7a8d05ed2ae2440dae355169bee577656560309bc5158",
+    revisions: [
+      {
+        id: "57-v1-living-character-world",
+        label: "V1 Source Baseline",
+        decision: "baseline",
+        executable: false,
+        notes: "exact source SHA256 e29121f05a99d2071ad1f7c9807a81755a382b1d07c806335add140af5ad2f6b · provenance only",
+      },
+      {
+        id: "57-v2-reactive-character-lubt",
+        label: "V2 Interactive World Panorama",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/57/v2",
+        notes: "PARTIAL IMPLEMENT · exact source SHA256 6990160d186cdd66fdd7a8d05ed2ae2440dae355169bee577656560309bc5158 · exact 54-PNG mirror required before source-fidelity FULL PASS",
+      },
+    ],
+  },
+  {
+    id: "lt-58-videofigure-atelier",
+    number: 58,
+    label: "VideoFigure Atelier",
+    status: "active",
+    summary: "source video의 Moment를 Person과 분리된 DerivedFigure/Look으로 투영하고 8방향 회전형 Figure Memory로 탐색하는 people/archive 계보입니다.",
+    scenarios: ["people-archive"],
+    currentDecision: "V1을 baseline으로 보존하고 V2를 current Revision으로 Design Lab에서 PARTIAL IMPLEMENT합니다. canonical /v4 채택은 승인되지 않았고 exact 80-frame gate 전에는 source-fidelity PASS를 주장하지 않습니다.",
+    sourceLabel: "Issue #145 · 05_LoveTree_VideoFigure_Atelier_V2 / LoveTree_VideoFigure_Atelier_V1",
+    revisions: [
+      {
+        id: "58-v1-videofigure-atelier",
+        label: "V1 Video Moment → curated Look → Figure Memory baseline",
+        decision: "baseline",
+        executable: true,
+        notes: "30,604 B · SHA256 cbb981c2796944b2c8988949ae9bc2249480fe2cd566616ee702cd5363c85953 · Drive 1eqNaaDsEKSFLIKCddee4rNGyGW6y5v15",
+      },
+      {
+        id: "58-v2-videofigure-atelier",
+        label: "V2 Complete 8-view Cinematic Figure Archive",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/58/v2",
+        notes: "27,918 B · SHA256 ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466 · PARTIAL IMPLEMENT · exact asset gate fail-closed",
+      },
+    ],
+  },
+
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
@@ -123,6 +274,7 @@ export function validateDesignLineages(lineages: readonly DesignLineage[] = DESI
     for (const revision of lineage.revisions) {
       if (revisionIds.has(revision.id)) problems.push(`duplicate revision id in ${lineage.id}: ${revision.id}`);
       revisionIds.add(revision.id);
+      if (revision.route && !revision.route.startsWith("/")) problems.push(`revision route must start with '/': ${revision.id}`);
     }
   }
 
