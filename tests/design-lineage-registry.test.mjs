@@ -66,11 +66,11 @@ test("every lineage-linked Scenario Variant points to an existing Lineage revisi
   }
 });
 
-test("LoveTree 52 V3 is visible for review before its React route exists", () => {
+test("LoveTree 52 V3 remains mapped while exposing its route-approved source runner", () => {
   const candidate = DESIGN_CANDIDATES.find((item) => item.id === "lineage:52-v3-reference-earth-orbit");
   assert.ok(candidate);
   assert.equal(candidate.status, "mapped");
-  assert.equal(candidate.route, undefined);
+  assert.equal(candidate.route, "/design-lab/lineages/52/v3");
   assert.equal(candidate.lineageId, "lt-52-global-moment-orbit");
   assert.equal(candidate.revisionId, "52-v3-reference-earth-orbit");
 });
