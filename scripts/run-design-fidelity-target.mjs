@@ -27,6 +27,17 @@ function requireConfiguredFile(relativePath, label) {
   }
 }
 
+function withTsxNodeOptions(baseEnv = process.env) {
+  const current = baseEnv.NODE_OPTIONS?.trim() ?? "";
+  const hasTsxImport = current.includes("--import=tsx") || current.includes("--import tsx");
+  return {
+    ...baseEnv,
+    NODE_OPTIONS: hasTsxImport
+      ? current
+      : [current, "--import=tsx"].filter(Boolean).join(" "),
+  };
+}
+
 function runAssetVerifier() {
   if (!target.assetGate) return { required: false, passed: true, marker: null };
 
@@ -34,6 +45,7 @@ function runAssetVerifier() {
   requireConfiguredFile(verifier, "asset verifier");
   const result = spawnSync(process.execPath, [verifier], {
     cwd: root,
+    env: withTsxNodeOptions(),
     encoding: "utf8",
     maxBuffer: 16 * 1024 * 1024,
   });
@@ -245,8 +257,8 @@ try {
     const logName = `gate-${path.basename(browserGate).replace(/[^a-zA-Z0-9._-]/g, "_")}.log`;
     await runLoggedProcess(
       process.execPath,
-      ["--import", "tsx", "--test", browserGate],
-      { env, logName },
+      ["--test", browserGate],
+      { env: withTsxNodeOptions(env), logName },
     );
   }
 

@@ -90,7 +90,9 @@ try {
   const reduced = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
   const page = await reduced.newPage();
   await page.goto(`${baseURL}${route}`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator('.lt56__stage-actions .is-primary').isDisabled(), true, "reduced motion disables continuous expression autoplay");
+  const autoplay = page.locator('.lt56__stage-actions .is-primary');
+  await page.waitForFunction(() => document.querySelector('.lt56__stage-actions .is-primary')?.matches(':disabled') === true);
+  assert.equal(await autoplay.isDisabled(), true, "reduced motion disables continuous expression autoplay");
   await page.locator('.lt56__expressions button').nth(2).click();
   assert.match(await page.locator('.lt56__status').innerText(), /WATCHING YOU/);
   await reduced.close();
