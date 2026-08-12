@@ -148,10 +148,19 @@ async function clickTimelineChapter(page, chapterName) {
 async function assertDesktopJourneyControls(page) {
   await page.getByRole("button", { name: "START THE FEELING", exact: true }).click();
   await page.locator(".lt54-stage.is-driving").waitFor({ timeout: 1000 });
-  await page.waitForTimeout(600);
+  // The 520ms trigger fades the current vehicle before the 170ms source swap;
+  // poll for the fade-with-front state instead of assuming fixed wall-clock
+  // timing, so slower runners do not read past the swap window.
+  await page.waitForFunction(() => {
+    const car = document.querySelector(".lt54-car");
+    return Boolean(car && car.style.opacity === "0.15" && /petal-runner-front-v3\.png$/.test(car.getAttribute("src") || ""));
+  }, { timeout: 900 });
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-front-v3\.png$/, "vehicle remains front during the source fade window before replacement loads");
   assert.equal(await page.locator(".lt54-car").evaluate((node) => node.style.opacity), "0.15", "source fade state is active after the 520ms trigger");
-  await page.waitForTimeout(180);
+  await page.waitForFunction(() => {
+    const car = document.querySelector(".lt54-car");
+    return Boolean(car && /petal-runner-side-v3\.png$/.test(car.getAttribute("src") || ""));
+  }, { timeout: 900 });
   assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-side-v3\.png$/, "170ms source swap delay reaches the side view");
   assert.equal(await page.locator(".lt54-speed-field").evaluate((node) => getComputedStyle(node).opacity), "1");
   await waitForTravelEnd(page);
@@ -210,6 +219,8 @@ async function assertDesktopDrag(page) {
 }
 
 async function dispatchTouchDrag(page, locator) {
+  await locator.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(250);
   const box = await locator.boundingBox();
   assert.ok(box, "mobile touch target exists");
   const session = await page.context().newCDPSession(page);

@@ -236,5 +236,5 @@
   .lt54-stage.is-driving .lt54-speed-field i,
   .lt54-petals i { animation: none !important; }
   .lt54-stage.is-driving .lt54-speed-field { opacity: 0; }
-  .lt54-car-wrap, .lt54-memory-path, .lt54-side--right, .lt54-toast { transition-duration: 0.001ms !important; }
+  .lt54-car-wrap, .lt54-memory-path, .lt54-memory-path i, .lt54-side--right, .lt54-toast { transition-duration: 0.001ms !important; }
 }
