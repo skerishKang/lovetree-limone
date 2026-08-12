@@ -15,8 +15,8 @@ export const LINEAGE_54_PETAL_RUNNER_SOURCE = {
   sourceSha256: "ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9",
   runnerRoute: "/design-lab/lineages/54/v4",
   assetBasePath: "/reference/lineage-54-petal-runner-v4/assets",
-  currentDisposition: "implementation-scaffold-assets-pending-git-transfer",
-  reviewLabel: "SOURCE-VERIFIED IMPLEMENTATION — ASSET TRANSFER HOLD",
+  currentDisposition: "source-fidelity-candidate-exact-assets-verified",
+  reviewLabel: "SOURCE-VERIFIED IMPLEMENTATION — EXACT ASSETS VERIFIED",
   chapters: ["FIRST MOMENT", "FEELING GROWS", "CONNECTION", "LOVE BLOOMS"],
   requiredAssets: [
     { file: "lovetree-arrival-garden-v3.png", driveFileId: "11zYOY2S8jbFi96M5WmCQFvdlc-kbllvY", bytes: 2_458_998, width: 1672, height: 941, mode: "RGB", sha256: "731ce39ccd9bbb9fe20fa1ba98a390ca8691d16f92110502a16cbcfee161ea35", gitBlobSha: "e8009e58ccb42617ee3ba3d59fc97da68ed7340a" },
