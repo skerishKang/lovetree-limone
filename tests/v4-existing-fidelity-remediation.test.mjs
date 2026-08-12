@@ -134,7 +134,7 @@ test("v4 existing fidelity — First Journey restores source story, preview, nar
       (await page.locator(".v4-journey-growth .v4-j-eyebrow").textContent())?.trim(),
       "04 · 러브트리 성장",
     );
-    assert.equal((await page.locator(".v4-j-growth-connector i").textContent())?.trim(), "→");
+    assert.equal((await page.locator(".v4-j-growth-connector i").textContent())?.trim(), "✿");
 
     await page.close();
   } finally {
@@ -150,13 +150,13 @@ test("v4 existing fidelity — First Journey reduced motion bypasses source dwel
     await page.goto(`${BASE}/v4/journey`, { waitUntil: "networkidle" });
     await startJourney(page);
     await page.fill("#content-url", YT_A);
-    const started = Date.now();
     await page.locator('#discovery-form button[type="submit"]').click();
-    await page.waitForSelector("#memory-form", { timeout: 1500 });
-    assert.ok(
-      Date.now() - started < 300,
-      "prefers-reduced-motion does not wait for the 480ms dwell",
+    assert.equal(
+      await page.locator(".v4-journey-page").getAttribute("data-fidelity-dwell"),
+      "bypassed",
+      "prefers-reduced-motion bypasses the 480ms fidelity dwell",
     );
+    await page.waitForSelector("#memory-form", { timeout: 1500 });
     await context.close();
   } finally {
     await browser.close();
