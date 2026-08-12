@@ -17,8 +17,9 @@ test("Lineage 54 pins the exact sibling V4 runtime and byte-identical alias", ()
   assert.equal(source.runnerRoute, "/design-lab/lineages/54/v4");
 });
 
-test("Lineage 54 requires the exact five sibling image assets before fidelity approval", () => {
-  assert.equal(source.currentDisposition, "implementation-scaffold-assets-pending-git-transfer");
+test("Lineage 54 pins the exact five sibling image assets and records the closed transfer gate", () => {
+  assert.equal(source.currentDisposition, "source-fidelity-candidate-exact-assets-verified");
+  assert.equal(source.reviewLabel, "SOURCE-VERIFIED IMPLEMENTATION — EXACT ASSETS VERIFIED");
   assert.deepEqual(source.requiredAssets.map((asset) => asset.file), [
     "lovetree-arrival-garden-v3.png",
     "petal-runner-front-v3.png",
