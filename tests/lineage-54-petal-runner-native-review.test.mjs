@@ -75,7 +75,7 @@ test("Lineage 54 keeps review policy outside the normal source composition", () 
   assert.doesNotMatch(component, /lt54-product-boundary/);
   assert.doesNotMatch(component, /Motion review: 1\.8s travel sequence enabled/);
   assert.match(component, /Reduced motion: chapter changes are immediate/);
-  assert.match(page, /canonical 정책으로 자동 채택하지 않습니다/);
+  assert.match(page, /canonical product adoption은 별도/);
 });
 
 test("Lineage 54 keeps reduced-motion and exact-binary approval boundaries explicit", () => {
@@ -83,8 +83,8 @@ test("Lineage 54 keeps reduced-motion and exact-binary approval boundaries expli
   assert.match(component, /ASSET TRANSFER HOLD/);
   assert.match(component, /fidelity approval stays blocked until all 5 PNG assets/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(page, /binary asset transfer는 별도 gate/);
-  assert.match(page, /canonical 정책으로 자동 채택하지 않습니다/);
+  assert.match(page, /binary asset transfer와 fingerprint gate는 닫혔습니다/);
+  assert.match(page, /canonical product adoption은 별도/);
 });
 
 test("Lineage 54 is registered as the executable V4 Design Lab candidate", () => {
@@ -93,7 +93,7 @@ test("Lineage 54 is registered as the executable V4 Design Lab candidate", () =>
   assert.match(registry, /id: "54-v4-petal-runner-love-journey"/);
   assert.match(registry, /route: "\/design-lab\/lineages\/54\/v4"/);
   assert.match(registry, /decision: "candidate"/);
-  assert.match(registry, /exact PNG transfer gate remains open/);
+  assert.match(registry, /exact PNG transfer gate closed/);
 });
 
 test("Lineage 54 source composition preserves viewport and fixed overlay contracts", () => {
