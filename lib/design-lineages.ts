@@ -140,7 +140,7 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     status: "active",
     summary: "첫 Moment가 감정으로 자라고 Connection path를 따라 Petal Runner가 이동해 LoveTree에 도착하는 4-stage cinematic memory journey 계보입니다.",
     scenarios: ["relationship-retrospective", "growth-milestones", "cinematic-brand"],
-    currentDecision: "V4를 현재 source-fidelity candidate로 구현합니다. Source runtime과 fingerprints는 검증됐고 review route는 활성화했지만, 정확한 background + vehicle PNG 5개가 Git에 transfer/hash-verify되기 전에는 fidelity PASS나 product adoption을 선언하지 않습니다.",
+    currentDecision: "V4를 현재 source-fidelity candidate로 구현합니다. Source runtime과 fingerprints는 검증됐고 exact background + vehicle PNG 5개도 Git transfer/hash-verify를 완료했습니다. Source-fidelity 검증과 canonical product adoption은 별도 결정으로 유지합니다.",
     sourceLabel: "Lineage 54 sibling Drive intake 2026-08-10 · Issue #129 · README-V4 / index-v4.html",
     revisions: [
       {
@@ -163,7 +163,7 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
         decision: "candidate",
         executable: true,
         route: "/design-lab/lineages/54/v4",
-        notes: "source runtime 21,337 B · SHA256 ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9 · exact PNG transfer gate remains open",
+        notes: "source runtime 21,337 B · SHA256 ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9 · exact PNG transfer gate closed · product adoption remains separate",
       },
     ],
   },
