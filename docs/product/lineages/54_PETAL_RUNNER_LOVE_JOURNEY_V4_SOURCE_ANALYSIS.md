@@ -108,41 +108,25 @@ Target asset path:
 
 `public/reference/lineage-54-petal-runner-v4/assets/`
 
-The review component uses this exact path contract and shows `ASSET TRANSFER HOLD` when any expected asset is missing.
+The review component uses this exact path contract and shows `ASSET TRANSFER HOLD` only when an expected asset is actually missing or has failed to decode.
 
-## Binary transfer gate
+## Binary transfer gate — closed
 
-The connected GitHub API can create blobs only from supplied text/base64 strings; it does not accept the locally materialized Drive file as a binary file parameter. The largest source image is 2.46 MB, so conversational base64 is not an acceptable byte-exact transfer mechanism.
+All five authoritative PNGs are now committed byte-for-byte at the registered Git paths. The fail-closed verifier confirms file presence, byte count, SHA-256, Git blob SHA, PNG IHDR dimensions and RGB/RGBA color type for every asset.
 
-Direct HTTPS `git` access from this execution container is also unavailable. Therefore:
+`scripts/verify-lineage-54-assets.mjs` must continue to print `LINEAGE_54_EXACT_ASSET_GATE_PASS` only for a complete 5/5 match. Approximate substitution, re-encoding, optimization or bypass remains forbidden.
 
-- native structural/motion implementation may proceed;
-- exact source metadata and asset paths are pinned;
-- no approximate image substitution is allowed;
-- no source-fidelity PASS is allowed until all five exact PNG files are transferred to Git and verified.
-
-`scripts/verify-lineage-54-assets.mjs` fails closed and verifies, for every transferred asset:
-
-- file presence;
-- byte count;
-- SHA-256;
-- Git blob SHA;
-- PNG IHDR dimensions;
-- PNG color type (`RGB` / `RGBA`).
-
-Only a complete 5/5 match prints `LINEAGE_54_EXACT_ASSET_GATE_PASS`.
+The transfer gate being closed does **not** automatically approve canonical product adoption. Source-fidelity evidence and product-policy adoption remain separate decisions.
 
 ## Post-transfer actual-route browser gate
 
-`tests/lineage-54-route-browser-qa.mjs` is intentionally **not** part of normal `*.test.mjs` discovery before the binaries arrive. It is a standalone fail-closed gate to execute after exact transfer with Playwright installed and the app running.
-
-Example execution after the asset verifier passes:
+`tests/lineage-54-route-browser-qa.mjs` is a standalone fail-closed Playwright gate for the exact transferred assets and native route.
 
 ```bash
 node --import tsx --test tests/lineage-54-route-browser-qa.mjs
 ```
 
-It does not skip a missing asset gate. It requires `ASSET TRANSFER HOLD` to disappear and checks:
+It does not skip a missing asset gate. It requires the runtime `ASSET TRANSFER HOLD` to be absent when all five exact assets decode and checks:
 
 - `1280×800` desktop;
 - `390×844` mobile/touch;
@@ -161,15 +145,15 @@ It does not skip a missing asset gate. It requires `ASSET TRANSFER HOLD` to disa
 
 Automated browser assertions and screenshots are evidence for the review, not a substitute for direct visual comparison by the CTO/user.
 
-## Remaining acceptance gate
+## Merge-readiness gate
 
-Before Ready/merge:
+Before Ready/merge, re-confirm on the exact PR head:
 
-1. transfer all five authoritative PNG files byte-for-byte to the registered Git paths;
-2. run `scripts/verify-lineage-54-assets.mjs` and require 5/5 PASS;
-3. run the standalone Lineage 54 actual-route browser gate;
-4. directly inspect the generated 1280×800 and 390×844 screenshots against the authoritative source, especially final open-door clipping, travel/camera/speed behavior and service panel;
-5. run exact-head full CI and require GREEN;
-6. recheck current `origin/main` and unresolved review threads immediately before Ready/merge.
+1. all five authoritative PNG files remain byte-for-byte at the registered Git paths;
+2. `scripts/verify-lineage-54-assets.mjs` returns the 5/5 exact PASS marker;
+3. the standalone Lineage 54 actual-route browser gate passes;
+4. generated 1280×800 and 390×844 screenshots are directly inspected against the authoritative source, especially final open-door clipping, travel/camera/speed behavior and service panel;
+5. exact-head full CI is GREEN;
+6. current `origin/main` remains an ancestor and unresolved review threads are rechecked immediately before Ready/merge.
 
 No Auth/API/DB/Firebase/Worker/Production mutation is part of this Design Lab lineage review.
