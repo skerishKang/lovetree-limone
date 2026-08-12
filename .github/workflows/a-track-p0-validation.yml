@@ -85,6 +85,26 @@ jobs:
           }
           trap cleanup EXIT
 
+          run_gate() {
+            local label="$1"
+            shift
+            local log="/tmp/a-track-${label}.log"
+            local status
+            set +e
+            "$@" 2>&1 | tee "$log"
+            status=${PIPESTATUS[0]}
+            set -e
+            if [ "$status" -ne 0 ]; then
+              local details
+              details="$(tail -n 40 "$log" | tr '\n' ' ' | cut -c1-4000)"
+              details="${details//'%'/'%25'}"
+              details="${details//$'\r'/'%0D'}"
+              details="${details//$'\n'/'%0A'}"
+              echo "::error title=A-track subgate failed::A_TRACK_SUBGATE_FAIL=${label} | ${details}"
+              return "$status"
+            fi
+          }
+
           ready=0
           for attempt in {1..60}; do
             if curl --fail --silent --show-error http://127.0.0.1:3000/v4 > /dev/null; then
@@ -102,7 +122,8 @@ jobs:
             exit 1
           fi
 
-          node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs
+          run_gate memory-anatomy-route \
+            node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs
 
           mapfile -t standard_tests < <(
             find tests -maxdepth 1 -type f -name '*.test.mjs' \
@@ -116,13 +137,16 @@ jobs:
             exit 1
           fi
 
-          node --import tsx --test "${standard_tests[@]}"
+          run_gate standard-tests \
+            node --import tsx --test "${standard_tests[@]}"
 
           echo "Running Lineage 52 actual-route browser QA in isolation"
-          node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs
+          run_gate lineage-52-route \
+            node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs
 
           echo "Running Lineage 52 direct-navigation browser security QA"
-          node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs
+          run_gate lineage-52-direct-navigation \
+            node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs
 
       - name: Build
         run: npm run build
