@@ -24,6 +24,12 @@ test("Lineage 52 V3 source-runner identity is pinned to the verified Drive artif
   assert.equal(LINEAGE_52_V3_SOURCE.revisionId, "52-v3-reference-earth-orbit");
   assert.equal(LINEAGE_52_V3_SOURCE.candidateId, "lineage:52-v3-reference-earth-orbit");
   assert.equal(LINEAGE_52_V3_SOURCE.runnerRoute, "/design-lab/lineages/52/v3");
+  assert.equal(LINEAGE_52_V3_SOURCE.sourceFile, "lovetree-52-v3-reference-earth-orbit.html");
+  assert.equal(LINEAGE_52_V3_SOURCE.sourceStorageFile, "lovetree-52-v3-reference-earth-orbit.txt");
+  assert.equal(
+    LINEAGE_52_V3_SOURCE.sourceAssetPath,
+    "/design-lab-assets/lineages/52/v3/lovetree-52-v3-reference-earth-orbit.txt",
+  );
   assert.equal(LINEAGE_52_V3_SOURCE.sourceBytes, 1_140_569);
   assert.equal(
     LINEAGE_52_V3_SOURCE.sourceSha256,
@@ -93,10 +99,21 @@ test("source runner defaults to outer-page scroll and requires explicit orbit in
   assert.match(pageSource, /lineage-52-source-runner-controls\.css/);
 });
 
-test("exact source asset must retain the verified byte identity", async () => {
-  const sourceUrl = new URL(`public${LINEAGE_52_V3_SOURCE.sourceAssetPath}`, root);
-  const bytes = await readFile(sourceUrl);
+test("exact source asset retains verified bytes while public HTML direct execution is removed", async () => {
+  const inertSourceUrl = new URL(`public${LINEAGE_52_V3_SOURCE.sourceAssetPath}`, root);
+  const executableHtmlPath =
+    "public/design-lab-assets/lineages/52/v3/lovetree-52-v3-reference-earth-orbit.html";
+  const bytes = await readFile(inertSourceUrl);
 
   assert.equal(bytes.byteLength, LINEAGE_52_V3_SOURCE.sourceBytes);
   assert.equal(createHash("sha256").update(bytes).digest("hex"), LINEAGE_52_V3_SOURCE.sourceSha256);
+  assert.equal(await exists(executableHtmlPath), false, "raw source must not remain directly navigable as public .html");
+});
+
+test("Next headers keep the inert source non-executable on direct navigation", async () => {
+  const nextConfig = await readFile(new URL("next.config.ts", root), "utf8");
+  assert.match(nextConfig, /lovetree-52-v3-reference-earth-orbit\.txt/);
+  assert.match(nextConfig, /Content-Type[\s\S]*text\/plain; charset=utf-8/);
+  assert.match(nextConfig, /X-Content-Type-Options[\s\S]*nosniff/);
+  assert.match(nextConfig, /Content-Security-Policy[\s\S]*default-src 'none'; sandbox/);
 });
