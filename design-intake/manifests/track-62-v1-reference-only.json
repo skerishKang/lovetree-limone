@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-62-v1-reference-only",
+  "sourceTrackId": "Track62 V1",
+  "title": "Reference Capability Snapshot",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "REFERENCE_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "Reference-only capability snapshot; no lineage or revision identity is reserved.",
+  "summary": "Track62 V1 is pinned as reference capability only. It reserves no repository lineage identity and never becomes an executable route.",
+  "provenance": {
+    "sourceLabel": "62 V1 source snapshot",
+    "driveFolderId": "1exampleDrive62",
+    "sourceFiles": ["track-62-v1-reference.html"],
+    "rightsStatus": "sibling-source-owned"
+  }
+}

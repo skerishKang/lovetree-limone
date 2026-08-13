@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-62-v1-1-reservation-hold",
+  "sourceTrackId": "Track62 V1.1",
+  "title": "Template Candidate (Reservation Hold)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "INSTRUCTION_ACCEPTED",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "Lineage/template candidate whose reservation and adoption are held pending product-owner decision.",
+  "summary": "Track62 V1.1 is a Lineage/Template candidate. The identity is reserved but adoption is HOLD: no executable route or artifact progress is claimed.",
+  "provenance": {
+    "sourceLabel": "62 V1.1 template intake",
+    "driveFolderId": "1exampleDrive62b",
+    "sourceFiles": ["track-62-v1-1-template.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-62-template-candidate",
+  "lineageNumber": 62,
+  "revisionId": "62-v1.1-template",
+  "reservation": {
+    "held": true,
+    "note": "Reservation/adoption HOLD until product owner approves the template direction."
+  }
+}

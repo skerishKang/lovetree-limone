@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-56-existing-lineage-variant",
+  "sourceTrackId": "Track56",
+  "title": "Crystal Memory Relic Variant",
+  "classification": "EXISTING_LINEAGE_VARIANT",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "growth-milestones",
+  "productJob": "Moment relic collectible variant in the Lineage 53 / CAP-14 mechanic family.",
+  "summary": "Track56 is classified as a variant inside the existing Lineage 53 emotional-path family (CAP-14 reuse mechanic). sourceTrackId (Track56) is a separate identity from the repository lineage (lt-53).",
+  "provenance": {
+    "sourceLabel": "08_LoveTree_Crystal_Memory_Atelier_V3 Drive intake",
+    "driveFolderId": "1exampleDrive56",
+    "sourceFiles": ["crystal-memory-atelier-v3.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-53-emotional-path-replay",
+  "revisionId": "53-v3-crystal-memory-relic",
+  "route": {
+    "path": "/design-lab/lineages/53/53-v3-crystal-memory-relic",
+    "surface": "lineage"
+  },
+  "derivedDisplay": [
+    { "value": "100/200/365", "kind": "VIEW_DERIVED", "source": "view-preset", "canonicalProductPolicy": false, "note": "source-demo reward framing, not canonical V4 policy" }
+  ],
+  "syntheticFixture": { "prototypeOnly": false, "sourceDemoOnly": true },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}
