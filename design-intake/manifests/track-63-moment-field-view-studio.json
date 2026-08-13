@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-63-moment-field-view-studio",
+  "sourceTrackId": "Track63",
+  "title": "Moment Field 3D View Studio V1",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_PENDING",
+  "rendering": "unresolved",
+  "scenarioId": "people-archive",
+  "productJob": "One existing Tree / one canonical Moment+Connection dataset → choose among multiple spatial presentation lenses → inspect the same mixed-media Moments under that lens → adjust bounded View geometry/motion parameters live → scrub/play the current presentation → save reusable View presets.",
+  "summary": "Track63 (모먼트필드 3D뷰스튜디오 / Moment Field 3D View Studio V1) is a new repository Lineage (lt-63-moment-field-view-studio). This manifest pins the V1 instruction-accepted / EXECUTABLE_PENDING proving snapshot (Issue #164), superseded by V1.2 (current authority) — the pinned snapshot stays historical and pre-executable: candidate folder was empty, rendering unresolved, no source-fidelity PASS claimed.",
+  "provenance": {
+    "sourceLabel": "63_모먼트필드_3D뷰스튜디오 / Issue #164",
+    "driveFolderId": "1ReLPsimI10csOD-Mi2MT_ccXcWxcroFI",
+    "sourceFiles": ["★_참고영상_3D포토콜라주_카드클라우드편집.mp4"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-63-moment-field-view-studio",
+  "lineageNumber": 63,
+  "revisionId": "63-v1",
+  "sourceSnapshot": {
+    "revisionLabel": "V1 (instruction accepted)",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.2 supersedes per Issue #164 current authority (executable Drive 1ZKdsOJe-MKVrSsCVfX00dmkUrb_gwui9, 1,111,636 B, SHA256 15292bc065e210b93128a62db91fe991adea01f3194cc3a52fc265279262644d) — the checked-in V1 pre-executable proving snapshot stays pinned per #80; do not force-upgrade its lifecycle to executable"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "★_참고영상_3D포토콜라주_카드클라우드편집.mp4",
+      "driveId": "1iopa96U_ID4bknrOIOw-Y83sgvrRudyD",
+      "bytes": 43394198,
+      "sha256": "1514c0c50d8d274a8dac61332f3e28094634048f2dd0e1a9d9631db7de38b1df",
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P4", "P5", "P7", "P9"],
+  "sourceDefects": [
+    "no executable candidate exists at intake — candidate folder empty",
+    "no source fingerprint for an executable"
+  ],
+  "nativeRemediations": [
+    "keyboard tool selection and inspector operation",
+    "visible focus",
+    "pointer/touch/wheel ownership",
+    "selected Moment semantics exposed outside purely visual 3D pixels",
+    "video playback cap enforced",
+    "saved preset restore",
+    "same canonical data preserved across multiple ViewDefinition switches",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #164 — V1 contract accepted; EXECUTABLE/QA PENDING"
+  },
+  "templateFamily": "view-preset-studio",
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "ViewDefinition/parameter-schema notes instead of treating every visible source tool as a new capability/runtime primitive",
+      "save/restore View presets = reusable template instances over canonical Moment+Connection projections"
+    ],
+    "policyBoundary": [
+      "no topology mutation from View controls",
+      "View presets are presentation state, not canonical data changes"
+    ]
+  },
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Moment Field 3D View Studio"
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}

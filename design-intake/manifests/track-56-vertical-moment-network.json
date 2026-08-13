@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-56-vertical-moment-network",
+  "sourceTrackId": "Track56",
+  "title": "Vertical Moment Network Overview",
+  "classification": "EXISTING_LINEAGE_VARIANT",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Macro whole-path / hierarchical reveal from First Moment before replay — variant of the Lineage 53 Emotional Path Replay + CAP-14 Directed Connection Path Replay family.",
+  "summary": "Track56 (세로형 모먼트관계망 전체조망 V1.2) is a Scenario Variant of the existing Lineage 53 / CAP-14 family. Repository Lineage 56 is Crystal Memory Atelier and must NEVER be routed here. Cross-namespace mapping: sourceTrackId 56 → lt-53-emotional-path-replay + CAP-14 family.",
+  "provenance": {
+    "sourceLabel": "56_러브트리_세로형_모먼트관계망_전체조망 / Issue #163",
+    "driveFolderId": "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G",
+    "sourceFiles": ["후보_버전1.2_세로형_모먼트관계망_전체조망.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-53-emotional-path-replay",
+  "revisionId": "53-v3-vertical-network-overview",
+  "route": {
+    "path": "/design-lab/lineages/53/53-v3-vertical-network-overview",
+    "surface": "lineage"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+      "driveId": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa",
+      "bytes": 45761,
+      "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "구현설명_버전1.2.md",
+      "driveId": "1dgzrA2ZNHeikdVdUc2UDUwdL7UcAEw9a",
+      "role": "implementation-note",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P3", "P4", "P7", "P9"],
+  "sourceDefects": [
+    "no keyboard event handler in the current V1.2 source HTML",
+    "no complete modal/dialog accessibility evidence",
+    "no 320×720 source QA"
+  ],
+  "nativeRemediations": [
+    "keyboard-accessible Moment/path selection and replay controls",
+    "visible focus",
+    "accessible current-path state",
+    "responsive detail semantics",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [
+    "288 Moments / 42 Paths / 345 Connections synthetic fixture",
+    "Primary 175 / Secondary 82 / Support 46 / Cross-link 18 / Bridge 5 / Secondary Bridge 10",
+    "Origin reveal guides 3"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #163 — KEYBOARD_ACCESSIBILITY_AND_320_QA_HOLD; native adoption pending"
+  },
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "path-family/Hub concepts are presentation state",
+      "data slots: Moment collection + Connection collection over canonical graph"
+    ],
+    "policyBoundary": [
+      "derived path-family/Hub remain presentation state unless product data authority changes"
+    ]
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": true,
+    "receiverConsume": true,
+    "sameMomentFocus": true
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-55-free-connection-routing",
+  "sourceTrackId": "Track55",
+  "title": "Free Connection / LUPT Routing",
+  "classification": "CANONICAL_OWNER_CAPABILITY",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "tree-workspace",
+  "productJob": "Directly create/edit Connections with dynamic routing (LUPT) — canonical V4 Free Graph already owns this core Product Job at /v4/trees/demo/graph.",
+  "summary": "Track55 (러브트리 자유연결 경로편집 / LUPT Living Connection Router) is capability evidence for higher-quality dynamic Connection routing. Repository Lineage 55 is Moonlit Blossom and must NOT be reserved. Cross-namespace mapping: sourceTrackId 55 → canonical owner surface /v4/trees/demo/graph.",
+  "provenance": {
+    "sourceLabel": "55_러브트리_자유연결_경로편집 / Issue #162",
+    "driveFolderId": "1BadZmcHHiGnKRAiGo6U6fc9ofNq69PUZ",
+    "sourceFiles": ["★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "ownerRoute": "/v4/trees/demo/graph",
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html",
+      "driveId": "1hAnmi-bJ5OUSjjouznJQdLxf8VxHsqBS",
+      "bytes": 55327,
+      "sha256": "768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P4", "P7", "P9"],
+  "trulyNewPrimitive": "ConnectionBundleRouter (narrow local pure core candidate — prove canonical Graph consumer before shared extraction)",
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "keyboard alternative for moving a Moment/junction",
+    "focus visibility and logical order",
+    "accessible Connection selection/name/state",
+    "reduced-motion path-follow equivalent",
+    "320×720 + touch drag authority",
+    "modal/inspector focus semantics if overlays introduced",
+    "no graph scroll trap / horizontal document overflow"
+  ],
+  "sourceOnlyValues": [],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "PRODUCT_POLICY_REQUIRED",
+    "note": "Issue #162 — dynamic routing selective adoption review; PRODUCT/BRAND REVIEW REQUIRED for LUPT junction identity, speech bubbles/copy, route decisions implying semantic grouping, junction persistence"
+  },
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "data slots: Moment collection + Connection collection projections",
+      "graph editor interaction over canonical graph, not a standalone fixture engine"
+    ],
+    "policyBoundary": [
+      "junction persistence is view/layout state unless a later product decision says otherwise",
+      "automatic route decisions must not imply semantic grouping"
+    ]
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": true,
+    "receiverConsume": true,
+    "sameMomentFocus": true
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}

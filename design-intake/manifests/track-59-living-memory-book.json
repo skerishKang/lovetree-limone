@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-59-living-memory-book",
+  "sourceTrackId": "Track59",
+  "title": "Living Memory Book V5",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "css3d-dom",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Experience an existing Moment/Connection path as a physical memory book — Moment → WHY NEXT → next Moment story replay, pause and choose at Branch, bounded inline edits, continue/replay the path.",
+  "summary": "Track59 (러브트리 메모리스케치북 페이지여정) V5 — LIVING MEMORY BOOK — is a new repository Lineage (lt-59-living-memory-book). Numeric equality between source Track 59 and Lineage 59 is an explicitly reviewed mapping, not an automatic rule.",
+  "provenance": {
+    "sourceLabel": "59_러브트리_메모리스케치북_페이지여정 / Issue #161",
+    "driveFolderId": "1j3Vh-VpZFzJBqFPeSyJEpqbImCHao2ID",
+    "sourceFiles": ["현재후보.html", "검증결과.json"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-59-living-memory-book",
+  "lineageNumber": 59,
+  "revisionId": "59-v5",
+  "route": {
+    "path": "/design-lab/lineages/59/59-v5",
+    "surface": "lineage"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V5",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "renderingAdapters": ["dom-2d-shell", "page-physics"],
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+      "bytes": 17192064,
+      "sha256": "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "검증결과.json",
+      "driveId": "1ZT8xpC5rPVL4qDuYCfnREWR68zrgFcxn",
+      "bytes": 9694,
+      "sha256": "365ab46a6f28eb6cf19f1df3d24006e5076c47e4d0e2a1e17a1d32ff00c94a94",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": ["physical-object-navigation"],
+  "runtimePrimitives": ["P3", "P4", "P5", "P7", "P9"],
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "accessibility parity for Story/page/Branch status",
+    "exact asset transfer for embedded standalone data URLs",
+    "compact edit preserves ID/provenance/position and updates all projections"
+  ],
+  "sourceOnlyValues": [
+    "source fixture names/dates/counts",
+    "embedded standalone data URLs",
+    "synthetic demo content",
+    "exact reference branding"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #161 — ACCESSIBILITY/ASSET NATIVE GATES HOLD"
+  },
+  "handoffMappings": [
+    {
+      "sourceTrackId": "Track60",
+      "resolvedProductTargetId": "lt-59-living-memory-book",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "path overview entry from Track 60/61 (Issue #161 stable handoff)"
+    }
+  ],
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "physical book navigation grammar (select → focus → open → return) over canonical Moment/Connection data",
+      "current Moment synchronized across page/index/detail/magnifier/story/editor projections"
+    ],
+    "policyBoundary": [
+      "persistence permissions, editable Moment fields, media upload/storage/rights, Connection edit authorization are PRODUCT_POLICY"
+    ]
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": true,
+    "receiverConsume": true,
+    "sameMomentFocus": true
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}
