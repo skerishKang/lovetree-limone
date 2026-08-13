@@ -814,13 +814,13 @@ test("fixtures: Track60 → NEW_LINEAGE → canvas-3d-projection", () => {
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
 });
 
-test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.5 with RESOLVED handoffs", () => {
+test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.7 with RESOLVED handoffs", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.rendering, "dom-2d");
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
-  assert.equal(manifest.revisionId, "61-v1-5");
-  assert.equal(manifest.route.path, "/design-lab/lineages/61/61-v1-5");
+  assert.equal(manifest.revisionId, "61-v1-7");
+  assert.equal(manifest.route.path, "/design-lab/lineages/61/61-v1-7");
   assert.ok(manifest.handoffMappings.length >= 3);
   for (const mapping of manifest.handoffMappings) {
     assert.equal(mapping.resolutionStatus, "RESOLVED");
@@ -836,15 +836,15 @@ test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.5 with RESOLVED handoffs",
   assert.equal(byTrack["Track59"].resolvedProductTargetId, "lt-59-living-memory-book");
 });
 
-test("fixtures: Track61 V1.5 authoritative source identity is pinned", () => {
+test("fixtures: Track61 V1.7 authoritative source identity is pinned", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
-  assert.equal(manifest.provenance.driveFolderId, "1Ebd1WW5e3I4uSQo9o2Q_leL8ncvgUXQB");
+  assert.equal(manifest.provenance.driveFolderId, "1uAuP0ja-4MB3HWedICosfMSWhkmQ0yEr");
   const executable = manifest.sourceArtifacts.find((artifact) => artifact.role === "executable");
-  assert.equal(executable.driveId, "17GwHW0uFafc35UR7-TZ0g_ulJyADw2_L");
-  assert.equal(executable.bytes, 488588);
+  assert.equal(executable.driveId, "1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm");
+  assert.equal(executable.bytes, 493980);
   assert.equal(
     executable.sha256,
-    "725350cd9132d499cee46eac0d3d0d9fc0c9a868d68efc635ceb6c94a884c474",
+    "133e3a82cae1e4edd46083deb648962882e624d1db1890c5c337a0068ef83bf7",
   );
   const instruction = manifest.sourceArtifacts.find((artifact) => artifact.role === "instruction");
   assert.equal(instruction.driveId, "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF");
@@ -1907,13 +1907,13 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
     IntakeManifestError,
   );
 
-  // Real superseded proving snapshots are explicitly HISTORICAL_PINNED and stay
-  // valid even though newer authoritative revisions exist (Track61 → V1.7,
-  // Track63 → V1.2, Track64 → V1.2.1).
+  // Track61 is now the CURRENT_AT_OBSERVATION V1.7 authority (Issue #158 current
+  // authority); Track63/Track64 remain HISTORICAL_PINNED proving snapshots whose
+  // newer authoritative revisions are recorded.
   const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
-  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
-  assert.equal(track61.sourceSnapshot.revisionLabel, "V1.5");
-  assert.match(track61.sourceSnapshot.newerRevisionKnown, /V1\.7/);
+  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track61.sourceSnapshot.revisionLabel, "V1.7");
+  assert.equal(track61.sourceSnapshot.newerRevisionKnown, undefined, "current snapshot records no newer revision");
   const track63 = parseIntakeManifest(fixture("track-63-moment-field-view-studio"));
   assert.equal(track63.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.match(track63.sourceSnapshot.newerRevisionKnown, /V1\.2/);

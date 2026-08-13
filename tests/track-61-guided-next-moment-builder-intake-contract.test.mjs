@@ -1,4 +1,8 @@
-{
+import assert from "node:assert/strict";
+import test from "node:test";
+import { parseIntakeManifest } from "../lib/design-intake/manifest.ts";
+
+const MANIFEST = {
   "schemaVersion": 1,
   "stableId": "track-61-guided-next-moment-builder",
   "sourceTrackId": "Track61",
@@ -6,14 +10,15 @@
   "classification": "NEW_LINEAGE",
   "lifecycle": "EXECUTABLE_AVAILABLE",
   "rendering": "dom-2d",
-  "nativeReadiness": "IMPLEMENTED",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
   "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — this manifest pins the current V1.7 proving snapshot (Issue #158 current authority). V1.5 and V1.6 are prior revision history. The native candidate is implemented in code (nativeReadiness IMPLEMENTED) but remains a candidate: Design Fidelity exact-asset gate (P8) and source navigation holds are HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
   "provenance": {
     "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.7 current authority)",
     "driveFolderId": "1uAuP0ja-4MB3HWedICosfMSWhkmQ0yEr",
-    "sourceFiles": ["현재후보.html"],
+    "sourceFiles": [
+      "현재후보.html"
+    ],
     "rightsStatus": "sibling-source-owned"
   },
   "designLineageId": "lt-61-guided-next-moment-builder",
@@ -23,10 +28,9 @@
     "path": "/design-lab/lineages/61/61-v1-7",
     "surface": "lineage"
   },
-  "sourceSnapshot": {
-    "revisionLabel": "V1.7",
-    "authorityObservedAt": "2026-08-13T17:16:51.000Z",
-    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #158 — V1.7 current authority proving snapshot; native candidate implemented (nativeReadiness IMPLEMENTED) but Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD — candidate for product-owner review; not FINAL/CLOSED"
   },
   "sourceArtifacts": [
     {
@@ -52,7 +56,13 @@
     }
   ],
   "reusableCapabilities": [],
-  "runtimePrimitives": ["P3", "P4", "P5", "P7", "P9"],
+  "runtimePrimitives": [
+    "P3",
+    "P4",
+    "P5",
+    "P7",
+    "P9"
+  ],
   "sourceDefects": [],
   "nativeRemediations": [
     "current → selected candidate → WHY → Main/Branch → next recommendation state consistency",
@@ -71,9 +81,15 @@
     "demo fan quotes"
   ],
   "backendScope": "BACKEND_FREE",
-  "adoption": {
-    "status": "UNDECIDED",
-    "note": "Issue #158 — V1.7 current authority proving snapshot; native candidate implemented (nativeReadiness IMPLEMENTED) but Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD — candidate for product-owner review; not FINAL/CLOSED"
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "recommendation reason / fan reaction / WHY NEXT must stay clearly separated",
+      "one canonical selected-candidate authority; no second independent selectedIndex"
+    ],
+    "policyBoundary": [
+      "recommendation/ranking algorithm, public/official/user-saved source authority, privacy/opt-in eligibility, real popularity metrics, persistence, moderation, official-path semantics = PRODUCT_POLICY"
+    ]
   },
   "handoffMappings": [
     {
@@ -95,16 +111,12 @@
       "handoffContext": "Living Memory Book stable product target (Issue #161)"
     }
   ],
-  "slotNotes": {
-    "issue": "142",
-    "notes": [
-      "recommendation reason / fan reaction / WHY NEXT must stay clearly separated",
-      "one canonical selected-candidate authority; no second independent selectedIndex"
-    ],
-    "policyBoundary": [
-      "recommendation/ranking algorithm, public/official/user-saved source authority, privacy/opt-in eligibility, real popularity metrics, persistence, moderation, official-path semantics = PRODUCT_POLICY"
-    ]
+  "sourceSnapshot": {
+    "revisionLabel": "V1.7",
+    "authorityObservedAt": "2026-08-13T17:16:51.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
   },
+  "nativeReadiness": "IMPLEMENTED",
   "navigationHandoff": {
     "targetMapping": true,
     "urlResolution": true,
@@ -115,9 +127,21 @@
   },
   "qa": {
     "viewports": [
-      { "width": 1280, "height": 800 },
-      { "width": 390, "height": 844, "mobile": true },
-      { "width": 320, "height": 720, "mobile": true }
+      {
+        "width": 1280,
+        "height": 800,
+        "mobile": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      {
+        "width": 320,
+        "height": 720,
+        "mobile": true
+      }
     ],
     "reducedMotion": true,
     "keyboardFocus": true,
@@ -127,4 +151,17 @@
     "consoleErrorsZero": true,
     "pageErrorsZero": true
   }
-}
+};
+
+test("track-61-guided-next-moment-builder: manifest stays schema-valid", () => {
+  const parsed = parseIntakeManifest(MANIFEST);
+  assert.equal(parsed.stableId, "track-61-guided-next-moment-builder");
+  assert.equal(parsed.sourceTrackId, "Track61");
+  assert.equal(parsed.classification, "NEW_LINEAGE");
+});
+
+test("track-61-guided-next-moment-builder: provenance is reference-only and never executed", () => {
+  const parsed = parseIntakeManifest(MANIFEST);
+  assert.ok(parsed.provenance.sourceFiles.length > 0);
+  assert.equal(parsed.schemaVersion, 1);
+});
