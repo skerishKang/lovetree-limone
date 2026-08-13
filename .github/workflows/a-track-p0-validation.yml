@@ -148,8 +148,51 @@ jobs:
           run_gate lineage-52-direct-navigation \
             node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs
 
+      - name: V4 Orbit canonical actual-route browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/v4-orbit-route-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..60}; do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/v4/subjects/demo/orbit > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/v4-orbit-route-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/v4-orbit-route-server.log
+            exit 1
+          fi
+
+          # PR #156 Orbit canonical browser QA across desktop 1280x800,
+          # mobile 390x844 real touch, 320x720 and reduced motion.  A
+          # failure here fails the A-track (no skip, no xfail).
+          V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
+            node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
+
       - name: Build
         run: npm run build
 
       - name: Database schema check
         run: npm run db:check
+
+      - name: Upload V4 Orbit canonical screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v4-orbit-canonical-155-screenshots
+          path: /tmp/v4-orbit-canonical-155-screenshots/*.png
+          if-no-files-found: warn
