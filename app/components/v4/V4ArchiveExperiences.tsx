@@ -1,8 +1,17 @@
 "use client";
 
-import type { CSSProperties, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import type { CSSProperties, MouseEvent as ReactMouseEvent, MutableRefObject, PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import {
+  canonicalV4OrbitRotation,
+  nearestEquivalentV4OrbitRotation,
+  snapV4OrbitRotation,
+} from "@/lib/v4-orbit-selection";
+import {
+  isV4OrbitDragMovement,
+  v4OrbitMediaAuthority,
+} from "@/lib/v4-orbit-product";
 
 interface ArchiveMoment {
   id: string;
@@ -127,72 +136,329 @@ function liquidTransform(mode: LiquidMode, index: number, active: number, rotati
   const offset = index - active;
   if (mode === "orbit") {
     const angle = (index / count) * Math.PI * 2 + rotation;
-    return { x: Math.cos(angle) * 370, y: Math.sin(angle) * 235, z: Math.sin(angle) * 150, rx: Math.sin(angle) * -9, ry: Math.cos(angle) * 24, rz: angle * 4, s: .77 + (Math.sin(angle) + 1) * .13 };
+    return { x: Math.cos(angle) * 370, y: Math.sin(angle) * 100, z: Math.sin(angle) * 150, rx: Math.sin(angle) * -9, ry: Math.cos(angle) * 24, rz: angle * 4, s: .78 + (Math.sin(angle) + 1) * .1 };
   }
   if (mode === "free") return { x: Math.sin(index * 2.31 + rotation) * 420, y: Math.cos(index * 1.71 + rotation) * 210, z: -Math.abs(offset) * 30, rx: Math.sin(index) * 8, ry: Math.cos(index) * 15, rz: Math.sin(index * 1.3) * 12, s: index === active ? 1.12 : .74 };
   if (mode === "diagonal") return { x: offset * 180 + rotation * 60, y: offset * 88, z: -Math.abs(offset) * 45, rx: 0, ry: offset * -8, rz: -13, s: index === active ? 1.08 : .77 };
   return { x: offset * 170 + rotation * 45, y: Math.sin(index * 1.25 + rotation) * 145, z: -Math.abs(offset) * 55, rx: Math.cos(index) * 8, ry: offset * -8, rz: Math.sin(index) * 7, s: index === active ? 1.08 : .76 };
 }
 
+interface V4OrbitRailProps {
+  moments: ArchiveMoment[];
+  selected: number;
+  onSelect: (index: number, trigger: HTMLElement | null) => void;
+}
+
+function V4OrbitRail({ moments, selected, onSelect }: V4OrbitRailProps) {
+  const selectedRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    selectedRef.current?.scrollIntoView({ block: "nearest", inline: "center", behavior: "auto" });
+  }, [selected]);
+
+  return (
+    <nav className="v4-orbit-rail" aria-label="Moment 바로 선택">
+      <div className="v4-orbit-rail-track">
+        {moments.map((item, index) => (
+          <button
+            key={item.id}
+            ref={index === selected ? selectedRef : undefined}
+            type="button"
+            className={`v4-orbit-rail-item${index === selected ? " is-selected" : ""}`}
+            aria-current={index === selected ? "true" : undefined}
+            style={{ "--accent": item.accent } as CSSProperties}
+            onClick={(event) => onSelect(index, event.currentTarget)}
+          >
+            <span className="v4-orbit-rail-num">{String(index + 1).padStart(2, "0")}</span>
+            <span className="v4-orbit-rail-title">{item.title}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+interface V4OrbitDetailProps {
+  moment: ArchiveMoment;
+  onClose: () => void;
+  triggerRef: MutableRefObject<HTMLElement | null>;
+}
+
+function V4OrbitDetail({ moment, onClose, triggerRef }: V4OrbitDetailProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const media = v4OrbitMediaAuthority(moment);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const trigger = triggerRef.current ?? (document.activeElement as HTMLElement | null);
+    closeRef.current?.focus();
+    function onKey(event: KeyboardEvent) {
+      const node = dialogRef.current;
+      if (!node) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key === "Tab") {
+        const items = Array.from(
+          node.querySelectorAll<HTMLElement>("button, [href], input, [tabindex]:not([tabindex='-1'])"),
+        ).filter((nodeItem) => !nodeItem.hasAttribute("disabled"));
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    dialog.addEventListener("keydown", onKey);
+    return () => {
+      dialog.removeEventListener("keydown", onKey);
+      trigger?.focus?.();
+    };
+  }, [onClose, triggerRef]);
+
+  return (
+    <div
+      className="v4-liquid-detail"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.currentTarget === event.target) onClose();
+      }}
+    >
+      <section
+        className="v4-liquid-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${moment.title} 상세`}
+        ref={dialogRef}
+      >
+        <div
+          className="v4-liquid-video"
+          style={{ backgroundImage: `linear-gradient(180deg,rgba(255,255,255,.02),rgba(28,17,23,.44)),url(${thumb(moment)})` }}
+        >
+          {playing && media.playable ? (
+            <iframe
+              className="v4-liquid-embed"
+              src={`https://www.youtube.com/embed/${moment.videoId}?autoplay=1&mute=1`}
+              title={moment.title}
+              allow="autoplay; encrypted-media"
+            />
+          ) : (
+            <button type="button" className="v4-liquid-play" aria-label="영상 재생" onClick={() => setPlaying(true)}>▶</button>
+          )}
+        </div>
+        <div className="v4-liquid-note">
+          <small>{moment.date} · {moment.emotion.toUpperCase()} · {moment.time}</small>
+          <h2>{moment.title}</h2>
+          <p>{moment.note}</p>
+          <p>선택한 영상과 그때의 메모를 같은 화면에서 감상합니다.</p>
+          <button className="v4-archive-button is-primary" type="button" ref={closeRef} onClick={onClose}>케이스에 다시 넣기</button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+const DRAG_SLOP = 6;
+const ORBIT_DRAG_FACTOR = 0.0045;
+
 export function V4LiquidOrbitGallery() {
   const [mode, setMode] = useState<LiquidMode>("orbit");
-  const [active, setActive] = useState(1);
-  const [rotation, setRotation] = useState(0);
+  const [selected, setSelected] = useState(1);
+  const [orbitRotation, setOrbitRotation] = useState(() => canonicalV4OrbitRotation(1, MOMENTS.length));
+  const [scrub, setScrub] = useState(0);
+  const [dragRotation, setDragRotation] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const [viewer, setViewer] = useState(false);
-  const drag = useRef<{ id: number; x: number; rotation: number } | null>(null);
-  const moment = MOMENTS[active];
+  const drag = useRef<{ id: number; x: number; y: number; start: number; latest: number; moved: boolean; isOrbit: boolean } | null>(null);
+  const suppressClick = useRef(false);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const count = MOMENTS.length;
+  const moment = MOMENTS[selected];
+
+  // Single canonical selection authority: every surface reads `selected`.
+  function select(index: number) {
+    const next = ((index % count) + count) % count;
+    setSelected(next);
+    if (mode === "orbit") {
+      setOrbitRotation((prev) => nearestEquivalentV4OrbitRotation(prev, next, count));
+    }
+  }
+  const step = useCallback((direction: 1 | -1) => {
+    const next = (selected + direction + count) % count;
+    setSelected(next);
+    if (mode === "orbit") {
+      setOrbitRotation((prev) => nearestEquivalentV4OrbitRotation(prev, next, count));
+    } else {
+      setScrub((prev) => prev + direction * 0.16);
+    }
+  }, [selected, mode, count]);
+  function changeMode(nextMode: LiquidMode) {
+    setMode(nextMode);
+    if (nextMode === "orbit") {
+      // Returning to orbit must converge on the canonical rotation of the
+      // current selected Moment, not a stale rotation from a previous visit.
+      setDragRotation(null);
+      setOrbitRotation(canonicalV4OrbitRotation(selected, count));
+    }
+  }
+  function isEditableTarget(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) return false;
+    const tag = target.tagName;
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
+  }
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") { setActive((value) => (value - 1 + MOMENTS.length) % MOMENTS.length); setRotation((value) => value - .18); }
-      if (event.key === "ArrowRight") { setActive((value) => (value + 1) % MOMENTS.length); setRotation((value) => value + .18); }
-      if (event.key === "Enter") setViewer(true);
-      if (event.key === "Escape") setViewer(false);
+      if (viewer) {
+        if (event.key === "Escape") setViewer(false);
+        return;
+      }
+      // Never hijack global navigation while the user is typing in an
+      // editable control or interacting with a native form field.
+      if (isEditableTarget(event.target)) return;
+      if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
+      else if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
+      else if (event.key === "Escape") setViewer(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [viewer, step]);
+
+  // Native non-passive wheel listener: React registers wheel passively (17+),
+  // which makes preventDefault() impossible and logs a console error.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      step(event.deltaY > 0 ? 1 : -1);
+    };
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    return () => stage.removeEventListener("wheel", onWheel);
+  }, [step]);
 
   function down(event: ReactPointerEvent<HTMLDivElement>) {
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { id: event.pointerId, x: event.clientX, rotation };
+    const isOrbit = mode === "orbit";
+    const start = isOrbit ? (dragRotation ?? orbitRotation) : scrub;
+    const fromCard = (event.target as HTMLElement).closest?.(".v4-liquid-card") != null;
+    // A pointer that starts on a card keeps the button's implicit capture,
+    // so the native click still lands on the card (open/select semantics).
+    // Only the bare stage needs explicit capture so drags can leave the box.
+    if (!fromCard) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    drag.current = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      start,
+      latest: start,
+      moved: false,
+      isOrbit,
+    };
     setDragging(true);
   }
   function move(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!drag.current || drag.current.id !== event.pointerId) return;
-    setRotation(drag.current.rotation + (event.clientX - drag.current.x) * .0045);
+    const current = drag.current;
+    if (!current || current.id !== event.pointerId) return;
+    const dx = event.clientX - current.x;
+    const dy = event.clientY - current.y;
+    if (!current.moved && isV4OrbitDragMovement(dx, dy, DRAG_SLOP)) {
+      current.moved = true;
+      suppressClick.current = true;
+    }
+    const delta = dx * ORBIT_DRAG_FACTOR;
+    current.latest = current.start + delta;
+    if (current.isOrbit) setDragRotation(current.latest);
+    else setScrub(current.latest);
   }
-  function up(event: ReactPointerEvent<HTMLDivElement>) {
-    if (drag.current?.id === event.pointerId) drag.current = null;
+  function finish(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = drag.current;
+    if (!current || current.id !== event.pointerId) {
+      setDragging(false);
+      return;
+    }
+    // Read the latest rotation from the ref, not the state: React batches
+    // state updates, so a pointerup immediately after the final pointermove
+    // can still see a stale dragRotation.
+    if (current.isOrbit) {
+      const snapped = snapV4OrbitRotation(current.latest, count);
+      setSelected(snapped.index);
+      setOrbitRotation(snapped.rotation);
+    }
+    drag.current = null;
+    setDragRotation(null);
     setDragging(false);
+    window.setTimeout(() => {
+      suppressClick.current = false;
+    }, 0);
   }
-  function wheel(event: ReactWheelEvent<HTMLDivElement>) {
-    event.preventDefault();
-    const delta = event.deltaY > 0 ? 1 : -1;
-    setActive((value) => (value + delta + MOMENTS.length) % MOMENTS.length);
-    setRotation((value) => value + delta * .14);
+  function openDetail(index: number, trigger: HTMLElement | null) {
+    select(index);
+    triggerRef.current = trigger;
+    setViewer(true);
   }
+  function onCardActivate(index: number, event?: ReactMouseEvent<HTMLButtonElement>) {
+    if (suppressClick.current) {
+      suppressClick.current = false;
+      return;
+    }
+    if (index === selected) openDetail(index, event?.currentTarget ?? null);
+    else select(index);
+  }
+
+  const effectiveRotation = mode === "orbit" ? (dragRotation ?? orbitRotation) : scrub;
 
   return (
     <main className="v4-archive-page v4-liquid-page">
       <div className="v4-archive-app">
         <ArchiveTop title="물결치는 순간의 서가" subtitle="DRAG · WHEEL · KEYBOARD · LIQUID ORBIT" active="Orbit" />
-        <section className="v4-archive-intro"><div><p>LIQUID ORBIT VIDEO GALLERY</p><h1>손끝을 따라 흐르는<br /><em>영상의 궤도</em></h1><span>드래그와 휠, 키보드로 장면의 흐름을 바꾸고 선택한 순간을 비닐 케이스에서 꺼내듯 크게 펼칩니다.</span></div><div className="v4-archive-guide"><b>드래그 회전</b><b>휠 이동</b><b>← → 키</b><b>Enter 열기</b></div></section>
+        <section className="v4-archive-intro"><div><p>LIQUID ORBIT VIDEO GALLERY</p><h1>손끝을 따라 흐르는<br /><em>영상의 궤도</em></h1><span>드래그와 휠, 키보드로 장면의 흐름을 바꾸고 선택한 순간을 비닐 케이스에서 꺼내듯 크게 펼칩니다.</span></div><div className="v4-archive-guide"><b>드래그 회전</b><b>휠 이동</b><b>← → 키</b><b>선택 열기</b></div></section>
         <section className="v4-archive-shell v4-liquid-shell">
-          <header className="v4-archive-head"><div><h2>{moment.title}</h2><p>{mode.toUpperCase()} · {moment.date} · {moment.emotion}</p></div><div className="v4-archive-count"><i />{active + 1} / {MOMENTS.length}</div></header>
-          <div className={`v4-liquid-stage${dragging ? " is-dragging" : ""}`} data-mode={mode} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onWheel={wheel}>
+          <header className="v4-archive-head"><div><h2>{moment.title}</h2><p>{mode.toUpperCase()} · {moment.date} · {moment.emotion}</p></div><div className="v4-archive-count"><i />{selected + 1} / {count}</div></header>
+          <div
+            ref={stageRef}
+            className={`v4-liquid-stage${dragging ? " is-dragging" : ""}`}
+            data-mode={mode}
+            onPointerDown={down}
+            onPointerMove={move}
+            onPointerUp={finish}
+            onPointerCancel={finish}
+            onLostPointerCapture={finish}
+          >
             <span className="v4-liquid-halo" />
             {MOMENTS.map((item, index) => {
-              const p = liquidTransform(mode, index, active, rotation);
+              const p = liquidTransform(mode, index, selected, effectiveRotation);
               const style = { "--x": `${Number(p.x).toFixed(2)}px`, "--y": `${Number(p.y).toFixed(2)}px`, "--z": `${p.z}px`, "--rx": `${Number(p.rx).toFixed(2)}deg`, "--ry": `${Number(p.ry).toFixed(2)}deg`, "--rz": `${Number(p.rz).toFixed(2)}deg`, "--s": Number(p.s).toFixed(4), "--accent": item.accent } as CSSProperties;
-              return <button className={`v4-liquid-card${index === active ? " is-selected" : ""}`} style={style} type="button" key={item.id} onPointerDown={(event) => event.stopPropagation()} onClick={() => { if (index === active) setViewer(true); else setActive(index); }}><div className="v4-liquid-media"><img src={thumb(item)} alt="" /><span className="v4-liquid-index">{String(index + 1).padStart(2, "0")}</span></div><div className="v4-liquid-copy"><small>{item.emotion.toUpperCase()} · {item.time}</small><strong>{item.title}</strong><p>{item.note}</p></div></button>;
+              return (
+                <button
+                  className={`v4-liquid-card${index === selected ? " is-selected" : ""}`}
+                  style={style}
+                  type="button"
+                  key={item.id}
+                  onClick={(event) => onCardActivate(index, event)}
+                >
+                  <div className="v4-liquid-media"><img src={thumb(item)} alt="" /><span className="v4-liquid-index">{String(index + 1).padStart(2, "0")}</span></div>
+                  <div className="v4-liquid-copy"><small>{item.emotion.toUpperCase()} · {item.time}</small><strong>{item.title}</strong><p>{item.note}</p></div>
+                </button>
+              );
             })}
           </div>
+          <V4OrbitRail moments={MOMENTS} selected={selected} onSelect={(index) => select(index)} />
         </section>
       </div>
-      <div className="v4-liquid-dock"><strong>보기 방식</strong><div className="v4-liquid-tabs">{LIQUID_MODES.map((item) => <button className={`v4-liquid-tab${mode === item ? " is-active" : ""}`} type="button" key={item} onClick={() => setMode(item)}>{item}</button>)}</div></div>
-      {viewer ? <div className="v4-liquid-detail" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setViewer(false); }}><section className="v4-liquid-dialog" role="dialog" aria-modal="true"><div className="v4-liquid-video" style={{ backgroundImage: `linear-gradient(180deg,rgba(255,255,255,.02),rgba(28,17,23,.44)),url(${thumb(moment)})` }}>▶</div><div className="v4-liquid-note"><small>{moment.date} · {moment.emotion.toUpperCase()} · {moment.time}</small><h2>{moment.title}</h2><p>{moment.note}</p><p>선택한 영상과 그때의 메모를 같은 화면에서 감상합니다.</p><button className="v4-archive-button is-primary" type="button" onClick={() => setViewer(false)}>케이스에 다시 넣기</button></div></section></div> : null}
+      <div className="v4-liquid-dock"><strong>보기 방식</strong><div className="v4-liquid-tabs">{LIQUID_MODES.map((item) => <button className={`v4-liquid-tab${mode === item ? " is-active" : ""}`} type="button" key={item} onClick={() => changeMode(item)}>{item}</button>)}</div></div>
+      {viewer ? <V4OrbitDetail key={moment.id} moment={moment} onClose={() => setViewer(false)} triggerRef={triggerRef} /> : null}
     </main>
   );
 }
