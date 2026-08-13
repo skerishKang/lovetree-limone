@@ -68,6 +68,115 @@ export const RENDERING_DISCRIMINATORS = [
 export type RenderingDiscriminator = (typeof RENDERING_DISCRIMINATORS)[number];
 
 /* ------------------------------------------------------------------ */
+/* Source snapshot authority                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Source authority states separate two different truths:
+ * - `CURRENT_AT_OBSERVATION` — the snapshot was the current Drive revision when
+ *   the authority was observed (requires the observation timestamp).
+ * - `HISTORICAL_PINNED` — the snapshot is pinned for proving purposes even
+ *   though a newer source revision exists (records the known newer revision
+ *   and the reason, per #80 continuous-intake precedence).
+ *
+ * A pinned proving snapshot never becomes stale-invalid because a newer Drive
+ * revision appears: the manifest pins the exact revision it validates. There is
+ * no live Drive/network polling anywhere in this factory.
+ *
+ * The snapshot identity never forges or omits SHA/bytes evidence: source
+ * artifacts still carry their own real fingerprints and the fingerprint
+ * evidence rules (G) are enforced independently of the snapshot state.
+ */
+export const SOURCE_AUTHORITY_STATES = [
+  "CURRENT_AT_OBSERVATION",
+  "HISTORICAL_PINNED",
+] as const;
+export type SourceAuthorityState = (typeof SOURCE_AUTHORITY_STATES)[number];
+
+export interface SourceSnapshot {
+  /** Source revision/snapshot identity, e.g. "V1.5" (source-side, never a repo route). */
+  revisionLabel: string;
+  /** ISO-8601 timestamp of when the authority was observed / the pin was recorded. */
+  authorityObservedAt: string;
+  sourceAuthorityState: SourceAuthorityState;
+  /** Known newer source revision + reason (required for HISTORICAL_PINNED). */
+  newerRevisionKnown?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Native implementation readiness (separate from source lifecycle)   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Sibling source lifecycle (EXECUTABLE_AVAILABLE) is NEVER the same as the
+ * LoveTree native candidate state. The scaffold initial state is SCAFFOLDED and
+ * only real native implementation + QA may advance to IMPLEMENTED/VALIDATED.
+ *
+ * Order: source executable → scaffold → native implementation → focused/browser
+ * QA → Fidelity eligibility. A source executable alone never activates fidelity.
+ */
+export const NATIVE_READINESS_STATES = [
+  "SCAFFOLDED",
+  "IMPLEMENTATION_PENDING",
+  "IMPLEMENTED",
+  "VALIDATED",
+] as const;
+export type NativeReadinessState = (typeof NATIVE_READINESS_STATES)[number];
+
+export const DEFAULT_NATIVE_READINESS: NativeReadinessState = "SCAFFOLDED";
+
+/* ------------------------------------------------------------------ */
+/* Secondary rendering adapters + visual diversity evidence           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Bounded secondary rendering/interaction vocabularies. A candidate keeps ONE
+ * primary renderer (`rendering`) and may declare additional bounded adapters
+ * (e.g. Track59: primary css3d-dom shell + bounded page physics).
+ */
+export const RENDERING_ADAPTERS = [
+  "dom-2d-shell",
+  "css3d-overlay",
+  "page-physics",
+  "canvas-2d-overlay",
+  "sprite-sheet",
+  "webgl-overlay",
+] as const;
+export type RenderingAdapter = (typeof RENDERING_ADAPTERS)[number];
+
+/**
+ * Optional visual-diversity evidence. `declaredFixtureCount` /
+ * `declaredEntityCount` (from the source instruction) are NEVER auto-derived
+ * into `independentlyReviewedCount`: independent visual review is a separate
+ * evidence contract. Automatic face recognition / identity inference is
+ * forbidden (`noFaceRecognitionOrIdentityInference` must be true).
+ */
+export interface VisualDiversityEvidence {
+  declaredFixtureCount?: number;
+  declaredEntityCount?: number;
+  independentlyReviewedCount?: number;
+  reviewMethod: string;
+  noFaceRecognitionOrIdentityInference: true;
+  evidencePath?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Required source package contract (ARTIFACTS_PARTIAL/COMPLETE)      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * ARTIFACTS_PARTIAL / ARTIFACTS_COMPLETE are never free labels: they must be
+ * backed by a declared required source package set (`requiredRoles`). This is
+ * SOURCE package completeness — it never implies native implementation
+ * completeness (see NATIVE_READINESS_STATES).
+ */
+export interface RequiredArtifactContract {
+  /** Roles that define the required source package set, e.g. ["executable", "sibling-qa"]. */
+  requiredRoles: readonly string[];
+  status: "PARTIAL" | "COMPLETE";
+}
+
+/* ------------------------------------------------------------------ */
 /* Source artifacts (distinct from runtime exactAssets)               */
 /* ------------------------------------------------------------------ */
 
@@ -361,6 +470,20 @@ export interface DesignIntakeManifest {
   visualMechanicOverlap?: readonly string[];
   /** Product-job distinctness statement when visual overlap exists. */
   productJobDistinctness?: string;
+  /* ---------------- source snapshot authority ---------------- */
+  /** Source revision/snapshot identity pinned by this proving manifest. */
+  sourceSnapshot?: SourceSnapshot;
+  /* ---------------- native readiness (repo-side) ---------------- */
+  /** LoveTree native candidate state — separate from the sibling source lifecycle. */
+  nativeReadiness?: NativeReadinessState;
+  /* ---------------- rendering / visual evidence ---------------- */
+  /** Bounded secondary rendering/interaction adapters (primary renderer stays `rendering`). */
+  renderingAdapters?: readonly RenderingAdapter[];
+  /** Optional visual-diversity review evidence (never auto-derived; no face inference). */
+  visualDiversity?: VisualDiversityEvidence;
+  /* ---------------- source package contract ---------------- */
+  /** Declared required source package set backing ARTIFACTS_PARTIAL/COMPLETE. */
+  requiredArtifacts?: RequiredArtifactContract;
   /* ---------------- P8 exact assets ---------------- */
   exactAssets?: readonly ExactAssetEntry[];
   exactAssetGate?: ExactAssetGateState;
@@ -405,9 +528,31 @@ const SHA256_PATTERN = /^[0-9a-f]{64}$/i;
 const GIT_BLOB_SHA_PATTERN = /^[0-9a-f]{40}$/i;
 /** Authoritative Drive object ids: 25–44 base64url chars. Placeholders rejected. */
 const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
+/**
+ * Fail-closed allowlist identifier grammar for filesystem-interpolated
+ * identities (revisionId, designLineageId): lowercase kebab only. Rejects `/`,
+ * `\\`, `..`, absolute paths, Windows drive paths, NUL, CR/LF and control chars.
+ */
+const IDENTIFIER_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+/** ISO-8601 timestamp, e.g. 2026-08-13T09:30:00.000Z. */
+const ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+/** CR/LF/NUL/control chars are rejected in any manifest string (C). */
+const CONTROL_CHAR_PATTERN = /[\u0000-\u001f\u007f]/;
+/** Repository-relative exact-asset target: public/** or reference/** only (B). */
+const REPO_TARGET_PREFIXES = ["public/", "reference/"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function hasControlChars(value: string): boolean {
+  return CONTROL_CHAR_PATTERN.test(value);
+}
+
+function rejectControlChars(value: string, field: string, problems: string[]): void {
+  if (hasControlChars(value)) {
+    problems.push(`${field} must not contain CR/LF/NUL/control characters`);
+  }
 }
 
 function expectString(value: unknown, field: string, problems: string[]): string {
@@ -415,6 +560,7 @@ function expectString(value: unknown, field: string, problems: string[]): string
     problems.push(`${field} must be a non-empty string`);
     return "";
   }
+  rejectControlChars(value, field, problems);
   return value;
 }
 
@@ -424,7 +570,31 @@ function expectOptionalString(value: unknown, field: string, problems: string[])
     problems.push(`${field} must be a non-empty string when provided`);
     return undefined;
   }
+  rejectControlChars(value, field, problems);
   return value;
+}
+
+/**
+ * Fail-closed repository-relative target path check (B): forward-slash
+ * normalized, no `.`/`..` segments, no absolute/drive/backslash paths, and the
+ * normalized destination must live exactly under public/** or reference/**.
+ * Returns null when safe, else a problem description.
+ */
+export function checkSafeTargetPath(targetPath: string): string | null {
+  if (!targetPath) return "targetPath must be a non-empty string";
+  if (hasControlChars(targetPath)) return "targetPath must not contain CR/LF/NUL/control characters";
+  if (targetPath.includes("\\")) return "targetPath must use forward slashes only";
+  if (targetPath.startsWith("/")) return "targetPath must be repository-relative (no leading '/')";
+  if (/^[A-Za-z]:/.test(targetPath)) return "targetPath must not be a Windows drive path";
+  const segments = targetPath.split("/");
+  if (segments.some((segment) => segment === "" || segment === "." || segment === "..")) {
+    return "targetPath must not contain empty, '.' or '..' segments";
+  }
+  const normalized = segments.join("/");
+  if (!REPO_TARGET_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
+    return "targetPath must be under public/ or reference/";
+  }
+  return null;
 }
 
 function expectOptionalNumber(value: unknown, field: string, problems: string[]): number | undefined {
@@ -554,6 +724,7 @@ function parseExactAssets(raw: unknown, problems: string[]): readonly ExactAsset
     return undefined;
   }
   const entries: ExactAssetEntry[] = [];
+  const seenTargets = new Set<string>();
   raw.forEach((entry, index) => {
     if (!isRecord(entry)) {
       problems.push(`exactAssets[${index}] must be an object`);
@@ -565,6 +736,19 @@ function parseExactAssets(raw: unknown, problems: string[]): readonly ExactAsset
     const targetPath = expectString(entry.targetPath, `${prefix}.targetPath`, problems);
     const role = expectString(entry.role, `${prefix}.role`, problems);
     const rightsStatus = expectString(entry.rightsStatus, `${prefix}.rightsStatus`, problems);
+
+    if (targetPath) {
+      const pathProblem = checkSafeTargetPath(targetPath);
+      if (pathProblem) {
+        problems.push(`${prefix}.targetPath: ${pathProblem}`);
+      } else {
+        const normalized = targetPath.split("/").filter(Boolean).join("/");
+        if (seenTargets.has(normalized)) {
+          problems.push(`${prefix}.targetPath duplicates another exact asset target: ${targetPath}`);
+        }
+        seenTargets.add(normalized);
+      }
+    }
 
     const driveId = expectOptionalString(entry.driveId, `${prefix}.driveId`, problems);
     if (driveId && (!DRIVE_ID_PATTERN.test(driveId) || /example/i.test(driveId))) {
@@ -586,13 +770,136 @@ function parseExactAssets(raw: unknown, problems: string[]): readonly ExactAsset
         problems.push(`${prefix}.gitBlobSha must be 40 hex chars`);
       }
     }
-    if (targetPath && !targetPath.startsWith("public/") && !targetPath.startsWith("reference/")) {
-      problems.push(`${prefix}.targetPath must live under public/ or reference/`);
-    }
 
     entries.push({ filename, driveId, bytes, sha256, gitBlobSha, width, height, mode, targetPath, role, rightsStatus });
   });
   return entries;
+}
+
+function parseSourceSnapshot(raw: unknown, problems: string[]): SourceSnapshot | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("sourceSnapshot must be an object");
+    return undefined;
+  }
+  const revisionLabel = expectString(raw.revisionLabel, "sourceSnapshot.revisionLabel", problems);
+  const authorityObservedAt = expectString(
+    raw.authorityObservedAt,
+    "sourceSnapshot.authorityObservedAt",
+    problems,
+  );
+  if (authorityObservedAt && !ISO_TIMESTAMP_PATTERN.test(authorityObservedAt)) {
+    problems.push("sourceSnapshot.authorityObservedAt must be an ISO-8601 timestamp (e.g. 2026-08-13T09:30:00.000Z)");
+  }
+  const sourceAuthorityState = expectEnum(
+    raw.sourceAuthorityState,
+    SOURCE_AUTHORITY_STATES,
+    "sourceSnapshot.sourceAuthorityState",
+    problems,
+  );
+  const newerRevisionKnown = expectOptionalString(
+    raw.newerRevisionKnown,
+    "sourceSnapshot.newerRevisionKnown",
+    problems,
+  );
+  if (!revisionLabel || !authorityObservedAt || !sourceAuthorityState) return undefined;
+  if (sourceAuthorityState === "CURRENT_AT_OBSERVATION" && !authorityObservedAt) {
+    problems.push("sourceSnapshot: CURRENT_AT_OBSERVATION requires authorityObservedAt");
+  }
+  if (sourceAuthorityState === "HISTORICAL_PINNED" && !newerRevisionKnown) {
+    problems.push(
+      "sourceSnapshot: HISTORICAL_PINNED requires newerRevisionKnown (known newer source revision + reason)",
+    );
+  }
+  return { revisionLabel, authorityObservedAt, sourceAuthorityState, newerRevisionKnown };
+}
+
+function parseRequiredArtifacts(raw: unknown, problems: string[]): RequiredArtifactContract | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("requiredArtifacts must be an object");
+    return undefined;
+  }
+  const requiredRoles = parseStringList(raw.requiredRoles, "requiredArtifacts.requiredRoles", problems);
+  const status = expectEnum(raw.status, ["PARTIAL", "COMPLETE"], "requiredArtifacts.status", problems);
+  if (!requiredRoles || !status) return undefined;
+  if (requiredRoles.length === 0) {
+    problems.push("requiredArtifacts.requiredRoles must be a non-empty array");
+    return undefined;
+  }
+  return { requiredRoles, status };
+}
+
+function parseRenderingAdapters(raw: unknown, problems: string[]): readonly RenderingAdapter[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    problems.push("renderingAdapters must be an array");
+    return undefined;
+  }
+  const adapters: RenderingAdapter[] = [];
+  const seen = new Set<string>();
+  raw.forEach((entry, index) => {
+    const adapter = expectEnum(entry, RENDERING_ADAPTERS, `renderingAdapters[${index}]`, problems);
+    if (adapter && seen.has(adapter)) {
+      problems.push(`renderingAdapters[${index}] duplicates adapter '${adapter}'`);
+      return;
+    }
+    if (adapter) {
+      seen.add(adapter);
+      adapters.push(adapter);
+    }
+  });
+  return adapters;
+}
+
+function parseVisualDiversity(raw: unknown, problems: string[]): VisualDiversityEvidence | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("visualDiversity must be an object");
+    return undefined;
+  }
+  const declaredFixtureCount = expectOptionalNumber(
+    raw.declaredFixtureCount,
+    "visualDiversity.declaredFixtureCount",
+    problems,
+  );
+  const declaredEntityCount = expectOptionalNumber(
+    raw.declaredEntityCount,
+    "visualDiversity.declaredEntityCount",
+    problems,
+  );
+  const independentlyReviewedCount = expectOptionalNumber(
+    raw.independentlyReviewedCount,
+    "visualDiversity.independentlyReviewedCount",
+    problems,
+  );
+  const reviewMethod = expectString(raw.reviewMethod, "visualDiversity.reviewMethod", problems);
+  const noFaceRecognitionOrIdentityInference = raw.noFaceRecognitionOrIdentityInference;
+  if (noFaceRecognitionOrIdentityInference !== true) {
+    problems.push("visualDiversity.noFaceRecognitionOrIdentityInference must be true — no face recognition/identity inference");
+  }
+  const evidencePath = expectOptionalString(raw.evidencePath, "visualDiversity.evidencePath", problems);
+  if (declaredFixtureCount === undefined && declaredEntityCount === undefined && independentlyReviewedCount === undefined) {
+    problems.push("visualDiversity must declare at least one count");
+  }
+  for (const [label, count] of [
+    ["declaredFixtureCount", declaredFixtureCount],
+    ["declaredEntityCount", declaredEntityCount],
+    ["independentlyReviewedCount", independentlyReviewedCount],
+  ] as const) {
+    if (count !== undefined && (!Number.isInteger(count) || count < 0)) {
+      problems.push(`visualDiversity.${label} must be a non-negative integer`);
+    }
+  }
+  if (!reviewMethod) return undefined;
+  return {
+    declaredFixtureCount,
+    declaredEntityCount,
+    independentlyReviewedCount,
+    reviewMethod,
+    noFaceRecognitionOrIdentityInference: true,
+    evidencePath,
+  };
 }
 
 function parseNavigationHandoff(raw: unknown, problems: string[]): NavigationHandoffEvidence | undefined {
@@ -926,9 +1233,22 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
 
   const provenance = parseProvenance(raw.provenance, problems);
   const designLineageId = expectOptionalString(raw.designLineageId, "designLineageId", problems);
+  if (designLineageId && !IDENTIFIER_PATTERN.test(designLineageId)) {
+    problems.push(
+      "designLineageId must be a lowercase kebab identifier (no '/', '\\', '..', drive paths or control chars)",
+    );
+  }
   const lineageNumber = expectOptionalNumber(raw.lineageNumber, "lineageNumber", problems);
   const revisionId = expectOptionalString(raw.revisionId, "revisionId", problems);
+  if (revisionId && !IDENTIFIER_PATTERN.test(revisionId)) {
+    problems.push(
+      "revisionId must be a lowercase kebab identifier (no '/', '\\', '..', drive paths or control chars)",
+    );
+  }
   const ownerRoute = expectOptionalString(raw.ownerRoute, "ownerRoute", problems);
+  if (ownerRoute && CONTROL_CHAR_PATTERN.test(ownerRoute)) {
+    problems.push("ownerRoute must not contain CR/LF/NUL/control characters");
+  }
   const route = parseRoute(raw.route, problems);
   const reservation = parseReservation(raw.reservation, problems);
   const lineageReservation = parseLineageReservation(raw.lineageReservation, problems);
@@ -948,6 +1268,14 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
   const handoffMappings = parseHandoffMappings(raw.handoffMappings, problems);
   const visualMechanicOverlap = parseStringList(raw.visualMechanicOverlap, "visualMechanicOverlap", problems);
   const productJobDistinctness = expectOptionalString(raw.productJobDistinctness, "productJobDistinctness", problems);
+  const sourceSnapshot = parseSourceSnapshot(raw.sourceSnapshot, problems);
+  const nativeReadiness =
+    raw.nativeReadiness === undefined || raw.nativeReadiness === null
+      ? undefined
+      : expectEnum(raw.nativeReadiness, NATIVE_READINESS_STATES, "nativeReadiness", problems);
+  const renderingAdapters = parseRenderingAdapters(raw.renderingAdapters, problems);
+  const visualDiversity = parseVisualDiversity(raw.visualDiversity, problems);
+  const requiredArtifacts = parseRequiredArtifacts(raw.requiredArtifacts, problems);
   const exactAssets = parseExactAssets(raw.exactAssets, problems);
   const exactAssetGate = parseExactAssetGate(raw.exactAssetGate, problems);
   const navigationHandoff = parseNavigationHandoff(raw.navigationHandoff, problems);
@@ -1121,6 +1449,116 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     }
   }
 
+  /* ---------------- source snapshot authority (A) ---------------- */
+
+  if (sourceSnapshot) {
+    if (sourceSnapshot.sourceAuthorityState === "CURRENT_AT_OBSERVATION") {
+      if (!sourceSnapshot.authorityObservedAt) {
+        problems.push("sourceSnapshot: CURRENT_AT_OBSERVATION requires authorityObservedAt");
+      }
+    }
+    if (sourceSnapshot.sourceAuthorityState === "HISTORICAL_PINNED") {
+      if (!sourceSnapshot.authorityObservedAt) {
+        problems.push("sourceSnapshot: HISTORICAL_PINNED requires authorityObservedAt");
+      }
+      if (!sourceSnapshot.newerRevisionKnown) {
+        problems.push(
+          "sourceSnapshot: HISTORICAL_PINNED requires newerRevisionKnown (known newer source revision + reason)",
+        );
+      }
+    }
+    // Snapshot state must never forge/omit SHA/bytes: a snapshot does not relax
+    // the fingerprint evidence below — evidence is enforced on the artifacts.
+  }
+
+  /* ---------------- source lifecycle evidence (G) ---------------- */
+
+  const pinnedExecutables = (sourceArtifacts ?? []).filter(
+    (artifact) => artifact.role === "executable" && artifact.status === "PINNED",
+  );
+  const fingerprintedExecutable = pinnedExecutables.find(
+    (artifact) => artifact.bytes !== undefined && artifact.bytes > 0 && Boolean(artifact.sha256),
+  );
+
+  if (lifecycle === "EXECUTABLE_FINGERPRINT_PINNED") {
+    if (!fingerprintedExecutable) {
+      problems.push(
+        "lifecycle EXECUTABLE_FINGERPRINT_PINNED requires a PINNED source executable artifact with positive bytes and a SHA-256 — a repository route can never substitute for source executable fingerprint evidence",
+      );
+    }
+  }
+
+  if (lifecycle === "ARTIFACTS_PARTIAL" || lifecycle === "ARTIFACTS_COMPLETE") {
+    if (!requiredArtifacts) {
+      problems.push(
+        `lifecycle ${lifecycle} requires a declared required source package set (requiredArtifacts.requiredRoles) — completeness is never a free label`,
+      );
+    } else {
+      const expectedStatus = lifecycle === "ARTIFACTS_COMPLETE" ? "COMPLETE" : "PARTIAL";
+      if (requiredArtifacts.status !== expectedStatus) {
+        problems.push(
+          `lifecycle ${lifecycle} requires requiredArtifacts.status '${expectedStatus}'`,
+        );
+      }
+      if (lifecycle === "ARTIFACTS_COMPLETE") {
+        for (const role of requiredArtifacts.requiredRoles) {
+          const evidence = (sourceArtifacts ?? []).some(
+            (artifact) =>
+              artifact.role === role &&
+              artifact.status === "PINNED" &&
+              artifact.bytes !== undefined &&
+              artifact.bytes > 0 &&
+              Boolean(artifact.sha256),
+          );
+          if (!evidence) {
+            problems.push(
+              `ARTIFACTS_COMPLETE requires a PINNED source artifact with positive bytes and SHA-256 for required role '${role}'`,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  /* ---------------- native readiness vs source lifecycle (H) ---------------- */
+
+  if (
+    nativeReadiness &&
+    (nativeReadiness === "IMPLEMENTED" || nativeReadiness === "VALIDATED") &&
+    lifecycle &&
+    !lifecycleImpliesExecutable(lifecycle)
+  ) {
+    problems.push(
+      `nativeReadiness '${nativeReadiness}' requires an executable source lifecycle — native implementation is never certified from a pre-executable source`,
+    );
+  }
+
+  /* ---------------- rendering adapters + visual diversity (L) ---------------- */
+
+  if (renderingAdapters && renderingAdapters.length > 0) {
+    if (!rendering || rendering === "unresolved") {
+      problems.push(
+        "renderingAdapters require a concrete primary rendering discriminator — adapters cannot be certified before the executable exists",
+      );
+    }
+  }
+
+  if (visualDiversity) {
+    if (visualDiversity.noFaceRecognitionOrIdentityInference !== true) {
+      problems.push(
+        "visualDiversity.noFaceRecognitionOrIdentityInference must be true — automatic face recognition/identity inference is forbidden",
+      );
+    }
+    const declared =
+      visualDiversity.declaredFixtureCount ?? visualDiversity.declaredEntityCount;
+    const reviewed = visualDiversity.independentlyReviewedCount;
+    if (declared !== undefined && reviewed !== undefined && reviewed > declared) {
+      problems.push(
+        "visualDiversity.independentlyReviewedCount must not exceed the declared count — review evidence is never auto-derived from declared counts",
+      );
+    }
+  }
+
   /* ---------------- P8 exact-asset gate rules ---------------- */
 
   if (exactAssets && exactAssets.length > 0) {
@@ -1188,6 +1626,11 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     handoffMappings,
     visualMechanicOverlap,
     productJobDistinctness,
+    sourceSnapshot,
+    nativeReadiness,
+    renderingAdapters,
+    visualDiversity,
+    requiredArtifacts,
     exactAssets,
     exactAssetGate,
     navigationHandoff,

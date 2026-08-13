@@ -31,6 +31,11 @@
     "status": "HOLD",
     "note": "Issue #159/CTO audit — V1.1 source revision CURRENT, lineage candidate YES, but LINEAGE_62_RESERVATION HOLD and CANONICAL_V4_ADOPTION HOLD"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.1",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",

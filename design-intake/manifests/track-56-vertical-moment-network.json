@@ -21,6 +21,11 @@
     "path": "/design-lab/lineages/53/53-v3-vertical-network-overview",
     "surface": "lineage"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",

@@ -18,6 +18,11 @@
   "designLineageId": "lt-64-floating-moment-entry-portal",
   "lineageNumber": 64,
   "revisionId": "64-v1",
+  "sourceSnapshot": {
+    "revisionLabel": "V1 (reference pinned)",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "★_참고영상_부유카드포트폴리오_웰컴오빗.mp4",

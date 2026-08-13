@@ -457,16 +457,47 @@ test("11. scaffold plans cover all three registry seams", () => {
       plan.registrySeams.map((seam) => seam.seam),
       ["designLineages", "designLab", "designFidelity"],
     );
-    for (const seam of plan.registrySeams) {
+    const lineages = plan.registrySeams.find((seam) => seam.seam === "designLineages");
+    const lab = plan.registrySeams.find((seam) => seam.seam === "designLab");
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(lineages.status, "entry");
+    assert.equal(lab.status, "entry");
+    // H: a scaffold-only source executable must NOT activate fidelity.
+    assert.equal(fidelity.status, "deferred");
+    assert.match(fidelity.reason, /native implementation/);
+    assert.equal(lab.entry.candidate.status, "mapped", "scaffold-only candidate is mapped, not implemented");
+    assert.equal(lab.entry.candidate.nativeReadiness, "SCAFFOLDED");
+
+    // A manifest that is IMPLEMENTED + qa + (no runtime assets) becomes a full
+    // three-seam entry with the fidelity target fully configured.
+    const eligible = buildScaffoldPlan(
+      newLineageManifest({
+        nativeReadiness: "IMPLEMENTED",
+        qa: {
+          viewports: [
+            { width: 1280, height: 800 },
+            { width: 390, height: 844, mobile: true },
+          ],
+          reducedMotion: true,
+          keyboardFocus: true,
+          pointer: true,
+          touch: true,
+          horizontalOverflowZero: true,
+          consoleErrorsZero: true,
+          pageErrorsZero: true,
+        },
+      }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    for (const seam of eligible.registrySeams) {
       assert.equal(seam.status, "entry", `${seam.seam} must carry a real registration`);
       assert.ok(seam.entry, `${seam.seam} must carry registration data`);
     }
-
-    // The fidelity registration carries viewports + reduced-motion config.
-    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
-    const target = fidelity.entry.target;
-    assert.equal(target.route, "/design-lab/lineages/60/60-v1-2");
-    assert.deepEqual(target.browserGates, ["tests/track-60-3d-moment-cluster-route-browser-qa.mjs"]);
+    const eligibleFidelity = eligible.registrySeams.find((seam) => seam.seam === "designFidelity");
+    const target = eligibleFidelity.entry.target;
+    assert.equal(target.route, "/design-lab/lineages/90/90-v1");
+    assert.deepEqual(target.browserGates, ["tests/track-test-new-lineage-route-browser-qa.mjs"]);
+    assert.equal(eligible.registrySeams.find((seam) => seam.seam === "designLab").entry.candidate.status, "implemented");
 
     // Non-executable candidates must still declare every seam (deferred/N-A).
     const pending = buildScaffoldPlan(fixture("track-63-moment-field-view-studio"), {
@@ -542,12 +573,38 @@ test("12. fingerprint, binary transfer and exact gate are independent", () => {
     false,
   );
 
-  // A complete-lifecycle manifest with a valid PASS state enables the verifier gate.
+  // A complete-lifecycle manifest with a valid PASS state + required artifact
+  // evidence + native readiness + QA enables the verifier gate.
   const root = withTempRoot();
   try {
     const complete = parseIntakeManifest({
       ...pending,
       lifecycle: "ARTIFACTS_COMPLETE",
+      requiredArtifacts: { requiredRoles: ["executable"], status: "COMPLETE" },
+      sourceArtifacts: [
+        {
+          filename: "현재후보.html",
+          driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+          bytes: 17192064,
+          sha256: "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71",
+          role: "executable",
+          status: "PINNED",
+        },
+      ],
+      nativeReadiness: "IMPLEMENTED",
+      qa: {
+        viewports: [
+          { width: 1280, height: 800 },
+          { width: 390, height: 844, mobile: true },
+        ],
+        reducedMotion: true,
+        keyboardFocus: true,
+        pointer: true,
+        touch: true,
+        horizontalOverflowZero: true,
+        consoleErrorsZero: true,
+        pageErrorsZero: true,
+      },
       exactAssetGate: {
         fingerprintStatus: "FINGERPRINT_COMPLETE",
         binaryTransferStatus: "BINARY_TRANSFER_COMPLETE",
@@ -556,6 +613,7 @@ test("12. fingerprint, binary transfer and exact gate are independent", () => {
     });
     const completePlan = buildScaffoldPlan(complete, { root, fidelityTargets: LIVE_TARGETS });
     const completeFidelity = completePlan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(completeFidelity.status, "entry");
     assert.equal(completeFidelity.entry.target.assetGate.verifier, "scripts/verify-track-test-new-lineage-assets.mjs");
     assert.equal(
       completeFidelity.entry.target.assetGate.expectedMarker,
@@ -573,14 +631,36 @@ test("12. fingerprint, binary transfer and exact gate are independent", () => {
 /* 13-14. QA viewports + reduced motion are transmitted               */
 /* ------------------------------------------------------------------ */
 
+function fidelityEligibleManifest(overrides = {}) {
+  return newLineageManifest({
+    nativeReadiness: "IMPLEMENTED",
+    qa: {
+      viewports: [
+        { width: 1280, height: 800 },
+        { width: 390, height: 844, mobile: true },
+        { width: 320, height: 720, mobile: true },
+      ],
+      reducedMotion: true,
+      keyboardFocus: true,
+      pointer: true,
+      touch: true,
+      horizontalOverflowZero: true,
+      consoleErrorsZero: true,
+      pageErrorsZero: true,
+    },
+    ...overrides,
+  });
+}
+
 test("13. 320×720 narrow viewport configuration is transmitted", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
+    const plan = buildScaffoldPlan(fidelityEligibleManifest(), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
     const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelity.status, "entry");
     assert.ok(
       fidelity.entry.target.viewports.some(
         (viewport) => viewport.width === 320 && viewport.height === 720 && viewport.mobile === true,
@@ -604,19 +684,21 @@ test("13. 320×720 narrow viewport configuration is transmitted", () => {
 test("14. reduced-motion configuration is transmitted", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
+    const plan = buildScaffoldPlan(fidelityEligibleManifest(), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
     const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
     assert.equal(fidelity.entry.target.captureReducedMotion, true);
 
+    // K: without a QA contract the fidelity seam cannot be active.
     const withoutMotion = buildScaffoldPlan(
-      newLineageManifest({ qa: undefined }),
+      newLineageManifest({ nativeReadiness: "IMPLEMENTED", qa: undefined }),
       { root, fidelityTargets: LIVE_TARGETS },
     );
     const withoutFidelity = withoutMotion.registrySeams.find((seam) => seam.seam === "designFidelity");
-    assert.equal(withoutFidelity.entry.target.captureReducedMotion, false);
+    assert.equal(withoutFidelity.status, "deferred");
+    assert.match(withoutFidelity.reason, /qa absent/i);
   } finally {
     cleanup(root);
   }
@@ -1137,6 +1219,645 @@ test("regression: reuse checklist + adoption report are generated for real fixtu
     assert.ok(adoption);
     assert.match(adoption.content, /adoptionStatus: UNDECIDED/);
     assert.match(adoption.content, /| mechanic | source evidence |/);
+  } finally {
+    cleanup(root);
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* Final factory hardening regressions (PR #166 CTO checklist)        */
+/* ------------------------------------------------------------------ */
+
+test("hardening: traversal revisionId is rejected", () => {
+  for (const revisionId of ["../escape", "..", "a/../b", "seg/../.."]) {
+    assert.throws(
+      () => parseIntakeManifest(newLineageManifest({ revisionId })),
+      IntakeManifestError,
+      `revisionId '${revisionId}' must be rejected`,
+    );
+  }
+});
+
+test("hardening: absolute / backslash / drive revisionIds are rejected", () => {
+  for (const revisionId of ["/abs", "/etc/passwd", "a\\b", "C:\\x", "C:/x", "a\nb"]) {
+    assert.throws(
+      () => parseIntakeManifest(newLineageManifest({ revisionId })),
+      IntakeManifestError,
+      `revisionId '${revisionId}' must be rejected`,
+    );
+  }
+  assert.doesNotThrow(() => parseIntakeManifest(newLineageManifest({ revisionId: "61-v1-5" })));
+  assert.doesNotThrow(() => parseIntakeManifest(newLineageManifest({ revisionId: "53-v9-new-variant" })));
+});
+
+test("hardening: crafted plan ../outside write is rejected at write time", () => {
+  const root = withTempRoot();
+  try {
+    const crafted = {
+      manifest: {},
+      writes: [{ path: "../outside.txt", kind: "crafted", content: "x" }],
+      registrySeams: [],
+      route: null,
+      executable: false,
+      assetGateMarker: null,
+    };
+    assert.throws(() => writeScaffoldPlan(crafted, { root }), IntakeCollisionError);
+    assert.equal(existsSync(path.join(path.dirname(root), "outside.txt")), false, "no escape write");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: crafted plan app/v4 write is rejected at write time", () => {
+  const root = withTempRoot();
+  try {
+    const crafted = {
+      manifest: {},
+      writes: [{ path: "app/v4/evil/page.tsx", kind: "crafted", content: "x" }],
+      registrySeams: [],
+      route: null,
+      executable: false,
+      assetGateMarker: null,
+    };
+    assert.throws(() => writeScaffoldPlan(crafted, { root }), IntakeCollisionError);
+    assert.equal(existsSync(path.join(root, "app/v4")), false, "no app/v4 write");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: unsafe exact-asset targetPaths are rejected", () => {
+  const base = newLineageManifest({
+    exactAssets: [
+      {
+        filename: "sprite.png",
+        mode: "png",
+        targetPath: "public/design-lab/lineages/90/90-v1/sprite.png",
+        role: "sprite",
+        rightsStatus: "sibling-source-owned",
+      },
+    ],
+    exactAssetGate: {
+      fingerprintStatus: "FINGERPRINT_COMPLETE",
+      binaryTransferStatus: "BINARY_TRANSFER_COMPLETE",
+      exactGateStatus: "EXACT_GATE_PASS",
+    },
+  });
+  for (const targetPath of [
+    "public/../../app/v4/x.png",
+    "reference/../outside",
+    "../../../v4/foo",
+    "public/./x.png",
+    "public//x.png",
+    "public\\x.png",
+    "/public/x.png",
+    "C:\\public\\x.png",
+    "app/v4/x.png",
+    "lib/x.png",
+  ]) {
+    const manifest = {
+      ...base,
+      exactAssets: [{ ...base.exactAssets[0], targetPath }],
+    };
+    assert.throws(() => parseIntakeManifest(manifest), IntakeManifestError, `targetPath '${targetPath}' must be rejected`);
+  }
+  // Safe public/** and reference/** targets are accepted.
+  assert.doesNotThrow(() => parseIntakeManifest(base));
+  const reference = {
+    ...base,
+    exactAssets: [
+      { ...base.exactAssets[0], targetPath: "reference/design-intake/track-test-new-lineage/sprite.png" },
+    ],
+  };
+  assert.doesNotThrow(() => parseIntakeManifest(reference));
+});
+
+test("hardening: manifest newline/code injection is inert or rejected", () => {
+  // Newline in a role → control char → schema reject.
+  const newlineRole = newLineageManifest({
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        sha256: "a".repeat(64),
+        role: "executable\nprocess.exit(1);",
+        status: "PINNED",
+      },
+    ],
+  });
+  assert.throws(() => parseIntakeManifest(newlineRole), IntakeManifestError);
+
+  // Code-like value WITHOUT newline must stay an inert JSON data literal in the
+  // generated verifier — never a top-level statement.
+  const codeLike = newLineageManifest({
+    exactAssets: [
+      {
+        filename: "sprite.png",
+        mode: "png",
+        targetPath: "public/design-lab/lineages/90/90-v1/sprite.png",
+        role: 'sprite"; process.exit(1); //',
+        rightsStatus: "sibling-source-owned",
+      },
+    ],
+    exactAssetGate: {
+      fingerprintStatus: "FINGERPRINT_COMPLETE",
+      binaryTransferStatus: "BINARY_TRANSFER_COMPLETE",
+      exactGateStatus: "EXACT_GATE_PASS",
+    },
+  });
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(codeLike, { root, fidelityTargets: LIVE_TARGETS });
+    const verifier = plan.writes.find((write) => write.path.endsWith("-assets.mjs"));
+    assert.ok(verifier, "verifier generated");
+    assert.ok(
+      !verifier.content.includes('process.exit(1); //') || verifier.content.includes('"sprite\\"; process.exit(1); //"'),
+      "code-like value stays escaped inside the JSON literal",
+    );
+    assert.ok(verifier.content.includes("const EXPECTED_ASSETS"), "inert data literal");
+    // Fail-closed: default gate state is PENDING and the skeleton never logs the
+    // PASS marker as a success line — the marker only appears as the expected
+    // marker constant and the EXPECT_EXACT_GATE=PASS guard that exits 1.
+    assert.match(verifier.content, /exactGateStatus: \"EXACT_GATE_PENDING\"/);
+    assert.match(verifier.content, /skeleton cannot satisfy EXACT_GATE_PASS/);
+    assert.ok(!/console\.log\(.*GATE_MARKER/.test(verifier.content), "PASS marker is never emitted");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: exclusive-create prevents overwrite (EEXIST fail closed)", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(newLineageManifest(), { root, fidelityTargets: LIVE_TARGETS });
+    const firstTarget = path.join(root, plan.writes[0].path);
+    mkdirSync(path.dirname(firstTarget), { recursive: true });
+    writeFileSync(firstTarget, "TOCTOU", "utf8");
+    // fsCollisions pre-check sees it, but also verify the write-level EEXIST path
+    // by removing the pre-check entry from the plan's writes.
+    const trimmed = { ...plan, writes: plan.writes.filter((write) => write.path !== plan.writes[0].path) };
+    writeScaffoldPlan(trimmed, { root });
+    const again = { ...trimmed, writes: [plan.writes[0]] };
+    assert.throws(() => writeScaffoldPlan(again, { root }), IntakeCollisionError);
+    assert.equal(readFileSync(firstTarget, "utf8"), "TOCTOU", "original content preserved");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: malformed existing manifest fails the scaffold (never SKIP)", () => {
+  const root = withTempRoot();
+  try {
+    mkdirSync(path.join(root, "design-intake", "manifests"), { recursive: true });
+    writeFileSync(
+      path.join(root, "design-intake", "manifests", "broken.json"),
+      "{ not valid json",
+      "utf8",
+    );
+    let error = null;
+    try {
+      execFileSync(
+        process.execPath,
+        [
+          "--import",
+          "tsx",
+          "scripts/design-intake-scaffold.mjs",
+          path.join(FIXTURES_DIR, "track-60-3d-moment-cluster.json"),
+          "--write",
+        ],
+        {
+          encoding: "utf8",
+          cwd: repoRoot,
+          env: { ...process.env, DESIGN_INTAKE_ROOT: root },
+          stdio: ["ignore", "pipe", "pipe"],
+        },
+      );
+    } catch (err) {
+      error = err;
+    }
+    assert.ok(error, "scaffold must fail on a malformed existing manifest");
+    assert.match(String(error.stderr ?? ""), /broken\.json/);
+    assert.ok(!/SKIP existing manifest/.test(String(error.stderr ?? "")), "never SKIP a malformed manifest");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: duplicate manifest stableId is rejected cross-manifest", () => {
+  const root = withTempRoot();
+  try {
+    const a = newLineageManifest({ stableId: "track-test-new-lineage" });
+    const b = { ...a, designLineageId: "lt-other", lineageNumber: 91, revisionId: "91-v1", route: { path: "/design-lab/lineages/91/91-v1", surface: "lineage" } };
+    assert.throws(
+      () => buildScaffoldPlan(b, { root, existingManifests: [a], fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: duplicate allocated lineage number is rejected", () => {
+  const root = withTempRoot();
+  try {
+    const a = newLineageManifest({ stableId: "track-a", designLineageId: "lt-a", lineageNumber: 91, revisionId: "91-v1", route: { path: "/design-lab/lineages/91/91-v1", surface: "lineage" } });
+    const b = newLineageManifest({ stableId: "track-b", designLineageId: "lt-b", lineageNumber: 91, revisionId: "92-v1", route: { path: "/design-lab/lineages/91/92-v1", surface: "lineage" } });
+    assert.throws(
+      () => buildScaffoldPlan(b, { root, existingManifests: [a], fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: duplicate route / fidelity target id is rejected", () => {
+  const root = withTempRoot();
+  try {
+    const a = newLineageManifest({ stableId: "track-a", designLineageId: "lt-a", lineageNumber: 91, revisionId: "91-v1", route: { path: "/design-lab/lineages/91/91-v1", surface: "lineage" } });
+    const b = newLineageManifest({ stableId: "track-b", designLineageId: "lt-b", lineageNumber: 92, revisionId: "92-v1", route: { path: "/design-lab/lineages/91/91-v1", surface: "lineage" } });
+    assert.throws(
+      () => buildScaffoldPlan(b, { root, existingManifests: [a], fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: duplicate exact-asset targetPath is rejected (within + cross manifest)", () => {
+  const asset = {
+    filename: "sprite.png",
+    mode: "png",
+    targetPath: "public/design-lab/lineages/90/90-v1/sprite.png",
+    role: "sprite",
+    rightsStatus: "sibling-source-owned",
+  };
+  const gate = {
+    fingerprintStatus: "FINGERPRINT_COMPLETE",
+    binaryTransferStatus: "BINARY_TRANSFER_COMPLETE",
+    exactGateStatus: "EXACT_GATE_PASS",
+  };
+  // Within one manifest.
+  assert.throws(
+    () =>
+      parseIntakeManifest(
+        newLineageManifest({ exactAssets: [asset, { ...asset, filename: "sprite2.png" }], exactAssetGate: gate }),
+      ),
+    IntakeManifestError,
+  );
+  // Cross-manifest.
+  const root = withTempRoot();
+  try {
+    const a = newLineageManifest({ stableId: "track-a", designLineageId: "lt-a", lineageNumber: 91, revisionId: "91-v1", route: { path: "/design-lab/lineages/91/91-v1", surface: "lineage" }, exactAssets: [asset], exactAssetGate: gate });
+    const b = newLineageManifest({ stableId: "track-b", designLineageId: "lt-b", lineageNumber: 92, revisionId: "92-v1", route: { path: "/design-lab/lineages/92/92-v1", surface: "lineage" }, exactAssets: [asset], exactAssetGate: gate });
+    assert.throws(
+      () => buildScaffoldPlan(b, { root, existingManifests: [a], fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: EXECUTABLE_FINGERPRINT_PINNED requires pinned executable SHA/bytes", () => {
+  const base = newLineageManifest({ lifecycle: "EXECUTABLE_FINGERPRINT_PINNED" });
+  assert.throws(() => parseIntakeManifest(base), IntakeManifestError, "no source artifacts at all");
+
+  const pinnedNoSha = {
+    ...base,
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  };
+  assert.throws(() => parseIntakeManifest(pinnedNoSha), IntakeManifestError, "PINNED without SHA-256");
+
+  const pinnedNoBytes = {
+    ...base,
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        sha256: "a".repeat(64),
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  };
+  assert.throws(() => parseIntakeManifest(pinnedNoBytes), IntakeManifestError, "PINNED without bytes");
+
+  const notPinned = {
+    ...base,
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        sha256: "a".repeat(64),
+        role: "executable",
+        status: "REFERENCE_ONLY",
+      },
+    ],
+  };
+  assert.throws(() => parseIntakeManifest(notPinned), IntakeManifestError, "not PINNED");
+
+  const valid = {
+    ...base,
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        sha256: "a".repeat(64),
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  };
+  assert.doesNotThrow(() => parseIntakeManifest(valid));
+});
+
+test("hardening: ARTIFACTS_COMPLETE requires a declared required artifact contract", () => {
+  const base = newLineageManifest({ lifecycle: "ARTIFACTS_COMPLETE" });
+  assert.throws(() => parseIntakeManifest(base), IntakeManifestError, "no requiredArtifacts declared");
+
+  const declaredButMissing = {
+    ...base,
+    requiredArtifacts: { requiredRoles: ["executable", "sibling-qa"], status: "COMPLETE" },
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        sha256: "a".repeat(64),
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  };
+  assert.throws(
+    () => parseIntakeManifest(declaredButMissing),
+    IntakeManifestError,
+    "required role 'sibling-qa' has no evidence",
+  );
+
+  const valid = {
+    ...base,
+    requiredArtifacts: { requiredRoles: ["executable", "sibling-qa"], status: "COMPLETE" },
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        bytes: 1000,
+        sha256: "a".repeat(64),
+        role: "executable",
+        status: "PINNED",
+      },
+      {
+        filename: "검증결과.json",
+        driveId: "1ZT8xpC5rPVL4qDuYCfnREWR68zrgFcxn",
+        bytes: 100,
+        sha256: "b".repeat(64),
+        role: "sibling-qa",
+        status: "PINNED",
+      },
+    ],
+  };
+  assert.doesNotThrow(() => parseIntakeManifest(valid));
+});
+
+test("hardening: source executable != native implemented (readiness separation)", () => {
+  const root = withTempRoot();
+  try {
+    // EXECUTABLE_AVAILABLE source with a route, but no native readiness.
+    const plan = buildScaffoldPlan(newLineageManifest(), { root, fidelityTargets: LIVE_TARGETS });
+    assert.equal(plan.executable, true);
+    const lab = plan.registrySeams.find((seam) => seam.seam === "designLab");
+    assert.notEqual(lab.entry.candidate.status, "implemented");
+    assert.equal(lab.entry.candidate.status, "mapped");
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelity.status, "deferred");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: scaffold initial native readiness is never IMPLEMENTED", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(newLineageManifest(), { root, fidelityTargets: LIVE_TARGETS });
+    assert.equal(plan.manifest.nativeReadiness ?? "SCAFFOLDED", "SCAFFOLDED");
+    const lab = plan.registrySeams.find((seam) => seam.seam === "designLab");
+    assert.equal(lab.entry.candidate.nativeReadiness, "SCAFFOLDED");
+    assert.notEqual(lab.entry.candidate.status, "implemented");
+    // Even an explicit IMPLEMENTATION_PENDING stays non-implemented.
+    const pending = buildScaffoldPlan(
+      newLineageManifest({ nativeReadiness: "IMPLEMENTATION_PENDING" }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    const pendingLab = pending.registrySeams.find((seam) => seam.seam === "designLab");
+    assert.equal(pendingLab.entry.candidate.status, "mapped");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: required exact assets with incomplete gate never activate fidelity", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(
+      fidelityEligibleManifest({
+        exactAssets: [
+          {
+            filename: "bg.png",
+            mode: "png",
+            targetPath: "public/design-lab/lineages/90/90-v1/bg.png",
+            role: "canvas-background",
+            rightsStatus: "sibling-source-owned",
+          },
+        ],
+        exactAssetGate: {
+          fingerprintStatus: "FINGERPRINT_PARTIAL",
+          binaryTransferStatus: "BINARY_TRANSFER_NONE",
+          exactGateStatus: "EXACT_GATE_PENDING",
+        },
+      }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelity.status, "deferred");
+    assert.match(fidelity.reason, /exact gate/);
+    assert.equal(fidelity.entry, undefined, "no active target with assetGate:null");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: route filesystem changes select the fidelity target", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(fidelityEligibleManifest(), {
+      root,
+      fidelityTargets: LIVE_TARGETS,
+    });
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    const prefixes = fidelity.entry.target.impactPrefixes;
+    assert.ok(
+      prefixes.some((prefix) => "app/design-lab/lineages/90/90-v1/page.tsx".startsWith(prefix)),
+      "route page filesystem change must select the target",
+    );
+    assert.ok(
+      prefixes.some((prefix) => "tests/track-test-new-lineage-route-browser-qa.mjs".startsWith(prefix)),
+      "browser gate change must select the target",
+    );
+    assert.ok(
+      prefixes.every((prefix) => !prefix.startsWith("/design-lab")),
+      "impactPrefixes are repository filesystem paths, never URL routes",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: exact-asset binary changes select the fidelity target", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(
+      fidelityEligibleManifest({
+        exactAssets: [
+          {
+            filename: "bg.png",
+            mode: "png",
+            targetPath: "public/design-lab/lineages/90/90-v1/bg.png",
+            role: "canvas-background",
+            rightsStatus: "sibling-source-owned",
+          },
+        ],
+        exactAssetGate: {
+          fingerprintStatus: "FINGERPRINT_COMPLETE",
+          binaryTransferStatus: "BINARY_TRANSFER_COMPLETE",
+          exactGateStatus: "EXACT_GATE_PASS",
+        },
+      }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    const prefixes = fidelity.entry.target.impactPrefixes;
+    assert.ok(
+      prefixes.includes("public/design-lab/lineages/90/90-v1/bg.png"),
+      "exact asset targetPath participates in impact planning",
+    );
+    assert.ok(
+      prefixes.some((prefix) => "public/design-lab/lineages/90/90-v1/bg.png".startsWith(prefix)),
+      "binary-only change must select the target",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: qa missing → fidelity-eligible candidate is rejected (deferred)", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(
+      newLineageManifest({ nativeReadiness: "IMPLEMENTED", qa: undefined }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelity.status, "deferred");
+    assert.match(fidelity.reason, /qa absent/i);
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: pinned historical snapshot remains valid after newer source exists", () => {
+  // Track62 V1 is HISTORICAL_PINNED while V1.1 exists — still valid.
+  const track62v1 = parseIntakeManifest(fixture("track-62-v1-reference-only"));
+  assert.equal(track62v1.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
+  assert.ok(track62v1.sourceSnapshot.newerRevisionKnown);
+  assert.match(track62v1.sourceSnapshot.newerRevisionKnown, /V1\.1/);
+
+  // A synthetic HISTORICAL_PINNED snapshot with a known newer revision is valid.
+  const pinned = newLineageManifest({
+    sourceSnapshot: {
+      revisionLabel: "V1.5",
+      authorityObservedAt: "2026-08-13T00:00:00.000Z",
+      sourceAuthorityState: "HISTORICAL_PINNED",
+      newerRevisionKnown: "V1.6 observed in Drive; proving snapshot stays V1.5 per #80",
+    },
+  });
+  assert.doesNotThrow(() => parseIntakeManifest(pinned));
+
+  // CURRENT_AT_OBSERVATION requires the observation timestamp.
+  assert.throws(
+    () =>
+      parseIntakeManifest(
+        newLineageManifest({
+          sourceSnapshot: { revisionLabel: "V1.5", sourceAuthorityState: "CURRENT_AT_OBSERVATION" },
+        }),
+      ),
+    IntakeManifestError,
+  );
+
+  // HISTORICAL_PINNED requires newerRevisionKnown.
+  assert.throws(
+    () =>
+      parseIntakeManifest(
+        newLineageManifest({
+          sourceSnapshot: {
+            revisionLabel: "V1.5",
+            authorityObservedAt: "2026-08-13T00:00:00.000Z",
+            sourceAuthorityState: "HISTORICAL_PINNED",
+          },
+        }),
+      ),
+    IntakeManifestError,
+  );
+
+  // Current-at-observation fixtures remain valid.
+  const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
+  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track61.sourceSnapshot.revisionLabel, "V1.5");
+});
+
+test("hardening: Track62 executable + reservation HOLD/adoption HOLD stays valid", () => {
+  const manifest = parseIntakeManifest(fixture("track-62-v1-1-reservation-hold"));
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.lineageReservation.status, "HOLD");
+  assert.equal(manifest.adoption.status, "HOLD");
+  assert.equal(manifest.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(manifest.lineageNumber, undefined);
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(manifest, { root, fidelityTargets: LIVE_TARGETS });
+    assert.equal(plan.route, null, "no route under HOLD reservation");
+    const lineageSeam = plan.registrySeams.find((seam) => seam.seam === "designLineages");
+    assert.equal(lineageSeam.status, "not-applicable");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("hardening: safe normal scaffold stays deterministic", () => {
+  const root = withTempRoot();
+  try {
+    const first = buildScaffoldPlan(fidelityEligibleManifest(), {
+      root,
+      fidelityTargets: LIVE_TARGETS,
+    });
+    const second = buildScaffoldPlan(fidelityEligibleManifest(), {
+      root,
+      fidelityTargets: LIVE_TARGETS,
+    });
+    assert.deepEqual(second, first);
   } finally {
     cleanup(root);
   }

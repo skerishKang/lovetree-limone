@@ -15,6 +15,12 @@
     "sourceFiles": ["현재후보.html"],
     "rightsStatus": "sibling-source-owned"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V1",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.1 exists (Track62 V1.1 candidate, LINEAGE_62_RESERVATION HOLD) — V1 remains pinned as the reference capability snapshot"
+  },
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",

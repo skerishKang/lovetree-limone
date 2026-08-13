@@ -22,6 +22,11 @@
     "path": "/design-lab/lineages/61/61-v1-5",
     "surface": "lineage"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.5",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",

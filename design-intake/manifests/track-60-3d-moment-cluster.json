@@ -22,6 +22,11 @@
     "path": "/design-lab/lineages/60/60-v1-2",
     "surface": "lineage"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",

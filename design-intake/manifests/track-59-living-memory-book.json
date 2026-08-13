@@ -22,6 +22,12 @@
     "path": "/design-lab/lineages/59/59-v5",
     "surface": "lineage"
   },
+  "sourceSnapshot": {
+    "revisionLabel": "V5",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "renderingAdapters": ["dom-2d-shell", "page-physics"],
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",

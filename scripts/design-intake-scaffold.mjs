@@ -39,10 +39,15 @@ function loadExistingManifests(selfPath) {
   for (const name of readdirSync(manifestDir).filter((entry) => entry.endsWith(".json"))) {
     const file = path.join(manifestDir, name);
     if (path.resolve(file) === path.resolve(selfPath)) continue;
+    // E: a repository-owned manifest that fails to parse is a hard FAIL — it is
+    // never skipped. Malformed manifests carry stableId/route/lineage/fidelity
+    // collisions that must not be silently ignored.
     try {
       manifests.push(parseIntakeManifest(JSON.parse(readFileSync(file, "utf8"))));
     } catch (error) {
-      console.error(`SKIP existing manifest ${file}: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `malformed existing manifest ${file}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
   return manifests;

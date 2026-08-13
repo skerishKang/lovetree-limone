@@ -18,6 +18,11 @@
   "designLineageId": "lt-63-moment-field-view-studio",
   "lineageNumber": 63,
   "revisionId": "63-v1",
+  "sourceSnapshot": {
+    "revisionLabel": "V1 (instruction accepted)",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
   "sourceArtifacts": [
     {
       "filename": "★_참고영상_3D포토콜라주_카드클라우드편집.mp4",
