@@ -639,6 +639,7 @@ function parseStringList(
       problems.push(`${field}[${index}] must be a non-empty string`);
       return;
     }
+    rejectControlChars(entry, `${field}[${index}]`, problems);
     values.push(entry);
   });
   return values;
@@ -805,6 +806,11 @@ function parseSourceSnapshot(raw: unknown, problems: string[]): SourceSnapshot |
   if (!revisionLabel || !authorityObservedAt || !sourceAuthorityState) return undefined;
   if (sourceAuthorityState === "CURRENT_AT_OBSERVATION" && !authorityObservedAt) {
     problems.push("sourceSnapshot: CURRENT_AT_OBSERVATION requires authorityObservedAt");
+  }
+  if (sourceAuthorityState === "CURRENT_AT_OBSERVATION" && newerRevisionKnown) {
+    problems.push(
+      "sourceSnapshot: CURRENT_AT_OBSERVATION contradicts newerRevisionKnown — a snapshot that records a known newer source revision must be HISTORICAL_PINNED",
+    );
   }
   if (sourceAuthorityState === "HISTORICAL_PINNED" && !newerRevisionKnown) {
     problems.push(
@@ -1097,6 +1103,7 @@ function parseProvenance(raw: unknown, problems: string[]): IntakeProvenance | u
           problems.push(`provenance.sourceFiles[${index}] must be a non-empty string`);
           return "";
         }
+        rejectControlChars(file, `provenance.sourceFiles[${index}]`, problems);
         return file;
       }).filter(Boolean)
     : [];
@@ -1455,6 +1462,11 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     if (sourceSnapshot.sourceAuthorityState === "CURRENT_AT_OBSERVATION") {
       if (!sourceSnapshot.authorityObservedAt) {
         problems.push("sourceSnapshot: CURRENT_AT_OBSERVATION requires authorityObservedAt");
+      }
+      if (sourceSnapshot.newerRevisionKnown) {
+        problems.push(
+          "sourceSnapshot: CURRENT_AT_OBSERVATION contradicts newerRevisionKnown — a snapshot that records a known newer source revision must be HISTORICAL_PINNED",
+        );
       }
     }
     if (sourceSnapshot.sourceAuthorityState === "HISTORICAL_PINNED") {

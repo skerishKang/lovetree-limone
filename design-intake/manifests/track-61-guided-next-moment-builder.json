@@ -8,7 +8,7 @@
   "rendering": "dom-2d",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — V1.5 is the current sibling authority (Issue #158 V1.5 update); V1.4 is revision history, not current. Cross-track handoffs to Track 55/56/59 are now RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — this manifest pins the V1.5 proving snapshot (Issue #158 V1.5), superseded by V1.7 (Issue #158 current authority); V1.4 is revision history. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
   "provenance": {
     "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.5)",
     "driveFolderId": "1Ebd1WW5e3I4uSQo9o2Q_leL8ncvgUXQB",
@@ -25,7 +25,8 @@
   "sourceSnapshot": {
     "revisionLabel": "V1.5",
     "authorityObservedAt": "2026-08-13T00:00:00.000Z",
-    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.7 supersedes per Issue #158 current authority (Drive 1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm, 493,980 B, SHA256 133e3a82cae1e4edd46083deb648962882e624d1db1890c5c337a0068ef83bf7) — V1.5 stays pinned as the proving snapshot per #80 continuous-intake precedence"
   },
   "sourceArtifacts": [
     {
@@ -65,7 +66,7 @@
   "backendScope": "BACKEND_FREE",
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #158 — V1.5 current; candidate for product-owner review; not FINAL/CLOSED"
+    "note": "Issue #158 — V1.5 pinned proving snapshot (superseded by V1.7); candidate for product-owner review; not FINAL/CLOSED"
   },
   "handoffMappings": [
     {

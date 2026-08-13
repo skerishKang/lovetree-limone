@@ -8,7 +8,7 @@
   "rendering": "unresolved",
   "scenarioId": "people-archive",
   "productJob": "One existing Tree / one canonical Moment+Connection dataset → choose among multiple spatial presentation lenses → inspect the same mixed-media Moments under that lens → adjust bounded View geometry/motion parameters live → scrub/play the current presentation → save reusable View presets.",
-  "summary": "Track63 (모먼트필드 3D뷰스튜디오 / Moment Field 3D View Studio V1) is a new repository Lineage (lt-63-moment-field-view-studio). Intake is recorded BEFORE an executable exists: candidate folder is empty, rendering is unresolved, and no source-fidelity PASS is claimed.",
+  "summary": "Track63 (모먼트필드 3D뷰스튜디오 / Moment Field 3D View Studio V1) is a new repository Lineage (lt-63-moment-field-view-studio). This manifest pins the V1 instruction-accepted / EXECUTABLE_PENDING proving snapshot (Issue #164), superseded by V1.2 (current authority) — the pinned snapshot stays historical and pre-executable: candidate folder was empty, rendering unresolved, no source-fidelity PASS claimed.",
   "provenance": {
     "sourceLabel": "63_모먼트필드_3D뷰스튜디오 / Issue #164",
     "driveFolderId": "1ReLPsimI10csOD-Mi2MT_ccXcWxcroFI",
@@ -21,7 +21,8 @@
   "sourceSnapshot": {
     "revisionLabel": "V1 (instruction accepted)",
     "authorityObservedAt": "2026-08-13T00:00:00.000Z",
-    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.2 supersedes per Issue #164 current authority (executable Drive 1ZKdsOJe-MKVrSsCVfX00dmkUrb_gwui9, 1,111,636 B, SHA256 15292bc065e210b93128a62db91fe991adea01f3194cc3a52fc265279262644d) — the checked-in V1 pre-executable proving snapshot stays pinned per #80; do not force-upgrade its lifecycle to executable"
   },
   "sourceArtifacts": [
     {

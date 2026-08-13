@@ -1778,6 +1778,75 @@ test("hardening: qa missing → fidelity-eligible candidate is rejected (deferre
   }
 });
 
+test("hardening: fidelity-eligible candidate with qa.reducedMotion=false stays deferred", () => {
+  const root = withTempRoot();
+  try {
+    const noMotion = newLineageManifest({
+      nativeReadiness: "IMPLEMENTED",
+      qa: {
+        viewports: [
+          { width: 1280, height: 800 },
+          { width: 390, height: 844, mobile: true },
+        ],
+        reducedMotion: false,
+        keyboardFocus: true,
+        pointer: true,
+        touch: true,
+        horizontalOverflowZero: true,
+        consoleErrorsZero: true,
+        pageErrorsZero: true,
+      },
+    });
+    const plan = buildScaffoldPlan(noMotion, { root, fidelityTargets: LIVE_TARGETS });
+    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelity.status, "deferred", "IMPLEMENTED + reducedMotion:false must not activate fidelity");
+    assert.match(fidelity.reason, /reduced-motion evidence is not yet satisfied/i);
+
+    // VALIDATED + reducedMotion:false is likewise deferred.
+    const validatedNoMotion = buildScaffoldPlan(
+      newLineageManifest({
+        nativeReadiness: "VALIDATED",
+        qa: {
+          viewports: [
+            { width: 1280, height: 800 },
+            { width: 390, height: 844, mobile: true },
+          ],
+          reducedMotion: false,
+          keyboardFocus: true,
+          pointer: true,
+          touch: true,
+          horizontalOverflowZero: true,
+          consoleErrorsZero: true,
+          pageErrorsZero: true,
+        },
+      }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
+    const validatedFidelity = validatedNoMotion.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(validatedFidelity.status, "deferred");
+    assert.match(validatedFidelity.reason, /reduced-motion evidence is not yet satisfied/i);
+
+    // IMPLEMENTED + reducedMotion:true + rest of gates satisfied → entry.
+    const entryPlan = buildScaffoldPlan(fidelityEligibleManifest(), {
+      root,
+      fidelityTargets: LIVE_TARGETS,
+    });
+    const entryFidelity = entryPlan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(entryFidelity.status, "entry");
+    assert.equal(entryFidelity.entry.target.captureReducedMotion, true);
+
+    // Source/reference-only states must not gain a new constraint: Track62 V1
+    // (REFERENCE_CAPABILITY_ONLY, no qa) scaffolds without fidelity entry but
+    // without any reduced-motion-specific failure.
+    const referenceOnly = parseIntakeManifest(fixture("track-62-v1-reference-only"));
+    const referencePlan = buildScaffoldPlan(referenceOnly, { root, fidelityTargets: LIVE_TARGETS });
+    const referenceFidelity = referencePlan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(referenceFidelity.status, "not-applicable");
+  } finally {
+    cleanup(root);
+  }
+});
+
 test("hardening: pinned historical snapshot remains valid after newer source exists", () => {
   // Track62 V1 is HISTORICAL_PINNED while V1.1 exists — still valid.
   const track62v1 = parseIntakeManifest(fixture("track-62-v1-reference-only"));
@@ -1807,6 +1876,22 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
     IntakeManifestError,
   );
 
+  // CURRENT_AT_OBSERVATION + newerRevisionKnown is a contradiction — reject.
+  assert.throws(
+    () =>
+      parseIntakeManifest(
+        newLineageManifest({
+          sourceSnapshot: {
+            revisionLabel: "V1.5",
+            authorityObservedAt: "2026-08-13T00:00:00.000Z",
+            sourceAuthorityState: "CURRENT_AT_OBSERVATION",
+            newerRevisionKnown: "V1.6 observed in Drive",
+          },
+        }),
+      ),
+    IntakeManifestError,
+  );
+
   // HISTORICAL_PINNED requires newerRevisionKnown.
   assert.throws(
     () =>
@@ -1822,10 +1907,21 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
     IntakeManifestError,
   );
 
-  // Current-at-observation fixtures remain valid.
+  // Real superseded proving snapshots are explicitly HISTORICAL_PINNED and stay
+  // valid even though newer authoritative revisions exist (Track61 → V1.7,
+  // Track63 → V1.2, Track64 → V1.2.1).
   const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
-  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.equal(track61.sourceSnapshot.revisionLabel, "V1.5");
+  assert.match(track61.sourceSnapshot.newerRevisionKnown, /V1\.7/);
+  const track63 = parseIntakeManifest(fixture("track-63-moment-field-view-studio"));
+  assert.equal(track63.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
+  assert.match(track63.sourceSnapshot.newerRevisionKnown, /V1\.2/);
+  assert.equal(track63.lifecycle, "EXECUTABLE_PENDING", "pre-executable proving snapshot is not force-upgraded");
+  const track64 = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
+  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
+  assert.match(track64.sourceSnapshot.newerRevisionKnown, /V1\.2\.1/);
+  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "V1 reference snapshot stays pre-executable");
 });
 
 test("hardening: Track62 executable + reservation HOLD/adoption HOLD stays valid", () => {

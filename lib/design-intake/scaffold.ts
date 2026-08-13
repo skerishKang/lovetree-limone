@@ -305,6 +305,19 @@ function designFidelitySeam(
     };
   }
 
+  // B2: standard reduced-motion evidence is mandatory before a fidelity target
+  // may activate. The central runner only performs the reduced-motion capture
+  // when captureReducedMotion is true, so declaring reducedMotion:false (or
+  // omitting the evidence) must never produce an active target — fail closed.
+  if (qa.reducedMotion !== true) {
+    return {
+      seam: "designFidelity",
+      status: "deferred",
+      targetFile: "scripts/design-fidelity-validation-registry.mjs",
+      reason: `qa.reducedMotion is not true — standard reduced-motion evidence is not yet satisfied; fidelity target stays deferred (reducedMotion: '${qa.reducedMotion}')`,
+    };
+  }
+
   // I: P8 ordering — declared runtime exact assets with an incomplete/FAIL gate
   // must never produce an active target with assetGate:null.
   const runtimeAssets = manifest.exactAssets ?? [];
