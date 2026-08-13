@@ -732,15 +732,50 @@ test("fixtures: Track60 → NEW_LINEAGE → canvas-3d-projection", () => {
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
 });
 
-test("fixtures: Track61 → NEW_LINEAGE → dom-2d with MAPPING_HOLD handoffs", () => {
+test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.5 with RESOLVED handoffs", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.rendering, "dom-2d");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.revisionId, "61-v1-5");
+  assert.equal(manifest.route.path, "/design-lab/lineages/61/61-v1-5");
   assert.ok(manifest.handoffMappings.length >= 3);
   for (const mapping of manifest.handoffMappings) {
-    assert.equal(mapping.resolutionStatus, "MAPPING_HOLD");
-    assert.equal(mapping.resolvedProductTargetId, null);
+    assert.equal(mapping.resolutionStatus, "RESOLVED");
+    assert.ok(mapping.resolvedProductTargetId, `${mapping.sourceTrackId} resolved target`);
+    assert.ok(
+      !/^\/design-lab\/lineages\/(55|56|59)\//.test(mapping.resolvedProductTargetId),
+      "never infer repository Lineage 55/56/59 routes from raw track numbers",
+    );
   }
+  const byTrack = Object.fromEntries(manifest.handoffMappings.map((m) => [m.sourceTrackId, m]));
+  assert.equal(byTrack["Track55"].resolvedProductTargetId, "/v4/trees/demo/graph");
+  assert.match(byTrack["Track56"].resolvedProductTargetId, /lt-53-emotional-path-replay/);
+  assert.equal(byTrack["Track59"].resolvedProductTargetId, "lt-59-living-memory-book");
+});
+
+test("fixtures: Track61 V1.5 authoritative source identity is pinned", () => {
+  const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
+  assert.equal(manifest.provenance.driveFolderId, "1Ebd1WW5e3I4uSQo9o2Q_leL8ncvgUXQB");
+  const executable = manifest.sourceArtifacts.find((artifact) => artifact.role === "executable");
+  assert.equal(executable.driveId, "17GwHW0uFafc35UR7-TZ0g_ulJyADw2_L");
+  assert.equal(executable.bytes, 488588);
+  assert.equal(
+    executable.sha256,
+    "725350cd9132d499cee46eac0d3d0d9fc0c9a868d68efc635ceb6c94a884c474",
+  );
+  const instruction = manifest.sourceArtifacts.find((artifact) => artifact.role === "instruction");
+  assert.equal(instruction.driveId, "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF");
+});
+
+test("fixtures: Track61 V1.5 navigation evidence keeps open/focus HOLDS separate", () => {
+  const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
+  assert.equal(manifest.navigationHandoff.targetMapping, true);
+  assert.equal(manifest.navigationHandoff.urlResolution, true);
+  assert.equal(manifest.navigationHandoff.openCall, true);
+  assert.equal(manifest.navigationHandoff.actualTargetOpen, false, "physical click→open HOLD");
+  assert.equal(manifest.navigationHandoff.receiverConsume, false, "receiver hook absent HOLD");
+  assert.equal(manifest.navigationHandoff.sameMomentFocus, false, "receiver same-Moment focus HOLD");
 });
 
 test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
@@ -752,15 +787,26 @@ test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
   assert.equal(manifest.adoption.status, "SOURCE_REFERENCE_ONLY");
 });
 
-test("fixtures: Track62 V1.1 → candidate with lineage reservation HOLD", () => {
+test("fixtures: Track62 V1.1 → source-executable lifecycle orthogonal to HOLD reservation", () => {
   const manifest = parseIntakeManifest(fixture("track-62-v1-1-reservation-hold"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.lineageReservation.status, "HOLD");
   assert.equal(manifest.lineageNumber, undefined, "no lineage number reserved");
   assert.equal(manifest.reservation.held, true);
-  assert.equal(manifest.lifecycle, "INSTRUCTION_ACCEPTED");
+  assert.equal(manifest.adoption.status, "HOLD");
+  // Lifecycle is SOURCE truth — the real V1.1 executable is pinned — and is
+  // orthogonal to the repository reservation/adoption HOLDS.
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.rendering, "dom-2d");
   assert.equal(manifest.route, undefined);
-  assert.equal(manifest.rendering, "unresolved");
+  const executable = manifest.sourceArtifacts.find((artifact) => artifact.role === "executable");
+  assert.equal(executable.driveId, "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S");
+  assert.equal(executable.bytes, 20728647);
+  assert.equal(
+    executable.sha256,
+    "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+  );
+  assert.ok(manifest.sourceArtifacts.length >= 3, "executable + instruction + sibling QA pinned");
 });
 
 test("fixtures: Track63 → NEW_LINEAGE → executable pending, rendering unresolved", () => {
@@ -991,6 +1037,71 @@ test("regression: Track62 candidate does not accidentally reserve Lineage62", ()
   } finally {
     cleanup(root);
   }
+});
+
+test("regression: lifecycle is orthogonal to reservation/adoption (source truth vs repo decision)", () => {
+  // HOLD reservation + executable lifecycle is only valid when a PINNED source
+  // executable artifact anchors the claim.
+  const heldWithPinnedExecutable = newLineageManifest({
+    lifecycle: "EXECUTABLE_AVAILABLE",
+    rendering: "dom-2d",
+    route: undefined,
+    lineageReservation: { status: "HOLD" },
+    lineageNumber: undefined,
+    revisionId: undefined,
+    reservation: { held: true },
+    adoption: { status: "HOLD" },
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S",
+        bytes: 20728647,
+        sha256: "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  });
+  const parsed = parseIntakeManifest(heldWithPinnedExecutable);
+  assert.equal(parsed.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(parsed.lineageReservation.status, "HOLD");
+  assert.equal(parsed.adoption.status, "HOLD");
+  assert.equal(parsed.lineageNumber, undefined);
+
+  // The same HOLD + executable claim WITHOUT a pinned source executable fails closed.
+  const heldWithoutExecutable = newLineageManifest({
+    lifecycle: "EXECUTABLE_AVAILABLE",
+    rendering: "dom-2d",
+    route: undefined,
+    lineageReservation: { status: "HOLD" },
+    lineageNumber: undefined,
+    revisionId: undefined,
+    reservation: { held: true },
+    adoption: { status: "HOLD" },
+    sourceArtifacts: [],
+  });
+  assert.throws(() => parseIntakeManifest(heldWithoutExecutable), IntakeManifestError);
+
+  // HOLD + executable lifecycle must never claim a route.
+  const heldWithRoute = newLineageManifest({
+    lifecycle: "EXECUTABLE_AVAILABLE",
+    rendering: "dom-2d",
+    route: { path: "/design-lab/lineages/62/62-v1-1", surface: "lineage" },
+    lineageReservation: { status: "HOLD" },
+    lineageNumber: undefined,
+    revisionId: undefined,
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S",
+        bytes: 20728647,
+        sha256: "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  });
+  assert.throws(() => parseIntakeManifest(heldWithRoute), IntakeManifestError);
 });
 
 test("regression: Track55/56 cross-namespace mappings are preserved", () => {

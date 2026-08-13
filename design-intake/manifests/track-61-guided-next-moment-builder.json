@@ -2,34 +2,40 @@
   "schemaVersion": 1,
   "stableId": "track-61-guided-next-moment-builder",
   "sourceTrackId": "Track61",
-  "title": "Guided Next Moment LoveTree Builder V1.4",
+  "title": "Guided Next Moment LoveTree Builder V1.5",
   "classification": "NEW_LINEAGE",
   "lifecycle": "EXECUTABLE_AVAILABLE",
   "rendering": "dom-2d",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder is a new repository Lineage (lt-61-guided-next-moment-builder). Source handoffs to Track 55/56/59 remain MAPPING_HOLD — never infer repository Lineage 55/56/59 routes from raw numbers.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — V1.5 is the current sibling authority (Issue #158 V1.5 update); V1.4 is revision history, not current. Cross-track handoffs to Track 55/56/59 are now RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
   "provenance": {
-    "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158",
-    "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
+    "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.5)",
+    "driveFolderId": "1Ebd1WW5e3I4uSQo9o2Q_leL8ncvgUXQB",
     "sourceFiles": ["현재후보.html"],
     "rightsStatus": "sibling-source-owned"
   },
   "designLineageId": "lt-61-guided-next-moment-builder",
   "lineageNumber": 61,
-  "revisionId": "61-v1-4",
+  "revisionId": "61-v1-5",
   "route": {
-    "path": "/design-lab/lineages/61/61-v1-4",
+    "path": "/design-lab/lineages/61/61-v1-5",
     "surface": "lineage"
   },
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",
-      "driveId": "13RipNmgNoiEUq3UWJ3qSR4nw-V8R5C2G",
-      "bytes": 482969,
-      "sha256": "2dacb6fff65005fcacaef0aa1e8282b7990f70a708183b65fb43bae7172ec8ac",
+      "driveId": "17GwHW0uFafc35UR7-TZ0g_ulJyADw2_L",
+      "bytes": 488588,
+      "sha256": "725350cd9132d499cee46eac0d3d0d9fc0c9a868d68efc635ceb6c94a884c474",
       "role": "executable",
       "status": "PINNED"
+    },
+    {
+      "filename": "23_디자인팀장7기_61_V1.5_실제트랙네비게이션·YouTubeSeed·Undo_수정지시_2026-08-13.md",
+      "driveId": "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF",
+      "role": "instruction",
+      "status": "REFERENCE_ONLY"
     }
   ],
   "reusableCapabilities": [],
@@ -41,38 +47,39 @@
     "closed overlays noninteractive/unfocusable",
     "source asset gate before exact visual PASS",
     "first three choices visibly differentiated",
-    "320×720 QA"
+    "320×720 QA",
+    "receiver-side ltHandoff consume hook + same-Moment focus in native targets (HOLD until receiver implemented)",
+    "physical click → target open under managed browser navigation policy (HOLD)"
   ],
   "sourceOnlyValues": [
     "fictional names",
     "21 fixed fixtures",
     "synthetic percentages/counts",
-    "demo fan quotes",
-    "source Track-number handoff labels until mapped"
+    "demo fan quotes"
   ],
   "backendScope": "BACKEND_FREE",
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #158 — candidate for product-owner review; not FINAL/CLOSED"
+    "note": "Issue #158 — V1.5 current; candidate for product-owner review; not FINAL/CLOSED"
   },
   "handoffMappings": [
     {
-      "sourceTrackId": "Track56",
-      "resolvedProductTargetId": null,
-      "resolutionStatus": "MAPPING_HOLD",
-      "handoffContext": "source handoff label — do not infer repository Lineage 56 route"
+      "sourceTrackId": "Track55",
+      "resolvedProductTargetId": "/v4/trees/demo/graph",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "canonical owner surface for free-connection/path editing (Issue #162) — NOT repository Lineage 55"
     },
     {
-      "sourceTrackId": "Track55",
-      "resolvedProductTargetId": null,
-      "resolutionStatus": "MAPPING_HOLD",
-      "handoffContext": "source handoff label — do not infer repository Lineage 55 route"
+      "sourceTrackId": "Track56",
+      "resolvedProductTargetId": "lt-53-emotional-path-replay + CAP-14",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "Lineage 53 / CAP-14 overview family (Issue #163) — NOT repository Lineage 56"
     },
     {
       "sourceTrackId": "Track59",
-      "resolvedProductTargetId": null,
-      "resolutionStatus": "MAPPING_HOLD",
-      "handoffContext": "source handoff label — do not infer repository Lineage 59 route"
+      "resolvedProductTargetId": "lt-59-living-memory-book",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "Living Memory Book stable product target (Issue #161)"
     }
   ],
   "slotNotes": {
@@ -89,9 +96,9 @@
     "targetMapping": true,
     "urlResolution": true,
     "openCall": true,
-    "actualTargetOpen": true,
-    "receiverConsume": true,
-    "sameMomentFocus": true
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
   },
   "qa": {
     "viewports": [

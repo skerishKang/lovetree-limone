@@ -985,6 +985,21 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
   const impliedReservation = lineageNumber !== undefined ? "ALLOCATED" : undefined;
   const newLineageReservation = lineageReservation?.status ?? impliedReservation;
 
+  /*
+   * Orthogonality: lifecycle describes the SOURCE revision state (what exists in
+   * the sibling source), while lineage reservation and adoption describe
+   * REPOSITORY decisions. A HOLD reservation does not erase source truth:
+   * Track62 V1.1 pins a real executable in the source while Lineage 62 remains
+   * unreserved and adoption stays HOLD.
+   *
+   * The only executable claim that requires a repository decision is a route
+   * (which still fails closed below). An executable lifecycle is anchored by a
+   * PINNED source executable artifact instead of a repo route.
+   */
+  const hasPinnedSourceExecutable = (sourceArtifacts ?? []).some(
+    (artifact) => artifact.role === "executable" && artifact.status === "PINNED",
+  );
+
   if (classification === "NEW_LINEAGE") {
     if (!newLineageReservation) {
       problems.push(
@@ -1012,8 +1027,13 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
       if (route) {
         problems.push(`route requires an ALLOCATED lineage; lineageReservation '${newLineageReservation}' cannot claim a route`);
       }
-      if (lifecycle && lifecycleImpliesExecutable(lifecycle)) {
-        problems.push(`lineageReservation '${newLineageReservation}' cannot claim an executable lifecycle`);
+      // Executable lifecycle is source truth, orthogonal to the reservation.
+      // It requires a PINNED source executable artifact (never inferred from a
+      // bare number, never claimed for a repo route under HOLD/PENDING).
+      if (lifecycle && lifecycleImpliesExecutable(lifecycle) && !hasPinnedSourceExecutable) {
+        problems.push(
+          `lineageReservation '${newLineageReservation}' cannot claim an executable lifecycle without a PINNED source executable artifact (lifecycle is source truth; reservation/adoption are repository decisions)`,
+        );
       }
     }
   }
@@ -1061,11 +1081,17 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     problems.push("route.surface 'capability' must not carry designLineageId");
   }
   if (lifecycle && lifecycleImpliesExecutable(lifecycle)) {
+    // An executable lifecycle is anchored by a repo route, a canonical owner
+    // surface, OR a PINNED source executable artifact (source truth — e.g.
+    // Track62 V1.1 whose executable is pinned while Lineage 62 stays HOLD).
     const hasExecutableAnchor =
       Boolean(route) ||
-      (classification === "CANONICAL_OWNER_CAPABILITY" && Boolean(ownerRoute));
+      (classification === "CANONICAL_OWNER_CAPABILITY" && Boolean(ownerRoute)) ||
+      hasPinnedSourceExecutable;
     if (!hasExecutableAnchor) {
-      problems.push(`lifecycle ${lifecycle} claims an executable but no route/ownerRoute is declared`);
+      problems.push(
+        `lifecycle ${lifecycle} claims an executable but no route/ownerRoute/PINNED source executable artifact is declared`,
+      );
     }
   }
   if (!lifecycle || !lifecycleImpliesExecutable(lifecycle)) {
@@ -1073,9 +1099,15 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
       problems.push(`route declared with lifecycle '${lifecycle ?? "<missing>"}' — route requires an executable lifecycle`);
     }
   }
-  if (reservation?.held && lifecycle) {
+  // Adoption hold (reservation.held) is orthogonal to SOURCE lifecycle truth:
+  // a held candidate may still pin a real source executable. It may not claim
+  // a repo route (blocked above), and without a pinned source executable an
+  // executable lifecycle still fails closed.
+  if (reservation?.held && lifecycle && !hasPinnedSourceExecutable) {
     if (lifecycleImpliesExecutable(lifecycle) || lifecycle === "ARTIFACTS_PARTIAL") {
-      problems.push(`reservation held but lifecycle '${lifecycle}' claims executable/artifact progress`);
+      problems.push(
+        `reservation held but lifecycle '${lifecycle}' claims executable/artifact progress without a PINNED source executable artifact`,
+      );
     }
   }
 
