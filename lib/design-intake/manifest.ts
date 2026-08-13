@@ -2,17 +2,24 @@
  * Design Intake Native Candidate Factory — typed declarative intake manifest.
  *
  * The manifest is repository-owned data. It is parsed from JSON (never executed):
- * source HTML/JS referenced by `provenance.sourceFiles` is evidence/reference only
- * and is never loaded, imported or evaluated by the factory.
+ * source HTML/JS referenced by `provenance.sourceFiles` / `sourceArtifacts` is
+ * evidence/reference only and is never loaded, imported or evaluated by the factory.
  *
  * Identity contract:
  * - `sourceTrackId` is the sibling intake track identity (e.g. "Track60").
  * - `designLineageId` is the repository Design Lineage identity (e.g. "lt-60-...").
  * - The two are completely separate identities. A source track number never
- *   implies the repository lineage number.
+ *   implies the repository lineage number (Track55 ≠ Lineage 55, Track56 ≠ Lineage 56).
+ *
+ * Lineage reservation contract:
+ * - classification and lineage-number reservation are separate states.
+ * - `lineageReservation: ALLOCATED` (or an explicit `lineageNumber`) reserves the number.
+ * - `lineageReservation: HOLD | PENDING` expresses a candidate that does NOT
+ *   reserve a lineage number yet (e.g. Track62 V1.1).
  */
 
 import { DESIGN_SCENARIOS } from "../design-lab";
+import { EXPERIENCE_CAPABILITIES } from "../experience-capabilities";
 
 export const INTAKE_SCHEMA_VERSION = 1 as const;
 
@@ -39,17 +46,55 @@ export const INTAKE_LIFECYCLES = [
 ] as const;
 export type IntakeLifecycle = (typeof INTAKE_LIFECYCLES)[number];
 
-export const RENDERING_DISCRIMINATORS = [
+/** Concrete rendering discriminators certify an actual candidate implementation. */
+export const CONCRETE_RENDERING_DISCRIMINATORS = [
   "dom-2d",
   "sprite-2.5d",
   "css3d-dom",
   "canvas-3d-projection",
   "webgl",
 ] as const;
+export type ConcreteRenderingDiscriminator = (typeof CONCRETE_RENDERING_DISCRIMINATORS)[number];
+
+/**
+ * `unresolved` is only valid in pre-executable states (no executable candidate
+ * exists yet). An executable lifecycle must fail closed without a concrete
+ * discriminator — never certify rendering before the executable exists.
+ */
+export const RENDERING_DISCRIMINATORS = [
+  ...CONCRETE_RENDERING_DISCRIMINATORS,
+  "unresolved",
+] as const;
 export type RenderingDiscriminator = (typeof RENDERING_DISCRIMINATORS)[number];
 
 /* ------------------------------------------------------------------ */
-/* P8 exact-asset contract                                            */
+/* Source artifacts (distinct from runtime exactAssets)               */
+/* ------------------------------------------------------------------ */
+
+export const SOURCE_ARTIFACT_STATUSES = [
+  "PINNED",
+  "REFERENCE_ONLY",
+  "PENDING",
+] as const;
+export type SourceArtifactStatus = (typeof SOURCE_ARTIFACT_STATUSES)[number];
+
+/**
+ * Source evidence — separate from `exactAssets` (runtime-required binaries).
+ * Drive file IDs are authoritative source identity; placeholders are rejected.
+ */
+export interface SourceArtifact {
+  filename: string;
+  driveId: string;
+  bytes?: number;
+  sha256?: string;
+  gitBlobSha?: string;
+  /** e.g. executable, reference-video, sibling-qa, instruction, implementation-note */
+  role: string;
+  status: SourceArtifactStatus;
+}
+
+/* ------------------------------------------------------------------ */
+/* P8 exact-asset contract (runtime-required binaries)                */
 /* ------------------------------------------------------------------ */
 
 export const FINGERPRINT_STATUSES = [
@@ -98,13 +143,63 @@ export interface ExactAssetEntry {
 /**
  * The three exact-asset statuses are independent and must stay separated:
  *   FINGERPRINT_COMPLETE !== BINARY_TRANSFER_COMPLETE !== EXACT_GATE_PASS
- * Fingerprint metadata alone never implies asset transfer, and transfer alone
- * never implies an exact gate pass.
  */
 export interface ExactAssetGateState {
   fingerprintStatus: FingerprintStatus;
   binaryTransferStatus: BinaryTransferStatus;
   exactGateStatus: ExactGateStatus;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reuse-before-new-code metadata                                     */
+/* ------------------------------------------------------------------ */
+
+export const RUNTIME_PRIMITIVE_PATTERN = /^P[1-9]$/;
+
+export type BackendScope = "BACKEND_FREE" | "BACKEND_DECISION_REQUIRED";
+
+export interface SlotNotes {
+  issue: "142";
+  /** #142 template slot notes (data/media/copy slot expectations). */
+  notes: readonly string[];
+  /** Policy boundary — what must remain presentation state vs product data. */
+  policyBoundary: readonly string[];
+}
+
+export interface FidelityTargetMetadata {
+  validationClass: "source-fidelity" | "interaction-contract";
+  label?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Lineage reservation + adoption state                               */
+/* ------------------------------------------------------------------ */
+
+export const LINEAGE_RESERVATION_STATUSES = [
+  "ALLOCATED",
+  "PENDING",
+  "HOLD",
+] as const;
+export type LineageReservationStatus = (typeof LINEAGE_RESERVATION_STATUSES)[number];
+
+export interface LineageReservation {
+  status: LineageReservationStatus;
+  note?: string;
+}
+
+export const ADOPTION_DECISIONS = [
+  "ADOPT",
+  "DO_NOT_ADOPT",
+  "SOURCE_REFERENCE_ONLY",
+  "PRODUCT_POLICY_REQUIRED",
+  "UNDECIDED",
+  "HOLD",
+] as const;
+export type AdoptionDecision = (typeof ADOPTION_DECISIONS)[number];
+
+export interface AdoptionRecord {
+  status: AdoptionDecision;
+  note?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -129,6 +224,21 @@ export type NavigationHandoffEvidence = Partial<
   Record<NavigationHandoffDimension, boolean>
 >;
 
+export const HANDOFF_RESOLUTION_STATUSES = ["MAPPING_HOLD", "RESOLVED"] as const;
+export type HandoffResolutionStatus = (typeof HANDOFF_RESOLUTION_STATUSES)[number];
+
+/**
+ * Cross-namespace handoff mapping: source Track handoffs must resolve to stable
+ * repository product targets, never source-local file paths. MAPPING_HOLD until
+ * the target is authoritative (e.g. Track 61 handoffs to 55/56/59).
+ */
+export interface HandoffMapping {
+  sourceTrackId: string;
+  resolvedProductTargetId: string | null;
+  resolutionStatus: HandoffResolutionStatus;
+  handoffContext?: string;
+}
+
 /* ------------------------------------------------------------------ */
 /* Derived / synthetic policy                                         */
 /* ------------------------------------------------------------------ */
@@ -139,18 +249,12 @@ export interface DerivedDisplayValue {
   kind: "VIEW_DERIVED";
   /** Derivation source, e.g. "cluster", "bridge-moment", "view-preset", "recent", "important", "resume". */
   source: string;
-  /**
-   * VIEW_DERIVED values are display calculations and are never canonical
-   * product policy. This field must therefore always be `false`.
-   */
   canonicalProductPolicy: false;
   note?: string;
 }
 
 export interface SyntheticFixtureFlag {
-  /** Prototype-only fixture, not product truth. */
   prototypeOnly: boolean;
-  /** Source-demo-only value (e.g. 100/200/365), not canonical policy. */
   sourceDemoOnly: boolean;
 }
 
@@ -201,29 +305,63 @@ export interface IntakeRoute {
 
 export interface DesignIntakeManifest {
   schemaVersion: typeof INTAKE_SCHEMA_VERSION;
-  /** Stable repository identity for this intake, e.g. "track-60-memory-entry-portal". */
+  /** Stable repository identity for this intake, e.g. "track-60-3d-moment-cluster". */
   stableId: string;
   /** Sibling intake track identity, e.g. "Track60". Fully separate from designLineageId. */
   sourceTrackId: string;
   title: string;
   classification: IntakeClassification;
   lifecycle: IntakeLifecycle;
-  rendering: RenderingDiscriminator;
+  /**
+   * Optional. `unresolved` (or absence) is valid only in pre-executable states;
+   * executable lifecycles require a concrete discriminator (fail closed).
+   */
+  rendering?: RenderingDiscriminator;
   scenarioId: string;
-  /** Product Job this intake serves, e.g. "returning-user Memory Entry Portal". */
   productJob: string;
   summary: string;
   provenance: IntakeProvenance;
   /** Repository Design Lineage identity. Separate identity from sourceTrackId. */
   designLineageId?: string;
-  /** Proposed repository lineage number (NEW_LINEAGE only). */
+  /** Allocated repository lineage number (NEW_LINEAGE ALLOCATED only). */
   lineageNumber?: number;
   /** Repository revision id within the lineage. */
   revisionId?: string;
   /** Canonical product owner route (CANONICAL_OWNER_CAPABILITY only). Metadata only — never written by the factory. */
   ownerRoute?: string;
   route?: IntakeRoute;
+  /** Adoption hold (product-level). Separate from lineage-number reservation. */
   reservation?: IntakeReservation;
+  /** Lineage-number reservation state, separate from classification. */
+  lineageReservation?: LineageReservation;
+  /** Adoption decision metadata (authoritative disposition when recorded). */
+  adoption?: AdoptionRecord;
+  /* ---------------- source identity ---------------- */
+  /** Source evidence artifacts (executables, reference videos, QA files, instructions). */
+  sourceArtifacts?: readonly SourceArtifact[];
+  /* ---------------- reuse-before-new-code ---------------- */
+  /** Reusable ExperienceCapability ids (validated against lib/experience-capabilities.ts). */
+  reusableCapabilities?: readonly string[];
+  /** Reused runtime primitives P1–P9 (Issue #141). */
+  runtimePrimitives?: readonly string[];
+  /** Optional genuinely new primitive — never a P1–P9 id. */
+  trulyNewPrimitive?: string;
+  sourceDeltas?: readonly string[];
+  sourceDefects?: readonly string[];
+  nativeRemediations?: readonly string[];
+  /** Source-only / fake demo values that must never become product truth. */
+  sourceOnlyValues?: readonly string[];
+  backendScope?: BackendScope;
+  templateFamily?: string;
+  slotNotes?: SlotNotes;
+  fidelityTargetMetadata?: FidelityTargetMetadata;
+  /** Cross-namespace handoff mapping evidence (source Track → stable target). */
+  handoffMappings?: readonly HandoffMapping[];
+  /** Visual-mechanic overlap that must NOT drive deduplication. */
+  visualMechanicOverlap?: readonly string[];
+  /** Product-job distinctness statement when visual overlap exists. */
+  productJobDistinctness?: string;
+  /* ---------------- P8 exact assets ---------------- */
   exactAssets?: readonly ExactAssetEntry[];
   exactAssetGate?: ExactAssetGateState;
   navigationHandoff?: NavigationHandoffEvidence;
@@ -265,6 +403,8 @@ const STABLE_ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const SOURCE_TRACK_PATTERN = /^Track\d+(\.\d+)?(\s+V\d+(\.\d+)?)?$/i;
 const SHA256_PATTERN = /^[0-9a-f]{64}$/i;
 const GIT_BLOB_SHA_PATTERN = /^[0-9a-f]{40}$/i;
+/** Authoritative Drive object ids: 25–44 base64url chars. Placeholders rejected. */
+const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -311,6 +451,72 @@ function expectEnum<T extends string>(
     return undefined;
   }
   return value as T;
+}
+
+function parseStringList(
+  raw: unknown,
+  field: string,
+  problems: string[],
+): readonly string[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    problems.push(`${field} must be an array`);
+    return undefined;
+  }
+  const values: string[] = [];
+  raw.forEach((entry, index) => {
+    if (typeof entry !== "string" || entry.trim() === "") {
+      problems.push(`${field}[${index}] must be a non-empty string`);
+      return;
+    }
+    values.push(entry);
+  });
+  return values;
+}
+
+function parseSourceArtifacts(raw: unknown, problems: string[]): readonly SourceArtifact[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    problems.push("sourceArtifacts must be an array");
+    return undefined;
+  }
+  const artifacts: SourceArtifact[] = [];
+  raw.forEach((entry, index) => {
+    if (!isRecord(entry)) {
+      problems.push(`sourceArtifacts[${index}] must be an object`);
+      return;
+    }
+    const prefix = `sourceArtifacts[${index}]`;
+    const filename = expectString(entry.filename, `${prefix}.filename`, problems);
+    const driveId = expectString(entry.driveId, `${prefix}.driveId`, problems);
+    if (driveId && (!DRIVE_ID_PATTERN.test(driveId) || /example/i.test(driveId))) {
+      problems.push(
+        `${prefix}.driveId must be an authoritative Drive file id (25–44 base64url chars, no placeholders)`,
+      );
+    }
+    const role = expectString(entry.role, `${prefix}.role`, problems);
+    const status = expectEnum(entry.status, SOURCE_ARTIFACT_STATUSES, `${prefix}.status`, problems);
+    const bytes = expectOptionalNumber(entry.bytes, `${prefix}.bytes`, problems);
+    if (bytes !== undefined && (!Number.isInteger(bytes) || bytes <= 0)) {
+      problems.push(`${prefix}.bytes must be a positive integer`);
+    }
+    let sha256: string | undefined;
+    if (entry.sha256 !== undefined && entry.sha256 !== null) {
+      sha256 = expectString(entry.sha256, `${prefix}.sha256`, problems);
+      if (sha256 && !SHA256_PATTERN.test(sha256)) problems.push(`${prefix}.sha256 must be 64 hex chars`);
+    }
+    let gitBlobSha: string | undefined;
+    if (entry.gitBlobSha !== undefined && entry.gitBlobSha !== null) {
+      gitBlobSha = expectString(entry.gitBlobSha, `${prefix}.gitBlobSha`, problems);
+      if (gitBlobSha && !GIT_BLOB_SHA_PATTERN.test(gitBlobSha)) {
+        problems.push(`${prefix}.gitBlobSha must be 40 hex chars`);
+      }
+    }
+    if (filename && driveId && role && status) {
+      artifacts.push({ filename, driveId, bytes, sha256, gitBlobSha, role, status });
+    }
+  });
+  return artifacts;
 }
 
 function parseExactAssetGate(raw: unknown, problems: string[]): ExactAssetGateState | undefined {
@@ -361,6 +567,9 @@ function parseExactAssets(raw: unknown, problems: string[]): readonly ExactAsset
     const rightsStatus = expectString(entry.rightsStatus, `${prefix}.rightsStatus`, problems);
 
     const driveId = expectOptionalString(entry.driveId, `${prefix}.driveId`, problems);
+    if (driveId && (!DRIVE_ID_PATTERN.test(driveId) || /example/i.test(driveId))) {
+      problems.push(`${prefix}.driveId must be an authoritative Drive file id`);
+    }
     const bytes = expectOptionalNumber(entry.bytes, `${prefix}.bytes`, problems);
     const width = expectOptionalNumber(entry.width, `${prefix}.width`, problems);
     const height = expectOptionalNumber(entry.height, `${prefix}.height`, problems);
@@ -406,6 +615,44 @@ function parseNavigationHandoff(raw: unknown, problems: string[]): NavigationHan
     problems.push("navigationHandoff must record at least one dimension");
   }
   return evidence;
+}
+
+function parseHandoffMappings(raw: unknown, problems: string[]): readonly HandoffMapping[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    problems.push("handoffMappings must be an array");
+    return undefined;
+  }
+  const mappings: HandoffMapping[] = [];
+  raw.forEach((entry, index) => {
+    if (!isRecord(entry)) {
+      problems.push(`handoffMappings[${index}] must be an object`);
+      return;
+    }
+    const prefix = `handoffMappings[${index}]`;
+    const sourceTrackId = expectString(entry.sourceTrackId, `${prefix}.sourceTrackId`, problems);
+    const resolutionStatus = expectEnum(
+      entry.resolutionStatus,
+      HANDOFF_RESOLUTION_STATUSES,
+      `${prefix}.resolutionStatus`,
+      problems,
+    );
+    const resolvedProductTargetId =
+      entry.resolvedProductTargetId === null || entry.resolvedProductTargetId === undefined
+        ? null
+        : expectString(entry.resolvedProductTargetId, `${prefix}.resolvedProductTargetId`, problems);
+    if (resolutionStatus === "RESOLVED" && !resolvedProductTargetId) {
+      problems.push(`${prefix}: RESOLVED mapping requires resolvedProductTargetId`);
+    }
+    if (resolutionStatus === "MAPPING_HOLD" && resolvedProductTargetId) {
+      problems.push(`${prefix}: MAPPING_HOLD must not claim resolvedProductTargetId`);
+    }
+    const handoffContext = expectOptionalString(entry.handoffContext, `${prefix}.handoffContext`, problems);
+    if (sourceTrackId && resolutionStatus) {
+      mappings.push({ sourceTrackId, resolvedProductTargetId, resolutionStatus, handoffContext });
+    }
+  });
+  return mappings;
 }
 
 function parseDerivedDisplay(raw: unknown, problems: string[]): readonly DerivedDisplayValue[] | undefined {
@@ -505,7 +752,6 @@ function parseQa(raw: unknown, problems: string[]): QaContract | undefined {
   const mobile = viewports.find((v) => v.width === 390 && v.height === 844);
   if (!desktop) problems.push("qa.viewports must include desktop 1280×800");
   if (!mobile) problems.push("qa.viewports must include mobile 390×844");
-  // Narrow 320×720 is optional but must be exactly 320×720 when present.
   const narrow = viewports.find((v) => v.width === 320);
   if (narrow && (narrow.height !== 720 || narrow.mobile !== true)) {
     problems.push("qa.viewports narrow variant must be 320×720 with mobile:true");
@@ -531,6 +777,9 @@ function parseProvenance(raw: unknown, problems: string[]): IntakeProvenance | u
   const sourceLabel = expectString(raw.sourceLabel, "provenance.sourceLabel", problems);
   const rightsStatus = expectString(raw.rightsStatus, "provenance.rightsStatus", problems);
   const driveFolderId = expectOptionalString(raw.driveFolderId, "provenance.driveFolderId", problems);
+  if (driveFolderId && (!DRIVE_ID_PATTERN.test(driveFolderId) || /example/i.test(driveFolderId))) {
+    problems.push("provenance.driveFolderId must be an authoritative Drive folder id (no placeholders)");
+  }
   const sourceFilesRaw = raw.sourceFiles;
   if (!Array.isArray(sourceFilesRaw) || sourceFilesRaw.length === 0) {
     problems.push("provenance.sourceFiles must be a non-empty array");
@@ -560,6 +809,62 @@ function parseReservation(raw: unknown, problems: string[]): IntakeReservation |
   }
   const note = expectOptionalString(raw.note, "reservation.note", problems);
   return { held: raw.held, note };
+}
+
+function parseLineageReservation(raw: unknown, problems: string[]): LineageReservation | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("lineageReservation must be an object");
+    return undefined;
+  }
+  const status = expectEnum(raw.status, LINEAGE_RESERVATION_STATUSES, "lineageReservation.status", problems);
+  const note = expectOptionalString(raw.note, "lineageReservation.note", problems);
+  if (!status) return undefined;
+  return { status, note };
+}
+
+function parseAdoption(raw: unknown, problems: string[]): AdoptionRecord | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("adoption must be an object");
+    return undefined;
+  }
+  const status = expectEnum(raw.status, ADOPTION_DECISIONS, "adoption.status", problems);
+  const note = expectOptionalString(raw.note, "adoption.note", problems);
+  if (!status) return undefined;
+  return { status, note };
+}
+
+function parseSlotNotes(raw: unknown, problems: string[]): SlotNotes | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("slotNotes must be an object");
+    return undefined;
+  }
+  if (raw.issue !== "142") {
+    problems.push("slotNotes.issue must be '142'");
+  }
+  const notes = parseStringList(raw.notes, "slotNotes.notes", problems);
+  const policyBoundary = parseStringList(raw.policyBoundary, "slotNotes.policyBoundary", problems);
+  if (raw.issue !== "142" || !notes || !policyBoundary) return undefined;
+  return { issue: "142", notes, policyBoundary };
+}
+
+function parseFidelityTargetMetadata(raw: unknown, problems: string[]): FidelityTargetMetadata | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) {
+    problems.push("fidelityTargetMetadata must be an object");
+    return undefined;
+  }
+  const validationClass = expectEnum(
+    raw.validationClass,
+    ["source-fidelity", "interaction-contract"],
+    "fidelityTargetMetadata.validationClass",
+    problems,
+  );
+  const label = expectOptionalString(raw.label, "fidelityTargetMetadata.label", problems);
+  if (!validationClass) return undefined;
+  return { validationClass, label };
 }
 
 function parseRoute(raw: unknown, problems: string[]): IntakeRoute | undefined {
@@ -594,7 +899,7 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
 
   const stableId = expectString(raw.stableId, "stableId", problems);
   if (stableId && !STABLE_ID_PATTERN.test(stableId)) {
-    problems.push("stableId must be a lowercase kebab slug (e.g. track-60-memory-entry-portal)");
+    problems.push("stableId must be a lowercase kebab slug (e.g. track-60-3d-moment-cluster)");
   }
 
   const sourceTrackId = expectString(raw.sourceTrackId, "sourceTrackId", problems);
@@ -608,7 +913,11 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
 
   const classification = expectEnum(raw.classification, INTAKE_CLASSIFICATIONS, "classification", problems);
   const lifecycle = expectEnum(raw.lifecycle, INTAKE_LIFECYCLES, "lifecycle", problems);
-  const rendering = expectEnum(raw.rendering, RENDERING_DISCRIMINATORS, "rendering", problems);
+  // rendering is optional (pre-executable states may omit it); 'unresolved' is valid only pre-executable.
+  const rendering =
+    raw.rendering === undefined || raw.rendering === null
+      ? undefined
+      : expectEnum(raw.rendering, RENDERING_DISCRIMINATORS, "rendering", problems);
 
   const scenarioId = expectString(raw.scenarioId, "scenarioId", problems);
   if (scenarioId && !DESIGN_SCENARIOS.some((scenario) => scenario.id === scenarioId)) {
@@ -622,6 +931,23 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
   const ownerRoute = expectOptionalString(raw.ownerRoute, "ownerRoute", problems);
   const route = parseRoute(raw.route, problems);
   const reservation = parseReservation(raw.reservation, problems);
+  const lineageReservation = parseLineageReservation(raw.lineageReservation, problems);
+  const adoption = parseAdoption(raw.adoption, problems);
+  const sourceArtifacts = parseSourceArtifacts(raw.sourceArtifacts, problems);
+  const reusableCapabilities = parseStringList(raw.reusableCapabilities, "reusableCapabilities", problems);
+  const runtimePrimitives = parseStringList(raw.runtimePrimitives, "runtimePrimitives", problems);
+  const trulyNewPrimitive = expectOptionalString(raw.trulyNewPrimitive, "trulyNewPrimitive", problems);
+  const sourceDeltas = parseStringList(raw.sourceDeltas, "sourceDeltas", problems);
+  const sourceDefects = parseStringList(raw.sourceDefects, "sourceDefects", problems);
+  const nativeRemediations = parseStringList(raw.nativeRemediations, "nativeRemediations", problems);
+  const sourceOnlyValues = parseStringList(raw.sourceOnlyValues, "sourceOnlyValues", problems);
+  const backendScope = expectEnum(raw.backendScope, ["BACKEND_FREE", "BACKEND_DECISION_REQUIRED"], "backendScope", problems);
+  const templateFamily = expectOptionalString(raw.templateFamily, "templateFamily", problems);
+  const slotNotes = parseSlotNotes(raw.slotNotes, problems);
+  const fidelityTargetMetadata = parseFidelityTargetMetadata(raw.fidelityTargetMetadata, problems);
+  const handoffMappings = parseHandoffMappings(raw.handoffMappings, problems);
+  const visualMechanicOverlap = parseStringList(raw.visualMechanicOverlap, "visualMechanicOverlap", problems);
+  const productJobDistinctness = expectOptionalString(raw.productJobDistinctness, "productJobDistinctness", problems);
   const exactAssets = parseExactAssets(raw.exactAssets, problems);
   const exactAssetGate = parseExactAssetGate(raw.exactAssetGate, problems);
   const navigationHandoff = parseNavigationHandoff(raw.navigationHandoff, problems);
@@ -629,17 +955,71 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
   const syntheticFixture = parseSyntheticFixture(raw.syntheticFixture, problems);
   const qa = parseQa(raw.qa, problems);
 
+  /* ---------------- reuse metadata validation ---------------- */
+
+  if (reusableCapabilities) {
+    const knownIds = new Set<string>(EXPERIENCE_CAPABILITIES.map((capability) => capability.id));
+    for (const capabilityId of reusableCapabilities) {
+      if (!knownIds.has(capabilityId)) {
+        problems.push(
+          `reusableCapabilities '${capabilityId}' is not a known ExperienceCapability id (${[...knownIds].join(", ")})`,
+        );
+      }
+    }
+  }
+
+  if (runtimePrimitives) {
+    for (const primitive of runtimePrimitives) {
+      if (!RUNTIME_PRIMITIVE_PATTERN.test(primitive)) {
+        problems.push(`runtimePrimitives '${primitive}' must be one of P1..P9`);
+      }
+    }
+  }
+
+  if (trulyNewPrimitive && RUNTIME_PRIMITIVE_PATTERN.test(trulyNewPrimitive)) {
+    problems.push(`trulyNewPrimitive '${trulyNewPrimitive}' collides with a shared P1..P9 primitive id`);
+  }
+
   /* ---------------- identity rules (fail closed) ---------------- */
 
+  const impliedReservation = lineageNumber !== undefined ? "ALLOCATED" : undefined;
+  const newLineageReservation = lineageReservation?.status ?? impliedReservation;
+
   if (classification === "NEW_LINEAGE") {
-    if (!designLineageId || !lineageNumber || !revisionId) {
+    if (!newLineageReservation) {
       problems.push(
-        "ambiguous identity: NEW_LINEAGE requires designLineageId, lineageNumber and revisionId together",
+        "ambiguous identity: NEW_LINEAGE requires lineageNumber (implicit ALLOCATED) or lineageReservation.status",
       );
     }
-    if (lineageNumber !== undefined && (!Number.isInteger(lineageNumber) || lineageNumber <= 0)) {
-      problems.push("lineageNumber must be a positive integer");
+    if (newLineageReservation === "ALLOCATED") {
+      if (!designLineageId || !lineageNumber || !revisionId) {
+        problems.push(
+          "ambiguous identity: NEW_LINEAGE ALLOCATED requires designLineageId, lineageNumber and revisionId together",
+        );
+      }
+      if (lineageNumber !== undefined && (!Number.isInteger(lineageNumber) || lineageNumber <= 0)) {
+        problems.push("lineageNumber must be a positive integer");
+      }
+    } else {
+      if (lineageNumber !== undefined) {
+        problems.push(
+          `NEW_LINEAGE with lineageReservation '${newLineageReservation}' must not allocate a lineage number`,
+        );
+      }
+      if (revisionId) {
+        problems.push(`revisionId must not be set while lineage reservation is '${newLineageReservation}'`);
+      }
+      if (route) {
+        problems.push(`route requires an ALLOCATED lineage; lineageReservation '${newLineageReservation}' cannot claim a route`);
+      }
+      if (lifecycle && lifecycleImpliesExecutable(lifecycle)) {
+        problems.push(`lineageReservation '${newLineageReservation}' cannot claim an executable lifecycle`);
+      }
     }
+  }
+
+  if (lineageReservation?.status === "ALLOCATED" && lineageNumber === undefined) {
+    problems.push("lineageReservation ALLOCATED requires lineageNumber");
   }
 
   if (classification === "EXISTING_LINEAGE_VARIANT") {
@@ -648,6 +1028,9 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     }
     if (lineageNumber !== undefined) {
       problems.push("lineageNumber must not be set for EXISTING_LINEAGE_VARIANT (identity comes from designLineageId)");
+    }
+    if (lineageReservation) {
+      problems.push("lineageReservation must not be set for EXISTING_LINEAGE_VARIANT");
     }
   }
 
@@ -658,13 +1041,13 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     if (ownerRoute && !ownerRoute.startsWith("/")) {
       problems.push("ownerRoute must start with '/'");
     }
-    if (lineageNumber !== undefined || revisionId !== undefined) {
-      problems.push("lineageNumber/revisionId must not be set for CANONICAL_OWNER_CAPABILITY");
+    if (lineageNumber !== undefined || revisionId !== undefined || lineageReservation) {
+      problems.push("lineageNumber/revisionId/lineageReservation must not be set for CANONICAL_OWNER_CAPABILITY");
     }
   }
 
   if (classification === "REFERENCE_CAPABILITY_ONLY") {
-    if (lineageNumber !== undefined || revisionId !== undefined || designLineageId) {
+    if (lineageNumber !== undefined || revisionId !== undefined || designLineageId || lineageReservation) {
       problems.push("REFERENCE_CAPABILITY_ONLY must not reserve lineage/revision identity");
     }
   }
@@ -693,6 +1076,16 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
   if (reservation?.held && lifecycle) {
     if (lifecycleImpliesExecutable(lifecycle) || lifecycle === "ARTIFACTS_PARTIAL") {
       problems.push(`reservation held but lifecycle '${lifecycle}' claims executable/artifact progress`);
+    }
+  }
+
+  /* ---------------- rendering rules (never certify pre-executable) ---------------- */
+
+  if (lifecycle && lifecycleImpliesExecutable(lifecycle)) {
+    if (!rendering || rendering === "unresolved") {
+      problems.push(
+        `lifecycle ${lifecycle} requires a concrete rendering discriminator (one of: ${CONCRETE_RENDERING_DISCRIMINATORS.join(", ")}) — rendering must never be 'unresolved' for an executable candidate`,
+      );
     }
   }
 
@@ -735,7 +1128,7 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     title,
     classification: classification as IntakeClassification,
     lifecycle: lifecycle as IntakeLifecycle,
-    rendering: rendering as RenderingDiscriminator,
+    rendering,
     scenarioId,
     productJob,
     summary,
@@ -746,6 +1139,23 @@ export function parseIntakeManifest(raw: unknown): DesignIntakeManifest {
     ownerRoute,
     route,
     reservation,
+    lineageReservation,
+    adoption,
+    sourceArtifacts,
+    reusableCapabilities,
+    runtimePrimitives,
+    trulyNewPrimitive,
+    sourceDeltas,
+    sourceDefects,
+    nativeRemediations,
+    sourceOnlyValues,
+    backendScope,
+    templateFamily,
+    slotNotes,
+    fidelityTargetMetadata,
+    handoffMappings,
+    visualMechanicOverlap,
+    productJobDistinctness,
     exactAssets,
     exactAssetGate,
     navigationHandoff,

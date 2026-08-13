@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-61-guided-next-moment-builder",
+  "sourceTrackId": "Track61",
+  "title": "Guided Next Moment LoveTree Builder V1.4",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "tree-workspace",
+  "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder is a new repository Lineage (lt-61-guided-next-moment-builder). Source handoffs to Track 55/56/59 remain MAPPING_HOLD — never infer repository Lineage 55/56/59 routes from raw numbers.",
+  "provenance": {
+    "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158",
+    "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
+    "sourceFiles": ["현재후보.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-61-guided-next-moment-builder",
+  "lineageNumber": 61,
+  "revisionId": "61-v1-4",
+  "route": {
+    "path": "/design-lab/lineages/61/61-v1-4",
+    "surface": "lineage"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "13RipNmgNoiEUq3UWJ3qSR4nw-V8R5C2G",
+      "bytes": 482969,
+      "sha256": "2dacb6fff65005fcacaef0aa1e8282b7990f70a708183b65fb43bae7172ec8ac",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P3", "P4", "P5", "P7", "P9"],
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "current → selected candidate → WHY → Main/Branch → next recommendation state consistency",
+    "video/reaction/drawer/dialog close + Escape + focus entry/containment/restoration where modal",
+    "closed overlays noninteractive/unfocusable",
+    "source asset gate before exact visual PASS",
+    "first three choices visibly differentiated",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [
+    "fictional names",
+    "21 fixed fixtures",
+    "synthetic percentages/counts",
+    "demo fan quotes",
+    "source Track-number handoff labels until mapped"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #158 — candidate for product-owner review; not FINAL/CLOSED"
+  },
+  "handoffMappings": [
+    {
+      "sourceTrackId": "Track56",
+      "resolvedProductTargetId": null,
+      "resolutionStatus": "MAPPING_HOLD",
+      "handoffContext": "source handoff label — do not infer repository Lineage 56 route"
+    },
+    {
+      "sourceTrackId": "Track55",
+      "resolvedProductTargetId": null,
+      "resolutionStatus": "MAPPING_HOLD",
+      "handoffContext": "source handoff label — do not infer repository Lineage 55 route"
+    },
+    {
+      "sourceTrackId": "Track59",
+      "resolvedProductTargetId": null,
+      "resolutionStatus": "MAPPING_HOLD",
+      "handoffContext": "source handoff label — do not infer repository Lineage 59 route"
+    }
+  ],
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "recommendation reason / fan reaction / WHY NEXT must stay clearly separated",
+      "one canonical selected-candidate authority; no second independent selectedIndex"
+    ],
+    "policyBoundary": [
+      "recommendation/ranking algorithm, public/official/user-saved source authority, privacy/opt-in eligibility, real popularity metrics, persistence, moderation, official-path semantics = PRODUCT_POLICY"
+    ]
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": true,
+    "receiverConsume": true,
+    "sameMomentFocus": true
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}

@@ -91,15 +91,25 @@ export function checkRegistryCollisions(
   const collisions: string[] = [];
 
   if (manifest.classification === "NEW_LINEAGE") {
-    if (manifest.designLineageId && snapshot.lineageIds.has(manifest.designLineageId)) {
-      collisions.push(
-        `NEW_LINEAGE designLineageId '${manifest.designLineageId}' already exists in lib/design-lineages.ts`,
-      );
-    }
-    if (manifest.lineageNumber !== undefined && snapshot.lineageNumbers.has(manifest.lineageNumber)) {
-      collisions.push(
-        `NEW_LINEAGE lineageNumber ${manifest.lineageNumber} already exists in lib/design-lineages.ts`,
-      );
+    if (manifest.lineageNumber !== undefined) {
+      // ALLOCATED reservation: both identity and number must be free.
+      if (manifest.designLineageId && snapshot.lineageIds.has(manifest.designLineageId)) {
+        collisions.push(
+          `NEW_LINEAGE designLineageId '${manifest.designLineageId}' already exists in lib/design-lineages.ts`,
+        );
+      }
+      if (snapshot.lineageNumbers.has(manifest.lineageNumber)) {
+        collisions.push(
+          `NEW_LINEAGE lineageNumber ${manifest.lineageNumber} already exists in lib/design-lineages.ts`,
+        );
+      }
+    } else if (manifest.designLineageId) {
+      // HOLD/PENDING reservation: a proposed lineage id must not collide with an existing lineage.
+      if (snapshot.lineageIds.has(manifest.designLineageId)) {
+        collisions.push(
+          `proposed designLineageId '${manifest.designLineageId}' collides with existing lineage in lib/design-lineages.ts`,
+        );
+      }
     }
   }
 

@@ -31,6 +31,20 @@ const LIVE_TARGETS = DESIGN_FIDELITY_TARGETS.map((target) => ({
   route: target.route,
 }));
 
+const REAL_FIXTURE_NAMES = [
+  "track-55-free-connection-routing",
+  "track-56-vertical-moment-network",
+  "track-59-living-memory-book",
+  "track-60-3d-moment-cluster",
+  "track-61-guided-next-moment-builder",
+  "track-62-v1-reference-only",
+  "track-62-v1-1-reservation-hold",
+  "track-63-moment-field-view-studio",
+  "track-64-floating-moment-entry-portal",
+];
+
+const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
+
 function fixture(stableId) {
   const raw = readFileSync(path.join(FIXTURES_DIR, `${stableId}.json`), "utf8");
   return JSON.parse(raw);
@@ -65,6 +79,7 @@ function newLineageManifest(overrides = {}) {
     lineageNumber: 90,
     revisionId: "90-v1",
     route: { path: "/design-lab/lineages/90/90-v1", surface: "lineage" },
+    backendScope: "BACKEND_FREE",
     ...overrides,
   };
 }
@@ -104,6 +119,12 @@ test("1. malformed manifests are rejected", () => {
 
   const unknownScenario = newLineageManifest({ scenarioId: "not-a-scenario" });
   assert.throws(() => parseIntakeManifest(unknownScenario), IntakeManifestError);
+
+  const missingBackendScope = newLineageManifest({ backendScope: undefined });
+  assert.throws(() => parseIntakeManifest(missingBackendScope), IntakeManifestError);
+
+  const invalidBackendScope = newLineageManifest({ backendScope: "MAYBE" });
+  assert.throws(() => parseIntakeManifest(invalidBackendScope), IntakeManifestError);
 
   // Executable lifecycle without any executable anchor must fail closed.
   const executableWithoutAnchor = newLineageManifest({
@@ -169,6 +190,24 @@ test("2. ambiguous identities are rejected", () => {
     route: undefined,
   });
   assert.throws(() => parseIntakeManifest(referenceWithLineage), IntakeManifestError);
+
+  // NEW_LINEAGE with HOLD reservation must not allocate a number or a route.
+  const holdWithNumber = newLineageManifest({
+    lifecycle: "INSTRUCTION_ACCEPTED",
+    route: undefined,
+    lineageReservation: { status: "HOLD" },
+    lineageNumber: 62,
+    revisionId: undefined,
+  });
+  assert.throws(() => parseIntakeManifest(holdWithNumber), IntakeManifestError);
+
+  const holdWithRoute = newLineageManifest({
+    lifecycle: "INSTRUCTION_ACCEPTED",
+    lineageReservation: { status: "HOLD" },
+    lineageNumber: undefined,
+    revisionId: undefined,
+  });
+  assert.throws(() => parseIntakeManifest(holdWithRoute), IntakeManifestError);
 });
 
 /* ------------------------------------------------------------------ */
@@ -176,9 +215,9 @@ test("2. ambiguous identities are rejected", () => {
 /* ------------------------------------------------------------------ */
 
 test("3. sourceTrackId and designLineageId are separate identities", () => {
-  const manifest = parseIntakeManifest(fixture("track-60-canvas-memory-orbit"));
+  const manifest = parseIntakeManifest(fixture("track-60-3d-moment-cluster"));
   assert.equal(manifest.sourceTrackId, "Track60");
-  assert.equal(manifest.designLineageId, "lt-60-canvas-memory-orbit");
+  assert.equal(manifest.designLineageId, "lt-60-3d-moment-cluster-explorer");
   assert.notEqual(manifest.sourceTrackId, manifest.designLineageId);
   assert.ok(!manifest.designLineageId.startsWith(manifest.sourceTrackId.toLowerCase()));
 });
@@ -228,23 +267,26 @@ test("4. all four classifications are schema-valid", () => {
 /* 5-7. rendering discriminators and lifecycle values                 */
 /* ------------------------------------------------------------------ */
 
-test("5. dom-2d rendering is valid", () => {
-  const manifest = parseIntakeManifest(newLineageManifest({ rendering: "dom-2d" }));
-  assert.equal(manifest.rendering, "dom-2d");
+test("5. all concrete rendering discriminators are valid", () => {
+  for (const rendering of ["dom-2d", "sprite-2.5d", "css3d-dom", "canvas-3d-projection", "webgl"]) {
+    const manifest = parseIntakeManifest(newLineageManifest({ rendering }));
+    assert.equal(manifest.rendering, rendering);
+  }
 });
 
-test("6. canvas-3d-projection rendering is valid", () => {
+test("6. canvas-3d-projection rendering is valid for an executable lineage", () => {
   const manifest = parseIntakeManifest(
     newLineageManifest({ rendering: "canvas-3d-projection" }),
   );
   assert.equal(manifest.rendering, "canvas-3d-projection");
 });
 
-test("7. EXECUTABLE_PENDING lifecycle is valid", () => {
+test("7. EXECUTABLE_PENDING lifecycle is valid (pre-executable)", () => {
   const manifest = parseIntakeManifest(
-    newLineageManifest({ lifecycle: "EXECUTABLE_PENDING", route: undefined }),
+    newLineageManifest({ lifecycle: "EXECUTABLE_PENDING", route: undefined, rendering: "unresolved" }),
   );
   assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
+  assert.equal(manifest.rendering, "unresolved");
 });
 
 /* ------------------------------------------------------------------ */
@@ -388,7 +430,7 @@ test("9. existing filesystem paths are never overwritten", () => {
 /* ------------------------------------------------------------------ */
 
 test("10. identical manifest produces an identical plan", () => {
-  const manifest = fixture("track-60-canvas-memory-orbit");
+  const manifest = fixture("track-60-3d-moment-cluster");
   const root = withTempRoot();
   try {
     const first = buildScaffoldPlan(manifest, { root, fidelityTargets: LIVE_TARGETS });
@@ -407,7 +449,7 @@ test("10. identical manifest produces an identical plan", () => {
 test("11. scaffold plans cover all three registry seams", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-canvas-memory-orbit"), {
+    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -423,11 +465,11 @@ test("11. scaffold plans cover all three registry seams", () => {
     // The fidelity registration carries viewports + reduced-motion config.
     const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
     const target = fidelity.entry.target;
-    assert.equal(target.route, "/design-lab/lineages/60/60-v1");
-    assert.deepEqual(target.browserGates, ["tests/track-60-canvas-memory-orbit-route-browser-qa.mjs"]);
+    assert.equal(target.route, "/design-lab/lineages/60/60-v1-2");
+    assert.deepEqual(target.browserGates, ["tests/track-60-3d-moment-cluster-route-browser-qa.mjs"]);
 
     // Non-executable candidates must still declare every seam (deferred/N-A).
-    const pending = buildScaffoldPlan(fixture("track-63-executable-pending"), {
+    const pending = buildScaffoldPlan(fixture("track-63-moment-field-view-studio"), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -500,17 +542,9 @@ test("12. fingerprint, binary transfer and exact gate are independent", () => {
     false,
   );
 
-  // A partial-lifecycle manifest never enables the fidelity assetGate.
+  // A complete-lifecycle manifest with a valid PASS state enables the verifier gate.
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-canvas-memory-orbit"), {
-      root,
-      fidelityTargets: LIVE_TARGETS,
-    });
-    const fidelity = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
-    assert.equal(fidelity.entry.target.assetGate, null, "partial lifecycle: asset gate stays off");
-
-    // A complete-lifecycle manifest with a valid PASS state enables the verifier gate.
     const complete = parseIntakeManifest({
       ...pending,
       lifecycle: "ARTIFACTS_COMPLETE",
@@ -542,7 +576,7 @@ test("12. fingerprint, binary transfer and exact gate are independent", () => {
 test("13. 320×720 narrow viewport configuration is transmitted", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-canvas-memory-orbit"), {
+    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -570,7 +604,7 @@ test("13. 320×720 narrow viewport configuration is transmitted", () => {
 test("14. reduced-motion configuration is transmitted", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-canvas-memory-orbit"), {
+    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -623,18 +657,7 @@ test("15. source HTML/JS is never read or executed", () => {
 test("16. scaffold plans never write under canonical /v4 product trees", () => {
   const root = withTempRoot();
   try {
-    const fixtureNames = [
-      "track-55-canonical-owner",
-      "track-56-existing-lineage-variant",
-      "track-59-new-lineage",
-      "track-60-canvas-memory-orbit",
-      "track-61-dom-2d-journey",
-      "track-62-v1-reference-only",
-      "track-62-v1-1-reservation-hold",
-      "track-63-executable-pending",
-      "track-64-memory-entry-portal",
-    ];
-    for (const name of fixtureNames) {
+    for (const name of REAL_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
       for (const write of plan.writes) {
         assert.ok(
@@ -654,7 +677,7 @@ test("16. scaffold plans never write under canonical /v4 product trees", () => {
     }
 
     // Track55 owns /v4/trees/demo/graph as metadata only — no write touches it.
-    const track55 = buildScaffoldPlan(fixture("track-55-canonical-owner"), {
+    const track55 = buildScaffoldPlan(fixture("track-55-free-connection-routing"), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -677,38 +700,47 @@ test("16. scaffold plans never write under canonical /v4 product trees", () => {
 /* ------------------------------------------------------------------ */
 
 test("fixtures: Track55 → CANONICAL_OWNER_CAPABILITY → /v4/trees/demo/graph owner", () => {
-  const manifest = parseIntakeManifest(fixture("track-55-canonical-owner"));
+  const manifest = parseIntakeManifest(fixture("track-55-free-connection-routing"));
   assert.equal(manifest.classification, "CANONICAL_OWNER_CAPABILITY");
   assert.equal(manifest.ownerRoute, "/v4/trees/demo/graph");
-  assert.equal(manifest.lifecycle, "ARTIFACTS_COMPLETE");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.sourceTrackId, "Track55");
+  assert.equal(manifest.designLineageId, undefined, "Track55 must NOT reserve a lineage id");
+  assert.equal(manifest.lineageNumber, undefined, "Track55 must NOT allocate a lineage number");
 });
 
 test("fixtures: Track56 → EXISTING_LINEAGE_VARIANT → Lineage53/CAP14 family", () => {
-  const manifest = parseIntakeManifest(fixture("track-56-existing-lineage-variant"));
+  const manifest = parseIntakeManifest(fixture("track-56-vertical-moment-network"));
   assert.equal(manifest.classification, "EXISTING_LINEAGE_VARIANT");
   assert.equal(manifest.designLineageId, "lt-53-emotional-path-replay");
+  assert.equal(manifest.lineageNumber, undefined, "variant must not allocate its own number");
   assert.notEqual(manifest.sourceTrackId, manifest.designLineageId);
 });
 
-test("fixtures: Track59 → NEW_LINEAGE", () => {
-  const manifest = parseIntakeManifest(fixture("track-59-new-lineage"));
+test("fixtures: Track59 → NEW_LINEAGE → Living Memory Book V5", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
-  assert.equal(manifest.lifecycle, "INSTRUCTION_ACCEPTED");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.title, "Living Memory Book V5");
+  assert.match(manifest.productJob, /memory book/i);
 });
 
 test("fixtures: Track60 → NEW_LINEAGE → canvas-3d-projection", () => {
-  const manifest = parseIntakeManifest(fixture("track-60-canvas-memory-orbit"));
+  const manifest = parseIntakeManifest(fixture("track-60-3d-moment-cluster"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.rendering, "canvas-3d-projection");
-  assert.equal(manifest.lifecycle, "ARTIFACTS_PARTIAL");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
 });
 
-test("fixtures: Track61 → NEW_LINEAGE → dom-2d", () => {
-  const manifest = parseIntakeManifest(fixture("track-61-dom-2d-journey"));
+test("fixtures: Track61 → NEW_LINEAGE → dom-2d with MAPPING_HOLD handoffs", () => {
+  const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.rendering, "dom-2d");
-  assert.equal(manifest.navigationHandoff.actualTargetOpen, false);
-  assert.equal(manifest.navigationHandoff.openCall, true);
+  assert.ok(manifest.handoffMappings.length >= 3);
+  for (const mapping of manifest.handoffMappings) {
+    assert.equal(mapping.resolutionStatus, "MAPPING_HOLD");
+    assert.equal(mapping.resolvedProductTargetId, null);
+  }
 });
 
 test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
@@ -716,44 +748,41 @@ test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
   assert.equal(manifest.classification, "REFERENCE_CAPABILITY_ONLY");
   assert.equal(manifest.lifecycle, "REFERENCE_PINNED");
   assert.equal(manifest.designLineageId, undefined);
+  assert.equal(manifest.lineageNumber, undefined);
+  assert.equal(manifest.adoption.status, "SOURCE_REFERENCE_ONLY");
 });
 
-test("fixtures: Track62 V1.1 → lineage/template candidate with adoption HOLD", () => {
+test("fixtures: Track62 V1.1 → candidate with lineage reservation HOLD", () => {
   const manifest = parseIntakeManifest(fixture("track-62-v1-1-reservation-hold"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
+  assert.equal(manifest.lineageReservation.status, "HOLD");
+  assert.equal(manifest.lineageNumber, undefined, "no lineage number reserved");
   assert.equal(manifest.reservation.held, true);
   assert.equal(manifest.lifecycle, "INSTRUCTION_ACCEPTED");
   assert.equal(manifest.route, undefined);
+  assert.equal(manifest.rendering, "unresolved");
 });
 
-test("fixtures: Track63 → NEW_LINEAGE → executable pending", () => {
-  const manifest = parseIntakeManifest(fixture("track-63-executable-pending"));
+test("fixtures: Track63 → NEW_LINEAGE → executable pending, rendering unresolved", () => {
+  const manifest = parseIntakeManifest(fixture("track-63-moment-field-view-studio"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
+  assert.equal(manifest.rendering, "unresolved");
   assert.equal(manifest.route, undefined);
 });
 
-test("fixtures: Track64 → NEW_LINEAGE → reference pinned, Memory Entry Portal job", () => {
-  const manifest = parseIntakeManifest(fixture("track-64-memory-entry-portal"));
+test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, executable pending", () => {
+  const manifest = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
-  assert.equal(manifest.lifecycle, "REFERENCE_PINNED");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
+  assert.equal(manifest.rendering, "unresolved");
   assert.equal(manifest.route, undefined);
-  assert.match(manifest.productJob, /Returning-user Memory Entry Portal/);
+  assert.match(manifest.productJob, /Memory Entry Portal/);
+  assert.ok(manifest.productJobDistinctness);
 });
 
 test("fixtures: all repository manifests parse and scaffold cleanly", () => {
-  const names = [
-    "track-55-canonical-owner",
-    "track-56-existing-lineage-variant",
-    "track-59-new-lineage",
-    "track-60-canvas-memory-orbit",
-    "track-61-dom-2d-journey",
-    "track-62-v1-reference-only",
-    "track-62-v1-1-reservation-hold",
-    "track-63-executable-pending",
-    "track-64-memory-entry-portal",
-  ];
-  for (const name of names) {
+  for (const name of REAL_FIXTURE_NAMES) {
     const manifest = parseIntakeManifest(fixture(name));
     assert.ok(manifest.stableId, `${name}: stableId`);
     assert.ok(manifest.provenance.sourceFiles.length > 0, `${name}: sourceFiles`);
@@ -761,11 +790,242 @@ test("fixtures: all repository manifests parse and scaffold cleanly", () => {
 
   const root = withTempRoot();
   try {
-    for (const name of names) {
+    for (const name of REAL_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
-      assert.ok(plan.writes.length >= 4, `${name}: expected at least metadata/provenance/tests/docs writes`);
+      assert.ok(plan.writes.length >= 5, `${name}: expected metadata/provenance/checklist/tests/docs writes`);
       assert.ok(plan.registrySeams.length === 3, `${name}: three registry seams`);
     }
+  } finally {
+    cleanup(root);
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* CTO audit regressions                                              */
+/* ------------------------------------------------------------------ */
+
+test("regression: real Track fixtures never use placeholder Drive IDs", () => {
+  const bad = /example/i;
+  for (const name of REAL_FIXTURE_NAMES) {
+    const manifest = parseIntakeManifest(fixture(name));
+    const folderId = manifest.provenance.driveFolderId;
+    if (folderId) {
+      assert.match(folderId, DRIVE_ID_PATTERN, `${name}: folder ${folderId}`);
+      assert.ok(!bad.test(folderId), `${name}: placeholder folder id`);
+    }
+    for (const artifact of manifest.sourceArtifacts ?? []) {
+      assert.match(artifact.driveId, DRIVE_ID_PATTERN, `${name}: ${artifact.filename}`);
+      assert.ok(!bad.test(artifact.driveId), `${name}: placeholder drive id in ${artifact.filename}`);
+      if (artifact.sha256) assert.match(artifact.sha256, /^[0-9a-f]{64}$/i, `${name}: sha256`);
+      if (artifact.bytes !== undefined) assert.ok(artifact.bytes > 0, `${name}: bytes`);
+    }
+  }
+});
+
+test("regression: Track59 title/productJob contract is pinned", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
+  assert.equal(manifest.title, "Living Memory Book V5");
+  assert.match(manifest.title, /Living Memory Book/);
+  assert.match(manifest.productJob, /memory book/i);
+  assert.ok(manifest.productJob.length > 40, "productJob is a real product statement, not a stub");
+});
+
+test("regression: pre-executable 'unresolved' rendering is valid", () => {
+  for (const lifecycle of ["INSTRUCTION_ACCEPTED", "REFERENCE_PINNED", "EXECUTABLE_PENDING"]) {
+    const manifest = parseIntakeManifest(
+      newLineageManifest({ lifecycle, route: undefined, rendering: "unresolved" }),
+    );
+    assert.equal(manifest.rendering, "unresolved", lifecycle);
+  }
+  // Absent rendering is also valid pre-executable.
+  const absent = parseIntakeManifest(
+    newLineageManifest({ lifecycle: "REFERENCE_PINNED", route: undefined, rendering: undefined }),
+  );
+  assert.equal(absent.rendering, undefined);
+});
+
+test("regression: executable lifecycle + unresolved rendering is rejected", () => {
+  for (const lifecycle of ["EXECUTABLE_AVAILABLE", "ARTIFACTS_COMPLETE", "EXECUTABLE_FINGERPRINT_PINNED"]) {
+    assert.throws(
+      () =>
+        parseIntakeManifest(
+          newLineageManifest({ lifecycle, rendering: "unresolved" }),
+        ),
+      IntakeManifestError,
+      `${lifecycle} must fail closed with unresolved rendering`,
+    );
+    assert.throws(
+      () => parseIntakeManifest(newLineageManifest({ lifecycle, rendering: undefined })),
+      IntakeManifestError,
+      `${lifecycle} must fail closed without a concrete rendering`,
+    );
+  }
+});
+
+test("regression: source artifact SHA/bytes/Drive identity validation", () => {
+  const base = newLineageManifest({
+    sourceArtifacts: [
+      {
+        filename: "현재후보.html",
+        driveId: "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+        bytes: 55327,
+        sha256: "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaa5f7",
+        role: "executable",
+        status: "PINNED",
+      },
+    ],
+  });
+
+  assert.doesNotThrow(() => parseIntakeManifest(base));
+
+  const badSha = {
+    ...base,
+    sourceArtifacts: [{ ...base.sourceArtifacts[0], sha256: "not-a-sha" }],
+  };
+  assert.throws(() => parseIntakeManifest(badSha), IntakeManifestError);
+
+  const negativeBytes = {
+    ...base,
+    sourceArtifacts: [{ ...base.sourceArtifacts[0], bytes: -5 }],
+  };
+  assert.throws(() => parseIntakeManifest(negativeBytes), IntakeManifestError);
+
+  const placeholderDrive = {
+    ...base,
+    sourceArtifacts: [{ ...base.sourceArtifacts[0], driveId: "1exampleDrive60" }],
+  };
+  assert.throws(() => parseIntakeManifest(placeholderDrive), IntakeManifestError);
+
+  const badGitBlob = {
+    ...base,
+    sourceArtifacts: [{ ...base.sourceArtifacts[0], gitBlobSha: "short" }],
+  };
+  assert.throws(() => parseIntakeManifest(badGitBlob), IntakeManifestError);
+
+  const badStatus = {
+    ...base,
+    sourceArtifacts: [{ ...base.sourceArtifacts[0], status: "DONE" }],
+  };
+  assert.throws(() => parseIntakeManifest(badStatus), IntakeManifestError);
+});
+
+test("regression: invalid runtime primitive ids are rejected", () => {
+  for (const bad of ["P0", "P10", "P42", "gesture-arbiter", "P1-P9"]) {
+    assert.throws(
+      () => parseIntakeManifest(newLineageManifest({ runtimePrimitives: [bad] })),
+      IntakeManifestError,
+      `${bad} must be rejected`,
+    );
+  }
+  assert.doesNotThrow(() => parseIntakeManifest(newLineageManifest({ runtimePrimitives: ["P1", "P9"] })));
+
+  // trulyNewPrimitive must not collide with P1-P9.
+  assert.throws(
+    () => parseIntakeManifest(newLineageManifest({ trulyNewPrimitive: "P3" })),
+    IntakeManifestError,
+  );
+  assert.doesNotThrow(() =>
+    parseIntakeManifest(newLineageManifest({ trulyNewPrimitive: "ConnectionBundleRouter" })),
+  );
+
+  // reusableCapabilities must be known ExperienceCapability ids.
+  assert.throws(
+    () => parseIntakeManifest(newLineageManifest({ reusableCapabilities: ["not-a-capability"] })),
+    IntakeManifestError,
+  );
+  assert.doesNotThrow(() =>
+    parseIntakeManifest(newLineageManifest({ reusableCapabilities: ["physical-object-navigation"] })),
+  );
+});
+
+test("regression: adoption decision union validation", () => {
+  for (const status of ["ADOPT", "DO_NOT_ADOPT", "SOURCE_REFERENCE_ONLY", "PRODUCT_POLICY_REQUIRED", "UNDECIDED", "HOLD"]) {
+    const manifest = parseIntakeManifest(newLineageManifest({ adoption: { status } }));
+    assert.equal(manifest.adoption.status, status);
+  }
+  assert.throws(
+    () => parseIntakeManifest(newLineageManifest({ adoption: { status: "SHIP_IT" } })),
+    IntakeManifestError,
+  );
+});
+
+test("regression: incomplete reuse checklist stays HOLD / not implementation-ready", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(newLineageManifest(), { root, fidelityTargets: LIVE_TARGETS });
+    const checklist = plan.writes.find((write) => write.path.endsWith("REUSE_CHECKLIST.md"));
+    assert.ok(checklist, "reuse checklist is generated");
+    assert.match(checklist.content, /IMPLEMENTATION_READY: NO/);
+    assert.ok(!/IMPLEMENTATION_READY:\s*YES/.test(checklist.content));
+    assert.match(checklist.content, /HOLD/);
+    assert.match(checklist.content, /TODO/);
+    assert.ok(
+      plan.writes.every((write) => !write.path.endsWith("ADOPTION_REPORT.md") ||
+        /UNDECIDED|HOLD/.test(write.content)),
+      "adoption report never auto-selects a decision",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("regression: Track62 candidate does not accidentally reserve Lineage62", () => {
+  const root = withTempRoot();
+  try {
+    const manifest = parseIntakeManifest(fixture("track-62-v1-1-reservation-hold"));
+    assert.equal(manifest.lineageNumber, undefined);
+
+    const plan = buildScaffoldPlan(manifest, { root, fidelityTargets: LIVE_TARGETS });
+    const serialized = JSON.stringify(plan);
+    assert.ok(!serialized.includes('"number": 62'), "no lineage number 62 allocated anywhere");
+    assert.ok(
+      plan.writes.every((write) => !write.path.includes("/62/")),
+      "no lineage 62 route path",
+    );
+
+    const lineageSeam = plan.registrySeams.find((seam) => seam.seam === "designLineages");
+    assert.equal(lineageSeam.status, "not-applicable");
+    assert.match(lineageSeam.reason, /HOLD/);
+    const fidelitySeam = plan.registrySeams.find((seam) => seam.seam === "designFidelity");
+    assert.equal(fidelitySeam.status, "not-applicable");
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("regression: Track55/56 cross-namespace mappings are preserved", () => {
+  const track55 = parseIntakeManifest(fixture("track-55-free-connection-routing"));
+  assert.equal(track55.sourceTrackId, "Track55");
+  assert.equal(track55.classification, "CANONICAL_OWNER_CAPABILITY");
+  assert.equal(track55.ownerRoute, "/v4/trees/demo/graph");
+  assert.equal(track55.designLineageId, undefined);
+  assert.equal(track55.lineageNumber, undefined);
+
+  const track56 = parseIntakeManifest(fixture("track-56-vertical-moment-network"));
+  assert.equal(track56.sourceTrackId, "Track56");
+  assert.equal(track56.designLineageId, "lt-53-emotional-path-replay");
+  assert.equal(track56.lineageNumber, undefined);
+  assert.notEqual(track56.designLineageId, "lt-56-crystal-memory-atelier");
+});
+
+test("regression: reuse checklist + adoption report are generated for real fixtures", () => {
+  const root = withTempRoot();
+  try {
+    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
+      root,
+      fidelityTargets: LIVE_TARGETS,
+    });
+    const checklist = plan.writes.find((write) => write.path.endsWith("REUSE_CHECKLIST.md"));
+    assert.ok(checklist);
+    assert.match(checklist.content, /## 1\. Product Job/);
+    assert.match(checklist.content, /## 10\. Backend\/Auth\/DB-free scope/);
+    assert.match(checklist.content, /## 4\. Existing ExperienceCapabilities/);
+    assert.match(checklist.content, /## 5\. P1–P9 reused/);
+
+    const adoption = plan.writes.find((write) => write.path.endsWith("ADOPTION_REPORT.md"));
+    assert.ok(adoption);
+    assert.match(adoption.content, /adoptionStatus: UNDECIDED/);
+    assert.match(adoption.content, /| mechanic | source evidence |/);
   } finally {
     cleanup(root);
   }
@@ -816,7 +1076,7 @@ test("CLI: design:intake:scaffold dry-run emits a three-seam plan without writin
         "--import",
         "tsx",
         "scripts/design-intake-scaffold.mjs",
-        path.join(FIXTURES_DIR, "track-60-canvas-memory-orbit.json"),
+        path.join(FIXTURES_DIR, "track-60-3d-moment-cluster.json"),
       ],
       {
         encoding: "utf8",
@@ -832,7 +1092,7 @@ test("CLI: design:intake:scaffold dry-run emits a three-seam plan without writin
     );
     assert.ok(plan.writes.length > 0);
     assert.equal(
-      existsSync(path.join(root, "design-intake/scaffolds/track-60-canvas-memory-orbit/manifest.json")),
+      existsSync(path.join(root, "design-intake/scaffolds/track-60-3d-moment-cluster/manifest.json")),
       false,
       "dry run must not write",
     );
@@ -850,7 +1110,7 @@ test("CLI: design:intake:scaffold --write materializes the plan in a clean root"
         "--import",
         "tsx",
         "scripts/design-intake-scaffold.mjs",
-        path.join(FIXTURES_DIR, "track-61-dom-2d-journey.json"),
+        path.join(FIXTURES_DIR, "track-59-living-memory-book.json"),
         "--write",
       ],
       {
@@ -862,12 +1122,16 @@ test("CLI: design:intake:scaffold --write materializes the plan in a clean root"
     );
     assert.match(stdout, /WROTE \d+ files:/);
     assert.ok(
-      existsSync(path.join(root, "app/design-lab/lineages/61/61-v1/page.tsx")),
+      existsSync(path.join(root, "app/design-lab/lineages/59/59-v5/page.tsx")),
       "route page written",
     );
     assert.ok(
-      existsSync(path.join(root, "tests/track-61-dom-2d-journey-intake-contract.test.mjs")),
+      existsSync(path.join(root, "tests/track-59-living-memory-book-intake-contract.test.mjs")),
       "contract test written",
+    );
+    assert.ok(
+      existsSync(path.join(root, "design-intake/scaffolds/track-59-living-memory-book/REUSE_CHECKLIST.md")),
+      "reuse checklist written",
     );
     assert.ok(
       !existsSync(path.join(root, "app/v4")),

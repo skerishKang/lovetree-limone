@@ -121,6 +121,14 @@ function designLineagesSeam(
   routePath: string | null,
 ): RegistrySeamRegistration {
   if (manifest.classification === "NEW_LINEAGE") {
+    if (manifest.lineageNumber === undefined) {
+      return {
+        seam: "designLineages",
+        status: "not-applicable",
+        targetFile: "lib/design-lineages.ts",
+        reason: `lineage reservation is '${manifest.lineageReservation?.status ?? "PENDING"}' — no lineage number is allocated; register only after explicit reservation (e.g. Track62 V1.1)`,
+      };
+    }
     return {
       seam: "designLineages",
       status: "entry",
@@ -270,9 +278,9 @@ function designFidelitySeam(
       action: "add-target",
       target: {
         id: targetId,
-        label: manifest.title,
+        label: manifest.fidelityTargetMetadata?.label ?? manifest.title,
         route: routePath,
-        validationClass: "source-fidelity",
+        validationClass: manifest.fidelityTargetMetadata?.validationClass ?? "source-fidelity",
         impactPrefixes: [
           routePath.replace(/\/[^/]+\/[^/]+$/, "/"),
           `reference/design-intake/${manifest.stableId}/`,
@@ -310,7 +318,7 @@ function provenanceContent(manifest: DesignIntakeManifest): string {
     "- designLineageId: " + (manifest.designLineageId ?? "(none)"),
     "- classification: " + manifest.classification,
     "- lifecycle: " + manifest.lifecycle,
-    "- rendering: " + manifest.rendering,
+    "- rendering: " + (manifest.rendering ?? "unresolved"),
     "- scenarioId: " + manifest.scenarioId,
     "- productJob: " + manifest.productJob,
     "- sourceLabel: " + manifest.provenance.sourceLabel,
@@ -319,6 +327,11 @@ function provenanceContent(manifest: DesignIntakeManifest): string {
     "- reservation.held: " + String(manifest.reservation?.held ?? false),
     "- sourceFiles:",
     ...manifest.provenance.sourceFiles.map((file) => "  - " + file),
+    "- sourceArtifacts:",
+    ...(manifest.sourceArtifacts ?? []).map((artifact) =>
+      `  - ${artifact.filename} (Drive ${artifact.driveId}, ${artifact.role}, ${artifact.status})`,
+    ),
+    ...((manifest.sourceArtifacts ?? []).length === 0 ? ["  - (none pinned)"] : []),
     "",
     "Rules:",
     "- Treat Drive originals as read-only; never rewrite or reformat them.",
@@ -329,6 +342,7 @@ function provenanceContent(manifest: DesignIntakeManifest): string {
 }
 
 function routePageContent(manifest: DesignIntakeManifest, surface: "lineage" | "capability"): string {
+  const rendering = manifest.rendering ?? "unresolved";
   const component = surface === "lineage" ? "LineageScaffoldPage" : "CapabilityScaffoldPage";
   return [
     'import type { Metadata } from "next";',
@@ -343,7 +357,7 @@ function routePageContent(manifest: DesignIntakeManifest, surface: "lineage" | "
     `  title: ${JSON.stringify(manifest.title)},`,
     `  classification: ${JSON.stringify(manifest.classification)},`,
     `  lifecycle: ${JSON.stringify(manifest.lifecycle)},`,
-    `  rendering: ${JSON.stringify(manifest.rendering)},`,
+    `  rendering: ${JSON.stringify(rendering)},`,
     `  productJob: ${JSON.stringify(manifest.productJob)},`,
     "  sourceFidelityClaimed: false,",
     "} as const;",
@@ -443,31 +457,178 @@ function assetVerifierContent(manifest: DesignIntakeManifest, marker: string): s
   ].join("\n");
 }
 
+function mechanicRows(manifest: DesignIntakeManifest): readonly string[] {
+  const rows: string[] = [];
+  const evidence = (manifest.sourceArtifacts ?? []).map((artifact) => artifact.filename).join(", ") || "(source evidence pending)";
+  const pushRow = (mechanic: string, kind: string) => {
+    rows.push(
+      [
+        mechanic,
+        evidence,
+        `NONE — scaffold (${kind} not implemented)`,
+        "UNDECIDED",
+        "canonical Moment/Connection projections — no schema change",
+        "NOT VERIFIED — HOLD",
+        "NOT VERIFIED — HOLD",
+        "NOT VERIFIED — HOLD",
+        "pending — Design Fidelity + browser QA required",
+        "UNDECIDED/HOLD",
+        "scaffold never auto-selects an adoption decision",
+      ].join(" | "),
+    );
+  };
+  for (const capabilityId of manifest.reusableCapabilities ?? []) {
+    pushRow(`capability:${capabilityId}`, "capability");
+  }
+  for (const primitiveId of manifest.runtimePrimitives ?? []) {
+    pushRow(`primitive:${primitiveId}`, "runtime primitive");
+  }
+  if (manifest.trulyNewPrimitive) {
+    pushRow(`new:${manifest.trulyNewPrimitive}`, "new primitive");
+  }
+  if (rows.length === 0) {
+    rows.push(
+      [
+        "(no mechanics declared yet)",
+        evidence,
+        "NONE — scaffold",
+        "UNDECIDED",
+        "canonical Moment/Connection projections — no schema change",
+        "NOT VERIFIED — HOLD",
+        "NOT VERIFIED — HOLD",
+        "NOT VERIFIED — HOLD",
+        "pending — reuse review required before implementation-ready",
+        "UNDECIDED/HOLD",
+        "scaffold never auto-selects an adoption decision",
+      ].join(" | "),
+    );
+  }
+  return rows;
+}
+
 function adoptionReportContent(manifest: DesignIntakeManifest): string {
-  return [
-    `# ${manifest.stableId} — Adoption Report (skeleton)`,
+  const adoptionStatus = manifest.adoption?.status ?? "UNDECIDED";
+  const lines = [
+    `# ${manifest.stableId} — Adoption Report (scaffold)`,
     "",
-    "Generated by `design:intake:scaffold`. Adoption is a separate product decision;",
-    "this report records the intake state, not an approval.",
+    "Generated by `design:intake:scaffold`. The scaffold initial value is UNDECIDED/HOLD;",
+    "it never auto-selects an adoption decision. Adoption is a separate product decision.",
     "",
-    "- status: NOT_APPROVED (scaffold)",
+    `- adoptionStatus: ${adoptionStatus} (manifest metadata; scaffold initial is UNDECIDED/HOLD)`,
+    "- supported statuses: ADOPT / DO NOT ADOPT / SOURCE REFERENCE ONLY / PRODUCT POLICY REQUIRED",
+    `- adoption note: ${manifest.adoption?.note ?? "(none recorded)"}`,
     "- sourceTrackId: " + manifest.sourceTrackId,
     "- designLineageId: " + (manifest.designLineageId ?? "(none)"),
+    "- lineageReservation: " + (manifest.lineageReservation?.status ?? "(n/a)"),
     "- classification: " + manifest.classification,
     "- lifecycle: " + manifest.lifecycle,
-    "- rendering: " + manifest.rendering,
+    "- rendering: " + (manifest.rendering ?? "unresolved"),
     "- scenarioId: " + manifest.scenarioId,
     "- productJob: " + manifest.productJob,
-    "- canonical /v4 adoption: NOT CLAIMED",
-    "- exact asset gate: " + (manifest.exactAssetGate?.exactGateStatus ?? "EXACT_GATE_PENDING (no assets)"),
+    "- canonical /v4 adoption: NOT CLAIMED by scaffold",
+    "- exact asset gate: " + (manifest.exactAssetGate?.exactGateStatus ?? "EXACT_GATE_PENDING (no runtime assets)"),
     "- reservation held: " + String(manifest.reservation?.held ?? false),
+    "",
+    "## Mechanic-by-mechanic review",
+    "",
+    "| mechanic | source evidence | candidate proof | canonical V4 owner surface | data authority | accessibility contract | mobile/touch contract | reduced-motion contract | tests/evidence required | decision | decision reason |",
+    "|---|---|---|---|---|---|---|---|---|---|---|",
+    ...mechanicRows(manifest),
     "",
     "Next steps:",
     "- Review registry wiring (design-intake/scaffolds/" + manifest.stableId + "/REGISTRY_WIRING.md).",
-    "- Implement the native candidate route, then real contract/browser QA.",
+    "- Resolve every HOLD in the reuse checklist before claiming implementation-ready.",
     "- Transfer exact binaries and flip the P8 gate only with verifier evidence.",
     "",
-  ].join("\n");
+  ];
+  return lines.join("\n") + "\n";
+}
+
+function reuseChecklistContent(manifest: DesignIntakeManifest): string {
+  const rendering = manifest.rendering ?? "unresolved";
+  const sections: Array<{ title: string; answer: string; status: string }> = [
+    {
+      title: "1. Product Job",
+      answer: manifest.productJob,
+      status: "OK",
+    },
+    {
+      title: "2. Lineage visual identity",
+      answer: `${manifest.classification} — ${manifest.title} (${rendering})`,
+      status: manifest.rendering ? "OK" : "HOLD — rendering unresolved until executable",
+    },
+    {
+      title: "3. Rendering",
+      answer: rendering === "unresolved" ? "UNRESOLVED — no executable candidate yet" : rendering,
+      status: rendering === "unresolved" ? "HOLD" : "OK",
+    },
+    {
+      title: "4. Existing ExperienceCapabilities",
+      answer: (manifest.reusableCapabilities ?? []).join(", ") || "TODO — reuse review required",
+      status: (manifest.reusableCapabilities ?? []).length > 0 ? "OK" : "HOLD",
+    },
+    {
+      title: "5. P1–P9 reused",
+      answer: (manifest.runtimePrimitives ?? []).join(", ") || "TODO — runtime primitive mapping required",
+      status: (manifest.runtimePrimitives ?? []).length > 0 ? "OK" : "HOLD",
+    },
+    {
+      title: "6. Truly new primitive",
+      answer: manifest.trulyNewPrimitive ?? "NONE — reuse only",
+      status: "OK (NONE is a valid answer)",
+    },
+    {
+      title: "7. Exact assets",
+      answer:
+        (manifest.exactAssets ?? []).length > 0
+          ? (manifest.exactAssets ?? []).map((asset) => asset.filename).join(", ")
+          : "NONE recorded — confirm no runtime-required binaries or pin them",
+      status: (manifest.exactAssets ?? []).length > 0 ? "OK" : "HOLD — confirm before implementation-ready",
+    },
+    {
+      title: "8. Source defects / native remediation",
+      answer:
+        (manifest.sourceDefects ?? []).length > 0 || (manifest.nativeRemediations ?? []).length > 0
+          ? [
+              ...(manifest.sourceDefects ?? []).map((defect) => `defect: ${defect}`),
+              ...(manifest.nativeRemediations ?? []).map((remediation) => `remediation: ${remediation}`),
+            ].join("\n")
+          : "TODO — source defect review required",
+      status:
+        (manifest.sourceDefects ?? []).length > 0 || (manifest.nativeRemediations ?? []).length > 0
+          ? "OK"
+          : "HOLD",
+    },
+    {
+      title: "9. Source-only / fake values excluded",
+      answer: (manifest.sourceOnlyValues ?? []).join(", ") || "NONE recorded — verify before implementation-ready",
+      status: (manifest.sourceOnlyValues ?? []).length > 0 ? "OK" : "HOLD — verify no source-only values leak",
+    },
+    {
+      title: "10. Backend/Auth/DB-free scope",
+      answer: manifest.backendScope ?? "UNSET",
+      status: manifest.backendScope === "BACKEND_FREE" ? "OK" : "HOLD — backend decision required",
+    },
+  ];
+
+  const lines = [
+    `# ${manifest.stableId} — Reuse-before-new-code checklist (scaffold)`,
+    "",
+    "Reuse existing mechanics/primitives before writing new code. Every section must be",
+    "answered; empty answers stay HOLD and never imply implementation-ready PASS.",
+    "",
+    ...sections.flatMap((section) => [
+      `## ${section.title}`,
+      "",
+      section.answer,
+      "",
+      `Status: ${section.status}`,
+      "",
+    ]),
+    `IMPLEMENTATION_READY: NO — scaffold; resolve every HOLD above before claiming implementation-ready.`,
+    "",
+  ];
+  return lines.join("\n") + "\n";
 }
 
 function wiringContent(
@@ -618,6 +779,11 @@ export function buildScaffoldPlan(
       path: `design-intake/scaffolds/${manifest.stableId}/REGISTRY_WIRING.md`,
       kind: "registry-wiring",
       content: wiringContent(manifest, seams),
+    },
+    {
+      path: `design-intake/scaffolds/${manifest.stableId}/REUSE_CHECKLIST.md`,
+      kind: "reuse-checklist",
+      content: reuseChecklistContent(manifest),
     },
     {
       path: `reference/design-intake/${manifest.stableId}/PROVENANCE.md`,

@@ -2,24 +2,36 @@
   "schemaVersion": 1,
   "stableId": "track-62-v1-1-reservation-hold",
   "sourceTrackId": "Track62 V1.1",
-  "title": "Template Candidate (Reservation Hold)",
+  "title": "Circular Rail Template Candidate (Reservation Hold)",
   "classification": "NEW_LINEAGE",
   "lifecycle": "INSTRUCTION_ACCEPTED",
-  "rendering": "dom-2d",
-  "scenarioId": "entry-onboarding",
-  "productJob": "Lineage/template candidate whose reservation and adoption are held pending product-owner decision.",
-  "summary": "Track62 V1.1 is a Lineage/Template candidate. The identity is reserved but adoption is HOLD: no executable route or artifact progress is claimed.",
+  "rendering": "unresolved",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Product/lineage/template candidate for the Continuous Circular Rail mechanic — reservation and adoption are HOLD until a real product job is demonstrated.",
+  "summary": "Track62 V1.1 is a Lineage/Template candidate whose lineage-number reservation is explicitly HOLD: no Lineage 62 number is allocated and no executable is claimed. Classification (NEW_LINEAGE candidate) is separated from reservation state (HOLD).",
   "provenance": {
-    "sourceLabel": "62 V1.1 template intake",
-    "driveFolderId": "1exampleDrive62b",
-    "sourceFiles": ["track-62-v1-1-template.html"],
+    "sourceLabel": "62 V1.1 product/lineage/template candidate review / Issue #159",
+    "driveFolderId": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+    "sourceFiles": ["17_디자인팀장8기_임명및_62_기억조각상_원형레일전시_REFERENCE_FIDELITY_V1_작업지시_2026-08-12.md"],
     "rightsStatus": "sibling-source-owned"
   },
-  "designLineageId": "lt-62-template-candidate",
-  "lineageNumber": 62,
-  "revisionId": "62-v1.1-template",
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage 62 is NOT allocated. No repository number is reserved by this manifest."
+  },
   "reservation": {
     "held": true,
-    "note": "Reservation/adoption HOLD until product owner approves the template direction."
-  }
+    "note": "Reservation/adoption HOLD until a real product job is demonstrated (Issue #159)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #159/CTO audit — product/lineage/template candidate; Lineage 62 reservation HOLD"
+  },
+  "sourceArtifacts": [],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P7", "P9"],
+  "sourceDefects": [],
+  "nativeRemediations": [],
+  "sourceOnlyValues": [],
+  "backendScope": "BACKEND_FREE"
 }

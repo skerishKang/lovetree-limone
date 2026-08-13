@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-64-floating-moment-entry-portal",
+  "sourceTrackId": "Track64",
+  "title": "Floating Moment Welcome Orbit V1",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_PENDING",
+  "rendering": "unresolved",
+  "scenarioId": "entry-onboarding",
+  "productJob": "A returning user enters LoveTree / My Tree, sees recent / important / First Moments living in one continuous floating 3D card universe, selects one memory, and re-enters the emotional path from that Moment — a returning-user Memory Entry Portal.",
+  "summary": "Track64 (부유모먼트 웰컴오빗 입장포털 / Floating Moment Welcome Orbit V1) is a new repository Lineage (lt-64-floating-moment-entry-portal). Although the visual overlaps with Orbit-like presentation, the Product Job is the returning-user Memory Entry Portal, not another generic Orbit gallery. Executable pending; rendering unresolved.",
+  "provenance": {
+    "sourceLabel": "64_부유모먼트_웰컴오빗_입장포털 / Issue #165",
+    "driveFolderId": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+    "sourceFiles": ["★_참고영상_부유카드포트폴리오_웰컴오빗.mp4"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-64-floating-moment-entry-portal",
+  "lineageNumber": 64,
+  "revisionId": "64-v1",
+  "sourceArtifacts": [
+    {
+      "filename": "★_참고영상_부유카드포트폴리오_웰컴오빗.mp4",
+      "driveId": "1rbxcW7PCHLQsQSw_Sb0zpoPqiR6DqVe3",
+      "bytes": 22264995,
+      "sha256": "eaf7a52a800b1f6b7eda69d60af4e39b233ce67c8cfc677018e9593ae1fda797",
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": ["spatial-orbit-3d"],
+  "runtimePrimitives": ["P3", "P4", "P5", "P6", "P7", "P9"],
+  "sourceDefects": [
+    "no executable candidate exists at intake — candidate folder empty",
+    "no explicit keyboard-only contract in the source instruction",
+    "no 320×720 gate in the source instruction"
+  ],
+  "nativeRemediations": [
+    "keyboard selection/index navigation",
+    "visible focus",
+    "pointer/touch/wheel ownership",
+    "reduced-motion manual parity (idle auto orbit OFF, user drag/swipe retained)",
+    "focused card metadata reachable without pointer-only hover",
+    "semantic non-visual Moment list/index alternative where the 3D field is not sufficient",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [
+    "recent / important / resume are PRODUCT_POLICY or derived-data authority, never template truth"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #165 — V1 contract accepted; REFERENCE PINNED — EXECUTABLE/QA PENDING"
+  },
+  "visualMechanicOverlap": ["Orbit-like floating card universe"],
+  "productJobDistinctness": "returning-user Memory Entry Portal — not a decorative landing page and not another generic Orbit gallery",
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "reuse canonical Orbit selection/media contracts while NOT treating Track 64 as another Orbit implementation",
+      "media slots: mixed Photo/Video/Memo/Link card surfaces"
+    ],
+    "policyBoundary": [
+      "recent/important/resume ordering = PRODUCT_POLICY or derived data authority, not template truth",
+      "no fake persistence/ranking/history claims"
+    ]
+  },
+  "derivedDisplay": [
+    { "value": "Recent", "kind": "VIEW_DERIVED", "source": "recent", "canonicalProductPolicy": false, "note": "display-only recency ordering; PRODUCT_POLICY or derived data authority" },
+    { "value": "Important", "kind": "VIEW_DERIVED", "source": "important", "canonicalProductPolicy": false },
+    { "value": "Resume", "kind": "VIEW_DERIVED", "source": "resume", "canonicalProductPolicy": false }
+  ],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Floating Moment Welcome Orbit Entry Portal"
+  },
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}

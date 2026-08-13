@@ -2,17 +2,59 @@
   "schemaVersion": 1,
   "stableId": "track-62-v1-reference-only",
   "sourceTrackId": "Track62 V1",
-  "title": "Reference Capability Snapshot",
+  "title": "Continuous Circular Rail Exhibition",
   "classification": "REFERENCE_CAPABILITY_ONLY",
   "lifecycle": "REFERENCE_PINNED",
   "rendering": "dom-2d",
-  "scenarioId": "entry-onboarding",
-  "productJob": "Reference-only capability snapshot; no lineage or revision identity is reserved.",
-  "summary": "Track62 V1 is pinned as reference capability only. It reserves no repository lineage identity and never becomes an executable route.",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Reference benchmark + Experience Capability evidence (Continuous Analog Exhibition Rail) — no direct canonical V4 adoption, no Design Lineage number reservation.",
+  "summary": "Track62 V1 (기억조각상 원형레일전시 / Reference Fidelity Rebuild V1) reproduces a non-LoveTree fashion/art exhibition reference with intentionally light LoveTree semantics. It is REFERENCE BENCHMARK + EXPERIENCE CAPABILITY EVIDENCE; Lineage 62 is NOT reserved.",
   "provenance": {
-    "sourceLabel": "62 V1 source snapshot",
-    "driveFolderId": "1exampleDrive62",
-    "sourceFiles": ["track-62-v1-reference.html"],
+    "sourceLabel": "62_러브트리_기억조각상_원형레일전시 / Issue #159",
+    "driveFolderId": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+    "sourceFiles": ["현재후보.html"],
     "rightsStatus": "sibling-source-owned"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+      "bytes": 5834579,
+      "sha256": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaa5f7",
+      "role": "reference-executable",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P7", "P9"],
+  "trulyNewPrimitive": "ContinuousAnalogRail (capability evidence only — phase/targetPhase/velocity shared fractional state; no lineage reservation)",
+  "sourceDefects": [],
+  "nativeRemediations": [],
+  "sourceOnlyValues": [
+    "non-LoveTree fashion/art exhibition reference composition",
+    "light LoveTree semantics: sculpture=Moment, rail order=exhibition traversal, scene micro-copy=WHY NEXT, final sculpture=symbolic result"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Issue #159 — reference benchmark + capability evidence; no direct canonical V4 adoption"
+  },
+  "visualMechanicOverlap": ["circular rail / menu-like geometry"],
+  "productJobDistinctness": "proves a motion/interaction grammar first — a distinct LoveTree Lineage requires a real product job decision",
+  "derivedDisplay": [
+    { "value": "Exhibition rail order", "kind": "VIEW_DERIVED", "source": "view-preset", "canonicalProductPolicy": false, "note": "source reference traversal, not canonical data ordering" }
+  ],
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
   }
 }
