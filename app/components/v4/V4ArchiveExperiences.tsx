@@ -351,12 +351,6 @@ export function V4LiquidOrbitGallery() {
     const isOrbit = mode === "orbit";
     const start = isOrbit ? (dragRotation ?? orbitRotation) : scrub;
     const fromCard = (event.target as HTMLElement).closest?.(".v4-liquid-card") != null;
-    // A pointer that starts on a card keeps the button's implicit capture,
-    // so the native click still lands on the card (open/select semantics).
-    // Only the bare stage needs explicit capture so drags can leave the box.
-    if (!fromCard) {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    }
     drag.current = {
       id: event.pointerId,
       x: event.clientX,
@@ -367,8 +361,26 @@ export function V4LiquidOrbitGallery() {
       isOrbit,
     };
     setDragging(true);
+    if (!fromCard) {
+      // Bare-stage pointer: capture so drags that leave the stage bounds
+      // still deliver events here.
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } else {
+      // Card-origin pointer: the button's implicit capture would swallow a
+      // drag that leaves the card, and stealing the capture would redirect
+      // the native click away from the card (breaking select/open).  Track
+      // move/up at window level instead, so a card-origin drag that leaves
+      // the card still snaps, while a plain tap keeps its click on the card.
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", finish);
+      window.addEventListener("pointercancel", cancelDrag);
+    }
   }
-  function move(event: ReactPointerEvent<HTMLDivElement>) {
+  // Structural pointer type: accepts both React.PointerEvent and native
+  // PointerEvent (window-level listeners), so move/finish/cancel can be
+  // attached to either the stage or the window without conversion.
+  type DragPointerEvent = { pointerId: number; clientX: number; clientY: number };
+  function move(event: DragPointerEvent) {
     const current = drag.current;
     if (!current || current.id !== event.pointerId) return;
     const dx = event.clientX - current.x;
@@ -382,7 +394,7 @@ export function V4LiquidOrbitGallery() {
     if (current.isOrbit) setDragRotation(current.latest);
     else setScrub(current.latest);
   }
-  function finish(event: ReactPointerEvent<HTMLDivElement>) {
+  function finish(event: DragPointerEvent) {
     const current = drag.current;
     if (!current || current.id !== event.pointerId) {
       setDragging(false);
@@ -390,8 +402,10 @@ export function V4LiquidOrbitGallery() {
     }
     // Read the latest rotation from the ref, not the state: React batches
     // state updates, so a pointerup immediately after the final pointermove
-    // can still see a stale dragRotation.
-    if (current.isOrbit) {
+    // can still see a stale dragRotation.  Only snap when the pointer
+    // actually moved past slop — a bare tap must leave the canonical
+    // selection to the click handler (card select/open semantics).
+    if (current.isOrbit && current.moved) {
       const snapped = snapV4OrbitRotation(current.latest, count);
       setSelected(snapped.index);
       setOrbitRotation(snapped.rotation);
@@ -399,9 +413,36 @@ export function V4LiquidOrbitGallery() {
     drag.current = null;
     setDragRotation(null);
     setDragging(false);
+    // Card-origin drags were tracked at window level; always detach so no
+    // stale listeners outlive the gesture.
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", finish);
+    window.removeEventListener("pointercancel", cancelDrag);
     window.setTimeout(() => {
       suppressClick.current = false;
     }, 0);
+  }
+  function cancelDrag(event: DragPointerEvent) {
+    const current = drag.current;
+    if (!current || current.id !== event.pointerId) {
+      setDragging(false);
+      return;
+    }
+    // Pointer was interrupted (e.g. gesture capture, second finger, system
+    // cancel).  Clean up without snapping so there is no unwanted orbit jump.
+    drag.current = null;
+    setDragRotation(null);
+    setDragging(false);
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", finish);
+    window.removeEventListener("pointercancel", cancelDrag);
+    if (current.moved) window.setTimeout(() => { suppressClick.current = false; }, 0);
+  }
+  function handleLostCapture(event: ReactPointerEvent<HTMLDivElement>) {
+    // The browser released the pointer capture (e.g. element removed,
+    // another element claimed it).  If we still own an active drag, finish
+    // it so the user isn't left with a stuck drag state.
+    if (drag.current && drag.current.id === event.pointerId) finish(event);
   }
   function openDetail(index: number, trigger: HTMLElement | null) {
     select(index);
@@ -433,8 +474,8 @@ export function V4LiquidOrbitGallery() {
             onPointerDown={down}
             onPointerMove={move}
             onPointerUp={finish}
-            onPointerCancel={finish}
-            onLostPointerCapture={finish}
+            onPointerCancel={cancelDrag}
+            onLostPointerCapture={handleLostCapture}
           >
             <span className="v4-liquid-halo" />
             {MOMENTS.map((item, index) => {
@@ -448,7 +489,7 @@ export function V4LiquidOrbitGallery() {
                   key={item.id}
                   onClick={(event) => onCardActivate(index, event)}
                 >
-                  <div className="v4-liquid-media"><img src={thumb(item)} alt="" /><span className="v4-liquid-index">{String(index + 1).padStart(2, "0")}</span></div>
+                  <div className="v4-liquid-media"><img src={thumb(item)} alt="" draggable={false} /><span className="v4-liquid-index">{String(index + 1).padStart(2, "0")}</span></div>
                   <div className="v4-liquid-copy"><small>{item.emotion.toUpperCase()} · {item.time}</small><strong>{item.title}</strong><p>{item.note}</p></div>
                 </button>
               );

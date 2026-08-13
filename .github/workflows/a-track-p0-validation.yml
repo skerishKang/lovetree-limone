@@ -125,6 +125,19 @@ jobs:
           run_gate memory-anatomy-route \
             node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs
 
+          # PR #156 V4 Orbit canonical actual-route browser QA (isolated
+          # subgate).  Screenshots are written to a deterministic runner
+          # path and uploaded as a GitHub Actions artifact so CTO can
+          # review them from the remote run.
+          if ! curl --fail --silent --show-error http://127.0.0.1:3000/v4/subjects/demo/orbit > /dev/null; then
+            echo "V4 Orbit actual route not ready" >&2
+            cat /tmp/a-track-p0-server.log
+            exit 1
+          fi
+          run_gate v4-orbit-route \
+            env V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
+            node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
+
           mapfile -t standard_tests < <(
             find tests -maxdepth 1 -type f -name '*.test.mjs' \
               ! -name 'lineage-52-route-browser-qa.test.mjs' \
@@ -153,3 +166,11 @@ jobs:
 
       - name: Database schema check
         run: npm run db:check
+
+      - name: Upload V4 Orbit canonical screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v4-orbit-canonical-155-screenshots
+          path: /tmp/v4-orbit-canonical-155-screenshots/*.png
+          if-no-files-found: warn
