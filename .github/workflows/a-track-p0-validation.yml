@@ -125,20 +125,63 @@ jobs:
           run_gate memory-anatomy-route \
             node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs
 
-          mapfile -t standard_tests < <(
+          # --- standard_tests partitioning: isolate Playwright browser tests ---
+          mapfile -t all_standard < <(
             find tests -maxdepth 1 -type f -name '*.test.mjs' \
               ! -name 'lineage-52-route-browser-qa.test.mjs' \
               ! -name 'lineage-53-v2-route-browser-qa.test.mjs' \
               ! -name 'memory-anatomy-route-browser-qa.test.mjs' \
               -print | sort
           )
-          if [ "${#standard_tests[@]}" -eq 0 ]; then
+          if [ "${#all_standard[@]}" -eq 0 ]; then
             echo "No standard tests discovered" >&2
             exit 1
           fi
 
-          run_gate standard-tests \
-            node --import tsx --test "${standard_tests[@]}"
+          detect_pw() {
+            grep -Eq "from ['\"]playwright['\"]|import\(['\"]playwright['\"]\)|@playwright/test|chromium\.launch|firefox\.launch|webkit\.launch" "$1"
+          }
+
+          browser_tests=()
+          non_browser_tests=()
+          for f in "${all_standard[@]}"; do
+            if detect_pw "$f"; then
+              browser_tests+=("$f")
+            else
+              non_browser_tests+=("$f")
+            fi
+          done
+
+          # Fail-closed guard: a Playwright-using test must never sit in the
+          # parallel non-browser bucket, and every browser-bucket entry must
+          # actually use Playwright. Prevents silent mis-classification that
+          # would reintroduce shared-browser nondeterminism.
+          for f in "${non_browser_tests[@]}"; do
+            if detect_pw "$f"; then
+              echo "FAIL-CLOSED: Playwright test mis-classified as non-browser: $f" >&2
+              exit 1
+            fi
+          done
+          for f in "${browser_tests[@]}"; do
+            if ! detect_pw "$f"; then
+              echo "FAIL-CLOSED: browser bucket entry without Playwright usage: $f" >&2
+              exit 1
+            fi
+          done
+
+          echo "standard non-browser tests: ${#non_browser_tests[@]}"
+          echo "standard browser tests: ${#browser_tests[@]}"
+
+          # Non-browser standard tests keep normal Node test concurrency.
+          run_gate standard-non-browser-tests \
+            node --import tsx --test "${non_browser_tests[@]}"
+
+          # Browser standard tests run file-serial (--test-concurrency=1) to
+          # remove shared-browser nondeterminism under concurrent execution.
+          if [ "${#browser_tests[@]}" -gt 0 ]; then
+            run_gate standard-browser-tests \
+              node --import tsx --test --test-concurrency=1 "${browser_tests[@]}"
+          fi
 
           echo "Running Lineage 52 actual-route browser QA in isolation"
           run_gate lineage-52-route \
