@@ -128,7 +128,7 @@ async function screenshot(page, name) {
   await page.screenshot({ path: path.join(EVIDENCE_DIR, `${name}.png`), fullPage: false });
 }
 
-test("Track61 V1.7 — desktop/mobile/narrow actual-route interaction contract", { timeout: 180000 }, async () => {
+test("Track61 V1.9 — desktop/mobile/narrow actual-route interaction contract", { timeout: 180000 }, async () => {
   const browser = await chromium.launch({ headless: true });
   try {
     for (const scenario of [
@@ -138,6 +138,7 @@ test("Track61 V1.7 — desktop/mobile/narrow actual-route interaction contract",
     ]) {
       const { context, page, errors } = await openRoute(browser, scenario);
       try {
+        await screenshot(page, `${scenario.label}-initial`);
         await exerciseJourney(page, scenario);
         await screenshot(page, `${scenario.label}-journey`);
         assert.deepEqual(errors, [], `${scenario.label}: no page/console errors: ${errors.join(" | ")}`);
@@ -150,7 +151,7 @@ test("Track61 V1.7 — desktop/mobile/narrow actual-route interaction contract",
   }
 });
 
-test("Track61 V1.7 — reduced motion preserves the semantic builder flow", { timeout: 60000 }, async () => {
+test("Track61 V1.9 — reduced motion preserves the semantic builder flow", { timeout: 60000 }, async () => {
   const browser = await chromium.launch({ headless: true });
   const scenario = { label: "390x844-reduced", width: 390, height: 844, mobile: true };
   try {
