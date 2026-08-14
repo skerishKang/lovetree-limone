@@ -43,6 +43,13 @@ const REAL_FIXTURE_NAMES = [
   "track-64-floating-moment-entry-portal",
 ];
 
+// Track61 becomes intentionally non-scaffoldable after this proving PR applies
+// all three live registry seams. Re-running the factory must fail closed instead
+// of duplicating the already-materialized lineage/candidate/fidelity identities.
+const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
+  (name) => name !== "track-61-guided-next-moment-builder",
+);
+
 const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
 
 function fixture(stableId) {
@@ -739,7 +746,7 @@ test("15. source HTML/JS is never read or executed", () => {
 test("16. scaffold plans never write under canonical /v4 product trees", () => {
   const root = withTempRoot();
   try {
-    for (const name of REAL_FIXTURE_NAMES) {
+    for (const name of PRE_REGISTRATION_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
       for (const write of plan.writes) {
         assert.ok(
@@ -814,13 +821,13 @@ test("fixtures: Track60 → NEW_LINEAGE → canvas-3d-projection", () => {
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
 });
 
-test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.5 with RESOLVED handoffs", () => {
+test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.7 with RESOLVED handoffs", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
   assert.equal(manifest.rendering, "dom-2d");
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
-  assert.equal(manifest.revisionId, "61-v1-5");
-  assert.equal(manifest.route.path, "/design-lab/lineages/61/61-v1-5");
+  assert.equal(manifest.revisionId, "61-v1-9");
+  assert.equal(manifest.route.path, "/design-lab/lineages/61/61-v1-9");
   assert.ok(manifest.handoffMappings.length >= 3);
   for (const mapping of manifest.handoffMappings) {
     assert.equal(mapping.resolutionStatus, "RESOLVED");
@@ -836,21 +843,26 @@ test("fixtures: Track61 → NEW_LINEAGE → dom-2d V1.5 with RESOLVED handoffs",
   assert.equal(byTrack["Track59"].resolvedProductTargetId, "lt-59-living-memory-book");
 });
 
-test("fixtures: Track61 V1.5 authoritative source identity is pinned", () => {
+test("fixtures: Track61 V1.9 authoritative source identity is pinned", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
-  assert.equal(manifest.provenance.driveFolderId, "1Ebd1WW5e3I4uSQo9o2Q_leL8ncvgUXQB");
+  assert.equal(manifest.provenance.driveFolderId, "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe");
   const executable = manifest.sourceArtifacts.find((artifact) => artifact.role === "executable");
-  assert.equal(executable.driveId, "17GwHW0uFafc35UR7-TZ0g_ulJyADw2_L");
-  assert.equal(executable.bytes, 488588);
+  assert.equal(executable.driveId, "1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u");
+  assert.equal(executable.bytes, 509063);
   assert.equal(
     executable.sha256,
-    "725350cd9132d499cee46eac0d3d0d9fc0c9a868d68efc635ceb6c94a884c474",
+    "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
   );
+  assert.equal(manifest.sourceSnapshot.revisionLabel, "V1.9");
   const instruction = manifest.sourceArtifacts.find((artifact) => artifact.role === "instruction");
-  assert.equal(instruction.driveId, "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF");
+  assert.equal(instruction.driveId, "1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl");
+  assert.equal(instruction.filename, "27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md");
+  assert.equal(instruction.bytes, 12521);
+  assert.equal(instruction.sha256, "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0");
+  assert.equal(manifest.fidelityTargetMetadata.validationClass, "interaction-contract");
 });
 
-test("fixtures: Track61 V1.5 navigation evidence keeps open/focus HOLDS separate", () => {
+test("fixtures: Track61 V1.7 navigation evidence keeps open/focus HOLDS separate", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.navigationHandoff.targetMapping, true);
   assert.equal(manifest.navigationHandoff.urlResolution, true);
@@ -939,14 +951,27 @@ test("fixtures: Track63 → NEW_LINEAGE → executable pending, rendering unreso
   assert.equal(manifest.route, undefined);
 });
 
-test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, executable pending", () => {
+test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, current-source re-intake", () => {
   const manifest = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
-  assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
-  assert.equal(manifest.rendering, "unresolved");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.rendering, "css3d-dom");
   assert.equal(manifest.route, undefined);
   assert.match(manifest.productJob, /Memory Entry Portal/);
   assert.ok(manifest.productJobDistinctness);
+});
+
+test("fixtures: Track61 applied registry seams fail closed on repeat scaffold", () => {
+  const root = withTempRoot();
+  try {
+    assert.throws(
+      () => buildScaffoldPlan(fixture("track-61-guided-next-moment-builder"), { root, fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+      "applied Track61 lineage/candidate/fidelity identities must not be scaffolded twice",
+    );
+  } finally {
+    cleanup(root);
+  }
 });
 
 test("fixtures: all repository manifests parse and scaffold cleanly", () => {
@@ -958,7 +983,7 @@ test("fixtures: all repository manifests parse and scaffold cleanly", () => {
 
   const root = withTempRoot();
   try {
-    for (const name of REAL_FIXTURE_NAMES) {
+    for (const name of PRE_REGISTRATION_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
       assert.ok(plan.writes.length >= 5, `${name}: expected metadata/provenance/checklist/tests/docs writes`);
       assert.ok(plan.registrySeams.length === 3, `${name}: three registry seams`);
@@ -1947,21 +1972,33 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
     IntakeManifestError,
   );
 
-  // Real superseded proving snapshots are explicitly HISTORICAL_PINNED and stay
-  // valid even though newer authoritative revisions exist (Track61 → V1.7,
-  // Track63 → V1.2, Track64 → V1.2.1).
+  // Real superseded proving snapshots are explicitly HISTORICAL_PINNED (Track63 → V1.2);
+  // Track61 is now the CURRENT_AT_OBSERVATION V1.9 authority (Issue #158 reintake);
+  // Track64 was promoted to CURRENT_AT_OBSERVATION V1.2.1 re-intake.
   const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
-  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
-  assert.equal(track61.sourceSnapshot.revisionLabel, "V1.5");
-  assert.match(track61.sourceSnapshot.newerRevisionKnown, /V1\.7/);
+  assert.equal(track61.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track61.sourceSnapshot.revisionLabel, "V1.9");
+  assert.equal(track61.sourceSnapshot.newerRevisionKnown, undefined, "current snapshot records no newer revision");
   const track63 = parseIntakeManifest(fixture("track-63-moment-field-view-studio"));
   assert.equal(track63.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.match(track63.sourceSnapshot.newerRevisionKnown, /V1\.2/);
   assert.equal(track63.lifecycle, "EXECUTABLE_PENDING", "pre-executable proving snapshot is not force-upgraded");
+  // Track64 was promoted from a pinned proving snapshot to the current-source
+  // re-intake: V1.2.1 is CURRENT_AT_OBSERVATION, no newerRevisionKnown, the
+  // executable fingerprint is pinned, and QA is absent until a native
+  // candidate actually passes the gates (no false-green qa object).
   const track64 = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
-  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
-  assert.match(track64.sourceSnapshot.newerRevisionKnown, /V1\.2\.1/);
-  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "V1 reference snapshot stays pre-executable");
+  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track64.sourceSnapshot.revisionLabel, "V1.2.1");
+  assert.ok(!track64.sourceSnapshot.newerRevisionKnown, "CURRENT promotion removes newerRevisionKnown");
+  assert.equal(track64.lifecycle, "EXECUTABLE_AVAILABLE", "source executable exists so source lifecycle is EXECUTABLE_AVAILABLE (separate from native readiness)");
+  assert.equal(track64.rendering, "css3d-dom", "actual V1.2.1 source is DOM cards via perspective/preserve-3d/translate3d/rotateX/Y/Z/rAF");
+  assert.equal(track64.qa, undefined, "source-only re-intake omits qa (no false-green)");
+  const track64Exec = track64.sourceArtifacts?.find((a) => a.role === "executable");
+  assert.equal(track64Exec?.status, "PINNED");
+  assert.equal(track64Exec?.sha256, "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d");
+  assert.equal(track64.navigationHandoff?.targetMapping, true);
+  assert.equal(track64.navigationHandoff?.actualTargetOpen, false);
 });
 
 test("hardening: Track62 executable + reservation HOLD/adoption HOLD stays valid", () => {
