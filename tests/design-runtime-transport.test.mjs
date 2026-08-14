@@ -155,6 +155,27 @@ test("transport authority: invalid policy or state transitions fail closed", () 
   assert.throws(() => reduceTransportAuthority(valid, { type: "unknown-action" }), TypeError);
 });
 
+test("transport authority: constructor options and pausePlayback options validate booleans at runtime", () => {
+  // createTransportAuthorityState options validation
+  assert.throws(() => createTransportAuthorityState(null), TypeError);
+  assert.throws(() => createTransportAuthorityState("invalid"), TypeError);
+  assert.throws(() => createTransportAuthorityState({ initialPlaying: "true" }), TypeError);
+  assert.throws(() => createTransportAuthorityState({ initialPlaying: 1 }), TypeError);
+  assert.throws(() => createTransportAuthorityState({ initiallyManuallyOwned: "false" }), TypeError);
+  assert.throws(() => createTransportAuthorityState({ initiallyManuallyOwned: 0 }), TypeError);
+
+  // startManualTakeover options validation
+  const valid = createTransportAuthorityState();
+  assert.throws(() => startManualTakeover(valid, null), TypeError);
+  assert.throws(() => startManualTakeover(valid, "invalid"), TypeError);
+  assert.throws(() => startManualTakeover(valid, { pausePlayback: "true" }), TypeError);
+  assert.throws(() => startManualTakeover(valid, { pausePlayback: 1 }), TypeError);
+
+  // reduceTransportAuthority with manual-start pausePlayback validation
+  assert.throws(() => reduceTransportAuthority(valid, { type: "manual-start", pausePlayback: "true" }), TypeError);
+  assert.throws(() => reduceTransportAuthority(valid, { type: "manual-start", pausePlayback: 1 }), TypeError);
+});
+
 test("transport authority: pure functions do not mutate caller state", () => {
   const state = Object.freeze(createTransportAuthorityState({ initialPlaying: true, initiallyManuallyOwned: false }));
 

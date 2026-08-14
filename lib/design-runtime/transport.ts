@@ -76,13 +76,33 @@ export function assertValidTransportState(
 /**
  * Create a new TransportAuthorityState.
  * Defaults to playing=true, manuallyOwned=false unless overridden.
+ * Throws TypeError if options or its fields are not valid booleans.
  */
 export function createTransportAuthorityState(
   options: TransportAuthorityOptions = {},
 ): TransportAuthorityState {
+  if (options !== undefined && options !== null) {
+    if (typeof options !== "object") {
+      throw new TypeError("invalid transport authority options");
+    }
+    if (
+      options.initialPlaying !== undefined &&
+      typeof options.initialPlaying !== "boolean"
+    ) {
+      throw new TypeError("initialPlaying must be a boolean");
+    }
+    if (
+      options.initiallyManuallyOwned !== undefined &&
+      typeof options.initiallyManuallyOwned !== "boolean"
+    ) {
+      throw new TypeError("initiallyManuallyOwned must be a boolean");
+    }
+  } else if (options === null) {
+    throw new TypeError("invalid transport authority options");
+  }
   return {
-    playing: options.initialPlaying ?? true,
-    manuallyOwned: options.initiallyManuallyOwned ?? false,
+    playing: options?.initialPlaying ?? true,
+    manuallyOwned: options?.initiallyManuallyOwned ?? false,
   };
 }
 
@@ -141,12 +161,25 @@ export function restartTransport(
  * If `options.pausePlayback` is true (e.g. Memory Anatomy pattern), `playing`
  * is also explicitly set to false; otherwise (e.g. VideoFigure pattern),
  * `playing` flag is preserved while manual ownership inhibits auto-tick.
+ *
+ * Throws TypeError if options or pausePlayback is not a boolean.
  */
 export function startManualTakeover(
   state: TransportAuthorityState,
   options?: ManualTakeoverOptions,
 ): TransportAuthorityState {
   assertValidTransportState(state);
+  if (options !== undefined) {
+    if (typeof options !== "object" || options === null) {
+      throw new TypeError("invalid manual takeover options");
+    }
+    if (
+      options.pausePlayback !== undefined &&
+      typeof options.pausePlayback !== "boolean"
+    ) {
+      throw new TypeError("pausePlayback must be a boolean");
+    }
+  }
   return {
     ...state,
     manuallyOwned: true,
