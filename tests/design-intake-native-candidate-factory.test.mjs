@@ -917,11 +917,11 @@ test("fixtures: Track63 → NEW_LINEAGE → executable pending, rendering unreso
   assert.equal(manifest.route, undefined);
 });
 
-test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, executable pending", () => {
+test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, current-source re-intake", () => {
   const manifest = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
-  assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
-  assert.equal(manifest.rendering, "unresolved");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.rendering, "css3d-dom");
   assert.equal(manifest.route, undefined);
   assert.match(manifest.productJob, /Memory Entry Portal/);
   assert.ok(manifest.productJobDistinctness);
@@ -1944,7 +1944,8 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
   assert.equal(track64.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
   assert.equal(track64.sourceSnapshot.revisionLabel, "V1.2.1");
   assert.ok(!track64.sourceSnapshot.newerRevisionKnown, "CURRENT promotion removes newerRevisionKnown");
-  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "re-intake stays pre-executable until a native candidate exists");
+  assert.equal(track64.lifecycle, "EXECUTABLE_AVAILABLE", "source executable exists so source lifecycle is EXECUTABLE_AVAILABLE (separate from native readiness)");
+  assert.equal(track64.rendering, "css3d-dom", "actual V1.2.1 source is DOM cards via perspective/preserve-3d/translate3d/rotateX/Y/Z/rAF");
   assert.equal(track64.qa, undefined, "source-only re-intake omits qa (no false-green)");
   const track64Exec = track64.sourceArtifacts?.find((a) => a.role === "executable");
   assert.equal(track64Exec?.status, "PINNED");
