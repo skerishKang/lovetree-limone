@@ -890,6 +890,28 @@ test("fixtures: Track60 must not claim completed native QA without evidence", ()
   assert.equal(manifest.qa, undefined, "qa omitted until native browser QA passes");
 });
 
+test("fixtures: Track59 navigation evidence keeps all handoff dimensions fail-closed", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
+  // No native implementation exists: app/design-lab/lineages/59/59-v5 is
+  // scaffold-only, no window.open/receiver/focus code exists in product, and
+  // adoption is UNDECIDED with NATIVE_ROUTE_PENDING. Every dimension stays
+  // false until product evidence is proven.
+  assert.equal(manifest.navigationHandoff.targetMapping, false, "no product target mapping code");
+  assert.equal(manifest.navigationHandoff.urlResolution, false, "no native route resolved");
+  assert.equal(manifest.navigationHandoff.openCall, false, "no window.open call in product");
+  assert.equal(manifest.navigationHandoff.actualTargetOpen, false, "no target open in browser");
+  assert.equal(manifest.navigationHandoff.receiverConsume, false, "receiver hook absent");
+  assert.equal(manifest.navigationHandoff.sameMomentFocus, false, "same-Moment focus absent");
+});
+
+test("fixtures: Track59 must not claim completed native QA without evidence", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
+  // No native route/browser QA exists; source QA has exact evidence only at
+  // 390×844 (of 1440×900 / 1280×720 / 430×932 / 390×844 / 360×800). A
+  // completed-looking qa object must not be re-added until native QA passes.
+  assert.equal(manifest.qa, undefined, "qa omitted until native browser QA passes");
+});
+
 test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
   const manifest = parseIntakeManifest(fixture("track-62-v1-reference-only"));
   assert.equal(manifest.classification, "REFERENCE_CAPABILITY_ONLY");
@@ -929,11 +951,11 @@ test("fixtures: Track63 → NEW_LINEAGE → executable pending, rendering unreso
   assert.equal(manifest.route, undefined);
 });
 
-test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, executable pending", () => {
+test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, current-source re-intake", () => {
   const manifest = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
   assert.equal(manifest.classification, "NEW_LINEAGE");
-  assert.equal(manifest.lifecycle, "EXECUTABLE_PENDING");
-  assert.equal(manifest.rendering, "unresolved");
+  assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
+  assert.equal(manifest.rendering, "css3d-dom");
   assert.equal(manifest.route, undefined);
   assert.match(manifest.productJob, /Memory Entry Portal/);
   assert.ok(manifest.productJobDistinctness);
@@ -1950,10 +1972,9 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
     IntakeManifestError,
   );
 
-  // Track61 is now the CURRENT_AT_OBSERVATION V1.9 authority (Issue #158 reintake
-  // after the stale V1.7 pin was discarded; current Drive root is byte-identical to V1.9);
-  // Track63/Track64 remain HISTORICAL_PINNED proving snapshots whose newer authoritative
-  // revisions are recorded.
+  // Real superseded proving snapshots are explicitly HISTORICAL_PINNED (Track63 → V1.2);
+  // Track61 is now the CURRENT_AT_OBSERVATION V1.9 authority (Issue #158 reintake);
+  // Track64 was promoted to CURRENT_AT_OBSERVATION V1.2.1 re-intake.
   const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(track61.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
   assert.equal(track61.sourceSnapshot.revisionLabel, "V1.9");
@@ -1962,10 +1983,22 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
   assert.equal(track63.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.match(track63.sourceSnapshot.newerRevisionKnown, /V1\.2/);
   assert.equal(track63.lifecycle, "EXECUTABLE_PENDING", "pre-executable proving snapshot is not force-upgraded");
+  // Track64 was promoted from a pinned proving snapshot to the current-source
+  // re-intake: V1.2.1 is CURRENT_AT_OBSERVATION, no newerRevisionKnown, the
+  // executable fingerprint is pinned, and QA is absent until a native
+  // candidate actually passes the gates (no false-green qa object).
   const track64 = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
-  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
-  assert.match(track64.sourceSnapshot.newerRevisionKnown, /V1\.2\.1/);
-  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "V1 reference snapshot stays pre-executable");
+  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track64.sourceSnapshot.revisionLabel, "V1.2.1");
+  assert.ok(!track64.sourceSnapshot.newerRevisionKnown, "CURRENT promotion removes newerRevisionKnown");
+  assert.equal(track64.lifecycle, "EXECUTABLE_AVAILABLE", "source executable exists so source lifecycle is EXECUTABLE_AVAILABLE (separate from native readiness)");
+  assert.equal(track64.rendering, "css3d-dom", "actual V1.2.1 source is DOM cards via perspective/preserve-3d/translate3d/rotateX/Y/Z/rAF");
+  assert.equal(track64.qa, undefined, "source-only re-intake omits qa (no false-green)");
+  const track64Exec = track64.sourceArtifacts?.find((a) => a.role === "executable");
+  assert.equal(track64Exec?.status, "PINNED");
+  assert.equal(track64Exec?.sha256, "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d");
+  assert.equal(track64.navigationHandoff?.targetMapping, true);
+  assert.equal(track64.navigationHandoff?.actualTargetOpen, false);
 });
 
 test("hardening: Track62 executable + reservation HOLD/adoption HOLD stays valid", () => {
