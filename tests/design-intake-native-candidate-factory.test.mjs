@@ -878,6 +878,28 @@ test("fixtures: Track60 must not claim completed native QA without evidence", ()
   assert.equal(manifest.qa, undefined, "qa omitted until native browser QA passes");
 });
 
+test("fixtures: Track59 navigation evidence keeps all handoff dimensions fail-closed", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
+  // No native implementation exists: app/design-lab/lineages/59/59-v5 is
+  // scaffold-only, no window.open/receiver/focus code exists in product, and
+  // adoption is UNDECIDED with NATIVE_ROUTE_PENDING. Every dimension stays
+  // false until product evidence is proven.
+  assert.equal(manifest.navigationHandoff.targetMapping, false, "no product target mapping code");
+  assert.equal(manifest.navigationHandoff.urlResolution, false, "no native route resolved");
+  assert.equal(manifest.navigationHandoff.openCall, false, "no window.open call in product");
+  assert.equal(manifest.navigationHandoff.actualTargetOpen, false, "no target open in browser");
+  assert.equal(manifest.navigationHandoff.receiverConsume, false, "receiver hook absent");
+  assert.equal(manifest.navigationHandoff.sameMomentFocus, false, "same-Moment focus absent");
+});
+
+test("fixtures: Track59 must not claim completed native QA without evidence", () => {
+  const manifest = parseIntakeManifest(fixture("track-59-living-memory-book"));
+  // No native route/browser QA exists; source QA has exact evidence only at
+  // 390×844 (of 1440×900 / 1280×720 / 430×932 / 390×844 / 360×800). A
+  // completed-looking qa object must not be re-added until native QA passes.
+  assert.equal(manifest.qa, undefined, "qa omitted until native browser QA passes");
+});
+
 test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
   const manifest = parseIntakeManifest(fixture("track-62-v1-reference-only"));
   assert.equal(manifest.classification, "REFERENCE_CAPABILITY_ONLY");
