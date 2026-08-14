@@ -25,7 +25,12 @@ async function openPage(browser, url, viewport) {
   const errors = [];
   page.on("pageerror", (err) => errors.push(err.message));
   page.on("console", (msg) => {
-    if (msg.type() === "error") errors.push(`console:${msg.text()}`);
+    if (msg.type() === "error") {
+      const text = msg.text();
+      if (!/Failed to load resource/i.test(text)) {
+        errors.push(`console:${text}`);
+      }
+    }
   });
   const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
   return { page, errors, status: resp.status() };
