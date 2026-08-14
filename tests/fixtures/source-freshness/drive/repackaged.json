@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "note": "synthetic: identical content re-uploaded under a new Drive file id",
+  "files": [
+    {
+      "driveId": "1J11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.1",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "bytes": 500000,
+      "functional": true
+    }
+  ]
+}

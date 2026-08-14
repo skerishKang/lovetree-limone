@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track63-v1-pending-newer-empty",
+  "sourceTrackId": "Track63",
+  "title": "Fixture Track63 pending with newer empty revision",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_PENDING",
+  "rendering": "unresolved",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: pre-executable Track63; Drive reports a newer V1.3 that carries no executable content",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-63-synthetic-pending",
+  "lineageNumber": 63,
+  "revisionId": "63-v1",
+  "backendScope": "BACKEND_FREE",
+  "sourceSnapshot": {
+    "revisionLabel": "V1 (instruction accepted)",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.3 supersedes per synthetic authority — Drive V1.3 exists but carries no executable content; checked-in V1 pre-executable proving snapshot stays pinned per #80"
+  }
+}
