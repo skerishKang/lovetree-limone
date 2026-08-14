@@ -12,7 +12,7 @@ const MANIFEST = {
   "rendering": "dom-2d",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — SOURCE RECONCILIATION to V1.9. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe) and V1.8/V1.9 predated the GitHub manifest authorityObservedAt. This manifest pins V1.9 (CURRENT_AT_OBSERVATION) and records V1.8 Cross-Track folder-root corrections and V1.9 material/visual deltas. Native candidate reuses V1.7 interaction implementation (nativeReadiness IMPLEMENTED) but V1.9 scale/visual behavior is NOT yet reimplemented in code: P8 exact-asset gate and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — V1.9 source reconciled and V1.9 material/visual deltas implemented. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe, 509063 bytes) and V1.8/V1.9 predated the GitHub manifest authorityObservedAt. This manifest pins V1.9 (CURRENT_AT_OBSERVATION) with the exact executable fingerprint and records V1.8 Cross-Track folder-root corrections. Native candidate reuses the V1.7 interaction implementation (nativeReadiness IMPLEMENTED) and now implements the V1.9 scale contract (progressive disclosure, Memory Cluster, branch scaling, disclosure actions), the Track56 working-view/overview boundary, the Path Card handoff (HOLD-marked) and the Memory Glass visual tokens. P8 exact-asset gate and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets.",
   "provenance": {
     "sourceLabel": "61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)",
     "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
@@ -35,7 +35,8 @@ const MANIFEST = {
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",
-      "driveId": "1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm",
+      "driveId": "1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u",
+      "bytes": 509063,
       "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
       "role": "executable",
       "status": "PINNED"

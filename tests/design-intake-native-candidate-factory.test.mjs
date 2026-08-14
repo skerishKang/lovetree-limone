@@ -847,7 +847,8 @@ test("fixtures: Track61 V1.9 authoritative source identity is pinned", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.provenance.driveFolderId, "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe");
   const executable = manifest.sourceArtifacts.find((artifact) => artifact.role === "executable");
-  assert.equal(executable.driveId, "1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm");
+  assert.equal(executable.driveId, "1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u");
+  assert.equal(executable.bytes, 509063);
   assert.equal(
     executable.sha256,
     "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",

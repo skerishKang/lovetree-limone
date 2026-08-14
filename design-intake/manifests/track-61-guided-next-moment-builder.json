@@ -9,9 +9,9 @@
   "nativeReadiness": "IMPLEMENTED",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — SOURCE RECONCILIATION to V1.9. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe) and that V1.8/V1.9 already predated the GitHub manifest authorityObservedAt. This manifest now pins V1.9 (CURRENT_AT_OBSERVATION) and records the V1.8 Cross-Track folder-root corrections and V1.9 material/visual deltas below. The native candidate reuses the V1.7 interaction implementation (nativeReadiness IMPLEMENTED) but V1.9 scale/visual behavior is NOT yet reimplemented in code: Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — V1.9 source reconciled and V1.9 material/visual deltas implemented. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe, 509063 bytes) and V1.8/V1.9 predated the GitHub manifest authorityObservedAt. This manifest pins V1.9 (CURRENT_AT_OBSERVATION) with the exact executable fingerprint and records V1.8 Cross-Track folder-root corrections. The native candidate reuses the V1.7 interaction implementation (nativeReadiness IMPLEMENTED) and now implements the V1.9 scale contract (progressive disclosure, Memory Cluster, branch scaling, disclosure actions), the Track56 working-view/overview boundary, the Path Card handoff (HOLD-marked) and the Memory Glass visual tokens. Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
   "provenance": {
-    "sourceLabel": "61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)",
+    "sourceLabel": "61_감정경로_연결검토실 / Track root 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / V1.9 folder 1DGvms4RXs0KL2_1AgbzH7zFwp00VuIFz / V1.9 executable 1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u / root current candidate 1qkD_Sy6r9MZYVycd-YkSR5jla6TBQi1l (byte-identical to V1.9 executable) (Issue #158 reintake)",
     "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
     "sourceFiles": [
       "현재후보.html"
@@ -33,7 +33,8 @@
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",
-      "driveId": "1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm",
+      "driveId": "1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u",
+      "bytes": 509063,
       "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
       "role": "executable",
       "status": "PINNED"
@@ -66,14 +67,15 @@
     "V1.8 (Cross-Track exact navigation folder-root correction): Track56 source Drive folder root corrected 56_러브트리_세로형_모먼트관계망_전체조망 → 56_세로형_모먼트관계망_전체조망",
     "V1.8 (Cross-Track exact navigation folder-root correction): Track55 source Drive folder root corrected 55_러브트리_자유연결_경로편집 → 55_자유연결_경로편집",
     "V1.8 (Cross-Track exact navigation folder-root correction): Track59 source Drive folder root corrected 59_러브트리_메모리스케치북_페이지여정 → 59_메모리스케치북_페이지여정",
-    "V1.9 material delta (NOT yet reimplemented in native UI — HOLD pending actual V1.9 Drive source): large Tree progressive disclosure — 1..12 Moments shown fully; 13+ collapses the middle; 30+ Desktop shows first 2 + Memory Cluster + recent 4; 30+ Mobile shows first 1 + Memory Cluster + current/recent",
-    "V1.9 material delta (HOLD): Memory Cluster '+N Moment · 기억 묶음' collapsed representation",
-    "V1.9 material delta (HOLD): Branch scaling — when Branch > 5, prioritize current/recent branch; past branches collapsible",
-    "V1.9 material delta (HOLD): disclosure actions — 전체 펼치기 / 모든 갈래 보기",
-    "V1.9 responsibility (HOLD): Track61 is the working/editor view of the currently-connected emotional flow; Track56 is the full LoveTree overview — Track61 must not always expand all 100 Moments; provide Track56 full-overview handoff",
-    "V1.9 responsibility (HOLD): Path Card '전체 경로에서 보기' (or source-equivalent) handoff to overview",
-    "V1.9 visual (HOLD): Memory Glass refinement — Warm Ivory / Dried Rose / Sage / Amber / Smoked Brown, translucent glass, paper-like ambient texture, media/photo hierarchy above UI, suppress generic AI/SaaS dashboard feel — requires actual V1.9 source CSS; not invented here",
-    "V1.9 executable SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe captured by independent Drive audit; executable byte count not re-captured in this reconciliation (fingerprint authoritative, byte length pending)"
+    "V1.9 material delta — IMPLEMENTED (native UI): large Tree progressive disclosure — 1..12 Moments shown fully; 13+ collapses the middle; 30+ Desktop shows first 2 + Memory Cluster + recent 4; 30+ Mobile shows first 1 + Memory Cluster + current/recent",
+    "V1.9 material delta — IMPLEMENTED (native UI): Memory Cluster '+N Moment · 기억 묶음' collapsed representation, expandable to reveal the hidden middle",
+    "V1.9 material delta — IMPLEMENTED (native UI): Branch scaling — when Branch > 5, early core + past omitted summary '+N개 과거 갈래 숨김' + recent branches",
+    "V1.9 material delta — IMPLEMENTED (native UI): disclosure actions — 전체 펼치기 / 모든 갈래 보기 (deterministic expanded/collapsed state)",
+    "V1.9 responsibility — IMPLEMENTED (native UI): Track61 is the working/editor view of the currently-connected emotional flow; Track56 is the full LoveTree overview — Track61 does not always expand all 100 Moments; full-overview handoff is exposed as a HOLD-marked Path Card",
+    "V1.9 responsibility — IMPLEMENTED (native UI): Path Card '전체 경로에서 보기 ↗' handoff; Track56 integration NOT false-green — no receiver/route proof yet (HOLD)",
+    "V1.9 visual — IMPLEMENTED (native UI): Memory Glass refinement — Warm Ivory #fffaf3 / Dried Rose #AE6D79 / Sage #7C9B7A / Amber #E8B86D / Smoked Brown #432C25, translucent glass rgba(255,255,255,.16–.72) layers, paper-like ambient texture, media/photo hierarchy above UI, generic AI/SaaS dashboard feel suppressed",
+    "V1.9 executable pinned exactly: Drive 1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u (V1.9 folder 1DGvms4RXs0KL2_1AgbzH7zFwp00VuIFz), 509063 bytes, SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe; root current candidate 1qkD_Sy6r9MZYVycd-YkSR5jla6TBQi1l byte-identical",
+    "Remaining HOLDs (not claimed): P8 exact-asset gate, actualTargetOpen, receiverConsume, sameMomentFocus"
   ],
   "sourceDefects": [],
   "nativeRemediations": [
@@ -95,7 +97,7 @@
   "backendScope": "BACKEND_FREE",
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #158 — V1.9 source reconciled (prior V1.7 pin was stale: audit found current Drive root = V1.9). Native candidate reuses the V1.7 interaction implementation (nativeReadiness IMPLEMENTED), but V1.9 scale (progressive disclosure / Memory Cluster / branch scaling / disclosure actions) and Memory Glass visual deltas are NOT yet reimplemented in code — HOLD pending the actual V1.9 Drive source (현재후보.html, SHA-256 834fb634…). Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD. Candidate for product-owner review; not FINAL/CLOSED."
+    "note": "Issue #158 — V1.9 source reconciled (prior V1.7 pin was stale: audit found current Drive root = V1.9, SHA-256 834fb634…, 509063 bytes) and V1.9 scale + Memory Glass deltas now implemented in the native UI (reusing the V1.7 interaction implementation; nativeReadiness IMPLEMENTED). Remaining HOLDs: P8 exact-asset gate, actualTargetOpen, receiverConsume, sameMomentFocus. Candidate for product-owner review; not FINAL/CLOSED."
   },
   "handoffMappings": [
     {

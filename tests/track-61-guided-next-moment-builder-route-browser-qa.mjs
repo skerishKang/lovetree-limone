@@ -174,3 +174,50 @@ test("Track61 V1.7 — reduced motion preserves the semantic builder flow", { ti
     await browser.close();
   }
 });
+
+test("Track61 V1.9 — connected flow progressive disclosure, Memory Cluster, branch disclosure", { timeout: 90000 }, async () => {
+  const browser = await chromium.launch({ headless: true });
+  const scenario = { label: "1280x800", width: 1280, height: 800, mobile: false };
+  try {
+    const { context, page, errors } = await openRoute(browser, scenario);
+    try {
+      await activate(page.getByRole("button", { name: /100-Moment 연결 흐름 데모/ }), false);
+      await page.getByRole("status").filter({ hasText: /100개 연결 흐름 데모/ }).waitFor();
+
+      // Large flow collapses to lead 2 + Memory Cluster + tail 4 (desktop).
+      assert.equal(await page.locator("[data-flow-moment]").count(), 6, `${scenario.label}: large flow collapses to lead 2 + tail 4`);
+      const cluster = page.getByRole("button", { name: /\+\d+ Moment · 기억 묶음/ });
+      await cluster.waitFor();
+      assert.equal(await cluster.getAttribute("aria-expanded"), "false", `${scenario.label}: Memory Cluster starts collapsed`);
+
+      // Current Moment remains authoritative in the connected flow and Story Path.
+      assert.equal(await page.locator('[data-flow-moment][data-current="true"]').count(), 1, `${scenario.label}: exactly one current Moment`);
+      assert.ok(await page.locator('[aria-current="step"]').count() >= 1, `${scenario.label}: current node authoritative in Story Path`);
+
+      // Branch scaling: past branches are omitted behind a summary.
+      assert.ok(await page.getByText(/과거 갈래 숨김/).count() >= 1, `${scenario.label}: branch past-omitted summary present`);
+
+      // Memory Cluster expands to reveal the hidden middle.
+      await activate(cluster, false);
+      assert.equal(await page.locator("[data-flow-moment]").count(), 101, `${scenario.label}: Memory Cluster expand reveals all Moments`);
+
+      // 전체 펼치기 keeps all visible; 축약 상태로 collapses again.
+      await activate(page.getByRole("button", { name: "전체 펼치기" }), false);
+      assert.equal(await page.locator("[data-flow-moment]").count(), 101, `${scenario.label}: 전체 펼치기 keeps all Moments`);
+      await activate(page.getByRole("button", { name: "축약 상태로" }), false);
+      assert.equal(await page.locator("[data-flow-moment]").count(), 6, `${scenario.label}: collapse returns to lead + Memory Cluster + tail`);
+
+      // 모든 갈래 보기 opens branch disclosure.
+      await activate(page.getByRole("button", { name: "모든 갈래 보기" }), false);
+      assert.equal(await page.getByText(/과거 갈래 숨김/).count(), 0, `${scenario.label}: 모든 갈래 보기 reveals all branches`);
+
+      await assertNoHorizontalOverflow(page, `${scenario.label}/v19-scale`);
+      await screenshot(page, `${scenario.label}-v19-scale-disclosure`);
+      assert.deepEqual(errors, [], `${scenario.label}: no page/console errors: ${errors.join(" | ")}`);
+    } finally {
+      await context.close();
+    }
+  } finally {
+    await browser.close();
+  }
+});

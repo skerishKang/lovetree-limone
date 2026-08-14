@@ -21,7 +21,7 @@ const ONE_PIXEL_PNG = Buffer.from(
 
 async function stubRoutineThirdPartyResources(page) {
   await page.route("**/*", async (route) => {
-    const requestUrl = new URL(route.request().url());
+    const requestUrl = new globalThis.URL(route.request().url());
 
     if (requestUrl.hostname === "fonts.googleapis.com") {
       await route.fulfill({ status: 200, contentType: "text/css", body: "" });

@@ -11,6 +11,11 @@ import {
   type ReactNode,
 } from "react";
 import styles from "./lineage-61.module.css";
+import {
+  discloseMoments,
+  discloseBranches,
+  type DisclosureMoment,
+} from "./tree-disclosure";
 
 /* ------------------------------------------------------------------ */
 /* Demo fixtures — explicitly synthetic, never presented as backend.    */
@@ -69,24 +74,12 @@ const SYNTHETIC_FAN_QUOTES: Record<string, { quote: string; handle: string }[]> 
     { quote: "비 소리가 배경음악처럼 느껴졌어요.", handle: "@demo_fan_04" },
     { quote: "우산 씬 보고 펑펑 울었답니다(데모).", handle: "@demo_fan_18" },
   ],
-  "m-travel": [
-    { quote: "해변 사진 구도가 SNS용이에요.", handle: "@demo_fan_09" },
-  ],
-  "m-gift": [
-    { quote: "편지 읽는 속도가 적절했어요.", handle: "@demo_fan_25" },
-  ],
-  "m-apology": [
-    { quote: "서운함을 털어놓는 대사가 따뜻해요.", handle: "@demo_fan_02" },
-  ],
-  "m-anniv": [
-    { quote: "눈빛 묘사만으로 분위기 전달됨.", handle: "@demo_fan_15" },
-  ],
-  "m-distance": [
-    { quote: "잘 자 인사에 목소리가 들려요.", handle: "@demo_fan_31" },
-  ],
-  "m-reunion": [
-    { quote: "우연한 마주침 설정이 미치죠.", handle: "@demo_fan_40" },
-  ],
+  "m-travel": [{ quote: "해변 사진 구도가 SNS용이에요.", handle: "@demo_fan_09" }],
+  "m-gift": [{ quote: "편지 읽는 속도가 적절했어요.", handle: "@demo_fan_25" }],
+  "m-apology": [{ quote: "서운함을 털어놓는 대사가 따뜻해요.", handle: "@demo_fan_02" }],
+  "m-anniv": [{ quote: "눈빛 묘사만으로 분위기 전달됨.", handle: "@demo_fan_15" }],
+  "m-distance": [{ quote: "잘 자 인사에 목소리가 들려요.", handle: "@demo_fan_31" }],
+  "m-reunion": [{ quote: "우연한 마주침 설정이 미치죠.", handle: "@demo_fan_40" }],
 };
 
 const SYNTHETIC_POPULARITY: Record<string, { cheers: number; views: number }> = {
@@ -104,7 +97,7 @@ const SYNTHETIC_POPULARITY: Record<string, { cheers: number; views: number }> = 
 const REASONS: Record<string, string> = {
   "m-first": "현재 Moment와 정서 곡선이 가장 가깝게 이어지는 시작점입니다.",
   "m-daily": "일상의 연속성을 강조하는 다음 단계로 자연스럽습니다.",
-  "m-confess": "감정이 무르익은 시점의 고백으로 흐름이 선명해집니다.",
+  "m-confess": "감정이 무루익은 시점의 고백으로 흐름이 선명해집니다.",
   "m-travel": "공간을 확장해 관계의 무대를 넓히는 추천 경로입니다.",
   "m-gift": "작은 서프라이즈로 정서 온도를 높이는 단계입니다.",
   "m-apology": "갈등 이후 회복을 보여주는 균형 잡힌 다음 순간입니다.",
@@ -181,6 +174,58 @@ function makeNode(momentId: string, parentId: string | null): PathNode {
   return { id: `n${nodeCounter}`, momentId, growAs: "main", whyNext: "", parentId, children: [] };
 }
 
+/** Pre-order flatten of the connected tree into an ordered Moment list (for V1.9 disclosure). */
+function flattenConnected(nodes: Record<string, PathNode>, rootId: string): DisclosureMoment[] {
+  const out: DisclosureMoment[] = [];
+  const visit = (id: string) => {
+    const node = nodes[id];
+    if (!node) return;
+    const moment = CANDIDATE_BY_MOMENT.get(node.momentId)?.moment;
+    out.push({
+      id: node.id,
+      title: moment?.title ?? node.momentId,
+      theme: moment?.theme,
+      subject: moment?.subject,
+      mediaType: moment?.mediaType,
+      isCurrent: false,
+    });
+    node.children.forEach(visit);
+  };
+  visit(rootId);
+  return out;
+}
+
+/**
+ * Deterministic stress tree: root + `count` direct children cycling the real
+ * fixtures (for V1.9 scale demo). Flat shape exercises both the flat connected-flow
+ * Memory Cluster disclosure and the Story Path branch disclosure without a
+ * 100-deep nested DOM.
+ */
+function buildStressNodes(count: number): Record<string, PathNode> {
+  const map: Record<string, PathNode> = {};
+  map.root = { ...makeNode(MOMENTS[0].id, null), id: "root" };
+  for (let i = 0; i < count; i += 1) {
+    const momentId = MOMENTS[i % MOMENTS.length].id;
+    const child = makeNode(momentId, "root");
+    map[child.id] = child;
+    map.root.children.push(child.id);
+  }
+  return map;
+}
+
+function useIsMobile(): boolean {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(max-width: 600px)");
+    const update = () => setMobile(mq.matches);
+    update();
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
+  }, []);
+  return mobile;
+}
+
 export default function Lineage61GuidedNextMomentBuilder() {
   const baseId = useId();
   const [currentMomentId, setCurrentMomentId] = useState<string>(MOMENTS[0].id);
@@ -196,9 +241,29 @@ export default function Lineage61GuidedNextMomentBuilder() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [announce, setAnnounce] = useState<string>("");
 
+  /* V1.9 disclosure state (deterministic). */
+  const [expandedAll, setExpandedAll] = useState<boolean>(false);
+  const [clusterExpanded, setClusterExpanded] = useState<boolean>(false);
+  const [showAllBranches, setShowAllBranches] = useState<boolean>(false);
+  const [handoffNote, setHandoffNote] = useState<string>("");
+
+  const isMobile = useIsMobile();
+
   const currentMoment = useMemo(
     () => MOMENTS.find((m) => m.id === currentMomentId) ?? MOMENTS[0],
     [currentMomentId],
+  );
+
+  const connectedMoments = useMemo<DisclosureMoment[]>(() => {
+    const flat = flattenConnected(nodes, "root");
+    const current = flat.find((m) => m.id === currentNodeId);
+    if (current) current.isCurrent = true;
+    return flat;
+  }, [nodes, currentNodeId]);
+
+  const momentDisclosure = useMemo(
+    () => discloseMoments(connectedMoments, { isMobile, expandedAll: expandedAll || clusterExpanded }),
+    [connectedMoments, isMobile, expandedAll, clusterExpanded],
   );
 
   const pool = useMemo(() => {
@@ -260,6 +325,19 @@ export default function Lineage61GuidedNextMomentBuilder() {
     setExpanded(false);
     setAnnounce(`'${CANDIDATE_BY_MOMENT.get(node.momentId)?.moment.title ?? node.momentId}' 지점에서 이어서 진행합니다. Branch를 추가로 만들 수 있습니다.`);
   }, [nodes]);
+
+  const loadStressFlow = useCallback((count: number) => {
+    const stress = buildStressNodes(count);
+    const lastId = stress.root.children[stress.root.children.length - 1] ?? "root";
+    stress[lastId].growAs = "main";
+    setNodes(stress);
+    setCurrentNodeId(lastId);
+    setCurrentMomentId(stress[lastId].momentId);
+    setExpandedAll(false);
+    setClusterExpanded(false);
+    setShowAllBranches(false);
+    setAnnounce(`${count}개 연결 흐름 데모를 불러왔습니다 (V1.9 progressive disclosure).`);
+  }, []);
 
   /* ----------------------------- Modal ----------------------------- */
   const detailCandidate = detailId ? CANDIDATE_BY_MOMENT.get(detailId) ?? null : null;
@@ -326,13 +404,29 @@ export default function Lineage61GuidedNextMomentBuilder() {
     }
   };
 
+  const onTrack56Handoff = useCallback(() => {
+    // V1.9 Path Card handoff meaning: "전체 경로에서 보기 ↗" → Track56 full overview.
+    // Track56 handoff has NO real receiver/route proof yet (HOLD) — disclose honestly, do NOT false-green.
+    setHandoffNote(
+      "Track56 전체 경로(handoff)는 아직 수신 측 route/receiver proof 없이 HOLD입니다. Track61은 현재 연결 흐름 working view이며 전체 Tree overview는 Track56 소유입니다.",
+    );
+  }, []);
+
+  const renderMomentItem = (m: DisclosureMoment, key: string) => (
+    <li key={key} className={styles.flowItem} data-flow-moment={m.id} data-current={m.isCurrent ? "true" : undefined}>
+      <span className={styles.flowDot} aria-hidden="true" />
+      <span className={styles.flowTitle}>{m.title}</span>
+      {m.isCurrent ? <span className={styles.flowCurrentTag}>현재</span> : null}
+    </li>
+  );
+
   return (
     <main className={styles.lab} id={`${baseId}-main`}>
       <a className={styles.skip} href={`#${baseId}-loop`}>본문으로 건너뛰기</a>
 
       <header className={styles.labHeader}>
         <div>
-          <p className={styles.eyebrow}>Track61 · Lineage 61 · V1.9 (source reconciled; UI reuses V1.7 loop, V1.9 scale/visual HOLD)</p>
+          <p className={styles.eyebrow}>Track61 · Lineage 61 · V1.9 (source reconciled · scale + Memory Glass implemented)</p>
           <h1 className={styles.labTitle}>Guided Next Moment LoveTree Builder</h1>
           <a className={styles.back} href="/design-lab">← Design Lab</a>
         </div>
@@ -350,6 +444,22 @@ export default function Lineage61GuidedNextMomentBuilder() {
         </span>
       </div>
 
+      <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <button type="button" className={styles.toggleBtn} onClick={() => loadStressFlow(100)}>
+          100-Moment 연결 흐름 데모 (V1.9 scale)
+        </button>
+        {connectedMoments.length > 12 && (
+          <button type="button" className={styles.toggleBtn} aria-pressed={expandedAll} onClick={() => { setExpandedAll((v) => !v); setClusterExpanded(false); }}>
+            {expandedAll ? "축약 상태로" : "전체 펼치기"}
+          </button>
+        )}
+        {momentDisclosure.collapsed && (
+          <button type="button" className={styles.toggleBtn} aria-pressed={clusterExpanded} onClick={() => setClusterExpanded((v) => !v)}>
+            {clusterExpanded ? "Memory Cluster 접기" : "+N 기억 묶음 펼치기"}
+          </button>
+        )}
+      </div>
+
       <div className={styles.grid} id={`${baseId}-loop`}>
         <section className={styles.panel} aria-labelledby={`${baseId}-flow`}>
           <h2 className={styles.panelTitle} id={`${baseId}-flow`}>다음 Moment 선택 흐름</h2>
@@ -358,6 +468,14 @@ export default function Lineage61GuidedNextMomentBuilder() {
             <p className={styles.eyebrow}>현재 Moment (Current)</p>
             <p className={styles.momentTitle}>{currentMoment.title}</p>
             <p className={styles.momentDesc}>{currentMoment.description}</p>
+            <button type="button" className={styles.handoffBtn} data-track56-handoff onClick={onTrack56Handoff}>
+              전체 경로에서 보기 ↗
+            </button>
+            {handoffNote && (
+              <p className={styles.handoffNote} role="status" aria-live="polite">
+                {handoffNote}
+              </p>
+            )}
           </div>
 
           <h3 className={styles.panelTitle}>대표 3선 (Representative choices)</h3>
@@ -493,13 +611,48 @@ export default function Lineage61GuidedNextMomentBuilder() {
           )}
         </section>
 
+        <section className={styles.panel} aria-labelledby={`${baseId}-connected`}>
+          <h2 className={styles.panelTitle} id={`${baseId}-connected`}>연결된 흐름 (Connected flow · V1.9 disclosure)</h2>
+          <p style={{ color: "var(--lt61-muted)", fontSize: 13, marginTop: 0 }}>
+            현재 연결된 감정 흐름을 다룹니다. 큰 흐름은 시작 · Memory Cluster · 최근 순으로 압축되며,
+            전체 Tree overview는 Track56 소유입니다.
+          </p>
+          {connectedMoments.length === 0 ? (
+            <p style={{ color: "var(--lt61-muted)" }}>아직 연결된 Moment가 없습니다.</p>
+          ) : (
+            <ul className={styles.flow} style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {momentDisclosure.lead.map((m) => renderMomentItem(m, `lead-${m.id}`))}
+              {momentDisclosure.collapsed && !clusterExpanded && (
+                <li key="cluster" className={styles.memoryCluster}>
+                  <button
+                    type="button"
+                    className={styles.clusterBtn}
+                    aria-expanded={false}
+                    onClick={() => setClusterExpanded(true)}
+                  >
+                    +{momentDisclosure.hiddenCount} Moment · 기억 묶음
+                  </button>
+                </li>
+              )}
+              {clusterExpanded && momentDisclosure.collapsedMiddle.map((m) => renderMomentItem(m, `mid-${m.id}`))}
+              {momentDisclosure.tail.map((m) => renderMomentItem(m, `tail-${m.id}`))}
+            </ul>
+          )}
+          {connectedMoments.length > 12 && (
+            <button type="button" className={styles.toggleBtn} style={{ marginTop: 10 }} aria-pressed={showAllBranches} onClick={() => setShowAllBranches((v) => !v)}>
+              {showAllBranches ? "갈래 축약하기" : "모든 갈래 보기"}
+            </button>
+          )}
+        </section>
+
         <section className={styles.panel} aria-labelledby={`${baseId}-path`}>
-          <h2 className={styles.panelTitle} id={`${baseId}-path`}>Story Path (즉시 동기화)</h2>
+          <h2 className={styles.panelTitle} id={`${baseId}-path`}>Story Path (즉시 동기화 · Branch disclosure)</h2>
           <p style={{ color: "var(--lt61-muted)", fontSize: 13, marginTop: 0 }}>
             선택할 때마다 경로가 갱신됩니다. 아무 노드나 눌러 그 지점에서 분기(Branch)를 이어갈 수 있습니다.
+            Branch가 5개를 넘으면 과거 갈래는 접힙니다.
           </p>
           <ul className={styles.path} style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {renderPath(nodes, "root", currentNodeId, continueFromNode, styles)}
+            {renderPath(nodes, "root", currentNodeId, continueFromNode, styles, showAllBranches)}
           </ul>
         </section>
       </div>
@@ -570,10 +723,23 @@ function renderPath(
   currentNodeId: string,
   onContinue: (nodeId: string) => void,
   s: typeof styles,
+  showAllBranches: boolean,
 ): ReactNode {
   const node = nodes[nodeId];
   if (!node) return null;
   const moment = CANDIDATE_BY_MOMENT.get(node.momentId)?.moment;
+
+  // V1.9 Branch disclosure: > 5 children → early core + past omitted + recent.
+  const childMoments = node.children.map((childId) => {
+    const child = nodes[childId];
+    const cm = child ? CANDIDATE_BY_MOMENT.get(child.momentId)?.moment : undefined;
+    return {
+      id: childId,
+      title: cm?.title ?? child?.momentId ?? childId,
+    };
+  });
+  const branch = discloseBranches(childMoments, { showAllBranches });
+
   return (
     <li key={nodeId} className={s.pathNode}>
       <button
@@ -590,7 +756,12 @@ function renderPath(
       </button>
       {node.children.length > 0 && (
         <ul className={s.path} style={{ listStyle: "none", padding: 0, margin: "8px 0 0" }}>
-          {node.children.map((childId) => renderPath(nodes, childId, currentNodeId, onContinue, s))}
+          {branch.visible.map((cm) => renderPath(nodes, cm.id, currentNodeId, onContinue, s, showAllBranches))}
+          {branch.collapsed && (
+            <li key={`${nodeId}-branch-collapsed`} className={s.branchCollapsed}>
+              <span aria-hidden="true">+{branch.hiddenCount}개 과거 갈래 숨김</span>
+            </li>
+          )}
         </ul>
       )}
     </li>

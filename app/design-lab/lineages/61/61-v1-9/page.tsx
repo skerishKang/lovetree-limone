@@ -29,11 +29,11 @@ export default function Lineage61V17Page() {
           ← Design Lab
         </Link>
         <br />
-        LINEAGE 61 · V1.9 (source reconciled) · NATIVE IMPLEMENT
+        LINEAGE 61 · V1.9 (source reconciled + scale/visual implemented) · NATIVE IMPLEMENT
         <br />
-        출처: Track61 Issue #158 · V1.9 재조정 (기존 V1.7 pin 폐기) · source fidelity 미주장
+        출처: Track61 Issue #158 · V1.9 (SHA-256 834fb634…, 509063 B) · source fidelity 미주장
         <br />
-        V1.9 scale/visual: HOLD (실제 V1.9 source 대기) · P8 exact-asset: HOLD · source navigation: HOLD
+        P8 exact-asset: HOLD · actualTargetOpen / receiverConsume / sameMomentFocus: HOLD
       </aside>
     </>
   );
