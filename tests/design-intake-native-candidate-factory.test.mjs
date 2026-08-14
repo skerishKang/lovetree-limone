@@ -872,6 +872,24 @@ test("fixtures: Track61 V1.7 navigation evidence keeps open/focus HOLDS separate
   assert.equal(manifest.navigationHandoff.sameMomentFocus, false, "receiver same-Moment focus HOLD");
 });
 
+test("fixtures: Track60 navigation evidence keeps open/focus HOLDS fail-closed", () => {
+  const manifest = parseIntakeManifest(fixture("track-60-3d-moment-cluster"));
+  assert.equal(manifest.navigationHandoff.targetMapping, true);
+  assert.equal(manifest.navigationHandoff.urlResolution, true);
+  assert.equal(manifest.navigationHandoff.openCall, true);
+  assert.equal(manifest.navigationHandoff.actualTargetOpen, false, "physical click→open HOLD");
+  assert.equal(manifest.navigationHandoff.receiverConsume, false, "receiver hook absent HOLD");
+  assert.equal(manifest.navigationHandoff.sameMomentFocus, false, "receiver same-Moment focus HOLD");
+});
+
+test("fixtures: Track60 must not claim completed native QA without evidence", () => {
+  const manifest = parseIntakeManifest(fixture("track-60-3d-moment-cluster"));
+  // Source QA (1440×900 / 1280×720 / 430×932 / 390×844 / 360×800) is partial
+  // source evidence, not completed native browser QA. A completed-looking qa
+  // object must not be re-added until native QA passes at evidenced viewports.
+  assert.equal(manifest.qa, undefined, "qa omitted until native browser QA passes");
+});
+
 test("fixtures: Track62 V1 → REFERENCE_CAPABILITY_ONLY", () => {
   const manifest = parseIntakeManifest(fixture("track-62-v1-reference-only"));
   assert.equal(manifest.classification, "REFERENCE_CAPABILITY_ONLY");
