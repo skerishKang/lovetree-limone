@@ -18,11 +18,7 @@
  *   - asset bytes / hash / decode / preload (P8)
  *   - TAU, FRONT_ANGLE, rotation↔index, snap geometry (P4 orbit boundary)
  */
-import {
-  assertPositiveSelectionCount,
-  normalizeSelectionIndex,
-  stepSelectionIndex,
-} from "./selection";
+import { normalizeSelectionIndex, stepSelectionIndex } from "./selection";
 
 /**
  * Normalize an ordered-frame index into the valid `[0, count)` range.
@@ -64,19 +60,39 @@ export function stepFrame(
 /**
  * Derive an ordered-frame direction (-1 | 0 | 1) from a horizontal delta.
  *
+ * The caller explicitly declares the sign convention via `positiveDeltaDirection`:
  * - `deltaX` in CSS pixels (clientX difference).
+ * - `positiveDeltaDirection` is the direction value returned when deltaX > 0.
+ *   Pass -1 when rightward movement must decrement the index (common convention
+ *   in Crystal and VideoFigure: stepDelta < 0 ? 1 : -1 / deltaX > 0 ? -1 : 1).
+ *   Pass +1 when rightward movement must increment the index.
  * - `threshold` is the minimum absolute delta that triggers a non-zero
  *   direction (default 0 — every non-zero delta yields a direction).
- * - Returns -1 for rightward movement, +1 for leftward, 0 when the delta
- *   is below threshold or zero (no direction).
+ * - Returns `positiveDeltaDirection` for rightward movement,
+ *   `-positiveDeltaDirection` for leftward, 0 when the delta is below
+ *   threshold or zero (no direction).
+ *
+ * Fails closed:
+ *   - NaN / ±Infinity deltaX → RangeError.
+ *   - NaN / ±Infinity / negative threshold → RangeError.
+ *   - threshold === 0 is explicitly allowed (no threshold).
  */
 export function directionFromDelta(
   deltaX: number,
+  positiveDeltaDirection: 1 | -1,
   threshold = 0,
 ): -1 | 0 | 1 {
-  if (!Number.isFinite(deltaX)) return 0;
+  if (!Number.isFinite(deltaX)) {
+    throw new RangeError("directionFromDelta: deltaX must be a finite number");
+  }
+  if (!Number.isFinite(threshold) || threshold < 0) {
+    throw new RangeError(
+      "directionFromDelta: threshold must be a non-negative finite number",
+    );
+  }
   if (Math.abs(deltaX) < threshold) return 0;
-  return deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
+  if (deltaX === 0) return 0;
+  return deltaX > 0 ? positiveDeltaDirection : -positiveDeltaDirection as -1 | 0 | 1;
 }
 
 /**

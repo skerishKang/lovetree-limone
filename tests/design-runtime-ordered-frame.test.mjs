@@ -100,37 +100,68 @@ test("stepFrame — large delta wraps multiple times", () => {
 });
 
 /* ------------------------------------------------------------------ */
-/*  directionFromDelta                                                 */
+/*  directionFromDelta — caller-declared sign convention                */
 /* ------------------------------------------------------------------ */
 
+const NEG = -1; // positiveDeltaDirection = -1 (Crystal / VideoFigure convention)
+const POS = 1;  // positiveDeltaDirection = +1 (inverted convention)
+
 test("directionFromDelta — zero delta yields no direction", () => {
-  assert.equal(directionFromDelta(0), 0);
+  assert.equal(directionFromDelta(0, NEG), 0);
+  assert.equal(directionFromDelta(0, POS), 0);
 });
 
-test("directionFromDelta — positive deltaX yields -1 (rightward)", () => {
-  assert.equal(directionFromDelta(10), -1);
-  assert.equal(directionFromDelta(100), -1);
+test("directionFromDelta — positive deltaX with NEG yields -1", () => {
+  assert.equal(directionFromDelta(10, NEG), -1);
+  assert.equal(directionFromDelta(100, NEG), -1);
 });
 
-test("directionFromDelta — negative deltaX yields +1 (leftward)", () => {
-  assert.equal(directionFromDelta(-10), 1);
-  assert.equal(directionFromDelta(-100), 1);
+test("directionFromDelta — positive deltaX with POS yields +1", () => {
+  assert.equal(directionFromDelta(10, POS), 1);
+  assert.equal(directionFromDelta(100, POS), 1);
+});
+
+test("directionFromDelta — negative deltaX with NEG yields +1", () => {
+  assert.equal(directionFromDelta(-10, NEG), 1);
+  assert.equal(directionFromDelta(-100, NEG), 1);
+});
+
+test("directionFromDelta — negative deltaX with POS yields -1", () => {
+  assert.equal(directionFromDelta(-10, POS), -1);
+  assert.equal(directionFromDelta(-100, POS), -1);
 });
 
 test("directionFromDelta — threshold suppresses sub-threshold deltas", () => {
-  assert.equal(directionFromDelta(9, 10), 0);
-  assert.equal(directionFromDelta(-9, 10), 0);
+  assert.equal(directionFromDelta(9, NEG, 10), 0);
+  assert.equal(directionFromDelta(-9, NEG, 10), 0);
 });
 
 test("directionFromDelta — threshold passes exact-boundary deltas", () => {
-  assert.equal(directionFromDelta(10, 10), -1);
-  assert.equal(directionFromDelta(-10, 10), 1);
+  assert.equal(directionFromDelta(10, NEG, 10), -1);
+  assert.equal(directionFromDelta(-10, NEG, 10), 1);
 });
 
-test("directionFromDelta — non-finite delta yields no direction", () => {
-  assert.equal(directionFromDelta(NaN), 0);
-  assert.equal(directionFromDelta(Infinity), 0);
-  assert.equal(directionFromDelta(-Infinity), 0);
+test("directionFromDelta — threshold = 0 is explicitly allowed", () => {
+  assert.equal(directionFromDelta(5, NEG, 0), -1);
+  assert.equal(directionFromDelta(-5, NEG, 0), 1);
+});
+
+test("directionFromDelta — fail closed on NaN deltaX", () => {
+  assert.throws(() => directionFromDelta(NaN, NEG), /must be a finite/);
+});
+
+test("directionFromDelta — fail closed on Infinity deltaX", () => {
+  assert.throws(() => directionFromDelta(Infinity, NEG), /must be a finite/);
+  assert.throws(() => directionFromDelta(-Infinity, NEG), /must be a finite/);
+});
+
+test("directionFromDelta — fail closed on non-finite threshold", () => {
+  assert.throws(() => directionFromDelta(10, NEG, NaN), /threshold must be/);
+  assert.throws(() => directionFromDelta(10, NEG, Infinity), /threshold must be/);
+});
+
+test("directionFromDelta — fail closed on negative threshold", () => {
+  assert.throws(() => directionFromDelta(10, NEG, -1), /threshold must be/);
 });
 
 /* ------------------------------------------------------------------ */
@@ -155,33 +186,35 @@ test("selectedFrame — never mutates input collection", () => {
 });
 
 /* ------------------------------------------------------------------ */
-/*  Crystal- and VideoFigure-specific regression pins                  */
+/*  Crystal- and VideoFigure-specific compatibility pins                */
 /* ------------------------------------------------------------------ */
 
-test("Crystal compatible: 4-angle wrap + angleStepFromDelta equivalence", () => {
+test("Crystal compatible: 4-angle wrap with caller-defined direction", () => {
   // Crystal rotateAngle(direction: 1 | -1) with (index + direction + N) % N
   // is equivalent to nextFrame / previousFrame with count=4.
   for (let i = 0; i < 4; i++) {
     assert.equal(nextFrame(i, 4), (i + 1) % 4);
     assert.equal(previousFrame(i, 4), (i + 3) % 4);
   }
-  // directionFromDelta with threshold 48 matches CRYSTAL_ANGLE_STEP_PX
-  assert.equal(directionFromDelta(47, 48), 0);
-  assert.equal(directionFromDelta(48, 48), -1);
-  assert.equal(directionFromDelta(-48, 48), 1);
+  // Crystal: stepDelta < 0 ? 1 : -1 → positiveDeltaDirection = -1
+  // with CRYSTAL_ANGLE_STEP_PX = 48 threshold
+  assert.equal(directionFromDelta(47, -1, 48), 0);
+  assert.equal(directionFromDelta(48, -1, 48), -1);
+  assert.equal(directionFromDelta(-47, -1, 48), 0);
+  assert.equal(directionFromDelta(-48, -1, 48), 1);
 });
 
-test("VideoFigure compatible: 8-angle wrap + stepDelta equivalence", () => {
+test("VideoFigure compatible: 8-angle wrap with caller-defined direction", () => {
   // VideoFigure step-angle with wrap(state.angleIndex + delta, 8)
   // is equivalent to stepFrame with count=8.
   assert.equal(stepFrame(0, 7, 8), 7);
   assert.equal(stepFrame(0, 8, 8), 0);
   assert.equal(stepFrame(3, -5, 8), 6); // (3-5) = -2 % 8 = 6
 
-  // VideoFigure angleStepFromHorizontalDelta(deltaX, 24) is equivalent
-  // to directionFromDelta(deltaX, 24) — exact same semantics.
-  for (const d of [-50, -24, -10, 0, 10, 24, 50]) {
-    const expected = d > 0 ? -1 : d < 0 ? 1 : 0;
-    assert.equal(directionFromDelta(d, 0), expected);
-  }
+  // VideoFigure: deltaX > 0 ? -1 : 1 → positiveDeltaDirection = -1
+  // with threshold = 24
+  assert.equal(directionFromDelta(23, -1, 24), 0);
+  assert.equal(directionFromDelta(24, -1, 24), -1);
+  assert.equal(directionFromDelta(-23, -1, 24), 0);
+  assert.equal(directionFromDelta(-24, -1, 24), 1);
 });
