@@ -49,6 +49,44 @@ test("V4 Orbit header count is 1-based and total reflects the moment count", () 
   assert.deepEqual(v4OrbitHeaderCount(COUNT, COUNT), { current: 1, total: COUNT });
 });
 
+test("V4 Orbit discrete projections wrap negative, out-of-range, and fractional indices deterministically", () => {
+  // Out-of-range positive wraps into [0, COUNT)
+  assert.equal(v4OrbitSelectedId(MOMENTS, 17), "a2");
+  assert.deepEqual(v4OrbitHeaderCount(17, COUNT), { current: 2, total: COUNT });
+  const railPositive = v4OrbitRailItems(MOMENTS, 17);
+  assert.equal(railPositive.filter((item) => item.selected).length, 1);
+  assert.equal(railPositive.find((item) => item.selected)?.index, 1);
+
+  // Negative index wraps into [0, COUNT)
+  assert.equal(v4OrbitSelectedId(MOMENTS, -1), "a8");
+  assert.deepEqual(v4OrbitHeaderCount(-1, COUNT), { current: 8, total: COUNT });
+  const railNegative = v4OrbitRailItems(MOMENTS, -1);
+  assert.equal(railNegative.filter((item) => item.selected).length, 1);
+  assert.equal(railNegative.find((item) => item.selected)?.index, 7);
+
+  // Multiple negative turns wrap deterministically
+  assert.equal(v4OrbitSelectedId(MOMENTS, -9), "a8");
+  assert.deepEqual(v4OrbitHeaderCount(-9, COUNT), { current: 8, total: COUNT });
+
+  // Fractional adapter truncation semantics are preserved (Math.trunc before modulo wrap)
+  assert.equal(v4OrbitSelectedId(MOMENTS, 2.9), "a3");
+  assert.deepEqual(v4OrbitHeaderCount(2.9, COUNT), { current: 3, total: COUNT });
+  assert.equal(v4OrbitSelectedId(MOMENTS, -0.9), "a1");
+  assert.deepEqual(v4OrbitHeaderCount(-0.9, COUNT), { current: 1, total: COUNT });
+  assert.equal(v4OrbitSelectedId(MOMENTS, -1.9), "a8");
+  assert.deepEqual(v4OrbitHeaderCount(-1.9, COUNT), { current: 8, total: COUNT });
+});
+
+test("V4 Orbit selection projections fail closed for empty collections or invalid counts", () => {
+  assert.throws(() => v4OrbitSelectedId([], 0), RangeError);
+  assert.throws(() => v4OrbitRailItems([], 0), RangeError);
+  assert.throws(() => v4OrbitHeaderCount(0, 0), RangeError);
+  assert.throws(() => v4OrbitHeaderCount(0, -1), RangeError);
+  assert.throws(() => v4OrbitHeaderCount(0, 3.5), RangeError);
+  assert.throws(() => v4OrbitHeaderCount(Number.NaN, COUNT), RangeError);
+  assert.throws(() => v4OrbitHeaderCount(Number.POSITIVE_INFINITY, COUNT), RangeError);
+});
+
 test("V4 Orbit media authority is fail-closed: selected-only and never carries audio", () => {
   const withVideo = v4OrbitMediaAuthority({ id: "a1", videoId: "dQw4w9WgXcQ" });
   assert.equal(withVideo.playable, true);
