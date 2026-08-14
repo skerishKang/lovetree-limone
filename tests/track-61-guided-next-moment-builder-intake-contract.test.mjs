@@ -1,0 +1,174 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { parseIntakeManifest } from "../lib/design-intake/manifest.ts";
+
+const MANIFEST = {
+  "schemaVersion": 1,
+  "stableId": "track-61-guided-next-moment-builder",
+  "sourceTrackId": "Track61",
+  "title": "Guided Next Moment LoveTree Builder V1.9",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "tree-workspace",
+  "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — V1.9 source reconciled and V1.9 material/visual deltas implemented. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe, 509063 bytes) and V1.8/V1.9 predated the GitHub manifest authorityObservedAt. This manifest pins V1.9 (CURRENT_AT_OBSERVATION) with the exact executable fingerprint and records V1.8 Cross-Track folder-root corrections. Native candidate reuses the V1.7 interaction implementation (nativeReadiness IMPLEMENTED) and now implements the V1.9 scale contract (progressive disclosure, Memory Cluster, branch scaling, disclosure actions), the Track56 working-view/overview boundary, the Path Card handoff (HOLD-marked) and the Memory Glass visual tokens. P8 exact-asset gate and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets.",
+  "provenance": {
+    "sourceLabel": "61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)",
+    "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
+    "sourceFiles": [
+      "현재후보.html"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-61-guided-next-moment-builder",
+  "lineageNumber": 61,
+  "revisionId": "61-v1-9",
+  "route": {
+    "path": "/design-lab/lineages/61/61-v1-9",
+    "surface": "lineage"
+  },
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #158 — V1.9 source reconciled (prior V1.7 pin was stale). Native candidate reuses V1.7 interaction implementation (nativeReadiness IMPLEMENTED); V1.9 scale/visual deltas NOT yet reimplemented — HOLD pending actual V1.9 Drive source. P8 exact-asset gate and source navigation holds remain HOLD — candidate for product-owner review; not FINAL/CLOSED"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1Pt7-h9Jmdrdvjj-dqyLyKaDRU9A3TZ3u",
+      "bytes": 509063,
+      "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "61_V1.7_QA.json",
+      "driveId": "15u7ZquFWTetSIdyoFL9siG0tumcWupbt",
+      "bytes": 10543,
+      "role": "sibling-qa",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md",
+      "driveId": "1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl",
+      "bytes": 12521,
+      "sha256": "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0",
+      "role": "instruction",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": [
+    "P3",
+    "P4",
+    "P5",
+    "P7",
+    "P9"
+  ],
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "current → selected candidate → WHY → Main/Branch → next recommendation state consistency",
+    "video/reaction/drawer/dialog close + Escape + focus entry/containment/restoration where modal",
+    "closed overlays noninteractive/unfocusable",
+    "source asset gate before exact visual PASS",
+    "first three choices visibly differentiated",
+    "320×720 QA",
+    "receiver-side ltHandoff consume hook + same-Moment focus in native targets (HOLD until receiver implemented)",
+    "physical click → target open under managed browser navigation policy (HOLD)"
+  ],
+  "sourceOnlyValues": [
+    "fictional names",
+    "21 fixed fixtures",
+    "synthetic percentages/counts",
+    "demo fan quotes"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Guided Next Moment LoveTree Builder V1.9"
+  },
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "recommendation reason / fan reaction / WHY NEXT must stay clearly separated",
+      "one canonical selected-candidate authority; no second independent selectedIndex"
+    ],
+    "policyBoundary": [
+      "recommendation/ranking algorithm, public/official/user-saved source authority, privacy/opt-in eligibility, real popularity metrics, persistence, moderation, official-path semantics = PRODUCT_POLICY"
+    ]
+  },
+  "handoffMappings": [
+    {
+      "sourceTrackId": "Track55",
+      "resolvedProductTargetId": "/v4/trees/demo/graph",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "canonical owner surface for free-connection/path editing (Issue #162) — NOT repository Lineage 55. V1.8 folder-root correction: 55_러브트리_자유연결_경로편집 → 55_자유연결_경로편집"
+    },
+    {
+      "sourceTrackId": "Track56",
+      "resolvedProductTargetId": "lt-53-emotional-path-replay + CAP-14",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "Lineage 53 / CAP-14 overview family (Issue #163) — NOT repository Lineage 56. V1.8 folder-root correction: 56_러브트리_세로형_모먼트관계망_전체조망 → 56_세로형_모먼트관계망_전체조망. Track56 = full LoveTree overview handoff for Track61 V1.9."
+    },
+    {
+      "sourceTrackId": "Track59",
+      "resolvedProductTargetId": "lt-59-living-memory-book",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "Living Memory Book stable product target (Issue #161). V1.8 folder-root correction: 59_러브트리_메모리스케치북_페이지여정 → 59_메모리스케치북_페이지여정"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.9",
+    "authorityObservedAt": "2026-08-14T09:16:50.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "nativeReadiness": "IMPLEMENTED",
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "qa": {
+    "viewports": [
+      {
+        "width": 1280,
+        "height": 800,
+        "mobile": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      {
+        "width": 320,
+        "height": 720,
+        "mobile": true
+      }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+};
+
+test("track-61-guided-next-moment-builder: manifest stays schema-valid", () => {
+  const parsed = parseIntakeManifest(MANIFEST);
+  assert.equal(parsed.stableId, "track-61-guided-next-moment-builder");
+  assert.equal(parsed.sourceTrackId, "Track61");
+  assert.equal(parsed.classification, "NEW_LINEAGE");
+  assert.equal(parsed.fidelityTargetMetadata.validationClass, "interaction-contract");
+});
+
+test("track-61-guided-next-moment-builder: provenance is reference-only and never executed", () => {
+  const parsed = parseIntakeManifest(MANIFEST);
+  assert.ok(parsed.provenance.sourceFiles.length > 0);
+  assert.equal(parsed.schemaVersion, 1);
+});
