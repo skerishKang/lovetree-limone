@@ -1,5 +1,5 @@
 /**
- * Design Source Freshness P0 Pure Resolver.
+ * Design Source Freshness P0 Pure Resolver (fail-closed).
  *
  * Pure, deterministic source-freshness resolution for Design Intake manifests:
  * given a parsed manifest and a DECLARED Drive source state, it returns a
@@ -13,16 +13,41 @@
  * - missing/incomplete Drive evidence fails closed to UNKNOWN with a
  *   mergeBlock instead of guessing.
  *
+ * Fail-closed authority rules:
+ * 1. ROOT CURRENT ALIAS — `DriveSourceState.rootCandidate` is the explicit
+ *    authority alias for the current root revision (driveId + sha256). When
+ *    present it must map by content identity (SHA-256) to an exact candidate
+ *    in `files`; a root alias with no matching candidate is
+ *    FAIL/ROOT_CURRENT_UNMAPPED. This is separate from a manifest that has no
+ *    sourceSnapshot at all (FAIL/UNMAPPED).
+ * 2. AMBIGUOUS CURRENT — the resolver NEVER auto-picks a "highest semver"
+ *    among competing functional candidates. Without explicit unique authority
+ *    evidence (a rootCandidate), two or more distinct functional candidates
+ *    are FAIL/AMBIGUOUS_CURRENT. Display/version numbers are never used to
+ *    guess which candidate is current.
+ * 3. HISTORICAL PIN — HISTORICAL_PINNED means "a newer current revision does
+ *    not, by itself, make the pinned snapshot stale". It does NOT mean the
+ *    pinned artifact's fingerprint was verified. When the observation contains
+ *    the historical artifact, its SHA-256 must match the manifest's pinned
+ *    executable SHA-256, else FAIL/HISTORICAL_PIN_MISMATCH. When no historical
+ *    artifact is observed, the verdict never claims the fingerprint is proven.
+ *
  * Verdict model (status / reason):
- * - PASS / CURRENT             — pinned snapshot fingerprint == functional Drive current.
+ * - PASS / CURRENT             — pinned snapshot fingerprint == authoritative current.
  * - PASS / PACKAGING_ONLY      — same content (SHA-256), different Drive file id:
  *                                a repackaging, not a freshness change.
- * - PASS / HISTORICAL_PINNED   — snapshot pins a historical revision and records
- *                                the newer current; historical integrity is kept (#80).
+ * - PASS / HISTORICAL_PINNED   — pin preserved; `historicalFingerprintVerified`
+ *                                records whether the observation actually verified it.
  * - FAIL / SOURCE_STALE        — snapshot claims CURRENT_AT_OBSERVATION but the
- *                                functional Drive current is newer / content differs.
+ *                                authoritative current is newer / content differs.
  * - FAIL / UNMAPPED            — manifest root has no sourceSnapshot, or a current
  *                                claim has no mappable pinned executable evidence.
+ * - FAIL / ROOT_CURRENT_UNMAPPED — Drive rootCandidate exists but no candidate in
+ *                                files matches its content identity.
+ * - FAIL / AMBIGUOUS_CURRENT   — ≥2 distinct functional candidates without an
+ *                                explicit unique authority (rootCandidate).
+ * - FAIL / HISTORICAL_PIN_MISMATCH — observed historical artifact fingerprint
+ *                                differs from the manifest's pinned executable SHA.
  * - NON_PASS / EXECUTABLE_PENDING — lifecycle is not executable; the candidate
  *                                can never be freshness-PASS until an executable
  *                                current exists.
@@ -30,8 +55,8 @@
  *                                incomplete; a mergeBlock explains why.
  *
  * Display-only revision labels (e.g. Track64 "V1.3" folder label vs functional
- * "V1.2.1") are ignored: staleness is resolved against the FUNCTIONAL Drive
- * current revision only, never against raw labels.
+ * "V1.2.1") are ignored: staleness is resolved against the authoritative
+ * current only, never against raw labels.
  */
 
 import {
@@ -42,6 +67,21 @@ import {
 /* ------------------------------------------------------------------ */
 /* Declared Drive source state (operator-supplied, never fetched)     */
 /* ------------------------------------------------------------------ */
+
+/**
+ * Explicit authority alias for the current ROOT revision. The root candidate
+ * is the single source of truth the manifest must match; it must map by
+ * content identity (sha256) to an exact candidate in `files`.
+ */
+export interface DriveRootCandidate {
+  /** Authoritative Drive file id of the root/current revision. */
+  driveId: string;
+  /** SHA-256 content fingerprint (64 hex) — the content identity. */
+  sha256: string;
+  bytes?: number;
+  /** Optional Drive-side revision label (context only, never a guess basis). */
+  revisionLabel?: string;
+}
 
 export interface DriveFileState {
   /** Authoritative Drive file id. */
@@ -66,6 +106,9 @@ export interface DriveSourceState {
   /** true = snapshot exists but is incomplete (truncated/missing fingerprints). */
   incomplete?: boolean;
   note?: string;
+  /** Explicit root/current authority alias; disambiguates competing candidates. */
+  rootCandidate?: DriveRootCandidate;
+  /** Revision candidates observed in the snapshot. */
   files?: readonly DriveFileState[];
 }
 
@@ -81,6 +124,9 @@ export type SourceFreshnessReason =
   | "HISTORICAL_PINNED"
   | "SOURCE_STALE"
   | "UNMAPPED"
+  | "ROOT_CURRENT_UNMAPPED"
+  | "AMBIGUOUS_CURRENT"
+  | "HISTORICAL_PIN_MISMATCH"
   | "EXECUTABLE_PENDING"
   | "DRIVE_UNAVAILABLE"
   | "DRIVE_INCOMPLETE";
@@ -98,9 +144,16 @@ export interface SourceFreshnessVerdict {
   mergeBlock?: string;
   /** Content-identical repackaging (same SHA-256, different Drive file id). */
   packagingOnly?: boolean;
+  /**
+   * HISTORICAL_PINNED only: true when the observation actually contained the
+   * historical artifact and its SHA-256 matched the pinned executable.
+   * A PASS/HISTORICAL_PINNED with this flag false means the fingerprint was
+   * NOT verified — the pin is preserved, not proven.
+   */
+  historicalFingerprintVerified?: boolean;
   /** Revision the manifest pins (sourceSnapshot.revisionLabel). */
   manifestRevision?: string;
-  /** Highest functional current revision resolved from the Drive state. */
+  /** Authoritative current revision resolved from the Drive state. */
   driveCurrentRevision?: string;
   /** Highest revision label seen across ALL Drive files (context only). */
   driveLatestRevision?: string;
@@ -142,26 +195,32 @@ export function compareRevisions(a: RevisionParts, b: RevisionParts): number {
   return 0;
 }
 
+/** Semantic label equality (V1.5 === "V1.5 (proving snapshot)"). */
+function labelsEqual(a: string | undefined, b: string | undefined): boolean {
+  if (a === undefined || b === undefined) return false;
+  const pa = parseRevisionLabel(a);
+  const pb = parseRevisionLabel(b);
+  if (pa === null || pb === null) return a.trim() === b.trim();
+  return compareRevisions(pa, pb) === 0;
+}
+
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-function highestFunctionalCurrent(
+function functionalCandidates(
   files: readonly DriveFileState[] | undefined,
-): DriveFileState | undefined {
-  const functional = (files ?? []).filter((file) => file.functional === true);
-  if (functional.length === 0) return undefined;
-  const withVersion = functional
-    .map((file) => ({ file, version: parseRevisionLabel(file.revisionLabel ?? "") }))
-    .filter((entry) => entry.version !== null) as Array<{
-    file: DriveFileState;
-    version: RevisionParts;
-  }>;
-  if (withVersion.length > 0) {
-    withVersion.sort((a, b) => compareRevisions(b.version, a.version));
-    return withVersion[0].file;
-  }
-  return functional[0];
+): readonly DriveFileState[] {
+  return (files ?? []).filter((file) => file.functional === true);
+}
+
+/**
+ * Content identity key for ambiguity: SHA-256 when present, otherwise the
+ * file id (distinct candidates that cannot prove identical content stay
+ * distinct — fail closed).
+ */
+function contentKey(file: DriveFileState): string {
+  return file.sha256 ?? `file:${file.driveId}`;
 }
 
 function highestLabelAcrossAllFiles(
@@ -188,6 +247,27 @@ function pinnedExecutable(manifest: DesignIntakeManifest) {
   return (
     executables.find((artifact) => Boolean(artifact.sha256)) ?? executables[0]
   );
+}
+
+/**
+ * The historical artifact observed in the Drive snapshot: the candidate whose
+ * revision label matches the pinned snapshot label (fallback: the candidate
+ * whose file id matches the pinned executable's Drive file id).
+ */
+function observedHistoricalArtifact(
+  files: readonly DriveFileState[] | undefined,
+  manifest: DesignIntakeManifest,
+): DriveFileState | undefined {
+  const pinned = pinnedExecutable(manifest);
+  const snapshotLabel = manifest.sourceSnapshot?.revisionLabel;
+  if (snapshotLabel !== undefined) {
+    const byLabel = (files ?? []).find((file) => labelsEqual(file.revisionLabel, snapshotLabel));
+    if (byLabel) return byLabel;
+  }
+  if (pinned?.driveId) {
+    return (files ?? []).find((file) => file.driveId === pinned.driveId);
+  }
+  return undefined;
 }
 
 function verdict(
@@ -237,7 +317,7 @@ export function resolveSourceFreshness(
   const driveFiles = drive.files ?? [];
   const driveLatestRevision = highestLabelAcrossAllFiles(driveFiles);
 
-  /* 2. Root current must be mapped: a manifest without a sourceSnapshot can
+  /* 2. Manifest root must be mapped: a manifest without a sourceSnapshot can
    *    never claim it pins the current source revision. */
   if (!snapshot) {
     return verdict(stableId, "FAIL", "UNMAPPED",
@@ -246,7 +326,8 @@ export function resolveSourceFreshness(
         mergeBlock:
           `${stableId}: root current unmapped (no sourceSnapshot) — FAIL. Do not merge until the pinned current revision is declared.`,
         driveCurrentRevision:
-          highestFunctionalCurrent(driveFiles)?.revisionLabel,
+          drive.rootCandidate?.revisionLabel ??
+          functionalCandidates(driveFiles)[0]?.revisionLabel,
         driveLatestRevision,
       },
     );
@@ -268,14 +349,85 @@ export function resolveSourceFreshness(
     );
   }
 
-  /* 4. HISTORICAL_PINNED keeps historical integrity (#80): the snapshot pins
-   *    an older proving revision and records the newer current — never a
-   *    staleness failure. */
+  /* 4. Root current alias must be grounded: when the observation declares a
+   *    root candidate, some candidate in `files` must match its content
+   *    identity (SHA-256). An ungrounded root alias is FAIL. */
+  if (drive.rootCandidate) {
+    const root = drive.rootCandidate;
+    const mapped = (driveFiles ?? []).some(
+      (file) => file.sha256 !== undefined && file.sha256 === root.sha256,
+    );
+    if (!mapped) {
+      return verdict(stableId, "FAIL", "ROOT_CURRENT_UNMAPPED",
+        `${stableId}: Drive rootCandidate (${root.driveId}) exists but no observed candidate matches its content identity (SHA-256 ${root.sha256}).`,
+        {
+          mergeBlock:
+            `${stableId}: Drive root alias unmapped — FAIL. Do not merge/promote until the root candidate is grounded in an observed candidate.`,
+          manifestRevision,
+          driveLatestRevision,
+        },
+      );
+    }
+  }
+
+  /* 5. Ambiguous current: without explicit unique authority evidence
+   *    (rootCandidate), two or more distinct functional candidates are a
+   *    contradiction — NEVER auto-pick by version/display numbers. */
+  const functional = functionalCandidates(driveFiles);
+  if (!drive.rootCandidate) {
+    const distinctContents = new Set(functional.map(contentKey));
+    if (distinctContents.size > 1) {
+      return verdict(stableId, "FAIL", "AMBIGUOUS_CURRENT",
+        `${stableId}: ${distinctContents.size} distinct functional candidates claim current authority with no explicit unique authority evidence (rootCandidate) — cannot resolve which is current.`,
+        {
+          mergeBlock:
+            `${stableId}: ambiguous current — ${distinctContents.size} competing functional candidates. Do not merge/promote until a single authoritative candidate (rootCandidate) is declared.`,
+          manifestRevision,
+          driveLatestRevision,
+        },
+      );
+    }
+  }
+
+  /* 6. HISTORICAL_PINNED: a newer current revision never, by itself, makes
+   *    the pin stale. But the pin is separate from fingerprint verification:
+   *    an observed historical artifact must match the pinned executable SHA. */
   if (snapshot.sourceAuthorityState === "HISTORICAL_PINNED") {
-    const driveCurrentRevision = highestFunctionalCurrent(driveFiles)?.revisionLabel;
+    const pinned = pinnedExecutable(manifest);
+    const historical = observedHistoricalArtifact(driveFiles, manifest);
+    const pinnedSha = pinned?.sha256;
+    const historicalSha = historical?.sha256;
+
+    if (
+      pinnedSha &&
+      historical &&
+      historicalSha !== undefined &&
+      historicalSha !== pinnedSha
+    ) {
+      return verdict(stableId, "FAIL", "HISTORICAL_PIN_MISMATCH",
+        `${stableId}: observed historical artifact '${historical.revisionLabel ?? historical.driveId}' has SHA-256 ${historicalSha}, but the manifest pins ${pinnedSha} — historical pin fingerprint mismatch.`,
+        {
+          mergeBlock:
+            `${stableId}: HISTORICAL_PIN_MISMATCH — the observed historical artifact does not match the pinned executable fingerprint. Do not merge/promote until the pin matches the observed artifact.`,
+          manifestRevision,
+          driveCurrentRevision:
+            drive.rootCandidate?.revisionLabel ?? functional[0]?.revisionLabel,
+          driveLatestRevision,
+        },
+      );
+    }
+
+    const verified = Boolean(
+      pinnedSha && historical && historicalSha === pinnedSha,
+    );
+    const driveCurrentRevision =
+      drive.rootCandidate?.revisionLabel ?? functional[0]?.revisionLabel;
     return verdict(stableId, "PASS", "HISTORICAL_PINNED",
-      `${stableId}: HISTORICAL_PINNED snapshot '${manifestRevision}' recorded${driveCurrentRevision ? ` (newer current '${driveCurrentRevision}' known)` : ""} — historical integrity maintained per #80.`,
+      verified
+        ? `${stableId}: HISTORICAL_PINNED snapshot '${manifestRevision}' preserved; historical artifact fingerprint verified against the observation (SHA-256 match).`
+        : `${stableId}: HISTORICAL_PINNED snapshot '${manifestRevision}' preserved (a newer current does not make it stale); historical artifact fingerprint NOT verified — no matching artifact observed.`,
       {
+        historicalFingerprintVerified: verified,
         manifestRevision,
         driveCurrentRevision,
         driveLatestRevision,
@@ -284,7 +436,7 @@ export function resolveSourceFreshness(
     );
   }
 
-  /* 5. CURRENT_AT_OBSERVATION: must match the functional Drive current. */
+  /* 7. CURRENT_AT_OBSERVATION: must match the authoritative current. */
 
   const pinned = pinnedExecutable(manifest);
   if (!pinned) {
@@ -299,15 +451,21 @@ export function resolveSourceFreshness(
     );
   }
 
-  const driveCurrent = highestFunctionalCurrent(driveFiles);
+  /* The authoritative current: the explicit root alias when present,
+   * otherwise the single functional candidate (ambiguity already failed
+   * closed above). */
+  const driveCurrent =
+    drive.rootCandidate ??
+    (functional.length === 1 ? functional[0] : undefined);
+
   if (!driveCurrent) {
     return verdict(stableId, "UNKNOWN", "DRIVE_INCOMPLETE",
       driveFiles.length === 0
         ? `${stableId}: Drive reports no files — current revision cannot be verified.`
-        : `${stableId}: Drive reports only non-functional/empty entries (latest '${driveLatestRevision ?? "?"}') — no functional current revision to resolve against.`,
+        : `${stableId}: Drive reports no functional current revision (latest '${driveLatestRevision ?? "?"}') and no rootCandidate — nothing to resolve against.`,
       {
         mergeBlock:
-          `${stableId}: no functional Drive current revision — UNKNOWN. Do not merge/promote until a functional current file is provided.`,
+          `${stableId}: no authoritative Drive current — UNKNOWN. Do not merge/promote until a functional current file or rootCandidate is provided.`,
         manifestRevision,
         driveLatestRevision,
       },
@@ -322,7 +480,7 @@ export function resolveSourceFreshness(
   if (sameContent) {
     if (pinned.driveId === driveCurrent.driveId) {
       return verdict(stableId, "PASS", "CURRENT",
-        `${stableId}: pinned snapshot '${manifestRevision}' matches the functional Drive current ('${driveCurrent.revisionLabel ?? driveCurrent.driveId}') exactly.`,
+        `${stableId}: pinned snapshot '${manifestRevision}' matches the authoritative current ('${driveCurrent.revisionLabel ?? driveCurrent.driveId}') exactly.`,
         {
           manifestRevision,
           driveCurrentRevision: driveCurrent.revisionLabel,
@@ -332,7 +490,7 @@ export function resolveSourceFreshness(
       );
     }
     return verdict(stableId, "PASS", "PACKAGING_ONLY",
-      `${stableId}: pinned content SHA-256 matches the functional Drive current but the Drive file id changed — packaging only, not a freshness change.`,
+      `${stableId}: pinned content SHA-256 matches the authoritative current but the Drive file id changed — packaging only, not a freshness change.`,
       {
         packagingOnly: true,
         manifestRevision,
@@ -349,10 +507,10 @@ export function resolveSourceFreshness(
   if (pinnedVersion !== null && currentVersion !== null) {
     if (compareRevisions(currentVersion, pinnedVersion) > 0) {
       return verdict(stableId, "FAIL", "SOURCE_STALE",
-        `${stableId}: snapshot pins '${manifestRevision}' as CURRENT_AT_OBSERVATION but the functional Drive current is '${driveCurrent.revisionLabel}' — SOURCE_STALE.`,
+        `${stableId}: snapshot pins '${manifestRevision}' as CURRENT_AT_OBSERVATION but the authoritative current is '${driveCurrent.revisionLabel}' — SOURCE_STALE.`,
         {
           mergeBlock:
-            `${stableId}: SOURCE_STALE — pins '${manifestRevision}' while Drive current is '${driveCurrent.revisionLabel}'. Do not merge/promote until the snapshot pins the current revision.`,
+            `${stableId}: SOURCE_STALE — pins '${manifestRevision}' while the current is '${driveCurrent.revisionLabel}'. Do not merge/promote until the snapshot pins the current revision.`,
           manifestRevision,
           driveCurrentRevision: driveCurrent.revisionLabel,
           driveLatestRevision,
@@ -362,10 +520,10 @@ export function resolveSourceFreshness(
     }
     /* Same/older version with different content = content drift. */
     return verdict(stableId, "FAIL", "SOURCE_STALE",
-      `${stableId}: pinned content differs from the functional Drive current at version '${driveCurrent.revisionLabel ?? "?"}' — content drift, fail closed as stale.`,
+      `${stableId}: pinned content differs from the authoritative current at version '${driveCurrent.revisionLabel ?? "?"}' — content drift, fail closed as stale.`,
       {
         mergeBlock:
-          `${stableId}: SOURCE_STALE — pinned content no longer matches the functional Drive current. Do not merge/promote until the snapshot is updated.`,
+          `${stableId}: SOURCE_STALE — pinned content no longer matches the authoritative current. Do not merge/promote until the snapshot is updated.`,
         manifestRevision,
         driveCurrentRevision: driveCurrent.revisionLabel,
         driveLatestRevision,

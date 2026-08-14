@@ -5,9 +5,11 @@
 //
 // The resolver is PURE: it never touches Google Drive / WIF / service
 // accounts / network. The Drive source state must be supplied as a JSON file
-// mapping manifest stableId -> { available, incomplete?, note?, files[] }.
-// Manifests without an entry are treated as Drive-unavailable and fail closed
-// to UNKNOWN.
+// mapping manifest stableId -> { available, incomplete?, note?,
+// rootCandidate?, files[] }. rootCandidate is the explicit root/current
+// authority alias (driveId + sha256) that must map by content identity to a
+// candidate in files. Manifests without an entry are treated as
+// Drive-unavailable and fail closed to UNKNOWN.
 //
 // Exit codes:
 //   0 — no FAIL and no UNKNOWN verdict (NON_PASS pending states are reported

@@ -1,0 +1,20 @@
+{
+  "available": true,
+  "note": "synthetic: the observed historical V1.5 artifact has a different SHA-256 than the manifest pins",
+  "files": [
+    {
+      "driveId": "1W11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.5",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "bytes": 499000,
+      "functional": false
+    },
+    {
+      "driveId": "1L11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.7",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "bytes": 510000,
+      "functional": true
+    }
+  ]
+}

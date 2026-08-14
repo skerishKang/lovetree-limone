@@ -146,7 +146,10 @@ test("fixtures: same SHA different fileId → PASS/PACKAGING_ONLY", () => {
   assert.equal(verdict.mergeBlock, undefined, "repackaging is not a staleness failure");
 });
 
-test("fixtures: HISTORICAL_PINNED + newer current → PASS (historical integrity kept)", () => {
+test("fixtures: HISTORICAL_PINNED + newer current → PASS, pin preserved but fingerprint unverified", () => {
+  // The observation contains the newer V1.7 current but NO V1.5 historical
+  // artifact: the pin is preserved (newer current never = stale), but the
+  // historical fingerprint must NOT be claimed as verified.
   const verdict = resolve(
     "track61-v1-5-historical-pinned",
     driveFixture("track61-v1-7"),
@@ -156,6 +159,30 @@ test("fixtures: HISTORICAL_PINNED + newer current → PASS (historical integrity
   assert.equal(verdict.mergeBlock, undefined);
   assert.equal(verdict.manifestRevision, "V1.5");
   assert.equal(verdict.driveCurrentRevision, "V1.7");
+  assert.equal(verdict.historicalFingerprintVerified, false);
+  assert.doesNotMatch(verdict.summary, /historical integrity maintained/i);
+  assert.match(verdict.summary, /NOT verified/i);
+});
+
+test("fixtures: HISTORICAL_PINNED + observed matching artifact → PASS, fingerprint verified", () => {
+  const verdict = resolve(
+    "track61-v1-5-historical-pinned",
+    driveFixture("historical-pin-verified"),
+  );
+  assert.equal(verdict.status, "PASS");
+  assert.equal(verdict.reason, "HISTORICAL_PINNED");
+  assert.equal(verdict.historicalFingerprintVerified, true);
+  assert.match(verdict.summary, /verified/i);
+});
+
+test("fixtures: observed historical artifact with wrong SHA → FAIL/HISTORICAL_PIN_MISMATCH", () => {
+  const verdict = resolve(
+    "track61-v1-5-historical-pinned",
+    driveFixture("historical-pin-mismatch"),
+  );
+  assert.equal(verdict.status, "FAIL");
+  assert.equal(verdict.reason, "HISTORICAL_PIN_MISMATCH");
+  assert.ok(verdict.mergeBlock, "wrong historical SHA must block merge");
 });
 
 /* ------------------------------------------------------------------ */
@@ -232,29 +259,38 @@ test("no functional Drive current → UNKNOWN/DRIVE_INCOMPLETE, never a guess", 
   assert.notEqual(displayOnly.reason, "SOURCE_STALE");
 });
 
-test("multiple functional files → highest version is the functional current", () => {
-  const verdict = resolve("track62-v1-1-current", {
-    available: true,
-    files: [
-      {
-        driveId: "1P11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
-        revisionLabel: "V1.0",
-        sha256: "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-        functional: true,
-      },
-      {
-        // Same file id + SHA as the manifest's pinned executable, so the
-        // V1.1 entry (and not the V1.0 entry) must resolve as CURRENT.
-        driveId: "1C11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
-        revisionLabel: "V1.1",
-        sha256: "2222222222222222222222222222222222222222222222222222222222222222",
-        functional: true,
-      },
-    ],
-  });
+test("two competing functional-current candidates → FAIL/AMBIGUOUS_CURRENT, never PASS", () => {
+  // No rootCandidate: the resolver must NEVER auto-pick by version number,
+  // even though the V1.1 candidate matches the manifest exactly.
+  const verdict = resolve("track62-v1-1-current", driveFixture("two-competitors"));
+  assert.equal(verdict.status, "FAIL");
+  assert.equal(verdict.reason, "AMBIGUOUS_CURRENT");
+  assert.ok(verdict.mergeBlock, "ambiguous current must block merge");
+  assert.notEqual(verdict.status, "PASS");
+});
+
+test("rootCandidate provides explicit unique authority over competing candidates → PASS/CURRENT", () => {
+  const verdict = resolve("track62-v1-1-current", driveFixture("root-disambiguates"));
   assert.equal(verdict.status, "PASS");
   assert.equal(verdict.reason, "CURRENT");
   assert.equal(verdict.driveCurrentRevision, "V1.1");
+  assert.equal(verdict.mergeBlock, undefined);
+});
+
+test("Drive rootCandidate with no matching candidate → FAIL/ROOT_CURRENT_UNMAPPED", () => {
+  // Distinct from the manifest-without-sourceSnapshot case (UNMAPPED): here
+  // the Drive observation itself is inconsistent.
+  const verdict = resolve("track62-v1-1-current", driveFixture("root-alias-unmapped"));
+  assert.equal(verdict.status, "FAIL");
+  assert.equal(verdict.reason, "ROOT_CURRENT_UNMAPPED");
+  assert.ok(verdict.mergeBlock, "ungrounded root alias must block merge");
+});
+
+test("manifest without sourceSnapshot stays FAIL/UNMAPPED (separate from Drive root alias)", () => {
+  const verdict = resolve("root-unmapped", driveFixture("root-unmapped"));
+  assert.equal(verdict.status, "FAIL");
+  assert.equal(verdict.reason, "UNMAPPED");
+  assert.ok(verdict.mergeBlock);
 });
 
 /* ------------------------------------------------------------------ */
@@ -293,6 +329,12 @@ test("CLI: complete matching drive state → no FAIL/UNKNOWN (exit 0)", () => {
     driveStates[manifest.stableId] = executable
       ? {
           available: true,
+          rootCandidate: {
+            driveId: executable.driveId,
+            sha256: executable.sha256,
+            bytes: executable.bytes,
+            revisionLabel: manifest.sourceSnapshot?.revisionLabel,
+          },
           files: [
             {
               driveId: executable.driveId,
