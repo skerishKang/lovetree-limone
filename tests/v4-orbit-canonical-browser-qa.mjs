@@ -14,8 +14,41 @@ const URL = `${BASE}/v4/subjects/demo/orbit`;
 const SCREENSHOT_DIR = process.env.V4_ORBIT_SCREENSHOT_DIR || "/tmp/v4-orbit-browser-qa";
 const ORBIT_DRAG_FACTOR = 0.0045;
 
+const ONE_PIXEL_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  "base64",
+);
+
+async function stubRoutineThirdPartyResources(page) {
+  await page.route("**/*", async (route) => {
+    const requestUrl = new URL(route.request().url());
+
+    if (requestUrl.hostname === "fonts.googleapis.com") {
+      await route.fulfill({ status: 200, contentType: "text/css", body: "" });
+      return;
+    }
+
+    if (requestUrl.hostname === "img.youtube.com" || requestUrl.hostname === "i.ytimg.com") {
+      await route.fulfill({ status: 200, contentType: "image/png", body: ONE_PIXEL_PNG });
+      return;
+    }
+
+    if (requestUrl.hostname === "www.youtube.com" && requestUrl.pathname.startsWith("/embed/")) {
+      await route.fulfill({
+        status: 200,
+        contentType: "text/html; charset=utf-8",
+        body: "<!doctype html><html><head><title>deterministic Orbit QA embed</title></head><body></body></html>",
+      });
+      return;
+    }
+
+    await route.continue();
+  });
+}
+
 async function openRoute(browser, viewport, options = {}) {
   const page = await browser.newPage({ viewport, ...options });
+  await stubRoutineThirdPartyResources(page);
   const errors = [];
   page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
   page.on("console", (message) => {
