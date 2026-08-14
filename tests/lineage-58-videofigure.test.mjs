@@ -18,6 +18,7 @@ import {
   createVideoFigureTurntableState,
   normalizeVideoFigureLookIndex,
   reduceVideoFigureTurntable,
+  angleStepFromHorizontalDelta,
 } from "../lib/videofigure-turntable.ts";
 import {
   orderedFrameIndex,
@@ -155,4 +156,33 @@ test("P2 ordered-frame core produces identical angle selection results as the lo
   // Threshold = 0 (no threshold)
   assert.equal(directionFromDelta(1, -1, 0), -1);
   assert.equal(directionFromDelta(-1, -1, 0), 1);
+});
+
+test("angleStepFromHorizontalDelta backward-compat adapter — default threshold 24 pinned", () => {
+  // Default threshold = 24
+  assert.equal(angleStepFromHorizontalDelta(23), 0);
+  assert.equal(angleStepFromHorizontalDelta(-23), 0);
+  assert.equal(angleStepFromHorizontalDelta(24), -1);
+  assert.equal(angleStepFromHorizontalDelta(-24), 1);
+  assert.equal(angleStepFromHorizontalDelta(0), 0);
+});
+
+test("angleStepFromHorizontalDelta backward-compat adapter — custom threshold pass-through", () => {
+  // threshold = 10
+  assert.equal(angleStepFromHorizontalDelta(9, 10), 0);
+  assert.equal(angleStepFromHorizontalDelta(10, 10), -1);
+  assert.equal(angleStepFromHorizontalDelta(-9, 10), 0);
+  assert.equal(angleStepFromHorizontalDelta(-10, 10), 1);
+});
+
+test("angleStepFromHorizontalDelta equivalent to directionFromDelta with positiveDeltaDirection=-1", () => {
+  for (const deltaX of [-50, -24, -10, 0, 10, 24, 50]) {
+    for (const threshold of [0, 10, 24, 48]) {
+      assert.equal(
+        angleStepFromHorizontalDelta(deltaX, threshold),
+        directionFromDelta(deltaX, -1, threshold),
+        `deltaX=${deltaX} threshold=${threshold}`,
+      );
+    }
+  }
 });
