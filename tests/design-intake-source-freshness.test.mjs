@@ -11,7 +11,10 @@ import {
 import os from "node:os";
 import path from "node:path";
 
-import { parseIntakeManifest } from "../lib/design-intake/manifest.ts";
+import {
+  lifecycleImpliesExecutable,
+  parseIntakeManifest,
+} from "../lib/design-intake/manifest.ts";
 import {
   compareRevisions,
   parseRevisionLabel,
@@ -356,8 +359,22 @@ test("CLI: complete matching drive state → no FAIL/UNKNOWN (exit 0)", () => {
       { encoding: "utf8", cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] },
     );
     assert.doesNotMatch(stdout, /^(FAIL|UNKNOWN)\s/m, "no blocking verdict lines expected");
-    assert.match(stdout, /track-60-3d-moment-cluster\.json — CURRENT/);
-    assert.match(stdout, /track-61-guided-next-moment-builder\.json — HISTORICAL_PINNED/);
+    for (const manifestFile of readdirSync(MANIFESTS_DIR).filter((name) => name.endsWith(".json"))) {
+      const manifest = parseIntakeManifest(
+        JSON.parse(readFileSync(path.join(MANIFESTS_DIR, manifestFile), "utf8")),
+      );
+      const expectedReason = !lifecycleImpliesExecutable(manifest.lifecycle)
+        ? "EXECUTABLE_PENDING"
+        : manifest.sourceSnapshot?.sourceAuthorityState === "HISTORICAL_PINNED"
+          ? "HISTORICAL_PINNED"
+          : "CURRENT";
+      const escapedFile = manifestFile.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      assert.match(
+        stdout,
+        new RegExp(`${escapedFile} — ${expectedReason}`),
+        `manifest ${manifestFile} must match derived expectation ${expectedReason}`,
+      );
+    }
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
