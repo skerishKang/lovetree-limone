@@ -1909,7 +1909,7 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
 
   // Real superseded proving snapshots are explicitly HISTORICAL_PINNED and stay
   // valid even though newer authoritative revisions exist (Track61 → V1.7,
-  // Track63 → V1.2, Track64 → V1.2.1).
+  // Track63 → V1.2).
   const track61 = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(track61.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.equal(track61.sourceSnapshot.revisionLabel, "V1.5");
@@ -1918,10 +1918,21 @@ test("hardening: pinned historical snapshot remains valid after newer source exi
   assert.equal(track63.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
   assert.match(track63.sourceSnapshot.newerRevisionKnown, /V1\.2/);
   assert.equal(track63.lifecycle, "EXECUTABLE_PENDING", "pre-executable proving snapshot is not force-upgraded");
+  // Track64 was promoted from a pinned proving snapshot to the current-source
+  // re-intake: V1.2.1 is CURRENT_AT_OBSERVATION, no newerRevisionKnown, the
+  // executable fingerprint is pinned, and QA is absent until a native
+  // candidate actually passes the gates (no false-green qa object).
   const track64 = parseIntakeManifest(fixture("track-64-floating-moment-entry-portal"));
-  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "HISTORICAL_PINNED");
-  assert.match(track64.sourceSnapshot.newerRevisionKnown, /V1\.2\.1/);
-  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "V1 reference snapshot stays pre-executable");
+  assert.equal(track64.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
+  assert.equal(track64.sourceSnapshot.revisionLabel, "V1.2.1");
+  assert.ok(!track64.sourceSnapshot.newerRevisionKnown, "CURRENT promotion removes newerRevisionKnown");
+  assert.equal(track64.lifecycle, "EXECUTABLE_PENDING", "re-intake stays pre-executable until a native candidate exists");
+  assert.equal(track64.qa, undefined, "source-only re-intake omits qa (no false-green)");
+  const track64Exec = track64.sourceArtifacts?.find((a) => a.role === "executable");
+  assert.equal(track64Exec?.status, "PINNED");
+  assert.equal(track64Exec?.sha256, "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d");
+  assert.equal(track64.navigationHandoff?.targetMapping, true);
+  assert.equal(track64.navigationHandoff?.actualTargetOpen, false);
 });
 
 test("hardening: Track62 executable + reservation HOLD/adoption HOLD stays valid", () => {
