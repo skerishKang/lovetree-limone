@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "note": "synthetic: complete Drive state",
+  "files": [
+    {
+      "driveId": "1M11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.2",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "bytes": 500000,
+      "functional": true
+    }
+  ]
+}

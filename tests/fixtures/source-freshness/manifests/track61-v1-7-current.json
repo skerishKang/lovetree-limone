@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track61-v1-7-current",
+  "sourceTrackId": "Track61",
+  "title": "Fixture Track61 V1.7 current claim",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: manifest pins V1.7 as CURRENT_AT_OBSERVATION while the Drive current has moved to V1.9",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-61-guided-next-moment-builder",
+  "lineageNumber": 61,
+  "revisionId": "61-v1-7",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1A11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.7",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

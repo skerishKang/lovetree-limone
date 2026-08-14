@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track64-v1-2-1-functional",
+  "sourceTrackId": "Track64",
+  "title": "Fixture Track64 functional V1.2.1 vs display V1.3",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: Drive carries a display-only 'V1.3' label and the functional revision V1.2.1; freshness must resolve to V1.2.1",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-64-synthetic-functional",
+  "lineageNumber": 64,
+  "revisionId": "64-v1-2-1",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1F11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2.1",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}
