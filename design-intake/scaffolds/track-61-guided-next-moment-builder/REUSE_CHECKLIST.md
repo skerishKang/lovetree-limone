@@ -2,7 +2,7 @@
 
 ## Product / native state
 - Product Job: guided next-Moment discovery → reason/fan/media inspection → selection → editable WHY NEXT → Main/Branch → Story Path continuation.
-- Native candidate: IMPLEMENTED in Design Lab route `/design-lab/lineages/61/61-v1-7`.
+- Native candidate: IMPLEMENTED in Design Lab route `/design-lab/lineages/61/61-v1-9`.
 - Reused runtime contracts: P3, P4, P5, P7, P9 semantics are implemented locally in this candidate; this does not claim a shared-core extraction.
 - Existing ExperienceCapabilities: no canonical capability adoption/import is required for this proving candidate. Reuse remains semantic until #141 extraction has proven multi-consumer value.
 - Truly new shared primitive: NONE.

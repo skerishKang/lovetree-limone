@@ -13,7 +13,7 @@ const REQUIRED_TARGETS = [
   "lineage-56-v3",
   "lineage-57-v2",
   "lineage-58-v2",
-  "lineage-61-61-v1-7",
+  "lineage-61-61-v1-9",
   "memory-anatomy",
   "moment-orbit-carousel",
 ];
@@ -52,15 +52,15 @@ test("direct candidate changes select only their matching fidelity target", () =
     ["lineage-58-v2"],
   );
   assert.deepEqual(
-    selectImpactedTargets(["app/design-lab/lineages/61/61-v1-7/page.tsx"]).map((target) => target.id),
-    ["lineage-61-61-v1-7"],
+    selectImpactedTargets(["app/design-lab/lineages/61/61-v1-9/page.tsx"]).map((target) => target.id),
+    ["lineage-61-61-v1-9"],
   );
 });
 
 test("Lineage61 V1.7 is interaction-contract only while P8/source fidelity remains HOLD", () => {
-  const target = getDesignFidelityTarget("lineage-61-61-v1-7");
+  const target = getDesignFidelityTarget("lineage-61-61-v1-9");
   assert.ok(target, "Lineage61 target is registered");
-  assert.equal(target.route, "/design-lab/lineages/61/61-v1-7");
+  assert.equal(target.route, "/design-lab/lineages/61/61-v1-9");
   assert.equal(target.validationClass, "interaction-contract");
   assert.equal(target.assetGate, null, "P8 source-fidelity is not false-greened");
   assert.deepEqual(target.browserGates, ["tests/track-61-guided-next-moment-builder-route-browser-qa.mjs"]);
@@ -89,7 +89,7 @@ test("orchestration changes self-validate against materialized browser targets",
   const selected = selectImpactedTargets([".github/workflows/design-fidelity-validation.yml"])
     .map((target) => target.id);
   assert.ok(selected.includes("lineage-53-v2"), "current-main Lineage 53 browser gate exercises orchestration changes");
-  assert.ok(selected.includes("lineage-61-61-v1-7"), "Lineage61 proving target exercises orchestration changes");
+  assert.ok(selected.includes("lineage-61-61-v1-9"), "Lineage61 proving target exercises orchestration changes");
 });
 
 test("asset-backed lineages are verifier-gated before browser certification", () => {

@@ -332,7 +332,7 @@ export default function Lineage61GuidedNextMomentBuilder() {
 
       <header className={styles.labHeader}>
         <div>
-          <p className={styles.eyebrow}>Track61 · Lineage 61 · V1.7</p>
+          <p className={styles.eyebrow}>Track61 · Lineage 61 · V1.9 (source reconciled; UI reuses V1.7 loop, V1.9 scale/visual HOLD)</p>
           <h1 className={styles.labTitle}>Guided Next Moment LoveTree Builder</h1>
           <a className={styles.back} href="/design-lab">← Design Lab</a>
         </div>

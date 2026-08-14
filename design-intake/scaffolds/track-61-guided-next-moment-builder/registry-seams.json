@@ -8,22 +8,22 @@
       "lineage": {
         "id": "lt-61-guided-next-moment-builder",
         "number": 61,
-        "label": "Guided Next Moment LoveTree Builder V1.7",
+        "label": "Guided Next Moment LoveTree Builder V1.9",
         "status": "incoming",
-        "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — this manifest pins the current V1.7 proving snapshot (Issue #158 current authority). V1.5 and V1.6 are prior revision history. The native candidate is implemented in code (nativeReadiness IMPLEMENTED) but remains a candidate: Design Fidelity exact-asset gate (P8) and source navigation holds are HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
+        "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — SOURCE RECONCILIATION to V1.9. Prior scaffold pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe). This manifest pins V1.9 (CURRENT_AT_OBSERVATION) and records V1.8 Cross-Track folder-root corrections and V1.9 material/visual deltas. Native candidate reuses V1.7 interaction implementation (nativeReadiness IMPLEMENTED) but V1.9 scale/visual behavior is NOT yet reimplemented in code: P8 exact-asset gate and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets.",
         "scenarios": [
           "tree-workspace"
         ],
-        "currentDecision": "Intake scaffolded from track-61-guided-next-moment-builder (candidate review) — canonical adoption is a separate decision.",
-        "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.7 current authority)",
+        "currentDecision": "V1.9 source reconciled (prior V1.7 pin was stale). Native interaction candidate reuses V1.7 implementation; V1.9 scale/visual deltas NOT yet reimplemented — HOLD pending actual V1.9 Drive source. Canonical adoption is a separate decision.",
+        "sourceLabel": "61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)",
         "revisions": [
           {
-            "id": "61-v1-7",
-            "label": "Guided Next Moment LoveTree Builder V1.7",
+            "id": "61-v1-9",
+            "label": "Guided Next Moment LoveTree Builder V1.9",
             "decision": "candidate",
             "executable": true,
-            "route": "/design-lab/lineages/61/61-v1-7",
-            "notes": "scaffolded from track-61-guided-next-moment-builder; source fidelity not claimed"
+            "route": "/design-lab/lineages/61/61-v1-9",
+            "notes": "native interaction candidate reuses V1.7 implementation; V1.9 source reconciled; V1.9 scale/visual deltas and source fidelity/P8 not yet claimed"
           }
         ]
       }
@@ -36,18 +36,18 @@
     "entry": {
       "action": "add-candidate",
       "candidate": {
-        "id": "lineage:lt-61-guided-next-moment-builder-61-v1-7",
-        "label": "Guided Next Moment LoveTree Builder V1.7",
+        "id": "lineage:lt-61-guided-next-moment-builder-61-v1-9",
+        "label": "Guided Next Moment LoveTree Builder V1.9",
         "scenarioId": "tree-workspace",
-        "route": "/design-lab/lineages/61/61-v1-7",
+        "route": "/design-lab/lineages/61/61-v1-9",
         "status": "implemented",
         "origin": "lineage-intake",
         "kind": "experience",
         "lineageId": "lt-61-guided-next-moment-builder",
-        "revisionId": "61-v1-7",
+        "revisionId": "61-v1-9",
         "sourceFile": "현재후보.html",
         "role": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-        "notes": "native interaction candidate implemented; central interaction-contract QA required; source fidelity/P8 and canonical adoption remain HOLD"
+        "notes": "native interaction candidate reuses V1.7 implementation; V1.9 source reconciled; V1.9 scale/visual deltas NOT yet reimplemented — HOLD pending actual V1.9 Drive source; source fidelity/P8 and canonical adoption remain HOLD"
       }
     }
   },
@@ -58,12 +58,12 @@
     "entry": {
       "action": "add-target",
       "target": {
-        "id": "lineage-61-61-v1-7",
-        "label": "Guided Next Moment LoveTree Builder V1.7",
-        "route": "/design-lab/lineages/61/61-v1-7",
+        "id": "lineage-61-61-v1-9",
+        "label": "Guided Next Moment LoveTree Builder V1.9",
+        "route": "/design-lab/lineages/61/61-v1-9",
         "validationClass": "interaction-contract",
         "impactPrefixes": [
-          "app/design-lab/lineages/61/61-v1-7/",
+          "app/design-lab/lineages/61/61-v1-9/",
           "reference/design-intake/track-61-guided-next-moment-builder/",
           "tests/track-61-guided-next-moment-builder-",
           "docs/product/design-intake/track-61-guided-next-moment-builder/",

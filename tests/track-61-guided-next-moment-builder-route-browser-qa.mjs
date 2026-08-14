@@ -5,7 +5,7 @@ import test from "node:test";
 import { chromium } from "playwright";
 
 const BASE = process.env.V4_BASE_URL || process.env.LOVETREE_QA_BASE_URL || "http://localhost:3000";
-const URL = `${BASE}/design-lab/lineages/61/61-v1-7`;
+const URL = `${BASE}/design-lab/lineages/61/61-v1-9`;
 const EVIDENCE_DIR = path.resolve("test-results/track-61-guided-next-moment-builder");
 
 function captureErrors(page) {

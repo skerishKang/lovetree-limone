@@ -6,16 +6,16 @@ const MANIFEST = {
   "schemaVersion": 1,
   "stableId": "track-61-guided-next-moment-builder",
   "sourceTrackId": "Track61",
-  "title": "Guided Next Moment LoveTree Builder V1.7",
+  "title": "Guided Next Moment LoveTree Builder V1.9",
   "classification": "NEW_LINEAGE",
   "lifecycle": "EXECUTABLE_AVAILABLE",
   "rendering": "dom-2d",
   "scenarioId": "tree-workspace",
   "productJob": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — this manifest pins the current V1.7 proving snapshot (Issue #158 current authority). V1.5 and V1.6 are prior revision history. The native candidate is implemented in code (nativeReadiness IMPLEMENTED) but remains a candidate: Design Fidelity exact-asset gate (P8) and source navigation holds are HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets — never inferred as repository Lineage 55/56/59 routes from raw numbers.",
+  "summary": "Track61 (감정경로 연결검토실) Guided Next Moment / Choice-based LoveTree Builder — SOURCE RECONCILIATION to V1.9. Prior manifest pinned V1.7 as CURRENT_AT_OBSERVATION, but an independent Drive audit found the current root '현재후보.html' is byte-identical to V1.9 (SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe) and V1.8/V1.9 predated the GitHub manifest authorityObservedAt. This manifest pins V1.9 (CURRENT_AT_OBSERVATION) and records V1.8 Cross-Track folder-root corrections and V1.9 material/visual deltas. Native candidate reuses V1.7 interaction implementation (nativeReadiness IMPLEMENTED) but V1.9 scale/visual behavior is NOT yet reimplemented in code: P8 exact-asset gate and source navigation holds remain HOLD. Cross-track handoffs to Track 55/56/59 are RESOLVED to stable repository product targets.",
   "provenance": {
-    "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.7 current authority)",
-    "driveFolderId": "1uAuP0ja-4MB3HWedICosfMSWhkmQ0yEr",
+    "sourceLabel": "61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)",
+    "driveFolderId": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe",
     "sourceFiles": [
       "현재후보.html"
     ],
@@ -23,21 +23,20 @@ const MANIFEST = {
   },
   "designLineageId": "lt-61-guided-next-moment-builder",
   "lineageNumber": 61,
-  "revisionId": "61-v1-7",
+  "revisionId": "61-v1-9",
   "route": {
-    "path": "/design-lab/lineages/61/61-v1-7",
+    "path": "/design-lab/lineages/61/61-v1-9",
     "surface": "lineage"
   },
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #158 — V1.7 current authority proving snapshot; native candidate implemented (nativeReadiness IMPLEMENTED) but Design Fidelity exact-asset gate (P8) and source navigation holds remain HOLD — candidate for product-owner review; not FINAL/CLOSED"
+    "note": "Issue #158 — V1.9 source reconciled (prior V1.7 pin was stale). Native candidate reuses V1.7 interaction implementation (nativeReadiness IMPLEMENTED); V1.9 scale/visual deltas NOT yet reimplemented — HOLD pending actual V1.9 Drive source. P8 exact-asset gate and source navigation holds remain HOLD — candidate for product-owner review; not FINAL/CLOSED"
   },
   "sourceArtifacts": [
     {
       "filename": "현재후보.html",
       "driveId": "1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm",
-      "bytes": 493980,
-      "sha256": "133e3a82cae1e4edd46083deb648962882e624d1db1890c5c337a0068ef83bf7",
+      "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
       "role": "executable",
       "status": "PINNED"
     },
@@ -54,7 +53,7 @@ const MANIFEST = {
       "bytes": 12521,
       "sha256": "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0",
       "role": "instruction",
-      "status": "PINNED"
+      "status": "REFERENCE_ONLY"
     }
   ],
   "reusableCapabilities": [],
@@ -85,7 +84,7 @@ const MANIFEST = {
   "backendScope": "BACKEND_FREE",
   "fidelityTargetMetadata": {
     "validationClass": "interaction-contract",
-    "label": "Guided Next Moment LoveTree Builder V1.7"
+    "label": "Guided Next Moment LoveTree Builder V1.9"
   },
   "slotNotes": {
     "issue": "142",
@@ -102,24 +101,24 @@ const MANIFEST = {
       "sourceTrackId": "Track55",
       "resolvedProductTargetId": "/v4/trees/demo/graph",
       "resolutionStatus": "RESOLVED",
-      "handoffContext": "canonical owner surface for free-connection/path editing (Issue #162) — NOT repository Lineage 55"
+      "handoffContext": "canonical owner surface for free-connection/path editing (Issue #162) — NOT repository Lineage 55. V1.8 folder-root correction: 55_러브트리_자유연결_경로편집 → 55_자유연결_경로편집"
     },
     {
       "sourceTrackId": "Track56",
       "resolvedProductTargetId": "lt-53-emotional-path-replay + CAP-14",
       "resolutionStatus": "RESOLVED",
-      "handoffContext": "Lineage 53 / CAP-14 overview family (Issue #163) — NOT repository Lineage 56"
+      "handoffContext": "Lineage 53 / CAP-14 overview family (Issue #163) — NOT repository Lineage 56. V1.8 folder-root correction: 56_러브트리_세로형_모먼트관계망_전체조망 → 56_세로형_모먼트관계망_전체조망. Track56 = full LoveTree overview handoff for Track61 V1.9."
     },
     {
       "sourceTrackId": "Track59",
       "resolvedProductTargetId": "lt-59-living-memory-book",
       "resolutionStatus": "RESOLVED",
-      "handoffContext": "Living Memory Book stable product target (Issue #161)"
+      "handoffContext": "Living Memory Book stable product target (Issue #161). V1.8 folder-root correction: 59_러브트리_메모리스케치북_페이지여정 → 59_메모리스케치북_페이지여정"
     }
   ],
   "sourceSnapshot": {
-    "revisionLabel": "V1.7",
-    "authorityObservedAt": "2026-08-13T17:16:51.000Z",
+    "revisionLabel": "V1.9",
+    "authorityObservedAt": "2026-08-14T09:16:50.000Z",
     "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
   },
   "nativeReadiness": "IMPLEMENTED",

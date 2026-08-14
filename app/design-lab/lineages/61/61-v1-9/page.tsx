@@ -2,7 +2,7 @@ import Link from "next/link";
 import Lineage61GuidedNextMomentBuilder from "./Lineage61GuidedNextMomentBuilder";
 
 export const metadata = {
-  title: "Guided Next Moment LoveTree Builder V1.7",
+  title: "Guided Next Moment LoveTree Builder V1.9",
 };
 
 export default function Lineage61V17Page() {
@@ -29,11 +29,11 @@ export default function Lineage61V17Page() {
           ← Design Lab
         </Link>
         <br />
-        LINEAGE 61 · V1.7 (현재 권위) · NATIVE IMPLEMENT
+        LINEAGE 61 · V1.9 (source reconciled) · NATIVE IMPLEMENT
         <br />
-        출처: Track61 Issue #158 (V1.7) · source fidelity 미주장
+        출처: Track61 Issue #158 · V1.9 재조정 (기존 V1.7 pin 폐기) · source fidelity 미주장
         <br />
-        P8 exact-asset gate: HOLD · source navigation holds: HOLD
+        V1.9 scale/visual: HOLD (실제 V1.9 source 대기) · P8 exact-asset: HOLD · source navigation: HOLD
       </aside>
     </>
   );

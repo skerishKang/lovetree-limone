@@ -170,12 +170,12 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
     extraEvidencePaths: ["test-results/lineage-58-videofigure"],
   },
   {
-    id: "lineage-61-61-v1-7",
-    label: "Guided Next Moment LoveTree Builder V1.7",
-    route: "/design-lab/lineages/61/61-v1-7",
+    id: "lineage-61-61-v1-9",
+    label: "Guided Next Moment LoveTree Builder V1.9",
+    route: "/design-lab/lineages/61/61-v1-9",
     validationClass: "interaction-contract",
     impactPrefixes: [
-      "app/design-lab/lineages/61/61-v1-7/",
+      "app/design-lab/lineages/61/61-v1-9/",
       "reference/design-intake/track-61-guided-next-moment-builder/",
       "tests/track-61-guided-next-moment-builder-",
       "docs/product/design-intake/track-61-guided-next-moment-builder/",

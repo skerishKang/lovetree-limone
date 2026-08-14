@@ -10,14 +10,16 @@ Drive originals are read-only reference; product code never executes sibling sou
 - nativeReadiness: IMPLEMENTED
 - rendering: dom-2d
 - scenarioId: tree-workspace
-- sourceLabel: 61_러브트리_감정경로_연결검토실 / Issue #158 (V1.7 current authority)
-- driveFolderId: 1uAuP0ja-4MB3HWedICosfMSWhkmQ0yEr
-- sourceSnapshot: V1.7 (CURRENT_AT_OBSERVATION @ 2026-08-13T17:16:51.000Z)
-- executable: 현재후보.html / Drive 1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm / 493,980 B / SHA256 133e3a82cae1e4edd46083deb648962882e624d1db1890c5c337a0068ef83bf7
-- sibling QA: 61_V1.7_QA.json / Drive 15u7ZquFWTetSIdyoFL9siG0tumcWupbt / 10,543 B
-- current instruction: 27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md / Drive 1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl / 12521 B / SHA256 48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0
+- sourceLabel: 61_감정경로_연결검토실 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / current root 현재후보.html = V1.9 (Issue #158 reintake)
+- driveFolderId: 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe
+- sourceSnapshot: V1.9 (CURRENT_AT_OBSERVATION @ 2026-08-14T09:16:50.000Z) — prior V1.7 pin was stale (independent Drive audit found current root byte-identical to V1.9, SHA-256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe)
+- executable: 현재후보.html / Drive 1xE--_8ZG-LC8f_vyQCJXkrURYZydT_sm / byte count not re-captured in this reconciliation / SHA256 834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe
+- sibling QA: 61_V1.7_QA.json / Drive 15u7ZquFWTetSIdyoFL9siG0tumcWupbt / 10,543 B (historical reference)
+- historical instruction: 27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md / Drive 1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl / 12521 B / SHA256 48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0 (V1.7-era instruction; V1.9 may carry its own instruction not captured here)
 
 Rules:
-- V1.5/V1.6 instructions remain historical context, not current V1.7 authority.
+- V1.5/V1.6/V1.7 instructions remain historical context, not current V1.9 authority.
+- V1.8 corrected Cross-Track Drive folder roots: Track56 56_러브트리_세로형_모먼트관계망_전체조망 → 56_세로형_모먼트관계망_전체조망; Track55 55_러브트리_자유연결_경로편집 → 55_자유연결_경로편집; Track59 59_러브트리_메모리스케치북_페이지여정 → 59_메모리스케치북_페이지여정.
+- V1.9 scale (progressive disclosure / Memory Cluster / branch scaling / disclosure actions) and Memory Glass visual deltas are NOT yet reimplemented in native UI — HOLD pending actual V1.9 Drive source.
 - Exact source-fidelity PASS requires a separate P8 exact-asset gate and is not inferred from the executable fingerprint or this provenance record.
 - owner Windows local `file://` target rendering and receiver same-Moment focus remain separate HOLDs.
