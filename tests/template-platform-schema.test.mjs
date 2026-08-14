@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   containsExecutableContent,
+  containsRemoteAddress,
   validateDefinition,
   validateInstance,
 } from "../lib/template-platform/validate.ts";
@@ -85,6 +86,13 @@ function deepFreeze(value) {
     Object.freeze(value);
   }
   return value;
+}
+
+function withBinding(slotId, value) {
+  return {
+    ...spatialMediaBrowserInstance,
+    bindings: [...spatialMediaBrowserInstance.bindings, { slotId, value }],
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -460,10 +468,6 @@ test("template platform: ordering must cover exactly the bound collection slots"
 
 test("template platform: executable content is rejected in instance strings", () => {
   const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
-  const withBinding = (slotId, value) => ({
-    ...spatialMediaBrowserInstance,
-    bindings: [...spatialMediaBrowserInstance.bindings, { slotId, value }],
-  });
   expectFail(
     validateInstance(withBinding("user-note", "<iframe src=\"x\"></iframe>"), definition),
     "executable content",
@@ -476,6 +480,139 @@ test("template platform: executable content is rejected in instance strings", ()
     validateInstance({ ...spatialMediaBrowserInstance, treeId: "tree_<script>" }, definition),
     "executable content",
   );
+});
+
+/* ------------------------------------------------------------------ */
+/* CTO remediation — full definition-level executable coverage +      */
+/* external remote media rejection (PR #189)                          */
+/* ------------------------------------------------------------------ */
+
+test("A. sourceProvenanceRef.revisionLabel executable content is rejected", () => {
+  expectFail(
+    validateDefinition({
+      ...spatialMediaBrowserDefinition,
+      sourceProvenanceRef: {
+        manifestStableId: "track-61-v1-9",
+        revisionLabel: "<script>alert(1)</script>",
+      },
+    }),
+    "revisionLabel contains executable content",
+  );
+  expectFail(
+    validateDefinition({
+      ...spatialMediaBrowserDefinition,
+      sourceProvenanceRef: {
+        manifestStableId: "track-61-v1-9",
+        revisionLabel: "onerror=alert(1)",
+      },
+    }),
+    "revisionLabel contains executable content",
+  );
+});
+
+test("B. compatibility.migrationNote executable content is rejected", () => {
+  expectFail(
+    validateDefinition({
+      ...spatialMediaBrowserDefinition,
+      compatibility: {
+        minTemplateVersion: "0.1.0",
+        maxTemplateVersion: "0.1.0",
+        migrationNote: "javascript:alert(1)",
+      },
+    }),
+    "migrationNote contains executable content",
+  );
+  expectFail(
+    validateDefinition({
+      ...spatialMediaBrowserDefinition,
+      compatibility: {
+        minTemplateVersion: "0.1.0",
+        maxTemplateVersion: "0.1.0",
+        migrationNote: "<style>body{display:none}</style>",
+      },
+    }),
+    "migrationNote contains executable content",
+  );
+});
+
+test("C. visualToken allowedValues executable content is rejected", () => {
+  const slots = spatialMediaBrowserDefinition.slots.map((slot) =>
+    slot.id === "accent" ? { ...slot, allowedValues: ["rose", "onerror=alert(1)"] } : slot,
+  );
+  expectFail(
+    validateDefinition({ ...spatialMediaBrowserDefinition, slots }),
+    "allowedValues contains executable content",
+  );
+});
+
+test("D. option allowedValues executable content is rejected", () => {
+  const slots = spatialMediaBrowserDefinition.slots.map((slot) =>
+    slot.id === "open-detail-on-select" ? { ...slot, allowedValues: ["open", "<embed src=\"x\">"] } : slot,
+  );
+  expectFail(
+    validateDefinition({ ...spatialMediaBrowserDefinition, slots }),
+    "allowedValues contains executable content",
+  );
+});
+
+test("E. external remote media https:// binding is rejected", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  expectFail(
+    validateInstance(withBinding("hero-media", "https://cdn.example.com/photo.jpg"), definition),
+    "external remote media address is rejected",
+  );
+});
+
+test("F. external remote media http:// binding is rejected", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  expectFail(
+    validateInstance(withBinding("hero-media", "http://example.com/a.png"), definition),
+    "external remote media address is rejected",
+  );
+});
+
+test("G. protocol-relative media //host binding is rejected", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  expectFail(
+    validateInstance(withBinding("hero-media", "//example.com/a.png"), definition),
+    "external remote media address is rejected",
+  );
+});
+
+test("H. opaque/canonical media refs remain allowed", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  const instance = expectOk(validateInstance(withBinding("hero-media", "drive_aaa"), definition));
+  assert.equal(
+    instance.bindings.find((b) => b.slotId === "hero-media").value,
+    "drive_aaa",
+  );
+});
+
+test("media remote-address boundary also covers frame-set collections and other schemes", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  expectFail(
+    validateInstance(withBinding("gallery-frames", ["drive_aaa", "ftp://host/x.jpg"]), definition),
+    "external remote media address is rejected",
+  );
+  expectFail(
+    validateInstance(withBinding("gallery-frames", ["https://cdn.example.com/1.jpg"]), definition),
+    "external remote media address is rejected",
+  );
+});
+
+test("containsRemoteAddress pins the remote-address boundary tokens", () => {
+  for (const bad of [
+    "https://cdn.example.com/x.jpg",
+    "http://example.com/x.png",
+    "//example.com/x.png",
+    "ftp://example.com/x",
+    "file:///etc/passwd",
+  ]) {
+    assert.equal(containsRemoteAddress(bad), true, `must reject: ${bad}`);
+  }
+  for (const safe of ["drive_aaa", "moment_m1", "우리의 여름", "12cv-Xw0lrk_RDnf7q8isANVm-eV_b5dd"]) {
+    assert.equal(containsRemoteAddress(safe), false, `must allow: ${safe}`);
+  }
 });
 
 test("template platform: containsExecutableContent pins the boundary tokens", () => {

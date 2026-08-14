@@ -89,6 +89,22 @@ function checkExecutable(errors: string[], path: string, value: string): void {
   }
 }
 
+/**
+ * Remote-address boundary for media bindings (Issue #184 fail-closed).
+ * No external media host allowlist/policy exists in this first slice, so any
+ * URL-like remote reference is rejected: any `scheme://` form (`http://`,
+ * `https://`, `ftp://`, `file://`, …) and protocol-relative `//host/...`.
+ * Only opaque/canonical product media refs (e.g. `drive_aaa`) are allowed
+ * until an explicit product media-host policy exists. Never fetch, never
+ * sanitize — the data layer simply rejects remote addresses at the boundary.
+ */
+const REMOTE_ADDRESS_PATTERN = /:\/\//i;
+const PROTOCOL_RELATIVE_PATTERN = /^\/\//;
+
+export function containsRemoteAddress(value: string): boolean {
+  return REMOTE_ADDRESS_PATTERN.test(value) || PROTOCOL_RELATIVE_PATTERN.test(value);
+}
+
 const KEBAB_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const COLLECTION_DATA_TYPES = new Set([
@@ -208,6 +224,10 @@ function validateSlot(errors: string[], path: string, raw: unknown): TemplateSlo
       if (!Array.isArray(raw.allowedValues) || raw.allowedValues.length === 0 ||
           !raw.allowedValues.every((v) => isNonEmptyString(v))) {
         errors.push(`${path} (${slotId}) allowedValues must be a non-empty array of strings`);
+      } else {
+        for (const value of raw.allowedValues) {
+          checkExecutable(errors, `${path} (${slotId}) allowedValues`, value);
+        }
       }
       break;
     }
@@ -216,6 +236,10 @@ function validateSlot(errors: string[], path: string, raw: unknown): TemplateSlo
       if (!Array.isArray(raw.allowedValues) || raw.allowedValues.length === 0 ||
           !raw.allowedValues.every((v) => isNonEmptyString(v))) {
         errors.push(`${path} (${slotId}) allowedValues must be a non-empty array of strings`);
+      } else {
+        for (const value of raw.allowedValues) {
+          checkExecutable(errors, `${path} (${slotId}) allowedValues`, value);
+        }
       }
       break;
     }
@@ -282,6 +306,8 @@ export function validateDefinition(input: unknown): ValidationResult<TemplateDef
     }
     if (!isNonEmptyString(input.sourceProvenanceRef.revisionLabel)) {
       errors.push("sourceProvenanceRef.revisionLabel must be a non-empty string");
+    } else {
+      checkExecutable(errors, "sourceProvenanceRef.revisionLabel", input.sourceProvenanceRef.revisionLabel);
     }
   }
 
@@ -395,6 +421,8 @@ export function validateDefinition(input: unknown): ValidationResult<TemplateDef
     if (input.compatibility.migrationNote !== undefined &&
         !isNonEmptyString(input.compatibility.migrationNote)) {
       errors.push("compatibility.migrationNote must be a non-empty string");
+    } else if (typeof input.compatibility.migrationNote === "string") {
+      checkExecutable(errors, "compatibility.migrationNote", input.compatibility.migrationNote);
     }
   }
 
@@ -574,6 +602,21 @@ export function validateInstance(
           pushBindingError(errors, slotId, `duplicate bound value: ${item}`);
         }
         seenValues.add(item);
+      }
+
+      // Media bindings: no external media host policy exists in this first
+      // slice — any URL-like remote media reference is rejected fail-closed;
+      // only opaque/canonical refs (e.g. `drive_aaa`) are allowed.
+      if (slot.kind === "media") {
+        for (const item of values) {
+          if (containsRemoteAddress(item)) {
+            pushBindingError(
+              errors,
+              slotId,
+              `external remote media address is rejected (no media host allowlist in this first slice): ${item}`,
+            );
+          }
+        }
       }
 
       // Range bounds: slot-level maxItems, then global constraints.
