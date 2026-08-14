@@ -1,4 +1,8 @@
 import {
+  normalizeSelectionIndex,
+  selectedId,
+} from "./design-runtime/selection";
+import {
   canonicalV4OrbitRotation,
   nearestEquivalentV4OrbitRotation,
   nearestV4OrbitIndex,
@@ -8,10 +12,6 @@ import {
 export interface V4OrbitMomentLike {
   id: string;
   videoId?: string;
-}
-
-function wrapIndex(index: number, count: number) {
-  return ((Math.trunc(index) % count) + count) % count;
 }
 
 /**
@@ -24,16 +24,21 @@ export function v4OrbitSelectedIndex(rotation: number, count: number) {
   return nearestV4OrbitIndex(rotation, count);
 }
 
-export function v4OrbitSelectedId<T extends V4OrbitMomentLike>(moments: T[], selected: number) {
-  return moments[wrapIndex(selected, moments.length)].id;
+export function v4OrbitSelectedId<T extends V4OrbitMomentLike>(moments: T[], selected: number): string {
+  const id = selectedId(moments, Math.trunc(selected), "wrap", (moment) => moment.id);
+  if (id === undefined) {
+    throw new RangeError("V4 Orbit moment list must not be empty");
+  }
+  return id;
 }
 
 export function v4OrbitHeaderCount(selected: number, count: number) {
-  return { current: wrapIndex(selected, count) + 1, total: count };
+  const current = normalizeSelectionIndex(Math.trunc(selected), count, "wrap") + 1;
+  return { current, total: count };
 }
 
 export function v4OrbitRailItems<T extends V4OrbitMomentLike>(moments: T[], selected: number) {
-  const sel = wrapIndex(selected, moments.length);
+  const sel = normalizeSelectionIndex(Math.trunc(selected), moments.length, "wrap");
   return moments.map((moment, index) => ({
     index,
     id: moment.id,
