@@ -1,74 +1,29 @@
-# track-61-guided-next-moment-builder — Reuse-before-new-code checklist (scaffold)
+# track-61-guided-next-moment-builder — Reuse-before-new-code checklist
 
-Reuse existing mechanics/primitives before writing new code. Every section must be
-answered; empty answers stay HOLD and never imply implementation-ready PASS.
+## Product / native state
+- Product Job: guided next-Moment discovery → reason/fan/media inspection → selection → editable WHY NEXT → Main/Branch → Story Path continuation.
+- Native candidate: IMPLEMENTED in Design Lab route `/design-lab/lineages/61/61-v1-7`.
+- Reused runtime contracts: P3, P4, P5, P7, P9 semantics are implemented locally in this candidate; this does not claim a shared-core extraction.
+- Existing ExperienceCapabilities: no canonical capability adoption/import is required for this proving candidate. Reuse remains semantic until #141 extraction has proven multi-consumer value.
+- Truly new shared primitive: NONE.
 
-## 1. Product Job
+## Exact assets / source fidelity
+- Runtime exact assets transferred to repo: NONE.
+- P8 exact visual/source fidelity: HOLD.
+- Interaction-contract Design Fidelity may run with `assetGate: null` only because it does not certify source-fidelity.
 
-Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.
+## Native remediation
+- current → selected candidate → WHY → Main/Branch → next recommendation state consistency: IMPLEMENTED.
+- representative grammar: same-subject / different-subject / format-shift: IMPLEMENTED.
+- explicit detail control + dialog focus entry/containment/Escape/restoration: IMPLEMENTED; central browser verification required.
+- closed overlay noninteractive/unfocusable: IMPLEMENTED by unmounting; central browser verification required.
+- 1280×800 / 390×844 / 320×720 + reduced motion + pointer/touch/keyboard: central interaction-contract gate required.
+- receiver-side handoff consume + same-Moment focus: HOLD.
+- physical owner Windows local-file target open: HOLD.
 
-Status: OK
+## Policy boundary
+Fictional identities, demo fan quotes and synthetic counts are prototype fixtures, never backend truth. Private Moment/memo/message content is not recommendation evidence.
 
-## 2. Lineage visual identity
-
-NEW_LINEAGE — Guided Next Moment LoveTree Builder V1.7 (dom-2d)
-
-Status: OK
-
-## 3. Rendering
-
-dom-2d
-
-Status: OK
-
-## 4. Existing ExperienceCapabilities
-
-TODO — reuse review required
-
-Status: HOLD
-
-## 5. P1–P9 reused
-
-P3, P4, P5, P7, P9
-
-Status: OK
-
-## 6. Truly new primitive
-
-NONE — reuse only
-
-Status: OK (NONE is a valid answer)
-
-## 7. Exact assets
-
-NONE recorded — confirm no runtime-required binaries or pin them
-
-Status: HOLD — confirm before implementation-ready
-
-## 8. Source defects / native remediation
-
-remediation: current → selected candidate → WHY → Main/Branch → next recommendation state consistency
-remediation: video/reaction/drawer/dialog close + Escape + focus entry/containment/restoration where modal
-remediation: closed overlays noninteractive/unfocusable
-remediation: source asset gate before exact visual PASS
-remediation: first three choices visibly differentiated
-remediation: 320×720 QA
-remediation: receiver-side ltHandoff consume hook + same-Moment focus in native targets (HOLD until receiver implemented)
-remediation: physical click → target open under managed browser navigation policy (HOLD)
-
-Status: OK
-
-## 9. Source-only / fake values excluded
-
-fictional names, 21 fixed fixtures, synthetic percentages/counts, demo fan quotes
-
-Status: OK
-
-## 10. Backend/Auth/DB-free scope
-
-BACKEND_FREE
-
-Status: OK
-
-IMPLEMENTATION_READY: NO — scaffold; resolve every HOLD above before claiming implementation-ready.
-
+IMPLEMENTATION_READY: YES for native **interaction-contract proving**.
+SOURCE_FIDELITY_READY: NO — P8 HOLD.
+CANONICAL_ADOPTION_READY: NO — product-owner decision remains separate.

@@ -231,6 +231,27 @@ export const LINEAGE_INTAKE_CANDIDATES: readonly DesignCandidate[] = [
     ],
     notes: "PARTIAL IMPLEMENT. SOURCE DELTA mobile parity/accessibility/reduced-motion hardening is explicit. SAVE is non-persistent. Visual source-fidelity remains blocked by EXACT_CHARACTER_ASSET_TRANSFER_HOLD until 54/54 exact binaries land.",
   },
+  {
+    id: "lineage:lt-61-guided-next-moment-builder-61-v1-7",
+    label: "Guided Next Moment LoveTree Builder V1.7",
+    scenarioId: "tree-workspace",
+    route: "/design-lab/lineages/61/61-v1-7",
+    status: "implemented",
+    origin: "lineage-intake",
+    kind: "experience",
+    lineageId: "lt-61-guided-next-moment-builder",
+    revisionId: "61-v1-7",
+    sourceFile: "현재후보.html",
+    role: "Discover plausible next Moments → inspect reason/fan context/media preview → choose → edit WHY NEXT → connect as Main/Branch → continue Story Path.",
+    preserve: [
+      "three semantic representative choices: same-subject / different-subject / format-shift",
+      "recommendation reason, fan reaction and user-owned WHY NEXT remain separate",
+      "one canonical selected candidate authority",
+      "Main/Branch state and branch continuation",
+      "synthetic demo metrics never presented as backend truth",
+    ],
+    notes: "Native interaction candidate implemented. Central interaction-contract QA is required; P8/source fidelity and canonical /v4 adoption remain HOLD.",
+  },
 ] as const;
 
 export const HISTORICAL_CANDIDATES: readonly DesignCandidate[] = [

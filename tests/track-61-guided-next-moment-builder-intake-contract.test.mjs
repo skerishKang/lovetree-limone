@@ -49,10 +49,12 @@ const MANIFEST = {
       "status": "REFERENCE_ONLY"
     },
     {
-      "filename": "23_디자인팀장7기_61_V1.5_실제트랙네비게이션·YouTubeSeed·Undo_수정지시_2026-08-13.md",
-      "driveId": "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF",
+      "filename": "27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md",
+      "driveId": "1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl",
+      "bytes": 12521,
+      "sha256": "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0",
       "role": "instruction",
-      "status": "REFERENCE_ONLY"
+      "status": "PINNED"
     }
   ],
   "reusableCapabilities": [],
@@ -81,6 +83,10 @@ const MANIFEST = {
     "demo fan quotes"
   ],
   "backendScope": "BACKEND_FREE",
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Guided Next Moment LoveTree Builder V1.7"
+  },
   "slotNotes": {
     "issue": "142",
     "notes": [
@@ -158,6 +164,7 @@ test("track-61-guided-next-moment-builder: manifest stays schema-valid", () => {
   assert.equal(parsed.stableId, "track-61-guided-next-moment-builder");
   assert.equal(parsed.sourceTrackId, "Track61");
   assert.equal(parsed.classification, "NEW_LINEAGE");
+  assert.equal(parsed.fidelityTargetMetadata.validationClass, "interaction-contract");
 });
 
 test("track-61-guided-next-moment-builder: provenance is reference-only and never executed", () => {

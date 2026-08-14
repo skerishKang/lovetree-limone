@@ -43,6 +43,13 @@ const REAL_FIXTURE_NAMES = [
   "track-64-floating-moment-entry-portal",
 ];
 
+// Track61 becomes intentionally non-scaffoldable after this proving PR applies
+// all three live registry seams. Re-running the factory must fail closed instead
+// of duplicating the already-materialized lineage/candidate/fidelity identities.
+const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
+  (name) => name !== "track-61-guided-next-moment-builder",
+);
+
 const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
 
 function fixture(stableId) {
@@ -739,7 +746,7 @@ test("15. source HTML/JS is never read or executed", () => {
 test("16. scaffold plans never write under canonical /v4 product trees", () => {
   const root = withTempRoot();
   try {
-    for (const name of REAL_FIXTURE_NAMES) {
+    for (const name of PRE_REGISTRATION_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
       for (const write of plan.writes) {
         assert.ok(
@@ -847,10 +854,14 @@ test("fixtures: Track61 V1.7 authoritative source identity is pinned", () => {
     "133e3a82cae1e4edd46083deb648962882e624d1db1890c5c337a0068ef83bf7",
   );
   const instruction = manifest.sourceArtifacts.find((artifact) => artifact.role === "instruction");
-  assert.equal(instruction.driveId, "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF");
+  assert.equal(instruction.driveId, "1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl");
+  assert.equal(instruction.filename, "27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md");
+  assert.equal(instruction.bytes, 12521);
+  assert.equal(instruction.sha256, "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0");
+  assert.equal(manifest.fidelityTargetMetadata.validationClass, "interaction-contract");
 });
 
-test("fixtures: Track61 V1.5 navigation evidence keeps open/focus HOLDS separate", () => {
+test("fixtures: Track61 V1.7 navigation evidence keeps open/focus HOLDS separate", () => {
   const manifest = parseIntakeManifest(fixture("track-61-guided-next-moment-builder"));
   assert.equal(manifest.navigationHandoff.targetMapping, true);
   assert.equal(manifest.navigationHandoff.urlResolution, true);
@@ -909,6 +920,19 @@ test("fixtures: Track64 → NEW_LINEAGE → Memory Entry Portal, executable pend
   assert.ok(manifest.productJobDistinctness);
 });
 
+test("fixtures: Track61 applied registry seams fail closed on repeat scaffold", () => {
+  const root = withTempRoot();
+  try {
+    assert.throws(
+      () => buildScaffoldPlan(fixture("track-61-guided-next-moment-builder"), { root, fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+      "applied Track61 lineage/candidate/fidelity identities must not be scaffolded twice",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
 test("fixtures: all repository manifests parse and scaffold cleanly", () => {
   for (const name of REAL_FIXTURE_NAMES) {
     const manifest = parseIntakeManifest(fixture(name));
@@ -918,7 +942,7 @@ test("fixtures: all repository manifests parse and scaffold cleanly", () => {
 
   const root = withTempRoot();
   try {
-    for (const name of REAL_FIXTURE_NAMES) {
+    for (const name of PRE_REGISTRATION_FIXTURE_NAMES) {
       const plan = buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS });
       assert.ok(plan.writes.length >= 5, `${name}: expected metadata/provenance/checklist/tests/docs writes`);
       assert.ok(plan.registrySeams.length === 3, `${name}: three registry seams`);

@@ -13,7 +13,9 @@
   "provenance": {
     "sourceLabel": "61_러브트리_감정경로_연결검토실 / Issue #158 (V1.7 current authority)",
     "driveFolderId": "1uAuP0ja-4MB3HWedICosfMSWhkmQ0yEr",
-    "sourceFiles": ["현재후보.html"],
+    "sourceFiles": [
+      "현재후보.html"
+    ],
     "rightsStatus": "sibling-source-owned"
   },
   "designLineageId": "lt-61-guided-next-moment-builder",
@@ -45,14 +47,22 @@
       "status": "REFERENCE_ONLY"
     },
     {
-      "filename": "23_디자인팀장7기_61_V1.5_실제트랙네비게이션·YouTubeSeed·Undo_수정지시_2026-08-13.md",
-      "driveId": "1zCROGw4ekblYdJIBwSpzruz6ZYmY2ayF",
+      "filename": "27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md",
+      "driveId": "1mDUVWjXjQFCkIHbvI-8jk4LdE3vaGMtl",
+      "bytes": 12521,
+      "sha256": "48aeceb831397ce41cee2ab0df0a6852ed1c294cc49fce5054f3488e1287a9a0",
       "role": "instruction",
-      "status": "REFERENCE_ONLY"
+      "status": "PINNED"
     }
   ],
   "reusableCapabilities": [],
-  "runtimePrimitives": ["P3", "P4", "P5", "P7", "P9"],
+  "runtimePrimitives": [
+    "P3",
+    "P4",
+    "P5",
+    "P7",
+    "P9"
+  ],
   "sourceDefects": [],
   "nativeRemediations": [
     "current → selected candidate → WHY → Main/Branch → next recommendation state consistency",
@@ -115,9 +125,20 @@
   },
   "qa": {
     "viewports": [
-      { "width": 1280, "height": 800 },
-      { "width": 390, "height": 844, "mobile": true },
-      { "width": 320, "height": 720, "mobile": true }
+      {
+        "width": 1280,
+        "height": 800
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      {
+        "width": 320,
+        "height": 720,
+        "mobile": true
+      }
     ],
     "reducedMotion": true,
     "keyboardFocus": true,
@@ -126,5 +147,9 @@
     "horizontalOverflowZero": true,
     "consoleErrorsZero": true,
     "pageErrorsZero": true
+  },
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Guided Next Moment LoveTree Builder V1.7"
   }
 }

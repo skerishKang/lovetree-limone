@@ -22,11 +22,17 @@ import styles from "./lineage-61.module.css";
 
 type GrowAs = "main" | "branch";
 
+type MediaType = "photo" | "video" | "shorts" | "interview";
+type RepresentativeKind = "same-subject" | "different-subject" | "format-shift";
+
 interface Moment {
   id: string;
   title: string;
   description: string;
   theme: string;
+  subject: string;
+  mediaType: MediaType;
+  previewLabel: string;
 }
 
 interface Candidate {
@@ -39,15 +45,15 @@ interface Candidate {
 }
 
 const MOMENTS: Moment[] = [
-  { id: "m-first", title: "처음 마주한 그날의 벤치", description: "햇살 아래 앉아 서로의 이름을 처음 묻던 순간.", theme: "first-meet" },
-  { id: "m-daily", title: "매일의 출근 인사", description: "비가 오나 눈이 오나 현관에서 건넨 작은 목례.", theme: "daily" },
-  { id: "m-confess", title: "고백했던 빗속 산책", description: "우산 하나로 둘이서 걸으며 털어놓은 마음.", theme: "confession" },
-  { id: "m-travel", title: "바다가 보이는 여행", description: "이른 아침 해변에서 함께 찍은 사진 한 장.", theme: "travel" },
-  { id: "m-gift", title: "손편지와 작은 선물", description: "생각지도 못한 날, 문 앞에 놓인 편지.", theme: "gift" },
-  { id: "m-apology", title: "화해의 카페 대화", description: "서로의 서운함을 꺼내고 웃음으로 끝낸 저녁.", theme: "apology" },
-  { id: "m-anniv", title: "첫 기념일 저녁", description: "예약한 자리보다 서로의 눈빛이 더 기억에 남음.", theme: "anniversary" },
-  { id: "m-distance", title: "멀어진 거리의 전화", description: "시차를 넘어 건넨 '잘 자'라는 인사.", theme: "distance" },
-  { id: "m-reunion", title: "다시 만난 골목길", description: "우연처럼 마주친 골목에서 멈춘 두 발.", theme: "reunion" },
+  { id: "m-first", title: "처음 마주한 그날의 벤치", description: "햇살 아래 앉아 서로의 이름을 처음 묻던 순간.", theme: "first-meet", subject: "하린", mediaType: "photo", previewLabel: "공원 벤치 스틸" },
+  { id: "m-daily", title: "매일의 출근 인사", description: "비가 오나 눈이 오나 현관에서 건넨 작은 목례.", theme: "daily", subject: "하린", mediaType: "photo", previewLabel: "현관 인사 포토" },
+  { id: "m-confess", title: "고백했던 빗속 산책", description: "우산 하나로 둘이서 걸으며 털어놓은 마음.", theme: "confession", subject: "민서", mediaType: "photo", previewLabel: "빗속 산책 스틸" },
+  { id: "m-travel", title: "바다가 보이는 여행", description: "이른 아침 해변에서 함께 찍은 사진 한 장.", theme: "travel", subject: "하린", mediaType: "video", previewLabel: "해변 여행 비디오 프리뷰" },
+  { id: "m-gift", title: "손편지와 작은 선물", description: "생각지도 못한 날, 문 앞에 놓인 편지.", theme: "gift", subject: "지우", mediaType: "photo", previewLabel: "손편지 포토" },
+  { id: "m-apology", title: "화해의 카페 대화", description: "서로의 서운함을 꺼내고 웃음으로 끝낸 저녁.", theme: "apology", subject: "민서", mediaType: "interview", previewLabel: "카페 대화 인터뷰 프리뷰" },
+  { id: "m-anniv", title: "첫 기념일 저녁", description: "예약한 자리보다 서로의 눈빛이 더 기억에 남음.", theme: "anniversary", subject: "서윤", mediaType: "video", previewLabel: "기념일 비디오 프리뷰" },
+  { id: "m-distance", title: "멀어진 거리의 전화", description: "시차를 넘어 건넨 '잘 자'라는 인사.", theme: "distance", subject: "지우", mediaType: "shorts", previewLabel: "통화 쇼츠 프리뷰" },
+  { id: "m-reunion", title: "다시 만난 골목길", description: "우연처럼 마주친 골목에서 멈춘 두 발.", theme: "reunion", subject: "서윤", mediaType: "photo", previewLabel: "재회 골목 포토" },
 ];
 
 const SYNTHETIC_FAN_QUOTES: Record<string, { quote: string; handle: string }[]> = {
@@ -134,6 +140,32 @@ function buildCandidate(moment: Moment): Candidate {
 const CANDIDATES: Candidate[] = MOMENTS.map(buildCandidate);
 const CANDIDATE_BY_MOMENT = new Map(CANDIDATES.map((c) => [c.moment.id, c]));
 
+interface RepresentativeChoice {
+  candidate: Candidate;
+  kind: RepresentativeKind;
+  label: string;
+}
+
+function buildRepresentativeChoices(current: Moment, candidates: Candidate[]): RepresentativeChoice[] {
+  const used = new Set<string>();
+  const choices: RepresentativeChoice[] = [];
+  const take = (kind: RepresentativeKind, label: string, predicate: (candidate: Candidate) => boolean) => {
+    const candidate = candidates.find((item) => !used.has(item.moment.id) && predicate(item));
+    if (!candidate) return;
+    used.add(candidate.moment.id);
+    choices.push({ candidate, kind, label });
+  };
+
+  take("same-subject", "같은 인물 심화", (item) => item.moment.subject === current.subject);
+  take("different-subject", "다른 인물 분기", (item) => item.moment.subject !== current.subject);
+  take("format-shift", "다른 콘텐츠 형식", (item) => item.moment.mediaType !== current.mediaType);
+
+  if (choices.length !== 3) {
+    throw new Error(`Representative grammar requires 3 semantic choices for ${current.id}`);
+  }
+  return choices;
+}
+
 interface PathNode {
   id: string;
   momentId: string;
@@ -176,9 +208,21 @@ export default function Lineage61GuidedNextMomentBuilder() {
     return filtered;
   }, [currentMomentId, theme]);
 
-  const representative = useMemo(() => pool.slice(0, 3), [pool]);
+  const representative = useMemo(
+    () => buildRepresentativeChoices(
+      currentMoment,
+      CANDIDATES.filter((candidate) => candidate.moment.id !== currentMomentId),
+    ),
+    [currentMoment, currentMomentId],
+  );
 
   const selectedCandidate = selectedId ? CANDIDATE_BY_MOMENT.get(selectedId) ?? null : null;
+
+  const selectCandidate = useCallback((momentId: string) => {
+    const candidate = CANDIDATE_BY_MOMENT.get(momentId);
+    setSelectedId(momentId);
+    setWhyNext(candidate?.recommendationReason ?? "");
+  }, []);
 
   const confirmSelection = useCallback(() => {
     if (!selectedCandidate) return;
@@ -301,7 +345,7 @@ export default function Lineage61GuidedNextMomentBuilder() {
       <div className={styles.demoBanner} role="note">
         <span aria-hidden="true">⚠</span>
         <span>
-          <strong>데모 픽스처 경계:</strong> 인기 수치(cheers/views), 팬 인용구, 가상 인물은后端
+          <strong>데모 픽스처 경계:</strong> 인기 수치(cheers/views), 팬 인용구, 가상 인물은 백엔드
           사실이 아닌 프로토타입 데모 데이터입니다. 비공개 Moment·메모·메시지는 추천 근거로 사용되지 않습니다.
         </span>
       </div>
@@ -318,19 +362,25 @@ export default function Lineage61GuidedNextMomentBuilder() {
 
           <h3 className={styles.panelTitle}>대표 3선 (Representative choices)</h3>
           <div className={styles.repRow}>
-            {representative.map((c, idx) => (
+            {representative.map(({ candidate: c, kind, label }, idx) => (
               <button
                 key={c.moment.id}
                 type="button"
                 className={styles.repCard}
                 data-selected={selectedId === c.moment.id}
+                data-representative-kind={kind}
+                data-subject={c.moment.subject}
+                data-media-type={c.moment.mediaType}
                 aria-pressed={selectedId === c.moment.id}
-                onClick={() => setSelectedId(c.moment.id)}
+                onClick={() => selectCandidate(c.moment.id)}
                 onDoubleClick={(e) => openDetail(c.moment.id, e.currentTarget)}
               >
-                <span className={styles.repBadge}>#{idx + 1}</span>
+                <span className={styles.repBadge}>{idx + 1}. {label}</span>
                 <div className={styles.poolTitle}>{c.moment.title}</div>
-                <div className={styles.poolMeta}>{c.moment.theme}</div>
+                <div className={styles.poolMeta}>{c.moment.subject} · {c.moment.mediaType} · {c.moment.theme}</div>
+                <div className={styles.poolMeta} data-demo-media-preview>
+                  미디어 미리보기: {c.moment.previewLabel} (demo)
+                </div>
               </button>
             ))}
           </div>
@@ -367,14 +417,16 @@ export default function Lineage61GuidedNextMomentBuilder() {
                     <button
                       type="button"
                       className={styles.poolItem}
+                      data-pool-candidate={c.moment.id}
+                      data-pool-theme={c.moment.theme}
                       data-selected={selectedId === c.moment.id}
                       aria-pressed={selectedId === c.moment.id}
-                      onClick={() => setSelectedId(c.moment.id)}
+                      onClick={() => selectCandidate(c.moment.id)}
                       onDoubleClick={(e) => openDetail(c.moment.id, e.currentTarget)}
                     >
                       <span className={styles.poolMain}>
                         <span className={styles.poolTitle}>{c.moment.title}</span>
-                        <span className={styles.poolMeta}> · {c.moment.theme}</span>
+                        <span className={styles.poolMeta}> · {c.moment.subject} · {c.moment.mediaType} · {c.moment.theme}</span>
                       </span>
                       <span className={styles.ghostBtn} aria-hidden="true">상세</span>
                     </button>
@@ -390,6 +442,16 @@ export default function Lineage61GuidedNextMomentBuilder() {
               <p style={{ margin: "0 0 8px" }}>
                 선택한 후보: <strong>{selectedCandidate.moment.title}</strong>
               </p>
+              <p className={styles.poolMeta} data-selected-media>
+                {selectedCandidate.moment.subject} · {selectedCandidate.moment.mediaType} · {selectedCandidate.moment.previewLabel}
+              </p>
+              <button
+                type="button"
+                className={styles.toggleBtn}
+                onClick={(event) => openDetail(selectedCandidate.moment.id, event.currentTarget)}
+              >
+                선택 후보 상세보기
+              </button>
               <div className={styles.growRow} role="radiogroup" aria-label="Main 또는 Branch로 연결">
                 <label className={styles.radioLabel}>
                   <input
@@ -460,6 +522,14 @@ export default function Lineage61GuidedNextMomentBuilder() {
               닫기 (Esc)
             </button>
             <h2 id={`${baseId}-dlg-title`}>{detailCandidate.moment.title}</h2>
+
+            <div className={styles.section} data-demo-media-detail>
+              <h3>미디어 미리보기 (Demo media preview)</h3>
+              <p style={{ margin: 0 }}>
+                {detailCandidate.moment.previewLabel} · {detailCandidate.moment.subject} · {detailCandidate.moment.mediaType}
+              </p>
+              <p className={styles.synthetic}>정확한 source media/P8 fidelity를 주장하지 않는 interaction-only demo preview입니다.</p>
+            </div>
 
             <div className={styles.section}>
               <h3>추천 근거 (Recommendation reason)</h3>

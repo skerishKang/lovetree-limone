@@ -255,6 +255,26 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
+  {
+    id: "lt-61-guided-next-moment-builder",
+    number: 61,
+    label: "Guided Next Moment LoveTree Builder V1.7",
+    status: "incoming",
+    summary: "Guided discovery of plausible next Moments, editable WHY NEXT, Main/Branch growth and continuing Story Path. Native interaction candidate is implemented; exact source visual fidelity and canonical /v4 adoption remain separate HOLD decisions.",
+    scenarios: ["tree-workspace"],
+    currentDecision: "V1.7 is the current native Design Lab proving candidate. Central interaction-contract QA is required; P8 exact visual/source fidelity, owner local file navigation and receiver same-Moment focus remain HOLD.",
+    sourceLabel: "Track61 V1.7 / Issue #158 / Design Intake Factory #157",
+    revisions: [
+      {
+        id: "61-v1-7",
+        label: "Guided Next Moment LoveTree Builder V1.7",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/61/61-v1-7",
+        notes: "native interaction candidate; interaction-contract proving only; source fidelity/P8 not claimed",
+      },
+    ],
+  },
 
 ] as const;
 

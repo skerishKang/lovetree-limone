@@ -47,8 +47,7 @@
         "revisionId": "61-v1-7",
         "sourceFile": "현재후보.html",
         "role": "Discover someone else's/public LoveTree path → start from one Moment → inspect several plausible next Moments → understand WHY NEXT / fan context → choose one → edit/own the WHY NEXT → grow my Tree as Main or Branch → receive the next choices and continue.",
-        "nativeReadiness": "IMPLEMENTED",
-        "notes": "scaffolded from track-61-guided-next-moment-builder; source fidelity not claimed"
+        "notes": "native interaction candidate implemented; central interaction-contract QA required; source fidelity/P8 and canonical adoption remain HOLD"
       }
     }
   },
@@ -62,7 +61,7 @@
         "id": "lineage-61-61-v1-7",
         "label": "Guided Next Moment LoveTree Builder V1.7",
         "route": "/design-lab/lineages/61/61-v1-7",
-        "validationClass": "source-fidelity",
+        "validationClass": "interaction-contract",
         "impactPrefixes": [
           "app/design-lab/lineages/61/61-v1-7/",
           "reference/design-intake/track-61-guided-next-moment-builder/",
@@ -93,7 +92,9 @@
           }
         ],
         "captureReducedMotion": true,
-        "extraEvidencePaths": []
+        "extraEvidencePaths": [
+          "test-results/track-61-guided-next-moment-builder"
+        ]
       }
     }
   }
