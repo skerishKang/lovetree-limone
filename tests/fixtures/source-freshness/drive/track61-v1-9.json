@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "note": "synthetic: Drive current is V1.9",
+  "files": [
+    {
+      "driveId": "1D11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.9",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "bytes": 520000,
+      "functional": true
+    }
+  ]
+}

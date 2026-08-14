@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track62-v1-1-current",
+  "sourceTrackId": "Track62",
+  "title": "Fixture Track62 V1.1 exact current",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: manifest pins V1.1 which exactly matches the functional Drive current",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-62-v1-1-current",
+  "lineageNumber": 62,
+  "revisionId": "62-v1-1",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1C11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.1",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

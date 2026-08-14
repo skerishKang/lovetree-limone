@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "note": "synthetic: Drive current is V1.7 (newer than the pinned V1.5)",
+  "files": [
+    {
+      "driveId": "1L11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.7",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "bytes": 510000,
+      "functional": true
+    }
+  ]
+}

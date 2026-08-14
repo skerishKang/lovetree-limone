@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "stableId": "repackaged-track62-v1-1",
+  "sourceTrackId": "Track62",
+  "title": "Fixture Track62 V1.1 repackaged",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: the pinned executable was re-uploaded under a new Drive file id with identical SHA-256 — packaging only",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-62-synthetic-repackaged",
+  "lineageNumber": 62,
+  "revisionId": "62-v1-1",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1I11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.1",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

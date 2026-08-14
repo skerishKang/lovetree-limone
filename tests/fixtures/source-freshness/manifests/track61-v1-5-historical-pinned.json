@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track61-v1-5-historical-pinned",
+  "sourceTrackId": "Track61",
+  "title": "Fixture Track61 V1.5 historical pin",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: V1.5 stays pinned as the historical proving snapshot while the Drive current is V1.7",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-61-synthetic-historical",
+  "lineageNumber": 61,
+  "revisionId": "61-v1-5",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1K11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.5",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.7 supersedes per synthetic Issue authority — V1.5 stays pinned as the proving snapshot per #80"
+  }
+}
