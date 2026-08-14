@@ -2,29 +2,36 @@
   "schemaVersion": 1,
   "stableId": "track-64-floating-moment-entry-portal",
   "sourceTrackId": "Track64",
-  "title": "Floating Moment Welcome Orbit V1",
+  "title": "Floating Moment Welcome Orbit V1.2.1",
   "classification": "NEW_LINEAGE",
-  "lifecycle": "EXECUTABLE_PENDING",
-  "rendering": "unresolved",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "css3d-dom",
   "scenarioId": "entry-onboarding",
   "productJob": "A returning user enters LoveTree / My Tree, sees recent / important / First Moments living in one continuous floating 3D card universe, selects one memory, and re-enters the emotional path from that Moment — a returning-user Memory Entry Portal.",
-  "summary": "Track64 (부유모먼트 웰컴오빗 입장포털 / Floating Moment Welcome Orbit V1) is a new repository Lineage (lt-64-floating-moment-entry-portal). This manifest pins the V1 reference/pre-executable proving snapshot (Issue #165), superseded by content revision V1.2.1 (current authority; Drive folder label '버전1.3_책으로보기_경로정정_후보' is a candidate label, not a V1.3 functional revision). Although the visual overlaps with Orbit-like presentation, the Product Job is the returning-user Memory Entry Portal, not another generic Orbit gallery. Executable pending; rendering unresolved.",
+  "summary": "Track64 (부유모먼트 웰컴오빗 입장포털 / Floating Moment Welcome Orbit V1) is a new repository Lineage (lt-64-floating-moment-entry-portal). This manifest is the current-source re-intake (Issue #165): functional revision V1.2.1 is the current authority at observation (Drive folder label '버전1.3_책으로보기_경로정정_후보' is a candidate label, NOT a V1.3 functional revision) with the path-corrected executable (Drive 1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g, 1,565,313 B, SHA256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d) pinned as current source executable. Source lifecycle EXECUTABLE_AVAILABLE and rendering css3d-dom reflect the real V1.2.1 executable (perspective / transform-style: preserve-3d / translate3d / rotateX/Y/Z / DOM cards / requestAnimationFrame — not WebGL/canvas/THREE); they are SOURCE lifecycle, separate from native readiness — native route/QA/adoption stay on HOLD and qa remains omitted. Although the visual overlaps with Orbit-like presentation, the Product Job is the returning-user Memory Entry Portal, not another generic Orbit gallery.",
   "provenance": {
     "sourceLabel": "64_부유모먼트_웰컴오빗_입장포털 / Issue #165",
     "driveFolderId": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
-    "sourceFiles": ["★_참고영상_부유카드포트폴리오_웰컴오빗.mp4"],
+    "sourceFiles": ["현재후보.html", "★_참고영상_부유카드포트폴리오_웰컴오빗.mp4"],
     "rightsStatus": "sibling-source-owned"
   },
   "designLineageId": "lt-64-floating-moment-entry-portal",
   "lineageNumber": 64,
-  "revisionId": "64-v1",
+  "revisionId": "64-v1-2-1",
   "sourceSnapshot": {
-    "revisionLabel": "V1 (reference pinned)",
+    "revisionLabel": "V1.2.1",
     "authorityObservedAt": "2026-08-13T00:00:00.000Z",
-    "sourceAuthorityState": "HISTORICAL_PINNED",
-    "newerRevisionKnown": "content revision V1.2.1 supersedes per Issue #165 current authority (Drive folder label '버전1.3_책으로보기_경로정정_후보' is a candidate label, NOT a V1.3 functional revision; authoritative status is V1.2.1; current path-corrected executable Drive 1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g, 1,565,313 B) — the checked-in V1 reference/pre-executable proving snapshot stays pinned per #80"
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
   },
   "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g",
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+      "role": "executable",
+      "status": "PINNED"
+    },
     {
       "filename": "★_참고영상_부유카드포트폴리오_웰컴오빗.mp4",
       "driveId": "1rbxcW7PCHLQsQSw_Sb0zpoPqiR6DqVe3",
@@ -37,18 +44,25 @@
   "reusableCapabilities": ["spatial-orbit-3d"],
   "runtimePrimitives": ["P3", "P4", "P5", "P6", "P7", "P9"],
   "sourceDefects": [
-    "no executable candidate exists at intake — candidate folder empty",
     "no explicit keyboard-only contract in the source instruction",
     "no 320×720 gate in the source instruction"
   ],
   "nativeRemediations": [
+    "lostpointercapture recovery",
+    "viewer focus entry",
+    "focus trap",
+    "Escape/X close",
+    "trigger focus restore",
+    "background inert/noninteractive",
     "keyboard selection/index navigation",
     "visible focus",
     "pointer/touch/wheel ownership",
     "reduced-motion manual parity (idle auto orbit OFF, user drag/swipe retained)",
     "focused card metadata reachable without pointer-only hover",
     "semantic non-visual Moment list/index alternative where the 3D field is not sufficient",
-    "320×720 QA"
+    "320×720 QA",
+    "real-video playback claim boundary (source fixture poster/PLAY is prototype behavior, not proven live playback)",
+    "source fixture ≠ canonical product truth"
   ],
   "sourceOnlyValues": [
     "recent / important / resume are PRODUCT_POLICY or derived-data authority, never template truth"
@@ -56,8 +70,16 @@
   "backendScope": "BACKEND_FREE",
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #165 — V1 contract accepted; REFERENCE PINNED — EXECUTABLE/QA PENDING"
+    "note": "Issue #165 — V1.2.1 current source re-intake accepted; source executable PINNED (CTO forensic authority); native QA absent — adoption stays UNDECIDED until a native candidate passes 1280×800 / 390×844 / 320×720 / reduced-motion / keyboard / pointer-touch gates"
   },
+  "handoffMappings": [
+    {
+      "sourceTrackId": "Track59",
+      "resolvedProductTargetId": "lt-59-living-memory-book",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "책으로 보기 target identity resolved from Track59 (Drive local path/static resolution proven); native route, receiver consume and same-Moment restore NOT proven — OPTIONAL dependency, does not block Track64 core; integration complete is NOT claimed"
+    }
+  ],
   "visualMechanicOverlap": ["Orbit-like floating card universe"],
   "productJobDistinctness": "returning-user Memory Entry Portal — not a decorative landing page and not another generic Orbit gallery",
   "slotNotes": {
@@ -80,18 +102,12 @@
     "validationClass": "interaction-contract",
     "label": "Floating Moment Welcome Orbit Entry Portal"
   },
-  "qa": {
-    "viewports": [
-      { "width": 1280, "height": 800 },
-      { "width": 390, "height": 844, "mobile": true },
-      { "width": 320, "height": 720, "mobile": true }
-    ],
-    "reducedMotion": true,
-    "keyboardFocus": true,
-    "pointer": true,
-    "touch": true,
-    "horizontalOverflowZero": true,
-    "consoleErrorsZero": true,
-    "pageErrorsZero": true
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
   }
 }
