@@ -1,0 +1,26 @@
+{
+  "available": true,
+  "note": "synthetic: rootCandidate is the explicit unique authority and maps to the V1.1 candidate",
+  "rootCandidate": {
+    "driveId": "1C11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "bytes": 500000,
+    "revisionLabel": "V1.1"
+  },
+  "files": [
+    {
+      "driveId": "1V11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.0",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "bytes": 490000,
+      "functional": true
+    },
+    {
+      "driveId": "1C11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.1",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bytes": 500000,
+      "functional": true
+    }
+  ]
+}
