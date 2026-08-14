@@ -275,7 +275,26 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
-
+  {
+    id: "lt-63-moment-field-view-studio",
+    number: 63,
+    label: "Moment Field 3D View Studio V1.1",
+    status: "active",
+    summary: "One canonical Moment+Connection dataset projected through 44 spatial ViewDefinitions with 48 bound inspector parameters, CSS3D DOM rendering, and single-active video authority.",
+    scenarios: ["people-archive"],
+    currentDecision: "V1.1 native proving candidate active in Design Lab. 54 Moments, 44 View Presets, 48 Inspector controls, 57 Connections, CSS3D DOM.",
+    sourceLabel: "Track63 V1.1 / Drive 15gQt4Z0XDe0w4-CpA43FxQmdY7TQ6Wu0 / Issue #164",
+    revisions: [
+      {
+        id: "63-v1-1",
+        label: "V1.1 Real Media Seed + Preset Expansion",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/63",
+        notes: "1,069,571 B source snapshot · SHA256 09017bb6ff2f14b2e0d4b95bd7da50117db37dfcb1a5bc001efd32fe6dba55cd · CSS3D DOM native candidate",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {

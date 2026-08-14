@@ -1,0 +1,784 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  background-color: #06070b;
+  color: #f3f0ec;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: clip;
+}
+
+/* Topbar Header */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  background: rgba(14, 16, 22, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  z-index: 40;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backLink {
+  color: #a8a29e;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.backLink:hover,
+.backLink:focus-visible {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  outline: 2px solid #ff7597;
+}
+
+.titleArea h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fafaf9;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 117, 151, 0.15);
+  color: #ff7597;
+  border: 1px solid rgba(255, 117, 151, 0.3);
+  margin-left: 8px;
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionBtn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e7e5e4;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover,
+.actionBtn:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  outline: 2px solid #ff7597;
+}
+
+.actionBtnPrimary {
+  background: #ff7597;
+  border: 1px solid #ff7597;
+  color: #0c0a09;
+  font-weight: 600;
+}
+
+.actionBtnPrimary:hover,
+.actionBtnPrimary:focus-visible {
+  background: #ff8ca8;
+  border-color: #ff8ca8;
+  outline: 2px solid #ffffff;
+}
+
+/* Studio Workspace Layout */
+.workspace {
+  display: grid;
+  grid-template-columns: 280px 1fr 340px;
+  flex: 1;
+  min-height: calc(100vh - 120px);
+  position: relative;
+}
+
+/* Left Preset & Seed Library */
+.sidebarLeft {
+  background: #090a0f;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 14px;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a8a29e;
+  margin: 0 0 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seedSelectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seedCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.seedCard:hover,
+.seedCard:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 117, 151, 0.4);
+  outline: 2px solid #ff7597;
+}
+
+.seedCardActive {
+  background: rgba(255, 117, 151, 0.12);
+  border-color: #ff7597;
+}
+
+.seedCardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fafaf9;
+}
+
+.seedCardDesc {
+  font-size: 10px;
+  color: #a8a29e;
+  margin-top: 2px;
+}
+
+.familyTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.familyTabBtn {
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d6d3d1;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.familyTabBtnActive {
+  background: #ff7597;
+  color: #0c0a09;
+  border-color: #ff7597;
+  font-weight: 600;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.presetCard {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.presetCard:hover,
+.presetCard:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 117, 151, 0.4);
+  outline: 2px solid #ff7597;
+}
+
+.presetCardActive {
+  background: rgba(255, 117, 151, 0.12);
+  border-color: #ff7597;
+}
+
+.presetCardName {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f5f5f4;
+}
+
+.presetCardFamily {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #ff7597;
+  margin-top: 2px;
+}
+
+/* Center Stage Viewport (CSS3D) */
+.stageContainer {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #151824 0%, #08090d 75%, #040406 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 480px;
+  perspective: 1200px;
+  cursor: grab;
+}
+
+.stageContainer:active {
+  cursor: grabbing;
+}
+
+.world3D {
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.momentCard3D {
+  position: absolute;
+  width: 140px;
+  height: 170px;
+  margin-left: -70px;
+  margin-top: -85px;
+  background: rgba(18, 20, 29, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  backface-visibility: visible;
+  overflow: hidden;
+  user-select: none;
+}
+
+.momentCard3D:hover,
+.momentCard3D:focus-visible {
+  border-color: #ff7597;
+  box-shadow: 0 0 20px rgba(255, 117, 151, 0.4);
+  outline: none;
+}
+
+.momentCardSelected {
+  border: 2px solid #ff7597 !important;
+  box-shadow: 0 0 25px rgba(255, 117, 151, 0.7) !important;
+}
+
+.momentCardCompact {
+  width: 100px;
+  height: 120px;
+  margin-left: -50px;
+  margin-top: -60px;
+  padding: 6px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mediaBadge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.badgePhoto { background: rgba(59, 130, 246, 0.25); color: #93c5fd; }
+.badgeVideo { background: rgba(236, 72, 153, 0.25); color: #f472b6; }
+.badgeMemo { background: rgba(245, 158, 11, 0.25); color: #fcd34d; }
+.badgeLink { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; }
+
+.mainPathPin {
+  font-size: 8px;
+  padding: 1px 4px;
+  background: #ff7597;
+  color: #0c0a09;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.cardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #f5f5f4;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardPreviewText {
+  font-size: 9px;
+  color: #a8a29e;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-style: italic;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  color: #78716c;
+}
+
+/* 3D Wireframe Grid Guides */
+.wireframeGrid {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  margin-left: -400px;
+  margin-top: -400px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  transform: rotateX(90deg) translateZ(-100px);
+  pointer-events: none;
+}
+
+/* Right Inspector Panel (48 Controls) */
+.sidebarRight {
+  background: #090a0f;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 14px;
+  gap: 14px;
+}
+
+.inspectorTabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.inspectorTabBtn {
+  flex: 1;
+  font-size: 11px;
+  padding: 6px 0;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: #a8a29e;
+  cursor: pointer;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: all 0.2s;
+}
+
+.inspectorTabBtn:hover,
+.inspectorTabBtn:focus-visible {
+  color: #ffffff;
+  outline: 2px solid #ff7597;
+}
+
+.inspectorTabBtnActive {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.controlRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controlHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #d6d3d1;
+}
+
+.controlHeader span {
+  font-weight: 500;
+}
+
+.controlValue {
+  font-size: 10px;
+  font-family: monospace;
+  color: #ff7597;
+}
+
+.rangeInput {
+  width: 100%;
+  accent-color: #ff7597;
+  cursor: pointer;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #d6d3d1;
+}
+
+.toggleInput {
+  accent-color: #ff7597;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.selectInput {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #fafaf9;
+  font-size: 11px;
+  padding: 6px 8px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.segmentedControl {
+  display: flex;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.segmentedBtn {
+  flex: 1;
+  min-width: 50px;
+  font-size: 10px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: #a8a29e;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.segmentedBtnActive {
+  background: rgba(255, 117, 151, 0.2);
+  color: #ff7597;
+  font-weight: 600;
+}
+
+/* Selected Moment Inspector Card */
+.selectedInspectorCard {
+  background: rgba(255, 117, 151, 0.08);
+  border: 1px solid rgba(255, 117, 151, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selectedMomentTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.selectedMomentMeta {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  color: #a8a29e;
+}
+
+.selectedMomentCaption {
+  font-size: 11px;
+  color: #d6d3d1;
+  line-height: 1.4;
+}
+
+.whyNextBox {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 2px solid #ff7597;
+  padding: 6px 8px;
+  font-size: 10px;
+  color: #fbcfe8;
+  margin-top: 4px;
+}
+
+/* Bottom Transport Bar */
+.transportBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: rgba(14, 16, 22, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  gap: 16px;
+  z-index: 30;
+}
+
+.transportPlayback {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.playBtn {
+  background: #ff7597;
+  border: none;
+  color: #0c0a09;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.playBtn:hover,
+.playBtn:focus-visible {
+  background: #ff8ca8;
+  outline: 2px solid #ffffff;
+}
+
+.scrubArea {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 420px;
+}
+
+.scrubSlider {
+  flex: 1;
+  accent-color: #ff7597;
+  cursor: pointer;
+}
+
+.historyActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modal Dialog */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modalDialog {
+  background: #11131a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #a8a29e;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.closeBtn:hover,
+.closeBtn:focus-visible {
+  color: #ffffff;
+  outline: 2px solid #ff7597;
+}
+
+.textInput {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Mobile Responsive Drawer Toggles */
+.mobileDrawerBar {
+  display: none;
+  background: #090a0f;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  justify-content: space-around;
+}
+
+.mobileDrawerBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d6d3d1;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mobileDrawerBtnActive {
+  background: #ff7597;
+  color: #0c0a09;
+  border-color: #ff7597;
+  font-weight: 600;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .workspace {
+    grid-template-columns: 240px 1fr 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebarLeft,
+  .sidebarRight {
+    height: auto;
+    max-height: 320px;
+  }
+
+  .stageContainer {
+    min-height: 380px;
+  }
+
+  .transportBar {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+
+  .scrubArea {
+    max-width: 100%;
+    order: 3;
+    width: 100%;
+  }
+
+  .mobileDrawerBar {
+    display: flex;
+  }
+}
+
+/* Reduced Motion Mode */
+@media (prefers-reduced-motion: reduce) {
+  .world3D,
+  .momentCard3D,
+  .actionBtn,
+  .seedCard,
+  .presetCard {
+    transition: none !important;
+    animation: none !important;
+  }
+}
