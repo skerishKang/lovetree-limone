@@ -92,17 +92,28 @@ function checkExecutable(errors: string[], path: string, value: string): void {
 /**
  * Remote-address boundary for media bindings (Issue #184 fail-closed).
  * No external media host allowlist/policy exists in this first slice, so any
- * URL-like remote reference is rejected: any `scheme://` form (`http://`,
- * `https://`, `ftp://`, `file://`, …) and protocol-relative `//host/...`.
+ * URL-like remote reference is rejected. After trimming, a media ref is a
+ * remote address when it has:
+ *   - any URI-scheme-like prefix (`<scheme>:` — `http:`, `https:`, `ftp:`,
+ *     `file:`, `data:`, …; with or without `//`), or
+ *   - a network-path / protocol-relative prefix using either slash direction
+ *     (`//host/...` or `\\\host\...`), possibly whitespace-prefixed, or
+ *   - a `scheme://` authority delimiter anywhere (`://`).
  * Only opaque/canonical product media refs (e.g. `drive_aaa`) are allowed
  * until an explicit product media-host policy exists. Never fetch, never
  * sanitize — the data layer simply rejects remote addresses at the boundary.
  */
-const REMOTE_ADDRESS_PATTERN = /:\/\//i;
-const PROTOCOL_RELATIVE_PATTERN = /^\/\//;
+const URI_SCHEME_PREFIX_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
+const NETWORK_PATH_PREFIX_PATTERN = /^(?:\/\/|\\)/;
+const SCHEME_AUTHORITY_PATTERN = /:\/\//i;
 
 export function containsRemoteAddress(value: string): boolean {
-  return REMOTE_ADDRESS_PATTERN.test(value) || PROTOCOL_RELATIVE_PATTERN.test(value);
+  const trimmed = value.trim();
+  return (
+    URI_SCHEME_PREFIX_PATTERN.test(trimmed) ||
+    NETWORK_PATH_PREFIX_PATTERN.test(trimmed) ||
+    SCHEME_AUTHORITY_PATTERN.test(trimmed)
+  );
 }
 
 const KEBAB_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

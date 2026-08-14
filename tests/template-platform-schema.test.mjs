@@ -602,17 +602,58 @@ test("media remote-address boundary also covers frame-set collections and other 
 
 test("containsRemoteAddress pins the remote-address boundary tokens", () => {
   for (const bad of [
+    // scheme:// forms
     "https://cdn.example.com/x.jpg",
     "http://example.com/x.png",
-    "//example.com/x.png",
     "ftp://example.com/x",
     "file:///etc/passwd",
+    // scheme with no //
+    "http:evil.example/x",
+    "ftp:evil.example/x",
+    // mixed/backslash network forms
+    "https:/\\evil.example/x",
+    "\\\\evil.example\\x",
+    // protocol-relative / network path
+    "//example.com/x.png",
+    "\\\\.\\share\\x.png",
+    // whitespace-prefixed network forms (trimmed before checking)
+    "  //evil.example/x",
+    "\t\\\\evil.example\\x",
+    // non-network scheme / data payloads (not opaque canonical ids)
+    "data:image/png;base64,AAAA",
+    "mailto:evil@example.com",
   ]) {
     assert.equal(containsRemoteAddress(bad), true, `must reject: ${bad}`);
   }
   for (const safe of ["drive_aaa", "moment_m1", "우리의 여름", "12cv-Xw0lrk_RDnf7q8isANVm-eV_b5dd"]) {
     assert.equal(containsRemoteAddress(safe), false, `must allow: ${safe}`);
   }
+});
+
+test("media bindings reject scheme-without-//, backslash, whitespace-prefixed and data forms", () => {
+  const definition = expectOk(validateDefinition(spatialMediaBrowserDefinition));
+  for (const bad of [
+    "http:evil.example/x",
+    "ftp:evil.example/x",
+    "https:/\\evil.example/x",
+    "\\\\evil.example\\x",
+    "  //evil.example/x",
+    "data:image/png;base64,AAAA",
+  ]) {
+    expectFail(
+      validateInstance(withBinding("hero-media", bad), definition),
+      "external remote media address is rejected",
+    );
+  }
+  // Opaque/canonical refs stay allowed under every bound media slot kind.
+  expectOk(validateInstance(withBinding("hero-media", "drive_aaa"), definition));
+  const frameInstance = {
+    ...spatialMediaBrowserInstance,
+    bindings: spatialMediaBrowserInstance.bindings.map((b) =>
+      b.slotId === "gallery-frames" ? { ...b, value: ["drive_aaa", "drive_bbb"] } : b,
+    ),
+  };
+  expectOk(validateInstance(frameInstance, definition));
 });
 
 test("template platform: containsExecutableContent pins the boundary tokens", () => {
