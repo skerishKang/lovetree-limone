@@ -4,7 +4,6 @@ import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent a
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import {
   TRACK63_CONNECTIONS,
-  TRACK63_MOMENTS,
   TRACK63_MOMENT_BY_ID,
   TRACK63_SEED_SETS,
 } from "@/lib/lineage-63/data";
@@ -13,7 +12,6 @@ import {
   reduceStudioState,
 } from "@/lib/lineage-63/state";
 import type {
-  CardTransform3D,
   Track63Moment,
   ViewFamily,
 } from "@/lib/lineage-63/types";
@@ -375,7 +373,7 @@ export default function Lineage63ViewStudio() {
                   <div className={styles.cardBody}>
                     <div className={styles.cardTitle}>{moment.title}</div>
                     {moment.memoText && (
-                      <div className={styles.cardPreviewText}>"{moment.memoText.slice(0, 36)}…"</div>
+                      <div className={styles.cardPreviewText}>&ldquo;{moment.memoText.slice(0, 36)}…&rdquo;</div>
                     )}
                   </div>
                   <div className={styles.cardFooter}>
@@ -1075,7 +1073,7 @@ export default function Lineage63ViewStudio() {
               )}
               {selectedMoment.mediaType === "memo" && (
                 <div style={{ color: "#fef3c7", fontSize: "13px", lineHeight: 1.6, fontStyle: "italic" }}>
-                  "{selectedMoment.memoText}"
+                  &ldquo;{selectedMoment.memoText}&rdquo;
                 </div>
               )}
               {selectedMoment.mediaType === "link" && (

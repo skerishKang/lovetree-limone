@@ -94,7 +94,7 @@ export type Track63StudioAction =
   | { type: "select-moment"; momentId: string | null }
   | { type: "set-playing"; playing: boolean }
   | { type: "set-scrub-phase"; phase: number }
-  | { type: "update-param"; key: keyof Track63ViewParameters; value: any }
+  | { type: "update-param"; key: keyof Track63ViewParameters; value: Track63ViewParameters[keyof Track63ViewParameters] }
   | { type: "set-params"; params: Partial<Track63ViewParameters> }
   | { type: "reset-params" }
   | { type: "save-preset"; name: string }

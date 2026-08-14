@@ -20,7 +20,7 @@ export interface Track63Moment {
   readonly theme: string;
   readonly date: string;
   readonly caption: string;
-  readonly aspectRatio: "16:9" | "4:3" | "1:1" | "9:16";
+  readonly aspectRatio: "16:9" | "4:3" | "1:1" | "9:16" | "3:4";
   readonly accentColor: string;
   readonly videoSrc?: string;
   readonly memoText?: string;

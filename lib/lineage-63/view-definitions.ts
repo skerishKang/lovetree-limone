@@ -1,9 +1,7 @@
 import type {
-  CardTransform3D,
   Track63Moment,
   Track63ViewDefinition,
   Track63ViewParameters,
-  ViewFamily,
 } from "./types";
 
 export const DEFAULT_VIEW_PARAMETERS: Track63ViewParameters = {
@@ -338,7 +336,7 @@ export const TRACK63_VIEW_DEFINITIONS: readonly Track63ViewDefinition[] = [
       let y = params.verticalOffset;
       let rx = 0;
       let ry = 0;
-      let rz = 0;
+      const rz = 0;
       if (side === 0) { y += -offset; rx = 60; }
       else if (side === 1) { x += offset; ry = -60; }
       else if (side === 2) { y += offset; rx = -60; }

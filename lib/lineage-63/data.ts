@@ -12,7 +12,7 @@ export const TRACK63_MOMENTS: readonly Track63Moment[] = [
   { id: "m1", title: "첫 만남의 벤치", mediaType: "photo", subject: "하린", theme: "first-meet", date: "2024-03-12", caption: "봄 햇살 아래 나란히 앉아 처음 이름을 건넸던 오후.", aspectRatio: "4:3", accentColor: "#ff7597", isMainPath: true },
   { id: "m2", title: "벚꽃길 첫 산책", mediaType: "photo", subject: "민서", theme: "first-meet", date: "2024-03-18", caption: "흩날리는 꽃잎 사이로 걸음을 맞추던 순간.", aspectRatio: "1:1", accentColor: "#ff9bb2" },
   { id: "m3", title: "카페 창가 눈맞춤", mediaType: "photo", subject: "하린", theme: "daily", date: "2024-03-25", caption: "창가로 비치는 오후 3시의 커피 잔과 미소.", aspectRatio: "4:3", accentColor: "#fca5a5" },
-  { id: "m4", title: "현관 앞 짧은 인사", mediaType: "photo", subject: "지우", theme: "daily", date: "2024-04-02", caption: "헤어지기 아쉬워 문고리를 쥐고 나눈 눈인사.", aspectRatio: "3:4" as any, accentColor: "#fdba74" },
+  { id: "m4", title: "현관 앞 짧은 인사", mediaType: "photo", subject: "지우", theme: "daily", date: "2024-04-02", caption: "헤어지기 아쉬워 문고리를 쥐고 나눈 눈인사.", aspectRatio: "3:4", accentColor: "#fdba74" },
   { id: "m5", title: "비 내리는 버스 정류장", mediaType: "photo", subject: "서윤", theme: "daily", date: "2024-04-10", caption: "투명 우산 아래 맺힌 빗방울과 따뜻한 체온.", aspectRatio: "16:9", accentColor: "#67e8f9" },
   { id: "m6", title: "비밀의 옥상 정원", mediaType: "photo", subject: "민서", theme: "intimate", date: "2024-04-22", caption: "도심의 소음이 아득해지는 우리만의 작은 하늘.", aspectRatio: "4:3", accentColor: "#a7f3d0", isMainPath: true },
   { id: "m7", title: "작은 화분 심던 날", mediaType: "photo", subject: "지우", theme: "growth", date: "2024-05-01", caption: "함께 고른 바질 씨앗을 화분에 묻으며 웃던 날.", aspectRatio: "1:1", accentColor: "#86efac" },
