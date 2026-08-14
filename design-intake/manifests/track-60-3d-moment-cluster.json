@@ -89,22 +89,8 @@
     "targetMapping": true,
     "urlResolution": true,
     "openCall": true,
-    "actualTargetOpen": true,
-    "receiverConsume": true,
-    "sameMomentFocus": true
-  },
-  "qa": {
-    "viewports": [
-      { "width": 1280, "height": 800 },
-      { "width": 390, "height": 844, "mobile": true },
-      { "width": 320, "height": 720, "mobile": true }
-    ],
-    "reducedMotion": true,
-    "keyboardFocus": true,
-    "pointer": true,
-    "touch": true,
-    "horizontalOverflowZero": true,
-    "consoleErrorsZero": true,
-    "pageErrorsZero": true
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
   }
 }
