@@ -82,19 +82,5 @@
   ],
   "backendScope": "BACKEND_FREE",
   "visualMechanicOverlap": ["canonical /v4/subjects/demo/orbit"],
-  "productJobDistinctness": "Continuous analog exhibition rail with fractional phase traversal + Memory Media Viewer loop — not canonical discrete Orbit selection",
-  "qa": {
-    "viewports": [
-      { "width": 1280, "height": 800 },
-      { "width": 390, "height": 844, "mobile": true },
-      { "width": 320, "height": 720, "mobile": true }
-    ],
-    "reducedMotion": true,
-    "keyboardFocus": true,
-    "pointer": true,
-    "touch": true,
-    "horizontalOverflowZero": true,
-    "consoleErrorsZero": true,
-    "pageErrorsZero": true
-  }
+  "productJobDistinctness": "Continuous analog exhibition rail with fractional phase traversal + Memory Media Viewer loop — not canonical discrete Orbit selection"
 }
