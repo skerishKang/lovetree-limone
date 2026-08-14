@@ -81,21 +81,21 @@ Script measured intersection between `[aria-label="출처 및 충실도 상태"]
 
 In every artifact the provenance/status footer sits below the product content in document flow; **provenance panel ↔ product content overlap = 0**.
 
-## 6. CI status at new exact head `51084cf43d455d3c926dbcac2642d222521650a5`
+## 6. CI status & commit lineage
 
-- **Design Fidelity Validation:** ✅ success
-- **Fidelity · lineage-61-61-v1-9 (actual execution):** ✅ success
-- **New screenshot artifact:** ✅ created (above set)
-- **A-track (`validate`):** ⚠️ 1 pre-existing failure, **out of scope for this blocker**
-  - Subgate `standard-non-browser-tests` → 999 pass / 1 fail.
-  - Failing test: `design-intake-source-freshness.test.mjs` asserts
-    `track-61-guided-next-moment-builder.json — HISTORICAL_PINNED`,
-    but the reconciled manifest (this PR's V1.9 work) resolves to `— CURRENT` (V1.9).
-  - Root cause: this assertion lives on `origin/main` (added after our branch diverged) and hardcodes the pre-reconciliation V1.7 `HISTORICAL_PINNED` state. It is a **merge-dependent, main-coupled** expectation, not caused by the screenshot fix, and cannot be corrected without merging the V1.9 reconciliation into `main` (CTO decision; MERGE NO). Editing the file in our branch would create a merge conflict and break the A-track checkout, so it is intentionally left untouched.
-  - Recommendation (separate from this blocker): when the PR is merged, update the main-side freshness assertion for track-61 to `CURRENT` (or complete the reconciliation merge) so A-track goes fully green.
+- **Screenshot-source commit:** `51084cf43d455d3c926dbcac2642d222521650a5` (provenance moved to document-flow footer, 0.0px overlap verified, CTO screenshot obstruction PASS)
+- **Screenshot report remote commit:** `805aa4084a3d0adbca388fe1625ff0709a1cf27e`
+- **Main reconciliation commit:** `16fd7a39d48b7f80ddbe5ec7f75f9ee8ae5f65f0` (normal merge of authoritative `origin/main` at `eaaf8ebac7823604592439be98ca43e88da80bce`)
+- **Source freshness smoke reconciliation:** `2a8679d` (dynamically derived manifest-authority state expectations in `tests/design-intake-source-freshness.test.mjs`)
+- **Final merge gate report:** see `evidence-l61-visual/TRACK61_V1_9_FINAL_MERGE_GATE_CLOSURE_REPORT.md`
+
+### Gate results
+- **Design Fidelity Validation:** ✅ SUCCESS
+- **Fidelity · lineage-61-61-v1-9 (actual execution):** ✅ SUCCESS
+- **New screenshot artifacts:** ✅ created and verified
+- **A-track (`validate`):** ✅ 1000/1000 non-browser + 46/46 serial browser tests PASS
 
 ## 7. Status
 - Draft: YES
 - READY: NO
 - MERGE: NO
-- CTO to re-review the new artifact set directly, then decide merge.
