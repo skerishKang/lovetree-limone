@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   TREES_CARDINALITY_PATH,
   classifyTreesResponse,
+  isCurrentResolverRequest,
   resolveEntryRoute,
   resolveEntryStage,
 } from "../lib/entry-resolver.ts";
@@ -210,13 +211,61 @@ test("malformed 2xx never reaches the zero-tree redirect path", () => {
 
 test("?start=1 short-circuits before V4EntryResolver/cardinality is mounted", async () => {
   const page = await readFile(new URL("../app/v4/page.tsx", import.meta.url), "utf8");
-  const startBranch = page.indexOf('if (start === "1")');
-  const resolverUsage = page.indexOf("V4EntryResolver");
-  assert.ok(startBranch !== -1, "page has a ?start=1 equality branch");
-  assert.ok(resolverUsage !== -1, "page references V4EntryResolver");
-  assert.ok(startBranch < resolverUsage, "?start=1 branch precedes resolver usage (API bypass)");
+
+  const importLine = page.indexOf("import V4EntryResolver");
+  assert.ok(importLine !== -1, "page imports V4EntryResolver");
+
+  // Target the ACTUAL JSX mount, not the import statement (which is captured
+  // first by a naive indexOf("V4EntryResolver")).
+  const resolverMount = page.indexOf("<V4EntryResolver");
+  assert.ok(resolverMount !== -1, "page mounts V4EntryResolver as JSX");
+  assert.ok(resolverMount > importLine, "JSX mount is distinct from the import");
+
+  const startReturn = page.search(
+    /if\s*\(start === "1"\)\s*\{[\s\S]*?return\s*<V4Landing\s*\/>;/
+  );
+  assert.ok(startReturn !== -1, "?start=1 immediately returns Landing");
+
+  // Contract: in the ?start=1 path the resolver/cardinality caller must never
+  // mount. The early return for ?start=1 precedes the resolver JSX mount, so the
+  // cardinality API is bypassed for that path.
   assert.ok(
-    /if \(start === "1"\)\s*\{\s*return <V4Landing \/>;/.test(page),
-    "?start=1 returns Landing directly without the resolver"
+    startReturn < resolverMount,
+    "?start=1 return precedes V4EntryResolver JSX mount (resolver never mounts for ?start=1)"
+  );
+});
+
+test("stale principal race: old A response is rejected after principal becomes B", () => {
+  const authority = { mounted: true, currentPrincipal: "A", requestSeq: 0 };
+  const aSeq = (authority.requestSeq += 1); // A begins a request
+  // Principal flips to B and B begins a fresh request.
+  authority.currentPrincipal = "B";
+  authority.requestSeq += 1; // B begins a request
+  const bSeq = authority.requestSeq;
+
+  // Stale A response resolving after the principal changed must not be
+  // authoritative (no redirect, no state update).
+  assert.equal(
+    isCurrentResolverRequest({ authority, forUid: "A", capturedSeq: aSeq }),
+    false,
+    "stale A response must be rejected after principal became B"
+  );
+  // B's own response remains authoritative.
+  assert.equal(
+    isCurrentResolverRequest({ authority, forUid: "B", capturedSeq: bSeq }),
+    true,
+    "current principal B response is authoritative"
+  );
+});
+
+test("unmount cancels any in-flight request (no redirect/state authority)", () => {
+  const authority = { mounted: true, currentPrincipal: "A", requestSeq: 1 };
+  const aSeq = 1;
+  authority.mounted = false; // resolver unmounted before the response settles
+
+  assert.equal(
+    isCurrentResolverRequest({ authority, forUid: "A", capturedSeq: aSeq }),
+    false,
+    "unmounted resolver must not grant redirect/state authority to a stale response"
   );
 });

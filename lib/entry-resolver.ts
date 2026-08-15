@@ -57,6 +57,24 @@ export type ResolverFetchResult =
   | { ok: true; trees: TreeRecord[] }
   | { ok: false; reason: "http-error" | "malformed" | "network" };
 
+export interface ResolverRequestAuthority {
+  mounted: boolean;
+  currentPrincipal: string | null;
+  requestSeq: number;
+}
+
+export function isCurrentResolverRequest(params: {
+  authority: ResolverRequestAuthority;
+  forUid: string;
+  capturedSeq: number;
+}): boolean {
+  return (
+    params.authority.mounted &&
+    params.authority.currentPrincipal === params.forUid &&
+    params.authority.requestSeq === params.capturedSeq
+  );
+}
+
 export function classifyTreesResponse(input: {
   responseOk: boolean;
   data: unknown;
