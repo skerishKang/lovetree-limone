@@ -332,9 +332,9 @@ export default function V4FirstJourneyV12({
                 )}
               </div>
             </div>
-            {v12Step === 0 && scrollDir !== "forward" && (
+            {v12Step === 0 && scrollDir !== "forward" && !appState.firstMoment.saved && (
               <div className="v4-j-v12-scroll-hint">
-                <span>아래로 스크롤해 계속하기</span>
+                <span className="v4-j-v12-hint-text">아래로 스크롤해 계속하기</span>
                 <span className="v4-j-v12-arrow" aria-hidden="true">↓</span>
               </div>
             )}

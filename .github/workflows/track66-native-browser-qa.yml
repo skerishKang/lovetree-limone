@@ -1,9 +1,11 @@
 name: Track66 V1.2 native browser QA evidence
 
 # Evidence-only workflow for PR #217 (Track66 V1.2 continuous-scroll first
-# journey). It runs the same native QA matrix that was executed locally and
-# uploads the 6 screenshots + qa-results.json as a GitHub artifact so the Web
-# CTO can review them directly. It does NOT modify backend/API/DB/Auth, nor
+# journey). It runs the dedicated native QA helper `qa/track66-native-browser-qa.mjs`
+# (intentionally OUTSIDE the standard `tests/*.test.mjs` corpus so the shared
+# A-track fail-closed browser inventory is NOT affected) and uploads the
+# 7 screenshots + qa-results.json (8 files total) as a GitHub artifact so the
+# Web CTO can review them directly. It does NOT modify backend/API/DB/Auth, nor
 # issue #204. Pure additive QA evidence gate.
 
 on:
@@ -71,13 +73,18 @@ jobs:
 
           mkdir -p qa-artifacts/track66-native
           TRACK66_QA_URL="http://127.0.0.1:3000" \
-            node --import tsx tests/track66-native-browser-qa.test.mjs
+            node qa/track66-native-browser-qa.mjs
 
       - name: Upload Track66 native QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: track66-v12-native-qa-evidence
+          # Artifact contents (8 files): 7 PNG screenshots + qa-results.json
+          #   desktop-1280x800.png, desktop-1280x800-viewport.png,
+          #   desktop-1280x800-reduced-motion.png, phone-390x844.png,
+          #   phone-390x844-viewport.png, mobile-320x720.png,
+          #   mobile-320x720-viewport.png, qa-results.json
           path: |
             qa-artifacts/track66-native/*.png
             qa-artifacts/track66-native/qa-results.json

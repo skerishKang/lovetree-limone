@@ -208,7 +208,6 @@ jobs:
           # gate until this list is updated, so a new browser test can never
           # silently join the parallel bucket.
           expected_browser_tests=(
-            tests/track66-native-browser-qa.test.mjs
             tests/v4-additional-source-baseline.test.mjs
             tests/v4-cinematic-v6.test.mjs
             tests/v4-cinematic.test.mjs
@@ -217,7 +216,7 @@ jobs:
             tests/v4-first-journey-source-faithful.test.mjs
             tests/v4-moments-100-source-faithful.test.mjs
           )
-          expected_browser_count=8
+          expected_browser_count=7
 
           printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
           printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt

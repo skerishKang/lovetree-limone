@@ -1,0 +1,206 @@
+{
+  "summary": {
+    "checks": 33,
+    "failures": 0
+  },
+  "results": [
+    {
+      "viewport": "desktop-1280x800",
+      "check": "V1.2 rendered (post-mount activation)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "horizontal overflow 0",
+      "pass": true,
+      "detail": "overflow px: 0"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "forward scroll advances step",
+      "pass": true,
+      "detail": "첫 순간 발견 -> 마음 남기기"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "reverse scroll returns step",
+      "pass": true,
+      "detail": "마음 남기기 -> 첫 순간 발견"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "keyboard focus reaches control",
+      "pass": true,
+      "detail": "focused: button[data-testid=save-first-moment]"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "pointer/touch activates CTA",
+      "pass": true,
+      "detail": "first-saved:1 done:1"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "console error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "page error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "V1.2 rendered (post-mount activation)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "horizontal overflow 0",
+      "pass": true,
+      "detail": "overflow px: 0"
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "forward scroll advances step",
+      "pass": true,
+      "detail": "첫 순간 발견 -> 마음 남기기"
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "reverse scroll returns step",
+      "pass": true,
+      "detail": "마음 남기기 -> 첫 순간 발견"
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "keyboard focus reaches control",
+      "pass": true,
+      "detail": "focused: button[data-testid=save-first-moment]"
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "pointer/touch activates CTA",
+      "pass": true,
+      "detail": "first-saved:1 done:1"
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "console error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "phone-390x844",
+      "check": "page error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "V1.2 rendered (post-mount activation)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "horizontal overflow 0",
+      "pass": true,
+      "detail": "overflow px: 0"
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "forward scroll advances step",
+      "pass": true,
+      "detail": "첫 순간 발견 -> 마음 남기기"
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "reverse scroll returns step",
+      "pass": true,
+      "detail": "마음 남기기 -> 첫 순간 발견"
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "keyboard focus reaches control",
+      "pass": true,
+      "detail": "focused: button[data-testid=save-first-moment]"
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "pointer/touch activates CTA",
+      "pass": true,
+      "detail": "first-saved:1 done:1"
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "console error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "mobile-320x720",
+      "check": "page error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "V1.2 rendered (post-mount activation)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "horizontal overflow 0",
+      "pass": true,
+      "detail": "overflow px: 0"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "forward scroll advances step",
+      "pass": true,
+      "detail": "첫 순간 발견 -> 마음 남기기"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "reverse scroll returns step",
+      "pass": true,
+      "detail": "마음 남기기 -> 첫 순간 발견"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "keyboard focus reaches control",
+      "pass": true,
+      "detail": "focused: button[data-testid=save-first-moment]"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "pointer/touch activates CTA",
+      "pass": true,
+      "detail": "first-saved:1 done:1"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "reduced-motion sections present",
+      "pass": true,
+      "detail": "sections: 5"
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "console error 0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "viewport": "desktop-1280x800",
+      "check": "page error 0",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

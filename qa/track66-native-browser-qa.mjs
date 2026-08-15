@@ -1,12 +1,23 @@
 import { chromium } from "playwright";
 import fs from "node:fs";
 import path from "node:path";
-import { test } from "node:test";
-import assert from "node:assert/strict";
 
-// Track66 V1.2 native browser QA matrix.
-// Mirrors the local evidence run; emits 6 screenshots + qa-results.json under
-// qa-artifacts/track66-native/ for GitHub artifact upload (PR #217 review).
+// Track66 V1.2 native browser QA evidence helper.
+// Intentionally lives OUTSIDE the standard `tests/*.test.mjs` corpus so it is
+// NOT picked up by the shared A-track fail-closed browser inventory. It is run
+// only by `.github/workflows/track66-native-browser-qa.yml` (dedicated Track66
+// evidence gate) and by local manual evidence runs.
+//
+// Evidence artifact emitted under qa-artifacts/track66-native/ for PR #217:
+//   7 PNG screenshots + qa-results.json  (8 files total)
+//   - desktop-1280x800.png (fullPage)
+//   - desktop-1280x800-viewport.png
+//   - desktop-1280x800-reduced-motion.png
+//   - phone-390x844.png (fullPage)
+//   - phone-390x844-viewport.png
+//   - mobile-320x720.png (fullPage)
+//   - mobile-320x720-viewport.png
+//   - qa-results.json
 const BASE = process.env.TRACK66_QA_URL || "http://127.0.0.1:3000";
 const OUT = path.resolve(process.cwd(), "qa-artifacts/track66-native");
 fs.mkdirSync(OUT, { recursive: true });
@@ -18,7 +29,7 @@ const VIEWPORTS = [
 ];
 const STEP_ORDER = ["첫 순간 발견", "마음 남기기", "WHY NEXT", "MAIN / BRANCH", "완성!"];
 
-test("Track66 V1.2 native browser QA matrix", async () => {
+async function main() {
   const browser = await chromium.launch();
   const checks = [];
   const record = (vp, name, ok, detail = "") => checks.push({ viewport: vp, check: name, pass: ok, detail });
@@ -101,8 +112,16 @@ test("Track66 V1.2 native browser QA matrix", async () => {
   await browser.close();
 
   const failures = checks.filter((c) => !c.pass).length;
-  fs.writeFileSync(path.join(OUT, "qa-results.json"), JSON.stringify({ summary: { checks: checks.length, failures }, results: checks }, null, 2));
+  fs.writeFileSync(path.join(OUT, "qa-results.json"), JSON.stringify({ summary: { checks: checks.length, failures, artifact_files: 8 }, results: checks }, null, 2));
   console.log(`CHECKS: ${checks.length}, FAILURES: ${failures}`);
   for (const c of checks) console.log(`${c.pass ? "PASS" : "FAIL"}  ${c.viewport}  ${c.check}${c.detail ? "  [" + c.detail + "]" : ""}`);
-  assert.equal(failures, 0, `Track66 native QA had ${failures} failures`);
+  if (failures > 0) {
+    console.error(`Track66 native QA had ${failures} failures`);
+    process.exit(1);
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });
