@@ -26,6 +26,12 @@ export type VideoFigureTurntableAction =
   | { type: "pause" }
   | { type: "restart" };
 
+import {
+  orderedFrameIndex,
+  stepFrame,
+  directionFromDelta,
+} from "./design-runtime/ordered-frame";
+
 const wrap = (value: number, count: number) => ((value % count) + count) % count;
 
 export function normalizeVideoFigureLookIndex(index: number, lookCount: number): number {
@@ -63,13 +69,13 @@ export function reduceVideoFigureTurntable(
     case "select-angle":
       return {
         ...state,
-        angleIndex: wrap(action.index, VIDEOFIGURE_ANGLES.length),
+        angleIndex: orderedFrameIndex(action.index, VIDEOFIGURE_ANGLES.length),
         manuallyOwned: action.manual ? true : state.manuallyOwned,
       };
     case "step-angle":
       return {
         ...state,
-        angleIndex: wrap(state.angleIndex + action.delta, VIDEOFIGURE_ANGLES.length),
+        angleIndex: stepFrame(state.angleIndex, action.delta, VIDEOFIGURE_ANGLES.length),
         manuallyOwned: action.manual ? true : state.manuallyOwned,
       };
     case "auto-tick": {
@@ -99,9 +105,19 @@ export function reduceVideoFigureTurntable(
   }
 }
 
+/**
+ * Derive an ordered-frame direction from a horizontal delta.
+ *
+ * Delegates to P2 directionFromDelta with the VideoFigure sign convention
+ * (positiveDeltaDirection = -1 — rightward movement decrements the angle
+ * index) and the VideoFigure default threshold of 24.
+ *
+ * @deprecated Prefer calling directionFromDelta(deltaX, -1, threshold)
+ *   directly from P2. This function is kept as a local adapter for
+ *   backward compatibility.
+ */
 export function angleStepFromHorizontalDelta(deltaX: number, threshold = 24): -1 | 0 | 1 {
-  if (Math.abs(deltaX) < threshold) return 0;
-  return deltaX > 0 ? -1 : 1;
+  return directionFromDelta(deltaX, -1, threshold);
 }
 
 export function videoFigureAngleForState(state: VideoFigureTurntableState): VideoFigureAngle {
