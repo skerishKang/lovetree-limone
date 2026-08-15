@@ -1,3 +1,7 @@
+import type { TreeRecord } from "./tree-types";
+
+export const TREES_CARDINALITY_PATH = "/api/trees?limit=2";
+
 export type EntryResolution =
   | { kind: "landing" }
   | { kind: "redirect"; path: string };
@@ -32,4 +36,34 @@ export function resolveEntryRoute(input: ResolveEntryInput): EntryResolution {
   }
 
   return { kind: "redirect", path: "/my-trees" };
+}
+
+export type ResolverStage = "loading" | "anonymous" | "resolved" | "inflight" | "run";
+
+export function resolveEntryStage(input: {
+  authLoading: boolean;
+  uid: string | null;
+  resolvedUid: string | null;
+  inflightUid: string | null;
+}): ResolverStage {
+  if (input.authLoading) return "loading";
+  if (!input.uid) return "anonymous";
+  if (input.resolvedUid === input.uid) return "resolved";
+  if (input.inflightUid === input.uid) return "inflight";
+  return "run";
+}
+
+export type ResolverFetchResult =
+  | { ok: true; trees: TreeRecord[] }
+  | { ok: false; reason: "http-error" | "malformed" | "network" };
+
+export function classifyTreesResponse(input: {
+  responseOk: boolean;
+  data: unknown;
+  networkError: boolean;
+}): ResolverFetchResult {
+  if (input.networkError) return { ok: false, reason: "network" };
+  if (!input.responseOk) return { ok: false, reason: "http-error" };
+  if (!Array.isArray(input.data)) return { ok: false, reason: "malformed" };
+  return { ok: true, trees: input.data as TreeRecord[] };
 }
