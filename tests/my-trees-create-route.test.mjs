@@ -11,6 +11,11 @@ test("My Trees create CTAs target the actual V4 first-moment entry", () => {
   assert.doesNotMatch(myTreesPage, /href="\/\?start=tree"/);
 });
 
+test("My Trees browse navigation targets canonical V4 community discovery", () => {
+  assert.match(myTreesPage, /href="\/v4\/community">둘러보기/);
+  assert.doesNotMatch(myTreesPage, /href="\/\?view=browse"/);
+});
+
 test("V4 entry still consumes start=1 and opens the first-moment action", () => {
   assert.match(v4Page, /start !== "1"/);
   assert.match(v4Page, /textContent\?\.includes\("첫 순간 심기"\)/);

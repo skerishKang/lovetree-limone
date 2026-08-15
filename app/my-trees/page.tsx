@@ -134,7 +134,7 @@ function TreePageShell({ children, userLabel }: { children: React.ReactNode; use
         <Link className="tree-page-brand" href="/" aria-label="LoveTree 처음 화면으로">LoveTree</Link>
         <nav className="tree-page-nav" aria-label="러브트리 메뉴">
           <Link href="/">처음 화면</Link>
-          <Link href="/?view=browse">둘러보기</Link>
+          <Link href="/v4/community">둘러보기</Link>
           {userLabel ? <span>{userLabel}</span> : null}
         </nav>
       </header>
