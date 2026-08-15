@@ -240,6 +240,27 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: ["test-results/moment-orbit-carousel"],
   },
+  {
+    id: "lineage-64-v1-2-1",
+    label: "Lineage 64 V1.2.1 Floating Moment Welcome Orbit",
+    route: "/design-lab/lineages/64/v1-2-1",
+    validationClass: "source-fidelity",
+    impactPrefixes: [
+      "app/design-lab/lineages/64/",
+      "lib/lineage-64",
+      "tests/lineage-64",
+      "docs/product/lineages/64",
+    ],
+    assetGate: null,
+    browserGates: ["tests/lineage-64-route-browser-qa.mjs"],
+    viewports: [
+      { width: 1280, height: 800 },
+      { width: 390, height: 844, mobile: true },
+      { width: 320, height: 720, mobile: true },
+    ],
+    captureReducedMotion: true,
+    extraEvidencePaths: ["test-results/lineage-64-floating-moment"],
+  },
 ]);
 
 function matchesPrefix(path, prefix) {

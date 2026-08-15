@@ -256,27 +256,34 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     ],
   },
   {
-    id: "lt-61-guided-next-moment-builder",
-    number: 61,
-    label: "Guided Next Moment LoveTree Builder V1.9",
-    status: "incoming",
-    summary: "Guided discovery of plausible next Moments, editable WHY NEXT, Main/Branch growth and continuing Story Path. Native interaction candidate is implemented; exact source visual fidelity and canonical /v4 adoption remain separate HOLD decisions.",
-    scenarios: ["tree-workspace"],
-    currentDecision: "V1.9 source reconciled (prior V1.7 pin was stale: current Drive root '현재후보.html' = V1.9, SHA-256 834fb634…). Native interaction candidate reuses the V1.7 implementation; V1.9 scale (progressive disclosure / Memory Cluster / branch scaling / disclosure actions) and Memory Glass visual deltas are NOT yet reimplemented in code — HOLD pending the actual V1.9 Drive source. Central interaction-contract QA is required; P8 exact visual/source fidelity, owner local file navigation and receiver same-Moment focus remain HOLD.",
-    sourceLabel: "Track61 V1.9 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / Issue #158 reintake",
+    id: "lt-64-floating-moment-entry-portal",
+    number: 64,
+    label: "Floating Moment Welcome Orbit",
+    status: "active",
+    summary: "복귀 사용자가 LoveTree / My Tree로 들어와 recent / important / First Moments가 하나의 연속된 부유 3D 카드 우주에 살아있음을 보고 하나의 Moment를 선택해 그 기억의 경로로 재진입하는 returning-user Memory Entry Portal 계보입니다.",
+    scenarios: ["entry-onboarding"],
+    currentDecision: "V1.2.1을 Design Lab source-fidelity candidate로 구현합니다. css3d-dom 렌더링을 faithful native React/CSS로 재구현하고, one selectedMomentId 권위·제스처 중재·Viewer 접근성·reduced-motion 수동 패리티를 보강합니다. canonical /v4 채택은 별도 결정(HOLD)이며 DB/API/Auth/Firebase/Neon/Worker는 변경하지 않습니다.",
+    sourceLabel: "Issue #165 · 64_부유모먼트_웰컴오빗_입장포털 / Track64 V1.2.1 (Drive 1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6)",
     revisions: [
       {
-        id: "61-v1-9",
-        label: "Guided Next Moment LoveTree Builder V1.9",
+        id: "64-v1-floating-moment-entry-portal",
+        label: "V1 reference / pre-executable proving snapshot",
+        decision: "reference",
+        executable: false,
+        notes: "Issue #165 intake pin · Drive folder 1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+      },
+      {
+        id: "64-v1-2-1-floating-moment-entry-portal",
+        label: "V1.2.1 Floating Moment Welcome Orbit (Direct Card Open + Curated Media)",
         decision: "candidate",
         executable: true,
-        route: "/design-lab/lineages/61/61-v1-9",
-        notes: "native interaction candidate reuses V1.7 implementation; V1.9 source reconciled; V1.9 scale/visual deltas and source fidelity/P8 not yet claimed",
+        route: "/design-lab/lineages/64/v1-2-1",
+        notes: "1,565,313 B · SHA256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d · css3d-dom · V1.2 → V1.2.1 delta = Track59 cross-track local navigation path correction only · canonical /v4 adoption HOLD",
       },
     ],
   },
 
-] as const;
+  ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
   const problems: string[] = [];
