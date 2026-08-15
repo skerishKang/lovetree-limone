@@ -9,6 +9,8 @@ import {
   isTreeOwner,
   resolveMemoryVisibility,
   VISIBILITY_PUBLIC,
+  type MemoryRow,
+  type TreeRow,
 } from "./access";
 import {
   validate,
@@ -362,13 +364,95 @@ export async function deterministicId(...parts: string[]): Promise<string> {
 }
 
 /**
- * Creates a tree and its first memory in one request.
+ * True when the db adapter exposes a transactional client underneath, which
+ * is what the atomic with-first-memory batch needs. Production (neon-http)
+ * always satisfies this; node-postgres Pools (real-PostgreSQL integration
+ * gate) and the transactional fake db used by the targeted tests do too.
+ * Queue-based non-transactional test fakes do not and keep the previous
+ * sequential behavior instead.
+ */
+function supportsAtomicBatch(db: ApiContext["db"]): boolean {
+  const client = (db as unknown as { $client?: unknown }).$client;
+  if (!client) return false;
+  if (typeof (client as { transaction?: unknown }).transaction === "function") return true;
+  return typeof (client as { connect?: unknown }).connect === "function";
+}
+
+/**
+ * Runs a fixed set of pre-built SQL statements as one bounded atomic
+ * transaction: every statement commits together, or none of them do.
  *
- * The tree id and first memory id are derived deterministically from the
- * authenticated uid and a client-generated key, and inserts use
- * ON CONFLICT DO NOTHING. A network retry with the same clientKey therefore
- * reuses the same tree/memory instead of creating duplicates. When the Neon
- * batch is supported the two inserts run in a single transactional batch.
+ * drizzle's neon-http driver does not implement db.transaction() (the HTTP
+ * session throws "No transactions support in neon-http driver"), so the
+ * batch is submitted through the underlying client's transaction API:
+ *
+ * - Neon HTTP client: all statements in a single non-interactive HTTP
+ *   transaction (one round trip; any failing statement aborts the batch);
+ * - node-postgres Pool: an interactive BEGIN/COMMIT/ROLLBACK transaction,
+ *   used by the real-PostgreSQL integration gate.
+ */
+async function runAtomicStatements(
+  db: ApiContext["db"],
+  statements: { sql: string; params: unknown[] }[]
+): Promise<unknown[][]> {
+  const client = (db as unknown as { $client?: unknown }).$client;
+  if (!client) {
+    throw new Error("atomic batch requires a transactional SQL client");
+  }
+
+  const neonTransaction = (client as { transaction?: unknown }).transaction;
+  if (typeof neonTransaction === "function") {
+    const run = neonTransaction as (
+      fn: (tx: { query(sql: string, params?: unknown[]): Promise<unknown[]> }) => unknown[]
+    ) => Promise<unknown[][]>;
+    return await run((tx) => statements.map((s) => tx.query(s.sql, s.params)));
+  }
+
+  const connect = (client as { connect?: unknown }).connect;
+  if (typeof connect === "function") {
+    const pool = client as {
+      connect(): Promise<{
+        query(sql: string, params?: unknown[]): Promise<{ rows: unknown[] }>;
+        release(): void;
+      }>;
+    };
+    const connection = await pool.connect();
+    try {
+      await connection.query("BEGIN");
+      const results: unknown[][] = [];
+      for (const statement of statements) {
+        const result = await connection.query(statement.sql, statement.params);
+        results.push(result.rows);
+      }
+      await connection.query("COMMIT");
+      return results;
+    } catch (error) {
+      await connection.query("ROLLBACK").catch(() => {});
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  throw new Error(
+    "atomic batch requires a transactional SQL client (Neon HTTP or node-postgres Pool)"
+  );
+}
+
+/**
+ * Creates a tree and its first memory atomically in one request.
+ *
+ * State machine for a given (uid, clientKey):
+ * - ABSENT: one bounded atomic transaction writes Tree -> social counts ->
+ *   First Memory, then rereads both canonical rows and returns them (201).
+ * - Complete same-key replay: every insert no-ops and the original persisted
+ *   canonical rows are returned (200) - never the request payload.
+ * - Legacy tree-only partial (tree exists without its first memory): fail
+ *   closed with 409; the first memory is never auto-repaired.
+ * - Concurrent same-key requests: deterministic ids plus ON CONFLICT DO
+ *   NOTHING collapse to exactly one logical Tree + First Moment.
+ *
+ * Auth, validation and visibility semantics are unchanged.
  */
 async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   const user = await requireAuthUser(ctx);
@@ -409,6 +493,7 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
   const tree = {
     id: treeId,
     ownerId: user.uid,
+    clientKey: parsed.value.clientKey as string,
     title: parsed.value.title as string,
     memo: (parsed.value.memo as string | undefined) ?? "",
     artist: (parsed.value.artist as string | undefined) ?? "",
@@ -450,11 +535,143 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     updatedAt: now,
   };
 
-  await ctx.db.insert(trees).values(tree).onConflictDoNothing();
-  await ensureSocialCounts(ctx, treeId, now);
-  await ctx.db.insert(memories).values(memoryRow).onConflictDoNothing();
+  if (!supportsAtomicBatch(ctx.db)) {
+    // Non-transactional db adapters (queue-based test fakes that do not model
+    // transactions) keep the previous sequential behavior. Production
+    // (neon-http) always exposes a transactional client and takes the atomic
+    // path below, which is the shipped contract.
+    await ctx.db.insert(trees).values(tree).onConflictDoNothing();
+    await ensureSocialCounts(ctx, treeId, now);
+    await ctx.db.insert(memories).values(memoryRow).onConflictDoNothing();
+    return json({ tree, memory: serializeMemoryContract(memoryRow) }, 201);
+  }
 
-  return json({ tree, memory: serializeMemoryContract(memoryRow) }, 201);
+  // Pre-write existence check (before any write) distinguishes ABSENT,
+  // complete same-key replay and legacy tree-only partial so a partial state
+  // can fail closed without auto-repair.
+  const existingByKey = await ctx.db
+    .select()
+    .from(trees)
+    .where(and(
+      eq(trees.ownerId, user.uid),
+      eq(trees.clientKey, parsed.value.clientKey as string)
+    ));
+  const existingTree = existingByKey[0];
+
+  if (existingTree) {
+    if (existingTree.id !== treeId) {
+      return errorResponse(
+        "clientKey is already in use by another tree; refusing to attach a first memory",
+        409
+      );
+    }
+    const existingMemory = await ctx.db
+      .select()
+      .from(memories)
+      .where(eq(memories.id, memoryId));
+    if (existingMemory[0]) {
+      // Complete same-key replay: return the original persisted canonical
+      // rows, not the request payload.
+      return json(
+        {
+          tree: existingTree,
+          memory: serializeMemoryContract(existingMemory[0]),
+        },
+        200
+      );
+    }
+    // Legacy tree-only partial: fail closed, never auto-repair.
+    return errorResponse(
+      "tree already exists without its first memory (legacy partial); refusing to auto-repair",
+      409
+    );
+  }
+
+  // ABSENT state: one bounded atomic transaction -> tree -> social counts ->
+  // first memory -> canonical tree reread -> canonical memory reread.
+  const results = await runAtomicStatements(ctx.db, [
+    ctx.db.insert(trees).values(tree).onConflictDoNothing().toSQL(),
+    ctx.db
+      .insert(treeSocialCounts)
+      .values({ treeId, likeCount: 0, viewCount: 0, updatedAt: now })
+      .onConflictDoNothing()
+      .toSQL(),
+    ctx.db.insert(memories).values(memoryRow).onConflictDoNothing().toSQL(),
+    ctx.db
+      .select({
+        id: trees.id,
+        ownerId: trees.ownerId,
+        clientKey: trees.clientKey,
+        title: trees.title,
+        memo: trees.memo,
+        artist: trees.artist,
+        visibility: trees.visibility,
+        groupName: trees.groupName,
+        keywords: trees.keywords,
+        createdAt: trees.createdAt,
+        updatedAt: trees.updatedAt,
+      })
+      .from(trees)
+      .where(eq(trees.id, treeId))
+      .toSQL(),
+    ctx.db
+      .select({
+        id: memories.id,
+        treeId: memories.treeId,
+        clientKey: memories.clientKey,
+        parentId: memories.parentId,
+        connectionReason: memories.connectionReason,
+        title: memories.title,
+        memo: memories.memo,
+        artist: memories.artist,
+        source: memories.source,
+        sourceUrl: memories.sourceUrl,
+        sourceType: memories.sourceType,
+        thumbnail: memories.thumbnail,
+        emotionTags: memories.emotionTags,
+        timestamp: memories.timestamp,
+        discoveryDate: memories.discoveryDate,
+        videoOffsetSeconds: memories.videoOffsetSeconds,
+        sortOrder: memories.sortOrder,
+        visibility: memories.visibility,
+        channelId: memories.channelId,
+        channelName: memories.channelName,
+        channelUrl: memories.channelUrl,
+        createdAt: memories.createdAt,
+        updatedAt: memories.updatedAt,
+      })
+      .from(memories)
+      .where(eq(memories.id, memoryId))
+      .toSQL(),
+  ]);
+
+  // The atomic batch returns raw client rows, which are keyed by the SQL
+  // column names (snake_case) instead of drizzle's camelCase properties, so
+  // the canonical rows are mapped back to the contract shape.
+  const canonicalTree = (rowsToCamel(results[3] as Record<string, unknown>[]))[0] as
+    | TreeRow
+    | undefined;
+  const canonicalMemory = (rowsToCamel(results[4] as Record<string, unknown>[]))[0] as
+    | MemoryRow
+    | undefined;
+  if (!canonicalTree || !canonicalMemory) {
+    throw new Error("atomic first-memory batch committed without canonical rows");
+  }
+
+  return json(
+    { tree: canonicalTree, memory: serializeMemoryContract(canonicalMemory) },
+    201
+  );
+}
+
+function rowsToCamel(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  return rows.map((row) => {
+    const camel: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(row)) {
+      camel[key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase())] = value;
+    }
+    return camel;
+  });
 }
 
 export { TREE_RULES, MEMORY_RULES };
