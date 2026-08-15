@@ -8,6 +8,23 @@ export const GLOBAL_ORCHESTRATION_PREFIXES = Object.freeze([
   "tests/design-fidelity-validation-orchestration.test.mjs",
 ]);
 
+/**
+ * Proven-consumer dependency edges (P8, issue #200).
+ *
+ * A change to a shared primitive must select the Design Fidelity target(s)
+ * that actually consume it, even when the primitive path is outside the
+ * consumer's direct impactPrefixes. Keep this narrow and evidence-backed:
+ * add an edge only when a target migrates to the shared primitive and proves
+ * equivalence. Do not widen to `lib/design-runtime/**` — sibling shared cores
+ * without a proven consumer must not auto-select any target.
+ */
+export const DEPENDENCY_EDGES = Object.freeze([
+  {
+    sourcePrefix: "lib/design-runtime/exact-asset.ts",
+    targetIds: Object.freeze(["lineage-58-v2"]),
+  },
+]);
+
 export const DESIGN_FIDELITY_TARGETS = Object.freeze([
   {
     id: "lineage-52-v3",
@@ -291,6 +308,14 @@ export function selectImpactedTargets(changedPaths, cwd = process.cwd()) {
     );
 
     if (directImpact) return true;
+
+    const edgeImpact = normalized.some((path) =>
+      DEPENDENCY_EDGES.some(
+        (edge) => edge.targetIds.includes(target.id) && matchesPrefix(path, edge.sourcePrefix),
+      ),
+    );
+
+    if (edgeImpact) return true;
     return globalChange && targetIsMaterialized(target, cwd);
   });
 }

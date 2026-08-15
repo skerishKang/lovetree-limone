@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  DEPENDENCY_EDGES,
   DESIGN_FIDELITY_TARGETS,
   getDesignFidelityTarget,
   selectImpactedTargets,
@@ -106,5 +107,55 @@ test("Lineage 55 provenance intake is intentionally outside actual-route fidelit
     DESIGN_FIDELITY_TARGETS.some((target) => target.route.includes("/55/")),
     false,
     "unresolved historical provenance is not flattened into an actual-route PASS contract",
+  );
+});
+
+test("P8 dependency edge maps only the proven exact-asset core to lineage-58-v2", () => {
+  assert.deepEqual(
+    DEPENDENCY_EDGES,
+    [
+      {
+        sourcePrefix: "lib/design-runtime/exact-asset.ts",
+        targetIds: ["lineage-58-v2"],
+      },
+    ],
+    "edge registry is narrow and evidence-backed; no inferred consumers",
+  );
+  for (const edge of DEPENDENCY_EDGES) {
+    assert.ok(edge.sourcePrefix.startsWith("lib/design-runtime/"), `${edge.sourcePrefix}: shared runtime primitive`);
+    for (const targetId of edge.targetIds) {
+      assert.ok(getDesignFidelityTarget(targetId), `${targetId}: edge consumer is a registered target`);
+    }
+  }
+});
+
+test("shared P8 exact-asset core change selects the proven lineage-58-v2 consumer", () => {
+  assert.deepEqual(
+    selectImpactedTargets(["lib/design-runtime/exact-asset.ts"]).map((target) => target.id),
+    ["lineage-58-v2"],
+    "only the proven P8 consumer is selected",
+  );
+  assert.deepEqual(
+    selectImpactedTargets(["lib/design-runtime/exact-asset.ts", "app/design-lab/lineages/56/v3/page.tsx"]).map((target) => target.id),
+    ["lineage-56-v3", "lineage-58-v2"],
+    "edge and existing direct impactPrefixes coexist",
+  );
+});
+
+test("unrelated shared runtime paths do not auto-select all Design Fidelity targets", () => {
+  assert.deepEqual(
+    selectImpactedTargets(["lib/design-runtime/selection.ts"]),
+    [],
+    "sibling shared core without a proven consumer selects nothing",
+  );
+  assert.deepEqual(
+    selectImpactedTargets(["lib/design-runtime/transport.ts"]),
+    [],
+    "no global lib/design-runtime/** to all-targets trigger",
+  );
+  assert.deepEqual(
+    selectImpactedTargets(["lib/design-runtime/ordered-frame.ts"]),
+    [],
+    "sibling shared core without a proven consumer selects nothing",
   );
 });
