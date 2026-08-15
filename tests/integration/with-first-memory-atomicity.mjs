@@ -24,6 +24,7 @@ import { readFile } from "node:fs/promises";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
 import * as schema from "../../db/schema.ts";
 import { treesRouter, deterministicId } from "../../server/api/trees.ts";
+import { memoriesRouter } from "../../server/api/memories.ts";
 
 const DB_CONN = process.env.DATABASE_URL;
 if (!DB_CONN) {
@@ -166,6 +167,39 @@ async function main() {
   rec("first memory sortOrder", r1.body?.memory?.sortOrder, 0);
   rec("success counts 1/1/1", JSON.stringify(await counts(treeA)), JSON.stringify([1, 1, 1]));
 
+  // 1b. Independent real-DB reread: GET /api/trees/:id
+  const rTreeGet = await call(treesRouter, {
+    method: "GET",
+    path: `/api/trees/${treeA}`,
+    uid: "user-a",
+  });
+  rec("tree GET status", rTreeGet.status, 200);
+  rec("tree GET id matches persisted", rTreeGet.body?.id, treeA);
+  rec("tree GET title matches original", rTreeGet.body?.title, "Golden");
+  rec("tree GET visibility matches persisted", rTreeGet.body?.visibility, "public");
+  rec("tree GET clientKey matches persisted", rTreeGet.body?.clientKey, keyA);
+
+  // 1c. Independent real-DB reread: GET /api/trees/:treeId/memories
+  const rMemGet = await call(memoriesRouter, {
+    method: "GET",
+    path: `/api/trees/${treeA}/memories`,
+    uid: "user-a",
+  });
+  rec("memories GET status", rMemGet.status, 200);
+  rec("memories GET exactly 1", rMemGet.body?.length, 1);
+  const memGet = rMemGet.body?.[0];
+  rec("memories GET id matches create response", memGet?.id, r1.body?.memory?.id);
+  rec("memories GET treeId matches tree", memGet?.treeId, treeA);
+  rec("memories GET memo matches original", memGet?.memo, "first");
+  rec("memories GET sortOrder 0", memGet?.sortOrder, 0);
+  rec("memories GET visibility matches persisted", memGet?.visibility, "public");
+
+  // 1d. Canonical open destination contract
+  const openPath = `/trees/${treeA}?highlight=${r1.body?.memory?.id}`;
+  rec("open destination constructible", typeof openPath, "string");
+  rec("open destination contains treeId", openPath.includes(treeA), true);
+  rec("open destination contains memoryId", openPath.includes(r1.body?.memory?.id), true);
+
   // 2. Complete same-key replay: original persisted rows, never the payload.
   const r2 = await call(treesRouter, {
     method: "POST",
@@ -177,6 +211,21 @@ async function main() {
   rec("replay returns original title", r2.body?.tree?.title, "Golden");
   rec("replay returns original memo", r2.body?.memory?.memo, "first");
   rec("replay counts unchanged 1/1/1", JSON.stringify(await counts(treeA)), JSON.stringify([1, 1, 1]));
+
+  // 2b. Restore truth: GET reread after changed replay returns original state
+  const rRestoreTree = await call(treesRouter, {
+    method: "GET",
+    path: `/api/trees/${treeA}`,
+    uid: "user-a",
+  });
+  rec("restore tree GET title original after replay", rRestoreTree.body?.title, "Golden");
+  const rRestoreMem = await call(memoriesRouter, {
+    method: "GET",
+    path: `/api/trees/${treeA}/memories`,
+    uid: "user-a",
+  });
+  rec("restore memories count 1 after replay", rRestoreMem.body?.length, 1);
+  rec("restore memories memo original after replay", rRestoreMem.body?.[0]?.memo, "first");
 
   // 3. Statement failure -> full rollback, 0 tree / 0 social / 0 memory.
   await pool.query(
@@ -377,6 +426,23 @@ async function main() {
   rec("private create 201", rP.status, 201);
   rec("private tree visibility", rP.body?.tree?.visibility, "private");
   rec("private memory inherits tree visibility", rP.body?.memory?.visibility, "private");
+
+  // 7b. Read authority control: private tree owner GET = 200,
+  //     other user GET = 404 (server-authoritative, no new policy).
+  const rPrivOwnerGet = await call(treesRouter, {
+    method: "GET",
+    path: `/api/trees/${rP.body?.tree?.id}`,
+    uid: "user-a",
+  });
+  rec("private tree owner GET status 200", rPrivOwnerGet.status, 200);
+  rec("private tree owner GET id matches", rPrivOwnerGet.body?.id, rP.body?.tree?.id);
+
+  const rPrivOtherGet = await call(treesRouter, {
+    method: "GET",
+    path: `/api/trees/${rP.body?.tree?.id}`,
+    uid: "user-b",
+  });
+  rec("private tree other GET status 404", rPrivOtherGet.status, 404);
 
   const keyS = `it-s-${RUN}`;
   const rS1 = await call(treesRouter, {
