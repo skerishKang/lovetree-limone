@@ -12,12 +12,27 @@ const VIEWPORTS = [
 async function openPage(browser, url, viewport) {
   const page = await browser.newPage({ viewport });
   const errors = [];
-  page.on("pageerror", (err) => errors.push(err.message));
-  page.on("console", (msg) => {
-    if (msg.type() === "error") errors.push(`console:${msg.text()}`);
+  page.on("pageerror", (err) => {
+    errors.push({ type: "pageerror", route: url, viewport: viewport.name, message: err.message });
   });
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
+      errors.push({ type: "console:error", route: url, viewport: viewport.name, message: msg.text() });
+    }
+  });
+
+  await page.route("**/fonts.googleapis.com/**", (route) => route.fulfill({ status: 200, contentType: "text/css", body: "" }));
+  await page.route("**/fonts.gstatic.com/**", (route) => route.fulfill({ status: 200, contentType: "application/octet-stream", body: "" }));
+
   const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 15000 });
   return { page, errors, status: resp.status() };
+}
+
+function formatErrorDetail(errors) {
+  if (errors.length === 0) return "";
+  return "\n" + errors.map((e, i) =>
+    `  [${i + 1}] ${e.type} @ ${e.route} [${e.viewport}]: ${e.message}`
+  ).join("\n");
 }
 
 async function checkCommon(page) {
@@ -53,7 +68,7 @@ test("V4 additional source baseline — rest screen", async () => {
       );
       const common = await checkCommon(page);
       assert.equal(status, 200, `rest ${vp.name}: HTTP 200`);
-      assert.equal(errors.length, 0, `rest ${vp.name}: no errors`);
+      assert.equal(errors.length, 0, `rest ${vp.name}: no errors${formatErrorDetail(errors)}`);
       assert.equal(common.iframes, 0, `rest ${vp.name}: no iframes`);
       assert.equal(common.dupIds.length, 0, `rest ${vp.name}: no duplicate IDs`);
       assert.equal(
@@ -109,7 +124,7 @@ test("V4 additional source baseline — state screen", async () => {
       );
       const common = await checkCommon(page);
       assert.equal(status, 200, `state ${vp.name}: HTTP 200`);
-      assert.equal(errors.length, 0, `state ${vp.name}: no errors`);
+      assert.equal(errors.length, 0, `state ${vp.name}: no errors${formatErrorDetail(errors)}`);
       assert.equal(common.iframes, 0, `state ${vp.name}: no iframes`);
       assert.equal(
         common.dupIds.length,
@@ -172,7 +187,7 @@ test("V4 additional source baseline — 300-plus screen", async () => {
       );
       const common = await checkCommon(page);
       assert.equal(status, 200, `300-plus ${vp.name}: HTTP 200`);
-      assert.equal(errors.length, 0, `300-plus ${vp.name}: no errors`);
+      assert.equal(errors.length, 0, `300-plus ${vp.name}: no errors${formatErrorDetail(errors)}`);
       assert.equal(
         common.iframes,
         0,
@@ -261,7 +276,7 @@ test("V4 additional source baseline — seasons screen", async () => {
       );
       const common = await checkCommon(page);
       assert.equal(status, 200, `seasons ${vp.name}: HTTP 200`);
-      assert.equal(errors.length, 0, `seasons ${vp.name}: no errors`);
+      assert.equal(errors.length, 0, `seasons ${vp.name}: no errors${formatErrorDetail(errors)}`);
       assert.equal(common.iframes, 0, `seasons ${vp.name}: no iframes`);
       assert.equal(
         common.dupIds.length,
