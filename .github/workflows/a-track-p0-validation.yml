@@ -12,6 +12,26 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      # Disposable PostgreSQL for the explicit backend integration gate.
+      # tests/integration/** is not auto-discovered by the A-track standard
+      # corpus, so the real-database with-first-memory atomicity contract is
+      # exercised here against a fresh service container instead.
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          # Trust auth: the disposable service container needs no password, so
+          # no credential value ever appears in this workflow (GitGuardian).
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: lovetree_wfm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +56,13 @@ jobs:
 
       - name: Targeted A-track contract tests
         run: node --import tsx --test tests/v4-source-faithful-contract.test.mjs tests/v4-complete-integration-contract.test.mjs tests/v4-product-spine-integration.test.mjs tests/v4-p1-product-contracts.test.mjs
+
+      - name: Real PostgreSQL with-first-memory atomicity gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATABASE_URL="postgres://postgres@127.0.0.1:5432/lovetree_wfm" \
+            node --import tsx tests/integration/with-first-memory-atomicity.mjs
 
       - name: Prepare Playwright runtime
         run: |
