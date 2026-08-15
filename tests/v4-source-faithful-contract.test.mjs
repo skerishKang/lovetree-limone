@@ -126,7 +126,8 @@ test("landing preserves modal, discovery form and live preview mechanics", async
   assert.match(landing, /v4-seed-preview-card/);
   assert.match(landing, /Escape/);
   assert.doesNotMatch(landing, /lovetree-v4-discovery/);
-  assert.match(landing, /apiFetch\("\/api\/trees\/with-first-memory"/);
+  assert.match(landing, /createFirstTree\(/);
+  assert.match(landing, /fetchFn:\s*apiFetch/);
   assert.match(landing, /router\.push\(`\/trees\/\$\{encodeURIComponent\(treeId\)\}\?highlight=/);
 });
 
