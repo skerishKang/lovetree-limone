@@ -118,10 +118,13 @@ async function assertCoreInteractions(page, label) {
 async function assertLubtDrag(page, label) {
   const lubt = page.locator(".lcw-lubt");
 
-  // Native trace is diagnostic evidence for #197. It records browser ownership
-  // transitions without changing product handlers, gesture timing, or retrying.
+  // Record native browser ownership transitions. The test waits for the real
+  // gotpointercapture event before movement instead of treating the pending
+  // setPointerCapture state as equivalent to activated capture.
   await lubt.evaluate((node) => {
     node.dataset.qaPointerEvents = "[]";
+    delete node.dataset.qaPointerId;
+    delete node.dataset.qaGotPointerCapture;
     const record = (event) => {
       const events = JSON.parse(node.dataset.qaPointerEvents || "[]");
       events.push({
@@ -136,6 +139,7 @@ async function assertLubtDrag(page, label) {
       });
       node.dataset.qaPointerEvents = JSON.stringify(events);
       if (event.type === "pointerdown") node.dataset.qaPointerId = String(event.pointerId);
+      if (event.type === "gotpointercapture") node.dataset.qaGotPointerCapture = String(event.pointerId);
     };
     for (const type of ["pointerdown", "gotpointercapture", "pointermove", "pointercancel", "lostpointercapture", "pointerup"]) {
       node.addEventListener(type, record);
@@ -161,11 +165,20 @@ async function assertLubtDrag(page, label) {
   await page.mouse.down();
   await page.locator(".lcw-lubt.dragging").waitFor({ state: "visible", timeout: 5000 });
 
-  const captured = await lubt.evaluate((node) => {
+  const pendingCapture = await lubt.evaluate((node) => {
     const pointerId = Number(node.dataset.qaPointerId);
     return Number.isInteger(pointerId) && node.hasPointerCapture(pointerId);
   });
-  assert.equal(captured, true, `${label}: Lubt owns browser pointer capture`);
+  assert.equal(pendingCapture, true, `${label}: Lubt pending pointer capture is established`);
+
+  await page.waitForFunction(
+    () => {
+      const node = document.querySelector(".lcw-lubt");
+      return Boolean(node?.dataset.qaPointerId && node.dataset.qaGotPointerCapture === node.dataset.qaPointerId);
+    },
+    undefined,
+    { timeout: 5000 },
+  );
 
   await page.mouse.move(
     Math.min(page.viewportSize().width - 40, startX + 140),
@@ -181,15 +194,27 @@ async function assertLubtDrag(page, label) {
       events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
     };
   });
-  assert.equal(
-    afterMove.dragging,
-    true,
-    `${label}: Lubt drag owns pointer; captured=${afterMove.captured}; trace=${JSON.stringify(afterMove.events)}`,
+  const prematureTerminal = afterMove.events.find((event) =>
+    event.type === "pointercancel" || event.type === "lostpointercapture" || event.type === "pointerup"
   );
+  assert.equal(
+    prematureTerminal,
+    undefined,
+    `${label}: no terminal pointer event before explicit mouse up; trace=${JSON.stringify(afterMove.events)}`,
+  );
+  assert.equal(afterMove.captured, true, `${label}: Lubt retains pointer capture through movement; trace=${JSON.stringify(afterMove.events)}`);
+  assert.equal(afterMove.dragging, true, `${label}: Lubt drag owns pointer; trace=${JSON.stringify(afterMove.events)}`);
 
   await page.mouse.up();
   await page.locator(".lcw-lubt.dragging").waitFor({ state: "detached", timeout: 5000 });
-  assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), false, `${label}: Lubt pointer release recovers`);
+
+  const afterUp = await lubt.evaluate((node) => ({
+    dragging: node.classList.contains("dragging"),
+    events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+  }));
+  assert.equal(afterUp.dragging, false, `${label}: Lubt pointer release recovers`);
+  assert.equal(afterUp.events.some((event) => event.type === "pointerup"), true, `${label}: explicit pointerup is observed`);
+  assert.equal(afterUp.events.some((event) => event.type === "pointercancel"), false, `${label}: normal mouse drag is not cancelled`);
   assert.match(await page.locator(".lcw-lubt-bubble").innerText(), /새로운 자리/);
   await page.waitForTimeout(2500);
   const inline = await lubt.evaluate((node) => ({ left: node.style.left, top: node.style.top }));
