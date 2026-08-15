@@ -118,17 +118,30 @@ async function assertCoreInteractions(page, label) {
 async function assertLubtDrag(page, label) {
   const lubt = page.locator(".lcw-lubt");
 
-  // Record the actual pointer id delivered to the moving Lubt so the test can
-  // prove browser pointer capture rather than infer ownership from CSS alone.
+  // Native trace is diagnostic evidence for #197. It records browser ownership
+  // transitions without changing product handlers, gesture timing, or retrying.
   await lubt.evaluate((node) => {
-    node.addEventListener("pointerdown", (event) => {
-      node.dataset.qaPointerId = String(event.pointerId);
-    }, { once: true });
+    node.dataset.qaPointerEvents = "[]";
+    const record = (event) => {
+      const events = JSON.parse(node.dataset.qaPointerEvents || "[]");
+      events.push({
+        type: event.type,
+        pointerId: event.pointerId,
+        button: event.button,
+        buttons: event.buttons,
+        captured: node.hasPointerCapture(event.pointerId),
+        dragging: node.classList.contains("dragging"),
+        clientX: Math.round(event.clientX),
+        clientY: Math.round(event.clientY),
+      });
+      node.dataset.qaPointerEvents = JSON.stringify(events);
+      if (event.type === "pointerdown") node.dataset.qaPointerId = String(event.pointerId);
+    };
+    for (const type of ["pointerdown", "gotpointercapture", "pointermove", "pointercancel", "lostpointercapture", "pointerup"]) {
+      node.addEventListener(type, record);
+    }
   });
 
-  // Lubt continuously wanders via CSS transform while idle. Track the live visual
-  // target before pressing instead of assuming an earlier bounding box is still
-  // current under CI load. This does not retry the gesture or pause the animation.
   const firstBox = await lubt.boundingBox();
   assert.ok(firstBox, `${label}: Lubt exists`);
   await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
@@ -159,7 +172,20 @@ async function assertLubtDrag(page, label) {
     Math.min(page.viewportSize().height - 80, startY + 100),
     { steps: 5 },
   );
-  assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), true, `${label}: Lubt drag owns pointer`);
+
+  const afterMove = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return {
+      dragging: node.classList.contains("dragging"),
+      captured: Number.isInteger(pointerId) && node.hasPointerCapture(pointerId),
+      events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+    };
+  });
+  assert.equal(
+    afterMove.dragging,
+    true,
+    `${label}: Lubt drag owns pointer; captured=${afterMove.captured}; trace=${JSON.stringify(afterMove.events)}`,
+  );
 
   await page.mouse.up();
   await page.locator(".lcw-lubt.dragging").waitFor({ state: "detached", timeout: 5000 });
