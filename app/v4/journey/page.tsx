@@ -13,13 +13,20 @@ const STORAGE_KEY = "lovetree-first-journey-unified";
 export default function V4FirstJourneyPage() {
   const [isV12] = useState(() => {
     try {
+      if (
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).has("v12")
+      ) {
+        return true;
+      }
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed.firstMoment?.url) return false;
+        if (parsed.v12Mode === true) return true;
       }
     } catch { /* ignore */ }
-    return true;
+    return false;
   });
 
   return (
