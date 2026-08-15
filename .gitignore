@@ -49,3 +49,6 @@ temp/
 # Agent and MCP working directories
 .kilo/
 .playwright-mcp/
+
+# Track66 native QA evidence (uploaded as CI artifact only, not committed)
+qa-artifacts/
