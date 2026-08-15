@@ -67,4 +67,28 @@ test("browse and authenticated navigation use real tree links", () => {
 test("integrated screens do not use the design mocks or localStorage", () => {
   assert.doesNotMatch(myTrees, /localStorage|SAMPLE|example/i);
   assert.doesNotMatch(detail, /localStorage|SAMPLE/);
+  assert.doesNotMatch(timeline, /localStorage|SAMPLE|fixture|design mock/i);
+});
+
+test("timeline keeps the canonical real-data source and owner mutation behavior", () => {
+  assert.match(timeline, /useTreeMoments\(treeId/);
+  assert.match(timeline, /timelineMoments/);
+  assert.match(timeline, /moments\.find\(\(m\) => m\.id === moment\.id\)/);
+  assert.match(timeline, /isOwner/);
+  assert.match(timeline, /createMoment/);
+  assert.match(timeline, /updateMoment/);
+  assert.match(timeline, /deleteMoment/);
+});
+
+test("timeline surfaces canonical WHY NEXT only for connected moments", () => {
+  // connected Moment detection follows canonical parentId semantics
+  assert.match(timeline, /memory\.parentId \? \(/);
+  // the relation block (label + reason + fallback) lives inside the parentId gate
+  assert.match(timeline, /memory\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+  // canonical connectionReason is consumed from the persisted memory record
+  assert.match(timeline, /memory\.connectionReason && memory\.connectionReason\.trim\(\)/);
+  assert.match(timeline, /<p className="moment-detail-parent-title">\{memory\.connectionReason\}<\/p>/);
+  // root / first Moment (no parentId) is never forced into a WHY NEXT relation
+  assert.equal((timeline.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  assert.match(timeline, /이전 순간과 이어지는 관계/);
 });
