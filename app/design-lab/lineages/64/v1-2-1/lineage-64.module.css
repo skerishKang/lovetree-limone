@@ -11,6 +11,14 @@
   touch-action: none;
 }
 
+/* Inertable root for ALL non-dialog background interactive content (world cards,
+   semantic toggle, list panel). Preserves the stage 3D context for .world. */
+.background {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
 .welcome {
   position: absolute;
   top: 46%;

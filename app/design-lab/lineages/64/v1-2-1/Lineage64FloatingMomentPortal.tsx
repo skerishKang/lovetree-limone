@@ -64,6 +64,7 @@ export default function Lineage64FloatingMomentPortal() {
   const [announce, setAnnounce] = useState("");
 
   const worldRef = useRef<HTMLDivElement | null>(null);
+  const backgroundRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const listToggleRef = useRef<HTMLButtonElement | null>(null);
@@ -124,7 +125,7 @@ export default function Lineage64FloatingMomentPortal() {
   // dialog so the Viewer always contains focus (item E).
   useEffect(() => {
     if (state.viewerOpen) {
-      if (worldRef.current) worldRef.current.inert = true;
+      if (backgroundRef.current) backgroundRef.current.inert = true;
       const id = requestAnimationFrame(() => closeRef.current?.focus());
       const dialog = viewerRef.current;
       const onFocusOut = (e: FocusEvent) => {
@@ -139,7 +140,7 @@ export default function Lineage64FloatingMomentPortal() {
         dialog?.removeEventListener("focusout", onFocusOut);
       };
     }
-    if (worldRef.current) worldRef.current.inert = false;
+    if (backgroundRef.current) backgroundRef.current.inert = false;
     triggerRef.current?.focus();
     triggerRef.current = null;
   }, [state.viewerOpen]);
@@ -320,11 +321,16 @@ export default function Lineage64FloatingMomentPortal() {
 
   return (
     <div className={styles.stage} onWheel={handleWheel}>
-      <div className={styles.welcome} aria-hidden="true">
-        <p className={styles.welcomeKicker}>WELCOME BACK</p>
-        <h2 className={styles.welcomeTitle}>부유모먼트 웰컴오빗</h2>
-        <p className={styles.welcomeSub}>연속된 부유 3D 카드 우주에서 하나의 Moment를 선택해 경로로 재진입하세요.</p>
-      </div>
+      <div
+        className={styles.background}
+        ref={backgroundRef}
+        data-background="true"
+      >
+        <div className={styles.welcome} aria-hidden="true">
+          <p className={styles.welcomeKicker}>WELCOME BACK</p>
+          <h2 className={styles.welcomeTitle}>부유모먼트 웰컴오빗</h2>
+          <p className={styles.welcomeSub}>연속된 부유 3D 카드 우주에서 하나의 Moment를 선택해 경로로 재진입하세요.</p>
+        </div>
 
       <button
         type="button"
@@ -395,6 +401,7 @@ export default function Lineage64FloatingMomentPortal() {
           ))}
         </div>
       )}
+      </div>
 
       {state.viewerOpen && active && (
         <div className={styles.viewerOverlay}>

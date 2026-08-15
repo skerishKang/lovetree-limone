@@ -139,23 +139,78 @@ async function waitForFocusInside(page, label, timeout = 3000) {
 }
 
 async function assertViewerFocusTrap(page, label) {
-  const inside = () =>
-    page.evaluate(() => {
-      const dialog = document.querySelector('[role="dialog"]');
-      return !!dialog && dialog.contains(document.activeElement);
-    });
   await waitForFocusInside(page, label);
-  await page.keyboard.press("Tab");
-  assert.ok(await inside(), `${label}: Tab keeps focus inside the Viewer`);
-  await page.keyboard.press("Tab");
-  assert.ok(await inside(), `${label}: repeated Tab keeps focus inside the Viewer`);
+  const wrap = () =>
+    page.evaluate(() => {
+      const dlg = document.querySelector('[role="dialog"]');
+      const focusables = dlg?.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+      const first = focusables && focusables[0];
+      const last = focusables && focusables[focusables.length - 1];
+      const a = document.activeElement;
+      return {
+        inside: !!dlg && dlg.contains(a),
+        isFirst: a === first,
+        isLast: a === last,
+        firstText: first?.textContent?.trim() ?? null,
+        lastText: last?.textContent?.trim() ?? null,
+      };
+    });
+
+  // Initial focus is inside the dialog on the first control (close button).
+  let s = await wrap();
+  assert.ok(s.inside, `${label}: Viewer initial focus is inside the dialog`);
+  assert.ok(s.isFirst, `${label}: Viewer initial focus is on the first control (${s.firstText})`);
+
+  // Shift+Tab from the FIRST focusable wraps to the LAST.
   await page.keyboard.press("Shift+Tab");
-  assert.ok(await inside(), `${label}: Shift+Tab keeps focus inside the Viewer`);
-  const inert = await page.evaluate(() => {
+  s = await wrap();
+  assert.ok(s.inside, `${label}: Shift+Tab stays inside the Viewer`);
+  assert.ok(s.isLast, `${label}: Shift+Tab from first wraps to last (${s.lastText})`);
+
+  // Tab from the LAST focusable wraps to the FIRST.
+  await page.keyboard.press("Tab");
+  s = await wrap();
+  assert.ok(s.inside, `${label}: Tab stays inside the Viewer`);
+  assert.ok(s.isFirst, `${label}: Tab from last wraps to first (${s.firstText})`);
+
+  // A forward/backward pass keeps focus inside at every step.
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  assert.ok((await wrap()).inside, `${label}: forward Tab pass keeps focus inside`);
+  await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Shift+Tab");
+  assert.ok((await wrap()).inside, `${label}: backward Shift+Tab pass keeps focus inside`);
+
+  await assertBackgroundInert(page, label);
+}
+
+async function assertBackgroundInert(page, label) {
+  const state = await page.evaluate(() => {
+    const bg = document.querySelector('[data-background]');
     const world = document.querySelector('[data-rendering="css3d-dom"]');
-    return world ? world.inert : null;
+    const toggle = document.querySelector('[aria-expanded]');
+    const card = document.querySelector('[data-moment-id]');
+    const insideBg = (el) => !!el && !!bg && (el === bg || bg.contains(el));
+    // Behavioral inertness: focusing an inert descendant must be a no-op.
+    toggle?.focus();
+    const toggleFocusable = document.activeElement === toggle;
+    card?.focus();
+    const cardFocusable = document.activeElement === card;
+    // Restore focus to the dialog close control for the subsequent Escape step.
+    document.querySelector('[role="dialog"] [aria-label="닫기"]')?.focus();
+    return {
+      bgInert: bg ? bg.inert : null,
+      worldInsideBg: insideBg(world),
+      toggleInsideBg: insideBg(toggle),
+      toggleFocusable,
+      cardFocusable,
+    };
   });
-  assert.equal(inert, true, `${label}: background world is inert while Viewer is open`);
+  assert.equal(state.bgInert, true, `${label}: whole background root is inert while Viewer is open`);
+  assert.equal(state.worldInsideBg, true, `${label}: world (orbit cards) is under the inert background root`);
+  assert.equal(state.toggleInsideBg, true, `${label}: semantic list toggle is under the inert background root`);
+  assert.equal(state.toggleFocusable, false, `${label}: semantic toggle cannot receive focus while Viewer is open`);
+  assert.equal(state.cardFocusable, false, `${label}: orbit cards cannot receive focus while Viewer is open`);
 }
 
 async function closeViewer(page) {
@@ -329,8 +384,9 @@ try {
       const selectedId = await mobile.page.locator("[data-selected-moment-id]").getAttribute("data-selected-moment-id");
       assert.ok(selectedId?.startsWith("moment-"), `${spec.label}: real touch tap opens Viewer (${selectedId})`);
 
-      // E. focus contained inside the Viewer on open.
+      // E. focus contained inside the Viewer on open + whole background inert.
       await waitForFocusInside(mobile.page, spec.label);
+      await assertBackgroundInert(mobile.page, spec.label);
 
       await closeViewer(mobile.page);
       const card = mobile.page.locator(`[data-moment-id="${selectedId}"]`);
