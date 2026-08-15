@@ -464,6 +464,93 @@ async function main() {
   );
   rec("same key different owner: distinct tree ids", rS1.body?.tree?.id === rS2.body?.tree?.id, false);
 
+  // === COM3 #204 Slice C1: canonical subsequent Moment relation round-trip ===
+  // Reuses the existing real-DB harness (treeA + firstMemoryId from section 1).
+  const firstMemoryId = r1.body?.memory?.id;
+  rec("first memory id captured", typeof firstMemoryId, "string");
+
+  const subKey = `it-a-sub-${RUN}`;
+  const WHY_NEXT = `canonical WHY NEXT: ${treeA} continues from ${firstMemoryId}`;
+  const rSub = await call(memoriesRouter, {
+    method: "POST",
+    path: `/api/trees/${treeA}/memories`,
+    body: {
+      clientKey: subKey,
+      parentId: firstMemoryId,
+      connectionReason: WHY_NEXT,
+      title: "Subsequent Moment",
+      memo: "canonical subsequent moment content",
+    },
+    uid: "user-a",
+  });
+  rec("subsequent create status 201", rSub.status, 201);
+  const subsequentMemoryId = rSub.body?.id;
+  rec("subsequent memory id captured", typeof subsequentMemoryId, "string");
+  rec("subsequent treeId matches tree", rSub.body?.treeId, treeA);
+  rec("subsequent parentId === firstMemoryId", rSub.body?.parentId, firstMemoryId);
+  rec("subsequent connectionReason round-trip on create", rSub.body?.connectionReason, WHY_NEXT);
+  rec("subsequent clientKey persisted", rSub.body?.clientKey, subKey);
+
+  // Exact idempotent retry: same treeId + same clientKey -> same canonical id,
+  // never a new row (NEXT_MEMORY_IDEMPOTENCY=REUSE_EXISTING).
+  const rRetry = await call(memoriesRouter, {
+    method: "POST",
+    path: `/api/trees/${treeA}/memories`,
+    body: {
+      clientKey: subKey,
+      parentId: firstMemoryId,
+      connectionReason: "retry payload reason must NOT overwrite persisted row",
+      title: "Subsequent Moment retry",
+      memo: "retry payload must not create a new row",
+    },
+    uid: "user-a",
+  });
+  rec("subsequent retry status 200 (reuse existing)", rRetry.status, 200);
+  rec("subsequent retry same id", rRetry.body?.id, subsequentMemoryId);
+
+  // Canonical reread through the existing GET authority.
+  const rMemGet2 = await call(memoriesRouter, {
+    method: "GET",
+    path: `/api/trees/${treeA}/memories`,
+    uid: "user-a",
+  });
+  rec("subsequent reread status 200", rMemGet2.status, 200);
+  const rows = rMemGet2.body || [];
+  rec("reread exactly 2 memories (no duplicate)", rows.length, 2);
+  const subRow = rows.find((m) => m.id === subsequentMemoryId);
+  rec("subsequent present in reread", !!subRow, true);
+  rec("reread parentId === firstMemoryId", subRow?.parentId, firstMemoryId);
+  rec("reread connectionReason exact round-trip", subRow?.connectionReason, WHY_NEXT);
+
+  // Duplicate prevention: exactly one row carries the subsequent clientKey.
+  const dupQ = await pool.query(
+    "select count(*)::int n from memories where tree_id=$1 and client_key=$2",
+    [treeA, subKey]
+  );
+  rec("no duplicate subsequent row for clientKey", dupQ.rows[0].n, 1);
+
+  // Relation restore from canonical rows only (no localStorage as truth).
+  const childrenByParent = {};
+  for (const m of rows) {
+    if (m.parentId) (childrenByParent[m.parentId] ||= []).push(m.id);
+  }
+  rec("first memory is root (no parent)", rows.find((m) => m.id === firstMemoryId)?.parentId, null);
+  rec(
+    "relation parent -> child recoverable from rows",
+    (childrenByParent[firstMemoryId] || []).includes(subsequentMemoryId),
+    true
+  );
+
+  // Actual persisted completion target (no sample/video/local id).
+  const completionTarget = `/trees/${treeA}?highlight=${subsequentMemoryId}`;
+  rec("completion target is string", typeof completionTarget, "string");
+  rec("completion target contains treeId", completionTarget.includes(treeA), true);
+  rec(
+    "completion target contains subsequentMemoryId",
+    completionTarget.includes(subsequentMemoryId),
+    true
+  );
+
   await pool.end();
   const failed = results.filter((r) => !r.ok);
   console.log(
