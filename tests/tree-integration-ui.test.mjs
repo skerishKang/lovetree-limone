@@ -9,6 +9,7 @@ const timeline = readFileSync(new URL("../app/trees/[id]/timeline/page.tsx", imp
 const album = readFileSync(new URL("../app/trees/[id]/album/page.tsx", import.meta.url), "utf8");
 const hook = readFileSync(new URL("../lib/use-tree-moments.ts", import.meta.url), "utf8");
 const composer = readFileSync(new URL("../app/components/MomentComposerModal.tsx", import.meta.url), "utf8");
+const finalTreeSurface = readFileSync(new URL("../app/components/v4/product/V4FinalTreeSurface.tsx", import.meta.url), "utf8");
 
 test("real tree routes exist and use the App Router shape", () => {
   assert.equal(existsSync(new URL("../app/my-trees/page.tsx", import.meta.url)), true);
@@ -91,4 +92,24 @@ test("timeline surfaces canonical WHY NEXT only for connected moments", () => {
   // root / first Moment (no parentId) is never forced into a WHY NEXT relation
   assert.equal((timeline.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
   assert.match(timeline, /이전 순간과 이어지는 관계/);
+});
+
+test("graph inspector keeps the canonical real-data surface and surfaces WHY NEXT only for connected moments", () => {
+  // Graph is a canonical real-data surface over useTreeMoments — no fixture/localStorage product truth
+  assert.match(finalTreeSurface, /function GraphSurface\(\{ moments \}: \{ moments: MemoryRecord\[\] \}\)/);
+  assert.match(finalTreeSurface, /useTreeMoments\(treeId\)/);
+  assert.doesNotMatch(finalTreeSurface, /localStorage|SAMPLE|fixture/i);
+  // V4FinalTreeSurface feeds the canonical moments collection to the graph — no new API lookup in the graph path
+  assert.match(finalTreeSurface, /\(mode === "graph" \? <GraphSurface moments=\{moments\} \/> : null\)|\{mode === "graph" \? <GraphSurface moments=\{moments\} \/> : null\}/);
+  // a selected connected Moment resolves its actual parent from the same canonical moments collection
+  assert.match(finalTreeSurface, /chosenParent = chosen\?\.parentId \? \(moments\.find\(\(memory\) => memory\.id === chosen\.parentId\)/);
+  // canonical connectionReason is consumed as the actual WHY NEXT when present
+  assert.match(finalTreeSurface, /chosen\.connectionReason\?\.trim\(\) \? chosen\.connectionReason/);
+  // missing stored reason keeps the truthful generic fallback (exactly once), never presented as a stored reason
+  assert.equal((finalTreeSurface.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  // root Moment (no parentId) keeps the root vocabulary and never renders a WHY NEXT row
+  assert.match(finalTreeSurface, /<dt>Parent<\/dt><dd>\{chosenParent \? memoryTitle\(chosenParent\) : chosen\.parentId \? "connected" : "root"\}<\/dd>/);
+  assert.match(finalTreeSurface, /\(chosen\.parentId \? <div><dt>WHY NEXT<\/dt>|\{chosen\.parentId \? <div><dt>WHY NEXT<\/dt>/);
+  // no new API/schema/persistence introduced by the graph path
+  assert.doesNotMatch(finalTreeSurface, /apiFetch\(`\/api\/trees/);
 });

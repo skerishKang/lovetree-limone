@@ -205,6 +205,7 @@ function GraphSurface({ moments }: { moments: MemoryRecord[] }) {
   }, [mode, visible]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
   const chosen = moments.find((memory) => memory.id === selected) ?? null;
+  const chosenParent = chosen?.parentId ? (moments.find((memory) => memory.id === chosen.parentId) ?? null) : null;
   const paths = nodes.flatMap((node) => {
     if (!node.parentId) return [];
     const parent = byId.get(node.parentId);
@@ -225,7 +226,7 @@ function GraphSurface({ moments }: { moments: MemoryRecord[] }) {
             {nodes.map((node, index) => <article key={node.id} className={`v4-graph-node${selected === node.id ? " is-active" : ""}`} style={{ left: node.x, top: node.y }} onClick={() => setSelected(node.id)}><span className="v4-graph-node-media" style={resolveMemoryThumbnail(node.memory) ? { backgroundImage: `url(${resolveMemoryThumbnail(node.memory)})` } : undefined} /><small>{String(index + 1).padStart(2, "0")} · {(node.memory.emotionTags || ["moment"])[0]}</small><strong>{memoryTitle(node.memory, index)}</strong></article>)}
           </div>
         </div>
-        <aside className="v4-graph-inspector"><small>{mode.toUpperCase()} INSPECTOR</small>{chosen ? <><h2>{memoryTitle(chosen)}</h2><p>{chosen.memo || "이 순간에 남긴 마음"}</p><dl><div><dt>Date</dt><dd>{formatTreeDate(dateValue(chosen))}</dd></div><div><dt>Parent</dt><dd>{chosen.parentId ? "connected" : "root"}</dd></div><div><dt>Tags</dt><dd>{(chosen.emotionTags || []).join(" · ") || "—"}</dd></div></dl>{isSafeExternalUrl(chosen.sourceUrl) ? <a href={chosen.sourceUrl} target="_blank" rel="noreferrer noopener">Source ↗</a> : null}</> : <p>노드를 선택해 주세요.</p>}<div className="v4-graph-telemetry"><span>VISIBLE {nodes.length}</span><span>EDGES {paths.length}</span><span>MODE {mode}</span></div></aside>
+        <aside className="v4-graph-inspector"><small>{mode.toUpperCase()} INSPECTOR</small>{chosen ? <><h2>{memoryTitle(chosen)}</h2><p>{chosen.memo || "이 순간에 남긴 마음"}</p><dl><div><dt>Date</dt><dd>{formatTreeDate(dateValue(chosen))}</dd></div><div><dt>Parent</dt><dd>{chosenParent ? memoryTitle(chosenParent) : chosen.parentId ? "connected" : "root"}</dd></div>{chosen.parentId ? <div><dt>WHY NEXT</dt><dd>{chosen.connectionReason?.trim() ? chosen.connectionReason : "이전 순간과 이어지는 관계"}</dd></div> : null}<div><dt>Tags</dt><dd>{(chosen.emotionTags || []).join(" · ") || "—"}</dd></div></dl>{isSafeExternalUrl(chosen.sourceUrl) ? <a href={chosen.sourceUrl} target="_blank" rel="noreferrer noopener">Source ↗</a> : null}</> : <p>노드를 선택해 주세요.</p>}<div className="v4-graph-telemetry"><span>VISIBLE {nodes.length}</span><span>EDGES {paths.length}</span><span>MODE {mode}</span></div></aside>
       </div>
     </section>
   );
