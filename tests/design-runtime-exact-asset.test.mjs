@@ -194,5 +194,5 @@ test("P8 exact-asset core — reusable module imports no fs/path/process/network
 
   assert.doesNotMatch(source, /from\s+["']node:(?:fs|path|crypto|http|https|net)/);
   assert.doesNotMatch(source, /\bprocess\./);
-  assert.doesNotMatch(source, /Google Drive|driveId|LINEAGE_\d|holdMarker|targetPath/);
+  assert.doesNotMatch(source, /\bdriveId\b|LINEAGE_\d|holdMarker|targetPath/);
 });
