@@ -156,6 +156,16 @@ export default function V4PublicStorySticky({ treeId }: { treeId: string }) {
               <small>CHAPTER {String(chapter + 1).padStart(2, "0")} · {formatTreeDate(dateOf(active))}</small>
               <h1>{chapter === 0 ? tree.title : titleOf(active, chapter)}</h1>
               <p>{active.memo || "한 순간이 다음 순간의 가지가 되었습니다."}</p>
+              {active.parentId ? (
+                <div className="v4-story-relation" data-why-next>
+                  <span className="v4-story-relation-label">이전 순간에서 이어짐</span>
+                  {active.connectionReason && active.connectionReason.trim() ? (
+                    <p className="v4-story-relation-reason">{active.connectionReason}</p>
+                  ) : (
+                    <p className="v4-story-relation-reason v4-story-relation-generic">이전 순간과 이어지는 관계</p>
+                  )}
+                </div>
+              ) : null}
               <div className="v4-story-tags">{(active.emotionTags || []).map((tag) => <span key={tag}>#{tag}</span>)}</div>
               <div className="v4-story-links">
                 <Link href={`/trees/${encodeURIComponent(treeId)}?moment=${encodeURIComponent(active.id)}`}>Moment detail →</Link>
