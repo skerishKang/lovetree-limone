@@ -13,7 +13,10 @@
 //   - complete same-key replay: original persisted canonical rows (200),
 //     never the request payload
 //   - concurrent same-key: exactly one logical Tree + First Moment
-//   - legacy tree-only partial: fail closed (409), never auto-repaired
+//   - legacy tree-only partial: fail closed (409), never auto-repaired -
+//     including the pre-#202 historical crash residue whose tree row has
+//     client_key = NULL with the deterministic treeId (and its complete
+//     replay, which returns the persisted rows without backfilling)
 //   - auth / validation / visibility controls
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -213,13 +216,15 @@ async function main() {
   rec("concurrent single tree id", new Set(concurrent.map((r) => r.body?.tree?.id)).size, 1);
   rec("concurrent single memory id", new Set(concurrent.map((r) => r.body?.memory?.id)).size, 1);
 
-  // 5. Legacy tree-only partial (old sequential-write crash residue): fail
-  //    closed with 409, never auto-repair the missing first memory.
+  // 5. Historical legacy tree-only partial: the pre-#202 endpoint did not
+  //    persist clientKey, so the crash residue has client_key = NULL with the
+  //    deterministic treeId and the first memory absent. Must fail closed
+  //    with 409 and zero writes - never auto-repair the missing memory.
   const keyL = `it-l-${RUN}`;
   const treeL = await deterministicId("user-a", "tree", keyL);
   await pool.query(
-    "insert into trees (id, owner_id, client_key, title, memo, artist, visibility, group_name, keywords, created_at, updated_at) values ($1,$2,$3,$4,'','','public',NULL,'[]',now(),now())",
-    [treeL, "user-a", keyL, "Legacy"]
+    "insert into trees (id, owner_id, client_key, title, memo, artist, visibility, group_name, keywords, created_at, updated_at) values ($1,$2,NULL,$3,'','','public',NULL,'[]',now(),now())",
+    [treeL, "user-a", "Legacy NULL-ck"]
   );
   await pool.query(
     "insert into tree_social_counts (tree_id, like_count, view_count, updated_at) values ($1,0,0,now())",
@@ -231,9 +236,82 @@ async function main() {
     body: { clientKey: keyL, title: "Repair?", memory: { memo: "should not insert" } },
     uid: "user-a",
   });
-  rec("legacy partial status 409", rL.status, 409);
-  rec("legacy partial counts 1/1/0", JSON.stringify(await counts(treeL)), JSON.stringify([1, 1, 0]));
-  rec("legacy partial memory NOT repaired", await pool.query("select count(*)::int n from memories where tree_id=$1", [treeL]).then((q) => q.rows[0].n), 0);
+  rec("historical NULL-clientKey legacy partial status 409", rL.status, 409);
+  rec(
+    "historical NULL-clientKey legacy partial counts 1/1/0",
+    JSON.stringify(await counts(treeL)),
+    JSON.stringify([1, 1, 0])
+  );
+  rec(
+    "historical NULL-clientKey memory NOT repaired",
+    await pool.query("select count(*)::int n from memories where tree_id=$1", [treeL]).then((q) => q.rows[0].n),
+    0
+  );
+  rec(
+    "historical NULL-clientKey row not backfilled",
+    await pool.query("select client_key from trees where id=$1", [treeL]).then((q) => q.rows[0].client_key),
+    null
+  );
+
+  // 5b. Historical row WITH its first memory: complete replay (200), the
+  //     persisted rows are returned and the historical row is not backfilled.
+  const keyH = `it-h-${RUN}`;
+  const treeH = await deterministicId("user-a", "tree", keyH);
+  const memH = await deterministicId("user-a", "tree", treeH, keyH);
+  await pool.query(
+    "insert into trees (id, owner_id, client_key, title, memo, artist, visibility, group_name, keywords, created_at, updated_at) values ($1,$2,NULL,$3,'','','public',NULL,'[]',now(),now())",
+    [treeH, "user-a", "Historical complete"]
+  );
+  await pool.query(
+    "insert into tree_social_counts (tree_id, like_count, view_count, updated_at) values ($1,0,0,now())",
+    [treeH]
+  );
+  await pool.query(
+    "insert into memories (id, tree_id, client_key, parent_id, title, memo, artist, source, source_url, source_type, thumbnail, emotion_tags, timestamp, sort_order, visibility, created_at, updated_at) values ($1,$2,NULL,NULL,'','historical moment','','','','youtube','','[]','2026-01-15',0,'public',now(),now())",
+    [memH, treeH]
+  );
+  const rH = await call(treesRouter, {
+    method: "POST",
+    path: "/api/trees/with-first-memory",
+    body: { clientKey: keyH, title: "Should Not Rewrite", memory: { memo: "should not rewrite" } },
+    uid: "user-a",
+  });
+  rec("historical NULL-clientKey replay status 200", rH.status, 200);
+  rec("historical replay returns persisted memo", rH.body?.memory?.memo, "historical moment");
+  rec("historical replay returns persisted title", rH.body?.tree?.title, "Historical complete");
+  rec("historical replay tree clientKey stays NULL", rH.body?.tree?.clientKey, null);
+  rec(
+    "historical replay no backfill in db",
+    await pool.query("select client_key from trees where id=$1", [treeH]).then((q) => q.rows[0].client_key),
+    null
+  );
+  rec("historical replay counts 1/1/1", JSON.stringify(await counts(treeH)), JSON.stringify([1, 1, 1]));
+
+  // 5c. New-shape legacy partial (post-#202 row that persisted clientKey but
+  //     whose first memory is missing, e.g. a manual row): also 409, no repair.
+  const keyN = `it-n-${RUN}`;
+  const treeN = await deterministicId("user-a", "tree", keyN);
+  await pool.query(
+    "insert into trees (id, owner_id, client_key, title, memo, artist, visibility, group_name, keywords, created_at, updated_at) values ($1,$2,$3,$4,'','','public',NULL,'[]',now(),now())",
+    [treeN, "user-a", keyN, "New-shape legacy"]
+  );
+  await pool.query(
+    "insert into tree_social_counts (tree_id, like_count, view_count, updated_at) values ($1,0,0,now())",
+    [treeN]
+  );
+  const rN = await call(treesRouter, {
+    method: "POST",
+    path: "/api/trees/with-first-memory",
+    body: { clientKey: keyN, title: "Repair?", memory: { memo: "should not insert" } },
+    uid: "user-a",
+  });
+  rec("new-shape legacy partial status 409", rN.status, 409);
+  rec("new-shape legacy partial counts 1/1/0", JSON.stringify(await counts(treeN)), JSON.stringify([1, 1, 0]));
+  rec(
+    "new-shape legacy memory NOT repaired",
+    await pool.query("select count(*)::int n from memories where tree_id=$1", [treeN]).then((q) => q.rows[0].n),
+    0
+  );
 
   // 6. Different-id tree under the same clientKey: fail closed, no residue.
   const keyD = `it-d-${RUN}`;

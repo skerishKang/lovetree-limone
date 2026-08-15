@@ -1168,6 +1168,118 @@ test("with-first-memory legacy tree-only partial fails closed without auto-repai
   });
 });
 
+test("with-first-memory historical clientKey=NULL legacy partial fails closed without auto-repair", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const key = "wfm-historical-null";
+    const treeId = await deterministicId(USER_ID, "tree", key);
+    // Pre-#202 crash residue: the endpoint did not persist clientKey, so the
+    // historical row has clientKey = null while the id is still the
+    // deterministic treeId and the first memory is absent.
+    const db = makeStatefulDb({
+      treeRows: [{
+        id: treeId,
+        ownerId: USER_ID,
+        clientKey: null,
+        title: "Historical Tree",
+        memo: "",
+        artist: "",
+        visibility: "public",
+        groupName: null,
+        keywords: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }],
+    });
+
+    const response = await treesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/with-first-memory",
+      body: withFirstMemoryBody({
+        clientKey: key,
+        title: "Should Not Repair",
+        memory: { memo: "must not repair" },
+      }),
+      db,
+    }));
+    assert.equal(response.status, 409, "historical NULL-clientKey legacy partial fails closed");
+    assert.equal(db._dbMemories.length, 0, "first memory was NOT auto-repaired");
+    assert.equal(db._dbSocialCounts.length, 0, "no new social write");
+    assert.equal(db.inserted.length, 0, "zero batch/transaction writes");
+    assert.equal(db._dbTrees.length, 1, "existing tree untouched");
+    assert.equal(db._dbTrees[0].clientKey, null, "historical row is not backfilled");
+  });
+});
+
+test("with-first-memory historical clientKey=NULL row with memory replays persisted rows without backfill", async () => {
+  await withFirebaseKeyFetch(async () => {
+    const key = "wfm-historical-replay";
+    const treeId = await deterministicId(USER_ID, "tree", key);
+    const memoryId = await deterministicId(USER_ID, "tree", treeId, key);
+    const db = makeStatefulDb({
+      treeRows: [{
+        id: treeId,
+        ownerId: USER_ID,
+        clientKey: null,
+        title: "Historical Tree",
+        memo: "",
+        artist: "",
+        visibility: "public",
+        groupName: null,
+        keywords: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }],
+      memoryRows: [{
+        id: memoryId,
+        treeId,
+        clientKey: null,
+        parentId: null,
+        connectionReason: null,
+        title: "",
+        memo: "historical first moment",
+        artist: "",
+        source: "",
+        sourceUrl: "",
+        sourceType: "youtube",
+        thumbnail: "",
+        emotionTags: [],
+        timestamp: "",
+        discoveryDate: null,
+        videoOffsetSeconds: null,
+        sortOrder: 0,
+        visibility: "public",
+        channelId: null,
+        channelName: null,
+        channelUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }],
+    });
+
+    const response = await treesRouter(makeContext({
+      method: "POST",
+      path: "/api/trees/with-first-memory",
+      body: withFirstMemoryBody({
+        clientKey: key,
+        title: "Should Not Rewrite",
+        memory: { memo: "should not rewrite" },
+      }),
+      db,
+    }));
+    assert.equal(response.status, 200, "complete historical replay returns 200");
+    const body = await response.json();
+    assert.equal(body.tree.id, treeId);
+    assert.equal(body.tree.clientKey, null, "historical row is not rewritten/backfilled");
+    assert.equal(body.tree.title, "Historical Tree", "persisted canonical tree returned");
+    assert.equal(body.memory.id, memoryId);
+    assert.equal(body.memory.memo, "historical first moment", "persisted canonical memory returned");
+    assert.equal(db._dbTrees.length, 1);
+    assert.equal(db._dbMemories.length, 1);
+    assert.equal(db._dbSocialCounts.length, 0, "no new social write on replay");
+    assert.equal(db.inserted.length, 0, "zero writes on replay");
+  });
+});
+
 test("with-first-memory tree with a different id under the same clientKey fails closed", async () => {
   await withFirebaseKeyFetch(async () => {
     const key = "wfm-legacy-diffid";

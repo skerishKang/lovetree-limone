@@ -447,8 +447,10 @@ async function runAtomicStatements(
  *   First Memory, then rereads both canonical rows and returns them (201).
  * - Complete same-key replay: every insert no-ops and the original persisted
  *   canonical rows are returned (200) - never the request payload.
- * - Legacy tree-only partial (tree exists without its first memory): fail
- *   closed with 409; the first memory is never auto-repaired.
+ * - Legacy tree-only partial (tree exists without its first memory, found by
+ *   either (ownerId, clientKey) or the deterministic treeId - including
+ *   pre-#202 crash residue where clientKey = NULL): fail closed with 409;
+ *   the first memory is never auto-repaired.
  * - Concurrent same-key requests: deterministic ids plus ON CONFLICT DO
  *   NOTHING collapse to exactly one logical Tree + First Moment.
  *
@@ -546,9 +548,19 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
     return json({ tree, memory: serializeMemoryContract(memoryRow) }, 201);
   }
 
-  // Pre-write existence check (before any write) distinguishes ABSENT,
-  // complete same-key replay and legacy tree-only partial so a partial state
-  // can fail closed without auto-repair.
+  // Pre-write existence checks (before any write) classify ABSENT, complete
+  // same-key replay and legacy tree-only partial so a partial state can fail
+  // closed without auto-repair.
+  //
+  // Two independent lookups are required:
+  // - (ownerId, clientKey): rows written by this endpoint after the #202
+  //   bridge (clientKey is persisted) plus the cross-tree collision case;
+  // - deterministic treeId: rows written by the pre-#202 endpoint, which did
+  //   NOT persist clientKey. Historical crash residue therefore has
+  //   tree.clientKey = NULL with the same deterministic id. An ownerId +
+  //   clientKey-only lookup would miss those rows, and the ABSENT batch would
+  //   then no-op the tree insert on the PK conflict and silently insert the
+  //   missing first memory - auto-repair, which #202 forbids.
   const existingByKey = await ctx.db
     .select()
     .from(trees)
@@ -556,22 +568,33 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
       eq(trees.ownerId, user.uid),
       eq(trees.clientKey, parsed.value.clientKey as string)
     ));
-  const existingTree = existingByKey[0];
+  const keyTree = existingByKey[0];
+
+  if (keyTree && keyTree.id !== treeId) {
+    // ownerId + clientKey already point at a different tree (for example one
+    // created via /api/trees POST with the same clientKey): fail closed,
+    // never attach a first memory under the conflicting key.
+    return errorResponse(
+      "clientKey is already in use by another tree; refusing to attach a first memory",
+      409
+    );
+  }
+
+  const existingById = await ctx.db
+    .select()
+    .from(trees)
+    .where(eq(trees.id, treeId));
+  const existingTree = keyTree ?? existingById[0];
 
   if (existingTree) {
-    if (existingTree.id !== treeId) {
-      return errorResponse(
-        "clientKey is already in use by another tree; refusing to attach a first memory",
-        409
-      );
-    }
     const existingMemory = await ctx.db
       .select()
       .from(memories)
       .where(eq(memories.id, memoryId));
     if (existingMemory[0]) {
       // Complete same-key replay: return the original persisted canonical
-      // rows, not the request payload.
+      // rows, never the request payload. Historical rows (clientKey = NULL)
+      // are returned as persisted; they are never rewritten or backfilled.
       return json(
         {
           tree: existingTree,
@@ -580,15 +603,18 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
         200
       );
     }
-    // Legacy tree-only partial: fail closed, never auto-repair.
+    // Legacy tree-only partial (including pre-#202 crash residue with
+    // clientKey = NULL): fail closed, never auto-repair.
     return errorResponse(
       "tree already exists without its first memory (legacy partial); refusing to auto-repair",
       409
     );
   }
 
-  // ABSENT state: one bounded atomic transaction -> tree -> social counts ->
-  // first memory -> canonical tree reread -> canonical memory reread.
+  // ABSENT state (confirmed: no tree under the deterministic id, no tree
+  // under (ownerId, clientKey)): one bounded atomic transaction -> tree ->
+  // social counts -> first memory -> canonical tree reread -> canonical
+  // memory reread.
   const results = await runAtomicStatements(ctx.db, [
     ctx.db.insert(trees).values(tree).onConflictDoNothing().toSQL(),
     ctx.db
