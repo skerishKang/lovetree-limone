@@ -111,6 +111,20 @@ async function focusInside(page) {
   });
 }
 
+// The reduced-motion flag is applied by the component's matchMedia effect after
+// first paint; poll instead of asserting immediately (CI can reach the selector
+// before the effect runs).
+async function waitForReducedMotionFlag(page, label) {
+  try {
+    await page.waitForFunction(
+      () => document.querySelector('[data-rendering="css3d-dom"]')?.getAttribute("data-reduced-motion") === "reduce",
+      { timeout: 8000 },
+    );
+  } catch {
+    throw new Error(`${label}: reduced-motion flag never applied (data-reduced-motion stays "no-preference")`);
+  }
+}
+
 // The Viewer moves focus into the dialog on open via rAF; poll briefly so the
 // assertion does not race the focus entry (especially on touch/mobile where the
 // open happens right after a synthesized click).
@@ -255,7 +269,7 @@ try {
   // ----------------------------------------------------------------------
   const desktopRM = await openRoute(browser, { width: 1280, height: 800 }, { reducedMotion: "reduce" });
   try {
-    assert.equal(await desktopRM.page.locator('[data-rendering="css3d-dom"]').getAttribute("data-reduced-motion"), "reduce", "reduced-motion: ambient orbit flag is set");
+    await waitForReducedMotionFlag(desktopRM.page, "reduced-motion");
 
     // D. reduced-motion idle: NO auto-orbit.
     const idle0 = await worldAngle(desktopRM.page);
@@ -350,7 +364,7 @@ try {
   const reduced = await openRoute(browser, { width: 390, height: 844 }, { reducedMotion: "reduce", isMobile: true, hasTouch: true });
   const rClient = await cdpSession(reduced.page);
   try {
-    assert.equal(await reduced.page.locator('[data-rendering="css3d-dom"]').getAttribute("data-reduced-motion"), "reduce", "reduced-motion mobile: ambient orbit flag is set");
+    await waitForReducedMotionFlag(reduced.page, "reduced-motion mobile");
 
     // D. reduced-motion idle: NO auto-orbit.
     const idle0 = await worldAngle(reduced.page);
