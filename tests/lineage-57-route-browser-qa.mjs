@@ -118,13 +118,12 @@ async function assertCoreInteractions(page, label) {
 async function assertLubtDrag(page, label) {
   const lubt = page.locator(".lcw-lubt");
 
-  // Record native browser ownership transitions. The test waits for the real
-  // gotpointercapture event before movement instead of treating the pending
-  // setPointerCapture state as equivalent to activated capture.
+  // Record native browser ownership transitions. One 1px activation move processes
+  // the pending setPointerCapture request; only after gotpointercapture is observed
+  // do we perform the real drag movement.
   await lubt.evaluate((node) => {
     node.dataset.qaPointerEvents = "[]";
     delete node.dataset.qaPointerId;
-    delete node.dataset.qaGotPointerCapture;
     const record = (event) => {
       const events = JSON.parse(node.dataset.qaPointerEvents || "[]");
       events.push({
@@ -139,7 +138,6 @@ async function assertLubtDrag(page, label) {
       });
       node.dataset.qaPointerEvents = JSON.stringify(events);
       if (event.type === "pointerdown") node.dataset.qaPointerId = String(event.pointerId);
-      if (event.type === "gotpointercapture") node.dataset.qaGotPointerCapture = String(event.pointerId);
     };
     for (const type of ["pointerdown", "gotpointercapture", "pointermove", "pointercancel", "lostpointercapture", "pointerup"]) {
       node.addEventListener(type, record);
@@ -171,14 +169,26 @@ async function assertLubtDrag(page, label) {
   });
   assert.equal(pendingCapture, true, `${label}: Lubt pending pointer capture is established`);
 
-  await page.waitForFunction(
-    () => {
-      const node = document.querySelector(".lcw-lubt");
-      return Boolean(node?.dataset.qaPointerId && node.dataset.qaGotPointerCapture === node.dataset.qaPointerId);
-    },
-    undefined,
-    { timeout: 5000 },
+  // Processing one tiny real mouse move activates pending capture. This is not a
+  // retry: the gesture remains the single original pointerdown sequence.
+  await page.mouse.move(Math.min(page.viewportSize().width - 40, startX + 1), startY, { steps: 1 });
+
+  const activation = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return {
+      dragging: node.classList.contains("dragging"),
+      captured: Number.isInteger(pointerId) && node.hasPointerCapture(pointerId),
+      events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+    };
+  });
+  const gotCapture = activation.events.find((event) => event.type === "gotpointercapture");
+  const activationTerminal = activation.events.find((event) =>
+    event.type === "pointercancel" || event.type === "lostpointercapture" || event.type === "pointerup"
   );
+  assert.ok(gotCapture, `${label}: activated gotpointercapture is observed; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activationTerminal, undefined, `${label}: capture activation has no terminal event; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activation.captured, true, `${label}: activated capture remains owned; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activation.dragging, true, `${label}: drag remains active after capture activation; trace=${JSON.stringify(activation.events)}`);
 
   await page.mouse.move(
     Math.min(page.viewportSize().width - 40, startX + 140),
@@ -197,11 +207,7 @@ async function assertLubtDrag(page, label) {
   const prematureTerminal = afterMove.events.find((event) =>
     event.type === "pointercancel" || event.type === "lostpointercapture" || event.type === "pointerup"
   );
-  assert.equal(
-    prematureTerminal,
-    undefined,
-    `${label}: no terminal pointer event before explicit mouse up; trace=${JSON.stringify(afterMove.events)}`,
-  );
+  assert.equal(prematureTerminal, undefined, `${label}: no terminal pointer event before explicit mouse up; trace=${JSON.stringify(afterMove.events)}`);
   assert.equal(afterMove.captured, true, `${label}: Lubt retains pointer capture through movement; trace=${JSON.stringify(afterMove.events)}`);
   assert.equal(afterMove.dragging, true, `${label}: Lubt drag owns pointer; trace=${JSON.stringify(afterMove.events)}`);
 
