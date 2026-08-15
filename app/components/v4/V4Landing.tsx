@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import EmailAuthForm from "@/app/components/EmailAuthForm";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { resolveFirstCreateIds, type FirstMomentResponse } from "@/lib/first-tree-create-client";
 
 const LAST_TREE_KEY = "lovetree-v4-product-spine-last-tree-id";
 const CLIENT_KEY = "lovetree-v4-product-spine-create-client-key";
@@ -14,12 +15,6 @@ const sampleMoments = [
   { label: "다음으로 찾아본 순간", title: "그 마음이 다른 영상으로 이어졌어요." },
   { label: "오래 간직할 문장", title: "시간이 지나도 다시 보고 싶은 기록." },
 ];
-
-interface FirstMomentResponse {
-  tree?: { id?: string };
-  memory?: { id?: string };
-  error?: string;
-}
 
 function youtubeId(value: string) {
   const trimmed = value.trim();
@@ -122,11 +117,10 @@ export default function V4Landing() {
         }),
       });
       const data = (await response.json().catch(() => ({}))) as FirstMomentResponse;
-      const treeId = data.tree?.id;
-      const memoryId = data.memory?.id;
-      if (!response.ok || !treeId || !memoryId) {
+      if (!response.ok) {
         throw new Error(data.error || "첫 순간을 저장하지 못했어요.");
       }
+      const { treeId, memoryId } = resolveFirstCreateIds(data);
 
       localStorage.setItem(LAST_TREE_KEY, treeId);
       localStorage.removeItem(CLIENT_KEY);
