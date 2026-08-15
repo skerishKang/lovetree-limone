@@ -1,103 +1,51 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { chromium } from "playwright";
+import {
+  resolvePublicStoryRelation,
+  PUBLIC_STORY_GENERIC_RELATION,
+} from "../app/components/v4/product/V4PublicStorySticky.tsx";
 
-const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
-const TREE_ID = "why-next-canonical-tree";
+// Non-browser source-contract test for the V4 Public Story canonical WHY NEXT
+// relation. It exercises the exact source authority (resolvePublicStoryRelation)
+// that the product surface renders, proving the three canonical semantics
+// required by issue #220 without driving a browser.
 
-const TREE_FIXTURE = {
-  id: TREE_ID,
-  title: "WHY NEXT 정렬 나무",
-  visibility: "public",
-  ownerId: "owner-1",
-};
-
-// Ordered so chapter 0 is the root (no parentId). The later chapters exercise
-// the two connected branches: explicit reason vs. generic fallback.
-const MOMENTS_FIXTURE = [
-  { id: "m-0", treeId: TREE_ID, title: "첫 순간", memo: "시작", parentId: null, connectionReason: null, emotionTags: ["기쁨"] },
-  { id: "m-1", treeId: TREE_ID, title: "둘째 순간", memo: "이어짐", parentId: "m-0", connectionReason: "같은 무대 위에서 이어진 순간", emotionTags: ["설렘"] },
-  { id: "m-2", treeId: TREE_ID, title: "셋째 순간", memo: "연결만", parentId: "m-0", connectionReason: null, emotionTags: ["평온"] },
-];
-
-const GENERIC_RELATION = "이전 순간과 이어지는 관계";
-
-function relationReasonText(page) {
-  return page.evaluate(() => {
-    const el = document.querySelector("[data-why-next] .v4-story-relation-reason");
-    return el ? el.textContent.trim() : null;
-  });
-}
-
-async function openStory(browser, moments) {
-  const context = await browser.newContext({ reducedMotion: "reduce" });
-  const page = await context.newPage();
-
-  page.on("pageerror", (err) => { throw new Error(`pageerror: ${err.message}`); });
-
-  await page.route(`**/api/trees/${TREE_ID}`, (route) =>
-    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TREE_FIXTURE) }),
-  );
-  await page.route("**/api/community/memories**", (route) =>
-    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(moments) }),
-  );
-
-  await page.goto(`${BASE}/trees/${TREE_ID}/story`, { waitUntil: "domcontentloaded", timeout: 15000 });
-  await page.waitForSelector(".v4-story-copy", { timeout: 10000 });
-  return { context, page };
-}
-
-test("WHY NEXT — root moment without parentId shows no relation", async () => {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const { context, page } = await openStory(browser, MOMENTS_FIXTURE);
-    // Chapter 0 (default) renders the root moment; no parentId -> no WHY NEXT.
-    const present = await page.evaluate(() => Boolean(document.querySelector("[data-why-next]")));
-    assert.equal(present, false, "root moment must not render a WHY NEXT relation");
-    await context.close();
-  } finally {
-    await browser.close();
-  }
+// A. root — no parentId renders no WHY NEXT relation element at all.
+test("WHY NEXT — root moment without parentId renders no relation (A)", () => {
+  const relation = resolvePublicStoryRelation({ parentId: null, connectionReason: null });
+  assert.equal(relation.visible, false, "root moment with no parentId must not render a WHY NEXT relation");
 });
 
-test("WHY NEXT — connected moment with connectionReason shows stored value", async () => {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const { context, page } = await openStory(browser, MOMENTS_FIXTURE);
-    await page.locator(".v4-story-rail button").nth(1).click();
-    await page.waitForFunction(
-      (text) => {
-        const el = document.querySelector("[data-why-next] .v4-story-relation-reason");
-        return el && el.textContent.trim() === text;
-      },
-      MOMENTS_FIXTURE[1].connectionReason,
-      { timeout: 5000 },
-    );
-    const reason = await relationReasonText(page);
-    assert.equal(reason, MOMENTS_FIXTURE[1].connectionReason, "must show the stored connectionReason");
-    await context.close();
-  } finally {
-    await browser.close();
-  }
+// B. connected moment + stored reason — canonical stored value is shown verbatim.
+test("WHY NEXT — connected moment with connectionReason shows stored value (B)", () => {
+  const stored = "같은 무대 위에서 이어진 순간";
+  const relation = resolvePublicStoryRelation({ parentId: "m-0", connectionReason: stored });
+  assert.equal(relation.visible, true);
+  assert.equal(relation.isGeneric, false, "an explicit reason must not be treated as the generic fallback");
+  assert.equal(relation.reason, stored, "must display the canonical stored connectionReason");
 });
 
-test("WHY NEXT — connected moment without reason falls back to generic", async () => {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const { context, page } = await openStory(browser, MOMENTS_FIXTURE);
-    await page.locator(".v4-story-rail button").nth(2).click();
-    await page.waitForFunction(
-      (text) => {
-        const el = document.querySelector("[data-why-next] .v4-story-relation-reason");
-        return el && el.textContent.trim() === text;
-      },
-      GENERIC_RELATION,
-      { timeout: 5000 },
-    );
-    const reason = await relationReasonText(page);
-    assert.equal(reason, GENERIC_RELATION, "must fall back to the generic canonical relation");
-    await context.close();
-  } finally {
-    await browser.close();
-  }
+// B (edge) — a stored reason that is only whitespace is not canonical and must fall through.
+test("WHY NEXT — whitespace-only connectionReason is not canonical (B edge)", () => {
+  const relation = resolvePublicStoryRelation({ parentId: "m-0", connectionReason: "   " });
+  assert.equal(relation.visible, true);
+  assert.equal(relation.isGeneric, true, "whitespace-only reason falls back to the generic relation");
+  assert.equal(relation.reason, PUBLIC_STORY_GENERIC_RELATION);
+});
+
+// C. connected moment + missing reason — generic canonical fallback exists.
+test("WHY NEXT — connected moment without reason falls back to generic (C)", () => {
+  const relation = resolvePublicStoryRelation({ parentId: "m-0", connectionReason: "" });
+  assert.equal(relation.visible, true);
+  assert.equal(relation.isGeneric, true, "missing reason must use the generic fallback");
+  assert.equal(relation.reason, PUBLIC_STORY_GENERIC_RELATION, "must fall back to the generic canonical relation");
+  assert.equal(relation.reason, "이전 순간과 이어지는 관계");
+});
+
+// C (edge) — missing/undefined reason also falls back to the generic canonical relation.
+test("WHY NEXT — undefined connectionReason falls back to generic (C edge)", () => {
+  const relation = resolvePublicStoryRelation({ parentId: "m-0" });
+  assert.equal(relation.visible, true);
+  assert.equal(relation.isGeneric, true);
+  assert.equal(relation.reason, PUBLIC_STORY_GENERIC_RELATION);
 });

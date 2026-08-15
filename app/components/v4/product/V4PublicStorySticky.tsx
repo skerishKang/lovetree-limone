@@ -21,6 +21,29 @@ function dateOf(memory: MemoryRecord) {
   return memory.timestamp || memory.createdAt || null;
 }
 
+export const PUBLIC_STORY_GENERIC_RELATION = "이전 순간과 이어지는 관계";
+
+export type PublicStoryRelation =
+  | { visible: false }
+  | { visible: true; reason: string; isGeneric: boolean };
+
+// Canonical WHY NEXT relation contract for V4 Public Story.
+// A. root (no parentId) renders no WHY NEXT relation at all.
+// B. connected moment with a stored, non-blank connectionReason shows it verbatim.
+// C. connected moment without a stored reason falls back to the generic canonical relation.
+export function resolvePublicStoryRelation(
+  memory: Pick<MemoryRecord, "parentId" | "connectionReason">,
+): PublicStoryRelation {
+  if (!memory.parentId) {
+    return { visible: false };
+  }
+  const reason = memory.connectionReason?.trim() ?? "";
+  if (reason) {
+    return { visible: true, reason, isGeneric: false };
+  }
+  return { visible: true, reason: PUBLIC_STORY_GENERIC_RELATION, isGeneric: true };
+}
+
 export default function V4PublicStorySticky({ treeId }: { treeId: string }) {
   const { user } = useAuth();
   const [tree, setTree] = useState<TreeRecord | null>(null);
@@ -156,16 +179,20 @@ export default function V4PublicStorySticky({ treeId }: { treeId: string }) {
               <small>CHAPTER {String(chapter + 1).padStart(2, "0")} · {formatTreeDate(dateOf(active))}</small>
               <h1>{chapter === 0 ? tree.title : titleOf(active, chapter)}</h1>
               <p>{active.memo || "한 순간이 다음 순간의 가지가 되었습니다."}</p>
-              {active.parentId ? (
-                <div className="v4-story-relation" data-why-next>
-                  <span className="v4-story-relation-label">이전 순간에서 이어짐</span>
-                  {active.connectionReason && active.connectionReason.trim() ? (
-                    <p className="v4-story-relation-reason">{active.connectionReason}</p>
-                  ) : (
-                    <p className="v4-story-relation-reason v4-story-relation-generic">이전 순간과 이어지는 관계</p>
-                  )}
-                </div>
-              ) : null}
+              {(() => {
+                const relation = resolvePublicStoryRelation(active);
+                if (!relation.visible) return null;
+                return (
+                  <div className="v4-story-relation" data-why-next>
+                    <span className="v4-story-relation-label">이전 순간에서 이어짐</span>
+                    {relation.isGeneric ? (
+                      <p className="v4-story-relation-reason v4-story-relation-generic">{relation.reason}</p>
+                    ) : (
+                      <p className="v4-story-relation-reason">{relation.reason}</p>
+                    )}
+                  </div>
+                );
+              })()}
               <div className="v4-story-tags">{(active.emotionTags || []).map((tag) => <span key={tag}>#{tag}</span>)}</div>
               <div className="v4-story-links">
                 <Link href={`/trees/${encodeURIComponent(treeId)}?moment=${encodeURIComponent(active.id)}`}>Moment detail →</Link>
