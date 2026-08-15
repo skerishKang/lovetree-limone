@@ -137,14 +137,32 @@ test("the helper targets exactly POST /api/trees/with-first-memory", async () =>
   assert.equal(fetchFn.calls[0].options.method, "POST");
 });
 
-test("V4Landing keeps the completion route and key-lifecycle contract", async () => {
+test("V4Landing consumes the full seam with explicit authenticated transport", async () => {
   const landing = await read("app/components/v4/V4Landing.tsx");
-  assert.match(landing, /apiFetch\("\/api\/trees\/with-first-memory"/);
-  assert.match(landing, /localStorage\.setItem\(LAST_TREE_KEY, treeId\)/);
-  assert.match(landing, /localStorage\.removeItem\(CLIENT_KEY\)/);
-  assert.match(landing, /lovetree-v4-product-spine-create-client-key/);
+  assert.match(landing, /createFirstTree\(/);
+  assert.match(landing, /fetchFn:\s*apiFetch/);
   assert.match(landing, /lovetree-v4-product-spine-last-tree-id/);
+  assert.match(landing, /localStorage\.setItem\(LAST_TREE_KEY, treeId\)/);
   assert.match(landing, /router\.push\(`\/trees\/\$\{encodeURIComponent\(treeId\)\}\?highlight=\$\{encodeURIComponent\(memoryId\)\}`\)/);
-  assert.match(landing, /resolveFirstCreateIds\(data\)/);
+  assert.doesNotMatch(landing, /lovetree-v4-product-spine-create-client-key/, "pending-key literal must live only in the seam");
+  assert.doesNotMatch(landing, /localStorage\.removeItem\(CLIENT_KEY\)/, "key-clear lifecycle must live only in the seam");
+  assert.doesNotMatch(landing, /getOrCreateClientKey\(/, "no duplicated inline key creator in V4Landing");
+  assert.doesNotMatch(landing, /apiFetch\("\/api\/trees\/with-first-memory"/, "no direct canonical POST in V4Landing");
   assert.doesNotMatch(landing, /localStorage\.setItem\([^,]+,\s*JSON\.stringify/);
+});
+
+test("the seam defaults to authenticated transport, never unauthenticated global fetch", async () => {
+  const source = await read("lib/first-tree-create-client.ts");
+  assert.match(source, /import \{ apiFetch \} from "\.\/api"/);
+  assert.match(source, /fetchFn = options\.fetchFn \?\? apiFetch/);
+  assert.doesNotMatch(source, /\?\? fetch\)/, "real product path must not silently default to unauthenticated fetch");
+  assert.doesNotMatch(source, /fetchFn = options\.fetchFn \?\? fetch/);
+});
+
+test("the seam owns the pending clientKey lifecycle", async () => {
+  const seam = await read("lib/first-tree-create-client.ts");
+  assert.match(seam, /PENDING_CLIENT_KEY = "lovetree-v4-product-spine-create-client-key"/);
+  assert.match(seam, /function getOrCreateClientKey\(storage: Storage\)/);
+  assert.match(seam, /removeItem\(PENDING_CLIENT_KEY\)/);
+  assert.match(seam, /getOrCreateClientKey\(storage\)/);
 });

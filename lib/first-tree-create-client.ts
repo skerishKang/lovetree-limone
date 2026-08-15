@@ -15,9 +15,11 @@
  * - the caller receives explicit canonical treeId/memoryId on success.
  */
 
+import { apiFetch } from "./api";
+
 export const FIRST_CREATE_ENDPOINT = "/api/trees/with-first-memory";
 
-/** Canonical pending clientKey storage key (matches V4Landing's CLIENT_KEY). */
+/** Canonical pending clientKey storage key (was V4Landing's CLIENT_KEY; now owned by the seam). */
 export const PENDING_CLIENT_KEY = "lovetree-v4-product-spine-create-client-key";
 
 export interface FirstMomentResponse {
@@ -31,13 +33,20 @@ export interface FirstCreateResult {
   memoryId: string;
 }
 
+/** Authenticated transport shape — compatible with lib/api.ts apiFetch and global fetch. */
+export type FirstCreateTransport = (path: string, init?: RequestInit) => Promise<Response>;
+
 export interface FirstCreateOptions {
   /** Canonical with-first-memory payload (title, visibility, memory, ...). clientKey is added by the seam. */
   payload: Record<string, unknown>;
   /** Storage used for the pending clientKey. Defaults to the browser localStorage. */
   storage?: Storage;
-  /** Fetch implementation (pass the authenticated apiFetch for the real path). Defaults to global fetch. */
-  fetchFn?: typeof fetch;
+  /**
+   * Transport used for the canonical POST. Defaults to the AUTHENTICATED lib/api.ts
+   * apiFetch — the real product path must never silently fall back to unauthenticated
+   * global fetch. Override only in tests / non-auth contexts.
+   */
+  fetchFn?: FirstCreateTransport;
 }
 
 /** Returns the stable pending clientKey, creating and persisting one before the first attempt. */
@@ -77,7 +86,7 @@ export function resolveFirstCreateIds(data: FirstMomentResponse): FirstCreateRes
  */
 export async function createFirstTree(options: FirstCreateOptions): Promise<FirstCreateResult> {
   const storage = options.storage ?? globalThis.localStorage;
-  const fetchFn = options.fetchFn ?? fetch;
+  const fetchFn = options.fetchFn ?? apiFetch;
 
   const clientKey = getOrCreateClientKey(storage);
   const response = await fetchFn(FIRST_CREATE_ENDPOINT, {
