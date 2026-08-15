@@ -83,7 +83,17 @@ async function main() {
       await page.waitForTimeout(600);
       const saved = await page.locator('[data-testid="first-saved"]').count();
       const done = await page.locator(".v4-j-v12-done").count();
-      record(vp.name, "pointer/touch activates CTA", saved === 1 || done >= 1, `first-saved:${saved} done:${done}`);
+      // Under canonical truthfulness (Slice B), an anonymous first-save must NOT
+      // claim local durable success; it must open the EXISTING auth UI instead.
+      // CTA is "activated" when either the saved state appears (authenticated
+      // success) OR the reused auth modal opens (anonymous defer path).
+      const authOpened = await page.locator(".auth-modal-backdrop").count();
+      record(
+        vp.name,
+        "pointer/touch activates CTA",
+        saved === 1 || done >= 1 || authOpened >= 1,
+        `first-saved:${saved} done:${done} auth-modal:${authOpened}`,
+      );
     } else {
       record(vp.name, "pointer/touch activates CTA", false, "CTA not found");
     }
