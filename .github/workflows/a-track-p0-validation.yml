@@ -21,7 +21,9 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          # Trust auth: the disposable service container needs no password, so
+          # no credential value ever appears in this workflow (GitGuardian).
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: lovetree_wfm
         ports:
           - 5432:5432
@@ -59,7 +61,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          DATABASE_URL="postgres://postgres:postgres@127.0.0.1:5432/lovetree_wfm" \
+          DATABASE_URL="postgres://postgres@127.0.0.1:5432/lovetree_wfm" \
             node --import tsx tests/integration/with-first-memory-atomicity.mjs
 
       - name: Prepare Playwright runtime
