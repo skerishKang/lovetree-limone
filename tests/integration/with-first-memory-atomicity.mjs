@@ -22,9 +22,14 @@ import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
 import * as schema from "../../db/schema.ts";
 import { treesRouter, deterministicId } from "../../server/api/trees.ts";
 
-const DB_CONN =
-  process.env.DATABASE_URL ||
-  "postgresql://postgres:rehearsal123@localhost:5432/lovetree_wfm_atomicity";
+const DB_CONN = process.env.DATABASE_URL;
+if (!DB_CONN) {
+  console.error(
+    "DATABASE_URL is required: point it at a fresh, empty PostgreSQL 16 database " +
+      "(for example the A-track disposable service container)."
+  );
+  process.exit(2);
+}
 const PROJECT_ID = "relovetree";
 const RUN = Date.now().toString(36);
 
