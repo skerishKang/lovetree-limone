@@ -33,10 +33,13 @@ test("V12 first-save reuses the createFirstTree seam (no duplicate direct POST)"
 });
 
 test("API failure / partial IDs must NOT claim durable first-save success", () => {
-  // firstMoment.saved becomes true ONLY inside the createFirstTree success branch.
+  // firstMoment.saved becomes true ONLY inside the createFirstTree success branch,
+  // alongside the preserved presentation fields (BLOCKER 4).
   const successBranch = V12.slice(V12.indexOf("const { treeId, memoryId } = await createFirstTree"));
   const savedSet = successBranch.slice(0, successBranch.indexOf("} catch"));
-  assert.match(savedSet, /firstMoment: \{ \.\.\.prev\.firstMoment, saved: true \}/);
+  assert.match(savedSet, /firstMoment: \{/);
+  assert.match(savedSet, /saved: true/);
+  assert.match(savedSet, /url: `https:\/\/youtube\.com\/watch\?v=\$\{first\.videoId\}`/);
   // In the catch branch there must be NO saved:true assignment.
   const catchBranch = V12.slice(V12.indexOf("} catch (cause) {"), V12.indexOf("} finally {", V12.indexOf("} catch (cause) {")));
   assert.doesNotMatch(catchBranch, /saved:\s*true/);
@@ -112,4 +115,47 @@ test("no new backend / endpoint / schema / Auth authority introduced", () => {
   }
   // No server/api, db, drizzle, migration, worker, or firebase-auth-authority edits here.
   assert.doesNotMatch(V12, /server\/api|drizzle|migration|neon|getAuthTokenProvider|signInWith/);
+});
+
+// --- Remediation BLOCKER 1: memory form inputs are wired to draft state ---
+test("BLOCKER 1: emotion radio + textarea are bound to memory draft state", () => {
+  // radio uses controlled `checked` + `onChange` → setMemoryDraft("emotion", ...)
+  assert.match(V12, /checked=\{appState\.memory\.emotion === e\}/);
+  assert.match(V12, /onChange=\{\(ev\) => setMemoryDraft\("emotion", ev\.target\.value\)\}/);
+  // textarea uses controlled `value` + `onChange` → setMemoryDraft("note", ...)
+  assert.match(V12, /value=\{appState\.memory\.note\}/);
+  assert.match(V12, /onChange=\{\(ev\) => setMemoryDraft\("note", ev\.target\.value\)\}/);
+  // submitMemory reads the actual draft (not a hardcoded default)
+  assert.match(V12, /const selectedEmotion = appState\.memory\.emotion;/);
+  assert.match(V12, /const memoNote = appState\.memory\.note\.trim\(\);/);
+});
+
+// --- Remediation BLOCKER 2: reload must NOT resurrect durable claims ---
+test("BLOCKER 2: reload strips localStorage durable claims (fail-closed)", () => {
+  // Initialization sets saved:false for both even when localStorage had saved:true.
+  assert.match(V12, /saved: false, \/\/ fail-closed: never trust localStorage for durable saved/);
+  assert.match(V12, /saved: false, \/\/ fail-closed/);
+  // canonical is reset to null (never restored from localStorage).
+  assert.match(V12, /canonical: null, \/\/ fail-closed: never restore canonical from localStorage/);
+  // connection memoryId is intentionally dropped on reload.
+  assert.match(V12, /\/\/ memoryId intentionally omitted — requires canonical revalidation/);
+});
+
+// --- Remediation BLOCKER 3: subsequent Moment POST carries stable clientKey ---
+test("BLOCKER 3: subsequent Moment POST sends stable clientKey, retired after confirmed ID", () => {
+  // key is created before the attempt and reused.
+  assert.match(V12, /const clientKey = ensureSubsequentClientKey\(\);/);
+  assert.match(V12, /clientKey,/);
+  // key is retired only after a confirmed canonical returned memory id.
+  assert.match(V12, /retireSubsequentClientKey\(\);/);
+  assert.match(V12, /\/\/ Confirmed canonical returned memory ID → retire the pending key\./);
+});
+
+// --- Remediation BLOCKER 4: first-save preserves FirstMoment presentation ---
+test("BLOCKER 4: first-save success preserves FirstMoment presentation semantics", () => {
+  const branch = V12.slice(V12.indexOf("// Only after BOTH canonical IDs exist"), V12.indexOf("showToast(\"첫 순간이 심어졌어요"));
+  for (const field of ["url", "videoId", "title", "note", "discoveryDate", "thumbnail"]) {
+    assert.match(branch, new RegExp(`\\b${field}:`), `FirstMoment.${field} is populated on success`);
+  }
+  assert.match(branch, /saved: true/);
 });

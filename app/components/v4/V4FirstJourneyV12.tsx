@@ -166,24 +166,82 @@ export default function V4FirstJourneyV12({
   const router = useRouter();
   const { user, authError, clearAuthError } = useAuth();
 
+  // Stable clientKey for subsequent-Moment writes (Slice B BLOCKER 3).
+  // Generated once, reused across retries, retired only after a confirmed ID.
+  // Persisted ONLY as draft/progress — never as durable truth.
+  const ensureSubsequentClientKey = useCallback((): string => {
+    try {
+      const existing = localStorage.getItem("lovetree-v12-subsequent-client-key");
+      if (existing) return existing;
+      const generated = `v12-sub-${crypto.randomUUID()}`;
+      localStorage.setItem("lovetree-v12-subsequent-client-key", generated);
+      return generated;
+    } catch {
+      // crypto/localStorage unavailable → ephemeral key (retry still safe within session)
+      return `v12-sub-${Math.random().toString(36).slice(2)}`;
+    }
+  }, []);
+
+  const retireSubsequentClientKey = useCallback((): void => {
+    try { localStorage.removeItem("lovetree-v12-subsequent-client-key"); } catch { /* noop */ }
+  }, []);
+
   // Initialize appState from localStorage synchronously.
-  // NOTE: localStorage holds DRAFT / PROGRESS only. `saved` flags are restored as
-  // presentation progress; the durable product truth is the canonical server IDs
-  // returned by createFirstTree() / Memory update — never localStorage presence alone.
+  // BLOCKER 2 (fail-closed): localStorage is DRAFT/PROGRESS/Pointer ONLY.
+  // Durable claims (saved flags, canonical IDs, connection memoryIds) are NEVER
+  // reasserted from localStorage alone on reload — they require canonical
+  // server revalidation (out of scope for this slice) or must stay false until
+  // a fresh successful write. We strip durable-truth fields, keep only draft
+  // inputs / progress pointers, and immediately rewrite the stripped state back
+  // to localStorage so no stale durable claim survives the reload.
   const [appState, setAppState] = useState<AppState>(() => {
+    const base = defaultState();
+    let initial = base;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<AppState>;
-        return {
-          ...defaultState(),
-          ...parsed,
-          canonical: parsed.canonical ?? null,
-          connections: parsed.connections ?? [],
+        // Carry over DRAFT / PROGRESS only (user-entered inputs, screen pointer,
+        // why-next drafts, relation drafts). Drop any durable-truth artifacts.
+        initial = {
+          ...base,
+          currentScreen: parsed.currentScreen ?? base.currentScreen,
+          treeName: parsed.treeName ?? base.treeName,
+          firstMoment: {
+            ...base.firstMoment,
+            url: parsed.firstMoment?.url ?? base.firstMoment.url,
+            videoId: parsed.firstMoment?.videoId ?? base.firstMoment.videoId,
+            title: parsed.firstMoment?.title ?? base.firstMoment.title,
+            note: parsed.firstMoment?.note ?? base.firstMoment.note,
+            discoveryDate: parsed.firstMoment?.discoveryDate ?? base.firstMoment.discoveryDate,
+            thumbnail: parsed.firstMoment?.thumbnail ?? base.firstMoment.thumbnail,
+            saved: false, // fail-closed: never trust localStorage for durable saved
+          },
+          memory: {
+            ...base.memory,
+            emotion: parsed.memory?.emotion ?? base.memory.emotion,
+            customEmotion: parsed.memory?.customEmotion ?? base.memory.customEmotion,
+            time: parsed.memory?.time ?? base.memory.time,
+            note: parsed.memory?.note ?? base.memory.note,
+            date: parsed.memory?.date ?? base.memory.date,
+            publicMemo: parsed.memory?.publicMemo ?? base.memory.publicMemo,
+            saved: false, // fail-closed
+          },
+          // connections kept as PRESENTATION draft buffer; memoryId dropped (not durable)
+          connections: (parsed.connections ?? []).map((c) => ({
+            first: c.first,
+            next: c.next,
+            createdAt: c.createdAt,
+            // memoryId intentionally omitted — requires canonical revalidation
+          })),
+          canonical: null, // fail-closed: never restore canonical from localStorage
+          drafts: parsed.drafts ?? base.drafts,
         };
       }
+      // Persist the stripped state so a stale durable claim cannot outlive reload.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
     } catch { /* ignore */ }
-    return defaultState();
+    return initial;
   });
   const [v12Step, setV12Step] = useState(0);
   const [scrollDir, setScrollDir] = useState<"forward" | "reverse" | null>(null);
@@ -283,9 +341,20 @@ export default function V4FirstJourneyV12({
       });
 
       // Only after BOTH canonical IDs exist do we claim durable success.
+      // BLOCKER 4: preserve the prior FirstMoment presentation semantics
+      // (URL/videoId/title/note/discoveryDate/thumbnail) alongside saved=true.
       update((prev) => ({
         ...prev,
-        firstMoment: { ...prev.firstMoment, saved: true },
+        firstMoment: {
+          ...prev.firstMoment,
+          url: `https://youtube.com/watch?v=${first.videoId}`,
+          videoId: first.videoId,
+          title: first.title,
+          note: fm.note.trim() || first.note,
+          discoveryDate: first.date,
+          thumbnail: `https://img.youtube.com/vi/${first.videoId}/hqdefault.jpg`,
+          saved: true,
+        },
         canonical: { treeId, firstMemoryId: memoryId },
         currentScreen: "step2",
       }));
@@ -357,10 +426,13 @@ export default function V4FirstJourneyV12({
     setSaving(true);
     setSaveError(null);
     clearAuthError();
+    // BLOCKER 3: stable clientKey — created before the attempt, reused on retry.
+    const clientKey = ensureSubsequentClientKey();
     try {
       const response = await (fetchFn ?? apiFetch)(`/api/trees/${encodeURIComponent(refs.treeId)}/memories`, {
         method: "POST",
         body: JSON.stringify({
+          clientKey,
           parentId: refs.firstMemoryId,
           title: m.title,
           memo: m.note,
@@ -377,6 +449,8 @@ export default function V4FirstJourneyV12({
       if (!response.ok || !data.id) {
         throw new Error(data.error || "연결을 저장하지 못했어요.");
       }
+      // Confirmed canonical returned memory ID → retire the pending key.
+      retireSubsequentClientKey();
 
       update((prev) => ({
         ...prev,
@@ -411,6 +485,12 @@ export default function V4FirstJourneyV12({
     setEditWhy((prev) => ({ ...prev, [idx]: value }));
   };
 
+  // BLOCKER 1: memory form inputs must be wired to draft state so the exact
+  // user input reaches submitMemory's PUT payload.
+  const setMemoryDraft = useCallback(<K extends keyof Memory>(key: K, value: Memory[K]) => {
+    update((prev) => ({ ...prev, memory: { ...prev.memory, [key]: value } }));
+  }, [update]);
+
   const handlePathChoice = (idx: number, choice: "MAIN" | "BRANCH") => {
     setPathChoice((prev) => ({ ...prev, [idx]: choice }));
   };
@@ -433,8 +513,9 @@ export default function V4FirstJourneyV12({
 
   const resetAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    // Also clear any pending first-create clientKey so a retry starts fresh.
+    // Clear any pending clientKeys so a retry starts fresh (no stale durable id).
     try { localStorage.removeItem("lovetree-v4-product-spine-create-client-key"); } catch { /* noop */ }
+    try { localStorage.removeItem("lovetree-v12-subsequent-client-key"); } catch { /* noop */ }
     const fresh = defaultState();
     setAppState(fresh);
     setV12Step(0);
@@ -521,12 +602,25 @@ export default function V4FirstJourneyV12({
                   <div className="v4-j-v12-chip-group">
                     {EMOTIONS.map((e) => (
                       <label key={e} className="v4-j-v12-chip">
-                        <input type="radio" name="emotion" value={e} defaultChecked={e === "설렘"} />
+                        <input
+                          type="radio"
+                          name="emotion"
+                          value={e}
+                          checked={appState.memory.emotion === e}
+                          onChange={(ev) => setMemoryDraft("emotion", ev.target.value)}
+                        />
                         <span>{e}</span>
                       </label>
                     ))}
                   </div>
-                  <textarea className="v4-j-v12-textarea" placeholder="이 장면을 보고 어떤 기분이 들었나요?" rows={3} />
+                  <textarea
+                    className="v4-j-v12-textarea"
+                    placeholder="이 장면을 보고 어떤 기분이 들었나요?"
+                    rows={3}
+                    value={appState.memory.note}
+                    onChange={(ev) => setMemoryDraft("note", ev.target.value)}
+                    data-testid="memory-note-input"
+                  />
                   <button type="submit" className="v4-j-v12-cta" data-testid="save-memory" disabled={saving}>마음 남기기</button>
                 </form>
               ) : (
