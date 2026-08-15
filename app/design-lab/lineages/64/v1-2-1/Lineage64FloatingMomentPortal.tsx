@@ -21,6 +21,11 @@ import styles from "./lineage-64.module.css";
 
 const MOMENT_COUNT = TRACK64_MOMENTS.length;
 
+// TRUE AMBIENT AUTO-ORBIT: a continuous, bounded idle orbit in normal motion.
+// Independent of any user inertia. Disabled under reduced motion, while the Viewer
+// is open, or while a pointer drag owns the world. Manual drag/wheel add on top.
+const AMBIENT_DEG_PER_MS = 0.01;
+
 function cardTransform(m: MomentRecord): string {
   const rad = (m.world.angle * Math.PI) / 180;
   const x = Math.sin(rad) * m.world.radius;
@@ -97,6 +102,11 @@ export default function Lineage64FloatingMomentPortal() {
       const dt = Math.min(64, now - last);
       last = now;
       if (!reducedMotion && !state.viewerOpen && !draggingRef.current) {
+        // TRUE AMBIENT AUTO-ORBIT: continuous bounded idle orbit, plus any user
+        // inertia from drag/wheel (which decays). Drag owns the world, so while
+        // draggingRef is set the ambient baseline is suppressed and only the
+        // pointer delta (applied in handlePointerMove) moves the camera.
+        cameraAngleRef.current += AMBIENT_DEG_PER_MS * dt;
         cameraAngleRef.current += velocityRef.current * dt;
         velocityRef.current *= 0.96;
         if (Math.abs(velocityRef.current) < 0.0004) velocityRef.current = 0;
@@ -187,6 +197,10 @@ export default function Lineage64FloatingMomentPortal() {
   const handleWheel = useCallback(
     (e: ReactWheelEvent<HTMLDivElement>) => {
       if (state.viewerOpen) return;
+      // Manual wheel ownership: rotate the world immediately and seed bounded
+      // inertia. Allowed under reduced motion because it is an explicit user
+      // gesture (same policy as manual drag/swipe), not ambient auto-orbit.
+      cameraAngleRef.current += e.deltaY * 0.06;
       velocityRef.current = Math.max(-0.06, Math.min(0.06, velocityRef.current + e.deltaY * 0.0006));
       if (worldRef.current) worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
     },

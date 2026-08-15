@@ -256,6 +256,26 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     ],
   },
   {
+    id: "lt-61-guided-next-moment-builder",
+    number: 61,
+    label: "Guided Next Moment LoveTree Builder V1.9",
+    status: "incoming",
+    summary: "Guided discovery of plausible next Moments, editable WHY NEXT, Main/Branch growth and continuing Story Path. Native interaction candidate is implemented; exact source visual fidelity and canonical /v4 adoption remain separate HOLD decisions.",
+    scenarios: ["tree-workspace"],
+    currentDecision: "V1.9 source reconciled (prior V1.7 pin was stale: current Drive root '현재후보.html' = V1.9, SHA-256 834fb634…). Native interaction candidate reuses the V1.7 implementation; V1.9 scale (progressive disclosure / Memory Cluster / branch scaling / disclosure actions) and Memory Glass visual deltas are NOT yet reimplemented in code — HOLD pending the actual V1.9 Drive source. Central interaction-contract QA is required; P8 exact visual/source fidelity, owner local file navigation and receiver same-Moment focus remain HOLD.",
+    sourceLabel: "Track61 V1.9 / Drive 1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe / Issue #158 reintake",
+    revisions: [
+      {
+        id: "61-v1-9",
+        label: "Guided Next Moment LoveTree Builder V1.9",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/61/61-v1-9",
+        notes: "native interaction candidate reuses V1.7 implementation; V1.9 source reconciled; V1.9 scale/visual deltas and source fidelity/P8 not yet claimed",
+      },
+    ],
+  },
+  {
     id: "lt-64-floating-moment-entry-portal",
     number: 64,
     label: "Floating Moment Welcome Orbit",
