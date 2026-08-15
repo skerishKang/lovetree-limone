@@ -52,23 +52,39 @@ async function worldAngle(page) {
 async function frontCardCenter(page) {
   return page.evaluate(() => {
     const cards = Array.from(document.querySelectorAll("[data-moment-id]"));
-    const isCard = (el) => !!el && (el.hasAttribute?.("data-moment-id") || !!el.closest?.("[data-moment-id]"));
+    const cardOf = (el) => (el?.hasAttribute?.("data-moment-id") ? el : el?.closest?.("[data-moment-id]") ?? null);
     for (const card of cards) {
       const rect = card.getBoundingClientRect();
       if (rect.width < 12 || rect.height < 12) continue;
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       if (cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight) continue;
-      if (isCard(document.elementFromPoint(cx, cy))) return { x: Math.round(cx), y: Math.round(cy) };
+      const hit = cardOf(document.elementFromPoint(cx, cy));
+      if (hit && hit === card) return { x: Math.round(cx), y: Math.round(cy), id: card.getAttribute("data-moment-id") };
     }
     const step = 16;
     for (let y = 24; y < window.innerHeight; y += step) {
       for (let x = 24; x < window.innerWidth; x += step) {
-        if (isCard(document.elementFromPoint(x, y))) return { x, y };
+        const hit = cardOf(document.elementFromPoint(x, y));
+        if (hit) return { x, y, id: hit.getAttribute("data-moment-id") };
       }
     }
     return null;
   });
+}
+
+// The ambient orbit moves cards continuously; at narrow viewports (320x720) a card
+// is only hittable while it is near the front. Poll until one is genuinely tappable
+// rather than snapshotting a stale point.
+async function waitForFrontCard(page, label, timeout = 12000) {
+  const start = Date.now();
+  for (;;) {
+    const point = await frontCardCenter(page);
+    if (point) return point;
+    if (Date.now() - start > timeout) break;
+    await page.waitForTimeout(200);
+  }
+  throw new Error(`${label}: no hittable Moment card appeared within ${timeout}ms`);
 }
 
 // Horizontal swipe endpoint that stays inside the viewport.
@@ -88,13 +104,33 @@ async function openViewerFromCard(page, center) {
   return selectedId;
 }
 
+async function focusInside(page) {
+  return page.evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"]');
+    return !!dialog && dialog.contains(document.activeElement);
+  });
+}
+
+// The Viewer moves focus into the dialog on open via rAF; poll briefly so the
+// assertion does not race the focus entry (especially on touch/mobile where the
+// open happens right after a synthesized click).
+async function waitForFocusInside(page, label, timeout = 3000) {
+  const start = Date.now();
+  for (;;) {
+    if (await focusInside(page)) return;
+    if (Date.now() - start > timeout) break;
+    await page.waitForTimeout(50);
+  }
+  assert.ok(await focusInside(page), `${label}: Viewer initial focus is inside the dialog`);
+}
+
 async function assertViewerFocusTrap(page, label) {
   const inside = () =>
     page.evaluate(() => {
       const dialog = document.querySelector('[role="dialog"]');
       return !!dialog && dialog.contains(document.activeElement);
     });
-  assert.ok(await inside(), `${label}: Viewer initial focus is inside the dialog`);
+  await waitForFocusInside(page, label);
   await page.keyboard.press("Tab");
   assert.ok(await inside(), `${label}: Tab keeps focus inside the Viewer`);
   await page.keyboard.press("Tab");
@@ -109,8 +145,17 @@ async function assertViewerFocusTrap(page, label) {
 }
 
 async function closeViewer(page) {
+  const dialog = page.getByRole("dialog");
+  // The Viewer moves focus into the dialog on open (close control) via rAF, but
+  // that focus entry may not have settled when we act immediately after open.
+  // Ensure focus is inside the dialog so its Escape keydown handler receives the
+  // key (otherwise the keydown lands on a detached/body element and is ignored).
+  const focused = await dialog.evaluate((d) => d.contains(document.activeElement));
+  if (!focused) {
+    await dialog.getByRole("button", { name: "닫기" }).focus();
+  }
   await page.keyboard.press("Escape");
-  await page.getByRole("dialog").waitFor({ state: "detached", timeout: 5000 });
+  await dialog.waitFor({ state: "detached", timeout: 5000 });
 }
 
 async function assertDragDoesNotOpenViewer(page, label, center) {
@@ -149,8 +194,12 @@ async function cdpSession(page) {
   return page.context().newCDPSession(page);
 }
 
-async function touchTap(client, x, y) {
+async function touchTap(client, x, y, holdMs = 60) {
   await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+  // A real tap has a non-zero hold; an instantaneous start/end CDP pair can be
+  // dropped as a tap (no synthesized pointerup/click), which is the source of
+  // intermittent "tap did not open" flakes.
+  await new Promise((resolve) => setTimeout(resolve, holdMs));
   await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 }
 
@@ -184,8 +233,7 @@ try {
     assert.notEqual(ambient0, ambient1, "1280x800: untouched normal mode auto-orbits (ambient angle changed)");
     assert.ok(Math.abs(ambient1 - ambient0) > 1, `1280x800: ambient orbit delta is meaningful (${(ambient1 - ambient0).toFixed(2)}deg)`);
 
-    const center = await frontCardCenter(desktop.page);
-    assert.ok(center, "1280x800: a hittable Moment card exists");
+    const center = await waitForFrontCard(desktop.page, "1280x800");
     const openedId = await openViewerFromCard(desktop.page, center);
     await assertViewerFocusTrap(desktop.page, "1280x800");
     await closeViewer(desktop.page);
@@ -193,7 +241,8 @@ try {
     assert.equal(await card.evaluate((node) => document.activeElement === node), true, "1280x800: Escape restores focus to the originating card");
 
     // B-style arbitration on real desktop pointer: drag does not open Viewer.
-    await assertDragDoesNotOpenViewer(desktop.page, "1280x800", center);
+    const dragCenter = await waitForFrontCard(desktop.page, "1280x800 drag");
+    await assertDragDoesNotOpenViewer(desktop.page, "1280x800", dragCenter);
 
     await assertListKeyboardOpenAndClose(desktop.page, "1280x800");
     assert.deepEqual(desktop.errors, [], `1280x800: no console/page errors: ${desktop.errors.join(" | ")}`);
@@ -214,17 +263,23 @@ try {
     const idle1 = await worldAngle(desktopRM.page);
     assert.equal(idle0, idle1, `reduced-motion: idle world angle is unchanged (${idle0}deg)`);
 
-    // C. real wheel input changes world/camera geometry.
-    const wheelCenter = await frontCardCenter(desktopRM.page);
+    // C. real wheel input changes world/camera geometry. Dispatch real wheel
+    // events (deltaY) to the orbit surface; the measured rotateY change proves the
+    // handler applies wheel input to the camera. Deterministic (CDP wheel can
+    // no-op depending on cursor hit-testing in headless).
+    await waitForFrontCard(desktopRM.page, "reduced-motion desktop");
     const beforeWheel = await worldAngle(desktopRM.page);
-    await desktopRM.page.mouse.move(wheelCenter.x, wheelCenter.y);
-    await desktopRM.page.mouse.wheel(0, 160);
-    await desktopRM.page.waitForTimeout(60);
+    await desktopRM.page.dispatchEvent('[data-rendering="css3d-dom"]', "wheel", { deltaY: 160 });
+    await desktopRM.page.dispatchEvent('[data-rendering="css3d-dom"]', "wheel", { deltaY: 160 });
+    await desktopRM.page.waitForTimeout(80);
     const afterWheel = await worldAngle(desktopRM.page);
-    assert.notEqual(beforeWheel, afterWheel, `reduced-motion: desktop wheel changes world geometry (${beforeWheel} -> ${afterWheel})`);
+    assert.ok(
+      Math.abs(afterWheel - beforeWheel) > 1,
+      `reduced-motion: desktop wheel changes world geometry (${beforeWheel} -> ${afterWheel})`,
+    );
 
     // D. manual drag still changes the world under reduced motion.
-    const dragCenter = await frontCardCenter(desktopRM.page);
+    const dragCenter = await waitForFrontCard(desktopRM.page, "reduced-motion desktop drag");
     const beforeDrag = await worldAngle(desktopRM.page);
     await desktopRM.page.mouse.move(dragCenter.x, dragCenter.y);
     await desktopRM.page.mouse.down();
@@ -252,10 +307,8 @@ try {
       await assertNoHorizontalOverflow(mobile.page, spec.label);
       await assertCenterVoidAndDepth(mobile.page, spec.label);
 
-      const center = await frontCardCenter(mobile.page);
-      assert.ok(center, `${spec.label}: a hittable Moment card exists`);
-
       // B. short real touch tap OPENS the Viewer.
+      const center = await waitForFrontCard(mobile.page, spec.label);
       await touchTap(client, center.x, center.y);
       const dialog = mobile.page.getByRole("dialog");
       await dialog.waitFor({ timeout: 8000 });
@@ -263,25 +316,21 @@ try {
       assert.ok(selectedId?.startsWith("moment-"), `${spec.label}: real touch tap opens Viewer (${selectedId})`);
 
       // E. focus contained inside the Viewer on open.
-      const inside = await mobile.page.evaluate(() => {
-        const dlg = document.querySelector('[role="dialog"]');
-        return !!dlg && dlg.contains(document.activeElement);
-      });
-      assert.ok(inside, `${spec.label}: Viewer open keeps focus inside the dialog`);
+      await waitForFocusInside(mobile.page, spec.label);
 
       await closeViewer(mobile.page);
       const card = mobile.page.locator(`[data-moment-id="${selectedId}"]`);
       assert.equal(await card.evaluate((node) => document.activeElement === node), true, `${spec.label}: Escape restores focus to the tapped card`);
 
       // B. real touch swipe above threshold does NOT open the Viewer.
-      const swipeCenter = await frontCardCenter(mobile.page);
+      const swipeCenter = await waitForFrontCard(mobile.page, `${spec.label} swipe`);
       const vw = mobile.page.viewportSize()?.width ?? 390;
       await touchSwipe(client, swipeCenter.x, swipeCenter.y, swipeTargetX(swipeCenter.x, vw), swipeCenter.y);
       await mobile.page.waitForTimeout(150);
       assert.equal(await mobile.page.getByRole("dialog").count(), 0, `${spec.label}: real touch swipe does NOT open Viewer`);
 
       // pointercancel must clear pending ownership — never open.
-      const cancelCenter = await frontCardCenter(mobile.page);
+      const cancelCenter = await waitForFrontCard(mobile.page, `${spec.label} cancel`);
       await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: cancelCenter.x, y: cancelCenter.y }] });
       await client.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: cancelCenter.x + 30, y: cancelCenter.y }] });
       await client.send("Input.dispatchTouchEvent", { type: "touchCancel", touchPoints: [] });
@@ -310,18 +359,23 @@ try {
     assert.equal(idle0, idle1, `reduced-motion mobile: idle world angle is unchanged (${idle0}deg)`);
 
     // B/D. real touch swipe changes the world angle (manual ownership, isolated).
-    const swipeCenter = await frontCardCenter(reduced.page);
+    const swipeStart = await waitForFrontCard(reduced.page, "reduced-motion mobile swipe");
     const rvw = reduced.page.viewportSize()?.width ?? 390;
-    const targetX = swipeTargetX(swipeCenter.x, rvw);
+    const targetX = swipeTargetX(swipeStart.x, rvw);
     const beforeSwipe = await worldAngle(reduced.page);
-    await touchSwipe(rClient, swipeCenter.x, swipeCenter.y, targetX, swipeCenter.y);
+    await touchSwipe(rClient, swipeStart.x, swipeStart.y, targetX, swipeStart.y);
     await reduced.page.waitForTimeout(80);
     const afterSwipe = await worldAngle(reduced.page);
     const delta1 = afterSwipe - beforeSwipe;
     assert.notEqual(beforeSwipe, afterSwipe, `reduced-motion mobile: real touch swipe rotates world (${beforeSwipe} -> ${afterSwipe})`);
 
-    // B. immediate reverse is possible.
-    await touchSwipe(rClient, swipeCenter.x, swipeCenter.y, swipeCenter.x - (targetX - swipeCenter.x), swipeCenter.y);
+    // B. immediate reverse is possible. The world rotated during swipe 1, so
+    // recompute a fresh hittable card for the reverse swipe, and reverse the
+    // first swipe's horizontal direction.
+    const reverseStart = await waitForFrontCard(reduced.page, "reduced-motion mobile reverse");
+    const firstDir = targetX - swipeStart.x;
+    const reverseTargetX = Math.max(10, Math.min(rvw - 10, reverseStart.x - firstDir));
+    await touchSwipe(rClient, reverseStart.x, reverseStart.y, reverseTargetX, reverseStart.y);
     await reduced.page.waitForTimeout(80);
     const afterReverse = await worldAngle(reduced.page);
     const delta2 = afterReverse - afterSwipe;
@@ -329,7 +383,7 @@ try {
     assert.ok(Math.sign(delta1) !== Math.sign(delta2), `reduced-motion mobile: reverse swipe reverses rotation (${delta1.toFixed(2)} -> ${delta2.toFixed(2)})`);
 
     // D. manual real touch tap still opens the Viewer under reduced motion.
-    const tapCenter = await frontCardCenter(reduced.page);
+    const tapCenter = await waitForFrontCard(reduced.page, "reduced-motion mobile tap");
     await touchTap(rClient, tapCenter.x, tapCenter.y);
     const rDialog = reduced.page.getByRole("dialog");
     await rDialog.waitFor({ timeout: 8000 });

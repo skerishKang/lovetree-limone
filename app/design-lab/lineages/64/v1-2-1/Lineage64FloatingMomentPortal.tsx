@@ -118,12 +118,26 @@ export default function Lineage64FloatingMomentPortal() {
     return () => cancelAnimationFrame(raf);
   }, [reducedMotion, state.viewerOpen]);
 
-  // Viewer focus entry / background inert / origin focus restoration.
+  // Viewer focus entry / background inert / origin focus restoration + focus trap.
+  // A real touch tap synthesizes a trailing click whose mousedown blurs the dialog
+  // focus back to <body>; re-assert focus inside on any focusout that escapes the
+  // dialog so the Viewer always contains focus (item E).
   useEffect(() => {
     if (state.viewerOpen) {
       if (worldRef.current) worldRef.current.inert = true;
       const id = requestAnimationFrame(() => closeRef.current?.focus());
-      return () => cancelAnimationFrame(id);
+      const dialog = viewerRef.current;
+      const onFocusOut = (e: FocusEvent) => {
+        const next = e.relatedTarget as HTMLElement | null;
+        if (dialog && (!next || !dialog.contains(next))) {
+          closeRef.current?.focus();
+        }
+      };
+      dialog?.addEventListener("focusout", onFocusOut);
+      return () => {
+        cancelAnimationFrame(id);
+        dialog?.removeEventListener("focusout", onFocusOut);
+      };
     }
     if (worldRef.current) worldRef.current.inert = false;
     triggerRef.current?.focus();
