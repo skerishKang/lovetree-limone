@@ -117,14 +117,110 @@ async function assertCoreInteractions(page, label) {
 
 async function assertLubtDrag(page, label) {
   const lubt = page.locator(".lcw-lubt");
-  const box = await lubt.boundingBox();
-  assert.ok(box, `${label}: Lubt exists`);
-  await page.mouse.move(box.x + 30, box.y + 30);
+
+  // Record native browser ownership transitions. One 1px activation move processes
+  // the pending setPointerCapture request; only after gotpointercapture is observed
+  // do we perform the real drag movement.
+  await lubt.evaluate((node) => {
+    node.dataset.qaPointerEvents = "[]";
+    delete node.dataset.qaPointerId;
+    const record = (event) => {
+      const events = JSON.parse(node.dataset.qaPointerEvents || "[]");
+      events.push({
+        type: event.type,
+        pointerId: event.pointerId,
+        button: event.button,
+        buttons: event.buttons,
+        captured: node.hasPointerCapture(event.pointerId),
+        dragging: node.classList.contains("dragging"),
+        clientX: Math.round(event.clientX),
+        clientY: Math.round(event.clientY),
+      });
+      node.dataset.qaPointerEvents = JSON.stringify(events);
+      if (event.type === "pointerdown") node.dataset.qaPointerId = String(event.pointerId);
+    };
+    for (const type of ["pointerdown", "gotpointercapture", "pointermove", "pointercancel", "lostpointercapture", "pointerup"]) {
+      node.addEventListener(type, record);
+    }
+  });
+
+  const firstBox = await lubt.boundingBox();
+  assert.ok(firstBox, `${label}: Lubt exists`);
+  await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
+
+  const liveBox = await lubt.boundingBox();
+  assert.ok(liveBox, `${label}: Lubt live box remains available`);
+  const startX = liveBox.x + liveBox.width / 2;
+  const startY = liveBox.y + liveBox.height / 2;
+  await page.mouse.move(startX, startY);
+
+  const receivesPointer = await page.evaluate(({ x, y }) => {
+    const target = document.elementFromPoint(x, y);
+    return Boolean(target?.closest?.(".lcw-lubt"));
+  }, { x: startX, y: startY });
+  assert.equal(receivesPointer, true, `${label}: live Lubt receives the pointer-down point`);
+
   await page.mouse.down();
-  await page.mouse.move(Math.min(page.viewportSize().width - 40, box.x + 170), Math.min(page.viewportSize().height - 80, box.y + 130), { steps: 5 });
-  assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), true, `${label}: Lubt drag owns pointer`);
+  await page.locator(".lcw-lubt.dragging").waitFor({ state: "visible", timeout: 5000 });
+
+  const pendingCapture = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return Number.isInteger(pointerId) && node.hasPointerCapture(pointerId);
+  });
+  assert.equal(pendingCapture, true, `${label}: Lubt pending pointer capture is established`);
+
+  // Processing one tiny real mouse move activates pending capture. This is not a
+  // retry: the gesture remains the single original pointerdown sequence.
+  await page.mouse.move(Math.min(page.viewportSize().width - 40, startX + 1), startY, { steps: 1 });
+
+  const activation = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return {
+      dragging: node.classList.contains("dragging"),
+      captured: Number.isInteger(pointerId) && node.hasPointerCapture(pointerId),
+      events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+    };
+  });
+  const gotCapture = activation.events.find((event) => event.type === "gotpointercapture");
+  const activationTerminal = activation.events.find((event) =>
+    event.type === "pointercancel" || event.type === "lostpointercapture" || event.type === "pointerup"
+  );
+  assert.ok(gotCapture, `${label}: activated gotpointercapture is observed; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activationTerminal, undefined, `${label}: capture activation has no terminal event; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activation.captured, true, `${label}: activated capture remains owned; trace=${JSON.stringify(activation.events)}`);
+  assert.equal(activation.dragging, true, `${label}: drag remains active after capture activation; trace=${JSON.stringify(activation.events)}`);
+
+  await page.mouse.move(
+    Math.min(page.viewportSize().width - 40, startX + 140),
+    Math.min(page.viewportSize().height - 80, startY + 100),
+    { steps: 5 },
+  );
+
+  const afterMove = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return {
+      dragging: node.classList.contains("dragging"),
+      captured: Number.isInteger(pointerId) && node.hasPointerCapture(pointerId),
+      events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+    };
+  });
+  const prematureTerminal = afterMove.events.find((event) =>
+    event.type === "pointercancel" || event.type === "lostpointercapture" || event.type === "pointerup"
+  );
+  assert.equal(prematureTerminal, undefined, `${label}: no terminal pointer event before explicit mouse up; trace=${JSON.stringify(afterMove.events)}`);
+  assert.equal(afterMove.captured, true, `${label}: Lubt retains pointer capture through movement; trace=${JSON.stringify(afterMove.events)}`);
+  assert.equal(afterMove.dragging, true, `${label}: Lubt drag owns pointer; trace=${JSON.stringify(afterMove.events)}`);
+
   await page.mouse.up();
-  assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), false, `${label}: Lubt pointer release recovers`);
+  await page.locator(".lcw-lubt.dragging").waitFor({ state: "detached", timeout: 5000 });
+
+  const afterUp = await lubt.evaluate((node) => ({
+    dragging: node.classList.contains("dragging"),
+    events: JSON.parse(node.dataset.qaPointerEvents || "[]"),
+  }));
+  assert.equal(afterUp.dragging, false, `${label}: Lubt pointer release recovers`);
+  assert.equal(afterUp.events.some((event) => event.type === "pointerup"), true, `${label}: explicit pointerup is observed`);
+  assert.equal(afterUp.events.some((event) => event.type === "pointercancel"), false, `${label}: normal mouse drag is not cancelled`);
   assert.match(await page.locator(".lcw-lubt-bubble").innerText(), /새로운 자리/);
   await page.waitForTimeout(2500);
   const inline = await lubt.evaluate((node) => ({ left: node.style.left, top: node.style.top }));

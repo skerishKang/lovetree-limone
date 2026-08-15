@@ -104,7 +104,7 @@ test("native candidate hardens mobile, accessibility and reduced motion while ke
   assert.match(component, /setAutoLife\(false\)/);
   assert.match(css + fixes, /prefers-reduced-motion:reduce/);
   assert.match(fixes, /lcwLubtWander/);
-  assert.match(fixes, /\.lcw-lubt\.dragging\{animation:none!important\}/);
+  assert.match(fixes, /\.lcw-lubt\.dragging\{animation-play-state:paused!important;scale:1.06\}/);
   assert.match(page, /assetTransferComplete/);
   assert.doesNotMatch(page, /node:fs|readFile|process\.cwd/);
   assert.doesNotMatch(component, /from ["']three["']|WebGLRenderingContext|<canvas/i);
