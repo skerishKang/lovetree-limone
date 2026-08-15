@@ -83,7 +83,7 @@ export default function MyTreesPage() {
             <h1 id="my-trees-title">내 러브트리</h1>
             <p>마음이 멈춘 순간들이 한 그루씩 자라고 있어요.</p>
           </div>
-          <Link className="button button-primary" href="/?start=tree">+ 새 러브트리</Link>
+          <Link className="button button-primary" href="/v4?start=1">+ 새 러브트리</Link>
         </div>
 
         {loading ? (
@@ -101,7 +101,7 @@ export default function MyTreesPage() {
             <span className="tree-page-symbol" aria-hidden="true">✦</span>
             <h2>아직 심은 러브트리가 없어요.</h2>
             <p>처음 마음이 멈춘 순간을 한 그루로 시작해 보세요.</p>
-            <Link className="button button-primary" href="/?start=tree">첫 순간 심기</Link>
+            <Link className="button button-primary" href="/v4?start=1">첫 순간 심기</Link>
           </div>
         ) : (
           <div className="tree-card-grid">
