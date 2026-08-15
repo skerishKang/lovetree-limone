@@ -72,11 +72,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isPositiveInteger(value: unknown): value is number {
-  return Number.isInteger(value) && typeof value === "number" && value > 0;
+  return typeof value === "number" && Number.isInteger(value) && value > 0;
 }
 
 function isNonNegativeInteger(value: unknown): value is number {
-  return Number.isInteger(value) && typeof value === "number" && value >= 0;
+  return typeof value === "number" && Number.isInteger(value) && value >= 0;
 }
 
 function fingerprintProblem(value: unknown): string | null {
