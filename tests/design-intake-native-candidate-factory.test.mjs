@@ -43,11 +43,11 @@ const REAL_FIXTURE_NAMES = [
   "track-64-floating-moment-entry-portal",
 ];
 
-// Track61 becomes intentionally non-scaffoldable after this proving PR applies
-// all three live registry seams. Re-running the factory must fail closed instead
-// of duplicating the already-materialized lineage/candidate/fidelity identities.
+// Track61 and Track64 become intentionally non-scaffoldable after their proving
+// PRs apply all three live registry seams. Re-running the factory must fail closed
+// instead of duplicating the already-materialized lineage/candidate/fidelity identities.
 const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
-  (name) => name !== "track-61-guided-next-moment-builder",
+  (name) => name !== "track-61-guided-next-moment-builder" && name !== "track-64-floating-moment-entry-portal",
 );
 
 const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
@@ -968,6 +968,19 @@ test("fixtures: Track61 applied registry seams fail closed on repeat scaffold", 
       () => buildScaffoldPlan(fixture("track-61-guided-next-moment-builder"), { root, fidelityTargets: LIVE_TARGETS }),
       IntakeCollisionError,
       "applied Track61 lineage/candidate/fidelity identities must not be scaffolded twice",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("fixtures: Track64 applied registry seams fail closed on repeat scaffold", () => {
+  const root = withTempRoot();
+  try {
+    assert.throws(
+      () => buildScaffoldPlan(fixture("track-64-floating-moment-entry-portal"), { root, fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+      "applied Track64 lineage/candidate/fidelity identities must not be scaffolded twice",
     );
   } finally {
     cleanup(root);

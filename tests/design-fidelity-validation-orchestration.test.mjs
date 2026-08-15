@@ -14,6 +14,7 @@ const REQUIRED_TARGETS = [
   "lineage-57-v2",
   "lineage-58-v2",
   "lineage-61-61-v1-9",
+  "lineage-64-v1-2-1",
   "memory-anatomy",
   "moment-orbit-carousel",
 ];
