@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-62-v1-1-reservation-hold",
+  "sourceTrackId": "Track62 V1.1",
+  "title": "Circular Rail Memory Sculpture Exhibition V1.1 (Reservation Hold)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Moment sculpture → open Moment Media Viewer → read WHY NEXT → play/reveal / SAVE → browse SCULPTURES / MEMORY FILMS / JOURNAL → retain exhibition phase/context → inspect current Memory Path / LoveTree ending (PRODUCT_JOB_STRENGTH: MATERIAL_UPGRADE per Issue #159 V1.1).",
+  "summary": "Track62 V1.1 (버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보) is the CURRENT source revision — a real executable exists and is fingerprint-pinned. Lifecycle is source truth (EXECUTABLE_AVAILABLE, dom-2d), fully orthogonal to repository decisions: Lineage 62 reservation stays HOLD and adoption stays HOLD. Classification (NEW_LINEAGE candidate) is separated from reservation state (HOLD) and from lifecycle (source executable).",
+  "provenance": {
+    "sourceLabel": "62 V1.1 current candidate folder / Issue #159 CTO V1.1 update",
+    "driveFolderId": "1hluQIixvMgnABN-y322xRjSlCWv75KE_",
+    "sourceFiles": [
+      "현재후보.html",
+      "22_디자인팀장8기_62_V1.1_신규조각상교체·포즈다양화·미디어뷰어·메뉴기능_수정지시_2026-08-13.md",
+      "검증결과.json"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage 62 is NOT allocated. No repository number is reserved by this manifest."
+  },
+  "reservation": {
+    "held": true,
+    "note": "Reservation/adoption HOLD until a product-owner decision (Issue #159)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #159/CTO audit — V1.1 source revision CURRENT, lineage candidate YES, but LINEAGE_62_RESERVATION HOLD and CANONICAL_V4_ADOPTION HOLD"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.1",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S",
+      "bytes": 20728647,
+      "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "22_디자인팀장8기_62_V1.1_신규조각상교체·포즈다양화·미디어뷰어·메뉴기능_수정지시_2026-08-13.md",
+      "driveId": "1aRjfRo2dCYKdykOx6jAV9lCuFYKlltAc",
+      "role": "instruction",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "검증결과.json",
+      "driveId": "12cv-Xw0lrk_RDnf7q8isANVm-eV_b5dd",
+      "bytes": 13953,
+      "sha256": "6462ef1f67016146e84942811b05a00b9e8f040030d4bc7acabc95d27f685d81",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P7", "P9"],
+  "sourceDefects": [
+    "DIALOG_ACCESSIBILITY: viewer role=dialog + aria-modal present but no focus entry/trap/trigger-return (activeElement stays BODY) — HOLD",
+    "MOBILE_320_390_COPY_READABILITY: large sculpture overlaps active Moment title/note region at 320/390 — HOLD (reflow, not overflow)",
+    "MY_TREE_NATIVE_HANDOFF: MY TREE 보기 resolves to internal exhibition-path summary panel, no external/native route — PENDING",
+    "PRODUCTION_MEDIA_AUTHORITY: instruction supplied no real media URLs/files; poster + PLAY state is prototype behavior — NOT PROVEN"
+  ],
+  "nativeRemediations": [
+    "dialog focus entry/containment/trigger-return + background inert while viewer/panel open",
+    "active Moment copy legibility at 320×720 / 390×844 (layout, not overflow)",
+    "map MY TREE to a stable repository product target only after one is selected; never copy a Drive/local target",
+    "production media authority via approved source assets",
+    "reduced-motion semantic equivalent for continuous rail + keyboard selection/navigation + visible focus + active Moment announcement"
+  ],
+  "sourceOnlyValues": [
+    "exhibition phase/context is presentation state, not product truth",
+    "synthetic canonical Moments until repository data is wired",
+    "poster/PLAY media placeholders (no production media authority)"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "visualMechanicOverlap": ["canonical /v4/subjects/demo/orbit"],
+  "productJobDistinctness": "Continuous analog exhibition rail with fractional phase traversal + Memory Media Viewer loop — not canonical discrete Orbit selection"
+}

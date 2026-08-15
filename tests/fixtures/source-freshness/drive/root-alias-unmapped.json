@@ -1,0 +1,19 @@
+{
+  "available": true,
+  "note": "synthetic: rootCandidate exists but no observed candidate matches its SHA-256",
+  "rootCandidate": {
+    "driveId": "1R11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+    "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "bytes": 510000,
+    "revisionLabel": "V1.1"
+  },
+  "files": [
+    {
+      "driveId": "1S11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.1",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bytes": 500000,
+      "functional": true
+    }
+  ]
+}

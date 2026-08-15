@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-60-3d-moment-cluster",
+  "sourceTrackId": "Track60",
+  "title": "3D Moment Cluster Explorer V1.2",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "canvas-3d-projection",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Discover which large memory clusters emerged inside one Tree and which actual Moments bridge those clusters — Cluster / Depth / Bridge Moment discovery, not path playback, graph editing, topology metrics or a global orbit.",
+  "summary": "Track60 (3D 모먼트 클러스터 심층탐색 / Pearl Graph Explorer V1.2) is a new repository Lineage (lt-60-3d-moment-cluster-explorer). Cluster and Bridge Moment are view-only derived properties, never persistent entities. Cross-track navigation evidence remains HOLD until native mapping to stable repository targets.",
+  "provenance": {
+    "sourceLabel": "60_러브트리_3D모먼트클러스터_심층탐색_55,56,59연결버전 / Issue #160",
+    "driveFolderId": "1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T",
+    "sourceFiles": ["★_현재후보_Track60_V1.2_REAL_NAVIGATION.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-60-3d-moment-cluster-explorer",
+  "lineageNumber": 60,
+  "revisionId": "60-v1-2",
+  "route": {
+    "path": "/design-lab/lineages/60/60-v1-2",
+    "surface": "lineage"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+      "driveId": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+      "bytes": 55260,
+      "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P4", "P7", "P9"],
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "semantic zoom levels 0/1/2/3 change information meaningfully",
+    "keyboard-accessible graph navigation or equivalent semantic list/tree alternative",
+    "canvas semantic fallback for screen-reader-oriented access",
+    "visible focus",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [
+    "Cluster = view-only aggregation (no persistent entity)",
+    "Bridge Moment = derived view property",
+    "synthetic fixture cluster groupings"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #160 — CROSS-TRACK NAVIGATION EVIDENCE HOLD"
+  },
+  "handoffMappings": [
+    {
+      "sourceTrackId": "Track59",
+      "resolvedProductTargetId": "lt-59-living-memory-book",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "path overview entry (Issue #161 PRODUCT_TARGET_RESOLVED, NATIVE_ROUTE_PENDING)"
+    },
+    {
+      "sourceTrackId": "Track55",
+      "resolvedProductTargetId": "/v4/trees/demo/graph",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "canonical graph owner surface (Issue #162 CANONICAL_OWNER_SURFACE_RESOLVED)"
+    },
+    {
+      "sourceTrackId": "Track56",
+      "resolvedProductTargetId": "lt-53-emotional-path-replay + CAP-14",
+      "resolutionStatus": "RESOLVED",
+      "handoffContext": "variant family (Issue #163 VARIANT_FAMILY_RESOLVED)"
+    }
+  ],
+  "visualMechanicOverlap": ["Orbit-like spatial navigation metaphors"],
+  "productJobDistinctness": "Cluster/depth/Bridge Moment discovery inside one Tree — not a global orbit, not topology analysis",
+  "derivedDisplay": [
+    { "value": "Cluster", "kind": "VIEW_DERIVED", "source": "cluster", "canonicalProductPolicy": false, "note": "view-only aggregation, never a persistent entity" },
+    { "value": "Bridge Moment", "kind": "VIEW_DERIVED", "source": "bridge-moment", "canonicalProductPolicy": false, "note": "derived view property connecting clusters" },
+    { "value": "View preset", "kind": "VIEW_DERIVED", "source": "view-preset", "canonicalProductPolicy": false, "note": "viewport preset, not product truth" }
+  ],
+  "syntheticFixture": { "prototypeOnly": false, "sourceDemoOnly": true },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  }
+}
