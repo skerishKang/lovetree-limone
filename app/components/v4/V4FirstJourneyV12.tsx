@@ -112,17 +112,39 @@ const RELATIONS = [
   "내가 직접 다시 검색했어요",
 ];
 
-export default function V4FirstJourneyV12() {
-  const [v12Mode] = useState(() => {
+export default function V4FirstJourneyV12({
+  onActivate,
+  storageKey = STORAGE_KEY,
+}: {
+  onActivate?: () => void;
+  storageKey?: string;
+}) {
+  // V1.2는 클라이언트 마운트 후에만 활성화됩니다. SSR 및 클라이언트 첫
+  // 렌더링에서는 null을 반환해 V1과 hydration 마크업이 일치하도록 보장합니다.
+  const [enabled, setEnabled] = useState(false);
+
+  // Activation gate: ?v12=1 URL 파라미터 또는 localStorage v12Mode === true.
+  // 기존 V1 진행 상태(firstMoment.url)가 있으면 V1을 유지합니다.
+  useEffect(() => {
+    const urlV12 = new URLSearchParams(window.location.search).has("v12");
+    let storageV12 = false;
+    let hasV1Progress = false;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(storageKey);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed.firstMoment?.url) return false;
+        if (parsed.firstMoment?.url) hasV1Progress = true;
+        if (parsed.v12Mode === true) storageV12 = true;
       }
     } catch { /* ignore */ }
-    return true;
-  });
+    if (hasV1Progress) return;
+    if (urlV12 || storageV12) {
+      queueMicrotask(() => {
+        setEnabled(true);
+        onActivate?.();
+      });
+    }
+  }, [onActivate, storageKey]);
 
   // Initialize appState from localStorage synchronously
   const [appState, setAppState] = useState<AppState>(() => {
@@ -160,7 +182,7 @@ export default function V4FirstJourneyV12() {
 
   // Scroll position → step mapping
   useEffect(() => {
-    if (!v12Mode) return;
+    if (!enabled) return;
     const el = scrollRef.current;
     if (!el) return;
 
@@ -182,7 +204,7 @@ export default function V4FirstJourneyV12() {
 
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
-  }, [v12Mode]);
+  }, [enabled]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -266,7 +288,7 @@ export default function V4FirstJourneyV12() {
     setScrollDir(null);
   }, []);
 
-  if (!v12Mode) return null;
+  if (!enabled) return null;
 
   const progressPct = Math.min(100, (v12Step / 4) * 100);
 
