@@ -117,13 +117,52 @@ async function assertCoreInteractions(page, label) {
 
 async function assertLubtDrag(page, label) {
   const lubt = page.locator(".lcw-lubt");
-  const box = await lubt.boundingBox();
-  assert.ok(box, `${label}: Lubt exists`);
-  await page.mouse.move(box.x + 30, box.y + 30);
+
+  // Record the actual pointer id delivered to the moving Lubt so the test can
+  // prove browser pointer capture rather than infer ownership from CSS alone.
+  await lubt.evaluate((node) => {
+    node.addEventListener("pointerdown", (event) => {
+      node.dataset.qaPointerId = String(event.pointerId);
+    }, { once: true });
+  });
+
+  // Lubt continuously wanders via CSS transform while idle. Track the live visual
+  // target before pressing instead of assuming an earlier bounding box is still
+  // current under CI load. This does not retry the gesture or pause the animation.
+  const firstBox = await lubt.boundingBox();
+  assert.ok(firstBox, `${label}: Lubt exists`);
+  await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
+
+  const liveBox = await lubt.boundingBox();
+  assert.ok(liveBox, `${label}: Lubt live box remains available`);
+  const startX = liveBox.x + liveBox.width / 2;
+  const startY = liveBox.y + liveBox.height / 2;
+  await page.mouse.move(startX, startY);
+
+  const receivesPointer = await page.evaluate(({ x, y }) => {
+    const target = document.elementFromPoint(x, y);
+    return Boolean(target?.closest?.(".lcw-lubt"));
+  }, { x: startX, y: startY });
+  assert.equal(receivesPointer, true, `${label}: live Lubt receives the pointer-down point`);
+
   await page.mouse.down();
-  await page.mouse.move(Math.min(page.viewportSize().width - 40, box.x + 170), Math.min(page.viewportSize().height - 80, box.y + 130), { steps: 5 });
+  await page.locator(".lcw-lubt.dragging").waitFor({ state: "visible", timeout: 5000 });
+
+  const captured = await lubt.evaluate((node) => {
+    const pointerId = Number(node.dataset.qaPointerId);
+    return Number.isInteger(pointerId) && node.hasPointerCapture(pointerId);
+  });
+  assert.equal(captured, true, `${label}: Lubt owns browser pointer capture`);
+
+  await page.mouse.move(
+    Math.min(page.viewportSize().width - 40, startX + 140),
+    Math.min(page.viewportSize().height - 80, startY + 100),
+    { steps: 5 },
+  );
   assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), true, `${label}: Lubt drag owns pointer`);
+
   await page.mouse.up();
+  await page.locator(".lcw-lubt.dragging").waitFor({ state: "detached", timeout: 5000 });
   assert.equal(await lubt.evaluate((node) => node.classList.contains("dragging")), false, `${label}: Lubt pointer release recovers`);
   assert.match(await page.locator(".lcw-lubt-bubble").innerText(), /새로운 자리/);
   await page.waitForTimeout(2500);
