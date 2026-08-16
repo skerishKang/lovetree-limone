@@ -246,6 +246,14 @@ for (const vp of VIEWPORTS) {
   const frame = sourceFrame(page);
   assert.ok(frame, `source frame mounted (${vp.name})`);
   await frame.waitForSelector(".node", { timeout: 10000 });
+  // On cramped viewports the runner header stacks and the iframe lands below
+  // the page fold; Chromium freezes rAF/transitions inside unrendered
+  // offscreen iframes (drawer class applies but the slide-in never runs).
+  // Scroll the runner page fully so the iframe renders before interacting.
+  if (vp.width < 800) {
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(700);
+  }
 
   const nodeCount = await frame.locator(".node").count();
   const objectCountText = await frame.locator("#objectCount").textContent();
