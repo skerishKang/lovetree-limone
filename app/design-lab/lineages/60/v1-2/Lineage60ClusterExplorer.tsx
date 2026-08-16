@@ -126,7 +126,7 @@ export default function Lineage60ClusterExplorer({
   const moments = qaDepth ? qaMoments : momentsProp;
   const clusters = qaDepth ? qaClusters : clustersProp;
 
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(qaDepth ? 2 : 0);
   const [focusCluster, setFocusCluster] = useState<ThemeKey | null>(null);
   const [selectedMomentId, setSelectedMomentId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -144,7 +144,6 @@ export default function Lineage60ClusterExplorer({
     const c: Camera = { yaw: 0, pitch: 0, distance: 300, target: [0, 0, 0] };
     camRef.current = { ...c };
     camTargetRef.current = { ...c };
-    setLevel(2);
   }, [qaDepth]);
 
   const byId = useMemo(() => new Map(moments.map((m) => [m.id, m])), [moments]);

@@ -85,6 +85,11 @@ async function dispatchPinch(page, box) {
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 }
 
+// The HUD level buttons use a CSS-module class, so select by their stable
+// accessible name (MACRO / CLUSTER / FIELD / INSPECT) instead of a class name.
+const LEVEL_NAMES = ["MACRO", "CLUSTER", "FIELD", "INSPECT"];
+const levelBtn = (page, name) => page.getByRole("button", { name, exact: true });
+
 async function main() {
   await mkdir(OUT, { recursive: true });
   const browser = await chromium.launch({ headless: true });
@@ -124,13 +129,13 @@ async function main() {
     {
       const { context, page, errors } = await openRoute(browser, { width: 1280, height: 800 });
       try {
-        const levelLabels = ["MACRO", "CLUSTER", "FIELD", "INSPECT"];
         const statusByLevel = [];
         for (let lv = 0; lv < 4; lv += 1) {
-          await page.locator(".levelBtn").nth(lv).click();
+          const name = LEVEL_NAMES[lv];
+          await levelBtn(page, name).click();
           await page.waitForTimeout(120);
-          const pressed = (await page.locator(".levelBtn").nth(lv).getAttribute("aria-pressed")) === "true";
-          assert.ok(pressed, `level ${lv} (${levelLabels[lv]}) becomes aria-pressed`);
+          const pressed = (await levelBtn(page, name).getAttribute("aria-pressed")) === "true";
+          assert.ok(pressed, `level ${lv} (${name}) becomes aria-pressed`);
           statusByLevel.push((await page.locator(".status").innerText()).trim());
         }
         // search/direct jump + single selection authority + Inspector projection
@@ -146,16 +151,16 @@ async function main() {
         assert.ok(inspectorTitle.length > 0, "Inspector projects the selected moment title");
         assert.equal(inspectorTitle, after, "Inspector reflects the single selected moment");
         // selecting enters INSPECT level (composition differs from MACRO)
-        assert.ok((await page.locator(".levelBtn").nth(3).getAttribute("aria-pressed")) === "true", "selection enters INSPECT level");
+        assert.ok((await levelBtn(page, "INSPECT").getAttribute("aria-pressed")) === "true", "selection enters INSPECT level");
         // keyboard semantic alternative
         await page.locator("canvas").first().focus();
         assert.equal(await page.evaluate(() => document.activeElement?.tagName), "CANVAS", "canvas is keyboard-focusable (visible focus target)");
         await page.keyboard.press("2");
         await page.waitForTimeout(80);
-        assert.ok((await page.locator(".levelBtn").nth(2).getAttribute("aria-pressed")) === "true", "number key 2 reaches FIELD level");
+        assert.ok((await levelBtn(page, "FIELD").getAttribute("aria-pressed")) === "true", "number key 2 reaches FIELD level");
         await page.keyboard.press("0");
         await page.waitForTimeout(80);
-        assert.ok((await page.locator(".levelBtn").nth(0).getAttribute("aria-pressed")) === "true", "number key 0 returns to MACRO");
+        assert.ok((await levelBtn(page, "MACRO").getAttribute("aria-pressed")) === "true", "number key 0 returns to MACRO");
         await assertNoErrors(errors, "semantic-levels");
         record("semantic-levels+single-authority+inspector+keyboard", true);
       } finally {
@@ -204,8 +209,9 @@ async function main() {
       await page.locator("canvas").first().waitFor({ timeout: 15000 });
       // wait until FIELD level is active (qa pins level 2)
       await page.waitForFunction(() => {
-        const btns = document.querySelectorAll(".levelBtn");
-        return btns[2] && btns[2].getAttribute("aria-pressed") === "true";
+        const btns = Array.from(document.querySelectorAll("button"));
+        const f = btns.find((b) => b.textContent.trim() === "FIELD");
+        return !!f && f.getAttribute("aria-pressed") === "true";
       }, { timeout: 10000 });
       const box = await page.locator("canvas").first().boundingBox();
       assert.ok(box, "canvas bounding box");
@@ -259,8 +265,9 @@ async function main() {
       assert.ok(response?.ok(), `depth overlap HTTP ${response?.status()}`);
       await page.locator("canvas").first().waitFor({ timeout: 15000 });
       await page.waitForFunction(() => {
-        const btns = document.querySelectorAll(".levelBtn");
-        return btns[2] && btns[2].getAttribute("aria-pressed") === "true";
+        const btns = Array.from(document.querySelectorAll("button"));
+        const f = btns.find((b) => b.textContent.trim() === "FIELD");
+        return !!f && f.getAttribute("aria-pressed") === "true";
       }, { timeout: 10000 });
       const box = await page.locator("canvas").first().boundingBox();
       assert.ok(box, "canvas bounding box");
