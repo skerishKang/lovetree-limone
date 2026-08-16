@@ -58,11 +58,14 @@ const expectedHoldErrors = [];
 const MEDIA_EXT = /\.(mp4|jpg|jpeg|png|webp|webm|mov)$/i;
 
 function isExpectedHoldError(text, url) {
-  if (PHASE !== "hold") return false;
-  // Expected ONLY when a missing exact-media transport request under the
-  // Track68 assets path fails with a real transport signature.
   if (!url || !url.includes(`${ASSET}/assets/`)) return false;
   if (!MEDIA_EXT.test(url)) return false;
+  // Element-canceled lazy media loads (the source attaches src for near-side
+  // cards, then pauses/reattaches as depth changes — Chromium aborts the
+  // in-flight fetch). This is source-normal in BOTH phases, never an error.
+  if (/net::ERR_ABORTED/i.test(text)) return true;
+  if (PHASE !== "hold") return false;
+  // Hold-phase missing-media transport failures (no media is provisioned).
   return /404|net::ERR|Failed to load resource/i.test(text);
 }
 
