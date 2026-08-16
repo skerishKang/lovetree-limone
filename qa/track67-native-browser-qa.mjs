@@ -83,20 +83,17 @@ async function runHits(page, vp) {
   }
   record(vp, "at least one chunk rendered", true);
 
-  // Scan a center-area grid of real pointer clicks to find a static chunk hit.
-  // Chunks from earlier spiral loops are visible ahead of the forward-facing
-  // camera, so at least one grid point should intersect a chunk ribbon triangle.
+  // Scan a grid of real pointer clicks across the canvas to find a static chunk
+  // hit. Chunks from earlier spiral loops are visible ahead of the forward-facing
+  // camera. At narrow viewports the ribbon fills a different vertical strip, so we
+  // cover the full width and lower-to-middle height range.
   const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
-  const cx = box.width / 2;
-  const cy = box.height / 2;
-  const points = [
-    [cx, cy],
-    [cx * 0.6, cy * 0.6],
-    [cx * 1.4, cy * 0.8],
-    [cx * 0.5, cy * 1.2],
-    [cx * 1.3, cy * 1.3],
-    [cx * 0.8, cy * 0.5],
-  ];
+  const points = [];
+  for (let xFrac = 0.2; xFrac <= 0.8; xFrac += 0.2) {
+    for (let yFrac = 0.3; yFrac <= 0.9; yFrac += 0.15) {
+      points.push([box.width * xFrac, box.height * yFrac]);
+    }
+  }
   let foundChunk = false;
   for (const [px, py] of points) {
     await clickCanvasPixel(page, px, py);
