@@ -110,12 +110,25 @@ export interface V24Ray {
   dz: number;
 }
 
+export interface V24HitCandidate {
+  kind: "chunk" | "tail";
+  id: number;
+  /** Positive ray parameter of this surface intersection. */
+  t: number;
+}
+
 export interface V24Hit {
   /** chunk id, or V24_ACTIVE_TAIL_SURFACE_ID (-1) when the hit is on the live active tail. */
   chunkId: number;
   kind: "chunk" | "tail";
   q: number;
   t: number;
+  /**
+   * Read-only observability: every positive surface intersection along the ray
+   * (ascending t). candidates[0] is always the selected (nearest) hit. Purely
+   * additive — the selection logic below is unchanged (best = min positive t).
+   */
+  candidates?: readonly V24HitCandidate[];
 }
 
 // ---------------------------------------------------------------------------
@@ -488,6 +501,7 @@ export function v24RibbonHitTest(
   tails?: readonly (readonly V24Sample[])[],
 ): V24Hit | null {
   let best: V24Hit | null = null;
+  const candidates: V24HitCandidate[] = [];
   const considerSurface = (
     samples: readonly V24Sample[],
     kind: "chunk" | "tail",
@@ -499,12 +513,19 @@ export function v24RibbonHitTest(
       const a = samples[i];
       const b = samples[i + 1];
       const t = rayRibbonSegment(ray, a, b, height);
-      if (t !== null && (best === null || t < best.t)) {
-        best = { chunkId: id, kind, q: a.q, t };
+      if (t !== null) {
+        candidates.push({ kind, id, t });
+        if (best === null || t < best.t) {
+          best = { chunkId: id, kind, q: a.q, t };
+        }
       }
     }
   };
   for (const chunk of chunks) considerSurface(chunk.samples, "chunk", chunk.id);
   if (tails) for (const tail of tails) considerSurface(tail, "tail", V24_ACTIVE_TAIL_SURFACE_ID);
+  if (best) {
+    candidates.sort((a, b) => a.t - b.t);
+    best.candidates = candidates;
+  }
   return best;
 }

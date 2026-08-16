@@ -75,6 +75,14 @@ function ribbonWallVerts(samples: readonly { x: number; z: number }[], height: n
   return out;
 }
 
+const HIT_NONE = {
+  kind: "none" as const,
+  surfaceId: null,
+  distance: null,
+  candidateCount: 0,
+  candidates: "",
+};
+
 export default function NativeRenderer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simRef = useRef<V24SimState>(v24InitState());
@@ -90,11 +98,14 @@ export default function NativeRenderer() {
   // from v24RibbonHitTest (the same surface the renderer draws), so a real browser
   // click on the rendered active tail produces a positive "tail" observable and an
   // empty-space click produces "none" — without inventing any new product behavior.
-  const [hitInfo, setHitInfo] = useState<{ kind: "chunk" | "tail" | "none"; surfaceId: number | null }>({
-    kind: "none",
-    surfaceId: null,
-  });
-  const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, raw: 0, q: 0 });
+  const [hitInfo, setHitInfo] = useState<{
+    kind: "chunk" | "tail" | "none";
+    surfaceId: number | null;
+    distance: number | null;
+    candidateCount: number;
+    candidates: string;
+  }>({ ...HIT_NONE });
+  const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, raw: 0, q: 0, oldest: null as number | null });
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -224,6 +235,9 @@ export default function NativeRenderer() {
         tail: s.raw.length,
         raw: s.raw.length,
         q: Number(computeQ(s.travel).toFixed(2)),
+        // Read-only retention observable: the FIRST-EVER baked chunk must stay
+        // present forever (no oldest-chunk eviction).
+        oldest: s.chunks.length > 0 ? s.chunks[0].id : null,
       });
       raf = requestAnimationFrame(loop);
     };
@@ -247,8 +261,21 @@ export default function NativeRenderer() {
     );
     // Surface the actual hit result as a bounded observable (chunk / tail / none)
     // so the active tail is provably hittable in a real browser, not silently dropped.
+    // Read-only observability of the ACTUAL hit computation: selected surface +
+    // distance + every positive candidate (ascending t). candidates[0] === the
+    // selected nearest hit — nothing is fabricated or injected here.
     setHitInfo(
-      hit ? { kind: hit.kind, surfaceId: hit.chunkId } : { kind: "none", surfaceId: null },
+      hit
+        ? {
+            kind: hit.kind,
+            surfaceId: hit.chunkId,
+            distance: Number(hit.t.toFixed(4)),
+            candidateCount: hit.candidates ? hit.candidates.length : 1,
+            candidates: hit.candidates
+              ? hit.candidates.map((c) => `${c.id}:${c.t.toFixed(3)}`).join(",")
+              : `${hit.chunkId}:${hit.t.toFixed(3)}`,
+          }
+        : { kind: "none", surfaceId: null, distance: null, candidateCount: 0, candidates: "" },
     );
   };
 
@@ -258,7 +285,7 @@ export default function NativeRenderer() {
       e.preventDefault();
       simRef.current = v24RewindStep(s);
       setInspect(null);
-      setHitInfo({ kind: "none", surfaceId: null });
+      setHitInfo(HIT_NONE);
     } else if (e.key === "Tab") {
       e.preventDefault();
       const next = { ...simRef.current };
@@ -291,6 +318,7 @@ export default function NativeRenderer() {
         <div><span>q</span><strong>{hud.q}</strong></div>
         <div><span>static chunks</span><strong>{hud.chunks}</strong></div>
         <div><span>active tail (raw)</span><strong>{hud.tail}</strong></div>
+        <div><span>oldest chunk</span><strong>{hud.oldest === null ? "—" : `#${hud.oldest}`}</strong></div>
         <div><span>bake</span><strong>{hud.raw} / {V24_CHUNK_TRIGGER} → {V24_CHUNK_RAW}</strong></div>
         <div>
           <button type="button" onClick={() => setPlaying((p) => !p)}>
@@ -312,6 +340,9 @@ export default function NativeRenderer() {
           aria-label="Track 67 V2.4.2 persistent world canvas"
           data-hit-kind={hitInfo.kind}
           data-hit-surface-id={hitInfo.surfaceId ?? ""}
+          data-hit-distance={hitInfo.distance ?? ""}
+          data-hit-candidate-count={hitInfo.candidateCount}
+          data-hit-candidates={hitInfo.candidates}
         />
         <p className="lt67-native__hit-status" role="status" aria-live="polite">
           {hitInfo.kind === "chunk"
