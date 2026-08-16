@@ -94,6 +94,32 @@ test("timeline surfaces canonical WHY NEXT only for connected moments", () => {
   assert.match(timeline, /이전 순간과 이어지는 관계/);
 });
 
+test("root and album surfaces canonical WHY NEXT only for connected moments", () => {
+  // both custom surfaces consume the canonical parentId + connectionReason from useTreeMoments
+  for (const page of [detail, album]) {
+    assert.match(page, /useTreeMoments\(treeId/);
+    assert.match(page, /moments\.find\(\(m\) => m\.id === moment\.id\)/);
+    // connected Moment detection follows canonical parentId semantics (relation block is parentId-gated)
+    assert.match(page, /memory\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+    // canonical connectionReason is consumed from the persisted memory record
+    assert.match(page, /memory\.connectionReason && memory\.connectionReason\.trim\(\)/);
+    assert.match(page, /<p className="moment-detail-parent-title">\{memory\.connectionReason\}<\/p>/);
+    // root / first Moment (no parentId) is never forced into a WHY NEXT relation; generic fallback appears exactly once
+    assert.equal((page.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+    assert.match(page, /이전 순간과 이어지는 관계/);
+    // no fixture / localStorage / design-mock product truth promoted on these surfaces
+    assert.doesNotMatch(page, /localStorage|SAMPLE|fixture|design mock/i);
+  }
+  // existing owner / create / update / delete semantics remain intact (no write-path mutation introduced)
+  for (const page of [detail, album]) {
+    assert.match(page, /isOwner/);
+    assert.match(page, /createMoment/);
+    assert.match(page, /updateMoment/);
+    assert.match(page, /deleteMoment/);
+    assert.match(page, /parentOptions=\{moments\}/);
+  }
+});
+
 test("graph inspector keeps the canonical real-data surface and surfaces WHY NEXT only for connected moments", () => {
   // Graph is a canonical real-data surface over useTreeMoments — no fixture/localStorage product truth
   assert.match(finalTreeSurface, /function GraphSurface\(\{ moments \}: \{ moments: MemoryRecord\[\] \}\)/);
