@@ -83,9 +83,18 @@ async function main() {
       await page.waitForTimeout(600);
       const saved = await page.locator('[data-testid="first-saved"]').count();
       const done = await page.locator(".v4-j-v12-done").count();
-      record(vp.name, "pointer/touch activates CTA", saved === 1 || done >= 1, `first-saved:${saved} done:${done}`);
+      const authOpened = await page.locator(".auth-modal-backdrop").count();
+      // BLOCKER 5 (anonymous truthfulness): the anonymous save MUST open the
+      // existing auth modal AND must NOT claim any durable saved/done state.
+      // Permissive OR is forbidden — require all three conditions together.
+      record(
+        vp.name,
+        "anonymous save opens auth, no durable success",
+        authOpened >= 1 && saved === 0 && done === 0,
+        `auth-modal:${authOpened} first-saved:${saved} done:${done}`,
+      );
     } else {
-      record(vp.name, "pointer/touch activates CTA", false, "CTA not found");
+      record(vp.name, "anonymous save opens auth, no durable success", false, "CTA not found");
     }
 
     record(vp.name, "console error 0", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
