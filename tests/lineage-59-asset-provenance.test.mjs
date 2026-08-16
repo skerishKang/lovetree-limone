@@ -93,8 +93,9 @@ test("source fingerprint mismatch forbids an exact-media PASS", () => {
 });
 
 test("media binding resolver does not depend on or break selection authority", () => {
-  const selection = createSelection(MOMENTS.map((m) => m.id));
-  const before = selection.currentId;
+  const pathIds = MOMENTS.map((m) => m.id);
+  const selection = createSelection(pathIds[0], pathIds);
+  const before = selection.currentMomentId;
   const status = resolveMomentMediaBinding(MOMENTS[0].media);
   assert.equal(status, "DEMO_FIXTURE");
   assert.equal(selection.currentId, before, "resolver must not mutate selection state");
