@@ -13,7 +13,10 @@ test("Lineage 67 V2.3 intake manifest is repository-owned and schema-named", asy
   assert.equal(raw.stableId, "track-67-memory-tape-interactive-roll");
   assert.equal(raw.classification, "NEW_LINEAGE");
   assert.equal(raw.lifecycle, "EXECUTABLE_PENDING");
-  assert.equal(raw.route.path, "/design-lab/lineages/67/v2-3");
+  // NOTE: the manifest does not declare `route` because the schema only permits
+  // `route` under an executable lifecycle, and the exact executable is still
+  // fail-closed PENDING. The runner route is owned by the app + lib module
+  // (LINEAGE_67_V23_SOURCE.runnerRoute), asserted separately below.
   assert.equal(raw.lineageReservation.status, "ALLOCATED");
   assert.equal(raw.adoption.status, "SOURCE_REFERENCE_ONLY");
 });
