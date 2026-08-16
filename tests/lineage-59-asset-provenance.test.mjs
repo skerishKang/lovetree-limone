@@ -143,15 +143,22 @@ test("no giant binary / accidental exact-asset commit", async () => {
   }
 });
 
-test("ledger transport policy is consistent: large/source assets are HOLD, only synthetic are DEMO_ONLY", () => {
+test("ledger transport policy is consistent: large HOLD, small exact approved, synthetic DEMO_ONLY", () => {
   const demoOnly = ASSET_LEDGER.filter((e) => e.repoTransportPolicy === "DEMO_ONLY");
-  assert.ok(demoOnly.length >= 3);
+  assert.equal(demoOnly.length, 3, "exactly 3 synthetic placeholders");
   assert.ok(
     demoOnly.every((e) => e.provenanceStatus === "DEMO_FIXTURE"),
     "DEMO_ONLY entries must be DEMO_FIXTURE",
   );
   const hold = ASSET_LEDGER.filter((e) => e.repoTransportPolicy === "REPO_TRANSPORT_HOLD");
-  assert.ok(hold.length >= 6, "all exact source assets remain transport HOLD");
+  const large = hold.filter((e) => typeof e.bytes === "number" && e.bytes > MAX_PINNED_BINARY_BYTES);
+  assert.equal(large.length, 4, "standalone executable + 3 environment backgrounds are large HOLD");
+  const pinOk = ASSET_LEDGER.filter((e) => e.repoTransportPolicy === "REPO_PIN_OK");
+  assert.equal(pinOk.length, 5, "5 small exact payloads are repo-pin approved");
+  assert.ok(
+    pinOk.every((e) => e.provenanceStatus === "SOURCE_REFERENCE_ONLY"),
+    "approved small exact payloads remain SOURCE_REFERENCE_ONLY until exact bytes are committed",
+  );
 });
 
 test("Web CTO Drive V5 re-verification is recorded as a separate authority", () => {
