@@ -98,9 +98,13 @@ export default function Track47NativeFrontDoor() {
   const scrubTime = useRef(0);
   const stillMode = useRef(false);
   const navRef = useRef(nav);
-  navRef.current = nav;
+  useEffect(() => {
+    navRef.current = nav;
+  }, [nav]);
   const composerOpenRef = useRef(runner.composerOpen);
-  composerOpenRef.current = runner.composerOpen;
+  useEffect(() => {
+    composerOpenRef.current = runner.composerOpen;
+  }, [runner.composerOpen]);
 
   const setMode = useCallback((next: PlaybackMode) => {
     playback.current = { ...playback.current, mode: next };

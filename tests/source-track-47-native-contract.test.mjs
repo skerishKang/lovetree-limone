@@ -57,7 +57,9 @@ test("video ownership points at the declared exact asset (absent → poster fall
   assert.match(html, new RegExp(`src="${SOURCE_TRACK_47_VIDEO.videoAssetPath}"`));
   assert.match(html, /playsinline/i);
   const component = componentText;
-  assert.match(component, /onError=\{failVideo\}/);
+  // Error is wired via an effect listener (refs survive fast 404s better than
+  // a synthetic onError on <source> — see Track47NativeFrontDoor.tsx).
+  assert.match(component, /addEventListener\("error", failVideo\)/);
   // Poster fallback layer mirrors the source .poster-fallback div.
   assert.match(html, /background-image:url\(&#x27;|background-image:url\('/);
 });

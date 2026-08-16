@@ -108,7 +108,9 @@ function navContract() {
       );
     }),
     record("08 first menu option receives keyboard focus on open", async () => {
-      await navPage.locator('[data-nav-menu="moments"]').click();
+      // The trigger was opened (and its first option focused) in check 06;
+      // the menu is pinned open through check 07. Re-clicking would toggle
+      // it CLOSED (source V4.2.5 trigger contract), so only verify focus.
       await navPage.waitForTimeout(350);
       const active = await navPage.evaluate(() => ({
         key: document.activeElement?.getAttribute("data-route-key"),
