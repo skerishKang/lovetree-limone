@@ -174,7 +174,10 @@ async function main() {
         assert.ok((await bridgeItem.count()) > 0, "at least one Bridge Moment exists in the list");
         await bridgeItem.click();
         await page.waitForTimeout(150);
-        assert.ok(await page.getByText("Bridge Moment", { exact: false }).isVisible(), "Bridge Moment is truthfully projected in the Inspector");
+        assert.ok(
+          await page.locator("strong", { hasText: "Bridge Moment" }).first().isVisible(),
+          "Bridge Moment is truthfully projected in the Inspector",
+        );
         await assertNoErrors(errors, "bridge-truthfulness");
         record("bridge-moment-truthfulness", true);
       } finally {
