@@ -1,0 +1,1496 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-68-living-media-sphere-v3",
+  "sourceTrackId": "Track68",
+  "title": "Living Media Sphere V3 · Interactive Video Sphere Entry",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "css3d-dom",
+  "scenarioId": "entry-onboarding",
+  "productJob": "LoveTree entry impression — 89 film cards orbit as an interactive sphere on an ivory canvas (pink/lime/blue accents, sans-serif typography, film grain): drag/inertia exploration, hidden Media drawer with the full 89-film library, hidden Shape drawer with live controls (film count 18..89, card size, sphere radius, corner, contrast, motion, depth fade, Wide/Tall/Square/Soft, Light/Dark, reset), click-to-focus a film, repeat-click to open the fullscreen viewer that owns audible playback. Working classification: ENTRY_MATERIAL + MOTION_COMPOSITION_EVIDENCE.",
+  "summary": "Source Track 68 (LoveTree Living Media Sphere) V3 intake, Issue #235. Current functional authority is V3: executable 버전3-84개.html (25,544 B, SHA-256 2f269047…e0232 — filename is stale naming; runtime authority is 89 videos + 89 posters, never 84). START.html is a byte-identical distribution alias (Web CTO verified; observed in the Drive trash on 2026-08-17). V1 (cdb88d1a…) and the V2 family (버전2/최종본/17_버전2_원본/15_V1.1 — all 4693dfaf…) are historical; V2_ALIAS_IDENTITY = PACKAGING_ONLY_CONFIRMED, so no V1.1 implementation exists. Rendering authority: CSS3D DOM + software spherical projection — no WebGL, no Three.js, no canvas renderer. Phase 1 (this intake) = source runner + repository evidence; Phase 2 native candidate = HOLD; no repository lineage number is reserved; canonical /v4 adoption is NOT authorized.",
+  "provenance": {
+    "sourceLabel": "12_러브트리_리빙미디어스피어_인터랙티브대문_V1 (Drive folder 14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4 — the adopted/current root IS this codex folder) / Issue #235",
+    "driveFolderId": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
+    "sourceFiles": [
+      "버전3-84개.html (V3 executable)",
+      "START.html (byte-identical distribution alias)",
+      "버전1.html / 버전2.html (historical revisions)",
+      "READ_ME_FIRST.txt (distribution instructions)",
+      "1.개발과정/16_버전관리_정리.md",
+      "1.개발과정/17_버전3_개발내용.md",
+      "1.개발과정/18_버전3_QA.md",
+      "1.개발과정/19_영상_원본대응표.csv (video provenance mapping)",
+      "assets/videos-v3/v3-001.mp4 … v3-089.mp4 (89 exact videos, OUT OF GIT)",
+      "assets/posters-v3/poster-001.jpg … poster-089.jpg (89 exact posters, OUT OF GIT)"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V3",
+    "authorityObservedAt": "2026-08-17T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "버전3-84개.html",
+      "driveId": "1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "START.html",
+      "driveId": "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "executable-variant-byte-identical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "1.개발과정/18_버전3_개발본.html",
+      "driveId": "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "executable-variant-byte-identical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "버전1.html",
+      "driveId": "17nRkpL7dU8aQJeJ90zXQ8YELPtWekVfw",
+      "bytes": 32808,
+      "sha256": "cdb88d1a7fc1c3778dd07dd2593ca1c9ac62e24f072dc6ffeb62a0e23d8e6b23",
+      "role": "historical-revision-v1",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "버전2.html",
+      "driveId": "1dq7EzwH6BvvSKM31yBDa13CYhDFYLs4B",
+      "bytes": 28323,
+      "sha256": "4693dfaf80c702652292920abd917ce2e68a9ac5f9ff78f5cbad176f1204111c",
+      "role": "historical-revision-v2-family",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "1.개발과정/19_영상_원본대응표.csv",
+      "driveId": "1j__XpclW6NcxkVCruQIL0gAiIiWcNSa9",
+      "bytes": 8223,
+      "role": "media-provenance-mapping",
+      "status": "PINNED"
+    },
+    {
+      "filename": "1.개발과정/16_버전관리_정리.md",
+      "driveId": "1vMVTwwQumRIVKIKcfUEF_sO6BG67Y2LT",
+      "bytes": 1099,
+      "role": "version-record",
+      "status": "PINNED"
+    },
+    {
+      "filename": "1.개발과정/17_버전3_개발내용.md",
+      "driveId": "1GeD8jlCvYFvFPvFEKQHXVjjjk8jmMAn4",
+      "bytes": 1874,
+      "role": "version-record",
+      "status": "PINNED"
+    },
+    {
+      "filename": "1.개발과정/18_버전3_QA.md",
+      "driveId": "1k_GW_Xme-ch1uBEL1_YxQ-yRyQkt1SFs",
+      "bytes": 925,
+      "role": "sibling-qa",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": [],
+  "sourceDefects": [
+    "prefers-reduced-motion only disables decorative transitions (video-mark pulse, drawer/viewer/center-copy transitions) — the idle auto-rotation keeps running, so source accessibility is PARTIAL, not certified",
+    "sphere card z-index reaches 1000 inside the fixed stage while the dock triggers sit at z-index 45 — front cards can overlap the Media/Shape triggers (observed live: a trigger click was intercepted by a front card during browser QA)",
+    "film-count slider range 18..89 clamps focusFilm on out-of-range selection by auto-raising the count (documented source behavior, not a defect per se — Phase 2 must decide equivalent semantics)"
+  ],
+  "nativeRemediations": [
+    "CSS3D DOM + software spherical projection preserved (no WebGL/Three.js/canvas renderer)",
+    "89-film Fibonacci-sphere layout with depth-based scale/opacity/blur/z-order and manual perspective camera",
+    "poster-first cards: preload=none, lazy src attach only for near-side (depth ≥ 0.7), play only when depth > 0.79 and document is visible",
+    "visibilitychange (NOT pagevisibilitychange) re-evaluates playback",
+    "5px click-vs-drag threshold: sub-5px tap focuses / re-tap opens the viewer; >5px is drag-only",
+    "max audible authority = 1: all sphere videos muted; only the fullscreen viewer may play audibly",
+    "hidden Media drawer (89-film library grid, lazy poster thumbs) and Shape drawer (live controls incl. Wide/Tall/Square/Soft, Light/Dark, reset)",
+    "inertia + manual takeover drag model with idle drift",
+    "Escape closes viewer + both drawers; L/R keyboard shortcuts toggle drawers",
+    "Phase 2 native MUST remediate reduced-motion truth (idle rotation under prefers-reduced-motion)"
+  ],
+  "sourceOnlyValues": [
+    "TOTAL = 89",
+    "film count slider 18..89",
+    "depth thresholds 0.7 / 0.79"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #235 — Phase 1 source runner + repository evidence intake authorized by Web CTO re-audit. Phase 2 native candidate HOLD. No repository lineage number allocated; canonical /v4 adoption NOT authorized."
+  },
+  "templateFamily": "living-media-sphere",
+  "slotNotes": {
+    "issue": "235",
+    "notes": [
+      "Exact media transport = LOCAL_EXACT_OUT_OF_GIT_ONLY: all 178 runtime assets stay out of Git (25 of 89 videos exceed the Cloudflare 25 MiB static-asset limit; full-set repo transport BLOCKED; external video origin NOT_AUTHORIZED).",
+      "Full per-file media evidence (driveFileId / bytes / SHA-256) is committed below in track68MediaInventory — 89/89 videos + 89/89 posters hash-verified in place via the local Drive mount (COM3-GLM 2026-08-17).",
+      "The repo transports the exact executable HTML only (25,544 B) plus this evidence; media staging path public/design-lab-assets/source-tracks/68/v3/assets/ is gitignored on purpose.",
+      "Local exact-media browser QA = PASS_WITH_NOTED_PARTIALS at 1280x800 / 390x844 / 320x720 (sliders/reset verified statically; IAB harness blocked top-zone widget clicks)."
+    ]
+  },
+  "track68MediaInventory": {
+    "transport": "LOCAL_EXACT_OUT_OF_GIT_ONLY",
+    "evidence": {
+      "sha256Gate": "178/178 VERIFIED (in-place DriveFS audit 2026-08-17)",
+      "decodeGate": "178/178 PASS (ffprobe)",
+      "provenanceGate": "89/89 videos matched to 19_영상_원본대응표.csv (name + bytes)"
+    },
+    "videosFolderDriveId": "1hP6kA-ezQsqCfwMEIBhS_p9Xt1oyd1kg",
+    "postersFolderDriveId": "1k2FAbsLu3nh7Aes6bNwDEdaP41n_SMjK",
+    "videoTotalBytes": 1946025764,
+    "posterTotalBytes": 1619015,
+    "videosAtOrBelow25MiB": 64,
+    "videosAbove25MiB": 25,
+    "videos": [
+      {
+        "i": 1,
+        "f": "v3-001.mp4",
+        "id": "1rCqqKNxUV7pG5db7MNA2qPCPCPqQnoU7",
+        "b": 21900443,
+        "h": "1c12cbc057851d9cc875bcf792bd881fa12846609076e70f2649a4209c909be1",
+        "o": "01_0730작업물.mp4"
+      },
+      {
+        "i": 2,
+        "f": "v3-002.mp4",
+        "id": "19OKtcfwXMr9CqggcdiG4bDyMaorTjtq2",
+        "b": 2905287,
+        "h": "e3bf82b89e53de35e014d220ae3f589d578a721e590334531c4f8d0a45b14288",
+        "o": "02.첫여정통합-3개html합본.mp4"
+      },
+      {
+        "i": 3,
+        "f": "v3-003.mp4",
+        "id": "19PDMDXdqSjLoHvQgnkyBpqxGZ2t_98yE",
+        "b": 4198098,
+        "h": "c7b99fb67093947c4f174acf50d1016b55e77a13d0cf2622e7698660db641a2e",
+        "o": "03_자유성장그래프_시즌아카이브.mp4"
+      },
+      {
+        "i": 4,
+        "f": "v3-004.mp4",
+        "id": "1F_eCMmsWqqTyoqga_niJE7bmiJBFOyHX",
+        "b": 5080239,
+        "h": "cbbddfddd7bd97a3e16f23635fcd3740129741ef63c54e68289706255aea8a05",
+        "o": "04_300플러스_자유성장그래프.mp4"
+      },
+      {
+        "i": 5,
+        "f": "v3-005.mp4",
+        "id": "1ZkRMv4szWzPn4ichE7a1kvmDQfgHhdzd",
+        "b": 4087176,
+        "h": "539325859a918de3c9e28c50cac567646fa5984dec09ef4a215ee7c09322e751",
+        "o": "05_트리휴식_간단복귀흐름.mp4"
+      },
+      {
+        "i": 6,
+        "f": "v3-006.mp4",
+        "id": "1_Ojc46oX9uZ-O7tdrHyR-Bv06RIapXOF",
+        "b": 12263085,
+        "h": "fe6e1b63c4d0bb8fc713807fc95497cd9ac86fd969e899053b2d9f47676784a1",
+        "o": "06_300모먼트_피날레.mp4"
+      },
+      {
+        "i": 7,
+        "f": "v3-007.mp4",
+        "id": "1i9obBgmWUoUzfy82mcS9lw-ar77J-Pav",
+        "b": 27565288,
+        "h": "3d63735ea59a14d0166815c5234e35777a7b73e7b3c72c149cc38bc8e0d6b20c",
+        "o": "07_오로라입자_하트.mp4"
+      },
+      {
+        "i": 8,
+        "f": "v3-008.mp4",
+        "id": "1_ciI2_MCbgYe7CN4isa-gJ-uA42TpKWk",
+        "b": 6781882,
+        "h": "e15e0ffd5b9d1c167c9bdac525cf2bb49a3946df41198885770e47c018db79ab",
+        "o": "08_무지개기억_수관.mp4"
+      },
+      {
+        "i": 9,
+        "f": "v3-009.mp4",
+        "id": "1QKyq_xAySwfUUvKoNCmW-OkG_vksb_wr",
+        "b": 2162136,
+        "h": "1f90682b0395d4ff972216a136118ca510f4018c1b8c1b774fde2907c51b818b",
+        "o": "09_전체기억요약대시보드.mp4"
+      },
+      {
+        "i": 10,
+        "f": "v3-010.mp4",
+        "id": "1JT0wReS3MNDNXbD0l_AB3GhLFHhhccxY",
+        "b": 5142112,
+        "h": "bee873f57d8cc0a541fe83c64106fe928ea2a342227954fd0da3c67374fbdd7d",
+        "o": "10_메모리펄스_데스크톱.mp4"
+      },
+      {
+        "i": 11,
+        "f": "v3-011.mp4",
+        "id": "1sqO1hjGNjWzCNKfQjGYCT-5fM3_wpGoT",
+        "b": 54613108,
+        "h": "45de1702ec885d67544bfdff615308a33f0911fbdf7da391557dae99c37ac63b",
+        "o": "11_메모리그래프_관측소_용광로코어.mp4"
+      },
+      {
+        "i": 12,
+        "f": "v3-012.mp4",
+        "id": "1RliZgN3pUGpPu5h9txFc4urm3yL47Zrt",
+        "b": 30962198,
+        "h": "5876c42153ee66f31d0501786f6fd353ca210f2358691333eeed8ecd18004937",
+        "o": "12_글로벌디스커버리_탐색홈.mp4"
+      },
+      {
+        "i": 13,
+        "f": "v3-013.mp4",
+        "id": "1cNN3h9WK69L0RrrWe7yOGRG75L4dPSy7",
+        "b": 54587753,
+        "h": "81b18a7731b564cbb0950d1c8fbe3d3c2e667152982ad5cdc774eee0d1e12a9f",
+        "o": "13_메모리아틀라스_전체우주지도.mp4"
+      },
+      {
+        "i": 14,
+        "f": "v3-014.mp4",
+        "id": "1WRjJb7ss6QyI7INolSLW4vt1wzAdRl2Y",
+        "b": 20635660,
+        "h": "3fb174f237a3f087c36a1affc6be3de34db4da3413148d8042f30b78282531b0",
+        "o": "14_자동전개마인드맵_현재채택_v2-4.mp4"
+      },
+      {
+        "i": 15,
+        "f": "v3-015.mp4",
+        "id": "16PjIEe402Ys8MtnyJ6MFgGL3iknhAKtA",
+        "b": 17179964,
+        "h": "22a37f31195005bb36548eb886ca79ddd1306a737edaa9b526b6edd1e91e7e69",
+        "o": "15_러브트리라이브맵_현재채택_v1-2.mp4"
+      },
+      {
+        "i": 16,
+        "f": "v3-016.mp4",
+        "id": "1eCMUJWpt8TM0hi208m1KvpO8HhT3g4r1",
+        "b": 55740045,
+        "h": "097be43ee1b80e9f6cbbac399fbe83de97a875a27e8b5351b8246b37c6c2935b",
+        "o": "16_메모리토폴로지_전체.mp4"
+      },
+      {
+        "i": 17,
+        "f": "v3-017.mp4",
+        "id": "1H6cIFptOCVD2PQM8Hzby43nCU8knKVMG",
+        "b": 34060382,
+        "h": "b237e909a4913b44b1816e4246ab0d5a856f9ad95bbe310c4dd138a224327797",
+        "o": "17_리빙메모리지형_현재채택_v1-2.mp4"
+      },
+      {
+        "i": 18,
+        "f": "v3-018.mp4",
+        "id": "17FavoxcZROUQrBge20-yfNt5TCsYK7kE",
+        "b": 11767400,
+        "h": "4addaf8530393a0b7ade892943b264c1054d5e331d5d0457433c2d35be3bbd77",
+        "o": "18_메모리코어전기오로라_전체.mp4"
+      },
+      {
+        "i": 19,
+        "f": "v3-019.mp4",
+        "id": "1QLkEgIW6Ih0q3HJ3PIYhmLGy7zwOczRq",
+        "b": 25435697,
+        "h": "ff1b26af7589783cff262eb43673448d06ccb0513088ed52e68b0d4a39e0887f",
+        "o": "19_메모리코어용광로네온_전체.mp4"
+      },
+      {
+        "i": 20,
+        "f": "v3-020.mp4",
+        "id": "1JKe8yucP2vmCvlYz85SkAz2oA_g_XlrO",
+        "b": 9702239,
+        "h": "f0f12f89c94e31dc3e43731f1c57fa179c9ae88832d8020811bf1e4759a04ec7",
+        "o": "20_1_리빙메모리엔진_v1.mp4"
+      },
+      {
+        "i": 21,
+        "f": "v3-021.mp4",
+        "id": "1WTvIjr6FAIy1yWxUgnTOPRNP4veqPUyv",
+        "b": 12173659,
+        "h": "df1dbb98133d02baa349fa9d9ff0493ee6a07ba6fc6294d98040e7b9efc01490",
+        "o": "20_2_리빙메모리엔진_글로벌시각충실도_v1-1.mp4"
+      },
+      {
+        "i": 22,
+        "f": "v3-022.mp4",
+        "id": "11TCSByznwp1aJ5zwwJEjExg7v2g1BTER",
+        "b": 3868452,
+        "h": "f68d3a9f43de88e695ea78b73e024f50a208e001176e057deb7dd548d29e4f57",
+        "o": "22_영상기억별자리.mp4"
+      },
+      {
+        "i": 23,
+        "f": "v3-023.mp4",
+        "id": "1IuT54THJpaMSdFcVR7jvrzyWndzy_29H",
+        "b": 4641872,
+        "h": "aeb8996f7c3c59eb6b609970a1680fa059c2a539067333a7bfb7ac5cfae532eb",
+        "o": "23_리빙영상기억그래프.mp4"
+      },
+      {
+        "i": 24,
+        "f": "v3-024.mp4",
+        "id": "1qDvzY6RhwXyJJ6FP_7UIQjReuyfGGcsS",
+        "b": 342637,
+        "h": "03168db15bea1746e246ec43c10adb5ac4c48c231a1b661064abc0efae5c0294",
+        "o": "24_영상기억워크플로우.mp4"
+      },
+      {
+        "i": 25,
+        "f": "v3-025.mp4",
+        "id": "1LQ3jPWdqqZu4CpSQsmdqObzcpxmENgJt",
+        "b": 5705429,
+        "h": "4597051096265c070c050b37b13fbd3575f94204afb749800ff9785c453b3a8d",
+        "o": "25_영상기억로어맵.mp4"
+      },
+      {
+        "i": 26,
+        "f": "v3-026.mp4",
+        "id": "1YYt9YsqcZ4y_TWucIsc1lPKMc0HLhS50",
+        "b": 15298566,
+        "h": "a3ce7fc043a1755da08f9a71d58688b60ca60bde1056720e8ebb6171657ea79f",
+        "o": "26_메모리필름스튜디오.mp4"
+      },
+      {
+        "i": 27,
+        "f": "v3-027.mp4",
+        "id": "1AchnbAR21-x3A9WL7ikhoZTs1EtspM5K",
+        "b": 12267848,
+        "h": "4940391fad5df0d2df58161a1fbfa83bd66fef917747bd66fe5dff78c8c7b508",
+        "o": "27_모션기억아카이브_클릭재생_v1.mp4"
+      },
+      {
+        "i": 28,
+        "f": "v3-028.mp4",
+        "id": "10dHy-PI3wsPfkNxYG0z1hhvCtWMi9zaH",
+        "b": 27706816,
+        "h": "e00426512b2f1890366662ae06469c8fd5b37280c0fcf4a4342cf5f78b63d509",
+        "o": "28_리퀴드오빗영상갤러리_v1.mp4"
+      },
+      {
+        "i": 29,
+        "f": "v3-029.mp4",
+        "id": "1NjjWoAQZhPWtZUiIzYZ126I8RmPoX2Yf",
+        "b": 6438525,
+        "h": "111fa02f855237a763eb43f409c368c0bea5168899ef873666b780e82d3db16c",
+        "o": "29_사람별기억책장_기본_v1.mp4"
+      },
+      {
+        "i": 30,
+        "f": "v3-030.mp4",
+        "id": "1t3CgouLrliVaThgmily880aFplCYIWIV",
+        "b": 5244875,
+        "h": "a3ccba70c54ff92d82c48731090be2a8a9899a2c4c9c6a2b14ffe6241a52b889",
+        "o": "30_사람별기억책장_3D_v2.mp4"
+      },
+      {
+        "i": 31,
+        "f": "v3-031.mp4",
+        "id": "1DUTnieEubQuRXbkl_ddFlZpoadT1ixaB",
+        "b": 6283500,
+        "h": "8474f71659ca8fc322d78174326f663d3abdc7f154399a18898668abd2540596",
+        "o": "31_사람별기억책장_상호작용_v2.mp4"
+      },
+      {
+        "i": 32,
+        "f": "v3-032.mp4",
+        "id": "17i6XYhp5fqh8dphzoAl6QCps8-IyiWb6",
+        "b": 1195029,
+        "h": "2b9467d841914d690f187043b03308966f4be91da6c99eea69f892aede000c6d",
+        "o": "32_실제페이지모션_v2-1.mp4"
+      },
+      {
+        "i": 33,
+        "f": "v3-033.mp4",
+        "id": "1IiCU8l_2lgmYigR3PDW2af2r8wwRKeLE",
+        "b": 11257924,
+        "h": "d4843808b0ccef883141bbf62211f984e484552836719778f1ccdcac9f3ead04",
+        "o": "33_사람별기억책장_접이식아카이브.mp4"
+      },
+      {
+        "i": 34,
+        "f": "v3-034.mp4",
+        "id": "18LqBg_oHJJAjMLgx2yjYVYOXtkPhdHmp",
+        "b": 12500516,
+        "h": "1e69e8fab2154ec3125be16d6ecaac9583f3c67ce4acd671f832414ddeba8480",
+        "o": "34_사람별기억책장_3D아코디언앨범.mp4"
+      },
+      {
+        "i": 35,
+        "f": "v3-035.mp4",
+        "id": "1cZsXa8et_-XIsjowrq_uBPxQhTfBn0R-",
+        "b": 17310897,
+        "h": "49714a682bf1949b77f0b0fd58af4fa9f6aee8fea72b5003655c50bbd758019c",
+        "o": "35_LP플레이어.mp4"
+      },
+      {
+        "i": 36,
+        "f": "v3-036.mp4",
+        "id": "1-sFK4eUROqa__VDqelqtDlG-sKNmevgF",
+        "b": 10996271,
+        "h": "fefdfdc981267fcc78cfddba983ea39936b21da6a2e8136a8e99138e525f0ff1",
+        "o": "36-1_시네마틱메모리포털.mp4"
+      },
+      {
+        "i": 37,
+        "f": "v3-037.mp4",
+        "id": "1qIfEyl-Q-uzCHvh75AnapGnK_jMjd7O8",
+        "b": 4953106,
+        "h": "5ae94835aa6b9df86bd4a379a11cf0978891ce37b17584f3835e47ae967a5c43",
+        "o": "36-2_시네마틱메모리포털.mp4"
+      },
+      {
+        "i": 38,
+        "f": "v3-038.mp4",
+        "id": "1W2qk6cA-ymeEUO8Qzgc3bn5g6ZWc_Xzn",
+        "b": 3631366,
+        "h": "578a7ee509dfb19b5ee4b22732aeeaed8ea61f8f71dc95109436ecef6ead379d",
+        "o": "36-3_시네마틱메모리포털.mp4"
+      },
+      {
+        "i": 39,
+        "f": "v3-039.mp4",
+        "id": "1Th3k2uO4XLOUZU5ndaGgOWgFyIEa6_YM",
+        "b": 10317784,
+        "h": "5d7d7748e65b45f9c0949274d5b2c4910445d81f240068a3d5e2690d7f1f1562",
+        "o": "37_기억달력.mp4"
+      },
+      {
+        "i": 40,
+        "f": "v3-040.mp4",
+        "id": "1REwHdRTO0FhIKg8pfhrztjxU5ouGQvPA",
+        "b": 44211787,
+        "h": "58e7177c02621e72941918afd2210b40194602681f9b85a495bddb3cbbd20df7",
+        "o": "38_보이저우주기억지도.mp4"
+      },
+      {
+        "i": 41,
+        "f": "v3-041.mp4",
+        "id": "1mypC3hJyadrvyY9H8tuaFKL7rBbIu_BA",
+        "b": 15142984,
+        "h": "55e954b011ee4ce65add8930e88d99d4c8795c9375765de74dde6461377e14f6",
+        "o": "39_LP커버플로우.mp4"
+      },
+      {
+        "i": 42,
+        "f": "v3-042.mp4",
+        "id": "1Dqj5OlAyYyV3cTubHiywWDEQtj2iOa4x",
+        "b": 60006772,
+        "h": "35a88a6a46b9d18fd86d6f52ce7743b046a03c42de4db6f6e29dc4e7cf4b200c",
+        "o": "40-1_시네마틱황금열매.mp4"
+      },
+      {
+        "i": 43,
+        "f": "v3-043.mp4",
+        "id": "16dG8eZPZ-syif-fpD5u9OiZYUEhARZpV",
+        "b": 36156765,
+        "h": "ad5b6b7aa4e8c22a2da993c63f3402b943156e911de7a30af09e92faa02d7769",
+        "o": "40-2_시네마틱황금열매.mp4"
+      },
+      {
+        "i": 44,
+        "f": "v3-044.mp4",
+        "id": "1je8iXUesr0jkXXErxJq53OUd75DBx80M",
+        "b": 78302072,
+        "h": "258579803d72d77db3b2f6c3e1c6a4c014b39a4dc4ca9f5d0a65916233618366",
+        "o": "40-3_시네마틱황금열매.mp4"
+      },
+      {
+        "i": 45,
+        "f": "v3-045.mp4",
+        "id": "1AQlKhixP9tWrW0eZwbAxVGT8IQyXladQ",
+        "b": 16737211,
+        "h": "2857a497ef316f6460b7100ed8eb714bd159b2bb4d963fdd01ba933a853037e1",
+        "o": "41_메모리포켓.mp4"
+      },
+      {
+        "i": 46,
+        "f": "v3-046.mp4",
+        "id": "1a6Re9Umx9H44EtWdW_zvIehq-3FVzO1Y",
+        "b": 1414476,
+        "h": "37814d80eb36cd072ff638e18e654662e51b5a59c61fff4416e62a7cbc46e214",
+        "o": "42_시즌기억카드.mp4"
+      },
+      {
+        "i": 47,
+        "f": "v3-047.mp4",
+        "id": "1q9gkx9H4IcC_Cc5EOaIY8F3iuBKEOiCu",
+        "b": 1751705,
+        "h": "ac7fe01a7b6e268f7976e4eb6af9840a43ef7df58adeb99bd431d01e06aceb30",
+        "o": "43_기억장면레시피.mp4"
+      },
+      {
+        "i": 48,
+        "f": "v3-048.mp4",
+        "id": "1AJLF1DJyWvjQ-m9wdxLKjw5qvuUu4gHO",
+        "b": 34890897,
+        "h": "3e087a518675c24549f414a512fbb7bd305f0e51ea845436cb4b37b7f91b27f7",
+        "o": "44_기억창컴포저_v2.mp4"
+      },
+      {
+        "i": 49,
+        "f": "v3-049.mp4",
+        "id": "1S3E7imGG2ZWrd_tYcR2DwL2tLP7qi8Mi",
+        "b": 1947294,
+        "h": "0c62215e2025ec97ba178e5e4bfef8a76b4db9ecff2c54ae7584c7fe5e5fdf15",
+        "o": "45_모먼트정밀보정도구.mp4"
+      },
+      {
+        "i": 50,
+        "f": "v3-050.mp4",
+        "id": "1FkwltLuLOCB7qtTYM_e5kygQqBt9Z5nD",
+        "b": 7196639,
+        "h": "e691f376b19ca00f6b7b7f76f44add87ee6364a0e792adbc1534292d5f5a56fa",
+        "o": "46_팝업시즌기억책.mp4"
+      },
+      {
+        "i": 51,
+        "f": "v3-051.mp4",
+        "id": "1VVHKgX-rdFwHsTxh9UI7rYD2Jw8md0A_",
+        "b": 24473528,
+        "h": "22f7487fae73a4ac164ca441b27c9cff6720132b7d323b84f29d2e4c8e7c7fed",
+        "o": "47-1_시즌수채화블_통합개발.mp4"
+      },
+      {
+        "i": 52,
+        "f": "v3-052.mp4",
+        "id": "1jAtQQRIpbTkubXgyYlrpODkEpoOM_jUF",
+        "b": 50353976,
+        "h": "6b1c0951059330a50a53f266c7dc8e591daef2127ffc9d91d05b38829cdc3275",
+        "o": "47-2_시즌수채화블_통합개발.mp4"
+      },
+      {
+        "i": 53,
+        "f": "v3-053.mp4",
+        "id": "1wg8j9NqIUgvjZYqdz_dD22pu-8Ok3Du1",
+        "b": 80084036,
+        "h": "010e2b7fe532897d003fbe69b52ed30d49f4448ebca1a3c677d736c8f1fceb1b",
+        "o": "47-3_시즌수채화블_통합개발.mp4"
+      },
+      {
+        "i": 54,
+        "f": "v3-054.mp4",
+        "id": "1gAJp6tkNQ8OoXtPYN-_7nypzKzaVQ2i0",
+        "b": 13939888,
+        "h": "4b85877bab8cfa476d2c8d4bf5c7a72dc4a434449db75f1e3abf339920a017ea",
+        "o": "48-1_아이돌러브트리_네온파일럿.mp4"
+      },
+      {
+        "i": 55,
+        "f": "v3-055.mp4",
+        "id": "16aX1mCGWS-5FNVxRdENYZM0vADziQnsR",
+        "b": 17680230,
+        "h": "36aff14761a8c08de1e89d4b638510a681caab2810760f9755e28344629f8bab",
+        "o": "48-2_아이돌러브트리_네온파일럿.mp4"
+      },
+      {
+        "i": 56,
+        "f": "v3-056.mp4",
+        "id": "1CHWbZYMqLKg3YZc2jbWBSb0hVeF9u9pY",
+        "b": 72550904,
+        "h": "dd59676928588189b046d63fd0d4b10b44fdd2408f48455041181c4170231546",
+        "o": "49_아이돌모먼트_리빌포털.mp4"
+      },
+      {
+        "i": 57,
+        "f": "v3-057.mp4",
+        "id": "1b5IlEotigMUaoG2MOCN10lFx97LYAz_-",
+        "b": 16698216,
+        "h": "baed8a508670b1bdbbc6b4275831fbfa79686960a086ea65ee1e32b3dd64ae13",
+        "o": "50-1_드림메모리_시네마틱.mp4"
+      },
+      {
+        "i": 58,
+        "f": "v3-058.mp4",
+        "id": "1GhzXbI5dnwq1Mi9Ucw1LAzmpY6qJPrs9",
+        "b": 22509926,
+        "h": "37dc3a1c5ddbcdea7571f10cfea45aa8e306ebad7758a39a8bd02aa4084cd39f",
+        "o": "50-2_드림메모리_시네마틱.mp4"
+      },
+      {
+        "i": 59,
+        "f": "v3-059.mp4",
+        "id": "1GatV4wg-7MTaOozVNVuXrRrNPgnzEwgx",
+        "b": 8624180,
+        "h": "afaa499a8514b162e12a82da9097812d1d184cfec0322e3da101017f32c7ea8c",
+        "o": "51_네온인간분석_홍보대문.mp4"
+      },
+      {
+        "i": 60,
+        "f": "v3-060.mp4",
+        "id": "1aD3djXHdC00szh6HVSRJM6suVnFPRAaG",
+        "b": 60410003,
+        "h": "5d295e68468c1268ad61a7e4f43d5343a47cc5c4eaf16a9683e95eea7b73260b",
+        "o": "52_글로벌모먼트오빗_3D네트워크.mp4"
+      },
+      {
+        "i": 61,
+        "f": "v3-061.mp4",
+        "id": "1AszDXionuMhpDa-WpznZMv4Rh8q8bvtN",
+        "b": 5149749,
+        "h": "0bb0934a073d3412b68b10ddf90a14c700c18349e3db705623cdc2e89a05ca96",
+        "o": "53_모먼트노드_라이트펄스_커넥션플로우.mp4"
+      },
+      {
+        "i": 62,
+        "f": "v3-062.mp4",
+        "id": "1dIf-jjzRKB3TBTBCEjgMwT1qMVy7PniQ",
+        "b": 9745463,
+        "h": "efaa73b7353c948e5c1fd92e85dc076c4ee6bd656ebb8db5a6bd01b799310359",
+        "o": "54_운영스튜디오_워크플로우.mp4"
+      },
+      {
+        "i": 63,
+        "f": "v3-063.mp4",
+        "id": "1F4U-QYCl1jUF9zVIoEi9Z3S9YJVxqBDV",
+        "b": 926067,
+        "h": "f42f0f9799d2fddf75228400fd27947f801aca6eab48cf8eab352ae448a668fc",
+        "o": "55_자유연결_경로편집.mp4"
+      },
+      {
+        "i": 64,
+        "f": "v3-064.mp4",
+        "id": "1CGkU9dZbICuP7dTN75uiQN6E2Y9LA1A-",
+        "b": 12452639,
+        "h": "26a22156b0ba2622d029533a4ec9036abae269b434dc7cdf4fc52cde85756249",
+        "o": "56_세로형_모먼트관계망_전체조망.mp4"
+      },
+      {
+        "i": 65,
+        "f": "v3-065.mp4",
+        "id": "1Z8-3dB1Z8aopdW58obWonPtRIr_iavZA",
+        "b": 19389647,
+        "h": "90c2f2c5ad6b1d6b5320a72ac94ccd99a5b5f89e1ed9941275644898b823c5db",
+        "o": "57_리빙글라스_모먼트카드.mp4"
+      },
+      {
+        "i": 66,
+        "f": "v3-066.mp4",
+        "id": "15DxgPsIQ5uJ15vrfvesacQkPOIEfQzVi",
+        "b": 26327386,
+        "h": "f6e07b301295b5817f7ac6045342443ad62bd1e6e4b7ca7a4e6aa2024f23a9e0",
+        "o": "58_리빙메모리_핀보드_시네마틱.mp4"
+      },
+      {
+        "i": 67,
+        "f": "v3-067.mp4",
+        "id": "1tV0P0WPbAysBUDjsf4XqW6PzirIEZdeM",
+        "b": 30939523,
+        "h": "5ce9c56c0065f719dfddbe0b37b98366cde8b6ee91e0a9a877ae449c906d855d",
+        "o": "59_메모리스케치북_페이지여정.mp4"
+      },
+      {
+        "i": 68,
+        "f": "v3-068.mp4",
+        "id": "1cR-sybp_-7pUsLsU-DiJH_jfE9UcO6_5",
+        "b": 20503419,
+        "h": "18e7c43d99e901706d8e0dbefdfc5e22d91d6e5e22c14c58f41b8f9fcd67adeb",
+        "o": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전.mp4"
+      },
+      {
+        "i": 69,
+        "f": "v3-069.mp4",
+        "id": "1o5wn95hrVmElFzrk0LIcYnPz8HAo2IgS",
+        "b": 16175940,
+        "h": "5725c79badb5003b95d5470e56565202bd4e14f0cdc6050b5e7890103085c5d4",
+        "o": "61_감정경로_연결검토실.mp4"
+      },
+      {
+        "i": 70,
+        "f": "v3-070.mp4",
+        "id": "1edmuHSUCfZdYet_kQWp9RL2Y_tsUzt51",
+        "b": 17421476,
+        "h": "482623a93e4b76c8b1b5a35906ef9589156b06503f5f288acbb9556c42beb432",
+        "o": "62-1_기억조각상_원형레일전시.mp4"
+      },
+      {
+        "i": 71,
+        "f": "v3-071.mp4",
+        "id": "1wx8we-HSD6E6b1uJdaBlNHR5-It58waN",
+        "b": 975752,
+        "h": "e2f37582ae56649d8699570f933a91e0a2f711e51887695143509916369871ff",
+        "o": "62-2_기억조각상_원형레일전시.mp4"
+      },
+      {
+        "i": 72,
+        "f": "v3-072.mp4",
+        "id": "1vGUQ-7NMiEG7oeNVR02pcilr4HfwbRYm",
+        "b": 94733644,
+        "h": "6e5b66201b242c59338f05b8387c5ef2f13a595a0b21b18d05bbdb8443b8f1f7",
+        "o": "63_모먼트필드_3D뷰스튜디오.mp4"
+      },
+      {
+        "i": 73,
+        "f": "v3-073.mp4",
+        "id": "1st9R1J6OHsLawGwzzCWyc8f-Rc7CNSOm",
+        "b": 22020614,
+        "h": "7447ad4ce97dc693564101528e95e4500596cee066578517ff5ba932423b9e72",
+        "o": "64_부유모먼트_웰컴오빗_입장포털.mp4"
+      },
+      {
+        "i": 74,
+        "f": "v3-074.mp4",
+        "id": "1u7354TTSkG92Q1BaOHNoe7H6qRu9dRTB",
+        "b": 9036270,
+        "h": "f35a36071b0ae1301ec25fcd5c0ca25759d4c647bd5d07fe4a4cf9bac5737ec8",
+        "o": "66_첫트리만들기_인터랙티브스크롤가이드.mp4"
+      },
+      {
+        "i": 75,
+        "f": "v3-075.mp4",
+        "id": "1FyznkoA-Gqk3_iFjyQQwlUekIagRIsB6",
+        "b": 11788540,
+        "h": "9878046e668f472ca49cbab1237116305e04186f674edf40a637a6cc00d6a474",
+        "o": "녹화_2026_08_13_23_03_02_988.mp4"
+      },
+      {
+        "i": 76,
+        "f": "v3-076.mp4",
+        "id": "1GNpy2Z8dkDZMkRh9DB-o09dEFPbzthxa",
+        "b": 19730720,
+        "h": "2f6934bbdc455abf8f8b81206fa28c0ff0c92aab6eceac8433a39afc571571bf",
+        "o": "녹화_2026_08_13_23_58_56_620.mp4"
+      },
+      {
+        "i": 77,
+        "f": "v3-077.mp4",
+        "id": "1OCI9JWfd0WBG78m-Q_TUHCzbYprvTget",
+        "b": 19911291,
+        "h": "d971a508348aaadd6e4a4ba39d4be9d7244ccc6669d9e665b6bd733ee6938163",
+        "o": "코덱스-01_러브트리_슈퍼휴먼_시네마틱대문_V2.mp4"
+      },
+      {
+        "i": 78,
+        "f": "v3-078.mp4",
+        "id": "1bjaAag2kiFtxEBP3nH7KFSrQO1q4AJgC",
+        "b": 18408478,
+        "h": "b109bcfb07e0529d1777f7d4c24c27ac98a56826b27fc30ab76c4175184e45d5",
+        "o": "코덱스-02_러브트리_에디토리얼_기억대문_남성_V3.mp4"
+      },
+      {
+        "i": 79,
+        "f": "v3-079.mp4",
+        "id": "1YheDENP7NgC2oSAHkMiuVTC81JVrdSWS",
+        "b": 16801126,
+        "h": "27df135bedcd0c4c24dd68feec7b0908adb12276853dff52377dc865d3b1900c",
+        "o": "코덱스-03_러브트리_에디토리얼_기억대문_여성_V1.mp4"
+      },
+      {
+        "i": 80,
+        "f": "v3-080.mp4",
+        "id": "1pL3WT3E0abyNDBf2Uw7HZzQ0fSdCN-f1",
+        "b": 16371448,
+        "h": "49fcb5b2f7b2a9947086003750bc524a9328dc2cc55ba03921d15ad11677fe7e",
+        "o": "코덱스-04_러브트리_최애아이돌_오빗아카이브_V1.mp4"
+      },
+      {
+        "i": 81,
+        "f": "v3-081.mp4",
+        "id": "1tsjTc5MFkCbDChpTRaOqfQR1qks2A6ty",
+        "b": 20775582,
+        "h": "d1e286738db25b9a7590a67c4d22d437a5b6791e39647174b6fab62834c026b7",
+        "o": "코덱스-05_러브트리_영상피규어_아틀리에_V2.mp4"
+      },
+      {
+        "i": 82,
+        "f": "v3-082.mp4",
+        "id": "1zRUBO_Q2AgDszWyK2i3Xsxr3yI0NGvCI",
+        "b": 36685447,
+        "h": "cebc574d190611a81d4d86d966d3eff64519eef773c02c70762581ace8ebe892",
+        "o": "코덱스-06_러브트리_3D체험_프로그램모음_V1.mp4"
+      },
+      {
+        "i": 83,
+        "f": "v3-083.mp4",
+        "id": "1X6lXvzVcy8FDN3fdfNwBo4dNhnKpMIq6",
+        "b": 39074736,
+        "h": "739b1fae348ceb9e72cbf87f82a233fac5168861da3c4972f148c0a8195a7e84",
+        "o": "코덱스-07_러브트리_살아있는캐릭터월드_V2.mp4"
+      },
+      {
+        "i": 84,
+        "f": "v3-084.mp4",
+        "id": "1BMmEqwP-woL5uqVgxSm-Mv4HqvW55a93",
+        "b": 26550096,
+        "h": "c9eb8085668650ee30ca02f9b702b30a91b6ef9985dd6163b24173ead6c2e02c",
+        "o": "코덱스-08_러브트리_크리스털기억_아틀리에_V3.mp4"
+      },
+      {
+        "i": 85,
+        "f": "v3-085.mp4",
+        "id": "11n4vEzVwSrXJkC1jOg-G0KhJmmax0RtN",
+        "b": 39096595,
+        "h": "ba02d467462c259242ae4c6b4a97e8f0a7913e0e4e08e4738b76601f42debdd1",
+        "o": "코덱스-09_러브트리_꽃잎자동차_감정여정_V4.mp4"
+      },
+      {
+        "i": 86,
+        "f": "v3-086.mp4",
+        "id": "1A9CiH1ZuiTwJOJHH7WDOsi72CTGFAptd",
+        "b": 11808007,
+        "h": "16d41fab9787c322a21fe5f0b15e6e20379156f30a628fdad6bcb895006c6c4b",
+        "o": "코덱스-10_러브트리_최애아이돌_영상오빗캐러셀_V1.mp4"
+      },
+      {
+        "i": 87,
+        "f": "v3-087.mp4",
+        "id": "1Yo9ZQM5uDq0dfQ__0EmudMHhkg1XApYO",
+        "b": 23086727,
+        "h": "64c2690211276f208d5ef73375c1fda7ef8ab20b0699eca11de74f68f862b8ff",
+        "o": "코덱스-11_러브트리_달빛꽃_감정여정_V2-1차버전.mp4"
+      },
+      {
+        "i": 88,
+        "f": "v3-088.mp4",
+        "id": "1taLbsNhibBTFMTbC8h_WnNXP8nTBg3Af",
+        "b": 31869158,
+        "h": "94d04abdf72e2386b6436a8498b6d59fb436097438d790479aab8330c5870262",
+        "o": "코덱스-11_러브트리_달빛꽃_감정여정_V2-2차버전.mp4"
+      },
+      {
+        "i": 89,
+        "f": "v3-089.mp4",
+        "id": "1KQataGek2UjoseN_NhrybkyyhgDdnBhX",
+        "b": 84281471,
+        "h": "90aef33be9dc1e9160efc740991c64e5829471495ab6fe41ea17cede0bc9f4f1",
+        "o": "코덱스-11_러브트리_달빛꽃_감정여정_V2-3차버전.mp4"
+      }
+    ],
+    "posters": [
+      {
+        "i": 1,
+        "f": "poster-001.jpg",
+        "id": "1MxG5d1pqSHCIVokJ09R0uN0OIDPz62J8",
+        "b": 16261,
+        "h": "de1bbea54bbccbcab2c4ffe83b8529ee1476ac2ec6747699b5e829006de2b269"
+      },
+      {
+        "i": 2,
+        "f": "poster-002.jpg",
+        "id": "1N9i59XigWvCK13BsmPNZN7KX_F0ECx9d",
+        "b": 14606,
+        "h": "4e842072c574533647d40dd3283e90160a823d14ca42fa3446f322c3074faafc"
+      },
+      {
+        "i": 3,
+        "f": "poster-003.jpg",
+        "id": "1M4ez9ypUw3CV8a4nGs5nG8cKTjkX5WXy",
+        "b": 15088,
+        "h": "f0a68af9f00de5cb803a379207fc175ec3b18d3730bcad1005c782a2ed22e1a3"
+      },
+      {
+        "i": 4,
+        "f": "poster-004.jpg",
+        "id": "1wlNJornaP_J-Ec1jKCQoakLDyyGIbfJg",
+        "b": 10365,
+        "h": "4601817005d9f09f7a5cd4ce297d0f62fbf90b0a78e6c875b789bba134d1a87e"
+      },
+      {
+        "i": 5,
+        "f": "poster-005.jpg",
+        "id": "1rrlsHok18H58rw90tcasu_OROQ5fCkut",
+        "b": 15250,
+        "h": "d87751981d4d8c3363736c86bf59f2455941cd433e140410abc74b920cf94ed3"
+      },
+      {
+        "i": 6,
+        "f": "poster-006.jpg",
+        "id": "1BYIY-mGskAWPC3cZQPD61uBJFNnSR7Nq",
+        "b": 14781,
+        "h": "ec0644b488796152403718f43d051d9a317b25cf057386da8fee4afed64a22ef"
+      },
+      {
+        "i": 7,
+        "f": "poster-007.jpg",
+        "id": "1dZQQgfREVhwDsCvq_oRJRaoA2EY0AdoG",
+        "b": 16260,
+        "h": "ba883272601798930d13e9d551ab5868cf8757b5668a53c0b7ab00a01d422c69"
+      },
+      {
+        "i": 8,
+        "f": "poster-008.jpg",
+        "id": "1u7PNIzwB27UYbhOzJd5egBnQe7YHr5ns",
+        "b": 13920,
+        "h": "d32b79ad4f0901145cdb83422675f9463e748f7eeb760395476c5fbe60bdd687"
+      },
+      {
+        "i": 9,
+        "f": "poster-009.jpg",
+        "id": "1K7L4wENweu9rXI72r5kTbGri_hon18pI",
+        "b": 13105,
+        "h": "ca9b34f6cc8eed515118561c76be2e9d68521fbc639648f201688460f1fea68b"
+      },
+      {
+        "i": 10,
+        "f": "poster-010.jpg",
+        "id": "1g0yWAMymBrGz4k2URwr-X-fabuMARsXL",
+        "b": 32669,
+        "h": "253a92258b883dfc1613859e468cef97f6d42c73bb2f4445c8c0c09d82ebd69d"
+      },
+      {
+        "i": 11,
+        "f": "poster-011.jpg",
+        "id": "12V7gMI3zlkXE-HyPDwX7CIJEg7eVsKBJ",
+        "b": 13794,
+        "h": "254211a0c8d1cf01458a8f457dced7ac95ff3076a60443b485b18e3f0cff5d54"
+      },
+      {
+        "i": 12,
+        "f": "poster-012.jpg",
+        "id": "1BOW2moZu0kHEoLPh8ZNBNDPuTNIgSkTH",
+        "b": 28174,
+        "h": "ca720285f15e2cafa252b0357da567aed605a07784d3cf6bf04a0f1df81addc2"
+      },
+      {
+        "i": 13,
+        "f": "poster-013.jpg",
+        "id": "1O9JkAdmbc8sOvhBfSyIWtgMWXKQ35di8",
+        "b": 13260,
+        "h": "d22ace571343c3a74dfd1976724613e1db49f6b76f8d0c033e281df88dde0bde"
+      },
+      {
+        "i": 14,
+        "f": "poster-014.jpg",
+        "id": "1Y-hnqbLMhxbLRQrnKLKXfd0IUAUKpew9",
+        "b": 9195,
+        "h": "3ba8b64bfd95d590aee21235a35716c669cea19415f4f733534610da9670a048"
+      },
+      {
+        "i": 15,
+        "f": "poster-015.jpg",
+        "id": "1HcbnFm94fataeSvm9QJbh0HK6cAoUHpP",
+        "b": 18610,
+        "h": "47b46d9a3307f578bf981dd6b2712c3210ee8f587f70ff028c9b54d4b61075d3"
+      },
+      {
+        "i": 16,
+        "f": "poster-016.jpg",
+        "id": "1_RueGY5AaCx8vJn3hV9gu_RqKzx_CnzR",
+        "b": 14235,
+        "h": "0874c88d4353fc9aa658bbe9e9700c6c29002ff7ea762e91e92508b1b1393030"
+      },
+      {
+        "i": 17,
+        "f": "poster-017.jpg",
+        "id": "1gqoPi3Psn1DviGy8lrESu9rYOaMt-RnP",
+        "b": 34472,
+        "h": "61af1f5d534538e76467fc157d29fff0f273fd34bbf1823aa03926db17b8b860"
+      },
+      {
+        "i": 18,
+        "f": "poster-018.jpg",
+        "id": "1brynPA1hE8SxMauym4DhVw4SAOXbObqf",
+        "b": 31800,
+        "h": "fbb17f36f23545d58ce3dc5d2c3a6d4ffe0b41ee1ea313e1d1aa7ce178aa83d4"
+      },
+      {
+        "i": 19,
+        "f": "poster-019.jpg",
+        "id": "1pyfc-GWeebNzGt0i1Bm91iZzu_QnXsNX",
+        "b": 34302,
+        "h": "a3b99a1c50e28c374e12969d70f50a5252a93c25efa15b3e7373555777d4ab84"
+      },
+      {
+        "i": 20,
+        "f": "poster-020.jpg",
+        "id": "1zDVp22-VCMwVdS_o-Y2jXmwLT1zltgq3",
+        "b": 15658,
+        "h": "ef67dea116f953ccbfc9092535658923a946902b511912ad11a31efe220b1d3e"
+      },
+      {
+        "i": 21,
+        "f": "poster-021.jpg",
+        "id": "1PasEsSs8EjJmtLVOkwWU6pr6TWH1x0sr",
+        "b": 24682,
+        "h": "cae1b8110f0b4310c278ee5c55625e79bc87b52b32f1a9ccf8b9a4830bc0c0c6"
+      },
+      {
+        "i": 22,
+        "f": "poster-022.jpg",
+        "id": "1pmK-ZSCZ4zB55NxNXJGqE9VcHmU7iXRs",
+        "b": 17847,
+        "h": "b8b22f9e7b585fd3381ee7b8dea71c79701c335e307f8f00bcddd949e4aacd97"
+      },
+      {
+        "i": 23,
+        "f": "poster-023.jpg",
+        "id": "1JGWqEbfAdympBV3RPcIFWJ3iBZEMwWWr",
+        "b": 12417,
+        "h": "c6045872050cd0a351d98bd3b7bb4e909fb993d0492489c3af042b5b48100231"
+      },
+      {
+        "i": 24,
+        "f": "poster-024.jpg",
+        "id": "1QpEzU2jNkfml1pcojdBERS6dkkD-S3u6",
+        "b": 22022,
+        "h": "711ffdc80d621a8cba229800ee80c21a377e245125873040c241c6150daeb478"
+      },
+      {
+        "i": 25,
+        "f": "poster-025.jpg",
+        "id": "1aNnP3g0Y78flxn6dnxxH9vPRbxFZuKqB",
+        "b": 14839,
+        "h": "847f5743db9c484827e0045b544c9acbac017fa309fc882507a313068cc9bd64"
+      },
+      {
+        "i": 26,
+        "f": "poster-026.jpg",
+        "id": "13B2SOE7rF6P5pbhDWj7AXDz6OQiJuvqC",
+        "b": 9668,
+        "h": "51d838459ef502684bef3cdc8b79b8e61d41bed10170a58efa76836103f5ce4e"
+      },
+      {
+        "i": 27,
+        "f": "poster-027.jpg",
+        "id": "1fGFs5dGxenDCkRjXS-9AYea_g-gd28K1",
+        "b": 17531,
+        "h": "9e6fc32ebd6c6b482ecdbf5040be97c563cff5914f5541e333af07522d6d0c9e"
+      },
+      {
+        "i": 28,
+        "f": "poster-028.jpg",
+        "id": "17YC09vxjlVB6yawcp3-Tk0Dy4dLgFXSb",
+        "b": 22119,
+        "h": "8966722b1ecee7e6355e2722d0a70a3878af829f3a40bd92a49a160bfb14629f"
+      },
+      {
+        "i": 29,
+        "f": "poster-029.jpg",
+        "id": "1GJleHf8bz8h56gFsOL14J1skS8SnPpoc",
+        "b": 16764,
+        "h": "bcee06265400124d9a03eddbf3a1406310e0f8f46f314f2df57a1053a1a8dae5"
+      },
+      {
+        "i": 30,
+        "f": "poster-030.jpg",
+        "id": "14oBgRK67LQOaL0oKo-hSbPETlT666BL6",
+        "b": 18246,
+        "h": "f90372e5b3112f24660632f39653673b0cf8f371feb46897c0da29851677b73d"
+      },
+      {
+        "i": 31,
+        "f": "poster-031.jpg",
+        "id": "1CBBsFn6M9_asQSMNRMr6N2OqFt68TNir",
+        "b": 12153,
+        "h": "3a3445ade0178756fc7bd11c10ecdccdb60275b7d1491dd9a55d33772e818a1c"
+      },
+      {
+        "i": 32,
+        "f": "poster-032.jpg",
+        "id": "1YxETQlZgfDuOjZ9pdkkOZh1R6a0sESqI",
+        "b": 26380,
+        "h": "3d46523eec2e2b2ff5225fb88aa06ad4ffe7a9fd04a202c9bffc730ae830fdf7"
+      },
+      {
+        "i": 33,
+        "f": "poster-033.jpg",
+        "id": "1ZWLaqiVs5DkzDCOdMB7oixl2pyOhp9cd",
+        "b": 15764,
+        "h": "b16fb8a4ce3d8e115c83010d465a204888d7fc5be4df5c8d6abee8d5285ba66a"
+      },
+      {
+        "i": 34,
+        "f": "poster-034.jpg",
+        "id": "1VylqYuExHpX-2vwd9vUWX5HxNVaMJE1F",
+        "b": 15525,
+        "h": "6375db0f1331776541c95fa2fae3c0616f2e66f2a2819607ea9b185da1b28c13"
+      },
+      {
+        "i": 35,
+        "f": "poster-035.jpg",
+        "id": "1U_ifXxIPe4qgFxTii3xx26o20mcxgGS2",
+        "b": 22712,
+        "h": "4c3b02e12c229698a354d9a877a67a82607a78bbbb0925c7a12de85da3d37313"
+      },
+      {
+        "i": 36,
+        "f": "poster-036.jpg",
+        "id": "1WdszU5hf0QBf7ufabVguPugdo60Y28qB",
+        "b": 16682,
+        "h": "9c7d9cf00602eb3a28d5db361f51edb563d1a45789d04c8a87f11a6f3d26416d"
+      },
+      {
+        "i": 37,
+        "f": "poster-037.jpg",
+        "id": "1lHOLKSVlprLJT5aZxgsRzZn6zVfqSbxX",
+        "b": 15357,
+        "h": "dce84656a629061ecda93c7ae0cd41dffdc77b98118c71cfb93079df7cc8bf8c"
+      },
+      {
+        "i": 38,
+        "f": "poster-038.jpg",
+        "id": "1maLnHktsXP-a1VTEoFql59gppN-_U1BU",
+        "b": 11858,
+        "h": "e95b09769c03324d584379210c51a3059f8b7182cae05fb4d61a93b16077ba94"
+      },
+      {
+        "i": 39,
+        "f": "poster-039.jpg",
+        "id": "1zQJEPOp_l2yusQwq41yejOVZh_YuoH3U",
+        "b": 14898,
+        "h": "ff94cf3461c9af855a2c2cb01190f36727927f4cd22ff180abf1424931f2147d"
+      },
+      {
+        "i": 40,
+        "f": "poster-040.jpg",
+        "id": "1-ZkQzrPNQctxpGNGvlnZrFjEBop1HBbh",
+        "b": 19320,
+        "h": "3d47cff25d2e104acf584e807fe2f9f27ab505f42f171623d1fa5ec0d77f010d"
+      },
+      {
+        "i": 41,
+        "f": "poster-041.jpg",
+        "id": "1yLDj-uC4hDlaMFRrcKwXTvw6WG_W1EQh",
+        "b": 13279,
+        "h": "8458848aef31d0b1d708181a05e9757d2927377fcc502ba19d9eed8413827c3e"
+      },
+      {
+        "i": 42,
+        "f": "poster-042.jpg",
+        "id": "1Wb2S8s43-HFAhTgEbcvS1GSgmxkZLB61",
+        "b": 12964,
+        "h": "71b87b23b97992b2a763b46778a011880c9e2adc416ed674cd577d60cb93f62c"
+      },
+      {
+        "i": 43,
+        "f": "poster-043.jpg",
+        "id": "1rPJm4AozJQSOzPtRX0DThVHzdzxYxRQZ",
+        "b": 26802,
+        "h": "b54b19dd78912c9f96fd6cd0c253c7922f068863ed60bedbd46dde1293f8baf8"
+      },
+      {
+        "i": 44,
+        "f": "poster-044.jpg",
+        "id": "1Lfs-Ah-TFyznk1OOqxqxla_4M5AZ9Zwb",
+        "b": 13146,
+        "h": "693a0af28432676ac1f871ebe88f22670427dbb3f4fdb8304542822fe40afab0"
+      },
+      {
+        "i": 45,
+        "f": "poster-045.jpg",
+        "id": "1jaWiQgMSdD7edSbQPVdHjeajRF9FjkYb",
+        "b": 25656,
+        "h": "97a8c763eedc609e5e4138c2b743e623c2885330d7732e557dd7fe7db1d3f009"
+      },
+      {
+        "i": 46,
+        "f": "poster-046.jpg",
+        "id": "1ZNT-5oJaTiC4y2f83rhOilBInbi_y37b",
+        "b": 17661,
+        "h": "34d1056bafe49b7944510e6431d864ee0c6d11732fb22d181ee5de812d7d44bb"
+      },
+      {
+        "i": 47,
+        "f": "poster-047.jpg",
+        "id": "1ilmeB656W9_zGXIPHxanoqbJDHxiCFKQ",
+        "b": 12343,
+        "h": "3cc0817a60222083f5778e213c77f44653694325baca2a928bd441ae3cb89e5e"
+      },
+      {
+        "i": 48,
+        "f": "poster-048.jpg",
+        "id": "1c_sDi5HrQEtOo_bGWbMO9z5VJeIV-PuS",
+        "b": 21987,
+        "h": "81dbb65544268657990370f16f3ce9a43f516c52cdb5753e9baf7dbb9cca5e20"
+      },
+      {
+        "i": 49,
+        "f": "poster-049.jpg",
+        "id": "1IsbqblzWFoOtwIqi9KwOHROMDoMinN9J",
+        "b": 14993,
+        "h": "3fb86b74248ce7ceb505f30197bf2557810ca81dd702be3f83a786eb7afc6cb0"
+      },
+      {
+        "i": 50,
+        "f": "poster-050.jpg",
+        "id": "10ExZoc81QPwANZJVYGibBkeJDpjUdIJw",
+        "b": 10142,
+        "h": "f621eeab70fad7000f526f730631eb5d9448bba8ae4dadacee4ad5fa6c084071"
+      },
+      {
+        "i": 51,
+        "f": "poster-051.jpg",
+        "id": "1F6E9rRhXv6B9AzRnDADZ5k82kknTeV1Y",
+        "b": 11530,
+        "h": "ea820b3cfbbbcfcdeba782cd7307f62500645299a19cc2fc04fe71fc56195007"
+      },
+      {
+        "i": 52,
+        "f": "poster-052.jpg",
+        "id": "198-e51B39pTi4cbFb3kMPfqUKC8pKHsd",
+        "b": 26032,
+        "h": "2f36440d11195ad6c3838c2186c90cdd7e5493f67b8fdfb52f90f81c79006959"
+      },
+      {
+        "i": 53,
+        "f": "poster-053.jpg",
+        "id": "1NOy4OKJp3R0hKKG7WTaWkpkXmQx0KEiS",
+        "b": 26274,
+        "h": "a680de840f09906171321b2f63f1c837ff321eaa72e200780da3d54e0a2e6eac"
+      },
+      {
+        "i": 54,
+        "f": "poster-054.jpg",
+        "id": "1P3QZEa1yRnskYAbYwYnySCMTMTX403E-",
+        "b": 10434,
+        "h": "f697217b94ab7c1cf556f796768a32e492a18bbbd331b3cadf2e7f7673b8bf82"
+      },
+      {
+        "i": 55,
+        "f": "poster-055.jpg",
+        "id": "18wqfqE6vuDMd-XGOjC20jFg-ewb1-4qZ",
+        "b": 10448,
+        "h": "77a7547ab751bae1a4f8b181f15ddb25b93c27a3de9811dfe2fa59ab90e68d23"
+      },
+      {
+        "i": 56,
+        "f": "poster-056.jpg",
+        "id": "1dlW5JVt-HRMYA09cyCNwh9EUdJujdE34",
+        "b": 20946,
+        "h": "68c67fed785400b47d361e2941eb58ae8331f5f87af8f1335e30394448b6e5e1"
+      },
+      {
+        "i": 57,
+        "f": "poster-057.jpg",
+        "id": "1AXrLjZOTZXM56joAVnPR35B_U9YcQxYE",
+        "b": 13586,
+        "h": "d622dd53e52341c2be7991d13f88c971515dae323649b5160361a36aa0659b06"
+      },
+      {
+        "i": 58,
+        "f": "poster-058.jpg",
+        "id": "1MuuzaXNJENW-5WP5t2l_iw4AHNOIVffQ",
+        "b": 17311,
+        "h": "8b742e1f6896a8cc06702e669dd774a8e378b42f0b4b75cb4ae280782cb96036"
+      },
+      {
+        "i": 59,
+        "f": "poster-059.jpg",
+        "id": "1Jl_1fNzDi-jZ4S1tp24io4h3B4wVAV_a",
+        "b": 23647,
+        "h": "f028f12107a842a7a964f5088b3e6a3c509e66a60e07cf8454aa344fc5b1f3e5"
+      },
+      {
+        "i": 60,
+        "f": "poster-060.jpg",
+        "id": "13Xl_5-RsxVUFLCd0QvKJMhJcQuuwpsP0",
+        "b": 15695,
+        "h": "1fbf01cee30e659b751a637604f62786d1721729518a9120e79184e56967aed8"
+      },
+      {
+        "i": 61,
+        "f": "poster-061.jpg",
+        "id": "1-1oYakUa4rAD3miCqdC5JcqQUWs9YQ4n",
+        "b": 13774,
+        "h": "6111a51f8afb46796ac62cf0fba40f84aac54a8231068b6c54c69267e2397a17"
+      },
+      {
+        "i": 62,
+        "f": "poster-062.jpg",
+        "id": "1M5By83MZwdATKpA7aZXGr42oR08lkTki",
+        "b": 11054,
+        "h": "cb21557fed07ba3295e4bc6743f1b76698095a1cb200ce47144d29a805ef4fa5"
+      },
+      {
+        "i": 63,
+        "f": "poster-063.jpg",
+        "id": "1nvFwCnCqPmzEF6Q1m9AhUPxBbsd2qC-B",
+        "b": 14009,
+        "h": "f289f9a8027e7bfe792e1694c20fcf22b330f1a5fe4c4010400266084cb3b689"
+      },
+      {
+        "i": 64,
+        "f": "poster-064.jpg",
+        "id": "1O3j677PGZbIYkbRKzacv-9ZBr8UUxIgP",
+        "b": 29540,
+        "h": "49e7858dac3eece2acb889b70c7bef700613295b4c115378949c178e71d6e84c"
+      },
+      {
+        "i": 65,
+        "f": "poster-065.jpg",
+        "id": "1M7l5ABefvL6pD3Wvpe61kZqLckPgKYMm",
+        "b": 17018,
+        "h": "dae52e2aee2d83af3f489973c7a30769d3fabdf243ac187290e868c9e70f7cc9"
+      },
+      {
+        "i": 66,
+        "f": "poster-066.jpg",
+        "id": "1HCv7PKvd0_ohsBysnnqGigYVEXbACu_8",
+        "b": 20501,
+        "h": "430d165fcea9c98f88d20afc45b951a612a0512e666711c676c1466417aadcce"
+      },
+      {
+        "i": 67,
+        "f": "poster-067.jpg",
+        "id": "1yIPPY12dw0e0PwuIkuXltV1HvHTtAOut",
+        "b": 24106,
+        "h": "28884b9230064e4847d3ef691eddb2973187d814884a62bf309ac52adaa6dd48"
+      },
+      {
+        "i": 68,
+        "f": "poster-068.jpg",
+        "id": "1RzsOXqOXxIi5He4DWGEdYq65QSs35I66",
+        "b": 8892,
+        "h": "37e9d9118af564169a285041426788b0f73880d2ef091b8dc00b2dedebe29257"
+      },
+      {
+        "i": 69,
+        "f": "poster-069.jpg",
+        "id": "1-nXtCPdwUkr372JvgCIQ8oHcD37abvpu",
+        "b": 19809,
+        "h": "f1f53518eb927edc7856955a734a0e2e4d2e4fc71acd6112f4aa909911507505"
+      },
+      {
+        "i": 70,
+        "f": "poster-070.jpg",
+        "id": "1JXI9SFCmgjX5BwUwfNFu1f4WcIGot47U",
+        "b": 13026,
+        "h": "29d8e0fd8b1662dd931906861c015ca8d7b154ac579cb12ba3f0da371572b70a"
+      },
+      {
+        "i": 71,
+        "f": "poster-071.jpg",
+        "id": "1n-kA6vDIIM9yCST2Ax7s70Nrh1FUJOdg",
+        "b": 34960,
+        "h": "d86c8a7f2ff6a8501c3bd20b896e3aff220701ff9d657d0cde93910647b05fd4"
+      },
+      {
+        "i": 72,
+        "f": "poster-072.jpg",
+        "id": "1hSpu0ukFKVvwqJ75QS2OFl-mgtLmXTIV",
+        "b": 27644,
+        "h": "bd75f23e64dcb6f5fe6f80b78e9b965c2d2e276be9aaa00c812a5313c9b6bb50"
+      },
+      {
+        "i": 73,
+        "f": "poster-073.jpg",
+        "id": "1ltI5GT9o469xvlA4SgREyKo6Gh2AodxW",
+        "b": 16009,
+        "h": "1c39ae3ec20a6ac68bca69700f873bd3bd151064c4337a0c33ab5ff8fd163d0d"
+      },
+      {
+        "i": 74,
+        "f": "poster-074.jpg",
+        "id": "1pGaw_FpgXuttUvRAIpsDqHVUDTfBYZH3",
+        "b": 10374,
+        "h": "0aa7e37caa3902307a4fdc955aff983e0815e74f702f323b3ae54ac7bd25c7b8"
+      },
+      {
+        "i": 75,
+        "f": "poster-075.jpg",
+        "id": "1zqM0UlLkngFkHsy9pV3s0bkdl5Yutk1t",
+        "b": 16929,
+        "h": "4375f05e073df2c027a0563e032b51dafb8ffba502e567c664fca498f9a4deec"
+      },
+      {
+        "i": 76,
+        "f": "poster-076.jpg",
+        "id": "16zWzHKeos0C1vDIqCQ1cg0hSaXGKvXBR",
+        "b": 18994,
+        "h": "984d0e329911894029bb130deeb28c776675195e13f541bb8dd21cd6d669e63a"
+      },
+      {
+        "i": 77,
+        "f": "poster-077.jpg",
+        "id": "1T5EKf_e02GCATlae1O7y6CZzUrKb_k_E",
+        "b": 14142,
+        "h": "2f0d1bcf052d73cfd5a59a4f769aabb4c3b747471c8e6c946c318341a979ae58"
+      },
+      {
+        "i": 78,
+        "f": "poster-078.jpg",
+        "id": "10xZB3a8BU79wZAeCjfPWsdKYei9Lmbi-",
+        "b": 16366,
+        "h": "de6e971f5c1d999222522861fb9e7e28343f4bf45a86dffb855035db2ae81042"
+      },
+      {
+        "i": 79,
+        "f": "poster-079.jpg",
+        "id": "1OoFii9goKG-SAJPnSflELrYhYZa9ZuhH",
+        "b": 18911,
+        "h": "9a9bfc9be82a75ad7e0ccc2883aa70fba3910bedee2067542930a3032706195a"
+      },
+      {
+        "i": 80,
+        "f": "poster-080.jpg",
+        "id": "1HCJadAPyT5ITMtq3QEb-Wzo4iC20nEc8",
+        "b": 16768,
+        "h": "a0e194e30a185e91af392fedc30477800ce87e658970f3cb386010097426db1d"
+      },
+      {
+        "i": 81,
+        "f": "poster-081.jpg",
+        "id": "1Q_dH66DdeNW7f5WNVZwyaNigrRKW1ZWE",
+        "b": 16535,
+        "h": "8e80bc3bc24e26edbbeb916cbda99645d9248e206f70bd3a70be77e917384df3"
+      },
+      {
+        "i": 82,
+        "f": "poster-082.jpg",
+        "id": "1bYcFfCN0QGp1q1hk9Zh5H1pXdop27mBf",
+        "b": 18747,
+        "h": "20f986b25c30a6f59244f27cbfc771918638798d4e74889b578141e08f842394"
+      },
+      {
+        "i": 83,
+        "f": "poster-083.jpg",
+        "id": "1EFpUEnInIzJNDlbYcd3WYCtUfh_LpTGm",
+        "b": 17714,
+        "h": "1136a6285d2e144f6aca85b6fb60fa2e04be091621cadccb66633b122f721ac0"
+      },
+      {
+        "i": 84,
+        "f": "poster-084.jpg",
+        "id": "1dfMPz1RhYr_zbiRq52aUct_sYpd7UPXJ",
+        "b": 19359,
+        "h": "778f98ed17e4c90e0387c4d5547c06e7e687fa512e058e2c91adf9ec66f1085d"
+      },
+      {
+        "i": 85,
+        "f": "poster-085.jpg",
+        "id": "1wjY6Q1qgW-KWmsG8yHBQBsETCSY0HOt3",
+        "b": 23862,
+        "h": "c76d2e4b02f85357867a06d91be01c90da2c952d3c8d5e80b7dc792f91352785"
+      },
+      {
+        "i": 86,
+        "f": "poster-086.jpg",
+        "id": "1epT86pBOQHrXKJihgnWfBbAuZ-GhtVgO",
+        "b": 17639,
+        "h": "1d48f0df3cc595dfb78052c8440d809d2ddfd9353271ac1c40a8b1ef92f3ae12"
+      },
+      {
+        "i": 87,
+        "f": "poster-087.jpg",
+        "id": "1LNNHS8ZGhlYh4Nxn0C4xc-4eLZ8Jr7Yz",
+        "b": 27449,
+        "h": "af2abf7f9f532e03725f18c551bc1ed6046812ab1713981eee42c13028e8a3d7"
+      },
+      {
+        "i": 88,
+        "f": "poster-088.jpg",
+        "id": "10DiH7Z7uoN9hykMZwvznE6jXjvRESdhI",
+        "b": 22229,
+        "h": "404f1ebae6395822b6ccdd7230233d1bd9ebae7284804edc2cec4069e88fc642"
+      },
+      {
+        "i": 89,
+        "f": "poster-089.jpg",
+        "id": "1-O7DYU1176I9d7nnfYDGMPwuwlnde8X4",
+        "b": 25190,
+        "h": "5806a7b7e69331799a29f4ee4a75df4bf5ab943ab7c46918ff6d36e2b7391843"
+      }
+    ]
+  }
+}

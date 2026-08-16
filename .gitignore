@@ -52,3 +52,6 @@ temp/
 
 # Track66 native QA evidence (uploaded as CI artifact only, not committed)
 qa-artifacts/
+
+# Track68 V3 exact media staging (LOCAL_EXACT_OUT_OF_GIT — never commit media)
+public/design-lab-assets/source-tracks/68/v3/assets/
