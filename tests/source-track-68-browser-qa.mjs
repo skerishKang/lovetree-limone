@@ -90,6 +90,21 @@ function sourceFrame(page) {
   return page.frames().find((f) => f.url().includes(`${ASSET}/index.html`));
 }
 
+/**
+ * Focus a control inside the source frame through the source's own keyboard
+ * tab order (native path; works even when the drawer-body scroll position
+ * keeps the widget outside the clipped frame viewport). The drawer-close
+ * button precedes the sliders in DOM order, so the first tabs may land there.
+ */
+async function focusById(frame, page, id, maxTabs = 25) {
+  for (let i = 0; i < maxTabs; i++) {
+    const current = await frame.evaluate(() => (document.activeElement && document.activeElement.id) || "");
+    if (current === id) return true;
+    await page.keyboard.press("Tab");
+  }
+  return false;
+}
+
 async function shot(page, name) {
   await writeFile(`${SHOTS}/${name}.png`, await page.screenshot());
 }
@@ -210,8 +225,8 @@ for (const vp of VIEWPORTS) {
   const shapeOpened = true;
   // 5) film-count slider actually changes runtime count (18..89 contract)
   const objects = frame.locator("#objects");
-  await objects.click(); // focus the range input
-  await objects.press("Home");
+  const objectsFocused = await focusById(frame, page, "objects");
+  await page.keyboard.press("Home");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "18", null, { timeout: 5000 });
   // display:none styles update on the NEXT render frame — wait for the exact count
   await frame.waitForFunction(
@@ -219,29 +234,24 @@ for (const vp of VIEWPORTS) {
     null,
     { timeout: 5000 },
   );
-  await objects.press("End");
+  await page.keyboard.press("End");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "89", null, { timeout: 5000 });
   await frame.waitForFunction(
     () => document.querySelectorAll('.node[style*="display: none"]').length === 0,
     null,
     { timeout: 5000 },
   );
-  record(`${vp.name}_slider_changes_runtime_count_18_89`, true);
+  record(`${vp.name}_slider_changes_runtime_count_18_89`, objectsFocused);
 
   // 6) Reset actually restores source defaults. The Reset button sits at the
   // bottom of the drawer's scrollable body; reach it through the source's
   // own keyboard tab order and activate with Enter (native keyboard path).
-  await objects.press("Home"); // -> 18
-  const corner = frame.locator("#corner");
-  await corner.click();
-  await corner.press("Home"); // deterministic: 0
-  for (let i = 0; i < 3; i++) await corner.press("ArrowRight"); // -> 3
-  const cornerBefore = await corner.inputValue();
-  let resetReached = false;
-  for (let i = 0; i < 20 && !resetReached; i++) {
-    await page.keyboard.press("Tab");
-    resetReached = await frame.evaluate(() => document.activeElement && document.activeElement.id === "reset");
-  }
+  await page.keyboard.press("Home"); // objects -> 18
+  const cornerFocused = await focusById(frame, page, "corner");
+  await page.keyboard.press("Home"); // deterministic: 0
+  for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight"); // -> 3
+  const cornerBefore = await frame.locator("#corner").inputValue();
+  const resetReached = await focusById(frame, page, "reset");
   await page.keyboard.press("Enter");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "89", null, { timeout: 5000 });
   await frame.waitForFunction(
@@ -249,9 +259,9 @@ for (const vp of VIEWPORTS) {
     null,
     { timeout: 5000 },
   );
-  const objectsAfter = await objects.inputValue();
-  const cornerAfter = await corner.inputValue();
-  record(`${vp.name}_reset_restores_defaults`, objectsAfter === "89" && cornerAfter === "7" && Number(cornerBefore) === 3 && resetReached);
+  const objectsAfter = await frame.locator("#objects").inputValue();
+  const cornerAfter = await frame.locator("#corner").inputValue();
+  record(`${vp.name}_reset_restores_defaults`, objectsAfter === "89" && cornerAfter === "7" && Number(cornerBefore) === 3 && cornerFocused && resetReached);
 
   // 8-close) Shape drawer closes via Escape
   await page.keyboard.press("Escape");
@@ -269,10 +279,12 @@ for (const vp of VIEWPORTS) {
   await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.5, { steps: 6 });
   await page.mouse.up();
   const viewerAfterDrag = await frame.locator(".viewer.open").count();
-  // sub-5px click on a FRONT card (highest z-index, on-screen) focuses it;
-  // the sphere drifts slowly, so retry with the current front card
+  // sub-5px click on a FRONT card (highest z-index, on-screen) focuses it.
+  // Source behavior: hovering a card pauses idle drift, so hover first and
+  // let inertia decay — then the target is stable for the two clicks.
   let focused = false;
   let selectedCount = 0;
+  let cbox = null;
   for (let attempt = 0; attempt < 4 && !focused; attempt++) {
     const frontIndex = await frame.evaluate(() => {
       let best = -1, bestZ = -1;
@@ -282,39 +294,34 @@ for (const vp of VIEWPORTS) {
       });
       return best;
     });
-    const card = frame.locator(`.node[data-index="${frontIndex}"]`);
-    const cbox = await card.boundingBox();
-    if (cbox) {
-      await page.mouse.click(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
-    }
-    await page.waitForTimeout(250);
+    cbox = await frame.locator(`.node[data-index="${frontIndex}"]`).boundingBox();
+    if (!cbox) continue;
+    const x = cbox.x + cbox.width / 2;
+    const y = cbox.y + cbox.height / 2;
+    await page.mouse.move(x, y); // hover pauses idle rotation
+    await page.waitForTimeout(600); // inertia decay
+    await page.mouse.click(x, y);
+    await page.waitForTimeout(300);
     selectedCount = await frame.locator(".node.selected").count();
     focused = selectedCount === 1;
   }
-  // repeat click on the selected card opens the viewer (same target, no drift margin needed)
+  record(`${vp.name}_focus_click_selects_card`, focused && selectedCount === 1);
+  // repeat click on the SAME point (still hovered → no drift) opens the viewer
   let viewerOpen = false;
   let viewerSrc = null;
-  if (focused) {
-    const sel = await frame.evaluate(() => {
-      const el = document.querySelector(".node.selected");
-      return el ? Number(el.dataset.index) : -1;
-    });
-    const card = frame.locator(`.node[data-index="${sel}"]`);
-    const cbox = await card.boundingBox();
-    if (cbox) {
-      await page.mouse.click(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
-    }
+  if (focused && cbox) {
+    await page.mouse.click(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
     try {
       await frame.waitForSelector(".viewer.open", { timeout: 5000 });
       viewerOpen = (await frame.locator(".viewer.open").count()) === 1;
       viewerSrc = await frame.locator("#viewerMedia video").getAttribute("src");
     } catch { viewerOpen = false; }
   }
+  record(`${vp.name}_repeat_click_opens_viewer`, viewerOpen && /v3-\d{3}\.mp4/.test(viewerSrc || ""));
   await shot(page, `${vp.name}-viewer`);
   await page.keyboard.press("Escape");
   const viewerClosed = (await frame.locator(".viewer.open").count()) === 0;
-  record(`${vp.name}_click_vs_drag_focus_viewer`,
-    viewerAfterDrag === 0 && before === 0 && focused && selectedCount === 1 && viewerOpen && /v3-\d{3}\.mp4/.test(viewerSrc || "") && viewerClosed);
+  record(`${vp.name}_drag_no_viewer_and_escape_closes`, viewerAfterDrag === 0 && before === 0 && viewerClosed);
 
   // 11) horizontal overflow = 0 (runner page AND source frame)
   const frameOverflow = await frame.evaluate(() => ({
