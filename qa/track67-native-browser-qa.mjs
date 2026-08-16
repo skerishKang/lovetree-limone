@@ -88,10 +88,13 @@ async function runHits(page, vp) {
   // camera. At narrow viewports the ribbon fills a different vertical strip, so we
   // cover the full width and lower-to-middle height range.
   const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+  // Dense grid: at 320x720 (narrow mobile) the canvas is very small, so a wide
+  // scan across the full width and full height ensures at least one chunk hit.
+  const xSteps = 6, ySteps = 10;
   const points = [];
-  for (let xFrac = 0.2; xFrac <= 0.8; xFrac += 0.2) {
-    for (let yFrac = 0.3; yFrac <= 0.9; yFrac += 0.15) {
-      points.push([box.width * xFrac, box.height * yFrac]);
+  for (let xi = 0; xi < xSteps; xi += 1) {
+    for (let yi = 0; yi < ySteps; yi += 1) {
+      points.push([(box.width * (xi + 1.5)) / (xSteps + 1), (box.height * (yi + 1.5)) / (ySteps + 1)]);
     }
   }
   let foundChunk = false;
