@@ -133,6 +133,26 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
+  {
+    id: "lt-59-living-memory-book",
+    number: 59,
+    label: "Living Memory Book / Memory Sketchbook Journey",
+    status: "active",
+    summary: "기존 Moment/Connection 경로를 물리적 추억책으로 경험하고 Story 재생, Branch 선택, 문맥 검수·편집까지 하나의 책 화면에서 처리하는 계보입니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace"],
+    currentDecision: "V5 Story ON + inline edit + fast page turn + cinematic background를 현재 design-review 후보로 진행합니다. 접근성 remediation과 자산 출처 확정이 native gate입니다.",
+    sourceLabel: "59 V5 Drive intake 2026-08-11 / Issue #161 intake + Web CTO release comment 5306408967",
+    revisions: [
+      {
+        id: "59-v5-living-memory-book",
+        label: "V5 Story ON · Inline Edit · Fast Page Turn · Cinematic Background",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/59/v5",
+        notes: "17,192,064 B · SHA256 763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71 · ACCESSIBILITY_DIALOG_AND_320_QA_HOLD · LINEAGE_59_ASSET_PROVENANCE_HOLD",
+      },
+    ],
+  },
 ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
