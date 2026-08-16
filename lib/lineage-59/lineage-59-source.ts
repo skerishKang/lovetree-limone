@@ -15,10 +15,13 @@ export const LINEAGE_59_SOURCE = {
   assetProvenance: "HOLD" as const,
   accessibilityDisposition: "NATIVE_REMEDIATION" as const,
   driveFetchStatus: "LOCAL_DRIVE_FETCH_UNAVAILABLE" as const,
+  webCtoDriveFetchVerified: true as const,
+  webCtoReviewId: "4946999933" as const,
   assetLedgerModule: "lib/lineage-59/asset-provenance.ts",
   mediaBindingDisposition: "FAIL_CLOSED_HOLD" as const,
   exactBinaryTransport: "HOLD" as const,
   fingerprintAuthority: "issue #161 — Web CTO independent verification" as const,
+  webCtoVerifiedAuthority: "Web CTO review 4946999933 — Drive V5 re-verified (executable + 검증결과.json + 8 unique embedded payloads)" as const,
 } as const;
 
 export const LINEAGE_59_V5_REVIEW_LABEL = "NATIVE FIDELITY REVIEW — LIVING MEMORY BOOK V5";

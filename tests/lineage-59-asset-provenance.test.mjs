@@ -7,10 +7,14 @@ import {
   ASSET_LEDGER,
   LINEAGE_59_SOURCE_FINGERPRINTS,
   DRIVE_FETCH_STATUS,
+  WEB_CTO_DRIVE_FETCH_VERIFIED,
+  WEB_CTO_VERIFIED_PAYLOADS,
+  EXACT_PINNED_ASSET_PATHS,
   MAX_PINNED_BINARY_BYTES,
   resolveMomentMediaBinding,
   verifyExactPin,
   isRepoPinnable,
+  classifyLedgerBinding,
   getLedgerEntry,
   ledgerStatusSummary,
 } from "../lib/lineage-59/asset-provenance.ts";
@@ -149,3 +153,100 @@ test("ledger transport policy is consistent: large/source assets are HOLD, only 
   const hold = ASSET_LEDGER.filter((e) => e.repoTransportPolicy === "REPO_TRANSPORT_HOLD");
   assert.ok(hold.length >= 6, "all exact source assets remain transport HOLD");
 });
+
+test("Web CTO Drive V5 re-verification is recorded as a separate authority", () => {
+  assert.equal(DRIVE_FETCH_STATUS, "LOCAL_DRIVE_FETCH_UNAVAILABLE");
+  assert.equal(WEB_CTO_DRIVE_FETCH_VERIFIED, true);
+  assert.equal(LINEAGE_59_SOURCE.webCtoDriveFetchVerified, true);
+  assert.equal(LINEAGE_59_SOURCE.webCtoReviewId, "4946999933");
+});
+
+test("asset ledger covers all 8 unique embedded payloads (9 data-URI occurrences)", () => {
+  const backgrounds = ASSET_LEDGER.filter((e) => e.role === "environment-background");
+  assert.equal(backgrounds.length, 3, "3 unique environment backgrounds");
+  const smallWebp = ASSET_LEDGER.filter(
+    (e) => e.role === "character" && e.mediaType === "image/webp",
+  );
+  assert.equal(smallWebp.length, 3, "3 character WebP payloads");
+  const jpeg = ASSET_LEDGER.filter(
+    (e) => e.role === "inline-media" && e.mediaType === "image/jpeg",
+  );
+  assert.equal(jpeg.length, 1, "1 inline JPEG payload");
+  const mp4 = ASSET_LEDGER.filter((e) => e.role === "inline-video");
+  assert.equal(mp4.length, 1, "1 inline MP4 payload (previously missing, now recorded)");
+  const uniqueEmbedded = [...backgrounds, ...smallWebp, ...jpeg, ...mp4];
+  assert.equal(uniqueEmbedded.length, 8, "8 unique embedded payloads");
+});
+
+test("exact small payloads carry Web CTO-verified bytes and SHA-256", () => {
+  const small = WEB_CTO_VERIFIED_PAYLOADS.smallExact;
+  assert.equal(small.length, 5);
+  const bySha = new Map(ASSET_LEDGER.map((e) => [e.sha256, e]));
+  for (const p of small) {
+    const entry = bySha.get(p.sha256);
+    assert.ok(entry, `ledger must contain small payload sha ${p.sha256}`);
+    assert.equal(entry.bytes, p.bytes, "exact byte size recorded");
+    assert.equal(entry.repoTransportPolicy, "REPO_PIN_OK", "repo-pin approved");
+  }
+  // MP4 specifically
+  const mp4 = getLedgerEntry("src-inline-video-mp4");
+  assert.ok(mp4);
+  assert.equal(mp4.sha256, "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465");
+  assert.equal(mp4.bytes, 4606);
+});
+
+test("EXACT_ASSET_PINNED resolver is fail-closed until exact bytes are committed", () => {
+  // Map is empty while Drive is unreachable for the worker, so the resolver
+  // can never fabricate an exact-media PASS.
+  assert.equal(Object.keys(EXACT_PINNED_ASSET_PATHS).length, 0);
+  assert.equal(
+    resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/placeholder-portrait.svg", type: "photo" }),
+    "DEMO_FIXTURE",
+  );
+  assert.equal(
+    resolveMomentMediaBinding({ src: "/any/unknown/source.jpg", type: "photo" }),
+    "SOURCE_REFERENCE_ONLY",
+  );
+  // A ledger entry that IS EXACT_ASSET_PINNED classifies as such (proves the
+  // classification path exists for when exact bytes are later committed).
+  const pinned = { ...getLedgerEntry("src-inline-video-mp4"), provenanceStatus: "EXACT_ASSET_PINNED" };
+  assert.equal(classifyLedgerBinding(pinned), "EXACT_ASSET_PINNED");
+});
+
+test("placeholder demo media stays distinct from exact source assets", () => {
+  const placeholder = resolveMomentMediaBinding({
+    src: "/design-lab-assets/lineages/59/v5/media/placeholder-landscape.svg",
+    type: "photo",
+  });
+  assert.equal(placeholder, "DEMO_FIXTURE");
+  assert.notEqual(placeholder, "EXACT_ASSET_PINNED");
+  const exactLike = resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/src-inline-video-mp4.mp4", type: "video" });
+  assert.equal(exactLike, "SOURCE_REFERENCE_ONLY", "uncommitted exact path must not be reported pinned");
+});
+
+test("large environment PNGs are never repo-pinnable and remain HOLD", () => {
+  for (const i of [1, 2, 3]) {
+    const bg = getLedgerEntry(`src-environment-background-${i}`);
+    assert.ok(bg);
+    assert.equal(bg.repoTransportPolicy, "REPO_TRANSPORT_HOLD");
+    assert.equal(isRepoPinnable(bg), false, "large binary must not be repo-pinnable");
+  }
+  assert.equal(getLedgerEntry("src-executable-current-candidate").repoTransportPolicy, "REPO_TRANSPORT_HOLD");
+});
+
+test("selection/story/product contract regression is not broken by media binding", async () => {
+  const pathIds = MOMENTS.map((m) => m.id);
+  const selection = createSelection(pathIds[0], pathIds);
+  const before = selection.currentMomentId;
+  const status = resolveMomentMediaBinding(MOMENTS[0].media);
+  assert.equal(status, "DEMO_FIXTURE");
+  assert.equal(selection.currentMomentId, before, "resolver must not mutate selection state");
+  assert.equal(resolveMomentMediaBinding(null), null, "media-less moment has no false binding");
+  // story transport untouched
+  const { createStoryState, startStory, advanceStoryPhase } = await import("../lib/lineage-59/story-transport.ts");
+  const story = createStoryState();
+  const started = startStory(story);
+  assert.ok(started.phase !== story.phase || started.playing !== story.playing, "story transport still functions");
+  advanceStoryPhase(started);
+});
+

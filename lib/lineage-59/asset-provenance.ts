@@ -18,6 +18,95 @@
 
 export const DRIVE_FETCH_STATUS = "LOCAL_DRIVE_FETCH_UNAVAILABLE" as const;
 
+/**
+ * Web CTO re-verified the authoritative Drive V5 directly in review 4946999933.
+ * This is a SEPARATE authority from the worker's own (unavailable) Drive access:
+ * the worker still cannot fetch Drive (DRIVE_FETCH_STATUS above), but the source
+ * fingerprints below are cited from Web CTO's independent verification.
+ */
+export const WEB_CTO_DRIVE_FETCH_VERIFIED = true as const;
+export const WEB_CTO_REVIEW_ID = "4946999933" as const;
+
+/**
+ * Exact embedded payloads Web CTO verified inside the authoritative standalone
+ * HTML (현재후보.html). 9 data-URI occurrences / 8 unique payloads:
+ * 3 large environment-background PNGs (repo-transport HOLD) + 5 small exact
+ * payloads (repo-pin approved). The worker could NOT extract the exact bytes
+ * (Drive unreachable, source HTML not present on the worker filesystem), so
+ * these are recorded as verified fingerprints, not as committed binaries.
+ */
+export const WEB_CTO_VERIFIED_PAYLOADS = {
+  executableFile: "현재후보.html",
+  executableDriveId: "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+  executableBytes: 17_192_064,
+  executableSha256:
+    "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71",
+  qaEvidenceFile: "검증결과.json",
+  qaEvidenceDriveId: "1ZT8xpC5rPVL4qDuYCfnREWR68zrgFcxn",
+  qaEvidenceBytes: 9_694,
+  qaEvidenceSha256:
+    "365ab46a6f28eb6cf19f1df3d24006e5076c47e4d0e2a1e17a1d32ff00c94a94",
+  backgrounds: [
+    {
+      bytes: 3_637_429,
+      sha256:
+        "eddbdc30287b23ce070b2d004eb21bdaab8fc7dc7860407bcb82728865294ee8",
+    },
+    {
+      bytes: 2_903_228,
+      sha256:
+        "f0b480f9356853aaf16c797173e702cacba2788da9981533435730f0e9251b52",
+    },
+    {
+      bytes: 2_599_253,
+      sha256:
+        "fe112ce3a470911a3c58697f45d81086341af0cd927c945eb56d88dfe69cc360",
+    },
+  ],
+  smallExact: [
+    {
+      kind: "webp",
+      bytes: 9_120,
+      sha256:
+        "aea1b65c10f6a937afc2a95d7892b5c277fe65cec4a56167696bfe56151cbef6",
+    },
+    {
+      kind: "jpeg",
+      bytes: 9_718,
+      sha256:
+        "cc086ddd6d8ad5fad1bcff40c8f0323f201b4c70e3d0dab85e91b59fd9f54d48",
+    },
+    {
+      kind: "webp",
+      bytes: 6_114,
+      sha256:
+        "5a0aaa877c77b8edcfe286f839f27e611a9647166f3eae2db7b0040147de1a77",
+    },
+    {
+      kind: "webp",
+      bytes: 9_162,
+      sha256:
+        "9ee926a2e59a2c6243ff27064001b1f5aa5ee4ef0d65cfac3bdbd8f3b4ac358b",
+    },
+    {
+      kind: "mp4",
+      bytes: 4_606,
+      sha256:
+        "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465",
+    },
+  ],
+} as const;
+
+/**
+ * Committed exact-pin asset paths → status. Empty because the worker could not
+ * extract the exact bytes from Drive (DRIVE_FETCH_STATUS). When exact small
+ * payloads are later committed under public/design-lab-assets/lineages/59/v5/,
+ * their deterministic paths are registered here and the resolver will return
+ * EXACT_ASSET_PINNED for matching media. Until then the map stays empty so the
+ * runner can never fabricate an exact-media PASS.
+ */
+export const EXACT_PINNED_ASSET_PATHS: Readonly<Record<string, true>> = {};
+
 export type MediaBindingStatus =
   | "EXACT_ASSET_PINNED"
   | "SOURCE_REFERENCE_ONLY"
@@ -67,10 +156,14 @@ export const LINEAGE_59_SOURCE_FINGERPRINTS = {
 } as const;
 
 /**
- * Exact-source asset ledger. Every entry is SOURCE_REFERENCE_ONLY or
- * DEMO_FIXTURE — none are EXACT_ASSET_PINNED, because the worker could not
- * re-fetch Drive and the character/JPEG embedded assets have no published
- * SHA-256 in issue #161, so they cannot be checksum-pinned truthfully.
+ * Exact-source asset ledger. The 8 unique embedded payloads
+ * (3 environment-background PNGs + 3 character WebP + 1 inline JPEG + 1 inline
+ * MP4) plus the standalone executable and 검증결과.json QA evidence are recorded
+ * with Web CTO-verified fingerprints (review 4946999933). The large binaries
+ * (executable + backgrounds) are REPO_TRANSPORT_HOLD. The 5 small exact
+ * payloads are REPO_PIN_OK (approved) but remain SOURCE_REFERENCE_ONLY because
+ * the worker could not extract the exact bytes from Drive (DRIVE_FETCH_STATUS),
+ * so nothing is EXACT_ASSET_PINNED.
  */
 export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
   {
@@ -135,24 +228,64 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     notes: "2.6MB; exceeds repo-pin ceiling; large binary transport HOLD",
   },
   {
-    assetId: "src-character-asset-set",
+    assetId: "src-character-webp-1",
     role: "character",
-    sourceIdentity: "362×362 RGB WebP character asset ×3 (embedded in standalone)",
+    sourceIdentity: "362×362 RGB WebP character asset #1 (embedded in standalone)",
+    bytes: 9_120,
+    sha256: "aea1b65c10f6a937afc2a95d7892b5c277fe65cec4a56167696bfe56151cbef6",
     mediaType: "image/webp",
-    nativeBindingTarget: "Moment character/portrait media (currently rendered via DEMO_FIXTURE)",
-    repoTransportPolicy: "REPO_TRANSPORT_HOLD",
+    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    repoTransportPolicy: "REPO_PIN_OK",
     provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Small, but no published SHA-256 in issue #161 — cannot checksum-pin truthfully; transport HOLD",
+    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed; do NOT mark EXACT_ASSET_PINNED until exact bytes are committed",
   },
   {
-    assetId: "src-inline-media-asset",
+    assetId: "src-character-webp-2",
+    role: "character",
+    sourceIdentity: "362×362 RGB WebP character asset #2 (embedded in standalone)",
+    bytes: 6_114,
+    sha256: "5a0aaa877c77b8edcfe286f839f27e611a9647166f3eae2db7b0040147de1a77",
+    mediaType: "image/webp",
+    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    repoTransportPolicy: "REPO_PIN_OK",
+    provenanceStatus: "SOURCE_REFERENCE_ONLY",
+    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+  },
+  {
+    assetId: "src-character-webp-3",
+    role: "character",
+    sourceIdentity: "362×362 RGB WebP character asset #3 (embedded in standalone)",
+    bytes: 9_162,
+    sha256: "9ee926a2e59a2c6243ff27064001b1f5aa5ee4ef0d65cfac3bdbd8f3b4ac358b",
+    mediaType: "image/webp",
+    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    repoTransportPolicy: "REPO_PIN_OK",
+    provenanceStatus: "SOURCE_REFERENCE_ONLY",
+    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+  },
+  {
+    assetId: "src-inline-media-jpeg",
     role: "inline-media",
     sourceIdentity: "235×145 RGB JPEG inline media asset (embedded in standalone)",
+    bytes: 9_718,
+    sha256: "cc086ddd6d8ad5fad1bcff40c8f0323f201b4c70e3d0dab85e91b59fd9f54d48",
     mediaType: "image/jpeg",
-    nativeBindingTarget: "Moment inline media (currently rendered via DEMO_FIXTURE)",
-    repoTransportPolicy: "REPO_TRANSPORT_HOLD",
+    nativeBindingTarget: "Moment inline media / video still (exact-byte repo-pin approved)",
+    repoTransportPolicy: "REPO_PIN_OK",
     provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Small, but no published SHA-256 in issue #161 — cannot checksum-pin truthfully; transport HOLD",
+    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+  },
+  {
+    assetId: "src-inline-video-mp4",
+    role: "inline-video",
+    sourceIdentity: "source DEMO_VIDEO MP4 (embedded in standalone)",
+    bytes: 4_606,
+    sha256: "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465",
+    mediaType: "video/mp4",
+    nativeBindingTarget: "Moment video media (exact-byte repo-pin approved)",
+    repoTransportPolicy: "REPO_PIN_OK",
+    provenanceStatus: "SOURCE_REFERENCE_ONLY",
+    notes: "MP4 payload previously missing from ledger — now recorded. Web CTO verified exact bytes; worker could not extract (Drive unreachable) → not committed",
   },
   {
     assetId: "demo-placeholder-portrait",
@@ -200,8 +333,16 @@ export function resolveMomentMediaBinding(
   media: { src: string; type: string } | null,
 ): MediaBindingStatus | null {
   if (!media) return null;
+  // Exact-pin path map is empty until exact bytes are committed (worker Drive
+  // unreachable). Guarded so the runner can never fabricate an exact-media PASS.
+  if (media.src in EXACT_PINNED_ASSET_PATHS) return "EXACT_ASSET_PINNED";
   if (media.src.includes("placeholder")) return "DEMO_FIXTURE";
   return "SOURCE_REFERENCE_ONLY";
+}
+
+/** Classify a ledger entry's binding status (truthful, no fabrication). */
+export function classifyLedgerBinding(entry: AssetLedgerEntry): MediaBindingStatus {
+  return entry.provenanceStatus;
 }
 
 /**
