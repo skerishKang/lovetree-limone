@@ -204,7 +204,7 @@
   transition:
     opacity 0.18s ease,
     transform 0.18s ease,
-    visibility 0.18s ease;
+    visibility 0s 0.18s;
 }
 
 .navGroup:hover .navPopover,
@@ -213,6 +213,10 @@
   visibility: visible;
   pointer-events: auto;
   transform: translate(-50%, 0);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s 0s;
 }
 
 .navGroup.isOpen > .navLink {

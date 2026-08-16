@@ -302,11 +302,16 @@ export default function Track47NativeFrontDoor() {
     let raf = 0;
     const tick = () => {
       const mode = playback.current.mode;
+      // In still (reduced-motion) mode the scroll handler is the act authority,
+      // not the video timeline. A failed/absent video cannot hold a currentTime,
+      // so re-projecting from it every frame would clobber the scroll-derived act
+      // (and pin data-act at ACT 1). Skip the projection while still mode is on.
       if (
-        mode === PLAYBACK_MODES.AUTO ||
-        mode === PLAYBACK_MODES.REPLAY ||
-        mode === PLAYBACK_MODES.COMPLETED ||
-        mode === PLAYBACK_MODES.PAUSED
+        !stillMode.current &&
+        (mode === PLAYBACK_MODES.AUTO ||
+          mode === PLAYBACK_MODES.REPLAY ||
+          mode === PLAYBACK_MODES.COMPLETED ||
+          mode === PLAYBACK_MODES.PAUSED)
       ) {
         applyAct(videoRef.current?.currentTime ?? 0);
       }
@@ -341,7 +346,7 @@ export default function Track47NativeFrontDoor() {
     const setup = () => {
       const reduced = query.matches;
       setRunner((prev) => ({ ...prev, reduced }));
-      stageRef.current?.classList.toggle("reducedMotion", reduced);
+      stageRef.current?.classList.toggle(styles.reducedMotion, reduced);
       if (reduced) {
         stillMode.current = true;
         playback.current = { ...playback.current, userAuthority: false };
@@ -441,7 +446,7 @@ export default function Track47NativeFrontDoor() {
   const reducedPlay = () => {
     const video = videoRef.current;
     stillMode.current = false;
-    stageRef.current?.classList.remove("reducedMotion");
+    stageRef.current?.classList.remove(styles.reducedMotion);
     setRunner((prev) => ({ ...prev, reduced: false }));
     if (video) video.currentTime = 0;
     window.scrollTo({ top: 0 });
