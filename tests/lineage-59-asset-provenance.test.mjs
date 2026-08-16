@@ -98,7 +98,7 @@ test("media binding resolver does not depend on or break selection authority", (
   const before = selection.currentMomentId;
   const status = resolveMomentMediaBinding(MOMENTS[0].media);
   assert.equal(status, "DEMO_FIXTURE");
-  assert.equal(selection.currentId, before, "resolver must not mutate selection state");
+  assert.equal(selection.currentMomentId, before, "resolver must not mutate selection state");
   assert.equal(resolveMomentMediaBinding(null), null, "media-less moment has no false binding");
 });
 
