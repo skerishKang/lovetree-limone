@@ -1,6 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import EmailAuthForm from "@/app/components/EmailAuthForm";
+import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { createFirstTree, type FirstCreateTransport } from "@/lib/first-tree-create-client";
 
 const STORAGE_KEY = "lovetree-first-journey-unified";
 
@@ -46,6 +51,13 @@ interface Connection {
   first: FirstMoment;
   next: NextRecord;
   createdAt: string;
+  /** Canonical persisted memory id returned by the backend (null until persisted). */
+  memoryId?: string;
+}
+
+interface CanonicalRefs {
+  treeId: string;
+  firstMemoryId: string;
 }
 
 interface AppState {
@@ -55,6 +67,7 @@ interface AppState {
   memory: Memory;
   connections: Connection[];
   step3Origin: null | FirstMoment;
+  canonical: CanonicalRefs | null;
   drafts: {
     step3: { url: string; title: string; time: string; relation: string; note: string };
   };
@@ -85,6 +98,7 @@ const defaultState = (): AppState => ({
   },
   connections: [],
   step3Origin: null,
+  canonical: null,
   drafts: {
     step3: {
       url: "",
@@ -115,9 +129,12 @@ const RELATIONS = [
 export default function V4FirstJourneyV12({
   onActivate,
   storageKey = STORAGE_KEY,
+  fetchFn,
 }: {
   onActivate?: () => void;
   storageKey?: string;
+  /** Authenticated transport for canonical writes. Defaults to lib/api apiFetch. Override only in tests. */
+  fetchFn?: FirstCreateTransport;
 }) {
   // V1.2는 클라이언트 마운트 후에만 활성화됩니다. SSR 및 클라이언트 첫
   // 렌더링에서는 null을 반환해 V1과 hydration 마크업이 일치하도록 보장합니다.
@@ -146,16 +163,96 @@ export default function V4FirstJourneyV12({
     }
   }, [onActivate, storageKey]);
 
-  // Initialize appState from localStorage synchronously
+  const router = useRouter();
+  const { user, authError, clearAuthError } = useAuth();
+
+  // Operation-scoped pending clientKeys for subsequent-Moment writes
+  // (Slice B BLOCKER 3 / Web CTO reaudit). Each candidate (by index) gets its
+  // OWN stable key: A retry reuses A's key, B gets a distinct key even while A
+  // is pending, and confirming A retires ONLY A's key. The in-memory map is the
+  // stable fallback when localStorage is unavailable, so A's retry key stays
+  // constant within a session — no per-attempt random fallback breaks retry stability.
+  const pendingSubKeys = useRef<Map<number, string>>(new Map());
+  const ensureSubsequentClientKey = useCallback((candidateIdx: number): string => {
+    const storageKey = `lovetree-v12-sub-key-${candidateIdx}`;
+    const fromMap = pendingSubKeys.current.get(candidateIdx);
+    if (fromMap) return fromMap; // retry reuses A's exact key (in-memory stable)
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        pendingSubKeys.current.set(candidateIdx, stored);
+        return stored;
+      }
+    } catch { /* storage unavailable → generate + keep in map only */ }
+    // Generated ONCE per candidate (never per attempt).
+    const generated = `v12-sub-${candidateIdx}-${crypto.randomUUID()}`;
+    pendingSubKeys.current.set(candidateIdx, generated);
+    try { localStorage.setItem(storageKey, generated); } catch { /* in-memory only */ }
+    return generated;
+  }, []);
+
+  const retireSubsequentClientKey = useCallback((candidateIdx: number): void => {
+    // Retire ONLY this candidate's pending key after a confirmed canonical id.
+    pendingSubKeys.current.delete(candidateIdx);
+    try { localStorage.removeItem(`lovetree-v12-sub-key-${candidateIdx}`); } catch { /* noop */ }
+  }, []);
+
+  // Initialize appState from localStorage synchronously.
+  // BLOCKER 2 (fail-closed): localStorage is DRAFT/PROGRESS/Pointer ONLY.
+  // Durable claims (saved flags, canonical IDs, connection memoryIds) are NEVER
+  // reasserted from localStorage alone on reload — they require canonical
+  // server revalidation (out of scope for this slice) or must stay false until
+  // a fresh successful write. We strip durable-truth fields, keep only draft
+  // inputs / progress pointers, and immediately rewrite the stripped state back
+  // to localStorage so no stale durable claim survives the reload.
   const [appState, setAppState] = useState<AppState>(() => {
+    const base = defaultState();
+    let initial = base;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as AppState;
-        return { ...defaultState(), ...parsed };
+        const parsed = JSON.parse(raw) as Partial<AppState>;
+        // Carry over DRAFT / PROGRESS only (user-entered inputs, screen pointer,
+        // why-next drafts, relation drafts). Drop any durable-truth artifacts.
+        initial = {
+          ...base,
+          currentScreen: parsed.currentScreen ?? base.currentScreen,
+          treeName: parsed.treeName ?? base.treeName,
+          firstMoment: {
+            ...base.firstMoment,
+            url: parsed.firstMoment?.url ?? base.firstMoment.url,
+            videoId: parsed.firstMoment?.videoId ?? base.firstMoment.videoId,
+            title: parsed.firstMoment?.title ?? base.firstMoment.title,
+            note: parsed.firstMoment?.note ?? base.firstMoment.note,
+            discoveryDate: parsed.firstMoment?.discoveryDate ?? base.firstMoment.discoveryDate,
+            thumbnail: parsed.firstMoment?.thumbnail ?? base.firstMoment.thumbnail,
+            saved: false, // fail-closed: never trust localStorage for durable saved
+          },
+          memory: {
+            ...base.memory,
+            emotion: parsed.memory?.emotion ?? base.memory.emotion,
+            customEmotion: parsed.memory?.customEmotion ?? base.memory.customEmotion,
+            time: parsed.memory?.time ?? base.memory.time,
+            note: parsed.memory?.note ?? base.memory.note,
+            date: parsed.memory?.date ?? base.memory.date,
+            publicMemo: parsed.memory?.publicMemo ?? base.memory.publicMemo,
+            saved: false, // fail-closed
+          },
+          // connections kept as PRESENTATION draft buffer; memoryId dropped (not durable)
+          connections: (parsed.connections ?? []).map((c) => ({
+            first: c.first,
+            next: c.next,
+            createdAt: c.createdAt,
+            // memoryId intentionally omitted — requires canonical revalidation
+          })),
+          canonical: null, // fail-closed: never restore canonical from localStorage
+          drafts: parsed.drafts ?? base.drafts,
+        };
       }
+      // Persist the stripped state so a stale durable claim cannot outlive reload.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
     } catch { /* ignore */ }
-    return defaultState();
+    return initial;
   });
   const [v12Step, setV12Step] = useState(0);
   const [scrollDir, setScrollDir] = useState<"forward" | "reverse" | null>(null);
@@ -163,6 +260,13 @@ export default function V4FirstJourneyV12({
   const [editWhy, setEditWhy] = useState<Record<number, string>>({});
   const [pathChoice, setPathChoice] = useState<Record<number, "MAIN" | "BRANCH">>({});
   const [complete, setComplete] = useState(false);
+
+  // Auth / pending-save composition (reuses V4Landing pattern, no new auth stack).
+  const [authOpen, setAuthOpen] = useState(false);
+  const [pendingFirstSave, setPendingFirstSave] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastScrollRef = useRef(0);
   const reducedMotion =
@@ -211,74 +315,222 @@ export default function V4FirstJourneyV12({
     setTimeout(() => setToast(""), 2000);
   }, []);
 
-  const submitFirstMoment = useCallback((e: React.FormEvent) => {
+  // --- Canonical first save via reused createFirstTree seam (Slice A) ---
+  const submitFirstMoment = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    update((prev) => ({
-      ...prev,
-      firstMoment: {
-        url: `https://youtube.com/watch?v=${SAMPLE_MOMENTS[0].videoId}`,
-        videoId: SAMPLE_MOMENTS[0].videoId,
-        title: SAMPLE_MOMENTS[0].title,
-        note: SAMPLE_MOMENTS[0].note,
-        discoveryDate: SAMPLE_MOMENTS[0].date,
-        thumbnail: `https://img.youtube.com/vi/${SAMPLE_MOMENTS[0].videoId}/hqdefault.jpg`,
-        saved: true,
-      },
-      currentScreen: "step2",
-    }));
-    showToast("첫 순간이 심어졌어요 ✦");
-  }, [update, showToast]);
+    const fm = appState.firstMoment;
+    const first = SAMPLE_MOMENTS[0];
 
-  const submitMemory = useCallback((e: React.FormEvent) => {
+    // Anonymous entry → reuse existing auth UI, defer the canonical write.
+    if (!user) {
+      setPendingFirstSave(true);
+      setAuthOpen(true);
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    clearAuthError();
+    try {
+      const { treeId, memoryId } = await createFirstTree({
+        payload: {
+          title: appState.treeName.trim(),
+          visibility: "public",
+          memory: {
+            title: first.title,
+            memo: fm.note.trim() || first.note,
+            source: "YouTube",
+            sourceUrl: `https://youtube.com/watch?v=${first.videoId}`,
+            sourceType: "youtube",
+            thumbnail: `https://img.youtube.com/vi/${first.videoId}/hqdefault.jpg`,
+            emotionTags: [],
+            timestamp: first.date,
+            visibility: "public",
+          },
+        },
+        fetchFn: fetchFn ?? apiFetch,
+      });
+
+      // Only after BOTH canonical IDs exist do we claim durable success.
+      // BLOCKER 4: preserve the prior FirstMoment presentation semantics
+      // (URL/videoId/title/note/discoveryDate/thumbnail) alongside saved=true.
+      update((prev) => ({
+        ...prev,
+        firstMoment: {
+          ...prev.firstMoment,
+          url: `https://youtube.com/watch?v=${first.videoId}`,
+          videoId: first.videoId,
+          title: first.title,
+          note: fm.note.trim() || first.note,
+          discoveryDate: first.date,
+          thumbnail: `https://img.youtube.com/vi/${first.videoId}/hqdefault.jpg`,
+          saved: true,
+        },
+        canonical: { treeId, firstMemoryId: memoryId },
+        currentScreen: "step2",
+      }));
+      showToast("첫 순간이 심어졌어요 ✦");
+    } catch (cause) {
+      // Failure / partial IDs: keep draft, never claim local durable success.
+      setSaveError(cause instanceof Error ? cause.message : "네트워크 오류가 발생했어요.");
+      showToast(cause instanceof Error ? cause.message : "저장하지 못했어요.");
+    } finally {
+      setSaving(false);
+    }
+  }, [appState.firstMoment, appState.treeName, user, fetchFn, update, showToast, clearAuthError]);
+
+  // --- Enrich the existing first Memory (Slice B §8): PUT, not a fake second Memory ---
+  const submitMemory = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    update((prev) => ({
-      ...prev,
-      memory: { ...prev.memory, saved: true },
-      currentScreen: "step2-success",
-    }));
-    showToast("첫 마음 카드가 피어났어요 ✦");
-  }, [update, showToast]);
+    const refs = appState.canonical;
+    if (!refs) {
+      // No canonical first memory yet — keep as presentation draft, do not fake success.
+      setSaveError("먼저 첫 순간을 심어 주세요.");
+      return;
+    }
 
-  const addConnection = useCallback((idx: number) => {
+    setSaving(true);
+    setSaveError(null);
+    clearAuthError();
+    try {
+      const selectedEmotion = appState.memory.emotion;
+      const memoNote = appState.memory.note.trim();
+      const payload: Record<string, unknown> = {
+        emotionTags: [selectedEmotion],
+      };
+      // Blank memo must NOT erase the existing first-moment memo.
+      if (memoNote) payload.memo = memoNote;
+
+      const response = await (fetchFn ?? apiFetch)(`/api/memories/${encodeURIComponent(refs.firstMemoryId)}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error || "마음을 기록하지 못했어요.");
+      }
+
+      update((prev) => ({
+        ...prev,
+        memory: { ...prev.memory, saved: true },
+        currentScreen: "step2-success",
+      }));
+      showToast("첫 마음 카드가 피어났어요 ✦");
+    } catch (cause) {
+      setSaveError(cause instanceof Error ? cause.message : "네트워크 오류가 발생했어요.");
+      showToast(cause instanceof Error ? cause.message : "저장하지 못했어요.");
+    } finally {
+      setSaving(false);
+    }
+  }, [appState.canonical, appState.memory, fetchFn, update, showToast, clearAuthError]);
+
+  // --- Subsequent Moment via existing same-origin API (Slice B §9) ---
+  const addConnection = useCallback(async (idx: number) => {
+    const refs = appState.canonical;
+    if (!refs) {
+      setSaveError("먼저 첫 순간을 심어 주세요.");
+      return;
+    }
     const m = SAMPLE_MOMENTS[idx + 1];
     if (!m?.videoId) return;
-    update((prev) => ({
-      ...prev,
-      connections: [
-        ...prev.connections,
-        {
-          first: prev.firstMoment,
-          next: {
-            id: m.videoId,
-            url: `https://youtube.com/watch?v=${m.videoId}`,
-            title: m.title,
-            time: "00:30",
-            relation: m.relation || RELATIONS[0],
-            note: m.note,
+
+    setSaving(true);
+    setSaveError(null);
+    clearAuthError();
+    // BLOCKER 3: stable clientKey — created before the attempt, reused on retry.
+    // Operation-scoped to this candidate index so A and B never share a key.
+    const clientKey = ensureSubsequentClientKey(idx);
+    try {
+      const response = await (fetchFn ?? apiFetch)(`/api/trees/${encodeURIComponent(refs.treeId)}/memories`, {
+        method: "POST",
+        body: JSON.stringify({
+          clientKey,
+          parentId: refs.firstMemoryId,
+          title: m.title,
+          memo: m.note,
+          source: "YouTube",
+          sourceUrl: `https://youtube.com/watch?v=${m.videoId}`,
+          sourceType: "youtube",
+          thumbnail: `https://img.youtube.com/vi/${m.videoId}/hqdefault.jpg`,
+          connectionReason: editWhy[idx] || m.whyNext || "",
+          emotionTags: [],
+          visibility: "public",
+        }),
+      });
+      const data = (await response.json().catch(() => ({}))) as { id?: string; error?: string };
+      if (!response.ok || !data.id) {
+        throw new Error(data.error || "연결을 저장하지 못했어요.");
+      }
+      // Confirmed canonical returned memory ID → retire ONLY this candidate's key.
+      retireSubsequentClientKey(idx);
+
+      update((prev) => ({
+        ...prev,
+        connections: [
+          ...prev.connections,
+          {
+            first: prev.firstMoment,
+            next: {
+              id: m.videoId,
+              url: `https://youtube.com/watch?v=${m.videoId}`,
+              title: m.title,
+              time: "00:30",
+              relation: m.relation || RELATIONS[0],
+              note: m.note,
+            },
+            createdAt: new Date().toISOString(),
+            memoryId: data.id,
           },
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    }));
-    setEditWhy((prev) => ({ ...prev, [idx]: prev[idx] || m.whyNext || "" }));
-  }, [update]);
+        ],
+      }));
+      setEditWhy((prev) => ({ ...prev, [idx]: prev[idx] || m.whyNext || "" }));
+      showToast("다음 순간이 이어졌어요 ✦");
+    } catch (cause) {
+      setSaveError(cause instanceof Error ? cause.message : "네트워크 오류가 발생했어요.");
+      showToast(cause instanceof Error ? cause.message : "저장하지 못했어요.");
+    } finally {
+      setSaving(false);
+    }
+  }, [appState.canonical, appState.firstMoment, editWhy, fetchFn, update, showToast, clearAuthError]);
 
   const handleWhyNextChange = (idx: number, value: string) => {
     setEditWhy((prev) => ({ ...prev, [idx]: value }));
   };
 
+  // BLOCKER 1: memory form inputs must be wired to draft state so the exact
+  // user input reaches submitMemory's PUT payload.
+  const setMemoryDraft = useCallback(<K extends keyof Memory>(key: K, value: Memory[K]) => {
+    update((prev) => ({ ...prev, memory: { ...prev.memory, [key]: value } }));
+  }, [update]);
+
   const handlePathChoice = (idx: number, choice: "MAIN" | "BRANCH") => {
     setPathChoice((prev) => ({ ...prev, [idx]: choice }));
   };
 
+  // --- Completion uses ACTUAL persisted IDs (Slice B §10) ---
   const completeJourney = () => {
+    const refs = appState.canonical;
+    if (!refs) {
+      // No canonical save → completion is NOT a durable destination.
+      setSaveError("아직 첫 순간이 저장되지 않았어요.");
+      return;
+    }
+    const latestPersisted = [...appState.connections].reverse().find((c) => c.memoryId)?.memoryId;
+    const highlight = latestPersisted ?? refs.firstMemoryId;
     setComplete(true);
     update((prev) => ({ ...prev, currentScreen: "growth" }));
     showToast("나의 첫 러브트리가 완성됐어요 ✦");
+    router.push(`/trees/${encodeURIComponent(refs.treeId)}?highlight=${encodeURIComponent(highlight)}`);
   };
 
   const resetAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
+    // Clear any pending per-candidate clientKeys so a retry starts fresh (no stale durable id).
+    try { localStorage.removeItem("lovetree-v4-product-spine-create-client-key"); } catch { /* noop */ }
+    for (let i = 0; i < 8; i++) {
+      try { localStorage.removeItem(`lovetree-v12-sub-key-${i}`); } catch { /* noop */ }
+    }
+    pendingSubKeys.current.clear();
     const fresh = defaultState();
     setAppState(fresh);
     setV12Step(0);
@@ -286,7 +538,19 @@ export default function V4FirstJourneyV12({
     setEditWhy({});
     setPathChoice({});
     setScrollDir(null);
+    setAuthOpen(false);
+    setPendingFirstSave(false);
+    setSaveError(null);
   }, []);
+
+  // Resume a deferred first save after auth succeeds (reuses V4Landing semantics).
+  const closeAuth = () => {
+    setAuthOpen(false);
+    if (pendingFirstSave && user) {
+      setPendingFirstSave(false);
+      void submitFirstMoment(new Event("submit") as unknown as React.FormEvent);
+    }
+  };
 
   if (!enabled) return null;
 
@@ -305,6 +569,8 @@ export default function V4FirstJourneyV12({
         </span>
       </div>
 
+      {saveError ? <p className="v4-j-v12-error" role="alert">{saveError}</p> : null}
+
       <div className="v4-j-v12-scroll" ref={scrollRef} data-testid="v12-scroll-container">
         <section className={`v4-j-v12-section ${v12Step === 0 ? "v4-j-v12-active" : ""}`} data-step="first-moment">
           <div className="v4-j-v12-sticky">
@@ -322,7 +588,7 @@ export default function V4FirstJourneyV12({
                 <p className="v4-j-v12-note">{SAMPLE_MOMENTS[0].note}</p>
                 {!appState.firstMoment.saved && (
                   <form onSubmit={submitFirstMoment} className="v4-j-v12-form">
-                    <button type="submit" className="v4-j-v12-cta" data-testid="save-first-moment">
+                    <button type="submit" className="v4-j-v12-cta" data-testid="save-first-moment" disabled={saving}>
                       이 순간을 첫 뿌리로 심기
                     </button>
                   </form>
@@ -351,13 +617,26 @@ export default function V4FirstJourneyV12({
                   <div className="v4-j-v12-chip-group">
                     {EMOTIONS.map((e) => (
                       <label key={e} className="v4-j-v12-chip">
-                        <input type="radio" name="emotion" value={e} defaultChecked={e === "설렘"} />
+                        <input
+                          type="radio"
+                          name="emotion"
+                          value={e}
+                          checked={appState.memory.emotion === e}
+                          onChange={(ev) => setMemoryDraft("emotion", ev.target.value)}
+                        />
                         <span>{e}</span>
                       </label>
                     ))}
                   </div>
-                  <textarea className="v4-j-v12-textarea" placeholder="이 장면을 보고 어떤 기분이 들었나요?" rows={3} />
-                  <button type="submit" className="v4-j-v12-cta" data-testid="save-memory">마음 남기기</button>
+                  <textarea
+                    className="v4-j-v12-textarea"
+                    placeholder="이 장면을 보고 어떤 기분이 들었나요?"
+                    rows={3}
+                    value={appState.memory.note}
+                    onChange={(ev) => setMemoryDraft("note", ev.target.value)}
+                    data-testid="memory-note-input"
+                  />
+                  <button type="submit" className="v4-j-v12-cta" data-testid="save-memory" disabled={saving}>마음 남기기</button>
                 </form>
               ) : (
                 <p className="v4-j-v12-done" data-testid="memory-saved">✦ 마음이 기록되었습니다</p>
@@ -391,7 +670,7 @@ export default function V4FirstJourneyV12({
                         </select>
                       </div>
                     </div>
-                    <button type="button" className="v4-j-v12-connect-btn" onClick={() => addConnection(idx)} data-testid={`connect-${idx}`}>연결하기</button>
+                    <button type="button" className="v4-j-v12-connect-btn" onClick={() => addConnection(idx)} data-testid={`connect-${idx}`} disabled={saving}>연결하기</button>
                   </div>
                 </div>
               ))}
@@ -446,13 +725,14 @@ export default function V4FirstJourneyV12({
               )}
             </div>
             <div className="v4-j-v12-complete-actions">
-              <button type="button" className="v4-j-v12-cta" data-testid="start-tree">{appState.treeName} 시작하기</button>
+              <button type="button" className="v4-j-v12-cta" data-testid="start-tree" onClick={completeJourney}>{appState.treeName} 시작하기</button>
               <button type="button" className="v4-j-v12-secondary" onClick={resetAll}>처음부터 다시 시작</button>
             </div>
           </div>
         </section>
       </div>
 
+      <EmailAuthForm open={authOpen} onClose={closeAuth} />
       {toast && (<div className="v4-j-v12-toast" role="status" aria-live="polite">{toast}</div>)}
     </div>
   );
