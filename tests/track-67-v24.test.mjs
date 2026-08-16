@@ -4,8 +4,7 @@ import assert from "node:assert/strict";
 import {
   V24_CHUNK_RAW,
   V24_CHUNK_TRIGGER,
-  V24_OVERLAP,
-  V24_COMMITTED_PER_BAKE,
+  V24_ACTIVE_TAIL_SURFACE_ID,
   V24_TRAVEL_MAX,
   V24_RIBBON_HEIGHT,
   computeQ,
@@ -74,18 +73,23 @@ test("A2. after >112 chunks the earliest ribbon remains resident (long-path)", (
   }
   assert.ok(s.chunks.length > 112);
   const first = s.chunks[0];
-  assert.ok(first.samples.length >= V24_OVERLAP);
+  assert.ok(first.samples.length >= 2);
   assert.equal(first.id, 1);
 });
 
 test("1b. CHUNK_RAW is a bake-quantity constant, not a chunk count cap", () => {
   assert.equal(V24_CHUNK_RAW, 112);
   assert.equal(V24_CHUNK_TRIGGER, 120);
-  assert.equal(V24_COMMITTED_PER_BAKE, 108);
+  // authoritative: consumed per bake is exactly CHUNK_RAW (112); no invented overlap.
+  let s = v24InitState();
+  for (let i = 0; i < V24_CHUNK_TRIGGER; i += 1) {
+    s = straightStep(s, 1, 0);
+  }
+  assert.equal(s.chunks[0].committed, 112);
 });
 
 // ---- BLOCKER 2: bake semantics / active tail (no invented TAIL_MAX=220) ----
-test("B. bake triggers at 120, bakes 112 raw, leaves a residual active tail", () => {
+test("B. bake triggers at 120, bakes 113 input, consumes 112, keeps active tail", () => {
   let s = v24InitState();
   let bakedAt = -1;
   for (let i = 0; i < V24_CHUNK_TRIGGER + 5; i += 1) {
@@ -95,24 +99,40 @@ test("B. bake triggers at 120, bakes 112 raw, leaves a residual active tail", ()
   }
   assert.ok(bakedAt >= 0, "a chunk should bake");
   assert.ok(bakedAt <= V24_CHUNK_TRIGGER, `bake should trigger near ${V24_CHUNK_TRIGGER}`);
-  assert.equal(s.chunks[0].samples.length, V24_CHUNK_RAW);
-  assert.equal(s.chunks[0].committed, V24_COMMITTED_PER_BAKE);
+  // authoritative: bake input = 113 (cut+1 seam sample), committed/consume = 112
+  assert.equal(s.chunks[0].samples.length, 113);
+  assert.equal(s.chunks[0].committed, V24_CHUNK_RAW);
   assert.ok(s.raw.length > 0 && s.raw.length < V24_CHUNK_TRIGGER, `residual tail bad: ${s.raw.length}`);
-  if (s.chunks[0].samples.length >= V24_OVERLAP) {
-    const lastBaked = s.chunks[0].samples[V24_CHUNK_RAW - V24_OVERLAP];
-    assert.equal(s.raw[0].order, lastBaked.order);
-  }
+  // seam continuity: the last baked sample is also the first residual sample
+  const seam = s.chunks[0].samples[s.chunks[0].samples.length - 1];
+  assert.equal(s.raw[0].order, seam.order);
 });
 
-test("2b. v24BakeChunk removes only (112 - overlap) raw, keeping overlap continuity", () => {
+test("B2. at the 120 trigger the active tail residual is exactly 8 (consume 112 of 113 baked)", () => {
+  let s = v24InitState();
+  let residualAfterBake = -1;
+  for (let i = 0; i < V24_CHUNK_TRIGGER + 1; i += 1) {
+    const before = s.chunks.length;
+    s = straightStep(s, 1, 0);
+    if (s.chunks.length > before && residualAfterBake < 0) {
+      residualAfterBake = s.raw.length;
+    }
+  }
+  assert.equal(residualAfterBake, 8);
+});
+
+test("2b. v24BakeChunk bakes 113 input, consumes 112 raw, leaves 8 residual with seam continuity", () => {
   const raw = [];
   for (let i = 0; i < V24_CHUNK_TRIGGER; i += 1) {
     raw.push(v24MakeSample({ order: i + 1, travel: i, x: i, y: 0, z: 0, spin: 0, dir: [1, 0, 0] }));
   }
   const { chunk, residual } = v24BakeChunk(raw, 1, 1);
-  assert.equal(chunk.samples.length, V24_CHUNK_RAW);
-  assert.equal(residual.length, V24_CHUNK_TRIGGER - (V24_CHUNK_RAW - V24_OVERLAP));
-  assert.equal(residual[0].order, raw[V24_CHUNK_RAW - V24_OVERLAP].order);
+  assert.equal(chunk.samples.length, 113); // raw.slice(0, cut + 1)
+  assert.equal(chunk.committed, V24_CHUNK_RAW); // 112
+  assert.equal(residual.length, 8); // raw.slice(112)
+  // seam sample shared: last baked == first residual == raw[112]
+  assert.equal(residual[0].order, chunk.samples[chunk.samples.length - 1].order);
+  assert.equal(residual[0].order, raw[V24_CHUNK_RAW].order);
 });
 
 // ---- BLOCKER 3: full-state rewind to origin ----
@@ -205,6 +225,23 @@ test("E4. empty chunks list yields null hit (no fabricated inspect)", () => {
   const eye = [0, 5, 0];
   const ray = v24RayFromPointer(0, 0, eye, [1, 0, 0], Math.PI / 3.2, 1.5);
   assert.equal(v24RibbonHitTest(ray, [], V24_RIBBON_HEIGHT), null);
+});
+
+test("F. active raw tail is an actual hit-test candidate (rendered ribbon surface)", () => {
+  // Active tail present, but no chunk baked yet (raw < trigger).
+  let s = v24InitState();
+  for (let i = 0; i < V24_CHUNK_TRIGGER - 10; i += 1) {
+    const x = 5 + i; // straight ribbon at z=0
+    s = v24AppendSample(s, v24MakeSample({ order: s.nextOrder, travel: i, x, y: 0, z: 0, spin: 0, dir: [1, 0, 0] }));
+  }
+  assert.equal(s.chunks.length, 0, "no chunk baked yet");
+  assert.ok(s.raw.length > 2, "active tail present");
+  const eye = [0, 5, -10];
+  const ray = v24RayFromPointer(0, 0, eye, [1, 0, 1], Math.PI / 3.2, 1.5);
+  const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
+  assert.ok(hit, "active tail ribbon surface must be hittable");
+  assert.equal(hit.kind, "tail");
+  assert.equal(hit.chunkId, V24_ACTIVE_TAIL_SURFACE_ID);
 });
 
 // ---- shared continuity / WORKS ledger ----

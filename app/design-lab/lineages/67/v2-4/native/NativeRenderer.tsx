@@ -6,6 +6,7 @@ import {
   V24_CHUNK_TRIGGER,
   V24_Q_OFFSET,
   V24_RIBBON_HEIGHT,
+  V24_ACTIVE_TAIL_SURFACE_ID,
   computeQ,
   clampTravel,
   v24InitState,
@@ -22,10 +23,8 @@ import {
   perspective,
   viewMatrix,
   multiply,
-  CHUNK_VERTEX_SHADER,
-  CHUNK_FRAGMENT_SHADER,
-  TAIL_VERTEX_SHADER,
-  TAIL_FRAGMENT_SHADER,
+  RIBBON_VERTEX_SHADER,
+  RIBBON_FRAGMENT_SHADER,
 } from "@/lib/lineage-67-v24/webgl";
 import { LINEAGE_67_V24_WORKS_V242_OWNER_SET } from "@/lib/lineage-67-v24/source";
 
@@ -57,18 +56,32 @@ function makeProgram(gl: WebGL2RenderingContext, vs: string, fs: string): WebGLP
   return p;
 }
 
-function chunkHeight(id: number): number {
-  const r = Math.sin(id * 12.9898) * 43758.5453;
-  return 6 + (r - Math.floor(r)) * 30;
+/** Build the vertical ribbon-wall triangles for a polyline — identical to the geometry v24RibbonHitTest intersects. */
+function ribbonWallVerts(samples: readonly { x: number; z: number }[], height: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < samples.length - 1; i += 1) {
+    const a = samples[i];
+    const b = samples[i + 1];
+    const ax = a.x;
+    const az = a.z;
+    const bx = b.x;
+    const bz = b.z;
+    const y0 = 0;
+    const y1 = height;
+    // triangle 1: (a,0)(b,0)(b,1)
+    out.push(ax, y0, az, bx, y0, bz, bx, y1, bz);
+    // triangle 2: (a,0)(b,1)(a,1)
+    out.push(ax, y0, az, bx, y1, bz, ax, y1, az);
+  }
+  return out;
 }
 
 export default function NativeRenderer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simRef = useRef<V24SimState>(v24InitState());
   const glRef = useRef<WebGL2RenderingContext | null>(null);
-  const programsRef = useRef<{ chunk: WebGLProgram | null; tail: WebGLProgram | null }>({
-    chunk: null,
-    tail: null,
+  const programsRef = useRef<{ ribbon: WebGLProgram | null }>({
+    ribbon: null,
   });
   const [motion, setMotion] = useState<"checking" | "full" | "reduced">("checking");
   const [playing, setPlaying] = useState(true);
@@ -135,54 +148,38 @@ export default function NativeRenderer() {
     const view = viewMatrix([s.pos[0], s.pos[1] + 1.2, s.pos[2]], s.dir);
     const vp = multiply(proj, view);
 
-    const chunkProg = programsRef.current.chunk;
-    const tailProg = programsRef.current.tail;
-    if (!chunkProg || !tailProg) return;
+    const ribbonProg = programsRef.current.ribbon;
+    if (!ribbonProg) return;
 
-    gl.useProgram(chunkProg);
-    const chunkVbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, chunkVbo);
-    const chunkData: number[] = [];
-    for (const c of s.chunks) {
-      const cx = (c.minX + c.maxX) / 2;
-      const cz = (c.minZ + c.maxZ) / 2;
-      chunkData.push(cx, 0, cz, chunkHeight(c.id));
-    }
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(chunkData), gl.DYNAMIC_DRAW);
-    const aPosC = 0;
-    const aHeightC = 1;
-    gl.enableVertexAttribArray(aPosC);
-    gl.vertexAttribPointer(aPosC, 3, gl.FLOAT, false, 16, 0);
-    gl.enableVertexAttribArray(aHeightC);
-    gl.vertexAttribPointer(aHeightC, 1, gl.FLOAT, false, 16, 12);
-    gl.uniformMatrix4fv(gl.getUniformLocation(chunkProg, "uVP"), false, new Float32Array(vp));
-    gl.drawArrays(gl.POINTS, 0, s.chunks.length);
-    gl.disableVertexAttribArray(aPosC);
-    gl.disableVertexAttribArray(aHeightC);
-    gl.deleteBuffer(chunkVbo);
+    gl.useProgram(ribbonProg);
+    const uVP = gl.getUniformLocation(ribbonProg, "uVP");
+    const uColor = gl.getUniformLocation(ribbonProg, "uColor");
+    gl.uniformMatrix4fv(uVP, false, new Float32Array(vp));
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 12, 0);
 
-    gl.useProgram(tailProg);
-    const tailVbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tailVbo);
-    const tailData: number[] = [];
-    const n = s.raw.length;
-    for (let i = 0; i < n; i += 1) {
-      const p = s.raw[i];
-      const age = n > 1 ? (n - 1 - i) / (n - 1) : 0;
-      tailData.push(p.x, p.y, p.z, age);
+    // Static chunk ribbons — the SAME wall geometry used by the hit-test.
+    const chunkVerts: number[] = [];
+    for (const c of s.chunks) chunkVerts.push(...ribbonWallVerts(c.samples, V24_RIBBON_HEIGHT));
+    if (chunkVerts.length > 0) {
+      const vbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(chunkVerts), gl.DYNAMIC_DRAW);
+      gl.uniform3f(uColor, 0.42, 0.55, 0.78);
+      gl.drawArrays(gl.TRIANGLES, 0, chunkVerts.length / 3);
+      gl.deleteBuffer(vbo);
     }
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tailData), gl.DYNAMIC_DRAW);
-    const aPosT = 0;
-    const aAgeT = 1;
-    gl.enableVertexAttribArray(aPosT);
-    gl.vertexAttribPointer(aPosT, 3, gl.FLOAT, false, 16, 0);
-    gl.enableVertexAttribArray(aAgeT);
-    gl.vertexAttribPointer(aAgeT, 1, gl.FLOAT, false, 16, 12);
-    gl.uniformMatrix4fv(gl.getUniformLocation(tailProg, "uVP"), false, new Float32Array(vp));
-    if (n > 1) gl.drawArrays(gl.LINE_STRIP, 0, n);
-    gl.disableVertexAttribArray(aPosT);
-    gl.disableVertexAttribArray(aAgeT);
-    gl.deleteBuffer(tailVbo);
+
+    // Active raw tail ribbon — the SAME wall geometry used by the hit-test.
+    const tailVerts = ribbonWallVerts(s.raw, V24_RIBBON_HEIGHT);
+    if (tailVerts.length > 0) {
+      const vbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tailVerts), gl.DYNAMIC_DRAW);
+      gl.uniform3f(uColor, 0.95, 0.62, 0.3);
+      gl.drawArrays(gl.TRIANGLES, 0, tailVerts.length / 3);
+      gl.deleteBuffer(vbo);
+    }
   }, []);
 
   useEffect(() => {
@@ -197,10 +194,9 @@ export default function NativeRenderer() {
     }
     glRef.current = gl;
     programsRef.current = {
-      chunk: makeProgram(gl, CHUNK_VERTEX_SHADER, CHUNK_FRAGMENT_SHADER),
-      tail: makeProgram(gl, TAIL_VERTEX_SHADER, TAIL_FRAGMENT_SHADER),
+      ribbon: makeProgram(gl, RIBBON_VERTEX_SHADER, RIBBON_FRAGMENT_SHADER),
     };
-    if (!programsRef.current.chunk || !programsRef.current.tail) {
+    if (!programsRef.current.ribbon) {
       setError("WebGL2 shader program failed to compile/link.");
       return;
     }
@@ -237,8 +233,11 @@ export default function NativeRenderer() {
     const ndcY = 1 - ((e.clientY - rect.top) / rect.height) * 2;
     const eye: [number, number, number] = [s.pos[0], s.pos[1] + 1.2, s.pos[2]];
     const ray = v24RayFromPointer(ndcX, ndcY, eye, [s.dir[0], s.dir[1], s.dir[2]], Math.PI / 3.2, rect.width / rect.height);
-    const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT);
-    setInspect(hit ? (s.chunks.find((c) => c.id === hit.chunkId) ?? null) : null);
+    // Hit-test the SAME rendered ribbon surface: static chunks AND the live active tail.
+    const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
+    setInspect(
+      hit && hit.kind === "chunk" ? (s.chunks.find((c) => c.id === hit.chunkId) ?? null) : null,
+    );
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {

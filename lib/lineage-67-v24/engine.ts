@@ -7,13 +7,12 @@
  *
  * Source persistence architecture: STATIC CHUNKS + ACTIVE TAIL.
  *   - V24_CHUNK_TRIGGER = 120 : when the active raw tail reaches 120 samples, bake.
- *   - V24_CHUNK_RAW     = 112 : raw samples baked into ONE static chunk per cycle.
+ *   - V24_CHUNK_RAW     = 112 : raw samples CONSUMED per bake (raw.splice(0, 112)).
  *                               This is SAMPLES-PER-BAKE, NOT a chunk-count cap.
- *   - V24_OVERLAP       = 4   : 4 samples overlap for ribbon / history continuity.
- *   - V24_COMMITTED_PER_BAKE = 108 (112 - 4 overlap).
- *   - residual raw samples remain the ACTIVE TAIL; it is naturally bounded by the
- *     bake cycle (raw length oscillates in [overlap, trigger)), NOT by an arbitrary
- *     queue cap.
+ *   - bake input        = 113 : raw.slice(0, V24_CHUNK_RAW + 1) — the chunk keeps ONE
+ *                               seam sample (cut + 1) for ribbon continuity.
+ *   - residual active tail    = 8 : 120 - 112, naturally bounded by the bake cycle,
+ *                               NOT by an arbitrary queue cap (no TAIL_MAX=220).
  *   - static chunks accumulate WITHOUT a count cap and WITHOUT oldest-chunk eviction
  *     (runtime reports pathEviction = false). Old ribbon never disappears.
  *
@@ -30,12 +29,12 @@
 
 export const V24_CHUNK_RAW = 112;
 export const V24_CHUNK_TRIGGER = 120;
-export const V24_OVERLAP = 4;
-export const V24_COMMITTED_PER_BAKE = V24_CHUNK_RAW - V24_OVERLAP;
 export const V24_Q_OFFSET = 0.58;
 export const V24_TRAVEL_MAX = 7200;
-/** Vertical extent of the hit-test ribbon wall (pure geometry, not gameplay). */
+/** Vertical extent of the rendered + hit-tested ribbon wall (pure geometry, not gameplay). */
 export const V24_RIBBON_HEIGHT = 10;
+/** Sentinel id for the live active-tail ribbon surface in hit results. */
+export const V24_ACTIVE_TAIL_SURFACE_ID = -1;
 
 export type Vec3 = readonly [number, number, number];
 
@@ -112,7 +111,9 @@ export interface V24Ray {
 }
 
 export interface V24Hit {
+  /** chunk id, or V24_ACTIVE_TAIL_SURFACE_ID (-1) when the hit is on the live active tail. */
   chunkId: number;
+  kind: "chunk" | "tail";
   q: number;
   t: number;
 }
@@ -182,7 +183,7 @@ function makeChunk(samples: readonly V24Sample[], id: number, order: number): V2
   return {
     id,
     order,
-    committed: V24_COMMITTED_PER_BAKE,
+    committed: V24_CHUNK_RAW,
     samples,
     q0: samples[0].q,
     q1: samples[samples.length - 1].q,
@@ -197,19 +198,22 @@ function makeChunk(samples: readonly V24Sample[], id: number, order: number): V2
 
 /**
  * Bake the raw tail once it has reached the trigger.
- * Takes the first V24_CHUNK_RAW (112) samples as ONE static chunk, then removes
- * (112 - overlap) from the raw tail so the last V24_OVERLAP (4) samples stay as
- * continuity with the next chunk. The residual raw is the ACTIVE TAIL.
- *
- * There is NO chunk-count cap and NO oldest-chunk eviction here.
+ * Authoritative V2.4.2 semantics (source-faithful):
+ *   - bake input = raw.slice(0, V24_CHUNK_RAW + 1) -> 113 samples; the chunk keeps
+ *                 ONE seam sample (cut + 1) for ribbon continuity.
+ *   - consume    = raw.slice(V24_CHUNK_RAW)        -> 112 samples removed, so
+ *                 8 raw samples remain as the ACTIVE TAIL when raw == trigger.
+ * There is NO chunk-count cap, NO invented overlap contract, and NO oldest-chunk
+ * eviction. The residual active tail is naturally bounded by the bake cycle.
  */
 export function v24BakeChunk(
   raw: readonly V24Sample[],
   chunkId: number,
   chunkOrder: number,
 ): { chunk: V24Chunk; residual: V24Sample[] } {
-  const baked = raw.slice(0, V24_CHUNK_RAW);
-  const residual = raw.slice(V24_CHUNK_RAW - V24_OVERLAP);
+  const cut = V24_CHUNK_RAW; // 112
+  const baked = raw.slice(0, cut + 1); // 113 samples (incl. 1 seam continuity sample)
+  const residual = raw.slice(cut); // 112 consumed; 8 remain at trigger 120
   return { chunk: makeChunk(baked, chunkId, chunkOrder), residual: residual.map(copySample) };
 }
 
@@ -452,35 +456,55 @@ function rayRibbonSegment(ray: V24Ray, a: V24Sample, b: V24Sample, height: numbe
   return best;
 }
 
+/** Build an AABB around a ribbon polyline (matches the rendered wall pad). */
+function aabbFromSamples(samples: readonly V24Sample[], height: number): AABB {
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minZ = Infinity;
+  let maxZ = -Infinity;
+  for (const s of samples) {
+    if (s.x < minX) minX = s.x;
+    if (s.x > maxX) maxX = s.x;
+    if (s.z < minZ) minZ = s.z;
+    if (s.z > maxZ) maxZ = s.z;
+  }
+  const pad = 1.5;
+  return { minX: minX - pad, maxX: maxX + pad, minY: 0, maxY: height, minZ: minZ - pad, maxZ: maxZ + pad };
+}
+
 /**
- * Source-faithful hit pipeline. Among visible chunks whose AABB the ray enters,
- * intersect the ribbon triangles and return the frontmost (nearest positive t)
- * surface with its q. Empty space / AABB miss => null.
+ * Source-faithful hit pipeline. Intersects the SAME ribbon wall geometry that is
+ * actually rendered: for every visible static chunk AND the live active raw tail,
+ * build the AABB, intersect the ribbon triangles, and return the frontmost
+ * (nearest positive t) surface with its q. Empty space / AABB miss => null.
+ *
+ * The active tail is a first-class hit candidate (V24_ACTIVE_TAIL_SURFACE_ID),
+ * NOT a separate invisible wall.
  */
 export function v24RibbonHitTest(
   ray: V24Ray,
   chunks: readonly V24Chunk[],
   height: number = V24_RIBBON_HEIGHT,
+  tails?: readonly (readonly V24Sample[])[],
 ): V24Hit | null {
   let best: V24Hit | null = null;
-  for (const chunk of chunks) {
-    const box: AABB = {
-      minX: chunk.minX,
-      maxX: chunk.maxX,
-      minY: 0,
-      maxY: height,
-      minZ: chunk.minZ,
-      maxZ: chunk.maxZ,
-    };
-    if (!rayAABB(ray, box)) continue;
-    for (let i = 0; i < chunk.samples.length - 1; i += 1) {
-      const a = chunk.samples[i];
-      const b = chunk.samples[i + 1];
+  const considerSurface = (
+    samples: readonly V24Sample[],
+    kind: "chunk" | "tail",
+    id: number,
+  ) => {
+    if (samples.length < 2) return;
+    if (!rayAABB(ray, aabbFromSamples(samples, height))) return;
+    for (let i = 0; i < samples.length - 1; i += 1) {
+      const a = samples[i];
+      const b = samples[i + 1];
       const t = rayRibbonSegment(ray, a, b, height);
       if (t !== null && (best === null || t < best.t)) {
-        best = { chunkId: chunk.id, q: a.q, t };
+        best = { chunkId: id, kind, q: a.q, t };
       }
     }
-  }
+  };
+  for (const chunk of chunks) considerSurface(chunk.samples, "chunk", chunk.id);
+  if (tails) for (const tail of tails) considerSurface(tail, "tail", V24_ACTIVE_TAIL_SURFACE_ID);
   return best;
 }

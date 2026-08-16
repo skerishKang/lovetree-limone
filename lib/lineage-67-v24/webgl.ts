@@ -112,3 +112,25 @@ out vec4 frag;
 void main(){
   frag = vec4(0.85, 0.6, 0.3, 1.0 - clamp(vAge, 0.0, 1.0));
 }`;
+
+/**
+ * Shared ribbon-wall shader used for BOTH the rendered surface and the hit-test
+ * surface authority. The renderer builds the exact same vertical-wall triangles
+ * (per consecutive sample pair) that v24RibbonHitTest intersects, so what is drawn
+ * is what is hit. `uColor` lets static chunks and the active tail share one program.
+ */
+export const RIBBON_VERTEX_SHADER = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+uniform mat4 uVP;
+void main(){
+  gl_Position = uVP * vec4(aPos, 1.0);
+}`;
+
+export const RIBBON_FRAGMENT_SHADER = `#version 300 es
+precision highp float;
+uniform vec3 uColor;
+out vec4 frag;
+void main(){
+  frag = vec4(uColor, 1.0);
+}`;
