@@ -48,7 +48,7 @@ const VIDEO_FILENAME = "Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.
 await mkdir(SHOTS, { recursive: true });
 
 /**
- * HOLD-phase error policy (narrowly bound, per CTO gate):
+ * HOLD-phase error policy (strict, per CTO exact-head re-audit gate):
  *
  * The exact 28,650,099 B video is intentionally NOT transported (HOLD). In the
  * `hold` phase the runner/native candidate execute the source-faithful
@@ -56,14 +56,48 @@ await mkdir(SHOTS, { recursive: true });
  * Track47 MP4. That specific transport failure is EXPECTED HOLD evidence — it
  * is classified and counted, never silently swallowed.
  *
- * EVERYTHING else (any unrelated pageerror, console error, 404 for another
- * resource, net::ERR for another path) remains UNEXPECTED and must stay zero.
+ * Classification is deliberately NARROW. An error is expected HOLD evidence
+ * ONLY when ALL of the following hold:
+ *   1. PHASE === "hold";
+ *   2. the exact pinned VIDEO_FILENAME is present in the location URL or the
+ *      captured error text (i.e. the error relates to the exact video);
+ *   3. the error carries an actual resource-transport failure signature
+ *      (404 / net::ERR / "Failed to load resource").
+ *
+ * A non-transport runtime/page error that merely *mentions* the same filename
+ * (e.g. a TypeError referencing VIDEO_FILENAME, a generic pageerror) is NOT
+ * expected — it stays UNEXPECTED and fatal. A 404 for an unrelated resource is
+ * likewise UNEXPECTED. This prevents the classifier from becoming a blanket
+ * filename exemption.
  */
 const expectedHoldErrors = [];
 
-function isExpectedHoldError(raw, url) {
-  if (PHASE !== "hold") return false;
+const VIDEO_PATH = "/design-lab-assets/source-tracks/47/v4-2-5/assets/";
+
+function isVideoRelevant(raw, url) {
+  // The error must relate to the exact pinned video — either the captured
+  // location URL targets it, or the error text itself names the exact file.
   return url.includes(VIDEO_FILENAME) || raw.includes(VIDEO_FILENAME);
+}
+
+function hasTransportFailureSignature(raw) {
+  // Narrow Chromium resource-transport failure signals only. Deliberately NOT
+  // a blanket `includes("error")`/`includes("failed")` match.
+  return (
+    /\b404\b/.test(raw) || // 404 / 404 (Not Found)
+    raw.includes("net::ERR") || // Chromium network-layer transport failure
+    raw.includes("Failed to load resource") // resource load/transport failure
+  );
+}
+
+function classifyHoldError(raw, url, phase) {
+  if (phase !== "hold") return false;
+  if (!isVideoRelevant(raw, url)) return false;
+  return hasTransportFailureSignature(raw);
+}
+
+function isExpectedHoldError(raw, url) {
+  return classifyHoldError(raw, url, PHASE);
 }
 
 function attachErrorCapture(page, errors) {
@@ -631,6 +665,57 @@ record("17/18/19 desktop console errors=0, page errors=0, overflow=0", async (br
   assert.equal(await overflowX(page), 0, "desktop horizontal overflow must be 0");
   await page.screenshot({ path: `${SHOTS}/native-desktop-${PHASE}-final.png` });
   await page.close();
+});
+
+record("hold: focused strict-transport classifier contract (regression proof)", async () => {
+  // Pure contract assertions on the classifier — no browser required. These
+  // lock the strict transport rule so a future broadening regression fails.
+  const transport404 = `console:Failed to load resource: the server responded with a status of 404 (Not Found) ${VIDEO_PATH}${VIDEO_FILENAME}`;
+
+  // 1) exact-video 404 transport failure => EXPECTED HOLD
+  assert.equal(
+    classifyHoldError(transport404, `${VIDEO_PATH}${VIDEO_FILENAME}`, "hold"),
+    true,
+    "exact-video 404 transport failure must be classified EXPECTED HOLD",
+  );
+  assert.equal(
+    classifyHoldError(transport404, "", "hold"),
+    true,
+    "exact-video 404 transport failure in message text must be classified EXPECTED HOLD",
+  );
+
+  // 2) PHASE hold + VIDEO_FILENAME + NON-transport runtime/page error => UNEXPECTED
+  assert.equal(
+    classifyHoldError(`pageerror:TypeError while decoding ${VIDEO_FILENAME}`, "", "hold"),
+    false,
+    "same-filename non-transport runtime error must NOT be expected",
+  );
+  assert.equal(
+    classifyHoldError(`console:Uncaught ReferenceError: ${VIDEO_FILENAME} is not defined`, "", "hold"),
+    false,
+    "same-filename console non-transport error must NOT be expected",
+  );
+
+  // 3) PHASE hold + unrelated resource 404 => UNEXPECTED
+  assert.equal(
+    classifyHoldError("console:Failed to load resource: the server responded with a status of 404 (Not Found) /favicon.ico", "/favicon.ico", "hold"),
+    false,
+    "unrelated resource 404 must NOT be expected",
+  );
+
+  // 4) PHASE exact + VIDEO_FILENAME transport error => NOT HOLD-EXPECTED
+  assert.equal(
+    classifyHoldError(transport404, `${VIDEO_PATH}${VIDEO_FILENAME}`, "exact"),
+    false,
+    "exact phase must never classify HOLD evidence even for the video",
+  );
+
+  // 5) PHASE hold + video filename but no transport signature => UNEXPECTED
+  assert.equal(
+    classifyHoldError(`console:warning about ${VIDEO_FILENAME}`, "", "hold"),
+    false,
+    "video filename without transport signature must NOT be expected",
+  );
 });
 
 record("hold: expected absent-video transport error explicitly classified as HOLD evidence", async () => {
