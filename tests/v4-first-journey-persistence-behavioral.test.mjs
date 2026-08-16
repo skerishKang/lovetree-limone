@@ -8,7 +8,7 @@ import { chromium } from "playwright";
  * and asserts actual runtime behavior, not source regex.
  */
 
-const BASE = process.env.V4_BASE_URL || "http://localhost:3001";
+const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
 
 // Seed a minimal valid first-moment draft so the memory step is reachable,
 // then verify inputs actually bind to draft state and that a stale
