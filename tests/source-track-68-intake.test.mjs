@@ -6,6 +6,13 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
+import {
+  SOURCE_TRACK_68_HTML,
+  SOURCE_TRACK_68_MEDIA,
+  SOURCE_TRACK_68_PHASE,
+  SOURCE_TRACK_68_RENDERING,
+  SOURCE_TRACK_68_REVISION,
+} from "../lib/source-track-68/ts";
 
 const root = new URL("../", import.meta.url);
 
@@ -27,30 +34,29 @@ const HTML_PATH = "public/design-lab-assets/source-tracks/68/v3/index.html";
 const STAGING_DIR = "public/design-lab-assets/source-tracks/68/v3/assets";
 
 test("track68 pinned constants match the Web CTO Phase 1 release evidence (#235)", async () => {
-  const { default: provenance } = await import("../lib/source-track-68/provenance.ts");
-  assert.equal(provenance.SOURCE_TRACK_68_REVISION, "V3");
-  assert.equal(provenance.SOURCE_TRACK_68_HTML.bytes, 25_544);
+  assert.equal(SOURCE_TRACK_68_REVISION, "V3");
+  assert.equal(SOURCE_TRACK_68_HTML.bytes, 25_544);
   assert.equal(
-    provenance.SOURCE_TRACK_68_HTML.sha256,
+    SOURCE_TRACK_68_HTML.sha256,
     "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
   );
-  assert.equal(provenance.SOURCE_TRACK_68_HTML.byteIdentical, true);
+  assert.equal(SOURCE_TRACK_68_HTML.byteIdentical, true);
   assert.deepEqual(
-    provenance.SOURCE_TRACK_68_HTML.variants.map((variant) => variant.driveId).sort(),
+    SOURCE_TRACK_68_HTML.variants.map((variant) => variant.driveId).sort(),
     ["1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI", "1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx", "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6"].sort(),
   );
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.videoCount, 89);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.posterCount, 89);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.videoTotalBytes, 1_946_025_764);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.posterTotalBytes, 1_619_015);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.videosAtOrBelow25MiB, 64);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.videosAbove25MiB, 25);
-  assert.equal(provenance.SOURCE_TRACK_68_MEDIA.transport, "LOCAL_EXACT_OUT_OF_GIT_ONLY");
+  assert.equal(SOURCE_TRACK_68_MEDIA.videoCount, 89);
+  assert.equal(SOURCE_TRACK_68_MEDIA.posterCount, 89);
+  assert.equal(SOURCE_TRACK_68_MEDIA.videoTotalBytes, 1_946_025_764);
+  assert.equal(SOURCE_TRACK_68_MEDIA.posterTotalBytes, 1_619_015);
+  assert.equal(SOURCE_TRACK_68_MEDIA.videosAtOrBelow25MiB, 64);
+  assert.equal(SOURCE_TRACK_68_MEDIA.videosAbove25MiB, 25);
+  assert.equal(SOURCE_TRACK_68_MEDIA.transport, "LOCAL_EXACT_OUT_OF_GIT_ONLY");
   // Phase 1 boundary: native is HOLD, no lineage, no canonical adoption.
-  assert.equal(provenance.SOURCE_TRACK_68_PHASE.nativeCandidate, "HOLD_PHASE_2");
-  assert.equal(provenance.SOURCE_TRACK_68_PHASE.repositoryLineage, "NOT_ALLOCATED");
-  assert.equal(provenance.SOURCE_TRACK_68_PHASE.canonicalV4Adoption, "NOT_AUTHORIZED");
-  assert.equal(provenance.SOURCE_TRACK_68_RENDERING.primary, "css3d-dom");
+  assert.equal(SOURCE_TRACK_68_PHASE.nativeCandidate, "HOLD_PHASE_2");
+  assert.equal(SOURCE_TRACK_68_PHASE.repositoryLineage, "NOT_ALLOCATED");
+  assert.equal(SOURCE_TRACK_68_PHASE.canonicalV4Adoption, "NOT_AUTHORIZED");
+  assert.equal(SOURCE_TRACK_68_RENDERING.primary, "css3d-dom");
 });
 
 test("committed source HTML is byte-exact to the pinned identity", async () => {
