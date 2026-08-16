@@ -6,7 +6,6 @@ import {
   V24_CHUNK_TRIGGER,
   V24_Q_OFFSET,
   V24_RIBBON_HEIGHT,
-  V24_ACTIVE_TAIL_SURFACE_ID,
   computeQ,
   clampTravel,
   v24InitState,
