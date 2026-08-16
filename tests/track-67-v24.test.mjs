@@ -221,12 +221,26 @@ test("E3. overlapping/cross-chunk surfaces select the frontmost (nearest t)", ()
   assert.notEqual(hit.chunkId, farChunk);
 });
 
+function buildStackedChunkState() {
+  // Two ribbon walls stacked in depth (z=0 front, z=40 back) with the same x
+  // span — a straight angled ray pierces BOTH walls, so the candidates list
+  // observably contains two positive surfaces with distinct t.
+  let s = v24InitState();
+  for (const [z, travelBase] of [[0, 0], [40, 2000]]) {
+    for (let i = 0; i < V24_CHUNK_TRIGGER; i += 1) {
+      const x = 10 + i;
+      s = v24AppendSample(s, v24MakeSample({ order: s.nextOrder, travel: travelBase + i, x, y: 0, z, spin: 0, dir: [1, 0, 0] }));
+    }
+  }
+  return { s, frontChunk: s.chunks[0].id, backChunk: s.chunks[1].id };
+}
+
 test("E5. hit-candidates observability: ascending t, first candidate == selected nearest", () => {
-  const { s } = buildTwoChunkState();
+  const { s, frontChunk, backChunk } = buildStackedChunkState();
   const eye = [0, 5, -10];
   const ray = v24RayFromPointer(0, 0, eye, [1, 0, 1], Math.PI / 3.2, 1.5);
-  const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
-  assert.ok(hit, "positive hit exists in the overlapping setup");
+  const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT);
+  assert.ok(hit, "positive hit exists in the stacked setup");
   assert.ok(hit.candidates && hit.candidates.length >= 2, "multiple positive candidates observable along the ray");
   for (let i = 1; i < hit.candidates.length; i += 1) {
     assert.ok(hit.candidates[i - 1].t <= hit.candidates[i].t, "candidates ascend by t");
@@ -234,6 +248,8 @@ test("E5. hit-candidates observability: ascending t, first candidate == selected
   assert.equal(hit.candidates[0].id, hit.chunkId, "selected surface is the first (nearest) candidate");
   assert.equal(hit.candidates[0].t, hit.t, "selected distance is the nearest positive t");
   assert.ok(hit.candidates.every((c) => c.t > 0), "all candidates are positive-t intersections");
+  assert.equal(hit.candidates[0].id, frontChunk, "nearest surface is the z=0 front wall");
+  assert.equal(hit.candidates[1].id, backChunk, "second candidate is the z=40 back wall");
 });
 
 test("E4. empty chunks list yields null hit (no fabricated inspect)", () => {

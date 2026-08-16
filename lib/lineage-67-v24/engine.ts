@@ -523,9 +523,10 @@ export function v24RibbonHitTest(
   };
   for (const chunk of chunks) considerSurface(chunk.samples, "chunk", chunk.id);
   if (tails) for (const tail of tails) considerSurface(tail, "tail", V24_ACTIVE_TAIL_SURFACE_ID);
-  if (best) {
+  const selected: V24Hit | null = best;
+  if (selected !== null) {
     candidates.sort((a, b) => a.t - b.t);
-    best.candidates = candidates;
+    selected.candidates = candidates;
   }
-  return best;
+  return selected;
 }
