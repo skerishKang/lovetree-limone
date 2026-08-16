@@ -166,24 +166,35 @@ export default function V4FirstJourneyV12({
   const router = useRouter();
   const { user, authError, clearAuthError } = useAuth();
 
-  // Stable clientKey for subsequent-Moment writes (Slice B BLOCKER 3).
-  // Generated once, reused across retries, retired only after a confirmed ID.
-  // Persisted ONLY as draft/progress — never as durable truth.
-  const ensureSubsequentClientKey = useCallback((): string => {
+  // Operation-scoped pending clientKeys for subsequent-Moment writes
+  // (Slice B BLOCKER 3 / Web CTO reaudit). Each candidate (by index) gets its
+  // OWN stable key: A retry reuses A's key, B gets a distinct key even while A
+  // is pending, and confirming A retires ONLY A's key. The in-memory map is the
+  // stable fallback when localStorage is unavailable, so A's retry key stays
+  // constant within a session — no per-attempt random fallback breaks retry stability.
+  const pendingSubKeys = useRef<Map<number, string>>(new Map());
+  const ensureSubsequentClientKey = useCallback((candidateIdx: number): string => {
+    const storageKey = `lovetree-v12-sub-key-${candidateIdx}`;
+    const fromMap = pendingSubKeys.current.get(candidateIdx);
+    if (fromMap) return fromMap; // retry reuses A's exact key (in-memory stable)
     try {
-      const existing = localStorage.getItem("lovetree-v12-subsequent-client-key");
-      if (existing) return existing;
-      const generated = `v12-sub-${crypto.randomUUID()}`;
-      localStorage.setItem("lovetree-v12-subsequent-client-key", generated);
-      return generated;
-    } catch {
-      // crypto/localStorage unavailable → ephemeral key (retry still safe within session)
-      return `v12-sub-${Math.random().toString(36).slice(2)}`;
-    }
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        pendingSubKeys.current.set(candidateIdx, stored);
+        return stored;
+      }
+    } catch { /* storage unavailable → generate + keep in map only */ }
+    // Generated ONCE per candidate (never per attempt).
+    const generated = `v12-sub-${candidateIdx}-${crypto.randomUUID()}`;
+    pendingSubKeys.current.set(candidateIdx, generated);
+    try { localStorage.setItem(storageKey, generated); } catch { /* in-memory only */ }
+    return generated;
   }, []);
 
-  const retireSubsequentClientKey = useCallback((): void => {
-    try { localStorage.removeItem("lovetree-v12-subsequent-client-key"); } catch { /* noop */ }
+  const retireSubsequentClientKey = useCallback((candidateIdx: number): void => {
+    // Retire ONLY this candidate's pending key after a confirmed canonical id.
+    pendingSubKeys.current.delete(candidateIdx);
+    try { localStorage.removeItem(`lovetree-v12-sub-key-${candidateIdx}`); } catch { /* noop */ }
   }, []);
 
   // Initialize appState from localStorage synchronously.
@@ -427,7 +438,8 @@ export default function V4FirstJourneyV12({
     setSaveError(null);
     clearAuthError();
     // BLOCKER 3: stable clientKey — created before the attempt, reused on retry.
-    const clientKey = ensureSubsequentClientKey();
+    // Operation-scoped to this candidate index so A and B never share a key.
+    const clientKey = ensureSubsequentClientKey(idx);
     try {
       const response = await (fetchFn ?? apiFetch)(`/api/trees/${encodeURIComponent(refs.treeId)}/memories`, {
         method: "POST",
@@ -449,8 +461,8 @@ export default function V4FirstJourneyV12({
       if (!response.ok || !data.id) {
         throw new Error(data.error || "연결을 저장하지 못했어요.");
       }
-      // Confirmed canonical returned memory ID → retire the pending key.
-      retireSubsequentClientKey();
+      // Confirmed canonical returned memory ID → retire ONLY this candidate's key.
+      retireSubsequentClientKey(idx);
 
       update((prev) => ({
         ...prev,
@@ -513,9 +525,12 @@ export default function V4FirstJourneyV12({
 
   const resetAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    // Clear any pending clientKeys so a retry starts fresh (no stale durable id).
+    // Clear any pending per-candidate clientKeys so a retry starts fresh (no stale durable id).
     try { localStorage.removeItem("lovetree-v4-product-spine-create-client-key"); } catch { /* noop */ }
-    try { localStorage.removeItem("lovetree-v12-subsequent-client-key"); } catch { /* noop */ }
+    for (let i = 0; i < 8; i++) {
+      try { localStorage.removeItem(`lovetree-v12-sub-key-${i}`); } catch { /* noop */ }
+    }
+    pendingSubKeys.current.clear();
     const fresh = defaultState();
     setAppState(fresh);
     setV12Step(0);

@@ -142,13 +142,19 @@ test("BLOCKER 2: reload strips localStorage durable claims (fail-closed)", () =>
 });
 
 // --- Remediation BLOCKER 3: subsequent Moment POST carries stable clientKey ---
-test("BLOCKER 3: subsequent Moment POST sends stable clientKey, retired after confirmed ID", () => {
-  // key is created before the attempt and reused.
-  assert.match(V12, /const clientKey = ensureSubsequentClientKey\(\);/);
+test("BLOCKER 3: subsequent Moment POST sends operation-scoped stable clientKey", () => {
+  // key is created before the attempt, scoped to the candidate index, reused on retry.
+  assert.match(V12, /const clientKey = ensureSubsequentClientKey\(idx\);/);
   assert.match(V12, /clientKey,/);
-  // key is retired only after a confirmed canonical returned memory id.
-  assert.match(V12, /retireSubsequentClientKey\(\);/);
-  assert.match(V12, /\/\/ Confirmed canonical returned memory ID → retire the pending key\./);
+  // per-candidate key storage (not a single shared global key), keyed by index.
+  assert.match(V12, /lovetree-v12-sub-key-\$\{candidateIdx\}/);
+  // NO shared single-key localStorage name from the prior implementation.
+  assert.doesNotMatch(V12, /lovetree-v12-subsequent-client-key/);
+  // NO Math.random() per-attempt fallback that breaks retry stability.
+  assert.doesNotMatch(V12, /Math\.random\(\)/);
+  // key is retired only after a confirmed canonical returned memory id, scoped to the candidate.
+  assert.match(V12, /retireSubsequentClientKey\(idx\);/);
+  assert.match(V12, /\/\/ Confirmed canonical returned memory ID → retire ONLY this candidate's key\./);
 });
 
 // --- Remediation BLOCKER 4: first-save preserves FirstMoment presentation ---
