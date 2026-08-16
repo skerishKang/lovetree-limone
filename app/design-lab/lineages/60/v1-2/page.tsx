@@ -8,9 +8,17 @@ import {
   deriveBridges,
 } from "@/lib/lineage-60/data";
 
-export default function Lineage60ClusterExplorerPage() {
+export default async function Lineage60ClusterExplorerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ qa?: string }>;
+}) {
+  const params = await searchParams;
   const bridges = deriveBridges(TRACK60_MOMENTS);
   const source = LINEAGE_60_SOURCE;
+  // QA depth-overlap fixture is decided on the server so the client component
+  // never diverges from the SSR HTML (no hydration mismatch).
+  const qaDepth = params.qa === "depth-overlap";
 
   return (
     <main
@@ -76,6 +84,7 @@ export default function Lineage60ClusterExplorerPage() {
         moments={TRACK60_MOMENTS}
         clusters={TRACK60_CLUSTER_SPECS}
         bridges={bridges}
+        qaDepth={qaDepth}
       />
 
       <section

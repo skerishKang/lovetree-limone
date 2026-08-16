@@ -228,21 +228,23 @@ async function main() {
       const afterClick = await getSelectedTitle(page);
       assert.equal(afterClick, "Depth Y", "click selects frontmost Y at yaw 0 (Proof A + frontmost hit)");
 
-      // Proof B: a substantial rotate drag ending on the node does NOT select
+      // Proof B: a substantial rotate drag ENDING ON the node does NOT select
       await page.locator("canvas").first().focus();
       await page.mouse.move(cx, cy);
       await page.mouse.down();
-      await page.mouse.move(cx - 120, cy - 60, { steps: 8 });
-      await page.mouse.move(cx - 200, cy - 90, { steps: 8 });
+      await page.mouse.move(cx - 160, cy - 80, { steps: 8 });
+      await page.mouse.move(cx, cy, { steps: 8 }); // drag ends on the node
       await page.mouse.up();
       await page.waitForTimeout(120);
-      assert.equal(await getSelectedTitle(page), "Depth Y", "rotate drag does NOT change selection (Proof B)");
+      assert.equal(await getSelectedTitle(page), "Depth Y", "rotate drag ending on node does NOT select (Proof B)");
 
-      // Proof C: pointercancel after moving over the node does NOT select
+      // Proof C: pointercancel after moving over the node does NOT select, even
+      // if a trailing pointer-up lands on the node
       await page.mouse.move(cx, cy);
       await page.mouse.down();
       await page.mouse.move(cx + 40, cy + 20, { steps: 4 });
       await dispatchSyntheticPointerCancel(page);
+      await page.mouse.move(cx, cy); // trailing release lands on the node
       await page.mouse.up();
       await page.waitForTimeout(120);
       assert.equal(await getSelectedTitle(page), "Depth Y", "pointercancel does NOT select (Proof C)");

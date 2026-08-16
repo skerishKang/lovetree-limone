@@ -21,6 +21,11 @@ const GOLDEN = 2.399963229728653;
 const LEVEL_DISTANCE: Record<number, number> = { 0: 920, 1: 540, 2: 340, 3: 210 };
 const PITCH_LIMIT = Math.PI / 2 - 0.12;
 
+const DEFAULT_CAM: Camera = { yaw: 0.5, pitch: 0.35, distance: LEVEL_DISTANCE[0], target: [0, 0, 0] };
+// QA depth-overlap fixture camera: on-axis so the two fixture points overlap at
+// screen center while differing in camera depth.
+const QA_DEPTH_CAM: Camera = { yaw: 0, pitch: 0, distance: 300, target: [0, 0, 0] };
+
 function clusterCenter(clusters: ClusterView[], key: ThemeKey): Vec3 {
   return clusters.find((c) => c.key === key)?.center ?? [0, 0, 0];
 }
@@ -48,10 +53,12 @@ export default function Lineage60ClusterExplorer({
   moments: momentsProp,
   clusters: clustersProp,
   bridges,
+  qaDepth = false,
 }: {
   moments: Track60Moment[];
   clusters: ClusterView[];
   bridges: BridgeView[];
+  qaDepth?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -68,10 +75,8 @@ export default function Lineage60ClusterExplorer({
   const pointersRef = useRef<Set<number>>(new Set());
 
   // ---- QA depth-overlap fixture (Blocker 2 browser proof) ----
-  const qaDepth = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return new URLSearchParams(window.location.search).get("qa") === "depth-overlap";
-  }, []);
+  // `qaDepth` is decided by the server page (?qa=depth-overlap) so the SSR HTML
+  // and the hydrated client always agree.
   const qaPositions = useMemo<Map<string, Vec3>>(() => {
     if (!qaDepth) return new Map();
     return new Map<string, Vec3>([
@@ -133,18 +138,9 @@ export default function Lineage60ClusterExplorer({
   const [reducedMotion, setReducedMotion] = useState(false);
   const [statusText, setStatusText] = useState("UNIVERSE · MACRO view");
 
-  const camRef = useRef<Camera>({ yaw: 0.5, pitch: 0.35, distance: LEVEL_DISTANCE[0], target: [0, 0, 0] });
-  const camTargetRef = useRef<Camera>({ yaw: 0.5, pitch: 0.35, distance: LEVEL_DISTANCE[0], target: [0, 0, 0] });
+  const camRef = useRef<Camera>({ ...(qaDepth ? QA_DEPTH_CAM : DEFAULT_CAM) });
+  const camTargetRef = useRef<Camera>({ ...(qaDepth ? QA_DEPTH_CAM : DEFAULT_CAM) });
   const sizeRef = useRef({ w: 800, h: 520, dpr: 1 });
-
-  // QA depth-overlap fixture: pin an on-axis camera so the two fixture points
-  // overlap at screen center; the frontmost (smaller depth) is the authority.
-  useEffect(() => {
-    if (!qaDepth) return;
-    const c: Camera = { yaw: 0, pitch: 0, distance: 300, target: [0, 0, 0] };
-    camRef.current = { ...c };
-    camTargetRef.current = { ...c };
-  }, [qaDepth]);
 
   const byId = useMemo(() => new Map(moments.map((m) => [m.id, m])), [moments]);
   const positions = useMemo(() => {
@@ -539,11 +535,15 @@ export default function Lineage60ClusterExplorer({
       }
     }
     pointersRef.current.delete(e.pointerId);
-    activeRef.current = false;
-    pinchHappenedRef.current = false;
-    cancelledRef.current = false;
-    pointerStartRef.current = { x: 0, y: 0 };
-    maxMoveRef.current = 0;
+    if (pointersRef.current.size === 0) {
+      activeRef.current = false;
+      pinchHappenedRef.current = false;
+      pointerStartRef.current = { x: 0, y: 0 };
+      maxMoveRef.current = 0;
+    }
+    // cancelledRef is intentionally NOT reset here: a cancelled gesture must
+    // never select — not even via a trailing pointerup — until a fresh
+    // pointerdown (Blocker 1 proof C / lost-capture equivalent).
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
