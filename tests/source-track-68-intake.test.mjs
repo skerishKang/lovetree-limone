@@ -12,7 +12,7 @@ import {
   SOURCE_TRACK_68_PHASE,
   SOURCE_TRACK_68_RENDERING,
   SOURCE_TRACK_68_REVISION,
-} from "../lib/source-track-68/ts";
+} from "../lib/source-track-68/provenance.ts";
 
 const root = new URL("../", import.meta.url);
 
