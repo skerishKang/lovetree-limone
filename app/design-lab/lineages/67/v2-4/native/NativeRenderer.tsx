@@ -367,7 +367,7 @@ export default function NativeRenderer() {
               <div><dt>q</dt><dd>{inspect.q0.toFixed(2)} – {inspect.q1.toFixed(2)}</dd></div>
               <div><dt>q offset</dt><dd>{V24_Q_OFFSET}</dd></div>
             </dl>
-            <button type="button" onClick={() => { setInspect(null); setHitInfo({ kind: "none", surfaceId: null }); }}>닫기</button>
+            <button type="button" onClick={() => { setInspect(null); setHitInfo(HIT_NONE); }}>닫기</button>
           </div>
         )}
       </div>
