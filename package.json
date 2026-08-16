@@ -18,6 +18,8 @@
     "design:intake:validate": "node --import tsx scripts/design-intake-validate.mjs",
     "design:intake:scaffold": "node --import tsx scripts/design-intake-scaffold.mjs",
     "design:intake:freshness": "node --import tsx scripts/design-intake-source-freshness.mjs",
+    "design:intake:observe": "node --import tsx scripts/design-intake-drive-observe.mjs",
+    "design:intake:freshness:live": "node --import tsx scripts/design-intake-source-freshness-live.mjs",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check"
