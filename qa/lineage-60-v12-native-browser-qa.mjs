@@ -284,9 +284,11 @@ async function main() {
       assert.equal(await getSelectedTitle(page), "Depth Y", "orientation A: Y frontmost (depth-before)");
       await page.screenshot({ path: `${OUT}/depth-before.png` });
 
-      // Change yaw ~90deg: the frontmost item on the identical overlap swaps to X
+      // Change yaw ~180deg (26 x 0.12 rad): on-axis fixture points still overlap
+      // at screen center (only yaw 0 and yaw pi keep them on-axis), but their
+      // camera depth is now swapped so the frontmost item flips to X.
       await page.locator("canvas").first().focus();
-      for (let i = 0; i < 14; i += 1) {
+      for (let i = 0; i < 26; i += 1) {
         await page.keyboard.press("ArrowRight");
       }
       await page.waitForTimeout(150);
