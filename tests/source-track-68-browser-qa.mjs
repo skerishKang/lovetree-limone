@@ -91,18 +91,18 @@ function sourceFrame(page) {
 }
 
 /**
- * Focus a control inside the source frame through the source's own keyboard
- * tab order (native path; works even when the drawer-body scroll position
- * keeps the widget outside the clipped frame viewport). The drawer-close
- * button precedes the sliders in DOM order, so the first tabs may land there.
+ * Focus a control inside the source frame. Playwright's locator.focus()
+ * focuses the element regardless of drawer-body scroll/viewport clipping;
+ * subsequent keys go through page.keyboard as real input events. (Tab-walking
+ * is NOT usable here: the tab order crosses the left drawer's 89 film
+ * buttons before reaching the right drawer controls.)
  */
-async function focusById(frame, page, id, maxTabs = 25) {
-  for (let i = 0; i < maxTabs; i++) {
-    const current = await frame.evaluate(() => (document.activeElement && document.activeElement.id) || "");
-    if (current === id) return true;
-    await page.keyboard.press("Tab");
-  }
-  return false;
+async function focusById(frame, id) {
+  const locator = frame.locator(`#${id}`);
+  if ((await locator.count()) !== 1) return false;
+  await locator.focus();
+  const active = await frame.evaluate(() => (document.activeElement && document.activeElement.id) || "");
+  return active === id;
 }
 
 async function shot(page, name) {
@@ -225,7 +225,7 @@ for (const vp of VIEWPORTS) {
   const shapeOpened = true;
   // 5) film-count slider actually changes runtime count (18..89 contract)
   const objects = frame.locator("#objects");
-  const objectsFocused = await focusById(frame, page, "objects");
+  const objectsFocused = await focusById(frame, "objects");
   await page.keyboard.press("Home");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "18", null, { timeout: 5000 });
   // display:none styles update on the NEXT render frame — wait for the exact count
@@ -247,11 +247,11 @@ for (const vp of VIEWPORTS) {
   // bottom of the drawer's scrollable body; reach it through the source's
   // own keyboard tab order and activate with Enter (native keyboard path).
   await page.keyboard.press("Home"); // objects -> 18
-  const cornerFocused = await focusById(frame, page, "corner");
+  const cornerFocused = await focusById(frame, "corner");
   await page.keyboard.press("Home"); // deterministic: 0
   for (let i = 0; i < 3; i++) await page.keyboard.press("ArrowRight"); // -> 3
   const cornerBefore = await frame.locator("#corner").inputValue();
-  const resetReached = await focusById(frame, page, "reset");
+  const resetReached = await focusById(frame, "reset");
   await page.keyboard.press("Enter");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "89", null, { timeout: 5000 });
   await frame.waitForFunction(
