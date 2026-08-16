@@ -109,17 +109,21 @@ async function authenticatedRequest({
   idToken,
   fetchImpl,
 }) {
-  const response = await fetchImpl(`${baseUrl}${path}`, {
+  return fetchImpl(`${baseUrl}${path}`, {
     method,
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${idToken}`,
     },
   });
-  return response;
 }
 
-async function requireSuccessfulDelete(response, label) {
+async function requireDeletedOrAlreadyGone(response, label) {
+  // Cleanup must be safely retryable. If a previous attempt deleted this exact
+  // resource and then failed later, DELETE can truthfully return 404. We accept
+  // that only as an intermediate "already gone" state; the final GET 404 proof
+  // below is still mandatory for every exact ID.
+  if (response.status === 404) return "already-gone";
   if (!response.ok) {
     throw operatorError(
       "V4_RUNTIME_E2E_EXACT_CLEANUP_FAILED",
@@ -133,6 +137,7 @@ async function requireSuccessfulDelete(response, label) {
       `${label} delete did not return success=true`
     );
   }
+  return "deleted";
 }
 
 async function requireGone(response, label) {
@@ -166,7 +171,10 @@ export async function cleanupExactRuntimeE2EResources({
     idToken: token,
     fetchImpl,
   });
-  await requireSuccessfulDelete(deleteMemory, "Memory");
+  const memoryDeleteDisposition = await requireDeletedOrAlreadyGone(
+    deleteMemory,
+    "Memory"
+  );
 
   const deleteTree = await authenticatedRequest({
     baseUrl: normalizedBase,
@@ -175,7 +183,7 @@ export async function cleanupExactRuntimeE2EResources({
     idToken: token,
     fetchImpl,
   });
-  await requireSuccessfulDelete(deleteTree, "Tree");
+  const treeDeleteDisposition = await requireDeletedOrAlreadyGone(deleteTree, "Tree");
 
   const verifyMemory = await authenticatedRequest({
     baseUrl: normalizedBase,
@@ -201,6 +209,8 @@ export async function cleanupExactRuntimeE2EResources({
     treeId: exactTreeId,
     memoryDeleted: true,
     treeDeleted: true,
+    memoryDeleteDisposition,
+    treeDeleteDisposition,
     verifiedGone: true,
   };
 }
