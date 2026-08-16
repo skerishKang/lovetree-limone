@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-66-first-journey-v1-2",
+  "sourceTrackId": "Track66",
+  "title": "First Tree Interactive Scroll Guide V1.2 — existing first-journey revision",
+  "classification": "CANONICAL_OWNER_CAPABILITY",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "css3d-dom",
+  "scenarioId": "entry-onboarding",
+  "productJob": "A new returning user (or a sample demo path) lands at LoveTree First Journey, experiences the continuous sticky-scroll V1.2 walkthrough, discovers the First Moment, scrolls forward to see three next candidates with editable WHY NEXT, decides MAIN or BRANCH, and sees YOUR FIRST TREE \u00b7 MAIN + BRANCH before completing the discovery flow. This is a presentation delta of the existing /v4/journey surface, not a new Lineage.",
+  "summary": "Track66 (\ud4e8\uc2a4\ud2b8\ud2b8\ub9ac \uc778\ud130\ub799\ud2f0\ube0c \uc2a4\ud06c\ub864\uac00\uc774\ub4dc V1.2 / First Tree Interactive Scroll Guide V1.2) is a CANONICAL_OWNER_CAPABILITY of the existing /v4/journey route. Unlike the V1 page-by-page wizard, V1.2 uses a continuous sticky-scroll paradigm: one same miniature morphs into a world view, forward/reverse scroll reveals the First Moment and three next candidates, editable WHY NEXT labels, MAIN/BRANCH routing, and YOUR FIRST TREE \u00b7 MAIN + BRANCH finale. API/DB/Auth = NON-SCOPE. State uses localStorage (source/presentation proof only, not durable persistence). Existing V1 journey regression tests remain unchanged.",
+  "provenance": {
+    "sourceLabel": "66_\ud4e8\uc2a4\ud2b8\ud2b8\ub9ac_\uc778\ud130\ub799\ud2f0\ube0c_\uc2a4\ud06c\ub864\uac00\uc774\ub4dc_V1.2 / Issue #177",
+    "driveFolderId": "1xHGY0_7xoh-FmryuFt8tEgqlC9X1GFXs",
+    "sourceFiles": [
+      "\ud604\uc7ac\ud6c4\ubcf4.html (V1.2 interactive executable)",
+      "\uac80\uc99d\uacb0\uacfc.json (QA artifact)"
+    ],
+    "rightsStatus": "unlocked_design_contract"
+  },
+  "ownerRoute": "/v4/journey",
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2 (continuous-scroll interactive guide)",
+    "authorityObservedAt": "2026-08-15T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "\ud604\uc7ac\ud6c4\ubcf4.html",
+      "driveId": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "\uac80\uc99d\uacb0\uacfc.json",
+      "driveId": "1AT7hyNVsahUw3b6IZtuD_D8SKjCSVuiv",
+      "bytes": 5097,
+      "sha256": "e49f07b46794d447ea8a7f1cd5715f153b47171161bbcd01eced2324137ca1e6",
+      "role": "qa-artifact",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": [],
+  "sourceDefects": [
+    "source executable uses JS-based scroll-driven animations \u2014 native implementation will use CSS scroll-driven animations where available, IntersectionObservers for step detection, and React state for morph/modal transitions"
+  ],
+  "nativeRemediations": [
+    "continuous sticky scroll: viewport-anchored hero maintains position while content cards scroll behind",
+    "miniature\u2192world morph: initial card smoothly scales and repositions into full hero view on first scroll",
+    "forward + reverse: scroll direction detection drives step progression and regression",
+    "First Moment: prominent initial card with metadata",
+    "next candidates: 3 horizontally arranged cards after First Moment",
+    "editable WHY NEXT: inline text field per connection",
+    "MAIN / BRANCH: radio/toggle for path selection per next candidate",
+    "YOUR FIRST TREE \u00b7 MAIN + BRANCH: recap summary with tree visualization placeholder"
+  ],
+  "sourceOnlyValues": [],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #177 \u2014 V1.2 continuous-scroll first journey accepted as presentation delta of existing /v4/journey. Native presentation implementation complete. API/DB/Auth = NON-SCOPE. Canonical durable persistence (Issue #204) is a separate concern."
+  },
+  "templateFamily": "first-journey",
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "Existing V1 journey tests at tests/v4-first-journey-source-faithful.test.mjs remain unchanged (regression gate).",
+      "No new Lineage number allocated \u2014 existing /v4/journey route is the canonical owner.",
+      "This is a presentation delta, not a new database model or API handler."
+    ]
+  }
+}

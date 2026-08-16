@@ -5,21 +5,15 @@ import { useRouter } from "next/navigation";
 import EmailAuthForm from "@/app/components/EmailAuthForm";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { createFirstTree } from "@/lib/first-tree-create-client";
 
 const LAST_TREE_KEY = "lovetree-v4-product-spine-last-tree-id";
-const CLIENT_KEY = "lovetree-v4-product-spine-create-client-key";
 
 const sampleMoments = [
   { label: "처음 발견한 순간", title: "한 장면이 오래 마음에 남았어요." },
   { label: "다음으로 찾아본 순간", title: "그 마음이 다른 영상으로 이어졌어요." },
   { label: "오래 간직할 문장", title: "시간이 지나도 다시 보고 싶은 기록." },
 ];
-
-interface FirstMomentResponse {
-  tree?: { id?: string };
-  memory?: { id?: string };
-  error?: string;
-}
 
 function youtubeId(value: string) {
   const trimmed = value.trim();
@@ -31,14 +25,6 @@ function youtubeId(value: string) {
   } catch {
     return "";
   }
-}
-
-function getOrCreateClientKey(): string {
-  const existing = localStorage.getItem(CLIENT_KEY);
-  if (existing) return existing;
-  const value = crypto.randomUUID();
-  localStorage.setItem(CLIENT_KEY, value);
-  return value;
 }
 
 export default function V4Landing() {
@@ -102,10 +88,8 @@ export default function V4Landing() {
     setSaveError(null);
     clearAuthError();
     try {
-      const response = await apiFetch("/api/trees/with-first-memory", {
-        method: "POST",
-        body: JSON.stringify({
-          clientKey: getOrCreateClientKey(),
+      const { treeId, memoryId } = await createFirstTree({
+        payload: {
           title: treeName.trim(),
           visibility: "public",
           memory: {
@@ -119,17 +103,11 @@ export default function V4Landing() {
             timestamp: date,
             visibility: "public",
           },
-        }),
+        },
+        fetchFn: apiFetch,
       });
-      const data = (await response.json().catch(() => ({}))) as FirstMomentResponse;
-      const treeId = data.tree?.id;
-      const memoryId = data.memory?.id;
-      if (!response.ok || !treeId || !memoryId) {
-        throw new Error(data.error || "첫 순간을 저장하지 못했어요.");
-      }
 
       localStorage.setItem(LAST_TREE_KEY, treeId);
-      localStorage.removeItem(CLIENT_KEY);
       setPendingSave(false);
       setAuthOpen(false);
       setToast("첫 순간이 뿌리로 심어졌어요 ✦");

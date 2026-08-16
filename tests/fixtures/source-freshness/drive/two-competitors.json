@@ -1,0 +1,20 @@
+{
+  "available": true,
+  "note": "synthetic: two competing functional-current candidates, no explicit unique authority",
+  "files": [
+    {
+      "driveId": "1T11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.0",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "bytes": 490000,
+      "functional": true
+    },
+    {
+      "driveId": "1U11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "revisionLabel": "V1.1",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bytes": 500000,
+      "functional": true
+    }
+  ]
+}

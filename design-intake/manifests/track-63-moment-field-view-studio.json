@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-63-moment-field-view-studio",
+  "sourceTrackId": "Track63",
+  "title": "Moment Field 3D View Studio V1",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_PENDING",
+  "rendering": "unresolved",
+  "scenarioId": "people-archive",
+  "productJob": "One existing Tree / one canonical Moment+Connection dataset → choose among multiple spatial presentation lenses → inspect the same mixed-media Moments under that lens → adjust bounded View geometry/motion parameters live → scrub/play the current presentation → save reusable View presets.",
+  "summary": "Track63 (모먼트필드 3D뷰스튜디오 / Moment Field 3D View Studio V1) is a new repository Lineage (lt-63-moment-field-view-studio). This manifest preserves the V1 instruction-accepted / EXECUTABLE_PENDING historical proving snapshot (Issue #164). Current source authority has advanced to the V1.3 instruction (instruction 35_디자인팀장6기_63_V1.3_V1.1엔진복귀·성능복구·선별UX이식_긴급수정지시_2026-08-14.md, Drive 17mpqsZk-dMcHCnPszv8eFmX8ku7NR_02, 20,136 B, SHA256 e4d9c1a0de4c2d4213133e4f94da98fc473ca02799cd407ea56f4ae00e3788d0; candidate folder 버전1.3_V1.1엔진복귀·성능복구·선별UX이식_후보, Drive 1k-2-WWIaVzII8TO7WrllSf1zDVFAO7fE — EMPTY at last independent read). V1.3 is INSTRUCTION_AUTHORITY_CURRENT / EXECUTABLE_PENDING. V1.1 engine is BASE MASTER (engine-return base); V1.2 is UX DONOR ONLY with performance-runtime regression HOLD — do NOT fall back to V1.2 as current authority. The historical V1 pin stays pre-executable: rendering unresolved, no source-fidelity PASS claimed. qa and fidelityTargetMetadata are removed in this correction — they were aspirational false-green claims; a native candidate must pass actual-route browser QA before they may be re-added.",
+  "provenance": {
+    "sourceLabel": "63_모먼트필드_3D뷰스튜디오 / Issue #164",
+    "driveFolderId": "1ReLPsimI10csOD-Mi2MT_ccXcWxcroFI",
+    "sourceFiles": ["★_참고영상_3D포토콜라주_카드클라우드편집.mp4"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-63-moment-field-view-studio",
+  "lineageNumber": 63,
+  "revisionId": "63-v1",
+  "sourceSnapshot": {
+    "revisionLabel": "V1 (instruction accepted)",
+    "authorityObservedAt": "2026-08-13T00:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.3 current instruction authority per Issue #164 (instruction 35_디자인팀장6기_63_V1.3_V1.1엔진복귀·성능복구·선별UX이식_긴급수정지시_2026-08-14.md, Drive 17mpqsZk-dMcHCnPszv8eFmX8ku7NR_02, 20,136 B, SHA256 e4d9c1a0de4c2d4213133e4f94da98fc473ca02799cd407ea56f4ae00e3788d0; candidate folder 버전1.3_V1.1엔진복귀·성능복구·선별UX이식_후보 Drive 1k-2-WWIaVzII8TO7WrllSf1zDVFAO7fE — EMPTY at last independent read). V1.3 is INSTRUCTION_AUTHORITY_CURRENT / EXECUTABLE_PENDING. V1.1 engine is BASE MASTER (engine-return base); V1.2 is UX DONOR ONLY with performance-runtime regression HOLD — do NOT fall back to V1.2 as current authority. The checked-in V1 pre-executable proving snapshot stays pinned per #80; do not force-upgrade its lifecycle or promote any prior executable artifact as if it were current authority"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "★_참고영상_3D포토콜라주_카드클라우드편집.mp4",
+      "driveId": "1iopa96U_ID4bknrOIOw-Y83sgvrRudyD",
+      "bytes": 43394198,
+      "sha256": "1514c0c50d8d274a8dac61332f3e28094634048f2dd0e1a9d9631db7de38b1df",
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P4", "P5", "P7", "P9"],
+  "sourceDefects": [
+    "no executable candidate exists at intake — candidate folder empty",
+    "no source fingerprint for an executable"
+  ],
+  "nativeRemediations": [
+    "keyboard tool selection and inspector operation",
+    "visible focus",
+    "pointer/touch/wheel ownership",
+    "selected Moment semantics exposed outside purely visual 3D pixels",
+    "video playback cap enforced",
+    "saved preset restore",
+    "same canonical data preserved across multiple ViewDefinition switches",
+    "320×720 QA"
+  ],
+  "sourceOnlyValues": [],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Issue #164 — V1 historical pin preserved; V1.3 current instruction authority accepted (INSTRUCTION_AUTHORITY_CURRENT / EXECUTABLE_PENDING / QA_PENDING / FINAL_CLOSED_FORBIDDEN); adoption stays UNDECIDED until a native candidate passes actual-route browser QA"
+  },
+  "templateFamily": "view-preset-studio",
+  "slotNotes": {
+    "issue": "142",
+    "notes": [
+      "ViewDefinition/parameter-schema notes instead of treating every visible source tool as a new capability/runtime primitive",
+      "save/restore View presets = reusable template instances over canonical Moment+Connection projections"
+    ],
+    "policyBoundary": [
+      "no topology mutation from View controls",
+      "View presets are presentation state, not canonical data changes"
+    ]
+  }
+}

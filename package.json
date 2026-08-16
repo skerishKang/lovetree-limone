@@ -15,6 +15,9 @@
     "start": "vinext start",
     "test": "npm run build && node --import tsx --test 'tests/*.test.mjs'",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern worker-configuration.d.ts",
+    "design:intake:validate": "node --import tsx scripts/design-intake-validate.mjs",
+    "design:intake:scaffold": "node --import tsx scripts/design-intake-scaffold.mjs",
+    "design:intake:freshness": "node --import tsx scripts/design-intake-source-freshness.mjs",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check"

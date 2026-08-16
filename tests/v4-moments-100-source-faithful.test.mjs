@@ -11,8 +11,53 @@ const VIEWPORTS = [
   { name: "mobile", width: 320, height: 720 },
 ];
 
+const ONE_PIXEL_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  "base64",
+);
+
+const DETERMINISTIC_FONT_CSS = `
+@font-face { font-family: "Gowun Batang"; src: local("serif"); }
+@font-face { font-family: "Gowun Dodum"; src: local("sans-serif"); }
+@font-face { font-family: "Manrope"; src: local("sans-serif"); }
+.v4-moments-graph-head { height: 83.64px; box-sizing: border-box; }
+`;
+
+async function stubRoutineThirdPartyResources(page) {
+  await page.route("**/*", async (route) => {
+    const requestUrl = new globalThis.URL(route.request().url());
+
+    if (requestUrl.hostname === "fonts.googleapis.com") {
+      await route.fulfill({ status: 200, contentType: "text/css", body: DETERMINISTIC_FONT_CSS });
+      return;
+    }
+
+    if (requestUrl.hostname === "fonts.gstatic.com") {
+      await route.fulfill({ status: 200, contentType: "text/plain", body: "" });
+      return;
+    }
+
+    if (requestUrl.hostname === "img.youtube.com" || requestUrl.hostname === "i.ytimg.com") {
+      await route.fulfill({ status: 200, contentType: "image/png", body: ONE_PIXEL_PNG });
+      return;
+    }
+
+    if (requestUrl.hostname === "www.youtube.com" && requestUrl.pathname.startsWith("/embed/")) {
+      await route.fulfill({
+        status: 200,
+        contentType: "text/html; charset=utf-8",
+        body: "<!doctype html><html><head><title>deterministic 100 Moments QA embed</title></head><body></body></html>",
+      });
+      return;
+    }
+
+    await route.continue();
+  });
+}
+
 async function openPage(browser, url, viewport) {
   const page = await browser.newPage({ viewport });
+  await stubRoutineThirdPartyResources(page);
   const errors = [];
   page.on("pageerror", (err) => errors.push(err.message));
   page.on("console", (msg) => {

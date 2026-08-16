@@ -135,6 +135,16 @@ export default function TreeDetailPage() {
                       <p>{moment.memo || "이 순간에 남긴 마음"}</p>
                       {memory.emotionTags && memory.emotionTags.length > 0 ? <div className="memory-tags">{memory.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}
                       {memory.sourceUrl ? <a className="memory-source" href={memory.sourceUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>출처 열기 ↗</a> : null}
+                     {memory.parentId ? (
+                       <div className="moment-detail-parent">
+                         <span className="moment-detail-parent-label">이전 순간에서 이어짐</span>
+                         {memory.connectionReason && memory.connectionReason.trim() ? (
+                           <p className="moment-detail-parent-title">{memory.connectionReason}</p>
+                         ) : (
+                           <p className="moment-detail-parent-title timeline-relation-generic">이전 순간과 이어지는 관계</p>
+                         )}
+                       </div>
+                     ) : null}
                     </div>
                   </article>
                 );

@@ -18,10 +18,17 @@ test("V4 landing preserves the source-faithful first-discovery journey", async (
 });
 
 test("V4 discovery creates Tree + first Memory through the existing authenticated API", async () => {
-  const landing = await read("app/components/v4/V4Landing.tsx");
+  const [landing, seam] = await Promise.all([
+    read("app/components/v4/V4Landing.tsx"),
+    read("lib/first-tree-create-client.ts"),
+  ]);
   assert.match(landing, /useAuth\(\)/);
   assert.match(landing, /<EmailAuthForm/);
-  assert.match(landing, /apiFetch\("\/api\/trees\/with-first-memory"/);
+  assert.match(landing, /createFirstTree\(/);
+  assert.match(landing, /fetchFn:\s*apiFetch/);
+  assert.match(seam, /FIRST_CREATE_ENDPOINT = "\/api\/trees\/with-first-memory"/);
+  assert.match(seam, /fetchFn = options\.fetchFn \?\? apiFetch/);
+  assert.doesNotMatch(landing, /apiFetch\("\/api\/trees\/with-first-memory"/, "direct canonical POST is owned by the seam");
   assert.match(landing, /sourceUrl:\s*url\.trim\(\)/);
   assert.match(landing, /sourceType:\s*"youtube"/);
   assert.match(landing, /thumbnail,/);
@@ -63,12 +70,17 @@ test("successful V4 creation enters the existing server-backed Tree view", async
 });
 
 test("localStorage is only a retry/pointer aid, never authoritative first-moment content", async () => {
-  const landing = await read("app/components/v4/V4Landing.tsx");
+  const [landing, seam] = await Promise.all([
+    read("app/components/v4/V4Landing.tsx"),
+    read("lib/first-tree-create-client.ts"),
+  ]);
   assert.match(landing, /lovetree-v4-product-spine-last-tree-id/);
-  assert.match(landing, /lovetree-v4-product-spine-create-client-key/);
   assert.match(landing, /localStorage\.setItem\(LAST_TREE_KEY, treeId\)/);
-  assert.match(landing, /localStorage\.removeItem\(CLIENT_KEY\)/);
+  assert.doesNotMatch(landing, /lovetree-v4-product-spine-create-client-key/, "pending-key literal is owned by the seam");
+  assert.doesNotMatch(landing, /localStorage\.removeItem\(CLIENT_KEY\)/, "pending-key clear is owned by the seam");
   assert.doesNotMatch(landing, /localStorage\.setItem\([^,]+,\s*JSON\.stringify/);
+  assert.match(seam, /PENDING_CLIENT_KEY = "lovetree-v4-product-spine-create-client-key"/);
+  assert.match(seam, /removeItem\(PENDING_CLIENT_KEY\)/);
 });
 
 test("V4 landing loads the shared email-auth styling", async () => {

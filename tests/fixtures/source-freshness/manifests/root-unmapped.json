@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "stableId": "root-unmapped",
+  "sourceTrackId": "Track60",
+  "title": "Fixture root current unmapped",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic source-freshness resolver fixture",
+  "summary": "synthetic fixture: manifest carries no sourceSnapshot, so its root never maps a current source revision",
+  "provenance": {
+    "sourceLabel": "synthetic source-freshness fixture",
+    "sourceFiles": ["fixture.html"],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "designLineageId": "lt-60-synthetic-root-unmapped",
+  "lineageNumber": 60,
+  "revisionId": "60-v1-2",
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1M11a2b3c4d5e6f7g8h9i0j1k2l3m4n",
+      "bytes": 500000,
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ]
+}

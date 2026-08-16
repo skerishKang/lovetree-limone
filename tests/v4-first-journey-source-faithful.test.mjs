@@ -20,8 +20,29 @@ const STORAGE_KEYS = [
   "lovetree-step3-connection",
 ];
 
+const ONE_PIXEL_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  "base64",
+);
+
+async function stubRoutineThirdPartyResources(page) {
+  await page.route("**/*", async (route) => {
+    const requestUrl = new URL(route.request().url());
+    if (requestUrl.hostname === "fonts.googleapis.com") {
+      await route.fulfill({ status: 200, contentType: "text/css", body: "" });
+      return;
+    }
+    if (requestUrl.hostname === "i.ytimg.com" || requestUrl.hostname === "img.youtube.com") {
+      await route.fulfill({ status: 200, contentType: "image/png", body: ONE_PIXEL_PNG });
+      return;
+    }
+    await route.continue();
+  });
+}
+
 async function openPage(browser, url, viewport) {
   const page = await browser.newPage({ viewport });
+  await stubRoutineThirdPartyResources(page);
   const errors = [];
   page.on("pageerror", (err) => errors.push(err.message));
   page.on("console", (msg) => {
