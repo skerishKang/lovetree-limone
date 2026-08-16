@@ -213,25 +213,44 @@ for (const vp of VIEWPORTS) {
   await objects.click(); // focus the range input
   await objects.press("Home");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "18", null, { timeout: 5000 });
-  const hiddenAt18 = await frame.locator('.node[style*="display: none"]').count();
-  const sliderTo18 = hiddenAt18 === 71;
+  // display:none styles update on the NEXT render frame — wait for the exact count
+  await frame.waitForFunction(
+    () => document.querySelectorAll('.node[style*="display: none"]').length === 71,
+    null,
+    { timeout: 5000 },
+  );
   await objects.press("End");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "89", null, { timeout: 5000 });
-  const hiddenAt89 = await frame.locator('.node[style*="display: none"]').count();
-  record(`${vp.name}_slider_changes_runtime_count_18_89`, sliderTo18 && hiddenAt89 === 0);
+  await frame.waitForFunction(
+    () => document.querySelectorAll('.node[style*="display: none"]').length === 0,
+    null,
+    { timeout: 5000 },
+  );
+  record(`${vp.name}_slider_changes_runtime_count_18_89`, true);
 
-  // 6) Reset actually restores source defaults
+  // 6) Reset actually restores source defaults. The Reset button sits at the
+  // bottom of the drawer's scrollable body; reach it through the source's
+  // own keyboard tab order and activate with Enter (native keyboard path).
   await objects.press("Home"); // -> 18
   const corner = frame.locator("#corner");
   await corner.click();
   for (let i = 0; i < 4; i++) await corner.press("ArrowLeft");
   const cornerBefore = await corner.inputValue();
-  await frame.locator("#reset").click();
+  let resetReached = false;
+  for (let i = 0; i < 20 && !resetReached; i++) {
+    await page.keyboard.press("Tab");
+    resetReached = await frame.evaluate(() => document.activeElement && document.activeElement.id === "reset");
+  }
+  await page.keyboard.press("Enter");
   await frame.waitForFunction(() => document.getElementById("objectCount").textContent === "89", null, { timeout: 5000 });
+  await frame.waitForFunction(
+    () => document.querySelectorAll('.node[style*="display: none"]').length === 0,
+    null,
+    { timeout: 5000 },
+  );
   const objectsAfter = await objects.inputValue();
   const cornerAfter = await corner.inputValue();
-  const hiddenAfterReset = await frame.locator('.node[style*="display: none"]').count();
-  record(`${vp.name}_reset_restores_defaults`, objectsAfter === "89" && cornerAfter === "7" && hiddenAfterReset === 0 && Number(cornerBefore) === 3);
+  record(`${vp.name}_reset_restores_defaults`, objectsAfter === "89" && cornerAfter === "7" && Number(cornerBefore) === 3 && resetReached);
 
   // 8-close) Shape drawer closes via Escape
   await page.keyboard.press("Escape");
