@@ -352,9 +352,9 @@ if (PHASE === "exact") {
     await page.screenshot({ path: `${SHOTS}/native-desktop-act5-cta.png` });
     await page.close();
   });
-  checks.push(...navContract());
-  checks.push(...mobileViewportChecks("390", { width: 390, height: 844 }));
-  checks.push(...mobileViewportChecks("320", { width: 320, height: 720 }));
+  navContract();
+  mobileViewportChecks("390", { width: 390, height: 844 });
+  mobileViewportChecks("320", { width: 320, height: 720 });
   record("reduced-motion 5-keyframe still mode with the exact film", async (browser) => {
     const { page } = await openNative(browser, { width: 1280, height: 800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -421,7 +421,7 @@ if (PHASE === "exact") {
     }
     await page.close();
   });
-  checks.push(...navContract());
+  navContract();
   record("13 reduced motion still mode maps scroll to the 5 keyframe acts", async (browser) => {
     const { page } = await openNative(browser, { width: 1280, height: 800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -450,8 +450,8 @@ if (PHASE === "exact") {
     await page.screenshot({ path: `${SHOTS}/native-desktop-reduced-act5.png` });
     await page.close();
   });
-  checks.push(...mobileViewportChecks("390", { width: 390, height: 844 }));
-  checks.push(...mobileViewportChecks("320", { width: 320, height: 720 }));
+  mobileViewportChecks("390", { width: 390, height: 844 });
+  mobileViewportChecks("320", { width: 320, height: 720 });
 }
 
 record("source runner: SHA-verified exact bytes + sandbox + truthful video state", async (browser) => {

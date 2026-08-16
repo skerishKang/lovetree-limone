@@ -30,6 +30,14 @@ const componentText = await readFile(
   "utf8",
 );
 
+const runnerText = await readFile(
+  new URL(
+    "app/design-lab/source-tracks/47/v4-2-5/source/SourceTrack47Runner.tsx",
+    root,
+  ),
+  "utf8",
+);
+
 function count(haystack, needle) {
   return haystack.split(needle).length - 1;
 }
@@ -161,4 +169,13 @@ test("component source holds the interaction contracts browser QA exercises", as
   assert.match(source, /failVideo/);
   // demoComposer parity hook.
   assert.match(source, /demoComposer/);
+});
+
+test("source runner retry re-runs verification (nonce-gated re-fetch, fail-closed)", () => {
+  // Regression guard for the Re-verify control: it must bump a retry nonce
+  // (not only reset state) so the verification effect actually re-fetches and
+  // re-hashes the exact source; the iframe stays fail-closed until
+  // verification reaches "ready".
+  assert.match(runnerText, /setNonce\(\(n\) => n \+ 1\)/);
+  assert.match(runnerText, /runner\.sourceAssetPath, nonce/);
 });

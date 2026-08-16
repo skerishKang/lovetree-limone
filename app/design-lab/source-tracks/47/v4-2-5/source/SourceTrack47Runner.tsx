@@ -50,6 +50,11 @@ export default function SourceTrack47Runner({
   };
 }) {
   const [verification, setVerification] = useState<Verification>(INITIAL);
+  // Retry nonce: bumped by the Re-verify control so the verification effect
+  // (which depends on it) actually re-fetches and re-hashes the exact source
+  // instead of only resetting state. Fail-closed: the iframe is still only
+  // created once verification reaches "ready".
+  const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,10 +92,10 @@ export default function SourceTrack47Runner({
     return () => {
       cancelled = true;
     };
-  }, [runner.sourceAssetPath]);
+  }, [runner.sourceAssetPath, nonce]);
 
   const reload = useCallback(() => {
-    setVerification(INITIAL);
+    setNonce((n) => n + 1);
   }, []);
 
   return (
