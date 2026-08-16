@@ -144,7 +144,7 @@ export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete
     }
   }
 
-  const parentMoment = parentOptions.find((m) => m.id === moment.parentId);
+  const parentMoment = moment.parentId ? parentOptions.find((m) => m.id === moment.parentId) : undefined;
   const offset = formatOffset(moment.videoOffsetSeconds ?? videoOffsetSecondsFromUrl(moment.sourceUrl || ""));
 
   return (
@@ -206,11 +206,15 @@ export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete
             {moment.thumbnail ? <div className="moment-detail-thumb"><MomentThumbnail src={moment.thumbnail} alt="" sourceType={moment.sourceType} placeholderClassName="moment-thumb-placeholder" /></div> : null}
             {moment.emotionTags && moment.emotionTags.length > 0 ? <div className="memory-tags">{moment.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}
             {moment.sourceUrl ? <a className="moment-detail-link" href={moment.sourceUrl} target="_blank" rel="noreferrer">출처 열기 ↗</a> : null}
-            {parentMoment ? (
+            {moment.parentId ? (
               <div className="moment-detail-parent">
                 <span className="moment-detail-parent-label">이전 순간에서 이어짐</span>
-                <span className="moment-detail-parent-title">{parentMoment.title || "이전 순간"}</span>
-                {moment.connectionReason ? <p>{moment.connectionReason}</p> : null}
+                <span className="moment-detail-parent-title">{parentMoment?.title || "이전 순간"}</span>
+                {moment.connectionReason && moment.connectionReason.trim() ? (
+                  <p>{moment.connectionReason}</p>
+                ) : (
+                  <p className="timeline-relation-generic">이전 순간과 이어지는 관계</p>
+                )}
               </div>
             ) : null}
             {isOwner ? <div className="moment-detail-actions"><button className="button button-quiet" type="button" onClick={() => { setMode("edit"); setFeedback(null); }}>수정</button><button className="button button-quiet" type="button" onClick={() => { setMode("delete-confirm"); setFeedback(null); }}>삭제</button></div> : null}

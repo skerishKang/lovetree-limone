@@ -9,6 +9,7 @@ const timeline = readFileSync(new URL("../app/trees/[id]/timeline/page.tsx", imp
 const album = readFileSync(new URL("../app/trees/[id]/album/page.tsx", import.meta.url), "utf8");
 const hook = readFileSync(new URL("../lib/use-tree-moments.ts", import.meta.url), "utf8");
 const composer = readFileSync(new URL("../app/components/MomentComposerModal.tsx", import.meta.url), "utf8");
+const momentDetailModal = readFileSync(new URL("../app/components/MomentDetailModal.tsx", import.meta.url), "utf8");
 const finalTreeSurface = readFileSync(new URL("../app/components/v4/product/V4FinalTreeSurface.tsx", import.meta.url), "utf8");
 
 test("real tree routes exist and use the App Router shape", () => {
@@ -138,4 +139,15 @@ test("graph inspector keeps the canonical real-data surface and surfaces WHY NEX
   assert.match(finalTreeSurface, /\(chosen\.parentId \? <div><dt>WHY NEXT<\/dt>|\{chosen\.parentId \? <div><dt>WHY NEXT<\/dt>/);
   // no new API/schema/persistence introduced by the graph path
   assert.doesNotMatch(finalTreeSurface, /apiFetch\(`\/api\/trees/);
+});
+
+test("shared Moment detail modal preserves canonical WHY NEXT semantics for connected moments", () => {
+  // relation visibility follows persisted topology even if the parent record is temporarily unresolved
+  assert.match(momentDetailModal, /moment\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+  assert.match(momentDetailModal, /parentMoment\?\.title \|\| "이전 순간"/);
+  // exact stored reason wins when nonblank; blank/missing reason uses the one canonical fallback
+  assert.match(momentDetailModal, /moment\.connectionReason && moment\.connectionReason\.trim\(\)/);
+  assert.match(momentDetailModal, /<p>\{moment\.connectionReason\}<\/p>/);
+  assert.equal((momentDetailModal.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  assert.match(momentDetailModal, /<p className="timeline-relation-generic">이전 순간과 이어지는 관계<\/p>/);
 });
