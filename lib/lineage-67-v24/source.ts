@@ -30,8 +30,8 @@ export const LINEAGE_67_V24_SOURCE = {
   expectedRuntimeApi: [
     "gl.getContext('webgl2')",
     "requestAnimationFrame loop",
-    "CHUNK_RAW static promotion (cap 112)",
-    "bounded memory tail (cap 220)",
+    "STATIC CHUNKS + ACTIVE TAIL (112 raw samples / bake, no chunk-count cap)",
+    "active tail bounded by bake cycle (trigger 120, residual raw)",
     "ribbonHitTest -> openInspect",
     "Space rewind / Tab orbit",
     "WORKS_ archive navigation",

@@ -3,15 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   V24_CHUNK_RAW,
-  V24_TAIL_MAX,
+  V24_CHUNK_TRIGGER,
   V24_Q_OFFSET,
-  promoteChunk,
-  pushTail,
+  V24_RIBBON_HEIGHT,
   computeQ,
   clampTravel,
-  frontmostHit,
+  v24InitState,
+  v24MakeSample,
+  v24AppendSample,
+  v24RecordHistory,
+  v24RewindStep,
+  v24RayFromPointer,
+  v24RibbonHitTest,
+  type V24SimState,
   type V24Chunk,
-  type V24Vec3,
 } from "@/lib/lineage-67-v24/engine";
 import {
   perspective,
@@ -23,21 +28,6 @@ import {
   TAIL_FRAGMENT_SHADER,
 } from "@/lib/lineage-67-v24/webgl";
 import { LINEAGE_67_V24_WORKS_V242_OWNER_SET } from "@/lib/lineage-67-v24/source";
-
-interface SimState {
-  pos: [number, number, number];
-  dir: [number, number, number];
-  travel: number;
-  chunks: V24Chunk[];
-  nextId: number;
-  tail: V24Vec3[];
-  callIndex: number;
-  history: number[];
-  historyIndex: number;
-  spin: number;
-  orbit: boolean;
-  rew: boolean;
-}
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string): WebGLShader | null {
   const sh = gl.createShader(type);
@@ -74,20 +64,7 @@ function chunkHeight(id: number): number {
 
 export default function NativeRenderer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const simRef = useRef<SimState>({
-    pos: [0, 1.5, 0],
-    dir: [0, 0, -1],
-    travel: 0,
-    chunks: [],
-    nextId: 1,
-    tail: [],
-    callIndex: 0,
-    history: [0],
-    historyIndex: 0,
-    spin: 0,
-    orbit: false,
-    rew: false,
-  });
+  const simRef = useRef<V24SimState>(v24InitState());
   const glRef = useRef<WebGL2RenderingContext | null>(null);
   const programsRef = useRef<{ chunk: WebGLProgram | null; tail: WebGLProgram | null }>({
     chunk: null,
@@ -97,7 +74,7 @@ export default function NativeRenderer() {
   const [playing, setPlaying] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inspect, setInspect] = useState<V24Chunk | null>(null);
-  const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, q: 0 });
+  const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, raw: 0, q: 0 });
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -113,28 +90,28 @@ export default function NativeRenderer() {
   const stepSim = useCallback((dt: number) => {
     const s = simRef.current;
     const speed = 6;
-    const step = speed * Math.min(dt, 0.05);
-    const spin = s.spin + step * 0.6;
+    const stepLen = speed * Math.min(dt, 0.05);
+    const spin = s.spin + stepLen * 0.6;
     const a = spin;
     const dir: [number, number, number] = [Math.sin(a) * 0.6, 0, -Math.cos(a) * 0.6];
+    const travel = clampTravel(s.travel + stepLen);
     const np: [number, number, number] = [
-      s.pos[0] + dir[0] * step,
+      s.pos[0] + dir[0] * stepLen,
       s.pos[1],
-      s.pos[2] + dir[2] * step,
+      s.pos[2] + dir[2] * stepLen,
     ];
-    const travel = clampTravel(s.travel + step);
-    s.callIndex += 1;
-    const promoted = promoteChunk(s.chunks, s.nextId, np[0], np[2]);
-    s.chunks = promoted.chunks as V24Chunk[];
-    s.nextId = promoted.nextId;
-    s.tail = pushTail(s.tail, { x: np[0], y: np[1], z: np[2] }, s.callIndex) as V24Vec3[];
-    s.history.push(travel);
-    if (s.history.length > 1024) s.history.shift();
-    s.historyIndex = s.history.length - 1;
-    s.pos = np;
-    s.dir = dir;
-    s.spin = spin;
-    s.travel = travel;
+    const sample = v24MakeSample({
+      order: s.nextOrder,
+      travel,
+      x: np[0],
+      y: np[1],
+      z: np[2],
+      spin,
+      dir,
+    });
+    let next = v24AppendSample(s, sample);
+    next = v24RecordHistory(next);
+    simRef.current = next;
   }, []);
 
   const renderSim = useCallback(() => {
@@ -166,7 +143,11 @@ export default function NativeRenderer() {
     const chunkVbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, chunkVbo);
     const chunkData: number[] = [];
-    for (const c of s.chunks) chunkData.push(c.x, 0, c.z, chunkHeight(c.id));
+    for (const c of s.chunks) {
+      const cx = (c.minX + c.maxX) / 2;
+      const cz = (c.minZ + c.maxZ) / 2;
+      chunkData.push(cx, 0, cz, chunkHeight(c.id));
+    }
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(chunkData), gl.DYNAMIC_DRAW);
     const aPosC = 0;
     const aHeightC = 1;
@@ -184,9 +165,9 @@ export default function NativeRenderer() {
     const tailVbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tailVbo);
     const tailData: number[] = [];
-    const n = s.tail.length;
+    const n = s.raw.length;
     for (let i = 0; i < n; i += 1) {
-      const p = s.tail[i];
+      const p = s.raw[i];
       const age = n > 1 ? (n - 1 - i) / (n - 1) : 0;
       tailData.push(p.x, p.y, p.z, age);
     }
@@ -237,7 +218,8 @@ export default function NativeRenderer() {
       setHud({
         travel: Math.round(s.travel),
         chunks: s.chunks.length,
-        tail: s.tail.length,
+        tail: s.raw.length,
+        raw: s.raw.length,
         q: Number(computeQ(s.travel).toFixed(2)),
       });
       raf = requestAnimationFrame(loop);
@@ -246,28 +228,30 @@ export default function NativeRenderer() {
     return () => cancelAnimationFrame(raf);
   }, [playing, motion, stepSim, renderSim]);
 
-  const onPointerDown = (_e: React.PointerEvent<HTMLCanvasElement>) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const s = simRef.current;
-    if (s.orbit || s.rew) return;
-    const hit = frontmostHit(s.chunks, s.pos[0], s.pos[2]);
-    setInspect(hit ? { ...hit } : null);
+    const canvas = canvasRef.current;
+    if (e.button !== 0 || !canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ndcY = 1 - ((e.clientY - rect.top) / rect.height) * 2;
+    const eye: [number, number, number] = [s.pos[0], s.pos[1] + 1.2, s.pos[2]];
+    const ray = v24RayFromPointer(ndcX, ndcY, eye, [s.dir[0], s.dir[1], s.dir[2]], Math.PI / 3.2, rect.width / rect.height);
+    const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT);
+    setInspect(hit ? (s.chunks.find((c) => c.id === hit.chunkId) ?? null) : null);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
     const s = simRef.current;
     if (e.key === " ") {
       e.preventDefault();
-      const r = (() => {
-        const idx = Math.max(0, Math.min(s.history.length - 1, s.historyIndex));
-        if (idx <= 0) return { travel: 0, index: 0 };
-        return { travel: s.history[idx - 1], index: idx - 1 };
-      })();
-      s.travel = r.travel;
-      s.historyIndex = r.index;
+      simRef.current = v24RewindStep(s);
       setInspect(null);
     } else if (e.key === "Tab") {
       e.preventDefault();
-      s.orbit = !s.orbit;
+      const next = { ...simRef.current };
+      (next as V24SimState & { orbit?: boolean }).orbit = !(next as V24SimState & { orbit?: boolean }).orbit;
+      simRef.current = next;
     }
   };
 
@@ -280,19 +264,22 @@ export default function NativeRenderer() {
           ← V2.4.2 exact source
         </a>
         <p className="lt67-native__eyebrow">LINEAGE 67 · REVISION V2.4.2 · NATIVE CANDIDATE</p>
-        <h1>Persistent World (native WebGL2, bounded)</h1>
+        <h1>Persistent World (native WebGL2, source-faithful)</h1>
         <p className="lt67-native__lede">
-          V2.4.2 원본의 engine/texture/inspect/rewind 로직을 보존하면서, 정적 chunk(MEMORY)·경계 있는
-          memory tail·ribbon hit/inspect·Space rewind를 native WebGL2로 재추출한 후보입니다. 원본이
-          없으면 비슷한 Persistent World를 새로 그리지 않습니다.
+          V2.4.2 원본의 STATIC CHUNKS + ACTIVE TAIL 구조를 보존합니다. 정적 chunk는 개수 상한 없이
+          누적되고 가장 오래된 ribbon도 사라지지 않습니다(112는 bake당 raw sample 수). 활성 tail은
+          bake 주기에 의해 자연스럽게 bounding되며, Space rewind는 위치·방향·spin·travel을 과거 상태로
+          되돌리고 origin까지 도달합니다. 포인터는 실제 카메라 ray → chunk AABB → ribbon triangle
+          교차로 가장 가까운 표면을 선택합니다.
         </p>
       </header>
 
       <section className="lt67-native__hud" aria-label="runtime state">
         <div><span>travel</span><strong>{hud.travel}</strong></div>
         <div><span>q</span><strong>{hud.q}</strong></div>
-        <div><span>static chunks</span><strong>{hud.chunks} / {V24_CHUNK_RAW}</strong></div>
-        <div><span>tail</span><strong>{hud.tail} / {V24_TAIL_MAX}</strong></div>
+        <div><span>static chunks</span><strong>{hud.chunks}</strong></div>
+        <div><span>active tail (raw)</span><strong>{hud.tail}</strong></div>
+        <div><span>bake</span><strong>{hud.raw} / {V24_CHUNK_TRIGGER} → {V24_CHUNK_RAW}</strong></div>
         <div>
           <button type="button" onClick={() => setPlaying((p) => !p)}>
             {playing ? "일시정지" : "재생"}
@@ -321,9 +308,11 @@ export default function NativeRenderer() {
           <div className="lt67-native__inspect" role="dialog" aria-label="inspect memory chunk">
             <h2>Inspect MEMORY #{inspect.id}</h2>
             <dl>
-              <div><dt>grid</dt><dd>{inspect.gx}, {inspect.gz}</dd></div>
-              <div><dt>world</dt><dd>{inspect.x.toFixed(1)}, {inspect.z.toFixed(1)}</dd></div>
-              <div><dt>born</dt><dd>{inspect.born}</dd></div>
+              <div><dt>order</dt><dd>{inspect.order}</dd></div>
+              <div><dt>samples</dt><dd>{inspect.samples.length}</dd></div>
+              <div><dt>committed</dt><dd>{inspect.committed}</dd></div>
+              <div><dt>travel</dt><dd>{inspect.travel0.toFixed(1)} – {inspect.travel1.toFixed(1)}</dd></div>
+              <div><dt>q</dt><dd>{inspect.q0.toFixed(2)} – {inspect.q1.toFixed(2)}</dd></div>
               <div><dt>q offset</dt><dd>{V24_Q_OFFSET}</dd></div>
             </dl>
             <button type="button" onClick={() => setInspect(null)}>닫기</button>
