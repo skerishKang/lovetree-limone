@@ -105,7 +105,13 @@ export const WEB_CTO_VERIFIED_PAYLOADS = {
  * EXACT_ASSET_PINNED for matching media. Until then the map stays empty so the
  * runner can never fabricate an exact-media PASS.
  */
-export const EXACT_PINNED_ASSET_PATHS: Readonly<Record<string, true>> = {};
+export const EXACT_PINNED_ASSET_PATHS: Readonly<Record<string, true>> = {
+  "/design-lab-assets/lineages/59/v5/media/moment-m1-character-f01.webp": true,
+  "/design-lab-assets/lineages/59/v5/media/moment-m5-character-m01.webp": true,
+  "/design-lab-assets/lineages/59/v5/media/moment-m7-character-f01.webp": true,
+  "/design-lab-assets/lineages/59/v5/media/moment-m3-video-still.jpg": true,
+  "/design-lab-assets/lineages/59/v5/media/source-demo-video.mp4": true,
+};
 
 export type MediaBindingStatus =
   | "EXACT_ASSET_PINNED"
@@ -127,6 +133,7 @@ export interface AssetLedgerEntry {
   sha256?: string;
   mediaType: string;
   nativeBindingTarget?: string;
+  committedPath?: string;
   repoTransportPolicy: RepoTransportPolicy;
   provenanceStatus: MediaBindingStatus;
   notes?: string;
@@ -234,10 +241,11 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     bytes: 9_120,
     sha256: "aea1b65c10f6a937afc2a95d7892b5c277fe65cec4a56167696bfe56151cbef6",
     mediaType: "image/webp",
-    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    nativeBindingTarget: "Moment m1 character/photo media",
+    committedPath: "/design-lab-assets/lineages/59/v5/media/moment-m1-character-f01.webp",
     repoTransportPolicy: "REPO_PIN_OK",
-    provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed; do NOT mark EXACT_ASSET_PINNED until exact bytes are committed",
+    provenanceStatus: "EXACT_ASSET_PINNED",
+    notes: "Exact bytes committed from Web CTO staging package (review 4947154845); SHA256 verified",
   },
   {
     assetId: "src-character-webp-2",
@@ -246,10 +254,11 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     bytes: 6_114,
     sha256: "5a0aaa877c77b8edcfe286f839f27e611a9647166f3eae2db7b0040147de1a77",
     mediaType: "image/webp",
-    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    nativeBindingTarget: "Moment m5 character/photo media",
+    committedPath: "/design-lab-assets/lineages/59/v5/media/moment-m5-character-m01.webp",
     repoTransportPolicy: "REPO_PIN_OK",
-    provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+    provenanceStatus: "EXACT_ASSET_PINNED",
+    notes: "Exact bytes committed from Web CTO staging package (review 4947154845); SHA256 verified",
   },
   {
     assetId: "src-character-webp-3",
@@ -258,10 +267,11 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     bytes: 9_162,
     sha256: "9ee926a2e59a2c6243ff27064001b1f5aa5ee4ef0d65cfac3bdbd8f3b4ac358b",
     mediaType: "image/webp",
-    nativeBindingTarget: "Moment character/portrait media (exact-byte repo-pin approved)",
+    nativeBindingTarget: "Moment m7 character/photo media",
+    committedPath: "/design-lab-assets/lineages/59/v5/media/moment-m7-character-f01.webp",
     repoTransportPolicy: "REPO_PIN_OK",
-    provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+    provenanceStatus: "EXACT_ASSET_PINNED",
+    notes: "Exact bytes committed from Web CTO staging package (review 4947154845); SHA256 verified",
   },
   {
     assetId: "src-inline-media-jpeg",
@@ -270,10 +280,11 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     bytes: 9_718,
     sha256: "cc086ddd6d8ad5fad1bcff40c8f0323f201b4c70e3d0dab85e91b59fd9f54d48",
     mediaType: "image/jpeg",
-    nativeBindingTarget: "Moment inline media / video still (exact-byte repo-pin approved)",
+    nativeBindingTarget: "Moment m3 video still",
+    committedPath: "/design-lab-assets/lineages/59/v5/media/moment-m3-video-still.jpg",
     repoTransportPolicy: "REPO_PIN_OK",
-    provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "Web CTO verified exact bytes (review 4946999933); worker could not extract (Drive unreachable) → not committed",
+    provenanceStatus: "EXACT_ASSET_PINNED",
+    notes: "Exact bytes committed from Web CTO staging package (review 4947154845); SHA256 verified",
   },
   {
     assetId: "src-inline-video-mp4",
@@ -282,10 +293,11 @@ export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
     bytes: 4_606,
     sha256: "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465",
     mediaType: "video/mp4",
-    nativeBindingTarget: "Moment video media (exact-byte repo-pin approved)",
+    nativeBindingTarget: "Moment m3 source DEMO_VIDEO",
+    committedPath: "/design-lab-assets/lineages/59/v5/media/source-demo-video.mp4",
     repoTransportPolicy: "REPO_PIN_OK",
-    provenanceStatus: "SOURCE_REFERENCE_ONLY",
-    notes: "MP4 payload previously missing from ledger — now recorded. Web CTO verified exact bytes; worker could not extract (Drive unreachable) → not committed",
+    provenanceStatus: "EXACT_ASSET_PINNED",
+    notes: "Exact bytes committed from Web CTO staging package (review 4947154845); SHA256 verified",
   },
   {
     assetId: "demo-placeholder-portrait",
@@ -324,17 +336,17 @@ export const MAX_PINNED_BINARY_BYTES = 1_000_000;
 
 /**
  * Resolve the truthful binding status for a moment's rendered media. A
- * placeholder src is reported as DEMO_FIXTURE; any non-placeholder src that is
- * not checksum-pinned is SOURCE_REFERENCE_ONLY. This resolver NEVER returns
- * EXACT_ASSET_PINNED, so the native runtime cannot fabricate an exact-media
- * PASS.
+ * placeholder src is reported as DEMO_FIXTURE; a committed, checksum-verified
+ * exact path reports EXACT_ASSET_PINNED; any other src reports
+ * SOURCE_REFERENCE_ONLY.
  */
 export function resolveMomentMediaBinding(
   media: { src: string; type: string } | null,
 ): MediaBindingStatus | null {
   if (!media) return null;
-  // Exact-pin path map is empty until exact bytes are committed (worker Drive
-  // unreachable). Guarded so the runner can never fabricate an exact-media PASS.
+  // Committed exact-pin path map is populated from the Web CTO staging package
+  // (review 4947154845). EXACT_ASSET_PINNED is only ever returned for a path
+  // that actually exists in the repo with a verified SHA-256 — never fabricated.
   if (media.src in EXACT_PINNED_ASSET_PATHS) return "EXACT_ASSET_PINNED";
   if (media.src.includes("placeholder")) return "DEMO_FIXTURE";
   return "SOURCE_REFERENCE_ONLY";

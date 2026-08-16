@@ -70,7 +70,7 @@ export const MOMENTS: readonly Moment[] = [
     keywords: ["첫인상", "호기심", "무대"],
     media: {
       type: "photo",
-      src: "/design-lab-assets/lineages/59/v5/media/placeholder-portrait.svg",
+      src: "/design-lab-assets/lineages/59/v5/media/moment-m1-character-f01.webp",
       alt: "첫 번째 순간의 사진",
       width: 480,
       height: 640,
@@ -107,11 +107,11 @@ export const MOMENTS: readonly Moment[] = [
     keywords: ["인터뷰", "무대 밖", "진짜 모습"],
     media: {
       type: "video",
-      src: "/design-lab-assets/lineages/59/v5/media/placeholder-video.mp4",
+      src: "/design-lab-assets/lineages/59/v5/media/source-demo-video.mp4",
       alt: "인터뷰 영상",
       width: 854,
       height: 480,
-      posterSrc: "/design-lab-assets/lineages/59/v5/media/placeholder-landscape.svg",
+      posterSrc: "/design-lab-assets/lineages/59/v5/media/moment-m3-video-still.jpg",
     },
     link: null,
   },
@@ -142,7 +142,7 @@ export const MOMENTS: readonly Moment[] = [
     keywords: ["추천", "밤샘", "탐색"],
     media: {
       type: "photo",
-      src: "/design-lab-assets/lineages/59/v5/media/placeholder-landscape.svg",
+      src: "/design-lab-assets/lineages/59/v5/media/moment-m5-character-m01.webp",
       alt: "팬 추천 영상",
       width: 640,
       height: 480,
@@ -170,7 +170,7 @@ export const MOMENTS: readonly Moment[] = [
     keywords: ["완전", "빠짐", "일부"],
     media: {
       type: "photo",
-      src: "/design-lab-assets/lineages/59/v5/media/placeholder-portrait.svg",
+      src: "/design-lab-assets/lineages/59/v5/media/moment-m7-character-f01.webp",
       alt: "마지막 순간",
       width: 480,
       height: 640,

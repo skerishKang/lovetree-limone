@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import test from "node:test";
 
@@ -101,22 +102,23 @@ test("media binding resolver does not depend on or break selection authority", (
   const selection = createSelection(pathIds[0], pathIds);
   const before = selection.currentMomentId;
   const status = resolveMomentMediaBinding(MOMENTS[0].media);
-  assert.equal(status, "DEMO_FIXTURE");
+  assert.equal(status, "EXACT_ASSET_PINNED");
   assert.equal(selection.currentMomentId, before, "resolver must not mutate selection state");
   assert.equal(resolveMomentMediaBinding(null), null, "media-less moment has no false binding");
 });
 
-test("native data placeholders all resolve to DEMO_FIXTURE truthfully", () => {
+test("native data media resolves to DEMO_FIXTURE or EXACT_ASSET_PINNED truthfully", () => {
   for (const dataset of [MOMENTS, LONG_PATH_MOMENTS, BRANCH_MOMENTS]) {
     for (const m of dataset) {
       if (!m.media) {
         assert.equal(resolveMomentMediaBinding(m.media), null);
         continue;
       }
-      assert.equal(
-        resolveMomentMediaBinding(m.media),
-        "DEMO_FIXTURE",
-        `moment ${m.id} uses placeholder demo media and must be labeled DEMO_FIXTURE`,
+      const status = resolveMomentMediaBinding(m.media);
+      const isExactBound = m.media.src.includes("moment-m") || m.media.src.includes("source-demo-video");
+      assert.ok(
+        isExactBound ? status === "EXACT_ASSET_PINNED" : status === "DEMO_FIXTURE",
+        `moment ${m.id} (${m.media.src}) resolved to ${status}`,
       );
     }
   }
@@ -156,8 +158,8 @@ test("ledger transport policy is consistent: large HOLD, small exact approved, s
   const pinOk = ASSET_LEDGER.filter((e) => e.repoTransportPolicy === "REPO_PIN_OK");
   assert.equal(pinOk.length, 5, "5 small exact payloads are repo-pin approved");
   assert.ok(
-    pinOk.every((e) => e.provenanceStatus === "SOURCE_REFERENCE_ONLY"),
-    "approved small exact payloads remain SOURCE_REFERENCE_ONLY until exact bytes are committed",
+    pinOk.every((e) => e.provenanceStatus === "EXACT_ASSET_PINNED"),
+    "approved small exact are EXACT_ASSET_PINNED once committed",
   );
 });
 
@@ -185,7 +187,7 @@ test("asset ledger covers all 8 unique embedded payloads (9 data-URI occurrences
   assert.equal(uniqueEmbedded.length, 8, "8 unique embedded payloads");
 });
 
-test("exact small payloads carry Web CTO-verified bytes and SHA-256", () => {
+test("exact small payloads are repo-pinned with verified bytes and SHA-256", () => {
   const small = WEB_CTO_VERIFIED_PAYLOADS.smallExact;
   assert.equal(small.length, 5);
   const bySha = new Map(ASSET_LEDGER.map((e) => [e.sha256, e]));
@@ -194,28 +196,60 @@ test("exact small payloads carry Web CTO-verified bytes and SHA-256", () => {
     assert.ok(entry, `ledger must contain small payload sha ${p.sha256}`);
     assert.equal(entry.bytes, p.bytes, "exact byte size recorded");
     assert.equal(entry.repoTransportPolicy, "REPO_PIN_OK", "repo-pin approved");
+    assert.equal(entry.provenanceStatus, "EXACT_ASSET_PINNED", "committed exact → EXACT_ASSET_PINNED");
+    assert.ok(entry.committedPath, "committed path recorded");
   }
   // MP4 specifically
   const mp4 = getLedgerEntry("src-inline-video-mp4");
   assert.ok(mp4);
   assert.equal(mp4.sha256, "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465");
   assert.equal(mp4.bytes, 4606);
+  assert.equal(mp4.provenanceStatus, "EXACT_ASSET_PINNED");
 });
 
-test("EXACT_ASSET_PINNED resolver is fail-closed until exact bytes are committed", () => {
-  // Map is empty while Drive is unreachable for the worker, so the resolver
-  // can never fabricate an exact-media PASS.
-  assert.equal(Object.keys(EXACT_PINNED_ASSET_PATHS).length, 0);
+test("5 exact binaries actually exist in the repo with verified bytes and SHA-256", async () => {
+  const dir = new URL("../public/design-lab-assets/lineages/59/v5/media/", import.meta.url);
+  const expected = [
+    ["moment-m1-character-f01.webp", 9120, "aea1b65c10f6a937afc2a95d7892b5c277fe65cec4a56167696bfe56151cbef6"],
+    ["moment-m5-character-m01.webp", 6114, "5a0aaa877c77b8edcfe286f839f27e611a9647166f3eae2db7b0040147de1a77"],
+    ["moment-m7-character-f01.webp", 9162, "9ee926a2e59a2c6243ff27064001b1f5aa5ee4ef0d65cfac3bdbd8f3b4ac358b"],
+    ["moment-m3-video-still.jpg", 9718, "cc086ddd6d8ad5fad1bcff40c8f0323f201b4c70e3d0dab85e91b59fd9f54d48"],
+    ["source-demo-video.mp4", 4606, "1c84aa49be5bf35b58196831f8c2d5562e65cb23732dfd80d2322a249ca60465"],
+  ];
+  for (const [file, bytes, sha] of expected) {
+    const buf = await readFile(new URL(file, dir));
+    assert.equal(buf.length, bytes, `${file} exact byte size`);
+    const actual = createHash("sha256").update(buf).digest("hex");
+    assert.equal(actual, sha, `${file} exact SHA-256`);
+  }
+});
+
+test("resolver returns EXACT_ASSET_PINNED only for committed exact paths; wrong/missing/hash-mismatch cannot", () => {
+  assert.equal(
+    Object.keys(EXACT_PINNED_ASSET_PATHS).length,
+    5,
+    "5 committed exact paths registered",
+  );
+  assert.equal(
+    resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/moment-m1-character-f01.webp", type: "photo" }),
+    "EXACT_ASSET_PINNED",
+  );
+  assert.equal(
+    resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/source-demo-video.mp4", type: "video" }),
+    "EXACT_ASSET_PINNED",
+  );
+  // wrong path (no such committed file) → not exact
+  assert.equal(
+    resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/does-not-exist.webp", type: "photo" }),
+    "SOURCE_REFERENCE_ONLY",
+  );
+  // placeholder can never masquerade as exact
   assert.equal(
     resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/placeholder-portrait.svg", type: "photo" }),
     "DEMO_FIXTURE",
   );
-  assert.equal(
-    resolveMomentMediaBinding({ src: "/any/unknown/source.jpg", type: "photo" }),
-    "SOURCE_REFERENCE_ONLY",
-  );
-  // A ledger entry that IS EXACT_ASSET_PINNED classifies as such (proves the
-  // classification path exists for when exact bytes are later committed).
+  // hash mismatch forbids a PASS even if a matching file existed
+  assert.equal(verifyExactPin("aea1b65c10f6a937afc2a95d7892b5c277fe65cec4a56167696bfe56151cbef6", "deadbeef"), false);
   const pinned = { ...getLedgerEntry("src-inline-video-mp4"), provenanceStatus: "EXACT_ASSET_PINNED" };
   assert.equal(classifyLedgerBinding(pinned), "EXACT_ASSET_PINNED");
 });
@@ -227,8 +261,11 @@ test("placeholder demo media stays distinct from exact source assets", () => {
   });
   assert.equal(placeholder, "DEMO_FIXTURE");
   assert.notEqual(placeholder, "EXACT_ASSET_PINNED");
-  const exactLike = resolveMomentMediaBinding({ src: "/design-lab-assets/lineages/59/v5/media/src-inline-video-mp4.mp4", type: "video" });
-  assert.equal(exactLike, "SOURCE_REFERENCE_ONLY", "uncommitted exact path must not be reported pinned");
+  const exact = resolveMomentMediaBinding({
+    src: "/design-lab-assets/lineages/59/v5/media/moment-m3-video-still.jpg",
+    type: "photo",
+  });
+  assert.equal(exact, "EXACT_ASSET_PINNED", "committed exact path must report pinned");
 });
 
 test("large environment PNGs are never repo-pinnable and remain HOLD", () => {
@@ -246,9 +283,12 @@ test("selection/story/product contract regression is not broken by media binding
   const selection = createSelection(pathIds[0], pathIds);
   const before = selection.currentMomentId;
   const status = resolveMomentMediaBinding(MOMENTS[0].media);
-  assert.equal(status, "DEMO_FIXTURE");
+  assert.equal(status, "EXACT_ASSET_PINNED");
   assert.equal(selection.currentMomentId, before, "resolver must not mutate selection state");
   assert.equal(resolveMomentMediaBinding(null), null, "media-less moment has no false binding");
+  // a still-placeholder moment stays DEMO_FIXTURE (not upgraded to exact)
+  const placeholderMoment = MOMENTS.find((m) => m.media && m.media.src.includes("placeholder"));
+  assert.equal(resolveMomentMediaBinding(placeholderMoment.media), "DEMO_FIXTURE");
   // story transport untouched
   const { createStoryState, startStory, advanceStoryPhase } = await import("../lib/lineage-59/story-transport.ts");
   const story = createStoryState();
