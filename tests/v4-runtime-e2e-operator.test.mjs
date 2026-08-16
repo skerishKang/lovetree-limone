@@ -143,8 +143,29 @@ test("exact Runtime E2E cleanup deletes Memory then Tree and verifies both IDs g
     treeId: "tree-exact-id",
     memoryDeleted: true,
     treeDeleted: true,
+    memoryDeleteDisposition: "deleted",
+    treeDeleteDisposition: "deleted",
     verifiedGone: true,
   });
+});
+
+test("exact Runtime E2E cleanup is idempotent when a previous attempt already deleted IDs", async () => {
+  const responses = [
+    jsonResponse({ error: "Not found" }, 404),
+    jsonResponse({ error: "Not found" }, 404),
+    jsonResponse({ error: "Not found" }, 404),
+    jsonResponse({ error: "Not found" }, 404),
+  ];
+  const result = await cleanupExactRuntimeE2EResources({
+    baseUrl: "https://lovetree-runtime-e2e-preview.example.test",
+    memoryId: "memory-exact-id",
+    treeId: "tree-exact-id",
+    idToken: "fixture-id-token",
+    fetchImpl: async () => responses.shift(),
+  });
+  assert.equal(result.memoryDeleteDisposition, "already-gone");
+  assert.equal(result.treeDeleteDisposition, "already-gone");
+  assert.equal(result.verifiedGone, true);
 });
 
 test("exact Runtime E2E cleanup fails closed before Tree deletion when Memory deletion fails", async () => {
