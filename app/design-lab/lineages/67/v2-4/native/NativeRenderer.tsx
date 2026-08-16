@@ -75,6 +75,37 @@ function ribbonWallVerts(samples: readonly { x: number; z: number }[], height: n
   return out;
 }
 
+/**
+ * Project a world point to canvas CSS pixel coordinates using the SAME
+ * column-major view-projection matrix the renderer feeds the shader. Used only
+ * to publish bounded, read-only QA observability (where the rendered active tail
+ * / a static chunk actually appear on screen) so a browser test can issue a REAL
+ * pointer event at that pixel — the hit is still computed by the real camera-ray
+ * → ribbon-triangle pipeline, never injected.
+ */
+function projectToScreen(
+  p: readonly { x: number; y: number; z: number }[] | readonly [number, number, number][],
+  idx: number,
+  vp: ArrayLike<number>,
+  w: number,
+  h: number,
+): [number, number] | null {
+  const x = (p[idx] as { x: number; y: number; z: number }).x ?? (p[idx] as [number, number, number])[0];
+  const y = (p[idx] as { x: number; y: number; z: number }).y ?? (p[idx] as [number, number, number])[1];
+  const z = (p[idx] as { x: number; y: number; z: number }).z ?? (p[idx] as [number, number, number])[2];
+  const m = vp as ArrayLike<number>;
+  const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
+  const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
+  const cz = m[2] * x + m[6] * y + m[10] * z + m[14];
+  const cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+  if (cw <= 0.0001) return null;
+  const ndcX = cx / cw;
+  const ndcY = cy / cw;
+  const sx = (ndcX * 0.5 + 0.5) * w;
+  const sy = (1 - (ndcY * 0.5 + 0.5)) * h;
+  return [sx, sy];
+}
+
 export default function NativeRenderer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simRef = useRef<V24SimState>(v24InitState());
@@ -86,6 +117,14 @@ export default function NativeRenderer() {
   const [playing, setPlaying] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inspect, setInspect] = useState<V24Chunk | null>(null);
+  // Bounded, truthful observable of the LAST actual pointer hit. Derived directly
+  // from v24RibbonHitTest (the same surface the renderer draws), so a real browser
+  // click on the rendered active tail produces a positive "tail" observable and an
+  // empty-space click produces "none" — without inventing any new product behavior.
+  const [hitInfo, setHitInfo] = useState<{ kind: "chunk" | "tail" | "none"; surfaceId: number | null }>({
+    kind: "none",
+    surfaceId: null,
+  });
   const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, raw: 0, q: 0 });
 
   useEffect(() => {
@@ -179,6 +218,28 @@ export default function NativeRenderer() {
       gl.drawArrays(gl.TRIANGLES, 0, tailVerts.length / 3);
       gl.deleteBuffer(vbo);
     }
+
+    // Bounded QA observability: publish where the rendered active tail and a
+    // static chunk actually appear on screen (read-only screen coords derived
+    // from the same vp matrix). A browser test clicks these real pixels, so the
+    // hit is computed by the actual camera-ray → ribbon-triangle pipeline.
+    try {
+      if (s.raw.length >= 1) {
+        const tailPt = projectToScreen(s.raw, s.raw.length - 1, vp, w, h);
+        if (tailPt) canvas.dataset.tailScreen = `${Math.round(tailPt[0])},${Math.round(tailPt[1])}`;
+      } else {
+        delete canvas.dataset.tailScreen;
+      }
+      if (s.chunks.length >= 1 && s.chunks[0].samples.length >= 1) {
+        const mid = Math.floor(s.chunks[0].samples.length / 2);
+        const chunkPt = projectToScreen(s.chunks[0].samples, mid, vp, w, h);
+        if (chunkPt) canvas.dataset.chunkScreen = `${Math.round(chunkPt[0])},${Math.round(chunkPt[1])}`;
+      } else {
+        delete canvas.dataset.chunkScreen;
+      }
+    } catch {
+      /* observability is best-effort; never blocks rendering */
+    }
   }, []);
 
   useEffect(() => {
@@ -237,6 +298,11 @@ export default function NativeRenderer() {
     setInspect(
       hit && hit.kind === "chunk" ? (s.chunks.find((c) => c.id === hit.chunkId) ?? null) : null,
     );
+    // Surface the actual hit result as a bounded observable (chunk / tail / none)
+    // so the active tail is provably hittable in a real browser, not silently dropped.
+    setHitInfo(
+      hit ? { kind: hit.kind, surfaceId: hit.chunkId } : { kind: "none", surfaceId: null },
+    );
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
@@ -245,6 +311,7 @@ export default function NativeRenderer() {
       e.preventDefault();
       simRef.current = v24RewindStep(s);
       setInspect(null);
+      setHitInfo({ kind: "none", surfaceId: null });
     } else if (e.key === "Tab") {
       e.preventDefault();
       const next = { ...simRef.current };
@@ -296,7 +363,16 @@ export default function NativeRenderer() {
           onPointerDown={onPointerDown}
           onKeyDown={onKeyDown}
           aria-label="Track 67 V2.4.2 persistent world canvas"
+          data-hit-kind={hitInfo.kind}
+          data-hit-surface-id={hitInfo.surfaceId ?? ""}
         />
+        <p className="lt67-native__hit-status" role="status" aria-live="polite">
+          {hitInfo.kind === "chunk"
+            ? `static chunk #${hitInfo.surfaceId} selected`
+            : hitInfo.kind === "tail"
+              ? `active tail (surface ${hitInfo.surfaceId}) selected`
+              : "no ribbon surface hit"}
+        </p>
         {error && (
           <div className="lt67-native__fallback" role="status">
             {error} (정적 프레임은 표시되지 않습니다. reduced-motion 폴백을 사용하세요.)
@@ -313,7 +389,7 @@ export default function NativeRenderer() {
               <div><dt>q</dt><dd>{inspect.q0.toFixed(2)} – {inspect.q1.toFixed(2)}</dd></div>
               <div><dt>q offset</dt><dd>{V24_Q_OFFSET}</dd></div>
             </dl>
-            <button type="button" onClick={() => setInspect(null)}>닫기</button>
+            <button type="button" onClick={() => { setInspect(null); setHitInfo({ kind: "none", surfaceId: null }); }}>닫기</button>
           </div>
         )}
       </div>
