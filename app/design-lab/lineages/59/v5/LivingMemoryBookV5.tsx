@@ -77,8 +77,27 @@ import type { EditState } from "@/lib/lineage-59/edit-authority";
 import { openEdit, closeEdit, updateEditField, getEditData } from "@/lib/lineage-59/edit-authority";
 import Lt59Overlay from "./Lt59Overlay";
 import { FOCUS_ENTRY_ATTRIBUTE } from "@/lib/lineage-59/focus-authority";
+import {
+  resolveMomentMediaBinding,
+} from "@/lib/lineage-59/asset-provenance";
+import type { MediaBindingStatus } from "@/lib/lineage-59/asset-provenance";
 
 import "@/app/styles/lineage-59-living-memory-book.css";
+
+const MEDIA_BINDING_LABEL: Record<MediaBindingStatus, string> = {
+  EXACT_ASSET_PINNED: "EXACT ASSET PINNED",
+  SOURCE_REFERENCE_ONLY: "SOURCE REFERENCE ONLY",
+  TRANSPORT_HOLD: "TRANSPORT HOLD",
+  DEMO_FIXTURE: "DEMO FIXTURE",
+};
+
+function MediaBindingBadge({ status }: { status: MediaBindingStatus }) {
+  return (
+    <span className="lt59-media-binding" data-media-binding={status} aria-hidden="true">
+      {MEDIA_BINDING_LABEL[status]}
+    </span>
+  );
+}
 
 export type DataSetKey = "default" | "long-path" | "branch";
 
@@ -597,6 +616,7 @@ export default function LivingMemoryBookV5() {
     <>
       {moment.media && (
         <div className="lt59-book__page-media">
+          <MediaBindingBadge status={resolveMomentMediaBinding(moment.media)!} />
           {moment.media.type === "video" ? (
             <video
               src={moment.media.src}
@@ -917,6 +937,7 @@ export default function LivingMemoryBookV5() {
             <h2 className="lt59-detail__title">{currentMoment.title}</h2>
             {currentMoment.media && (
               <div className="lt59-detail__media">
+                <MediaBindingBadge status={resolveMomentMediaBinding(currentMoment.media)!} />
                 {currentMoment.media.type === "video" ? (
                   <video src={currentMoment.media.src} poster={currentMoment.media.posterSrc} controls aria-label={currentMoment.media.alt} style={{ maxWidth: "100%", maxHeight: "50vh" }} />
                 ) : (
@@ -952,6 +973,7 @@ export default function LivingMemoryBookV5() {
           <div className="lt59-magnifier">
             <h2 className="lt59-magnifier__title">Magnifier</h2>
             <div className="lt59-magnifier__frame">
+              <MediaBindingBadge status={resolveMomentMediaBinding(currentMoment.media)!} />
               {currentMoment.media.type === "photo" ? (
                 <img src={currentMoment.media.src} alt={currentMoment.media.alt} className="lt59-magnifier__img" />
               ) : null}

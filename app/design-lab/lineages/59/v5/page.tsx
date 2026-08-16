@@ -24,6 +24,9 @@ export default function Lineage59V5Page() {
         <div><span>Revision</span><strong>{LINEAGE_59_SOURCE.revisionId}</strong></div>
         <div className="lt59-runner__hash"><span>SHA256</span><code>{LINEAGE_59_SOURCE.sourceSha256}</code></div>
         <div><span>Assets</span><strong>{LINEAGE_59_SOURCE.assetProvenance}</strong></div>
+        <div><span>Media Binding</span><strong>{LINEAGE_59_SOURCE.mediaBindingDisposition}</strong></div>
+        <div><span>Exact Binary Transport</span><strong>{LINEAGE_59_SOURCE.exactBinaryTransport}</strong></div>
+        <div><span>Drive Fetch</span><strong>{LINEAGE_59_SOURCE.driveFetchStatus}</strong></div>
         <div><span>Accessibility</span><strong>{LINEAGE_59_SOURCE.accessibilityDisposition}</strong></div>
       </section>
 

@@ -147,6 +147,36 @@
 .lt59-book__next-teaser-title { font-size: 0.75rem; font-weight: 600; color: #2d2a20; }
 
 .lt59-book__page-media { width: 100%; }
+
+/* Truthful native media-binding provenance badge (closure of
+   LINEAGE_59_ASSET_PROVENANCE_AND_NATIVE_MEDIA_BINDING_HOLD). It must make a
+   DEMO_FIXTURE placeholder visibly distinct from an exact source asset so the
+   runner can never masquerade placeholder demo media as exact source media. */
+.lt59-media-binding {
+  display: inline-block;
+  margin: 0 0 0.4rem;
+  padding: 0.12rem 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  color: #b06a00;
+  background: #fff7e6;
+}
+.lt59-media-binding[data-media-binding="DEMO_FIXTURE"] {
+  color: #b06a00;
+  background: #fff7e6;
+}
+.lt59-media-binding[data-media-binding="SOURCE_REFERENCE_ONLY"],
+.lt59-media-binding[data-media-binding="TRANSPORT_HOLD"] {
+  color: #8a5a00;
+  background: #fff1d6;
+}
+.lt59-media-binding[data-media-binding="EXACT_ASSET_PINNED"] {
+  color: #1f7a3d;
+  background: #e8f7ec;
+}
 .lt59-book__media-img, .lt59-book__media-video { width: 100%; display: block; object-fit: cover; }
 .lt59-book__page-text { padding: 1.25rem; }
 .lt59-book__emotion {

@@ -14,6 +14,11 @@ export const LINEAGE_59_SOURCE = {
   revisionLabel: "V5 Story ON · Inline Edit · Fast Page Turn · Cinematic Background",
   assetProvenance: "HOLD" as const,
   accessibilityDisposition: "NATIVE_REMEDIATION" as const,
+  driveFetchStatus: "LOCAL_DRIVE_FETCH_UNAVAILABLE" as const,
+  assetLedgerModule: "lib/lineage-59/asset-provenance.ts",
+  mediaBindingDisposition: "FAIL_CLOSED_HOLD" as const,
+  exactBinaryTransport: "HOLD" as const,
+  fingerprintAuthority: "issue #161 — Web CTO independent verification" as const,
 } as const;
 
 export const LINEAGE_59_V5_REVIEW_LABEL = "NATIVE FIDELITY REVIEW — LIVING MEMORY BOOK V5";
