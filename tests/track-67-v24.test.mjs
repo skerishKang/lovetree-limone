@@ -221,6 +221,21 @@ test("E3. overlapping/cross-chunk surfaces select the frontmost (nearest t)", ()
   assert.notEqual(hit.chunkId, farChunk);
 });
 
+test("E5. hit-candidates observability: ascending t, first candidate == selected nearest", () => {
+  const { s } = buildTwoChunkState();
+  const eye = [0, 5, -10];
+  const ray = v24RayFromPointer(0, 0, eye, [1, 0, 1], Math.PI / 3.2, 1.5);
+  const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
+  assert.ok(hit, "positive hit exists in the overlapping setup");
+  assert.ok(hit.candidates && hit.candidates.length >= 2, "multiple positive candidates observable along the ray");
+  for (let i = 1; i < hit.candidates.length; i += 1) {
+    assert.ok(hit.candidates[i - 1].t <= hit.candidates[i].t, "candidates ascend by t");
+  }
+  assert.equal(hit.candidates[0].id, hit.chunkId, "selected surface is the first (nearest) candidate");
+  assert.equal(hit.candidates[0].t, hit.t, "selected distance is the nearest positive t");
+  assert.ok(hit.candidates.every((c) => c.t > 0), "all candidates are positive-t intersections");
+});
+
 test("E4. empty chunks list yields null hit (no fabricated inspect)", () => {
   const eye = [0, 5, 0];
   const ray = v24RayFromPointer(0, 0, eye, [1, 0, 0], Math.PI / 3.2, 1.5);
@@ -279,4 +294,39 @@ test("V2.4.2 owner WORKS set never fabricates an href", () => {
   const t13 = LINEAGE_67_V24_WORKS_V242_OWNER_SET.find((t) => t.id === "13");
   assert.equal(t13?.status, "HOLD");
   assert.equal(t13?.href, null);
+});
+
+// ---- CSS namespace isolation (Web CTO corrective finding, exact head 52e6df8) ----
+// Track67's source-runner stylesheet once redefined the GLOBAL `.lt-orbit-runner*`
+// namespace that Lineage52 owns. In the production build every route's global CSS
+// is bundled app-wide, so Track67's `.lt-orbit-runner__mode { white-space: nowrap }`
+// leaked into the Lineage52 route and caused the deterministic A-track failure
+// `lineage-52-route / 390x844 horizontal overflow` (reproduced twice at the same
+// head). The stylesheet is now scoped under the Track67-only root
+// `.lt67-source-runner`; these guards make any future unscoped regression fail
+// at the unit level instead of in a downstream route.
+
+test("track67 source-runner CSS is fully scoped under .lt67-source-runner", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const css = await readFile(new URL("../app/styles/lineage-67-v24-source-runner.css", import.meta.url), "utf8");
+  const unscoped = css
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.includes(".lt-orbit-runner") && !line.includes(".lt67-source-runner"));
+  assert.deepEqual(
+    unscoped,
+    [],
+    "every .lt-orbit-runner* selector in the Track67 stylesheet must be scoped under .lt67-source-runner (no global leakage into Lineage52's namespace)",
+  );
+  // The root rule must be the compound (scope + shared class), not a bare global.
+  assert.match(css, /^\.lt67-source-runner\.lt-orbit-runner \{/);
+  // And the scoping root must actually exist on the Track67 source route markup.
+  const page = await readFile(new URL("../app/design-lab/lineages/67/v2-4/source/page.tsx", import.meta.url), "utf8");
+  assert.match(page, /className="lt67-source-runner lt-orbit-runner"/);
+});
+
+test("track67 native CSS never touches the shared lt-orbit-runner namespace", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const css = await readFile(new URL("../app/styles/lineage-67-v24-native.css", import.meta.url), "utf8");
+  assert.equal(css.includes(".lt-orbit-runner"), false);
 });

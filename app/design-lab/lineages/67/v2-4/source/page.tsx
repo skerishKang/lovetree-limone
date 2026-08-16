@@ -8,7 +8,7 @@ import "@/app/styles/lineage-67-v24-source-runner.css";
 
 export default function Lineage67V24SourceRunnerPage() {
   return (
-    <main className="lt-orbit-runner">
+    <main className="lt67-source-runner lt-orbit-runner">
       <header className="lt-orbit-runner__header">
         <div>
           <Link className="lt-orbit-runner__back" href="/design-lab">

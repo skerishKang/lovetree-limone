@@ -1,4 +1,4 @@
-.lt-orbit-runner {
+.lt67-source-runner.lt-orbit-runner {
   max-width: 1100px;
   margin: 0 auto;
   padding: 32px 20px 64px;
@@ -6,7 +6,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.lt-orbit-runner__header {
+.lt67-source-runner .lt-orbit-runner__header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -14,7 +14,7 @@
   flex-wrap: wrap;
 }
 
-.lt-orbit-runner__back {
+.lt67-source-runner .lt-orbit-runner__back {
   display: inline-block;
   margin-bottom: 12px;
   color: #4a4a4a;
@@ -22,20 +22,20 @@
   font-size: 14px;
 }
 
-.lt-orbit-runner__eyebrow {
+.lt67-source-runner .lt-orbit-runner__eyebrow {
   margin: 0;
   font-size: 13px;
   letter-spacing: 0.08em;
   color: #6a6a6a;
 }
 
-.lt-orbit-runner h1 {
+.lt67-source-runner h1 {
   margin: 6px 0 10px;
   font-size: 26px;
   line-height: 1.25;
 }
 
-.lt-orbit-runner__lede {
+.lt67-source-runner .lt-orbit-runner__lede {
   margin: 0;
   max-width: 62ch;
   color: #3a3a3a;
@@ -43,7 +43,7 @@
   line-height: 1.5;
 }
 
-.lt-orbit-runner__mode {
+.lt67-source-runner .lt-orbit-runner__mode {
   border: 1px solid #c9c8c4;
   border-radius: 999px;
   padding: 6px 14px;
@@ -53,7 +53,7 @@
   background: #efeee9;
 }
 
-.lt-orbit-runner__meta {
+.lt67-source-runner .lt-orbit-runner__meta {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
@@ -65,30 +65,30 @@
   font-size: 13px;
 }
 
-.lt-orbit-runner__meta > div {
+.lt67-source-runner .lt-orbit-runner__meta > div {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.lt-orbit-runner__meta span {
+.lt67-source-runner .lt-orbit-runner__meta span {
   color: #6a6a6a;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.lt-orbit-runner__hash {
+.lt67-source-runner .lt-orbit-runner__hash {
   flex: 1 1 320px;
   min-width: 280px;
 }
 
-.lt-orbit-runner__hash code {
+.lt67-source-runner .lt-orbit-runner__hash code {
   word-break: break-all;
   font-size: 12px;
 }
 
-.lt-orbit-runner__viewport {
+.lt67-source-runner .lt-orbit-runner__viewport {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -99,29 +99,29 @@
   background: #d6d5d1;
 }
 
-.lt-orbit-runner__viewport--pending {
+.lt67-source-runner .lt-orbit-runner__viewport--pending {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
 
-.lt-orbit-runner__iframe {
+.lt67-source-runner .lt-orbit-runner__iframe {
   width: 100%;
   height: 100%;
   border: 0;
   display: block;
 }
 
-.lt-orbit-runner__iframe--passive {
+.lt67-source-runner .lt-orbit-runner__iframe--passive {
   pointer-events: none;
 }
 
-.lt-orbit-runner__iframe--interactive {
+.lt67-source-runner .lt-orbit-runner__iframe--interactive {
   pointer-events: auto;
 }
 
-.lt-orbit-runner__interaction-controls {
+.lt67-source-runner .lt-orbit-runner__interaction-controls {
   position: absolute;
   left: 12px;
   bottom: 12px;
@@ -134,7 +134,7 @@
   font-size: 13px;
 }
 
-.lt-orbit-runner__interaction-controls button {
+.lt67-source-runner .lt-orbit-runner__interaction-controls button {
   border: 1px solid #b9b8b3;
   background: #fff;
   border-radius: 8px;
@@ -142,30 +142,30 @@
   cursor: pointer;
 }
 
-.lt-orbit-runner__pending-card {
+.lt67-source-runner .lt-orbit-runner__pending-card {
   max-width: 520px;
   text-align: center;
 }
 
-.lt-orbit-runner__pending-kicker {
+.lt67-source-runner .lt-orbit-runner__pending-kicker {
   font-size: 12px;
   letter-spacing: 0.08em;
   color: #7a7a7a;
 }
 
-.lt-orbit-runner__pending-card h2 {
+.lt67-source-runner .lt-orbit-runner__pending-card h2 {
   font-size: 18px;
   margin: 8px 0;
 }
 
-.lt-orbit-runner__motion-gate {
+.lt67-source-runner .lt-orbit-runner__motion-gate {
   background: #f6f5f1;
   border: 1px solid #d8d7d2;
   border-radius: 12px;
   padding: 20px;
 }
 
-.lt-orbit-runner__motion-gate button {
+.lt67-source-runner .lt-orbit-runner__motion-gate button {
   margin-top: 10px;
   border: 1px solid #b9b8b3;
   background: #fff;
@@ -174,7 +174,7 @@
   cursor: pointer;
 }
 
-.lt-orbit-runner__contract {
+.lt67-source-runner .lt-orbit-runner__contract {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
@@ -182,34 +182,34 @@
 }
 
 @media (max-width: 720px) {
-  .lt-orbit-runner__contract {
+  .lt67-source-runner .lt-orbit-runner__contract {
     grid-template-columns: 1fr;
   }
-  .lt-orbit-runner h1 {
+  .lt67-source-runner h1 {
     font-size: 22px;
   }
 }
 
-.lt-orbit-runner__contract-label {
+.lt67-source-runner .lt-orbit-runner__contract-label {
   font-size: 12px;
   letter-spacing: 0.07em;
   color: #7a7a7a;
   margin: 0 0 6px;
 }
 
-.lt-orbit-runner__contract h2 {
+.lt67-source-runner .lt-orbit-runner__contract h2 {
   font-size: 17px;
   margin: 0 0 10px;
 }
 
-.lt-orbit-runner__contract p,
-.lt-orbit-runner__contract li {
+.lt67-source-runner .lt-orbit-runner__contract p,
+.lt67-source-runner .lt-orbit-runner__contract li {
   font-size: 14px;
   line-height: 1.55;
   color: #333;
 }
 
-.lt-orbit-runner__contract ul {
+.lt67-source-runner .lt-orbit-runner__contract ul {
   margin: 0;
   padding-left: 18px;
 }
