@@ -153,7 +153,11 @@
    DEMO_FIXTURE placeholder visibly distinct from an exact source asset so the
    runner can never masquerade placeholder demo media as exact source media. */
 .lt59-media-binding {
-  display: inline-block;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   margin: 0 0 0.4rem;
   padding: 0.12rem 0.5rem;
   font-size: 0.62rem;
@@ -177,7 +181,7 @@
   color: #1f7a3d;
   background: #e8f7ec;
 }
-.lt59-book__media-img, .lt59-book__media-video { width: 100%; display: block; object-fit: cover; }
+.lt59-book__media-img, .lt59-book__media-video { width: 100%; max-width: 100%; display: block; object-fit: cover; }
 .lt59-book__page-text { padding: 1.25rem; }
 .lt59-book__emotion {
   display: inline-block;
