@@ -10,10 +10,12 @@
 //
 // The native route exposes bounded QA observability (no fabricated hit):
 //   canvas[data-hit-kind]        -> "chunk" | "tail" | "none" (last REAL pointer hit)
-//   canvas[data-tail-screen]     -> "x,y" CSS px where the rendered active tail appears
-//   canvas[data-chunk-screen]    -> "x,y" CSS px where the oldest static chunk appears
-// The QA clicks those REAL pixels, so the hit is computed by the actual
-// camera-ray -> ribbon-triangle pipeline, never injected.
+// The QA clicks a grid of REAL canvas pixels (the actual pointer pipeline), so
+// each hit is computed by the real camera-ray -> ribbon-triangle pipeline, never
+// injected. The drawn spiral sits behind/around the forward-facing camera, so a
+// chunk is only hittable at some orientations; runHits polls the grid across the
+// evolving world until a chunk hit is observed — viewport-independent, no
+// narrow-viewport exemption.
 
 import { chromium } from "playwright";
 import fs from "node:fs";
@@ -71,6 +73,28 @@ async function waitFor(page, fn, timeoutMs, intervalMs = 400) {
   }
 }
 
+async function scanGridOnce(page) {
+  const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+  if (!box) return false;
+  const xSteps = 8, ySteps = 12;
+  const points = [];
+  for (let xi = 0; xi < xSteps; xi += 1) {
+    for (let yi = 0; yi < ySteps; yi += 1) {
+      points.push([(box.width * (xi + 1.5)) / (xSteps + 1), (box.height * (yi + 1.5)) / (ySteps + 1)]);
+    }
+  }
+  for (const [px, py] of points) {
+    await clickCanvasPixel(page, px, py);
+    await page.waitForTimeout(40);
+    const ds = await readCanvasDataset(page);
+    if (ds?.hitKind === "chunk") {
+      const inspectVisible = await page.locator(".lt67-native__inspect").count();
+      return inspectVisible >= 1;
+    }
+  }
+  return false;
+}
+
 async function runHits(page, vp) {
   // Wait until at least one static chunk exists (engine is running).
   const hasChunk = await waitFor(page, async () => {
@@ -83,42 +107,26 @@ async function runHits(page, vp) {
   }
   record(vp, "at least one chunk rendered", true);
 
-  // Scan a grid of real pointer clicks across the canvas to find a static chunk
-  // hit. Chunks from earlier spiral loops are visible ahead of the forward-facing
-  // camera. At narrow viewports the ribbon fills a different vertical strip, so we
-  // cover the full width and lower-to-middle height range.
-  const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
-  // Dense grid: at 320x720 (narrow mobile) the canvas is very small, so a wide
-  // scan across the full width and full height ensures at least one chunk hit.
-  const xSteps = 6, ySteps = 10;
-  const points = [];
-  for (let xi = 0; xi < xSteps; xi += 1) {
-    for (let yi = 0; yi < ySteps; yi += 1) {
-      points.push([(box.width * (xi + 1.5)) / (xSteps + 1), (box.height * (yi + 1.5)) / (ySteps + 1)]);
-    }
-  }
+  // The drawn spiral path sits behind / around the forward-facing camera, so a
+  // static chunk is only hittable at certain simulation orientations. A single
+  // grid scan can land on an unlucky frame — that was the old narrow-viewport
+  // failure. Instead, poll the grid of REAL pointer clicks across the evolving
+  // world until a chunk hit is observed. This is viewport-independent and uses
+  // only real clicks through the actual camera-ray -> ribbon-triangle pipeline,
+  // so the narrow-viewport limitation is closed honestly (no exemption, no
+  // fabricated hit).
   let foundChunk = false;
-  for (const [px, py] of points) {
-    await clickCanvasPixel(page, px, py);
-    await page.waitForTimeout(80);
-    const ds = await readCanvasDataset(page);
-    if (ds?.hitKind === "chunk") {
-      foundChunk = true;
-      const inspectVisible = await page.locator(".lt67-native__inspect").count();
-      record(vp, "static chunk positive hit observable", inspectVisible >= 1, `hitKind=chunk inspect=${inspectVisible}`);
-      break;
-    }
+  const deadline = Date.now() + 45000;
+  while (Date.now() < deadline && !foundChunk) {
+    foundChunk = await scanGridOnce(page);
+    if (!foundChunk) await page.waitForTimeout(350);
   }
-  if (!foundChunk) {
-    if (box.width < 400) {
-      // At very narrow viewports (320×720) the forward-facing camera may not
-      // capture far-loop chunk geometry. This is a viewport limitation, not a
-      // code defect; chunk-hit observability is proven on wider viewports.
-      record(vp, "static chunk positive hit observable (narrow viewport)", true, "no chunk visible ahead at narrow aspect");
-    } else {
-      record(vp, "static chunk positive hit observable", false, "no chunk hit from center grid");
-    }
-  }
+  record(
+    vp,
+    "static chunk positive hit observable",
+    foundChunk,
+    foundChunk ? "hit observed via real pointer click (polled grid)" : "no chunk hit across polling window",
+  );
 
   // Close any open inspect dialog
   if (await page.locator(".lt67-native__inspect").count()) {
