@@ -269,3 +269,93 @@ test("unmount cancels any in-flight request (no redirect/state authority)", () =
     "unmounted resolver must not grant redirect/state authority to a stale response"
   );
 });
+
+// ---------------------------------------------------------------------------
+// Golden Path negative contract (COM1 #227 final reconciliation).
+//
+// These assertions HARDEN the contract that V4 entry-route authority is the
+// live trees-cardinality response only. They must NOT weaken any assertion
+// above. They prove the absence of a fabricated "resume / last-viewed" routing
+// surface that the Web CTO explicitly forbade.
+// ---------------------------------------------------------------------------
+
+const RESOLVER_SOURCE_FILES = [
+  new URL("../lib/entry-resolver.ts", import.meta.url),
+  new URL("../app/components/v4/V4EntryResolver.tsx", import.meta.url),
+  new URL("../app/v4/page.tsx", import.meta.url),
+];
+
+async function readResolverSources() {
+  const parts = await Promise.all(RESOLVER_SOURCE_FILES.map((u) => readFile(u, "utf8")));
+  return parts.join("\n");
+}
+
+test("negative contract: route authority never derives from LAST_TREE_KEY / last-tree-id persistence", async () => {
+  const src = await readResolverSources();
+  assert.ok(!src.includes("LAST_TREE_KEY"), "resolver must not reference LAST_TREE_KEY as route authority");
+  assert.ok(
+    !src.includes("lovetree-v4-product-spine-last-tree-id"),
+    "resolver must not reference the persisted last-tree-id spine key"
+  );
+  assert.ok(
+    !src.includes("last-tree-id") && !src.includes("lastTreeId"),
+    "resolver must not consult any last-tree-id persistence key"
+  );
+});
+
+test("negative contract: no recent/resume/last-viewed ranking semantics invented", async () => {
+  const src = await readResolverSources();
+  assert.ok(
+    !/\bresume\b/i.test(src) && !/last[ -]?viewed/i.test(src) && !/\brecent\b/i.test(src),
+    "resolver source must not invent resume / last-viewed / recent ranking semantics"
+  );
+  const sig = resolveEntryRoute.toString();
+  assert.ok(
+    !/last|recent|resume|viewed|rank/i.test(sig),
+    "resolveEntryRoute must contain no recency/ranking logic"
+  );
+});
+
+test("negative contract: single-tree direct entry uses the live tree id, not a persisted last id", () => {
+  const first = resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "first-id" }], fetchOk: true });
+  const second = resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "second-id" }], fetchOk: true });
+  assert.deepEqual(first, { kind: "redirect", path: "/trees/first-id" });
+  assert.deepEqual(second, { kind: "redirect", path: "/trees/second-id" });
+});
+
+test("negative contract: exactly one tree enters directly via cardinality uniqueness", () => {
+  const resolution = resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "abc-123" }], fetchOk: true });
+  assert.deepEqual(resolution, { kind: "redirect", path: "/trees/abc-123" });
+
+  // cardinality uniqueness: ONLY count === 1 yields a direct tree entry.
+  assert.deepEqual(
+    resolveEntryRoute({ authLoading: false, authed: true, trees: [], fetchOk: true }),
+    { kind: "redirect", path: "/v4/journey" }
+  );
+  assert.deepEqual(
+    resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "t-1" }, { id: "t-2" }], fetchOk: true }),
+    { kind: "redirect", path: "/my-trees" }
+  );
+});
+
+test("negative contract: 2+ trees always route to chooser regardless of order (no recency ranking)", () => {
+  const chooser = { kind: "redirect", path: "/my-trees" };
+  assert.deepEqual(
+    resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "t-1" }, { id: "t-2" }], fetchOk: true }),
+    chooser
+  );
+  assert.deepEqual(
+    resolveEntryRoute({ authLoading: false, authed: true, trees: [{ id: "t-2" }, { id: "t-1" }], fetchOk: true }),
+    chooser,
+    "reversing tree order must not promote a 'last-viewed' tree to direct entry"
+  );
+  assert.deepEqual(
+    resolveEntryRoute({
+      authLoading: false,
+      authed: true,
+      trees: [{ id: "t-1" }, { id: "t-2" }, { id: "t-3" }],
+      fetchOk: true,
+    }),
+    chooser
+  );
+});
