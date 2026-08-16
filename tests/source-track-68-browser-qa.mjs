@@ -234,7 +234,8 @@ for (const vp of VIEWPORTS) {
   await objects.press("Home"); // -> 18
   const corner = frame.locator("#corner");
   await corner.click();
-  for (let i = 0; i < 4; i++) await corner.press("ArrowLeft");
+  await corner.press("Home"); // deterministic: 0
+  for (let i = 0; i < 3; i++) await corner.press("ArrowRight"); // -> 3
   const cornerBefore = await corner.inputValue();
   let resetReached = false;
   for (let i = 0; i < 20 && !resetReached; i++) {
@@ -268,20 +269,52 @@ for (const vp of VIEWPORTS) {
   await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.5, { steps: 6 });
   await page.mouse.up();
   const viewerAfterDrag = await frame.locator(".viewer.open").count();
-  // sub-5px click on a card focuses it
-  await frame.locator(".node").first().click({ force: true });
-  await frame.waitForSelector(".node.selected", { timeout: 5000 });
-  const selectedCount = await frame.locator(".node.selected").count();
-  // repeat click on the selected card opens the viewer
-  await frame.locator(".node.selected").first().click({ force: true });
-  await frame.waitForSelector(".viewer.open", { timeout: 5000 });
-  const viewerOpen = (await frame.locator(".viewer.open").count()) === 1;
-  const viewerSrc = await frame.locator("#viewerMedia video").getAttribute("src");
+  // sub-5px click on a FRONT card (highest z-index, on-screen) focuses it;
+  // the sphere drifts slowly, so retry with the current front card
+  let focused = false;
+  let selectedCount = 0;
+  for (let attempt = 0; attempt < 4 && !focused; attempt++) {
+    const frontIndex = await frame.evaluate(() => {
+      let best = -1, bestZ = -1;
+      document.querySelectorAll(".node").forEach((n) => {
+        const z = Number(n.style.zIndex || 0);
+        if (z > bestZ && n.style.display !== "none") { bestZ = z; best = Number(n.dataset.index); }
+      });
+      return best;
+    });
+    const card = frame.locator(`.node[data-index="${frontIndex}"]`);
+    const cbox = await card.boundingBox();
+    if (cbox) {
+      await page.mouse.click(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
+    }
+    await page.waitForTimeout(250);
+    selectedCount = await frame.locator(".node.selected").count();
+    focused = selectedCount === 1;
+  }
+  // repeat click on the selected card opens the viewer (same target, no drift margin needed)
+  let viewerOpen = false;
+  let viewerSrc = null;
+  if (focused) {
+    const sel = await frame.evaluate(() => {
+      const el = document.querySelector(".node.selected");
+      return el ? Number(el.dataset.index) : -1;
+    });
+    const card = frame.locator(`.node[data-index="${sel}"]`);
+    const cbox = await card.boundingBox();
+    if (cbox) {
+      await page.mouse.click(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2);
+    }
+    try {
+      await frame.waitForSelector(".viewer.open", { timeout: 5000 });
+      viewerOpen = (await frame.locator(".viewer.open").count()) === 1;
+      viewerSrc = await frame.locator("#viewerMedia video").getAttribute("src");
+    } catch { viewerOpen = false; }
+  }
   await shot(page, `${vp.name}-viewer`);
   await page.keyboard.press("Escape");
   const viewerClosed = (await frame.locator(".viewer.open").count()) === 0;
   record(`${vp.name}_click_vs_drag_focus_viewer`,
-    viewerAfterDrag === 0 && before === 0 && selectedCount === 1 && viewerOpen && /v3-\d{3}\.mp4/.test(viewerSrc || "") && viewerClosed);
+    viewerAfterDrag === 0 && before === 0 && focused && selectedCount === 1 && viewerOpen && /v3-\d{3}\.mp4/.test(viewerSrc || "") && viewerClosed);
 
   // 11) horizontal overflow = 0 (runner page AND source frame)
   const frameOverflow = await frame.evaluate(() => ({
