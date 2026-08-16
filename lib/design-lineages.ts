@@ -271,7 +271,7 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
         decision: "candidate",
         executable: true,
         route: "/design-lab/lineages/59/v5",
-        notes: "17,192,064 B · SHA256 763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71 · ORIGIN_RIGHTS_PROVENANCE_HOLD · NATIVE_MEDIA_BINDING_HOLD · placeholder demo media only",
+        notes: "17,192,064 B · SHA256 763f8a2f…e71 · ORIGIN_RIGHTS_PROVENANCE_HOLD · NATIVE_MEDIA_BINDING=EXACT_SMALL_PINNED_TRANSPORT_HOLD — 5 Web CTO-verified small exact assets committed + bound (review 4947154845); 3 large environment PNGs transport HOLD; synthetic demo placeholders retained",
       },
     ],
   },

@@ -2,12 +2,14 @@
  * Lineage 59 V5 — Asset Provenance Ledger + Native Media Binding resolver.
  *
  * This module is the bounded closure for the
- * LINEAGE_59_ASSET_PROVENANCE_AND_NATIVE_MEDIA_BINDING_HOLD gap. It does NOT
+ * LINEAGE_59_ASSET_PROVENANCE_AND_NATIVE_MEDIA_BINDING gap. It does NOT
  * invent exact binaries or approximate/generated substitutions. It records the
  * authoritative source fingerprint (independently verified by Web CTO in
- * issue #161) and makes the native runner's media-binding status truthful so a
- * DEMO_FIXTURE placeholder can never masquerade as an EXACT_ASSET_PINNED
- * source asset.
+ * issue #161 and re-verified in reviews 4946999933 / 4947154845) and makes the
+ * native runner's media-binding status truthful: 5 Web CTO-verified small exact
+ * assets are committed + EXACT_ASSET_PINNED; 3 large environment PNGs remain
+ * REPO_TRANSPORT_HOLD; DEMO_FIXTURE placeholders stay distinct (never masquerade
+ * as exact source).
  *
  * Source freshness: the worker's Drive remote (padiemipu:) is a different
  * account and cannot list the source owner's Drive folder. The standalone
@@ -19,13 +21,15 @@
 export const DRIVE_FETCH_STATUS = "LOCAL_DRIVE_FETCH_UNAVAILABLE" as const;
 
 /**
- * Web CTO re-verified the authoritative Drive V5 directly in review 4946999933.
- * This is a SEPARATE authority from the worker's own (unavailable) Drive access:
- * the worker still cannot fetch Drive (DRIVE_FETCH_STATUS above), but the source
- * fingerprints below are cited from Web CTO's independent verification.
+ * Web CTO re-verified the authoritative Drive V5 (review 4946999933) and later
+ * staged the exact-byte package that actually committed the 5 small assets
+ * (review 4947154845). This is a SEPARATE authority from the worker's own
+ * (unavailable) Drive access: the worker still cannot fetch Drive
+ * (DRIVE_FETCH_STATUS above), but the source fingerprints below are cited from
+ * Web CTO's independent verification.
  */
 export const WEB_CTO_DRIVE_FETCH_VERIFIED = true as const;
-export const WEB_CTO_REVIEW_ID = "4946999933" as const;
+export const WEB_CTO_REVIEW_ID = "4947154845" as const;
 
 /**
  * Exact embedded payloads Web CTO verified inside the authoritative standalone
@@ -98,12 +102,12 @@ export const WEB_CTO_VERIFIED_PAYLOADS = {
 } as const;
 
 /**
- * Committed exact-pin asset paths → status. Empty because the worker could not
- * extract the exact bytes from Drive (DRIVE_FETCH_STATUS). When exact small
- * payloads are later committed under public/design-lab-assets/lineages/59/v5/,
- * their deterministic paths are registered here and the resolver will return
- * EXACT_ASSET_PINNED for matching media. Until then the map stays empty so the
- * runner can never fabricate an exact-media PASS.
+ * Committed exact-pin asset paths → status. Populated from the Web CTO staging
+ * package (review 4947154845): the 5 small exact binaries are committed under
+ * public/design-lab-assets/lineages/59/v5/media/ with verified SHA-256. The
+ * resolver returns EXACT_ASSET_PINNED only for a path that actually exists in the
+ * repo with a verified checksum — it can never fabricate an exact-media PASS for
+ * an uncommitted or mismatched path.
  */
 export const EXACT_PINNED_ASSET_PATHS: Readonly<Record<string, true>> = {
   "/design-lab-assets/lineages/59/v5/media/moment-m1-character-f01.webp": true,
@@ -166,11 +170,12 @@ export const LINEAGE_59_SOURCE_FINGERPRINTS = {
  * Exact-source asset ledger. The 8 unique embedded payloads
  * (3 environment-background PNGs + 3 character WebP + 1 inline JPEG + 1 inline
  * MP4) plus the standalone executable and 검증결과.json QA evidence are recorded
- * with Web CTO-verified fingerprints (review 4946999933). The large binaries
- * (executable + backgrounds) are REPO_TRANSPORT_HOLD. The 5 small exact
- * payloads are REPO_PIN_OK (approved) but remain SOURCE_REFERENCE_ONLY because
- * the worker could not extract the exact bytes from Drive (DRIVE_FETCH_STATUS),
- * so nothing is EXACT_ASSET_PINNED.
+ * with Web CTO-verified fingerprints (review 4946999933 / 4947154845). The
+ * large binaries (executable + 3 backgrounds) are REPO_TRANSPORT_HOLD and are
+ * never committed. The 5 small exact payloads are committed under
+ * public/design-lab-assets/lineages/59/v5/media/ and recorded as
+ * EXACT_ASSET_PINNED (repo-pin approved, checksum-verified); synthetic
+ * placeholders remain DEMO_FIXTURE.
  */
 export const ASSET_LEDGER: readonly AssetLedgerEntry[] = [
   {

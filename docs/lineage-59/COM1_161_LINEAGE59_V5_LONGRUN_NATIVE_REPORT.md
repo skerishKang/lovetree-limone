@@ -66,7 +66,7 @@ Session/in-memory only. No persistence claims. Locked fields (Moment ID, capture
 
 ## Exact assets / HOLDS
 
-- `LINEAGE_59_ASSET_PROVENANCE_AND_NATIVE_MEDIA_BINDING_HOLD` — kept HOLD. Placeholder SVG/MP4 demo media are used and clearly not source-authority assets; exact V5 background/character/media objects were not pinnable because Drive download was blocked in this environment.
+- `LINEAGE_59_ASSET_PROVENANCE_AND_NATIVE_MEDIA_BINDING` — closure complete. Web CTO staged the exact-byte package (review 4947154845, ZIP SHA256 `a2493792…b4c`); 5 small exact assets are committed under `public/design-lab-assets/lineages/59/v5/media/` with verified SHA-256 and bound as `EXACT_ASSET_PINNED` (m1/m5/m7 character/photo WebP, m3 video + poster). 3 large environment PNGs remain `REPO_TRANSPORT_HOLD` (never committed); synthetic placeholders remain `DEMO_FIXTURE`. `ORIGIN_RIGHTS_PROVENANCE_HOLD` still applies (origin-rights not claimed).
 - `ACCESSIBILITY_DIALOG_AND_320_QA_HOLD` — native remediation implemented and QA-passed for 1280/390/320 + dialog/keyboard/reduced-motion; recorded as remediated in this candidate but disposition kept as evidence of the source HOLD.
 - `CANONICAL_ADOPTION=NO`, `BACKEND_MUTATION=NONE`, `PRODUCTION_MUTATION=NONE`.
 
@@ -122,7 +122,7 @@ Session/in-memory only. No persistence claims. Locked fields (Moment ID, capture
 
 ## Remaining gaps / notes
 
-- Exact V5 binary assets were not pinnable in this environment (Drive download blocked); native media binding remains HOLD with placeholder media.
+- Exact V5 binary assets: the 5 small exact payloads (3 character WebP, 1 inline JPEG, 1 DEMO_VIDEO MP4) are now committed + `EXACT_ASSET_PINNED` from Web CTO staging (review 4947154845); 3 large environment PNGs remain `REPO_TRANSPORT_HOLD` (never committed). Native media binding is `EXACT_SMALL_PINNED_TRANSPORT_HOLD`.
 - Full `npm test` (build-gated) and full production build were deferred per same-machine resource sharing; scope-relevant typecheck/lint/pure/browser evidence is complete.
 - Final flags: `CANONICAL_ADOPTION=NO`, `BACKEND_MUTATION=NONE`, `PRODUCTION_MUTATION=NONE`, `READY=NO`, `MERGE=NO`, `READY_FOR_WEB_CTO_REAUDIT=YES`.
 
@@ -193,8 +193,7 @@ full non-browser standard corpus 1327/1327 pass; typecheck 0 errors; lint 0 erro
 `SOURCE_HTML_FINGERPRINT=VERIFIED` (manifest-pinned bytes 17,192,064 / SHA256 `763f8a2f...`).
 `SOURCE_EMBEDDED_MEDIA_BYTES=RECOVERABLE/PINNABLE` per Web CTO; sibling Drive is not publicly
 readable from this environment, so byte re-verification remains pinned evidence, not a fresh download.
-`ORIGIN_RIGHTS_PROVENANCE=HOLD`, `NATIVE_MEDIA_BINDING=HOLD` — placeholder demo media only; no
-canonical asset adoption.
+`ORIGIN_RIGHTS_PROVENANCE=HOLD`, `NATIVE_MEDIA_BINDING=EXACT_SMALL_PINNED_TRANSPORT_HOLD` — 5 Web CTO-verified small exact assets committed + bound; 3 large environment PNGs transport HOLD; synthetic placeholders retained as DEMO_FIXTURE. No canonical /v4 asset adoption.
 
 ## Disposition
 
