@@ -129,14 +129,12 @@ async function main() {
     {
       const { context, page, errors } = await openRoute(browser, { width: 1280, height: 800 });
       try {
-        const statusByLevel = [];
         for (let lv = 0; lv < 4; lv += 1) {
           const name = LEVEL_NAMES[lv];
           await levelBtn(page, name).click();
           await page.waitForTimeout(120);
           const pressed = (await levelBtn(page, name).getAttribute("aria-pressed")) === "true";
           assert.ok(pressed, `level ${lv} (${name}) becomes aria-pressed`);
-          statusByLevel.push((await page.locator(".status").innerText()).trim());
         }
         // search/direct jump + single selection authority + Inspector projection
         const before = await getSelectedTitle(page);
@@ -147,7 +145,7 @@ async function main() {
         const selectedCount = await page.locator('[data-moment-item][aria-selected="true"]').count();
         assert.equal(selectedCount, 1, "exactly one selectedMomentId drives the list");
         // inspector shows the selected title (projection authority)
-        const inspectorTitle = (await page.locator(".inspectTitle").innerText()).trim();
+        const inspectorTitle = (await page.getByRole("heading", { level: 2 }).first().innerText()).trim();
         assert.ok(inspectorTitle.length > 0, "Inspector projects the selected moment title");
         assert.equal(inspectorTitle, after, "Inspector reflects the single selected moment");
         // selecting enters INSPECT level (composition differs from MACRO)
@@ -176,8 +174,7 @@ async function main() {
         assert.ok((await bridgeItem.count()) > 0, "at least one Bridge Moment exists in the list");
         await bridgeItem.click();
         await page.waitForTimeout(150);
-        const inspectorText = (await page.locator(".explorer").innerText());
-        assert.ok(/Bridge Moment/i.test(inspectorText), "Bridge Moment is truthfully projected in the Inspector");
+        assert.ok(await page.getByText("Bridge Moment", { exact: false }).isVisible(), "Bridge Moment is truthfully projected in the Inspector");
         await assertNoErrors(errors, "bridge-truthfulness");
         record("bridge-moment-truthfulness", true);
       } finally {
