@@ -42,12 +42,17 @@ export const SOURCE_TRACK_68_DRIVE = Object.freeze({
 export const SOURCE_TRACK_68_DRIVE_FOLDER_ID = SOURCE_TRACK_68_DRIVE.rootFolderId as string;
 
 /**
- * The V3 executable. The filename `버전3-84개.html` is STALE NAMING ONLY —
- * the runtime authority is 89 videos + 89 posters, never 84.
- * START.html (distribution alias) is byte-identical per Web CTO binary
- * comparison; the local DriveFS index observed it in the Drive trash on
- * 2026-08-17 (25,544 B — matches the executable size). The dev-side copy
- * `18_버전3_개발본.html` is byte-identical (re-verified at intake).
+ * The V3 executable authority. The filename `버전3-84개.html` is STALE NAMING
+ * ONLY — the runtime authority is 89 videos + 89 posters, never 84.
+ * The dev-side copy `18_버전3_개발본.html` is byte-identical (Web CTO
+ * fresh-downloaded and re-hashed 2026-08-17; re-verified at intake).
+ *
+ * `START.html` was the distribution alias and was byte-identical at intake
+ * time (Web CTO binary comparison), but the current Drive API returns
+ * 404 / File not found and the local DriveFS index observed it in the Drive
+ * trash on 2026-08-17. It is therefore TRASH/HISTORICAL_ALIAS
+ * (REFERENCE_ONLY) — NOT a current executable variant. See
+ * SOURCE_TRACK_68_START_ALIAS below.
  */
 export const SOURCE_TRACK_68_HTML = Object.freeze({
   bytes: 25_544,
@@ -56,20 +61,51 @@ export const SOURCE_TRACK_68_HTML = Object.freeze({
     Object.freeze({
       label: "버전3-84개.html",
       driveId: "1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx",
-      note: "executable authority (filename is stale naming; runtime count is 89)",
-    }),
-    Object.freeze({
-      label: "START.html",
-      driveId: "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI",
-      note: "distribution alias — byte-identical (Web CTO verified); observed in Drive trash 2026-08-17",
+      note: "current executable authority (filename is stale naming; runtime count is 89)",
     }),
     Object.freeze({
       label: "1.개발과정/18_버전3_개발본.html",
       driveId: "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6",
-      note: "dev-side copy — byte-identical (sha256 re-verified at intake)",
+      note: "accessible dev-side copy — byte-identical (Web CTO fresh re-hash + intake re-verification)",
     }),
   ]),
   byteIdentical: true,
+});
+
+/**
+ * START.html — historical distribution alias only.
+ *
+ * - byte identity to the executable was verified by Web CTO at intake time;
+ * - current Drive API status: 404 / File not found (Web CTO fresh check);
+ * - local DriveFS index observed it in the Drive trash (2026-08-17, 25,544 B);
+ * - classification: TRASH/HISTORICAL_ALIAS (REFERENCE_ONLY) — must never be
+ *   represented as a current PINNED executable variant.
+ */
+export const SOURCE_TRACK_68_START_ALIAS = Object.freeze({
+  label: "START.html",
+  driveId: "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI",
+  classification: "TRASH/HISTORICAL_ALIAS" as const,
+  status: "REFERENCE_ONLY" as const,
+  currentAvailability: "DRIVE_API_404_FILE_NOT_FOUND" as const,
+  localObservation: "DriveFS trash, 25,544 B (2026-08-17)",
+  byteIdentityAtIntake: "verified byte-identical by Web CTO at intake time",
+});
+
+/**
+ * V3 source pointer-gesture defect (P0) and the pinned Phase 2 native
+ * contract. The exact source binds pointerup AND pointercancel to the same
+ * committing endPointer() path, so a cancelled ≤5px card gesture can still
+ * call focusFilm()/openViewer(). Phase 1 records this truth; Phase 2 must
+ * implement the cleanup-only contract below (the exact source HTML itself is
+ * NOT modified in Phase 1).
+ */
+export const SOURCE_TRACK_68_POINTER_CONTRACT = Object.freeze({
+  severity: "P0" as const,
+  sourceDefect:
+    "pointerup and pointercancel share the same committing endPointer() — a cancelled ≤5px gesture can still focusFilm()/openViewer()",
+  pointerup: "may commit click/drag only after valid 5px click-vs-drag threshold semantics" as const,
+  pointercancel: "cleanup only — never select, never focusFilm, never open viewer" as const,
+  lostpointercapture: "cleanup only — never select, never focusFilm, never open viewer" as const,
 });
 
 /**
@@ -117,14 +153,19 @@ export const SOURCE_TRACK_68_MEDIA = Object.freeze({
   videoMaxBytes: 94_733_644, // v3-072.mp4
   transport: "LOCAL_EXACT_OUT_OF_GIT_ONLY" as const,
   assetState: "EXACT_MEDIA_HOLD_OUT_OF_GIT" as const,
+  /**
+   * Repository-relative LOCAL QA staging convention ONLY — this is not a
+   * production media authority and carries no machine/host-specific path.
+   * Exact media is identified by stable Drive IDs + bytes + SHA-256 in the
+   * intake manifest; staging here is allowed (gitignored) for local
+   * exact-media review and must never be committed.
+   */
   stagingPath: "public/design-lab-assets/source-tracks/68/v3/assets",
-  driveSourcePath:
-    "F:/내 드라이브/[26]/[[지피티 작업]]/코덱스/12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets",
   localEvidence: Object.freeze({
     sha256Verified: "178/178 (COM3-GLM 2026-08-17 in-place DriveFS audit)",
     decodePass: "178/178 (ffprobe: container/duration/dimensions/video-stream)",
     provenancePass: "89/89 videos cross-checked against 19_영상_원본대응표.csv",
-    browserQa: "PASS_WITH_NOTED_PARTIALS (1280x800 / 390x844 / 320x720)",
+    browserQa: "dynamic browser QA — see tests/source-track-68-browser-qa.mjs evidence",
   }),
 });
 

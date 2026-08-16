@@ -8,7 +8,7 @@
   "rendering": "css3d-dom",
   "scenarioId": "entry-onboarding",
   "productJob": "LoveTree entry impression — 89 film cards orbit as an interactive sphere on an ivory canvas (pink/lime/blue accents, sans-serif typography, film grain): drag/inertia exploration, hidden Media drawer with the full 89-film library, hidden Shape drawer with live controls (film count 18..89, card size, sphere radius, corner, contrast, motion, depth fade, Wide/Tall/Square/Soft, Light/Dark, reset), click-to-focus a film, repeat-click to open the fullscreen viewer that owns audible playback. Working classification: ENTRY_MATERIAL + MOTION_COMPOSITION_EVIDENCE.",
-  "summary": "Source Track 68 (LoveTree Living Media Sphere) V3 intake, Issue #235. Current functional authority is V3: executable 버전3-84개.html (25,544 B, SHA-256 2f269047…e0232 — filename is stale naming; runtime authority is 89 videos + 89 posters, never 84). START.html is a byte-identical distribution alias (Web CTO verified; observed in the Drive trash on 2026-08-17). V1 (cdb88d1a…) and the V2 family (버전2/최종본/17_버전2_원본/15_V1.1 — all 4693dfaf…) are historical; V2_ALIAS_IDENTITY = PACKAGING_ONLY_CONFIRMED, so no V1.1 implementation exists. Rendering authority: CSS3D DOM + software spherical projection — no WebGL, no Three.js, no canvas renderer. Phase 1 (this intake) = source runner + repository evidence; Phase 2 native candidate = HOLD; no repository lineage number is reserved; canonical /v4 adoption is NOT authorized.",
+  "summary": "Source Track 68 (LoveTree Living Media Sphere) V3 intake, Issue #235. Current functional authority is V3: executable 버전3-84개.html (25,544 B, SHA-256 2f269047…e0232 — filename is stale naming; runtime authority is 89 videos + 89 posters, never 84). START.html was a byte-identical distribution alias at intake (Web CTO verified) but the current Drive API returns 404 / File not found and the local index observed it in the Drive trash on 2026-08-17 — TRASH/HISTORICAL_ALIAS (REFERENCE_ONLY), not a current executable variant; the accessible byte-identical dev copy is 18_버전3_개발본.html. V1 (cdb88d1a…) and the V2 family (버전2/최종본/17_버전2_원본/15_V1.1 — all 4693dfaf…) are historical; V2_ALIAS_IDENTITY = PACKAGING_ONLY_CONFIRMED, so no V1.1 implementation exists. Rendering authority: CSS3D DOM + software spherical projection — no WebGL, no Three.js, no canvas renderer. Phase 1 (this intake) = source runner + repository evidence; Phase 2 native candidate = HOLD; no repository lineage number is reserved; canonical /v4 adoption is NOT authorized.",
   "provenance": {
     "sourceLabel": "12_러브트리_리빙미디어스피어_인터랙티브대문_V1 (Drive folder 14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4 — the adopted/current root IS this codex folder) / Issue #235",
     "driveFolderId": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
@@ -45,8 +45,8 @@
       "driveId": "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI",
       "bytes": 25544,
       "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
-      "role": "executable-variant-byte-identical",
-      "status": "PINNED"
+      "role": "historical-distribution-alias-trash-404",
+      "status": "REFERENCE_ONLY"
     },
     {
       "filename": "1.개발과정/18_버전3_개발본.html",
@@ -106,7 +106,8 @@
   "sourceDefects": [
     "prefers-reduced-motion only disables decorative transitions (video-mark pulse, drawer/viewer/center-copy transitions) — the idle auto-rotation keeps running, so source accessibility is PARTIAL, not certified",
     "sphere card z-index reaches 1000 inside the fixed stage while the dock triggers sit at z-index 45 — front cards can overlap the Media/Shape triggers (observed live: a trigger click was intercepted by a front card during browser QA)",
-    "film-count slider range 18..89 clamps focusFilm on out-of-range selection by auto-raising the count (documented source behavior, not a defect per se — Phase 2 must decide equivalent semantics)"
+    "film-count slider range 18..89 clamps focusFilm on out-of-range selection by auto-raising the count (documented source behavior, not a defect per se — Phase 2 must decide equivalent semantics)",
+    "pointerup and pointercancel share the same committing endPointer() handler — a cancelled ≤5px card gesture can still focusFilm()/openViewer() (P0 native-remediation requirement per Issue #235)"
   ],
   "nativeRemediations": [
     "CSS3D DOM + software spherical projection preserved (no WebGL/Three.js/canvas renderer)",
@@ -118,7 +119,8 @@
     "hidden Media drawer (89-film library grid, lazy poster thumbs) and Shape drawer (live controls incl. Wide/Tall/Square/Soft, Light/Dark, reset)",
     "inertia + manual takeover drag model with idle drift",
     "Escape closes viewer + both drawers; L/R keyboard shortcuts toggle drawers",
-    "Phase 2 native MUST remediate reduced-motion truth (idle rotation under prefers-reduced-motion)"
+    "Phase 2 native MUST remediate reduced-motion truth (idle rotation under prefers-reduced-motion)",
+    "P0 pointer contract: pointerup may commit click/drag only after valid 5px click-vs-drag threshold semantics; pointercancel and lost pointercapture are cleanup-only — never select, never focusFilm, never open the viewer"
   ],
   "sourceOnlyValues": [
     "TOTAL = 89",

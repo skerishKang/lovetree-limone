@@ -15,10 +15,10 @@ Issue: #235 · Worker: COM3-GLM · Date: 2026-08-17 · Phase: 1 (Source Runner /
 | Adopted root folder | `14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4` = `12_러브트리_리빙미디어스피어_인터랙티브대문_V1` |
 | Filename truth | `버전3-84개` is STALE NAMING — runtime authority is 89 videos + 89 posters, never 84 |
 
-Aliases (byte-identical, one revision — never treat as separate revisions):
+Aliases and history:
 
-- `START.html` (`1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI`) — distribution alias; byte-identity verified by Web CTO on Drive. Observed in the **Drive trash** (25,544 B) in the local DriveFS index on 2026-08-17; trashing does not affect the verified identity.
-- `1.개발과정/18_버전3_개발본.html` (`1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6`) — dev-side copy, SHA-256 re-verified identical at intake.
+- `1.개발과정/18_버전3_개발본.html` (`1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6`) — **current accessible byte-identical dev copy**: Web CTO fresh-downloaded and re-hashed 25,544 B / `2f269047…e0232` on 2026-08-17; re-verified at intake.
+- `START.html` (`1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI`) — **TRASH/HISTORICAL_ALIAS (REFERENCE_ONLY)**: byte identity to the executable was verified by Web CTO at intake time, but the current Drive API returns **404 / File not found** and the local DriveFS index observed it in the Drive trash (25,544 B, 2026-08-17). It must never be represented as a current PINNED executable variant. `START_ALIAS_CURRENT_AVAILABILITY = FAIL_404_TRASH_REFERENCE_ONLY`.
 
 Historical revisions (all hashes locally re-verified):
 
@@ -47,6 +47,7 @@ Full per-file evidence: `design-intake/manifests/track-68-living-media-sphere-v3
 - Poster-first: every sphere video sets `poster` + `preload='none'`; `src` kept in `dataset.src` and attached lazily only for near-side nodes (depth ≥ 0.7); play only when depth > 0.79 and `!document.hidden`; far-side paused (line 55/66)
 - **`visibilitychange`** is the exact event used (line 73) — NOT `pagevisibilitychange`
 - Click-vs-drag: `Math.hypot(...) > 5` marks a drag; a sub-5px tap focuses, repeat tap on the selected film opens the fullscreen viewer (lines 62–64)
+- **P0 source defect — pointer cancel commits like pointer up**: the source binds `pointerup` AND `pointercancel` to the same `endPointer()` (line 65), so a cancelled ≤5px card gesture can still call `focusFilm()` / `openViewer()`. Phase 2 native contract (pinned): `pointerup` may commit click/drag only after valid 5px threshold semantics; `pointercancel` and lost pointercapture are **cleanup-only — never select, never focusFilm, never open the viewer**. The exact source HTML is NOT modified in Phase 1.
 - Audible authority: all sphere videos `muted`; only the viewer video may play audibly → max audible = 1 (lines 55/59)
 - Rendering: DOM transforms + manual perspective (`camera / (camera - z2)`) with `transform-style: preserve-3d` — **no WebGL, no Three.js, no canvas renderer** (verified by full-file read)
 - Controls: film count 18..89, card size, sphere radius, corner, contrast, motion, depth fade, Wide/Tall/Square/Soft, Light/Dark, reset (lines 32–40, 68–72); Escape closes viewer + drawers; L/R toggle drawers (line 73)
@@ -67,8 +68,9 @@ Viewports 1280×800 / 390×844 / 320×720, read-only in-place serving of the Dri
 ## 5. Transport contract
 
 - `TRANSPORT = LOCAL_EXACT_OUT_OF_GIT_ONLY` — the repository carries the exact executable HTML (25,544 B) + this evidence; all 178 media assets stay out of Git
-- Staging (gitignored): `public/design-lab-assets/source-tracks/68/v3/assets/{videos-v3,posters-v3}/`
-- `REMOTE_CI_EXACT_VIDEO_TRANSPORT = NOT_PROVISIONED`; `EXTERNAL_VIDEO_ORIGIN = NOT_AUTHORIZED` — no substitute media may be claimed exact
+- Source identity is carried by stable Drive IDs / filenames / bytes / SHA-256 only — **no machine-local absolute path is repository authority** (per Issue #235 Phase-1 release)
+- Staging convention (repository-relative, gitignored, **LOCAL QA only — not a production media authority**): `public/design-lab-assets/source-tracks/68/v3/assets/{videos-v3,posters-v3}/`; local exact media MAY be staged there and MUST NOT be Git-tracked
+- `REMOTE_CI_EXACT_VIDEO_TRANSPORT = NOT_PROVISIONED`; `EXTERNAL_VIDEO_ORIGIN = NOT_AUTHORIZED` — no substitute media may be claimed exact; remote CI runs the truthful missing-media state and must never be reported as exact-video PASS
 - Source runner route: `/design-lab/source-tracks/68/v3/source` (fail-closed: the iframe mounts only after the served bytes hash-match the pinned SHA-256)
 
 ## 6. Phase gates

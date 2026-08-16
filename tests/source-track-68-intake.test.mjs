@@ -4,14 +4,18 @@
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFile, readdir, stat } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { readFile, stat } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
   SOURCE_TRACK_68_HTML,
   SOURCE_TRACK_68_MEDIA,
   SOURCE_TRACK_68_PHASE,
+  SOURCE_TRACK_68_POINTER_CONTRACT,
   SOURCE_TRACK_68_RENDERING,
   SOURCE_TRACK_68_REVISION,
+  SOURCE_TRACK_68_START_ALIAS,
 } from "../lib/source-track-68/provenance.ts";
 
 const root = new URL("../", import.meta.url);
@@ -31,7 +35,6 @@ async function exists(path) {
 
 const MANIFEST_PATH = "design-intake/manifests/track-68-living-media-sphere-v3.json";
 const HTML_PATH = "public/design-lab-assets/source-tracks/68/v3/index.html";
-const STAGING_DIR = "public/design-lab-assets/source-tracks/68/v3/assets";
 
 test("track68 pinned constants match the Web CTO Phase 1 release evidence (#235)", async () => {
   assert.equal(SOURCE_TRACK_68_REVISION, "V3");
@@ -41,10 +44,28 @@ test("track68 pinned constants match the Web CTO Phase 1 release evidence (#235)
     "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
   );
   assert.equal(SOURCE_TRACK_68_HTML.byteIdentical, true);
+  // Current executable variants are ONLY the executable + the accessible dev copy.
   assert.deepEqual(
     SOURCE_TRACK_68_HTML.variants.map((variant) => variant.driveId).sort(),
-    ["1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI", "1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx", "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6"].sort(),
+    ["1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx", "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6"].sort(),
   );
+  // START.html is TRASH/HISTORICAL_ALIAS (REFERENCE_ONLY) — never a current variant.
+  assert.equal(SOURCE_TRACK_68_START_ALIAS.driveId, "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI");
+  assert.equal(SOURCE_TRACK_68_START_ALIAS.classification, "TRASH/HISTORICAL_ALIAS");
+  assert.equal(SOURCE_TRACK_68_START_ALIAS.status, "REFERENCE_ONLY");
+  assert.equal(SOURCE_TRACK_68_START_ALIAS.currentAvailability, "DRIVE_API_404_FILE_NOT_FOUND");
+  assert.equal(
+    (SOURCE_TRACK_68_HTML.variants.find((v) => v.driveId === SOURCE_TRACK_68_START_ALIAS.driveId) ||
+      undefined),
+    undefined,
+    "START.html must not appear among current executable variants",
+  );
+  // P0 pointercancel ledger + pinned Phase 2 cleanup-only contract.
+  assert.equal(SOURCE_TRACK_68_POINTER_CONTRACT.severity, "P0");
+  assert.match(SOURCE_TRACK_68_POINTER_CONTRACT.sourceDefect, /pointercancel/);
+  assert.match(SOURCE_TRACK_68_POINTER_CONTRACT.pointercancel, /cleanup only/i);
+  assert.match(SOURCE_TRACK_68_POINTER_CONTRACT.pointercancel, /never open viewer/);
+  assert.match(SOURCE_TRACK_68_POINTER_CONTRACT.lostpointercapture, /cleanup only/i);
   assert.equal(SOURCE_TRACK_68_MEDIA.videoCount, 89);
   assert.equal(SOURCE_TRACK_68_MEDIA.posterCount, 89);
   assert.equal(SOURCE_TRACK_68_MEDIA.videoTotalBytes, 1_946_025_764);
@@ -52,6 +73,10 @@ test("track68 pinned constants match the Web CTO Phase 1 release evidence (#235)
   assert.equal(SOURCE_TRACK_68_MEDIA.videosAtOrBelow25MiB, 64);
   assert.equal(SOURCE_TRACK_68_MEDIA.videosAbove25MiB, 25);
   assert.equal(SOURCE_TRACK_68_MEDIA.transport, "LOCAL_EXACT_OUT_OF_GIT_ONLY");
+  // No machine-local absolute path may survive as repository authority.
+  const provenanceSource = await readFile(new URL("../lib/source-track-68/provenance.ts", root), "utf8");
+  assert.doesNotMatch(provenanceSource, /"[A-Z]:\//, "no Windows drive-letter absolute path in provenance");
+  assert.doesNotMatch(provenanceSource, /\/mnt\/[a-z]\//, "no /mnt/<drive> absolute path in provenance");
   // Phase 1 boundary: native is HOLD, no lineage, no canonical adoption.
   assert.equal(SOURCE_TRACK_68_PHASE.nativeCandidate, "HOLD_PHASE_2");
   assert.equal(SOURCE_TRACK_68_PHASE.repositoryLineage, "NOT_ALLOCATED");
@@ -115,24 +140,39 @@ test("manifest media inventory is complete and internally consistent", async () 
   assert.equal(inventory.videos.filter((row) => row.b > threshold).length, 25);
 });
 
-test("media transport hold is truthful: no exact media is committed", async () => {
+test("media transport hold is truthful: no exact media is Git-tracked (local staging allowed)", async () => {
   const gitignore = await readFile(new URL(".gitignore", root), "utf8");
   assert.match(
     gitignore,
     /public\/design-lab-assets\/source-tracks\/68\/v3\/assets\//,
     "the Track68 media staging path must be gitignored",
   );
-  if (await exists(STAGING_DIR)) {
-    // A developer may stage exact media locally (out of Git) — verify no media
-    // leaked into tracked locations and no substitute media was planted.
-    const staged = await readdir(new URL(STAGING_DIR, root), { recursive: true });
-    const media = staged.filter((entry) => /\.(mp4|jpg|jpeg|png|webm)$/i.test(entry));
-    if (media.length > 0) {
-      assert.fail(
-        `exact media must not be committed/staged in the worktree — found ${media.length} media files under ${STAGING_DIR} (remove them; they belong out of Git)`,
-      );
-    }
-  }
+
+  // LOCAL_EXACT_OUT_OF_GIT_ONLY = staging exact media locally is ALLOWED.
+  // The contract this guard proves is "zero Track68 exact-media binaries are
+  // Git-tracked" — NOT "no untracked local media exists". A developer may
+  // stage the 89+89 assets under the gitignored path for local exact-media
+  // QA; that state must keep this test green.
+  const tracked = execFileSync(
+    "git",
+    ["ls-files", "--", "public/design-lab-assets/source-tracks/68", "design-intake/manifests/track-68-living-media-sphere-v3.json"],
+    { cwd: fileURLToPath(new URL("../", import.meta.url)) },
+  )
+    .toString()
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const trackedMedia = tracked.filter((path) => /\.(mp4|jpg|jpeg|png|webp|webm|mov)$/i.test(path));
+  assert.equal(
+    trackedMedia.length,
+    0,
+    `Track68 exact media must never be Git-tracked — found tracked media: ${trackedMedia.join(", ")}`,
+  );
+  // The repo transports the pinned executable HTML (not media) — sanity-check it stays tracked.
+  assert.ok(
+    tracked.includes("public/design-lab-assets/source-tracks/68/v3/index.html"),
+    "the exact pinned executable HTML must remain Git-tracked",
+  );
 });
 
 test("Phase 1 boundary: no native candidate route exists yet", async () => {

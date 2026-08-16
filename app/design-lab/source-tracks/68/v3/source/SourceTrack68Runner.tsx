@@ -9,6 +9,7 @@ import {
   SOURCE_TRACK_68_MEDIA,
   SOURCE_TRACK_68_PHASE,
   SOURCE_TRACK_68_REVISION,
+  SOURCE_TRACK_68_START_ALIAS,
   SOURCE_TRACK_68_TITLE,
 } from "@/lib/source-track-68/provenance";
 
@@ -120,13 +121,16 @@ export default function SourceTrack68Runner({
             <Row label="lifecycle">{SOURCE_TRACK_68_LIFECYCLE}</Row>
             <Row label="Drive root folder">{SOURCE_TRACK_68_DRIVE_FOLDER_ID}</Row>
             <Row label="HTML A · 버전3-84개.html">
-              {SOURCE_TRACK_68_HTML.variants[0].driveId}
+              {SOURCE_TRACK_68_HTML.variants[0].driveId} — current executable authority
             </Row>
-            <Row label="HTML B · START.html (alias)">
-              {SOURCE_TRACK_68_HTML.variants[1].driveId} — byte-identical (Web CTO verified)
+            <Row label="HTML B · 18_버전3_개발본.html">
+              {SOURCE_TRACK_68_HTML.variants[1].driveId} — byte-identical (Web CTO fresh re-hash)
             </Row>
-            <Row label="HTML C · 18_버전3_개발본.html">
-              {SOURCE_TRACK_68_HTML.variants[2].driveId} — byte-identical (intake re-verified)
+            <Row label={`START.html · ${SOURCE_TRACK_68_START_ALIAS.classification}`}>
+              <span className={styles.hold}>
+                {SOURCE_TRACK_68_START_ALIAS.driveId} — {SOURCE_TRACK_68_START_ALIAS.currentAvailability} ·{" "}
+                {SOURCE_TRACK_68_START_ALIAS.status} (not a current variant)
+              </span>
             </Row>
             <Row label="filename truth">`버전3-84개` is stale naming — runtime count is 89</Row>
             <Row label="bytes">{SOURCE_TRACK_68_HTML.bytes.toLocaleString("en-US")}</Row>
