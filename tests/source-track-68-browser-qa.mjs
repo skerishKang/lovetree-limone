@@ -195,16 +195,17 @@ for (const vp of VIEWPORTS) {
   record(`${vp.name}_iframe_runs_89_nodes`, nodeCount === 89 && objectCountText === "89");
   await shot(page, `${vp.name}-initial`);
 
-  // 7) Media drawer open/close
-  await frame.locator("body").press("l");
+  // 7) Media drawer open/close (keyboard: the source's own L shortcut; the
+  // trigger button is focusable so key events dispatch inside the frame)
+  await frame.locator("#libraryTrigger").press("l");
   await frame.waitForSelector("body.library-open", { timeout: 5000 });
   const mediaOpened = true;
-  await frame.locator("body").press("Escape");
+  await page.keyboard.press("Escape");
   const mediaClosed = (await frame.locator("body.library-open").count()) === 0;
   record(`${vp.name}_media_drawer_open_close`, mediaOpened && mediaClosed);
 
-  // 8) Shape drawer open/close
-  await frame.locator("body").press("r");
+  // 8) Shape drawer open/close (keyboard: the source's own R shortcut)
+  await frame.locator("#controlsTrigger").press("r");
   await frame.waitForSelector("body.controls-open", { timeout: 5000 });
   const shapeOpened = true;
   // 5) film-count slider actually changes runtime count (18..89 contract)
@@ -233,12 +234,12 @@ for (const vp of VIEWPORTS) {
   record(`${vp.name}_reset_restores_defaults`, objectsAfter === "89" && cornerAfter === "7" && hiddenAfterReset === 0 && Number(cornerBefore) === 3);
 
   // 8-close) Shape drawer closes via Escape
-  await frame.locator("body").press("Escape");
+  await page.keyboard.press("Escape");
   const shapeClosed = (await frame.locator("body.controls-open").count()) === 0;
   record(`${vp.name}_shape_drawer_open_close`, shapeOpened && shapeClosed);
 
   // 9/10) click-vs-drag + focus, then repeat-click viewer (missing media errors are expected in hold)
-  await frame.locator("body").press("Escape");
+  await page.keyboard.press("Escape");
   const stage = frame.locator("#stage");
   const before = await frame.locator(".node.selected").count();
   // >5px drag must NOT open the viewer
@@ -258,7 +259,7 @@ for (const vp of VIEWPORTS) {
   const viewerOpen = (await frame.locator(".viewer.open").count()) === 1;
   const viewerSrc = await frame.locator("#viewerMedia video").getAttribute("src");
   await shot(page, `${vp.name}-viewer`);
-  await frame.locator("body").press("Escape");
+  await page.keyboard.press("Escape");
   const viewerClosed = (await frame.locator(".viewer.open").count()) === 0;
   record(`${vp.name}_click_vs_drag_focus_viewer`,
     viewerAfterDrag === 0 && before === 0 && selectedCount === 1 && viewerOpen && /v3-\d{3}\.mp4/.test(viewerSrc || "") && viewerClosed);

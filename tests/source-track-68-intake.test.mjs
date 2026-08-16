@@ -74,7 +74,7 @@ test("track68 pinned constants match the Web CTO Phase 1 release evidence (#235)
   assert.equal(SOURCE_TRACK_68_MEDIA.videosAbove25MiB, 25);
   assert.equal(SOURCE_TRACK_68_MEDIA.transport, "LOCAL_EXACT_OUT_OF_GIT_ONLY");
   // No machine-local absolute path may survive as repository authority.
-  const provenanceSource = await readFile(new URL("../lib/source-track-68/provenance.ts", root), "utf8");
+  const provenanceSource = await readFile(new URL("lib/source-track-68/provenance.ts", root), "utf8");
   assert.doesNotMatch(provenanceSource, /"[A-Z]:\//, "no Windows drive-letter absolute path in provenance");
   assert.doesNotMatch(provenanceSource, /\/mnt\/[a-z]\//, "no /mnt/<drive> absolute path in provenance");
   // Phase 1 boundary: native is HOLD, no lineage, no canonical adoption.
