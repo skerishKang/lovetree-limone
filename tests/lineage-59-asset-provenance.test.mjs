@@ -68,15 +68,21 @@ test("placeholder demo media is distinctly DEMO_FIXTURE, never EXACT_ASSET_PINNE
   assert.ok(!all.includes("EXACT_ASSET_PINNED"));
 });
 
-test("unavailable exact asset fails closed: nothing is pinned and nothing is repo-pinnable", () => {
+test("committed exact assets are pinned and repo-pinnable; large binaries remain HOLD", () => {
   const summary = ledgerStatusSummary();
-  assert.equal(summary.exactPinned, 0);
-  assert.equal(summary.repoPinnable, 0);
+  assert.equal(summary.exactPinned, 5, "5 small exact payloads committed + pinned");
+  assert.equal(summary.repoPinnable, 5);
+  const pinned = ASSET_LEDGER.filter((e) => e.provenanceStatus === "EXACT_ASSET_PINNED");
   assert.ok(
-    ASSET_LEDGER.every((e) => e.provenanceStatus !== "EXACT_ASSET_PINNED"),
-    "no ledger entry may claim EXACT_ASSET_PINNED while Drive is un-fetched",
+    pinned.every((e) => e.repoTransportPolicy === "REPO_PIN_OK" && typeof e.committedPath === "string"),
+    "pinned entries are repo-pin approved with a committed path",
   );
-  assert.equal(LINEAGE_59_SOURCE.mediaBindingDisposition, "FAIL_CLOSED_HOLD");
+  // large background PNGs + standalone executable stay transport HOLD (never pinned)
+  for (const i of [1, 2, 3]) {
+    assert.equal(getLedgerEntry(`src-environment-background-${i}`).provenanceStatus, "SOURCE_REFERENCE_ONLY");
+  }
+  assert.equal(getLedgerEntry("src-executable-current-candidate").provenanceStatus, "SOURCE_REFERENCE_ONLY");
+  assert.equal(LINEAGE_59_SOURCE.mediaBindingDisposition, "EXACT_SMALL_PINNED_TRANSPORT_HOLD");
   assert.equal(LINEAGE_59_SOURCE.exactBinaryTransport, "HOLD");
   assert.equal(LINEAGE_59_SOURCE.driveFetchStatus, "LOCAL_DRIVE_FETCH_UNAVAILABLE");
 });
@@ -141,7 +147,14 @@ test("no giant binary / accidental exact-asset commit", async () => {
         `large asset ${entry.assetId} must not be repo-pinnable`,
       );
     }
-    assert.equal(isRepoPinnable(entry), false);
+    // Only actually-pinned exact assets may be repo-pinnable; everything else
+    // (large binaries, placeholders, standalone executable) must not be.
+    const expectedPinnable = entry.provenanceStatus === "EXACT_ASSET_PINNED";
+    assert.equal(
+      isRepoPinnable(entry),
+      expectedPinnable,
+      `${entry.assetId} repo-pinnable matches pin state`,
+    );
   }
 });
 

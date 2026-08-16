@@ -18,7 +18,7 @@ export const LINEAGE_59_SOURCE = {
   webCtoDriveFetchVerified: true as const,
   webCtoReviewId: "4946999933" as const,
   assetLedgerModule: "lib/lineage-59/asset-provenance.ts",
-  mediaBindingDisposition: "FAIL_CLOSED_HOLD" as const,
+  mediaBindingDisposition: "EXACT_SMALL_PINNED_TRANSPORT_HOLD" as const,
   exactBinaryTransport: "HOLD" as const,
   fingerprintAuthority: "issue #161 — Web CTO independent verification" as const,
   webCtoVerifiedAuthority: "Web CTO review 4946999933 — Drive V5 re-verified (executable + 검증결과.json + 8 unique embedded payloads)" as const,
