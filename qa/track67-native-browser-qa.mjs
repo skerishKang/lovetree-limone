@@ -172,11 +172,42 @@ async function runHitProofs(page, vp) {
       : "no multi-candidate ray in window",
   );
 
-  // Negative control: empty-space click -> no hit.
-  await clickCanvasPixel(page, 2, 2);
-  await page.waitForTimeout(120);
-  const ds = await readCanvasDataset(page);
-  record(vp, "E2. empty-space click -> no hit", ds?.hitKind === "none", `hitKind=${ds?.hitKind}`);
+}
+
+// E2 negative control on the SPARSE world (before persistence fills the view
+// with >112 ribbons — in a dense world even corner pixels legitimately hit a
+// wall, so the no-hit control is only truthful early).
+async function runSparseNoHitControl(page, vp) {
+  await waitFor(page, async () => {
+    const n = parseInt(await readHud(page, "static chunks"), 10);
+    return Number.isFinite(n) && n >= 1 ? n : null;
+  }, 120000);
+  const corners = [
+    [2, 2],
+    [-3, 2],
+    [2, -3],
+    [-3, -3],
+  ];
+  const deadline = Date.now() + 30000;
+  let noneSeen = false;
+  let last = null;
+  while (Date.now() < deadline && !noneSeen) {
+    for (const [cx, cy] of corners) {
+      const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+      const x = cx < 0 ? box.width + cx : cx;
+      const y = cy < 0 ? box.height + cy : cy;
+      await clickCanvasPixel(page, x, y);
+      await page.waitForTimeout(90);
+      const ds = await readCanvasDataset(page);
+      last = ds?.hitKind;
+      if (ds?.hitKind === "none") {
+        noneSeen = true;
+        break;
+      }
+    }
+    if (!noneSeen) await page.waitForTimeout(800);
+  }
+  record(vp, "E2. sparse-world empty-space click -> no hit (negative control)", noneSeen, `last hitKind=${last}`);
 }
 
 async function runWorks(page, vp) {
@@ -289,6 +320,7 @@ async function runViewportMatrix(browser, vp) {
   await page.locator("canvas.lt67-native__canvas").waitFor({ timeout: 15000 });
   record(vp.name, "A. native Track67 route loads", true);
 
+  await runSparseNoHitControl(page, vp.name); // E2 (sparse world — truthful no-hit window)
   await runPersistence(page, vp.name); // G + H (also grows overlap for hit proofs)
   await runHitProofs(page, vp.name); // E + F + F2 + E2
   await runWorks(page, vp.name); // K + K2
