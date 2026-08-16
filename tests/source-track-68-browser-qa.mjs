@@ -295,29 +295,39 @@ for (const vp of VIEWPORTS) {
   const viewerAfterDrag = await frame.locator(".viewer.open").count();
 
   // film-grid selection: open Media drawer, click film 001 (static target).
-  // On cramped viewports the iframe sits partly below the runner-page fold,
-  // so expose it first and click by resolved coordinates (static element).
+  // Primary path: native locator click. Fallback for cramped viewports where
+  // the iframe sits below the runner-page fold: expose it by scrolling and
+  // click by resolved coordinates (the target itself is static).
   await frame.locator("#libraryTrigger").press("l");
   await frame.waitForSelector("body.library-open", { timeout: 5000 });
-  await page.evaluate(() => window.scrollBy(0, 700));
-  const film1Box = await frame.locator('.film[data-index="0"]').boundingBox();
-  let focused = false;
-  let focusedIndex = null;
-  if (film1Box) {
-    await page.mouse.click(film1Box.x + film1Box.width / 2, film1Box.y + Math.min(film1Box.height / 2, 40));
+  const film1 = frame.locator('.film[data-index="0"]');
+  let filmClicked = false;
+  try {
+    await film1.click({ timeout: 3000 });
+    filmClicked = true;
+  } catch {
+    await page.evaluate(() => window.scrollBy(0, 700));
+    const fb = await film1.boundingBox();
+    if (fb) {
+      await page.mouse.click(fb.x + fb.width / 2, fb.y + Math.min(fb.height / 2, 40));
+      filmClicked = true;
+    }
   }
   await frame.waitForSelector(".node.selected", { timeout: 5000 });
-  focused = (await frame.locator(".node.selected").count()) === 1;
-  focusedIndex = await frame.locator(".node.selected").first().getAttribute("data-index");
+  const focused = (await frame.locator(".node.selected").count()) === 1;
+  const focusedIndex = await frame.locator(".node.selected").first().getAttribute("data-index");
   const drawerClosedOnFocus = (await frame.locator("body.library-open").count()) === 0;
-  record(`${vp.name}_focus_click_selects_film`, focused && focusedIndex === "0" && drawerClosedOnFocus && before === 0);
+  record(`${vp.name}_focus_click_selects_film`, focused && focusedIndex === "0" && drawerClosedOnFocus && before === 0 && filmClicked);
 
   // repeat click on the SAME film (still selected) opens the viewer
   await frame.locator("#libraryTrigger").press("l");
   await frame.waitForSelector("body.library-open", { timeout: 5000 });
-  const film1Box2 = await frame.locator('.film[data-index="0"]').boundingBox();
-  if (film1Box2) {
-    await page.mouse.click(film1Box2.x + film1Box2.width / 2, film1Box2.y + Math.min(film1Box2.height / 2, 40));
+  try {
+    await film1.click({ timeout: 3000 });
+  } catch {
+    await page.evaluate(() => window.scrollBy(0, 700));
+    const fb = await film1.boundingBox();
+    if (fb) await page.mouse.click(fb.x + fb.width / 2, fb.y + Math.min(fb.height / 2, 40));
   }
   let viewerOpen = false;
   let viewerSrc = null;
