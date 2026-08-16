@@ -131,15 +131,6 @@
     "note": "Issue #235 — Phase 1 source runner + repository evidence intake authorized by Web CTO re-audit. Phase 2 native candidate HOLD. No repository lineage number allocated; canonical /v4 adoption NOT authorized."
   },
   "templateFamily": "living-media-sphere",
-  "slotNotes": {
-    "issue": "235",
-    "notes": [
-      "Exact media transport = LOCAL_EXACT_OUT_OF_GIT_ONLY: all 178 runtime assets stay out of Git (25 of 89 videos exceed the Cloudflare 25 MiB static-asset limit; full-set repo transport BLOCKED; external video origin NOT_AUTHORIZED).",
-      "Full per-file media evidence (driveFileId / bytes / SHA-256) is committed below in track68MediaInventory — 89/89 videos + 89/89 posters hash-verified in place via the local Drive mount (COM3-GLM 2026-08-17).",
-      "The repo transports the exact executable HTML only (25,544 B) plus this evidence; media staging path public/design-lab-assets/source-tracks/68/v3/assets/ is gitignored on purpose.",
-      "Local exact-media browser QA = PASS_WITH_NOTED_PARTIALS at 1280x800 / 390x844 / 320x720 (sliders/reset verified statically; IAB harness blocked top-zone widget clicks)."
-    ]
-  },
   "track68MediaInventory": {
     "transport": "LOCAL_EXACT_OUT_OF_GIT_ONLY",
     "evidence": {
