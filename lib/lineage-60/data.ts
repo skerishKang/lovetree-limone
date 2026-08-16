@@ -47,7 +47,8 @@ export interface Track60SourceMeta {
   executableBytes: number;
   executableSha256: string;
   renderingTier: string;
-  sourceStatus: "PINNED" | "DRIVE_UNAVAILABLE";
+  sourceStatus: "PINNED" | "DRIVE_UNAVAILABLE" | "CTO_VERIFIED";
+  localDriveFetch: "AVAILABLE" | "UNAVAILABLE";
   revisionLabel: string;
   note: string;
 }
@@ -57,9 +58,10 @@ export const LINEAGE_60_SOURCE: Track60SourceMeta = {
   executableBytes: 55260,
   executableSha256: "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
   renderingTier: "software-projected canvas 3D (canvas-2d context)",
-  sourceStatus: "DRIVE_UNAVAILABLE",
+  sourceStatus: "CTO_VERIFIED",
+  localDriveFetch: "UNAVAILABLE",
   revisionLabel: "V1.2",
-  note: "Google Drive source is behind an auth wall in this environment; SHA-256 pin recorded from the intake manifest. No fingerprint could be taken locally — reported as DRIVE_UNAVAILABLE, not a PASS.",
+  note: "Web CTO independently verified SOURCE_FINGERPRINT=PASS for ★_현재후보_Track60_V1.2_REAL_NAVIGATION.html (SHA-256 c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf, exact bytes 55,260). Local Drive fetch is unavailable in this environment, so the fingerprint authority is CTO_VERIFIED — not locally recomputed and not DRIVE_UNAVAILABLE. Rendering confirmed Canvas-2D software-projected 3D; WEBGL=NO, THREE_JS=NO.",
 };
 
 interface ThemeSpec {

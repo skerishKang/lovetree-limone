@@ -60,7 +60,9 @@ export default function Lineage60ClusterExplorerPage() {
           value={
             source.sourceStatus === "PINNED"
               ? `${source.executableBytes.toLocaleString("en-US")} B · ${source.executableSha256.slice(0, 12)}…`
-              : `PINNED ${source.executableSha256.slice(0, 12)}… · DRIVE_UNAVAILABLE`
+              : source.sourceStatus === "CTO_VERIFIED"
+                ? `${source.executableBytes.toLocaleString("en-US")} B · ${source.executableSha256.slice(0, 12)}… · CTO_VERIFIED`
+                : `PINNED ${source.executableSha256.slice(0, 12)}… · DRIVE_UNAVAILABLE`
           }
         />
         <Meta label="RENDERING" value="software-projected canvas 3D" />

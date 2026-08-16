@@ -8,22 +8,14 @@ import {
   type ThemeKey,
   type Track60Moment,
 } from "@/lib/lineage-60/data";
-
-type Vec3 = [number, number, number];
-
-interface Camera {
-  yaw: number;
-  pitch: number;
-  distance: number;
-  target: Vec3;
-}
-
-interface Projected {
-  sx: number;
-  sy: number;
-  scale: number;
-  depth: number;
-}
+import {
+  type Camera,
+  type Projected,
+  type Vec3,
+  classifyGesture,
+  frontmostHit,
+  project as projectPoint,
+} from "@/lib/lineage-60/projection";
 
 const GOLDEN = 2.399963229728653;
 const LEVEL_DISTANCE: Record<number, number> = { 0: 920, 1: 540, 2: 340, 3: 210 };
@@ -53,8 +45,8 @@ function momentBasePosition(
 }
 
 export default function Lineage60ClusterExplorer({
-  moments,
-  clusters,
+  moments: momentsProp,
+  clusters: clustersProp,
   bridges,
 }: {
   moments: Track60Moment[];
@@ -64,12 +56,75 @@ export default function Lineage60ClusterExplorer({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
-  const dragRef = useRef<{ x: number; y: number; active: boolean; pinch: boolean; dist?: number }>({
-    x: 0,
-    y: 0,
-    active: false,
-    pinch: false,
-  });
+
+  // ---- interaction authority (Blocker 1) ----
+  // Single source of truth for drag-vs-click vs pinch vs cancel discrimination.
+  const activeRef = useRef(false);
+  const pointerStartRef = useRef({ x: 0, y: 0 });
+  const lastPointerRef = useRef({ x: 0, y: 0 });
+  const maxMoveRef = useRef(0);
+  const cancelledRef = useRef(false);
+  const pinchHappenedRef = useRef(false);
+  const pointersRef = useRef<Set<number>>(new Set());
+
+  // ---- QA depth-overlap fixture (Blocker 2 browser proof) ----
+  const qaDepth = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("qa") === "depth-overlap";
+  }, []);
+  const qaPositions = useMemo<Map<string, Vec3>>(() => {
+    if (!qaDepth) return new Map();
+    return new Map<string, Vec3>([
+      ["qa-X", [0, 0, 40]],
+      ["qa-Y", [0, 0, -40]],
+    ]);
+  }, [qaDepth]);
+  const qaMoments = useMemo<Track60Moment[]>(
+    () =>
+      qaDepth
+        ? [
+            {
+              id: "qa-X",
+              title: "Depth X",
+              memo: "front-most at yaw π",
+              sourceType: "memo",
+              discoveryDate: "2025-01-01",
+              emotionTags: [],
+              parentId: null,
+              connectionReason: "qa",
+              theme: "first",
+            },
+            {
+              id: "qa-Y",
+              title: "Depth Y",
+              memo: "front-most at yaw 0",
+              sourceType: "memo",
+              discoveryDate: "2025-01-01",
+              emotionTags: [],
+              parentId: null,
+              connectionReason: "qa",
+              theme: "trip",
+            },
+          ]
+        : [],
+    [qaDepth],
+  );
+  const qaClusters = useMemo<ClusterView[]>(
+    () =>
+      qaDepth
+        ? [
+            { key: "first", label: "X cluster", color: "#ff9bb3", memberIds: ["qa-X"], center: [0, 0, 40] },
+            { key: "trip", label: "Y cluster", color: "#7ec8ff", memberIds: ["qa-Y"], center: [0, 0, -40] },
+          ]
+        : [],
+    [qaDepth],
+  );
+
+  // Effective data surface: normal mode uses the native route props; the QA
+  // depth-overlap fixture replaces them with two on-axis points whose projected
+  // screen position is identical but whose camera depth differs.
+  const moments = qaDepth ? qaMoments : momentsProp;
+  const clusters = qaDepth ? qaClusters : clustersProp;
 
   const [level, setLevel] = useState(0);
   const [focusCluster, setFocusCluster] = useState<ThemeKey | null>(null);
@@ -82,8 +137,19 @@ export default function Lineage60ClusterExplorer({
   const camTargetRef = useRef<Camera>({ yaw: 0.5, pitch: 0.35, distance: LEVEL_DISTANCE[0], target: [0, 0, 0] });
   const sizeRef = useRef({ w: 800, h: 520, dpr: 1 });
 
+  // QA depth-overlap fixture: pin an on-axis camera so the two fixture points
+  // overlap at screen center; the frontmost (smaller depth) is the authority.
+  useEffect(() => {
+    if (!qaDepth) return;
+    const c: Camera = { yaw: 0, pitch: 0, distance: 300, target: [0, 0, 0] };
+    camRef.current = { ...c };
+    camTargetRef.current = { ...c };
+    setLevel(2);
+  }, [qaDepth]);
+
   const byId = useMemo(() => new Map(moments.map((m) => [m.id, m])), [moments]);
   const positions = useMemo(() => {
+    if (qaDepth) return qaPositions;
     const map = new Map<string, Vec3>();
     for (const c of clusters) {
       c.memberIds.forEach((id, i) => {
@@ -92,7 +158,7 @@ export default function Lineage60ClusterExplorer({
       });
     }
     return map;
-  }, [clusters, byId]);
+  }, [clusters, byId, qaDepth, qaPositions]);
 
   const bridgeSet = useMemo(() => new Set(bridges.map((b) => b.momentId)), [bridges]);
 
@@ -211,37 +277,9 @@ export default function Lineage60ClusterExplorer({
     };
   }, []);
 
-  // ---- projection ----
+  // ---- projection (delegates to the single-source authority in projection.ts) ----
   const project = useCallback((p: Vec3, cam: Camera): Projected | null => {
-    const { w, h, dpr } = sizeRef.current;
-    const cx = (w * dpr) / 2;
-    const cy = (h * dpr) / 2;
-    const focal = Math.min(w, h) * dpr * 1.15;
-
-    const x = p[0] - cam.target[0];
-    const y = p[1] - cam.target[1];
-    const z = p[2] - cam.target[2];
-
-    const cyaw = Math.cos(cam.yaw);
-    const syaw = Math.sin(cam.yaw);
-    const x1 = x * cyaw + z * syaw;
-    const z1 = -x * syaw + z * cyaw;
-    const y1 = y;
-
-    const cp = Math.cos(cam.pitch);
-    const sp = Math.sin(cam.pitch);
-    const y2 = y1 * cp - z1 * sp;
-    const z2 = y1 * sp + z1 * cp;
-    const x2 = x1;
-
-    const dz = z2 + cam.distance;
-    if (dz <= 1) return null;
-    return {
-      sx: (x2 * focal) / dz + cx,
-      sy: (-y2 * focal) / dz + cy,
-      scale: focal / dz,
-      depth: dz,
-    };
+    return projectPoint(p, cam, sizeRef.current);
   }, []);
 
   // ---- render loop ----
@@ -283,26 +321,28 @@ export default function Lineage60ClusterExplorer({
         ctx.globalAlpha = 1;
       };
 
-      // LEVEL 0 — UNIVERSE / MACRO
+      // LEVEL 0 — UNIVERSE / MACRO (depth-sorted far -> near)
       if (level === 0) {
-        for (const c of clusters) {
-          const p = project(c.center, cam);
-          if (!p) continue;
-          const r = Math.max(28, Math.min(120, c.memberIds.length * 6)) * p.scale * 0.06;
-          const grad = ctx.createRadialGradient(p.sx, p.sy, r * 0.2, p.sx, p.sy, r);
+        const clusterItems = clusters
+          .map((c) => ({ c, proj: project(c.center, cam) }))
+          .filter((it): it is { c: ClusterView; proj: Projected } => it.proj !== null)
+          .sort((a, b) => b.proj.depth - a.proj.depth);
+        for (const { c, proj } of clusterItems) {
+          const r = Math.max(28, Math.min(120, c.memberIds.length * 6)) * proj.scale * 0.06;
+          const grad = ctx.createRadialGradient(proj.sx, proj.sy, r * 0.2, proj.sx, proj.sy, r);
           grad.addColorStop(0, c.color + "55");
           grad.addColorStop(1, c.color + "05");
           ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+          ctx.arc(proj.sx, proj.sy, r, 0, Math.PI * 2);
           ctx.fill();
           ctx.fillStyle = c.color;
           ctx.font = `${14 * dpr}px Georgia, serif`;
           ctx.textAlign = "center";
-          ctx.fillText(c.label, p.sx, p.sy - r - 8 * dpr);
+          ctx.fillText(c.label, proj.sx, proj.sy - r - 8 * dpr);
           ctx.fillStyle = "#8d857f";
           ctx.font = `${10 * dpr}px sans-serif`;
-          ctx.fillText(`${c.memberIds.length} moments`, p.sx, p.sy - r + 10 * dpr);
+          ctx.fillText(`${c.memberIds.length} moments`, proj.sx, proj.sy - r + 10 * dpr);
         }
         for (const b of bridges) {
           const from = positions.get(b.incomingParentId);
@@ -344,11 +384,13 @@ export default function Lineage60ClusterExplorer({
               if (from) drawCorridor(from, to, "#c9b6ff", 2);
             }
           }
-          // cluster members as anchors
-          for (const id of c.memberIds) {
-            const p = positions.get(id);
-            if (!p) continue;
-            const proj = project(p, cam);
+          // cluster members as anchors (depth-sorted far -> near)
+          const memberItems = c.memberIds
+            .map((id) => ({ id, p: positions.get(id), proj: positions.get(id) ? project(positions.get(id)!, cam) : null }))
+            .filter((it) => it.proj !== null)
+            .sort((a, b) => b.proj!.depth - a.proj!.depth);
+          for (const { id, p } of memberItems) {
+            const proj = project(p!, cam);
             if (!proj) continue;
             const isBridge = bridgeSet.has(id);
             ctx.fillStyle = isBridge ? "#c9b6ff" : c.color;
@@ -389,7 +431,15 @@ export default function Lineage60ClusterExplorer({
             ctx.fillText(label, proj.sx + r + 4 * dpr, proj.sy + 4 * dpr);
           }
         };
-        for (const m of moments) if (m.id !== selectedMomentId) drawNode(m, false);
+        // depth-sorted far -> near render order (occlusion authority)
+        const fieldNodes = moments
+          .map((m) => ({ m, proj: positions.get(m.id) ? project(positions.get(m.id)!, cam) : null }))
+          .filter((it) => it.proj !== null)
+          .sort((a, b) => b.proj!.depth - a.proj!.depth);
+        for (const { m } of fieldNodes) {
+          if (m.id === selectedMomentId) continue; // selected drawn last (on top)
+          drawNode(m, false);
+        }
         if (selected) drawNode(selected, true);
       }
 
@@ -408,14 +458,19 @@ export default function Lineage60ClusterExplorer({
             const to = positions.get(ch.id);
             if (from && to) drawCorridor(from, to, "#ffd27e", 2);
           }
-          // dim field
-          for (const m of moments) {
-            if (m.id === selected.id) continue;
-            if (parent && m.id === parent.id) continue;
-            if (children.some((c) => c.id === m.id)) continue;
-            const p = positions.get(m.id);
-            if (!p) continue;
-            const proj = project(p, cam);
+          // dim field (depth-sorted far -> near)
+          const dimItems = moments
+            .filter(
+              (m) =>
+                m.id !== selected.id &&
+                !(parent && m.id === parent.id) &&
+                !children.some((c) => c.id === m.id),
+            )
+            .map((m) => ({ m, proj: positions.get(m.id) ? project(positions.get(m.id)!, cam) : null }))
+            .filter((it) => it.proj !== null)
+            .sort((a, b) => b.proj!.depth - a.proj!.depth);
+          for (const { m } of dimItems) {
+            const proj = project(positions.get(m.id)!, cam);
             if (!proj) continue;
             ctx.fillStyle = clusterColor(m.theme);
             ctx.globalAlpha = 0.18;
@@ -471,27 +526,11 @@ export default function Lineage60ClusterExplorer({
     return () => cancelAnimationFrame(raf);
   }, [level, focusCluster, clusters, moments, positions, byId, project, reducedMotion, bridgeSet, selected, selectedMomentId, bridges]);
 
-  // ---- pointer / wheel / touch ----
-  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.setPointerCapture(e.pointerId);
-    dragRef.current = { x: e.clientX, y: e.clientY, active: true, pinch: false };
-  };
+  // ---- interaction authority (Blocker 1) ----
+  // Click/tap vs rotate-drag vs pinch vs cancel is decided at gesture end using a
+  // single threshold constant (CLICK_THRESHOLD_PX) sourced from projection.ts.
 
-  const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const d = dragRef.current;
-    if (!d.active || d.pinch) return;
-    const dx = e.clientX - d.x;
-    const dy = e.clientY - d.y;
-    d.x = e.clientX;
-    d.y = e.clientY;
-    const t = camTargetRef.current;
-    t.yaw -= dx * 0.005;
-    t.pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, t.pitch + dy * 0.005));
-  };
-
-  const onPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const endGestureCleanup = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (canvas && e.pointerId != null) {
       try {
@@ -500,13 +539,68 @@ export default function Lineage60ClusterExplorer({
         /* ignore */
       }
     }
-    const d = dragRef.current;
-    if (d.active && !d.pinch) {
-      // treat as click if minimal movement → hit test
+    pointersRef.current.delete(e.pointerId);
+    activeRef.current = false;
+    pinchHappenedRef.current = false;
+    cancelledRef.current = false;
+    pointerStartRef.current = { x: 0, y: 0 };
+    maxMoveRef.current = 0;
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.setPointerCapture(e.pointerId);
+    pointersRef.current.add(e.pointerId);
+    activeRef.current = true;
+    cancelledRef.current = false;
+    // A second simultaneous pointer means a pinch lifecycle started.
+    pinchHappenedRef.current = pointersRef.current.size >= 2;
+    pointerStartRef.current = { x: e.clientX, y: e.clientY };
+    lastPointerRef.current = { x: e.clientX, y: e.clientY };
+    maxMoveRef.current = 0;
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!activeRef.current) return;
+    // A pinch / multi-touch lifecycle owns the gesture: no rotate, no select.
+    if (pinchHappenedRef.current || pointersRef.current.size >= 2) return;
+    const dx = e.clientX - lastPointerRef.current.x;
+    const dy = e.clientY - lastPointerRef.current.y;
+    lastPointerRef.current = { x: e.clientX, y: e.clientY };
+    // total displacement from the down origin drives click/tap authority
+    maxMoveRef.current = Math.max(
+      maxMoveRef.current,
+      Math.hypot(e.clientX - pointerStartRef.current.x, e.clientY - pointerStartRef.current.y),
+    );
+    const t = camTargetRef.current;
+    t.yaw -= dx * 0.005;
+    t.pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, t.pitch + dy * 0.005));
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    // Decide click/tap vs rotate vs pinch vs cancel from the gesture record.
+    const kind = classifyGesture({
+      maxMove: maxMoveRef.current,
+      pinch: pinchHappenedRef.current,
+      cancelled: cancelledRef.current,
+    });
+    if (kind === "click") {
       hitTest(e.clientX, e.clientY);
     }
-    d.active = false;
-    d.pinch = false;
+    // rotate / pinch / cancel -> cleanup only, NO selection (Blocker 1 proofs B/C/D).
+    endGestureCleanup(e);
+  };
+
+  const onPointerCancel = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    // pointercancel (and lost capture) is cleanup-only: it must never select.
+    cancelledRef.current = true;
+    endGestureCleanup(e);
+  };
+
+  const onLostPointerCapture = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    cancelledRef.current = true;
+    endGestureCleanup(e);
   };
 
   const onWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -530,11 +624,12 @@ export default function Lineage60ClusterExplorer({
       ts.y = e.touches[0].clientY;
     } else if (e.touches.length === 2) {
       ts.mode = "pinch";
+      // Pinch lifecycle: mark so pointer-up of the trailing finger cannot select.
+      pinchHappenedRef.current = true;
       ts.dist = Math.hypot(
         e.touches[0].clientX - e.touches[1].clientX,
         e.touches[0].clientY - e.touches[1].clientY,
       );
-      dragRef.current.pinch = true;
     }
   };
 
@@ -560,8 +655,10 @@ export default function Lineage60ClusterExplorer({
   };
 
   const onTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    touchState.current.mode = e.touches.length === 1 ? "pan" : "none";
-    if (e.touches.length === 0) dragRef.current.pinch = false;
+    const ts = touchState.current;
+    ts.mode = e.touches.length === 1 ? "pan" : "none";
+    // Pinch lifecycle must not be mis-read as a click on the trailing finger-up.
+    if (e.touches.length === 0) pinchHappenedRef.current = false;
   };
 
   const hitTest = (clientX: number, clientY: number) => {
@@ -571,29 +668,36 @@ export default function Lineage60ClusterExplorer({
     const px = clientX - rect.left;
     const py = clientY - rect.top;
     const cam = camRef.current;
-    let best: { id: string; d: number } | null = null;
+    const vp = sizeRef.current;
+    const candidates: { item: string; proj: Projected }[] = [];
     for (const m of moments) {
       const p = positions.get(m.id);
       if (!p) continue;
       const proj = project(p, cam);
       if (!proj) continue;
-      const d = Math.hypot(proj.sx / (sizeRef.current.dpr) - px, proj.sy / (sizeRef.current.dpr) - py);
-      const hitR = Math.max(14, 18 - level * 2);
-      if (d < hitR && (!best || d < best.d)) best = { id: m.id, d };
+      candidates.push({ item: m.id, proj });
     }
-    if (best) {
-      selectMoment(best.id);
-    } else if (level === 0) {
-      // cluster mass hit?
+    const hitR = Math.max(14, 18 - level * 2);
+    // Frontmost (nearest = smallest depth) among overlapping 2D candidates.
+    const hit = frontmostHit(candidates, px, py, hitR, vp);
+    if (hit) {
+      selectMoment(hit);
+      return;
+    }
+    if (level === 0) {
+      // cluster mass hit (nearest within 70px) — 2D mass, kept as-is
+      let bestC: ThemeKey | null = null;
+      let bestD = Infinity;
       for (const c of clusters) {
         const proj = project(c.center, cam);
         if (!proj) continue;
-        const d = Math.hypot(proj.sx / sizeRef.current.dpr - px, proj.sy / sizeRef.current.dpr - py);
-        if (d < 70) {
-          focusOnCluster(c.key);
-          return;
+        const d = Math.hypot(proj.sx / vp.dpr - px, proj.sy / vp.dpr - py);
+        if (d < 70 && d < bestD) {
+          bestD = d;
+          bestC = c.key;
         }
       }
+      if (bestC) focusOnCluster(bestC);
     }
   };
 
@@ -743,7 +847,8 @@ export default function Lineage60ClusterExplorer({
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
+          onPointerCancel={onPointerCancel}
+          onLostPointerCapture={onLostPointerCapture}
           onWheel={onWheel}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
