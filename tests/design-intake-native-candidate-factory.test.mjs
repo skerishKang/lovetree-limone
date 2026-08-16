@@ -43,11 +43,14 @@ const REAL_FIXTURE_NAMES = [
   "track-64-floating-moment-entry-portal",
 ];
 
-// Track61 and Track64 become intentionally non-scaffoldable after their proving
+// Track59/Track61/Track64 become intentionally non-scaffoldable after their proving
 // PRs apply all three live registry seams. Re-running the factory must fail closed
 // instead of duplicating the already-materialized lineage/candidate/fidelity identities.
 const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
-  (name) => name !== "track-61-guided-next-moment-builder" && name !== "track-64-floating-moment-entry-portal",
+  (name) =>
+    name !== "track-59-living-memory-book" &&
+    name !== "track-61-guided-next-moment-builder" &&
+    name !== "track-64-floating-moment-entry-portal",
 );
 
 const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{25,44}$/;
@@ -981,6 +984,19 @@ test("fixtures: Track64 applied registry seams fail closed on repeat scaffold", 
       () => buildScaffoldPlan(fixture("track-64-floating-moment-entry-portal"), { root, fidelityTargets: LIVE_TARGETS }),
       IntakeCollisionError,
       "applied Track64 lineage/candidate/fidelity identities must not be scaffolded twice",
+    );
+  } finally {
+    cleanup(root);
+  }
+});
+
+test("fixtures: Track59 applied registry seams fail closed on repeat scaffold", () => {
+  const root = withTempRoot();
+  try {
+    assert.throws(
+      () => buildScaffoldPlan(fixture("track-59-living-memory-book"), { root, fidelityTargets: LIVE_TARGETS }),
+      IntakeCollisionError,
+      "applied Track59 lineage/candidate/fidelity identities must not be scaffolded twice",
     );
   } finally {
     cleanup(root);
@@ -2128,7 +2144,7 @@ test("CLI: design:intake:scaffold --write materializes the plan in a clean root"
         "--import",
         "tsx",
         "scripts/design-intake-scaffold.mjs",
-        path.join(FIXTURES_DIR, "track-59-living-memory-book.json"),
+        path.join(FIXTURES_DIR, "track-60-3d-moment-cluster.json"),
         "--write",
       ],
       {
@@ -2140,15 +2156,15 @@ test("CLI: design:intake:scaffold --write materializes the plan in a clean root"
     );
     assert.match(stdout, /WROTE \d+ files:/);
     assert.ok(
-      existsSync(path.join(root, "app/design-lab/lineages/59/59-v5/page.tsx")),
+      existsSync(path.join(root, "app/design-lab/lineages/60/60-v1-2/page.tsx")),
       "route page written",
     );
     assert.ok(
-      existsSync(path.join(root, "tests/track-59-living-memory-book-intake-contract.test.mjs")),
+      existsSync(path.join(root, "tests/track-60-3d-moment-cluster-intake-contract.test.mjs")),
       "contract test written",
     );
     assert.ok(
-      existsSync(path.join(root, "design-intake/scaffolds/track-59-living-memory-book/REUSE_CHECKLIST.md")),
+      existsSync(path.join(root, "design-intake/scaffolds/track-60-3d-moment-cluster/REUSE_CHECKLIST.md")),
       "reuse checklist written",
     );
     assert.ok(

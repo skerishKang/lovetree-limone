@@ -29,6 +29,7 @@ import {
   selectNext,
   selectPrevious,
   selectByIndex,
+  selectById,
   hasNext,
   hasPrevious,
   isAtEnd,
@@ -45,21 +46,37 @@ import {
   getStoryPhaseDurations,
   cycleSpeed,
 } from "@/lib/lineage-59/story-transport";
-import type { BranchChoice } from "@/lib/lineage-59/branch-authority";
-import { createBranchState, selectBranchChoice } from "@/lib/lineage-59/branch-authority";
-import type { CurlState } from "@/lib/lineage-59/page-physics";
+import type { BranchState } from "@/lib/lineage-59/branch-authority";
+import {
+  createBranchState,
+  resolveBranchChoices,
+  canOfferBranch,
+  selectBranchChoice,
+  getSelectedChoice,
+  consumeBranchState,
+  isBranchBlocking,
+  getResolvedContinuationMomentId,
+} from "@/lib/lineage-59/branch-authority";
+import type { CurlState, FlickTracker, TurnDirection } from "@/lib/lineage-59/page-physics";
 import {
   createCurlState,
   updateCurlProgress,
-  shouldCommit,
   completePageTurn,
   cancelPageTurn,
   startFastFlip,
   stopFastFlip,
   computeCurlTransform,
+  createFlickTracker,
+  trackFlick,
+  flickDeltaX,
+  curlProgressFromDelta,
+  resolveDragCommit,
+  resolvePointerCancel,
 } from "@/lib/lineage-59/page-physics";
 import type { EditState } from "@/lib/lineage-59/edit-authority";
 import { openEdit, closeEdit, updateEditField, getEditData } from "@/lib/lineage-59/edit-authority";
+import Lt59Overlay from "./Lt59Overlay";
+import { FOCUS_ENTRY_ATTRIBUTE } from "@/lib/lineage-59/focus-authority";
 
 import "@/app/styles/lineage-59-living-memory-book.css";
 
@@ -93,6 +110,8 @@ const DATA_SETS: Record<DataSetKey, DataSet> = {
   },
 };
 
+const BRANCH_CONSUME_DELAY_MS = 400;
+
 export default function LivingMemoryBookV5() {
   const [dataSetKey, setDataSetKey] = useState<DataSetKey>("default");
   const dataSet = DATA_SETS[dataSetKey];
@@ -104,8 +123,24 @@ export default function LivingMemoryBookV5() {
   const [whyNextOverrides, setWhyNextOverrides] = useState<Record<string, string>>({});
 
   const pathMomentIds = useMemo(() => dataSet.moments.map((m) => m.id), [dataSet]);
-  const connectionsMap = useMemo(() => {
-    const map = new Map(dataSet.connections.map((c) => [c.fromId, c]));
+
+  /**
+   * Two authorities, two key domains:
+   *  - `connectionByFromMoment`: WHY NEXT prose, keyed by Moment id (fromId).
+   *  - `connectionById`: BranchChoice.connectionId resolution, keyed by Connection id.
+   * They are never interchangeable. First-declared connection wins for a fromId
+   * so a fork keeps the primary path's WHY NEXT rather than the last alternate.
+   */
+  const connectionByFromMoment = useMemo(() => {
+    const map = new Map<string, Connection>();
+    for (const c of dataSet.connections) {
+      if (!map.has(c.fromId)) map.set(c.fromId, c);
+    }
+    return map;
+  }, [dataSet]);
+  const connectionById = useMemo(() => {
+    const map = new Map<string, Connection>();
+    for (const c of dataSet.connections) map.set(c.id, c);
     return map;
   }, [dataSet]);
   const branchesMap = useMemo(() => {
@@ -115,17 +150,20 @@ export default function LivingMemoryBookV5() {
 
   const [selection, setSelection] = useState<SelectionState>(() => createSelection(pathMomentIds[0], pathMomentIds));
   const [story, setStory] = useState<StoryState>(() => createStoryState());
-  const [branchState, setBranchState] = useState<ReturnType<typeof createBranchState> | null>(null);
+  const [branchState, setBranchState] = useState<BranchState | null>(null);
+  const [branchDismissedAt, setBranchDismissedAt] = useState<string | null>(null);
   const [curl, setCurl] = useState<CurlState>(() => createCurlState());
   const [edit, setEdit] = useState<EditState>({ active: false, momentId: null, fields: [], dirty: false });
   const [view, setView] = useState<"book" | "index" | "detail" | "magnifier">("book");
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const [fastFlipTimer, setFastFlipTimer] = useState<ReturnType<typeof setInterval> | null>(null);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const storyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const branchConsumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bookRef = useRef<HTMLDivElement | null>(null);
-  const prevDragRef = useRef<{ x: number; time: number } | null>(null);
+  const dragTrackerRef = useRef<FlickTracker | null>(null);
+  const dragPointerIdRef = useRef<number | null>(null);
+  const lastDragProgressRef = useRef(0);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -134,14 +172,6 @@ export default function LivingMemoryBookV5() {
     query.addEventListener("change", sync);
     return () => query.removeEventListener("change", sync);
   }, []);
-
-  useEffect(() => {
-    if (reducedMotion !== false) return;
-    const initial = setTimeout(() => {
-      setView("book");
-    }, 300);
-    return () => clearTimeout(initial);
-  }, [reducedMotion]);
 
   const switchDataSet = useCallback((key: DataSetKey) => {
     setDataSetKey(key);
@@ -154,9 +184,13 @@ export default function LivingMemoryBookV5() {
     setSelection(createSelection(ids[0], ids));
     setStory(createStoryState());
     setBranchState(null);
+    setBranchDismissedAt(null);
     setCurl(createCurlState());
     setEdit({ active: false, momentId: null, fields: [], dirty: false });
     setView("book");
+    dragTrackerRef.current = null;
+    dragPointerIdRef.current = null;
+    lastDragProgressRef.current = 0;
     if (fastFlipTimer) clearInterval(fastFlipTimer);
     setFastFlipTimer(null);
   }, [fastFlipTimer]);
@@ -166,21 +200,42 @@ export default function LivingMemoryBookV5() {
     if (!currentMoment) return null;
     const override = whyNextOverrides[currentMoment.id];
     if (override) return override;
-    const conn = connectionsMap.get(currentMoment.id);
+    const conn = connectionByFromMoment.get(currentMoment.id);
     return conn?.whyNext ?? null;
-  }, [currentMoment, whyNextOverrides, connectionsMap]);
+  }, [currentMoment, whyNextOverrides, connectionByFromMoment]);
 
   const hasCurrentBranch = useMemo(() => {
     if (!currentMoment) return false;
     return branchesMap.has(currentMoment.id);
   }, [currentMoment, branchesMap]);
 
+  /**
+   * Branch authorities — resolved once per branch Moment. `connectionById` is
+   * the only lookup for `BranchChoice.connectionId`; any connection not
+   * originating at the declared branch Moment is dropped instead of producing a
+   * continuation. The Story only hands control over when the branch is actually
+   * offerable (>= 2 truthful choices, every destination non-empty).
+   */
+  const currentBranchChoices = useMemo(() => {
+    if (!currentMoment) return [];
+    const branch = branchesMap.get(currentMoment.id);
+    if (!branch) return [];
+    return resolveBranchChoices(branch.choices, connectionById, currentMoment.id);
+  }, [currentMoment, branchesMap, connectionById]);
+  const currentBranchOfferable = useMemo(
+    () => hasCurrentBranch && canOfferBranch(currentBranchChoices),
+    [hasCurrentBranch, currentBranchChoices],
+  );
+
   const storyDurations = useMemo(() => getStoryPhaseDurations(story), [story]);
 
   useEffect(() => {
     if (!story.playing || story.paused) return;
     if (story.phase === "ended") return;
-    if (branchState?.active || branchState?.resolved) return;
+    // Branch states block scheduling for two distinct reasons:
+    //  - active & unresolved: the reader owes an explicit choice.
+    //  - resolved: the landing must consume the Branch before Story may advance.
+    if (isBranchBlocking(branchState) || branchState?.resolved) return;
 
     let duration = 0;
     switch (story.phase) {
@@ -208,22 +263,16 @@ export default function LivingMemoryBookV5() {
             setStory((s) => advanceStoryPhase(s, "ended"));
             return;
           }
-          if (hasCurrentBranch && !branchState?.resolved) {
-            const branch = branchesMap.get(currentMoment!.id);
-            if (branch) {
-              const choices: BranchChoice[] = branch.choices.map((ch) => {
-                const conn = connectionsMap.get(ch.connectionId);
-                return {
-                  id: ch.id,
-                  label: ch.label,
-                  description: ch.description,
-                  continuationMomentId: conn?.toId ?? "",
-                };
-              });
-              setBranchState(createBranchState(currentMoment!.id, choices));
-              setStory((s) => ({ ...s, phase: "branch-pause", playing: false, paused: true }));
-              return;
-            }
+          if (currentBranchOfferable && !branchState?.resolved) {
+            setBranchDismissedAt(null);
+            setBranchState(createBranchState(currentMoment!.id, currentBranchChoices));
+            setStory((s) => ({
+              ...s,
+              phase: "branch-pause",
+              playing: false,
+              paused: true,
+            }));
+            return;
           }
           setSelection(selectNext);
           setCurl(createCurlState);
@@ -233,7 +282,7 @@ export default function LivingMemoryBookV5() {
       }
     }, duration);
     return () => { if (storyTimerRef.current) clearTimeout(storyTimerRef.current); };
-  }, [story.phase, story.playing, story.paused, story.speed, selection, pathMomentIds, branchState, hasCurrentBranch, currentMoment, branchesMap, connectionsMap, storyDurations]);
+  }, [story.phase, story.playing, story.paused, story.speed, selection, pathMomentIds, branchState, currentBranchOfferable, currentBranchChoices, currentMoment, storyDurations]);
 
   const handleStoryPlay = useCallback(() => {
     if (story.phase === "ended") {
@@ -270,6 +319,15 @@ export default function LivingMemoryBookV5() {
     setStory(stopStory);
   }, [selection]);
 
+  /** Page turn by a gesture-implied direction (velocity flick or threshold drag). */
+  const handleTurn = useCallback((direction: TurnDirection | null) => {
+    if (direction === "backward") {
+      handlePrev();
+    } else {
+      handleNext();
+    }
+  }, [handlePrev, handleNext]);
+
   const handleIndexJump = useCallback((index: number) => {
     setCurl(createCurlState);
     setSelection((s) => selectByIndex(s, index));
@@ -277,21 +335,50 @@ export default function LivingMemoryBookV5() {
     setView("book");
   }, []);
 
+  /**
+   * Story resume after an explicit Branch choice.
+   *
+   * Sequence: exact selected continuation → branch blocking state consume →
+   * landing → Story resumes → next Story phase scheduled. The Branch chooser
+   * unmounts because `resolved` is set; the consumed Branch then clears
+   * entirely so the transport is never parked forever.
+   */
   const handleBranchSelect = useCallback((choiceId: string) => {
     if (!branchState) return;
+    if (branchState.resolved) return;
+
     const updated = selectBranchChoice(branchState, choiceId);
+    const destination = getResolvedContinuationMomentId(updated);
+    if (!destination) return;
+
     setBranchState(updated);
-    const choice = branchState.choices.find((c) => c.id === choiceId);
-    if (choice) {
-      setSelection((s) => {
-        const idx = pathMomentIds.indexOf(choice.continuationMomentId);
-        return { ...s, currentMomentId: choice.continuationMomentId, pathIndex: idx >= 0 ? idx : s.pathIndex };
-      });
-    }
-    setTimeout(() => {
-      setStory((s) => resumeStory(s));
-    }, 400);
-  }, [branchState, pathMomentIds]);
+    setBranchDismissedAt(null);
+    setSelection((s) => selectById(s, destination));
+
+    setStory((s) => ({ ...resumeStory(s), phase: "landing" }));
+
+    if (branchConsumeTimerRef.current) clearTimeout(branchConsumeTimerRef.current);
+    branchConsumeTimerRef.current = setTimeout(() => {
+      setBranchState((current) => consumeBranchState(current));
+    }, BRANCH_CONSUME_DELAY_MS);
+  }, [branchState]);
+
+  /** Escape on the Branch dialog dismisses it without making a choice. */
+  const handleBranchDismiss = useCallback(() => {
+    if (!branchState || branchState.resolved) return;
+    setBranchState(null);
+    setBranchDismissedAt(branchState.momentId);
+    setStory((s) => ({ ...s, phase: "landing", playing: false, paused: true }));
+  }, [branchState]);
+
+  /** Reopens the Branch chooser from an explicit "Choose path" button. */
+  const handleBranchReopen = useCallback(() => {
+    if (!currentMoment || !currentBranchOfferable) return;
+    if (branchState) return;
+    setBranchDismissedAt(null);
+    setBranchState(createBranchState(currentMoment.id, currentBranchChoices));
+    setStory((s) => ({ ...s, phase: "branch-pause", playing: false, paused: true }));
+  }, [currentMoment, currentBranchOfferable, currentBranchChoices, branchState]);
 
   const handleEditOpen = useCallback(() => {
     if (!currentMoment) return;
@@ -341,60 +428,91 @@ export default function LivingMemoryBookV5() {
 
   const transform = useMemo(() => computeCurlTransform(curl.curlProgress), [curl.curlProgress]);
 
-  const handlePointerDown = useCallback((clientX: number) => {
-    prevDragRef.current = { x: clientX, time: Date.now() };
-    setTouchStartX(clientX);
-    setIsDragging(true);
-  }, []);
-
-  const handlePointerMove = useCallback((clientX: number) => {
-    if (!bookRef.current || prevDragRef.current === null) return;
-    const rect = bookRef.current.getBoundingClientRect();
-    const relX = (clientX - rect.left) / rect.width;
-    const clamped = Math.max(0, Math.min(1, relX));
-    setCurl((s) => updateCurlProgress(s, clamped));
-  }, []);
-
-  const handlePointerUp = useCallback(() => {
-    prevDragRef.current = null;
-    setTouchStartX(null);
+  /** Ends a pointer interaction with a gesture-derived commit decision. */
+  const finishDrag = useCallback((decision: { commit: boolean; direction: TurnDirection | null }) => {
+    const activePointerId = dragPointerIdRef.current;
+    if (activePointerId !== null) {
+      try {
+        bookRef.current?.releasePointerCapture(activePointerId);
+      } catch {
+        // the pointer may already be gone (e.g. pointercancel) — nothing to release
+      }
+    }
+    dragTrackerRef.current = null;
+    dragPointerIdRef.current = null;
+    lastDragProgressRef.current = 0;
     setIsDragging(false);
-    if (shouldCommit(curl)) {
-      handleNext();
+    if (decision.commit) {
+      handleTurn(decision.direction);
     } else {
       setCurl(cancelPageTurn);
     }
-  }, [curl, handleNext]);
+  }, [handleTurn]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (reduced) return;
-    handlePointerDown(e.clientX);
-  }, [reduced, handlePointerDown]);
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    if (dragPointerIdRef.current !== null) return;
+    const now = performance.now();
+    dragTrackerRef.current = createFlickTracker(e.clientX, now);
+    dragPointerIdRef.current = e.pointerId;
+    lastDragProgressRef.current = 0;
+    setIsDragging(true);
+    try {
+      bookRef.current?.setPointerCapture(e.pointerId);
+    } catch {
+      // capture is best-effort; pointermove/up still arrive on the element
+    }
+  }, [reduced]);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (prevDragRef.current === null) return;
-    handlePointerMove(e.clientX);
-  }, [handlePointerMove]);
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (dragPointerIdRef.current === null) return;
+    if (dragPointerIdRef.current !== e.pointerId) return;
+    const tracker = dragTrackerRef.current;
+    const book = bookRef.current;
+    if (!tracker || !book) return;
 
-  const handleMouseUp = useCallback(() => {
-    handlePointerUp();
-  }, [handlePointerUp]);
+    const now = performance.now();
+    dragTrackerRef.current = trackFlick(tracker, e.clientX, now);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (reduced) { handleNext(); return; }
-    const touch = e.touches[0];
-    handlePointerDown(touch.clientX);
-  }, [reduced, handlePointerDown, handleNext]);
+    const rect = book.getBoundingClientRect();
+    const width = Math.max(1, rect.width);
+    const deltaX = flickDeltaX(dragTrackerRef.current);
+    const progress = curlProgressFromDelta(deltaX, width);
+    lastDragProgressRef.current = progress;
+    setCurl((s) => updateCurlProgress(s, progress));
+  }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (touchStartX === null) return;
-    const touch = e.touches[0];
-    handlePointerMove(touch.clientX);
-  }, [touchStartX, handlePointerMove]);
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    if (dragPointerIdRef.current === null) return;
+    if (dragPointerIdRef.current !== e.pointerId) return;
+    const tracker = dragTrackerRef.current;
+    if (!tracker) return;
+    const progress = lastDragProgressRef.current;
+    const decision = resolveDragCommit({
+      progress,
+      velocity: tracker.velocity,
+      deltaX: flickDeltaX(tracker),
+      commitThreshold: curl.commitThreshold,
+      flickEnabled: curl.flickEnabled,
+    });
+    finishDrag(decision);
+  }, [curl.commitThreshold, curl.flickEnabled, finishDrag]);
 
-  const handleTouchEnd = useCallback(() => {
-    handlePointerUp();
-  }, [handlePointerUp]);
+  /**
+   * pointercancel / lost capture: a cancelled interaction never commits and
+   * never changes the selection, no matter how far or fast the drag went.
+   */
+  const handlePointerCancel = useCallback(() => {
+    if (dragPointerIdRef.current === null) return;
+    finishDrag(resolvePointerCancel());
+  }, [finishDrag]);
+
+  const handleLostPointerCapture = useCallback((e: React.PointerEvent) => {
+    if (dragPointerIdRef.current === null) return;
+    if (dragPointerIdRef.current !== e.pointerId) return;
+    finishDrag(resolvePointerCancel());
+  }, [finishDrag]);
 
   const startFastFlipMode = useCallback((direction: "forward" | "backward") => {
     setCurl((s) => startFastFlip(s, direction));
@@ -419,13 +537,14 @@ export default function LivingMemoryBookV5() {
   useEffect(() => {
     return () => {
       if (storyTimerRef.current) clearTimeout(storyTimerRef.current);
+      if (branchConsumeTimerRef.current) clearTimeout(branchConsumeTimerRef.current);
       if (fastFlipTimer) clearInterval(fastFlipTimer);
     };
   }, [fastFlipTimer]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (edit.active) return;
+      if (isOverlayActive(view, edit.active, Boolean(branchState?.active))) return;
       switch (e.key) {
         case "ArrowLeft":
           e.preventDefault();
@@ -437,17 +556,9 @@ export default function LivingMemoryBookV5() {
           break;
         case " ":
           e.preventDefault();
-          if (branchState?.active && !branchState.resolved) break;
+          if (isBranchBlocking(branchState) || branchState?.resolved) break;
           if (story.playing) handleStoryPause();
           else handleStoryPlay();
-          break;
-        case "Escape":
-          if (view !== "book") { setView("book"); return; }
-          if (edit.active) { handleEditClose(); return; }
-          if (branchState?.active) {
-            setBranchState(null);
-            setStory(resumeStory);
-          }
           break;
         case "i":
         case "I":
@@ -461,7 +572,7 @@ export default function LivingMemoryBookV5() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handlePrev, handleNext, handleStoryPlay, handleStoryPause, handleEditOpen, handleEditClose, story, branchState, view, edit.active]);
+  }, [handlePrev, handleNext, handleStoryPlay, handleStoryPause, handleEditOpen, story, branchState, view, edit.active]);
 
   if (!currentMoment) {
     return <div className="lt59-book__empty" role="status">No moments to display</div>;
@@ -528,31 +639,16 @@ export default function LivingMemoryBookV5() {
     </>
   );
 
-  const renderOverlay = (role: string, label: string, children: React.ReactNode, onClose?: () => void) => (
-    <div
-      className="lt59-overlay"
-      role={role}
-      aria-modal="true"
-      aria-label={label}
-      onKeyDown={(e) => { if (e.key === "Escape") onClose?.(); }}
-    >
-      <div className="lt59-overlay__backdrop" onClick={onClose} />
-      <div className="lt59-overlay__panel">
-        {onClose && (
-          <button type="button" className="lt59-overlay__close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
-        )}
-        {children}
-      </div>
-    </div>
-  );
-
   return (
     <div
       ref={bookRef}
       className={`lt59-book${reduced ? " is-reduced-motion" : ""}${view !== "book" ? " has-overlay" : ""}`}
       data-viewport="desktop"
+      data-dataset={dataSetKey}
+      data-moment-id={currentMoment.id}
+      data-moment-index={selection.pathIndex}
+      data-story-phase={story.phase}
+      data-story-playing={story.playing && !story.paused}
       role="application"
       aria-label="Living Memory Book"
       aria-live="polite"
@@ -619,13 +715,11 @@ export default function LivingMemoryBookV5() {
       <div className="lt59-book__spread">
         <div
           className="lt59-book__page"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+          onLostPointerCapture={handleLostPointerCapture}
           style={curlStyle}
         >
           <div className="lt59-book__page-front">
@@ -670,11 +764,10 @@ export default function LivingMemoryBookV5() {
             <button
               type="button"
               className="lt59-book__nav-btn lt59-book__fast-flip"
-              onMouseDown={() => startFastFlipMode("backward")}
-              onMouseUp={stopFastFlipMode}
-              onMouseLeave={stopFastFlipMode}
-              onTouchStart={() => startFastFlipMode("backward")}
-              onTouchEnd={stopFastFlipMode}
+              onPointerDown={() => startFastFlipMode("backward")}
+              onPointerUp={stopFastFlipMode}
+              onPointerLeave={stopFastFlipMode}
+              onPointerCancel={stopFastFlipMode}
               aria-label="Fast flip backward"
             >
               ◀◀
@@ -682,11 +775,10 @@ export default function LivingMemoryBookV5() {
             <button
               type="button"
               className="lt59-book__nav-btn lt59-book__fast-flip"
-              onMouseDown={() => startFastFlipMode("forward")}
-              onMouseUp={stopFastFlipMode}
-              onMouseLeave={stopFastFlipMode}
-              onTouchStart={() => startFastFlipMode("forward")}
-              onTouchEnd={stopFastFlipMode}
+              onPointerDown={() => startFastFlipMode("forward")}
+              onPointerUp={stopFastFlipMode}
+              onPointerLeave={stopFastFlipMode}
+              onPointerCancel={stopFastFlipMode}
               aria-label="Fast flip forward"
             >
               ▶▶
@@ -702,147 +794,175 @@ export default function LivingMemoryBookV5() {
         {currentWhyNext && <span className="lt59-book__why-next-text">“{currentWhyNext}”</span>}
       </div>
 
-      {branchState?.active && !branchState.resolved && renderOverlay(
-        "dialog",
-        "Branch choice",
-        <div className="lt59-branch">
-          <h2 className="lt59-branch__title">Choose your path</h2>
-          <p className="lt59-branch__desc">The story branches here. Your choice determines what comes next.</p>
-          <div className="lt59-branch__choices">
-            {branchState.choices.map((choice, i) => (
-              <button
-                key={choice.id}
-                type="button"
-                className="lt59-branch__choice"
-                onClick={() => handleBranchSelect(choice.id)}
-                aria-label={`Choice ${i + 1}: ${choice.label}`}
-                autoFocus={i === 0}
-              >
-                <strong>{choice.label}</strong>
-                <span>{choice.description}</span>
-              </button>
-            ))}
+      {branchState?.active && !branchState.resolved && (
+        <Lt59Overlay
+          label="Branch choice"
+          onClose={handleBranchDismiss}
+          showCloseButton={false}
+          restoreFocusFallbackRef={bookRef}
+          testId="lt59-branch-dialog"
+        >
+          <div className="lt59-branch">
+            <h2 className="lt59-branch__title">Choose your path</h2>
+            <p className="lt59-branch__desc">The story branches here. Your choice determines what comes next.</p>
+            <div className="lt59-branch__choices">
+              {branchState.choices.map((choice, i) => (
+                <button
+                  key={choice.id}
+                  type="button"
+                  className="lt59-branch__choice"
+                  onClick={() => handleBranchSelect(choice.id)}
+                  aria-label={`Choice ${i + 1}: ${choice.label}`}
+                  {...(i === 0 ? { [FOCUS_ENTRY_ATTRIBUTE]: "" } : {})}
+                >
+                  <strong>{choice.label}</strong>
+                  <span>{choice.description}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>,
-        undefined,
+        </Lt59Overlay>
       )}
 
       {branchState?.resolved && (
         <div className="lt59-branch__resolved" role="status" aria-live="assertive">
-          Continuing your chosen path...
+          {getSelectedChoice(branchState)
+            ? `Continuing on “${getSelectedChoice(branchState)!.label}”...`
+            : "Continuing your chosen path..."}
         </div>
       )}
 
-      {edit.active && renderOverlay(
-        "dialog",
-        "Edit moment",
-        <div className="lt59-edit">
-          <h2 className="lt59-edit__title">Edit Moment</h2>
-          <div className="lt59-edit__fields">
-            {edit.fields.map((field) => (
-              <label key={field.key} className="lt59-edit__field">
-                <span>{field.label}</span>
-                {field.type === "textarea" ? (
-                  <textarea value={field.value} onChange={(e) => handleUpdateField(field.key, e.target.value)} rows={3} />
+      {!branchState && branchDismissedAt === currentMoment.id && currentBranchOfferable && story.paused && (
+        <div className="lt59-branch__reopen" role="status" aria-live="polite">
+          <span>Story is paused at this branch.</span>
+          <button type="button" className="lt59-branch__reopen-btn" onClick={handleBranchReopen} aria-label="Choose path">
+            Choose path
+          </button>
+        </div>
+      )}
+
+      {edit.active && (
+        <Modal
+          label="Edit moment"
+          onClose={handleEditClose}
+          restoreFocusFallbackRef={bookRef}
+        >
+          <div className="lt59-edit">
+            <h2 className="lt59-edit__title">Edit Moment</h2>
+            <div className="lt59-edit__fields">
+              {edit.fields.map((field) => (
+                <label key={field.key} className="lt59-edit__field">
+                  <span>{field.label}</span>
+                  {field.type === "textarea" ? (
+                    <textarea value={field.value} onChange={(e) => handleUpdateField(field.key, e.target.value)} rows={3} />
+                  ) : (
+                    <input type={field.type === "url" ? "url" : "text"} value={field.value} onChange={(e) => handleUpdateField(field.key, e.target.value)} />
+                  )}
+                </label>
+              ))}
+            </div>
+            <div className="lt59-edit__actions">
+              <button type="button" className="lt59-edit__btn is-primary" onClick={handleEditSave} disabled={!edit.dirty}>
+                Save
+              </button>
+              <button type="button" className="lt59-edit__btn" onClick={handleEditClose}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {view === "index" && (
+        <Modal
+          label="Moment Index"
+          onClose={() => setView("book")}
+          restoreFocusFallbackRef={bookRef}
+        >
+          <div className="lt59-index">
+            <h2 className="lt59-index__title">Memory Path Index</h2>
+            <div className="lt59-index__list" role="list" aria-label="Moment list">
+              {pathMomentIds.map((id, i) => {
+                const m = moments[id];
+                if (!m) return null;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`lt59-index__item${i === selection.pathIndex ? " is-current" : ""}`}
+                    onClick={() => handleIndexJump(i)}
+                    role="listitem"
+                    aria-current={i === selection.pathIndex ? "true" : undefined}
+                  >
+                    <span className="lt59-index__num">{i + 1}</span>
+                    <div className="lt59-index__content">
+                      <strong>{m.title}</strong>
+                      <span className="lt59-index__emotion">{m.primaryEmotion}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {view === "detail" && currentMoment && (
+        <Modal
+          label="Moment Detail"
+          onClose={() => setView("book")}
+          restoreFocusFallbackRef={bookRef}
+        >
+          <div className="lt59-detail">
+            <h2 className="lt59-detail__title">{currentMoment.title}</h2>
+            {currentMoment.media && (
+              <div className="lt59-detail__media">
+                {currentMoment.media.type === "video" ? (
+                  <video src={currentMoment.media.src} poster={currentMoment.media.posterSrc} controls aria-label={currentMoment.media.alt} style={{ maxWidth: "100%", maxHeight: "50vh" }} />
                 ) : (
-                  <input type={field.type === "url" ? "url" : "text"} value={field.value} onChange={(e) => handleUpdateField(field.key, e.target.value)} />
+                  <img src={currentMoment.media.src} alt={currentMoment.media.alt} style={{ maxWidth: "100%", maxHeight: "50vh" }} onClick={() => setView("magnifier")} className="lt59-detail__media-img" />
                 )}
-              </label>
-            ))}
-          </div>
-          <div className="lt59-edit__actions">
-            <button type="button" className="lt59-edit__btn is-primary" onClick={handleEditSave} disabled={!edit.dirty}>
-              Save
-            </button>
-            <button type="button" className="lt59-edit__btn" onClick={handleEditClose}>
-              Cancel
-            </button>
-          </div>
-        </div>,
-        handleEditClose,
-      )}
-
-      {view === "index" && renderOverlay(
-        "dialog",
-        "Moment Index",
-        <div className="lt59-index">
-          <h2 className="lt59-index__title">Memory Path Index</h2>
-          <div className="lt59-index__list" role="list" aria-label="Moment list">
-            {pathMomentIds.map((id, i) => {
-              const m = moments[id];
-              if (!m) return null;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  className={`lt59-index__item${i === selection.pathIndex ? " is-current" : ""}`}
-                  onClick={() => handleIndexJump(i)}
-                  role="listitem"
-                  aria-current={i === selection.pathIndex ? "true" : undefined}
-                >
-                  <span className="lt59-index__num">{i + 1}</span>
-                  <div className="lt59-index__content">
-                    <strong>{m.title}</strong>
-                    <span className="lt59-index__emotion">{m.primaryEmotion}</span>
+              </div>
+            )}
+            <div className="lt59-detail__body">
+              <span className="lt59-detail__emotion">{currentMoment.primaryEmotion}</span>
+              <p>{currentMoment.body}</p>
+              <div className="lt59-detail__meta">
+                <span>Captured: {new Date(currentMoment.capturedAt).toLocaleString()}</span>
+                {currentMoment.keywords.length > 0 && (
+                  <div className="lt59-detail__keywords">
+                    {currentMoment.keywords.map((kw) => <span key={kw} className="lt59-detail__keyword">{kw}</span>)}
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>,
-        () => setView("book"),
-      )}
-
-      {view === "detail" && currentMoment && renderOverlay(
-        "dialog",
-        "Moment Detail",
-        <div className="lt59-detail">
-          <h2 className="lt59-detail__title">{currentMoment.title}</h2>
-          {currentMoment.media && (
-            <div className="lt59-detail__media">
-              {currentMoment.media.type === "video" ? (
-                <video src={currentMoment.media.src} poster={currentMoment.media.posterSrc} controls aria-label={currentMoment.media.alt} style={{ maxWidth: "100%", maxHeight: "50vh" }} />
-              ) : (
-                <img src={currentMoment.media.src} alt={currentMoment.media.alt} style={{ maxWidth: "100%", maxHeight: "50vh" }} onClick={() => setView("magnifier")} className="lt59-detail__media-img" />
-              )}
-            </div>
-          )}
-          <div className="lt59-detail__body">
-            <span className="lt59-detail__emotion">{currentMoment.primaryEmotion}</span>
-            <p>{currentMoment.body}</p>
-            <div className="lt59-detail__meta">
-              <span>Captured: {new Date(currentMoment.capturedAt).toLocaleString()}</span>
-              {currentMoment.keywords.length > 0 && (
-                <div className="lt59-detail__keywords">
-                  {currentMoment.keywords.map((kw) => <span key={kw} className="lt59-detail__keyword">{kw}</span>)}
-                </div>
-              )}
-              {currentMoment.link && (
-                <a href={currentMoment.link.url} target="_blank" rel="noopener noreferrer">{currentMoment.link.title}</a>
-              )}
+                )}
+                {currentMoment.link && (
+                  <a href={currentMoment.link.url} target="_blank" rel="noopener noreferrer">{currentMoment.link.title}</a>
+                )}
+              </div>
             </div>
           </div>
-        </div>,
-        () => setView("book"),
+        </Modal>
       )}
 
-      {view === "magnifier" && currentMoment?.media && renderOverlay(
-        "dialog",
-        "Magnifier View",
-        <div className="lt59-magnifier">
-          <h2 className="lt59-magnifier__title">Magnifier</h2>
-          <div className="lt59-magnifier__frame">
-            {currentMoment.media.type === "photo" ? (
-              <img src={currentMoment.media.src} alt={currentMoment.media.alt} className="lt59-magnifier__img" />
-            ) : null}
+      {view === "magnifier" && currentMoment?.media && (
+        <Modal
+          label="Magnifier View"
+          onClose={() => setView("book")}
+          restoreFocusFallbackRef={bookRef}
+        >
+          <div className="lt59-magnifier">
+            <h2 className="lt59-magnifier__title">Magnifier</h2>
+            <div className="lt59-magnifier__frame">
+              {currentMoment.media.type === "photo" ? (
+                <img src={currentMoment.media.src} alt={currentMoment.media.alt} className="lt59-magnifier__img" />
+              ) : null}
+            </div>
+            <div className="lt59-magnifier__controls">
+              <button type="button" className="lt59-magnifier__btn" onClick={() => setView("book")} aria-label="Close magnifier">
+                Close
+              </button>
+            </div>
           </div>
-          <div className="lt59-magnifier__controls">
-            <button type="button" className="lt59-magnifier__btn" onClick={() => setView("book")} aria-label="Close magnifier">
-              Close
-            </button>
-          </div>
-        </div>,
-        () => setView("book"),
+        </Modal>
       )}
 
       {reduced && (
@@ -851,6 +971,33 @@ export default function LivingMemoryBookV5() {
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Modal overlay for Index / Detail / Magnifier / Edit. Wraps the shared
+ * focus-lifecycle overlay with a deterministic close affordance.
+ */
+function Modal({
+  label,
+  onClose,
+  restoreFocusFallbackRef,
+  children,
+}: {
+  label: string;
+  onClose?: () => void;
+  restoreFocusFallbackRef?: React.RefObject<HTMLElement | null>;
+  children: React.ReactNode;
+}) {
+  return (
+    <Lt59Overlay
+      label={label}
+      onClose={onClose}
+      showCloseButton={Boolean(onClose)}
+      restoreFocusFallbackRef={restoreFocusFallbackRef}
+    >
+      {children}
+    </Lt59Overlay>
   );
 }
 
@@ -867,4 +1014,13 @@ function getEmotionColor(emotion: string): string {
     nostalgia: "#DDA0DD",
   };
   return palette[emotion] ?? "#FFD36A";
+}
+
+/** True while any modal overlay should own keyboard input. Kept as a function so callers are not control-flow narrowed. */
+function isOverlayActive(
+  view: "book" | "index" | "detail" | "magnifier",
+  editActive: boolean,
+  branchActive: boolean,
+): boolean {
+  return view !== "book" || editActive || branchActive;
 }

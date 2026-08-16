@@ -248,7 +248,7 @@ export const LONG_PATH_CONNECTIONS: readonly Connection[] = [
   { id: "lp-c59-009", fromId: "lp-m59-009", toId: "lp-m59-010", whyNext: "The path became clear." },
 ];
 
-export const BRANCH_MOMENTS: readonly Moment[] = MOMENTS.slice(0, 6).map((m) => ({
+export const BRANCH_MOMENTS: readonly Moment[] = MOMENTS.map((m) => ({
   ...m,
   id: `br-${m.id}`,
   provenance: "original-capture",
@@ -260,8 +260,18 @@ export const BRANCH_CONNECTIONS: readonly Connection[] = [
   { id: "br-c59-003", fromId: "br-m59-003", toId: "br-m59-004", whyNext: "작은 웃음이 마음을 움직였다." },
   { id: "br-c59-004", fromId: "br-m59-004", toId: "br-m59-005", whyNext: "팬이 말했다: 이거 봐." },
   { id: "br-c59-005", fromId: "br-m59-005", toId: "br-m59-006", whyNext: "스스로 찾아다녔다." },
+  { id: "br-c59-006", fromId: "br-m59-006", toId: "br-m59-007", whyNext: "이 순간 인정했다." },
 ];
 
+/**
+ * Branch declaration.
+ *
+ * Topology contract: every choice's `connectionId` MUST resolve to a Connection
+ * whose `fromId` equals this Branch's `fromMomentId`, so that both choices are
+ * truthful outgoing continuations of the Moment where the Branch is declared.
+ * See `validateBranchTopology` in `branch-authority.ts`, which is enforced by
+ * `tests/lineage-59-branch-authority.test.mjs`.
+ */
 export const BRANCHES: readonly Branch[] = [
   {
     id: "b59-001",
@@ -272,14 +282,20 @@ export const BRANCHES: readonly Branch[] = [
         id: "ch-br-b",
         label: "잠시 멈추고 돌아보기",
         description: "지금까지의 순간을 다시 음미한다",
-        connectionId: "br-c59-005-alt",
+        connectionId: "br-c59-004-alt",
       },
     ],
   },
 ];
 
+/**
+ * Alternate outgoing continuation for the Branch declared at `br-m59-004`.
+ * Originates at the declared Branch Moment (not at `br-m59-005`) so that the
+ * second choice is a real fork of the same Moment rather than an edge of the
+ * following Moment.
+ */
 export const BRANCH_ALTERNATE_CONNECTIONS: readonly Connection[] = [
-  { id: "br-c59-005-alt", fromId: "br-m59-005", toId: "br-m59-006", whyNext: "이 길이 맞는지 확인하고 싶었다." },
+  { id: "br-c59-004-alt", fromId: "br-m59-004", toId: "br-m59-006", whyNext: "이 길이 맞는지 확인하고 싶었다." },
 ];
 
 export function getMomentById(id: string, moments?: readonly Moment[]): Moment | undefined {
@@ -288,6 +304,15 @@ export function getMomentById(id: string, moments?: readonly Moment[]): Moment |
 
 export function getConnectionByFromId(fromId: string, connections?: readonly Connection[]): Connection | undefined {
   return (connections ?? CONNECTIONS).find((c) => c.fromId === fromId);
+}
+
+/**
+ * Connection lookup by Connection id. `BranchChoice.connectionId` is a
+ * Connection id and MUST be resolved through this authority — never through the
+ * `fromId`-keyed WHY NEXT lookup, which has a different key domain.
+ */
+export function getConnectionById(connectionId: string, connections?: readonly Connection[]): Connection | undefined {
+  return (connections ?? CONNECTIONS).find((c) => c.id === connectionId);
 }
 
 export function getNextMomentId(currentId: string, connections?: readonly Connection[]): string | undefined {

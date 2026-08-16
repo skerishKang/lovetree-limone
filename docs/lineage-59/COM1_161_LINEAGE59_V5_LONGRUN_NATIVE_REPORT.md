@@ -125,3 +125,80 @@ Session/in-memory only. No persistence claims. Locked fields (Moment ID, capture
 - Exact V5 binary assets were not pinnable in this environment (Drive download blocked); native media binding remains HOLD with placeholder media.
 - Full `npm test` (build-gated) and full production build were deferred per same-machine resource sharing; scope-relevant typecheck/lint/pure/browser evidence is complete.
 - Final flags: `CANONICAL_ADOPTION=NO`, `BACKEND_MUTATION=NONE`, `PRODUCTION_MUTATION=NONE`, `READY=NO`, `MERGE=NO`, `READY_FOR_WEB_CTO_REAUDIT=YES`.
+
+---
+
+# COM2_237_LINEAGE59_V5_BOUNDED_CORRECTION_ADDENDUM
+
+Date: 2026-08-16
+COM2 bounded correction lane for PR #237 (`fix/237-lineage59-v5-bounded-corrections`, worktree `/root/lovetree-lineage59-com2-correction`).
+COM1 26-file slice preserved; only the Web-CTO-confirmed blockers were corrected.
+
+## Corrections shipped
+
+1. **Branch connection lookup (P0-A)** — `BranchChoice.connectionId` now resolves through a
+   Connection-id authority (`connectionById`); WHY NEXT prose uses the separate `fromId`-keyed
+   authority (`connectionByFromMoment`). `resolveBranchChoices` drops any choice whose connection
+   does not originate at the declared Branch Moment, so an empty `continuationMomentId` can never be
+   produced. A pure `validateBranchTopology` guards the real Lineage 59 declaration in tests.
+
+2. **Branch topology truth (P0-B)** — the alternate connection now originates at the declared Branch
+   Moment (`br-m59-004 → br-m59-006`) instead of at `br-m59-005`. Both choices are truthful outgoing
+   continuations: Choice A → `br-m59-005`, Choice B → `br-m59-006` (distinct destinations, both on path).
+   `BRANCH_MOMENTS` is the full 7-moment path so both continuations continue to later Moments.
+
+3. **Story resume after branch (P0)** — explicit choice → exact selected continuation
+   (`selectById`) → `branchState` resolved → landing phase → consume (branch blocking state cleared) →
+   Story resumes → next phase/Moment advances. Branch `resolved` no longer parks the Story forever.
+
+4. **Velocity flick (P0)** — `page-physics.ts` now implements signed, direction-aware, smoothed
+   velocity tracking (`createFlickTracker`/`trackFlick`), delta-based curl progress, and
+   `resolveDragCommit` (progress threshold OR flick). Short fast flicks commit below the threshold;
+   slow drags over the same distance cancel. Wired into pointer handlers.
+
+5. **Pointer/touch cancel** — `pointercancel` and lost pointer capture cancel the gesture
+   unconditionally (no commit, no selection change) with full tracker/timer cleanup.
+
+6. **Dialog focus lifecycle** — new `lib/lineage-59/focus-authority.ts` + `Lt59Overlay` for
+   Index/Edit/Detail/Magnifier/Branch: trigger remember, deterministic focus entry, Tab/Shift+Tab
+   containment, background focus-escape recapture, Escape close, trigger/fallback focus restore,
+   closed overlays unmount (non-interactive). Branch Escape dismisses without choosing; explicit
+   "Choose path" affordance reopens it.
+
+7. **CI/registry coupling** — `tests/design-intake-native-candidate-factory.test.mjs` updated for the
+   now-registered Lineage 59 (pre-registration exclusion, fail-closed repeat-scaffold test, CLI
+   fixture moved to track-60). A-track browser inventory + server URL updated for the lineage-59
+   browser QA file.
+
+## Evidence (browser QA, 11/11 green on dev 3160 and production 3005)
+
+- Choice A lands exactly on `br-m59-005` (index 4), chooser detached, Story resumes and advances to
+  `br-m59-006`.
+- Choice B lands exactly on `br-m59-006` (index 5), Story resumes and advances to `br-m59-007`.
+- Branch Escape dismisses without choice; selection unchanged; "Choose path" reopens.
+- Short fast flick (same short distance as slow) commits page 2; slow drag cancels (curl reset,
+  page unchanged); pointercancel mid-drag never commits and never changes selection.
+- Index dialog: focus enters, Tab containment, background focus recapture, Escape, trigger restore.
+- Viewports 1280x800 / 390x844 / 320x720: zero horizontal overflow, zero console/page errors.
+- Reduced-motion semantic parity retained.
+
+## Pure tests
+
+Lineage 59 pure corpus expanded to 79 passing (branch topology/flick/focus additions);
+full non-browser standard corpus 1327/1327 pass; typecheck 0 errors; lint 0 errors;
+`npm run build` passes; `git diff --check` clean.
+
+## Media / provenance truth
+
+`SOURCE_HTML_FINGERPRINT=VERIFIED` (manifest-pinned bytes 17,192,064 / SHA256 `763f8a2f...`).
+`SOURCE_EMBEDDED_MEDIA_BYTES=RECOVERABLE/PINNABLE` per Web CTO; sibling Drive is not publicly
+readable from this environment, so byte re-verification remains pinned evidence, not a fresh download.
+`ORIGIN_RIGHTS_PROVENANCE=HOLD`, `NATIVE_MEDIA_BINDING=HOLD` — placeholder demo media only; no
+canonical asset adoption.
+
+## Disposition
+
+`CODE_CONCEPT=KEEP`, `BRANCH_DESTINATION_AUTHORITY=PASS`, `BRANCH_STORY_RESUME=PASS`,
+`VELOCITY_FLICK_FIDELITY=PASS`, `POINTER_CANCEL_LIFECYCLE=PASS`, `DIALOG_FOCUS_LIFECYCLE=PASS`,
+`MAIN_ALIGNMENT=PASS`, `CANONICAL_ADOPTION=NO`, `BACKEND_MUTATION=NONE`, `PRODUCTION_MUTATION=NONE`,
+`READY=NO`, `MERGE=NO`, `READY_FOR_WEB_CTO_REAUDIT=YES`.
