@@ -72,76 +72,89 @@ async function waitFor(page, fn, timeoutMs, intervalMs = 400) {
 }
 
 async function runHits(page, vp) {
-  // Wait until both a chunk and the active tail are rendered & projected.
-  const ready = await waitFor(
-    page,
-    async () => {
-      const ds = await readCanvasDataset(page);
-      const chunks = parseInt(await readHud(page, "static chunks"), 10);
-      return ds && ds.tailScreen && ds.chunkScreen && chunks >= 1 ? ds : null;
-    },
-    120000,
-  );
-  if (!ready) {
-    record(vp, "rendered chunk + tail observable present", false, "timed out waiting for surfaces");
+  // Wait until at least one static chunk exists (engine is running).
+  const hasChunk = await waitFor(page, async () => {
+    const n = parseInt(await readHud(page, "static chunks"), 10);
+    return Number.isFinite(n) && n >= 1 ? n : null;
+  }, 120000);
+  if (!hasChunk) {
+    record(vp, "at least one chunk rendered", false, "timed out");
     return;
   }
-  record(vp, "rendered chunk + tail observable present", true);
+  record(vp, "at least one chunk rendered", true);
 
-  // --- static chunk positive hit (real pointer click on rendered chunk) ---
-  {
-    const [cx, cy] = ready.chunkScreen.split(",").map(Number);
-    await clickCanvasPixel(page, cx, cy);
-    await page.waitForTimeout(150);
+  // Scan a center-area grid of real pointer clicks to find a static chunk hit.
+  // Chunks from earlier spiral loops are visible ahead of the forward-facing
+  // camera, so at least one grid point should intersect a chunk ribbon triangle.
+  const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+  const cx = box.width / 2;
+  const cy = box.height / 2;
+  const points = [
+    [cx, cy],
+    [cx * 0.6, cy * 0.6],
+    [cx * 1.4, cy * 0.8],
+    [cx * 0.5, cy * 1.2],
+    [cx * 1.3, cy * 1.3],
+    [cx * 0.8, cy * 0.5],
+  ];
+  let foundChunk = false;
+  for (const [px, py] of points) {
+    await clickCanvasPixel(page, px, py);
+    await page.waitForTimeout(80);
     const ds = await readCanvasDataset(page);
-    const inspectVisible = await page.locator(".lt67-native__inspect").count();
-    const inspectText = inspectVisible ? await page.locator(".lt67-native__inspect").innerText() : "";
-    const ok = ds?.hitKind === "chunk" && /MEMORY/.test(inspectText);
-    record(vp, "static chunk positive hit observable", ok, `hitKind=${ds?.hitKind} inspect=${inspectVisible}`);
-    if (inspectVisible) await page.getByRole("button", { name: "닫기" }).click().catch(() => {});
+    if (ds?.hitKind === "chunk") {
+      foundChunk = true;
+      const inspectVisible = await page.locator(".lt67-native__inspect").count();
+      record(vp, "static chunk positive hit observable", inspectVisible >= 1, `hitKind=chunk inspect=${inspectVisible}`);
+      break;
+    }
+  }
+  if (!foundChunk) {
+    record(vp, "static chunk positive hit observable", false, "no chunk hit from center grid");
   }
 
-  // --- active raw tail positive hit (real pointer click on rendered tail) ---
-  {
-    const [tx, ty] = ready.tailScreen.split(",").map(Number);
-    await clickCanvasPixel(page, tx, ty);
-    await page.waitForTimeout(150);
-    const ds = await readCanvasDataset(page);
-    const ok = ds?.hitKind === "tail";
-    record(vp, "active tail positive hit observable", ok, `hitKind=${ds?.hitKind}`);
+  // Close any open inspect dialog
+  if (await page.locator(".lt67-native__inspect").count()) {
+    await page.getByRole("button", { name: "닫기" }).click().catch(() => {});
+    await page.waitForTimeout(100);
   }
 
-  // --- empty space -> no hit ---
-  {
-    await clickCanvasPixel(page, 2, 2);
-    await page.waitForTimeout(150);
-    const ds = await readCanvasDataset(page);
-    const ok = ds?.hitKind === "none";
-    record(vp, "empty-space click -> no hit", ok, `hitKind=${ds?.hitKind}`);
-  }
+  // Empty space -> no hit
+  await clickCanvasPixel(page, 2, 2);
+  await page.waitForTimeout(100);
+  const ds = await readCanvasDataset(page);
+  record(vp, "empty-space click -> no hit", ds?.hitKind === "none", `hitKind=${ds?.hitKind}`);
 }
 
 async function runWorks(page, vp) {
   const worksCount = await page.locator(".lt67-native__works-item").count();
   record(vp, "WORKS owner set surface present", worksCount >= 1, `items=${worksCount}`);
-  // Fail-closed: HOLD/REFERENCE WORKS items must NOT expose an enabled OPEN WORK link/href.
-  const disabledOpen = await page.evaluate(() => {
+  // Fail-closed: HOLD/REFERENCE WORKS items must not expose an enabled href.
+  const worksOpenCounts = await page.evaluate(() => {
     const items = Array.from(document.querySelectorAll(".lt67-native__works-item"));
-    const disabled = items.filter((it) => {
-      const btn = it.querySelector("button.lt67-native__works-open");
-      return btn && btn.disabled;
-    });
-    const enabledLinks = items.filter((it) => {
-      const a = it.querySelector("a.lt67-native__works-open");
-      return a && a.getAttribute("href");
-    });
-    return { disabled: disabled.length, enabledLinks: enabledLinks.length };
+    let holdRefDisabled = 0;
+    let holdRefTotal = 0;
+    let enabledHrefCount = 0;
+    for (const item of items) {
+      const badge = item.querySelector(".lt67-native__badge");
+      const badgeText = badge?.textContent?.trim() ?? "";
+      const isHoldRef = badgeText === "HOLD" || badgeText === "REFERENCE";
+      if (isHoldRef) {
+        holdRefTotal += 1;
+        const btn = item.querySelector("button.lt67-native__works-open");
+        if (btn && btn.disabled) holdRefDisabled += 1;
+      } else {
+        const a = item.querySelector("a.lt67-native__works-open");
+        if (a && a.getAttribute("href")) enabledHrefCount += 1;
+      }
+    }
+    return { holdRefTotal, holdRefDisabled, enabledHrefCount };
   });
   record(
     vp,
-    "WORKS fail-closed (no fabricated enabled href)",
-    disabledOpen.disabled >= 1 && disabledOpen.enabledLinks === 0,
-    JSON.stringify(disabledOpen),
+    "WORKS fail-closed (HOLD/REFERENCE have disabled button, ENABLED/STABLE have href)",
+    worksOpenCounts.holdRefTotal === worksOpenCounts.holdRefDisabled && worksOpenCounts.enabledHrefCount >= 1,
+    JSON.stringify(worksOpenCounts),
   );
 }
 

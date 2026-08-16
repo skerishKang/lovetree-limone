@@ -75,37 +75,6 @@ function ribbonWallVerts(samples: readonly { x: number; z: number }[], height: n
   return out;
 }
 
-/**
- * Project a world point to canvas CSS pixel coordinates using the SAME
- * column-major view-projection matrix the renderer feeds the shader. Used only
- * to publish bounded, read-only QA observability (where the rendered active tail
- * / a static chunk actually appear on screen) so a browser test can issue a REAL
- * pointer event at that pixel — the hit is still computed by the real camera-ray
- * → ribbon-triangle pipeline, never injected.
- */
-function projectToScreen(
-  p: readonly { x: number; y: number; z: number }[] | readonly [number, number, number][],
-  idx: number,
-  vp: ArrayLike<number>,
-  w: number,
-  h: number,
-): [number, number] | null {
-  const x = (p[idx] as { x: number; y: number; z: number }).x ?? (p[idx] as [number, number, number])[0];
-  const y = (p[idx] as { x: number; y: number; z: number }).y ?? (p[idx] as [number, number, number])[1];
-  const z = (p[idx] as { x: number; y: number; z: number }).z ?? (p[idx] as [number, number, number])[2];
-  const m = vp as ArrayLike<number>;
-  const cx = m[0] * x + m[4] * y + m[8] * z + m[12];
-  const cy = m[1] * x + m[5] * y + m[9] * z + m[13];
-  const cz = m[2] * x + m[6] * y + m[10] * z + m[14];
-  const cw = m[3] * x + m[7] * y + m[11] * z + m[15];
-  if (cw <= 0.0001) return null;
-  const ndcX = cx / cw;
-  const ndcY = cy / cw;
-  const sx = (ndcX * 0.5 + 0.5) * w;
-  const sy = (1 - (ndcY * 0.5 + 0.5)) * h;
-  return [sx, sy];
-}
-
 export default function NativeRenderer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simRef = useRef<V24SimState>(v24InitState());
@@ -217,28 +186,6 @@ export default function NativeRenderer() {
       gl.uniform3f(uColor, 0.95, 0.62, 0.3);
       gl.drawArrays(gl.TRIANGLES, 0, tailVerts.length / 3);
       gl.deleteBuffer(vbo);
-    }
-
-    // Bounded QA observability: publish where the rendered active tail and a
-    // static chunk actually appear on screen (read-only screen coords derived
-    // from the same vp matrix). A browser test clicks these real pixels, so the
-    // hit is computed by the actual camera-ray → ribbon-triangle pipeline.
-    try {
-      if (s.raw.length >= 1) {
-        const tailPt = projectToScreen(s.raw, s.raw.length - 1, vp, w, h);
-        if (tailPt) canvas.dataset.tailScreen = `${Math.round(tailPt[0])},${Math.round(tailPt[1])}`;
-      } else {
-        delete canvas.dataset.tailScreen;
-      }
-      if (s.chunks.length >= 1 && s.chunks[0].samples.length >= 1) {
-        const mid = Math.floor(s.chunks[0].samples.length / 2);
-        const chunkPt = projectToScreen(s.chunks[0].samples, mid, vp, w, h);
-        if (chunkPt) canvas.dataset.chunkScreen = `${Math.round(chunkPt[0])},${Math.round(chunkPt[1])}`;
-      } else {
-        delete canvas.dataset.chunkScreen;
-      }
-    } catch {
-      /* observability is best-effort; never blocks rendering */
     }
   }, []);
 
