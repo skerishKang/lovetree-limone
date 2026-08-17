@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 
-import { readFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
+import { pathToFileURL } from "node:url";
 
 import {
+  removeCredentialsFile,
   runDisposableCleanup,
   safeErrorCode,
   signInWithPassword,
 } from "./lib/firebase-disposable-auth.mjs";
 import { preflightFromEnv } from "./lib/v4-runtime-e2e-preflight.mjs";
-import {
-  cleanupExactRuntimeE2EResources,
-  verifyRuntimeE2EHealth,
-} from "./lib/v4-runtime-e2e-operator.mjs";
+import { runRuntimeE2ECleanupWorkflow } from "./lib/v4-runtime-e2e-operator.mjs";
 
 function parseArgs(argv) {
   const args = {};
@@ -34,83 +33,140 @@ function requiredArg(args, key) {
   return value;
 }
 
-const args = parseArgs(process.argv.slice(2));
+function cleanupErrorCode(error) {
+  if (
+    typeof error?.code === "string" &&
+    error.code.startsWith("V4_RUNTIME_E2E_")
+  ) {
+    return error.code;
+  }
+  return safeErrorCode(error, "CLEANUP_FAILED");
+}
 
-try {
+export function cleanupTombstonePath(credsPath) {
+  return `${credsPath}.cleanup-state.json`;
+}
+
+export async function runCleanupCli({
+  argv = process.argv.slice(2),
+  env = process.env,
+  readFileImpl = readFile,
+  writeFileImpl = writeFile,
+  rmImpl = rm,
+  signInImpl = signInWithPassword,
+  disposableCleanupImpl = runDisposableCleanup,
+  log = (line) => console.log(line),
+}) {
+  const args = parseArgs(argv);
   const baseUrl = requiredArg(args, "base-url");
   const credsPath = requiredArg(args, "creds");
   const treeId = requiredArg(args, "tree-id");
   const memoryId = requiredArg(args, "memory-id");
+  const statePath = cleanupTombstonePath(credsPath);
+  const identity = preflightFromEnv(env);
 
-  const identity = preflightFromEnv(process.env);
-  await verifyRuntimeE2EHealth({
+  const loadTombstone = async () => {
+    let source;
+    try {
+      source = await readFileImpl(statePath, "utf8");
+    } catch (error) {
+      if (error?.code === "ENOENT") return null;
+      throw error;
+    }
+    try {
+      return JSON.parse(source);
+    } catch {
+      const error = new Error("Runtime E2E cleanup tombstone is malformed JSON");
+      error.code = "V4_RUNTIME_E2E_TOMBSTONE_INVALID";
+      throw error;
+    }
+  };
+
+  const loadCredentials = async () => {
+    try {
+      return JSON.parse(await readFileImpl(credsPath, "utf8"));
+    } catch (error) {
+      if (error?.code?.startsWith?.("V4_RUNTIME_E2E_")) throw error;
+      const wrapped = new Error("unable to read disposable Firebase credentials file");
+      wrapped.code = "V4_RUNTIME_E2E_CREDENTIALS_INVALID";
+      throw wrapped;
+    }
+  };
+
+  const result = await runRuntimeE2ECleanupWorkflow({
     baseUrl,
+    expectedWorker: identity.worker,
     expectedFirebaseProjectId: identity.firebaseProjectId,
-  });
-
-  let creds;
-  try {
-    creds = JSON.parse(await readFile(credsPath, "utf8"));
-  } catch {
-    throw new Error("unable to read disposable Firebase credentials file");
-  }
-  const users = Array.isArray(creds?.users) ? creds.users : [];
-  if (users.length !== 1) {
-    throw new Error("Runtime E2E cleanup requires exactly one disposable Firebase user");
-  }
-  const user = users[0];
-  if (
-    typeof creds.apiKey !== "string" ||
-    !creds.apiKey ||
-    typeof user?.email !== "string" ||
-    !user.email ||
-    typeof user?.password !== "string" ||
-    !user.password
-  ) {
-    throw new Error("disposable Firebase credentials are incomplete");
-  }
-
-  // Refresh the token immediately before API cleanup. This avoids relying on
-  // a possibly expired creation token after the logout/login acceptance steps.
-  const refreshed = await signInWithPassword({
-    apiKey: creds.apiKey,
-    email: user.email,
-    password: user.password,
-  });
-  const freshToken = refreshed.idToken;
-
-  const resourceCleanup = await cleanupExactRuntimeE2EResources({
-    baseUrl,
+    expectedNeonBranchId: identity.neonBranchId,
+    expectedDatabaseHost: identity.databaseHost,
+    expectedAppEnv: identity.appEnv,
     memoryId,
     treeId,
-    idToken: freshToken,
+    loadTombstone,
+    loadCredentials,
+    signIn: signInImpl,
+    deleteAndVerifyAccount: async ({ apiKey, user, idToken }) => {
+      const firebaseCleanup = await disposableCleanupImpl({
+        users: [{ ...user, idToken }],
+        apiKey,
+        // Credential retirement is deliberately owned by the wrapper after a
+        // durable ACCOUNT_DELETED_VERIFIED tombstone is written.
+        credsFile: null,
+        log,
+      });
+      const verified =
+        firebaseCleanup?.ok === true &&
+        firebaseCleanup?.allDeleted === true &&
+        Array.isArray(firebaseCleanup?.results) &&
+        firebaseCleanup.results.length === 1 &&
+        firebaseCleanup.results.every((entry) => entry?.deleted === true);
+      return {
+        verified,
+        firebaseUid: user?.uid ?? null,
+      };
+    },
+    writeTombstone: async (tombstone) => {
+      await writeFileImpl(statePath, JSON.stringify(tombstone, null, 2), {
+        encoding: "utf8",
+        mode: 0o600,
+      });
+    },
+    retireCredentials: async () => {
+      await removeCredentialsFile(credsPath, rmImpl);
+    },
+    retireTombstone: async () => {
+      await rmImpl(statePath, { force: true });
+    },
   });
 
-  // DB resources are verified gone before the Firebase account is deleted, so
-  // a failed DB cleanup retains a usable disposable identity for a safe retry.
-  const firebaseCleanup = await runDisposableCleanup({
-    users: [{ ...user, idToken: freshToken }],
-    apiKey: creds.apiKey,
-    credsFile: credsPath,
-    log: (line) => console.log(line),
-  });
-  if (!firebaseCleanup.ok) {
-    throw new Error("disposable Firebase account cleanup did not verify complete");
-  }
-
-  console.log(
+  log(
     JSON.stringify({
       ok: true,
-      treeId: resourceCleanup.treeId,
-      memoryId: resourceCleanup.memoryId,
-      treeDeleted: resourceCleanup.treeDeleted,
-      memoryDeleted: resourceCleanup.memoryDeleted,
-      exactIdsVerifiedGone: resourceCleanup.verifiedGone,
-      firebaseUsersVerifiedDeleted: firebaseCleanup.results.every((entry) => entry.deleted),
-      credentialsFileRemoved: firebaseCleanup.fileRemoved,
+      treeId: result.treeId,
+      memoryId: result.memoryId,
+      exactIdsVerifiedGone: true,
+      firebaseUsersVerifiedDeleted: result.accountDeletionVerified,
+      credentialsFileRemoved: result.credentialsRetired,
+      cleanupPhase: result.cleanupPhase,
+      resumedFrom: result.resumedFrom,
+      tombstoneRetired: result.tombstoneRetired,
     })
   );
-} catch (error) {
-  console.error(`[v4-runtime-e2e-cleanup] ${safeErrorCode(error, "CLEANUP_FAILED")}`);
-  process.exitCode = 1;
+  return result;
+}
+
+export async function main() {
+  try {
+    await runCleanupCli({});
+  } catch (error) {
+    console.error(`[v4-runtime-e2e-cleanup] ${cleanupErrorCode(error)}`);
+    process.exitCode = 1;
+  }
+}
+
+const invokedAsScript =
+  typeof process.argv[1] === "string" &&
+  pathToFileURL(process.argv[1]).href === import.meta.url;
+if (invokedAsScript) {
+  await main();
 }
