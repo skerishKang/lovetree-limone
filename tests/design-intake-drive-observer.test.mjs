@@ -644,17 +644,17 @@ test("UNTRUSTED_PR_CANNOT_EXECUTE_WITH_PRIVILEGED_TOKEN: workflow static boundar
 
 test("PURE_RESOLVER_REUSE: the #171 resolver source is byte-identical to merged main", async () => {
   // The observation layer must reuse #171 unchanged; any accidental edit to
-  // the pure resolver is a boundary violation. Compare against origin/main.
+  // the pure resolver is a boundary violation. Compare against origin/main,
+  // fetching a shallow main tip first when the local clone lacks the ref
+  // (CI checkouts default to a single-ref shallow fetch).
   const { execFileSync: exec } = await import("node:child_process");
-  let mainVersion;
+  const runGit = (args) => exec("git", args, { encoding: "utf8", cwd: repoRoot });
   try {
-    mainVersion = exec("git", ["show", "origin/main:lib/design-intake/source-freshness.ts"], {
-      encoding: "utf8",
-      cwd: repoRoot,
-    });
+    runGit(["cat-file", "-e", "origin/main^{commit}"]);
   } catch {
-    assert.ok(false, "origin/main must be available to verify resolver purity");
+    runGit(["fetch", "origin", "main", "--depth=1", "--quiet"]);
   }
+  const mainVersion = runGit(["show", "origin/main:lib/design-intake/source-freshness.ts"]);
   const workingVersion = readSource(path.join("lib", "design-intake", "source-freshness.ts"));
   const normalize = (text) => text.replace(/\r\n/g, "\n");
   assert.equal(
