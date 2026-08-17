@@ -52,11 +52,9 @@ type DraftState = {
   secondMoment: SecondMomentDraft;
 };
 
-type StoredDraftSnapshot = DraftState & {
-  version: 2;
-};
-
+type StoredDraftSnapshot = DraftState & { version: 2 };
 type JsonRecord = Record<string, unknown>;
+type PathChoice = "MAIN" | "BRANCH" | null;
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -207,6 +205,7 @@ export default function V4FirstJourneyV12({
   const [firstSaved, setFirstSaved] = useState(false);
   const [memorySaved, setMemorySaved] = useState(false);
   const [secondSaved, setSecondSaved] = useState(false);
+  const [pathChoice, setPathChoice] = useState<PathChoice>(null);
   const [v12Step, setV12Step] = useState(0);
   const [toast, setToast] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
@@ -214,13 +213,15 @@ export default function V4FirstJourneyV12({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const pendingSecondKey = useRef<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastScrollRef = useRef(0);
 
   useEffect(() => {
     const hydrated = loadDraftSnapshot(storageKey);
     setDraft(hydrated);
     try {
-      // Rewrite only the approved draft schema. Any legacy saved/canonical IDs,
-      // connection memoryIds, or completion claims are discarded on reload.
+      // Rewrite only the approved draft schema. Legacy saved/canonical IDs,
+      // connection memoryIds and completion claims are discarded on reload.
       persistDraftSnapshot(storageKey, hydrated);
     } catch {
       // localStorage is not required for canonical writes.
@@ -228,6 +229,23 @@ export default function V4FirstJourneyV12({
     setMounted(true);
     onActivate?.();
   }, [onActivate, storageKey]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const element = scrollRef.current;
+    if (!element) return;
+
+    const handleScroll = () => {
+      const maxScroll = Math.max(1, element.scrollHeight - element.clientHeight);
+      const scrollTop = element.scrollTop;
+      lastScrollRef.current = scrollTop;
+      const step = Math.max(0, Math.min(4, Math.round((scrollTop / maxScroll) * 4)));
+      setV12Step(step);
+    };
+
+    element.addEventListener("scroll", handleScroll, { passive: true });
+    return () => element.removeEventListener("scroll", handleScroll);
+  }, [mounted]);
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -298,7 +316,15 @@ export default function V4FirstJourneyV12({
   }, []);
 
   const performFirstSave = useCallback(async () => {
-    const { videoId } = requireFirstInput(draft);
+    let videoId: string;
+    try {
+      ({ videoId } = requireFirstInput(draft));
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : "첫 순간 입력을 확인해 주세요.";
+      setSaveError(message);
+      return;
+    }
+
     setSaving(true);
     setSaveError(null);
     clearAuthError();
@@ -325,8 +351,8 @@ export default function V4FirstJourneyV12({
         fetchFn: fetchFn ?? apiFetch,
       });
 
-      // Durable truth lives only in memory from the canonical response. It is
-      // intentionally never copied into localStorage/sessionStorage.
+      // Canonical IDs are held only in component memory from the server response.
+      // They are never copied into localStorage/sessionStorage.
       setCanonical({ treeId, firstMemoryId: memoryId });
       setFirstSaved(true);
       setV12Step(1);
@@ -344,21 +370,16 @@ export default function V4FirstJourneyV12({
 
   const submitFirstMoment = useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      requireFirstInput(draft);
-    } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "첫 순간 입력을 확인해 주세요.";
-      setSaveError(message);
-      return;
-    }
 
+    // Preserve the existing auth composition as the first anonymous action.
+    // Input validation is repeated after authentication before any write occurs.
     if (!user) {
       setPendingFirstSave(true);
       setAuthOpen(true);
       return;
     }
     await performFirstSave();
-  }, [draft, performFirstSave, user]);
+  }, [performFirstSave, user]);
 
   useEffect(() => {
     if (!pendingFirstSave || !user || saving) return;
@@ -488,6 +509,7 @@ export default function V4FirstJourneyV12({
     setFirstSaved(false);
     setMemorySaved(false);
     setSecondSaved(false);
+    setPathChoice(null);
     setV12Step(0);
     setSaveError(null);
     setPendingFirstSave(false);
@@ -498,24 +520,25 @@ export default function V4FirstJourneyV12({
 
   const firstVideoId = youtubeId(draft.firstMoment.url);
   const secondVideoId = youtubeId(draft.secondMoment.url);
-  const progressPct = Math.min(100, (v12Step / 3) * 100);
+  const progressPct = Math.min(100, (v12Step / 4) * 100);
 
   return (
     <div className="v4-j-v12" data-testid="canonical-first-journey-v12">
-      <div className="v4-j-v12-progress" role="progressbar" aria-valuenow={v12Step} aria-valuemin={0} aria-valuemax={3}>
+      <div className="v4-j-v12-progress" role="progressbar" aria-valuenow={v12Step} aria-valuemin={0} aria-valuemax={4}>
         <div className="v4-j-v12-progress-bar" style={{ width: `${progressPct}%` }} />
         <span className="v4-j-v12-step-label">
           {v12Step === 0 && "첫 순간 발견"}
           {v12Step === 1 && "마음 남기기"}
           {v12Step === 2 && "WHY NEXT"}
-          {v12Step >= 3 && "워크스페이스 열기"}
+          {v12Step === 3 && "MAIN / BRANCH"}
+          {v12Step >= 4 && "완성!"}
         </span>
       </div>
 
       {saveError ? <p className="v4-j-v12-error" role="alert">{saveError}</p> : null}
       {authError ? <p className="v4-j-v12-error" role="alert">{authError}</p> : null}
 
-      <div className="v4-j-v12-scroll" data-testid="v12-scroll-container">
+      <div className="v4-j-v12-scroll" ref={scrollRef} data-testid="v12-scroll-container">
         <section className={`v4-j-v12-section ${v12Step === 0 ? "v4-j-v12-active" : ""}`} data-step="first-moment">
           <div className="v4-j-v12-sticky">
             <div className="v4-j-v12-hero">
@@ -536,7 +559,7 @@ export default function V4FirstJourneyV12({
                   <span className="v4-j-v12-eyebrow">00 — First Moment</span>
                   <em>{draft.firstMoment.title.trim() || "나의 첫 순간"}</em>
                 </h1>
-                <p className="v4-j-v12-note">샘플이 아니라 직접 입력한 순간이 실제 러브트리의 첫 뿌리가 됩니다.</p>
+                <p className="v4-j-v12-note">직접 입력한 순간이 실제 러브트리의 첫 뿌리가 됩니다.</p>
                 {!firstSaved ? (
                   <form onSubmit={submitFirstMoment} className="v4-j-v12-form" data-testid="first-moment-form">
                     <input
@@ -701,7 +724,47 @@ export default function V4FirstJourneyV12({
           </div>
         </section>
 
-        <section className={`v4-j-v12-section ${v12Step >= 3 ? "v4-j-v12-active" : ""}`} data-step="complete">
+        <section className={`v4-j-v12-section ${v12Step === 3 ? "v4-j-v12-active" : ""}`} data-step="main-branch">
+          <div className="v4-j-v12-sticky">
+            <span className="v4-j-v12-eyebrow">03 — MAIN / BRANCH</span>
+            <h2>이 순간을 어떤 모습으로 보고 싶나요?</h2>
+            <p className="v4-j-v12-note">이 선택은 presentation pointer일 뿐이며 Tree/Moment/Connection 저장 모델을 바꾸지 않습니다.</p>
+            <div className="v4-j-v12-path-group">
+              <div className="v4-j-v12-path-row">
+                <span className="v4-j-v12-path-title">{draft.secondMoment.title || "다음 순간"}</span>
+                <div className="v4-j-v12-path-buttons">
+                  <button
+                    type="button"
+                    className={`v4-j-v12-path-btn ${pathChoice === "MAIN" ? "v4-j-v12-path-selected" : ""}`}
+                    onClick={() => setPathChoice("MAIN")}
+                    data-testid="main-path"
+                  >
+                    MAIN
+                  </button>
+                  <button
+                    type="button"
+                    className={`v4-j-v12-path-btn ${pathChoice === "BRANCH" ? "v4-j-v12-path-selected" : ""}`}
+                    onClick={() => setPathChoice("BRANCH")}
+                    data-testid="branch-path"
+                  >
+                    BRANCH
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="v4-j-v12-cta"
+              onClick={() => setV12Step(4)}
+              disabled={!secondSaved || !pathChoice}
+              data-testid="show-complete"
+            >
+              완성 화면 보기
+            </button>
+          </div>
+        </section>
+
+        <section className={`v4-j-v12-section ${v12Step >= 4 ? "v4-j-v12-active" : ""}`} data-step="complete">
           <div className="v4-j-v12-sticky v4-j-v12-complete">
             <div className="v4-j-v12-complete-icon" aria-hidden="true">🌳</div>
             <h2 className="v4-j-v12-complete-title">YOUR FIRST TREE</h2>
