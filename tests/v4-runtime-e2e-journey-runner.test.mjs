@@ -7,6 +7,7 @@ import {
   CANONICAL_JOURNEY_STEPS,
   createJourneyJournal,
   validateJourneyContractPayload,
+  validateDisposableCredentials,
   buildSecretFreeEvidenceReport,
   executeCanonicalJourneyWorkflow,
 } from "../scripts/lib/v4-runtime-e2e-runner.mjs";
@@ -18,6 +19,127 @@ import {
   APPROVED_E2E_NEON_HOST,
 } from "../scripts/lib/v4-runtime-e2e-preflight.mjs";
 
+function getTestAuthority() {
+  return createRuntimeE2EAuthority({
+    baseUrl: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
+    expectedOrigin: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
+    expectedWorker: "lovetree-limone-e2e-preview",
+    expectedFirebaseProjectId: "relovetree-e2e",
+    expectedNeonBranchId: APPROVED_E2E_NEON_BRANCH_ID,
+    expectedDatabaseHost: APPROVED_E2E_NEON_HOST,
+    expectedAppEnv: "e2e",
+  });
+}
+
+function getValidDisposableCreds() {
+  return {
+    apiKey: "mock-api-key-safe",
+    users: [
+      {
+        email: "disposable-user@example.com",
+        password: "mock-password-safe",
+        uid: "uid-disposable-123",
+      },
+    ],
+  };
+}
+
+function getValidJourneyPayload() {
+  return {
+    treeTitle: "아이유 음악 여정",
+    firstMoment: {
+      title: "좋은 날 3단 고음 무대",
+      sourceUrl: "https://www.youtube.com/watch?v=jeqdYqsrsA0",
+    },
+    secondMoment: {
+      title: "너랑 나 뮤직비디오",
+      sourceUrl: "https://www.youtube.com/watch?v=NJR8Inf7tJg",
+      connectionReason: "좋은 날의 밝은 에너지가 너랑 나의 판타지 세계관으로 이어짐",
+    },
+    editMoment: {
+      title: "좋은 날 3단 고음 무대 (입덕의 시작)",
+    },
+    thirdMoment: {
+      title: "밤편지 오피셜 라이브",
+      sourceUrl: "https://www.youtube.com/watch?v=BzYnNdJhZQw",
+      connectionReason: "빠른 댄스곡 너랑 나 이후 아티스트의 서정적인 밤편지로 심화됨",
+    },
+  };
+}
+
+function createMockPageDriver(events) {
+  return {
+    async goto(url, vp) {
+      events.push({ action: "goto", url, vp });
+    },
+    async executeFirstMomentCreate(args) {
+      events.push({ action: "createFirst", args });
+      return { treeId: "tree-e2e-canonical", firstMemoryId: "mem-e2e-1" };
+    },
+    async executeSecondMomentCreate(args) {
+      events.push({ action: "createSecond", args });
+      return { secondMemoryId: "mem-e2e-2" };
+    },
+    async verifyWorkspaceHighlight(args) {
+      events.push({ action: "verifyHighlight", args });
+    },
+    async reload(vp) {
+      events.push({ action: "reload", vp });
+    },
+    async verifyTreeState(args) {
+      events.push({ action: "verifyTreeState", args });
+    },
+    async signOut() {
+      events.push({ action: "signOut" });
+    },
+    async signIn() {
+      events.push({ action: "signIn" });
+    },
+    async executeMomentEdit(args) {
+      events.push({ action: "editMoment", args });
+    },
+    async executeThirdMomentCreate(args) {
+      events.push({ action: "createThird", args });
+      return { thirdMemoryId: "mem-e2e-3" };
+    },
+  };
+}
+
+function createMockFetch(deletedUrls = new Set()) {
+  return async (url, options) => {
+    const method = options?.method || "GET";
+    if (method === "DELETE") {
+      deletedUrls.add(url);
+      return {
+        ok: true,
+        status: 200,
+        async json() {
+          return { success: true };
+        },
+      };
+    }
+    if (method === "GET") {
+      if (deletedUrls.has(url)) {
+        return {
+          ok: false,
+          status: 404,
+          async json() {
+            return { error: "Not found" };
+          },
+        };
+      }
+      return {
+        ok: true,
+        status: 200,
+        async json() {
+          return { id: "existing" };
+        },
+      };
+    }
+    return { ok: true, status: 200, async json() { return {}; } };
+  };
+}
+
 test("DESKTOP_CONTRACT: Desktop viewport is 1280x800", () => {
   assert.deepEqual(DESKTOP_VIEWPORT, { width: 1280, height: 800 });
 });
@@ -27,15 +149,7 @@ test("MOBILE_CONTRACT: Mobile viewport is 390x844", () => {
 });
 
 test("PREFLIGHT_REUSE: Preflight authority requires approved E2E identities", () => {
-  const authority = createRuntimeE2EAuthority({
-    baseUrl: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedOrigin: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedWorker: "lovetree-limone-e2e-preview",
-    expectedFirebaseProjectId: "relovetree-e2e",
-    expectedNeonBranchId: APPROVED_E2E_NEON_BRANCH_ID,
-    expectedDatabaseHost: APPROVED_E2E_NEON_HOST,
-    expectedAppEnv: "e2e",
-  });
+  const authority = getTestAuthority();
   assert.equal(authority.worker, "lovetree-limone-e2e-preview");
   assert.equal(authority.firebaseProjectId, "relovetree-e2e");
   assert.equal(authority.appEnv, "e2e");
@@ -64,6 +178,20 @@ test("SECOND_MOMENT_WHY_NEXT: Rejects second moment without WHY NEXT connectionR
   );
 });
 
+test("DISPOSABLE_CREDS_CONTRACT: Validates disposable credentials payload", () => {
+  assert.throws(
+    () => validateDisposableCredentials({}),
+    /disposable credentials apiKey is required/
+  );
+  assert.throws(
+    () => validateDisposableCredentials({ apiKey: "test-key" }),
+    /disposable credentials requires at least one user/
+  );
+  const validated = validateDisposableCredentials(getValidDisposableCreds());
+  assert.equal(validated.apiKey, "mock-api-key-safe");
+  assert.equal(validated.user.email, "disposable-user@example.com");
+});
+
 test("EXACT_ID_JOURNAL: Accurately tracks all created entities and steps", () => {
   const journal = createJourneyJournal();
   journal.setTreeId("tree-123");
@@ -85,16 +213,7 @@ test("EXACT_ID_JOURNAL: Accurately tracks all created entities and steps", () =>
 });
 
 test("SECRET_SAFE_EVIDENCE: Evidence report never exposes secret fields or tokens", () => {
-  const authority = createRuntimeE2EAuthority({
-    baseUrl: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedOrigin: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedWorker: "lovetree-limone-e2e-preview",
-    expectedFirebaseProjectId: "relovetree-e2e",
-    expectedNeonBranchId: APPROVED_E2E_NEON_BRANCH_ID,
-    expectedDatabaseHost: APPROVED_E2E_NEON_HOST,
-    expectedAppEnv: "e2e",
-  });
-
+  const authority = getTestAuthority();
   const journal = createJourneyJournal();
   journal.setTreeId("tree-evidence-1");
   journal.addMemoryId("mem-evidence-1", "first");
@@ -106,7 +225,12 @@ test("SECRET_SAFE_EVIDENCE: Evidence report never exposes secret fields or token
     viewport: DESKTOP_VIEWPORT,
     authority,
     journalSnapshot: journal.getSnapshot(),
-    cleanupResult: { ok: true, memoryDeleted: true, treeDeleted: true },
+    cleanupResult: {
+      ok: true,
+      allMemoryIdsVerified404: true,
+      treeVerified404: true,
+      accountDeletionVerified: true,
+    },
     durationMs: 1250,
   });
 
@@ -114,6 +238,9 @@ test("SECRET_SAFE_EVIDENCE: Evidence report never exposes secret fields or token
   assert.equal(report.firstMemoryId, "mem-evidence-1");
   assert.equal(report.allStepsCompleted, true);
   assert.equal(report.cleanupHandoffOk, true);
+  assert.equal(report.allMemoryIdsVerified404, true);
+  assert.equal(report.treeVerified404, true);
+  assert.equal(report.accountDeletionVerified, true);
 
   const rawJson = JSON.stringify(report);
   assert.equal(rawJson.includes("password"), false);
@@ -121,124 +248,179 @@ test("SECRET_SAFE_EVIDENCE: Evidence report never exposes secret fields or token
   assert.equal(rawJson.includes("apiKey"), false);
 });
 
-test("CANONICAL_JOURNEY_WORKFLOW: Executes full 20-step journey with mock driver and #241 cleanup handoff", async () => {
-  const authority = createRuntimeE2EAuthority({
-    baseUrl: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedOrigin: "https://lovetree-limone-e2e-preview.charliekant.workers.dev",
-    expectedWorker: "lovetree-limone-e2e-preview",
-    expectedFirebaseProjectId: "relovetree-e2e",
-    expectedNeonBranchId: APPROVED_E2E_NEON_BRANCH_ID,
-    expectedDatabaseHost: APPROVED_E2E_NEON_HOST,
-    expectedAppEnv: "e2e",
-  });
+test("INITIAL_AUTH_ACTUALLY_EXECUTES: Sign-in failure halts journey with zero mutations", async () => {
+  const authority = getTestAuthority();
+  const pageEvents = [];
+  const mockDriver = createMockPageDriver(pageEvents);
 
-  const pageDriverCalls = [];
-  const mockDriver = {
-    async goto(url, vp) {
-      pageDriverCalls.push({ action: "goto", url, vp });
-    },
-    async executeFirstMomentCreate(args) {
-      pageDriverCalls.push({ action: "createFirst", args });
-      return { treeId: "tree-e2e-canonical", firstMemoryId: "mem-e2e-1" };
-    },
-    async executeSecondMomentCreate(args) {
-      pageDriverCalls.push({ action: "createSecond", args });
-      return { secondMemoryId: "mem-e2e-2" };
-    },
-    async verifyWorkspaceHighlight(args) {
-      pageDriverCalls.push({ action: "verifyHighlight", args });
-    },
-    async reload(vp) {
-      pageDriverCalls.push({ action: "reload", vp });
-    },
-    async verifyTreeState(args) {
-      pageDriverCalls.push({ action: "verifyTreeState", args });
-    },
-    async signOut() {
-      pageDriverCalls.push({ action: "signOut" });
-    },
-    async signIn() {
-      pageDriverCalls.push({ action: "signIn" });
-    },
-    async executeMomentEdit(args) {
-      pageDriverCalls.push({ action: "editMoment", args });
-    },
-    async executeThirdMomentCreate(args) {
-      pageDriverCalls.push({ action: "createThird", args });
-      return { thirdMemoryId: "mem-e2e-3" };
-    },
+  const failingSignIn = async () => {
+    const err = new Error("INVALID_LOGIN_CREDENTIALS");
+    err.code = "SIGN_IN_FAILED";
+    throw err;
   };
 
-  // Mock fetch for #241 cleanup handoff
-  const mockFetch = async (_url, options) => {
-    if (options?.method === "DELETE") {
-      return {
-        ok: true,
-        status: 200,
-        async json() {
-          return { success: true };
-        },
-      };
-    }
-    if (options?.method === "GET") {
-      return {
-        ok: false,
-        status: 404,
-        async json() {
-          return { error: "Not found" };
-        },
-      };
+  await assert.rejects(
+    async () => {
+      await executeCanonicalJourneyWorkflow({
+        authority,
+        viewport: DESKTOP_VIEWPORT,
+        disposableCreds: getValidDisposableCreds(),
+        journeyPayload: getValidJourneyPayload(),
+        pageDriver: mockDriver,
+        signInWithPasswordImpl: failingSignIn,
+      });
+    },
+    { code: "V4_RUNTIME_E2E_AUTH_FAILED" }
+  );
+
+  // Assert zero page driver mutations occurred
+  assert.equal(pageEvents.length, 0);
+});
+
+test("ALL_JOURNALED_MEMORY_IDS_404: Fails if second or third memory is unverified (not 404)", async () => {
+  const authority = getTestAuthority();
+  const pageEvents = [];
+  const mockDriver = createMockPageDriver(pageEvents);
+
+  // Mock fetch where second memory remains 200 (not 404)
+  const mockFetchWithLeakingSecondMemory = async (url, options) => {
+    const method = options?.method || "GET";
+    if (method === "DELETE") return { ok: true, status: 200, async json() { return { success: true }; } };
+    if (method === "GET") {
+      if (url.includes("mem-e2e-2")) {
+        // Leaking second memory returns 200 OK instead of 404
+        return { ok: true, status: 200, async json() { return { id: "mem-e2e-2" }; } };
+      }
+      return { ok: false, status: 404, async json() { return { error: "Not found" }; } };
     }
     return { ok: true, status: 200, async json() { return {}; } };
   };
 
-  const disposableCreds = {
-    apiKey: "mock-api-key-safe",
-    user: {
-      email: "disposable-user@example.com",
-      password: "mock-password-safe",
-      uid: "uid-disposable-123",
-      idToken: "mock-id-token-safe",
-    },
-  };
+  const mockSignIn = async () => ({ idToken: "mock-valid-id-token", localId: "uid-123" });
+  const mockDeleteAccount = async () => ({});
+  const mockVerifyUserDeleted = async () => ({ deleted: true, reasonCode: "VERIFIED" });
 
-  const journeyPayload = {
-    treeTitle: "아이유 음악 여정",
-    firstMoment: {
-      title: "좋은 날 3단 고음 무대",
-      sourceUrl: "https://www.youtube.com/watch?v=jeqdYqsrsA0",
+  await assert.rejects(
+    async () => {
+      await executeCanonicalJourneyWorkflow({
+        authority,
+        viewport: DESKTOP_VIEWPORT,
+        disposableCreds: getValidDisposableCreds(),
+        journeyPayload: getValidJourneyPayload(),
+        pageDriver: mockDriver,
+        signInWithPasswordImpl: mockSignIn,
+        deleteAccountImpl: mockDeleteAccount,
+        verifyUserDeletedImpl: mockVerifyUserDeleted,
+        fetchImpl: mockFetchWithLeakingSecondMemory,
+      });
     },
-    secondMoment: {
-      title: "너랑 나 뮤직비디오",
-      sourceUrl: "https://www.youtube.com/watch?v=NJR8Inf7tJg",
-      connectionReason: "좋은 날의 밝은 에너지가 너랑 나의 판타지 세계관으로 이어짐",
+    { code: "V4_RUNTIME_E2E_EXACT_CLEANUP_UNVERIFIED" }
+  );
+});
+
+test("ACCOUNT_DELETE_INDEPENDENT_VERIFY: Fails if account deletion verification is false", async () => {
+  const authority = getTestAuthority();
+  const pageEvents = [];
+  const mockDriver = createMockPageDriver(pageEvents);
+  const deletedUrls = new Set();
+  const mockFetch = createMockFetch(deletedUrls);
+
+  const mockSignIn = async () => ({ idToken: "mock-valid-id-token", localId: "uid-123" });
+  const mockDeleteAccount = async () => ({});
+  const mockVerifyUserDeletedFailing = async () => ({
+    deleted: false,
+    reasonCode: "DELETE_UNVERIFIED",
+    detail: "lookup still returns the user",
+  });
+
+  await assert.rejects(
+    async () => {
+      await executeCanonicalJourneyWorkflow({
+        authority,
+        viewport: DESKTOP_VIEWPORT,
+        disposableCreds: getValidDisposableCreds(),
+        journeyPayload: getValidJourneyPayload(),
+        pageDriver: mockDriver,
+        signInWithPasswordImpl: mockSignIn,
+        deleteAccountImpl: mockDeleteAccount,
+        verifyUserDeletedImpl: mockVerifyUserDeletedFailing,
+        fetchImpl: mockFetch,
+      });
     },
-    editMoment: {
-      title: "좋은 날 3단 고음 무대 (입덕의 시작)",
-    },
-    thirdMoment: {
-      title: "밤편지 오피셜 라이브",
-      sourceUrl: "https://www.youtube.com/watch?v=BzYnNdJhZQw",
-      connectionReason: "빠른 댄스곡 너랑 나 이후 아티스트의 서정적인 밤편지로 심화됨",
-    },
-  };
+    { code: "V4_RUNTIME_E2E_ACCOUNT_DELETION_UNVERIFIED" }
+  );
+});
+
+test("CANONICAL_JOURNEY_WORKFLOW_DESKTOP: Full 20-step execution passes for Desktop 1280x800", async () => {
+  const authority = getTestAuthority();
+  const pageEvents = [];
+  const mockDriver = createMockPageDriver(pageEvents);
+  const deletedUrls = new Set();
+  const mockFetch = createMockFetch(deletedUrls);
+
+  let tombstoneWritten = false;
+  let credentialsRetired = false;
+
+  const mockSignIn = async () => ({ idToken: "mock-valid-id-token", localId: "uid-123" });
+  const mockDeleteAccount = async () => ({});
+  const mockVerifyUserDeleted = async () => ({ deleted: true, reasonCode: "VERIFIED" });
+  const mockWriteTombstone = async () => { tombstoneWritten = true; };
+  const mockRetireCredentials = async () => { credentialsRetired = true; };
 
   const result = await executeCanonicalJourneyWorkflow({
     authority,
     viewport: DESKTOP_VIEWPORT,
-    disposableCreds,
-    journeyPayload,
+    disposableCreds: getValidDisposableCreds(),
+    journeyPayload: getValidJourneyPayload(),
     pageDriver: mockDriver,
+    signInWithPasswordImpl: mockSignIn,
+    deleteAccountImpl: mockDeleteAccount,
+    verifyUserDeletedImpl: mockVerifyUserDeleted,
+    writeTombstoneImpl: mockWriteTombstone,
+    retireCredentialsImpl: mockRetireCredentials,
     fetchImpl: mockFetch,
   });
 
   assert.equal(result.ok, true);
-  assert.equal(result.journal.treeId, "tree-e2e-canonical");
-  assert.equal(result.journal.firstMemoryId, "mem-e2e-1");
-  assert.equal(result.journal.secondMemoryId, "mem-e2e-2");
-  assert.equal(result.journal.thirdMemoryId, "mem-e2e-3");
-  assert.equal(result.journal.completedSteps.length, 20);
-  assert.equal(result.cleanupResult.memoryDeleted, true);
-  assert.equal(result.cleanupResult.treeDeleted, true);
+  assert.equal(result.evidenceReport.viewport, "1280x800");
   assert.equal(result.evidenceReport.allStepsCompleted, true);
+  assert.equal(result.evidenceReport.allMemoryIdsVerified404, true);
+  assert.equal(result.evidenceReport.treeVerified404, true);
+  assert.equal(result.evidenceReport.accountDeletionVerified, true);
+  assert.equal(tombstoneWritten, true);
+  assert.equal(credentialsRetired, true);
+
+  // Verify exact journaled memories (all 3 memories)
+  assert.deepEqual(result.journal.memoryIds, ["mem-e2e-1", "mem-e2e-2", "mem-e2e-3"]);
+});
+
+test("CANONICAL_JOURNEY_WORKFLOW_MOBILE: Full 20-step execution passes for Mobile 390x844", async () => {
+  const authority = getTestAuthority();
+  const pageEvents = [];
+  const mockDriver = createMockPageDriver(pageEvents);
+  const deletedUrls = new Set();
+  const mockFetch = createMockFetch(deletedUrls);
+
+  const mockSignIn = async () => ({ idToken: "mock-valid-id-token", localId: "uid-123" });
+  const mockDeleteAccount = async () => ({});
+  const mockVerifyUserDeleted = async () => ({ deleted: true, reasonCode: "VERIFIED" });
+
+  const result = await executeCanonicalJourneyWorkflow({
+    authority,
+    viewport: MOBILE_VIEWPORT,
+    disposableCreds: getValidDisposableCreds(),
+    journeyPayload: getValidJourneyPayload(),
+    pageDriver: mockDriver,
+    signInWithPasswordImpl: mockSignIn,
+    deleteAccountImpl: mockDeleteAccount,
+    verifyUserDeletedImpl: mockVerifyUserDeleted,
+    fetchImpl: mockFetch,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.evidenceReport.viewport, "390x844");
+  assert.equal(result.evidenceReport.allStepsCompleted, true);
+  assert.equal(result.evidenceReport.allMemoryIdsVerified404, true);
+  assert.equal(result.evidenceReport.treeVerified404, true);
+  assert.equal(result.evidenceReport.accountDeletionVerified, true);
 });
