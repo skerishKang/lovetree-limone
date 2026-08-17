@@ -46,11 +46,11 @@ test("Track66 page.tsx makes V1.2 default and isolates V1 as explicit legacy dem
   const content = fs.readFileSync(path.join(ROOT, "app/v4/journey/page.tsx"), "utf8");
   assert.match(content, /V4FirstJourneyV12/);
   assert.match(content, /V4FirstJourney/);
-  assert.match(content, /JourneyMode/);
-  assert.match(content, /"legacy-demo"/);
-  assert.match(content, /params\.get\("legacy"\) === "1"/);
+  assert.match(content, /searchParams: Promise/);
+  assert.match(content, /const legacy = Array\.isArray\(params\.legacy\)/);
+  assert.match(content, /if \(legacy === "1"\)/);
   assert.match(content, /return <V4FirstJourneyV12 storageKey=\{STORAGE_KEY\} \/>/);
-  assert.doesNotMatch(content, /v12Mode|params\.get\("v12"\)|\?v12=1/);
+  assert.doesNotMatch(content, /v12Mode|params\.get\("v12"\)|\?v12=1|JourneyMode|useEffect|useState/);
 });
 
 test("V1.2 presentation avoids forbidden scope", () => {
