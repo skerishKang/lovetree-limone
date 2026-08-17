@@ -80,11 +80,15 @@ jobs:
           DESIGN_INTAKE_DRIVE_ACCESS_TOKEN: ""
         run: |
           set -uo pipefail
+          # The runner shell enables errexit; disable it around the probe so
+          # the refusal exit code can be captured and verified.
+          set +e
           node --import tsx scripts/design-intake-drive-observe.mjs \
             --config tests/fixtures/source-freshness/observer/observer-config.json \
             --mode live \
             --track track-observer-62-exact
           status=$?
+          set -e
           if [ "$status" -ne 3 ]; then
             echo "::error::LIVE mode must fail closed without the credential contract (expected exit 3 LIVE_DISABLED, got $status)"
             exit 1
