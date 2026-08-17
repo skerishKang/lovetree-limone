@@ -67,10 +67,10 @@ test("#248: failed first write cannot claim success", () => {
   const firstSave = sliceBetween(V12, "const performFirstSave", "const submitFirstMoment");
   assert.match(firstSave, /setCanonical\(\{ treeId, firstMemoryId: memoryId \}\)/);
   assert.match(firstSave, /setFirstSaved\(true\)/);
-  const catchBranch = firstSave.slice(firstSave.indexOf("} catch (cause)"));
-  assert.match(catchBranch, /setFirstSaved\(false\)/);
-  assert.match(catchBranch, /setCanonical\(null\)/);
-  assert.doesNotMatch(catchBranch, /setFirstSaved\(true\)/);
+  const networkCatch = firstSave.slice(firstSave.lastIndexOf("} catch (cause)"));
+  assert.match(networkCatch, /setFirstSaved\(false\)/);
+  assert.match(networkCatch, /setCanonical\(null\)/);
+  assert.doesNotMatch(networkCatch, /setFirstSaved\(true\)/);
 });
 
 test("#248: second Moment uses real firstMemoryId and exact user WHY NEXT", () => {
