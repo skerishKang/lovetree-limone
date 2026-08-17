@@ -170,12 +170,12 @@ async function main() {
     treeTitle: "아이유 음악 여정 E2E",
     firstMoment: {
       title: "좋은 날 3단 고음 무대",
-      sourceUrl: "https://www.youtube.com/watch?v=jeqdYqsrsA0",
+      sourceUrl: "https://example.com/journey/moment-1",
       memo: "처음 들었을 때 전율이 돋았던 순간",
     },
     secondMoment: {
       title: "너랑 나 뮤직비디오",
-      sourceUrl: "https://www.youtube.com/watch?v=NJR8Inf7tJg",
+      sourceUrl: "https://example.com/journey/moment-2",
       memo: "시계바늘 춤과 판타지 세계관",
       connectionReason: "좋은 날의 밝은 에너지가 너랑 나의 세계관으로 이어짐",
     },
@@ -184,7 +184,7 @@ async function main() {
     },
     thirdMoment: {
       title: "밤편지 오피셜 라이브",
-      sourceUrl: "https://www.youtube.com/watch?v=BzYnNdJhZQw",
+      sourceUrl: "https://example.com/journey/moment-3",
       connectionReason: "빠른 댄스곡 너랑 나 이후 아티스트의 서정적인 밤편지로 심화됨",
     },
   };
