@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640">
+  <rect width="480" height="640" fill="#f0eeff"/>
+  <rect x="80" y="80" width="320" height="320" rx="12" fill="#ddd"/>
+  <circle cx="240" cy="240" r="60" fill="#bbb"/>
+  <text x="240" y="520" text-anchor="middle" fill="#999" font-size="20" font-family="sans-serif">Portrait Placeholder</text>
+</svg>

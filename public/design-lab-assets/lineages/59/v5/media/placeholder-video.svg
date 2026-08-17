@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="854" height="480" viewBox="0 0 854 480">
+  <rect width="854" height="480" fill="#1a1a2e"/>
+  <polygon points="427,140 527,240 427,340 327,240" fill="#ff4fa3" opacity="0.8"/>
+  <rect x="307" y="220" width="240" height="40" rx="4" fill="#fff" opacity="0.9"/>
+  <text x="427" y="246" text-anchor="middle" fill="#1a1a2e" font-size="14" font-family="sans-serif" font-weight="bold">▶ Video Placeholder</text>
+</svg>
