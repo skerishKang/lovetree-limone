@@ -55,10 +55,19 @@ export async function runCleanupCli({
   rmImpl = rm,
   signInImpl = signInWithPassword,
   disposableCleanupImpl = runDisposableCleanup,
+  verifyHealthImpl,
+  cleanupResourcesImpl,
+  now,
   log = (line) => console.log(line),
 }) {
   const args = parseArgs(argv);
   const baseUrl = requiredArg(args, "base-url");
+  const expectedOrigin = typeof env.E2E_EXPECTED_ORIGIN === "string" ? env.E2E_EXPECTED_ORIGIN.trim() : "";
+  if (!expectedOrigin) {
+    const error = new Error("E2E_EXPECTED_ORIGIN is required");
+    error.code = "V4_RUNTIME_E2E_OPERATOR_INPUT_INVALID";
+    throw error;
+  }
   const credsPath = requiredArg(args, "creds");
   const treeId = requiredArg(args, "tree-id");
   const memoryId = requiredArg(args, "memory-id");
@@ -95,6 +104,7 @@ export async function runCleanupCli({
 
   const result = await runRuntimeE2ECleanupWorkflow({
     baseUrl,
+    expectedOrigin,
     expectedWorker: identity.worker,
     expectedFirebaseProjectId: identity.firebaseProjectId,
     expectedNeonBranchId: identity.neonBranchId,
@@ -137,6 +147,9 @@ export async function runCleanupCli({
     retireTombstone: async () => {
       await rmImpl(statePath, { force: true });
     },
+    ...(verifyHealthImpl ? { verifyHealthImpl } : {}),
+    ...(cleanupResourcesImpl ? { cleanupResourcesImpl } : {}),
+    ...(now ? { now } : {}),
   });
 
   log(

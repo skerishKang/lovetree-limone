@@ -5,6 +5,7 @@ import {
 
 const CLEANUP_TOMBSTONE_VERSION = 1;
 const ACCOUNT_DELETED_VERIFIED = "ACCOUNT_DELETED_VERIFIED";
+const RUNTIME_E2E_AUTHORITY_BRAND = Symbol("V4_RUNTIME_E2E_AUTHORITY");
 const LOOPBACK_HOSTNAMES = new Set(["localhost", "127.0.0.1", "[::1]"]);
 const FORBIDDEN_TOMBSTONE_KEY = /(password|idtoken|refreshtoken|apikey|oauth|secret|token)/i;
 
@@ -50,37 +51,34 @@ function isLoopbackHostname(hostname) {
   return LOOPBACK_HOSTNAMES.has(hostname.toLowerCase());
 }
 
-export function normalizeRuntimeE2EBaseUrl(
-  value,
-  { expectedWorker, allowLocalhostHttp = false } = {}
-) {
-  const raw = requiredString(value, "V4_E2E_BASE_URL");
+function parseRuntimeOrigin(value, label, { allowLocalhostHttp = false } = {}) {
+  const raw = requiredString(value, label);
   let parsed;
   try {
     parsed = new URL(raw);
   } catch {
     throw operatorError(
       "V4_RUNTIME_E2E_OPERATOR_INPUT_INVALID",
-      "V4_E2E_BASE_URL must be a valid http(s) URL"
+      `${label} must be a valid http(s) URL`
     );
   }
 
   if (parsed.username || parsed.password) {
     throw operatorError(
       "V4_RUNTIME_E2E_TARGET_ORIGIN_UNTRUSTED",
-      "V4_E2E_BASE_URL must not contain URL credentials"
+      `${label} must not contain URL credentials`
     );
   }
   if (parsed.search || parsed.hash) {
     throw operatorError(
       "V4_RUNTIME_E2E_TARGET_ORIGIN_UNTRUSTED",
-      "V4_E2E_BASE_URL must be an origin without query or fragment"
+      `${label} must be an origin without query or fragment`
     );
   }
   if (parsed.pathname !== "/" && parsed.pathname !== "") {
     throw operatorError(
       "V4_RUNTIME_E2E_TARGET_ORIGIN_UNTRUSTED",
-      "V4_E2E_BASE_URL must identify the Worker origin root"
+      `${label} must identify the Worker origin root`
     );
   }
 
@@ -99,7 +97,7 @@ export function normalizeRuntimeE2EBaseUrl(
         "localhost Runtime E2E targets must use http or https"
       );
     }
-    return parsed.origin;
+    return parsed;
   }
 
   if (parsed.protocol !== "https:") {
@@ -114,8 +112,11 @@ export function normalizeRuntimeE2EBaseUrl(
       "remote Runtime E2E targets must use the canonical HTTPS port"
     );
   }
+  return parsed;
+}
 
-  const worker = validateExpectedWorker(expectedWorker);
+function validateRemoteWorkerHost(parsed, worker) {
+  const hostname = parsed.hostname.toLowerCase();
   const workerLabel = hostname.split(".")[0] ?? "";
   if (PROTECTED_WORKER_NAMES.includes(workerLabel)) {
     throw operatorError(
@@ -123,22 +124,51 @@ export function normalizeRuntimeE2EBaseUrl(
       `protected Worker host '${hostname}' is forbidden for Runtime E2E`
     );
   }
-
   const approvedHostPattern = new RegExp(
     `^${escapeRegExp(worker)}\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.workers\\.dev$`
   );
   if (!approvedHostPattern.test(hostname)) {
     throw operatorError(
       "V4_RUNTIME_E2E_TARGET_ORIGIN_MISMATCH",
-      "V4_E2E_BASE_URL origin is not bound to the preflight-approved Worker identity"
+      "Runtime E2E origin is not bound to the preflight-approved Worker identity"
     );
   }
+}
 
-  return parsed.origin;
+export function normalizeRuntimeE2EBaseUrl(
+  value,
+  { expectedWorker, expectedOrigin, allowLocalhostHttp = false } = {}
+) {
+  const worker = validateExpectedWorker(expectedWorker);
+  const target = parseRuntimeOrigin(value, "V4_E2E_BASE_URL", { allowLocalhostHttp });
+  const approved = parseRuntimeOrigin(expectedOrigin, "E2E_EXPECTED_ORIGIN", {
+    allowLocalhostHttp,
+  });
+
+  const targetLoopback = isLoopbackHostname(target.hostname);
+  const approvedLoopback = isLoopbackHostname(approved.hostname);
+  if (targetLoopback !== approvedLoopback) {
+    throw operatorError(
+      "V4_RUNTIME_E2E_TARGET_ORIGIN_MISMATCH",
+      "Runtime E2E target and approved origin classes differ"
+    );
+  }
+  if (!targetLoopback) {
+    validateRemoteWorkerHost(target, worker);
+    validateRemoteWorkerHost(approved, worker);
+  }
+  if (target.origin !== approved.origin) {
+    throw operatorError(
+      "V4_RUNTIME_E2E_TARGET_ORIGIN_MISMATCH",
+      "V4_E2E_BASE_URL must exactly match the independently approved E2E_EXPECTED_ORIGIN"
+    );
+  }
+  return target.origin;
 }
 
 export function createRuntimeE2EAuthority({
   baseUrl,
+  expectedOrigin,
   expectedWorker,
   expectedFirebaseProjectId,
   expectedNeonBranchId,
@@ -162,10 +192,13 @@ export function createRuntimeE2EAuthority({
   }
   const targetOrigin = normalizeRuntimeE2EBaseUrl(baseUrl, {
     expectedWorker: worker,
+    expectedOrigin,
     allowLocalhostHttp,
   });
   return Object.freeze({
+    [RUNTIME_E2E_AUTHORITY_BRAND]: true,
     targetOrigin,
+    approvedOrigin: targetOrigin,
     worker,
     firebaseProjectId,
     neonBranchId,
@@ -176,14 +209,19 @@ export function createRuntimeE2EAuthority({
 }
 
 function normalizeAuthority(authority) {
-  if (!authority || typeof authority !== "object") {
+  if (
+    !authority ||
+    typeof authority !== "object" ||
+    authority[RUNTIME_E2E_AUTHORITY_BRAND] !== true
+  ) {
     throw operatorError(
       "V4_RUNTIME_E2E_AUTHORITY_INVALID",
-      "preflight-approved Runtime E2E authority is required"
+      "internally validated Runtime E2E authority is required"
     );
   }
   return createRuntimeE2EAuthority({
     baseUrl: authority.targetOrigin,
+    expectedOrigin: authority.approvedOrigin,
     expectedWorker: authority.worker,
     expectedFirebaseProjectId: authority.firebaseProjectId,
     expectedNeonBranchId: authority.neonBranchId,
@@ -206,6 +244,7 @@ async function parseJsonResponse(response, label) {
 
 export async function verifyRuntimeE2EHealth({
   baseUrl,
+  expectedOrigin,
   expectedWorker,
   expectedFirebaseProjectId,
   expectedNeonBranchId,
@@ -216,6 +255,7 @@ export async function verifyRuntimeE2EHealth({
 }) {
   const authority = createRuntimeE2EAuthority({
     baseUrl,
+    expectedOrigin,
     expectedWorker,
     expectedFirebaseProjectId,
     expectedNeonBranchId,
@@ -501,6 +541,7 @@ function validateCredentialPayload(creds) {
 
 export async function runRuntimeE2ECleanupWorkflow({
   baseUrl,
+  expectedOrigin,
   expectedWorker,
   expectedFirebaseProjectId,
   expectedNeonBranchId,
@@ -539,6 +580,7 @@ export async function runRuntimeE2ECleanupWorkflow({
 
   const authority = createRuntimeE2EAuthority({
     baseUrl,
+    expectedOrigin,
     expectedWorker,
     expectedFirebaseProjectId,
     expectedNeonBranchId,
@@ -575,6 +617,7 @@ export async function runRuntimeE2ECleanupWorkflow({
 
   await verifyHealthImpl({
     baseUrl: authority.targetOrigin,
+    expectedOrigin: authority.approvedOrigin,
     expectedWorker: authority.worker,
     expectedFirebaseProjectId: authority.firebaseProjectId,
     expectedNeonBranchId: authority.neonBranchId,

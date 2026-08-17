@@ -11,6 +11,7 @@ import {
   validateCleanupTombstone,
   verifyRuntimeE2EHealth,
 } from "../scripts/lib/v4-runtime-e2e-operator.mjs";
+import { cleanupTombstonePath, runCleanupCli } from "../scripts/cleanup-v4-runtime-e2e.mjs";
 
 function jsonResponse(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
@@ -28,6 +29,7 @@ const DATABASE_HOST = "ep-red-paper-azsjzfte.c-3.ap-southeast-1.aws.neon.tech";
 function authority(overrides = {}) {
   return createRuntimeE2EAuthority({
     baseUrl: BASE_URL,
+    expectedOrigin: BASE_URL,
     expectedWorker: WORKER,
     expectedFirebaseProjectId: FIREBASE_PROJECT,
     expectedNeonBranchId: NEON_BRANCH,
@@ -48,6 +50,21 @@ function healthBody() {
   };
 }
 
+function wrapperEnv() {
+  return {
+    E2E_EXPECTED_ORIGIN: BASE_URL,
+    E2E_EXPECTED_WORKER: WORKER,
+    E2E_FIREBASE_PROJECT_ID: FIREBASE_PROJECT,
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID: FIREBASE_PROJECT,
+    FIREBASE_PROJECT_ID: FIREBASE_PROJECT,
+    E2E_NEON_PROJECT_ID: "autumn-cherry-54971674",
+    E2E_NEON_BRANCH_ID: NEON_BRANCH,
+    DATABASE_URL: `postgres://tester@${DATABASE_HOST}/lovetree`,
+    APP_ENV: "e2e",
+    API_MUTATIONS_ENABLED: "true",
+  };
+}
+
 function workflowDefaults(overrides = {}) {
   const events = overrides.events ?? [];
   const creds = {
@@ -62,6 +79,7 @@ function workflowDefaults(overrides = {}) {
   };
   return {
     baseUrl: BASE_URL,
+    expectedOrigin: BASE_URL,
     expectedWorker: WORKER,
     expectedFirebaseProjectId: FIREBASE_PROJECT,
     expectedNeonBranchId: NEON_BRANCH,
@@ -109,13 +127,17 @@ function workflowDefaults(overrides = {}) {
 
 test("approved Runtime E2E worker origin is exact and remote HTTPS only", () => {
   assert.equal(
-    normalizeRuntimeE2EBaseUrl(`${BASE_URL}/`, { expectedWorker: WORKER }),
+    normalizeRuntimeE2EBaseUrl(`${BASE_URL}/`, {
+      expectedWorker: WORKER,
+      expectedOrigin: BASE_URL,
+    }),
     BASE_URL
   );
   assert.throws(
     () =>
       normalizeRuntimeE2EBaseUrl("http://remote.example.test", {
         expectedWorker: WORKER,
+        expectedOrigin: BASE_URL,
       }),
     (error) => error?.code === "V4_RUNTIME_E2E_REMOTE_HTTPS_REQUIRED"
   );
@@ -123,6 +145,7 @@ test("approved Runtime E2E worker origin is exact and remote HTTPS only", () => 
     () =>
       normalizeRuntimeE2EBaseUrl("https://unrelated.example.test", {
         expectedWorker: WORKER,
+        expectedOrigin: BASE_URL,
       }),
     (error) => error?.code === "V4_RUNTIME_E2E_TARGET_ORIGIN_MISMATCH"
   );
@@ -133,7 +156,7 @@ test("protected Production Worker hosts fail closed", () => {
     () =>
       normalizeRuntimeE2EBaseUrl(
         "https://lovetree-limone.lovetree-test.workers.dev",
-        { expectedWorker: WORKER }
+        { expectedWorker: WORKER, expectedOrigin: BASE_URL }
       ),
     (error) => error?.code === "V4_RUNTIME_E2E_PROTECTED_WORKER_HOST_BLOCKED"
   );
@@ -141,12 +164,17 @@ test("protected Production Worker hosts fail closed", () => {
 
 test("localhost HTTP exception is explicit, loopback-only, and test-bounded", () => {
   assert.throws(
-    () => normalizeRuntimeE2EBaseUrl("http://127.0.0.1:3000", { expectedWorker: WORKER }),
+    () =>
+      normalizeRuntimeE2EBaseUrl("http://127.0.0.1:3000", {
+        expectedWorker: WORKER,
+        expectedOrigin: "http://127.0.0.1:3000",
+      }),
     (error) => error?.code === "V4_RUNTIME_E2E_LOCALHOST_NOT_ALLOWED"
   );
   assert.equal(
     normalizeRuntimeE2EBaseUrl("http://127.0.0.1:3000", {
       expectedWorker: WORKER,
+      expectedOrigin: "http://127.0.0.1:3000",
       allowLocalhostHttp: true,
     }),
     "http://127.0.0.1:3000"
@@ -154,6 +182,7 @@ test("localhost HTTP exception is explicit, loopback-only, and test-bounded", ()
   assert.equal(
     normalizeRuntimeE2EBaseUrl("http://localhost:8787", {
       expectedWorker: WORKER,
+      expectedOrigin: "http://localhost:8787",
       allowLocalhostHttp: true,
     }),
     "http://localhost:8787"
@@ -161,6 +190,7 @@ test("localhost HTTP exception is explicit, loopback-only, and test-bounded", ()
   assert.equal(
     normalizeRuntimeE2EBaseUrl("http://[::1]:8787", {
       expectedWorker: WORKER,
+      expectedOrigin: "http://[::1]:8787",
       allowLocalhostHttp: true,
     }),
     "http://[::1]:8787"
@@ -169,6 +199,7 @@ test("localhost HTTP exception is explicit, loopback-only, and test-bounded", ()
     () =>
       normalizeRuntimeE2EBaseUrl("http://192.0.2.10:8787", {
         expectedWorker: WORKER,
+        expectedOrigin: "http://192.0.2.10:8787",
         allowLocalhostHttp: true,
       }),
     (error) => error?.code === "V4_RUNTIME_E2E_REMOTE_HTTPS_REQUIRED"
@@ -182,6 +213,32 @@ test("spoofed health on wrong origin receives zero requests and zero Authorizati
     () =>
       verifyRuntimeE2EHealth({
         baseUrl: "https://attacker.example.test",
+        expectedOrigin: BASE_URL,
+        expectedWorker: WORKER,
+        expectedFirebaseProjectId: FIREBASE_PROJECT,
+        expectedNeonBranchId: NEON_BRANCH,
+        expectedDatabaseHost: DATABASE_HOST,
+        fetchImpl: async (_url, options) => {
+          requestCount += 1;
+          if (options?.headers?.Authorization) authorizationCount += 1;
+          return jsonResponse(healthBody());
+        },
+      }),
+    (error) => error?.code === "V4_RUNTIME_E2E_TARGET_ORIGIN_MISMATCH"
+  );
+  assert.equal(requestCount, 0);
+  assert.equal(authorizationCount, 0);
+});
+
+test("same Worker name on a different workers.dev account is rejected before Authorization", async () => {
+  let requestCount = 0;
+  let authorizationCount = 0;
+  const wrongAccountOrigin = `https://${WORKER}.attacker-account.workers.dev`;
+  await assert.rejects(
+    () =>
+      verifyRuntimeE2EHealth({
+        baseUrl: wrongAccountOrigin,
+        expectedOrigin: BASE_URL,
         expectedWorker: WORKER,
         expectedFirebaseProjectId: FIREBASE_PROJECT,
         expectedNeonBranchId: NEON_BRANCH,
@@ -201,6 +258,7 @@ test("spoofed health on wrong origin receives zero requests and zero Authorizati
 test("post-deploy Runtime E2E health uses preflight origin authority and truthful health fields", async () => {
   const result = await verifyRuntimeE2EHealth({
     baseUrl: BASE_URL,
+    expectedOrigin: BASE_URL,
     expectedWorker: WORKER,
     expectedFirebaseProjectId: FIREBASE_PROJECT,
     expectedNeonBranchId: NEON_BRANCH,
@@ -257,6 +315,7 @@ test("post-deploy Runtime E2E health fails closed on any truthful identity misma
       () =>
         verifyRuntimeE2EHealth({
           baseUrl: BASE_URL,
+          expectedOrigin: BASE_URL,
           expectedWorker: WORKER,
           expectedFirebaseProjectId: FIREBASE_PROJECT,
           expectedNeonBranchId: NEON_BRANCH,
@@ -301,7 +360,10 @@ test("exact Runtime E2E cleanup deletes Memory then Tree and verifies both IDs g
       ["GET", `${BASE_URL}/api/trees/tree-exact-id`],
     ]
   );
-  assert.equal(requests.every((entry) => entry.authorization === "Bearer fixture-id-token"), true);
+  assert.equal(
+    requests.every((entry) => entry.authorization === "Bearer fixture-id-token"),
+    true
+  );
   assert.equal(requests.every((entry) => entry.redirect === "error"), true);
   assert.equal(result.verifiedGone, true);
 });
@@ -454,7 +516,14 @@ test("tombstone carries zero secret fields or values", () => {
     verifiedAt: "2026-08-17T09:45:00.000Z",
   });
   const serialized = JSON.stringify(state);
-  for (const forbidden of ["password", "idToken", "refreshToken", "apiKey", "oauth", "secret"]) {
+  for (const forbidden of [
+    "password",
+    "idToken",
+    "refreshToken",
+    "apiKey",
+    "oauth",
+    "secret",
+  ]) {
     assert.equal(serialized.toLowerCase().includes(forbidden.toLowerCase()), false);
   }
   assert.equal(
@@ -545,4 +614,170 @@ test("verified tombstone with wrong exact IDs fails closed", async () => {
     (error) => error?.code === "V4_RUNTIME_E2E_TOMBSTONE_MISMATCH"
   );
   assert.equal(retired, false);
+});
+
+test("cleanup CLI persists verified tombstone before credential unlink and resumes without re-auth", async () => {
+  const credsPath = "/tmp/runtime-e2e-creds.json";
+  const statePath = cleanupTombstonePath(credsPath);
+  const credentials = {
+    apiKey: "fixture-api-key-secret",
+    users: [
+      {
+        email: "runtime-e2e@example.test",
+        password: "fixture-password-secret",
+        uid: "fixture-uid",
+      },
+    ],
+  };
+  let durableState = null;
+  let credentialExists = true;
+  let credentialRetireAttempts = 0;
+  let signInCalls = 0;
+  let accountCleanupCalls = 0;
+  let healthCalls = 0;
+  let resourceCleanupCalls = 0;
+
+  const readFileImpl = async (path) => {
+    if (path === statePath) {
+      if (durableState === null) {
+        throw Object.assign(new Error("missing"), { code: "ENOENT" });
+      }
+      return JSON.stringify(durableState);
+    }
+    if (path === credsPath && credentialExists) return JSON.stringify(credentials);
+    throw Object.assign(new Error("missing"), { code: "ENOENT" });
+  };
+  const writeFileImpl = async (path, source, options) => {
+    assert.equal(path, statePath);
+    assert.equal(options.mode, 0o600);
+    durableState = JSON.parse(source);
+  };
+  const rmImpl = async (path) => {
+    if (path === credsPath) {
+      credentialRetireAttempts += 1;
+      if (credentialRetireAttempts === 1) {
+        throw new Error("simulated credential unlink failure");
+      }
+      credentialExists = false;
+      return;
+    }
+    if (path === statePath) {
+      durableState = null;
+    }
+  };
+  const common = {
+    argv: [
+      "--base-url",
+      BASE_URL,
+      "--creds",
+      credsPath,
+      "--tree-id",
+      "tree-exact-id",
+      "--memory-id",
+      "memory-exact-id",
+    ],
+    env: wrapperEnv(),
+    readFileImpl,
+    writeFileImpl,
+    rmImpl,
+    signInImpl: async () => {
+      signInCalls += 1;
+      return { idToken: "fixture-id-token-secret", localId: "fixture-uid" };
+    },
+    disposableCleanupImpl: async ({ credsFile }) => {
+      accountCleanupCalls += 1;
+      assert.equal(credsFile, null);
+      return { ok: true, allDeleted: true, results: [{ deleted: true }] };
+    },
+    verifyHealthImpl: async () => {
+      healthCalls += 1;
+      return { ok: true };
+    },
+    cleanupResourcesImpl: async ({ memoryId, treeId }) => {
+      resourceCleanupCalls += 1;
+      return { memoryId, treeId, verifiedGone: true };
+    },
+    now: () => "2026-08-17T10:00:00.000Z",
+    log: () => {},
+  };
+
+  await assert.rejects(() => runCleanupCli(common), /unlink failure/);
+  assert.equal(durableState?.phase, "ACCOUNT_DELETED_VERIFIED");
+  assert.equal(durableState?.accountDeletionVerified, true);
+  assert.equal(assertCleanupTombstoneSecretFree(durableState), true);
+  assert.equal(signInCalls, 1);
+  assert.equal(accountCleanupCalls, 1);
+  assert.equal(healthCalls, 1);
+  assert.equal(resourceCleanupCalls, 1);
+
+  await runCleanupCli({
+    ...common,
+    signInImpl: async () => {
+      throw new Error("retry must not sign in");
+    },
+    disposableCleanupImpl: async () => {
+      throw new Error("retry must not delete account again");
+    },
+    verifyHealthImpl: async () => {
+      throw new Error("retry must not network-verify health");
+    },
+    cleanupResourcesImpl: async () => {
+      throw new Error("retry must not touch resources");
+    },
+  });
+
+  assert.equal(credentialExists, false);
+  assert.equal(durableState, null);
+  assert.equal(credentialRetireAttempts, 2);
+  assert.equal(signInCalls, 1);
+  assert.equal(accountCleanupCalls, 1);
+  assert.equal(healthCalls, 1);
+  assert.equal(resourceCleanupCalls, 1);
+});
+
+test("cleanup CLI malformed tombstone fails closed before credentials or auth", async () => {
+  const credsPath = "/tmp/runtime-e2e-malformed-creds.json";
+  const statePath = cleanupTombstonePath(credsPath);
+  let credentialsRead = 0;
+  let signInCalls = 0;
+  await assert.rejects(
+    () =>
+      runCleanupCli({
+        argv: [
+          "--base-url",
+          BASE_URL,
+          "--creds",
+          credsPath,
+          "--tree-id",
+          "tree-exact-id",
+          "--memory-id",
+          "memory-exact-id",
+        ],
+        env: wrapperEnv(),
+        readFileImpl: async (path) => {
+          if (path === statePath) return "{malformed-json";
+          credentialsRead += 1;
+          return "{}";
+        },
+        signInImpl: async () => {
+          signInCalls += 1;
+          throw new Error("must not sign in");
+        },
+        disposableCleanupImpl: async () => {
+          throw new Error("must not delete account");
+        },
+        writeFileImpl: async () => {},
+        rmImpl: async () => {},
+        verifyHealthImpl: async () => {
+          throw new Error("must not health-check after malformed tombstone");
+        },
+        cleanupResourcesImpl: async () => {
+          throw new Error("must not cleanup resources");
+        },
+        log: () => {},
+      }),
+    (error) => error?.code === "V4_RUNTIME_E2E_TOMBSTONE_INVALID"
+  );
+  assert.equal(credentialsRead, 0);
+  assert.equal(signInCalls, 0);
 });

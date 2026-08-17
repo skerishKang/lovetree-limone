@@ -7,6 +7,7 @@ try {
   const identity = preflightFromEnv(process.env);
   const result = await verifyRuntimeE2EHealth({
     baseUrl: process.env.V4_E2E_BASE_URL,
+    expectedOrigin: process.env.E2E_EXPECTED_ORIGIN,
     expectedWorker: identity.worker,
     expectedFirebaseProjectId: identity.firebaseProjectId,
     expectedNeonBranchId: identity.neonBranchId,
