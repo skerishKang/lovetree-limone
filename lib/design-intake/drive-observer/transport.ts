@@ -17,6 +17,14 @@
  * job). Long-lived key material (service-account JSON, OAuth refresh tokens)
  * is detected and REFUSED — see `redact.assertNoLongLivedCredentialEnv`.
  *
+ * Credential target boundary:
+ * - the bearer token may only be sent to the code-owned Google Drive API
+ *   endpoint at https://www.googleapis.com/drive/v3;
+ * - callers may inject the fetch implementation for tests, but cannot override
+ *   the credential-bearing request origin;
+ * - credential-bearing requests use redirect: "error" so an unexpected
+ *   redirect cannot silently move the Authorization header across origins.
+ *
  * Every error message is secret-redacted before it is thrown; the exact
  * bearer token is registered for exact-match redaction as soon as it is held.
  */
@@ -164,10 +172,8 @@ export function createEnvAccessTokenProvider(env: Record<string, string | undefi
 
 export interface HttpDriveTransportOptions {
   tokenProvider: DriveAccessTokenProvider;
-  /** Injectable for tests; defaults to global fetch. */
+  /** Injectable network implementation for tests; defaults to global fetch. */
   fetch?: typeof globalThis.fetch;
-  /** API base, overridable for a future trusted proxy. */
-  baseUrl?: string;
   /** Per-request timeout in milliseconds (default 30000). */
   timeoutMs?: number;
   /** Hard page limit per listing (default 50). */
@@ -184,7 +190,8 @@ interface MinimalFetchResponse {
   body: unknown;
 }
 
-const DEFAULT_BASE_URL = "https://www.googleapis.com/drive/v3";
+const TRUSTED_DRIVE_ORIGIN = "https://www.googleapis.com";
+const DRIVE_API_BASE_URL = `${TRUSTED_DRIVE_ORIGIN}/drive/v3`;
 const LIST_FIELDS = "nextPageToken,files(id,name,mimeType,size,modifiedTime,md5Checksum,trashed)";
 
 function transportErrorForStatus(status: number, url: string): DriveTransportError {
@@ -242,13 +249,21 @@ async function* streamBody(body: unknown): AsyncIterable<Uint8Array> {
 
 export function createHttpDriveTransport(options: HttpDriveTransportOptions): DriveTransport {
   const doFetch = options.fetch ?? globalThis.fetch;
-  const baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
   const timeoutMs = options.timeoutMs ?? 30_000;
   const maxPages = options.maxPages ?? 50;
   const pageSize = options.pageSize ?? 100;
 
   async function driveGet(path: string, stage: "LIST" | "HASH"): Promise<MinimalFetchResponse> {
-    const url = `${baseUrl}${path}`;
+    const url = `${DRIVE_API_BASE_URL}${path}`;
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== "https:" || parsedUrl.origin !== TRUSTED_DRIVE_ORIGIN) {
+      throw new DriveTransportError(
+        "API_ERROR",
+        "refusing credential-bearing Drive request outside the trusted Google API origin",
+        stage,
+      );
+    }
+
     let token: string;
     try {
       token = await options.tokenProvider.getAccessToken();
@@ -268,6 +283,7 @@ export function createHttpDriveTransport(options: HttpDriveTransportOptions): Dr
       response = await doFetch(url, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
+        redirect: "error",
         signal: controller.signal,
       });
     } catch (error) {
