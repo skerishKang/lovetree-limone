@@ -263,7 +263,10 @@ test("WIF subject contract admits only the exact repository/default-branch/workf
 test("required-check names are exact stable job identities, never workflow/conditional child aliases", () => {
   const aTrack = parseJobBlocks(read(".github/workflows/a-track-p0-validation.yml"));
   assert.ok(aTrack.validate, "A-track must keep the exact `validate` job id");
-  assert.doesNotMatch(aTrack.validate, /^\s*name:/m, "validate check identity must remain the stable job id `validate`");
+  const validateJobLevelName = aTrack.validate
+    .split(/\r?\n/)
+    .find((line) => /^ {4}name:\s*/.test(line));
+  assert.equal(validateJobLevelName, undefined, "validate check identity must remain the stable job id `validate`");
 
   const fidelity = parseJobBlocks(read(".github/workflows/design-fidelity-validation.yml"));
   assert.match(fidelity.result ?? "", /^\s*name:\s*Design Fidelity Validation\s*$/m);
