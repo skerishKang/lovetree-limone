@@ -42,13 +42,15 @@ test("Track66 V1.2 page component exists and exports default component", () => {
   assert.match(content, /MAIN.*BRANCH|YOUR FIRST TREE/i);
 });
 
-test("Track66 page.tsx conditionally renders V1.2 or V1 based on localStorage state", () => {
+test("Track66 page.tsx makes V1.2 default and isolates V1 as explicit legacy demo", () => {
   const content = fs.readFileSync(path.join(ROOT, "app/v4/journey/page.tsx"), "utf8");
   assert.match(content, /V4FirstJourneyV12/);
   assert.match(content, /V4FirstJourney/);
-  assert.match(content, /isV12/);
-  assert.match(content, /STORAGE_KEY/);
-  assert.doesNotMatch(content, /useEffect/);
+  assert.match(content, /JourneyMode/);
+  assert.match(content, /"legacy-demo"/);
+  assert.match(content, /params\.get\("legacy"\) === "1"/);
+  assert.match(content, /return <V4FirstJourneyV12 storageKey=\{STORAGE_KEY\} \/>/);
+  assert.doesNotMatch(content, /v12Mode|params\.get\("v12"\)|\?v12=1/);
 });
 
 test("V1.2 presentation avoids forbidden scope", () => {
@@ -59,7 +61,7 @@ test("V1.2 presentation avoids forbidden scope", () => {
   assert.doesNotMatch(component, /Firebase|Neon|Worker|Production/);
 });
 
-test("Existing V1 regression files are unmodified", () => {
+test("Existing V1 regression files remain available for explicit legacy-demo coverage", () => {
   const v1Component = fs.readFileSync(path.join(ROOT, "app/components/v4/V4FirstJourney.tsx"), "utf8");
   assert.match(v1Component, /export default function V4FirstJourney/);
 
