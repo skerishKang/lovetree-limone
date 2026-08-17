@@ -11,8 +11,10 @@
 #      credential contract is absent.
 #
 # 2. `live-observation` (TRUSTED HOLD, manual dispatch only):
-#    - can only be dispatched on the default branch, so it never checks out
-#      or executes PR-controlled code;
+#    - can only run when the dispatch ref name exactly equals the repository
+#      default branch, and checkout is explicitly pinned to that default branch;
+#    - never trusts a workflow input, PR head, pull ref or tag as executable
+#      live-observation code;
 #    - intentionally FAILS (LIVE_WIF_CONFIGURATION_HOLD) until the Web CTO
 #      provisions the Google Workload Identity Federation binding described
 #      in docs/design-intake/drive-observer-wif-trust-topology.md;
@@ -72,7 +74,10 @@ jobs:
         run: node --import tsx --test tests/design-intake-source-freshness.test.mjs
 
       - name: Observer acceptance matrix + security contracts
-        run: node --import tsx --test tests/design-intake-drive-observer.test.mjs
+        run: >-
+          node --import tsx --test
+          tests/design-intake-drive-observer.test.mjs
+          tests/design-intake-drive-observer-security-closure.test.mjs
 
       - name: "FAIL-CLOSED proof: live mode without credentials must refuse (exit 3)"
         shell: bash
@@ -97,7 +102,7 @@ jobs:
 
   live-observation:
     name: Live observation (trusted hold — default-branch code only)
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live' && github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -110,8 +115,10 @@ jobs:
       #   - a dedicated read-only identity with Drive read-only scope.
       # See docs/design-intake/drive-observer-wif-trust-topology.md.
     steps:
-      - name: Checkout default-branch code ONLY (dispatch never carries PR code)
+      - name: Checkout trusted default-branch code ONLY
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
