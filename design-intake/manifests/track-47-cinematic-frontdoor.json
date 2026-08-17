@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-47-cinematic-frontdoor",
+  "sourceTrackId": "Track47",
+  "title": "Cinematic Front Door V4.2.5 · Pinned Navigation Menu Fix",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "LoveTree front door — cinematic first impression / product framing (5-ACT scroll film) plus stable top-level choices (Moments / Connections / My Tree pinned menus), leading into the canonical first-moment entry. Working classification: ENTRY_MATERIAL + NAVIGATION_COMPOSITION_EVIDENCE.",
+  "summary": "Source Track 47 (LoveTree Cinematic Front Door) V4.2.5 PINNED NAV MENU FIX, intake Issue #234. The two observed V4.2.5 HTML objects are byte-identical (40,890 B, SHA256 676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596) and are ONE revision. V4.2.5 delta is narrowly the pinned top navigation (trigger buttons pin .is-open popovers; close on option select / outside pointer / Escape; 14px pointer bridge + 4px gap; first-option keyboard focus; aria-haspopup/aria-expanded; no :focus-within auto-open) — cinematic video / 5-ACT / copy / scroll / CTA / route map unchanged from V4.2.4. SOURCE TRACK 47 is NOT repository Design Lineage 47: no lineage number is reserved. Canonical /v4 replacement is NOT authorized; isolated Design Lab candidate only.",
+  "provenance": {
+    "sourceLabel": "47_시즌수채화블_통합개발/12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보 / Issue #234",
+    "driveFolderId": "1cQLZEA2auL2qaab9rP-0TjhcrFXC1m5m",
+    "sourceFiles": [
+      "현재후보.html",
+      "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+      "01_OWNER_SELECTED_ROUTE_MAP.json",
+      "02_ROUTE_SOURCE_AUDIT.md",
+      "03_PINNED_MENU_INTERACTION_QA.md",
+      "검증결과.json",
+      "V4.2.4→V4.2.5_변경설명.md",
+      "assets/poster-act01.jpg",
+      "assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V4.2.5",
+    "authorityObservedAt": "2026-08-16T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "현재후보.html",
+      "driveId": "1aONTs8UGsz0Kzs3rpwhAhEPFyu1vo1Z7",
+      "bytes": 40890,
+      "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+      "driveId": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+      "bytes": 40890,
+      "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+      "role": "executable-variant-byte-identical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "poster-act01.jpg",
+      "driveId": "1jQ6A4RX933xPik9HKZmoyU55d969Xwg0",
+      "bytes": 187679,
+      "sha256": "1056d9b89d49818dc43593c35b33648423d10aa340d3a69412bb88b71dcd8fdd",
+      "role": "poster-asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4",
+      "driveId": "1dRmVkiHrV-dGJ4XNA4mp9ftKP5ozqRGT",
+      "bytes": 28650099,
+      "sha256": "28951ccb76923e0dfbbb60e7757ab2f6fa379e405731a386fa03b05a32a227ce",
+      "role": "cinematic-video-asset",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": ["cinematic-scene-transition"],
+  "runtimePrimitives": ["P3", "P7", "P9"],
+  "trulyNewPrimitive": "PinnedNavMenu (one canonical open-menu authority; trigger click pins popover, closes only on item selection / outside pointer / Escape; focus restore without re-open)",
+  "sourceDefects": [
+    "route targets are Drive-local sibling HTML paths resolvable only under file:// — not product route authority",
+    "no 320×720 gate in the source QA",
+    "modal focus is not trapped in the source demo composer"
+  ],
+  "nativeRemediations": [
+    "route normalization: every source route classified STABLE_REPO_TARGET / DESIGN_LAB_TARGET / HOLD_UNRESOLVED against the repository; HOLD targets render disabled with truthful review-pending presentation and never fabricate hrefs",
+    "320×720 QA",
+    "poster-exact fallback proven; video fidelity stays HOLD (exact video not transported — 28,650,099 B exceeds the Cloudflare Workers 25 MiB static-asset limit and repository binary precedent) and is never substituted"
+  ],
+  "sourceOnlyValues": [
+    "sessionStorage handoff (lovetree.frontdoor.handoff) is source-local file:// navigation glue, not canonical entry authority",
+    "demo composer inputs (URL/emotion/한 줄) are demo-only values with no persistence — never product truth",
+    "route-notice toast copy asserting Google Drive local HTML execution is source-context truth, not repo truth"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Issue #234 — ENTRY_MATERIAL + NAVIGATION_COMPOSITION_EVIDENCE intake; isolated Design Lab source runner + native candidate only; canonical /v4 adoption explicitly NOT authorized in this intake; adoption review recorded in TRACK47_V425_ADOPTION_REPORT.md"
+  },
+  "visualMechanicOverlap": ["fixed full-screen cinematic stage", "scroll-scrubbed film timeline", "pinned dropdown navigation"],
+  "productJobDistinctness": "cinematic front door for first impression + product framing leading to the canonical first-moment entry — not another gallery/viewer lineage",
+  "derivedDisplay": [],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Cinematic Front Door V4.2.5 Pinned Nav"
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  }
+}
