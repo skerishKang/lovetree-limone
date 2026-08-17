@@ -26,6 +26,7 @@ import {
   selectScene,
   setMotionPolicy,
   stepContinuousPhase,
+  wheelConsumes,
   type ContinuousPhaseConfig,
   type ContinuousPhaseState,
   type ResolvedContinuousPhaseConfig,
@@ -142,6 +143,12 @@ export function ContinuousExhibitionRailExperience() {
 
   const stageRef = useRef<HTMLDivElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  // Mirror of the latest rail state so the wheel listener (attached once) can
+  // decide wheel ownership synchronously without a stale closure.
+  const railRef = useRef<ContinuousPhaseState>(rail);
+  useEffect(() => {
+    railRef.current = rail;
+  }, [rail]);
   const triggerRef = useRef<HTMLElement | null>(null);
   const suppressClickRef = useRef(false);
   const overlayRef = useRef<Track62Overlay>("none");
@@ -199,14 +206,24 @@ export function ContinuousExhibitionRailExperience() {
   }, []);
 
   // ---- wheel: fractional target accumulation on the same phase ----
+  // Wheel OWNERSHIP is conditional: the rail only preventDefaults (and feeds
+  // the wheel into the phase) when it can actually consume the delta. At a
+  // min/max boundary an OUTWARD wheel cannot be consumed, so the event is
+  // handed off to the outer page (no scroll trap). Overlay/modal state keeps
+  // its existing authority (the handler returns early, no trap, no input).
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
     const handleWheel = (event: WheelEvent) => {
       if (overlayRef.current !== "none") return;
-      event.preventDefault();
       const factor = event.deltaMode === 1 ? 33 : 1;
       const delta = event.deltaY * factor;
+      if (!wheelConsumes(railRef.current, BASE_CONFIG, { delta })) {
+        // Outward boundary wheel: release to the page. No preventDefault →
+        // the real page scroll position is allowed to change.
+        return;
+      }
+      event.preventDefault();
       setRail((prev) =>
         applyWheel(prev, BASE_CONFIG, { delta, nowMs: performance.now() }),
       );
@@ -351,8 +368,14 @@ export function ContinuousExhibitionRailExperience() {
 
   const closeOverlay = useCallback(() => {
     const closing = overlayRef.current;
-    setOverlay("none");
     if (closing === "none") return;
+    // Sync the ref synchronously so the focus-restore rAF (scheduled below)
+    // observes the dialog as CLOSED and returns focus to the exact trigger
+    // rather than falling through to the fallback. React's passive effect
+    // that mirrors `overlay` into this ref runs later, so reading it inside
+    // the rAF would otherwise still report "open" and break exact restore.
+    overlayRef.current = "none";
+    setOverlay("none");
     requestAnimationFrame(() => {
       const restored = restoreDialogFocus({
         trigger: triggerRef.current,

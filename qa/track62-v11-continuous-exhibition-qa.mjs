@@ -10,6 +10,21 @@ import path from "node:path";
 // Emits qa-artifacts/track62-v11/ :
 //   desktop-1280x800.png, mobile-390x844.png, mobile-320x720.png,
 //   reduced-motion-1280x800.png, viewer-open-desktop.png, qa-results.json
+//
+// This harness covers the four QA/contract blockers from PR #246 / Issue #159:
+//   A OUTER PAGE SCROLL HANDOFF  — wheel ownership is conditional; an outward
+//      wheel at a rail boundary is handed to the real page (no scroll trap),
+//      proven by an ACTUAL document scroll-position change (not an event spy).
+//   B REAL TOUCH                — uses a genuine touch pointer path (CDP
+//      Input.dispatchTouchEvent) so the production handler receives
+//      pointerType === "touch", with drag threshold + release semantics.
+//   C EXACT FOCUS RESTORE       — the SAME trigger element opened the viewer is
+//      the element that holds focus after close (close-button AND Escape), not
+//      just any element (BODY/tagName) passing a loose check.
+//   D POINTERCANCEL CLEANUP-ONLY — a real drag followed by pointercancel
+//      commits no selection, opens no viewer and snaps to NO nearest scene.
+//
+// Assertion weakening / skip / xfail / retry-masking are forbidden.
 
 const BASE = process.env.TRACK62_QA_URL || "http://127.0.0.1:3000";
 const ROUTE = "/design-lab/capabilities/continuous-exhibition-rail";
@@ -129,11 +144,34 @@ async function main() {
     const afterDragRele = await waitForIdle(page);
     record("H drag release settles to a scene", afterDragRele, `phase ${await readPhase(page)}`);
 
-    // I-equivalent touch: covered in the 390 context below (hasTouch).
-
-    // J: pointercancel never selects/opens
+    // D: pointercancel CLEANUP-ONLY — real mouse drag into "dragging", then a
+    // real pointercancel. Must commit no selection, open no viewer, and snap
+    // to NO nearest scene (phase preserved where the drag was interrupted).
+    await page.locator("[data-stage]").hover();
+    const dbox = await page.locator("[data-stage]").boundingBox();
+    const dsx = dbox.x + dbox.width * 0.6;
+    const dsy = dbox.y + dbox.height * 0.5;
+    await page.mouse.move(dsx, dsy);
+    await page.mouse.down();
+    await page.mouse.move(dsx - 200, dsy, { steps: 10 });
+    await page.waitForTimeout(120);
+    const phaseMidCancel = await readPhase(page);
+    const sceneBeforeCancel = await readActiveScene(page);
     await page.evaluate(() => {
-      // expose a synthetic pointercancel path via the real stage element
+      const stage = document.querySelector("[data-stage]");
+      stage.dispatchEvent(new PointerEvent("pointercancel", { pointerId: 1, bubbles: true }));
+    });
+    await page.waitForTimeout(300);
+    const phaseAfterCancel = await readPhase(page);
+    const sceneAfterCancel = await readActiveScene(page);
+    const dialogAfterCancel = await page.locator("[role='dialog']").count();
+    record("D pointercancel: no viewer open", dialogAfterCancel === 0, `dialog ${dialogAfterCancel}`);
+    record("D pointercancel: no selection commit (scene unchanged)", sceneAfterCancel === sceneBeforeCancel, `scene ${sceneBeforeCancel} -> ${sceneAfterCancel}`);
+    record("D pointercancel: phase preserved (no nearest-scene snap)", Math.abs(phaseAfterCancel - phaseMidCancel) < 0.02, `${phaseMidCancel} -> ${phaseAfterCancel}`);
+    await page.mouse.up();
+
+    // J: pointercancel (synthetic) never opens the dialog
+    await page.evaluate(() => {
       const stage = document.querySelector("[data-stage]");
       const rect = stage.getBoundingClientRect();
       const down = new PointerEvent("pointerdown", { pointerId: 42, clientX: rect.left + rect.width * 0.6, clientY: rect.top + rect.height * 0.5, bubbles: true, pointerType: "touch" });
@@ -144,11 +182,11 @@ async function main() {
       stage.dispatchEvent(cancel);
     });
     await page.waitForTimeout(300);
-    const dialogAfterCancel = await page.locator("[role='dialog']").count();
-    record("J pointercancel never opens dialog", dialogAfterCancel === 0, `dialog ${dialogAfterCancel}`);
+    const dialogAfterCancel2 = await page.locator("[role='dialog']").count();
+    record("J pointercancel never opens dialog", dialogAfterCancel2 === 0, `dialog ${dialogAfterCancel2}`);
     await waitForIdle(page);
 
-    // K: lostpointercapture safe cleanup (drag then force lostcapture via mouseup outside never happens after capture; use direct dispatch)
+    // K: lostpointercapture safe cleanup (drag then force lostcapture)
     await page.evaluate(() => {
       const stage = document.querySelector("[data-stage]");
       const rect = stage.getBoundingClientRect();
@@ -166,15 +204,7 @@ async function main() {
     const phasePath = await readPhase(page);
     record("L node click travels via controller and lands", clicked && phasePath === 3 && phaseBeforeSelect !== null, `phase -> ${phasePath}`);
 
-    // M: phase preservation across panel open/close. Move the rail to a
-    // fractional phase, capture the exact phase while the viewer is open
-    // (the rAF transport is frozen while the overlay is open, so it reads
-    // exactly as preserved), then close and require no reset / no jump:
-    // the overlay open-close must not snap the phase to a different scene,
-    // reset it, or otherwise move it away. Forward continuation toward any
-    // pending wheel target after close is legitimate transport behavior and
-    // is bounded here; the NO-OP guarantee is proven exactly by the pure
-    // controller contract test (overlayOpened returns identical state).
+    // M: phase preservation across panel open/close
     await page.locator("[data-stage]").hover();
     await page.mouse.wheel(0, 320);
     await page.waitForTimeout(140);
@@ -183,7 +213,7 @@ async function main() {
     const frozenPhase = await readPhase(page);
     const isFractional = Math.abs(frozenPhase - Math.round(frozenPhase)) > 1e-3;
     record("M viewer opens on fractional phase", isFractional, `frozen phase ${frozenPhase}`);
-    await page.waitForTimeout(500); // would drift here if the overlay did not freeze the transport
+    await page.waitForTimeout(500);
     const stillFrozen = await readPhase(page);
     record(
       "M phase frozen while viewer open (no drift during overlay)",
@@ -209,7 +239,7 @@ async function main() {
     const journalEntry = await page.locator("[data-title]").getAttribute("data-title");
     record("N one Moment authority across surfaces", activeScene === 2 && activeTitle === 1 && journalEntry === "mom-03-cafe-talk", `scene ${activeScene}, title ${titleText?.trim()}`);
 
-    // O..T: dialog focus lifecycle
+    // O..S + EXACT focus restore (Blocker C)
     await openViewer(page, "viewer for focus lifecycle");
     const focusEntry = await page.evaluate(() => {
       const dialog = document.querySelector("[role='dialog']");
@@ -244,11 +274,27 @@ async function main() {
     await page.waitForTimeout(200);
     record("S Escape closes viewer", (await page.locator("[role='dialog']").count()) === 0, "dialog removed");
 
-    const restoredFocus = await page.evaluate(() => {
-      const el = document.activeElement;
-      return el ? el.getAttribute("data-open-viewer") ?? el.closest("[data-open-viewer]")?.getAttribute("data-open-viewer") ?? el.tagName : null;
-    });
-    record("T trigger focus restored", Boolean(restoredFocus), `restored ${restoredFocus}`);
+    // Blocker C — EXACT focus restore. Capture the exact trigger element, then
+    // require document.activeElement to BE that exact node after close, not
+    // merely "an element" (the old BODY/tagName check passed even when focus
+    // landed on BODY).
+    const triggerHandle = await page.locator("[data-open-viewer]").elementHandle();
+
+    await page.locator("[data-open-viewer]").click();
+    await page.locator("[role='dialog']").waitFor({ state: "visible", timeout: 5000 });
+    await page.locator("[data-close-viewer]").click();
+    await page.waitForTimeout(220);
+    const exactClose = await page.evaluate((el) => document.activeElement === el, triggerHandle);
+    const activeAfterClose = await page.evaluate(() => document.activeElement?.tagName);
+    record("C exact trigger restored after close-button", exactClose, `active ${activeAfterClose}`);
+
+    await page.locator("[data-open-viewer]").click();
+    await page.locator("[role='dialog']").waitFor({ state: "visible", timeout: 5000 });
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(220);
+    const exactEscape = await page.evaluate((el) => document.activeElement === el, triggerHandle);
+    const activeAfterEscape = await page.evaluate(() => document.activeElement?.tagName);
+    record("C exact trigger restored after Escape", exactEscape, `active ${activeAfterEscape}`);
 
     // Viewer tabs share the same selected Moment
     await openViewer(page, "viewer for tab projections");
@@ -269,7 +315,84 @@ async function main() {
     await ctx.close();
   }
 
-  /* ================= mobile 390x844 (touch) ================= */
+  /* ================= Blocker A — outer page scroll handoff ================= */
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const page = await ctx.newPage();
+    const { consoleErrors, pageErrors } = await attachPageErrorCapture(page);
+    await page.goto(`${BASE}${ROUTE}`, { waitUntil: "networkidle", timeout: 30000 });
+    await page.locator("[data-stage]").waitFor({ state: "visible", timeout: 10000 });
+    await waitForIdle(page);
+
+    // Make the outer page scrollable (test-only spacer) so a real scroll
+    // handoff is observable. This is appended by the harness, NOT product code.
+    await page.evaluate(() => {
+      const spacer = document.createElement("div");
+      spacer.id = "__qa_scroll_probe";
+      spacer.style.cssText = "height:1600px;width:1px;background:transparent;";
+      document.body.appendChild(spacer);
+      // Force INSTANT scrolling so scrollTo/scroll measurements are not raced
+      // by a smooth-scroll animation (which otherwise makes the handoff proof
+      // non-deterministic).
+      document.documentElement.style.scrollBehavior = "auto";
+    });
+
+    const settleScroll = async () => {
+      await page.waitForTimeout(80);
+      return page.evaluate(() => window.scrollY);
+    };
+
+    // Park the rail at the MIN boundary (scene 0).
+    await page.locator("[data-scene-node='0']").click();
+    await page.waitForTimeout(900);
+
+    // A small downward scroll that keeps the stage under the mouse.
+    const box0 = await page.locator("[data-stage]").boundingBox();
+    const topAt0 = box0.y;
+    const S = Math.max(40, Math.min(Math.floor(topAt0 * 0.5), 160));
+    await page.evaluate((s) => window.scrollTo(0, s), S);
+    await settleScroll();
+
+    // OUTWARD wheel (up) at the min boundary: rail cannot consume → HANDOFF.
+    let sb = await page.locator("[data-stage]").boundingBox();
+    await page.mouse.move(sb.x + sb.width / 2, sb.y + sb.height / 2);
+    const scrollBeforeUp = await settleScroll();
+    await page.mouse.wheel(0, -600);
+    await page.waitForTimeout(350);
+    const scrollAfterUp = await page.evaluate(() => window.scrollY);
+    record("A outer-page scroll handoff at MIN boundary (real scroll)", scrollAfterUp < scrollBeforeUp - 1, `scrollY ${scrollBeforeUp} -> ${scrollAfterUp}`);
+
+    // INWARD wheel (down) at the min boundary: rail OWNS it → no page scroll.
+    await page.evaluate((s) => window.scrollTo(0, s), S);
+    await settleScroll();
+    sb = await page.locator("[data-stage]").boundingBox();
+    await page.mouse.move(sb.x + sb.width / 2, sb.y + sb.height / 2);
+    const scrollBeforeIn = await settleScroll();
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(350);
+    const scrollAfterIn = await page.evaluate(() => window.scrollY);
+    record("A rail owns inward wheel (no page scroll trap)", Math.abs(scrollAfterIn - scrollBeforeIn) < 1, `scrollY ${scrollBeforeIn} -> ${scrollAfterIn}`);
+
+    // MAX boundary: park at last scene, OUTWARD (down) wheel → HANDOFF.
+    const sceneCount = await page.locator("[data-scene-node]").count();
+    await page.locator(`[data-scene-node='${sceneCount - 1}']`).click();
+    await page.waitForTimeout(900);
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await settleScroll();
+    let bm = await page.locator("[data-stage]").boundingBox();
+    await page.mouse.move(bm.x + bm.width / 2, bm.y + bm.height / 2);
+    const scrollBeforeDown = await settleScroll();
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(350);
+    const scrollAfterDown = await page.evaluate(() => window.scrollY);
+    record("A outer-page scroll handoff at MAX boundary (real scroll)", scrollAfterDown > scrollBeforeDown + 1, `scrollY ${scrollBeforeDown} -> ${scrollAfterDown}`);
+
+    record("A console errors = 0 (scroll handoff)", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
+    record("A page errors = 0 (scroll handoff)", pageErrors.length === 0, pageErrors.slice(0, 2).join(" | "));
+    await ctx.close();
+  }
+
+  /* ================= mobile 390x844 (REAL touch) ================= */
   {
     const ctx = await browser.newContext({
       viewport: { width: 390, height: 844 },
@@ -277,22 +400,51 @@ async function main() {
       isMobile: true,
     });
     const page = await ctx.newPage();
+    const client = await ctx.newCDPSession(page);
     const { consoleErrors, pageErrors } = await attachPageErrorCapture(page);
     await page.goto(`${BASE}${ROUTE}`, { waitUntil: "networkidle", timeout: 30000 });
     await page.locator("[data-stage]").waitFor({ state: "visible", timeout: 10000 });
     await waitForIdle(page);
 
-    // H/I: real touch drag (hasTouch context emits touch events from mouse ops)
+    // Capture the REAL pointerType the production handler receives.
+    await page.evaluate(() => {
+      window.__t62Touch = [];
+      const stage = document.querySelector("[data-stage]");
+      stage.addEventListener("pointerdown", (e) => window.__t62Touch.push(e.pointerType), false);
+    });
+
     const box = await page.locator("[data-stage]").boundingBox();
-    const from = { x: box.x + box.width * 0.72, y: box.y + box.height * 0.55 };
+    const from = { x: Math.round(box.x + box.width * 0.72), y: Math.round(box.y + box.height * 0.55) };
+
+    // REAL touch drag via CDP (synthesizes pointerType=touch PointerEvents).
     const phaseBeforeTouch = await readPhase(page);
-    await page.mouse.move(from.x, from.y);
-    await page.mouse.down();
-    await page.mouse.move(from.x - 150, from.y, { steps: 6 });
+    await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: from.x, y: from.y }] });
+    await client.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: from.x - 150, y: from.y }] });
     await page.waitForTimeout(140);
     const phaseTouch = await readPhase(page);
-    await page.mouse.up();
-    record("I touch-equivalent drag motion", Math.abs(phaseTouch - phaseBeforeTouch) > 0.03, `${phaseBeforeTouch} -> ${phaseTouch}`);
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    record("I real-touch drag moves fractional phase", Math.abs(phaseTouch - phaseBeforeTouch) > 0.03, `${phaseBeforeTouch} -> ${phaseTouch}`);
+
+    const touchTypes = await page.evaluate(() => window.__t62Touch);
+    record("I pointerType is touch (real touch path, not renamed mouse)", touchTypes.length > 0 && touchTypes.every((t) => t === "touch"), JSON.stringify(touchTypes));
+    await waitForIdle(page);
+
+    // Threshold: a real touch that stays below the drag threshold must NOT
+    // open the viewer or commit a scene (tap semantics only).
+    const box2 = await page.locator("[data-stage]").boundingBox();
+    const from2 = { x: Math.round(box2.x + box2.width * 0.5), y: Math.round(box2.y + box2.height * 0.5) };
+    await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: from2.x, y: from2.y }] });
+    await client.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: from2.x - 4, y: from2.y }] });
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await page.waitForTimeout(150);
+    record("I below-threshold touch does not open viewer", (await page.locator("[role='dialog']").count()) === 0, "tap, no open");
+
+    // Release semantics: a real touch DRAG release must NOT open the viewer.
+    await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: from.x, y: from.y }] });
+    await client.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: from.x - 160, y: from.y }] });
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await page.waitForTimeout(150);
+    record("I touch drag release does not open viewer (no accidental open)", (await page.locator("[role='dialog']").count()) === 0, "release semantics");
     await waitForIdle(page);
 
     // U: mobile readability — copy block must not be covered by sculpture
@@ -314,7 +466,7 @@ async function main() {
     const overflow390 = await horizontalOverflow(page);
     record("B2 390 overflow = 0", overflow390.doc <= 1 && overflow390.body <= 1, JSON.stringify(overflow390));
 
-    // W: no outer-page scroll trap — page should be scrollable past the stage
+    // W: no outer-page scroll trap — page scrollable past the stage
     const scrollable = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
     await page.evaluate(() => window.scrollTo({ top: 0 }));
     record("W no scroll trap at 390", scrollable > 0 || (await page.evaluate(() => window.scrollY)) === 0, `extra scroll ${scrollable}px`);

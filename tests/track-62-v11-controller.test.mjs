@@ -17,6 +17,7 @@ import {
   selectScene,
   setMotionPolicy,
   stepContinuousPhase,
+  wheelConsumes,
 } from "../lib/track-62-v11/controller.ts";
 
 /** Drive a state to its next stable point via explicit frames. */
@@ -125,7 +126,7 @@ for (const sceneCount of [3, 7, 11]) {
     assert.equal(released.settling, false);
   });
 
-  test(`controller(${sceneCount} scenes): pointercancel never selects, never commits, never opens`, () => {
+  test(`controller(${sceneCount} scenes): pointercancel is CLEANUP-ONLY — no selection, no commit, no nearest-scene snap`, () => {
     let state = createContinuousPhaseState(config);
     state = beginGesture(state, config, { pointerId: 3, startX: 400, nowMs: 4000 });
     state = moveGesture(state, config, { pointerId: 3, x: 220, nowMs: 4010 });
@@ -133,13 +134,36 @@ for (const sceneCount of [3, 7, 11]) {
     const { state: cancelled, outcome } = cancelGesture(state, { pointerId: 3, nowMs: 4020 });
     assert.equal(outcome, "cancelled");
     assert.equal(cancelled.velocity, 0);
+    assert.equal(cancelled.gesture, "none");
     assert.equal(cancelled.drag, null);
+    // The phase is frozen exactly where the drag was interrupted — never
+    // snapped to a nearest scene and never reset.
+    assert.equal(cancelled.mode, "idle", "cancel must freeze, never settle/snap");
+    assert.equal(cancelled.settling, false);
     assert.ok(
       Math.abs(cancelled.target - draggingPhase) <= 0.0001,
       "cancel must not jump the target away from the interrupted drag",
     );
     const settled = settle(cancelled, config, 4020, { maxFrames: 8000 });
-    assert.ok(Math.abs(settled.phase - nearestScene(draggingPhase, sceneCount)) < 0.51);
+    assert.ok(
+      Math.abs(settled.phase - draggingPhase) < 0.0001,
+      "cleanup-only cancel must preserve the interrupted phase (no snap)",
+    );
+    assert.equal(settled.mode, "idle");
+  });
+
+  test(`controller(${sceneCount} scenes): wheel ownership — consume inward, hand off outward at boundaries`, () => {
+    const atStart = createContinuousPhaseState(config); // target 0
+    assert.equal(wheelConsumes(atStart, config, { delta: 200 }), true, "forward wheel at start is consumed");
+    assert.equal(wheelConsumes(atStart, config, { delta: -200 }), false, "outward (up) wheel at start is handed to the page");
+
+    const atEnd = createContinuousPhaseState({ ...config, initialPhase: sceneCount - 1 });
+    assert.equal(wheelConsumes(atEnd, config, { delta: -200 }), true, "backward wheel at end is consumed");
+    assert.equal(wheelConsumes(atEnd, config, { delta: 200 }), false, "outward (down) wheel at end is handed to the page");
+
+    const mid = createContinuousPhaseState({ ...config, initialPhase: Math.floor(sceneCount / 2) });
+    assert.equal(wheelConsumes(mid, config, { delta: 50 }), true, "mid-rail wheel is consumed");
+    assert.equal(wheelConsumes(mid, config, { delta: -50 }), true, "mid-rail wheel is consumed (reverse)");
   });
 
   test(`controller(${sceneCount} scenes): direct selection travels through the SAME controller (travel, not teleport)`, () => {

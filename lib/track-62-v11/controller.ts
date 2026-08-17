@@ -442,8 +442,14 @@ export function endGesture(
 }
 
 /**
- * pointercancel / lostpointercapture: cleanup ONLY.
- * Never selects, never opens a viewer, never commits a phase target.
+ * pointercancel / lostpointercapture: CLEANUP ONLY.
+ *
+ * A cancelled gesture must never select, never open a viewer, never commit a
+ * new target, and never snap to the nearest scene. The controller releases the
+ * pointer and freezes the phase exactly where the drag was interrupted (mode
+ * "idle", no settle). The transport therefore stops dead — no implicit
+ * nearest-scene "settling" target is ever created by a cancel. This is the
+ * authoritative contract for Issue #159 / PR #246 Blocker D.
  */
 export function cancelGesture(
   state: ContinuousPhaseState,
@@ -454,16 +460,15 @@ export function cancelGesture(
   assertFinite(input.nowMs, "nowMs");
   requireGesture(state, input.pointerId);
 
-  const wasDragging = state.gesture === "dragging";
   return {
     state: {
       ...state,
-      target: wasDragging ? clampPhase(state.phase, { sceneCount: state.sceneCount }) : state.target,
+      target: state.phase,
       velocity: 0,
-      mode: wasDragging ? "settling" : state.mode,
+      mode: "idle",
       gesture: "none",
       drag: null,
-      settling: wasDragging,
+      settling: false,
       lastInputTime: input.nowMs,
     },
     outcome: "cancelled",
@@ -496,6 +501,35 @@ export function applyWheel(
     lastInputTime: input.nowMs,
     lastInputChannel: "wheel",
   };
+}
+
+/**
+ * Decide whether the rail OWNS a wheel delta (i.e. it would actually move the
+ * phase). Used to avoid trapping the outer page scroll at a rail boundary:
+ *
+ *   - at the MIN boundary an OUTWARD (up) wheel cannot be consumed → the page
+ *     must receive it (scroll handoff);
+ *   - at the MAX boundary an OUTWARD (down) wheel cannot be consumed → handoff;
+ *   - any INWARD delta at a boundary, and every delta mid-rail, is consumed by
+ *     the rail and must be preventDefault'd.
+ *
+ * The decision is derived from the same clamp the live wheel applies, so the
+ * rail and the page never disagree about ownership (Issue #159 / PR #246
+ * Blocker A).
+ */
+export function wheelConsumes(
+  state: ContinuousPhaseState,
+  config: ContinuousPhaseConfig,
+  input: { delta: number },
+): boolean {
+  validateState(state);
+  const resolved = resolveContinuousPhaseConfig({ ...config, sceneCount: state.sceneCount });
+  assertFinite(input.delta, "delta");
+  const proposed = clampPhase(
+    state.target + input.delta * resolved.wheelDeltaPhaseFactor,
+    { sceneCount: state.sceneCount },
+  );
+  return Math.abs(proposed - state.target) > 1e-9;
 }
 
 /**
