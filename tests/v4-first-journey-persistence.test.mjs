@@ -75,16 +75,16 @@ test("#248: failed first write cannot claim success", () => {
 
 test("#248: second Moment uses real firstMemoryId and exact user WHY NEXT", () => {
   const second = sliceBetween(V12, "const submitSecondMoment", "const completeJourney");
+  assert.match(V12, /const whyNext = draft\.secondMoment\.whyNext\.trim\(\);/);
   assert.match(second, /parentId: canonical\.firstMemoryId/);
   assert.match(second, /connectionReason: input\.whyNext/);
-  assert.match(second, /const whyNext = draft\.secondMoment\.whyNext\.trim\(\);/);
   assert.doesNotMatch(second, /whyNext \|\||connectionReason:.*relation|SAMPLE/);
   assert.match(second, /if \(!response\.ok \|\| !data\.id\)/);
   assert.match(second, /secondMemoryId: data\.id/);
   assert.match(second, /setSecondSaved\(true\)/);
-  const catchBranch = second.slice(second.indexOf("} catch (cause)"));
-  assert.match(catchBranch, /setSecondSaved\(false\)/);
-  assert.doesNotMatch(catchBranch, /setSecondSaved\(true\)/);
+  const networkCatch = second.slice(second.lastIndexOf("} catch (cause)"));
+  assert.match(networkCatch, /setSecondSaved\(false\)/);
+  assert.doesNotMatch(networkCatch, /setSecondSaved\(true\)/);
 });
 
 test("#248: second-write retry keeps an operation-scoped clientKey", () => {
