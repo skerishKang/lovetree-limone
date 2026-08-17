@@ -9,7 +9,6 @@ import { createFirstTree, type FirstCreateTransport } from "@/lib/first-tree-cre
 
 const STORAGE_KEY = "lovetree-first-journey-unified";
 const SECOND_PENDING_KEY = "lovetree-v12-second-moment-client-key";
-
 const EMOTIONS = ["설렘", "웃음", "위로", "놀람", "존경", "애틋함"] as const;
 const RELATIONS = [
   "댓글을 따라 찾아봤어요",
@@ -19,39 +18,16 @@ const RELATIONS = [
   "내가 직접 다시 검색했어요",
 ] as const;
 
-type CanonicalRefs = {
-  treeId: string;
-  firstMemoryId: string;
-  secondMemoryId?: string;
-};
-
-type FirstMomentDraft = {
-  url: string;
-  title: string;
-  note: string;
-  discoveryDate: string;
-};
-
-type MemoryDraft = {
-  emotion: string;
-  note: string;
-};
-
-type SecondMomentDraft = {
-  url: string;
-  title: string;
-  note: string;
-  relation: string;
-  whyNext: string;
-};
-
+type CanonicalRefs = { treeId: string; firstMemoryId: string; secondMemoryId?: string };
+type FirstMomentDraft = { url: string; title: string; note: string; discoveryDate: string };
+type MemoryDraft = { emotion: string; note: string };
+type SecondMomentDraft = { url: string; title: string; note: string; relation: string; whyNext: string };
 type DraftState = {
   treeName: string;
   firstMoment: FirstMomentDraft;
   memory: MemoryDraft;
   secondMoment: SecondMomentDraft;
 };
-
 type StoredDraftSnapshot = DraftState & { version: 2 };
 type JsonRecord = Record<string, unknown>;
 type PathChoice = "MAIN" | "BRANCH" | null;
@@ -61,30 +37,14 @@ const today = () => new Date().toISOString().slice(0, 10);
 function defaultDraft(): DraftState {
   return {
     treeName: "",
-    firstMoment: {
-      url: "",
-      title: "",
-      note: "",
-      discoveryDate: today(),
-    },
-    memory: {
-      emotion: "설렘",
-      note: "",
-    },
-    secondMoment: {
-      url: "",
-      title: "",
-      note: "",
-      relation: RELATIONS[0],
-      whyNext: "",
-    },
+    firstMoment: { url: "", title: "", note: "", discoveryDate: today() },
+    memory: { emotion: "설렘", note: "" },
+    secondMoment: { url: "", title: "", note: "", relation: RELATIONS[0], whyNext: "" },
   };
 }
 
 function asRecord(value: unknown): JsonRecord | null {
-  return value !== null && typeof value === "object" && !Array.isArray(value)
-    ? (value as JsonRecord)
-    : null;
+  return value !== null && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord) : null;
 }
 
 function readString(record: JsonRecord | null, key: string, fallback: string): string {
@@ -113,10 +73,7 @@ function persistDraftSnapshot(storageKey: string, draft: DraftState): void {
       note: draft.firstMoment.note,
       discoveryDate: draft.firstMoment.discoveryDate,
     },
-    memory: {
-      emotion: draft.memory.emotion,
-      note: draft.memory.note,
-    },
+    memory: { emotion: draft.memory.emotion, note: draft.memory.note },
     secondMoment: {
       url: draft.secondMoment.url,
       title: draft.secondMoment.title,
@@ -133,14 +90,11 @@ function loadDraftSnapshot(storageKey: string): DraftState {
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return base;
-
     const parsed = asRecord(JSON.parse(raw));
     if (!parsed) throw new Error("malformed journey draft");
-
     const first = asRecord(parsed.firstMoment);
     const memory = asRecord(parsed.memory);
     const second = asRecord(parsed.secondMoment);
-
     return {
       treeName: readString(parsed, "treeName", base.treeName),
       firstMoment: {
@@ -165,7 +119,7 @@ function loadDraftSnapshot(storageKey: string): DraftState {
     try {
       localStorage.removeItem(storageKey);
     } catch {
-      // Storage is optional draft state only.
+      // Optional draft storage only.
     }
     return base;
   }
@@ -214,35 +168,38 @@ export default function V4FirstJourneyV12({
   const [saveError, setSaveError] = useState<string | null>(null);
   const pendingSecondKey = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const lastScrollRef = useRef(0);
 
   useEffect(() => {
-    const hydrated = loadDraftSnapshot(storageKey);
-    setDraft(hydrated);
-    try {
-      // Rewrite only the approved draft schema. Legacy saved/canonical IDs,
-      // connection memoryIds and completion claims are discarded on reload.
-      persistDraftSnapshot(storageKey, hydrated);
-    } catch {
-      // localStorage is not required for canonical writes.
-    }
-    setMounted(true);
-    onActivate?.();
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      const hydrated = loadDraftSnapshot(storageKey);
+      setDraft(hydrated);
+      try {
+        // Rewrites only the approved draft schema. Any stale canonical IDs,
+        // saved flags, connection memoryIds, and completion claims disappear.
+        persistDraftSnapshot(storageKey, hydrated);
+      } catch {
+        // localStorage is not required for canonical writes.
+      }
+      setMounted(true);
+      onActivate?.();
+    }, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [onActivate, storageKey]);
 
   useEffect(() => {
     if (!mounted) return;
     const element = scrollRef.current;
     if (!element) return;
-
     const handleScroll = () => {
       const maxScroll = Math.max(1, element.scrollHeight - element.clientHeight);
-      const scrollTop = element.scrollTop;
-      lastScrollRef.current = scrollTop;
-      const step = Math.max(0, Math.min(4, Math.round((scrollTop / maxScroll) * 4)));
+      const step = Math.max(0, Math.min(4, Math.round((element.scrollTop / maxScroll) * 4)));
       setV12Step(step);
     };
-
     element.addEventListener("scroll", handleScroll, { passive: true });
     return () => element.removeEventListener("scroll", handleScroll);
   }, [mounted]);
@@ -265,24 +222,15 @@ export default function V4FirstJourneyV12({
   }, [storageKey]);
 
   const setFirstDraft = useCallback(<K extends keyof FirstMomentDraft>(key: K, value: FirstMomentDraft[K]) => {
-    updateDraft((previous) => ({
-      ...previous,
-      firstMoment: { ...previous.firstMoment, [key]: value },
-    }));
+    updateDraft((previous) => ({ ...previous, firstMoment: { ...previous.firstMoment, [key]: value } }));
   }, [updateDraft]);
 
   const setMemoryDraft = useCallback(<K extends keyof MemoryDraft>(key: K, value: MemoryDraft[K]) => {
-    updateDraft((previous) => ({
-      ...previous,
-      memory: { ...previous.memory, [key]: value },
-    }));
+    updateDraft((previous) => ({ ...previous, memory: { ...previous.memory, [key]: value } }));
   }, [updateDraft]);
 
   const setSecondDraft = useCallback(<K extends keyof SecondMomentDraft>(key: K, value: SecondMomentDraft[K]) => {
-    updateDraft((previous) => ({
-      ...previous,
-      secondMoment: { ...previous.secondMoment, [key]: value },
-    }));
+    updateDraft((previous) => ({ ...previous, secondMoment: { ...previous.secondMoment, [key]: value } }));
   }, [updateDraft]);
 
   const ensureSecondClientKey = useCallback((): string => {
@@ -320,8 +268,7 @@ export default function V4FirstJourneyV12({
     try {
       ({ videoId } = requireFirstInput(draft));
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "첫 순간 입력을 확인해 주세요.";
-      setSaveError(message);
+      setSaveError(cause instanceof Error ? cause.message : "첫 순간 입력을 확인해 주세요.");
       return;
     }
 
@@ -350,9 +297,6 @@ export default function V4FirstJourneyV12({
         },
         fetchFn: fetchFn ?? apiFetch,
       });
-
-      // Canonical IDs are held only in component memory from the server response.
-      // They are never copied into localStorage/sessionStorage.
       setCanonical({ treeId, firstMemoryId: memoryId });
       setFirstSaved(true);
       setV12Step(1);
@@ -370,9 +314,6 @@ export default function V4FirstJourneyV12({
 
   const submitFirstMoment = useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
-
-    // Preserve the existing auth composition as the first anonymous action.
-    // Input validation is repeated after authentication before any write occurs.
     if (!user) {
       setPendingFirstSave(true);
       setAuthOpen(true);
@@ -383,9 +324,17 @@ export default function V4FirstJourneyV12({
 
   useEffect(() => {
     if (!pendingFirstSave || !user || saving) return;
-    setPendingFirstSave(false);
-    setAuthOpen(false);
-    void performFirstSave();
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      setPendingFirstSave(false);
+      setAuthOpen(false);
+      void performFirstSave();
+    }, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [pendingFirstSave, performFirstSave, saving, user]);
 
   const submitMemory = useCallback(async (event: React.FormEvent) => {
@@ -394,17 +343,13 @@ export default function V4FirstJourneyV12({
       setSaveError("먼저 첫 순간을 저장해 주세요.");
       return;
     }
-
     setSaving(true);
     setSaveError(null);
     clearAuthError();
     try {
-      const payload: Record<string, unknown> = {
-        emotionTags: [draft.memory.emotion],
-      };
+      const payload: Record<string, unknown> = { emotionTags: [draft.memory.emotion] };
       const memo = draft.memory.note.trim();
       if (memo) payload.memo = memo;
-
       const response = await (fetchFn ?? apiFetch)(
         `/api/memories/${encodeURIComponent(canonical.firstMemoryId)}`,
         { method: "PUT", body: JSON.stringify(payload) },
@@ -432,13 +377,11 @@ export default function V4FirstJourneyV12({
       setSaveError("먼저 첫 순간을 저장해 주세요.");
       return;
     }
-
     let input: { videoId: string; whyNext: string };
     try {
       input = requireSecondInput(draft);
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "다음 순간 입력을 확인해 주세요.";
-      setSaveError(message);
+      setSaveError(cause instanceof Error ? cause.message : "다음 순간 입력을 확인해 주세요.");
       return;
     }
 
@@ -467,10 +410,7 @@ export default function V4FirstJourneyV12({
         },
       );
       const data = (await response.json().catch(() => ({}))) as { id?: string; error?: string };
-      if (!response.ok || !data.id) {
-        throw new Error(data.error || "다음 순간을 저장하지 못했어요.");
-      }
-
+      if (!response.ok || !data.id) throw new Error(data.error || "다음 순간을 저장하지 못했어요.");
       retireSecondClientKey();
       setCanonical((previous) => previous ? { ...previous, secondMemoryId: data.id } : previous);
       setSecondSaved(true);
@@ -545,11 +485,7 @@ export default function V4FirstJourneyV12({
               <div className="v4-j-v12-miniature">
                 <div
                   className="v4-j-v12-mini-card"
-                  style={firstVideoId ? {
-                    backgroundImage: `url(${thumbnailFor(firstVideoId)})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  } : undefined}
+                  style={firstVideoId ? { backgroundImage: `url(${thumbnailFor(firstVideoId)})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
                 >
                   <span className="v4-j-v12-mini-icon">✦</span>
                 </div>
@@ -562,52 +498,14 @@ export default function V4FirstJourneyV12({
                 <p className="v4-j-v12-note">직접 입력한 순간이 실제 러브트리의 첫 뿌리가 됩니다.</p>
                 {!firstSaved ? (
                   <form onSubmit={submitFirstMoment} className="v4-j-v12-form" data-testid="first-moment-form">
-                    <input
-                      className="v4-j-v12-why-input"
-                      type="text"
-                      placeholder="러브트리 이름"
-                      value={draft.treeName}
-                      onChange={(event) => updateDraft((previous) => ({ ...previous, treeName: event.target.value }))}
-                      data-testid="tree-name-input"
-                    />
-                    <input
-                      className="v4-j-v12-why-input"
-                      type="url"
-                      placeholder="YouTube 주소"
-                      value={draft.firstMoment.url}
-                      onChange={(event) => setFirstDraft("url", event.target.value)}
-                      data-testid="first-url-input"
-                    />
-                    <input
-                      className="v4-j-v12-why-input"
-                      type="text"
-                      placeholder="첫 순간 제목"
-                      value={draft.firstMoment.title}
-                      onChange={(event) => setFirstDraft("title", event.target.value)}
-                      data-testid="first-title-input"
-                    />
-                    <textarea
-                      className="v4-j-v12-textarea"
-                      placeholder="이 순간에 남기고 싶은 메모"
-                      rows={3}
-                      value={draft.firstMoment.note}
-                      onChange={(event) => setFirstDraft("note", event.target.value)}
-                      data-testid="first-note-input"
-                    />
-                    <input
-                      className="v4-j-v12-why-input"
-                      type="date"
-                      value={draft.firstMoment.discoveryDate}
-                      onChange={(event) => setFirstDraft("discoveryDate", event.target.value)}
-                      data-testid="first-date-input"
-                    />
-                    <button type="submit" className="v4-j-v12-cta" data-testid="save-first-moment" disabled={saving}>
-                      {saving ? "저장 중…" : "이 순간을 첫 뿌리로 심기"}
-                    </button>
+                    <input className="v4-j-v12-why-input" type="text" placeholder="러브트리 이름" value={draft.treeName} onChange={(event) => updateDraft((previous) => ({ ...previous, treeName: event.target.value }))} data-testid="tree-name-input" />
+                    <input className="v4-j-v12-why-input" type="url" placeholder="YouTube 주소" value={draft.firstMoment.url} onChange={(event) => setFirstDraft("url", event.target.value)} data-testid="first-url-input" />
+                    <input className="v4-j-v12-why-input" type="text" placeholder="첫 순간 제목" value={draft.firstMoment.title} onChange={(event) => setFirstDraft("title", event.target.value)} data-testid="first-title-input" />
+                    <textarea className="v4-j-v12-textarea" placeholder="이 순간에 남기고 싶은 메모" rows={3} value={draft.firstMoment.note} onChange={(event) => setFirstDraft("note", event.target.value)} data-testid="first-note-input" />
+                    <input className="v4-j-v12-why-input" type="date" value={draft.firstMoment.discoveryDate} onChange={(event) => setFirstDraft("discoveryDate", event.target.value)} data-testid="first-date-input" />
+                    <button type="submit" className="v4-j-v12-cta" data-testid="save-first-moment" disabled={saving}>{saving ? "저장 중…" : "이 순간을 첫 뿌리로 심기"}</button>
                   </form>
-                ) : (
-                  <p className="v4-j-v12-done" data-testid="first-saved">✦ 서버에 첫 순간이 저장되었습니다</p>
-                )}
+                ) : <p className="v4-j-v12-done" data-testid="first-saved">✦ 서버에 첫 순간이 저장되었습니다</p>}
               </div>
             </div>
           </div>
@@ -623,35 +521,16 @@ export default function V4FirstJourneyV12({
                   <div className="v4-j-v12-chip-group">
                     {EMOTIONS.map((emotion) => (
                       <label key={emotion} className="v4-j-v12-chip">
-                        <input
-                          type="radio"
-                          name="emotion"
-                          value={emotion}
-                          checked={draft.memory.emotion === emotion}
-                          onChange={(event) => setMemoryDraft("emotion", event.target.value)}
-                        />
+                        <input type="radio" name="emotion" value={emotion} checked={draft.memory.emotion === emotion} onChange={(event) => setMemoryDraft("emotion", event.target.value)} />
                         <span>{emotion}</span>
                       </label>
                     ))}
                   </div>
-                  <textarea
-                    className="v4-j-v12-textarea"
-                    placeholder="선택 사항: 첫 순간의 메모를 보강할 수 있어요."
-                    rows={3}
-                    value={draft.memory.note}
-                    onChange={(event) => setMemoryDraft("note", event.target.value)}
-                    data-testid="memory-note-input"
-                  />
-                  <button type="submit" className="v4-j-v12-cta" data-testid="save-memory" disabled={saving || !canonical}>
-                    마음 남기기
-                  </button>
-                  <button type="button" className="v4-j-v12-secondary" onClick={() => setV12Step(2)} disabled={!canonical}>
-                    WHY NEXT로 계속
-                  </button>
+                  <textarea className="v4-j-v12-textarea" placeholder="선택 사항: 첫 순간의 메모를 보강할 수 있어요." rows={3} value={draft.memory.note} onChange={(event) => setMemoryDraft("note", event.target.value)} data-testid="memory-note-input" />
+                  <button type="submit" className="v4-j-v12-cta" data-testid="save-memory" disabled={saving || !canonical}>마음 남기기</button>
+                  <button type="button" className="v4-j-v12-secondary" onClick={() => setV12Step(2)} disabled={!canonical}>WHY NEXT로 계속</button>
                 </form>
-              ) : (
-                <p className="v4-j-v12-done" data-testid="memory-saved">✦ 첫 마음이 서버에 기록되었습니다</p>
-              )}
+              ) : <p className="v4-j-v12-done" data-testid="memory-saved">✦ 첫 마음이 서버에 기록되었습니다</p>}
             </div>
           </div>
         </section>
@@ -661,65 +540,21 @@ export default function V4FirstJourneyV12({
             <span className="v4-j-v12-eyebrow">02 — WHY NEXT</span>
             <h2>그다음 마음이 향한 순간을 직접 적어 주세요.</h2>
             <form onSubmit={submitSecondMoment} className="v4-j-v12-form" data-testid="second-moment-form">
-              <div
-                className="v4-j-v12-candidate-visual"
-                style={secondVideoId ? {
-                  backgroundImage: `url(${thumbnailFor(secondVideoId)})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                } : undefined}
-              >
-                <span className="v4-j-v12-candidate-icon">▶</span>
-              </div>
-              <input
-                className="v4-j-v12-why-input"
-                type="url"
-                placeholder="다음 YouTube 주소"
-                value={draft.secondMoment.url}
-                onChange={(event) => setSecondDraft("url", event.target.value)}
-                data-testid="second-url-input"
-              />
-              <input
-                className="v4-j-v12-why-input"
-                type="text"
-                placeholder="다음 순간 제목"
-                value={draft.secondMoment.title}
-                onChange={(event) => setSecondDraft("title", event.target.value)}
-                data-testid="second-title-input"
-              />
-              <textarea
-                className="v4-j-v12-textarea"
-                placeholder="다음 순간에 남길 메모"
-                rows={3}
-                value={draft.secondMoment.note}
-                onChange={(event) => setSecondDraft("note", event.target.value)}
-                data-testid="second-note-input"
-              />
+              <div className="v4-j-v12-candidate-visual" style={secondVideoId ? { backgroundImage: `url(${thumbnailFor(secondVideoId)})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}><span className="v4-j-v12-candidate-icon">▶</span></div>
+              <input className="v4-j-v12-why-input" type="url" placeholder="다음 YouTube 주소" value={draft.secondMoment.url} onChange={(event) => setSecondDraft("url", event.target.value)} data-testid="second-url-input" />
+              <input className="v4-j-v12-why-input" type="text" placeholder="다음 순간 제목" value={draft.secondMoment.title} onChange={(event) => setSecondDraft("title", event.target.value)} data-testid="second-title-input" />
+              <textarea className="v4-j-v12-textarea" placeholder="다음 순간에 남길 메모" rows={3} value={draft.secondMoment.note} onChange={(event) => setSecondDraft("note", event.target.value)} data-testid="second-note-input" />
               <label className="v4-j-v12-relation">
                 <span className="v4-j-v12-relation-label">연결 맥락</span>
-                <select
-                  className="v4-j-v12-select"
-                  value={draft.secondMoment.relation}
-                  onChange={(event) => setSecondDraft("relation", event.target.value)}
-                  data-testid="second-relation-input"
-                >
+                <select className="v4-j-v12-select" value={draft.secondMoment.relation} onChange={(event) => setSecondDraft("relation", event.target.value)} data-testid="second-relation-input">
                   {RELATIONS.map((relation) => <option key={relation} value={relation}>{relation}</option>)}
                 </select>
               </label>
               <label>
                 <small>WHY NEXT</small>
-                <input
-                  type="text"
-                  className="v4-j-v12-why-input"
-                  placeholder="왜 이 순간을 다음으로 찾아보게 됐나요?"
-                  value={draft.secondMoment.whyNext}
-                  onChange={(event) => setSecondDraft("whyNext", event.target.value)}
-                  data-testid="why-next-input"
-                />
+                <input type="text" className="v4-j-v12-why-input" placeholder="왜 이 순간을 다음으로 찾아보게 됐나요?" value={draft.secondMoment.whyNext} onChange={(event) => setSecondDraft("whyNext", event.target.value)} data-testid="why-next-input" />
               </label>
-              <button type="submit" className="v4-j-v12-connect-btn" data-testid="save-second-moment" disabled={saving || !canonical || secondSaved}>
-                {secondSaved ? "연결됨" : "실제 다음 순간 저장하기"}
-              </button>
+              <button type="submit" className="v4-j-v12-connect-btn" data-testid="save-second-moment" disabled={saving || !canonical || secondSaved}>{secondSaved ? "연결됨" : "실제 다음 순간 저장하기"}</button>
             </form>
           </div>
         </section>
@@ -733,34 +568,12 @@ export default function V4FirstJourneyV12({
               <div className="v4-j-v12-path-row">
                 <span className="v4-j-v12-path-title">{draft.secondMoment.title || "다음 순간"}</span>
                 <div className="v4-j-v12-path-buttons">
-                  <button
-                    type="button"
-                    className={`v4-j-v12-path-btn ${pathChoice === "MAIN" ? "v4-j-v12-path-selected" : ""}`}
-                    onClick={() => setPathChoice("MAIN")}
-                    data-testid="main-path"
-                  >
-                    MAIN
-                  </button>
-                  <button
-                    type="button"
-                    className={`v4-j-v12-path-btn ${pathChoice === "BRANCH" ? "v4-j-v12-path-selected" : ""}`}
-                    onClick={() => setPathChoice("BRANCH")}
-                    data-testid="branch-path"
-                  >
-                    BRANCH
-                  </button>
+                  <button type="button" className={`v4-j-v12-path-btn ${pathChoice === "MAIN" ? "v4-j-v12-path-selected" : ""}`} onClick={() => setPathChoice("MAIN")} data-testid="main-path">MAIN</button>
+                  <button type="button" className={`v4-j-v12-path-btn ${pathChoice === "BRANCH" ? "v4-j-v12-path-selected" : ""}`} onClick={() => setPathChoice("BRANCH")} data-testid="branch-path">BRANCH</button>
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              className="v4-j-v12-cta"
-              onClick={() => setV12Step(4)}
-              disabled={!secondSaved || !pathChoice}
-              data-testid="show-complete"
-            >
-              완성 화면 보기
-            </button>
+            <button type="button" className="v4-j-v12-cta" onClick={() => setV12Step(4)} disabled={!secondSaved || !pathChoice} data-testid="show-complete">완성 화면 보기</button>
           </div>
         </section>
 
@@ -772,22 +585,11 @@ export default function V4FirstJourneyV12({
             <div className="v4-j-v12-tree-preview">
               <div className="v4-j-v12-tree-main">
                 <span className="v4-j-v12-tree-label">ROOT</span>
-                <div className="v4-j-v12-tree-card">
-                  <span>{draft.firstMoment.title || "첫 순간"}</span>
-                  {secondSaved ? <span className="v4-j-v12-tree-sub">└ {draft.secondMoment.title}</span> : null}
-                </div>
+                <div className="v4-j-v12-tree-card"><span>{draft.firstMoment.title || "첫 순간"}</span>{secondSaved ? <span className="v4-j-v12-tree-sub">└ {draft.secondMoment.title}</span> : null}</div>
               </div>
             </div>
             <div className="v4-j-v12-complete-actions">
-              <button
-                type="button"
-                className="v4-j-v12-cta"
-                data-testid="complete-journey"
-                onClick={completeJourney}
-                disabled={!canonical?.secondMemoryId}
-              >
-                실제 러브트리 열기
-              </button>
+              <button type="button" className="v4-j-v12-cta" data-testid="complete-journey" onClick={completeJourney} disabled={!canonical?.secondMemoryId}>실제 러브트리 열기</button>
               <button type="button" className="v4-j-v12-secondary" onClick={resetAll}>처음부터 다시 시작</button>
             </div>
           </div>
