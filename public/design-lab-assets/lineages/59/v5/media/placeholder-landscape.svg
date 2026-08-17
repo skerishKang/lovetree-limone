@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <rect width="640" height="480" fill="#f0f6ff"/>
+  <rect x="60" y="40" width="520" height="260" rx="12" fill="#ddd"/>
+  <circle cx="320" cy="170" r="50" fill="#bbb"/>
+  <text x="320" y="400" text-anchor="middle" fill="#999" font-size="20" font-family="sans-serif">Landscape Placeholder</text>
+</svg>
