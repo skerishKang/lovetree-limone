@@ -17,11 +17,12 @@ function sliceBetween(source, start, end) {
 }
 
 test("#248: canonical V1.2 is the default /v4/journey product authority", () => {
-  assert.match(PAGE, /setMode\(params\.get\("legacy"\) === "1" \? "legacy-demo" : "canonical"\)/);
+  assert.match(PAGE, /searchParams: Promise/);
+  assert.match(PAGE, /const legacy = Array\.isArray\(params\.legacy\)/);
+  assert.match(PAGE, /if \(legacy === "1"\)/);
   assert.match(PAGE, /return <V4FirstJourneyV12 storageKey=\{STORAGE_KEY\} \/>/);
-  assert.doesNotMatch(PAGE, /v12Mode|params\.get\("v12"\)|\?v12=1/);
-  assert.match(PAGE, /mode === "legacy-demo"/);
   assert.match(PAGE, /<V4FirstJourney \/>/);
+  assert.doesNotMatch(PAGE, /v12Mode|params\.get\("v12"\)|\?v12=1|useEffect|useState|JourneyMode/);
 });
 
 test("#248: canonical writes never use SAMPLE_MOMENTS or fixture fallbacks", () => {
@@ -79,7 +80,7 @@ test("#248: second Moment uses real firstMemoryId and exact user WHY NEXT", () =
   assert.match(second, /parentId: canonical\.firstMemoryId/);
   assert.match(second, /connectionReason: input\.whyNext/);
   assert.doesNotMatch(second, /whyNext \|\||connectionReason:.*relation|SAMPLE/);
-  assert.match(second, /if \(!response\.ok \|\| !data\.id\)/);
+  assert.match(second, /if \(!response\.ok \|\| !data\.id\)|if \(!response\.ok \|\| !data\.id\) throw/);
   assert.match(second, /secondMemoryId: data\.id/);
   assert.match(second, /setSecondSaved\(true\)/);
   const networkCatch = second.slice(second.lastIndexOf("} catch (cause)"));
