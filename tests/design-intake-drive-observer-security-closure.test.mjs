@@ -42,8 +42,8 @@ test("DEFAULT_BRANCH_LIVE_GUARD_PRESENT + TRUSTED_DEFAULT_BRANCH_CHECKOUT_PINNED
 
   assert.match(
     liveJob,
-    /if:\s*github\.event_name == 'workflow_dispatch' && inputs\.mode == 'live' && github\.ref_name == github\.event\.repository\.default_branch/,
-    "live job must require workflow_dispatch live mode on the repository default branch",
+    /if:\s*github\.event_name == 'workflow_dispatch' && inputs\.mode == 'live' && github\.ref == format\('refs\/heads\/\{0\}', github\.event\.repository\.default_branch\)/,
+    "live job must require workflow_dispatch live mode on the exact refs/heads/<default branch> ref",
   );
   assert.match(
     liveJob,
@@ -54,13 +54,13 @@ test("DEFAULT_BRANCH_LIVE_GUARD_PRESENT + TRUSTED_DEFAULT_BRANCH_CHECKOUT_PINNED
   assert.doesNotMatch(liveJob, /pull_request\.head|refs\/pull\//, "live job must never resolve PR-controlled code");
 });
 
-test("NON_DEFAULT_REF_PRIVILEGED_LIVE_EXECUTION is structurally impossible", () => {
+test("NON_DEFAULT_REF_PRIVILEGED_LIVE_EXECUTION is structurally impossible, including same-name tags", () => {
   const workflow = read(workflowPath);
   assert.match(workflow, /workflow_dispatch:/, "manual dispatch remains the only live trigger surface");
   assert.match(
     workflow,
-    /github\.ref_name == github\.event\.repository\.default_branch/,
-    "a branch/tag dispatch must match the server-provided default branch name before live job execution",
+    /github\.ref == format\('refs\/heads\/\{0\}', github\.event\.repository\.default_branch\)/,
+    "live execution must require an exact default-branch heads ref, not merely a matching ref name",
   );
   assert.doesNotMatch(workflow, /^[^#\n]*pull_request_target:/m, "pull_request_target remains forbidden");
 });
