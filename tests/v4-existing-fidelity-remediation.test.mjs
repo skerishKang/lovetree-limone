@@ -36,7 +36,7 @@ test("v4 existing fidelity — First Journey restores source story, preview, nar
   const browser = await chromium.launch({ headless: true });
   try {
     const page = await browser.newPage({ viewport: DESKTOP });
-    await page.goto(`${BASE}/v4/journey`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE}/v4/journey?legacy=1`, { waitUntil: "networkidle" });
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "networkidle" });
     await page.waitForSelector('[data-source-story="three-moment-youtube"]');
@@ -147,7 +147,7 @@ test("v4 existing fidelity — First Journey reduced motion bypasses source dwel
   try {
     const context = await browser.newContext({ viewport: DESKTOP, reducedMotion: "reduce" });
     const page = await context.newPage();
-    await page.goto(`${BASE}/v4/journey`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE}/v4/journey?legacy=1`, { waitUntil: "networkidle" });
     await startJourney(page);
     await page.fill("#content-url", YT_A);
     await page.locator('#discovery-form button[type="submit"]').click();
