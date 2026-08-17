@@ -102,6 +102,75 @@ never classify a source or select the current revision. Filename-derived
 revision labels are recorded as descriptive context only; the #171 resolver
 never picks the current candidate by label.
 
+## Offline stale-green / TOCTOU merge-authority contract
+
+A prior `PASS` is evidence about one exact observation, not a reusable merge
+capability. Before merge authority can be accepted, the trusted gate must bind
+the PASS to the exact GitHub and Drive evidence tuple and reject historical
+green when that tuple moves.
+
+Minimum PASS seal:
+
+- PR head SHA;
+- observed base/main SHA;
+- observation timestamp;
+- track/root identity;
+- root/current Drive file id;
+- Drive `modifiedTime`;
+- metadata-declared bytes;
+- full-content SHA-256;
+- `providerState=SUCCESS`, `observationComplete=true`, and terminal pagination.
+
+If PR head or main moves, or if file id / `modifiedTime` / bytes / SHA-256 changes,
+the old green immediately loses merge authority and a fresh full observation +
+resolver run is required. A same-hash/new-file-id packaging-only revision may
+resolve to PASS again **after** re-observation; the earlier PASS is still stale
+because source identity changed. `INCOMPLETE`, `UNAVAILABLE`, `AUTH_FAILED`,
+`PERMISSION_DENIED`, `API_ERROR`, pagination failure, or hash evidence failure
+is `UNKNOWN`/non-authoritative with `mergeBlock`, never a reason to retain a
+historical PASS.
+
+## Concrete WIF subject contract — documentation only, NOT provisioned
+
+The current repository facts used by the offline negative matrix are:
+
+- `repository_id` == `1316947337`
+- `repository` == `skerishKang/lovetree-limone`
+- `ref` == `refs/heads/main`
+- `ref_type` == `branch`
+- `workflow_ref` == `skerishKang/lovetree-limone/.github/workflows/design-source-freshness-observer.yml@refs/heads/main`
+- `event_name` == `workflow_dispatch`
+
+All fields above are conjunctive. The future WIF condition must deny, at
+minimum: a different repository id/name, `refs/tags/main`, any `refs/pull/**`
+ref, a feature branch, the same workflow path loaded from a non-main ref, a
+different workflow path, and an untrusted event. A future reusable-workflow
+architecture may additionally pin `job_workflow_ref` + `job_workflow_sha`; the
+current non-reusable skeleton must not pretend those claims are active today.
+
+`id-token: write` remains disabled until the Google-side WIF condition and
+read-only identity are independently provisioned and approved.
+
+## Required-check naming contract — future enforcement only
+
+GitHub enforcement must use stable **job/check identities**, not workflow
+display names or conditional child jobs.
+
+- CURRENT/STAGE-A required candidate: `validate`
+- CURRENT/STAGE-A required candidate: `Design Fidelity Validation`
+- FUTURE_FRESHNESS_REQUIRED_CHECK = `Design Source Freshness`
+- NOT a required-check alias: workflow name `Design Source Freshness Observer`
+- NOT globally required: `Fidelity · ${{ matrix.id }}`
+- NOT the live freshness verdict: `Observer contract + security (unprivileged, credential-free)`
+
+`REQUIRED_CHECK_RENAME_OR_ABSENCE = BLOCK/HOLD`
+
+A rename, conditional omission, or accidental substitution must fail closed.
+Do not silently accept a similarly named check and do not activate the future
+`Design Source Freshness` requirement until one deterministic aggregator exists
+for both applicable and `NOT_APPLICABLE` PRs and trusted merge-time
+re-observation is proven.
+
 ## Enforcement rollout state
 
 ```

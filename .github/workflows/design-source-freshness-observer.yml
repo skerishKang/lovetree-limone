@@ -73,11 +73,12 @@ jobs:
       - name: "#171 pure resolver regression (reused unchanged by the observer)"
         run: node --import tsx --test tests/design-intake-source-freshness.test.mjs
 
-      - name: Observer acceptance matrix + security contracts
+      - name: Observer acceptance matrix + security + offline enforcement contracts
         run: >-
           node --import tsx --test
           tests/design-intake-drive-observer.test.mjs
           tests/design-intake-drive-observer-security-closure.test.mjs
+          tests/design-intake-drive-observer-enforcement-contract.test.mjs
 
       - name: "FAIL-CLOSED proof: live mode without credentials must refuse (exit 3)"
         shell: bash
