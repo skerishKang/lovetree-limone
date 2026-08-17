@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-67-v24-persistent-world-works-navigation",
+  "sourceTrackId": "Track67",
+  "title": "Memory Tape Interactive Roll — Persistent World + Works Navigation",
+  "classification": "EXISTING_LINEAGE_VARIANT",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "webgl",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Persistent memory world: user-drawn memory tape accumulates as static (MEMORY) chunks, a bounded memory tail leaves a trail, ribbon hit/inspect and Space rewind revisit memory, plus a WORKS_ archive navigation surface. Existing repository Lineage 67 (reserved by Issue #231) revision V2.4.2.",
+  "summary": "Track 67 V2.4 engine/texture/inspect/rewind logic, extended in V2.4.2 with a WORKS compare menu. V2.4.2 supersedes V2.4/V2.4.1 in the official 67 메모리테이프 인터랙티브롤 revision ladder. The exact source implementation is RAW_WEBGL2 / CUSTOM_WEBGL (Three.js = 0); the repository native candidate renders through the webgl discriminator while preserving the same ribbon surface the hit-test intersects.",
+  "provenance": {
+    "sourceLabel": "Track 67 V2.4.2 / Drive 18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
+    "driveFolderId": "18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
+    "sourceFiles": [
+      "track67_v2.4.2_works_compare_menu.html",
+      "V2.4.2_SHA256SUMS.txt",
+      "V2.4.2_RUNTIME.json",
+      "16_V2.4.2_WORKS_COMPARE_MENU_REPORT.md"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V2.4.2",
+    "authorityObservedAt": "2026-08-17T04:50:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "track67_v2.4.2_works_compare_menu.html",
+      "driveId": "18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
+      "bytes": 12265511,
+      "sha256": "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "intakeContract": {
+    "exactAssetPath": "/design-lab-assets/lineages/67/v2-4/track67_v2.4_persistent_world_works_navigation.txt",
+    "exactBytes": 12265511,
+    "exactSha256": "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f",
+    "verifiedIndependently": true,
+    "verifiedAgainst": "design team V2.4.2_SHA256SUMS.txt"
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P1", "P7", "P9"],
+  "trulyNewPrimitive": "PersistentMemoryWorld (user-drawn tape -> static MEMORY chunks + bounded tail + rewind)",
+  "sourceDefects": [],
+  "nativeRemediations": [
+    "reduced-motion fallback (no auto RAF when prefers-reduced-motion)",
+    "fail-closed exact-source gate (no reconstructed substitute)",
+    "WORKS ledger with no fabricated href (HOLD/REFERENCE disabled)"
+  ],
+  "sourceOnlyValues": [
+    "Exact source implementation is RAW_WEBGL2 / CUSTOM_WEBGL (Three.js = 0)",
+    "Repository native candidate renders through the webgl discriminator; the same prepared ribbon surface is shared by render + hit-test"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Source-reference candidate for existing Lineage 67 (Issue #231). Canonical /v4 adoption remains a separate HOLD decision. DB/API/Auth/Firebase/Neon/Worker unchanged."
+  },
+  "visualMechanicOverlap": ["persistent world", "memory ribbon", "works archive"],
+  "productJobDistinctness": "Lineage 67 is reserved by Issue #231; this is its V2.4.2 revision.",
+  "derivedDisplay": [
+    { "value": "WORKS owner set", "kind": "VIEW_DERIVED", "source": "works-owner-set", "canonicalProductPolicy": false, "note": "V2.4.2 drops 61/60, adds 62 V1.1 / Track 13 Atlas / Living Video Graph" }
+  ],
+  "designLineageId": "lt-67-memory-tape-persistent-world",
+  "revisionId": "v2-4-2",
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true },
+      { "width": 320, "height": 720, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}
