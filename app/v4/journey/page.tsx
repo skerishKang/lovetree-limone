@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import V4FirstJourney from "@/app/components/v4/V4FirstJourney";
 import V4FirstJourneyV12 from "@/app/components/v4/V4FirstJourneyV12";
 import V4FirstJourneyFidelityBridge from "@/app/components/v4/V4FirstJourneyFidelityBridge";
@@ -10,19 +7,15 @@ import "@/app/styles/v4/existing-fidelity-remediation.css";
 
 const STORAGE_KEY = "lovetree-first-journey-unified";
 
-type JourneyMode = "loading" | "canonical" | "legacy-demo";
+type JourneyPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default function V4FirstJourneyPage() {
-  const [mode, setMode] = useState<JourneyMode>("loading");
+export default async function V4FirstJourneyPage({ searchParams }: JourneyPageProps) {
+  const params = await searchParams;
+  const legacy = Array.isArray(params.legacy) ? params.legacy[0] : params.legacy;
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setMode(params.get("legacy") === "1" ? "legacy-demo" : "canonical");
-  }, []);
-
-  if (mode === "loading") return null;
-
-  if (mode === "legacy-demo") {
+  if (legacy === "1") {
     return (
       <>
         <V4FirstJourney />
