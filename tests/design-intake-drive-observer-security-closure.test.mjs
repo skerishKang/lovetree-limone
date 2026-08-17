@@ -9,7 +9,11 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { createHttpDriveTransport } from "../lib/design-intake/drive-observer/index.ts";
+import {
+  createHttpDriveTransport,
+  liveObservationAvailability,
+  redactString,
+} from "../lib/design-intake/drive-observer/index.ts";
 
 const repoRoot = process.cwd();
 const workflowPath = path.join(repoRoot, ".github", "workflows", "design-source-freshness-observer.yml");
@@ -130,4 +134,43 @@ test("content GET keeps encoded file id, exact trusted origin, and fail-closed r
   assert.equal(call.init.redirect, "error");
   assert.equal(call.init.headers.Authorization, `Bearer ${FAKE_TOKEN}`);
   assert.ok(!call.url.includes(FAKE_TOKEN));
+});
+
+test("SECRET_REDACTION covers bearer/API/GitHub/PEM/refresh shapes without erasing normal evidence", () => {
+  const googleApiKey = `AIza${"A".repeat(35)}`;
+  const githubToken = `ghp_${"B".repeat(24)}`;
+  const refreshToken = `1//${"C".repeat(24)}`;
+  const bearer = `Bearer ${"D".repeat(24)}`;
+  const pem = `-----BEGIN PRIVATE KEY-----\nFAKE-KEY-MATERIAL\n-----END PRIVATE KEY-----`;
+  const normalFileId = "1f73observerTrack62V11OldFileAaa";
+  const normalHash = "a".repeat(64);
+  const normalFilename = "Track62 V1.1 current.html";
+
+  const redacted = redactString(
+    [FAKE_TOKEN, googleApiKey, githubToken, refreshToken, bearer, pem, normalFileId, normalHash, normalFilename].join("\n"),
+  );
+
+  for (const secret of [FAKE_TOKEN, googleApiKey, githubToken, refreshToken, bearer, pem]) {
+    assert.ok(!redacted.includes(secret), `secret shape must be removed: ${secret.slice(0, 12)}`);
+  }
+  assert.match(redacted, /\[REDACTED\]/);
+  assert.ok(redacted.includes(normalFileId), "normal Drive file id must survive redaction");
+  assert.ok(redacted.includes(normalHash), "normal SHA-256 evidence must survive redaction");
+  assert.ok(redacted.includes(normalFilename), "normal filename must survive redaction");
+});
+
+test("LONG_LIVED_CREDENTIAL_REFUSAL covers refresh-token and service-account env seams", () => {
+  const withRefreshToken = liveObservationAvailability({
+    DESIGN_INTAKE_DRIVE_ACCESS_TOKEN: FAKE_TOKEN,
+    OAUTH_REFRESH_TOKEN: `1//${"R".repeat(24)}`,
+  });
+  assert.equal(withRefreshToken.enabled, false);
+  assert.match(withRefreshToken.reason, /long-lived|refused/i);
+
+  const withServiceAccount = liveObservationAvailability({
+    DESIGN_INTAKE_DRIVE_ACCESS_TOKEN: FAKE_TOKEN,
+    SERVICE_ACCOUNT_KEY: '{"client_email":"fake@example.invalid"}',
+  });
+  assert.equal(withServiceAccount.enabled, false);
+  assert.match(withServiceAccount.reason, /long-lived|refused/i);
 });
