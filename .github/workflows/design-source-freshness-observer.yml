@@ -11,8 +11,8 @@
 #      credential contract is absent.
 #
 # 2. `live-observation` (TRUSTED HOLD, manual dispatch only):
-#    - can only run when the dispatch ref name exactly equals the repository
-#      default branch, and checkout is explicitly pinned to that default branch;
+#    - can only run when the dispatch ref is exactly refs/heads/<default branch>,
+#      and checkout is explicitly pinned to that repository default branch;
 #    - never trusts a workflow input, PR head, pull ref or tag as executable
 #      live-observation code;
 #    - intentionally FAILS (LIVE_WIF_CONFIGURATION_HOLD) until the Web CTO
@@ -102,7 +102,7 @@ jobs:
 
   live-observation:
     name: Live observation (trusted hold — default-branch code only)
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live' && github.ref_name == github.event.repository.default_branch
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
