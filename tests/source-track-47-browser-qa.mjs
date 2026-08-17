@@ -131,7 +131,12 @@ async function openNative(browser, viewport, options = {}) {
   const page = await browser.newPage({ viewport, ...options });
   const errors = [];
   attachErrorCapture(page, errors);
-  const response = await page.goto(NATIVE, { waitUntil: "networkidle", timeout: 45000 });
+  // In the `exact` phase the pinned 28,650,099 B video streams continuously,
+  // so `networkidle` never settles while the film transports; `load` plus the
+  // stage wait below is the truthful readiness gate there. The `hold` phase
+  // keeps `networkidle` (the exact video is intentionally absent).
+  const waitUntil = PHASE === "exact" ? "load" : "networkidle";
+  const response = await page.goto(NATIVE, { waitUntil, timeout: 45000 });
   assert.ok(response?.ok(), `native route HTTP ${response?.status()}`);
   await page.locator("main[data-act]").waitFor({ timeout: 15000 });
   return { page, errors };
@@ -359,11 +364,16 @@ if (PHASE === "exact") {
     await page.waitForTimeout(350);
     assert.equal(await attr(page, "data-mode"), "USER_CONTROLLED");
     const ms = await maxScroll(page);
+    // Scroll-ratio → ACT mapping per the pinned source ACTS timeline
+    // (duration 14.187007s): ACT boundaries are 2.450 / 6.100 / 10.650 /
+    // 12.250. Ratios land strictly INSIDE each act: 0.3→4.256s (ACT 2),
+    // 0.5→7.094s (ACT 3), 0.8→11.350s (ACT 4), 0.999→14.173s (ACT 5).
+    // (0.75→10.640s is still ACT 3 by the source boundary — not ACT 4.)
     for (const [ratio, expectedAct] of [
       [0.0, "1"],
       [0.3, "2"],
       [0.5, "3"],
-      [0.75, "4"],
+      [0.8, "4"],
       [0.999, "5"],
     ]) {
       await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * ratio));
@@ -404,7 +414,9 @@ if (PHASE === "exact") {
     await page.waitForTimeout(400);
     assert.equal(await page.evaluate(() => document.querySelector("video")?.paused), true);
     await page.locator('[role="slider"]').focus();
-    await page.keyboard.press("ArrowDown");
+    // Source V4.2.5 rail keydown: dir = (ArrowUp || ArrowRight) ? +1 : -1 —
+    // ArrowUp/ArrowRight seek FORWARD (+4%), ArrowDown/ArrowLeft seek back.
+    await page.keyboard.press("ArrowUp");
     await page.waitForTimeout(300);
     const after = Number(await page.locator('[role="slider"]').getAttribute("aria-valuenow"));
     assert.ok(after >= now, "rail keyboard seek works");
@@ -732,7 +744,18 @@ record("hold: expected absent-video transport error explicitly classified as HOL
 
 /* ------------------------------------------------------------------ */
 
-const browser = await chromium.launch();
+// Playwright's bundled Chromium is built without proprietary H.264/AAC decode,
+// so the `exact` phase (real media transport of the pinned MP4) requires a
+// channel that can actually decode it. The `hold` phase and CI never set this
+// and keep the default bundled Chromium. Local exact-overlay evidence may set
+// TRACK47_BROWSER_CHANNEL=chrome to use the system Google Chrome.
+const BROWSER_CHANNEL = process.env.TRACK47_BROWSER_CHANNEL || undefined;
+if (PHASE === "exact" && !BROWSER_CHANNEL) {
+  console.warn(
+    "WARN exact phase without TRACK47_BROWSER_CHANNEL: bundled Chromium cannot decode H.264 — exact media transport checks will fail closed",
+  );
+}
+const browser = await chromium.launch(BROWSER_CHANNEL ? { channel: BROWSER_CHANNEL } : {});
 try {
   // Provision the shared desktop page used by the nav contract checks.
   const navOpened = await openNative(browser, { width: 1280, height: 800 });
