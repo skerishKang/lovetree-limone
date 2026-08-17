@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "kind": "SOURCE_FAMILY_INTAKE",
+  "stableId": "living-media-sphere-v3",
+  "sourceFamilyId": "living-media-sphere",
+  "revisionId": "v3",
+  "title": "Living Media Sphere V3 · Interactive Video Sphere Entry",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "css3d-dom",
+  "scenarioId": "entry-onboarding",
+  "productJob": "LoveTree entry impression: 89 film cards orbit as an interactive sphere; drag/inertia exploration, Media and Shape drawers, live composition controls, click-to-focus, repeat-click fullscreen viewer, and max-one audible playback authority.",
+  "summary": "Independent Living Media Sphere source family. Issue #242 removed numeric repository Source Track ownership while preserving the validated V3 Phase-1 source-runner behavior, exact executable fingerprint, local-only 178-media authority, source defects, and historical adopted-design-folder provenance.",
+  "governance": {
+    "decisionIssue": 242,
+    "historicalDriveFolderNumber": 68,
+    "historicalDriveNumberMeaning": "ADOPTED_DESIGN_FOLDER_PROVENANCE_ONLY",
+    "repositoryNumericSourceTrackId": null,
+    "repositoryLineage68": "NOT_ALLOCATED",
+    "canonicalV4Adoption": "NO",
+    "phase2Native": "HOLD",
+    "productionMutation": "NONE"
+  },
+  "provenance": {
+    "driveFolderId": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
+    "sourceLabel": "12_러브트리_리빙미디어스피어_인터랙티브대문_V1",
+    "historicalAdoptedDesignPath": "03_디자인채택본/68_리빙미디어스피어_인터랙티브대문/현재후보.html",
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V3",
+    "authorityObservedAt": "2026-08-17T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "버전3-84개.html",
+      "driveId": "1OvSy5DhPRGFLsNyjHwQZYJFrEmUoZLbx",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "1.개발과정/18_버전3_개발본.html",
+      "driveId": "1X47bumRM4nz0ljtnRIK1JcQWJUj-TZl6",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "executable-variant-byte-identical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "START.html",
+      "driveId": "1A30t1gY088DWbdWU6lqqYWdUJJhAzqwI",
+      "bytes": 25544,
+      "sha256": "2f269047827ad91b32841a2be6eb5022fbae7befcb2f8b59337b8cd1ee2e0232",
+      "role": "historical-distribution-alias-trash-404",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "exactMedia": {
+    "transport": "LOCAL_EXACT_OUT_OF_GIT_ONLY",
+    "rows": 178,
+    "videoCount": 89,
+    "posterCount": 89,
+    "videoTotalBytes": 1946025764,
+    "posterTotalBytes": 1619015,
+    "videosAtOrBelow25MiB": 64,
+    "videosAbove25MiB": 25,
+    "historicalEvidenceSnapshot": "docs/design/source-families/living-media-sphere/history/pre-242-numeric-identity-manifest.json",
+    "localStagingPath": "public/design-lab-assets/source-families/living-media-sphere/v3/assets",
+    "remoteCiExactMedia": "NOT_PROVISIONED",
+    "externalOrigin": "NOT_AUTHORIZED"
+  },
+  "sourceDefects": [
+    "prefers-reduced-motion disables decorative transitions but idle auto-rotation continues; source truth is PARTIAL / KNOWN_SOURCE_DEFECT",
+    "front sphere cards can overlap dock triggers because source z-order permits card z-index above trigger z-index",
+    "pointerup and pointercancel share the same committing endPointer path; cancelled short gestures can focus/open"
+  ],
+  "nativeRemediations": [
+    "preserve CSS3D DOM + software spherical projection; no WebGL/Three.js/canvas renderer substitution",
+    "pointercancel and lost pointer capture must be cleanup-only and never select/focus/open",
+    "Phase 2 must remediate reduced-motion autonomous rotation while preserving manual interaction"
+  ],
+  "sourceRunner": {
+    "route": "/design-lab/source-families/living-media-sphere/v3/source",
+    "assetPath": "/design-lab-assets/source-families/living-media-sphere/v3/index.html",
+    "hashGate": "FAIL_CLOSED_SHA256"
+  },
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "UNDECIDED",
+    "note": "Phase 1 source runner/evidence only. Phase 2 native HOLD. No repository lineage allocation and no canonical /v4 adoption."
+  }
+}
