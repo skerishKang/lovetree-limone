@@ -8,6 +8,15 @@
     "auth_identity": "skerishKang/LoveBud#4006",
     "shared_api_foundation": "skerishKang/LoveBud#4094"
   },
+  "authority_resolution_order": [
+    "LATEST_EXPLICIT_PRODUCT_OWNER_ARCHITECTURE_DECISION",
+    "PLATFORM_PARENT_4004_AND_LOVETREE_152",
+    "FRESH_CURRENT_PROVIDER_AND_REPOSITORY_EVIDENCE",
+    "SPECIALIZED_4005_4006_SHARED_API_AUTHORITY",
+    "LATEST_EXPLICIT_SUPERSEDING_CORRECTION",
+    "NONSTALE_ISSUE_BODY",
+    "HISTORICAL_REPORTS_SNAPSHOTS_AND_PROTOTYPES"
+  ],
   "product_invariants": {
     "authentication_authorities": 1,
     "backend_api_authorities": 1,
@@ -50,11 +59,13 @@
     "ARCHITECTURE_CONSISTENCY_GATE_PASS"
   ],
   "production_mutation_gate": {
-    "current_deployment_fresh": true,
-    "current_provider_target_fresh": true,
-    "runtime_binding_target_match": true,
-    "required_capability_present": true,
-    "explicit_production_mutation_authority": true,
+    "required_conditions": [
+      "CURRENT_DEPLOYMENT_FRESH",
+      "CURRENT_PROVIDER_TARGET_FRESH",
+      "RUNTIME_BINDING_TARGET_MATCH",
+      "REQUIRED_CAPABILITY_PRESENT",
+      "EXPLICIT_PRODUCTION_MUTATION_AUTHORITY"
+    ],
     "any_ambiguity_means_zero_mutation": true
   },
   "historical_snapshot_warning": {
