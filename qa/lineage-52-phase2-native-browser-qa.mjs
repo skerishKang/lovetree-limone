@@ -178,11 +178,11 @@ async function main() {
         assert.equal(early.progress, 0.18);
         assert.match(earlyText, /reveal\s+(?:1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])%/);
 
-        await page.evaluate(() => window.__LINEAGE52_PHASE2__.setProgress(0.92));
+        await page.evaluate(() => window.__LINEAGE52_PHASE2__.setProgress(1));
         await page.waitForTimeout(80);
         const late = await state(page);
         const lateText = await page.locator('[data-connection-id="c-01"]').innerText();
-        assert.equal(late.progress, 0.92);
+        assert.equal(late.progress, 1);
         assert.match(lateText, /reveal 100%/);
 
         await page.getByRole("button", { name: "Restart", exact: true }).click();
