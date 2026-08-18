@@ -34,7 +34,7 @@ test("Track18 exact runtime asset fingerprints are byte-exact and repo-transfer 
   const manifest = JSON.parse(readFileSync(`${ROOT}/design-intake/manifests/source-track-18-fragment-loader-v2.json`, "utf8"));
   assert.equal(manifest.exactAssetGate.fingerprintStatus, "FINGERPRINT_COMPLETE");
   assert.equal(manifest.exactAssetGate.binaryTransferStatus, "BINARY_TRANSFER_COMPLETE");
-  assert.equal(manifest.exactAssetGate.exactGateStatus, "EXACT_GATE_8_8_PASS");
+  assert.equal(manifest.exactAssetGate.exactGateStatus, "EXACT_GATE_PASS");
   assert.equal(manifest.exactAssets.length, 8);
   for (const [filename, bytes, expectedSha] of expectedAssets) {
     assert.match(provenance, new RegExp(filename.replace(".", "\\.")));
