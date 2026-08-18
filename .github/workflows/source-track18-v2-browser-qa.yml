@@ -1,4 +1,4 @@
-name: Track18 V2 source runner fail-closed HOLD QA
+name: Track18 V2 source runner exact asset 8/8 closure QA
 
 on:
   pull_request:
@@ -49,7 +49,7 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run Track18 fail-closed asset HOLD browser QA
+      - name: Run Track18 exact asset 8/8 browser QA
         shell: bash
         run: |
           set -euo pipefail
@@ -87,6 +87,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: track18-v2-source-runner-hold-evidence
+          name: track18-v2-source-runner-exact-8-8-evidence
           path: /tmp/track18-browser-qa/*.png
           if-no-files-found: warn

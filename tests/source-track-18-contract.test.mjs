@@ -29,22 +29,30 @@ test("Track18 exact HTML fingerprint and source-local href stay pinned", () => {
   assert.match(html, /duration=6800/);
 });
 
-test("Track18 exact runtime asset fingerprints remain pinned while repo transfer fails closed", () => {
+test("Track18 exact runtime asset fingerprints are byte-exact and repo-transfer complete", () => {
   const provenance = readFileSync(`${ROOT}/lib/source-track-18/provenance.ts`, "utf8");
   const manifest = JSON.parse(readFileSync(`${ROOT}/design-intake/manifests/source-track-18-fragment-loader-v2.json`, "utf8"));
   assert.equal(manifest.exactAssetGate.fingerprintStatus, "FINGERPRINT_COMPLETE");
-  assert.equal(manifest.exactAssetGate.binaryTransferStatus, "BINARY_TRANSFER_NONE");
-  assert.equal(manifest.exactAssetGate.exactGateStatus, "EXACT_GATE_PENDING");
+  assert.equal(manifest.exactAssetGate.binaryTransferStatus, "BINARY_TRANSFER_COMPLETE");
+  assert.equal(manifest.exactAssetGate.exactGateStatus, "EXACT_GATE_8_8_PASS");
   assert.equal(manifest.exactAssets.length, 8);
   for (const [filename, bytes, expectedSha] of expectedAssets) {
     assert.match(provenance, new RegExp(filename.replace(".", "\\.")));
     assert.match(provenance, new RegExp(String(bytes).replace(/(\d)(?=(\d{3})+$)/g, "$1[_]?")));
     assert.match(provenance, new RegExp(expectedSha));
+    const assetPath = `${ROOT}/public/design-lab-assets/source-tracks/18/v2/assets/${filename}`;
     assert.equal(
-      existsSync(`${ROOT}/public/design-lab-assets/source-tracks/18/v2/assets/${filename}`),
-      false,
-      `${filename} must not be substituted while exact binary transfer is held`,
+      existsSync(assetPath),
+      true,
+      `${filename} must be present after exact byte-safe transfer`,
     );
+    const buf = readFileSync(assetPath);
+    assert.equal(buf.byteLength, bytes, `${filename} byte length must be exact`);
+    assert.equal(sha(buf), expectedSha, `${filename} SHA-256 must be exact`);
+    const declared = manifest.exactAssets.find((a) => a.filename === filename);
+    assert.ok(declared, `manifest must declare ${filename}`);
+    assert.equal(declared.sha256, expectedSha, `manifest fingerprint must equal file fingerprint for ${filename}`);
+    assert.equal(declared.bytes, bytes, `manifest byte length must equal file byte length for ${filename}`);
   }
 });
 

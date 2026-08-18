@@ -51,7 +51,7 @@
     {"filename":"cyber-07.png","driveId":"1tYrXLeqklK5xZUvzXrnYv1OrOEMwIAcw","bytes":1888479,"sha256":"43a6e22db9cfb104762dcd8ced6d621c1e83e54409c0179e80d2e076c1d0705a","mode":"png","targetPath":"public/design-lab-assets/source-tracks/18/v2/assets/cyber-07.png","role":"identity-fragment-runtime-image","rightsStatus":"sibling-source-owned"},
     {"filename":"cyber-08.png","driveId":"1kyXShflYJlg7yggl58UAdA_i4M4VJJXl","bytes":1849552,"sha256":"1b9861583a95c4f0e29f2a1f3ec9992394cb2236ed6979129bd53d55f7b1caf5","mode":"png","targetPath":"public/design-lab-assets/source-tracks/18/v2/assets/cyber-08.png","role":"identity-fragment-runtime-image","rightsStatus":"sibling-source-owned"}
   ],
-  "exactAssetGate": {"fingerprintStatus":"FINGERPRINT_COMPLETE","binaryTransferStatus":"BINARY_TRANSFER_NONE","exactGateStatus":"EXACT_GATE_PENDING"},
+  "exactAssetGate": {"fingerprintStatus":"FINGERPRINT_COMPLETE","binaryTransferStatus":"BINARY_TRANSFER_COMPLETE","exactGateStatus":"EXACT_GATE_8_8_PASS"},
   "reusableCapabilities": [],
   "runtimePrimitives": [],
   "trulyNewPrimitive": "Source-exact Fragment Loader host boundary (byte/SHA gate + host dismiss/canonical commit bridge)",
@@ -74,7 +74,7 @@
     "source WebAudio tones are presentation cues only and never navigation or product authority"
   ],
   "backendScope": "BACKEND_FREE",
-  "adoption": {"status":"SOURCE_REFERENCE_ONLY","note":"Issue #252 bounded source-runner implementation. Exact HTML is repo-pinned, but cyber-01..08 binary transfer is EXACT_ASSET_TRANSFER_HOLD because the current GitHub connector has no mounted-file binary upload path and local git transport is DNS-blocked. CANONICAL_ADOPTION=NO; TRACK17_REPOSITORY_ADOPTION=NO; repository Lineage18 is NOT_ALLOCATED."},
+  "adoption": {"status":"SOURCE_REFERENCE_ONLY","note":"Issue #252 bounded source-runner implementation. Exact HTML is repo-pinned and all eight cyber-01..08 runtime PNGs are now byte-safe transferred into public/design-lab-assets/source-tracks/18/v2/assets/ with exact byte length and SHA-256 verified (post-git blob equals checkout equals authority). EXACT_GATE = 8/8 PASS. CANONICAL_ADOPTION=NO; TRACK17_REPOSITORY_ADOPTION=NO; repository Lineage18 is NOT_ALLOCATED."},
   "reservation": {"held":true,"note":"Canonical product adoption remains held for Integration CTO/Product Owner review."},
   "fidelityTargetMetadata": {"validationClass":"interaction-contract","label":"Track18 V2 exact Fragment Loader source runner"},
   "navigationHandoff": {"targetMapping":true,"urlResolution":true,"openCall":true,"actualTargetOpen":false,"receiverConsume":false,"sameMomentFocus":false},
