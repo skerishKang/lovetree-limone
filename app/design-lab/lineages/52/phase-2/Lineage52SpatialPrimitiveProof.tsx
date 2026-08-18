@@ -338,7 +338,7 @@ export default function Lineage52SpatialPrimitiveProof({ qaDepth = false }: { qa
       setYaw(yaw: number) {
         if (!Number.isFinite(yaw)) return;
         lastManualAtRef.current = performance.now();
-        setCamera((current) => ({ ...current, yaw }));
+        setCamera((current) => ({ ...current, yaw, pitch: qaDepth ? 0 : current.pitch }));
       },
       setProgress(next: number) {
         if (!Number.isFinite(next)) return;
@@ -351,7 +351,7 @@ export default function Lineage52SpatialPrimitiveProof({ qaDepth = false }: { qa
     return () => {
       delete window.__LINEAGE52_PHASE2__;
     };
-  }, [fallbackReason]);
+  }, [fallbackReason, qaDepth]);
 
   const selectedMoment = moments.find((moment) => moment.id === selectedMomentId) ?? null;
 
