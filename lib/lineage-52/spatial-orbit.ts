@@ -311,6 +311,38 @@ export function quadraticBezier(a: Vec3, control: Vec3, b: Vec3, t: number): Vec
   ];
 }
 
+export function sphericalInterpolate(a: Vec3, b: Vec3, t: number): Vec3 {
+  const tt = clamp(t, 0, 1);
+  const start = normalizeVec3(a);
+  const end = normalizeVec3(b);
+  const cosine = clamp(dotVec3(start, end), -1, 1);
+
+  if (cosine > 0.9995) {
+    return normalizeVec3(lerpVec3(start, end, tt));
+  }
+
+  if (cosine < -0.9995) {
+    const xAxis: Vec3 = [1, 0, 0];
+    const yAxis: Vec3 = [0, 1, 0];
+    const firstAxis = Math.abs(dotVec3(start, xAxis)) < 0.9 ? xAxis : yAxis;
+    const orthogonal = normalizeVec3(crossVec3(start, firstAxis));
+    return normalizeVec3(
+      addVec3(
+        scaleVec3(start, Math.cos(Math.PI * tt)),
+        scaleVec3(orthogonal, Math.sin(Math.PI * tt)),
+      ),
+    );
+  }
+
+  const theta = Math.acos(cosine);
+  const sinTheta = Math.sin(theta);
+  const sourceWeight = Math.sin((1 - tt) * theta) / sinTheta;
+  const targetWeight = Math.sin(tt * theta) / sinTheta;
+  return normalizeVec3(
+    addVec3(scaleVec3(start, sourceWeight), scaleVec3(end, targetWeight)),
+  );
+}
+
 export function buildArcPoints(
   source: Vec3,
   target: Vec3,
@@ -321,14 +353,27 @@ export function buildArcPoints(
   if (!Number.isInteger(segments) || segments < 2 || !Number.isFinite(height) || height < 0) {
     throw new RangeError("invalid arc options");
   }
-  const midpointDirection = normalizeVec3(addVec3(normalizeVec3(source), normalizeVec3(target)));
-  const fallbackDirection = normalizeVec3(addVec3(source, target));
-  const direction = lengthVec3(midpointDirection) > Number.EPSILON ? midpointDirection : fallbackDirection;
-  const radius = Math.max(lengthVec3(source), lengthVec3(target));
-  const control = scaleVec3(direction, radius + height);
+  const sourceRadius = lengthVec3(source);
+  const targetRadius = lengthVec3(target);
+  if (sourceRadius <= Number.EPSILON || targetRadius <= Number.EPSILON) {
+    throw new RangeError("arc endpoints must be non-zero vectors");
+  }
+
   const points: Vec3[] = [];
   for (let index = 0; index <= segments; index += 1) {
-    points.push(quadraticBezier(source, control, target, index / segments));
+    if (index === 0) {
+      points.push(source);
+      continue;
+    }
+    if (index === segments) {
+      points.push(target);
+      continue;
+    }
+    const t = index / segments;
+    const direction = sphericalInterpolate(source, target, t);
+    const surfaceRadius = sourceRadius + (targetRadius - sourceRadius) * t;
+    const radialLift = Math.sin(Math.PI * t) * height;
+    points.push(scaleVec3(direction, surfaceRadius + radialLift));
   }
   return points;
 }
