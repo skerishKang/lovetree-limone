@@ -8,7 +8,6 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
-  type WheelEvent as ReactWheelEvent,
 } from "react";
 import {
   canAutoAdvance,
@@ -158,6 +157,23 @@ export default function Lineage52SpatialPrimitiveProof({ qaDepth = false }: { qa
     };
   }, []);
 
+  // React delegates wheel events at the root. The native listener is explicitly
+  // non-passive so wheel/dolly authority stays on the canvas and page scrolling
+  // cannot steal the gesture while the pointer is over the spatial stage.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      lastManualAtRef.current = performance.now();
+      setCamera((current) =>
+        applyOrbitCameraInput(current, { distanceDelta: event.deltaY * 0.0022 }),
+      );
+    };
+    canvas.addEventListener("wheel", handleWheel, { passive: false });
+    return () => canvas.removeEventListener("wheel", handleWheel);
+  }, []);
+
   useEffect(() => {
     const renderer = rendererRef.current;
     if (!renderer?.available) return;
@@ -250,15 +266,6 @@ export default function Lineage52SpatialPrimitiveProof({ qaDepth = false }: { qa
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    endManual();
-  };
-
-  const handleWheel = (event: ReactWheelEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
-    beginManual();
-    setCameraWithManualAuthority((state) =>
-      applyOrbitCameraInput(state, { distanceDelta: event.deltaY * 0.0022 }),
-    );
     endManual();
   };
 
@@ -372,7 +379,6 @@ export default function Lineage52SpatialPrimitiveProof({ qaDepth = false }: { qa
           onPointerUp={finishPointer}
           onPointerCancel={finishPointer}
           onLostPointerCapture={finishPointer}
-          onWheel={handleWheel}
           onKeyDown={handleKeyDown}
           data-testid="lineage52-phase2-canvas"
         />
