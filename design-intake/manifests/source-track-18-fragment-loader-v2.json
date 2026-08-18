@@ -75,7 +75,6 @@
   ],
   "backendScope": "BACKEND_FREE",
   "adoption": {"status":"SOURCE_REFERENCE_ONLY","note":"Issue #252 bounded source-runner implementation. Exact HTML is repo-pinned, but cyber-01..08 binary transfer is EXACT_ASSET_TRANSFER_HOLD because the current GitHub connector has no mounted-file binary upload path and local git transport is DNS-blocked. CANONICAL_ADOPTION=NO; TRACK17_REPOSITORY_ADOPTION=NO; repository Lineage18 is NOT_ALLOCATED."},
-  "lineageReservation": {"status":"HOLD","note":"Source Track18 does not allocate repository Design Lineage18."},
   "reservation": {"held":true,"note":"Canonical product adoption remains held for Integration CTO/Product Owner review."},
   "fidelityTargetMetadata": {"validationClass":"interaction-contract","label":"Track18 V2 exact Fragment Loader source runner"},
   "navigationHandoff": {"targetMapping":true,"urlResolution":true,"openCall":true,"actualTargetOpen":false,"receiverConsume":false,"sameMomentFocus":false},
