@@ -78,7 +78,7 @@ Resolve conflicts in this order:
 1. latest explicit Product Owner architecture decision;
 2. LoveBud `#4004` + LoveTree `#152`;
 3. fresh current repository/provider evidence for the exact target;
-4. LoveBud `#4005` for DB/schema/data and `#4006` for auth/identity;
+4. LoveBud `#4005` for DB/schema/data, `#4006` for auth/identity, and the current shared-API authority for backend runtime;
 5. latest explicit superseding correction comment;
 6. non-stale issue body;
 7. historical reports, old SHAs, prototypes, snapshots.
@@ -170,5 +170,17 @@ HISTORICAL_SNAPSHOT
 Do not call dated provider/database observations `current` without a fresh verification in the same work session. Stale snapshots must be corrected or visibly marked `HISTORICAL_SNAPSHOT / NOT CURRENT AUTHORITY`.
 
 ## 10. Cutover rule
+
+Before any Production mutation, all of the following are **required conditions**, not claims that Production mutation is currently authorized:
+
+```text
+CURRENT_DEPLOYMENT_FRESH
+CURRENT_PROVIDER_TARGET_FRESH
+RUNTIME_BINDING_TARGET_MATCH
+REQUIRED_CAPABILITY_PRESENT
+EXPLICIT_PRODUCTION_MUTATION_AUTHORITY
+```
+
+Any ambiguity means zero mutation.
 
 A green E2E, prototype, provider deployment, or CI result proves only its stated scope. It never implicitly authorizes Product auth cutover, canonical DB cutover, Firebase retirement, shared API Production routing, or LoveTree DB promotion.
