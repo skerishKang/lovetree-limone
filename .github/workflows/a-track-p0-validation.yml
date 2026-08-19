@@ -67,7 +67,7 @@ jobs:
       - name: Prepare Playwright runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Lineage 53 V2 actual-route browser QA
         shell: bash
