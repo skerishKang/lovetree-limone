@@ -40,10 +40,13 @@ export type CompareMode = "launcher" | "A" | "B";
 export interface BridgeMessage {
   readonly type: "track68-select-variant" | "track68-portal-open";
   readonly variant?: "A" | "B";
-  readonly targetId?: string;
+  /** Child-supplied target ID — UNTRUSTED. Parent recomputes from ledger. */
+  readonly targetId?: string | null;
   readonly sourceLabel?: string;
+  /** Child-supplied route — UNTRUSTED. Parent recomputes from ledger. */
   readonly resolvedRoute?: string | null;
-  readonly status?: "DESIGN_LAB_TARGET" | "HOLD_UNRESOLVED" | "FAIL_CLOSED_UNKNOWN";
+  /** Child-supplied status — UNTRUSTED. Parent recomputes from ledger. */
+  readonly status?: "DESIGN_LAB_TARGET" | "STABLE_REPO_TARGET" | "HOLD_UNRESOLVED" | "FAIL_CLOSED_UNKNOWN";
 }
 
 /**

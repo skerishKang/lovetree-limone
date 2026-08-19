@@ -120,8 +120,14 @@ export default function SourceTrack68CompareRunner() {
   }, [target, mode, nonce]);
 
   // Listen for bridge postMessage (portal open / variant select)
+  // P0 trust boundary: event.source must be the active iframe's contentWindow.
+  // targetId is untrusted input — recompute status + route from the parent-owned
+  // SOURCE_TRACK_68_PORTAL_LEDGER. Never trust child-supplied status/resolvedRoute.
   useEffect(() => {
     const handler = (event: MessageEvent) => {
+      // Only accept messages from the active iframe's contentWindow
+      const iframeWindow = iframeRef.current?.contentWindow;
+      if (event.source !== iframeWindow) return;
       if (!event.data || typeof event.data.type !== "string") return;
       if (!event.data.type.startsWith("track68-")) return;
       const msg = event.data as BridgeMessage;
@@ -131,7 +137,25 @@ export default function SourceTrack68CompareRunner() {
           setPortalEvent(null);
         }
       } else if (msg.type === "track68-portal-open") {
-        setPortalEvent(msg);
+        // Treat child-supplied targetId as untrusted input.
+        // Recompute status + resolvedRoute from the parent-owned ledger.
+        const targetId = msg.targetId ?? null;
+        const entry = SOURCE_TRACK_68_PORTAL_LEDGER.find(
+          (p) => p.sourceTargetId === targetId,
+        );
+        const computedStatus = entry
+          ? entry.routeStatus
+          : "HOLD_UNRESOLVED";
+        const computedRoute = entry
+          ? entry.resolvedRepositoryRoute
+          : null;
+        setPortalEvent({
+          type: "track68-portal-open",
+          targetId,
+          status: computedStatus,
+          resolvedRoute: computedRoute,
+          sourceLabel: entry?.sourceLabel,
+        });
       }
     };
     window.addEventListener("message", handler);
@@ -294,7 +318,13 @@ export default function SourceTrack68CompareRunner() {
         </div>
 
         {portalEvent && (
-          <div className={styles.portalEvent} role="status" aria-live="polite">
+          <div
+            className={styles.portalEvent}
+            role="status"
+            aria-live="polite"
+            data-portal-target={portalEvent.targetId ?? "unknown"}
+            data-portal-status={portalEvent.status ?? "HOLD_UNRESOLVED"}
+          >
             {portalEvent.status === "DESIGN_LAB_TARGET" && portalEvent.resolvedRoute ? (
               <>
                 <span className={styles.ok}>
