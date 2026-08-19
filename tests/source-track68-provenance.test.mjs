@@ -14,7 +14,7 @@ import {
   SOURCE_TRACK_68_VARIANT_A,
   SOURCE_TRACK_68_VARIANT_B,
   SOURCE_TRACK_68_EXTERNAL_MEDIA,
-} from "@/lib/source-track-68/provenance";
+} from "@/app/design-lab/source-tracks/68/v3-3-2/compare/lib/provenance";
 
 test("Track68 launcher fingerprint matches Issue #244 authority", () => {
   assert.equal(SOURCE_TRACK_68_LAUNCHER.bytes, 2670);

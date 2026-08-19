@@ -33,7 +33,7 @@ import {
   SOURCE_TRACK_68_PORTAL_LEDGER,
   SOURCE_TRACK_68_VARIANT_A,
   SOURCE_TRACK_68_VARIANT_B,
-} from "@/lib/source-track-68/provenance";
+} from "./provenance";
 
 export type CompareMode = "launcher" | "A" | "B";
 

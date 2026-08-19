@@ -16,14 +16,14 @@ import {
   SOURCE_TRACK_68_TITLE,
   SOURCE_TRACK_68_VARIANT_A,
   SOURCE_TRACK_68_VARIANT_B,
-} from "@/lib/source-track-68/provenance";
+} from "./lib/provenance";
 import {
   type BridgeMessage,
   type CompareMode,
   buildLauncherSrcdoc,
   buildVariantSrcdoc,
   SOURCE_TRACK_68_VERIFICATION_TARGETS,
-} from "@/lib/source-track-68/host-bridge";
+} from "./lib/host-bridge";
 
 type RunnerState = "verifying" | "ready" | "failed";
 

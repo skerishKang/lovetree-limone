@@ -3,10 +3,10 @@
   "stableId": "source-track-68-v332-compare-runner",
   "sourceTrackId": "Track68",
   "title": "Human Emotional Path Motion Archive V3.3.2 · Compare Launcher + A/B Variants",
-  "classification": "SOURCE_COMPARE_RUNNER",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
   "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
   "rendering": "dom-2d",
-  "scenarioId": "emotional-path-archive",
+  "scenarioId": "people-archive",
   "productJob": "Hero emotional-motion pair → horizontal pointer position scrubs the beginning state → scroll transitions into a 9-Moment emotional archive → each Moment card can route into another LoveTree source world → end-state WORKS portal index exposes the same source-world destinations. V3.3.2 is a compare-launcher/display layer over two V3.3.1 A/B functional candidates.",
   "summary": "Source Track 68 (68_인물감정경로_모션아카이브) V3.3.2 compare launcher + V3.3.1 A/B functional candidates, intake Issue #244. A↔B byte diff proves only two delta classes: document title A/B marker and 9 archive image paths (01.png..09.png vs 동양인01.png..동양인09.png). Product flow, portal mapping, hero URLs, CSS, animation, keyboard behavior are otherwise byte-identical. A_B_PRODUCT_SEMANTICS=IDENTICAL. SELECTED_VARIANT=UNRESOLVED. SOURCE TRACK 68 is NOT repository Design Lineage 68: no lineage number is reserved. REPOSITORY_LINEAGE_68=NOT_ALLOCATED. CANONICAL_ADOPTION=NO. CLOUDFRONT_BYTE_EQUIVALENCE=HOLD. DIRECT_CLOUDFRONT_HOTLINK=NOT_AUTHORIZED. Runtime uses local hero companion MP4s.",
   "provenance": {
@@ -29,7 +29,7 @@
   "sourceSnapshot": {
     "revisionLabel": "V3.3.2",
     "authorityObservedAt": "2026-08-17T21:40:14Z",
-    "sourceAuthorityState": "IMPLEMENTATION_READY_SOURCE_AUTHORITY_PACKAGE"
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
   },
   "sourceArtifacts": [
     {
@@ -37,7 +37,7 @@
       "driveId": "1J7VtN8ixGYO3Ddd33oVxoFBPuFNZ8ymf",
       "bytes": 2670,
       "sha256": "31637f6ffd49a280cded499e6c1a65fda79f0647561bdfd83d4696332129d8c8",
-      "role": "compare-launcher-display-packaging",
+      "role": "executable",
       "status": "PINNED"
     },
     {
@@ -45,7 +45,7 @@
       "driveId": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
       "bytes": 18565,
       "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
-      "role": "functional-candidate-variant-A",
+      "role": "executable-variant-A",
       "status": "PINNED"
     },
     {
@@ -53,7 +53,7 @@
       "driveId": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
       "bytes": 18646,
       "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
-      "role": "functional-candidate-variant-B",
+      "role": "executable-variant-B",
       "status": "PINNED"
     },
     {
@@ -61,16 +61,16 @@
       "driveId": "1rX1jnSKISOlPzLND5Ve63l910S9IX_w-",
       "bytes": 2485522,
       "sha256": "2b898552691e6562c255ed18fd318979134eec4c7005647336e3390187a1cb59",
-      "role": "hero-video-companion-left",
-      "status": "PINNED_LOCAL_COMPANION"
+      "role": "hero-video-asset",
+      "status": "PINNED"
     },
     {
       "filename": "hero_right.mp4",
       "driveId": "112B5IvUs_6zaquqgLohuH0yfs1RvIDRD",
       "bytes": 2265192,
       "sha256": "e70bbeea35a13c55f92942f1dbd8d2fcc097921b33def0bec3fafa2eedb65500",
-      "role": "hero-video-companion-right",
-      "status": "PINNED_LOCAL_COMPANION"
+      "role": "hero-video-asset",
+      "status": "PINNED"
     }
   ],
   "runtimeImagesA": [
@@ -95,7 +95,7 @@
     { "filename": "동양인08.png", "driveId": "1rzbjwupfee6JkJp5NDSEbK0arJVcSWNR", "bytes": 1777216, "sha256": "2d2f7151e4ebf6154b2f543a73537c95693735d90daf60062e67162548c95024" },
     { "filename": "동양인09.png", "driveId": "1BhbSzxlclleMmZnw2tPsKHxnyhGIfuVS", "bytes": 1792944, "sha256": "4529a55ec3996856afb71f91f630de7590763578bf342d2cbee5ba9f07a3b7df" }
   ],
-  "reusableCapabilities": ["emotional-path-archive", "cross-experience-portal-navigation"],
+  "reusableCapabilities": [],
   "runtimePrimitives": ["P3", "P7", "P9"],
   "trulyNewPrimitive": "HumanEmotionalPathArchive (hero emotional-motion pair + horizontal scrub + 9-Moment scroll archive + cross-experience portals + WORKS index)",
   "sourceDefects": [
@@ -143,7 +143,7 @@
     ]
   },
   "fidelityTargetMetadata": {
-    "validationClass": "truthful-hold",
+    "validationClass": "source-fidelity",
     "label": "Track68 V3.3.2 Compare Runner"
   },
   "navigationHandoff": {
