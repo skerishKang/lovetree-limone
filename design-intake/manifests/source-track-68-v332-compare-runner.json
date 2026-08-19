@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-68-v332-compare-runner",
+  "sourceTrackId": "Track68",
+  "title": "Human Emotional Path Motion Archive V3.3.2 · Compare Launcher + A/B Variants",
+  "classification": "SOURCE_COMPARE_RUNNER",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "emotional-path-archive",
+  "productJob": "Hero emotional-motion pair → horizontal pointer position scrubs the beginning state → scroll transitions into a 9-Moment emotional archive → each Moment card can route into another LoveTree source world → end-state WORKS portal index exposes the same source-world destinations. V3.3.2 is a compare-launcher/display layer over two V3.3.1 A/B functional candidates.",
+  "summary": "Source Track 68 (68_인물감정경로_모션아카이브) V3.3.2 compare launcher + V3.3.1 A/B functional candidates, intake Issue #244. A↔B byte diff proves only two delta classes: document title A/B marker and 9 archive image paths (01.png..09.png vs 동양인01.png..동양인09.png). Product flow, portal mapping, hero URLs, CSS, animation, keyboard behavior are otherwise byte-identical. A_B_PRODUCT_SEMANTICS=IDENTICAL. SELECTED_VARIANT=UNRESOLVED. SOURCE TRACK 68 is NOT repository Design Lineage 68: no lineage number is reserved. REPOSITORY_LINEAGE_68=NOT_ALLOCATED. CANONICAL_ADOPTION=NO. CLOUDFRONT_BYTE_EQUIVALENCE=HOLD. DIRECT_CLOUDFRONT_HOTLINK=NOT_AUTHORIZED. Runtime uses local hero companion MP4s.",
+  "provenance": {
+    "sourceLabel": "68_인물감정경로_모션아카이브 / V8_LAUNCHER_ENGLISH / Issue #244",
+    "driveFolderId": "1fv1AjuxstlAzeT3TABVNDmnFRFjvGJSh",
+    "v8DriveFolderId": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+    "imagesDriveFolderId": "1SImONyiSMzFvAoG0BGOeaV5_hRct-7ho",
+    "videoDriveFolderId": "1aSbWqBt5IIYm5xrHe16B0NMWMqW-Kp-B",
+    "sourceFiles": [
+      "V8_LAUNCHER_ENGLISH/68_V3.3.2_COMPARE_LAUNCHER_ENGLISH.html",
+      "V8_LAUNCHER_ENGLISH/68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+      "V8_LAUNCHER_ENGLISH/68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+      "images/01.png ... 09.png",
+      "images/동양인01.png ... 동양인09.png",
+      "video/hero_left.mp4",
+      "video/hero_right.mp4"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V3.3.2",
+    "authorityObservedAt": "2026-08-17T21:40:14Z",
+    "sourceAuthorityState": "IMPLEMENTATION_READY_SOURCE_AUTHORITY_PACKAGE"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "68_V3.3.2_COMPARE_LAUNCHER_ENGLISH.html",
+      "driveId": "1J7VtN8ixGYO3Ddd33oVxoFBPuFNZ8ymf",
+      "bytes": 2670,
+      "sha256": "31637f6ffd49a280cded499e6c1a65fda79f0647561bdfd83d4696332129d8c8",
+      "role": "compare-launcher-display-packaging",
+      "status": "PINNED"
+    },
+    {
+      "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+      "driveId": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+      "bytes": 18565,
+      "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+      "role": "functional-candidate-variant-A",
+      "status": "PINNED"
+    },
+    {
+      "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+      "driveId": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+      "bytes": 18646,
+      "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+      "role": "functional-candidate-variant-B",
+      "status": "PINNED"
+    },
+    {
+      "filename": "hero_left.mp4",
+      "driveId": "1rX1jnSKISOlPzLND5Ve63l910S9IX_w-",
+      "bytes": 2485522,
+      "sha256": "2b898552691e6562c255ed18fd318979134eec4c7005647336e3390187a1cb59",
+      "role": "hero-video-companion-left",
+      "status": "PINNED_LOCAL_COMPANION"
+    },
+    {
+      "filename": "hero_right.mp4",
+      "driveId": "112B5IvUs_6zaquqgLohuH0yfs1RvIDRD",
+      "bytes": 2265192,
+      "sha256": "e70bbeea35a13c55f92942f1dbd8d2fcc097921b33def0bec3fafa2eedb65500",
+      "role": "hero-video-companion-right",
+      "status": "PINNED_LOCAL_COMPANION"
+    }
+  ],
+  "runtimeImagesA": [
+    { "filename": "01.png", "driveId": "1MdOA-xwTffQOqayNacMBqGsyQSXEp2x8", "bytes": 1864548, "sha256": "9471f5dee67354e48d8495ab4572b6aca693d896de64567b7c9530b3d33907fc" },
+    { "filename": "02.png", "driveId": "1ao_jcS4Z5AWtmp12gAmmj0FdP0Da8vqZ", "bytes": 2031825, "sha256": "5e35a017293e98d9f5bff4fefa8733ac4af8b555408274540a15375084f27c81" },
+    { "filename": "03.png", "driveId": "15bUEnmZflpro3WdpdyEb0Dh4uzM99za3", "bytes": 1860675, "sha256": "9d52f8f58110274143dcb1e9b0726a2b74677fb00bbbcb9f714cf02a19be4936" },
+    { "filename": "04.png", "driveId": "1IziJSecq5xHGWvcrHRY7tyobtWjWtH-3", "bytes": 1842341, "sha256": "816df9ea5689ccbe1126d1ae08379710280ba7a4f4c977be8e6929f6d1071221" },
+    { "filename": "05.png", "driveId": "1uPz1PUXhSeOHDUx7LWHEf82yBW9IkZfT", "bytes": 1459649, "sha256": "78493b5fa6caa5697d489048133330d01b4ad748c2af751751581b5cbab2cc5e" },
+    { "filename": "06.png", "driveId": "1zTYABeNj-N-HgNws2s6nyQVx0IQz1nc-", "bytes": 1734205, "sha256": "fb46e4bf7b155648b26b1e898949c6d60e9957b9724a8c7f93372188ac02e699" },
+    { "filename": "07.png", "driveId": "1D6ifA3iW7TN3BZH5MM9EV4QqYh4UWLXv", "bytes": 1773216, "sha256": "90778997f43589132ade524d9a2965314330989d9e88e8d5e8a73f7d7f2faefa" },
+    { "filename": "08.png", "driveId": "1xblKgU7TmK16Qvhg2SBZkbRguGuueteN", "bytes": 1908180, "sha256": "0626c2b6ea5240cc022a3769a14c3dd632334c1ccd5f0b622dd8b8298cce43d6" },
+    { "filename": "09.png", "driveId": "1Y5DDy1cXSdm14gaXBkrxIIptZGDxrClT", "bytes": 1715727, "sha256": "49696b6485e17eb08e07c3c5fda10ae3e7014940b8c2baf66ed58b3ae093c0e9" }
+  ],
+  "runtimeImagesB": [
+    { "filename": "동양인01.png", "driveId": "1T5YXnVMMqLOsxFdUHT-UH-7OcW4XcDj0", "bytes": 1813828, "sha256": "5bc21565a6367be631e25012e54c71de74cf459c0495a4f6f397a18a1c8fc715" },
+    { "filename": "동양인02.png", "driveId": "17Psq1S3N-mqx2tw8fe_c3wnLAqK0zGLK", "bytes": 1871481, "sha256": "eabfa7d9e4d0fe6ce7f7caeab6fa23ef8a8b83c511f960e2ca23baa699a38d94" },
+    { "filename": "동양인03.png", "driveId": "1NqWyiEbuvMTR-4anAtzDDwXQ-AqAQRyw", "bytes": 2035128, "sha256": "b65cbcc1b1b15d1993bd8b87ed482dd6590e9cd84816e5cee146784435b85e6b" },
+    { "filename": "동양인04.png", "driveId": "1qNKw3uI0ne0qaJOZ0gmVS6BR7SRM6fgj", "bytes": 1478799, "sha256": "0e92bf16b68660ac93fdebf455bd01e1281c3e01f713be018dd84c78b70a57a6" },
+    { "filename": "동양인05.png", "driveId": "1aThpTbhjbtZRksx0xIamuBlvBeMVQDgJ_", "bytes": 1715876, "sha256": "6925327b7fa8722dc79c8b831ad566fb9299deb36c285450e029b94962d65e44" },
+    { "filename": "동양인06.png", "driveId": "1hb8p2NUk17G1XGrJm_3VE9bcGyuQF6Bx", "bytes": 2074268, "sha256": "cae1b06cde3c94a5ae778a718dabc169a51d2deac3c5e1cef56d30f34a7adf87" },
+    { "filename": "동양인07.png", "driveId": "1QyqE4_Y03NEhDhCt-e2dzqHirQpObEPy", "bytes": 1843218, "sha256": "843b7417df49ee6c5b7ecb49ab54aec9038563740f3602a1d48fa19ec8221fd3" },
+    { "filename": "동양인08.png", "driveId": "1rzbjwupfee6JkJp5NDSEbK0arJVcSWNR", "bytes": 1777216, "sha256": "2d2f7151e4ebf6154b2f543a73537c95693735d90daf60062e67162548c95024" },
+    { "filename": "동양인09.png", "driveId": "1BhbSzxlclleMmZnw2tPsKHxnyhGIfuVS", "bytes": 1792944, "sha256": "4529a55ec3996856afb71f91f630de7590763578bf342d2cbee5ba9f07a3b7df" }
+  ],
+  "reusableCapabilities": ["emotional-path-archive", "cross-experience-portal-navigation"],
+  "runtimePrimitives": ["P3", "P7", "P9"],
+  "trulyNewPrimitive": "HumanEmotionalPathArchive (hero emotional-motion pair + horizontal scrub + 9-Moment scroll archive + cross-experience portals + WORKS index)",
+  "sourceDefects": [
+    "External transport fragility: frozen HTML hotlinks two CloudFront MP4s despite local Track68 hero companions being present",
+    "Reduced-motion incompleteness: CSS forces cards visible / removes panel transition / hides cursor, but JS continuous requestAnimationFrame loops remain active and coarse-pointer mode still auto-plays alternating videos",
+    "Works overlay dialog semantics incomplete: source lacks role=dialog, aria-modal, focus containment/background inert",
+    "Works rows lack interactive semantics: non-current rows are focusable divs with keyboard activation but no button/link role",
+    "Filesystem navigation is non-portable: window.open(new URL(relativePath, location.href)) resolves source-local paths",
+    "Document language metadata mismatch: A/B declare <html lang=\"ko\"> while the primary interface/body copy is substantially English",
+    "Reduced-motion desktop cursor visibility: base .scroll-spacer uses cursor:none; the reduced-motion media query hides the custom .cursor"
+  ],
+  "nativeRemediations": [
+    "Host bridge replaces CloudFront hero URLs with local companion MP4s at runtime (frozen source HTML bytes unmodified)",
+    "Host bridge intercepts window.open and routes through fail-closed repository portal ledger (HOLD targets never navigate)",
+    "Host bridge adds role=dialog, aria-modal, focus trap, background inert to WORKS overlay",
+    "Host bridge adds role=button to non-current WORKS rows",
+    "Host bridge pauses RAF choreography when prefers-reduced-motion is active",
+    "Host bridge restores visible cursor for reduced-motion desktop fine pointers"
+  ],
+  "sourceOnlyValues": [
+    "CloudFront hero URLs are frozen-source provenance (preserved in metadata), not runtime transport authority",
+    "Source-local filesystem portal paths are never copied as repository hrefs",
+    "A/B image variant split (01.png..09.png vs 동양인01.png..동양인09.png) is a visual archive-asset split, not an interaction delta"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Issue #244 — IMPLEMENTATION_READY_SOURCE_AUTHORITY_PACKAGE. BOUNDED_DESIGN_LAB_SOURCE_COMPARE_RUNNER. CANONICAL_ADOPTION=NO. REPOSITORY_LINEAGE_68=NOT_ALLOCATED. A/B BOTH PRESERVED. CLOUDFRONT_BYTE_EQUIVALENCE=HOLD."
+  },
+  "portalLedger": {
+    "total": 9,
+    "designLabTarget": 4,
+    "stableRepoTarget": 0,
+    "holdUnresolved": 5,
+    "targets": [
+      { "sourceTargetId": "67", "resolvedRoute": "/design-lab/lineages/67/v2-4/source", "status": "DESIGN_LAB_TARGET" },
+      { "sourceTargetId": "65", "resolvedRoute": null, "status": "HOLD_UNRESOLVED" },
+      { "sourceTargetId": "C14", "resolvedRoute": null, "status": "HOLD_UNRESOLVED" },
+      { "sourceTargetId": "C13", "resolvedRoute": null, "status": "HOLD_UNRESOLVED" },
+      { "sourceTargetId": "C12", "resolvedRoute": "/design-lab/source-families/living-media-sphere/v3/source", "status": "DESIGN_LAB_TARGET" },
+      { "sourceTargetId": "C11", "resolvedRoute": null, "status": "HOLD_UNRESOLVED" },
+      { "sourceTargetId": "C10", "resolvedRoute": null, "status": "HOLD_UNRESOLVED" },
+      { "sourceTargetId": "C09", "resolvedRoute": "/design-lab/lineages/54/v4", "status": "DESIGN_LAB_TARGET" },
+      { "sourceTargetId": "C08", "resolvedRoute": "/design-lab/lineages/56/v3", "status": "DESIGN_LAB_TARGET" }
+    ]
+  },
+  "fidelityTargetMetadata": {
+    "validationClass": "truthful-hold",
+    "label": "Track68 V3.3.2 Compare Runner"
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  }
+}
