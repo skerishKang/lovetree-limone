@@ -251,41 +251,48 @@ async function runChunkAndFrontmostProofs(page, vp) {
 }
 
 // E2 negative control on the SPARSE world (before persistence fills the view
-// with >112 ribbons — in a dense world even corner pixels legitimately hit a
-// wall, so the no-hit control is only truthful early).
+// with >112 ribbons — in a dense world even broad regions can legitimately hit
+// a wall). Pause first so the geometry is stable, then probe a bounded grid of
+// REAL mouse pixels until the production hit-test itself reports `none`.
 async function runSparseNoHitControl(page, vp) {
   await waitFor(page, async () => {
     const n = parseInt(await readHud(page, "static chunks"), 10);
     return Number.isFinite(n) && n >= 1 ? n : null;
   }, 120000);
-  const corners = [
-    [2, 2],
-    [-3, 2],
-    [2, -3],
-    [-3, -3],
-  ];
-  const deadline = Date.now() + 30000;
+
+  await setPlaying(page, false);
+  const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+  if (!box) throw new Error("canvas boundingBox unavailable during sparse control");
+
+  const xSteps = 11;
+  const ySteps = 9;
   let noneSeen = false;
   let last = null;
-  while (Date.now() < deadline && !noneSeen) {
-    for (const [cx, cy] of corners) {
-      const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
-      if (!box) throw new Error("canvas boundingBox unavailable during sparse control");
-      const x = cx < 0 ? box.width + cx : cx;
-      const y = cy < 0 ? box.height + cy : cy;
+  let probes = 0;
+  outer: for (let yi = 0; yi < ySteps; yi += 1) {
+    for (let xi = 0; xi < xSteps; xi += 1) {
+      const x = (box.width * (xi + 0.5)) / xSteps;
+      const y = (box.height * (yi + 0.5)) / ySteps;
       await clickCanvasPixel(page, x, y);
-      await page.waitForTimeout(90);
+      probes += 1;
+      await page.waitForTimeout(40);
       const ds = await readCanvasDataset(page);
       last = ds?.hitKind;
       if (ds?.hitKind === "none") {
         noneSeen = true;
-        break;
+        break outer;
       }
       await closeInspect(page);
     }
-    if (!noneSeen) await page.waitForTimeout(800);
   }
-  record(vp, "E2. sparse-world empty-space click -> no hit (negative control)", noneSeen, `last hitKind=${last}`);
+
+  record(
+    vp,
+    "E2. sparse-world empty-space click -> no hit (negative control)",
+    noneSeen,
+    `probes=${probes}; last hitKind=${last}`,
+  );
+  await setPlaying(page, true);
 }
 
 async function runWorks(page, vp) {
