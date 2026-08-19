@@ -347,43 +347,6 @@ export default function NativeRenderer() {
     };
   }, [getSimSnapshot, getHitCandidates]);
 
-  // Temporary debug: project EVERY strided sample to NDC/screen with raw cw.
-  useEffect(() => {
-    const win = window as unknown as Record<string, unknown>;
-    win.__track67NativeDebug = () => {
-      const canvas = canvasRef.current;
-      const s = simRef.current;
-      if (!canvas) return null;
-      const rect = canvas.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-      if (w <= 0 || h <= 0) return { eye: [...V24_CAMERA_EYE], dir: v24CameraForward(), cw: 0 };
-      const aspect = w / h;
-      const eye: [number, number, number] = [...V24_CAMERA_EYE];
-      const fwd: [number, number, number] = v24CameraForward();
-      const vp = v24ViewProjection(aspect);
-      let inFront = 0, onScreen = 0;
-      const samplePt = (sm: { x: number; z: number }) => {
-        const proj = project(vp, [sm.x, V24_RIBBON_HEIGHT / 2, sm.z]);
-        const cw = proj[2];
-        if (cw > 0) inFront++;
-        if (cw > 0) {
-          const sx = ((proj[0] + 1) / 2) * w + rect.left;
-          const sy = ((1 - proj[1]) / 2) * h + rect.top;
-          if (sx >= rect.left && sx <= rect.right && sy >= rect.top && sy <= rect.bottom) onScreen++;
-        }
-      };
-      for (const c of s.chunks) {
-        for (let i = 0; i < c.samples.length; i += 1) samplePt(c.samples[i]);
-      }
-      for (let i = 0; i < s.raw.length; i += 1) samplePt(s.raw[i]);
-      return { eye, dir: fwd, aspect, inFront, onScreen, canvasW: w, canvasH: h };
-    };
-    return () => {
-      delete win.__track67NativeDebug;
-    };
-  }, []);
-
   // --- Escape + Tab containment ---
 
   useEffect(() => {
