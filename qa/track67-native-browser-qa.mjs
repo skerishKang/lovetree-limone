@@ -9,7 +9,7 @@
 //   qa-results.json for Web CTO review.
 //
 // Full A–K matrix per viewport (desktop 1280x800, phone 390x844, mobile
-// 320x720) — desktop AND mobile now run the SAME depth (persistence, oldest
+// 320x720) — desktop AND mobile run the SAME depth (persistence, oldest
 // retention, real pointer hits, rewind), in PARALLEL browser contexts so the
 // wall-clock stays bounded:
 //   A. route load
@@ -24,15 +24,13 @@
 //   J. rewind to origin (full-state restoration, travel 0)
 //   K. WORKS fail-closed surface reachable
 //
-// The native route exposes bounded read-only observability (no fabricated
-// hit): canvas[data-hit-kind] / [data-hit-surface-id] / [data-hit-distance] /
-// [data-hit-candidate-count] / [data-hit-candidates], all derived from the
-// ACTUAL pointer ray → AABB → ribbon-triangle hit-test. The QA clicks grids of
-// REAL canvas pixels, so every hit is computed by the production pipeline —
-// never injected. The drawn spiral sits behind/around the forward-facing
-// camera, so surfaces are hittable at some orientations only; the harness
-// polls the evolving world until each proof lands — viewport-independent, no
-// narrow-viewport exemption, no try/catch→PASS.
+// The native route exposes bounded READ-ONLY hit observability through
+// window.__track67Native.getHitCandidates(). It projects actual rendered ribbon
+// geometry with the same fixed source-faithful camera and evaluates the same
+// production hit-test authority. The harness uses it only to AIM a real mouse
+// click at a real positive surface; selection still goes through the product's
+// onPointerDown pipeline and is verified from canvas[data-hit-*]. No fabricated
+// hits, no synthetic selection injection, no viewport exemption, no skip.
 
 import { chromium } from "playwright";
 import fs from "node:fs";
@@ -72,6 +70,7 @@ function readCanvasDataset(page) {
       distance: c.dataset.hitDistance ?? null,
       candidateCount: c.dataset.hitCandidateCount ?? null,
       candidates: c.dataset.hitCandidates ?? null,
+      pointerType: c.dataset.hitPointerType ?? null,
     };
   });
 }
@@ -103,75 +102,152 @@ function parseCandidates(raw) {
     .filter((c) => Number.isFinite(c.t));
 }
 
-// One grid pass of REAL pointer clicks (8x12 interior canvas points). Returns
-// the first dataset satisfying `accept`, or null. Chunk hits open an inspect
-// dialog; it is closed so the canvas remains the click target.
-async function scanGridUntil(page, accept) {
-  const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
-  if (!box) return null;
-  const xSteps = 8;
-  const ySteps = 12;
-  for (let xi = 0; xi < xSteps; xi += 1) {
-    for (let yi = 0; yi < ySteps; yi += 1) {
-      const px = (box.width * (xi + 1.5)) / (xSteps + 1);
-      const py = (box.height * (yi + 1.5)) / (ySteps + 1);
-      await clickCanvasPixel(page, px, py);
-      await page.waitForTimeout(40);
-      const ds = await readCanvasDataset(page);
-      if (ds && accept(ds)) return ds;
-      if ((await page.locator(".lt67-native__inspect").count()) > 0) {
-        await page.getByRole("button", { name: "닫기" }).click().catch(() => {});
-        await page.waitForTimeout(60);
-      }
-    }
-  }
-  return null;
+async function setPlaying(page, wantPlay) {
+  const btn = page.locator(".lt67-native__hud button", { hasText: /재생|일시정지/ }).first();
+  const label = (await btn.textContent()) || "";
+  const currentlyPlaying = label.includes("일시정지");
+  if (currentlyPlaying === wantPlay) return;
+  await btn.click();
+  const wantLabel = wantPlay ? "일시정지" : "재생";
+  await page.locator(".lt67-native__hud button", { hasText: wantLabel }).first().waitFor({ timeout: 5000 });
 }
 
-// E + F + F2 proofs, all through REAL pointer clicks on the evolving world.
-// Runs AFTER persistence so >112 overlapping chunks exist (frontmost
-// multi-candidate rays are common then). No synthetic injection: the accept
-// predicates only READ what the production hit-test actually computed.
-async function runHitProofs(page, vp) {
-  const found = { chunk: null, tail: null, frontmost: null };
-  const consider = (ds) => {
-    if (!found.chunk && ds.hitKind === "chunk" && ds.surfaceId !== "") found.chunk = ds;
-    if (!found.tail && ds.hitKind === "tail") found.tail = ds;
-    if (!found.frontmost) {
-      const cands = parseCandidates(ds.candidates);
-      const count = Number(ds.candidateCount || 0);
-      if (count >= 2 && cands.length >= 2 && ds.surfaceId !== "") {
-        const selId = ds.surfaceId;
-        const selDist = Number(ds.distance);
-        if (String(cands[0].id) === String(selId) && Math.abs(cands[0].t - selDist) < 1e-6 && cands[0].t <= cands[1].t) {
-          found.frontmost = ds;
-        }
-      }
-    }
-  };
-  const deadline = Date.now() + 150000;
-  while (Date.now() < deadline && (!found.chunk || !found.tail || !found.frontmost)) {
-    const got = await scanGridUntil(page, (ds) => {
-      consider(ds);
-      return Boolean(found.chunk && found.tail && found.frontmost);
-    });
-    if (got) break;
-    await page.waitForTimeout(350);
+async function closeInspect(page) {
+  const dlg = page.locator(".lt67-native__inspect");
+  if ((await dlg.count()) === 0) return;
+  const close = page.getByRole("button", { name: "Close Moment inspection" });
+  if ((await close.count()) !== 1) throw new Error("inspect close button unavailable");
+  await close.click();
+  await dlg.waitFor({ state: "detached", timeout: 5000 });
+}
+
+async function getNativeCandidate(page, kind, requireOverlap = false) {
+  await page.locator("canvas.lt67-native__canvas").scrollIntoViewIfNeeded();
+  return page.evaluate(({ expectedKind, overlap }) => {
+    const api = window.__track67Native;
+    if (!api || typeof api.getHitCandidates !== "function") return null;
+    const cands = api.getHitCandidates().filter((c) => c.expectedKind === expectedKind);
+    if (overlap) return cands.find((c) => c.candidateCount >= 2) || null;
+    return cands[0] || null;
+  }, { expectedKind: kind, overlap: requireOverlap });
+}
+
+async function waitNativeCandidate(page, kind, requireOverlap, timeoutMs) {
+  return waitFor(page, () => getNativeCandidate(page, kind, requireOverlap), timeoutMs, 120);
+}
+
+async function clickNativeCandidate(page, candidate) {
+  await page.mouse.click(candidate.x, candidate.y);
+  await page.waitForTimeout(80);
+  return readCanvasDataset(page);
+}
+
+// F: active tail proof belongs to the SPARSE phase. This avoids the old
+// blind-grid problem where, after >112 static chunks, the tiny live tail could
+// be visually occluded and a fixed 8x12 grid never sampled it. The read-only
+// native authority resolves a real visible tail point, then a REAL mouse click
+// must independently produce data-hit-kind="tail".
+async function runTailProof(page, vp) {
+  const candidate = await waitNativeCandidate(page, "tail", false, 120000);
+  if (!candidate) {
+    record(vp, "F. active tail positive hit (real pointer)", false, "no native tail candidate became visible");
+    return;
   }
 
-  record(vp, "E. static chunk positive hit (real pointer)", Boolean(found.chunk),
-    found.chunk ? `surface ${found.chunk.surfaceId} @ t=${found.chunk.distance}` : "no chunk hit in window");
-  record(vp, "F. active tail positive hit (real pointer)", Boolean(found.tail),
-    found.tail ? `tail surface ${found.tail.surfaceId} @ t=${found.tail.distance}` : "no tail hit in window");
+  await setPlaying(page, false);
+  const stable = await getNativeCandidate(page, "tail", false);
+  if (!stable) {
+    await setPlaying(page, true);
+    record(vp, "F. active tail positive hit (real pointer)", false, "tail candidate disappeared before stable click");
+    return;
+  }
+
+  const ds = await clickNativeCandidate(page, stable);
+  const ok = Boolean(
+    ds &&
+      ds.hitKind === "tail" &&
+      String(ds.surfaceId) === String(stable.expectedSurfaceId) &&
+      ds.pointerType === "mouse",
+  );
+  record(
+    vp,
+    "F. active tail positive hit (real pointer)",
+    ok,
+    ds ? `tail surface ${ds.surfaceId} @ t=${ds.distance}; pointer=${ds.pointerType}` : "no hit dataset",
+  );
+  await setPlaying(page, true);
+}
+
+// E + F2: deterministic AIM from read-only native geometry, but the actual
+// proof remains a production pointer event. Frontmost comparison respects the
+// observables' intentional precision difference: selected distance is 4dp,
+// candidate distances are 3dp, so <=0.001 is the strict rounding envelope.
+async function runChunkAndFrontmostProofs(page, vp) {
+  const overlap = await waitNativeCandidate(page, "chunk", true, 120000);
+  const anyChunk = overlap || (await waitNativeCandidate(page, "chunk", false, 120000));
+
+  if (!anyChunk) {
+    record(vp, "E. static chunk positive hit (real pointer)", false, "no native chunk candidate became visible");
+    record(vp, "F2. frontmost/nearest selection (real pointer, >=2 positive candidates)", false, "no chunk candidate available");
+    return;
+  }
+
+  await setPlaying(page, false);
+
+  const stableChunk = await getNativeCandidate(page, "chunk", false);
+  let chunkDs = null;
+  if (stableChunk) {
+    chunkDs = await clickNativeCandidate(page, stableChunk);
+  }
+  const chunkOk = Boolean(
+    stableChunk &&
+      chunkDs &&
+      chunkDs.hitKind === "chunk" &&
+      String(chunkDs.surfaceId) === String(stableChunk.expectedSurfaceId) &&
+      chunkDs.pointerType === "mouse",
+  );
+  record(
+    vp,
+    "E. static chunk positive hit (real pointer)",
+    chunkOk,
+    chunkDs ? `surface ${chunkDs.surfaceId} @ t=${chunkDs.distance}; pointer=${chunkDs.pointerType}` : "no chunk hit dataset",
+  );
+  await closeInspect(page);
+
+  const stableOverlap = await getNativeCandidate(page, "chunk", true);
+  let frontDs = null;
+  if (stableOverlap) {
+    frontDs = await clickNativeCandidate(page, stableOverlap);
+  }
+
+  let frontOk = false;
+  let frontDetail = "no multi-candidate native aim available";
+  if (stableOverlap && frontDs) {
+    const cands = parseCandidates(frontDs.candidates);
+    const count = Number(frontDs.candidateCount || 0);
+    const selDist = Number(frontDs.distance);
+    const nearest = cands[0] || null;
+    frontOk = Boolean(
+      frontDs.hitKind === "chunk" &&
+        frontDs.pointerType === "mouse" &&
+        count >= 2 &&
+        cands.length >= 2 &&
+        nearest &&
+        String(nearest.id) === String(frontDs.surfaceId) &&
+        String(frontDs.surfaceId) === String(stableOverlap.expectedSurfaceId) &&
+        Math.abs(nearest.t - selDist) <= 0.001 &&
+        nearest.t <= cands[1].t,
+    );
+    frontDetail = `selected ${frontDs.surfaceId} @ ${frontDs.distance}; candidates ${frontDs.candidates}; pointer=${frontDs.pointerType}`;
+  }
   record(
     vp,
     "F2. frontmost/nearest selection (real pointer, >=2 positive candidates)",
-    Boolean(found.frontmost),
-    found.frontmost
-      ? `selected ${found.frontmost.surfaceId} @ ${found.frontmost.distance}; candidates ${found.frontmost.candidates}`
-      : "no multi-candidate ray in window",
+    frontOk,
+    frontDetail,
   );
-
+  await closeInspect(page);
+  await setPlaying(page, true);
 }
 
 // E2 negative control on the SPARSE world (before persistence fills the view
@@ -194,6 +270,7 @@ async function runSparseNoHitControl(page, vp) {
   while (Date.now() < deadline && !noneSeen) {
     for (const [cx, cy] of corners) {
       const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
+      if (!box) throw new Error("canvas boundingBox unavailable during sparse control");
       const x = cx < 0 ? box.width + cx : cx;
       const y = cy < 0 ? box.height + cy : cy;
       await clickCanvasPixel(page, x, y);
@@ -204,6 +281,7 @@ async function runSparseNoHitControl(page, vp) {
         noneSeen = true;
         break;
       }
+      await closeInspect(page);
     }
     if (!noneSeen) await page.waitForTimeout(800);
   }
@@ -318,11 +396,17 @@ async function runViewportMatrix(browser, vp) {
 
   await page.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
   await page.locator("canvas.lt67-native__canvas").waitFor({ timeout: 15000 });
+  await page.waitForFunction(() => Boolean(window.__track67Native), undefined, { timeout: 15000 });
   record(vp.name, "A. native Track67 route loads", true);
 
-  await runSparseNoHitControl(page, vp.name); // E2 (sparse world — truthful no-hit window)
-  await runPersistence(page, vp.name); // G + H (also grows overlap for hit proofs)
-  await runHitProofs(page, vp.name); // E + F + F2 + E2
+  // Prove the live tail while the world is sparse and the tail is genuinely
+  // observable. Then prove no-hit and static/frontmost contracts before the
+  // long persistence phase. This preserves every acceptance contract while
+  // removing the old blind-grid sampling dependence.
+  await runTailProof(page, vp.name); // F
+  await runSparseNoHitControl(page, vp.name); // E2
+  await runChunkAndFrontmostProofs(page, vp.name); // E + F2
+  await runPersistence(page, vp.name); // G + H
   await runWorks(page, vp.name); // K + K2
 
   const overflow = await page.evaluate(() =>
