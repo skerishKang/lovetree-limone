@@ -1,0 +1,89 @@
+name: Design Lab spatial performance QA evidence
+
+# Issue #79 characterization-only evidence. This workflow is intentionally
+# path-scoped so it validates changes to the performance harness itself without
+# turning a historical/local QA issue into a repository-wide merge prerequisite.
+# It records factual frame pacing and post-GC memory/resource observations; it
+# does not invent FPS or heap pass thresholds and does not mutate Product data.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "qa/design-lab-spatial-performance-qa.mjs"
+      - ".github/workflows/design-lab-spatial-performance-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  characterize-spatial-performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run bounded spatial performance characterization
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/design-lab-spatial-performance-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error \
+              "http://127.0.0.1:3000/design-lab/lineages/52/v3" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/design-lab-spatial-performance-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/design-lab-spatial-performance-server.log
+            exit 1
+          fi
+
+          mkdir -p qa-artifacts/design-lab-spatial-performance
+          DESIGN_LAB_PERF_QA_URL="http://127.0.0.1:3000" \
+            node qa/design-lab-spatial-performance-qa.mjs
+
+      - name: Upload spatial performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-lab-spatial-performance-qa-evidence
+          path: |
+            qa-artifacts/design-lab-spatial-performance/qa-results.json
+            qa-artifacts/design-lab-spatial-performance/summary.md
+          if-no-files-found: warn
