@@ -218,8 +218,9 @@ jobs:
             tests/v4-moments-100-source-faithful.test.mjs
             tests/lineage-59-browser-qa.test.mjs
             tests/track67-v242-browser-qa.test.mjs
+            tests/track67-native-inspect-acceptance.test.mjs
           )
-          expected_browser_count=10
+          expected_browser_count=11
 
           printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
           printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt
