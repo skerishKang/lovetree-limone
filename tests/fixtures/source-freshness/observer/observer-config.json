@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "tracks": [
+    {
+      "stableId": "track-observer-61-stale",
+      "driveFolderId": "1F73observerTrack61StaleFoldrAa",
+      "rootCurrentFileId": "1f73observerTrack61V19FileAaaaaa",
+      "functionalFileIds": [
+        "1f73observerTrack61V19FileAaaaaa"
+      ]
+    },
+    {
+      "stableId": "track-observer-62-exact",
+      "driveFolderId": "1F73observerTrack62ExactFoldrAa",
+      "rootCurrentFileId": "1f73observerTrack62V11OldFileAaa",
+      "functionalFileIds": [
+        "1f73observerTrack62V11OldFileAaa"
+      ]
+    },
+    {
+      "stableId": "track-observer-62-repackaged",
+      "driveFolderId": "1F73observerTrack62RepackFoldrAa",
+      "rootCurrentFileId": "1f73observerTrack62V11NewFileAaa",
+      "functionalFileIds": [
+        "1f73observerTrack62V11NewFileAaa"
+      ]
+    },
+    {
+      "stableId": "track-observer-64-functional",
+      "driveFolderId": "1F73observerTrack64DisplayFoldAa",
+      "rootCurrentFileId": "1f73observerTrack64V121FuncFileA",
+      "functionalFileIds": [
+        "1f73observerTrack64V121FuncFileA"
+      ],
+      "displayFileIds": [
+        "1f73observerTrack64V13DispFileAa"
+      ]
+    },
+    {
+      "stableId": "track-observer-64-ambiguous",
+      "driveFolderId": "1F73observerTrack64AmbigFoldrAaa",
+      "functionalFileIds": [
+        "1f73observerTrack64CompCFileAaaa",
+        "1f73observerTrack64CompDFileAaaa"
+      ]
+    },
+    {
+      "stableId": "track-observer-62-nosnapshot",
+      "driveFolderId": "1F73observerTrack62ExactFoldrAa",
+      "rootCurrentFileId": "1f73observerTrack62V11OldFileAaa",
+      "functionalFileIds": [
+        "1f73observerTrack62V11OldFileAaa"
+      ]
+    },
+    {
+      "stableId": "track-observer-61-historical",
+      "driveFolderId": "1F73observerTrack61HistoricalFldA",
+      "rootCurrentFileId": "1f73observerTrack61HistV17FileAa",
+      "functionalFileIds": [
+        "1f73observerTrack61HistV17FileAa"
+      ],
+      "historicalFileIds": [
+        "1f73observerTrack61HistV15FileAa"
+      ]
+    }
+  ]
+}

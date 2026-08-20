@@ -22,10 +22,120 @@ import {
   perspective,
   viewMatrix,
   multiply,
+  project,
+  type Mat4,
   RIBBON_VERTEX_SHADER,
   RIBBON_FRAGMENT_SHADER,
 } from "@/lib/lineage-67-v24/webgl";
 import { LINEAGE_67_V24_WORKS_V242_OWNER_SET } from "@/lib/lineage-67-v24/source";
+
+// ---------------------------------------------------------------------------
+// Source-faithful camera (V2.4.2 "works" build).
+//
+// The source renders AND hit-tests from a FIXED overhead vantage looking at the
+// world origin; the ribbon is drawn in absolute world coordinates near origin.
+//   camera(): eye=(orbit||proofCam)?spherical:[0,10.4,12.8]; tar=[0,0,0];
+//            P=persp(38*PI/180, aspect, .1, 80); V=look(eye,tar,UP); VP=P*V.
+// This is the EXACT VP rebuilt by getHitCandidates / onPointerDown, so the
+// reported expected surface identity is native truth — the same pipeline.
+// ---------------------------------------------------------------------------
+const V24_CAMERA_EYE: readonly [number, number, number] = [0, 10.4, 12.8];
+const V24_CAMERA_TARGET: readonly [number, number, number] = [0, 0, 0];
+const V24_CAMERA_FOV = (38 * Math.PI) / 180;
+const V24_CAMERA_NEAR = 0.1;
+const V24_CAMERA_FAR = 80;
+
+function v24CameraForward(): [number, number, number] {
+  return [
+    V24_CAMERA_TARGET[0] - V24_CAMERA_EYE[0],
+    V24_CAMERA_TARGET[1] - V24_CAMERA_EYE[1],
+    V24_CAMERA_TARGET[2] - V24_CAMERA_EYE[2],
+  ];
+}
+
+function v24ViewProjection(aspect: number): Mat4 {
+  return multiply(
+    perspective(V24_CAMERA_FOV, aspect, V24_CAMERA_NEAR, V24_CAMERA_FAR),
+    viewMatrix(V24_CAMERA_EYE, v24CameraForward()),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// High-res Moment asset mapping — authoritative source from V2.4.2 package.
+// ---------------------------------------------------------------------------
+
+const MOMENT_SEG_LEN = 3.15;
+const MOMENT_CYCLE = MOMENT_SEG_LEN * 16;
+
+const MOMENTS_ASSETS = [
+  { id: 1, title: "FIRST CLUE STAIRS", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M01_FIRST_CLUE_STAIRS.png", dim: "1536x1024" },
+  { id: 2, title: "FAN-A MAIN", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M02_FAN_A_MAIN.png", dim: "1024x1536" },
+  { id: 3, title: "EYE MACRO", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M03_EYE_MACRO.png", dim: "1448x1086" },
+  { id: 4, title: "PURPLE STAGE", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M04_PURPLE_STAGE.png", dim: "1024x1536" },
+  { id: 5, title: "MICROPHONE", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M05_MICROPHONE.png", dim: "1024x1536" },
+  { id: 6, title: "INTERVIEW CANDID", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M06_INTERVIEW_CANDID.png", dim: "1024x1536" },
+  { id: 7, title: "B/W EDITORIAL", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M07_BW_EDITORIAL.png", dim: "1122x1402" },
+  { id: 8, title: "BLUE NOIR", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M08_BLUE_NOIR.png", dim: "1024x1536" },
+  { id: 9, title: "CAMERA MOMENT", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M09_CAMERA_MOMENT.png", dim: "1024x1536" },
+  { id: 10, title: "POLAROID PORTRAIT", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M10_POLAROID_PORTRAIT.png", dim: "1024x1536" },
+  { id: 11, title: "FIRST CLUE KEYFRAME", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M11_FIRST_CLUE_KEYFRAME.jpg", dim: "1536x2562" },
+  { id: 12, title: "MY LOVETREE", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M12_MY_LOVETREE.jpg", dim: "1536x2553" },
+  { id: 13, title: "FILM STRIP", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M13_FILM_STRIP.png", dim: "2172x724" },
+  { id: 14, title: "WARM CANDID", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M14_WARM_CANDID.png", dim: "1024x1536" },
+  { id: 15, title: "NATURAL PORTRAIT", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M15_NATURAL_PORTRAIT.png", dim: "1024x1536" },
+  { id: 16, title: "WIDE FINAL", src: "/design-lab-assets/lineages/67/v2-4/01_Assets/M16_WIDE_FINAL.png", dim: "1672x941" },
+] as const;
+
+function momentFromQ(q: number): number {
+  const qw = ((q % MOMENT_CYCLE) + MOMENT_CYCLE) % MOMENT_CYCLE;
+  return Math.floor(qw / MOMENT_SEG_LEN) % 16 + 1;
+}
+
+// ---------------------------------------------------------------------------
+// Read-only native observability for fail-closed acceptance QA (Issue #258).
+//
+// Why this is native observability, not a test hook:
+//  - It does NOT mutate simulation state, it does NOT open/close inspect, and
+//    it does NOT inject or fabricate hits.
+//  - getHitCandidates() rebuilds the EXACT view-projection matrix the renderer
+//    draws with (perspective + viewMatrix, same fov/aspect/eye) and then runs
+//    the EXACT ray + v24RibbonHitTest authority that onPointerDown uses, so the
+//    reported expected surface identity is native truth — the same pipeline.
+//  - It only exists so genuine touchscreen taps can be aimed at real rendered
+//    ribbon geometry (deterministic screen coordinates) instead of blind
+//    mouse-grid scanning. The actual selection is still performed by the real
+//    production pointer handler on the genuine tap.
+// ---------------------------------------------------------------------------
+interface Track67NativeCandidate {
+  x: number;
+  y: number;
+  expectedKind: "chunk" | "tail";
+  expectedSurfaceId: number;
+  candidateCount: number;
+  candidates: string;
+}
+
+interface Track67NativeSnapshot {
+  travel: number;
+  chunks: number;
+  raw: number;
+  q: number;
+  oldestChunkId: number | null;
+  chunkIds: string;
+  frozen: boolean;
+}
+
+interface Track67NativeDiagnostic {
+  getSimSnapshot: () => Track67NativeSnapshot;
+  getHitCandidates: () => Track67NativeCandidate[];
+}
+
+declare global {
+  interface Window {
+    __track67Native?: Track67NativeDiagnostic;
+  }
+}
+
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string): WebGLShader | null {
   const sh = gl.createShader(type);
@@ -81,6 +191,7 @@ const HIT_NONE = {
   distance: null,
   candidateCount: 0,
   candidates: "",
+  pointerType: null,
 };
 
 export default function NativeRenderer() {
@@ -94,6 +205,9 @@ export default function NativeRenderer() {
   const [playing, setPlaying] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inspect, setInspect] = useState<V24Chunk | null>(null);
+  const inspectFrozenRef = useRef(false);
+  const previousFocusRef = useRef<Element | null>(null);
+  const inspectCloseBtnRef = useRef<HTMLButtonElement | null>(null);
   // Bounded, truthful observable of the LAST actual pointer hit. Derived directly
   // from v24RibbonHitTest (the same surface the renderer draws), so a real browser
   // click on the rendered active tail produces a positive "tail" observable and an
@@ -104,6 +218,7 @@ export default function NativeRenderer() {
     distance: number | null;
     candidateCount: number;
     candidates: string;
+    pointerType: string | null;
   }>({ ...HIT_NONE });
   const [hud, setHud] = useState({ travel: 0, chunks: 0, tail: 0, raw: 0, q: 0, oldest: null as number | null });
 
@@ -117,6 +232,151 @@ export default function NativeRenderer() {
     query.addEventListener("change", sync);
     return () => query.removeEventListener("change", sync);
   }, []);
+
+  // --- Inspect open / close helpers ---
+
+  const closeInspect = useCallback(() => {
+    setInspect(null);
+    setHitInfo(HIT_NONE);
+    inspectFrozenRef.current = false;
+    const prev = previousFocusRef.current;
+    if (prev && typeof (prev as HTMLElement).focus === 'function') {
+      (prev as HTMLElement).focus();
+    } else {
+      canvasRef.current?.focus();
+    }
+  }, []);
+
+  const openInspect = useCallback((chunk: V24Chunk, trigger: Element | null) => {
+    previousFocusRef.current = trigger;
+    inspectFrozenRef.current = true;
+    setInspect(chunk);
+  }, []);
+
+  // --- Focus entry into the dialog when it opens ---
+  // Deterministic: runs synchronously after React commits the dialog DOM, so the
+  // close button receives focus on open with no arbitrary timeout.
+  useEffect(() => {
+    if (inspect) {
+      inspectCloseBtnRef.current?.focus();
+    }
+  }, [inspect]);
+
+  // --- Read-only native observability (Issue #258) ---
+
+  const getSimSnapshot = useCallback((): Track67NativeSnapshot => {
+    const s = simRef.current;
+    return {
+      travel: s.travel,
+      chunks: s.chunks.length,
+      raw: s.raw.length,
+      q: Number(computeQ(s.travel).toFixed(4)),
+      oldestChunkId: s.chunks.length > 0 ? s.chunks[0].id : null,
+      chunkIds: s.chunks.map((c) => c.id).join(","),
+      frozen: inspectFrozenRef.current,
+    };
+  }, []);
+
+  const getHitCandidates = useCallback((): Track67NativeCandidate[] => {
+    const canvas = canvasRef.current;
+    const s = simRef.current;
+    if (!canvas) return [];
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    if (w <= 0 || h <= 0) return [];
+    const aspect = w / h;
+    const eye: [number, number, number] = [...V24_CAMERA_EYE];
+    const fwd: [number, number, number] = v24CameraForward();
+    // Rebuild the EXACT VP matrix used to draw, so projected coordinates describe
+    // what is actually rendered (and therefore what the real pointer hit test sees).
+    const vp = v24ViewProjection(aspect);
+    const out: Track67NativeCandidate[] = [];
+    const STRIDE = 6;
+    const MAX = 64;
+    const segs: Array<{ ax: number; az: number; bx: number; bz: number }> = [];
+    for (const c of s.chunks) {
+      for (let i = 0; i + 1 < c.samples.length; i += STRIDE) {
+        const a = c.samples[i];
+        const b = c.samples[i + 1];
+        segs.push({ ax: a.x, az: a.z, bx: b.x, bz: b.z });
+      }
+    }
+    for (let i = 0; i + 1 < s.raw.length; i += 1) {
+      const a = s.raw[i];
+      const b = s.raw[i + 1];
+      segs.push({ ax: a.x, az: a.z, bx: b.x, bz: b.z });
+    }
+    for (const seg of segs) {
+      if (out.length >= MAX) break;
+      const mx = (seg.ax + seg.bx) / 2;
+      const mz = (seg.az + seg.bz) / 2;
+      const proj = project(vp, [mx, V24_RIBBON_HEIGHT / 2, mz]);
+      const ndcX = proj[0];
+      const ndcY = proj[1];
+      const cw = proj[2];
+      if (!(cw > 0)) continue; // behind the camera: not a valid tap target
+      const sx = ((ndcX + 1) / 2) * w + rect.left;
+      const sy = ((1 - ndcY) / 2) * h + rect.top;
+      if (sx < rect.left + 6 || sx > rect.right - 6 || sy < rect.top + 6 || sy > rect.bottom - 6) continue;
+      // Reconstruct the exact client-space point and run the real hit authority.
+      const px = ((sx - rect.left) / w) * 2 - 1;
+      const py = 1 - ((sy - rect.top) / h) * 2;
+      const ray = v24RayFromPointer(px, py, eye, fwd, V24_CAMERA_FOV, aspect);
+      const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
+      if (!hit) continue;
+      out.push({
+        x: sx,
+        y: sy,
+        expectedKind: hit.kind,
+        expectedSurfaceId: hit.chunkId,
+        candidateCount: hit.candidates ? hit.candidates.length : 1,
+        candidates: hit.candidates
+          ? hit.candidates.map((cc) => `${cc.id}:${cc.t.toFixed(3)}`).join(",")
+          : `${hit.chunkId}:${hit.t.toFixed(3)}`,
+      });
+    }
+    return out;
+  }, []);
+
+  useEffect(() => {
+    const win = window as unknown as Record<string, unknown>;
+    win.__track67Native = { getSimSnapshot, getHitCandidates };
+    return () => {
+      delete win.__track67Native;
+    };
+  }, [getSimSnapshot, getHitCandidates]);
+
+  // --- Escape + Tab containment ---
+
+  useEffect(() => {
+    if (!inspect) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        closeInspect();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = [inspectCloseBtnRef.current].filter(Boolean) as HTMLElement[];
+        if (focusable.length === 0) return;
+        const current = document.activeElement;
+        const idx = focusable.indexOf(current as HTMLElement);
+        if (e.shiftKey) {
+          const next = idx <= 0 ? focusable.length - 1 : idx - 1;
+          e.preventDefault();
+          focusable[next].focus();
+        } else {
+          const next = idx >= focusable.length - 1 ? 0 : idx + 1;
+          e.preventDefault();
+          focusable[next].focus();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [inspect, closeInspect]);
 
   const stepSim = useCallback((dt: number) => {
     const s = simRef.current;
@@ -162,9 +422,7 @@ export default function NativeRenderer() {
 
     const s = simRef.current;
     const aspect = w / h;
-    const proj = perspective(Math.PI / 3.2, aspect, 0.1, 400);
-    const view = viewMatrix([s.pos[0], s.pos[1] + 1.2, s.pos[2]], s.dir);
-    const vp = multiply(proj, view);
+    const vp = v24ViewProjection(aspect);
 
     const ribbonProg = programsRef.current.ribbon;
     if (!ribbonProg) return;
@@ -224,7 +482,7 @@ export default function NativeRenderer() {
     const loop = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
-      if (playing && motion !== "reduced") {
+      if (playing && motion !== "reduced" && !inspectFrozenRef.current) {
         stepSim(dt);
       }
       renderSim();
@@ -249,16 +507,24 @@ export default function NativeRenderer() {
     const s = simRef.current;
     const canvas = canvasRef.current;
     if (e.button !== 0 || !canvas) return;
+    if (inspectFrozenRef.current) return;
+    // Prevent the canvas from taking focus on pointerdown so the dialog's close
+    // button (focused by the open effect) is the stable active element. The
+    // canvas is still restored as the trigger on close via previousFocusRef.
+    e.preventDefault();
     const rect = canvas.getBoundingClientRect();
     const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = 1 - ((e.clientY - rect.top) / rect.height) * 2;
-    const eye: [number, number, number] = [s.pos[0], s.pos[1] + 1.2, s.pos[2]];
-    const ray = v24RayFromPointer(ndcX, ndcY, eye, [s.dir[0], s.dir[1], s.dir[2]], Math.PI / 3.2, rect.width / rect.height);
+    const eye: [number, number, number] = [...V24_CAMERA_EYE];
+    const ray = v24RayFromPointer(ndcX, ndcY, eye, v24CameraForward(), V24_CAMERA_FOV, rect.width / rect.height);
     // Hit-test the SAME rendered ribbon surface: static chunks AND the live active tail.
     const hit = v24RibbonHitTest(ray, s.chunks, V24_RIBBON_HEIGHT, [s.raw]);
-    setInspect(
-      hit && hit.kind === "chunk" ? (s.chunks.find((c) => c.id === hit.chunkId) ?? null) : null,
-    );
+    if (hit && hit.kind === 'chunk') {
+      const chunk = s.chunks.find((c) => c.id === hit.chunkId) ?? null;
+      if (chunk) {
+        openInspect(chunk, e.target as Element);
+      }
+    }
     // Surface the actual hit result as a bounded observable (chunk / tail / none)
     // so the active tail is provably hittable in a real browser, not silently dropped.
     // Read-only observability of the ACTUAL hit computation: selected surface +
@@ -274,8 +540,9 @@ export default function NativeRenderer() {
             candidates: hit.candidates
               ? hit.candidates.map((c) => `${c.id}:${c.t.toFixed(3)}`).join(",")
               : `${hit.chunkId}:${hit.t.toFixed(3)}`,
+            pointerType: e.pointerType ?? null,
           }
-        : { kind: "none", surfaceId: null, distance: null, candidateCount: 0, candidates: "" },
+        : { kind: "none", surfaceId: null, distance: null, candidateCount: 0, candidates: "", pointerType: e.pointerType ?? null },
     );
   };
 
@@ -286,6 +553,7 @@ export default function NativeRenderer() {
       simRef.current = v24RewindStep(s);
       setInspect(null);
       setHitInfo(HIT_NONE);
+      inspectFrozenRef.current = false;
     } else if (e.key === "Tab") {
       e.preventDefault();
       const next = { ...simRef.current };
@@ -324,7 +592,7 @@ export default function NativeRenderer() {
           <button type="button" onClick={() => setPlaying((p) => !p)}>
             {playing ? "일시정지" : "재생"}
           </button>
-          <button type="button" onClick={() => stepSim(0.05)} disabled={motion === "reduced" && playing}>
+          <button type="button" onClick={() => stepSim(0.05)} disabled={inspect !== null || (motion === "reduced" && playing)}>
             한 걸음
           </button>
         </div>
@@ -334,7 +602,7 @@ export default function NativeRenderer() {
         <canvas
           ref={canvasRef}
           className="lt67-native__canvas"
-          tabIndex={0}
+          tabIndex={inspect ? -1 : 0}
           onPointerDown={onPointerDown}
           onKeyDown={onKeyDown}
           aria-label="Track 67 V2.4.2 persistent world canvas"
@@ -343,6 +611,7 @@ export default function NativeRenderer() {
           data-hit-distance={hitInfo.distance ?? ""}
           data-hit-candidate-count={hitInfo.candidateCount}
           data-hit-candidates={hitInfo.candidates}
+          data-hit-pointer-type={hitInfo.pointerType ?? ""}
         />
         <p className="lt67-native__hit-status" role="status" aria-live="polite">
           {hitInfo.kind === "chunk"
@@ -357,7 +626,15 @@ export default function NativeRenderer() {
           </div>
         )}
         {inspect && (
-          <div className="lt67-native__inspect" role="dialog" aria-label="inspect memory chunk">
+          <div
+            className="lt67-native__inspect"
+            role="dialog"
+            aria-modal="true"
+            aria-label="inspect memory chunk"
+            data-inspect-open="true"
+            data-inspect-chunk-id={inspect.id}
+            data-inspect-q0={inspect.q0}
+          >
             <h2>Inspect MEMORY #{inspect.id}</h2>
             <dl>
               <div><dt>order</dt><dd>{inspect.order}</dd></div>
@@ -366,8 +643,50 @@ export default function NativeRenderer() {
               <div><dt>travel</dt><dd>{inspect.travel0.toFixed(1)} – {inspect.travel1.toFixed(1)}</dd></div>
               <div><dt>q</dt><dd>{inspect.q0.toFixed(2)} – {inspect.q1.toFixed(2)}</dd></div>
               <div><dt>q offset</dt><dd>{V24_Q_OFFSET}</dd></div>
+              {(() => {
+                const momentIdx = momentFromQ(inspect.q0);
+                const m = MOMENTS_ASSETS[momentIdx - 1];
+                if (!m) return null;
+                return (
+                  <>
+                    <div><dt>moment</dt><dd>MOMENT {String(m.id).padStart(2, "0")} — {m.title}</dd></div>
+                    <div><dt>source asset</dt><dd>{m.dim}</dd></div>
+                  </>
+                );
+              })()}
             </dl>
-            <button type="button" onClick={() => { setInspect(null); setHitInfo(HIT_NONE); }}>닫기</button>
+            {(() => {
+              const momentIdx = momentFromQ(inspect.q0);
+              const m = MOMENTS_ASSETS[momentIdx - 1];
+              if (!m) return null;
+              return (
+                <figure className="lt67-native__inspect-asset" data-moment-id={m.id}>
+                  <a
+                    href={m.src}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`원본 고해상도 Moment ${String(m.id).padStart(2, "0")} — ${m.title} 보기 (새 창)`}
+                  >
+                    <img
+                      src={m.src}
+                      alt={`Moment ${String(m.id).padStart(2, "0")} — ${m.title} — original high-resolution source asset`}
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <figcaption>original high-res copy · {m.dim}</figcaption>
+                  </a>
+                </figure>
+              );
+            })()}
+            <button
+              ref={inspectCloseBtnRef}
+              type="button"
+              autoFocus
+              aria-label="Close Moment inspection"
+              onClick={closeInspect}
+            >
+              닫기
+            </button>
           </div>
         )}
       </div>

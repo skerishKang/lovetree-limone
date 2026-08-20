@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-observer-64-functional",
+  "sourceTrackId": "Track64",
+  "title": "Observer fixture Track64 functional V1.2.1 vs display V1.3",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic live-observer acceptance fixture",
+  "summary": "synthetic: display-only V1.3 exists but functional authority is the pinned V1.2.1",
+  "provenance": {
+    "sourceLabel": "synthetic live-observer fixture",
+    "sourceFiles": [
+      "fixture.html"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "PENDING",
+    "note": "synthetic observer fixture — no lineage allocation"
+  },
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1f73observerTrack64V121FuncFileA",
+      "bytes": 141,
+      "sha256": "3ebcf80b66f7289ac39f043a5796f8604fa81cda960346154fce7a03aa6f4f59",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2.1",
+    "authorityObservedAt": "2026-08-14T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

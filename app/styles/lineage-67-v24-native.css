@@ -113,10 +113,29 @@
   top: 12px;
   width: 260px;
   max-width: 60%;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
   padding: 14px 16px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+.lt67-native__inspect-asset {
+  margin: 10px 0;
+}
+
+.lt67-native__inspect-asset img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  max-height: 260px;
+  width: auto;
+  object-fit: contain;
+}
+
+.lt67-native__inspect-asset a {
+  display: inline-block;
 }
 
 .lt67-native__inspect h2 {
