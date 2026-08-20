@@ -112,6 +112,45 @@ async function setPlaying(page, wantPlay) {
   await page.locator(".lt67-native__hud button", { hasText: wantLabel }).first().waitFor({ timeout: 5000 });
 }
 
+// React can commit the pause-button label one paint before the old RAF effect is
+// cleaned up. On the narrow 390px viewport that final frame can move a thin
+// ribbon after getHitCandidates() has produced its client coordinate. Wait for
+// the read-only simulation authority to report the same state across multiple
+// polls before computing a positive-hit aim. This removes the race without
+// retrying a click, widening hit tolerance, or mutating Product/runtime state.
+async function waitForSimulationSettled(page, timeoutMs = 5000) {
+  const start = Date.now();
+  let previous = null;
+  let stableReads = 0;
+
+  while (Date.now() - start <= timeoutMs) {
+    const snapshot = await page.evaluate(() => {
+      const api = window.__track67Native;
+      return api && typeof api.getSimSnapshot === "function" ? api.getSimSnapshot() : null;
+    });
+
+    if (snapshot) {
+      const key = JSON.stringify({
+        travel: snapshot.travel,
+        chunks: snapshot.chunks,
+        raw: snapshot.raw,
+        q: snapshot.q,
+      });
+      if (key === previous) {
+        stableReads += 1;
+        if (stableReads >= 2) return snapshot;
+      } else {
+        previous = key;
+        stableReads = 0;
+      }
+    }
+
+    await page.waitForTimeout(100);
+  }
+
+  return null;
+}
+
 async function closeInspect(page) {
   const dlg = page.locator(".lt67-native__inspect");
   if ((await dlg.count()) === 0) return;
@@ -155,6 +194,12 @@ async function runTailProof(page, vp) {
   }
 
   await setPlaying(page, false);
+  const settled = await waitForSimulationSettled(page);
+  if (!settled) {
+    await setPlaying(page, true);
+    record(vp, "F. active tail positive hit (real pointer)", false, "simulation did not settle after pause");
+    return;
+  }
   const stable = await getNativeCandidate(page, "tail", false);
   if (!stable) {
     await setPlaying(page, true);
@@ -193,6 +238,13 @@ async function runChunkAndFrontmostProofs(page, vp) {
   }
 
   await setPlaying(page, false);
+  const settled = await waitForSimulationSettled(page);
+  if (!settled) {
+    record(vp, "E. static chunk positive hit (real pointer)", false, "simulation did not settle after pause");
+    record(vp, "F2. frontmost/nearest selection (real pointer, >=2 positive candidates)", false, "simulation did not settle after pause");
+    await setPlaying(page, true);
+    return;
+  }
 
   const stableChunk = await getNativeCandidate(page, "chunk", false);
   let chunkDs = null;
@@ -261,6 +313,8 @@ async function runSparseNoHitControl(page, vp) {
   }, 120000);
 
   await setPlaying(page, false);
+  const settled = await waitForSimulationSettled(page);
+  if (!settled) throw new Error(`${vp}: simulation did not settle before sparse no-hit control`);
   const box = await page.locator("canvas.lt67-native__canvas").boundingBox();
   if (!box) throw new Error("canvas boundingBox unavailable during sparse control");
 
