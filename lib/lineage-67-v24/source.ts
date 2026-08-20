@@ -19,8 +19,12 @@ export const LINEAGE_67_V24_SOURCE = {
   candidateId: "track67_v2.4.2_works_compare_menu",
   revision: "V2.4.2",
   title: "Track 67 V2.4 — Persistent World + Works Navigation",
+  /** Legacy Blob-based source path (shared SourceRunnerFrame uses this). */
   sourceAssetPath:
     "/design-lab-assets/lineages/67/v2-4/track67_v2.4_persistent_world_works_navigation.txt",
+  /** Real package URL — iframe loads this directly; relative paths resolve naturally. */
+  realPackageUrl:
+    "/design-lab-assets/lineages/67/v2-4/track67_v2.4.2_works_compare_menu.html",
   sourceBytes: 12265511,
   sourceSha256: "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f",
   driveExecutableId: "18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
