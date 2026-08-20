@@ -3,7 +3,7 @@
  *
  * This is a DESIGN-LAB review artifact, not canonical /v4 product adoption.
  * Fingerprint values are taken from the verified exact source and the design team's
- * own V2.4.2_SHA256SUMS.txt (drive id 1NgBfAr2wdYNMouHXAuv-o3c6XaMZGf60).
+ * own V2.4.2_SHA256SUMS.txt (drive id 1my0skzyOU_fsoz4MCkSl_mGz-nL4rGeG).
  *
  * WORKS ledger policy: fail-closed. No href may be fabricated. Every target is
  * either (a) a known, explicitly-provided route, or (b) status HOLD with href = null.
