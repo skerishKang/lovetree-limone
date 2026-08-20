@@ -3,7 +3,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { createWriteStream, existsSync } from "node:fs";
 import { cp, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { getDesignFidelityTarget } from "./design-fidelity-validation-registry.mjs";
+import { getDesignFidelityTarget } from "./design-fidelity-validation-inventory.mjs";
 
 const targetId = process.argv[2];
 const target = getDesignFidelityTarget(targetId);

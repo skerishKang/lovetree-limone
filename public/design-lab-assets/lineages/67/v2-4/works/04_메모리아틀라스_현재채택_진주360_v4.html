@@ -1,0 +1,341 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: archive
+SCREEN: memory-atlas
+VERSION: v2.2
+BASE_FILE: lovetree-memory-universe-atlas-v1.html
+STATUS: design-review
+SCOPE: v1 visual lock + shallow 360 spatial rotation + filled selection
+PRESERVE: fullscreen atlas, semantic zoom, search fly-to, filters, navigator, guided orbit, import/export
+DATE: 2026-08-05
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>LoveTree Memory Atlas · Pearl Atlas 360</title>
+<style>
+  :root{
+    --bg:#f6f7fb;--paper:#fff;--ink:#171a24;--muted:#747b8b;--line:#dfe3ec;
+    --rose:#ec7597;--teal:#35bfae;--amber:#e4ad3f;--violet:#846ae8;--sky:#5aafe3;
+    --cobalt:#5278e9;--slate:#8994a4;--shadow:0 14px 40px rgba(67,77,110,.13);
+  }
+  *{box-sizing:border-box}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  button,input{font:inherit}
+  button{color:inherit}
+  .atlas-app{position:relative;width:100%;height:100%;overflow:hidden;background:
+    radial-gradient(circle at 50% 44%,rgba(255,255,255,.96),rgba(246,247,251,.92) 48%,rgba(239,242,249,.98) 100%)}
+  .atlas-app::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:
+    radial-gradient(circle at 12% 18%,rgba(132,106,232,.07) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 76% 68%,rgba(53,191,174,.06) 0 1px,transparent 1.5px);background-size:31px 31px,43px 43px;mix-blend-mode:multiply}
+  #atlasCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+  #atlasCanvas.dragging{cursor:grabbing}
+  .label-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .tree-label,.season-label,.moment-pill,.course-label,.unconnected-label{position:absolute;transform:translate(-50%,-50%);will-change:transform,opacity;white-space:nowrap}
+  .tree-label{pointer-events:auto;cursor:pointer;text-align:center;color:#303543;filter:drop-shadow(0 2px 9px rgba(255,255,255,.9));transition:opacity .16s,transform .16s}
+  .tree-label b{display:block;font-size:18px;letter-spacing:.02em;font-weight:760}
+  .tree-label span{display:block;margin-top:2px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#757c8d}
+  .tree-label:hover{transform:translate(-50%,-50%) scale(1.04)}
+  .season-label{pointer-events:auto;cursor:pointer;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.68);border:1px solid rgba(66,74,98,.10);box-shadow:0 5px 14px rgba(70,83,116,.08);color:#555d70;font-size:10px;letter-spacing:.04em;transition:.18s}
+  .season-label:hover{background:#fff;box-shadow:0 8px 19px rgba(70,83,116,.16)}
+  .moment-pill{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:7px;max-width:230px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.9);border:1px solid rgba(83,97,125,.18);box-shadow:0 7px 17px rgba(69,77,110,.12);color:#242936;font-size:11px;line-height:1;transition:transform .18s,box-shadow .18s,opacity .18s,background .18s;border-color .18s;overflow:hidden}
+  .moment-pill:hover{transform:translate(-50%,calc(-50% - 3px)) scale(1.02);box-shadow:0 12px 25px rgba(65,76,112,.18);border-color:var(--accent,#5278e9)}
+  .moment-pill.selected{background:var(--accent,#5278e9);color:white;border-color:transparent;box-shadow:0 0 0 5px color-mix(in srgb,var(--accent,#5278e9) 15%,transparent),0 12px 28px rgba(65,76,112,.2)}
+  .moment-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent);flex:0 0 auto}
+  .moment-pill .title{overflow:hidden;text-overflow:ellipsis}
+  .course-label{padding:5px 8px;border-radius:999px;background:rgba(132,106,232,.10);border:1px solid rgba(132,106,232,.22);color:#6551bd;font-size:9px;letter-spacing:.09em;text-transform:uppercase}
+  .brand{position:absolute;top:20px;left:50%;transform:translateX(-50%);text-align:center;z-index:20;pointer-events:none}
+  .brand h1{margin:0;font-size:14px;letter-spacing:.19em;font-weight:760}
+  .brand h1 span{background:linear-gradient(90deg,var(--rose),var(--teal));-webkit-background-clip:text;color:transparent}
+  .brand p{margin:4px 0 0;font-size:8px;letter-spacing:.26em;color:#9aa1af;text-transform:uppercase}
+  .brand .meta{margin-top:7px;font-size:8px;letter-spacing:.08em;color:#818899}
+  .search-wrap{position:absolute;top:20px;left:20px;z-index:30;width:min(310px,calc(100vw - 40px))}
+  .search-box{height:42px;display:flex;align-items:center;gap:9px;padding:0 13px;border-radius:16px;background:rgba(255,255,255,.86);border:1px solid rgba(92,104,136,.16);box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+  .search-box svg{width:17px;height:17px;color:#798196}
+  .search-box input{width:100%;border:0;outline:0;background:transparent;color:#242936;font-size:12px}
+  .search-box input::placeholder{color:#9299a8}
+  .search-results{display:none;margin-top:8px;padding:8px;border-radius:16px;background:rgba(255,255,255,.95);box-shadow:var(--shadow);border:1px solid rgba(92,104,136,.12);max-height:330px;overflow:auto}
+  .search-results.open{display:block}
+  .search-result{width:100%;display:grid;grid-template-columns:9px 1fr auto;gap:9px;align-items:center;border:0;background:transparent;border-radius:11px;padding:9px;text-align:left;cursor:pointer}
+  .search-result:hover,.search-result.active{background:#f2f4f9}
+  .search-result .type-dot{width:7px;height:7px;border-radius:50%;background:var(--result-color)}
+  .search-result b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .search-result small{display:block;margin-top:2px;color:#858d9f;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .search-result em{font-style:normal;color:#9aa1af;font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+  .filters{position:absolute;left:20px;top:82px;z-index:20;display:flex;flex-direction:column;gap:7px;width:170px}
+  .filter{height:31px;padding:0 10px;display:grid;grid-template-columns:8px 1fr auto;gap:8px;align-items:center;border-radius:999px;border:1px solid rgba(96,108,137,.15);background:rgba(255,255,255,.76);box-shadow:0 5px 16px rgba(67,77,110,.07);cursor:pointer;color:#545c6f;transition:.18s;text-align:left}
+  .filter:hover{background:#fff;transform:translateX(2px)}
+  .filter.active{background:#fff;border-color:var(--filter-color);box-shadow:0 0 0 3px color-mix(in srgb,var(--filter-color) 12%,transparent),0 6px 16px rgba(67,77,110,.1)}
+  .filter .dot{width:7px;height:7px;border-radius:50%;background:var(--filter-color)}
+  .filter .name{font-size:9px;letter-spacing:.11em;font-weight:700}
+  .filter .count{font-size:9px;color:#888f9e}
+  .navigator{position:absolute;right:20px;top:82px;z-index:25;width:292px;padding:18px;border-radius:22px;background:rgba(255,255,255,.92);border:1px solid rgba(92,104,136,.16);box-shadow:0 20px 55px rgba(67,77,110,.16);backdrop-filter:blur(16px);transform:translateX(calc(100% + 36px));opacity:0;transition:transform .35s cubic-bezier(.22,.72,.16,1),opacity .3s;pointer-events:none}
+  .navigator.open{transform:translateX(0);opacity:1;pointer-events:auto}
+  .nav-mark{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .nav-mark b{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#747d8e}
+  .nav-close{width:28px;height:28px;border:0;border-radius:50%;background:#f1f3f7;cursor:pointer}
+  .nav-type{font-size:9px;letter-spacing:.18em;color:var(--nav-accent);font-weight:800}
+  .navigator h2{font-size:20px;line-height:1.15;margin:8px 0 5px}
+  .nav-meta{font-size:10px;color:#858d9f;margin-bottom:16px}
+  .nav-feeling{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:color-mix(in srgb,var(--nav-accent) 12%,white);color:color-mix(in srgb,var(--nav-accent) 80%,#20242d);font-size:9px;margin-bottom:13px}
+  .nav-copy{font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.55;color:#3f4656;margin:0 0 15px}
+  .nav-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}
+  .nav-stat{padding:10px;border-radius:12px;background:#f5f6fa}
+  .nav-stat b{display:block;font-size:13px}.nav-stat span{font-size:8px;letter-spacing:.1em;color:#8b92a2;text-transform:uppercase}
+  .nav-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .nav-actions button{border:0;border-radius:999px;padding:9px 12px;background:#eff2f7;color:#424a5b;font-size:9px;font-weight:720;cursor:pointer}
+  .nav-actions .primary{background:var(--nav-accent);color:white}
+  .orbit-controls{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:7px;padding:6px;border-radius:999px;background:rgba(255,255,255,.88);border:1px solid rgba(92,104,136,.16);box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+  .orbit-controls button{height:34px;border:0;border-radius:999px;padding:0 13px;background:transparent;color:#596174;font-size:9px;font-weight:760;letter-spacing:.07em;cursor:pointer}
+  .orbit-controls button:hover{background:#f1f3f7}
+  .orbit-controls .start{background:linear-gradient(90deg,var(--violet),var(--rose));color:#fff;min-width:114px}
+  .io-controls{position:absolute;left:20px;bottom:20px;z-index:20;display:flex;gap:6px}
+  .io-controls button,.mobile-top button{height:34px;padding:0 11px;border:1px solid rgba(92,104,136,.16);border-radius:999px;background:rgba(255,255,255,.8);box-shadow:0 5px 14px rgba(67,77,110,.08);font-size:8px;letter-spacing:.08em;color:#697184;cursor:pointer}
+  .instructions{position:absolute;right:20px;bottom:20px;z-index:10;text-align:right;color:#969dac;font-size:8px;line-height:1.55;letter-spacing:.04em}
+  .zoom-badge{position:absolute;right:20px;top:20px;z-index:20;display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(92,104,136,.14);box-shadow:0 6px 16px rgba(67,77,110,.08);font-size:8px;letter-spacing:.09em;color:#6f7789}
+  .zoom-badge b{color:#313746}
+  .toast{position:absolute;left:50%;bottom:78px;z-index:60;transform:translate(-50%,16px);opacity:0;padding:10px 15px;border-radius:999px;background:#272b36;color:white;font-size:10px;box-shadow:0 12px 30px rgba(22,25,33,.25);transition:.25s;pointer-events:none}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .empty-state{position:absolute;left:50%;top:50%;z-index:18;transform:translate(-50%,-50%);text-align:center;display:none}
+  .empty-state.show{display:block}
+  .empty-seed{width:72px;height:72px;margin:0 auto 24px;border-radius:50%;background:radial-gradient(circle at 42% 38%,white 0 8%,rgba(236,117,151,.9) 18%,rgba(236,117,151,.18) 53%,transparent 70%);box-shadow:0 0 0 42px rgba(236,117,151,.05),0 18px 50px rgba(236,117,151,.2);animation:breathe 3.2s ease-in-out infinite}
+  .empty-state h2{font-size:20px;letter-spacing:.08em;margin:0 0 8px}.empty-state p{font-family:Georgia,serif;color:#737b8d;margin:0 0 18px}.empty-state button{border:0;border-radius:999px;padding:11px 17px;background:var(--rose);color:white;cursor:pointer}
+  @keyframes breathe{50%{transform:scale(1.08);box-shadow:0 0 0 54px rgba(236,117,151,.035),0 24px 65px rgba(236,117,151,.24)}}
+  .mobile-top{display:none}
+  input[type=file]{display:none}
+  @media (max-width:760px){
+    .brand{top:12px}.brand h1{font-size:11px}.brand p,.brand .meta{display:none}
+    .search-wrap{top:54px;left:10px;width:calc(100% - 20px)}.search-box{height:40px;border-radius:14px}
+    .filters{top:102px;left:0;right:0;width:auto;padding:0 10px;display:flex;flex-direction:row;overflow-x:auto;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.filter{flex:0 0 auto;width:auto;min-width:108px}
+    .filter .count{margin-left:7px}
+    .zoom-badge{display:none}
+    .navigator{position:absolute;left:8px;right:8px;top:auto;bottom:8px;width:auto;max-height:42%;overflow:auto;border-radius:22px;transform:translateY(calc(100% + 24px));padding:16px}.navigator.open{transform:translateY(0)}
+    .navigator h2{font-size:18px}.nav-copy{font-size:13px}
+    .orbit-controls{left:auto;right:10px;bottom:10px;transform:none;padding:5px}.orbit-controls button:not(.start){display:none}.orbit-controls .start{min-width:102px;height:38px}
+    .io-controls,.instructions{display:none}
+    .mobile-top{display:flex;position:absolute;right:10px;top:10px;z-index:30;gap:6px}.mobile-top button{width:36px;padding:0;font-size:13px}
+    .toast{bottom:65px;max-width:90%;white-space:nowrap}
+    .moment-pill{max-width:190px;padding:8px 10px;font-size:11px;min-height:44px}
+    .tree-label b{font-size:15px}.season-label{min-height:34px;display:flex;align-items:center}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}.navigator,.toast,.moment-pill{transition-duration:.01ms!important}}
+
+  /* v2.2: V1 visual lock. Only rotation, selection and performance behavior are added. */
+  .tree-label,.season-label,.moment-pill,.course-label{transition:opacity .18s,transform .18s,background .28s,border-color .28s,box-shadow .28s,color .28s}
+  .tree-label{padding:6px 10px;border-radius:16px}
+  .tree-label.selected{background:var(--accent);color:#fff;filter:none;box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 12%,transparent),0 14px 32px color-mix(in srgb,var(--accent) 20%,transparent)}
+  .tree-label.selected span{color:rgba(255,255,255,.84)}
+  .season-label.selected{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent),0 10px 24px color-mix(in srgb,var(--accent) 18%,transparent)}
+  .course-label{pointer-events:auto;cursor:pointer}
+  .course-label.selected{background:linear-gradient(90deg,#846AE8,#EC7597);color:#fff;border-color:transparent;box-shadow:0 0 0 4px rgba(132,106,232,.12),0 10px 24px rgba(132,106,232,.18)}
+  .moment-pill.selected{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 13%,transparent),0 12px 27px color-mix(in srgb,var(--accent) 22%,transparent)}
+  .moment-pill.selected .dot{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.24)}
+  .rotation-controls{position:absolute;right:20px;top:58px;z-index:22;display:flex;gap:5px;padding:5px;border-radius:999px;background:rgba(255,255,255,.82);border:1px solid rgba(92,104,136,.14);box-shadow:0 6px 18px rgba(67,77,110,.08)}
+  .rotation-controls button{height:30px;padding:0 11px;border:0;border-radius:999px;background:transparent;color:#657084;font-size:8px;letter-spacing:.07em;font-weight:760;cursor:pointer}
+  .rotation-controls button:hover{background:#f0f2f7;color:#313746}
+  #atlasCanvas{cursor:grab}
+  #atlasCanvas.dragging{cursor:grabbing}
+  @media(max-width:760px){.rotation-controls{top:98px;right:8px}.filters{top:138px}.search-wrap{top:50px}.rotation-controls button:not(#resetView){display:none}}
+
+</style>
+</head>
+<body>
+<main class="atlas-app" id="atlasApp">
+  <canvas id="atlasCanvas" aria-label="Interactive LoveTree Memory Atlas"></canvas>
+  <div class="label-layer" id="labelLayer"></div>
+
+  <header class="brand">
+    <h1>LOVETREE <span>ATLAS</span></h1>
+    <p>My living memory universe</p>
+    <div class="meta" id="brandMeta">UPDATED 2026-08-05 02:40 · 7 TREES · 437 MOMENTS · 830 CONNECTIONS</div>
+  </header>
+
+  <section class="search-wrap" aria-label="Atlas search">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="searchInput" autocomplete="off" placeholder="Search a person, moment or feeling" />
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <nav class="filters" id="filters" aria-label="Atlas filters"></nav>
+
+  <aside class="navigator" id="navigator" aria-live="polite">
+    <div class="nav-mark"><b>LoveTree Navigator</b><button class="nav-close" id="navClose" aria-label="Close">×</button></div>
+    <div class="nav-type" id="navType">MOMENT</div>
+    <h2 id="navTitle">WHISPER — the first clip</h2>
+    <div class="nav-meta" id="navMeta">Felix · Season 03</div>
+    <div class="nav-feeling" id="navFeeling">● First spark</div>
+    <p class="nav-copy" id="navCopy">The voice made me search for what came next.</p>
+    <div class="nav-stats" id="navStats"></div>
+    <div class="nav-actions" id="navActions"></div>
+  </aside>
+
+  <div class="orbit-controls">
+    <button id="prevTour">← PREVIOUS</button>
+    <button class="start" id="startTour">START ORBIT</button>
+    <button id="nextTour">NEXT →</button>
+  </div>
+
+  <div class="io-controls">
+    <button id="importBtn">IMPORT JSON</button>
+    <button id="exportBtn">EXPORT JSON</button>
+    <button id="pngBtn">EXPORT PNG</button>
+  </div>
+  <input type="file" id="importFile" accept="application/json" />
+
+  <div class="instructions">DRAG TO ROTATE · SCROLL TO ZOOM<br>DOUBLE-CLICK TO FOCUS · R TO RESET</div>
+  <div class="rotation-controls"><button id="zoomOut">−</button><button id="zoomIn">＋</button><button id="resetView">RESET VIEW</button></div>
+  <div class="zoom-badge">ZOOM <b id="zoomLevelLabel">UNIVERSE</b> <span id="zoomValue">0.42×</span></div>
+  <div class="mobile-top"><button id="mobileSearch" aria-label="Search">⌕</button><button id="mobileFit" aria-label="Fit all">◎</button></div>
+  <div class="toast" id="toast"></div>
+  <div class="empty-state" id="emptyState"><div class="empty-seed"></div><h2>YOUR MEMORY UNIVERSE<br>BEGINS WITH ONE MOMENT</h2><p>Every path begins with the instant your heart moved.</p><button>Plant your first moment</button></div>
+</main>
+<script>
+(()=>{
+'use strict';
+const qs=new URLSearchParams(location.search);
+const MODE={empty:qs.has('empty'),sparse:qs.has('sparse'),public:qs.has('public'),demo:qs.has('demo'),view:qs.get('view')||''};
+const prefersReduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const TREE_CONFIG=[
+ {id:'tree-felix',title:'Felix',color:'#EC7597',count:127,seasons:4,privacy:'private',center:{x:-620,y:-245},radius:395,z:.30},
+ {id:'tree-juyeon',title:'Juyeon',color:'#35BFAE',count:84,seasons:3,privacy:'public',center:{x:100,y:-345},radius:330,z:.14},
+ {id:'tree-junhyuk',title:'Junhyuk',color:'#846AE8',count:71,seasons:3,privacy:'public',center:{x:705,y:-205},radius:310,z:-.12},
+ {id:'tree-ado',title:'Ado',color:'#E4AD3F',count:62,seasons:2,privacy:'public',center:{x:-385,y:425},radius:290,z:.18},
+ {id:'tree-cinema',title:'Cinema',color:'#5AAFE3',count:48,seasons:2,privacy:'public',center:{x:285,y:410},radius:265,z:-.04},
+ {id:'tree-family',title:'Family',color:'#F28C7A',count:31,seasons:2,privacy:'private',center:{x:870,y:430},radius:235,z:-.22},
+ {id:'tree-places',title:'Places',color:'#7E9BCF',count:14,seasons:2,privacy:'public',center:{x:-930,y:510},radius:205,z:-.30}
+];
+const FEELINGS=['First spark','Curiosity','Revisit','Anticipation','Comfort','Presence','Warmth','Attachment','Reflection','Wonder','Relief','Longing'];
+const SOURCES=['YouTube','Instagram','X','Interview','Live','Article','Photo','Note'];
+const PREFIX=['The first','A quiet','The night','The stage','A voice','That unexpected','The moment','A small','The clip','The scene','The return','The answer'];
+const SUFFIX=['I stopped for','that stayed with me','I watched twice','that opened a path','I searched again','that changed the feeling','off stage','I remembered','that made sense later','that felt like home','that brought me back','I finally understood'];
+const seeded=(seed)=>{let s=seed>>>0;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296)};
+const rng=seeded(45220805),uid=(p,i)=>`${p}-${String(i).padStart(3,'0')}`;
+const atlasData={trees:[],seasons:[],moments:[],connections:[],courses:[]};
+function generateData(){
+ if(MODE.empty)return;
+ const configs=MODE.sparse?[{...TREE_CONFIG[0],count:8,seasons:1,center:{x:0,y:0},radius:285,z:.16,privacy:'private'}]:TREE_CONFIG;
+ configs.forEach((cfg,ti)=>{
+  if(MODE.public&&cfg.privacy==='private')return;
+  const tree={...cfg,seasonIds:[],momentIds:[]};atlasData.trees.push(tree);
+  const base=Math.floor(cfg.count/cfg.seasons),extra=cfg.count%cfg.seasons;let localIndex=0;
+  for(let si=0;si<cfg.seasons;si++){
+   const scount=base+(si<extra?1:0),angle=Math.PI*2*si/cfg.seasons+ti*.31,orbitR=cfg.radius*(.35+.12*(si%2));
+   const sx=cfg.center.x+Math.cos(angle)*orbitR,sy=cfg.center.y+Math.sin(angle)*orbitR*.68;
+   const season={id:`season-${cfg.id}-${si+1}`,treeId:cfg.id,title:`Season ${String(si+1).padStart(2,'0')} · ${['First Light','Growing Signal','Deepening Path','Return Chapter'][si%4]}`,dateRange:[`2026-0${Math.min(9,si+1)}-01`,`2026-0${Math.min(9,si+2)}-28`],momentIds:[],center:{x:sx,y:sy},rx:Math.max(95,cfg.radius*(.23+.04*(si%2))),ry:Math.max(64,cfg.radius*(.14+.03*((si+1)%2))),color:cfg.color,z:cfg.z+((si%3)-1)*.045};
+   atlasData.seasons.push(season);tree.seasonIds.push(season.id);
+   for(let mi=0;mi<scount;mi++){
+    const a=Math.PI*2*(mi/scount)+rng()*.36,rad=Math.sqrt((mi+.5)/scount),jitter=(rng()-.5)*26;
+    const x=sx+Math.cos(a)*season.rx*rad+jitter,y=sy+Math.sin(a)*season.ry*rad+(rng()-.5)*18,idx=localIndex++;
+    const privacy=(cfg.privacy==='private'||idx%17===0)?'private':'public';if(MODE.public&&privacy==='private')continue;
+    const m={id:uid(cfg.id.replace('tree-','moment-'),idx+1),treeId:cfg.id,seasonId:season.id,title:`${PREFIX[(idx+ti)%PREFIX.length]} ${SUFFIX[(idx*3+si)%SUFFIX.length]}`,feeling:FEELINGS[(idx+si*2+ti)%FEELINGS.length],source:SOURCES[(idx*5+ti)%SOURCES.length],discoveredAt:`2026-${String((idx%8)+1).padStart(2,'0')}-${String((idx*3%27)+1).padStart(2,'0')}`,revisits:1+((idx*7+ti)%18),privacy,x,y,z:season.z+(rng()-.5)*.095,size:2.1+Math.min(4,((idx*7)%11)/3),featured:mi<2};
+    atlasData.moments.push(m);season.momentIds.push(m.id);tree.momentIds.push(m.id);
+   }
+  }
+ });
+ if(!MODE.sparse)atlasData.moments.slice(-11).forEach((m,i)=>{m.unconnected=true;const a=Math.PI*2*i/11;m.x=Math.cos(a)*1320;m.y=Math.sin(a)*760;m.z=-.18+Math.sin(a*2)*.12});
+ const momentById=id=>atlasData.moments.find(m=>m.id===id);
+ atlasData.trees.forEach(tree=>{for(let i=1;i<tree.momentIds.length;i++){const a=momentById(tree.momentIds[i-1]),b=momentById(tree.momentIds[i]);if(a?.unconnected||b?.unconnected)continue;atlasData.connections.push({from:a.id,to:b.id,reason:'This moment led naturally to what came next.'})}});
+ const target=MODE.sparse?7:(MODE.public?Math.min(510,Math.max(1,atlasData.moments.length*2-10)):830),edgeSet=new Set(atlasData.connections.map(e=>`${e.from}|${e.to}`));let guard=0;
+ while(atlasData.connections.length<target&&guard++<24000){const tree=atlasData.trees[Math.floor(rng()*atlasData.trees.length)];if(!tree||tree.momentIds.length<3)continue;const a=Math.floor(rng()*tree.momentIds.length),jump=2+Math.floor(rng()*Math.min(18,tree.momentIds.length-1)),b=(a+jump)%tree.momentIds.length,from=tree.momentIds[Math.min(a,b)],to=tree.momentIds[Math.max(a,b)],key=`${from}|${to}`,fm=momentById(from),tm=momentById(to);if(fm?.unconnected||tm?.unconnected||from===to||edgeSet.has(key))continue;edgeSet.add(key);atlasData.connections.push({from,to,reason:FEELINGS[(a+b)%FEELINGS.length]+' made the next search feel necessary.'})}
+ if(!MODE.sparse)[['Follow the voice','tree-felix'],['A softer way in','tree-felix'],['Stages that changed me','tree-juyeon'],['Cinema after midnight','tree-cinema'],['Where the story opened','tree-junhyuk'],['Places I want to return to','tree-places']].forEach((d,i)=>{const tree=atlasData.trees.find(t=>t.id===d[1]);if(!tree)return;const step=Math.max(1,Math.floor(tree.momentIds.length/9)),ids=[];for(let n=i%3;n<tree.momentIds.length&&ids.length<9;n+=step)ids.push(tree.momentIds[n]);atlasData.courses.push({id:`course-${i+1}`,treeId:tree.id,title:d[0],momentIds:ids,color:i%2?'#EC7597':'#846AE8'})});
+}
+generateData();
+const byId={};[...atlasData.trees,...atlasData.seasons,...atlasData.moments,...atlasData.courses].forEach(x=>byId[x.id]=x);
+const canvas=document.getElementById('atlasCanvas'),ctx=canvas.getContext('2d',{alpha:false}),labelLayer=document.getElementById('labelLayer'),filtersEl=document.getElementById('filters'),navigatorEl=document.getElementById('navigator'),toastEl=document.getElementById('toast');
+let W=innerWidth,H=innerHeight,dpr=1,camera={x:0,y:40,scale:innerWidth<760?.34:.42},defaultCamera={x:0,y:40,scale:innerWidth<760?.34:.42};
+let yaw=0,pitch=0,velYaw=0,velPitch=0,targetView=null,dragging=false,dragMoved=false,lastPointer=null,pointers=new Map(),pinch=null,hovered=null,selected=null,activeFilter='all',activeCourse=null,tourPlaying=false,tourIndex=0,tourTimer=0,selectionStarted=0,courseSignal=0;
+let raf=0,dirty=true,lastFrame=0,lastLabelUpdate=0,settledFrames=0;
+const projectionCache=new Map(),WORLD_X=1400,WORLD_Y=920;
+const FILTERS=[['all','ALL TREES','#EC7597',()=>atlasData.trees.length],['people','PEOPLE','#EC7597',()=>atlasData.trees.length],['moments','MOMENTS','#35BFAE',()=>atlasData.moments.length],['seasons','SEASONS','#E4AD3F',()=>atlasData.seasons.length],['courses','COURSES','#846AE8',()=>atlasData.courses.length],['feelings','FEELINGS','#5AAFE3',()=>new Set(atlasData.moments.map(m=>m.feeling)).size],['sources','SOURCES','#5278E9',()=>new Set(atlasData.moments.map(m=>m.source)).size],['notes','NOTES','#8994A4',()=>Math.round(atlasData.moments.length*.327)],['unconnected','UNCONNECTED','#8994A4',()=>atlasData.moments.filter(m=>m.unconnected).length],['private','PRIVATE','#6B7280',()=>atlasData.moments.filter(m=>m.privacy==='private').length]];
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rgba(hex,a){const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+function itemType(item){return item.id.startsWith('tree-')?'PERSON':item.id.startsWith('season-')?'SEASON':item.id.startsWith('course-')?'COURSE':'MOMENT'}
+function itemXYZ(item){if(item.x!=null)return{x:item.x,y:item.y,z:item.z||0};if(item.center)return{x:item.center.x,y:item.center.y,z:item.z||0};if(item.momentIds){const pts=item.momentIds.map(id=>byId[id]).filter(Boolean);return{x:pts.reduce((s,m)=>s+m.x,0)/pts.length,y:pts.reduce((s,m)=>s+m.y,0)/pts.length,z:pts.reduce((s,m)=>s+(m.z||0),0)/pts.length}}return{x:0,y:0,z:0}}
+function rotationAmount(){return clamp(Math.abs(Math.sin(yaw))*1.05+Math.abs(pitch)*.55,0,1)}
+function projectXYZ(v){const vx=v.x/WORLD_X,vy=-v.y/WORLD_Y,cy=Math.cos(yaw),sy=Math.sin(yaw);let rx=vx*cy+v.z*sy,rz=-vx*sy+v.z*cy;const cp=Math.cos(pitch),sp=Math.sin(pitch),ry=vy*cp-rz*sp,rz2=vy*sp+rz*cp,rs=rotationAmount();const worldX=v.x*.76+(rx*WORLD_X)*.24,worldY=v.y*.86+(-ry*WORLD_Y)*.14;const scale=1+rs*(rz2>=0?.07*rz2:.10*rz2),opacity=1-rs*(.24*(1-(rz2+1)/2));return{x:(worldX-camera.x)*camera.scale*scale+W/2,y:(worldY-camera.y)*camera.scale*scale+H/2,z:rz2,scale:clamp(scale,.90,1.07),opacity:clamp(opacity,.76,1)}}
+function projectItem(item){let p=projectionCache.get(item.id);if(!p){p=projectXYZ(itemXYZ(item));projectionCache.set(item.id,p)}return p}
+function requestRender(ms=0){dirty=true;if(!raf)raf=requestAnimationFrame(frame);if(ms>0){const until=performance.now()+ms;const tick=()=>{if(performance.now()<until){dirty=true;if(!raf)raf=requestAnimationFrame(frame);requestAnimationFrame(tick)}};requestAnimationFrame(tick)}}
+function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,W<760?1.35:1.5);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);defaultCamera={x:0,y:40,scale:W<760?.34:.42};if(!targetView&&Math.abs(yaw)<.001&&Math.abs(pitch)<.001)camera={...defaultCamera};requestRender(180)}
+addEventListener('resize',resize,{passive:true});
+function zoomLevel(){return camera.scale<.5?'UNIVERSE':camera.scale<1.15?'TREE':camera.scale<2.2?'SEASON':'MOMENT'}
+function isVisible(type,item){if(activeFilter==='all')return true;if(activeFilter==='people')return type==='tree';if(activeFilter==='moments')return type==='moment';if(activeFilter==='seasons')return type==='season';if(activeFilter==='courses')return type==='course';if(activeFilter==='private')return item.privacy==='private';if(activeFilter==='unconnected')return item.unconnected;if(activeFilter==='feelings'||activeFilter==='sources')return type==='moment';return true}
+function opacityFor(type,item){return activeFilter==='all'?1:(isVisible(type,item)?1:.12)}
+function selectedTreeId(){if(!selected)return null;return selected.id.startsWith('tree-')?selected.id:selected.treeId||null}
+function selectedSeasonId(){if(!selected)return null;return selected.id.startsWith('season-')?selected.id:selected.seasonId||null}
+function relatedMoment(id){if(!selected)return false;const ty=itemType(selected);if(ty==='MOMENT')return id===selected.id||atlasData.connections.some(e=>(e.from===selected.id&&e.to===id)||(e.to===selected.id&&e.from===id));if(ty==='SEASON'||ty==='PERSON'||ty==='COURSE')return selected.momentIds?.includes(id);return false}
+function createLabels(){
+ const make=(item,cls,html)=>{const el=document.createElement('div');el.className=cls;el.dataset.id=item.id;el.style.display='none';el.style.setProperty('--accent',item.color||byId[item.treeId]?.color||'#5278E9');el.innerHTML=html;el.addEventListener('click',e=>{e.stopPropagation();selectItem(item)});el.addEventListener('dblclick',e=>{e.stopPropagation();focusItem(item)});el.addEventListener('pointerenter',()=>{hovered=item;requestRender()});el.addEventListener('pointerleave',()=>{if(hovered===item){hovered=null;requestRender()}});labelLayer.appendChild(el);item._label=el};
+ atlasData.trees.forEach(t=>make(t,'tree-label',`<b>${t.title}${t.privacy==='private'?' · ⌑':''}</b><span>${t.momentIds.length} moments · ${t.seasonIds.length} seasons</span>`));
+ atlasData.seasons.forEach(s=>make(s,'season-label',s.title.split(' · ')[0]));
+ atlasData.moments.forEach(m=>make(m,'moment-pill',`<span class="dot"></span><span class="title">${m.title}</span>`));
+ atlasData.courses.forEach(c=>make(c,'course-label',c.title));
+}
+function initFilters(){filtersEl.innerHTML='';FILTERS.forEach(([id,name,color,count])=>{const b=document.createElement('button');b.className='filter'+(id==='all'?' active':'');b.style.setProperty('--filter-color',color);b.innerHTML=`<span class="dot"></span><span class="name">${name}</span><span class="count">${count()}</span>`;b.onclick=()=>{activeFilter=id;[...filtersEl.children].forEach(x=>x.classList.toggle('active',x===b));requestRender(220);showToast(`${name} filter applied`)};filtersEl.appendChild(b)})}
+function drawBackground(){const g=ctx.createRadialGradient(W*.5,H*.42,30,W*.5,H*.45,Math.max(W,H)*.74);g.addColorStop(0,'#ffffff');g.addColorStop(.55,'#f7f8fc');g.addColorStop(1,'#eef1f7');ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+function treeRadius(tree,p){return tree.radius*camera.scale*p.scale}
+function drawTreeRegions(t){const st=selectedTreeId(),ease=selected?clamp((t-selectionStarted)/300,0,1):0;const arr=atlasData.trees.map(tree=>({tree,p:projectItem(tree)})).sort((a,b)=>a.p.z-b.p.z);for(const {tree,p} of arr){const r=treeRadius(tree,p),sel=selected?.id===tree.id,within=st===tree.id,dim=st&&st!==tree.id;ctx.save();ctx.globalAlpha=opacityFor('tree',tree)*p.opacity*(dim?.76:1);const alpha=sel?.26+.04*ease:within?.18:.12;const g=ctx.createRadialGradient(p.x-r*.26,p.y-r*.28,r*.06,p.x,p.y,r);g.addColorStop(0,rgba(tree.color,sel?.32:.16));g.addColorStop(.48,rgba(tree.color,alpha));g.addColorStop(1,rgba(tree.color,sel?.08:.03));ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,r*(sel?1.02:1),0,Math.PI*2);ctx.fill();ctx.strokeStyle=rgba(tree.color,sel?.78:within?.52:.34);ctx.lineWidth=sel?1.9:1;ctx.stroke();if(sel){const aura=ctx.createRadialGradient(p.x,p.y,r*.2,p.x,p.y,r*1.22);aura.addColorStop(0,rgba(tree.color,.09));aura.addColorStop(1,rgba(tree.color,0));ctx.fillStyle=aura;ctx.beginPath();ctx.arc(p.x,p.y,r*1.22,0,Math.PI*2);ctx.fill()}ctx.restore()}}
+function drawSeasonRegions(){const st=selectedTreeId(),ss=selectedSeasonId();for(const s of atlasData.seasons){const p=projectItem(s),tree=byId[s.treeId],sel=selected?.id===s.id,dim=(st&&s.treeId!==st)||(ss&&s.id!==ss),rx=s.rx*camera.scale*p.scale*1.32,ry=s.ry*camera.scale*p.scale*1.25;if(rx<4)continue;ctx.save();ctx.globalAlpha=opacityFor('season',s)*p.opacity*(dim?.68:1);if(sel){ctx.fillStyle=rgba(tree.color,.20);ctx.beginPath();ctx.ellipse(p.x,p.y,rx,ry,0,0,Math.PI*2);ctx.fill()}ctx.strokeStyle=rgba(sel?'#E4AD3F':tree.color,sel?.82:.28);ctx.lineWidth=sel?1.8:.8;ctx.setLineDash(sel?[]:[4,5]);ctx.beginPath();ctx.ellipse(p.x,p.y,rx,ry,0,0,Math.PI*2);ctx.stroke();ctx.restore()}}
+function connectionSubset(){const level=zoomLevel();if(selected){const ty=itemType(selected);if(ty==='MOMENT')return atlasData.connections.filter(e=>e.from===selected.id||e.to===selected.id);const set=new Set(selected.momentIds||[]);return atlasData.connections.filter(e=>set.has(e.from)&&set.has(e.to))}const lim=level==='UNIVERSE'?210:level==='TREE'?420:level==='SEASON'?560:650,step=Math.max(1,Math.ceil(atlasData.connections.length/lim));return atlasData.connections.filter((_,i)=>i%step===0)}
+function drawConnections(){const edges=connectionSubset(),st=selectedTreeId(),ss=selectedSeasonId(),sm=selected?.id?.startsWith('moment-')?selected.id:null;for(const e of edges){const a=byId[e.from],b=byId[e.to];if(!a||!b)continue;const pa=projectItem(a),pb=projectItem(b),hot=sm&&(e.from===sm||e.to===sm),inSeason=ss&&a.seasonId===ss&&b.seasonId===ss,inTree=st&&a.treeId===st&&b.treeId===st,depth=Math.min(pa.opacity,pb.opacity);ctx.strokeStyle=hot?'rgba(72,105,220,.78)':inSeason?rgba(byId[a.treeId].color,.55):inTree?rgba(byId[a.treeId].color,.36):`rgba(75,88,112,${.14*depth})`;ctx.lineWidth=hot?1.9:inSeason?1.35:inTree?1.05:.55;ctx.beginPath();const mx=(pa.x+pb.x)/2+(pa.y-pb.y)*.018,my=(pa.y+pb.y)/2+(pb.x-pa.x)*.018;ctx.moveTo(pa.x,pa.y);ctx.quadraticCurveTo(mx,my,pb.x,pb.y);ctx.stroke()}
+ for(const c of atlasData.courses){if(activeCourse&&activeCourse.id!==c.id)continue;const pts=c.momentIds.map(id=>projectItem(byId[id]));if(pts.length<2)continue;ctx.strokeStyle=rgba(c.color,activeCourse?.id===c.id?.68:.44);ctx.lineWidth=activeCourse?.id===c.id?2.2:1.25;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();if(activeCourse?.id===c.id){const seg=Math.min(pts.length-2,Math.floor(courseSignal%(pts.length-1))),u=courseSignal-seg,a=pts[seg],b=pts[seg+1];ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u,2.4,0,Math.PI*2);ctx.fill()}}
+}
+function drawMoments(){const st=selectedTreeId(),ss=selectedSeasonId();const arr=atlasData.moments.map(m=>({m,p:projectItem(m)})).sort((a,b)=>a.p.z-b.p.z);for(const {m,p} of arr){if(p.x<-25||p.x>W+25||p.y<-25||p.y>H+25)continue;const tree=byId[m.treeId],sel=selected?.id===m.id,hov=hovered?.id===m.id,rel=relatedMoment(m.id),dim=(st&&m.treeId!==st)||(ss&&m.seasonId!==ss),r=Math.max(1.15,m.size*p.scale*(camera.scale<.5?.7:1));ctx.save();ctx.globalAlpha=opacityFor('moment',m)*p.opacity*(dim?.76:1);ctx.fillStyle=sel?'#fff':tree.color;ctx.shadowColor=sel||hov?tree.color:'transparent';ctx.shadowBlur=sel?10:hov?6:0;ctx.beginPath();ctx.arc(p.x,p.y,r*(sel?1.45:1),0,Math.PI*2);ctx.fill();if(sel){ctx.strokeStyle=tree.color;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(p.x,p.y,r+5,0,Math.PI*2);ctx.stroke()}else if(rel){ctx.strokeStyle=rgba(tree.color,.38);ctx.lineWidth=.8;ctx.beginPath();ctx.arc(p.x,p.y,r+2.5,0,Math.PI*2);ctx.stroke()}ctx.restore()}}
+function drawFrame(t){projectionCache.clear();drawBackground();drawTreeRegions(t);drawSeasonRegions();drawConnections();drawMoments();document.getElementById('zoomLevelLabel').textContent=zoomLevel();document.getElementById('zoomValue').textContent=camera.scale.toFixed(2)+'×'}
+function place(item,p,opacity,scale=1){const el=item._label;if(!el)return;el.style.display='';el.style.opacity=String(clamp(opacity,0,1));el.style.transform=`translate(-50%,-50%) translate3d(${p.x}px,${p.y}px,0) scale(${scale})`}
+function hideAll(){[...atlasData.trees,...atlasData.seasons,...atlasData.moments,...atlasData.courses].forEach(x=>{if(x._label)x._label.style.display='none'})}
+function updateLabels(t,force=false){const level=zoomLevel(),dragMode=dragging||Math.abs(velYaw)+Math.abs(velPitch)>.002,st=selectedTreeId(),ss=selectedSeasonId();hideAll();
+ atlasData.trees.forEach(tree=>{const p=projectItem(tree),el=tree._label;if(p.x<-180||p.x>W+180||p.y<-120||p.y>H+120)return;el.classList.toggle('selected',selected?.id===tree.id);el.style.setProperty('--accent',tree.color);place(tree,p,opacityFor('tree',tree)*p.opacity*(st&&st!==tree.id?.78:1),p.scale)});
+ atlasData.seasons.forEach((s,i)=>{const p=projectItem(s),el=s._label,show=level!=='UNIVERSE'||selected?.id===s.id||dragMode&&i%2===0;if(!show||p.x<-130||p.x>W+130||p.y<-80||p.y>H+80)return;el.classList.toggle('selected',selected?.id===s.id);el.style.setProperty('--accent',selected?.id===s.id?'#E4AD3F':byId[s.treeId].color);const dim=(st&&s.treeId!==st)||(ss&&s.id!==ss);place(s,{...p,y:p.y+16*p.scale},opacityFor('season',s)*p.opacity*(dim?.72:1),p.scale)});
+ let max=dragMode?(W<760?22:64):level==='MOMENT'?190:level==='SEASON'?120:level==='TREE'?58:0,shown=0,occupied=[];
+ atlasData.moments.forEach((m,i)=>{if(shown>=max)return;const p=projectItem(m),priority=selected?.id===m.id||hovered?.id===m.id,show=priority||m.featured||(level==='MOMENT'&&i%2===0)||(level==='SEASON'&&i%7===0)||(level==='TREE'&&i%22===0);if(!show||p.x<-160||p.x>W+160||p.y<-60||p.y>H+60)return;const box={x:p.x-80,y:p.y-16,w:160,h:32};if(!priority&&occupied.some(o=>!(box.x+box.w<o.x||o.x+o.w<box.x||box.y+box.h<o.y||o.y+o.h<box.y)))return;occupied.push(box);shown++;const el=m._label,tree=byId[m.treeId],dim=(st&&m.treeId!==st)||(ss&&m.seasonId!==ss);el.classList.toggle('selected',selected?.id===m.id);el.style.setProperty('--accent',tree.color);place(m,p,opacityFor('moment',m)*p.opacity*(dim?.76:1),p.scale)});
+ atlasData.courses.forEach(c=>{const p=projectItem(c),el=c._label;if(level==='UNIVERSE'&&!activeCourse)return;el.classList.toggle('selected',selected?.id===c.id);place(c,p,.88,p.scale)});
+}
+function animateState(dt,t){let active=false;if(targetView){const k=1-Math.pow(.001,dt/1000);let dy=targetView.yaw-yaw;while(dy>Math.PI)dy-=Math.PI*2;while(dy<-Math.PI)dy+=Math.PI*2;yaw+=dy*k;pitch+=(targetView.pitch-pitch)*k;camera.x+=(targetView.x-camera.x)*k;camera.y+=(targetView.y-camera.y)*k;camera.scale+=(targetView.scale-camera.scale)*k;if(Math.abs(dy)<.001&&Math.abs(targetView.pitch-pitch)<.001&&Math.abs(targetView.x-camera.x)<.3&&Math.abs(targetView.y-camera.y)<.3&&Math.abs(targetView.scale-camera.scale)<.002){yaw=targetView.yaw;pitch=targetView.pitch;camera={x:targetView.x,y:targetView.y,scale:targetView.scale};targetView=null}else active=true}
+ if(!dragging&&(Math.abs(velYaw)>.00002||Math.abs(velPitch)>.00002)){yaw+=velYaw*dt;pitch=clamp(pitch+velPitch*dt,-1.02,1.02);const damp=Math.pow(W<760?.80:.84,dt/16.67);velYaw*=damp;velPitch*=damp;active=true}
+ if(activeCourse){courseSignal=(courseSignal+dt*.0022)%(Math.max(1,activeCourse.momentIds.length-1));active=true}
+ if(selected&&t-selectionStarted<340)active=true;return active}
+function frame(t){raf=0;const dt=Math.min(40,t-(lastFrame||t));lastFrame=t;const active=animateState(dt,t);if(dirty||active){dirty=false;drawFrame(t);if(t-lastLabelUpdate>(dragging?34:24)){updateLabels(t);lastLabelUpdate=t}}if(active||dirty)raf=requestAnimationFrame(frame)}
+function nearestItem(x,y,r=18){let best=null,dist=r;for(const m of atlasData.moments){const p=projectItem(m),d=Math.hypot(p.x-x,p.y-y);if(d<dist){best=m;dist=d}}for(const s of atlasData.seasons){const p=projectItem(s),d=Math.hypot(p.x-x,p.y-y);if(d<dist+5){best=s;dist=d}}for(const tr of atlasData.trees){const p=projectItem(tr),d=Math.hypot(p.x-x,p.y-y);if(d<dist+12){best=tr;dist=d}}return best}
+function focusItem(item,scale){const v=itemXYZ(item),ty=itemType(item),targetScale=scale||(ty==='MOMENT'?2.55:ty==='SEASON'?1.5:ty==='COURSE'?1.6:1.05);targetView={yaw,pitch,x:v.x,y:v.y,scale:targetScale};requestRender(1000)}
+function resetView(){targetView={yaw:0,pitch:0,...defaultCamera};selected=null;activeCourse=null;closeNavigator(false);requestRender(1000)}
+function selectItem(item){selected=item;activeCourse=itemType(item)==='COURSE'?item:null;selectionStarted=performance.now();showNavigator(item);requestRender(380)}
+function showNavigator(item){const type=itemType(item),tree=type==='PERSON'?item:byId[item.treeId],season=type==='SEASON'?item:byId[item.seasonId],accent=type==='COURSE'?item.color:type==='SEASON'?'#E4AD3F':tree?.color||'#5278E9';navigatorEl.style.setProperty('--nav-accent',accent);navigatorEl.style.setProperty('--accent',accent);document.getElementById('navType').textContent=type;document.getElementById('navTitle').textContent=item.title;document.getElementById('navMeta').textContent=type==='PERSON'?`${item.momentIds.length} Moments · ${item.seasonIds.length} Seasons`:type==='SEASON'?`${tree.title} · ${item.dateRange.join(' — ')}`:type==='COURSE'?`${tree.title} · ${item.momentIds.length} stops`:`${tree.title} · ${season?.title.split(' · ')[0]||'Unsorted'}`;const feel=document.getElementById('navFeeling');feel.style.display=type==='MOMENT'?'inline-flex':'none';feel.textContent='● '+(item.feeling||'Living memory');document.getElementById('navCopy').textContent=type==='MOMENT'?connectionReason(item):type==='SEASON'?'A chapter where related moments gathered into one orbit.':type==='COURSE'?'An ordered path designed to be walked, remembered and shared.':'A living world built from moments, seasons and the paths between them.';let stats=[];if(type==='MOMENT')stats=[['Revisits',item.revisits],['Connections',connectionCount(item.id)],['Source',item.source],['Saved',item.discoveredAt]];else if(type==='SEASON')stats=[['Moments',item.momentIds.length],['Courses',atlasData.courses.filter(c=>c.treeId===item.treeId&&c.momentIds.some(id=>item.momentIds.includes(id))).length],['From',item.dateRange[0]],['To',item.dateRange[1]]];else if(type==='COURSE')stats=[['Stops',item.momentIds.length],['Tree',tree.title],['Start',byId[item.momentIds[0]]?.discoveredAt||'—'],['Status','Ready']];else stats=[['Moments',item.momentIds.length],['Seasons',item.seasonIds.length],['Privacy',item.privacy],['Courses',atlasData.courses.filter(c=>c.treeId===item.id).length]];document.getElementById('navStats').innerHTML=stats.map(s=>`<div class="nav-stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join('');document.getElementById('navActions').innerHTML=`<button class="primary" id="navPrimary">${type==='COURSE'?'Walk this Course':type==='SEASON'?'Open Season':type==='PERSON'?'Open Tree':'Open Moment'}</button><button id="navWalk">${type==='MOMENT'?'Walk from here':'Focus'}</button>`;document.getElementById('navPrimary').onclick=()=>focusItem(item,type==='MOMENT'?2.55:type==='SEASON'?1.5:type==='COURSE'?1.6:1.05);document.getElementById('navWalk').onclick=()=>focusItem(item,type==='MOMENT'?1.7:1.2);navigatorEl.classList.add('open')}
+function connectionCount(id){return atlasData.connections.reduce((n,e)=>n+(e.from===id||e.to===id),0)}
+function connectionReason(m){return atlasData.connections.find(e=>e.from===m.id||e.to===m.id)?.reason||'This moment has not yet been connected to another path.'}
+function closeNavigator(clear=true){navigatorEl.classList.remove('open');if(clear){selected=null;activeCourse=null;requestRender(260)}}
+document.getElementById('navClose').onclick=()=>closeNavigator(true);
+function showToast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toastEl.classList.remove('show'),1800)}
+const searchInput=document.getElementById('searchInput'),searchResults=document.getElementById('searchResults');let currentResults=[],searchIndex=0;
+function buildSearch(q){q=q.trim().toLowerCase();if(!q){searchResults.classList.remove('open');return}const entries=[];atlasData.trees.forEach(x=>entries.push({type:'Person',item:x,color:x.color,sub:`${x.momentIds.length} moments`}));atlasData.seasons.forEach(x=>entries.push({type:'Season',item:x,color:'#E4AD3F',sub:byId[x.treeId]?.title||''}));atlasData.moments.forEach(x=>entries.push({type:'Moment',item:x,color:byId[x.treeId]?.color||'#35BFAE',sub:`${byId[x.treeId]?.title} · ${x.feeling} · ${x.source}`}));atlasData.courses.forEach(x=>entries.push({type:'Course',item:x,color:x.color,sub:byId[x.treeId]?.title||''}));currentResults=entries.filter(e=>(e.item.title+' '+e.sub).toLowerCase().includes(q)).slice(0,8);searchIndex=0;searchResults.innerHTML=currentResults.map((r,i)=>`<button class="search-result ${i===0?'active':''}" data-i="${i}" style="--result-color:${r.color}"><span class="type-dot"></span><span><b>${r.item.title}</b><small>${r.sub}</small></span><em>${r.type}</em></button>`).join('');searchResults.classList.toggle('open',!!currentResults.length);searchResults.querySelectorAll('button').forEach(b=>b.onclick=()=>chooseSearch(+b.dataset.i))}
+function chooseSearch(i){const r=currentResults[i];if(!r)return;selectItem(r.item);focusItem(r.item,r.type==='Moment'?2.55:r.type==='Season'?1.5:r.type==='Course'?1.6:1.05);searchResults.classList.remove('open');searchInput.blur();showToast('Flying to '+r.item.title)}
+searchInput.addEventListener('input',e=>buildSearch(e.target.value));searchInput.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();searchIndex=Math.min(currentResults.length-1,searchIndex+1)}else if(e.key==='ArrowUp'){e.preventDefault();searchIndex=Math.max(0,searchIndex-1)}else if(e.key==='Enter'){e.preventDefault();chooseSearch(searchIndex)}else if(e.key==='Escape')searchResults.classList.remove('open');searchResults.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('active',i===searchIndex))});
+function pointerDown(e){stopTour();try{canvas.setPointerCapture(e.pointerId)}catch{}pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1){dragging=true;dragMoved=false;lastPointer={x:e.clientX,y:e.clientY,t:performance.now()};velYaw=velPitch=0;canvas.classList.add('dragging')}else if(pointers.size===2){const p=[...pointers.values()];pinch={dist:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),scale:camera.scale}}requestRender()}
+function pointerMove(e){if(pointers.has(e.pointerId))pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&pinch){const p=[...pointers.values()],dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);camera.scale=clamp(pinch.scale*(dist/pinch.dist),.18,3.8);requestRender();return}if(dragging&&lastPointer){const now=performance.now(),dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y,dt=Math.max(8,now-lastPointer.t);if(Math.abs(dx)+Math.abs(dy)>2)dragMoved=true;yaw+=dx*.0062;pitch=clamp(pitch+dy*.0046,-1.02,1.02);velYaw=(dx*.0062/dt)*.80;velPitch=(dy*.0046/dt)*.80;lastPointer={x:e.clientX,y:e.clientY,t:now};requestRender()}else{projectionCache.clear();const n=nearestItem(e.clientX,e.clientY,17);if(n!==hovered){hovered=n;canvas.style.cursor=n?'pointer':'grab';requestRender()}}}
+function pointerUp(e){pointers.delete(e.pointerId);if(pointers.size<2)pinch=null;if(!pointers.size){dragging=false;lastPointer=null;canvas.classList.remove('dragging');canvas.style.cursor=hovered?'pointer':'grab';requestRender(800)}}
+canvas.addEventListener('pointerdown',pointerDown);canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',pointerUp);
+canvas.addEventListener('click',e=>{if(dragMoved)return;projectionCache.clear();const n=nearestItem(e.clientX,e.clientY,18);if(n)selectItem(n);else{selected=null;activeCourse=null;closeNavigator(false);requestRender(260)}});
+canvas.addEventListener('dblclick',e=>{projectionCache.clear();const n=nearestItem(e.clientX,e.clientY,22);n?focusItem(n):resetView()});
+canvas.addEventListener('wheel',e=>{e.preventDefault();stopTour();camera.scale=clamp(camera.scale*Math.exp(-e.deltaY*.0012),.18,3.8);requestRender(180)},{passive:false});
+document.getElementById('zoomOut').onclick=()=>{camera.scale=clamp(camera.scale/1.18,.18,3.8);requestRender(180)};document.getElementById('zoomIn').onclick=()=>{camera.scale=clamp(camera.scale*1.18,.18,3.8);requestRender(180)};document.getElementById('resetView').onclick=resetView;
+document.getElementById('mobileSearch').onclick=()=>searchInput.focus();document.getElementById('mobileFit').onclick=resetView;
+const tourStops=()=>[{item:null,view:{yaw:0,pitch:0,...defaultCamera}},{item:byId['tree-felix'],view:{yaw:.34,pitch:-.10,x:-620,y:-245,scale:.82}},{item:atlasData.seasons.find(s=>s.treeId==='tree-felix'),view:{yaw:.72,pitch:.12,x:-520,y:-260,scale:1.25}},{item:atlasData.moments.find(m=>m.treeId==='tree-felix'),view:{yaw:1.12,pitch:.08,x:-530,y:-250,scale:2.0}},{item:byId['tree-juyeon'],view:{yaw:1.82,pitch:-.12,x:100,y:-345,scale:.92}},{item:null,view:{yaw:Math.PI,pitch:0,...defaultCamera}},{item:null,view:{yaw:0,pitch:0,...defaultCamera}}];
+function goTour(i){const stops=tourStops();tourIndex=(i+stops.length)%stops.length;const stop=stops[tourIndex];targetView={...stop.view};if(stop.item)selectItem(stop.item);else{selected=null;activeCourse=null;closeNavigator(false)}requestRender(1200)}
+function startTour(){tourPlaying=!tourPlaying;document.getElementById('startTour').textContent=tourPlaying?'PAUSE ORBIT':'START ORBIT';if(tourPlaying){goTour(tourIndex);tourTimer=setInterval(()=>goTour(tourIndex+1),5200)}else clearInterval(tourTimer)}
+function stopTour(){if(tourPlaying){tourPlaying=false;clearInterval(tourTimer);document.getElementById('startTour').textContent='START ORBIT'}}
+document.getElementById('startTour').onclick=startTour;document.getElementById('prevTour').onclick=()=>{stopTour();goTour(tourIndex-1)};document.getElementById('nextTour').onclick=()=>{stopTour();goTour(tourIndex+1)};
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(atlasData,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lovetree-atlas.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('pngBtn').onclick=()=>{requestRender(30);setTimeout(()=>{const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='lovetree-atlas-view.png';a.click()},50)};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();document.getElementById('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.trees||!d.moments)throw new Error('Invalid Atlas JSON');showToast('Atlas JSON validated. Demo data was not replaced.')}catch(err){showToast(err.message)}};r.readAsText(f)};
+addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R')resetView();if(e.key==='Escape'){selected=null;activeCourse=null;closeNavigator(false);requestRender(260)}if(e.code==='Space'){e.preventDefault();startTour()}if(e.key==='ArrowLeft'){stopTour();goTour(tourIndex-1)}if(e.key==='ArrowRight'){stopTour();goTour(tourIndex+1)}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)requestRender()});
+function applyViewParam(){const v=MODE.view;if(!v)return;if(v==='rotate45')yaw=Math.PI/4;if(v==='rotate120')yaw=Math.PI*2/3;if(v==='rotate180')yaw=Math.PI;if(v==='felix')selectItem(byId['tree-felix']);if(v==='season')selectItem(atlasData.seasons.find(s=>s.treeId==='tree-felix'));if(v==='moment'){camera.scale=1.5;selectItem(atlasData.moments.find(m=>m.treeId==='tree-felix'))}if(v==='zoom')camera.scale=1.55}
+function init(){resize();createLabels();initFilters();document.getElementById('brandMeta').textContent=`UPDATED 2026-08-05 17:09 · ${atlasData.trees.length} TREES · ${atlasData.moments.length} MOMENTS · ${atlasData.connections.length} CONNECTIONS`;if(MODE.empty){document.getElementById('emptyState').classList.add('show');labelLayer.style.display='none'}applyViewParam();requestRender(400);if(MODE.demo&&!prefersReduced)setTimeout(startTour,700)}
+init();
+window.__atlasV22={getState:()=>({yaw,pitch,camera:{...camera},selected:selected?.id||null,labels:labelLayer.children.length,connections:connectionSubset().length,treeCount:atlasData.trees.length,momentCount:atlasData.moments.length,rafActive:!!raf}),setView:(v)=>{yaw=v.yaw??yaw;pitch=v.pitch??pitch;camera.scale=v.scale??camera.scale;camera.x=v.x??camera.x;camera.y=v.y??camera.y;requestRender(200)},select:(id)=>selectItem(byId[id]),reset:resetView,getProjectedTrees:()=>{projectionCache.clear();return atlasData.trees.map(t=>({id:t.id,...projectItem(t)}))}};
+})();
+</script>
+</body></html>

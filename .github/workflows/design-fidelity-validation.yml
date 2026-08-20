@@ -16,6 +16,9 @@ jobs:
       has_targets: ${{ steps.plan.outputs.has_targets }}
       matrix: ${{ steps.plan.outputs.matrix }}
       target_ids: ${{ steps.plan.outputs.target_ids }}
+      has_exclusions: ${{ steps.plan.outputs.has_exclusions }}
+      excluded_targets: ${{ steps.plan.outputs.excluded_targets }}
+      no_impact: ${{ steps.plan.outputs.no_impact }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,8 +30,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Registry contract tests
-        run: node --test tests/design-fidelity-validation-orchestration.test.mjs
+      - name: Registry and inventory contract tests
+        run: node --test tests/design-fidelity-validation-orchestration.test.mjs tests/design-fidelity-inventory-drift.test.mjs
 
       - name: Plan impacted target matrix
         id: plan
@@ -93,6 +96,9 @@ jobs:
           VALIDATE_RESULT: ${{ needs.validate.result }}
           HAS_TARGETS: ${{ needs.plan.outputs.has_targets }}
           TARGET_IDS: ${{ needs.plan.outputs.target_ids }}
+          HAS_EXCLUSIONS: ${{ needs.plan.outputs.has_exclusions }}
+          EXCLUDED_TARGETS: ${{ needs.plan.outputs.excluded_targets }}
+          NO_IMPACT: ${{ needs.plan.outputs.no_impact }}
         shell: bash
         run: |
           set -euo pipefail
@@ -107,8 +113,18 @@ jobs:
               echo "DESIGN_FIDELITY_VALIDATION_FAIL targets=$TARGET_IDS"
               exit 1
             fi
-            echo "DESIGN_FIDELITY_VALIDATION_PASS targets=$TARGET_IDS"
+            echo "DESIGN_FIDELITY_VALIDATION_PASS targets=$TARGET_IDS exclusions=$EXCLUDED_TARGETS"
             exit 0
+          fi
+
+          if [ "$HAS_EXCLUSIONS" = "true" ]; then
+            echo "DESIGN_FIDELITY_EXCLUDED_TARGETS exclusions=$EXCLUDED_TARGETS"
+            exit 0
+          fi
+
+          if [ "$NO_IMPACT" != "true" ]; then
+            echo "DESIGN_FIDELITY_SEMANTIC_STATE_INVALID"
+            exit 1
           fi
 
           echo "DESIGN_FIDELITY_NO_IMPACTED_TARGETS"

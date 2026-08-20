@@ -1,0 +1,238 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import {
+  DESIGN_FIDELITY_TARGETS as BASE_TARGETS,
+  GLOBAL_ORCHESTRATION_PREFIXES,
+  selectImpactedTargets as selectBaseTargets,
+  targetIsMaterialized as baseTargetIsMaterialized,
+} from "./design-fidelity-validation-registry.mjs";
+
+const VIEWPORTS = Object.freeze([
+  Object.freeze({ width: 1280, height: 800 }),
+  Object.freeze({ width: 390, height: 844, mobile: true }),
+  Object.freeze({ width: 320, height: 720, mobile: true }),
+]);
+
+export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
+  Object.freeze({
+    id: "lineage-59-v5",
+    label: "Lineage 59 V5 Living Memory Book",
+    route: "/design-lab/lineages/59/v5",
+    routeEntry: "app/design-lab/lineages/59/v5/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/59/", "lib/lineage-59",
+      "design-intake/manifests/track-59-living-memory-book.json",
+      "tests/lineage-59", "qa/design-fidelity/lineage-59-v5-browser-gate.mjs",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "LARGE_ENVIRONMENT_MEDIA_SOURCE_REFERENCE_ONLY; ORIGIN_RIGHTS_PROVENANCE_HOLD",
+    browserGates: Object.freeze(["qa/design-fidelity/lineage-59-v5-browser-gate.mjs"]),
+    actualRouteBrowserGate: "qa/design-fidelity/lineage-59-v5-browser-gate.mjs",
+    dedicatedWorkflow: null,
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/lineage-59"]),
+  }),
+  Object.freeze({
+    id: "lineage-60-v1-2",
+    label: "Lineage 60 V1.2 3D Moment Cluster Explorer",
+    route: "/design-lab/lineages/60/v1-2",
+    routeEntry: "app/design-lab/lineages/60/v1-2/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/60/", "lib/lineage-60", "design-intake/manifests/track-60",
+      "qa/lineage-60-v12-native-browser-qa.mjs", "tests/lineage-60",
+      ".github/workflows/lineage60-v12-native-browser-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "NOT_REQUIRED",
+    browserGates: Object.freeze(["qa/lineage-60-v12-native-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/lineage-60-v12-native-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/lineage60-v12-native-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/lineage-60"]),
+  }),
+  Object.freeze({
+    id: "track-67-v2-4-2-native",
+    label: "Track67 V2.4.2 native Memory Tape",
+    route: "/design-lab/lineages/67/v2-4/native",
+    routeEntry: "app/design-lab/lineages/67/v2-4/native/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/67/", "app/styles/lineage-67", "lib/lineage-67",
+      "design-intake/manifests/track-67", "qa/track67-native-browser-qa.mjs", "tests/track-67",
+      ".github/workflows/track67-native-browser-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "V2.4.2_SOURCE_PACKAGE_DEPENDENCY_HOLD_OUTSIDE_NATIVE_INTERACTION_GATE",
+    browserGates: Object.freeze(["qa/track67-native-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/track67-native-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track67-native-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa-artifacts/track67-native"]),
+  }),
+]);
+
+export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
+  Object.freeze({
+    id: "track-47-v4-2-5-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track47 V4.2.5 cinematic source HOLD", validationClass: "truthful-hold",
+    route: "/design-lab/source-tracks/47/v4-2-5/native",
+    routeEntry: "app/design-lab/source-tracks/47/v4-2-5/native/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/47/", "public/design-lab-assets/source-tracks/47/", "tests/source-track-47-browser-qa.mjs", ".github/workflows/source-track47-v425-browser-qa.yml"]),
+    actualRouteBrowserGate: "tests/source-track-47-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track47-v425-browser-qa.yml",
+    exactAssetStatus: "VIDEO_EXACT_ASSET_HOLD", viewports: VIEWPORTS, reducedMotion: true,
+    holdSemantics: "Dedicated CI proves only the missing-video HOLD path; never FULL source-fidelity PASS.",
+    reason: "Exact 28,650,099-byte cinematic video is intentionally absent from Git; dedicated HOLD workflow owns current truth.",
+  }),
+  Object.freeze({
+    id: "living-media-sphere-v3-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Living Media Sphere V3 source-family HOLD", validationClass: "truthful-hold",
+    route: "/design-lab/source-families/living-media-sphere/v3/source",
+    routeEntry: "app/design-lab/source-families/living-media-sphere/v3/source/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/source-families/living-media-sphere/", "public/design-lab-assets/source-families/living-media-sphere/", "tests/living-media-sphere-v3-browser-qa.mjs", ".github/workflows/living-media-sphere-v3-hold-browser-qa.yml"]),
+    actualRouteBrowserGate: "tests/living-media-sphere-v3-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/living-media-sphere-v3-hold-browser-qa.yml",
+    exactAssetStatus: "LOCAL_EXACT_OUT_OF_GIT_ONLY", viewports: VIEWPORTS, reducedMotion: true,
+    holdSemantics: "Dedicated CI proves missing-media HOLD only; never FULL source-fidelity PASS.",
+    reason: "Exact media remains local/out-of-Git by authority; dedicated HOLD workflow is the truthful certification surface.",
+  }),
+  Object.freeze({
+    id: "track-66-v1-2-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track66 V1.2 canonical journey dedicated QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/journey?v12=1", routeEntry: "app/v4/journey/page.tsx",
+    impactPrefixes: Object.freeze(["app/components/v4/V4FirstJourneyV12", "app/styles/v4/first-journey-v12", "qa/track66-native-browser-qa.mjs", "tests/track-66", ".github/workflows/track66-native-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/track66-native-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track66-native-browser-qa.yml",
+    exactAssetStatus: "NOT_REQUIRED", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track66 validates canonical /v4 journey behavior in its dedicated workflow; it is not a Design Lab/source-fidelity target.",
+  }),
+  Object.freeze({
+    id: "source-track-68-v3-3-2-compare-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track68 V3.3.2 bounded source compare — external equivalence HOLD", validationClass: "truthful-hold",
+    route: "/design-lab/source-tracks/68/v3-3-2/compare",
+    routeEntry: "app/design-lab/source-tracks/68/v3-3-2/compare/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/68/v3-3-2/",
+      "public/design-lab-assets/source-tracks/68/v3-3-2/",
+      "design-intake/manifests/source-track-68-v332-compare-runner.json",
+      "scripts/verify-source-track68-v332-assets.mjs",
+      "tests/source-track68-",
+      ".github/workflows/source-track68-v332-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "tests/source-track68-v332-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track68-v332-browser-qa.yml",
+    exactAssetStatus: "LOCAL_EXACT_PACKAGE_23_23_PINNED; CLOUDFRONT_BYTE_EQUIVALENCE_HOLD",
+    viewports: VIEWPORTS,
+    reducedMotion: true,
+    holdSemantics: "Dedicated Track68 CI proves the pinned local compare package, exact local assets, A/B behavior, and actual-route interactions; it must never be reported as FULL source-fidelity equivalence while CloudFront byte equivalence remains HOLD.",
+    reason: "The bounded local compare runner is implementation-ready and locally exact, but original CloudFront hero-byte equivalence is not proven and direct CloudFront hotlink is not authorized; keep central fidelity classification truthful HOLD.",
+  }),
+]);
+
+export const FUTURE_MERGE_GUARDS = Object.freeze([
+  Object.freeze({
+    id: "track-62-v1-1-future-merge", disposition: "FUTURE_MERGE_GUARD",
+    route: "/design-lab/capabilities/continuous-exhibition-rail",
+    routeEntry: "app/design-lab/capabilities/continuous-exhibition-rail/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/capabilities/continuous-exhibition-rail/", "design-intake/manifests/track-62-v11-continuous-exhibition-native-proof.json", "lib/track-62-v11/", "qa/track62-v11-continuous-exhibition-qa.mjs", "tests/track-62-v11", ".github/workflows/track62-v11-continuous-exhibition-qa.yml"]),
+    actualRouteBrowserGate: "qa/track62-v11-continuous-exhibition-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track62-v11-continuous-exhibition-qa.yml",
+    validationClass: "interaction-contract-pending-merge", exactAssetStatus: "SOURCE_REFERENCE_ONLY_MEDIA",
+    viewports: VIEWPORTS, reducedMotion: true,
+    requiredResolution: "Before merge, replace this guard with REGISTERED_TARGET or EXPLICIT_MACHINE_CHECKED_EXCLUSION.",
+  }),
+  Object.freeze({
+    id: "track-18-v2-future-merge", disposition: "FUTURE_MERGE_GUARD",
+    route: "/design-lab/source-tracks/18/v2/source",
+    routeEntry: "app/design-lab/source-tracks/18/v2/source/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/18/v2/", "design-intake/manifests/source-track-18-fragment-loader-v2.json", "lib/source-track-18/", "public/design-lab-assets/source-tracks/18/v2/", "qa/source-track-18-v2-browser-qa.mjs", "tests/source-track-18", ".github/workflows/source-track18-v2-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/source-track-18-v2-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track18-v2-browser-qa.yml",
+    validationClass: "truthful-hold-pending-merge", exactAssetStatus: "EXACT_ASSET_TRANSFER_HOLD",
+    exactAssetRequirement: Object.freeze({ requiredAssetVerifierBeforeBrowser: true }),
+    requiredAssetVerifierBeforeBrowser: true, viewports: VIEWPORTS, reducedMotion: true,
+    requiredResolution: "Before merge, use truthful HOLD exclusion or a registered target with non-null exact assetGate before browser gates.",
+  }),
+]);
+
+export const DESIGN_FIDELITY_TARGETS = Object.freeze([...BASE_TARGETS, ...SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS]);
+const GLOBAL_PREFIXES = Object.freeze([...GLOBAL_ORCHESTRATION_PREFIXES, "scripts/design-fidelity-validation-inventory.mjs", "tests/design-fidelity-inventory-drift.test.mjs"]);
+const NON_TARGET_WORKFLOWS = new Set([".github/workflows/design-fidelity-validation.yml", ".github/workflows/a-track-p0-validation.yml", ".github/workflows/production-auto-deploy.yml"]);
+const matches = (p, prefix) => p === prefix || p.startsWith(prefix);
+const nonempty = (v) => typeof v === "string" && v.trim().length > 0;
+
+function validateCommon(entry) {
+  if (!nonempty(entry.id)) throw new Error("inventory entry missing id");
+  if (!nonempty(entry.route) || !entry.route.startsWith("/")) throw new Error(`${entry.id}: invalid route`);
+  if (!Array.isArray(entry.impactPrefixes) || entry.impactPrefixes.length === 0) throw new Error(`${entry.id}: impactPrefixes required`);
+  if (!Array.isArray(entry.viewports) || entry.viewports.length < 2) throw new Error(`${entry.id}: viewports required`);
+}
+function validateRegistered(target) {
+  validateCommon(target);
+  if (!["source-fidelity", "interaction-contract"].includes(target.validationClass)) throw new Error(`${target.id}: registered target has invalid/full-HOLD validation class ${target.validationClass}`);
+  if (!Array.isArray(target.browserGates) || target.browserGates.length === 0) throw new Error(`${target.id}: browserGates must be non-empty`);
+  if (typeof target.captureReducedMotion !== "boolean") throw new Error(`${target.id}: captureReducedMotion required`);
+  if (target.assetGate && (!nonempty(target.assetGate.verifier) || !nonempty(target.assetGate.expectedMarker))) throw new Error(`${target.id}: invalid exact asset gate`);
+}
+
+export function validateDesignFidelityInventory({ registeredTargets = DESIGN_FIDELITY_TARGETS, exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS, futureGuards = FUTURE_MERGE_GUARDS } = {}) {
+  registeredTargets.forEach(validateRegistered);
+  exclusions.forEach((entry) => { validateCommon(entry); if (entry.disposition !== "EXPLICIT_MACHINE_CHECKED_EXCLUSION" || !nonempty(entry.reason) || !nonempty(entry.actualRouteBrowserGate)) throw new Error(`${entry.id}: invalid exclusion`); if (entry.validationClass === "truthful-hold" && !nonempty(entry.holdSemantics)) throw new Error(`${entry.id}: HOLD semantics required`); });
+  futureGuards.forEach((entry) => { validateCommon(entry); if (entry.disposition !== "FUTURE_MERGE_GUARD" || !nonempty(entry.requiredResolution)) throw new Error(`${entry.id}: invalid future guard`); });
+  const ids = [...registeredTargets, ...exclusions, ...futureGuards].map((entry) => entry.id);
+  if (new Set(ids).size !== ids.length) throw new Error("duplicate Design Fidelity inventory id");
+  return true;
+}
+
+export function getDesignFidelityTarget(id) { return DESIGN_FIDELITY_TARGETS.find((target) => target.id === id) ?? null; }
+const supplementalMaterialized = (target, cwd) => [target.routeEntry, ...target.browserGates, ...(target.assetGate ? [target.assetGate.verifier] : [])].every((p) => existsSync(path.join(cwd, p)));
+
+export function discoverDedicatedPlaywrightWorkflows(cwd = process.cwd()) {
+  const dir = path.join(cwd, ".github", "workflows");
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).sort().filter((name) => /\.ya?ml$/i.test(name)).map((name) => `.github/workflows/${name}`).filter((relative) => !NON_TARGET_WORKFLOWS.has(relative) && readFileSync(path.join(cwd, relative), "utf8").includes("npx playwright install"));
+}
+
+export function assertDedicatedWorkflowCoverage(cwd = process.cwd(), { registeredTargets = DESIGN_FIDELITY_TARGETS, exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS, futureGuards = FUTURE_MERGE_GUARDS } = {}) {
+  const represented = new Set([...registeredTargets, ...exclusions, ...futureGuards].map((entry) => entry.dedicatedWorkflow).filter(Boolean));
+  const unknown = discoverDedicatedPlaywrightWorkflows(cwd).filter((workflow) => !represented.has(workflow));
+  if (unknown.length) throw new Error(`UNREGISTERED_DEDICATED_BROWSER_WORKFLOW: ${unknown.join(", ")}`);
+  return true;
+}
+
+export function validateRepositoryInventory(cwd = process.cwd()) {
+  validateDesignFidelityInventory();
+  for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
+  for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) for (const p of [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean)) if (!existsSync(path.join(cwd, p))) throw new Error(`${entry.id}: configured evidence path missing: ${p}`);
+  assertDedicatedWorkflowCoverage(cwd);
+  return true;
+}
+
+const impacted = (entry, paths) => paths.some((p) => entry.impactPrefixes.some((prefix) => matches(p, prefix)));
+const potentialNewSurface = (p) => /^app\/design-lab\/.+\/page\.tsx$/.test(p) || (/^\.github\/workflows\/.+\.ya?ml$/i.test(p) && /(?:browser-)?qa\.ya?ml$/i.test(p));
+const covered = (p) => [...DESIGN_FIDELITY_TARGETS, ...EXPLICIT_MACHINE_CHECKED_EXCLUSIONS, ...FUTURE_MERGE_GUARDS].some((entry) => entry.routeEntry === p || entry.dedicatedWorkflow === p || entry.impactPrefixes?.some((prefix) => matches(p, prefix)));
+
+export function planDesignFidelityInventory(changedPaths, { addedPaths = [], cwd = process.cwd(), validateFilesystem = true } = {}) {
+  const changed = [...new Set(changedPaths.filter(Boolean))];
+  const added = [...new Set(addedPaths.filter(Boolean))];
+  validateDesignFidelityInventory();
+  if (validateFilesystem) validateRepositoryInventory(cwd);
+  const unknown = added.filter((p) => potentialNewSurface(p) && !covered(p));
+  if (unknown.length) throw new Error(`UNREGISTERED_FIDELITY_SURFACE: ${unknown.join(", ")}`);
+  const future = FUTURE_MERGE_GUARDS.filter((entry) => impacted(entry, changed));
+  if (future.length) throw new Error(`FUTURE_MERGE_GUARD: ${future.map((entry) => `${entry.id} (${entry.requiredResolution})`).join("; ")}`);
+  const globalChange = changed.some((p) => GLOBAL_PREFIXES.some((prefix) => matches(p, prefix)));
+  const base = globalChange ? BASE_TARGETS.filter((target) => baseTargetIsMaterialized(target, cwd)) : selectBaseTargets(changed, cwd);
+  const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || supplementalMaterialized(target, cwd))) || impacted(target, changed));
+  const targets = [...new Map([...base, ...supplemental].map((target) => [target.id, target])).values()];
+  const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => globalChange || impacted(entry, changed));
+  return { targets, exclusions, futureGuards: [], genuinelyNoImpact: targets.length === 0 && exclusions.length === 0 };
+}
