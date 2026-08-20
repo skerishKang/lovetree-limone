@@ -438,6 +438,7 @@ describe("Track67 V2.4.2 native inspect acceptance", () => {
       assert.equal(MOMENT_ASSET_FILES.includes(fileTail), true, `asset MUST be an authoritative V2.4.2 package file (got ${fileTail})`);
       assert.equal(String(expectedMoment), momentId ?? "", "moment id MUST match q0→momentFromQ authoritative mapping");
       assert.equal(fileTail, MOMENT_ASSET_FILES[expectedMoment - 1], "selected moment MUST map to the same-Moment package asset");
+      await img.evaluate((el) => el.decode());
       assert.equal(await img.evaluate((el) => el.complete && el.naturalWidth > 0 && el.naturalHeight > 0), true, "high-res asset MUST be fully decoded with real pixel dimensions");
       await captureEvidence(desktopPage, "native-H-focus-restore-highres");
       await closeInspectDesktop();

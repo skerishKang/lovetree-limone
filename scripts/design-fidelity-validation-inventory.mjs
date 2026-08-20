@@ -114,6 +114,27 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     exactAssetStatus: "NOT_REQUIRED", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
     reason: "Track66 validates canonical /v4 journey behavior in its dedicated workflow; it is not a Design Lab/source-fidelity target.",
   }),
+  Object.freeze({
+    id: "source-track-68-v3-3-2-compare-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track68 V3.3.2 bounded source compare — external equivalence HOLD", validationClass: "truthful-hold",
+    route: "/design-lab/source-tracks/68/v3-3-2/compare",
+    routeEntry: "app/design-lab/source-tracks/68/v3-3-2/compare/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/68/v3-3-2/",
+      "public/design-lab-assets/source-tracks/68/v3-3-2/",
+      "design-intake/manifests/source-track-68-v332-compare-runner.json",
+      "scripts/verify-source-track68-v332-assets.mjs",
+      "tests/source-track68-",
+      ".github/workflows/source-track68-v332-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "tests/source-track68-v332-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track68-v332-browser-qa.yml",
+    exactAssetStatus: "LOCAL_EXACT_PACKAGE_23_23_PINNED; CLOUDFRONT_BYTE_EQUIVALENCE_HOLD",
+    viewports: VIEWPORTS,
+    reducedMotion: true,
+    holdSemantics: "Dedicated Track68 CI proves the pinned local compare package, exact local assets, A/B behavior, and actual-route interactions; it must never be reported as FULL source-fidelity equivalence while CloudFront byte equivalence remains HOLD.",
+    reason: "The bounded local compare runner is implementation-ready and locally exact, but original CloudFront hero-byte equivalence is not proven and direct CloudFront hotlink is not authorized; keep central fidelity classification truthful HOLD.",
+  }),
 ]);
 
 export const FUTURE_MERGE_GUARDS = Object.freeze([
