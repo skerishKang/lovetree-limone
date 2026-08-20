@@ -12,7 +12,7 @@ if (!baseSha || !headSha) {
 function changedPathsFor(args) {
   const diff = execFileSync(
     "git",
-    ["diff", ...args, `${baseSha}...${headSha}`],
+    ["-c", "core.quotePath=false", "diff", ...args, `${baseSha}...${headSha}`],
     { encoding: "utf8" },
   );
   return diff.split(/\r?\n/).map((value) => value.trim()).filter(Boolean);

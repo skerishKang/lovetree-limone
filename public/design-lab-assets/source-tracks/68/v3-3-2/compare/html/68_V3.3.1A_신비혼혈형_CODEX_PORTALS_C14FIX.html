@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree Track68 V3.3A · Codex Portals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--ink:#fff;--panel:#050505;--line:rgba(255,255,255,.25)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#fff;font-family:"Inter Tight",system-ui,sans-serif}
+body{overflow-x:hidden}.scroll-spacer{position:relative;height:720vh;background:#fff;user-select:none;cursor:none}
+.stage{position:fixed;inset:0;overflow:hidden;background:#111}.video-wrap{position:absolute;inset:0;z-index:0;overflow:hidden;background:#111}
+.video-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.video-wrap video:first-child{display:none}
+.tint{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.18) 62%,rgba(0,0,0,.5));pointer-events:none}
+.ui{position:fixed;z-index:20;color:#fff;mix-blend-mode:exclusion;pointer-events:none}.logo{left:32px;top:26px;font-size:clamp(44px,7.4vw,112px);line-height:.78;letter-spacing:-.08em;font-weight:600}.logo small{display:block;margin-top:11px;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.caption{left:32px;top:190px;width:min(650px,44vw);font-size:13px;line-height:1.38;letter-spacing:-.03em}.nav{right:32px;top:32px;display:flex;gap:42px;font-size:14px;text-transform:uppercase}.nav span:last-child{letter-spacing:.18em}
+.info{right:32px;bottom:50px;width:330px;text-align:center}.info .symbol{font-size:24px}.info .label{margin-top:14px;font-size:28px;line-height:.95;text-transform:uppercase;letter-spacing:-.045em}.info .count{margin-top:13px;font-size:72px;line-height:.9;letter-spacing:-.07em}
+.cursor{position:fixed;z-index:60;width:50px;height:50px;border:2px solid white;border-radius:50%;pointer-events:none;mix-blend-mode:exclusion;transform:translate(-50%,-50%);display:grid;place-items:center;color:white;font-size:16px}.cursor:after{content:"♥"}
+.panel{position:fixed;inset:0;z-index:10;background:#050505;transform:translateY(100vh);will-change:transform;overflow:hidden}.gallery-inner{position:absolute;left:0;top:0;width:100%;padding:38vh 3.2vw 30vh;will-change:transform}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2vw 2.2vw}.cell{aspect-ratio:2/3;position:relative}.card{position:absolute;inset:0;overflow:hidden;transform:scale(0);will-change:transform;background:#111}.card img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.94) contrast(1.02)}.card .tag{position:absolute;left:12px;bottom:10px;color:white;font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 10px #000}
+.white{position:fixed;inset:0;z-index:12;background:white;opacity:0;pointer-events:none}.final-copy{position:fixed;left:32px;bottom:28px;z-index:21;color:white;mix-blend-mode:exclusion;opacity:0;font-size:13px;letter-spacing:.08em;text-transform:uppercase}.view{position:fixed;right:32px;bottom:32px;z-index:21;width:330px;height:170px;border-radius:999px;background:white;transform:scale(0);transform-origin:right bottom;display:grid;place-items:center;color:white;mix-blend-mode:exclusion;font-size:88px;letter-spacing:-.07em;text-transform:lowercase}
+.center-guide{position:fixed;left:50%;top:50%;z-index:5;width:1px;height:28px;background:rgba(255,255,255,.55);transform:translate(-50%,-50%);pointer-events:none}.center-guide:before{content:"move across a memory";position:absolute;left:12px;top:8px;color:white;font-size:8px;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;opacity:.65}
+@media(max-width:1023px){.scroll-spacer{cursor:auto}.cursor{display:none}.logo{left:16px;top:18px}.caption{left:16px;top:116px;width:calc(100vw - 32px);font-size:11px}.nav{right:16px;top:20px;gap:18px;font-size:12px}.nav span:first-child{display:none}.info{left:16px;right:16px;bottom:34px;width:auto}.info .label{font-size:22px}.info .count{font-size:58px}.video-wrap{top:205px}.grid{grid-template-columns:repeat(2,1fr);gap:14px}.gallery-inner{padding-top:28vh}.view{left:16px;right:16px;width:auto;height:98px;bottom:62px;font-size:64px}.final-copy{left:16px;bottom:20px}.center-guide{display:none}}
+@media(prefers-reduced-motion:reduce){.card{transform:scale(1)!important}.panel{transition:none}.cursor{display:none}}
+
+/* V3.3 — V2 typography tone + Track67/Track65 V18 + Codex 14→08 portals */
+.logo{font-weight:700!important;opacity:.68;letter-spacing:-.085em!important}
+.logo small{opacity:.86;font-weight:600}
+.card{cursor:pointer;outline:none}
+.card img{transition:transform .28s ease,filter .28s ease}
+.card:hover img,.card:focus-visible img{transform:scale(1.022);filter:saturate(.98) contrast(1.04)}
+.card:focus-visible{box-shadow:0 0 0 2px rgba(255,255,255,.9) inset}
+.portal-mark{position:absolute;right:12px;top:11px;z-index:4;color:#fff;font-size:9px;letter-spacing:.13em;text-transform:uppercase;padding:7px 9px;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.22);backdrop-filter:blur(8px);opacity:.72;transition:opacity .2s ease}
+.card:hover .portal-mark,.card:focus-visible .portal-mark{opacity:1}
+.view{border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:58px!important;letter-spacing:-.055em!important;pointer-events:none}
+.works-overlay{position:fixed;inset:0;z-index:100;background:rgba(5,5,5,.98);color:#f3f3f1;display:none;overflow:auto;cursor:auto}
+.works-overlay.open{display:block}
+.works-shell{min-height:100%;padding:26px 32px 42px}
+.works-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.22);padding:0 0 18px}
+.works-brand{display:flex;align-items:baseline;gap:16px}.works-brand strong{font-size:18px;letter-spacing:.16em}.works-brand span{font-size:10px;color:#8e8e8e;letter-spacing:.18em;text-transform:uppercase}
+.works-close{width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:transparent;color:#fff;font-size:22px}
+.works-list{margin-top:24px;border-top:1px solid rgba(255,255,255,.13)}
+.work-row{display:grid;grid-template-columns:72px minmax(220px,1fr) minmax(180px,.8fr) 90px;align-items:center;min-height:67px;border-bottom:1px solid rgba(255,255,255,.13);padding:8px 3px;transition:background .18s ease,color .18s ease;cursor:pointer}
+.work-row:hover,.work-row:focus-visible{background:#f0f0ed;color:#111;outline:none}
+.work-row.current{cursor:default;color:#777}.work-row.current:hover{background:transparent;color:#777}
+.work-num{font-size:11px;letter-spacing:.18em}.work-name{font-size:20px;font-weight:600;letter-spacing:-.035em}.work-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#777}.work-action{text-align:right;font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.works-foot{display:flex;justify-content:space-between;gap:20px;margin-top:24px;color:#777;font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+@media(max-width:760px){.works-shell{padding:18px 14px 34px}.work-row{grid-template-columns:46px 1fr 60px;min-height:62px}.work-sub{display:none}.work-name{font-size:16px}.view{font-size:42px!important}}
+
+</style>
+</head>
+<!-- Track68 V3.3: V1 layout/motion baseline + 9 portal destinations. Hero PROMPT untouched. -->
+<body>
+<div class="scroll-spacer" id="scroll-spacer">
+  <div class="stage">
+    <div class="video-wrap" id="videoWrap">
+      <video id="leftVideo" muted playsinline preload="auto" src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4"></video>
+      <video id="rightVideo" muted playsinline preload="auto" src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4"></video>
+      <div class="tint"></div>
+    </div>
+    <div class="center-guide"></div>
+  </div>
+
+  <div class="ui logo">LoveTree<small>my emotional path archive</small></div>
+  <div class="ui caption">A Moment is not a file. It is the instant your feeling moved. Move across the image to revisit the beginning, then scroll to see how those moments became your path.</div>
+  <div class="ui nav"><span>MOMENTS</span><span>MY TREE · 09</span></div>
+  <div class="ui info" id="info"><div class="symbol" id="symbol">♥</div><div class="label">MY MOMENT<br>ARCHIVE</div><div class="count">09</div></div>
+  <div class="cursor" id="cursor"></div>
+
+  <section class="panel" id="panel"><div class="gallery-inner" id="galleryInner"><div class="grid" id="grid"></div></div></section>
+  <div class="white" id="white"></div>
+  <div class="final-copy" id="finalCopy">LOVETREE · CHOOSE ANOTHER WORLD</div>
+  <button class="view" id="view" type="button" aria-label="Open LoveTree works">works_</button>
+</div>
+<section class="works-overlay" id="worksOverlay" aria-hidden="true">
+  <div class="works-shell">
+    <div class="works-head"><div class="works-brand"><strong>WORKS_</strong><span>LOVE TREE · PORTAL INDEX</span></div><button class="works-close" id="worksClose" aria-label="Close works">×</button></div>
+    <div class="works-list" id="worksList"></div>
+    <div class="works-foot"><span>SELECT A WORLD · OPENS IN NEW TAB</span><span>TRACK 68 · CURRENT · 9 DESTINATIONS</span></div>
+  </div>
+</section>
+
+<script>
+const imageUrls=[
+'../images/01.png',
+'../images/02.png',
+'../images/03.png',
+'../images/04.png',
+'../images/05.png',
+'../images/06.png',
+'../images/07.png',
+'../images/08.png',
+'../images/09.png'];
+const titles=['FIRST SPARK', 'SAVED MOMENT', 'WHY IT STAYED', 'NEXT CONNECTION', 'MY PATH', 'LOOK BACK', 'MY TREE', 'AFTERGLOW', 'REPLAY'];
+const worksCatalog = [{"code":"68","name":"MOTION ARCHIVE","sub":"Portrait Emotional Path · Current","path":"","current":true},{"code":"67","name":"MEMORY TAPE","sub":"Persistent Ribbon World","path":"../../67_메모리테이프_인터랙티브롤/track67_v2.4.2_works_compare_menu.html","current":false},{"code":"65","name":"FIRST CLUE · V18","sub":"H3 Extended Motion Editing","path":"../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html","current":false},{"code":"C14","name":"ROTATING MEMORY INDEX","sub":"Codex 14 · Rotating Memory Index","path":"../../../../코덱스/14_러브트리_로테이팅메모리인덱스_V1/v2/개발본.html","current":false},{"code":"C13","name":"LIQUID GLASS VIDEO WALL","sub":"Codex 13 · Infinite Video Wall","path":"../../../../코덱스/13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html","current":false},{"code":"C12","name":"LIVING MEDIA SPHERE","sub":"Codex 12 · Interactive Front Door","path":"../../../../코덱스/12_러브트리_리빙미디어스피어_인터랙티브대문_V1/최종본.html","current":false},{"code":"C11","name":"MOONLIGHT FLOWER JOURNEY","sub":"Codex 11 · Living Flower Video Moment","path":"../../../../코덱스/11_러브트리_달빛꽃_감정여정_V2/V10_생명꽃_영상모먼트_러브트리대문/최종본_V10_생명꽃_영상모먼트_러브트리대문.html","current":false},{"code":"C10","name":"IDOL VIDEO ORBIT","sub":"Codex 10 · Video Orbit Carousel","path":"../../../../코덱스/10_러브트리_최애아이돌_영상오빗캐러셀_V1/최종본.html","current":false},{"code":"C09","name":"PETAL CAR JOURNEY","sub":"Codex 09 · Retro Future Emotion Journey","path":"../../../../코덱스/09_러브트리_꽃잎자동차_감정여정_V4/최종본.html","current":false},{"code":"C08","name":"CRYSTAL MEMORY ATELIER","sub":"Codex 08 · Crystal Memory Atelier","path":"../../../../코덱스/08_러브트리_크리스털기억_아틀리에_V3/최종본.html","current":false}];
+const portalTargets=worksCatalog.filter(item=>!item.current);
+const grid=document.getElementById('grid');
+function buildLayout(){grid.innerHTML='';const cols=innerWidth<640?2:innerWidth<1024?3:4;let idx=0,row=0;while(idx<imageUrls.length){const a=(row*2+(row%2))%cols;const b=row%3===0?(a+2)%cols:-1;for(let c=0;c<cols;c++){const cell=document.createElement('div');cell.className='cell';if((c===a||c===b)&&idx<imageUrls.length){const momentIndex=idx;const target=portalTargets[momentIndex];const card=document.createElement('div');card.className='card';card.tabIndex=0;card.setAttribute('role','link');card.setAttribute('aria-label',`${titles[momentIndex]} — Open ${target.code} ${target.name}`);card.style.transformOrigin=c<cols/2?'right bottom':'left bottom';card.innerHTML=`<img src="${imageUrls[momentIndex]}" alt="Moment ${momentIndex+1}"><div class="portal-mark">${target.code} ↗</div><div class="tag">${String(momentIndex+1).padStart(2,'0')} · ${titles[momentIndex]}</div>`;const open=()=>openWork(target);card.addEventListener('click',open);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});cell.appendChild(card);idx++;}grid.appendChild(cell)}row++}}
+buildLayout();addEventListener('resize',buildLayout);
+const cursor=document.getElementById('cursor');addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px'});
+const leftVideo=document.getElementById('leftVideo'),rightVideo=document.getElementById('rightVideo');let last='right',mouseX=innerWidth/2;
+addEventListener('mousemove',e=>mouseX=e.clientX);
+function scrub(){if(matchMedia('(pointer:fine)').matches){const w=innerWidth,dead=Math.max(30,w*.05),mid=w/2;if(mouseX<mid-dead){last='right';rightVideo.style.display='block';leftVideo.style.display='none';if(rightVideo.duration&&!rightVideo.seeking)rightVideo.currentTime=Math.min(rightVideo.duration,((mid-dead-mouseX)/(mid-dead))*rightVideo.duration)}else if(mouseX>mid+dead){last='left';leftVideo.style.display='block';rightVideo.style.display='none';if(leftVideo.duration&&!leftVideo.seeking)leftVideo.currentTime=Math.min(leftVideo.duration,((mouseX-(mid+dead))/(w-(mid+dead)))*leftVideo.duration)}else{if(last==='left'){leftVideo.style.display='block';rightVideo.style.display='none'}else{rightVideo.style.display='block';leftVideo.style.display='none'}const v=last==='left'?leftVideo:rightVideo;if(!v.seeking)v.currentTime=0}}requestAnimationFrame(scrub)}requestAnimationFrame(scrub);
+if(!matchMedia('(pointer:fine)').matches){leftVideo.style.display='block';rightVideo.style.display='none';leftVideo.loop=false;rightVideo.loop=false;leftVideo.play().catch(()=>{});leftVideo.onended=()=>{leftVideo.style.display='none';rightVideo.style.display='block';rightVideo.currentTime=0;rightVideo.play().catch(()=>{})};rightVideo.onended=()=>{rightVideo.style.display='none';leftVideo.style.display='block';leftVideo.currentTime=0;leftVideo.play().catch(()=>{})}}
+const panel=document.getElementById('panel'),galleryInner=document.getElementById('galleryInner'),white=document.getElementById('white'),view=document.getElementById('view'),finalCopy=document.getElementById('finalCopy'),info=document.getElementById('info'),symbol=document.getElementById('symbol'),videoWrap=document.getElementById('videoWrap');let lastSymbol=0;const symbols=['♥','✦','↗','∞','•'];
+function frame(){const y=scrollY,vh=innerHeight;const wrapH=galleryInner.scrollHeight;const maxScroll=Math.max(1,wrapH-vh*.8);document.getElementById('scroll-spacer').style.height=(vh+maxScroll+vh*2)+'px';if(y<=vh){const p=y/vh;panel.style.transform=`translateY(${(1-p)*vh}px)`;galleryInner.style.transform='translateY(0px)'}else{panel.style.transform='translateY(0)';galleryInner.style.transform=`translateY(${-Math.min(maxScroll,y-vh)}px)`}videoWrap.style.visibility=y>vh?'hidden':'visible';document.querySelectorAll('.card').forEach(card=>{const r=card.getBoundingClientRect();let s=0;if(r.bottom>0&&r.top<vh){const enter=Math.min(1,(vh-r.top)/(vh*.58));const exit=Math.min(1,r.bottom/(vh*.38));s=Math.max(0,Math.min(enter,exit))}card.style.transform=`scale(${s})`});const oStart=vh+maxScroll;if(y>oStart){const p=Math.max(0,Math.min(1,(y-oStart)/(vh*.85)));white.style.opacity=p;view.style.transform=`scale(${p})`;view.style.pointerEvents=p>.62?'auto':'none';finalCopy.style.opacity=p;info.style.transform=`translateY(${-p*150}px)`;info.style.opacity=1-p*.55}else{white.style.opacity=0;view.style.transform='scale(0)';view.style.pointerEvents='none';finalCopy.style.opacity=0;info.style.transform='none';info.style.opacity=1}if(performance.now()-lastSymbol>120&&y>10){symbol.textContent=symbols[Math.floor((y/160)%symbols.length)];lastSymbol=performance.now()}requestAnimationFrame(frame)}requestAnimationFrame(frame);
+
+const worksOverlay=document.getElementById('worksOverlay');
+const worksList=document.getElementById('worksList');
+const worksClose=document.getElementById('worksClose');
+function resolveWork(path){try{return new URL(path,location.href).href}catch(_){return path}}
+function openWork(item){if(!item||item.current)return;window.open(resolveWork(item.path),'_blank','noopener')}
+function renderWorks(){worksList.innerHTML='';worksCatalog.forEach(item=>{const row=document.createElement('div');row.className='work-row'+(item.current?' current':'');row.tabIndex=item.current?-1:0;row.innerHTML=`<div class="work-num">${item.code}</div><div class="work-name">${item.name}</div><div class="work-sub">${item.sub}</div><div class="work-action">${item.current?'CURRENT':'OPEN ↗'}</div>`;if(!item.current){row.addEventListener('click',()=>openWork(item));row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openWork(item)}})}worksList.appendChild(row)})}
+function openWorks(){worksOverlay.classList.add('open');worksOverlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';worksClose.focus()}
+function closeWorks(){worksOverlay.classList.remove('open');worksOverlay.setAttribute('aria-hidden','true');document.body.style.overflow='';view.focus()}
+renderWorks();
+worksClose.addEventListener('click',closeWorks);
+worksOverlay.addEventListener('click',e=>{if(e.target===worksOverlay)closeWorks()});
+view.addEventListener('click',openWorks);
+view.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openWorks()}});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&worksOverlay.classList.contains('open'))closeWorks()});
+
+</script>
+</body></html>
