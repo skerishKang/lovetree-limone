@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SourceRunnerFrame from "../../../52/v3/SourceRunnerFrame";
+import Lineage67SourceRunner from "./Lineage67SourceRunner";
 import {
   LINEAGE_67_V24_RUNNER_LABEL,
   LINEAGE_67_V24_SOURCE,
@@ -46,8 +46,8 @@ export default function Lineage67V24SourceRunnerPage() {
         </div>
       </section>
 
-      <SourceRunnerFrame
-        sourceAssetPath={LINEAGE_67_V24_SOURCE.sourceAssetPath}
+      <Lineage67SourceRunner
+        realPackageUrl={LINEAGE_67_V24_SOURCE.realPackageUrl}
         sourceBytes={LINEAGE_67_V24_SOURCE.sourceBytes}
         sourceSha256={LINEAGE_67_V24_SOURCE.sourceSha256}
       />

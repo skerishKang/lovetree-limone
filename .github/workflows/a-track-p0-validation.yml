@@ -67,7 +67,7 @@ jobs:
       - name: Prepare Playwright runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Lineage 53 V2 actual-route browser QA
         shell: bash
@@ -217,8 +217,10 @@ jobs:
             tests/v4-first-journey-persistence-behavioral.test.mjs
             tests/v4-moments-100-source-faithful.test.mjs
             tests/lineage-59-browser-qa.test.mjs
+            tests/track67-v242-browser-qa.test.mjs
+            tests/track67-native-inspect-acceptance.test.mjs
           )
-          expected_browser_count=9
+          expected_browser_count=11
 
           printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
           printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt
@@ -313,6 +315,7 @@ jobs:
           # server (port 3000); local runs use LINEAGE59_BASE_URL (default 3160).
           run_gate standard-browser-tests \
             env LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
+            env TRACK67_BASE_URL=http://127.0.0.1:3000 \
             node --import tsx --test --test-concurrency=1 "${browser_tests[@]}"
 
           echo "Running Lineage 52 actual-route browser QA in isolation"
