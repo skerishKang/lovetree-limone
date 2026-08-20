@@ -1,0 +1,10 @@
+{
+  "folderPages": {},
+  "content": {},
+  "listErrors": {
+    "1F73observerTrack62ExactFoldrAa": {
+      "kind": "PERMISSION_DENIED",
+      "message": "Drive API 403: the observer identity lacks reader access to the source folder"
+    }
+  }
+}

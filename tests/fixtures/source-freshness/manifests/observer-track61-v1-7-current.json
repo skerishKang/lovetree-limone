@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-observer-61-stale",
+  "sourceTrackId": "Track61",
+  "title": "Observer fixture Track61 V1.7 current claim",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic live-observer acceptance fixture",
+  "summary": "synthetic: manifest pins V1.7 as CURRENT_AT_OBSERVATION while the live Drive current is V1.9",
+  "provenance": {
+    "sourceLabel": "synthetic live-observer fixture",
+    "sourceFiles": [
+      "fixture.html"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "PENDING",
+    "note": "synthetic observer fixture — no lineage allocation"
+  },
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1f73observerTrack61V17FileAaaaaa",
+      "bytes": 115,
+      "sha256": "bea45a5112c5ac74ea63fa3526a36c9fbc434dd5d19d036c021270cc430d5e34",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.7",
+    "authorityObservedAt": "2026-08-14T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-observer-61-historical",
+  "sourceTrackId": "Track61",
+  "title": "Observer fixture Track61 V1.5 historical pin with newer V1.7 current",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic live-observer acceptance fixture",
+  "summary": "synthetic: HISTORICAL_PINNED proving snapshot; the live Drive current is newer V1.7 and the V1.5 artifact is observed",
+  "provenance": {
+    "sourceLabel": "synthetic live-observer fixture",
+    "sourceFiles": [
+      "fixture.html"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "PENDING",
+    "note": "synthetic observer fixture — no lineage allocation"
+  },
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1f73observerTrack61HistV15FileAa",
+      "bytes": 129,
+      "sha256": "5672898084c5ef517f52fafde6b2bc25bb58a962ef2e476ff428ac8f3a1710f0",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.5",
+    "authorityObservedAt": "2026-08-13T09:00:00.000Z",
+    "sourceAuthorityState": "HISTORICAL_PINNED",
+    "newerRevisionKnown": "V1.7 (newer proving current published 2026-08-14)"
+  }
+}

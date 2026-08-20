@@ -1,0 +1,10 @@
+{
+  "folderPages": {},
+  "content": {},
+  "listErrors": {
+    "1F73observerTrack62ExactFoldrAa": {
+      "kind": "AUTH_FAILED",
+      "message": "request failed with token ya29.a0FakeObserverTokenDO_NOT_LEAK_000000000 sender"
+    }
+  }
+}
