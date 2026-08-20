@@ -40,7 +40,7 @@ jobs:
       - name: Prepare Playwright runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Run Track67 V2.4.2 native browser QA
         shell: bash
