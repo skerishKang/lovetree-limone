@@ -144,6 +144,7 @@
 .lt-lineage__revision small {
   color: rgba(22, 19, 15, 0.55);
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .lt-lineage__revision-meta {
@@ -173,11 +174,13 @@
   padding-top: 18px;
   color: rgba(22, 19, 15, 0.44);
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 760px) {
-  .lt-lineages__grid { grid-template-columns: 1fr; }
-  .lt-lineage { padding: 20px; }
-  .lt-lineage__revision { grid-template-columns: 1fr; }
-  .lt-lineage__revision-meta { justify-items: start; grid-template-columns: auto auto; }
+  .lt-lineages__grid { grid-template-columns: minmax(0, 1fr); }
+  .lt-lineage { padding: 20px; min-width: 0; }
+  .lt-lineage__revision { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .lt-lineage__revision > span:first-child { min-width: 0; }
+  .lt-lineage__revision-meta { justify-items: start; grid-template-columns: auto auto; white-space: normal; }
 }

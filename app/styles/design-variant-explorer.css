@@ -44,6 +44,7 @@
 .lt-variant-filters label {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .lt-variant-filters label > span {
@@ -57,6 +58,7 @@
 .lt-variant-filters button,
 .lt-variant-empty button {
   min-height: 42px;
+  min-width: 0;
   border: 1px solid var(--lt-line);
   border-radius: 12px;
   background: rgba(255,255,255,.72);
@@ -104,14 +106,14 @@
 }
 
 @media (max-width: 1050px) {
-  .lt-variant-filters { grid-template-columns: 1fr 1fr; }
+  .lt-variant-filters { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .lt-variant-search { grid-column: 1 / -1; }
 }
 
 @media (max-width: 680px) {
   .lt-variant-explorer__heading,
   .lt-variant-empty { align-items: flex-start; flex-direction: column; }
-  .lt-variant-filters { grid-template-columns: 1fr; }
+  .lt-variant-filters { grid-template-columns: minmax(0, 1fr); }
   .lt-variant-search { grid-column: auto; }
   .lt-variant-filters button { width: 100%; }
 }
