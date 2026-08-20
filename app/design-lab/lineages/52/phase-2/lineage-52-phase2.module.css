@@ -1,0 +1,311 @@
+.proof {
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+  color: #eef3f8;
+  overflow-x: clip;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+  height: min(70vh, 760px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(52, 94, 127, 0.16), transparent 42%),
+    #05080d;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.canvas:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -5px;
+}
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(5, 8, 13, 0.96);
+  color: #dde7ef;
+}
+
+.fallback span {
+  max-width: 560px;
+  color: #aab7c2;
+  line-height: 1.6;
+}
+
+.fallback code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: #c7d6e2;
+}
+
+.status {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.status span {
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(5, 8, 13, 0.72);
+  backdrop-filter: blur(8px);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: #c9d6e0;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: #0b1016;
+}
+
+.controls button,
+.momentButton {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: #121a23;
+  color: #edf4f8;
+  font: inherit;
+  cursor: pointer;
+}
+
+.controls button {
+  min-height: 38px;
+  padding: 8px 11px;
+}
+
+.controls button:hover,
+.momentButton:hover {
+  background: #17232f;
+}
+
+.controls button:focus-visible,
+.momentButton:focus-visible,
+.seekLabel input:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+.seekLabel {
+  min-width: min(280px, 100%);
+  flex: 1 1 240px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b8c6d0;
+  font-size: 12px;
+}
+
+.seekLabel input {
+  min-width: 0;
+  width: 100%;
+}
+
+.semanticGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.semanticPanel {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: #0b1016;
+  padding: 14px;
+}
+
+.panelHeading {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.panelHeading small {
+  color: #8fa1af;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.panelHeading h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.panelHeading > span {
+  max-width: 46%;
+  overflow-wrap: anywhere;
+  color: #b9c7d1;
+  font-size: 11px;
+  text-align: right;
+}
+
+.momentList,
+.connectionList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+
+.momentButton {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.momentButton[aria-pressed="true"] {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: #1b2a37;
+}
+
+.momentButton span,
+.momentButton code,
+.connectionList span,
+.connectionList code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.momentButton code,
+.connectionList code {
+  color: #91a7b7;
+  font-size: 10px;
+}
+
+.connectionList li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #111821;
+  color: #d8e2e9;
+  font-size: 11px;
+}
+
+.connectionList li > span:last-child {
+  color: #94a6b3;
+  white-space: nowrap;
+}
+
+.boundaryNote {
+  padding: 12px 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  color: #9eacb7;
+  font-size: 11px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.boundaryNote strong {
+  color: #eef4f8;
+}
+
+@media (max-width: 720px) {
+  .stage {
+    min-height: 390px;
+    height: 58vh;
+    max-height: 520px;
+    border-radius: 14px;
+  }
+
+  .semanticGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panelHeading {
+    align-items: start;
+  }
+
+  .connectionList li {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .connectionList li > span:last-child {
+    grid-column: 2;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 360px) {
+  .stage {
+    min-height: 340px;
+    height: 52vh;
+  }
+
+  .controls {
+    padding: 8px;
+  }
+
+  .controls button {
+    flex: 1 1 42%;
+  }
+
+  .seekLabel {
+    flex-basis: 100%;
+  }
+
+  .semanticPanel {
+    padding: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .controls button,
+  .momentButton,
+  .canvas {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
