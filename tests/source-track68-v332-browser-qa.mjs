@@ -71,10 +71,15 @@ async function overflowX(page) {
   );
 }
 
-// Get the iframe's content frame (Playwright can access sandboxed cross-origin frames)
-function getIframeFrame(page) {
-  const frames = page.frames();
-  return frames.find((f) => f !== page.mainFrame());
+// Resolve the iframe content frame via the currently mounted DOM element.
+// This avoids stale-frame selection from page.frames() enumeration.
+async function getIframeFrame(page) {
+  const iframeEl = page.locator("iframe[data-source-state='ready']");
+  const handle = await iframeEl.elementHandle();
+  if (!handle) return null;
+  const frame = await handle.contentFrame();
+  await handle.dispose();
+  return frame;
 }
 
 console.log("Source Track 68 V3.3.2 — browser QA (genuine execution)");
@@ -128,7 +133,7 @@ for (const vp of VIEWPORTS) {
   await page.screenshot({ path: `${SHOTS}/track68-${vp.label}-variant-A.png` });
 
   await check(`${vp.label}: A variant hero video uses local companion (not CloudFront)`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     assert.ok(frame, "iframe frame must exist");
     const videoSrc = await frame.evaluate(() => {
       const v = document.querySelector("video");
@@ -143,7 +148,9 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: A variant has 9 Moment cards in DOM`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
+    assert.ok(frame, "A variant iframe content frame must exist");
+    await frame.waitForFunction(() => document.querySelectorAll(".card").length >= 1, { timeout: 5000 });
     const count = await frame.evaluate(() => document.querySelectorAll(".card").length);
     assert.ok(count >= 9, `expected >=9 cards, got ${count}`);
   });
@@ -159,7 +166,9 @@ for (const vp of VIEWPORTS) {
   await page.screenshot({ path: `${SHOTS}/track68-${vp.label}-variant-B.png` });
 
   await check(`${vp.label}: B variant has 동양인 images`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
+    assert.ok(frame, "B variant iframe content frame must exist");
+    await frame.waitForFunction(() => document.querySelectorAll(".card img").length >= 1, { timeout: 5000 });
     const count = await frame.evaluate(() => document.querySelectorAll(".card img").length);
     assert.ok(count >= 9, `expected >=9 images, got ${count}`);
     const firstSrc = await frame.evaluate(() => {
@@ -173,7 +182,7 @@ for (const vp of VIEWPORTS) {
   await check(`${vp.label}: WORKS overlay has role=dialog aria-modal (host bridge)`, async () => {
     await page.locator("button[aria-pressed]").nth(1).click();
     await page.waitForTimeout(500);
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     const role = await frame.evaluate(() => document.getElementById("worksOverlay")?.getAttribute("role"));
     const modal = await frame.evaluate(() => document.getElementById("worksOverlay")?.getAttribute("aria-modal"));
     assert.equal(role, "dialog", "host bridge must add role=dialog");
@@ -182,7 +191,7 @@ for (const vp of VIEWPORTS) {
 
   // ── WORKS modal lifecycle (genuine execution) ──
   await check(`${vp.label}: WORKS open — focus enters #worksClose`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     // Programmatically trigger openWorks() inside the iframe
     await frame.evaluate(() => {
       const view = document.getElementById("view");
@@ -199,7 +208,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: WORKS open — background is inert`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     const inertCount = await frame.evaluate(() => {
       const spacer = document.getElementById("scroll-spacer");
       if (!spacer) return 0;
@@ -214,7 +223,7 @@ for (const vp of VIEWPORTS) {
 
   await check(`${vp.label}: WORKS Tab containment (focus stays in dialog)`, async () => {
     // Focus the iframe first, then Tab within it
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     await frame.focus("body");
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
@@ -228,7 +237,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: WORKS Shift+Tab containment (focus stays in dialog)`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     await frame.focus("body");
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Shift+Tab");
@@ -242,7 +251,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: WORKS Escape closes, aria-hidden restores, focus leaves overlay`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     // Focus the close button to ensure Escape fires from within the overlay
     await frame.evaluate(() => document.getElementById("worksClose")?.focus());
     await page.waitForTimeout(100);
@@ -301,7 +310,10 @@ for (const vp of VIEWPORTS) {
     await touchPage.waitForTimeout(500);
     await touchPage.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
 
-    const tf = touchPage.frames().find((f) => f !== touchPage.mainFrame());
+    const tfIframeEl = touchPage.locator("iframe[data-source-state='ready']");
+    const tfHandle = await tfIframeEl.elementHandle();
+    const tf = await tfHandle.contentFrame();
+    await tfHandle.dispose();
 
     // Verify coarse pointer mode is active (source detects non-fine pointer)
     const isCoarsePointer = await tf.evaluate(() => {
@@ -381,7 +393,7 @@ for (const vp of VIEWPORTS) {
   await check(`${vp.label}: DESIGN_LAB_TARGET portals produce exact route events`, async () => {
     await page.locator("button[aria-pressed]").nth(1).click();
     await page.waitForTimeout(500);
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
 
     for (const targetId of DESIGN_LAB_TARGETS) {
       // Open WORKS overlay
@@ -415,7 +427,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: HOLD_UNRESOLVED portals fail closed (no navigation)`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     for (const targetId of HOLD_TARGETS) {
       await frame.evaluate(() => document.getElementById("view")?.click());
       await page.waitForTimeout(300);
@@ -443,7 +455,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: unknown portal target fail closed`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     // Send a forged message with unknown targetId FROM the iframe (so event.source matches)
     await frame.evaluate(() => {
       window.parent.postMessage(
@@ -460,7 +472,7 @@ for (const vp of VIEWPORTS) {
   });
 
   await check(`${vp.label}: forged child status/route cannot escape parent ledger`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     // Forge: HOLD target "65" claiming DESIGN_LAB_TARGET with fake route
     await frame.evaluate(() => {
       window.parent.postMessage(
@@ -493,8 +505,11 @@ for (const vp of VIEWPORTS) {
     await reducedPage.waitForTimeout(500);
     await reducedPage.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
 
-    // Use Playwright frame access (works cross-origin)
-    const rf = reducedPage.frames().find((f) => f !== reducedPage.mainFrame());
+    // Use iframe element -> contentFrame binding (works cross-origin)
+    const rfIframeEl = reducedPage.locator("iframe[data-source-state='ready']");
+    const rfHandle = await rfIframeEl.elementHandle();
+    const rf = await rfHandle.contentFrame();
+    await rfHandle.dispose();
     assert.ok(rf, "reduced-motion iframe frame must exist");
 
     // Verify RAF was replaced with a no-op (not native code)
@@ -517,7 +532,7 @@ for (const vp of VIEWPORTS) {
 
   // ── Media fallback: no CloudFront hotlink ──
   await check(`${vp.label}: no CloudFront hotlink in any video src`, async () => {
-    const frame = getIframeFrame(page);
+    const frame = await getIframeFrame(page);
     const videoSrcs = await frame.evaluate(() => {
       return Array.from(document.querySelectorAll("video")).map((v) => v.getAttribute("src") || "");
     });
