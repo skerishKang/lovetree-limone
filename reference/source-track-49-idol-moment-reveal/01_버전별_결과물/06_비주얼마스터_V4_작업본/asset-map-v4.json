@@ -1,0 +1,37 @@
+{
+  "master_visual": "ghostwriter_images/context/b80e37ed-0fe7-58d3-8007-6cac4a535478.png",
+  "sections": {
+    "hero": "assets/section-hero.png",
+    "archive": "assets/section-archive.png",
+    "connection": "assets/section-connection.png",
+    "tree": "assets/section-tree.png",
+    "save": "assets/section-save.png"
+  },
+  "hero_assets": {
+    "main": "assets/hero/main.png",
+    "stage": "assets/hero/stage.png",
+    "smile": "assets/hero/smile.png",
+    "backstage": "assets/hero/backstage.png",
+    "walking": "assets/hero/walking.png"
+  },
+  "archive_cards": {
+    "stage": "assets/cards/stage.png",
+    "fancam": "assets/cards/fancam.png",
+    "interview": "assets/cards/interview.png",
+    "photo": "assets/cards/photo.png",
+    "live": "assets/cards/live.png"
+  },
+  "connection_cards": {
+    "this_moment": "assets/cards/connection_this.png",
+    "next_moment": "assets/cards/connection_next.png"
+  },
+  "tree_assets": {
+    "fruit1": "assets/tree/fruit1.png",
+    "fruit2": "assets/tree/fruit2.png",
+    "fruit3": "assets/tree/fruit3.png",
+    "fruit4": "assets/tree/fruit4.png",
+    "fruit5": "assets/tree/fruit5.png",
+    "fruit6": "assets/tree/fruit6.png",
+    "fruit7": "assets/tree/fruit7.png"
+  }
+}

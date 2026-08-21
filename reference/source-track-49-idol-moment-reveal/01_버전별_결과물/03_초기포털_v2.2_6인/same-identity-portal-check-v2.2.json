@@ -1,0 +1,42 @@
+{
+  "scope": "V2.2 Hero + Moment Portal identity rule",
+  "casts": {
+    "A": {
+      "hero_source": "49_v2.2_cast-A_hero-cutout_master_v1.webp",
+      "portal_sources": [
+        "49_v2.2_cast-A_moment-stage_derived_v1.jpg",
+        "49_v2.2_cast-A_moment-smile_derived_v1.jpg",
+        "49_v2.2_cast-A_moment-backstage_derived_v1.jpg",
+        "49_v2.2_cast-A_moment-walking_derived_v1.jpg"
+      ],
+      "same_canonical_identity_source": true,
+      "biometric_identity_verified": false,
+      "note": "Derived from the same canonical portrait source; not claimed as independently photographed same-person moments."
+    },
+    "B": {
+      "hero_source": "49_v2.2_cast-B_hero-cutout_master_v1.webp",
+      "portal_sources": [
+        "49_v2.2_cast-B_moment-stage_derived_v1.jpg",
+        "49_v2.2_cast-B_moment-smile_derived_v1.jpg",
+        "49_v2.2_cast-B_moment-backstage_derived_v1.jpg",
+        "49_v2.2_cast-B_moment-walking_derived_v1.jpg"
+      ],
+      "same_canonical_identity_source": true,
+      "biometric_identity_verified": false,
+      "note": "Derived from the same canonical portrait source; not claimed as independently photographed same-person moments."
+    },
+    "C": {
+      "hero_source": "49_v2.2_cast-C_hero-cutout_master_v1.webp",
+      "portal_sources": [
+        "49_v2.2_cast-C_moment-stage_derived_v1.jpg",
+        "49_v2.2_cast-C_moment-smile_derived_v1.jpg",
+        "49_v2.2_cast-C_moment-backstage_derived_v1.jpg",
+        "49_v2.2_cast-C_moment-walking_derived_v1.jpg"
+      ],
+      "same_canonical_identity_source": true,
+      "biometric_identity_verified": false,
+      "note": "Derived from the same canonical portrait source; not claimed as independently photographed same-person moments."
+    }
+  },
+  "status": "PASS_FOR_DESIGN_IDENTITY_SAFETY_WITH_DISCLOSED_LIMIT"
+}

@@ -1,0 +1,114 @@
+{
+  "version": "V2.3",
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "scope": "6 Hero Worlds / Hover Reveal / Glow Tree Lock",
+  "states": [
+    {
+      "idx": "01 / 06",
+      "world": "clear",
+      "cast": "CAST A · MAIN VISUAL",
+      "treeGlow": "#f4d28d",
+      "fieldTitle": "Airy archive.",
+      "saveWorld": "CLEAR / IVORY",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "idx": "02 / 06",
+      "world": "pink",
+      "cast": "CAST A · MAIN VISUAL",
+      "treeGlow": "#ff9cba",
+      "fieldTitle": "Soft afterglow.",
+      "saveWorld": "PINK DREAM",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "idx": "03 / 06",
+      "world": "clear",
+      "cast": "CAST B · SOFT EMOTION",
+      "treeGlow": "#ead7a0",
+      "fieldTitle": "Quiet archive.",
+      "saveWorld": "CLEAR / IVORY",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "idx": "04 / 06",
+      "world": "purple",
+      "cast": "CAST B · SOFT EMOTION",
+      "treeGlow": "#c879ff",
+      "fieldTitle": "Arena memory.",
+      "saveWorld": "PURPLE CONCERT",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "idx": "05 / 06",
+      "world": "pink",
+      "cast": "CAST C · CHIC EDGE",
+      "treeGlow": "#ff8daa",
+      "fieldTitle": "Warm memory.",
+      "saveWorld": "PINK DREAM",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "idx": "06 / 06",
+      "world": "purple",
+      "cast": "CAST C · CHIC EDGE",
+      "treeGlow": "#aa71ff",
+      "fieldTitle": "Night encore.",
+      "saveWorld": "PURPLE CONCERT",
+      "borderRadius": "0px",
+      "clipPath": "none",
+      "maskImage": "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 9%, rgb(0, 0, 0) 91%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 4%, rgb(0, 0, 0) 97%, rgba(0, 0, 0, 0) 100%)"
+    }
+  ],
+  "desktop": {
+    "errors": [],
+    "overflow_px": 0,
+    "prev": "05 / 06",
+    "next": "06 / 06",
+    "hover_changed": true,
+    "hover_after": "THAT SMILE\nThe reason I came back.",
+    "pointer_changed": true,
+    "save_confirmation": true
+  },
+  "mobile": {
+    "errors": [],
+    "overflow_px": 0,
+    "state_before_swipe": "01 / 06",
+    "state_after_swipe": "02 / 06",
+    "swipe_changed_state": true,
+    "focus_reveal": "BACKSTAGE\nRight before the cameras."
+  },
+  "checks": {
+    "six_hero_states": true,
+    "three_distinct_casts": true,
+    "three_color_worlds": true,
+    "main_hero_no_oval_border": true,
+    "main_hero_no_clip_path": true,
+    "edge_feather_linear_only": true,
+    "light_trail_present": true,
+    "glow_tree_present": true,
+    "moment_field_state_sync": true,
+    "save_world_state_sync": true,
+    "hover_reveal_runtime": true,
+    "pointer_runtime": true,
+    "prev_next_runtime": true,
+    "mobile_swipe_runtime": true,
+    "save_confirmation_runtime": true,
+    "desktop_no_errors": true,
+    "mobile_no_errors": true,
+    "desktop_no_overflow": true,
+    "mobile_no_overflow": true
+  },
+  "pass_count": 19,
+  "fail_count": 0
+}

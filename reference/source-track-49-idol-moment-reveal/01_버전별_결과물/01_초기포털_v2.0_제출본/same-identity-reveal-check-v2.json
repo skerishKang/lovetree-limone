@@ -1,0 +1,40 @@
+{
+  "version": "V2",
+  "status": "PASS_CANDIDATE_WITH_VISUAL_IDENTITY_CAVEAT",
+  "identity_basis": "single synthetic source sheet; no real person claimed",
+  "checks": [
+    {
+      "source_asset": "49_v2_same-identity-moment-sheet_source_v1.png / stage crop",
+      "same_identity": "visual-consistency-pass-candidate",
+      "moment_type": "stage performance",
+      "hero_difference": "black performance styling, stage lights, microphone",
+      "visual_clarity": "clear separate moment",
+      "pass": true
+    },
+    {
+      "source_asset": "49_v2_same-identity-moment-sheet_source_v1.png / smile crop",
+      "same_identity": "visual-consistency-pass-candidate",
+      "moment_type": "smiling close-up",
+      "hero_difference": "open smile, brighter close-up",
+      "visual_clarity": "clear separate moment",
+      "pass": true
+    },
+    {
+      "source_asset": "49_v2_same-identity-moment-sheet_source_v1.png / backstage crop",
+      "same_identity": "visual-consistency-pass-candidate",
+      "moment_type": "backstage candid",
+      "hero_difference": "dark styling, candid indoor context",
+      "visual_clarity": "clear separate moment",
+      "pass": true
+    },
+    {
+      "source_asset": "49_v2_same-identity-moment-sheet_source_v1.png / walking crop",
+      "same_identity": "visual-consistency-pass-candidate",
+      "moment_type": "walking toward camera",
+      "hero_difference": "fuller-body motion context, outdoor crowd",
+      "visual_clarity": "clear separate moment",
+      "pass": true
+    }
+  ],
+  "caveat": "No biometric identity verification is claimed. This is a synthetic prototype identity sheet and requires product-owner visual acceptance."
+}

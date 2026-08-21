@@ -1,0 +1,99 @@
+{
+  "project": "LoveTree 49 Moment Reveal Portal",
+  "version": "V2",
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "approval": "NOT_OWNER_APPROVED",
+  "production": "PROHIBITED",
+  "core_change": "V1 mask/acrylic ornament reveal removed; V2 opens another photographic Moment in a portal window.",
+  "runtime": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "page_errors": [],
+      "console_issues": [],
+      "horizontal_overflow": 0,
+      "reveal_open": true,
+      "reveal_label": "THAT SMILE · THE REASON I CAME BACK",
+      "day_night_card_layout_shift_px": 0.0,
+      "route_open": true,
+      "metrics": [
+        "6",
+        "6",
+        "3"
+      ],
+      "save_confirmation": true
+    },
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "page_errors": [],
+      "console_issues": [],
+      "horizontal_overflow": 0,
+      "reveal_open": true,
+      "reveal_label": "THAT SMILE · THE REASON I CAME BACK",
+      "day_night_card_layout_shift_px": 0.0,
+      "route_open": true,
+      "metrics": [
+        "6",
+        "6",
+        "3"
+      ],
+      "save_confirmation": true
+    }
+  },
+  "checks": {
+    "v1_overwrite": false,
+    "production_change": false,
+    "external_dependencies": false,
+    "forbidden_face_ornament_terms": {
+      "acrylic": false,
+      "chromatic": false,
+      "clip-path": false
+    },
+    "forbidden_track_terms": {
+      "neon": false,
+      "cockpit": false,
+      "hud": false,
+      "aircraft": false
+    },
+    "hero_reveal_real_photo_window": true,
+    "same_person_source_sheet_used": true,
+    "field_mixed_cast_count": 6,
+    "day_night_layout_shift_desktop_px": 0.0,
+    "day_night_layout_shift_mobile_px": 0.0,
+    "desktop_horizontal_overflow_px": 0,
+    "mobile_horizontal_overflow_px": 0,
+    "desktop_page_errors": [],
+    "mobile_page_errors": [],
+    "desktop_console_issues": [],
+    "mobile_console_issues": [],
+    "desktop_reveal": true,
+    "mobile_reveal": true,
+    "route_preview": true,
+    "save_confirmation": true,
+    "mock_metrics": {
+      "moments": 6,
+      "connections": 6,
+      "routes": 3
+    },
+    "self_contained": true
+  },
+  "visual_gate": {
+    "hero_is_strong_moment": "PASS_CANDIDATE",
+    "reveal_reads_as_another_moment": "PASS_CANDIDATE",
+    "same_person_multiple_moments": "PASS_CANDIDATE_WITH_GENERATIVE_IDENTITY_CAVEAT",
+    "moment_connection_meaning": "PASS_CANDIDATE",
+    "not_profile_dating_app": "PASS_CANDIDATE",
+    "hero_to_field_tree_save_continuity": "PASS_CANDIDATE",
+    "mobile_reveal": "PASS_CANDIDATE"
+  },
+  "caveats": [
+    "Same-identity assets are synthetic prototype material. No biometric identity verification is claimed.",
+    "Hero master contains a very subtle pre-existing light-trace line; no mask/acrylic/chromatic face patch is used.",
+    "Product-owner visual acceptance is required before asset or V2 candidate is considered adopted."
+  ]
+}

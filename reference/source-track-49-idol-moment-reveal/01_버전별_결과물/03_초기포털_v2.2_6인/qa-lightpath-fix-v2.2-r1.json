@@ -1,0 +1,70 @@
+{
+  "scope": "V2.2 R1 Light Path QA Fix only",
+  "layout_changed": false,
+  "state_mapping_changed": false,
+  "cast_assets_changed": false,
+  "reveal_architecture_changed": false,
+  "fix": "Style SVG <use> elements as luminous thin paths instead of default dark shapes.",
+  "state_trail_styles": [
+    {
+      "state": 1,
+      "trail_style": {
+        "stroke": "rgb(255, 240, 215)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    },
+    {
+      "state": 2,
+      "trail_style": {
+        "stroke": "rgb(255, 226, 233)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    },
+    {
+      "state": 3,
+      "trail_style": {
+        "stroke": "rgb(234, 208, 255)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    },
+    {
+      "state": 4,
+      "trail_style": {
+        "stroke": "rgb(248, 234, 215)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    },
+    {
+      "state": 5,
+      "trail_style": {
+        "stroke": "rgb(255, 225, 216)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    },
+    {
+      "state": 6,
+      "trail_style": {
+        "stroke": "rgb(217, 198, 255)",
+        "fill": "none",
+        "width": "1.35px"
+      }
+    }
+  ],
+  "desktop": {
+    "errors": [],
+    "overflow": 0,
+    "pointer_reveal": "walking",
+    "reveal_active": true
+  },
+  "mobile": {
+    "errors": [],
+    "overflow": 0,
+    "tap_reveal": "smile"
+  },
+  "pass": true
+}

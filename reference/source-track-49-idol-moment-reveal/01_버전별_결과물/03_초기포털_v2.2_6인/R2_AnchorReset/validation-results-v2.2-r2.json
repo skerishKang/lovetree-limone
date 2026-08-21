@@ -1,0 +1,132 @@
+{
+  "summary": {
+    "r1_status": "REJECTED",
+    "r2_status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+    "six_states_present": true,
+    "anchor_sequence": [
+      "ANCHOR A · LOCKED",
+      "ANCHOR A · LOCKED",
+      "ANCHOR B · LOCKED",
+      "ANCHOR B · LOCKED",
+      "ANCHOR C · LOCKED",
+      "ANCHOR C · LOCKED"
+    ],
+    "expected_anchor_sequence": [
+      "ANCHOR A · LOCKED",
+      "ANCHOR A · LOCKED",
+      "ANCHOR B · LOCKED",
+      "ANCHOR B · LOCKED",
+      "ANCHOR C · LOCKED",
+      "ANCHOR C · LOCKED"
+    ],
+    "new_identity_used": false,
+    "hero_main_face_rgb_retouched": false,
+    "all_anchor_rgb_exact": true,
+    "face_core_alpha_opaque": true,
+    "main_hero_oval_or_capsule": false,
+    "pointer_reveal_active": true,
+    "pointer_reveal_is_side_window": true,
+    "portal_hover_pass": true,
+    "desktop_runtime_pass": true,
+    "mobile_tap_pass": true,
+    "mobile_swipe_pass": true,
+    "mobile_runtime_pass": true
+  },
+  "face_integrity": {
+    "A": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 0.9796,
+      "face_core_alpha_mean": 252.34,
+      "face_rgb_difference_max": 0
+    },
+    "B": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 1.0,
+      "face_core_alpha_mean": 255.0,
+      "face_rgb_difference_max": 0
+    },
+    "C": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 1.0,
+      "face_core_alpha_mean": 255.0,
+      "face_rgb_difference_max": 0
+    }
+  },
+  "runtime": {
+    "states": [
+      {
+        "idx": "01 / 06",
+        "anchor": "ANCHOR A · LOCKED",
+        "anchorData": "A",
+        "world": "clear",
+        "tree": "Ivory Champagne",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      },
+      {
+        "idx": "02 / 06",
+        "anchor": "ANCHOR A · LOCKED",
+        "anchorData": "A",
+        "world": "pink",
+        "tree": "Rose Gold",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      },
+      {
+        "idx": "03 / 06",
+        "anchor": "ANCHOR B · LOCKED",
+        "anchorData": "B",
+        "world": "purple",
+        "tree": "Violet Magenta",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      },
+      {
+        "idx": "04 / 06",
+        "anchor": "ANCHOR B · LOCKED",
+        "anchorData": "B",
+        "world": "clear",
+        "tree": "Champagne White",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      },
+      {
+        "idx": "05 / 06",
+        "anchor": "ANCHOR C · LOCKED",
+        "anchorData": "C",
+        "world": "pink",
+        "tree": "Pink Blossom",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      },
+      {
+        "idx": "06 / 06",
+        "anchor": "ANCHOR C · LOCKED",
+        "anchorData": "C",
+        "world": "purple",
+        "tree": "Deep Purple Star",
+        "borderRadius": "0px",
+        "clipPath": "none"
+      }
+    ],
+    "desktop": {
+      "errors": [],
+      "overflow": 0,
+      "pointer": {
+        "active": true,
+        "portal": "close-memory",
+        "left": "8%",
+        "top": "17%"
+      },
+      "portal_hover": "quiet-detail"
+    },
+    "mobile": {
+      "errors": [],
+      "overflow": 0,
+      "tap": "close-memory",
+      "swipe_before": "01 / 06",
+      "swipe_after": "02 / 06",
+      "swipe_pass": true
+    }
+  }
+}

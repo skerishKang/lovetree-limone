@@ -1,0 +1,220 @@
+{
+  "artifact": "LoveTree 49 SUPERHUMAN rapid final production candidate",
+  "generated_at": "2026-08-09T21:44:00+09:00",
+  "owner_order": "RAPID FINAL PRODUCTION ORDER v1",
+  "status": "PARTIAL_CANDIDATE_TOOLING_BLOCK",
+  "production_authorized_scope": true,
+  "benchmark_track": "NCT 127 Superhuman MV Teaser timing/camera/color/motion grammar only",
+  "benchmark_asset_reuse": {
+    "frames": false,
+    "logos": false,
+    "audio": false,
+    "performer_assets": false
+  },
+  "timing_master": {
+    "duration_seconds": 29.252,
+    "source_fps_analysis": 23.976,
+    "shot_count": 21,
+    "continuity": "PASS"
+  },
+  "wrapper": {
+    "file": "49_SUPERHUMAN_FINAL_WRAPPER.html",
+    "primary_mode": "MP4-first",
+    "desktop_video_expected": "49_SUPERHUMAN_FULL_CINEMATIC_29.252s_DESKTOP.mp4",
+    "mobile_video_expected": "49_SUPERHUMAN_FULL_CINEMATIC_MOBILE.mp4",
+    "fallback": "21-shot exact-timed local-asset QA fallback; not claimed as full cinematic",
+    "controls": [
+      "autoplay/fallback",
+      "play/pause",
+      "replay",
+      "skip",
+      "sound",
+      "ENTER LOVETREE",
+      "Moment save interaction"
+    ],
+    "responsive": true,
+    "prefers_reduced_motion": true,
+    "javascript_syntax": "PASS",
+    "asset_reference_check": "PASS",
+    "headless_browser_runtime": "BLOCKED_BY_LOCAL_CHROMIUM_ENVIRONMENT"
+  },
+  "identity": {
+    "primary": "APPROVED PRIMARY / PRIMARY_MASTER_V2",
+    "contact_sheet_continuity": "PASS_VISUAL_CANDIDATE",
+    "s04_many_moments_same_person": "PASS_VISUAL_CANDIDATE",
+    "s08_many_moments_same_person": "PASS_VISUAL_CANDIDATE",
+    "s09_primary_path": "PASS_VISUAL_CANDIDATE",
+    "s10_other_male_face_intrusion": "NO_OBVIOUS_INTRUSION_AT_CONTACT_LEVEL"
+  },
+  "source_assets": {
+    "count": 20,
+    "dimensions": {
+      "s01": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "s03": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m1": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m2": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m3": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m4": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m5": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m6": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "m7": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "s07": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "d1": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "d2": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "d3": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "d4": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "d5": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "s09": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "s10": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "after": {
+        "width": 1672,
+        "height": 941,
+        "format": "PNG"
+      },
+      "save": {
+        "width": 1672,
+        "height": 941,
+        "format": "PNG"
+      },
+      "conn": {
+        "width": 1672,
+        "height": 941,
+        "format": "PNG"
+      }
+    },
+    "current_17shot_crop_masters": "1920x1080 composition-reference/fallback set exists",
+    "current_true_master_contact": "1536x1024 17-shot contact visually reviewed",
+    "approved_preserved_beats": [
+      "02 AFTERIMAGE",
+      "05 SAVE",
+      "06 CONNECTION"
+    ]
+  },
+  "required_deliverables": {
+    "49_SUPERHUMAN_FULL_CINEMATIC_29.252s_DESKTOP.mp4": {
+      "status": "BLOCKED_NOT_GENERATED",
+      "reason": "Available connected Adobe video toolset does not expose reference-guided still-to-video / first-frame image-to-video generation required for 70–80% true motion. Creating a slideshow MP4 would fail the owner order."
+    },
+    "49_SUPERHUMAN_FULL_CINEMATIC_MOBILE.mp4": {
+      "status": "BLOCKED_NOT_GENERATED",
+      "reason": "Depends on the same missing true-motion generation capability; a simple resize/static slideshow is not being misrepresented as final."
+    },
+    "49_SUPERHUMAN_FINAL_WRAPPER.html": {
+      "status": "CREATED",
+      "sha256": "d799055a4c68116c887c05df533311815d364a908eb0706b3b82edf1f7d147ac"
+    },
+    "49_SUPERHUMAN_FINAL_CONTACT_SHEET.jpg": {
+      "status": "CREATED",
+      "sha256": "dfe2403b18f85123246d80f59b88b9ce24ca97a45fd706ce8e1a3054a2c44609"
+    },
+    "49_SUPERHUMAN_STORYBOARD_vs_FINAL.jpg": {
+      "status": "CREATED_AS_ASSET_LEVEL_GATE",
+      "sha256": "c424a60b3a41998a54a39020a1e104482125dcfdce3ae330ec1d3e883a29319c",
+      "note": "Right column is current True-Master asset contact; rhythm/true-motion explicitly remains unscored until MP4 exists."
+    },
+    "49_SUPERHUMAN_VALIDATION.json": {
+      "status": "CREATED_SELF"
+    }
+  },
+  "existing_smoke_test": {
+    "file": "03_SUPERHUMAN_12SEC_POC.mp4",
+    "status": "PRESENT_PREVIOUS_INTERNAL_SMOKE_TEST_NOT_FINAL"
+  },
+  "static_fallback_shot_count": 21,
+  "known_visual_issues": [
+    "Requested 29.252s desktop true-motion MP4 is not generated in the available connected toolset.",
+    "Requested mobile true-motion MP4 is not generated; wrapper uses responsive image fallback until a real mobile render exists.",
+    "The locally mounted 17 individual 1920x1080 masters are the crop/resample composition-reference set; the higher-detail reconstruction is currently evidenced by the True-Master contact sheet rather than 17 locally mounted independent True-Master files."
+  ],
+  "gate": {
+    "composition_lock": "PASS",
+    "primary_identity": "PASS_CANDIDATE",
+    "shot_variety": "PASS_CANDIDATE",
+    "loveTree_semantic_path": "PASS_BY_MAPPING",
+    "true_motion_ratio_70_80_percent": "NOT_TESTABLE_NO_FULL_MP4",
+    "superhuman_rhythm": "MAPPED_IN_WRAPPER_NOT_FINAL_VIDEO_GRADED",
+    "final_video_gate": "HOLD_TOOLING_BLOCK"
+  },
+  "hashes": {
+    "49_SUPERHUMAN_FINAL_WRAPPER.html": {
+      "bytes": 19329,
+      "sha256": "d799055a4c68116c887c05df533311815d364a908eb0706b3b82edf1f7d147ac"
+    },
+    "49_SUPERHUMAN_FINAL_CONTACT_SHEET.jpg": {
+      "bytes": 503639,
+      "sha256": "dfe2403b18f85123246d80f59b88b9ce24ca97a45fd706ce8e1a3054a2c44609"
+    },
+    "49_SUPERHUMAN_STORYBOARD_vs_FINAL.jpg": {
+      "bytes": 957901,
+      "sha256": "c424a60b3a41998a54a39020a1e104482125dcfdce3ae330ec1d3e883a29319c"
+    }
+  }
+}
