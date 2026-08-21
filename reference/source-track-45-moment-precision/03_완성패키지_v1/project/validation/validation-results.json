@@ -1,0 +1,59 @@
+{
+  "reference": {
+    "videoDurationSeconds": 17.74,
+    "sourceResolution": "1904x1068",
+    "capturedSequenceStartsAtPrinciple": 10,
+    "capturedSequenceEndsAtPrinciple": 12
+  },
+  "layout": {
+    "centeredPortraitArtboard": true,
+    "blackSideMargins": true,
+    "heroPresent": true,
+    "gridColumnsDesktop": 3,
+    "principleCardCount": 12,
+    "desktopHorizontalOverflow": false
+  },
+  "guidedDemo": {
+    "referenceTailModeWorks": true,
+    "fullModeWorks": true,
+    "principle10Highlighted": true,
+    "principle11Highlighted": true,
+    "principle12Highlighted": true,
+    "applyBarHighlightedAtEnd": true
+  },
+  "principles": {
+    "nestedRadiusWorks": true,
+    "opticalFocusWorks": true,
+    "thumbnailOutlineWorks": true,
+    "shadowComparisonWorks": true,
+    "hitAreaVisible": true,
+    "tabularNumbersStable": true,
+    "interruptibleMotionWorks": true,
+    "pressScaleWorks": true,
+    "iconStatesWork": true,
+    "staggerEntryWorks": true,
+    "softExitWorks": true,
+    "balancedWrapWorks": true,
+    "specificTransitionWorks": true
+  },
+  "product": {
+    "saveFlowBlocked": false,
+    "presentationPresetOnly": true,
+    "coreMomentDataChanged": false,
+    "presetSaved": true,
+    "storageKey": "lovetree-moment-polish-lab-v1"
+  },
+  "mobile": {
+    "twoColumnGrid": true,
+    "touchTargetsAtLeast44px": true,
+    "activeCardScrollsIntoView": true,
+    "horizontalOverflow": false
+  },
+  "errors": {
+    "desktopConsoleErrors": 0,
+    "mobileConsoleErrors": 0,
+    "pageErrors": 0,
+    "details": []
+  },
+  "finalResult": "PASS"
+}
