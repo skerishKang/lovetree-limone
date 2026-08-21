@@ -380,7 +380,7 @@ test("v4 100 moments — layout framing matches original, grid representative vi
     assert.ok(minimap && minimap.w, "minimap viewport box present after framing");
 
     /* mobile: tab selection does not force-scroll the page */
-    const mobile = await openPage(browser, `${BASE}/v4/trees/demo/graph/100-moments`, VIEWPORTS[3]);
+    const mobile = await openPage(browser, `${BASE}/v4/trees/demo/graph/100-moments?dock=1`, VIEWPORTS[3]);
     await mobile.page.waitForTimeout(600);
     await dismissCompletion(mobile.page);
     await mobile.page.waitForTimeout(400);
