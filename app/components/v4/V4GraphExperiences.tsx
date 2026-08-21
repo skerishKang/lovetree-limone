@@ -3,6 +3,7 @@
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { deriveEdgeRoutes } from "@/lib/graph/lupt-routing";
 
 interface GraphNode {
   id: string;
@@ -43,18 +44,10 @@ const GRAPH_EDGES: GraphEdge[] = [
   { id: "e7", from: "n3", to: "n6", relation: "같은 계절의 마음" },
 ];
 
-function graphPath(a: GraphNode, b: GraphNode) {
-  const ax = a.x + 168;
-  const ay = a.y + 55;
-  const bx = b.x;
-  const by = b.y + 55;
-  const bend = Math.max(80, Math.abs(bx - ax) * 0.46);
-  return `M ${ax} ${ay} C ${ax + bend} ${ay}, ${bx - bend} ${by}, ${bx} ${by}`;
-}
-
 export function V4FreeGraph() {
   const [nodes, setNodes] = useState(GRAPH_NODES);
   const [edges, setEdges] = useState(GRAPH_EDGES);
+  const edgeRoutes = useMemo(() => deriveEdgeRoutes(nodes, edges), [nodes, edges]);
   const [selectedId, setSelectedId] = useState("n1");
   const [selectedEdge, setSelectedEdge] = useState("e1");
   const [zoom, setZoom] = useState(0.92);
@@ -123,10 +116,9 @@ export function V4FreeGraph() {
             <div className="v4-freegraph-stage" style={{ transform: `scale(${zoom})` }}>
               <svg className="v4-freegraph-lines" viewBox="0 0 1250 760" aria-hidden="true">
                 {edges.map((edge) => {
-                  const from = nodes.find((node) => node.id === edge.from);
-                  const to = nodes.find((node) => node.id === edge.to);
-                  if (!from || !to) return null;
-                  return <path className={`v4-freegraph-edge${selectedEdge === edge.id ? " is-selected" : ""}`} d={graphPath(from, to)} key={edge.id} onClick={() => setSelectedEdge(edge.id)} style={{ pointerEvents: "stroke" }} />;
+                  const route = edgeRoutes.get(edge.id);
+                  if (!route?.d) return null;
+                  return <path className={`v4-freegraph-edge${selectedEdge === edge.id ? " is-selected" : ""}`} d={route.d} key={edge.id} onClick={() => setSelectedEdge(edge.id)} style={{ pointerEvents: "stroke" }} />;
                 })}
               </svg>
 
