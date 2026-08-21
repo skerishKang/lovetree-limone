@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Track70 V1 vs V2 Portal Compare</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif;background:#111;color:#fff}
+header{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#0b0b0b;border-bottom:1px solid #333}
+strong{letter-spacing:.08em}.tabs{display:flex;gap:8px}.tabs button{border:1px solid #444;background:#151515;color:#aaa;padding:8px 12px;cursor:pointer}
+.tabs button.on{background:#fff;color:#111;border-color:#fff}.grid{height:calc(100% - 56px);display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#333}
+.frame{position:relative;background:#fff}.label{position:absolute;z-index:5;left:12px;top:12px;background:#000;color:#fff;font-size:11px;letter-spacing:.12em;padding:7px 9px}
+iframe{width:100%;height:100%;border:0;background:#fff}.single .grid{grid-template-columns:1fr}.single .frame.hide{display:none}
+@media(max-width:900px){.grid{grid-template-columns:1fr;height:auto}.frame{height:88vh}}
+</style></head><body>
+<header><strong>TRACK 70 · LOVETREE PORTAL EVOLUTION</strong><div class="tabs"><button class="on" data-mode="both">V1 / V2</button><button data-mode="a">V1</button><button data-mode="b">V2 PORTAL</button></div></header>
+<div class="grid">
+<div class="frame a"><div class="label">V1 · LOVETREE SEMANTIC ADAPTATION</div><iframe src="../70_B_LOVETREE_MOMENT_REVEAL.html"></iframe></div>
+<div class="frame b"><div class="label">V2 · REAL TEMPLATE PORTALS</div><iframe src="70_V2_LOVETREE_MOMENT_REVEAL_PORTAL_NAV.html"></iframe></div>
+</div>
+<script>
+document.querySelectorAll('button[data-mode]').forEach(b=>b.onclick=()=>{document.querySelectorAll('button[data-mode]').forEach(x=>x.classList.toggle('on',x===b));document.body.classList.toggle('single',b.dataset.mode!=='both');document.querySelector('.a').classList.toggle('hide',b.dataset.mode==='b');document.querySelector('.b').classList.toggle('hide',b.dataset.mode==='a')});
+</script></body></html>
