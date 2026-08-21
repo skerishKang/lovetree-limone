@@ -125,7 +125,9 @@ jobs:
             exit 1
           fi
 
-          node --import tsx --test 'tests/*.test.mjs'
+          TRACK67_BASE_URL=http://127.0.0.1:3000 \
+            LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
+            node --import tsx --test 'tests/*.test.mjs'
 
       - name: Database schema check
         run: npm run db:check
