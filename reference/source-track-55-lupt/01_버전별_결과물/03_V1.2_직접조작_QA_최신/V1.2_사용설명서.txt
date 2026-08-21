@@ -1,0 +1,74 @@
+LoveTree 55 · LUPT Free Wiring V1.2 사용설명서
+
+[30초 빠른 시작]
+1. Moment 카드의 왼쪽 IN 또는 오른쪽 OUT 소켓 중 아무 쪽이나 잡습니다.
+2. 다른 Moment의 반대쪽 소켓 또는 해당 카드 가장자리까지 끌어 놓습니다.
+3. LUPT가 자동으로 Connection 경로를 정리합니다.
+4. 선을 클릭하면 WHY NEXT?와 방향을 확인할 수 있습니다.
+5. WALK CONNECTION을 누르면 LUPT가 실제 선을 따라 다음 Moment까지 이동합니다.
+
+[양쪽 Socket 사용법]
+- 오른쪽 OUT에서 시작 → 다른 Moment 왼쪽 IN에 놓기 = A → B
+- 왼쪽 IN에서 시작 → 이전 Moment 오른쪽 OUT에 놓기 = A → B
+- 사용자는 어느 쪽에서든 시작할 수 있지만 데이터 의미는 항상 OUT=source / IN=target으로 보존됩니다.
+- 작은 원에 정확히 놓지 않아도 카드의 해당 가장자리 약 25~36px 영역에서 Magnetic Snap이 작동합니다.
+
+[OUT / IN 의미]
+- OUT: 이 Moment 다음에 찾아간 Moment로 나가는 방향
+- IN: 앞선 Moment에서 이 Moment로 들어오는 방향
+
+[One-to-Many]
+한 Moment의 OUT에서 여러 Moment의 IN으로 반복해서 연결하면 됩니다.
+예: A → B / C / D / E
+OUT은 첫 연결 뒤에도 계속 사용할 수 있습니다.
+
+[Many-to-One]
+여러 Moment의 OUT을 하나의 Moment IN으로 연결할 수 있습니다.
+예: A / B / C / D → E
+IN은 여러 incoming Connection을 받을 수 있습니다.
+
+[Cable 선택]
+- Connection 선을 클릭/탭하면 선택됩니다.
+- 선택 선은 가장 밝게 표시되고 다른 선은 사라지지 않고 약 38% 밝기로 남습니다.
+- Inspector에서 방향, WHY NEXT?, outgoing/incoming 수를 확인할 수 있습니다.
+
+[Bend 추가 / 이동]
+- Desktop: Connection 선택 후 + BEND 또는 선 더블클릭
+- Mobile: Connection을 길게 누르기
+- 표시된 작은 bend handle을 끌면 source/target endpoint는 유지된 채 path가 실시간 재계산됩니다.
+- bend handle 더블클릭 또는 − BEND로 제거할 수 있습니다.
+
+[Rewire]
+- Connection 선택 → REWIRE TARGET
+- 붉은 endpoint handle을 다른 Moment의 IN으로 옮깁니다.
+- 기존 Connection의 targetMomentId가 실제로 변경되고 LUPT가 새 경로를 계산합니다.
+
+[Delete / Undo]
+- Connection 선택 → DELETE CONNECTION
+- Desktop: Delete / Backspace도 지원
+- UNDO 또는 Ctrl/Cmd+Z로 최소 1단계 이상 되돌릴 수 있습니다.
+
+[WALK]
+- Connection 선택 → WALK CONNECTION
+- LUPT가 선택한 실제 SVG path의 geometry를 따라 source → target으로 이동합니다.
+- 도착 시 target Moment가 반응하고 WHY NEXT?가 표시됩니다.
+- WALK 중에도 socket을 잡으면 WALK가 즉시 중단되고 사용자의 wiring 조작이 우선됩니다.
+
+[색 상태 의미]
+- Bright: 현재 선택된 Connection
+- Colored: 연결되어 있는 일반 Connection
+- Pulsing socket: 현재 wiring에서 유효한 target
+- Gray socket: 현재 wiring에서 잘못된 방향 또는 자기 자신
+- Completed trace: WALK 후 남는 memory state
+
+[연결이 안 될 때 화면에 표시되는 이유]
+- OUT → OUT: CONNECT OUT TO IN
+- IN → IN: CONNECT IN TO OUT
+- 자기 자신: SAME MOMENT CANNOT CONNECT TO ITSELF
+- 동일 A → B 중복: THIS PATH ALREADY EXISTS
+  새 선을 만들지 않고 기존 Connection을 자동 선택합니다.
+
+[RESET]
+RESET은 Moment 위치, Connection, bend, LUPT 위치를 초기 seed 상태로 되돌립니다.
+
+상태: V1.2 CANDIDATE / Production 반영 아님

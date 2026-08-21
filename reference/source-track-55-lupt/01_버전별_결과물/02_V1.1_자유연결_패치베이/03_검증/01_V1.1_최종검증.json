@@ -1,0 +1,66 @@
+{
+  "track": 55,
+  "version": "V1.1_FREE_WIRING_PATCHBAY",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "benchmark": {
+    "file": "참고-녹화_2026_08_09_17_12_36_587.mp4",
+    "direct_raw_review": true,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "duration_seconds": 17.182766,
+    "behaviors_verified": [
+      "parallel_bundle",
+      "junction_reroute",
+      "endpoint_continuity",
+      "fan_out",
+      "cable_identity"
+    ]
+  },
+  "desktop": {
+    "viewport": "1440x960",
+    "connection_create": {"pass": 6, "total": 6},
+    "same_source_multi_connect": 4,
+    "many_to_one_sources": 3,
+    "manual_junction": {"pass": 3, "total": 3},
+    "rewire": {"pass": 3, "total": 3},
+    "delete_undo": {"pass": 3, "total": 3},
+    "moment_drag_live": true,
+    "lupt_drag_live": true,
+    "path_walk": true,
+    "endpoint_max_gap_px": 0.000028471444728079757,
+    "overflow": {"horizontal": 0, "vertical": 0},
+    "errors": []
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "create": {"pass": 3, "total": 3},
+    "select": {"pass": 3, "total": 3},
+    "delete_undo": {"pass": 2, "total": 2},
+    "long_press_bend": true,
+    "moment_drag": true,
+    "lupt_drag": true,
+    "port_hit_target_px": 38.63999938964844,
+    "overflow": {"horizontal": 0, "vertical": 0},
+    "errors": []
+  },
+  "common": {
+    "serif_or_georgia": false,
+    "track53_grid_template_reused": false,
+    "broken_media": 0,
+    "standalone_external_script": false,
+    "standalone_external_stylesheet": false,
+    "v1_live_routing_regression": false,
+    "v1_lupt_path_walk_regression": false
+  },
+  "execution_video": {
+    "type": "actual Chromium browser recording",
+    "composite": false,
+    "width": 1280,
+    "height": 852,
+    "fps": 30,
+    "duration_seconds": 27.966667
+  },
+  "all_hard_fail_checks_pass": true,
+  "all_pass": true
+}
