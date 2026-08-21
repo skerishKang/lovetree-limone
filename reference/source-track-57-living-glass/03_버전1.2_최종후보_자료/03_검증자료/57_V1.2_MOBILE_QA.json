@@ -1,0 +1,29 @@
+{
+  "track": 57,
+  "version": "V1.2 MOBILE",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "basis": "Dedicated mobile supplement for Track 57 V1.2; desktop V1.2 preserved unchanged.",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "is_mobile": true,
+    "has_touch": true
+  },
+  "checks": {
+    "horizontal_overflow": false,
+    "glass_cards_rendered": 3,
+    "tap_selection_detail": true,
+    "detail_bottom_sheet": true,
+    "edit_sheet_open": true,
+    "youtube_live_preview_ui": true,
+    "touch_card_collection": true,
+    "selected_bloom_preserved": true,
+    "tilt_glare_spring_code_preserved": true,
+    "connection_arrival_code_preserved": true,
+    "page_errors": [],
+    "failed_requests": []
+  },
+  "managed_environment_note": "External YouTube thumbnail network may be blocked by the managed Chromium policy; mobile layout/render QA used the standalone document in about:blank injection. Product browser should load the same img.youtube.com URL contract as V1.2.",
+  "sha256": "98ee5906d27f08559200f16caf81f890415570a9392eb49b71c027686e38ae4c",
+  "pass": true
+}

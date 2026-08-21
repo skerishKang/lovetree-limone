@@ -1,0 +1,28 @@
+{
+  "acceptance": {
+    "reference_directly_inspected": true,
+    "visual_gate_internal_pass": true,
+    "tilt_5of5": true,
+    "glare_follows_5of5": true,
+    "spring_return_5of5": true,
+    "card_select_5of5": true,
+    "detail_open_close": true,
+    "next_moment_transition": true,
+    "why_next": true,
+    "media_viewer": true,
+    "keyboard": true,
+    "mobile_touch_tilt": true,
+    "mobile_release_spring": true,
+    "mobile_tap_select": true,
+    "mobile_swipe_next": true,
+    "desktop_overflow_zero": true,
+    "mobile_overflow_zero": true,
+    "console_error_zero": true,
+    "page_error_zero": true,
+    "failed_request_zero": true,
+    "external_hotlink_zero": true,
+    "webgl_zero": true,
+    "serif_zero": true
+  },
+  "pass": true
+}

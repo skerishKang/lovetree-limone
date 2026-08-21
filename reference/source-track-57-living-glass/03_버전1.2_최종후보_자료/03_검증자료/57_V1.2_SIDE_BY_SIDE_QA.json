@@ -1,0 +1,137 @@
+{
+  "qaMode": "Managed Chromium external img.youtube.com is network-blocked; exact img.youtube.com requests are intercepted with the same local visual fixture in BOTH pages. This tests URL derivation + renderer synchronization without changing the requested URL.",
+  "sameActualYouTubeUrl": "https://www.youtube.com/watch?v=hmE9f-TEutc",
+  "sameVideoId": "hmE9f-TEutc",
+  "expectedThumbnailUrl": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+  "baseline": {
+    "bg": "linear-gradient(rgba(255, 244, 231, 0.08), rgba(46, 34, 34, 0.27)), url(\"https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg\")",
+    "title": "첫 순간으로 연결할 영상",
+    "expected": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+    "match": true,
+    "pageErrors": []
+  },
+  "v12": {
+    "selectedInitial": true,
+    "cases": [
+      {
+        "case": "watch",
+        "url": "https://www.youtube.com/watch?v=hmE9f-TEutc",
+        "expected": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+        "preview": {
+          "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+          "complete": true,
+          "w": 1200,
+          "h": 780
+        },
+        "state": "VIDEO ID · hmE9f-TEutc",
+        "pass": true
+      },
+      {
+        "case": "youtu.be",
+        "url": "https://youtu.be/nqofkzQD19E",
+        "expected": "https://img.youtube.com/vi/nqofkzQD19E/hqdefault.jpg",
+        "preview": {
+          "src": "https://img.youtube.com/vi/nqofkzQD19E/hqdefault.jpg",
+          "complete": true,
+          "w": 1200,
+          "h": 780
+        },
+        "state": "VIDEO ID · nqofkzQD19E",
+        "pass": true
+      },
+      {
+        "case": "shorts",
+        "url": "https://www.youtube.com/shorts/bcUfIpQ6aeA",
+        "expected": "https://img.youtube.com/vi/bcUfIpQ6aeA/hqdefault.jpg",
+        "preview": {
+          "src": "https://img.youtube.com/vi/bcUfIpQ6aeA/hqdefault.jpg",
+          "complete": true,
+          "w": 1200,
+          "h": 780
+        },
+        "state": "VIDEO ID · bcUfIpQ6aeA",
+        "pass": true
+      }
+    ],
+    "live": {
+      "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+      "complete": true,
+      "w": 1200,
+      "h": 780
+    },
+    "card": {
+      "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+      "complete": true,
+      "w": 1200,
+      "h": 780
+    },
+    "detail": {
+      "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+      "complete": true,
+      "w": 1200,
+      "h": 780
+    },
+    "persistent": true,
+    "viewer": {
+      "iframe": 1,
+      "fallback": 1,
+      "iframeSrc": "https://www.youtube-nocookie.com/embed/hmE9f-TEutc?autoplay=1&playsinline=1&rel=0&start=0",
+      "fallbackHref": "https://www.youtube.com/watch?v=hmE9f-TEutc",
+      "fallbackText": "YouTube에서 재생 ↗"
+    },
+    "tilt": {
+      "rx": "3.735deg",
+      "ry": "6.512deg",
+      "gx": "84.00%",
+      "gy": "24.00%"
+    },
+    "spring": {
+      "rx": "0.000deg",
+      "ry": "0.000deg"
+    },
+    "arrival": {
+      "selected": "m2",
+      "arrival": true,
+      "why": "WHY NEXT · 마지막 표정이 계속 생각나서 같은 날의 다른 영상을 더 찾아봤어요."
+    },
+    "pageErrors": [],
+    "consoleErrors": []
+  },
+  "mobile": {
+    "live": {
+      "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+      "complete": true,
+      "w": 1200,
+      "h": 780
+    },
+    "card": {
+      "src": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+      "complete": true,
+      "w": 1200,
+      "h": 780
+    },
+    "selected": true,
+    "overflowZero": true,
+    "pageErrors": []
+  },
+  "acceptance": {
+    "baseline_exact_thumbnail_url": true,
+    "v12_same_url_live_preview": true,
+    "watch_youtu_be_shorts_preview": true,
+    "save_updates_glass_card_thumbnail": true,
+    "save_updates_detail_thumbnail": true,
+    "selected_bloom_state_preserved": true,
+    "youtube_inline_attempt": true,
+    "youtube_fallback": true,
+    "tilt_glare_preserved": true,
+    "spring_preserved": true,
+    "connection_arrival_preserved": true,
+    "mobile_live_preview": true,
+    "mobile_saved_card": true,
+    "mobile_selected_preserved": true,
+    "mobile_overflow_zero": true,
+    "v12_internal_page_errors_zero": true,
+    "mobile_page_errors_zero": true
+  },
+  "pass": true
+}

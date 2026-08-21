@@ -1,0 +1,128 @@
+LoveTree Track 57 — LIVING GLASS MOMENT CARDS V1 사용설명서
+================================================================
+
+1. 이 화면이 무엇인가요?
+----------------------
+`LOVETREE · LIVING MOMENTS`는 사용자가 저장한 Moment를 단순한 평면 카드가 아니라
+감정과 기억의 깊이를 가진 살아 있는 glass object처럼 감상하는 Signature Moments View 후보입니다.
+
+이 화면은 마인드맵이 아닙니다.
+Track 44의 Tree Composer / 자동전개 기능을 복제하지 않습니다.
+
+카드 안의 데이터:
+- Moment 제목
+- 날짜
+- 감정
+- 미디어
+- 내 메모
+- 출처
+- 다음 순간으로 이어진 이유 (WHY NEXT)
+
+2. 30초 빠른 시작
+----------------
+1) 첫 화면의 violet / rose / amber 카드 중 하나에 마우스를 올립니다.
+2) 카드 안에서 포인터를 좌·우·상·하로 천천히 움직입니다.
+3) 카드가 포인터 반대 방향으로 소폭 기울고, 표면 glare가 포인터를 따라가는지 봅니다.
+4) 포인터를 카드 밖으로 빼면 spring처럼 부드럽게 중앙으로 돌아옵니다.
+5) 카드를 클릭하면 선택한 Moment의 상세 정보가 열립니다.
+6) `다음 순간 보기`를 누르면 WHY NEXT와 작은 Connection thread가 나타난 뒤 다음 카드가 focus됩니다.
+7) `Moment 열기`를 누르면 미디어 확대 Viewer를 볼 수 있습니다.
+
+3. 카드에 마우스를 올리기
+------------------------
+카드는 idle 상태에서도 glass depth와 emotion glow가 보이도록 설계했습니다.
+hover는 단순 scale 효과가 아니라 pointer-responsive interaction입니다.
+
+4. Tilt / Glare는 무엇인가요?
+----------------------------
+Tilt:
+- horizontal pointer 위치 → rotateY
+- vertical pointer 위치 → rotateX
+- 최대 약 ±8° / ±6°
+- 과한 게임 카드 회전이 아니라 묵직한 glass slab 수준
+
+Glare:
+- 카드 안의 마우스 위치가 radial highlight 중심과 직접 연결됩니다.
+- 반대편에는 emotion color reflection이 약하게 생깁니다.
+- 흰 원 하나를 올리는 효과가 아닙니다.
+
+Layered depth:
+- media layer
+- title / text layer
+- emotion chip
+- glass surface glare
+이 서로 다른 깊이로 미세하게 움직입니다.
+
+Pointer leave:
+requestAnimationFrame 기반 damped spring으로 복귀합니다.
+즉시 0deg로 끊어지는 단순 transition이 아닙니다.
+
+5. Moment 선택
+-------------
+카드 자체를 클릭하면 해당 Moment가 선택됩니다.
+선택한 카드의 glow가 강해지고 주변 카드는 살짝 dim 됩니다.
+오른쪽(모바일은 하단) 상세 패널에서 실제 LoveTree 정보를 확인할 수 있습니다.
+
+6. Moment 열기
+-------------
+상세 패널의 `Moment 열기`를 누르면 미디어 Viewer가 열립니다.
+이 V1의 미디어는 실제 사용자 계정 데이터가 아니라 명확히 표시된 DEMO MEDIA입니다.
+자동재생 동영상은 사용하지 않습니다.
+ESC 또는 닫기 버튼으로 Viewer를 닫을 수 있습니다.
+
+7. 감정 색
+----------
+V1 데모의 3개 Signature Moment:
+- violet · 설렘
+- rose · 몰입
+- amber · 확신
+
+색만으로 의미를 전달하지 않고 카드에 감정 텍스트를 함께 표시합니다.
+
+8. Connection 이유
+-----------------
+상세 패널에는 반드시:
+`왜 다음 순간으로 이어졌나요?`
+가 표시됩니다.
+
+예:
+`마지막 표정이 계속 생각나서 같은 날의 다른 직캠을 찾아봤어요.`
+
+이 정보가 Track 57을 단순 portfolio/card showcase가 아니라 LoveTree의 Moment View로 만듭니다.
+
+9. 다음 순간 보기
+----------------
+`다음 순간 보기`를 누르면:
+1) 현재 Moment와 다음 Moment 사이에 짧은 luminous thread가 나타남
+2) WHY NEXT가 상단에 잠깐 표시됨
+3) 다음 Moment가 focus됨
+4) 이전 카드는 idle 상태로 돌아감
+
+선을 항상 펼쳐 놓는 graph / mind map은 아닙니다.
+
+10. 모바일 조작
+--------------
+모바일에서는 카드가 horizontal snap collection으로 바뀝니다.
+- touch + small drag → tilt / glare
+- release → spring return
+- tap → Moment 선택 / detail
+- horizontal swipe → 다음 카드
+- 상세 패널 → bottom sheet 형태
+
+Device Orientation permission은 사용하지 않습니다.
+
+11. Prototype 한계
+-----------------
+- V1은 reusable visual component 후보이며 아직 기본 LoveTree 카드 UI로 채택되지 않았습니다.
+- Moment media 3개는 제품 구조 검증용 DEMO MEDIA입니다.
+- 실제 사용자 DB / 54 Studio / 55 LUPT Connection과 연결되지 않았습니다.
+- `다음 순간 보기`는 Prototype 내부 demo Connection state입니다.
+- Production 배포, main merge, 실제 사용자 데이터 변경은 수행하지 않았습니다.
+- WebGL / Three.js / TRUE 3D를 사용하지 않습니다.
+- 외부 이미지·폰트·스크립트 hotlink를 사용하지 않는 standalone 후보가 루트에 있습니다.
+
+접근성:
+- 카드 keyboard focus 지원
+- Enter / Space로 카드 선택
+- ESC로 detail / viewer 닫기
+- prefers-reduced-motion 대응

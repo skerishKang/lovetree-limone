@@ -1,0 +1,37 @@
+{
+  "track": 57,
+  "version": "V1.2",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "scope": [
+    "YOUTUBE_LIVE_THUMBNAIL_PREVIEW",
+    "SAVE_TO_GLASS_CARD_SYNC",
+    "YOUTUBE_FALLBACK"
+  ],
+  "preservedV11Sha256": "1849572b17c973f0e687e380a564c62f21069eeb67971eaf2d4252cede7884bd",
+  "candidateSha256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+  "baseline": "01_러브트리_첫여정통합_v1.html",
+  "sameActualYouTubeUrl": "https://www.youtube.com/watch?v=hmE9f-TEutc",
+  "expectedThumbnailUrl": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+  "managedChromiumNetworkMode": "exact external thumbnail URL derived; visual requests intercepted with identical local fixture for both pages because external img.youtube.com pixels are blocked",
+  "acceptance": {
+    "baseline_exact_thumbnail_url": true,
+    "v12_same_url_live_preview": true,
+    "watch_youtu_be_shorts_preview": true,
+    "save_updates_glass_card_thumbnail": true,
+    "save_updates_detail_thumbnail": true,
+    "selected_bloom_state_preserved": true,
+    "youtube_inline_attempt": true,
+    "youtube_fallback": true,
+    "tilt_glare_preserved": true,
+    "spring_preserved": true,
+    "connection_arrival_preserved": true,
+    "mobile_live_preview": true,
+    "mobile_saved_card": true,
+    "mobile_selected_preserved": true,
+    "mobile_overflow_zero": true,
+    "v12_internal_page_errors_zero": true,
+    "mobile_page_errors_zero": true,
+    "sequential_second_youtube_url_updates_card": true
+  },
+  "pass": true
+}

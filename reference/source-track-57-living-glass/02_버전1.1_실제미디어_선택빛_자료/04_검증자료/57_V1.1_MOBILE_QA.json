@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "touch_tilt_glare": true,
+    "release_spring": true,
+    "tap_selected_bloom": true,
+    "mobile_video_playback": true,
+    "overflow_0": true
+  },
+  "details": {
+    "tilt": {
+      "rx": 1.87,
+      "ry": 1.815,
+      "gx": "59.38%",
+      "gy": "37.11%"
+    },
+    "spring": {
+      "rx": 0,
+      "ry": 0
+    },
+    "selection": {
+      "id": "m1",
+      "selected": true,
+      "wake": true,
+      "detail": true
+    },
+    "video": {
+      "paused": false,
+      "current": 0.405282,
+      "playsInline": true,
+      "ready": 4
+    }
+  },
+  "runtime": {
+    "page_errors": [],
+    "console_errors": [],
+    "failed_requests": []
+  },
+  "pass": true
+}
