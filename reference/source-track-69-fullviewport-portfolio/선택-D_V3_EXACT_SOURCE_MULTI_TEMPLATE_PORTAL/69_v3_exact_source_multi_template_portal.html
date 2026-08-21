@@ -1,0 +1,220 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: portal
+SCREEN: full-viewport-multi-template-navigation
+VERSION: v3
+BASE_FILE: 69_v2_template_nav_portal.html
+STATUS: design-review
+SCOPE: repair broken source paths, make every menu/CTA open a different adopted template, add in-page viewer and WORKS navigator
+PRESERVE: full-viewport CloudFront video, Inter+basis33, locked viewport, mobile menu
+DATE: 2026-08-17
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoveTree - Multi Template Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff}
+    body{font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    button,a{font:inherit}
+    .font-pixel{font-family:'basis33',monospace}
+    .page{position:relative;height:100vh;height:100dvh;width:100%;overflow:hidden;background:#000;color:#fff}
+    .bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .content{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;padding:0 20px;pointer-events:none}
+    .content>*{pointer-events:auto}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0;flex:0 0 auto}
+    .logo-button{border:0;background:transparent;padding:0;color:inherit;cursor:pointer;display:grid;place-items:center}
+    .logo{width:28px;height:28px;display:block}
+    .desktop-nav{display:none;align-items:center;gap:20px;font-size:12px;letter-spacing:.08em}
+    .desktop-nav button,.menu-nav button{border:0;background:transparent;color:#fff;padding:0;cursor:pointer;letter-spacing:inherit;transition:opacity .2s ease}
+    .desktop-nav button:hover,.menu-nav button:hover,.icon-btn:hover{opacity:.7}
+    .icon-btn{border:0;background:transparent;color:#fff;padding:8px;cursor:pointer;transition:opacity .2s ease;display:grid;place-items:center}
+    .meta{margin-top:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;flex:0 0 auto}
+    .meta h2{margin:0;font-size:18px;line-height:1.08;letter-spacing:.025em;font-weight:400}
+    .meta .pixel-line{display:block;font-size:24px;line-height:1.02}
+    .asterisk{margin-top:12px;font-size:10px;color:rgba(255,255,255,.5)}
+    .blurb{margin-top:4px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.5}
+    .meta-label{margin:0 0 12px;text-transform:uppercase;font-size:16px;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+    .meta-body{max-width:220px;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .meta ul{list-style:none;padding:0;margin:0;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .lg-left{text-align:right}
+    .spacer{flex:1;min-height:8px;pointer-events:none}
+    .bottom{padding-bottom:16px;flex:0 0 auto}
+    .row-a{display:grid;grid-template-columns:1fr;gap:16px;align-items:end}
+    .hero{margin:0;text-transform:uppercase;font-size:30px;line-height:.72;letter-spacing:.025em;font-weight:400}
+    .hero .pixel-word{font-size:1.25em;display:inline-block;line-height:1;vertical-align:baseline;font-weight:400}
+    .right-col{display:flex;flex-direction:column;gap:16px;justify-content:flex-end}
+    .template-action{border:0;text-decoration:none;color:inherit;cursor:pointer}
+    .showreel{align-self:flex-start;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.3);padding:12px 24px;background:rgba(255,255,255,.05);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;font-size:14px;letter-spacing:.05em;transition:background .2s ease,transform .2s ease}
+    .showreel:hover,.showreel:focus-visible{background:rgba(255,255,255,.12);transform:translateY(-2px);outline:none}
+    .play-icon{width:14px;height:14px;display:block}
+    .chips{align-self:flex-start;display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;font-size:14px;color:rgba(255,255,255,.8)}
+    .chip{display:flex;align-items:center;gap:8px;background:#0B0B0B;padding:8px 12px;transition:transform .2s ease,background .2s ease}
+    .chip:hover,.chip:focus-visible{background:#171717;transform:translateY(-2px);outline:none}
+    .chip .count{font-size:12px;color:rgba(255,255,255,.5)}
+    .chip-main{font-weight:700;font-size:13px;letter-spacing:-.025em}.chip-wide{font-weight:700;font-size:11px;letter-spacing:-.025em}
+    .footer{margin-top:16px;display:grid;grid-template-columns:1fr;gap:8px;padding-top:16px;font-size:12px;color:rgba(255,255,255,.6)}
+    .footer button{border:0;background:transparent;padding:0;color:#ef4444;cursor:pointer;transition:color .2s ease}.footer button:hover{color:#f87171}
+    .menu-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:all 500ms cubic-bezier(.16,1,.3,1)}
+    .menu-overlay.open{opacity:1;pointer-events:auto}
+    .menu-header{display:flex;align-items:center;justify-content:space-between;padding:24px}
+    .menu-nav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
+    .menu-nav button{font-size:22px;letter-spacing:.1em;opacity:0;transform:translateY(16px);transition:all 500ms cubic-bezier(.16,1,.3,1)}
+    .menu-overlay.open .menu-nav button{opacity:1;transform:translateY(0)}
+    .portal-hint{position:fixed;z-index:11;right:20px;top:50%;transform:translateY(-50%) rotate(90deg);transform-origin:center;font-family:'basis33',monospace;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.45);pointer-events:none}
+
+    .works-overlay[hidden],.viewer[hidden]{display:none!important}
+    .works-overlay{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);color:#fff}
+    .works-panel{min-width:0;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.16);overflow:hidden}
+    .works-head{height:76px;flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.16)}
+    .works-head strong{font-family:'basis33',monospace;font-size:25px;font-weight:400;letter-spacing:.05em}.works-head span{font-size:11px;letter-spacing:.15em;color:rgba(255,255,255,.48)}
+    .works-spacer{flex:1}.works-close{width:38px;height:38px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:26px;line-height:1;cursor:pointer;transition:.2s}.works-close:hover{background:#fff;color:#000}
+    .works-list{overflow:auto;overscroll-behavior:contain;padding:8px 0 24px}
+    .works-row{width:100%;display:grid;grid-template-columns:72px minmax(0,1fr) 94px;align-items:center;gap:16px;min-height:68px;padding:10px 28px;color:#fff;border:0;border-bottom:1px solid rgba(255,255,255,.1);background:transparent;text-align:left;cursor:pointer;transition:background .2s,color .2s}
+    .works-row:hover,.works-row:focus-visible{background:#fff;color:#000;outline:none}
+    .works-row.current{color:rgba(255,255,255,.55);cursor:default}.works-row.current:hover{background:transparent;color:rgba(255,255,255,.55)}
+    .works-no{font-family:'basis33',monospace;font-size:25px}.works-name strong{display:block;font-size:15px;letter-spacing:.04em}.works-name span{display:block;margin-top:4px;font-size:10px;letter-spacing:.04em;opacity:.55}.works-state{justify-self:end;font-size:10px;letter-spacing:.12em;white-space:nowrap}
+    .works-preview{display:flex;align-items:flex-end;position:relative;overflow:hidden;background:#060606;padding:28px}.works-preview:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(255,255,255,.09),transparent 42%),linear-gradient(135deg,transparent 0 48%,rgba(255,255,255,.04) 48% 49%,transparent 49%);pointer-events:none}
+    .preview-card{position:relative;z-index:1;width:100%}.preview-no{font-family:'basis33',monospace;font-size:clamp(92px,15vw,220px);line-height:.72;letter-spacing:-.05em;color:rgba(255,255,255,.9)}.preview-kicker{margin-top:26px;font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.48)}.preview-title{margin-top:8px;font-size:24px;line-height:1.05;text-transform:uppercase}.preview-copy{margin-top:14px;max-width:360px;font-size:12px;line-height:1.55;color:rgba(255,255,255,.58)}
+
+    .viewer{position:fixed;inset:0;z-index:120;background:#050505;display:grid;grid-template-rows:62px 1fr}
+    .viewer-bar{display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.18);background:rgba(8,8,8,.98)}
+    .viewer-index{font-family:'basis33',monospace;font-size:24px;min-width:42px}.viewer-meta{min-width:0}.viewer-meta strong{display:block;font-size:13px;letter-spacing:.06em}.viewer-meta span{display:block;margin-top:3px;font-size:9px;letter-spacing:.11em;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.viewer-spacer{flex:1}
+    .viewer-btn{height:38px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;padding:0 14px;cursor:pointer;font-size:10px;letter-spacing:.11em}.viewer-btn:hover,.viewer-btn:focus-visible{background:#fff;color:#000;outline:none}.viewer-close{width:38px;padding:0;font-size:21px}
+    .viewer-stage{position:relative;min-height:0;background:#111}.viewer-frame{display:block;width:100%;height:100%;border:0;background:#fff}.viewer-loading{position:absolute;inset:0;display:grid;place-items:center;background:#080808;color:rgba(255,255,255,.7);font-family:'basis33',monospace;font-size:12px;letter-spacing:.14em;transition:opacity .25s ease;pointer-events:none}.viewer-loading.done{opacity:0}
+
+    @media(min-width:640px){.content{padding:0 24px}.meta{gap:24px}.hero{font-size:36px}.right-col{gap:24px}.chips{gap:12px}.chip{padding-left:16px;padding-right:16px}.footer{margin-top:20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.footer .right{text-align:right}}
+    @media(min-width:768px){.content{padding:0 40px}.desktop-nav{display:flex}.mobile-menu-btn{display:none}.meta h2{font-size:20px}.meta .pixel-line{font-size:30px}.hero{font-size:48px}}
+    @media(min-width:1024px){.content{padding:0 56px}.bg-video{transform:scale(1.2)}.meta{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}.lg-left{text-align:left}.row-a{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.hero{font-size:60px}.chips{align-self:flex-end}}
+    @media(min-width:1280px){.hero{font-size:68px}.desktop-nav{gap:26px;font-size:13px}}
+    @media(max-width:900px){.works-overlay{grid-template-columns:1fr}.works-preview{display:none}.works-panel{border-right:0}.works-head{height:68px;padding:0 20px}.works-row{grid-template-columns:52px minmax(0,1fr) 72px;padding:10px 20px;min-height:64px}.works-no{font-size:22px}.works-name strong{font-size:14px}.portal-hint{display:none}}
+    @media(max-width:640px){.works-head span{display:none}.works-row{grid-template-columns:44px minmax(0,1fr) 62px;gap:10px;padding:10px 16px}.works-state{font-size:9px}.works-name span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.viewer{grid-template-rows:56px 1fr}.viewer-bar{padding:0 10px;gap:9px}.viewer-index{font-size:20px;min-width:30px}.viewer-meta span{display:none}.viewer-btn{padding:0 9px}.viewer-open{display:none}}
+    @media(max-height:820px){.navbar{padding:14px 0}.meta{margin-top:4px}.meta h2{font-size:16px}.meta .pixel-line{font-size:24px}.meta-label{margin-bottom:6px;font-size:13px}.meta-body,.meta ul{font-size:12px;line-height:1.35}.blurb{font-size:10px;line-height:1.3}.asterisk{margin-top:6px}.hero{font-size:clamp(29px,5.1vh,53px)}.bottom{padding-bottom:8px}.right-col{gap:10px}.showreel{padding:9px 18px}.footer{margin-top:8px;padding-top:7px}.chip{padding-top:6px;padding-bottom:6px}}
+    @media(max-height:680px){.meta-body{max-width:180px}.meta li:nth-child(n+5){display:none}.footer{display:none}.hero{font-size:clamp(26px,5.4vh,44px)}.menu-nav{gap:18px}.menu-nav button{font-size:19px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.bg-video{display:none}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <video class="bg-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4" autoplay muted loop playsinline></video>
+  <div class="content">
+    <nav class="navbar">
+      <button class="logo-button" id="homeLogo" type="button" aria-label="Return to portal home">
+        <svg class="logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/><circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/></svg>
+      </button>
+      <div class="desktop-nav">
+        <button type="button" data-template="01">ABOUT</button>
+        <button type="button" data-template="03">JOURNEY</button>
+        <button type="button" data-template="04">MOMENTS</button>
+        <button type="button" data-template="06">TREE</button>
+        <button type="button" data-template="07">ARCHIVE</button>
+        <button type="button" data-template="08">DISCOVERY</button>
+        <button type="button" data-open-works>WORKS</button>
+      </div>
+      <button class="icon-btn mobile-menu-btn" id="menuOpen" aria-label="Open menu" type="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    </nav>
+
+    <section class="meta">
+      <div><h2><span>LOVE</span><span class="font-pixel pixel-line">TREE</span></h2><div class="asterisk">*</div><div class="font-pixel blurb">A living archive of<br>the exact moments that<br>moved your heart and<br>changed where you went next</div></div>
+      <div class="lg-left"><h2><span>MOMENT &amp;</span><span class="font-pixel pixel-line">PATHWAYS</span></h2></div>
+      <div><div class="font-pixel meta-label">What LoveTree Is</div><div class="meta-body">Save the moment that moved you, connect why you searched next, then replay the path that made you fall in love.</div></div>
+      <div class="lg-left"><div class="font-pixel meta-label">Core Journey</div><ul><li>Discover a Moment</li><li>Save the Exact Point</li><li>Leave the Feeling</li><li>Connect the Reason</li><li>Grow the Tree</li><li>Walk It Again</li></ul></div>
+    </section>
+
+    <div class="spacer"></div>
+
+    <section class="bottom">
+      <div class="row-a">
+        <h1 class="hero">SAVE THE<br><span class="font-pixel pixel-word">MOMENTS</span> THAT<br>GROW INTO<br><span class="font-pixel pixel-word">PATHS</span></h1>
+        <div class="right-col">
+          <button class="showreel template-action" type="button" data-template="09"><svg class="play-icon" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg><span>PLAY MEMORY PATHS</span></button>
+          <div class="chips">
+            <button class="chip template-action" type="button" data-template="02"><span class="chip-main">DISCOVER</span><span class="count">01</span></button>
+            <button class="chip template-action" type="button" data-template="05"><span class="chip-main">CONNECT</span><span class="count">02</span></button>
+            <button class="chip template-action" type="button" data-template="10"><span class="chip-wide">REPLAY</span><span class="count">03</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div>Your first moment can become a path someone else follows. <button type="button" data-template="11">Plant a moment</button></div><div class="right">Moment &bull; Emotion &bull; Connection &bull; Replay</div></div>
+    </section>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-header">
+      <svg class="logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/><circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/></svg>
+      <button class="icon-btn" id="menuClose" aria-label="Close menu" type="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="menu-nav" id="menuNav">
+      <button type="button" data-template="01">ABOUT</button><button type="button" data-template="03">JOURNEY</button><button type="button" data-template="04">MOMENTS</button><button type="button" data-template="06">TREE</button><button type="button" data-template="07">ARCHIVE</button><button type="button" data-template="08">DISCOVERY</button><button type="button" data-open-works>WORKS</button>
+    </div>
+  </div>
+  <div class="portal-hint">11 TEMPLATES / CLICK TO OPEN</div>
+
+  <div class="works-overlay" id="worksOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="worksTitle">
+    <section class="works-panel">
+      <header class="works-head"><strong id="worksTitle">WORKS_</strong><span>EXACT SOURCE TEMPLATE NAVIGATOR</span><div class="works-spacer"></div><button class="works-close" id="worksClose" type="button" aria-label="Close Works navigator">×</button></header>
+      <div class="works-list" id="worksList"></div>
+    </section>
+    <aside class="works-preview" aria-live="polite"><div class="preview-card"><div class="preview-no" id="previewNo">69</div><div class="preview-kicker">SELECTED TEMPLATE</div><div class="preview-title" id="previewTitle">FULL VIEWPORT PORTAL</div><div class="preview-copy" id="previewCopy">Track 69 V3 · all navigation repaired and each action mapped to a different adopted LoveTree template.</div></div></aside>
+  </div>
+
+  <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+    <header class="viewer-bar"><div class="viewer-index" id="viewerIndex">01</div><div class="viewer-meta"><strong id="viewerTitle">FIRST JOURNEY</strong><span id="viewerSource">Track 02</span></div><div class="viewer-spacer"></div><button class="viewer-btn viewer-open" id="viewerOpenExternal" type="button">OPEN WINDOW ↗</button><button class="viewer-btn viewer-close" id="viewerClose" type="button" aria-label="Close template">×</button></header>
+    <div class="viewer-stage"><iframe class="viewer-frame" id="viewerFrame" title="LoveTree selected template"></iframe><div class="viewer-loading" id="viewerLoading">LOADING SELECTED TEMPLATE…</div></div>
+  </div>
+</div>
+<script>
+  const templates={
+    '01':{track:'02',title:'FIRST JOURNEY',sub:'Landing · first Moment · first connection',path:'../../02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html',copy:'Track 02 · the integrated first journey from naming a tree to planting the first emotional path.'},
+    '02':{track:'65',title:'CINEMATIC CLUE',sub:'H3 extended motion editorial',path:'../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html',copy:'Track 65 · cinematic entry where a small clue begins the path into fandom.'},
+    '03':{track:'66',title:'FIRST TREE',sub:'Interactive first-tree guide',path:'../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html',copy:'Track 66 · interactive first-tree guide with an actual Moment, next reason and first branch.'},
+    '04':{track:'61',title:'CONNECTION REVIEW',sub:'Emotion-path review room',path:'../../61_감정경로_연결검토실/현재후보.html',copy:'Track 61 · review and compare why one Moment led to another.'},
+    '05':{track:'55',title:'FREE CONNECTION',sub:'Direct route editing',path:'../../55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html',copy:'Track 55 · direct manipulation for building and editing free emotional routes.'},
+    '06':{track:'67',title:'MEMORY TAPE',sub:'V2.4.2 persistent world + WORKS',path:'../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html',copy:'Track 67 · persistent interactive memory tape with its original internal WORKS comparison menu intact.'},
+    '07':{track:'68',title:'MOTION ARCHIVE',sub:'V3.3.1 A/B launcher',path:'../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html',copy:'Track 68 · verified A/B launcher for two person-centered emotional-path motion archive candidates.'},
+    '08':{track:'12',title:'GLOBAL DISCOVERY',sub:'Public path discovery home',path:'../../12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html',copy:'Track 12 · public discovery surface for finding other people’s routes and beginning a new exploration.'},
+    '09':{track:'59',title:'MEMORY STORYBOOK',sub:'Page journey + story autoplay',path:'../../59_메모리스케치북_페이지여정/버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html',copy:'Track 59 · a page-based memory journey with story playback and inline editing.'},
+    '10':{track:'06',title:'300 MOMENT FINALE',sub:'Replay · celebration · transformation',path:'../../06_300모먼트_피날레/01_300모먼트_피날레.html',copy:'Track 06 · replay and celebrate a full season of 300 Moments without turning the milestone into a paywall.'},
+    '11':{track:'44',title:'MOMENT COMPOSER',sub:'Hand-opened memory window',path:'../../44_손으로여는기억창_컴포저/01_손으로여는기억창_컴포저_v2.html',copy:'Track 44 · a direct composer for opening and shaping a memory window by hand.'}
+  };
+  const menuOverlay=document.getElementById('menuOverlay');
+  const menuItems=[...document.querySelectorAll('.menu-nav button')];
+  const worksOverlay=document.getElementById('worksOverlay');
+  const worksList=document.getElementById('worksList');
+  const worksClose=document.getElementById('worksClose');
+  const previewNo=document.getElementById('previewNo');
+  const previewTitle=document.getElementById('previewTitle');
+  const previewCopy=document.getElementById('previewCopy');
+  const viewer=document.getElementById('viewer');
+  const viewerFrame=document.getElementById('viewerFrame');
+  const viewerIndex=document.getElementById('viewerIndex');
+  const viewerTitle=document.getElementById('viewerTitle');
+  const viewerSource=document.getElementById('viewerSource');
+  const viewerLoading=document.getElementById('viewerLoading');
+  const viewerOpenExternal=document.getElementById('viewerOpenExternal');
+  let currentTemplate=null,lastFocus=null;
+
+  function setMenu(open){menuOverlay.classList.toggle('open',open);menuOverlay.setAttribute('aria-hidden',String(!open));menuItems.forEach((item,i)=>item.style.transitionDelay=open?`${100+i*55}ms`:'0ms');if(open)document.getElementById('menuClose').focus()}
+  function setPreview(key){const item=templates[key];if(!item)return;previewNo.textContent=item.track;previewTitle.textContent=item.title;previewCopy.textContent=item.copy}
+  function renderWorks(){worksList.innerHTML='<div class="works-row current" tabindex="-1"><div class="works-no">69</div><div class="works-name"><strong>FULL VIEWPORT PORTAL</strong><span>Current · exact source multi-template navigation</span></div><div class="works-state">CURRENT</div></div>'+Object.entries(templates).map(([key,item])=>`<button class="works-row" type="button" data-template="${key}"><div class="works-no">${item.track}</div><div class="works-name"><strong>${item.title}</strong><span>${item.sub}</span></div><div class="works-state">OPEN →</div></button>`).join('');worksList.querySelectorAll('[data-template]').forEach(row=>{row.addEventListener('mouseenter',()=>setPreview(row.dataset.template));row.addEventListener('focus',()=>setPreview(row.dataset.template));row.addEventListener('click',()=>openTemplate(row.dataset.template))})}
+  function openWorks(){lastFocus=document.activeElement;setMenu(false);worksOverlay.hidden=false;previewNo.textContent='69';previewTitle.textContent='FULL VIEWPORT PORTAL';previewCopy.textContent='Track 69 V3 · all navigation repaired and each action mapped to a different adopted LoveTree template.';worksClose.focus()}
+  function closeWorks(){if(worksOverlay.hidden)return;worksOverlay.hidden=true;if(lastFocus?.focus)lastFocus.focus()}
+  function openTemplate(key){const item=templates[key];if(!item)return;currentTemplate=item;lastFocus=document.activeElement;setMenu(false);worksOverlay.hidden=true;viewerIndex.textContent=item.track;viewerTitle.textContent=item.title;viewerSource.textContent=`Track ${item.track} · ${item.sub}`;viewerLoading.classList.remove('done');viewerFrame.src=item.path;viewer.hidden=false;viewerClose.focus()}
+  function closeViewer(){if(viewer.hidden)return;viewer.hidden=true;viewerFrame.src='about:blank';currentTemplate=null;if(lastFocus?.focus)lastFocus.focus()}
+  document.getElementById('menuOpen').addEventListener('click',()=>setMenu(true));document.getElementById('menuClose').addEventListener('click',()=>setMenu(false));document.getElementById('homeLogo').addEventListener('click',()=>{closeViewer();closeWorks();setMenu(false)});
+  document.querySelectorAll('[data-template]').forEach(btn=>btn.addEventListener('click',()=>openTemplate(btn.dataset.template)));
+  document.querySelectorAll('[data-open-works]').forEach(btn=>btn.addEventListener('click',openWorks));worksClose.addEventListener('click',closeWorks);document.getElementById('viewerClose').addEventListener('click',closeViewer);
+  viewerFrame.addEventListener('load',()=>viewerLoading.classList.add('done'));viewerOpenExternal.addEventListener('click',()=>{if(currentTemplate)window.open(currentTemplate.path,'_blank','noopener')});
+  window.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!viewer.hidden){e.preventDefault();closeViewer();return}if(!worksOverlay.hidden){e.preventDefault();closeWorks();return}if(menuOverlay.classList.contains('open')){e.preventDefault();setMenu(false)}});
+  renderWorks();
+  window.lovetreePortal={templates,openTemplate,openWorks,closeWorks,closeViewer,targets:()=>Object.entries(templates).map(([key,v])=>({key,...v}))};
+</script>
+</body>
+</html>
