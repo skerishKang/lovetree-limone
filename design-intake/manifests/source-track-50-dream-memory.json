@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-50-dream-memory",
+  "sourceTrackId": "Track50",
+  "title": "드림메모리 시네마틱 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Dream Memory cinematic candidate: a Supernova-benchmarked cinematic website layer (locked V2 storyboard, approved desktop/mobile video masters, cast/PRIMARY identity locks) with a Dream Memory v1.x interactive scroll lineage (v1→v1.5 female cinematic). Registration only — no product adoption implied.",
+  "summary": "Source Track 50 registered as a CLOSED work-package gate (README_50, 2026-08-10): final video masters are owner-approved and locked, the final homepage package is the current authority (01_최종채택본_시네마틱_웹사이트_슈퍼노바), and production reflection is explicitly held until a separate product-owner instruction. Full Drive tree preserved locally with SHA256SUMS; repository commit is selective per #287/#236 size guardrail and the no-video-bytes rule (videos fingerprinted only).",
+  "provenance": {
+    "sourceLabel": "50_드림메모리_시네마틱 / Issue #307 source gate registration",
+    "driveFolderId": "1CAyzJ6zV-Mlk-OkBjmO7ztSTT5jZ2v92",
+    "sourceFiles": [
+      "00_50번_작업완료_읽어보기.md",
+      "01_최종채택본_시네마틱_웹사이트_슈퍼노바/01_최종홈페이지_실행본.html",
+      "01_최종채택본_시네마틱_웹사이트_슈퍼노바/08_최종사이트_검증결과.json",
+      "80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/LoveTree_4-2기_시네마틱디자인팀장_임명및1차작업지시서_v1.md"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage number is NOT allocated by this manifest; Track 50 is a sibling source track. Placement is reviewed only after a product-owner instruction reopens the closed package (Issue #307)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "WORK_CLOSED (README_50 완료/CLOSED): approved masters locked, production reflection requires an explicit product-owner instruction; IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO (Issue #307 initial disposition)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "CLOSED_FINAL_SUPERNOVA_WEBSITE__DREAMMEMORY_V1_X_HISTORY",
+    "authorityObservedAt": "2026-08-21T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "00_50번_작업완료_읽어보기.md",
+      "driveId": "1FSkVK6hz7c8ehWxQeZvAomg4dLDpBCbg",
+      "role": "readme",
+      "status": "PINNED",
+      "bytes": 2109,
+      "sha256": "71d1b36654171158b734ec39e279deacca3751aef2305349118a85e86fc64d94"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/01_최종홈페이지_실행본.html",
+      "driveId": "1iICJM0uIsbuQNZGDgfTpRjfza7su2pSO",
+      "role": "executable",
+      "status": "PINNED",
+      "bytes": 29491,
+      "sha256": "51c370000767508b27673a04d7a5b9b3d34bf7d2c64b431d62ae30733cc04b5e"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/08_최종사이트_검증결과.json",
+      "driveId": "1QYtRfHWL-7KK4y7DrpGfgBypHcc7dWiu",
+      "role": "validation-record",
+      "status": "PINNED",
+      "bytes": 4431,
+      "sha256": "457edd66c87f763b43405e33b530538d589e25ad4fc89f399de5abcc89217ed1"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/05_최종사이트_데스크톱_화면.jpg",
+      "driveId": "1yCJEawC30fixs1TE66pfWB90uGmUq9Qa",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 294390,
+      "sha256": "7d230aab29241759acd457e24f810935a4be9a5470fe92ce7cf8774b75b16749"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/06_최종사이트_모바일_화면.jpg",
+      "driveId": "1LMLxTHJIpZpTc-e476Z2T3Vk9lcXg6yg",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 123304,
+      "sha256": "4497d7bbfa253c3590962e0051a2f82b57dd91ffbd82231967dc4cc0770aefca"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/07_최종사이트_인터랙션_상태.jpg",
+      "driveId": "10UR7YSDqDtYxxraJARjKAvs1zx6bY4nm",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 353010,
+      "sha256": "80b20ab2240496539ff31fb26e86da724cdbaaea698c51082a4eee21cae5be06"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/00_필수자산_포스터/01_첫화면_포스터_데스크톱.jpg",
+      "driveId": "1txljVq2l_MfVWR1AjDzDsvdghhrzYp1j",
+      "role": "poster-asset",
+      "status": "PINNED",
+      "bytes": 100119,
+      "sha256": "1c0a9d4aa5487d9ff7f0a6d66cac23bd530c27d47fbbfd2b91bba03505d112be"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/00_필수자산_포스터/02_첫화면_포스터_모바일.jpg",
+      "driveId": "1wwncRNBCLY2nedn9qg8NgHRj2XRLjZew",
+      "role": "poster-asset",
+      "status": "PINNED",
+      "bytes": 96786,
+      "sha256": "108cbe069486e4c27520eef8bafffd7aeb764ee5f14da4cadc48a368281321dd"
+    },
+    {
+      "filename": "10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/V2_LOCKED_STORYBOARD.png",
+      "driveId": "1p-qzqNurgRNz1oEIWFqtol82AKT8heEo",
+      "role": "locked-storyboard",
+      "status": "PINNED",
+      "bytes": 2219692,
+      "sha256": "e1d487d8287be922042d74fb824fcd8952e5523c34537265c0bc3a7707fbb3b9"
+    },
+    {
+      "filename": "80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/LoveTree_4-2기_시네마틱디자인팀장_임명및1차작업지시서_v1.md",
+      "driveId": "1OJXS2axlnRyoiwjG5fujQdWpajrTAck6",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 18520,
+      "sha256": "54eee278335556924b5727702bba8c61c9c570c7da6760eb8505171bc9c4fea2"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/03_캐스트_LOCK_기록/01_CAST_LOCK_BOARD.jpg",
+      "driveId": "1PSl7yVXBzBeMok-Uiz9jTF1HRyMvLzto",
+      "role": "cast-lock-record",
+      "status": "PINNED",
+      "bytes": 1143180,
+      "sha256": "9b20e23dc1db5940f3818c8a0f08ec34e3e83b0a38ee2e0565647aa78a90bed8"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/04_PRIMARY_LOCK_기록/02_PRIMARY_IDENTITY_ANCHOR_MAP.md",
+      "driveId": "1TQ1RleOMeEyum0H_Qa6ndIK6wDpHSvBa",
+      "role": "identity-lock-record",
+      "status": "PINNED",
+      "bytes": 3948,
+      "sha256": "63cc270ff694e13ddd7c8ddf7d97af15f4311a3f0c0e4076a698c15062e0582b"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/04_PRIMARY_LOCK_기록/02_PRIMARY_LOCK_CONTACT_SHEET.jpg",
+      "driveId": "1qsY3HWFWCLrQeq_Fs6JeXpMCaC3QcuWp",
+      "role": "identity-lock-record",
+      "status": "PINNED",
+      "bytes": 1055692,
+      "sha256": "24a2de331a882f9868d91a6a6285adbfa6aa12785c385bb0dba4704ff6fc3977"
+    },
+    {
+      "filename": "01_lovetree-dream-memory-cinematic-v1.3-female.html",
+      "driveId": "1h4S-Mu9fymedNQ5kFokVaT6aljxQwIoQ",
+      "role": "executable-history",
+      "status": "PINNED",
+      "bytes": 482134,
+      "sha256": "3b010d6c0ffa9064b18ea5a1c186a8fdfb66bc9d2f925aeb30125e99dba85176"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/lovetree-dream-memory-cinematic-v1.5-female-cinematic-self-contained.html",
+      "driveId": "1qDz4IRS-Pfmzk3ah52f5ZfPrA9awU7wN",
+      "role": "executable-history",
+      "status": "PINNED",
+      "bytes": 1589874,
+      "sha256": "9cc61f2435859349089868d4cdd0684314430972543a66249eee8d9ebf4067af"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/03_승인영상_데스크톱_최종마스터.mp4",
+      "driveId": "1JCnGpGOE7eNj1t9wq3zhfUlChDcHeRYl",
+      "bytes": 12092482,
+      "sha256": "d35725878b23b955886896016d1f417245554b3ba60c1ee09df4b83650819eec",
+      "role": "approved-video-master",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/04_승인영상_모바일_최종마스터.mp4",
+      "driveId": "1Aobp4FhB41YIsJYRolFrMWcnC-_sdf9_",
+      "bytes": 13037283,
+      "sha256": "c1028c268a3077c53884459cb005cd312c898082156ca6cc66aaedbf6fc6b41f",
+      "role": "approved-video-master",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/02_최종홈페이지_단독미리보기.html",
+      "driveId": "1QQ_Oyv6VOmom7J3Izqeq7QOoeUw4Yx1L",
+      "bytes": 16285708,
+      "sha256": "4b4736068b01d6100b1db99afe5f2ba283956a3a97c29f20a2ed1ef97e014868",
+      "role": "executable-preview",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_최종채택본_시네마틱_웹사이트_슈퍼노바/09_최종사이트_전체패키지.zip",
+      "driveId": "1umZ0-E2fUgAnh7qEvXVxDiee4Uf2XCYa",
+      "bytes": 38839881,
+      "sha256": "e3ce8d7e612b1a02640657271e490bcf839f484f3786c5d3f5908daeaae6d49c",
+      "role": "final-package-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_화면녹화_2026-08-09_04-46-33.mp4",
+      "driveId": "1TK2bkq-RQWxYUMJ-OrpBb0UmBeUwrLyj",
+      "bytes": 16698216,
+      "sha256": "baed8a508670b1bdbbc6b4275831fbfa79686960a086ea65ee1e32b3dd64ae13",
+      "role": "screen-recording",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_화면녹화_2026-08-10_01-23-40.mp4",
+      "driveId": "17GTq8I_xtt_ZUbnhzdenBtfRZOW2bYDe",
+      "bytes": 22509926,
+      "sha256": "37dc3a1c5ddbcdea7571f10cfea45aa8e306ebad7758a39a8bd02aa4084cd39f",
+      "role": "screen-recording",
+      "status": "PENDING"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_RAPID_FINAL_PACKAGE_v1.zip",
+      "driveId": "1SYuB-mgHemUS8ady6hnkN6zvehzfrFJS",
+      "bytes": 78768576,
+      "sha256": "9e818f97a7b4e55164698920572556519d6aa7f1772cc3ab0b3a38316e1b483f",
+      "role": "process-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/02_슈퍼노바_초기모션_HTML_v1.1.html",
+      "driveId": "1NNO5nLzR_CEBvSjzOxeO7KD6iWo1pj8D",
+      "bytes": 11075255,
+      "sha256": "9c2bb9525a4f731776791b80f7aa9d2d79567396e17a67633b96f1ddd1676f8d",
+      "role": "executable-history",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "WORK_CLOSED_NO_OWNER_REOPEN: README_50 marks Track 50 완료/CLOSED — production reflection is blocked until an explicit product-owner instruction",
+    "VIDEO_BYTES_NOT_TRANSPORTED_INTO_GIT: all videos (approved masters, screen recordings, process recordings ≈289MB) are fingerprint-only per the no-video-bytes guardrail; bytes stay on Drive",
+    "OVERSIZED_EXECUTABLES: 02_최종홈페이지_단독미리보기.html (16.3MB), 09_최종사이트_전체패키지.zip (38.8MB), RAPID_FINAL_PACKAGE zip (78.8MB), 슈퍼노바 초기모션 v1.1 HTML (11.1MB) exceed the ≤10MB single-file guardrail",
+    "BYTE_DUPLICATE_PREVIEW: 07_최종사이트_루트중복_단독미리보기.html is a byte-duplicate of 02_최종홈페이지_단독미리보기.html (same SHA256)",
+    "README_FOLDER_NAME_DRIFT: README names the authority folder 00_최종채택본… while the actual Drive folder is 01_최종채택본… (same folder, naming drift only)"
+  ],
+  "nativeRemediations": [
+    "product owner must explicitly reopen Track 50 before any native review or production reflection",
+    "if reopened: run executable/source QA against 01_최종홈페이지_실행본.html + approved masters, then exact-fingerprint intake under the transport guardrail",
+    "video assets require either a pre-approved exception or poster-frame/fingerprint substitution before any repository-native use"
+  ],
+  "sourceOnlyValues": [
+    "Supernova benchmark aesthetics stay source-side; LoveTree adaptations must keep the locked comparison rules recorded in 80_작업지시_및_검증기록/02_초기_레퍼런스_분석",
+    "approved video masters are locked reference material — never re-cut or replaced ad hoc",
+    "CAST_LOCK / PRIMARY_IDENTITY_ANCHOR records pin cast identity for any derivative work",
+    "Track 68 files are out of scope and must not be modified by Track 50 work"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

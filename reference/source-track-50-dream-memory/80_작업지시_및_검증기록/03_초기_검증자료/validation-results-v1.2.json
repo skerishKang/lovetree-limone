@@ -1,0 +1,230 @@
+{
+  "artifact": "lovetree-dream-memory-cinematic-v1.2.html",
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "approval": "NOT_OWNER_APPROVED",
+  "production": "PROHIBITED",
+  "existing_v1_overwritten": false,
+  "casting_expansion_performed": false,
+  "identity_lock_performed": false,
+  "benchmark_mv_frames_in_result": false,
+  "benchmark_audio_in_result": false,
+  "duration_seconds": 44.5,
+  "validation_video_method": "Deterministic screenshots of actual Chromium-rendered HTML at 8 fps, encoded to MP4 at real 44.5-second timeline. Interactive runtime behavior separately tested in Chromium.",
+  "automated_checks": {
+    "pass": 39,
+    "fail": 0,
+    "checks": [
+      {
+        "name": "new_file_v1_2_exists",
+        "result": "PASS",
+        "detail": "/mnt/data/50_드림메모리_시네마틱_분류대기/03_HTML/lovetree-dream-memory-cinematic-v1.2.html"
+      },
+      {
+        "name": "v1_preserved",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "scene_count_static",
+        "result": "PASS",
+        "detail": 10
+      },
+      {
+        "name": "content_first_moment",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_memory_breath",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_save_this_moment",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_connection",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_next_moment",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_memory_field",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_tree_emerges",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "content_lovetree",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "no_external_img_script",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "no_benchmark_audio",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "no_neon_pilot_vocabulary",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "save_freeze_320ms",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "connection_light_match",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "tree_delayed_scene09",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "full_body_asset_present",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "pair_asset_present",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "backstage_asset_present",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "performance_asset_present",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "reduced_motion_css",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "responsive_mobile",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "desktop_no_page_errors",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "desktop_no_external_requests",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "desktop_no_horizontal_overflow",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "mobile_no_page_errors",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "mobile_no_external_requests",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "mobile_no_horizontal_overflow",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "reduced_motion_no_page_errors",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "reduced_motion_no_external_requests",
+        "result": "PASS",
+        "detail": []
+      },
+      {
+        "name": "reduced_motion_no_horizontal_overflow",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "desktop_save_interaction",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "mobile_save_interaction",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "sound_state_changes",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "reduced_motion_starts_manual",
+        "result": "PASS",
+        "detail": null
+      },
+      {
+        "name": "desktop_video_duration",
+        "result": "PASS",
+        "detail": 44.5
+      },
+      {
+        "name": "mobile_video_duration",
+        "result": "PASS",
+        "detail": 44.5
+      },
+      {
+        "name": "required_deliverables_exist",
+        "result": "PASS",
+        "detail": [
+          "dream-memory-v1.2-scene-map.md",
+          "reference-grammar-application-v1.2.md",
+          "implementation-report-v1.2.md",
+          "desktop-execution-v1.2.mp4",
+          "mobile-execution-v1.2.mp4",
+          "reference-grammar-vs-result-v1.2.jpg"
+        ]
+      }
+    ]
+  },
+  "owner_gate": {
+    "status": "PENDING",
+    "questions": [
+      "NewJeans / ILLIT / ENHYPEN teaser-like uneven breath and cinematic timing are perceptible?",
+      "Moment → Save → Connection → Next Moment → Tree reads as LoveTree rather than K-pop fan/profile site?",
+      "People, full-body, space, object, light and silence feel mixed rather than portrait slideshow?",
+      "Final Tree feels like the accumulated result of prior Moments?"
+    ]
+  }
+}

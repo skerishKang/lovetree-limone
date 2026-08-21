@@ -1,0 +1,166 @@
+{
+  "status": "PASS",
+  "video_master_policy": "LOCKED / UNCHANGED",
+  "browser_qa": {
+    "tests": {
+      "landing_cta_visible": true,
+      "navigation_visible": true,
+      "play_works": true,
+      "pause_works": true,
+      "sound_works": true,
+      "timeline_seek_works": true,
+      "replay_works": true,
+      "save_prompt_contextual": true,
+      "save_works": true,
+      "connection_unlock_visual": true,
+      "enter_works": true,
+      "saved_state_persists_in_entry": true,
+      "skip_to_bloom_works": true,
+      "desktop_no_overflow": true,
+      "mobile_logo_visible": true,
+      "mobile_menu_visible": true,
+      "mobile_play_visible": true,
+      "mobile_controls_visible": true,
+      "mobile_menu_opens": true,
+      "mobile_no_overflow": true,
+      "console_error_0": true,
+      "page_error_0": true
+    },
+    "console_errors": [],
+    "page_errors": [],
+    "basis": "UI logic tested in Chromium with a tiny 30s local MP4 substitute; approved production MP4 byte identity is validated independently.",
+    "failures": [],
+    "status": "PASS",
+    "pass_count": 22
+  },
+  "production_asset_checks": {
+    "video_master_locked_desktop_sha_match": true,
+    "video_master_locked_mobile_sha_match": true,
+    "desktop_source_reference_exact": true,
+    "mobile_source_reference_exact": true,
+    "landing_has_play_cta": true,
+    "landing_has_enter_cta": true,
+    "navigation_has_required_labels": true,
+    "timeline_has_10_chapters": true,
+    "save_interaction_present": true,
+    "connection_unlock_present": true,
+    "end_state_present": true,
+    "prototype_enter_no_fake_external_url": true,
+    "standalone_embeds_video": true,
+    "standalone_embeds_poster": true,
+    "required_screens_exist": true
+  },
+  "desktop_master": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "24000/1001",
+        "avg_frame_rate": "24000/1001"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "29.200000"
+    }
+  },
+  "mobile_master": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "24000/1001",
+        "avg_frame_rate": "24000/1001"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "29.196000"
+    }
+  },
+  "sha256": {
+    "desktop_approved_source": "d35725878b23b955886896016d1f417245554b3ba60c1ee09df4b83650819eec",
+    "desktop_website_package_copy": "d35725878b23b955886896016d1f417245554b3ba60c1ee09df4b83650819eec",
+    "mobile_approved_source": "c1028c268a3077c53884459cb005cd312c898082156ca6cc66aaedbf6fc6b41f",
+    "mobile_website_package_copy": "c1028c268a3077c53884459cb005cd312c898082156ca6cc66aaedbf6fc6b41f"
+  },
+  "chapters": [
+    {
+      "id": "01",
+      "name": "FIRST GLIMPSE",
+      "time": 0.0
+    },
+    {
+      "id": "02",
+      "name": "DISTORTED MEMORY",
+      "time": 2.127
+    },
+    {
+      "id": "03",
+      "name": "OBJECT / DETAIL",
+      "time": 2.586
+    },
+    {
+      "id": "04",
+      "name": "NEW WORLD",
+      "time": 4.087
+    },
+    {
+      "id": "05",
+      "name": "PRIMARY MOMENTS",
+      "time": 9.176
+    },
+    {
+      "id": "06",
+      "name": "NEXT MOMENT",
+      "time": 13.138
+    },
+    {
+      "id": "07",
+      "name": "SAVE / MEMORY FIELD",
+      "time": 16.558
+    },
+    {
+      "id": "08",
+      "name": "CONNECTION",
+      "time": 20.312
+    },
+    {
+      "id": "09",
+      "name": "TREE EMERGES",
+      "time": 22.523
+    },
+    {
+      "id": "10",
+      "name": "LOVETREE",
+      "time": 25.943
+    }
+  ],
+  "notes": [
+    "Website QA uses a tiny substitute MP4 only for browser control logic to avoid re-encoding or modifying the approved masters.",
+    "Production package copies are byte-identical to the approved Desktop/Mobile masters by SHA-256.",
+    "Standalone review embeds the approved Desktop master; the packaged website selects the approved Mobile master at <=760px."
+  ]
+}

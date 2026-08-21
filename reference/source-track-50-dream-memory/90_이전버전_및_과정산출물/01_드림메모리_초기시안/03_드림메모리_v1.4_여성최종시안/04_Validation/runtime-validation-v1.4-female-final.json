@@ -1,0 +1,151 @@
+{
+  "title": "LoveTree — Dream Memory Female Final",
+  "desktop_scroll_width": 1440,
+  "desktop_scroll_height": 5132,
+  "section_count": 10,
+  "used_assets": [
+    "F4_reference.png",
+    "f_backstage.jpg",
+    "f_first.jpg",
+    "f_full.jpg",
+    "f_pair.jpg",
+    "f_reveal.jpg",
+    "f_save.jpg",
+    "f_secondary.jpg",
+    "f_stage.jpg"
+  ],
+  "image_checks": [
+    {
+      "src": "female first glimpse",
+      "complete": true,
+      "nw": 157,
+      "nh": 182
+    },
+    {
+      "src": "memory breath window scene",
+      "complete": true,
+      "nw": 373,
+      "nh": 403
+    },
+    {
+      "src": "person reveal",
+      "complete": true,
+      "nw": 163,
+      "nh": 181
+    },
+    {
+      "src": "save memory detail",
+      "complete": true,
+      "nw": 166,
+      "nh": 182
+    },
+    {
+      "src": "stage detail",
+      "complete": true,
+      "nw": 167,
+      "nh": 182
+    },
+    {
+      "src": "saved moment portrait",
+      "complete": true,
+      "nw": 172,
+      "nh": 182
+    },
+    {
+      "src": "connection left",
+      "complete": true,
+      "nw": 157,
+      "nh": 182
+    },
+    {
+      "src": "connection right",
+      "complete": true,
+      "nw": 172,
+      "nh": 182
+    },
+    {
+      "src": "memory fragment",
+      "complete": true,
+      "nw": 166,
+      "nh": 181
+    },
+    {
+      "src": "memory fragment",
+      "complete": true,
+      "nw": 166,
+      "nh": 182
+    },
+    {
+      "src": "memory fragment",
+      "complete": true,
+      "nw": 173,
+      "nh": 180
+    },
+    {
+      "src": "memory fragment",
+      "complete": true,
+      "nw": 175,
+      "nh": 183
+    },
+    {
+      "src": "next moment",
+      "complete": true,
+      "nw": 175,
+      "nh": 183
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 166,
+      "nh": 181
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 172,
+      "nh": 182
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 166,
+      "nh": 182
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 167,
+      "nh": 182
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 157,
+      "nh": 182
+    },
+    {
+      "src": "memory card",
+      "complete": true,
+      "nw": 173,
+      "nh": 180
+    }
+  ],
+  "console_messages": [],
+  "page_errors": [],
+  "outputs": {
+    "fullpage": "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/fullpage-v1.4-female-final.png",
+    "mobile_full": "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/mobile-full-v1.4-female-final.png",
+    "sections": [
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-01.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-02.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-03.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-04.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-05.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-06.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-07.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-08.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-09.png",
+      "/mnt/data/DreamMemory_v1.4_Female_Final/04_Validation/section-10.png"
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "status": "RAPID_FINAL_CANDIDATE / PENDING PRODUCT OWNER VISUAL GATE",
+  "benchmark_duration_seconds": 29.206,
+  "desktop_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "24000/1001",
+        "avg_frame_rate": "24000/1001"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "29.195833",
+      "size": "12089659",
+      "bit_rate": "3312708"
+    }
+  },
+  "mobile_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "24000/1001",
+        "avg_frame_rate": "4200000/175421"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "29.257833",
+      "size": "9692586",
+      "bit_rate": "2650253"
+    }
+  },
+  "shot_count": 24,
+  "rapid_microcut_count": 7,
+  "new_female_identity_generation": 0,
+  "new_storyboard_generation": 0,
+  "primary_policy": "OWNER_APPROVED_CURRENT_SCENE_IDENTITY only",
+  "motion_clip_count": 26,
+  "checks": {
+    "desktop_exists": true,
+    "mobile_exists": true,
+    "html_exists": true,
+    "contact_sheet_exists": true,
+    "shot_map_exists": true,
+    "autoplay_present": true,
+    "playsinline_present": true,
+    "muted_present": true,
+    "replay_control": true,
+    "skip_control": true,
+    "sound_control": true,
+    "enter_lovetree": true,
+    "desktop_video_reference": true,
+    "mobile_video_reference": true,
+    "external_http_reference": false
+  },
+  "smoke_test": {
+    "duration_seconds": 12.137125,
+    "fatal_issue_detected": false,
+    "notes": "Identity/source quality, close-detail-wide distance changes and benchmark-paced rapid cuts were present; production continued per Rapid Final order."
+  },
+  "known_visual_limits": [
+    "Live-action movement is mostly high-quality scene-master pan/push/whip fallback rather than full generative body motion.",
+    "S15 Memory Field is a cinematic composite built only from approved PRIMARY moments rather than a separately photographed environment.",
+    "Mobile reframe switches to a letterboxed full-width Tree presentation after the bloom section begins so the locked Tree is not cropped."
+  ]
+}

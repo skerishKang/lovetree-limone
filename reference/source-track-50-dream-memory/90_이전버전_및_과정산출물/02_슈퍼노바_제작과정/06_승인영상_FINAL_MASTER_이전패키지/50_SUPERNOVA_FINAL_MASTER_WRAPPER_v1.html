@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree 50 — Supernova Final Master</title>
+<meta name="theme-color" content="#05060a" />
+<style>
+:root{--pink:#f3a9c8;--cyan:#8edff0;--white:#f7f7fa;--glass:rgba(7,9,15,.46)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#05060a;color:#fff;font-family:Arial,"Noto Sans KR",sans-serif;overflow:hidden}
+body{position:relative}.stage{position:fixed;inset:0;background:#000;display:grid;place-items:center;overflow:hidden}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.chrome{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.48),transparent 18%,transparent 72%,rgba(0,0,0,.58));z-index:2}
+.brand{position:absolute;left:max(22px,env(safe-area-inset-left));top:max(20px,env(safe-area-inset-top));z-index:4;font-weight:700;letter-spacing:.22em;font-size:13px;text-transform:uppercase;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+.brand b{color:var(--pink)}
+.controls{position:absolute;right:max(18px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top));z-index:5;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button,.enter{pointer-events:auto;border:1px solid rgba(255,255,255,.22);background:rgba(5,7,12,.48);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:.2s}
+button:hover,.enter:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+button:focus-visible,.enter:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.progress-wrap{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.1);z-index:6}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));box-shadow:0 0 14px rgba(243,169,200,.65)}
+.cta{position:absolute;left:50%;bottom:max(46px,calc(env(safe-area-inset-bottom) + 30px));transform:translate(-50%,18px);opacity:0;z-index:5;transition:.5s;pointer-events:none;text-align:center}.cta.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}.enter{display:inline-block;padding:13px 22px;font-weight:700;letter-spacing:.16em;text-decoration:none;border-color:rgba(243,169,200,.44);box-shadow:0 0 26px rgba(243,169,200,.15)}
+.cta small{display:block;margin-top:9px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em}.status{position:absolute;left:max(22px,env(safe-area-inset-left));bottom:max(22px,calc(env(safe-area-inset-bottom) + 10px));z-index:5;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.loading{position:absolute;inset:0;z-index:7;display:grid;place-items:center;background:#05060a;color:rgba(255,255,255,.68);font-size:11px;letter-spacing:.16em;transition:opacity .25s}.loading.hide{opacity:0;pointer-events:none}
+@media(max-width:720px){.brand{font-size:11px;letter-spacing:.16em}.controls{max-width:64vw}.controls button{padding:8px 10px;font-size:10px}.status{display:none}.cta{bottom:max(34px,calc(env(safe-area-inset-bottom) + 22px))}}
+@media(prefers-reduced-motion:reduce){button,.enter,.cta,.loading{transition:none}}
+</style>
+</head>
+<body>
+<div class="stage" id="lovetree">
+  <video id="film" playsinline autoplay muted preload="auto"></video>
+  <div class="loading" id="loading">LOADING MOMENT</div>
+  <div class="chrome"></div>
+  <div class="brand"><b>LOVETREE</b> · DREAM MEMORY 50</div>
+  <div class="controls">
+    <button id="sound" type="button" aria-pressed="false">SOUND ON</button>
+    <button id="replay" type="button">REPLAY</button>
+    <button id="skip" type="button">SKIP TO BLOOM</button>
+  </div>
+  <div class="cta" id="cta"><a class="enter" id="enter" href="#lovetree">ENTER LOVETREE</a><small>FOLLOW THE FEELING</small></div>
+  <div class="status" id="status">FINAL MASTER CANDIDATE · SUPERNOVA BENCHMARK</div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+</div>
+<script>
+(() => {
+  'use strict';
+  const film=document.getElementById('film');
+  const sound=document.getElementById('sound');
+  const replay=document.getElementById('replay');
+  const skip=document.getElementById('skip');
+  const progress=document.getElementById('progress');
+  const cta=document.getElementById('cta');
+  const loading=document.getElementById('loading');
+  const enter=document.getElementById('enter');
+  const status=document.getElementById('status');
+  const mobile=matchMedia('(max-width:720px) and (orientation:portrait)').matches;
+  const source=mobile?'50_SUPERNOVA_FINAL_MASTER_MOBILE_v1.mp4':'50_SUPERNOVA_FINAL_MASTER_DESKTOP_v1.mp4';
+  const BLOOM_AT=25.943;
+  const CTA_AT=25.943;
+  film.src=source;
+
+  const playSafe=()=>film.play().catch(()=>{});
+  film.addEventListener('loadedmetadata',()=>{loading.classList.add('hide');playSafe();},{once:true});
+  film.addEventListener('canplay',()=>loading.classList.add('hide'),{once:true});
+  film.addEventListener('error',()=>{loading.textContent='VIDEO LOAD ERROR';status.textContent='ASSET LOAD ERROR';});
+  film.addEventListener('timeupdate',()=>{
+    const duration=film.duration||29.2;
+    progress.style.width=Math.min(100,(film.currentTime/duration)*100)+'%';
+    cta.classList.toggle('show',film.currentTime>=CTA_AT);
+  });
+  film.addEventListener('ended',()=>{progress.style.width='100%';cta.classList.add('show');});
+
+  sound.addEventListener('click',()=>{
+    film.muted=!film.muted;
+    sound.textContent=film.muted?'SOUND ON':'SOUND OFF';
+    sound.setAttribute('aria-pressed',String(!film.muted));
+    playSafe();
+  });
+  replay.addEventListener('click',()=>{
+    film.currentTime=0;
+    cta.classList.remove('show');
+    progress.style.width='0%';
+    playSafe();
+  });
+  skip.addEventListener('click',()=>{
+    film.currentTime=Math.min(BLOOM_AT,Math.max(0,(film.duration||29.2)-0.25));
+    playSafe();
+  });
+  enter.addEventListener('click',()=>{
+    document.body.dataset.enter='requested';
+    window.dispatchEvent(new CustomEvent('lovetree:enter'));
+  });
+})();
+</script>
+</body>
+</html>
