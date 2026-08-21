@@ -25,7 +25,10 @@
 
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { after, before, describe, it } from "node:test";
+import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const BASE =
@@ -34,7 +37,7 @@ const BASE =
   "http://127.0.0.1:3000";
 const NATIVE_URL = `${BASE}/design-lab/lineages/67/v2-4/native`;
 
-const EVIDENCE_DIR = new URL("../qa/evidence/track67-v242/", import.meta.url);
+const EVIDENCE_DIR = new URL(`${pathToFileURL(path.join(os.tmpdir(), "lovetree-qa-evidence", "track67-v242"))}/`);
 
 // ---------------------------------------------------------------------------
 // Authoritative Moment mapping mirrored from the exact V2.4.2 source package
@@ -90,7 +93,7 @@ async function ensureEvidenceDir() {
 
 async function captureEvidence(page, name) {
   await ensureEvidenceDir();
-  const path = new URL(`../qa/evidence/track67-v242/${name}.png`, import.meta.url);
+  const path = new URL(`${name}.png`, EVIDENCE_DIR);
   await page.screenshot({ path: path.pathname, fullPage: false });
 }
 
