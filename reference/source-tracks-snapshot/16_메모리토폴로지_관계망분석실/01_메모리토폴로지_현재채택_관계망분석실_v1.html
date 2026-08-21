@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree Memory Topology Lab</title>
+<style>
+:root{
+  --bg:#fbfafc;--paper:#ffffff;--paper2:#fff8fb;--ink:#2f2a31;--muted:#7a7180;--line:#eadde5;
+  --pink:#f02f86;--pink2:#ff7ab5;--rose:#ef96bb;--mint:#44cdb2;--aqua:#4fc4e8;
+  --yellow:#f6bf4a;--violet:#8d6ceb;--cobalt:#4c79e8;--coral:#ff766b;
+  --shadow:0 9px 30px rgba(93,45,70,.08);
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+  --sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+button,select,input{font:inherit;color:inherit}.app{height:100%;display:grid;grid-template-rows:54px minmax(0,1fr) 178px;background:linear-gradient(135deg,#fff 0%,#fdf9fb 54%,#fff 100%)}
+.topbar{display:grid;grid-template-columns:280px 1fr auto;align-items:center;border-bottom:1px solid #efdae5;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);z-index:20}
+.brand{height:100%;display:flex;align-items:center;gap:10px;padding:0 14px;border-right:1px solid var(--line);font-weight:760;letter-spacing:.08em;color:#d92373;font-size:13px}
+.brandmark{width:30px;height:30px;border-radius:9px;background:radial-gradient(circle at 38% 32%,#ffb4d5 0 10%,#f03386 44%,#bc145e 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 5px 14px rgba(238,47,134,.26);position:relative}
+.brandmark:before,.brandmark:after{content:"";position:absolute;left:50%;top:50%;background:white;border-radius:99px;transform-origin:0 0}.brandmark:before{width:12px;height:2px;transform:rotate(18deg) translate(-2px,-1px)}.brandmark:after{width:2px;height:12px;transform:rotate(18deg) translate(-1px,-8px)}
+.systemline{display:flex;align-items:center;gap:10px;padding:0 16px;font:11px var(--mono);letter-spacing:.05em;color:#49404a;white-space:nowrap;overflow:hidden}.online-dot{width:7px;height:7px;border-radius:50%;background:#ff3c92;box-shadow:0 0 0 4px rgba(240,47,134,.10),0 0 14px rgba(240,47,134,.48);animation:pulseDot 2s ease-in-out infinite}
+@keyframes pulseDot{50%{transform:scale(.72);opacity:.7}}
+.topstats{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(58px,auto);align-items:stretch;height:100%}.topstat{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 10px;border-left:1px solid #f1e6ec}.topstat b{font:700 14px var(--mono)}.topstat span{font:8px var(--mono);letter-spacing:.10em;color:#9a8e98}.topstat.mode b{color:var(--pink);font-size:12px}
+.main{min-height:0;display:grid;grid-template-columns:280px minmax(0,1fr) 166px}
+.left{min-height:0;border-right:1px solid var(--line);background:rgba(255,255,255,.90);display:grid;grid-template-rows:auto auto minmax(0,1fr);overflow:hidden}
+.section-title{height:28px;padding:9px 10px 0;color:#d32775;font:700 9px var(--mono);letter-spacing:.10em;text-transform:uppercase}
+.metrics{padding:0 8px 8px;display:grid;grid-template-columns:1fr 1fr;gap:5px}.metric{min-height:52px;border:1px solid #eadfe5;border-radius:6px;background:#fff;padding:7px 9px;box-shadow:0 1px 0 rgba(255,255,255,.9)}.metric label{display:block;color:#887e86;font:8px var(--mono);letter-spacing:.04em}.metric strong{display:block;margin-top:5px;font:700 15px var(--mono);color:#2d2930}.metric strong em{font-size:9px;font-style:normal;color:#756d75;margin-left:2px}
+.inspector{margin:0 8px 8px;border:1px solid #eadfe5;border-radius:6px;background:#fff;overflow:hidden}.inspector-head{padding:7px 9px;border-bottom:1px solid #eee4e9;display:flex;justify-content:space-between;align-items:center}.inspector-head b{font:700 9px var(--mono);letter-spacing:.08em;color:#d32775}.live-badge{font:700 8px var(--mono);color:#159a7f;background:#e9fbf5;border:1px solid #b8eadc;border-radius:99px;padding:3px 7px}.inspect-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:6px 7px 8px}.inspect-grid div{padding:4px 3px}.inspect-grid small{display:block;font:7px var(--mono);color:#9a8e98;text-transform:uppercase}.inspect-grid span{display:block;margin-top:3px;font:10px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inspect-grid .wide{grid-column:span 2}.inspect-grid .pink span{color:var(--pink);font-weight:700}
+.stream{min-height:0;margin:0 8px 8px;border:1px solid #eadfe5;border-radius:6px;background:linear-gradient(180deg,#fff,#fffafd);display:flex;flex-direction:column;overflow:hidden}.stream-head{flex:0 0 auto;display:flex;justify-content:space-between;padding:7px 9px;border-bottom:1px solid #eee4e9;font:700 8px var(--mono);color:#655b64}.stream-head b{color:#d32775}.stream-body{min-height:0;overflow:hidden;padding:6px 8px;font:8.1px/1.32 var(--mono);color:#2d9b81;white-space:pre-wrap}.stream-body .pink{color:#e32b79}.stream-body .muted{color:#8e818b}
+.stage{position:relative;min-width:0;min-height:0;overflow:hidden;background:
+ linear-gradient(rgba(224,214,222,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(224,214,222,.28) 1px,transparent 1px),radial-gradient(circle at 50% 48%,#fff 0,#fff 46%,#fff8fb 100%);background-size:28px 28px,28px 28px,auto}
+#graph{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.stage-strip{position:absolute;left:10px;right:10px;top:8px;height:26px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;z-index:4}.readout{pointer-events:auto;display:flex;gap:5px;align-items:center;padding:5px 8px;border:1px solid #ebdfe6;background:rgba(255,255,255,.90);border-radius:4px;box-shadow:0 2px 8px rgba(74,44,60,.04);font:8px var(--mono);color:#756b73}.readout strong{color:#4a4149}.filters{pointer-events:auto;display:flex;gap:5px}.mini-select,.mini-btn{height:26px;border:1px solid #e8dce3;background:rgba(255,255,255,.92);border-radius:4px;padding:0 8px;font:8px var(--mono);letter-spacing:.02em;outline:none}.mini-btn{cursor:pointer}.mini-btn:hover,.mini-btn.active{border-color:#f05a9d;background:#fff4f9;color:#d92576}.stage-help{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);z-index:5;padding:4px 9px;border:1px solid #ece1e7;background:rgba(255,255,255,.86);border-radius:99px;font:8px var(--mono);color:#8f838c;pointer-events:none;white-space:nowrap}.tooltip{position:absolute;z-index:9;max-width:230px;pointer-events:none;background:#28252b;color:#fff;border-radius:5px;padding:8px 10px;box-shadow:0 10px 26px rgba(0,0,0,.18);font:10px/1.35 var(--sans);opacity:0;transform:translate(10px,-50%);transition:opacity .12s}.tooltip b{display:block;color:#ff94c4;font-size:10px;margin-bottom:2px}.tooltip small{display:block;color:#c8bdc5;font:8px var(--mono)}
+.right{border-left:1px solid var(--line);background:rgba(255,255,255,.9);display:flex;flex-direction:column;min-height:0}.right-title{height:32px;padding:10px 12px 0;color:#d32775;font:700 9px var(--mono);letter-spacing:.10em}.modes{padding:0 7px;display:grid;gap:5px;overflow:auto}.mode-btn{height:61px;border:1px solid #eadfe5;background:#fff;border-radius:6px;display:grid;place-items:center;cursor:pointer;transition:.22s;position:relative}.mode-btn:hover{transform:translateY(-1px);border-color:#eaa2c2}.mode-btn.active{border-color:#ee3d8c;background:linear-gradient(180deg,#fff,#fff1f7);box-shadow:0 0 0 1px rgba(240,47,134,.13),0 8px 20px rgba(236,53,136,.10)}.mode-btn .icon{font-size:16px;color:#d92776;line-height:1}.mode-btn b{font:700 9px var(--mono);letter-spacing:.03em}.mode-btn small{font:7px var(--mono);color:#9c8f98}
+.bottom{display:grid;grid-template-columns:1.05fr 1.1fr 1fr;border-top:1px solid var(--line);background:#fff;min-height:0}.console{min-width:0;overflow:hidden;border-right:1px solid var(--line);padding:7px 10px}.console:last-child{border-right:0}.console h3{margin:0 0 5px;color:#d32775;font:700 9px var(--mono);letter-spacing:.08em}.telemetry,.vectors{font:8px/1.35 var(--mono);white-space:pre-wrap;color:#51484f;overflow:hidden;height:138px}.telemetry .ok{color:#18a281}.telemetry .pink{color:#db2a76}.vectors{columns:2;column-gap:12px}.matrix{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}.cell{height:18px;border:1px solid #ece2e7;background:#fff;border-radius:2px;display:grid;place-items:center;font:7px var(--mono);color:#726770;transition:.25s}.cell.hot{background:#ffdeed;border-color:#f49ac1;color:#d01f6d;font-weight:700}.cell.warm{background:#fff2f7;border-color:#f2c9da}.bottom-tabs{display:none}
+.mobile-tools{display:none}
+@media (max-width:900px){
+ .app{grid-template-rows:52px minmax(0,1fr) 122px}.topbar{grid-template-columns:1fr auto}.brand{border-right:0}.systemline{display:none}.topstats .topstat:nth-child(n+4){display:none}.main{grid-template-columns:minmax(0,1fr)}.left,.right{display:none}.stage{grid-column:1}.bottom{grid-template-columns:1fr}.console{display:none;border:0}.console.active{display:block}.bottom-tabs{display:flex;position:absolute;bottom:122px;left:8px;z-index:18;gap:4px}.bottom-tabs button{height:24px;border:1px solid #e8dce3;background:#fff;border-radius:4px;padding:0 8px;font:8px var(--mono)}.mobile-tools{display:flex;position:absolute;top:58px;left:8px;right:8px;z-index:18;justify-content:space-between;pointer-events:none}.mobile-tools button{pointer-events:auto;height:28px;border:1px solid #e7d8e1;background:rgba(255,255,255,.94);border-radius:5px;padding:0 9px;font:8px var(--mono);box-shadow:var(--shadow)}
+ .drawer{display:block!important;position:fixed;z-index:40;top:52px;bottom:0;width:min(86vw,310px);background:#fff;transition:transform .26s ease;box-shadow:0 12px 40px rgba(68,38,55,.18)}.left.drawer{left:0;transform:translateX(-105%)}.right.drawer{right:0;transform:translateX(105%)}.drawer.open{transform:translateX(0)}.modes{grid-template-columns:1fr 1fr}.mode-btn{height:68px}.stage-strip{top:42px}.filters{display:none}.stage-help{bottom:8px;font-size:7px}.topstat{padding:0 7px}.topstat span{font-size:7px}.topstat b{font-size:11px}
+}
+@media (max-width:520px){.brand{padding-left:8px;font-size:10px;letter-spacing:.04em}.brandmark{width:28px;height:28px}.topstats .topstat:nth-child(n+3){display:none}.app{grid-template-rows:52px minmax(0,1fr) 110px}.bottom-tabs{bottom:110px}.readout{font-size:7px;padding:4px 6px}.stage-strip{left:6px;right:6px}.vectors{columns:1}.matrix{grid-template-columns:repeat(10,1fr);gap:2px}.cell{height:16px;font-size:6px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><span class="brandmark" aria-hidden="true"></span><span>LOVETREE MEMORY TOPOLOGY</span></div>
+  <div class="systemline"><span class="online-dot"></span><span id="systemText">SYSTEM ONLINE · MEMORY KERNEL 1.0.0</span></div>
+  <div class="topstats">
+    <div class="topstat mode"><span>TOPOLOGY</span><b id="topMode">MEMORY</b></div>
+    <div class="topstat"><span>MEM NODES</span><b id="nodeCount">362</b></div>
+    <div class="topstat"><span>SYN EDGES</span><b id="edgeCount">2896</b></div>
+    <div class="topstat"><span>FPS</span><b id="fps">60</b></div>
+  </div>
+</header>
+<div class="main">
+  <aside class="left" id="leftPanel">
+    <div>
+      <div class="section-title">▌ LIVE RELATION METRICS</div>
+      <div class="metrics">
+        <div class="metric"><label>CONN DENSITY</label><strong id="mDensity">4.43<em>%</em></strong></div>
+        <div class="metric"><label>CLUSTERING</label><strong id="mCluster">16.1<em>%</em></strong></div>
+        <div class="metric"><label>EMOTION ENTROPY</label><strong id="mEntropy">1.201</strong></div>
+        <div class="metric"><label>SYNC LATENCY</label><strong id="mLatency">0.9<em>ms</em></strong></div>
+        <div class="metric"><label>ACTIVE PEOPLE</label><strong id="mPeople">12</strong></div>
+        <div class="metric"><label>MEMORY SPREAD</label><strong id="mSpread">87.4<em>%</em></strong></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-title">▌ NODE INSPECTOR</div>
+      <div class="inspector">
+        <div class="inspector-head"><b id="inspectTitle">NO NODE SELECTED</b><span class="live-badge">LIVE</span></div>
+        <div class="inspect-grid">
+          <div class="pink"><small>ID</small><span id="iId">—</span></div><div><small>TYPE</small><span id="iType">—</span></div><div><small>DEG</small><span id="iDeg">—</span></div><div><small>WEIGHT</small><span id="iWeight">—</span></div>
+          <div class="wide"><small>PERSON</small><span id="iPerson">—</span></div><div class="wide"><small>SEASON</small><span id="iSeason">—</span></div>
+          <div class="wide"><small>FEELING</small><span id="iFeeling">—</span></div><div class="wide"><small>TEMPERATURE</small><span id="iTemp">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="stream">
+      <div class="stream-head"><b>MUTATION STREAM</b><span id="streamCount">000</span></div>
+      <div class="stream-body" id="streamBody"></div>
+    </div>
+  </aside>
+  <main class="stage" id="stage">
+    <canvas id="graph" aria-label="Interactive live topology graph of LoveTree moments, feelings, people, seasons and shared memories"></canvas>
+    <div class="stage-strip">
+      <div class="readout"><span id="readRot">ROT: -18.0°</span><span>·</span><span id="readZoom">Z: 1.00</span><span>·</span><strong id="readHover">HOVER: none</strong></div>
+      <div class="filters">
+        <select class="mini-select" id="personFilter" aria-label="Filter by person"><option value="all">ALL PEOPLE</option><option value="p0">PERSON 01</option><option value="p1">PERSON 02</option><option value="p2">PERSON 03</option><option value="p3">PERSON 04</option></select>
+        <select class="mini-select" id="seasonFilter" aria-label="Filter by season"><option value="all">ALL SEASONS</option><option>SPRING 2026</option><option>SUMMER 2026</option><option>AUTUMN 2026</option><option>WINTER 2026</option></select>
+        <select class="mini-select" id="feelingFilter" aria-label="Filter by feeling"><option value="all">ALL FEELINGS</option><option>CURIOSITY</option><option>WONDER</option><option>RETURN</option><option>STAYING</option><option>COMFORT</option><option>JOY</option></select>
+        <button class="mini-btn active" id="liveBtn" aria-label="Pause or resume live topology">LIVE</button>
+        <button class="mini-btn" id="densityBtn" aria-label="Toggle dense or sparse view">DENSE</button>
+        <button class="mini-btn" id="resetBtn" aria-label="Reset camera">RESET</button>
+      </div>
+    </div>
+    <div class="stage-help">DRAG to rotate · SCROLL to zoom · HOVER nodes to reveal emotional links · CLICK to inspect</div>
+    <div class="tooltip" id="tooltip"></div>
+  </main>
+  <aside class="right" id="rightPanel">
+    <div class="right-title">▌ TOPOLOGY</div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="PEOPLE"><span class="icon">⌘</span><b>PEOPLE</b><small>Person cluster</small></button>
+      <button class="mode-btn" data-mode="FEELING"><span class="icon">♧</span><b>FEELING</b><small>Emotion taxonomy</small></button>
+      <button class="mode-btn" data-mode="SEASON"><span class="icon">◎</span><b>SEASON</b><small>Season rings</small></button>
+      <button class="mode-btn active" data-mode="MEMORY"><span class="icon">⌬</span><b>MEMORY</b><small>Dense archive</small></button>
+      <button class="mode-btn" data-mode="SHARED"><span class="icon">∞</span><b>SHARED</b><small>Shared routes</small></button>
+      <button class="mode-btn" data-mode="BLOOM"><span class="icon">✦</span><b>BLOOM</b><small>Growth topology</small></button>
+    </div>
+  </aside>
+</div>
+<div class="bottom">
+  <section class="console active" data-console="telemetry"><h3>▌ SYSTEM TELEMETRY</h3><div class="telemetry" id="telemetry"></div></section>
+  <section class="console" data-console="vectors"><h3>▌ RELATIONSHIP VECTORS</h3><div class="vectors" id="vectors"></div></section>
+  <section class="console" data-console="matrix"><h3>▌ MEMORY MATRIX · LIVE</h3><div class="matrix" id="matrix"></div></section>
+</div>
+<div class="bottom-tabs"><button data-tab="telemetry">TELEMETRY</button><button data-tab="vectors">VECTORS</button><button data-tab="matrix">MATRIX</button></div>
+<div class="mobile-tools"><button id="openMetrics">METRICS</button><button id="openModes">MODES</button></div>
+</div>
+<script>
+(()=>{
+'use strict';
+const TWO=Math.PI*2, NODE_COUNT=362, EDGE_TARGET=2896;
+const COLORS={person:'#f02f86',moment:'#ff5c9d',feeling:'#44cdb2',season:'#f6bf4a',place:'#4fc4e8',shared:'#8d6ceb',replay:'#ff766b',branch:'#4c79e8'};
+const TYPES=['person','moment','feeling','season','place','shared','replay','branch'];
+const FEELINGS=['CURIOSITY','WONDER','RETURN','STAYING','COMFORT','JOY'];
+const SEASONS=['SPRING 2026','SUMMER 2026','AUTUMN 2026','WINTER 2026'];
+const MOMENT_NAMES=['The first clip I saved','The voice I replayed','The scene I searched again','A quiet return','The moment that stayed','The smile behind the camera','The line I remembered','The night I came back','A feeling without a name','The cover I kept'];
+const EDGE_REASONS=['I searched for another side','The voice made me return','Curiosity became a longer path','This moment carried the feeling forward','I replayed it after the first spark','A shared route brought the memory back','The same season held both moments','The feeling returned through another scene'];
+function rngFactory(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let x=t;x=Math.imul(x^x>>>15,x|1);x^=x+Math.imul(x^x>>>7,x|61);return((x^x>>>14)>>>0)/4294967296}}
+const rnd=rngFactory(4608953), rand=(a=0,b=1)=>a+(b-a)*rnd();
+const canvas=document.getElementById('graph'), ctx=canvas.getContext('2d',{alpha:true});
+const stage=document.getElementById('stage'), tooltip=document.getElementById('tooltip');
+let dpr=1,W=0,H=0,mode='MEMORY',live=true,dense=true,zoom=1,yaw=-.32,pitch=.09,panX=0,panY=0;
+let dragging=false,lastX=0,lastY=0,hovered=-1,selected=-1,hoveredEdge=-1,progress=0,entryStart=performance.now(),lastTime=performance.now(),fpsSm=60;
+let filter={person:'all',season:'all',feeling:'all'}, autoSpin=.00003, mutationTick=0,recentNode=-1,recentUntil=0;
+const nodes=[],edges=[],adj=[]; const projectCache=[]; const streamLines=[];
+const typeCounts={person:12,moment:180,feeling:60,season:24,place:24,shared:24,replay:20,branch:18};
+function gauss(){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(TWO*v)}
+let idx=0;
+for(const type of TYPES){for(let i=0;i<typeCounts[type];i++){
+ const person=i%12, cluster=person%4, season=SEASONS[(i+cluster)%4], feeling=FEELINGS[(i*3+cluster)%FEELINGS.length];
+ const label= type==='person'?`PERSON ${String(person+1).padStart(2,'0')}`:type==='moment'?MOMENT_NAMES[i%MOMENT_NAMES.length]:type==='feeling'?feeling:type==='season'?season:type==='place'?`PLACE ${String(i%9+1).padStart(2,'0')}`:type==='shared'?`SHARED ROUTE ${i%8+1}`:type==='replay'?`REPLAY POINT ${i%10+1}`:`BRANCH SEED ${i%9+1}`;
+ nodes.push({id:`N${String(idx+1).padStart(3,'0')}`,type,label,person:`PERSON ${String(person+1).padStart(2,'0')}`,personKey:`p${cluster}`,season,feeling,cluster,weight:rand(.18,.99),temp:rand(.31,.94),x:gauss()*.55,y:gauss()*.48,z:gauss()*.34,tx:0,ty:0,tz:0,vx:0,vy:0,vz:0,phase:rand(0,TWO),r:type==='person'?5.6:type==='season'?4.8:type==='shared'?4.7:3.5+rand(0,1.6)}); adj.push([]); idx++;
+}}
+const edgeSet=new Set();
+function addEdge(a,b,kind){if(a===b)return false;if(a>b){const t=a;a=b;b=t}const k=a+'-'+b;if(edgeSet.has(k))return false;edgeSet.add(k);const e={a,b,kind:kind||'emotional link',strength:rand(.15,1),phase:rand(0,1),reason:EDGE_REASONS[Math.floor(rand(0,EDGE_REASONS.length))]};edges.push(e);adj[a].push(b);adj[b].push(a);return true}
+// semantic backbone
+const byType={};TYPES.forEach(t=>byType[t]=[]);nodes.forEach((n,i)=>byType[n.type].push(i));
+for(let i=0;i<nodes.length;i++){
+ const n=nodes[i];
+ const same=nodes.map((x,j)=>x.cluster===n.cluster?j:-1).filter(j=>j>=0&&j!==i);
+ const links=n.type==='person'?18:n.type==='shared'?16:n.type==='season'?12:7;
+ for(let k=0;k<links;k++) addEdge(i,same[Math.floor(rand(0,same.length))],n.type==='shared'?'shared path':'emotional link');
+ if(n.type==='moment'){
+   addEdge(i,byType.feeling[(i*7)%byType.feeling.length],'moment-to-feeling');
+   addEdge(i,byType.season[(i*5)%byType.season.length],'same season relation');
+ }
+ if(n.type==='shared') for(let k=0;k<4;k++) addEdge(i,byType.person[(i+k*3)%byType.person.length],'shared path');
+}
+while(edges.length<EDGE_TARGET){let a=Math.floor(rand(0,nodes.length)),b;if(rnd()<.76){const pool=nodes.map((n,i)=>n.cluster===nodes[a].cluster?i:-1).filter(i=>i>=0&&i!==a);b=pool[Math.floor(rand(0,pool.length))]}else b=Math.floor(rand(0,nodes.length));addEdge(a,b,rnd()<.25?'memory reference':'growth connection')}
+if(edges.length>EDGE_TARGET){edges.length=EDGE_TARGET;adj.forEach(a=>a.length=0);edges.forEach(e=>{adj[e.a].push(e.b);adj[e.b].push(e.a)})}
+function setTargets(nextMode){
+ mode=nextMode; document.getElementById('topMode').textContent=mode; document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+ const counts={};
+ nodes.forEach((n,i)=>{
+   let x=0,y=0,z=0;const a=(i/nodes.length)*TWO;
+   if(mode==='PEOPLE'){
+     const c=n.cluster,ca=c*TWO/4-Math.PI/2,cx=Math.cos(ca)*.74,cy=Math.sin(ca)*.56; x=cx+gaussDet(i,1)*.28;y=cy+gaussDet(i,2)*.24;z=gaussDet(i,3)*.30;if(n.type==='person'){x=cx;y=cy;z=0}
+   } else if(mode==='FEELING'){
+     const f=FEELINGS.indexOf(n.feeling),cols=3,row=Math.floor(f/cols),col=f%cols; x=(col-1)*.74+gaussDet(i,4)*.23;y=(row-.5)*.72+gaussDet(i,5)*.25;z=gaussDet(i,6)*.28;
+   } else if(mode==='SEASON'){
+     const s=SEASONS.indexOf(n.season),ang=s*TWO/4 + (i%29)/29*.95-.47,rad=.34+s*.18+Math.abs(gaussDet(i,7))*.10;x=Math.cos(ang)*rad;y=Math.sin(ang)*rad*.76;z=gaussDet(i,8)*.34;
+   } else if(mode==='SHARED'){
+     const shared=n.type==='shared'; if(shared){const aa=(i%24)/24*TWO;x=Math.cos(aa)*.22;y=Math.sin(aa)*.22;z=gaussDet(i,9)*.12}else{const side=n.cluster%2?1:-1;x=side*(.55+Math.abs(gaussDet(i,10))*.35);y=gaussDet(i,11)*.55;z=gaussDet(i,12)*.30}
+   } else if(mode==='BLOOM'){
+     const pet=n.cluster%6,pa=pet*TWO/6-Math.PI/2,local=(i%41)/41,rad=.14+local*.92;x=Math.cos(pa)*rad+Math.cos(a*3)*.08;y=Math.sin(pa)*rad*.78+Math.sin(a*2)*.06;z=Math.sin(pa*2)*.24+gaussDet(i,13)*.12;
+   } else {
+     const gx=(gaussDet(i,21)+gaussDet(i,22)+gaussDet(i,23))/3;
+     const gy=(gaussDet(i,24)+gaussDet(i,25)+gaussDet(i,26))/3;
+     const gz=(gaussDet(i,27)+gaussDet(i,28)+gaussDet(i,29))/3;
+     const ca=n.cluster*TWO/4-Math.PI/2;
+     x=gx*1.18+Math.cos(ca)*.10; y=gy*.88+Math.sin(ca)*.08; z=gz*.78;
+     if(i%61===0){x*=1.42;y*=1.35;z*=1.20}
+   }
+   n.tx=x;n.ty=y;n.tz=z;
+ });
+ logMutation(`topology.switch → ${mode}`, 'pink');
+}
+function gaussDet(i,s){const x=Math.sin((i+1)*(12.9898+s*31.7))*43758.5453;return((x-Math.floor(x))*2-1)}
+setTargets('MEMORY');
+function resize(){const r=stage.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,1.5);W=Math.max(1,r.width);H=Math.max(1,r.height);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
+window.addEventListener('resize',resize);resize();
+function passes(n){return (filter.person==='all'||n.personKey===filter.person)&&(filter.season==='all'||n.season===filter.season)&&(filter.feeling==='all'||n.feeling===filter.feeling)}
+function project(n,t){
+ const breathe=live?Math.sin(t*.0013+n.phase)*.004:0;let x=n.x*(1+breathe),y=n.y*(1+breathe),z=n.z;
+ const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);let x1=x*cy-z*sy,z1=x*sy+z*cy,y1=y*cp-z1*sp,z2=y*sp+z1*cp;
+ const base=Math.min(W,H)*1.08,depth=2.65+z2;const s=base*zoom/depth;return{x:W*.5+panX+x1*s,y:H*.50+panY+y1*s,s:s/base,z:z2,visible:depth>.35};
+}
+function updatePositions(dt){const ease=1-Math.pow(.0001,dt/1000);for(const n of nodes){n.x+=(n.tx-n.x)*ease*.58;n.y+=(n.ty-n.y)*ease*.58;n.z+=(n.tz-n.z)*ease*.58;if(live){n.x+=Math.sin(performance.now()*.00037+n.phase)*.000018*dt;n.y+=Math.cos(performance.now()*.00031+n.phase)*.000014*dt}}
+ if(live&&!dragging)yaw+=autoSpin*dt;
+}
+function draw(t){ctx.clearRect(0,0,W,H);const entry=Math.min(1,(t-entryStart)/2200);progress=entry<1?easeOut(entry):1;
+ for(let i=0;i<nodes.length;i++)projectCache[i]=project(nodes[i],t);
+ const visibleLimit=dense?nodes.length:190;
+ // edges, batched
+ ctx.lineCap='round';
+ ctx.beginPath();let ordinary=0;
+ for(let i=0;i<edges.length;i++){
+   const e=edges[i];if(e.a>=visibleLimit||e.b>=visibleLimit)continue;const a=projectCache[e.a],b=projectCache[e.b];if(!a.visible||!b.visible)continue;const reveal=Math.min(1,Math.max(0,(progress*1.15-(i/edges.length)*.36)/.64));if(reveal<=0)continue;
+   const relevant=passes(nodes[e.a])&&passes(nodes[e.b]);const active=hovered>=0&&(e.a===hovered||e.b===hovered)||selected>=0&&(e.a===selected||e.b===selected);
+   if(active)continue;ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ordinary++;
+ }
+ ctx.strokeStyle='rgba(238,72,141,'+(filter.person==='all'&&filter.season==='all'&&filter.feeling==='all'?.105:.055)+')';ctx.lineWidth=.65;ctx.stroke();
+ // active edges + energy packets
+ for(let i=0;i<edges.length;i++){
+   const e=edges[i];if(e.a>=visibleLimit||e.b>=visibleLimit)continue;const a=projectCache[e.a],b=projectCache[e.b];if(!a.visible||!b.visible)continue;const active=hovered>=0&&(e.a===hovered||e.b===hovered)||selected>=0&&(e.a===selected||e.b===selected);if(!active)continue;
+   ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(232,31,119,.78)';ctx.lineWidth=1.35;ctx.stroke();
+   const q=((t*.00024*e.strength+e.phase)%1);const ex=a.x+(b.x-a.x)*q,ey=a.y+(b.y-a.y)*q;ctx.beginPath();ctx.arc(ex,ey,2.1,0,TWO);ctx.fillStyle='#ff2d83';ctx.shadowColor='#ff2d83';ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;
+ }
+ // sort nodes by depth
+ const order=Array.from({length:visibleLimit},(_,i)=>i).sort((a,b)=>projectCache[a].z-projectCache[b].z);
+ for(const i of order){const n=nodes[i],p=projectCache[i];if(!p.visible)continue;const nr=Math.max(2.2,n.r*(.72+p.s*.5));const reveal=Math.min(1,Math.max(0,(progress*1.25-(i/nodes.length)*.45)/.55));if(reveal<=0)continue;const rel=passes(n),dim=rel?1:.13;const isHot=i===hovered||i===selected, recent=i===recentNode&&t<recentUntil;
+   ctx.globalAlpha=reveal*dim;
+   if(isHot||recent){ctx.beginPath();ctx.arc(p.x,p.y,nr*(isHot?2.3:2.0)+Math.sin(t*.006+n.phase)*1.4,0,TWO);ctx.fillStyle=isHot?'rgba(240,47,134,.12)':'rgba(68,205,178,.12)';ctx.fill()}
+   ctx.beginPath();ctx.arc(p.x,p.y,nr+1.9,0,TWO);ctx.fillStyle='rgba(255,255,255,.94)';ctx.fill();ctx.lineWidth=isHot?1.8:.9;ctx.strokeStyle=isHot?'#ec257b':'rgba(235,96,154,.65)';ctx.stroke();
+   ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1.4,nr*.54),0,TWO);ctx.fillStyle=COLORS[n.type];ctx.shadowColor=isHot?COLORS[n.type]:'transparent';ctx.shadowBlur=isHot?12:0;ctx.fill();ctx.shadowBlur=0;
+   if((isHot||n.type==='person'||n.type==='season'||(i%27===0&&zoom>1.05))&&reveal>.7){ctx.font=`${isHot?9:7}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')}`;ctx.fillStyle='#5b4b55';ctx.textAlign='center';ctx.fillText(n.id,p.x,p.y-nr-4)}
+   ctx.globalAlpha=1;
+ }
+ // title chip for selected mode
+ if(progress<1){ctx.globalAlpha=1-progress;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;ctx.fillStyle='#e12b79';ctx.font='700 12px var(--mono)'}
+}
+function easeOut(x){return 1-Math.pow(1-x,3)}
+function animate(t){const dt=Math.min(40,t-lastTime||16);lastTime=t;fpsSm=fpsSm*.92+(1000/dt)*.08;updatePositions(dt);draw(t);if(live||dragging||performance.now()-entryStart<2500||modeTransitioning())requestAnimationFrame(animate);else requestAnimationFrame(animate)}
+function modeTransitioning(){for(let i=0;i<10;i++){const n=nodes[i];if(Math.abs(n.x-n.tx)+Math.abs(n.y-n.ty)+Math.abs(n.z-n.tz)>.005)return true}return false}
+requestAnimationFrame(animate);
+function findHover(x,y){let best=-1,bd=16*16;for(let i=0;i<(dense?nodes.length:190);i++){const p=projectCache[i];const dx=p.x-x,dy=p.y-y,d=dx*dx+dy*dy;if(d<bd){bd=d;best=i}}return best}
+function findEdge(x,y){let best=-1,bd=36;for(let i=0;i<edges.length;i+=3){const e=edges[i],a=projectCache[e.a],b=projectCache[e.b];if(!a||!b)continue;const vx=b.x-a.x,vy=b.y-a.y,l2=vx*vx+vy*vy;if(l2<1)continue;let q=((x-a.x)*vx+(y-a.y)*vy)/l2;q=Math.max(0,Math.min(1,q));const dx=x-(a.x+q*vx),dy=y-(a.y+q*vy),d=dx*dx+dy*dy;if(d<bd){bd=d;best=i}}return best}
+function pointerMove(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(dragging){const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;yaw+=dx*.006;pitch=Math.max(-.55,Math.min(.55,pitch+dy*.004));updateReadout();return}
+ hovered=findHover(x,y);hoveredEdge=hovered<0?findEdge(x,y):-1;updateTooltip(e.clientX-r.left,e.clientY-r.top);document.getElementById('readHover').textContent='HOVER: '+(hovered>=0?nodes[hovered].id:hoveredEdge>=0?'EDGE '+hoveredEdge:'none')}
+function updateTooltip(x,y){if(hovered>=0){const n=nodes[hovered];tooltip.innerHTML=`<b>${n.label}</b><small>${n.type.toUpperCase()} · ${n.feeling} · ${adj[hovered].length} LINKS</small>`;tooltip.style.left=Math.min(W-235,x)+'px';tooltip.style.top=Math.max(24,Math.min(H-24,y))+'px';tooltip.style.opacity=1}else if(hoveredEdge>=0){const e=edges[hoveredEdge];tooltip.innerHTML=`<b>${e.kind}</b><small>${e.reason}</small>`;tooltip.style.left=Math.min(W-235,x)+'px';tooltip.style.top=Math.max(24,Math.min(H-24,y))+'px';tooltip.style.opacity=1}else tooltip.style.opacity=0}
+canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',e=>{dragging=false;try{canvas.releasePointerCapture(e.pointerId)}catch{}});canvas.addEventListener('pointercancel',()=>dragging=false);canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerleave',()=>{if(!dragging){hovered=-1;hoveredEdge=-1;tooltip.style.opacity=0}});canvas.addEventListener('click',e=>{if(hovered>=0){selected=hovered;updateInspector(nodes[selected],selected);logMutation(`inspect.node → ${nodes[selected].id}`, 'pink');if(innerWidth<=900){document.getElementById('leftPanel').classList.add('drawer','open')}}});canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.58,Math.min(2.5,zoom*Math.exp(-e.deltaY*.0011)));updateReadout()},{passive:false});
+function updateReadout(){document.getElementById('readRot').textContent=`ROT: ${(yaw*180/Math.PI).toFixed(1)}°`;document.getElementById('readZoom').textContent=`Z: ${zoom.toFixed(2)}`}
+function updateInspector(n,i){document.getElementById('inspectTitle').textContent=n.label;document.getElementById('iId').textContent=n.id;document.getElementById('iType').textContent=n.type;document.getElementById('iDeg').textContent=adj[i].length;document.getElementById('iWeight').textContent=n.weight.toFixed(2);document.getElementById('iPerson').textContent=n.person;document.getElementById('iSeason').textContent=n.season;document.getElementById('iFeeling').textContent=n.feeling;document.getElementById('iTemp').textContent=Math.round(n.temp*100)+'%'}
+function logMutation(text,cls=''){streamLines.unshift(`<span class="${cls}">${new Date().toISOString().slice(11,19)} ${text}</span>`);if(streamLines.length>25)streamLines.pop();document.getElementById('streamBody').innerHTML=streamLines.join('\n');document.getElementById('streamCount').textContent=String(++mutationTick).padStart(3,'0')}
+['heartbeat · memory graph stable','edge.strengthen · return path +0.18','moment.ingest · new saved clip','season.cluster · spring relation recalibrated','bloom.detected · cluster 03','shared.route · bridge updated','emotion.entropy · wonder rising'].forEach((s,i)=>logMutation(s,i%3===0?'pink':''));
+function fillTelemetry(){const arr=['[SYNC] heartbeat · memory=34.8MB · queue=04','[OK] topology.rebuild · MEMORY · press=52','[INFO] heartbeat · memory=35.1MB · queue=11','[SYNC] edge.rewire · return-path · 08 links','[OK] bloom.index · 0.84 · stable','[INFO] shared-route · 04 bridges active','[SYNC] recall-pressure · 0.61 · nominal','[OK] emotion-cluster · WONDER · converged'];document.getElementById('telemetry').innerHTML=arr.map((s,i)=>`<span class="${i%3===1?'ok':i%4===0?'pink':''}">${s}</span>`).join('\n')}
+function fillVectors(){let s='';for(let i=0;i<22;i++)s+=`V-${nodes[(i*17)%nodes.length].id}→${nodes[(i*31+7)%nodes.length].id} (${gaussDet(i,14).toFixed(3)}, ${gaussDet(i,15).toFixed(3)}, ${gaussDet(i,16).toFixed(3)}) |F|=${(Math.abs(gaussDet(i,17))*2.8).toFixed(2)}\n`;document.getElementById('vectors').textContent=s}
+function buildMatrix(){const m=document.getElementById('matrix');m.innerHTML='';for(let i=0;i<70;i++){const c=document.createElement('div');c.className='cell';c.textContent=Math.floor(rand(0,256)).toString(16).toUpperCase().padStart(2,'0');m.appendChild(c)}}
+fillTelemetry();fillVectors();buildMatrix();
+function liveUpdate(){if(!live)return;const t=performance.now();document.getElementById('mDensity').innerHTML=(4.43+Math.sin(t*.0008)*.09).toFixed(2)+'<em>%</em>';document.getElementById('mCluster').innerHTML=(16.1+Math.sin(t*.00043+1)*.7).toFixed(1)+'<em>%</em>';document.getElementById('mEntropy').textContent=(1.18+Math.sin(t*.00065)*.025).toFixed(3);document.getElementById('mLatency').innerHTML=(.82+Math.abs(Math.sin(t*.0011))*.28).toFixed(1)+'<em>ms</em>';document.getElementById('mPeople').textContent=12+(Math.sin(t*.00022)>0.87?1:0);document.getElementById('mSpread').innerHTML=(86.9+Math.sin(t*.00051)*1.4).toFixed(1)+'<em>%</em>';document.getElementById('fps').textContent=Math.max(1,Math.min(60,Math.round(fpsSm)));document.querySelectorAll('.cell').forEach((c,i)=>{if(rnd()<.035){c.classList.toggle('hot');if(rnd()<.4)c.classList.toggle('warm');c.textContent=Math.floor(rand(0,256)).toString(16).toUpperCase().padStart(2,'0')}});if(rnd()<.22){recentNode=Math.floor(rand(0,nodes.length));recentUntil=t+1600;logMutation(['moment.ingest · recent spark','edge.rewire · emotional link','memory.sync · route stable','bloom.detected · season cluster'][Math.floor(rand(0,4))],rnd()<.45?'pink':'')}}
+setInterval(liveUpdate,720);
+function applyFilter(){logMutation(`filter.apply → ${filter.person}/${filter.season}/${filter.feeling}`,'pink')}
+document.getElementById('personFilter').addEventListener('change',e=>{filter.person=e.target.value;applyFilter()});document.getElementById('seasonFilter').addEventListener('change',e=>{filter.season=e.target.value;applyFilter()});document.getElementById('feelingFilter').addEventListener('change',e=>{filter.feeling=e.target.value;applyFilter()});
+document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{setTargets(b.dataset.mode);if(innerWidth<=900)document.getElementById('rightPanel').classList.remove('open')}));
+document.getElementById('liveBtn').addEventListener('click',()=>{live=!live;document.getElementById('liveBtn').textContent=live?'LIVE':'PAUSED';document.getElementById('liveBtn').classList.toggle('active',live);document.getElementById('systemText').textContent=live?'SYSTEM ONLINE · MEMORY KERNEL 1.0.0':'SYSTEM PAUSED · INSPECTION HOLD';logMutation(live?'system.resume':'system.pause','pink')});document.getElementById('densityBtn').addEventListener('click',()=>{dense=!dense;document.getElementById('densityBtn').textContent=dense?'DENSE':'SPARSE';logMutation(`density.view → ${dense?'DENSE':'SPARSE'}`,'pink')});document.getElementById('resetBtn').addEventListener('click',()=>{yaw=-.32;pitch=.09;zoom=1;panX=panY=0;updateReadout();logMutation('camera.reset')});
+document.getElementById('openMetrics').addEventListener('click',()=>{document.getElementById('leftPanel').classList.toggle('open');document.getElementById('leftPanel').classList.add('drawer');document.getElementById('rightPanel').classList.remove('open')});document.getElementById('openModes').addEventListener('click',()=>{document.getElementById('rightPanel').classList.toggle('open');document.getElementById('rightPanel').classList.add('drawer');document.getElementById('leftPanel').classList.remove('open')});
+document.querySelectorAll('.bottom-tabs button').forEach(b=>b.addEventListener('click',()=>document.querySelectorAll('.console').forEach(c=>c.classList.toggle('active',c.dataset.console===b.dataset.tab))));
+// query-state support for capture / QA
+const qs=new URLSearchParams(location.search);if(qs.get('mode'))setTargets(qs.get('mode').toUpperCase());if(qs.get('state')==='initial'){entryStart=performance.now()+100000;progress=0;live=false}else if(qs.get('state')==='inspect'){selected=12;updateInspector(nodes[selected],selected)}else if(qs.get('state')==='hover'){hovered=26}else if(qs.get('state')==='zoom'){zoom=1.75;yaw=.42;pitch=-.08}if(qs.get('live')==='0')live=false;
+updateReadout();document.getElementById('nodeCount').textContent=nodes.length;document.getElementById('edgeCount').textContent=edges.length;
+window.__topologyLab={setMode:setTargets,setLive:v=>{live=!!v},selectNode:i=>{selected=i;updateInspector(nodes[i],i)},hoverNode:i=>{hovered=i;if(i<0){tooltip.style.opacity=0;document.getElementById('readHover').textContent='HOVER: none';return}const p=projectCache[i];if(p){updateTooltip(p.x,p.y);document.getElementById('readHover').textContent='HOVER: '+nodes[i].id}},setCamera:o=>{if(o.yaw!=null)yaw=o.yaw;if(o.pitch!=null)pitch=o.pitch;if(o.zoom!=null)zoom=o.zoom;updateReadout()},setEntry:p=>{entryStart=performance.now()-Math.max(0,Math.min(1,p))*2200},screenPosition:i=>projectCache[i],diagnostics:()=>({nodes:nodes.length,edges:edges.length,mode,live,dense,selected,hovered,zoom,yaw,pitch,externalRequests:0,version:'v1'})};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoveTree · Video Memory Lore Map</title>
+  <style>
+    :root {
+      --bg: #090c0f;
+      --panel: #0e1216;
+      --panel-2: #12171d;
+      --line: rgba(255,255,255,.075);
+      --ink: #f5f6f7;
+      --muted: #737d86;
+      --pink: #ff4e91;
+      --mint: #39d5b1;
+      --gold: #ffb539;
+      --violet: #966cff;
+      --blue: #4d8dff;
+      --felix: #ff4e91;
+      --juyeon: #39d5b1;
+      --junhyuk: #ffb539;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -.02em;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+
+    .app {
+      height: 100%;
+      min-height: 650px;
+      display: grid;
+      grid-template-rows: 62px minmax(0, 1fr);
+      background:
+        radial-gradient(circle at 37% 46%, rgba(57,213,177,.04), transparent 31%),
+        radial-gradient(circle at 73% 66%, rgba(255,78,145,.035), transparent 27%),
+        var(--bg);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      min-width: 0;
+      padding: 0 17px 0 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9,12,15,.93);
+      backdrop-filter: blur(18px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 210px;
+      color: #fff;
+      text-decoration: none;
+      font-family: Georgia, "Noto Serif KR", serif;
+      font-size: 20px;
+      letter-spacing: -.08em;
+    }
+    .brand-mark {
+      position: relative;
+      width: 29px;
+      height: 37px;
+      display: inline-block;
+      transform: rotate(-6deg);
+    }
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      width: 2px;
+      height: 27px;
+      border-radius: 999px;
+      background: var(--mint);
+      transform: rotate(15deg);
+      box-shadow: 0 0 11px rgba(57,213,177,.55);
+    }
+    .brand-mark::after {
+      content: "✿";
+      position: absolute;
+      left: 0;
+      top: -4px;
+      color: var(--pink);
+      font-size: 24px;
+      text-shadow: 0 0 16px rgba(255,78,145,.62);
+    }
+    .brand small {
+      margin-left: 2px;
+      color: #6f7880;
+      font: 700 8px/1 Inter, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .summary {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      color: #59636c;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+    .summary span + span::before { content: "·"; padding: 0 8px; color: #2d353c; }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .mode-switch {
+      display: flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0c1014;
+    }
+    .mode-switch button {
+      min-width: 62px;
+      height: 31px;
+      border: 0;
+      border-radius: 6px;
+      color: #626b73;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+    .mode-switch button.active { color: #e9edf0; background: #191f25; box-shadow: inset 0 0 0 1px rgba(255,255,255,.045); }
+    .icon-button {
+      width: 37px;
+      height: 37px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: #737d86;
+      background: #0d1115;
+      transition: .2s ease;
+    }
+    .icon-button:hover { color: #fff; border-color: rgba(255,255,255,.18); }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 304px;
+    }
+    .map-shell { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+    .map-shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 48%, transparent 42%, rgba(2,4,6,.36) 100%);
+      z-index: 7;
+    }
+    .map-title {
+      position: absolute;
+      left: 24px;
+      top: 21px;
+      z-index: 12;
+      pointer-events: none;
+    }
+    .map-title strong {
+      display: block;
+      color: #d8dde1;
+      font-family: Georgia, "Noto Serif KR", serif;
+      font-size: 17px;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+    .map-title span {
+      display: block;
+      margin-top: 5px;
+      color: #505a63;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .hint {
+      position: absolute;
+      left: 50%;
+      top: 19px;
+      z-index: 12;
+      translate: -50% 0;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 999px;
+      color: #535e67;
+      background: rgba(11,15,19,.78);
+      font-size: 9px;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity .5s ease;
+    }
+    .hint.hide { opacity: 0; }
+    .map-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+    .map-viewport.dragging { cursor: grabbing; }
+    .map-world {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+    .dust { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .dust i {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: .12;
+      animation: drift var(--dur) ease-in-out infinite alternate;
+    }
+    @keyframes drift { to { translate: var(--dx) var(--dy); opacity: .26; } }
+
+    #edgeLayer { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .edge {
+      fill: none;
+      stroke: #39444e;
+      stroke-width: 1.15;
+      vector-effect: non-scaling-stroke;
+      opacity: .44;
+      transition: opacity .35s ease, stroke .35s ease, stroke-width .35s ease;
+    }
+    .edge.memory { stroke-dasharray: 3 7; animation: dash 11s linear infinite; }
+    .edge.backbone { stroke-width: 1.45; opacity: .55; }
+    .edge.muted { opacity: .045; }
+    .edge.active { opacity: .95; stroke-width: 2; filter: drop-shadow(0 0 4px currentColor); }
+    @keyframes dash { to { stroke-dashoffset: -100; } }
+
+    .anchor {
+      position: absolute;
+      z-index: 4;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      translate: -50% -50%;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 50%;
+      color: #fff;
+      background: #151b21;
+      box-shadow: 0 0 0 6px rgba(255,255,255,.022), 0 0 24px color-mix(in srgb, currentColor 32%, transparent);
+      font-size: 7px;
+      font-weight: 900;
+      transition: left .75s cubic-bezier(.2,.8,.2,1), top .75s cubic-bezier(.2,.8,.2,1), opacity .3s ease, scale .3s ease;
+    }
+    .anchor::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      top: 34px;
+      translate: -50% 0;
+      color: #5d6871;
+      font-size: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .anchor.root {
+      width: 43px;
+      height: 43px;
+      border-color: rgba(255,255,255,.6);
+      color: #fff;
+      background: radial-gradient(circle at 34% 25%, #ffdae9, #ff4e91 42%, #8837c8 94%);
+      box-shadow: 0 0 0 7px rgba(255,255,255,.025), 0 0 32px rgba(255,78,145,.38);
+      font-size: 17px;
+    }
+    .anchor.root::after { top: 51px; color: #aab1b7; font: 500 10px Georgia, serif; }
+    .anchor.hidden { opacity: 0; scale: .55; pointer-events: none; }
+
+    .memory-card {
+      --accent: var(--pink);
+      position: absolute;
+      z-index: 5;
+      width: 198px;
+      min-height: 104px;
+      padding: 12px 13px 10px;
+      translate: -50% -50%;
+      border: 1px solid rgba(255,255,255,.09);
+      border-left-color: color-mix(in srgb, var(--accent) 68%, transparent);
+      border-radius: 7px;
+      color: #cdd2d6;
+      background: linear-gradient(140deg, rgba(20,25,30,.97), rgba(13,17,21,.95));
+      box-shadow: 0 13px 32px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.025);
+      text-align: left;
+      opacity: 0;
+      transform: translateY(9px) scale(.97);
+      transition:
+        left .78s cubic-bezier(.2,.8,.2,1),
+        top .78s cubic-bezier(.2,.8,.2,1),
+        opacity .32s ease,
+        transform .25s ease,
+        filter .3s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+    }
+    .memory-card.arrived { opacity: 1; transform: none; }
+    .memory-card:hover, .memory-card.selected {
+      z-index: 9;
+      border-color: color-mix(in srgb, var(--accent) 70%, #ffffff 12%);
+      box-shadow: 0 15px 40px rgba(0,0,0,.34), 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 14%, transparent);
+      transform: translateY(-3px);
+    }
+    .memory-card.muted { opacity: .075; filter: grayscale(.8); transform: scale(.96); pointer-events: auto; }
+    .card-top { display: flex; align-items: center; gap: 7px; }
+    .kind-dot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--accent); box-shadow: 0 0 9px var(--accent); }
+    .kind {
+      color: var(--accent);
+      font-size: 7px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .short-badge { margin-left: auto; color: #515b64; font-size: 7px; font-weight: 800; }
+    .memory-card h3 {
+      margin: 8px 0 6px;
+      overflow: hidden;
+      color: #e7eaec;
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .memory-card p {
+      height: 25px;
+      margin: 0;
+      overflow: hidden;
+      color: #66717a;
+      font-size: 8px;
+      line-height: 1.55;
+    }
+    .card-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; color: #4f5962; font-size: 7px; }
+    .card-meta span:last-child { margin-left: auto; }
+    .card-meta i { display: inline-block; width: 5px; height: 5px; margin-right: 4px; border-radius: 50%; background: var(--accent); }
+
+    .zoom-controls {
+      position: absolute;
+      left: 19px;
+      bottom: 19px;
+      z-index: 12;
+      display: grid;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(13,17,21,.9);
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+    }
+    .zoom-controls button {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      color: #68737c;
+      background: transparent;
+      font-size: 15px;
+    }
+    .zoom-controls button:last-child { border-bottom: 0; font-size: 10px; }
+    .zoom-controls button:hover { color: #fff; background: rgba(255,255,255,.045); }
+    .zoom-readout {
+      position: absolute;
+      left: 59px;
+      bottom: 25px;
+      z-index: 12;
+      color: #47515a;
+      font: 700 8px/1 monospace;
+    }
+    .view-status {
+      position: absolute;
+      left: 50%;
+      bottom: 17px;
+      z-index: 12;
+      translate: -50% 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 31px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 999px;
+      color: #58636c;
+      background: rgba(11,15,19,.86);
+      font-size: 8px;
+      pointer-events: none;
+    }
+    .view-status i { width: 5px; height: 5px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 9px var(--mint); }
+
+    .structure {
+      position: relative;
+      z-index: 15;
+      min-width: 0;
+      overflow: hidden;
+      border-left: 1px solid var(--line);
+      background: rgba(13,17,21,.95);
+      box-shadow: -22px 0 50px rgba(0,0,0,.14);
+    }
+    .structure-head { height: 69px; padding: 18px 18px 12px; border-bottom: 1px solid rgba(255,255,255,.055); }
+    .structure-head h2 { margin: 0; color: #cdd2d6; font-size: 12px; }
+    .structure-head p { margin: 5px 0 0; color: #4d5760; font-size: 8px; }
+    .structure-body { height: calc(100% - 69px); overflow: auto; padding: 11px 0 30px; scrollbar-width: thin; scrollbar-color: #252c32 transparent; }
+    .tree-section { margin-bottom: 3px; }
+    .tree-row {
+      --row-accent: transparent;
+      position: relative;
+      width: 100%;
+      min-height: 31px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px 5px calc(15px + var(--depth, 0) * 15px);
+      border: 0;
+      color: #6f7982;
+      background: transparent;
+      text-align: left;
+      font-size: 9px;
+      transition: .18s ease;
+    }
+    .tree-row::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: transparent;
+    }
+    .tree-row:hover { color: #c8cdd1; background: rgba(255,255,255,.025); }
+    .tree-row.active { color: #e7eaec; background: color-mix(in srgb, var(--row-accent) 10%, transparent); }
+    .tree-row.active::before { background: var(--row-accent); box-shadow: 0 0 12px var(--row-accent); }
+    .caret { width: 10px; color: #434d55; font-size: 8px; text-align: center; transition: rotate .18s ease; }
+    .tree-section.closed > .tree-row .caret { rotate: -90deg; }
+    .folder { color: #77704e; font-size: 12px; }
+    .file-icon { color: var(--row-accent); font-size: 8px; }
+    .tree-row .label { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .tree-count { margin-left: auto; color: #3f4951; font: 700 8px monospace; }
+    .tree-children { overflow: hidden; max-height: 340px; transition: max-height .25s ease, opacity .2s ease; }
+    .tree-section.closed > .tree-children { max-height: 0; opacity: 0; }
+    .tree-divider { height: 1px; margin: 10px 14px; background: rgba(255,255,255,.045); }
+    .legend { display: flex; gap: 10px; padding: 7px 16px 13px; color: #4c565f; font-size: 7px; }
+    .legend span { display: flex; align-items: center; gap: 4px; }
+    .legend i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+
+    .scrim {
+      position: fixed;
+      inset: 62px 304px 0 0;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(3,5,7,.5);
+      backdrop-filter: blur(2px);
+      transition: opacity .2s ease;
+    }
+    .scrim.open { opacity: 1; pointer-events: auto; }
+    .detail {
+      --detail-accent: var(--pink);
+      position: fixed;
+      left: calc((100% - 304px) / 2);
+      top: 50%;
+      z-index: 31;
+      width: min(475px, calc(100vw - 352px));
+      max-height: calc(100vh - 100px);
+      overflow: auto;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.085);
+      border-top-color: color-mix(in srgb, var(--detail-accent) 58%, transparent);
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(20,25,30,.99), rgba(13,17,21,.99));
+      box-shadow: 0 30px 90px rgba(0,0,0,.58), 0 0 35px color-mix(in srgb, var(--detail-accent) 8%, transparent);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -46%) scale(.97);
+      transition: opacity .22s ease, transform .28s cubic-bezier(.2,.8,.2,1);
+    }
+    .detail.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+    .detail-close {
+      position: absolute;
+      right: 13px;
+      top: 13px;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 50%;
+      color: #6a747c;
+      background: rgba(255,255,255,.025);
+    }
+    .detail-kicker { color: var(--detail-accent); font-size: 8px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+    .detail h2 { margin: 9px 39px 7px 0; color: #edf0f2; font-size: 22px; letter-spacing: -.045em; }
+    .detail-meta { display: flex; gap: 13px; color: #59636c; font-size: 8px; }
+    .detail-meta span { display: flex; align-items: center; gap: 5px; }
+    .detail-meta i { width: 5px; height: 5px; border-radius: 50%; background: var(--detail-accent); }
+    .video-preview {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      margin-top: 17px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: #090c0f;
+    }
+    .video-preview.vertical { aspect-ratio: 9 / 12; max-height: 410px; width: min(290px, 100%); margin-inline: auto; }
+    .video-preview img, .video-preview iframe { display: block; width: 100%; height: 100%; border: 0; object-fit: cover; }
+    .video-preview::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 58%, rgba(4,6,8,.72)); }
+    .video-preview.playing::after { display: none; }
+    .preview-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 2;
+      translate: -50% -50%;
+      width: 55px;
+      height: 55px;
+      padding-left: 4px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 50%;
+      color: #111519;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 12px 30px rgba(0,0,0,.34);
+      font-size: 17px;
+    }
+    .preview-label { position: absolute; left: 12px; bottom: 10px; z-index: 2; color: rgba(255,255,255,.85); font-size: 8px; font-weight: 800; letter-spacing: .1em; }
+    .detail-note { margin: 15px 0 0; color: #747e87; font-size: 10px; line-height: 1.7; }
+    .detail-footer { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+    .detail-footer a, .detail-footer button {
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      border: 1px solid rgba(255,255,255,.085);
+      border-radius: 7px;
+      color: #717b83;
+      background: rgba(255,255,255,.025);
+      text-decoration: none;
+      font-size: 9px;
+      font-weight: 800;
+    }
+    .detail-footer .primary { flex: 1; color: #111519; border-color: var(--detail-accent); background: var(--detail-accent); }
+    .toast {
+      position: fixed;
+      left: calc((100% - 304px) / 2);
+      bottom: 55px;
+      z-index: 40;
+      translate: -50% 16px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      color: #aab1b7;
+      background: rgba(18,23,29,.94);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+      font-size: 9px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s ease;
+    }
+    .toast.show { opacity: 1; translate: -50% 0; }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: minmax(0, 1fr) 250px; }
+      .brand { min-width: auto; }
+      .summary span:nth-child(n+3) { display: none; }
+      .structure { width: 250px; }
+      .scrim { right: 250px; }
+      .detail { left: calc((100% - 250px) / 2); width: min(440px, calc(100vw - 290px)); }
+      .toast { left: calc((100% - 250px) / 2); }
+      .memory-card { width: 176px; }
+    }
+    @media (max-width: 720px) {
+      body { overflow: auto; }
+      .app { min-width: 680px; }
+      .summary { display: none; }
+      .mode-switch button { min-width: 52px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="러브트리 홈">
+        <i class="brand-mark" aria-hidden="true"></i><span>러브트리</span><small>LoveTree</small>
+      </a>
+      <div class="summary" aria-label="기억 지도 요약">
+        <span>9 moments</span><span>3 people</span><span>4 feelings</span><span>2026 memory map</span>
+      </div>
+      <div class="top-actions">
+        <div class="mode-switch" aria-label="지도 배치 방식">
+          <button type="button" class="active" data-mode="people">사람별</button>
+          <button type="button" data-mode="emotion">감정별</button>
+        </div>
+        <button class="icon-button" id="replayIntro" type="button" title="기억 카드 다시 펼치기" aria-label="기억 카드 다시 펼치기">✦</button>
+        <button class="icon-button" id="resetTop" type="button" title="전체 지도 보기" aria-label="전체 지도 보기">⌖</button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div class="map-shell">
+        <div class="map-title"><strong>나의 영상 기억 지도</strong><span>LoveTree · video memory lore</span></div>
+        <div class="hint" id="hint">빈 화면을 드래그하고 · 휠로 확대해 보세요</div>
+        <div class="map-viewport" id="mapViewport" aria-label="영상 기억 관계 지도">
+          <div class="map-world" id="mapWorld">
+            <div class="dust" id="dust" aria-hidden="true"></div>
+            <svg id="edgeLayer" aria-hidden="true"></svg>
+            <div id="anchorLayer"></div>
+            <div id="cardLayer"></div>
+          </div>
+        </div>
+        <div class="zoom-controls" aria-label="지도 확대 축소">
+          <button type="button" id="zoomIn" aria-label="확대">＋</button>
+          <button type="button" id="zoomOut" aria-label="축소">−</button>
+          <button type="button" id="resetView" aria-label="전체 보기">⌂</button>
+        </div>
+        <span class="zoom-readout" id="zoomReadout">100%</span>
+        <div class="view-status"><i></i><span id="viewStatus">사람별 연결 · 9개의 영상 기억</span></div>
+      </div>
+
+      <aside class="structure" aria-label="기억 구조">
+        <div class="structure-head"><h2>기억 구조</h2><p>사람과 감정의 경로를 눌러 장면을 골라보세요.</p></div>
+        <div class="structure-body" id="structureBody">
+          <div class="legend"><span style="color:var(--pink)"><i></i>설렘</span><span style="color:var(--gold)"><i></i>무대</span><span style="color:var(--violet)"><i></i>위로</span><span style="color:var(--mint)"><i></i>발견</span></div>
+
+          <div class="tree-section">
+            <button class="tree-row active" style="--depth:0;--row-accent:#dce2e6" data-filter="all" type="button">
+              <span class="caret">⌄</span><span class="folder">◇</span><span class="label">나의 LoveTree</span><span class="tree-count">9</span>
+            </button>
+          </div>
+
+          <div class="tree-divider"></div>
+
+          <div class="tree-section person-section" data-section="felix">
+            <button class="tree-row" style="--depth:0;--row-accent:var(--felix)" data-filter="person:felix" type="button">
+              <span class="caret">⌄</span><span class="folder">▱</span><span class="label">스트레이키즈 필릭스</span><span class="tree-count">3</span>
+            </button>
+            <div class="tree-children" id="tree-felix"></div>
+          </div>
+          <div class="tree-section person-section" data-section="juyeon">
+            <button class="tree-row" style="--depth:0;--row-accent:var(--juyeon)" data-filter="person:juyeon" type="button">
+              <span class="caret">⌄</span><span class="folder">▱</span><span class="label">더보이즈 이주연</span><span class="tree-count">3</span>
+            </button>
+            <div class="tree-children" id="tree-juyeon"></div>
+          </div>
+          <div class="tree-section person-section" data-section="junhyuk">
+            <button class="tree-row" style="--depth:0;--row-accent:var(--junhyuk)" data-filter="person:junhyuk" type="button">
+              <span class="caret">⌄</span><span class="folder">▱</span><span class="label">배우 이준혁</span><span class="tree-count">3</span>
+            </button>
+            <div class="tree-children" id="tree-junhyuk"></div>
+          </div>
+
+          <div class="tree-divider"></div>
+
+          <div class="tree-section emotion-section">
+            <button class="tree-row" style="--depth:0;--row-accent:#76818a" type="button" data-toggle-section>
+              <span class="caret">⌄</span><span class="folder">▱</span><span class="label">감정 가지</span><span class="tree-count">4</span>
+            </button>
+            <div class="tree-children">
+              <button class="tree-row" style="--depth:1;--row-accent:var(--pink)" data-filter="emotion:설렘" type="button"><span class="caret"></span><span class="file-icon">●</span><span class="label">설렘</span><span class="tree-count">2</span></button>
+              <button class="tree-row" style="--depth:1;--row-accent:var(--gold)" data-filter="emotion:무대" type="button"><span class="caret"></span><span class="file-icon">●</span><span class="label">무대</span><span class="tree-count">3</span></button>
+              <button class="tree-row" style="--depth:1;--row-accent:var(--violet)" data-filter="emotion:위로" type="button"><span class="caret"></span><span class="file-icon">●</span><span class="label">위로</span><span class="tree-count">2</span></button>
+              <button class="tree-row" style="--depth:1;--row-accent:var(--mint)" data-filter="emotion:발견" type="button"><span class="caret"></span><span class="file-icon">●</span><span class="label">발견</span><span class="tree-count">2</span></button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+  <article class="detail" id="detail" aria-hidden="true" aria-label="영상 기억 상세">
+    <button class="detail-close" id="detailClose" type="button" aria-label="닫기">×</button>
+    <div class="detail-kicker" id="detailKicker">LOVE MOMENT</div>
+    <h2 id="detailTitle">기억을 선택해 보세요</h2>
+    <div class="detail-meta" id="detailMeta"></div>
+    <div class="video-preview" id="videoPreview"></div>
+    <p class="detail-note" id="detailNote"></p>
+    <div class="detail-footer">
+      <button type="button" class="primary" id="detailPlay">이 영상 재생</button>
+      <a href="#" id="sourceLink" target="_blank" rel="noopener">원본 링크 ↗</a>
+    </div>
+  </article>
+  <div class="toast" id="toast">관련 기억만 밝게 표시했어요.</div>
+
+  <script>
+    const PEOPLE = {
+      felix: { name: '필릭스', full: '스트레이키즈 필릭스', color: '#ff4e91', initial: 'F' },
+      juyeon: { name: '이주연', full: '더보이즈 이주연', color: '#39d5b1', initial: 'J' },
+      junhyuk: { name: '이준혁', full: '배우 이준혁', color: '#ffb539', initial: 'LJH' }
+    };
+    const EMOTIONS = {
+      '설렘': { color: '#ff4e91', label: 'HEARTBEAT' },
+      '무대': { color: '#ffb539', label: 'STAGE' },
+      '위로': { color: '#966cff', label: 'COMFORT' },
+      '발견': { color: '#39d5b1', label: 'DISCOVERY' }
+    };
+    const MEMORIES = [
+      { id:'felix-room', person:'felix', yt:'dF3T25im5Jg', title:'투키즈룸 Ep.07 · 필릭스', emotion:'위로', type:'TALK', note:'차분히 이야기를 나누는 모습을 오래 남겨두고 싶은 장면.', short:false, people:[17,24], emotionPos:[20,67] },
+      { id:'felix-menu', person:'felix', yt:'88gQkK_p_t0', title:'神메뉴 · 필릭스 4K 직캠', emotion:'무대', type:'STAGE', note:'무대의 힘과 눈빛이 한 번에 기억되는 순간.', short:false, people:[15,50], emotionPos:[72,18] },
+      { id:'felix-easy', person:'felix', yt:'IaWoxBn4kDo', title:'Easy · 필릭스 FaceCam', emotion:'설렘', type:'FANCAM', note:'표정이 바뀌는 짧은 순간까지 놓치고 싶지 않았던 영상.', short:false, people:[22,77], emotionPos:[16,21] },
+      { id:'juyeon-switch', person:'juyeon', yt:'T0I22axxSOY', title:'같은 멤버도 놀란 주연의 다른 매력', emotion:'발견', type:'MOMENT', note:'익숙했던 사람에게서 새로운 표정을 발견한 장면.', short:false, people:[40,13], emotionPos:[76,67] },
+      { id:'juyeon-salty', person:'juyeon', yt:'35j5aBM2Yck', title:"Ain't Salty · 주연 직캠", emotion:'무대', type:'STAGE', note:'움직임과 분위기가 선명하게 남은 무대 기록.', short:false, people:[62,15], emotionPos:[61,17] },
+      { id:'juyeon-blaze', person:'juyeon', yt:'C9VVlr_Zik8', title:'THE BLAZE · 주연의 무대', emotion:'설렘', type:'FANCAM', note:'다시 볼 때마다 처음처럼 마음이 뛰는 장면.', short:false, people:[49,76], emotionPos:[33,19] },
+      { id:'junhyuk-game', person:'junhyuk', yt:'a1gsq3jC0Tg', title:'게임할 때 진심인 이준혁', emotion:'발견', type:'CHARACTER', note:'작품 밖의 편안하고 장난스러운 모습을 발견한 순간.', short:false, people:[80,27], emotionPos:[80,78] },
+      { id:'junhyuk-live', person:'junhyuk', yt:'17UP5Pfmduo', title:'이준혁의 이야기 · V LIVE', emotion:'위로', type:'VOICE', note:'목소리와 말투가 조용히 마음을 쉬게 해준 영상.', short:false, people:[82,53], emotionPos:[36,72] },
+      { id:'junhyuk-villain', person:'junhyuk', yt:'rZMQbnkXhaQ', title:'범죄도시3 · 반전 빌런 이준혁', emotion:'무대', type:'SCENE', note:'새로운 얼굴과 강한 몰입감으로 오래 남은 작품 장면.', short:false, people:[74,79], emotionPos:[81,34] }
+    ];
+
+    const PERSON_ANCHORS = {
+      felix: [32,49], juyeon: [52,34], junhyuk: [68,51]
+    };
+    const EMOTION_ANCHORS = {
+      '설렘': [25,32], '무대': [68,30], '위로': [29,66], '발견': [70,67]
+    };
+    const ROOT = [50,49];
+    const state = { mode:'people', filter:'all', selected:null, scale:1, x:0, y:0, drag:null, toastTimer:null };
+
+    const mapViewport = document.getElementById('mapViewport');
+    const mapWorld = document.getElementById('mapWorld');
+    const edgeLayer = document.getElementById('edgeLayer');
+    const anchorLayer = document.getElementById('anchorLayer');
+    const cardLayer = document.getElementById('cardLayer');
+    const zoomReadout = document.getElementById('zoomReadout');
+    const viewStatus = document.getElementById('viewStatus');
+    const hint = document.getElementById('hint');
+    const cardEls = new Map();
+    const anchorEls = new Map();
+    const edgeEls = [];
+
+    function makeDust() {
+      const dust = document.getElementById('dust');
+      for (let i = 0; i < 58; i += 1) {
+        const dot = document.createElement('i');
+        dot.style.left = `${(i * 37) % 97}%`;
+        dot.style.top = `${(i * 71) % 93}%`;
+        dot.style.setProperty('--dur', `${4.5 + (i % 8) * .7}s`);
+        dot.style.setProperty('--dx', `${(i % 3 - 1) * (7 + i % 9)}px`);
+        dot.style.setProperty('--dy', `${(i % 5 - 2) * 4}px`);
+        dust.appendChild(dot);
+      }
+    }
+
+    function createAnchor(id, label, color, initial, pos, root = false) {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = `anchor${root ? ' root' : ''}`;
+      el.dataset.id = id;
+      el.dataset.label = label;
+      el.style.color = color;
+      el.style.left = `${pos[0]}%`;
+      el.style.top = `${pos[1]}%`;
+      el.textContent = initial;
+      if (!root) {
+        el.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (id.startsWith('person:')) applyFilter(id);
+          if (id.startsWith('emotion:')) applyFilter(id);
+        });
+      }
+      anchorLayer.appendChild(el);
+      anchorEls.set(id, el);
+      return el;
+    }
+
+    function createCard(memory, index) {
+      const emotion = EMOTIONS[memory.emotion];
+      const person = PEOPLE[memory.person];
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'memory-card';
+      el.dataset.id = memory.id;
+      el.style.setProperty('--accent', emotion.color);
+      el.style.left = `${memory.people[0]}%`;
+      el.style.top = `${memory.people[1]}%`;
+      el.innerHTML = `
+        <span class="card-top"><i class="kind-dot"></i><b class="kind">${emotion.label} · ${memory.type}</b><small class="short-badge">VIDEO</small></span>
+        <h3>${memory.title}</h3>
+        <p>${memory.note}</p>
+        <span class="card-meta"><span><i></i>${person.name}</span><span>북마크 기억</span><span>▶</span></span>`;
+      el.setAttribute('aria-label', `${person.full}, ${memory.title}`);
+      el.addEventListener('click', (event) => { event.stopPropagation(); openDetail(memory.id); });
+      cardLayer.appendChild(el);
+      cardEls.set(memory.id, el);
+      window.setTimeout(() => el.classList.add('arrived'), 120 + index * 85);
+    }
+
+    function makeLine(from, to, color, className, memoryId, groupId) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.classList.add('edge', className);
+      line.dataset.from = from;
+      line.dataset.to = to;
+      line.dataset.memory = memoryId || '';
+      line.dataset.group = groupId || '';
+      line.style.stroke = color;
+      line.style.color = color;
+      edgeLayer.appendChild(line);
+      edgeEls.push(line);
+    }
+
+    function renderTreeVideos() {
+      Object.keys(PEOPLE).forEach(personKey => {
+        const host = document.getElementById(`tree-${personKey}`);
+        MEMORIES.filter(item => item.person === personKey).forEach(item => {
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'tree-row';
+          row.dataset.open = item.id;
+          row.style.setProperty('--depth', '1');
+          row.style.setProperty('--row-accent', EMOTIONS[item.emotion].color);
+          row.innerHTML = `<span class="caret"></span><span class="file-icon">●</span><span class="label">${item.title}</span><span class="tree-count">▶</span>`;
+          host.appendChild(row);
+        });
+      });
+    }
+
+    function buildMap() {
+      makeDust();
+      createAnchor('root', '나의 LoveTree', '#ff4e91', '♥', ROOT, true);
+      Object.entries(PEOPLE).forEach(([key, person]) => createAnchor(`person:${key}`, person.name, person.color, person.initial, PERSON_ANCHORS[key]));
+      Object.entries(EMOTIONS).forEach(([key, emotion]) => {
+        const anchor = createAnchor(`emotion:${key}`, key, emotion.color, '✦', EMOTION_ANCHORS[key]);
+        anchor.classList.add('hidden');
+      });
+      MEMORIES.forEach(createCard);
+      renderTreeVideos();
+      rebuildEdges();
+      requestAnimationFrame(updateEdges);
+    }
+
+    function rebuildEdges() {
+      edgeLayer.innerHTML = '';
+      edgeEls.length = 0;
+      if (state.mode === 'people') {
+        Object.entries(PEOPLE).forEach(([key, person]) => makeLine('root', `person:${key}`, person.color, 'backbone', '', `person:${key}`));
+        MEMORIES.forEach(memory => makeLine(`person:${memory.person}`, memory.id, PEOPLE[memory.person].color, 'memory', memory.id, `person:${memory.person}`));
+      } else {
+        Object.entries(EMOTIONS).forEach(([key, emotion]) => makeLine('root', `emotion:${key}`, emotion.color, 'backbone', '', `emotion:${key}`));
+        MEMORIES.forEach(memory => makeLine(`emotion:${memory.emotion}`, memory.id, EMOTIONS[memory.emotion].color, 'memory', memory.id, `emotion:${memory.emotion}`));
+      }
+      updateFilterVisuals();
+    }
+
+    function pointFor(id) {
+      if (id === 'root') return ROOT;
+      if (id.startsWith('person:')) return PERSON_ANCHORS[id.split(':')[1]];
+      if (id.startsWith('emotion:')) return EMOTION_ANCHORS[id.split(':')[1]];
+      const item = MEMORIES.find(memory => memory.id === id);
+      return state.mode === 'people' ? item.people : item.emotionPos;
+    }
+
+    function updateEdges() {
+      edgeEls.forEach(line => {
+        const a = pointFor(line.dataset.from);
+        const b = pointFor(line.dataset.to);
+        line.setAttribute('x1', `${a[0]}%`);
+        line.setAttribute('y1', `${a[1]}%`);
+        line.setAttribute('x2', `${b[0]}%`);
+        line.setAttribute('y2', `${b[1]}%`);
+      });
+      requestAnimationFrame(updateEdges);
+    }
+
+    function setMode(mode) {
+      if (mode === state.mode) return;
+      state.mode = mode;
+      document.querySelectorAll('[data-mode]').forEach(button => button.classList.toggle('active', button.dataset.mode === mode));
+      Object.keys(PEOPLE).forEach(key => anchorEls.get(`person:${key}`).classList.toggle('hidden', mode !== 'people'));
+      Object.keys(EMOTIONS).forEach(key => anchorEls.get(`emotion:${key}`).classList.toggle('hidden', mode !== 'emotion'));
+      MEMORIES.forEach(memory => {
+        const pos = mode === 'people' ? memory.people : memory.emotionPos;
+        const el = cardEls.get(memory.id);
+        el.style.left = `${pos[0]}%`;
+        el.style.top = `${pos[1]}%`;
+      });
+      viewStatus.textContent = mode === 'people' ? '사람별 연결 · 9개의 영상 기억' : '감정별 연결 · 4개의 마음 가지';
+      rebuildEdges();
+      resetTransform();
+      showToast(mode === 'people' ? '사람을 중심으로 기억을 다시 연결했어요.' : '감정을 중심으로 같은 장면들을 다시 모았어요.');
+    }
+
+    function matchesFilter(memory, filter) {
+      if (filter === 'all') return true;
+      const [kind, value] = filter.split(':');
+      return kind === 'person' ? memory.person === value : memory.emotion === value;
+    }
+
+    function applyFilter(filter, silent = false) {
+      state.filter = filter;
+      state.selected = null;
+      cardEls.forEach((el, id) => {
+        const memory = MEMORIES.find(item => item.id === id);
+        el.classList.toggle('muted', !matchesFilter(memory, filter));
+        el.classList.remove('selected');
+      });
+      updateFilterVisuals();
+      document.querySelectorAll('.tree-row[data-filter]').forEach(row => row.classList.toggle('active', row.dataset.filter === filter));
+      document.querySelectorAll('.tree-row[data-open].active').forEach(row => row.classList.remove('active'));
+      if (!silent) showToast(filter === 'all' ? '모든 영상 기억을 다시 펼쳤어요.' : '관련 기억만 밝게 표시했어요.');
+    }
+
+    function updateFilterVisuals() {
+      edgeEls.forEach(line => {
+        const memory = MEMORIES.find(item => item.id === line.dataset.memory);
+        const groupValue = line.dataset.group;
+        let visible = true;
+        if (state.filter !== 'all') {
+          if (memory) visible = matchesFilter(memory, state.filter);
+          else visible = groupValue === state.filter;
+        }
+        const selected = state.selected && (line.dataset.memory === state.selected || line.dataset.group === relatedGroup(state.selected));
+        line.classList.toggle('muted', !visible || (state.selected && !selected));
+        line.classList.toggle('active', Boolean(selected));
+      });
+      anchorEls.forEach((el, id) => {
+        if (id === 'root') return;
+        const wrongMode = state.mode === 'people' ? id.startsWith('emotion:') : id.startsWith('person:');
+        el.classList.toggle('hidden', wrongMode);
+        el.style.opacity = state.filter === 'all' || state.filter === id ? '' : '.18';
+      });
+    }
+
+    function relatedGroup(memoryId) {
+      const memory = MEMORIES.find(item => item.id === memoryId);
+      if (!memory) return '';
+      return state.mode === 'people' ? `person:${memory.person}` : `emotion:${memory.emotion}`;
+    }
+
+    function focusMemory(memoryId) {
+      state.selected = memoryId;
+      cardEls.forEach((el, id) => {
+        el.classList.toggle('selected', id === memoryId);
+        el.classList.toggle('muted', id !== memoryId);
+      });
+      updateFilterVisuals();
+      document.querySelectorAll('.tree-row[data-open]').forEach(row => row.classList.toggle('active', row.dataset.open === memoryId));
+    }
+
+    function thumb(id) { return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; }
+    function source(id) { return `https://www.youtube.com/watch?v=${id}`; }
+    const detail = document.getElementById('detail');
+    const scrim = document.getElementById('scrim');
+    const preview = document.getElementById('videoPreview');
+    const detailPlay = document.getElementById('detailPlay');
+
+    function openDetail(memoryId) {
+      const memory = MEMORIES.find(item => item.id === memoryId);
+      if (!memory) return;
+      focusMemory(memoryId);
+      const person = PEOPLE[memory.person];
+      const emotion = EMOTIONS[memory.emotion];
+      detail.style.setProperty('--detail-accent', emotion.color);
+      document.getElementById('detailKicker').textContent = `${emotion.label} · ${memory.type}`;
+      document.getElementById('detailTitle').textContent = memory.title;
+      document.getElementById('detailMeta').innerHTML = `<span><i></i>${person.full}</span><span>${memory.emotion}</span><span>북마크에서 담은 영상</span>`;
+      document.getElementById('detailNote').textContent = memory.note;
+      preview.className = `video-preview${memory.short ? ' vertical' : ''}`;
+      preview.innerHTML = `<img src="${thumb(memory.yt)}" alt="${memory.title} 썸네일"><button class="preview-play" type="button" aria-label="영상 재생">▶</button><span class="preview-label">CLICK TO PLAY · YOUTUBE</span>`;
+      preview.querySelector('.preview-play').addEventListener('click', () => playVideo(memory));
+      detailPlay.onclick = () => playVideo(memory);
+      document.getElementById('sourceLink').href = source(memory.yt);
+      detail.classList.add('open');
+      scrim.classList.add('open');
+      detail.setAttribute('aria-hidden', 'false');
+    }
+
+    function playVideo(memory) {
+      preview.classList.add('playing');
+      preview.innerHTML = `<iframe title="${memory.title}" src="https://www.youtube-nocookie.com/embed/${memory.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    }
+
+    function closeDetail() {
+      detail.classList.remove('open');
+      scrim.classList.remove('open');
+      detail.setAttribute('aria-hidden', 'true');
+      preview.innerHTML = '';
+      state.selected = null;
+      applyFilter(state.filter, true);
+    }
+
+    function updateTransform() {
+      mapWorld.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+      zoomReadout.textContent = `${Math.round(state.scale * 100)}%`;
+    }
+
+    function zoomAt(nextScale, clientX, clientY) {
+      const rect = mapViewport.getBoundingClientRect();
+      const px = clientX == null ? rect.width / 2 : clientX - rect.left;
+      const py = clientY == null ? rect.height / 2 : clientY - rect.top;
+      const worldX = (px - state.x) / state.scale;
+      const worldY = (py - state.y) / state.scale;
+      state.scale = Math.max(.58, Math.min(1.72, nextScale));
+      state.x = px - worldX * state.scale;
+      state.y = py - worldY * state.scale;
+      updateTransform();
+    }
+
+    function resetTransform() {
+      state.scale = 1;
+      state.x = 0;
+      state.y = 0;
+      updateTransform();
+    }
+
+    function replayIntro() {
+      [...cardEls.values()].forEach(el => el.classList.remove('arrived'));
+      requestAnimationFrame(() => MEMORIES.forEach((memory, index) => window.setTimeout(() => cardEls.get(memory.id).classList.add('arrived'), 90 + index * 90)));
+      applyFilter('all', true);
+      showToast('기억 카드가 연결되는 흐름을 다시 보여드릴게요.');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(state.toastTimer);
+      state.toastTimer = window.setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    mapViewport.addEventListener('wheel', event => {
+      event.preventDefault();
+      hint.classList.add('hide');
+      const factor = event.deltaY > 0 ? .9 : 1.1;
+      zoomAt(state.scale * factor, event.clientX, event.clientY);
+    }, { passive:false });
+    mapViewport.addEventListener('pointerdown', event => {
+      if (event.target.closest('.memory-card, .anchor')) return;
+      hint.classList.add('hide');
+      state.drag = { pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, x:state.x, y:state.y };
+      mapViewport.setPointerCapture(event.pointerId);
+      mapViewport.classList.add('dragging');
+    });
+    mapViewport.addEventListener('pointermove', event => {
+      if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+      state.x = state.drag.x + event.clientX - state.drag.startX;
+      state.y = state.drag.y + event.clientY - state.drag.startY;
+      updateTransform();
+    });
+    function endDrag(event) {
+      if (!state.drag || (event && state.drag.pointerId !== event.pointerId)) return;
+      state.drag = null;
+      mapViewport.classList.remove('dragging');
+    }
+    mapViewport.addEventListener('pointerup', endDrag);
+    mapViewport.addEventListener('pointercancel', endDrag);
+    mapViewport.addEventListener('dblclick', event => { if (!event.target.closest('.memory-card, .anchor')) resetTransform(); });
+
+    document.getElementById('zoomIn').addEventListener('click', () => zoomAt(state.scale + .12));
+    document.getElementById('zoomOut').addEventListener('click', () => zoomAt(state.scale - .12));
+    document.getElementById('resetView').addEventListener('click', resetTransform);
+    document.getElementById('resetTop').addEventListener('click', () => { resetTransform(); applyFilter('all'); });
+    document.getElementById('replayIntro').addEventListener('click', replayIntro);
+    document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
+
+    document.getElementById('structureBody').addEventListener('click', event => {
+      const filterRow = event.target.closest('[data-filter]');
+      const openRow = event.target.closest('[data-open]');
+      if (openRow) { openDetail(openRow.dataset.open); return; }
+      if (filterRow) {
+        applyFilter(filterRow.dataset.filter);
+        const section = filterRow.closest('.tree-section.person-section');
+        if (section) section.classList.remove('closed');
+        return;
+      }
+      const toggle = event.target.closest('[data-toggle-section]');
+      if (toggle) toggle.closest('.tree-section').classList.toggle('closed');
+    });
+    document.querySelectorAll('.person-section > .tree-row .caret').forEach(caret => {
+      caret.addEventListener('click', event => {
+        event.stopPropagation();
+        caret.closest('.tree-section').classList.toggle('closed');
+      });
+    });
+    document.getElementById('detailClose').addEventListener('click', closeDetail);
+    scrim.addEventListener('click', closeDetail);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeDetail();
+      if ((event.ctrlKey || event.metaKey) && event.key === '0') { event.preventDefault(); resetTransform(); }
+    });
+
+    buildMap();
+    updateTransform();
+    window.setTimeout(() => hint.classList.add('hide'), 5200);
+  </script>
+</body>
+</html>

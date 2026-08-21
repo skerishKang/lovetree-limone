@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LoveTree · 영상 기억 뜯어보기</title>
+  <!-- Interaction study inspired by pluk-inc/himekuri (MIT). This is an independent HTML/CSS/JS prototype. -->
+  <style>
+    :root{
+      --ink:#3c3431;--muted:#877b76;--paper:#fffdf8;--rose:#e8899c;--rose-deep:#c95d75;
+      --sage:#8eaa82;--sky:#cdebed;--cream:#f8f3e8;--line:rgba(81,65,59,.14);
+      --shadow:0 30px 70px rgba(87,74,66,.17),0 8px 18px rgba(87,74,66,.1);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f7f5ef;color:var(--ink);font-family:"Pretendard","Noto Sans KR",Arial,sans-serif}
+    button{font:inherit;color:inherit}
+    .app{position:relative;min-height:100vh;overflow:hidden;background:
+      radial-gradient(circle at 12% 16%,rgba(255,255,255,.92) 0 14%,transparent 35%),
+      radial-gradient(circle at 88% 8%,rgba(238,194,203,.45),transparent 31%),
+      radial-gradient(circle at 74% 85%,rgba(177,220,221,.42),transparent 34%),
+      linear-gradient(140deg,#fefcf7 0%,#f6eced 46%,#e6f3f1 100%)}
+    .app:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.21;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E")}
+    .orb{position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none;animation:drift 8s ease-in-out infinite alternate}
+    .orb.a{width:280px;height:280px;left:-120px;bottom:5%;background:rgba(244,188,201,.24)}
+    .orb.b{width:220px;height:220px;right:-70px;top:25%;background:rgba(170,218,219,.28);animation-delay:-3s}
+    @keyframes drift{to{transform:translate3d(25px,-18px,0) scale(1.08)}}
+    .topbar{height:78px;position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 42px;border-bottom:1px solid rgba(82,66,60,.09);background:rgba(255,253,248,.58);backdrop-filter:blur(18px)}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+    .brand-mark{position:relative;width:28px;height:34px;display:inline-block}
+    .brand-mark:before{content:"";position:absolute;width:3px;height:31px;left:13px;top:2px;background:linear-gradient(var(--sage),#618261);border-radius:5px;transform:rotate(8deg)}
+    .brand-mark i,.brand-mark i:before,.brand-mark i:after{position:absolute;width:13px;height:9px;border-radius:100% 0 100% 0;background:var(--rose);content:""}
+    .brand-mark i{left:2px;top:4px;transform:rotate(25deg)}
+    .brand-mark i:before{left:10px;top:4px;transform:rotate(76deg);background:#ef9bac}
+    .brand-mark i:after{left:7px;top:13px;transform:rotate(145deg);background:#d76e86}
+    .brand strong{font-family:Georgia,"Noto Serif KR",serif;font-size:21px;font-weight:500;letter-spacing:-.04em}
+    .brand small{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#9d8d87;margin-left:-5px;margin-top:4px}
+    .top-note{display:flex;align-items:center;gap:9px;font-size:11px;color:#796d68;letter-spacing:.05em}
+    .top-note i{width:7px;height:7px;border-radius:50%;background:#91b286;box-shadow:0 0 0 5px rgba(145,178,134,.15)}
+    .studio{position:relative;z-index:3;min-height:calc(100vh - 78px);display:grid;grid-template-columns:minmax(230px,310px) minmax(430px,600px) minmax(250px,340px);gap:clamp(22px,4vw,66px);align-items:center;justify-content:center;padding:38px 48px 44px}
+    .intro{align-self:center;max-width:310px}
+    .eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--rose-deep)}
+    .eyebrow:before{content:"";width:30px;height:1px;background:var(--rose)}
+    .intro h1{margin:18px 0 16px;font-family:Georgia,"Noto Serif KR",serif;font-size:clamp(38px,4.2vw,62px);line-height:1.03;font-weight:500;letter-spacing:-.065em}
+    .intro h1 em{font-style:normal;color:var(--rose-deep)}
+    .intro>p{font-size:14px;line-height:1.9;color:#756a65;word-break:keep-all;margin:0 0 24px}
+    .people{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+    .person{border:1px solid rgba(83,67,61,.12);background:rgba(255,255,255,.64);padding:9px 12px;border-radius:999px;font-size:11px;cursor:pointer;transition:.25s}
+    .person:hover{transform:translateY(-2px);border-color:rgba(201,93,117,.35)}
+    .person.active{background:var(--ink);color:white;border-color:var(--ink);box-shadow:0 7px 18px rgba(67,53,48,.16)}
+    .guide{padding:16px 17px;border-radius:18px;background:rgba(255,253,248,.72);border:1px solid rgba(83,67,61,.09);box-shadow:0 10px 28px rgba(101,84,76,.07)}
+    .guide strong{display:block;font-size:12px;margin-bottom:10px}
+    .guide ol{list-style:none;padding:0;margin:0;display:grid;gap:8px;counter-reset:g}
+    .guide li{counter-increment:g;font-size:11px;color:#796d68;display:flex;align-items:center;gap:9px}
+    .guide li:before{content:counter(g);width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:#f5dde2;color:#b95068;font-size:9px;font-weight:800}
+    .demo-btn{margin-top:14px;width:100%;border:0;border-radius:12px;padding:11px;background:linear-gradient(120deg,#eb8ea1,#f2b5a6);color:#fff;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(214,104,129,.2)}
+    .demo-btn:hover{filter:saturate(1.08);transform:translateY(-1px)}
+    .pad-zone{position:relative;display:grid;place-items:center;perspective:1300px;min-height:680px}
+    .pad-zone:before{content:"";position:absolute;width:560px;height:140px;bottom:4%;border-radius:50%;background:radial-gradient(ellipse,rgba(75,61,54,.19),transparent 66%);filter:blur(10px)}
+    .pad{position:relative;width:min(440px,88vw);height:620px;transform-style:preserve-3d;filter:drop-shadow(0 35px 32px rgba(85,72,64,.16))}
+    .pad-back{position:absolute;inset:18px 4px -3px;border-radius:9px 9px 20px 20px;background:linear-gradient(145deg,#d8b58f,#c79e76);transform:translateZ(-30px) rotateX(1deg);box-shadow:inset 0 0 0 1px rgba(90,61,39,.18)}
+    .pad-back:after{content:"LOVETREE · MEMORY PAD";position:absolute;bottom:15px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:.22em;color:rgba(71,48,35,.55);white-space:nowrap}
+    .stack-page{position:absolute;inset:7px 8px 3px;border-radius:7px 7px 16px 16px;background:#eee9df;border:1px solid rgba(95,78,67,.09);transform:translate3d(0,5px,-16px) rotate(.45deg)}
+    .stack-page.two{transform:translate3d(0,1px,-9px) rotate(-.35deg);background:#f6f1e7}
+    .binding{position:absolute;z-index:12;left:0;right:0;top:0;height:34px;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#e4788d 0 5px,#f6c6ce 5px 11px,#f5e9e3 11px 100%);box-shadow:0 5px 11px rgba(103,72,69,.12);pointer-events:none}
+    .binding:before{content:"";position:absolute;left:24px;right:24px;top:17px;height:1px;background:repeating-linear-gradient(90deg,#bf6b7a 0 5px,transparent 5px 13px);opacity:.5}
+    .pins{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:center;padding:0 42px}
+    .pins i{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 8%,#b8a89d 14%,#75675e 62%,#51463f);box-shadow:0 2px 4px rgba(45,36,31,.38)}
+    .sheet{position:absolute;left:8px;right:8px;top:27px;bottom:4px;border-radius:2px 2px 15px 15px;overflow:hidden;background:var(--paper);box-shadow:var(--shadow)}
+    .under-page{z-index:3;transform:translate3d(0,2px,-2px)}
+    .active-wrap{z-index:6;position:absolute;left:8px;right:8px;top:27px;bottom:4px;transform-style:preserve-3d;touch-action:none;cursor:grab;user-select:none}
+    .active-wrap.dragging{cursor:grabbing}
+    .active-wrap.hidden{opacity:0;pointer-events:none}
+    .paper-mesh{position:absolute;inset:0;transform-style:preserve-3d;filter:drop-shadow(0 13px 12px rgba(75,60,52,.11))}
+    .paper-strip{position:absolute;inset:0;width:100%;height:100%;overflow:visible;clip-path:inset(var(--clip-top) 0 var(--clip-bottom) 0);transform-origin:50% var(--origin);will-change:transform,filter;backface-visibility:hidden}
+    .paper-strip .sheet-surface{position:absolute;inset:0;width:100%;height:100%;border-radius:2px 2px 15px 15px}
+    .sheet-surface{position:relative;width:100%;height:100%;overflow:hidden;background:
+      linear-gradient(90deg,rgba(137,111,91,.045) 1px,transparent 1px),
+      linear-gradient(rgba(137,111,91,.035) 1px,transparent 1px),#fffdf8;background-size:24px 24px;color:#403733}
+    .sheet-surface:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,.52),transparent 28%,transparent 72%,rgba(116,92,76,.04));mix-blend-mode:soft-light}
+    .paper-head{height:89px;padding:23px 27px 11px;display:grid;grid-template-columns:1fr auto;align-items:start;border-bottom:1px solid rgba(88,69,61,.1)}
+    .paper-head .kicker{font-size:8px;text-transform:uppercase;letter-spacing:.2em;font-weight:900;color:var(--accent)}
+    .paper-head .person-name{display:block;margin-top:6px;font-family:Georgia,"Noto Serif KR",serif;font-size:18px;letter-spacing:-.04em}
+    .day-no{font-family:Georgia,serif;font-size:54px;line-height:.76;color:var(--accent);letter-spacing:-.08em}
+    .memory-main{padding:18px 27px 0}
+    .memory-date{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#9b8c84}
+    .memory-date i{width:56px;height:1px;background:var(--accent)}
+    .video-thumb{position:relative;height:252px;border-radius:14px;overflow:hidden;background:#ddd;box-shadow:0 11px 25px rgba(70,52,44,.13)}
+    .video-thumb img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.015)}
+    .video-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(37,28,25,.55))}
+    .play-dot{position:absolute;z-index:2;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:rgba(255,255,255,.91);display:grid;place-items:center;box-shadow:0 8px 24px rgba(36,27,24,.22);color:var(--accent);font-size:16px;padding-left:3px}
+    .source-badge{position:absolute;z-index:2;left:14px;bottom:12px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.85);font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .memory-copy{padding-top:18px}
+    .memory-copy h2{font-family:Georgia,"Noto Serif KR",serif;margin:0 0 9px;font-size:23px;font-weight:500;line-height:1.24;letter-spacing:-.045em}
+    .memory-copy p{margin:0;font-size:11px;line-height:1.7;color:#80736d;word-break:keep-all}
+    .paper-foot{position:absolute;left:27px;right:27px;bottom:19px;display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(86,68,60,.1);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#9a8b84}
+    .paper-foot strong{color:var(--accent)}
+    .video-hit{position:absolute;z-index:20;left:27px;right:27px;top:126px;height:252px;border:0;border-radius:14px;background:transparent;cursor:pointer}
+    .video-hit:focus-visible{outline:4px solid rgba(224,113,136,.4);outline-offset:3px}
+    .fibers{position:absolute;z-index:18;left:17px;right:17px;top:2px;height:10px;display:grid;grid-template-columns:repeat(11,1fr);gap:3px;pointer-events:none}
+    .fiber{height:2px;background:#a8998f;border-radius:4px;opacity:.52;transition:transform .16s,opacity .16s,filter .16s}
+    .fiber.broken{transform:translateY(calc((var(--flip) * 5px))) rotate(calc(var(--flip) * 18deg));opacity:.12;filter:blur(.5px)}
+    .tear-cue{position:absolute;z-index:19;left:50%;bottom:17px;transform:translateX(-50%);display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.84);box-shadow:0 6px 18px rgba(84,68,60,.12);font-size:9px;font-weight:800;color:#8b7d76;letter-spacing:.03em;pointer-events:none;transition:opacity .2s}
+    .tear-cue i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:#f3d5dc;color:#bd526b;font-style:normal;font-size:10px;animation:nudge 1.3s ease-in-out infinite}
+    @keyframes nudge{50%{transform:translateY(3px)}}
+    .progress-line{position:absolute;z-index:17;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,var(--accent) var(--tear,0%),transparent 0);opacity:.72;pointer-events:none}
+    .complete-sheet{height:100%;display:grid;place-items:center;text-align:center;padding:35px;background:linear-gradient(150deg,#fffdf8,#f5ebe9)}
+    .complete-sheet i{font-style:normal;font-size:52px;color:var(--rose)}
+    .complete-sheet h2{font-family:Georgia,"Noto Serif KR",serif;font-weight:500;font-size:29px;margin:12px 0 10px}
+    .complete-sheet p{color:#80736d;font-size:12px;line-height:1.8;margin:0 0 20px}
+    .complete-sheet button{border:0;border-radius:999px;background:var(--ink);color:white;padding:12px 18px;font-size:11px;font-weight:800;cursor:pointer}
+    .side{align-self:center;max-width:340px}
+    .side-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:15px}
+    .side-head small{display:block;color:var(--rose-deep);font-size:8px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}
+    .side-head h2{font-family:Georgia,"Noto Serif KR",serif;font-size:24px;font-weight:500;margin:0;letter-spacing:-.04em}
+    .archive-count{font-size:10px;color:#847771}
+    .archive{min-height:378px;padding:14px;border-radius:22px;background:rgba(255,253,248,.62);border:1px solid rgba(84,67,61,.09);box-shadow:0 20px 50px rgba(101,84,76,.09);backdrop-filter:blur(12px)}
+    .empty{min-height:344px;display:grid;place-items:center;text-align:center;border:1px dashed rgba(112,91,82,.2);border-radius:15px;color:#9a8c85;padding:32px}
+    .empty i{font-style:normal;font-size:34px;display:block;margin-bottom:10px;opacity:.6}
+    .empty strong{display:block;font-family:Georgia,"Noto Serif KR",serif;font-weight:500;font-size:17px;color:#71645e;margin-bottom:8px}
+    .empty span{font-size:10px;line-height:1.7}
+    .archive-list{display:grid;gap:10px;max-height:344px;overflow:auto;padding-right:3px}
+    .archive-card{position:relative;display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center;width:100%;border:0;text-align:left;padding:9px;border-radius:14px;background:#fffdf8;box-shadow:0 7px 17px rgba(78,63,56,.08);cursor:pointer;transition:.2s}
+    .archive-card:hover{transform:translateX(-3px);box-shadow:0 10px 22px rgba(78,63,56,.12)}
+    .archive-card img{width:70px;height:53px;border-radius:9px;object-fit:cover}
+    .archive-card small{font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:900}
+    .archive-card strong{display:block;margin:5px 0 3px;font-size:11px;line-height:1.25}
+    .archive-card span{font-size:8px;color:#9a8c85}
+    .archive-card:after{content:"다시 보기";position:absolute;right:8px;bottom:7px;font-size:7px;color:#ad9f98}
+    .meaning{margin-top:14px;padding:14px 16px;border-left:2px solid var(--rose);background:rgba(255,255,255,.37);font-size:10px;line-height:1.7;color:#81736d}
+    .meaning strong{color:var(--rose-deep)}
+    .flying-page{position:fixed;z-index:90;overflow:hidden;border-radius:4px 4px 15px 15px;box-shadow:0 34px 75px rgba(74,56,48,.28);pointer-events:none;transform-origin:50% 3%;transition:transform 1.05s cubic-bezier(.18,.7,.18,1),opacity .85s .2s,filter .85s}
+    .flying-page.fly{transform:translate3d(var(--fly-x),var(--fly-y),0) rotate(var(--fly-r)) scale(.18) rotateX(18deg);opacity:.12;filter:blur(1px)}
+    .toast{position:fixed;z-index:110;left:50%;bottom:28px;transform:translate(-50%,20px);padding:11px 17px;border-radius:999px;background:rgba(54,46,42,.92);color:#fff;font-size:10px;opacity:0;pointer-events:none;transition:.3s}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .player{position:fixed;z-index:130;inset:0;display:grid;place-items:center;background:rgba(62,51,47,.42);backdrop-filter:blur(13px);opacity:0;pointer-events:none;transition:.28s;padding:24px}
+    .player.open{opacity:1;pointer-events:auto}
+    .player-card{position:relative;width:min(900px,92vw);border-radius:25px;background:#fffdf8;padding:16px;box-shadow:0 35px 100px rgba(47,36,32,.34);transform:translateY(20px) scale(.98);transition:.3s}
+    .player.open .player-card{transform:none}
+    .player-frame{aspect-ratio:16/9;border-radius:17px;overflow:hidden;background:#2c2523}
+    .player-frame iframe{width:100%;height:100%;border:0;display:block}
+    .player-meta{display:flex;align-items:center;justify-content:space-between;padding:14px 4px 2px;gap:18px}
+    .player-meta small{font-size:8px;letter-spacing:.17em;text-transform:uppercase;color:var(--rose-deep);font-weight:900}
+    .player-meta strong{display:block;font-family:Georgia,"Noto Serif KR",serif;font-size:18px;margin-top:4px}
+    .close-player{border:0;width:38px;height:38px;border-radius:50%;background:#f2e8e5;cursor:pointer;font-size:17px}
+    .sr-live{position:fixed;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    @media(max-width:1100px){
+      .studio{grid-template-columns:250px minmax(400px,520px);padding-inline:28px}.side{grid-column:1/-1;max-width:780px;width:100%;justify-self:center}.archive{min-height:160px}.empty{min-height:126px}.archive-list{grid-template-columns:repeat(3,1fr);max-height:none}.archive-card{grid-template-columns:58px 1fr}.archive-card img{width:58px;height:46px}
+    }
+    @media(max-width:760px){
+      .topbar{padding:0 18px;height:65px}.top-note{display:none}.studio{display:flex;flex-direction:column;padding:28px 18px 38px;gap:25px}.intro{max-width:520px;width:100%}.intro h1{font-size:43px}.pad-zone{min-height:600px;width:100%;transform:scale(.88);margin:-32px 0}.pad{height:600px}.side{width:100%}.archive-list{grid-template-columns:1fr}.archive{min-height:160px}.guide{display:none}
+    }
+    @media(max-height:820px) and (min-width:761px){
+      .topbar{height:64px}.studio{min-height:calc(100vh - 64px);padding-top:18px;padding-bottom:18px}.pad-zone{min-height:590px;transform:scale(.86)}.intro h1{font-size:45px}.intro>p{line-height:1.7;margin-bottom:18px}.guide{padding:13px 15px}.archive{min-height:330px}.empty{min-height:296px}
+    }
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <i class="orb a"></i><i class="orb b"></i>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="LoveTree"><span class="brand-mark"><i></i></span><strong>러브트리</strong><small>LoveTree</small></a>
+      <div class="top-note"><i></i><span>뜯은 기억도 사라지지 않고 트리에 보관돼요</span></div>
+    </header>
+
+    <section class="studio">
+      <aside class="intro">
+        <div class="eyebrow">Daily memory ritual</div>
+        <h1>오늘의 영상을<br><em>한 장 뜯어</em> 간직해요.</h1>
+        <p>달력을 넘기듯 오늘 마음에 남은 영상 한 장을 골라요. 아래쪽을 잡아 뜯으면 다음 순간이 나타나고, 뜯은 장면은 오른쪽 기억함에 그대로 남아요.</p>
+        <div class="people" id="people" aria-label="사람별 러브트리 선택"></div>
+        <div class="guide">
+          <strong>이렇게 사용해 보세요</strong>
+          <ol><li>영상 표지를 눌러 먼저 재생하기</li><li>종이 아래쪽을 잡고 아래로 천천히 당기기</li><li>뜯은 순간은 기억함에서 다시 열기</li></ol>
+          <button class="demo-btn" id="demoButton" type="button">뜯기 동작 자동으로 보기</button>
+        </div>
+      </aside>
+
+      <section class="pad-zone" aria-label="LoveTree 영상 기억 패드">
+        <div class="pad" id="pad">
+          <div class="pad-back"></div><div class="stack-page"></div><div class="stack-page two"></div>
+          <div class="sheet under-page" id="underPage"></div>
+          <div class="active-wrap" id="activeWrap">
+            <div class="paper-mesh" id="paperMesh"></div>
+            <div class="fibers" id="fibers"></div>
+            <div class="progress-line" id="progressLine"></div>
+            <button class="video-hit" id="videoHit" type="button" aria-label="현재 영상 재생"></button>
+            <div class="tear-cue" id="tearCue"><i>↓</i><span>아래쪽을 잡고 뜯기</span></div>
+          </div>
+          <div class="binding"><div class="pins"><i></i><i></i><i></i></div></div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <div class="side-head"><div><small>kept moments</small><h2>오늘 뜯어 간 기억</h2></div><span class="archive-count" id="archiveCount">0장</span></div>
+        <div class="archive" id="archive"></div>
+        <p class="meaning"><strong>LoveTree의 뜯기 = 삭제가 아니에요.</strong><br>오늘의 장면을 고르고, 다음 순간으로 넘어가는 작은 의식이에요.</p>
+      </aside>
+    </section>
+  </main>
+
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-label="영상 플레이어">
+    <div class="player-card"><div class="player-frame" id="playerFrame"></div><div class="player-meta"><div><small id="playerPerson"></small><strong id="playerTitle"></strong></div><button class="close-player" id="closePlayer" type="button" aria-label="영상 닫기">×</button></div></div>
+  </div>
+  <div class="toast" id="toast"></div><div class="sr-live" id="live" aria-live="polite"></div>
+
+  <script>
+    const peopleData={
+      felix:{name:'필릭스',latin:'FELIX',accent:'#d77e91',soft:'#f5dde3',moments:[
+        {id:'nOrDWTMSR0w',day:'01',date:'2026 · AUG · MEMORY 01',title:'처음 마음을 멈추게 한 무대',note:'낮게 울리는 목소리와 강한 눈빛을 처음 오래 바라본 순간.',source:'STRAY KIDS · GOD’S MENU'},
+        {id:'ts_xlXdsl4M',day:'02',date:'2026 · AUG · MEMORY 02',title:'계속 다시 보게 된 장면',note:'짧게 지나가도 이상하게 다시 돌아오게 되는 움직임.',source:'FELIX · BACK DOOR'},
+        {id:'IaWoxBn4kDo',day:'03',date:'2026 · AUG · MEMORY 03',title:'표정이 바뀌는 찰나',note:'무대 한가운데서 분위기가 완전히 달라진 그 몇 초.',source:'FELIX · EASY'},
+        {id:'sFPKeBPdFZ8',day:'04',date:'2026 · AUG · MEMORY 04',title:'웃는 모습까지 좋아진 날',note:'무대 밖의 장난스러운 결까지 기억하고 싶어진 순간.',source:'FELIX · RELAY DANCE'}]},
+      juyeon:{name:'이주연',latin:'JUYEON',accent:'#c86278',soft:'#f3d7dc',moments:[
+        {id:'qKkJ6YHLhak',day:'01',date:'2026 · AUG · MEMORY 01',title:'WHISPER로 시작된 마음',note:'정확한 동작과 부드러운 선을 자꾸 다시 보게 된 날.',source:'THE BOYZ · WHISPER'},
+        {id:'ePAi-0qKEio',day:'02',date:'2026 · AUG · MEMORY 02',title:'한 사람의 춤에 빠진 순간',note:'무대가 아니라 한 편의 이야기처럼 남은 퍼포먼스.',source:'JUYEON · ARTIST OF THE MONTH'},
+        {id:'93jg1vU4R5I',day:'03',date:'2026 · AUG · MEMORY 03',title:'여름빛 무대의 기억',note:'밝은 표정과 리듬이 오래 마음에 남았던 직캠.',source:'JUYEON · PASSION FRUIT'},
+        {id:'9I7Au-q7eH8',day:'04',date:'2026 · AUG · MEMORY 04',title:'무대 밖의 다정한 결',note:'프로 아이돌의 하루를 따라가며 더 좋아지게 된 장면.',source:'JUYEON · BOYLOG'}]},
+      junhyuk:{name:'이준혁',latin:'LEE JUN HYUK',accent:'#799988',soft:'#dceae2',moments:[
+        {id:'a1gsq3jC0Tg',day:'01',date:'2026 · AUG · MEMORY 01',title:'말투가 좋아진 인터뷰',note:'조용히 답하는 방식에서 예상 밖의 귀여움을 발견한 날.',source:'LEE JUN HYUK · INTERVIEW'},
+        {id:'O3ptaX7-G8w',day:'02',date:'2026 · AUG · MEMORY 02',title:'윙크하고 사라진 순간',note:'짧아서 더 오래 기억에 남은 장난스러운 한 장면.',source:'LEE JUN HYUK · MOMENT'},
+        {id:'-uYx6joIm0g',day:'03',date:'2026 · AUG · MEMORY 03',title:'서동재의 선명한 인상',note:'수트와 표정만으로 장면의 공기를 바꾸었던 기억.',source:'LEE JUN HYUK · CHARACTER'},
+        {id:'kUobSk5oe_U',day:'04',date:'2026 · AUG · MEMORY 04',title:'잘생긴 빌런이라는 말',note:'무대인사에서 웃는 얼굴까지 이어서 보게 된 날.',source:'LEE JUN HYUK · STAGE GREETING'}]}
+    };
+
+    const ROWS=14;
+    const activeWrap=document.getElementById('activeWrap');
+    const paperMesh=document.getElementById('paperMesh');
+    const fibers=document.getElementById('fibers');
+    const underPage=document.getElementById('underPage');
+    const archive=document.getElementById('archive');
+    const people=document.getElementById('people');
+    const videoHit=document.getElementById('videoHit');
+    const tearCue=document.getElementById('tearCue');
+    const progressLine=document.getElementById('progressLine');
+    const player=document.getElementById('player');
+    const playerFrame=document.getElementById('playerFrame');
+    const live=document.getElementById('live');
+    const state={person:'felix',index:0,dragging:false,flying:false,startX:0,startY:0,lastY:0,lastT:0,dx:0,dy:0,progress:0,archived:[]};
+
+    function thumb(id){return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+    function currentSet(){return peopleData[state.person]}
+    function currentMoment(){return currentSet().moments[state.index]}
+    function surfaceHTML(moment,person){
+      if(!moment)return `<div class="complete-sheet"><div><i>❀</i><h2>${person.name}의 오늘 기억을<br>모두 골랐어요.</h2><p>뜯은 장면은 오른쪽 기억함에 남아 있어요.<br>내일은 또 다른 순간을 한 장 골라보세요.</p><button type="button" data-restart>처음 장부터 다시 보기</button></div></div>`;
+      return `<article class="sheet-surface" style="--accent:${person.accent};--soft:${person.soft}">
+        <header class="paper-head"><div><span class="kicker">${person.latin} · LOVETREE</span><span class="person-name">${person.name}의 오늘 한 장</span></div><strong class="day-no">${moment.day}</strong></header>
+        <div class="memory-main"><div class="memory-date"><span>${moment.date}</span><i></i></div><div class="video-thumb"><img src="${thumb(moment.id)}" alt="${moment.title}" draggable="false"><span class="play-dot">▶</span><span class="source-badge">click to play</span></div><div class="memory-copy"><h2>${moment.title}</h2><p>${moment.note}</p></div></div>
+        <footer class="paper-foot"><span>${moment.source}</span><strong>♥ KEEP THIS MOMENT</strong></footer></article>`
+    }
+    function renderPeople(){people.innerHTML=Object.entries(peopleData).map(([key,p])=>`<button class="person ${key===state.person?'active':''}" type="button" data-person="${key}">${p.name}</button>`).join('')}
+    function renderFibers(){fibers.innerHTML=Array.from({length:11},(_,i)=>`<i class="fiber" style="--flip:${i%2?1:-1}"></i>`).join('')}
+    function renderMesh(){
+      const person=currentSet(),moment=currentMoment();
+      if(!moment){paperMesh.innerHTML=surfaceHTML(null,person);activeWrap.classList.remove('hidden');videoHit.hidden=true;tearCue.style.display='none';progressLine.style.display='none';return}
+      videoHit.hidden=false;tearCue.style.display='flex';progressLine.style.display='block';
+      paperMesh.innerHTML=Array.from({length:ROWS},(_,row)=>{const overlap=.11,top=Math.max(0,row/ROWS*100-overlap),bottom=Math.max(0,(ROWS-row-1)/ROWS*100-overlap),origin=(row+.5)/ROWS*100;return `<div class="paper-strip" style="--row:${row};--clip-top:${top}%;--clip-bottom:${bottom}%;--origin:${origin}%">${surfaceHTML(moment,person)}</div>`}).join('');
+      renderFibers();resetMesh(true)
+    }
+    function renderUnder(){const person=currentSet(),next=person.moments[state.index+1];underPage.innerHTML=surfaceHTML(next||null,person)}
+    function renderArchive(){
+      document.getElementById('archiveCount').textContent=`${state.archived.length}장`;
+      if(!state.archived.length){archive.innerHTML='<div class="empty"><div><i>♡</i><strong>아직 뜯어 간 기억이 없어요</strong><span>마음에 남은 영상을 한 장 뜯으면<br>여기에 차곡차곡 보관돼요.</span></div></div>';return}
+      archive.innerHTML=`<div class="archive-list">${state.archived.slice().reverse().map((a,i)=>`<button class="archive-card" type="button" data-archive="${state.archived.length-1-i}" style="--accent:${a.accent}"><img src="${thumb(a.moment.id)}" alt=""><div><small>${a.personName}</small><strong>${a.moment.title}</strong><span>${a.moment.date}</span></div></button>`).join('')}</div>`
+    }
+    function build(){renderPeople();renderMesh();renderUnder();renderArchive();activeWrap.classList.remove('hidden');state.flying=false}
+
+    function setBreaks(progress,grabRatio){
+      const nodes=[...fibers.children],center=Math.round(grabRatio*(nodes.length-1));
+      nodes.forEach((node,i)=>{const threshold=.16+Math.abs(i-center)*.055;node.classList.toggle('broken',progress>threshold)})
+    }
+    function updateMesh(dx,dy,progress,grabRatio=.5){
+      state.dx=dx;state.dy=dy;state.progress=progress;
+      const side=grabRatio<.5?-1:1;
+      [...paperMesh.querySelectorAll('.paper-strip')].forEach((strip,row)=>{
+        const t=row/(ROWS-1),hinge=Math.pow(t,1.52),bulge=Math.sin(t*Math.PI);
+        const tx=dx*hinge+side*bulge*progress*13;
+        const ty=dy*hinge-bulge*progress*7;
+        const rz=dx*.038*hinge+side*bulge*progress*1.5;
+        const skew=side*bulge*progress*1.1;
+        strip.style.transform=`translate3d(${tx}px,${ty}px,${bulge*progress*18}px) rotateZ(${rz}deg) rotateX(${-bulge*progress*7}deg) skewX(${skew}deg) scaleX(${1-bulge*progress*.025})`;
+        strip.style.filter=`brightness(${1-bulge*progress*.045}) drop-shadow(0 ${Math.max(0,progress*4)}px ${2+progress*5}px rgba(70,52,44,${.04+progress*.035}))`
+      });
+      const avg=.72;videoHit.style.transform=`translate3d(${dx*avg}px,${dy*avg}px,0) rotate(${dx*.027}deg)`;
+      tearCue.style.opacity=String(Math.max(0,1-progress*3.3));
+      progressLine.style.setProperty('--tear',`${Math.min(100,progress*112)}%`);
+      setBreaks(progress,grabRatio)
+    }
+    function resetMesh(immediate=false){
+      const strips=[...paperMesh.querySelectorAll('.paper-strip')];
+      strips.forEach(s=>{s.style.transition=immediate?'none':'transform .62s cubic-bezier(.2,.86,.26,1),filter .5s';s.style.transform='';s.style.filter=''});
+      videoHit.style.transition=immediate?'none':'transform .62s cubic-bezier(.2,.86,.26,1)';videoHit.style.transform='';
+      tearCue.style.opacity='1';progressLine.style.setProperty('--tear','0%');[...fibers.children].forEach(n=>n.classList.remove('broken'));
+      setTimeout(()=>{strips.forEach(s=>s.style.transition='');videoHit.style.transition=''},680);state.progress=state.dx=state.dy=0
+    }
+    function pointerDown(e){
+      if(state.flying||!currentMoment()||e.button!==0||e.target.closest('.video-hit'))return;
+      state.dragging=true;state.startX=e.clientX;state.startY=e.clientY;state.lastY=e.clientY;state.lastT=performance.now();activeWrap.classList.add('dragging');try{activeWrap.setPointerCapture(e.pointerId)}catch(_){ }e.preventDefault()
+    }
+    function pointerMove(e){
+      if(!state.dragging)return;
+      let dx=e.clientX-state.startX,dy=e.clientY-state.startY;if(dy<0)dy*=.18;
+      const progress=Math.min(1.15,Math.max(0,(Math.max(0,dy)+Math.abs(dx)*.13)/245));
+      const rect=activeWrap.getBoundingClientRect(),grabRatio=Math.max(0,Math.min(1,(state.startX-rect.left)/rect.width));
+      updateMesh(dx,dy,progress,grabRatio);state.lastY=e.clientY;state.lastT=performance.now();e.preventDefault()
+    }
+    function pointerUp(e){
+      if(!state.dragging)return;state.dragging=false;activeWrap.classList.remove('dragging');
+      try{activeWrap.releasePointerCapture(e.pointerId)}catch(_){ }
+      if(state.progress>=.58)commitTear();else resetMesh()
+    }
+    function commitTear(){
+      const moment=currentMoment();if(!moment||state.flying)return;state.flying=true;
+      const person=currentSet(),rect=activeWrap.getBoundingClientRect(),tray=archive.getBoundingClientRect();
+      const flyer=document.createElement('div');flyer.className='flying-page';flyer.style.cssText=`left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;--fly-x:${tray.left-rect.left+35}px;--fly-y:${tray.top-rect.top+Math.min(210,state.archived.length*24)}px;--fly-r:${state.dx>=0?'14deg':'-14deg'}`;flyer.innerHTML=surfaceHTML(moment,person);document.body.appendChild(flyer);
+      activeWrap.classList.add('hidden');requestAnimationFrame(()=>requestAnimationFrame(()=>flyer.classList.add('fly')));
+      state.archived.push({person:state.person,personName:person.name,accent:person.accent,index:state.index,moment});
+      announce(`${moment.title}을 오늘의 기억으로 보관했어요.`);showToast('♥ 뜯은 영상이 기억함에 보관됐어요');
+      setTimeout(()=>{state.index+=1;build()},260);setTimeout(()=>flyer.remove(),1250)
+    }
+    function autoTear(){
+      if(state.flying||!currentMoment())return;let start=performance.now();const duration=980;const direction=Math.random()>.5?1:-1;
+      function frame(now){const t=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-t,3);updateMesh(direction*38*ease,176*ease,ease*.78,.62);if(t<1)requestAnimationFrame(frame);else setTimeout(commitTear,120)}requestAnimationFrame(frame)
+    }
+    function openVideo(){
+      const moment=currentMoment();if(!moment)return;const person=currentSet();
+      playerFrame.innerHTML=`<iframe src="https://www.youtube.com/embed/${moment.id}?autoplay=1&rel=0" title="${moment.title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;document.getElementById('playerPerson').textContent=`${person.name} · TODAY'S MEMORY`;document.getElementById('playerTitle').textContent=moment.title;player.classList.add('open')
+    }
+    function closeVideo(){player.classList.remove('open');setTimeout(()=>playerFrame.innerHTML='',280)}
+    function restoreArchive(index){
+      const saved=state.archived[index];if(!saved)return;state.person=saved.person;state.index=saved.index;state.archived.splice(index,1);build();showToast('선택한 기억을 다시 맨 위에 올렸어요');announce(`${saved.moment.title}을 다시 펼쳤어요.`)
+    }
+    function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function announce(message){live.textContent='';setTimeout(()=>live.textContent=message,20)}
+
+    people.addEventListener('click',e=>{const button=e.target.closest('[data-person]');if(!button||state.flying)return;state.person=button.dataset.person;state.index=0;build();announce(`${currentSet().name}의 기억 패드를 열었어요.`)});
+    archive.addEventListener('click',e=>{const card=e.target.closest('[data-archive]');if(card)restoreArchive(Number(card.dataset.archive));const restart=e.target.closest('[data-restart]');if(restart){state.index=0;build()}});
+    paperMesh.addEventListener('click',e=>{if(e.target.closest('[data-restart]')){state.index=0;build()}});
+    activeWrap.addEventListener('pointerdown',pointerDown);activeWrap.addEventListener('pointermove',pointerMove);activeWrap.addEventListener('pointerup',pointerUp);activeWrap.addEventListener('pointercancel',pointerUp);
+    videoHit.addEventListener('click',openVideo);document.getElementById('demoButton').addEventListener('click',autoTear);document.getElementById('closePlayer').addEventListener('click',closeVideo);player.addEventListener('click',e=>{if(e.target===player)closeVideo()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&player.classList.contains('open'))closeVideo()});
+    build();
+  </script>
+</body>
+</html>
