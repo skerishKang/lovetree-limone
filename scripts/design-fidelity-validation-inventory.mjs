@@ -117,6 +117,22 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze(["qa/evidence/source-track-18-v2"]),
   }),
+  Object.freeze({
+    id: "track-62-v1-1-continuous-exhibition-rail",
+    label: "Track62 V1.1 continuous exhibition rail native capability proof",
+    route: "/design-lab/capabilities/continuous-exhibition-rail",
+    routeEntry: "app/design-lab/capabilities/continuous-exhibition-rail/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze(["app/design-lab/capabilities/continuous-exhibition-rail/", "design-intake/manifests/track-62-v11-continuous-exhibition-native-proof.json", "lib/track-62-v11/", "qa/track62-v11-continuous-exhibition-qa.mjs", "tests/track-62-v11", ".github/workflows/track62-v11-continuous-exhibition-qa.yml"]),
+    exactAssetStatus: "SOURCE_REFERENCE_ONLY_MEDIA",
+    browserGates: Object.freeze(["qa/track62-v11-continuous-exhibition-qa.mjs"]),
+    actualRouteBrowserGate: "qa/track62-v11-continuous-exhibition-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track62-v11-continuous-exhibition-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/track62-v11"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
@@ -177,19 +193,7 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
   }),
 ]);
 
-export const FUTURE_MERGE_GUARDS = Object.freeze([
-  Object.freeze({
-    id: "track-62-v1-1-future-merge", disposition: "FUTURE_MERGE_GUARD",
-    route: "/design-lab/capabilities/continuous-exhibition-rail",
-    routeEntry: "app/design-lab/capabilities/continuous-exhibition-rail/page.tsx",
-    impactPrefixes: Object.freeze(["app/design-lab/capabilities/continuous-exhibition-rail/", "design-intake/manifests/track-62-v11-continuous-exhibition-native-proof.json", "lib/track-62-v11/", "qa/track62-v11-continuous-exhibition-qa.mjs", "tests/track-62-v11", ".github/workflows/track62-v11-continuous-exhibition-qa.yml"]),
-    actualRouteBrowserGate: "qa/track62-v11-continuous-exhibition-qa.mjs",
-    dedicatedWorkflow: ".github/workflows/track62-v11-continuous-exhibition-qa.yml",
-    validationClass: "interaction-contract-pending-merge", exactAssetStatus: "SOURCE_REFERENCE_ONLY_MEDIA",
-    viewports: VIEWPORTS, reducedMotion: true,
-    requiredResolution: "Before merge, replace this guard with REGISTERED_TARGET or EXPLICIT_MACHINE_CHECKED_EXCLUSION.",
-  }),
-]);
+export const FUTURE_MERGE_GUARDS = Object.freeze([]);
 
 export const DESIGN_FIDELITY_TARGETS = Object.freeze([...BASE_TARGETS, ...SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS]);
 const GLOBAL_PREFIXES = Object.freeze([...GLOBAL_ORCHESTRATION_PREFIXES, "scripts/design-fidelity-validation-inventory.mjs", "tests/design-fidelity-inventory-drift.test.mjs"]);
