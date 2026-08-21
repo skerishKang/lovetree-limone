@@ -1,0 +1,78 @@
+LoveTree Track 57 — Living Glass Moment Cards V1.2 사용설명서
+================================================================
+YOUTUBE LIVE THUMBNAIL SYNC
+
+1. 무엇이 바뀌었나요?
+-------------------
+V1.1 디자인과 물성은 그대로입니다.
+V1.2는 YouTube URL을 연결할 때 썸네일이 실제 Glass Card까지 동기화되지 않던 문제만 수정했습니다.
+
+유지:
+- Selected Light Bloom
+- Tilt
+- Cursor-following Glare
+- Spring Return
+- Glass Depth / Layered Parallax
+- WHY NEXT
+- Selection Light → Connection Light → Arrival Light
+
+2. 가장 빠른 확인 방법
+--------------------
+1) 첫 카드를 클릭합니다.
+2) `미디어 링크 연결`을 누릅니다.
+3) 미디어 종류를 YouTube로 선택합니다.
+4) YouTube URL을 붙여 넣습니다.
+5) 저장하기 전 `LIVE PREVIEW`에 영상 썸네일이 즉시 바뀌는지 확인합니다.
+6) `이 Moment에 연결`을 누릅니다.
+7) 실제 Living Glass Card의 사진도 같은 YouTube 썸네일로 바뀌는지 확인합니다.
+8) 다시 편집해 다른 YouTube URL을 넣으면 Live Preview가 즉시 다른 썸네일로 바뀝니다.
+
+3. 지원 YouTube URL
+------------------
+- https://www.youtube.com/watch?v=VIDEO_ID
+- https://youtu.be/VIDEO_ID
+- https://www.youtube.com/shorts/VIDEO_ID
+
+변환 규칙:
+URL → YouTube ID → https://img.youtube.com/vi/{ID}/hqdefault.jpg
+
+4. 저장 전과 저장 후의 차이
+--------------------------
+저장 전:
+- URL을 타이핑/붙여넣는 즉시 Live Preview만 바뀝니다.
+- 아직 실제 Moment 데이터는 확정하지 않습니다.
+
+저장 후:
+- sourceUrl / mediaUrl 저장
+- thumbnailUrl을 실제 YouTube thumbnail URL로 갱신
+- Living Glass Card의 media image 즉시 갱신
+- Detail image 즉시 갱신
+
+5. Moment 열기
+-------------
+YouTube Moment에서 `Moment 열기 · 재생`을 누르면:
+- inline YouTube iframe 재생을 시도합니다.
+- viewer에는 항상 `YouTube에서 재생 ↗` fallback이 함께 있습니다.
+
+따라서 iframe이 브라우저/관리 환경에서 차단되어도 원본 YouTube URL로 이동할 수 있습니다.
+
+6. 카드 클릭과 재생
+------------------
+카드 클릭 = Moment 선택 + Selected Bloom
+Moment 열기 = 영상 재생
+
+카드 클릭만으로 autoplay하지 않습니다.
+
+7. QA 환경 주의
+--------------
+관리형 Chromium은 외부 img.youtube.com / YouTube 네트워크를 차단할 수 있습니다.
+이 경우 코드가 만든 thumbnail URL 자체와 Glass Card 동기화를 확인하고, 실제 외부 픽셀/영상 재생은 일반 브라우저에서 최종 확인합니다.
+V1.2 QA에서는 첫여정과 57에 동일한 실제 YouTube URL을 넣고 동일 thumbnail request가 생성되는지 Side-by-Side로 검증했습니다.
+
+8. Prototype 한계
+----------------
+- 제품 오너 승인 전 후보입니다.
+- 실제 사용자 DB 저장은 연결하지 않았습니다.
+- 편집값은 Prototype 세션 상태입니다.
+- Production 배포 / main merge / 실제 사용자 데이터 변경 없음.
+- V1.1 원본은 수정하지 않았습니다.

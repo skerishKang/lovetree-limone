@@ -1,0 +1,15 @@
+{
+  "firstSave": {
+    "url": "https://www.youtube.com/watch?v=hmE9f-TEutc",
+    "preview": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+    "savedCard": "https://img.youtube.com/vi/hmE9f-TEutc/hqdefault.jpg",
+    "pass": true
+  },
+  "secondSave": {
+    "url": "https://youtu.be/nqofkzQD19E",
+    "preview": "https://img.youtube.com/vi/nqofkzQD19E/hqdefault.jpg",
+    "savedCard": "https://img.youtube.com/vi/nqofkzQD19E/hqdefault.jpg",
+    "pass": true
+  },
+  "pass": true
+}

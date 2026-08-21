@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-57-living-glass",
+  "sourceTrackId": "Track57",
+  "title": "리빙글라스 모먼트카드 (Living Glass Moment Cards) 소스 게이트 등록",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Source gate registration of the 'LoveTree Living Glass Moment Cards' versioned single-file HTML candidate family (V1 → V1.1 REAL_MEDIA selection bloom → V1.2 YouTube live-thumbnail 최종후보 → V1.3 mobile-responsive fix): a reusable View/component candidate that expresses already-saved Moments as premium tactile glass objects (DOM/CSS 2.5D tilt, cursor-following glare, layered parallax, emotion-derived violet/rose/amber material, WHY NEXT detail), together with sibling design-lead instructions, per-version QA/validation evidence and a product-owner review recording. Registration only — no product adoption implied.",
+  "summary": "Source Track 57 registered as a preservation gate (Issue #309). All 62 files observed in Drive folder 57_리빙글라스_모먼트카드 were copied byte-exact; 56 non-video files (no non-video file exceeded 10 MB) are committed under reference/source-track-57-living-glass/ with SHA256SUMS, while 6 video binaries — including the 19.4 MB product-owner review recording — are withheld from the repository per repo size/video policy with Drive ID+bytes+SHA256 recorded in docs/design-intake/source-track-57-gate.md. Sibling design-lead instruction documents exist (디자인팀장6기 신규작업지시 V1 + 수정지시 V1.1); every version README marks the track 'CANDIDATE / 제품 오너 승인 전 미채택' and no owner verdict is recorded in the folder, so adoption stays HOLD and Lineage57 is NOT allocated. Internal historical pins verified: README_V1.2 pins V1.1 (1849572b…) and V1.2 (18f2f79c…), 버전1.3 검증결과.json pins the V1.3 candidate (ca30cdb4…) — all three match fresh hashes exactly. OPEN flag raised: 6 byte-identical duplicate content groups exist under distinct Drive IDs (per-version self-contained copies + top-level ★최종 mirror); authoritative object selection is deferred to design-lead classification. A misfiled Track 44 instruction (99_CANCELLED_44_오분류지시_보존) is preserved as-is; the folder explicitly states Track 57 is NOT a Track 44 sequel.",
+  "provenance": {
+    "sourceLabel": "57_리빙글라스_모먼트카드 / Issue #309 source gate registration",
+    "driveFolderId": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+    "sourceFiles": [
+      "★_최종_버전1.2_리빙글라스_모먼트카드.html",
+      "모바일_확인본_버전1.2_유튜브_실시간썸네일.html",
+      "제품오너_검토녹화_2026-08-11_16-12.mp4",
+      "★_참고영상_컬러카드마인드맵_자동전개.mp4",
+      "01_버전1_기본버전_자료/00_README_V1.md",
+      "01_버전1_기본버전_자료/01_지시·분석/01_57_LIVING_GLASS_MOMENT_CARDS_V1_디자인팀장6기_신규작업지시_2026-08-11.md",
+      "01_버전1_기본버전_자료/01_지시·분석/02_57_V1.1_REAL_MEDIA_AND_SELECTION_BLOOM_디자인팀장6기_수정지시_2026-08-11.md",
+      "01_버전1_기본버전_자료/01_지시·분석/99_CANCELLED_44_오분류지시_보존_2026-08-11.md",
+      "01_버전1_기본버전_자료/01_지시·분석/57_REFERENCE_ANALYSIS.md",
+      "02_버전1.1_실제미디어_선택빛_자료/★_현재후보_57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.html",
+      "03_버전1.2_최종후보_자료/00_README_V1.2.md",
+      "03_버전1.2_최종후보_자료/★_대표본_V1.2_사용설명서.txt",
+      "04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+      "04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage57 is NOT allocated. Repository lineage number is not reserved by this manifest; product-shell placement is reviewed only after a design-lead classification decision closes the intake state (Issue #309)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO; all version READMEs mark 'CANDIDATE / 제품 오너 승인 전 미채택' and no product-owner verdict is recorded in the folder; registration/preservation evidence only (Issue #309)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-11",
+    "authorityObservedAt": "2026-08-21T06:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+      "driveId": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+      "bytes": 676320,
+      "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "★_최종_버전1.2_리빙글라스_모먼트카드.html",
+      "driveId": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+      "bytes": 671480,
+      "sha256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_버전1.1_실제미디어_선택빛_자료/★_현재후보_57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.html",
+      "driveId": "1YMthLRTO5FphIo0JnNl3t58L67APyW40",
+      "bytes": 666876,
+      "sha256": "1849572b17c973f0e687e380a564c62f21069eeb67971eaf2d4252cede7884bd",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/01_지시·분석/01_57_LIVING_GLASS_MOMENT_CARDS_V1_디자인팀장6기_신규작업지시_2026-08-11.md",
+      "driveId": "1s28pONirS6odkYZL7Vm2BrKP7nUjrftU",
+      "bytes": 17868,
+      "sha256": "7e5745c110433a8d0380463b1bd8e1306ab49c9952b414f6bf5619ce52c2f555",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/01_지시·분석/02_57_V1.1_REAL_MEDIA_AND_SELECTION_BLOOM_디자인팀장6기_수정지시_2026-08-11.md",
+      "driveId": "1gk-cDe3mPOhkb3PskYKrgMSWtfL4BruO",
+      "bytes": 11648,
+      "sha256": "26a53e8f77f045131506f9fb9a2d0edad9e003cbcbec236c9ad7fb4a3c79db49",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/01_지시·분석/99_CANCELLED_44_오분류지시_보존_2026-08-11.md",
+      "driveId": "1iWzKsMjqtq9rTVwFVutZG07qKQwKLL9q",
+      "bytes": 16853,
+      "sha256": "9cbe2d18b3f7c2def136992caa18f778f850a21dc5801988f3a6f87b7a827daf",
+      "role": "misfiled-instruction-preservation",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/01_지시·분석/57_REFERENCE_ANALYSIS.md",
+      "driveId": "1IFH_WVLNNTVvK9pBEosHRmTvPGwCp6Qw",
+      "bytes": 2354,
+      "sha256": "2ab570662c1872200d3e0def64439a9bd46e8b7cd31f1ae7a1924346333ab7ce",
+      "role": "reference-analysis",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_버전1.2_최종후보_자료/00_README_V1.2.md",
+      "driveId": "1AcwIWAxQrCSg_VS1ZIXcFZYoH5wpIVca",
+      "bytes": 398,
+      "sha256": "10bc91b0ccaf4f889066b441a3e4ba22a9c2a41758fd539357fd150a2e6f140f",
+      "role": "version-readme-with-pins",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_버전1.2_최종후보_자료/★_대표본_V1.2_사용설명서.txt",
+      "driveId": "1-OU4neZvaDJs2G3o-PzDeuj-yhnDEQGg",
+      "bytes": 3074,
+      "sha256": "33a027d93a5d54b07b165a39aaa4252f23a79ae571e2c5ee4afe71c1ac8c5509",
+      "role": "usage-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json",
+      "driveId": "1UvKoXF3urjBTwcnPxirOR8NRoyl2avG3",
+      "bytes": 1897,
+      "sha256": "e620bb4ca57ddc9c234c90dfd413fe8c907d5594cc2c00d86436720f9bb6f97a",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "제품오너_검토녹화_2026-08-11_16-12.mp4",
+      "driveId": "1ZOMRSNDJQZwO-8-Aj5cNFioPwPkdQ2uZ",
+      "bytes": 19389647,
+      "sha256": "90c2f2c5ad6b1d6b5320a72ac94ccd99a5b5f89e1ed9941275644898b823c5db",
+      "role": "owner-review-recording",
+      "status": "PENDING"
+    },
+    {
+      "filename": "★_참고영상_컬러카드마인드맵_자동전개.mp4",
+      "driveId": "1pWqIaSpwWcHVtXqfB6ck_j4wjL6I5sNr",
+      "bytes": 6048305,
+      "sha256": "696c6279f46e06fd257497a0c64831752f224a42eda70c341c309bab636895f0",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/버전1_실행영상_리빙글라스_모먼트카드.mp4",
+      "driveId": "1F_hE9bW3gFxyEjyASsBT7AbqTZ6kWZ4R",
+      "bytes": 2404364,
+      "sha256": "9add66c82611ce83439353dcb324a971e81bbcd94ff2d9d9047d5b31cfeadc5c",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_버전1.1_실제미디어_선택빛_자료/★_실행영상_57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.mp4",
+      "driveId": "19v2SG0fyvnO36DoQKvrmoB6mcIx3VG3q",
+      "bytes": 1425114,
+      "sha256": "de5d80e9dc33f827649744620a8cb3c95611f7160e3dc043d2fe41ac4210c1b2",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_버전1_기본버전_자료/04_검증자료/57_MOBILE_INTERACTION.mp4",
+      "driveId": "1g06wM_qlINCQPrFMUcivyoN0jDOrYIDi",
+      "bytes": 387432,
+      "sha256": "e73d9bdd69ed37e71279a135e4bc29891d2535a5d89095bd1aabbd7769c7feaa",
+      "role": "sibling-qa-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_버전1.1_실제미디어_선택빛_자료/03_미디어자산/moment_2_demo.mp4",
+      "driveId": "1tyk8W9Bug2xg_OuR0klEIlvVAu_qZQW-",
+      "bytes": 157986,
+      "sha256": "a04e0c4627ff48deb6fc0b089e6a28efd71b580e4e96ede168e883648c702fcc",
+      "role": "media-demo-video",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "DUPLICATE_DRIVE_OBJECTS_OPEN: 6 byte-identical content groups exist under distinct Drive IDs (V1.2 HTML ×3 incl. top-level ★최종 mirror; V1.1 HTML ×2 현재후보=STANDALONE; V1.1 수정지시 md ×2; moment_1/2/3.jpg ×2 carried from V1 to V1.1 asset folders) — structurally self-explained by self-contained per-version folders, but the authoritative Drive object per artifact stays UNRESOLVED → OPEN until design-lead classification selects canonical objects",
+    "VIDEO_BINARY_TRANSFER_WITHHELD: 6 video binaries (.mp4) excluded from the repository commit per repo size/video policy — Drive ID+bytes+SHA256 fingerprints recorded in docs/design-intake/source-track-57-gate.md; artifacts stay PENDING until an approved transfer exception or product need exists",
+    "MISFILED_TRACK44_INSTRUCTION_PRESERVED: 99_CANCELLED_44_오분류지시_보존_2026-08-11.md (and the ★_참고영상_컬러카드마인드맵_자동전개.mp4 it references) belong to the Track 44 자동전개마인드맵 context and are preserved as-is inside this folder; the folder explicitly states Track 57은 Track 44의 마인드맵 후속이 아니다",
+    "OWNER_VERDICT_NOT_RECORDED: 제품오너_검토녹화 recording exists (2026-08-11) but no written product-owner decision document is present in the folder — adoption basis remains PENDING"
+  ],
+  "nativeRemediations": [
+    "obtain the recorded-or-missing product-owner verdict plus a LoveTree design-lead classification/adoption decision before any lineage-number or product placement decision",
+    "resolve DUPLICATE_DRIVE_OBJECTS_OPEN by selecting one authoritative Drive object per duplicated artifact during design-lead classification",
+    "if video evidence is required for future native review, re-obtain the 6 withheld binaries from the untouched Drive originals under an approved transfer exception",
+    "only after classification closes: run the standard intake sequence (design-lead decision → source QA → exact fingerprint → repository native intake/proving)"
+  ],
+  "sourceOnlyValues": [
+    "'CANDIDATE / 제품 오너 승인 전 미채택' status semantics are source-side state — never canonical product truth until an explicit owner decision lands",
+    "Track 57 is explicitly NOT a Track 44 마인드맵 sequel despite the preserved misfiled instruction — do not merge their mechanics",
+    "emotion-derived violet/rose/amber glass material and transient card-to-card Connection cue are source design values pending classification",
+    "auto-generated verification captures are machine-generated sibling QA evidence, never canonical product art"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
