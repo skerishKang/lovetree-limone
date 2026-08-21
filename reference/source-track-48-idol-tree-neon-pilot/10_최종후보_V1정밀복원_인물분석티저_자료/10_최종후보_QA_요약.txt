@@ -1,0 +1,19 @@
+LoveTree 48 FINAL GATE — 10 최종후보 QA 요약
+
+상태: OWNER VISUAL REVIEW REQUIRED
+자동 PASS 선언: 하지 않음
+실행 길이: 31.2초
+Broken image: 0
+Page error: 0 / Console error: 0
+신규 Cast: 0
+Aircraft Scene: 0 / Cockpit Scene: 0 / Pilot Scene: 0
+극단 Eye Zoom: 제거 — Face/Eye/Tunnel crop 최대 약 1.88×
+얼굴 Black Mask / Face Vignette / Multiply Skin Mask: 제거
+골반·벨트 중심 Detail: 제거, 어깨·소매·상반신·전신 context로 교체
+01 V1 0~17.9초 장면 순서와 빠른 전환 빈도: 유지
+White Iris / Lime Scan Wipe / Flash / Match Cut / Vector / Thermal Shock: 유지
+비행 구간 대체: Radar Shock → Face Match → 2/4/6 Multi-panel → White → Vector → Thermal → Signal Trace → Same-person → Human Signal → Group Return
+Moment Saved: 앞에서 실제 사용한 A Front Moment 1개를 freeze하고 작은 SAVE signal만 표시
+LOVETREE Ending: V1 typography 유지, 지시된 dark → white core → lime beam → burst → LOVETREE 단계만 적용
+
+최종 Gate: 01 V1과 나란히 보고 10이 조금이라도 밋밋하면 10 반려 후 01을 기준 후보로 사용.

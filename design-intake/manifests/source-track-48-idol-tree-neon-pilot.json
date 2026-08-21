@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-48-idol-tree-neon-pilot",
+  "sourceTrackId": "Track48",
+  "title": "아이돌러브트리 네온파일럿 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Cinematic idol LoveTree teaser: a person-analysis/character-intro cinematic pilot (31.2s target) exploring an idol-group visual identity for the LoveTree brand — FINAL GATE candidate 10 (V1 precision-restored person-analysis teaser) is current, with 01 V1 as the designated fallback baseline (registration only — no product adoption implied).",
+  "summary": "Drive 채택본 48_아이돌러브트리_네온파일럿 registered per Issue #305. Version history V1→V4.2b plus FINAL GATE candidate 10 (V1 정밀복원 인물분석티저; Aircraft/Cockpit/Pilot Scene=0; owner visual review pending — if rejected, 01 V1 becomes baseline). Full Drive tree fingerprint-indexed (334 files / 684,669,025 B in FILE_INDEX.md with server-side MD5); selected evidence preserved byte-exact (11 files / 7,087,529 B) with dual-pin verification (Drive MD5 == local MD5, local SHA256SUMS.txt). Videos are fingerprint-only per commit caps. Lineage reservation and adoption both HOLD.",
+  "provenance": {
+    "sourceLabel": "48_아이돌러브트리_네온파일럿 / Issue #305 source gate registration",
+    "driveFolderId": "1RsVSpzqmi2Gdnge0msJHiaMZ5FDe7QMQ",
+    "sourceFiles": [
+      "10_최종후보_V1정밀복원_인물분석티저_바로보기.html",
+      "01_V1_최초시네마틱_원형_바로보기.html",
+      "00_버전목록_한눈에보기.txt",
+      "90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/LoveTree 48 · NEON PILOT.md"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage number is NOT allocated. No repository lineage is reserved by this manifest."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #305 gate registration only — CANONICAL_V4_ADOPTION=NO. FINAL GATE owner review (10 vs 01 fallback) has not been recorded in this package."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "10-FINAL-GATE (V1 정밀복원 인물분석티저)",
+    "authorityObservedAt": "2026-08-09T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "10_최종후보_V1정밀복원_인물분석티저_바로보기.html",
+      "driveId": "1JBGFDBDrftmPI22P_KNn4ZnSPMarFh85",
+      "bytes": 781713,
+      "sha256": "741ecdb27148c45805905763e5686fb9444bb7023cee993e32f3a1de2e187eae",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_V1_최초시네마틱_원형_바로보기.html",
+      "driveId": "13fa5jMgqnh9M9n7oNJUfKbkMbSwM3OKS",
+      "bytes": 5482396,
+      "sha256": "fe63834b1e6fc5273a7f98b0fac46e47346880d97f40c3f4ca1da73bef2378d0",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "00_버전목록_한눈에보기.txt",
+      "driveId": "1CtMSRodws_7HbwtUtQcuk9meRO3I4QoU",
+      "bytes": 2359,
+      "sha256": "33cf44b5e19dee9baacde29d7465fbb6a611e1641597a34b033da33d507a4497",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/LoveTree 48 · NEON PILOT.md",
+      "driveId": "1Xh2s775TeV2COu_7QRLEuVUP26VWE8QF",
+      "bytes": 17375,
+      "sha256": "c32dbe1644ff873978c1cabff5b9c0617d7bfd9d05a79d6e6b09ab92473d5486",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "10_최종후보_V1정밀복원_인물분석티저_자료/10_최종후보_QA_요약.txt",
+      "driveId": "13VN9ALbuK3nUs07s6HxtjwGakMnh9xyk",
+      "bytes": 1148,
+      "sha256": "36bc2e3e66df9e5fd90123d1edeb4a21d2aded33dbd481ffb4fcc813abc93c88",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "10_최종후보_V1정밀복원_인물분석티저_자료/10_최종후보_Desktop실행_31.2초.mp4",
+      "driveId": "1UDtiuNNBJtIKxFu5ZdTVZkvKtWl4p0Gq",
+      "bytes": 14525699,
+      "role": "sibling-qa",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "00_제품오너녹화_V1_최초시네마틱.mp4",
+      "driveId": "1wNridR22HXaHOevEd9raHqBCTJZ8B6M2",
+      "bytes": 20749100,
+      "role": "reference-media",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "FINAL_GATE_UNDECIDED: candidate 10 vs fallback 01 owner visual review is not recorded in the package",
+    "CASTING_PROVENANCE: idol visual identity was produced through multi-generation casting gates (Gate0–Gate2C); likeness/rights provenance of generated idol identities is not established by the sibling package",
+    "REJECTED_ARCHIVE_PRESENT: 92_반려_중간자료_보관 contains DO_NOT_USE sealed packages — must never be treated as candidates"
+  ],
+  "nativeRemediations": [
+    "record the FINAL GATE owner decision (10 vs 01) before any adoption discussion",
+    "establish likeness/rights provenance for generated idol identities before any native candidate",
+    "run repository-side fidelity, reduced-motion, keyboard/manual-takeover and overflow gates before any native proposal"
+  ],
+  "sourceOnlyValues": [
+    "version list 00_버전목록_한눈에보기.txt is the authority index; 01~09 기존본 수정 금지",
+    "candidate 10 rules: no Aircraft/Cockpit/Pilot Scene, target length 31.2s, V1 direct base",
+    "if 10 is rejected no V11/V12/R2 is produced — 01 V1 becomes the baseline"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
