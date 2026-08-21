@@ -28,13 +28,15 @@ an original reference footage clip and one auto-generated preview image.
 | File | Bytes | SHA-256 | Drive ID | Status |
 |---|---|---|---|---|
 | 01_메모리포켓_상호작용.html | 37,622 | `ba0a31f96f2acdcf0bfd99543189af89c6b7417c3cad998196c7ba410484645a` | `1J_d-ZZ4K8AsprhTj9sMHgRPmyqv77N7u` | PINNED |
-| 02_녹화영상_메모리포켓.mp4 | 16,737,211 | `2857a497ef316f6460b7100ed8eb714bd159b2bb4d963fdd01ba933a853037e1` | `1ciVUTrLVYhYqaNwA-mUxXmlLJcu9W6Xe` | PINNED |
-| 03_참고영상_메모리포켓_원본.mp4 | 12,270,217 | `ed15fe35e68563d272cc5140f7c423bfde828035f0a2878fcd41b3fc1e95f4bc` | `1YeZlf3AqsLm9BM4Ec0YHAbriRRe71L1K` | PINNED |
+| 02_녹화영상_메모리포켓.mp4 | 16,737,211 | `2857a497ef316f6460b7100ed8eb714bd159b2bb4d963fdd01ba933a853037e1` | `1ciVUTrLVYhYqaNwA-mUxXmlLJcu9W6Xe` | PENDING (지문만) |
+| 03_참고영상_메모리포켓_원본.mp4 | 12,270,217 | `ed15fe35e68563d272cc5140f7c423bfde828035f0a2878fcd41b3fc1e95f4bc` | `1YeZlf3AqsLm9BM4Ec0YHAbriRRe71L1K` | PENDING (지문만) |
 | 10_이미지/90_자동생성_대표미리보기.png | 426,887 | `848d67fdb7fc091397c952f606a5eb2975a9147dfa4ac42f39c8ea911cf3706e` | `1CerLU3DWRmBeFnou1_9WjqknSHxRcqWV` | PINNED |
 
 All 4 files observed in the Drive folder were copied byte-exact with
-`rclone copy --transfers 2`; `SHA256SUMS` pins the preserved set. No file was left
-unpreserved, so no artifact carries `PENDING` transport state.
+`rclone copy --transfers 2`; `SHA256SUMS` pins the preserved set. Since Issue #328
+the two video byte streams are removed from the repository under the no-video-bytes
+guardrail (≈29MB freed); their fingerprints above (bytes + SHA-256 + Drive ID) and
+the `SHA256SUMS` entries stay recorded — the bytes remain on read-only Drive originals.
 
 ## Historical pin (Drive-side history)
 
@@ -76,7 +78,8 @@ instruction/design-lead classification decision
 
 ```text
 SOURCE_TRACK_41_INTAKE      = RECORDED (preservation gate complete)
-PRESERVED_EVIDENCE          = reference/source-track-41-memory-pocket/ (4 files + SHA256SUMS)
+PRESERVED_EVIDENCE          = reference/source-track-41-memory-pocket/ (2 files + SHA256SUMS;
+                              video bytes removed in #328, fingerprints retained)
 LINEAGE41_RESERVATION       = HOLD (no repository lineage number allocated)
 CANONICAL_V4_ADOPTION       = NO
 BACKEND_SCOPE               = NONE (no DB/API/Auth/Firebase/Neon/Worker work implied)
