@@ -129,6 +129,15 @@ jobs:
             LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
             node --import tsx --test 'tests/*.test.mjs'
 
+      - name: Remove test byproducts (keep worktree-clean guard meaningful)
+        shell: bash
+        run: |
+          echo "::group::test byproducts"
+          git status --porcelain || true
+          echo "::endgroup::"
+          git checkout -- . 2>/dev/null || true
+          git clean -fdq
+
       - name: Database schema check
         run: npm run db:check
 
