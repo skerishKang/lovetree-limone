@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Drive-intake evidence is read-only reference, never product code.
+    "reference/**",
   ]),
 ]);
 
