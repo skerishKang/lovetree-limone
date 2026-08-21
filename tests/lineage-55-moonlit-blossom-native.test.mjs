@@ -69,9 +69,9 @@ test("lineage 55 assets resolve under the canonical public base path", () => {
   }
 });
 
-test("lineage 55 asset requests stay dormant while provenance hold persists", async () => {
+test("lineage 55 asset requests activate only after verified materialization", async () => {
   const { LINEAGE_55_ASSETS_MATERIALIZED } = await import("../lib/lineage-55-moonlit-blossom-assets.ts");
-  assert.equal(LINEAGE_55_ASSETS_MATERIALIZED, false);
+  assert.equal(LINEAGE_55_ASSETS_MATERIALIZED, true);
 });
 
 test("blossom controller starts at SEED with auto off", () => {
