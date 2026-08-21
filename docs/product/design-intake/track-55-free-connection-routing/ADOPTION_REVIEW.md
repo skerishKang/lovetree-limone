@@ -13,7 +13,7 @@
 - preserved path: `reference/source-track-55-lupt/` (57 files, read-only `rclone copy` from the adopted-design Drive mirror `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/55_자유연결_경로편집`)
 - checksum ledger: `reference/source-track-55-lupt/SHA256SUMS` (57 entries, self-reference excluded)
 - executable identity confirmed: `★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` = 55,327 B, SHA-256 `768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd` — byte-length matches the Issue #162 pin and the digest independently re-confirms the manifest's pinned fingerprint from a second Drive location
-- OPEN provenance flag: the Integration CTO reconciliation on #162 recorded a fresh raw download of the same-titled 55,327-byte object at SHA-256 `768a49f64dc810d6279497c32347249753351455600dd0b32b06024ecb7bff19`; mismatch cause NOT PROVEN. Both identities are recorded here without resolution. Reconcile before any implementation slice consumes this evidence.
+- RESOLVED provenance flag (re-measured 2026-08-21, evidence: `PROVENANCE_REHASH.md`): the Integration CTO reconciliation on #162 recorded a fresh raw download of the same-titled 55,327-byte object at SHA-256 `768a49f64dc810d6279497c32347249753351455600dd0b32b06024ecb7bff19`; independent triple re-measurement (fresh rclone download + repository mirror + ledger/manifest/issue-body pins, each digest computed twice) confirmed `768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd` for every copy — the CTO comment value was a transcription error (shares its 10-char prefix with the true digest; chance coincidence ≈10⁻¹²). No DRIVE_MUTATION (live object id, bytes, and modTime unchanged).
 
 ## Canonical `/v4/trees/demo/graph` vs LUPT V1.2 feature comparison
 
