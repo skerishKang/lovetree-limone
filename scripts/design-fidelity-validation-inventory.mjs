@@ -133,6 +133,32 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze(["qa/evidence/track62-v11"]),
   }),
+  Object.freeze({
+    id: "lineage-55-moonlit-blossom",
+    label: "Lineage 55 Moonlit Blossom Hero V1 native",
+    route: "/design-lab/lineages/55",
+    routeEntry: "app/design-lab/lineages/55/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/55/",
+      "app/styles/lineage-55-moonlit-blossom.css",
+      "lib/lineage-55-moonlit-blossom-data.ts",
+      "lib/lineage-55-moonlit-blossom-controller.ts",
+      "lib/lineage-55-moonlit-blossom-source.ts",
+      "tests/lineage-55-moonlit-blossom",
+      "qa/lineage55-native-browser-qa.mjs",
+      "reference/lineage-55-moonlit-blossom-v1/",
+      "public/reference/lineage-55-moonlit-blossom-v1/",
+    ]),
+    exactAssetStatus: "SOURCE_REFERENCE_ONLY_MEDIA; HISTORICAL_ASSET_SOURCE_UNRESOLVED_PROVENANCE_HOLD",
+    browserGates: Object.freeze(["qa/lineage55-native-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/lineage55-native-browser-qa.mjs",
+    dedicatedWorkflow: null,
+    viewports: VIEWPORTS,
+    captureReducedMotion: false,
+    extraEvidencePaths: Object.freeze(["qa/evidence/lineage55"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
