@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoveTree - Male Motion Pathways Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#020202;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.72);
+      --soft:rgba(255,255,255,.18);
+      --soft2:rgba(255,255,255,.08);
+      --accent:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;font-family:'Inter',sans-serif}
+    body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .page{position:relative;height:100vh;width:100vw;overflow:hidden;background:radial-gradient(circle at 50% 58%, rgba(84,36,128,.22), transparent 24%), #000}
+    .grain,.vignette,.stars{position:absolute;inset:0;pointer-events:none}
+    .grain{opacity:.08;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.95'/%3E%3C/svg%3E");mix-blend-mode:screen;animation:grain 8s steps(8) infinite}
+    .vignette{background:radial-gradient(circle at 50% 50%, transparent 36%, rgba(0,0,0,.35) 65%, rgba(0,0,0,.82) 100%)}
+    .stars::before,.stars::after{content:"";position:absolute;inset:0;background-repeat:repeat;background-size:220px 220px;opacity:.45}
+    .stars::before{background-image:radial-gradient(circle, rgba(180,160,255,.8) 0 1px, transparent 1.3px);animation:drift 18s linear infinite}
+    .stars::after{background-image:radial-gradient(circle, rgba(255,255,255,.75) 0 .9px, transparent 1.2px);background-size:260px 260px;animation:drift2 28s linear infinite}
+
+    .content{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;padding:24px 28px 18px}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:32px}
+    .logo-wrap{display:flex;flex-direction:column;gap:18px;min-width:110px}
+    .logo{width:24px;height:24px;display:block}
+    .brand-title{font-size:18px;line-height:1.1;font-weight:500;letter-spacing:.02em}
+    .brand-copy{font-size:12px;line-height:1.7;color:var(--muted);max-width:145px}
+    .nav{display:flex;gap:28px;flex-wrap:wrap;justify-content:flex-end;padding-top:6px}
+    .nav a{font-size:13px;letter-spacing:.08em;color:#fff;text-decoration:none;opacity:.95;transition:opacity .2s}
+    .nav a:hover{opacity:.68}
+
+    .meta{margin-top:18px;display:grid;grid-template-columns:1.1fr 1.3fr 1.2fr 1.2fr;gap:32px;padding-right:10px}
+    .meta h3{margin:0 0 14px;font-size:12px;letter-spacing:.24em;font-weight:500;color:rgba(255,255,255,.72)}
+    .meta .big{font-size:19px;line-height:1.06;font-weight:500;letter-spacing:.02em;margin-bottom:10px}
+    .meta p,.meta li{font-size:14px;line-height:1.55;color:#fff;margin:0}
+    .meta ul{list-style:none;padding:0;margin:0}
+
+    .hero-figure{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:min(44vw, 660px);display:flex;justify-content:center;align-items:center;pointer-events:none;filter:drop-shadow(0 24px 48px rgba(0,0,0,.6))}
+    .hero-figure img{width:100%;height:auto;display:block;animation:floaty 7s ease-in-out infinite}
+
+    .bottom{margin-top:auto;display:grid;grid-template-columns:1.35fr .95fr;align-items:end;gap:24px}
+    .headline{max-width:620px}
+    .headline h1{margin:0;font-size:clamp(56px,6.5vw,96px);line-height:.94;font-weight:400;letter-spacing:-.04em}
+    .headline .pixel{display:inline-block;font-weight:700;letter-spacing:-.04em;text-shadow:0 0 .01px #fff;filter:contrast(1.14)}
+    .headline .sub{margin-top:24px;font-size:15px;line-height:1.7;color:var(--muted)}
+    .headline .sub a{color:var(--accent);text-decoration:none}
+
+    .actions{display:flex;flex-direction:column;align-items:flex-end;gap:22px}
+    .cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.03);backdrop-filter:blur(6px);color:#fff;text-decoration:none;padding:16px 26px;min-width:290px;font-size:15px;letter-spacing:.08em;transition:background .2s,border-color .2s,transform .2s}
+    .cta:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.35);transform:translateY(-1px)}
+    .chips{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:12px 16px;font-size:13px;letter-spacing:.06em;color:#fff}
+    .chip span{opacity:.55;margin-left:7px}
+
+    .footer{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}
+    .footer-left,.footer-right{font-size:14px;color:rgba(255,255,255,.76)}
+    .footer-right{text-align:right}
+    .footer .bul{opacity:.45;padding:0 12px}
+    .side-note{position:absolute;right:18px;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;letter-spacing:.18em;font-size:11px;color:rgba(255,255,255,.4)}
+    .menu-btn,.mobile-menu{display:none}
+
+    @keyframes floaty{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
+    @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,-1%)}50%{transform:translate(1%,2%)}75%{transform:translate(2%,-2%)}100%{transform:translate(0,0)}}
+    @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-40px)}}
+    @keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-30px, 26px)}}
+
+    @media (max-width: 1180px){
+      .meta{grid-template-columns:1fr 1fr;gap:28px 24px}
+      .hero-figure{width:min(48vw,540px);top:56%}
+      .bottom{grid-template-columns:1fr}
+      .actions{align-items:flex-start}
+      .chips{justify-content:flex-start}
+      .footer{grid-template-columns:1fr}
+      .footer-right{text-align:left}
+    }
+    @media (max-width: 820px){
+      .content{padding:18px 18px 16px}
+      .meta{display:none}
+      .menu-btn{display:flex;align-items:center;justify-content:center;background:none;border:none;color:#fff;font-size:14px;letter-spacing:.12em}
+      .nav{display:none}
+      .mobile-menu{position:fixed;inset:0;background:rgba(0,0,0,.94);backdrop-filter:blur(10px);z-index:20;padding:24px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:.25s}
+      .mobile-menu.open{opacity:1;pointer-events:auto}
+      .mobile-menu header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+      .mobile-menu nav{display:flex;flex-direction:column;gap:18px;margin-top:28px}
+      .mobile-menu a{color:#fff;text-decoration:none;font-size:24px;letter-spacing:.06em}
+      .hero-figure{position:relative;left:auto;top:auto;transform:none;width:min(80vw,420px);margin:36px auto 8px}
+      .bottom{margin-top:0}
+      .headline h1{font-size:clamp(44px,13vw,64px)}
+      .cta{min-width:0;width:100%}
+      .footer-left,.footer-right{font-size:12px}
+      .side-note{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="stars"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <div class="content">
+      <div class="topbar">
+        <div class="logo-wrap">
+          <svg class="logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C10.3 5.1 8.1 6.9 5.4 7.7C7.1 8.3 8.6 9.5 10 11.3V22H11.5V15.1H12.5V22H14V11.3C15.4 9.5 16.9 8.3 18.6 7.7C15.9 6.9 13.7 5.1 12 2ZM12 4.8C13.1 6.4 14.3 7.5 15.7 8.3C14.6 9 13.5 10 12.5 11.4H11.5C10.5 10 9.4 9 8.3 8.3C9.7 7.5 10.9 6.4 12 4.8Z" fill="white"/></svg>
+          <div class="brand-title">LOVE<br>TREE</div>
+          <div class="brand-copy">A living archive of the real moments that moved your heart and shaped who you went next.</div>
+        </div>
+        <nav class="nav">
+          <a href="#">ABOUT</a>
+          <a href="#">JOURNEY</a>
+          <a href="#">MOMENTS</a>
+          <a href="#">TREE</a>
+          <a href="#">ARCHIVE</a>
+          <a href="#">DISCOVERY</a>
+          <a href="#">WORKS</a>
+        </nav>
+        <button class="menu-btn" id="menuBtn">MENU</button>
+      </div>
+
+      <section class="meta">
+        <div>
+          <div class="big">MOMENT &<br>PATHWAYS</div>
+        </div>
+        <div>
+          <h3>WHAT LOVETREE IS</h3>
+          <p>Save the moment that moved you, connect why you searched next, then replay the path that made you fall in love.</p>
+        </div>
+        <div>
+          <h3>CORE JOURNEY</h3>
+          <ul>
+            <li>Discover a Moment</li>
+            <li>Save the Exact Point</li>
+            <li>Leave the Feeling</li>
+            <li>Connect the Reason</li>
+            <li>Grow the Tree</li>
+            <li>Walk It Again</li>
+          </ul>
+        </div>
+        <div></div>
+      </section>
+
+      <div class="hero-figure">
+        <img src="hero-male.png" alt="LoveTree male portal character" />
+      </div>
+
+      <section class="bottom">
+        <div class="headline">
+          <h1>SAVE THE<br><span class="pixel">MOMENTS</span><br>THAT<br>GROW INTO<br><span class="pixel">PATHS</span></h1>
+          <div class="sub">Your first moment can become a path someone else follows. <a href="#">Plant a moment</a></div>
+        </div>
+        <div class="actions">
+          <a class="cta" href="#">▶&nbsp;&nbsp;PLAY MEMORY PATHS</a>
+          <div class="chips">
+            <div class="chip">DISCOVER <span>01</span></div>
+            <div class="chip">CONNECT <span>02</span></div>
+            <div class="chip">REPLAY <span>03</span></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-left">A living archive for people, feelings and memory paths.</div>
+        <div class="footer-right">Moment<span class="bul">•</span>Emotion<span class="bul">•</span>Connection<span class="bul">•</span>Replay</div>
+      </footer>
+    </div>
+
+    <div class="side-note">MEMORIES TRACE WHO WE BECOME</div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <header>
+        <strong>LoveTree</strong>
+        <button class="menu-btn" id="closeBtn">CLOSE</button>
+      </header>
+      <nav>
+        <a href="#">ABOUT</a>
+        <a href="#">JOURNEY</a>
+        <a href="#">MOMENTS</a>
+        <a href="#">TREE</a>
+        <a href="#">ARCHIVE</a>
+        <a href="#">DISCOVERY</a>
+        <a href="#">WORKS</a>
+      </nav>
+    </div>
+  </div>
+  <script>
+    const menu = document.getElementById('mobileMenu');
+    document.getElementById('menuBtn')?.addEventListener('click',()=>menu.classList.add('open'));
+    document.getElementById('closeBtn')?.addEventListener('click',()=>menu.classList.remove('open'));
+  </script>
+</body>
+</html>

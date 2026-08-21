@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-69-fullviewport-portfolio",
+  "sourceTrackId": "Track69",
+  "title": "풀뷰포트 폴리오 러브트리 모션 랜딩 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Locked full-viewport portfolio motion landing evaluated as a cinematic LoveTree entry portal hub: one 100vh dark composition whose nav/chips/CTAs route into already-adopted template sources so a first-time viewer reads Moment → Connection → Replay from the first screen. Registration only — no product adoption implied.",
+  "summary": "Source Track 69 registered with all four revision layers preserved byte-exact from Drive 03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩: V1 A/B pair (A original MotionSites prompt fidelity reference; B LoveTree semantic adaptation, not owner-approved), V2 template navigation portal (recorded attempt incl. 잘안됨.mp4), selected V3 exact-source multi-template portal (11 works pages linking sibling tracks via local relative paths), and V4 A-person cinematic portal candidate (new male AI-human key visual, no video; product-owner reaction positive per source notes but follow-up wiring required). No authoritative native executable exists in the repository; lineage number is NOT reserved; canonical adoption is HOLD. Repository payload revision (#290 REWORK): the two .mp4 videos and the two >10MB works HTML (09_memory_storybook, 06_memory_tape) are excluded from the committed payload under the 50MB-total / 10MB-single-file caps; their Drive IDs, bytes and SHA-256 fingerprints stay pinned here as PENDING while byte-exact local preservation copies remain outside the commit.",
+  "provenance": {
+    "sourceLabel": "69_풀뷰포트폴리오_러브트리모션랜딩 / Issue #290 source gate registration",
+    "driveFolderId": "1sBdAyhjn5bDen4FswIcWKTeeCLzTZRni",
+    "sourceFiles": [
+      "69_v3_exact_source_multi_template_portal.html",
+      "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/ (entry + V3_QA + link map + works/01–11)",
+      "A_ORIGINAL_PROMPT_EXACT/ (original prompt + A_original_exact.html + A_vite_react_source.zip)",
+      "B_LOVETREE_ADAPTED/ (adapted prompt + B_lovetree_adapted.html + B_vite_react_source.zip)",
+      "C_V2_TEMPLATE_NAV_PORTAL/ (V2 portal + link map + V2_QA + 잘안됨.mp4)",
+      "E_V4_A_PERSON_CINEMATIC_PORTAL/ (prompts + scope/log/result + portal html + hero-male.png + result preview)",
+      "69_풀뷰포트폴리오_러브트리모션랜딩.mp4",
+      "02_COMPARISON.md",
+      "evidence/QA_RENDER_NOTES.txt"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage69 is NOT allocated. This manifest reserves no repository lineage number; product-shell placement is reviewed only after an owner-approved Track 69 revision reaches an executable/QA gate (Issue #290)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "V1_B=NOT_OWNER_APPROVED; V2=RECORDED_ATTEMPT_ONLY; V3=SELECTED_SIBLING_SURFACE_LOCAL_LINKS_UNRESOLVED; V4_CANDIDATE=OWNER_REACTION_POSITIVE_WIRING_PENDING; CANONICAL_V4_ADOPTION=NO; IMPLEMENTATION_RELEASE=NO; PAYLOAD_CAP_TRIM=2_MP4_VIDEO_EXCLUDED+2_OVER_10MB_WORKS_HTML_EXCLUDED_FINGERPRINTS_PINNED (Issue #290 initial disposition + payload rework)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "MULTI_REVISION_SNAPSHOT_2026-08-17_V1AB_V2_V3_SELECTED_V4_CANDIDATE",
+    "authorityObservedAt": "2026-08-21T04:04:57Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "02_COMPARISON.md",
+      "driveId": "1XFdwVhKQEQqnaCF7yG1g2NYqdlab-eOv",
+      "bytes": 2653,
+      "sha256": "b4aa03af271576a0f589722816e79180e8ef06afcb6d739f033f75c3f8a7467e",
+      "role": "comparison-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04dd23f9-acc4-4471-9d22-a9ea7a8e6a56.png",
+      "driveId": "13TRQBxuBY-JtPJl_wYe_rwxK9YP-PntW",
+      "bytes": 904464,
+      "sha256": "6ff01faed52a513fb2a305456a2a00bdc77db0f7d330c1d2f5512523cea873a3",
+      "role": "unclassified-render-preview",
+      "status": "PENDING"
+    },
+    {
+      "filename": "69_v3_exact_source_multi_template_portal.html",
+      "driveId": "1WyiJtGv-EiBjA8Fih7XBbQRaE2hybNN7",
+      "bytes": 27600,
+      "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "69_풀뷰포트폴리오_러브트리모션랜딩.mp4",
+      "driveId": "1BRUQ0GrePw3o8webqlgr9Y8DdE4A0jou",
+      "bytes": 26223001,
+      "sha256": "15f85030d18e7c19da17cd5220da283e23b618a8c63dc57ccf0241111763badf",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "00_ORIGINAL_MOTIONSITES_PROMPT.txt",
+      "driveId": "1joEFrt4Mtwpi4AQG_gp_TsN1Kk2C2f9p",
+      "bytes": 10556,
+      "sha256": "e8bc267649a5fb42ca16d5565ca7a75eed0e4b09b6bc90b249f23810e9f59326",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "2.Digital Director.txt",
+      "driveId": "1pyEClOxvREDgxPtyKM-7VubW0K-4wICz",
+      "bytes": 10813,
+      "sha256": "5a0259cde25095a1d6f538bec13579a5f3cc94d155f0af7f612cdb8e010c3198",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "A_original_exact.html",
+      "driveId": "1KrPpkVrGDBsX9zKlXdL1FVcFzUR6DP4l",
+      "bytes": 10257,
+      "sha256": "34780023d170915dc96612345d3a8233ebf8ee0fdab0da0ad7c9ae70301a6285",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "A_vite_react_source.zip",
+      "driveId": "1vqddmzPlCfk_Rad561lMzL6lOzA99HsE",
+      "bytes": 5096,
+      "sha256": "3882d995497dad6f20157e82562d0ff9958fc0b28f379fc3e5441fecae42f611",
+      "role": "source-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_LOVETREE_ADAPTED_PROMPT.txt",
+      "driveId": "177w2hvqH6P1anPfC2bg3lod4bA0RofDJ",
+      "bytes": 10210,
+      "sha256": "984af98cafbe1232e8e8491db2bcf0d97e60805c793d580cf20e862f5b35e887",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "B_lovetree_adapted.html",
+      "driveId": "17RujuJ8uBqmdAePQMeXaLEXdfqj6NKFk",
+      "bytes": 10852,
+      "sha256": "fffbd5e25a5ecd3f077e31435dc6d7923846c1f57760f1f81cad0c7f3283fdfd",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "B_vite_react_source.zip",
+      "driveId": "1KCFdguQgN60GgRJFAz2JCVAQ3KA2n-xg",
+      "bytes": 5164,
+      "sha256": "b62c3610083b255f95bf58c5ec954ca38a53f09d4d009c0c4a8875578c92b800",
+      "role": "source-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "69_v2_template_nav_portal.html",
+      "driveId": "1Ruj5482bGbQqZLhzNtfCg5R793YUhW3I",
+      "bytes": 25757,
+      "sha256": "62a6fe1744979dbc4730aa2368c76ef307b87cbd7ec466d28c24b149cfe60da4",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V2_TEMPLATE_LINK_MAP.md",
+      "driveId": "1GSqCrlPBefWEYn7IpfjDHMOu_q1VnheS",
+      "bytes": 2290,
+      "sha256": "4433961f66ba89ecb091e207be05c951c5e99bc4c3cdb85b2b62395350096d9c",
+      "role": "link-map",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V2_QA.md",
+      "driveId": "1QOy4P84XRbbFuLHgbqQ1CPjYieGbL8gN",
+      "bytes": 1118,
+      "sha256": "c71a9cea04685810d779394791dffa44c1694b9789816b387f43d8d342c36484",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "잘안됨.mp4",
+      "driveId": "1qNm2kHQweUAUH1Kk_6OqwsCqIcQtOisT",
+      "bytes": 7028823,
+      "sha256": "631d25613170b2062e5d7569c908d23d1ba6584912313c97fa1b1a37d9e8e918",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "00_README.md",
+      "driveId": "19ah0213OiX_lCsWYQ6Jh3l63tmEgcSkX",
+      "bytes": 1106,
+      "sha256": "cffdb6376d03f1450ebc7bdf200ab6f9b78628e3d48b4b8cdf6cc5921b0ec0e3",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_WORK_SCOPE_AND_DECISIONS.md",
+      "driveId": "1LzNnQFfiv28Ng30eLDbGXukv5jnwREgw",
+      "bytes": 987,
+      "sha256": "50bfdfc0da80caeb5c6fe8c416913e4c34ccb64b9718763b79516f80200b9298",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_WORK_PROCESS_LOG.md",
+      "driveId": "1qtEMXo7Iup4XXPVYtlN4deHNmAyCbpTX",
+      "bytes": 915,
+      "sha256": "2afda452732c73e0832b6f0d4d56fe51f8e43dfc091ffd6d49440c5aa972b36a",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "06_RESULT_SUMMARY.md",
+      "driveId": "1hhxPGDLdHxO5CN9_SNXKUB4U3qQcKy4r",
+      "bytes": 671,
+      "sha256": "af63ca091947799aceeaf1fd963413e1bb574d46dcd62a62a683ae6c91662bd2",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "69_V4_A_PERSON_CINEMATIC_PORTAL.html",
+      "driveId": "13Fd3Wf_LiSV47vr3tERilR59buijS09O",
+      "bytes": 11099,
+      "sha256": "208b556a28684afc96abb5d1a6a100c1c85c3853aba3f9cdeaa4c68bffff46a0",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_PROMPT_A_PERSON_CINEMATIC_PORTAL.txt",
+      "driveId": "1PuKjqa8to4xddUzEQf1VNhTbVSp-ncMd",
+      "bytes": 1441,
+      "sha256": "08ec9bfb6a6c31400a8c669822db46cd6efaf606ccabd1846a186d0915f8e4ae",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_PROMPT_B_MEMORY_FRAGMENT_FIELD.txt",
+      "driveId": "10TUySe_dU3Da04PQP0ssX7FQE26hkTdw",
+      "bytes": 1257,
+      "sha256": "8af6cb98194ef8f4e3a3c706a5f0868386f1b9b6ad72b9fb58f918feb36277c9",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_PROMPT_C_PRODUCT_PATHWAY_INTERFACE.txt",
+      "driveId": "1GXOWi9KMM5AUaPMTw-Gsz3caJqo9l4AG",
+      "bytes": 1195,
+      "sha256": "63219aabe881cd665423ac300ee965856ccb7ead125ab7cc4069979d379ad4b7",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "hero-male.png",
+      "driveId": "1RAASAPkYEFRACzqfOfELeDgeXHmthMtP",
+      "bytes": 1565694,
+      "sha256": "2b4df74e671c3784b46a030ca0ff7d7a2d8565ed66bf08daf959df5469c3c7f9",
+      "role": "hero-asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "69_V4_result_preview.png",
+      "driveId": "1Ve5IwoVIHdJjwQtdjh5XDBIyX78jXCKC",
+      "bytes": 1565694,
+      "sha256": "2b4df74e671c3784b46a030ca0ff7d7a2d8565ed66bf08daf959df5469c3c7f9",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "QA_RENDER_NOTES.txt",
+      "driveId": "1IJkhPkS072yr4HL1INevjZ2RIHFLLm2S",
+      "bytes": 1086,
+      "sha256": "83d26fb9ba2f7fc1aa14f8ff96237202bef0b2818e24d93c8741c85c04fd32d7",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "69_v3_exact_source_multi_template_portal.html",
+      "driveId": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+      "bytes": 27600,
+      "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V3_QA.md",
+      "driveId": "1Bomv3Dt5JwQ6_R_poKJpdUqoX9ludUhj",
+      "bytes": 903,
+      "sha256": "f21c89efb6072ffe432f7eeebf5d766a2b7fe12d6727197933544edcec35fca6",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V3_TEMPLATE_LINK_MAP.md",
+      "driveId": "1s3Yj81eb3AXX_0vjLTY-qDX3p0TAgXFF",
+      "bytes": 896,
+      "sha256": "f088e2dff8b5c1d00fc780c3e6fbe74c9f48b67ebb7520c683a27e1a84e097b4",
+      "role": "link-map",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_first_journey.html",
+      "driveId": "1ljWh8WPKBKdg__equ_j2LaybE4_mNkl8",
+      "bytes": 111950,
+      "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_cinematic_clue.html",
+      "driveId": "11Cmci2Z4fzzaaRSZNHKYp6ylOL7T-ZEf",
+      "bytes": 41333,
+      "sha256": "6e0b18db18d4adab85823907f7cc1238556ee9fcff5df2bc45dcffafa7658f0f",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_first_tree.html",
+      "driveId": "18ILP7zUtKZImOBJXD-Mt04UXs8QMED6U",
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_connection_review.html",
+      "driveId": "18K2q6cD_l76FuDiKrJy-JfkqBtag4tMz",
+      "bytes": 509063,
+      "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_free_connection.html",
+      "driveId": "1bmS1uUDMoX6BfuYX_yxAxjLrwi6OdW88",
+      "bytes": 55327,
+      "sha256": "768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "06_memory_tape.html",
+      "driveId": "1gypPeoAlaDN8HUQXobm66gh134phEFq8",
+      "bytes": 12265511,
+      "sha256": "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f",
+      "role": "executable",
+      "status": "PENDING"
+    },
+    {
+      "filename": "07_motion_archive.html",
+      "driveId": "1AI1HGbcu2mplI8Pxdm7hH4WyVTOx22fW",
+      "bytes": 823,
+      "sha256": "daf675b2cdaf5006f16a897d5e8880395c2ac2038764c478e86243d6855049c4",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "08_global_discovery.html",
+      "driveId": "1QaYelE5R-J3CLaBlkwQvH9aNm0tI8lEb",
+      "bytes": 4898093,
+      "sha256": "8c8a4c787c085167f195d7fce7b63ccc3df073e03822a4bfd803493dd8a3dd02",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "09_memory_storybook.html",
+      "driveId": "1GIBJt1mjCDGIEnBDIVLOncnqTvSH29XM",
+      "bytes": 17192064,
+      "sha256": "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71",
+      "role": "executable",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_replay_300_finale.html",
+      "driveId": "1TS_gyxMTsoM4PQJBxTvrBLCE1oVxgiG7",
+      "bytes": 26280,
+      "sha256": "e0488699b7a5eb288a3347d1f5378da8b8457a03a320d25a34d0deec24e00f19",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "11_moment_composer.html",
+      "driveId": "1SV46aKIZPNFnTlimbT-TIu0TQklXEeeZ",
+      "bytes": 427043,
+      "sha256": "8fd6a4f14c2bb4dfa1f4ccb30dd95409f81e4159936bc70a3a62d7fddc5d705a",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "RUNTIME_RENDER_EVIDENCE_GAP: source-side headless Chromium stalled on remote CloudFront video/font assets, so no visual acceptance screenshot was promoted by the source workflow (QA_RENDER_NOTES.txt)",
+    "NON_PORTABLE_NAVIGATION: V3 cross-track links use local Drive-relative paths intended for the synced local folder hierarchy, not repository-stable targets",
+    "V1_B_NOT_OWNER_APPROVED: LoveTree semantic adaptation is a design-review candidate only",
+    "UNDOCUMENTED_ROOT_ASSET: uuid-named root PNG shows an adapted-portal render preview but its producing step is undocumented — recorded PENDING",
+    "ZIP_CONTENTS_UNVERIFIED: A/B vite_react_source.zip archives preserved byte-exact but never extracted/classified — recorded PENDING",
+    "PAYLOAD_CAP_TRIM_PENDING_ARTIFACTS: reference-video mp4s (both) and works/09_memory_storybook.html + works/06_memory_tape.html exceed the 10MB single-file cap or are video media excluded by the #290 rework rule — committed payload omits them; fingerprints pinned above, transport PENDING until a bounded intake contract says otherwise"
+  ],
+  "nativeRemediations": [
+    "re-host referenced CloudFront video/font assets as local companion assets before any runtime QA",
+    "resolve every portal target through the fail-closed repository portal ledger (HOLD targets never navigate)",
+    "obtain explicit product-owner approval for a single authoritative revision before any executable intake",
+    "classify or document the uuid-named root PNG and both source zips before promoting them beyond PENDING"
+  ],
+  "sourceOnlyValues": [
+    "Adam Roberts / Grilled Pixels identity, GP SVG, portfolio copy, service list, FWA/W./CSS Design Awards chips and PLAY SHOWREEL are original-template provenance and must never become product truth",
+    "CloudFront female-face video URL is frozen-source provenance, not runtime transport authority",
+    "award/metric claims without basis are forbidden in any product translation (per E_V4 work scope)",
+    "V3 works links point at sibling source folders, never at repository routes"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

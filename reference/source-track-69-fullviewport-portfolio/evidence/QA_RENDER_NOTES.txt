@@ -1,0 +1,21 @@
+TRACK 69 QA NOTES
+Date: 2026-08-17 KST
+
+Static validation:
+- A_original_exact.html parsed successfully.
+- B_lovetree_adapted.html parsed successfully.
+- Both contain: full viewport root, nav, 4-column metadata band, hero, footer, mobile menu, exact CloudFront video URL.
+- Both use the requested responsive 1.2x video scaling at >=1024px.
+- A uses the exact supplied GP SVG.
+- B uses a new white geometric LoveTree path/branch SVG.
+- React/TypeScript/Tailwind/Vite source packages were also prepared for A and B.
+
+Runtime evidence limitation:
+- Headless Chromium in the current container did not complete a screenshot while waiting on the remote CloudFront video/font assets.
+- Direct container download of the CloudFront MP4 also failed in this runtime.
+- Therefore no screenshot was promoted as visual acceptance evidence.
+- This does NOT imply the supplied CloudFront URL is invalid; only that this execution runtime could not independently render/download it.
+
+Design status:
+- A = fidelity reference / comparison only.
+- B = LoveTree candidate / design review; not owner-approved.

@@ -1,0 +1,260 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: portal
+SCREEN: full-viewport-template-navigation
+VERSION: v2
+BASE_FILE: B_lovetree_adapted.html
+STATUS: design-review
+SCOPE: make every menu/CTA functional + cross-track WORKS compare navigator
+PRESERVE: full-viewport CloudFront video, Inter+basis33, locked viewport, mobile menu
+DATE: 2026-08-17
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoveTree - Template Navigation Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff}
+    body{font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .font-pixel{font-family:'basis33',monospace}
+    .page{position:relative;height:100vh;width:100%;overflow:hidden;background:#000;color:#fff}
+    .bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .content{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;padding:0 20px}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+    .logo{width:28px;height:28px;display:block}
+    .desktop-nav{display:none;align-items:center;gap:32px;font-size:14px;letter-spacing:.025em}
+    .desktop-nav a,.menu-nav a{color:#fff;text-decoration:none;transition:opacity .2s ease}
+    .desktop-nav a:hover,.menu-nav a:hover,.icon-btn:hover{opacity:.7}
+    .icon-btn{border:0;background:transparent;color:#fff;padding:8px;cursor:pointer;transition:opacity .2s ease;display:grid;place-items:center}
+    .meta{margin-top:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .meta h2{margin:0;font-size:18px;line-height:1.08;letter-spacing:.025em;font-weight:400}
+    .meta .pixel-line{display:block;font-size:24px;line-height:1.02}
+    .asterisk{margin-top:12px;font-size:10px;color:rgba(255,255,255,.5)}
+    .blurb{margin-top:4px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.5}
+    .meta-label{margin:0 0 12px;text-transform:uppercase;font-size:16px;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+    .meta-body{max-width:220px;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .meta ul{list-style:none;padding:0;margin:0;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .lg-left{text-align:right}
+    .spacer{flex:1}
+    .bottom{padding-bottom:16px}
+    .row-a{display:grid;grid-template-columns:1fr;gap:16px;align-items:end}
+    .hero{margin:0;text-transform:uppercase;font-size:30px;line-height:.72;letter-spacing:.025em;font-weight:400}
+    .hero .pixel-word{font-size:1.25em;display:inline-block;line-height:1;vertical-align:baseline;font-weight:400}
+    .right-col{display:flex;flex-direction:column;gap:16px;justify-content:flex-end}
+    .showreel{align-self:flex-start;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.3);padding:12px 24px;background:rgba(255,255,255,.05);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;font:inherit;font-size:14px;letter-spacing:.05em;cursor:pointer;transition:background .2s ease}
+    .showreel:hover{background:rgba(255,255,255,.1)}
+    .play-icon{width:14px;height:14px;display:block}
+    .awards{align-self:flex-start;display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;font-size:14px;color:rgba(255,255,255,.8)}
+    .chip{display:flex;align-items:center;gap:8px;background:#0B0B0B;padding:8px 12px}.chip .count{font-size:12px;color:rgba(255,255,255,.5)}
+    .chip-main{font-weight:700;font-size:13px;letter-spacing:-.025em}.chip-wide{font-weight:700;font-size:11px;letter-spacing:-.025em}
+    .footer{margin-top:16px;display:grid;grid-template-columns:1fr;gap:8px;padding-top:16px;font-size:12px;color:rgba(255,255,255,.6)}
+    .footer a{color:#ef4444;text-decoration:none;transition:color .2s ease}.footer a:hover{color:#f87171}
+    .menu-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:all 500ms cubic-bezier(.16,1,.3,1)}
+    .menu-overlay.open{opacity:1;pointer-events:auto}.menu-header{display:flex;align-items:center;justify-content:space-between;padding:24px}.menu-nav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}.menu-nav a{font-size:24px;letter-spacing:.1em;opacity:0;transform:translateY(16px);transition:all 500ms cubic-bezier(.16,1,.3,1)}.menu-overlay.open .menu-nav a{opacity:1;transform:translateY(0)}
+    @media(min-width:640px){.content{padding:0 24px}.meta{gap:24px}.hero{font-size:36px}.right-col{gap:24px}.awards{gap:12px}.chip{padding-left:16px;padding-right:16px}.footer{margin-top:20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.footer .right{text-align:right}}
+    @media(min-width:768px){.content{padding:0 40px}.desktop-nav{display:flex}.mobile-menu-btn{display:none}.meta h2{font-size:20px}.meta .pixel-line{font-size:30px}.hero{font-size:48px}}
+    @media(min-width:1024px){.content{padding:0 56px}.bg-video{transform:scale(1.2)}.meta{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}.lg-left{text-align:left}.row-a{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.hero{font-size:60px}.awards{align-self:flex-end}}
+    @media(min-width:1280px){.hero{font-size:68px}}
+
+    .logo-button{border:0;background:transparent;padding:0;color:inherit;cursor:pointer;display:grid;place-items:center}
+    .desktop-nav button,.menu-nav button{border:0;background:transparent;color:#fff;font:inherit;letter-spacing:inherit;padding:0;cursor:pointer;transition:opacity .2s ease}
+    .desktop-nav button:hover,.menu-nav button:hover{opacity:.7}
+    .chip-link{color:inherit;text-decoration:none;cursor:pointer;transition:transform .22s ease,background .22s ease}
+    .chip-link:hover,.chip-link:focus-visible{background:#171717;transform:translateY(-2px);outline:none}
+    .showreel{text-decoration:none}
+    .works-overlay[hidden]{display:none!important}
+    .works-overlay{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);color:#fff}
+    .works-panel{min-width:0;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.16);overflow:hidden}
+    .works-head{height:84px;flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.16)}
+    .works-head strong{font-family:'basis33',monospace;font-size:25px;font-weight:400;letter-spacing:.05em}.works-head span{font-size:11px;letter-spacing:.15em;color:rgba(255,255,255,.48)}
+    .works-spacer{flex:1}.works-close{width:38px;height:38px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:26px;line-height:1;cursor:pointer;transition:.2s}.works-close:hover{background:#fff;color:#000}
+    .works-list{overflow:auto;overscroll-behavior:contain;padding:8px 0 24px}
+    .works-row{display:grid;grid-template-columns:72px minmax(0,1fr) 94px;align-items:center;gap:16px;min-height:78px;padding:12px 28px;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.1);transition:background .2s,color .2s}
+    .works-row:hover,.works-row:focus-visible{background:#fff;color:#000;outline:none}.works-row.current{color:rgba(255,255,255,.55);cursor:default}.works-row.current:hover{background:transparent;color:rgba(255,255,255,.55)}
+    .works-no{font-family:'basis33',monospace;font-size:25px}.works-name strong{display:block;font-size:16px;letter-spacing:.04em}.works-name span{display:block;margin-top:4px;font-size:11px;letter-spacing:.04em;opacity:.55}.works-state{justify-self:end;font-size:10px;letter-spacing:.12em;white-space:nowrap}
+    .works-preview{display:flex;align-items:flex-end;position:relative;overflow:hidden;background:#060606;padding:28px}.works-preview:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(255,255,255,.09),transparent 42%),linear-gradient(135deg,transparent 0 48%,rgba(255,255,255,.04) 48% 49%,transparent 49%);pointer-events:none}
+    .preview-card{position:relative;z-index:1;width:100%}.preview-no{font-family:'basis33',monospace;font-size:clamp(92px,15vw,220px);line-height:.72;letter-spacing:-.05em;color:rgba(255,255,255,.9)}.preview-kicker{margin-top:26px;font-size:10px;letter-spacing:.18em;color:rgba(255,255,255,.48)}.preview-title{margin-top:8px;font-size:24px;line-height:1.05;text-transform:uppercase}.preview-copy{margin-top:14px;max-width:360px;font-size:12px;line-height:1.55;color:rgba(255,255,255,.58)}
+    .portal-hint{position:fixed;z-index:11;right:20px;top:50%;transform:translateY(-50%) rotate(90deg);transform-origin:center;font-family:'basis33',monospace;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.45);pointer-events:none}
+    @media(max-width:900px){.works-overlay{grid-template-columns:1fr}.works-preview{display:none}.works-panel{border-right:0}.works-head{height:72px;padding:0 20px}.works-row{grid-template-columns:52px minmax(0,1fr) 72px;padding:12px 20px;min-height:72px}.works-no{font-size:22px}.works-name strong{font-size:14px}.portal-hint{display:none}}
+    @media(max-width:640px){.works-head span{display:none}.works-row{grid-template-columns:44px minmax(0,1fr) 62px;gap:10px;padding:10px 16px}.works-state{font-size:9px}.works-name span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <video class="bg-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4" autoplay muted loop playsinline></video>
+  <div class="content">
+    <nav class="navbar">
+      <button class="logo-button" id="homeLogo" type="button" aria-label="LoveTree portal home">
+      <svg class="logo" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/>
+        <circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/>
+      </svg>
+      </button>
+      <div class="desktop-nav">
+        <a href="../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html" target="_blank" rel="noopener">CINEMATIC</a>
+        <a href="../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html" target="_blank" rel="noopener">FIRST TREE</a>
+        <a href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/lovetree-memory-tape-v2.4.2-persistent-world.html" target="_blank" rel="noopener">MEMORY TAPE</a>
+        <a href="../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V7_portal_launcher.html" target="_blank" rel="noopener">MOTION ARCHIVE</a>
+        <a href="../../12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html" target="_blank" rel="noopener">DISCOVERY</a>
+        <button type="button" data-open-works>WORKS</button>
+      </div>
+      <button class="icon-btn mobile-menu-btn" id="menuOpen" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </nav>
+
+    <section class="meta">
+      <div>
+        <h2><span>LOVE</span><span class="font-pixel pixel-line">TREE</span></h2>
+        <div class="asterisk">*</div>
+        <div class="font-pixel blurb">A living archive of<br>the exact moments that<br>moved your heart and<br>changed where you went next</div>
+      </div>
+      <div class="lg-left">
+        <h2><span>MOMENT &amp;</span><span class="font-pixel pixel-line">PATHWAYS</span></h2>
+      </div>
+      <div>
+        <div class="font-pixel meta-label">What LoveTree Is</div>
+        <div class="meta-body">Save the moment that moved you, connect why you searched next, then replay the path that made you fall in love.</div>
+      </div>
+      <div class="lg-left">
+        <div class="font-pixel meta-label">Core Journey</div>
+        <ul><li>Discover a Moment</li><li>Save the Exact Point</li><li>Leave the Feeling</li><li>Connect the Reason</li><li>Grow the Tree</li><li>Walk It Again</li></ul>
+      </div>
+    </section>
+
+    <div class="spacer"></div>
+
+    <section class="bottom">
+      <div class="row-a">
+        <h1 class="hero">SAVE THE<br><span class="font-pixel pixel-word">MOMENTS</span> THAT<br>GROW INTO<br><span class="font-pixel pixel-word">PATHS</span></h1>
+        <div class="right-col">
+          <a class="showreel" id="replayButton" href="../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V7_portal_launcher.html" target="_blank" rel="noopener"><svg class="play-icon" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg><span>PLAY MEMORY PATH</span></a>
+          <div class="awards">
+            <a class="chip chip-link" href="../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html" target="_blank" rel="noopener"><span class="chip-main">DISCOVER</span><span class="count">01</span></a>
+            <a class="chip chip-link" href="../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html" target="_blank" rel="noopener"><span class="chip-main">CONNECT</span><span class="count">02</span></a>
+            <a class="chip chip-link" href="../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V7_portal_launcher.html" target="_blank" rel="noopener"><span class="chip-wide">REPLAY</span><span class="count">03</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div>Your first moment can become a path someone else follows. <a href="../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html" target="_blank" rel="noopener">Plant a moment</a></div>
+        <div class="right">Moment &bull; Emotion &bull; Connection &bull; Replay</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-header">
+      <svg class="logo" viewBox="0 0 28 28" fill="none"><path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/><circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/></svg>
+      <button class="icon-btn" id="menuClose" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="menu-nav" id="menuNav">
+      <a href="../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html" target="_blank" rel="noopener">CINEMATIC</a>
+      <a href="../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html" target="_blank" rel="noopener">FIRST TREE</a>
+      <a href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/lovetree-memory-tape-v2.4.2-persistent-world.html" target="_blank" rel="noopener">MEMORY TAPE</a>
+      <a href="../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V7_portal_launcher.html" target="_blank" rel="noopener">MOTION ARCHIVE</a>
+      <a href="../../12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html" target="_blank" rel="noopener">DISCOVERY</a>
+      <button type="button" data-open-works>WORKS</button>
+    </div>
+  </div>
+  <div class="portal-hint">TEMPLATES / CLICK TO OPEN</div>
+
+  <div class="works-overlay" id="worksOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="worksTitle">
+    <section class="works-panel">
+      <header class="works-head">
+        <strong id="worksTitle">WORKS_</strong><span>LOVETREE TEMPLATE NAVIGATOR</span><div class="works-spacer"></div>
+        <button class="works-close" id="worksClose" type="button" aria-label="Close Works navigator">×</button>
+      </header>
+      <div class="works-list">
+        <div class="works-row current" tabindex="-1" data-track="69" data-title="FULL VIEWPORT PORTAL" data-copy="Current Track 69 · MotionSites full-viewport composition adapted into a LoveTree cross-track launcher."><div class="works-no">69</div><div class="works-name"><strong>FULL VIEWPORT PORTAL</strong><span>Current · cinematic template navigator</span></div><div class="works-state">CURRENT</div></div>
+        <a class="works-row" data-track="65" data-title="CINEMATIC CLUE" data-copy="Track 65 · cinematic editorial entry experience for the clue that starts a fandom path." href="../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html" target="_blank" rel="noopener"><div class="works-no">65</div><div class="works-name"><strong>CINEMATIC CLUE</strong><span>H3 extended motion editing</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="66" data-title="FIRST TREE" data-copy="Track 66 · interactive first-tree flow where a first Moment and next connection become an actual tree." href="../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html" target="_blank" rel="noopener"><div class="works-no">66</div><div class="works-name"><strong>FIRST TREE</strong><span>Moment → next reason → branch</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="67" data-title="MEMORY TAPE" data-copy="Track 67 V2.4.2 · persistent interactive memory tape with its own WORKS compare navigator." href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/lovetree-memory-tape-v2.4.2-persistent-world.html" target="_blank" rel="noopener"><div class="works-no">67</div><div class="works-name"><strong>MEMORY TAPE</strong><span>Persistent world · compare menu</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="68" data-title="MOTION ARCHIVE" data-copy="Track 68 V7 · person-centered emotional-path motion archive portal with repaired asset paths." href="../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V7_portal_launcher.html" target="_blank" rel="noopener"><div class="works-no">68</div><div class="works-name"><strong>MOTION ARCHIVE</strong><span>V7 portal launcher</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="12" data-title="GLOBAL DISCOVERY" data-copy="Track 12 · public discovery surface for finding other routes and starting a new exploration." href="../../12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html" target="_blank" rel="noopener"><div class="works-no">12</div><div class="works-name"><strong>GLOBAL DISCOVERY</strong><span>Explore public paths</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="23" data-title="LIVING MEMORY GRAPH" data-copy="Track 23 comparison work · living video-memory graph copied into Track 67 WORKS for cross-template review." href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/works/23_리빙영상기억그래프.html" target="_blank" rel="noopener"><div class="works-no">23</div><div class="works-name"><strong>LIVING MEMORY GRAPH</strong><span>Track 67 WORKS comparison</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="13" data-title="MEMORY ATLAS" data-copy="Track 13 comparison work · whole-memory atlas copied into Track 67 WORKS for side-by-side exploration." href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/works/13_메모리아틀라스_전체우주지도.html" target="_blank" rel="noopener"><div class="works-no">13</div><div class="works-name"><strong>MEMORY ATLAS</strong><span>Whole-universe map</span></div><div class="works-state">OPEN ↗</div></a>
+        <a class="works-row" data-track="62" data-title="MEMORY SCULPTURE" data-copy="Track 62 comparison work · circular rail exhibition copied into Track 67 WORKS." href="../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/works/62_기억조각상_원형레일전시.html" target="_blank" rel="noopener"><div class="works-no">62</div><div class="works-name"><strong>MEMORY SCULPTURE</strong><span>Circular rail exhibition</span></div><div class="works-state">OPEN ↗</div></a>
+      </div>
+    </section>
+    <aside class="works-preview" aria-live="polite">
+      <div class="preview-card"><div class="preview-no" id="previewNo">69</div><div class="preview-kicker">SELECTED TEMPLATE</div><div class="preview-title" id="previewTitle">FULL VIEWPORT PORTAL</div><div class="preview-copy" id="previewCopy">Current Track 69 · MotionSites full-viewport composition adapted into a LoveTree cross-track launcher.</div></div>
+    </aside>
+  </div>
+
+</div>
+<script>
+  const menuOverlay=document.getElementById('menuOverlay');
+  const menuItems=[...document.querySelectorAll('.menu-nav a,.menu-nav button')];
+  const worksOverlay=document.getElementById('worksOverlay');
+  const worksClose=document.getElementById('worksClose');
+  const worksOpeners=[...document.querySelectorAll('[data-open-works]')];
+  const worksRows=[...document.querySelectorAll('.works-row[data-track]')];
+  const previewNo=document.getElementById('previewNo');
+  const previewTitle=document.getElementById('previewTitle');
+  const previewCopy=document.getElementById('previewCopy');
+  let lastFocus=null;
+
+  function setMenu(open){
+    menuOverlay.classList.toggle('open',open);
+    menuOverlay.setAttribute('aria-hidden',String(!open));
+    menuItems.forEach((item,i)=>item.style.transitionDelay=open?`${100+i*60}ms`:'0ms');
+    if(open) document.getElementById('menuClose').focus();
+  }
+  function setPreview(row){
+    if(!row)return;
+    previewNo.textContent=row.dataset.track||'69';
+    previewTitle.textContent=row.dataset.title||'LOVETREE WORK';
+    previewCopy.textContent=row.dataset.copy||'';
+  }
+  function openWorks(){
+    lastFocus=document.activeElement;
+    setMenu(false);
+    worksOverlay.hidden=false;
+    setPreview(document.querySelector('.works-row.current'));
+    worksClose.focus();
+  }
+  function closeWorks(){
+    if(worksOverlay.hidden)return;
+    worksOverlay.hidden=true;
+    if(lastFocus && typeof lastFocus.focus==='function') lastFocus.focus();
+  }
+
+  document.getElementById('menuOpen').addEventListener('click',()=>setMenu(true));
+  document.getElementById('menuClose').addEventListener('click',()=>setMenu(false));
+  document.getElementById('homeLogo').addEventListener('click',()=>window.location.reload());
+  menuItems.forEach(item=>{
+    if(!item.hasAttribute('data-open-works')) item.addEventListener('click',()=>setMenu(false));
+  });
+  worksOpeners.forEach(btn=>btn.addEventListener('click',openWorks));
+  worksClose.addEventListener('click',closeWorks);
+  worksOverlay.addEventListener('pointerdown',e=>{if(e.target===worksOverlay)closeWorks()});
+  worksRows.forEach(row=>{
+    row.addEventListener('mouseenter',()=>setPreview(row));
+    row.addEventListener('focus',()=>setPreview(row));
+  });
+  window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if(!worksOverlay.hidden){e.preventDefault();closeWorks();return;}
+      if(menuOverlay.classList.contains('open')){e.preventDefault();setMenu(false);}
+    }
+  });
+
+  // Lightweight diagnostics for local QA / automated checks.
+  window.lovetreePortal={
+    openWorks,closeWorks,
+    targets:()=>worksRows.filter(r=>r.tagName==='A').map(r=>({track:r.dataset.track,title:r.dataset.title,href:r.getAttribute('href')})),
+    menuTargets:()=>[...document.querySelectorAll('.desktop-nav a')].map(a=>({label:a.textContent.trim(),href:a.getAttribute('href')}))
+  };
+</script>
+</body>
+</html>
