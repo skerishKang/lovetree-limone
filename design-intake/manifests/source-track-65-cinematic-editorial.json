@@ -43,8 +43,10 @@
     {
       "filename": "설계팀장8기_65_V2_LUSION_H3_SCROLL_CINEMATIC_디자인팀장15기_신규작업지시_2026-08-16.md",
       "driveId": "1D3rlZWXlELQNis4c1UoRy3Nob52N2l2M",
+      "bytes": 30965,
+      "sha256": "7ad5580c9b442c4b007d4995b08532ef71516306a587662e2d7a5a224b47acee",
       "role": "instruction",
-      "status": "PENDING"
+      "status": "PINNED"
     },
     {
       "filename": "★_현재후보_65_V2_LUSION_H3_SCROLL_CINEMATIC.html",
@@ -52,7 +54,7 @@
       "bytes": 50765,
       "sha256": "b2fadd397876c4e449dfc0b22b34f8d5301e21dc445f706b96e29241532373b0",
       "role": "executable",
-      "status": "PENDING"
+      "status": "PINNED"
     }
   ],
   "reusableCapabilities": [],

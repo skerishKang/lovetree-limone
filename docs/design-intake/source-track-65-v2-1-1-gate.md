@@ -73,7 +73,10 @@ BACKEND_SCOPE               = NONE (no DB/API/Auth/Firebase/Neon/Worker work imp
 IMPLEMENTATION_RELEASE      = NO
 ```
 
-Artifact pinning state at registration: V1 instruction docx PINNED byte-exact
-(26,086 B, SHA256 `42cee2247b704c10aba355c55b0f9a994e376e2c24ef6c3b60f595cecff41c20`);
-V2 expansion instruction and historical V2 executable recorded with Drive IDs and expected
-fingerprints but transport-blocked (`PENDING`) — see PROVENANCE.md transport hold note.
+Artifact pinning state: all three reference artifacts are PINNED byte-exact under
+`reference/design-intake/source-track-65-cinematic-editorial/` —
+V1 instruction docx (26,086 B, SHA256 `42cee224…c41c20`),
+V2 expansion instruction md (30,965 B, SHA256 `7ad5580c…acee`),
+historical V2 executable HTML (50,765 B, SHA256 `b2fadd39…73b0`, verified against the sibling
+`65_V2_SHA256SUMS.txt` fingerprint before pinning). The historical V2 executable remains
+REFERENCE/comparison evidence only — pinning it does not make it current.
