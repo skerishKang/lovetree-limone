@@ -162,6 +162,17 @@ test("Track62 resolved as registered interaction-contract target; Track18 resolv
   assert.equal(plan.futureGuards.length, 0);
 });
 
+test("Lineage55 registered as interaction-contract target with held asset provenance", () => {
+  const lineage55 = getDesignFidelityTarget("lineage-55-moonlit-blossom");
+  assert.ok(lineage55);
+  assert.equal(lineage55.inventoryDisposition, "REGISTERED_TARGET");
+  assert.equal(lineage55.validationClass, "interaction-contract");
+  assert.equal(lineage55.assetGate, undefined);
+  const plan = planDesignFidelityInventory([lineage55.routeEntry], { addedPaths: [lineage55.routeEntry], validateFilesystem: false });
+  assert.ok(plan.targets.some((target) => target.id === "lineage-55-moonlit-blossom"));
+  assert.equal(plan.futureGuards.length, 0);
+});
+
 test("combined target IDs remain unique", () => {
   assert.equal(new Set(DESIGN_FIDELITY_TARGETS.map((target) => target.id)).size, DESIGN_FIDELITY_TARGETS.length);
 });
