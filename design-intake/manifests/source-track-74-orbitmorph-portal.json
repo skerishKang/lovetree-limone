@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-74-orbitmorph-portal",
+  "sourceTrackId": "Track74",
+  "title": "Orbit Morph LoveTree Template Portal — gate registration (no implementation)",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Orbit-morph template portal: an entry portal with orbit morph trails and entrance animation over LoveTree template navigation, with a story menu linking sibling template experiences. Two revisions preserved: V1 and V2 (product-owner feedback corrections on top of V1 structure/imagery/morph-trail/entrance). Gate-registered as capability evidence only.",
+  "summary": "Issue #314 gate registration for the adopted-design Drive folder 74_오빗모프_러브트리_템플릿포털_V1 (11 objects, 21.26 MiB). Full byte-exact preservation with an 11-entry SHA256SUMS ledger; both revision executables (V1 index.html 25,536 B, V2 index.html 27,012 B) are committed and pinned. The single oversize file (22,201,260 B reference recording MP4) is excluded from git under the #287 standard and pinned by fingerprint with its Drive ID (manifest status PENDING). No repository Lineage number is allocated or reserved; canonical adoption and implementation are HOLD.",
+  "provenance": {
+    "sourceLabel": "74_오빗모프_러브트리_템플릿포털_V1 (adopted-design mirror [[지피티 작업]]/[01_러브트리]/03_디자인채택본) / Issue #314",
+    "driveFolderId": "1TTr4NWYWzoZ3JP0Owc5K4zo0dVuu5wbr",
+    "sourceFiles": [
+      "V1/index.html",
+      "V1/00_기존프롬프트_ORBIT_SECURE_SYSTEM.md",
+      "V1/01_러브트리적용프롬프트_TRACK74.md",
+      "V1/02_TRACK74_적용기록.md",
+      "V1/03_TRACK74_QA.md",
+      "V2_70경로_고딕타이포_열매트리로고/index.html",
+      "V2_70경로_고딕타이포_열매트리로고/01_러브트리적용프롬프트_TRACK74_V2.md",
+      "V2_70경로_고딕타이포_열매트리로고/02_V2_CHANGELOG.md",
+      "V2_70경로_고딕타이포_열매트리로고/03_V2_QA.md",
+      "5.Orbit Flora.txt"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V2-current-candidate",
+    "authorityObservedAt": "2026-08-21T07:20:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "V1/index.html",
+      "driveId": "12CNeF8WfzzfF8Qr4KHTwWFUcRDCIp-aN",
+      "bytes": 25536,
+      "sha256": "5e4e99b8b50ec7c7f3d363ca8a79d088ae0632385a15f842aa79f4bef1b046fe",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V2_70경로_고딕타이포_열매트리로고/index.html",
+      "driveId": "1yjnAVu8Fuu7MpC1M1SVgf2e-89DPcM9r",
+      "bytes": 27012,
+      "sha256": "fcc7cad6bf0277c0dd304aa8bb2bc5a2f1ae6a9a021fff43c6ad6374b66a0b09",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "74_오빗모프_러브트리_템플릿포털_V1.mp4",
+      "driveId": "16-FaLOH4_0jAxZuHsG_kNLCQfG_kBE9_",
+      "bytes": 22201260,
+      "sha256": "dc9e01bfddbb7f1efc58fcb893604dac8d4b566470f671b94ec8912055154bff",
+      "role": "reference-recording",
+      "status": "PENDING"
+    }
+  ],
+  "intakeContract": {
+    "preservedReferencePath": "reference/source-track-74-orbitmorph-portal/",
+    "checksumLedger": "reference/source-track-74-orbitmorph-portal/SHA256SUMS",
+    "verifiedIndependently": true,
+    "verifiedAgainst": "local SHA256SUMS generated at preservation time (11 files); no prior historical pin exists for this track, so this preservation establishes the first fingerprint baseline",
+    "commitSizeContract": "#287 standard interpreted as MiB: single file <= 10485760 B, total committed <= 52428800 B. Committed set = 10 of 11 files (~53 KB of source + this ledger); the single oversize reference MP4 (22,201,260 B) is excluded from git and pinned above."
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P7"],
+  "trulyNewPrimitive": "Orbit-morph portal entry grammar (orbit morph trails + entrance animation feeding template/story navigation)",
+  "sourceDefects": [
+    "keyboard/focus/reduced-motion contract not yet audited against current native quality gates",
+    "fruit-tree SVG logo in V2 is an explicit CANDIDATE until the product owner approves a final LoveTree logo",
+    "story menu links a source-local sibling Track70 relative path — provenance only, never a repository route"
+  ],
+  "nativeRemediations": [
+    "audit keyboard, focus-visible and prefers-reduced-motion behavior before any native slice",
+    "verify 1280x800 / 390x844 / 320x720 with zero horizontal overflow if a route is ever authorized",
+    "resolve any story-menu target through repository-owned stable route mapping or HOLD it"
+  ],
+  "sourceOnlyValues": [
+    "V2 preserves V1 structure, imagery, morph trail and entrance animation; corrections limited to Track70 menu path, gothic typography, LOVETREE wordmark width and fruit-tree candidate logo",
+    "sibling link ../../70_모먼트리빌_퓨처에디토리얼/선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html is source evidence, never a repository href"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #314 gate registration only. Implementation, canonical adoption and lineage allocation are HOLD pending Product Owner / design-lead review under Issue #80 intake rules and Issue #201 scenario assembly."
+  },
+  "reservation": {
+    "held": true,
+    "note": "Gate registration preserves source authority; nothing is adopted. Lineage reservation is HOLD by omission under the REFERENCE_CAPABILITY_ONLY identity rule: no lineage number is reserved or allocated by this gate registration."
+  },
+  "navigationHandoff": {
+    "targetMapping": false,
+    "urlResolution": false,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track74 orbit morph template portal gate (no route implemented)"
+  }
+}
