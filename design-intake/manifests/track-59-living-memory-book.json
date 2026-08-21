@@ -13,13 +13,13 @@
     "sourceLabel": "59_러브트리_메모리스케치북_페이지여정 / Issue #161",
     "driveFolderId": "1j3Vh-VpZFzJBqFPeSyJEpqbImCHao2ID",
     "sourceFiles": ["현재후보.html", "검증결과.json"],
-    "rightsStatus": "sibling-source-owned"
+    "rightsStatus": "ORIGIN_RIGHTS_PROVENANCE_HOLD"
   },
   "designLineageId": "lt-59-living-memory-book",
   "lineageNumber": 59,
   "revisionId": "59-v5",
   "route": {
-    "path": "/design-lab/lineages/59/59-v5",
+    "path": "/design-lab/lineages/59/v5",
     "surface": "lineage"
   },
   "sourceSnapshot": {
@@ -63,7 +63,7 @@
   "backendScope": "BACKEND_FREE",
   "adoption": {
     "status": "UNDECIDED",
-    "note": "Issue #161 — ACCESSIBILITY/ASSET NATIVE GATES HOLD"
+    "note": "Issue #253 current-main reconciliation — NATIVE_DESIGN_LAB_IMPLEMENTATION=COMPLETE; ACCESSIBILITY=PASS; EXACT_SMALL_ASSETS=5 EXACT_ASSET_PINNED/HASH_VERIFIED; LARGE_ENVIRONMENT_PNG=TRANSPORT_HOLD + SOURCE_REFERENCE_ONLY; ORIGIN_RIGHTS_PROVENANCE_HOLD; CANONICAL_ADOPTION=NO; PRODUCT_ADOPTION=POST_MVP / UNDECIDED"
   },
   "handoffMappings": [
     {
