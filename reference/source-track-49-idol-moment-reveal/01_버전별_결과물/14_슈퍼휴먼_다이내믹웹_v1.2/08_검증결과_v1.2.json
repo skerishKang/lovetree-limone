@@ -1,0 +1,108 @@
+{
+  "candidate": "LoveTree 49 Superhuman Dynamic Cinematic Website v1.2",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_VISUAL_REVIEW",
+  "production": "PROHIBITED",
+  "scope": "Tree Climax only",
+  "image_generation_tool_calls": 0,
+  "new_primary": 0,
+  "new_storyboards": 0,
+  "new_shots": 0,
+  "console_errors": [],
+  "page_errors": [],
+  "external_requests": [],
+  "desktop": {
+    "overflow_landing": true,
+    "takeover": true,
+    "save_gate": true,
+    "save_touch_min44": true,
+    "save_paused": true,
+    "saved_label": true,
+    "saved_state": true,
+    "connection_after_save": true,
+    "save_resumed": true,
+    "tree_visible": true,
+    "trunk_body_visible": true,
+    "moments_visible": 8,
+    "hierarchy": {
+      "root": 6,
+      "trunk": 1,
+      "trunk-secondary": 1,
+      "major": 6,
+      "minor": 12,
+      "canopy": 46,
+      "twig": 8
+    },
+    "photo_glow": true,
+    "breathing": true,
+    "photo_alignment_max_px": 0.016,
+    "photo_attachment": true,
+    "overflow_tree": true
+  },
+  "mobile": {
+    "overflow_landing": true,
+    "takeover": true,
+    "save_gate": true,
+    "save_touch_min44": true,
+    "save_paused": true,
+    "saved_label": true,
+    "saved_state": true,
+    "connection_after_save": true,
+    "save_resumed": true,
+    "tree_visible": true,
+    "trunk_body_visible": true,
+    "moments_visible": 8,
+    "hierarchy": {
+      "root": 6,
+      "trunk": 1,
+      "trunk-secondary": 1,
+      "major": 6,
+      "minor": 12,
+      "canopy": 46,
+      "twig": 8
+    },
+    "photo_glow": true,
+    "breathing": true,
+    "photo_alignment_max_px": 0.016,
+    "photo_attachment": true,
+    "overflow_tree": true
+  },
+  "desktop_buttons": {
+    "landing_enter": true,
+    "play_pause_visible": true,
+    "sound_visible": true,
+    "secondary_controls_retracted": true,
+    "final_enter_visible": true,
+    "final_enter_opens_experience": true,
+    "final_replay_visible": true,
+    "final_replay_restarts": true
+  },
+  "mobile_buttons": {
+    "landing_enter": true,
+    "play_pause_visible": true,
+    "sound_visible": true,
+    "secondary_controls_retracted": true,
+    "final_enter_visible": true,
+    "final_enter_opens_experience": true,
+    "final_replay_visible": true,
+    "final_replay_restarts": true
+  },
+  "checks": {
+    "save_desktop_pass": true,
+    "save_mobile_pass": true,
+    "root_trunk_branch_photo_pass": true,
+    "desktop_mobile_overflow_zero": true,
+    "buttons_pass": true,
+    "console_error_zero": true,
+    "page_error_zero": true,
+    "external_request_zero": true,
+    "v1_1_to_v1_2_tree_visual_structure_improved": true
+  },
+  "tree_visual_change_summary": {
+    "v1.1": "abstract line bundle",
+    "v1.2": "filled tapered trunk + 6-root fan + leader branches + structural minors + 46 canopy/terminal branches + exact photo sockets"
+  },
+  "sha256": {
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_v1.2.html": "6c010e266c9740943f8e171551dbaf0c845c8ad6d3ea2450bc9c08a1ec8201f5",
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_PREVIEW_STANDALONE_v1.2.html": "e6f9bac3d0e6b8d7932877db5efa22f71fefe50d6c23de6a7851332839f19697"
+  }
+}

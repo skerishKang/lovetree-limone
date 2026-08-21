@@ -1,0 +1,22 @@
+{
+  "status": "SHOT_MASTER_EXTRACTION_ACTIVE",
+  "storyboard_locked": true,
+  "primary_locked": true,
+  "video_hold": true,
+  "html_hold": true,
+  "direction_language": "NCT 127 Superhuman x LoveTree emotional path",
+  "new_storyboard_created": false,
+  "new_cast_generated": false,
+  "preserved_pass_scenes_untouched": [
+    "02 AFTERIMAGE",
+    "05 SAVE THIS MOMENT",
+    "06 CONNECTION / WHY NEXT?"
+  ],
+  "shot_master_count": 17,
+  "required_resolution": "1920x1080",
+  "actual_resolution_all": "1920x1080",
+  "one_file_one_shot": true,
+  "s08_strip_used_as_deliverable": false,
+  "motion_created": false,
+  "html_created": false
+}

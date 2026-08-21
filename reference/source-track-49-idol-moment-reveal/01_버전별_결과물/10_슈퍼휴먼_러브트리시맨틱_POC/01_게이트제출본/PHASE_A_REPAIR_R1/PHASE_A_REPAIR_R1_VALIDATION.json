@@ -1,0 +1,56 @@
+{
+  "status": "PHASE_A_REPAIR_R1_VISUAL_GATE_READY",
+  "phase_gate": "HOLD",
+  "do_not_advance_to_12sec_v2_1": true,
+  "do_not_advance_to_html": true,
+  "preserved_unchanged": [
+    "02 AFTERIMAGE",
+    "05 SAVE THIS MOMENT",
+    "06 CONNECTION / WHY NEXT?"
+  ],
+  "repaired_only": [
+    "01 FIRST GLIMPSE",
+    "03 PERSON REVEAL",
+    "04 DELICATE MOMENTS",
+    "07 NEXT MOMENT",
+    "08 DEEPENING / MANY MOMENTS",
+    "09 MEMORY FIELD / PATH REVEAL",
+    "10 TREE EMERGES / LOVETREE"
+  ],
+  "primary_lock": "PRIMARY_MASTER_V2",
+  "checks": {
+    "01": {
+      "medium_close_or_3q": true,
+      "dark_silver_cyan": true,
+      "text_ui_zero": true
+    },
+    "03": {
+      "white_silver_chamber": true,
+      "text_ui_zero": true,
+      "storyboard_panel_removed": true
+    },
+    "04": {
+      "independent_sources": 6,
+      "collage_deliverable": false,
+      "same_primary_intended": true,
+      "text_ui_zero": true
+    },
+    "07": {
+      "different_male_removed": true,
+      "same_primary_intended": true
+    },
+    "08": {
+      "many_moments_not_many_people": true,
+      "same_primary_intended": true
+    },
+    "09": {
+      "same_primary_moment_field_intended": true,
+      "random_other_people": false
+    },
+    "10": {
+      "tree_moment_frames_replaced_with_same_primary_sources": true,
+      "random_other_people": false
+    }
+  },
+  "note": "Visual/identity acceptance remains a product-owner/design gate. No 12-second motion proof or HTML has been created."
+}

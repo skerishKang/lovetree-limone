@@ -1,0 +1,112 @@
+{
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_VISUAL_REVIEW",
+  "owner_approval": "PENDING",
+  "production_status": "PROHIBITED",
+  "track": "LoveTree 49 / Superhuman-style Dynamic Cinematic Website v1",
+  "build_policy": {
+    "image_generation_calls_in_this_build": 0,
+    "new_primary": 0,
+    "new_shots_generated": 0,
+    "new_storyboard": 0,
+    "asset_source": "49_아이돌모먼트_리빌포털_분류대기/스토리보드 (READ-ONLY)",
+    "existing_storyboard_assets_used": 21,
+    "old_codex_static_wrapper_reused": false,
+    "old_raster_tree_used_in_cinematic": false,
+    "same_primary_tree_moment_nodes": true
+  },
+  "cinematic": {
+    "timeline_design_seconds": 29.252,
+    "execution_recording_seconds": 29.24,
+    "transition_engine": [
+      "whip cut",
+      "prism fracture",
+      "white impact flash",
+      "black frame hit",
+      "chromatic split",
+      "mirror slice",
+      "light streak wipe",
+      "controlled impact shake",
+      "2.5D perspective/parallax"
+    ],
+    "meaning_sequence": [
+      "FIRST GLIMPSE",
+      "AFTERIMAGE",
+      "DETAIL",
+      "MORE MOMENTS",
+      "SAVE",
+      "CONNECTION",
+      "NEXT MOMENT",
+      "MEMORY FIELD",
+      "TREE",
+      "LOVETREE"
+    ],
+    "tree_climax": "DOM/SVG cyber-organic growth; connection convergence -> root/trunk -> branches -> same-primary Moment nodes -> bloom"
+  },
+  "website_controls": [
+    "PLAY THE TEASER",
+    "PLAY/PAUSE",
+    "SOUND",
+    "REPLAY",
+    "SKIP",
+    "SAVE/SAVED",
+    "chapter timeline",
+    "ENTER LOVETREE",
+    "moment internal preview modal",
+    "SIGN IN prototype modal"
+  ],
+  "network": {
+    "external_requests": 0,
+    "requests": []
+  },
+  "runtime": {
+    "console_errors": [],
+    "page_errors": [],
+    "requests": [],
+    "checks": {
+      "landing_visible": true,
+      "play_button_visible": true,
+      "cinema_active": true,
+      "pause_works": true,
+      "save_ui_visible": true,
+      "save_state": true,
+      "final_visible": true,
+      "experience_active": true,
+      "moment_modal": true,
+      "no_horizontal_overflow_desktop": true,
+      "mobile_landing_visible": true,
+      "no_horizontal_overflow_mobile": true,
+      "mobile_cinema_active": true
+    }
+  },
+  "files": {
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_v1.html": {
+      "bytes": 46629,
+      "sha256": "14f8b55d9a0760bf3c21f18f8fa2d6d38939545e4d79195fe50ea04c02e92ece"
+    },
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_PREVIEW_STANDALONE_v1.html": {
+      "bytes": 4713808,
+      "sha256": "6039ef6350962e8de3a7f33bab8406163aac10e73a88015e8950ae3d533f0c9b"
+    },
+    "SITE_DESKTOP_FULLPAGE.jpg": {
+      "bytes": 208920,
+      "sha256": "995cd2f5dd3c1391e24fc08d62c9ce7f3342b5bf986871c185553d4dcd3e9aef"
+    },
+    "SITE_MOBILE_FULLPAGE.jpg": {
+      "bytes": 76199,
+      "sha256": "a9723d4c93a1d5806663d54e1ffbc5551acf21cb5a2204064261ee1b5a1bfb7a"
+    },
+    "TRANSITION_STATE_SHEET.jpg": {
+      "bytes": 290812,
+      "sha256": "12ba2dc4e5f8de05487ed92fbe6dc8c96f432a72059979615bc23ba6e69f9ee0"
+    },
+    "49_SITE_EXECUTION_29.252s.mp4": {
+      "bytes": 5697822,
+      "sha256": "e6a9097c184cc1ff551b2bb36d2be1ef8991f419b9c850c57667e5d338d0c13b"
+    }
+  },
+  "known_limitations": [
+    "Source warehouse consists of high-resolution still frames; perceived motion is created by rapid editorial cutting, compositing, perspective/parallax and transition effects rather than native image-to-video footage.",
+    "Sound is optional browser-generated WebAudio ambience, muted by default; no benchmark or copyrighted audio is embedded.",
+    "This is an offline design prototype. Sign-in and external content URLs are intentionally not represented as working production services."
+  ]
+}

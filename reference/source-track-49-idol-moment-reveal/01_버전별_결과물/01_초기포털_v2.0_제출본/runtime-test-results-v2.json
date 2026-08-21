@@ -1,0 +1,40 @@
+{
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "page_errors": [],
+    "console_issues": [],
+    "horizontal_overflow": 0,
+    "reveal_open": true,
+    "reveal_label": "THAT SMILE \u00b7 THE REASON I CAME BACK",
+    "day_night_card_layout_shift_px": 0.0,
+    "route_open": true,
+    "metrics": [
+      "6",
+      "6",
+      "3"
+    ],
+    "save_confirmation": true
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "page_errors": [],
+    "console_issues": [],
+    "horizontal_overflow": 0,
+    "reveal_open": true,
+    "reveal_label": "THAT SMILE \u00b7 THE REASON I CAME BACK",
+    "day_night_card_layout_shift_px": 0.0,
+    "route_open": true,
+    "metrics": [
+      "6",
+      "6",
+      "3"
+    ],
+    "save_confirmation": true
+  }
+}

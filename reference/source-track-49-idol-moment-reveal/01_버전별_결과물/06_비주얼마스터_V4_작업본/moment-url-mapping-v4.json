@@ -1,0 +1,150 @@
+{
+  "hero": {
+    "main": {
+      "type": "hero",
+      "title": "Main portrait",
+      "image": "assets/hero/main.png",
+      "url": "",
+      "note": "Exact-build hero crop from visual master"
+    },
+    "moments": [
+      {
+        "key": "stage",
+        "type": "STAGE",
+        "title": "On stage",
+        "image": "assets/hero/stage.png",
+        "url": "",
+        "note": "Hero orbit moment"
+      },
+      {
+        "key": "smile",
+        "type": "SMILE",
+        "title": "That smile",
+        "image": "assets/hero/smile.png",
+        "url": "",
+        "note": "Hero orbit moment"
+      },
+      {
+        "key": "backstage",
+        "type": "BACKSTAGE",
+        "title": "Backstage",
+        "image": "assets/hero/backstage.png",
+        "url": "",
+        "note": "Hero orbit moment"
+      },
+      {
+        "key": "walking",
+        "type": "WALKING",
+        "title": "Walking",
+        "image": "assets/hero/walking.png",
+        "url": "",
+        "note": "Hero orbit moment"
+      }
+    ]
+  },
+  "archive": [
+    {
+      "type": "STAGE",
+      "title": "The stage I replayed",
+      "image": "assets/cards/stage.png",
+      "url": "",
+      "note": "Archive card slot"
+    },
+    {
+      "type": "FANCAM",
+      "title": "That one fancam",
+      "image": "assets/cards/fancam.png",
+      "url": "",
+      "note": "Archive card slot"
+    },
+    {
+      "type": "INTERVIEW",
+      "title": "The interview I remembered",
+      "image": "assets/cards/interview.png",
+      "url": "",
+      "note": "Archive card slot"
+    },
+    {
+      "type": "PHOTO",
+      "title": "The photo I could not forget",
+      "image": "assets/cards/photo.png",
+      "url": "",
+      "note": "Archive card slot"
+    },
+    {
+      "type": "LIVE",
+      "title": "Backstage before the show",
+      "image": "assets/cards/live.png",
+      "url": "",
+      "note": "Archive card slot"
+    }
+  ],
+  "connection": {
+    "this": {
+      "type": "INTERVIEW",
+      "title": "The reason I came back.",
+      "image": "assets/cards/connection_this.png",
+      "url": "",
+      "note": "This moment"
+    },
+    "reason": "That small smile changed how I remembered the stage.",
+    "next": {
+      "type": "STAGE",
+      "title": "Right before the cameras.",
+      "image": "assets/cards/connection_next.png",
+      "url": "",
+      "note": "Next moment"
+    }
+  },
+  "tree": [
+    {
+      "type": "STAGE",
+      "title": "Stage memory",
+      "image": "assets/tree/fruit1.png",
+      "url": "",
+      "note": "Tree fruit moment 01"
+    },
+    {
+      "type": "SMILE",
+      "title": "Smile memory",
+      "image": "assets/tree/fruit2.png",
+      "url": "",
+      "note": "Tree fruit moment 02"
+    },
+    {
+      "type": "INTERVIEW",
+      "title": "Interview memory",
+      "image": "assets/tree/fruit3.png",
+      "url": "",
+      "note": "Tree fruit moment 03"
+    },
+    {
+      "type": "LIVE",
+      "title": "Live memory",
+      "image": "assets/tree/fruit4.png",
+      "url": "",
+      "note": "Tree fruit moment 04"
+    },
+    {
+      "type": "BACKSTAGE",
+      "title": "Backstage memory",
+      "image": "assets/tree/fruit5.png",
+      "url": "",
+      "note": "Tree fruit moment 05"
+    },
+    {
+      "type": "PHOTO",
+      "title": "Photo memory",
+      "image": "assets/tree/fruit6.png",
+      "url": "",
+      "note": "Tree fruit moment 06"
+    },
+    {
+      "type": "WALKING",
+      "title": "Walking memory",
+      "image": "assets/tree/fruit7.png",
+      "url": "",
+      "note": "Tree fruit moment 07"
+    }
+  ]
+}

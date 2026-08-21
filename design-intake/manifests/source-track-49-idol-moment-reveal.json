@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-49-idol-moment-reveal",
+  "sourceTrackId": "Track49",
+  "title": "Idol Moment Reveal Portal — gate registration (no implementation)",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Idol-moment reveal portal candidate line (초기포털 v2.x → 슈퍼휴먼 벤치마크/다이내믹웹 → v1.4 현재후보): hero-reveal portal presentation over idol Moments with chapter/seek navigation, living-moment and tree-climax stages. Gate-registered as capability evidence only; current selected candidate is the v1.4 interactive-web folder.",
+  "summary": "Issue #306 gate registration for the adopted-design Drive folder 49_아이돌모먼트_리빌포털 (1.151 GiB, 559 files). Full byte-exact preservation with a 559-entry SHA256SUMS ledger; committed set is selectively capped under the #287 standard (total ~18MB, single file <= 10MiB): the complete v1.4 현재후보 executable set minus its oversize ZIP, plus all markdown/text/json/svg documents across every version folder. All oversize videos/zips/archives and legacy build artifacts are excluded from git and pinned by fingerprint in the ledger and gate FILE_INDEX. No repository Lineage number is allocated or reserved; canonical adoption and implementation are HOLD.",
+  "provenance": {
+    "sourceLabel": "49_아이돌모먼트_리빌포털 (adopted-design mirror [[지피티 작업]]/[01_러브트리]/03_디자인채택본) / Issue #306",
+    "driveFolderId": "15rgq99I_5hdd-6w33vUUX3nZvxiQ7TKj",
+    "sourceFiles": [
+      "01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/** (current candidate)",
+      "01_버전별_결과물/01..15_* version folders (docs committed, builds fingerprint-only)",
+      "04_초기참고자료·분석/** reference recordings (fingerprint-only)",
+      "90_이전시안·보관/** legacy candidates (fingerprint-only)"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "v1.4-current-candidate",
+    "authorityObservedAt": "2026-08-21T05:40:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/01_메인HTML_v1.4.html",
+      "driveId": "1i9Mpczr0Ua6nw55Zpz0RkllpHzL2Oxuh",
+      "bytes": 382861,
+      "sha256": "f99d3b31a3642c56f4969c90658574b32d8bcc8a9919730134fc3d955d171f0e",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/02_단독실행HTML_v1.4.html",
+      "driveId": "1S8w5qB1GxS4KBEDgOEudzOb21Z1wrVy2",
+      "bytes": 10342372,
+      "sha256": "78fd4462484eda74bfd37e2cde0c81067d5ab6889aa90bf736b477531ab75f21",
+      "role": "standalone-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/10_전체패키지_v1.4.zip",
+      "driveId": "1ZBCxCUkgjdSbtHnk4ipCG0BmUPU3dCmv",
+      "bytes": 26087898,
+      "sha256": "b4f0a2796e00f1f6398e414373b8c9cb061747253afd6c1d62b4a4a157954eed",
+      "role": "candidate-package-archive",
+      "status": "PENDING"
+    }
+  ],
+  "intakeContract": {
+    "preservedReferencePath": "reference/source-track-49-idol-moment-reveal/",
+    "checksumLedger": "reference/source-track-49-idol-moment-reveal/SHA256SUMS",
+    "verifiedIndependently": true,
+    "verifiedAgainst": "local SHA256SUMS generated at preservation time (559 files); no prior historical pin exists for this track, so this preservation establishes the first fingerprint baseline",
+    "commitSizeContract": "#287 standard interpreted as MiB: single file <= 10485760 B, total committed <= 52428800 B. Committed set = 118 files (~18MB): full v1.4 현재후보 set minus oversize ZIP plus all .md/.txt/.json/.svg documents. Oversize exclusions are preserved on the lane worktree and pinned in SHA256SUMS + docs/design-intake/source-track-49-gate.md FILE_INDEX."
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P7"],
+  "trulyNewPrimitive": "Hero-reveal portal staging grammar (chapter/seek navigation over idol-moment reveal scenes with living-moment and tree-climax stages)",
+  "sourceDefects": [
+    "keyboard/focus/reduced-motion contract not yet audited against current native quality gates",
+    "multiple parallel candidate lines (초기포털 v2.x vs 슈퍼휴먼 v1.x) exist without an explicit single selected-revision authority beyond the v1.4 현재후보 folder label"
+  ],
+  "nativeRemediations": [
+    "audit keyboard, focus-visible and prefers-reduced-motion behavior before any native slice",
+    "verify 1280x800 / 390x844 / 320x720 with zero horizontal overflow if a route is ever authorized"
+  ],
+  "sourceOnlyValues": [
+    "v1.4 candidate: chapter movement, seek-bar movement, living moment, tree climax stages per inspection captures",
+    "09_검증결과_v1.4.json records the candidate's own verification output"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #306 gate registration only. Implementation, canonical adoption and lineage allocation are HOLD pending Product Owner / design-lead review under Issue #80 intake rules and Issue #201 scenario assembly."
+  },
+  "reservation": {
+    "held": true,
+    "note": "Gate registration preserves source authority; nothing is adopted. Lineage reservation is HOLD by omission under the REFERENCE_CAPABILITY_ONLY identity rule: no lineage number is reserved or allocated by this gate registration."
+  },
+  "navigationHandoff": {
+    "targetMapping": false,
+    "urlResolution": false,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track49 idol moment reveal portal gate (no route implemented)"
+  }
+}

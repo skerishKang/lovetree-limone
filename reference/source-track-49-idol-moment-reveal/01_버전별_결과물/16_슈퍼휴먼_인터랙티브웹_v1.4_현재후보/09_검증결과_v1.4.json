@@ -1,0 +1,459 @@
+{
+  "version": "v1.4",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_VISUAL_REVIEW",
+  "scope": "v1.3 cinematic and approved Tree locked; navigation, deterministic seek, clickable Moments, Living Moment micro-loops, and media failsafe added.",
+  "locked_regression": {
+    "shot_timeline_hash_equal": true,
+    "tree_climax_function_hash_equal": true,
+    "approved_tree_asset_hash_equal": true,
+    "approved_tree_sha256": "c1be54c3c06b506fc5c7f1af5855ab287c9146e88cc354cb62b47262e22c6912",
+    "SAVE_regression": "PASS",
+    "Tree_regression": "PASS"
+  },
+  "required_numeric_report": {
+    "broken_media_frames": 0,
+    "missing_poster": 0,
+    "dead_navigation_button": 0,
+    "chapter_seek_success": "8/8",
+    "moment_click_success": "8/8",
+    "tree_moment_click_success": "8/8",
+    "arbitrary_seek_success": "11/11",
+    "SAVE_regression": "PASS",
+    "Tree_regression": "PASS",
+    "desktop_overflow": 0,
+    "mobile_overflow": 0,
+    "console_error": 0,
+    "page_runtime_error": 0
+  },
+  "navigation": {
+    "buttons": {
+      "HOME": true,
+      "CHAPTERS": true,
+      "MOMENTS": true,
+      "TREE": true,
+      "SOUND": true,
+      "REPLAY": true,
+      "ENTER": true
+    },
+    "chapter_count": 8,
+    "chapter_markers": 8
+  },
+  "media_failsafe": {
+    "preload_gate_ready": true,
+    "posters_preloaded": 8,
+    "living_videos_preloaded": 4,
+    "poster_fallback_activated_count": 0,
+    "video_fallback_activated_count": 0,
+    "standalone_external_script_count": 0,
+    "standalone_external_stylesheet_count": 0,
+    "main_relative_asset_reference_count": 26,
+    "main_missing_relative_asset_count": 0,
+    "fallback_chain": "VIDEO -> POSTER -> embedded fallback"
+  },
+  "living_moments": {
+    "actual_video_loops_count": 4,
+    "premium_stills_count": 4,
+    "poster_fallback_count": 0,
+    "one_active_loop_at_a_time": "PASS",
+    "loops": {
+      "living_white_room.mp4": {
+        "duration_s": 2.4,
+        "size_bytes": 103537,
+        "resolution": "540x676",
+        "sha256": "24a4a232cb4eebaa2e1ff604e7a3d5028c1616fb1dd6515f22891e03417d8da4"
+      },
+      "living_backstage.mp4": {
+        "duration_s": 2.433,
+        "size_bytes": 136803,
+        "resolution": "540x676",
+        "sha256": "c2554f49935a2b7a75ea88f067deab64496761fe76183a5adb9e2921ac9fb56d"
+      },
+      "living_reflection.mp4": {
+        "duration_s": 2.433,
+        "size_bytes": 104452,
+        "resolution": "540x676",
+        "sha256": "b9b8f8543928fa375b79dda469927d6fd630fef899779ebb4b9dc87dd2050016"
+      },
+      "living_afterimage.mp4": {
+        "duration_s": 2.4,
+        "size_bytes": 91381,
+        "resolution": "540x676",
+        "sha256": "540da3f6050a90de7c28e91eaa6ec50bd6dc7c3a3accaec82198ac91ee2987c9"
+      }
+    },
+    "source": "approved internal 03_SUPERHUMAN_12SEC_POC.mp4; no real reference/NCT clip embedded; no new image/video generation used.",
+    "identity_drift_inspection": "PASS — 4/4 loops are temporal crops from the same approved PRIMARY POC source; manual keyframe review found no subject substitution or generated-face drift."
+  },
+  "responsive": {
+    "desktop": "1440x900 PASS",
+    "mobile": "390x844 PASS",
+    "mobile_moment_detail": "bottom sheet PASS",
+    "mobile_menu": "PASS"
+  },
+  "execution_mp4": {
+    "duration_s": 34.0,
+    "resolution": "1440x900",
+    "fps": "30/1",
+    "frames": 1020,
+    "provenance": "review composite: locked v1.3 execution footage retained for cinematic pacing, v1.4 navigation/dock chrome overlaid, final Tree hold extended to 34.0s. Interactive behavior is separately verified in the actual v1.4 standalone HTML and proof sheets."
+  },
+  "raw_browser_validation": {
+    "counts": {
+      "chapters": 8,
+      "markers": 8,
+      "momentDrawer": 8,
+      "experienceMoments": 8,
+      "treeMoments": 8,
+      "livingVideos": 4
+    },
+    "media": {
+      "badImages": 0,
+      "failedVideos": 0,
+      "audit": {
+        "brokenMediaFrames": 0,
+        "missingPoster": 0,
+        "videoFallbacks": 0,
+        "posterFallbacks": 0,
+        "preloadedVideos": 4,
+        "preloadedPosters": 8,
+        "deadButtons": 0
+      },
+      "preloadGateReady": true
+    },
+    "chapter_seek": [
+      {
+        "index": 0,
+        "target": 1.95,
+        "actual": 1.9999679999999997,
+        "pass": true
+      },
+      {
+        "index": 1,
+        "target": 6.05,
+        "actual": 6.1000000000000005,
+        "pass": true
+      },
+      {
+        "index": 2,
+        "target": 10.25,
+        "actual": 10.299968,
+        "pass": true
+      },
+      {
+        "index": 3,
+        "target": 15.15,
+        "actual": 15.200000000000001,
+        "pass": true
+      },
+      {
+        "index": 4,
+        "target": 16.15,
+        "actual": 16.2,
+        "pass": true
+      },
+      {
+        "index": 5,
+        "target": 17.75,
+        "actual": 17.75,
+        "pass": true
+      },
+      {
+        "index": 6,
+        "target": 18.65,
+        "actual": 18.65,
+        "pass": true
+      },
+      {
+        "index": 7,
+        "target": 23.049999999999997,
+        "actual": 23.100099999999998,
+        "pass": true
+      }
+    ],
+    "moment_seek": [
+      {
+        "index": 0,
+        "target": 4.05,
+        "actual": 4.0833,
+        "pass": true
+      },
+      {
+        "index": 1,
+        "target": 1.55,
+        "actual": 1.5832,
+        "pass": true
+      },
+      {
+        "index": 2,
+        "target": 1.95,
+        "actual": 1.95,
+        "pass": true
+      },
+      {
+        "index": 3,
+        "target": 6.05,
+        "actual": 6.0999,
+        "pass": true
+      },
+      {
+        "index": 4,
+        "target": 8.75,
+        "actual": 8.8,
+        "pass": true
+      },
+      {
+        "index": 5,
+        "target": 5.8,
+        "actual": 5.8499680000000005,
+        "pass": true
+      },
+      {
+        "index": 6,
+        "target": 17.75,
+        "actual": 17.8,
+        "pass": true
+      },
+      {
+        "index": 7,
+        "target": 11.15,
+        "actual": 11.199968,
+        "pass": true
+      }
+    ],
+    "seek_range": [
+      {
+        "target": 0,
+        "actual": 0,
+        "pass": true
+      },
+      {
+        "target": 1.95,
+        "actual": 1.95,
+        "pass": true
+      },
+      {
+        "target": 6.05,
+        "actual": 6.05,
+        "pass": true
+      },
+      {
+        "target": 10.25,
+        "actual": 10.25,
+        "pass": true
+      },
+      {
+        "target": 15.15,
+        "actual": 15.15,
+        "pass": true
+      },
+      {
+        "target": 16.15,
+        "actual": 16.15,
+        "pass": true
+      },
+      {
+        "target": 17.75,
+        "actual": 17.75,
+        "pass": true
+      },
+      {
+        "target": 18.65,
+        "actual": 18.65,
+        "pass": true
+      },
+      {
+        "target": 23.05,
+        "actual": 23.05,
+        "pass": true
+      },
+      {
+        "target": 31,
+        "actual": 31,
+        "pass": true
+      },
+      {
+        "target": 33.5,
+        "actual": 33.5,
+        "pass": true
+      }
+    ],
+    "tree_moment_click": [
+      {
+        "index": 0,
+        "active": true,
+        "title": "FIRST NOTE",
+        "pass": true
+      },
+      {
+        "index": 1,
+        "active": true,
+        "title": "REFLECTION",
+        "pass": true
+      },
+      {
+        "index": 2,
+        "active": true,
+        "title": "WHITE ROOM",
+        "pass": true
+      },
+      {
+        "index": 3,
+        "active": true,
+        "title": "BACKSTAGE",
+        "pass": true
+      },
+      {
+        "index": 4,
+        "active": true,
+        "title": "ON STAGE",
+        "pass": true
+      },
+      {
+        "index": 5,
+        "active": true,
+        "title": "LOOKING BACK",
+        "pass": true
+      },
+      {
+        "index": 6,
+        "active": true,
+        "title": "NEXT MOMENT",
+        "pass": true
+      },
+      {
+        "index": 7,
+        "active": true,
+        "title": "AFTERIMAGE",
+        "pass": true
+      }
+    ],
+    "living": [
+      {
+        "treeIndex": 2,
+        "playing": 1,
+        "idx": 2,
+        "audit": {
+          "brokenMediaFrames": 0,
+          "missingPoster": 0,
+          "videoFallbacks": 0,
+          "posterFallbacks": 0,
+          "preloadedVideos": 4,
+          "preloadedPosters": 8,
+          "deadButtons": 0
+        },
+        "pass": true
+      },
+      {
+        "treeIndex": 3,
+        "playing": 1,
+        "idx": 3,
+        "audit": {
+          "brokenMediaFrames": 0,
+          "missingPoster": 0,
+          "videoFallbacks": 0,
+          "posterFallbacks": 0,
+          "preloadedVideos": 4,
+          "preloadedPosters": 8,
+          "deadButtons": 0
+        },
+        "pass": true
+      },
+      {
+        "treeIndex": 5,
+        "playing": 1,
+        "idx": 5,
+        "audit": {
+          "brokenMediaFrames": 0,
+          "missingPoster": 0,
+          "videoFallbacks": 0,
+          "posterFallbacks": 0,
+          "preloadedVideos": 4,
+          "preloadedPosters": 8,
+          "deadButtons": 0
+        },
+        "pass": true
+      },
+      {
+        "treeIndex": 7,
+        "playing": 1,
+        "idx": 7,
+        "audit": {
+          "brokenMediaFrames": 0,
+          "missingPoster": 0,
+          "videoFallbacks": 0,
+          "posterFallbacks": 0,
+          "preloadedVideos": 4,
+          "preloadedPosters": 8,
+          "deadButtons": 0
+        },
+        "pass": true
+      }
+    ],
+    "save": {
+      "before": {
+        "playhead": 15.216700000000001,
+        "playing": false,
+        "saveGate": true,
+        "saved": false,
+        "mediaReady": true,
+        "activeLivingIndex": -1
+      },
+      "after": {
+        "playhead": 16.2676,
+        "playing": true,
+        "saveGate": false,
+        "saved": true,
+        "mediaReady": true,
+        "activeLivingIndex": -1
+      },
+      "text": "SAVED ✓",
+      "pass": true
+    },
+    "nav": {
+      "HOME": true,
+      "CHAPTERS": true,
+      "MOMENTS": true,
+      "TREE": true,
+      "SOUND": true,
+      "REPLAY": true,
+      "ENTER": true
+    },
+    "desktop_overflow": {
+      "x": 0,
+      "y": 0
+    },
+    "desktop_errors": {
+      "page": [],
+      "console": []
+    },
+    "mobile": {
+      "overflow": {
+        "x": 0,
+        "y": 0
+      },
+      "menu": true,
+      "momentBottomSheet": true,
+      "modalRect": {
+        "x": 0,
+        "y": 504,
+        "width": 390,
+        "height": 340
+      },
+      "pageErrors": [],
+      "consoleErrors": []
+    },
+    "lock_hashes": {
+      "shots_v13": "1c795aeb996b665a1d3efb7a9f0ba051a494c0c39a59af053bec7ffd67d20a58",
+      "shots_v14": "1c795aeb996b665a1d3efb7a9f0ba051a494c0c39a59af053bec7ffd67d20a58",
+      "treeFn_v13": "9abe8cce6a331dc0d916bf2af625f7f197e22aa9789ae80688889b656709f5a5",
+      "treeFn_v14": "9abe8cce6a331dc0d916bf2af625f7f197e22aa9789ae80688889b656709f5a5",
+      "treeAsset_v13": "c1be54c3c06b506fc5c7f1af5855ab287c9146e88cc354cb62b47262e22c6912",
+      "treeAsset_v14": "c1be54c3c06b506fc5c7f1af5855ab287c9146e88cc354cb62b47262e22c6912"
+    }
+  },
+  "file_hashes": {
+    "main_html_sha256": "f99d3b31a3642c56f4969c90658574b32d8bcc8a9919730134fc3d955d171f0e",
+    "standalone_html_sha256": "78fd4462484eda74bfd37e2cde0c81067d5ab6889aa90bf736b477531ab75f21",
+    "execution_mp4_sha256": "d02ffec4c767e7afbdfc9814d5fa3fd830a6f1a2c2fff03c03a600c77485b675"
+  }
+}

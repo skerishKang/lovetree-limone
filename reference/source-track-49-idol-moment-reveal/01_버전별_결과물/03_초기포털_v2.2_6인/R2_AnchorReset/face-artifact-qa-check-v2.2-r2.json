@@ -1,0 +1,99 @@
+{
+  "status": "PASS_CANDIDATE",
+  "r1_status": "REJECTED",
+  "checks": {
+    "all_main_hero_sources_are_product_owner_anchors": true,
+    "new_cast_generation_used": false,
+    "hero_rgb_retouch_used": false,
+    "hero_face_material_overlay_used": false,
+    "black_patch_on_face_used": false,
+    "polygon_face_mask_used": false,
+    "dark_matte_spill_on_face_used": false,
+    "reveal_window_can_overlap_main_face": false,
+    "main_hero_border_radius_zero": true,
+    "main_hero_clip_path_none": true
+  },
+  "anchor_integrity": {
+    "A": {
+      "drive_anchor_file": "ChatGPT Image 2026년 8월 9일 오전 12_24_16 (1).png",
+      "drive_anchor_sha256": "efeadf02020733a711c9c8627d5dd45e0e18d6a889841904cf9d268cbf310567",
+      "anchor_crop_box_px": [
+        260,
+        45,
+        820,
+        690
+      ],
+      "hero_asset": "49_v2.2_r2_anchor-A_hero-matte_v1.png",
+      "hero_rgb_pixels_identical_to_anchor_crop": true,
+      "face_roi_alpha_min": 0,
+      "face_roi_alpha_mean": 114.89,
+      "new_face_generation_used": false,
+      "rgb_retouch_used": false,
+      "only_alpha_background_matte_added": true
+    },
+    "B": {
+      "drive_anchor_file": "ChatGPT Image 2026년 8월 9일 오전 12_24_16 (2).png",
+      "drive_anchor_sha256": "3e3b8a8065c7d00ec0381f9e7e18ef094cfcbdc6b4321fdf25a08cafc8e8bdf2",
+      "anchor_crop_box_px": [
+        420,
+        40,
+        1040,
+        790
+      ],
+      "hero_asset": "49_v2.2_r2_anchor-B_hero-matte_v1.png",
+      "hero_rgb_pixels_identical_to_anchor_crop": true,
+      "face_roi_alpha_min": 0,
+      "face_roi_alpha_mean": 119.57,
+      "new_face_generation_used": false,
+      "rgb_retouch_used": false,
+      "only_alpha_background_matte_added": true
+    },
+    "C": {
+      "drive_anchor_file": "ChatGPT Image 2026년 8월 9일 오전 12_24_17 (3).png",
+      "drive_anchor_sha256": "766c441c1553f839abc9bc5602517c3922380e4dcd68e0e1c9a74326b1610f23",
+      "anchor_crop_box_px": [
+        365,
+        45,
+        585,
+        360
+      ],
+      "hero_asset": "49_v2.2_r2_anchor-C_hero-matte_v1.png",
+      "hero_rgb_pixels_identical_to_anchor_crop": true,
+      "face_roi_alpha_min": 0,
+      "face_roi_alpha_mean": 196.1,
+      "new_face_generation_used": false,
+      "rgb_retouch_used": false,
+      "only_alpha_background_matte_added": true
+    }
+  },
+  "note": "Reveal is a separate side memory-light window. It never paints or masks the main face.",
+  "face_core_integrity": {
+    "A": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 0.9796,
+      "face_core_alpha_mean": 252.34,
+      "face_rgb_difference_max": 0
+    },
+    "B": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 1.0,
+      "face_core_alpha_mean": 255.0,
+      "face_rgb_difference_max": 0
+    },
+    "C": {
+      "rgb_exact_match_to_anchor_crop": true,
+      "face_core_alpha_opaque_ratio": 1.0,
+      "face_core_alpha_mean": 255.0,
+      "face_rgb_difference_max": 0
+    }
+  },
+  "runtime_side_reveal": {
+    "active": true,
+    "portal": "close-memory",
+    "leftPct": 8.068165189024041,
+    "topPct": 17.057338980741278,
+    "widthPct": 34.580361986751186,
+    "heroSrc": "data:image/png;base64,iVBORw0KGg",
+    "revealSrc": "data:image/jpeg;base64,/9j/4AAQS"
+  }
+}

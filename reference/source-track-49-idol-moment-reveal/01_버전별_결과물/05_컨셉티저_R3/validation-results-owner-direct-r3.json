@@ -1,0 +1,37 @@
+{
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "owner_direct_requirements": {
+    "hover_face_or_copy_swap_removed": true,
+    "hero_uses_uploaded_reference_composition": true,
+    "moment_archive_has_distinct_media_cards": 6,
+    "moment_categories": [
+      "STAGE",
+      "FANCAM",
+      "INTERVIEW",
+      "BACKSTAGE",
+      "PHOTO",
+      "LIVE"
+    ],
+    "next_moment_uses_distinct_thumbnails": true,
+    "example_video_links_present": true,
+    "tree_is_luminous_and_media_bearing": true,
+    "save_flow_works": true
+  },
+  "runtime": {
+    "desktop": {
+      "errors": [],
+      "overflow": 0
+    },
+    "mobile": {
+      "errors": [],
+      "overflow": 0
+    }
+  },
+  "production": "PROHIBITED",
+  "visual_qa_adjustments": [
+    "Removed duplicate fixed navigation from the Hero reference.",
+    "Replaced weak INTERVIEW/PHOTO thumbnails with distinct same-person crops from the supplied Hero reference.",
+    "Recropped the Tree to remove baked UI panel and emphasize the luminous canopy/trunk.",
+    "Added denser blossom-light canopy without changing content on hover."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "status": "GENERATED VISUAL MASTER EXACT-BUILD CANDIDATE",
+  "checks": {
+    "five_locked_sections_present": true,
+    "desktop_visual_source_matches_approved_master": true,
+    "hero_has_single_main_person_and_four_distinct_moments": true,
+    "archive_has_distinct_moment_cards": true,
+    "connection_uses_two_distinct_moments": true,
+    "tree_is_large_blooming_and_contains_clickable_moment_fruits": true,
+    "save_section_has_form_and_saved_card": true,
+    "hover_face_swap_removed": true,
+    "future_urls_are_config_slots_not_fake_official_urls": true
+  },
+  "runtime_note": "Desktop screenshot surrogate equals the approved master because the desktop build is a sliced exact implementation of that master. Mobile screenshot is a stacked mock capture built from the same extracted assets.",
+  "files": {
+    "html": "lovetree-49-concept-teaser-visual-master-v4.html",
+    "desktop_screenshot": "desktop-fullpage-v4.png",
+    "mobile_screenshot": "mobile-fullpage-v4.png",
+    "comparison": "visual-master-vs-html-v4.png",
+    "asset_map": "asset-map-v4.json",
+    "mapping": "moment-url-mapping-v4.json"
+  }
+}
