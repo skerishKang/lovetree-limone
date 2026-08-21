@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-58-living-memory-pinboard",
+  "sourceTrackId": "Track58",
+  "title": "리빙메모리 핀보드 시네마틱 V1.2 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "tree-workspace",
+  "productJob": "A cinematic living-memory pinboard: moments are pinned as cards on a Pearl-Ivory board (6 themes / 7 pins / 6 card styles) joined by a Living Thread with idle wobble and elastic reflow; moments support direct editing, WHY NEXT / next-moment / multi-chooser connections, and a Cinema mode with pause, resume, scrub and board re-entry. V1.2 shows real YouTube media via thumbnail-first loading and a youtube-nocookie embed viewer with an explicit 'YouTube에서 재생' fallback. Registration only — no product adoption implied.",
+  "summary": "Source Track 58 registered at its closed sibling authority V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE (TRACK_58_FINAL_APPROVED_CLOSED, PASS B, 2026-08-11). The V1.2 final executable (532,697 B), its V1 design instruction, the V1.2 revision instruction, the sibling QA json and the V1.1→V1.2 change summary are pinned byte-exact under reference/source-track-58-living-memory-pinboard/; MD5 cross-verified against the #287 repository Drive snapshot. The three root videos stay on Drive as REFERENCE_ONLY fingerprints. Sibling closure is prototype-grade PASS B: real-thumbnail display, fallback button and original URL preservation were verified in the product owner's browser, but live embed playback itself is not claimed. Gate registration only: native implementation NOT started, lineage number NOT allocated, adoption HOLD.",
+  "provenance": {
+    "sourceLabel": "58_리빙메모리_핀보드_시네마틱 / Issue #310 source gate registration",
+    "driveFolderId": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+    "sourceFiles": [
+      "★_최종_58_리빙메모리_핀보드.html",
+      "00_작업지시/01_58_LIVING_MEMORY_PINBOARD_CINEMATIC_V1_디자인팀장5기_신규작업지시_2026-08-11.md",
+      "00_작업지시/04_58_유튜브실제미디어표시_모바일반응형_버전폴더정리_설계팀장11기_수정지시_2026-08-11.md",
+      "버전_1.2_유튜브실제미디어·모바일보정/검증결과.json",
+      "버전_1.2_유튜브실제미디어·모바일보정/수정전후_비교요약.md",
+      "★_참고영상_원본_핀보드.mp4",
+      "제품오너_네트워크검토녹화_2026-08-11_18-23.mp4"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage58 is NOT allocated by this manifest. The existing repository Lineage 58 (living-character world) is a separate identity — source track numbers never imply repository lineage numbers."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Gate registration only (Issue #310). IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO; native implementation must not start before a separate approval lane admits the track."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+    "authorityObservedAt": "2026-08-21T05:57:50.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "★_최종_58_리빙메모리_핀보드.html",
+      "driveId": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+      "bytes": 532697,
+      "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "00_작업지시/01_58_LIVING_MEMORY_PINBOARD_CINEMATIC_V1_디자인팀장5기_신규작업지시_2026-08-11.md",
+      "driveId": "1RA-QMoB482Lv-xrAWqG-LmYFubzIckRa",
+      "bytes": 23485,
+      "sha256": "73a24023d7a89fb6251d8b3f3a001e32e67e4250c6b37b87c800e9f7b1a3d76c",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "00_작업지시/04_58_유튜브실제미디어표시_모바일반응형_버전폴더정리_설계팀장11기_수정지시_2026-08-11.md",
+      "driveId": "1b2yJdaJ6Y3C3sOYbFZTvAbdcUmVwVH_e",
+      "bytes": 12194,
+      "sha256": "45366adacf7aa2c8ac2ba9353b8951253cf8bfeea2bd751e09ced499a5c63450",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "버전_1.2_유튜브실제미디어·모바일보정/검증결과.json",
+      "driveId": "1oMo5F5u4jAySPJUIFkiVk-3LZZzRH-VM",
+      "bytes": 12078,
+      "sha256": "5d9f57a491bb7136975957ac9f2ea19a9b24a0519b4a057275d461f2ea1fc588",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "버전_1.2_유튜브실제미디어·모바일보정/수정전후_비교요약.md",
+      "driveId": "1vjglTzcdKUnAj9zZ-Sg4OSK-ktMDIw-P",
+      "bytes": 1777,
+      "sha256": "adc670ebb556fab45fb51c1bf242cce99f29937c6cab44035f45ac64c55f6e1a",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "★_참고영상_원본_핀보드.mp4",
+      "driveId": "1LUQnx33uoedVYxIDHpYgQVgsL50nkWOS",
+      "bytes": 58299201,
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "제품오너_네트워크검토녹화_2026-08-11_18-23.mp4",
+      "driveId": "1-crSP9xaKldX4uS5Li5mkndfSHj6J85q",
+      "bytes": 26327386,
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "filename": "★_모바일_실행영상_58_리빙메모리_핀보드.mp4",
+      "driveId": "1Gna3xaKIzTw2AwzA2wOTJsDcQUtXgj2O",
+      "bytes": 781303,
+      "role": "reference-video",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "SIBLING_CLOSURE_IS_PASS_B_PROTOTYPE: live YouTube embed playback itself was never claimed — verified evidence covers real-thumbnail display, nocookie iframe wiring, fallback button activation and original URL preservation only",
+    "MANAGED_BROWSER_IFRAME_BLOCKED: the sibling's managed Chromium blocks external iframes, so embed playback parity must be reproduced in an unrestricted environment before any native port claims it",
+    "HISTORICAL_REVISION_COPIES_ON_DRIVE: V1.0/V1.1 HTML exist in multiple identical copies alongside V1.2; only the V1.2 final is pinned authority",
+    "NATIVE_IMPLEMENTATION_NOT_STARTED: no repository scaffold, route or registry seam exists for this track"
+  ],
+  "nativeRemediations": [
+    "reproduce actual youtube-nocookie embed playback inside the Cinema viewer in an unrestricted browser QA environment before any native port claims playback parity",
+    "preserve the sibling's explicit verification boundary: thumbnail/fallback/original-URL checks never substitute for live playback proof",
+    "only after approval: native intake sequence scaffold → implementation → focused/browser QA → fingerprint → registry admission"
+  ],
+  "sourceOnlyValues": [
+    "the six themes, seven pins, six card styles and Living Thread visuals are source-side vocabulary until a native candidate adopts them by decision",
+    "sample moments/cards on the board are source fixtures, never product content",
+    "WHY NEXT / next-moment / multi-chooser connection semantics are source-demo behavior until a native candidate maps them to product truth"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
