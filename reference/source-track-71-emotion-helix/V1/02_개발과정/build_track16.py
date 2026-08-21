@@ -1,0 +1,209 @@
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+from pathlib import Path
+import base64, json, os, subprocess, textwrap, math
+
+ROOT=Path('/mnt/data/codex16_emotion_path_helix')
+AS=ROOT/'03_에셋'
+for d in [ROOT, ROOT/'01_분석', ROOT/'02_개발과정', AS, ROOT/'04_녹화', ROOT/'05_QA', ROOT/'06_프롬프트_기록', ROOT/'07_메모']:
+    d.mkdir(parents=True, exist_ok=True)
+
+srcs=[
+('/mnt/data/S01_FIRST_CLUE_1536w.jpg','01_first_look.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (3).png','02_look_again.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (4).png','03_stage_light.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (5).png','04_off_stage.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (6).png','05_small_gesture.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_41 (7).png','06_fan_echo.jpg'),
+('/mnt/data/ChatGPT Image 2026년 8월 14일 오후 05_12_42 (8).png','07_my_path.jpg'),
+('/mnt/data/S10_MY_LOVETREE_1536w.jpg','08_my_lovetree.jpg'),
+]
+
+def cover(im, size=(1024,1024)):
+    im=im.convert('RGB')
+    w,h=im.size; tw,th=size
+    s=max(tw/w, th/h); nw,nh=round(w*s),round(h*s)
+    im=im.resize((nw,nh), Image.Resampling.LANCZOS)
+    x=(nw-tw)//2; y=(nh-th)//2
+    return im.crop((x,y,x+tw,y+th))
+
+# Detail assets
+for src,name in srcs:
+    im=Image.open(src)
+    # portrait/detail: keep full ratio, max 1400
+    im=im.convert('RGB')
+    mx=1400
+    scale=min(1, mx/max(im.size))
+    if scale < 1:
+        im=im.resize((int(im.width*scale), int(im.height*scale)), Image.Resampling.LANCZOS)
+    im.save(AS/name, quality=88, optimize=True)
+
+moments=[
+ dict(no='01',title='FIRST LOOK',emotion='설렘',date='2026.08.04',line='처음 표정이 계속 생각났다',connection='그 표정이 계속 생각나서 다른 무대를 찾아봤다.'),
+ dict(no='02',title='LOOK AGAIN',emotion='궁금함',date='2026.08.04',line='왜 다시 보고 싶은지 궁금했다',connection='다른 각도의 무대를 보니 실력이 더 궁금해졌다.'),
+ dict(no='03',title='STAGE LIGHT',emotion='놀람',date='2026.08.05',line='생각보다 훨씬 잘해서 멈췄다',connection='실력을 확인하고 나니 무대 밖 사람이 궁금해졌다.'),
+ dict(no='04',title='OFF STAGE',emotion='친근함',date='2026.08.06',line='말투가 무대와 전혀 달랐다',connection='작은 리액션 하나가 이상하게 오래 남았다.'),
+ dict(no='05',title='SMALL GESTURE',emotion='애틋함',date='2026.08.07',line='무심한 장면이 오히려 결정적이었다',connection='다른 팬들도 같은 장면을 기억하는지 찾아봤다.'),
+ dict(no='06',title='FAN ECHO',emotion='공감',date='2026.08.08',line='다른 팬의 반응에서 내 마음을 봤다',connection='저장한 순간들을 이어보니 내가 걸어온 길이 보였다.'),
+ dict(no='07',title='MY PATH',emotion='확신',date='2026.08.10',line='흩어진 순간들이 하나의 이유가 됐다',connection='마지막에는 콘텐츠가 아니라 내 감정의 변화가 남았다.'),
+ dict(no='08',title='MY LOVETREE',emotion='입덕',date='2026.08.12',line='이때 나는 완전히 좋아하고 있었다',connection='다시 처음으로 돌아가도 같은 길을 걸을 것 같다.'),
+]
+for i,m in enumerate(moments): m['asset']=srcs[i][1]
+
+# Atlas: one continuous horizontal strip, each cell 1024x1024
+W=1024*8; H=1024
+atlas=Image.new('RGB',(W,H),(235,232,224))
+font_reg='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
+font_bold='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'
+FB=ImageFont.truetype(font_bold,52); FS=ImageFont.truetype(font_reg,28); FK=ImageFont.truetype(font_bold,34); FT=ImageFont.truetype(font_reg,24)
+for i,(src,_name) in enumerate(srcs):
+    im=cover(Image.open(src))
+    # editorial desaturation slightly
+    im=ImageEnhance.Color(im).enhance(0.82)
+    x=i*1024; atlas.paste(im,(x,0))
+    d=ImageDraw.Draw(atlas,'RGBA')
+    # bottom gradient bands
+    for yy in range(660,1024):
+        a=int(220*((yy-660)/(1024-660))**1.3)
+        d.rectangle((x,yy,x+1024,yy+1),fill=(7,7,7,a))
+    d.rectangle((x+34,34,x+155,76), fill=(246,244,238,205))
+    d.text((x+52,39),f"MOMENT {moments[i]['no']}",font=FT,fill=(18,18,18,255))
+    d.text((x+48,760),moments[i]['title'],font=FB,fill=(255,255,255,255))
+    d.text((x+50,827),moments[i]['emotion'],font=FK,fill=(244,214,214,255))
+    d.text((x+50,878),moments[i]['line'],font=FS,fill=(255,255,255,230))
+    d.text((x+50,927),moments[i]['date'],font=FT,fill=(255,255,255,170))
+atlas_path=AS/'moment_atlas_8192x1024.jpg'
+atlas.save(atlas_path,quality=82,optimize=True,progressive=True)
+
+# small motion asset (selected moment 03): 4s slow crossfade from 3 stills
+frames_dir=ROOT/'02_개발과정'/'motion_frames'; frames_dir.mkdir(parents=True,exist_ok=True)
+imgs=[cover(Image.open(srcs[j][0]),(720,720)) for j in [1,2,3]]
+frames=[]
+N=96
+for n in range(N):
+    t=n/(N-1)
+    pos=t*2
+    j=min(1,int(pos)); f=pos-j
+    a=imgs[j]; b=imgs[j+1]
+    # subtle zoom
+    def zoom(im,z):
+        nw=int(720*z); nh=nw
+        tmp=im.resize((nw,nh),Image.Resampling.LANCZOS)
+        l=(nw-720)//2; return tmp.crop((l,l,l+720,l+720))
+    aa=zoom(a,1+0.035*f); bb=zoom(b,1+0.035*f)
+    fr=Image.blend(aa,bb,f)
+    fr.save(frames_dir/f'{n:04d}.jpg',quality=88)
+video_path=AS/'moment_03_stage_light.mp4'
+subprocess.run(['ffmpeg','-y','-loglevel','error','-framerate','24','-i',str(frames_dir/'%04d.jpg'),'-c:v','libx264','-pix_fmt','yuv420p','-crf','25','-movflags','+faststart',str(video_path)],check=True)
+
+# base64 util
+
+def data_uri(path,mime):
+    return 'data:'+mime+';base64,'+base64.b64encode(Path(path).read_bytes()).decode('ascii')
+
+# HTML builder
+
+def html(self_contained=False):
+    if self_contained:
+        atlas_src=data_uri(atlas_path,'image/jpeg')
+        imgs=[data_uri(AS/m['asset'],'image/jpeg') for m in moments]
+        vid=data_uri(video_path,'video/mp4')
+    else:
+        atlas_src='03_에셋/moment_atlas_8192x1024.jpg'
+        imgs=['03_에셋/'+m['asset'] for m in moments]
+        vid='03_에셋/moment_03_stage_light.mp4'
+    js_mom=[]
+    for i,m in enumerate(moments):
+        mm=dict(m); mm['image']=imgs[i]; mm['video']=vid if i==2 else ''
+        js_mom.append(mm)
+    moment_json=json.dumps(js_mom,ensure_ascii=False)
+    return f'''<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LoveTree Emotion Path Helix — Track 16 V1</title>
+<style>
+:root{{--paper:#f3f0e8;--ink:#10100f;--muted:#77746d;--rose:#b95e70;--dark:#080909;--line:rgba(16,16,15,.14);--focus:0;}}
+*{{box-sizing:border-box}}html,body{{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Inter,Arial,"Noto Sans KR",sans-serif}}button{{font:inherit}}body.dark{{background:#080909;color:#f5f2eb}}
+#app{{position:fixed;inset:0;background:radial-gradient(circle at 68% 46%,#fff 0,#f3f0e8 43%,#e7e2d8 100%);transition:background .8s,color .8s}}
+#gl{{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;z-index:4}}#gl.dragging{{cursor:grabbing}}
+.noise{{position:absolute;inset:0;pointer-events:none;opacity:.16;z-index:5;background-image:radial-gradient(rgba(0,0,0,.18) .55px,transparent .55px);background-size:7px 7px;mix-blend-mode:multiply}}
+.brand{{position:absolute;z-index:20;left:32px;top:28px;width:min(355px,32vw)}}
+.logo{{font-size:20px;font-weight:800;letter-spacing:-.045em}}.kicker{{margin-top:18px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#8b887f;font-weight:700}}
+.brand h1{{margin:9px 0 13px;font-size:clamp(36px,4.3vw,72px);line-height:.9;letter-spacing:-.075em;font-weight:650}}
+.brand p{{margin:0;max-width:320px;font-size:12px;line-height:1.55;color:#625f59;letter-spacing:-.025em}}
+.hint{{position:absolute;z-index:20;left:32px;bottom:30px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#68655e}}
+.status{{position:absolute;z-index:20;right:28px;top:26px;text-align:right}}.status .n{{font-size:60px;font-weight:300;line-height:.85;letter-spacing:-.08em;color:#aaa59b}}.status .t{{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#77736b}}
+.indexBtn{{position:absolute;z-index:22;right:28px;bottom:28px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.58);backdrop-filter:blur(14px);padding:13px 18px;font-size:9px;font-weight:750;letter-spacing:.17em;text-transform:uppercase;cursor:pointer}}
+.bgword{{position:absolute;z-index:1;right:-.03em;top:50%;transform:translateY(-50%);font-size:clamp(125px,20vw,360px);font-weight:800;letter-spacing:-.09em;color:rgba(15,15,14,.045);line-height:.72;white-space:nowrap;pointer-events:none;transition:.7s}}
+#labels{{position:absolute;inset:0;z-index:12;pointer-events:none}}.mLabel{{position:absolute;width:250px;transform:translate(-50%,-50%);opacity:.18;transition:opacity .25s,transform .25s;mix-blend-mode:multiply}}
+.mLabel.active{{opacity:1;transform:translate(-50%,-50%) scale(1.04)}}.mLabel.hover{{opacity:.82}}.mLabel .no{{font-size:8px;letter-spacing:.18em;color:#8c887f}}.mLabel .title{{font-size:16px;font-weight:730;letter-spacing:-.04em;margin-top:5px}}.mLabel .emotion{{font-size:10px;color:#a34d61;margin-top:4px;font-weight:650}}.mLabel .why{{font-size:9px;line-height:1.4;color:#5d5a54;margin-top:8px;max-width:220px}}
+.drawer{{position:absolute;z-index:60;right:16px;top:16px;bottom:16px;width:min(410px,92vw);background:rgba(247,244,236,.94);backdrop-filter:blur(28px);border:1px solid rgba(0,0,0,.12);border-radius:28px;box-shadow:0 30px 90px rgba(0,0,0,.16);transform:translateX(calc(100% + 24px));transition:transform .42s cubic-bezier(.2,.82,.2,1);overflow:hidden}}
+.drawer.open{{transform:none}}.drawerHead{{height:112px;padding:24px;border-bottom:1px solid var(--line)}}.drawerHead small{{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:#77736b}}.drawerHead h2{{margin:7px 0 0;font-size:32px;line-height:.9;letter-spacing:-.06em}}.drawerClose{{position:absolute;right:20px;top:20px;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:transparent;cursor:pointer}}
+.indexList{{height:calc(100% - 112px);overflow:auto;padding:10px 12px 16px}}.indexItem{{width:100%;display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;text-align:left;border:0;border-bottom:1px solid rgba(0,0,0,.09);background:transparent;padding:14px 10px;cursor:pointer}}.indexItem img{{width:54px;height:68px;object-fit:cover;border-radius:8px}}.indexItem b{{display:block;font-size:14px}}.indexItem span{{display:block;font-size:9px;margin-top:4px;color:#77736b}}.indexItem em{{font-style:normal;font-size:10px;color:#a34d61}}
+.detail{{position:fixed;z-index:100;inset:0;background:#080909;color:#f7f3eb;opacity:0;pointer-events:none;clip-path:polygon(46% 0,58% 2%,56% 98%,43% 100%);transform:perspective(1200px) rotateY(-18deg) scale(.92);transition:clip-path .78s cubic-bezier(.18,.78,.18,1),transform .78s cubic-bezier(.18,.78,.18,1),opacity .32s ease;transform-origin:var(--ox,70%) var(--oy,50%)}}
+.detail.open{{opacity:1;pointer-events:auto;clip-path:inset(0);transform:none}}.detailInner{{position:absolute;inset:0;display:grid;grid-template-columns:42% 58%}}.detailCopy{{padding:8vh 5vw 6vh;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(140deg,#090a0a,#11100f)}}.detailMedia{{position:relative;background:#000;overflow:hidden}}.detailMedia img,.detailMedia video{{width:100%;height:100%;object-fit:cover}}.detailMedia:after{{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}}.detailTop{{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.46)}}.detailCopy h2{{margin:15px 0 8px;font-size:clamp(56px,7vw,118px);line-height:.82;letter-spacing:-.085em;font-weight:620}}.detailEmotion{{font-size:18px;color:#d995a5}}.detailLine{{margin-top:24px;max-width:520px;font-size:18px;line-height:1.5;color:rgba(255,255,255,.72)}}.detailWhy{{border-top:1px solid rgba(255,255,255,.18);padding-top:22px;font-size:13px;line-height:1.6;color:rgba(255,255,255,.55)}}.detailWhy strong{{display:block;color:#fff;font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}}.detailClose{{position:absolute;z-index:5;right:24px;top:24px;width:44px;height:44px;border:1px solid rgba(255,255,255,.3);border-radius:50%;background:rgba(0,0,0,.25);color:#fff;cursor:pointer}}
+.connectionTag{{position:absolute;z-index:15;left:50%;top:50%;min-width:240px;max-width:320px;padding:10px 14px;border-radius:999px;background:rgba(15,15,14,.84);color:#fff;font-size:9px;letter-spacing:.02em;line-height:1.25;opacity:0;transform:translate(-50%,-50%) scale(.94);transition:.25s;pointer-events:none}}.connectionTag.show{{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@media(max-width:760px){{.brand{{left:16px;top:16px;width:250px}}.brand h1{{font-size:38px}}.brand p{{font-size:10px}}.status{{right:14px;top:16px}}.status .n{{font-size:40px}}.hint{{left:16px;bottom:18px}}.indexBtn{{right:14px;bottom:14px}}.mLabel{{width:170px}}.mLabel .why{{display:none}}.detailInner{{grid-template-columns:1fr}}.detailMedia{{position:absolute;inset:0;opacity:.43}}.detailCopy{{position:relative;z-index:2;background:linear-gradient(90deg,rgba(0,0,0,.92),rgba(0,0,0,.35));padding:12vh 7vw 6vh}}.detailCopy h2{{font-size:64px}}}}
+@media(prefers-reduced-motion:reduce){{.detail,.drawer,.mLabel{{transition-duration:.01ms!important}}}}
+</style></head>
+<body>
+<div id="app">
+<canvas id="gl" aria-label="LoveTree 감정 경로 헬릭스"></canvas><div class="noise"></div>
+<div class="bgword" id="bgword">MOMENT</div>
+<header class="brand"><div class="logo">LoveTree</div><div class="kicker">Emotion Path Helix · Track 16</div><h1>Follow what<br>made you care.</h1><p>콘텐츠를 모으는 대신, 왜 다음 순간으로 갔는지 따라가 보세요. 하나의 리본 위에 Moment와 Connection이 살아 있는 경로가 됩니다.</p></header>
+<div class="status"><div class="n" id="statusNo">01</div><div class="t">current moment / 08</div></div>
+<div class="hint">Drag to follow the path · Wheel to move · Click a Moment</div>
+<button class="indexBtn" id="indexBtn">All Moments</button><div id="labels"></div><div class="connectionTag" id="connectionTag"></div>
+<aside class="drawer" id="drawer"><div class="drawerHead"><small>LoveTree / Path Index</small><h2>All Moments</h2><button class="drawerClose" id="drawerClose">×</button></div><div class="indexList" id="indexList"></div></aside>
+<section class="detail" id="detail" aria-hidden="true"><button class="detailClose" id="detailClose">×</button><div class="detailInner"><div class="detailCopy"><div><div class="detailTop" id="detailTop">Moment 01 · 2026.08.04</div><h2 id="detailTitle">FIRST LOOK</h2><div class="detailEmotion" id="detailEmotion">설렘</div><div class="detailLine" id="detailLine"></div></div><div class="detailWhy"><strong>Connection / Why next?</strong><span id="detailWhy"></span></div></div><div class="detailMedia" id="detailMedia"></div></div></section>
+<img id="atlas" src="{atlas_src}" hidden>
+<script>
+const MOMENTS={moment_json};
+const canvas=document.getElementById('gl'),gl=canvas.getContext('webgl2',{{antialias:true,alpha:true,powerPreference:'high-performance'}});
+if(!gl){{document.body.innerHTML='<div style="padding:40px">WebGL2 is required for Track 16.</div>';throw new Error('WebGL2 unavailable');}}
+const VS=`#version 300 es\nprecision highp float;layout(location=0)in vec3 aPos;layout(location=1)in vec2 aUV;uniform mat4 uMVP;out vec2 vUV;out float vDepth;void main(){{vec4 p=uMVP*vec4(aPos,1.0);gl_Position=p;vUV=aUV;vDepth=p.z/p.w;}}`;
+const FS=`#version 300 es\nprecision highp float;in vec2 vUV;in float vDepth;uniform sampler2D uTex;uniform float uFocus;uniform float uTime;out vec4 outColor;void main(){{vec4 c=texture(uTex,vUV);float d=abs(vUV.x-uFocus);float hi=1.0+0.32*exp(-d*d*420.0);float edge=smoothstep(0.0,.035,vUV.y)*smoothstep(1.0,.965,vUV.y);float fog=mix(.72,1.0,clamp((vDepth+1.0)*.5,0.0,1.0));c.rgb*=hi*fog;c.rgb=mix(c.rgb,vec3(.94,.91,.84),.08*(1.0-edge));if(!gl_FrontFacing)c.rgb*=.32;outColor=vec4(c.rgb,edge);}}`;
+const SOLID_FS=`#version 300 es\nprecision highp float;in vec2 vUV;uniform vec4 uColor;out vec4 outColor;void main(){{float edge=smoothstep(0.0,.12,vUV.y)*smoothstep(1.0,.88,vUV.y);outColor=vec4(uColor.rgb,uColor.a*edge);}}`;
+function shader(type,src){{let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}}
+function program(vs,fs){{let p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,vs));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p}}
+const prog=program(VS,FS),solidProg=program(VS,SOLID_FS);
+function norm(a){{let l=Math.hypot(...a)||1;return a.map(v=>v/l)}}function cross(a,b){{return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}}
+function center(t,phase=0,rOff=0){{let turns=2.05,ang=(t-.5)*Math.PI*2*turns+phase,r=2.35+rOff+.18*Math.sin(t*Math.PI*4);return[Math.cos(ang)*r,(.5-t)*7.0,Math.sin(ang)*r]}}
+function frameAt(t,phase=0,rOff=0){{let e=.0005,p=center(Math.max(0,t-e),phase,rOff),q=center(Math.min(1,t+e),phase,rOff),tan=norm([q[0]-p[0],q[1]-p[1],q[2]-p[2]]),c=center(t,phase,rOff),rad=norm([c[0],0,c[2]]),wide=norm(cross(rad,tan));return{{c,tan,wide}}}}
+function makeRibbon(phase=0,rOff=0,width=1.34,N=360){{let v=[],ind=[];for(let i=0;i<=N;i++){{let t=i/N,f=frameAt(t,phase,rOff);for(let s=-1;s<=1;s+=2){{v.push(f.c[0]+f.wide[0]*width*.5*s,f.c[1]+f.wide[1]*width*.5*s,f.c[2]+f.wide[2]*width*.5*s,t,(s+1)*.5)}}}}for(let i=0;i<N;i++){{let a=i*2,b=a+1,c=a+2,d=a+3;ind.push(a,c,b,b,c,d)}}return{{v:new Float32Array(v),ind:new Uint32Array(ind)}}}}
+function mesh(data){{let vao=gl.createVertexArray();gl.bindVertexArray(vao);let vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,data.v,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,2,gl.FLOAT,false,20,12);let ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,data.ind,gl.STATIC_DRAW);gl.bindVertexArray(null);return{{vao,count:data.ind.length}}}}
+const mainMesh=mesh(makeRibbon(0,0,1.46,420)),side1=mesh(makeRibbon(.22,-.48,.44,300)),side2=mesh(makeRibbon(-.30,.48,.34,300));
+const momentCenters=MOMENTS.map((m,i)=>center((i+.5)/MOMENTS.length));
+function mat4Perspective(fovy,aspect,n,f){{let s=1/Math.tan(fovy/2),nf=1/(n-f);return new Float32Array([s/aspect,0,0,0,0,s,0,0,0,0,(f+n)*nf,-1,0,0,2*f*n*nf,0])}}
+function mat4Mul(a,b){{let o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++)o[c*4+r]=a[0*4+r]*b[c*4+0]+a[1*4+r]*b[c*4+1]+a[2*4+r]*b[c*4+2]+a[3*4+r]*b[c*4+3];return o}}
+function rotX(a){{let c=Math.cos(a),s=Math.sin(a);return new Float32Array([1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1])}}function rotY(a){{let c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1])}}function translate(x,y,z){{return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1])}}
+let yaw=.48,pitch=-.10,yawVel=0,pitchVel=0,drag=false,px=0,py=0,lastMove=0,hover=-1,focus=0,focusTarget=0,autoFocus=false;
+const atlas=document.getElementById('atlas');let tex=gl.createTexture();atlas.onload=()=>{{gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,atlas);gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);}};
+const labels=document.getElementById('labels');MOMENTS.forEach((m,i)=>{{let e=document.createElement('div');e.className='mLabel';e.innerHTML=`<div class="no">MOMENT ${{m.no}} · ${{m.date}}</div><div class="title">${{m.title}}</div><div class="emotion">${{m.emotion}}</div><div class="why">→ ${{m.connection}}</div>`;labels.appendChild(e);m._label=e}});
+function resize(){{let d=Math.min(devicePixelRatio||1,1.8),w=innerWidth,h=innerHeight;canvas.width=w*d;canvas.height=h*d;canvas.style.width=w+'px';canvas.style.height=h+'px';gl.viewport(0,0,canvas.width,canvas.height)}}addEventListener('resize',resize);resize();
+function mvp(){{let p=mat4Perspective(Math.PI/4,canvas.width/canvas.height,.1,50),v=translate(0,0,-10.5),r=mat4Mul(rotX(pitch),rotY(yaw));return mat4Mul(p,mat4Mul(v,r))}}
+function project(pt,M){{let x=pt[0],y=pt[1],z=pt[2],w=M[3]*x+M[7]*y+M[11]*z+M[15],nx=(M[0]*x+M[4]*y+M[8]*z+M[12])/w,ny=(M[1]*x+M[5]*y+M[9]*z+M[13])/w,nz=(M[2]*x+M[6]*y+M[10]*z+M[14])/w;return{{x:(nx*.5+.5)*innerWidth,y:(1-(ny*.5+.5))*innerHeight,z:nz,w}}}}
+function drawMesh(m,p,color=null){{gl.useProgram(p);gl.uniformMatrix4fv(gl.getUniformLocation(p,'uMVP'),false,mvp());if(p===prog){{gl.uniform1f(gl.getUniformLocation(p,'uFocus'),(focus+.5)/MOMENTS.length);gl.uniform1f(gl.getUniformLocation(p,'uTime'),performance.now()/1000);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(gl.getUniformLocation(p,'uTex'),0)}}else gl.uniform4fv(gl.getUniformLocation(p,'uColor'),color);gl.bindVertexArray(m.vao);gl.drawElements(gl.TRIANGLES,m.count,gl.UNSIGNED_INT,0);gl.bindVertexArray(null)}}
+function frame(){{if(!drag){{yaw+=yawVel;pitch+=pitchVel;yawVel*=.94;pitchVel*=.92;if(autoFocus){{let t=(focusTarget+.5)/MOMENTS.length,ang=(t-.5)*Math.PI*2*2.05;yaw+=( -ang-yaw)*.075;pitch+=( -.08-pitch)*.06;if(Math.abs(-ang-yaw)<.01)autoFocus=false}}else if(performance.now()-lastMove>2400) yaw+=.00045;}}pitch=Math.max(-.5,Math.min(.42,pitch));gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.disable(gl.CULL_FACE);drawMesh(side1,solidProg,[.08,.08,.075,.22]);drawMesh(side2,solidProg,[.56,.26,.34,.28]);drawMesh(mainMesh,prog);updateLabels();requestAnimationFrame(frame)}}
+function updateLabels(){{let M=mvp(),best={{i:focus,z:99}};MOMENTS.forEach((m,i)=>{{let p=project(momentCenters[i],M),e=m._label;e.style.left=p.x+'px';e.style.top=p.y+'px';let vis=p.w>0&&p.x>-120&&p.x<innerWidth+120&&p.y>-100&&p.y<innerHeight+100;e.style.display=vis?'block':'none';e.classList.toggle('active',i===focus);e.classList.toggle('hover',i===hover);if(vis&&Math.abs(p.x-innerWidth*.62)<innerWidth*.22&&p.z<best.z)best={{i,z:p.z}}}});if(!drag&&hover<0&&!autoFocus&&best.i!==focus) setFocus(best.i,false)}}
+function setFocus(i,withTurn=true){{focus=(i+MOMENTS.length)%MOMENTS.length;focusTarget=focus;if(withTurn)autoFocus=true;document.getElementById('statusNo').textContent=MOMENTS[focus].no;document.getElementById('bgword').textContent=['MOMENT','LOOK','STAGE','CONNECTION','FEELING','ECHO','PATH','LOVE'][focus];}}
+canvas.addEventListener('pointerdown',e=>{{drag=true;canvas.classList.add('dragging');px=e.clientX;py=e.clientY;yawVel=pitchVel=0;lastMove=performance.now();canvas.setPointerCapture(e.pointerId)}});canvas.addEventListener('pointermove',e=>{{let M=mvp(),nearest={{i:-1,d:110}};MOMENTS.forEach((m,i)=>{{let p=project(momentCenters[i],M),d=Math.hypot(p.x-e.clientX,p.y-e.clientY);if(p.w>0&&d<nearest.d)nearest={{i,d}}}});hover=nearest.i;if(hover>=0){{let p=project(momentCenters[hover],M),tag=document.getElementById('connectionTag');tag.textContent='Connection → '+MOMENTS[hover].connection;tag.style.left=Math.max(150,Math.min(innerWidth-150,p.x))+'px';tag.style.top=Math.max(80,Math.min(innerHeight-80,p.y+72))+'px';tag.classList.add('show')}}else document.getElementById('connectionTag').classList.remove('show');if(!drag)return;let dx=e.clientX-px,dy=e.clientY-py;yaw+=dx*.006;pitch+=dy*.004;yawVel=dx*.00045;pitchVel=dy*.00025;px=e.clientX;py=e.clientY;lastMove=performance.now();autoFocus=false}});function end(e){{if(!drag)return;drag=false;canvas.classList.remove('dragging');try{{canvas.releasePointerCapture(e.pointerId)}}catch(_e){{}}}}canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('pointerleave',()=>{{hover=-1;document.getElementById('connectionTag').classList.remove('show')}});
+canvas.addEventListener('wheel',e=>{{e.preventDefault();setFocus(focus+(e.deltaY>0?1:-1),true)}},{{passive:false}});canvas.addEventListener('click',e=>{{if(Math.abs(yawVel)+Math.abs(pitchVel)>.02)return;if(hover>=0){{setFocus(hover,false);openDetail(hover)}}}});
+const drawer=document.getElementById('drawer'),indexList=document.getElementById('indexList');MOMENTS.forEach((m,i)=>{{let b=document.createElement('button');b.className='indexItem';b.innerHTML=`<img src="${{m.image}}"><div><b>${{m.no}} ${{m.title}}</b><span>${{m.line}}</span></div><em>${{m.emotion}}</em>`;b.onclick=()=>{{drawer.classList.remove('open');setFocus(i,true)}};indexList.appendChild(b)}});document.getElementById('indexBtn').onclick=()=>drawer.classList.add('open');document.getElementById('drawerClose').onclick=()=>drawer.classList.remove('open');
+const detail=document.getElementById('detail');function openDetail(i){{let m=MOMENTS[i],p=project(momentCenters[i],mvp());detail.style.setProperty('--ox',p.x+'px');detail.style.setProperty('--oy',p.y+'px');document.getElementById('detailTop').textContent=`Moment ${{m.no}} · ${{m.date}}`;document.getElementById('detailTitle').textContent=m.title;document.getElementById('detailEmotion').textContent=m.emotion;document.getElementById('detailLine').textContent=m.line;document.getElementById('detailWhy').textContent=m.connection;let md=document.getElementById('detailMedia');md.innerHTML=m.video?`<video src="${{m.video}}" poster="${{m.image}}" autoplay muted loop playsinline controls></video>`:`<img src="${{m.image}}" alt="${{m.title}}">`;detail.setAttribute('aria-hidden','false');requestAnimationFrame(()=>detail.classList.add('open'));}}
+function closeDetail(){{let v=detail.querySelector('video');if(v)v.pause();detail.classList.remove('open');detail.setAttribute('aria-hidden','true');setTimeout(()=>document.getElementById('detailMedia').innerHTML='',780)}}document.getElementById('detailClose').onclick=closeDetail;document.addEventListener('keydown',e=>{{if(e.key==='Escape'){{drawer.classList.remove('open');closeDetail()}}if(e.key==='ArrowDown'||e.key==='ArrowRight')setFocus(focus+1,true);if(e.key==='ArrowUp'||e.key==='ArrowLeft')setFocus(focus-1,true);if(e.key==='Enter'&&!detail.classList.contains('open'))openDetail(focus)}});
+setFocus(0,true);frame();
+</script></div></body></html>'''
+
+(ROOT/'개발본.html').write_text(html(False),encoding='utf-8')
+(ROOT/'최종본.html').write_text(html(True),encoding='utf-8')
+
+# docs
+(ROOT/'01_작업개요.md').write_text('''# Track16 V1 작업개요\n\n- 신규 Track: `16_러브트리_감정경로헬릭스_인터랙티브대문_V1`\n- 목표: 독립 카드가 아니라 Moment와 Connection이 하나의 연속 3D Memory Helix로 읽히는 첫 화면.\n- 구조: WebGL2 continuous textured ribbon + 2개의 companion ribbon + DOM projected Moment/Connection labels.\n- 선택: 선택 지점에서 좁은 ribbon 형태가 전체 화면으로 풀리는 detail transition.\n- Index: 기본 화면에서 숨겨진 drawer.\n- 외부 CDN: 사용 안 함.\n''',encoding='utf-8')
+(ROOT/'02_구현요약.md').write_text('''# Track16 V1 구현요약\n\n## 엔진\n- Vanilla WebGL2. Three.js/CDN 불사용.\n- 420 subdivision의 연속 helix ribbon 1개와 companion ribbon 2개.\n- 8개 Moment는 하나의 8192×1024 atlas에서 연속 UV로 배치되어 card gap 없이 구조물 표면에 붙는다.\n- Drag yaw/pitch + inertia, wheel focus navigation, screen-space hover/focus.\n\n## LoveTree 문법\n- 각 Moment: 번호 / 날짜 / 이미지 / 감정 / 한 줄 기억.\n- 각 Connection: `왜 다음 순간으로 갔는가` 문장을 명시.\n- 상세 전환은 modal fade가 아니라 taper ribbon clip-path가 화면 전체로 펴지는 방식.\n\n## 성능\n- 첫 화면 비디오는 autoplay하지 않음.\n- detail에서 Moment 03만 로컬 MP4 재생.\n- atlas는 단일 GPU texture로 사용.\n''',encoding='utf-8')
+(ROOT/'03_재사용자산목록.md').write_text('''# Track16 V1 재사용 자산 목록\n\n- Track65 계열 `S01_FIRST_CLUE_1536w.jpg`, `S10_MY_LOVETREE_1536w.jpg`\n- 기존 LoveTree 디자인 작업에서 생성·보관 중인 인물 Moment 이미지 6장\n- 신규 생성 이미지 없음.\n- 참고 구현 원칙: 12의 drag/depth/focus, 13의 archive 개념, 14의 index/viewer 접근, 15의 cinematic emphasis를 신규 helix 구조로 재조합.\n''',encoding='utf-8')
+(ROOT/'04_QA.md').write_text('''# Track16 V1 QA\n\n- 외부 CDN 사용: **NO**\n- 단일 HTML 실행: **YES (`최종본.html`, image/video/data embedded)**\n- 개발본 로컬 상대경로: **YES**\n- 이미지 자산 존재: **YES / 8**\n- 영상 자산 존재: **YES / 1 local MP4**\n- ESC 복귀: **YES**\n- 마우스 드래그: **YES**\n- Wheel focus: **YES**\n- Index drawer: **YES**\n- 모바일 최소 대응: **CSS + Pointer Events 적용**\n- 성능 이슈: high-DPI는 DPR 1.8 cap, 단일 atlas. software renderer에서는 FPS가 하드웨어보다 낮을 수 있음.\n- 알려진 한계: Three.js가 아닌 vanilla WebGL2. 참고영상 2개 원본 파일은 현재 Drive 검색에서 직접 확보하지 못했으며 지시서에 추출된 강점과 12~15 구조를 기준으로 구현.\n''',encoding='utf-8')
+(ROOT/'01_분석'/'01_컨셉판단.md').write_text('''# 컨셉 판단\n\n첫 인상이 card carousel / video wall / sphere가 되지 않도록 단일 continuous ribbon atlas를 채택한다.\nMoment는 texture zone이고 Connection은 화면상 projected causal sentence와 side ribbon으로 표현한다.\n''',encoding='utf-8')
+(ROOT/'06_프롬프트_기록'/'01_V1_BUILD_NOTE.md').write_text('''# V1 Build Note\n\nMASTER: 설계팀장9기 Track16 신규 작업지시 2026-08-17.\n핵심 우선순위: 구조 > LoveTree 문법 > 효과.\n''',encoding='utf-8')
+(ROOT/'07_메모'/'참고영상_미확보.md').write_text('''# 참고영상 확인 상태\n\n지시서에 명시된 `녹화_2026_08_15_20_58_10_135.mp4`, `c76dac41-ce73-42c9-bbdb-088efaf5924f.mp4`는 현재 Google Drive filename search 및 세션 sandbox에서 직접 파일을 찾지 못했다.\n임의 대체본을 만들어 참고영상으로 주장하지 않는다.\n''',encoding='utf-8')
+print(ROOT)

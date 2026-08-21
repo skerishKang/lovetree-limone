@@ -1,0 +1,861 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-71-emotion-helix",
+  "sourceTrackId": "Track71",
+  "title": "러브트리 감정경로헬릭스 인터랙티브대문 V1 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "entry-onboarding",
+  "productJob": "Interactive front door where Moments and Connections read as one continuous 3D emotion-path helix: a single WebGL2 textured ribbon (8 Moments on one atlas, no card gaps) with companion ribbons, drag/wheel navigation, projected causal Connection sentences, and a ribbon clip-path detail transition instead of modal fades. MVP first-screen v2 extension candidate. Registration only — no product adoption implied.",
+  "summary": "Source Track 71 registered with the full V1 package preserved byte-exact from Drive 03_디자인채택본/71_러브트리_감정경로헬릭스_인터랙티브대문_V1 (100 files; rclone check 0 differences). Authority chain inside the folder: V1 helix build (internally labeled Track16) → V2 GABE_EXACT_GLASS_ORBIT gate A→A6 with successive rejects → V3/V4/V5 A6 pair-proof iterations → V6 FINAL one-shot batch completion (반복 Gate 종료) → V7 FINAL MOTION INTERACTIVE ACTIVATION with R2→R2.4 fixes (latest executable 71_V7_FINAL_INTERACTIVE_R2.4.html; R2.4 corrects REPLAY/MY TREE routes to 코덱스 Track14/15). No authoritative native implementation exists in the repository; lineage number is NOT reserved; canonical adoption is HOLD. Payload rework rule applied at registration: all 12 video files and the 23MB V1 review zip are excluded from the committed payload under the 50MB-total/10MB-single caps and the video fingerprint-only rule — Drive IDs, bytes and SHA-256 fingerprints stay pinned here as PENDING.",
+  "provenance": {
+    "sourceLabel": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1 / Issue #311 source gate registration",
+    "driveFolderId": "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN",
+    "sourceFiles": [
+      "V1/ (최종본.html + 개발본.html + 작업지시 + 에셋 8종 + moment_atlas + QA pngs + 개발과정 build_track16.py)",
+      "V2_GABE_EXACT_GLASS_ORBIT_후보/ (GATE A~A5 htmls + comparison/proof pngs + reject/correction instructions)",
+      "V3_A6_PAIR_PROOF_v3/ · V4_A6_PAIR_PROOF_v4/ · V5_A6_REFERENCE_TRACE_PAIR_v5/ (pair proofs + rejects)",
+      "V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/ (71_V6_FINAL.html + proofs + 종료 지시)",
+      "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/ (FINAL_INTERACTIVE + R2~R2.4 + evidence videos + notes + 작업지시)",
+      "실패/ (failed recording videos, fingerprint-only)",
+      "참고영상.mp4 · 71_러브트리_감정경로헬릭스_인터랙티브대문_V1.mp4 (fingerprint-only)"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage71 is NOT allocated. The source-internal 'Track16' labels inside V1 are sibling-side numbering history, not a repository identity, and never imply Lineage16 or Lineage71. Repository lineage number is not reserved by this manifest (Issue #311)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "V1=SUPERSEDED_BY_LATER_GATES; V2_GATES=A1..A6_REJECT_CHAIN_CLOSED_INTO_V6; V6=FINAL_CANDIDATE_BATCH_COMPLETED; V7_R2.4=LATEST_EXECUTABLE_WITH_CROSS_TRACK_LOCAL_ROUTES; CANONICAL_V4_ADOPTION=NO; IMPLEMENTATION_RELEASE=NO; PAYLOAD_RULE=VIDEOS_FINGERPRINT_ONLY+ZIP_OVER_10MB_FINGERPRINT_ONLY (Issue #311 initial disposition)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1_PACKAGE_SNAPSHOT_2026-08-18_V7_R2.4_LATEST_EXECUTABLE",
+    "authorityObservedAt": "2026-08-21T06:16:49Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1.mp4",
+      "driveId": "1LofPbjHhhAh3owRhqFtozfAeU9Y_gdot",
+      "bytes": 16611419,
+      "sha256": "be8bd8e573f5c122de2069654dab98dd6be5812ed5a2cf28c6627bf5a6114dcb",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_컨셉판단.md",
+      "driveId": "1WHovVBloAU720qdEIWulSubkfB66L-ak",
+      "bytes": 249,
+      "sha256": "94b296533d7dd2982267534a41f871438312a1893aac123283f2b8cce9bdfeb3",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_작업개요.md",
+      "driveId": "1SMGAZq_kCIsNWkzKx-qF07x5wPCul4bE",
+      "bytes": 520,
+      "sha256": "398a379c217c13e79644cc7d96e8c338f977653925365c9b0273adb89c0bb02f",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "build_track16.py",
+      "driveId": "1hNcrCOR0eFw0GqCiD1NYewb41-eOl8GZ",
+      "bytes": 30613,
+      "sha256": "944bfe5ff14c93fe238e7359fed74bbabcc90ced09a66b2d755ca16f9b9de5ff",
+      "role": "build-script",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_구현요약.md",
+      "driveId": "13l2upB0T0RxOZACsEdyKcB34DA6uQdm_",
+      "bytes": 765,
+      "sha256": "97fd252d6d9ccbc8b27713cd764f667e6983831b41e3e6d08e06894c961e5f75",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_first_look.jpg",
+      "driveId": "152qgHam6YbilWYQ20xPRHulWvdC6Wf_-",
+      "bytes": 183902,
+      "sha256": "ef79fabacdbfb38b1754593e2fe6fa8e7b81b15e9ca700344199976348843013",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_look_again.jpg",
+      "driveId": "1noZminFkfhFQTGKTFSQ_M14HSz5pGOWz",
+      "bytes": 292694,
+      "sha256": "07c7610f4a7118e1e30b729c2fa4eb6bfbc4eb00bb23d1911f27f491c58760a8",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_stage_light.jpg",
+      "driveId": "1f5qHf2cBRvQjg02CuO36495j_2Kz57Ek",
+      "bytes": 241835,
+      "sha256": "dc697284dbb0995649dd84411a5922b24617087735e2acbc1d29d60e12d95d98",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_off_stage.jpg",
+      "driveId": "1sYOnyZyZ9DVRSZeraX6kreCllB4ax1op",
+      "bytes": 184142,
+      "sha256": "a7923d547c46bed388c1f9e25fbcc7602b92e3e69124a10f839490a01ff8207f",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_small_gesture.jpg",
+      "driveId": "1_0kEoc0Y2INCgbF7jE_rea5ywl5bF7hj",
+      "bytes": 212854,
+      "sha256": "c23c25e24dc031a7c8d7d12939f03700ca3e1c5a5ae407683d428f302be653fb",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "06_fan_echo.jpg",
+      "driveId": "1LJnCD3R4uObJ8mt6yO61kHWT3nnyVFxR",
+      "bytes": 135520,
+      "sha256": "1dc77c255dcc2bee39237535bd3aab3546044ba7b2f1d461c9a068d78bd49677",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "07_my_path.jpg",
+      "driveId": "17xEAHDgwzHHDCZihqAHWFDFad4m5W0lZ",
+      "bytes": 205585,
+      "sha256": "ccf1e6da191186222da624256c9aab35f32d3aedec67850ca43d2249505be6a6",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "08_my_lovetree.jpg",
+      "driveId": "1lKolhUcsqeFcj_-QFi11rZvw4gkcetb1",
+      "bytes": 224179,
+      "sha256": "f6abbbb5dfaf1ecac35bb04d9a79514c4b145e5aaa45c4226e4e130f492b833f",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "moment_03_stage_light.mp4",
+      "driveId": "1nwJLj59yPINRsWD1tC75GFpiBQvN4FCL",
+      "bytes": 606220,
+      "sha256": "08692e2675dd634fa4da88f68d426eefacbb4b33fb76d4a1dbe123fc91efbaa1",
+      "role": "asset-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "moment_atlas_8192x1024.jpg",
+      "driveId": "10ms8JFcQ_pbN_23S3WKXgMGcDWU26iOt",
+      "bytes": 1012396,
+      "sha256": "5cac37b3807b5a9915a347dc439cb7dda31511c48ad7be75554de3a5529dd06d",
+      "role": "asset",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_재사용자산목록.md",
+      "driveId": "101jkHD50A5vGlB4ZDL52jZ15tBvfQCmm",
+      "bytes": 396,
+      "sha256": "8af45c420fba05bb8426ff4f1787e0f63ee8df4c25a0fffa93cf6f3d3b4d1d7b",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_QA.md",
+      "driveId": "1DyZKsYQaqRVjE7pbAHSxcMjjIuT0NY0L",
+      "bytes": 1662,
+      "sha256": "a3bbb45bac1b338ad20fe96d35083239ccfcc4be5158be1b601ed7a27853f2dd",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "Track16_V1_전체시연.mp4",
+      "driveId": "1m7QdOhUclAU_Ut_RRQ3I_xkK25jayhgO",
+      "bytes": 8785599,
+      "sha256": "9a0cda045d6de53ab048cbcfda2bde33f9207a2afbee6abaf48cc73c34484c22",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_HERO_HELIX.png",
+      "driveId": "1gsmjlILNRt20Ln-wtDWv0EYx7QcltMNR",
+      "bytes": 952511,
+      "sha256": "1cc2e3009dc41c628e0770d016f476b4599940f81b62c61751745ceb59138cf9",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_DRAG_ROTATION.png",
+      "driveId": "13smJanjiWsxjLneOMUtP6rPynBZfWEp1",
+      "bytes": 944935,
+      "sha256": "2e75edbee3e61cea25a48f428aa90499fcb14e152de5e41046c746cde1266ddd",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_INDEX_DRAWER.png",
+      "driveId": "1CQHzeBCjxnOuHH8Bq5UexLaVO1wXGdwm",
+      "bytes": 950275,
+      "sha256": "dde3d014aef6fc9e6ba68b14adf44f7a239c9c95ffc1a2dea37b166051926f01",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_DETAIL_UNFOLD.png",
+      "driveId": "1NH9_jqD7j0tDreS4_wqjcCe6Sh1qq50M",
+      "bytes": 1008496,
+      "sha256": "46890fba05017c5a3cd7e3f53c140bfac3abb22a2c99868917177c25fb0464bc",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "QA_RUNTIME_RESULT.txt",
+      "driveId": "1omeE8BaaX49eB-TMuN-o6oEgMp0tblz8",
+      "bytes": 188,
+      "sha256": "af192782bffc3a3c48cb91ed2bf8c045316e3139d8fcf6abe0d6ededf2cc6cbe",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_V1_BUILD_NOTE.md",
+      "driveId": "1eVfiHi_9-mkq9PwUDdqWnPQMvuKh6766",
+      "bytes": 138,
+      "sha256": "12de0a2b8f2ba52ac2c3696c0a099b0b34b47ca85adf033576d64ec643a01376",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "참고영상_미확보.md",
+      "driveId": "1ix_yaz4NMxGurOKhWkZndSuJzU3kp0B7",
+      "bytes": 306,
+      "sha256": "9b74b62bc85cd160cc5f4d1a872a4d6fbf44464a5a717d676c2b58c6cc091f9e",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "Track16_LOVETREE_EMOTION_PATH_HELIX_V1_REVIEW_2026-08-17.zip",
+      "driveId": "18rgU1tF7r1AgGXPFU-6fZB9m1RGec_sV",
+      "bytes": 23033245,
+      "sha256": "6b77900cc95f518795eae5c0b6e65769f6f689d5cd88f1ed09108e6398b866bb",
+      "role": "source-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "개발본.html",
+      "driveId": "1osgHxAZfIhCo8lzmviU6fqu5qjoBJka5",
+      "bytes": 22599,
+      "sha256": "96ed89ba8e6ff17a96a359c7c865e508455b4fd524eb8b2742157241a9ae7692",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_16_러브트리_감정경로헬릭스_인터랙티브대문_V1_신규작업지시_2026-08-17.md",
+      "driveId": "1O9xfzxOeL2z5HdRUE_6KOluWtTP6ZVoc",
+      "bytes": 16594,
+      "sha256": "6fbd2c3d05c0273ec9a3c25966be443efe10b3073c15e644f11d6c41bc01d3be",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "최종본.html",
+      "driveId": "1YbHw6lvtZMHi6HYHI83XfbOgjuDGcRA-",
+      "bytes": 4421666,
+      "sha256": "35a696c2114ba396ec11fc7729ea5d9a5bb5365c764d0f60bd13e05bf42044b8",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A.html",
+      "driveId": "1nO6xHYi49onEKbhjqcsfVmprYdBNxf8n",
+      "bytes": 11398,
+      "sha256": "4adfa9d98b57f341e2fe5092059e1aa38157966b342dc297a431593bbdbdd707",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A2.html",
+      "driveId": "1h5w7jdiLgIt7otCc1-BWEMVv3BGOpKXc",
+      "bytes": 12150,
+      "sha256": "7085e91ca51ffe3eb2f6ebf5e6cbf9ae6497b3b58d7e03a230f1529e53886d96",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A2_NOTES.md",
+      "driveId": "1UDS48L2hRsKFKbDnaQjRIeZO-EEu26tM",
+      "bytes": 2953,
+      "sha256": "9c826dc14b2f181e1976d1ceea1346a76c675e374261f40b32b0cb84967e9ce6",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A2_REFERENCE_COMPARISON.png",
+      "driveId": "12sz8dmvSC4bwbEE3qxU2s_xBVaP-Ehnr",
+      "bytes": 441981,
+      "sha256": "e4018d14d61a65615f727fefcf55f8f99e54282e29f4cdf8f7041ce89f1aeb70",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A3.html",
+      "driveId": "1i8jDmUfCwsFXHVt5kaFZ7Rhjse-aLVcc",
+      "bytes": 14172,
+      "sha256": "bc985edc20d0418f6fff07463e938b4799c78b3ca08ca5ff4ed42cbe991e2e53",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A3_NOTES.md",
+      "driveId": "1Dkf0766OsT6y7iBPi5ULG0na5uqBjYOc",
+      "bytes": 3096,
+      "sha256": "fe377a8ceaaa99c913046393678f285f5e90ca64a0fcdf77d6a92a898b58f907",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A3_REFERENCE_COMPARISON.png",
+      "driveId": "1AqU61mJSxvq1PLIxTmkOZI4lIVwlw0ie",
+      "bytes": 1086288,
+      "sha256": "68030fed59a413d8d1f54bcd80b11ef5909c71d5065face20860a31cdbeb1836",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A4.html",
+      "driveId": "1LStTKo95VGFAp81oUkjV_v59sHqccLHs",
+      "bytes": 13002,
+      "sha256": "50872bd142425a50f87de043e99d86515267b45949d175ee325c760a95189727",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A4_NOTES.md",
+      "driveId": "1cZ0f8dSzSaeJXTAUTDFkqwgTlaDo2aO4",
+      "bytes": 3906,
+      "sha256": "439fec0fb613f2f323fcd0b69622f0b160111e8ef79d5b4ea07e4552ec4a1bd1",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A4_OBJECT_TRACE_BOARD.png",
+      "driveId": "1DdA9p3F_6jbOMvhPz81Rr-ilZXpAbQcZ",
+      "bytes": 448173,
+      "sha256": "40df0d1c547b69fc645d777e8a1d00f0ac73a341758913d6841850688bd175b8",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A4_REFERENCE_COMPARISON.png",
+      "driveId": "1LYtccbx1eoQGMLT9F0-jaM4r6KAlEkE3",
+      "bytes": 889866,
+      "sha256": "a8242403621e54dfcf2125eec5586a56aa8956bd495293e40be204fffcfa017a",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A5.html",
+      "driveId": "16gslnoiP5zH11YGnKi5PAxk1pttGGWMg",
+      "bytes": 11120,
+      "sha256": "71a39b945434ef31b617387cfd28faec8b1cc298c8da9230686bdf6ae2af9922",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A5_JELLY_SHAPE_PROOF.png",
+      "driveId": "14NF2mQa-sWS1rllDN-ZNFc3dM8VFawwv",
+      "bytes": 310870,
+      "sha256": "3ad4cddaf525eece9ad913a3659de88a66ee45cc8c5d2223fa5ab6fe18f1b9fe",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A5_NOTES.md",
+      "driveId": "1Tkp-PoNrEkZiNfuVtH4dSEBxmlKlBbrl",
+      "bytes": 2104,
+      "sha256": "b90ecf1e94b9ca9110dee29fa480b0e125a5342542faec44a8a3e6219104cb97",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A5_REFERENCE_COMPARISON.png",
+      "driveId": "1bU6MllgKwDXE57cT_oLHuB4QdcKymoBx",
+      "bytes": 891500,
+      "sha256": "1bc5e8fd19df231becbc354c2a10ce89f0b0fb9c725d4745c9cefdb96d9eebbe",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_JELLY_PAIR_PROOF_v2.png",
+      "driveId": "1ERoqcpmnheL4goDXaGWWEgUU2T05CheY",
+      "bytes": 661203,
+      "sha256": "fba84b4fb89b38e4ba73762ed681ad48b85014af9dc8124542797c393497b888",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_PAIR_NOTES_v2.md",
+      "driveId": "1yIW5pxs2E_Z4Vu0eiBwnn7M_yEMMosrU",
+      "bytes": 945,
+      "sha256": "c200090b37a9289a932ef76988d92f2c3c90b8623403e6b8d2880c87fb06dda2",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A_NOTES.md",
+      "driveId": "1rkCCz_oryZdTAZEdLtNsDcuOGKETvAYI",
+      "bytes": 2181,
+      "sha256": "127a34005079fd1d3bb8eb083b80e8d2802eb0842bec4ab646c539e9f89c1bf7",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A_REFERENCE_COMPARISON.png",
+      "driveId": "1Ky_2vN2hBJE9sEDIHbdBQrREpp6NIu_p",
+      "bytes": 514760,
+      "sha256": "bbc010e37469f9cdd5e3d3995d291d5fde4bcd0eedcc1dd0f677e3f1fd1c4eed",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A1_REJECT_A2_정밀교정지시_2026-08-17.md",
+      "driveId": "1mSizUCEKW-Xqu1RuCSlpr34i8Z0aVc55",
+      "bytes": 8624,
+      "sha256": "7b173c98c0c2da35fea7b28927d158b2a4b78205df5b1f56d0ac43ed5835d7af",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A3_REJECT_A4_REFERENCE_GLASS_OBJECT_RECONSTRUCTION_2026-08-17.md",
+      "driveId": "18SFW3QJ-2QO6CkT94zLkMB3qaYB0vobU",
+      "bytes": 9859,
+      "sha256": "31c583d91ac051e5f05c68fb3e0df111c8f651771090fa7be5d9b4d44ae32b99",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A4_REJECT_A5_SOLID_JELLY_LENS_긴급재정의_2026-08-17.md",
+      "driveId": "1XbdIGgN44VOZ-PkVxQts7UHnCFMlwGQ9",
+      "bytes": 11032,
+      "sha256": "2e52531f142d0110135d485a706802af18619f562d05c7f921757899fc79c334",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A5_REJECT_A6_CLEAR_JELLY_DISC_IRREGULAR_OVERLAP_2026-08-17.md",
+      "driveId": "1KffKJNWFy91919SGkxJSYV4bRmT00_nv",
+      "bytes": 10911,
+      "sha256": "858edc92ae0563daa85f2bd3fc686dbcc3ff6414c3867bad9dd1afb9725e5946",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_JELLY_PAIR_PROOF_우선진행승인_2026-08-17.md",
+      "driveId": "1dVpFQGJQoi1t-7GDuzjPxr3AK053kJeD",
+      "bytes": 4565,
+      "sha256": "965e2136a28bd9b83ad30295356723c0da7f881533aec9a9e6fbad54f069efde",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_PAIR_PROOF_NOT_PASS_광학존재감_정밀교정_2026-08-17.md",
+      "driveId": "1t_b1UqZp3l-G9_dUL3OhGGmjrgTLclIg",
+      "bytes": 7434,
+      "sha256": "c9c5bcba07fd5b67f359afeb766785db50c26997ab8ccdb1ab96aaba306071af",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_v2_PAIR_PROOF_ARTIFACT_AVAILABILITY_HOLD_2026-08-17.md",
+      "driveId": "1wOQXYb9pPTwqXzxydCetfCy1RvP6pQ-2",
+      "bytes": 1684,
+      "sha256": "f01f1518c2dc9ccd8070ced1c938352046de83410c6f056a01b14aa86aecba36",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_JELLY_PAIR_PROOF_v3.png",
+      "driveId": "1npyZr78Vfu63c3L1eS7aX8IdD-rEYCze",
+      "bytes": 712112,
+      "sha256": "a36fc6cae470f2f98e6b0eeca0e3377929ff0b1f57c6a8516de62bf5902c0e93",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_PAIR_NOTES_v3.md",
+      "driveId": "1fyShUJg14HPFGMpGwv2Fu4bntJBiMMS5",
+      "bytes": 2241,
+      "sha256": "c3042e3bd2c44576d5bceeaf5c1db3995c08dff7b00b136922bccac6d6a31dfe",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_PAIR_v2_REJECT_v3_OPTICAL_PERIMETER_INTERNAL_REFRACTION_2026-08-17.md",
+      "driveId": "1pWETaOJ3FLyR_3WsYP7rZMDM2h9r_w-m",
+      "bytes": 9768,
+      "sha256": "a35d2607f73fc0ea82285d9bc307beee8c1ec93e9c723f320a708aec5eea7877",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_JELLY_PAIR_PROOF_v4.png",
+      "driveId": "11Iu9sdDWLGT9dsdA3IhEwu2XWwu-Xwzx",
+      "bytes": 683749,
+      "sha256": "43d38eaa4e9f657b5e5c9579bcc8de18e059a415b3ecc7940dc82c8e830e9136",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_PAIR_NOTES_v4.md",
+      "driveId": "1P_q4k-QQiRkBG43OLUo_LWupEQOM0ZHK",
+      "bytes": 2641,
+      "sha256": "e9e252c8a7e33068c9f37b345c907c99685e96572336460abc0af50bf6bcdc56",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_PAIR_v3_REJECT_v4_SMOOTH_CONTINUOUS_REFRACTION_2026-08-17.md",
+      "driveId": "1bGd3sOoojSYLLVEvGrP8AoBGJxWLYz_t",
+      "bytes": 10160,
+      "sha256": "3d7fa523816be5eaad2cd256240111b4ae9486ca7c234013814908a026e03d50",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_JELLY_PAIR_PROOF_v5.png",
+      "driveId": "1J2cT4h1tej1sngrQgyKrMEHTfUIDXBfh",
+      "bytes": 719062,
+      "sha256": "30b6723cd04d786f238d861e2c16c71594220cf876d31e5cf07379e162ab3fff",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_PAIR_NOTES_v5.md",
+      "driveId": "1EdiQ6jbCwzi_yArLaYaZaQDwAfeT77LD",
+      "bytes": 1911,
+      "sha256": "20fdfcd2d915b5ab96707a70ce2983e3c278bbd0e5f0e5b6c992ffc0caada438",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V2_GATE_A6_REF_TRACE_MAP_v5.png",
+      "driveId": "1TXJnEryBF1OtcgqTdW1uxDSxJr5qFmEQ",
+      "bytes": 599571,
+      "sha256": "ed583e0bbf5462c555223b99ea73e6b3d9b5a28fb323b76e584869874fe87ed9",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GATE_A6_PAIR_v4_REJECT_v5_REFERENCE_TRACE_OPTICAL_MAP_2026-08-17.md",
+      "driveId": "1z4eJukJd8pimb0XgNSMf0imhSR1u22X4",
+      "bytes": 9887,
+      "sha256": "b91d442e4ae0162d3b16a68361c2b215cafabff44fb383153b1f3ac7a20fb8e2",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_A6_DESIGN_TOOL_PAIR_PROOF.png",
+      "driveId": "1QGOtcD4yM5thdl5-tN6BU-MxbR0I24nn",
+      "bytes": 1027500,
+      "sha256": "55887836f4ef1a072b469856fa1c530e93154e93682ded31f676cefac1ad31c3",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_A6_DESIGN_TOOL_SURFACE_NOTES.md",
+      "driveId": "1Qabc9pK2qmfFfI_9ECRWpQbBpcswNCpo",
+      "bytes": 2765,
+      "sha256": "68a760309d6eb1ff003ce810b7cbd908eecb730107aab25b962bd3fcf7273084",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_FINAL.html",
+      "driveId": "10Wd2V4JlB6mXIxN-COuUBoEaQNbye9x8",
+      "bytes": 750816,
+      "sha256": "0a7492d8927406573b5dfcbe801eac343a88f22caddfb3025a5286ded7f90a6f",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_FINAL_CANDIDATE_SCREEN.png",
+      "driveId": "1ae6HTLOW0vFSCSG9fnDauaVSk5UACwm0",
+      "bytes": 562829,
+      "sha256": "471f7adaf7b2a81583901b8117b270506e0b286935df267a2cdc92d2a79bb8ab",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_FINAL_NOTES.md",
+      "driveId": "1YLh-ftNkntVZ1lSD1hkQ2o-r0NS_Qeid",
+      "bytes": 1869,
+      "sha256": "8b7ce9e741eee277d6f7e6ee976cd9d7cd31c15fb58df6033d82b366f49596a1",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V6_FINAL_REFERENCE_COMPARISON.png",
+      "driveId": "1rlkvHKRsNR6ZUGd3Ku8nhdIoOSpcgG7B",
+      "bytes": 772448,
+      "sha256": "0d5a8316e7aa26c144ba0cdd41d3dad5f236bc146251105c261946ed8422d85e",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF_2026-08-17.md",
+      "driveId": "1OXg0fwjtY-dsilGIhOncqe3pBncCPDUt",
+      "bytes": 8383,
+      "sha256": "ce5f8c5a9dd0073ff342e9215ebd22a39422319f4d5fc3bebbc3382e697e1f73",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V6_FINAL_ONE_SHOT_반복Gate종료_최종후보일괄완성_2026-08-17.md",
+      "driveId": "1i4KvBPs3024m_MyEG9zC40ahDjYp8E_Z",
+      "bytes": 6417,
+      "sha256": "c720363e580bfb733755e662793e2b48629e587cfd7ff90a9ed8df098a649183",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_ENDLESS_REEL_EVIDENCE_R2.3.mp4",
+      "driveId": "1Iw2BIDT6T2N4pGN20jUGeEv-_QuZ_Vmc",
+      "bytes": 783145,
+      "sha256": "47da01804a8284e5fd40d76a06fa454b6884c40e7bd3b42e1d3bc51600163f11",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTION_EVIDENCE.mp4",
+      "driveId": "1p7xI2y4Nu8EXiAi3KXAAKMZ5mvs7DCDk",
+      "bytes": 529367,
+      "sha256": "499ca300babc776ef1a41fba30ea1cd5d41894a5beb819417a5e9f835d080a27",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTION_EVIDENCE_R2.2.mp4",
+      "driveId": "1HcWAnicW_hFgOOBsV729y0bB9Bw23REa",
+      "bytes": 263245,
+      "sha256": "26d9847acdbbee438849f6057544210b75b6a7c99520a550f03a6746d71b6d2d",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTION_EVIDENCE_R2.mp4",
+      "driveId": "1Krrn8ZqNrmjZ6gLkIzl9FyLog4v_KiET",
+      "bytes": 238100,
+      "sha256": "5fa4d5ce04abac6a768add4ea582de40ea444854af6d37c7440bb826257be396",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE.html",
+      "driveId": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn",
+      "bytes": 2019938,
+      "sha256": "5f9180d0621953f6138d09058a6a8af064effda3e264c3ebad64440bcfed2b5b",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html",
+      "driveId": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP",
+      "bytes": 15947,
+      "sha256": "2da033ea84cf2fea5b1dcb1e7fba44df9eab496ea702358ed8c098af1c5f7f0d",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html",
+      "driveId": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp",
+      "bytes": 22857,
+      "sha256": "a666b73d7a1196494c29fd848ed624594a86bfee53dc13c822ff9337e492b286",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html",
+      "driveId": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ",
+      "bytes": 24004,
+      "sha256": "994559f80c77410e494b8d184ed2b6a0642db9b856a9348d50b920a7df43cb31",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+      "driveId": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+      "bytes": 24039,
+      "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.html",
+      "driveId": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN",
+      "bytes": 16281,
+      "sha256": "2df11d51fdef388090a2e4bf858c6ef744805ccce96283a08c19119a60aa9983",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_MOTION_EVIDENCE.mp4",
+      "driveId": "1hiW-q-qQsJQlEHU3OCoVhFrkbKG_pHwy",
+      "bytes": 907171,
+      "sha256": "4dec13ac369914207ab6e63ac0c7a11fabc010fb93ec37b05027997c96880959",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_MOTION_EVIDENCE_R2.mp4",
+      "driveId": "1GbGo-HogOjjCxI0ZcxEKIemiqtNt3b8K",
+      "bytes": 338432,
+      "sha256": "f88dda308afa8a8ea6020ea892559dec6ec2ea9f64eecc450db2039dee71fea6",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "71_V7_FINAL_NOTES.md",
+      "driveId": "1U4MVaY0GTuJJ8VfDJXzh5xU8gkGiiuYm",
+      "bytes": 7508,
+      "sha256": "1469eeb703ab1ada8bbe87a890e251541260110decc3cc2906c261a67be73fc5",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_NOTES_R2.2.md",
+      "driveId": "17PX0GBNTIzzVue-rMRtODQWgFwoolOpG",
+      "bytes": 4184,
+      "sha256": "a98e180a196fc004d01b6232b8a3df59f1903493f509b1151589998797551871",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_NOTES_R2.3.md",
+      "driveId": "1T3qTVmlYD_21nLErkNR8XjquC0A1NJKn",
+      "bytes": 2767,
+      "sha256": "7751176849fa5a05af55a54bc514049f5e14e7195afe837828902e69134b89fc",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_NOTES_R2.4.md",
+      "driveId": "1Mtn3uspkq5BemgUMm5DznU33YQbplieM",
+      "bytes": 1612,
+      "sha256": "287c318245dfe76aaead31eb15f9126970423a0d603412cad8866e83e3e66c56",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_NOTES_R2.md",
+      "driveId": "18uYIgqjaxLWyN1dVhCSFOR7CUQeT_iOH",
+      "bytes": 3442,
+      "sha256": "c8d6c9207f928068b2eae6481e3532d03337c18299a2b4545ec17ddd55e5346a",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_STATIC_COMPARE.png",
+      "driveId": "1CouHukGopu3MZn1YlT8rtQBZF1gfNPzm",
+      "bytes": 710793,
+      "sha256": "6b724f7e2abeb42d66d6a3a27039554c2964777229bb3246ca5488a907a2533e",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_STATIC_SCREEN_R2.2.png",
+      "driveId": "1cboxMP56iuuRxxPLCHTtLF44SO-JuJdA",
+      "bytes": 201667,
+      "sha256": "f5ea2a15d2bd7b80e35e611dd068318002c77bafd244ac117526962400d2e862",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_STATIC_SCREEN_R2.3.png",
+      "driveId": "1nPn1-f5Jx4-JcxtnO5ilSlTZBO-iSYM8",
+      "bytes": 193545,
+      "sha256": "309433dfdbaa789baeb447b8582228a6fca778ac149b255fff73b2140495b4fc",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "71_V7_FINAL_STATIC_SCREEN_R2.png",
+      "driveId": "1EcNFhluKrjh-f_s180yFU5c9fL3B2mU-",
+      "bytes": 233257,
+      "sha256": "06d5686d6dde76ab5b5e6c27fa6a5a690e66500ee8de396fc3ba5ae44cc1d326",
+      "role": "gate-proof",
+      "status": "PINNED"
+    },
+    {
+      "filename": "Track71_V7_R2.3_ENDLESS_REEL_ROUTE_FIX.zip",
+      "driveId": "1lvncuR8-03pVLv8PbYCgu-AimrNbPPTr",
+      "bytes": 976759,
+      "sha256": "a59c33b4d4ec426bb0b9b82b7c82fd01e01925f62a3775e5ab344871ecbc80e1",
+      "role": "source-archive",
+      "status": "PENDING"
+    },
+    {
+      "filename": "디자인팀장19기_선임및_Track71_V7_FINAL_MOTION_INTERACTIVE_ACTIVATION_작업지시_2026-08-17.md",
+      "driveId": "1xcm-Oq7nrFu4rdXxFRf0WQdj3WGl5ehK",
+      "bytes": 10582,
+      "sha256": "64456ad099e62422e9863befaff4b1256d9f56e4a0a99928a1f910bce8d097e3",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "설계팀장9기_71_V2_GABE_EXACT_GLASS_ORBIT_긴급수정지시_2026-08-17.md",
+      "driveId": "1VyCgQNeMsFDfnRtpMijPL0Qpd2tQiGpN",
+      "bytes": 13048,
+      "sha256": "01b8249bfa6ee95fd6e5dcda7854c3d87b8554215ef240974403c5d1fe6a49f6",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "녹화_2026_08_18_01_17_37_455.mp4",
+      "driveId": "1EiRTFYTPDrTRJLzjfPq_HbXIpFG2kgbv",
+      "bytes": 7222848,
+      "sha256": "d4d9060919272566e50421dec060853e288cf0f83272f2f7a27caefc4214f3a3",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "녹화_2026_08_18_01_18_09_420.mp4",
+      "driveId": "1Xsb0Uam8pQ15qqPtpNTbMzIFfVAqKgbW",
+      "bytes": 2030049,
+      "sha256": "2e1b534b92d0201302c78abebdbfaa2a65f6f25da67e3de1fccb9280fc5f665a",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "참고영상.mp4",
+      "driveId": "1WmrDXZHtwEsdbaFjnJ9__sPZpfPEghCX",
+      "bytes": 22588284,
+      "sha256": "35db49e539e8a920629fd7003bd2f4aa44feae898b66f8549a7e4d1e55b04200",
+      "role": "reference-video",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "CROSS_TRACK_LOCAL_ROUTES: V7 R2.4 REPLAY/MY TREE routes resolve into 코덱스 Track14/15 folders via ../../.. relative paths — non-portable, MAPPING_HOLD for any repository target",
+    "SOURCE_INTERNAL_NUMBERING_MISMATCH: V1 artifacts carry 'Track16' names while the registered track is 71 — history quirk recorded, never an identity claim",
+    "REFERENCE_VIDEO_MEMO_CONFLICT: V1/07_메모/참고영상_미확보.md records the reference video as not secured while the folder root carries 참고영상.mp4 — provenance of that root video is undocumented",
+    "FAILED_TAKE_FOLDER: 실패/ contains two failed recording videos (fingerprint-only, no classification beyond failure evidence)",
+    "PAYLOAD_CAP_EXCLUSIONS: 12 videos + 23MB review zip excluded from commit per 50MB/10MB caps and video fingerprint-only rule — fingerprints pinned, transport PENDING"
+  ],
+  "nativeRemediations": [
+    "resolve every V7 route through the fail-closed repository portal ledger before any runtime QA (HOLD targets never navigate)",
+    "re-host atlas/asset media locally and keep first-screen autoplay off as the source already does",
+    "obtain explicit product-owner selection between V6 final-candidate surface and V7 R2.4 interactive activation before any executable intake",
+    "document or de-duplicate the root 참고영상.mp4 provenance against V1/07_메모/참고영상_미확보.md"
+  ],
+  "sourceOnlyValues": [
+    "Moment numbering/dates/emotion sentences and Connection causal sentences are sibling source copy, never product truth until owner-approved",
+    "코덱스 Track14/15 route targets are source-local filesystem paths, never repository hrefs",
+    "the 8192×1024 moment atlas is source-owned artwork; reuse requires rights review",
+    "V2 gate comparison PNGs are design-gate evidence only, not visual authority for any native port"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

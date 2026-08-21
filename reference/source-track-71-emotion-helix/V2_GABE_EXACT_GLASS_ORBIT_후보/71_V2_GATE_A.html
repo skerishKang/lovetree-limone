@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoveTree · GABE Exact Glass Orbit · Gate A</title>
+<style>
+  :root{--ink:#050505;--paper:#fff;--soft:#f7f7f5}
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  body{isolation:isolate}
+  .stage{position:relative;width:100vw;height:100vh;background:#fff;overflow:hidden}
+  .brand{position:absolute;left:3.05vw;top:3.2vh;font-family:Georgia,'Times New Roman',serif;font-size:2.2vw;letter-spacing:-.05em;z-index:8}
+  .intro{position:absolute;left:3.05vw;top:40.5vh;width:31vw;font-weight:700;font-size:1.3vw;line-height:.98;letter-spacing:-.055em;z-index:8}
+  .intro span{display:block}
+  .cta{position:absolute;left:3.05vw;bottom:5.2vh;width:7.5vw;height:7.5vw;min-width:92px;min-height:92px;border-radius:50%;background:#050505;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.82vw;font-weight:700;letter-spacing:-.03em;z-index:8}
+  .mode-dot{position:absolute;left:41.7vw;top:22.2vh;width:3.25vw;height:3.25vw;border-radius:50%;background:#050505;z-index:2}
+
+  .mega{position:absolute;inset:0;pointer-events:none;z-index:1;font-family:Impact,'Arial Black',Arial,sans-serif;color:#050505;font-weight:900;overflow:hidden}
+  .mega .topline{position:absolute;left:45vw;top:-7vh;font-size:10.5vw;line-height:.76;letter-spacing:-.055em;white-space:nowrap}
+  .mega .columns{position:absolute;left:45.3vw;top:28vh;display:flex;gap:1.5vw;align-items:flex-start}
+  .mega .col{display:flex;flex-direction:column;font-size:8.4vw;line-height:.70;letter-spacing:-.05em}
+  .mega .col:nth-child(2){margin-top:-6vh}
+  .mega .rightword{position:absolute;right:-4.7vw;top:22vh;font-size:8.5vw;line-height:.76;letter-spacing:-.06em;writing-mode:vertical-rl;text-orientation:mixed}
+
+  #glass{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+
+  /* refracted duplicate typography inside each elliptical glass footprint */
+  .refract{position:absolute;z-index:3;border-radius:50%;overflow:hidden;mix-blend-mode:multiply;opacity:.98;pointer-events:none;filter:saturate(1.35) contrast(1.16);background:radial-gradient(ellipse at 44% 42%,rgba(255,255,255,.03) 0 52%,rgba(255,255,255,.18) 58%,rgba(255,255,255,.82) 62%,rgba(8,8,8,.22) 65%,rgba(20,90,255,.18) 69%,rgba(255,124,0,.20) 72%,rgba(255,255,255,.02) 77% 100%);box-shadow:0 5px 18px rgba(0,0,0,.15),inset 0 0 0 2px rgba(10,10,10,.55),inset 0 0 0 5px rgba(255,255,255,.78),inset 11px 3px 12px rgba(0,75,255,.20),inset -12px -3px 14px rgba(255,115,0,.20)}
+  .refract::before{content:"";position:absolute;inset:-20%;background:inherit;transform:scale(1.08) skewX(-2deg);filter:blur(.25px)}
+  .refract .ghost{position:absolute;inset:-260px -380px;color:#050505;font-family:Impact,'Arial Black',Arial,sans-serif;font-size:150px;line-height:.76;letter-spacing:-.06em;white-space:pre;transform:scale(1.04,1.10)}
+  .refract::after{content:"";position:absolute;inset:9% 6%;border-radius:50%;border:2px solid rgba(20,20,20,.28);box-shadow:inset 0 0 7px rgba(0,0,0,.16),0 0 0 2px rgba(255,255,255,.34),6px 0 5px rgba(0,95,255,.15),-6px 0 5px rgba(255,122,0,.15)}
+  .r1{left:61.2vw;top:-4.8vh;width:30vw;height:17vh;transform:rotate(15deg)}
+  .r2{left:57.6vw;top:12.0vh;width:32vw;height:18vh;transform:rotate(-8deg)}
+  .r3{left:58.2vw;top:28.0vh;width:31vw;height:18vh;transform:rotate(9deg)}
+  .r4{left:60.2vw;top:44.0vh;width:31.5vw;height:19vh;transform:rotate(-13deg)}
+  .r5{left:63.0vw;top:59.5vh;width:30vw;height:19vh;transform:rotate(13deg)}
+  .r6{left:66.5vw;top:75.0vh;width:30vw;height:18vh;transform:rotate(-7deg)}
+
+  .orbit-label{position:absolute;z-index:7;font-size:2.15vw;font-weight:800;font-style:italic;letter-spacing:-.045em;color:#050505;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.75)}
+  .l1{left:73vw;top:8.5vh;transform:rotate(12deg)}
+  .l2{left:64.0vw;top:24.2vh;transform:rotate(-5deg)}
+  .l3{left:66.4vw;top:39.2vh;transform:rotate(6deg)}
+  .l4{left:64.8vw;top:53.5vh;transform:rotate(-17deg)}
+  .l5{left:72.4vw;top:67.8vh;transform:rotate(12deg)}
+  .l6{left:76.2vw;top:82.5vh;transform:rotate(82deg)}
+
+  .micro{position:absolute;right:1.6vw;bottom:2.5vh;z-index:8;font-size:.78vw;font-weight:700;border:1px solid rgba(0,0,0,.18);border-radius:3px;padding:.55vw .8vw;background:rgba(255,255,255,.84)}
+  .gate{position:absolute;left:3vw;bottom:1.0vh;font-size:.52vw;letter-spacing:.18em;color:#888;z-index:8;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brand">LoveTree</div>
+  <div class="intro">
+    <span>Moments that moved your heart,</span>
+    <span>connected into the path</span>
+    <span>that made you a fan.</span>
+  </div>
+  <div class="cta">MY<br>TREE</div>
+  <div class="mode-dot"></div>
+
+  <div class="mega" aria-hidden="true">
+    <div class="topline">PATH</div>
+    <div class="columns">
+      <div class="col"><span>M</span><span>O</span><span>M</span><span>E</span><span>N</span><span>T</span></div>
+      <div class="col"><span>M</span><span>E</span><span>M</span><span>O</span><span>R</span><span>Y</span></div>
+    </div>
+    <div class="rightword">LOVE</div>
+  </div>
+
+  <div class="refract r1"><div class="ghost">PATH\nMOMENT\nMEMORY\nLOVE</div></div>
+  <div class="refract r2"><div class="ghost">MOMENT\nMEMORY\nPATH\nLOVE</div></div>
+  <div class="refract r3"><div class="ghost">MEMORY\nMOMENT\nLOVE\nPATH</div></div>
+  <div class="refract r4"><div class="ghost">CONNECTION\nMEMORY\nMOMENT\nPATH</div></div>
+  <div class="refract r5"><div class="ghost">REPLAY\nMY TREE\nMEMORY\nLOVE</div></div>
+  <div class="refract r6"><div class="ghost">RETURN\nPATH\nLOVE\nMOMENT</div></div>
+
+  <canvas id="glass"></canvas>
+
+  <div class="orbit-label l1">FIRST MOMENT</div>
+  <div class="orbit-label l2">MOMENTS</div>
+  <div class="orbit-label l3">CONNECTION</div>
+  <div class="orbit-label l4">REPLAY</div>
+  <div class="orbit-label l5">MY TREE</div>
+  <div class="orbit-label l6">RETURN</div>
+  <div class="micro">LOVE TREE · GATE A</div>
+  <div class="gate">static exactness only · no feature expansion</div>
+</div>
+<script>
+(() => {
+  const canvas=document.getElementById('glass');
+  const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false});
+  if(!gl) return;
+  const DPR=Math.min(devicePixelRatio||1,1.6);
+  function resize(){canvas.width=Math.floor(innerWidth*DPR);canvas.height=Math.floor(innerHeight*DPR);canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';gl.viewport(0,0,canvas.width,canvas.height)}
+  resize(); addEventListener('resize',()=>{resize();render()});
+  const vs=`#version 300 es
+  precision highp float;
+  layout(location=0) in vec3 aPos; layout(location=1) in vec3 aNor;
+  uniform mat4 uMVP; uniform mat4 uM; out vec3 vN; out vec3 vP;
+  void main(){vec4 p=uM*vec4(aPos,1.0);vP=p.xyz;vN=mat3(uM)*aNor;gl_Position=uMVP*vec4(aPos,1.0);}`;
+  const fs=`#version 300 es
+  precision highp float; in vec3 vN; in vec3 vP; out vec4 o;
+  uniform vec3 uTint; uniform float uAlpha;
+  void main(){
+    vec3 N=normalize(vN); vec3 V=normalize(vec3(0.0,0.0,6.0)-vP);
+    float fres=pow(1.0-max(dot(N,V),0.0),2.2);
+    vec3 L1=normalize(vec3(-.35,.7,.6)); vec3 L2=normalize(vec3(.7,-.25,.5));
+    float s1=pow(max(dot(reflect(-L1,N),V),0.0),68.0);
+    float s2=pow(max(dot(reflect(-L2,N),V),0.0),42.0);
+    float edge=pow(1.0-abs(N.z),2.6);
+    vec3 chroma=vec3(.15,.45,1.0)*pow(max(N.x,0.0),2.0)+vec3(1.0,.35,.02)*pow(max(-N.x,0.0),2.0);
+    vec3 col=uTint*.11 + vec3(.96)*s1*1.25 + vec3(.65)*s2*.7 + chroma*edge*.75 + vec3(.02)*fres;
+    float a=clamp(uAlpha + fres*.46 + s1*.28 + edge*.16,0.08,.82);
+    o=vec4(col,a);
+  }`;
+  function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const loc={mvp:gl.getUniformLocation(pr,'uMVP'),m:gl.getUniformLocation(pr,'uM'),t:gl.getUniformLocation(pr,'uTint'),a:gl.getUniformLocation(pr,'uAlpha')};
+  function torus(R=.86,r=.15,seg=96,tube=24,warp=0){const p=[],n=[],idx=[];for(let i=0;i<=seg;i++){const u=i/seg*Math.PI*2;for(let j=0;j<=tube;j++){const v=j/tube*Math.PI*2;let rr=R + warp*Math.sin(u*3.0+.7);let cv=Math.cos(v),sv=Math.sin(v);let x=(rr+r*cv)*Math.cos(u),y=(rr+r*cv)*Math.sin(u),z=r*sv; x*=1.03+warp*.06*Math.sin(u*2.0); y*=.62+warp*.04*Math.cos(u*3.0); p.push(x,y,z); let nx=cv*Math.cos(u),ny=cv*Math.sin(u),nz=sv;n.push(nx,ny,nz)}}for(let i=0;i<seg;i++)for(let j=0;j<tube;j++){let a=i*(tube+1)+j,b=a+tube+1;idx.push(a,b,a+1,b,b+1,a+1)}return {p:new Float32Array(p),n:new Float32Array(n),i:new Uint16Array(idx)}}
+  const mesh=torus(1,.17,112,28,.18);const vao=gl.createVertexArray();gl.bindVertexArray(vao);let b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,mesh.p,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,mesh.n,gl.STATIC_DRAW);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,0,0);b=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,mesh.i,gl.STATIC_DRAW);
+  const I=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+  const mul=(a,b)=>{let o=new Array(16).fill(0);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o};
+  const T=(x,y,z)=>{let m=I();m[12]=x;m[13]=y;m[14]=z;return m};
+  const S=(x,y,z)=>{let m=I();m[0]=x;m[5]=y;m[10]=z;return m};
+  const Rx=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m};
+  const Ry=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m};
+  const Rz=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m};
+  const persp=(fovy,asp,n,f)=>{let t=1/Math.tan(fovy/2),m=new Array(16).fill(0);m[0]=t/asp;m[5]=t;m[10]=(f+n)/(n-f);m[11]=-1;m[14]=2*f*n/(n-f);return m};
+  const P=persp(.78,innerWidth/innerHeight,.1,30); const V=T(0,0,-6.6);
+  const rings=[
+   [-.02,2.60,.15,2.15,.83,.62,.20,-.18,.20],
+   [-.48,1.55,.08,2.30,.82,.60,-.14,.20,-.14],
+   [-.35,.55,.28,2.20,.86,.66,.12,-.17,.18],
+   [-.10,-.50,.10,2.28,.90,.64,-.18,.14,-.19],
+   [.18,-1.55,.23,2.18,.88,.68,.15,-.13,.16],
+   [.52,-2.55,.05,2.10,.84,.62,-.08,.18,-.10],
+  ];
+  function render(){
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.bindVertexArray(vao);
+    rings.forEach((q,k)=>{let [x,y,z,sx,sy,sz,rx,ry,rz]=q;let M=mul(T(1.65+x,y*.82,z),mul(Rz(rz),mul(Ry(ry),mul(Rx(rx),S(sx*.78,sy,sz)))));let MVP=mul(P,mul(V,M));gl.uniformMatrix4fv(loc.mvp,false,new Float32Array(MVP));gl.uniformMatrix4fv(loc.m,false,new Float32Array(M));gl.uniform3f(loc.t,.93,.95,1.0);gl.uniform1f(loc.a,.045);gl.drawElements(gl.TRIANGLES,mesh.i.length,gl.UNSIGNED_SHORT,0)})
+  }
+  render();
+})();
+</script>
+</body>
+</html>
