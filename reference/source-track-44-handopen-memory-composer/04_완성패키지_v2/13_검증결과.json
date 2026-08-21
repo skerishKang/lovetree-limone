@@ -1,0 +1,86 @@
+{
+  "result": "PASS",
+  "file": "lovetree-memory-window-composer-v2.html",
+  "camera": {
+    "getUserMediaAbsent": true,
+    "mediaPipeAbsent": true,
+    "permissionScreenAbsent": true
+  },
+  "editing": {
+    "fourCornerDrag": true,
+    "wholeQuadDragImplemented": true,
+    "matrix3dHomography": true,
+    "ratioLock": true,
+    "reset": true,
+    "centerFit": true,
+    "mirror": true,
+    "tiltPresets": true,
+    "scaleControls": true,
+    "offscreenCoordinatesSupported": true
+  },
+  "styles": {
+    "count": 6,
+    "names": [
+      "CLEAN",
+      "CINEMA",
+      "ARCHIVE",
+      "GLOW",
+      "COLLAGE",
+      "LIVE MOMENT"
+    ]
+  },
+  "content": {
+    "momentCount": 3,
+    "backgroundCount": 3,
+    "uploadBackground": true
+  },
+  "playback": {
+    "perspectiveFlattens": true,
+    "youtubeIframeCreatedOnDemand": true,
+    "restoresPreviousCorners": true
+  },
+  "storage": {
+    "key": "lovetree-memory-window-composer-v1",
+    "savedPayload": {
+      "personId": "felix",
+      "backgroundId": "season-03",
+      "momentId": "moment-stage",
+      "corners": [
+        {
+          "x": 0.57,
+          "y": 0.25
+        },
+        {
+          "x": 0.88,
+          "y": 0.31
+        },
+        {
+          "x": 0.84,
+          "y": 0.7
+        },
+        {
+          "x": 0.5,
+          "y": 0.63
+        }
+      ],
+      "style": "LIVE MOMENT",
+      "titleVisible": true,
+      "feelingVisible": true,
+      "mirrored": false,
+      "savedAt": "2026-08-04T10:50:28.121Z",
+      "target": "cover"
+    }
+  },
+  "mobile": {
+    "touchHandlesAtLeast44px": true,
+    "horizontalDock": true,
+    "momentSheet": true,
+    "pinchCodeImplemented": true
+  },
+  "errors": {
+    "desktopConsoleErrors": [],
+    "desktopPageErrors": [],
+    "mobileConsoleErrors": [],
+    "mobilePageErrors": []
+  }
+}
