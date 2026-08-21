@@ -16,6 +16,9 @@ import {
   LINEAGE_55_TIMING,
 } from "@/lib/lineage-55-moonlit-blossom-data";
 import {
+  LINEAGE_55_ASSETS_MATERIALIZED,
+} from "@/lib/lineage-55-moonlit-blossom-assets";
+import {
   advanceBlossomState,
   createInitialBlossomControllerState,
   jumpToBlossomState,
@@ -33,8 +36,7 @@ interface BlossomImageProps {
 }
 
 function BlossomImage({ src, alt, className }: BlossomImageProps) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
+  if (!LINEAGE_55_ASSETS_MATERIALIZED) {
     return (
       <span
         className={className}
@@ -56,14 +58,7 @@ function BlossomImage({ src, alt, className }: BlossomImageProps) {
       </span>
     );
   }
-  return (
-    <img
-      className={className}
-      src={src}
-      alt={alt}
-      onError={() => setFailed(true)}
-    />
-  );
+  return <img className={className} src={src} alt={alt} />;
 }
 
 export default function Lineage55MoonlitBlossom() {
