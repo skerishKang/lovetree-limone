@@ -1,0 +1,56 @@
+# Track73 Drive 원본 인덱스 — 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1
+
+총 48 files / 44351231 B. 폴더: [[지피티 작업]]/[01_러브트리]/03_디자인채택본/73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 (Drive)
+
+지문 = Drive 제공 MD5(서버 메타데이터). [P]=바이트 보존됨(reference/source-track-73-mainframe-hero/), [F]=지문만(영상 등 미보존).
+
+| 상태 | bytes | md5 | path |
+|---|---|---|---|
+| P | 5794 | a3d45bb80ac597b55c92b223ebcbb700 | 4.Retro-Futurist.txt |
+| F | 19370101 | a7577c4205c1f13979e49999ef04f4f8 | 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1.mp4 |
+| P | 9029 | 279d26bd0d48acf9a33d0b7862a2100b | V1/73_lovetree_mainframe_hero_v1.zip |
+| P | 676 | cc3691188847aad89c28f4b12d07948f | V1/index.html |
+| P | 546 | aacdefe969ecd8bb2b5be916b37f8728 | V1/package.json |
+| P | 81 | c735540bb63936a123bc867d950c9f69 | V1/postcss.config.js |
+| P | 774 | 6d567659ec55c9dc5914f5e3862defcc | V1/README.md |
+| P | 10510 | 621f2d8b08085616e84d4c42c57998a2 | V1/src/App.tsx |
+| P | 978 | 63a65bf09c7d7305d58a41ed32a3de6a | V1/src/index.css |
+| P | 237 | 16507ff9cb1dc5b560a1986f85d48643 | V1/src/main.tsx |
+| P | 170 | 1740dcfedc2dc7ce615b49ac9ef034d3 | V1/tailwind.config.js |
+| P | 507 | 7a940a506c8dc8ab395ed2d493135b3c | V1/tsconfig.app.json |
+| P | 119 | a3d39fa780ebff65444de257f291ce6c | V1/tsconfig.json |
+| P | 211 | 5dc1dc0bbca00cb4d886fa8446d6db2d | V1/tsconfig.node.json |
+| P | 136 | eb98c53348e57a55028f415914969a6b | V1/vite.config.ts |
+| P | 18982 | ab8e3c4ae93d63261e480b7523b10dd5 | V2_STANDALONE_DIRECT_OPEN_FIX/73_V2_STANDALONE_DIRECT_OPEN.html |
+| F | 2633352 | 3608a24f2036201dba8aa1871cd5ebd2 | V2_STANDALONE_DIRECT_OPEN_FIX/녹화_2026_08_17_23_47_54_535.mp4 |
+| P | 35213 | 479cb91b2ac2bf6816c8956a47efa509 | V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_FAST_SCRUB_TEMPLATE_PORTAL.html |
+| P | 1443 | 497df99f058c2583a97d2b23cd8e59dd | V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_MENU_ROUTE_AUDIT.md |
+| P | 813 | 50c7f21add7324aec05bd16b06d2fd9e | V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_QA.md |
+| F | 20005089 | 0844191c5c4e19e6ef0411728aed7f7f | V3_FAST_SCRUB_TEMPLATE_PORTAL/녹화_2026_08_18_00_25_47_646.mp4 |
+| P | 1918 | f17ad4849b90344680b6ac43eb729938 | V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_CHANGELOG_AND_ROUTE_AUDIT.md |
+| P | 1107 | 5cb31101afca051805d61a6113482890 | V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_QA.md |
+| P | 39196 | cca42d1bdaec93a3dc90be8d7ac555e0 | V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL.html |
+| P | 1804 | 596a8a6ca32839d116096624d9a7efe1 | V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/73_V5_CHANGELOG.md |
+| P | 1371 | 3612d691f434280d2b54adac2f9b5a2c | V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/73_V5_QA.md |
+| P | 25459 | 1c1e0227edd6436792962d7fc2bd1412 | V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/index.html |
+| P | 968 | ad288425008a482f5642c36ccbec7593 | V5_PINNED_DESKTOP_MENUS/73_V4_1_CHANGELOG.md |
+| P | 40190 | 52a3555e89da7eb53c415cb3962afb79 | V5_PINNED_DESKTOP_MENUS/73_V4_1_PINNED_DESKTOP_MENUS.html |
+| P | 778 | 21901bece0f617f09dd08283e5e1e8e0 | V5_PINNED_DESKTOP_MENUS/73_V4_1_QA.md |
+| P | 4940 | 20e0c43739d064f5413c8e0408d8e39f | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/01_USED_AUDIO/typewriter-key-1_USED_V4.2.mp3 |
+| P | 8396 | f58fc0712987663affd8bfb2bfb56f39 | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/01_USED_AUDIO/typewriter-line-break-1_USED_V4.2.mp3 |
+| P | 1257 | 185d64d159b875740388fa3ac9ebeafe | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/02_RECORDS/73_V4_2_CHANGELOG.md |
+| P | 886 | 9fdc8f199ad894ecfb8af7d70b1a7189 | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/02_RECORDS/73_V4_2_QA.md |
+| P | 40805 | 172634786af95677d1aab2bf1875eccd | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/03_SOURCE_AUDIO_REFERENCE/SOURCE_typewriter-key-1.mp3 |
+| P | 40805 | 348a350d1855fca814b54dcc2244a565 | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/03_SOURCE_AUDIO_REFERENCE/SOURCE_typewriter-line-break-1.mp3 |
+| P | 627 | 77e6c7517a165aef8518a77369980391 | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/04_UNUSED_AUDIO_NOTE/UNUSED_AUDIO_NOTE.md |
+| P | 61463 | 7de6d8a476b81121b3790b69f67ec21a | 선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/73_V4_2_DUAL_TYPEWRITER_SOUND_SELECTOR.html |
+| P | 1369637 | fa9649b1158499d41ca9045001af7e41 | 타자기소리/typewriter-1.mp3 |
+| P | 82331 | 0b03404b06983be708b5e50394793104 | 타자기소리/typewriter-2.mp3 |
+| P | 75410 | 9078f24b56bcfcd976e7558387c9f18a | 타자기소리/typewriter-backspace-1.mp3 |
+| P | 114629 | fa66b8ecd2711e7603a096b4c548a17f | 타자기소리/typewriter-forward-1.mp3 |
+| P | 40805 | 172634786af95677d1aab2bf1875eccd | 타자기소리/typewriter-key-1.mp3 |
+| P | 40805 | 348a350d1855fca814b54dcc2244a565 | 타자기소리/typewriter-line-break-1.mp3 |
+| P | 56954 | 511bd6817a55503a14ec0fb53533a38c | 타자기소리/typewriter-paper-1.mp3 |
+| P | 73103 | 6fb4fe82e564d231273762727b31c6d8 | 타자기소리/typewriter-paper-roll-up-1.mp3 |
+| P | 61568 | 2870725d59b71e73ad2ed4917dcbef02 | 타자기소리/typewriter-return-1.mp3 |
+| P | 69258 | f098ceb4c5b95f61652dcc5e516ffd8e | 타자기소리/typewriter-space-bar-1.mp3 |

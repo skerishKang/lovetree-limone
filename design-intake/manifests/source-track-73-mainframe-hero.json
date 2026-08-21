@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-73-mainframe-hero",
+  "sourceTrackId": "Track73",
+  "title": "메인프레임 마우스스크럽 러브트리히어로랜딩 V1 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "Full-screen mouse-scrub cinematic hero landing: giant LOVETREE wordmark, pinned desktop menus (둘러보기/내 러브트리/이야기/가이드) linking to existing adopted templates, 첫 순간 심기 CTA, typewriter sound selector and orbit-morph poster states — an MVP first-screen (hero landing) expansion candidate (registration only — no product adoption implied).",
+  "summary": "Drive 채택본 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 registered per Issue #313. Origin is the external 'Mainframe' creative-agency hero brief (4.Retro-Futurist.txt; React/TS/Vite/Tailwind, HelveticaNow webfonts) rebuilt as LoveTree first-screen candidates: V1 React source → V2 standalone → V3 fast-scrub template portal → V4/V4.1 typewriter-sound + pinned menus → V4.2 dual sound selector → V5 orbit-morph LoveTree poster portal with template-linked menus. All 45 non-video files preserved byte-exact (2,342,689 B) with dual-pin verification (Drive MD5 == local MD5, 45/45) + SHA256SUMS.txt; 3 videos fingerprint-only in FILE_INDEX.md (48 files / 44,351,231 B total). Lineage reservation and adoption both HOLD.",
+  "provenance": {
+    "sourceLabel": "73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 / Issue #313 source gate registration",
+    "driveFolderId": "1_rflZqy4e1RsvlpRhTrcPrmy0wi0xyPE",
+    "sourceFiles": [
+      "V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/index.html",
+      "선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/73_V4_2_DUAL_TYPEWRITER_SOUND_SELECTOR.html",
+      "4.Retro-Futurist.txt",
+      "73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1.mp4"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage number is NOT allocated. No repository lineage is reserved by this manifest."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #313 gate registration only — CANONICAL_V4_ADOPTION=NO. MVP first-screen v2 expansion candidacy requires owner review plus font/rights provenance closure."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V5 (orbit morph LoveTree poster portal)",
+    "authorityObservedAt": "2026-08-21T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/index.html",
+      "driveId": "1XL2W75Fn5wp-P5Vqg9DrmEcfFajdKvrR",
+      "bytes": 25459,
+      "sha256": "ee4a10eb1711e06c02f2878d64870958bd9e6c89586fd96368bea3815adde52a",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/73_V4_2_DUAL_TYPEWRITER_SOUND_SELECTOR.html",
+      "driveId": "1A-z7zDSVW-t2RcOrJaWyiUrwhEXWAO-y",
+      "bytes": 61463,
+      "sha256": "b3a9ee25407957ba8ea6bf6daef62f1452e30d4be106a54fcfa1fb1a3a37cbb3",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_FAST_SCRUB_TEMPLATE_PORTAL.html",
+      "driveId": "1DZBMZzAs6mPVgQ_A7W0Y02vJXYG0XvCP",
+      "bytes": 35213,
+      "sha256": "12e086203e6fcb159cdb48dddd9812566700ff8c04eb45b38488d9b263baede2",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "4.Retro-Futurist.txt",
+      "driveId": "1y-Jx-C15piV_QqemDrlROnZrQJNfdbMN",
+      "bytes": 5794,
+      "sha256": "a9bd0f59446e5519f8df3adf9ae5372bcfa1f9fd48588afe8c58ee857f6d520a",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1.mp4",
+      "driveId": "14NWcWZQdBW2EeT3NpvOo11wspK-wRY9c",
+      "bytes": 19370101,
+      "role": "reference-media",
+      "status": "REFERENCE_ONLY"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "EXTERNAL_DESIGN_ORIGIN: base layout/motion derive from the external 'Mainframe' agency hero brief; upstream rights of that concept are not established by the sibling package",
+    "FONT_LICENSING_PROVENANCE: HelveticaNowDisplay webfonts load from db.onlinewebfonts.com links; license terms for product use are not recorded",
+    "SIBLING_QA_SCOPE: V-series QA/changelog docs cover the sibling's own runs only; no repository-side fidelity/reduced-motion/overflow gate has run"
+  ],
+  "nativeRemediations": [
+    "establish rights provenance for the Mainframe-derived design and HelveticaNow fonts before any adoption decision",
+    "run repository-side gates (fidelity, reduced-motion semantic continuity for scrub/camera effects, keyboard/manual takeover, overflow at 1280×800/390×844/320×720) before any native proposal",
+    "replace external font links with licensed self-hosted assets if adopted"
+  ],
+  "sourceOnlyValues": [
+    "LOVETREE wordmark treatment (LOVE white / TREE pink gradient) and menu copy are sibling-authored substitutions on the external Mainframe skeleton",
+    "menu links reference existing adopted templates by track numbers as a navigation map, not a wired product route",
+    "typewriter audio set (타자기소리/) is user-provided recording + Web Audio synthesis variants"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
