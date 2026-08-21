@@ -1,0 +1,299 @@
+{
+  "status": "VERTICAL_MOMENT_NETWORK_OVERVIEW_V1.2_PATH_REVEAL_CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "html_sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+  "graph": {
+    "moments": 288,
+    "paths": 42,
+    "edges": 345,
+    "edge_kinds": {
+      "primary": 175,
+      "secondary": 82,
+      "cross": 18,
+      "anchor": 6,
+      "support": 46,
+      "bridge": 5,
+      "bridgeSecondary": 10,
+      "origin": 3
+    },
+    "primary_secondary_ratio_pct": 74.5,
+    "cross_link_ratio_pct": 5.2
+  },
+  "viewports": [
+    {
+      "viewport": "1440x900",
+      "horizontal_overflow": 0,
+      "vertical_overflow": 0,
+      "errors": [],
+      "origin": {
+        "mode": "ORIGIN_REVEAL",
+        "first": true,
+        "groups": [
+          1,
+          2,
+          3
+        ],
+        "reveal": 142
+      },
+      "clusters": [
+        {
+          "ci": 0,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 38
+        },
+        {
+          "ci": 1,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 52
+        },
+        {
+          "ci": 2,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 55
+        }
+      ],
+      "playback": {
+        "route": {
+          "pid": "p0_0",
+          "nid": "m0_0",
+          "len": 7,
+          "children": 1
+        },
+        "paused": {
+          "branchPause": true,
+          "trail": 3,
+          "options": 2
+        },
+        "after": {
+          "trail": 6,
+          "pathId": "p0_0s1",
+          "active": false
+        }
+      },
+      "pass": true,
+      "stats": {
+        "moments": 288,
+        "paths": 42,
+        "edges": 345,
+        "clusters": [
+          {
+            "name": "처음 빠져든 순간",
+            "count": 34,
+            "primaryPaths": 3
+          },
+          {
+            "name": "무대와 퍼포먼스",
+            "count": 48,
+            "primaryPaths": 4
+          },
+          {
+            "name": "콘텐츠 탐색",
+            "count": 58,
+            "primaryPaths": 4
+          },
+          {
+            "name": "사람과 관계",
+            "count": 46,
+            "primaryPaths": 3
+          },
+          {
+            "name": "다시 찾은 기억",
+            "count": 38,
+            "primaryPaths": 3
+          },
+          {
+            "name": "다음 계절",
+            "count": 64,
+            "primaryPaths": 4
+          }
+        ],
+        "edgeKinds": {
+          "primary": 175,
+          "secondary": 82,
+          "cross": 18,
+          "anchor": 6,
+          "support": 46,
+          "bridge": 5,
+          "bridgeSecondary": 10,
+          "origin": 3
+        }
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "horizontal_overflow": 0,
+      "vertical_overflow": 0,
+      "errors": [],
+      "origin": {
+        "mode": "ORIGIN_REVEAL",
+        "first": true,
+        "groups": [
+          1,
+          2,
+          3
+        ],
+        "reveal": 142
+      },
+      "clusters": [
+        {
+          "ci": 0,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 38
+        },
+        {
+          "ci": 1,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 52
+        },
+        {
+          "ci": 2,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 55
+        }
+      ],
+      "playback": {
+        "structural": {
+          "len": 7,
+          "children": 1
+        }
+      },
+      "pass": true,
+      "stats": null
+    },
+    {
+      "viewport": "430x932",
+      "horizontal_overflow": 0,
+      "vertical_overflow": 0,
+      "errors": [],
+      "origin": {
+        "mode": "ORIGIN_REVEAL",
+        "first": true,
+        "groups": [
+          1,
+          2,
+          3
+        ],
+        "reveal": 142
+      },
+      "clusters": [
+        {
+          "ci": 0,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 38
+        },
+        {
+          "ci": 1,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 52
+        },
+        {
+          "ci": 2,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 55
+        }
+      ],
+      "playback": {
+        "structural": {
+          "len": 7,
+          "children": 1
+        }
+      },
+      "pass": true,
+      "stats": null
+    },
+    {
+      "viewport": "390x844",
+      "horizontal_overflow": 0,
+      "vertical_overflow": 0,
+      "errors": [],
+      "origin": {
+        "mode": "ORIGIN_REVEAL",
+        "first": true,
+        "groups": [
+          1,
+          2,
+          3
+        ],
+        "reveal": 142
+      },
+      "clusters": [
+        {
+          "ci": 0,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 38
+        },
+        {
+          "ci": 1,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 52
+        },
+        {
+          "ci": 2,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 55
+        }
+      ],
+      "playback": {
+        "route": {
+          "pid": "p0_0",
+          "nid": "m0_0",
+          "len": 7,
+          "children": 1
+        },
+        "paused": {
+          "branchPause": true,
+          "trail": 3,
+          "options": 2
+        },
+        "after": {
+          "trail": 6,
+          "pathId": "p0_0s1",
+          "active": false
+        }
+      },
+      "pass": true,
+      "stats": null
+    },
+    {
+      "viewport": "360x800",
+      "horizontal_overflow": 0,
+      "vertical_overflow": 0,
+      "errors": [],
+      "origin": {
+        "mode": "ORIGIN_REVEAL",
+        "first": true,
+        "groups": [
+          1,
+          2,
+          3
+        ],
+        "reveal": 142
+      },
+      "clusters": [
+        {
+          "ci": 0,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 38
+        },
+        {
+          "ci": 1,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 52
+        },
+        {
+          "ci": 2,
+          "mode": "CLUSTER_PATH_OVERVIEW",
+          "reveal": 55
+        }
+      ],
+      "playback": {
+        "structural": {
+          "len": 7,
+          "children": 1
+        }
+      },
+      "pass": true,
+      "stats": null
+    }
+  ],
+  "all_required_gates_pass": true
+}
