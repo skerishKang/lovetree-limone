@@ -1,0 +1,617 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-40-goldenfruit",
+  "sourceTrackId": "Track40",
+  "title": "시네마틱황금열매 버전통합 (Cinematic Golden Fruit) 소스 게이트 등록",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Source gate registration of the 'LoveTree 시네마틱황금열매' version-consolidated single-file HTML family (V1 초기황금하트 → V2 성장모션증명 → V3 원본에셋/레퍼런스충실도 → V5/V5-1 레퍼런스모션재현 → V6 국제판): a 16-scene cinematic scroll journey reproducing a reference recording (orchard opening, question scene, constellation drawing, pruning/grafting, golden fruit finale) as an entry/brand experience candidate. Registration only — no product adoption implied.",
+  "summary": "Source Track 40 registered as a preservation gate (Issue #340). All 69 files observed in Drive folder 40_시네마틱황금열매_버전통합 (~384.6 MB) were copied byte-exact; the #287 commit cap (total ≤50 MB, single file ≤10 MB, videos fingerprint-only) was applied with the lane priority order: all 7 version-executable HTMLs + both motion-analysis notes + all 3 sibling QA results are committed and PINNED (25.9 MB total, max 7.11 MB), while 8 video binaries and 49 image stills are withheld from the repository as PENDING entries with Drive ID+bytes+SHA256 fixed here and in docs/design-intake/source-track-40-gate.md. Authoritative executable is 01_시네마틱황금열매_국제판_v6.html — highest version, top-level placement in the consolidation folder, dedicated v6 recording, 'International cinematic edition' title; predecessor V5 is explicitly marked 버벅 (janky motion) by its folder name and superseded by V5-1 per the motion re-analysis. No instruction document and no internal hash pins exist in the folder; the top-level PASS verification result cannot be cryptographically bound to a specific executable, so pre-implementation re-verification against the pinned V6 fingerprint is mandatory. Lineage40 is NOT allocated (lineageReservation HOLD) and adoption is HOLD.",
+  "provenance": {
+    "sourceLabel": "40_시네마틱황금열매_버전통합 / Issue #340 source gate registration",
+    "driveFolderId": "12fTnrGHoBazU09y5Z5RBkZ6c3FBDJhPw",
+    "sourceFiles": [
+      "01_시네마틱황금열매_국제판_v6.html",
+      "02_시네마틱황금열매_레퍼런스모션_v5-1.html",
+      "05_레퍼런스모션재현_v5_버벅/01_레퍼런스모션재현_v5.html",
+      "04_레퍼런스충실도_v3/01_레퍼런스충실도_v3.html",
+      "01_시네마틱황금열매_원본에셋_v3.html",
+      "03_성장모션증명_v2/01_성장모션증명_v2.html",
+      "02_초기황금하트_v1/01_초기황금하트_스크롤스토리_v1.html",
+      "03_참고영상_시네마틱황금열매_원본.mp4",
+      "02_녹화영상_시네마틱황금열매_v6.mp4",
+      "40_문서자료/01_모션분석.md",
+      "30_검증자료/01_검증결과.json"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage40 is NOT allocated. Repository lineage number is not reserved by this manifest; product-shell placement is reviewed only after a design-lead classification decision closes the intake state (Issue #340)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO; no instruction document and no recorded product-owner decision in folder; registration/preservation evidence only (Issue #340)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-07",
+    "authorityObservedAt": "2026-08-21T08:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_녹화영상_초기_v3.mp4",
+      "driveId": "1EyC_8ybXAjkk1bh8E7-ol9QvZAwcq5RM",
+      "bytes": 36156765,
+      "sha256": "ad5b6b7aa4e8c22a2da993c63f3402b943156e911de7a30af09e92faa02d7769",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "01_시네마틱황금열매_국제판_v6.html",
+      "driveId": "1qUMW1mjvz9audoIy07_-3GraBQvzmYt7",
+      "bytes": 7451922,
+      "sha256": "9a97ce9ee0c0f00fea57add2dbbd55f5d7f50b7ea9cf7d663ca642c879f3d17b",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_시네마틱황금열매_원본에셋_v3.html",
+      "driveId": "1yVahVrVvdoUxgTLP5PQyoeuZogo_mK6p",
+      "bytes": 1689407,
+      "sha256": "15e5086931807beb02a8e4da5b90255fea76a97eaccb4553dd7af8e9d90cf414",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_녹화영상_개선_v5.mp4",
+      "driveId": "1C85ZV4-hLQJ5fMLpgfZUw4psuf8N_UYS",
+      "bytes": 60006772,
+      "sha256": "35a88a6a46b9d18fd86d6f52ce7743b046a03c42de4db6f6e29dc4e7cf4b200c",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_녹화영상_시네마틱황금열매_v6.mp4",
+      "driveId": "1RtV2hQMS9IPGdJTkYc7f4kO0Ie4ODH9u",
+      "bytes": 78302072,
+      "sha256": "258579803d72d77db3b2f6c3e1c6a4c014b39a4dc4ca9f5d0a65916233618366",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_시네마틱황금열매_레퍼런스모션_v5-1.html",
+      "driveId": "1mFCZ3oh92uNgKGQnXEVNw-5df5H7fQ8y",
+      "bytes": 7443862,
+      "sha256": "cbc9b3651fe0ee63e67b5c05543b63d6a9851482244be51b3e6bb8ab4b6e6430",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_초기황금하트_v1/00_대표미리보기.png",
+      "driveId": "1Ma3RYC4fD3aan1-RJIdI11rCHFDReDv7",
+      "bytes": 515566,
+      "sha256": "29fa84545228c6bfd0fcdf7d3125a521193c66e3abf0f59082eb6be9379ed3cc",
+      "role": "preview-image",
+      "status": "PENDING"
+    },
+    {
+      "filename": "02_초기황금하트_v1/01_초기황금하트_스크롤스토리_v1.html",
+      "driveId": "1JGptuS8MdMR_z6fEez8IFraMPl1_K_oC",
+      "bytes": 43910,
+      "sha256": "2adc32fdbdb081240aa44b94f869a5b1f381cd5cd7f98896c93d16178775398d",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_초기황금하트_v1/02_실행영상_초기황금하트_v1.mp4",
+      "driveId": "18wKrlWmx4YLPYFDT5zm_FTM0u9KGoOJe",
+      "bytes": 18829785,
+      "sha256": "5437eb97c01e0c0fb97521803b180d090ed902ba9cab866c3b4f85597c86602e",
+      "role": "version-demo-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_성장모션증명_v2/00_대표미리보기.png",
+      "driveId": "1o_Bfpd2vxvlRb3PeAqPfpFngoDD2BPlc",
+      "bytes": 519949,
+      "sha256": "2d5892e8af5da6084401730a2628bedf2405a03c1f384a53af35630a8b029c0f",
+      "role": "preview-image",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_성장모션증명_v2/01_성장모션증명_v2.html",
+      "driveId": "15iTBrdWwB--SXzzaL2p1VAzL7Q8wmTFd",
+      "bytes": 43430,
+      "sha256": "6d260bfefcedf5a9851687ec6e09e080566c84165210b90ecb03e315e5e1c1b1",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_성장모션증명_v2/02_실행영상_시네마틱사용자여정_v2.mp4",
+      "driveId": "1YK5WMu-z2QLbvk_8tuqxhStcuSnFAXG2",
+      "bytes": 3713076,
+      "sha256": "a13dde8ac162038f28f3694b40b43caadbf1fcd9cfd6bb55ae8ac39fa9604bd1",
+      "role": "version-demo-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_참고영상_시네마틱황금열매_원본.mp4",
+      "driveId": "1SE-zY1Zjf5x9CsWfxI_-HjsqQUK6S5br",
+      "bytes": 82612558,
+      "sha256": "b3d36577b3be1e538acdbcada4e7754a5ae248951ff6eb3a287e70470aaa205d",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/00_대표미리보기.png",
+      "driveId": "1bRgEx2TxZP-x3ru_Q37TJa_0vLYKNjSD",
+      "bytes": 1516572,
+      "sha256": "e6be39e7e938316aa44757f24e29a77adecb693e4b83aae7349242b5f4d64f4a",
+      "role": "preview-image",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/01_레퍼런스충실도_v3.html",
+      "driveId": "14xoRwsEPWk6jOz9IHwsKQxivIKpGtYO_",
+      "bytes": 3030255,
+      "sha256": "a74511a211e6bb86dcadd76958faa194fe60f5bba89b5269aeafb0719f9a2ce6",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/02_실행영상_레퍼런스충실도_v3.webm",
+      "driveId": "1uwow_RVIs_B-2hLWp2bPOrhp83yubLCi",
+      "bytes": 3727158,
+      "sha256": "69d341c94a04b6bf57a1b88091d24c016bcd5664422c2855cc2b57ff64b07450",
+      "role": "version-demo-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/03_화면캡처_데스크톱_첫화면.png",
+      "driveId": "13iciRItP6dxkk2bJgRwZ2KquTVZ-LaH6",
+      "bytes": 1443742,
+      "sha256": "dbe1554c251a5bc5f41886f89923f7fdfb23c274d318a65ee4e4d4fcad7af644",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/04_화면캡처_데스크톱_과수원장면.png",
+      "driveId": "1MxZgIAw30959R5fOruucclrjB1rldqUW",
+      "bytes": 1671241,
+      "sha256": "ed853ca2dfbe1194369075800f805a85a07b8a984323cba19a099942dee0c999",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/05_화면캡처_데스크톱_질문장면.png",
+      "driveId": "1XZnRhDxqkRLNUW89wEVNEInb5FRzp75m",
+      "bytes": 1383203,
+      "sha256": "839a6223bf5b540497bd2271cda93ad6b31a41cf8397b38de816e48d0c709ae5",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/06_화면캡처_데스크톱_별자리장면.png",
+      "driveId": "1rK7wS3PAYsowf_dFE182d-G4Myb32hC-",
+      "bytes": 1366062,
+      "sha256": "7a35b4200db4fdfc6bb490b009901cfac06d516884be8090b70139b0442af499",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/07_화면캡처_데스크톱_최종장면.png",
+      "driveId": "1m_gJX34KqOhGAdqeqFhtbV_mSyPQfizE",
+      "bytes": 1516572,
+      "sha256": "e6be39e7e938316aa44757f24e29a77adecb693e4b83aae7349242b5f4d64f4a",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/08_화면캡처_모바일_첫화면.png",
+      "driveId": "1_5bOa8ZCjlNE8J0mCLmu_WN0xrlClvVa",
+      "bytes": 359491,
+      "sha256": "ea4df5cd1f15e168c54c1d774d98a00df1e32b1219c4054bea7ab549f7af3868",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/09_화면캡처_모바일_최종장면.png",
+      "driveId": "1LNfdGixjp03c2XhdxKvqtZus3rSUxm_q",
+      "bytes": 416167,
+      "sha256": "5121a398b288332ac78527d2d9ed31d0921d9cd381985dbee1ae699c8ee336be",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "04_레퍼런스충실도_v3/10_검증결과.json",
+      "driveId": "1mTyxaszs_JSOkofVDt1eai0sb6JqiSFr",
+      "bytes": 227,
+      "sha256": "340b4ab9eae361cf4c21789fff0ed73dcafdaa21e6dc4307810f2a37d06db9fb",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/00_대표미리보기.png",
+      "driveId": "1zVITgtkbi36gkvenyTc-lglxWA0yEw_y",
+      "bytes": 1657913,
+      "sha256": "78bd9555bca660dae406a2b196c808a48721a2bce04fb4dafc173a56a3d28b54",
+      "role": "preview-image",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/01_레퍼런스모션재현_v5.html",
+      "driveId": "1FzA9IJS3UkfxuUhAqcHh7QZkc2VoTqnT",
+      "bytes": 7444724,
+      "sha256": "0a3b5920276389a62b38a48c01528505ea776eb6d0b142c7fd1a1c9f7555d0a7",
+      "role": "reference-executable-historical",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/02_실행영상_레퍼런스모션재현_v5.mp4",
+      "driveId": "1Oeck5JLe3dpcYw4tK3fuePYkM5FGxM_x",
+      "bytes": 7397713,
+      "sha256": "cd6dd005195321fb58828f1f2f3867b9bf89d20a3e9ec989d25edd3cb63bc203",
+      "role": "version-demo-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/03_화면캡처_오프닝정밀보정.png",
+      "driveId": "1fHqvS94aeaksW4pmPmHcyjMGUVea2REB",
+      "bytes": 1442225,
+      "sha256": "a4399392686bfcc2fa5571317cd3c6013781d2b2dbc8a11ed6d6df6f31288115",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/04_화면캡처_황금열매_클로즈업.png",
+      "driveId": "1b3nCCYRjo5uMhu8ilEgAd4M08WP_6fvb",
+      "bytes": 948198,
+      "sha256": "fd29d74b26e07d61196525fc26f93d0540d66b4dc31166f125cde9a36d87ac3e",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/05_화면캡처_가지접목장면.png",
+      "driveId": "1wTJ1VsTQRR4Wu8ZnjZoTnQf2icDHNvlg",
+      "bytes": 1322329,
+      "sha256": "733ccc2acc78d6e8b90592f47899e4a2a3a91e18128817bc53f035873f808aa0",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/06_화면캡처_가지자르기장면.png",
+      "driveId": "1BV4u4dHjFpqNrz88pgRwdMrpEATm14Qy",
+      "bytes": 1423019,
+      "sha256": "7ea8852219cff2f0e500d037c627acf6fd5648eea22bfb84682baa43092950a2",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/07_화면캡처_하늘스크롤장면.png",
+      "driveId": "1oocy_M5INmWvdoZn-NpbsHpL_Q9X2qtW",
+      "bytes": 773009,
+      "sha256": "61d7388cdbc501d01931ce6294fe9862f4983fc3356b6ab1cea2b045a44607ec",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/08_화면캡처_설계도장면.png",
+      "driveId": "1HUjGKipUohIztZZPUWL2aPgdo-HvIUv4",
+      "bytes": 1296317,
+      "sha256": "0562b310454cc5dc8f9def0e543978f77cc2afd3649f5d49760ae8ccb885386c",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/09_화면캡처_워크숍장면.png",
+      "driveId": "1RdIIO23OZKD6TygqEObLso7oiCSHGMZc",
+      "bytes": 1762409,
+      "sha256": "5ba4e8ca8775e783e19984e11fd751be79c7dc9f3dbf54a6d22f9cb4c0611e53",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/10_화면캡처_가지치기장면.png",
+      "driveId": "1zE4sWrhTMIfkbe3jBepuNrBXiav9ZV3S",
+      "bytes": 1643205,
+      "sha256": "69405f9e72062fb895956a1052764b509dae8e882b8c66331e84287b74a36b62",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/11_화면캡처_궤도메뉴.png",
+      "driveId": "16AugRrHzRFdMKXRbwcmVCjQK8W7hH4P3",
+      "bytes": 1457348,
+      "sha256": "5994675683160e1811cb8962e9d3e0003e1435998129a318f1dabf687ba3f3a5",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/12_화면캡처_별자리입력폼.png",
+      "driveId": "1WoP-formUY77TQAKWW1NoIgRc9mXGXHf",
+      "bytes": 1308350,
+      "sha256": "3e0ad1caf8af6f8b90ba033879ca05644ff0d9d0434aa542dd0445a632461b24",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/13_화면캡처_최종장면.png",
+      "driveId": "1ayuYVRpXcDW-H_-aWS9PCKCgYdRmUnoH",
+      "bytes": 1657913,
+      "sha256": "78bd9555bca660dae406a2b196c808a48721a2bce04fb4dafc173a56a3d28b54",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/14_화면캡처_메뉴오버레이.png",
+      "driveId": "1aSaKwrPHh_Cthd0KIA6zGjGmGz2zlS5u",
+      "bytes": 1351084,
+      "sha256": "9af8703a855b2fd6940a70f2ee8084d2204c52864333ee1cf02d1556ffc14306",
+      "role": "screen-capture",
+      "status": "PENDING"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/15_모션분석.md",
+      "driveId": "1jaXIYwzY-EOs3uMzGNdWMnyksfQ38FFn",
+      "bytes": 3361,
+      "sha256": "af8fa54dff08ac47fb4db038f9313c697d8252b6b71d6b64a439105b6d48760c",
+      "role": "motion-analysis-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "05_레퍼런스모션재현_v5_버벅/16_검증결과.json",
+      "driveId": "1R54QlDn0zBnsfHlaz6GF0MRtMH6yONcg",
+      "bytes": 525,
+      "sha256": "e0bbc25f014b137f7f68ccc30df89bc874e9e2ceb2b89ea696cfe9508d63f55d",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "10_이미지/048f836a-6fdc-44c8-808b-5c151814f173.png",
+      "driveId": "1y1EwGMl-sjp5nJ-Yf0rqinP7osLgAqon",
+      "bytes": 2010932,
+      "sha256": "85215091a77d35a4884e63981c493142393d8ade6d74ab4844ef7a8bc15bba1f",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/06_질문장면.png",
+      "driveId": "1JefdfyK380jhUbhDu5CxZwsciVOxDo7Z",
+      "bytes": 1454114,
+      "sha256": "d05be69e48947d1bc9cf4a98ae285c1cbd49bb83d8fd60dd5a9a3c8e08b34799",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/07_별자리장면.png",
+      "driveId": "1QyFtzXlyJNFPm6c06FzV9XMhed-ZI27-",
+      "bytes": 1390332,
+      "sha256": "9074fe10ab82f8b8f752291ec3acd35291210a6d452cb0c7f29cae418df56719",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/08_최종장면.png",
+      "driveId": "1DbE9qEZR_osMa_WvXtw5V7F-90322W3b",
+      "bytes": 1653322,
+      "sha256": "9e2400283a27c5dfca222cfd14c0fc84b2e5e3a41afccf9e0d55173ea3b5f9a5",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/0cf94fd3-4f05-4540-abda-1981fd3c56f3.png",
+      "driveId": "1j-QGaBDMCbydwWn2qj_mDkIBuCWnWDlI",
+      "bytes": 2208182,
+      "sha256": "e81ee01d1e852a69e5330c111382b6bb570c4b325154f64c7c440e7ef59f3a42",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/3a1fedd0-7a54-4dd6-ade7-75c8548073a8.png",
+      "driveId": "1vRps8L2dFJc2Bq9MjiZD8dkGKf5DGZ1F",
+      "bytes": 2409534,
+      "sha256": "0b0c3d8992fd6c3e28115e462d3ecf292c8a8deec7ababf38b2702c6bf02bca2",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/5e7c7b49-bb7a-4e4c-93da-aec19cfb0e5b.png",
+      "driveId": "1amI3i4trLqDqfTV6p0BPLE7ve4_ZnBPx",
+      "bytes": 2241700,
+      "sha256": "4cfb89f358039c0339133b74b8082e974b079c269b98198a98e25a8cb2e4b1e8",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/609bcc0a-e0b8-4f7b-a7cb-498ba8efd8aa.png",
+      "driveId": "1YfI9GWqEUk_fJuxIDdfdJkAoubPwQXPc",
+      "bytes": 2177310,
+      "sha256": "0ae4fa26e77c062b2faa4c63f10b680c8c64e5b08b207ad983d522a45c68852e",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/6a47ba83-cae7-42ca-80bd-1cce2c4caee3.png",
+      "driveId": "15dBdVhtWuqfqvsXHezbSmByuhfs2QX8G",
+      "bytes": 2364234,
+      "sha256": "5c66e39be2d71616183f274f296b98156e9cc9c7c9a4320006a9d13168843ce6",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/719d373a-c087-456c-bddc-43a36eac3f9d.png",
+      "driveId": "1FbxLBbh-hGGvREU_8jQAru2JyEvbuyd2",
+      "bytes": 2208121,
+      "sha256": "9918dbf56bd41150e304a0e3a31c54428c99a32ccebb419e6998f726f34299fd",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/7d4e7ed2-eff8-4b57-9de0-c14b8a734fcc.png",
+      "driveId": "1GfGbTTTmH2r57vf5bnrhCTvi0rOnVTeb",
+      "bytes": 2153464,
+      "sha256": "231a782e7c2d609524009d42c66725580ec9aa5349b0f3b6e95ad1cbf0a786af",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/88594e2b-bc50-4cf6-8df0-600c1b2391ed.png",
+      "driveId": "14EXvEsGJxH8eobXaCXzbd5f8HkkE3muU",
+      "bytes": 2220887,
+      "sha256": "f8e1812f98476b45925284dc8a9c2c74db0c157ef8b35dd24f8d2054f18890d0",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/8fd790f8-df89-48d8-b982-adbb6b383a73.png",
+      "driveId": "1b-UhbANeKWnBiV6_Q4IvTVPQGNfAGa-c",
+      "bytes": 2192175,
+      "sha256": "0e3a30c5c9cb82d8ba05db9ee4f3a77e42e86013a802b821d9ee643c2487b77e",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/94763b33-955d-4929-8fa8-ed60bbebfe79.png",
+      "driveId": "15Mjz253WYphtC_SlkMZcfFmlc-GO0E27",
+      "bytes": 2292996,
+      "sha256": "56a25696f120eaea2d0625dd6acc72f61ba4dd0f80a64e0f8eba5745ad74e3db",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/a10b6009-94f3-4554-9f44-5160e8e15b65.png",
+      "driveId": "1nRszIQfTQNnG47LaVOaHNyt8skrVwtak",
+      "bytes": 2653824,
+      "sha256": "4020d878c7d7e1d0570d479ce80b70d0ca5ca13231c02b0af5df0cf6e42a4aa2",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/af9c75ec-5af0-47a9-9b27-5e043449d09d.png",
+      "driveId": "1jO7zu7Rkl6TebCaLeIw3L3o1O-uRfyfn",
+      "bytes": 2195789,
+      "sha256": "f9b6de29389bea175feabf48a51e002bc61605b0883be90896f1f2b12776a0b2",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/b7c763d5-56a5-454e-a0b7-13f43e489ab4.png",
+      "driveId": "1m8JAR8L8UWR5XYgux551QZw1VkNKs7dh",
+      "bytes": 2335610,
+      "sha256": "bdf0e0d326f0364adf068b71306efb382724011130001d3c2f4626d3f5e0eadf",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/bea58a5f-8be5-4df0-8a6d-d7c476f9ae44.png",
+      "driveId": "1W8Y5i-GR7o3raFHCgM19czFF_O1MC97-",
+      "bytes": 2503977,
+      "sha256": "3ef6f2526c7d15c22c03c5b0981f335a32a7d01633488e45e8588262dc2812f6",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/c70da424-6b0b-4697-b4de-fd34928e149d.png",
+      "driveId": "1wq6mvPgv_69yY_1TXYi7pjd-Jmew0a5t",
+      "bytes": 2534936,
+      "sha256": "fa0d339924ba7eb32111b6db7b7616bd0ae2ceeb6daa010484ec2d55e482ae59",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/d3570baa-aaaf-4b6e-87c0-f45ec2ff468f.png",
+      "driveId": "1D8SmWUMTMC3NoiLZS_sXyX9kE_KWOnJf",
+      "bytes": 2141581,
+      "sha256": "dda5b68376b9fa26b32a149141d22b1b03957b56e73f00208281065bf6f74304",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/d4a7c1eb-0bad-459a-a95a-6f949c61a23c.png",
+      "driveId": "1E0EyzuQ54_dv5e5dULSFdZBJhvXyxFUl",
+      "bytes": 1776405,
+      "sha256": "6429a1623633b5800cb892b0faea958f8d40b6aa2d61c80faa80e5bd592a20f7",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/dc4d8eae-bf6b-4cd5-8b27-8c06b1c41c09.png",
+      "driveId": "1FeD5sLgkCOouIVM3DNg5Lf1OGmSBg4Au",
+      "bytes": 2432724,
+      "sha256": "d1404afb0776364c0d44b1889c39214e0978233d90c0f2773d89e12752b0c9a4",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/de167842-f60a-4aef-b5ac-db1538d7652b.png",
+      "driveId": "1dDb3xf3qBC68gsdUPT51tpkP86zMiR0d",
+      "bytes": 2384878,
+      "sha256": "a9c4413da6fcd4328f13084e24a0d5069f8e5167df4170d82f4d4885b1c0ef7c",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/de174525-d07a-48a8-b2c1-a39d350c4543.png",
+      "driveId": "1XmwyABpp6MHQqahAVek5wi8Sgv1JaK-R",
+      "bytes": 2547514,
+      "sha256": "ea30c012a505d56fa6e88a7346dfd3a3ae8bc3dcf87ef34a013e10a721a5e74f",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/e3ed089a-03a5-465a-a6be-b60111434bcf.png",
+      "driveId": "15F-oeN5DJ8jFo1v886s-ueZyvByTrFqv",
+      "bytes": 1956931,
+      "sha256": "ba83614404d406f766c23b5776b4945eeb6d5027c27d755ab1af871f57e4e21a",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "10_이미지/f8a35ff6-b231-4a85-982f-a3b5b6029b82.png",
+      "driveId": "1b_QgY4tXrfHfCoI-_D87ohbVA2vctxWy",
+      "bytes": 2216550,
+      "sha256": "4746d255f886ddbd33e5b38d27072302cd006a3a3d68517e0d2165b118032769",
+      "role": "source-image-still",
+      "status": "PENDING"
+    },
+    {
+      "filename": "30_검증자료/01_검증결과.json",
+      "driveId": "19ElVSD7ey7zCS4SvKCrfY_kO2Ky_vS1K",
+      "bytes": 1060,
+      "sha256": "6c3fe2a7d1e4a30e457c97f9ceb7aa8a6155b6a4c4c39aff44b9edd5e73e8eb1",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "40_문서자료/01_모션분석.md",
+      "driveId": "1Vovrgp3QAqtbGjVGsrPxi4_Aks1vvOxL",
+      "bytes": 2014,
+      "sha256": "42dfa10d20a2baefe0c0d4d73e746fbd858fbfec02926d105ca90db053e765fe",
+      "role": "motion-analysis-note",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "COMMIT_CAP_SELECTION_APPLIED: 57 of 69 observed files are withheld from the repository commit under the #287 cap (8 video binaries per fingerprint-only rule; 49 image stills by the 50 MB total cap after priority selection) — every withheld file carries Drive ID+bytes+SHA256 as a PENDING entry here and in the gate doc",
+    "NO_INSTRUCTION_DOCUMENT: no 작업지시/design-lead instruction exists in the folder — only motion-analysis notes; classification basis is partial and PENDING per Design Ops #80",
+    "NO_INTERNAL_HASH_PINS: no internal SHA256SUMS or pin records exist to reconcile — nothing to compare fresh hashes against; pre-implementation re-verification must bind QA evidence to the pinned V6 fingerprint explicitly",
+    "VERIFICATION_NOT_FINGERPRINT_BOUND: 30_검증자료/01_검증결과.json records PASS (16 scenes, desktop/mobile clean) but carries no target hash — it cannot be attributed to a specific executable version",
+    "V5_MOTION_DEFECT_MARKED_BY_SOURCE: the V5 folder name itself marks 버벅 (janky motion); V5-1 corrected it per 01_모션분석.md — historical versions are comparison evidence only",
+    "MINOR_IMAGE_DUPLICATE_GROUPS: 대표미리보기.png equals 최종장면 capture inside 04_레퍼런스충실도_v3 and 05_레퍼런스모션재현_v5_버벅 — both copies excluded by size policy, fingerprints kept per path"
+  ],
+  "nativeRemediations": [
+    "obtain a design-lead classification/adoption decision before any lineage-number or product placement decision",
+    "before any implementation: re-run source QA bound to the exact pinned V6 SHA-256 (9a97ce9ee0c0f00fea57add2dbbd55f5d7f50b7ea9cf7d663ca642c879f3d17b)",
+    "if video/image evidence is required for future native review, re-obtain the 57 withheld binaries from the untouched Drive originals under an approved transfer exception",
+    "only after classification closes: run the standard intake sequence (design-lead decision → source QA → exact fingerprint → repository native intake/proving)"
+  ],
+  "sourceOnlyValues": [
+    "version ladder V1→V6 is sibling-side iteration history; only V6 국제판 is the observed current candidate and older versions are comparison evidence only",
+    "reference-recording reproduction claims (scene timing, motion fidelity) are sibling-side assertions until independently re-verified against the pinned fingerprint",
+    "auto-generated screen captures and UUID-named image stills are machine-generated source material, never canonical product art"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

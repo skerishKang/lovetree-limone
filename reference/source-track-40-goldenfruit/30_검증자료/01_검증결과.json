@@ -1,0 +1,53 @@
+{
+  "structure": {
+    "sceneCount": 16,
+    "orbitCards": 0,
+    "createForms": 0,
+    "waterStreams": 0,
+    "questionItems": 3,
+    "constellationCaption": 1,
+    "oldMetaSentence": 0
+  },
+  "desktop": {
+    "horizontalOverflow": 0,
+    "transitionVisibleContent": [
+      {
+        "i": 13,
+        "op": 0.705222,
+        "pre": false,
+        "texts": 1
+      },
+      {
+        "i": 14,
+        "op": 0.294778,
+        "pre": true,
+        "texts": 0
+      }
+    ],
+    "duplicateTextPrevented": true,
+    "visibleQuestionItems": 3,
+    "constellationPathsDrawn": true,
+    "noMessageWindow": true,
+    "finalWaterOverlayAbsent": true,
+    "console": [],
+    "pageErrors": []
+  },
+  "mobile": {
+    "horizontalOverflow": 0,
+    "messageWindowAbsent": true,
+    "orbitCardsAbsent": true,
+    "console": [],
+    "pageErrors": []
+  },
+  "errors": {
+    "desktopConsoleErrors": 0,
+    "desktopPageErrors": 0,
+    "mobileConsoleErrors": 0,
+    "mobilePageErrors": 0
+  },
+  "performance": {
+    "rafMeanMs": 35.42,
+    "rafP95Ms": 50
+  },
+  "result": "PASS"
+}
