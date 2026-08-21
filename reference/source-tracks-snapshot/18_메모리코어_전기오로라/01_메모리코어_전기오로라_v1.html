@@ -1,0 +1,258 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: advanced
+SCREEN: memory-core-reactor
+VERSION: v1
+BASE_FILE: independent-new-candidate
+STATUS: design-review
+SCOPE: relationship map feeding a synchronized WebGL particle memory reactor
+PRESERVE: three-layer console, five-stage loop, sparse/private states, responsive mobile
+DATE: 2026-08-05
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree Memory Core Reactor · Electric Aurora</title>
+<style>
+:root{
+  --bg:#01050a;--console:#04101a;--panel:#071824;--panel-raised:#0b2130;--deep:#12364a;
+  --cyan:#00e7ff;--blue:#4b7dff;--violet:#9b5cff;--magenta:#ff4fd8;--lime:#b8ff3d;
+  --warning:#ff5c7a;--text:#eafbff;--muted:#6f9aaf;--dim:#365a70;--line:#123b52;--line-active:#00cfff;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#000;color:var(--text);font-family:var(--sans);overflow:hidden}
+button{font:inherit;color:inherit}
+body{
+  background:
+    radial-gradient(circle at 50% 48%,#0c2130 0%,#030a11 46%,#000 78%);
+  min-height:100dvh;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.21;
+  background-image:linear-gradient(rgba(0,231,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,231,255,.022) 1px,transparent 1px);
+  background-size:46px 46px;mask-image:radial-gradient(circle at 50% 45%,#000,transparent 75%);
+}
+.reactor-stage{height:100dvh;display:grid;place-items:center;padding:12px 18px;position:relative}
+.reactor-console{
+  position:relative;width:clamp(680px,43vw,820px);height:min(1036px,97dvh);min-height:700px;
+  display:grid;grid-template-rows:52px 156px minmax(220px,.78fr) minmax(300px,1.22fr) 72px;
+  background:linear-gradient(180deg,#071722 0%,#02080e 68%,#04101a 100%);
+  border:1px solid #15516a;box-shadow:0 0 0 1px rgba(0,231,255,.09),0 24px 90px #000,0 0 60px rgba(48,117,255,.08);
+  overflow:hidden;isolation:isolate;
+}
+.reactor-console::before{content:"";position:absolute;inset:5px;border:1px solid #082c3f;pointer-events:none;z-index:20}
+.reactor-console::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:21;opacity:.18;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(0,231,255,.035) 4px)}
+.corner{position:absolute;width:18px;height:18px;border-color:rgba(0,231,255,.55);z-index:30;pointer-events:none}.corner.tl{left:1px;top:1px;border-left:2px solid;border-top:2px solid}.corner.tr{right:1px;top:1px;border-right:2px solid;border-top:2px solid}.corner.bl{left:1px;bottom:1px;border-left:2px solid;border-bottom:2px solid}.corner.br{right:1px;bottom:1px;border-right:2px solid;border-bottom:2px solid}
+.system-header{display:flex;align-items:center;justify-content:space-between;padding:0 19px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(13,39,54,.88),rgba(4,16,26,.78));z-index:2}
+.brand{display:flex;align-items:center;gap:9px;font:700 11px/1 var(--mono);letter-spacing:.12em;white-space:nowrap}.status-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 9px var(--cyan)}
+.header-stream{display:flex;gap:17px;align-items:center}.micro{display:grid;gap:3px;text-align:right}.micro span{font:600 7px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}.micro b{font:700 9px/1 var(--mono);color:#bdefff;letter-spacing:.05em}.micro b.ready{color:var(--lime)}
+.mode-badge{display:none;font:700 8px/1 var(--mono);padding:5px 7px;border:1px solid var(--violet);color:#d8c8ff;letter-spacing:.1em;background:rgba(155,92,255,.08)}
+.metrics-zone{padding:10px 14px 11px;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:7px;border-bottom:1px solid var(--line);z-index:2}
+.metric-card{position:relative;min-width:0;padding:8px 9px 6px;background:linear-gradient(155deg,rgba(11,33,48,.92),rgba(4,15,24,.94));border:1px solid rgba(18,59,82,.9);overflow:hidden;transition:border-color .2s,transform .2s,background .2s}
+.metric-card:hover,.metric-card:focus-within{border-color:rgba(0,231,255,.72);transform:translateY(-1px);background:linear-gradient(155deg,rgba(13,43,62,.96),rgba(4,15,24,.96))}
+.metric-label{font:700 7px/1.15 var(--mono);letter-spacing:.1em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:4px}.metric-value{font:700 20px/.9 var(--mono);color:var(--cyan);letter-spacing:-.06em}.metric-note{font:600 7px/1 var(--mono);color:var(--dim)}
+.metric-card[data-kind="connection"] .metric-value{color:#8baaff}.metric-card[data-kind="season"] .metric-value{color:#b695ff}.metric-card[data-kind="course"] .metric-value{color:#ff8fe8}.metric-card[data-kind="ready"] .metric-value{color:var(--lime)}.metric-card[data-kind="warning"] .metric-value{color:#ff8096}
+.spark{height:18px;width:100%;display:block;margin-top:3px}.spark path{fill:none;stroke:var(--cyan);stroke-width:1.4;vector-effect:non-scaling-stroke}.metric-card[data-kind="connection"] .spark path{stroke:var(--blue)}.metric-card[data-kind="season"] .spark path{stroke:var(--violet)}.metric-card[data-kind="course"] .spark path{stroke:var(--magenta)}.metric-card[data-kind="warning"] .spark path{stroke:var(--warning)}
+.zone{position:relative;border-bottom:1px solid var(--line);min-height:0;z-index:2}.zone-header{height:33px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(18,59,82,.72);background:linear-gradient(90deg,rgba(8,28,42,.84),rgba(2,8,14,.45))}.zone-title{font:700 8px/1 var(--mono);letter-spacing:.13em;color:#a9d9e8}.zone-state{display:flex;align-items:center;gap:6px;font:700 7px/1 var(--mono);letter-spacing:.12em;color:var(--cyan)}.zone-state::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 7px currentColor}.zone-state.ready{color:var(--lime)}
+.relationship-zone{display:grid;grid-template-rows:33px 1fr 28px}.map-wrap{position:relative;min-height:0;overflow:hidden;background:radial-gradient(circle at 50% 48%,rgba(14,53,74,.32),rgba(2,8,14,.86) 72%)}
+#relationshipMap{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.map-wrap.dragging #relationshipMap{cursor:grabbing}
+.map-overlay{position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,231,255,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(0,231,255,.026) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(#000,transparent 92%)}
+.map-tooltip{position:absolute;z-index:5;display:none;pointer-events:none;max-width:184px;padding:7px 8px;background:rgba(2,11,18,.94);border:1px solid rgba(0,231,255,.62);box-shadow:0 8px 24px #000;font:600 8px/1.35 var(--mono);color:#dffaff}.map-tooltip strong{display:block;color:var(--cyan);margin-bottom:3px}.map-tooltip.season strong{color:#c6aaff}.map-tooltip.course strong{color:#ff8fe8}.map-tooltip.gap strong{color:#ff8096}
+.map-metrics{display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#030b12;font:600 7px/1 var(--mono);letter-spacing:.08em;color:var(--muted)}.map-legend{display:flex;gap:12px}.legend-item{display:flex;gap:5px;align-items:center}.legend-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan)}.legend-dot.season{background:var(--violet)}.legend-dot.course{background:var(--magenta)}.legend-dot.gap{background:var(--warning)}
+.reactor-zone{display:grid;grid-template-rows:33px minmax(0,1fr) 30px;position:relative}.reactor-wrap{position:relative;min-height:0;overflow:hidden;background:radial-gradient(ellipse at 50% 52%,rgba(8,39,58,.52),rgba(1,6,11,.98) 68%)}
+#particleReactor{width:100%;height:100%;display:block;touch-action:none}.reactor-wrap::before{content:"";position:absolute;inset:9% 16%;border:1px solid rgba(0,231,255,.08);border-radius:50%;box-shadow:0 0 0 24px rgba(75,125,255,.025),0 0 0 58px rgba(0,231,255,.018);pointer-events:none}.reactor-wrap::after{content:"";position:absolute;left:9%;right:9%;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,231,255,.18),transparent);box-shadow:0 0 10px rgba(0,231,255,.18);pointer-events:none}
+.stage-tabs{display:flex;gap:3px}.stage-tab{width:22px;height:17px;border:1px solid var(--line);background:#06131d;color:var(--muted);font:700 7px/1 var(--mono);cursor:pointer;padding:0}.stage-tab:hover{border-color:var(--cyan);color:var(--text)}.stage-tab.active{border-color:var(--cyan);color:var(--cyan);box-shadow:inset 0 0 9px rgba(0,231,255,.08)}
+.reactor-hud{position:absolute;inset:9px 12px auto;display:flex;justify-content:space-between;pointer-events:none;font:600 7px/1 var(--mono);letter-spacing:.08em;color:var(--dim)}.reactor-hud b{color:#a9d9e8}.phase-label{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);text-align:center;pointer-events:none}.phase-label strong{display:block;font:700 clamp(10px,1.4vw,14px)/1 var(--mono);letter-spacing:.17em;color:#dffaff;text-shadow:0 0 12px rgba(0,231,255,.26)}.phase-label span{display:block;margin-top:5px;font:600 7px/1 var(--mono);letter-spacing:.11em;color:var(--muted)}
+.reactor-metrics{display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#030b12;font:600 7px/1 var(--mono);letter-spacing:.08em;color:var(--muted)}.reactor-metrics b{color:#bdefff}.reactor-metrics .ready{color:var(--lime)}
+.engine-footer{display:grid;grid-template-columns:1fr 1.6fr 1fr;align-items:center;gap:12px;padding:8px 14px;background:linear-gradient(180deg,#06141e,#02080e);z-index:2}.engine-status{display:grid;gap:4px;font:600 7px/1 var(--mono);letter-spacing:.1em;color:var(--muted)}.engine-status b{font-size:9px;color:var(--cyan)}.engine-status b.ready{color:var(--lime)}
+.command{display:flex;height:38px;border:1px solid rgba(18,59,82,.95);background:#030c13;min-width:0}.command-label{display:flex;align-items:center;flex:1;padding:0 10px;font:600 8px/1 var(--mono);color:#7ea7ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.activate{min-width:116px;border:0;border-left:1px solid var(--line-active);background:linear-gradient(180deg,#0b3446,#071d2b);font:800 8px/1 var(--mono);letter-spacing:.12em;color:var(--cyan);cursor:pointer;transition:.2s}.activate:hover{background:linear-gradient(180deg,#10506a,#092839);box-shadow:inset 0 0 20px rgba(0,231,255,.08)}.activate.ready{color:var(--lime);border-left-color:rgba(184,255,61,.55)}
+.footer-right{text-align:right;font:600 7px/1.55 var(--mono);letter-spacing:.08em;color:var(--muted)}.footer-right b{color:#bdefff}.footer-right b.ready{color:var(--lime)}
+.sparse-message{display:none;position:absolute;inset:auto 50% 42px auto;transform:translateX(50%);text-align:center;width:75%;padding:10px;border:1px solid rgba(155,92,255,.35);background:rgba(3,11,18,.84);font:600 8px/1.5 var(--mono);color:var(--muted);z-index:4}.sparse-message strong{display:block;color:#cfbbff;letter-spacing:.12em;margin-bottom:3px}.is-sparse .sparse-message{display:block}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);padding:9px 12px;background:#061722;border:1px solid var(--cyan);font:700 8px/1 var(--mono);letter-spacing:.08em;color:#dffaff;opacity:0;pointer-events:none;transition:.24s;z-index:100;box-shadow:0 12px 38px #000}.toast.show{opacity:1;transform:translate(-50%,0)}
+.webgl-error{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;font:700 10px/1.5 var(--mono);color:#ff9cab;background:#02080e;z-index:10}.webgl-error.show{display:grid}
+@media(max-width:900px){.reactor-console{width:min(720px,97vw);grid-template-rows:50px 146px minmax(210px,.78fr) minmax(280px,1.22fr) 68px}.metric-value{font-size:18px}.header-stream{gap:11px}.micro:nth-child(3){display:none}}
+@media(max-width:560px){
+ html,body{height:auto;min-height:100%;overflow:auto;background:#01050a}.reactor-stage{display:block;height:auto;min-height:100dvh;padding:0}.reactor-console{width:100%;height:auto;min-height:100dvh;display:block;border-left:0;border-right:0;overflow:visible;box-shadow:none}.reactor-console::before{display:none}
+ .system-header{height:56px;position:sticky;top:0;z-index:40;padding:0 12px;background:rgba(4,16,26,.96);backdrop-filter:blur(8px)}.brand{font-size:9px}.header-stream{gap:8px}.micro{display:none}.micro:first-of-type{display:grid}.mode-badge{display:block}
+ .metrics-zone{height:128px;display:flex;overflow-x:auto;overscroll-behavior-x:contain;padding:10px 12px;gap:8px;scroll-snap-type:x mandatory}.metric-card{flex:0 0 144px;scroll-snap-align:start;padding:10px}.metric-value{font-size:22px}.metric-label{font-size:7px}.spark{height:24px}
+ .relationship-zone{height:300px;display:grid}.reactor-zone{height:420px;display:grid}.zone-header{padding:0 12px}.map-metrics,.reactor-metrics{padding:0 12px}.map-legend{gap:8px}.legend-item span:last-child{display:none}.stage-tab{width:26px;height:20px}
+ .reactor-wrap::before{inset:10% 4%}.phase-label{bottom:18px;width:90%}.phase-label strong{font-size:11px}
+ .engine-footer{height:132px;display:grid;grid-template-columns:1fr 1fr;padding:11px 12px;gap:9px}.command{grid-column:1/-1;grid-row:2;height:44px}.activate{min-width:122px}.footer-right{font-size:7px}.engine-status{font-size:7px}
+ .toast{bottom:14px;width:calc(100% - 24px);text-align:center}
+}
+@media(prefers-reduced-motion:reduce){.reactor-console::after{display:none}.metric-card{transition:none}.status-dot{box-shadow:none}}
+</style>
+</head>
+<body>
+<main class="reactor-stage">
+  <section class="reactor-console" id="console" aria-label="LoveTree Memory Core Reactor">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <header class="system-header">
+      <div class="brand"><span class="status-dot"></span><span>LOVETREE × MEMORY CORE</span></div>
+      <div class="header-stream">
+        <div class="mode-badge" id="modeBadge">LIVE FIELD</div>
+        <div class="micro"><span>TREE BUFFER</span><b class="ready" id="syncValue">SYNCED</b></div>
+        <div class="micro"><span>REACTOR LOAD</span><b id="loadValue">74%</b></div>
+        <div class="micro"><span>FIELD LATENCY</span><b id="latencyValue">2.4ms</b></div>
+        <div class="micro"><span>SYSTEM CLOCK</span><b id="clock">08:13:09</b></div>
+      </div>
+    </header>
+
+    <section class="metrics-zone" id="metricsZone" aria-label="Memory processing metrics"></section>
+
+    <section class="zone relationship-zone">
+      <header class="zone-header">
+        <div class="zone-title">// RELATIONSHIP MAP</div>
+        <div class="zone-state" id="mapState">LIVE MAPPING</div>
+      </header>
+      <div class="map-wrap" id="mapWrap">
+        <canvas id="relationshipMap" aria-label="Interactive LoveTree relationship map"></canvas>
+        <div class="map-overlay"></div>
+        <div class="map-tooltip" id="mapTooltip"></div>
+      </div>
+      <div class="map-metrics">
+        <div class="map-legend"><div class="legend-item"><i class="legend-dot"></i><span>MOMENT</span></div><div class="legend-item"><i class="legend-dot season"></i><span>SEASON</span></div><div class="legend-item"><i class="legend-dot course"></i><span>COURSE</span></div><div class="legend-item"><i class="legend-dot gap"></i><span>GAP</span></div></div>
+        <div><span id="visibleNodes">0</span> NODES · <span id="visibleEdges">0</span> LINKS</div>
+      </div>
+    </section>
+
+    <section class="zone reactor-zone">
+      <header class="zone-header">
+        <div class="zone-title">// PARTICLE MEMORY REACTOR</div>
+        <div style="display:flex;align-items:center;gap:10px"><div class="stage-tabs" id="stageTabs"></div><div class="zone-state" id="coreState">CORE ACTIVE</div></div>
+      </header>
+      <div class="reactor-wrap" id="reactorWrap">
+        <canvas id="particleReactor" aria-label="WebGL particle memory reactor"></canvas>
+        <div class="reactor-hud"><span>REACTOR PARTICLES <b id="particleCount">0</b></span><span>FIELD VECTOR <b id="fieldVector">+0.42</b></span></div>
+        <div class="phase-label"><strong id="phaseTitle">INGESTING MOMENTS</strong><span id="phaseDetail">OUTER MEMORY STREAMS ENTERING FIELD</span></div>
+        <div class="sparse-message"><strong>CORE FORMATION INCOMPLETE</strong>Add more Moments and Connections<br/>to build a denser memory field.</div>
+        <div class="webgl-error" id="webglError">WEBGL INITIALIZATION FAILED<br/>The relationship map remains available.</div>
+      </div>
+      <div class="reactor-metrics"><span>ENERGY INPUT <b id="energyValue">0.18</b></span><span>CORE DENSITY <b id="densityValue">0.18</b></span><span>FIELD STABILITY <b id="stabilityValue">24%</b></span></div>
+    </section>
+
+    <footer class="engine-footer">
+      <div class="engine-status"><span>MEMORY ENGINE</span><b id="engineConnection">CONNECTED</b><span id="stageCounter">STAGE 01 / 05</span></div>
+      <div class="command"><div class="command-label" id="commandLabel">Map and activate my LoveTree</div><button class="activate" id="activateBtn" type="button">ACTIVATE CORE</button></div>
+      <div class="footer-right"><div>CORE DENSITY <b id="footerDensity">0.18</b></div><div>FIELD STABILITY <b id="footerStability">24%</b></div></div>
+    </footer>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(() => {
+'use strict';
+const COPY={
+  stages:[
+    {title:'INGESTING MOMENTS',detail:'OUTER MEMORY STREAMS ENTERING FIELD',command:'PROCESSING',verb:'Moment ingest'},
+    {title:'MAPPING CONNECTIONS',detail:'CAUSAL PATHS RESOLVING ACROSS SEASONS',command:'PROCESSING',verb:'Connection mapping'},
+    {title:'FORMING SEASONS',detail:'MEMORY CLUSTERS CONVERGING INTO CHAPTERS',command:'PROCESSING',verb:'Season clustering'},
+    {title:'ACTIVATING MEMORY CORE',detail:'COURSE PATHS TRIGGERING REACTOR EXPANSION',command:'PROCESSING',verb:'Core reaction'},
+    {title:'STABILIZING MEMORY FIELD',detail:'FIELD GEOMETRY LOCKING INTO LONG-TERM FORM',command:'READY',verb:'Field stabilization'}
+  ],
+  privateLabel:'PRIVATE TREE · LOCAL MEMORY FIELD',sparseLabel:'SPARSE FIELD'
+};
+const query=new URLSearchParams(location.search);const sparse=query.get('sparse')==='1';const privateMode=query.get('private')==='1';
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const treeData=sparse?{person:'Felix',moments:8,connections:7,seasons:1,courses:0,revisits:21,sourceGaps:1}:{person:'Felix',moments:324,connections:487,seasons:6,courses:privateMode?0:3,revisits:1248,sourceGaps:7};
+const consoleEl=document.getElementById('console');if(sparse)consoleEl.classList.add('is-sparse');
+const modeBadge=document.getElementById('modeBadge');modeBadge.textContent=privateMode?'PRIVATE FIELD':sparse?'SPARSE FIELD':'LIVE FIELD';
+if(privateMode){document.getElementById('syncValue').textContent='LOCAL';document.getElementById('mapState').textContent='LOCAL MAPPING';document.getElementById('commandLabel').textContent='Activate private local memory field';}
+
+const metricDefs=[
+  ['MOMENTS INGESTED','moments','moment'],['CONNECTIONS MAPPED','connections','connection'],['SEASONS DETECTED','seasons','season'],['COURSE PATHS','courses','course'],
+  ['REVISIT SIGNALS','revisits','connection'],['SOURCE GAPS','sourceGaps','warning'],['CORE DENSITY','density','moment'],['FIELD STABILITY','stability','ready']
+];
+const metricsZone=document.getElementById('metricsZone');
+const metricEls={};
+metricDefs.forEach((d,i)=>{const c=document.createElement('article');c.className='metric-card';c.dataset.kind=d[2];c.tabIndex=0;c.innerHTML=`<div class="metric-label">${d[0]}</div><div class="metric-row"><div class="metric-value" id="metric-${d[1]}">0</div><div class="metric-note" id="note-${d[1]}">STANDBY</div></div><svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><path id="spark-${d[1]}" d="M0 16L12 15L24 17L36 13L48 14L60 10L72 12L84 7L100 8"/></svg>`;metricsZone.appendChild(c);metricEls[d[1]]=c.querySelector('.metric-value');c.addEventListener('mouseenter',()=>highlightMetric(d[1]));c.addEventListener('focus',()=>highlightMetric(d[1]));});
+function highlightMetric(key){selectedType=key==='seasons'?2:key==='courses'?3:key==='sourceGaps'?4:key==='connections'?1:0;showToast(`${key.replace(/([A-Z])/g,' $1').toUpperCase()} CHANNEL FOCUSED`);setTimeout(()=>selectedType=-1,900)}
+
+const stageTabs=document.getElementById('stageTabs');for(let i=0;i<5;i++){const b=document.createElement('button');b.className='stage-tab';b.textContent=String(i+1).padStart(2,'0');b.title=COPY.stages[i].title;b.addEventListener('click',()=>setStage(i,true));stageTabs.appendChild(b)}
+let currentStage=0,stageStart=performance.now(),paused=false,manualStage=false,selectedType=-1;const durations=[3000,3300,3300,4000,3800];
+function setStage(i,manual=false){currentStage=(i+5)%5;stageStart=performance.now();manualStage=manual;updateStageUI();if(manual)showToast(`STAGE ${String(i+1).padStart(2,'0')} · ${COPY.stages[i].verb.toUpperCase()}`)}
+function updateStageUI(){[...stageTabs.children].forEach((b,i)=>b.classList.toggle('active',i===currentStage));const s=COPY.stages[currentStage];document.getElementById('phaseTitle').textContent=s.title;document.getElementById('phaseDetail').textContent=s.detail;document.getElementById('stageCounter').textContent=`STAGE ${String(currentStage+1).padStart(2,'0')} / 05`;
+ const ready=currentStage===4;document.getElementById('coreState').textContent=ready?'CORE READY':'CORE ACTIVE';document.getElementById('coreState').classList.toggle('ready',ready);document.getElementById('mapState').textContent=currentStage===0?'INGEST STREAM':currentStage===1?'LIVE MAPPING':currentStage===2?'SEASON FORMATION':currentStage===3?'COURSE REACTION':'FIELD LOCKED';document.getElementById('mapState').classList.toggle('ready',ready);const btn=document.getElementById('activateBtn');btn.textContent=ready?'OPEN CORE':`PROCESSING ${14-currentStage*3}`;btn.classList.toggle('ready',ready);document.getElementById('engineConnection').className=ready?'ready':'';document.getElementById('engineConnection').textContent=ready?'READY':'CONNECTED';}
+updateStageUI();
+
+const toast=document.getElementById('toast');let toastTimer;function showToast(msg){clearTimeout(toastTimer);toast.textContent=msg;toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),1600)}
+
+// Relationship map
+const mapCanvas=document.getElementById('relationshipMap'),mapCtx=mapCanvas.getContext('2d');const mapWrap=document.getElementById('mapWrap'),tooltip=document.getElementById('mapTooltip');
+let mapW=1,mapH=1,mapDpr=1,mapScale=1,mapOffset={x:0,y:0},dragging=false,lastPointer={x:0,y:0},hoverNode=null,focusNode=null;
+const rand=(()=>{let s=7421;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296)})();
+const nodes=[],edges=[],signals=[];
+function buildGraph(){nodes.length=0;edges.length=0;signals.length=0;nodes.push({id:'root',type:'root',label:treeData.person+' LoveTree',x:0,y:0,r:10,weight:1});
+ const sc=treeData.seasons;for(let s=0;s<sc;s++){const a=-Math.PI*.92+(s/(Math.max(1,sc-1)))*Math.PI*1.84;const rr=sparse?78:95+(s%2)*20;nodes.push({id:'s'+s,type:'season',label:`Season ${String(s+1).padStart(2,'0')}`,x:Math.cos(a)*rr,y:Math.sin(a)*rr*.55,r:7,season:s});edges.push({a:'root',b:'s'+s,type:'season'});}
+ const mc=sparse?8:64;for(let i=0;i<mc;i++){const s=i%Math.max(1,sc);const sn=nodes.find(n=>n.id==='s'+s);const ring=1+Math.floor(i/Math.max(1,sc));const a=(i*.93)+(s*.7);const radius=18+ring*8;const n={id:'m'+i,type:(i%17===0?'gap':'moment'),label:`Moment ${String(i+1).padStart(3,'0')}`,x:sn.x+Math.cos(a)*radius,y:sn.y+Math.sin(a)*radius*.62,r:i%11===0?4.1:2.7,season:s};nodes.push(n);edges.push({a:sn.id,b:n.id,type:'connection'});if(i>sc&&i%3===0)edges.push({a:'m'+(i-sc),b:n.id,type:'connection'});}
+ if(!privateMode&&!sparse){for(let c=0;c<3;c++){const path=[];for(let k=0;k<6;k++)path.push('m'+((c*13+k*7)%mc));for(let k=0;k<path.length-1;k++)edges.push({a:path[k],b:path[k+1],type:'course',course:c});}}
+ for(let i=0;i<18;i++){const e=edges[Math.floor(rand()*edges.length)];signals.push({edge:e,phase:rand(),speed:.12+rand()*.24})}
+}
+buildGraph();
+function resizeMap(){const r=mapCanvas.getBoundingClientRect();mapDpr=Math.min(devicePixelRatio||1,2);mapW=Math.max(1,r.width);mapH=Math.max(1,r.height);mapCanvas.width=Math.round(mapW*mapDpr);mapCanvas.height=Math.round(mapH*mapDpr);mapCtx.setTransform(mapDpr,0,0,mapDpr,0,0)}
+function worldToScreen(n){return{x:mapW/2+mapOffset.x+n.x*mapScale,y:mapH/2+mapOffset.y+n.y*mapScale}}
+function activeFraction(stage,p){if(stage===0)return .12+p*.88;if(stage===1)return 1;return 1}
+function drawMap(now,phase){mapCtx.clearRect(0,0,mapW,mapH);const visibleFrac=activeFraction(currentStage,phase),visibleCount=Math.max(1,Math.floor(nodes.length*visibleFrac));
+ mapCtx.save();mapCtx.globalCompositeOperation='lighter';
+ let edgeCount=0;for(const e of edges){const a=nodes.find(n=>n.id===e.a),b=nodes.find(n=>n.id===e.b);const ai=nodes.indexOf(a),bi=nodes.indexOf(b);if(ai>=visibleCount||bi>=visibleCount)continue;if(e.type==='course'&&currentStage<3)continue;const A=worldToScreen(a),B=worldToScreen(b);const focus=focusNode&&(a===focusNode||b===focusNode);mapCtx.strokeStyle=e.type==='course'?'rgba(255,79,216,.52)':e.type==='season'?'rgba(155,92,255,.25)':focus?'rgba(0,231,255,.72)':'rgba(75,125,255,.18)';mapCtx.lineWidth=(e.type==='course'?1.4:focus?1.2:.7)*mapScale;mapCtx.beginPath();mapCtx.moveTo(A.x,A.y);mapCtx.lineTo(B.x,B.y);mapCtx.stroke();edgeCount++;}
+ for(const s of signals){if(currentStage===0&&phase<.18)continue;const e=s.edge;if(e.type==='course'&&currentStage<3)continue;const a=nodes.find(n=>n.id===e.a),b=nodes.find(n=>n.id===e.b);if(!a||!b)continue;const A=worldToScreen(a),B=worldToScreen(b);const t=(s.phase+now*.0001*s.speed*(currentStage+1))%1;const x=A.x+(B.x-A.x)*t,y=A.y+(B.y-A.y)*t;mapCtx.fillStyle=e.type==='course'?'#ff4fd8':'#00e7ff';mapCtx.shadowColor=mapCtx.fillStyle;mapCtx.shadowBlur=7;mapCtx.beginPath();mapCtx.arc(x,y,1.6,0,Math.PI*2);mapCtx.fill();}
+ for(let i=0;i<visibleCount;i++){const n=nodes[i],p=worldToScreen(n);const focused=n===focusNode,hovered=n===hoverNode;let color=n.type==='root'?'#c8f9ff':n.type==='season'?'#9b5cff':n.type==='gap'?'#ff5c7a':'#00d8ff';if(selectedType===2&&n.type!=='season')color='rgba(35,73,88,.55)';if(selectedType===4&&n.type!=='gap')color='rgba(35,73,88,.55)';mapCtx.fillStyle=color;mapCtx.shadowColor=color;mapCtx.shadowBlur=focused?16:hovered?11:n.type==='root'?10:4;mapCtx.beginPath();mapCtx.arc(p.x,p.y,n.r*mapScale*(focused?1.45:hovered?1.22:1),0,Math.PI*2);mapCtx.fill();if(n.type==='root'||n.type==='season'||focused){mapCtx.strokeStyle='rgba(234,251,255,.52)';mapCtx.lineWidth=.8;mapCtx.beginPath();mapCtx.arc(p.x,p.y,(n.r+3)*mapScale,0,Math.PI*2);mapCtx.stroke();}}
+ mapCtx.restore();document.getElementById('visibleNodes').textContent=visibleCount;document.getElementById('visibleEdges').textContent=edgeCount;}
+function pickNode(clientX,clientY){const r=mapCanvas.getBoundingClientRect(),x=clientX-r.left,y=clientY-r.top;let best=null,dist=14;for(const n of nodes){const p=worldToScreen(n),d=Math.hypot(x-p.x,y-p.y);if(d<dist){best=n;dist=d}}return{node:best,x,y}}
+mapCanvas.addEventListener('pointerdown',e=>{const hit=pickNode(e.clientX,e.clientY);if(hit.node){focusNode=hit.node;selectedType=hit.node.type==='season'?2:hit.node.type==='gap'?4:0;showToast(`${hit.node.label.toUpperCase()} · PATH FOCUSED`);setTimeout(()=>selectedType=-1,1200)}else{dragging=true;mapWrap.classList.add('dragging');lastPointer={x:e.clientX,y:e.clientY};mapCanvas.setPointerCapture(e.pointerId)}});
+mapCanvas.addEventListener('pointermove',e=>{if(dragging){mapOffset.x+=e.clientX-lastPointer.x;mapOffset.y+=e.clientY-lastPointer.y;lastPointer={x:e.clientX,y:e.clientY};return}const hit=pickNode(e.clientX,e.clientY);hoverNode=hit.node;if(hit.node){tooltip.style.display='block';tooltip.style.left=Math.min(mapW-190,hit.x+12)+'px';tooltip.style.top=Math.max(4,hit.y-42)+'px';tooltip.className='map-tooltip '+hit.node.type;tooltip.innerHTML=`<strong>${hit.node.label}</strong>${hit.node.type.toUpperCase()} · ${hit.node.type==='season'?'CLUSTER CENTER':hit.node.type==='gap'?'SOURCE RECOVERY REQUIRED':'RELATIONSHIP SIGNAL'}`;}else tooltip.style.display='none';});
+mapCanvas.addEventListener('pointerup',e=>{dragging=false;mapWrap.classList.remove('dragging');try{mapCanvas.releasePointerCapture(e.pointerId)}catch(_){}});mapCanvas.addEventListener('pointerleave',()=>{hoverNode=null;tooltip.style.display='none'});mapCanvas.addEventListener('wheel',e=>{e.preventDefault();const delta=Math.exp(-e.deltaY*.001);mapScale=Math.max(.62,Math.min(2.4,mapScale*delta))},{passive:false});
+
+// WebGL particle reactor
+const reactorCanvas=document.getElementById('particleReactor');let gl,program,particleN=0,particleBuffer,colorBuffer,auxBuffer;let uTime,uStage,uPhase,uAspect,uPointer,uPointerActive,uSelected;
+const pointer={x:0,y:0,active:0};
+function initGL(){gl=reactorCanvas.getContext('webgl',{alpha:true,antialias:false,premultipliedAlpha:false})||reactorCanvas.getContext('experimental-webgl');if(!gl){document.getElementById('webglError').classList.add('show');return false}
+ const vs=`attribute vec3 aSeed;attribute vec3 aAux;attribute float aType;uniform float uTime;uniform float uStage;uniform float uPhase;uniform float uAspect;uniform vec2 uPointer;uniform float uPointerActive;uniform float uSelected;varying vec3 vColor;varying float vAlpha;
+ float hash(float n){return fract(sin(n)*43758.5453123);}vec3 palette(float t){if(t<.67)return vec3(0.0,.82,1.0);if(t<.85)return vec3(.29,.49,1.0);if(t<.96)return vec3(.61,.36,1.0);return vec3(1.0,.31,.85);} 
+ void main(){float id=aSeed.x;float th=aSeed.y*6.2831853;float ph=acos(2.0*aSeed.z-1.0);float rr=.16+.62*pow(aAux.x,.65);vec3 sphere=vec3(sin(ph)*cos(th),cos(ph),sin(ph)*sin(th))*rr;float p=clamp(uPhase,0.0,1.0);
+ float outer=1.24+1.35*aAux.y;vec3 stream=vec3(cos(th+uTime*.13)*outer,(aAux.z-.5)*1.9,sin(th+uTime*.13)*outer);vec3 ingestCore=sphere*.38;
+ float rad=.22+.58*aAux.x;float ang=th+uTime*(.25+.55*aAux.y)+rad*5.0;vec3 mapPos=vec3(cos(ang)*rad,(aAux.z-.5)*1.18,sin(ang)*rad*.75)+sphere*.16;
+ float cluster=floor(aType*5.999);float ca=cluster/6.0*6.2831853;vec3 clusterCenter=vec3(cos(ca)*.34,sin(ca)*.18,sin(ca)*.13);vec3 clusterPos=clusterCenter+sphere*.30;clusterPos.y*=.72;
+ float ringR=.43+.16*sin(th*3.0+uTime*.25);vec3 ring=vec3(cos(th)*ringR,(aAux.z-.5)*.23,sin(th)*ringR*.76);vec3 stablePos=mix(sphere*.72,ring,.48)+sphere*.08*sin(uTime*.35+th*2.0);
+ vec3 pos=stablePos;
+ if(uStage<.5){float t0=smoothstep(0.0,.17,p);float t1=smoothstep(.17,1.0,p);pos=mix(stablePos,stream,t0);pos=mix(pos,ingestCore,t1);}
+ else if(uStage<1.5){pos=mix(ingestCore,mapPos,smoothstep(0.0,1.0,p));}
+ else if(uStage<2.5){pos=mix(mapPos,clusterPos,smoothstep(0.0,1.0,p));}
+ else if(uStage<3.5){float wave=sin(p*3.1415926);float speed=.42+1.6*aAux.y;vec3 dir=normalize(clusterPos+vec3((aAux.z-.5)*.25,(aAux.x-.5)*.18,(aAux.y-.5)*.22));float swirl=sin(uTime*.9+th*4.0)*.13;pos=clusterPos+dir*wave*speed+vec3(-dir.y,dir.x,0.0)*swirl*wave;}
+ else {pos=mix(clusterPos,stablePos,smoothstep(0.0,1.0,p));}
+ pos.x/=uAspect;vec2 pp=pos.xy;vec2 delta=pp-uPointer;float influence=(1.0-smoothstep(.0,.34,length(delta)))*uPointerActive;pp+=normalize(delta+vec2(.0001))*influence*.045;pos.xy=pp;
+ gl_Position=vec4(pos.xy,pos.z*.18,1.0);float center=1.0-clamp(length(pos.xy)*1.3,0.0,1.0);float size=(1.2+3.1*pow(aAux.z,2.0))*(1.0+.75*center);if(uStage>2.5&&uStage<3.5)size*=1.2;gl_PointSize=size;
+ vec3 c=palette(aType);if(uSelected>-.5){float target=abs(aType-uSelected/5.0);c=mix(c,vec3(.10,.20,.25),smoothstep(.05,.17,target)*.74);}vColor=mix(c,vec3(.78,.98,1.0),center*.42);vAlpha=.22+.62*center;}`;
+ const fs=`precision mediump float;varying vec3 vColor;varying float vAlpha;void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.02,d)*vAlpha;if(a<.015)discard;gl_FragColor=vec4(vColor,a);}`;
+ function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}
+ try{program=gl.createProgram();gl.attachShader(program,sh(gl.VERTEX_SHADER,vs));gl.attachShader(program,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program));}catch(err){document.getElementById('webglError').textContent='WEBGL SHADER ERROR\n'+err.message;document.getElementById('webglError').classList.add('show');return false}
+ gl.useProgram(program);uTime=gl.getUniformLocation(program,'uTime');uStage=gl.getUniformLocation(program,'uStage');uPhase=gl.getUniformLocation(program,'uPhase');uAspect=gl.getUniformLocation(program,'uAspect');uPointer=gl.getUniformLocation(program,'uPointer');uPointerActive=gl.getUniformLocation(program,'uPointerActive');uSelected=gl.getUniformLocation(program,'uSelected');buildParticles();gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);return true;}
+function buildParticles(){const mobile=innerWidth<=560;particleN=sparse?(mobile?1300:1800):(mobile?3200:7600);const seeds=new Float32Array(particleN*3),aux=new Float32Array(particleN*3),types=new Float32Array(particleN);let rs=9173;function pr(){rs=(rs*16807)%2147483647;return(rs-1)/2147483646}for(let i=0;i<particleN;i++){seeds[i*3]=i/particleN;seeds[i*3+1]=pr();seeds[i*3+2]=pr();aux[i*3]=pr();aux[i*3+1]=pr();aux[i*3+2]=pr();const q=pr();types[i]=q<.72?q*.75:q<.90?.72+pr()*.09:q<.975?.86+pr()*.07:.97;}
+ function bind(name,size,data){const loc=gl.getAttribLocation(program,name),buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,0,0);return buf}particleBuffer=bind('aSeed',3,seeds);auxBuffer=bind('aAux',3,aux);colorBuffer=bind('aType',1,types);document.getElementById('particleCount').textContent=particleN.toLocaleString();}
+function resizeGL(){if(!gl)return;const r=reactorCanvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,innerWidth<=560?1.5:2);const w=Math.max(1,Math.round(r.width*dpr)),h=Math.max(1,Math.round(r.height*dpr));if(reactorCanvas.width!==w||reactorCanvas.height!==h){reactorCanvas.width=w;reactorCanvas.height=h;gl.viewport(0,0,w,h)}}
+reactorCanvas.addEventListener('pointermove',e=>{const r=reactorCanvas.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-(((e.clientY-r.top)/r.height)*2-1);pointer.active=1});reactorCanvas.addEventListener('pointerleave',()=>pointer.active=0);reactorCanvas.addEventListener('pointerdown',()=>{pointer.active=1;showToast('REACTOR FIELD INFLUENCE · 4.1%')});
+const glReady=initGL();
+
+function stagePhase(now){return Math.max(0,Math.min(1,(now-stageStart)/durations[currentStage]))}
+function updateMetrics(phase){const st=currentStage;const ingest=st===0?phase:1,map=st<1?0:st===1?phase:1,conv=st<2?0:st===2?phase:1,react=st<3?0:st===3?phase:1,stab=st<4?0:phase;
+ const vals={moments:Math.round(treeData.moments*(.08+.92*ingest)),connections:Math.round(treeData.connections*map),seasons:Math.round(treeData.seasons*conv),courses:Math.round(treeData.courses*react),revisits:Math.round(treeData.revisits*(.18+.82*Math.max(map,conv))),sourceGaps:Math.round(treeData.sourceGaps*Math.max(.2,map)),density:(.16+.58*Math.max(conv,react)+.12*stab),stability:Math.round(22+38*conv+32*stab)};
+ metricEls.moments.textContent=vals.moments.toLocaleString();metricEls.connections.textContent=vals.connections.toLocaleString();metricEls.seasons.textContent=vals.seasons;metricEls.courses.textContent=vals.courses;metricEls.revisits.textContent=vals.revisits.toLocaleString();metricEls.sourceGaps.textContent=vals.sourceGaps;metricEls.density.textContent=vals.density.toFixed(2);metricEls.stability.textContent=vals.stability+'%';
+ const stageNotes=['STREAM','RESOLVING','CLUSTER','REACTING','LOCKED'];for(const [k] of metricDefs){};document.getElementById('note-moments').textContent=stageNotes[st];document.getElementById('note-connections').textContent=st>=1?'CAUSAL':'QUEUED';document.getElementById('note-seasons').textContent=st>=2?'CLUSTERED':'SCANNING';document.getElementById('note-courses').textContent=privateMode?'PRIVATE':st>=3?'ACTIVE':'IDLE';document.getElementById('note-revisits').textContent='SIGNAL';document.getElementById('note-sourceGaps').textContent=vals.sourceGaps?'RECOVER':'CLEAR';document.getElementById('note-density').textContent='FIELD';document.getElementById('note-stability').textContent=st===4?'READY':'RISING';
+ const energy=(.12+.15*st+.20*(st===3?Math.sin(phase*Math.PI):phase)).toFixed(2);document.getElementById('energyValue').textContent=energy;document.getElementById('densityValue').textContent=vals.density.toFixed(2);document.getElementById('footerDensity').textContent=vals.density.toFixed(2);document.getElementById('stabilityValue').textContent=vals.stability+'%';document.getElementById('footerStability').textContent=vals.stability+'%';document.getElementById('footerStability').className=st===4?'ready':'';document.getElementById('fieldVector').textContent=(st===3?'+1.28':st===4?'+0.18':'+0.'+(18+st*13));document.getElementById('loadValue').textContent=Math.round(38+st*12+phase*9)+'%';document.getElementById('latencyValue').textContent=(3.8-st*.35-phase*.2).toFixed(1)+'ms';}
+function renderGL(now,phase){if(!glReady)return;resizeGL();gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform1f(uTime,now*.001);gl.uniform1f(uStage,currentStage);gl.uniform1f(uPhase,phase);gl.uniform1f(uAspect,reactorCanvas.width/reactorCanvas.height);gl.uniform2f(uPointer,pointer.x,pointer.y);gl.uniform1f(uPointerActive,pointer.active);gl.uniform1f(uSelected,selectedType);gl.drawArrays(gl.POINTS,0,particleN)}
+let last=performance.now();function loop(now){if(document.hidden){requestAnimationFrame(loop);return}const phase=stagePhase(now);if(!paused&&!manualStage&&!reduced&&phase>=1){currentStage=(currentStage+1)%5;stageStart=now;updateStageUI()}else if(manualStage&&phase>=1)manualStage=false;updateMetrics(Math.min(1,phase));drawMap(now,Math.min(1,phase));renderGL(now,Math.min(1,phase));last=now;requestAnimationFrame(loop)}requestAnimationFrame(loop);
+
+function resetAll(){currentStage=0;stageStart=performance.now();manualStage=false;paused=false;focusNode=null;mapScale=1;mapOffset={x:0,y:0};updateStageUI();showToast('MEMORY CORE SEQUENCE RESTARTED')}
+document.getElementById('activateBtn').addEventListener('click',()=>{if(currentStage===4){showToast('MEMORY CORE READY · FIELD OPENED')}else resetAll()});
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();paused=!paused;if(!paused)stageStart=performance.now()-Math.min(durations[currentStage],performance.now()-stageStart);showToast(paused?'PROCESS PAUSED':'PROCESS RESUMED')}else if(e.key.toLowerCase()==='r')resetAll();else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.();}});
+addEventListener('resize',()=>{resizeMap();resizeGL()});resizeMap();
+setInterval(()=>{const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('en-GB',{hour12:false})},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)stageStart=performance.now()});
+})();
+</script>
+</body>
+</html>

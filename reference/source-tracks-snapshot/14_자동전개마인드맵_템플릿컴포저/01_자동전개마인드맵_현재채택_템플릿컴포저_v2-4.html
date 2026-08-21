@@ -1,0 +1,893 @@
+<!doctype html>
+<!-- LOVETREE_HTML_ASSET | AREA: workspace | SCREEN: template-composer | VERSION: v2.4 | BASE: v2.3 | STATUS: design-review | SCOPE: YouTube URL input visibility + immediate node apply + robust parser -->
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree Template Composer v2.4 · YouTube Fixed</title>
+<style>
+:root{
+  --paper:#f7f1e8;--paper-2:#fffaf4;--ink:#4e3f3b;--muted:#8e7f7a;
+  --rose:#c86e79;--rose-deep:#98505e;--sage:#879975;--sage-deep:#596b4c;
+  --lav:#9a87b8;--gold:#d7ad65;--mist:#e8e1dc;--line:#bdaea7;
+  --ui:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Noto Sans KR",sans-serif;
+  --display:"Pretendard Variable","Pretendard","SUIT","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink)}
+body{font-family:var(--ui);-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit}
+button{color:inherit}
+.app{position:relative;width:100%;height:100%;isolation:isolate;overflow:hidden;background:
+ radial-gradient(circle at 12% 14%,rgba(255,255,255,.92),transparent 28%),
+ radial-gradient(circle at 88% 18%,rgba(222,186,192,.23),transparent 26%),
+ radial-gradient(circle at 64% 92%,rgba(135,153,117,.16),transparent 28%),
+ linear-gradient(135deg,#faf6ef 0%,#f4ede4 54%,#f8f3ec 100%)}
+.app:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.52;background-image:
+ linear-gradient(rgba(100,79,70,.035) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(100,79,70,.035) 1px,transparent 1px),
+ radial-gradient(rgba(120,90,76,.14) .45px,transparent .75px);
+ background-size:34px 34px,34px 34px,5px 5px;mix-blend-mode:multiply}
+.app:after{content:"";position:absolute;inset:-20%;pointer-events:none;background:conic-gradient(from 210deg at 50% 52%,transparent,rgba(255,255,255,.2),transparent 22%,rgba(200,110,121,.05),transparent 45%);animation:paperLight 18s ease-in-out infinite alternate}
+@keyframes paperLight{to{transform:translate3d(2.5%,-1.8%,0) rotate(.8deg)}}
+
+.topbar{position:absolute;z-index:20;top:0;left:0;right:0;height:86px;padding:20px 28px;display:flex;align-items:center;gap:24px;pointer-events:none}
+.brand{display:flex;align-items:center;gap:12px;pointer-events:auto;min-width:255px}
+.brand-mark{width:38px;height:38px;border-radius:50%;position:relative;display:grid;place-items:center;background:rgba(255,250,244,.76);border:1px solid rgba(152,80,94,.2);box-shadow:0 12px 38px rgba(100,69,60,.13)}
+.brand-mark:before,.brand-mark:after{content:"";position:absolute;width:11px;height:17px;border-radius:70% 30% 68% 32%;background:linear-gradient(145deg,#d98b98,#b55f70);transform-origin:bottom center}
+.brand-mark:before{transform:translate(-4px,-2px) rotate(-28deg)}
+.brand-mark:after{transform:translate(4px,-2px) rotate(28deg);background:linear-gradient(145deg,#9bab8c,#6f8868)}
+.brand-copy strong{display:block;font-family:var(--display);font-size:17px;letter-spacing:.035em;font-weight:650}
+.brand-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px;letter-spacing:.17em;text-transform:uppercase}
+
+.template-tabs{pointer-events:auto;margin-left:auto;display:flex;align-items:center;padding:4px;border:1px solid rgba(103,82,75,.12);border-radius:999px;background:rgba(255,251,246,.68);box-shadow:0 12px 36px rgba(91,66,60,.08);backdrop-filter:blur(16px)}
+.template-tab{border:0;background:transparent;border-radius:999px;padding:9px 15px;font-size:11px;letter-spacing:.045em;cursor:pointer;color:#7d6f69;transition:.24s ease;white-space:nowrap}
+.template-tab:hover{color:var(--rose-deep)}
+.template-tab.active{background:#fffaf4;color:var(--rose-deep);box-shadow:0 5px 18px rgba(107,75,68,.12),inset 0 0 0 1px rgba(152,80,94,.12)}
+
+.toolbar{pointer-events:auto;display:flex;align-items:center;gap:7px;background:rgba(255,251,246,.68);border:1px solid rgba(103,82,75,.12);border-radius:999px;padding:4px;box-shadow:0 12px 36px rgba(91,66,60,.08);backdrop-filter:blur(16px)}
+.tool-btn,.speed-select{height:36px;border:0;background:transparent;border-radius:999px;cursor:pointer;color:#746660}
+.tool-btn{min-width:36px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:11px;letter-spacing:.035em}
+.tool-btn:hover,.speed-select:hover{background:rgba(200,110,121,.08);color:var(--rose-deep)}
+.tool-btn.primary{background:var(--rose-deep);color:#fffaf7;box-shadow:0 7px 22px rgba(152,80,94,.23)}
+.tool-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.speed-select{appearance:none;padding:0 29px 0 12px;font-size:10px;background-image:linear-gradient(45deg,transparent 50%,#8c7c76 50%),linear-gradient(135deg,#8c7c76 50%,transparent 50%);background-position:calc(100% - 14px) 15px,calc(100% - 10px) 15px;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+
+.stage-shell{position:absolute;z-index:2;inset:78px 22px 72px;border-radius:31px;border:1px solid rgba(117,94,85,.12);background:rgba(255,252,247,.42);box-shadow:0 34px 90px rgba(82,61,53,.1),inset 0 1px 0 rgba(255,255,255,.8);overflow:hidden;backdrop-filter:blur(5px)}
+.stage-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.8),transparent 45%),linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent);opacity:.82}
+.stage-shell.dragging{cursor:grabbing}
+.stage-shell:not(.dragging){cursor:grab}
+#mapSvg{display:block;width:100%;height:100%;touch-action:none;user-select:none}
+#viewportGroup{transform-origin:0 0}
+
+.edge-path{fill:none;stroke:var(--line);stroke-width:1.35;stroke-linecap:round;filter:url(#softLine);opacity:.83;vector-effect:non-scaling-stroke;transition:stroke .25s,opacity .25s,stroke-width .25s}
+.edge-path.level-1{stroke-width:1.7;stroke:rgba(152,80,94,.52)}
+.edge-path.level-2{stroke:rgba(89,107,76,.46)}
+.edge-path.level-3{stroke:rgba(154,135,184,.4)}
+.edge-path.related{stroke:var(--rose-deep);stroke-width:2.25;opacity:.95}
+.edge-path.dimmed{opacity:.17}
+.edge-trail{fill:none;stroke:url(#trailGradient);stroke-width:5;stroke-linecap:round;opacity:0;filter:url(#trailGlow);vector-effect:non-scaling-stroke}
+.edge-trail.running{animation:trailFade .75s ease-out both}
+@keyframes trailFade{0%{opacity:0}25%{opacity:.42}100%{opacity:0}}
+
+.connection-label{pointer-events:none}
+.connection-label rect{fill:rgba(255,251,246,.92);stroke:rgba(136,111,101,.15);stroke-width:1;rx:8;filter:url(#labelShadow)}
+.connection-label text{font-family:var(--ui);font-size:10px;letter-spacing:.025em;fill:#8c7770;text-anchor:middle;dominant-baseline:central}
+.connection-label.dimmed{opacity:.15}
+
+.node{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:filter .25s,opacity .25s}
+.node .node-shadow{fill:rgba(109,76,67,.09);filter:url(#nodeBlur)}
+.node .node-card{fill:rgba(255,251,246,.96);stroke:rgba(116,91,82,.16);stroke-width:1;vector-effect:non-scaling-stroke}
+.node .node-accent{stroke-width:2.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.node .node-dot{stroke:rgba(255,255,255,.88);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.node .eyebrow{font-family:var(--ui);font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;fill:#9c8d87}
+.node .title{font-family:var(--display);font-size:15px;font-weight:620;fill:#4f403c;letter-spacing:-.012em}
+.node .subtitle{font-family:var(--ui);font-size:9.6px;fill:#8b7c76;letter-spacing:.012em}
+.node.moment .node-accent,.node.root .node-accent{stroke:var(--rose)}
+.node.moment .node-dot,.node.root .node-dot{fill:var(--rose)}
+.node.emotion .node-card{fill:rgba(250,232,232,.95);stroke:rgba(200,110,121,.24)}
+.node.emotion .node-accent{stroke:var(--rose-deep)}
+.node.emotion .node-dot{fill:var(--rose-deep)}
+.node.cluster .node-card,.node.season .node-card{fill:rgba(238,242,232,.95);stroke:rgba(89,107,76,.2)}
+.node.cluster .node-accent,.node.season .node-accent{stroke:var(--sage-deep)}
+.node.cluster .node-dot,.node.season .node-dot{fill:var(--sage)}
+.node.note .node-card{fill:rgba(242,237,248,.96);stroke:rgba(154,135,184,.2)}
+.node.note .node-accent{stroke:var(--lav)}
+.node.note .node-dot{fill:var(--lav)}
+.node.media .node-card{fill:rgba(250,245,232,.97);stroke:rgba(215,173,101,.25)}
+.node.media .node-accent{stroke:var(--gold)}
+.node.media .node-dot{fill:var(--gold)}
+.node.root .node-card{fill:rgba(255,250,244,.98);stroke:rgba(152,80,94,.23);stroke-width:1.2;filter:url(#rootShadow)}
+.node.root .title{font-size:22px;color:var(--ink)}
+.node.root .subtitle{font-size:10.5px}
+.node.root .seed-leaf{fill:none;stroke:var(--rose-deep);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
+.node:hover{filter:drop-shadow(0 10px 17px rgba(96,65,58,.15))}
+.node:hover .node-card{stroke:rgba(152,80,94,.38)}
+.node.selected{filter:drop-shadow(0 12px 22px rgba(152,80,94,.2))}
+.node.selected .node-card{stroke:var(--rose-deep);stroke-width:1.6}
+.node.dimmed{opacity:.29}
+.node.branch-pulse{animation:branchPulse 1.15s ease-out}
+@keyframes branchPulse{0%{filter:drop-shadow(0 0 0 rgba(200,110,121,0))}35%{filter:drop-shadow(0 0 17px rgba(200,110,121,.42))}100%{filter:drop-shadow(0 0 0 rgba(200,110,121,0))}}
+
+.root-aura{fill:none;stroke:rgba(200,110,121,.16);stroke-width:1.1;transform-origin:center;vector-effect:non-scaling-stroke}
+.root-aura.a1{animation:aura 4.4s ease-in-out infinite}
+.root-aura.a2{animation:aura 4.4s 1.15s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.93);opacity:.25}50%{transform:scale(1.08);opacity:.7}}
+.map-complete .node.breathe-1{animation:nodeBreathe 5.4s ease-in-out infinite}
+.map-complete .node.breathe-2{animation:nodeBreathe 6.1s .8s ease-in-out infinite}
+.map-complete .node.breathe-3{animation:nodeBreathe 5.8s 1.6s ease-in-out infinite}
+@keyframes nodeBreathe{0%,100%{translate:0 0}50%{translate:0 -1.4px}}
+.capture-mode .map-complete .node,.capture-mode .root-aura{animation:none!important}
+
+.petals{pointer-events:none;opacity:.6}
+.petal{fill:rgba(200,110,121,.16);transform-origin:center;animation:petalDrift 9s ease-in-out infinite alternate}
+.petal:nth-child(2n){fill:rgba(135,153,117,.15);animation-duration:11s}
+.petal:nth-child(3n){fill:rgba(154,135,184,.13);animation-delay:-4s}
+@keyframes petalDrift{to{transform:translate(8px,-9px) rotate(10deg)}}
+.capture-mode .petal{animation:none!important}
+
+.intro-copy{position:absolute;z-index:8;left:46px;bottom:36px;pointer-events:none;max-width:450px}
+.intro-copy .kicker{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--rose-deep);font-weight:650}
+.intro-copy h1{margin:8px 0 7px;font-family:var(--display);font-size:clamp(22px,2.6vw,42px);font-weight:530;letter-spacing:-.035em;line-height:1.05;color:#4d3d39}
+.intro-copy p{margin:0;color:#8a7b75;font-size:11px;line-height:1.6;letter-spacing:.02em}
+
+.progress-rail{position:absolute;z-index:9;right:42px;bottom:34px;width:min(330px,28vw);pointer-events:none}
+.progress-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#8c7e78;font-size:9px;letter-spacing:.11em;text-transform:uppercase}
+.progress-meta strong{color:var(--rose-deep);font-weight:700}
+.progress-track{height:2px;background:rgba(100,78,70,.12);border-radius:999px;overflow:hidden}
+.progress-fill{width:0;height:100%;background:linear-gradient(90deg,var(--rose-deep),var(--rose),var(--sage));border-radius:999px;box-shadow:0 0 12px rgba(200,110,121,.28)}
+
+.mode-caption{position:absolute;z-index:9;left:50%;top:25px;transform:translateX(-50%);text-align:center;pointer-events:none}
+.mode-caption .label{font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:#a08f88}
+.mode-caption .title{margin-top:5px;font-family:var(--display);font-size:16px;color:#6a5650}
+
+.toast{position:absolute;z-index:30;left:50%;bottom:92px;transform:translate(-50%,18px);padding:10px 15px;border-radius:999px;background:rgba(78,63,59,.92);color:#fffaf6;font-size:10px;letter-spacing:.025em;opacity:0;pointer-events:none;transition:.25s ease;box-shadow:0 12px 32px rgba(75,55,49,.18)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1050px){
+ .topbar{padding:16px 18px;height:76px}.brand{min-width:auto}.brand-copy span{display:none}
+ .template-tab{padding:8px 10px}.tool-btn span{display:none}.tool-btn{padding:0;min-width:34px}
+ .stage-shell{inset:70px 12px 68px;border-radius:24px}.intro-copy{left:28px;bottom:26px}.progress-rail{right:28px;bottom:26px}
+}
+@media(max-width:700px){
+ html,body{overflow:hidden}.app{min-height:100svh}
+ .topbar{height:auto;min-height:104px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;grid-template-rows:40px 40px;gap:7px 8px}
+ .brand{grid-column:1;grid-row:1}.brand-mark{width:34px;height:34px}.brand-copy strong{font-size:15px}
+ .toolbar{grid-column:2;grid-row:1}.speed-select{display:none}
+ .template-tabs{grid-column:1/3;grid-row:2;margin:0;overflow:auto;justify-content:flex-start;scrollbar-width:none}.template-tabs::-webkit-scrollbar{display:none}
+ .template-tab{flex:0 0 auto;padding:8px 12px;font-size:10px}
+ .stage-shell{inset:104px 8px 82px;border-radius:22px}
+ .mode-caption{top:17px}.mode-caption .title{font-size:14px}
+ .intro-copy{left:21px;right:21px;bottom:25px;max-width:none}.intro-copy h1{font-size:26px;margin-top:6px}.intro-copy p{display:none}
+ .progress-rail{left:21px;right:21px;bottom:12px;width:auto}.progress-meta{margin-bottom:6px}
+ .toast{bottom:96px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+/* ===== LoveTree 44 v2 · Template Composer ===== */
+.template-tabs{display:none!important}
+.toolbar{margin-left:auto}
+.template-book-btn{position:relative}
+.template-book-btn .book-dot{position:absolute;right:5px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 3px rgba(200,110,121,.13)}
+.stage-shell.drop-ready{box-shadow:0 34px 90px rgba(82,61,53,.1),inset 0 0 0 2px rgba(200,110,121,.48),inset 0 1px 0 rgba(255,255,255,.8)}
+.empty-state{position:absolute;z-index:7;inset:0;display:grid;place-items:center;pointer-events:none;transition:.3s ease}
+.empty-state.hidden{opacity:0;visibility:hidden;transform:scale(.985)}
+.empty-card{text-align:center;max-width:460px;padding:32px 28px;border:1px dashed rgba(152,80,94,.28);border-radius:26px;background:rgba(255,251,246,.56);backdrop-filter:blur(10px);box-shadow:0 22px 60px rgba(86,61,53,.08)}
+.empty-icon{width:52px;height:52px;margin:0 auto 16px;border-radius:17px;display:grid;place-items:center;background:rgba(200,110,121,.1);color:var(--rose-deep)}
+.empty-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+.empty-card strong{display:block;font-family:var(--display);font-size:25px;font-weight:560;letter-spacing:-.025em}
+.empty-card p{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.65}
+.drawer-scrim{position:absolute;z-index:39;inset:0;background:rgba(67,52,48,.12);opacity:0;pointer-events:none;transition:.28s ease;backdrop-filter:blur(1.5px)}
+.drawer-scrim.open{opacity:1;pointer-events:auto}
+.composer-drawer{position:absolute;z-index:40;top:0;right:0;width:min(390px,92vw);height:100%;padding:18px;background:rgba(255,250,244,.96);border-left:1px solid rgba(103,82,75,.14);box-shadow:-25px 0 80px rgba(69,47,42,.16);transform:translateX(104%);transition:transform .32s cubic-bezier(.2,.75,.2,1);display:flex;flex-direction:column;backdrop-filter:blur(22px)}
+.composer-drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;gap:12px;padding:4px 2px 16px;border-bottom:1px solid rgba(103,82,75,.1)}
+.drawer-title{min-width:0;flex:1}.drawer-title strong{display:block;font-family:var(--display);font-size:20px;font-weight:600}.drawer-title span{display:block;margin-top:4px;color:var(--muted);font-size:10px;letter-spacing:.04em}
+.drawer-close{width:36px;height:36px;border:0;border-radius:50%;background:rgba(200,110,121,.08);cursor:pointer;color:var(--rose-deep);font-size:20px}
+.drawer-body{flex:1;min-height:0;overflow:auto;padding:16px 2px 28px;scrollbar-width:thin}
+.drawer-section-label{font-size:9px;letter-spacing:.18em;color:var(--rose-deep);font-weight:700;text-transform:uppercase;margin:2px 4px 11px}
+.template-card{position:relative;margin-bottom:12px;padding:15px;border:1px solid rgba(103,82,75,.12);border-radius:19px;background:#fffaf4;cursor:grab;box-shadow:0 12px 28px rgba(85,61,54,.07);transition:.22s ease;user-select:none}
+.template-card:hover{transform:translateY(-2px);border-color:rgba(152,80,94,.3);box-shadow:0 17px 36px rgba(85,61,54,.11)}
+.template-card:active{cursor:grabbing}
+.template-preview{height:92px;border-radius:14px;background:linear-gradient(135deg,rgba(200,110,121,.055),rgba(135,153,117,.06));position:relative;overflow:hidden;margin-bottom:12px;border:1px solid rgba(103,82,75,.07)}
+.preview-node{position:absolute;width:38px;height:20px;border:1px solid rgba(200,110,121,.45);border-radius:6px;background:#fffaf4;box-shadow:0 4px 9px rgba(80,55,50,.06)}
+.preview-root{width:54px;height:28px;left:calc(50% - 27px);top:31px;border-color:var(--rose)}
+.preview-node.a{left:12%;top:11px}.preview-node.b{right:12%;top:11px}.preview-node.c{left:12%;bottom:10px}.preview-node.d{right:12%;bottom:10px}
+.template-preview:before,.template-preview:after{content:"";position:absolute;left:50%;top:46%;width:40%;height:1px;background:rgba(152,80,94,.28);transform-origin:left center}
+.template-preview:before{transform:rotate(-24deg)}.template-preview:after{transform:rotate(24deg)}
+.template-meta{display:flex;align-items:flex-start;gap:12px}.template-meta strong{display:block;font-family:var(--display);font-size:17px}.template-meta p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.5}.drag-chip{margin-left:auto;flex:0 0 auto;padding:6px 9px;border-radius:999px;background:rgba(200,110,121,.09);color:var(--rose-deep);font-size:9px;font-weight:650}
+.template-help{padding:13px 14px;border-radius:15px;background:rgba(135,153,117,.09);color:#64705b;font-size:10px;line-height:1.6;margin-top:5px}
+.editor-empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}
+.editor-form{display:grid;gap:13px}.field{display:grid;gap:6px}.field label{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#88756e;font-weight:700}.field input,.field textarea,.field select{width:100%;border:1px solid rgba(103,82,75,.15);background:#fffdf9;border-radius:12px;padding:11px 12px;color:var(--ink);outline:none;font-size:12px}.field input:focus,.field textarea:focus{border-color:rgba(152,80,94,.55);box-shadow:0 0 0 3px rgba(200,110,121,.08)}.field textarea{resize:vertical;min-height:84px;line-height:1.55}
+.media-drop{border:1px dashed rgba(152,80,94,.28);border-radius:15px;padding:16px;text-align:center;background:rgba(200,110,121,.035)}.media-drop input[type="file"]{display:none}.media-drop>label{display:block;cursor:pointer;color:var(--rose-deep);font-size:11px;font-weight:650}.media-drop small{display:block;margin-top:5px;color:var(--muted);font-size:9px}.youtube-row input[type="url"]{display:block!important;width:100%;min-width:0;border:1px solid rgba(103,82,75,.18);background:#fffdf9;border-radius:12px;padding:11px 12px;color:var(--ink);outline:none;font-size:12px}.youtube-row input[type="url"]:focus{border-color:rgba(152,80,94,.55);box-shadow:0 0 0 3px rgba(200,110,121,.08)}.youtube-status{display:none;margin-top:7px;padding:8px 10px;border-radius:10px;font-size:10px;line-height:1.45;text-align:left}.youtube-status.show{display:block}.youtube-status.ok{background:rgba(135,153,117,.12);color:#536449}.youtube-status.error{background:rgba(200,110,121,.11);color:#8f4e5b}
+.media-preview{display:none;margin-top:10px;border-radius:12px;overflow:hidden;background:#eee;max-height:170px}.media-preview.show{display:block}.media-preview img,.media-preview video{display:block;width:100%;max-height:170px;object-fit:cover}.media-file{padding:12px;font-size:10px;color:var(--ink);background:#fffaf4}
+.editor-actions{display:flex;gap:8px;padding-top:4px}.editor-actions button{flex:1;border:0;border-radius:999px;padding:11px 13px;cursor:pointer;font-size:11px}.save-btn{background:var(--rose-deep);color:white}.secondary-btn{background:rgba(103,82,75,.08);color:var(--ink)}
+.connection-label{pointer-events:auto!important;cursor:pointer}.connection-label:hover rect{stroke:rgba(152,80,94,.52)}
+.edge-path.related{filter:url(#livingLine)!important;stroke-dasharray:5 8!important;animation:connectionFlow 1.15s linear infinite}
+@keyframes connectionFlow{to{stroke-dashoffset:-26}}
+.media-badge circle{fill:#fffaf4;stroke:var(--gold);stroke-width:1.2}.media-badge path{fill:var(--gold)}
+.slot-hint{font-size:8px;fill:#aa9b95;font-family:var(--ui)}
+@media(max-width:700px){.composer-drawer{width:100vw}.empty-card{margin:0 18px}.empty-card strong{font-size:22px}.toolbar .template-book-btn{display:inline-flex}.intro-copy{pointer-events:none}}
+
+
+/* ===== LoveTree 44 v2.1 · reliable template drag + visible media ===== */
+.template-card{touch-action:none}
+.template-card.drag-source{opacity:.42;transform:scale(.985)}
+.template-drag-ghost{position:fixed;z-index:120;width:250px;pointer-events:none;padding:12px;border:1px solid rgba(152,80,94,.28);border-radius:18px;background:rgba(255,250,244,.97);box-shadow:0 24px 68px rgba(74,48,43,.24);transform:translate3d(-50%,-50%,0) scale(.92);opacity:0;transition:opacity .12s ease,box-shadow .18s ease;backdrop-filter:blur(18px)}
+.template-drag-ghost.live{opacity:1;box-shadow:0 28px 80px rgba(74,48,43,.3)}
+.template-drag-ghost .template-preview{height:70px;margin:0 0 9px}.template-drag-ghost strong{font-family:var(--display);font-size:15px}.template-drag-ghost p{display:none}.template-drag-ghost .drag-chip{display:none}
+.canvas-drop-target{position:absolute;z-index:12;left:50%;top:50%;width:184px;height:116px;transform:translate(-50%,-50%) scale(.86);border:1.5px dashed rgba(152,80,94,.42);border-radius:25px;display:grid;place-items:center;text-align:center;color:var(--rose-deep);font-size:10px;letter-spacing:.06em;background:rgba(255,250,244,.72);box-shadow:0 20px 56px rgba(95,61,55,.12);opacity:0;pointer-events:none;transition:.2s ease;backdrop-filter:blur(10px)}
+.canvas-drop-target:before{content:"";position:absolute;inset:-18px;border:1px solid rgba(200,110,121,.15);border-radius:34px;animation:dropTargetPulse 1.35s ease-in-out infinite}
+.canvas-drop-target strong{display:block;font-family:var(--display);font-size:18px;margin-bottom:4px;letter-spacing:-.02em}
+.stage-shell.drop-ready .canvas-drop-target{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.stage-shell.drop-ready .empty-state{opacity:.15}
+@keyframes dropTargetPulse{50%{transform:scale(1.07);opacity:.25}}
+.unfold-seed-burst{position:absolute;z-index:13;left:50%;top:50%;width:36px;height:36px;border-radius:50%;border:2px solid rgba(200,110,121,.65);transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none}
+.unfold-seed-burst.run{animation:seedBurst .72s cubic-bezier(.18,.78,.18,1) both}
+@keyframes seedBurst{0%{opacity:.9;transform:translate(-50%,-50%) scale(.2);box-shadow:0 0 0 0 rgba(200,110,121,.35)}100%{opacity:0;transform:translate(-50%,-50%) scale(5.2);box-shadow:0 0 0 20px rgba(200,110,121,0)}}
+.node-media-visual{pointer-events:none}.node-media-visual image{opacity:.92}.node-media-wash{fill:url(#nodeMediaWash)}
+.node.has-media .node-card{fill:rgba(255,251,246,.34)}
+.node-media-play{fill:rgba(255,250,244,.9);stroke:rgba(152,80,94,.55);stroke-width:1.2}.node-media-play-icon{fill:var(--rose-deep)}
+.media-applied-label{margin-top:8px;color:var(--sage-deep);font-size:9px;font-weight:700;display:none}.media-applied-label.show{display:block}
+@media(max-width:700px){.template-drag-ghost{width:210px}.canvas-drop-target{width:160px;height:100px}}
+
+
+/* ===== LoveTree 44 v2.2 · distinct templates, crisp media, sans typography ===== */
+:root{--display:"Pretendard Variable","Pretendard","SUIT","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif}
+.brand-copy strong,.drawer-title strong,.template-meta strong,.empty-card strong,.canvas-drop-target strong,
+.intro-copy h1,.mode-caption .title,.node .title{font-family:var(--display)!important;letter-spacing:-.025em!important}
+.brand-copy strong{font-weight:650}.drawer-title strong{font-weight:700}.template-meta strong{font-weight:700}.node .title{font-weight:600}.node.root .title{font-weight:650}
+.intro-copy h1{font-weight:600;line-height:1.12}.mode-caption .title{font-weight:560}
+
+/* Template library previews now communicate four genuinely different forms. */
+.template-preview:before,.template-preview:after{display:none}
+.template-card[data-template-drag="basic"] .template-preview{background:linear-gradient(135deg,rgba(200,110,121,.045),rgba(255,255,255,.35))}
+.template-card[data-template-drag="basic"] .preview-root{left:7%!important;top:32px!important}
+.template-card[data-template-drag="basic"] .preview-node.a{left:31%!important;top:13px!important}
+.template-card[data-template-drag="basic"] .preview-node.b{left:53%!important;top:13px!important}
+.template-card[data-template-drag="basic"] .preview-node.c{left:53%!important;bottom:12px!important}
+.template-card[data-template-drag="basic"] .preview-node.d{right:7%!important;top:32px!important}
+.template-card[data-template-drag="basic"] .template-preview{background-image:linear-gradient(25deg,transparent 48%,rgba(152,80,94,.28) 49%,rgba(152,80,94,.28) 51%,transparent 52%)}
+
+.template-card[data-template-drag="person"] .template-preview:after{display:block;content:"";position:absolute;left:50%;top:50%;width:128px;height:66px;transform:translate(-50%,-50%);border:1px dashed rgba(89,107,76,.28);border-radius:50%}
+.template-card[data-template-drag="person"] .preview-root{left:calc(50% - 27px)!important;top:32px!important;border-radius:50%!important}
+.template-card[data-template-drag="person"] .preview-node.a{left:calc(50% - 19px)!important;top:4px!important;border-color:#879975!important}
+.template-card[data-template-drag="person"] .preview-node.b{right:8%!important;top:35px!important;border-color:#879975!important}
+.template-card[data-template-drag="person"] .preview-node.c{left:calc(50% - 19px)!important;bottom:4px!important;border-color:#879975!important}
+.template-card[data-template-drag="person"] .preview-node.d{left:8%!important;top:35px!important;border-color:#879975!important}
+
+.template-card[data-template-drag="emotion"] .template-preview:after{display:block;content:"";position:absolute;inset:12px 16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 70'%3E%3Cpath d='M5 52 C45 5 70 4 100 34 S150 68 195 16' fill='none' stroke='%2398505e' stroke-opacity='.28' stroke-width='2' stroke-dasharray='4 5'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.template-card[data-template-drag="emotion"] .preview-root{left:4%!important;top:48px!important}
+.template-card[data-template-drag="emotion"] .preview-node.a{left:28%!important;top:5px!important}
+.template-card[data-template-drag="emotion"] .preview-node.b{left:52%!important;top:31px!important;border-color:#879975!important}
+.template-card[data-template-drag="emotion"] .preview-node.c{left:65%!important;bottom:5px!important}
+.template-card[data-template-drag="emotion"] .preview-node.d{right:3%!important;top:6px!important}
+
+.template-card[data-template-drag="season"] .template-preview:after{display:block;content:"";position:absolute;left:50%;top:7px;bottom:7px;width:1px;background:rgba(89,107,76,.3)}
+.template-card[data-template-drag="season"] .preview-root{left:calc(50% - 27px)!important;top:2px!important;border-color:#596b4c!important}
+.template-card[data-template-drag="season"] .preview-node.a{left:16%!important;top:25px!important;border-color:#879975!important}
+.template-card[data-template-drag="season"] .preview-node.b{right:14%!important;top:42px!important;border-color:#879975!important}
+.template-card[data-template-drag="season"] .preview-node.c{left:17%!important;bottom:4px!important;border-color:#879975!important}
+.template-card[data-template-drag="season"] .preview-node.d{right:13%!important;bottom:2px!important;border-color:#879975!important}
+
+.layout-guide{fill:none;vector-effect:non-scaling-stroke;pointer-events:none}
+.layout-guide.orbit{stroke:rgba(89,107,76,.18);stroke-width:1.2;stroke-dasharray:3 8}
+.layout-guide.journey{stroke:rgba(152,80,94,.13);stroke-width:8;stroke-linecap:round;filter:url(#softLine)}
+.layout-guide.timeline{stroke:rgba(89,107,76,.2);stroke-width:1.2;stroke-dasharray:4 7}
+.layout-guide.branch{stroke:rgba(152,80,94,.12);stroke-width:1.2;stroke-dasharray:2 9}
+[data-layout="timeline"] .node.cluster .node-card{stroke-width:1.2}
+[data-layout="orbit"] .node.season .node-card{stroke-width:1.2}
+
+/* Crisp, large media cards. */
+.node-media-visual image{opacity:1!important;filter:none!important;image-rendering:auto}
+.node-media-wash{fill:url(#nodeMediaWashV22)!important}
+.node.has-media .node-card{fill:rgba(255,251,246,.08)!important;stroke:rgba(255,255,255,.72)!important}
+.node.has-media .title,.node.has-media .subtitle,.node.has-media .eyebrow{fill:#fff!important;paint-order:stroke;stroke:rgba(42,29,27,.28);stroke-width:1.7px;stroke-linejoin:round;text-shadow:none}
+.node.has-media .node-accent{stroke:rgba(255,255,255,.88)!important}.node.has-media .node-dot{fill:#fff!important;stroke:rgba(64,45,41,.35)!important}
+.node-media-foreign{pointer-events:none;overflow:hidden}
+.node-media-frame{width:100%;height:100%;overflow:hidden;background:#d8d0c8}
+.node-media-frame video{display:block;width:100%;height:100%;object-fit:cover;filter:none;opacity:1;background:#201c1a}
+.node-media-status{position:absolute;right:8px;top:8px;padding:4px 7px;border-radius:999px;background:rgba(38,27,25,.7);color:white;font:700 9px/1 var(--display);letter-spacing:.08em}
+.node-media-play{fill:rgba(255,255,255,.92)!important;stroke:rgba(48,32,29,.22)!important}.node-media-play-icon{fill:#98505e!important}
+.media-preview{max-height:250px!important;background:#1f1b19!important;border:1px solid rgba(103,82,75,.1)}
+.media-preview img,.media-preview video{max-height:250px!important;object-fit:contain!important;background:#1f1b19}
+.media-preview video{min-height:180px}
+
+
+.youtube-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}.youtube-row input{min-width:0}.youtube-apply{border:0;border-radius:12px;padding:0 14px;background:var(--sage-deep);color:#fff;cursor:pointer;font-weight:700}.youtube-apply:hover{filter:brightness(1.05)}.youtube-help{display:block;margin-top:6px;color:#8d7d77;font-size:10px;line-height:1.45}.media-preview iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:14px;background:#111}.youtube-node-hit{cursor:pointer}.youtube-node-hit:hover{filter:brightness(1.04)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand" aria-label="LoveTree Structure Unfold">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-copy"><strong>LoveTree Template Composer</strong><span>Drag · unfold · fill your moments</span></div>
+    </div>
+    <nav class="template-tabs" aria-label="전개 템플릿">
+      <button class="template-tab active" data-template="basic">Basic</button>
+      <button class="template-tab" data-template="person">Person</button>
+      <button class="template-tab" data-template="emotion">Emotion</button>
+      <button class="template-tab" data-template="season">Season</button>
+    </nav>
+    <div class="toolbar" aria-label="애니메이션 조작">
+
+      <button class="tool-btn template-book-btn" id="templateBookBtn" type="button" aria-label="템플릿 보관함 열기">
+        <span class="book-dot" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5A2.5 2.5 0 0 1 20 21.5z"/></svg><span>템플릿</span>
+      </button>
+      <button class="tool-btn primary" id="replayBtn" type="button" aria-label="다시 펼치기">
+        <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.34 5.66"/><path d="M20 4v7h-7"/></svg><span>다시 펼치기</span>
+      </button>
+      <select class="speed-select" id="speedSelect" aria-label="전개 속도">
+        <option value="0.72">0.7×</option><option value="1" selected>1.0×</option><option value="1.35">1.35×</option>
+      </select>
+      <button class="tool-btn" id="zoomOutBtn" type="button" aria-label="축소"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M16 16l5 5"/></svg></button>
+      <button class="tool-btn" id="zoomInBtn" type="button" aria-label="확대"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M11 8v6M16 16l5 5"/></svg></button>
+      <button class="tool-btn" id="fitBtn" type="button" aria-label="화면 맞춤"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
+    </div>
+  </header>
+
+  <main class="stage-shell" id="stageShell">
+    <div class="mode-caption"><div class="label" id="modeLabel">LOVE UNFOLDS</div><div class="title" id="modeTitle">A tree of moments</div></div>
+    <svg id="mapSvg" viewBox="-600 -370 1200 740" role="img" aria-label="LoveTree 자동 전개 마인드맵">
+      <defs>
+        <filter id="softLine" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".18"/></filter>
+        <filter id="trailGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+        <filter id="nodeBlur" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="7"/></filter>
+        <filter id="rootShadow" x="-30%" y="-40%" width="160%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#6e5148" flood-opacity=".13"/></filter>
+        <filter id="labelShadow" x="-25%" y="-40%" width="150%" height="180%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#6e5148" flood-opacity=".09"/></filter>
+        <linearGradient id="trailGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c86e79" stop-opacity="0"/><stop offset=".52" stop-color="#c86e79" stop-opacity=".75"/><stop offset="1" stop-color="#879975" stop-opacity="0"/></linearGradient><linearGradient id="nodeMediaWash" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fffaf4" stop-opacity=".98"/><stop offset=".58" stop-color="#fffaf4" stop-opacity=".76"/><stop offset="1" stop-color="#fffaf4" stop-opacity=".08"/></linearGradient><linearGradient id="nodeMediaWashV22" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241b19" stop-opacity="0"/><stop offset=".48" stop-color="#241b19" stop-opacity=".05"/><stop offset="1" stop-color="#241b19" stop-opacity=".82"/></linearGradient>
+      <filter id="livingLine" x="-16%" y="-28%" width="132%" height="156%"><feTurbulence type="fractalNoise" baseFrequency="0.011 0.055" numOctaves="1" seed="7" result="noise"><animate attributeName="baseFrequency" dur="3.8s" values="0.011 0.055;0.018 0.038;0.011 0.055" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+      <g id="viewportGroup">
+        <g class="petals" id="petalLayer"></g>
+        <g id="edgeLayer"></g>
+        <g id="labelLayer"></g>
+        <g id="nodeLayer"></g>
+      </g>
+    </svg>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-card">
+        <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5A2.5 2.5 0 0 1 20 21.5z"/></svg></div>
+        <strong>템플릿을 꺼내 캔버스에 놓으세요</strong>
+        <p>우측 상단의 책을 열고 폼을 끌어놓으면 구조가 자동으로 펼쳐집니다. 각 노드에는 영상·사진·음성·메시지를 채울 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="canvas-drop-target" id="canvasDropTarget"><div><strong>여기에 놓기</strong>가운데에서 구조가 펼쳐집니다</div></div>
+    <div class="unfold-seed-burst" id="unfoldSeedBurst"></div>
+    <section class="intro-copy" aria-live="polite">
+      <div class="kicker" id="copyKicker">FROM SEED TO MEMORY</div>
+      <h1 id="copyTitle">기억이 트리로 열립니다</h1>
+      <p id="copyBody">루트에서 시작해 Moment와 Connection이 순차적으로 살아나는 재사용형 구조 애니메이션.</p>
+    </section>
+    <div class="progress-rail" aria-hidden="true">
+      <div class="progress-meta"><strong id="phaseLabel">SEED</strong><span id="progressText">00%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </main>
+
+  <div class="drawer-scrim" id="drawerScrim"></div>
+  <aside class="composer-drawer" id="composerDrawer" aria-label="LoveTree 템플릿과 노드 편집기">
+    <div class="drawer-head">
+      <div class="drawer-title"><strong id="drawerHeading">템플릿 보관함</strong><span id="drawerSubheading">폼을 캔버스에 끌어놓으세요</span></div>
+      <button class="drawer-close" id="drawerClose" type="button" aria-label="닫기">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <div id="libraryView">
+        <div class="drawer-section-label">Structure forms</div>
+        <div class="template-card" draggable="false" data-template-drag="basic">
+          <div class="template-preview"><i class="preview-node preview-root"></i><i class="preview-node a"></i><i class="preview-node b"></i><i class="preview-node c"></i><i class="preview-node d"></i></div>
+          <div class="template-meta"><div><strong>Path Tree</strong><p>Moment와 Connection이 순서와 가지로 펼쳐지는 기본 폼</p></div><span class="drag-chip">끌어놓기</span></div>
+        </div>
+        <div class="template-card" draggable="false" data-template-drag="person">
+          <div class="template-preview"><i class="preview-node preview-root"></i><i class="preview-node a" style="border-color:#879975"></i><i class="preview-node b" style="border-color:#879975"></i><i class="preview-node c" style="border-color:#879975"></i><i class="preview-node d" style="border-color:#879975"></i></div>
+          <div class="template-meta"><div><strong>Person Tree</strong><p>한 사람과 연결된 여러 Moment·Season을 한눈에 보는 폼</p></div><span class="drag-chip">끌어놓기</span></div>
+        </div>
+        <div class="template-card" draggable="false" data-template-drag="emotion">
+          <div class="template-preview"><i class="preview-node preview-root" style="left:12%;top:32px"></i><i class="preview-node a" style="left:35%;top:10px"></i><i class="preview-node b" style="right:14%;top:31px;border-color:#879975"></i><i class="preview-node d" style="right:27%;bottom:9px"></i></div>
+          <div class="template-meta"><div><strong>Emotion Path</strong><p>감정 전후와 다음 탐색의 원인을 따라가는 경로 폼</p></div><span class="drag-chip">끌어놓기</span></div>
+        </div>
+        <div class="template-card" draggable="false" data-template-drag="season">
+          <div class="template-preview"><i class="preview-node preview-root"></i><i class="preview-node a" style="border-color:#879975"></i><i class="preview-node b" style="border-color:#879975"></i><i class="preview-node c" style="border-color:#879975"></i><i class="preview-node d" style="border-color:#879975"></i></div>
+          <div class="template-meta"><div><strong>Season Archive</strong><p>한 Season을 Opening·Turning point·Deepening·Afterglow로 펼치는 폼</p></div><span class="drag-chip">끌어놓기</span></div>
+        </div>
+        <div class="template-help">데스크톱에서는 폼을 드래그해 캔버스에 놓습니다. 모바일에서는 폼을 누른 뒤 캔버스의 배치할 위치를 누릅니다.</div>
+      </div>
+      <div id="editorView" hidden>
+        <div class="drawer-section-label" id="editorKind">Moment slot</div>
+        <form class="editor-form" id="nodeEditorForm">
+          <div class="field"><label for="nodeTitleInput">제목</label><input id="nodeTitleInput" maxlength="80" placeholder="이 순간의 제목" /></div>
+          <div class="field"><label for="nodeSubtitleInput">짧은 설명</label><input id="nodeSubtitleInput" maxlength="120" placeholder="시간·출처·감정 등" /></div>
+          <div class="field"><label for="nodeMessageInput">메시지 또는 메모</label><textarea id="nodeMessageInput" placeholder="이 순간이 왜 중요했는지 적어보세요"></textarea></div>
+          <div class="media-drop"><input id="nodeMediaInput" type="file" accept="image/*,video/*,audio/*"/><label for="nodeMediaInput">영상·사진·음성 넣기</label><small>로컬 파일은 현재 브라우저 세션에서 미리보기 됩니다.</small><div class="youtube-row"><input id="nodeYoutubeInput" type="url" inputmode="url" placeholder="YouTube 링크 붙여넣기"/><button class="youtube-apply" id="applyYoutubeBtn" type="button">링크 적용</button></div><span class="youtube-help">일반 영상, Shorts, youtu.be, Live 링크와 영상 ID를 지원합니다. 링크 적용 즉시 노드에 표시됩니다.</span><div class="youtube-status" id="youtubeStatus" role="status" aria-live="polite"></div><div class="media-preview" id="mediaPreview"></div><div class="media-applied-label" id="mediaAppliedLabel">선택한 미디어가 노드에 표시됩니다.</div></div>
+          <div class="editor-actions"><button type="button" class="secondary-btn" id="backToLibraryBtn">템플릿</button><button type="submit" class="save-btn">노드에 적용</button></div>
+        </form>
+      </div>
+      <div id="edgeEditorView" hidden>
+        <div class="drawer-section-label">Connection</div>
+        <form class="editor-form" id="edgeEditorForm">
+          <div class="field"><label for="edgeReasonInput">왜 다음 순간으로 이어졌나요?</label><textarea id="edgeReasonInput" maxlength="180" placeholder="예: 이 장면이 궁금해서 다음 영상을 찾아봤다"></textarea></div>
+          <div class="editor-actions"><button type="button" class="secondary-btn" id="edgeBackBtn">템플릿</button><button type="submit" class="save-btn">Connection 저장</button></div>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast">선택한 가지가 다시 살아납니다.</div>
+</div>
+<script>
+(() => {
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const qs=new URLSearchParams(location.search);
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const smooth=t=>t*t*(3-2*t);
+const easeOutCubic=t=>1-Math.pow(1-t,3);
+const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const backOut=t=>{const c1=1.15,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const svgEl=(tag,attrs={})=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e};
+const palettes={moment:'#c86e79',emotion:'#98505e',cluster:'#879975',season:'#596b4c',note:'#9a87b8',media:'#d7ad65',root:'#c86e79'};
+
+const templates={
+ basic:{
+  label:'LOVE UNFOLDS',title:'A tree of moments',kicker:'FROM SEED TO MEMORY',copy:'기억이 트리로 열립니다',body:'첫 순간에서 시작해 감정의 인과관계가 가지와 노드로 차분히 맺힙니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:224,h:112,eyebrow:'LOVE TREE',title:'First spark',sub:'the moment that started everything'},
+   {id:'m1',type:'moment',x:-360,y:-155,w:178,h:82,eyebrow:'MOMENT 01',title:'The first song',sub:'2:14 · wonder'},
+   {id:'m2',type:'moment',x:350,y:-178,w:190,h:84,eyebrow:'MOMENT 02',title:'Stayed a little longer',sub:'late summer · warmth'},
+   {id:'m3',type:'moment',x:-385,y:180,w:188,h:84,eyebrow:'MOMENT 03',title:'Found my way back',sub:'a quiet return'},
+   {id:'m4',type:'moment',x:365,y:185,w:190,h:84,eyebrow:'MOMENT 04',title:'Shared it with someone',sub:'the memory grew'},
+   {id:'e1',type:'emotion',x:-520,y:-280,w:126,h:56,eyebrow:'EMOTION',title:'Wonder',sub:''},
+   {id:'e2',type:'emotion',x:510,y:-295,w:132,h:56,eyebrow:'EMOTION',title:'Comfort',sub:''},
+   {id:'e3',type:'emotion',x:-535,y:305,w:128,h:56,eyebrow:'EMOTION',title:'Courage',sub:''},
+   {id:'n1',type:'note',x:520,y:306,w:150,h:62,eyebrow:'NOTE',title:'“Keep this.”',sub:'private reflection'}
+  ],
+  edges:[
+   {from:'root',to:'m1',label:'made me look closer',curve:-20},{from:'root',to:'m2',label:'felt unexpectedly warm',curve:24},
+   {from:'root',to:'m3',label:'I returned because',curve:22},{from:'root',to:'m4',label:'became ours',curve:-24},
+   {from:'m1',to:'e1',label:'before → after',curve:18},{from:'m2',to:'e2',label:'stayed with me',curve:-15},
+   {from:'m3',to:'e3',label:'a little braver',curve:-16},{from:'m4',to:'n1',label:'held in words',curve:16}
+  ]
+ },
+ person:{
+  label:'PERSON MEMORY',title:'One person, many seasons',kicker:'A LIVING MEMORY SHELF',copy:'한 사람의 계절이 펼쳐집니다',body:'같은 사람을 향한 여러 순간과 감정이 하나의 경로로 이어집니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:230,h:112,eyebrow:'PERSON TREE',title:'Mina',sub:'one person · four seasons'},
+   {id:'s1',type:'season',x:-360,y:-205,w:176,h:78,eyebrow:'SEASON 01',title:'First light',sub:'when I first noticed'},
+   {id:'s2',type:'season',x:360,y:-210,w:176,h:78,eyebrow:'SEASON 02',title:'Closer days',sub:'small things became dear'},
+   {id:'s3',type:'season',x:-365,y:205,w:176,h:78,eyebrow:'SEASON 03',title:'Quiet winter',sub:'distance and return'},
+   {id:'s4',type:'season',x:365,y:205,w:176,h:78,eyebrow:'SEASON 04',title:'New chapter',sub:'the feeling stayed'},
+   {id:'m1',type:'moment',x:-540,y:-305,w:160,h:68,eyebrow:'MOMENT',title:'A passing smile',sub:'curiosity'},
+   {id:'m2',type:'moment',x:-520,y:-95,w:164,h:68,eyebrow:'MOMENT',title:'The long message',sub:'trust'},
+   {id:'m3',type:'moment',x:540,y:-315,w:164,h:68,eyebrow:'MOMENT',title:'Shared playlist',sub:'belonging'},
+   {id:'m4',type:'moment',x:535,y:-90,w:164,h:68,eyebrow:'MOMENT',title:'Sunday walk',sub:'ease'},
+   {id:'m5',type:'moment',x:-540,y:305,w:164,h:68,eyebrow:'MOMENT',title:'Silence between us',sub:'uncertain'},
+   {id:'e1',type:'emotion',x:-520,y:92,w:124,h:54,eyebrow:'EMOTION',title:'Missing',sub:''},
+   {id:'m6',type:'moment',x:540,y:310,w:164,h:68,eyebrow:'MOMENT',title:'We met again',sub:'relief'},
+   {id:'n1',type:'note',x:525,y:92,w:150,h:60,eyebrow:'NOTE',title:'Still here',sub:'a private line'}
+  ],
+  edges:[
+   {from:'root',to:'s1',label:'the beginning',curve:-28},{from:'root',to:'s2',label:'grew closer',curve:26},{from:'root',to:'s3',label:'a quiet distance',curve:26},{from:'root',to:'s4',label:'returned gently',curve:-26},
+   {from:'s1',to:'m1',label:'first noticed',curve:12},{from:'s1',to:'m2',label:'wanted to know more',curve:-16},
+   {from:'s2',to:'m3',label:'shared worlds',curve:-14},{from:'s2',to:'m4',label:'felt ordinary and rare',curve:14},
+   {from:'s3',to:'m5',label:'could not say',curve:-12},{from:'s3',to:'e1',label:'became longing',curve:13},
+   {from:'s4',to:'m6',label:'found each other',curve:12},{from:'s4',to:'n1',label:'kept the feeling',curve:-12}
+  ]
+ },
+ emotion:{
+  label:'EMOTIONAL MAP',title:'From feeling to connection',kicker:'THE PATH BENEATH A MEMORY',copy:'감정의 인과가 길이 됩니다',body:'첫 순간이 기록되고, 연결되고, 다시 돌아오는 감정 경로를 보여줍니다.',
+  nodes:[
+   {id:'root',type:'root',x:-410,y:0,w:214,h:108,eyebrow:'FIRST MOMENT',title:'I noticed',sub:'a small movement of the heart'},
+   {id:'a1',type:'moment',x:-165,y:-185,w:168,h:76,eyebrow:'CAPTURE',title:'Saved the moment',sub:'time · source · note'},
+   {id:'a2',type:'emotion',x:90,y:-205,w:144,h:58,eyebrow:'EMOTION',title:'Wonder',sub:''},
+   {id:'a3',type:'cluster',x:320,y:-105,w:172,h:76,eyebrow:'CONNECTION',title:'Why it led onward',sub:'emotion before → after'},
+   {id:'a4',type:'moment',x:390,y:145,w:170,h:76,eyebrow:'NEXT MOMENT',title:'Looked again',sub:'the path continued'},
+   {id:'a5',type:'emotion',x:130,y:220,w:146,h:58,eyebrow:'EMOTION',title:'Belonging',sub:''},
+   {id:'a6',type:'note',x:-150,y:195,w:164,h:66,eyebrow:'REFLECTION',title:'“This changed me.”',sub:'private note'},
+   {id:'a7',type:'season',x:560,y:-260,w:158,h:68,eyebrow:'EXPANSION',title:'New branch',sub:'a derived path'},
+   {id:'a8',type:'media',x:565,y:285,w:156,h:68,eyebrow:'RETURN',title:'Played again',sub:'the feeling revives'}
+  ],
+  edges:[
+   {from:'root',to:'a1',label:'first saved',curve:-18},{from:'a1',to:'a2',label:'named the feeling',curve:17},{from:'a2',to:'a3',label:'made me curious',curve:-16},
+   {from:'a3',to:'a4',label:'led to the next moment',curve:23},{from:'a4',to:'a5',label:'changed into',curve:18},{from:'a5',to:'a6',label:'held as words',curve:-18},
+   {from:'a3',to:'a7',label:'another route opened',curve:-22},{from:'a4',to:'a8',label:'returned through replay',curve:20},
+   {from:'a6',to:'root',label:'the path can begin again',curve:58}
+  ]
+ },
+ season:{
+  label:'SEASON MAP',title:'A season becomes a living archive',kicker:'ONE TREE · MANY CHAPTERS',copy:'한 시즌의 전체 구조가 피어납니다',body:'오프닝, 전환점, 깊어짐, 여운이 같은 나무 안의 장으로 정리됩니다.',
+  nodes:[
+   {id:'root',type:'root',x:0,y:0,w:234,h:112,eyebrow:'SEASON 03',title:'The season we stayed',sub:'18 moments · 4 emotional clusters'},
+   {id:'c1',type:'cluster',x:-380,y:-210,w:176,h:78,eyebrow:'CHAPTER 01',title:'Opening',sub:'the first three moments'},
+   {id:'c2',type:'cluster',x:380,y:-215,w:182,h:78,eyebrow:'CHAPTER 02',title:'Turning point',sub:'the feeling changed'},
+   {id:'c3',type:'cluster',x:-390,y:215,w:176,h:78,eyebrow:'CHAPTER 03',title:'Deepening',sub:'the path grew roots'},
+   {id:'c4',type:'cluster',x:390,y:215,w:176,h:78,eyebrow:'CHAPTER 04',title:'Afterglow',sub:'what remained'},
+   {id:'m1',type:'moment',x:-555,y:-315,w:150,h:64,eyebrow:'MOMENT',title:'First glance',sub:'wonder'},
+   {id:'m2',type:'moment',x:-545,y:-100,w:150,h:64,eyebrow:'MOMENT',title:'A small sign',sub:'curiosity'},
+   {id:'m3',type:'moment',x:550,y:-325,w:154,h:64,eyebrow:'MOMENT',title:'The honest line',sub:'surprise'},
+   {id:'e1',type:'emotion',x:545,y:-95,w:132,h:54,eyebrow:'EMOTION',title:'Trust',sub:''},
+   {id:'m4',type:'moment',x:-555,y:325,w:154,h:64,eyebrow:'MOMENT',title:'Stayed through rain',sub:'comfort'},
+   {id:'n1',type:'note',x:-545,y:100,w:148,h:60,eyebrow:'NOTE',title:'Closer now',sub:'private'},
+   {id:'m5',type:'moment',x:550,y:325,w:154,h:64,eyebrow:'MOMENT',title:'Last evening',sub:'grateful'},
+   {id:'e2',type:'emotion',x:545,y:100,w:132,h:54,eyebrow:'EMOTION',title:'Afterglow',sub:''}
+  ],
+  edges:[
+   {from:'root',to:'c1',label:'the season opened',curve:-28},{from:'root',to:'c2',label:'something shifted',curve:28},{from:'root',to:'c3',label:'we stayed longer',curve:26},{from:'root',to:'c4',label:'what remained',curve:-26},
+   {from:'c1',to:'m1',label:'first spark',curve:12},{from:'c1',to:'m2',label:'looked closer',curve:-14},
+   {from:'c2',to:'m3',label:'said aloud',curve:-12},{from:'c2',to:'e1',label:'became trust',curve:14},
+   {from:'c3',to:'m4',label:'felt safe',curve:-12},{from:'c3',to:'n1',label:'held privately',curve:14},
+   {from:'c4',to:'m5',label:'the final evening',curve:12},{from:'c4',to:'e2',label:'stayed after',curve:-14}
+  ]
+ }
+};
+
+function applyV22DistinctLayouts(){
+ const set=(name,layout,positions,edges)=>{
+  const t=templates[name];t.layout=layout;
+  t.nodes.forEach(n=>{const p=positions[n.id];if(p){n.x=p[0];n.y=p[1];if(p[2])n.w=p[2];if(p[3])n.h=p[3]}});
+  if(edges)t.edges=edges;
+ };
+ set('basic','branch',{
+  root:[-455,0,214,104],m1:[-205,-150],m2:[55,-135],m3:[55,145],m4:[330,5],
+  e1:[40,-285],e2:[330,-170],e3:[330,205],n1:[525,90]
+ },[
+  {from:'root',to:'m1',label:'첫 순간에서',curve:-12},{from:'m1',to:'m2',label:'더 궁금해져서',curve:-16},
+  {from:'m1',to:'m3',label:'다시 돌아와서',curve:18},{from:'m2',to:'m4',label:'다음 순간을 찾음',curve:14},
+  {from:'m1',to:'e1',label:'처음 느낀 감정',curve:-10},{from:'m2',to:'e2',label:'감정이 깊어짐',curve:-12},
+  {from:'m3',to:'e3',label:'돌아온 뒤',curve:12},{from:'m4',to:'n1',label:'남겨둔 말',curve:-12}
+ ]);
+ set('person','orbit',{
+  root:[0,0,230,112],s1:[0,-235],s2:[315,0],s3:[0,235],s4:[-315,0],
+  m1:[-190,-315],m2:[190,-315],m3:[500,-110],m4:[500,115],
+  m5:[-190,320],e1:[190,320],m6:[-500,115],n1:[-500,-110]
+ });
+ set('emotion','journey',{
+  root:[-500,-225,205,102],a1:[-310,-115],a2:[-105,-230],a3:[90,-95],a4:[300,45],
+  a5:[115,205],a6:[-120,105],a7:[485,-175],a8:[495,235]
+ });
+ set('season','timeline',{
+  root:[0,-285,236,108],c1:[-245,-135],c2:[245,-30],c3:[-245,95],c4:[245,210],
+  m1:[-500,-210],m2:[-500,-80],m3:[505,-105],e1:[505,25],m4:[-500,80],n1:[-500,205],m5:[505,195],e2:[505,310]
+ });
+}
+applyV22DistinctLayouts();
+
+const templateBlueprints=JSON.parse(JSON.stringify(templates));
+const emptySlotLabels={root:['트리 제목','이 폼에 기억을 채워보세요'],moment:['+ Moment 추가','영상·사진·링크·메시지'],emotion:['감정 이름','before → after'],cluster:['Chapter','Moment 묶음'],season:['Season','한 시기의 기억'],note:['+ 메모','나만 보는 기록'],media:['+ 영상','다시 재생할 순간']};
+function freshTemplate(name){
+ templates[name]=JSON.parse(JSON.stringify(templateBlueprints[name]));
+ templates[name].nodes.forEach(n=>{const v=emptySlotLabels[n.type]||emptySlotLabels.moment;n.title=v[0];n.sub=v[1]});
+}
+
+const app=$('#app'), svg=$('#mapSvg'), viewport=$('#viewportGroup'), edgeLayer=$('#edgeLayer'), labelLayer=$('#labelLayer'), nodeLayer=$('#nodeLayer'), petalLayer=$('#petalLayer');
+const stage=$('#stageShell'), progressFill=$('#progressFill'), progressText=$('#progressText'), phaseLabel=$('#phaseLabel'), toast=$('#toast');
+let current=templates[qs.get('template')]?qs.get('template'):'basic';
+let nodesById=new Map(), edges=[], nodeEls=new Map(), edgeEls=new Map(), labelEls=new Map(), schedule={nodes:new Map(),edges:new Map()};
+let progress=0, raf=0, playing=false, startedAt=0, speed=Number(qs.get('speed')||1), duration=1300;
+let camera={scale:1,x:0,y:0}, drag=null, selectedId=null, breathTime=0, originShift={x:0,y:0};
+const capture=qs.get('capture')==='1'; if(capture) document.body.classList.add('capture-mode');
+const isMobile=()=>innerWidth<=700;
+
+function layoutNode(n,index){
+ if(!isMobile()) return {x:n.x+originShift.x,y:n.y+originShift.y};
+ if(n.id==='root') return {x:0,y:-470};
+ const tpl=templates[current];
+ const parents=new Map(tpl.edges.map(e=>[e.to,e.from]));
+ let level=0,p=n.id; while(parents.has(p)&&level<5){level++;p=parents.get(p)}
+ const same=tpl.nodes.filter(nn=>{let l=0,q=nn.id;while(parents.has(q)&&l<5){l++;q=parents.get(q)}return l===level&&nn.id!=='root'});
+ const idx=same.findIndex(nn=>nn.id===n.id);
+ if(level===1){const cols=2;return {x:(idx%cols?168:-168),y:-230+Math.floor(idx/cols)*235}}
+ const parentId=parents.get(n.id), parent=nodesById.get(parentId); const pp=parent?layoutNode(parent,0):{x:0,y:0};
+ const siblings=tpl.nodes.filter(nn=>parents.get(nn.id)===parentId); const si=siblings.findIndex(nn=>nn.id===n.id);
+ return {x:pp.x+(si%2?105:-105),y:pp.y+118+Math.floor(si/2)*98};
+}
+function setViewBox(){
+ svg.setAttribute('viewBox',isMobile()?'-360 -520 720 1050':'-600 -370 1200 740');
+}
+function nodeRadius(n,ux,uy){return Math.min(Math.abs(ux)>Math.abs(uy)?n.w*.46:n.h*.46,92)}
+function pathFor(a,b,i,curve=0){
+ const pa=layoutNode(a),pb=layoutNode(b),dx=pb.x-pa.x,dy=pb.y-pa.y,d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d;
+ const rs=nodeRadius(a,ux,uy),rt=nodeRadius(b,ux,uy); const sx=pa.x+ux*rs,sy=pa.y+uy*rs,tx=pb.x-ux*rt,ty=pb.y-uy*rt;
+ const nx=-uy,ny=ux,c=curve||((i%2?1:-1)*Math.min(42,d*.1));
+ const c1x=sx+(tx-sx)*.34+nx*c,c1y=sy+(ty-sy)*.34+ny*c,c2x=sx+(tx-sx)*.68+nx*c,c2y=sy+(ty-sy)*.68+ny*c;
+ return `M ${sx.toFixed(2)} ${sy.toFixed(2)} C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${tx.toFixed(2)} ${ty.toFixed(2)}`;
+}
+function getLevels(tpl){
+ const parent=new Map(tpl.edges.map(e=>[e.to,e.from]));const levels=new Map([['root',0]]);
+ const level=id=>{if(levels.has(id))return levels.get(id);const p=parent.get(id);const l=p?level(p)+1:1;levels.set(id,l);return l};
+ tpl.nodes.forEach(n=>level(n.id));return levels;
+}
+function createPetals(){
+ petalLayer.replaceChildren();
+ const pts=[[-520,-300,8,14,-18],[530,-260,7,13,24],[-560,270,6,12,14],[510,300,8,14,-25],[-70,-320,5,10,12],[85,315,5,11,-10]];
+ pts.forEach(([x,y,rx,ry,r])=>{const p=svgEl('ellipse',{class:'petal',cx:x,cy:y,rx,ry,transform:`rotate(${r} ${x} ${y})`});petalLayer.append(p)});
+}
+function buildSchedule(tpl){
+ schedule={nodes:new Map(),edges:new Map()};const levels=getLevels(tpl);schedule.nodes.set('root',{s:.025,d:.12});
+ const groups={1:[],2:[],3:[],4:[]};tpl.edges.forEach((e,i)=>{const l=levels.get(e.to)||1;(groups[l]||(groups[l]=[])).push({e,i})});
+ const windows={1:[.15,.42],2:[.44,.72],3:[.68,.88],4:[.78,.94]};
+ Object.entries(groups).forEach(([ls,arr])=>{if(!arr.length)return;const [a,b]=windows[ls]||[.5,.9];arr.forEach((o,j)=>{const s=a+(arr.length===1?0:(b-a)*(j/(arr.length-1))*.7);schedule.edges.set(o.i,{s,d:.13});schedule.nodes.set(o.e.to,{s:s+.072,d:.105})})});
+}
+
+function createLayoutGuide(tpl){
+ const add=(tag,attrs)=>{const el=svgEl(tag,attrs);edgeLayer.append(el);return el};
+ if(tpl.layout==='orbit'){
+  add('ellipse',{class:'layout-guide orbit',cx:0,cy:0,rx:360,ry:245});
+  add('ellipse',{class:'layout-guide orbit',cx:0,cy:0,rx:455,ry:325,opacity:.55});
+ }else if(tpl.layout==='journey'){
+  add('path',{class:'layout-guide journey',d:'M -520 -225 C -310 80 -190 -300 55 -105 S 255 270 510 215',opacity:.52});
+ }else if(tpl.layout==='timeline'){
+  add('path',{class:'layout-guide timeline',d:'M 0 -245 C -25 -160 25 -80 0 0 S -25 165 0 292'});
+ }else{
+  add('path',{class:'layout-guide branch',d:'M -500 0 C -260 -55 -35 55 520 25'});
+ }
+}
+function nodeCornerRadius(n){
+ if(current==='person'&&n.type==='season')return Math.min(30,n.h*.42);
+ if(current==='season'&&n.type==='cluster')return 8;
+ if(current==='emotion')return n.type==='root'?26:13;
+ return Math.min(19,n.h*.24);
+}
+
+function makeNode(n,i){
+ const p=layoutNode(n); const g=svgEl('g',{class:`node ${n.type} breathe-${i%3+1}`,'data-id':n.id,'data-base-x':p.x,'data-base-y':p.y,tabindex:'0','aria-label':`${n.eyebrow} ${n.title}`});
+ const shadow=svgEl('rect',{class:'node-shadow',x:-n.w/2+4,y:-n.h/2+8,width:n.w-8,height:n.h-4,rx:nodeCornerRadius(n)});
+ const card=svgEl('rect',{class:'node-card',x:-n.w/2,y:-n.h/2,width:n.w,height:n.h,rx:nodeCornerRadius(n)});
+ const accent=svgEl('line',{class:'node-accent',x1:-n.w/2+18,y1:-n.h/2+13,x2:-n.w/2+48,y2:-n.h/2+13});
+ const dot=svgEl('circle',{class:'node-dot',cx:-n.w/2+21,cy:n.type==='root'?-2:-1,r:n.type==='root'?7:5});
+ g.append(shadow,card,accent,dot);
+ if(n.type==='root'){
+  g.append(svgEl('path',{class:'seed-leaf',d:'M -91 4 C -82 -15 -64 -20 -54 -11 C -58 3 -71 10 -88 8 M -88 8 C -76 8 -65 14 -59 25'}));
+  const ey=svgEl('text',{class:'eyebrow',x:-n.w/2+44,y:-22});ey.textContent=n.eyebrow;
+  const tt=svgEl('text',{class:'title',x:-n.w/2+44,y:6});tt.textContent=n.title;
+  const st=svgEl('text',{class:'subtitle',x:-n.w/2+44,y:27});st.textContent=n.sub;
+  g.append(ey,tt,st);
+ }else{
+  const textX=-n.w/2+38;
+  const ey=svgEl('text',{class:'eyebrow',x:textX,y:n.sub?-14:-8});ey.textContent=n.eyebrow;
+  const tt=svgEl('text',{class:'title',x:textX,y:n.sub?8:13});tt.textContent=n.title;
+  g.append(ey,tt);
+  if(n.sub){const st=svgEl('text',{class:'subtitle',x:textX,y:27});st.textContent=n.sub;g.append(st)}
+ }
+ g.addEventListener('click',ev=>{ev.stopPropagation();selectBranch(n.id,true)});
+ g.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectBranch(n.id,true)}});
+ nodeLayer.append(g);nodeEls.set(n.id,g);return g;
+}
+function makeEdge(e,i,levels){
+ const a=nodesById.get(e.from),b=nodesById.get(e.to),d=pathFor(a,b,i,e.curve);const level=levels.get(e.to)||1;
+ const trail=svgEl('path',{class:'edge-trail',d});
+ const path=svgEl('path',{class:`edge-path level-${level}`,d,'data-edge':i,'data-from':e.from,'data-to':e.to});
+ edgeLayer.append(trail,path); const len=path.getTotalLength();path.style.strokeDasharray=len;path.style.strokeDashoffset=len;
+ edgeEls.set(i,{path,trail,len});
+ const pt=path.getPointAtLength(len*(e.labelPos||.53));const w=Math.max(68,e.label.length*5.35+18);const lg=svgEl('g',{class:'connection-label','data-edge':i,transform:`translate(${pt.x} ${pt.y})`});
+ const rect=svgEl('rect',{x:-w/2,y:-10,width:w,height:20,rx:8});const text=svgEl('text',{x:0,y:.7});text.textContent=e.label;lg.append(rect,text);labelLayer.append(lg);labelEls.set(i,lg);
+}
+function build(name,{autoplay=true}={}){
+ current=name; selectedId=null;cancelAnimationFrame(raf);playing=false;progress=0;camera={scale:1,x:0,y:0};applyCamera();
+ const tpl=templates[name];app.dataset.layout=tpl.layout||name;nodesById=new Map(tpl.nodes.map(n=>[n.id,n]));edges=tpl.edges;
+ edgeLayer.replaceChildren();labelLayer.replaceChildren();nodeLayer.replaceChildren();nodeEls.clear();edgeEls.clear();labelEls.clear();createPetals();setViewBox();buildSchedule(tpl);
+ const levels=getLevels(tpl);createLayoutGuide(tpl);
+ // Root aura lives beneath nodes.
+ const root=nodesById.get('root'),rp=layoutNode(root);for(let k=0;k<2;k++){const a=svgEl('ellipse',{class:`root-aura a${k+1}`,cx:rp.x,cy:rp.y,rx:root.w*.58+k*18,ry:root.h*.67+k*12});edgeLayer.append(a)}
+ tpl.edges.forEach((e,i)=>makeEdge(e,i,levels));tpl.nodes.forEach(makeNode);
+ $('#modeLabel').textContent=tpl.label;$('#modeTitle').textContent=tpl.title;$('#copyKicker').textContent=tpl.kicker;$('#copyTitle').textContent=tpl.copy;$('#copyBody').textContent=tpl.body;
+ $$('.template-tab').forEach(b=>b.classList.toggle('active',b.dataset.template===name));
+ render(0); if(autoplay&&!capture) setTimeout(play,260);
+}
+function localProgress(p,s,d){return clamp((p-s)/d)}
+function phaseFor(p){if(p<.14)return'SEED';if(p<.43)return'CONNECTIONS';if(p<.76)return'MOMENTS';if(p<.98)return'SETTLING';return'FORM COMPLETE'}
+function render(p){
+ progress=clamp(p); const tpl=templates[current];
+ nodeEls.forEach((g,id)=>{const sch=schedule.nodes.get(id)||{s:.5,d:.1};const t=localProgress(progress,sch.s,sch.d);const e=id==='root'?backOut(t):backOut(t);const pos=layoutNode(nodesById.get(id));const sx=.16+.84*e,sy=.7+.3*e;g.style.opacity=smooth(t);g.setAttribute('transform',`translate(${pos.x} ${pos.y}) scale(${sx.toFixed(4)} ${sy.toFixed(4)})`);g.style.pointerEvents=t>.82?'auto':'none'});
+ edgeEls.forEach((obj,i)=>{const sch=schedule.edges.get(i)||{s:.4,d:.1};const t=easeInOut(localProgress(progress,sch.s,sch.d));obj.path.style.strokeDashoffset=obj.len*(1-t);obj.path.style.opacity=.15+.78*t;const lg=labelEls.get(i);const lt=smooth(localProgress(progress,sch.s+sch.d*.56,.08));lg.style.opacity=lt;lg.style.transform=`${lg.getAttribute('transform')} scale(${(.82+.18*lt).toFixed(3)})`;});
+ const done=progress>=.999;viewport.classList.toggle('map-complete',done);progressFill.style.width=`${(progress*100).toFixed(1)}%`;progressText.textContent=`${String(Math.round(progress*100)).padStart(2,'0')}%`;phaseLabel.textContent=phaseFor(progress);
+ window.__lovetreeState={template:current,progress,phase:phaseFor(progress),nodeCount:tpl.nodes.length,edgeCount:tpl.edges.length,playing,camera:{...camera},mobile:isMobile(),selectedId};
+}
+function play(){
+ cancelAnimationFrame(raf);playing=true;startedAt=performance.now()-progress*(duration/speed);
+ const tick=now=>{const p=(now-startedAt)/(duration/speed);render(p);if(p<1&&playing)raf=requestAnimationFrame(tick);else{playing=false;render(1)}};raf=requestAnimationFrame(tick);
+}
+function replay(){selectedId=null;clearSelection();render(0);setTimeout(play,120)}
+function descendants(id){const out=new Set([id]);let changed=true;while(changed){changed=false;edges.forEach(e=>{if(out.has(e.from)&&!out.has(e.to)){out.add(e.to);changed=true}})}return out}
+function selectBranch(id,notify=false){
+ selectedId=id;const rel=descendants(id);nodeEls.forEach((g,nid)=>{g.classList.toggle('selected',nid===id);g.classList.toggle('dimmed',!rel.has(nid));if(rel.has(nid)){g.classList.remove('branch-pulse');void g.getBBox();g.classList.add('branch-pulse')}});
+ edges.forEach((e,i)=>{const yes=rel.has(e.from)&&rel.has(e.to);edgeEls.get(i).path.classList.toggle('related',yes);edgeEls.get(i).path.classList.toggle('dimmed',!yes);labelEls.get(i).classList.toggle('dimmed',!yes);if(yes){const tr=edgeEls.get(i).trail;tr.classList.remove('running');void tr.getBBox();tr.classList.add('running')}});
+ if(notify){toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500)}
+ render(progress);
+}
+function clearSelection(){selectedId=null;nodeEls.forEach(g=>g.classList.remove('selected','dimmed','branch-pulse'));edgeEls.forEach(o=>o.path.classList.remove('related','dimmed'));labelEls.forEach(g=>g.classList.remove('dimmed'))}
+function applyCamera(){viewport.setAttribute('transform',`translate(${camera.x} ${camera.y}) scale(${camera.scale})`)}
+function zoomBy(f){camera.scale=clamp(camera.scale*f,.66,1.75);applyCamera()}
+function fit(){camera={scale:1,x:0,y:0};applyCamera()}
+
+$('#replayBtn').addEventListener('click',replay);$('#speedSelect').addEventListener('change',e=>{speed=Number(e.target.value);if(playing)play()});
+$('#zoomInBtn').addEventListener('click',()=>zoomBy(1.12));$('#zoomOutBtn').addEventListener('click',()=>zoomBy(.89));$('#fitBtn').addEventListener('click',fit);
+$$('.template-tab').forEach(b=>b.addEventListener('click',()=>{stage.animate([{opacity:1},{opacity:.35},{opacity:1}],{duration:420,easing:'ease-in-out'});setTimeout(()=>build(b.dataset.template,{autoplay:true}),120)}));
+stage.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY<0?1.08:.92)},{passive:false});
+stage.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('.node'))return;drag={x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y};stage.setPointerCapture(e.pointerId);stage.classList.add('dragging');clearSelection()});
+stage.addEventListener('pointermove',e=>{if(!drag)return;camera.x=drag.cx+(e.clientX-drag.x)/camera.scale;camera.y=drag.cy+(e.clientY-drag.y)/camera.scale;applyCamera()});
+stage.addEventListener('pointerup',()=>{drag=null;stage.classList.remove('dragging')});
+addEventListener('resize',()=>{setViewBox();build(current,{autoplay:false});render(progress)});
+
+window.LoveTreeUnfold={
+ setProgress:p=>{cancelAnimationFrame(raf);playing=false;render(Number(p))},
+ play,replay,build:(name,auto=false)=>build(name,{autoplay:auto}),
+ select:id=>selectBranch(id,false),clearSelection,zoomBy,fit,
+ state:()=>window.__lovetreeState,
+ templates:()=>Object.keys(templates),
+ getData:()=>JSON.parse(JSON.stringify(templates[current])),
+ updateNode:(id,patch)=>{const n=nodesById.get(id);if(!n)return false;Object.assign(n,patch||{});build(current,{autoplay:false});render(1);return true},
+ updateEdge:(index,patch)=>{const e=templates[current].edges[Number(index)];if(!e)return false;Object.assign(e,patch||{});build(current,{autoplay:false});render(1);return true},
+ dropTemplate:(name)=>{if(!templates[name])return false;freshTemplate(name);originShift={x:0,y:0};build(name,{autoplay:false});render(0);setTimeout(play,110);return true},
+ clearCanvas:()=>{cancelAnimationFrame(raf);playing=false;progress=0;render(0)},
+ origin:()=>({...originShift})
+};
+
+build(current,{autoplay:qs.get('autoload')==='1'});
+if(qs.has('progress')){setTimeout(()=>window.LoveTreeUnfold.setProgress(Number(qs.get('progress'))),0)}
+})();
+</script>
+
+<script>
+(() => {
+'use strict';
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const drawer=$('#composerDrawer'),scrim=$('#drawerScrim'),library=$('#libraryView'),editor=$('#editorView'),edgeEditor=$('#edgeEditorView');
+const empty=$('#emptyState'),stage=$('#stageShell'),svg=$('#mapSvg');
+let pendingTemplate=null,editingNodeId=null,editingEdgeIndex=null,currentMedia=null,mediaReadyPromise=Promise.resolve();
+const mediaByTemplate=new Map();
+function mediaKey(id){return `${window.__lovetreeState?.template||'basic'}:${id}`}
+function openDrawer(view='library'){
+ drawer.classList.add('open');scrim.classList.add('open');
+ library.hidden=view!=='library';editor.hidden=view!=='editor';edgeEditor.hidden=view!=='edge';
+ $('#drawerHeading').textContent=view==='library'?'템플릿 보관함':view==='edge'?'Connection 편집':'노드 채우기';
+ $('#drawerSubheading').textContent=view==='library'?'폼을 캔버스에 끌어놓으세요':view==='edge'?'다음 탐색을 일으킨 이유':'영상·사진·음성·메시지를 넣으세요';
+}
+function closeDrawer(){drawer.classList.remove('open');scrim.classList.remove('open');requestAnimationFrame(()=>scrollTo(0,0))}
+$('#templateBookBtn').addEventListener('click',()=>openDrawer('library'));
+$('#drawerClose').addEventListener('click',closeDrawer);scrim.addEventListener('click',closeDrawer);
+$('#backToLibraryBtn').addEventListener('click',()=>openDrawer('library'));$('#edgeBackBtn').addEventListener('click',()=>openDrawer('library'));
+function announce(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700)}
+function clearExampleContent(){ /* v2.1: freshTemplate() already creates empty slots in one batch. */ }
+function svgPointFromEvent(e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const ctm=svg.getScreenCTM();if(!ctm)return{x:0,y:0};const p=pt.matrixTransform(ctm.inverse());return{x:p.x,y:p.y}}
+function placeTemplate(name){
+ if(!['basic','person','emotion','season'].includes(name))return;
+ [...mediaByTemplate.keys()].filter(k=>k.startsWith(name+':')).forEach(k=>mediaByTemplate.delete(k));
+ empty.classList.add('hidden');closeDrawer();
+ const burst=$('#unfoldSeedBurst');burst.classList.remove('run');void burst.offsetWidth;burst.classList.add('run');
+ LoveTreeUnfold.dropTemplate(name);announce('가운데에서 폼이 촤르륵 펼쳐집니다.');pendingTemplate=null;
+ setTimeout(()=>{renderMediaInNodes();stage.classList.remove('drop-ready')},1900)
+}
+let templateDrag=null;
+function makeDragGhost(card){
+ const ghost=document.createElement('div');ghost.className='template-drag-ghost';
+ const preview=card.querySelector('.template-preview').cloneNode(true);const meta=card.querySelector('.template-meta').cloneNode(true);
+ ghost.append(preview,meta);document.body.append(ghost);requestAnimationFrame(()=>ghost.classList.add('live'));return ghost
+}
+function pointInsideStage(x,y){const r=stage.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function moveGhost(g,x,y){g.style.left=x+'px';g.style.top=y+'px'}
+function finishTemplateDrag(e){
+ if(!templateDrag)return;const d=templateDrag;templateDrag=null;const card=d.card;card.classList.remove('drag-source');
+ try{card.releasePointerCapture(e.pointerId)}catch(_){ }
+ const inside=pointInsideStage(e.clientX,e.clientY);
+ if(inside){
+  const r=stage.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const anim=d.ghost.animate([{left:e.clientX+'px',top:e.clientY+'px',transform:'translate3d(-50%,-50%,0) scale(.92)',opacity:1},{left:cx+'px',top:cy+'px',transform:'translate3d(-50%,-50%,0) scale(.36)',opacity:.05}],{duration:300,easing:'cubic-bezier(.18,.82,.18,1)',fill:'forwards'});
+  closeDrawer();stage.classList.add('drop-ready');
+  setTimeout(()=>placeTemplate(d.name),170);anim.finished.finally(()=>d.ghost.remove())
+ }else{d.ghost.animate([{opacity:1},{opacity:0,transform:'translate3d(-50%,-50%,0) scale(.72)'}],{duration:150,fill:'forwards'}).finished.finally(()=>d.ghost.remove());stage.classList.remove('drop-ready');if(!d.moved)placeTemplate(d.name)}
+}
+$$('[data-template-drag]').forEach(card=>{
+ card.addEventListener('dragstart',e=>{e.dataTransfer.effectAllowed='copy';e.dataTransfer.setData('text/lovetree-template',card.dataset.templateDrag);e.dataTransfer.setData('text/plain',card.dataset.templateDrag);card.classList.add('drag-source');stage.classList.add('drop-ready')});card.addEventListener('dragend',()=>{card.classList.remove('drag-source');stage.classList.remove('drop-ready')});
+ card.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();try{card.setPointerCapture(e.pointerId)}catch(_){ }templateDrag={name:card.dataset.templateDrag,startX:e.clientX,startY:e.clientY,moved:false,ghost:makeDragGhost(card),card,pointerId:e.pointerId};moveGhost(templateDrag.ghost,e.clientX,e.clientY);card.classList.add('drag-source')});
+});
+addEventListener('pointermove',e=>{if(!templateDrag||e.pointerId!==templateDrag.pointerId)return;const d=Math.hypot(e.clientX-templateDrag.startX,e.clientY-templateDrag.startY);if(d>5)templateDrag.moved=true;moveGhost(templateDrag.ghost,e.clientX,e.clientY);stage.classList.toggle('drop-ready',pointInsideStage(e.clientX,e.clientY))},true);
+addEventListener('pointerup',e=>{if(templateDrag&&e.pointerId===templateDrag.pointerId)finishTemplateDrag(e)},true);
+addEventListener('pointercancel',e=>{if(templateDrag&&e.pointerId===templateDrag.pointerId)finishTemplateDrag(e)},true);
+addEventListener('dragover',e=>{const types=Array.from(e.dataTransfer?.types||[]);if(types.includes('text/lovetree-template')||types.includes('text/plain')){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='copy';stage.classList.toggle('drop-ready',pointInsideStage(e.clientX,e.clientY))}},true);
+addEventListener('drop',e=>{const name=e.dataTransfer?.getData('text/lovetree-template')||e.dataTransfer?.getData('text/plain');if(!['basic','person','emotion','season'].includes(name))return;e.preventDefault();stage.classList.remove('drop-ready');if(pointInsideStage(e.clientX,e.clientY))placeTemplate(name);else announce('캔버스 안에 놓아주세요.')},true);
+
+stage.addEventListener('click',e=>{if(pendingTemplate&&!e.target.closest('.node'))placeTemplate(pendingTemplate)},false);
+function nodeData(id){return LoveTreeUnfold.getData().nodes.find(n=>n.id===id)}
+function edgeData(i){return LoveTreeUnfold.getData().edges[Number(i)]}
+function youtubeIdFromUrl(value){
+ const raw=String(value||'').trim().replace(/[\u200B-\u200D\uFEFF]/g,'');
+ if(!raw)return'';
+ if(/^[A-Za-z0-9_-]{11}$/.test(raw))return raw;
+ try{
+  const normalized=/^[a-z]+:\/\//i.test(raw)?raw:`https://${raw}`;
+  const u=new URL(normalized);const host=u.hostname.toLowerCase().replace(/^www\./,'').replace(/^m\./,'').replace(/^music\./,'');
+  let id='';
+  if(host==='youtu.be')id=u.pathname.split('/').filter(Boolean)[0]||'';
+  else if(host==='youtube.com'||host.endsWith('.youtube.com')){
+   if(u.pathname==='/watch')id=u.searchParams.get('v')||'';
+   else{const parts=u.pathname.split('/').filter(Boolean);if(['shorts','embed','live','v'].includes(parts[0]))id=parts[1]||''}
+  }
+  id=(id||'').split(/[?&#/]/)[0];return /^[A-Za-z0-9_-]{11}$/.test(id)?id:'';
+ }catch(_){
+  const m=raw.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/i);
+  return m?.[1]||'';
+ }
+}
+function youtubeMedia(value){const id=youtubeIdFromUrl(value);if(!id)return null;return{name:'YouTube',type:'youtube',url:`https://www.youtube.com/watch?v=${id}`,videoId:id,thumb:`https://i.ytimg.com/vi/${id}/hqdefault.jpg`,embed:`https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`}}
+function showMediaPreview(media){const box=$('#mediaPreview');box.replaceChildren();box.classList.remove('show');if(!media)return;box.classList.add('show');if(media.type==='youtube'){const f=document.createElement('iframe');f.src=media.embed;f.title='YouTube 영상 미리보기';f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';f.allowFullscreen=true;box.append(f)}else if(media.type.startsWith('image/')){const img=new Image();img.src=media.url;img.alt=media.name||'선택한 사진';box.append(img)}else if(media.type.startsWith('video/')){const v=document.createElement('video');v.src=media.url;v.controls=true;v.muted=true;v.autoplay=true;v.loop=true;v.playsInline=true;v.preload='auto';box.append(v);v.addEventListener('canplay',()=>v.play().catch(()=>{}),{once:true})}else{const d=document.createElement('div');d.className='media-file';d.textContent=`🎧 ${media.name}`;box.append(d)}}
+function openNodeEditor(id){
+ editingNodeId=id;editingEdgeIndex=null;const n=nodeData(id);if(!n)return;$('#editorKind').textContent=(n.type||'node').toUpperCase()+' SLOT';$('#nodeTitleInput').value=n.title||'';$('#nodeSubtitleInput').value=n.sub||'';const saved=mediaByTemplate.get(mediaKey(id));$('#nodeMessageInput').value=saved?.message||'';currentMedia=saved?.media||null;$('#nodeYoutubeInput').value=currentMedia?.type==='youtube'?currentMedia.url:'';$('#youtubeStatus').className='youtube-status';$('#youtubeStatus').textContent='';showMediaPreview(currentMedia);$('#mediaAppliedLabel').classList.toggle('show',!!currentMedia);openDrawer('editor')
+}
+function openEdgeEditor(i){editingEdgeIndex=Number(i);editingNodeId=null;const e=edgeData(i);if(!e)return;$('#edgeReasonInput').value=e.label||'';openDrawer('edge')}
+stage.addEventListener('click',e=>{const node=e.target.closest?.('.node');if(node){openNodeEditor(node.dataset.id);return}const label=e.target.closest?.('.connection-label');if(label)openEdgeEditor(label.dataset.edge)},true);
+async function mediaThumb(file,url){
+ if(file.type.startsWith('image/'))return url;
+ if(file.type.startsWith('video/'))return await new Promise(resolve=>{
+  const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.src=url;
+  let settled=false;const done=value=>{if(settled)return;settled=true;resolve(value||'')};
+  const capture=()=>{try{if(!v.videoWidth||!v.videoHeight)return done('');const max=900,ratio=v.videoWidth/v.videoHeight;const c=document.createElement('canvas');c.width=max;c.height=Math.max(1,Math.round(max/ratio));c.getContext('2d',{alpha:false}).drawImage(v,0,0,c.width,c.height);done(c.toDataURL('image/jpeg',.9))}catch(_){done('')}};
+  const seek=()=>{try{const target=Number.isFinite(v.duration)&&v.duration>0?Math.min(.6,Math.max(.08,v.duration*.08)):.08;if(Math.abs(v.currentTime-target)<.02)capture();else v.currentTime=target}catch(_){capture()}};
+  v.addEventListener('loadedmetadata',seek,{once:true});v.addEventListener('loadeddata',()=>{if(!Number.isFinite(v.duration))capture()},{once:true});v.addEventListener('seeked',capture,{once:true});v.addEventListener('error',()=>done(''),{once:true});setTimeout(capture,3200)
+ });
+ return ''
+}
+function setYoutubeStatus(message,type='ok'){
+ const el=$('#youtubeStatus');el.textContent=message;el.className=`youtube-status show ${type}`;
+}
+function applyYoutubeToCurrentNode(){
+ const raw=$('#nodeYoutubeInput').value;const media=youtubeMedia(raw);
+ if(!media){setYoutubeStatus('링크를 인식하지 못했습니다. YouTube 공유 주소 전체 또는 11자리 영상 ID를 붙여넣어 주세요.','error');announce('올바른 YouTube 링크를 붙여넣어 주세요.');$('#nodeYoutubeInput').focus();return false}
+ if(currentMedia?.url?.startsWith('blob:'))URL.revokeObjectURL(currentMedia.url);
+ currentMedia=media;mediaReadyPromise=Promise.resolve(media.thumb);$('#nodeYoutubeInput').value=media.url;showMediaPreview(currentMedia);$('#mediaAppliedLabel').classList.add('show');
+ if(editingNodeId){
+  const activeNode=nodeData(editingNodeId);const mediaSize=activeNode?.type==='root'?{w:252,h:148}:{w:224,h:136};
+  const previous=mediaByTemplate.get(mediaKey(editingNodeId))||{};mediaByTemplate.set(mediaKey(editingNodeId),{message:$('#nodeMessageInput').value.trim()||previous.message||'',media:currentMedia});
+  LoveTreeUnfold.updateNode(editingNodeId,mediaSize);setTimeout(()=>{renderMediaInNodes();LoveTreeUnfold.select(editingNodeId)},30);
+ }
+ setYoutubeStatus('YouTube 영상을 불러와 노드에 표시했습니다. 제목·메모는 아래 “노드에 적용”으로 저장합니다.','ok');announce('YouTube 링크를 노드에 적용했습니다.');return true;
+}
+$('#applyYoutubeBtn').addEventListener('click',applyYoutubeToCurrentNode);
+$('#nodeYoutubeInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#applyYoutubeBtn').click()}});
+$('#nodeYoutubeInput').addEventListener('paste',()=>setTimeout(()=>{const v=$('#nodeYoutubeInput').value;if(youtubeIdFromUrl(v))applyYoutubeToCurrentNode();else setYoutubeStatus('붙여넣은 주소가 YouTube 링크인지 확인해 주세요.','error')},40));
+$('#nodeMediaInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;if(currentMedia?.url?.startsWith('blob:'))URL.revokeObjectURL(currentMedia.url);const url=URL.createObjectURL(file);currentMedia={name:file.name,type:file.type||'application/octet-stream',url,thumb:''};showMediaPreview(currentMedia);$('#mediaAppliedLabel').classList.add('show');mediaReadyPromise=mediaThumb(file,url).then(thumb=>{if(currentMedia?.url===url)currentMedia.thumb=thumb;return thumb})});
+$('#nodeEditorForm').addEventListener('submit',async e=>{e.preventDefault();if(!editingNodeId)return;const saveBtn=e.submitter;saveBtn&&(saveBtn.disabled=true);await mediaReadyPromise;const activeNode=nodeData(editingNodeId);const mediaSize=currentMedia?(activeNode?.type==='root'?{w:252,h:148}:{w:224,h:136}):{};LoveTreeUnfold.updateNode(editingNodeId,{title:$('#nodeTitleInput').value.trim()||'+ 내용 추가',sub:$('#nodeSubtitleInput').value.trim(),...mediaSize});mediaByTemplate.set(mediaKey(editingNodeId),{message:$('#nodeMessageInput').value.trim(),media:currentMedia});setTimeout(()=>{renderMediaInNodes();LoveTreeUnfold.select(editingNodeId)},40);$('#mediaAppliedLabel').classList.remove('show');$('#nodeMediaInput').value='';$('#nodeYoutubeInput').value=currentMedia?.type==='youtube'?currentMedia.url:'';saveBtn&&(saveBtn.disabled=false);announce('사진·영상과 내용을 노드에 적용했습니다.');closeDrawer()});
+$('#edgeEditorForm').addEventListener('submit',e=>{e.preventDefault();if(editingEdgeIndex==null)return;LoveTreeUnfold.updateEdge(editingEdgeIndex,{label:$('#edgeReasonInput').value.trim()||'다음 순간으로 이어진 이유'});setTimeout(()=>LoveTreeUnfold.setProgress(1),20);announce('Connection 이유를 저장했습니다.');closeDrawer()});
+function renderMediaInNodes(){
+ $$('.node-media-visual,.node-media-foreign,.media-badge').forEach(x=>x.remove());
+ const data=LoveTreeUnfold.getData(),defs=svg.querySelector('defs'),xhtml='http://www.w3.org/1999/xhtml';
+ data.nodes.forEach(n=>{
+  const saved=mediaByTemplate.get(mediaKey(n.id));if(!saved?.media)return;
+  const g=document.querySelector(`.node[data-id="${CSS.escape(n.id)}"]`);if(!g)return;g.classList.add('has-media');
+  const ns='http://www.w3.org/2000/svg',clipId=`media-clip-${window.__lovetreeState.template}-${n.id}`.replace(/[^a-zA-Z0-9_-]/g,'-');let clip=svg.querySelector('#'+clipId);
+  if(!clip){clip=document.createElementNS(ns,'clipPath');clip.id=clipId;const rr=document.createElementNS(ns,'rect');rr.setAttribute('x',-n.w/2+2);rr.setAttribute('y',-n.h/2+2);rr.setAttribute('width',n.w-4);rr.setAttribute('height',n.h-4);rr.setAttribute('rx',Math.min(18,n.h*.22));clip.append(rr);defs.append(clip)}
+  let mediaLayer;
+  if(saved.media.type==='youtube'){
+   const mg=document.createElementNS(ns,'g');mg.setAttribute('class','node-media-visual youtube-node-hit');mg.setAttribute('clip-path',`url(#${clipId})`);
+   const im=document.createElementNS(ns,'image');im.setAttribute('href',saved.media.thumb);im.setAttribute('x',-n.w/2+2);im.setAttribute('y',-n.h/2+2);im.setAttribute('width',n.w-4);im.setAttribute('height',n.h-4);im.setAttribute('preserveAspectRatio','xMidYMid slice');mg.append(im);mediaLayer=mg;
+  }else if(saved.media.type.startsWith('video/')){
+   const fo=document.createElementNS(ns,'foreignObject');fo.setAttribute('class','node-media-foreign');fo.setAttribute('x',-n.w/2+2);fo.setAttribute('y',-n.h/2+2);fo.setAttribute('width',n.w-4);fo.setAttribute('height',n.h-4);fo.setAttribute('clip-path',`url(#${clipId})`);
+   const frame=document.createElementNS(xhtml,'div');frame.setAttribute('class','node-media-frame');
+   const video=document.createElementNS(xhtml,'video');video.src=saved.media.url;video.muted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.preload='auto';if(saved.media.thumb)video.poster=saved.media.thumb;
+   frame.append(video);fo.append(frame);mediaLayer=fo;
+   video.addEventListener('canplay',()=>video.play().catch(()=>{}),{once:true});setTimeout(()=>video.play().catch(()=>{}),80);
+  }else{
+   const mg=document.createElementNS(ns,'g');mg.setAttribute('class','node-media-visual');mg.setAttribute('clip-path',`url(#${clipId})`);
+   const im=document.createElementNS(ns,'image');im.setAttribute('href',saved.media.thumb||saved.media.url);im.setAttribute('x',-n.w/2+2);im.setAttribute('y',-n.h/2+2);im.setAttribute('width',n.w-4);im.setAttribute('height',n.h-4);im.setAttribute('preserveAspectRatio','xMidYMid slice');mg.append(im);mediaLayer=mg;
+  }
+  const card=g.querySelector('.node-card');card.after(mediaLayer);
+  const wash=document.createElementNS(ns,'rect');wash.setAttribute('class','node-media-wash node-media-visual');wash.setAttribute('x',-n.w/2+2);wash.setAttribute('y',-n.h/2+2);wash.setAttribute('width',n.w-4);wash.setAttribute('height',n.h-4);wash.setAttribute('rx',Math.min(18,n.h*.22));mediaLayer.after(wash);
+  if(saved.media.type==='youtube'||saved.media.type.startsWith('video/')){const c=document.createElementNS(ns,'circle');c.setAttribute('class','node-media-play node-media-visual');c.setAttribute('cx',n.w/2-25);c.setAttribute('cy',-n.h/2+24);c.setAttribute('r',12);const p=document.createElementNS(ns,'path');p.setAttribute('class','node-media-play-icon node-media-visual');p.setAttribute('d',`M ${n.w/2-28} ${-n.h/2+18} L ${n.w/2-18} ${-n.h/2+24} L ${n.w/2-28} ${-n.h/2+30} Z`);wash.after(c,p)}
+  const ey=g.querySelector('.eyebrow'),tt=g.querySelector('.title'),st=g.querySelector('.subtitle');
+  const left=-n.w/2+(n.type==='root'?44:18);if(ey){ey.setAttribute('x',left);ey.setAttribute('y',n.h/2-49)}if(tt){tt.setAttribute('x',left);tt.setAttribute('y',n.h/2-27)}if(st){st.setAttribute('x',left);st.setAttribute('y',n.h/2-10)}
+ });
+}
+const renderMediaBadges=renderMediaInNodes;
+// Keep the canvas blank until a form is dropped.
+LoveTreeUnfold.clearCanvas();empty.classList.remove('hidden');
+window.LoveTreeComposer={openLibrary:()=>openDrawer('library'),place:(name)=>placeTemplate(name),mediaByTemplate,renderMedia:renderMediaInNodes};
+})();
+</script>
+
+</body>
+</html>

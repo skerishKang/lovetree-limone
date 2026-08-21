@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoveTree · Neon Heart Constellation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Manrope:wght@500;700;800&display=swap');
+
+    :root {
+      --bg: #191a1e;
+      --bg-deep: #0c0d11;
+      --ink: #fffaff;
+      --soft: #d6d6df;
+      --muted: #92939f;
+      --line: rgba(255,255,255,.18);
+      --pink: #ff27ba;
+      --mint: #27efad;
+      --cyan: #41dcff;
+      --violet: #ad76ff;
+      --yellow: #ffdd53;
+      --orange: #ff9b51;
+      --rose: #ff6f99;
+      --panel: rgba(25, 27, 38, .96);
+      --display: 'Gowun Batang', serif;
+      --body: 'Gowun Dodum', sans-serif;
+      --latin: 'Manrope', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+    body { margin: 0; overflow: hidden; color: var(--ink); background: var(--bg); font-family: var(--body); letter-spacing: -.025em; }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .app { position: relative; width: 100%; height: 100%; min-width: 720px; overflow: hidden; background: radial-gradient(circle at 50% 53%, rgba(77, 74, 104, .23), transparent 42%), var(--bg); }
+    .app::before { content: ''; position: absolute; inset: 0; z-index: 20; pointer-events: none; opacity: .08; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E"); mix-blend-mode: screen; }
+    .topbar { position: absolute; inset: 0 0 auto; z-index: 18; display: flex; align-items: center; gap: 17px; height: 70px; padding: 12px 19px; border-bottom: 1px solid rgba(255,255,255,.12); background: linear-gradient(180deg, rgba(9,10,14,.88), rgba(9,10,14,.32), transparent); backdrop-filter: blur(8px); }
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 190px; color: #fff; text-decoration: none; }
+    .brand-mark { position: relative; display: grid; place-items: center; width: 35px; height: 35px; color: var(--pink); font-size: 26px; text-shadow: 0 0 10px var(--pink), 0 0 23px var(--pink); }
+    .brand-mark::after { content: ''; position: absolute; right: 0; bottom: 1px; width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 11px var(--mint); }
+    .brand strong { display: block; font: 700 20px/1 var(--display); letter-spacing: -.08em; }
+    .brand small { display: block; margin-top: 4px; color: #9b9ba7; font: 800 8px/1 var(--latin); letter-spacing: .13em; }
+    .tree-title { min-width: 168px; color: #fff; font-size: 12px; }
+    .tree-title b { font-weight: 700; }
+    .tree-title small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .subjects { display: flex; align-items: center; gap: 5px; min-width: 0; overflow: auto; }
+    .subject-chip, .top-action { flex: 0 0 auto; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 7px 10px; background: rgba(255,255,255,.06); color: var(--soft); font-size: 10px; transition: .2s ease; }
+    .subject-chip:hover, .subject-chip.is-active, .top-action:hover { border-color: var(--pink); color: #fff; background: rgba(255,39,186,.15); box-shadow: 0 0 17px rgba(255,39,186,.18); }
+    .top-actions { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+    .top-action.primary { border: 0; color: #210c1e; background: linear-gradient(135deg, var(--pink), #ff9cbb, var(--yellow)); font-weight: 700; }
+
+    .graph-title { position: absolute; z-index: 7; top: 91px; left: 27px; pointer-events: none; }
+    .graph-title p { margin: 0; color: #b0aeb9; font: 800 9px var(--latin); letter-spacing: .18em; text-transform: uppercase; }
+    .graph-title h1 { margin: 7px 0 0; font: 700 25px/1.16 var(--display); letter-spacing: -.08em; }
+    .graph-title small { display: block; margin-top: 6px; color: #85858f; font-size: 10px; }
+    .graph-legend { position: absolute; z-index: 7; top: 153px; left: 27px; display: grid; gap: 7px; padding: 10px 11px; border: 1px solid rgba(255,255,255,.12); border-radius: 13px; background: rgba(19,20,26,.6); backdrop-filter: blur(8px); cursor: grab; user-select: none; touch-action: none; }
+    .graph-legend.is-dragging { cursor: grabbing; border-color: var(--pink); box-shadow: 0 0 22px rgba(255,39,186,.22); }
+    .graph-legend small { color: #898a96; font: 800 8px var(--latin); letter-spacing: .14em; text-transform: uppercase; }
+    .legend-item { display: flex; align-items: center; gap: 7px; color: #bcbcc6; font-size: 10px; }
+    .legend-item i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 9px var(--c); }
+
+    .world-viewport { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
+    .world-viewport.is-panning { cursor: grabbing; }
+    .world { position: absolute; inset: 0; transform-origin: 50% 53%; transition: transform .22s ease-out; }
+    .world.is-dragging { transition: none; }
+    .world::before { content: ''; position: absolute; inset: 12% 11% 8%; border-radius: 50%; background: radial-gradient(ellipse, rgba(127,113,151,.12), transparent 67%); filter: blur(24px); pointer-events: none; }
+    #edgesSvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .edge { fill: none; stroke: var(--edge-color); stroke-width: 1.15; opacity: .76; stroke-dasharray: 2 9; stroke-linecap: round; animation: edge-flow var(--edge-speed, 3.5s) linear infinite; filter: drop-shadow(0 0 3px var(--edge-color)); transition: opacity .24s, stroke-width .24s; }
+    .edge.edge-person { stroke-width: 2; opacity: .9; stroke-dasharray: 9 9; }
+    .edge.is-muted { opacity: .08; filter: none; }
+    .edge.is-hot { opacity: 1; stroke-width: 2.7; }
+    @keyframes edge-flow { to { stroke-dashoffset: -66; } }
+    .spark-layer { position: absolute; inset: 0; pointer-events: none; }
+    .spark { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); opacity: .55; animation: spark-drift var(--d) ease-in-out var(--delay) infinite alternate; }
+    @keyframes spark-drift { from { transform: translate(-3px, 5px) scale(.6); opacity: .18; } to { transform: translate(7px, -7px) scale(1.25); opacity: .85; } }
+
+    .core { position: absolute; left: 50%; top: 54%; z-index: 5; width: 82px; height: 82px; transform: translate(-50%,-50%); pointer-events: none; }
+    .core::before { content: ''; position: absolute; inset: -62px; border-radius: 50%; background: radial-gradient(circle, rgba(255,39,186,.28), rgba(39,239,173,.12) 38%, transparent 70%); filter: blur(8px); animation: core-glow 3s ease-in-out infinite; }
+    .core::after { content: ''; position: absolute; inset: -12px; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; transform: rotate(28deg) scaleX(1.28); box-shadow: 0 0 18px rgba(255,39,186,.42); animation: ring-turn 12s linear infinite; }
+    .core-orb { position: absolute; inset: 0; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.75); border-radius: 50%; color: #fff; background: radial-gradient(circle at 33% 25%, #ffea89, #ff3fb9 37%, #5d24a7 76%); box-shadow: 0 0 12px var(--pink), 0 0 46px rgba(255,39,186,.55); animation: core-pulse 1.8s ease-in-out infinite; }
+    .core-orb::after { content: '♥'; font-size: 29px; line-height: 1; text-shadow: 0 0 8px #fff, 0 0 20px var(--pink); }
+    .core-label { position: absolute; top: calc(100% + 22px); left: 50%; width: 220px; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+    .core-label b { display: block; font: 700 15px var(--display); letter-spacing: -.07em; }
+    .core-label small { display: block; margin-top: 4px; color: #8c8c97; font: 800 8px var(--latin); letter-spacing: .13em; }
+    @keyframes core-glow { 50% { transform: scale(1.18); opacity: .72; } }
+    @keyframes ring-turn { to { transform: rotate(388deg) scaleX(1.28); } }
+    @keyframes core-pulse { 50% { transform: scale(1.1); } }
+
+    .node { position: absolute; z-index: 4; display: block; width: 19px; height: 19px; padding: 0; border: 1px solid color-mix(in srgb, var(--node-color) 76%, white); border-radius: 50%; transform: translate(-50%,-50%); background: var(--node-color); box-shadow: 0 0 5px var(--node-color), 0 0 16px color-mix(in srgb, var(--node-color) 72%, transparent), 0 0 34px color-mix(in srgb, var(--node-color) 32%, transparent); transition: left .55s cubic-bezier(.2,.8,.2,1), top .55s cubic-bezier(.2,.8,.2,1), transform .2s, opacity .2s, filter .2s; user-select: none; }
+    .node::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: rgba(255,255,255,.58); opacity: .48; }
+    .node.video-node { animation: node-breathe var(--node-speed, 3.8s) ease-in-out var(--node-delay, 0s) infinite alternate; }
+    .node.video-node::before { content: '♥'; position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; color: rgba(255,255,255,.92); font-size: 9px; line-height: 1; text-shadow: 0 0 5px var(--node-color); }
+    .node.cluster-node { width: 25px; height: 25px; border: 0; background: transparent; box-shadow: none; animation: cluster-pulse 4.5s ease-in-out infinite alternate; }
+    .cluster-dot { position: absolute; width: 9px; height: 9px; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; background: var(--node-color); box-shadow: 0 0 8px var(--node-color); }
+    .cluster-dot:nth-child(1) { left: 1px; top: 8px; } .cluster-dot:nth-child(2) { left: 8px; top: 1px; } .cluster-dot:nth-child(3) { left: 15px; top: 8px; } .cluster-dot:nth-child(4) { left: 5px; top: 15px; } .cluster-dot:nth-child(5) { left: 12px; top: 15px; }
+    .node.person-node { width: 25px; height: 25px; border: 0; background: transparent; box-shadow: 0 0 15px var(--node-color); }
+    .person-head { position: absolute; left: 8px; top: 1px; width: 10px; height: 10px; border: 1px solid rgba(255,255,255,.65); border-radius: 50%; background: color-mix(in srgb, var(--node-color) 72%, white); box-shadow: 0 0 9px var(--node-color); }
+    .person-body { position: absolute; left: 3px; bottom: 0; width: 20px; height: 14px; border: 1px solid rgba(255,255,255,.52); border-radius: 12px 12px 5px 5px; background: var(--node-color); box-shadow: 0 0 11px var(--node-color); }
+    .node-label { position: absolute; left: calc(100% + 9px); top: 50%; min-width: max-content; transform: translateY(-50%); color: #d9d8e1; font: 500 10px/1.25 var(--body); text-align: left; text-shadow: 0 1px 3px #050507, 0 0 6px rgba(0,0,0,.95); pointer-events: none; }
+    .node-label em { display: block; margin-top: 2px; color: var(--node-color); font: 800 7px var(--latin); letter-spacing: .06em; font-style: normal; opacity: .86; }
+    .person-node .node-label { left: calc(100% + 8px); font-weight: 700; color: #fff; }
+    .cluster-node .node-label { top: -10px; left: 31px; color: var(--node-color); font-size: 9px; }
+    .node:hover, .node.is-selected { z-index: 15; transform: translate(-50%,-50%) scale(1.55); filter: brightness(1.18); }
+    .node:hover .node-label, .node.is-selected .node-label { color: #fff; text-shadow: 0 0 7px var(--node-color), 0 1px 3px #000; }
+    .node.is-muted { opacity: .16; filter: saturate(.25); }
+    .person-node.is-selected { transform: translate(-50%,-50%) scale(1.25); }
+    @keyframes node-breathe { from { filter: brightness(.88); } to { filter: brightness(1.18); } }
+    @keyframes cluster-pulse { from { transform: translate(-50%,-50%) scale(.95); } to { transform: translate(-50%,-50%) scale(1.1); } }
+
+    .graph-tools { position: absolute; z-index: 10; left: 24px; bottom: 22px; display: flex; align-items: center; gap: 8px; }
+    .graph-tools button { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: rgba(18,19,25,.78); color: #e5e5eb; font-size: 17px; }
+    .graph-tools button:hover { border-color: var(--cyan); box-shadow: 0 0 15px rgba(65,220,255,.3); }
+    .zoom-readout { color: #9d9da8; font: 800 9px var(--latin); letter-spacing: .08em; }
+    .graph-hint { position: absolute; z-index: 10; right: 25px; bottom: 25px; color: #898a95; font-size: 10px; }
+    .filter-note { position: absolute; z-index: 8; right: 23px; top: 90px; display: none; padding: 8px 10px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(18,19,25,.72); color: var(--soft); font-size: 10px; }
+    .filter-note.is-visible { display: block; }
+
+    .inspector { position: absolute; z-index: 30; top: 0; right: 0; display: flex; flex-direction: column; width: min(380px, 92vw); height: 100%; padding: 26px 22px 25px; overflow: auto; border-left: 1px solid rgba(255,255,255,.16); background: linear-gradient(180deg, rgba(25,27,38,.98), rgba(13,14,20,.98)); box-shadow: -26px 0 70px rgba(0,0,0,.28); transform: translateX(103%); transition: transform .38s cubic-bezier(.2,.8,.2,1); }
+    .inspector.is-open { transform: translateX(0); }
+    .inspector-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .inspector-head p { margin: 0 0 7px; color: var(--pink); font: 800 8px var(--latin); letter-spacing: .15em; text-transform: uppercase; }
+    .inspector-head h2 { margin: 0; font: 700 25px/1.15 var(--display); letter-spacing: -.08em; }
+    .close-inspector { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: rgba(255,255,255,.05); font-size: 17px; }
+    .close-inspector:hover { border-color: var(--pink); color: var(--pink); }
+    .detail-empty { display: grid; place-items: center; min-height: 430px; padding: 40px 20px; color: #8d8e9a; text-align: center; }
+    .empty-heart { display: grid; place-items: center; width: 68px; height: 68px; margin-bottom: 18px; border: 1px solid rgba(255,39,186,.5); border-radius: 50%; color: var(--pink); font-size: 30px; box-shadow: 0 0 26px rgba(255,39,186,.32); }
+    .detail-empty b { display: block; color: #e7e5ed; font: 700 17px var(--display); }
+    .detail-empty p { margin-top: 7px; font-size: 11px; line-height: 1.6; }
+    .detail-content { display: none; margin-top: 22px; }
+    .detail-content.is-visible { display: block; }
+    .detail-type { color: var(--selected-color, var(--pink)); font: 800 9px var(--latin); letter-spacing: .14em; text-transform: uppercase; }
+    .detail-content h3 { margin-top: 8px; font: 700 23px/1.22 var(--display); letter-spacing: -.08em; }
+    .detail-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .detail-meta span { padding: 4px 7px; border-radius: 999px; background: rgba(255,255,255,.08); color: #c6c6d0; font-size: 10px; }
+    .detail-memo { margin-top: 12px; color: #c8c8d2; font-size: 12px; line-height: 1.65; }
+    .detail-media { position: relative; aspect-ratio: 16/9; overflow: hidden; margin-top: 18px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #0d0e14; box-shadow: 0 18px 42px rgba(0,0,0,.26); }
+    .detail-media img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .84; }
+    .detail-player { position: absolute; inset: 0; z-index: 4; }
+    .detail-player iframe { display: block; width: 100%; height: 100%; border: 0; }
+    .detail-play { position: absolute; z-index: 5; left: 50%; top: 50%; display: grid; place-items: center; width: 53px; height: 53px; transform: translate(-50%,-50%); border: 1px solid rgba(255,255,255,.7); border-radius: 50%; background: rgba(255,39,186,.86); color: #fff; font-size: 19px; box-shadow: 0 0 28px var(--pink); }
+    .detail-play:hover { transform: translate(-50%,-50%) scale(1.1); background: var(--pink); }
+    .detail-media-label { position: absolute; left: 12px; bottom: 10px; z-index: 3; color: #fff; font: 800 9px var(--latin); letter-spacing: .09em; text-shadow: 0 1px 4px #000; }
+    .person-detail { display: none; margin-top: 26px; padding: 20px; border: 1px solid rgba(255,255,255,.13); border-radius: 19px; background: rgba(255,255,255,.04); text-align: center; }
+    .person-detail.is-visible { display: block; }
+    .person-big { display: grid; place-items: center; width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 50%; color: var(--selected-color); font-size: 34px; background: rgba(255,255,255,.05); box-shadow: 0 0 26px color-mix(in srgb, var(--selected-color) 52%, transparent); }
+    .person-detail b { font: 700 20px var(--display); }
+    .person-detail p { margin-top: 8px; color: #b9b9c5; font-size: 11px; line-height: 1.6; }
+    .detail-actions { display: flex; gap: 8px; margin-top: 18px; }
+    .detail-actions button { flex: 1; border: 1px solid rgba(255,255,255,.16); border-radius: 11px; padding: 10px; background: rgba(255,255,255,.05); color: #d9d9e2; font-size: 10px; }
+    .detail-actions button:hover { border-color: var(--cyan); color: #fff; }
+    .detail-actions .primary { border: 0; color: #180919; background: linear-gradient(135deg, var(--pink), var(--yellow)); font-weight: 700; }
+
+    .modal { position: fixed; inset: 0; z-index: 60; display: none; place-items: center; padding: 22px; background: rgba(4,5,9,.73); backdrop-filter: blur(12px); }
+    .modal.is-open { display: grid; }
+    .modal-card { width: min(500px, 100%); padding: 23px; border: 1px solid rgba(255,255,255,.17); border-radius: 22px; background: var(--panel); box-shadow: 0 28px 80px rgba(0,0,0,.45); }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; }
+    .modal-head p { margin: 0 0 6px; color: var(--pink); font: 800 8px var(--latin); letter-spacing: .15em; text-transform: uppercase; }
+    .modal-head h2 { margin: 0; font: 700 23px var(--display); }
+    .modal-close { display: grid; place-items: center; width: 31px; height: 31px; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.05); }
+    .modal-form { display: grid; gap: 12px; margin-top: 20px; }
+    .modal-form label { display: grid; gap: 6px; color: #cfcfda; font-size: 11px; }
+    .modal-form input, .modal-form textarea { width: 100%; border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 10px; background: rgba(5,6,10,.72); color: #fff; font-size: 12px; }
+    .modal-form textarea { min-height: 70px; resize: vertical; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 3px; }
+    .modal-actions button { border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 9px 13px; background: rgba(255,255,255,.05); font-size: 11px; }
+    .modal-actions .primary { border: 0; color: #170914; background: linear-gradient(135deg, var(--cyan), var(--mint)); font-weight: 700; }
+    .toast { position: fixed; z-index: 70; left: 50%; bottom: 25px; padding: 10px 14px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(25,27,38,.96); color: #fff; font-size: 11px; opacity: 0; transform: translate(-50%, 16px); transition: .23s ease; pointer-events: none; box-shadow: 0 18px 45px rgba(0,0,0,.35); }
+    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+    /* Dense archive layer: many small memory particles, closer to the reference graph. */
+    .archive-halo { position: absolute; z-index: 0; left: var(--x); top: var(--y); width: var(--w); height: var(--h); transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--halo) 25%, transparent), transparent 70%); filter: blur(13px); opacity: .72; animation: archive-halo-breathe var(--halo-speed) ease-in-out var(--halo-delay) infinite alternate; pointer-events: none; }
+    .archive-halo::after { content: ''; position: absolute; inset: 22% 18%; border: 1px solid color-mix(in srgb, var(--halo) 31%, transparent); border-radius: 50%; transform: rotate(var(--halo-tilt)); }
+    @keyframes archive-halo-breathe { from { transform: translate(-50%,-50%) scale(.9); opacity: .38; } to { transform: translate(-50%,-50%) scale(1.13); opacity: .86; } }
+    .micro-node { width: 11px; height: 11px; border-width: 1px; box-shadow: 0 0 5px var(--node-color), 0 0 13px color-mix(in srgb, var(--node-color) 70%, transparent); }
+    .micro-node::after { display: none; }
+    .micro-node.video-node::before { content: ''; }
+    .micro-node .node-label { display: none; left: calc(100% + 6px); font-size: 8px; }
+    .micro-node.labelled .node-label { display: block; }
+    .micro-node.labelled .node-label em { display: none; }
+    .micro-node.is-selected { transform: translate(-50%,-50%) scale(1.85); }
+
+    @media (max-width: 980px) {
+      .brand { min-width: auto; }
+      .tree-title { display: none; }
+      .graph-title h1 { font-size: 21px; }
+      .graph-legend { top: 143px; }
+    }
+    @media (max-width: 720px) {
+      .app { min-width: 0; }
+      .topbar { gap: 8px; padding-inline: 10px; }
+      .brand strong { font-size: 17px; }
+      .brand small { font-size: 7px; }
+      .subjects { max-width: 220px; }
+      .graph-title { left: 15px; }
+      .graph-legend { left: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="LoveTree 홈"><span class="brand-mark">♥</span><span><strong>러브트리</strong><small>LOVE MOMENT TREE</small></span></a>
+      <div class="tree-title"><b id="treeSubjectTitle">주연이의 러브트리</b><small><span id="momentCount">94</span>개의 영상 기억 · 살아있는 기록</small></div>
+      <div class="subjects" aria-label="러브트리 대상 선택">
+        <button class="subject-chip is-active" data-person-filter="all">전체</button>
+        <button class="subject-chip" data-person-filter="주연">주연</button>
+        <button class="subject-chip" data-person-filter="이준혁">이준혁</button>
+        <button class="subject-chip" data-person-filter="허드슨">허드슨</button>
+      </div>
+      <div class="top-actions"><button class="top-action" id="resetView">처음 위치</button><button class="top-action primary" id="openAdd">+ 영상 담기</button></div>
+    </header>
+
+    <div class="graph-title"><p>LoveTree · living video graph</p><h1>좋아한 순간이<br />이렇게 자라나요.</h1><small>점을 누르면 영상과 그때의 마음이 열려요.</small></div>
+    <div class="graph-legend" id="graphLegend" aria-label="감정 색상 범례"><small>memory colors · drag me</small><span class="legend-item"><i style="--c:var(--pink)"></i>처음 마음</span><span class="legend-item"><i style="--c:var(--mint)"></i>계속 본 장면</span><span class="legend-item"><i style="--c:var(--yellow)"></i>웃음·기쁨</span><span class="legend-item"><i style="--c:var(--cyan)"></i>위로</span></div>
+    <div class="filter-note" id="filterNote"></div>
+
+    <main class="world-viewport" id="worldViewport" aria-label="움직이는 LoveTree 영상 그래프">
+      <div class="world" id="world">
+        <svg id="edgesSvg" aria-hidden="true"></svg>
+        <div class="spark-layer" id="sparkLayer" aria-hidden="true"></div>
+        <div class="core"><div class="core-orb"></div><div class="core-label"><b>나의 LoveTree</b><small>MY VIDEO CONSTELLATION</small></div></div>
+        <div id="nodesLayer"></div>
+      </div>
+    </main>
+
+    <div class="graph-tools" aria-label="그래프 확대 축소"><button id="zoomOut" aria-label="축소">−</button><button id="zoomIn" aria-label="확대">＋</button><span class="zoom-readout" id="zoomReadout">100%</span></div>
+    <div class="graph-hint">휠로 확대·축소 · 배경을 드래그 · 하트를 눌러 영상 열기</div>
+
+    <aside class="inspector" id="inspector" aria-label="선택한 영상 상세">
+      <div class="inspector-head"><div><p>LoveTree moment</p><h2 id="inspectorHeading">선택한 기억</h2></div><button class="close-inspector" id="closeInspector" aria-label="상세 닫기">×</button></div>
+      <div class="detail-empty" id="detailEmpty"><div><div class="empty-heart">♥</div><b>하트를 하나 눌러보세요.</b><p>영상 노드를 누르면<br />그 장면의 제목과 설명이 이곳에 나타나요.</p></div></div>
+      <div class="detail-content" id="detailContent">
+        <div class="detail-type" id="detailType">VIDEO MOMENT</div><h3 id="detailTitle"></h3><div class="detail-meta"><span id="detailMood"></span><span id="detailTime"></span><span id="detailPerson"></span></div><p class="detail-memo" id="detailMemo"></p>
+        <div class="detail-media" id="detailMedia"><img id="detailThumb" alt="선택한 영상 썸네일" /><span class="detail-media-label">CLICK TO PLAY</span><button class="detail-play" id="detailPlay" aria-label="영상 재생">▶</button><div class="detail-player" id="detailPlayer"></div></div>
+        <div class="detail-actions"><button id="closeDetailSecondary">닫기</button><button class="primary" id="rememberMoment">이 장면에 마음 남기기</button></div>
+      </div>
+      <div class="person-detail" id="personDetail"><div class="person-big" id="personBig">♟</div><b id="personName"></b><p id="personMemo"></p><button class="top-action" id="personOpenBranch">이 사람의 가지 보기</button></div>
+    </aside>
+  </div>
+
+  <div class="modal" id="addModal" aria-hidden="true"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="addTitle"><div class="modal-head"><div><p>add a new moment</p><h2 id="addTitle">새 영상 하트 만들기</h2></div><button class="modal-close" id="closeAdd" aria-label="닫기">×</button></div><form class="modal-form" id="addForm"><label>영상 제목<input id="addName" required placeholder="예: 눈빛이 오래 남은 장면" /></label><label>YouTube / Shorts 링크<input id="addUrl" required placeholder="https://youtu.be/..." /></label><label>그때의 마음<textarea id="addMemo" placeholder="왜 이 영상을 담았는지 한 줄로 남겨보세요."></textarea></label><div class="modal-actions"><button type="button" id="cancelAdd">나중에</button><button class="primary" type="submit">러브트리에 담기</button></div></form></section></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (() => {
+      const palette = { pink: '#ff27ba', mint: '#27efad', cyan: '#41dcff', violet: '#ad76ff', yellow: '#ffdd53', orange: '#ff9b51', rose: '#ff6f99' };
+      const people = {
+        주연: { color: 'mint', branch: 'p1', memo: '처음 마음이 시작된 사람. 장면마다 다른 색의 가지가 자라고 있어요.' },
+        이준혁: { color: 'cyan', branch: 'p2', memo: '말과 눈빛을 오래 기억하고 싶은 사람. 조용한 위로의 가지.' },
+        허드슨: { color: 'yellow', branch: 'p4', memo: '함께 웃은 순간을 모아두는 사람. 기쁨의 가지.' },
+      };
+      const nodes = [
+        { id:'p1', title:'처음의 설렘', label:'처음 마음', kind:'EMOTION CLUSTER', color:'pink', x:30, y:38, parent:'core', cluster:true },
+        { id:'p2', title:'조용한 위로', label:'위로', kind:'EMOTION CLUSTER', color:'cyan', x:39, y:20, parent:'core', cluster:true },
+        { id:'p3', title:'계속 보고 싶은', label:'반복 재생', kind:'EMOTION CLUSTER', color:'mint', x:58, y:18, parent:'core', cluster:true },
+        { id:'p4', title:'함께 웃은 날', label:'기쁨', kind:'EMOTION CLUSTER', color:'yellow', x:77, y:36, parent:'core', cluster:true },
+        { id:'p5', title:'나를 회복시킨', label:'회복', kind:'EMOTION CLUSTER', color:'violet', x:70, y:60, parent:'core', cluster:true },
+        { id:'p6', title:'다음 계절', label:'기대', kind:'EMOTION CLUSTER', color:'orange', x:48, y:75, parent:'core', cluster:true },
+        { id:'p7', title:'좋아한다고 말한', label:'고백', kind:'EMOTION CLUSTER', color:'rose', x:20, y:62, parent:'core', cluster:true },
+        { id:'m1', title:'처음 발견한 장면', label:'처음 발견', kind:'VIDEO', mood:'설렘', color:'pink', x:23, y:30, parent:'p1', person:'주연', videoId:'aqz-KE-bpKQ', time:'01:30—02:18', memo:'우연히 보고 마음이 멈춘 순간. 이 장면이 나의 첫 하트가 되었어요.' },
+        { id:'m2', title:'다시 보게 된 무대', label:'다시 본 무대', kind:'VIDEO', mood:'몰입', color:'pink', x:16, y:40, parent:'p1', person:'주연', videoId:'dQw4w9WgXcQ', time:'00:42—01:38', memo:'한 번만 보려고 했는데, 같은 구간을 계속 다시 보고 있었어요.' },
+        { id:'m3', title:'팬을 바라보던 눈빛', label:'눈빛', kind:'VIDEO', mood:'위로', color:'cyan', x:31, y:13, parent:'p2', person:'이준혁', videoId:'9bZkp7q19f0', time:'02:10—03:04', memo:'말보다 표정이 더 오래 남았던 날. 조용히 곁에 있던 장면이에요.' },
+        { id:'m4', title:'비 오는 날의 목소리', label:'비 오는 라이브', kind:'VIDEO', mood:'위로', color:'cyan', x:43, y:10, parent:'p2', person:'이준혁', videoId:'aqz-KE-bpKQ', time:'03:24—04:11', memo:'마음이 복잡한 날 찾아가면 조용히 안아주는 영상이에요.' },
+        { id:'m5', title:'처음 따라 해본 춤', label:'따라 해본 춤', kind:'VIDEO', mood:'신남', color:'mint', x:51, y:10, parent:'p3', person:'주연', videoId:'dQw4w9WgXcQ', time:'00:21—00:44', memo:'나도 모르게 몸이 먼저 움직였던 순간.' },
+        { id:'m6', title:'완벽하지 않아 더 좋았던 컷', label:'비하인드', kind:'VIDEO', mood:'애정', color:'mint', x:64, y:13, parent:'p3', person:'주연', videoId:'9bZkp7q19f0', time:'01:04—01:56', memo:'조금 흐트러진 모습까지 좋아하게 된 날.' },
+        { id:'m7', title:'친구에게 처음 보낸 영상', label:'친구에게 보낸', kind:'VIDEO', mood:'기쁨', color:'yellow', x:84, y:26, parent:'p4', person:'허드슨', videoId:'aqz-KE-bpKQ', time:'00:55—01:20', memo:'좋아하는 마음을 처음 말로 꺼내본 작은 기록.' },
+        { id:'m8', title:'나만의 레전드 장면', label:'나만의 레전드', kind:'VIDEO', mood:'벅참', color:'yellow', x:89, y:40, parent:'p4', person:'허드슨', videoId:'dQw4w9WgXcQ', time:'04:10—05:02', memo:'시간이 지나도 이 장면만큼은 지워지지 않을 것 같아요.' },
+        { id:'m9', title:'오늘의 기분을 구한 영상', label:'오늘의 피난처', kind:'VIDEO', mood:'안도', color:'violet', x:82, y:55, parent:'p5', person:'주연', videoId:'9bZkp7q19f0', time:'00:11—00:39', memo:'힘든 날 아무 설명 없이 재생하는 나만의 작은 피난처.' },
+        { id:'m10', title:'우리만 아는 포인트', label:'우리만 아는', kind:'VIDEO', mood:'웃음', color:'violet', x:71, y:68, parent:'p5', person:'주연', videoId:'aqz-KE-bpKQ', time:'01:44—02:09', memo:'친구와 동시에 웃음이 터졌던 그 포인트를 남겨두었어요.' },
+        { id:'m11', title:'다음 계절에도 보고 싶은 영상', label:'다음 계절', kind:'VIDEO', mood:'기대', color:'orange', x:57, y:85, parent:'p6', person:'주연', videoId:'dQw4w9WgXcQ', time:'05:10—06:02', memo:'지금의 나에게 보내는 다음 계절의 약속.' },
+        { id:'m12', title:'오래 남은 한 문장', label:'오래 남은 문장', kind:'VIDEO', mood:'여운', color:'orange', x:40, y:84, parent:'p6', person:'이준혁', videoId:'9bZkp7q19f0', time:'02:44—03:20', memo:'그날 들은 한 문장을 영상과 함께 기억하고 싶었어요.' },
+        { id:'m13', title:'좋아한다는 걸 인정한 날', label:'인정한 날', kind:'VIDEO', mood:'고백', color:'rose', x:16, y:73, parent:'p7', person:'주연', videoId:'aqz-KE-bpKQ', time:'00:17—01:07', memo:'이제는 그냥 좋아한다고 말할 수 있게 된 순간.' },
+        { id:'m14', title:'첫 계절의 엔딩', label:'첫 시즌 엔딩', kind:'VIDEO', mood:'완성', color:'rose', x:10, y:57, parent:'p7', person:'주연', videoId:'dQw4w9WgXcQ', time:'06:03—06:42', memo:'첫 번째 시즌을 닫고, 다음 가지를 기다리는 장면.' },
+        { id:'person-juyeon', title:'주연', label:'주연', kind:'PERSON', color:'mint', x:7, y:80, parent:'core', person:'주연', personNode:true },
+        { id:'person-junhyuk', title:'이준혁', label:'이준혁', kind:'PERSON', color:'cyan', x:29, y:8, parent:'core', person:'이준혁', personNode:true },
+        { id:'person-hudson', title:'허드슨', label:'허드슨', kind:'PERSON', color:'yellow', x:88, y:19, parent:'core', person:'허드슨', personNode:true },
+      ];
+
+      const world = document.getElementById('world');
+      const viewport = document.getElementById('worldViewport');
+      const nodesLayer = document.getElementById('nodesLayer');
+      const edgesSvg = document.getElementById('edgesSvg');
+      const inspector = document.getElementById('inspector');
+      const detailEmpty = document.getElementById('detailEmpty');
+      const detailContent = document.getElementById('detailContent');
+      const personDetail = document.getElementById('personDetail');
+      const detailThumb = document.getElementById('detailThumb');
+      const detailPlayer = document.getElementById('detailPlayer');
+      const detailPlay = document.getElementById('detailPlay');
+      const detailTitle = document.getElementById('detailTitle');
+      const detailType = document.getElementById('detailType');
+      const detailMood = document.getElementById('detailMood');
+      const detailTime = document.getElementById('detailTime');
+      const detailPerson = document.getElementById('detailPerson');
+      const detailMemo = document.getElementById('detailMemo');
+      const toast = document.getElementById('toast');
+      const graphLegend = document.getElementById('graphLegend');
+      let selectedId = null;
+      let activePerson = 'all';
+      let zoom = 1;
+      let panX = 0;
+      let panY = 0;
+      let panStart = null;
+      let toastTimer;
+
+      const getNode = (id) => nodes.find((node) => node.id === id);
+      const videoThumb = (id) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+      const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#039;', '"':'&quot;' }[character]));
+      const showToast = (message) => { toast.textContent = message; toast.classList.add('is-visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2100); };
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+      function beginLegendDrag(event) {
+        event.preventDefault(); event.stopPropagation();
+        const frame = document.querySelector('.app').getBoundingClientRect(); const box = graphLegend.getBoundingClientRect(); const offsetX = event.clientX - box.left; const offsetY = event.clientY - box.top;
+        graphLegend.classList.add('is-dragging');
+        const move = (moveEvent) => { graphLegend.style.left = `${clamp(moveEvent.clientX - frame.left - offsetX, 8, frame.width - box.width - 8)}px`; graphLegend.style.top = `${clamp(moveEvent.clientY - frame.top - offsetY, 78, frame.height - box.height - 8)}px`; };
+        const end = () => { graphLegend.classList.remove('is-dragging'); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); };
+        window.addEventListener('pointermove', move); window.addEventListener('pointerup', end);
+      }
+
+      function buildSparks() {
+        const colors = Object.values(palette);
+        for (let i = 0; i < 55; i += 1) {
+          const spark = document.createElement('i'); spark.className = 'spark';
+          spark.style.setProperty('--x', `${5 + ((i * 41) % 90)}%`); spark.style.setProperty('--y', `${6 + ((i * 59) % 87)}%`); spark.style.setProperty('--s', `${2 + ((i * 7) % 4)}px`); spark.style.setProperty('--c', colors[i % colors.length]); spark.style.setProperty('--d', `${2.2 + ((i * 11) % 21) / 10}s`); spark.style.setProperty('--delay', `${-((i * 13) % 30) / 10}s`); document.getElementById('sparkLayer').appendChild(spark);
+        }
+      }
+
+      function renderNodes() {
+        nodesLayer.innerHTML = '';
+        nodes.forEach((node, index) => {
+          const button = document.createElement('button');
+          button.className = `node ${node.cluster ? 'cluster-node' : node.personNode ? 'person-node' : 'video-node'}${node.micro ? ' micro-node' : ''}${node.label ? ' labelled' : ''}`;
+          button.dataset.id = node.id; button.dataset.kind = node.kind; button.style.left = `${node.x}%`; button.style.top = `${node.y}%`; button.style.setProperty('--node-color', palette[node.color]); button.style.setProperty('--node-delay', `${-(index % 9) / 5}s`); button.style.setProperty('--node-speed', `${3 + (index % 6) / 2}s`);
+          if (node.cluster) button.innerHTML = `<span class="cluster-dot"></span><span class="cluster-dot"></span><span class="cluster-dot"></span><span class="cluster-dot"></span><span class="cluster-dot"></span><span class="node-label">${escapeHtml(node.label)}<em>${escapeHtml(node.kind)}</em></span>`;
+          else if (node.personNode) button.innerHTML = `<span class="person-head"></span><span class="person-body"></span><span class="node-label">${escapeHtml(node.label)}<em>PERSON TREE</em></span>`;
+          else button.innerHTML = `<span class="node-label">${escapeHtml(node.label)}<em>${escapeHtml(node.mood)}</em></span>`;
+          button.addEventListener('pointerdown', beginNodeDrag);
+          button.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); selectNode(node.id); });
+          nodesLayer.appendChild(button);
+        });
+        requestAnimationFrame(drawEdges);
+      }
+
+      function beginNodeDrag(event) {
+        event.preventDefault(); event.stopPropagation();
+        const button = event.currentTarget; const node = getNode(button.dataset.id); const start = { x: event.clientX, y: event.clientY }; let moved = false;
+        try { button.setPointerCapture(event.pointerId); } catch (_) { /* pointer capture is optional */ }
+        const move = (moveEvent) => {
+          const dx = moveEvent.clientX - start.x; const dy = moveEvent.clientY - start.y;
+          if (Math.abs(dx) + Math.abs(dy) < 5) return;
+          moved = true; node.x = clamp(node.x + dx / viewport.clientWidth * 100 / zoom, 3, 97); node.y = clamp(node.y + dy / viewport.clientHeight * 100 / zoom, 4, 94); button.style.left = `${node.x}%`; button.style.top = `${node.y}%`; drawEdges();
+        };
+        const end = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); if (!moved) selectNode(node.id); };
+        window.addEventListener('pointermove', move); window.addEventListener('pointerup', end);
+      }
+
+      function drawEdges() {
+        const frame = world.getBoundingClientRect(); const core = document.querySelector('.core').getBoundingClientRect(); const corePoint = { x: core.left + core.width / 2 - frame.left, y: core.top + core.height / 2 - frame.top }; edgesSvg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`); edgesSvg.innerHTML = '';
+        nodes.filter((node) => node.parent === 'core').forEach((node) => { const nodeElement = nodesLayer.querySelector(`[data-id="${node.id}"]`); if (!nodeElement) return; const rect = nodeElement.getBoundingClientRect(); const target = { x: rect.left + rect.width / 2 - frame.left, y: rect.top + rect.height / 2 - frame.top }; addEdge(corePoint, target, palette[node.color], node.personNode ? 'edge-person' : ''); if (!node.personNode) nodes.filter((child) => child.parent === node.id).forEach((child) => addChildEdge(target, child, frame, node.color)); });
+      }
+
+      function addChildEdge(from, node, frame, branchColor) { const element = nodesLayer.querySelector(`[data-id="${node.id}"]`); if (!element) return; const rect = element.getBoundingClientRect(); const target = { x: rect.left + rect.width / 2 - frame.left, y: rect.top + rect.height / 2 - frame.top }; addEdge(from, target, palette[node.color || branchColor]); }
+      function addEdge(from, to, color, extraClass = '') { const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); const bend = Math.max(14, Math.min(78, Math.abs(to.x - from.x) * .2)); const direction = to.x >= from.x ? 1 : -1; path.setAttribute('d', `M ${from.x} ${from.y} C ${from.x + bend * direction} ${from.y}, ${to.x - bend * direction} ${to.y}, ${to.x} ${to.y}`); path.setAttribute('class', `edge ${extraClass}`); path.style.setProperty('--edge-color', color); path.style.setProperty('--edge-speed', `${2.7 + (from.x % 7) / 3}s`); path.dataset.color = color; edgesSvg.appendChild(path); }
+
+      function clearPlayer() { detailPlayer.innerHTML = ''; detailThumb.style.display = 'block'; detailPlay.style.display = 'grid'; }
+      function closeInspector() { clearPlayer(); inspector.classList.remove('is-open'); detailEmpty.style.display = 'grid'; detailContent.classList.remove('is-visible'); personDetail.classList.remove('is-visible'); document.querySelectorAll('.node').forEach((node) => node.classList.remove('is-selected')); selectedId = null; }
+
+      function selectNode(id) {
+        const node = getNode(id); if (!node) return; clearPlayer(); selectedId = id; document.querySelectorAll('.node').forEach((element) => element.classList.toggle('is-selected', element.dataset.id === id)); inspector.classList.add('is-open'); detailEmpty.style.display = 'none'; detailContent.classList.remove('is-visible'); personDetail.classList.remove('is-visible');
+        document.querySelectorAll('.edge').forEach((edge) => edge.classList.toggle('is-hot', edge.dataset.color === palette[node.color]));
+        if (node.personNode) { const person = people[node.person]; inspector.style.setProperty('--selected-color', palette[person.color]); document.getElementById('personBig').style.color = palette[person.color]; document.getElementById('personName').textContent = node.person; document.getElementById('personMemo').textContent = person.memo; personDetail.classList.add('is-visible'); document.getElementById('inspectorHeading').textContent = `${node.person}의 러브트리`; return; }
+        document.getElementById('inspectorHeading').textContent = node.cluster ? node.title : '영상 기억'; inspector.style.setProperty('--selected-color', palette[node.color]); detailType.textContent = node.cluster ? 'EMOTION BRANCH' : 'VIDEO MOMENT'; detailTitle.textContent = node.title; detailMood.textContent = node.cluster ? `${nodes.filter((item) => item.parent === node.id).length}개 영상` : node.mood; detailTime.textContent = node.cluster ? 'living branch' : node.time; detailPerson.textContent = node.person ? node.person : 'LoveTree'; detailMemo.textContent = node.cluster ? '이 색과 감정으로 모인 영상 가지예요. 작은 하트를 눌러 장면을 하나씩 열어보세요.' : node.memo; detailContent.classList.add('is-visible'); if (node.cluster) { detailThumb.src = videoThumb(nodes.find((item) => item.parent === node.id)?.videoId || 'aqz-KE-bpKQ'); detailPlay.style.display = 'none'; } else { detailThumb.src = videoThumb(node.videoId); detailPlay.style.display = 'grid'; }
+      }
+
+      function mountVideo() { const node = getNode(selectedId); if (!node || node.cluster || node.personNode) return; if (detailPlayer.querySelector('iframe')) return; detailThumb.style.display = 'none'; detailPlay.style.display = 'none'; const iframe = document.createElement('iframe'); iframe.title = node.title; iframe.src = `https://www.youtube-nocookie.com/embed/${node.videoId}?autoplay=1&rel=0&playsinline=1`; iframe.allow = 'autoplay; encrypted-media; picture-in-picture'; iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation'); iframe.referrerPolicy = 'strict-origin-when-cross-origin'; detailPlayer.appendChild(iframe); showToast('선택한 영상이 이곳에서 재생됩니다.'); }
+
+      function setFilter(personName) { activePerson = personName; document.querySelectorAll('[data-person-filter]').forEach((button) => button.classList.toggle('is-active', button.dataset.personFilter === personName)); const note = document.getElementById('filterNote'); if (personName === 'all') { note.classList.remove('is-visible'); document.querySelectorAll('.node').forEach((node) => node.classList.remove('is-muted')); return; } note.textContent = `${personName}의 가지를 보고 있어요`; note.classList.add('is-visible'); const branch = people[personName].branch; document.querySelectorAll('.node').forEach((element) => { const node = getNode(element.dataset.id); const visible = node.id === branch || node.person === personName || node.parent === branch || node.id === 'core'; element.classList.toggle('is-muted', !visible); }); }
+
+      function updateTransform() { world.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${zoom})`; document.getElementById('zoomReadout').textContent = `${Math.round(zoom * 100)}%`; drawEdges(); }
+      function beginPan(event) { if (event.target.closest('.node') || event.target.closest('.graph-tools') || event.target.closest('.inspector')) return; panStart = { x: event.clientX - panX, y: event.clientY - panY }; world.classList.add('is-dragging'); viewport.classList.add('is-panning'); const move = (moveEvent) => { if (!panStart) return; panX = moveEvent.clientX - panStart.x; panY = moveEvent.clientY - panStart.y; updateTransform(); }; const end = () => { panStart = null; world.classList.remove('is-dragging'); viewport.classList.remove('is-panning'); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); }; window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); }
+      function handleWheel(event) { event.preventDefault(); const direction = event.deltaY > 0 ? -1 : 1; zoom = clamp(zoom + direction * .08, .55, 2.15); updateTransform(); }
+      function resetView() { closeInspector(); activePerson = 'all'; document.querySelectorAll('[data-person-filter]').forEach((button) => button.classList.toggle('is-active', button.dataset.personFilter === 'all')); document.querySelectorAll('.node').forEach((node) => node.classList.remove('is-muted')); graphLegend.style.left = ''; graphLegend.style.top = ''; panX = 0; panY = 0; zoom = 1; updateTransform(); showToast('처음 위치로 돌아왔어요.'); }
+      function openAdd() { document.getElementById('addModal').classList.add('is-open'); document.getElementById('addModal').setAttribute('aria-hidden', 'false'); document.getElementById('addName').focus(); }
+      function closeAdd() { document.getElementById('addModal').classList.remove('is-open'); document.getElementById('addModal').setAttribute('aria-hidden', 'true'); }
+      function parseVideoId(url) { const match = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{6,})/); return match ? match[1] : ''; }
+
+      viewport.addEventListener('pointerdown', beginPan); graphLegend.addEventListener('pointerdown', beginLegendDrag); viewport.addEventListener('wheel', handleWheel, { passive: false }); window.addEventListener('resize', drawEdges); document.getElementById('zoomIn').addEventListener('click', () => { zoom = clamp(zoom + .12, .55, 2.15); updateTransform(); }); document.getElementById('zoomOut').addEventListener('click', () => { zoom = clamp(zoom - .12, .55, 2.15); updateTransform(); }); document.getElementById('resetView').addEventListener('click', resetView); document.getElementById('closeInspector').addEventListener('click', closeInspector); document.getElementById('closeDetailSecondary').addEventListener('click', closeInspector); document.getElementById('detailPlay').addEventListener('click', mountVideo); document.getElementById('rememberMoment').addEventListener('click', () => showToast('이 장면을 마음 기록으로 남겼어요.')); document.getElementById('personOpenBranch').addEventListener('click', () => { const person = getNode(selectedId)?.person; if (person) { setFilter(person); closeInspector(); } }); document.querySelectorAll('[data-person-filter]').forEach((button) => button.addEventListener('click', () => setFilter(button.dataset.personFilter))); document.getElementById('openAdd').addEventListener('click', openAdd); document.getElementById('closeAdd').addEventListener('click', closeAdd); document.getElementById('cancelAdd').addEventListener('click', closeAdd); document.getElementById('addModal').addEventListener('click', (event) => { if (event.target.id === 'addModal') closeAdd(); });
+
+      document.getElementById('addForm').addEventListener('submit', (event) => { event.preventDefault(); const title = document.getElementById('addName').value.trim(); const url = document.getElementById('addUrl').value.trim(); const memo = document.getElementById('addMemo').value.trim() || '내가 고른 장면을 러브트리에 남겼어요.'; const videoId = parseVideoId(url); if (!videoId) { showToast('YouTube 또는 Shorts 링크를 확인해주세요.'); return; } const colors = Object.keys(palette); const color = colors[nodes.filter((node) => !node.cluster && !node.personNode).length % colors.length]; const id = `m${Date.now()}`; const parent = ['p1','p3','p5','p7'][nodes.length % 4]; nodes.push({ id, title, label: title.slice(0, 12), kind:'VIDEO', mood:'새로운 마음', color, x:45 + (nodes.length % 5) * 5, y:32 + (nodes.length % 4) * 10, parent, person:'주연', videoId, time:'새로 담은 장면', memo }); closeAdd(); renderNodes(); document.getElementById('momentCount').textContent = nodes.filter((node) => !node.cluster && !node.personNode).length; selectNode(id); event.target.reset(); showToast('새 하트가 러브트리의 가지가 되었어요.'); });
+
+      const juyeonArchive = [
+        ['XAgABXUwKSw','Heated Rivalry'],['T0I22axxSOY','영훈·주연 극대노'],['MUKjhyAl_Ig','Miljyu in 2025'],['zmOI_XujTsU','cute to hot'],['35j5aBM2Yck','Ain’t Salty'],['C9VVlr_Zik8','The Blaze'],['PiimgtLtdlE','Balenciaga night'],['vlrlXOcTgh0','that part'],['iiRBOaaEEfc','타고난 주연'],['QeQLf3jlOw8','sleeveless'],['DCq0jadiiPU','웃는 이유'],['ll5eYFIA2gM','Dreamlike'],['8z2ahjI6Rmk','원펀챌린지'],['VSUjS8uE3Ks','belt looks nice'],['XT3T9s-ubOw','MAVERICK'],['8-DAYKkpkEQ','소통 오류'],['4zM3LYbQlAs','비하인드'],['JURt3fEl9L4','주연 취향'],['W6M0I4z-MSc','영훈주연'],['FofjfdJafw8','폭로전'],['mtNlzyDHLuM','무비 춤'],['-bSevJ3nxUc','전남친'],['3T8p7iliH7w','절대로 보지마'],['sNocv2uNruU','앙탈 주연'],['dab-1tS5vXc','레전드 댄스'],['PSDPeCEOaV8','어떻게 이렇게'],['nqofkzQD19E','안무 디테일 1'],['MOOw4lywYsg','키차이'],['bcUfIpQ6aeA','심쿵 모먼트'],['mRppy-KnyNI','찐 성격 탐구'],['k_xvpSjrn5o','메댄즈'],['64tAqyMLDS4','안무 디테일 2'],['6b7Xa-G-epI','주연짱팬'],['fpSzrQVNGU4','허당미 티키타카'],['aHaHpi7V4-g','세상이 빨라서'],['5ucSK0bKhfc','D.D.D'],['XPhohbbz4Z0','행동이 설레는'],['Dq995dXTW1w','멍냥즈 케미'],['EuXpTZVbEJc','친구 zip'],['Ut4uBr2a_yE','도원경 비하인드'],['R7LW5W4heY4','맴찢 영상'],['kgUwvhESUBs','루미큐브'],['33cAB8cOjLs','내가 뭘 보고'],['4R9kNjVaWDw','4대1 주연'],['DEdKSEfY3NM','조금 이상한'],['9WqAFxdJRec','위버스 라이브'],['ePAi-0qKEio','Artist of Month'],['q7MA_SidcA8','Choreo Record'],['wfWn1MCY4uY','아는형님'],['3HPze4eDQTs','Paris Boylog'],['7k63tu6hfJY','귀여워서 미안해'],['9MAoJWaLPd4','reaction'],['zDDz0RF8p84','Kevin chose'],['seiicCXsV84','boyfriend type'],['9egDeVeSRMI','WATCH IT'],['9I7Au-q7eH8','프로 아이돌'],['ybjB8h-5eJM','마음의 짐'],['qKkJ6YHLhak','WHISPER'],['93jg1vU4R5I','Passion Fruit'],['CuGtbPTwrIc','고양이 모음'],['ZSFk04xYkqk','다정미남'],['CSMSEETqG-U','입덕영상'],['ubZE05RP-lo','막내 이주연'],['YE6poU_dFkE','WATCH IT close'],['DydBC297OTk','바닥 슬라이딩'],['puUNI3f-0Tw','patience'],['4eu90wHNHGk','cute reaction'],['VBkYyBRjsE0','마야 체험기'],['-eha6i7v-uk','나믿즈'],['cEf5Ez9D1BM','Kiss'],['9If0hPcDAqU','hand kiss'],['OTCflkvTv84','말 다 맞아'],['eyFMLz8CAlA','안 비켜주는'],['K5mEOdvsm9I','98 메댄즈'],['qucTSGS7kFE','미니 팬미팅'],['nyZjY3dnQAQ','신체 부위'],['F2TmhJp_5pQ','Passion Fruit focus'],['Dmkak03KYyE','킥보드 썰'],['U-prYzwGU30','환승연애'],['Wkje9BElGHY','홍석천의 보석함']
+      ];
+      const denseBranches = [{ id:'p1', x:30, y:38, color:'pink' },{ id:'p2', x:39, y:20, color:'cyan' },{ id:'p3', x:58, y:18, color:'mint' },{ id:'p4', x:77, y:36, color:'yellow' },{ id:'p5', x:70, y:60, color:'violet' },{ id:'p6', x:48, y:75, color:'orange' },{ id:'p7', x:20, y:62, color:'rose' }];
+      function renderArchiveHalos() { const layer = document.getElementById('sparkLayer'); denseBranches.forEach((branch, index) => { const halo = document.createElement('i'); halo.className = 'archive-halo'; halo.style.setProperty('--x', `${branch.x}%`); halo.style.setProperty('--y', `${branch.y}%`); halo.style.setProperty('--w', `${210 + (index % 3) * 48}px`); halo.style.setProperty('--h', `${155 + (index % 4) * 35}px`); halo.style.setProperty('--halo', palette[branch.color]); halo.style.setProperty('--halo-speed', `${3.6 + (index % 4) / 2}s`); halo.style.setProperty('--halo-delay', `${-index / 2}s`); halo.style.setProperty('--halo-tilt', `${index * 17 - 28}deg`); layer.appendChild(halo); }); }
+      function seedDenseArchive() { juyeonArchive.forEach(([videoId, label], index) => { const branch = denseBranches[index % denseBranches.length]; const ring = Math.floor(index / denseBranches.length); const angle = (index % denseBranches.length) / denseBranches.length * Math.PI * 2 + ring * .57; const radiusX = 6.5 + (ring % 5) * 3.4; const radiusY = 5.6 + (ring % 4) * 3.1; const x = clamp(branch.x + Math.cos(angle) * radiusX + ((index % 3) - 1) * 1.2, 3, 97); const y = clamp(branch.y + Math.sin(angle) * radiusY + ((index % 4) - 1.5) * 1.1, 5, 94); nodes.push({ id:`archive-${index + 1}`, title:`주연 · ${label}`, label:index % 7 === 0 ? label : '', kind:'ARCHIVE VIDEO', mood:['설렘','몰입','웃음','위로','애정'][index % 5], color:branch.color, x, y, parent:branch.id, person:'주연', videoId, time:'bookmark moment', memo:`북마크에서 모은 주연의 영상 기억이에요. ${label} 장면을 나의 가지에 담아두었어요.`, micro:true }); }); renderArchiveHalos(); document.getElementById('momentCount').textContent = nodes.filter((node) => !node.cluster && !node.personNode).length; }
+      seedDenseArchive(); buildSparks(); renderNodes(); updateTransform();
+    })();
+  </script>
+</body>
+</html>

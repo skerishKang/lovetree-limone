@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LoveTree Track70 V2.1 — Portal Navigation Return Fix</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Michroma&family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+:root{
+  --pad-x:clamp(1.25rem,4.5vw,5rem);--pad-y:clamp(1rem,3vh,4rem);--header-pt:clamp(1.25rem,2.5vh,2.5rem);
+  --gap-nav:clamp(1rem,2.2vw,2.25rem);--logo:clamp(1.35rem,1.2vw + .9rem,2.1rem);--logo-deg:clamp(.65rem,.4vw + .45rem,.9rem);
+  --nav:clamp(.65rem,.35vw + .5rem,.875rem);--headline:clamp(2.15rem,4.5vw + .75rem,5.25rem);--body:clamp(.7rem,.35vw + .55rem,.9rem);
+  --micro:clamp(.55rem,.25vw + .45rem,.7rem);--btn-px:clamp(1.15rem,1.4vw,1.75rem);--btn-py:clamp(.6rem,.9vh,.85rem);
+  --btn-gap:clamp(.75rem,1vw,1.1rem);--feature-pad:clamp(1rem,1.5vw,1.75rem);--feature-min:clamp(13rem,18vw,20rem);
+  --globe:clamp(2.25rem,2.5vw + 1rem,3.25rem);--checker-w:clamp(2.75rem,4.5vw,6.5rem);--checker-h:clamp(1.35rem,2.2vw,3rem);
+  --corner:clamp(.65rem,.4vw + .4rem,.95rem);--icon:clamp(1rem,.6vw + .7rem,1.35rem);--drawer-pad:clamp(1.25rem,2.5vw,2.25rem);
+  --drawer-max:clamp(18rem,28vw,28rem);--section-gap:clamp(.75rem,1.5vh,1.5rem);--main-py:clamp(1.25rem,4vh,4rem)
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#fff;color:#000}
+body{font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:#000;color:#fff}
+button{font:inherit}
+.page{min-height:100vh;background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.bg-desktop{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+.grid-overlay{position:absolute;inset:0;opacity:.10}
+.header{position:relative;z-index:20;padding-inline:var(--pad-x);padding-top:var(--header-pt);padding-bottom:var(--section-gap);display:flex;justify-content:space-between;align-items:flex-start}
+.logo{border:0;background:transparent;color:#000;cursor:pointer;padding:0;display:flex;align-items:flex-start}
+.logo-main{font-family:'Orbitron',sans-serif;font-size:var(--logo);font-weight:900;letter-spacing:.15em;line-height:1}
+.logo-sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:var(--micro);font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-top:.4rem;opacity:.6}
+.logo-degree{font-size:var(--logo-deg);margin-left:.1rem;margin-top:-.15rem}
+.logo:hover,.nav button:hover{opacity:.5}
+.nav{display:flex;align-items:center;gap:var(--gap-nav);font-size:var(--nav);font-weight:500;letter-spacing:.2em;text-transform:uppercase}
+.nav button{border:0;background:transparent;padding:0;cursor:pointer;color:#000}
+.divider{color:#9ca3af}
+.icon-btn{position:relative;display:grid;place-items:center}
+.badge{position:absolute;right:-.65rem;top:-.55rem;background:#000;color:#fff;width:1.25rem;height:1.25rem;border-radius:50%;display:none;place-items:center;font-size:.6rem;letter-spacing:0}
+.badge.show{display:grid}
+.hero{position:relative;z-index:10;flex:1;padding-inline:var(--pad-x);padding-block:var(--main-py);display:flex;justify-content:space-between;gap:3rem;align-items:center}
+.left{max-width:58rem}
+.corner{width:var(--corner);height:var(--corner);display:block}
+.headline{font-family:'Orbitron',sans-serif;font-size:var(--headline);font-weight:800;line-height:1.05;letter-spacing:.08em;text-transform:uppercase;margin:.7rem 0;max-width:13ch}
+.headline .last{display:flex;align-items:flex-end;gap:.55rem;white-space:nowrap}
+.checker,.path-matrix{width:var(--checker-w);height:var(--checker-h);transform:translateY(2px);flex:none}
+.cta{margin-top:clamp(1.2rem,2.5vh,2.4rem);border:1px solid #9ca3af;border-radius:.375rem;background:transparent;color:#000;padding:var(--btn-py) var(--btn-px);text-transform:uppercase;letter-spacing:.18em;font-size:var(--body);font-weight:600;display:inline-flex;align-items:center;gap:var(--btn-gap);cursor:pointer;transition:.2s}
+.cta:hover{background:#000;color:#fff;border-color:#000}
+.cta svg{transition:transform .2s}.cta:hover svg{transform:translate(2px,-2px)}
+.feature{align-self:flex-end;min-width:var(--feature-min);padding:var(--feature-pad);position:relative;display:flex;align-items:center;gap:1.2rem;margin-bottom:clamp(.25rem,2vh,2rem)}
+.feature-corner{position:absolute;width:var(--corner);height:var(--corner)}
+.tl{left:0;top:0}.tr{right:0;top:0}.bl{left:0;bottom:0}.br{right:0;bottom:0}
+.globe{width:var(--globe);height:var(--globe);flex:none}
+.tagline{font-size:var(--body);font-weight:600;letter-spacing:.18em;text-transform:uppercase;line-height:1.5}
+.mobile-image{display:none;position:relative;z-index:10;margin:0 var(--pad-x) 1.5rem}
+.mobile-image .img{aspect-ratio:4/5;background-size:cover;background-position:center;border:1px solid #e5e7eb}
+.mobile-caption{margin-top:.5rem;font-size:var(--micro);letter-spacing:.16em;text-transform:uppercase;color:#6b7280}
+.backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.2);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.2s}
+.backdrop.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;z-index:50;right:0;top:0;height:100vh;width:min(100%,var(--drawer-max));background:#fff;border-left:1px solid #d1d5db;padding:var(--drawer-pad);transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding-bottom:1.25rem;border-bottom:1px solid #e5e7eb}
+.drawer-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.1rem,2vw,1.6rem);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.close{width:2.6rem;height:2.6rem;border:1px solid #d1d5db;background:#fff;display:grid;place-items:center;cursor:pointer}
+.drawer-sub{margin:1.25rem 0 .6rem;color:#6b7280;font-size:var(--micro);letter-spacing:.16em;text-transform:uppercase}
+.drawer-content{overflow:auto;flex:1}
+.row{padding:1.1rem 0;border-bottom:1px solid #e5e7eb}
+.row-top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+.row-tag{font-size:var(--micro);color:#6b7280;letter-spacing:.14em;text-transform:uppercase}
+.row-title{margin:.35rem 0;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.95rem;line-height:1.25}
+.row-meta{font-size:var(--micro);color:#6b7280;letter-spacing:.08em;text-transform:uppercase}
+.row-desc{margin:.55rem 0 0;font-size:.78rem;line-height:1.55;color:#4b5563}
+.mini{border:1px solid #9ca3af;background:#fff;color:#000;padding:.45rem .65rem;font-size:var(--micro);font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.mini:hover,.mini:focus-visible{background:#000;color:#fff;border-color:#000;outline:none}
+.drawer-foot{padding-top:1rem;border-top:1px solid #e5e7eb;text-align:center;color:#6b7280;font-size:var(--micro);letter-spacing:.13em;text-transform:uppercase}
+.primary-full{width:100%;border:0;background:#000;color:#fff;padding:.9rem 1rem;text-transform:uppercase;letter-spacing:.15em;font-size:var(--body);font-weight:700;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-decoration:none}
+.empty{min-height:45vh;display:grid;place-items:center;text-align:center;color:#4b5563}
+.empty svg{margin:auto}.empty strong{display:block;color:#111;margin:.8rem 0 .35rem}
+.toast{position:fixed;z-index:80;right:1.25rem;top:1.25rem;background:#000;color:#fff;padding:.85rem 1rem;display:flex;align-items:center;gap:.7rem;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:.78rem;transform:translateY(-1rem);opacity:0;pointer-events:none;transition:.22s}
+.toast.show{transform:none;opacity:1}
+@media(max-width:1023px){
+  .bg-desktop{display:none}.hero{flex-direction:column;align-items:flex-start;justify-content:center;padding-bottom:1.25rem}.feature{align-self:stretch;margin:0}.mobile-image{display:block}.nav{gap:1rem}.nav .optional{display:none}.headline{max-width:12ch}
+}
+@media(min-width:640px) and (max-width:1023px){.mobile-image .img{aspect-ratio:16/9}}
+@media(max-width:620px){.header{gap:1rem}.logo-main{letter-spacing:.08em}.nav{font-size:.58rem}.hero{padding-top:1rem}.headline .last{white-space:normal}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+.logo{display:block;text-align:left}.logo-main{font-family:'Plus Jakarta Sans';font-weight:700;letter-spacing:-.04em;text-transform:none}.micro-instruction{position:fixed;z-index:12;left:50%;bottom:1.2rem;transform:translateX(-50%);font-size:var(--micro);letter-spacing:.18em;text-transform:uppercase;color:#4b5563;pointer-events:none}
+
+/* V2_PORTAL_NAV — real template portals + WORKS index */
+.row-actions{display:flex;flex-direction:column;gap:.45rem;align-items:flex-end;flex:none}
+.portal-banner{margin:.2rem 0 1rem;padding:.85rem 0 1rem;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.portal-banner-copy{font-size:var(--micro);letter-spacing:.12em;text-transform:uppercase;color:#6b7280;line-height:1.45}
+.portal-banner .mini{white-space:nowrap}
+.works-trigger{position:fixed;z-index:24;right:var(--pad-x);bottom:1.25rem;border:1px solid #9ca3af;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);color:#000;padding:.62rem .85rem;font-size:var(--micro);font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+.works-trigger:hover{background:#000;color:#fff;border-color:#000}
+.works-overlay{position:fixed;inset:0;z-index:100;background:rgba(5,5,5,.985);color:#f3f3f1;display:none;overflow:auto}
+.works-overlay.open{display:block}
+.works-shell{min-height:100%;padding:26px 32px 42px}
+.works-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.22);padding:0 0 18px}
+.works-brand{display:flex;align-items:baseline;gap:16px}
+.works-brand strong{font-family:'Orbitron',sans-serif;font-size:18px;letter-spacing:.16em}
+.works-brand span{font-size:10px;color:#8e8e8e;letter-spacing:.18em;text-transform:uppercase}
+.works-close{width:44px;height:44px;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:transparent;color:#fff;font-size:22px;cursor:pointer}
+.works-list{margin-top:24px;border-top:1px solid rgba(255,255,255,.13)}
+.work-row{display:grid;text-decoration:none;color:inherit;grid-template-columns:72px minmax(220px,1fr) minmax(180px,.8fr) 90px;align-items:center;min-height:67px;border-bottom:1px solid rgba(255,255,255,.13);padding:8px 3px;transition:background .18s ease,color .18s ease;cursor:pointer}
+.work-row:hover,.work-row:focus-visible{background:#f0f0ed;color:#111;outline:none}
+.work-row.current{cursor:default;color:#777}.work-row.current:hover{background:transparent;color:#777}
+.work-num{font-size:11px;letter-spacing:.18em}.work-name{font-size:20px;font-weight:600;letter-spacing:-.035em}
+.work-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#777}.work-action{text-align:right;font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.works-foot{display:flex;justify-content:space-between;gap:20px;margin-top:24px;color:#777;font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+@media(max-width:760px){
+ .works-shell{padding:18px 14px 34px}.work-row{grid-template-columns:46px 1fr 60px;min-height:62px}.work-sub{display:none}.work-name{font-size:16px}
+ .works-trigger{right:16px;bottom:12px}.row-actions{gap:.35rem}
+}
+
+</style></head>
+<body>
+<!-- Track70 V2.1: all template portals are direct target=_blank anchors; drawer/WORKS layers participate in browser history. --><div class="page">
+<div class="bg-desktop">
+  <div class="bg-layer" id="bg1"></div><div class="bg-layer" id="bg2"></div>
+  <svg class="grid-overlay" width="100%" height="100%"><defs><pattern id="gridPattern" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M 48 0 L 0 0 0 48" fill="none" stroke="#64748b" stroke-width=".6"/></pattern></defs><rect width="100%" height="100%" fill="url(#gridPattern)"/></svg>
+</div>
+
+<header class="header">
+<button class="logo" id="logoBtn"><div><span class="logo-main">LoveTree</span><span class="logo-degree">˚</span><div class="logo-sub">MY EMOTIONAL PATH ARCHIVE</div></div></button>
+<nav class="nav"><button data-open="moments">MOMENTS</button><button data-open="paths" class="optional">PATHS</button><button data-open="journal" class="optional">JOURNAL</button><span class="divider">|</span><button class="icon-btn" data-open="tree" aria-label="My Tree"><span id="heartIcon"></span><span class="badge" id="treeBadge">0</span></button></nav>
+</header>
+<main class="hero"><section class="left">
+<svg class="corner" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 11.5V0.5H11.5"/></svg>
+<h1 class="headline"><span>MOMENTS</span><br><span>BECOME</span><br><span class="last">PATHS 
+<svg class="path-matrix" viewBox="0 0 36 18" aria-hidden="true">
+<g stroke="currentColor" stroke-width="1" fill="none"><path d="M4 9h7l5-5h7l5 5h4M16 4v10M11 9l5 5h7l5-5"/></g>
+<g fill="currentColor"><circle cx="4" cy="9" r="2.1"/><circle cx="11" cy="9" r="1.5"/><circle cx="16" cy="4" r="1.5"/><circle cx="16" cy="14" r="1.5"/><circle cx="23" cy="4" r="1.5"/><circle cx="23" cy="14" r="1.5"/><circle cx="28" cy="9" r="1.5"/><circle cx="32" cy="9" r="1.3"/></g>
+</svg>
+</span></h1>
+<svg class="corner" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 0.5V11.5H11.5"/></svg>
+<button class="cta" data-open="moments">OPEN ARCHIVE <span id="arrowIcon"></span></button>
+</section>
+<aside class="feature"><svg class="feature-corner tl" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 11.5V0.5H11.5"/></svg><svg class="feature-corner tr" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0.5 0.5H11.5V11.5"/></svg><svg class="feature-corner bl" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 0.5V11.5H11.5"/></svg><svg class="feature-corner br" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0.5 11.5H11.5V0.5"/></svg>
+<svg class="globe" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+<circle cx="32" cy="32" r="28"/><path d="M4 32h56"/><ellipse cx="32" cy="32" rx="28" ry="12"/><ellipse cx="32" cy="32" rx="12" ry="28"/>
+<path d="M14 20 28 31 43 18M28 31 47 39 35 50"/><g fill="currentColor" stroke="none"><circle cx="14" cy="20" r="1.8"/><circle cx="28" cy="31" r="2.2"/><circle cx="43" cy="18" r="1.7"/><circle cx="47" cy="39" r="1.7"/><circle cx="35" cy="50" r="1.7"/></g>
+</svg>
+<div class="tagline">A MOMENT MOVES.<br>A PATH REMAINS.</div></aside></main>
+<div class="micro-instruction">MOVE ACROSS A MEMORY</div>
+<section class="mobile-image"><div class="img" data-mobile-bg></div><div class="mobile-caption">FIRST IMPRESSION · MOMENT 01</div></section>
+</div>
+
+<button class="works-trigger" id="worksTrigger" type="button" aria-label="Open LoveTree works index">WORKS_</button>
+<section class="works-overlay" id="worksOverlay" aria-hidden="true">
+  <div class="works-shell">
+    <div class="works-head">
+      <div class="works-brand"><strong>WORKS_</strong><span>LOVETREE · TRACK 70 PORTAL INDEX</span></div>
+      <button class="works-close" id="worksClose" aria-label="Close works">×</button>
+    </div>
+    <div class="works-list" id="worksList"></div>
+    <div class="works-foot"><span>SELECT A WORLD · OPENS IN NEW TAB</span><span>TRACK 70 · CURRENT</span></div>
+  </div>
+</section>
+
+<div class="backdrop" id="backdrop"></div><aside class="drawer" id="drawer"><div class="drawer-head"><div class="drawer-title" id="drawerTitle"></div><button class="close" id="closeBtn"></button></div><div class="drawer-sub" id="drawerSub"></div><div class="drawer-content" id="drawerContent"></div><div class="drawer-foot" id="drawerFoot">LOVETREE © 2026 — MY EMOTIONAL PATH ARCHIVE</div></aside><div class="toast" id="toast"></div>
+<script>
+const icons={
+arrow:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17 17 7M7 7h10v10"/></svg>`,
+x:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+bag:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>`,
+heart:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>`,
+chev:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m9 18 6-6-6-6"/></svg>`,
+check:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8"><path d="m20 6-11 11-5-5"/></svg>`
+}
+
+document.getElementById('heartIcon').innerHTML=icons.heart;document.getElementById('arrowIcon').innerHTML=icons.arrow;document.getElementById('closeBtn').innerHTML=icons.x;
+const templates={
+ track68:'../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html',
+ track67:'../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html',
+ track66:'../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html',
+ track65:'../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html',
+ track64:'../../64_부유모먼트_웰컴오빗_입장포털/현재후보.html',
+ track63:'../../63_모먼트필드_3D뷰스튜디오/버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/현재후보.html',
+ track62:'../../62_기억조각상_원형레일전시/62_기억조각상_원형레일전시.html',
+ track61:'../../61_감정경로_연결검토실/현재후보.html',
+ track60:'../../60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html',
+ track59:'../../59_메모리스케치북_페이지여정/버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html',
+ track58:'../../58_리빙메모리_핀보드/★_최종_58_리빙메모리_핀보드.html',
+ track57:'../../57_리빙글라스_모먼트카드/★_최종_버전1.2_리빙글라스_모먼트카드.html'
+};
+const sectionTargets={
+ moments:{label:'OPEN MOMENT FIELD',path:templates.track63},
+ paths:{label:'OPEN CONNECTION REVIEW',path:templates.track61},
+ journal:{label:'OPEN MEMORY SKETCHBOOK',path:templates.track59},
+ tree:{label:'OPEN FIRST TREE',path:templates.track66}
+};
+const moments=[
+{tag:'FIRST SPARK',title:'THE FIRST LOOK',meta:'00:17 · FIRST IMPRESSION',desc:'I did not know why I stopped here yet.',path:templates.track65},
+{tag:'CURIOSITY',title:'LOOK AGAIN',meta:'00:42 · CURIOSITY',desc:'That expression stayed with me, so I came back.',path:templates.track68},
+{tag:'TURNING POINT',title:'WHY IT STAYED',meta:'01:08 · RECOGNITION',desc:'A small detail changed the way I saw this person.',path:templates.track61},
+{tag:'AFTERGLOW',title:'THE MEMORY RETURNED',meta:'01:31 · AFTERGLOW',desc:'The screen went dark. The moment did not.',path:templates.track59}
+]; let planted=[];
+const paths=[
+['FIRST SPARK','THE FIRST THREE MOMENTS','First look → curiosity → looking again.','01 → 02 → 04',templates.track67],
+['WHY I KEPT SEARCHING','CURIOSITY PATH','A detail stayed in memory, leading to another clip, another expression, another question.','02 → 03 → 04',templates.track61],
+['FALLING IN','TURNING POINT PATH','The route where recognition became attachment.','03 → 04 → 07',templates.track60]
+];
+const journal=[
+['AUG 17 2026','I CAME BACK TO THE FIRST MOMENT','2 MIN READ','The beginning felt smaller than I remembered, but the feeling returned immediately.',templates.track59],
+['AUG 12 2026','WHY THAT EXPRESSION STAYED WITH ME','3 MIN READ','I still cannot explain the exact detail that made me look again.',templates.track58],
+['AUG 04 2026','THE DAY CURIOSITY BECAME ATTACHMENT','4 MIN READ','One more search became another, and the path had already begun.',templates.track57]
+];
+const worksCatalog=[
+{code:'70',name:'MOMENT REVEAL',sub:'Future Editorial · Current',path:'',current:true},
+{code:'68',name:'MOTION ARCHIVE',sub:'Portrait Emotional Path · V7',path:templates.track68},
+{code:'67',name:'MEMORY TAPE',sub:'Persistent Ribbon World · V2.4.2',path:templates.track67},
+{code:'66',name:'FIRST TREE',sub:'Interactive Scroll Guide',path:templates.track66},
+{code:'65',name:'FIRST CLUE',sub:'Cinematic Editorial · V18',path:templates.track65},
+{code:'64',name:'WELCOME ORBIT',sub:'Floating Moment Entry Portal',path:templates.track64},
+{code:'63',name:'MOMENT FIELD',sub:'3D View Studio',path:templates.track63},
+{code:'62',name:'MEMORY SCULPTURE',sub:'Circular Rail Exhibition',path:templates.track62},
+{code:'61',name:'CONNECTION REVIEW',sub:'Emotional Path Review',path:templates.track61},
+{code:'60',name:'MOMENT CLUSTER',sub:'Deep Exploration',path:templates.track60},
+{code:'59',name:'MEMORY SKETCHBOOK',sub:'Page Journey',path:templates.track59},
+{code:'58',name:'LIVING MEMORY',sub:'Cinematic Pinboard',path:templates.track58},
+{code:'57',name:'LIVING GLASS',sub:'Moment Card',path:templates.track57}
+];
+
+function portalAnchor(path,label='OPEN'){
+ return `<a class="mini" href="${path}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+}
+
+function sectionPortal(key){
+ const t=sectionTargets[key];
+ return `<div class="portal-banner"><div class="portal-banner-copy">RELATED LOVETREE TEMPLATE<br>${t.label.replace('OPEN ','')}</div>${portalAnchor(t.path,t.label)}</div>`;
+}
+const drawers={
+moments:{title:'Moment Archive',sub:'Saved Moments',render:()=>sectionPortal('moments')+moments.map((x,i)=>`<div class="row"><div class="row-top"><div><div class="row-tag">${x.tag}</div><div class="row-title">${x.title}</div><div class="row-meta">${x.meta}</div><div class="row-desc">${x.desc}</div></div><div class="row-actions"><button class="mini" onclick="plant(${i})">PLANT</button>${portalAnchor(x.path)}</div></div></div>`).join('')},
+paths:{title:'Emotional Paths',sub:'Ways I Followed The Feeling',render:()=>sectionPortal('paths')+paths.map((x,i)=>`<div class="row" onclick="selectPath(${i})" style="cursor:pointer"><div class="row-top"><div><div class="row-tag">${x[1]}</div><div class="row-title">${x[0]}</div><div class="row-desc">${x[2]}</div><div class="row-meta" style="margin-top:.7rem">${x[3]}</div></div>${portalAnchor(x[4])}</div></div>`).join('')},
+journal:{title:'Heart Journal',sub:'Notes From The Path',render:()=>sectionPortal('journal')+journal.map(x=>`<div class="row"><div class="row-top"><div><div class="row-tag">${x[0]}</div><div class="row-title">${x[1]}</div><div class="row-meta">${x[2]}</div><div class="row-desc">${x[3]}</div></div>${portalAnchor(x[4])}</div></div>`).join('')},
+tree:{title:'My Tree',sub:'',render:()=>sectionPortal('tree')+renderTree()}
+};
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=icons.check+`<span>${msg}</span>`;t.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('show'),3000)}
+function updateBadge(){const b=document.getElementById('treeBadge');b.textContent=planted.length;b.classList.toggle('show',planted.length>0)}
+function plant(i){if(!planted.includes(i))planted.push(i);updateBadge();showToast(`Planted "${moments[i].title}" in My Tree.`)}
+function removePlant(i){planted.splice(i,1);updateBadge();openDrawer('tree')}
+function renderTree(){if(!planted.length)return `<div class="empty"><div>${icons.heart}<strong>No moments planted yet.</strong><div>Plant the moments that changed how you felt.</div></div></div>`;
+return planted.map((idx,i)=>{const x=moments[idx];return `<div class="row"><div class="row-top"><div><div class="row-tag">0${i+1}</div><div class="row-title">${x.title}</div><div class="row-meta">${x.tag} · ${x.meta.split(' · ')[0]}</div></div><button class="mini" onclick="removePlant(${i})">REMOVE</button></div></div>`}).join('')+`<div style="padding-top:1rem"><a class="primary-full" href="${templates.track66}" target="_blank" rel="noopener noreferrer" onclick="showToast(\'Opening your LoveTree template in a new tab.\')">OPEN MY TREE ${icons.chev}</a></div>`}
+function selectPath(i){showToast(`Path selected: ${paths[i][0]}`)}
+function openTree(){showToast('Opening your LoveTree template in a new tab.')}
+
+function openPortal(path){
+ if(!path)return;
+ const a=document.createElement('a');
+ a.href=path;
+ a.target='_blank';
+ a.rel='noopener noreferrer';
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+}
+function renderWorks(){
+ const list=document.getElementById('worksList');
+ list.innerHTML=worksCatalog.map(item=>item.current?`
+   <div class="work-row current">
+     <div class="work-num">${item.code}</div>
+     <div class="work-name">${item.name}</div>
+     <div class="work-sub">${item.sub}</div>
+     <div class="work-action">CURRENT</div>
+   </div>`:`
+   <a class="work-row" href="${item.path}" target="_blank" rel="noopener noreferrer">
+     <div class="work-num">${item.code}</div>
+     <div class="work-name">${item.name}</div>
+     <div class="work-sub">${item.sub}</div>
+     <div class="work-action">OPEN WORK</div>
+   </a>`).join('');
+}
+function hideDrawerVisual(){
+ document.getElementById('backdrop').classList.remove('open');
+ document.getElementById('drawer').classList.remove('open');
+}
+function hideWorksVisual(){
+ const o=document.getElementById('worksOverlay');
+ o.classList.remove('open');o.setAttribute('aria-hidden','true');
+ document.body.style.overflow='';
+}
+function setLayerHistory(layer,key){
+ const next={track70Layer:layer,key:key||null};
+ const hash=layer==='drawer'?`#${key}`:'#works';
+ if(history.state&&history.state.track70Layer){
+   history.replaceState(next,'',hash);
+ }else{
+   history.pushState(next,'',hash);
+ }
+}
+function openWorks(pushHistory=true){
+ hideDrawerVisual();
+ renderWorks();
+ const o=document.getElementById('worksOverlay');
+ o.classList.add('open');o.setAttribute('aria-hidden','false');
+ document.body.style.overflow='hidden';
+ if(pushHistory)setLayerHistory('works');
+}
+function closeWorks(requestHistory=true){
+ if(requestHistory&&history.state&&history.state.track70Layer==='works'){
+   history.back();return;
+ }
+ hideWorksVisual();
+}
+function openDrawer(key,pushHistory=true){
+ hideWorksVisual();
+ const d=drawers[key];
+ document.getElementById('drawerTitle').textContent=d.title;
+ document.getElementById('drawerSub').textContent=d.sub;
+ document.getElementById('drawerContent').innerHTML=d.render();
+ document.getElementById('drawerFoot').style.display=key==='tree'?'none':'block';
+ document.getElementById('backdrop').classList.add('open');
+ document.getElementById('drawer').classList.add('open');
+ if(pushHistory)setLayerHistory('drawer',key);
+}
+function closeDrawer(requestHistory=true){
+ if(requestHistory&&history.state&&history.state.track70Layer==='drawer'){
+   history.back();return;
+ }
+ hideDrawerVisual();
+}
+function restoreLayerFromHistory(state){
+ hideDrawerVisual();hideWorksVisual();
+ if(!state||!state.track70Layer)return;
+ if(state.track70Layer==='drawer'&&drawers[state.key])openDrawer(state.key,false);
+ if(state.track70Layer==='works')openWorks(false);
+}
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openDrawer(b.dataset.open)));
+document.getElementById('closeBtn').onclick=()=>closeDrawer(true);
+document.getElementById('backdrop').onclick=()=>closeDrawer(true);
+document.getElementById('logoBtn').onclick=()=>{
+ if(history.state&&history.state.track70Layer)history.back();
+ else{hideDrawerVisual();hideWorksVisual()}
+};
+document.getElementById('worksTrigger').onclick=()=>openWorks(true);
+document.getElementById('worksClose').onclick=()=>closeWorks(true);
+document.getElementById('worksOverlay').addEventListener('click',e=>{if(e.target.id==='worksOverlay')closeWorks(true)});
+addEventListener('popstate',e=>restoreLayerFromHistory(e.state));
+addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+   if(history.state&&history.state.track70Layer)history.back();
+   else{hideDrawerVisual();hideWorksVisual()}
+ }
+});
+
+
+const BG1='https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260802_074534_f0d9d476-3f86-4c67-9b12-dfc63d99da41.png&w=1920&q=85',BG2='https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260802_075145_1b557479-775b-43af-8270-f45d79d97d5a.png&w=1920&q=85';
+const base=document.getElementById('bg1'),reveal=document.getElementById('bg2'),gridPattern=document.getElementById('gridPattern');
+base.style.backgroundImage=`url("${BG1}")`; reveal.style.backgroundImage=`url("${BG2}")`;
+document.querySelectorAll('[data-mobile-bg]').forEach(el=>el.style.backgroundImage=`url("${BG1}")`);
+const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+let mouse={x:innerWidth*.55,y:innerHeight*.45},smooth={...mouse},gridOffset={x:0,y:0};
+function resizeMask(){canvas.width=innerWidth;canvas.height=innerHeight}
+addEventListener('resize',resizeMask); resizeMask();
+addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+function frame(){
+ if(innerWidth>=1024){
+   smooth.x+=(mouse.x-smooth.x)*.1;smooth.y+=(mouse.y-smooth.y)*.1;
+   ctx.clearRect(0,0,canvas.width,canvas.height);
+   const r=Math.round(Math.min(420,Math.max(160,innerWidth*.16)));
+   const g=ctx.createRadialGradient(smooth.x,smooth.y,0,smooth.x,smooth.y,r);
+   [[0,'rgba(255,255,255,1)'],[.4,'rgba(255,255,255,1)'],[.6,'rgba(255,255,255,.75)'],[.75,'rgba(255,255,255,.4)'],[.88,'rgba(255,255,255,.12)'],[1,'rgba(255,255,255,0)']].forEach(s=>g.addColorStop(s[0],s[1]));
+   ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);
+   const data=canvas.toDataURL(); reveal.style.webkitMaskImage=`url("${data}")`; reveal.style.maskImage=`url("${data}")`;reveal.style.webkitMaskSize='100% 100%';reveal.style.maskSize='100% 100%';
+   const cx=smooth.x/innerWidth-.5,cy=smooth.y/innerHeight-.5;
+   gridOffset.x+=(cx*16-gridOffset.x)*.06;gridOffset.y+=(cy*16-gridOffset.y)*.06;
+   if(gridPattern){gridPattern.setAttribute('x',gridOffset.x);gridPattern.setAttribute('y',gridOffset.y)}
+ }
+ requestAnimationFrame(frame)
+}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches) frame();
+
+</script></body></html>
