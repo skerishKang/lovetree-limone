@@ -1,0 +1,92 @@
+name: Track18 V2 source runner exact asset 8/8 closure QA
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-track18-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Track18 manifest
+        run: npm run design:intake:validate -- design-intake/manifests/source-track-18-fragment-loader-v2.json
+
+      - name: Track18 focused contracts
+        run: node --import tsx --test 'tests/source-track-18-*.test.mjs'
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run Track18 exact asset 8/8 browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/track18-browser-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/source-tracks/18/v2/source" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/track18-browser-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/track18-browser-qa-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/track18-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            TRACK18_SCREENSHOT_DIR="/tmp/track18-browser-qa" \
+            node qa/source-track-18-v2-browser-qa.mjs
+
+      - name: Upload Track18 browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track18-v2-source-runner-exact-8-8-evidence
+          path: /tmp/track18-browser-qa/*.png
+          if-no-files-found: warn

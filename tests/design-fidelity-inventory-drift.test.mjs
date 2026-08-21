@@ -140,19 +140,23 @@ test("unknown dedicated Playwright workflow is machine-detected", async () => {
   }
 });
 
-test("Track62 and Track18 cannot merge while left only as future guards", () => {
+test("Track62 remains a merge-blocking future guard; Track18 resolved as registered exact-gate target", () => {
   const track62 = FUTURE_MERGE_GUARDS.find((entry) => entry.id === "track-62-v1-1-future-merge");
-  const track18 = FUTURE_MERGE_GUARDS.find((entry) => entry.id === "track-18-v2-future-merge");
   assert.ok(track62);
-  assert.equal(track18?.exactAssetRequirement.requiredAssetVerifierBeforeBrowser, true);
+  assert.equal(FUTURE_MERGE_GUARDS.find((entry) => entry.id === "track-18-v2-future-merge"), undefined);
   assert.throws(
     () => planDesignFidelityInventory([track62.routeEntry], { addedPaths: [track62.routeEntry], validateFilesystem: false }),
     /FUTURE_MERGE_GUARD/,
   );
-  assert.throws(
-    () => planDesignFidelityInventory([track18.routeEntry], { addedPaths: [track18.routeEntry], validateFilesystem: false }),
-    /FUTURE_MERGE_GUARD/,
-  );
+  const track18 = getDesignFidelityTarget("track-18-v2-source-runner");
+  assert.ok(track18);
+  assert.equal(track18.inventoryDisposition, "REGISTERED_TARGET");
+  assert.equal(track18.validationClass, "interaction-contract");
+  assert.equal(track18.assetGate?.verifier, "scripts/verify-source-track-18-assets.mjs");
+  assert.match(track18.assetGate?.expectedMarker ?? "", /PASS/);
+  const plan = planDesignFidelityInventory([track18.routeEntry], { addedPaths: [track18.routeEntry], validateFilesystem: false });
+  assert.ok(plan.targets.some((target) => target.id === "track-18-v2-source-runner"));
+  assert.equal(plan.futureGuards.length, 0);
 });
 
 test("combined target IDs remain unique", () => {

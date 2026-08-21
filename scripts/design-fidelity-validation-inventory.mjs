@@ -100,6 +100,23 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze(["qa-artifacts/track67-native"]),
   }),
+  Object.freeze({
+    id: "track-18-v2-source-runner",
+    label: "Track18 V2 exact Fragment Loader source runner",
+    route: "/design-lab/source-tracks/18/v2/source",
+    routeEntry: "app/design-lab/source-tracks/18/v2/source/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/18/v2/", "design-intake/manifests/source-track-18-fragment-loader-v2.json", "lib/source-track-18/", "public/design-lab-assets/source-tracks/18/v2/", "qa/source-track-18-v2-browser-qa.mjs", "tests/source-track-18", ".github/workflows/source-track18-v2-browser-qa.yml", "scripts/verify-source-track-18-assets.mjs"]),
+    assetGate: Object.freeze({ verifier: "scripts/verify-source-track-18-assets.mjs", expectedMarker: "TRACK18_V2_EXACT_ASSET_GATE_PASS" }),
+    exactAssetStatus: "EXACT_GATE_PASS",
+    browserGates: Object.freeze(["qa/source-track-18-v2-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-18-v2-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track18-v2-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/source-track-18-v2"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
@@ -171,18 +188,6 @@ export const FUTURE_MERGE_GUARDS = Object.freeze([
     validationClass: "interaction-contract-pending-merge", exactAssetStatus: "SOURCE_REFERENCE_ONLY_MEDIA",
     viewports: VIEWPORTS, reducedMotion: true,
     requiredResolution: "Before merge, replace this guard with REGISTERED_TARGET or EXPLICIT_MACHINE_CHECKED_EXCLUSION.",
-  }),
-  Object.freeze({
-    id: "track-18-v2-future-merge", disposition: "FUTURE_MERGE_GUARD",
-    route: "/design-lab/source-tracks/18/v2/source",
-    routeEntry: "app/design-lab/source-tracks/18/v2/source/page.tsx",
-    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/18/v2/", "design-intake/manifests/source-track-18-fragment-loader-v2.json", "lib/source-track-18/", "public/design-lab-assets/source-tracks/18/v2/", "qa/source-track-18-v2-browser-qa.mjs", "tests/source-track-18", ".github/workflows/source-track18-v2-browser-qa.yml"]),
-    actualRouteBrowserGate: "qa/source-track-18-v2-browser-qa.mjs",
-    dedicatedWorkflow: ".github/workflows/source-track18-v2-browser-qa.yml",
-    validationClass: "truthful-hold-pending-merge", exactAssetStatus: "EXACT_ASSET_TRANSFER_HOLD",
-    exactAssetRequirement: Object.freeze({ requiredAssetVerifierBeforeBrowser: true }),
-    requiredAssetVerifierBeforeBrowser: true, viewports: VIEWPORTS, reducedMotion: true,
-    requiredResolution: "Before merge, use truthful HOLD exclusion or a registered target with non-null exact assetGate before browser gates.",
   }),
 ]);
 
