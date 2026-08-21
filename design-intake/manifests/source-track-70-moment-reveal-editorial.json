@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-70-moment-reveal-editorial",
+  "sourceTrackId": "Track70",
+  "title": "모먼트리빌 퓨처에디토리얼 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Future-editorial moment reveal candidate: an LGPSM/MotionSites fashion-editorial structure (SHOP/COLLECTIONS/JOURNAL/CART, portrait radial mask reveal) semantically substituted into LoveTree moments (MOMENTS/PATHS/JOURNAL/MY TREE, ADD→PLANT), tracing '첫 인상 ↔ 감정이 바뀐 뒤의 잔상' as a cursor/canvas trail reveal over portrait pairs. Registration only — no product adoption implied.",
+  "summary": "Source Track 70 registered as a NOT-OWNER-APPROVED design-candidate gate (README_70 STATUS line, 2026-08-17). Two selected candidates coexist without a single authority decision: 선택1 V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX (small HTML portal variant) and 선택2 V11_INSTANT_CANVAS_TRAIL_REVEAL (24.5MB self-contained canvas-trail variant by 디자인팀장19기); the 19기 00_CURRENT package additionally pins SOURCE_LOCK assets and a V3 ONE MASTER EXACT RULE docx. Original LGPSM prompt baseline (A) and LoveTree adaptation (B) are preserved with locked comparison rules (no flower/cream/pink/literal tree in B; A keeps pure fashion copy). Full Drive tree preserved locally with SHA256SUMS; repository commit is selective per #287/#236 size guardrail.",
+  "provenance": {
+    "sourceLabel": "70_모먼트리빌_퓨처에디토리얼 / Issue #291 source gate registration",
+    "driveFolderId": "11wFgEktEN2oaQ3N2A-geQKp9HqxWn73H",
+    "sourceFiles": [
+      "README_70.md",
+      "70_LOVETREE_MOTIONSITES_STANDALONE_PROMPT.md",
+      "선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html",
+      "선택2-70_V11_INSTANT_CANVAS_TRAIL_REVEAL_디자인팀장19기.html",
+      "00_CURRENT_19기_TRACK70_분석·제작게이트/00_MASTER/00_MASTER_Track70_19기_현황분석·자산판정·제작게이트_2026-08-17_v1.docx"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage70 is NOT allocated. Repository lineage number is not reserved by this manifest; placement is reviewed only after the owner A/B decision closes the dual-candidate state (Issue #291)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "NOT_OWNER_APPROVED (README_70 STATUS); DUAL_CANDIDATE unresolved (선택1 V2.1 vs 선택2 V11); IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO (Issue #291 initial disposition)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "DUAL_CANDIDATE_V2.1_NAV_RETURN_FIX__V11_INSTANT_CANVAS_TRAIL_REVEAL",
+    "authorityObservedAt": "2026-08-21T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "README_70.md",
+      "driveId": "1nYPdstgZZ4GNoW911YpNgUc79WwEFKqY",
+      "role": "readme",
+      "status": "PINNED",
+      "bytes": 1852,
+      "sha256": "936d14d8074c802bf9855294c38a76bc3ef53af9e6090a1636b77b55e50c93f8"
+    },
+    {
+      "filename": "70_LOVETREE_MOTIONSITES_STANDALONE_PROMPT.md",
+      "driveId": "1aPoyXinf0DAglfUwcnjxxcMX6oITYlH7",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 14626,
+      "sha256": "1c3a728e2e7d21d97d4d923cf9a3b25d5d801753beb5a0683560d5adef953991"
+    },
+    {
+      "filename": "70_V3_WHITE_VEIL_EMOTIONAL_REVEAL_PROMPT_디자인팀장18기.docx",
+      "driveId": "1xZsb8Um3llDz_AO8-R2748Ws9I0oT-IXxLZboCAAxbA",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 11556,
+      "sha256": "c67c02770f465cd57f744993b079e221ce17571c14332e30c8f64317f4417e2e"
+    },
+    {
+      "filename": "선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html",
+      "driveId": "1M5ab-nid8efR1jY6kcID4LmRkXLoC1JC",
+      "role": "executable",
+      "status": "PINNED",
+      "bytes": 31282,
+      "sha256": "bbee4b839c73b9da95ea0b0f92e7ddb77447b669cdfa42d25678f374efe3b1c0"
+    },
+    {
+      "filename": "70_V2.1_COMPARE_WITH_V2.html",
+      "driveId": "1idCOXBdYxqcX-1e1AzNrPvZ_hunmVTjy",
+      "role": "compare-helper",
+      "status": "PINNED",
+      "bytes": 2146,
+      "sha256": "75fd0c83e5dc76720988d29431742d1b6eeba4bc2a6a90d361bb873b2f0efe7a"
+    },
+    {
+      "filename": "README_70_V2.1_NAV_RETURN_FIX.md",
+      "driveId": "1dS_jtjBqTAI9lnX41w-6nACyhMXMS_2j",
+      "role": "readme",
+      "status": "PINNED",
+      "bytes": 1434,
+      "sha256": "01a5b52710f6fbfeb39e99da5ff55b58c0bfa5d9921abb8ae971b8d1d15c881c"
+    },
+    {
+      "filename": "README_V11_INSTANT_CANVAS_TRAIL_REVEAL.txt",
+      "driveId": "1eNHnXWdUhzjPo4nT9-CLfTLu5d2iaifW",
+      "role": "readme",
+      "status": "PINNED",
+      "bytes": 804,
+      "sha256": "74178988907b62c71e86a8c459a9e1337f96b0354c49fa93e07fca9c453f906d"
+    },
+    {
+      "filename": "70_COMPARE.html",
+      "driveId": "1gA0sMsPB8n9TyOemi1nkXKQeEBKS7JCt",
+      "role": "compare-helper",
+      "status": "PINNED",
+      "bytes": 2100,
+      "sha256": "c28af571c9851d9fcc24b14fcd474b2a8bec759c6acf3ed2d6fd6ebd72a7a7be"
+    },
+    {
+      "filename": "70_V2_COMPARE_WITH_V1.html",
+      "driveId": "1fcGUo776k6uTgW378HCbYl43Q_QK9M8g",
+      "role": "compare-helper",
+      "status": "PINNED",
+      "bytes": 2121,
+      "sha256": "191aff5bf574bcca5d926f0a009a222c1c5b8d19810bfdc2e8ac930c97bd8cfe"
+    },
+    {
+      "filename": "70_A_ORIGINAL_LGPSM_PROMPT_REPLICA.html",
+      "driveId": "1KeIEKmV1fY-XLol320O_0DsdPGSt81r_",
+      "role": "executable",
+      "status": "PINNED",
+      "bytes": 19644,
+      "sha256": "df30b9bbb219bfd326aa93b5942dff00cc02e32d28c5054099c9367f63fc78da"
+    },
+    {
+      "filename": "70_A_SOURCE_MOTIONSITES_PROMPT.md",
+      "driveId": "1daqoM-ccvwaLhfaAjZT-aNMI8Rl37udd",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 10619,
+      "sha256": "971ac1dd12d6ed3bd5dc18bd3fc235a89392b49bf6420a91f0768ba69f50b8cf"
+    },
+    {
+      "filename": "3.Synth Mode.txt",
+      "driveId": "12YxF7o6nPrGuUpNX-jVyq1izEcYHXvK7",
+      "role": "instruction-source",
+      "status": "PINNED",
+      "bytes": 10816,
+      "sha256": "fb0b1cdbdd556386f532ec7d311dd7dc40bf0920f7506ef685d5c45071372414"
+    },
+    {
+      "filename": "70_B_LOVETREE_MOMENT_REVEAL.html",
+      "driveId": "1IVwofJlTXnH_8Qorpyvh9guFc3YdDCue",
+      "role": "executable",
+      "status": "PINNED",
+      "bytes": 20815,
+      "sha256": "60839dad2b7b5dc313b6dd17ccb2a67e28472634c0ad86be86925bd55288e705"
+    },
+    {
+      "filename": "70_B_LOVETREE_PROMPT_OVERRIDE.md",
+      "driveId": "18_3q9_S2QR1o9fOmkzwulW3PO2inXZyn",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 4237,
+      "sha256": "6396d876778abeaa6ed1aae7ed200c9157ccc09697b7b648d7a27ca7214d7968"
+    },
+    {
+      "filename": "00_MASTER_Track70_19기_현황분석·자산판정·제작게이트_2026-08-17_v1.docx",
+      "driveId": "1QM4GOazjBONR-41jyyGarQqjM1X5PgtlQy19o0jCpmU",
+      "role": "gate-analysis",
+      "status": "PINNED",
+      "bytes": 12874,
+      "sha256": "c9cbb2ca41dcc7523ce6dfa1bd137faccb06a66006fede6d05e95c97275cca26"
+    },
+    {
+      "filename": "SOURCE_LOCK_03_APPROVED_4MODEL_REFERENCE.png",
+      "driveId": "13FD3VutnJ_adQbgRdWJBeLG23-LuKstY",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 1851143,
+      "sha256": "6ac35f0910cd8bcab4824fabe2353a0a3771a1ecc692801252fc01427c38c143"
+    },
+    {
+      "filename": "SOURCE_LOCK_06_V3_ONE_MASTER_EXACT_RULE.docx",
+      "driveId": "15RIwEvnX11SmzwUHlyhpScFv_6FwRu8yuuMxGX74YDc",
+      "role": "instruction",
+      "status": "PINNED",
+      "bytes": 11556,
+      "sha256": "4875f61ea64d5488a73a939a24250269fee83f8d5f89b49b1e43f69310cf9a88"
+    },
+    {
+      "filename": "CANDIDATE_LOCK_LT01_CLEAN_MASTER.png",
+      "driveId": "1mj7t6flhhX0l7AtnBtAcUmHQf7zOq5FJ",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 2892369,
+      "sha256": "7b4fc55bd7402695a6ebaba1b03fd2d209fa458deaf588af195d591c97b4c7a2"
+    },
+    {
+      "filename": "CANDIDATE_LOCK_LT02_CLEAN_MASTER.png",
+      "driveId": "1IhU8OafrKRnu0SUUUQ_4z6dCPS4dOeTD",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 2965461,
+      "sha256": "1aa3cd299a4b9151fe103946d08e0329584b23e46ef621a2eb7e68ee9b80d5bd"
+    },
+    {
+      "filename": "CANDIDATE_LOCK_LT03_CLEAN_MASTER.png",
+      "driveId": "1-zbuhkuuXmAoxgIMFo2w7vng3hPXuLwz",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 2850755,
+      "sha256": "c917b939b1ba910b16438c73f32416888df2526c10a56c13301ad37c64ccf27a"
+    },
+    {
+      "filename": "CANDIDATE_LOCK_LT04_CLEAN_MASTER.png",
+      "driveId": "166JneEmcxRylDuoIEdAM4goiBRXq5mdu",
+      "role": "reference-image",
+      "status": "PINNED",
+      "bytes": 2807883,
+      "sha256": "09f5c5735fdcf5f22490e8ed2361feedcbcf30c491ec96be36f34c8936221298"
+    },
+    {
+      "filename": "선택2-70_V11_INSTANT_CANVAS_TRAIL_REVEAL_디자인팀장19기.html",
+      "driveId": "1qXH-hzYJqSYbMBwHWaTP7kBRckfVC6gC",
+      "bytes": 24536470,
+      "sha256": "4234b3104841ec5f63223d073e04ee39916fc4fc9993d0d9743ac9a21e7cc7a7",
+      "role": "executable",
+      "status": "PENDING"
+    },
+    {
+      "filename": "선택1-70_모먼트리빌_퓨처에디토리얼.mp4",
+      "driveId": "13QedQiklSgZQxekgTtbRmaOSpaIFQSFc",
+      "bytes": 15363185,
+      "sha256": "60de41e25621649f1f0c7bef9cbf92e344e0e73a19b871b0da1e858f9e7d7b7b",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "선택2-70_모먼트리빌_퓨처에디토리얼.mp4",
+      "driveId": "1YIAQjxdffzbkPuNcdxA8R-2yA86BM2DU",
+      "bytes": 17808710,
+      "sha256": "03f3d41adec11764d0108a20624f7b12df619aa7a765589e4055667f95c6b072",
+      "role": "reference-video",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "NOT_OWNER_APPROVED: README_70 marks Track70 DESIGN CANDIDATE pending owner A/B review",
+    "DUAL_CANDIDATE_UNRESOLVED: 선택1 V2.1 portal variant and 선택2 V11 canvas-trail variant both marked 선택 without a recorded single-authority decision",
+    "HEAVY_SELF_CONTAINED_EXECUTABLES: V1–V11 executables embed full asset payloads (21–31MB each), transport-blocked from the repository under the ≤10MB single-file guardrail",
+    "DRIVE_DUPLICATE_OBJECT: 비교/70_COMPARE.html exists as two same-name Drive objects (transported 1gA0sMsPB8n9TyOemi1nkXKQeEBKS7JCt; skipped 16doWQLeAp-syGq-PQUkoegaD7N8buyJ5)"
+  ],
+  "nativeRemediations": [
+    "owner performs the README-prescribed A/B comparison and records a single-authority selection before any native review",
+    "re-select or re-cut the winning executable below the repository transport guardrail (or split assets) before exact-fingerprint intake",
+    "only after authority closes: executable/source QA → exact fingerprint → repository native intake/proving"
+  ],
+  "sourceOnlyValues": [
+    "LGPSM original aesthetics (white/black/grey editorial, SHOP/COLLECTIONS/JOURNAL/CART copy) stay in A only",
+    "B must not add flower/cream/pink/literal tree motifs (locked comparison rule 3)",
+    "portrait reveal imagery is synthetic generated reference material locked by SOURCE_LOCK_03/CLEAN_LOCK masters — never replaceable ad hoc",
+    "Track68 files are out of scope and must not be modified by Track70 work (locked comparison rule 4)"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
