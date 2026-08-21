@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-45-moment-precision",
+  "sourceTrackId": "Track45",
+  "title": "모먼트 정밀조절도구 (Moment Polish Lab) 소스 게이트 등록",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "tree-workspace",
+  "productJob": "Source gate registration of the 'LoveTree Moment Polish Lab' single-file interactive HTML prototype (Reference-Fidelity Microinteraction Playground): an optional refine-presentation space where a user reviews and applies presets to the expression and micro-interactions of an already-saved Moment/Season/Course (Save first. Polish later.), together with its sibling execution contract, complete submission package (analysis/report/validation evidence) and recording/reference footage. Registration only — no product adoption implied.",
+  "summary": "Source Track 45 registered as a preservation gate (Issue #303). All 182 files observed in Drive folder 45_모먼트_정밀조절도구 were copied byte-exact; 177 non-video files (no file exceeded 10 MB) are committed under reference/source-track-45-moment-precision/ with SHA256SUMS, while 5 video binaries are withheld from the repository per repo size/video policy with Drive ID+bytes+SHA256 recorded in docs/design-intake/source-track-45-gate.md. Unlike Track 41, a sibling execution contract exists (01_실행계약_모먼트정밀보정도구_v1.txt, byte-identical duplicate preserved in the package) defining official feature name 'LoveTree Moment Polish Lab', the Save-first gating rule and an English-primary copy policy. Historical pin: the package's internal SHA256SUMS.txt (175 entries, original LoveTree-Moment-Polish-Lab-v1/ prefix) content-matches all fresh hashes after Drive restructuring (173 path-mapped + 2 relocated entries) — zero mismatches, no OPEN flag. Lineage45 is NOT allocated (lineageReservation HOLD) and adoption is HOLD; scenarioId mapping is provisional until the design-lead classification lands.",
+  "provenance": {
+    "sourceLabel": "45_모먼트_정밀조절도구 / Issue #303 source gate registration",
+    "driveFolderId": "1btQJlDNOKB7tRIpRxhaXbb_CSncoOfF-",
+    "sourceFiles": [
+      "01_모먼트상호작용_정밀보정도구.html",
+      "02_녹화영상_모먼트정밀보정도구.mp4",
+      "03_참고영상_모먼트정밀보정도구_원본.mp4",
+      "40_문서자료/01_실행계약_모먼트정밀보정도구_v1.txt",
+      "10_이미지/90_자동생성_대표미리보기.png",
+      "03_완성패키지_v1/README.txt",
+      "03_완성패키지_v1/package-manifest.json",
+      "03_완성패키지_v1/SHA256SUMS.txt",
+      "03_완성패키지_v1/01_실행계약_중복보존본.txt",
+      "03_완성패키지_v1/OPEN-ME-lovetree-moment-polish-lab-v1.html",
+      "03_완성패키지_v1/project/lovetree-moment-polish-lab-v1.html",
+      "03_완성패키지_v1/project/reference-analysis.md",
+      "03_완성패키지_v1/project/implementation-report.md",
+      "03_완성패키지_v1/project/validation/validation-results.json"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage45 is NOT allocated. Repository lineage number is not reserved by this manifest; product-shell placement is reviewed only after a design-lead classification decision closes the intake state (Issue #303)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO; sibling execution contract exists but no LoveTree design-lead adoption decision yet; registration/preservation evidence only (Issue #303)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-06",
+    "authorityObservedAt": "2026-08-21T05:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_모먼트상호작용_정밀보정도구.html",
+      "driveId": "1qBGQNI9uhGKeC7LsKD97kwdgEyExkdgZ",
+      "bytes": 33940,
+      "sha256": "6f066360a31d07f1c95bdb609be4861a66606095d1bb83611bdd37352fb7589b",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "40_문서자료/01_실행계약_모먼트정밀보정도구_v1.txt",
+      "driveId": "1yxga8FZPkLEaPchCviPRGK1Ie7njvX5d",
+      "bytes": 31286,
+      "sha256": "ca43f706fe5000ff9226fb7f93051e5df540b7773daca0c80ecb6f9bcf9a1bf8",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/01_실행계약_중복보존본.txt",
+      "driveId": "1OwzHQgOtZQexIs7YWKUEnCYRkqf-hIg3",
+      "bytes": 31286,
+      "sha256": "ca43f706fe5000ff9226fb7f93051e5df540b7773daca0c80ecb6f9bcf9a1bf8",
+      "role": "instruction-duplicate-preservation",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/SHA256SUMS.txt",
+      "driveId": "1h0YgmpFinnPyjr-9_-6ILM2igRZCPIlF",
+      "bytes": 24686,
+      "sha256": "776dacdcc87d7288b9534dd3f6f106a6398f8c31bfbc8ea8c0817107dbd069b2",
+      "role": "sibling-package-manifest",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/package-manifest.json",
+      "driveId": "1aqmPA8ViiAFN8CmiHupfTBLIdV4Rqwuo",
+      "bytes": 448,
+      "sha256": "e0d1034d5c1aa4bb5fefac11e9b21e9682ae0c248285f4992b8f28ec8b2a143e",
+      "role": "package-manifest",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/reference-analysis.md",
+      "driveId": "1dVy5Yn6s11G8gsnYnLc2_d2QiSVja0m2",
+      "bytes": 2705,
+      "sha256": "e078c6d34f4f7d89b4787173b5f5dd0964a12c3258b6586aa8f14aac9377a290",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/implementation-report.md",
+      "driveId": "1lsCnRI7UgcZL4LQhVGqnE4Qg_-BkA-zy",
+      "bytes": 3067,
+      "sha256": "34a0f0b8034c64fbce96a44a1e9a9059c51e62e006b5bab38211f7ff0546686c",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/validation/validation-results.json",
+      "driveId": "1sWcOLgresxFUAKCYwjSkdtaDDl3i-RNQ",
+      "bytes": 1556,
+      "sha256": "992c65f1251ef4056d941af46a1a8e6369886655461e311afa080df6064461b4",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_완성패키지_v1/technical/moment-polish-check.js",
+      "driveId": "1w4KLe3iEhYzLe3LmkuokE3Ct4i4jSqgQ",
+      "bytes": 17459,
+      "sha256": "759a6e55755bd74ccd48faac1fcac433b9c93fb32c5fdd8cc7d59fa7a76f4c9e",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "10_이미지/90_자동생성_대표미리보기.png",
+      "driveId": "1LNDxq3DWF5mO7AR7fp7jNGwPPAoO2ZZu",
+      "bytes": 219653,
+      "sha256": "d41134929ff6608fab71188f9c6653877412ce9e64e4b2c24c082331a3a5f420",
+      "role": "preview-image",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_녹화영상_모먼트정밀보정도구.mp4",
+      "driveId": "1hBzrnKjrffAnKrz1-4MPmVcgOpiV1T5e",
+      "bytes": 1947294,
+      "sha256": "0c62215e2025ec97ba178e5e4bfef8a76b4db9ecff2c54ae7584c7fe5e5fdf15",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_참고영상_모먼트정밀보정도구_원본.mp4",
+      "driveId": "1v6m-kLVjt9NXVB2c-Ln0XsbG4csA-82V",
+      "bytes": 1564478,
+      "sha256": "9f3a1081f5b3c85755555a85807e85f29a9de607f4dc48f96b8e6900202abf4a",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/validation/desktop-execution.mp4",
+      "driveId": "1VULv3DhqSaqyjkPw0qDM9KFZIbugT5iD",
+      "bytes": 164799,
+      "sha256": "ee972845996b63b43ecf0bab9753ad14877fea261e5367e036df477868882765",
+      "role": "sibling-qa-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/validation/mobile-execution.mp4",
+      "driveId": "1bpvpSFJKnCBR0K6CyZVY4oEqpOb8YQNt",
+      "bytes": 122036,
+      "sha256": "5e3a772e8115ca75757ff66a8fd9bcd18dfb95a63f02646fae27b02cce138da3",
+      "role": "sibling-qa-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "03_완성패키지_v1/project/validation/video-temp/abba03a2fa433fd9a2ee7795788d7885.webm",
+      "driveId": "1BVbBhcgTwTIdE6NLhM3bOnq0pKx2pAK8",
+      "bytes": 1310720,
+      "sha256": "5d65f461a097bccdf532bde14b2f7f5149c17010e434a83f944ff8238add4849",
+      "role": "sibling-qa-video-temp",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "VIDEO_BINARY_TRANSFER_WITHHELD: 5 video binaries (.mp4/.webm) excluded from the repository commit per repo size/video policy — Drive ID+bytes+SHA256 fingerprints recorded in docs/design-intake/source-track-45-gate.md; artifacts stay PENDING until an approved transfer exception or product need exists",
+    "PACKAGE_RESTRUCTURED_ON_DRIVE: internal SHA256SUMS.txt paths use the original LoveTree-Moment-Polish-Lab-v1/ prefix while the Drive placement renames it to 03_완성패키지_v1 and relocates reference/ contents to top level — all 175 internal entries content-match fresh hashes (173 path-mapped + 2 relocated), zero mismatches, no OPEN flag",
+    "PARTIAL_REFERENCE_COVERAGE_DECLARED_BY_CONTRACT: the reference recording omits the automated demo of cards 1–9; only cards 10–12 and the final CTA reproduce observed source timing — the contract explicitly forbids claiming exact fidelity for unobserved states"
+  ],
+  "nativeRemediations": [
+    "obtain a LoveTree design-lead classification/adoption decision before any lineage-number or product placement decision",
+    "if video evidence is required for future native review, re-obtain the 5 withheld binaries from the untouched Drive originals under an approved transfer exception",
+    "only after classification closes: run the standard intake sequence (design-lead decision → source QA → exact fingerprint → repository native intake/proving)"
+  ],
+  "sourceOnlyValues": [
+    "'Save first. Polish later.' gating is source-contract semantics: this surface must never appear before the first save and must remain fully optional — never canonical product flow truth",
+    "cards 1–9 are rebuilt from visible card forms/principles only; the original automated demo was not recorded, so exact-fidelity claims for those states are forbidden",
+    "English-primary copy policy with JavaScript data-object separation (future Korean copy set) is sibling-side intent, not a repository i18n commitment",
+    "auto-generated preview image (90_자동생성_대표미리보기.png) is machine-generated source material, never canonical product art"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
