@@ -17,20 +17,21 @@ Drive originals are read-only reference; product code never executes sibling sou
 | filename | Drive ID | bytes | SHA256 | role | status |
 |---|---|---|---|---|---|
 | 33_디자인팀장10기_65_입덕단서_시네마틱에디토리얼_V1_작업지시_2026-08-13.docx | 1LoVATtowbSufxlY5U9aYrvvmvwwMEP3FSzxSUXJ-EFc | 26086 | 42cee2247b704c10aba355c55b0f9a994e376e2c24ef6c3b60f595cecff41c20 | instruction (V1 evidence) | PINNED (this directory, byte-exact copy) |
-| 설계팀장8기_65_V2_LUSION_H3_SCROLL_CINEMATIC_디자인팀장15기_신규작업지시_2026-08-16.md | 1D3rlZWXlELQNis4c1UoRy3Nob52N2l2M | — | — | instruction (V2 expansion) | PENDING (transport-blocked at intake) |
-| ★_현재후보_65_V2_LUSION_H3_SCROLL_CINEMATIC.html | 1MQd-FdlOSPP8QhOSzt43sOhjbTV14-Dg | 50765 | b2fadd397876c4e449dfc0b22b34f8d5301e21dc445f706b96e29241532373b0 | executable (historical V2) | PENDING (transport-blocked at intake) |
+| 설계팀장8기_65_V2_LUSION_H3_SCROLL_CINEMATIC_디자인팀장15기_신규작업지시_2026-08-16.md | 1D3rlZWXlELQNis4c1UoRy3Nob52N2l2M | 30965 | 7ad5580c9b442c4b007d4995b08532ef71516306a587662e2d7a5a224b47acee | instruction (V2 expansion) | PINNED (this directory, byte-exact copy) |
+| ★_현재후보_65_V2_LUSION_H3_SCROLL_CINEMATIC.html | 1MQd-FdlOSPP8QhOSzt43sOhjbTV14-Dg | 50765 | b2fadd397876c4e449dfc0b22b34f8d5301e21dc445f706b96e29241532373b0 | executable (historical V2) | PINNED (this directory, byte-exact copy; fingerprint matches sibling `65_V2_SHA256SUMS.txt`) |
 
-Expected identity of the two PENDING artifacts is fixed by the Issue #236 record and the sibling
-`65_V2_SHA256SUMS.txt` (Drive 1WO5NO_BQnloXuhHcBZfBg5lA2WO0orbX): the historical V2 HTML must be
-exactly 50,765 bytes with SHA256 `b2fadd397876c4e449dfc0b22b34f8d5301e21dc445f706b96e29241532373b0`.
-Any future byte-exact intake MUST verify against that fingerprint before flipping status to PINNED.
+All three artifacts are byte-exact copies pinned in this directory. The historical V2 HTML was
+fetched via folder path `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/65_입덕단서_시네마틱에디토리얼/
+V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/` and verified against the expected fingerprint
+(50,765 B, SHA256 `b2fadd39…73b0`) before pinning. The V2 expansion instruction was located under
+`99_이전문서/01_팀세션_이전·중단기록/01_설계팀장_세대별/08_설계팀장8기_휴식/02_디자인팀장_전달지시서/디자인팀장15기/`.
 
-## Transport hold note (fail-closed intake)
+## Intake transport note
 
-At intake time the Track65 shared Drive folder was outside the `padiemipu:` rclone remote scope
-(ID lookups returned "directory not found"), anonymous HTTPS download redirected to Google sign-in,
-and no local/SMB mirror existed. Only the V1 instruction docx was reachable and is preserved here
-byte-exact. The two PENDING artifacts were NOT fabricated, substituted, or re-typed.
+At first intake the Track65 shared Drive folder was outside the `padiemipu:` remote scope when
+addressed by file ID, and anonymous HTTPS download redirected to Google sign-in — the two V2-era
+artifacts were therefore registered `PENDING` (fail-closed, not fabricated). A follow-up pass
+located both by folder path and promoted them to `PINNED` after SHA-256 verification.
 
 ## Rules
 
