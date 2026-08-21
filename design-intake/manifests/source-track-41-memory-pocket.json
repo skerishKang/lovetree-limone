@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-41-memory-pocket",
+  "sourceTrackId": "Track41",
+  "title": "메모리포켓 (Memory Pocket) 소스 게이트 등록",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Source gate registration of the 'LoveTree · Memory Pocket' single-file interactive HTML prototype (Korean-language memory pocket interaction: video memory viewer with frame zoom/shrink controls, next-scene capture, MEMORY RECEIPT tear-off output, card shuffle) together with its screen recording, original reference footage and auto-generated preview image. Registration only — no product adoption implied.",
+  "summary": "Source Track 41 registered as a preservation gate (Issue #289). All 4 files observed in Drive folder 41_메모리포켓 were copied byte-exact into reference/source-track-41-memory-pocket/ with SHA256SUMS; every preserved file is PINNED below. No instruction/design-lead decision document exists in the source folder, so the product classification basis is UNKNOWN and stays PENDING per Design Ops #80 intake rules: Lineage41 is NOT allocated (lineageReservation HOLD) and adoption is HOLD. Historical cross-pin: docs/design/source-families/living-media-sphere/history/pre-242-numeric-identity-manifest.json records '41_메모리포켓.mp4' with SHA-256 2857a497ef316f6460b7100ed8eb714bd159b2bb4d963fdd01ba933a853037e1 (16,737,211 B) matching the freshly preserved 02_녹화영상_메모리포켓.mp4 byte-for-byte under a different Drive object id — content-identical, so no OPEN mismatch flag is raised. scenarioId mapping is provisional until the design-lead classification lands.",
+  "provenance": {
+    "sourceLabel": "41_메모리포켓 / Issue #289 source gate registration",
+    "driveFolderId": "15JiCHcDiPivnKh2uOkqbHaWsPGDxTVQ7",
+    "sourceFiles": [
+      "01_메모리포켓_상호작용.html",
+      "02_녹화영상_메모리포켓.mp4",
+      "03_참고영상_메모리포켓_원본.mp4",
+      "10_이미지/90_자동생성_대표미리보기.png"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage41 is NOT allocated. Repository lineage number is not reserved by this manifest; product-shell placement is reviewed only after a design-lead classification decision closes the PENDING intake state (Issue #289)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO; CLASSIFICATION_BASIS=PENDING (no instruction document in source folder); registration/preservation evidence only (Issue #289)."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-06",
+    "authorityObservedAt": "2026-08-21T04:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_메모리포켓_상호작용.html",
+      "driveId": "1J_d-ZZ4K8AsprhTj9sMHgRPmyqv77N7u",
+      "bytes": 37622,
+      "sha256": "ba0a31f96f2acdcf0bfd99543189af89c6b7417c3cad998196c7ba410484645a",
+      "role": "reference-executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_녹화영상_메모리포켓.mp4",
+      "driveId": "1ciVUTrLVYhYqaNwA-mUxXmlLJcu9W6Xe",
+      "bytes": 16737211,
+      "sha256": "2857a497ef316f6460b7100ed8eb714bd159b2bb4d963fdd01ba933a853037e1",
+      "role": "reference-video",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_참고영상_메모리포켓_원본.mp4",
+      "driveId": "1YeZlf3AqsLm9BM4Ec0YHAbriRRe71L1K",
+      "bytes": 12270217,
+      "sha256": "ed15fe35e68563d272cc5140f7c423bfde828035f0a2878fcd41b3fc1e95f4bc",
+      "role": "reference-video",
+      "status": "PINNED"
+    },
+    {
+      "filename": "10_이미지/90_자동생성_대표미리보기.png",
+      "driveId": "1CerLU3DWRmBeFnou1_9WjqknSHxRcqWV",
+      "bytes": 426887,
+      "sha256": "848d67fdb7fc091397c952f606a5eb2975a9147dfa4ac42f39c8ea911cf3706e",
+      "role": "preview-image",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "CLASSIFICATION_BASIS_UNKNOWN: no 작업지시/instruction or design-lead decision document exists in the 41_메모리포켓 Drive folder — product classification stays PENDING per Design Ops #80",
+    "HISTORICAL_DRIVE_OBJECT_ID_DRIFT: 02_녹화영상_메모리포켓.mp4 matches the pre-242 Track68 historical pin by SHA-256/bytes but lives under a different Drive object id (current 1ciVUTrLVYhYqaNwA-mUxXmlLJcu9W6Xe vs historical 1AQlKhixP9tWrW0eZwbAxVGT8IQyXladQ) — content-identical rename/re-upload, recorded as provenance observation, no OPEN mismatch flag"
+  ],
+  "nativeRemediations": [
+    "obtain the missing instruction/design-lead classification document for Track 41 before any lineage-number or adoption decision",
+    "only after classification closes: run the standard intake sequence (design-lead decision → source QA → exact fingerprint → repository native intake/proving)"
+  ],
+  "sourceOnlyValues": [
+    "single-file HTML prototype semantics (MEMORY RECEIPT tear-off, video memory viewer, card shuffle) are source-only evidence until classified",
+    "auto-generated preview image (90_자동생성_대표미리보기.png) is machine-generated source material, never canonical product art"
+  ],
+  "backendScope": "BACKEND_FREE"
+}
