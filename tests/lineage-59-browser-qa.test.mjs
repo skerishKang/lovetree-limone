@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const BASE = process.env.LINEAGE59_BASE_URL || "http://127.0.0.1:3160";
 const ROUTE = `${BASE}/design-lab/lineages/59/v5`;
 const EXPECTED_SHA256 = "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71";
-const OUT_DIR = new URL("../qa/evidence/lineage-59/", import.meta.url);
+const OUT_DIR = new URL(`${pathToFileURL(path.join(os.tmpdir(), "lovetree-qa-evidence", "lineage-59"))}/`);
 
 async function captureErrors(page) {
   const errors = [];
