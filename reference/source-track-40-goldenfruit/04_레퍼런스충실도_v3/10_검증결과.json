@@ -1,0 +1,14 @@
+{
+  "desktop": {
+    "overflowX": 0,
+    "scene0Visible": true,
+    "keyboardWorks": true
+  },
+  "mobile": {
+    "overflowX": 0,
+    "scene0Visible": true,
+    "swipeWorks": true
+  },
+  "consoleErrors": [],
+  "pageErrors": []
+}
