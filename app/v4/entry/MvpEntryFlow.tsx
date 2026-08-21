@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, type MouseEvent } from "react";
+import { useCallback, useEffect, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import Lineage55MoonlitBlossom from "@/app/design-lab/lineages/55/Lineage55MoonlitBlossom";
 import "@/app/styles/lineage-55-moonlit-blossom.css";
@@ -18,6 +18,23 @@ export const MVP_ENTRY_EDITOR_ROUTE = "/v4/trees/demo/graph";
  */
 export default function MvpEntryFlow() {
   const router = useRouter();
+
+  // Dark overscan cover (issue #343b): while the first screen is mounted, the
+  // document canvas behind .lt55 uses the same night tone so viewport
+  // over-scan (rubber-banding, capture over-render) never flashes the light
+  // site paper background at the bottom band. Presentation-only.
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.background;
+    const prevBody = body.style.background;
+    html.style.background = "#050615";
+    body.style.background = "#050615";
+    return () => {
+      html.style.background = prevHtml;
+      body.style.background = prevBody;
+    };
+  }, []);
 
   const onClickCapture = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
