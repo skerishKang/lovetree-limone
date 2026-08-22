@@ -76,21 +76,62 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
         assert.equal(pausedOffsetAfter, pausedOffset, `${scenario.label}: pause freezes the active Connection light`);
 
         await page.getByRole("button", { name: "RESUME", exact: true }).click();
+        // TEMPORARY DIAGNOSTICS (#344 dispatch rework): census rAF frames and
+        // offset samples across the resume window so a CI stall can be
+        // classified as pausedRef-stuck (frames fire, offset frozen) versus
+        // rAF starvation (no frames). Removed once root cause is confirmed.
+        await page.evaluate(() => {
+          window.__l53census = [];
+          window.__l53clicks = [];
+          const resumeButton = [...document.querySelectorAll(".lt53-motion__controls button")]
+            .find((b) => b.textContent === "RESUME");
+          if (resumeButton) {
+            resumeButton.addEventListener("click", () => window.__l53clicks.push(performance.now()), { capture: true });
+          }
+          const tick = (now) => {
+            const node = document.querySelector(".lt53-motion__connection-active-inner");
+            window.__l53census.push([Math.round(now), node ? node.style.strokeDashoffset : null]);
+            if (window.__l53census.length < 2000) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
         // The light advances one rAF frame after the resume commit; under CI
         // runner load the first frame can land well past any fixed sleep
         // (observed '37' === '37' in production-deploy runs). Wait for the
         // offset to actually change instead — bounded, explicit timeout, and
         // the not-equal contract below is unchanged.
-        await page.waitForFunction(
-          (previous) => {
-            const node = document.querySelector(".lt53-motion__connection-active-inner");
-            return node instanceof HTMLElement && node.style.strokeDashoffset !== previous;
-          },
-          pausedOffset,
-          { timeout: 5000, polling: 50 },
-        );
+        let resumeDiag = "";
+        const resumeStartedAt = Date.now();
+        try {
+          await page.waitForFunction(
+            (previous) => {
+              const node = document.querySelector(".lt53-motion__connection-active-inner");
+              return node instanceof HTMLElement && node.style.strokeDashoffset !== previous;
+            },
+            pausedOffset,
+            { timeout: 5000, polling: 50 },
+          );
+        } catch {
+          resumeDiag = await page.evaluate(() => JSON.stringify({
+            visibility: document.visibilityState,
+            frames: (window.__l53census || []).length,
+            firstFrame: (window.__l53census || [])[0] ?? null,
+            lastFrame: (window.__l53census || []).at(-1) ?? null,
+            clicks: window.__l53clicks || [],
+            controls: [...document.querySelectorAll(".lt53-motion__controls button")].map((b) => `${b.textContent}${b.disabled ? ":disabled" : ""}`),
+            activeNodePresent: !!document.querySelector(".lt53-motion__connection-active-inner"),
+            offsetNow: document.querySelector(".lt53-motion__connection-active-inner")?.style.strokeDashoffset ?? null,
+          }));
+        }
         const resumedOffset = await activePath.evaluate((node) => node.style.strokeDashoffset);
-        assert.notEqual(resumedOffset, pausedOffset, `${scenario.label}: resume continues the active Connection light`);
+        assert.notEqual(resumedOffset, pausedOffset, `${scenario.label}: resume continues the active Connection light ${resumeDiag}`);
+        if (!resumeDiag) {
+          const census = await page.evaluate(() => ({
+            frames: window.__l53census.length,
+            clicks: window.__l53clicks.length,
+          }));
+          console.log(`L53DIAG ${scenario.label} ok frames=${census.frames} clicks=${census.clicks} latencyMs=${Date.now() - resumeStartedAt}`);
+        }
 
         const speed = page.getByRole("button", { name: /SPEED/ });
         assert.equal(await speed.innerText(), "SPEED 1×");
