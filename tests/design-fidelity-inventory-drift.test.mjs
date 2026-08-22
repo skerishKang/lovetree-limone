@@ -173,6 +173,17 @@ test("Lineage55 registered as interaction-contract target with held asset proven
   assert.equal(plan.futureGuards.length, 0);
 });
 
+test("Track74 V2 native candidate registered as interaction-contract target with held asset provenance", () => {
+  const track74 = getDesignFidelityTarget("track-74-v2-native");
+  assert.ok(track74);
+  assert.equal(track74.inventoryDisposition, "REGISTERED_TARGET");
+  assert.equal(track74.validationClass, "interaction-contract");
+  assert.equal(track74.assetGate, undefined);
+  const plan = planDesignFidelityInventory([track74.routeEntry], { addedPaths: [track74.routeEntry], validateFilesystem: false });
+  assert.ok(plan.targets.some((target) => target.id === "track-74-v2-native"));
+  assert.equal(plan.futureGuards.length, 0);
+});
+
 test("combined target IDs remain unique", () => {
   assert.equal(new Set(DESIGN_FIDELITY_TARGETS.map((target) => target.id)).size, DESIGN_FIDELITY_TARGETS.length);
 });

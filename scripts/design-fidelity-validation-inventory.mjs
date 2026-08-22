@@ -159,6 +159,27 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: false,
     extraEvidencePaths: Object.freeze(["qa/evidence/lineage55"]),
   }),
+  Object.freeze({
+    id: "track-74-v2-native",
+    label: "Track74 V2 Orbit Morph Template Portal native candidate",
+    route: "/design-lab/source-tracks/74/v2/native",
+    routeEntry: "app/design-lab/source-tracks/74/v2/native/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/74/",
+      "app/components/v4/V4OrbitMorphTemplatePortal",
+      "lib/source-track-74/",
+      "qa/track74-native-browser-qa.mjs",
+    ]),
+    exactAssetStatus: "OVERSIZE_MP4_FINGERPRINT_ONLY_OUT_OF_GIT; LOGO_SVG_CANDIDATE_PENDING_OWNER_APPROVAL",
+    browserGates: Object.freeze(["qa/track74-native-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/track74-native-browser-qa.mjs",
+    dedicatedWorkflow: null,
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa-artifacts/track74-native"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
