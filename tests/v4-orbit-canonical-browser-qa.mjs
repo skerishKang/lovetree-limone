@@ -14,6 +14,114 @@ const URL = `${BASE}/v4/subjects/demo/orbit`;
 const SCREENSHOT_DIR = process.env.V4_ORBIT_SCREENSHOT_DIR || "/tmp/v4-orbit-browser-qa";
 const ORBIT_DRAG_FACTOR = 0.0045;
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#370/#374 pattern):
+// every expected state change polls for the actual transition with an explicit
+// timeout/polling budget; the original assertions stay verbatim below the
+// waits, and a timeout fails loudly with self-classifying diagnostics
+// attached so a recurrence classifies itself.  Gesture release waits observe
+// the real product state transitions — the `.is-dragging` stage lifecycle and
+// the canonical selection commit — never fixed sleeps.
+const CONDITION_WAIT = { timeout: 10000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+// Self-classifying snapshot of every product surface the orbit assertions
+// read, so a timeout distinguishes lost input (stageDragging still true),
+// selection-authority divergence (card vs rail vs header) and dialog/media
+// interference on its own.
+function orbitSelectionState() {
+  const cardNum = document.querySelector(".v4-liquid-card.is-selected .v4-liquid-index")?.textContent?.trim() ?? null;
+  const railNum = document.querySelector(".v4-orbit-rail-item.is-selected .v4-orbit-rail-num")?.textContent?.trim() ?? null;
+  return {
+    selectedCard: cardNum != null ? parseInt(cardNum, 10) - 1 : null,
+    selectedRail: railNum != null ? parseInt(railNum, 10) - 1 : null,
+    header: document.querySelector(".v4-archive-count")?.textContent?.trim() ?? null,
+    stageDragging: document.querySelector(".v4-liquid-stage")?.classList.contains("is-dragging") ?? null,
+    dialogCount: document.querySelectorAll(".v4-liquid-dialog").length,
+    embedCount: document.querySelectorAll(".v4-liquid-embed").length,
+    mode: document.querySelector(".v4-liquid-stage")?.getAttribute("data-mode") ?? null,
+  };
+}
+
+async function waitForSelectedIndex(page, expectedIdx, label) {
+  await waitForCondition(
+    page,
+    (expected) => {
+      const el = document.querySelector(".v4-liquid-card.is-selected .v4-liquid-index");
+      if (!el) return false;
+      const num = parseInt(el.textContent?.trim() ?? "", 10);
+      return Number.isFinite(num) && num - 1 === expected;
+    },
+    orbitSelectionState,
+    `${label}: canonical selection reaches card ${expectedIdx + 1}`,
+    expectedIdx,
+  );
+}
+
+// The drag session lifecycle is observable in the DOM: pointerdown adds
+// `.is-dragging` to the stage and pointerup/pointercancel/lostpointercapture
+// remove it.  Waiting for the session to be observed ACTIVE before the
+// gesture continues, then CLEARED after release, means a missed event loop
+// cycle can never satisfy the wait by accident.
+async function waitForDragSession(page, active, label) {
+  await waitForCondition(
+    page,
+    (expectedActive) => {
+      const stage = document.querySelector(".v4-liquid-stage");
+      return stage != null && stage.classList.contains("is-dragging") === expectedActive;
+    },
+    orbitSelectionState,
+    `${label}: stage drag session ${active ? "active" : "cleared"}`,
+    active,
+  );
+}
+
+// A snap commits the selection instantly, but the cards' .9s transform
+// transition keeps moving their bounding boxes.  Later geometry (hit points,
+// overflow checks) must observe the position stop changing: poll until the
+// selected card's rect is identical on two consecutive polls.
+async function waitForOrbitSettled(page, label) {
+  await waitForCondition(
+    page,
+    () => {
+      const el = document.querySelector(".v4-liquid-card.is-selected");
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      const key = `${rect.x.toFixed(1)},${rect.y.toFixed(1)},${rect.width.toFixed(1)},${rect.height.toFixed(1)}`;
+      const previous = window.__v4OrbitSettleKey;
+      window.__v4OrbitSettleKey = key;
+      return previous === key;
+    },
+    orbitSelectionState,
+    `${label}: orbit transform settles after the snap`,
+  );
+}
+
+// Canonical selection transition = the selection commit AND the visual
+// settle, both observed as state, not elapsed time.
+async function waitForSelectionTransition(page, expectedIdx, label) {
+  await waitForSelectedIndex(page, expectedIdx, label);
+  await waitForOrbitSettled(page, label);
+}
+
+async function waitForDialogClosed(page, label) {
+  await waitForCondition(
+    page,
+    () => document.querySelectorAll(".v4-liquid-dialog").length === 0,
+    orbitSelectionState,
+    `${label}: detail dialog is removed`,
+  );
+}
+
 const ONE_PIXEL_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   "base64",
@@ -97,16 +205,22 @@ async function assertBackgroundMediaSilent(page, label) {
   assert.equal(media, 0, `${label}: background orbit cards carry no playable media`);
 }
 
-async function pointerDrag(page, dx, dy = 0, startPoint = null) {
+// Mouse drag whose release is observed through the drag-session lifecycle and
+// (when the caller knows the snap target) the canonical selection transition.
+async function pointerDrag(page, dx, dy = 0, startPoint = null, settle = null) {
   const box = await page.locator(".v4-liquid-stage").boundingBox();
   assert.ok(box, "orbit stage box exists for drag");
   const x0 = startPoint ? startPoint.x : box.x + box.width / 2;
   const y0 = startPoint ? startPoint.y : box.y + box.height / 2;
   await page.mouse.move(x0, y0);
   await page.mouse.down();
+  await waitForDragSession(page, true, "pointer drag press");
   await page.mouse.move(x0 + dx, y0 + dy, { steps: 8 });
   await page.mouse.up();
-  await page.waitForTimeout(1100);
+  await waitForDragSession(page, false, "pointer drag release");
+  if (settle?.expectedIdx != null) {
+    await waitForSelectionTransition(page, settle.expectedIdx, settle.label ?? "pointer drag snap");
+  }
 }
 
 // Return the visible centre of the card that is currently in a given position
@@ -137,20 +251,23 @@ async function cardHitPoint(page, index) {
 
 // Tap/click a specific card at a point that really hits that card, avoiding
 // the overlap problem in the 3-D orbit (desktop mouse vs mobile touch).
+// The tap itself carries no wait: callers observe the resulting product
+// state (canonical selection or dialog) as a bounded condition.
 async function tapPoint(page, point) {
   await page.touchscreen.tap(point.x, point.y);
-  await page.waitForTimeout(200);
 }
 async function cardTap(page, index) {
   const point = await cardHitPoint(page, index);
   assert.ok(point, `card ${index} has a reachable tap point`);
   await tapPoint(page, point);
 }
-async function cardClick(page, index) {
+async function cardClick(page, index, settle = null) {
   const point = await cardHitPoint(page, index);
   assert.ok(point, `card ${index} has a reachable click point`);
   await page.mouse.click(point.x, point.y);
-  await page.waitForTimeout(200);
+  if (settle?.expectedIdx != null) {
+    await waitForSelectionTransition(page, settle.expectedIdx, settle.label ?? `card ${index} click`);
+  }
 }
 
 // Find a card (other than excludeIdx) that has an actual reachable hit point.
@@ -177,7 +294,7 @@ async function assertCardOriginDrag(page, fromIdx, dx) {
   const before = await getState(page);
   const expectedRotation = canonicalV4OrbitRotation(before.cardIdx, before.count) + beyondEdge * ORBIT_DRAG_FACTOR;
   const expectedIdx = nearestV4OrbitIndex(expectedRotation, before.count);
-  await pointerDrag(page, beyondEdge, 0, start);
+  await pointerDrag(page, beyondEdge, 0, start, { expectedIdx, label: `card-origin drag from ${fromIdx}` });
   const after = await assertSelectionAuthority(page, `card-origin drag from ${fromIdx}`);
   assert.equal(after.cardIdx, expectedIdx,
     `card-origin drag snaps to nearest canonical Moment (${before.cardIdx} -> ${expectedIdx})`);
@@ -198,6 +315,8 @@ async function assertPointerCancelRecovery(page) {
     type: "touchStart",
     touchPoints: [{ x: point.x, y: point.y, radiusX: 3, radiusY: 3, force: 1, id: 200 }],
   });
+  // confirm the first pointer's drag session is live before cancelling it
+  await waitForDragSession(page, true, "pointercancel setup");
   await session.send("Input.dispatchTouchEvent", {
     type: "touchMove",
     touchPoints: [{ x: point.x + 20, y: point.y, radiusX: 3, radiusY: 3, force: 1, id: 200 }],
@@ -212,7 +331,7 @@ async function assertPointerCancelRecovery(page) {
   });
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await session.detach();
-  await page.waitForTimeout(300);
+  await waitForDragSession(page, false, "pointercancel recovery");
   assert.equal(await page.locator(".v4-liquid-dialog").count(), 0,
     "pointercancel does not open a dialog");
   // Next regular gesture still works
@@ -220,7 +339,7 @@ async function assertPointerCancelRecovery(page) {
   const dx = 100;
   const expectedRotation = canonicalV4OrbitRotation(before.cardIdx, before.count) + dx * ORBIT_DRAG_FACTOR;
   const expectedIdx = nearestV4OrbitIndex(expectedRotation, before.count);
-  await touchDrag(page, dx, point);
+  await touchDrag(page, dx, point, { expectedIdx, label: "post-pointercancel drag" });
   const after = await assertSelectionAuthority(page, "post-pointercancel drag");
   assert.equal(after.cardIdx, expectedIdx, "drag after pointercancel still works");
 }
@@ -233,7 +352,8 @@ async function assertLostPointerCaptureRecovery(page) {
   assert.ok(point, "empty stage point for lostpointercapture");
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.waitForTimeout(80);
+  // drag session confirmed live before the capture is stolen from it
+  await waitForDragSession(page, true, "lostpointercapture setup");
   // Another element claims the pointer capture — stage loses it.
   // Playwright mouse uses pointerId 1.
   await page.evaluate(() => {
@@ -248,7 +368,7 @@ async function assertLostPointerCaptureRecovery(page) {
     dummy.setPointerCapture(1);
   });
   await page.mouse.up();
-  await page.waitForTimeout(300);
+  await waitForDragSession(page, false, "lostpointercapture release");
   // Clean up the dummy
   await page.evaluate(() => document.getElementById("capture-thief")?.remove());
   assert.equal(await page.locator(".v4-liquid-dialog").count(), 0,
@@ -256,14 +376,17 @@ async function assertLostPointerCaptureRecovery(page) {
   // Next drag still works
   const before = await getState(page);
   const dx = 100;
-  await pointerDrag(page, dx, 0, point);
-  const after = await assertSelectionAuthority(page, "post-lostcapture drag");
   const expectedRotation = canonicalV4OrbitRotation(before.cardIdx, before.count) + dx * ORBIT_DRAG_FACTOR;
   const expectedIdx = nearestV4OrbitIndex(expectedRotation, before.count);
+  await pointerDrag(page, dx, 0, point, { expectedIdx, label: "post-lostcapture drag" });
+  const after = await assertSelectionAuthority(page, "post-lostcapture drag");
   assert.equal(after.cardIdx, expectedIdx, "drag after lost pointer capture still works");
 }
 
-async function touchDrag(page, dx, startPoint = null) {
+// CDP touch drag whose release is observed through the drag-session lifecycle
+// and the canonical selection transition (or, for gestures that must NOT
+// change selection, the visual settle only).
+async function touchDrag(page, dx, startPoint = null, settle = null) {
   const box = await page.locator(".v4-liquid-stage").boundingBox();
   assert.ok(box, "mobile orbit stage box exists for touch drag");
   const session = await page.context().newCDPSession(page);
@@ -273,6 +396,9 @@ async function touchDrag(page, dx, startPoint = null) {
     type: "touchStart",
     touchPoints: [{ x: x0, y: y0, radiusX: 3, radiusY: 3, force: 1, id: 156 }],
   });
+  // confirm the touch's drag session is live before moving/releasing, so the
+  // later "cleared" observation cannot pass on a missed lifecycle cycle
+  await waitForDragSession(page, true, "touch drag press");
   for (let step = 1; step <= 6; step += 1) {
     await session.send("Input.dispatchTouchEvent", {
       type: "touchMove",
@@ -281,7 +407,12 @@ async function touchDrag(page, dx, startPoint = null) {
   }
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await session.detach();
-  await page.waitForTimeout(1100);
+  await waitForDragSession(page, false, "touch drag release");
+  if (settle?.expectedIdx != null) {
+    await waitForSelectionTransition(page, settle.expectedIdx, settle.label ?? "touch drag snap");
+  } else if (settle?.expectUnchanged) {
+    await waitForOrbitSettled(page, settle.label ?? "touch gesture settle");
+  }
 }
 
 // Find a point inside the orbit stage that is not covered by a card, so a
@@ -321,20 +452,20 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
       // A. canonical selection authority — wheel -> canonical selected Moment
       await page.locator(".v4-liquid-stage").hover();
       await page.mouse.wheel(0, 240);
-      await page.waitForTimeout(120);
+      await waitForSelectionTransition(page, (initial.cardIdx + 1) % initial.count, "1280x800 wheel");
       const afterWheel = await assertSelectionAuthority(page, "1280x800 wheel");
       assert.equal(afterWheel.cardIdx, (initial.cardIdx + 1) % initial.count, "wheel advances the canonical selected Moment by one");
 
       // Arrow -> canonical selected Moment
       await page.keyboard.press("ArrowRight");
-      await page.waitForTimeout(120);
+      await waitForSelectionTransition(page, (afterWheel.cardIdx + 1) % afterWheel.count, "1280x800 arrow");
       const afterArrow = await assertSelectionAuthority(page, "1280x800 arrow");
       assert.equal(afterArrow.cardIdx, (afterWheel.cardIdx + 1) % afterWheel.count, "ArrowRight advances the canonical selected Moment");
 
       // C. rail -> canonical selected Moment
       const targetRail = (afterArrow.cardIdx + 3) % afterArrow.count;
       await page.locator(".v4-orbit-rail-item").nth(targetRail).click();
-      await page.waitForTimeout(120);
+      await waitForSelectionTransition(page, targetRail, "1280x800 rail");
       const afterRail = await assertSelectionAuthority(page, "1280x800 rail");
       assert.equal(afterRail.cardIdx, targetRail, "rail click selects the canonical Moment");
 
@@ -343,13 +474,13 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
       const dx = 150;
       const expectedRotation = canonicalV4OrbitRotation(before.cardIdx, before.count) + dx * ORBIT_DRAG_FACTOR;
       const expectedIdx = nearestV4OrbitIndex(expectedRotation, before.count);
-      await pointerDrag(page, dx);
+      await pointerDrag(page, dx, 0, null, { expectedIdx, label: "1280x800 drag" });
       const afterDrag = await assertSelectionAuthority(page, "1280x800 drag");
       assert.equal(afterDrag.cardIdx, expectedIdx, `drag release snaps to nearest canonical Moment (${before.cardIdx} -> ${expectedIdx})`);
 
       // card -> canonical selected Moment + open detail
       const openIdx = (afterDrag.cardIdx + 2) % afterDrag.count;
-      await cardClick(page, openIdx);
+      await cardClick(page, openIdx, { expectedIdx: openIdx, label: "1280x800 card" });
       const afterCard = await assertSelectionAuthority(page, "1280x800 card");
       assert.equal(afterCard.cardIdx, openIdx, "clicking a non-selected card selects it canonically");
 
@@ -366,7 +497,7 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
 
       // normal card tap still works after a card-origin drag
       const postDragTap = (originIdx + 1) % afterCard.count;
-      await cardClick(page, postDragTap);
+      await cardClick(page, postDragTap, { expectedIdx: postDragTap, label: "1280x800 post-drag tap" });
       const afterTap = await assertSelectionAuthority(page, "1280x800 post-drag tap");
       assert.equal(afterTap.cardIdx, postDragTap,
         "normal card tap still works after a card-origin drag");
@@ -408,7 +539,7 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
 
       // backdrop close policy
       await page.locator(".v4-liquid-detail").click({ position: { x: 4, y: 4 } });
-      await page.waitForTimeout(150);
+      await waitForDialogClosed(page, "1280x800 backdrop close");
       assert.equal(await page.locator(".v4-liquid-dialog").count(), 0, "clicking the backdrop closes the detail");
 
       // reopen and Escape closes + restores trigger focus
@@ -416,7 +547,7 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
       await cardClick(page, reopenIdx);
       await page.locator(".v4-liquid-dialog").waitFor({ state: "visible" });
       await page.keyboard.press("Escape");
-      await page.waitForTimeout(150);
+      await waitForDialogClosed(page, "1280x800 escape close");
       assert.equal(await page.locator(".v4-liquid-dialog").count(), 0, "Escape closes the detail");
       const restored = await page.evaluate(() => document.activeElement?.classList.contains("v4-liquid-card"));
       assert.equal(restored, true, "closing restores focus to the triggering card");
@@ -425,10 +556,15 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
       const mediaIdx = (await getState(page)).cardIdx;
       await cardClick(page, mediaIdx);
       await page.locator(".v4-liquid-play").click();
-      await page.waitForTimeout(200);
+      await waitForCondition(
+        page,
+        () => document.querySelectorAll(".v4-liquid-embed").length === 1,
+        orbitSelectionState,
+        "1280x800 play: playable media mounts inside the open detail",
+      );
       assert.equal(await page.locator(".v4-liquid-embed").count(), 1, "playable media exists only inside the open detail");
       await page.keyboard.press("Escape");
-      await page.waitForTimeout(120);
+      await waitForDialogClosed(page, "1280x800 media close");
 
       await assertNoHorizontalOverflow(page, "1280x800 final");
       assert.equal(errors.length, 0, `1280x800: no runtime/console errors: ${errors.join(" | ")}`);
@@ -454,7 +590,7 @@ test("V4 Orbit canonical adoption — mobile 390x844 touch drag, dialog escape/r
       const dx = 120;
       const expectedRotation = canonicalV4OrbitRotation(before.cardIdx, before.count) + dx * ORBIT_DRAG_FACTOR;
       const expectedIdx = nearestV4OrbitIndex(expectedRotation, before.count);
-      await touchDrag(page, dx);
+      await touchDrag(page, dx, null, { expectedIdx, label: "390x844 touch drag" });
       const after = await assertSelectionAuthority(page, "390x844 touch drag");
       assert.equal(after.cardIdx, expectedIdx, `real touch drag snaps to nearest canonical Moment (${before.cardIdx} -> ${expectedIdx})`);
 
@@ -462,7 +598,7 @@ test("V4 Orbit canonical adoption — mobile 390x844 touch drag, dialog escape/r
       const preTap = await getState(page);
       const emptyPoint = await findEmptyStagePoint(page);
       assert.ok(emptyPoint, "found a card-free stage point for sub-slop touch");
-      await touchDrag(page, 2, emptyPoint);
+      await touchDrag(page, 2, emptyPoint, { expectUnchanged: true, label: "390x844 sub-slop touch" });
       const postTap = await getState(page);
       assert.equal(postTap.cardIdx, preTap.cardIdx, "sub-slop touch is treated as a tap, not a drag");
 
@@ -475,7 +611,7 @@ test("V4 Orbit canonical adoption — mobile 390x844 touch drag, dialog escape/r
       const touchDx = 160;
       const expectedTouchRotation = canonicalV4OrbitRotation(beforeCardOriginTouch.cardIdx, beforeCardOriginTouch.count) + touchDx * ORBIT_DRAG_FACTOR;
       const expectedTouchIdx = nearestV4OrbitIndex(expectedTouchRotation, beforeCardOriginTouch.count);
-      await touchDrag(page, touchDx, originPoint);
+      await touchDrag(page, touchDx, originPoint, { expectedIdx: expectedTouchIdx, label: "390x844 card-origin touch drag" });
       const afterTouchDrag = await assertSelectionAuthority(page, "390x844 card-origin touch drag");
       assert.equal(afterTouchDrag.cardIdx, expectedTouchIdx,
         `card-origin touch drag snaps to nearest canonical Moment (${beforeCardOriginTouch.cardIdx} -> ${expectedTouchIdx})`);
@@ -487,6 +623,7 @@ test("V4 Orbit canonical adoption — mobile 390x844 touch drag, dialog escape/r
       const nonSelected = await findReachableCard(page, currentIdx);
       assert.ok(nonSelected, "found a reachable non-selected card for sub-slop tap");
       await tapPoint(page, nonSelected.point);
+      await waitForSelectionTransition(page, nonSelected.index, "390x844 sub-slop card tap select");
       const afterSubSlopSelect = await assertSelectionAuthority(page, "390x844 sub-slop card tap select");
       assert.equal(afterSubSlopSelect.cardIdx, nonSelected.index,
         "non-selected card sub-slop tap canonically selects the card");
@@ -498,7 +635,7 @@ test("V4 Orbit canonical adoption — mobile 390x844 touch drag, dialog escape/r
       assert.equal(await dialog.getAttribute("aria-modal"), "true", "mobile detail is a modal dialog");
       await screenshot(page, "mobile-detail-open");
       await page.keyboard.press("Escape");
-      await page.waitForTimeout(200);
+      await waitForDialogClosed(page, "390x844 escape close");
       assert.equal(await page.locator(".v4-liquid-dialog").count(), 0, "Escape closes the mobile detail");
       const restored = await page.evaluate(() => document.activeElement?.classList.contains("v4-liquid-card"));
       assert.equal(restored, true, "mobile close restores focus to the triggering card");
@@ -547,11 +684,11 @@ test("V4 Orbit canonical adoption — reduced motion keeps manual selection sema
       // manual card/rail/wheel/key selection still works under reduced motion
       await page.locator(".v4-liquid-stage").hover();
       await page.mouse.wheel(0, 240);
-      await page.waitForTimeout(80);
+      await waitForSelectionTransition(page, (initial.cardIdx + 1) % initial.count, "reduced-motion wheel");
       const afterWheel = await assertSelectionAuthority(page, "reduced-motion wheel");
       assert.equal(afterWheel.cardIdx, (initial.cardIdx + 1) % initial.count, "reduced motion: wheel still moves canonical selection");
       await page.keyboard.press("ArrowLeft");
-      await page.waitForTimeout(80);
+      await waitForSelectionTransition(page, (afterWheel.cardIdx + initial.count - 1) % initial.count, "reduced-motion arrow");
       const afterArrow = await assertSelectionAuthority(page, "reduced-motion arrow");
       assert.equal(afterArrow.cardIdx, (afterWheel.cardIdx + initial.count - 1) % initial.count, "reduced motion: arrow still moves canonical selection");
       await screenshot(page, "reduced-motion-state");
