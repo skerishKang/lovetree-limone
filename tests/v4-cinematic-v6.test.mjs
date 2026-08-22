@@ -7,6 +7,42 @@ const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
 const URL = `${BASE}/v4/cinematic`;
 const SOURCE_SHA = "9a97ce9ee0c0f00fea57add2dbbd55f5d7f50b7ea9cf7d663ca642c879f3d17b";
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#374/#382/#404
+// pattern): every value-change expectation polls for the actual transition
+// with an explicit timeout/polling budget; the original assertion stays
+// verbatim below it, and a timeout fails loudly with self-classifying
+// diagnostics attached so a recurrence classifies itself.
+const CONDITION_WAIT = { timeout: 15000, polling: 50 };
+const SCENE_WAIT = { timeout: 8000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, wait = CONDITION_WAIT, arg = null) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+function classifyCinV6State() {
+  const root = document.querySelector("[data-cinematic-root]");
+  const activeScene = document.querySelector(".cin-scene.is-rendering");
+  return {
+    rootEdition: root?.getAttribute("data-cin-v6-edition") ?? null,
+    pointerCapability: root?.getAttribute("data-cin-v6-pointer") ?? null,
+    reduced: root?.getAttribute("data-cin-reduced") ?? null,
+    counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+    railButtons: document.querySelectorAll(".cin-rail button").length,
+    pointerTicks: Number(window.__cinV6PointerTicks || 0),
+    pointerActive: window.__cinV6PointerActive ?? null,
+    stackTranslate: document.querySelector(".cin-scene-stack")?.style.translate ?? "",
+    mediaTranslate: document.querySelector(".cin-scene.is-rendering .cin-media")?.style.translate ?? "",
+    activeSceneEffect: activeScene?.getAttribute("data-effect") ?? null,
+  };
+}
+
 async function openPage(browser, viewport, options = {}) {
   const page = await browser.newPage({ viewport, ...options });
   const errors = [];
@@ -15,8 +51,27 @@ async function openPage(browser, viewport, options = {}) {
     if (msg.type() === "error") errors.push(`console:${msg.text()}`);
   });
   const response = await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-  await page.waitForTimeout(450);
   assert.ok(response?.ok(), `cinematic route HTTP ${response?.status()}`);
+  // Issue #406: fixed 450ms settle sleep replaced by bounded wait for real v6
+  // hydration readiness: the effect has stamped the international/source
+  // dataset attrs, the V5 core has stamped the reduced-motion attr, the v6
+  // pointer runtime globals exist, and the rail/counter are live.
+  await waitForCondition(
+    page,
+    () => {
+      const root = document.querySelector("[data-cinematic-root]");
+      return (
+        !!root &&
+        root.getAttribute("data-cin-v6-edition") === "international" &&
+        root.hasAttribute("data-cin-reduced") &&
+        typeof window.__cinV6PointerTicks === "number" &&
+        document.querySelectorAll(".cin-rail button").length === 16 &&
+        !!document.querySelector(".cin-counter span")?.textContent
+      );
+    },
+    classifyCinV6State,
+    "v6 hydration readiness (edition attr + reduced attr + pointer ticks global + 16 rail buttons + live counter)",
+  );
   return { page, errors };
 }
 
@@ -87,7 +142,7 @@ test("v4 cinematic v6 — source-backed special scene deltas appear lazily", asy
     assert.equal(await page.locator(".cin-v6-sky-canopy").count(), 0, "sky canopy not eagerly loaded");
     assert.equal(await page.locator(".cin-v6-alt-growth").count(), 0, "growth alt shot not eagerly loaded");
 
-    const jump = async (scene, expected) => {
+    const jump = async (scene, expected, ready) => {
       const button = page.locator(`.cin-rail button[aria-label="${scene}번 장면"]`);
       const box = await button.boundingBox();
       await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
@@ -96,26 +151,42 @@ test("v4 cinematic v6 — source-backed special scene deltas appear lazily", asy
         expected,
         { timeout: 8000 },
       );
-      await page.waitForTimeout(180);
+      if (!ready) return;
+      // Issue #406: generic 180ms sleep replaced by a bounded wait for the
+      // caller's actual lazy scene materialization (MutationObserver-driven
+      // v6 source deltas appear once the scene gains is-rendering).
+      await waitForCondition(
+        page,
+        ready,
+        classifyCinV6State,
+        `scene ${expected} lazy effects materialized`,
+        SCENE_WAIT,
+      );
     };
 
-    await jump(5, "05");
+    await jump(5, "05", () => document.querySelectorAll(".cin-v6-alt-growth").length === 1);
     assert.equal(await page.locator(".cin-v6-alt-growth").count(), 1, "growth alt shot added on demand");
 
-    await jump(10, "10");
+    await jump(10, "10", () => document.querySelectorAll(".cin-v6-sky-canopy img").length === 2);
     assert.equal(await page.locator(".cin-v6-sky-canopy img").count(), 2, "v6 sky canopy has two source images");
     assert.match(await page.locator('.cin-scene[data-effect="sky"] .cin-sky-copy').innerText(), /Dates turn memory\s+into a flow/);
 
-    await jump(14, "14");
+    await jump(
+      14,
+      "14",
+      () =>
+        document.querySelectorAll('.cin-scene[data-effect="questions"] .cin-question-item').length === 4 &&
+        document.querySelectorAll('[data-cin-v6-line="4"]').length === 2,
+    );
     assert.equal(await page.locator('.cin-scene[data-effect="questions"] .cin-question-item').count(), 4, "v6 has four question chips");
     assert.match(await page.locator('.cin-scene[data-effect="questions"] .q4').innerText(), /What do you still keep/);
     assert.equal(await page.locator('[data-cin-v6-line="4"]').count(), 2, "fourth question path and endpoint added");
 
-    await jump(15, "15");
+    await jump(15, "15", () => document.querySelectorAll(".cin-v6-flash-bloom").length === 1);
     assert.equal(await page.locator(".cin-v6-flash-bloom").count(), 1, "constellation bloom layer added lazily");
     assert.match(await page.locator(".cin-constellation-caption").innerText(), /Every connection\s+becomes a map/);
 
-    await jump(16, "16");
+    await jump(16, "16", () => !!document.querySelector(".cin-final-logo") && !!document.querySelector(".cin-final-cta"));
     assert.match(await page.locator(".cin-final-logo").innerText(), /A PRIVATE PARADISE OF MEMORY/);
     assert.match((await page.locator(".cin-final-logo").textContent()) || "", /Your brightest memories grow into a living tree/);
     assert.equal(await page.locator(".cin-final-cta").getAttribute("href"), "/v4/journey", "validated CTA link preserved");
@@ -140,7 +211,32 @@ test("v4 cinematic v6 — fine pointer produces smoothed depth without taking ov
       ticks: Number(window.__cinV6PointerTicks || 0),
     }));
     await page.mouse.move(1180, 110);
-    await page.waitForTimeout(650);
+    // Issue #406: fixed 650ms sleep replaced by bounded wait for the actual
+    // smoothed depth transition: pointer rAF ticks advanced, and the scene
+    // stack moved STRICTLY OUTSIDE the same <=2px neutral envelope this test
+    // already uses for "neutral" below, with the active media carrying a
+    // depth translate. A bare non-empty translate is NOT sufficient: the
+    // first rAF can fire in the same millisecond as the loop start
+    // (elapsedMs -> 0, smoothing -> 0) and stamp a degenerate "0px"
+    // translate, which the self-classifying diagnostics exposed.
+    await waitForCondition(
+      page,
+      (before) => {
+        const t = document.querySelector(".cin-scene-stack")?.style.translate || "";
+        const vals = t.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+        const displacedOutsideNeutral =
+          vals.length >= 2 && (Math.abs(vals[0]) > 2 || Math.abs(vals[1]) > 2);
+        return (
+          Number(window.__cinV6PointerTicks || 0) > before.ticks &&
+          displacedOutsideNeutral &&
+          (document.querySelector(".cin-scene.is-rendering .cin-media")?.style.translate || "") !== ""
+        );
+      },
+      classifyCinV6State,
+      "pointer depth response (ticks advanced + stack displaced beyond <=2px neutral envelope + media translate applied)",
+      SCENE_WAIT,
+      before,
+    );
     const after = await page.evaluate(() => ({
       scrollY: Math.round(scrollY),
       translate: document.querySelector(".cin-scene-stack")?.style.translate || "",
@@ -153,7 +249,20 @@ test("v4 cinematic v6 — fine pointer produces smoothed depth without taking ov
     assert.ok(after.ticks > before.ticks, "pointer smoothing rAF advanced");
 
     await page.mouse.move(640, 400);
-    await page.waitForTimeout(650);
+    // Issue #406: fixed 650ms sleep replaced by a bounded wait for the actual
+    // convergence back into the SAME <=2px neutral envelope the assertion
+    // below enforces — the envelope itself is not widened.
+    await waitForCondition(
+      page,
+      () => {
+        const t = document.querySelector(".cin-scene-stack")?.style.translate || "";
+        const vals = t.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+        return vals.length >= 1 && Math.abs(vals[0]) <= 2 && Math.abs(vals[1] || 0) <= 2;
+      },
+      classifyCinV6State,
+      "pointer residual converged to <=2px neutral envelope",
+      SCENE_WAIT,
+    );
     const reset = await page.evaluate(() => document.querySelector(".cin-scene-stack")?.style.translate || "");
     const resetValues = reset.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
     assert.notEqual(reset, after.translate, "pointer moves back toward neutral center");
@@ -176,11 +285,31 @@ test("v4 cinematic v6 — reduced motion disables pointer enhancement while base
       if (msg.type() === "error") errors.push(`console:${msg.text()}`);
     });
     await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(450);
+    // Issue #406: fixed 450ms settle sleep replaced by bounded wait for the
+    // actual initialized reduced-motion state.
+    await waitForCondition(
+      page,
+      () => {
+        const root = document.querySelector("[data-cinematic-root]");
+        return (
+          !!root &&
+          root.getAttribute("data-cin-v6-pointer") === "disabled" &&
+          root.getAttribute("data-cin-reduced") === "true"
+        );
+      },
+      classifyCinV6State,
+      "reduced-motion readiness (pointer capability disabled + data-cin-reduced=true)",
+    );
     const root = page.locator("[data-cinematic-root]");
     assert.equal(await root.getAttribute("data-cin-v6-pointer"), "disabled");
     assert.equal(await root.getAttribute("data-cin-reduced"), "true");
     await page.mouse.move(1180, 110);
+    // Issue #406: PRESERVED negative observation window. This 400ms is not a
+    // transition wait — the contract under test is that the pointer stays
+    // inactive across an interval after a move attempt while reduced motion
+    // is active (pointerActive remains false, transforms remain neutral,
+    // canvas stays hidden). Collapsing it into an instant condition would
+    // erase the time-based guarantee being verified.
     await page.waitForTimeout(400);
     const state = await page.evaluate(() => ({
       translate: document.querySelector(".cin-scene-stack")?.style.translate || "",
@@ -204,7 +333,22 @@ test("v4 cinematic v6 — coarse pointer disables pointer-follow", async () => {
   try {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
     await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(450);
+    // Issue #406: fixed 450ms settle sleep replaced by bounded wait for the
+    // actual coarse-pointer initialization (capability disabled + v6 pointer
+    // rAF confirmed inactive).
+    await waitForCondition(
+      page,
+      () => {
+        const root = document.querySelector("[data-cinematic-root]");
+        return (
+          !!root &&
+          root.getAttribute("data-cin-v6-pointer") === "disabled" &&
+          window.__cinV6PointerActive === false
+        );
+      },
+      classifyCinV6State,
+      "coarse-pointer readiness (capability disabled + pointer rAF inactive)",
+    );
     assert.equal(await page.locator("[data-cinematic-root]").getAttribute("data-cin-v6-pointer"), "disabled");
     const state = await page.evaluate(() => ({
       translate: document.querySelector(".cin-scene-stack")?.style.translate || "",
