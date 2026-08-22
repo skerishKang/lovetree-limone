@@ -1,6 +1,6 @@
 # Source Track 70 — 모먼트리빌 퓨처에디토리얼 Source Gate Record
 
-Issue: #291 · Refs: #80 #236 #287
+Issue: #291 · Refs: #80 #236 #287 #344
 Classification: `NEW_LINEAGE_CANDIDATE + CINEMATIC_BRAND_EDITORIAL + SOURCE_REFERENCE_ONLY`
 Manifest: `design-intake/manifests/source-track-70-moment-reveal-editorial.json`
 Preservation: `reference/source-track-70-moment-reveal-editorial/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
@@ -12,13 +12,16 @@ STATUS             = DESIGN CANDIDATE / NOT OWNER-APPROVED (README_70, 2026-08-1
 SOURCE_OWNER       = 디자인팀장18기 (track) / 디자인팀장19기 (V-executables, 00_CURRENT gate package)
 DUAL_CANDIDATE     = 선택1 V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX (31,282 B HTML portal variant)
                      선택2 V11_INSTANT_CANVAS_TRAIL_REVEAL (24,536,470 B self-contained canvas-trail variant)
+A/B_DECISION       = BOTH QUEUED (2026-08-22, #344) — A안(선택1 V2.1)·B안(선택2 V11)
+                     both registered to the implementation queue; no single-authority pick
 BASELINE_A         = 70_A_ORIGINAL_LGPSM_PROMPT_REPLICA.html — MotionSites/LGPSM free-prompt
                      fashion-editorial baseline (SHOP/COLLECTIONS/JOURNAL/CART kept pure)
 ADAPTED_B          = 70_B_LOVETREE_MOMENT_REVEAL.html — same structure/reveal substituted to
                      MOMENTS/PATHS/JOURNAL/MY TREE, ADD→PLANT
 GATE_PACKAGE       = 00_CURRENT_19기_TRACK70_분석·제작게이트 (MASTER analysis, SOURCE_LOCK,
                      CLEAN_LOCK LT01–LT04 masters, V3 ONE MASTER EXACT RULE)
-OWNER_REVIEW       = PENDING — product owner must compare A/B and pick a single authority
+OWNER_REVIEW       = RESOLVED (2026-08-22, #344) — A/B both queued; single-authority pick
+                     not required (see Decision record)
 IMPLEMENTATION     = MUST NOT START (gate registration only)
 PRODUCTION SOURCE  = DO NOT MODIFY (Drive originals read-only)
 ```
@@ -52,18 +55,29 @@ recordings, `이미지/**` generated stills, `03_PAIR_QA/**` QA media. Byte-dupl
 once under their canonical path (see `PROVENANCE.md`). Manifest records these as `PENDING` with full
 Drive ID + bytes + SHA256 fingerprints (#236 method).
 
+## Decision record (2026-08-22)
+
+- #344 (단일 원장, 2026-08-22 오너 결정 접수) 항목 5: Track70 → **A안·B안 둘 다 구현 큐 등재**.
+- Effect: the former "owner must pick a single authority" precondition is retired. 선택1(V2.1)
+  and 선택2(V11) proceed as separate implementation-queue entries; neither is forced to win.
+- Unchanged: source-side authority (`README_70` = `DESIGN CANDIDATE / NOT OWNER-APPROVED`,
+  2026-08-17) is preserved as historical fact. This decision governs repository implementation-queue
+  scheduling only — Drive originals, fingerprints and the source-preservation contract are untouched.
+- Update basis: #344 ledger + #291 closure comment (2026-08-22 CTO Lane re-verification).
+
 ## Open gates
 
 | Gate | State | Blocking condition |
 |---|---|---|
-| Owner A/B review | PENDING | product owner must pick single authority among 선택1(V2.1)/선택2(V11) |
-| Single-authority executable | UNRESOLVED | dual `선택` markers with no recorded decision |
-| Transport weight | HELD | winning executable >10MB guardrail (V11 24.5MB; mp4s 15–18MB) |
-| Native intake | NOT STARTED | requires authority close → source QA → exact fingerprint |
+| Owner A/B review | RESOLVED (2026-08-22, #344) | A안(선택1 V2.1)·B안(선택2 V11) 둘 다 구현 큐 등재 — no single-authority pick |
+| Single-authority executable | OBSOLETE — superseded by #344 | both candidates proceed as separate queue entries; single pick no longer a gate step |
+| Transport weight | HELD | queued executables must clear the 10MB guardrail before native intake (V11 24.5MB; mp4s 15–18MB stay fingerprint-only) |
+| Native intake | NOT STARTED | requires per-candidate queue lane → source QA → exact fingerprint |
 | Lineage reservation | HOLD | no repository lineage number allocated |
 
-Correct sequence: owner A/B decision → single-authority selection → transport-compliant executable →
-executable/source QA → exact fingerprint → repository native intake/proving.
+Correct sequence (updated 2026-08-22 per #344): both A/B candidates queued → per-candidate
+transport-compliant executable → executable/source QA → exact fingerprint → repository native
+intake/proving. Single-authority selection is no longer a gate step.
 
 ## Repository disposition
 
