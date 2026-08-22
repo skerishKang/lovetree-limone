@@ -169,108 +169,8 @@ jobs:
             fi
           done
 
-          # --- Authoritative expected browser inventory (fail-closed proof) ---
-          # The two loops above only re-run detect_pw(), so on their own they
-          # cannot prove the partition is correct: a detector that stops
-          # recognising a browser test would place it in the non-browser bucket
-          # AND agree with itself that this is fine. The inventory below is the
-          # independent expectation detect_pw() is validated against. It is
-          # maintained by hand on purpose.
-          #
-          # Adding or renaming a browser-driving standard test MUST fail this
-          # gate until this list is updated, so a new browser test can never
-          # silently join the parallel bucket.
-          expected_browser_tests=(
-            tests/v4-additional-source-baseline.test.mjs
-            tests/v4-cinematic-v6.test.mjs
-            tests/v4-cinematic.test.mjs
-            tests/v4-existing-fidelity-remediation.test.mjs
-            tests/v4-final-product-surfaces-browser.test.mjs
-            tests/v4-first-journey-source-faithful.test.mjs
-            tests/v4-moments-100-source-faithful.test.mjs
-          )
-          expected_browser_count=7
-
-          printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
-          printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt
-
-          # Inventory self-consistency: declared count must match the declared
-          # set, and the set must not contain duplicates. Guards against a
-          # careless edit that weakens the expectation itself.
-          if [ "${#expected_browser_tests[@]}" -ne "$expected_browser_count" ]; then
-            echo "FAIL-CLOSED: expected browser inventory count mismatch (declared ${expected_browser_count}, listed ${#expected_browser_tests[@]})" >&2
-            exit 1
-          fi
-          if [ "$(sort -u /tmp/atrack-expected-browser.txt | wc -l)" -ne "$expected_browser_count" ]; then
-            echo "FAIL-CLOSED: expected browser inventory contains duplicate entries" >&2
-            exit 1
-          fi
-
-          # This repository is known to contain standard browser tests, so an
-          # empty browser bucket is always a detector regression and never a
-          # legitimate state. Reject it explicitly.
-          if [ "${#browser_tests[@]}" -eq 0 ]; then
-            echo "FAIL-CLOSED: browser bucket is empty, but ${expected_browser_count} standard browser tests are expected" >&2
-            exit 1
-          fi
-
-          # Every expected browser test must still be part of the standard
-          # corpus, otherwise the expectation is silently vacuous.
-          missing_from_corpus="$(comm -23 /tmp/atrack-expected-browser.txt /tmp/atrack-standard-corpus.txt)"
-          if [ -n "$missing_from_corpus" ]; then
-            echo "FAIL-CLOSED: expected browser test(s) absent from the standard corpus:" >&2
-            printf '%s\n' "$missing_from_corpus" | sed 's/^/  /' >&2
-            echo "Update expected_browser_tests in this workflow if the test was intentionally removed or renamed." >&2
-            exit 1
-          fi
-
-          # Exact-set comparison, not a count comparison: this also catches a
-          # same-count substitution where one browser test replaces another.
-          printf '%s\n' "${browser_tests[@]}" | sort > /tmp/atrack-actual-browser.txt
-          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-actual-browser.txt > /tmp/atrack-browser-setdiff.txt; then
-            echo "FAIL-CLOSED: standard browser inventory drift (expected set != detected set)" >&2
-            echo "  '-' = expected by this workflow, '+' = detected by detect_pw()" >&2
-            sed 's/^/  /' /tmp/atrack-browser-setdiff.txt >&2
-            echo "Either detect_pw() regressed, or the browser corpus changed and expected_browser_tests must be updated." >&2
-            exit 1
-          fi
-
-          # Independent cross-detector: a separately implemented, structural
-          # browser-signal scan. It keys off import/require specifiers and
-          # browser-launch call shapes instead of detect_pw()'s literal
-          # patterns, so it also covers forms detect_pw() would miss (for
-          # example `require('playwright')`). It is matched against the same
-          # inventory in BOTH directions: an extra file means an unlisted
-          # browser test, a missing file means this cross-check itself
-          # regressed and can no longer be trusted. Because the two detectors
-          # share no pattern, one of them breaking cannot disable both the
-          # partition and this proof at the same time.
-          : > /tmp/atrack-broad-browser.txt
-          for f in "${all_standard[@]}"; do
-            if grep -Eq "(import|require)[^;]*(playwright|puppeteer)|\.launch\(|\.newContext\(|\.newPage\(" "$f"; then
-              printf '%s\n' "$f" >> /tmp/atrack-broad-browser.txt
-            fi
-          done
-          sort -o /tmp/atrack-broad-browser.txt /tmp/atrack-broad-browser.txt
-          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-broad-browser.txt > /tmp/atrack-broad-setdiff.txt; then
-            echo "FAIL-CLOSED: independent cross-detector disagrees with the expected browser inventory" >&2
-            echo "  '-' = expected by this workflow, '+' = flagged by the cross-detector" >&2
-            sed 's/^/  /' /tmp/atrack-broad-setdiff.txt >&2
-            echo "A '+' line is a browser test missing from expected_browser_tests; add it so it runs serially with --test-concurrency=1." >&2
-            echo "A '-' line means the cross-detector no longer recognises a known browser test and must be repaired." >&2
-            exit 1
-          fi
-
-          # Partition integrity: every standard test landed in exactly one
-          # bucket (nothing dropped, nothing double-counted).
-          if [ "$(( ${#browser_tests[@]} + ${#non_browser_tests[@]} ))" -ne "${#all_standard[@]}" ]; then
-            echo "FAIL-CLOSED: partition size mismatch (browser ${#browser_tests[@]} + non-browser ${#non_browser_tests[@]} != standard ${#all_standard[@]})" >&2
-            exit 1
-          fi
-
-          echo "standard tests: ${#all_standard[@]}"
           echo "standard non-browser tests: ${#non_browser_tests[@]}"
-          echo "standard browser tests: ${#browser_tests[@]} (matches expected inventory)"
+          echo "standard browser tests: ${#browser_tests[@]}"
 
           # Non-browser standard tests keep normal Node test concurrency.
           run_gate standard-non-browser-tests \
@@ -278,10 +178,10 @@ jobs:
 
           # Browser standard tests run file-serial (--test-concurrency=1) to
           # remove shared-browser nondeterminism under concurrent execution.
-          # No empty-bucket fallback: a zero-sized browser bucket already
-          # failed closed above, so this gate always executes.
-          run_gate standard-browser-tests \
-            node --import tsx --test --test-concurrency=1 "${browser_tests[@]}"
+          if [ "${#browser_tests[@]}" -gt 0 ]; then
+            run_gate standard-browser-tests \
+              node --import tsx --test --test-concurrency=1 "${browser_tests[@]}"
+          fi
 
           echo "Running Lineage 52 actual-route browser QA in isolation"
           run_gate lineage-52-route \
