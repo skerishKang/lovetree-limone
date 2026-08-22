@@ -52,8 +52,3 @@ temp/
 
 # Track66 native QA evidence (uploaded as CI artifact only, not committed)
 qa-artifacts/
-
-# Track47 V4.2.5 exact-video local overlay (LOCAL EXACT-OVERLAY EVIDENCE ONLY,
-# never committed; see tests/source-track-47-browser-qa.mjs `exact` phase and
-# VIDEO_EXACT_ASSET_HOLD — 28,650,099 B exceeds transport authority)
-public/design-lab-assets/source-tracks/47/v4-2-5/assets/*.mp4

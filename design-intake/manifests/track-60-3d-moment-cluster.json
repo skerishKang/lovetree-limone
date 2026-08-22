@@ -17,9 +17,9 @@
   },
   "designLineageId": "lt-60-3d-moment-cluster-explorer",
   "lineageNumber": 60,
-  "revisionId": "v1-2",
+  "revisionId": "60-v1-2",
   "route": {
-    "path": "/design-lab/lineages/60/v1-2",
+    "path": "/design-lab/lineages/60/60-v1-2",
     "surface": "lineage"
   },
   "sourceSnapshot": {

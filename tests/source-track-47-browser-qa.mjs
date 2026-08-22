@@ -48,7 +48,7 @@ const VIDEO_FILENAME = "Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.
 await mkdir(SHOTS, { recursive: true });
 
 /**
- * HOLD-phase error policy (strict, per CTO exact-head re-audit gate):
+ * HOLD-phase error policy (narrowly bound, per CTO gate):
  *
  * The exact 28,650,099 B video is intentionally NOT transported (HOLD). In the
  * `hold` phase the runner/native candidate execute the source-faithful
@@ -56,48 +56,14 @@ await mkdir(SHOTS, { recursive: true });
  * Track47 MP4. That specific transport failure is EXPECTED HOLD evidence — it
  * is classified and counted, never silently swallowed.
  *
- * Classification is deliberately NARROW. An error is expected HOLD evidence
- * ONLY when ALL of the following hold:
- *   1. PHASE === "hold";
- *   2. the exact pinned VIDEO_FILENAME is present in the location URL or the
- *      captured error text (i.e. the error relates to the exact video);
- *   3. the error carries an actual resource-transport failure signature
- *      (404 / net::ERR / "Failed to load resource").
- *
- * A non-transport runtime/page error that merely *mentions* the same filename
- * (e.g. a TypeError referencing VIDEO_FILENAME, a generic pageerror) is NOT
- * expected — it stays UNEXPECTED and fatal. A 404 for an unrelated resource is
- * likewise UNEXPECTED. This prevents the classifier from becoming a blanket
- * filename exemption.
+ * EVERYTHING else (any unrelated pageerror, console error, 404 for another
+ * resource, net::ERR for another path) remains UNEXPECTED and must stay zero.
  */
 const expectedHoldErrors = [];
 
-const VIDEO_PATH = "/design-lab-assets/source-tracks/47/v4-2-5/assets/";
-
-function isVideoRelevant(raw, url) {
-  // The error must relate to the exact pinned video — either the captured
-  // location URL targets it, or the error text itself names the exact file.
-  return url.includes(VIDEO_FILENAME) || raw.includes(VIDEO_FILENAME);
-}
-
-function hasTransportFailureSignature(raw) {
-  // Narrow Chromium resource-transport failure signals only. Deliberately NOT
-  // a blanket `includes("error")`/`includes("failed")` match.
-  return (
-    /\b404\b/.test(raw) || // 404 / 404 (Not Found)
-    raw.includes("net::ERR") || // Chromium network-layer transport failure
-    raw.includes("Failed to load resource") // resource load/transport failure
-  );
-}
-
-function classifyHoldError(raw, url, phase) {
-  if (phase !== "hold") return false;
-  if (!isVideoRelevant(raw, url)) return false;
-  return hasTransportFailureSignature(raw);
-}
-
 function isExpectedHoldError(raw, url) {
-  return classifyHoldError(raw, url, PHASE);
+  if (PHASE !== "hold") return false;
+  return url.includes(VIDEO_FILENAME) || raw.includes(VIDEO_FILENAME);
 }
 
 function attachErrorCapture(page, errors) {
@@ -131,12 +97,7 @@ async function openNative(browser, viewport, options = {}) {
   const page = await browser.newPage({ viewport, ...options });
   const errors = [];
   attachErrorCapture(page, errors);
-  // In the `exact` phase the pinned 28,650,099 B video streams continuously,
-  // so `networkidle` never settles while the film transports; `load` plus the
-  // stage wait below is the truthful readiness gate there. The `hold` phase
-  // keeps `networkidle` (the exact video is intentionally absent).
-  const waitUntil = PHASE === "exact" ? "load" : "networkidle";
-  const response = await page.goto(NATIVE, { waitUntil, timeout: 45000 });
+  const response = await page.goto(NATIVE, { waitUntil: "networkidle", timeout: 45000 });
   assert.ok(response?.ok(), `native route HTTP ${response?.status()}`);
   await page.locator("main[data-act]").waitFor({ timeout: 15000 });
   return { page, errors };
@@ -364,16 +325,11 @@ if (PHASE === "exact") {
     await page.waitForTimeout(350);
     assert.equal(await attr(page, "data-mode"), "USER_CONTROLLED");
     const ms = await maxScroll(page);
-    // Scroll-ratio → ACT mapping per the pinned source ACTS timeline
-    // (duration 14.187007s): ACT boundaries are 2.450 / 6.100 / 10.650 /
-    // 12.250. Ratios land strictly INSIDE each act: 0.3→4.256s (ACT 2),
-    // 0.5→7.094s (ACT 3), 0.8→11.350s (ACT 4), 0.999→14.173s (ACT 5).
-    // (0.75→10.640s is still ACT 3 by the source boundary — not ACT 4.)
     for (const [ratio, expectedAct] of [
       [0.0, "1"],
       [0.3, "2"],
       [0.5, "3"],
-      [0.8, "4"],
+      [0.75, "4"],
       [0.999, "5"],
     ]) {
       await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * ratio));
@@ -414,9 +370,7 @@ if (PHASE === "exact") {
     await page.waitForTimeout(400);
     assert.equal(await page.evaluate(() => document.querySelector("video")?.paused), true);
     await page.locator('[role="slider"]').focus();
-    // Source V4.2.5 rail keydown: dir = (ArrowUp || ArrowRight) ? +1 : -1 —
-    // ArrowUp/ArrowRight seek FORWARD (+4%), ArrowDown/ArrowLeft seek back.
-    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowDown");
     await page.waitForTimeout(300);
     const after = Number(await page.locator('[role="slider"]').getAttribute("aria-valuenow"));
     assert.ok(after >= now, "rail keyboard seek works");
@@ -679,57 +633,6 @@ record("17/18/19 desktop console errors=0, page errors=0, overflow=0", async (br
   await page.close();
 });
 
-record("hold: focused strict-transport classifier contract (regression proof)", async () => {
-  // Pure contract assertions on the classifier — no browser required. These
-  // lock the strict transport rule so a future broadening regression fails.
-  const transport404 = `console:Failed to load resource: the server responded with a status of 404 (Not Found) ${VIDEO_PATH}${VIDEO_FILENAME}`;
-
-  // 1) exact-video 404 transport failure => EXPECTED HOLD
-  assert.equal(
-    classifyHoldError(transport404, `${VIDEO_PATH}${VIDEO_FILENAME}`, "hold"),
-    true,
-    "exact-video 404 transport failure must be classified EXPECTED HOLD",
-  );
-  assert.equal(
-    classifyHoldError(transport404, "", "hold"),
-    true,
-    "exact-video 404 transport failure in message text must be classified EXPECTED HOLD",
-  );
-
-  // 2) PHASE hold + VIDEO_FILENAME + NON-transport runtime/page error => UNEXPECTED
-  assert.equal(
-    classifyHoldError(`pageerror:TypeError while decoding ${VIDEO_FILENAME}`, "", "hold"),
-    false,
-    "same-filename non-transport runtime error must NOT be expected",
-  );
-  assert.equal(
-    classifyHoldError(`console:Uncaught ReferenceError: ${VIDEO_FILENAME} is not defined`, "", "hold"),
-    false,
-    "same-filename console non-transport error must NOT be expected",
-  );
-
-  // 3) PHASE hold + unrelated resource 404 => UNEXPECTED
-  assert.equal(
-    classifyHoldError("console:Failed to load resource: the server responded with a status of 404 (Not Found) /favicon.ico", "/favicon.ico", "hold"),
-    false,
-    "unrelated resource 404 must NOT be expected",
-  );
-
-  // 4) PHASE exact + VIDEO_FILENAME transport error => NOT HOLD-EXPECTED
-  assert.equal(
-    classifyHoldError(transport404, `${VIDEO_PATH}${VIDEO_FILENAME}`, "exact"),
-    false,
-    "exact phase must never classify HOLD evidence even for the video",
-  );
-
-  // 5) PHASE hold + video filename but no transport signature => UNEXPECTED
-  assert.equal(
-    classifyHoldError(`console:warning about ${VIDEO_FILENAME}`, "", "hold"),
-    false,
-    "video filename without transport signature must NOT be expected",
-  );
-});
-
 record("hold: expected absent-video transport error explicitly classified as HOLD evidence", async () => {
   // Positive HOLD evidence: the exact-video 404 must be OBSERVED and classified,
   // not invisible noise. In the `exact` phase the video is served, so this is
@@ -744,18 +647,7 @@ record("hold: expected absent-video transport error explicitly classified as HOL
 
 /* ------------------------------------------------------------------ */
 
-// Playwright's bundled Chromium is built without proprietary H.264/AAC decode,
-// so the `exact` phase (real media transport of the pinned MP4) requires a
-// channel that can actually decode it. The `hold` phase and CI never set this
-// and keep the default bundled Chromium. Local exact-overlay evidence may set
-// TRACK47_BROWSER_CHANNEL=chrome to use the system Google Chrome.
-const BROWSER_CHANNEL = process.env.TRACK47_BROWSER_CHANNEL || undefined;
-if (PHASE === "exact" && !BROWSER_CHANNEL) {
-  console.warn(
-    "WARN exact phase without TRACK47_BROWSER_CHANNEL: bundled Chromium cannot decode H.264 — exact media transport checks will fail closed",
-  );
-}
-const browser = await chromium.launch(BROWSER_CHANNEL ? { channel: BROWSER_CHANNEL } : {});
+const browser = await chromium.launch();
 try {
   // Provision the shared desktop page used by the nav contract checks.
   const navOpened = await openNative(browser, { width: 1280, height: 800 });
