@@ -139,19 +139,25 @@ for (const viewport of [{ name: "desktop", width: 1280, height: 800 }, { name: "
           const sticky = await opened.page.locator(".v4-story-sticky").evaluate((node) => getComputedStyle(node).position);
           assert.equal(sticky, "sticky");
           await opened.page.locator(".v4-story-rail button").nth(2).click();
-          // Chapter transition (#408): wait for the rail selection state AND
-          // the sticky chapter heading to actually reflect chapter 3 instead
-          // of sleeping a fixed 650ms.
+          // Chapter transition (#408): the click applies chapter state
+          // immediately and then drives a smooth scroll whose progress
+          // handler recomputes the chapter mid-flight, so the target state
+          // can transiently appear and revert. Require the chapter-3 state
+          // (rail selection + sticky heading) to PERSIST across consecutive
+          // polls instead of sleeping a fixed 650ms.
           await waitForCondition(
             opened.page,
             () => {
               const buttons = [...document.querySelectorAll(".v4-story-rail button")];
               const third = buttons[2];
               const stickyHeading = document.querySelector(".v4-story-sticky h1");
-              return Boolean(
-                third?.classList.contains("is-active") &&
-                  stickyHeading?.textContent?.trim() === "여름 여행",
-              );
+              const settled =
+                Boolean(third?.classList.contains("is-active")) &&
+                stickyHeading?.textContent?.trim() === "여름 여행";
+              const state = window;
+              state.__finalSurfacesChapter3Ticks =
+                settled ? (state.__finalSurfacesChapter3Ticks ?? 0) + 1 : 0;
+              return state.__finalSurfacesChapter3Ticks >= 8;
             },
             () => ({
               pathname: location.pathname,
@@ -163,7 +169,7 @@ for (const viewport of [{ name: "desktop", width: 1280, height: 800 }, { name: "
               scrollY,
               documentReadyState: document.readyState,
             }),
-            'story chapter 3 ("여름 여행") active after rail click',
+            'story chapter 3 ("여름 여행") settled after rail click',
           );
           assert.ok(await opened.page.getByRole("heading", { name: "여름 여행", exact: true }).count());
         }
