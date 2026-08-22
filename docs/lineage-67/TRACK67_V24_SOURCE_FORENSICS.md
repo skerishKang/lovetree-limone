@@ -14,7 +14,7 @@
     - `04_V2.3_INTERACTIVE_INSPECTION`
     - `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION` (three same-title builds: 07:58 / 09:19 / 09:41)
     - `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY` (`1ZpfO70MXaHhnEGI-BNq7EOEI28PGwri7`)
-    - `07_V2.4.2_WORKS_COMPARE_MENU` (`12xJFNBvcVDP-zvTjssicd7QoXVyR0tp6QTNa3ulmvghcKKy9`) — **newest**
+    - `07_V2.4.2_WORKS_COMPARE_MENU` (`12xJFNBvcVDP-zvTjssicd7QciXXT3rOq`) — **newest**
 
 ## Freshness re-check (start-of-task, 2026-08-16 ~23:5x KST)
 

@@ -11,7 +11,7 @@
   "summary": "Track 67 V2.4 engine/texture/inspect/rewind logic, extended in V2.4.2 with a WORKS compare menu. V2.4.2 supersedes V2.4/V2.4.1 in the official 67 메모리테이프 인터랙티브롤 revision ladder. The exact source implementation is RAW_WEBGL2 / CUSTOM_WEBGL (Three.js = 0); the repository native candidate renders through the webgl discriminator while preserving the same ribbon surface the hit-test intersects.",
   "provenance": {
     "sourceLabel": "Track 67 V2.4.2 / Drive 18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
-    "driveFolderId": "18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
+    "driveFolderId": "12xJFNBvcVDP-zvTjssicd7QciXXT3rOq",
     "sourceFiles": [
       "track67_v2.4.2_works_compare_menu.html",
       "V2.4.2_SHA256SUMS.txt",
@@ -33,6 +33,33 @@
       "sha256": "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f",
       "role": "executable",
       "status": "PINNED"
+    },
+    {
+      "filename": "01_Assets/M01~M16 (16종)",
+      "driveId": "1ZyjKv7gcMEg9krN0JHX8_C1zi0OJ_g06",
+      "role": "asset-set",
+      "status": "PINNED",
+      "folderId": "1Hco1hHRwRybxg-UlJvjNf2jX0kI5Mydl",
+      "assetsFolderId": "1ZyjKv7gcMEg9krN0JHX8_C1zi0OJ_g06",
+      "note": "V2.4.2 패키지(07_V2.4.2)에는 01_Assets가 누락됨. 원본 16종은 05_V2.4 09:19 빌드(위 folderId)의 01_Assets(위 assetsFolderId)에 존재하며, V2.4.2는 해당 세트를 상속. 서버측 SHA256 전수 실측(rclone lsjson --hash, 2026-08-22, lovetree-limone#372).",
+      "fileHashes": [
+        { "path": "01_Assets/M01_FIRST_CLUE_STAIRS.png", "bytes": 2755503, "sha256": "bae9d6f7509f3e294ce8ce66b255af6f58581ae7da7ee28abcb93fee28ebb4c1", "driveId": "1PtA1ZNxH1q5QuxRWjipGy4HN0IsPM_qU" },
+        { "path": "01_Assets/M02_FAN_A_MAIN.png", "bytes": 1916821, "sha256": "bffda41103a96ad12be665c4e1505bab8b0de4a3ac827078fe4893c2d3430bbf", "driveId": "1g0_KdMst_jY4Ny1DWxXty-9Eo-hdyyTf" },
+        { "path": "01_Assets/M03_EYE_MACRO.png", "bytes": 2509987, "sha256": "6c49bf1a67ebd03afb04a5cfb76c55cafb930dc0cf052b0b1b3525bed24fe6eb", "driveId": "19MhcWHT8O0hNSA1smV8VobS0qGZy8G0u" },
+        { "path": "01_Assets/M04_PURPLE_STAGE.png", "bytes": 2576903, "sha256": "65428d0734ccb5983d809b90c68f370b6e7841a4adcd0e74df0e02cdc94efd1d", "driveId": "1JEkbGY9LeyNbmGnAfREL91h9yYjXeJFv" },
+        { "path": "01_Assets/M05_MICROPHONE.png", "bytes": 2438634, "sha256": "78a29f0a24309db4098d43acacb50ef81577e9669ec6a8a553dc37b57bca5598", "driveId": "1jD97QwjTZWUX8edycnfyupLARMmRqoJc" },
+        { "path": "01_Assets/M06_INTERVIEW_CANDID.png", "bytes": 2361300, "sha256": "861e65673b267a09ed54b60a0bb4ccdbb8a3383120501467a4215e7a273283cb", "driveId": "1MC8VpeIXcQU-LEV44tOi5sZ4MeG_DdQX" },
+        { "path": "01_Assets/M07_BW_EDITORIAL.png", "bytes": 1874013, "sha256": "967e8ae92e016c003ce7d44dc3f46740906b5a8254688d35621248468928da80", "driveId": "1yIj_Vmk4lfDUV6M1LGc1rosqHC4za0AM" },
+        { "path": "01_Assets/M08_BLUE_NOIR.png", "bytes": 2137504, "sha256": "4dc10280cb6cbf1397581d7756147471837de16d623590bbc50db96cfca9b939", "driveId": "1vqSJ8cOwuB543RWQQ2ZkzIlnk_WxxxoW" },
+        { "path": "01_Assets/M09_CAMERA_MOMENT.png", "bytes": 2022761, "sha256": "730d568a5b96e3318abbd8e401ee351606f5a9aaa0c115be0b338e1725deaf94", "driveId": "1coZbhsj4QcbRngoMSpfO5ZVAUX_irc_r" },
+        { "path": "01_Assets/M10_POLAROID_PORTRAIT.png", "bytes": 2362143, "sha256": "6b201984e75dcb9d7de9bd71936d3ae10208622bf9f0e087b4fad8bba0dbcf8e", "driveId": "1kr3gawfM3hqdxXoidJsBDfO3WhK9NYu1" },
+        { "path": "01_Assets/M11_FIRST_CLUE_KEYFRAME.jpg", "bytes": 674574, "sha256": "9075e80974699b5ee34f801ab22e247b1d6d6cd5a8a7f37f8b3c94b2d87d9ee7", "driveId": "1exQoR3nnB_FOAxxT7t9muPmF7moiC0UY" },
+        { "path": "01_Assets/M12_MY_LOVETREE.jpg", "bytes": 819173, "sha256": "2a2f863d3c8da4a9aa995b3aca7a855ec18d09e9704955ea11dfd44ed576c0b7", "driveId": "1shZLAsdBiD0VOGLHa_AhASrqNQadmprl" },
+        { "path": "01_Assets/M13_FILM_STRIP.png", "bytes": 2335855, "sha256": "79605458d95c43fda5c3278112d27a601c8d91c94a4b958cb5b8ffac8a7f08fb", "driveId": "1IIHAMnF84U6YGap8hGL5OagNIAqksRFg" },
+        { "path": "01_Assets/M14_WARM_CANDID.png", "bytes": 2363472, "sha256": "16c438013ae28b7a2177434afb597f6d77f29fa743e28b0658cfdc3967ef13dd", "driveId": "1vJpSXXCAfDi3NiXGhe74a0Uc4jX81sTJ" },
+        { "path": "01_Assets/M15_NATURAL_PORTRAIT.png", "bytes": 2138084, "sha256": "b21e1f53c6e2798ba22495137bd56f9481c1c276a264b22c12b2e9fd663392b9", "driveId": "1WsdwlEt3vL9jY1aSw-7A5UvFU_LncplC" },
+        { "path": "01_Assets/M16_WIDE_FINAL.png", "bytes": 2859371, "sha256": "396413da65259e7a63c46fef42bd3e4e215a61d6cda9520ef7ea2b40d735dfd4", "driveId": "1-nI23fGeeJtUjwJkhOXIRSX-h-LXbU5g" }
+      ]
     }
   ],
   "intakeContract": {
