@@ -35,7 +35,17 @@ test("Lineage 57 registers V1 baseline and V2 interaction Revision without a new
   assert.equal(candidate.revisionId, "57-v2-reactive-character-lubt");
 });
 
-test("exact archived source restores to pinned Drive bytes and V2 is V1 plus only CSS/JS overlay links", async () => {
+test("exact archived source restores to pinned Drive bytes and V2 is V1 plus only CSS/JS overlay links", async (t) => {
+  const xzProbe = spawnSync("xz", ["--version"], { encoding: "utf8" });
+  if (xzProbe.error || xzProbe.status !== 0) {
+    t.skip(
+      "AVAILABILITY-PROBE(xz) [D7-2 #369/#379]: xz binary not found on this runner, " +
+        "so archived-source byte assertions cannot execute here (spawnSync would fail with ENOENT). " +
+        "Explicit environment skip, not a silent pass. Re-run environments where xz exists and this " +
+        "asserts for real: Linux CI (A-track P0 validation, production auto-deploy)."
+    );
+    return;
+  }
   const v1 = await restoreArchive(LINEAGE_57_SOURCES.v1Index.gitArchivePath);
   const v2 = await restoreArchive(LINEAGE_57_SOURCES.v2Index.gitArchivePath);
   const js = await restoreArchive(LINEAGE_57_SOURCES.v2Js.gitArchivePath);
