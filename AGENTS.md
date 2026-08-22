@@ -113,17 +113,17 @@ Google Drive and sibling-project originals are evidence/reference sources unless
 
 The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository. For current shared-platform architecture, however, fresh connected GitHub authority in LoveBud #4004/#4005/#4006 is controlling rather than an old mirrored snapshot.
 
-## Mandatory WSL-native workspace
+## Workspace policy: WSL / Windows dual-track
 
-Run active development and verification only from the WSL Linux filesystem, normally:
+Both WSL and Windows are approved environments for active development and verification. Work happens only in dedicated per-Lane worktrees, never in a bare or shared checkout.
 
-```text
-$HOME/worktrees/**
-```
+- **One worktree per Lane.** Every concurrent work Lane (agent/session/work room) owns exactly one dedicated worktree on its declared OS-native filesystem:
+  - WSL: `$HOME/worktrees/**`
+  - Windows: a dedicated per-Lane worktree directory on a native NTFS path
+- **OS ownership is fixed per Lane.** Each Lane declares its owning OS (WSL or Windows) at start and must not switch OS mid-task. Never run one Lane's worktree from both operating systems.
+- Do not run repository workloads from cross-mounted paths such as `/mnt/c/**` or `/mnt/g/**`; run them inside the Lane's own worktree on the owning OS's native filesystem.
 
-Do not run repository workloads from Windows-mounted paths such as `/mnt/c/**` or `/mnt/g/**`.
-
-Prohibited on Windows-mounted paths:
+Prohibited on cross-mounted paths (`/mnt/c/**`, `/mnt/g/**` and equivalents):
 
 - `npm ci` / `npm install`
 - lint, typecheck, tests, build or `db:check`
@@ -131,7 +131,22 @@ Prohibited on Windows-mounted paths:
 - Playwright / Chromium / browser capture matrices
 - bulk generation/scanning/copying of repository working files
 
-Windows-mounted drives may be used for read-only source archives and exported evidence/artifacts after WSL work is complete.
+Windows-mounted drives may be used for read-only source archives and exported evidence/artifacts after the owning Lane's work is complete.
+
+### Shared root is a sync surface only
+
+The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a workspace. Do not edit, build, test, run servers or otherwise perform task work directly inside it. Only sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`); do all real work in a per-Lane worktree.
+
+### Heavy processes require CTO pre-approval
+
+Docker, virtual machines and other heavyweight processes (container runtimes, emulators, large parallel builds, bulk capture/scanning jobs) must not be started without explicit prior CTO approval. This rule is codified following an unauthorized Docker execution incident. Record the approval (issue or message link) before launching.
+
+### GitHub is the single ledger
+
+All durable work state lives on GitHub, not on any local disk.
+
+- Before starting work: `git fetch origin` and base the Lane on current `origin/main`.
+- After finishing work: push the Lane branch and open/update the PR. Local-only commits are not a completion state.
 
 Before implementation or validation, record:
 
@@ -162,7 +177,7 @@ See `docs/operations/WSL_WORKSPACE_POLICY.md` for migration/recovery details.
 
 ## Validation
 
-For ordinary code changes, use the repository's current validation scripts from a WSL-native workspace:
+For ordinary code changes, use the repository's current validation scripts from the Lane's owning native workspace (WSL or Windows, per the workspace policy above):
 
 ```bash
 npm ci
