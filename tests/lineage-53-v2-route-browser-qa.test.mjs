@@ -50,7 +50,7 @@ async function replayFromStart(page) {
   await page.locator(".lt53-motion__connection-active-inner").waitFor({ timeout: 3000 });
 }
 
-test("Lineage 53 V2 — native route matches the source replay contract at desktop and mobile", { timeout: 120000 }, async () => {
+test("Lineage 53 V2 — native route matches the source replay contract at desktop and mobile", { timeout: 240000 }, async () => {
   const browser = await chromium.launch({ headless: true });
   try {
     for (const scenario of [
@@ -76,9 +76,47 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
         assert.equal(pausedOffsetAfter, pausedOffset, `${scenario.label}: pause freezes the active Connection light`);
 
         await page.getByRole("button", { name: "RESUME", exact: true }).click();
-        await page.waitForTimeout(320);
-        const resumedOffset = await activePath.evaluate((node) => node.style.strokeDashoffset);
-        assert.notEqual(resumedOffset, pausedOffset, `${scenario.label}: resume continues the active Connection light`);
+        // The light advances on the animation frame after the resume commit.
+        // Sample-at-a-fixed-delay lost here twice (#344 production-deploy
+        // incidents at a fixed 320ms) because a stalled renderer frame
+        // leaves the paused value on screen. Wait for the transition itself.
+        // The predicate runs in Playwright's isolated world, so it must not
+        // use cross-realm constructors (instanceof HTMLElement is always
+        // false for SVG nodes there). Disappearance of the active node
+        // counts as progression too: the replay has moved past this
+        // Connection toward the climax. On timeout, attach a rAF frame
+        // counter and control-bar state to classify the stall:
+        //   frames === 0            -> renderer/main-thread stall (env)
+        //   frames > 0, same offset -> pausedRef stuck (product side)
+        // The resume-continues contract below stays a hard assertion.
+        await page.evaluate(() => {
+          window.__l53frames = 0;
+          const tick = () => {
+            window.__l53frames += 1;
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+        try {
+          await page.waitForFunction(
+            (previous) => {
+              const node = document.querySelector(".lt53-motion__connection-active-inner");
+              if (!node) return true;
+              return node.style.strokeDashoffset !== previous;
+            },
+            pausedOffset,
+            { timeout: 45000, polling: 100 },
+          );
+        } catch {
+          const diag = await page.evaluate(() => JSON.stringify({
+            visibility: document.visibilityState,
+            frames: window.__l53frames ?? null,
+            activeNodePresent: !!document.querySelector(".lt53-motion__connection-active-inner"),
+            offsetNow: document.querySelector(".lt53-motion__connection-active-inner")?.style.strokeDashoffset ?? null,
+            controls: [...document.querySelectorAll(".lt53-motion__controls button")].map((b) => `${b.textContent}${b.disabled ? ":disabled" : ""}`),
+          }), { timeout: 10000 }).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+          assert.fail(`${scenario.label}: resume continues the active Connection light [${diag}]`);
+        }
 
         const speed = page.getByRole("button", { name: /SPEED/ });
         assert.equal(await speed.innerText(), "SPEED 1×");
