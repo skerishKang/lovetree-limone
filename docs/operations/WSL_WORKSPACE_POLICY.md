@@ -1,46 +1,118 @@
-# LoveTree WSL Workspace Policy
+# LoveTree WSL / Windows Workspace Policy
 
-## Status
+## Status and precedence
 
-Mandatory for active LoveTree implementation, validation and browser work.
+This document is a subordinate operational guide for the repository workspace policy in `AGENTS.md`.
 
-This policy exists because the same LoveTree/Node workloads that stalled or became unreliable on Windows-mounted NTFS paths completed normally from WSL-native ext4 worktrees.
+**Controlling authority:** `AGENTS.md` → `Workspace policy: WSL / Windows dual-track`.
 
-## Active workspace
+If this document and `AGENTS.md` ever disagree, `AGENTS.md` wins. Issue #369 records the current staged Windows-parity program; Issue #397 tracks this documentation reconciliation.
 
-Use one isolated repository clone/worktree per assignment under:
+Current rule:
+
+```text
+OS-neutral mutation / ordinary local validation = WINDOWS FIRST
+Linux-specific work                           = WSL NATIVE
+local browser QA not yet Windows-parity-approved = WSL READ-ONLY VERIFICATION or GitHub Actions Linux
+final exact-head integration authority        = GitHub Actions Linux
+```
+
+This document no longer imposes a repository-wide WSL mandate.
+
+## One Lane, one owning OS
+
+Every active implementation or mutation Lane declares one primary OS at start and keeps that ownership for the life of the Lane.
+
+- Windows Lane → dedicated worktree on native NTFS.
+- WSL Lane → dedicated worktree on WSL-native ext4 under `$HOME/worktrees/**`.
+- Never use the same mutation Lane/worktree from both operating systems.
+- Never move the primary mutation Lane to WSL merely because one verification step still requires Linux/browser parity.
+
+When cross-OS evidence is required, create a **separate read-only verification worktree at the exact pushed head**. Do not continue mutation from that verification worktree.
+
+## Windows-native work
+
+For OS-neutral Git and repository work, Windows is the default local environment.
+
+Typical Windows-owned work includes:
+
+- branch/worktree creation and ordinary Git merge-forward;
+- source edits;
+- `npm ci` / dependency installation;
+- lint;
+- typecheck;
+- unit/contract tests that are Windows-parity-approved;
+- build and `db:check` when the task is OS-neutral;
+- repository inspection and evidence generation that does not require a Linux-specific runtime.
+
+Use a dedicated per-Lane native NTFS worktree. The shared repository root is administration/sync only and is not an execution workspace.
+
+## WSL-native work
+
+Use WSL when the task is explicitly Linux-specific, when the Lane was declared WSL-owned at start, or when current parity evidence says the relevant local browser/runtime verification still requires WSL.
+
+WSL worktrees must live on WSL-native storage such as:
 
 ```text
 $HOME/worktrees/**
 ```
 
-Do not use `/mnt/c/**`, `/mnt/g/**` or another Windows-mounted filesystem as an active repository workspace.
+Do not run active repository workloads from `/mnt/c/**`, `/mnt/g/**`, or other Windows-mounted paths inside WSL. The concern is cross-filesystem WSL↔NTFS I/O, not native Windows execution itself.
 
-Windows drives may still hold read-only source archives, backups and final exported evidence/artifacts.
+Prohibited from WSL cross-mounted paths:
 
-## Workloads prohibited on Windows-mounted paths
+- `npm ci` / `npm install`;
+- lint, typecheck, tests, build, `db:check`;
+- development servers;
+- Playwright / Chromium / browser matrices;
+- bulk repository generation/scanning/copying.
 
-Do not run from `/mnt/c` or `/mnt/g`:
+## Browser QA transition rule
 
-- `npm ci` / `npm install`
-- `npm run lint`
-- `npm run typecheck`
-- `npm test`
-- `npm run build`
-- `npm run db:check`
-- development servers
-- Playwright / Chromium / browser capture matrices
-- bulk repository generation/scanning/copying
+Issue #369 is the authority for Windows browser-QA parity.
 
-A Git worktree on NTFS prevents branch conflicts but does not remove WSL↔NTFS small-file I/O overhead.
+Until a browser suite is explicitly accepted as Windows-parity-ready:
 
-## Mandatory preflight
+1. keep the primary mutation Lane on its declared OS;
+2. push the exact candidate head;
+3. use GitHub Actions Linux as the final exact-head authority;
+4. if local Linux/browser evidence is specifically required, use a separate WSL-native **read-only** verification worktree at that exact head.
 
-Before editing, validating or launching a browser:
+Do not interpret "browser QA still uses WSL" as "all implementation, Git, lint, typecheck and build must run in WSL".
+
+## Shared root is administration only
+
+The shared root checkout:
+
+```text
+G:\Ddrive\BatangD\task\workdiary\lovetree-limone
+```
+
+is a sync / worktree-administration surface only.
+
+Allowed there:
+
+- `git fetch` / `git push`;
+- `git worktree add/remove/list`;
+- branch/ref administration needed to create isolated Lane worktrees.
+
+Do not edit, build, test, launch servers or run browser QA directly from the shared root.
+
+## Mandatory Lane declaration
+
+At task start, record:
+
+```text
+PRIMARY_OS = WINDOWS | WSL
+WORKTREE = <native path>
+BRANCH = <lane branch>
+MUTATION_BOUNDARY = <owned files/scope>
+CROSS_OS_VERIFICATION = NONE | READ_ONLY_WSL | READ_ONLY_WINDOWS | GITHUB_ACTIONS_ONLY
+```
+
+Before implementation or validation, also record the environment state appropriate to the owning OS:
 
 ```bash
-pwd
-df -T .
 node --version
 npm --version
 git branch --show-current
@@ -49,67 +121,24 @@ git status --short
 git remote -v
 ```
 
-Stop and report a blocker when:
+For WSL additionally confirm the filesystem/path is WSL-native. For Windows confirm the worktree is a dedicated native NTFS path and is not the shared root.
 
-- the path is under `/mnt/c` or `/mnt/g`;
-- the filesystem is not the intended Linux filesystem;
-- Node does not satisfy the repository/task requirement;
-- branch/HEAD differs from the authorized base;
-- the worktree contains unexplained changes;
-- a required remote ref cannot be resolved without guessing.
+Stop rather than guess when the branch, starting SHA, worktree ownership or filesystem differs from the assignment.
 
-## Creating a clean workspace
+## GitHub is the durable ledger
 
-Typical pattern:
+Local-only state is never completion.
 
-```bash
-mkdir -p "$HOME/worktrees"
-cd "$HOME/worktrees"
-git clone https://github.com/skerishKang/lovetree-limone.git lovetree-<task>
-cd lovetree-<task>
-git fetch origin --prune
-```
+Before starting work that depends on the latest baseline, fresh-query/fetch current `origin/main`. After intentional mutation, push the Lane branch and use the PR/exact-head GitHub state as the durable record.
 
-Create/checkout the task branch only from the exact authorized base.
+Historical SHAs, old local worktrees and old CI reports are evidence only.
 
-## Moving uncommitted work
+## Validation authority
 
-Prefer Git patches rather than copying a whole Windows worktree:
-
-```bash
-# old worktree
-git diff --binary > /tmp/lovetree-worktree.patch
-git diff --cached --binary > /tmp/lovetree-index.patch
-git ls-files --others --exclude-standard
-```
-
-Apply the patches to a clean WSL clone at the same starting commit and copy only required untracked source files.
-
-After transfer compare:
-
-```bash
-git status --short
-git diff --stat
-git diff --name-status
-git diff --cached --stat
-git diff --cached --name-status
-```
-
-If a copy produces widespread CRLF/LF churn or hundreds of unrelated changes, discard that transfer and restart from a clean clone. Never commit contaminated line-ending churn.
-
-## Dependencies and validation
-
-Install dependencies only in WSL-native storage:
+Ordinary validation scripts remain:
 
 ```bash
 npm ci
-```
-
-Unless the task changes dependencies, verify `package.json` and `package-lock.json` did not change.
-
-Current full validation sequence:
-
-```bash
 npm run lint
 npm run typecheck
 npm test
@@ -117,37 +146,41 @@ npm run build
 npm run db:check
 ```
 
-Record exact failures/warnings where relevant rather than reporting only “green.”
+Run them from the Lane's owning **native** workspace. The exact subset depends on task scope and current OS parity evidence.
 
-## Browser jobs
+GitHub Actions Linux remains the final exact-head integration authority unless a later explicit repository policy changes that rule.
 
-Do not start a long Playwright/Chromium matrix with a detached `&` process inside a short-timeout shell. Use a foreground execution with sufficient timeout or an explicit process facility with log/process polling.
+## Moving or recovering work
 
-For large browser runs:
+Do not move an active mutation Lane between Windows and WSL as a routine troubleshooting step.
 
-- one capture process per assignment;
-- no duplicate Chromium matrices;
-- clean the intended output directory before a fresh run;
-- distinguish a killed/timed-out browser from an application failure;
-- record viewport, route, console/page errors, failed requests and overflow results.
+If the owning environment is genuinely blocked:
 
-A local browser mechanics harness is useful evidence but is not a deployed Preview/Production acceptance result.
+1. stop mutation;
+2. preserve/push or patch the intentional delta without rewriting history;
+3. report the environment blocker;
+4. receive a new Lane/OS decision before continuing mutation.
 
-## Exports
+A separate cross-OS verification Lane may inspect the exact pushed head without taking mutation ownership.
 
-Generate evidence in WSL first. Copy only the final artifact to a Windows drive when needed and verify source/copy hashes when fidelity matters.
+Never force-push, reset, amend, rebase, or delete unrelated worktrees merely to change environments.
 
-Do not automatically delete the old Windows worktree. Keep it until the WSL copy has the correct base, intentional diff, dependencies and validation state and cleanup is explicitly authorized.
+## Heavy processes
 
-## Git/release boundary
+Docker, virtual machines, emulators, large parallel builds and bulk browser/capture jobs require the repository's current CTO approval rule from `AGENTS.md`.
 
-Moving to WSL never grants extra product/release authority. A workspace migration does not by itself authorize:
+Environment choice never grants extra authority for provider, DB/Auth, Production, release or destructive operations.
 
-- force-pushing or resetting `main`;
-- merging unrelated/stale PRs;
-- Production deployment;
-- DB/Auth/secret mutation;
-- deleting source/reference worktrees;
-- broadening a task beyond its requested scope.
+## PR #382 incident note
 
-Use the current repository operating/release policy in `AGENTS.md` and `docs/operations/LOVETREE_RELEASE_OPERATING_POLICY.md` for those decisions.
+Issue #397 was opened after PR #382's OS-neutral current-main merge-forward was unnecessarily moved into a new WSL worktree because this file still contained the obsolete WSL-only mandate.
+
+The correct pattern is now explicit:
+
+```text
+primary PR mutation / merge-forward / OS-neutral validation = Windows-native Lane
+browser/Linux evidence, when still required                = separate read-only WSL exact-head Lane
+final CI                                                     = GitHub Actions Linux exact head
+```
+
+This incident is a documentation-policy correction, not authority to delete the historical WSL worktree or mutate unrelated branches.
