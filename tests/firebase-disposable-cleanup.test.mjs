@@ -150,7 +150,16 @@ test("deleteAccount rejects when the API reports an error", async () => {
   );
 });
 
-test("credentials file is written with restrictive permissions (mode 0600)", async () => {
+test("credentials file is written with restrictive permissions (mode 0600)", async (t) => {
+  if (process.platform === "win32") {
+    t.skip(
+      "SKIP-IF(win32) [D7-2 #369/#379]: POSIX mode bits are unenforceable on win32 " +
+        "(Node chmod maps to the NTFS read-only flag only), so stat().mode can never read 0o600 there. " +
+        "Explicit environment skip, not a silent pass. Re-run environments that assert this for real: " +
+        "Linux CI (A-track P0 validation, production auto-deploy) and any Linux/macOS host."
+    );
+    return;
+  }
   const dir = await mkdtemp(path.join(tmpdir(), "fb-cleanup-"));
   const credsFile = path.join(dir, "creds.json");
   await writeCredentialsFile({ users: USERS, apiKey: API_KEY, filePath: credsFile });
