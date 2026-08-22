@@ -11,6 +11,34 @@ const VIEWPORTS = [
   { name: "phone", width: 390, height: 844 },
   { name: "mobile", width: 320, height: 720 },
 ];
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#370 pattern):
+// every value-change expectation polls for the actual transition with an
+// explicit timeout/polling budget; the original assertion stays verbatim
+// below it, and a timeout fails loudly with self-classifying diagnostics
+// attached so a recurrence classifies itself.
+const CONDITION_WAIT = { timeout: 30000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+async function waitForLocalCondition(condition, classify, label, timeout = CONDITION_WAIT.timeout, polling = CONDITION_WAIT.polling) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if (condition()) return;
+    await new Promise((resolve) => setTimeout(resolve, polling));
+  }
+  assert.fail(
+    `${label}: condition not met within ${timeout}ms (self-classification: ${JSON.stringify(classify())})`,
+  );
+}
 
 async function openPage(browser, url, viewport) {
   const page = await browser.newPage({ viewport });
@@ -19,8 +47,17 @@ async function openPage(browser, url, viewport) {
   page.on("console", (msg) => {
     if (msg.type() === "error") errors.push(`console:${msg.text()}`);
   });
-  const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
-  await page.waitForTimeout(400);
+  const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 45000 });
+  await waitForCondition(
+    page,
+    () => document.querySelectorAll(".cin-scene").length === 16,
+    () => ({
+      scenes: document.querySelectorAll(".cin-scene").length,
+      counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      rafTicks: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+    }),
+    `initial render mounts 16 scenes (${viewport.name})`,
+  );
   return { page, errors, resp };
 }
 test("v4 cinematic — route 200 and no errors across all viewports", async () => {
@@ -135,7 +172,15 @@ test("v4 cinematic — menu open/close, backdrop, Escape, focus trap, focus rest
 
     // Escape closes
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      () => !document.getElementById("cin-menu-overlay"),
+      () => ({
+        overlayPresent: !!document.getElementById("cin-menu-overlay"),
+        focus: document.activeElement?.className ?? null,
+      }),
+      "menu closes on Escape",
+    );
     const goneAfterEsc = (await page.locator("#cin-menu-overlay").count()) === 0;
     assert.equal(goneAfterEsc, true, "Escape closes menu");
     const restoredFocus = await page.evaluate(
@@ -149,7 +194,15 @@ test("v4 cinematic — menu open/close, backdrop, Escape, focus trap, focus rest
     const overlay = page.locator("#cin-menu-overlay");
     const box = await overlay.boundingBox();
     await page.mouse.click(box.x + box.width - 5, box.y + 5);
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      () => !document.getElementById("cin-menu-overlay"),
+      () => ({
+        overlayPresent: !!document.getElementById("cin-menu-overlay"),
+        focus: document.activeElement?.className ?? null,
+      }),
+      "menu closes on backdrop click",
+    );
     const goneAfterBackdrop = (await page.locator("#cin-menu-overlay").count()) === 0;
     assert.equal(goneAfterBackdrop, true, "backdrop click closes menu");
 
@@ -169,8 +222,16 @@ test("v4 cinematic — reduced motion disables canvas and keeps navigation usabl
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(`console:${msg.text()}`);
     });
-    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(400);
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 45000 });
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-scene").length === 16,
+      () => ({
+        scenes: document.querySelectorAll(".cin-scene").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "reduced motion: initial render mounts 16 scenes",
+    );
     const state = await page.evaluate(() => ({
       reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
       dataReduced: document.querySelector("[data-cinematic-root]")?.getAttribute("data-cin-reduced"),
@@ -199,7 +260,18 @@ test("v4 cinematic — full 16-scene scroll pass stays within bounds and rAF doe
       const rb = page.locator(`.cin-rail button[aria-label="${i + 1}번 장면"]`);
       const rbox = await rb.boundingBox();
       await page.mouse.click(rbox.x + rbox.width / 2, rbox.y + rbox.height / 2);
-      await page.waitForTimeout(250);
+      await waitForCondition(
+        page,
+        (e) => document.querySelector(".cin-counter span")?.textContent === e,
+        (e) => ({
+          expected: e,
+          counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+          scrollY: Math.round(window.scrollY),
+          maxScroll: document.documentElement.scrollHeight - innerHeight,
+        }),
+        `full pass reaches scene ${i + 1}`,
+        String(i + 1).padStart(2, "0"),
+      );
     }
     const after = await page.evaluate(() => ({
       scrollY: Math.round(window.scrollY),
@@ -301,8 +373,16 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(`console:${msg.text()}`);
     });
-    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(300);
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 45000 });
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-scene").length === 16,
+      () => ({
+        scenes: document.querySelectorAll(".cin-scene").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "scene-12 test: initial render mounts 16 scenes",
+    );
 
     // navigate to scene 12 and wait for it to become active
     const sbtn = page.locator('.cin-rail button[aria-label="12번 장면"]');
@@ -312,7 +392,15 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
       () => document.querySelector(".cin-counter span")?.textContent === "12",
       { timeout: 8000 },
     );
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-shard").length === 12,
+      () => ({
+        shards: document.querySelectorAll(".cin-shard").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "scene 12 shard field mounts",
+    );
 
     const shards = await page.evaluate(() => {
       const list = document.querySelectorAll(".cin-shard");
@@ -340,7 +428,23 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
       return s ? getComputedStyle(s).transform : "none";
     });
     await page.mouse.wheel(0, 200);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      (prev) => {
+        const s = document.querySelector(".cin-shard");
+        return !!s && getComputedStyle(s).transform !== prev;
+      },
+      (prev) => ({
+        transformBefore: prev,
+        transformNow: document.querySelector(".cin-shard")
+          ? getComputedStyle(document.querySelector(".cin-shard")).transform
+          : null,
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+      }),
+      "scene 12 shard transform changes on scroll",
+      t1,
+    );
     const t2 = await page.evaluate(() => {
       const s = document.querySelector(".cin-shard");
       return s ? getComputedStyle(s).transform : "none";
@@ -350,7 +454,15 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
     // reduced motion: transforms remain static
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-scene").length === 16,
+      () => ({
+        scenes: document.querySelectorAll(".cin-scene").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "reduced-motion reload mounts 16 scenes",
+    );
     const rbtn = page.locator('.cin-rail button[aria-label="12번 장면"]');
     const rbox = await rbtn.boundingBox();
     await page.mouse.click(rbox.x + rbox.width / 2, rbox.y + rbox.height / 2);
@@ -362,8 +474,22 @@ test("v4 cinematic — scene 12 shard-field renders 12 workshop shards with scro
       const s = document.querySelector(".cin-shard");
       return s ? getComputedStyle(s).transform : "none";
     });
+    const scrollBeforeWheel = await page.evaluate(() => Math.round(scrollY));
     await page.mouse.wheel(0, 200);
-    await page.waitForTimeout(300);
+    // the wheel input itself must land before sampling the static transform:
+    // waiting for the applied scroll is stronger than a fixed sleep, which
+    // could pass on a gesture that never reached the page
+    await waitForCondition(
+      page,
+      (s0) => Math.round(scrollY) !== s0,
+      (s0) => ({
+        scrollBefore: s0,
+        scrollNow: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+      }),
+      "reduced-motion wheel scroll applies",
+      scrollBeforeWheel,
+    );
     const r2 = await page.evaluate(() => {
       const s = document.querySelector(".cin-shard");
       return s ? getComputedStyle(s).transform : "none";
@@ -385,12 +511,30 @@ test("v4 cinematic — fx rAF loop lifecycle (active, hidden, resume single loop
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(`console:${msg.text()}`);
     });
-    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(500);
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 45000 });
+    await waitForCondition(
+      page,
+      () => typeof window.__cinFxTicks === "number",
+      () => ({
+        hasCounter: typeof window.__cinFxTicks === "number",
+        active: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+      }),
+      "fx harness counter exposes",
+    );
 
     // active: fx ticks counter increases while visible
     const activeStart = await page.evaluate(() => window.__cinFxTicks);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      (s0) => window.__cinFxTicks > s0,
+      (s0) => ({
+        start: s0,
+        now: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+        active: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+      }),
+      "fx tick counter advances while active",
+      activeStart,
+    );
     const activeEnd = await page.evaluate(() => window.__cinFxTicks);
     assert.ok(activeEnd > activeStart, `fx loop running while active (${activeStart} -> ${activeEnd})`);
     const activeFlag = await page.evaluate(() => window.__cinFxActive);
@@ -401,7 +545,15 @@ test("v4 cinematic — fx rAF loop lifecycle (active, hidden, resume single loop
       Object.defineProperty(document, "hidden", { value: true, configurable: true });
       document.dispatchEvent(new Event("visibilitychange"));
     });
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      () => window.__cinFxActive === false,
+      () => ({
+        active: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+        ticks: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+      }),
+      "fx active flag clears while hidden",
+    );
     const hiddenTickA = await page.evaluate(() => window.__cinFxTicks);
     const hiddenFlag = await page.evaluate(() => window.__cinFxActive);
     await page.waitForTimeout(400);
@@ -414,10 +566,28 @@ test("v4 cinematic — fx rAF loop lifecycle (active, hidden, resume single loop
       Object.defineProperty(document, "hidden", { value: false, configurable: true });
       document.dispatchEvent(new Event("visibilitychange"));
     });
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      () => window.__cinFxActive === true,
+      () => ({
+        active: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+        ticks: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+      }),
+      "fx active flag returns on visibility restore",
+    );
     const resumeStart = await page.evaluate(() => window.__cinFxTicks);
     const resumeFlag = await page.evaluate(() => window.__cinFxActive);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      (s0) => window.__cinFxTicks > s0,
+      (s0) => ({
+        start: s0,
+        now: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+        active: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+      }),
+      "fx ticks resume after visibility restore",
+      resumeStart,
+    );
     const resumeEnd = await page.evaluate(() => window.__cinFxTicks);
     assert.equal(resumeFlag, true, "exactly one loop after resume (active flag true)");
     assert.ok(resumeEnd > resumeStart, "fx ticks resume after visibility restore");
@@ -425,7 +595,20 @@ test("v4 cinematic — fx rAF loop lifecycle (active, hidden, resume single loop
     // reduced motion: no loop (canvas hidden, active flag false)
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const canvas = document.querySelector(".cin-fx-canvas");
+        return !!canvas && getComputedStyle(canvas).display === "none";
+      },
+      () => ({
+        display: document.querySelector(".cin-fx-canvas")
+          ? getComputedStyle(document.querySelector(".cin-fx-canvas")).display
+          : null,
+        dataReduced: document.querySelector("[data-cinematic-root]")?.getAttribute("data-cin-reduced") ?? null,
+      }),
+      "reduced-motion reload hides fx canvas",
+    );
     const reduced = await page.evaluate(() => {
       const canvas = document.querySelector(".cin-fx-canvas");
       return {
@@ -452,14 +635,30 @@ test("v4 cinematic — autoplay state machine (Space toggle, wheel stop, menu is
 
     // Space starts autoplay (no focused control)
     await page.keyboard.press(" ");
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "true",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        focus: document.activeElement?.className ?? null,
+      }),
+      "Space starts autoplay (state machine scenario)",
+    );
     const afterSpace = await playBtn.getAttribute("aria-pressed");
     assert.equal(afterSpace, "true", "Space starts autoplay and sets aria-pressed true");
 
     // wheel stops autoplay + resets UI state
     await page.mouse.move(700, 400);
     await page.mouse.wheel(0, 60);
-    await page.waitForTimeout(500);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "false",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        scrollY: Math.round(scrollY),
+      }),
+      "wheel stops autoplay (state machine scenario)",
+    );
     const afterWheel = await playBtn.getAttribute("aria-pressed");
     assert.equal(afterWheel, "false", "wheel stops autoplay and resets UI state");
 
@@ -480,7 +679,15 @@ test("v4 cinematic — autoplay state machine (Space toggle, wheel stop, menu is
     assert.equal(counterAfter, counterBefore, "arrows do not navigate while menu open");
     // Escape closes menu
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      () => !document.getElementById("cin-menu-overlay"),
+      () => ({
+        overlayPresent: !!document.getElementById("cin-menu-overlay"),
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+      }),
+      "Escape closes menu during autoplay isolation",
+    );
     const menuGone = (await page.locator("#cin-menu-overlay").count()) === 0;
     assert.equal(menuGone, true, "Escape closes menu");
     await page.close();
@@ -497,11 +704,28 @@ test("v4 cinematic — autoplay hidden pause keeps scroll/aria and resumes forwa
 
     // Space starts autoplay
     await page.keyboard.press(" ");
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "true",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        focus: document.activeElement?.className ?? null,
+      }),
+      "Space starts autoplay (hidden-pause scenario)",
+    );
     assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "Space starts autoplay");
 
     // let it make measurable progress
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => Math.round(scrollY) > 0,
+      () => ({
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+      }),
+      "autoplay makes measurable scroll progress before hide",
+    );
     const scrollBeforeHide = await page.evaluate(() => Math.round(scrollY));
     assert.ok(scrollBeforeHide > 0, `autoplay made progress before hide (scrollY=${scrollBeforeHide})`);
 
@@ -525,7 +749,18 @@ test("v4 cinematic — autoplay hidden pause keeps scroll/aria and resumes forwa
       Object.defineProperty(document, "hidden", { value: false, configurable: true });
       document.dispatchEvent(new Event("visibilitychange"));
     });
-    await page.waitForTimeout(350);
+    await waitForCondition(
+      page,
+      (s0) => Math.round(scrollY) > s0,
+      (s0) => ({
+        retained: s0,
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+      }),
+      "autoplay resumes forward from retained position",
+      hiddenState.s2,
+    );
     const resumeState = await page.evaluate(() => ({
       scrollY: Math.round(scrollY),
       maxScroll: document.documentElement.scrollHeight - innerHeight,
@@ -543,7 +778,15 @@ test("v4 cinematic — autoplay hidden pause keeps scroll/aria and resumes forwa
     // wheel stops and clears
     await page.mouse.move(700, 400);
     await page.mouse.wheel(0, 60);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "false",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        scrollY: Math.round(scrollY),
+      }),
+      "wheel stops autoplay after resume",
+    );
     assert.equal(await playBtn.getAttribute("aria-pressed"), "false", "wheel stops autoplay");
     await page.close();
   } finally {
@@ -560,16 +803,40 @@ test("v4 cinematic — touchstart stops autoplay and natural completion resets a
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.push(`console:${msg.text()}`);
     });
-    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(400);
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 45000 });
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-scene").length === 16,
+      () => ({
+        scenes: document.querySelectorAll(".cin-scene").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "touch test: initial render mounts 16 scenes",
+    );
     const playBtn = page.locator(".cin-play");
 
     // touchstart stops autoplay
     await page.keyboard.press(" ");
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "true",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        focus: document.activeElement?.className ?? null,
+      }),
+      "Space starts autoplay (touch scenario)",
+    );
     assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "Space starts autoplay");
     await page.touchscreen.tap(700, 400);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "false",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        scrollY: Math.round(scrollY),
+      }),
+      "touchstart stops autoplay",
+    );
     assert.equal(await playBtn.getAttribute("aria-pressed"), "false", "touchstart stops autoplay");
 
     // natural completion resets aria-pressed
@@ -579,11 +846,51 @@ test("v4 cinematic — touchstart stops autoplay and natural completion resets a
       const maxScroll = document.documentElement.scrollHeight - innerHeight;
       window.scrollTo(0, maxScroll * 0.985);
     });
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        return max > 0 && Math.round(scrollY) >= max * 0.98;
+      },
+      () => ({
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+      }),
+      "page positioned near natural completion point",
+    );
     await page.keyboard.press(" ");
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "true",
+      () => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        focus: document.activeElement?.className ?? null,
+      }),
+      "autoplay running near completion",
+    );
     assert.equal(await playBtn.getAttribute("aria-pressed"), "true", "autoplay running near completion");
-    await page.waitForTimeout(4000);
+    // natural completion: poll for the actual completion transition instead of
+    // relying on a fixed upper-bound sleep (remaining duration varies with load)
+    try {
+      await page.waitForFunction(
+        () => document.querySelector(".cin-play")?.getAttribute("aria-pressed") === "false",
+        undefined,
+        { timeout: 45000, polling: 100 },
+      );
+    } catch (err) {
+      const diag = await page.evaluate(() => ({
+        pressed: document.querySelector(".cin-play")?.getAttribute("aria-pressed") ?? null,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+        rafTicks: typeof window.__cinFxTicks === "number" ? window.__cinFxTicks : null,
+        fxActive: typeof window.__cinFxActive === "boolean" ? window.__cinFxActive : null,
+      })).catch((diagErr) => ({ diagError: diagErr.message }));
+      assert.fail(
+        `natural completion did not reset aria-pressed within 20000ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+      );
+    }
     const state = await page.evaluate(() => ({
       pressed: document.querySelector(".cin-play").getAttribute("aria-pressed"),
       counter: document.querySelector(".cin-counter span").textContent,
@@ -606,8 +913,16 @@ test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", a
       const url = req.url();
       if (url.includes(".webp") && !url.includes("data:")) webpUrls.push(url);
     });
-    await page.goto(URL, { waitUntil: "networkidle", timeout: 20000 });
-    await page.waitForTimeout(500);
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 45000 });
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll(".cin-scene").length === 16,
+      () => ({
+        scenes: document.querySelectorAll(".cin-scene").length,
+        counter: document.querySelector(".cin-counter span")?.textContent ?? null,
+      }),
+      "WebP test: initial render mounts 16 scenes",
+    );
 
     const initialUnique = [...new Set(webpUrls)];
     // The menu is NOT open, and no scrolling happened yet
@@ -620,13 +935,21 @@ test("v4 cinematic — initial WebP network requests <= 2 before scroll/menu", a
     const nbtn = page.locator('.cin-rail button[aria-label="8번 장면"]');
     const nbox = await nbtn.boundingBox();
     await page.mouse.click(nbox.x + nbox.width / 2, nbox.y + nbox.height / 2);
-    await page.waitForTimeout(600);
+    await waitForLocalCondition(
+      () => new Set(webpUrls).size > initialUnique.length,
+      () => ({ baseline: initialUnique.length, capturedRequests: new Set(webpUrls).size }),
+      "WebP asset requests arrive after scene navigation",
+    );
     const afterNavUnique = new Set(webpUrls).size;
     assert.ok(afterNavUnique > initialUnique.length, "more WebP requests after scene navigation");
 
     // after menu open, thumbnails request additional assets
     await page.locator(".cin-menu-btn").click();
-    await page.waitForTimeout(800);
+    await waitForLocalCondition(
+      () => new Set(webpUrls).size > afterNavUnique,
+      () => ({ baseline: afterNavUnique, capturedRequests: new Set(webpUrls).size }),
+      "menu thumbnail WebP requests arrive after menu open",
+    );
     const afterMenuUnique = new Set(webpUrls).size;
     assert.ok(afterMenuUnique > afterNavUnique, "menu open triggers additional thumbnail requests");
     await page.close();
@@ -648,7 +971,15 @@ test("v4 cinematic — rail is ordinarily clickable without force at desktop and
     for (const vp of [VIEWPORTS[0], VIEWPORTS[3], VIEWPORTS[4]]) {
       const { page, errors } = await openPage(browser, URL, vp);
       await page.evaluate(() => window.scrollTo(0, 0));
-      await page.waitForTimeout(300);
+      await waitForCondition(
+        page,
+        () => Math.round(scrollY) === 0,
+        () => ({
+          scrollY: Math.round(scrollY),
+          maxScroll: document.documentElement.scrollHeight - innerHeight,
+        }),
+        "rail-clickable pass resets to top",
+      );
       for (const t of targets) {
         const btn = page.locator(`.cin-rail button[aria-label="${t.label}"]`);
         // ordinary pointer click via the button's real center coordinates
@@ -729,7 +1060,15 @@ test("v4 cinematic — all 16 rail controls pointer-clickable at 320x720", async
     const vp = VIEWPORTS[4]; // 320x720
     const { page, errors } = await openPage(browser, URL, vp);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => Math.round(scrollY) === 0,
+      () => ({
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+      }),
+      "320x720 pointer pass resets to top",
+    );
     for (let i = 1; i <= 16; i += 1) {
       const label = `${i}번 장면`;
       const expected = String(i).padStart(2, "0");
@@ -761,7 +1100,15 @@ test("v4 cinematic — all 16 rail controls keyboard-activatable at 320x720", as
     const vp = VIEWPORTS[4]; // 320x720
     const { page, errors } = await openPage(browser, URL, vp);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => Math.round(scrollY) === 0,
+      () => ({
+        scrollY: Math.round(scrollY),
+        maxScroll: document.documentElement.scrollHeight - innerHeight,
+      }),
+      "320x720 keyboard pass resets to top",
+    );
     // Enter activation
     for (let i = 1; i <= 16; i += 1) {
       const label = `${i}번 장면`;
