@@ -1,0 +1,701 @@
+/* Source Track 74 V2 — Orbit Morph Template Portal.
+ * Ported from reference/source-track-74-orbitmorph-portal/V2_70경로_고딕타이포_열매트리로고/index.html
+ * (pinned sha256 fcc7cad6…). Trail/entrance/nav/mobile structure preserved;
+ * story-menu targets are re-mapped through lib/source-track-74/route-map.ts.
+ * The fruit-tree symbol is a design candidate, not an approved permanent LoveTree logo. */
+
+/* Scope tokens (source :root block). */
+.scope {
+  --ink: #ffffff;
+  --surface: #161616;
+  --orb-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --orb-soft: cubic-bezier(0.25, 0.8, 0.28, 1);
+  --font-orbit-sans:
+    "LoveTree Sans", "Malgun Gothic", "Apple SD Gothic Neo", Arial, Helvetica,
+    sans-serif;
+  --font-orbit-display:
+    "LoveTree Display", "Arial Black", "Malgun Gothic", Arial, sans-serif;
+}
+
+.viewport {
+  position: fixed;
+  inset: 0;
+  background: #161616;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  contain: strict;
+  isolation: isolate;
+  background: #161616;
+  overflow: hidden;
+}
+
+.brandMark {
+  position: absolute;
+  z-index: 4;
+  top: 1.75dvh;
+  left: 3.65vw;
+  width: clamp(42px, min(3.85vw, 6.2dvh), 74px);
+  height: auto;
+  overflow: visible;
+}
+
+.brandCanopy {
+  fill: rgba(255, 255, 255, 0.035);
+  stroke: #fff;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brandTrunk,
+.brandBranch {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brandFruit {
+  fill: #fd86db;
+  stroke: #ffc5dc;
+  stroke-width: 1.2;
+}
+
+.brandLeaf {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.primaryNav {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.primaryNav > li {
+  position: absolute;
+  top: 3.426791dvh;
+  pointer-events: auto;
+  transform-origin: left center;
+}
+
+.primaryNav > li:nth-child(1) {
+  left: 10.104167vw;
+  transform: scaleX(1.165);
+}
+
+.primaryNav > li:nth-child(2) {
+  left: 17.526042vw;
+  transform: scaleX(1.052);
+}
+
+.primaryNav > li:nth-child(3) {
+  left: 27.578125vw;
+  transform: scaleX(1.126);
+}
+
+.primaryNav > li:nth-child(4) {
+  left: 36.171875vw;
+  transform: scaleX(1.168);
+}
+
+.navTrigger {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: clamp(13px, min(1.302083vw, 2.05dvh), 25px);
+  line-height: 1;
+  color: #fff;
+}
+
+.navTrigger::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--orb-soft);
+  margin-top: 0.34em;
+}
+
+.navTrigger:hover::after,
+.navTrigger[aria-expanded="true"]::after {
+  transform: scaleX(1);
+}
+
+.navPanel {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: clamp(230px, 18vw, 340px);
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(22, 22, 22, 0.88);
+  backdrop-filter: blur(18px) saturate(120%);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scaleX(calc(1 / var(--nav-scale, 1)));
+  transform-origin: left top;
+  transition:
+    opacity 0.2s ease,
+    transform 0.24s var(--orb-soft),
+    visibility 0.2s;
+  pointer-events: none;
+}
+
+.primaryNav > li:nth-child(1) {
+  --nav-scale: 1.165;
+}
+.primaryNav > li:nth-child(2) {
+  --nav-scale: 1.052;
+}
+.primaryNav > li:nth-child(3) {
+  --nav-scale: 1.126;
+}
+.primaryNav > li:nth-child(4) {
+  --nav-scale: 1.168;
+}
+
+.primaryNav > li.open .navPanel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scaleX(calc(1 / var(--nav-scale, 1)));
+  pointer-events: auto;
+}
+
+.panelLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.25;
+  letter-spacing: 0.015em;
+  color: rgba(255, 255, 255, 0.82);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.panelLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.panelLink b {
+  font-weight: 400;
+  color: #fd86db;
+}
+
+.panelHold {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.25;
+  letter-spacing: 0.015em;
+  color: rgba(255, 255, 255, 0.38);
+  cursor: default;
+}
+
+.panelHold b {
+  font-weight: 400;
+  color: rgba(253, 134, 219, 0.45);
+}
+
+.securePill {
+  position: absolute;
+  z-index: 4;
+  top: 2.336449dvh;
+  right: 7.5vw;
+  height: clamp(34px, 4.439252dvh, 57px);
+  padding: 0 clamp(18px, 1.65vw, 32px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #fff;
+  color: #161616;
+  font-size: clamp(12px, min(1.05vw, 1.85dvh), 20px);
+  letter-spacing: 0.026923em;
+  white-space: nowrap;
+  transition: transform 0.25s var(--orb-soft);
+}
+
+.securePill:hover {
+  transform: translateY(-2px);
+}
+
+.orbitWord {
+  position: absolute;
+  z-index: 1;
+  top: 12.2dvh;
+  left: 3.2vw;
+  right: 2.6vw;
+  margin: 0;
+  font-family: var(--font-orbit-display);
+  font-weight: 900;
+  font-size: min(15.8vw, 37dvh);
+  line-height: 0.84;
+  letter-spacing: -0.052em;
+  white-space: nowrap;
+  color: #fff;
+  overflow: visible;
+}
+
+.wordMask {
+  display: block;
+  overflow: visible;
+  padding-right: 0.22em;
+}
+
+.wordInner {
+  display: block;
+  padding-right: 0.16em;
+}
+
+.wordWhite {
+  color: #fff;
+}
+
+.wordPink {
+  background: linear-gradient(180deg, #ffc5dc 0%, #fd86db 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.wordL {
+  display: inline-block;
+  transform: scaleX(1.025);
+  transform-origin: left center;
+  margin-right: 0.012em;
+}
+
+.flower {
+  position: absolute;
+  z-index: 2;
+  top: 14.749065dvh;
+  left: 49.121328vw;
+  height: 106.109034dvh;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.flowerSizer {
+  visibility: hidden;
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+.flowerLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.flowerLayer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.flowerLayerTop {
+  -webkit-mask-image: linear-gradient(#0000, #0000);
+  mask-image: linear-gradient(#0000, #0000);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.morphCanvas {
+  display: none;
+}
+
+.stage a:focus-visible,
+.stage button:focus-visible {
+  outline: 2px solid #fd86db;
+  outline-offset: 4px;
+}
+
+.supportCopy {
+  position: absolute;
+  z-index: 3;
+  bottom: 4.361371dvh;
+  color: #f7f7f7;
+  font-family: var(--font-orbit-sans);
+  font-size: clamp(14px, min(1.25vw, 1.95dvh), 24px);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: -0.035em;
+}
+
+.supportLeft {
+  left: 3.177083vw;
+  transform: scaleX(1.073);
+  transform-origin: left center;
+}
+
+.supportRight {
+  left: 78.28125vw;
+  transform: scaleX(1.058);
+  transform-origin: left center;
+}
+
+.supportInner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.mobileBurger,
+.mobileScrim,
+.mobileSheet {
+  display: none;
+}
+
+/* Entrance animation sequence (html.anim → root.anim). */
+.anim .wordMask {
+  overflow: hidden;
+  padding: 0.16em 0.28em 0.12em 0.1em;
+  margin: -0.16em -0.28em -0.12em -0.1em;
+}
+
+@keyframes orbWord {
+  from {
+    transform: translateY(118%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbSubject {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(3.4dvh);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes orbCorner {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbQuiet {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbDim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.anim .brandMark {
+  animation: orbQuiet 620ms var(--orb-soft) 100ms both;
+}
+.anim .primaryNav > li:nth-child(1) {
+  animation: orbDim 550ms var(--orb-soft) 180ms both;
+}
+.anim .primaryNav > li:nth-child(2) {
+  animation: orbDim 550ms var(--orb-soft) 225ms both;
+}
+.anim .primaryNav > li:nth-child(3) {
+  animation: orbDim 550ms var(--orb-soft) 270ms both;
+}
+.anim .primaryNav > li:nth-child(4) {
+  animation: orbDim 550ms var(--orb-soft) 315ms both;
+}
+.anim .securePill {
+  animation: orbQuiet 620ms var(--orb-soft) 340ms both;
+}
+.anim .wordInner {
+  animation: orbWord 1150ms var(--orb-reveal) 300ms both;
+}
+.anim .flower {
+  animation: orbSubject 1150ms var(--orb-reveal) 660ms both;
+}
+.anim .supportInner {
+  animation: orbCorner 720ms var(--orb-soft) 980ms both;
+}
+
+@media (max-width: 1200px), (orientation: portrait) {
+  .orbitWord {
+    left: 2vw;
+    right: 2vw;
+    width: auto;
+    text-align: center;
+    font-size: min(15.6vw, 34dvh);
+    letter-spacing: -0.055em;
+  }
+}
+
+@media (max-width: 900px), (max-aspect-ratio: 4/5) {
+  .primaryNav,
+  .securePill {
+    display: none;
+  }
+
+  .mobileBurger {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    z-index: 12;
+    top: 18px;
+    right: 18px;
+    width: 52px;
+    height: 52px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #161616;
+    cursor: pointer;
+  }
+
+  .mobileBurger span,
+  .mobileBurger::before,
+  .mobileBurger::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition:
+      transform 0.25s,
+      opacity 0.2s;
+  }
+
+  .mobileBurger span {
+    position: absolute;
+  }
+
+  .mobileBurger::before {
+    transform: translateY(-6px);
+  }
+
+  .mobileBurger::after {
+    transform: translateY(6px);
+  }
+
+  .mobileBurger[aria-expanded="true"] span {
+    opacity: 0;
+  }
+
+  .mobileBurger[aria-expanded="true"]::before {
+    transform: rotate(45deg);
+  }
+
+  .mobileBurger[aria-expanded="true"]::after {
+    transform: rotate(-45deg);
+  }
+
+  .mobileScrim {
+    display: block;
+    position: absolute;
+    z-index: 9;
+    inset: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.58);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.25s,
+      visibility 0.25s;
+  }
+
+  .mobileSheet {
+    display: block;
+    position: absolute;
+    z-index: 10;
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: min(430px, calc(100vw - 24px));
+    padding: 86px 22px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 30px;
+    background: rgba(22, 22, 22, 0.88);
+    backdrop-filter: blur(24px) saturate(130%);
+    overflow: auto;
+    transform: translateX(calc(100% + 26px));
+    transition: transform 0.42s var(--orb-reveal);
+  }
+
+  .menuOpen .mobileScrim {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .menuOpen .mobileSheet {
+    transform: translateX(0);
+  }
+
+  .menuGroup {
+    padding: 18px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .menuGroup:first-child {
+    border-top: 0;
+  }
+
+  .menuGroupTitle {
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fd86db;
+  }
+
+  .menuLink {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .menuLink b {
+    font-weight: 400;
+    color: #fd86db;
+  }
+
+  .menuHold {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    font-size: 18px;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.38);
+    cursor: default;
+  }
+
+  .menuHold b {
+    font-weight: 400;
+    color: rgba(253, 134, 219, 0.45);
+  }
+
+  .anim .mobileBurger {
+    animation: orbQuiet 560ms var(--orb-soft) 230ms both;
+  }
+
+  .anim .primaryNav > li,
+  .anim .securePill {
+    animation: none !important;
+  }
+
+  .anim .flower {
+    animation-delay: 560ms;
+  }
+
+  .anim .supportInner {
+    animation-delay: 900ms;
+  }
+}
+
+@media (max-aspect-ratio: 4/5) {
+  .flower {
+    top: 30dvh;
+    left: 50%;
+    height: min(55dvh, 110vw);
+  }
+
+  .orbitWord {
+    top: 14dvh;
+    left: 2vw;
+    right: 2vw;
+    font-size: min(15.8vw, 16dvh);
+    letter-spacing: -0.055em;
+  }
+
+  .supportCopy {
+    bottom: 3.2dvh;
+    max-width: 42vw;
+    line-height: 1.18;
+  }
+
+  .supportLeft {
+    left: 5vw;
+  }
+
+  .supportRight {
+    left: auto;
+    right: 5vw;
+    transform: scaleX(1.03);
+    transform-origin: right center;
+    text-align: right;
+  }
+
+  .brandMark {
+    top: 18px;
+    left: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim .stage {
+    animation: orbDim 280ms ease both;
+  }
+
+  .anim .brandMark,
+  .anim .primaryNav > li,
+  .anim .securePill,
+  .anim .wordInner,
+  .anim .flower,
+  .anim .supportInner,
+  .anim .mobileBurger {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
