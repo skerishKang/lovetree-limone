@@ -115,7 +115,7 @@ The historical LoveBud repository is a source of product/backend intent. Do not 
 
 ## Workspace policy: WSL / Windows dual-track
 
-Both WSL and Windows are approved environments for active development and verification. Work happens only in dedicated per-Lane worktrees, never in a bare or shared checkout.
+Both WSL and Windows are approved environments for active development and verification. Work happens only in dedicated per-Lane worktrees, never in a bare or shared checkout. When a task is OS-neutral, prefer Windows first; use WSL for Linux-resident worktrees and Linux-specific needs.
 
 - **One worktree per Lane.** Every concurrent work Lane (agent/session/work room) owns exactly one dedicated worktree on its declared OS-native filesystem:
   - WSL: `$HOME/worktrees/**`
