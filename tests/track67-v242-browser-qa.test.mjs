@@ -13,7 +13,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const BASE = process.env.TRACK67_BASE_URL || "http://127.0.0.1:3099";
@@ -28,8 +28,9 @@ async function ensureEvidenceDir() {
 async function captureEvidence(page, name) {
   await ensureEvidenceDir();
   const path = new URL(`${name}.png`, EVIDENCE_DIR);
-  await page.screenshot({ path: path.pathname, fullPage: false });
-  return path.pathname;
+  const evidencePath = fileURLToPath(path);
+  await page.screenshot({ path: evidencePath, fullPage: false });
+  return evidencePath;
 }
 
 async function captureErrors(page) {
@@ -182,7 +183,7 @@ test("B. INSPECT_FREEZE — world state frozen during inspect dialog", async () 
 
     await captureEvidence(page, "B-inspect-freeze");
     await writeFile(
-      new URL("B-inspect-freeze.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("B-inspect-freeze.json", EVIDENCE_DIR)),
       JSON.stringify({ inspectState, frameBefore, frameAfter, pixelDiff: diff }),
     );
 
@@ -238,7 +239,7 @@ test("C. INSPECT_DIALOG — inspect dialog semantics and visible state", async (
 
     await captureEvidence(page, "C-inspect-dialog");
     await writeFile(
-      new URL("C-inspect-dialog.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("C-inspect-dialog.json", EVIDENCE_DIR)),
       JSON.stringify(dialogState),
     );
 
@@ -283,7 +284,7 @@ test("D. INSPECT_FOCUS — focus moves to inspect dialog on open", async () => {
 
     await captureEvidence(page, "D-inspect-focus");
     await writeFile(
-      new URL("D-inspect-focus.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("D-inspect-focus.json", EVIDENCE_DIR)),
       JSON.stringify(focusState),
     );
 
@@ -329,7 +330,7 @@ test("E. INSPECT_ESCAPE — Escape key closes inspect dialog", async () => {
 
     await captureEvidence(page, "E-inspect-escape");
     await writeFile(
-      new URL("E-inspect-escape.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("E-inspect-escape.json", EVIDENCE_DIR)),
       JSON.stringify({ beforeEscape, afterEscape }),
     );
 
@@ -382,7 +383,7 @@ test("F. INSPECT_RESTORE — canvas/runtime restores after inspect close", async
 
     await captureEvidence(page, "F-inspect-restore");
     await writeFile(
-      new URL("F-inspect-restore.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("F-inspect-restore.json", EVIDENCE_DIR)),
       JSON.stringify({ restored, criticalErrors }),
     );
 
@@ -441,7 +442,7 @@ test("G. INSPECT_HIGH_RES — inspect viewer shows high-resolution source asset"
 
     await captureEvidence(page, "G-inspect-high-res");
     await writeFile(
-      new URL("G-inspect-high-res.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("G-inspect-high-res.json", EVIDENCE_DIR)),
       JSON.stringify(highRes),
     );
 
@@ -529,7 +530,7 @@ test("H. TOUCH_390x844 — genuine touchscreen tap at mobile viewport", async ()
 
     await captureEvidence(page, "H-touch-390x844");
     await writeFile(
-      new URL("H-touch-390x844.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("H-touch-390x844.json", EVIDENCE_DIR)),
       JSON.stringify({ viewport: { width: 390, height: 844 }, method: "touchscreen.tap" }),
     );
 
@@ -559,7 +560,7 @@ test("I. TOUCH_320x720 — genuine touchscreen tap at small mobile viewport", as
 
     await captureEvidence(page, "I-touch-320x720");
     await writeFile(
-      new URL("I-touch-320x720.json", EVIDENCE_DIR).pathname,
+      fileURLToPath(new URL("I-touch-320x720.json", EVIDENCE_DIR)),
       JSON.stringify({ viewport: { width: 320, height: 720 }, method: "touchscreen.tap" }),
     );
 

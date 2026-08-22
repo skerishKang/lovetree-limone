@@ -28,7 +28,7 @@ import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { after, before, describe, it } from "node:test";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const BASE =
@@ -94,7 +94,8 @@ async function ensureEvidenceDir() {
 async function captureEvidence(page, name) {
   await ensureEvidenceDir();
   const path = new URL(`${name}.png`, EVIDENCE_DIR);
-  await page.screenshot({ path: path.pathname, fullPage: false });
+  const evidencePath = fileURLToPath(path);
+  await page.screenshot({ path: evidencePath, fullPage: false });
 }
 
 // ---------------------------------------------------------------------------

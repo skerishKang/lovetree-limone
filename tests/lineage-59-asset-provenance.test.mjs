@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   ASSET_LEDGER,
@@ -133,7 +134,7 @@ test("native data media resolves to DEMO_FIXTURE or EXACT_ASSET_PINNED truthfull
 test("no giant binary / accidental exact-asset commit", async () => {
   const files = await readdir(PLACEHOLDER_DIR);
   for (const file of files) {
-    const buf = await readFile(path.join(PLACEHOLDER_DIR.pathname, file));
+    const buf = await readFile(path.join(fileURLToPath(PLACEHOLDER_DIR), file));
     assert.ok(
       buf.length < 16 * 1024,
       `committed placeholder asset ${file} must stay small (got ${buf.length} bytes)`,
