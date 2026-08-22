@@ -50,7 +50,7 @@ async function replayFromStart(page) {
   await page.locator(".lt53-motion__connection-active-inner").waitFor({ timeout: 3000 });
 }
 
-test("Lineage 53 V2 — native route matches the source replay contract at desktop and mobile", { timeout: 120000 }, async () => {
+test("Lineage 53 V2 — native route matches the source replay contract at desktop and mobile", { timeout: 240000 }, async () => {
   const browser = await chromium.launch({ headless: true });
   try {
     for (const scenario of [
@@ -76,17 +76,19 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
         assert.equal(pausedOffsetAfter, pausedOffset, `${scenario.label}: pause freezes the active Connection light`);
 
         await page.getByRole("button", { name: "RESUME", exact: true }).click();
-        // The light advances on the next animation frame after the resume
-        // commit. Runner VMs exhibit multi-second main-thread congestion
-        // episodes during which neither rAF frames nor in-page polling
-        // evaluate — run 32554296228 showed no offset change within 5s, and
-        // the original fixed 320ms sleep failed the same way in production
-        // deploys ('37' === '37'). Poll for the actual transition with a
-        // bound that absorbs those episodes; the not-equal contract below is
-        // kept verbatim. On timeout a frame counter plus control-bar state
-        // are attached so a recurrence classifies immediately:
-        //   frames === 0            -> main-thread/rAF stall (environment)
-        //   frames > 0, same offset -> pausedRef stuck (product-side)
+        // The light advances on the animation frame after the resume commit.
+        // Sample-at-a-fixed-delay lost here twice (#344 production-deploy
+        // incidents at a fixed 320ms) because a stalled renderer frame
+        // leaves the paused value on screen. Wait for the transition itself.
+        // The predicate runs in Playwright's isolated world, so it must not
+        // use cross-realm constructors (instanceof HTMLElement is always
+        // false for SVG nodes there). Disappearance of the active node
+        // counts as progression too: the replay has moved past this
+        // Connection toward the climax. On timeout, attach a rAF frame
+        // counter and control-bar state to classify the stall:
+        //   frames === 0            -> renderer/main-thread stall (env)
+        //   frames > 0, same offset -> pausedRef stuck (product side)
+        // The resume-continues contract below stays a hard assertion.
         await page.evaluate(() => {
           window.__l53frames = 0;
           const tick = () => {
@@ -95,15 +97,15 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
           };
           requestAnimationFrame(tick);
         });
-        let resumeDiag = "";
         try {
           await page.waitForFunction(
             (previous) => {
               const node = document.querySelector(".lt53-motion__connection-active-inner");
-              return node instanceof HTMLElement && node.style.strokeDashoffset !== previous;
+              if (!node) return true;
+              return node.style.strokeDashoffset !== previous;
             },
             pausedOffset,
-            { timeout: 15000, polling: 50 },
+            { timeout: 45000, polling: 100 },
           );
         } catch {
           const diag = await page.evaluate(() => JSON.stringify({
@@ -112,11 +114,9 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
             activeNodePresent: !!document.querySelector(".lt53-motion__connection-active-inner"),
             offsetNow: document.querySelector(".lt53-motion__connection-active-inner")?.style.strokeDashoffset ?? null,
             controls: [...document.querySelectorAll(".lt53-motion__controls button")].map((b) => `${b.textContent}${b.disabled ? ":disabled" : ""}`),
-          })).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
-          resumeDiag = ` [${diag}]`;
+          }), { timeout: 10000 }).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+          assert.fail(`${scenario.label}: resume continues the active Connection light [${diag}]`);
         }
-        const resumedOffset = await activePath.evaluate((node) => node.style.strokeDashoffset);
-        assert.notEqual(resumedOffset, pausedOffset, `${scenario.label}: resume continues the active Connection light${resumeDiag}`);
 
         const speed = page.getByRole("button", { name: /SPEED/ });
         assert.equal(await speed.innerText(), "SPEED 1×");
