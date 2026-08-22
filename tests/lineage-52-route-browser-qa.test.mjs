@@ -120,16 +120,40 @@ async function assertNoOverflow(page, frame, viewportLabel) {
   assert.equal(inner.vertical, false, `${viewportLabel}: raw source has no vertical overflow`);
 }
 
-async function assertOuterScrollPriority(page, iframe) {
+async function assertOuterScrollPriority(page, iframe, frame) {
   await iframe.scrollIntoViewIfNeeded();
   const before = await page.evaluate(() => Math.round(scrollY));
   const box = await iframe.boundingBox();
   assert.ok(box, "passive iframe has a bounding box");
   await page.mouse.move(box.x + box.width / 2, box.y + Math.min(box.height / 2, 260));
   await page.mouse.wheel(0, 500);
-  await page.waitForTimeout(250);
-  const after = await page.evaluate(() => Math.round(scrollY));
-  assert.ok(after > before + 100, `passive iframe leaves wheel scrolling to outer page: ${before} -> ${after}`);
+  // Wheel scrolling applies on the compositor/main thread; under software-
+  // WebGL runner load the outer scrollY can lag the gesture past any fixed
+  // sleep (deploy incidents sampled '160 -> 160' at exactly 250ms). Poll
+  // for the actual scroll transition instead — bounded, explicit timeout;
+  // the >100px progression contract below stays verbatim. On timeout,
+  // attach outer scroll headroom and iframe-internal overflow so a
+  // recurrence self-classifies (zero headroom vs wheel consumed by the
+  // frame vs scroll applied late).
+  try {
+    await page.waitForFunction(
+      (previous) => Math.round(scrollY) > previous + 100,
+      before,
+      { timeout: 10000, polling: 50 },
+    );
+    return;
+  } catch {
+    const outer = await page.evaluate(() => JSON.stringify({
+      visibility: document.visibilityState,
+      scrollY: Math.round(scrollY),
+      maxScroll: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+    })).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+    const inner = await frame.evaluate(() => JSON.stringify({
+      innerOverflowY: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      innerScrollTop: Math.round(document.documentElement.scrollTop || window.scrollY || 0),
+    })).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+    assert.ok(false, `passive iframe leaves wheel scrolling to outer page: ${before} -> ${before} [outer=${outer}] [inner=${inner}]`);
+  }
 }
 
 async function enableInteraction(page) {
@@ -207,7 +231,7 @@ test("Lineage 52 V3 — actual source-runner route satisfies #94 desktop/mobile 
           await enableInteraction(page);
           await assertMobileTouchDrag(frame);
         } else {
-          await assertOuterScrollPriority(page, iframe);
+          await assertOuterScrollPriority(page, iframe, frame);
           await enableInteraction(page);
           await assertDesktopDrag(page, frame);
         }
