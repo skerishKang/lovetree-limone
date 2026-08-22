@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
 const BASE = process.env.LINEAGE59_BASE_URL || "http://127.0.0.1:3160";
@@ -408,7 +408,7 @@ test("Lineage 59 V5 desktop screenshots for visual review", async () => {
       ["narrow-320x720", { width: 320, height: 720 }],
     ]) {
       const { page } = await openRoute(browser, viewport);
-      await page.screenshot({ path: new URL(`${label}.png`, OUT_DIR).pathname, fullPage: true });
+      await page.screenshot({ path: fileURLToPath(new URL(`${label}.png`, OUT_DIR)), fullPage: true });
       await page.close();
     }
   } finally {
