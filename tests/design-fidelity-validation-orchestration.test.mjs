@@ -16,6 +16,7 @@ const REQUIRED_TARGETS = [
   "lineage-58-v2",
   "lineage-61-61-v1-9",
   "lineage-64-v1-2-1",
+  "lineage-63",
   "memory-anatomy",
   "moment-orbit-carousel",
 ];
@@ -56,6 +57,10 @@ test("direct candidate changes select only their matching fidelity target", () =
   assert.deepEqual(
     selectImpactedTargets(["app/design-lab/lineages/61/61-v1-9/page.tsx"]).map((target) => target.id),
     ["lineage-61-61-v1-9"],
+  );
+  assert.deepEqual(
+    selectImpactedTargets(["app/design-lab/lineages/63/page.tsx"]).map((target) => target.id),
+    ["lineage-63"],
   );
 });
 
