@@ -1,0 +1,85 @@
+{
+  "candidate": "★_후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+  "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+  "pass": true,
+  "viewports": {
+    "390x844": {
+      "initial": {
+        "bodyW": 390,
+        "innerW": 390,
+        "h1": "29.64px",
+        "heroP": "13px",
+        "cardW": 338,
+        "cardH": 430,
+        "cardTitle": "20px"
+      },
+      "errors": [],
+      "detail": {
+        "open": true,
+        "title": "21px",
+        "item": "13px",
+        "note": "13px",
+        "actionH": 48,
+        "bodyW": 390
+      },
+      "edit": {
+        "open": true,
+        "opacity": "1",
+        "inputFont": "16px",
+        "inputW": 336,
+        "viewerW": 370,
+        "saveH": 48,
+        "bodyW": 390
+      },
+      "preview": {
+        "id": "bcUfIpQ6aeA",
+        "src": "https://img.youtube.com/vi/bcUfIpQ6aeA/hqdefault.jpg"
+      }
+    },
+    "430x932": {
+      "initial": {
+        "bodyW": 430,
+        "innerW": 430,
+        "h1": "31px",
+        "heroP": "13px",
+        "cardW": 360,
+        "cardH": 430,
+        "cardTitle": "20px"
+      },
+      "errors": [],
+      "detail": {
+        "open": true,
+        "title": "21px",
+        "item": "13px",
+        "note": "13px",
+        "actionH": 48,
+        "bodyW": 430
+      },
+      "edit": {
+        "open": true,
+        "opacity": "1",
+        "inputFont": "16px",
+        "inputW": 376,
+        "viewerW": 410,
+        "saveH": 48,
+        "bodyW": 430
+      },
+      "preview": {
+        "id": "bcUfIpQ6aeA",
+        "src": "https://img.youtube.com/vi/bcUfIpQ6aeA/hqdefault.jpg"
+      }
+    },
+    "1440x900": {
+      "initial": {
+        "bodyW": 1440,
+        "innerW": 1440,
+        "h1": "57.6px",
+        "heroP": "15px",
+        "cardW": 371,
+        "cardH": 490,
+        "cardTitle": "25px"
+      },
+      "errors": []
+    }
+  }
+}

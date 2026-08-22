@@ -1,0 +1,84 @@
+{
+  "track": 55,
+  "candidate": "LUPT Living Connection Router V1",
+  "status": "CANDIDATE_PASS_WITH_BENCHMARK_RAW_REVIEW_PENDING",
+  "production": false,
+  "main_merge": false,
+  "benchmark": {
+    "work_order_analysis_used": true,
+    "raw_video_filename": "녹화_2026_08_09_17_12_36_587.mp4",
+    "raw_video_retrieved_in_this_run": false,
+    "raw_optical_fidelity_review": "PENDING",
+    "behavior_contract_implemented": true
+  },
+  "track53_reuse": {
+    "source_standalone_retrieved": true,
+    "getTotalLength": true,
+    "getPointAtLength": true,
+    "hot_tip": true,
+    "fading_trail": true,
+    "arrival_reaction": true,
+    "ResizeObserver": true
+  },
+  "initial_counts": {"moments": 7, "connections": 10, "bundles": 3, "lupt": 1},
+  "after_add_moment": {"moments": 8, "connections": 11},
+  "routing": {
+    "svg": true,
+    "live_pointermove_reflow": true,
+    "lane_spacing_px": 6,
+    "entry_exit_junctions": true,
+    "continuous_topology": true,
+    "endpoint_attachment": true,
+    "moment_drag": true,
+    "lupt_drag": true
+  },
+  "path_follow": {
+    "connection_click": true,
+    "selected_path_dimming": true,
+    "real_svg_geometry_sampling": true,
+    "lupt_walks_selected_path": true,
+    "arrival": true,
+    "why_next": true
+  },
+  "desktop_1440x960": {
+    "horizontal_overflow": false,
+    "console_errors": 0,
+    "moment_live_reflow": true,
+    "lupt_live_reflow": true,
+    "path_walk_completes": true,
+    "add_moment_route_intact": true
+  },
+  "mobile_390x844": {
+    "initial_zoom": 0.86,
+    "horizontal_overflow": false,
+    "card_clamp": true,
+    "touch_moment_drag_test": true,
+    "touch_lupt_drag_test": true,
+    "touch_live_reflow": true,
+    "zoom_controls": true,
+    "console_errors": 0
+  },
+  "execution_video": {
+    "actual_browser_html_execution": true,
+    "capture_method": "Chromium + Playwright page.set_content due environment blocking file:// navigation",
+    "duration_seconds": 29.16,
+    "resolution": "1280x820",
+    "fps": 25,
+    "sequence": ["initial bundle", "Moment drag", "live reflow", "LUPT drag", "bundle follows", "Connection select", "LUPT path travel", "arrival", "+ Moment", "new path join", "AUTO TIDY", "WALK THIS PATH"]
+  },
+  "hard_fail_matrix": {
+    "endpoint_detached": false,
+    "line_disappears_during_drag": false,
+    "bundle_identity_collapses": false,
+    "lupt_drag_no_live_reflow": false,
+    "add_moment_route_break": false,
+    "lupt_walks_wrong_connection": false,
+    "broken_image": false,
+    "dead_button": false,
+    "mobile_drag_impossible": false,
+    "desktop_horizontal_overflow": false,
+    "console_error": false,
+    "walk_not_real_path_geometry": false,
+    "execution_video_not_browser_html": false
+  }
+}

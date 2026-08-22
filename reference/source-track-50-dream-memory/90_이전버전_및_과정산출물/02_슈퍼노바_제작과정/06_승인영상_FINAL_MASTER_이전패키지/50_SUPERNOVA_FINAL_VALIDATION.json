@@ -1,0 +1,84 @@
+{
+  "status": "FINAL MASTER CANDIDATE — PRODUCT OWNER FINAL CONFIRMATION",
+  "visual_base": "09_RAPID_FINAL_SUPERNOVA_v1 / owner visual direction approved",
+  "new_female_identity_generation": 0,
+  "new_storyboard_generation": 0,
+  "shot_count": 24,
+  "rapid_microcut_count": 7,
+  "benchmark_duration_seconds": 29.206,
+  "desktop": {
+    "duration_seconds": 29.2,
+    "resolution": "1920x1080",
+    "fps": "24000/1001",
+    "codec": "H.264 High",
+    "audio": "AAC LC 48kHz stereo",
+    "file_size_bytes": 12092482,
+    "approved_video_stream_preserved_exactly": true,
+    "decode_pass": true,
+    "black_gap_detected": false,
+    "integrated_loudness_lufs": -16.57,
+    "true_peak_dbtp": -1.61
+  },
+  "mobile": {
+    "duration_seconds": 29.196,
+    "resolution": "1080x1920",
+    "fps": "24000/1001 CFR",
+    "codec": "H.264 High",
+    "audio": "AAC LC 48kHz stereo",
+    "file_size_bytes": 13037283,
+    "approved_vs_final_ssim_all": 0.997603,
+    "decode_pass": true,
+    "black_gap_detected": false,
+    "integrated_loudness_lufs": -16.55,
+    "true_peak_dbtp": -1.51
+  },
+  "wrapper": {
+    "preload_auto": true,
+    "autoplay_muted": true,
+    "playsinline": true,
+    "desktop_source_reference": true,
+    "mobile_source_reference": true,
+    "skip_to_bloom_seconds": 25.943,
+    "replay_control": true,
+    "sound_control": true,
+    "enter_lovetree": true,
+    "external_http_reference": false
+  },
+  "browser_runtime": {
+    "desktop_console_error_count": 0,
+    "desktop_page_error_count": 0,
+    "desktop_overflow_x": false,
+    "desktop_replay_pass": true,
+    "desktop_skip_pass": true,
+    "desktop_sound_pass": true,
+    "desktop_enter_pass": true,
+    "mobile_console_error_count": 0,
+    "mobile_page_error_count": 0,
+    "mobile_overflow_x": false,
+    "mobile_replay_pass": true,
+    "mobile_skip_pass": true,
+    "mobile_sound_pass": true,
+    "mobile_enter_pass": true,
+    "note": "Runtime environment blocks file/http navigation, so wrapper was executed with identical HTML via set_content and final MP4 bytes substituted as data URIs."
+  },
+  "required_artifacts_exist": {
+    "desktop": true,
+    "mobile": true,
+    "html": true,
+    "comparison": true,
+    "contact": true,
+    "shot_map": true
+  },
+  "finalization_changes": [
+    "Desktop approved video stream preserved exactly; audio normalized and MP4 fast-start finalized.",
+    "Mobile stabilized to constant 23.976 fps and approved timing window without scene redesign.",
+    "Audio levels normalized conservatively to approximately -16.6 LUFS with peaks near -1.5 dBTP.",
+    "Wrapper preload/error handling/control states hardened; Skip to Bloom corrected to 25.943 s.",
+    "Final comparison/contact sheet and technical validation added; no storyboard or Tree redesign."
+  ],
+  "known_visual_limits": [
+    "Several shots remain scene-master push/pan/whip motion rather than full generative body motion.",
+    "Memory Field remains the approved cinematic composite built from PRIMARY moments.",
+    "Mobile retains intentional late-section framing/letterbox behavior to preserve the locked Tree and LOVETREE title."
+  ]
+}

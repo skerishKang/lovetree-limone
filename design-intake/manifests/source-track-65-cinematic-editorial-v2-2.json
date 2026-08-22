@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-65-cinematic-editorial-v2-2",
+  "sourceTrackId": "Track65 V2.2",
+  "title": "입덕 단서 시네마틱 에디토리얼 V2.2 오너픽 전면활용·스토리 재정렬 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "entry-onboarding",
+  "productJob": "Cinematic editorial Entry experience tracing the fan-discovery trail that becomes a LoveTree, re-based on the V2.2 owner-pick/story-reorder authority: recurring protagonist locked to approved owner-pick assets across FIRST CLUE → TRACE → WATCH → DISCOVERY → ARCHIVE → FINAL LOVETREE (33-cut board; 8 representative cuts pinned). Registration only — no product adoption implied.",
+  "summary": "Issue #236 follow-up source gate registering the Track65 V2.2 revision (V9_오너픽전면활용·스토리재정렬_후보), which supersedes the withdrawn GATE B storyboard as story/asset intent: white detective character removed, left-eye rule enforced, CUT33 final replaced by owner-pick high-res LoveTree reveal, 16 problem cuts flagged for full replacement. All 11 V9 evidence objects are preserved byte-exact with an 11-entry SHA256SUMS ledger (18,772,418 B total; no oversize exclusions). V2.2 itself has NO executable (STORYBOARD/MOTION/HTML = NOT STARTED per C_ASSET_USAGE_NOTE.md); later sibling candidates (V2.2.1–V2.2.5, V2.3) carry no approval evidence and stay out of scope. The V2.1.1 gate HOLDs (GATE_B=REJECT_REBUILD, ASSET_COVERAGE=31/33, story-locked GATE B PASS required) remain in force.",
+  "provenance": {
+    "sourceLabel": "65_입덕단서_시네마틱에디토리얼 / Issue #236 V2.2 owner-pick story-reorder source gate registration",
+    "driveFolderId": "1WKpu_AE89-HbEL4xV0y_eyQqiUASdxJb",
+    "sourceFiles": [
+      "V9_오너픽전면활용·스토리재정렬_후보/A_TRACK65_V2.2_33CUT_CONTACT_SHEET.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/B_REPRESENTATIVE_8CUT_OVERVIEW.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/C_ASSET_USAGE_NOTE.md",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_01_The_First_Clue.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_04_Left_Eye_+_Instant_Photo.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_11_Left-Eye_Portrait.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_19_Stage_Revelation.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_23_What_I_Saw_Heard_Felt.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_29_Floating_Photo_Memory.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_31_Hanging_Photo_Cards.png",
+      "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_33_Final_LoveTree.png"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage65 remains NOT allocated by any Track65 intake manifest; this V2.2 registration reserves no repository lineage number and claims no route (Issue #236)."
+  },
+  "reservation": {
+    "held": true,
+    "note": "Reservation/adoption HOLD until a product-owner decision under Issue #80 intake rules; V2.1.1 gate dispositions (GATE_B=REJECT_REBUILD, ASSET_COVERAGE=31/33) are not lifted by this registration."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "SOURCE_GATE_REGISTRATION_ONLY; STORYBOARD=NOT_STARTED; MOTION=NOT_STARTED; HTML=NOT_STARTED (per sibling C_ASSET_USAGE_NOTE.md gate check); IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V2.2_OWNERPICK_FULL_STORY_REORDER",
+    "authorityObservedAt": "2026-08-22T01:25:33.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/A_TRACK65_V2.2_33CUT_CONTACT_SHEET.png",
+      "driveId": "1xhVVB_4R4HCECbfv3mBteH4kg5K1ei23",
+      "bytes": 5261901,
+      "sha256": "1581f15e52ae3902051a459cf4e811756a3281a68607a2a1ad7097c5bf47323a",
+      "role": "storyboard-contact-sheet",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/B_REPRESENTATIVE_8CUT_OVERVIEW.png",
+      "driveId": "1RlW6aLvwgoqNeKKTAySbTgRJ76GZJB3O",
+      "bytes": 1542351,
+      "sha256": "98432282f68be981cbedf9018dd734fe01c05685281694374971621954b37de7",
+      "role": "storyboard-overview",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/C_ASSET_USAGE_NOTE.md",
+      "driveId": "1IpnBvtU0oO9KwGnKcIzs3mij-A8vAfXl",
+      "bytes": 2146,
+      "sha256": "f459ed62ed55361b178303408a31c25ea80aa96138cba5bd70a238a36e00babf",
+      "role": "asset-usage-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_01_The_First_Clue.png",
+      "driveId": "1wxZ4ay1jb6loPl9YPL5c6JETL-_l1POk",
+      "bytes": 2112825,
+      "sha256": "3f0b1f12c062d64d2750b187ea672a22af2a89252f1f0eb7d0b7893162dc595b",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_04_Left_Eye_+_Instant_Photo.png",
+      "driveId": "1EvT-FJCJcc_TOzNUS40VQ0kA4GNayTfO",
+      "bytes": 1308405,
+      "sha256": "faa9ad97a3f5aa0cdb48b3d4d6b97501f6ab7f54eb5582d921b8f0d08ea63058",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_11_Left-Eye_Portrait.png",
+      "driveId": "1HW41yXPecMkEn2E9Y6bVaqVbXxGS6PLy",
+      "bytes": 1384198,
+      "sha256": "df5748444308185ece6cfb5ae40bc0f1e8b6e4c5ede33bff2e029816c497773c",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_19_Stage_Revelation.png",
+      "driveId": "1iP9FShcJWRDUjurdmrmVXYjRJXRCtTOi",
+      "bytes": 1660820,
+      "sha256": "4abfef15962d08aebd610b8ae754ef7690383eb611e2e8fe2c29fcf2b9f25749",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_23_What_I_Saw_Heard_Felt.png",
+      "driveId": "12KEIYiZCuVJ-XxRCFH0eJqxDcK4CI8CR",
+      "bytes": 1234486,
+      "sha256": "d6d6ae04458b671a1820a60f4f24a9330646cd19bb1ec05d36e13d1db63a746f",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_29_Floating_Photo_Memory.png",
+      "driveId": "1Xw-bwOn5kYAR3KtHuKOzW5DF5SqfLWwS",
+      "bytes": 940360,
+      "sha256": "7facfd9ec95b4778387cab9ed06823bfca4bbc4a9759be0330a64c76b4d45d0e",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_31_Hanging_Photo_Cards.png",
+      "driveId": "1nK1oJDEtVsZVoJsvIB8baXKLEgRMvIZ-",
+      "bytes": 950322,
+      "sha256": "ff9243099d19f2ee4c95cb5d8347f52d07196436d7ecfea9aa4e27f128edfd43",
+      "role": "representative-cut",
+      "status": "PINNED"
+    },
+    {
+      "filename": "V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_33_Final_LoveTree.png",
+      "driveId": "1yvWyq11M3f2m6RjPpyUsjGb6nmcTgr6Z",
+      "bytes": 2374604,
+      "sha256": "d3623a0df1b7c88390bedc5e00904dbf46e67d98ced56f563c544ba7a91a3caf",
+      "role": "representative-cut",
+      "status": "PINNED"
+    }
+  ],
+  "intakeContract": {
+    "preservedReferencePath": "reference/source-track-65/V9_오너픽전면활용·스토리재정렬_후보/",
+    "checksumLedger": "reference/source-track-65/SHA256SUMS",
+    "verifiedIndependently": true,
+    "verifiedAgainst": "local SHA256SUMS generated at preservation time (11 files, byte-size verified against the Drive listing); Drive API exposes no server-side content hash for these objects, so this is a single-sided local fingerprint baseline",
+    "commitSizeContract": "#287 standard interpreted as MiB: single file <= 10485760 B, total committed <= 52428800 B. Committed set = 11 of 11 files (18,772,418 B total); no oversize exclusion required."
+  },
+  "reusableCapabilities": [],
+  "sourceDeltas": [
+    "story authority re-based from the withdrawn GATE B 33-cut rebuild to the V2.2 owner-pick/story-reorder sequence: FIRST CLUE → TRACE → WATCH → DISCOVERY → ARCHIVE → FINAL LOVETREE",
+    "white detective character (누끼3) excluded under the V2.2 character ban; recurring protagonist pinned to 누끼1/2/4 placements",
+    "left-eye rule enforced: 왼쪽눈1.JPG becomes the CUT04 evidence strip; CUT11 rebuilt from 여자1.png high-res face with the left eye as primary focal point; right-eye-only emphasis removed from key cuts",
+    "CUT33 low-res S10 capture replaced by owner-pick high-res 러브트리2.png full-bleed final reveal",
+    "16 problem cuts listed for full replacement (CUT02/05/09/10/12/13/15/17/20/22/24/28/29/31/32/33); CUT04/CUT11 separately corrected for the left-eye requirement"
+  ],
+  "sourceDefects": [
+    "V2.2 MASTER instruction 설계팀장8기_65_V2.2_오너픽전면활용·스토리재정렬_디자인팀장16기_긴급수정지시_2026-08-16.md (referenced by C_ASSET_USAGE_NOTE.md) NOT LOCATED in the padiemipu: remote scope at intake time — registered fail-closed, never fabricated",
+    "CURRENT_EXECUTABLE_NOT_AVAILABLE: V2.2 has no authoritative implementation executable (STORYBOARD/MOTION/HTML = NOT STARTED)",
+    "Drive API exposes no server-side MD5/SHA content hash for the 11 preserved objects — fingerprint baseline is single-sided (local SHA-256 + byte-size match + Drive ID)",
+    "sibling QA verdicts in C_ASSET_USAGE_NOTE.md are sibling-side static judgments; no repository-side fidelity/reduced-motion/keyboard gates exist for this revision"
+  ],
+  "nativeRemediations": [
+    "locate or re-issue the V2.2 MASTER instruction (or an explicit design-lead successor) before treating V2.2 as instruction-backed authority",
+    "close the inherited V2.1.1 blockers first: CUT19/CUT25 high-res gaps to reach 33/33 coverage and an explicit story-locked GATE B PASS",
+    "only after GATE B PASS: motion gate → executable/source QA → exact fingerprint → repository native intake/proving"
+  ],
+  "sourceOnlyValues": [
+    "one source photo = one hero use; no nonadjacent reuse via crop/flip/blur/grade/mask (inherited V2 discipline restated by C_ASSET_USAGE_NOTE.md)",
+    "abstract rectangle/bar/ring/fake-3D filler cuts are banned replacements, not stylistic options",
+    "owner-pick contact sheet cut numbering (CUT01–CUT33) is sibling storyboard vocabulary, never a repository route or scene id"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "navigationHandoff": {
+    "targetMapping": false,
+    "urlResolution": false,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track65 V2.2 owner-pick/story-reorder source gate (no route implemented)"
+  }
+}

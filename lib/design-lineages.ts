@@ -256,6 +256,26 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
     ],
   },
   {
+    id: "lt-59-living-memory-book",
+    number: 59,
+    label: "Living Memory Book / Memory Sketchbook Journey",
+    status: "active",
+    summary: "기존 Moment/Connection 경로를 물리적 추억책으로 경험하고 Story 재생, Branch 선택, 문맥 검수·편집까지 하나의 책 화면에서 처리하는 계보입니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace"],
+    currentDecision: "V5 Story ON + inline edit + fast page turn + cinematic background를 현재 design-review 후보로 진행합니다. 접근성 remediation과 자산 출처 확정이 native gate입니다.",
+    sourceLabel: "59 V5 Drive intake 2026-08-11 / Issue #161 intake + Web CTO release comment 5306408967",
+    revisions: [
+      {
+        id: "59-v5-living-memory-book",
+        label: "V5 Story ON · Inline Edit · Fast Page Turn · Cinematic Background",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/59/v5",
+        notes: "17,192,064 B · SHA256 763f8a2f…e71 · ORIGIN_RIGHTS_PROVENANCE_HOLD · NATIVE_MEDIA_BINDING=EXACT_SMALL_PINNED_TRANSPORT_HOLD — 5 Web CTO-verified small exact assets committed + bound (review 4947154845); 3 large environment PNGs transport HOLD; synthetic demo placeholders retained",
+      },
+    ],
+  },
+  {
     id: "lt-61-guided-next-moment-builder",
     number: 61,
     label: "Guided Next Moment LoveTree Builder V1.9",
@@ -275,7 +295,55 @@ export const DESIGN_LINEAGES: readonly DesignLineage[] = [
       },
     ],
   },
-] as const;
+  {
+    id: "lt-67-memory-tape-persistent-world",
+    number: 67,
+    label: "Memory Tape Interactive Roll / Persistent World",
+    status: "active",
+    summary: "사용자가 그리는 memory tape이 정적 chunk(MEMORY)로 누적되고, 경계 있는 memory tail이 흔적을 남기며, ribbon hit/inspect와 Space rewind로 기억을 재방문하는 persistent world 계보입니다. V2.4.2는 WORKS_ 아카이브 내비게이션을 포함합니다.",
+    scenarios: ["relationship-retrospective", "tree-workspace", "growth-milestones"],
+    currentDecision: "V2.4 engine/texture/inspect/rewind 로직을 보존한 V2.4.2를 source-fidelity candidate로 구현합니다. 시작 직전 Drive freshness 재확인에서 V2.4.1·V2.4.2 정식 revision이 발견되어 배정된 V2.4 authority 대신 V2.4.2로 재핀했습니다. exact source는 RAW_WEBGL2 / CUSTOM_WEBGL입니다. canonical /v4 채택은 별도 결정(HOLD)이며 DB/API/Auth/Firebase/Neon/Worker는 변경하지 않습니다.",
+    sourceLabel: "Track 67 V2.4.2 / Drive 18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A (SHA256 85210be6…) · Issue #231",
+    revisions: [
+      {
+        id: "67-v2-4-2-persistent-world-works-navigation",
+        label: "V2.4.2 Persistent World + Works Navigation (Compare Menu)",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/67/v2-4",
+        notes: "12,265,511 B · SHA256 85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f · supersedes V2.4/V2.4.1 in official 67_메모리테이프_인터랙티브롤 ladder · V2.4.2 WORKS menu drops 61/60, adds 62 V1.1 / Track 13 Atlas / Living Video Graph · canonical /v4 adoption HOLD",
+      },
+    ],
+  },
+  {
+    id: "lt-64-floating-moment-entry-portal",
+    number: 64,
+    label: "Floating Moment Welcome Orbit",
+    status: "active",
+    summary: "복귀 사용자가 LoveTree / My Tree로 들어와 recent / important / First Moments가 하나의 연속된 부유 3D 카드 우주에 살아있음을 보고 하나의 Moment를 선택해 그 기억의 경로로 재진입하는 returning-user Memory Entry Portal 계보입니다.",
+    scenarios: ["entry-onboarding"],
+    currentDecision: "V1.2.1을 Design Lab source-fidelity candidate로 구현합니다. css3d-dom 렌더링을 faithful native React/CSS로 재구현하고, one selectedMomentId 권위·제스처 중재·Viewer 접근성·reduced-motion 수동 패리티를 보강합니다. canonical /v4 채택은 별도 결정(HOLD)이며 DB/API/Auth/Firebase/Neon/Worker는 변경하지 않습니다.",
+    sourceLabel: "Issue #165 · 64_부유모먼트_웰컴오빗_입장포털 / Track64 V1.2.1 (Drive 1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6)",
+    revisions: [
+      {
+        id: "64-v1-floating-moment-entry-portal",
+        label: "V1 reference / pre-executable proving snapshot",
+        decision: "reference",
+        executable: false,
+        notes: "Issue #165 intake pin · Drive folder 1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+      },
+      {
+        id: "64-v1-2-1-floating-moment-entry-portal",
+        label: "V1.2.1 Floating Moment Welcome Orbit (Direct Card Open + Curated Media)",
+        decision: "candidate",
+        executable: true,
+        route: "/design-lab/lineages/64/v1-2-1",
+        notes: "1,565,313 B · SHA256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d · css3d-dom · V1.2 → V1.2.1 delta = Track59 cross-track local navigation path correction only · canonical /v4 adoption HOLD",
+      },
+    ],
+  },
+
+  ] as const;
 
 export function validateDesignLineages(lineages: readonly DesignLineage[] = DESIGN_LINEAGES): readonly string[] {
   const problems: string[] = [];

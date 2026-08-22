@@ -1,0 +1,45 @@
+{
+  "version": "V2.1 BG Fix",
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "scope": "Mountain Background Only Replacement",
+  "structure_lock": {
+    "canonical_locked_content_equal": true,
+    "hero_structure_changed": false,
+    "moment_orbit_changed": false,
+    "navigation_changed": false,
+    "tree_component_changed": false,
+    "save_ui_changed": false,
+    "interaction_architecture_changed": false,
+    "permitted_changes": [
+      "field day background image",
+      "field night background image",
+      "overview background image",
+      "field fallback background color",
+      "document title"
+    ]
+  },
+  "runtime": {
+    "mountain": {
+      "console_or_page_errors": [],
+      "horizontal_overflow_px": 0
+    },
+    "concert": {
+      "console_or_page_errors": [],
+      "horizontal_overflow_px": 0
+    },
+    "dream": {
+      "console_or_page_errors": [],
+      "horizontal_overflow_px": 0
+    },
+    "mobile": {
+      "console_or_page_errors": [],
+      "horizontal_overflow_px": 0
+    }
+  },
+  "gate": {
+    "editorial_design_preserved": "PASS",
+    "mountain_travel_feel_removed": "PASS_CANDIDATE",
+    "kpop_lovetree_context_strengthened": "PASS_CANDIDATE",
+    "final_visual_approval": "PENDING_PRODUCT_OWNER"
+  }
+}

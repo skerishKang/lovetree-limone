@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoveTree · Living Video Memory Graph</title>
+  <style>
+    :root {
+      --ink: #15161b;
+      --muted: #777b86;
+      --paper: #f6f7f9;
+      --line: #e8e9ee;
+      --blue: #477ff2;
+      --mint: #21b896;
+      --violet: #8361e8;
+      --gold: #eea52d;
+      --pink: #ee5eab;
+      --dark: #0d1014;
+      --dark-2: #171a21;
+      --shadow: 0 18px 55px rgba(22, 24, 33, .13);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #dfe2e8; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #dfe2e8;
+      font-family: Inter, Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -.015em;
+    }
+    button, a { font: inherit; }
+    button { cursor: pointer; }
+    .page {
+      width: min(1420px, 100%);
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #fff;
+      overflow: hidden;
+    }
+    .topbar {
+      height: 70px;
+      padding: 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.95);
+      position: relative;
+      z-index: 8;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px 11px 11px 3px;
+      color: white;
+      background: linear-gradient(145deg, #ff70bd, #863fe9);
+      box-shadow: 0 7px 18px rgba(221, 79, 181, .3);
+      transform: rotate(-8deg);
+    }
+    .brand-mark span { transform: rotate(8deg); font-size: 16px; }
+    .top-meta { display: flex; gap: 9px; align-items: center; color: #737783; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .top-pill { border: 1px solid #e1e3e9; border-radius: 999px; padding: 8px 11px; background: #fff; }
+
+    .hero {
+      min-height: 360px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 35%;
+      background: #0b0e12;
+      color: #fff;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 36% 47%, rgba(27, 177, 132, .13), transparent 28%),
+        radial-gradient(circle at 63% 45%, rgba(101, 77, 214, .1), transparent 27%),
+        linear-gradient(120deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: auto, auto, 34px 34px;
+      opacity: .85;
+      pointer-events: none;
+    }
+    .hero-map {
+      position: relative;
+      min-height: 360px;
+      overflow: hidden;
+    }
+    .hero-rail {
+      position: absolute;
+      left: 25px;
+      top: 35px;
+      bottom: 31px;
+      width: 58px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      z-index: 3;
+    }
+    .rail-icon {
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.56);
+      background: rgba(255,255,255,.035);
+      font-size: 18px;
+      transition: .2s ease;
+    }
+    .rail-icon small { display: block; font-size: 8px; margin-top: -6px; letter-spacing: 0; }
+    .rail-icon.active, .rail-icon:hover { color: #fff; border-color: rgba(98,232,190,.55); background: rgba(33,184,150,.16); box-shadow: 0 0 22px rgba(33,184,150,.14); }
+    .hero-graph {
+      position: absolute;
+      inset: 26px 24px 26px 87px;
+    }
+    .hero-graph svg, .graph-plane svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .hero-line { stroke: rgba(67, 207, 168, .44); stroke-width: 1.1; stroke-dasharray: 2 5; }
+    .hero-line.violet { stroke: rgba(125, 100, 236, .42); }
+    .hero-node {
+      position: absolute;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 5px rgba(255,255,255,.03), 0 0 18px currentColor;
+      z-index: 2;
+      transition: left .25s ease, top .25s ease;
+    }
+    .hero-node.person { width: 31px; height: 31px; border: 2px solid rgba(255,255,255,.55); box-shadow: 0 0 0 7px rgba(255,255,255,.04), 0 0 28px currentColor; }
+    .hero-node.core { width: 57px; height: 57px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.65); box-shadow: 0 0 0 10px rgba(255,255,255,.04), 0 0 34px currentColor; font-size: 22px; }
+    .hero-label { position: absolute; transform: translate(12px, -5px); color: rgba(255,255,255,.65); font-size: 9px; white-space: nowrap; z-index: 3; }
+    .hero-copy { position: relative; z-index: 2; padding: 78px 53px 48px 20px; display: flex; flex-direction: column; justify-content: center; }
+    .eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .16em; font-weight: 800; color: #72e3c2; }
+    .hero-copy h1 { margin: 13px 0 14px; font-size: clamp(28px, 3.2vw, 47px); line-height: .98; letter-spacing: -.065em; max-width: 360px; }
+    .hero-copy p { margin: 0; max-width: 350px; color: rgba(255,255,255,.56); font-size: 13px; line-height: 1.7; }
+    .hero-sign { margin-top: 30px; display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 21px; }
+    .hero-sign-mark { width: 24px; height: 24px; border-radius: 7px 7px 7px 2px; background: #fff; color: #0d1014; display: grid; place-items: center; transform: rotate(-8deg); }
+    .hero-sign-mark span { transform: rotate(8deg); font-size: 13px; }
+    .hero-sign small { display: block; color: rgba(255,255,255,.4); font-size: 9px; font-weight: 600; margin-top: 4px; letter-spacing: .04em; }
+
+    .intro { padding: 58px 52px 30px; text-align: center; }
+    .intro h2 { margin: 0; font-size: clamp(34px, 4.1vw, 55px); letter-spacing: -.075em; }
+    .intro p { margin: 13px auto 0; color: var(--muted); font-size: 15px; }
+    .intro-tools { margin-top: 26px; display: flex; justify-content: center; align-items: center; gap: 9px; flex-wrap: wrap; }
+    .filter-button { border: 1px solid #dfe2e8; background: #fff; color: #666a75; border-radius: 999px; padding: 9px 15px; font-size: 11px; font-weight: 800; transition: .2s ease; }
+    .filter-button:hover, .filter-button.active { color: #fff; border-color: var(--ink); background: var(--ink); }
+    .filter-button[data-person="felix"].active { background: var(--blue); border-color: var(--blue); }
+    .filter-button[data-person="juyeon"].active { background: var(--mint); border-color: var(--mint); }
+    .filter-button[data-person="junhyuk"].active { background: var(--gold); border-color: var(--gold); }
+    .notice { color: #999da7; font-size: 11px; margin-left: 3px; }
+
+    .graph-card { margin: 0 28px 60px; border: 1px solid #e4e5ea; border-radius: 21px; background: #f8f9fb; box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-columns: 73px minmax(0, 1fr) 285px; min-height: 600px; }
+    .board-rail { border-right: 1px solid #e6e7eb; padding: 24px 12px; display: flex; flex-direction: column; align-items: center; gap: 22px; background: rgba(255,255,255,.56); }
+    .board-rail .rail-icon { color: #a0a4af; border-color: transparent; background: transparent; }
+    .board-rail .rail-icon.active, .board-rail .rail-icon:hover { color: #2b2f38; border-color: #e3e5ea; background: #fff; box-shadow: 0 8px 18px rgba(23,31,50,.08); }
+    .rail-caption { writing-mode: vertical-rl; color: #b1b4bd; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; margin-top: auto; }
+    .graph-stage { position: relative; min-width: 0; min-height: 600px; overflow: hidden; background-color: #f9fafb; background-image: radial-gradient(#d9dde5 1px, transparent 1px); background-size: 25px 25px; }
+    .graph-stage::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at 50% 48%, rgba(255,255,255,.97), rgba(249,250,251,.55) 55%, rgba(240,242,247,.16)); pointer-events:none; }
+    .zoom-readout { position: absolute; top: 18px; left: 21px; z-index: 5; padding: 7px 10px; border-radius: 8px; color: #a2a6b0; border: 1px solid #e5e7ec; background: rgba(255,255,255,.78); font-size: 10px; font-weight: 700; }
+    .graph-plane { position: absolute; inset: 0; touch-action: none; cursor: grab; }
+    .graph-plane.is-dragging { cursor: grabbing; }
+    .graph-world { position: absolute; inset: 0; transform-origin: 50% 50%; transition: transform .18s ease; }
+    .graph-node { position: absolute; width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 50%; transform: translate(-50%, -50%); z-index: 2; color: #fff; box-shadow: 0 5px 12px rgba(36,43,63,.16), 0 0 0 5px rgba(255,255,255,.52); transition: opacity .22s ease, filter .22s ease, scale .22s ease; }
+    .graph-node::after { content:""; position:absolute; inset: 5px; border-radius: inherit; border: 1px solid rgba(255,255,255,.38); }
+    .graph-node:hover, .graph-node.selected { z-index: 8; scale: 1.22; box-shadow: 0 8px 18px rgba(36,43,63,.18), 0 0 0 7px rgba(255,255,255,.7), 0 0 30px currentColor; }
+    .graph-node .play { font-size: 11px; line-height: 1; position: relative; z-index: 1; margin-left: 2px; }
+    .graph-node.person-node { width: 53px; height: 53px; border: 4px solid #fff; box-shadow: 0 7px 17px rgba(36,43,63,.18), 0 0 0 4px currentColor; }
+    .graph-node.person-node .person-initial { font-size: 17px; font-weight: 900; }
+    .graph-node.muted { opacity: .13; filter: grayscale(.9); scale: .8; }
+    .graph-node-label { position: absolute; top: 27px; left: 50%; transform: translateX(-50%); width: 122px; color: #7f8490; font-size: 9px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; pointer-events: none; }
+    .person-node .graph-node-label { top: 62px; color: #555b68; font-size: 10px; }
+    .edge { fill: none; stroke-width: 1.3; stroke-dasharray: 1 7; stroke-linecap: round; opacity: .62; }
+    .edge.person-edge { stroke-width: 2; stroke-dasharray: 5 6; opacity: .42; }
+    .edge.active { stroke-width: 2.4; opacity: .78; }
+    .board-copy { position: relative; z-index: 4; border-left: 1px solid #e6e7eb; background: rgba(255,255,255,.66); padding: 39px 27px 30px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .board-copy .tiny { color: #9095a0; text-transform: uppercase; letter-spacing: .15em; font-weight: 800; font-size: 9px; }
+    .board-copy h3 { margin: 11px 0 12px; font-size: 27px; line-height: .98; letter-spacing: -.065em; }
+    .board-copy p { margin: 0; color: #8b8f99; line-height: 1.65; font-size: 12px; }
+    .board-copy .key { margin-top: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 25px; }
+    .key-row { display: flex; align-items: center; gap: 9px; color: #9196a0; font-size: 10px; font-weight: 700; }
+    .key-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 11px currentColor; }
+    .board-copy .brand-lockup { margin-top: 29px; display: flex; align-items: center; gap: 9px; font-weight: 900; font-size: 19px; }
+    .board-copy .brand-lockup small { display: block; color: #adb0b8; font-size: 9px; font-weight: 600; letter-spacing: .05em; margin-top: 4px; }
+    .lockup-mark { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px 8px 8px 2px; color: #fff; background: linear-gradient(145deg, #ff70bd, #863fe9); transform: rotate(-8deg); }
+    .lockup-mark span { transform: rotate(8deg); }
+
+    .detail-backdrop { position: fixed; inset: 0; background: rgba(12,14,19,.33); opacity: 0; pointer-events: none; transition: opacity .22s ease; z-index: 20; }
+    .detail-panel { position: fixed; top: 0; right: 0; width: min(420px, 94vw); height: 100vh; padding: 31px; background: #161922; color: #fff; transform: translateX(105%); transition: transform .28s cubic-bezier(.2,.8,.2,1); z-index: 21; box-shadow: -18px 0 55px rgba(0,0,0,.22); overflow-y: auto; }
+    .detail-panel.open { transform: translateX(0); }
+    .detail-backdrop.open { opacity: 1; pointer-events: auto; }
+    .detail-close { float: right; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,.22); background: transparent; color: #fff; }
+    .detail-kicker { padding-top: 52px; color: #71e1be; text-transform: uppercase; letter-spacing: .15em; font-size: 9px; font-weight: 800; }
+    .detail-panel h3 { margin: 12px 0 9px; font-size: 28px; line-height: 1.05; letter-spacing: -.06em; }
+    .detail-meta { color: rgba(255,255,255,.5); font-size: 11px; }
+    .preview { margin-top: 25px; position: relative; overflow: hidden; border-radius: 14px; aspect-ratio: 16 / 9; background: #252936; box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .preview iframe { display:block; border:0; width:100%; height:100%; }
+    .play-button { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 58px; height: 58px; border: 0; border-radius: 50%; background: #fff; color: #101219; box-shadow: 0 9px 25px rgba(0,0,0,.25); font-size: 19px; padding-left: 4px; }
+    .detail-description { color: rgba(255,255,255,.57); font-size: 12px; line-height: 1.7; margin: 17px 0 0; }
+    .detail-actions { display: flex; gap: 9px; margin-top: 22px; }
+    .detail-actions button, .detail-actions a { flex: 1; min-height: 42px; border-radius: 10px; border: 1px solid rgba(255,255,255,.17); color: #fff; background: rgba(255,255,255,.07); text-decoration: none; display: grid; place-items: center; font-size: 11px; font-weight: 800; }
+    .detail-actions .primary { color: #11151a; border-color: #fff; background: #fff; }
+    .source-note { margin: 34px 28px 28px; color: #a5a8b1; text-align: center; font-size: 10px; }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-copy { padding: 26px 34px 35px; background: linear-gradient(180deg, rgba(11,14,18,.28), #0b0e12 92%); }
+      .hero-map { min-height: 300px; }
+      .hero-copy h1 { max-width: 600px; }
+      .hero-copy p { max-width: 600px; }
+      .graph-card { grid-template-columns: 68px minmax(0, 1fr); }
+      .board-copy { grid-column: 2; min-height: 190px; border-top: 1px solid #e6e7eb; border-left: 0; display: block; }
+      .board-copy .key { flex-direction: row; padding: 25px 0 0; flex-wrap: wrap; }
+      .board-copy .brand-lockup { margin-top: 20px; }
+    }
+    @media (max-width: 640px) {
+      .topbar { height: 60px; padding: 0 18px; }
+      .top-meta { display: none; }
+      .hero-rail { left: 12px; }
+      .hero-graph { inset-left: 64px; inset-right: 5px; }
+      .hero-copy { padding: 23px 20px 31px; }
+      .intro { padding: 42px 20px 23px; }
+      .graph-card { margin: 0 10px 42px; grid-template-columns: 54px minmax(0,1fr); border-radius: 15px; }
+      .board-rail { padding: 16px 6px; }
+      .board-rail .rail-icon { width: 39px; height: 39px; font-size: 15px; }
+      .graph-stage { min-height: 520px; }
+      .board-copy { padding: 28px 20px; }
+      .graph-node-label { font-size: 8px; }
+      .source-note { margin: 25px 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="LoveTree home"><span class="brand-mark"><span>♥</span></span><span>러브트리</span></a>
+      <div class="top-meta"><span class="top-pill">LIVING VIDEO GRAPH</span><span class="top-pill">03 PEOPLE · 18 MOMENTS</span></div>
+    </header>
+
+    <section class="hero" id="top" aria-label="LoveTree dark graph preview">
+      <div class="hero-map">
+        <div class="hero-rail" aria-label="graph categories">
+          <button class="rail-icon active" title="영상 기억">▶<small>video</small></button>
+          <button class="rail-icon" title="사람">♧<small>people</small></button>
+          <button class="rail-icon" title="감정">✦<small>mood</small></button>
+        </div>
+        <div class="hero-graph" id="heroGraph">
+          <svg id="heroLines" aria-hidden="true"></svg>
+          <div class="hero-node core" data-x="52" data-y="53" style="color:#e85cad;background:radial-gradient(circle at 30% 25%,#ffd6ec,#f04eab 43%,#753bd6);">♥</div>
+          <div class="hero-node person" data-x="34" data-y="30" style="color:#477ff2;background:#477ff2;"><span>F</span></div><span class="hero-label" style="left:34%;top:30%;">필릭스</span>
+          <div class="hero-node person" data-x="52" data-y="24" style="color:#21b896;background:#21b896;"><span>J</span></div><span class="hero-label" style="left:52%;top:24%;">이주연</span>
+          <div class="hero-node person" data-x="70" data-y="32" style="color:#eea52d;background:#eea52d;"><span>JH</span></div><span class="hero-label" style="left:70%;top:32%;">이준혁</span>
+          <span class="hero-label" style="left:52%;top:57%;transform:translate(-50%, 0);color:rgba(255,255,255,.88);font-weight:800;">나의 LoveTree</span>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow">LoveTree · memory graph</div>
+        <h1>영상을<br />기억으로<br />바꾸는 나무</h1>
+        <p>좋아했던 순간을 링크 하나로 모으고, 사람과 감정의 가지로 다시 만나는 영상 기억 지도.</p>
+        <div class="hero-sign"><span class="hero-sign-mark"><span>♥</span></span><span>LoveTree<small>YOUR VIDEO MEMORY, WITH FEELING</small></span></div>
+      </div>
+    </section>
+
+    <section class="intro">
+      <div class="eyebrow" style="color:#7d61e8;">YOUR LIVING VIDEO MEMORY</div>
+      <h2>LoveTree</h2>
+      <p>영상이 쌓일수록 사람·장면·감정의 연결이 살아납니다.</p>
+      <div class="intro-tools" aria-label="people filters">
+        <button class="filter-button active" data-person="all">전체 그래프</button>
+        <button class="filter-button" data-person="felix">필릭스</button>
+        <button class="filter-button" data-person="juyeon">더보이즈 이주연</button>
+        <button class="filter-button" data-person="junhyuk">이준혁</button>
+        <span class="notice">최대 3명의 기억만 표시</span>
+      </div>
+    </section>
+
+    <section class="graph-card" aria-label="living video memory graph">
+      <aside class="board-rail" aria-label="graph filters">
+        <button class="rail-icon active" data-person="all" title="전체 영상">▶</button>
+        <button class="rail-icon" data-person="felix" title="필릭스">F</button>
+        <button class="rail-icon" data-person="juyeon" title="이주연">J</button>
+        <button class="rail-icon" data-person="junhyuk" title="이준혁">JH</button>
+        <span class="rail-caption">memory map · 2026</span>
+      </aside>
+      <div class="graph-stage" id="graphStage">
+        <div class="zoom-readout" id="zoomReadout">100%</div>
+        <div class="graph-plane" id="graphPlane">
+          <div class="graph-world" id="graphWorld">
+            <svg id="edgeLayer" aria-hidden="true"></svg>
+            <div id="graphNodes"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="board-copy">
+        <div class="key">
+          <div class="key-row"><span class="key-dot" style="color:var(--blue);background:var(--blue);"></span> 필릭스 · STRAY KIDS</div>
+          <div class="key-row"><span class="key-dot" style="color:var(--mint);background:var(--mint);"></span> 이주연 · THE BOYZ</div>
+          <div class="key-row"><span class="key-dot" style="color:var(--gold);background:var(--gold);"></span> 이준혁 · ACTOR</div>
+        </div>
+        <div class="tiny">memory nodes · click to open</div>
+        <h3>내가 좋아한<br />순간들이<br />여기 있어요</h3>
+        <p>노드를 누르면 그 순간의 실제 영상 썸네일과 제목을 확인할 수 있어요. 휠로 확대하고 빈 공간을 드래그해 자유롭게 둘러보세요.</p>
+        <div class="brand-lockup"><span class="lockup-mark"><span>♥</span></span><span>LoveTree<small>MY VIDEO MEMORY GRAPH</small></span></div>
+      </aside>
+    </section>
+    <p class="source-note">이 프로토타입은 07_마케팅팀 북마크의 필릭스 · 더보이즈 이주연 · 이준혁 영상 링크를 사용합니다. 샘플용 랜덤 영상은 포함하지 않았습니다.</p>
+  </main>
+
+  <div class="detail-backdrop" id="detailBackdrop"></div>
+  <aside class="detail-panel" id="detailPanel" aria-label="selected video details" aria-hidden="true">
+    <button class="detail-close" id="detailClose" aria-label="닫기">×</button>
+    <div class="detail-kicker" id="detailKicker">LOVE MOMENT</div>
+    <h3 id="detailTitle">영상을 선택해보세요</h3>
+    <div class="detail-meta" id="detailMeta">노드를 클릭하면 실제 북마크 영상이 열립니다.</div>
+    <div class="preview" id="preview"><div style="height:100%;display:grid;place-items:center;color:rgba(255,255,255,.3);font-size:12px;">노드를 선택하세요</div></div>
+    <p class="detail-description" id="detailDescription">내가 저장한 영상의 썸네일을 확인하고, 재생 버튼을 눌렀을 때만 영상이 재생됩니다.</p>
+    <div class="detail-actions"><button class="primary" id="playButton" disabled>▶ 영상 재생</button><a id="sourceLink" href="#" target="_blank" rel="noopener" aria-disabled="true">원본 링크</a></div>
+  </aside>
+
+  <script>
+    const people = {
+      felix: { label: '필릭스', group: 'STRAY KIDS', color: '#477ff2', initial: 'F' },
+      juyeon: { label: '이주연', group: 'THE BOYZ', color: '#21b896', initial: 'J' },
+      junhyuk: { label: '이준혁', group: 'ACTOR', color: '#eea52d', initial: 'JH' }
+    };
+
+    // 실제 북마크의 YouTube ID만 사용합니다. 썸네일은 각 ID에서 자동으로 생성됩니다.
+    const videos = [
+      { id:'felix-01', person:'felix', yt:'dF3T25im5Jg', title:'♥ Kids Room(하트키즈룸) Ep.07 Felix', x:29, y:24, topic:'따뜻함' },
+      { id:'felix-02', person:'felix', yt:'sFPKeBPdFZ8', title:'스트레이키즈 필릭스 · 릴댄 속 용복이', x:20, y:39, topic:'무대' },
+      { id:'felix-03', person:'felix', yt:'55ztsObxmm4', title:'Felix being felix with the members', x:34, y:50, topic:'사람' },
+      { id:'felix-04', person:'felix', yt:'88gQkK_p_t0', title:'스트레이 키즈 필릭스 직캠 4K · 神메뉴', x:17, y:60, topic:'무대' },
+      { id:'felix-05', person:'felix', yt:'d2X4dhqub9M', title:'스트레이키즈 필릭스 神메뉴 FaceCam', x:29, y:73, topic:'빛' },
+      { id:'felix-06', person:'felix', yt:'IaWoxBn4kDo', title:'스트레이키즈 필릭스 Easy FaceCam', x:42, y:80, topic:'춤' },
+      { id:'juyeon-01', person:'juyeon', yt:'T0I22axxSOY', title:'더보이즈 영훈·주연 · 같은 극대노 다른 성량', x:50, y:17, topic:'표정' },
+      { id:'juyeon-02', person:'juyeon', yt:'zmOI_XujTsU', title:'He switches from cute to hot in seconds', x:64, y:26, topic:'반전' },
+      { id:'juyeon-03', person:'juyeon', yt:'35j5aBM2Yck', title:'THE BOYZ Ain’t Salty · 주연 직캠', x:76, y:37, topic:'무대' },
+      { id:'juyeon-04', person:'juyeon', yt:'PiimgtLtdlE', title:'더보이즈 주연 · Balenciaga Paris', x:66, y:50, topic:'기억' },
+      { id:'juyeon-05', person:'juyeon', yt:'vlrlXOcTgh0', title:'Juyeon talking about that part', x:81, y:62, topic:'목소리' },
+      { id:'juyeon-06', person:'juyeon', yt:'iiRBOaaEEfc', title:'더보이즈 주연 · 그냥 타고난 건데', x:59, y:78, topic:'장면' },
+      { id:'junhyuk-01', person:'junhyuk', yt:'a1gsq3jC0Tg', title:'이준혁 · 게임을 안 하는 이유는?', x:46, y:30, topic:'대화' },
+      { id:'junhyuk-02', person:'junhyuk', yt:'17UP5Pfmduo', title:'이준혁의 손 크기는? · V LIVE', x:54, y:41, topic:'사람' },
+      { id:'junhyuk-03', person:'junhyuk', yt:'2SDl278ezBQ', title:'가을엔 영화처럼 · 이준혁 배우', x:45, y:54, topic:'영화' },
+      { id:'junhyuk-04', person:'junhyuk', yt:'-uYx6joIm0g', title:'이준혁 · 쓰리피스 입은 서동재', x:56, y:64, topic:'캐릭터' },
+      { id:'junhyuk-05', person:'junhyuk', yt:'PUXTruqwNVk', title:'한복 입고 레전드 찍은 이준혁', x:43, y:72, topic:'장면' },
+      { id:'junhyuk-06', person:'junhyuk', yt:'rZMQbnkXhaQ', title:'범죄도시3 반전 빌런 이준혁', x:72, y:76, topic:'영화' }
+    ];
+
+    const colors = Object.fromEntries(Object.entries(people).map(([key, value]) => [key, value.color]));
+    const graphPlane = document.getElementById('graphPlane');
+    const graphWorld = document.getElementById('graphWorld');
+    const graphNodes = document.getElementById('graphNodes');
+    const edgeLayer = document.getElementById('edgeLayer');
+    const graphStage = document.getElementById('graphStage');
+    const zoomReadout = document.getElementById('zoomReadout');
+    const nodeEls = new Map();
+    const edgeEls = [];
+    let activePerson = 'all';
+    let selectedId = null;
+    let zoom = 1;
+    let panX = 0;
+    let panY = 0;
+    let drag = null;
+
+    function thumb(id) { return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; }
+    function videoUrl(id) { return `https://www.youtube.com/watch?v=${id}`; }
+    function visible(node) { return activePerson === 'all' || node.person === activePerson; }
+
+    function makeNode(data) {
+      const el = document.createElement('button');
+      el.className = 'graph-node';
+      el.type = 'button';
+      el.dataset.id = data.id;
+      el.dataset.person = data.person;
+      el.style.background = colors[data.person];
+      el.style.color = colors[data.person];
+      el.innerHTML = `<span class="play">▶</span><span class="graph-node-label">${data.title}</span>`;
+      el.setAttribute('aria-label', `${people[data.person].label}: ${data.title}`);
+      el.addEventListener('click', (event) => { event.stopPropagation(); selectVideo(data.id); });
+      graphNodes.appendChild(el);
+      nodeEls.set(data.id, el);
+    }
+
+    function makePersonNode(personKey, x, y) {
+      const p = people[personKey];
+      const data = { id:`person-${personKey}`, person:personKey, x, y, topic:'person' };
+      const el = document.createElement('button');
+      el.className = 'graph-node person-node';
+      el.type = 'button';
+      el.dataset.id = data.id;
+      el.dataset.person = personKey;
+      el.style.background = p.color;
+      el.style.color = p.color;
+      el.innerHTML = `<span class="person-initial">${p.initial}</span><span class="graph-node-label">${p.label}</span>`;
+      el.addEventListener('click', (event) => { event.stopPropagation(); setFilter(personKey); });
+      graphNodes.appendChild(el);
+      nodeEls.set(data.id, el);
+      return data;
+    }
+
+    const personAnchors = [
+      makePersonNode('felix', 18, 46),
+      makePersonNode('juyeon', 51, 17),
+      makePersonNode('junhyuk', 82, 47)
+    ];
+    videos.forEach(makeNode);
+
+    function makeEdge(fromId, toId, person, isPersonEdge = false) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.classList.add('edge');
+      if (isPersonEdge) line.classList.add('person-edge');
+      line.dataset.from = fromId;
+      line.dataset.to = toId;
+      line.style.stroke = colors[person] || '#c7cbd4';
+      edgeLayer.appendChild(line);
+      edgeEls.push(line);
+    }
+    videos.forEach((video) => makeEdge(`person-${video.person}`, video.id, video.person, true));
+
+    function basePosition(video, index) {
+      const row = Math.floor(index / 6);
+      const wave = (index % 2 ? 1 : -1) * row * 1.2;
+      return { x: video.x + wave, y: video.y };
+    }
+
+    function pointFor(id, now) {
+      const person = personAnchors.find((p) => p.id === id);
+      if (person) {
+        const wobble = Math.sin(now / 1200 + person.x) * .8;
+        return { x: person.x + wobble, y: person.y + Math.cos(now / 1600 + person.y) * .6 };
+      }
+      const videoIndex = videos.findIndex((v) => v.id === id);
+      const video = videos[videoIndex];
+      const base = basePosition(video, videoIndex);
+      const offset = video.person === 'felix' ? 0 : video.person === 'juyeon' ? 1.6 : 3.2;
+      return {
+        x: base.x + Math.sin(now / 1800 + videoIndex * .9 + offset) * 1.35,
+        y: base.y + Math.cos(now / 2100 + videoIndex * .55 + offset) * 1.25
+      };
+    }
+
+    function updateGraph(now) {
+      const rect = graphPlane.getBoundingClientRect();
+      const positions = new Map();
+      personAnchors.forEach((p) => positions.set(p.id, pointFor(p.id, now)));
+      videos.forEach((v) => positions.set(v.id, pointFor(v.id, now)));
+      positions.forEach((pos, id) => {
+        const el = nodeEls.get(id);
+        if (!el) return;
+        el.style.left = `${pos.x}%`;
+        el.style.top = `${pos.y}%`;
+        if (!id.startsWith('person-')) {
+          const data = videos.find((v) => v.id === id);
+          el.classList.toggle('muted', !visible(data));
+          el.classList.toggle('selected', selectedId === id);
+        } else {
+          el.classList.toggle('muted', activePerson !== 'all' && !id.endsWith(activePerson));
+        }
+      });
+      edgeEls.forEach((line) => {
+        const a = positions.get(line.dataset.from);
+        const b = positions.get(line.dataset.to);
+        if (!a || !b) return;
+        line.setAttribute('x1', `${a.x}%`); line.setAttribute('y1', `${a.y}%`);
+        line.setAttribute('x2', `${b.x}%`); line.setAttribute('y2', `${b.y}%`);
+        line.classList.toggle('active', selectedId && (line.dataset.from === selectedId || line.dataset.to === selectedId));
+      });
+      requestAnimationFrame(updateGraph);
+    }
+    requestAnimationFrame(updateGraph);
+
+    function updateZoom() {
+      graphWorld.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+      zoomReadout.textContent = `${Math.round(zoom * 100)}%`;
+    }
+    graphStage.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      zoom = Math.min(1.7, Math.max(.72, zoom + (event.deltaY > 0 ? -.08 : .08)));
+      updateZoom();
+    }, { passive: false });
+    graphPlane.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('.graph-node')) return;
+      drag = { x: event.clientX, y: event.clientY, panX, panY };
+      graphPlane.setPointerCapture(event.pointerId);
+      graphPlane.classList.add('is-dragging');
+    });
+    graphPlane.addEventListener('pointermove', (event) => {
+      if (!drag) return;
+      panX = drag.panX + event.clientX - drag.x;
+      panY = drag.panY + event.clientY - drag.y;
+      updateZoom();
+    });
+    graphPlane.addEventListener('pointerup', () => { drag = null; graphPlane.classList.remove('is-dragging'); });
+    graphPlane.addEventListener('pointercancel', () => { drag = null; graphPlane.classList.remove('is-dragging'); });
+
+    function setFilter(person) {
+      activePerson = person;
+      document.querySelectorAll('[data-person]').forEach((button) => button.classList.toggle('active', button.dataset.person === person));
+    }
+    document.querySelectorAll('.filter-button, .board-rail .rail-icon[data-person]').forEach((button) => button.addEventListener('click', () => setFilter(button.dataset.person)));
+
+    const detailPanel = document.getElementById('detailPanel');
+    const detailBackdrop = document.getElementById('detailBackdrop');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailMeta = document.getElementById('detailMeta');
+    const detailKicker = document.getElementById('detailKicker');
+    const detailDescription = document.getElementById('detailDescription');
+    const preview = document.getElementById('preview');
+    const playButton = document.getElementById('playButton');
+    const sourceLink = document.getElementById('sourceLink');
+
+    function selectVideo(id) {
+      const video = videos.find((item) => item.id === id);
+      if (!video) return;
+      selectedId = id;
+      const p = people[video.person];
+      detailKicker.textContent = `LOVE MOMENT · ${p.group}`;
+      detailTitle.textContent = video.title;
+      detailMeta.textContent = `${p.label} · ${video.topic} · 북마크 영상`;
+      detailDescription.textContent = '작은 하트를 눌러 저장한 영상의 한 장면이에요. 재생 버튼을 누른 뒤에만 영상이 재생됩니다.';
+      preview.innerHTML = `<img src="${thumb(video.yt)}" alt="${video.title} 썸네일" /><button class="play-button" aria-label="영상 재생">▶</button>`;
+      preview.querySelector('.play-button').addEventListener('click', () => playVideo(video));
+      playButton.disabled = false;
+      playButton.onclick = () => playVideo(video);
+      sourceLink.href = videoUrl(video.yt);
+      detailPanel.classList.add('open');
+      detailBackdrop.classList.add('open');
+      detailPanel.setAttribute('aria-hidden', 'false');
+    }
+    function playVideo(video) {
+      preview.innerHTML = `<iframe title="${video.title}" src="https://www.youtube-nocookie.com/embed/${video.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    }
+    function closeDetail() {
+      selectedId = null;
+      preview.innerHTML = '<div style="height:100%;display:grid;place-items:center;color:rgba(255,255,255,.3);font-size:12px;">노드를 선택하세요</div>';
+      detailPanel.classList.remove('open');
+      detailBackdrop.classList.remove('open');
+      detailPanel.setAttribute('aria-hidden', 'true');
+      playButton.disabled = true;
+      sourceLink.href = '#';
+    }
+    document.getElementById('detailClose').addEventListener('click', closeDetail);
+    detailBackdrop.addEventListener('click', closeDetail);
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDetail(); });
+
+    // 위쪽 어두운 프리뷰 그래프: 아래 그래프와 같은 기억 관계를 짧게 요약합니다.
+    const heroGraph = document.getElementById('heroGraph');
+    const heroLines = document.getElementById('heroLines');
+    const heroCore = heroGraph.querySelector('.hero-node.core');
+    const heroPersonNodes = [...heroGraph.querySelectorAll('.hero-node.person')];
+    const heroSatellites = [];
+    for (let i = 0; i < 22; i++) {
+      const dot = document.createElement('i');
+      dot.className = 'hero-node';
+      const angle = (Math.PI * 2 * i) / 22;
+      const radius = 22 + (i % 4) * 8;
+      dot.dataset.x = 52 + Math.cos(angle) * radius;
+      dot.dataset.y = 53 + Math.sin(angle) * radius * .7;
+      dot.style.color = i % 3 === 0 ? '#7866df' : i % 3 === 1 ? '#2abf9d' : '#3f84eb';
+      dot.style.background = dot.style.color;
+      heroGraph.appendChild(dot);
+      heroSatellites.push(dot);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.classList.add('hero-line');
+      if (i % 3 === 0) line.classList.add('violet');
+      heroLines.appendChild(line);
+      dot._line = line;
+    }
+    function updateHero(now) {
+      const coreX = 52 + Math.sin(now / 1900) * 1.3;
+      const coreY = 53 + Math.cos(now / 2200) * 1.1;
+      heroCore.style.left = `${coreX}%`; heroCore.style.top = `${coreY}%`;
+      heroSatellites.forEach((dot, i) => {
+        const angle = (Math.PI * 2 * i) / heroSatellites.length + now / 11500;
+        const radius = 22 + (i % 4) * 8;
+        const x = coreX + Math.cos(angle) * radius;
+        const y = coreY + Math.sin(angle) * radius * .7;
+        dot.style.left = `${x}%`; dot.style.top = `${y}%`;
+        dot._line.setAttribute('x1', `${coreX}%`); dot._line.setAttribute('y1', `${coreY}%`);
+        dot._line.setAttribute('x2', `${x}%`); dot._line.setAttribute('y2', `${y}%`);
+      });
+      requestAnimationFrame(updateHero);
+    }
+    requestAnimationFrame(updateHero);
+  </script>
+</body>
+</html>

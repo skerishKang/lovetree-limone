@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoveTree Track 72 — Gate A2 Editorial Moment Archive</title>
+<style>
+:root{--bg:#fff;--ink:#151515;--muted:#8d8d89;--line:#e9e9e5;--soft:#f5f5f2;--rose:#dc6780;--sidebar:224px;--gap:14px}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif} body{min-height:1580px}
+.shell{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;padding:30px 26px 24px;border-right:1px solid #f0f0ed;display:flex;flex-direction:column;background:#fff;z-index:3}
+.brand{font-size:24px;line-height:.95;font-weight:800;letter-spacing:-.06em}.brand-mark{display:inline-block;width:13px;height:13px;border-radius:50%;background:#111;margin-left:5px;vertical-align:4px}
+.tree-title{margin-top:40px;font-size:13px;font-weight:700}.tree-sub{margin-top:8px;font-size:11px;line-height:1.45;color:#777}.meta{margin-top:20px;font-size:10px;line-height:1.7;color:#9a9a95;letter-spacing:.02em}
+.side-section{margin-top:31px}.side-label{font-size:9px;letter-spacing:.16em;color:#b2b2ad;margin-bottom:10px}.side-item{font-size:12px;line-height:1.8;color:#8b8b86}.side-item.active{color:#111;font-weight:700}.side-dot{display:inline-block;width:5px;height:5px;background:#111;border-radius:50%;margin-left:5px;vertical-align:2px}
+.side-bottom{margin-top:auto;font-size:10px;line-height:1.5;color:#9b9b96}.side-bottom strong{display:block;color:#222;font-size:11px;margin-bottom:6px}
+.main{min-width:0;padding:0 28px 80px 28px}
+.topstrip{position:sticky;top:0;z-index:2;height:72px;display:flex;align-items:center;border-bottom:1px solid #f3f3ef;background:rgba(255,255,255,.96);backdrop-filter:blur(8px)}
+.count{font-size:10px;letter-spacing:.14em;color:#7f7f7a;margin-right:25px}.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.pill{font-size:10px;color:#8b8b87;background:#f4f4f1;border-radius:999px;padding:8px 12px}.pill.active{background:#151515;color:#fff}.sort{margin-left:auto;font-size:10px;color:#777;border:1px solid #ecece8;border-radius:999px;padding:8px 12px}
+.wall{padding-top:24px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:21px;gap:var(--gap);position:relative}
+.tile{position:relative;min-width:0;overflow:hidden;background:#f4f4f2;border-radius:3px}.tile img,.tile video{width:100%;height:100%;display:block}.tile.media img,.tile.media video{object-fit:cover}.tile.preserve img{object-fit:contain}.tile.object{background:#f1f1ef;padding:10px}.tile.object.dark{background:#0e0e10}.tile.object img{object-fit:contain}.tile.fullbody{background:#f9f9f7}.tile.fullbody img{object-fit:contain}.tile.lovetree{background:#f5f3ee}.tile.video{background:#111}.tile.video video{object-fit:contain;background:#111}.tile::after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(10,10,10,.035)}
+.micro{position:absolute;left:10px;bottom:9px;display:flex;gap:8px;align-items:center;color:#fff;font-size:8px;letter-spacing:.09em;text-shadow:0 1px 3px rgba(0,0,0,.5);z-index:2}.micro.darktext{color:#181818;text-shadow:none}.play{width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid currentColor}.prog{width:28px;height:1px;background:currentColor;opacity:.55}
+.note{background:#faf8f5;border:1px solid #eeeae3;padding:16px 14px;display:flex;flex-direction:column;justify-content:space-between}.note .kicker{font-size:8px;letter-spacing:.15em;color:#aaa69f}.note blockquote{margin:0;font-family:Georgia,serif;font-size:17px;line-height:1.25;letter-spacing:-.02em}.note .emotion{font-size:9px;color:#9d6d78}.connection{background:#fff;border-top:1px solid #171717;border-bottom:1px solid #ddd;padding:14px 4px;display:flex;flex-direction:column;justify-content:center}.connection .route{font-size:9px;letter-spacing:.12em;color:#777}.connection strong{font-family:Georgia,serif;font-size:16px;line-height:1.25;margin-top:10px;font-weight:400}.connection .arrow{margin-top:12px;font-size:10px;color:var(--rose)}
+.caption{position:absolute;left:0;right:0;top:calc(100% + 5px);font-size:8px;color:#8d8d88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* First viewport: heterogeneous 12-surface editorial composition */
+.t-v65{grid-column:1 / span 5;grid-row:1 / span 11}.t-crystal{grid-column:6 / span 2;grid-row:1 / span 8}.t-stage{grid-column:8 / span 2;grid-row:1 / span 16}.t-note{grid-column:10 / span 1;grid-row:1 / span 6}.t-s10{grid-column:11 / span 2;grid-row:1 / span 13}
+.t-car{grid-column:6 / span 2;grid-row:9 / span 8}.t-v67{grid-column:1 / span 4;grid-row:12 / span 9}.t-tree{grid-column:5 / span 2;grid-row:17 / span 12}.t-v52{grid-column:7 / span 4;grid-row:17 / span 9}.t-dance{grid-column:11 / span 2;grid-row:14 / span 16}.t-v59{grid-column:1 / span 4;grid-row:21 / span 9}.t-connection{grid-column:7 / span 4;grid-row:26 / span 5}
+.below{grid-column:1 / -1;grid-row:31 / span 6;border-top:1px solid #f1f1ed;margin-top:16px;padding-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;color:#aaa;font-size:10px;line-height:1.5}
+@media(max-width:1200px){:root{--sidebar:190px}.main{padding-left:18px;padding-right:18px}.wall{gap:10px}.sidebar{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">LoveTree<span class="brand-mark"></span></div>
+    <div class="tree-title">My LoveTree</div>
+    <div class="tree-sub">the moments that changed<br>where I searched next</div>
+    <div class="meta">36 MOMENTS<br>2024.03 — 2026.08</div>
+    <section class="side-section">
+      <div class="side-label">VIEW</div>
+      <div class="side-item active">Archive <span class="side-dot"></span></div>
+      <div class="side-item">Tree</div>
+      <div class="side-item">Timeline</div>
+    </section>
+    <section class="side-section">
+      <div class="side-label">TREE</div>
+      <div class="side-item">First moment</div>
+      <div class="side-item">Turning points</div>
+      <div class="side-item">Connections</div>
+    </section>
+    <div class="side-bottom"><strong>A visual archive of moments.</strong>Different media keep their own shape, scale and weight.</div>
+  </aside>
+
+  <main class="main">
+    <header class="topstrip">
+      <div class="count">ALL MOMENTS · 36</div>
+      <div class="filters">
+        <span class="pill active">All</span><span class="pill">Video</span><span class="pill">Photo</span><span class="pill">Object</span><span class="pill">Memo</span><span class="pill">Link</span>
+      </div>
+      <div class="sort">Curated ↓</div>
+    </header>
+
+    <section class="wall" aria-label="Track 72 Gate A2 static editorial archive">
+      <article class="tile video t-v65" data-kind="video">
+        <video muted playsinline preload="metadata" data-time="69.77" poster="../../03_에셋/A2_VIDEO_POSTERS/65_t69.77.jpg" src="../../../../결과물/65_입덕단서_시네마틱에디토리얼.mp4"></video>
+        <div class="micro"><span class="play"></span><span>VIDEO</span><span>01:29</span><span class="prog"></span></div>
+      </article>
+
+      <article class="tile object t-crystal"><img src="../../../../02_디자인팀/캐릭터/캐릭터-사물/crystal-awake-02.png" alt="crystal object"></article>
+
+      <article class="tile fullbody t-stage"><img src="../../../../02_디자인팀/캐릭터/캐릭터-전신/01_stage-singing.png" alt="full body stage performance"></article>
+
+      <article class="tile note t-note">
+        <div class="kicker">MOMENT NOTE</div>
+        <blockquote>그 장면이 계속 생각나서 다음 무대를 찾아봤다.</blockquote>
+        <div class="emotion">설렘 → 궁금함</div>
+      </article>
+
+      <article class="tile lovetree t-s10"><img src="../../../../02_디자인팀/캐릭터/캐릭터-러브트리/S10_MY_LOVETREE_1536w.jpg" alt="LoveTree product graphic"></article>
+
+      <article class="tile object dark t-car"><img src="../../../../02_디자인팀/캐릭터/캐릭터-사물/petal-runner-open-v3.png" alt="petal runner object"></article>
+
+      <article class="tile video t-v67" data-kind="video">
+        <video muted playsinline preload="metadata" data-time="11.40" poster="../../03_에셋/A2_VIDEO_POSTERS/67_t11.40.jpg" src="../../../../결과물/67_메모리테이프_인터랙티브롤.mp4"></video>
+        <div class="micro darktext"><span class="play"></span><span>VIDEO</span><span>01:34</span><span class="prog"></span></div>
+      </article>
+
+      <article class="tile lovetree t-tree"><img src="../../../../02_디자인팀/캐릭터/캐릭터-러브트리/04_lovetree-sculpture.png" alt="LoveTree sculpture"></article>
+
+      <article class="tile video t-v52" data-kind="video">
+        <video muted playsinline preload="metadata" data-time="8.36" poster="../../03_에셋/A2_VIDEO_POSTERS/52_t8.36.jpg" src="../../../../결과물/52_글로벌모먼트오빗_3D네트워크.mp4"></video>
+        <div class="micro"><span class="play"></span><span>VIDEO</span><span>01:09</span><span class="prog"></span></div>
+      </article>
+
+      <article class="tile fullbody t-dance"><img src="../../../../02_디자인팀/캐릭터/캐릭터-전신/02_dance.png" alt="full body dance scene"></article>
+
+      <article class="tile video t-v59" data-kind="video">
+        <video muted playsinline preload="metadata" data-time="11.01" poster="../../03_에셋/A2_VIDEO_POSTERS/59_t11.01.jpg" src="../../../../결과물/59_메모리스케치북_페이지여정.mp4"></video>
+        <div class="micro darktext"><span class="play"></span><span>VIDEO</span><span>01:31</span><span class="prog"></span></div>
+      </article>
+
+      <article class="tile connection t-connection">
+        <div class="route">CONNECTION LANDMARK</div>
+        <strong>“한 장면을 저장한 뒤,<br>이전 무대까지 거슬러 올라갔다.”</strong>
+        <div class="arrow">호감 → 확신 →</div>
+      </article>
+
+      <div class="below">
+        <div>VIDEO / spatial memory</div><div>OBJECT / artifact</div><div>SCENE / full body</div><div>TEXT / connection</div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+// GATE A2: curated paused frame only. No autoplay, hover play, filter, detail or interaction.
+document.querySelectorAll('video[data-time]').forEach(v=>{
+  const freeze=()=>{try{v.currentTime=Number(v.dataset.time||0)}catch(e){};};
+  v.addEventListener('loadedmetadata',freeze,{once:true});
+  v.addEventListener('seeked',()=>v.pause());
+  v.pause();
+});
+</script>
+</body>
+</html>

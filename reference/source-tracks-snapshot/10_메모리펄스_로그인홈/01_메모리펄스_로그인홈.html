@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LoveTree Memory Pulse</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#050507;--board:#111116;--card:rgba(20,20,26,.94);--card2:rgba(16,16,22,.94);
+  --text:#f4f1f7;--muted:#9691a0;--line:rgba(255,255,255,.06);
+  --purple:#a76cff;--purple2:#d1a7ff;--green:#63f19a;--blue:#45a9df;
+  --art-w:840;--art-h:990;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020204;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+button{font:inherit;color:inherit}
+.memory-pulse-stage{position:fixed;inset:0;display:grid;place-items:center;background:
+  radial-gradient(80% 75% at 50% 42%,rgba(90,48,150,.11),transparent 65%),
+  radial-gradient(40% 45% at 49% 64%,rgba(14,80,121,.07),transparent 70%),
+  #030305;overflow:hidden}
+.memory-pulse-stage::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0%,transparent 17%,transparent 83%,#000 100%);pointer-events:none;z-index:3}
+.dashboard-shell{position:relative;width:min(900px,88vw,calc(92vh * .8485));height:min(1020px,92vh,calc(88vw / .8485));}
+.dashboard-artboard{position:absolute;left:50%;top:50%;width:840px;height:990px;transform:translate(-50%,-50%) scale(var(--scale,1));transform-origin:center;border-radius:24px;background:
+  radial-gradient(420px 280px at 55% 35%,rgba(50,70,100,.08),transparent 70%),
+  linear-gradient(180deg,#15151a 0%,#111116 100%);box-shadow:0 45px 120px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.025),inset 0 0 70px rgba(151,105,255,.025);overflow:hidden;isolation:isolate}
+.dashboard-artboard::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.3),transparent 80%);pointer-events:none}
+#ambient{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.header{position:absolute;left:34px;right:34px;top:22px;height:48px;display:flex;align-items:center;justify-content:space-between;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:680;letter-spacing:-.02em}.brandmark{width:26px;height:26px;border:1px solid rgba(211,173,255,.7);border-radius:50%;display:grid;place-items:center;box-shadow:0 0 18px rgba(162,97,255,.18)}
+.brandmark svg{width:17px;height:17px}.brand-sub{font:600 9px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;color:#8f8998;margin-left:8px}
+.filters{display:flex;align-items:center;gap:4px;padding:4px;background:rgba(7,7,10,.62);border:1px solid var(--line);border-radius:12px;backdrop-filter:blur(14px)}
+.filter-btn{border:0;background:transparent;color:#77717f;font:650 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;padding:8px 9px;border-radius:8px;cursor:pointer;transition:.25s}.filter-btn.active{color:#fff;background:rgba(162,101,255,.22);box-shadow:inset 0 0 0 1px rgba(192,151,255,.2)}
+.card{position:absolute;background:linear-gradient(145deg,rgba(25,25,31,.97),rgba(15,15,20,.97));border:1px solid var(--line);border-radius:18px;box-shadow:0 26px 50px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.025);overflow:hidden;z-index:5}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.025),transparent 30%)}
+.kicker{font:650 8px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:#77717f}.title{font-size:18px;line-height:1.13;font-weight:650;letter-spacing:-.035em;margin-top:7px}.description{font-size:9px;line-height:1.5;color:#817c89;margin-top:6px;max-width:330px}.metric{font-size:44px;line-height:.92;letter-spacing:-.06em;font-weight:720}.change{color:var(--green);font-size:13px;font-weight:650}
+.activity-card{left:34px;top:83px;width:548px;height:180px;padding:20px 22px}.activity-top{display:flex;align-items:flex-end;justify-content:space-between}.activity-copy .title{font-size:15px}.activity-metric{display:flex;align-items:flex-end;gap:12px;margin-top:18px}.activity-metric .metric{font-size:38px}.bar-wrap{position:absolute;left:22px;right:22px;bottom:18px;height:58px;display:flex;align-items:flex-end;gap:4px}.bar{position:relative;flex:1;min-width:4px;border-radius:4px 4px 2px 2px;background:linear-gradient(to top,rgba(78,48,120,.75),rgba(121,75,184,.66));height:var(--h);opacity:.68;transition:height .45s ease,background .5s ease,filter .5s ease,opacity .4s}.bar.near{background:linear-gradient(to top,#613ea6,#a66cff);opacity:.9;filter:drop-shadow(0 0 8px rgba(161,99,255,.33))}.bar.active{background:linear-gradient(to top,#9a59ff,#ead3ff);opacity:1;filter:drop-shadow(0 0 12px rgba(207,160,255,.9))}.bar:hover{opacity:1;transform:translateY(-2px)}
+.tooltip{position:absolute;z-index:50;pointer-events:none;opacity:0;transform:translate(-50%,-112%);background:rgba(5,5,8,.92);border:1px solid rgba(255,255,255,.08);padding:8px 10px;border-radius:9px;font-size:9px;color:#ddd;box-shadow:0 10px 30px rgba(0,0,0,.5);white-space:nowrap;transition:opacity .15s}.tooltip strong{display:block;color:#fff;margin-bottom:3px}
+.world-card{right:34px;top:83px;width:212px;height:270px;padding:16px}.map-title{position:absolute;left:15px;bottom:15px;z-index:2}.map-title .title{font-size:13px}.map-stats{font:600 8px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8d8895;margin-top:4px}.world-map{position:absolute;inset:4px 4px 58px 4px;width:calc(100% - 8px);height:calc(100% - 62px)}.map-dot{fill:#3a3840;opacity:.62}.map-dot.active{fill:#c28cff;filter:url(#glow)}.map-dot.hot{fill:#58aee6;filter:url(#glow2)}
+.source-card{left:34px;top:277px;width:278px;height:335px;padding:18px}.source-field{position:absolute;inset:67px 12px 75px;perspective:500px}.source-lines{position:absolute;inset:0;width:100%;height:100%;opacity:.38}.source-lines path{fill:none;stroke:rgba(157,120,212,.22);stroke-width:1;stroke-dasharray:3 6}.source-chip{position:absolute;display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:11px;background:rgba(13,13,18,.88);border:1px solid rgba(255,255,255,.075);font:600 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#aaa4b0;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.35);transition:.25s;animation:floatChip var(--dur) ease-in-out infinite alternate}.source-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 10px color-mix(in srgb,var(--c),transparent 40%)}.source-chip.active,.source-chip:hover{color:#fff;border-color:rgba(179,129,255,.42);background:rgba(43,29,62,.84);transform:translateY(-2px) scale(1.03)}
+.source-card .source-copy-small{position:absolute;left:18px;bottom:17px}.source-copy-small .title{font-size:15px}.source-copy-small .description{max-width:225px}
+@keyframes floatChip{from{translate:0 -2px}to{translate:0 3px}}
+.tree-card{left:300px;top:286px;width:302px;height:265px;z-index:12;border-radius:20px;background:
+  radial-gradient(180px 140px at var(--px,60%) var(--py,24%),rgba(116,207,255,.34),transparent 75%),
+  linear-gradient(155deg,#0d2637 0%,#174c6b 50%,#102737 100%);border-color:rgba(143,217,255,.22);box-shadow:0 30px 70px rgba(0,0,0,.58),0 0 45px rgba(44,137,190,.12),inset 0 0 70px rgba(80,184,238,.09);padding:22px;cursor:pointer;transition:transform .28s ease}
+.tree-card:hover{transform:translateY(-3px)}.tree-card::before{content:"";position:absolute;inset:-80% -20%;background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.11) 49%,transparent 60%);transform:translateX(var(--shine,-45%));transition:transform .6s ease;pointer-events:none}.tree-card .kicker{color:#9dc8df}.tree-name{font-size:12px;color:#b4d9ea;font-weight:650;letter-spacing:.08em}.tree-number{font-size:80px;line-height:.9;letter-spacing:-.075em;font-weight:720;margin-top:30px;text-shadow:0 0 24px rgba(153,226,255,.35)}.tree-label{font:650 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;color:#b5d9e9;margin-top:9px}.tree-pills{position:absolute;left:18px;right:18px;bottom:18px;display:flex;gap:5px;flex-wrap:wrap}.tree-pill{font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b3d4e1;padding:7px 9px;border:1px solid rgba(183,225,244,.14);background:rgba(6,23,33,.38);border-radius:999px}.tree-action{position:absolute;right:18px;top:18px;font-size:10px;color:#daf3ff;opacity:0;transform:translateY(-4px);transition:.25s}.tree-card.open .tree-action{opacity:1;transform:translateY(0)}
+.reach-card{right:34px;top:368px;width:222px;height:226px;padding:19px 18px}.reach-card .title{font-size:20px;max-width:175px}.reach-stats{position:absolute;left:18px;right:18px;bottom:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.reach-stat{padding:8px 4px;border-radius:9px;background:rgba(255,255,255,.025);border:1px solid var(--line);text-align:center}.reach-stat b{display:block;font-size:12px}.reach-stat span{display:block;font-size:7px;color:#77717f;margin-top:3px;text-transform:uppercase;letter-spacing:.1em}
+.rhythm-card{left:282px;top:570px;width:524px;height:276px;padding:20px;z-index:10}.rhythm-card .title{font-size:17px}.chart-wrap{position:absolute;left:18px;right:18px;top:89px;height:142px}.chart-svg{width:100%;height:100%;overflow:visible}.grid-line{stroke:rgba(255,255,255,.045);stroke-width:1}.area-path{fill:url(#areaGradient)}.line-path{fill:none;stroke:#8652d8;stroke-width:2}.focus-line{fill:none;stroke:url(#lineGradient);stroke-width:3.2;filter:url(#chartGlow);stroke-linecap:round}.guide{stroke:rgba(226,202,255,.45);stroke-width:1;stroke-dasharray:3 5}.focus-dot{fill:#f2e8ff;stroke:#b77fff;stroke-width:3;filter:url(#chartGlow)}.chart-label{font-size:8px;fill:#b4afbd;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.chart-badges{position:absolute;right:18px;top:20px;display:flex;gap:6px}.chart-badge{font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:7px 9px;border-radius:999px;background:rgba(151,93,241,.11);border:1px solid rgba(170,115,255,.12);color:#a79faf}.chart-footer{position:absolute;left:20px;right:20px;bottom:16px;display:flex;justify-content:space-between;font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#625e69}
+.copy-left{position:absolute;left:34px;top:630px;width:225px;height:170px;padding:2px 4px;z-index:6}.copy-left .title{font-size:17px}.copy-left .description{font-size:9px}.tiny-line{width:36px;height:1px;background:#6d6576;margin:15px 0}.copy-right{position:absolute;left:302px;top:865px;width:260px}.copy-right .title{font-size:16px}.copy-right .description{max-width:250px}.statusbar{position:absolute;right:34px;bottom:29px;display:flex;align-items:center;gap:9px;font:600 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#77717f}.live-dot{width:7px;height:7px;border-radius:50%;background:#63f19a;box-shadow:0 0 12px rgba(99,241,154,.6);animation:live 1.2s infinite}@keyframes live{50%{opacity:.35;transform:scale(.72)}}
+.toast{position:absolute;left:50%;bottom:24px;transform:translate(-50%,14px);z-index:80;background:rgba(9,9,13,.92);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:10px 16px;font-size:10px;opacity:0;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty-overlay,.private-overlay{position:absolute;inset:83px 34px 84px;z-index:60;background:rgba(12,12,17,.9);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;display:none;place-items:center;text-align:center;padding:40px}.empty-overlay.show,.private-overlay.show{display:grid}.state-inner{max-width:430px}.state-number{font-size:98px;line-height:.8;font-weight:720;letter-spacing:-.08em;color:#8aa8ba}.state-title{font-size:34px;line-height:1.05;letter-spacing:-.05em;margin-top:26px}.state-copy{font-size:12px;line-height:1.65;color:#96919f;margin-top:14px}.state-btn{margin-top:22px;border:1px solid rgba(187,150,255,.35);background:rgba(151,93,241,.18);border-radius:999px;padding:12px 18px;font-weight:650;font-size:11px;cursor:pointer}
+@media (max-width:700px){
+ html,body{height:auto!important;min-height:1540px;overflow-x:hidden!important;overflow-y:auto!important;background:#0b0b10}.memory-pulse-stage{position:relative;min-height:1540px;height:1540px;display:block;padding:0;background:#0b0b10;overflow:hidden}.memory-pulse-stage::before{display:none}.dashboard-shell{width:100%;height:1540px}.dashboard-artboard{position:relative;left:auto;top:auto;width:100%;height:1540px;transform:none!important;border-radius:0;overflow:hidden}.header{left:16px;right:16px;top:16px}.brand-sub{display:none}.filters{max-width:245px;overflow:auto}.filter-btn{padding:8px 7px;white-space:nowrap}.card{border-radius:16px}.activity-card{left:16px;right:16px;top:80px;width:auto;height:190px}.world-card{left:16px;right:16px;top:285px;width:auto;height:214px}.world-map{inset:0 46% 0 0;width:54%;height:100%}.map-title{left:56%;top:28px;bottom:auto}.tree-card{left:16px;right:16px;top:515px;width:auto;height:270px}.source-card{left:16px;right:16px;top:800px;width:auto;height:235px}.source-field{inset:64px 12px 15px 12px}.source-card .source-copy-small{display:none}.reach-card{left:16px;right:16px;top:1050px;width:auto;height:165px}.reach-card .title{font-size:20px;max-width:270px}.rhythm-card{left:16px;right:16px;top:1230px;width:auto;height:285px}.copy-left,.copy-right,.statusbar{display:none}.empty-overlay,.private-overlay{position:fixed;inset:86px 16px 20px}.metric{font-size:40px}}
+@media (prefers-reduced-motion:reduce){.source-chip,.live-dot{animation:none}.bar,.filter-btn,.tree-card{transition:none}}
+</style>
+</head>
+<body>
+<main class="memory-pulse-stage">
+  <div class="dashboard-shell">
+  <section class="dashboard-artboard" id="dashboard">
+    <canvas id="ambient"></canvas>
+    <header class="header">
+      <div class="brand"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20V8M12 11C8 11 6 8 6 5c3 0 6 1 6 6Zm0 2c4 0 7-2 7-6-4 0-7 2-7 6ZM9 17c-3 0-5-2-5-5 3 0 5 2 5 5Zm6 0c3 0 5-2 5-5-3 0-5 2-5 5Z" fill="none" stroke="#d6b4ff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>LoveTree</span><span class="brand-sub">MEMORY PULSE</span></div>
+      <div class="filters" id="periodFilters"></div>
+    </header>
+
+    <section class="card activity-card" id="activityCard">
+      <div class="activity-top"><div class="activity-copy"><div class="kicker">MEMORY ACTIVITY</div><div class="title">Moments added this season</div><div class="description">Daily saves, revisits and new connections.</div></div><div class="change" id="activityChange">+18.6%</div></div>
+      <div class="activity-metric"><div class="metric" id="activityValue">284</div><div class="kicker" id="activityDate">JUL 14 · LIVE</div></div>
+      <div class="bar-wrap" id="activityBars"></div><div class="tooltip" id="barTooltip"></div>
+    </section>
+
+    <section class="card world-card" id="worldCard">
+      <svg class="world-map" id="worldMap" viewBox="0 0 220 210" role="img" aria-label="Global discovery dot map"><defs><filter id="glow"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="glow2"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+      <div class="map-title"><div class="kicker">GLOBAL DISCOVERY</div><div class="title">18 regions</div><div class="map-stats">1,248 COURSE WALKS</div></div>
+      <div class="tooltip" id="mapTooltip"></div>
+    </section>
+
+    <section class="card source-card">
+      <div class="kicker">CONNECTED SOURCES</div><div class="title">Everything saved,<br/>one living archive.</div>
+      <div class="source-field" id="sourceField"><svg class="source-lines" viewBox="0 0 250 190"><path d="M35 45C90 10 160 20 220 64M55 142C110 118 166 125 212 155M68 58C110 95 158 104 203 83M45 144C66 96 143 52 204 46"/></svg></div>
+      <div class="source-copy-small"><div class="description">Videos, posts and links stay connected to the moment that brought them in.</div></div>
+    </section>
+
+    <section class="card tree-card" id="treeCard">
+      <div class="tree-action">Open Tree →</div><div class="tree-name" id="treeName">FELIX · SEASON 03</div><div class="tree-number" id="treeMoments">127</div><div class="tree-label">MOMENTS ALIVE</div><div class="tree-pills" id="treePills"></div>
+    </section>
+
+    <section class="card reach-card" id="reachCard">
+      <div class="kicker">PUBLIC COURSE REACH</div><div class="title">Walked across<br/>18 regions</div><div class="description">Where your shared path is discovered, revisited and passed forward.</div>
+      <div class="reach-stats"><div class="reach-stat"><b id="walks">1,248</b><span>walks</span></div><div class="reach-stat"><b id="completed">312</b><span>complete</span></div><div class="reach-stat"><b id="saved">84</b><span>saved</span></div></div>
+    </section>
+
+    <section class="card rhythm-card" id="rhythmCard">
+      <div class="kicker">SEASON RHYTHM</div><div class="title">Find the moments that changed the journey</div><div class="description">See when you saved, revisited and connected what mattered.</div>
+      <div class="chart-badges"><span class="chart-badge" id="peakBadge">PEAK 18</span><span class="chart-badge" id="avgBadge">AVG 12</span></div>
+      <div class="chart-wrap"><svg class="chart-svg" id="chartSvg" viewBox="0 0 480 140" preserveAspectRatio="none"><defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9d62ff" stop-opacity=".46"/><stop offset="1" stop-color="#7447cc" stop-opacity="0"/></linearGradient><linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8b52dd"/><stop offset=".76" stop-color="#a969ff"/><stop offset="1" stop-color="#f1dcff"/></linearGradient><filter id="chartGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><line class="grid-line" x1="0" y1="35" x2="480" y2="35"/><line class="grid-line" x1="0" y1="70" x2="480" y2="70"/><line class="grid-line" x1="0" y1="105" x2="480" y2="105"/><path class="area-path" id="areaPath"/><path class="line-path" id="linePath"/><path class="focus-line" id="focusPath"/><line class="guide" id="guide" y1="8" y2="132"/><circle class="focus-dot" id="focusDot" r="4.5"/><text class="chart-label" id="chartLabel" y="15"></text></svg><div class="tooltip" id="chartTooltip"></div></div>
+      <div class="chart-footer"><span id="chartStart">JUL 01</span><span id="chartEnd">JUL 30</span></div>
+    </section>
+
+    <section class="copy-left"><div class="kicker">CONNECTED SOURCES</div><div class="tiny-line"></div><div class="title">One archive,<br/>many entrances.</div><div class="description">Every source retains the context that made the moment worth saving.</div></section>
+    <section class="copy-right"><div class="kicker">SEASON RHYTHM</div><div class="title">Your journey has a shape.</div><div class="description">Return to the points where a new branch, person or feeling entered the story.</div></section>
+    <div class="statusbar"><span class="live-dot"></span><span id="liveLabel">LIVE PULSE · 30D</span></div>
+    <div class="toast" id="toast">Live Pulse paused</div>
+    <div class="empty-overlay" id="emptyOverlay"><div class="state-inner"><div class="state-number">0</div><div class="kicker">MOMENTS</div><div class="state-title">Your LoveTree begins<br/>with one moment.</div><div class="state-copy">Save the first scene that made you stop. Memory Pulse will grow as your archive takes shape.</div><button class="state-btn">Plant your first moment</button></div></div>
+    <div class="private-overlay" id="privateOverlay"><div class="state-inner"><div class="brandmark" style="margin:auto;width:44px;height:44px">✦</div><div class="kicker" style="margin-top:20px">PRIVATE TREE</div><div class="state-title">Visible only to you.</div><div class="state-copy">Create a Course when you are ready to let someone walk the same path.</div><button class="state-btn" id="closePrivate">Return to Memory Pulse</button></div></div>
+  </section>
+  </div>
+</main>
+<script>
+(()=>{
+'use strict';
+const dashboardData={
+ currentTree:{id:'tree-felix',person:'Felix',season:'Season 03',moments:127,branches:18,revisits:42,people:6,courses:3},
+ activity:Array.from({length:42},(_,i)=>{const base=[12,18,21,17,24,31,28,35,42,38,46,51,44,57,63,59,48,54,68,72,64,61,74,81,77,69,83,89,84,92,88,78,86,95,90,99,92,104,98,108,101,112][i];return{date:`2026-07-${String(i+1).padStart(2,'0')}`,saves:Math.round(base*.43),revisits:Math.round(base*.38),connections:Math.max(1,Math.round(base*.19)),total:base}}),
+ sources:[
+  {id:'all',label:'All Sources',count:127,color:'#a76cff',x:45,y:42,dur:3.5},
+  {id:'youtube',label:'YouTube',count:74,color:'#ff6978',x:152,y:16,dur:4.2},
+  {id:'tiktok',label:'TikTok',count:18,color:'#79e4df',x:120,y:67,dur:3.2},
+  {id:'instagram',label:'Instagram',count:14,color:'#dd7fe5',x:22,y:93,dur:4.9},
+  {id:'x',label:'X',count:7,color:'#d7d9dd',x:165,y:112,dur:3.8},
+  {id:'spotify',label:'Spotify',count:6,color:'#62d991',x:62,y:145,dur:4.5},
+  {id:'web',label:'Web',count:5,color:'#7ab6ff',x:175,y:160,dur:5.2},
+  {id:'vimeo',label:'Vimeo',count:3,color:'#5bbdf2',x:112,y:124,dur:3.9}
+ ],
+ publicReach:{regions:18,walks:1248,completed:312,saved:84},
+ regions:[
+  {name:'Seoul',x:178,y:84},{name:'Tokyo',x:190,y:91},{name:'Los Angeles',x:34,y:92},{name:'London',x:104,y:62},{name:'Paris',x:107,y:69},{name:'Bangkok',x:164,y:116},{name:'Singapore',x:166,y:134},{name:'Sydney',x:198,y:164}
+ ]
+};
+const periods={
+ '7D':{slice:7,mult:.82},'30D':{slice:30,mult:1},'SEASON':{slice:42,mult:1.14},'ALL':{slice:42,mult:1.28}
+};
+let state={period:'30D',source:'all',selected:13,running:true,timer:null,step:0,empty:new URLSearchParams(location.search).has('empty'),private:new URLSearchParams(location.search).has('private')};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const periodFilters=$('#periodFilters');
+Object.keys(periods).forEach(k=>{const b=document.createElement('button');b.className='filter-btn'+(k===state.period?' active':'');b.textContent=k;b.onclick=()=>setPeriod(k,true);periodFilters.appendChild(b)});
+const bars=$('#activityBars'),barTip=$('#barTooltip');
+dashboardData.activity.forEach((d,i)=>{const b=document.createElement('div');b.className='bar';b.dataset.i=i;b.style.setProperty('--h',`${18+d.total/112*39}px`);b.addEventListener('mouseenter',()=>showBarTip(i,b));b.addEventListener('mouseleave',()=>barTip.style.opacity=0);b.addEventListener('click',()=>{state.selected=i;state.running=false;updateAll(true);toast('Live Pulse paused')});bars.appendChild(b)});
+function showBarTip(i,el){const d=getData()[i]||dashboardData.activity[i];barTip.innerHTML=`<strong>${d.date}</strong>${d.saves} saves · ${d.revisits} revisits · ${d.connections} connections`;barTip.style.left=(el.offsetLeft+el.offsetWidth/2)+'px';barTip.style.top=(el.offsetTop)+'px';barTip.style.opacity=1}
+function sourceFactor(){if(state.source==='all')return 1;const s=dashboardData.sources.find(x=>x.id===state.source);return .34+s.count/127*.66}
+function getData(){const p=periods[state.period];return dashboardData.activity.slice(-p.slice).map((d,i)=>({...d,total:Math.max(1,Math.round(d.total*p.mult*sourceFactor())),saves:Math.max(0,Math.round(d.saves*p.mult*sourceFactor())),revisits:Math.max(0,Math.round(d.revisits*p.mult*sourceFactor())),connections:Math.max(0,Math.round(d.connections*p.mult*sourceFactor()))}))}
+function setPeriod(k,user=false){state.period=k;$$('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent===k));state.selected=Math.min(state.selected,getData().length-1);if(user){state.running=false;toast(`${k} view selected`)}renderBars();renderChart();updateAll()}
+function renderBars(){const data=getData();const all=$$('.bar');all.forEach((b,i)=>{const visible=i>=all.length-data.length;b.style.display=visible?'block':'none';if(visible){const d=data[i-(all.length-data.length)];b.style.setProperty('--h',`${16+d.total/Math.max(...data.map(x=>x.total))*41}px`)}})}
+function buildSources(){const f=$('#sourceField');dashboardData.sources.forEach((s,i)=>{const b=document.createElement('button');b.className='source-chip'+(s.id===state.source?' active':'');b.dataset.id=s.id;b.style.cssText=`left:${s.x}px;top:${s.y}px;--c:${s.color};--dur:${s.dur}s`;b.innerHTML=`<span class="dot"></span>${s.label}`;b.onclick=()=>{state.source=s.id;state.running=false;$$('.source-chip').forEach(x=>x.classList.toggle('active',x.dataset.id===s.id));updateAll(true);toast(`${s.label} moments selected`)};f.appendChild(b)})}
+buildSources();
+const map=$('#worldMap'),mapTip=$('#mapTooltip');
+function inContinent(x,y){const shapes=[
+ [48,72,46,33,-.2],[80,114,31,49,.08],[125,63,35,19,-.1],[137,96,29,39,.12],[175,72,52,31,.05],[176,117,38,28,-.1],[197,161,22,17,0]
+ ];return shapes.some(([cx,cy,rx,ry,sk])=>{const dx=x-cx-sk*(y-cy),dy=y-cy;return dx*dx/(rx*rx)+dy*dy/(ry*ry)<1})}
+const dots=[];for(let y=35;y<184;y+=5.4){for(let x=14;x<210;x+=5.2){if(inContinent(x,y)&&Math.random()>.16){const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',(x+(Math.random()-.5)*2).toFixed(1));c.setAttribute('cy',(y+(Math.random()-.5)*2).toFixed(1));c.setAttribute('r',Math.random()>.88?'1.35':'.9');c.setAttribute('class','map-dot');map.appendChild(c);dots.push(c)}}}
+const regionNodes=dashboardData.regions.map((r,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',r.x);c.setAttribute('cy',r.y);c.setAttribute('r','2.5');c.setAttribute('class','map-dot hot');c.dataset.region=i;c.addEventListener('mouseenter',e=>{mapTip.innerHTML=`<strong>${r.name}</strong>Public Course discovery`;mapTip.style.left=(r.x/220*212)+'px';mapTip.style.top=(r.y/210*210)+'px';mapTip.style.opacity=1});c.addEventListener('mouseleave',()=>mapTip.style.opacity=0);map.appendChild(c);return c});
+function renderTree(){const s=sourceFactor(),p=periods[state.period].mult;const t=dashboardData.currentTree;$('#treeName').textContent=`${t.person.toUpperCase()} · ${t.season.toUpperCase()}`;$('#treeMoments').textContent=Math.max(0,Math.round(t.moments*s*p));$('#treePills').innerHTML=[`${Math.round(t.branches*s)} branches`,`${Math.round(t.revisits*s*p)} revisits`,`${t.people} people`,`${t.courses} courses`,t.season].map(x=>`<span class="tree-pill">${x}</span>`).join('')}
+$('#treeCard').addEventListener('pointermove',e=>{const r=e.currentTarget.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;e.currentTarget.style.setProperty('--px',x+'%');e.currentTarget.style.setProperty('--py',y+'%');e.currentTarget.style.setProperty('--shine',`${x-80}%`)});$('#treeCard').onclick=e=>{e.currentTarget.classList.toggle('open');toast(e.currentTarget.classList.contains('open')?'Current Tree ready to open':'Tree summary closed')};
+function linePoints(data){const max=Math.max(...data.map(d=>d.total));return data.map((d,i)=>({x:i/(data.length-1)*480,y:126-(d.total/max)*104,d}))}
+function smoothPath(pts){if(!pts.length)return'';let d=`M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],mx=(a.x+b.x)/2;d+=` C${mx.toFixed(1)},${a.y.toFixed(1)} ${mx.toFixed(1)},${b.y.toFixed(1)} ${b.x.toFixed(1)},${b.y.toFixed(1)}`}return d}
+function renderChart(){const data=getData(),pts=linePoints(data),line=smoothPath(pts);$('#linePath').setAttribute('d',line);$('#areaPath').setAttribute('d',line+` L480,140 L0,140 Z`);$('#peakBadge').textContent=`PEAK ${Math.max(...data.map(d=>d.total))}`;$('#avgBadge').textContent=`AVG ${Math.round(data.reduce((a,b)=>a+b.total,0)/data.length)}`;$('#chartStart').textContent=data[0]?.date.slice(5).replace('-',' · ')||'';$('#chartEnd').textContent=data.at(-1)?.date.slice(5).replace('-',' · ')||'';$('#chartSvg').onmousemove=e=>{const r=e.currentTarget.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*480,idx=Math.max(0,Math.min(data.length-1,Math.round(x/480*(data.length-1))));state.selected=idx;updateAll(false);const d=data[idx];const tip=$('#chartTooltip');tip.innerHTML=`<strong>${d.date}</strong>${d.saves} saves · ${d.revisits} revisits · ${d.connections} connections`;tip.style.left=(idx/(data.length-1)*100)+'%';tip.style.top='70px';tip.style.opacity=1};$('#chartSvg').onmouseleave=()=>$('#chartTooltip').style.opacity=0}
+function updateAll(animated=false){const data=getData();if(!data.length)return;state.selected=Math.max(0,Math.min(state.selected,data.length-1));const d=data[state.selected],globalIndex=dashboardData.activity.length-data.length+state.selected;const max=Math.max(...data.map(x=>x.total));$('#activityValue').textContent=d.total;const prev=data[Math.max(0,state.selected-1)].total||1;const rate=(d.total-prev)/prev*100;$('#activityChange').textContent=`${rate>=0?'+':''}${rate.toFixed(1)}%`;$('#activityDate').textContent=`${d.date.slice(5).replace('-',' · ')} · ${state.period}`;const all=$$('.bar');all.forEach((b,i)=>{const dist=Math.abs(i-globalIndex);b.classList.toggle('active',i===globalIndex);b.classList.toggle('near',dist>0&&dist<=3)});const pts=linePoints(data),p=pts[state.selected],sub=pts.slice(0,state.selected+1);$('#focusPath').setAttribute('d',smoothPath(sub));$('#focusDot').setAttribute('cx',p.x);$('#focusDot').setAttribute('cy',p.y);$('#guide').setAttribute('x1',p.x);$('#guide').setAttribute('x2',p.x);$('#chartLabel').setAttribute('x',Math.min(415,Math.max(4,p.x-24)));$('#chartLabel').textContent=`${d.total} ACTIVITY`;const r=regionNodes[state.step%regionNodes.length];regionNodes.forEach((n,i)=>{n.setAttribute('class','map-dot '+(i===state.step%regionNodes.length?'active':'hot'));n.setAttribute('r',i===state.step%regionNodes.length?'4':'2.3')});const reach=dashboardData.publicReach;$('#walks').textContent=Math.round(reach.walks*sourceFactor()).toLocaleString();$('#completed').textContent=Math.round(reach.completed*sourceFactor()).toLocaleString();$('#saved').textContent=Math.round(reach.saved*sourceFactor()).toLocaleString();renderTree();$('#liveLabel').textContent=`${state.running?'LIVE PULSE':'PAUSED'} · ${state.period}`}
+function tick(){if(!state.running)return;const data=getData();state.step=(state.step+1)%8;const indexes=[3,8,13,17,21,24,27,29].map(i=>Math.min(data.length-1,Math.round(i/30*(data.length-1))));state.selected=indexes[state.step];updateAll(true)}
+function startLoop(){clearInterval(state.timer);state.timer=setInterval(tick,1150)}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1400)}
+function setMode(){state.empty?$('#emptyOverlay').classList.add('show'):$('#emptyOverlay').classList.remove('show');state.private?$('#privateOverlay').classList.add('show'):$('#privateOverlay').classList.remove('show')}
+$('#closePrivate').onclick=()=>{$('#privateOverlay').classList.remove('show');state.private=false};
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();state.running=!state.running;toast(state.running?'Live Pulse resumed':'Live Pulse paused');updateAll()}if(e.key.toLowerCase()==='r'){state.step=0;state.selected=3;state.running=true;updateAll();toast('Live Pulse restarted')}});
+function scaleArtboard(){if(innerWidth<=700)return;const shell=$('.dashboard-shell'),board=$('#dashboard');const scale=Math.min(shell.clientWidth/840,shell.clientHeight/990);board.style.setProperty('--scale',scale)}addEventListener('resize',scaleArtboard);
+function ambient(){const c=$('#ambient'),ctx=c.getContext('2d');let pts=Array.from({length:70},()=>({x:Math.random()*840,y:Math.random()*990,r:Math.random()*1.4+.2,a:Math.random()*.22+.05,s:Math.random()*1.4+.3}));function resize(){c.width=840;c.height=990}resize();let last=0;function draw(t){requestAnimationFrame(draw);if(t-last<33)return;last=t;ctx.clearRect(0,0,840,990);pts.forEach((p,i)=>{p.y-=p.s*.025;if(p.y<0)p.y=990;const a=p.a*(.65+.35*Math.sin(t*.001+p.x));ctx.fillStyle=`rgba(${i%8===0?'164,105,255':'255,255,255'},${a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()})}requestAnimationFrame(draw)}ambient();
+renderBars();renderChart();updateAll();setMode();scaleArtboard();startLoop();
+window.__MEMORY_PULSE_API__={setPeriod,setSource:id=>{const el=document.querySelector(`.source-chip[data-id="${id}"]`);el?.click()},setSelected:i=>{state.selected=i;updateAll()},pause:()=>{state.running=false;updateAll()},resume:()=>{state.running=true;updateAll()},showPrivate:v=>{$('#privateOverlay').classList.toggle('show',v)},showEmpty:v=>{$('#emptyOverlay').classList.toggle('show',v)},getState:()=>({...state})};
+})();
+</script>
+</body>
+</html>

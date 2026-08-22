@@ -1,0 +1,37 @@
+[B안 — 기억 파편 / 모먼트 중심]
+
+Design an original fullscreen LoveTree landing page focused on memory fragments rather than one dominant portrait.
+
+CORE IDEA
+LoveTree is a living emotional archive where several small moments accumulate into a path.
+The main aesthetic language should be memory fragments: cropped stills, tiny cards, dates, notes, subtitles, blurred images, emotion tags and fine connection lines.
+
+VISUAL STYLE
+- Full viewport, no scroll
+- Dark cinematic background
+- Elegant white/warm-white typography
+- Thin translucent cards
+- Subtle grain, blur and soft glow, not neon
+- A faint human presence may exist, but fragmented rather than dominant
+
+HERO
+A SINGLE
+MOMENT
+CAN GROW
+A WHOLE PATH
+
+MEMORY FRAGMENTS
+Arrange 5–9 fragments with hints such as first look, replayed clip, interview line, laughter, stage scene, late-night replay.
+Use subtle emotion tags: curiosity / comfort / excitement / obsession / pause / return.
+Connect only some fragments with very fine lines.
+
+CTA
+START WITH ONE MOMENT
+FOLLOW THE PATH
+REPLAY A MEMORY ROUTE
+
+DO NOT
+- Do not look like a designer portfolio
+- Do not use one giant face as the only visual anchor
+- Do not copy the reference layout rhythm
+- Do not add fake awards or startup metrics

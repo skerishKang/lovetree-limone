@@ -1,0 +1,332 @@
+{
+  "desktop": {
+    "cardCount": 3,
+    "horizontalOverflow": false,
+    "tiltGlareSpringCycles": [
+      {
+        "card": 1,
+        "pointer": [
+          0.16,
+          0.18
+        ],
+        "active": {
+          "rx": "4.496deg",
+          "ry": "-6.369deg",
+          "gx": "16.00%",
+          "gy": "18.00%",
+          "mx": "4.76px",
+          "tx": "-3.06px"
+        },
+        "spring": [
+          [
+            100,
+            [
+              0.084,
+              -0.163
+            ]
+          ],
+          [
+            250,
+            [
+              -0.016,
+              0.046
+            ]
+          ],
+          [
+            450,
+            [
+              0.004,
+              -0.007
+            ]
+          ],
+          [
+            650,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            800,
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "settled": true
+      },
+      {
+        "card": 2,
+        "pointer": [
+          0.84,
+          0.18
+        ],
+        "active": {
+          "rx": "4.625deg",
+          "ry": "6.597deg",
+          "gx": "84.00%",
+          "gy": "18.00%",
+          "mx": "-4.76px",
+          "tx": "3.06px"
+        },
+        "spring": [
+          [
+            100,
+            [
+              0.036,
+              -0.142
+            ]
+          ],
+          [
+            250,
+            [
+              -0.009,
+              0.018
+            ]
+          ],
+          [
+            450,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            650,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            800,
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "settled": true
+      },
+      {
+        "card": 3,
+        "pointer": [
+          0.84,
+          0.82
+        ],
+        "active": {
+          "rx": "-4.176deg",
+          "ry": "6.375deg",
+          "gx": "84.00%",
+          "gy": "82.00%",
+          "mx": "-4.76px",
+          "tx": "3.06px"
+        },
+        "spring": [
+          [
+            100,
+            [
+              -0.058,
+              0.091
+            ]
+          ],
+          [
+            250,
+            [
+              0.009,
+              -0.013
+            ]
+          ],
+          [
+            450,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            650,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            800,
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "settled": true
+      },
+      {
+        "card": 1,
+        "pointer": [
+          0.16,
+          0.82
+        ],
+        "active": {
+          "rx": "-4.479deg",
+          "ry": "-6.328deg",
+          "gx": "16.00%",
+          "gy": "82.00%",
+          "mx": "4.76px",
+          "tx": "-3.06px"
+        },
+        "spring": [
+          [
+            100,
+            [
+              -0.018,
+              -0.018
+            ]
+          ],
+          [
+            250,
+            [
+              -0.186,
+              -0.307
+            ]
+          ],
+          [
+            450,
+            [
+              0.012,
+              0.02
+            ]
+          ],
+          [
+            650,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            800,
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "settled": true
+      },
+      {
+        "card": 2,
+        "pointer": [
+          0.72,
+          0.38
+        ],
+        "active": {
+          "rx": "1.478deg",
+          "ry": "3.683deg",
+          "gx": "72.00%",
+          "gy": "38.00%",
+          "mx": "-3.08px",
+          "tx": "1.98px"
+        },
+        "spring": [
+          [
+            100,
+            [
+              0.04,
+              0.15
+            ]
+          ],
+          [
+            250,
+            [
+              -0.013,
+              -0.055
+            ]
+          ],
+          [
+            450,
+            [
+              0.002,
+              0.006
+            ]
+          ],
+          [
+            650,
+            [
+              0,
+              0
+            ]
+          ],
+          [
+            800,
+            [
+              0,
+              0
+            ]
+          ]
+        ],
+        "settled": true
+      }
+    ],
+    "selectCycles": [
+      {
+        "expected": "m1",
+        "selected": "m1",
+        "open": true,
+        "title": "처음 눈에 들어온 무대"
+      },
+      {
+        "expected": "m2",
+        "selected": "m2",
+        "open": true,
+        "title": "계속 찾아보게 된 직캠"
+      },
+      {
+        "expected": "m3",
+        "selected": "m3",
+        "open": true,
+        "title": "지금 가장 아끼는 순간"
+      },
+      {
+        "expected": "m1",
+        "selected": "m1",
+        "open": true,
+        "title": "처음 눈에 들어온 무대"
+      },
+      {
+        "expected": "m2",
+        "selected": "m2",
+        "open": true,
+        "title": "계속 찾아보게 된 직캠"
+      }
+    ],
+    "flow": {
+      "why": "마지막 표정이 계속 생각나서 같은 날의 다른 직캠을 찾아봤어요.",
+      "nextSelected": "m2",
+      "toast": "WHY NEXT · 마지막 표정이 계속 생각나서 같은 날의 다른 직캠을 찾아봤어요.",
+      "viewerOpen": true,
+      "viewerEscapeClosed": true,
+      "detailEscapeClosed": true
+    },
+    "keyboardEnter": "m3",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": []
+  },
+  "mobile": {
+    "touchActive": {
+      "rx": "-0.058deg",
+      "ry": "0.400deg",
+      "gx": "76.00%"
+    },
+    "springResidual": 0,
+    "tapSelected": "m2",
+    "swipeSelected": "m2",
+    "horizontalOverflow": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": []
+  },
+  "errors": []
+}

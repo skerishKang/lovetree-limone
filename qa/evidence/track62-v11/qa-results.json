@@ -1,0 +1,238 @@
+{
+  "summary": {
+    "checks": 46,
+    "failures": 0
+  },
+  "results": [
+    {
+      "check": "A route loads",
+      "pass": true,
+      "detail": "status 200"
+    },
+    {
+      "check": "B horizontal overflow = 0",
+      "pass": true,
+      "detail": "{\"doc\":0,\"body\":0}"
+    },
+    {
+      "check": "E wheel creates fractional phase before settle",
+      "pass": true,
+      "detail": "phase 0 -> 0.7686"
+    },
+    {
+      "check": "G immediate reverse while moving",
+      "pass": true,
+      "detail": "0.7686 -> 0.3152"
+    },
+    {
+      "check": "F idle nearest snap",
+      "pass": true,
+      "detail": "mode idle, phase 0"
+    },
+    {
+      "check": "H pointer drag fractional motion",
+      "pass": true,
+      "detail": "0 -> 0.6316"
+    },
+    {
+      "check": "H drag release settles to a scene",
+      "pass": true,
+      "detail": "phase 1"
+    },
+    {
+      "check": "J pointercancel never opens dialog",
+      "pass": true,
+      "detail": "dialog 0"
+    },
+    {
+      "check": "K lostpointercapture safe cleanup",
+      "pass": true,
+      "detail": "cleanup only, no selection"
+    },
+    {
+      "check": "L node click travels via controller and lands",
+      "pass": true,
+      "detail": "phase -> 3"
+    },
+    {
+      "check": "M viewer opens on fractional phase",
+      "pass": true,
+      "detail": "frozen phase 3.3954"
+    },
+    {
+      "check": "M phase frozen while viewer open (no drift during overlay)",
+      "pass": true,
+      "detail": "3.3954 -> 3.3954"
+    },
+    {
+      "check": "M phase preserved across viewer open/close (3.25 contract)",
+      "pass": true,
+      "detail": "preserved 3.3954 -> 3.4385 (no reset / no far jump)"
+    },
+    {
+      "check": "N one Moment authority across surfaces",
+      "pass": true,
+      "detail": "scene 2, title 카페에서"
+    },
+    {
+      "check": "O viewer opens",
+      "pass": true,
+      "detail": "viewer for focus lifecycle"
+    },
+    {
+      "check": "P focus entry inside dialog",
+      "pass": true,
+      "detail": "activeElement inside dialog"
+    },
+    {
+      "check": "Q Tab containment",
+      "pass": true,
+      "detail": "8 tabs stayed inside"
+    },
+    {
+      "check": "R Shift+Tab containment",
+      "pass": true,
+      "detail": "6 shift-tabs stayed inside"
+    },
+    {
+      "check": "S Escape closes viewer",
+      "pass": true,
+      "detail": "dialog removed"
+    },
+    {
+      "check": "T trigger focus restored",
+      "pass": true,
+      "detail": "restored mom-03-cafe-talk"
+    },
+    {
+      "check": "O viewer opens",
+      "pass": true,
+      "detail": "viewer for tab projections"
+    },
+    {
+      "check": "N2 viewer tab projections same Moment",
+      "pass": true,
+      "detail": "1 journal-current entries"
+    },
+    {
+      "check": "O viewer opens",
+      "pass": true,
+      "detail": "screenshot evidence"
+    },
+    {
+      "check": "C console errors = 0 (desktop)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "D page errors = 0 (desktop)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "I touch-equivalent drag motion",
+      "pass": true,
+      "detail": "0 -> 0.3947"
+    },
+    {
+      "check": "U 390 copy not covered by sculpture",
+      "pass": true,
+      "detail": "no overlap"
+    },
+    {
+      "check": "U copy inside viewport",
+      "pass": true,
+      "detail": "{\"y\":206,\"h\":172.5}"
+    },
+    {
+      "check": "B2 390 overflow = 0",
+      "pass": true,
+      "detail": "{\"doc\":0,\"body\":0}"
+    },
+    {
+      "check": "W no scroll trap at 390",
+      "pass": true,
+      "detail": "extra scroll 226px"
+    },
+    {
+      "check": "C2 console errors = 0 (390)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "D2 page errors = 0 (390)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "V 320 copy not covered by sculpture",
+      "pass": true,
+      "detail": "no overlap"
+    },
+    {
+      "check": "B3 320 overflow = 0",
+      "pass": true,
+      "detail": "{\"doc\":0,\"body\":0}"
+    },
+    {
+      "check": "C3 console errors = 0 (320)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "D3 page errors = 0 (320)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "X reduced-motion policy active",
+      "pass": true,
+      "detail": "policy reduced"
+    },
+    {
+      "check": "Y keyboard ArrowRight selects next scene",
+      "pass": true,
+      "detail": "0 -> 1"
+    },
+    {
+      "check": "Y keyboard ArrowLeft returns",
+      "pass": true,
+      "detail": "1 -> 0"
+    },
+    {
+      "check": "X reduced-motion fast settle via controller",
+      "pass": true,
+      "detail": "landed in 412ms"
+    },
+    {
+      "check": "C4 console errors = 0 (reduced)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "D4 page errors = 0 (reduced)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "AA no fake MY TREE links",
+      "pass": true,
+      "detail": "0 fake links found"
+    },
+    {
+      "check": "AB no production media claims",
+      "pass": true,
+      "detail": "holds text present"
+    },
+    {
+      "check": "AB viewer carries DEMO media authority",
+      "pass": true,
+      "detail": "viewer elements: 0"
+    },
+    {
+      "check": "Z visible focus present",
+      "pass": true,
+      "detail": "outline solid"
+    }
+  ]
+}

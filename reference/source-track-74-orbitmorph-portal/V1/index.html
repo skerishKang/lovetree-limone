@@ -1,0 +1,254 @@
+<!doctype html>
+<!-- Track 74: Orbit Morph LoveTree Template Portal V1. Source candidate migrated from Track 73 V5 with root-relative route correction. -->
+<html lang="en" class="anim">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#161616">
+  <title>LoveTree — Moments become paths</title>
+  <style>
+    /* Exact Orbit base64 TTF blocks were not present in the supplied sources.
+       The required family names remain stable and map to local fallbacks. */
+    @font-face{font-family:"Orbit Sans";font-style:normal;font-weight:400;font-display:block;src:local("Arial"),local("Helvetica")}
+    @font-face{font-family:"Orbit Display";font-style:normal;font-weight:400;font-display:block;src:local("Times New Roman"),local("Times")}
+    :root{--ink:#ffffff;--surface:#161616;--orb-reveal:cubic-bezier(.16,1,.3,1);--orb-soft:cubic-bezier(.25,.8,.28,1)}
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--surface)}
+    body{font-family:"Orbit Sans",Arial,Helvetica,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+    button,a{font:inherit;color:inherit}
+    button{appearance:none}
+    a{text-decoration:none}
+    :focus-visible{outline:2px solid #fd86db;outline-offset:4px}
+    .viewport{position:fixed;inset:0;background:#161616;overflow:hidden}
+    .stage{position:absolute;inset:0;contain:strict;isolation:isolate;background:#161616;overflow:hidden}
+    .brand-mark{position:absolute;z-index:4;top:2.141745dvh;left:3.854167vw;width:clamp(34px,min(3.4375vw,5.2dvh),66px);height:auto;color:#fff}
+    .brand-mark line{stroke:currentColor;stroke-width:5;stroke-linecap:square}
+    .primary-nav{position:absolute;inset:0;z-index:4;margin:0;padding:0;list-style:none;pointer-events:none}
+    .primary-nav>li{position:absolute;top:3.426791dvh;pointer-events:auto;transform-origin:left center}
+    .primary-nav>li:nth-child(1){left:10.104167vw;transform:scaleX(1.165)}
+    .primary-nav>li:nth-child(2){left:17.526042vw;transform:scaleX(1.052)}
+    .primary-nav>li:nth-child(3){left:27.578125vw;transform:scaleX(1.126)}
+    .primary-nav>li:nth-child(4){left:36.171875vw;transform:scaleX(1.168)}
+    .nav-trigger{border:0;background:transparent;padding:0;cursor:pointer;white-space:nowrap;font-size:clamp(13px,min(1.302083vw,2.05dvh),25px);line-height:1;color:#fff}
+    .nav-trigger::after{content:"";display:block;height:1px;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform .3s var(--orb-soft);margin-top:.34em}
+    .nav-trigger:hover::after,.nav-trigger[aria-expanded="true"]::after{transform:scaleX(1)}
+    .nav-panel{position:absolute;top:calc(100% + 12px);left:0;width:clamp(230px,18vw,340px);padding:11px;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(22,22,22,.88);backdrop-filter:blur(18px) saturate(120%);box-shadow:0 22px 70px rgba(0,0,0,.4);opacity:0;visibility:hidden;transform:translateY(-6px) scaleX(calc(1 / var(--nav-scale,1)));transform-origin:left top;transition:opacity .2s ease,transform .24s var(--orb-soft),visibility .2s;pointer-events:none}
+    .primary-nav>li:nth-child(1){--nav-scale:1.165}.primary-nav>li:nth-child(2){--nav-scale:1.052}.primary-nav>li:nth-child(3){--nav-scale:1.126}.primary-nav>li:nth-child(4){--nav-scale:1.168}
+    .primary-nav>li.open .nav-panel{opacity:1;visibility:visible;transform:translateY(0) scaleX(calc(1 / var(--nav-scale,1)));pointer-events:auto}
+    .nav-panel__link{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 10px;border-radius:10px;font-size:13px;line-height:1.25;letter-spacing:.015em;color:rgba(255,255,255,.82);transition:background .2s,color .2s}
+    .nav-panel__link:hover{background:rgba(255,255,255,.1);color:#fff}
+    .nav-panel__link b{font-weight:400;color:#fd86db}
+    .secure-pill{position:absolute;z-index:4;top:2.336449dvh;right:7.5vw;height:clamp(34px,4.439252dvh,57px);padding:0 clamp(18px,1.65vw,32px);display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#fff;color:#161616;font-size:clamp(12px,min(1.05vw,1.85dvh),20px);letter-spacing:.026923em;white-space:nowrap;transition:transform .25s var(--orb-soft)}
+    .secure-pill:hover{transform:translateY(-2px)}
+    .orbit-word{position:absolute;z-index:1;top:11.565421dvh;left:4.348958vw;margin:0;font-family:"Orbit Display","Times New Roman",Times,serif;font-weight:400;font-size:min(20.7vw,43dvh);line-height:.82;letter-spacing:.015em;white-space:nowrap;color:#fff}
+    .orbit-word__mask{display:block}
+    .orbit-word__inner{display:block}
+    .orbit-word__white{color:#fff}
+    .orbit-word__pink{background:linear-gradient(180deg,#ffc5dc 0%,#fd86db 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .orbit-word__l{display:inline-block;transform:scaleX(1.055);transform-origin:left center;margin-right:.018em}
+    .flower{position:absolute;z-index:2;top:14.749065dvh;left:49.121328vw;height:106.109034dvh;transform:translateX(-50%);pointer-events:none}
+    .flower__sizer{visibility:hidden;height:100%;width:auto;display:block}
+    .flower__layer{position:absolute;inset:0}
+    .flower__layer img{width:100%;height:100%;object-fit:cover;display:block}
+    .flower__layer--top{-webkit-mask-image:linear-gradient(#0000,#0000);mask-image:linear-gradient(#0000,#0000);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+    .morph-canvas{display:none}
+    .support-copy{position:absolute;z-index:3;bottom:4.361371dvh;color:#f7f7f7;font-size:clamp(14px,min(1.40625vw,2.102804dvh),27px);line-height:1.08;letter-spacing:.005em}
+    .support-copy--left{left:3.177083vw;transform:scaleX(1.073);transform-origin:left center}
+    .support-copy--right{left:78.28125vw;transform:scaleX(1.058);transform-origin:left center}
+    .support-copy__inner{display:block}
+    .mobile-burger,.mobile-scrim,.mobile-sheet{display:none}
+
+    html.anim .orbit-word__mask{overflow:hidden;padding:.16em .1em .12em;margin:-.16em -.1em -.12em}
+    @keyframes orb-word{from{transform:translateY(118%)}to{transform:translateY(0)}}
+    @keyframes orb-subject{from{opacity:0;transform:translateX(-50%) translateY(3.4dvh)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    @keyframes orb-corner{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes orb-quiet{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes orb-dim{from{opacity:0}to{opacity:1}}
+    html.anim .brand-mark{animation:orb-quiet 620ms var(--orb-soft) 100ms both}
+    html.anim .primary-nav>li:nth-child(1){animation:orb-dim 550ms var(--orb-soft) 180ms both}
+    html.anim .primary-nav>li:nth-child(2){animation:orb-dim 550ms var(--orb-soft) 225ms both}
+    html.anim .primary-nav>li:nth-child(3){animation:orb-dim 550ms var(--orb-soft) 270ms both}
+    html.anim .primary-nav>li:nth-child(4){animation:orb-dim 550ms var(--orb-soft) 315ms both}
+    html.anim .secure-pill{animation:orb-quiet 620ms var(--orb-soft) 340ms both}
+    html.anim .orbit-word__inner{animation:orb-word 1150ms var(--orb-reveal) 300ms both}
+    html.anim .flower{animation:orb-subject 1150ms var(--orb-reveal) 660ms both}
+    html.anim .support-copy__inner{animation:orb-corner 720ms var(--orb-soft) 980ms both}
+
+    @media (max-width:1200px),(orientation:portrait){
+      .orbit-word{left:0;width:100%;text-align:center;font-size:min(20vw,38dvh)}
+    }
+    @media (max-width:900px),(max-aspect-ratio:4/5){
+      .primary-nav,.secure-pill{display:none}
+      .mobile-burger{display:grid;place-items:center;position:absolute;z-index:12;top:18px;right:18px;width:52px;height:52px;border:0;border-radius:50%;background:#fff;color:#161616;cursor:pointer}
+      .mobile-burger span,.mobile-burger::before,.mobile-burger::after{content:"";display:block;width:20px;height:2px;background:currentColor;transition:transform .25s,opacity .2s}
+      .mobile-burger span{position:absolute}
+      .mobile-burger::before{transform:translateY(-6px)}
+      .mobile-burger::after{transform:translateY(6px)}
+      .mobile-burger[aria-expanded="true"] span{opacity:0}
+      .mobile-burger[aria-expanded="true"]::before{transform:rotate(45deg)}
+      .mobile-burger[aria-expanded="true"]::after{transform:rotate(-45deg)}
+      .mobile-scrim{display:block;position:absolute;z-index:9;inset:0;border:0;background:rgba(0,0,0,.58);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+      .mobile-sheet{display:block;position:absolute;z-index:10;top:12px;right:12px;bottom:12px;width:min(430px,calc(100vw - 24px));padding:86px 22px 28px;border:1px solid rgba(255,255,255,.18);border-radius:30px;background:rgba(22,22,22,.88);backdrop-filter:blur(24px) saturate(130%);overflow:auto;transform:translateX(calc(100% + 26px));transition:transform .42s var(--orb-reveal)}
+      .menu-open .mobile-scrim{opacity:1;visibility:visible}
+      .menu-open .mobile-sheet{transform:translateX(0)}
+      .mobile-menu__group{padding:18px 0;border-top:1px solid rgba(255,255,255,.14)}
+      .mobile-menu__group:first-child{border-top:0}
+      .mobile-menu__group h2{margin:0 0 10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fd86db}
+      .mobile-menu__link{display:flex;justify-content:space-between;gap:16px;padding:11px 0;font-size:18px;line-height:1.2}
+      .mobile-menu__link b{font-weight:400;color:#fd86db}
+      html.anim .mobile-burger{animation:orb-quiet 560ms var(--orb-soft) 230ms both}
+      html.anim .primary-nav>li,html.anim .secure-pill{animation:none!important}
+      html.anim .flower{animation-delay:560ms}
+      html.anim .support-copy__inner{animation-delay:900ms}
+    }
+    @media (max-aspect-ratio:4/5){
+      .flower{top:30dvh;left:50%;height:min(55dvh,110vw)}
+      .orbit-word{top:14dvh;font-size:min(27.5vw,18dvh);letter-spacing:.008em}
+      .support-copy{bottom:3.2dvh;max-width:42vw;line-height:1.18}
+      .support-copy--left{left:5vw}
+      .support-copy--right{left:auto;right:5vw;transform:scaleX(1.03);transform-origin:right center;text-align:right}
+      .brand-mark{top:18px;left:18px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      html.anim .stage{animation:orb-dim 280ms ease both}
+      html.anim .brand-mark,html.anim .primary-nav>li,html.anim .secure-pill,html.anim .orbit-word__inner,html.anim .flower,html.anim .support-copy__inner,html.anim .mobile-burger{animation:none!important}
+      *,*::before,*::after{scroll-behavior:auto!important}
+    }
+  </style>
+</head>
+<body>
+<main class="viewport">
+  <section class="stage" aria-labelledby="orbit-title">
+    <svg class="brand-mark" viewBox="0 0 66 62" aria-label="LoveTree connection mark" role="img">
+      <line x1="33" y1="1" x2="33" y2="61"></line><line x1="3" y1="31" x2="63" y2="31"></line><line x1="11.8" y1="9.8" x2="54.2" y2="52.2"></line><line x1="54.2" y1="9.8" x2="11.8" y2="52.2"></line>
+    </svg>
+
+    <ul class="primary-nav" aria-label="LoveTree template menu">
+      <li><button class="nav-trigger" type="button" aria-expanded="false">둘러보기</button><div class="nav-panel"><a class="nav-panel__link" href="../62_기억조각상_원형레일전시/62_기억조각상_원형레일전시.html" target="_blank" rel="noopener"><span>62 · 기억조각상 원형 레일</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../../../코덱스/12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1/최종본.html" target="_blank" rel="noopener"><span>12-1 · 리빙 미디어 스피어 I</span><b aria-hidden="true">↗</b></a></div></li>
+      <li><button class="nav-trigger" type="button" aria-expanded="false">내 러브트리</button><div class="nav-panel"><a class="nav-panel__link" href="../35_LP플레이어/01_LP플레이어_영상기억.html" target="_blank" rel="noopener"><span>35 · LP 모먼트 플레이어</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../39_LP커버플로우_미디어갤러리/01_LP커버플로우_영상갤러리.html" target="_blank" rel="noopener"><span>39 · LP 커버플로우 갤러리</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../58_리빙메모리_핀보드_시네마틱/★_최종_58_리빙메모리_핀보드.html" target="_blank" rel="noopener"><span>58 · 리빙 메모리 핀보드</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../../../코덱스/14_러브트리_로테이팅메모리인덱스_V1/v2/개발본.html" target="_blank" rel="noopener"><span>14 · 로테이팅 메모리 인덱스</span><b aria-hidden="true">↗</b></a></div></li>
+      <li><button class="nav-trigger" type="button" aria-expanded="false">이야기</button><div class="nav-panel"><a class="nav-panel__link" href="../43_기억장면_레시피도구/01_기억장면_레시피도구.html" target="_blank" rel="noopener"><span>43 · 기억 장면 레시피</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../70_모먼트리빌_퓨처에디토리얼/선택-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html" target="_blank" rel="noopener"><span>70 · 모먼트 리빌 에디토리얼</span><b aria-hidden="true">↗</b></a></div></li>
+      <li><button class="nav-trigger" type="button" aria-expanded="false">가이드</button><div class="nav-panel"><a class="nav-panel__link" href="../../../코덱스/15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html" target="_blank" rel="noopener"><span>15 · 메모리 바이오스피어</span><b aria-hidden="true">↗</b></a>
+<a class="nav-panel__link" href="../64_부유모먼트_웰컴오빗_입장포털O/현재후보.html" target="_blank" rel="noopener"><span>64 · 첫 순간 심기</span><b aria-hidden="true">↗</b></a></div></li>
+    </ul>
+
+    <a class="secure-pill" href="../64_부유모먼트_웰컴오빗_입장포털O/현재후보.html" target="_blank" rel="noopener">첫 순간 심기</a>
+
+    <h1 class="orbit-word" id="orbit-title" aria-label="LoveTree">
+      <span class="orbit-word__mask"><span class="orbit-word__inner"><span class="orbit-word__white"><span class="orbit-word__l">L</span>OVE</span><span class="orbit-word__pink">TREE</span></span></span>
+    </h1>
+
+    <div class="flower" id="flower">
+      <img class="flower__sizer" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260808_192942_e1086505-d7da-433b-a59b-8220f4e6c808.png&w=1280&q=85" alt="" aria-hidden="true">
+      <div class="flower__layer flower__layer--bg" id="frontLayer"><img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260808_192942_e1086505-d7da-433b-a59b-8220f4e6c808.png&w=1280&q=85" alt="Pixel-art pink and violet lily"></div>
+      <div class="flower__layer flower__layer--top" id="revealLayer" aria-hidden="true"><img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260808_151324_bf318a5f-5525-4fc7-aab5-e9a341018828.png&w=1280&q=85" alt=""></div>
+    </div>
+
+    <p class="support-copy support-copy--left"><span class="support-copy__inner">마음이 움직인 순간을,<br>놓치지 않고 심습니다.</span></p>
+    <p class="support-copy support-copy--right"><span class="support-copy__inner">다음 순간으로 이어진 이유를,<br>나만의 경로로 남깁니다.</span></p>
+
+    <button class="mobile-scrim" type="button" aria-label="메뉴 닫기" tabindex="-1"></button>
+    <aside class="mobile-sheet" aria-label="LoveTree template menu" aria-hidden="true" inert>
+      <div class="mobile-menu__group"><h2>둘러보기</h2><a class="mobile-menu__link" href="../62_기억조각상_원형레일전시/62_기억조각상_원형레일전시.html" target="_blank" rel="noopener"><span>62 · 기억조각상 원형 레일</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../../../코덱스/12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1/최종본.html" target="_blank" rel="noopener"><span>12-1 · 리빙 미디어 스피어 I</span><b aria-hidden="true">↗</b></a></div>
+      <div class="mobile-menu__group"><h2>내 러브트리</h2><a class="mobile-menu__link" href="../35_LP플레이어/01_LP플레이어_영상기억.html" target="_blank" rel="noopener"><span>35 · LP 모먼트 플레이어</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../39_LP커버플로우_미디어갤러리/01_LP커버플로우_영상갤러리.html" target="_blank" rel="noopener"><span>39 · LP 커버플로우 갤러리</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../58_리빙메모리_핀보드_시네마틱/★_최종_58_리빙메모리_핀보드.html" target="_blank" rel="noopener"><span>58 · 리빙 메모리 핀보드</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../../../코덱스/14_러브트리_로테이팅메모리인덱스_V1/v2/개발본.html" target="_blank" rel="noopener"><span>14 · 로테이팅 메모리 인덱스</span><b aria-hidden="true">↗</b></a></div>
+      <div class="mobile-menu__group"><h2>이야기</h2><a class="mobile-menu__link" href="../43_기억장면_레시피도구/01_기억장면_레시피도구.html" target="_blank" rel="noopener"><span>43 · 기억 장면 레시피</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../70_모먼트리빌_퓨처에디토리얼/선택-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html" target="_blank" rel="noopener"><span>70 · 모먼트 리빌 에디토리얼</span><b aria-hidden="true">↗</b></a></div>
+      <div class="mobile-menu__group"><h2>가이드</h2><a class="mobile-menu__link" href="../../../코덱스/15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html" target="_blank" rel="noopener"><span>15 · 메모리 바이오스피어</span><b aria-hidden="true">↗</b></a>
+<a class="mobile-menu__link" href="../64_부유모먼트_웰컴오빗_입장포털O/현재후보.html" target="_blank" rel="noopener"><span>64 · 첫 순간 심기</span><b aria-hidden="true">↗</b></a></div>
+    </aside>
+    <button class="mobile-burger" type="button" aria-label="메뉴 열기" aria-expanded="false"><span></span></button>
+  </section>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const TRAIL_MAX_POINTS=60,TRAIL_HEAD_R=140,TRAIL_NOISE_AMP=44,TRAIL_BLOB_PTS=24,TRAIL_FADE_SPEED=.92,TRAIL_SAMPLE_DIST=8;
+  const stage=document.querySelector('.stage');
+  const flower=document.getElementById('flower');
+  const frontLayer=document.getElementById('frontLayer');
+  const revealLayer=document.getElementById('revealLayer');
+  const trail={points:[],headRadius:0,hovering:false,x:0,y:0,lastX:null,lastY:null,time:0};
+
+  function drawMorphBlob(ctx,cx,cy,r,t,seed){
+    if(r<2)return;
+    const pts=[];
+    for(let i=0;i<TRAIL_BLOB_PTS;i++){
+      const angle=(Math.PI*2*i)/TRAIL_BLOB_PTS;
+      const n1=Math.sin(angle*3+t*1.4+seed)*.45;
+      const n2=Math.sin(angle*5-t*.9+seed*2.3)*.3;
+      const n3=Math.cos(angle*2+t*1.8+seed*.7)*.25;
+      const noise=(n1+n2+n3)*TRAIL_NOISE_AMP*(r/TRAIL_HEAD_R);
+      const rr=Math.max(1,r+noise);
+      pts.push({x:cx+Math.cos(angle)*rr,y:cy+Math.sin(angle)*rr});
+    }
+    const first=pts[0],last=pts[pts.length-1];
+    ctx.beginPath();
+    ctx.moveTo((last.x+first.x)/2,(last.y+first.y)/2);
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i],next=pts[(i+1)%pts.length];
+      ctx.quadraticCurveTo(p.x,p.y,(p.x+next.x)/2,(p.y+next.y)/2);
+    }
+    ctx.closePath();ctx.fill();
+  }
+
+  class MorphTrailLayer{
+    constructor(layer,invert){
+      this.layer=layer;this.invert=invert;this.canvas=document.createElement('canvas');this.canvas.className='morph-canvas';this.canvas.setAttribute('aria-hidden','true');flower.appendChild(this.canvas);this.ctx=this.canvas.getContext('2d');this.resize();
+    }
+    resize(){
+      const r=flower.getBoundingClientRect();this.canvas.width=Math.max(1,Math.round(r.width));this.canvas.height=Math.max(1,Math.round(r.height));
+    }
+    render(points,time){
+      const c=this.canvas,ctx=this.ctx;ctx.save();ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,c.width,c.height);
+      if(!this.invert){ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.globalCompositeOperation='destination-out';}
+      else{ctx.fillStyle='#fff';}
+      for(const p of points){ctx.globalAlpha=Math.max(0,Math.min(1,p.alpha));drawMorphBlob(ctx,p.x,p.y,p.r,time,p.seed)}
+      ctx.restore();const url=`url(${c.toDataURL()})`;this.layer.style.maskImage=url;this.layer.style.webkitMaskImage=url;this.layer.style.maskSize='100% 100%';this.layer.style.webkitMaskSize='100% 100%';this.layer.style.maskRepeat='no-repeat';this.layer.style.webkitMaskRepeat='no-repeat';
+    }
+  }
+  const bgMask=new MorphTrailLayer(frontLayer,false),topMask=new MorphTrailLayer(revealLayer,true);
+  const resize=()=>{bgMask.resize();topMask.resize()};
+  new ResizeObserver(resize).observe(flower);window.addEventListener('resize',resize,{passive:true});
+  function toFlowerSpace(e){const r=flower.getBoundingClientRect();trail.x=(e.clientX-r.left)*(bgMask.canvas.width/r.width);trail.y=(e.clientY-r.top)*(bgMask.canvas.height/r.height)}
+  stage.addEventListener('mouseenter',e=>{trail.hovering=true;toFlowerSpace(e);trail.lastX=null;trail.lastY=null});
+  stage.addEventListener('mousemove',e=>{trail.hovering=true;toFlowerSpace(e)});
+  stage.addEventListener('mouseleave',()=>{trail.hovering=false;trail.lastX=null;trail.lastY=null});
+  function frame(){
+    const targetR=trail.hovering?TRAIL_HEAD_R:0;trail.headRadius+=(targetR-trail.headRadius)*(trail.hovering?.14:.04);
+    if(trail.hovering&&trail.headRadius>5){
+      const d=trail.lastX===null?Infinity:Math.hypot(trail.x-trail.lastX,trail.y-trail.lastY);
+      if(d>TRAIL_SAMPLE_DIST){trail.points.push({x:trail.x,y:trail.y,r:trail.headRadius,alpha:1,seed:Math.random()*100});if(trail.points.length>TRAIL_MAX_POINTS)trail.points.splice(0,trail.points.length-TRAIL_MAX_POINTS);trail.lastX=trail.x;trail.lastY=trail.y}
+    }
+    for(const p of trail.points){p.alpha*=TRAIL_FADE_SPEED;p.r*=.995}
+    trail.points=trail.points.filter(p=>p.alpha>=.01);trail.time+=.016;bgMask.render(trail.points,trail.time);topMask.render(trail.points,trail.time);requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  const navItems=[...document.querySelectorAll('.primary-nav>li')];
+  function closeNav(except=null){navItems.forEach(li=>{if(li!==except){li.classList.remove('open');li.querySelector('.nav-trigger').setAttribute('aria-expanded','false')}})}
+  navItems.forEach(li=>{const b=li.querySelector('.nav-trigger');b.addEventListener('click',e=>{e.stopPropagation();const opening=!li.classList.contains('open');closeNav(li);li.classList.toggle('open',opening);b.setAttribute('aria-expanded',String(opening))});li.querySelector('.nav-panel').addEventListener('click',e=>e.stopPropagation())});
+  document.addEventListener('click',()=>closeNav());document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav()});
+
+  const burger=document.querySelector('.mobile-burger'),scrim=document.querySelector('.mobile-scrim'),sheet=document.querySelector('.mobile-sheet');let previousFocus=null;
+  function mobileFocusable(){return [...sheet.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])')]}
+  function openMobile(){previousFocus=document.activeElement;document.documentElement.classList.add('menu-open');burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','메뉴 닫기');sheet.inert=false;sheet.setAttribute('aria-hidden','false');scrim.tabIndex=0;requestAnimationFrame(()=>mobileFocusable()[0]?.focus())}
+  function closeMobile(){document.documentElement.classList.remove('menu-open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','메뉴 열기');sheet.inert=true;sheet.setAttribute('aria-hidden','true');scrim.tabIndex=-1;(previousFocus||burger).focus()}
+  burger.addEventListener('click',()=>burger.getAttribute('aria-expanded')==='true'?closeMobile():openMobile());scrim.addEventListener('click',closeMobile);sheet.addEventListener('click',e=>{if(e.target.closest('a'))closeMobile()});
+  document.addEventListener('keydown',e=>{if(!document.documentElement.classList.contains('menu-open'))return;if(e.key==='Escape'){e.preventDefault();closeMobile();return}if(e.key==='Tab'){const f=mobileFocusable();if(!f.length)return;const first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+
+  const root=document.documentElement;let entranceDone=false;const finishEntrance=()=>{if(entranceDone)return;entranceDone=true;root.classList.remove('anim')};
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lastAnimated=reduced?stage:document.querySelector('.support-copy--right .support-copy__inner');
+  lastAnimated.addEventListener('animationend',e=>{if(reduced||String(e.animationName).startsWith('orb-'))finishEntrance()},{once:true});setTimeout(finishEntrance,6000);
+})();
+</script>
+</body>
+</html>

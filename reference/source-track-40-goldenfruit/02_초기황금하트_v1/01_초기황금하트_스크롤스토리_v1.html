@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="황금 하트가 한 사람의 기억나무로 자라는 LoveTree 스크롤 전시형 프로토타입">
+  <title>LoveTree · Golden Heart Story</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Manrope:wght@500;600;700&display=swap');
+    :root{
+      --blue:#0874d4;--blue-deep:#025cb1;--blue-light:#54a8ed;--ink:#173851;
+      --cream:#f5ead3;--gold:#c99b3f;--gold-light:#f3d889;--rose:#c86e79;
+      --sage:#879975;--paper:#fbf7ee;--display:'Gowun Batang','Noto Serif KR',serif;
+      --body:'Gowun Dodum','Noto Sans KR',sans-serif;--latin:'Manrope',sans-serif;
+      --mx:0;--my:0;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--blue)}
+    body{margin:0;color:white;font-family:var(--body);background:var(--blue);overflow-x:hidden}
+    button,a{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,a:focus-visible{outline:3px solid rgba(255,233,153,.7);outline-offset:4px}
+    .scroll-space{height:900vh;position:relative}
+    .experience{position:sticky;top:0;width:100%;height:100vh;min-height:620px;overflow:clip;background:var(--blue);isolation:isolate}
+    .experience:before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);background-size:calc(100vw/12) calc(100vh/8);mask-image:linear-gradient(to bottom,rgba(0,0,0,.72),transparent 88%);pointer-events:none}
+    .experience:after{content:"";position:absolute;inset:-20%;z-index:80;opacity:.13;pointer-events:none;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.52'/%3E%3C/svg%3E")}
+    .topbar{position:absolute;z-index:90;left:0;right:0;top:0;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid rgba(255,255,255,.2)}
+    .brand{display:flex;align-items:center;gap:9px;color:white;text-decoration:none;font:700 19px var(--display);letter-spacing:-.04em}
+    .mark{width:26px;height:27px;position:relative;transform:rotate(7deg)}
+    .mark:before{content:"";position:absolute;left:12px;top:3px;width:2px;height:22px;border-radius:99px;background:#f4d889}
+    .mark:after{content:"";position:absolute;left:3px;top:4px;width:20px;height:15px;background:radial-gradient(ellipse at 23% 58%,#bcd69d 0 34%,transparent 36%),radial-gradient(ellipse at 78% 35%,#ff9eb5 0 30%,transparent 32%);transform:rotate(-14deg)}
+    .brand small{font:600 7px var(--latin);letter-spacing:.18em;text-transform:uppercase;opacity:.7;margin-left:2px}
+    .chapter-readout{display:flex;align-items:center;gap:11px;font:600 8px var(--latin);letter-spacing:.15em;text-transform:uppercase}
+    .chapter-readout i{display:block;width:5px;height:5px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 5px rgba(243,216,137,.18)}
+    .chapter-readout strong{font-size:11px;color:var(--gold-light)}
+    .side-rail{position:absolute;z-index:70;left:28px;top:50%;transform:translateY(-50%);display:grid;gap:12px}
+    .rail-dot{width:7px;height:7px;padding:0;border:1px solid rgba(255,255,255,.66);border-radius:50%;background:transparent;transition:.3s}
+    .rail-dot.active{height:26px;border-radius:6px;background:var(--gold-light);border-color:var(--gold-light)}
+    .scroll-copy{position:absolute;z-index:70;left:50%;bottom:23px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;font:600 8px var(--latin);letter-spacing:.13em;text-transform:uppercase;white-space:nowrap;opacity:.78}
+    .scroll-copy i{width:34px;height:1px;background:rgba(255,255,255,.6);position:relative;overflow:hidden}.scroll-copy i:after{content:"";position:absolute;inset:0;background:var(--gold-light);animation:scrollLine 1.8s infinite}
+    @keyframes scrollLine{from{transform:translateX(-110%)}to{transform:translateX(110%)}}
+    .scene{position:absolute;z-index:2;inset:70px 0 0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s linear,visibility .18s;overflow:clip;--enter:0;--leave:0}
+    .scene.visible{visibility:visible}
+    .scene.active{pointer-events:auto}
+    .scene h1,.scene h2,.scene p{margin:0}
+    .eyebrow{font:600 8px var(--latin);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px!important}
+    .title{font:400 clamp(43px,6.7vw,104px)/.88 var(--display);letter-spacing:-.065em;text-wrap:balance}
+    .copy{font-size:12px;line-height:1.8;max-width:390px;color:rgba(255,255,255,.78)}
+    .scene-index{position:absolute;top:23px;left:30px;font:600 9px var(--latin);letter-spacing:.1em}.scene-index b{font-size:22px;margin-right:4px;color:var(--gold-light)}
+    .cloud{position:absolute;width:210px;height:75px;filter:blur(.2px);opacity:.95;background:radial-gradient(ellipse at 20% 65%,#f7edd7 0 24%,transparent 25%),radial-gradient(ellipse at 43% 43%,#fff7df 0 31%,transparent 32%),radial-gradient(ellipse at 68% 60%,#eee1c8 0 31%,transparent 32%),radial-gradient(ellipse at 84% 70%,#fff6df 0 20%,transparent 21%);transform:translate(calc(var(--mx)*12px),calc(var(--my)*7px))}
+    .cloud.c1{left:15%;top:11%;transform:scale(.72) translate(calc(var(--mx)*12px),calc(var(--my)*7px))}.cloud.c2{right:5%;top:24%;transform:scale(.48) translate(calc(var(--mx)*-15px),calc(var(--my)*8px))}.cloud.c3{left:51%;bottom:8%;transform:scale(.42)}
+    .gold-heart{position:relative;width:min(33vw,410px);aspect-ratio:.84;filter:drop-shadow(0 36px 30px rgba(0,35,78,.27));transform-style:preserve-3d}
+    .gold-heart svg{width:100%;height:100%;overflow:visible}
+    .heart-glint{position:absolute;z-index:4;left:44%;top:39%;width:18px;height:18px;border-radius:50%;background:white;box-shadow:0 0 9px white,0 0 25px #fff4ad,0 0 68px #fff,68px 0 0 -7px rgba(255,255,255,.7),-50px 17px 0 -8px rgba(255,255,255,.65)}
+    .pedestal{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:63%;height:25%;background:linear-gradient(90deg,#e9dfca,#fff8e7 38%,#d7cab0);clip-path:polygon(12% 0,88% 0,100% 20%,92% 28%,96% 100%,4% 100%,8% 28%,0 20%);box-shadow:0 24px 35px rgba(0,39,82,.24)}
+    .figure{position:absolute;width:150px;height:260px;color:#eadcc6;filter:drop-shadow(0 18px 15px rgba(0,38,79,.22));transform-origin:50% 100%}
+    .figure svg{width:100%;height:100%;overflow:visible}.figure .skin{fill:#d9a26f}.figure .cloth{fill:#eadcc6}.figure .cloth2{fill:#cbbba1}.figure .line{fill:none;stroke:#927b60;stroke-width:2}
+    .hero-copy{position:absolute;left:6.5%;top:24%;z-index:10;width:43%}
+    .hero-copy .title{font-size:clamp(46px,6.7vw,106px)}
+    .hero-copy .copy{margin-top:24px}
+    .hero-art{position:absolute;right:6%;top:7%;width:49%;height:91%;display:grid;place-items:center;transform:translate(calc(var(--mx)*-8px),calc(var(--my)*-6px))}
+    .hero-art .figure.left{left:1%;bottom:4%;transform:rotate(4deg) scale(.83)}.hero-art .figure.right{right:-1%;bottom:3%;transform:rotate(-5deg) scale(.88)}
+    .gold-heart.hero-heart{z-index:2;transform:translateY(calc(var(--leave)*-100px)) scale(calc(1 + var(--leave)*.55)) rotate(calc(var(--mx)*2deg))}
+    .intro-rule{display:flex;align-items:center;gap:12px;margin-top:34px;font:600 8px var(--latin);letter-spacing:.14em;text-transform:uppercase}.intro-rule i{width:42px;height:1px;background:var(--gold-light)}
+    .branch-scene{background:var(--paper);color:#263d47}
+    .branch-scene:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(13,86,137,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(13,86,137,.12) 1px,transparent 1px);background-size:8.333vw 12.5vh}
+    .branch-copy{position:absolute;z-index:8;left:8%;top:15%;width:32%}.branch-copy .eyebrow{color:var(--rose)}.branch-copy .title{font-size:clamp(40px,5.2vw,77px)}.branch-copy .copy{color:#62757b;margin-top:22px}
+    .branch-art{position:absolute;right:-2%;bottom:0;width:70%;height:100%}
+    .branch-art svg{position:absolute;inset:0;width:100%;height:100%}
+    .branch-video{position:absolute;right:28%;top:21%;width:min(20vw,260px);aspect-ratio:1;border-radius:50%;border:10px solid var(--gold);overflow:hidden;box-shadow:0 18px 42px rgba(73,52,31,.25),0 0 0 5px #fff;transform:scale(calc(.7 + var(--enter)*.3)) rotate(calc(-14deg + var(--enter)*14deg))}
+    .branch-video img{width:100%;height:100%;object-fit:cover}.branch-video:after{content:"▶";position:absolute;left:50%;top:50%;width:45px;height:45px;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,-50%);background:rgba(255,255,255,.88);color:var(--rose);padding-left:3px}
+    .graft-ring{position:absolute;right:16%;top:11%;width:320px;height:320px;border:1px solid rgba(200,110,121,.42);border-radius:50%;animation:orbit 12s linear infinite}.graft-ring:before,.graft-ring:after{content:"";position:absolute;border-radius:50%;background:var(--rose);box-shadow:0 0 0 7px rgba(200,110,121,.12)}.graft-ring:before{width:8px;height:8px;left:30px;top:42px}.graft-ring:after{width:5px;height:5px;right:13px;bottom:92px}@keyframes orbit{to{transform:rotate(360deg)}}
+    .orchard{background:#49652f}
+    .orchard:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 130%,#213d20 0 24%,transparent 58%),linear-gradient(#7da8c2 0 34%,transparent 35%)}
+    .orchard-copy{position:absolute;z-index:9;left:50%;top:11%;transform:translateX(-50%);width:min(900px,82vw);text-align:center}.orchard-copy .title{font-size:clamp(40px,5.4vw,82px)}.orchard-copy .copy{margin:18px auto 0}
+    .canopy{position:absolute;inset:-8% -2% 0;transform:scale(calc(.84 + var(--enter)*.16));transform-origin:50% 20%}
+    .canopy svg{width:100%;height:100%}
+    .fruit-node{position:absolute;width:60px;height:68px;padding:0;border:0;background:none;filter:drop-shadow(0 9px 7px rgba(17,31,11,.25));transition:.25s;animation:sway 4s ease-in-out infinite;animation-delay:var(--delay)}.fruit-node:hover{transform:scale(1.18)!important;z-index:20}.fruit-node:before{content:"";position:absolute;left:8px;top:7px;width:43px;height:49px;background:radial-gradient(circle at 36% 25%,#fff5bd 0 3%,transparent 12%),linear-gradient(145deg,#f0d77a,#a87522);clip-path:polygon(50% 0,63% 17%,85% 26%,100% 53%,92% 78%,72% 100%,50% 91%,28% 100%,8% 78%,0 53%,15% 26%,37% 17%)}.fruit-node:after{content:"";position:absolute;left:29px;top:-1px;width:3px;height:15px;border-radius:4px;background:#6b5425;transform:rotate(12deg)}
+    @keyframes sway{0%,100%{translate:0 0;rotate:-2deg}50%{translate:0 7px;rotate:3deg}}
+    .fruit-node.n1{left:16%;top:31%;--delay:-.5s}.fruit-node.n2{left:31%;top:54%;--delay:-2.2s}.fruit-node.n3{left:49%;top:34%;--delay:-1.2s}.fruit-node.n4{right:29%;top:48%;--delay:-3s}.fruit-node.n5{right:14%;top:25%;--delay:-1.8s}.fruit-node.n6{right:9%;top:62%;--delay:-.2s}.fruit-node.n7{left:10%;top:66%;--delay:-2.7s}
+    .share-scene{background:var(--paper);color:#2b3d45}
+    .share-copy{position:absolute;left:8%;top:18%;z-index:9;width:38%}.share-copy .eyebrow{color:var(--rose)}.share-copy .title{font-size:clamp(42px,6vw,92px)}.share-copy .copy{color:#65777d;margin-top:22px}
+    .split-heart{position:absolute;right:8%;top:9%;width:min(46vw,610px);aspect-ratio:1;filter:drop-shadow(0 32px 38px rgba(89,60,26,.23));transform:scale(calc(.82 + var(--enter)*.18))}
+    .half{position:absolute;inset:8%;background:linear-gradient(135deg,#f7e297,#b17a25 67%,#704311);overflow:hidden}.half.left{clip-path:polygon(50% 100%,8% 62%,2% 34%,15% 12%,38% 5%,50% 22%);transform:translateX(calc(var(--enter)*-20px))}.half.right{clip-path:polygon(50% 100%,92% 62%,98% 34%,85% 12%,62% 5%,50% 22%);transform:translateX(calc(var(--enter)*20px))}.half:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.7),transparent 22%),repeating-radial-gradient(circle at center,transparent 0 8px,rgba(88,48,8,.08) 9px 10px)}
+    .reveal-card{position:absolute;z-index:3;left:50%;top:49%;width:38%;aspect-ratio:16/11;transform:translate(-50%,-50%) scale(calc(.25 + var(--enter)*.75));border:8px solid #fff;border-radius:7px;background:#222;overflow:hidden;box-shadow:0 20px 50px rgba(48,35,22,.32)}.reveal-card img{width:100%;height:100%;object-fit:cover}.reveal-card button{position:absolute;inset:0;border:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.75));color:white;display:flex;align-items:flex-end;justify-content:center;padding:18px;font-size:11px}
+    .build-scene{background:var(--blue)}
+    .build-copy{position:absolute;right:7%;top:16%;width:31%;z-index:8}.build-copy .title{font-size:clamp(40px,5.3vw,78px)}.build-copy .copy{margin-top:22px}
+    .scaffold{position:absolute;left:1%;bottom:-4%;width:67%;height:92%;transform:translateY(calc((1 - var(--enter))*100px))}
+    .scaffold svg{width:100%;height:100%}.scaffold .goldfill{fill:url(#buildGold)}.scaffold .wood{fill:none;stroke:#e7c891;stroke-width:6}.scaffold .woodthin{fill:none;stroke:#c89f62;stroke-width:2}.scaffold .paper{fill:#e8dac0}.scaffold .worker{fill:#ecdcc2}
+    .milestones{display:flex;gap:8px;margin-top:28px;flex-wrap:wrap}.milestones span{padding:8px 11px;border:1px solid rgba(255,255,255,.3);border-radius:99px;font:600 8px var(--latin);letter-spacing:.08em}.milestones span:nth-child(2){background:var(--gold-light);border-color:var(--gold-light);color:#4c3a19}
+    .archive-scene{background:var(--cream);color:#243c4b}
+    .archive-copy{position:absolute;right:7%;top:24%;z-index:9;width:35%}.archive-copy .eyebrow{color:var(--rose)}.archive-copy .title{font-size:clamp(40px,5.3vw,78px)}.archive-copy .copy{color:#6c7778;margin-top:22px}
+    .archive-frames{position:absolute;left:7%;top:11%;width:49%;height:72%;display:grid;place-items:center;perspective:1000px;transform:rotateX(calc(var(--my)*3deg)) rotateY(calc(var(--mx)*-3deg))}
+    .archive-frames .frame{position:absolute;border:2px solid rgba(139,100,48,.5);box-shadow:inset 0 0 0 10px rgba(255,255,255,.42),0 25px 50px rgba(82,57,31,.14)}
+    .frame.f1{width:92%;height:92%}.frame.f2{width:74%;height:75%}.frame.f3{width:55%;height:57%}.frame.f4{width:37%;height:39%;overflow:hidden;background:#17334a}.frame.f4 img{width:100%;height:100%;object-fit:cover;opacity:.9}.frame.f4:after{content:"SEASON 01 · 300 MOMENTS";position:absolute;left:0;right:0;bottom:0;padding:12px 8px;background:rgba(18,39,55,.78);color:white;text-align:center;font:600 8px var(--latin);letter-spacing:.12em}
+    .frame-star{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 17px var(--gold);animation:twinkle 1.7s ease-in-out infinite alternate}@keyframes twinkle{to{opacity:.3;transform:scale(.5)}}
+    .frame-star.s1{left:12%;top:18%}.frame-star.s2{right:11%;top:34%;animation-delay:-.8s}.frame-star.s3{left:20%;bottom:16%;animation-delay:-1.3s}
+    .prune-scene{background:var(--blue)}
+    .prune-copy{position:absolute;left:8%;top:14%;z-index:9;width:35%}.prune-copy .title{font-size:clamp(40px,5.4vw,82px)}.prune-copy .copy{margin-top:22px}.prune-list{margin-top:24px;display:grid;gap:11px}.prune-list span{display:flex;align-items:center;gap:10px;font-size:11px}.prune-list i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:var(--gold-light);color:#4a3a1b;font-size:9px}
+    .prune-tree{position:absolute;right:-1%;bottom:-2%;width:62%;height:100%}.prune-tree svg{width:100%;height:100%}.prune-tree .trunk{fill:none;stroke:#8b6330;stroke-width:17;stroke-linecap:round}.prune-tree .twig{fill:none;stroke:#80602f;stroke-width:6;stroke-linecap:round}.prune-tree .leaf{fill:#5e7d43}.prune-tree .leaf.gold{fill:#d7aa4d}
+    .leaf-fall{position:absolute;width:13px;height:8px;border-radius:90% 0 90% 0;background:#c9a14b;animation:fall 6s linear infinite;animation-delay:var(--d);left:var(--x);top:-5%}@keyframes fall{to{translate:70px 110vh;rotate:420deg}}
+    .constellation{background:linear-gradient(#0772d0,#096abf)}
+    .constellation-copy{position:absolute;left:8%;top:14%;z-index:12;width:31%}.constellation-copy .title{font-size:clamp(40px,5vw,75px)}.constellation-copy .copy{margin-top:20px}
+    .sky-map{position:absolute;right:3%;top:6%;width:67%;height:85%;transform:translate(calc(var(--mx)*8px),calc(var(--my)*6px))}
+    .sky-map svg{position:absolute;inset:0;width:100%;height:100%}.sky-map line{stroke:rgba(255,235,166,.7);stroke-width:1.2;stroke-dasharray:3 5}.sky-map circle{fill:#fff5c4;filter:drop-shadow(0 0 7px #fff)}
+    .star-video{position:absolute;width:18px;height:18px;padding:0;border:0;border-radius:50%;background:#fff6c2;box-shadow:0 0 8px white,0 0 25px #fff3ab;transition:.25s}.star-video:hover{transform:scale(1.8)}.star-video:after{content:attr(data-label);position:absolute;left:24px;top:-3px;white-space:nowrap;color:white;font:600 8px var(--latin);letter-spacing:.08em;opacity:.78}.star-video.v1{left:31%;top:23%}.star-video.v2{left:55%;top:16%}.star-video.v3{left:70%;top:40%}.star-video.v4{left:47%;top:54%}.star-video.v5{left:78%;top:69%}.star-video.v6{left:25%;top:74%}.star-video.v7{left:60%;top:83%}
+    .memory-panel{position:absolute;right:6%;bottom:8%;width:290px;padding:17px;border:1px solid rgba(255,255,255,.34);border-radius:15px;background:rgba(255,255,255,.11);backdrop-filter:blur(12px);transform:translateY(calc((1 - var(--enter))*60px));font-size:10px}.memory-panel small{font:600 7px var(--latin);letter-spacing:.13em;color:var(--gold-light)}.memory-panel strong{display:block;font:700 16px var(--display);margin:7px 0}.memory-panel button{border:0;border-radius:99px;padding:8px 12px;background:#111;color:white;font-size:8px}
+    .finale{background:var(--blue)}
+    .finale-copy{position:absolute;z-index:12;left:50%;top:10%;transform:translateX(-50%);text-align:center;width:min(800px,88vw)}.finale-copy .title{font-size:clamp(72px,12vw,178px);line-height:.78}.finale-copy .copy{margin:20px auto 0}.finale-copy .eyebrow{color:var(--gold-light)}
+    .finale-tree{position:absolute;left:50%;bottom:-12%;transform:translateX(-50%) scale(calc(.78 + var(--enter)*.22));width:min(51vw,710px);height:73%}.finale-tree svg{width:100%;height:100%}.finale-tree .trunk{fill:none;stroke:#765124;stroke-width:15;stroke-linecap:round}.finale-tree .branch{fill:none;stroke:#765124;stroke-width:7;stroke-linecap:round}.finale-tree .leaf{fill:#638548}.finale-tree .heartleaf{fill:#e0b24f}.finale .figure.left{left:6%;bottom:0;transform:scale(1.08)}.finale .figure.right{right:5%;bottom:0;transform:scale(1.12) rotateY(180deg)}
+    .final-cta{position:absolute;z-index:20;left:50%;bottom:31px;transform:translateX(-50%);border:0;border-radius:99px;padding:14px 22px;background:#111;color:white;font-size:10px;font-weight:700;box-shadow:0 12px 30px rgba(0,34,71,.25);transition:.25s}.final-cta:hover{transform:translateX(-50%) translateY(-4px);background:var(--rose)}
+    .video-modal{position:fixed;z-index:200;inset:0;padding:25px;display:grid;place-items:center;background:rgba(4,34,59,.56);backdrop-filter:blur(13px);opacity:0;pointer-events:none;transition:.25s}.video-modal.open{opacity:1;pointer-events:auto}.video-card{width:min(820px,94vw);border-radius:18px;background:#fbf7ee;padding:12px;color:#263b48;box-shadow:0 35px 90px rgba(0,27,56,.35);transform:translateY(20px) scale(.98);transition:.3s}.video-modal.open .video-card{transform:none}.video-frame{aspect-ratio:16/9;border-radius:11px;background:#102536;overflow:hidden}.video-frame iframe{display:block;width:100%;height:100%;border:0}.video-foot{display:flex;align-items:center;justify-content:space-between;padding:13px 4px 2px;gap:14px}.video-foot small{font:600 8px var(--latin);letter-spacing:.14em;color:var(--rose)}.video-foot strong{display:block;margin-top:4px;font:700 17px var(--display)}.video-close{width:40px;height:40px;border:0;border-radius:50%;background:#eaddca;color:#2b3a40;font-size:18px}
+    .next-scene{position:absolute;z-index:72;right:28px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:1px solid rgba(255,255,255,.4);border-radius:50%;background:rgba(0,0,0,.08);color:white;display:grid;place-items:center;transition:.25s}.next-scene:hover{background:var(--gold-light);color:#3b2f18;border-color:var(--gold-light)}
+    @media(max-width:760px){.experience{min-height:560px}.topbar{padding:0 17px;height:62px}.brand small,.chapter-readout span{display:none}.scene{inset:62px 0 0}.side-rail{left:14px}.next-scene{right:13px}.scene-index{left:18px}.hero-copy,.branch-copy,.share-copy,.build-copy,.archive-copy,.prune-copy,.constellation-copy{left:9%;right:auto;top:9%;width:82%;text-align:left}.hero-copy .title,.branch-copy .title,.share-copy .title,.build-copy .title,.archive-copy .title,.prune-copy .title,.constellation-copy .title{font-size:clamp(36px,10vw,58px)}.hero-copy .copy,.branch-copy .copy,.share-copy .copy,.build-copy .copy,.archive-copy .copy,.prune-copy .copy,.constellation-copy .copy{font-size:10px;max-width:84%}.hero-art{right:-15%;top:29%;width:105%;height:68%}.gold-heart{width:min(63vw,330px)}.hero-art .figure{width:110px;height:200px}.hero-art .figure.left{left:10%}.branch-art{right:-23%;bottom:-8%;width:120%;height:74%}.branch-video{right:34%;top:36%;width:37vw}.orchard-copy{top:8%}.orchard-copy .title{font-size:42px}.canopy{top:8%}.fruit-node{transform:scale(.78)}.split-heart{right:-6%;top:31%;width:106vw}.scaffold{left:-25%;width:130%;height:65%}.build-copy .milestones{display:none}.archive-frames{left:3%;top:35%;width:94%;height:58%}.prune-tree{right:-35%;bottom:-3%;width:125%;height:70%}.prune-list{display:none}.sky-map{right:-20%;top:29%;width:125%;height:64%}.memory-panel{width:230px;right:9%;bottom:8%}.finale-copy{top:10%}.finale-copy .title{font-size:19vw}.finale-tree{width:92vw;height:62%}.finale .figure{width:90px;height:170px}.scroll-copy{bottom:14px}.cloud{opacity:.65}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <div class="scroll-space" id="scrollSpace">
+    <main class="experience" id="experience">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="LoveTree 처음 장면"><span class="mark" aria-hidden="true"></span><span>LoveTree</span><small>Living Memory Exhibition</small></a>
+        <div class="chapter-readout"><i></i><span id="chapterName">황금 하트</span><strong><span id="chapterNow">01</span> / 09</strong></div>
+      </header>
+      <nav class="side-rail" id="sideRail" aria-label="이야기 장면 이동"></nav>
+      <button class="next-scene" id="nextScene" type="button" aria-label="다음 장면">↓</button>
+
+      <section class="scene hero active visible" data-title="황금 하트">
+        <span class="scene-index"><b>01</b> / 09</span><i class="cloud c1"></i><i class="cloud c2"></i>
+        <div class="hero-copy"><p class="eyebrow">THE FIRST MOMENT APPEARS</p><h1 class="title">사랑은 순간을<br>다시 나타나게 해요.</h1><p class="copy">영상 하나를 가져오는 순간, 지나가 버린 장면은 황금빛 기억으로 다시 모습을 드러냅니다.</p><div class="intro-rule"><i></i>scroll to let it grow</div></div>
+        <div class="hero-art">
+          <div class="gold-heart hero-heart" aria-label="황금 하트 조형물">
+            <svg viewBox="0 0 360 430" aria-hidden="true"><defs><radialGradient id="goldMain" cx="35%" cy="25%"><stop offset="0" stop-color="#fff3b3"/><stop offset=".3" stop-color="#e4bb57"/><stop offset=".72" stop-color="#a96f1f"/><stop offset="1" stop-color="#6f4317"/></radialGradient><filter id="rough"><feTurbulence baseFrequency=".8" numOctaves="2" seed="8" result="n"/><feBlend in="SourceGraphic" in2="n" mode="soft-light"/></filter></defs><path d="M180 400C150 357 38 286 30 178C23 83 131 47 180 126C229 47 337 83 330 178C322 286 210 357 180 400Z" fill="url(#goldMain)" filter="url(#rough)"/><path d="M184 126C177 82 188 39 218 13" fill="none" stroke="#76501e" stroke-width="12" stroke-linecap="round"/><path d="M207 42C248 10 297 32 302 64C262 73 231 63 207 42Z" fill="#bf9636"/></svg><i class="heart-glint"></i>
+          </div><i class="pedestal"></i>
+          <div class="figure left" aria-hidden="true"><svg viewBox="0 0 150 270"><circle class="skin" cx="75" cy="34" r="18"/><path class="cloth" d="M58 54Q75 45 92 55L109 116L131 234H17l24-118Z"/><path class="cloth2" d="M59 61Q27 74 21 125l18 3q8-33 31-39Z"/><path class="skin" d="M22 119q-13 12-2 26q14 3 19-17Z"/><path class="line" d="M52 69q30 31 50 89M41 117q37 30 63 78M32 152q38 24 76 63"/></svg></div>
+          <div class="figure right" aria-hidden="true"><svg viewBox="0 0 150 270"><circle class="skin" cx="75" cy="34" r="18"/><path class="cloth" d="M58 54Q75 45 92 55L109 116L131 234H17l24-118Z"/><path class="cloth2" d="M90 62q33 14 40 57l-18 8Q99 90 79 88Z"/><path class="skin" d="M112 119q15 8 5 25q-13 2-18-16Z"/><path class="line" d="M98 73q-29 32-52 91M109 117q-37 30-63 78M116 151q-38 25-76 64"/></svg></div>
+        </div>
+      </section>
+
+      <section class="scene branch-scene" data-title="기억 접붙이기">
+        <span class="scene-index"><b>02</b> / 09</span><div class="branch-copy"><p class="eyebrow">GRAFT A VIDEO MOMENT</p><h2 class="title">영상 하나를<br>마음에 접붙여요.</h2><p class="copy">링크와 그때의 감정을 함께 남기면, 기억은 더 이상 흩어진 북마크가 아니라 나무의 첫 가지가 됩니다.</p></div>
+        <div class="branch-art"><svg viewBox="0 0 1100 700" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wood" x2="1"><stop stop-color="#4b321f"/><stop offset=".48" stop-color="#8c653d"/><stop offset="1" stop-color="#402717"/></linearGradient></defs><path d="M1130 590C850 486 728 399 552 349C351 292 159 298-72 168" fill="none" stroke="url(#wood)" stroke-width="103" stroke-linecap="round"/><path d="M610 370C671 248 688 162 666 74" fill="none" stroke="url(#wood)" stroke-width="42" stroke-linecap="round"/><path d="M683 160q62-46 135-20" fill="none" stroke="#6b4b2f" stroke-width="21" stroke-linecap="round"/><g fill="#708a4d"><ellipse cx="675" cy="83" rx="36" ry="16" transform="rotate(-31 675 83)"/><ellipse cx="739" cy="123" rx="43" ry="18" transform="rotate(22 739 123)"/><ellipse cx="814" cy="139" rx="40" ry="17" transform="rotate(-7 814 139)"/></g></svg><i class="graft-ring"></i><button class="branch-video video-trigger" data-video="nOrDWTMSR0w" data-person="필릭스" data-title="처음 마음을 멈추게 한 순간" type="button" aria-label="필릭스 영상 열기"><img src="https://i.ytimg.com/vi/nOrDWTMSR0w/hqdefault.jpg" alt="필릭스 영상 썸네일"></button></div>
+      </section>
+
+      <section class="scene orchard" data-title="기억 과수원">
+        <span class="scene-index"><b>03</b> / 09</span><div class="orchard-copy"><p class="eyebrow">EVERY HEART HOLDS A SCENE</p><h2 class="title">좋아했던 장면이<br>열매처럼 맺혀요.</h2><p class="copy">황금 하트를 눌러 각각의 영상을 열어보세요. 한 사람을 좋아한 시간들이 하나의 풍경이 됩니다.</p></div>
+        <div class="canopy"><svg viewBox="0 0 1400 780" preserveAspectRatio="none" aria-hidden="true"><g fill="#365528"><circle cx="85" cy="270" r="170"/><circle cx="260" cy="230" r="190"/><circle cx="455" cy="250" r="170"/><circle cx="650" cy="218" r="188"/><circle cx="848" cy="255" r="179"/><circle cx="1060" cy="220" r="202"/><circle cx="1285" cy="270" r="188"/></g><g fill="#55713d" opacity=".92"><circle cx="100" cy="410" r="175"/><circle cx="340" cy="430" r="185"/><circle cx="570" cy="390" r="170"/><circle cx="790" cy="430" r="190"/><circle cx="1020" cy="395" r="174"/><circle cx="1260" cy="430" r="200"/></g><path d="M705 760V430M705 532L483 365M708 510L932 340M686 585L350 515M720 570L1120 500" fill="none" stroke="#6f4f2c" stroke-width="28" stroke-linecap="round"/></svg>
+          <button class="fruit-node n1 video-trigger" data-video="nOrDWTMSR0w" data-person="필릭스" data-title="처음 마음을 멈추게 한 神메뉴" aria-label="필릭스 기억 열기"></button><button class="fruit-node n2 video-trigger" data-video="qKkJ6YHLhak" data-person="이주연" data-title="WHISPER로 시작된 마음" aria-label="이주연 기억 열기"></button><button class="fruit-node n3 video-trigger" data-video="a1gsq3jC0Tg" data-person="이준혁" data-title="말투가 좋아진 인터뷰" aria-label="이준혁 기억 열기"></button><button class="fruit-node n4 video-trigger" data-video="ts_xlXdsl4M" data-person="필릭스" data-title="계속 다시 본 Back Door" aria-label="필릭스 기억 열기"></button><button class="fruit-node n5 video-trigger" data-video="ePAi-0qKEio" data-person="이주연" data-title="한 사람의 춤에 빠진 순간" aria-label="이주연 기억 열기"></button><button class="fruit-node n6 video-trigger" data-video="O3ptaX7-G8w" data-person="이준혁" data-title="윙크하고 사라진 순간" aria-label="이준혁 기억 열기"></button><button class="fruit-node n7 video-trigger" data-video="IaWoxBn4kDo" data-person="필릭스" data-title="표정이 바뀌는 Easy" aria-label="필릭스 기억 열기"></button>
+        </div>
+      </section>
+
+      <section class="scene share-scene" data-title="마음 나누기">
+        <span class="scene-index"><b>04</b> / 09</span><div class="share-copy"><p class="eyebrow">OPEN WHAT THE HEART KEPT</p><h2 class="title">하트를 열면<br>그 장면이 보여요.</h2><p class="copy">겉으로는 작은 하트 하나지만, 안에는 영상과 날짜와 그날의 마음이 함께 들어 있습니다.</p></div><div class="split-heart"><i class="half left"></i><i class="half right"></i><div class="reveal-card"><img src="https://i.ytimg.com/vi/qKkJ6YHLhak/hqdefault.jpg" alt="이주연 영상 기억"><button class="video-trigger" data-video="qKkJ6YHLhak" data-person="이주연" data-title="WHISPER로 시작된 마음" type="button">이 장면 다시 보기 · ▶</button></div></div>
+      </section>
+
+      <section class="scene build-scene" data-title="트리 성장">
+        <span class="scene-index"><b>05</b> / 09</span><div class="build-copy"><p class="eyebrow">BUILD A TREE, MOMENT BY MOMENT</p><h2 class="title">한 장면씩 쌓여<br>나무가 완성돼요.</h2><p class="copy">100개의 순간은 첫 계절, 300개는 완성된 나무, 1000개는 오로라가 됩니다. 완성은 끝이 아니라 다음 풍경의 시작이에요.</p><div class="milestones"><span>100 · SEASON</span><span>300 · COMPLETE TREE</span><span>1000 · AURORA</span></div></div>
+        <div class="scaffold"><svg viewBox="0 0 900 700" aria-hidden="true"><defs><radialGradient id="buildGold" cx="35%" cy="20%"><stop stop-color="#fff0a3"/><stop offset=".45" stop-color="#d0a03c"/><stop offset="1" stop-color="#805019"/></radialGradient></defs><path class="goldfill" d="M420 620C370 548 170 430 160 261C151 114 339 68 420 196C501 68 689 114 680 261C670 430 470 548 420 620Z"/><path class="wood" d="M120 590V156M720 590V137M85 590H757M104 468H733M118 341H719M135 216H703M120 590L720 137M720 590L120 156"/><path class="woodthin" d="M240 590V178M360 590V150M480 590V150M600 590V155M88 530H752M98 405H742M110 278H730"/><rect class="paper" x="519" y="181" width="142" height="98" transform="rotate(4 590 230)"/><path d="M538 256L589 199L642 258M590 199V260" fill="none" stroke="#8a765c" stroke-width="2"/><g class="worker"><circle cx="206" cy="430" r="15"/><path d="M191 449h31l18 81h-67Z"/><circle cx="638" cy="331" r="15"/><path d="M623 349h31l16 83h-64Z"/></g></svg></div>
+      </section>
+
+      <section class="scene archive-scene" data-title="시즌 보관">
+        <span class="scene-index"><b>06</b> / 09</span><div class="archive-frames"><i class="frame f1"></i><i class="frame f2"></i><i class="frame f3"></i><div class="frame f4"><img src="https://i.ytimg.com/vi/a1gsq3jC0Tg/hqdefault.jpg" alt="시즌 대표 영상"></div><i class="frame-star s1"></i><i class="frame-star s2"></i><i class="frame-star s3"></i></div><div class="archive-copy"><p class="eyebrow">NOT DELETED. BEAUTIFULLY KEPT.</p><h2 class="title">완성된 계절은<br>액자처럼 보관해요.</h2><p class="copy">더 이어가고 싶다면 새 계절을 시작하고, 잠시 멈추고 싶다면 완성된 나무를 그대로 보관합니다. 사라지는 기억은 없어요.</p></div>
+      </section>
+
+      <section class="scene prune-scene" data-title="마음 다듬기">
+        <span class="scene-index"><b>07</b> / 09</span><div class="prune-copy"><p class="eyebrow">CARE FOR THE TREE YOU MADE</p><h2 class="title">좋아한 마음도<br>천천히 다듬어요.</h2><p class="copy">보고 싶지 않은 장면은 잠시 가리고, 다시 보고 싶은 장면은 가까이 두세요. 나무를 쉬게 해도 기억은 그대로 남아 있습니다.</p><div class="prune-list"><span><i>1</i>영상은 삭제하지 않고 잠시 가리기</span><span><i>2</i>나만 보는 비공개 계절로 전환하기</span><span><i>3</i>돌아오고 싶은 날 그대로 이어가기</span></div></div>
+        <div class="prune-tree"><svg viewBox="0 0 850 700" aria-hidden="true"><path class="trunk" d="M430 720C408 588 432 450 417 318C409 240 425 155 446 88"/><path class="twig" d="M425 475L240 328M420 415L606 252M417 348L300 205M435 279L586 130M416 530L680 430M430 560L207 493"/><g class="leaf"><ellipse cx="212" cy="310" rx="92" ry="45" transform="rotate(18 212 310)"/><ellipse cx="301" cy="187" rx="86" ry="43" transform="rotate(-18 301 187)"/><ellipse cx="621" cy="238" rx="105" ry="48" transform="rotate(-12 621 238)"/><ellipse cx="594" cy="111" rx="82" ry="40" transform="rotate(16 594 111)"/><ellipse cx="705" cy="423" rx="104" ry="49" transform="rotate(17 705 423)"/><ellipse cx="191" cy="486" rx="92" ry="44" transform="rotate(-8 191 486)"/></g><g class="leaf gold"><circle cx="233" cy="335" r="13"/><circle cx="318" cy="211" r="13"/><circle cx="608" cy="267" r="13"/><circle cx="577" cy="138" r="13"/><circle cx="682" cy="449" r="13"/></g></svg></div><i class="leaf-fall" style="--x:54%;--d:-1s"></i><i class="leaf-fall" style="--x:70%;--d:-3.3s"></i><i class="leaf-fall" style="--x:84%;--d:-5s"></i>
+      </section>
+
+      <section class="scene constellation" data-title="감정 별자리">
+        <span class="scene-index"><b>08</b> / 09</span><div class="constellation-copy"><p class="eyebrow">CONNECT THE FEELINGS</p><h2 class="title">영상 사이의 마음이<br>별자리가 돼요.</h2><p class="copy">설렘, 위로, 회복, 계속 보고 싶은 마음. 같은 감정의 장면들이 서로 연결되어 나만의 기억 지도를 만듭니다.</p></div>
+        <div class="sky-map"><svg viewBox="0 0 800 580" aria-hidden="true"><line x1="210" y1="128" x2="425" y2="95"/><line x1="425" y1="95" x2="572" y2="232"/><line x1="572" y1="232" x2="365" y2="320"/><line x1="365" y1="320" x2="207" y2="430"/><line x1="365" y1="320" x2="626" y2="410"/><line x1="626" y1="410" x2="477" y2="504"/><circle cx="210" cy="128" r="5"/><circle cx="425" cy="95" r="6"/><circle cx="572" cy="232" r="5"/><circle cx="365" cy="320" r="7"/><circle cx="207" cy="430" r="5"/><circle cx="626" cy="410" r="6"/><circle cx="477" cy="504" r="5"/></svg>
+          <button class="star-video v1 video-trigger" data-video="nOrDWTMSR0w" data-person="필릭스" data-title="처음 마음" data-label="FIRST HEART" aria-label="필릭스 처음 마음 영상"></button><button class="star-video v2 video-trigger" data-video="qKkJ6YHLhak" data-person="이주연" data-title="계속 보고 싶은 춤" data-label="FASCINATION" aria-label="이주연 춤 영상"></button><button class="star-video v3 video-trigger" data-video="a1gsq3jC0Tg" data-person="이준혁" data-title="편안한 말투" data-label="COMFORT" aria-label="이준혁 인터뷰 영상"></button><button class="star-video v4 video-trigger" data-video="ts_xlXdsl4M" data-person="필릭스" data-title="다시 찾은 장면" data-label="RETURN" aria-label="필릭스 다시 찾은 영상"></button><button class="star-video v5 video-trigger" data-video="ePAi-0qKEio" data-person="이주연" data-title="몰입한 순간" data-label="IMMERSION" aria-label="이주연 몰입 영상"></button><button class="star-video v6 video-trigger" data-video="O3ptaX7-G8w" data-person="이준혁" data-title="작은 장난" data-label="DELIGHT" aria-label="이준혁 장난 영상"></button><button class="star-video v7 video-trigger" data-video="IaWoxBn4kDo" data-person="필릭스" data-title="무대 위 표정" data-label="ENERGY" aria-label="필릭스 무대 영상"></button>
+        </div><div class="memory-panel"><small>SELECTED EMOTION CLUSTER</small><strong>계속 보고 싶은 마음</strong><p>7개의 영상이 같은 감정으로 연결되어 있어요.</p><button type="button" id="clusterPlay">첫 장면 열기</button></div>
+      </section>
+
+      <section class="scene finale" data-title="나의 LoveTree">
+        <span class="scene-index"><b>09</b> / 09</span><div class="finale-copy"><p class="eyebrow">THE MOMENTS YOU LOVED, STILL GROWING</p><h2 class="title">LoveTree</h2><p class="copy">한 장면을 심고, 마음을 연결하고, 좋아한 시간을 나무로 간직하세요.</p></div>
+        <div class="finale-tree"><svg viewBox="0 0 700 600" aria-hidden="true"><path class="trunk" d="M350 610C332 500 359 399 347 289C340 215 355 151 350 95"/><path class="branch" d="M348 400L174 302M350 365L537 271M347 311L227 203M354 275L492 169M352 463L570 400M348 475L147 412"/><g class="leaf"><circle cx="166" cy="293" r="79"/><circle cx="229" cy="195" r="72"/><circle cx="515" cy="263" r="90"/><circle cx="488" cy="159" r="72"/><circle cx="574" cy="393" r="84"/><circle cx="145" cy="407" r="79"/><circle cx="350" cy="112" r="94"/></g><g class="heartleaf"><path d="M157 286c-18-21-49 4 0 43c49-39 18-64 0-43Z"/><path d="M237 190c-18-21-49 4 0 43c49-39 18-64 0-43Z"/><path d="M518 251c-18-21-49 4 0 43c49-39 18-64 0-43Z"/><path d="M483 150c-18-21-49 4 0 43c49-39 18-64 0-43Z"/><path d="M570 385c-18-21-49 4 0 43c49-39 18-64 0-43Z"/><path d="M350 95c-22-25-60 5 0 52c60-47 22-77 0-52Z"/></g></svg></div>
+        <div class="figure left" aria-hidden="true"><svg viewBox="0 0 150 270"><circle class="skin" cx="75" cy="34" r="18"/><path class="cloth" d="M58 54Q75 45 92 55L109 116L131 234H17l24-118Z"/><path class="cloth2" d="M60 65Q25 75 18 130l18 4q10-35 36-45Z"/><path class="line" d="M50 73q36 33 58 120M36 126q38 29 77 81"/></svg></div><div class="figure right" aria-hidden="true"><svg viewBox="0 0 150 270"><circle class="skin" cx="75" cy="34" r="18"/><path class="cloth" d="M58 54Q75 45 92 55L109 116L131 234H17l24-118Z"/><path class="cloth2" d="M60 65Q25 75 18 130l18 4q10-35 36-45Z"/><path class="line" d="M50 73q36 33 58 120M36 126q38 29 77 81"/></svg></div><button class="final-cta" id="restartStory" type="button">처음부터 다시 보기 · ↑</button>
+      </section>
+
+      <div class="scroll-copy"><i></i><span id="scrollHint">scroll to grow the memory</span></div>
+    </main>
+  </div>
+
+  <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="LoveTree 영상 기억">
+    <div class="video-card"><div class="video-frame" id="videoFrame"></div><div class="video-foot"><div><small id="modalPerson">LOVETREE VIDEO MOMENT</small><strong id="modalTitle">영상 기억</strong></div><button class="video-close" id="videoClose" type="button" aria-label="영상 닫기">×</button></div></div>
+  </div>
+
+  <script>
+    const scenes=[...document.querySelectorAll('.scene')];
+    const scrollSpace=document.getElementById('scrollSpace');
+    const chapterNow=document.getElementById('chapterNow');
+    const chapterName=document.getElementById('chapterName');
+    const sideRail=document.getElementById('sideRail');
+    const scrollHint=document.getElementById('scrollHint');
+    let current=0,ticking=false;
+    const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+    sideRail.innerHTML=scenes.map((s,i)=>`<button class="rail-dot${i===0?' active':''}" data-scene="${i}" type="button" aria-label="${i+1}장 ${s.dataset.title}"></button>`).join('');
+    const railDots=[...document.querySelectorAll('.rail-dot')];
+    function goToScene(i){const max=scrollSpace.offsetHeight-innerHeight;scrollTo({top:max*(clamp(i,0,scenes.length-1)/(scenes.length-1)),behavior:'smooth'})}
+    function render(){
+      ticking=false;
+      const max=Math.max(1,scrollSpace.offsetHeight-innerHeight);
+      const progress=clamp(scrollY/max);
+      const position=progress*(scenes.length-1);
+      const nearest=Math.round(position);
+      scenes.forEach((scene,i)=>{
+        const local=position-i,visibility=clamp(1-Math.abs(local)*1.22);
+        scene.style.opacity=visibility;
+        scene.style.setProperty('--enter',clamp(1+local));
+        scene.style.setProperty('--leave',clamp(local));
+        scene.classList.toggle('visible',visibility>.01);
+        scene.classList.toggle('active',i===nearest);
+      });
+      if(nearest!==current){current=nearest;chapterNow.textContent=String(current+1).padStart(2,'0');chapterName.textContent=scenes[current].dataset.title;railDots.forEach((d,i)=>d.classList.toggle('active',i===current));scrollHint.textContent=current===scenes.length-1?'the tree keeps growing':'scroll to grow the memory'}
+    }
+    addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(render)}},{passive:true});
+    addEventListener('resize',render);
+    addEventListener('pointermove',e=>{document.documentElement.style.setProperty('--mx',((e.clientX/innerWidth)-.5).toFixed(3));document.documentElement.style.setProperty('--my',((e.clientY/innerHeight)-.5).toFixed(3))});
+    sideRail.addEventListener('click',e=>{const d=e.target.closest('[data-scene]');if(d)goToScene(Number(d.dataset.scene))});
+    document.getElementById('nextScene').addEventListener('click',()=>goToScene(current===scenes.length-1?0:current+1));
+    document.querySelector('.brand').addEventListener('click',e=>{e.preventDefault();goToScene(0)});
+    document.getElementById('restartStory').addEventListener('click',()=>goToScene(0));
+    const modal=document.getElementById('videoModal'),frame=document.getElementById('videoFrame');
+    function openVideo(id,person,title){document.getElementById('modalPerson').textContent=`${person} · LOVETREE VIDEO MOMENT`;document.getElementById('modalTitle').textContent=title;frame.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" title="${title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;modal.classList.add('open')}
+    function closeVideo(){modal.classList.remove('open');setTimeout(()=>frame.innerHTML='',260)}
+    document.addEventListener('click',e=>{const trigger=e.target.closest('.video-trigger');if(trigger)openVideo(trigger.dataset.video,trigger.dataset.person,trigger.dataset.title)});
+    document.getElementById('clusterPlay').addEventListener('click',()=>openVideo('nOrDWTMSR0w','필릭스','처음 마음을 멈추게 한 순간'));
+    document.getElementById('videoClose').addEventListener('click',closeVideo);
+    modal.addEventListener('click',e=>{if(e.target===modal)closeVideo()});
+    document.addEventListener('keydown',e=>{if(modal.classList.contains('open')){if(e.key==='Escape')closeVideo();return}if(e.key==='ArrowDown'||e.key==='ArrowRight'){e.preventDefault();goToScene(current+1)}if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToScene(current-1)}});
+    render();
+  </script>
+</body>
+</html>

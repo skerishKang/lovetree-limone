@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-42-season-memory-cards",
+  "sourceTrackId": "Track42",
+  "title": "시즌기억카드 캐러셀 v1 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "relationship-retrospective",
+  "productJob": "Season memory viewing as a full-screen card carousel: previous/current/next cards travel left with ~0.5–0.6s spatial moves and WIDE/FOCUS camera states, re-rendering LoveTree season memories in the reference video's interface language (registration only — no product adoption implied).",
+  "summary": "Drive 채택본 42_시즌기억카드_캐러셀 registered per Issue #296. The sibling package is an independent new candidate built under a 1:1 reference-video reproduction contract (제작실행계약): reproduce the reference carousel's card size, spacing, pagination, motion and camera zoom while substituting LoveTree season-memory content; existing adopted sources were not modified. Full folder preserved byte-exact (33 files, 20,421,344 B) with SHA256SUMS.txt. Lifecycle is source truth (EXECUTABLE_AVAILABLE, dom-2d); lineage reservation and adoption both HOLD — no repository lineage number is allocated by this manifest.",
+  "provenance": {
+    "sourceLabel": "42_시즌기억카드_캐러셀 / Issue #296 source gate registration",
+    "driveFolderId": "1_adBcKGug3pSwzZFx0H3eGXWGOIPGTdZ",
+    "sourceFiles": [
+      "01_시즌기억카드_캐러셀.html",
+      "03_참고영상_시즌기억카드_원본.mp4",
+      "40_문서자료/01_제작실행계약.txt",
+      "04_참고자료/reference-analysis.md"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage number is NOT allocated. No repository lineage is reserved by this manifest; product-shell placement is a later owner decision."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #296 gate registration only — CANONICAL_V4_ADOPTION=NO until a product-owner review decides capability/lineage placement."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "v1",
+    "authorityObservedAt": "2026-08-21T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_시즌기억카드_캐러셀.html",
+      "driveId": "1JlPogPRqo1_O-DQUGo7Do1_WN9c_JxsG",
+      "bytes": 1860576,
+      "sha256": "50579074ae80ade743b2bc606ad00f6ae0f76ce9a9aaf192ee1f347b51e7c18f",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_참고영상_시즌기억카드_원본.mp4",
+      "driveId": "1tqGAL81y-MDETyxFipbwwVQmQJp1zsbw",
+      "bytes": 7458409,
+      "sha256": "9e583079c1befb3867e40883aa9a250dc59159a14cda1fda5ae1c760ac25c73d",
+      "role": "reference-media",
+      "status": "PINNED"
+    },
+    {
+      "filename": "02_녹화영상_시즌기억카드.mp4",
+      "driveId": "1e1Y18J0RKARWGCFoNZvhMW8LfSyzB46R",
+      "bytes": 1414476,
+      "sha256": "37814d80eb36cd072ff638e18e654662e51b5a59c61fff4416e62a7cbc46e214",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "01_녹화영상_모바일.mp4",
+      "driveId": "1NMZDr-K7-2dHIyHbl2l5o86HreEIp2RP",
+      "bytes": 207245,
+      "sha256": "3c05a6b6d4d9dd692e70f9509bee262c4aff28580ac09d28d5e1822056e8f5d4",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "40_문서자료/01_제작실행계약.txt",
+      "driveId": "1fyVzAxn5tCl76-E7I-KyuUtMWX_H7LsI",
+      "bytes": 28061,
+      "sha256": "4a8ec96e9fb709e0a13437b3fc05df1d3694e08d2dc85b6465b2bedfade0af75",
+      "role": "instruction",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_참고자료/reference-analysis.md",
+      "driveId": "1OUtRBgQgRUqTfgI2y8EA3PXFVTUALMtg",
+      "bytes": 4547,
+      "sha256": "204db0a73da47f28c036cf842186d9b61eb72e4289a2fac75d2224281211eba2",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    },
+    {
+      "filename": "04_참고자료/validation-results.json",
+      "driveId": "10LIjYK6S8Y10Qk8sRPchPoiySkiUj53U",
+      "bytes": 2514,
+      "sha256": "c9839013d126e8bc2c7c3ab97ba4887dadd2ecd4f3a8dd1ca487789aeb06c9b2",
+      "role": "sibling-qa",
+      "status": "PINNED"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "REFERENCE_VIDEO_PROVENANCE: the reproduction target is an external X-post recording; upstream rights of that reference interface are not established by the sibling package",
+    "SIBLING_QA_SCOPE: validation-results.json covers the sibling's own browser run only; no repository-side fidelity or accessibility gate has run"
+  ],
+  "nativeRemediations": [
+    "establish rights/provenance for the external reference video before any adoption decision",
+    "run repository-side fidelity, reduced-motion, keyboard/manual-takeover and overflow gates before any native candidate is proposed"
+  ],
+  "sourceOnlyValues": [
+    "card size, spacing, pagination rhythm and WIDE/FOCUS camera states mirror the reference video, not an existing LoveTree surface",
+    "season-memory content substitution is sibling-authored placeholder truth until repository data is wired"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

@@ -1,0 +1,88 @@
+{
+  "states": [
+    {
+      "idx": "01 / 06",
+      "cast": "CAST A · SOFT CENTER",
+      "world": "clear",
+      "tree": "#f5d89c",
+      "treeName": "Ivory Tree",
+      "field": "Editorial Memory."
+    },
+    {
+      "idx": "02 / 06",
+      "cast": "CAST A · SOFT CENTER",
+      "world": "pink",
+      "tree": "#ff9fb9",
+      "treeName": "Rose Gold Tree",
+      "field": "Rose Memory."
+    },
+    {
+      "idx": "03 / 06",
+      "cast": "CAST B · URBAN PERFORMANCE",
+      "world": "purple",
+      "tree": "#ce77ff",
+      "treeName": "Violet Magenta Tree",
+      "field": "Concert Memory."
+    },
+    {
+      "idx": "04 / 06",
+      "cast": "CAST B · URBAN PERFORMANCE",
+      "world": "clear",
+      "tree": "#f1dfb3",
+      "treeName": "Champagne White Tree",
+      "field": "Quiet Archive."
+    },
+    {
+      "idx": "05 / 06",
+      "cast": "CAST C · BRIGHT CHIC",
+      "world": "pink",
+      "tree": "#ff92ae",
+      "treeName": "Pink Blossom Tree",
+      "field": "Pink Memory."
+    },
+    {
+      "idx": "06 / 06",
+      "cast": "CAST C · BRIGHT CHIC",
+      "world": "purple",
+      "tree": "#ad73ff",
+      "treeName": "Deep Purple Star Tree",
+      "field": "Night Encore."
+    }
+  ],
+  "desktop": {
+    "console_page_errors": [],
+    "horizontal_overflow_px": 0,
+    "pointer_reveal_before": "stage",
+    "pointer_reveal_after": "walking",
+    "pointer_reveal_changed": true,
+    "pointer_reveal_active": true,
+    "portal_hover_reveal": "smile",
+    "save_confirmation": true
+  },
+  "mobile": {
+    "console_page_errors": [],
+    "horizontal_overflow_px": 0,
+    "tap_reveal_moment": "backstage",
+    "tap_reveal_active": true,
+    "swipe_before": "01 / 06",
+    "swipe_after": "02 / 06",
+    "swipe_changed_state": true
+  },
+  "static": {},
+  "summary": {
+    "state_count": 6,
+    "six_states_present": true,
+    "three_distinct_cast_labels": true,
+    "three_worlds_present": true,
+    "six_tree_glow_values_present": true,
+    "desktop_pointer_reveal_pass": true,
+    "desktop_portal_hover_pass": true,
+    "desktop_save_pass": true,
+    "mobile_tap_reveal_pass": true,
+    "mobile_swipe_pass": true,
+    "desktop_runtime_pass": true,
+    "mobile_runtime_pass": true,
+    "mountain_background_used": false,
+    "main_hero_oval_crop_used": false
+  }
+}

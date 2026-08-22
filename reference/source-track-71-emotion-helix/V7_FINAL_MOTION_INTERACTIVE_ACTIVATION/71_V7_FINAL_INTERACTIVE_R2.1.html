@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree — Track 71 V7 R2.1 Lens Runtime</title>
+<style>
+:root{--paper:#fff;--ink:#050505;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:var(--ink)}
+body{font-family:Arial,Helvetica,sans-serif}
+button{font:inherit}
+.viewport{position:fixed;inset:0;background:#000;overflow:hidden}
+.stage{position:absolute;width:1920px;height:1080px;will-change:transform}
+.paper{position:absolute;left:236px;top:71px;width:1448px;height:937px;background:#fff;overflow:hidden;isolation:isolate}
+.left-ui{position:absolute;left:0;top:0;width:630px;height:100%;z-index:30;pointer-events:none}
+.brand{position:absolute;left:20px;top:18px;margin:0;font-family:Georgia,'Times New Roman',serif;font-size:70px;line-height:1;font-weight:400;letter-spacing:-2.5px;pointer-events:auto}
+.copy{position:absolute;left:20px;top:410px;width:545px;margin:0;font-size:24px;line-height:1.09;font-weight:800;letter-spacing:-.55px}
+.meta{position:absolute;left:20px;top:528px;margin:0;font-size:11px;line-height:1;font-weight:800;letter-spacing:.28px;word-spacing:6px}
+.cta{position:absolute;left:30px;top:808px;width:98px;height:98px;border:0;border-radius:50%;background:#000;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;cursor:pointer;pointer-events:auto;outline:0;transition:transform .26s var(--ease),box-shadow .26s ease}
+.cta:hover{transform:translateY(-3px) scale(1.03)}
+.cta:active{transform:scale(.97)}
+.cta:focus-visible{box-shadow:0 0 0 3px #fff,0 0 0 6px #000}
+.scene-wrap{position:absolute;inset:0;z-index:4}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:default}
+.hit{position:absolute;border:0;background:transparent;padding:0;margin:0;outline:none;cursor:pointer;z-index:20;transform:translate(-50%,-50%);border-radius:48%;pointer-events:none;}
+.hit:focus-visible{box-shadow:0 0 0 2px #000,0 0 0 5px #fff,0 0 0 7px #000}
+.status{position:absolute;right:18px;bottom:13px;z-index:40;font-size:10px;font-weight:700;letter-spacing:.14em;color:#000;opacity:.38;pointer-events:none}
+@media(max-width:700px){.brand{font-size:74px}.copy{font-size:34px;width:590px;top:390px}.meta{display:none}.cta{width:116px;height:116px;font-size:16px;top:785px}}
+@media(prefers-reduced-motion:reduce){.cta{transition:none}}
+</style>
+</head>
+<body>
+<div class="viewport">
+  <main class="stage" id="stage" aria-label="LoveTree interactive emotion-lens portal">
+    <section class="paper" id="paper">
+      <div class="scene-wrap"><canvas id="scene" aria-hidden="true"></canvas></div>
+      <div class="left-ui">
+        <h1 class="brand">LoveTree</h1>
+        <p class="copy">Moments that moved your heart,<br>connected into the path<br>that made you a fan.</p>
+        <p class="meta">MOMENTS · CONNECTION · REPLAY · MY TREE</p>
+        <button class="cta" id="cta" type="button" aria-label="My Tree. Route not assigned.">MY TREE</button>
+      </div>
+      <button class="hit" data-i="0" aria-label="First moment lens" aria-pressed="false"></button>
+      <button class="hit" data-i="1" aria-label="Moments lens" aria-pressed="false"></button>
+      <button class="hit" data-i="2" aria-label="Connection lens" aria-pressed="false"></button>
+      <button class="hit" data-i="3" aria-label="Replay lens" aria-pressed="false"></button>
+      <button class="hit" data-i="4" aria-label="My Tree lens" aria-pressed="false"></button>
+      <button class="hit" data-i="5" aria-label="Return lens" aria-pressed="false"></button>
+      <div class="status">R2 · LIVE OPTICAL LENSES</div>
+    </section>
+  </main>
+</div>
+<script>
+(()=>{
+'use strict';
+const W=1448,H=937;
+const stage=document.getElementById('stage'),paper=document.getElementById('paper'),canvas=document.getElementById('scene');
+const ctx=canvas.getContext('2d',{alpha:true});
+const hits=[...document.querySelectorAll('.hit')];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let selected=-1, paused=new URLSearchParams(location.search).has('paused');
+let dpr=1, last=performance.now(), time=0;
+
+function fitStage(){
+  const w=innerWidth,h=innerHeight;let scale,x=0,y=0;
+  if(w<=700){scale=w/1050;x=-(236*scale-12);y=Math.max(26,(h-1080*scale)/2);stage.style.left='0';stage.style.top='0';stage.style.transformOrigin='0 0';stage.style.transform=`translate(${x}px,${y}px) scale(${scale})`}
+  else{scale=Math.min(w/1920,h/1080);stage.style.left='50%';stage.style.top='50%';stage.style.transformOrigin='50% 50%';stage.style.transform=`translate(-50%,-50%) scale(${scale})`}
+}
+fitStage();addEventListener('resize',fitStage,{passive:true});
+
+const bg=document.createElement('canvas'),bgctx=bg.getContext('2d');
+function resizeCanvas(){
+  dpr=Math.min(2,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);bg.width=Math.round(W*dpr);bg.height=Math.round(H*dpr);
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  drawBackground();
+}
+function drawBackground(){
+  bgctx.setTransform(dpr,0,0,dpr,0,0);bgctx.clearRect(0,0,W,H);bgctx.fillStyle='#fff';bgctx.fillRect(0,0,W,H);
+  // giant type is deliberately real-time canvas typography: no reference/V6 bitmap asset.
+  bgctx.fillStyle='#000';bgctx.textBaseline='top';bgctx.font='900 190px Arial Black, Arial, sans-serif';
+  bgctx.save();bgctx.translate(590,-39);bgctx.scale(1.03,.98);bgctx.fillText('PATH',0,0);bgctx.restore();
+  bgctx.beginPath();bgctx.arc(618,205,25,0,Math.PI*2);bgctx.fill();
+  bgctx.save();bgctx.translate(585,215);bgctx.scale(1.02,.99);bgctx.fillText('MOMENT',0,0);bgctx.restore();
+  bgctx.save();bgctx.translate(575,465);bgctx.scale(1.01,1.01);bgctx.fillText('MEMORY',0,0);bgctx.restore();
+  bgctx.save();bgctx.translate(615,714);bgctx.scale(1.05,1.01);bgctx.fillText('LOVE',0,0);bgctx.restore();
+}
+resizeCanvas();addEventListener('resize',resizeCanvas,{passive:true});
+
+// Six LoveTree-specific lens families. These are NOT traced from the reference silhouettes.
+const lenses=[
+ {label:'FIRST',      x:1032,y:100, rx:210,ry:78,  z:-4, seed:0.65, lobes:[.055,-.035,.025], tilt:7,  warp:1.055, shear:.025, hue:'cool'},
+ {label:'MOMENTS',    x:1092,y:258, rx:174,ry:103, z: 3, seed:1.70, lobes:[-.045,.060,-.025],tilt:-13,warp:1.075, shear:-.030,hue:'warm'},
+ {label:'CONNECTION', x:965, y:428, rx:207,ry:105, z:-9, seed:2.85, lobes:[.075,.025,-.045], tilt:17,warp:1.090, shear:.055, hue:'cool'},
+ {label:'REPLAY',     x:1136,y:577, rx:188,ry:96,  z: 7, seed:4.10, lobes:[-.065,.035,.055],tilt:-21,warp:1.065, shear:-.060,hue:'warm'},
+ {label:'MY TREE',    x:1197,y:758, rx:151,ry:122, z:12, seed:5.35, lobes:[.045,-.075,.035],tilt:26,warp:1.105, shear:.035,hue:'cool'},
+ {label:'RETURN',     x:1420,y:477, rx:128,ry:181, z:-2, seed:6.40, lobes:[-.035,.055,.070],tilt:78,warp:1.080, shear:-.035,hue:'warm'}
+].map((o,i)=>({...o,i,hover:false,px:0,py:0,tx:0,ty:0,rx3:0,ry3:0,trx:0,try:0,focus:false}));
+
+function blobPath(o){
+  const p=new Path2D(),N=72;const [a,b,c]=o.lobes;
+  for(let k=0;k<=N;k++){
+    const t=k/N*Math.PI*2;
+    const rad=1+a*Math.sin(3*t+o.seed)+b*Math.sin(5*t-o.seed*.7)+c*Math.cos(2*t+o.seed*1.8);
+    const x=Math.cos(t)*o.rx*rad, y=Math.sin(t)*o.ry*(1+.035*Math.sin(4*t+o.seed))*rad;
+    if(!k)p.moveTo(x,y);else p.lineTo(x,y);
+  }p.closePath();return p;
+}
+const paths=lenses.map(blobPath);
+
+function lensMatrix(o){
+  // approximate rotateX/rotateY as anisotropic squash + shear, then Z rotation.
+  const rz=(o.tilt+Math.sin(time*.21+o.seed)*1.8+(o.hover?o.px*.9:0))*Math.PI/180;
+  const sx=Math.max(.83,Math.cos(o.ry3*Math.PI/180));
+  const sy=Math.max(.82,Math.cos(o.rx3*Math.PI/180));
+  const shx=Math.sin(o.ry3*Math.PI/180)*.19;
+  const shy=-Math.sin(o.rx3*Math.PI/180)*.11;
+  const cr=Math.cos(rz),sr=Math.sin(rz);
+  // R * shear/scale matrix
+  return {a:cr*sx-sr*shy,b:sr*sx+cr*shy,c:cr*shx-sr*sy,d:sr*shx+cr*sy,e:o.x,f:o.y,rz};
+}
+function applyM(m){ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f)}
+
+function pointInLens(o,clientX,clientY){
+  const r=paper.getBoundingClientRect();const x=(clientX-r.left)*(W/r.width),y=(clientY-r.top)*(H/r.height);
+  const dx=x-o.x,dy=y-o.y;const ang=-(o.tilt*Math.PI/180),ca=Math.cos(ang),sa=Math.sin(ang);
+  const lx=(dx*ca-dy*sa)/o.rx,ly=(dx*sa+dy*ca)/o.ry;
+  return lx*lx+ly*ly<1.12;
+}
+function localPointer(o,e){
+  const r=paper.getBoundingClientRect();const x=(e.clientX-r.left)*(W/r.width),y=(e.clientY-r.top)*(H/r.height);
+  o.tx=Math.max(-1,Math.min(1,(x-o.x)/o.rx));o.ty=Math.max(-1,Math.min(1,(y-o.y)/o.ry));
+}
+
+function placeHits(){
+  lenses.forEach((o,i)=>{const h=hits[i];h.style.left=o.x+'px';h.style.top=o.y+'px';h.style.width=(o.rx*2.12)+'px';h.style.height=(o.ry*2.15)+'px';h.style.transform=`translate(-50%,-50%) rotate(${o.tilt}deg)`});
+}
+placeHits();
+hits.forEach((h,i)=>{
+  const o=lenses[i];
+  h.addEventListener('focus',()=>{o.focus=true;o.hover=true});
+  h.addEventListener('blur',()=>{o.focus=false;o.hover=false;o.tx=o.ty=0});
+  h.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(i)}});
+});
+let hovered=-1;
+function updateHoverFromPaper(e){
+  const r=paper.getBoundingClientRect();
+  const x=(e.clientX-r.left)*(W/r.width),y=(e.clientY-r.top)*(H/r.height);
+  let best=-1,bestD=99;
+  lenses.forEach((o,i)=>{
+    const dx=x-o.x,dy=y-o.y,ang=-(o.tilt*Math.PI/180),ca=Math.cos(ang),sa=Math.sin(ang);
+    const lx=(dx*ca-dy*sa)/o.rx,ly=(dx*sa+dy*ca)/o.ry,d=lx*lx+ly*ly;
+    if(d<1.12&&d<bestD){bestD=d;best=i}
+  });
+  hovered=best;
+  lenses.forEach((o,i)=>{o.hover=i===best||o.focus;if(i!==best&&!o.focus){o.tx=o.ty=0}});
+  if(best>=0){const o=lenses[best];o.tx=Math.max(-1,Math.min(1,(x-o.x)/o.rx));o.ty=Math.max(-1,Math.min(1,(y-o.y)/o.ry));paper.style.cursor='pointer'}
+  else paper.style.cursor='default';
+}
+paper.addEventListener('pointermove',updateHoverFromPaper,{passive:true});
+paper.addEventListener('pointerleave',()=>{hovered=-1;lenses.forEach(o=>{if(!o.focus){o.hover=false;o.tx=o.ty=0}});paper.style.cursor='default'},{passive:true});
+paper.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#cta'))return;if(hovered>=0)select(hovered)});
+function select(i){
+  selected=selected===i?-1:i;hits.forEach((h,k)=>h.setAttribute('aria-pressed',String(k===selected)));
+}
+addEventListener('keydown',e=>{if(e.key==='Escape'){selected=-1;hits.forEach(h=>h.setAttribute('aria-pressed','false'));document.activeElement?.blur?.()}});
+
+let globalX=0,globalY=0,targetGX=0,targetGY=0;
+paper.addEventListener('pointermove',e=>{
+  const r=paper.getBoundingClientRect();targetGX=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(r.width/2)));targetGY=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(r.height/2)));
+},{passive:true});
+paper.addEventListener('pointerleave',()=>{targetGX=targetGY=0},{passive:true});
+
+document.getElementById('cta').addEventListener('click',e=>{e.currentTarget.animate([{transform:'scale(1)'},{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:260,easing:'ease-out'})});
+
+function drawLens(o,path){
+  const m=lensMatrix(o);const sel=selected===o.i;
+  // Clip in the lens's projected screen geometry.
+  ctx.save();applyM(m);ctx.clip(path);
+  // Reset to stage coordinates while preserving clip, then sample the background with a lens-specific warp.
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const refrX=o.x + o.ry3*.9 + Math.sin(time*.31+o.seed)*2.0;
+  const refrY=o.y - o.rx3*.65 + Math.cos(time*.27+o.seed)*1.5;
+  const scale=o.warp + (sel?.035:0) + Math.abs(o.ry3)*.0018;
+  ctx.translate(refrX,refrY);
+  ctx.transform(scale, o.shear+o.rx3*.0017, o.shear*.42+o.ry3*.0015, 1+(scale-1)*.55, -refrX,-refrY);
+  // small counter-shift makes the refraction visibly react to tilt instead of behaving like surface paint
+  ctx.drawImage(bg,(-o.ry3*1.05)*dpr,(o.rx3*.8)*dpr,bg.width,bg.height,0,0,W,H);
+  // refracted ghost sample creates optical thickness
+  ctx.globalAlpha=.18;ctx.translate(o.ry3*.32+3,o.rx3*.18-2);ctx.drawImage(bg,0,0,bg.width,bg.height,0,0,W,H);ctx.globalAlpha=1;
+  ctx.restore();
+
+  // Lens body and optical perimeter.
+  ctx.save();applyM(m);
+  const body=ctx.createRadialGradient(-o.rx*.18,-o.ry*.18,5,0,0,Math.max(o.rx,o.ry));
+  body.addColorStop(0,'rgba(255,255,255,.018)');body.addColorStop(.55,'rgba(255,255,255,.010)');body.addColorStop(1,'rgba(255,255,255,.065)');
+  ctx.fillStyle=body;ctx.fill(path);
+  ctx.lineJoin='round';
+  ctx.lineWidth=1.2;ctx.strokeStyle='rgba(0,0,0,.34)';ctx.stroke(path);
+  ctx.lineWidth=3.4;ctx.strokeStyle='rgba(255,255,255,.58)';ctx.globalAlpha=.48;ctx.stroke(path);ctx.globalAlpha=1;
+
+  // local black liquid reflection zones
+  ctx.save();ctx.clip(path);
+  let g=ctx.createRadialGradient(o.rx*.45,-o.ry*.14,2,o.rx*.45,-o.ry*.14,o.rx*.64);
+  g.addColorStop(0,'rgba(0,0,0,.34)');g.addColorStop(.28,'rgba(0,0,0,.10)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(-o.rx,-o.ry,o.rx*2,o.ry*2);
+  let h=ctx.createRadialGradient(-o.rx*.52,o.ry*.38,1,-o.rx*.52,o.ry*.38,o.rx*.45);
+  h.addColorStop(0,'rgba(0,0,0,.26)');h.addColorStop(.32,'rgba(0,0,0,.06)');h.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=h;ctx.fillRect(-o.rx,-o.ry,o.rx*2,o.ry*2);
+  ctx.restore();
+
+  // Neutral glass specular only. Chromatic blue/orange/red caustic lines were removed in R2.1.
+  const drift=o.ry3*.010;
+  ctx.lineCap='round';
+  ctx.lineWidth=1.35;
+  ctx.strokeStyle='rgba(255,255,255,.82)';
+  ctx.beginPath();ctx.ellipse(0,0,o.rx*.965,o.ry*.945,0,Math.PI*(1.055+drift),Math.PI*(1.165+drift));ctx.stroke();
+  ctx.lineWidth=.8;
+  ctx.strokeStyle='rgba(0,0,0,.17)';
+  ctx.beginPath();ctx.ellipse(0,0,o.rx*.952,o.ry*.934,0,Math.PI*(.20-drift),Math.PI*(.255-drift));ctx.stroke();
+
+  // surface keyword shares the lens orientation.
+  ctx.fillStyle='#050505';ctx.font=`700 ${o.label==='CONNECTION'?14:16}px Arial, sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.translate(o.rx*.13,o.ry*.05);ctx.rotate((o.ry3*.12-o.rx3*.06)*Math.PI/180);ctx.fillText(o.label,0,0);
+
+  if(sel||o.focus){ctx.lineWidth=sel?3.4:2.0;ctx.strokeStyle=sel?'rgba(0,0,0,.72)':'rgba(0,0,0,.40)';ctx.stroke(path)}
+  ctx.restore();
+}
+
+function render(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused)time+=dt;
+  globalX+=(targetGX-globalX)*.07;globalY+=(targetGY-globalY)*.07;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.drawImage(bg,0,0,bg.width,bg.height,0,0,W,H);
+  // weak giant-type parallax without moving the left UI
+  if(!paused&&!reduce){ctx.globalAlpha=.035;ctx.drawImage(bg,globalX*2.2,globalY*1.5,bg.width,bg.height,0,0,W,H);ctx.globalAlpha=1}
+  lenses.forEach((o,i)=>{
+    const idle=paused||reduce?0:1;
+    const irx=Math.sin(time*(.22+.015*i)+o.seed)*3.5*idle;
+    const iry=Math.cos(time*(.18+.014*i)+o.seed*1.2)*4.6*idle;
+    const hoverFactor=o.hover?1:0;
+    o.trx=(-o.ty*13*hoverFactor)+irx;
+    o.try=( o.tx*16*hoverFactor)+iry;
+    // a small global depth response remains, but local hover dominates.
+    o.trx+=globalY*(1.2+i*.18)*(paused?0:(reduce?.20:1));
+    o.try+=globalX*(1.6+i*.22)*(paused?0:(reduce?.20:1));
+    o.rx3+=(o.trx-o.rx3)*(.10+(o.hover?.05:0));
+    o.ry3+=(o.try-o.ry3)*(.10+(o.hover?.05:0));
+    if(selected===i){o.rx3*=1.002;o.ry3*=1.002}
+    drawLens(o,paths[i]);
+  });
+  requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
+window.__LOVE_TREE_V7_R2__={
+  version:'71_V7_FINAL_INTERACTIVE_R2',
+  renderer:'Canvas2D runtime refraction; zero reference/V6 bitmap assets',
+  lensCount:lenses.length,
+  routeAssigned:false,
+  get selected(){return selected},
+  get lensState(){return lenses.map(o=>({label:o.label,hover:o.hover,rx:o.rx3,ry:o.ry3}))},
+  select,
+  clear(){selected=-1;hits.forEach(h=>h.setAttribute('aria-pressed','false'))},
+  setPaused(v=true){paused=!!v;targetGX=targetGY=globalX=globalY=0;lenses.forEach(o=>{o.tx=o.ty=o.trx=o.try=o.rx3=o.ry3=0})}
+};
+})();
+</script>
+</body>
+</html>

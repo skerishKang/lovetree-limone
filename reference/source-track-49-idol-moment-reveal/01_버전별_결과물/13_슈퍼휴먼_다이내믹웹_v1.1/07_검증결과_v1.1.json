@@ -1,0 +1,127 @@
+{
+  "candidate": "LoveTree 49 Superhuman Dynamic Cinematic Website v1.1",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_VISUAL_REVIEW",
+  "production": "PROHIBITED",
+  "image_generation_tool_calls": 0,
+  "new_primary": 0,
+  "new_shots": 0,
+  "new_storyboards": 0,
+  "source_policy": "existing 49 storyboard/08 asset warehouse only",
+  "target_runtime_seconds": 34.0,
+  "user_save_hold_excluded_from_runtime": true,
+  "checks": {
+    "desktop_save_interaction_pass": true,
+    "mobile_save_interaction_pass": true,
+    "takeover_structure_pass": true,
+    "tree_climax_structural_pass": true,
+    "runtime_console_clean": true,
+    "external_network_requests_zero": true,
+    "desktop_mobile_overflow_pass": true,
+    "requested_videos_created": true,
+    "all_required_runtime_gates_pass": true
+  },
+  "desktop": {
+    "landing_visible": true,
+    "site_header_visible_on_landing": true,
+    "no_horizontal_overflow_landing": true,
+    "cinema_active": true,
+    "teaser_takeover_class": true,
+    "nav_retracted": true,
+    "teaser_mark_visible": true,
+    "save_gate_active": true,
+    "save_touch_target_height": 48,
+    "save_touch_target_min44": true,
+    "save_waited_2s": true,
+    "save_ui_visible": true,
+    "timeline_paused_while_waiting": true,
+    "saved_label": true,
+    "saved_state": true,
+    "connection_visible_after_save": true,
+    "timeline_resumed_after_save": true,
+    "tree_visible": true,
+    "tree_core_visible": true,
+    "tree_moment_nodes_visible": 8,
+    "tree_branch_max_width": 18,
+    "tree_substantial_branching": true,
+    "final_card_visible": true,
+    "site_chrome_returned": true,
+    "no_horizontal_overflow_final": true
+  },
+  "mobile": {
+    "landing_visible": true,
+    "site_header_visible_on_landing": true,
+    "no_horizontal_overflow_landing": true,
+    "cinema_active": true,
+    "teaser_takeover_class": true,
+    "nav_retracted": true,
+    "teaser_mark_visible": true,
+    "save_gate_active": true,
+    "save_touch_target_height": 48,
+    "save_touch_target_min44": true,
+    "save_waited_2s": true,
+    "save_ui_visible": true,
+    "timeline_paused_while_waiting": true,
+    "saved_label": true,
+    "saved_state": true,
+    "connection_visible_after_save": true,
+    "timeline_resumed_after_save": true,
+    "tree_visible": true,
+    "tree_core_visible": true,
+    "tree_moment_nodes_visible": 8,
+    "tree_branch_max_width": 18,
+    "tree_substantial_branching": true,
+    "final_card_visible": true,
+    "site_chrome_returned": true,
+    "no_horizontal_overflow_final": true
+  },
+  "console_errors": [],
+  "page_errors": [],
+  "external_requests": [],
+  "sha256": {
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_v1.1.html": "7cce56a1ec4f624e6c04187489ef6915f04d351f4f72dc9621ede479bb06ad86",
+    "49_SUPERHUMAN_DYNAMIC_CINEMATIC_WEBSITE_PREVIEW_STANDALONE_v1.1.html": "3d7d69d8774223c56a53beabddff3ff346362753ae1afd7cf349bc4b9b3b5a40"
+  },
+  "asset_count": 21,
+  "pacing": {
+    "v1_reference_seconds": 29.252,
+    "v1_1_narrative_seconds": 34.0,
+    "v1_1_save_hold_behavior": "timeline pauses at SAVE until SAVE or continue; QA proof waits >2s before click",
+    "structure": "BURST → BREATH → BURST → HERO HOLD → DETAIL BURST → SAVE HOLD → CONNECTION RUSH → MEMORY BREATH → TREE CLIMAX",
+    "site_structure": "SITE → TEASER TAKEOVER → INTERACTIVE SAVE → CONNECTION → MASSIVE TREE → SITE"
+  },
+  "tree_climax": {
+    "allocated_seconds": 9.0,
+    "full_tree_hold_target_seconds": "~2",
+    "max_branch_width_px": 18,
+    "moment_nodes": 8,
+    "moving_light_tip": true,
+    "fading_trail": true,
+    "palette": [
+      "cyan-white",
+      "violet",
+      "magenta"
+    ]
+  },
+  "videos": {
+    "49_SITE_EXECUTION_v1.1.mp4": {
+      "duration_seconds": 36.767,
+      "sha256": "a797cdcc8fee27c5a5c562b9aadf0cbe5f341b4953dd2c36e1bfe688a6d5169f",
+      "bytes": 2319318
+    },
+    "49_V1_vs_V1.1_PACING_COMPARISON.mp4": {
+      "duration_seconds": 36.8,
+      "sha256": "d7954d5ccaf08da2455dff2b98ce64f1e09166a403a96188d59b796b7e5303ca",
+      "bytes": 4135380
+    },
+    "49_SAVE_INTERACTION_PROOF.mp4": {
+      "duration_seconds": 8.0,
+      "sha256": "bc95d4d8a0129ae0db50d6c852c9739da607fd5ccbc02eb9ea10e9e2d013155b",
+      "bytes": 1450743
+    },
+    "49_TREE_CLIMAX_PROOF.mp4": {
+      "duration_seconds": 10.95,
+      "sha256": "5c215ef9ee57c3d6efd88398ec8bdc2c40d9b01eb72facc9674bbcf9039c55a4",
+      "bytes": 495348
+    }
+  }
+}

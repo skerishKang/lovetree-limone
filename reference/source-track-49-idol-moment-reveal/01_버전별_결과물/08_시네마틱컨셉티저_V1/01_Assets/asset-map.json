@@ -1,0 +1,35 @@
+{
+  "source_reference": "ChatGPT Image 2026년 8월 9일 오전 03_47_18 (1)(1).png",
+  "scene_assets": [
+    "first_glimpse",
+    "curtain_breath",
+    "person_reveal",
+    "mic_detail",
+    "cafe_moment",
+    "ribbon_back",
+    "save_portrait",
+    "connection_left",
+    "connection_right",
+    "next_petals",
+    "memory_field",
+    "tree_emerges",
+    "tree_final"
+  ],
+  "memory_field_cards": [
+    "field_01",
+    "field_02",
+    "field_03",
+    "field_04",
+    "field_05",
+    "field_06"
+  ],
+  "tree_moments": [
+    "tree_moment_01.jpg",
+    "tree_moment_02.jpg",
+    "tree_moment_03.jpg",
+    "tree_moment_04.jpg",
+    "tree_moment_05.jpg",
+    "tree_moment_06.jpg"
+  ],
+  "note": "No benchmark frames embedded. All visual scene materials are isolated from the user-provided LoveTree original concept artwork."
+}

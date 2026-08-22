@@ -1,0 +1,238 @@
+Recreate the exact same full-viewport editorial landing page from the supplied portfolio prompt, then adapt only the semantic/brand layer for LoveTree. Preserve the original composition, spacing, responsive behavior, video, font contrast, menu timing, and locked viewport. The result must still visibly belong to the same template family.
+
+═══════════════════════════════════════
+PRODUCT INTENT
+═══════════════════════════════════════
+This is a LoveTree cinematic entry portal, not the canonical everyday workspace and not a generic SaaS landing page.
+
+LoveTree captures the exact Moment that moved a user's heart, the feeling attached to that Moment, and the emotional reason the user moved to the next Moment. The path can later be replayed so the user can walk the route of falling for a person, artist, work, or subject again.
+
+Communicate only the essential loop:
+DISCOVER → FEEL → CONNECT → GROW → REPLAY
+
+Do not add extra feature sections to explain the product. The meaning must be carried by the existing four-column metadata band, hero headline, CTA, and footer.
+
+═══════════════════════════════════════
+TECH / STACK
+═══════════════════════════════════════
+- React + TypeScript + Tailwind CSS + Vite
+- Icons: lucide-react (`Play`, `Menu`, `X`)
+- Single full-screen page: `h-screen w-full overflow-hidden`
+- Root: `relative h-screen w-full overflow-hidden bg-black text-white`
+
+═══════════════════════════════════════
+FONTS — KEEP EXACTLY
+═══════════════════════════════════════
+Inter:
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+basis33:
+<link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+
+CSS:
+body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.font-pixel { font-family: 'basis33', monospace; }
+
+basis33 is used for:
+- TREE under LOVE
+- PATHWAYS under MOMENT &
+- LoveTree micro blurb under the name
+- labels WHAT LOVETREE IS and CORE JOURNEY
+- words MOMENTS and PATHS in the hero headline, at 1.25em
+
+Inter is used everywhere else.
+
+Page title: "LoveTree - Moments Become Paths"
+
+═══════════════════════════════════════
+BACKGROUND VIDEO — KEEP EXACT SOURCE
+═══════════════════════════════════════
+Full-bleed background <video>:
+src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4"
+
+Attributes: autoPlay muted loop playsInline
+Classes: absolute inset-0 h-full w-full object-cover lg:scale-[1.2]
+
+Do not add a dark overlay.
+
+Interpret the female face as a person-centered first encounter: the subject whose expression or presence first stopped the user's attention and opened an emotional path. Do NOT stylize it as a fashion campaign or add literal tree imagery over the face.
+
+═══════════════════════════════════════
+LOVETREE LOGO
+═══════════════════════════════════════
+Replace only the original GP mark.
+Use a 28×28 white geometric LoveTree mark:
+- one vertical trunk/path
+- two restrained branching arms
+- a compact seed/heart-like center or negative space
+- modern, sharp, editorial
+- white only
+- no gradients
+- no cartoon leaves
+- no colorful flower icon
+
+Use the same mark in the top-left navbar and mobile menu header.
+
+═══════════════════════════════════════
+LAYOUT STRUCTURE — KEEP SOURCE EXACT
+═══════════════════════════════════════
+Outer content wrapper:
+relative z-10 flex h-full flex-col px-5 sm:px-6 md:px-10 lg:px-14
+
+── 1. NAVBAR ──
+flex items-center justify-between py-6
+
+Desktop md+ links, same gap/size/tracking:
+ABOUT | JOURNEY | MOMENTS | TREE | ARCHIVE | TALK
+
+Each href="#", hover:opacity-70 transition-opacity.
+Mobile <md uses Menu icon size 24 with p-2 hover:opacity-70.
+
+── 2. FOUR-COLUMN META GRID ──
+mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8
+
+COL 1:
+h2 line 1: LOVE — Inter normal
+h2 line 2: TREE — basis33, text-2xl md:text-3xl
+asterisk at text-[10px] text-white/50 mt-3
+brand blurb basis33, exact line breaks:
+A living archive of
+the exact moments that
+moved your heart and
+changed where you went next
+
+COL 2:
+line 1: MOMENT & — Inter normal
+line 2: PATHWAYS — basis33
+Maintain source mobile right-align / lg left-align behavior.
+
+COL 3:
+Label: WHAT LOVETREE IS — basis33, same label styling
+Body exact copy:
+Save the moment that moved you, connect why you searched next, then replay the path that made you fall in love.
+
+COL 4:
+Label: CORE JOURNEY — basis33, same label styling
+List:
+- Discover a Moment
+- Save the Exact Point
+- Leave the Feeling
+- Connect the Reason
+- Grow the Tree
+- Walk It Again
+
+── 3. FLEX SPACER ──
+<div className="flex-1" />
+
+── 4. BOTTOM SECTION ──
+Keep source pb-4 and source responsive grid.
+
+LEFT hero:
+text-3xl sm:text-4xl md:text-5xl lg:text-[3.75rem] xl:text-[4.25rem]
+tracking-wide uppercase font-normal
+style lineHeight: 0.72
+
+Exact lines:
+SAVE THE
+MOMENTS THAT
+GROW INTO
+PATHS
+
+MOMENTS and PATHS use basis33, font-normal, text-[1.25em], inline-block, leading-none, align-baseline.
+
+RIGHT column:
+A) CTA button with exact source border, spacing, blur and hover.
+Lucide Play size 14 fill white.
+Label: PLAY MEMORY PATH
+Click in the prototype may set the background video currentTime=0 and play again. Do not navigate away.
+
+B) Three dark chips with the same visual rhythm as the award chips.
+Do not invent LoveTree usage counts or awards.
+Use journey ordinals instead:
+1) DISCOVER + 01
+2) CONNECT + 02
+3) REPLAY + 03
+
+Same #0B0B0B background, padding and muted ordinal styling.
+
+ROW B footer strip:
+Left exact copy:
+Your first moment can become a path someone else follows. Plant a moment
+"Plant a moment" is the red-500 link, hover red-400.
+
+Right exact copy:
+Moment • Emotion • Connection • Replay
+
+═══════════════════════════════════════
+MOBILE FULLSCREEN MENU — KEEP SOURCE BEHAVIOR
+═══════════════════════════════════════
+State: menuOpen boolean
+Overlay: fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col
+500ms transition with cubic-bezier(0.16,1,0.3,1)
+open opacity-100 pointer-events-auto
+closed opacity-0 pointer-events-none
+
+Header uses same LoveTree logo and X size 24.
+Nav links:
+ABOUT
+JOURNEY
+MOMENTS
+TREE
+ARCHIVE
+TALK
+
+text-2xl tracking-widest, gap-8.
+Stagger link entrance exactly 100 + i*60ms.
+Clicking a link closes menu.
+
+═══════════════════════════════════════
+ANIMATIONS / INTERACTIONS
+═══════════════════════════════════════
+1. Background video autoplay muted loop
+2. Nav hover opacity 70%
+3. CTA hover white/5 → white/10
+4. Plant a moment red-500 → red-400
+5. Mobile overlay 500ms fade
+6. Mobile links stagger fade + translate-y
+7. Menu/X hover opacity 70%
+8. No scroll; one locked viewport only
+9. No desktop page-load entrance animation
+10. lg video scale 1.2×
+
+═══════════════════════════════════════
+COLOR TOKENS — KEEP SOURCE EXACT
+═══════════════════════════════════════
+- #000000 fallback background
+- #ffffff primary text
+- white/90, white/80, white/60, white/50 muted text
+- red-500 only for the small footer action
+- #0B0B0B chips
+- white/30 CTA border
+- white/5 CTA fill
+- black/95 mobile overlay
+
+═══════════════════════════════════════
+RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════
+- <md: hamburger + 2-col meta grid, CTA/chips stacked below hero
+- md+: desktop nav
+- lg+: 4-col meta grid, two-column bottom, 1.2 video crop
+- same sm/md/lg/xl padding and hero-size progression as source prompt
+
+═══════════════════════════════════════
+DO NOT
+═══════════════════════════════════════
+- Do not convert this experiment into the warm cream/paper canonical LoveTree workspace
+- Do not add literal branches over the whole screen
+- Do not add flower borders, cards, dashboard panels, purple gradients, or extra sections
+- Do not add fake user counts, award counts, moment counts, archive counts, or conversion claims
+- Do not replace or regenerate the supplied video
+- Do not change the source viewport structure
+- Do not add scrolling
+- Do not make a second viewport section
+- Do not make it look like a generic SaaS landing page
+- Do not keep Adam Roberts, Grilled Pixels, portfolio services, or design-award copy in the LoveTree variant
+
+This is a controlled visual adaptation test: source layout fidelity first, LoveTree semantic identity second.

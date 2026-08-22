@@ -12,6 +12,71 @@ This repository is the active LoveTree Limone product repository.
 
 Do not infer a new product generation from a V1/V2/V3/V4 label inside one design lineage. Use the intake rules tracked by Design Ops issue #80.
 
+## Cross-repository platform authority — mandatory for Auth/DB/backend/provider work
+
+LoveTree is **not** an independently canonical backend/auth/data product.
+
+Primary cross-repository authority:
+
+- `skerishKang/LoveBud#4004` — one shared Product auth/backend/data authority;
+- `skerishKang/lovetree-limone#152` — LoveTree-side guardrail;
+- `skerishKang/LoveBud#4005` — DB/schema/data convergence when relevant;
+- `skerishKang/LoveBud#4006` — shared Firebase → staged Neon Auth migration when relevant;
+- `docs/architecture/SHARED_LOVE_PLATFORM_AUTHORITY.md` — repository mirror once merged.
+
+Current Product architecture during migration:
+
+```text
+LoveBud + LoveTree
+= ONE Product authentication authority
+= ONE shared backend/API authority
+= ONE canonical writable Tree/Memory/social data authority
+
+current Product auth = shared Firebase Auth
+target auth = staged Neon Auth migration through stable account mapping
+LoveTree separate DB = TRANSITIONAL_BRIDGE_NONCANONICAL
+```
+
+Before creating, configuring, binding, deploying, deleting, or reusing any Firebase, Neon, Cloudflare Worker, DB, Auth, secret, route, Preview, E2E, or provider resource, fresh-read the authorities above and classify the exact target as one of:
+
+```text
+CANONICAL_PRODUCT_AUTHORITY
+TRANSITIONAL_BRIDGE_NONCANONICAL
+TEST_ISOLATION_ONLY
+PROTOTYPE_ONLY
+HISTORICAL_EVIDENCE_ONLY
+UNKNOWN_STOP
+```
+
+`UNKNOWN_STOP` means zero mutation.
+
+A dedicated E2E/prototype resource never becomes Product authority merely because it exists or passes tests:
+
+```text
+DEDICATED_E2E_FIREBASE != NEW_PRODUCT_AUTHORITY
+ISOLATED_E2E_WORKER != NEW_SHARED_BACKEND
+DISPOSABLE_NEON_BRANCH != NEW_CANONICAL_DB
+```
+
+Any Auth/DB/backend/provider/mutable-E2E worker must report before mutation:
+
+```text
+PARENT_4004_READ = YES
+LOVETREE_152_READ = YES
+DATA_4005_READ_IF_RELEVANT = YES/NA
+AUTH_4006_READ_IF_RELEVANT = YES/NA
+CURRENT_REMOTE_FRESH = YES
+CURRENT_PROVIDER_IDENTITY_FRESH = YES/NA
+RESOURCE_CLASS = <classification>
+SECOND_CANONICAL_WRITER_CREATED = NO
+SECOND_PRODUCT_AUTHORITY_CREATED = NO
+TEST_RESOURCE_PROMOTED_TO_PRODUCT = NO
+PRODUCT_CUTOVER_EXPLICITLY_AUTHORIZED = YES/NO
+ARCHITECTURE_CONSISTENCY_GATE = PASS/STOP
+```
+
+`STOP` means zero provider/DB mutation. Historical row counts, branch IDs, SHAs, deployment IDs, and old issue comments are evidence only; fresh-query the exact current target before acting.
+
 ## Runtime stack
 
 - UI: Next.js 16 / React 19 / TypeScript / Tailwind 4
@@ -19,6 +84,8 @@ Do not infer a new product generation from a V1/V2/V3/V4 label inside one design
 - Database: Neon PostgreSQL through Drizzle ORM
 - Auth: Firebase Authentication (`relovetree` is the Production Firebase project)
 - Production Worker: `lovetree-limone`
+
+The runtime stack above describes the current LoveTree implementation/bridge surface. It does **not** override the cross-repository platform authority or promote the LoveTree DB/Worker/Auth configuration into a second canonical Product backend.
 
 Primary current source areas include:
 
@@ -44,19 +111,19 @@ Google Drive and sibling-project originals are evidence/reference sources unless
 - Do not silently turn a sibling project into LoveTree product code. Extract only the approved Variant/Capability mechanics.
 - New intake follows `Lineage → Revision → Variant/Capability` and the newest explicit product-owner/design-lead decision takes precedence while older revisions remain preserved as history.
 
-The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository.
+The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository. For current shared-platform architecture, however, fresh connected GitHub authority in LoveBud #4004/#4005/#4006 is controlling rather than an old mirrored snapshot.
 
-## Mandatory WSL-native workspace
+## Workspace policy: WSL / Windows dual-track
 
-Run active development and verification only from the WSL Linux filesystem, normally:
+Both WSL and Windows are approved environments for active development and verification. Work happens only in dedicated per-Lane worktrees, never in a bare or shared checkout. When a task is OS-neutral, prefer Windows first; use WSL for Linux-resident worktrees and Linux-specific needs.
 
-```text
-$HOME/worktrees/**
-```
+- **One worktree per Lane.** Every concurrent work Lane (agent/session/work room) owns exactly one dedicated worktree on its declared OS-native filesystem:
+  - WSL: `$HOME/worktrees/**`
+  - Windows: a dedicated per-Lane worktree directory on a native NTFS path
+- **OS ownership is fixed per Lane.** Each Lane declares its owning OS (WSL or Windows) at start and must not switch OS mid-task. Never run one Lane's worktree from both operating systems.
+- Do not run repository workloads from cross-mounted paths such as `/mnt/c/**` or `/mnt/g/**`; run them inside the Lane's own worktree on the owning OS's native filesystem.
 
-Do not run repository workloads from Windows-mounted paths such as `/mnt/c/**` or `/mnt/g/**`.
-
-Prohibited on Windows-mounted paths:
+Prohibited on cross-mounted paths (`/mnt/c/**`, `/mnt/g/**` and equivalents):
 
 - `npm ci` / `npm install`
 - lint, typecheck, tests, build or `db:check`
@@ -64,7 +131,22 @@ Prohibited on Windows-mounted paths:
 - Playwright / Chromium / browser capture matrices
 - bulk generation/scanning/copying of repository working files
 
-Windows-mounted drives may be used for read-only source archives and exported evidence/artifacts after WSL work is complete.
+Windows-mounted drives may be used for read-only source archives and exported evidence/artifacts after the owning Lane's work is complete.
+
+### Shared root is a sync surface only
+
+The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a workspace. Do not edit, build, test, run servers or otherwise perform task work directly inside it. Only sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`); do all real work in a per-Lane worktree.
+
+### Heavy processes require CTO pre-approval
+
+Docker, virtual machines and other heavyweight processes (container runtimes, emulators, large parallel builds, bulk capture/scanning jobs) must not be started without explicit prior CTO approval. This rule is codified following an unauthorized Docker execution incident. Record the approval (issue or message link) before launching.
+
+### GitHub is the single ledger
+
+All durable work state lives on GitHub, not on any local disk.
+
+- Before starting work: `git fetch origin` and base the Lane on current `origin/main`.
+- After finishing work: push the Lane branch and open/update the PR. Local-only commits are not a completion state.
 
 Before implementation or validation, record:
 
@@ -95,7 +177,7 @@ See `docs/operations/WSL_WORKSPACE_POLICY.md` for migration/recovery details.
 
 ## Validation
 
-For ordinary code changes, use the repository's current validation scripts from a WSL-native workspace:
+For ordinary code changes, use the repository's current validation scripts from the Lane's owning native workspace (WSL or Windows, per the workspace policy above):
 
 ```bash
 npm ci
@@ -148,7 +230,7 @@ Do not create or deploy to an accidental `lovetree-limone-production` Worker.
 
 Never expose secret values in source, logs, PR comments or reports. Production verification may use read-only metadata/state checks required by the guard. Do not mutate Production DB/Firebase merely to make a validation gate pass.
 
-Firebase validation must not use user-creating probes such as anonymous signup. Disposable mutable Runtime E2E belongs only on the isolated non-Production target tracked by #67.
+Firebase validation must not use user-creating probes such as anonymous signup. Disposable mutable Runtime E2E belongs only on the isolated non-Production/test topology tracked by #67, and any dedicated resource there remains `TEST_ISOLATION_ONLY` rather than Product authority.
 
 ## Files and secrets
 
@@ -164,4 +246,4 @@ When a secret or environment variable is required, report only the variable name
 
 ## Operating principle
 
-Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype status from product adoption, and leave a clearly named blocker instead of weakening a fail-closed contract.
+Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, and leave a clearly named blocker instead of weakening a fail-closed contract.

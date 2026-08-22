@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoveTree · GABE Exact Glass Orbit · Gate A2</title>
+<style>
+  :root{--ink:#050505;--paper:#fff}
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  body{isolation:isolate}
+  .stage{position:relative;width:100vw;height:100vh;background:#fff;overflow:hidden}
+  .brand{position:absolute;left:3.0vw;top:2.6vh;font-family:Georgia,'Times New Roman',serif;font-size:2.72vw;line-height:1;letter-spacing:-.055em;z-index:9}
+  .intro{position:absolute;left:3.0vw;top:39.0vh;width:34vw;font-weight:800;font-size:1.56vw;line-height:.94;letter-spacing:-.062em;z-index:9}
+  .intro span{display:block}
+  .cta{position:absolute;left:3.0vw;bottom:5.1vh;width:7.8vw;height:7.8vw;min-width:104px;min-height:104px;border-radius:50%;background:#050505;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.80vw;font-weight:800;letter-spacing:-.03em;z-index:9}
+  .mode-dot{position:absolute;left:44.2vw;top:21.0vh;width:3.1vw;height:3.1vw;border-radius:50%;background:#050505;z-index:2}
+
+  .mega{position:absolute;inset:0;pointer-events:none;z-index:1;font-family:Impact,'Arial Black',Arial,sans-serif;color:#050505;font-weight:900;overflow:hidden}
+  .mega .topline{position:absolute;left:43.2vw;top:-10.5vh;font-size:12.0vw;line-height:.74;letter-spacing:-.052em;white-space:nowrap}
+  .mega .columns{position:absolute;left:43.7vw;top:26.4vh;display:flex;gap:4.2vw;align-items:flex-start}
+  .mega .col{display:flex;flex-direction:column;font-size:8.45vw;line-height:.76;letter-spacing:-.047em}
+  .mega .col:nth-child(2){margin-top:-3.4vh}
+  .mega .rightword{position:absolute;right:-5.1vw;top:18.8vh;font-size:8.65vw;line-height:.78;letter-spacing:-.055em;writing-mode:vertical-rl;text-orientation:mixed}
+
+  #glass{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+
+  /* Static GATE A2 refraction proxy: the real broad glass geometry is WebGL; these annular masks
+     only make the background type visibly bend/compress inside each object for visual comparison. */
+  .lens{position:absolute;z-index:3;pointer-events:none;overflow:hidden;
+    -webkit-mask:radial-gradient(ellipse at center,transparent 0 37%,#000 39% 72%,transparent 74% 100%);
+            mask:radial-gradient(ellipse at center,transparent 0 37%,#000 39% 72%,transparent 74% 100%);
+    filter:contrast(1.35) saturate(1.05);
+  }
+  .lens::before{content:"PATH  MOMENT  MEMORY  LOVE";position:absolute;left:-42vw;top:-13vh;width:125vw;height:120vh;
+    font-family:Impact,'Arial Black',Arial,sans-serif;font-weight:900;font-size:10.2vw;line-height:.74;letter-spacing:-.06em;color:#050505;
+    transform:scale(1.13,.93) skewX(-5deg) translateX(var(--dx,0));transform-origin:center;opacity:.98;white-space:pre-wrap;
+  }
+  .lens::after{content:"";position:absolute;inset:0;background:
+    linear-gradient(100deg,rgba(255,255,255,.98) 0 9%,rgba(255,255,255,.15) 18%,rgba(0,0,0,.08) 46%,rgba(255,255,255,.0) 62%,rgba(255,255,255,.85) 88% 100%);
+    mix-blend-mode:screen;opacity:.55
+  }
+  .r1{left:63.2vw;top:-4.5vh;width:31vw;height:18vh;transform:rotate(12deg);--dx:1vw}
+  .r2{left:56.8vw;top:13.4vh;width:32.5vw;height:19.5vh;transform:rotate(-10deg);--dx:-1.5vw}
+  .r3{left:60.3vw;top:31.5vh;width:31.8vw;height:19.5vh;transform:rotate(7deg);--dx:2.0vw}
+  .r4{left:56.2vw;top:49.1vh;width:33.2vw;height:20.2vh;transform:rotate(-17deg);--dx:-2.2vw}
+  .r5{left:62.9vw;top:65.3vh;width:31.5vw;height:19.5vh;transform:rotate(13deg);--dx:1.1vw}
+  .r6{left:69.0vw;top:81.5vh;width:29.5vw;height:18.4vh;transform:rotate(-10deg);--dx:2.2vw}
+
+  .orbit-label{position:absolute;z-index:8;font-size:2.02vw;font-weight:900;font-style:italic;letter-spacing:-.05em;color:#050505;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.9)}
+  .l1{left:72.5vw;top:7.0vh;transform:rotate(10deg)}
+  .l2{left:62.1vw;top:26.0vh;transform:rotate(-7deg)}
+  .l3{left:66.5vw;top:43.0vh;transform:rotate(4deg)}
+  .l4{left:62.0vw;top:60.3vh;transform:rotate(-17deg)}
+  .l5{left:71.2vw;top:76.0vh;transform:rotate(12deg)}
+  .l6{left:80.2vw;top:88.0vh;transform:rotate(82deg)}
+  .gate{position:absolute;left:3vw;bottom:1.1vh;font-size:.52vw;letter-spacing:.17em;color:#8a8a8a;z-index:9;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brand">LoveTree</div>
+  <div class="intro">
+    <span>Moments that moved your heart,</span>
+    <span>connected into the path that made you care,</span>
+    <span>and eventually made you a fan.</span>
+  </div>
+  <div class="cta">MY<br>TREE</div>
+  <div class="mode-dot"></div>
+
+  <div class="mega" aria-hidden="true">
+    <div class="topline">PATH</div>
+    <div class="columns">
+      <div class="col"><span>M</span><span>O</span><span>M</span><span>E</span><span>N</span><span>T</span></div>
+      <div class="col"><span>M</span><span>E</span><span>M</span><span>O</span><span>R</span><span>Y</span></div>
+    </div>
+    <div class="rightword">LOVE</div>
+  </div>
+
+  <div class="lens r1"></div><div class="lens r2"></div><div class="lens r3"></div>
+  <div class="lens r4"></div><div class="lens r5"></div><div class="lens r6"></div>
+  <canvas id="glass"></canvas>
+
+  <div class="orbit-label l1">FIRST MOMENT</div>
+  <div class="orbit-label l2">MOMENTS</div>
+  <div class="orbit-label l3">CONNECTION</div>
+  <div class="orbit-label l4">REPLAY</div>
+  <div class="orbit-label l5">MY TREE</div>
+  <div class="orbit-label l6">RETURN</div>
+  <div class="gate">GATE A2 · STATIC REFINEMENT ONLY · NO GATE B/C FEATURES</div>
+</div>
+<script>
+(() => {
+  const canvas=document.getElementById('glass');
+  const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false});
+  if(!gl) return;
+  const DPR=Math.min(devicePixelRatio||1,1.5);
+  function resize(){canvas.width=Math.floor(innerWidth*DPR);canvas.height=Math.floor(innerHeight*DPR);canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';gl.viewport(0,0,canvas.width,canvas.height)}
+  resize();
+
+  const vs=`#version 300 es
+  precision highp float;
+  layout(location=0) in vec3 aPos; layout(location=1) in vec3 aNor;
+  uniform mat4 uMVP; uniform mat4 uM; out vec3 vN; out vec3 vP; out vec3 vL;
+  void main(){vec4 p=uM*vec4(aPos,1.0);vP=p.xyz;vL=aPos;vN=normalize(mat3(uM)*aNor);gl_Position=uMVP*vec4(aPos,1.0);}`;
+  const fs=`#version 300 es
+  precision highp float; in vec3 vN; in vec3 vP; in vec3 vL; out vec4 o;
+  uniform float uSeed;
+  void main(){
+    vec3 N=normalize(vN); vec3 V=normalize(vec3(0.0,0.0,6.4)-vP);
+    float ndv=max(dot(N,V),0.0); float fres=pow(1.0-ndv,3.0);
+    vec3 L1=normalize(vec3(-.55,.85,.7)); vec3 L2=normalize(vec3(.8,-.15,.65));
+    float sp1=pow(max(dot(reflect(-L1,N),V),0.0),92.0);
+    float sp2=pow(max(dot(reflect(-L2,N),V),0.0),34.0);
+    float broad=pow(max(dot(N,normalize(vec3(-.2,.3,1.0))),0.0),6.0);
+    float edge=pow(1.0-abs(N.z),2.4);
+    float side=clamp(N.x*.5+.5,0.0,1.0);
+    vec3 blue=vec3(.03,.27,1.0), orange=vec3(1.0,.33,.0);
+    vec3 chroma=mix(orange,blue,side)*edge*.82;
+    float dark=pow(max(-N.y*.6+edge*.4,0.0),2.0)*.28;
+    vec3 base=vec3(.93)*(.16+broad*.46)+vec3(1.0)*sp1*1.75+vec3(.72)*sp2*.40;
+    vec3 col=mix(base,vec3(.015),clamp(fres*.82+edge*.16,0.0,.92))-vec3(dark*.45)+chroma*edge*1.75;
+    float alpha=clamp(.075 + fres*.68 + sp1*.32 + broad*.12 + edge*.18, .06, .88);
+    o=vec4(col,alpha);
+  }`;
+  function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const loc={mvp:gl.getUniformLocation(pr,'uMVP'),m:gl.getUniformLocation(pr,'uM'),seed:gl.getUniformLocation(pr,'uSeed')};
+
+  function loop(seed=0, seg=144, cross=24){
+    const p=[],n=[],idx=[];
+    const band=.34, depth=.095;
+    for(let i=0;i<=seg;i++){
+      const u=i/seg*Math.PI*2;
+      const asym=.075*Math.sin(u*2.0+seed*1.7)+.045*Math.sin(u*3.0+seed*.8);
+      const cx=(1.0+asym)*Math.cos(u);
+      const cy=(.60+.035*Math.sin(u*2.0+seed))*Math.sin(u);
+      const tangent=[-(1.0+asym)*Math.sin(u),(.60+.035*Math.sin(u*2.0+seed))*Math.cos(u),0];
+      let radial=[cx,cy,0]; const rl=Math.hypot(radial[0],radial[1])||1; radial=[radial[0]/rl,radial[1]/rl,0];
+      const localBand=band*(1+.16*Math.sin(u+seed*2.2)+.06*Math.sin(u*3.0+seed));
+      for(let j=0;j<cross;j++){
+        const v=j/cross*Math.PI*2;
+        // Rounded-rectangle cross section: wide radial face, shallow depth.
+        const c=Math.cos(v), s=Math.sin(v);
+        const rs=localBand*Math.sign(c)*Math.pow(Math.abs(c),.34);
+        const zs=depth*Math.sign(s)*Math.pow(Math.abs(s),.58);
+        const twist=.06*Math.sin(u*1.5+seed)*Math.sin(v);
+        p.push(cx+radial[0]*rs,cy+radial[1]*rs,zs+twist);
+        let nx=(rs/(localBand*localBand))*radial[0], ny=(rs/(localBand*localBand))*radial[1], nz=zs/(depth*depth);
+        const nl=Math.hypot(nx,ny,nz)||1; n.push(nx/nl,ny/nl,nz/nl);
+      }
+    }
+    for(let i=0;i<seg;i++)for(let j=0;j<cross;j++){
+      const a=i*cross+j,b=(i+1)*cross+j,c=i*cross+((j+1)%cross),d=(i+1)*cross+((j+1)%cross);
+      idx.push(a,b,c,b,d,c);
+    }
+    return {p:new Float32Array(p),n:new Float32Array(n),i:new Uint32Array(idx)};
+  }
+  function makeVAO(seed){
+    const mesh=loop(seed); const vao=gl.createVertexArray(); gl.bindVertexArray(vao);
+    let b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,mesh.p,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
+    b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,mesh.n,gl.STATIC_DRAW);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,0,0);
+    b=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,mesh.i,gl.STATIC_DRAW);
+    return {vao,count:mesh.i.length};
+  }
+  const meshes=[0,1,2,3,4,5].map(makeVAO);
+  const I=()=>[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+  const mul=(a,b)=>{let o=new Array(16).fill(0);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o};
+  const T=(x,y,z)=>{let m=I();m[12]=x;m[13]=y;m[14]=z;return m};
+  const S=(x,y,z)=>{let m=I();m[0]=x;m[5]=y;m[10]=z;return m};
+  const Rx=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m};
+  const Ry=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m};
+  const Rz=a=>{let m=I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m};
+  const persp=(fovy,asp,n,f)=>{let t=1/Math.tan(fovy/2),m=new Array(16).fill(0);m[0]=t/asp;m[5]=t;m[10]=(f+n)/(n-f);m[11]=-1;m[14]=2*f*n/(n-f);return m};
+  const P=persp(.76,innerWidth/innerHeight,.1,40),V=T(0,0,-7.0);
+  // Separate X centers / depth / angle. No continuous coil.
+  const rings=[
+    [1.55,2.95,.28,1.95,.78,.58,.22,-.16,.18],
+    [1.08,1.72,-.10,2.15,.82,.62,-.17,.17,-.16],
+    [1.42,.56,.20,2.03,.84,.64,.10,-.18,.12],
+    [.96,-.66,-.18,2.18,.88,.64,-.20,.16,-.22],
+    [1.58,-1.78,.24,2.00,.84,.66,.16,-.13,.18],
+    [2.08,-2.84,-.12,1.88,.80,.62,-.08,.18,-.12]
+  ];
+  function render(){
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    rings.forEach((q,k)=>{const [x,y,z,sx,sy,sz,rx,ry,rz]=q;const M=mul(T(x,y,z),mul(Rz(rz),mul(Ry(ry),mul(Rx(rx),S(sx,sy,sz)))));const MVP=mul(P,mul(V,M));gl.uniformMatrix4fv(loc.mvp,false,new Float32Array(MVP));gl.uniformMatrix4fv(loc.m,false,new Float32Array(M));gl.uniform1f(loc.seed,k);gl.bindVertexArray(meshes[k].vao);gl.drawElements(gl.TRIANGLES,meshes[k].count,gl.UNSIGNED_INT,0);});
+  }
+  render();
+})();
+</script>
+</body>
+</html>

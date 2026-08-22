@@ -1,0 +1,26 @@
+{
+  "desktop": {
+    "sceneCount": 16,
+    "horizontalOverflow": 0,
+    "menuOpen": true,
+    "formToastVisible": true,
+    "newStarAdded": true,
+    "autoPlayStarted": true,
+    "autoPlayStopped": true,
+    "consoleMessages": [],
+    "pageErrors": []
+  },
+  "mobile": {
+    "sceneCount": 16,
+    "horizontalOverflow": 0,
+    "railTapNavigates": true,
+    "consoleMessages": [],
+    "pageErrors": []
+  },
+  "errors": {
+    "desktopConsoleErrors": 0,
+    "mobileConsoleErrors": 0,
+    "pageErrors": 0
+  },
+  "result": "PASS"
+}

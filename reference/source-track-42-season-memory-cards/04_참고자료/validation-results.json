@@ -1,0 +1,106 @@
+{
+  "reference": {
+    "file": "참고-녹화_2026_08_03_18_53_45_489.mp4",
+    "durationSeconds": 13.560454,
+    "resolution": "1904x1068",
+    "fps": 30
+  },
+  "layout": {
+    "whiteCanvasWidth": 840.72,
+    "whiteCanvasHeight": 840.72,
+    "wideScale": 0.82,
+    "focusScale": 1.27,
+    "visibleCardsWide": 3,
+    "cardWidth": 200.08,
+    "cardHeight": 295.2,
+    "visibleCardsFocus": 3,
+    "focusCanvasWidth": 1302.09
+  },
+  "carousel": {
+    "nextMovesLeft": true,
+    "nextMovementPixelsAt250ms": -297.84,
+    "previousMovesRight": true,
+    "nineToOneEndsAtPage1": true,
+    "cyclicPreviousAtPage1": true,
+    "cyclicNextAtPage1": true,
+    "totalMoments": 9,
+    "visibleCardSlots": 3,
+    "transitionStateModel": [
+      "IDLE",
+      "TRANSITIONING"
+    ],
+    "transitionDurationMs": 560,
+    "cyclic": true
+  },
+  "pagination": {
+    "page9Tokens": [
+      "1",
+      "…",
+      "7",
+      "8",
+      "9"
+    ],
+    "pageCountText": "09 / 09",
+    "activeIndicatorMoves": true,
+    "page5Tokens": [
+      "1",
+      "…",
+      "4",
+      "5",
+      "6",
+      "…",
+      "9"
+    ],
+    "compressed": true,
+    "currentFormat": "02 digits / 02 digits"
+  },
+  "controls": {
+    "endKeyGoesTo9": true,
+    "homeKeyGoesTo1": true,
+    "arrowRightWorks": true,
+    "arrowLeftWorks": true
+  },
+  "modal": {
+    "iframeCreatedOnPlay": true,
+    "autoplayParameter": true,
+    "iframeRemovedOnClose": true,
+    "pageMaintainedAfterClose": true
+  },
+  "storage": {
+    "key": "lovetree-season-memory-card-carousel-v1",
+    "currentPageSaved": true,
+    "lastOpenedSaved": true,
+    "stateRestoredInFreshDocument": true,
+    "autoDemoStoppedSaved": true
+  },
+  "mobile": {
+    "centralCardFullyVisible": true,
+    "centralCardWidth": 288.59,
+    "previousPeekVisible": true,
+    "nextPeekVisible": true,
+    "swipeMovesNext": true,
+    "keyboardHintHidden": true
+  },
+  "errors": {
+    "mobileConsoleErrors": 0,
+    "mobilePageErrors": 0,
+    "desktopConsoleErrors": 0,
+    "desktopPageErrors": 0,
+    "pageErrors": 0
+  },
+  "result": "PASS",
+  "thumbnails": {
+    "actualYouTubeThumbnailFirst": true,
+    "embeddedLoveTreeFallback": true,
+    "dynamicSvgLastFallback": true,
+    "validationCaptureUsedEmbeddedFallback": true
+  },
+  "executionVideos": {
+    "desktopDurationSeconds": 13.5,
+    "mobileDurationSeconds": 5.25,
+    "desktopConsoleErrors": 0,
+    "mobileConsoleErrors": 0,
+    "pageErrors": 0,
+    "playerCaptureMode": "validation-only srcdoc; production HTML uses YouTube embed iframe"
+  }
+}

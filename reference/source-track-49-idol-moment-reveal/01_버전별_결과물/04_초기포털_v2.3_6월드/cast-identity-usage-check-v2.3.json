@@ -1,0 +1,32 @@
+{
+  "version": "V2.3",
+  "status": "PASS_CANDIDATE",
+  "principle": "One canonical synthetic identity source per cast; no cross-cast face substitution inside a state.",
+  "casts": [
+    {
+      "cast": "A",
+      "role": "Main Visual",
+      "source": "49_v2.3_cast-A_main-visual_source_v1.png",
+      "states": [1, 2],
+      "bubble_source_strategy": "same-source contextual crop/filter",
+      "same_identity": true
+    },
+    {
+      "cast": "B",
+      "role": "Soft Emotion",
+      "source": "49_v2.3_cast-B_soft-emotion_source_v1.png",
+      "states": [3, 4],
+      "bubble_source_strategy": "same-source contextual crop/filter",
+      "same_identity": true
+    },
+    {
+      "cast": "C",
+      "role": "Chic Edge",
+      "source": "49_v2.3_cast-C_chic-edge_source_v1.png",
+      "states": [5, 6],
+      "bubble_source_strategy": "same-source contextual crop/filter",
+      "same_identity": true
+    }
+  ],
+  "note": "Bubble treatments are not claimed as separately photographed Stage/Smile/Backstage/Walking source images."
+}

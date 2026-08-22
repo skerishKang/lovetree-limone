@@ -1,0 +1,58 @@
+{
+  "result": "PASS",
+  "reference": {
+    "fullRecordingSeconds": 72.167619,
+    "reconstructedFirstLoopSeconds": 32.4,
+    "secondLoopExcluded": true,
+    "videoOrFramesEmbedded": false
+  },
+  "structure": {
+    "sceneCount": 7,
+    "recipeCount": 12,
+    "tileCount": 25,
+    "singleHtml": true
+  },
+  "motion": {
+    "singleCard3D": true,
+    "sharedBoardTransition": true,
+    "dynamicCapsuleChanges": 6,
+    "galleryCardsWithIndependentZ": 10,
+    "traceSvg": true,
+    "orbitDepth": true,
+    "cascadeStagger": true,
+    "materializeParticles": true,
+    "endingAssembly": true
+  },
+  "interaction": {
+    "select": true,
+    "preview": true,
+    "apply": true,
+    "categoryFilter": true,
+    "energyFilter": true,
+    "copyName": true,
+    "spacePause": true,
+    "rReplay": true,
+    "arrowNavigation": true,
+    "mobileExplore": true,
+    "mobileDetailSheet": true,
+    "storageKey": "lovetree-memory-scene-recipe-library-v1"
+  },
+  "responsive": {
+    "desktopViewport": "1440x900",
+    "mobileViewport": "390x844",
+    "desktopHorizontalOverflow": false,
+    "mobileHorizontalOverflow": false
+  },
+  "submission": {
+    "resultCaptures": 14,
+    "comparisonCaptures": 14,
+    "desktopExecutionVideo": true,
+    "mobileInteractionVideo": true
+  },
+  "errors": {
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "consoleErrorDetails": [],
+    "pageErrorDetails": []
+  }
+}

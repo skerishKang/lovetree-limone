@@ -1,0 +1,86 @@
+name: Living Media Sphere V3 hold browser QA evidence
+
+# Evidence-only workflow for PR #240 after Issue #242 namespace migration.
+# It exercises the independent Living Media Sphere V3 source-family runner.
+# Exact media stays LOCAL_EXACT_OUT_OF_GIT_ONLY; CI runs truthful missing-media HOLD.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  living-media-sphere-hold-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install chromium
+
+      - name: Run Living Media Sphere V3 hold browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/living-media-sphere-hold-browser-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/source-families/living-media-sphere/v3/source" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/living-media-sphere-hold-browser-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/living-media-sphere-hold-browser-qa-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/living-media-sphere-browser-qa
+          LIVING_MEDIA_SPHERE_BASE_URL="http://127.0.0.1:3000" \
+            LIVING_MEDIA_SPHERE_SCREENSHOT_DIR="/tmp/living-media-sphere-browser-qa" \
+            node --import tsx tests/living-media-sphere-v3-browser-qa.mjs hold
+
+      - name: Upload hold-phase screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: living-media-sphere-v3-hold-browser-qa
+          path: |
+            /tmp/living-media-sphere-browser-qa/*.png
+          retention-days: 14

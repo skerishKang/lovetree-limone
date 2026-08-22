@@ -1,0 +1,87 @@
+{
+  "desktop": {
+    "errors": [],
+    "initial_time": "0.210",
+    "skip_time": 24.39,
+    "end_actions_visible_after_skip": true,
+    "replay_time": 0.07,
+    "sound_first_click": "SOUND ON",
+    "sound_second_click": "SOUND OFF",
+    "enter_opens_experience": true,
+    "moment_opens_modal": true,
+    "modal_closes": true,
+    "horizontal_overflow_px": 0,
+    "stage": [
+      1440,
+      900
+    ]
+  },
+  "mobile": {
+    "errors": [],
+    "horizontal_overflow_px": 0,
+    "stage": [
+      390,
+      844
+    ],
+    "skip_time": 24.387,
+    "enter_opens_experience": true
+  },
+  "structure": {
+    "shots": 21,
+    "cut_count": 22,
+    "male_cast_count": 5,
+    "male_assets": {
+      "cast_a_center.png": {
+        "size": [
+          1122,
+          1402
+        ],
+        "sha256": "5c2107d8721f69812255931feabec10e3055811e29ff85a4d25dffcda4f51034"
+      },
+      "cast_b_blond.png": {
+        "size": [
+          1122,
+          1402
+        ],
+        "sha256": "edcb755869ca7928cd278e9d3093710a1b5366f3997b0e3e90ebb9386dbac557"
+      },
+      "cast_c_performance.png": {
+        "size": [
+          1122,
+          1402
+        ],
+        "sha256": "50a7c25143a1d2b52ce42056b27cbb0a57f174d0afca2c9943714dd8139a0c3e"
+      },
+      "cast_d_cool.png": {
+        "size": [
+          1122,
+          1402
+        ],
+        "sha256": "77591962709e30a043cb7fd489b965ff2f52f34d44f2701450bc11cfa2cbb2b7"
+      },
+      "cast_e_global.png": {
+        "size": [
+          1122,
+          1402
+        ],
+        "sha256": "216155605082ff2031c70ec7dbddb19e1f88a0216a640b04dddacd9f5cc45a22"
+      }
+    },
+    "tree_size": [
+      2560,
+      1440
+    ],
+    "forbidden_terms_present": {
+      "electric lime": false,
+      "radar": false,
+      "aircraft": false,
+      "cockpit": false,
+      "pilot suit": false,
+      "world map": false
+    },
+    "benchmark_media_embedded": false,
+    "static_page_sections_used_as_background": false,
+    "hotspot_toast_placeholder_used": false
+  },
+  "pass": true
+}

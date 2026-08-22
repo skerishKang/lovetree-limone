@@ -1,0 +1,135 @@
+{
+  "status": "VERTICAL_MOMENT_NETWORK_OVERVIEW_V1.1_VISUAL_RESCUE_CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "final": false,
+  "closed": false,
+  "reference": {
+    "name": "★_참고영상_네온관계망_세로형네트워크맵.mp4",
+    "resolution": "1904x1068",
+    "fps": 29.8956521739,
+    "duration_s": 19.1666667,
+    "comparison_performed": [
+      "reference_video",
+      "V1_HTML",
+      "V1_desktop_video",
+      "V1.1_HTML",
+      "V1.1_desktop_video"
+    ]
+  },
+  "network": {
+    "moments": 288,
+    "anchors": 19,
+    "connections": 1274,
+    "cluster_counts": [
+      28,
+      56,
+      68,
+      44,
+      32,
+      60
+    ],
+    "cluster_shapes": [
+      "branching fan",
+      "overlapping double-lobe",
+      "compressed irregular knot",
+      "elongated asymmetric ellipse",
+      "open sparse branch",
+      "asymmetric cloud"
+    ],
+    "radial_ring_primary_structure": false,
+    "local_neighbor_connections": true,
+    "cross_links": true,
+    "multi_bridge": true
+  },
+  "visual_gates": {
+    "light_background": "PASS",
+    "dark_fullscreen_removed": "PASS",
+    "flower_star_silhouette_removed": "PASS",
+    "irregular_cluster_silhouette": "PASS",
+    "cluster_size_density_variation": "PASS",
+    "multi_bridge": "PASS",
+    "cross_link": "PASS",
+    "macro_organic_mass": "PASS",
+    "selected_path_readability": "PASS",
+    "manual_original_v1_v11_comparison": "PASS"
+  },
+  "functional_gates": {
+    "vertical_pan": "PASS",
+    "cluster_focus": "PASS",
+    "moment_focus": "PASS",
+    "why_next": "PASS",
+    "path_follow": "PASS",
+    "reset_overview": "PASS"
+  },
+  "responsive": [
+    {
+      "viewport": "1440x900",
+      "horizontal_overflow": 0,
+      "page_error": 0,
+      "console_error": 0,
+      "dead_core_control": 0
+    },
+    {
+      "viewport": "1280x720",
+      "horizontal_overflow": 0,
+      "page_error": 0,
+      "console_error": 0,
+      "dead_core_control": 0
+    },
+    {
+      "viewport": "430x932",
+      "horizontal_overflow": 0,
+      "page_error": 0,
+      "console_error": 0,
+      "dead_core_control": 0
+    },
+    {
+      "viewport": "390x844",
+      "horizontal_overflow": 0,
+      "page_error": 0,
+      "console_error": 0,
+      "dead_core_control": 0
+    },
+    {
+      "viewport": "360x800",
+      "horizontal_overflow": 0,
+      "page_error": 0,
+      "console_error": 0,
+      "dead_core_control": 0
+    }
+  ],
+  "mobile": {
+    "desktop_world_simple_shrink": false,
+    "cluster_ribbon": "PASS",
+    "focused_submap": "PASS",
+    "moment_bottom_sheet": "PASS",
+    "why_next": "PASS",
+    "path_follow": "PASS"
+  },
+  "files": {
+    "후보_버전1.1_세로형_모먼트관계망_전체조망.html": {
+      "bytes": 31144,
+      "sha256": "67c7fcc239ca8d21793fe232650b99239a42dd0d336eb62565ed1647606ebcd1"
+    },
+    "데스크톱_실행영상_버전1.1.mp4": {
+      "bytes": 342041,
+      "sha256": "ca603a91a4be15802d11d34511880c3667df31018e33f3eee782e66e5eb0085e"
+    },
+    "모바일_실행영상_버전1.1.mp4": {
+      "bytes": 115633,
+      "sha256": "680c3d22409e06f652478bb8637c3b0da919677fe58b6bc6cf8ad5df6821bc32"
+    },
+    "구현설명_버전1.1.md": {
+      "bytes": 2529,
+      "sha256": "958d2af69bd9f197d4d9f4a08046fec4269a27fad8cc6388ae281b49b6ec87a1"
+    },
+    "원본대비_시각비교.jpg": {
+      "bytes": 261273,
+      "sha256": "591ba435a73b6024c925d2741526272b42b86b24f7653f405eb2b179c0f1972f"
+    },
+    "원본대비_비교설명.md": {
+      "bytes": 3651,
+      "sha256": "98be9b270ebbdfd12d3f932c4d7b00ab92dc41ebdf98539d203df53ff14de803"
+    }
+  },
+  "zip_created": false
+}

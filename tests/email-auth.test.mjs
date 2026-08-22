@@ -162,10 +162,14 @@ test("Legacy V1 and V2 still use the shared api client", async () => {
   assert.match(v2Detail, /apiFetch/);
 });
 
-test("shared api client unchanged (Bearer + firebase token)", async () => {
+test("shared api client retains Firebase bearer flow through the auth-token provider seam", async () => {
   const api = await readRoot("lib/api.ts");
-  assert.match(api, /auth\?\.currentUser\?\.getIdToken\(\)/);
+  assert.match(api, /firebaseAuthTokenProvider/);
+  assert.match(api, /getAuthTokenProvider\(firebaseAuthTokenProvider\)/);
+  assert.match(api, /getBoundAccessToken/);
+  assert.match(api, /user\.getIdToken\(\)/);
   assert.match(api, /authorization/);
+  assert.match(api, /Bearer/);
 });
 
 // 12. 자격 증명이 repository에 포함되지 않음

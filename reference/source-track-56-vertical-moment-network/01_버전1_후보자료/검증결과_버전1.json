@@ -1,0 +1,132 @@
+{
+  "status": "VERTICAL_MOMENT_NETWORK_OVERVIEW_TEMPLATE_CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "scope": "기존 04_홈탐색_관계지도 안의 독립 View Template 후보. 신규 Track 아님.",
+  "desktop": {
+    "viewport": "1440x900",
+    "overflow_x": 0,
+    "overflow_y": 0,
+    "macro_pan": true,
+    "overview_reset": true,
+    "cluster_focus": true,
+    "moment_focus": {
+      "open": true,
+      "title": "처음 눈에 들어온 무대",
+      "why": "이 장면의 표정이 계속 생각나서 다음 영상을 찾았어요.",
+      "next": "연습실 짧은 영상",
+      "actionH": 42
+    },
+    "follow_path": {
+      "title": "연습실 짧은 영상",
+      "open": true
+    },
+    "page_errors": [],
+    "console_errors": []
+  },
+  "mobile": {
+    "360x800": {
+      "overflow_x": 0,
+      "toolbar_visible": true,
+      "cluster_focus": true,
+      "moment_detail": {
+        "open": true,
+        "title": "처음 눈에 들어온 무대",
+        "why": "이 장면의 표정이 계속 생각나서 다음 영상을 찾았어요.",
+        "next": "연습실 짧은 영상",
+        "detailLeft": 7,
+        "detailRight": 353,
+        "actionHeight": 46,
+        "fontSize": 22
+      },
+      "follow_path": {
+        "title": "연습실 짧은 영상"
+      },
+      "page_errors": [],
+      "console_errors": []
+    },
+    "390x844": {
+      "overflow_x": 0,
+      "toolbar_visible": true,
+      "cluster_focus": true,
+      "moment_detail": {
+        "open": true,
+        "title": "처음 눈에 들어온 무대",
+        "why": "이 장면의 표정이 계속 생각나서 다음 영상을 찾았어요.",
+        "next": "연습실 짧은 영상",
+        "detailLeft": 7,
+        "detailRight": 383,
+        "actionHeight": 46,
+        "fontSize": 22
+      },
+      "follow_path": {
+        "title": "연습실 짧은 영상"
+      },
+      "page_errors": [],
+      "console_errors": []
+    },
+    "430x932": {
+      "overflow_x": 0,
+      "toolbar_visible": true,
+      "cluster_focus": true,
+      "moment_detail": {
+        "open": true,
+        "title": "처음 눈에 들어온 무대",
+        "why": "이 장면의 표정이 계속 생각나서 다음 영상을 찾았어요.",
+        "next": "연습실 짧은 영상",
+        "detailLeft": 7,
+        "detailRight": 423,
+        "actionHeight": 46,
+        "fontSize": 22
+      },
+      "follow_path": {
+        "title": "연습실 짧은 영상"
+      },
+      "page_errors": [],
+      "console_errors": []
+    }
+  },
+  "reduced_motion": {
+    "detail_title": "처음 눈에 들어온 무대",
+    "page_errors": [],
+    "pass": true
+  },
+  "source_preservation": {
+    "52": "보존",
+    "55": "보존",
+    "06-5_live_map": "보존",
+    "06-6_topology": "보존",
+    "04-3_observatory": "보존",
+    "53_flow": "보존"
+  },
+  "files": {
+    "후보_버전1_세로형_모먼트관계망_전체조망.html": {
+      "bytes": 27625,
+      "sha256": "21b57043b4814dd205403184a20192b71f634648026aca5fdd14364483007cb4"
+    },
+    "데스크톱_실행영상_버전1.mp4": {
+      "bytes": 902685,
+      "sha256": "13bafba7f7a7fa278b69a7943ab5a12dfa3055276f5bd8a47a2bf4ee5e648ea1"
+    },
+    "모바일_실행영상_버전1.mp4": {
+      "bytes": 261918,
+      "sha256": "a6ec5197f0ce4a04ca667cb459430dfab36125e0e4c6492f558d67f6febb49ba"
+    }
+  },
+  "gates": {
+    "긴_세로월드": true,
+    "대형허브_보기전용클러스터": true,
+    "실제Moment노드": true,
+    "Connection_skeleton": true,
+    "기본비선택저광량": true,
+    "클러스터포커스": true,
+    "Moment포커스": true,
+    "WHY_NEXT": true,
+    "이경로따라가기": true,
+    "모바일_클러스터개요": true,
+    "모바일_bottom_sheet": true,
+    "모바일_가로오버플로0": true,
+    "콘솔오류0": true,
+    "페이지오류0": true,
+    "ZIP없음": true
+  },
+  "all_required_gates_pass": true
+}

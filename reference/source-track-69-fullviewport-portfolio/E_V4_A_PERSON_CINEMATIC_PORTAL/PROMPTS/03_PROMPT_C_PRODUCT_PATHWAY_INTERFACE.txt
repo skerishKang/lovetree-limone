@@ -1,0 +1,45 @@
+[C안 — 제품 랜딩 / 감정 경로 인터페이스]
+
+Create an original LoveTree product landing page that feels like a cinematic interface for emotional pathways.
+
+PRODUCT LOGIC
+Moment → Connection → Replay
+
+GOAL
+The first screen should make users understand that LoveTree saves meaningful moments, connects why the next moment happened, builds a personal tree and lets users replay the emotional path.
+
+VISUAL LANGUAGE
+- Full viewport hero
+- Dark premium background
+- Sparse editorial composition
+- Human silhouette or portrait optional, not mandatory
+- Miniature product UI fragments integrated into the scene
+- Thin path/branch lines and replay nodes
+- Emotional but structured, never dashboard-heavy
+
+HERO
+FROM
+ONE MOMENT
+TO A LIVING
+LOVE TREE
+
+or
+SAVE A MOMENT
+TRACE THE FEELING
+REPLAY THE PATH
+
+SUPPORTING MODULES
+MOMENT: thumbnail + title + emotional note
+CONNECTION: why the next moment mattered + tiny connector line
+REPLAY: 3–5 nodes forming a replay route
+
+CTA
+PLANT YOUR FIRST MOMENT
+EXPLORE A LOVE PATH
+WATCH A REPLAY
+
+DO NOT
+- Do not make a generic SaaS homepage
+- Do not clone the free template
+- Do not rely only on a giant face
+- Do not use loud Web3/crypto visuals

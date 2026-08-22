@@ -1,0 +1,226 @@
+{
+  "reference": {
+    "videoDurationSeconds": 14.976871,
+    "referenceStartSeconds": 1.0,
+    "referenceEndSeconds": 13.2,
+    "referenceType": "paper-cut-popup-book",
+    "sourceResolution": "1904x1068",
+    "sourceFrameRate": 30
+  },
+  "productRole": {
+    "dashboard": false,
+    "seasonViewer": true,
+    "publicCourseOpening": true,
+    "personTreeCover": true,
+    "integrationStatus": "independent-candidate"
+  },
+  "book": {
+    "closedBookVisible": true,
+    "separateFrontCover": true,
+    "separateBackCover": true,
+    "pageBlockVisible": true,
+    "bindingVisible": true,
+    "coverOpensFromSpine": true,
+    "independentTurningPageCount": 3
+  },
+  "paperWorld": {
+    "independentLayerCount": 15,
+    "independentLayerCountAtLeast14": true,
+    "paperThicknessVisible": true,
+    "layerShadowsVisible": true,
+    "sequentialUnfolding": true,
+    "singleCompositeImageUsed": false,
+    "referenceFramesUsedAsTexture": false
+  },
+  "loveTree": {
+    "seedAppears": true,
+    "rootsGrow": true,
+    "trunkGrows": true,
+    "majorBranchCount": 9,
+    "branchesOpenIndependently": true,
+    "fullBloomVisible": true
+  },
+  "moments": {
+    "branchMomentMappingWorks": true,
+    "momentHoverWorks": true,
+    "momentSelectionWorks": true,
+    "momentCardWorks": true,
+    "youtubePlaybackIframeCreated": true,
+    "iframeRemovedOnClose": true,
+    "youtubeNetworkRequirement": "External YouTube access is required for actual playback; validation intercepted the request after iframe creation."
+  },
+  "chapters": {
+    "maximumMomentsPerChapter": 9,
+    "nextChapterWorks": true,
+    "previousChapterWorks": true,
+    "importanceRankingAbsent": true,
+    "sampleChapterCount": 3,
+    "sampleMomentCount": 27
+  },
+  "modes": {
+    "normalModeWorks": true,
+    "referenceDemoWorks": true,
+    "manualCloseWorks": true,
+    "fastDemoCloseWorks": true,
+    "observedDesktopDemoStateTimelineMs": [
+      {
+        "state": "closed",
+        "t": 0
+      },
+      {
+        "state": "cover",
+        "t": 901
+      },
+      {
+        "state": "world",
+        "t": 2101
+      },
+      {
+        "state": "seed",
+        "t": 4201
+      },
+      {
+        "state": "tree",
+        "t": 6101
+      },
+      {
+        "state": "bloom",
+        "t": 8201
+      },
+      {
+        "state": "closed",
+        "t": 10604
+      }
+    ]
+  },
+  "themes": {
+    "archive": true,
+    "midnight": true,
+    "bloom": true
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "portraitCompositionWorks": true,
+    "bookRemainsReadable": true,
+    "allNineBranchesVisible": true,
+    "momentTouchWorks": true,
+    "youtubeModalWorks": true,
+    "measuredBranchBounds": [
+      {
+        "i": 0,
+        "left": 112,
+        "right": 134.3,
+        "top": 549.7,
+        "bottom": 568,
+        "visible": true
+      },
+      {
+        "i": 1,
+        "left": 117.9,
+        "right": 139.9,
+        "top": 523.4,
+        "bottom": 541.2,
+        "visible": true
+      },
+      {
+        "i": 2,
+        "left": 136.2,
+        "right": 157.9,
+        "top": 499.2,
+        "bottom": 516.6,
+        "visible": true
+      },
+      {
+        "i": 3,
+        "left": 165.3,
+        "right": 186.6,
+        "top": 481.8,
+        "bottom": 498.8,
+        "visible": true
+      },
+      {
+        "i": 4,
+        "left": 200.7,
+        "right": 221.9,
+        "top": 473.9,
+        "bottom": 490.5,
+        "visible": true
+      },
+      {
+        "i": 5,
+        "left": 233.3,
+        "right": 255.3,
+        "top": 485,
+        "bottom": 501.5,
+        "visible": true
+      },
+      {
+        "i": 6,
+        "left": 254.9,
+        "right": 278.1,
+        "top": 503.5,
+        "bottom": 520,
+        "visible": true
+      },
+      {
+        "i": 7,
+        "left": 260.8,
+        "right": 285.1,
+        "top": 524.2,
+        "bottom": 541.4,
+        "visible": true
+      },
+      {
+        "i": 8,
+        "left": 247.1,
+        "right": 272.1,
+        "top": 540.4,
+        "bottom": 559,
+        "visible": true
+      }
+    ]
+  },
+  "performance": {
+    "desktopHeadlessFramesInOneSecond": 21,
+    "mobileHeadlessFramesInOneSecond": 28,
+    "targetStatus": "not independently certified; headless Chromium in this environment throttled requestAnimationFrame",
+    "recordedDesktopVideoDurationSeconds": 34.0,
+    "recordedMobileVideoDurationSeconds": 33.8
+  },
+  "storage": {
+    "key": "lovetree-popup-season-memory-book-v1",
+    "localStorageCodePresent": true,
+    "validationSandboxStorageOrigin": "set_content/about:blank; storage access unavailable and safely caught without a page error"
+  },
+  "accessibility": {
+    "keyboardSpace": true,
+    "keyboardR": true,
+    "keyboardEscape": true,
+    "focusVisible": true,
+    "reducedMotionMediaQuery": true,
+    "mobileChapterTouchTarget44px": true
+  },
+  "errors": {
+    "desktopConsoleErrors": 0,
+    "mobileConsoleErrors": 0,
+    "desktopPageErrors": 0,
+    "mobilePageErrors": 0,
+    "desktopDetails": {
+      "console": [],
+      "page": []
+    },
+    "mobileDetails": {
+      "console": [],
+      "page": []
+    }
+  },
+  "artifacts": {
+    "html": "lovetree-popup-season-memory-book-v1.html",
+    "referenceAnalysis": "reference-analysis.md",
+    "implementationReport": "implementation-report.md",
+    "paperSceneStructure": "paper-scene-structure.md",
+    "desktopVideo": "desktop-execution.mp4",
+    "mobileVideo": "mobile-execution.mp4",
+    "comparison": "reference-result-comparison.jpg"
+  }
+}

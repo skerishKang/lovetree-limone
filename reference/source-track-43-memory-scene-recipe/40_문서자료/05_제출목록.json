@@ -1,0 +1,257 @@
+[
+  {
+    "path": "captures/01-single-recipe-card.png",
+    "bytes": 389534,
+    "sha256": "6feba789621b48b56f736fe2d345040d2f3bd7ff623a0cb1b5811255bd980368"
+  },
+  {
+    "path": "captures/02-copy-and-card.png",
+    "bytes": 366938,
+    "sha256": "ec5c06ec705a2d8be14a53492be6f52b9cd32fd22c4b999cef290b4ee76017b9"
+  },
+  {
+    "path": "captures/03-library-board-front.png",
+    "bytes": 431466,
+    "sha256": "4649ba260f4700790c7d0c88a6399df46d11fa71944b109850d8b7baaa44108f"
+  },
+  {
+    "path": "captures/03b-library-board-selected.png",
+    "bytes": 465009,
+    "sha256": "ae621488a3870208ee3b5a221be9ca25c7afa0f3de898e1379a46636993ded45"
+  },
+  {
+    "path": "captures/04-board-3d-side.png",
+    "bytes": 400106,
+    "sha256": "7e7d7fdd99ffda4ba24e968cb470a151857acfccf2d1f2d0ca5fdc84c51b472c"
+  },
+  {
+    "path": "captures/05-dynamic-capsule.png",
+    "bytes": 223522,
+    "sha256": "36d911338f24f9773471132869bd7685d4ad00c9c9869067e3f5e1590e047ec5"
+  },
+  {
+    "path": "captures/06-gallery-flight.png",
+    "bytes": 387225,
+    "sha256": "44dd02958f3891fa54edce2ace59ec364be0fbf7e1ecd6ba962a86840e3e55d5"
+  },
+  {
+    "path": "captures/07-memories-trace.png",
+    "bytes": 253702,
+    "sha256": "b33e28693d668959e6f139ed54b48952334d9737d21c4837863bcc79cb91f945"
+  },
+  {
+    "path": "captures/08-memories-orbit.png",
+    "bytes": 254412,
+    "sha256": "14de54345ce4a0989610f0464d6dd992b0c22d46a56c6efe2c2fe5eaf86597af"
+  },
+  {
+    "path": "captures/09-memories-cascade.png",
+    "bytes": 262486,
+    "sha256": "4613446aeaf6e98d084697c4e438f98a7e321e254dfbd1dadc949e712e0ac3db"
+  },
+  {
+    "path": "captures/10-memories-materialize.png",
+    "bytes": 243036,
+    "sha256": "6edf4a237575f3cfd70df1a2a070a8a5a48f5f2218b2ad25ae4eba29f10afbbd"
+  },
+  {
+    "path": "captures/11-large-tile-stage.png",
+    "bytes": 350119,
+    "sha256": "ca3bf4c365a008fbb2bcb5307795217e55c4a0665d846afd94087c6736378fe9"
+  },
+  {
+    "path": "captures/12-memorycraft-ending.png",
+    "bytes": 230411,
+    "sha256": "94412484ba3f88b5f9bf90dd7eddabca75773d5ab536a3b9549ecd81f03ac4df"
+  },
+  {
+    "path": "captures/13-mobile-card-exploration.png",
+    "bytes": 156115,
+    "sha256": "df1763dd4fa0b75b7ecb8f22cc2dbad716855878f6b319e3215a6df019916b7b"
+  },
+  {
+    "path": "captures/13-recipe-detail-sheet-desktop.png",
+    "bytes": 274590,
+    "sha256": "94f3c7e8472edb2fad018b1a3643af50b1485d55750c2767e377d50e5036f36d"
+  },
+  {
+    "path": "captures/14-mobile-detail-sheet.png",
+    "bytes": 85148,
+    "sha256": "ce6c2b5c9a3ab52e5d1640b848ab1a9f48274aa2c986fdd5f858cd3383e2c188"
+  },
+  {
+    "path": "compare/01-single-recipe-card-reference-vs-result.jpg",
+    "bytes": 74833,
+    "sha256": "365ccd083497a550b2376993131c92489774b8ff720b1e495c3671337fec933f"
+  },
+  {
+    "path": "compare/02-copy-and-card-reference-vs-result.jpg",
+    "bytes": 69554,
+    "sha256": "21507cc0d5cb6b6417d622b19a2000e7836dbee13bfb410de0b6fc2d0cc9a89b"
+  },
+  {
+    "path": "compare/03-library-board-front-reference-vs-result.jpg",
+    "bytes": 100335,
+    "sha256": "ac0abf3a0ff686ecc42f4cb2f59be6f5e3e325a3dfb179ce773b10294faa574e"
+  },
+  {
+    "path": "compare/04-board-3d-side-reference-vs-result.jpg",
+    "bytes": 75158,
+    "sha256": "703c1baf1235e429222307aa81ecc83386a80b04c33867a0cdb404755adc10a5"
+  },
+  {
+    "path": "compare/05-dynamic-capsule-reference-vs-result.jpg",
+    "bytes": 54442,
+    "sha256": "801694035c5e26773a4d693802c4b8b18de2219f86a67b03199d2d8577ea3699"
+  },
+  {
+    "path": "compare/06-gallery-flight-reference-vs-result.jpg",
+    "bytes": 90340,
+    "sha256": "9854e07b12d3ecfb64758446b0381b20ac8b17ab83c92e073c9d58563cd887c2"
+  },
+  {
+    "path": "compare/07-memories-trace-reference-vs-result.jpg",
+    "bytes": 63791,
+    "sha256": "2d1ef06d788fb49c9e4af8256d08e422fde00ecd01c9d5a84439b6db3992d90e"
+  },
+  {
+    "path": "compare/08-memories-orbit-reference-vs-result.jpg",
+    "bytes": 64894,
+    "sha256": "8fa0842dd0c1f8258eb24bf70a5096067065e49fcada5d6cc84daa70789e7df3"
+  },
+  {
+    "path": "compare/09-memories-cascade-reference-vs-result.jpg",
+    "bytes": 68990,
+    "sha256": "85e9a34429a0ee4c937e07d289c56338112159aab82b296ed2874e38195a1cf5"
+  },
+  {
+    "path": "compare/10-memories-materialize-reference-vs-result.jpg",
+    "bytes": 66751,
+    "sha256": "a3f1c4822bdb527f49dcbb993319535e620c454bc5255c4e1fc5482636cf48e9"
+  },
+  {
+    "path": "compare/11-large-tile-stage-reference-vs-result.jpg",
+    "bytes": 97387,
+    "sha256": "790f26dfdc3c00a1876435e43157da3ddfbc9cac52ca82cac99c338159f39460"
+  },
+  {
+    "path": "compare/12-memorycraft-ending-reference-vs-result.jpg",
+    "bytes": 56900,
+    "sha256": "b368e8ff4af395cfb01b6d30d9b5674fc08badfb301879abceeb95dacbf1d1e6"
+  },
+  {
+    "path": "compare/13-mobile-card-exploration.jpg",
+    "bytes": 78795,
+    "sha256": "6fe83014a5e26dab39fa3a08dffd9c1f085b74656827af5abdc7dbb2ed1b48ed"
+  },
+  {
+    "path": "compare/14-mobile-detail-sheet.jpg",
+    "bytes": 67250,
+    "sha256": "24dc64adbe37d0787618a56b1404c3a0c0e25a0e78c2c519bac0fd963dc6d988"
+  },
+  {
+    "path": "desktop-execution-contact-sheet.jpg",
+    "bytes": 58830,
+    "sha256": "81e53bd4763f91e6a670f7db8723c2374c6d40d219c55c25eac9d141408a4147"
+  },
+  {
+    "path": "desktop-execution.mp4",
+    "bytes": 1751705,
+    "sha256": "ac7fe01a7b6e268f7976e4eb6af9840a43ef7df58adeb99bd431d01e06aceb30"
+  },
+  {
+    "path": "implementation-report.md",
+    "bytes": 1684,
+    "sha256": "660f29ef509ef2208861f3e5b7a93464e1483eb2ea59a1ebdf54123098677cab"
+  },
+  {
+    "path": "mobile-interaction-contact-sheet.jpg",
+    "bytes": 51318,
+    "sha256": "4fa2c059e90d7455f900cf7bf44d1f971121f4f33855383fd4de2f81b0cfef8a"
+  },
+  {
+    "path": "mobile-interaction.mp4",
+    "bytes": 182599,
+    "sha256": "e631952aa8fc12c3e3a58c0b50747ecfa538898617d427eace4381bd1d0a5241"
+  },
+  {
+    "path": "reference/01-single-recipe-card.png",
+    "bytes": 336300,
+    "sha256": "e068dc063eda22c39786d9f65ad6c73096f33c3795ae3cdbeb908b8e1d4cf963"
+  },
+  {
+    "path": "reference/02-copy-and-card.png",
+    "bytes": 280218,
+    "sha256": "4d8134b64dad69f197eafe78d2459d45a4ebbdb5d871228a543f663f731f105b"
+  },
+  {
+    "path": "reference/03-library-board-front.png",
+    "bytes": 570387,
+    "sha256": "14423c6540dafcdaedeaae2f65f3cf5bf0c4d4bba3ea7d66e09fd346ea16bc5f"
+  },
+  {
+    "path": "reference/04-board-3d-side.png",
+    "bytes": 253245,
+    "sha256": "94d89dc81a363d864b7e2ec491784e9754b805413ada455f08741e73d1bba277"
+  },
+  {
+    "path": "reference/05-dynamic-capsule.png",
+    "bytes": 221250,
+    "sha256": "711d85acb23790a9a586d11af7cf09f06751d853a31b091b280c18aca17b07a7"
+  },
+  {
+    "path": "reference/06-gallery-flight.png",
+    "bytes": 530526,
+    "sha256": "9705db859ec8cfca46319d2b7e804eda7b1494fff866cd04afb5282a6ff7bbf8"
+  },
+  {
+    "path": "reference/07-memories-trace.png",
+    "bytes": 273914,
+    "sha256": "414dc067eb243683f9c581dca240ab27269e7e63c794275bbdb8557cfdaade6e"
+  },
+  {
+    "path": "reference/08-memories-orbit.png",
+    "bytes": 328695,
+    "sha256": "8709d1582d4e08268acece31b6b1522ebaeb51f002affc219d9c421aa05c03c9"
+  },
+  {
+    "path": "reference/09-memories-cascade.png",
+    "bytes": 349676,
+    "sha256": "8dde9018b7b98c5dcb2dacf9bac853d91e4b6e24875b6437c38155bc54c0e4b6"
+  },
+  {
+    "path": "reference/10-memories-materialize.png",
+    "bytes": 300773,
+    "sha256": "1160176e0d45a7d7b90137674790571afd315f43921f5060e356f3fd62483b86"
+  },
+  {
+    "path": "reference/11-large-tile-stage.png",
+    "bytes": 411400,
+    "sha256": "759bb9859513929eccf8dfb00d0fea6c7f14dec55d2fec68ab73d704019c3796"
+  },
+  {
+    "path": "reference/12-memorycraft-ending.png",
+    "bytes": 184039,
+    "sha256": "2902a9ddf15b923d75fb1fcbe3ce3c7e77e09ab6d700ff0a61fa54569780318f"
+  },
+  {
+    "path": "reference-analysis.md",
+    "bytes": 2230,
+    "sha256": "b3421a1eba7f78d4ab4a849c3c08e7f4b976795328ff2d8693f2842723b778aa"
+  },
+  {
+    "path": "reference-comparison-contact-sheet.jpg",
+    "bytes": 498441,
+    "sha256": "2355cd23d16e18929b8708b0e2ebf96dee194f8ea87a4d2abc25004fd0ed7323"
+  },
+  {
+    "path": "result-captures-contact-sheet.jpg",
+    "bytes": 229501,
+    "sha256": "f45bf8be54aeb3a5618f8929ee039bb14b6e957541b3fc73fec73d09edb773c4"
+  },
+  {
+    "path": "validation-results.json",
+    "bytes": 1382,
+    "sha256": "963a9a3425a73f4868fe9adbb69fe734bc164d069510244dd9b6b81f4a253d8d"
+  }
+]

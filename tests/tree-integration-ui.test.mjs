@@ -9,6 +9,8 @@ const timeline = readFileSync(new URL("../app/trees/[id]/timeline/page.tsx", imp
 const album = readFileSync(new URL("../app/trees/[id]/album/page.tsx", import.meta.url), "utf8");
 const hook = readFileSync(new URL("../lib/use-tree-moments.ts", import.meta.url), "utf8");
 const composer = readFileSync(new URL("../app/components/MomentComposerModal.tsx", import.meta.url), "utf8");
+const momentDetailModal = readFileSync(new URL("../app/components/MomentDetailModal.tsx", import.meta.url), "utf8");
+const finalTreeSurface = readFileSync(new URL("../app/components/v4/product/V4FinalTreeSurface.tsx", import.meta.url), "utf8");
 
 test("real tree routes exist and use the App Router shape", () => {
   assert.equal(existsSync(new URL("../app/my-trees/page.tsx", import.meta.url)), true);
@@ -67,4 +69,85 @@ test("browse and authenticated navigation use real tree links", () => {
 test("integrated screens do not use the design mocks or localStorage", () => {
   assert.doesNotMatch(myTrees, /localStorage|SAMPLE|example/i);
   assert.doesNotMatch(detail, /localStorage|SAMPLE/);
+  assert.doesNotMatch(timeline, /localStorage|SAMPLE|fixture|design mock/i);
+});
+
+test("timeline keeps the canonical real-data source and owner mutation behavior", () => {
+  assert.match(timeline, /useTreeMoments\(treeId/);
+  assert.match(timeline, /timelineMoments/);
+  assert.match(timeline, /moments\.find\(\(m\) => m\.id === moment\.id\)/);
+  assert.match(timeline, /isOwner/);
+  assert.match(timeline, /createMoment/);
+  assert.match(timeline, /updateMoment/);
+  assert.match(timeline, /deleteMoment/);
+});
+
+test("timeline surfaces canonical WHY NEXT only for connected moments", () => {
+  // connected Moment detection follows canonical parentId semantics
+  assert.match(timeline, /memory\.parentId \? \(/);
+  // the relation block (label + reason + fallback) lives inside the parentId gate
+  assert.match(timeline, /memory\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+  // canonical connectionReason is consumed from the persisted memory record
+  assert.match(timeline, /memory\.connectionReason && memory\.connectionReason\.trim\(\)/);
+  assert.match(timeline, /<p className="moment-detail-parent-title">\{memory\.connectionReason\}<\/p>/);
+  // root / first Moment (no parentId) is never forced into a WHY NEXT relation
+  assert.equal((timeline.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  assert.match(timeline, /이전 순간과 이어지는 관계/);
+});
+
+test("root and album surfaces canonical WHY NEXT only for connected moments", () => {
+  // both custom surfaces consume the canonical parentId + connectionReason from useTreeMoments
+  for (const page of [detail, album]) {
+    assert.match(page, /useTreeMoments\(treeId/);
+    assert.match(page, /moments\.find\(\(m\) => m\.id === moment\.id\)/);
+    // connected Moment detection follows canonical parentId semantics (relation block is parentId-gated)
+    assert.match(page, /memory\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+    // canonical connectionReason is consumed from the persisted memory record
+    assert.match(page, /memory\.connectionReason && memory\.connectionReason\.trim\(\)/);
+    assert.match(page, /<p className="moment-detail-parent-title">\{memory\.connectionReason\}<\/p>/);
+    // root / first Moment (no parentId) is never forced into a WHY NEXT relation; generic fallback appears exactly once
+    assert.equal((page.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+    assert.match(page, /이전 순간과 이어지는 관계/);
+    // no fixture / localStorage / design-mock product truth promoted on these surfaces
+    assert.doesNotMatch(page, /localStorage|SAMPLE|fixture|design mock/i);
+  }
+  // existing owner / create / update / delete semantics remain intact (no write-path mutation introduced)
+  for (const page of [detail, album]) {
+    assert.match(page, /isOwner/);
+    assert.match(page, /createMoment/);
+    assert.match(page, /updateMoment/);
+    assert.match(page, /deleteMoment/);
+    assert.match(page, /parentOptions=\{moments\}/);
+  }
+});
+
+test("graph inspector keeps the canonical real-data surface and surfaces WHY NEXT only for connected moments", () => {
+  // Graph is a canonical real-data surface over useTreeMoments — no fixture/localStorage product truth
+  assert.match(finalTreeSurface, /function GraphSurface\(\{ moments \}: \{ moments: MemoryRecord\[\] \}\)/);
+  assert.match(finalTreeSurface, /useTreeMoments\(treeId\)/);
+  assert.doesNotMatch(finalTreeSurface, /localStorage|SAMPLE|fixture/i);
+  // V4FinalTreeSurface feeds the canonical moments collection to the graph — no new API lookup in the graph path
+  assert.match(finalTreeSurface, /\(mode === "graph" \? <GraphSurface moments=\{moments\} \/> : null\)|\{mode === "graph" \? <GraphSurface moments=\{moments\} \/> : null\}/);
+  // a selected connected Moment resolves its actual parent from the same canonical moments collection
+  assert.match(finalTreeSurface, /chosenParent = chosen\?\.parentId \? \(moments\.find\(\(memory\) => memory\.id === chosen\.parentId\)/);
+  // canonical connectionReason is consumed as the actual WHY NEXT when present
+  assert.match(finalTreeSurface, /chosen\.connectionReason\?\.trim\(\) \? chosen\.connectionReason/);
+  // missing stored reason keeps the truthful generic fallback (exactly once), never presented as a stored reason
+  assert.equal((finalTreeSurface.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  // root Moment (no parentId) keeps the root vocabulary and never renders a WHY NEXT row
+  assert.match(finalTreeSurface, /<dt>Parent<\/dt><dd>\{chosenParent \? memoryTitle\(chosenParent\) : chosen\.parentId \? "connected" : "root"\}<\/dd>/);
+  assert.match(finalTreeSurface, /\(chosen\.parentId \? <div><dt>WHY NEXT<\/dt>|\{chosen\.parentId \? <div><dt>WHY NEXT<\/dt>/);
+  // no new API/schema/persistence introduced by the graph path
+  assert.doesNotMatch(finalTreeSurface, /apiFetch\(`\/api\/trees/);
+});
+
+test("shared Moment detail modal preserves canonical WHY NEXT semantics for connected moments", () => {
+  // relation visibility follows persisted topology even if the parent record is temporarily unresolved
+  assert.match(momentDetailModal, /moment\.parentId \? \([\s\S]*?이전 순간에서 이어짐[\s\S]*?\) : null/);
+  assert.match(momentDetailModal, /parentMoment\?\.title \|\| "이전 순간"/);
+  // exact stored reason wins when nonblank; blank/missing reason uses the one canonical fallback
+  assert.match(momentDetailModal, /moment\.connectionReason && moment\.connectionReason\.trim\(\)/);
+  assert.match(momentDetailModal, /<p>\{moment\.connectionReason\}<\/p>/);
+  assert.equal((momentDetailModal.match(/이전 순간과 이어지는 관계/g) ?? []).length, 1);
+  assert.match(momentDetailModal, /<p className="timeline-relation-generic">이전 순간과 이어지는 관계<\/p>/);
 });

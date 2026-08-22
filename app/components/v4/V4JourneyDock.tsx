@@ -61,8 +61,43 @@ const GROUPS = [
   },
 ] as const;
 
+const DOCK_REVIEW_QUERY_PARAM = "dock";
+
+/**
+ * Internal review navigation. Hidden from normal production traffic (issue
+ * #343b): the toggle renders only for explicit reviewer opt-in via
+ * `?dock=1` on any V4 route, or when a previous opt-in is stored under the
+ * `lt4-journey-dock-review` localStorage key. Presentation-only gate; no
+ * route or data behavior changes.
+ */
+function useDockReviewOptIn() {
+  const [reviewerMode, setReviewerMode] = useState(false);
+
+  useEffect(() => {
+    let matched = false;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get(DOCK_REVIEW_QUERY_PARAM) === "1") {
+        window.localStorage.setItem("lt4-journey-dock-review", "1");
+        matched = true;
+      } else if (window.localStorage.getItem("lt4-journey-dock-review") === "1") {
+        matched = true;
+      }
+    } catch {
+      // storage unavailable — stay hidden, fail closed
+    }
+    if (matched) {
+      const raf = requestAnimationFrame(() => setReviewerMode(true));
+      return () => cancelAnimationFrame(raf);
+    }
+  }, []);
+
+  return reviewerMode;
+}
+
 export default function V4JourneyDock() {
   const pathname = usePathname();
+  const reviewerMode = useDockReviewOptIn();
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -102,6 +137,10 @@ export default function V4JourneyDock() {
   }, [open]);
 
   if (pathname.startsWith("/v4/cinematic")) {
+    return null;
+  }
+
+  if (!reviewerMode) {
     return null;
   }
 

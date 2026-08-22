@@ -1,0 +1,12 @@
+{
+  "desktop": {
+    "errors": [],
+    "enter": "block",
+    "modal": "grid",
+    "overflow": 0
+  },
+  "mobile": {
+    "errors": [],
+    "overflow": 0
+  }
+}

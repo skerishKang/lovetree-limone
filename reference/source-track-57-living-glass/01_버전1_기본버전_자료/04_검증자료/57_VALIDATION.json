@@ -1,0 +1,99 @@
+{
+  "track": 57,
+  "version": "V1",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "classification": "DOM_CSS_2_5D_LIVING_GLASS_MOMENT_CARD",
+  "reference_video": {
+    "width": 1904,
+    "height": 1068,
+    "duration_seconds": 32.3,
+    "fps": 30
+  },
+  "static": {
+    "three_js_refs": 0,
+    "webgl_refs": 0,
+    "external_http_refs": 0,
+    "serif_refs": 0,
+    "moment_title_present": true,
+    "emotion_present": true,
+    "note_present": true,
+    "why_next_present": true,
+    "reduced_motion": true,
+    "spring_solver": true,
+    "cursor_glare": true,
+    "layered_parallax": true
+  },
+  "acceptance": {
+    "reference_directly_inspected": true,
+    "visual_gate_internal_pass": true,
+    "tilt_5of5": true,
+    "glare_follows_5of5": true,
+    "spring_return_5of5": true,
+    "card_select_5of5": true,
+    "detail_open_close": true,
+    "next_moment_transition": true,
+    "why_next": true,
+    "media_viewer": true,
+    "keyboard": true,
+    "mobile_touch_tilt": true,
+    "mobile_release_spring": true,
+    "mobile_tap_select": true,
+    "mobile_swipe_next": true,
+    "desktop_overflow_zero": true,
+    "mobile_overflow_zero": true,
+    "console_error_zero": true,
+    "page_error_zero": true,
+    "failed_request_zero": true,
+    "external_hotlink_zero": true,
+    "webgl_zero": true,
+    "serif_zero": true
+  },
+  "pass": true,
+  "files": [
+    {
+      "path": "★_현재후보_57_LIVING_GLASS_MOMENT_CARDS.html",
+      "bytes": 334962,
+      "sha256": "df7a4fcb09468d756a60d8fc2a72cae74952a21a916c89375cbfa1332048f61d"
+    },
+    {
+      "path": "★_실행영상_57_LIVING_GLASS_MOMENT_CARDS.mp4",
+      "bytes": 2404364,
+      "sha256": "9add66c82611ce83439353dcb324a971e81bbcd94ff2d9d9047d5b31cfeadc5c"
+    },
+    {
+      "path": "★_참고영상_컬러카드마인드맵_자동전개.mp4",
+      "bytes": 6048305,
+      "sha256": "696c6279f46e06fd257497a0c64831752f224a42eda70c341c309bab636895f0"
+    },
+    {
+      "path": "★_57_LIVING_GLASS_MOMENT_CARDS_사용설명서.txt",
+      "bytes": 5057,
+      "sha256": "650a8d0b3341948470ee45f2ffb9cfb4ecab3080fc4adae00d78fdbf86388200"
+    },
+    {
+      "path": "02_HTML/57_LIVING_GLASS_MOMENT_CARDS.html",
+      "bytes": 32463,
+      "sha256": "674630717cf1b22573ea60823abc7a85e4ea9be423197ff4b023d840b15e1ffe"
+    },
+    {
+      "path": "02_HTML/57_LIVING_GLASS_MOMENT_CARDS_STANDALONE.html",
+      "bytes": 334962,
+      "sha256": "df7a4fcb09468d756a60d8fc2a72cae74952a21a916c89375cbfa1332048f61d"
+    },
+    {
+      "path": "04_QA·리뷰/57_QA.json",
+      "bytes": 6036,
+      "sha256": "a8d2c7c0a023495388d1f37c0e088e0be400f94e40d55551dec3a456e79a1f68"
+    },
+    {
+      "path": "04_QA·리뷰/57_MOBILE_INTERACTION.mp4",
+      "bytes": 387432,
+      "sha256": "e73d9bdd69ed37e71279a135e4bc29891d2535a5d89095bd1aabbd7769c7feaa"
+    },
+    {
+      "path": "04_QA·리뷰/★_57_REFERENCE_vs_HERO_VISUAL_GATE.jpg",
+      "bytes": 154354,
+      "sha256": "ba19e0c5f8749fbb300605b35fb0285a3ea90978ec506b3f74947ba4e843d6ee"
+    }
+  ]
+}

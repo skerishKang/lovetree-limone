@@ -60,6 +60,7 @@
 .lt-capability-filters label {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .lt-capability-filters label > span {
@@ -73,6 +74,7 @@
 .lt-capability-filters button,
 .lt-capability-empty button {
   min-height: 42px;
+  min-width: 0;
   border: 1px solid var(--lt-line);
   border-radius: 12px;
   background: rgba(255,255,255,.72);
@@ -248,17 +250,17 @@
 }
 
 @media (max-width: 900px) {
-  .lt-capabilities__heading { grid-template-columns: 1fr; }
-  .lt-capabilities__stats { grid-template-columns: repeat(2, 1fr); min-width: 0; }
-  .lt-capability-filters { grid-template-columns: 1fr 1fr; }
+  .lt-capabilities__heading { grid-template-columns: minmax(0, 1fr); }
+  .lt-capabilities__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); min-width: 0; }
+  .lt-capability-filters { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .lt-capability-filters label:first-child { grid-column: 1 / -1; }
 }
 
 @media (max-width: 720px) {
   .lt-capabilities { margin-top: 54px; padding-top: 30px; }
-  .lt-capabilities__grid { grid-template-columns: 1fr; }
-  .lt-capability { min-height: 0; padding: 20px; }
-  .lt-capability-filters { grid-template-columns: 1fr; }
+  .lt-capabilities__grid { grid-template-columns: minmax(0, 1fr); }
+  .lt-capability { min-height: 0; padding: 20px; min-width: 0; }
+  .lt-capability-filters { grid-template-columns: minmax(0, 1fr); }
   .lt-capability-filters label:first-child { grid-column: auto; }
   .lt-capability-filters button { width: 100%; }
   .lt-capability-empty { align-items: flex-start; flex-direction: column; }

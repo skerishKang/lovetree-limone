@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adam Roberts - Design & Engineering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff}
+    body{font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .font-pixel{font-family:'basis33',monospace}
+    .page{position:relative;height:100vh;width:100%;overflow:hidden;background:#000;color:#fff}
+    .bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .content{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;padding:0 20px}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+    .logo{width:28px;height:28px;display:block}
+    .desktop-nav{display:none;align-items:center;gap:32px;font-size:14px;letter-spacing:.025em}
+    .desktop-nav a,.menu-nav a{color:#fff;text-decoration:none;transition:opacity .2s ease}
+    .desktop-nav a:hover,.menu-nav a:hover,.icon-btn:hover{opacity:.7}
+    .icon-btn{border:0;background:transparent;color:#fff;padding:8px;cursor:pointer;transition:opacity .2s ease;display:grid;place-items:center}
+    .meta{margin-top:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .meta h2{margin:0;font-size:18px;line-height:1.08;letter-spacing:.025em;font-weight:400}
+    .meta .pixel-line{display:block;font-size:24px;line-height:1.02}
+    .asterisk{margin-top:12px;font-size:10px;color:rgba(255,255,255,.5)}
+    .blurb{margin-top:4px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.5}
+    .meta-label{margin:0 0 12px;text-transform:uppercase;font-size:16px;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+    .meta-body{max-width:220px;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .meta ul{list-style:none;padding:0;margin:0;font-size:14px;color:rgba(255,255,255,.9);line-height:1.55}
+    .mobile-right{text-align:right}.lg-left{text-align:right}
+    .spacer{flex:1}
+    .bottom{padding-bottom:16px}
+    .row-a{display:grid;grid-template-columns:1fr;gap:16px;align-items:end}
+    .hero{margin:0;text-transform:uppercase;font-size:30px;line-height:.72;letter-spacing:.025em;font-weight:400}
+    .hero .pixel-word{font-size:1.25em;display:inline-block;line-height:1;vertical-align:baseline;font-weight:400}
+    .right-col{display:flex;flex-direction:column;gap:16px;justify-content:flex-end}
+    .showreel{align-self:flex-start;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.3);padding:12px 24px;background:rgba(255,255,255,.05);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;font:inherit;font-size:14px;letter-spacing:.05em;cursor:pointer;transition:background .2s ease}
+    .showreel:hover{background:rgba(255,255,255,.1)}
+    .play-icon{width:14px;height:14px;display:block}
+    .awards{align-self:flex-start;display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;font-size:14px;color:rgba(255,255,255,.8)}
+    .chip{display:flex;align-items:center;gap:8px;background:#0B0B0B;padding:8px 12px}.chip .count{font-size:12px;color:rgba(255,255,255,.5)}
+    .fwa{font-weight:700;font-size:14px;letter-spacing:-.025em}.w{font-weight:700;font-size:18px}.cssda{font-weight:700;font-size:10px;letter-spacing:-.025em}
+    .footer{margin-top:16px;display:grid;grid-template-columns:1fr;gap:8px;padding-top:16px;font-size:12px;color:rgba(255,255,255,.6)}
+    .footer a{color:#ef4444;text-decoration:none;transition:color .2s ease}.footer a:hover{color:#f87171}
+    .menu-overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:all 500ms cubic-bezier(.16,1,.3,1)}
+    .menu-overlay.open{opacity:1;pointer-events:auto}.menu-header{display:flex;align-items:center;justify-content:space-between;padding:24px}.menu-nav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}.menu-nav a{font-size:24px;letter-spacing:.1em;opacity:0;transform:translateY(16px);transition:all 500ms cubic-bezier(.16,1,.3,1)}.menu-overlay.open .menu-nav a{opacity:1;transform:translateY(0)}
+    @media(min-width:640px){.content{padding:0 24px}.meta{gap:24px}.hero{font-size:36px}.right-col{gap:24px}.awards{gap:12px}.chip{padding-left:16px;padding-right:16px}.fwa{font-size:16px}.w{font-size:20px}.cssda{font-size:12px}.footer{margin-top:20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.footer .right{text-align:right}}
+    @media(min-width:768px){.content{padding:0 40px}.desktop-nav{display:flex}.mobile-menu-btn{display:none}.meta h2{font-size:20px}.meta .pixel-line{font-size:30px}.hero{font-size:48px}}
+    @media(min-width:1024px){.content{padding:0 56px}.bg-video{transform:scale(1.2)}.meta{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}.lg-left{text-align:left}.row-a{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.hero{font-size:60px}.awards{align-self:flex-end}}
+    @media(min-width:1280px){.hero{font-size:68px}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <video class="bg-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4" autoplay muted loop playsinline></video>
+  <div class="content">
+    <nav class="navbar">
+      <svg class="logo" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256" fill="none" aria-label="Grilled Pixels logo"><path d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z" fill="white"/></svg>
+      <div class="desktop-nav">
+        <a href="#">ABOUT</a><a href="#">PROCESS</a><a href="#">PROJECTS</a><a href="#">CATALOG</a><a href="#">D.O.T</a><a href="#">TALK</a>
+      </div>
+      <button class="icon-btn mobile-menu-btn" id="menuOpen" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </nav>
+
+    <section class="meta">
+      <div>
+        <h2><span>ADAM</span><span class="font-pixel pixel-line">ROBERTS</span></h2>
+        <div class="asterisk">*</div>
+        <div class="font-pixel blurb">Grilled Pixels is my<br>personal brand - I came up<br>with it in 2004 based on<br>"cooking up ideas"</div>
+      </div>
+      <div class="lg-left">
+        <h2><span>DESIGN &amp;</span><span class="font-pixel pixel-line">ENGINEERING</span></h2>
+      </div>
+      <div>
+        <div class="font-pixel meta-label">What I Do</div>
+        <div class="meta-body">I create the top 1% of experiences for brands and digital products</div>
+      </div>
+      <div class="lg-left">
+        <div class="font-pixel meta-label">Services</div>
+        <ul><li>Branding</li><li>Creative Direction &amp; Strategy</li><li>UX/UI Design</li><li>Web Development (React/Nextjs)</li><li>3D, WebGL / Photography</li><li>Video &amp; Animation</li></ul>
+      </div>
+    </section>
+
+    <div class="spacer"></div>
+
+    <section class="bottom">
+      <div class="row-a">
+        <h1 class="hero">I BRING THE<br><span class="font-pixel pixel-word">UNEXPECTED</span> TO<br>BRAND &amp; DIGITAL<br><span class="font-pixel pixel-word">EXPERIENCES</span></h1>
+        <div class="right-col">
+          <button class="showreel"><svg class="play-icon" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg><span>PLAY SHOWREEL</span></button>
+          <div class="awards">
+            <div class="chip"><span class="fwa">FWA</span><span class="count">x1</span></div>
+            <div class="chip"><span class="w">W.</span><span class="count">x7</span></div>
+            <div class="chip"><span class="cssda">CSSDesignAwards</span><span class="count">x22</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div>Open to freelance, contract or full-time. <a href="#">Schedule a call</a></div>
+        <div class="right">5 full cases &bull; 82 archive fragments &bull; 22 catalog items</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-header">
+      <svg class="logo" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256" fill="none"><path d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z" fill="white"/></svg>
+      <button class="icon-btn" id="menuClose" aria-label="Close menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="menu-nav" id="menuNav">
+      <a href="#">ABOUT</a><a href="#">PROCESS</a><a href="#">PROJECTS</a><a href="#">CATALOG</a><a href="#">D.O.T</a><a href="#">TALK</a>
+    </div>
+  </div>
+</div>
+<script>
+  const overlay=document.getElementById('menuOverlay');
+  const links=[...document.querySelectorAll('.menu-nav a')];
+  function setMenu(open){overlay.classList.toggle('open',open);overlay.setAttribute('aria-hidden',String(!open));links.forEach((a,i)=>a.style.transitionDelay=open?`${100+i*60}ms`:'0ms')}
+  document.getElementById('menuOpen').addEventListener('click',()=>setMenu(true));
+  document.getElementById('menuClose').addEventListener('click',()=>setMenu(false));
+  links.forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+</script>
+</body>
+</html>

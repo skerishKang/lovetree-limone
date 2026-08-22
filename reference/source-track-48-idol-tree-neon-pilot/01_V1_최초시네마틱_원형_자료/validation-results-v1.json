@@ -1,0 +1,71 @@
+{
+  "artifact": "lovetree-48-neon-pilot-cinematic-hero-v1.html",
+  "instruction": "19_참고영상_최대충실도_Cinematic_Hero_HTML_즉시제작_v1",
+  "status": "HTML_V1_COMPLETE_OWNER_REVIEW_REQUIRED",
+  "reference": {
+    "duration_seconds": 45.395,
+    "resolution": "640x360",
+    "fps": 24,
+    "one_second_contact_sheet_used": true
+  },
+  "new_idol_images_generated": false,
+  "source_media_reuse": {
+    "reference_mp4_embedded": false,
+    "reference_audio_embedded": false,
+    "reference_frames_used_as_product_assets": false
+  },
+  "required_features": {
+    "first_second_five_member_hook": "PASS",
+    "black_white_contrast": "PASS",
+    "member_scan": "PASS",
+    "thermal_scan": "PASS_WITH_VISUAL_FIDELITY_NOTE",
+    "face_eye_match_cut": "PASS",
+    "circular_hud": "PASS",
+    "white_character_exhibition": "PASS",
+    "flight": "PASS_WITH_PROCEDURAL_FIDELITY_NOTE",
+    "repeated_cockpit_pov": "PASS_WITH_PROCEDURAL_FIDELITY_NOTE",
+    "electric_lime": "PASS",
+    "group_return": "PASS",
+    "end_card": "PASS",
+    "autoplay": "PASS",
+    "play_pause": "PASS",
+    "mute_sound_state": "PASS",
+    "restart": "PASS",
+    "reduced_motion_support": "PASS"
+  },
+  "runtime": {
+    "desktop": {
+      "viewport": "1440x900",
+      "loaded": true,
+      "console_errors": 0
+    },
+    "mobile": {
+      "viewport": "390x844",
+      "loaded": true,
+      "console_errors": 0
+    },
+    "loop_duration_seconds": 45.395,
+    "controls_test": {
+      "play_pause": true,
+      "sound_on_muted_toggle": true,
+      "restart": true
+    }
+  },
+  "reference_similarity": {
+    "comparison_method": "1-second REFERENCE | RESULT timeline contact sheet",
+    "contactsheet_generated": true,
+    "temporal_scene_order": "PASS_WITH_NOTES",
+    "black_white_lime_macro_structure": "PASS",
+    "main_remaining_gap": "Reference uses photoreal/cinematic vehicle, helmet and cockpit imagery; v1 intentionally uses procedural SVG/CSS until product-owner review identifies which clean plates are actually needed.",
+    "numeric_similarity_score": null
+  },
+  "execution_evidence": {
+    "desktop_mp4": "desktop-execution-v1.mp4",
+    "mobile_mp4": "mobile-execution-v1.mp4",
+    "capture_method": "browser timeline sampled at 4 fps and encoded to 24 fps MP4 for execution/layout evidence",
+    "desktop_duration_seconds": 45.416667,
+    "mobile_duration_seconds": 45.416667
+  },
+  "production_changed": false,
+  "approved_assets_overwritten": false
+}

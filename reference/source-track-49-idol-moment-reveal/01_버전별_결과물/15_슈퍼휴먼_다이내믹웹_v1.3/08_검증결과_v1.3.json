@@ -1,0 +1,39 @@
+{
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_VISUAL_REVIEW",
+  "console_errors": [],
+  "page_errors": [],
+  "external_requests": [],
+  "image_generation_tool_calls": 0,
+  "new_primary": 0,
+  "new_storyboard": 0,
+  "new_shots": 0,
+  "desktop": {
+    "save_gate": true,
+    "save_touch_min44": true,
+    "save_paused": true,
+    "saved": true,
+    "tree_art_visible": true,
+    "moments_visible": 8,
+    "overflow_zero": true
+  },
+  "mobile": {
+    "save_gate": true,
+    "save_touch_min44": true,
+    "save_paused": true,
+    "saved": true,
+    "tree_art_visible": true,
+    "moments_visible": 8,
+    "overflow_zero": true
+  },
+  "checks": {
+    "save_desktop_pass": true,
+    "save_mobile_pass": true,
+    "approved_tree_visible_desktop_mobile": true,
+    "eight_primary_moments_visible": true,
+    "overflow_zero": true,
+    "console_error_zero": true,
+    "page_error_zero": true,
+    "external_request_zero": true
+  },
+  "approved_tree_sha256": "c1be54c3c06b506fc5c7f1af5855ab287c9146e88cc354cb62b47262e22c6912"
+}

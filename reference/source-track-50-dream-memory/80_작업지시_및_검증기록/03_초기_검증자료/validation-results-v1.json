@@ -1,0 +1,315 @@
+{
+  "artifact": "LOVETREE DREAM MEMORY cinematic v1",
+  "status": "PASS_CANDIDATE_PENDING_PRODUCT_OWNER_VISUAL_REVIEW",
+  "approval": "NOT_OWNER_APPROVED",
+  "production": "PROHIBITED",
+  "existing_48_49_modified": false,
+  "new_image_generation_used": false,
+  "benchmark_mv_frames_in_result": false,
+  "benchmark_audio_in_result": false,
+  "asset_source": "Existing LoveTree Expanded Moment Cast clean portraits + original CSS atmosphere",
+  "browser_validation": "Chromium runtime; execution evidence recorded from browser and time-normalized to 38s after 2x validation capture. High-resolution still validation is unaccelerated deterministic render.",
+  "self_design_gate": {
+    "Q1_first_2s_emotional_moment": true,
+    "Q2_visually_distinct_from_neon_pilot": true,
+    "Q3_strong_without_ui": true,
+    "Q4_save_connection_next_understandable": true,
+    "Q5_emotional_flow_of_liking": true,
+    "Q6_6s_15s_cuttable": true,
+    "Q7_lovetree_brand_recall": true
+  },
+  "owner_visual_gate": "PENDING",
+  "checks": [
+    {
+      "id": "structure.scene_count",
+      "status": "PASS",
+      "evidence": {
+        "count": 10
+      }
+    },
+    {
+      "id": "content.save_this_moment",
+      "status": "PASS",
+      "evidence": {
+        "token": "SAVE THIS MOMENT"
+      }
+    },
+    {
+      "id": "content.moment_saved",
+      "status": "PASS",
+      "evidence": {
+        "token": "MOMENT SAVED"
+      }
+    },
+    {
+      "id": "content.one_moment_opens_the_next",
+      "status": "PASS",
+      "evidence": {
+        "token": "ONE MOMENT OPENS THE NEXT"
+      }
+    },
+    {
+      "id": "content.my_tree",
+      "status": "PASS",
+      "evidence": {
+        "token": "MY TREE"
+      }
+    },
+    {
+      "id": "content.lovetree",
+      "status": "PASS",
+      "evidence": {
+        "token": "LOVETREE"
+      }
+    },
+    {
+      "id": "content.follow_the_moment",
+      "status": "PASS",
+      "evidence": {
+        "token": "FOLLOW THE MOMENT"
+      }
+    },
+    {
+      "id": "separation.no_biometric_scan",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "BIOMETRIC SCAN"
+      }
+    },
+    {
+      "id": "separation.no_cockpit",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "COCKPIT"
+      }
+    },
+    {
+      "id": "separation.no_radar",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "RADAR"
+      }
+    },
+    {
+      "id": "separation.no_electric_lime",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "ELECTRIC LIME"
+      }
+    },
+    {
+      "id": "separation.no_group_signal",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "GROUP SIGNAL"
+      }
+    },
+    {
+      "id": "separation.no_instrument_signal_dash",
+      "status": "PASS",
+      "evidence": {
+        "forbidden_visual_vocabulary": "INSTRUMENT / SIGNAL DASH"
+      }
+    },
+    {
+      "id": "runtime.desktop.page_errors",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "runtime.desktop.save_interaction",
+      "status": "PASS",
+      "evidence": {
+        "saved": true
+      }
+    },
+    {
+      "id": "runtime.desktop.sound_state",
+      "status": "PASS",
+      "evidence": {
+        "control": "SOUND ON"
+      }
+    },
+    {
+      "id": "runtime.desktop.connection_transition",
+      "status": "PASS",
+      "evidence": {
+        "scene_after_click": "07 / FOLLOW THE CONNECTION"
+      }
+    },
+    {
+      "id": "runtime.desktop.overflow",
+      "status": "PASS",
+      "evidence": {
+        "sw": 1440,
+        "iw": 1440,
+        "sh": 900,
+        "ih": 900
+      }
+    },
+    {
+      "id": "runtime.desktop.external_requests",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "runtime.mobile.page_errors",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "runtime.mobile.save_interaction",
+      "status": "PASS",
+      "evidence": {
+        "saved": true
+      }
+    },
+    {
+      "id": "runtime.mobile.sound_state",
+      "status": "PASS",
+      "evidence": {
+        "control": "SOUND ON"
+      }
+    },
+    {
+      "id": "runtime.mobile.connection_transition",
+      "status": "PASS",
+      "evidence": {
+        "scene_after_click": "07 / FOLLOW THE CONNECTION"
+      }
+    },
+    {
+      "id": "runtime.mobile.overflow",
+      "status": "PASS",
+      "evidence": {
+        "sw": 390,
+        "iw": 390,
+        "sh": 844,
+        "ih": 844
+      }
+    },
+    {
+      "id": "runtime.mobile.external_requests",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "accessibility.reduced_motion_autoplay",
+      "status": "PASS",
+      "evidence": {
+        "control": "PLAY"
+      }
+    },
+    {
+      "id": "accessibility.reduced_motion_page_errors",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "validation_video.desktop",
+      "status": "PASS",
+      "evidence": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 540,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "38.000000",
+          "size": "1192537"
+        }
+      }
+    },
+    {
+      "id": "validation_video.mobile",
+      "status": "PASS",
+      "evidence": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 390,
+            "height": 844,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "38.000000",
+          "size": "919392"
+        }
+      }
+    },
+    {
+      "id": "deliverable.reference-selection-v1.md",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/01_Reference_Analysis/reference-selection-v1.md",
+        "bytes": 4128,
+        "sha256": "95c3ad241eebdb0c79e2349160cc9d99dae1c38fc010388dbceceda16ba5e45a"
+      }
+    },
+    {
+      "id": "deliverable.cinematic-grammar-map-v1.md",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/01_Reference_Analysis/cinematic-grammar-map-v1.md",
+        "bytes": 2519,
+        "sha256": "48b9d8f889a2f1d80ccb4ad8438e46589c897eb89e6891e821d2b39b880f907d"
+      }
+    },
+    {
+      "id": "deliverable.lovetree-dream-memory-cinematic-v1.html",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/03_HTML/lovetree-dream-memory-cinematic-v1.html",
+        "bytes": 1029772,
+        "sha256": "b1284a8590f6ed0524e9885c013fd02583b9021a7014ed025c35a1abef07232a"
+      }
+    },
+    {
+      "id": "deliverable.implementation-report-v1.md",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/03_HTML/implementation-report-v1.md",
+        "bytes": 2462,
+        "sha256": "89b59176cb0c9f6dff2c61830f746fa5483c54db1afd47f08443f8de395f7b78"
+      }
+    },
+    {
+      "id": "deliverable.desktop-execution-v1.mp4",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/04_Validation/desktop-execution-v1.mp4",
+        "bytes": 1192537,
+        "sha256": "63aa9311c4b4510390475d97f4dc994e3c814061d78bc393565186b170582faa"
+      }
+    },
+    {
+      "id": "deliverable.mobile-execution-v1.mp4",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/04_Validation/mobile-execution-v1.mp4",
+        "bytes": 919392,
+        "sha256": "cdb788a81811f332022cebc0e34fd1963cc71d2300696eca307d43965b875d3d"
+      }
+    },
+    {
+      "id": "deliverable.reference-vs-result-v1.jpg",
+      "status": "PASS",
+      "evidence": {
+        "path": "/mnt/data/50_드림메모리_시네마틱_분류대기/04_Validation/reference-vs-result-v1.jpg",
+        "bytes": 272813,
+        "sha256": "6825a3d21aabee8fd9d07969fe41724bb4b09e3d5ba41d86cbbecd78a59280ac"
+      }
+    }
+  ],
+  "summary": {
+    "pass": 36,
+    "fail": 0,
+    "total": 36
+  }
+}

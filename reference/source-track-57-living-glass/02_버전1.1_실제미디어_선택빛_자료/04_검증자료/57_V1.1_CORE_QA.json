@@ -1,0 +1,148 @@
+{
+  "checks": {
+    "tilt_5of5": true,
+    "glare_5of5": true,
+    "layered_parallax": true,
+    "spring_5of5": true,
+    "selected_bloom_5of5": true,
+    "selected_persistent": true,
+    "local_video_playback_3of3": true,
+    "close_stops_removes": true,
+    "image_viewer": true,
+    "selection_connection_arrival": true,
+    "keyboard_bloom": true,
+    "escape_detail": true,
+    "overflow_0": true
+  },
+  "details": {
+    "tilt": [
+      {
+        "rx": 3.47,
+        "ry": -4.627,
+        "gx": "20.00%",
+        "gy": "20.00%",
+        "mx": "4.20px",
+        "tx": "-2.70px"
+      },
+      {
+        "rx": 3.881,
+        "ry": 5.175,
+        "gx": "80.00%",
+        "gy": "20.00%",
+        "mx": "-4.20px",
+        "tx": "2.70px"
+      },
+      {
+        "rx": -4.355,
+        "ry": -5.806,
+        "gx": "20.00%",
+        "gy": "80.00%",
+        "mx": "4.20px",
+        "tx": "-2.70px"
+      },
+      {
+        "rx": -3.881,
+        "ry": 5.175,
+        "gx": "80.00%",
+        "gy": "80.00%",
+        "mx": "-4.20px",
+        "tx": "2.70px"
+      },
+      {
+        "rx": 2.158,
+        "ry": 0.957,
+        "gx": "55.00%",
+        "gy": "35.00%",
+        "mx": "-0.70px",
+        "tx": "0.45px"
+      }
+    ],
+    "spring": [
+      {
+        "rx": 0,
+        "ry": 0
+      },
+      {
+        "rx": 0.007,
+        "ry": 0.009
+      },
+      {
+        "rx": 0,
+        "ry": 0
+      },
+      {
+        "rx": -0.005,
+        "ry": 0.007
+      },
+      {
+        "rx": 0,
+        "ry": 0
+      }
+    ],
+    "bloom": [
+      {
+        "selected": true,
+        "wake": true,
+        "opacity": 0
+      },
+      {
+        "selected": true,
+        "wake": true,
+        "opacity": 0
+      },
+      {
+        "selected": true,
+        "wake": true,
+        "opacity": 0
+      },
+      {
+        "selected": true,
+        "wake": true,
+        "opacity": 0
+      },
+      {
+        "selected": true,
+        "wake": true,
+        "opacity": 0
+      }
+    ],
+    "persistent": {
+      "id": "m2",
+      "opacity": 0.423034,
+      "mark": 1
+    },
+    "videos": [
+      {
+        "paused": false,
+        "current": 0.379044,
+        "ready": 4,
+        "duration": 5
+      },
+      {
+        "paused": false,
+        "current": 0.382012,
+        "ready": 4,
+        "duration": 5
+      },
+      {
+        "paused": false,
+        "current": 0.380208,
+        "ready": 4,
+        "duration": 5
+      }
+    ],
+    "arrival": {
+      "id": "m2",
+      "arrival": true,
+      "path": "M 274.418125 352.8 C 334.418125 318.8, 362.8971875 303.5, 422.8971875 269.5",
+      "orb": "#e564a4",
+      "why": "무대 밖에서는 어떤 표정인지 궁금해져 인터뷰까지 찾아갔어요."
+    }
+  },
+  "runtime": {
+    "page_errors": [],
+    "console_errors": [],
+    "failed_requests": []
+  },
+  "pass": true
+}

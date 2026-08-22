@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoveTree · GABE Exact Glass Orbit · Gate A4</title>
+<style>
+:root{--ink:#050505;--paper:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.stage{position:relative;width:100vw;height:100vh;background:#fff;overflow:hidden}
+.brand{position:absolute;left:3.0vw;top:2.6vh;font-family:Georgia,'Times New Roman',serif;font-size:2.72vw;line-height:1;letter-spacing:-.055em;z-index:9}
+.intro{position:absolute;left:3.0vw;top:39.0vh;width:34vw;font-weight:800;font-size:1.56vw;line-height:.94;letter-spacing:-.062em;z-index:9}
+.intro span{display:block}
+.cta{position:absolute;left:3.0vw;bottom:5.1vh;width:7.8vw;height:7.8vw;min-width:104px;min-height:104px;border-radius:50%;background:#050505;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.80vw;font-weight:800;letter-spacing:-.03em;z-index:9}
+#bg,#glass{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#bg{z-index:1}
+#glass{z-index:5}
+.gate{position:absolute;left:3vw;bottom:1.1vh;font-size:.52vw;letter-spacing:.17em;color:#8a8a8a;z-index:9;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="stage">
+  <canvas id="bg"></canvas>
+  <div class="brand">LoveTree</div>
+  <div class="intro">
+    <span>Moments that moved your heart,</span>
+    <span>connected into the path that made you care,</span>
+    <span>and eventually made you a fan.</span>
+  </div>
+  <div class="cta">MY<br>TREE</div>
+  <canvas id="glass"></canvas>
+  <div class="gate">GATE A4 · REFERENCE GLASS OBJECT RECONSTRUCTION · STATIC ONLY · NO GATE B/C</div>
+</div>
+<script>
+(() => {
+  const DPR=Math.min(devicePixelRatio||1,1.5);
+  const bg=document.getElementById('bg');
+  const bgc=bg.getContext('2d');
+  const canvas=document.getElementById('glass');
+  const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,premultipliedAlpha:false});
+  if(!gl) return;
+
+  function drawBackground(){
+    bg.width=Math.floor(innerWidth*DPR); bg.height=Math.floor(innerHeight*DPR);
+    bg.style.width=innerWidth+'px'; bg.style.height=innerHeight+'px';
+    bgc.setTransform(DPR,0,0,DPR,0,0);
+    bgc.clearRect(0,0,innerWidth,innerHeight);
+    bgc.fillStyle='#fff'; bgc.fillRect(0,0,innerWidth,innerHeight);
+    bgc.fillStyle='#050505'; bgc.textBaseline='top';
+    // A2/A3 editorial direction retained; spacing slightly reference disciplined.
+    bgc.font=`900 ${innerWidth*.121}px Impact, Arial Black, Arial`;
+    bgc.fillText('PATH',innerWidth*.425,-innerHeight*.105);
+    bgc.font=`900 ${innerWidth*.087}px Impact, Arial Black, Arial`;
+    const lh=innerWidth*.087*.74;
+    const x1=innerWidth*.425, x2=innerWidth*.535;
+    const y1=innerHeight*.268, y2=innerHeight*.235;
+    const a=['M','O','M','E','N','T'], b=['M','E','M','O','R','Y'];
+    a.forEach((t,i)=>bgc.fillText(t,x1,y1+i*lh));
+    b.forEach((t,i)=>bgc.fillText(t,x2,y2+i*lh));
+    bgc.save(); bgc.translate(innerWidth*.958,innerHeight*.17); bgc.rotate(Math.PI/2);
+    bgc.font=`900 ${innerWidth*.089}px Impact, Arial Black, Arial`; bgc.fillText('LOVE',0,0); bgc.restore();
+    bgc.beginPath(); bgc.arc(innerWidth*.434,innerHeight*.225,innerWidth*.016,0,Math.PI*2); bgc.fill();
+  }
+
+  function resize(){
+    drawBackground();
+    canvas.width=Math.floor(innerWidth*DPR); canvas.height=Math.floor(innerHeight*DPR);
+    canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px';
+    gl.viewport(0,0,canvas.width,canvas.height);
+  }
+  resize();
+
+  const vs=`#version 300 es
+  precision highp float;
+  layout(location=0) in vec2 aPos;
+  uniform vec2 uCenter;
+  uniform vec2 uScale;
+  uniform float uRot;
+  out vec2 vLocal;
+  void main(){
+    vLocal=aPos;
+    float c=cos(uRot), s=sin(uRot);
+    vec2 p=vec2(c*aPos.x-s*aPos.y,s*aPos.x+c*aPos.y)*uScale+uCenter;
+    gl_Position=vec4(p,0.0,1.0);
+  }`;
+
+  const fs=`#version 300 es
+  precision highp float;
+  in vec2 vLocal;
+  out vec4 o;
+  uniform sampler2D uBg;
+  uniform sampler2D uLabel;
+  uniform vec2 uResolution;
+  uniform float uSeed;
+  uniform float uInner;
+  uniform vec2 uInnerOffset;
+  uniform float uRef;
+  uniform float uLabelAng;
+  uniform vec4 uHot1;
+  uniform vec4 uHot2;
+  uniform vec4 uHot3;
+
+  float angDist(float a,float b){float d=abs(a-b);return min(d,6.2831853-d);}
+  float gaussAng(float a,float c,float w){float d=angDist(a,c);return exp(-(d*d)/(w*w));}
+  float luminance(vec3 c){return dot(c,vec3(.299,.587,.114));}
+
+  void main(){
+    vec2 p=vLocal;
+    float ang=atan(p.y,p.x); if(ang<0.0)ang+=6.2831853;
+    // Smooth reference-like asymmetry: a few broad bulges/pinches, never noisy deformation.
+    float outer=1.0 + .072*sin(ang*2.0+uSeed*.91) + .032*sin(ang*3.0+uSeed*1.73)
+                  + .060*gaussAng(ang,fract(uSeed*.173)*6.2831853, .38)
+                  - .038*gaussAng(ang,fract(.47+uSeed*.119)*6.2831853,.34);
+    float eo=length(vec2(p.x, p.y*1.06));
+
+    vec2 ip=p-uInnerOffset;
+    float inner=uInner + .018*sin(ang*2.0+uSeed*1.27) - .014*sin(ang*3.0+uSeed*.61);
+    float ei=length(vec2(ip.x,ip.y*1.06));
+    float dOuter=outer-eo;
+    float dInner=ei-inner;
+    float band=min(dOuter,dInner);
+    float aa=max(fwidth(band)*1.3,.0025);
+    float mask=smoothstep(-aa,aa,band);
+    if(mask<.002) discard;
+
+    // Optical zones: flat body weak, inner/outer rim strong, local bulges strongest.
+    float outerRim=exp(-pow(dOuter/.055,2.0));
+    float innerRim=exp(-pow(dInner/.050,2.0));
+    float centerZone=1.0-clamp(max(outerRim,innerRim),0.0,1.0);
+    float bulge=.45*gaussAng(ang,fract(.12+uSeed*.091)*6.2831853,.42)
+                +.36*gaussAng(ang,fract(.66-uSeed*.057)*6.2831853,.34);
+    float opticalPower=.10*centerZone + .72*innerRim + .46*outerRim + .44*bulge;
+
+    vec2 screenUV=vec2(gl_FragCoord.x/uResolution.x,1.0-gl_FragCoord.y/uResolution.y);
+    vec2 radial=normalize(vec2(p.x,p.y*1.12)+vec2(1e-5));
+    vec2 tangent=vec2(-radial.y,radial.x);
+    vec2 offset=(radial*(.008+.026*opticalPower)+tangent*.004*sin(ang*2.0+uSeed))*uRef;
+    vec3 orig=texture(uBg,screenUV).rgb;
+    vec3 refr;
+    refr.r=texture(uBg,clamp(screenUV+offset*1.055,0.001,0.999)).r;
+    refr.g=texture(uBg,clamp(screenUV+offset,0.001,0.999)).g;
+    refr.b=texture(uBg,clamp(screenUV+offset*.945,0.001,0.999)).b;
+
+    float dist=length(refr-orig);
+    float ink=1.0-luminance(refr);
+    vec3 col=refr;
+
+    // Local dark optical depth: blobs/sinks, never a full outline.
+    float darkA=gaussAng(ang,uHot1.x,uHot1.y)*(uHot1.z+.65*innerRim);
+    float darkB=gaussAng(ang,uHot2.x,uHot2.y)*(uHot2.z+.55*outerRim);
+    float darkC=gaussAng(ang,uHot3.x,uHot3.y)*(uHot3.z+.45*innerRim);
+    float darkBlob=clamp(max(max(darkA,darkB),darkC),0.0,1.0);
+    col=mix(col,vec3(.001,.002,.004),darkBlob*.96);
+
+    // Narrow, local specular streaks instead of broad white face fill.
+    float specAng=gaussAng(ang,fract(.24+uSeed*.103)*6.2831853,.22)+.68*gaussAng(ang,fract(.79-uSeed*.071)*6.2831853,.17);
+    float spec=specAng*(.32*outerRim+.55*innerRim+.18*bulge);
+    col += vec3(1.0)*spec*.88;
+
+    // Manually anchored local optical caustics.
+    float blue=gaussAng(ang,uHot1.w,.16)*(outerRim+.55*innerRim);
+    float amber=gaussAng(ang,uHot2.w,.18)*(innerRim+.45*outerRim);
+    float red=gaussAng(ang,uHot3.w,.11)*(outerRim+.35*innerRim);
+    col += vec3(.01,.20,1.0)*blue*1.75;
+    col += vec3(1.0,.25,.005)*amber*1.70;
+    col += vec3(1.0,.005,.015)*red*.88;
+
+    // Surface-bound keyword: map a small tangent frame directly onto a selected front band segment.
+    float da=atan(sin(ang-uLabelAng),cos(ang-uLabelAng));
+    float radialBand=clamp((eo-inner)/max(.001,outer-inner),0.0,1.0);
+    vec2 luv=vec2(da/.88+.50,radialBand);
+    vec4 lab=texture(uLabel,clamp(luv,0.0,1.0));
+    float insideLabel=step(-.44,da)*step(da,.44);
+    float textMask=lab.a*mask*insideLabel;
+    textMask*=smoothstep(.012,.050,dInner)*smoothstep(.012,.050,dOuter);
+    col=mix(col,vec3(.006),textMask*.96);
+
+    // Base face is clear. Optical events, refraction difference, and dark type create presence.
+    float baseAlpha=.055;
+    float alpha=baseAlpha + .26*outerRim + .30*innerRim + .66*dist + .25*ink*opticalPower + .42*darkBlob + .12*spec + .78*textMask;
+    alpha=clamp(alpha,.035,.78)*mask;
+    o=vec4(clamp(col,0.0,1.0),alpha);
+  }`;
+
+  function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}
+  const pr=gl.createProgram();gl.attachShader(pr,shader(gl.VERTEX_SHADER,vs));gl.attachShader(pr,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(pr));gl.useProgram(pr);
+  const loc={center:gl.getUniformLocation(pr,'uCenter'),scale:gl.getUniformLocation(pr,'uScale'),rot:gl.getUniformLocation(pr,'uRot'),bg:gl.getUniformLocation(pr,'uBg'),label:gl.getUniformLocation(pr,'uLabel'),res:gl.getUniformLocation(pr,'uResolution'),seed:gl.getUniformLocation(pr,'uSeed'),inner:gl.getUniformLocation(pr,'uInner'),innerOffset:gl.getUniformLocation(pr,'uInnerOffset'),ref:gl.getUniformLocation(pr,'uRef'),labelAng:gl.getUniformLocation(pr,'uLabelAng'),hot1:gl.getUniformLocation(pr,'uHot1'),hot2:gl.getUniformLocation(pr,'uHot2'),hot3:gl.getUniformLocation(pr,'uHot3')};
+
+  const quad=new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+  const vao=gl.createVertexArray();gl.bindVertexArray(vao);const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,quad,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+
+  function texFrom(source,flip=false){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,flip);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t}
+  const bgTex=texFrom(bg,false);
+  const words=['FIRST','MOMENTS','CONNECTION','REPLAY','MY TREE','RETURN'];
+  function labelCanvas(word){const c=document.createElement('canvas');c.width=1024;c.height=256;const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.fillStyle='#000';x.textAlign='center';x.textBaseline='middle';x.font='900 italic 156px Arial';x.save();x.translate(c.width/2,c.height/2);x.transform(1,0,-.08,1,0,0);x.fillText(word,0,0);x.restore();return c}
+  const labels=words.map(w=>texFrom(labelCanvas(w),false));
+
+  // Reference-traced independent object cluster. Values are NDC center/half-size/rotation.
+  // Each object has a distinct box; there is no shared helix phase or continuous path.
+  const objs=[
+    {c:[ .28,.84], s:[.250,.170], r:-.22, inner:.72, io:[ .025,-.014], ref:1.12, seed:.3, la:4.72, h1:[.52,.22,.58,5.16],h2:[3.54,.24,.48,1.14],h3:[5.72,.19,.40,3.05]},
+    {c:[ .22,.58], s:[.238,.158], r: .08, inner:.74, io:[-.032,.018], ref:1.18, seed:1.1, la:4.68, h1:[3.06,.20,.60,2.84],h2:[5.58,.22,.46,5.42],h3:[1.10,.18,.42,.62]},
+    {c:[ .24,.34], s:[.215,.145], r:-.12, inner:.71, io:[ .025,.024], ref:1.12, seed:2.0, la:4.86, h1:[4.64,.21,.62,4.37],h2:[1.76,.20,.44,1.45],h3:[.45,.17,.38,5.92]},
+    {c:[ .29,.09],s:[.220,.155], r:-.27, inner:.75, io:[-.026,-.016],ref:1.22, seed:2.9, la:4.92, h1:[2.72,.19,.60,2.54],h2:[5.08,.22,.48,5.82],h3:[.82,.18,.40,.30]},
+    {c:[ .35,-.19],s:[.205,.158], r: .18, inner:.73, io:[ .030,.008], ref:1.08, seed:3.8, la:4.78, h1:[5.38,.22,.56,5.03],h2:[2.14,.20,.45,2.47],h3:[.58,.16,.38,.95]},
+    {c:[ .47,-.49],s:[.190,.168], r: .68, inner:.76, io:[-.024,.020],ref:1.15, seed:4.7, la:4.88, h1:[1.35,.19,.58,1.08],h2:[4.36,.21,.46,4.72],h3:[5.82,.16,.40,5.46]}
+  ];
+
+  function render(){
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    gl.uniform2f(loc.res,canvas.width,canvas.height);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,bgTex);gl.uniform1i(loc.bg,0);
+    gl.bindVertexArray(vao);
+    objs.forEach((o,i)=>{
+      gl.uniform2f(loc.center,o.c[0],o.c[1]);gl.uniform2f(loc.scale,o.s[0],o.s[1]);gl.uniform1f(loc.rot,o.r);gl.uniform1f(loc.seed,o.seed);gl.uniform1f(loc.inner,o.inner);gl.uniform2f(loc.innerOffset,o.io[0],o.io[1]);gl.uniform1f(loc.ref,o.ref);gl.uniform1f(loc.labelAng,o.la);
+      gl.uniform4f(loc.hot1,...o.h1);gl.uniform4f(loc.hot2,...o.h2);gl.uniform4f(loc.hot3,...o.h3);
+      gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,labels[i]);gl.uniform1i(loc.label,1);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    });
+  }
+  render();
+  window.__A4_OBJECTS=objs;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "package": "LoveTree Moment Polish Lab v1 Complete Bundle",
+  "createdAt": "2026-08-04T12:04:08.304588+00:00",
+  "fileCount": 178,
+  "sourceFileCount": 175,
+  "contains": {
+    "standaloneHtml": true,
+    "referenceVideo": true,
+    "executionContract": true,
+    "desktopExecutionVideo": true,
+    "mobileExecutionVideo": true,
+    "comparisonImages": true,
+    "reports": true,
+    "validationJson": true,
+    "rawExecutionFrames": true
+  }
+}

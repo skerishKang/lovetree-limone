@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-43-memory-scene-recipe",
+  "sourceTrackId": "Track43",
+  "title": "Memory Scene Recipe Library — gate registration (no implementation)",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Memory-scene recipe/preview library reconstructed from a benchmark recording: twelve named scene recipes (First Moment Awakening, Emotion Trace, Person Orbit, Season Cascade, Memory Materialize, Branch Pulse, Quiet Archive, Course Glow, Bookmark Drift, Feeling Ripple, Flower Reveal, Next Scene Thread) browsable with category/energy filters, preview and apply actions over a 32.4-second seven-scene timeline. Gate-registered as capability evidence only.",
+  "summary": "Issue #297 gate registration for the adopted-design Drive folder 43_기억장면_레시피도구. Self-contained DOM/SVG/CSS prototype (51,828 B HTML, no external runtime asset) preserved with a full SHA256SUMS ledger under the #287 commit-size standard: total committed set is under 50MB and every file over 10MB is excluded from git and recorded by FILE_INDEX + SHA256 fingerprint with its Drive ID (one oversize reference video). No repository Lineage number is allocated or reserved; canonical adoption and implementation are HOLD.",
+  "provenance": {
+    "sourceLabel": "43_기억장면_레시피도구 (adopted-design mirror [[지피티 작업]]/[01_러브트리]/03_디자인채택본) / Issue #297",
+    "driveFolderId": "1Vjww57Yx7WvaZpHAxeO9jpWLlVHd7jlD",
+    "sourceFiles": [
+      "01_기억장면_레시피도구.html",
+      "40_문서자료/01_실행계약.txt",
+      "40_문서자료/02_구현보고.md",
+      "40_문서자료/03_레퍼런스분석.md",
+      "40_문서자료/04_제출목록.md",
+      "30_검증자료/01_검증결과.json",
+      "10_이미지/** scene captures",
+      "04_참고키프레임/** reference keyframes",
+      "03_비교자료/** reference-vs-result comparisons"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1",
+    "authorityObservedAt": "2026-08-21T04:20:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "01_기억장면_레시피도구.html",
+      "driveId": "1Lxv8xosMapt9EtU5D9cEFkTMwVnnMiVu",
+      "bytes": 51828,
+      "sha256": "e36c7b136628285976197e75ddde4d5395ac26e2de9db11445779db3fdf7ca2f",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "03_참고영상_기억장면레시피_원본.mp4",
+      "driveId": "1byhtwOM-zKmX9zHeVcDVeHeOmtrZ4wLA",
+      "bytes": 28841597,
+      "sha256": "73ff927e8a645828934ca53307635a8925ee428fc98a32f42484f58fdc512625",
+      "role": "reference-recording",
+      "status": "PENDING"
+    }
+  ],
+  "intakeContract": {
+    "preservedReferencePath": "reference/source-track-43-memory-scene-recipe/",
+    "checksumLedger": "reference/source-track-43-memory-scene-recipe/SHA256SUMS",
+    "verifiedIndependently": true,
+    "verifiedAgainst": "local SHA256SUMS generated at preservation time (53 files); no prior historical pin exists for this track, so this preservation establishes the first fingerprint baseline",
+    "commitSizeContract": "#287 standard: total committed <= 50MB, single file <= 10MB. One oversize file (03_참고영상_기억장면레시피_원본.mp4, 28,841,597 B) is preserved on the lane worktree and fingerprinted above but excluded from git; see docs/design-intake/source-track-43-gate.md FILE_INDEX."
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": ["P7"],
+  "trulyNewPrimitive": "MemorySceneRecipe preview grammar (named scene recipes with category/energy filters, preview and apply actions)",
+  "sourceDefects": [
+    "keyboard/focus/reduced-motion contract not yet audited against current native quality gates",
+    "recipe previews are CSS/SVG/DOM reconstructions of a third-party benchmark recording; brand/identity review required before any adoption"
+  ],
+  "nativeRemediations": [
+    "audit keyboard, focus-visible and prefers-reduced-motion behavior before any native slice",
+    "verify 1280x800 / 390x844 / 320x720 with zero horizontal overflow if a route is ever authorized"
+  ],
+  "sourceOnlyValues": [
+    "seven full-screen scenes on a 32.4-second requestAnimationFrame timeline",
+    "twelve recipes stored in one JavaScript data array",
+    "local state key lovetree-memory-scene-recipe-library-v1"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "HOLD",
+    "note": "Issue #297 gate registration only. Implementation, canonical adoption and lineage allocation are HOLD pending Product Owner / design-lead review under Issue #80 intake rules and Issue #201 scenario assembly."
+  },
+  "reservation": {
+    "held": true,
+    "note": "Gate registration preserves source authority; nothing is adopted. Lineage reservation is HOLD by omission under the REFERENCE_CAPABILITY_ONLY identity rule: no lineage number is reserved or allocated by this gate registration."
+  },
+  "navigationHandoff": {
+    "targetMapping": false,
+    "urlResolution": false,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track43 memory scene recipe library gate (no route implemented)"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "youtube_parse_3of3": true,
+  "parsed": [
+    "hmE9f-TEutc",
+    "hmE9f-TEutc",
+    "hmE9f-TEutc"
+  ],
+  "invalid_javascript_rejected": true,
+  "invalid_feedback": "http:// 또는 https:// URL만 연결할 수 있습니다.",
+  "editor_connected": {
+    "kind": "youtube",
+    "url": "https://youtu.be/hmE9f-TEutc",
+    "sourceUrl": "https://youtu.be/hmE9f-TEutc",
+    "start": 11,
+    "label": "YouTube / Connected URL"
+  },
+  "viewer_iframe_count": 1,
+  "viewer_iframe_src": "https://www.youtube-nocookie.com/embed/hmE9f-TEutc?autoplay=1&playsinline=1&rel=0&start=11",
+  "iframe_contract_pass": true,
+  "frames": [
+    "about:blank",
+    "chrome-error://chromewebdata/"
+  ],
+  "live_network_status": "BLOCKED_BY_MANAGED_CHROMIUM_POLICY",
+  "page_errors": [],
+  "console_errors": [],
+  "pass": true
+}

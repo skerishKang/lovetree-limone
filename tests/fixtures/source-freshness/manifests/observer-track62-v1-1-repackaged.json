@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "stableId": "track-observer-62-repackaged",
+  "sourceTrackId": "Track62",
+  "title": "Observer fixture Track62 V1.1 repackaged (new Drive file id)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "EXECUTABLE_AVAILABLE",
+  "rendering": "dom-2d",
+  "scenarioId": "entry-onboarding",
+  "productJob": "synthetic live-observer acceptance fixture",
+  "summary": "synthetic: pinned content is identical but the live Drive current moved to a new file id",
+  "provenance": {
+    "sourceLabel": "synthetic live-observer fixture",
+    "sourceFiles": [
+      "fixture.html"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "PENDING",
+    "note": "synthetic observer fixture — no lineage allocation"
+  },
+  "backendScope": "BACKEND_FREE",
+  "sourceArtifacts": [
+    {
+      "filename": "fixture.html",
+      "driveId": "1f73observerTrack62V11OldFileAaa",
+      "bytes": 123,
+      "sha256": "144d7668b219f817729f8057dba01247dd6f6e09900bf2c90b5290a2162822a6",
+      "role": "executable",
+      "status": "PINNED"
+    }
+  ],
+  "sourceSnapshot": {
+    "revisionLabel": "V1.1",
+    "authorityObservedAt": "2026-08-14T09:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  }
+}

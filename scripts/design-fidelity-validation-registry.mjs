@@ -8,6 +8,23 @@ export const GLOBAL_ORCHESTRATION_PREFIXES = Object.freeze([
   "tests/design-fidelity-validation-orchestration.test.mjs",
 ]);
 
+/**
+ * Proven-consumer dependency edges (P8, issue #200).
+ *
+ * A change to a shared primitive must select the Design Fidelity target(s)
+ * that actually consume it, even when the primitive path is outside the
+ * consumer's direct impactPrefixes. Keep this narrow and evidence-backed:
+ * add an edge only when a target migrates to the shared primitive and proves
+ * equivalence. Do not widen to `lib/design-runtime/**` — sibling shared cores
+ * without a proven consumer must not auto-select any target.
+ */
+export const DEPENDENCY_EDGES = Object.freeze([
+  {
+    sourcePrefix: "lib/design-runtime/exact-asset.ts",
+    targetIds: Object.freeze(["lineage-58-v2"]),
+  },
+]);
+
 export const DESIGN_FIDELITY_TARGETS = Object.freeze([
   {
     id: "lineage-52-v3",
@@ -241,25 +258,25 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
     extraEvidencePaths: ["test-results/moment-orbit-carousel"],
   },
   {
-    id: "lineage-63",
-    label: "Lineage 63 Moment Field 3D View Studio",
-    route: "/design-lab/lineages/63",
+    id: "lineage-64-v1-2-1",
+    label: "Lineage 64 V1.2.1 Floating Moment Welcome Orbit",
+    route: "/design-lab/lineages/64/v1-2-1",
     validationClass: "source-fidelity",
     impactPrefixes: [
-      "app/design-lab/lineages/63/",
-      "lib/lineage-63/",
-      "tests/lineage-63",
-      "docs/product/lineages/63",
+      "app/design-lab/lineages/64/",
+      "lib/lineage-64",
+      "tests/lineage-64",
+      "docs/product/lineages/64",
     ],
     assetGate: null,
-    browserGates: ["tests/lineage-63-route-browser-qa.mjs"],
+    browserGates: ["tests/lineage-64-route-browser-qa.mjs"],
     viewports: [
       { width: 1280, height: 800 },
       { width: 390, height: 844, mobile: true },
       { width: 320, height: 720, mobile: true },
     ],
     captureReducedMotion: true,
-    extraEvidencePaths: ["test-results/lineage-63-native"],
+    extraEvidencePaths: ["test-results/lineage-64-floating-moment"],
   },
 ]);
 
@@ -291,6 +308,14 @@ export function selectImpactedTargets(changedPaths, cwd = process.cwd()) {
     );
 
     if (directImpact) return true;
+
+    const edgeImpact = normalized.some((path) =>
+      DEPENDENCY_EDGES.some(
+        (edge) => edge.targetIds.includes(target.id) && matchesPrefix(path, edge.sourcePrefix),
+      ),
+    );
+
+    if (edgeImpact) return true;
     return globalChange && targetIsMaterialized(target, cwd);
   });
 }

@@ -1,0 +1,5735 @@
+# Drive 채택본 원본 스냅샷 파일 인덱스 — 2026-08-21
+
+- 원본 소스: `padiemipu:[[지피티 작업]]/[01_러브트리]/03_디자인채택본` (Google Drive, 읽기 전용 스캔)
+- 스캔 시각: 2026-08-21 (KST) · 파일 수: 5,334 · 총 바이트: 11,825,229,300
+- 본 인덱스는 삭제·변조 감지 기준선이다. Drive 원본은 수정·삭제·이동하지 않았다(복사만 수행).
+- 해시: 전체 트리는 Drive 네이티브 MD5 → `MD5SUMS-full-tree.txt`. SHA256은 Drive 서버사이드 미지원이므로 보존 분만 로컬 계산 → `SHA256SUMS.txt` 및 트랙 폴더별 `SHA256SUMS.txt`.
+- 선별 보존 위치: `reference/source-tracks-snapshot/<트랙번호>_<이름>/` (트랙당 최신 실행본 1개, .html/.md, ≤5MB)
+
+## 트랙별 보존 결과
+
+| 트랙 | 처리 | 대상 파일 / 링크 |
+|---|---|---|
+| 01_0730작업물 | 보존 | `01_0730작업물/lovetree-community-discovery-v2.html` (40,685 bytes, 최신 mtime) |
+| 02_첫여정통합-3개html합본 | 보존 | `02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html` (111,950 bytes, 최신 mtime) |
+| 03_자유성장그래프_시즌아카이브 | 보존 | `03_자유성장그래프_시즌아카이브/01_자유성장그래프_시즌아카이브.html` (57,878 bytes, 최신 mtime) |
+| 04_300플러스_자유성장그래프 | 보존 | `04_300플러스_자유성장그래프/01_300플러스_자유성장그래프.html` (35,607 bytes, 최신 mtime) |
+| 05_트리휴식_중단과복귀흐름 | 보존 | `05_트리휴식_중단과복귀흐름/01_트리휴식_간단복귀흐름_v2.html` (29,121 bytes, 최신 mtime) |
+| 06_300모먼트_피날레 | 보존 | `06_300모먼트_피날레/01_300모먼트_피날레.html` (26,280 bytes, 최신 mtime) |
+| 07_오로라입자_하트 | 보존 | `07_오로라입자_하트/01_오로라입자_하트.html` (22,375 bytes, 최신 mtime) |
+| 08_무지개기억_수관 | 보존 | `08_무지개기억_수관/01_무지개기억_수관.html` (19,346 bytes, 최신 mtime) |
+| 09_전체기억_요약대시보드 | 보존 | `09_전체기억_요약대시보드/01_전체기억_요약대시보드.html` (25,265 bytes, 최신 mtime) |
+| 10_메모리펄스_로그인홈 | 보존 | `10_메모리펄스_로그인홈/01_메모리펄스_로그인홈.html` (33,049 bytes, 최신 mtime) |
+| 11_메모리그래프_관측소 | 보존 | `11_메모리그래프_관측소/01_메모리그래프_관측소_용광로코어.html` (37,551 bytes, 최신 mtime) |
+| 12_글로벌디스커버리_탐색홈 | 보존 | `12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html` (4,898,093 bytes, 최신 mtime) |
+| 13_메모리아틀라스_전체우주지도 | 보존 | `13_메모리아틀라스_전체우주지도/04_메모리아틀라스_현재채택_진주360_v4.html` (52,824 bytes, 최신 mtime) |
+| 14_자동전개마인드맵_템플릿컴포저 | 보존 | `14_자동전개마인드맵_템플릿컴포저/01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html` (87,256 bytes, 최신 mtime) |
+| 15_라이브맵_실시간흐름 | 보존 | `15_라이브맵_실시간흐름/01_러브트리라이브맵_현재채택_v1-2.html` (47,624 bytes, 최신 mtime) |
+| 16_메모리토폴로지_관계망분석실 | 보존 | `16_메모리토폴로지_관계망분석실/01_메모리토폴로지_현재채택_관계망분석실_v1.html` (37,920 bytes, 최신 mtime) |
+| 17_리빙메모리지형 | 보존 | `17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html` (1,953,464 bytes, 최신 mtime) |
+| 18_메모리코어_전기오로라 | 보존 | `18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html` (39,569 bytes, 최신 mtime) |
+| 19_메모리코어_네온 | 보존 | `19_메모리코어_네온/01_메모리코어_용광로네온_v2.html` (53,947 bytes, 최신 mtime) |
+| 20_리빙메모리엔진_버전통합 | 보존 | `20_리빙메모리엔진_버전통합/01_리빙메모리엔진_현재채택_글로벌시각충실도_v1-1.html` (62,426 bytes, 최신 mtime) |
+| 21_기억의문_시네마틱대문 | 보존 | `21_기억의문_시네마틱대문/V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/현재후보.html` (7,960 bytes, 마커 선택) |
+| 22_영상기억_별자리보기 | 보존 | `22_영상기억_별자리보기/01_영상기억별자리_네온하트_v3-1.html` (55,105 bytes, 최신 mtime) |
+| 23_리빙영상기억그래프 | 보존 | `23_리빙영상기억그래프/01_리빙영상기억그래프_v1.html` (36,008 bytes, 최신 mtime) |
+| 24_영상기억_워크플로우 | 보존 | `24_영상기억_워크플로우/01_영상기억워크플로우_v1.html` (36,370 bytes, 최신 mtime) |
+| 25_영상기억_로어맵 | 보존 | `25_영상기억_로어맵/01_영상기억로어맵_v1.html` (47,351 bytes, 최신 mtime) |
+| 26_메모리필름스튜디오 | 보존 | `26_메모리필름스튜디오/01_메모리필름스튜디오_v1.html` (48,201 bytes, 최신 mtime) |
+| 27_모션기억_보기 | 보존 | `27_모션기억_보기/01_모션기억아카이브_클릭재생_v1.html` (41,025 bytes, 최신 mtime) |
+| 28_리퀴드오빗_미디어갤러리 | 보존 | `28_리퀴드오빗_미디어갤러리/01_리퀴드오빗영상갤러리_v1.html` (219,889 bytes, 최신 mtime) |
+| 29_사람별기억책장_기본 | 보존 | `29_사람별기억책장_기본/01_사람별기억책장_기본_v1.html` (46,992 bytes, 최신 mtime) |
+| 30_사람별기억책장_3D | 보존 | `30_사람별기억책장_3D/01_사람별기억책장_3D_v2.html` (56,941 bytes, 최신 mtime) |
+| 31_사람별기억책장_인터랙션 | 보존 | `31_사람별기억책장_인터랙션/01_사람별기억책장_상호작용_v2.html` (58,905 bytes, 최신 mtime) |
+| 32_사람별기억책장_실제페이지모션 | 보존 | `32_사람별기억책장_실제페이지모션/01_사람별기억책장_실제페이지모션_v2-1.html` (74,978 bytes, 최신 mtime) |
+| 33_사람별기억책장_폴딩 | 보존 | `33_사람별기억책장_폴딩/01_사람별기억책장_접이식아카이브.html` (88,870 bytes, 최신 mtime) |
+| 34_사람별기억책장_3D아코디언앨범 | 보존 | `34_사람별기억책장_3D아코디언앨범/01_사람별기억책장_3D아코디언앨범.html` (37,054 bytes, 최신 mtime) |
+| 35_LP플레이어 | 보존 | `35_LP플레이어/01_LP플레이어_영상기억.html` (43,297 bytes, 최신 mtime) |
+| 36_시네마틱메모리포털_버전통합 | 보존 | `36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html` (22,561 bytes, 최신 mtime) |
+| 37_기억달력_메모리패드 | 보존 | `37_기억달력_메모리패드/01_기억달력_뜯어쓰는메모리패드.html` (36,195 bytes, 최신 mtime) |
+| 38_보이저_우주기억지도 | 보존 | `38_보이저_우주기억지도/01_보이저_우주영상기억지도.html` (35,935 bytes, 최신 mtime) |
+| 39_LP커버플로우_미디어갤러리 | 보존 | `39_LP커버플로우_미디어갤러리/01_LP커버플로우_영상갤러리.html` (23,965 bytes, 최신 mtime) |
+| 40_시네마틱황금열매_버전통합 | 보존 | `40_시네마틱황금열매_버전통합/01_시네마틱황금열매_원본에셋_v3.html` (1,689,407 bytes, 최신 mtime) |
+| 41_메모리포켓 | 보존 | `41_메모리포켓/01_메모리포켓_상호작용.html` (37,622 bytes, 최신 mtime) |
+| 42_시즌기억카드_캐러셀 | 보존 | `42_시즌기억카드_캐러셀/01_시즌기억카드_캐러셀.html` (1,860,576 bytes, 최신 mtime) |
+| 43_기억장면_레시피도구 | 보존 | `43_기억장면_레시피도구/01_기억장면_레시피도구.html` (51,828 bytes, 최신 mtime) |
+| 44_손으로여는기억창_컴포저 | 보존 | `44_손으로여는기억창_컴포저/01_손으로여는기억창_컴포저_v2.html` (427,043 bytes, 최신 mtime) |
+| 45_모먼트_정밀조절도구 | 보존 | `45_모먼트_정밀조절도구/01_모먼트상호작용_정밀보정도구.html` (33,940 bytes, 최신 mtime) |
+| 46_팝업시즌_기억책 | 보존 | `46_팝업시즌_기억책/01_팝업시즌_기억책.html` (55,960 bytes, 최신 mtime) |
+| 47_시즌수채화블_통합개발 | 링크만 | public/design-lab-assets/source-tracks/47/v4-2-5/index.html (sha256 동일 — 재저장 생략) |
+| 48_아이돌러브트리_네온파일럿 | 보존 | `48_아이돌러브트리_네온파일럿/10_최종후보_V1정밀복원_인물분석티저_바로보기.html` (781,713 bytes, 마커 선택) |
+| 49_아이돌모먼트_리빌포털 | 보존 | `49_아이돌모먼트_리빌포털/01_버전별_결과물/08_시네마틱컨셉티저_V1/03_메인HTML_시네마틱컨셉티저_v1.html` (1,301,379 bytes, 최신 mtime) |
+| 50_드림메모리_시네마틱 | 보존 | `50_드림메모리_시네마틱/01_최종채택본_시네마틱_웹사이트_슈퍼노바/01_최종홈페이지_실행본.html` (29,491 bytes, 마커 선택) |
+| 51_네온인간분석_인터랙티브홍보대문 | 보존 | `51_네온인간분석_인터랙티브홍보대문/10_병행안_네온인간분석_홍보대문_바로보기.html` (2,782,365 bytes, 최신 mtime) |
+| 52_글로벌모먼트오빗_3D네트워크 | 보존 | `52_글로벌모먼트오빗_3D네트워크/52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_LOVETREE_ORBIT_VIEW_PREVIEW_STANDALONE.html` (3,368,362 bytes, 최신 mtime) |
+| 53_모먼트노드_라이트펄스_커넥션플로우 | 보존 | `53_모먼트노드_라이트펄스_커넥션플로우/53_LOVETREE_NODE_LIGHT_FLOW_PREVIEW_STANDALONE_v2.html` (39,162 bytes, 최신 mtime) |
+| 54_운영스튜디오_워크플로우 | 보존 | `54_운영스튜디오_워크플로우/★_최종선택_54_러브트리_운영스튜디오_V2.1_바로보기.html` (96,622 bytes, 마커 선택) |
+| 55_자유연결_경로편집 | 보존 | `55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` (55,327 bytes, 마커 선택) |
+| 56_세로형_모먼트관계망_전체조망 | 보존 | `56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html` (45,761 bytes, 최신 mtime) |
+| 57_리빙글라스_모먼트카드 | 보존 | `57_리빙글라스_모먼트카드/★_최종_버전1.2_리빙글라스_모먼트카드.html` (671,480 bytes, 마커 선택) |
+| 58_리빙메모리_핀보드_시네마틱 | 보존 | `58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html` (532,697 bytes, 마커 선택) |
+| 59_메모리스케치북_페이지여정 | 보존 | `59_메모리스케치북_페이지여정/버전4_캐릭터실자산_최신후보/현재후보.html` (120,614 bytes, 마커 선택) |
+| 60_3D모먼트클러스터_심층탐색_55,56,59연결버전 | 보존 | `60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html` (55,260 bytes, 마커 선택) |
+| 61_감정경로_연결검토실 | 보존 | `61_감정경로_연결검토실/현재후보.html` (509,063 bytes, 마커 선택) |
+| 62_기억조각상_원형레일전시 | index-only | 현재후보 html 20,728,647 bytes > 5MB 상한 → 미보존, REPORT 참조 |
+| 63_모먼트필드_3D뷰스튜디오 | 보호구역 스캔만 | 보존 제외 (Lineage 63 / #191 계열) |
+| 64_부유모먼트_웰컴오빗_입장포털O | 보존 | `64_부유모먼트_웰컴오빗_입장포털O/현재후보.html` (1,565,313 bytes, 마커 선택) |
+| 65_입덕단서_시네마틱에디토리얼 | 보존 | `65_입덕단서_시네마틱에디토리얼/V16_설계팀장8기_65_V2.3_H3_KINETIC_33BEAT_DIRECTOR_CUT_최종비교후보_2026-08-17/★_설계팀장8기_65_V2.3_H3_KINETIC_33BEAT_DIRECTOR_CUT_최종비교후보_2026-08-17.html` (47,614 bytes, 마커 선택) |
+| 66_첫트리만들기_인터랙티브스크롤가이드 | 보존 | `66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html` (166,996 bytes, 마커 선택) |
+| 67_메모리테이프_인터랙티브롤 | 보존 | `67_메모리테이프_인터랙티브롤/05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/track67_v2.4_persistent_world_works_navigation.html` (4,929,831 bytes, 최신 mtime) |
+| 68_인물감정경로_모션아카이브 | 링크만 | public/design-lab-assets/source-tracks/68/v3-3-2/compare/html/68_V3.3.2_COMPARE_LAUNCHER_ENGLISH.html (sha256 동일 — 재저장 생략) |
+| 69_풀뷰포트폴리오_러브트리모션랜딩 | 보존 | `69_풀뷰포트폴리오_러브트리모션랜딩/E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html` (11,099 bytes, 최신 mtime) |
+| 70_모먼트리빌_퓨처에디토리얼 | 보존 | `70_모먼트리빌_퓨처에디토리얼/선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html` (31,282 bytes, 최신 mtime) |
+| 71_러브트리_감정경로헬릭스_인터랙티브대문_V1 | 보존 | `71_러브트리_감정경로헬릭스_인터랙티브대문_V1/V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.4.html` (24,039 bytes, 마커 선택) |
+| 72_에디토리얼모먼트아카이브_디스커버리월 | 보존 | `72_에디토리얼모먼트아카이브_디스커버리월/V4_VIDEO_FIRST_PRODUCT_INTEGRATION/V4.2_VARIABLE_RATIO_VIDEO_MASONRY_후보/★_FINAL_V4.2_VARIABLE_RATIO_VIDEO_MASONRY_72_에디토리얼모먼트아카이브.html` (48,589 bytes, 마커 선택) |
+| 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 | 보존 | `73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1/V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/index.html` (25,459 bytes, 최신 mtime) |
+| 74_오빗모프_러브트리_템플릿포털_V1 | 보존 | `74_오빗모프_러브트리_템플릿포털_V1/V2_70경로_고딕타이포_열매트리로고/index.html` (27,012 bytes, 최신 mtime) |
+
+## 폴더별 용량 요약
+
+| 폴더 | 파일 수 | 바이트 |
+|---|---|---|
+| 49_아이돌모먼트_리빌포털 | 559 | 1,235,763,136 |
+| 65_입덕단서_시네마틱에디토리얼 | 472 | 1,130,609,796 |
+| 47_시즌수채화블_통합개발 | 590 | 1,123,748,940 |
+| 70_모먼트리빌_퓨처에디토리얼 | 143 | 866,552,116 |
+| 67_메모리테이프_인터랙티브롤 | 260 | 823,602,900 |
+| 50_드림메모리_시네마틱 | 360 | 741,773,018 |
+| 48_아이돌러브트리_네온파일럿 | 334 | 684,669,025 |
+| 21_기억의문_시네마틱대문 | 176 | 682,935,877 |
+| 40_시네마틱황금열매_버전통합 | 69 | 403,310,502 |
+| 72_에디토리얼모먼트아카이브_디스커버리월 | 130 | 337,068,038 |
+| 68_인물감정경로_모션아카이브 | 78 | 287,965,614 |
+| 52_글로벌모먼트오빗_3D네트워크 | 62 | 225,956,718 |
+| 63_모먼트필드_3D뷰스튜디오 | 39 | 194,102,950 |
+| 00_신규시안_분류대기 | 62 | 188,239,480 |
+| 13_메모리아틀라스_전체우주지도 | 89 | 173,762,604 |
+| 38_보이저_우주기억지도 | 4 | 172,244,754 |
+| 62_기억조각상_원형레일전시 | 77 | 167,537,338 |
+| 22_영상기억_별자리보기 | 14 | 143,647,660 |
+| 58_리빙메모리_핀보드_시네마틱 | 60 | 130,907,539 |
+| 71_러브트리_감정경로헬릭스_인터랙티브대문_V1 | 100 | 110,724,280 |
+| 앞으로만들것 | 11 | 106,940,730 |
+| 44_손으로여는기억창_컴포저 | 98 | 104,035,544 |
+| 16_메모리토폴로지_관계망분석실 | 29 | 103,547,126 |
+| 59_메모리스케치북_페이지여정 | 50 | 100,413,339 |
+| 60_3D모먼트클러스터_심층탐색_55,56,59연결버전 | 29 | 98,307,686 |
+| 11_메모리그래프_관측소 | 76 | 88,654,299 |
+| 12_글로벌디스커버리_탐색홈 | 58 | 86,597,914 |
+| 17_리빙메모리지형 | 64 | 81,754,821 |
+| 64_부유모먼트_웰컴오빗_입장포털O | 43 | 74,650,691 |
+| 69_풀뷰포트폴리오_러브트리모션랜딩 | 40 | 73,153,681 |
+| 20_리빙메모리엔진_버전통합 | 47 | 55,286,325 |
+| 61_감정경로_연결검토실 | 99 | 54,061,408 |
+| 56_세로형_모먼트관계망_전체조망 | 22 | 53,187,694 |
+| 66_첫트리만들기_인터랙티브스크롤가이드 | 36 | 48,397,205 |
+| 26_메모리필름스튜디오 | 77 | 48,036,165 |
+| 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 | 48 | 44,351,231 |
+| 19_메모리코어_네온 | 15 | 43,982,768 |
+| 43_기억장면_레시피도구 | 53 | 41,147,698 |
+| 57_리빙글라스_모먼트카드 | 62 | 38,445,886 |
+| 15_라이브맵_실시간흐름 | 56 | 38,348,753 |
+| 39_LP커버플로우_미디어갤러리 | 5 | 37,147,355 |
+| 14_자동전개마인드맵_템플릿컴포저 | 46 | 36,848,908 |
+| 54_운영스튜디오_워크플로우 | 42 | 34,349,600 |
+| 36_시네마틱메모리포털_버전통합 | 8 | 31,373,135 |
+| 18_메모리코어_전기오로라 | 24 | 29,555,653 |
+| 41_메모리포켓 | 4 | 29,471,937 |
+| 28_리퀴드오빗_미디어갤러리 | 6 | 29,427,976 |
+| 07_오로라입자_하트 | 7 | 28,541,386 |
+| 46_팝업시즌_기억책 | 13 | 26,133,871 |
+| 55_자유연결_경로편집 | 57 | 22,734,759 |
+| 01_0730작업물 | 13 | 22,380,041 |
+| 74_오빗모프_러브트리_템플릿포털_V1 | 11 | 22,291,130 |
+| 35_LP플레이어 | 4 | 22,254,738 |
+| 45_모먼트_정밀조절도구 | 182 | 21,737,177 |
+| 42_시즌기억카드_캐러셀 | 33 | 20,421,344 |
+| 51_네온인간분석_인터랙티브홍보대문 | 8 | 19,574,411 |
+| 10_메모리펄스_로그인홈 | 49 | 17,723,801 |
+| 37_기억달력_메모리패드 | 4 | 14,147,877 |
+| 06_300모먼트_피날레 | 7 | 13,353,261 |
+| 34_사람별기억책장_3D아코디언앨범 | 5 | 13,282,929 |
+| 25_영상기억_로어맵 | 4 | 13,221,753 |
+| 27_모션기억_보기 | 5 | 13,108,411 |
+| 02_첫여정통합-3개html합본 | 24 | 12,701,792 |
+| 33_사람별기억책장_폴딩 | 3 | 12,135,808 |
+| 23_리빙영상기억그래프 | 9 | 9,194,370 |
+| 31_사람별기억책장_인터랙션 | 7 | 7,860,864 |
+| 08_무지개기억_수관 | 4 | 7,637,616 |
+| 53_모먼트노드_라이트펄스_커넥션플로우 | 20 | 7,573,827 |
+| 29_사람별기억책장_기본 | 7 | 7,175,871 |
+| 09_전체기억_요약대시보드 | 4 | 6,168,393 |
+| 30_사람별기억책장_3D | 3 | 5,594,590 |
+| 04_300플러스_자유성장그래프 | 4 | 5,473,672 |
+| 24_영상기억_워크플로우 | 5 | 5,033,083 |
+| 05_트리휴식_중단과복귀흐름 | 4 | 4,714,064 |
+| 03_자유성장그래프_시즌아카이브 | 3 | 4,360,375 |
+| 32_사람별기억책장_실제페이지모션 | 8 | 2,096,348 |
+| (root) | 1 | 3,925 |
+
+## 전체 파일 트리 (폴더 → 파일, 바이트수)
+
+### (root) — 1 files, 3,925 bytes
+
+- `00_디자인채택본_운영안내.md` — 3,925 B
+
+### 00_신규시안_분류대기 — 62 files, 188,239,480 bytes
+
+- `00_분류대기_사용방법.md` — 2,184 B
+- `00_설계팀장_인수인계/LoveTree_차기설계팀장_인수인계_2026-08-09_v1.md` — 15,754 B
+- `01_신규시안_48사용중_다음번호49.txt` — 193 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_56_PETAL_RUNNER_3D_LOVE_JOURNEY_사용설명서.txt` — 4,767 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_56_PETAL_RUNNER_V1.1_사용설명서.txt` — 4,832 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_실행영상_56_PETAL_RUNNER_3D_LOVE_JOURNEY.mp4` — 4,269,620 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_실행영상_56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE.mp4` — 2,816,303 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_참고영상_레트로미래자동차_시네마틱쇼케이스.mp4` — 8,373,878 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_현재후보_56_PETAL_RUNNER_3D_LOVE_JOURNEY.html` — 32,701 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_현재후보_56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE.html` — 8,028,855 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_현재V4_제품오너녹화_문제점비교용.mp4` — 19,699,917 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/★_V1_vs_CodexV4_vs_V1.1_first-frame_comparison.jpg` — 425,807 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/00_56_TRACK_INDEX_2026-08-10_v1.md` — 1,226 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_56_TRACK_INDEX_2026-08-11_v2.md` — 1,058 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/01_56_PETAL_RUNNER_TRUE_3D_LOVE_JOURNEY_V1_디자인팀장5기_작업지시_2026-08-10.md` — 20,463 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/02_56_MASTER_디자인팀장6기_재배정실행지시_2026-08-11.md` — 21,329 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/02_56_PETAL_RUNNER_TRUE_3D_LOVE_JOURNEY_V1_디자인팀장6기_재배정실행지시_2026-08-11.md` — 21,329 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/03_56_V1.1_VISUAL_FIDELITY_RESCUE_디자인팀장6기_수정지시_2026-08-11.docx` — -1 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/56_BENCHMARK_V4_COMPARISON.md` — 1,114 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/01_지시·분석/56_TRUE_3D_IMPLEMENTATION_NOTE.md` — 3,217 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/02_56_TRACK_INDEX_2026-08-11_v3.docx` — -1 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/02_HTML/56_PETAL_RUNNER_3D_LOVE_JOURNEY_STANDALONE.html` — 32,701 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/02_HTML/56_PETAL_RUNNER_3D_LOVE_JOURNEY.html` — 32,701 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/03_3D_ASSETS/petal_runner_procedural_webgl.js` — 21,543 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/06_mobile.png` — 315,111 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/07_recording_sheet.jpg` — 106,794 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/08_recording_final_frame.jpg` — 34,867 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_DESKTOP_QA.json` — 3,821 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_FINAL_RUNTIME_SMOKE.json` — 1,392 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_FOCUSED_INPUT_QA.json` — 288 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_KEY_STATE_SHEET.jpg` — 285,960 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_MOBILE_FINAL_QA.json` — 218 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_QA_REPORT.md` — 2,406 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/04_QA·리뷰/56_VALIDATION.json` — 3,224 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/★_56_PETAL_RUNNER_V1.1_사용설명서.txt` — 4,832 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/★_실행영상_56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE.mp4` — 2,816,303 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/★_현재후보_56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE.html` — 8,028,855 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/00_README_V1.1.md` — 678 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/01_분석·Gate/★_V1_vs_CodexV4_vs_V1.1_first-frame_comparison.jpg` — 425,807 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/01_분석·Gate/56_V1.1_VISUAL_RESCUE_DECISION.md` — 3,352 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/01_분석·Gate/V1.1_HERO_B_firstframe.png` — 1,690,818 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/02_HTML/56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE_STANDALONE.html` — 8,028,855 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/02_HTML/56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE.html` — 32,545 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/lovetree-arrival-garden-v3.png` — 2,458,998 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/orbit24_experiment_contact_sheet.jpg` — 204,034 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/petal-runner-front-v3.png` — 178,894 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/petal-runner-open-v3.png` — 261,150 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/petal-runner-rear-v3.png` — 168,905 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/petal-runner-side-v3.png` — 135,739 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/03_HYBRID_ASSETS/README.md` — 1,108 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/06_v11_mobile.png` — 324,454 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_FINAL_DESKTOP_QA.json` — 1,623 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_FINAL_MOBILE_QA.json` — 174 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_KEY_STATE_SHEET.jpg` — 595,513 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_RECORDING_SHEET_FINAL.jpg` — 238,080 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_SHA256.txt` — 385 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/56_V1.1_VISUAL_QA_REPORT.md` — 2,337 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/04_QA·리뷰/record_final_v11_verified.jpg` — 96,638 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE_PACKAGE.zip` — 39,013,739 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/06_V1.1_VISUAL_FIDELITY_RESCUE/56_V1.1_VALIDATION.json` — 1,834 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/56_PETAL_RUNNER_3D_LOVE_JOURNEY_PACKAGE.zip` — 39,924,520 B
+- `99_실패·중단시안_보관/56_LoveTree_Petal_Runner_3D_LoveJourney_V1/56_PETAL_RUNNER_V1.1_VISUAL_FIDELITY_RESCUE_PACKAGE.zip` — 39,013,739 B
+
+### 01_0730작업물 — 13 files, 22,380,041 bytes
+
+- `녹화_2026_08_14_02_23_01_96.mp4` — 21,900,443 B
+- `lovetree-community-discovery-v1.html` — 58,403 B
+- `lovetree-community-discovery-v2.html` — 40,685 B
+- `lovetree-complete-manga-refinement.html` — 27,879 B
+- `lovetree-diary-flow-v1.html` — 35,957 B
+- `lovetree-growing-tree-v2-original-concept.html` — 37,467 B
+- `lovetree-growing-tree-v3-refined.html` — 44,320 B
+- `lovetree-growing-tree-v4-story-fullscreen.html` — 43,579 B
+- `lovetree-growing-tree-v5-draggable-notes.html` — 46,164 B
+- `lovetree-growing-tree-v6-fullscreen-add.html` — 50,466 B
+- `lovetree-step2-emotion-refined.html` — 27,902 B
+- `lovetree-step3-connect-next-video.html` — 31,039 B
+- `lovetree-step4-growing-tree.html` — 35,737 B
+
+### 02_첫여정통합-3개html합본 — 24 files, 12,701,792 bytes
+
+- `02_러브트리_첫여정통합_v1.html` — 111,950 B
+- `02_러브트리_첫여정통합_v1.mp4` — 2,905,287 B
+- `02_통합전_원본3개/lovetree-complete-manga-refinement.html` — 27,879 B
+- `02_통합전_원본3개/lovetree-step2-emotion-refined.html` — 27,902 B
+- `02_통합전_원본3개/lovetree-step3-connect-next-video.html` — 31,039 B
+- `10_이미지/01_사용자캡처.jpg` — 75,770 B
+- `10_이미지/02_사용자캡처.jpg` — 37,260 B
+- `10_이미지/03_사용자캡처.jpg` — 77,265 B
+- `10_이미지/04_사용자캡처.jpg` — 112,235 B
+- `10_이미지/05_사용자캡처.jpg` — 99,832 B
+- `10_이미지/06_사용자캡처.jpg` — 105,612 B
+- `10_이미지/07_사용자캡처.jpg` — 93,537 B
+- `10_이미지/08_사용자캡처.jpg` — 93,328 B
+- `10_이미지/09_사용자캡처.jpg` — 101,345 B
+- `10_이미지/10_사용자캡처.jpg` — 87,051 B
+- `10_이미지/20_랜딩.png` — 1,286,736 B
+- `10_이미지/21_이름입력모달.png` — 555,498 B
+- `10_이미지/22_1단계.png` — 1,063,541 B
+- `10_이미지/23_2단계.png` — 1,087,688 B
+- `10_이미지/24_2단계_성공.png` — 969,135 B
+- `10_이미지/25_3단계.png` — 1,110,205 B
+- `10_이미지/26_3단계_성공.png` — 1,138,079 B
+- `10_이미지/27_모바일_3단계.png` — 683,146 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 820,472 B
+
+### 03_자유성장그래프_시즌아카이브 — 3 files, 4,360,375 bytes
+
+- `01_자유성장그래프_시즌아카이브.html` — 57,878 B
+- `03_자유성장그래프_시즌아카이브.mp4` — 4,198,098 B
+- `10_이미지/01_화면캡처.jpg` — 104,399 B
+
+### 04_300플러스_자유성장그래프 — 4 files, 5,473,672 bytes
+
+- `01_300플러스_자유성장그래프.html` — 35,607 B
+- `04_300플러스_자유성장그래프.mp4` — 5,080,239 B
+- `10_이미지/01_화면캡처.jpg` — 138,641 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 219,185 B
+
+### 05_트리휴식_중단과복귀흐름 — 4 files, 4,714,064 bytes
+
+- `01_트리휴식_간단복귀흐름_v2.html` — 29,121 B
+- `01_트리휴식_간단복귀흐름_v2.mp4` — 4,087,176 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 547,511 B
+- `90_이전HTML/01_트리휴식_문제상태_v1.html` — 50,256 B
+
+### 06_300모먼트_피날레 — 7 files, 13,353,261 bytes
+
+- `01_300모먼트_피날레.html` — 26,280 B
+- `01_300모먼트_피날레.mp4` — 12,263,085 B
+- `10_이미지/01_화면캡처.jpg` — 114,784 B
+- `10_이미지/02_화면캡처.jpg` — 96,966 B
+- `10_이미지/03_화면캡처.jpg` — 98,502 B
+- `10_이미지/04_화면캡처.jpg` — 98,767 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 654,877 B
+
+### 07_오로라입자_하트 — 7 files, 28,541,386 bytes
+
+- `01_오로라입자_하트.html` — 22,375 B
+- `07_오로라입자_하트.mp4` — 27,565,288 B
+- `10_이미지/01_화면캡처.jpg` — 126,534 B
+- `10_이미지/02_화면캡처.jpg` — 129,092 B
+- `10_이미지/03_화면캡처.jpg` — 116,801 B
+- `10_이미지/04_화면캡처.jpg` — 122,493 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 458,803 B
+
+### 08_무지개기억_수관 — 4 files, 7,637,616 bytes
+
+- `01_무지개기억_수관.html` — 19,346 B
+- `08_무지개기억_수관.mp4` — 6,781,882 B
+- `10_이미지/01_화면캡처.jpg` — 103,274 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 733,114 B
+
+### 09_전체기억_요약대시보드 — 4 files, 6,168,393 bytes
+
+- `01_전체기억_요약대시보드.html` — 25,265 B
+- `03_참고영상_전체기억요약대시보드_원본.mp4` — 3,585,208 B
+- `09_전체기억요약대시보드.mp4` — 2,162,136 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 395,784 B
+
+### 10_메모리펄스_로그인홈 — 49 files, 17,723,801 bytes
+
+- `01_메모리펄스_로그인홈.html` — 33,049 B
+- `02_녹화영상_메모리펄스_전체.mp4` — 5,142,112 B
+- `03_녹화영상_메모리펄스_데스크톱.mp4` — 781,880 B
+- `04_녹화영상_메모리펄스_모바일.mp4` — 163,155 B
+- `05_참고영상_메모리펄스_원본.mp4` — 2,362,357 B
+- `10_이미지/01_대시보드전체.png` — 480,625 B
+- `10_이미지/02_메모리활동.png` — 480,510 B
+- `10_이미지/03_막대발광_중앙.png` — 483,519 B
+- `10_이미지/04_막대발광_우측.png` — 487,224 B
+- `10_이미지/05_세계지도_기본.png` — 487,626 B
+- `10_이미지/06_세계지도_다중펄스.png` — 486,831 B
+- `10_이미지/07_트리요약.png` — 485,936 B
+- `10_이미지/08_소스별자리.png` — 488,763 B
+- `10_이미지/09_시즌리듬_기본.png` — 483,969 B
+- `10_이미지/10_시즌리듬_활성.png` — 488,933 B
+- `10_이미지/11_플랫폼필터.png` — 490,255 B
+- `10_이미지/12_기간필터.png` — 483,160 B
+- `10_이미지/13_비공개트리.png` — 259,482 B
+- `10_이미지/14_빈상태.png` — 262,554 B
+- `10_이미지/15_모바일전체.png` — 349,934 B
+- `10_이미지/16_모바일차트.png` — 182,676 B
+- `10_이미지/20_녹화영상_데스크톱_접촉시트.jpg` — 136,901 B
+- `10_이미지/21_녹화영상_모바일_접촉시트.jpg` — 96,830 B
+- `10_이미지/22_결과캡처_접촉시트.jpg` — 193,989 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 524,891 B
+- `20_비교이미지/01-01-dashboard-full-reference-vs-result.jpg` — 58,955 B
+- `20_비교이미지/02-02-memory-activity-reference-vs-result.jpg` — 56,883 B
+- `20_비교이미지/03-03-bar-glow-middle-reference-vs-result.jpg` — 57,037 B
+- `20_비교이미지/04-04-bar-glow-right-reference-vs-result.jpg` — 58,523 B
+- `20_비교이미지/05-05-world-map-default-reference-vs-result.jpg` — 57,278 B
+- `20_비교이미지/06-06-world-map-multi-pulse-reference-vs-result.jpg` — 58,809 B
+- `20_비교이미지/07-07-tree-summary-reference-vs-result.jpg` — 56,912 B
+- `20_비교이미지/08-08-source-constellation-reference-vs-result.jpg` — 57,207 B
+- `20_비교이미지/09-09-season-rhythm-default-reference-vs-result.jpg` — 58,640 B
+- `20_비교이미지/10-10-season-rhythm-active-reference-vs-result.jpg` — 56,410 B
+- `20_비교이미지/11-11-platform-filter-reference-vs-result.jpg` — 58,534 B
+- `20_비교이미지/12-12-period-filter-reference-vs-result.jpg` — 57,850 B
+- `20_비교이미지/13-13-private-tree-reference-vs-result.jpg` — 45,550 B
+- `20_비교이미지/14-14-empty-state-reference-vs-result.jpg` — 46,525 B
+- `20_비교이미지/15-15-mobile-full-reference-vs-result.jpg` — 50,939 B
+- `20_비교이미지/16-16-mobile-chart-reference-vs-result.jpg` — 56,116 B
+- `20_비교이미지/reference-contact-sheet.jpg` — 194,800 B
+- `20_비교이미지/reference-result-comparison.jpg` — 273,640 B
+- `30_문서및검증/01_실행계약_메모리펄스_v1.txt` — 33,921 B
+- `30_문서및검증/02_제출목록.md` — 2,906 B
+- `30_문서및검증/03_구현보고.md` — 3,133 B
+- `30_문서및검증/04_레퍼런스분석.md` — 2,870 B
+- `30_문서및검증/05_검증결과.json` — 2,404 B
+- `30_문서및검증/06_실행점검.json` — 798 B
+
+### 11_메모리그래프_관측소 — 76 files, 88,654,299 bytes
+
+- `01_메모리그래프_관측소_용광로코어.html` — 37,551 B
+- `02_녹화영상_메모리그래프관측소_데스크톱.mp4` — 6,002,364 B
+- `03_녹화영상_메모리그래프관측소_모바일.mp4` — 2,311,356 B
+- `04_참고영상_메모리그래프관측소_원본.mp4` — 13,915,283 B
+- `10_이미지/01_참고키프레임.jpg` — 31,502 B
+- `10_이미지/02_참고키프레임.jpg` — 29,477 B
+- `10_이미지/03_참고키프레임.jpg` — 46,018 B
+- `10_이미지/04_참고키프레임.jpg` — 44,480 B
+- `10_이미지/05_참고키프레임.jpg` — 45,225 B
+- `10_이미지/06_참고키프레임.jpg` — 45,729 B
+- `10_이미지/07_참고키프레임.jpg` — 45,605 B
+- `10_이미지/08_참고키프레임.jpg` — 46,900 B
+- `10_이미지/09_참고키프레임.jpg` — 47,708 B
+- `10_이미지/10_참고키프레임.jpg` — 47,020 B
+- `10_이미지/11_참고키프레임.jpg` — 38,324 B
+- `10_이미지/12_참고키프레임.jpg` — 38,272 B
+- `10_이미지/13_참고키프레임.jpg` — 37,904 B
+- `10_이미지/14_참고키프레임.jpg` — 32,565 B
+- `10_이미지/15_참고키프레임.jpg` — 32,769 B
+- `10_이미지/16_참고키프레임.jpg` — 30,160 B
+- `10_이미지/17_참고키프레임.jpg` — 27,796 B
+- `10_이미지/18_참고키프레임.jpg` — 28,774 B
+- `10_이미지/19_참고키프레임.jpg` — 33,727 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 489,136 B
+- `10_이미지/90_참고영상_접촉시트.jpg` — 299,154 B
+- `11_메모리그래프_관측소_용광로코어.mp4` — 54,613,108 B
+- `20_검증자료/01_화면캡처/01-full-console.png` — 468,250 B
+- `20_검증자료/01_화면캡처/02-system-header.png` — 9,781 B
+- `20_검증자료/01_화면캡처/03-process-panels.png` — 94,738 B
+- `20_검증자료/01_화면캡처/04-branch-traversal-card.png` — 467,742 B
+- `20_검증자료/01_화면캡처/05-background-recall-card.png` — 456,159 B
+- `20_검증자료/01_화면캡처/06-link-recovery-card.png` — 427,190 B
+- `20_검증자료/01_화면캡처/07-season-clustering-card.png` — 413,813 B
+- `20_검증자료/01_화면캡처/08-stage-1.png` — 468,250 B
+- `20_검증자료/01_화면캡처/09-stage-2.png` — 457,109 B
+- `20_검증자료/01_화면캡처/10-stage-3.png` — 427,535 B
+- `20_검증자료/01_화면캡처/11-stage-4.png` — 414,940 B
+- `20_검증자료/01_화면캡처/12-hemisphere-left.png` — 468,250 B
+- `20_검증자료/01_화면캡처/13-hemisphere-right.png` — 455,953 B
+- `20_검증자료/01_화면캡처/14-season-focus.png` — 428,967 B
+- `20_검증자료/01_화면캡처/15-graph-zoom.png` — 496,622 B
+- `20_검증자료/01_화면캡처/16-moment-hover.png` — 407,869 B
+- `20_검증자료/01_화면캡처/17-sparse-state.png` — 381,324 B
+- `20_검증자료/01_화면캡처/18-mobile-full.png` — 216,171 B
+- `20_검증자료/01_화면캡처/19-private-state.png` — 510,566 B
+- `20_검증자료/02_비교이미지/01-01-full-console-side-by-side.jpg` — 85,618 B
+- `20_검증자료/02_비교이미지/02-02-system-header-side-by-side.jpg` — 62,840 B
+- `20_검증자료/02_비교이미지/03-03-process-panels-side-by-side.jpg` — 90,383 B
+- `20_검증자료/02_비교이미지/04-04-branch-traversal-card-side-by-side.jpg` — 87,675 B
+- `20_검증자료/02_비교이미지/05-05-background-recall-card-side-by-side.jpg` — 89,423 B
+- `20_검증자료/02_비교이미지/06-06-link-recovery-card-side-by-side.jpg` — 86,186 B
+- `20_검증자료/02_비교이미지/07-07-season-clustering-card-side-by-side.jpg` — 85,623 B
+- `20_검증자료/02_비교이미지/08-08-stage-1-side-by-side.jpg` — 86,310 B
+- `20_검증자료/02_비교이미지/09-09-stage-2-side-by-side.jpg` — 90,052 B
+- `20_검증자료/02_비교이미지/10-10-stage-3-side-by-side.jpg` — 87,482 B
+- `20_검증자료/02_비교이미지/11-11-stage-4-side-by-side.jpg` — 85,385 B
+- `20_검증자료/02_비교이미지/12-12-hemisphere-left-side-by-side.jpg` — 86,971 B
+- `20_검증자료/02_비교이미지/13-13-hemisphere-right-side-by-side.jpg` — 90,383 B
+- `20_검증자료/02_비교이미지/14-15-graph-zoom-side-by-side.jpg` — 91,101 B
+- `20_검증자료/02_비교이미지/15-16-moment-hover-side-by-side.jpg` — 83,735 B
+- `20_검증자료/02_비교이미지/16-14-season-focus-side-by-side.jpg` — 85,830 B
+- `20_검증자료/02_비교이미지/17-17-sparse-state-side-by-side.jpg` — 77,098 B
+- `20_검증자료/02_비교이미지/18-18-mobile-full-side-by-side.jpg` — 78,778 B
+- `20_검증자료/10_녹화영상_데스크톱_접촉시트.jpg` — 69,213 B
+- `20_검증자료/11_녹화영상_모바일_접촉시트.jpg` — 89,273 B
+- `20_검증자료/12_레퍼런스대비_전체.jpg` — 679,249 B
+- `20_검증자료/13_결과캡처_접촉시트.jpg` — 327,188 B
+- `20_검증자료/20_실행점검.json` — 499 B
+- `20_검증자료/21_제출목록.md` — 892 B
+- `20_검증자료/22_검증결과.json` — 1,858 B
+- `30_문서자료/01_그래프렌더링보고.md` — 2,165 B
+- `30_문서자료/02_구현보고.md` — 1,946 B
+- `30_문서자료/03_레퍼런스분석.md` — 2,291 B
+- `30_문서자료/04_초기작업지시.txt` — 34,866 B
+- `30_문서자료/05_실행계약_메모리그래프관측소.txt` — 34,866 B
+- `30_문서자료/90_SHA256SUMS.txt` — 9,984 B
+
+### 12_글로벌디스커버리_탐색홈 — 58 files, 86,597,914 bytes
+
+- `01_글로벌디스커버리_탐색홈.html` — 4,898,093 B
+- `02_녹화영상_글로벌디스커버리_데스크톱.mp4` — 3,441,558 B
+- `03_녹화영상_글로벌디스커버리_모바일.mp4` — 876,212 B
+- `04_참고영상_글로벌디스커버리_원본.mp4` — 22,604,886 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 990,227 B
+- `12_글로벌디스커버리_탐색홈.mp4` — 30,962,198 B
+- `20_검증자료/01_참고키프레임/ref-01.jpg` — 24,447 B
+- `20_검증자료/01_참고키프레임/ref-02.jpg` — 20,915 B
+- `20_검증자료/01_참고키프레임/ref-03.jpg` — 56,143 B
+- `20_검증자료/01_참고키프레임/ref-04.jpg` — 36,810 B
+- `20_검증자료/01_참고키프레임/ref-05.jpg` — 33,799 B
+- `20_검증자료/01_참고키프레임/ref-06.jpg` — 33,696 B
+- `20_검증자료/01_참고키프레임/ref-07.jpg` — 35,230 B
+- `20_검증자료/01_참고키프레임/ref-08.jpg` — 44,733 B
+- `20_검증자료/01_참고키프레임/ref-09.jpg` — 38,185 B
+- `20_검증자료/01_참고키프레임/ref-10.jpg` — 28,902 B
+- `20_검증자료/01_참고키프레임/ref-11.jpg` — 34,235 B
+- `20_검증자료/01_참고키프레임/ref-12.jpg` — 31,916 B
+- `20_검증자료/01_참고키프레임/ref-13.jpg` — 42,899 B
+- `20_검증자료/01_참고키프레임/ref-14.jpg` — 37,940 B
+- `20_검증자료/01_참고키프레임/ref-15.jpg` — 44,459 B
+- `20_검증자료/01_참고키프레임/ref-16.jpg` — 26,842 B
+- `20_검증자료/01_참고키프레임/ref-17.jpg` — 36,118 B
+- `20_검증자료/02_검증영상/64503595b3242f58008e273dd31570c5.webm` — 524,288 B
+- `20_검증자료/03_화면캡처/00-desktop-full-page.png` — 5,982,986 B
+- `20_검증자료/03_화면캡처/00-mobile-full-page.png` — 2,364,200 B
+- `20_검증자료/03_화면캡처/01-header-hero.png` — 923,491 B
+- `20_검증자료/03_화면캡처/02-featured-lovetrees.png` — 683,589 B
+- `20_검증자료/03_화면캡처/03-curated-ways.png` — 770,354 B
+- `20_검증자료/03_화면캡처/04-how-lovetree-grows.png` — 52,113 B
+- `20_검증자료/03_화면캡처/05-member-story.png` — 761,350 B
+- `20_검증자료/03_화면캡처/06-growth-over-time.png` — 614,532 B
+- `20_검증자료/03_화면캡처/07-explore-by-feeling.png` — 492,341 B
+- `20_검증자료/03_화면캡처/07b-feeling-comfort.png` — 487,027 B
+- `20_검증자료/03_화면캡처/08-product-principles.png` — 49,538 B
+- `20_검증자료/03_화면캡처/09-feature-moment-story.png` — 800,519 B
+- `20_검증자료/03_화면캡처/10-before-after.png` — 1,212,323 B
+- `20_검증자료/03_화면캡처/10b-before-after-expanded.png` — 1,166,371 B
+- `20_검증자료/03_화면캡처/11-choose-way-in.png` — 745,097 B
+- `20_검증자료/03_화면캡처/12-real-journeys.png` — 648,246 B
+- `20_검증자료/03_화면캡처/13-editorial-statement.png` — 55,779 B
+- `20_검증자료/03_화면캡처/14-featured-course.png` — 823,238 B
+- `20_검증자료/03_화면캡처/15-journal.png` — 585,733 B
+- `20_검증자료/03_화면캡처/16-weekly-discovery.png` — 38,471 B
+- `20_검증자료/03_화면캡처/17-footer.png` — 252,766 B
+- `20_검증자료/03_화면캡처/18-first-moment-layer.png` — 308,404 B
+- `20_검증자료/03_화면캡처/19-mobile-hero.png` — 191,838 B
+- `20_검증자료/03_화면캡처/20-mobile-featured-trees.png` — 210,008 B
+- `20_검증자료/03_화면캡처/21-mobile-footer.png` — 115,141 B
+- `20_검증자료/10_녹화영상_데스크톱_접촉시트.jpg` — 43,302 B
+- `20_검증자료/11_녹화영상_모바일_접촉시트.jpg` — 38,492 B
+- `20_검증자료/12_레퍼런스대비_전체.jpg` — 739,503 B
+- `20_검증자료/13_결과캡처_접촉시트.jpg` — 497,119 B
+- `20_검증자료/20_검증결과.json` — 1,781 B
+- `30_문서자료/01_실행계약.txt` — 35,170 B
+- `30_문서자료/02_제출목록.md` — 701 B
+- `30_문서자료/03_구현보고.md` — 741 B
+- `30_문서자료/04_레퍼런스분석.md` — 919 B
+
+### 13_메모리아틀라스_전체우주지도 — 89 files, 173,762,604 bytes
+
+- `01_메모리아틀라스_v1.html` — 49,874 B
+- `02_녹화영상_메모리아틀라스_v4_데스크톱.mp4` — 1,673,680 B
+- `02_메모리아틀라스_궤도지구본_v2.html` — 49,354 B
+- `03_녹화영상_메모리아틀라스_v2_데스크톱.mp4` — 714,130 B
+- `03_메모리아틀라스_크리스털버블_v3.html` — 61,826 B
+- `04_메모리아틀라스_현재채택_진주360_v4.html` — 52,824 B
+- `04_참고영상_메모리아틀라스_원본.mp4` — 77,673,436 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 736,102 B
+- `13_메모리아틀라스_전체우주지도.mp4` — 54,587,753 B
+- `20_버전자료_v1/atlas-data-model.md` — 3,741 B
+- `20_버전자료_v1/captures/desktop-full.png` — 347,477 B
+- `20_버전자료_v1/captures/mobile-full.png` — 120,193 B
+- `20_버전자료_v1/captures/mobile-selected.png` — 139,437 B
+- `20_버전자료_v1/captures/orbital-rotation.png` — 433,043 B
+- `20_버전자료_v1/captures/selected-moment.png` — 642,846 B
+- `20_버전자료_v1/captures/selected-planet.png` — 408,352 B
+- `20_버전자료_v1/desktop-execution.mp4` — 1,673,680 B
+- `20_버전자료_v1/implementation-report.md` — 4,097 B
+- `20_버전자료_v1/lovetree-memory-universe-atlas-v1.html` — 49,874 B
+- `20_버전자료_v1/lovetree-memory-universe-atlas-v2-orbital-globe.html` — 49,354 B
+- `20_버전자료_v1/mobile-execution.mp4` — 518,962 B
+- `20_버전자료_v1/orbital-globe-rotation-demo.mp4` — 1,741,493 B
+- `20_버전자료_v1/README.txt` — 582 B
+- `20_버전자료_v1/reference-analysis.md` — 4,289 B
+- `20_버전자료_v1/reference-result-comparison.jpg` — 2,139,591 B
+- `20_버전자료_v1/validation-results.json` — 2,655 B
+- `21_버전자료_v2/captures/01-full-memory-universe.png` — 755,140 B
+- `21_버전자료_v2/captures/02-left-filters.png` — 717,707 B
+- `21_버전자료_v2/captures/03-top-search.png` — 756,034 B
+- `21_버전자료_v2/captures/04-universe-zoomed-out.png` — 593,837 B
+- `21_버전자료_v2/captures/05-person-tree-planet.png` — 731,266 B
+- `21_버전자료_v2/captures/06-season-orbit.png` — 785,319 B
+- `21_버전자료_v2/captures/07-moment-cluster.png` — 769,562 B
+- `21_버전자료_v2/captures/08-moment-pill-zoom.png` — 885,801 B
+- `21_버전자료_v2/captures/09-connection-lines.png` — 889,240 B
+- `21_버전자료_v2/captures/10-course-path.png` — 791,349 B
+- `21_버전자료_v2/captures/11-moment-selection.png` — 894,835 B
+- `21_버전자료_v2/captures/12-navigator-card.png` — 895,422 B
+- `21_버전자료_v2/captures/13-search-fly-to.png` — 820,274 B
+- `21_버전자료_v2/captures/14-tree-filter.png` — 812,229 B
+- `21_버전자료_v2/captures/15-course-filter.png` — 795,611 B
+- `21_버전자료_v2/captures/16-unconnected-moments.png` — 600,168 B
+- `21_버전자료_v2/captures/17-guided-orbit.png` — 755,741 B
+- `21_버전자료_v2/captures/18-empty-state.png` — 518,356 B
+- `21_버전자료_v2/captures/19-sparse-state.png` — 513,455 B
+- `21_버전자료_v2/captures/20-mobile-full.png` — 216,259 B
+- `21_버전자료_v2/captures/21-mobile-moment-detail.png` — 177,970 B
+- `21_버전자료_v2/captures/22-public-state.png` — 683,251 B
+- `21_버전자료_v2/implementation-report.md` — 4,430 B
+- `21_버전자료_v2/README.txt` — 985 B
+- `21_버전자료_v2/validation-results.json` — 3,111 B
+- `22_버전자료_v3/captures/desktop-full.png` — 911,564 B
+- `22_버전자료_v3/captures/mobile-full.png` — 288,256 B
+- `22_버전자료_v3/captures/mobile-selected.png` — 191,926 B
+- `22_버전자료_v3/captures/moment-selected.png` — 837,538 B
+- `22_버전자료_v3/captures/navigator-open.png` — 837,538 B
+- `22_버전자료_v3/captures/rotation-120.png` — 886,108 B
+- `22_버전자료_v3/captures/rotation-45.png` — 895,279 B
+- `22_버전자료_v3/captures/season-selected.png` — 840,977 B
+- `22_버전자료_v3/captures/tree-selected.png` — 897,229 B
+- `22_버전자료_v3/captures/zoomed.png` — 1,052,202 B
+- `22_버전자료_v3/comparison-report.md` — 1,264 B
+- `22_버전자료_v3/comparison/01-default-comparison.jpg` — 118,662 B
+- `22_버전자료_v3/comparison/02-felix-tree-comparison.jpg` — 127,232 B
+- `22_버전자료_v3/comparison/03-season-comparison.jpg` — 131,248 B
+- `22_버전자료_v3/comparison/04-moment-comparison.jpg` — 143,300 B
+- `22_버전자료_v3/comparison/05-rotation-45-comparison.jpg` — 135,018 B
+- `22_버전자료_v3/comparison/06-rotation-120-comparison.jpg` — 118,345 B
+- `22_버전자료_v3/comparison/07-zoom-comparison.jpg` — 115,192 B
+- `22_버전자료_v3/comparison/08-navigator-comparison.jpg` — 139,344 B
+- `22_버전자료_v3/comparison/09-mobile-default-comparison.jpg` — 67,585 B
+- `22_버전자료_v3/comparison/10-mobile-selected-comparison.jpg` — 75,631 B
+- `22_버전자료_v3/desktop-3d-rotate-demo.mp4` — 2,064,756 B
+- `22_버전자료_v3/implementation-report.md` — 4,667 B
+- `22_버전자료_v3/lovetree-memory-universe-atlas-v2-1-crystal-bubble.html` — 61,826 B
+- `22_버전자료_v3/mobile-rotate-selection-demo.mp4` — 422,803 B
+- `22_버전자료_v3/README.txt` — 700 B
+- `22_버전자료_v3/v1-v2-v2-1-comparison.jpg` — 445,309 B
+- `22_버전자료_v3/validation-results.json` — 3,313 B
+- `23_버전자료_v4/implementation-report-v2-2.md` — 2,851 B
+- `23_버전자료_v4/lovetree-memory-universe-atlas-v2-2-mobile-demo.mp4` — 272,466 B
+- `23_버전자료_v4/README-v2-2.txt` — 578 B
+- `23_버전자료_v4/v1-v2-2-default-comparison.png` — 374,755 B
+- `23_버전자료_v4/v1-v2-2-mobile-comparison.png` — 486,463 B
+- `23_버전자료_v4/v1-v2-2-rotation-comparison.png` — 735,723 B
+- `23_버전자료_v4/v1-v2-2-selection-comparison.png` — 784,571 B
+- `23_버전자료_v4/validation-results-v2-2.json` — 4,159 B
+- `23_버전자료_v4/visual-lock-report-v2-2.md` — 1,851 B
+- `30_문서자료/01_실행계약_메모리아틀라스_v1.txt` — 38,378 B
+
+### 14_자동전개마인드맵_템플릿컴포저 — 46 files, 36,848,908 bytes
+
+- `01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html` — 87,256 B
+- `02_녹화영상_자동전개마인드맵_현재채택_v2-4.mp4` — 20,635,660 B
+- `03_녹화영상_자동전개마인드맵_v1_데모.mp4` — 163,101 B
+- `04_참고영상_자동전개마인드맵_원본.mp4` — 2,959,685 B
+- `05_추가참고영상_컬러카드마인드맵_자동전개.mp4` — 6,048,305 B
+- `10_이미지/01_사용자캡처.jpg` — 72,436 B
+- `10_이미지/02_사용자캡처.jpg` — 75,161 B
+- `20_버전자료_v1/asset-manifest-v1.json` — 2,654 B
+- `20_버전자료_v1/captures/desktop-capture.png` — 96,752 B
+- `20_버전자료_v1/captures/mobile-capture.png` — 49,905 B
+- `20_버전자료_v1/captures/node-selection-pulse.png` — 107,821 B
+- `20_버전자료_v1/captures/template-basic.png` — 96,752 B
+- `20_버전자료_v1/captures/template-emotion.png` — 103,340 B
+- `20_버전자료_v1/captures/template-person.png` — 113,853 B
+- `20_버전자료_v1/captures/template-season.png` — 115,253 B
+- `20_버전자료_v1/captures/unfold-and-template-contact-sheet.png` — 306,670 B
+- `20_버전자료_v1/captures/unfold-complete.png` — 96,752 B
+- `20_버전자료_v1/captures/unfold-middle.png` — 84,749 B
+- `20_버전자료_v1/captures/unfold-start.png` — 56,173 B
+- `20_버전자료_v1/implementation-report-v1.md` — 2,701 B
+- `20_버전자료_v1/README-v1.txt` — 1,247 B
+- `20_버전자료_v1/reference-motion-analysis-v1.md` — 1,533 B
+- `20_버전자료_v1/validation-results-v1.json` — 3,562 B
+- `21_버전자료_v2-2_미디어구분/change-report-v2.2.md` — 1,707 B
+- `21_버전자료_v2-2_미디어구분/lovetree-auto-unfold-template-composer-v2.2-distinct-media.html` — 81,086 B
+- `21_버전자료_v2-2_미디어구분/lovetree-template-composer-v2.2-demo.mp4` — 999,297 B
+- `21_버전자료_v2-2_미디어구분/README-v2.2.txt` — 880 B
+- `21_버전자료_v2-2_미디어구분/validation-results-v2.2.json` — 852 B
+- `21_버전자료_v2-2_미디어구분/validation/basic.png` — 640,854 B
+- `21_버전자료_v2-2_미디어구분/validation/contact-sheet.jpg` — 205,217 B
+- `21_버전자료_v2-2_미디어구분/validation/emotion.png` — 651,630 B
+- `21_버전자료_v2-2_미디어구분/validation/image-applied.png` — 674,965 B
+- `21_버전자료_v2-2_미디어구분/validation/person.png` — 677,844 B
+- `21_버전자료_v2-2_미디어구분/validation/results.json` — 6,057 B
+- `21_버전자료_v2-2_미디어구분/validation/season.png` — 682,026 B
+- `21_버전자료_v2-2_미디어구분/validation/video-applied.png` — 626,580 B
+- `22_버전자료_v2-3_유튜브/lovetree-auto-unfold-template-composer-v2.3-youtube.html` — 84,760 B
+- `30_문서자료/01_디자인지시서_자동전개마인드맵_v1.txt` — 10,105 B
+- `30_문서자료/02_제품적용판정및_v2지시서.md` — 7,797 B
+- `30_문서자료/03_템플릿컴포저_v2_적용설계.md` — 3,456 B
+- `30_문서자료/05_수정보고_v2-4.md` — 1,247 B
+- `30_문서자료/06_검증결과_v2-4.json` — 491 B
+- `90_이전HTML/01_자동전개마인드맵_v1.html` — 38,962 B
+- `90_이전HTML/02_자동전개마인드맵_표시흐름수정_v1-1.html` — 41,576 B
+- `90_이전HTML/03_자동전개마인드맵_템플릿컴포저_v2.html` — 60,480 B
+- `90_이전HTML/04_자동전개마인드맵_드래그미디어수정_v2-1.html` — 69,718 B
+
+### 15_라이브맵_실시간흐름 — 56 files, 38,348,753 bytes
+
+- `01_러브트리라이브맵_현재채택_v1-2.html` — 47,624 B
+- `02_녹화영상_러브트리라이브맵_현재채택_v1-2.mp4` — 17,179,964 B
+- `03_녹화영상_러브트리라이브맵_v1_데모.mp4` — 463,942 B
+- `04_참고영상_러브트리라이브맵_원본.mp4` — 3,544,258 B
+- `20_버전자료_v1/asset-manifest-v1.json` — 3,190 B
+- `20_버전자료_v1/captures/desktop-capture.png` — 490,003 B
+- `20_버전자료_v1/captures/desktop-selected-focus.png` — 598,956 B
+- `20_버전자료_v1/captures/forming.png` — 576,259 B
+- `20_버전자료_v1/captures/initial.png` — 513,385 B
+- `20_버전자료_v1/captures/live-flow-state-contact-sheet.png` — 998,876 B
+- `20_버전자료_v1/captures/live.png` — 632,521 B
+- `20_버전자료_v1/captures/mobile-capture.png` — 283,426 B
+- `20_버전자료_v1/captures/mobile-selected.png` — 242,159 B
+- `20_버전자료_v1/captures/reduced-motion.png` — 628,373 B
+- `20_버전자료_v1/captures/selected.png` — 630,084 B
+- `20_버전자료_v1/captures/shape-circle.png` — 640,304 B
+- `20_버전자료_v1/captures/shape-heart.png` — 624,937 B
+- `20_버전자료_v1/captures/shape-square.png` — 632,212 B
+- `20_버전자료_v1/implementation-report-v1.md` — 2,493 B
+- `20_버전자료_v1/lovetree-live-flow-map-v1.html` — 43,886 B
+- `20_버전자료_v1/README-v1.txt` — 376 B
+- `20_버전자료_v1/reference-motion-analysis-v1.md` — 1,393 B
+- `20_버전자료_v1/SHA256SUMS.txt` — 1,773 B
+- `20_버전자료_v1/validation-results-v1.json` — 2,462 B
+- `21_버전자료_v1-1_필터미디어노드/captures/desktop-live-v1-1.png` — 638,929 B
+- `21_버전자료_v1-1_필터미디어노드/captures/filter-emotion-return.png` — 613,274 B
+- `21_버전자료_v1-1_필터미디어노드/captures/filter-shared-people.png` — 586,008 B
+- `21_버전자료_v1-1_필터미디어노드/captures/media-nodes-circle.png` — 651,233 B
+- `21_버전자료_v1-1_필터미디어노드/captures/media-nodes-heart.png` — 634,767 B
+- `21_버전자료_v1-1_필터미디어노드/captures/mobile-filter-staying.png` — 262,727 B
+- `21_버전자료_v1-1_필터미디어노드/captures/mobile-live-v1-1.png` — 290,814 B
+- `21_버전자료_v1-1_필터미디어노드/captures/mobile-video-modal.png` — 90,862 B
+- `21_버전자료_v1-1_필터미디어노드/captures/moment-video-modal.png` — 197,739 B
+- `21_버전자료_v1-1_필터미디어노드/captures/v1-1-interaction-review-sheet.png` — 709,536 B
+- `21_버전자료_v1-1_필터미디어노드/implementation-report-v1-1.md` — 1,632 B
+- `21_버전자료_v1-1_필터미디어노드/lovetree-live-flow-map-v1-1-assets/moment-01.mp4` — 42,322 B
+- `21_버전자료_v1-1_필터미디어노드/lovetree-live-flow-map-v1-1-assets/moment-02.mp4` — 43,345 B
+- `21_버전자료_v1-1_필터미디어노드/lovetree-live-flow-map-v1-1-assets/moment-03.mp4` — 44,039 B
+- `21_버전자료_v1-1_필터미디어노드/lovetree-live-flow-map-v1-1.html` — 56,457 B
+- `21_버전자료_v1-1_필터미디어노드/README-v1-1.txt` — 511 B
+- `21_버전자료_v1-1_필터미디어노드/SHA256SUMS.txt` — 1,712 B
+- `21_버전자료_v1-1_필터미디어노드/validation-results-v1-1.json` — 2,303 B
+- `22_현재채택_v1-2_관련자료/10_이미지/desktop-default.png` — 627,656 B
+- `22_현재채택_v1-2_관련자료/10_이미지/filter-emotion-curiosity.png` — 594,720 B
+- `22_현재채택_v1-2_관련자료/10_이미지/filter-emotion-return.png` — 621,332 B
+- `22_현재채택_v1-2_관련자료/10_이미지/filter-person-current.png` — 638,828 B
+- `22_현재채택_v1-2_관련자료/10_이미지/filter-season-01.png` — 630,663 B
+- `22_현재채택_v1-2_관련자료/10_이미지/heart-shape-preserved.png` — 628,193 B
+- `22_현재채택_v1-2_관련자료/10_이미지/mobile-default.png` — 285,901 B
+- `22_현재채택_v1-2_관련자료/10_이미지/v1-2-filter-review-sheet.png` — 593,859 B
+- `22_현재채택_v1-2_관련자료/20_에셋목록_v1-2.json` — 2,019 B
+- `22_현재채택_v1-2_관련자료/21_구현보고_v1-2.md` — 2,051 B
+- `22_현재채택_v1-2_관련자료/22_시안안내_v1-2.txt` — 169 B
+- `22_현재채택_v1-2_관련자료/23_검증결과_v1-2.json` — 4,312 B
+- `30_문서자료/01_디자인지시서_러브트리라이브맵_v1.txt` — 11,527 B
+- `90_이전HTML/01_러브트리라이브맵_v1-1.html` — 56,457 B
+
+### 16_메모리토폴로지_관계망분석실 — 29 files, 103,547,126 bytes
+
+- `01_메모리토폴로지_현재채택_관계망분석실_v1.html` — 37,920 B
+- `02_녹화영상_메모리토폴로지_전체.mp4` — 55,740,045 B
+- `03_녹화영상_메모리토폴로지_v1_데모.mp4` — 3,555,238 B
+- `04_참고영상_메모리토폴로지_원본.mp4` — 33,702,223 B
+- `20_현재채택_v1_관련자료/10_이미지/01_데모_접촉시트.png` — 655,672 B
+- `20_현재채택_v1_관련자료/10_이미지/01-desktop-live.png` — 632,152 B
+- `20_현재채택_v1_관련자료/10_이미지/02_토폴로지상태_접촉시트.png` — 854,010 B
+- `20_현재채택_v1_관련자료/10_이미지/02-initial-entry.png` — 493,641 B
+- `20_현재채택_v1_관련자료/10_이미지/03_레퍼런스구조비교.png` — 1,495,778 B
+- `20_현재채택_v1_관련자료/10_이미지/03-node-hover.png` — 628,291 B
+- `20_현재채택_v1_관련자료/10_이미지/04-node-inspect.png` — 641,146 B
+- `20_현재채택_v1_관련자료/10_이미지/05-mode-people.png` — 531,848 B
+- `20_현재채택_v1_관련자료/10_이미지/06-mode-feeling.png` — 503,001 B
+- `20_현재채택_v1_관련자료/10_이미지/07-mode-season.png` — 375,680 B
+- `20_현재채택_v1_관련자료/10_이미지/08-mode-shared.png` — 562,968 B
+- `20_현재채택_v1_관련자료/10_이미지/09-mode-bloom.png` — 452,230 B
+- `20_현재채택_v1_관련자료/10_이미지/10-zoomed-in.png` — 974,028 B
+- `20_현재채택_v1_관련자료/10_이미지/11-feeling-filter.png` — 898,977 B
+- `20_현재채택_v1_관련자료/10_이미지/12-mobile-live.png` — 212,829 B
+- `20_현재채택_v1_관련자료/10_이미지/13-mobile-modes.png` — 63,507 B
+- `20_현재채택_v1_관련자료/10_이미지/14-mobile-inspector.png` — 90,127 B
+- `20_현재채택_v1_관련자료/10_이미지/15-reduced-motion.png` — 415,450 B
+- `20_현재채택_v1_관련자료/20_에셋목록_v1.json` — 4,089 B
+- `20_현재채택_v1_관련자료/21_구현보고_v1.md` — 3,227 B
+- `20_현재채택_v1_관련자료/22_시안안내_v1.txt` — 850 B
+- `20_현재채택_v1_관련자료/23_참고모션분석_v1.md` — 3,457 B
+- `20_현재채택_v1_관련자료/24_검증결과_v1.json` — 1,777 B
+- `20_현재채택_v1_관련자료/90_SHA256SUMS.txt` — 2,385 B
+- `30_문서자료/01_디자인지시서_메모리토폴로지_v1.txt` — 14,580 B
+
+### 17_리빙메모리지형 — 64 files, 81,754,821 bytes
+
+- `01_리빙메모리지형_현재채택_가로화면안전_v1-2.html` — 1,953,464 B
+- `02_녹화영상_리빙메모리지형_현재채택_v1-2.mp4` — 34,060,382 B
+- `03_참고영상_리빙메모리지형_원본.mp4` — 3,481,707 B
+- `10_이미지/01_사용자캡처.jpg` — 133,309 B
+- `10_이미지/02_참고영상_접촉시트.jpg` — 310,127 B
+- `20_버전자료_v1_HTML게이트/47-execution-contact-sheet.png` — 604,446 B
+- `20_버전자료_v1_HTML게이트/47-runtime-state-contact-sheet.png` — 433,960 B
+- `20_버전자료_v1_HTML게이트/제품역할.txt` — 508 B
+- `20_버전자료_v1_HTML게이트/approved-design-board.png` — 1,244,141 B
+- `20_버전자료_v1_HTML게이트/assets/fallback-season.png` — 1,422,004 B
+- `20_버전자료_v1_HTML게이트/captures/01-quiet-field.png` — 1,101,414 B
+- `20_버전자료_v1_HTML게이트/captures/02-moments-gather.png` — 1,119,075 B
+- `20_버전자료_v1_HTML게이트/captures/03-connection-ripple.png` — 1,122,762 B
+- `20_버전자료_v1_HTML게이트/captures/04-return-pulse.png` — 1,128,771 B
+- `20_버전자료_v1_HTML게이트/captures/05-season-formation.png` — 1,146,138 B
+- `20_버전자료_v1_HTML게이트/captures/06-moment-inspect.png` — 1,127,452 B
+- `20_버전자료_v1_HTML게이트/captures/07-mobile-season.png` — 333,788 B
+- `20_버전자료_v1_HTML게이트/captures/08-mobile-connection.png` — 327,726 B
+- `20_버전자료_v1_HTML게이트/captures/09-reduced-motion.png` — 934,717 B
+- `20_버전자료_v1_HTML게이트/desktop-execution.mp4` — 3,022,118 B
+- `20_버전자료_v1_HTML게이트/implementation-report.md` — 2,041 B
+- `20_버전자료_v1_HTML게이트/lovetree-living-memory-terrain-v1-standalone.html` — 1,950,016 B
+- `20_버전자료_v1_HTML게이트/lovetree-living-memory-terrain-v1.html` — 50,928 B
+- `20_버전자료_v1_HTML게이트/mobile-execution.mp4` — 1,230,208 B
+- `20_버전자료_v1_HTML게이트/README-HTML-GATE.txt` — 415 B
+- `20_버전자료_v1_HTML게이트/reference-vs-result.png` — 628,915 B
+- `20_버전자료_v1_HTML게이트/runtime-validation.json` — 2,818 B
+- `20_버전자료_v1_HTML게이트/SHA256SUMS.txt` — 2,161 B
+- `20_버전자료_v1_HTML게이트/vendor/three/README.txt` — 391 B
+- `20_버전자료_v1_HTML게이트/vendor/three/three.min.js` — 3,100 B
+- `20_버전자료_v1_HTML게이트/webgl-proof.json` — 674 B
+- `21_버전자료_v1-1_반응형맞춤/47-execution-contact-sheet.png` — 604,446 B
+- `21_버전자료_v1-1_반응형맞춤/47-runtime-state-contact-sheet.png` — 433,960 B
+- `21_버전자료_v1-1_반응형맞춤/approved-design-board.png` — 1,244,141 B
+- `21_버전자료_v1-1_반응형맞춤/assets/fallback-season.png` — 1,422,004 B
+- `21_버전자료_v1-1_반응형맞춤/captures/01-quiet-field.png` — 1,101,414 B
+- `21_버전자료_v1-1_반응형맞춤/captures/02-moments-gather.png` — 1,119,075 B
+- `21_버전자료_v1-1_반응형맞춤/captures/03-connection-ripple.png` — 1,122,762 B
+- `21_버전자료_v1-1_반응형맞춤/captures/04-return-pulse.png` — 1,128,771 B
+- `21_버전자료_v1-1_반응형맞춤/captures/05-season-formation.png` — 1,146,138 B
+- `21_버전자료_v1-1_반응형맞춤/captures/06-moment-inspect.png` — 1,127,452 B
+- `21_버전자료_v1-1_반응형맞춤/captures/07-mobile-season.png` — 333,788 B
+- `21_버전자료_v1-1_반응형맞춤/captures/08-mobile-connection.png` — 327,726 B
+- `21_버전자료_v1-1_반응형맞춤/captures/09-reduced-motion.png` — 934,717 B
+- `21_버전자료_v1-1_반응형맞춤/desktop-execution.mp4` — 3,022,118 B
+- `21_버전자료_v1-1_반응형맞춤/implementation-report-v1-1-responsive-fit.md` — 1,174 B
+- `21_버전자료_v1-1_반응형맞춤/implementation-report.md` — 2,041 B
+- `21_버전자료_v1-1_반응형맞춤/lovetree-living-memory-terrain-v1-1-responsive-fit.html` — 53,284 B
+- `21_버전자료_v1-1_반응형맞춤/lovetree-living-memory-terrain-v1-1-standalone.html` — 1,952,357 B
+- `21_버전자료_v1-1_반응형맞춤/mobile-execution.mp4` — 1,230,208 B
+- `21_버전자료_v1-1_반응형맞춤/README-HTML-GATE.txt` — 415 B
+- `21_버전자료_v1-1_반응형맞춤/reference-vs-result.png` — 628,915 B
+- `21_버전자료_v1-1_반응형맞춤/runtime-validation.json` — 2,818 B
+- `21_버전자료_v1-1_반응형맞춤/SHA256SUMS.txt` — 2,399 B
+- `21_버전자료_v1-1_반응형맞춤/validation-results-v1-1-responsive-fit.json` — 1,623 B
+- `21_버전자료_v1-1_반응형맞춤/vendor/three/README.txt` — 391 B
+- `21_버전자료_v1-1_반응형맞춤/vendor/three/three.min.js` — 3,100 B
+- `21_버전자료_v1-1_반응형맞춤/webgl-proof.json` — 674 B
+- `22_현재채택_v1-2_관련자료/10_HTML게이트_v1-2_가로화면안전/implementation-report-v1-2.md` — 1,483 B
+- `22_현재채택_v1-2_관련자료/10_HTML게이트_v1-2_가로화면안전/lovetree-living-memory-terrain-v1-2-landscape-safe.html` — 1,953,464 B
+- `22_현재채택_v1-2_관련자료/10_HTML게이트_v1-2_가로화면안전/SHA256SUMS.txt` — 313 B
+- `22_현재채택_v1-2_관련자료/10_HTML게이트_v1-2_가로화면안전/validation-results-v1-2.json` — 2,611 B
+- `30_문서자료/01_디자인지시서_리빙메모리지형_v1.md` — 17,006 B
+- `90_이전HTML/01_리빙메모리지형_v1-1.html` — 1,952,357 B
+
+### 18_메모리코어_전기오로라 — 24 files, 29,555,653 bytes
+
+- `01_메모리코어_전기오로라_v1.html` — 39,569 B
+- `02_녹화영상_메모리코어전기오로라_전체.mp4` — 11,767,400 B
+- `03_녹화영상_메모리코어전기오로라_데스크톱.mp4` — 1,696,263 B
+- `04_녹화영상_메모리코어전기오로라_모바일.mp4` — 436,248 B
+- `05_참고영상_메모리코어전기오로라_원본.mp4` — 14,186,622 B
+- `10_이미지/01_사용자캡처.jpg` — 79,139 B
+- `10_이미지/02_레퍼런스대비결과.jpg` — 409,176 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 523,092 B
+- `20_딥시크_작업자료/cmp_ref_result_1_2_INGEST.mp4` — 18,951 B
+- `20_딥시크_작업자료/cmp_ref_result_10_5_REACT-BURST.mp4` — 19,597 B
+- `20_딥시크_작업자료/cmp_ref_result_11_5_REACT-DISPERS.mp4` — 18,316 B
+- `20_딥시크_작업자료/cmp_ref_result_13_5_REASSEMBLE.mp4` — 18,666 B
+- `20_딥시크_작업자료/cmp_ref_result_15_5_STABILIZE.mp4` — 25,847 B
+- `20_딥시크_작업자료/cmp_ref_result_4_MAP.mp4` — 19,892 B
+- `20_딥시크_작업자료/cmp_ref_result_6_5_CONVERGE.mp4` — 17,149 B
+- `20_딥시크_작업자료/cmp_ref_result_9_5_REACT-PRE.mp4` — 19,694 B
+- `20_딥시크_작업자료/desktop-execution.mp4` — 0 B
+- `20_딥시크_작업자료/lovetree-memory-core-reactor-v1-electric-aurora.html` — 38,038 B
+- `20_딥시크_작업자료/mobile-execution.mp4` — 176,699 B
+- `30_문서및검증/01_구현보고.md` — 2,852 B
+- `30_문서및검증/02_반응기렌더링보고.md` — 2,400 B
+- `30_문서및검증/03_레퍼런스분석.md` — 2,730 B
+- `30_문서및검증/04_검증결과.json` — 3,494 B
+- `30_문서및검증/05_초기지시프롬프트.txt` — 33,819 B
+
+### 19_메모리코어_네온 — 15 files, 43,982,768 bytes
+
+- `01_메모리코어_용광로네온_v2.html` — 53,947 B
+- `02_녹화영상_메모리코어용광로네온_전체.mp4` — 25,435,697 B
+- `03_녹화영상_메모리코어용광로네온_실행.mp4` — 1,121,841 B
+- `04_참고영상_메모리코어용광로네온_원본.mp4` — 14,186,622 B
+- `10_이미지/01_사용자캡처.jpg` — 91,547 B
+- `10_이미지/02_데스크톱전체.png` — 753,718 B
+- `10_이미지/03_관계지도강조.png` — 113,982 B
+- `10_이미지/04_기억경로활성.png` — 130,463 B
+- `10_이미지/05_코어폭발.png` — 242,754 B
+- `10_이미지/06_메모리코어준비.png` — 782,582 B
+- `10_이미지/07_모바일.png` — 336,680 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 715,615 B
+- `30_문서및검증/01_디자인수정지시서_메모리코어용광로네온_v2.txt` — 9,401 B
+- `30_문서및검증/02_업그레이드보고.md` — 3,177 B
+- `30_문서및검증/03_검증결과.json` — 4,742 B
+
+### 20_리빙메모리엔진_버전통합 — 47 files, 55,286,325 bytes
+
+- `01_리빙메모리엔진_현재채택_글로벌시각충실도_v1-1.html` — 62,426 B
+- `02_녹화영상_리빙메모리엔진_v1.mp4` — 9,702,239 B
+- `03_녹화영상_리빙메모리엔진_글로벌시각충실도_v1-1.mp4` — 12,173,659 B
+- `04_참고영상_리빙메모리엔진_원본.mp4` — 27,306,622 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 632,663 B
+- `20_패키지_v1/compare/01-intro-rose-reference.png` — 163,849 B
+- `20_패키지_v1/compare/01-intro-rose-side-by-side.jpg` — 86,058 B
+- `20_패키지_v1/compare/02-core-dark-reference.png` — 147,111 B
+- `20_패키지_v1/compare/02-core-dark-side-by-side.jpg` — 74,308 B
+- `20_패키지_v1/compare/03-core-wireframe-reference.png` — 147,649 B
+- `20_패키지_v1/compare/03-core-wireframe-side-by-side.jpg` — 72,358 B
+- `20_패키지_v1/compare/04-coral-moment-reference.png` — 154,819 B
+- `20_패키지_v1/compare/04-coral-moment-side-by-side.jpg` — 76,074 B
+- `20_패키지_v1/compare/05-shape-swarm-reference.png` — 158,810 B
+- `20_패키지_v1/compare/05-shape-swarm-side-by-side.jpg` — 80,440 B
+- `20_패키지_v1/compare/06-mint-path-reference.png` — 180,215 B
+- `20_패키지_v1/compare/06-mint-path-side-by-side.jpg` — 84,350 B
+- `20_패키지_v1/compare/07-blue-dots-reference.png` — 183,562 B
+- `20_패키지_v1/compare/07-blue-dots-side-by-side.jpg` — 84,495 B
+- `20_패키지_v1/compare/08-cyan-branch-reference.png` — 179,612 B
+- `20_패키지_v1/compare/08-cyan-branch-side-by-side.jpg` — 80,195 B
+- `20_패키지_v1/compare/09-lime-seed-reference.png` — 186,152 B
+- `20_패키지_v1/compare/09-lime-seed-side-by-side.jpg` — 83,581 B
+- `20_패키지_v1/compare/10-responsive-dots-reference.png` — 195,453 B
+- `20_패키지_v1/compare/10-responsive-dots-side-by-side.jpg` — 84,850 B
+- `20_패키지_v1/compare/11-core-exploded-reference.png` — 164,857 B
+- `20_패키지_v1/compare/11-core-exploded-side-by-side.jpg` — 82,247 B
+- `20_패키지_v1/compare/12-particle-heart-reference.png` — 165,062 B
+- `20_패키지_v1/compare/12-particle-heart-side-by-side.jpg` — 84,689 B
+- `20_패키지_v1/compare/13-start-screen-reference.png` — 159,616 B
+- `20_패키지_v1/compare/13-start-screen-side-by-side.jpg` — 85,439 B
+- `20_패키지_v1/compare/14-heart-return-reference.png` — 171,159 B
+- `20_패키지_v1/compare/14-heart-return-side-by-side.jpg` — 89,038 B
+- `20_패키지_v1/desktop-flow-contact-sheet.jpg` — 193,091 B
+- `20_패키지_v1/implementation-report.md` — 3,758 B
+- `20_패키지_v1/lovetree-living-memory-engine-v1-execution.mp4` — 1,408,643 B
+- `20_패키지_v1/mobile-flow-contact-sheet.jpg` — 197,033 B
+- `20_패키지_v1/reference-analysis.md` — 4,662 B
+- `20_패키지_v1/validation-results.json` — 1,612 B
+- `21_패키지_글로벌시각충실도_v1-1/light-dark-scene-system.md` — 1,535 B
+- `21_패키지_글로벌시각충실도_v1-1/memory-core-3d-report.md` — 2,620 B
+- `21_패키지_글로벌시각충실도_v1-1/submission-manifest.md` — 1,122 B
+- `21_패키지_글로벌시각충실도_v1-1/typography-system.md` — 1,572 B
+- `21_패키지_글로벌시각충실도_v1-1/v1-to-v1.1-change-summary.md` — 3,429 B
+- `21_패키지_글로벌시각충실도_v1-1/validation-results-v1-1.json` — 1,619 B
+- `30_문서자료/01_실행계약_리빙메모리엔진_v1.txt` — 31,922 B
+- `90_이전HTML/01_리빙메모리엔진_v1.html` — 50,050 B
+
+### 21_기억의문_시네마틱대문 — 176 files, 682,935,877 bytes
+
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/00_프로젝트안내.md` — 1,204 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/00_프로젝트안내.md` — 526 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/fonts/Bahnschrift.ttf` — 371,380 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/fonts/NotoSansKR-VF.ttf` — 10,415,532 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/images/01-living-memory-sculpture.png` — 2,174,759 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/images/02-moment-capsule.png` — 1,541,122 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/images/03-connection-ribbons.png` — 1,521,978 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/assets/images/04-seasons-chronology.png` — 2,387,020 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/docs/00_디자인방향.md` — 1,247 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/개발과정/docs/01_이미지생성프롬프트.md` — 1,468 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/13_러브트리_리빙메모리_에디토리얼대문_V1/최종본.html` — 15,191 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/00_IMAGE_DIRECTION.md` — 2,141 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/01_기존_시네마틱메모리포털과_V12_차이.md` — 1,909 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/02_개발내용_및_파일안내.md` — 1,204 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_러브트리_전용_구현프롬프트.md` — 10,312 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_ASSETS/fonts/Georgia-Italic.ttf` — 208,444 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_ASSETS/fonts/NotoSansKR-VF.ttf` — 10,415,532 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_ASSETS/images/01-memory-root-gate.png` — 2,394,879 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_ASSETS/images/02-moment-connection-field.png` — 2,225,064 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/03_ASSETS/images/03-lovetree-memory-bloom.png` — 2,438,851 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/러브트리_기억의문_시네마틱_v1.html` — 13,482 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/.gitignore` — 504 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/.openai/hosting.json` — 44 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/app/chatgpt-auth.ts` — 2,640 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/app/globals.css` — 11,770 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/app/layout.tsx` — 1,027 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/app/page.tsx` — 5,947 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/build/sites-vite-plugin.ts` — 1,299 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/db/index.ts` — 436 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/db/schema.ts` — 173 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/drizzle.config.ts` — 155 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/drizzle/meta/_journal.json` — 66 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/eslint.config.mjs` — 1,050 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/examples/d1/app/api/notes/route.ts` — 1,758 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/examples/d1/db/schema.ts` — 379 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/next-env.d.ts` — 194 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/next.config.ts` — 140 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/package-lock.json` — 357,552 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/package.json` — 1,330 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/postcss.config.mjs` — 101 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/favicon.svg` — 718 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/file.svg` — 393 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/globe.svg` — 1,037 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/images/01-memory-root-gate.png` — 2,394,879 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/images/02-moment-connection-field.png` — 2,225,064 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/images/03-lovetree-memory-bloom.png` — 2,438,851 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/og.png` — 2,496,663 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/public/window.svg` — 387 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/README.md` — 3,885 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/tests/rendered-html.test.mjs` — 3,638 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/tsconfig.json` — 632 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/vite.config.ts` — 1,756 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/개발과정/웹소스_React_Vinext/worker/index.ts` — 1,778 B
+- `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1/최종본.html` — 13,547 B
+- `1.html` — 58,849 B
+- `2.html` — 8,844,423 B
+- `3.html` — 6,683,231 B
+- `4.html` — 23,676,718 B
+- `48_디자인팀장14기_21_V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_최종정정지시_2026-08-15.md` — 21,590 B
+- `5.html` — 27,269,783 B
+- `6.html` — 30,145,054 B
+- `녹화_2026_08_14_19_42_40_22.mp4` — 6,857,816 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 07_12_51.png` — 2,381,374 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 07_16_59.png` — 2,570,404 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 07_22_06.png` — 3,155,210 B
+- `스토리/V2.4_SELF_DIRECTED_8FRAME.jpg` — 350,413 B
+- `스토리/V2.7.2_TARGET_ALIGNED_FULLBLEED_8FRAME.jpg` — 376,115 B
+- `스토리/V2.8_TUTORIAL_METHOD_REBUILD_8FRAME.jpg` — 374,604 B
+- `실패/녹화_2026_08_14_16_27_02_697.mp4` — 4,479,088 B
+- `실패/V2.4_SELF_DIRECTED_INTERNAL_PREVIEW_10s.mp4` — 2,062,178 B
+- `실패/V2.7.2_TARGET_ALIGNED_FULLBLEED_INTERNAL_PREVIEW_10s.mp4` — 1,369,172 B
+- `실패/V2.8_TUTORIAL_METHOD_REBUILD_INTERNAL_PREVIEW_10s.mp4` — 1,377,082 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/01_Reference_Shot_Map.md` — 1,973 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/02_LOCK_FAIL_REUSE_NEW.md` — 1,323 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/03_Asset_Manifest.md` — 1,766 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/04_QA_REPORT.md` — 5,876 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/현재후보.html` — 19,375 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C01_memory_root_gate.png` — 3,367,180 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C02_connection_flow_ribbons.png` — 3,411,861 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C03_ribbon_memory_orbs.png` — 2,472,034 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C04_selected_memory_orb.png` — 2,493,252 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C05_heart_infinity_lovetree.png` — 2,929,040 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C07_lovetree_world_textless.png` — 3,439,478 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/codex/C08_moment_frame_path.png` — 3,220,953 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/A_near_left.png` — 2,711,923 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/A_near_right.png` — 2,702,219 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/B_gate_left.png` — 2,729,442 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/B_gate_right.png` — 2,700,059 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/B_top_arch.png` — 2,717,907 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth_mobile/C_ground_path.png` — 2,704,594 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/A_near_left.png` — 993,483 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/A_near_right.png` — 979,188 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/B_gate_left.png` — 1,116,288 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/B_gate_right.png` — 1,262,842 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/B_top_arch.png` — 850,627 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/C_ground_path.png` — 1,262,350 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/C_threshold_light.png` — 939,107 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/D_frame_far.png` — 380,713 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/D_frame_mid.png` — 249,049 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/D_frame_near.png` — 342,381 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/assets/depth/frame_middle_asset.png` — 249,049 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/Desktop_1440x1000_실행영상.mp4` — 7,446,797 B
+- `이전버전_V2.1_HOLD_COMPARE_ONLY/Mobile_390x844_실행영상.mp4` — 2,590,500 B
+- `지시서/37_디자인팀장9기_기억의문_V2.2_TRUE_CAMERA_THRESHOLD_전면구조수정지시_2026-08-14.md` — 12,453 B
+- `지시서/38_디자인팀장9기_기억의문_V2.2_TRUE_CAMERA_WORLD_SYMBOLIC_통합전면수정지시_2026-08-14.md` — 12,453 B
+- `지시서/41_디자인팀장9기_기억의문_V2.3_QUANTUM_CAMERA_AXIS_연속공간_전면수정지시_2026-08-14.md` — 14,028 B
+- `지시서/44_디자인팀장14기_21_V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_수정지시_2026-08-15.md` — 20,668 B
+- `지시서/SELF_DIRECTED_DESIGN_NOTE.md` — 1,686 B
+- `지시서/V2.8_DESIGN_NOTE.md` — 683 B
+- `참고영상-02_시네마틱메모리포털_버전통합.mp4` — 10,796,048 B
+- `참고영상-웹디자인레퍼런스_초장시간종합리서치.mp4` — 331,437,048 B
+- `참고영상-퀀텀헬스_몽환포트폴리오.mp4` — 35,163,668 B
+- `assets/codex/S1_MOMENT_FIELD.png` — 3,220,953 B
+- `assets/codex/S2_MEMORY_GATE.png` — 3,367,180 B
+- `assets/codex/S3_CONNECTION_FLOW.png` — 3,411,861 B
+- `assets/codex/S4_MEMORY_ORB.png` — 2,493,252 B
+- `assets/codex/S6_FINAL_WORLD.png` — 3,439,478 B
+- `evidence/QUANTUM_vs_V2.3_CAMERA_8FRAME.jpg` — 300,260 B
+- `evidence/V2.2.1_FAIL_vs_V2.3_FIX_6FRAME.jpg` — 370,326 B
+- `evidence/V2.3_GATE_CHROMIUM_RENDER_PREVIEW_18s_NOT_ACCEPTANCE.mp4` — 4,271,483 B
+- `V2.4_SELF_DIRECTED_BUILD_MANIFEST.json` — 2,190 B
+- `V2.7.2_TARGET_ALIGNED_FULLBLEED_BUILD_MANIFEST.json` — 322 B
+- `V2.8_TUTORIAL_METHOD_REBUILD_BUILD_MANIFEST.json` — 599 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/01_V2.8_VISUAL_LOCK.jpg` — 484,371 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/02_REFERENCE_ROLE_KEYFRAMES.jpg` — 543,507 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/03_S2_PIXEL_LOCK_LAYER_CONTACT_SHEET.jpg` — 324,917 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/04_S2_ORIGINAL_vs_LAYERED_DIFF_QA.jpg` — 201,982 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/05_CAMERA_MOTION_SPEC.json` — 1,415 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/06_GATE_LAYER_MANIFEST.json` — 2,738 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/15_PERFORMANCE_REPORT.json` — 781 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/16_V2.8→V2.8.1_변경설명.md` — 1,236 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/17_REFERENCE_vs_V2.8.1_MOTION_CURVE_CONTACT.jpg` — 324,573 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/18_REFERENCE_vs_V2.8.1_SIDE_BY_SIDE.mp4` — 3,527,430 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/19_BROWSER_1920x1080_K0-K7_CONTACT.jpg` — 509,523 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/20_BROWSER_HANDOFF_DIFF_HEATMAP.jpg` — 358,807 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/21_HANDOFF_TIMING_FINAL.json` — 1,973 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/22_MID_FAR_LANDMARK_CONTINUITY.jpg` — 384,995 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/23_FORWARD_REVERSE_SCROLL_QA.mp4` — 2,636,338 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/24_MOBILE_390x844_K0-K7_CONTACT.jpg` — 236,833 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/25_MOBILE_TRAVERSAL_QA.mp4` — 906,282 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/26_RUNTIME_PERFORMANCE_FINAL.json` — 2,667 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/27_FULL_VIEWPORT_PORTAL_TRAVERSAL.mp4` — 4,132,105 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/28_HARDWARE_CHROME_TEST_ENV.json` — 1,472 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/29_RAF_FRAME_TIMING_DESKTOP.json` — 719 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/30_RAF_FRAME_TIMING_MOBILE.json` — 717 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/31_THRESHOLD_FRAME_TIMING.json` — 881 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/32_CHROME_PERFORMANCE_TRACE_SUMMARY.md` — 2,076 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/33_ASSET_PAYLOAD_REPORT.json` — 2,841 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/35_THREE_RUN_STABILITY.json` — 683 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/37_PERFORMANCE_CLOSURE_STATUS.json` — 1,037 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/현재후보_GATE_V2.8.1_BROWSER_MOTION_TUNED.html` — 9,905 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/현재후보_GATE_V2.8.1_CAMERA_THROUGH_GATE.html` — 9,371 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-ground.png` — 2,594,785 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-left-center.png` — 2,623,742 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-left-inner.png` — 2,647,283 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-left-near.png` — 2,606,969 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-right.png` — 2,620,228 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/gate-top.png` — 2,604,686 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/hero.webp` — 1,733,796 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/inside-far.webp` — 1,634,832 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/assets/inside-mid.webp` — 1,456,258 B
+- `V2.8.1_CAMERA_THROUGH_GATE·PIXEL_LOCK·PERFORMANCE_RESCUE_후보/qa/24B_MOBILE_430x932_K0-K7_CONTACT.jpg` — 247,251 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/01_QUANTUM_vs_TRACK21_OPENING_5STATE.jpg` — 216,822 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/02_PORTAL_FRAME_SPATIAL_RELATION_QA.jpg` — 337,173 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/03_FOREGROUND_MASK_METHOD_REFERENCE.jpg` — 223,747 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/04_MOBILE_390x844_OPENING_5STATE.jpg` — 246,435 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/05_OWNER_REVIEW_OUTSIDE_GATE_OPENING.mp4` — 4,009,176 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/현재후보.html` — 7,960 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-ground.png` — 2,594,785 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-left-center.png` — 2,623,742 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-left-inner.png` — 2,647,283 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-left-near.png` — 2,606,969 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-right.png` — 2,620,228 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/gate-top.png` — 2,604,686 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/hero.png` — 2,563,198 B
+- `V2.8.2_REFERENCE_OUTSIDE_GATE_OPENING·APERTURE_REVEAL_후보/assets/inside-world.webp` — 1,456,258 B
+
+### 22_영상기억_별자리보기 — 14 files, 143,647,660 bytes
+
+- `01_영상기억별자리_네온하트_v3-1.html` — 55,105 B
+- `02_녹화영상_영상기억별자리.mp4` — 3,868,452 B
+- `03_참고영상_네온하트별자리_원본.mp4` — 138,824,374 B
+- `10_이미지/01_화면캡처_v1.jpg` — 119,562 B
+- `10_이미지/02_화면캡처_v2_기본.jpg` — 70,701 B
+- `10_이미지/03_화면캡처_v2_선택상태.jpg` — 79,801 B
+- `10_이미지/04_화면캡처_v3_기본.jpg` — 95,696 B
+- `10_이미지/05_화면캡처_v3_선택상태.jpg` — 98,999 B
+- `10_이미지/06_화면캡처_v3_인물수정.jpg` — 92,882 B
+- `10_이미지/07_화면캡처_v3_범례이동.jpg` — 92,081 B
+- `10_이미지/90_자동생성_대표미리보기.jpg` — 98,999 B
+- `90_이전HTML/01_영상기억별자리_v1.html` — 48,911 B
+- `90_이전HTML/02_영상기억별자리_네온하트_v2.html` — 47,887 B
+- `90_이전HTML/03_영상기억별자리_고밀도북마크_v3.html` — 54,210 B
+
+### 23_리빙영상기억그래프 — 9 files, 9,194,370 bytes
+
+- `01_리빙영상기억그래프_v1.html` — 36,008 B
+- `02_녹화영상_리빙영상기억그래프.mp4` — 4,641,872 B
+- `03_참고영상_영상기억그래프_원본.mp4` — 3,678,709 B
+- `10_이미지/01_화면캡처.jpg` — 97,757 B
+- `10_이미지/02_화면캡처.jpg` — 73,267 B
+- `10_이미지/03_화면캡처.jpg` — 96,142 B
+- `10_이미지/04_화면캡처.jpg` — 84,278 B
+- `10_이미지/05_화면캡처.jpg` — 82,998 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 403,339 B
+
+### 24_영상기억_워크플로우 — 5 files, 5,033,083 bytes
+
+- `01_영상기억워크플로우_v1.html` — 36,370 B
+- `02_녹화영상_영상기억워크플로우.mp4` — 342,637 B
+- `03_참고영상_영상기억워크플로우_원본.mp4` — 3,705,164 B
+- `10_이미지/01_화면캡처_워크플로우.png` — 681,507 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 267,405 B
+
+### 25_영상기억_로어맵 — 4 files, 13,221,753 bytes
+
+- `01_영상기억로어맵_v1.html` — 47,351 B
+- `02_녹화영상_영상기억로어맵.mp4` — 5,705,429 B
+- `03_참고영상_영상기억로어맵_원본.mp4` — 6,877,958 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 591,015 B
+
+### 26_메모리필름스튜디오 — 77 files, 48,036,165 bytes
+
+- `01_녹화영상_모바일.mp4` — 240,416 B
+- `01_메모리필름스튜디오_v1.html` — 48,201 B
+- `02_녹화영상_메모리필름스튜디오.mp4` — 15,298,566 B
+- `03_참고영상_메모리필름스튜디오_원본.mp4` — 23,774,924 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 334,042 B
+- `30_검증자료/captures/01-intro-network.png` — 187,061 B
+- `30_검증자료/captures/02-a-memory-still.png` — 116,080 B
+- `30_검증자료/captures/03-start-real-moment.png` — 109,152 B
+- `30_검증자료/captures/04-automatic-command.png` — 110,464 B
+- `30_검증자료/captures/05-person-moment-structure.png` — 63,257 B
+- `30_검증자료/captures/06-full-memory-structure.png` — 93,130 B
+- `30_검증자료/captures/07-camera-front.png` — 99,659 B
+- `30_검증자료/captures/08-camera-diagonal-close.png` — 88,617 B
+- `30_검증자료/captures/09-one-moment-one-feeling.png` — 51,736 B
+- `30_검증자료/captures/10-code-feeling-graph.png` — 51,884 B
+- `30_검증자료/captures/11-view-inspect-export.png` — 185,378 B
+- `30_검증자료/captures/12-output-16-9.png` — 176,931 B
+- `30_검증자료/captures/13-output-9-16.png` — 184,853 B
+- `30_검증자료/captures/14-output-1-1.png` — 193,943 B
+- `30_검증자료/captures/15-production-system.png` — 158,487 B
+- `30_검증자료/captures/16-ending-logo.png` — 38,625 B
+- `30_검증자료/captures/17-studio-mode-full.png` — 298,191 B
+- `30_검증자료/captures/18-storyboard-rail.png` — 319,123 B
+- `30_검증자료/captures/19-camera-preset.png` — 319,148 B
+- `30_검증자료/captures/20-mobile-9-16-studio.png` — 85,892 B
+- `30_검증자료/comparison/01-reference-vs-result.jpg` — 40,116 B
+- `30_검증자료/comparison/02-reference-vs-result.jpg` — 46,328 B
+- `30_검증자료/comparison/03-reference-vs-result.jpg` — 57,238 B
+- `30_검증자료/comparison/04-reference-vs-result.jpg` — 60,880 B
+- `30_검증자료/comparison/05-reference-vs-result.jpg` — 53,213 B
+- `30_검증자료/comparison/06-reference-vs-result.jpg` — 54,929 B
+- `30_검증자료/comparison/07-reference-vs-result.jpg` — 66,056 B
+- `30_검증자료/comparison/08-reference-vs-result.jpg` — 67,384 B
+- `30_검증자료/comparison/09-reference-vs-result.jpg` — 52,568 B
+- `30_검증자료/comparison/10-reference-vs-result.jpg` — 51,750 B
+- `30_검증자료/comparison/11-reference-vs-result.jpg` — 76,910 B
+- `30_검증자료/comparison/12-reference-vs-result.jpg` — 81,025 B
+- `30_검증자료/comparison/13-reference-vs-result.jpg` — 84,379 B
+- `30_검증자료/comparison/14-reference-vs-result.jpg` — 86,248 B
+- `30_검증자료/comparison/15-reference-vs-result.jpg` — 58,160 B
+- `30_검증자료/comparison/16-reference-vs-result.jpg` — 25,673 B
+- `30_검증자료/comparison/17-reference-vs-result.jpg` — 60,384 B
+- `30_검증자료/comparison/18-reference-vs-result.jpg` — 66,667 B
+- `30_검증자료/comparison/19-reference-vs-result.jpg` — 79,359 B
+- `30_검증자료/comparison/20-reference-vs-result.jpg` — 80,271 B
+- `30_검증자료/desktop-execution-contact-sheet.jpg` — 178,347 B
+- `30_검증자료/mobile-execution-contact-sheet.jpg` — 145,974 B
+- `30_검증자료/reference-frames/01.jpg` — 81,532 B
+- `30_검증자료/reference-frames/02.jpg` — 108,364 B
+- `30_검증자료/reference-frames/03.jpg` — 105,040 B
+- `30_검증자료/reference-frames/04.jpg` — 124,851 B
+- `30_검증자료/reference-frames/05.jpg` — 127,494 B
+- `30_검증자료/reference-frames/06.jpg` — 138,472 B
+- `30_검증자료/reference-frames/07.jpg` — 142,090 B
+- `30_검증자료/reference-frames/08.jpg` — 160,325 B
+- `30_검증자료/reference-frames/09.jpg` — 139,612 B
+- `30_검증자료/reference-frames/10.jpg` — 125,546 B
+- `30_검증자료/reference-frames/11.jpg` — 207,661 B
+- `30_검증자료/reference-frames/12.jpg` — 260,470 B
+- `30_검증자료/reference-frames/13.jpg` — 277,972 B
+- `30_검증자료/reference-frames/14.jpg` — 286,089 B
+- `30_검증자료/reference-frames/15.jpg` — 111,207 B
+- `30_검증자료/reference-frames/16.jpg` — 22,193 B
+- `30_검증자료/reference-frames/17.jpg` — 111,207 B
+- `30_검증자료/reference-frames/18.jpg` — 111,207 B
+- `30_검증자료/reference-frames/19.jpg` — 160,325 B
+- `30_검증자료/reference-frames/20.jpg` — 277,972 B
+- `30_검증자료/reference-result-comparison.jpg` — 446,782 B
+- `30_검증자료/result-captures-contact-sheet.jpg` — 245,122 B
+- `30_검증자료/runtime-errors.json` — 2 B
+- `30_검증자료/validation-results.json` — 1,555 B
+- `40_문서자료/00_자료안내.md` — 342 B
+- `40_문서자료/01_필름렌더링보고.md` — 680 B
+- `40_문서자료/02_구현보고.md` — 1,408 B
+- `40_문서자료/03_레퍼런스분석.md` — 1,030 B
+- `40_문서자료/04_제출목록.md` — 22,110 B
+- `40_문서자료/05_실행계약.txt` — 35,886 B
+
+### 27_모션기억_보기 — 5 files, 13,108,411 bytes
+
+- `01_모션기억아카이브_클릭재생_v1.html` — 41,025 B
+- `06_모션기억아카이브_클릭재생_v1.mp4` — 12,267,848 B
+- `10_이미지/01_화면캡처.jpg` — 132,046 B
+- `10_이미지/02_화면캡처.jpg` — 138,121 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 529,371 B
+
+### 28_리퀴드오빗_미디어갤러리 — 6 files, 29,427,976 bytes
+
+- `01_리퀴드오빗영상갤러리_v1.html` — 219,889 B
+- `07_리퀴드오빗영상갤러리_v1.mp4` — 27,706,816 B
+- `10_이미지/01_화면캡처.jpg` — 156,019 B
+- `10_이미지/02_화면캡처.jpg` — 169,082 B
+- `10_이미지/03_화면캡처.jpg` — 146,543 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 1,029,627 B
+
+### 29_사람별기억책장_기본 — 7 files, 7,175,871 bytes
+
+- `01_사람별기억책장_기본_v1.html` — 46,992 B
+- `01_사람별기억책장_기본_v1.mp4` — 6,438,525 B
+- `10_이미지/01_사람별책장_전체목록.jpg` — 127,961 B
+- `10_이미지/02_주연책장_상세.jpg` — 109,895 B
+- `10_이미지/03_주연영상_팝업.jpg` — 46,587 B
+- `10_이미지/04_이준혁책장_상세.jpg` — 94,857 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 311,054 B
+
+### 30_사람별기억책장_3D — 3 files, 5,594,590 bytes
+
+- `01_사람별기억책장_3D_v2.html` — 56,941 B
+- `01_사람별기억책장_3D_v2.mp4` — 5,244,875 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 292,774 B
+
+### 31_사람별기억책장_인터랙션 — 7 files, 7,860,864 bytes
+
+- `01_사람별기억책장_상호작용_v2.html` — 58,905 B
+- `01_사람별기억책장_상호작용_v2.mp4` — 6,283,500 B
+- `10_이미지/01_화면캡처.jpg` — 83,240 B
+- `10_이미지/02_화면캡처.jpg` — 89,736 B
+- `10_이미지/03_화면캡처.jpg` — 95,835 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 1,248,162 B
+- `20_검증자료/01_검증결과.json` — 1,486 B
+
+### 32_사람별기억책장_실제페이지모션 — 8 files, 2,096,348 bytes
+
+- `01_사람별기억책장_실제페이지모션_v2-1.html` — 74,978 B
+- `02_녹화영상_실제페이지모션_v2-1.mp4` — 1,195,029 B
+- `10_이미지/01_책장전체.jpg` — 64,180 B
+- `10_이미지/02_책표지_50퍼센트.jpg` — 60,039 B
+- `10_이미지/03_책페이지_50퍼센트.jpg` — 77,286 B
+- `10_이미지/04_다음챕터.jpg` — 78,041 B
+- `10_이미지/05_모션검증_접촉시트.jpg` — 60,952 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 485,843 B
+
+### 33_사람별기억책장_폴딩 — 3 files, 12,135,808 bytes
+
+- `01_사람별기억책장_접이식아카이브.html` — 88,870 B
+- `05_사람별기억책장_접이식아카이브.mp4` — 11,257,924 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 789,014 B
+
+### 34_사람별기억책장_3D아코디언앨범 — 5 files, 13,282,929 bytes
+
+- `01_사람별기억책장_3D아코디언앨범.html` — 37,054 B
+- `06_사람별기억책장_3D아코디언앨범.mp4` — 12,500,516 B
+- `10_이미지/01_화면캡처.jpg` — 101,597 B
+- `10_이미지/02_화면캡처.jpg` — 111,753 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 532,009 B
+
+### 35_LP플레이어 — 4 files, 22,254,738 bytes
+
+- `01_LP플레이어_영상기억.html` — 43,297 B
+- `02_녹화영상_LP플레이어.mp4` — 17,310,897 B
+- `03_참고영상_LP플레이어_원본.mp4` — 3,943,903 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 956,641 B
+
+### 36_시네마틱메모리포털_버전통합 — 8 files, 31,373,135 bytes
+
+- `01_시네마틱메모리포털_밝은로컬진입_v3.html` — 22,561 B
+- `02_녹화영상_시네마틱메모리포털.mp4` — 3,631,366 B
+- `03_참고영상_시네마틱메모리포털_원본.mp4` — 10,796,048 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 910,786 B
+- `90_이전HTML/01_시네마틱메모리포털_v1.html` — 35,940 B
+- `90_이전HTML/02_시네마틱메모리포털_깊은진입_v2.html` — 27,057 B
+- `녹화_2026_08_14_01_52_44_865.mp4` — 10,996,271 B
+- `녹화_2026_08_14_01_53_31_891.mp4` — 4,953,106 B
+
+### 37_기억달력_메모리패드 — 4 files, 14,147,877 bytes
+
+- `01_기억달력_뜯어쓰는메모리패드.html` — 36,195 B
+- `02_녹화영상_기억달력.mp4` — 10,317,784 B
+- `03_참고영상_기억달력_원본.mp4` — 2,901,970 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 891,928 B
+
+### 38_보이저_우주기억지도 — 4 files, 172,244,754 bytes
+
+- `01_보이저_우주영상기억지도.html` — 35,935 B
+- `02_녹화영상_보이저우주기억지도.mp4` — 44,211,787 B
+- `03_참고영상_보이저우주기억지도_원본.mp4` — 126,748,624 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 1,248,408 B
+
+### 39_LP커버플로우_미디어갤러리 — 5 files, 37,147,355 bytes
+
+- `01_LP커버플로우_영상갤러리.html` — 23,965 B
+- `02_녹화영상_LP커버플로우.mp4` — 15,142,984 B
+- `03_참고영상_LP커버플로우_원본.mp4` — 20,730,600 B
+- `10_이미지/01_화면캡처.jpg` — 84,655 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 1,165,151 B
+
+### 40_시네마틱황금열매_버전통합 — 69 files, 403,310,502 bytes
+
+- `01_녹화영상_초기_v3.mp4` — 36,156,765 B
+- `01_시네마틱황금열매_국제판_v6.html` — 7,451,922 B
+- `01_시네마틱황금열매_원본에셋_v3.html` — 1,689,407 B
+- `02_녹화영상_개선_v5.mp4` — 60,006,772 B
+- `02_녹화영상_시네마틱황금열매_v6.mp4` — 78,302,072 B
+- `02_시네마틱황금열매_레퍼런스모션_v5-1.html` — 7,443,862 B
+- `02_초기황금하트_v1/00_대표미리보기.png` — 515,566 B
+- `02_초기황금하트_v1/01_초기황금하트_스크롤스토리_v1.html` — 43,910 B
+- `02_초기황금하트_v1/02_실행영상_초기황금하트_v1.mp4` — 18,829,785 B
+- `03_성장모션증명_v2/00_대표미리보기.png` — 519,949 B
+- `03_성장모션증명_v2/01_성장모션증명_v2.html` — 43,430 B
+- `03_성장모션증명_v2/02_실행영상_시네마틱사용자여정_v2.mp4` — 3,713,076 B
+- `03_참고영상_시네마틱황금열매_원본.mp4` — 82,612,558 B
+- `04_레퍼런스충실도_v3/00_대표미리보기.png` — 1,516,572 B
+- `04_레퍼런스충실도_v3/01_레퍼런스충실도_v3.html` — 3,030,255 B
+- `04_레퍼런스충실도_v3/02_실행영상_레퍼런스충실도_v3.webm` — 3,727,158 B
+- `04_레퍼런스충실도_v3/03_화면캡처_데스크톱_첫화면.png` — 1,443,742 B
+- `04_레퍼런스충실도_v3/04_화면캡처_데스크톱_과수원장면.png` — 1,671,241 B
+- `04_레퍼런스충실도_v3/05_화면캡처_데스크톱_질문장면.png` — 1,383,203 B
+- `04_레퍼런스충실도_v3/06_화면캡처_데스크톱_별자리장면.png` — 1,366,062 B
+- `04_레퍼런스충실도_v3/07_화면캡처_데스크톱_최종장면.png` — 1,516,572 B
+- `04_레퍼런스충실도_v3/08_화면캡처_모바일_첫화면.png` — 359,491 B
+- `04_레퍼런스충실도_v3/09_화면캡처_모바일_최종장면.png` — 416,167 B
+- `04_레퍼런스충실도_v3/10_검증결과.json` — 227 B
+- `05_레퍼런스모션재현_v5_버벅/00_대표미리보기.png` — 1,657,913 B
+- `05_레퍼런스모션재현_v5_버벅/01_레퍼런스모션재현_v5.html` — 7,444,724 B
+- `05_레퍼런스모션재현_v5_버벅/02_실행영상_레퍼런스모션재현_v5.mp4` — 7,397,713 B
+- `05_레퍼런스모션재현_v5_버벅/03_화면캡처_오프닝정밀보정.png` — 1,442,225 B
+- `05_레퍼런스모션재현_v5_버벅/04_화면캡처_황금열매_클로즈업.png` — 948,198 B
+- `05_레퍼런스모션재현_v5_버벅/05_화면캡처_가지접목장면.png` — 1,322,329 B
+- `05_레퍼런스모션재현_v5_버벅/06_화면캡처_가지자르기장면.png` — 1,423,019 B
+- `05_레퍼런스모션재현_v5_버벅/07_화면캡처_하늘스크롤장면.png` — 773,009 B
+- `05_레퍼런스모션재현_v5_버벅/08_화면캡처_설계도장면.png` — 1,296,317 B
+- `05_레퍼런스모션재현_v5_버벅/09_화면캡처_워크숍장면.png` — 1,762,409 B
+- `05_레퍼런스모션재현_v5_버벅/10_화면캡처_가지치기장면.png` — 1,643,205 B
+- `05_레퍼런스모션재현_v5_버벅/11_화면캡처_궤도메뉴.png` — 1,457,348 B
+- `05_레퍼런스모션재현_v5_버벅/12_화면캡처_별자리입력폼.png` — 1,308,350 B
+- `05_레퍼런스모션재현_v5_버벅/13_화면캡처_최종장면.png` — 1,657,913 B
+- `05_레퍼런스모션재현_v5_버벅/14_화면캡처_메뉴오버레이.png` — 1,351,084 B
+- `05_레퍼런스모션재현_v5_버벅/15_모션분석.md` — 3,361 B
+- `05_레퍼런스모션재현_v5_버벅/16_검증결과.json` — 525 B
+- `10_이미지/048f836a-6fdc-44c8-808b-5c151814f173.png` — 2,010,932 B
+- `10_이미지/06_질문장면.png` — 1,454,114 B
+- `10_이미지/07_별자리장면.png` — 1,390,332 B
+- `10_이미지/08_최종장면.png` — 1,653,322 B
+- `10_이미지/0cf94fd3-4f05-4540-abda-1981fd3c56f3.png` — 2,208,182 B
+- `10_이미지/3a1fedd0-7a54-4dd6-ade7-75c8548073a8.png` — 2,409,534 B
+- `10_이미지/5e7c7b49-bb7a-4e4c-93da-aec19cfb0e5b.png` — 2,241,700 B
+- `10_이미지/609bcc0a-e0b8-4f7b-a7cb-498ba8efd8aa.png` — 2,177,310 B
+- `10_이미지/6a47ba83-cae7-42ca-80bd-1cce2c4caee3.png` — 2,364,234 B
+- `10_이미지/719d373a-c087-456c-bddc-43a36eac3f9d.png` — 2,208,121 B
+- `10_이미지/7d4e7ed2-eff8-4b57-9de0-c14b8a734fcc.png` — 2,153,464 B
+- `10_이미지/88594e2b-bc50-4cf6-8df0-600c1b2391ed.png` — 2,220,887 B
+- `10_이미지/8fd790f8-df89-48d8-b982-adbb6b383a73.png` — 2,192,175 B
+- `10_이미지/94763b33-955d-4929-8fa8-ed60bbebfe79.png` — 2,292,996 B
+- `10_이미지/a10b6009-94f3-4554-9f44-5160e8e15b65.png` — 2,653,824 B
+- `10_이미지/af9c75ec-5af0-47a9-9b27-5e043449d09d.png` — 2,195,789 B
+- `10_이미지/b7c763d5-56a5-454e-a0b7-13f43e489ab4.png` — 2,335,610 B
+- `10_이미지/bea58a5f-8be5-4df0-8a6d-d7c476f9ae44.png` — 2,503,977 B
+- `10_이미지/c70da424-6b0b-4697-b4de-fd34928e149d.png` — 2,534,936 B
+- `10_이미지/d3570baa-aaaf-4b6e-87c0-f45ec2ff468f.png` — 2,141,581 B
+- `10_이미지/d4a7c1eb-0bad-459a-a95a-6f949c61a23c.png` — 1,776,405 B
+- `10_이미지/dc4d8eae-bf6b-4cd5-8b27-8c06b1c41c09.png` — 2,432,724 B
+- `10_이미지/de167842-f60a-4aef-b5ac-db1538d7652b.png` — 2,384,878 B
+- `10_이미지/de174525-d07a-48a8-b2c1-a39d350c4543.png` — 2,547,514 B
+- `10_이미지/e3ed089a-03a5-465a-a6be-b60111434bcf.png` — 1,956,931 B
+- `10_이미지/f8a35ff6-b231-4a85-982f-a3b5b6029b82.png` — 2,216,550 B
+- `30_검증자료/01_검증결과.json` — 1,060 B
+- `40_문서자료/01_모션분석.md` — 2,014 B
+
+### 41_메모리포켓 — 4 files, 29,471,937 bytes
+
+- `01_메모리포켓_상호작용.html` — 37,622 B
+- `02_녹화영상_메모리포켓.mp4` — 16,737,211 B
+- `03_참고영상_메모리포켓_원본.mp4` — 12,270,217 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 426,887 B
+
+### 42_시즌기억카드_캐러셀 — 33 files, 20,421,344 bytes
+
+- `01_녹화영상_모바일.mp4` — 207,245 B
+- `01_시즌기억카드_캐러셀.html` — 1,860,576 B
+- `02_녹화영상_시즌기억카드.mp4` — 1,414,476 B
+- `03_비교자료/01-wide-reference-vs-result.jpg` — 134,537 B
+- `03_비교자료/02-focus-reference-vs-result.jpg` — 162,675 B
+- `03_비교자료/03-page-3-reference-vs-result.jpg` — 95,634 B
+- `03_비교자료/04-page-5-reference-vs-result.jpg` — 166,242 B
+- `03_비교자료/05-page-7-reference-vs-result.jpg` — 175,559 B
+- `03_비교자료/06-page-9-reference-vs-result.jpg` — 182,221 B
+- `03_참고영상_시즌기억카드_원본.mp4` — 7,458,409 B
+- `04_참고자료/execution-video-errors.json` — 80 B
+- `04_참고자료/implementation-report.md` — 4,376 B
+- `04_참고자료/mobile-execution-video-contact-sheet.jpg` — 42,530 B
+- `04_참고자료/README.txt` — 574 B
+- `04_참고자료/reference-analysis.md` — 4,547 B
+- `04_참고자료/submission-manifest.md` — 785 B
+- `04_참고자료/validation-results.json` — 2,514 B
+- `10_이미지/01-wide-page-1.png` — 1,000,220 B
+- `10_이미지/02-focus-page-1.png` — 826,743 B
+- `10_이미지/03-page-3.png` — 783,801 B
+- `10_이미지/04-page-5.png` — 777,232 B
+- `10_이미지/05-page-7.png` — 787,832 B
+- `10_이미지/06-page-9.png` — 835,047 B
+- `10_이미지/07-pagination-compressed-page-5.png` — 777,164 B
+- `10_이미지/08-nine-to-one-mid-transition.png` — 826,723 B
+- `10_이미지/09-memory-detail-modal.png` — 646,230 B
+- `10_이미지/10-mobile-page-1.png` — 215,830 B
+- `10_이미지/11-mobile-page-5.png` — 180,724 B
+- `10_이미지/12-mobile-swipe-result.png` — 193,569 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 254,841 B
+- `10_이미지/desktop-execution-video-contact-sheet.jpg` — 211,068 B
+- `10_이미지/result-captures-contact-sheet.jpg` — 163,279 B
+- `40_문서자료/01_제작실행계약.txt` — 28,061 B
+
+### 43_기억장면_레시피도구 — 53 files, 41,147,698 bytes
+
+- `01_기억장면_레시피도구.html` — 51,828 B
+- `01_녹화영상_모바일상호작용.mp4` — 182,599 B
+- `02_녹화영상_기억장면레시피.mp4` — 1,751,705 B
+- `03_비교자료/01-single-recipe-card-reference-vs-result.jpg` — 74,833 B
+- `03_비교자료/02-copy-and-card-reference-vs-result.jpg` — 69,554 B
+- `03_비교자료/03-library-board-front-reference-vs-result.jpg` — 100,335 B
+- `03_비교자료/04-board-3d-side-reference-vs-result.jpg` — 75,158 B
+- `03_비교자료/05-dynamic-capsule-reference-vs-result.jpg` — 54,442 B
+- `03_비교자료/06-gallery-flight-reference-vs-result.jpg` — 90,340 B
+- `03_비교자료/07-memories-trace-reference-vs-result.jpg` — 63,791 B
+- `03_비교자료/08-memories-orbit-reference-vs-result.jpg` — 64,894 B
+- `03_비교자료/09-memories-cascade-reference-vs-result.jpg` — 68,990 B
+- `03_비교자료/10-memories-materialize-reference-vs-result.jpg` — 66,751 B
+- `03_비교자료/11-large-tile-stage-reference-vs-result.jpg` — 97,387 B
+- `03_비교자료/12-memorycraft-ending-reference-vs-result.jpg` — 56,900 B
+- `03_비교자료/13-mobile-card-exploration.jpg` — 78,795 B
+- `03_비교자료/14-mobile-detail-sheet.jpg` — 67,250 B
+- `03_참고영상_기억장면레시피_원본.mp4` — 28,841,597 B
+- `04_참고키프레임/01-single-recipe-card.png` — 336,300 B
+- `04_참고키프레임/02-copy-and-card.png` — 280,218 B
+- `04_참고키프레임/03-library-board-front.png` — 570,387 B
+- `04_참고키프레임/04-board-3d-side.png` — 253,245 B
+- `04_참고키프레임/05-dynamic-capsule.png` — 221,250 B
+- `04_참고키프레임/06-gallery-flight.png` — 530,526 B
+- `04_참고키프레임/07-memories-trace.png` — 273,914 B
+- `04_참고키프레임/08-memories-orbit.png` — 328,695 B
+- `04_참고키프레임/09-memories-cascade.png` — 349,676 B
+- `04_참고키프레임/10-memories-materialize.png` — 300,773 B
+- `04_참고키프레임/11-large-tile-stage.png` — 411,400 B
+- `04_참고키프레임/12-memorycraft-ending.png` — 184,039 B
+- `10_이미지/01-single-recipe-card.png` — 389,534 B
+- `10_이미지/02-copy-and-card.png` — 366,938 B
+- `10_이미지/03-library-board-front.png` — 431,466 B
+- `10_이미지/03b-library-board-selected.png` — 465,009 B
+- `10_이미지/04-board-3d-side.png` — 400,106 B
+- `10_이미지/05-dynamic-capsule.png` — 223,522 B
+- `10_이미지/06-gallery-flight.png` — 387,225 B
+- `10_이미지/07-memories-trace.png` — 253,702 B
+- `10_이미지/08-memories-orbit.png` — 254,412 B
+- `10_이미지/09-memories-cascade.png` — 262,486 B
+- `10_이미지/10-memories-materialize.png` — 243,036 B
+- `10_이미지/11-large-tile-stage.png` — 350,119 B
+- `10_이미지/12-memorycraft-ending.png` — 230,411 B
+- `10_이미지/13-mobile-card-exploration.png` — 156,115 B
+- `10_이미지/13-recipe-detail-sheet-desktop.png` — 274,590 B
+- `10_이미지/14-mobile-detail-sheet.png` — 85,148 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 430,303 B
+- `30_검증자료/01_검증결과.json` — 1,382 B
+- `40_문서자료/01_실행계약.txt` — 29,340 B
+- `40_문서자료/02_구현보고.md` — 1,684 B
+- `40_문서자료/03_레퍼런스분석.md` — 2,230 B
+- `40_문서자료/04_제출목록.md` — 3,043 B
+- `40_문서자료/05_제출목록.json` — 8,325 B
+
+### 44_손으로여는기억창_컴포저 — 98 files, 104,035,544 bytes
+
+- `01_손으로여는기억창_컴포저_v2.html` — 427,043 B
+- `02_녹화영상_기억창컴포저_v2.mp4` — 34,890,897 B
+- `03_참고영상_손프레임기억창_원본.mp4` — 24,520,000 B
+- `04_완성패키지_v2/01_구현보고.md` — 1,899 B
+- `04_완성패키지_v2/02_제출목록.md` — 1,928 B
+- `04_완성패키지_v2/03_실행영상_데스크톱.mp4` — 2,245,246 B
+- `04_완성패키지_v2/04_실행영상_모바일.mp4` — 1,081,316 B
+- `04_완성패키지_v2/05_실행영상_데스크톱.webm` — 1,534,894 B
+- `04_완성패키지_v2/06_실행영상_모바일.webm` — 1,572,864 B
+- `04_완성패키지_v2/07_실행원본_데스크톱/9121f6045c14eb0c1d71ac2380ae66dc.webm` — 1,534,894 B
+- `04_완성패키지_v2/08_실행원본_모바일/405c612749c496bdfee35493ffce32cd.webm` — 1,572,864 B
+- `04_완성패키지_v2/09_화면캡처/01-desktop-initial.png` — 1,517,467 B
+- `04_완성패키지_v2/09_화면캡처/02-strong-perspective-drag.png` — 1,412,107 B
+- `04_완성패키지_v2/09_화면캡처/03-archive-style.png` — 1,423,268 B
+- `04_완성패키지_v2/09_화면캡처/04-collage-style.png` — 1,418,582 B
+- `04_완성패키지_v2/09_화면캡처/05-season-background-moment-2.png` — 1,564,451 B
+- `04_완성패키지_v2/09_화면캡처/06-live-moment-style.png` — 1,558,790 B
+- `04_완성패키지_v2/09_화면캡처/07-flat-youtube-playback.png` — 526,971 B
+- `04_완성패키지_v2/09_화면캡처/08-return-to-perspective.png` — 1,045,191 B
+- `04_완성패키지_v2/09_화면캡처/09-preview-clean.png` — 1,542,153 B
+- `04_완성패키지_v2/09_화면캡처/10-mobile-initial.png` — 390,382 B
+- `04_완성패키지_v2/09_화면캡처/11-mobile-moment-sheet.png` — 345,208 B
+- `04_완성패키지_v2/09_화면캡처/12-mobile-corner-drag.png` — 371,204 B
+- `04_완성패키지_v2/09_화면캡처/13-mobile-glow-style.png` — 378,303 B
+- `04_완성패키지_v2/09_화면캡처/14-mobile-playback.png` — 121,739 B
+- `04_완성패키지_v2/10_접촉시트_데스크톱실행.jpg` — 93,787 B
+- `04_완성패키지_v2/11_접촉시트_모바일실행.jpg` — 90,775 B
+- `04_완성패키지_v2/12_접촉시트_결과전체.jpg` — 298,123 B
+- `04_완성패키지_v2/13_검증결과.json` — 1,799 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 1,677,143 B
+- `90_이전버전_v1/01_손으로여는기억창_v1.html` — 415,275 B
+- `90_이전버전_v1/02_실행계약.txt` — 35,084 B
+- `90_이전버전_v1/03_로컬카메라실행_Windows.bat` — 120 B
+- `90_이전버전_v1/04_로컬카메라실행_macOS_Linux.sh` — 153 B
+- `90_이전버전_v1/05_검증자료/captures/01-no-hands-default.png` — 571,353 B
+- `90_이전버전_v1/05_검증자료/captures/02-dock-full.png` — 576,557 B
+- `90_이전버전_v1/05_검증자료/captures/03-anime-wide.png` — 547,702 B
+- `90_이전버전_v1/05_검증자료/captures/04-anime-diagonal.png` — 595,316 B
+- `90_이전버전_v1/05_검증자료/captures/05-watercolor-wide-trapezoid.png` — 644,553 B
+- `90_이전버전_v1/05_검증자료/captures/06-watercolor-small.png` — 626,312 B
+- `90_이전버전_v1/05_검증자료/captures/07-cinema-narrow.png` — 667,968 B
+- `90_이전버전_v1/05_검증자료/captures/08-cinema-perspective.png` — 679,003 B
+- `90_이전버전_v1/05_검증자료/captures/09-neon.png` — 671,672 B
+- `90_이전버전_v1/05_검증자료/captures/10-block.png` — 773,743 B
+- `90_이전버전_v1/05_검증자료/captures/11-my-moment.png` — 1,055,346 B
+- `90_이전버전_v1/05_검증자료/captures/12-offscreen-partial.png` — 491,369 B
+- `90_이전버전_v1/05_검증자료/captures/13-save-effect.png` — 498,966 B
+- `90_이전버전_v1/05_검증자료/captures/14-mobile-memory-window.png` — 166,923 B
+- `90_이전버전_v1/05_검증자료/captures/15-mobile-dock.png` — 248,105 B
+- `90_이전버전_v1/05_검증자료/captures/16-camera-permission.png` — 464,378 B
+- `90_이전버전_v1/05_검증자료/compare/01-no-hands-default-side-by-side.jpg` — 102,204 B
+- `90_이전버전_v1/05_검증자료/compare/02-dock-full-side-by-side.jpg` — 115,187 B
+- `90_이전버전_v1/05_검증자료/compare/03-anime-wide-side-by-side.jpg` — 129,393 B
+- `90_이전버전_v1/05_검증자료/compare/04-anime-diagonal-side-by-side.jpg` — 134,707 B
+- `90_이전버전_v1/05_검증자료/compare/05-watercolor-wide-trapezoid-side-by-side.jpg` — 124,434 B
+- `90_이전버전_v1/05_검증자료/compare/06-watercolor-small-side-by-side.jpg` — 113,557 B
+- `90_이전버전_v1/05_검증자료/compare/07-cinema-narrow-side-by-side.jpg` — 113,943 B
+- `90_이전버전_v1/05_검증자료/compare/08-cinema-perspective-side-by-side.jpg` — 117,249 B
+- `90_이전버전_v1/05_검증자료/compare/09-neon-side-by-side.jpg` — 117,456 B
+- `90_이전버전_v1/05_검증자료/compare/10-block-side-by-side.jpg` — 147,419 B
+- `90_이전버전_v1/05_검증자료/compare/11-my-moment-side-by-side.jpg` — 158,045 B
+- `90_이전버전_v1/05_검증자료/compare/12-offscreen-partial-side-by-side.jpg` — 129,942 B
+- `90_이전버전_v1/05_검증자료/compare/13-save-effect-side-by-side.jpg` — 118,483 B
+- `90_이전버전_v1/05_검증자료/compare/14-mobile-memory-window-side-by-side.jpg` — 117,183 B
+- `90_이전버전_v1/05_검증자료/compare/15-mobile-dock-side-by-side.jpg` — 137,209 B
+- `90_이전버전_v1/05_검증자료/compare/16-camera-permission-side-by-side.jpg` — 101,356 B
+- `90_이전버전_v1/05_검증자료/desktop-execution-contact-sheet.jpg` — 82,620 B
+- `90_이전버전_v1/05_검증자료/desktop-execution.mp4` — 1,672,843 B
+- `90_이전버전_v1/05_검증자료/implementation-report.md` — 2,724 B
+- `90_이전버전_v1/05_검증자료/mobile-execution-contact-sheet.jpg` — 55,258 B
+- `90_이전버전_v1/05_검증자료/mobile-execution.mp4` — 482,140 B
+- `90_이전버전_v1/05_검증자료/README.md` — 803 B
+- `90_이전버전_v1/05_검증자료/reference-analysis.md` — 2,430 B
+- `90_이전버전_v1/05_검증자료/reference-comparison-contact-sheet.jpg` — 575,148 B
+- `90_이전버전_v1/05_검증자료/reference-frames/01-no-hands-default.jpg` — 102,253 B
+- `90_이전버전_v1/05_검증자료/reference-frames/02-dock-full.jpg` — 105,234 B
+- `90_이전버전_v1/05_검증자료/reference-frames/03-anime-wide.jpg` — 130,589 B
+- `90_이전버전_v1/05_검증자료/reference-frames/04-anime-diagonal.jpg` — 137,374 B
+- `90_이전버전_v1/05_검증자료/reference-frames/05-watercolor-wide-trapezoid.jpg` — 126,645 B
+- `90_이전버전_v1/05_검증자료/reference-frames/06-watercolor-small.jpg` — 115,976 B
+- `90_이전버전_v1/05_검증자료/reference-frames/07-cinema-narrow.jpg` — 109,003 B
+- `90_이전버전_v1/05_검증자료/reference-frames/08-cinema-perspective.jpg` — 107,807 B
+- `90_이전버전_v1/05_검증자료/reference-frames/09-neon.jpg` — 104,995 B
+- `90_이전버전_v1/05_검증자료/reference-frames/10-block.jpg` — 123,036 B
+- `90_이전버전_v1/05_검증자료/reference-frames/11-my-moment.jpg` — 103,353 B
+- `90_이전버전_v1/05_검증자료/reference-frames/12-offscreen-partial.jpg` — 122,483 B
+- `90_이전버전_v1/05_검증자료/reference-frames/13-save-effect.jpg` — 99,845 B
+- `90_이전버전_v1/05_검증자료/reference-frames/14-mobile-memory-window.jpg` — 127,324 B
+- `90_이전버전_v1/05_검증자료/reference-frames/15-mobile-dock.jpg` — 104,785 B
+- `90_이전버전_v1/05_검증자료/reference-frames/16-camera-permission.jpg` — 125,445 B
+- `90_이전버전_v1/05_검증자료/result-captures-contact-sheet.jpg` — 260,438 B
+- `90_이전버전_v1/05_검증자료/runtime-probe.json` — 849 B
+- `90_이전버전_v1/05_검증자료/submission-manifest.md` — 684 B
+- `90_이전버전_v1/05_검증자료/validation-results.json` — 1,985 B
+- `90_이전버전_v1/05_검증자료/video_mobile_raw/9db8ee175a2dc1dbf30c00ef8a5710e1.webm` — 655,102 B
+- `90_이전버전_v1/05_검증자료/video_raw/0020d1b2f98c9f38567cf95103571efc.webm` — 0 B
+- `90_이전버전_v1/05_검증자료/video_raw/fce88b24df416873f66a29e313d2f1c8.webm` — 1,492,336 B
+- `90_이전버전_v1/90_실행계약_중복본.txt` — 35,084 B
+
+### 45_모먼트_정밀조절도구 — 182 files, 21,737,177 bytes
+
+- `01_모먼트상호작용_정밀보정도구.html` — 33,940 B
+- `02_녹화영상_모먼트정밀보정도구.mp4` — 1,947,294 B
+- `03_완성패키지_v1/01_실행계약_중복보존본.txt` — 31,286 B
+- `03_완성패키지_v1/OPEN-ME-lovetree-moment-polish-lab-v1.html` — 33,940 B
+- `03_완성패키지_v1/package-manifest.json` — 448 B
+- `03_완성패키지_v1/project/implementation-report.md` — 3,067 B
+- `03_완성패키지_v1/project/lovetree-moment-polish-lab-v1.html` — 33,940 B
+- `03_완성패키지_v1/project/reference-analysis.md` — 2,705 B
+- `03_완성패키지_v1/project/reference-result-comparison.jpg` — 1,596,374 B
+- `03_완성패키지_v1/project/submission-manifest.md` — 956 B
+- `03_완성패키지_v1/project/validation/captures/01-overall-playground.png` — 201,470 B
+- `03_완성패키지_v1/project/validation/captures/02-hero.png` — 55,657 B
+- `03_완성패키지_v1/project/validation/captures/03-grid.png` — 66,522 B
+- `03_완성패키지_v1/project/validation/captures/04-memory-tags-entry.png` — 202,248 B
+- `03_완성패키지_v1/project/validation/captures/05-memory-tags-exit.png` — 199,228 B
+- `03_완성패키지_v1/project/validation/captures/06-balanced-title-default.png` — 199,777 B
+- `03_완성패키지_v1/project/validation/captures/07-balanced-title-balanced.png` — 199,529 B
+- `03_완성패키지_v1/project/validation/captures/08-transition-all.png` — 201,825 B
+- `03_완성패키지_v1/project/validation/captures/09-specific-only.png` — 200,962 B
+- `03_완성패키지_v1/project/validation/captures/10-apply-active.png` — 200,605 B
+- `03_완성패키지_v1/project/validation/captures/11-stable-time-prop.png` — 201,844 B
+- `03_완성패키지_v1/project/validation/captures/12-stable-time-tab.png` — 202,551 B
+- `03_완성패키지_v1/project/validation/captures/13-tactile-save-press.png` — 202,956 B
+- `03_완성패키지_v1/project/validation/captures/14-save-states.png` — 202,266 B
+- `03_완성패키지_v1/project/validation/captures/15-mobile-full.png` — 141,272 B
+- `03_완성패키지_v1/project/validation/captures/16-mobile-active-card.png` — 31,501 B
+- `03_완성패키지_v1/project/validation/compare/01-overall-playground-side-by-side.jpg` — 113,696 B
+- `03_완성패키지_v1/project/validation/compare/02-hero-side-by-side.jpg` — 63,507 B
+- `03_완성패키지_v1/project/validation/compare/03-grid-side-by-side.jpg` — 83,218 B
+- `03_완성패키지_v1/project/validation/compare/04-memory-tags-entry-side-by-side.jpg` — 114,204 B
+- `03_완성패키지_v1/project/validation/compare/05-memory-tags-exit-side-by-side.jpg` — 113,694 B
+- `03_완성패키지_v1/project/validation/compare/06-balanced-title-default-side-by-side.jpg` — 114,075 B
+- `03_완성패키지_v1/project/validation/compare/07-balanced-title-balanced-side-by-side.jpg` — 114,581 B
+- `03_완성패키지_v1/project/validation/compare/08-transition-all-side-by-side.jpg` — 112,975 B
+- `03_완성패키지_v1/project/validation/compare/09-specific-only-side-by-side.jpg` — 113,082 B
+- `03_완성패키지_v1/project/validation/compare/10-apply-active-side-by-side.jpg` — 113,230 B
+- `03_완성패키지_v1/project/validation/compare/11-stable-time-prop-side-by-side.jpg` — 114,335 B
+- `03_완성패키지_v1/project/validation/compare/12-stable-time-tab-side-by-side.jpg` — 114,374 B
+- `03_완성패키지_v1/project/validation/compare/13-tactile-save-press-side-by-side.jpg` — 114,815 B
+- `03_완성패키지_v1/project/validation/compare/14-save-states-side-by-side.jpg` — 114,439 B
+- `03_완성패키지_v1/project/validation/compare/15-mobile-full-side-by-side.jpg` — 83,614 B
+- `03_완성패키지_v1/project/validation/compare/16-mobile-active-card-side-by-side.jpg` — 83,820 B
+- `03_완성패키지_v1/project/validation/desktop-execution-contact-sheet.jpg` — 160,451 B
+- `03_완성패키지_v1/project/validation/desktop-execution.mp4` — 164,799 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0001.jpg` — 82,065 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0002.jpg` — 82,242 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0003.jpg` — 81,794 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0004.jpg` — 81,280 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0005.jpg` — 82,300 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0006.jpg` — 81,629 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0007.jpg` — 82,025 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0008.jpg` — 82,312 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0009.jpg` — 82,308 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0010.jpg` — 82,308 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0011.jpg` — 82,308 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0012.jpg` — 82,391 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0013.jpg` — 81,884 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0014.jpg` — 81,346 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0015.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0016.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0017.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0018.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0019.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0020.jpg` — 81,239 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0021.jpg` — 81,963 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0022.jpg` — 81,719 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0023.jpg` — 81,719 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0024.jpg` — 81,698 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0025.jpg` — 81,771 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0026.jpg` — 81,773 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0027.jpg` — 81,762 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0028.jpg` — 81,762 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0029.jpg` — 81,762 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0030.jpg` — 81,762 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0031.jpg` — 81,615 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0032.jpg` — 81,243 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0033.jpg` — 81,410 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0034.jpg` — 81,454 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0035.jpg` — 81,476 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0036.jpg` — 81,457 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0037.jpg` — 81,447 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0038.jpg` — 81,966 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0039.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0040.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0041.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0042.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0043.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0044.jpg` — 82,052 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0045.jpg` — 81,930 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0046.jpg` — 81,930 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0047.jpg` — 82,856 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0048.jpg` — 83,253 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0049.jpg` — 83,150 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0050.jpg` — 83,173 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0051.jpg` — 83,265 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0052.jpg` — 83,265 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0053.jpg` — 83,265 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0054.jpg` — 82,969 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0055.jpg` — 82,798 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0056.jpg` — 82,807 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0057.jpg` — 83,171 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0058.jpg` — 83,270 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0059.jpg` — 83,298 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0060.jpg` — 82,937 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0061.jpg` — 83,050 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0062.jpg` — 83,043 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0063.jpg` — 82,783 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0064.jpg` — 82,767 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0065.jpg` — 82,722 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0066.jpg` — 82,905 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0067.jpg` — 82,970 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0068.jpg` — 82,973 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0069.jpg` — 82,604 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0070.jpg` — 82,661 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0071.jpg` — 82,754 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0072.jpg` — 83,229 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0073.jpg` — 83,265 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0074.jpg` — 83,265 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0075.jpg` — 82,901 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0076.jpg` — 82,851 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0077.jpg` — 82,872 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0078.jpg` — 82,735 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0079.jpg` — 82,512 B
+- `03_완성패키지_v1/project/validation/desktop-frames/0080.jpg` — 82,675 B
+- `03_완성패키지_v1/project/validation/desktop-initial.png` — 202,072 B
+- `03_완성패키지_v1/project/validation/mobile-execution-contact-sheet.jpg` — 51,223 B
+- `03_완성패키지_v1/project/validation/mobile-execution.mp4` — 122,036 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0001.jpg` — 45,559 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0002.jpg` — 45,559 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0003.jpg` — 45,559 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0004.jpg` — 45,559 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0005.jpg` — 22,303 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0006.jpg` — 21,201 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0007.jpg` — 21,384 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0008.jpg` — 20,311 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0009.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0010.jpg` — 21,406 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0011.jpg` — 20,659 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0012.jpg` — 20,034 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0013.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0014.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0015.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0016.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0017.jpg` — 19,946 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0018.jpg` — 20,479 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0019.jpg` — 20,479 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0020.jpg` — 20,479 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0021.jpg` — 20,356 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0022.jpg` — 20,356 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0023.jpg` — 20,356 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0024.jpg` — 20,356 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0025.jpg` — 20,356 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0026.jpg` — 19,903 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0027.jpg` — 20,113 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0028.jpg` — 20,107 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0029.jpg` — 20,137 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0030.jpg` — 20,565 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0031.jpg` — 20,625 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0032.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0033.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0034.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0035.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0036.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0037.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0038.jpg` — 20,637 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0039.jpg` — 47,118 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0040.jpg` — 47,427 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0041.jpg` — 47,380 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0042.jpg` — 47,302 B
+- `03_완성패키지_v1/project/validation/mobile-frames/0043.jpg` — 47,201 B
+- `03_완성패키지_v1/project/validation/mobile-full-2.png` — 136,451 B
+- `03_완성패키지_v1/project/validation/mobile-full.png` — 96,559 B
+- `03_완성패키지_v1/project/validation/reference-result-comparison.jpg` — 1,596,374 B
+- `03_완성패키지_v1/project/validation/result-captures-contact-sheet.jpg` — 263,791 B
+- `03_완성패키지_v1/project/validation/validation-results.json` — 1,556 B
+- `03_완성패키지_v1/project/validation/video-temp/abba03a2fa433fd9a2ee7795788d7885.webm` — 1,310,720 B
+- `03_완성패키지_v1/README.txt` — 426 B
+- `03_완성패키지_v1/SHA256SUMS.txt` — 24,686 B
+- `03_완성패키지_v1/technical/moment-polish-check.js` — 17,459 B
+- `03_참고영상_모먼트정밀보정도구_원본.mp4` — 1,564,478 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 219,653 B
+- `40_문서자료/01_실행계약_모먼트정밀보정도구_v1.txt` — 31,286 B
+
+### 46_팝업시즌_기억책 — 13 files, 26,133,871 bytes
+
+- `01_녹화영상_데스크톱.mp4` — 1,567,266 B
+- `01_팝업시즌_기억책.html` — 55,960 B
+- `02_녹화영상_모바일.mp4` — 448,361 B
+- `02_녹화영상_팝업시즌기억책.mp4` — 7,196,639 B
+- `03_참고영상_팝업시즌기억책_원본.mp4` — 15,592,414 B
+- `10_이미지/01_화면캡처.jpg` — 59,776 B
+- `10_이미지/90_자동생성_대표미리보기.png` — 568,424 B
+- `40_문서자료/01_실행계약_팝업시즌기억책_v1.txt` — 37,341 B
+- `50_검증및제출자료/01_구현보고.md` — 5,908 B
+- `50_검증및제출자료/02_종이장면구조.md` — 6,213 B
+- `50_검증및제출자료/03_레퍼런스분석.md` — 5,275 B
+- `50_검증및제출자료/04_검증결과.json` — 5,442 B
+- `50_검증및제출자료/05_비교이미지_레퍼런스대비결과.jpg` — 584,852 B
+
+### 47_시즌수채화블_통합개발 — 590 files, 1,123,748,940 bytes
+
+- `01_v1_svg/01_시즌수채화블룸_초기_v1.html` — 28,909 B
+- `01_v1_svg/02_녹화영상_초기_v1.mp4` — 1,915,414 B
+- `01_v1_svg/10_이미지/01_수채화리본.png` — 1,175,248 B
+- `01_v1_svg/10_이미지/02_캘리그래피.png` — 1,161,313 B
+- `01_v1_svg/10_이미지/03_블룸장면.png` — 1,187,112 B
+- `01_v1_svg/10_이미지/04_시즌커버.png` — 683,475 B
+- `01_v1_svg/10_이미지/05_모바일.png` — 291,310 B
+- `01_v1_svg/10_이미지/06_레퍼런스대비.png` — 2,468,074 B
+- `01_v1_svg/10_이미지/90_자동생성_대표미리보기.png` — 683,475 B
+- `01_v1_svg/30_검증자료/01_검증결과.json` — 3,739 B
+- `01_v1_svg/40_문서자료/01_구현보고.md` — 2,051 B
+- `01_v1_svg/40_문서자료/02_레퍼런스분석.md` — 1,756 B
+- `01_v1_svg/40_문서자료/03_시안안내.txt` — 490 B
+- `01_v1_svg/40_문서자료/90_SHA256SUMS.txt` — 932 B
+- `02_v2_svg/01_시즌수채화블룸_에디토리얼리빌_v2.html` — 17,407 B
+- `02_v2_svg/02_녹화영상_에디토리얼리빌_v2.webm` — 1,445,561 B
+- `02_v2_svg/10_이미지/01_오프닝.png` — 807,824 B
+- `02_v2_svg/10_이미지/02_첫감정.png` — 806,467 B
+- `02_v2_svg/10_이미지/03_기억경로.png` — 838,659 B
+- `02_v2_svg/10_이미지/04-season-bloom.png` — 814,867 B
+- `02_v2_svg/10_이미지/05-cover-reveal.png` — 680,987 B
+- `02_v2_svg/10_이미지/06-final-cta.png` — 689,803 B
+- `02_v2_svg/10_이미지/90_자동생성_대표미리보기.png` — 680,987 B
+- `02_v2_svg/10_이미지/mobile-01-opening.png` — 248,190 B
+- `02_v2_svg/10_이미지/mobile-04-bloom.png` — 243,339 B
+- `02_v2_svg/10_이미지/mobile-06-cta.png` — 230,920 B
+- `02_v2_svg/30_검증자료/01_검증결과_v2.json` — 1,766 B
+- `02_v2_svg/40_문서자료/01_구현보고_v2.md` — 2,727 B
+- `02_v2_svg/40_문서자료/02_인물에셋출처.txt` — 536 B
+- `02_v2_svg/40_문서자료/03_시안안내_v2.txt` — 898 B
+- `03_v3_WebGL_3D게이트/01_시즌수채화블_WebGL3D게이트_v3.html` — 1,319,597 B
+- `03_v3_WebGL_3D게이트/02_녹화영상_WebGL3D게이트_v3.mp4` — 12,314,657 B
+- `03_v3_WebGL_3D게이트/40_문서자료/01_시안안내.txt` — 1,004 B
+- `03_v3_WebGL_3D게이트/40_문서자료/90_SHA256SUMS.txt` — 250 B
+- `04_현재채택본_다중각도_v3_관련자료/01_시즌수채화블_현재채택_다중각도_v3.html` — 30,549 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/01-opening.png` — 1,310,896 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/02-first-moment.png` — 1,328,617 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/03-moment-path.png` — 1,322,858 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/04-writing-start.png` — 1,314,599 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/05-writing-mid.png` — 1,318,270 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/06-writing-complete.png` — 1,319,190 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/07-orbit-000.png` — 1,355,334 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/08-orbit-090.png` — 1,383,218 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/09-orbit-180.png` — 1,341,749 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/10-orbit-270.png` — 1,341,020 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/11-orbit-360.png` — 1,365,852 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/12-lookup-bloom.png` — 1,339,129 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/13-final-poster.png` — 1,117,362 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/90_참고영상_인물궤도_접촉시트.png` — 388,960 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/91_참고영상_인물쓰기_접촉시트.png` — 62,279 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/92_참고영상_인물시선전환_접촉시트.png` — 132,882 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/mobile-bloom.png` — 368,518 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/mobile-final.png` — 400,102 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/mobile-opening.png` — 370,691 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/mobile-orbit.png` — 361,360 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/mobile-writing.png` — 380,259 B
+- `04_현재채택본_다중각도_v3_관련자료/10_이미지/reduced-motion.png` — 1,074,982 B
+- `04_현재채택본_다중각도_v3_관련자료/30_검증자료/01_검증결과_다중각도_v3.json` — 2,148 B
+- `04_현재채택본_다중각도_v3_관련자료/30_검증자료/02_실행결과.json` — 814 B
+- `04_현재채택본_다중각도_v3_관련자료/40_문서자료/01_시안안내.txt` — 593 B
+- `04_현재채택본_다중각도_v3_관련자료/40_문서자료/02_구현보고_다중각도_v3.md` — 1,748 B
+- `04_현재채택본_다중각도_v3_관련자료/40_문서자료/90_SHA256SUMS.txt` — 19,025 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/01_MASTER_KEYFRAMES/ACT01_BRUSH_ENCOUNTER_MASTER.png` — 2,080,676 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/01_MASTER_KEYFRAMES/ACT02_SPATIAL_MOMENT_MASTER.png` — 2,302,305 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/01_MASTER_KEYFRAMES/ACT03_BLOOM_TRANSFORMATION_MASTER.png` — 2,646,977 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/01_MASTER_KEYFRAMES/ACT04_WHY_NEXT_EDITORIAL_MASTER.png` — 2,292,942 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/01_MASTER_KEYFRAMES/ACT05_MACRO_RETURN_MASTER.png` — 2,289,267 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/02_QA/REFERENCE_FRAME_BIBLE.jpg` — 277,700 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/02_QA/Reference_vs_V4_5ACT_STATIC_FIDELITY_QA.jpg` — 793,023 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/02_QA/V4_5ACT_MASTER_BOARD.jpg` — 415,856 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/03_MOTION_SPEC/V4_5ACT_MOTION_SPEC.json` — 3,131 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/03_MOTION_SPEC/V4_VIDEO_GENERATION_PROMPTS.md` — 4,334 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/04_REVIEW_SHELL/V4_STATIC_MASTER_REVIEW.html` — 2,509 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/06_HAILUO_COMBINED_CLIP345_실제결과평가.md` — 1,978 B
+- `05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER/README_STATUS.md` — 886 B
+- `06_시네마틱HTML미리보기/01_시즌수채화블_시네마틱미리보기_v3.html` — 57,652 B
+- `06_시네마틱HTML미리보기/02_녹화영상_시네마틱미리보기_전체시연.mp4` — 17,997,952 B
+- `06_시네마틱HTML미리보기/10_이미지/01-opening.png` — 1,715,550 B
+- `06_시네마틱HTML미리보기/10_이미지/02-first-moment.png` — 1,777,526 B
+- `06_시네마틱HTML미리보기/10_이미지/03-moment-path.png` — 1,676,180 B
+- `06_시네마틱HTML미리보기/10_이미지/04-emotional-words.png` — 1,696,434 B
+- `06_시네마틱HTML미리보기/10_이미지/05-orbit.png` — 1,697,574 B
+- `06_시네마틱HTML미리보기/10_이미지/06-season-bloom.png` — 1,772,749 B
+- `06_시네마틱HTML미리보기/10_이미지/07-cover.png` — 1,663,517 B
+- `06_시네마틱HTML미리보기/10_이미지/08-final-poster.png` — 1,541,837 B
+- `06_시네마틱HTML미리보기/20_추가녹화/01_녹화영상_데스크톱.mp4` — 6,470,190 B
+- `06_시네마틱HTML미리보기/20_추가녹화/02_녹화영상_모바일.mp4` — 3,215,425 B
+- `06_시네마틱HTML미리보기/30_검증자료/01_검증결과_시네마틱미리보기_v3.json` — 11,730 B
+- `06_시네마틱HTML미리보기/40_문서자료/01_시안안내.txt` — 737 B
+- `06_시네마틱HTML미리보기/40_문서자료/02_구현보고_시네마틱미리보기_v3.md` — 7,354 B
+- `06_시네마틱HTML미리보기/40_문서자료/90_SHA256SUMS.txt` — 4,903 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/bloom-field.png` — 935,969 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/flower-cluster-01.png` — 365,982 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/flower-cluster-02.png` — 454,229 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/flower-cluster-03.png` — 404,975 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/moment-01.png` — 358,558 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/moment-02.png` — 411,143 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/moment-03.png` — 457,180 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/paper-grain.jpg` — 42,891 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/paper-piece-01.png` — 823,564 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/paper-piece-02.png` — 603,667 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/paper-piece-03.png` — 493,099 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/petal-01.png` — 30,865 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/petal-02.png` — 29,645 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/petal-03.png` — 31,019 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/petal-04.png` — 32,149 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/petal-05.png` — 29,444 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/wash-blue.png` — 234,542 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/wash-gold.png` — 227,771 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/wash-rose.png` — 264,076 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/wash-teal.png` — 191,501 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/wax-seal.png` — 8,057 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/woman-cover.png` — 1,050,010 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/woman-hands.png` — 1,110,046 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/woman-hero.png` — 1,335,880 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/woman-profile.png` — 1,152,864 B
+- `06_시네마틱HTML미리보기/50_실행에셋_시네마틱미리보기_v3/woman-rear-approved.png` — 153,111 B
+- `07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보/43_디자인팀장13기_47_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_신규작업지시_2026-08-14.md` — 18,763 B
+- `07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보/44_디자인팀장13기_47_V4.2_v2.1_CLEAN_편집·QA보고_2026-08-15.md` — 2,584 B
+- `07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보/Track47_V4_WATERMARK_FREE_Cinematic_DirectorCut_v2_1920x1080.mp4` — 24,061,081 B
+- `07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4` — 28,650,099 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/00_V4_디자인결정·금지사항·실패계보_인수인계.md` — 2,116 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/01_V4_5ACT_아트디렉션·HTML통합설계.md` — 1,891 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/02_V4_Hailuo_StartEnd_영상생성_실행가이드.md` — 6,208 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/03_V4_현재진행상태·다음팀장_체크리스트.md` — 1,375 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/04_HAILUO_CLIP1_실제결과평가.md` — 1,276 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/ACT01_BRUSH_ENCOUNTER_MASTER.png` — 2,080,676 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/ACT02_SPATIAL_MOMENT_MASTER.png` — 2,302,305 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/ACT03_BLOOM_TRANSFORMATION_MASTER.png` — 2,646,977 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/ACT04_WHY_NEXT_EDITORIAL_MASTER.png` — 2,292,942 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/ACT05_MACRO_RETURN_MASTER.png` — 2,289,267 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/README_STATUS.md` — 886 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/REFERENCE_FRAME_BIBLE.jpg` — 277,700 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/Reference_vs_V4_5ACT_STATIC_FIDELITY_QA.jpg` — 793,023 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/V4_5ACT_MASTER_BOARD.jpg` — 415,856 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/V4_5ACT_MOTION_SPEC.json` — 3,131 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/V4_STATIC_MASTER_REVIEW.html` — 2,509 B
+- `08_버전4_REFERENCE_CINEMATIC_RESCUE_후보/V4_VIDEO_GENERATION_PROMPTS.md` — 4,334 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/00_V2_vs_V2.1_CROP_IMPACT_5FRAME.jpg` — 640,156 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/01_VIDEO_TIMELINE_MAPPING.md` — 2,659 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/02_TYPOGRAPHY_TOKEN.md` — 1,449 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/03_DESKTOP_1920x1080_5ACT_CONTACT.jpg` — 260,042 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/04_DESKTOP_1440x900_5ACT_CONTACT.jpg` — 253,973 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/05_MOBILE_390x844_5ACT_CONTACT.jpg` — 252,577 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/06_AUTO_CINEMATIC_QA.mp4` — 11,410,898 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/07_AUTO_TO_USER_CONTROL_QA.mp4` — 3,559,564 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/08_REVERSE_SCROLL_QA.mp4` — 1,820,872 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/09_REPLAY_QA.mp4` — 3,729,111 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/10_REDUCED_MOTION_QA.mp4` — 703,833 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/11_VIDEO_FAILURE_FALLBACK_QA.jpg` — 155,373 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/12_FINAL_CINEMATIC_FULL_VIEWPORT.mp4` — 16,378,026 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/46_디자인팀장13기_47_V4.2.3_실제로컬Route직접연결·Placeholder제거_후속수정지시_2026-08-15.md` — 13,593 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/검증결과.json` — 3,301 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/현재후보.html` — 30,829 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/assets/poster-act01.jpg` — 187,679 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4` — 28,650,099 B
+- `09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보/V4.2.1→V4.2.2_변경설명.md` — 1,365 B
+- `1-lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html` — 7,763,478 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/01_ROUTE_MAP.json` — 3,697 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/02_FIRST_MOMENT_ROUTE_QA.mp4` — 672,832 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/03_MOMENTS_TRACK59_ROUTE_QA.mp4` — 1,223,630 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/04_CONNECTIONS_TRACK55_ROUTE_QA.mp4` — 611,613 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/05_MYTREE_TRACK56_ROUTE_QA.mp4` — 541,091 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/06_FINAL_CTA_ROUTE_QA.mp4` — 389,509 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/07_BACK_RETURN_STATE_QA.mp4` — 655,284 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/08_ROUTE_SOURCE_AUDIT.md` — 3,900 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/검증결과.json` — 2,864 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/현재후보.html` — 35,297 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/assets/poster-act01.jpg` — 187,679 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4` — 28,650,099 B
+- `10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보/V4.2.2→V4.2.3_변경설명.md` — 1,964 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/01_OWNER_SELECTED_ROUTE_MAP.json` — 2,130 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/02_ROUTE_SOURCE_AUDIT.md` — 1,869 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/검증결과.json` — 658 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/현재후보.html` — 38,986 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/assets/poster-act01.jpg` — 187,679 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4` — 28,650,099 B
+- `11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보/V4.2.3→V4.2.4_변경설명.md` — 818 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/01_OWNER_SELECTED_ROUTE_MAP.json` — 2,130 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/02_ROUTE_SOURCE_AUDIT.md` — 1,869 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/03_PINNED_MENU_INTERACTION_QA.md` — 874 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/검증결과.json` — 1,390 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/현재후보.html` — 40,890 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/assets/poster-act01.jpg` — 187,679 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4` — 28,650,099 B
+- `12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/V4.2.4→V4.2.5_변경설명.md` — 1,054 B
+- `2-lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html` — 4,582,531 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_46_14 (1).png` — 1,937,089 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_46_16 (2).png` — 2,402,441 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_46_16 (3).png` — 2,248,940 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_46_17 (4).png` — 2,519,571 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_46_17 (5).png` — 2,128,660 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_49_51 (1).png` — 2,196,275 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_49_53 (2).png` — 2,449,374 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_49_53 (3).png` — 2,631,842 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_49_53 (4).png` — 2,261,022 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_52_51.png` — 2,012,701 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 05_57_23.png` — 2,221,671 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 06_03_20 (1).png` — 2,080,676 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 06_03_21 (2).png` — 2,302,305 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 06_03_21 (3).png` — 2,646,977 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 06_03_21 (4).png` — 2,292,942 B
+- `고화질/ChatGPT Image 2026년 8월 14일 오후 06_03_22 (5).png` — 2,289,267 B
+- `녹화_2026_08_14_18_16_55_739.mp4` — 6,973,665 B
+- `문서자료/01_초기제작지시서_시즌수채화블룸_v1.txt` — 24,618 B
+- `문서자료/02_재설계지시서_시즌수채화블룸_v2.txt` — 9,930 B
+- `실행영상1-시네마틱애니매틱_v1.mp4` — 2,800,642 B
+- `실행영상2-시네마틱애니매틱_v2.mp4` — 1,509,208 B
+- `실행영상3.mp4` — 50,353,976 B
+- `실행영상4.mp4` — 24,473,528 B
+- `실행영상5-모바일.mp4` — 239,718 B
+- `영상/하이루오1.mp4` — 2,537,820 B
+- `영상/하이루오2.mp4` — 2,746,492 B
+- `영상/하이루오3.mp4` — 2,469,168 B
+- `영상/합본-워터마크x.mp4` — 105,701,205 B
+- `영상/합본-원터마크o.mp4` — 12,426,888 B
+- `이미지/01_시즌통계_24모먼트23연결.png` — 2,912,423 B
+- `이미지/02_MIRA시즌커버_인물우측.png` — 2,929,558 B
+- `이미지/03_MIRA시즌커버_프로필전신.png` — 3,134,196 B
+- `이미지/04_기억꽃잎_앉은인물.png` — 2,813,785 B
+- `이미지/05_첫감정이계절로개화.png` — 3,123,547 B
+- `이미지/06_MIRA시즌커버_인물중앙.png` — 3,052,721 B
+- `이미지/07_모든기억이경로로성장.png` — 2,901,881 B
+- `이미지/08_시즌아쿠아렐블룸_타이틀.png` — 3,014,192 B
+- `이미지/09_감정단계_호기심경이귀환머무름.png` — 2,870,619 B
+- `이미지/10_감정단계와기억카드콜라주.png` — 2,645,755 B
+- `이미지/11_이름알기전시작된계절.png` — 2,778,125 B
+- `이미지/12_MIRA시즌커버_머물게한순간들.png` — 2,820,974 B
+- `이미지/13_저장한감정이경로가됨.png` — 3,040,145 B
+- `이미지/14_한감정으로시작하는계절.png` — 2,462,020 B
+- `이미지/90_자동생성_대표미리보기.png` — 289,013 B
+- `이미지/디자인1_기본안/10_이미지/01_디자인보드.png` — 4,680,173 B
+- `이미지/디자인1_기본안/10_이미지/02_키프레임_오프닝.png` — 1,753,828 B
+- `이미지/디자인1_기본안/10_이미지/03_키프레임_첫색상.png` — 1,672,116 B
+- `이미지/디자인1_기본안/10_이미지/04_키프레임_모먼트리본.png` — 1,729,927 B
+- `이미지/디자인1_기본안/10_이미지/05_키프레임_감정문구.png` — 1,795,766 B
+- `이미지/디자인1_기본안/10_이미지/06_키프레임_연결소용돌이.png` — 1,681,778 B
+- `이미지/디자인1_기본안/10_이미지/07_키프레임_시즌개화.png` — 1,799,173 B
+- `이미지/디자인1_기본안/10_이미지/08_키프레임_커버조립.png` — 1,695,001 B
+- `이미지/디자인1_기본안/10_이미지/09_키프레임_최종포스터.png` — 1,733,473 B
+- `이미지/디자인1_기본안/10_이미지/10_후보인물이미지_1.png` — 2,765,080 B
+- `이미지/디자인1_기본안/10_이미지/11_후보인물이미지_2.png` — 2,913,153 B
+- `이미지/디자인1_기본안/10_이미지/12_후보인물이미지_3.png` — 2,691,333 B
+- `이미지/디자인1_기본안/10_이미지/13_후보인물이미지_4.png` — 2,436,662 B
+- `이미지/디자인1_기본안/20_인물에셋/asset-provenance.md` — 1,127 B
+- `이미지/디자인1_기본안/20_인물에셋/season-woman-cover.png` — 1,029,345 B
+- `이미지/디자인1_기본안/20_인물에셋/season-woman-emotional.png` — 1,062,256 B
+- `이미지/디자인1_기본안/20_인물에셋/season-woman-hands.png` — 994,363 B
+- `이미지/디자인1_기본안/20_인물에셋/season-woman-hero.png` — 1,356,468 B
+- `이미지/디자인1_기본안/20_인물에셋/season-woman-profile.png` — 1,024,381 B
+- `이미지/디자인1_기본안/20_인물에셋/watercolor-bloom-01.png` — 827,437 B
+- `이미지/디자인1_기본안/20_인물에셋/watercolor-ribbon-01.png` — 685,027 B
+- `이미지/디자인1_기본안/20_인물에셋/watercolor-swirl-01.png` — 856,080 B
+- `이미지/디자인1_기본안/40_문서자료/01_디자인근거.md` — 5,352 B
+- `이미지/디자인1_기본안/40_문서자료/90_SHA256SUMS.txt` — 2,806 B
+- `이미지/디자인2_인물모션고정/01_녹화영상_인물모션고정_애니매틱_v2.mp4` — 7,216,557 B
+- `이미지/디자인2_인물모션고정/10_이미지/01_모션스토리보드_인물고정_v2.png` — 6,092,993 B
+- `이미지/디자인2_인물모션고정/20_모션테스트/01_모션테스트_오프닝.mp4` — 631,988 B
+- `이미지/디자인2_인물모션고정/20_모션테스트/02_모션테스트_손글씨.mp4` — 284,049 B
+- `이미지/디자인2_인물모션고정/20_모션테스트/03_모션테스트_360도오빗.mp4` — 1,394,976 B
+- `이미지/디자인2_인물모션고정/20_모션테스트/04_모션테스트_정면시선개화.mp4` — 1,356,864 B
+- `이미지/디자인2_인물모션고정/20_모션테스트/05_모션테스트_커버정착.mp4` — 5,147,760 B
+- `이미지/디자인2_인물모션고정/30_검증자료/01_검증결과_인물모션_v2.json` — 3,442 B
+- `이미지/디자인2_인물모션고정/40_문서자료/01_카피고정기준.md` — 4,923 B
+- `이미지/디자인2_인물모션고정/40_문서자료/02_모션구현계획_v2.md` — 6,320 B
+- `이미지/디자인2_인물모션고정/40_문서자료/03_모션에셋맵_v2.json` — 9,629 B
+- `이미지/디자인2_인물모션고정/40_문서자료/04_시안안내.txt` — 601 B
+- `이미지/디자인2_인물모션고정/40_문서자료/90_SHA256SUMS.txt` — 3,285 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/01_design-board-approved.png` — 4,680,173 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/02_keyframe-01-opening.png` — 1,753,828 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/03_keyframe-02-first-color.png` — 1,672,116 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/04_keyframe-03-moment-ribbons.png` — 1,729,927 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/05_keyframe-04-emotional-words.png` — 1,795,766 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/06_keyframe-05-connection-swirl.png` — 1,681,778 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/07_keyframe-06-season-bloom.png` — 1,799,173 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/08_keyframe-07-cover-assembly.png` — 1,695,001 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/09_keyframe-08-final-poster.png` — 1,733,473 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/asset-provenance.md` — 1,127 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/season-woman-cover.png` — 1,029,345 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/season-woman-hands.png` — 994,363 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/season-woman-hero.png` — 1,356,468 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/season-woman-profile.png` — 1,024,381 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/watercolor-bloom-01.png` — 827,437 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/watercolor-ribbon-01.png` — 685,027 B
+- `이미지/디자인2_인물모션고정/50_승인시각에셋/watercolor-swirl-01.png` — 856,080 B
+- `이미지/디자인3_모바일모션/01_녹화영상_모바일모션_애니매틱_v1.mp4` — 4,600,138 B
+- `이미지/디자인3_모바일모션/10_이미지/01_모션스토리보드.png` — 6,187,403 B
+- `이미지/디자인3_모바일모션/10_이미지/02_모바일키프레임_오프닝.png` — 373,271 B
+- `이미지/디자인3_모바일모션/10_이미지/03_모바일키프레임_기억경로.png` — 258,968 B
+- `이미지/디자인3_모바일모션/10_이미지/04_모바일키프레임_시즌개화.png` — 423,300 B
+- `이미지/디자인3_모바일모션/10_이미지/05_모바일키프레임_최종포스터.png` — 289,401 B
+- `이미지/디자인3_모바일모션/40_문서자료/01_모션구현계획.md` — 5,134 B
+- `이미지/디자인3_모바일모션/40_문서자료/02_에셋레이어맵.json` — 7,360 B
+- `이미지/디자인3_모바일모션/40_문서자료/03_시안안내.txt` — 149 B
+- `이미지/디자인3_모바일모션/40_문서자료/90_SHA256SUMS.txt` — 2,966 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/01_design-board-approved.png` — 4,680,173 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/02_keyframe-01-opening.png` — 1,753,828 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/03_keyframe-02-first-color.png` — 1,672,116 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/04_keyframe-03-moment-ribbons.png` — 1,729,927 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/05_keyframe-04-emotional-words.png` — 1,795,766 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/06_keyframe-05-connection-swirl.png` — 1,681,778 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/07_keyframe-06-season-bloom.png` — 1,799,173 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/08_keyframe-07-cover-assembly.png` — 1,695,001 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/09_keyframe-08-final-poster.png` — 1,733,473 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/asset-provenance.md` — 1,127 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/season-woman-cover.png` — 1,029,345 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/season-woman-hands.png` — 994,363 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/season-woman-hero.png` — 1,356,468 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/season-woman-profile.png` — 1,024,381 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/watercolor-bloom-01.png` — 827,437 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/watercolor-ribbon-01.png` — 685,027 B
+- `이미지/디자인3_모바일모션/50_승인시각에셋/watercolor-swirl-01.png` — 856,080 B
+- `이미지/실행에셋_다중각도_v3/data/orbit-frames.json` — 8,148 B
+- `이미지/실행에셋_다중각도_v3/data/three-lite.min.js` — 5,945 B
+- `이미지/실행에셋_다중각도_v3/data/writing-points.json` — 777 B
+- `이미지/실행에셋_다중각도_v3/flowers/bloom-field.png` — 935,969 B
+- `이미지/실행에셋_다중각도_v3/flowers/flower-cluster-01.png` — 365,982 B
+- `이미지/실행에셋_다중각도_v3/flowers/flower-cluster-02.png` — 454,229 B
+- `이미지/실행에셋_다중각도_v3/flowers/flower-cluster-03.png` — 404,975 B
+- `이미지/실행에셋_다중각도_v3/flowers/petal-01.png` — 30,865 B
+- `이미지/실행에셋_다중각도_v3/flowers/petal-02.png` — 29,645 B
+- `이미지/실행에셋_다중각도_v3/flowers/petal-03.png` — 31,019 B
+- `이미지/실행에셋_다중각도_v3/flowers/petal-04.png` — 32,149 B
+- `이미지/실행에셋_다중각도_v3/flowers/petal-05.png` — 29,444 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-01.png` — 289,433 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-01.webp` — 56,432 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-02.png` — 301,247 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-02.webp` — 61,160 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-03.png` — 302,625 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-03.webp` — 62,176 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-04.png` — 303,074 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-04.webp` — 62,476 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-05.png` — 303,616 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-05.webp` — 62,936 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-06.png` — 304,159 B
+- `이미지/실행에셋_다중각도_v3/lookup/woman-lookup-06.webp` — 63,140 B
+- `이미지/실행에셋_다중각도_v3/moments/moment-01.png` — 358,558 B
+- `이미지/실행에셋_다중각도_v3/moments/moment-02.png` — 411,143 B
+- `이미지/실행에셋_다중각도_v3/moments/moment-03.png` — 457,180 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-000.png` — 289,433 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-000.webp` — 56,432 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-015.png` — 292,766 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-015.webp` — 56,476 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-030.png` — 284,080 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-030.webp` — 55,180 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-045.png` — 276,938 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-045.webp` — 52,022 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-060.png` — 266,828 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-060.webp` — 50,016 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-075.png` — 248,359 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-075.webp` — 46,386 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-090.png` — 230,097 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-090.webp` — 41,822 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-105.png` — 239,498 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-105.webp` — 45,030 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-120.png` — 252,395 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-120.webp` — 47,270 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-135.png` — 259,284 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-135.webp` — 48,578 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-150.png` — 259,395 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-150.webp` — 49,242 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-165.png` — 239,999 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-165.webp` — 48,190 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-180.png` — 212,249 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-180.webp` — 43,874 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-195.png` — 236,793 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-195.webp` — 47,760 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-210.png` — 247,390 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-210.webp` — 49,522 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-225.png` — 242,492 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-225.webp` — 46,732 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-240.png` — 233,910 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-240.webp` — 45,032 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-255.png` — 226,585 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-255.webp` — 43,494 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-270.png` — 217,685 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-270.webp` — 40,994 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-285.png` — 233,171 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-285.webp` — 45,238 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-300.png` — 249,301 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-300.webp` — 48,728 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-315.png` — 264,639 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-315.webp` — 51,108 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-330.png` — 278,397 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-330.webp` — 55,744 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-345.png` — 280,080 B
+- `이미지/실행에셋_다중각도_v3/orbit/woman-orbit-345.webp` — 55,110 B
+- `이미지/실행에셋_다중각도_v3/paper/paper-grain.jpg` — 42,891 B
+- `이미지/실행에셋_다중각도_v3/paper/paper-piece-01.png` — 823,564 B
+- `이미지/실행에셋_다중각도_v3/paper/paper-piece-02.png` — 603,667 B
+- `이미지/실행에셋_다중각도_v3/paper/paper-piece-03.png` — 493,099 B
+- `이미지/실행에셋_다중각도_v3/paper/wax-seal.png` — 8,057 B
+- `이미지/실행에셋_다중각도_v3/ribbons/wash-blue.png` — 234,542 B
+- `이미지/실행에셋_다중각도_v3/ribbons/wash-gold.png` — 227,771 B
+- `이미지/실행에셋_다중각도_v3/ribbons/wash-rose.png` — 264,076 B
+- `이미지/실행에셋_다중각도_v3/ribbons/wash-teal.png` — 191,501 B
+- `이미지/실행에셋_다중각도_v3/woman-cover-approved.png` — 1,050,010 B
+- `이미지/실행에셋_다중각도_v3/woman-hands-approved.png` — 1,110,046 B
+- `이미지/실행에셋_다중각도_v3/woman-hero-approved.png` — 1,335,880 B
+- `이미지/실행에셋_다중각도_v3/woman-profile-approved.png` — 1,152,864 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-01.png` — 288,584 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-01.webp` — 55,624 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-02.png` — 288,584 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-02.webp` — 55,624 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-03.png` — 288,614 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-03.webp` — 55,520 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-04.png` — 288,662 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-04.webp` — 55,740 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-05.png` — 288,676 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-05.webp` — 55,584 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-06.png` — 288,588 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-06.webp` — 55,666 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-07.png` — 288,584 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-07.webp` — 55,624 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-08.png` — 288,859 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-08.webp` — 55,860 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-09.png` — 288,851 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-09.webp` — 56,074 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-10.png` — 289,270 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-10.webp` — 56,192 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-11.png` — 289,514 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-11.webp` — 56,232 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-12.png` — 289,057 B
+- `이미지/실행에셋_다중각도_v3/writing/woman-writing-12.webp` — 55,828 B
+- `이전버전_소스보관/01_시네마틱소스팩/01_실행영상_시네마틱애니매틱_v1.mp4` — 2,800,642 B
+- `이전버전_소스보관/01_시네마틱소스팩/02_검증결과.json` — 1,302 B
+- `이전버전_소스보관/01_시네마틱소스팩/03_소스팩안내.txt` — 604 B
+- `이전버전_소스보관/01_시네마틱소스팩/04_팀간드라이브검토.md` — 3,543 B
+- `이전버전_소스보관/01_시네마틱소스팩/05_소스권한지도.md` — 2,064 B
+- `이전버전_소스보관/01_시네마틱소스팩/06_참고영상_모션분석.md` — 2,330 B
+- `이전버전_소스보관/01_시네마틱소스팩/07_기존43버전_판정.md` — 2,042 B
+- `이전버전_소스보관/01_시네마틱소스팩/08_시네마틱_숏리스트.md` — 2,005 B
+- `이전버전_소스보관/01_시네마틱소스팩/09_에셋레이어맵.json` — 4,578 B
+- `이전버전_소스보관/01_시네마틱소스팩/10_인물연속성_접촉시트.png` — 1,887,823 B
+- `이전버전_소스보관/01_시네마틱소스팩/11_모션소스_접촉시트.png` — 2,340,370 B
+- `이전버전_소스보관/01_시네마틱소스팩/90_SHA256SUMS.txt` — 6,177 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/brand/LoveTree-logo.png` — 12,835 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/cover/final-poster-clean.png` — 2,424,758 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/cover/paper-cover-piece-01.png` — 428,986 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/cover/paper-cover-piece-02.png` — 431,654 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/cover/paper-cover-piece-03.png` — 436,669 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/cover/paper-cover-piece-04.png` — 447,802 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/flowers/bloom-center.png` — 181,689 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/flowers/flower-seed.png` — 61,752 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/flowers/foreground-flower-cluster.png` — 265,434 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/flowers/rear-flower-cluster.png` — 245,264 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/light/light-dust.png` — 18,029 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/light/natural-window-light.png` — 155,580 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/light/spirit-wind.png` — 312,795 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/moments/moment-photo-card-01.png` — 52,351 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/moments/moment-photo-card-02.png` — 21,490 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/moments/moment-photo-card-03.png` — 44,541 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/paper/paper-background.png` — 1,810,433 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/drifting-petals.png` — 17,719 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-01.png` — 23,981 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-02.png` — 29,112 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-03.png` — 26,783 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-04.png` — 28,147 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-05.png` — 28,340 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-06.png` — 29,622 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-07.png` — 21,181 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-08.png` — 28,246 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-09.png` — 24,222 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-10.png` — 36,300 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-11.png` — 33,305 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/petals/large-petal-12.png` — 26,012 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/pigment/ink-cloud.png` — 780,263 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/pigment/rear-watercolor-wash.png` — 953,528 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/ribbons/macro-ribbon-rose.png` — 68,713 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/ribbons/macro-ribbon-teal.png` — 85,503 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/ribbons/macro-ribbon-violet.png` — 104,161 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/ribbons/ribbon-back-face.png` — 63,578 B
+- `이전버전_소스보관/01_시네마틱소스팩/layers/ribbons/ribbon-front-face.png` — 71,253 B
+- `이전버전_소스보관/01_시네마틱소스팩/review-evidence/reference-full-contact-sheet.jpg` — 566,426 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/01_opening-breath.png` — 2,503,443 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/02_hand-sweep-first-path.png` — 2,509,108 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/03_handwriting-body-connected.png` — 2,478,852 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/04_left-profile-orbit.png` — 2,711,279 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/05_back-and-turn.png` — 2,600,941 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/06_opposite-profile.png` — 2,721,728 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/07_front-arrival.png` — 2,647,169 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/08_frontal-look-up.png` — 2,659,887 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/09_bloom-opening.png` — 2,730,968 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/10_bloom-peak.png` — 2,813,622 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/11_cover-flattening.png` — 2,702,703 B
+- `이전버전_소스보관/01_시네마틱소스팩/source-images/12_final-poster.png` — 2,424,758 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/01-opening.webp` — 455,260 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/02-first-path.webp` — 417,446 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/03-season-name.webp` — 519,208 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/04-orbit.webp` — 545,256 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/05-bloom-rise.webp` — 645,678 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/06-bloom-hero.webp` — 376,624 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/07-final-poster.webp` — 498,780 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/assets/08-final-alt.webp` — 538,938 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/lovetree-season-aquarelle-a-cinematic-v3-art-directed-demo.mp4` — 1,509,208 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html` — 7,763,478 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/lovetree-season-aquarelle-a-cinematic-v3-art-directed.html` — 21,333 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/README.md` — 911 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/validation.json` — 949 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-01-opening.jpg` — 231,304 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-06-writing-v2.jpg` — 211,166 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-06-writing.jpg` — 224,015 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-11-orbit.jpg` — 293,843 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-15-bloom.jpg` — 197,355 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-18-poster-v2.jpg` — 259,398 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-18-poster.jpg` — 237,119 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-contact-sheet-v2.jpg` — 411,960 B
+- `이전버전_소스보관/02_아트디렉션HTML_v3/verified-contact-sheet.jpg` — 384,741 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/03_handwriting-body-connected(1).png` — 2,478,852 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/05_back-and-turn(1).png` — 2,600,941 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/06_same-woman-continuity-sheet(1).png` — 1,887,823 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/08_frontal-look-up(1).png` — 2,659,887 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/foreground-flower-cluster.png` — 265,434 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/LoveTree_43_A_Cinematic_HTML_구현계약_v1.md` — 3,367 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/LoveTree_43_A_Cinematic_Source_Pack_v1_검토판정서.md` — 7,942 B
+- `이전버전_소스보관/03_시네마틱소스팩_수정지시/LoveTree_43_A_Cinematic_Source_Pack_v2_재제작지시서.md` — 7,931 B
+- `이전버전_소스보관/04_이전자체포함HTML_v5_자료/1f0f854b-80d6-495e-95ae-198674197c42.png` — 4,928,175 B
+- `이전버전_소스보관/04_이전자체포함HTML_v5_자료/contact_v1v2.jpg` — 135,097 B
+- `이전버전_소스보관/04_이전자체포함HTML_v5_자료/contact_v3p.jpg` — 94,390 B
+- `이전버전_소스보관/04_이전자체포함HTML_v5_자료/lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html` — 4,582,531 B
+- `이전버전_소스보관/04_이전자체포함HTML_v5_자료/reference_16.jpg` — 170,785 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/01-opening.webp` — 366,318 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/02-first-color.webp` — 117,656 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/03-moment-ribbons.webp` — 128,020 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/04-emotional-words.webp` — 142,942 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/05-connection-swirl.webp` — 129,990 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/06-handwrite.webp` — 336,216 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/07-spirit-flow.webp` — 433,756 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/08-bloom-build.webp` — 160,460 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/09-bloom-peak.webp` — 542,192 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/10-cover-assembly.webp` — 133,148 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/11-final-poster.webp` — 520,742 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/assets/12-epilogue.webp` — 414,298 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/lovetree-season-aquarelle-bloom-v4-reference-motion.html` — 30,980 B
+- `이전버전_소스보관/05_배경전용_레퍼런스모션_v4/README.txt` — 709 B
+- `참고영상_시즌수채화블룸_원본.mp4` — 27,307,133 B
+- `최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html` — 40,890 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/01_하이루오_기준이미지/01_Moment_Awakens.png` — 1,984,324 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/01_하이루오_기준이미지/02_Paths_Become_A_Season.png` — 2,220,516 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/01_하이루오_기준이미지/03_Season_Becomes_LoveTree.png` — 2,635,847 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/02_하이루오_프롬프트/01_Moment_Awakens_프롬프트.txt` — 980 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/02_하이루오_프롬프트/02_Paths_Become_A_Season_프롬프트.txt` — 1,160 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/02_하이루오_프롬프트/03_Season_Becomes_LoveTree_프롬프트.txt` — 1,187 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/02_하이루오_프롬프트/하이루오_3클립_생성가이드.md` — 5,866 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/00_실행_러브트리_시네마틱수채화_V2.html` — 19,365 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/개발내용.md` — 1,944 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/01-moment-awakens-clean.mp4` — 3,421,328 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/02-season-becomes-lovetree-clean.mp4` — 5,594,765 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/03-quiet-editorial.png` — 2,436,662 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/04-paths-editorial.png` — 2,901,881 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/05-bloom-editorial.png` — 3,014,192 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/06-season-cover.png` — 2,929,558 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/assets/07-lovetree-overhead-final.png` — 2,635,847 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/index.html` — 19,365 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/03_완성사이트_V2_영상중심대문/README_실행안내.txt` — 1,585 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/녹화_2026_08_13_23_03_02_988.mp4` — 11,788,540 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/녹화_2026_08_13_23_58_56_620.mp4` — 19,730,720 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/01_디자인보드.png` — 4,680,173 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/01_시즌통계_24모먼트23연결.png` — 2,912,423 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/02_키프레임_오프닝.png` — 1,753,828 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/02_MIRA시즌커버_인물우측.png` — 2,929,558 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/03_키프레임_첫색상.png` — 1,672,116 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/03_MIRA시즌커버_프로필전신.png` — 3,134,196 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/04_기억꽃잎_앉은인물.png` — 2,813,785 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/04_키프레임_모먼트리본.png` — 1,729,927 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/05_모바일키프레임_최종포스터.png` — 289,401 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/05_첫감정이계절로개화.png` — 3,123,547 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/05_키프레임_감정문구.png` — 1,795,766 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/06_키프레임_연결소용돌이.png` — 1,681,778 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/06_MIRA시즌커버_인물중앙.png` — 3,052,721 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/07_모든기억이경로로성장.png` — 2,901,881 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/07_키프레임_시즌개화.png` — 1,799,173 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/08_시즌아쿠아렐블룸_타이틀.png` — 3,014,192 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/08_키프레임_커버조립.png` — 1,695,001 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/09_감정단계_호기심경이귀환머무름.png` — 2,870,619 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/09_키프레임_최종포스터.png` — 1,733,473 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/10_감정단계와기억카드콜라주.png` — 2,645,755 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/10_후보인물이미지_1.png` — 2,765,080 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/11_이름알기전시작된계절.png` — 2,778,125 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/11_후보인물이미지_2.png` — 2,913,153 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/12_후보인물이미지_3.png` — 2,691,333 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/12_MIRA시즌커버_머물게한순간들.png` — 2,820,974 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/13_저장한감정이경로가됨.png` — 3,040,145 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/13_후보인물이미지_4.png` — 2,436,662 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/14_한감정으로시작하는계절.png` — 2,462,020 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/woman-cover-approved.png` — 1,050,010 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/지피티 이미지/woman-hands-approved.png` — 1,110,046 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/Hailuo_Video_Single continuous cinematic fi_544310490384789506.mp4` — 2,563,565 B
+- `코덱스 작업물-13_러브트리_시네마틱수채화/Hailuo_Video_Single continuous cinematic tr_544304703352598533.mp4` — 1,536,209 B
+- `V실행영상6-최종선택.mp4` — 80,084,036 B
+
+### 48_아이돌러브트리_네온파일럿 — 334 files, 684,669,025 bytes
+
+- `00_버전목록_한눈에보기.txt` — 2,359 B
+- `00_제품오너녹화_V1_최초시네마틱.mp4` — 20,749,100 B
+- `00_참고영상_원본_네온파일럿.mp4` — 3,354,389 B
+- `01_실행영상_V1_최초시네마틱_원형.mp4` — 1,901,201 B
+- `01_V1_최초시네마틱_원형_바로보기.html` — 5,482,396 B
+- `01_V1_최초시네마틱_원형_자료/원본_HTML_상대경로형.html` — 46,352 B
+- `01_V1_최초시네마틱_원형_자료/assets/01_HUD_component_v1.svg` — 2,703 B
+- `01_V1_최초시네마틱_원형_자료/assets/A_000_front_v1.png` — 2,591,898 B
+- `01_V1_최초시네마틱_원형_자료/assets/A_090_left_v1.png` — 2,406,042 B
+- `01_V1_최초시네마틱_원형_자료/assets/A_180_back_v1.png` — 2,540,678 B
+- `01_V1_최초시네마틱_원형_자료/assets/A_270_right_v1.png` — 2,439,224 B
+- `01_V1_최초시네마틱_원형_자료/assets/B_000_front_v1.png` — 2,335,385 B
+- `01_V1_최초시네마틱_원형_자료/assets/C_000_front_v1.png` — 2,427,119 B
+- `01_V1_최초시네마틱_원형_자료/assets/D_000_front_v1.png` — 2,415,037 B
+- `01_V1_최초시네마틱_원형_자료/assets/E_000_front_v1.png` — 1,793,534 B
+- `01_V1_최초시네마틱_원형_자료/desktop-execution-v1.mp4` — 1,901,201 B
+- `01_V1_최초시네마틱_원형_자료/implementation-report-v1.md` — 5,151 B
+- `01_V1_최초시네마틱_원형_자료/lovetree-48-neon-pilot-cinematic-hero-v1.html` — 46,352 B
+- `01_V1_최초시네마틱_원형_자료/mobile-execution-v1.mp4` — 1,052,211 B
+- `01_V1_최초시네마틱_원형_자료/README_DELIVERY.md` — 571 B
+- `01_V1_최초시네마틱_원형_자료/reference-shot-map-v1.md` — 4,864 B
+- `01_V1_최초시네마틱_원형_자료/reference-vs-result-contactsheet-v1.jpg` — 799,383 B
+- `01_V1_최초시네마틱_원형_자료/validation-results-v1.json` — 2,449 B
+- `02_실행영상_V2_시네마틱리듬강화.mp4` — 2,987,954 B
+- `02_V2_시네마틱리듬강화_바로보기.html` — 2,933,774 B
+- `02_V2_시네마틱리듬강화_자료/asset-inventory-v2.json` — 1,993 B
+- `02_V2_시네마틱리듬강화_자료/ChatGPT Image 2026년 8월 8일 오후 08_06_29 (1).png` — 2,439,617 B
+- `02_V2_시네마틱리듬강화_자료/ChatGPT Image 2026년 8월 8일 오후 08_06_29 (2).png` — 2,518,010 B
+- `02_V2_시네마틱리듬강화_자료/desktop-console-errors-v2.json` — 2 B
+- `02_V2_시네마틱리듬강화_자료/desktop-execution-v2.mp4` — 2,987,954 B
+- `02_V2_시네마틱리듬강화_자료/implementation-report-v2.md` — 4,507 B
+- `02_V2_시네마틱리듬강화_자료/lovetree-48-neon-pilot-cinematic-hero-v2.html` — 45,940 B
+- `02_V2_시네마틱리듬강화_자료/mobile-console-errors-v2.json` — 2 B
+- `02_V2_시네마틱리듬강화_자료/mobile-execution-v2.mp4` — 1,721,969 B
+- `02_V2_시네마틱리듬강화_자료/moment-pool-manifest-v2.json` — 1,815 B
+- `02_V2_시네마틱리듬강화_자료/reference-shot-map-v2.md` — 3,952 B
+- `02_V2_시네마틱리듬강화_자료/reference-vs-result-contactsheet-v2.jpg` — 1,682,761 B
+- `02_V2_시네마틱리듬강화_자료/reference-vs-v1-v2-contactsheet-v2.jpg` — 1,682,761 B
+- `02_V2_시네마틱리듬강화_자료/SHA256SUMS-v2.json` — 7,393 B
+- `02_V2_시네마틱리듬강화_자료/validation-results-v2.json` — 2,501 B
+- `03_실행영상_V3_스토리보드마스터복귀.mp4` — 3,657,602 B
+- `03_V3_스토리보드마스터복귀_바로보기.html` — 4,847,307 B
+- `03_V3_스토리보드마스터복귀_자료/best-cut-selection-v3.md` — 1,844 B
+- `03_V3_스토리보드마스터복귀_자료/brand-visible-text-check-v3.json` — 288 B
+- `03_V3_스토리보드마스터복귀_자료/core5-exposure-v3.json` — 753 B
+- `03_V3_스토리보드마스터복귀_자료/desktop-execution-v3.mp4` — 3,657,602 B
+- `03_V3_스토리보드마스터복귀_자료/initial-storyboard-scene-map-v3.md` — 2,374 B
+- `03_V3_스토리보드마스터복귀_자료/lovetree-neon-pilot-v3-standalone-fix1-validation.json` — 942 B
+- `03_V3_스토리보드마스터복귀_자료/lovetree-neon-pilot-v3-standalone-fix1.html` — 4,847,307 B
+- `03_V3_스토리보드마스터복귀_자료/lovetree-neon-pilot-v3.html` — 48,743 B
+- `03_V3_스토리보드마스터복귀_자료/mobile-execution-v3.mp4` — 1,654,118 B
+- `03_V3_스토리보드마스터복귀_자료/reference-video-vs-v3-contactsheet.jpg` — 695,589 B
+- `03_V3_스토리보드마스터복귀_자료/SHA256SUMS-v3.json` — 9,028 B
+- `03_V3_스토리보드마스터복귀_자료/standalone-render-validation-contact.jpg` — 217,457 B
+- `03_V3_스토리보드마스터복귀_자료/storyboard-master-vs-v3-contactsheet.jpg` — 1,193,001 B
+- `03_V3_스토리보드마스터복귀_자료/validation-results-v3.json` — 1,939 B
+- `04_실행영상_V4_리듬구조통합.mp4` — 5,084,581 B
+- `04_V4_V2리듬_V3구조통합_바로보기.html` — 6,926,597 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/aircraft-scale-check-v4.json` — 4,878 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/brand-visible-text-check-v4.json` — 414 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/desktop-execution-v4.mp4` — 5,084,581 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/lovetree-neon-pilot-v4.html` — 6,926,597 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/mobile-execution-v4.mp4` — 2,391,872 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/portrait-edge-check-v4.json` — 9,871 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/quality-fix-check-v4.md` — 3,517 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/v2-v3-hybrid-scene-map-v4.md` — 3,766 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/v4-desktop-contactsheet.jpg` — 353,179 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/v4-mobile-contactsheet.jpg` — 418,955 B
+- `04_V4_V2리듬_V3구조통합_품질수정_자료/validation-results-v4.json` — 619 B
+- `05_실행영상_V4.1_품질수정_최종검토.mp4` — 5,461,951 B
+- `05_V4.1_품질수정_최종검토_바로보기.html` — 12,734,943 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/aircraft-runtime-source-check-v4.1.json` — 4,966 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/brand-visible-text-check-v4.1-final.json` — 310 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/cast-diversity-byte-manifest-v4.1.json` — 1,475 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/cast-diversity-check-v4.1.json` — 1,476 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/cast-diversity-contactsheet-v4.1.jpg` — 311,527 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/clean-aircraft-byte-materialization-v4.1.json` — 4,463 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/desktop-execution-v4.1-clean.mp4` — 4,390,766 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/execution-evidence-v4.1-clean.json` — 966 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/lovetree-neon-pilot-v4.1-final-review-package.zip` — 26,443,879 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/lovetree-neon-pilot-v4.1-final-review-standalone.html` — 12,734,943 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/mobile-execution-v4.1-clean.mp4` — 2,343,300 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/moment-connection-runtime-check-v4.1.json` — 3,820 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/route-runtime-consistency-v4.1.json` — 494 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/runtime-general-check-v4.1.json` — 289 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/SHA256SUMS-v4.1-final.json` — 4,600 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/v4.1-final-gate-report.md` — 3,082 B
+- `05_V4.1_품질수정_최종검토_자료/99_FINAL_REVIEW/v4.1-final-runtime-contactsheet_v2.jpg` — 505,264 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/01_clean_aircraft_lime_ascent_4k.png` — 5,983,784 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/02_clean_aircraft_red_bank_4k.png` — 3,753,887 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/03_clean_aircraft_violet_chase_4k.png` — 5,166,720 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/04_clean_aircraft_blue_pass_4k.png` — 4,154,086 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/05_clean_aircraft_green_flyby_4k.png` — 6,179,822 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/06_clean_formation_flight_4k.png` — 7,359,915 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean-original/07_clean_final_approach_4k.png` — 5,404,000 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/01_clean_aircraft_lime_ascent_4k.webp` — 701,440 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/02_clean_aircraft_red_bank_4k.webp` — 360,740 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/03_clean_aircraft_violet_chase_4k.webp` — 410,182 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/04_clean_aircraft_blue_pass_4k.webp` — 364,422 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/05_clean_aircraft_green_flyby_4k.webp` — 437,980 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/06_clean_formation_flight_4k.webp` — 665,062 B
+- `05_V4.1_품질수정_최종검토_자료/assets/aircraft-clean/07_clean_final_approach_4k.webp` — 430,904 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_F01_copper_backstage.webp` — 150,696 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_F02_auburn_window.webp` — 101,946 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_F03_platinum_corridor.webp` — 129,130 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_M01_curly_stage.webp` — 207,164 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_M02_buzzcut_rain.webp` — 173,368 B
+- `05_V4.1_품질수정_최종검토_자료/assets/cast-diverse/CAST_PAIR01_backstage_monitor.webp` — 213,250 B
+- `05_V4.1_품질수정_최종검토_자료/cinematic-vs-ui-scene-check-v4.1.md` — 3,691 B
+- `05_V4.1_품질수정_최종검토_자료/clean-aircraft-source-check-v4.1.json` — 4,158 B
+- `05_V4.1_품질수정_최종검토_자료/desktop-execution-v4.1.mp4` — 5,461,951 B
+- `05_V4.1_품질수정_최종검토_자료/execution-evidence-v4.1.json` — 508 B
+- `05_V4.1_품질수정_최종검토_자료/lovetree-neon-pilot-v4.1-final-review.html` — 6,938,787 B
+- `05_V4.1_품질수정_최종검토_자료/lovetree-neon-pilot-v4.1-package.zip` — 12,586,934 B
+- `05_V4.1_품질수정_최종검토_자료/lovetree-neon-pilot-v4.1.html` — 6,937,931 B
+- `05_V4.1_품질수정_최종검토_자료/mobile-execution-v4.1.mp4` — 1,324,856 B
+- `05_V4.1_품질수정_최종검토_자료/mobile-recomposition-check-v4.1.json` — 1,546 B
+- `05_V4.1_품질수정_최종검토_자료/SHA256SUMS-v4.1.json` — 1,431 B
+- `05_V4.1_품질수정_최종검토_자료/v4-vs-v4.1-contactsheet.jpg` — 659,846 B
+- `05_V4.1_품질수정_최종검토_자료/validation-results-v4.1.json` — 797 B
+- `06_V4.2_스토리보드1_반려_자료/v4.2-reference-reset-scene-map-v1.md` — 6,319 B
+- `06_V4.2_스토리보드1_반려_자료/v4.2-reference-reset-storyboard-v1.jpg` — 466,083 B
+- `07_V4.2_스토리보드2_승인_자료/v4.2-reference-reset-scene-map-v2.md` — 6,974 B
+- `07_V4.2_스토리보드2_승인_자료/v4.2-reference-reset-storyboard-v2.jpg` — 690,990 B
+- `08_실행영상_V4.2_참고영상리셋.mp4` — 17,299,794 B
+- `08_V4.2_참고영상리셋_바로보기.html` — 5,415,789 B
+- `08_V4.2_참고영상리셋_HTML_자료/desktop-contactsheet-1s-v4.2.jpg` — 425,088 B
+- `08_V4.2_참고영상리셋_HTML_자료/desktop-execution-v4.2-45s.mp4` — 17,299,794 B
+- `08_V4.2_참고영상리셋_HTML_자료/lovetree-neon-pilot-v4.2-reference-reset.html` — 5,415,789 B
+- `09_실행영상_V4.2b_인물분석복귀.mp4` — 4,449,755 B
+- `09_V4.2b_인물분석복귀_바로보기.html` — 4,313,060 B
+- `09_V4.2b_인물분석복귀_자료/change-log-v4.2b.md` — 7,494 B
+- `09_V4.2b_인물분석복귀_자료/desktop-contactsheet-1s-v4.2b.jpg` — 611,185 B
+- `09_V4.2b_인물분석복귀_자료/desktop-execution-v4.2b-45s.mp4` — 4,449,755 B
+- `09_V4.2b_인물분석복귀_자료/lovetree-neon-pilot-v4.2b-human-analysis-reset.html` — 4,313,060 B
+- `10_최종후보_V1정밀복원_인물분석티저_바로보기.html` — 781,713 B
+- `10_최종후보_V1정밀복원_인물분석티저_자료/10_01V1대비_동일시각_비교판.jpg` — 431,159 B
+- `10_최종후보_V1정밀복원_인물분석티저_자료/10_최종후보_1초간격_컨택트시트.jpg` — 358,344 B
+- `10_최종후보_V1정밀복원_인물분석티저_자료/10_최종후보_Desktop실행_31.2초.mp4` — 14,525,699 B
+- `10_최종후보_V1정밀복원_인물분석티저_자료/10_최종후보_QA_요약.txt` — 1,148 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/14_이미지자산_파일분류명명및지시서운영규칙_v1.md` — 6,153 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/16_Gate2A_우측면최종확정_원본20장락업_컨택시트제작지시_v1.md` — 10,994 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/17_Gate2A_20of20완료_이미지자산정리및Gate2B진입준비지시_v1.md` — 5,978 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/17_Gate2B_CostumeGeometryLock_IDOL-A_8방향파일럿지시_v1.md` — 10,755 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/18_Gate2B-A_Attempt1실자산회수_135-315재생성_8방향검증지시_v1.md` — 10,338 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/20_3기_CinematicHero_v2_다중아이돌MomentPool_비행씬고도화_설계지시_v1.md` — 19,168 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/23_3기_초기Storyboard_VisualMaster복귀_LOVETREE_NeonPilot_V3지시_v1.md` — 14,604 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/25_3기_V4실화면검수_CleanAircraft_CinematicRoute_V4-1수정지시_v1.md` — 15,163 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/01_현재적용/26_3기_V4-1_항공기시각승인_CleanPlateLock_패키징_캐스트다양화지시_v1.md` — 9,273 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/01_초기_디자인팀장지시_프롬프트세트_v1.md` — 34,354 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/02_Gate0_아이돌비주얼_전면재설계지시서_v2.md` — 16,414 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/03_Gate0_전원탈락_아이돌캐스팅재설계지시서_v3.md` — 12,489 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/04_Gemini_IDOL-A_품질기준선_판정및재지시_v1.md` — 9,905 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/05_디자인팀장4기_인수인계판정_Gate0A업무지시_v1.md` — 10,743 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/06_Gate0A승인_Gate0B아이돌캐스팅지시서_v1.md` — 10,787 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/07_Pinterest_남자아이돌_직접열람_추가지시_v1.md` — 4,539 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/08_Pinterest_업무오해_시정명령_v1.md` — 10,403 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/09_5인얼굴1차승인_전신Turnaround진입지시_v1.md` — 8,201 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/10_Gate2A_4방향Cardinal_제작지시서_v1.md` — 11,924 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/11_Gate2A_4방향Cardinal_프롬프트세트_v1.md` — 45,534 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/12_IDOL-A_Gate2A판정_B-E연속제작지시_v1.md` — 9,392 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/13_Gate2A_원본분류완료_D-E누락분생성및후속운영지시_v1.md` — 6,494 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/15_Gate2A_실폴더최종검수_D-E우측면2장보완및FinalReview지시_v1.md` — 8,273 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/90_과거지시/16_Gate2A_D-E270산출물검수_파일정리및재생성지시_v1.md` — 5,470 B
+- `90_공통자산_캐스팅_참고영상/00_작업상태_설계지시/LoveTree 48 · NEON PILOT.md` — 17,375 B
+- `90_공통자산_캐스팅_참고영상/01_참고영상_분석/01_참고영상_원본_네온파일럿.mp4` — 3,354,389 B
+- `90_공통자산_캐스팅_참고영상/01_참고영상_분석/02_참고영상_재분석_v1.md` — 2,797 B
+- `90_공통자산_캐스팅_참고영상/01_참고영상_분석/03_참고영상_ContactSheet_1s.jpg` — 366,166 B
+- `90_공통자산_캐스팅_참고영상/01_참고영상_분석/04_참고영상_ContactSheet_2s.jpg` — 260,325 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/00_벤치마크_참고/01_Gemini_보이그룹비주얼_벤치마크_얼굴.jpg` — 96,821 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/00_벤치마크_참고/02_Gemini_보이그룹비주얼_벤치마크_전신.jpg` — 89,627 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/01_IDOL-A_IdentityLock/01_IDOL-A_front_neutral_v1_exact_duplicate.png` — 1,980,714 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/01_IDOL-A_IdentityLock/02_IDOL-A_3Q_view01_neutral_v1_exact_duplicate.png` — 1,891,668 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/01_IDOL-A_IdentityLock/03_IDOL-A_3Q_view02_neutral_v1_exact_duplicate.png` — 1,946,146 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/01_IDOL-A_IdentityLock/04_IDOL-A_left_profile_neutral_v1_exact_duplicate.png` — 1,967,311 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/01_IDOL-A_IdentityLock/05_IDOL-A_front_smile_v1_exact_duplicate.png` — 1,918,986 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/02_IDOL-B-E_승인얼굴/01_IDOL-B_승인얼굴_v1_exact_duplicate.png` — 1,751,840 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/02_IDOL-B-E_승인얼굴/02_IDOL-C_승인얼굴_v1_exact_duplicate.png` — 2,035,137 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/02_IDOL-B-E_승인얼굴/03_IDOL-D_승인얼굴_v1_exact_duplicate.png` — 1,996,457 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/02_IDOL-B-E_승인얼굴/04_IDOL-E_승인얼굴_v1_exact_duplicate.png` — 1,913,880 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/03_초기얼굴_품질기준_참고/01_초기얼굴_3컷품질참고_01.jpg` — 83,212 B
+- `90_공통자산_캐스팅_참고영상/02_Gate0_캐스팅_얼굴/03_초기얼굴_품질기준_참고/02_초기얼굴_3컷품질참고_02.jpg` — 76,434 B
+- `90_공통자산_캐스팅_참고영상/03_Gate1_전신CharacterBible/01_5인전신CharacterBible_보조기준_v1.png` — 1,925,699 B
+- `90_공통자산_캐스팅_참고영상/03_Gate1_전신CharacterBible/02_5인전신CharacterBible_주기준_v1.png` — 2,163,260 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/01_최종검토/Gate2A_5Members_20Cardinal_FinalReview_v1.png` — 4,659,229 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/01_최종검토/Gate2A_D-E_270_pair_proof_labeled_v1.png` — 1,484,147 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/01_최종검토/Gate2A_D-E_270_pair_proof_unlabeled_v1.png` — 1,709,871 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/01_초기통합보드_20260807_1641/01_Gate2A_통합보드_검토용_v1.png` — 1,799,048 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/01_초기통합보드_20260807_1641/02_Gate2A_통합보드_검토용_v1.png` — 1,934,417 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/01_초기통합보드_20260807_1641/03_Gate2A_통합보드_검토용_v1.png` — 1,978,364 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/01_초기통합보드_20260807_1641/04_Gate2A_통합보드_검토용_v1.png` — 2,152,730 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/01_초기통합보드_20260807_1641/05_Gate2A_통합보드_검토용_v1.png` — 2,084,990 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/02_후속통합보드_20260807_1824/01_Gate2A_통합보드_검토용_v1.png` — 2,438,539 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/02_후속통합보드_20260807_1824/02_Gate2A_통합보드_검토용_v1.png` — 2,599,160 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/02_후속통합보드_20260807_1824/03_Gate2A_통합보드_검토용_v1.png` — 2,640,593 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/02_후속통합보드_20260807_1824/04_Gate2A_통합보드_검토용_v1.png` — 2,877,361 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/90_이전통합보드/02_후속통합보드_20260807_1824/05_Gate2A_통합보드_검토용_v1.png` — 2,657,390 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/00_검토보드/Gate2A_CardinalViews_20cuts_contactsheet_review_v1.png` — 3,125,492 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/01_IDOL-A/A_000_front_v1.png` — 2,591,898 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/01_IDOL-A/A_090_left_v1.png` — 2,406,042 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/01_IDOL-A/A_180_back_v1.png` — 2,540,678 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/01_IDOL-A/A_270_right_v1.png` — 2,439,224 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/02_IDOL-B/B_000_front_v1.png` — 2,335,385 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/02_IDOL-B/B_090_left_v1.png` — 2,412,259 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/02_IDOL-B/B_180_back_v1.png` — 2,515,542 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/02_IDOL-B/B_270_right_v1.png` — 2,164,146 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/03_IDOL-C/C_000_front_v1.png` — 2,427,119 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/03_IDOL-C/C_090_left_v1.png` — 2,379,927 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/03_IDOL-C/C_180_back_v1.png` — 2,461,982 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/03_IDOL-C/C_270_right_v1.png` — 2,397,448 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/04_IDOL-D/D_000_front_v1.png` — 2,415,037 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/04_IDOL-D/D_090_left_v1.png` — 2,319,434 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/04_IDOL-D/D_180_back_v1.png` — 2,443,309 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/04_IDOL-D/D_270_right_v1.png` — 1,715,119 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/05_IDOL-E/E_000_front_v1.png` — 1,793,534 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/05_IDOL-E/E_090_left_v1.png` — 1,788,159 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/05_IDOL-E/E_180_back_v1.png` — 1,805,353 B
+- `90_공통자산_캐스팅_참고영상/04_Gate2A_CardinalViews/05_IDOL-E/E_270_right_v1.png` — 1,735,494 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/01_IDOL-A/A_045_front-left_v1.png` — 465,709 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/01_IDOL-A/A_135_back-left_v1.png` — 446,071 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/01_IDOL-A/A_225_back-right_v1.png` — 440,857 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/01_IDOL-A/A_315_front-right_v1.png` — 471,222 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/Gate2B_A_Pilot_Attempt1_Validation_v1.md` — 4,740 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/Gate2B_CostumeGeometryLock_5members_review_v1.png` — 4,093,231 B
+- `90_공통자산_캐스팅_참고영상/05_Gate2B_IntermediateViews/Gate2B_CostumeGeometryLock_5members_v1.md` — 11,917 B
+- `90_공통자산_캐스팅_참고영상/06_Gate2C_Turnaround_모션/A_8view_turnaround_review_v1.png` — 1,767,094 B
+- `90_공통자산_캐스팅_참고영상/06_Gate2C_Turnaround_모션/Gate2B_A_Pilot_Attempt2_Validation_v1.md` — 3,876 B
+- `90_공통자산_캐스팅_참고영상/06_Gate2C_Turnaround_모션/Gate2B_CostumeGeometryLock_5members_v1.md` — 11,917 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/01_HUD_component_v1.svg` — 2,703 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/01_HUD_component_v1.svg` — 2,703 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/A_000_front_v1.png` — 2,591,898 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/A_090_left_v1.png` — 2,406,042 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/A_180_back_v1.png` — 2,540,678 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/A_270_right_v1.png` — 2,439,224 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/B_000_front_v1.png` — 2,335,385 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/C_000_front_v1.png` — 2,427,119 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/D_000_front_v1.png` — 2,415,037 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/assets/E_000_front_v1.png` — 1,793,534 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/desktop-execution-v1.mp4` — 1,901,201 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/implementation-report-v1.md` — 5,151 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/lovetree-48-neon-pilot-cinematic-hero-v1.html` — 46,352 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/mobile-execution-v1.mp4` — 1,052,211 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/reference-shot-map-v1.md` — 4,864 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/reference-vs-result-contactsheet-v1.jpg` — 799,383 B
+- `90_공통자산_캐스팅_참고영상/07_HUD_키프레임_HTML/02_CinematicHero_v1/validation-results-v1.json` — 2,449 B
+- `90_공통자산_캐스팅_참고영상/08_검증_메타데이터/Gate2B_A_Pilot_Attempt2_Validation_v1.md` — 3,876 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/moment-pool-manifest-v2.json` — 1,815 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_DV01_right_profile_v1.png` — 1,785,339 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_DV02_right_profile_v1.png` — 1,981,495 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC01_portrait_v1.jpg` — 125,384 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC02_portrait_v1.jpg` — 105,547 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC03_portrait_v1.jpg` — 133,153 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC04_portrait_v1.jpg` — 114,447 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC05_portrait_v1.jpg` — 117,850 B
+- `90_공통자산_캐스팅_참고영상/09A_재활용승격_아이돌MomentPool/MomentCast_MC06_portrait_v1.jpg` — 124,756 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/01_추가아이돌_정면변형_고유3인/MomentCast_BV01_front_v1.png` — 1,734,993 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/01_추가아이돌_정면변형_고유3인/MomentCast_BV02_front_v1.png` — 1,739,299 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/01_추가아이돌_정면변형_고유3인/MomentCast_BV03_front_v1.png` — 1,701,243 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/02_추가아이돌_측면후보_고유2인/MomentCast_DV01_right_profile_v1.png` — 1,785,339 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/02_추가아이돌_측면후보_고유2인/MomentCast_DV02_right_profile_v1.png` — 1,981,495 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/03_Gate2B_실패컷_재활용후보/MomentCast_A_4view_failedboard_reuse_v1.png` — 1,767,047 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/03_Gate2B_실패컷_재활용후보/MomentCast_A_8view_failedboard_reuse_v1.png` — 1,794,870 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/01_A_legacy_angles/MomentCast_Alegacy_000_front_v1.png` — 1,960,781 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/01_A_legacy_angles/MomentCast_Alegacy_090_left_v1.png` — 1,796,652 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/01_A_legacy_angles/MomentCast_Alegacy_180_back_v1.png` — 1,909,822 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/01_A_legacy_angles/MomentCast_Alegacy_270_right_v1.png` — 1,829,945 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/02_B_legacy_angles/MomentCast_Blegacy_000_front_v1.png` — 1,767,842 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/02_B_legacy_angles/MomentCast_Blegacy_090_left_v1.png` — 1,554,864 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/02_B_legacy_angles/MomentCast_Blegacy_180_back_v1.png` — 1,661,114 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/02_B_legacy_angles/MomentCast_Blegacy_270_right_v1.png` — 1,382,723 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/03_C_legacy_angles/MomentCast_Clegacy_000_front_v1.png` — 1,588,294 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/03_C_legacy_angles/MomentCast_Clegacy_090_left_v1.png` — 1,529,933 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/03_C_legacy_angles/MomentCast_Clegacy_180_back_v1.png` — 1,615,337 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/03_C_legacy_angles/MomentCast_Clegacy_270_right_v1.png` — 1,554,743 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/04_D_legacy_angles/MomentCast_Dlegacy_000_front_v1.png` — 1,575,183 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/04_D_legacy_angles/MomentCast_Dlegacy_090_left_v1.png` — 1,479,969 B
+- `90_공통자산_캐스팅_참고영상/09B_재활용승격_아이돌MomentPool_중복보존/04_Gate2A_이전각도_고유자산/04_D_legacy_angles/MomentCast_Dlegacy_180_back_v1.png` — 1,597,343 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221416_kr.pinterest.com.png` — 6,784,987 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221534_kr.pinterest.com.png` — 6,633,352 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221638_kr.pinterest.com_1.png` — 6,430,121 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221639_kr.pinterest.com_2.png` — 673,307 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221728_kr.pinterest.com_1.png` — 6,472,155 B
+- `90_공통자산_캐스팅_참고영상/10_핀터레스트_레퍼런스/CaptureX_2026-08-08_221728_kr.pinterest.com_2.png` — 1,244,211 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/1.JPG` — 184,231 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/10.JPG` — 84,120 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/2.JPG` — 127,399 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/3.JPG` — 186,364 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/4.JPG` — 97,921 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/5.JPG` — 195,135 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/6.JPG` — 178,445 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/7.JPG` — 233,509 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/8.JPG` — 192,091 B
+- `91_제품오너_선호장면_참고자료/01_제품오너_선호장면10장_원본/9.JPG` — 200,979 B
+- `91_제품오너_선호장면_참고자료/02_항공장면_참고_뱅기.JPG` — 73,290 B
+- `91_제품오너_선호장면_참고자료/03_추가참고이미지_01.png` — 2,325,532 B
+- `91_제품오너_선호장면_참고자료/04_추가참고이미지_02.png` — 2,290,575 B
+- `91_제품오너_선호장면_참고자료/05_추가참고이미지_03.png` — 2,070,605 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/00_gate-review-board.png` — 694,949 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/01_디자인팀장_제작지시서_v1.md` — 34,354 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/01_초기Gate1_5인전신라인업_실패_v1.png` — 3,392,029 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/02_초기Gate1_IDOL-A_얼굴각도_실패_v1.png` — 2,443,678 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/02_generated-asset-manifest.json` — 2,530 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/03_초기Gate1_IDOL-A_전신각도_실패_v1.png` — 2,606,862 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/04_character-lock-bible.md` — 1,480 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/05_gate2-regeneration-contract.md` — 982 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/07_gate-validation.json` — 1,125 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/08_visual-validation-report.md` — 1,791 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/README.txt` — 702 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_01_초기Gate1_CharacterConsistency_실패패키지/SHA256SUMS.txt` — 1,125 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/00_초기15인_후보설명_v1.md` — 4,520 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/01_초기15인_전원탈락검토판_v1.png` — 1,968,277 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/02_REJECTED_A1.png` — 159,023 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/03_REJECTED_A2.png` — 168,036 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/04_REJECTED_A3.png` — 143,756 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/05_REJECTED_B1.png` — 124,590 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/06_REJECTED_B2.png` — 147,049 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/07_REJECTED_B3.png` — 114,032 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/08_REJECTED_C1.png` — 167,989 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/09_REJECTED_C2.png` — 130,825 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/10_REJECTED_C3.png` — 146,235 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/11_REJECTED_D1.png` — 97,633 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/12_REJECTED_D2.png` — 119,944 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/13_REJECTED_D3.png` — 170,340 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/14_REJECTED_E1.png` — 143,948 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/15_REJECTED_E2.png` — 144,507 B
+- `92_반려_중간자료_보관/01_이전반려버전_기존보관/ZZ_절대사용금지_초기실패봉인/DO_NOT_USE_02_Gate0_초기캐스팅_전원반려/16_REJECTED_E3.png` — 119,925 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/11_반려_FinalHumanTeaser_바로보기.html` — 36,739,323 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/11_반려_FinalHumanTeaser_실행영상.mp4` — 3,769,068 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/desktop-contactsheet-final-human-teaser-v1.jpg` — 254,755 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/desktop-execution-final-human-teaser-v1.mp4` — 3,769,068 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/lovetree-neon-pilot-final-human-teaser-v1.html` — 36,739,323 B
+- `92_반려_중간자료_보관/04_반려_FinalHumanTeaser_V1복구안/reference-vs-final-human-analysis-comparison-v1.jpg` — 327,467 B
+- `녹화_2026_08_14_03_33_59_761.mp4` — 13,939,888 B
+- `녹화_2026_08_14_03_36_28_279.mp4` — 17,680,230 B
+
+### 49_아이돌모먼트_리빌포털 — 559 files, 1,235,763,136 bytes
+
+- `★_참고영상_NCT127_슈퍼휴먼_MV티저.mp4` — 7,394,627 B
+- `★_최종선택_49_슈퍼휴먼_인터랙티브_v1.4_바로보기.html` — 10,342,372 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-execution-v2.mp4` — 1,925,494 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-field-v2.png` — 1,659,494 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-hero-v2.png` — 406,554 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-overview-v2.png` — 1,308,921 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-reveal-v2.png` — 444,794 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-route-v2.png` — 1,018,051 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/desktop-save-v2.png` — 478,508 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/hero-cast-usage-map-v2.md` — 1,064 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/implementation-report-v2.md` — 2,351 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/lovetree-49-moment-reveal-portal-v2.html` — 17,732,687 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-execution-v2.mp4` — 1,153,910 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-field-v2.png` — 403,076 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-hero-v2.png` — 215,646 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-overview-v2.png` — 359,760 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-reveal-v2.png` — 226,475 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-route-v2.png` — 289,126 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/mobile-save-v2.png` — 123,519 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/moment-meaning-check-v2.md` — 1,200 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/moment-reveal-window-scene-map-v2.md` — 1,737 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/reference-vs-result-v2.jpg` — 323,477 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/runtime-test-results-v2.json` — 814 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/same-identity-reveal-check-v2.json` — 1,679 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/SHA256SUMS_v2.txt` — 957 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/SUBMISSION_INDEX_v2.md` — 634 B
+- `01_버전별_결과물/01_초기포털_v2.0_제출본/validation-results-v2.json` — 2,991 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/49_v2.1_bg_kpop-concert-memory_day_master_v1.svg` — 7,430 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/49_v2.1_bg_kpop-concert-memory_night_master_v1.svg` — 7,430 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/49_v2.1_bg_lovetree-dream-memory_day_compare_v1.svg` — 3,244 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/49_v2.1_bg_lovetree-dream-memory_night_compare_v1.svg` — 3,244 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/background-comparison-v2.1.jpg` — 237,478 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/background-replacement-map-v2.1.md` — 651 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-concert-field.png` — 881,409 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-concert-overview.png` — 789,982 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-dream-field.png` — 959,231 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-dream-overview.png` — 882,950 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-mountain-field.png` — 1,659,412 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/compare-mountain-overview.png` — 1,308,928 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/implementation-report-v2.1.md` — 886 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/lovetree-49-moment-reveal-portal-v2.1-bgfix.html` — 16,698,009 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/mobile-concert-field.png` — 231,378 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/mobile-concert-overview.png` — 217,368 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/SHA256SUMS_v2.1.txt` — 1,809 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/SUBMISSION_INDEX_v2.1.md` — 374 B
+- `01_버전별_결과물/02_초기포털_v2.1_배경수정/validation-results-v2.1.json` — 1,262 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/desktop-validation-v2.2.png` — 3,702,614 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-cast-map-v2.2.md` — 1,303 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-01-desktop-v2.2-r1.png` — 746,648 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-01-desktop-v2.2.png` — 740,011 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-02-desktop-v2.2-r1.png` — 875,317 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-02-desktop-v2.2.png` — 868,965 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-03-desktop-v2.2-r1.png` — 1,397,391 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-03-desktop-v2.2.png` — 1,396,994 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-04-desktop-v2.2-r1.png` — 782,566 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-04-desktop-v2.2.png` — 780,260 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-05-desktop-v2.2-r1.png` — 885,974 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-05-desktop-v2.2.png` — 883,133 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-06-desktop-v2.2-r1.png` — 1,374,334 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/hero-state-06-desktop-v2.2.png` — 1,369,592 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/implementation-report-v2.2.md` — 1,728 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/light-reveal-interaction-spec-v2.2.md` — 1,356 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/lovetree-49-moment-reveal-portal-v2.2-six-hero-r1.html` — 2,096,351 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/lovetree-49-moment-reveal-portal-v2.2-six-hero.html` — 2,096,255 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/mobile-validation-v2.2-r1.png` — 815,696 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/mobile-validation-v2.2.png` — 851,798 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/pointer-reveal-validation-v2.2-r1.png` — 1,383,651 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/QA_LIGHTPATH_FIX_v2.2-r1.md` — 711 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/qa-lightpath-fix-v2.2-r1.json` — 1,428 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/anchor-mapping-sheet-v2.2-r2.md` — 888 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/desktop-validation-v2.2-r2.png` — 3,706,218 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/face-artifact-qa-check-v2.2-r2.json` — 3,289 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/face-artifact-qa-v2.2-r2.jpg` — 158,870 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-01-desktop-v2.2-r2.png` — 670,307 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-02-desktop-v2.2-r2.png` — 814,650 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-03-desktop-v2.2-r2.png` — 1,372,455 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-04-desktop-v2.2-r2.png` — 709,614 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-05-desktop-v2.2-r2.png` — 849,468 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/hero-state-06-desktop-v2.2-r2.png` — 1,373,467 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/implementation-note-v2.2-r2.md` — 1,019 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/LoveTree_49_V2_2_R2_AnchorReset.zip` — 21,810,795 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/lovetree-49-moment-reveal-portal-v2.2-r2-anchor-reset.html` — 2,819,945 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/mobile-validation-v2.2-r2.png` — 793,577 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/pointer-reveal-validation-spec-v2.2-r2.md` — 653 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/pointer-reveal-validation-v2.2-r2.png` — 1,400,351 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/SHA256SUMS_v2.2-r2.txt` — 3,765 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/six-state-contactsheet-v2.2-r2-anchor-reset.jpg` — 322,468 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/SUBMISSION_INDEX_v2.2-r2.md` — 792 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/R2_AnchorReset/validation-results-v2.2-r2.json` — 3,368 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/same-identity-portal-check-v2.2.json` — 1,815 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/SHA256SUMS_v2.2.txt` — 3,755 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/six-hero-state-contactsheet-v2.2-r1.jpg` — 351,606 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/six-hero-state-contactsheet-v2.2.jpg` — 356,117 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/six-hero-state-map-v2.2.md` — 991 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/SUBMISSION_INDEX_v2.2.md` — 703 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/tree-color-system-v2.2.md` — 850 B
+- `01_버전별_결과물/03_초기포털_v2.2_6인/validation-results-v2.2.json` — 2,277 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/06_4-3기_LoveTree49_V2.3_6HeroWorlds_실행기록_v1.md` — 711 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_cast-A_main-visual_source_v1.png` — 2,007,120 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_cast-B_soft-emotion_source_v1.png` — 2,015,646 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_cast-C_chic-edge_source_v1.png` — 1,938,260 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_world-clear_master_v1.jpg` — 38,721 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_world-pink_master_v1.jpg` — 42,209 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/49_v2.3_world-purple_master_v1.jpg` — 296,250 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/cast-identity-usage-check-v2.3.json` — 1,033 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/desktop-validation-v2.3.png` — 3,370,819 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-6state-comparison-v2.3.jpg` — 317,941 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-01-desktop-v2.3.png` — 863,076 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-02-desktop-v2.3.png` — 979,105 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-03-desktop-v2.3.png` — 874,605 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-04-desktop-v2.3.png` — 1,430,983 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-05-desktop-v2.3.png` — 954,775 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-06-desktop-v2.3.png` — 1,369,475 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/hero-state-map-v2.3.md` — 2,866 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/implementation-report-v2.3.md` — 3,349 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/interaction-spec-v2.3.md` — 2,052 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/lovetree-49-moment-reveal-portal-v2.3-6state.html` — 8,476,106 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/mobile-validation-v2.3.png` — 845,979 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/SHA256SUMS_v2.3.txt` — 874 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/SUBMISSION_INDEX_v2.3.md` — 847 B
+- `01_버전별_결과물/04_초기포털_v2.3_6월드/validation-results-v2.3.json` — 4,204 B
+- `01_버전별_결과물/05_컨셉티저_R3/desktop-hero-owner-direct-r3.png` — 857,882 B
+- `01_버전별_결과물/05_컨셉티저_R3/desktop-moment-archive-owner-direct-r3.png` — 1,448,549 B
+- `01_버전별_결과물/05_컨셉티저_R3/desktop-tree-owner-direct-r3.png` — 1,154,489 B
+- `01_버전별_결과물/05_컨셉티저_R3/implementation-note-owner-direct-r3.md` — 1,175 B
+- `01_버전별_결과물/05_컨셉티저_R3/LoveTree_49_OwnerDirect_ConceptTeaser_R3.zip` — 7,372,014 B
+- `01_버전별_결과물/05_컨셉티저_R3/lovetree-49-concept-teaser-owner-direct-r3.html` — 1,880,345 B
+- `01_버전별_결과물/05_컨셉티저_R3/mobile-owner-direct-r3.png` — 1,873,204 B
+- `01_버전별_결과물/05_컨셉티저_R3/validation-results-owner-direct-r3.json` — 1,111 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/asset-map-v4.json` — 1,217 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/desktop-fullpage-v4.png` — 2,030,508 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/implementation-note-v4.md` — 747 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/LoveTree_49_ConceptTeaser_VisualMaster_V4_DownloadReady.zip` — 10,584,346 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/lovetree-49-concept-teaser-visual-master-v4-selfcontained.html` — 4,189,155 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/lovetree-49-concept-teaser-visual-master-v4.html` — 23,634 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/mobile-fullpage-v4.png` — 578,592 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/moment-url-mapping-v4.json` — 3,523 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/README_다운로드안내.md` — 591 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/validation-v4.json` — 1,123 B
+- `01_버전별_결과물/06_비주얼마스터_V4_작업본/visual-master-vs-html-v4.png` — 2,126,272 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/asset-map-v4.json` — 1,217 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/connection_next.png` — 30,925 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/connection_this.png` — 32,509 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/fancam.png` — 39,676 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/interview.png` — 39,110 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/live.png` — 43,269 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/photo.png` — 38,377 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/cards/stage.png` — 35,461 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/hero/backstage.png` — 15,430 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/hero/main.png` — 226,410 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/hero/smile.png` — 17,300 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/hero/stage.png` — 18,855 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/hero/walking.png` — 19,256 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/section-archive.png` — 408,557 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/section-connection.png` — 333,265 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/section-hero.png` — 512,862 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/section-save.png` — 286,291 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/section-tree.png` — 489,837 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit1.png` — 8,815 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit2.png` — 6,972 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit3.png` — 6,504 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit4.png` — 8,979 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit5.png` — 6,098 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit6.png` — 9,551 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/assets/tree/fruit7.png` — 5,741 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/desktop-fullpage-v4.png` — 2,030,508 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/desktop-v4.pdf` — 30,553 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/implementation-note-v4.md` — 747 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/lovetree-49-concept-teaser-visual-master-v4-selfcontained.html` — 4,189,155 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/lovetree-49-concept-teaser-visual-master-v4.html` — 23,634 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/mobile-fullpage-v4.png` — 578,592 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/mobile-v4.pdf` — 31,241 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/moment-url-mapping-v4.json` — 3,523 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/README_다운로드안내.md` — 591 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/validation-v4.json` — 1,123 B
+- `01_버전별_결과물/07_비주얼마스터_V4_다운로드본/visual-master-vs-html-v4.png` — 2,126,272 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/01_Assets/00_visual-source.png` — 3,141,677 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/01_Assets/01_Assets_All.zip` — 589,164 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/01_Assets/asset-map.json` — 822 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/01_Assets/curtain_breath.jpg` — 26,893 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/01_Assets/first_glimpse.jpg` — 20,511 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/02_내부검수/02_QA_KeyEvidence.zip` — 4,451,186 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/02_내부검수/runtime-check.json` — 156 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/03_메인HTML_시네마틱컨셉티저_v1.html` — 1,301,379 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/04_샷맵.md` — 2,888 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/05_데스크톱_실행영상.mp4` — 5,542,736 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/06_모바일_실행영상.mp4` — 1,769,024 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/07_벤치마크→러브트리_적용맵.md` — 3,154 B
+- `01_버전별_결과물/08_시네마틱컨셉티저_V1/08_2초간격_컨택트시트.jpg` — 287,962 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/cast_a_center.png` — 1,982,600 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/cast_b_blond.png` — 2,007,120 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/cast_c_performance.png` — 1,929,136 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/cast_d_cool.png` — 1,938,260 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/cast_e_global.png` — 1,974,248 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/01_Assets/lovetree_full_bloom_2560x1440.png` — 989,839 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/02_메인HTML_슈퍼휴먼_정확벤치마크_v1.0.html` — 11,292,755 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/03_슈퍼휴먼_샷맵.md` — 3,240 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/04_슈퍼휴먼→러브트리_스토리보드.md` — 3,162 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/05_남성_고해상도자산_컨택트시트.jpg` — 164,123 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/06_데스크톱_실행영상.mp4` — 5,218,416 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/07_모바일_실행영상.mp4` — 1,728,426 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/08_최종_컨택트시트.jpg` — 210,521 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/09_검증결과.json` — 2,006 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/10_수정지시_V1.1_역동성강화.md` — 16,742 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/11_반려기록_V1.1→V2_재설계.md` — 19,211 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/cast_a_center_cutout_v1.1.webp` — 106,392 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/cast_b_blond_cutout_v1.1.webp` — 111,764 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/cast_c_performance_cutout_v1.1.webp` — 98,690 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/cast_d_cool_cutout_v1.1.webp` — 101,368 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/cast_e_global_cutout_v1.1.webp` — 126,714 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/01_Assets/lovetree_full_bloom_2560x1440_v1.1.webp` — 231,988 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/02_QA/key-check-contact-v1.1.jpg` — 215,299 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/02_QA/mobile-check-contact-v1.1.jpg` — 80,447 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/49_V1.1_DYNAMIC_CORRECTION_REPORT.md` — 1,911 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/desktop-visual-gate-v1.1.mp4` — 9,051,266 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/dynamic-correction-contact-sheet-v1.1.jpg` — 335,944 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/lovetree-49-superhuman-exact-benchmark-male-v1.1-dynamic.html` — 9,094,305 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/mobile-visual-gate-v1.1.mp4` — 3,596,751 B
+- `01_버전별_결과물/09_슈퍼휴먼_정확벤치마크_V1/12_V1.1_역동성보정/validation-v1.1.json` — 2,652 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/01_PRIMARY_IDENTITY_BOARD.jpg` — 463,555 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/02_LOVETREE_10BEAT_STORYBOARD.jpg` — 563,647 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/03_SUPERHUMAN_12SEC_POC.mp4` — 3,708,615 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/01_FIRST_GLIMPSE_REPAIR_R1.png` — 166,436 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/03_PERSON_REVEAL_REPAIR_R1.png` — 156,500 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/07_NEXT_MOMENT_REPAIR_R1.png` — 145,906 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/08_DEEPENING_MANY_MOMENTS_REPAIR_R1.png` — 191,801 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/09_MEMORY_FIELD_PATH_REVEAL_REPAIR_R1.png` — 236,659 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/01_Repaired_Scene_Masters/10_TREE_EMERGES_LOVETREE_REPAIR_R1.png` — 825,388 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04A_MICROPHONE_HAND_REPAIR_R1.png` — 40,308 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04B_STAGE_PROFILE_REPAIR_R1.png` — 41,779 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04C_PRE_SMILE_EXPRESSION_REPAIR_R1.png` — 38,740 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04D_BACKSTAGE_GESTURE_REPAIR_R1.png` — 42,435 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04E_FACE_DETAIL_REPAIR_R1.png` — 38,931 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/02_Delicate_Microshots/04F_ACCESSORY_JACKET_HAND_REPAIR_R1.png` — 40,574 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/PHASE_A_REPAIR_R1_CONTACT_SHEET.jpg` — 604,352 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/01_게이트제출본/PHASE_A_REPAIR_R1/PHASE_A_REPAIR_R1_VALIDATION.json` — 1,481 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/02_작업원본/PHASE_A_REPAIR_R1/00_PRIMARY_MASTER_V2_REFERENCE_PACK.jpg` — 478,379 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/02_작업원본/PHASE_A_REPAIR_R1/00_REPAIR_GENERATION_SOURCE_SHEET_R1.png` — 2,232,865 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/02_작업원본/PHASE_A_REPAIR_R1/README.md` — 720 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/02_작업원본/semantic_scene_generation_source_v1.png` — 2,342,132 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/02_작업원본/semantic_storyboard_generation_source_v1.png` — 2,243,210 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/03_내부검수/PHASE_A_REPAIR_R1/PHASE_A_REPAIR_R1_CONTACT_SHEET.jpg` — 604,352 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/03_내부검수/PHASE_A_REPAIR_R1/PHASE_A_REPAIR_R1_VALIDATION.json` — 1,481 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/03_내부검수/PHASE_A_REPAIR_R1/SHA256SUMS.txt` — 1,799 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/03_내부검수/poc_internal_check_contact.jpg` — 152,585 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/04_반려기록·참고/STATUS_V1_V1.1_REJECTED_VISUAL_AND_PRODUCT_CONCEPT.md` — 386 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/01_S01_FIRST_GLIMPSE_MASTER.png` — 821,705 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/02_S03_PERSON_REVEAL_MASTER.png` — 859,337 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_01.png` — 602,075 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_02.png` — 609,196 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_03.png` — 606,512 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_04.png` — 767,542 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_05.png` — 614,696 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_06.png` — 666,587 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/03_S04_MICROSHOT_07.png` — 978,035 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/04_S07_NEXT_MOMENT_MASTER.png` — 913,208 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/05_S08_DEEPENING_01.png` — 529,736 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/05_S08_DEEPENING_02.png` — 684,465 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/05_S08_DEEPENING_03.png` — 599,945 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/05_S08_DEEPENING_04.png` — 495,343 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/05_S08_DEEPENING_05.png` — 559,561 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/06_S09_MEMORY_FIELD_MASTER.png` — 1,437,911 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/07_S10_TREE_EMERGES_MASTER.png` — 2,141,010 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/08_SHOT_MASTER_USAGE_MAP.md` — 3,574 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/01_Gate_Submission/SHOT_MASTER_CONTACT_OVERVIEW.jpg` — 519,818 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/02_Working_Source/WORKING_REPAIR_ASSET_SHEET_SOURCE.png` — 2,084,715 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/03_Internal_QA/SHA256SUMS.txt` — 2,043 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/05_PHASE_A_보정샷·마스터추출_R1/03_Internal_QA/SHOT_MASTER_EXTRACTION_VALIDATION.json` — 635 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/POC_승인PRIMARY_12초영상_복사본.mp4` — 3,708,615 B
+- `01_버전별_결과물/10_슈퍼휴먼_러브트리시맨틱_POC/POC_승인PRIMARY_12초영상.mp4` — 3,708,615 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/01_단독실행HTML_부분후보_v1.1.html` — 26,189,739 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/02_최종_컨택트시트.jpg` — 503,639 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/03_스토리보드_vs_최종비교.jpg` — 957,901 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/04_검증결과.json` — 6,843 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/05_최종보고.md` — 2,110 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/49_final_contact_sheet.pdf` — 3,116,481 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/49_final_contact_sheet.svg` — 359 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/49_storyboard_vs_final_gate.pdf` — 3,664,807 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/49_storyboard_vs_final_gate.svg` — 8,168 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/after.png` — 1,719,262 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/conn.png` — 2,143,717 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/d1.png` — 529,736 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/d2.png` — 684,465 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/d3.png` — 599,945 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/d4.png` — 495,343 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/d5.png` — 559,561 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m1.png` — 602,075 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m2.png` — 609,196 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m3.png` — 606,512 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m4.png` — 767,542 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m5.png` — 614,696 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m6.png` — 666,587 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/m7.png` — 978,035 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/s01.png` — 821,705 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/s03.png` — 859,337 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/s07.png` — 913,208 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/s09.png` — 1,437,911 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/s10.png` — 2,141,010 B
+- `01_버전별_결과물/11_슈퍼휴먼_부분후보_v1.1/06_작업원본/assets/save.png` — 1,877,947 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/01_메인HTML_v1.0.html` — 46,629 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/02_단독실행HTML_v1.0.html` — 4,713,808 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/03_데스크톱_검수_v1.0.jpg` — 208,920 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/04_모바일_검수_v1.0.jpg` — 76,199 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/05_전환상태_검수시트.jpg` — 290,812 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/06_검증결과_v1.0.json` — 3,707 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/07_사이트실행영상_29.252초.mp4` — 5,697,822 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/08_전체패키지_v1.0.zip` — 13,326,817 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/afterimage.webp` — 123,448 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/backstage_profile.webp` — 109,682 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/connection.webp` — 262,186 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/corridor_tilt.webp` — 145,716 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/eye_alt.webp` — 208,184 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/eye_impact.webp` — 240,394 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/jacket_detail.webp` — 230,624 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/memory_field.webp` — 291,900 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/mic_alt.webp` — 148,952 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/mic_grip.webp` — 130,200 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/neck_detail.webp` — 177,796 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/prism_close.webp` — 178,804 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/rear_corridor.webp` — 160,014 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/reflection_close.webp` — 157,432 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/save.webp` — 158,210 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/singing_close.webp` — 152,984 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/stage_action.webp` — 164,576 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/stage_low.webp` — 157,238 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/tracking_profile.webp` — 98,780 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/white_rear.webp` — 101,188 B
+- `01_버전별_결과물/12_슈퍼휴먼_다이내믹웹_v1.0/assets/white_room.webp` — 102,052 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/01_메인HTML_v1.1.html` — 56,531 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/02_단독실행HTML_v1.1.html` — 4,723,743 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/03_사이트실행영상_v1.1.mp4` — 2,319,318 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/04_v1.0_vs_v1.1_페이싱비교.mp4` — 4,135,380 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/05_SAVE상호작용_검수영상.mp4` — 1,450,743 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/06_트리클라이맥스_검수영상.mp4` — 495,348 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/07_검증결과_v1.1.json` — 4,413 B
+- `01_버전별_결과물/13_슈퍼휴먼_다이내믹웹_v1.1/08_전체패키지_v1.1.zip` — 15,453,843 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/01_메인HTML_v1.2.html` — 84,122 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/02_단독실행HTML_v1.2.html` — 4,751,334 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/03_사이트실행영상_v1.2.mp4` — 3,542,206 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/04_트리클라이맥스_전후비교.jpg` — 348,004 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/05_트리클라이맥스_검수영상.mp4` — 1,123,214 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/06_데스크톱_검수_v1.2.jpg` — 162,966 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/07_모바일_검수_v1.2.jpg` — 70,105 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/08_검증결과_v1.2.json` — 3,094 B
+- `01_버전별_결과물/14_슈퍼휴먼_다이내믹웹_v1.2/09_전체패키지_v1.2.zip` — 12,307,281 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/01_메인HTML_v1.3.html` — 67,176 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/02_단독실행HTML_v1.3.html` — 9,445,143 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/03_승인트리_vs_HTML트리_비교.jpg` — 798,150 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/04_사이트실행영상_v1.3.mp4` — 3,153,002 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/05_데스크톱_검수_v1.3.jpg` — 361,932 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/06_모바일_검수_v1.3.jpg` — 114,947 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/07_승인_트리비주얼_마스터.png` — 3,533,101 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/08_검증결과_v1.3.json` — 1,014 B
+- `01_버전별_결과물/15_슈퍼휴먼_다이내믹웹_v1.3/09_전체패키지_v1.3.zip` — 21,174,202 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/01_메인HTML_v1.4.html` — 382,861 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/02_단독실행HTML_v1.4.html` — 10,342,372 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/03_전체실행영상_v1.4.mp4` — 6,838,526 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/04_챕터이동_검수.jpg` — 219,553 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/05_시크바이동_검수.jpg` — 176,117 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/06_리빙모먼트_검수.jpg` — 162,460 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/07_트리클라이맥스_검수.jpg` — 406,547 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/08_데스크톱·모바일_검수.jpg` — 279,049 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/09_검증결과_v1.4.json` — 11,269 B
+- `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/10_전체패키지_v1.4.zip` — 26,087,898 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_01차_01.png` — 2,397,695 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_01차_02.png` — 2,175,554 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_01차_03.png` — 2,140,786 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_01차_04.png` — 2,125,063 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_02차_01.png` — 2,342,132 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_02차_02.png` — 2,382,066 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_02차_03.png` — 2,493,251 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_02차_04.png` — 2,243,210 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_03차_01.png` — 2,307,626 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_03차_02.png` — 2,286,994 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_04차_01.png` — 2,237,463 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_04차_02.png` — 2,275,878 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_04차_03.png` — 2,149,433 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_01.png` — 1,659,784 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_02.png` — 2,081,502 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_03.png` — 1,578,963 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_04.png` — 1,708,119 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_05.png` — 1,694,697 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_06.png` — 1,835,117 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_07.png` — 1,533,408 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_08.png` — 2,114,543 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_09.png` — 1,555,359 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_05차_10.png` — 2,159,558 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_06차_01.png` — 1,971,982 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_06차_02.png` — 2,189,900 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_06차_03.png` — 1,835,123 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_06차_04.png` — 1,876,732 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_01.png` — 1,892,145 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_02.png` — 1,962,183 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_03.png` — 1,861,667 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_04.png` — 1,851,234 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_05.png` — 1,672,415 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_06.png` — 1,720,946 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_07.png` — 1,961,050 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_08.png` — 2,193,345 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_09.png` — 1,947,534 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_07차_10.png` — 2,272,803 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_01.png` — 1,916,408 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_02.png` — 2,070,328 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_03.png` — 1,665,361 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_04.png` — 1,895,702 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_05.png` — 1,775,628 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_06.png` — 1,788,705 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_07.png` — 1,888,480 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_08.png` — 2,197,096 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_09.png` — 2,059,370 B
+- `02_이미지·스토리보드·검수/01_스토리보드_생성본/스토리보드_08차_10.png` — 2,136,861 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_01.png` — 1,635,087 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_02.png` — 2,143,717 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_03.png` — 2,719,154 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_04.png` — 2,191,743 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_05.png` — 2,386,802 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_06.png` — 2,053,047 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_07.png` — 1,719,262 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_08.png` — 1,877,947 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_09.png` — 1,563,620 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_10.png` — 1,981,124 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_11.png` — 1,803,832 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_12.png` — 2,671,526 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_13.png` — 1,997,891 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_14.png` — 1,829,129 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_15.png` — 1,995,956 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_16.png` — 1,911,436 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_17.png` — 2,036,269 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_18.png` — 1,968,726 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_19.png` — 1,757,293 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_20.png` — 1,798,723 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_21.png` — 2,712,976 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_22.png` — 1,949,260 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_23.png` — 1,670,565 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_24.png` — 1,669,591 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_25.png` — 1,730,056 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_26.png` — 2,009,015 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_27.png` — 1,852,339 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_28.png` — 1,596,065 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_29.png` — 1,657,663 B
+- `02_이미지·스토리보드·검수/02_코덱스_고화질_이미지/코덱스_고화질_30.png` — 1,599,903 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/concert-memory-bg.jpg` — 334,984 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/luminous-tree-reference.jpg` — 128,464 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-backstage.jpg` — 24,621 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-fancam.jpg` — 26,137 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-interview.jpg` — 28,529 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-live.jpg` — 24,868 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-photo.jpg` — 22,988 B
+- `02_이미지·스토리보드·검수/03_R3_참고이미지/moment-stage.jpg` — 29,773 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-A_hero-cutout_master_v1.webp` — 171,008 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-A_moment-backstage_derived_v1.jpg` — 47,254 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-A_moment-smile_derived_v1.jpg` — 53,273 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-A_moment-stage_derived_v1.jpg` — 50,081 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-A_moment-walking_derived_v1.jpg` — 50,582 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-B_hero-cutout_master_v1.webp` — 217,428 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-B_moment-backstage_derived_v1.jpg` — 55,090 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-B_moment-smile_derived_v1.jpg` — 55,028 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-B_moment-stage_derived_v1.jpg` — 57,661 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-B_moment-walking_derived_v1.jpg` — 50,253 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-C_hero-cutout_master_v1.webp` — 127,090 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-C_moment-backstage_derived_v1.jpg` — 52,473 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-C_moment-smile_derived_v1.jpg` — 53,655 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-C_moment-stage_derived_v1.jpg` — 54,331 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_cast-C_moment-walking_derived_v1.jpg` — 51,871 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_world-clear_master_v1.jpg` — 38,721 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_world-pink_master_v1.jpg` — 42,209 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/49_v2.2_world-purple-photographic-concert_master_v1.jpg` — 321,646 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-A_hero-matte_v1.png` — 510,727 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-A_ORIGINAL.png` — 1,907,796 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-A_portal-close-memory_v1.jpg` — 45,985 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-A_portal-quiet-detail_v1.jpg` — 43,373 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-A_portal-stage-light_v1.jpg` — 39,957 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-B_hero-matte_v1.png` — 679,241 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-B_ORIGINAL.png` — 1,965,331 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-B_portal-close-memory_v1.jpg` — 37,534 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-B_portal-quiet-detail_v1.jpg` — 39,007 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-B_portal-stage-light_v1.jpg` — 37,430 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-C_hero-matte_v1.png` — 114,953 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-C_ORIGINAL.png` — 2,060,358 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-C_portal-close-memory_v1.jpg` — 44,652 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-C_portal-quiet-detail_v1.jpg` — 45,889 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_anchor-C_portal-stage-light_v1.jpg` — 47,673 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_world-concert-violet-photo_v1.jpg` — 326,640 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_world-ivory-clear_v1.jpg` — 39,120 B
+- `02_이미지·스토리보드·검수/04_V2.2_6인_이미지/R2_AnchorReset/49_v2.2_r2_world-rose-dream_v1.jpg` — 43,557 B
+- `02_이미지·스토리보드·검수/검수이미지_데스크톱_v2.3.png` — 3,370,819 B
+- `02_이미지·스토리보드·검수/검수이미지_모바일_v2.3.png` — 845,979 B
+- `02_이미지·스토리보드·검수/참고이미지_03_2026-08-09_00시24분_01.png` — 1,907,796 B
+- `02_이미지·스토리보드·검수/참고이미지_04_2026-08-09_00시24분_02.png` — 1,965,331 B
+- `02_이미지·스토리보드·검수/참고이미지_05_2026-08-09_00시24분_03.png` — 2,060,358 B
+- `02_이미지·스토리보드·검수/참고이미지_06_2026-08-09_01시02분_01.png` — 2,000,572 B
+- `02_이미지·스토리보드·검수/참고이미지_07_2026-08-09_01시02분_02.png` — 2,392,270 B
+- `02_이미지·스토리보드·검수/참고이미지_08_초기시안.png` — 2,018,632 B
+- `02_이미지·스토리보드·검수/참고이미지_09_2026-08-09_03시01분.png` — 2,060,358 B
+- `02_이미지·스토리보드·검수/참고이미지_10_2026-08-09_04시58분.png` — 2,059,603 B
+- `02_이미지·스토리보드·검수/참고이미지_11_2026-08-09_20시40분.png` — 2,084,715 B
+- `02_이미지·스토리보드·검수/참고이미지_12_러브트리_나무_타이틀형.png` — 1,662,306 B
+- `02_이미지·스토리보드·검수/참고이미지_13_러브트리_나무원형_텍스트없음.png` — 2,540,977 B
+- `02_이미지·스토리보드·검수/참고이미지_14_인터랙티브_전체UI_레퍼런스.png` — 2,189,826 B
+- `02_이미지·스토리보드·검수/V2_동일인물_모먼트시트_마스터.png` — 2,060,358 B
+- `02_이미지·스토리보드·검수/V2_동일인물_모먼트시트_원본.png` — 1,965,331 B
+- `02_이미지·스토리보드·검수/V2.1_배경_콘서트메모리_야간.svg` — 7,430 B
+- `02_이미지·스토리보드·검수/V2.1_배경_콘서트메모리_주간.svg` — 7,430 B
+- `02_이미지·스토리보드·검수/V2.1_배경비교_드림메모리_야간.svg` — 3,244 B
+- `02_이미지·스토리보드·검수/V2.1_배경비교_드림메모리_주간.svg` — 3,244 B
+- `02_이미지·스토리보드·검수/V2.3_배경_보라_마스터.jpg` — 296,250 B
+- `02_이미지·스토리보드·검수/V2.3_배경_클린_마스터.jpg` — 38,721 B
+- `02_이미지·스토리보드·검수/V2.3_배경_핑크_마스터.jpg` — 42,209 B
+- `02_이미지·스토리보드·검수/V2.3_인물A_메인비주얼_원본.png` — 2,007,120 B
+- `02_이미지·스토리보드·검수/V2.3_인물B_소프트감정_원본.png` — 2,015,646 B
+- `02_이미지·스토리보드·검수/V2.3_인물C_시크_원본.png` — 1,938,260 B
+- `03_작업지시·기록/00_지시이력_인수인계_INDEX_2026-08-10_v1.md` — 3,350 B
+- `03_작업지시·기록/01_현재적용/01_3기_LoveTree49_MomentRevealPortal_디자인팀실행지시서_v1.md` — 15,952 B
+- `03_작업지시·기록/01_현재적용/02_4-3기_LoveTree49_MomentRevealPortal_1차실행지시서_v1.md` — 9,009 B
+- `03_작업지시·기록/03_4-3기_LoveTree49_V2.1_BackgroundOnly_수정실행기록_v1.md` — 1,032 B
+- `03_작업지시·기록/06_4-3기_LoveTree49_V2.3_6HeroWorlds_실행기록_v1.md` — 711 B
+- `03_작업지시·기록/07_4-3기_LoveTree49_V2.2_6HeroStates_실행기록_v1.md` — 745 B
+- `03_작업지시·기록/08_4-3기_LoveTree49_V2.2_R2_AnchorReset_실행기록_v1.md` — 1,220 B
+- `03_작업지시·기록/08_4-3기_STORYBOARD_LOCK_영상우선_HTML후행_실행지시_v1_SUPERSEDED_BY_10.md` — 11,657 B
+- `03_작업지시·기록/09_4-3기_STORYBOARD_vs_IMPLEMENTATION_Shot별_검수체크리스트_v1_SUPERSEDED_BY_10.md` — 8,965 B
+- `03_작업지시·기록/10_4-3기_PRIMARY승인_STORYBOARD_LOCK_영상복원_통합실행지시_v1.md` — 17,580 B
+- `03_작업지시·기록/11_4-3기_이미지생성중단_기존고화질자산_ONLY_동적HTML즉시제작지시_v1.md` — 2,196 B
+- `03_작업지시·기록/12_4-3기_v1.1_페이싱_SAVE정지_TREE강화_수정지시_v1.md` — 1,718 B
+- `03_작업지시·기록/13_4-3기_v1.2_TREE_CLIMAX_구조개선지시_v1_SUPERSEDED_BY_14.md` — 1,762 B
+- `03_작업지시·기록/14_4-3기_v1.3_APPROVED_TREE_EXACT_USE_긴급수정지시_v1.md` — 1,860 B
+- `03_작업지시·기록/15_4-3기_v1.4_INTERACTIVE_NAVIGATION_LIVING_MOMENTS_최종마감지시_v1.md` — 3,185 B
+- `03_작업지시·기록/49_4-3기_SUPERHUMAN_EXACT_BENCHMARK_남성모먼트포털_신규제작지시_v1.docx` — -1 B
+- `03_작업지시·기록/49_Concept_Teaser_Visual_Master_V4_4-3기_최종재제작지시.md` — 18,171 B
+- `03_작업지시·기록/99_49_제작과정_실수교훈_인수인계_v1.md` — 2,853 B
+- `03_작업지시·기록/지시_08_V1.1_역동성강화.md` — 16,742 B
+- `03_작업지시·기록/지시_09_V1.1반려_감정경로복귀_V2재설계.md` — 19,211 B
+- `03_작업지시·기록/지시_10_PRIMARY승인_스토리보드락_영상복원.md` — 17,580 B
+- `04_초기참고자료·분석/참고영상_구간별분석_러브트리적용맵.md` — 9,790 B
+- `04_초기참고자료·분석/참고영상_컨택트시트_01_0분00초-1분25초.jpg` — 417,014 B
+- `04_초기참고자료·분석/참고영상_컨택트시트_02_2분45초-6분05초.jpg` — 433,347 B
+- `04_초기참고자료·분석/참고영상_컨택트시트_03_8분00초-10분20초.jpg` — 377,154 B
+- `04_초기참고자료·분석/참고영상_컨택트시트_04_10분30초-11분15초.jpg` — 165,096 B
+- `04_초기참고자료·분석/참고영상_A_히어로리빌_00분00-02분40.mp4` — 97,484,061 B
+- `04_초기참고자료·분석/참고영상_B1_히어로_3분30초-5분30초.mp4` — 78,709,442 B
+- `04_초기참고자료·분석/참고영상_B2_공간보드_5분30초-6분30초.mp4` — 28,465,984 B
+- `04_초기참고자료·분석/참고영상_C_자연형_8분00초-9분40초.mp4` — 63,573,242 B
+- `04_초기참고자료·분석/참고영상_D_오버뷰·저장_9분40초-11분21초.mp4` — 45,683,629 B
+- `90_이전시안·보관/이전HTML_슈퍼휴먼_동적벤치마크_v1.1.html` — 9,094,305 B
+- `90_이전시안·보관/이전HTML_슈퍼휴먼_최종래퍼_단독실행_v1.1.html` — 26,189,739 B
+- `90_이전시안·보관/이전HTML_초기포털_v1.html` — 2,595,309 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.0.html` — 17,732,687 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.1_배경수정.html` — 16,698,009 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.2_6인_r1.html` — 2,096,351 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.2_6인.html` — 2,096,255 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.2_r2_앵커리셋.html` — 2,819,945 B
+- `90_이전시안·보관/이전HTML_초기포털_v2.3_6상태.html` — 8,476,106 B
+- `90_이전시안·보관/이전HTML_컨셉티저_R3.html` — 1,880,345 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221416_kr.pinterest.com.png` — 6,784,987 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221534_kr.pinterest.com.png` — 6,633,352 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221638_kr.pinterest.com_1.png` — 6,430,121 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221639_kr.pinterest.com_2.png` — 673,307 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221728_kr.pinterest.com_1.png` — 6,472,155 B
+- `90_이전시안·보관/참고_핀터레스트_초기자료/CaptureX_2026-08-08_221728_kr.pinterest.com_2.png` — 1,244,211 B
+- `녹화_2026_08_10_19_32_30_147.mp4` — 72,550,904 B
+
+### 50_드림메모리_시네마틱 — 360 files, 741,773,018 bytes
+
+- `00_50번_작업완료_읽어보기.md` — 2,109 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/00_필수자산_포스터/01_첫화면_포스터_데스크톱.jpg` — 100,119 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/00_필수자산_포스터/02_첫화면_포스터_모바일.jpg` — 96,786 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/01_최종홈페이지_실행본.html` — 29,491 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/02_최종홈페이지_단독미리보기.html` — 16,285,708 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/03_승인영상_데스크톱_최종마스터.mp4` — 12,092,482 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/04_승인영상_모바일_최종마스터.mp4` — 13,037,283 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/05_최종사이트_데스크톱_화면.jpg` — 294,390 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/06_최종사이트_모바일_화면.jpg` — 123,304 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/07_최종사이트_인터랙션_상태.jpg` — 353,010 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/08_최종사이트_검증결과.json` — 4,431 B
+- `01_최종채택본_시네마틱_웹사이트_슈퍼노바/09_최종사이트_전체패키지.zip` — 38,839,881 B
+- `01_화면녹화_2026-08-09_04-46-33.mp4` — 16,698,216 B
+- `01_lovetree-dream-memory-cinematic-v1.3-female.html` — 482,134 B
+- `02_최종홈페이지_단독미리보기.html` — 16,285,708 B
+- `02_화면녹화_2026-08-10_01-23-40.mp4` — 22,509,926 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/female-face-pool/F-VAR02-B_v1.png` — 1,188,727 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/female-face-pool/female-face-diversity-check-v2.json` — 1,072 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/female-face-pool/female-face-pool-final-candidate-v2.jpg` — 634,668 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-MC01_v2.png` — 965,608 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-MC02_v2.png` — 1,101,251 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-MC03_v2.png` — 1,097,030 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-MC04_v2.png` — 969,917 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-SC01_v2.png` — 1,123,050 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-SC02_v2.png` — 1,052,951 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-SC03_v2.png` — 1,221,258 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-SC04_v2.png` — 1,143,090 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-VAR01_v2.png` — 1,265,329 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/M-VAR02_v2.png` — 1,111,897 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/male-diversity-check-v2.json` — 4,293 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/male-face-pool-v2-approval-board.jpg` — 524,989 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool-v2-reset/male-face-pool-v2-review.md` — 4,066 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-MC01-A_v1.png` — 716,948 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-MC01-B_v1.png` — 874,561 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-MC01-C_v1.png` — 805,710 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-MC01-D_v1.png` — 855,899 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-SC01-A_v1.png` — 752,277 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-SC01-B_v1.png` — 818,142 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-SC02-A_v1.png` — 766,356 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-SC02-B_v1.png` — 712,425 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-VAR01_v1.png` — 739,942 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/M-VAR02_v1.png` — 768,794 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-casting-review-v1.md` — 2,609 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-diversity-check-v1.json` — 1,505 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-pool-v1.jpg` — 482,851 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-pool-v2-approval-sheet.jpg` — 517,489 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-pool-v2-difference-map.md` — 7,382 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-pool-v2-diversity-check.json` — 4,947 B
+- `10_최종제작_원본소스/01_공통_이미지자산/02_캐스트자산/male-face-pool/male-face-pool-v2-status.md` — 1,391 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC01_portrait_v1.webp` — 38,654 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC02_portrait_v1.webp` — 31,036 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC03_portrait_v1.webp` — 39,536 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC04_portrait_v1.webp` — 32,104 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC05_portrait_v1.webp` — 33,542 B
+- `10_최종제작_원본소스/01_공통_이미지자산/초기/MomentCast_MC06_portrait_v1.webp` — 35,940 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/7eaf63c4-1cfd-4d04-8d3d-7689a60d5186.png` — 2,457,285 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_09_05 (1).png` — 2,457,285 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_09_06 (2).png` — 2,502,488 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_09_06 (3).png` — 2,173,667 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_09_06 (4).png` — 2,265,796 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_12 (1).png` — 2,354,612 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_12 (2).png` — 2,104,689 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (3).png` — 2,177,424 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (4).png` — 2,220,640 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (5).png` — 2,011,966 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (6).png` — 2,074,609 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (7).png` — 1,979,731 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (8).png` — 2,150,950 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 8일 오후 11_46_13 (9).png` — 2,158,951 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_27_36 (1).png` — 2,275,290 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_27_37 (2).png` — 2,333,201 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 12_48_36 (1).png` — 2,264,072 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 12_48_36 (2).png` — 2,271,625 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 12_48_37 (3).png` — 2,128,018 B
+- `10_최종제작_원본소스/02_여성_캐스트자산/F-VAR02-B_v1.png` — 1,188,727 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_37 (1).png` — 1,982,600 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_37 (2).png` — 2,015,646 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (3).png` — 2,007,120 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (4).png` — 1,929,136 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (5).png` — 1,881,384 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (6).png` — 1,938,260 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (7).png` — 1,846,029 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_38 (8).png` — 1,908,649 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_39 (10).png` — 1,974,248 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_33_39 (9).png` — 2,056,168 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_52_36 (1).png` — 2,344,495 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_52_37 (2).png` — 2,112,921 B
+- `10_최종제작_원본소스/03_남성_캐스트자산/ChatGPT Image 2026년 8월 9일 오전 01_52_37 (3).png` — 2,247,198 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221416_kr.pinterest.com.png` — 6,784,987 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221534_kr.pinterest.com.png` — 6,633,352 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221638_kr.pinterest.com_1.png` — 6,430,121 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221639_kr.pinterest.com_2.png` — 673,307 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221728_kr.pinterest.com_1.png` — 6,472,155 B
+- `10_최종제작_원본소스/04_핀터레스트_무드보드/CaptureX_2026-08-08_221728_kr.pinterest.com_2.png` — 1,244,211 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오전 08_16_52 (1).png` — 2,397,695 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오전 08_16_53 (2).png` — 2,175,554 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오전 08_16_54 (3).png` — 2,140,786 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오전 08_16_54 (4).png` — 2,125,063 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오후 05_14_50 (1).png` — 2,342,132 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오후 05_14_50 (2).png` — 2,382,066 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오후 05_14_51 (3).png` — 2,493,251 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/ChatGPT Image 2026년 8월 9일 오후 05_14_51 (4).png` — 2,243,210 B
+- `10_최종제작_원본소스/05_슈퍼노바_스토리보드_기준본/V2_LOCKED_STORYBOARD.png` — 2,219,692 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_01 (1).png` — 1,584,832 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_02 (2).png` — 2,147,369 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_02 (3).png` — 1,771,337 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_03 (4).png` — 2,084,554 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_03 (5).png` — 2,127,066 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_05 (6).png` — 1,719,034 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_06 (7).png` — 1,736,344 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_06 (8).png` — 1,842,469 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_06 (9).png` — 1,655,842 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 05_52_07 (10).png` — 1,689,120 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 09_17_36 (1).png` — 1,894,218 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 09_17_37 (2).png` — 1,175,614 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 09_33_14 (1).png` — 1,607,423 B
+- `10_최종제작_원본소스/06_승인_PRIMARY_장면원본/ChatGPT Image 2026년 8월 9일 오후 09_33_16 (2).png` — 1,470,902 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_지시이력_인수인계_INDEX_2026-08-10_v1.md` — 1,530 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/04_4-2기_4차긴급정정지시_Pinterest캐스팅승인Gate_Adobe인물생성금지_v1.md` — 11,858 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/05_4-2기_5차전면반려_SUPERNOVA_러브트리컨셉우선_HARD_RESET_v1.md` — 12,565 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/06_4-2기_6차최종정정_기존LoveTree콘티고정_SUPERNOVA연출언어만적용_v1.md` — 14,936 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/07_4-2기_Gate1캐스팅전면반려_기존여자산만사용_PRIMARY재선정_v1_SUPERSEDED_BY_08.md` — 6,971 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/08_4-2기_기존SUPERNOVA_STORYBOARD_LOCK_그대로영상복원_통합실행지시_v1.md` — 13,033 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/13_4-2기_FINAL_MASTER_LOCK_승인후_최종마감지시_v1.md` — 7,588 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/4-2기_2차보완지시_DreamMemory_V1보존_Pinterest캐스트_V1-1_v1.md` — 7,516 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/4-2기_3차보완지시_DreamMemory_V1-1_실사용원본사진생성Gate_v1.md` — 9,300 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/50_4-2기_SUPERNOVA_EXACT_BENCHMARK_여성시네마틱_최종제작지시_v1.docx` — -1 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/LoveTree_4-2기_시네마틱디자인팀장_임명및1차작업지시서_v1.md` — 18,520 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_초기_설계지시_묶음/WORK_STATUS_v1.md` — 372 B
+- `80_작업지시_및_검증기록/01_지시서_이력/05_전면반려_슈퍼노바_러브트리컨셉우선_리셋지시_v1.md` — 12,565 B
+- `80_작업지시_및_검증기록/01_지시서_이력/06_기존러브트리콘티고정_슈퍼노바연출적용지시_v1.md` — 14,936 B
+- `80_작업지시_및_검증기록/01_지시서_이력/07_캐스팅반려_기존여자산_PRIMARY재선정지시_v1.md` — 6,971 B
+- `80_작업지시_및_검증기록/01_지시서_이력/08_슈퍼노바_스토리보드고정_영상복원지시_v1.md` — 13,033 B
+- `80_작업지시_및_검증기록/01_지시서_이력/13_최종마스터고정_최종마감지시_v1.md` — 7,588 B
+- `80_작업지시_및_검증기록/01_지시서_이력/14_4-2기_VIDEO_MASTER_APPROVED_시네마틱웹사이트레이어_완성지시_v1.md` — 2,323 B
+- `80_작업지시_및_검증기록/01_지시서_이력/99_50_제작과정_성공요인_인수인계_v1.md` — 1,295 B
+- `80_작업지시_및_검증기록/02_초기_레퍼런스_분석/cinematic-grammar-map-v1.md` — 2,519 B
+- `80_작업지시_및_검증기록/02_초기_레퍼런스_분석/dream-memory-v1.2-scene-map.md` — 2,180 B
+- `80_작업지시_및_검증기록/02_초기_레퍼런스_분석/reference-grammar-application-v1.2.md` — 1,771 B
+- `80_작업지시_및_검증기록/02_초기_레퍼런스_분석/reference-selection-v1.md` — 4,128 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/desktop-execution-v1.2.mp4` — 2,531,288 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/desktop-execution-v1.mp4` — 1,192,537 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/desktop-stills-v1.2.jpg` — 200,145 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/desktop-stills-v1.3-female.jpg` — 173,216 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/desktop-stills-v1.jpg` — 185,560 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/mobile-execution-v1.2.mp4` — 1,881,517 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/mobile-execution-v1.mp4` — 919,392 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/mobile-stills-v1.2.jpg` — 143,976 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/mobile-stills-v1.jpg` — 195,260 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/reference-grammar-vs-result-v1.2.jpg` — 272,630 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/reference-vs-result-v1.jpg` — 272,813 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/runtime-validation-v1.3.json` — 149 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/SHA256SUMS_v1.txt` — 3,300 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/SHA256SUMS-v1.2.txt` — 904 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/validation-results-v1.2.json` — 5,759 B
+- `80_작업지시_및_검증기록/03_초기_검증자료/validation-results-v1.json` — 8,150 B
+- `80_작업지시_및_검증기록/04_초기_제출목록_v1.md` — 1,414 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_드림메모리_v1.0_초기본.html` — 1,029,772 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_초기_HTML_작업폴더/implementation-report-v1.2.md` — 2,330 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_초기_HTML_작업폴더/implementation-report-v1.md` — 2,462 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_초기_HTML_작업폴더/lovetree-dream-memory-cinematic-v1.2.html` — 590,127 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_초기_HTML_작업폴더/lovetree-dream-memory-cinematic-v1.3-female.html` — 482,134 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/00_초기_HTML_작업폴더/lovetree-dream-memory-cinematic-v1.html` — 1,029,772 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_루트복사본.html` — 590,127 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/01_Reference_Analysis/dream-memory-v1.2-scene-map.md` — 2,180 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/01_Reference_Analysis/reference-grammar-application-v1.2.md` — 1,771 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/03_HTML/implementation-report-v1.2.md` — 2,330 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/03_HTML/lovetree-dream-memory-cinematic-v1.2.html` — 590,127 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/desktop-execution-v1.2.mp4` — 2,531,288 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/desktop-stills-v1.2.jpg` — 200,145 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/mobile-execution-v1.2.mp4` — 1,881,517 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/mobile-stills-v1.2.jpg` — 143,976 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/reference-grammar-vs-result-v1.2.jpg` — 272,630 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/SHA256SUMS-v1.2.txt` — 904 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/01_드림메모리_v1.2_제출본/04_Validation/validation-results-v1.2.json` — 5,759 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_루트복사본.html` — 482,134 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/03_HTML/녹화_2026_08_09_04_46_33_643.mp4` — 16,698,216 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/03_HTML/lovetree-dream-memory-cinematic-v1.3-female.html` — 482,134 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/breath2.png` — 528,604 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/contact_v1.jpg` — 91,467 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene01-v1.3.png` — 976,562 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene02-v1.3.png` — 528,604 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene03-v1.3.png` — 573,982 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene04-v1.3.png` — 660,097 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene05-v1.3.png` — 846,256 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene06-v1.3.png` — 423,592 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene07-v1.3.png` — 369,743 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene08-v1.3.png` — 813,323 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene09-v1.3.png` — 791,865 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-scene10-v1.3.png` — 767,533 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/desktop-stills-v1.3-female.jpg` — 173,216 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/hero2.png` — 978,770 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/mobile-check01-v1.3.png` — 372,285 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/mobile-check02-v1.3.png` — 207,603 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/mobile-check03-v1.3.png` — 358,765 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/mobile-check04-v1.3.png` — 298,958 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/mobile-check05-v1.3.png` — 293,470 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/runtime-validation-v1.3.json` — 149 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene01.png` — 935,829 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene02.png` — 522,581 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene03.png` — 574,363 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene04.png` — 658,027 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene05.png` — 848,606 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene06.png` — 423,592 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene07.png` — 368,483 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene08.png` — 801,768 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene09.png` — 671,713 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/scene10.png` — 694,954 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/test_pw.png` — 909,583 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree_end_s9.png` — 723,230 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree_final.png` — 710,054 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree10b.png` — 734,338 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree10c.png` — 762,959 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree9b.png` — 751,886 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/02_드림메모리_v1.3_여성시안_선택1/04_Validation/tree9c.png` — 773,291 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/01_Reference_Analysis/asset-map-v1.4-female-final.md` — 2,076 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/01_Reference_Analysis/benchmark-translation-summary-v1.4-female-final.md` — 2,006 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_backstage.jpg` — 14,542 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_first.jpg` — 13,033 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_full.jpg` — 13,345 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_pair.jpg` — 17,779 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_reveal.jpg` — 13,662 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_save.jpg` — 13,942 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_secondary.jpg` — 13,369 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/f_stage.jpg` — 12,981 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/F4_reference.png` — 183,121 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/F6_reference.png` — 170,412 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/female_reference_board.png` — 2,166,308 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/02_Assets/male_structure_reference.png` — 1,998,469 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/03_HTML/lovetree-dream-memory-cinematic-v1.4-female-final.html` — 35,716 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/fullpage-v1.4-female-final.png` — 4,193,530 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/mobile-full-v1.4-female-final.png` — 2,120,371 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/runtime-validation-v1.4-female-final.json` — 3,387 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-01.png` — 613,103 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-02.png` — 256,597 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-03.png` — 574,729 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-04.png` — 282,616 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-05.png` — 282,744 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-06.png` — 283,439 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-07.png` — 1,055,363 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-08.png` — 333,328 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-09.png` — 130,551 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/04_Validation/section-10.png` — 219,305 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/03_드림메모리_v1.4_여성최종시안/DELIVERABLES.md` — 817 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/asset-map-v1.5-female-cinematic.md` — 1,512 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/desktop-execution-v1.5-female-cinematic.mp4` — 2,222,805 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/desktop-fullpage-v1.5-female-cinematic.png` — 1,520,951 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/lovetree-dream-memory-cinematic-v1.5-female-cinematic-self-contained.html` — 1,589,874 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/mobile-fullpage-v1.5-female-cinematic.png` — 615,191 B
+- `90_이전버전_및_과정산출물/01_드림메모리_초기시안/04_드림메모리_v1.5_여성시네마틱/runtime-validation-v1.5-female-cinematic.json` — 176 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/01_Reference_Analysis/supernova-shot-map-v1.md` — 7,643 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/02_Storyboard/storyboard-page-01.jpg` — 894,118 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/02_Storyboard/storyboard-page-02.jpg` — 940,265 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/02_Storyboard/storyboard-page-03.jpg` — 697,472 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/02_Storyboard/storyboard-page-04.jpg` — 608,187 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/02_Storyboard/supernova-vs-lovetree-1to1-storyboard-contact-sheet-v1.jpg` — 2,962,586 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/asset-map-v1.md` — 2,844 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/asset-transfer-map.json` — 3,260 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S01_dark_room_A.png` — 1,741,418 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S02_distorted_E.png` — 2,397,258 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S03_city_object_F.png` — 2,175,799 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S04a_fire_D.png` — 2,101,572 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S04b_building_window.png` — 1,878,140 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S05_night_overpass_A.png` — 1,652,120 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S06_pink_fisheye_B.png` — 1,920,385 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S07_city_sky_object.png` — 2,094,711 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S08_cyan_turn_C.png` — 2,064,602 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S09_courtyard_EF.png` — 1,907,201 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S10_gesture_B.png` — 1,937,520 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S11_blue_lines_E.png` — 2,193,965 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S12_street_reveal_D.png` — 2,110,739 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S13_group_platform_ABCF.png` — 2,232,916 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14a_white_A.png` — 946,929 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14b_white_B.png` — 1,642,395 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14c_white_C.png` — 1,542,012 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14d_white_E.png` — 2,005,829 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14e_white_A_alt.png` — 1,303,477 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14f_white_E_alt.png` — 2,097,546 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S14g_white_B_hold.png` — 1,659,507 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S15_group_six.png` — 2,984,703 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S15b_empty_debris.png` — 2,278,314 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S16_lovetree_neon_logo.png` — 144,211 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S17_lovetree_wireframe_logo.png` — 33,931 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/03_Assets/masters_1920x1080/S18_tree_bloom.png` — 1,704,524 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/04_Comparison/asset-quality-diversity-check-v1.json` — 1,885 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/04_Comparison/generated-assets-contact-sheet-v1.jpg` — 796,530 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/04_Comparison/status-v1.md` — 1,183 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/05_HTML_HOLD/HTML_NOT_STARTED.txt` — 107 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/06_Gate1A_EXISTING_CAST_SELECTION/50_EXISTING_FEMALE_CAST_SELECTION_BOARD_v1.jpg` — 1,066,175 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/90_Internal_Transfer/Supernova_Asset_Transfer_Bridge_v1.pptx` — -1 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/90_Internal_Transfer/TEMP_S15_SIX_CAST_TRANSFER_v1.pptx` — -1 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/녹화_2026_08_09_14_15_18_865.mp4` — 17,056,090 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/01_슈퍼노바_정밀벤치마크_작업본/lovetree-50-supernova-exact-benchmark-motion-v1.1-SELF-CONTAINED.html` — 11,075,255 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/02_슈퍼노바_초기모션_HTML_v1.1.html` — 11,075,255 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/03_캐스트_LOCK_기록/01_CAST_LOCK_BOARD.jpg` — 1,143,180 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/04_PRIMARY_LOCK_기록/02_PRIMARY_IDENTITY_ANCHOR_MAP.md` — 3,948 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/04_PRIMARY_LOCK_기록/02_PRIMARY_LOCK_CONTACT_SHEET.jpg` — 1,055,692 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_FINAL_CONTACT_SHEET.jpg` — 761,566 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_FINAL_WRAPPER.html` — 4,704 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_FULL_CINEMATIC_DESKTOP.mp4` — 12,089,659 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_FULL_CINEMATIC_MOBILE.mp4` — 9,692,586 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_RAPID_FINAL_PACKAGE_v1.zip` — 78,768,576 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_SHOT_MAP.md` — 3,582 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/05_슈퍼노바_RAPID_FINAL_영상후보/50_SUPERNOVA_VALIDATION.json` — 2,699 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/03_Internal_QA/browser_validation.json` — 1,129 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_APPROVED_vs_FINAL_MASTER.jpg` — 1,347,524 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_CONTACT_SHEET.jpg` — 1,065,647 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_MASTER_DESKTOP_v1.mp4` — 12,092,482 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_MASTER_MOBILE_v1.mp4` — 13,037,283 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_MASTER_PACKAGE.zip` — 27,352,222 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_MASTER_WRAPPER_v1.html` — 6,203 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_SHOT_MAP.md` — 3,339 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/06_승인영상_FINAL_MASTER_이전패키지/50_SUPERNOVA_FINAL_VALIDATION.json` — 3,112 B
+- `90_이전버전_및_과정산출물/02_슈퍼노바_제작과정/07_최종사이트_루트중복_단독미리보기.html` — 16,285,708 B
+- `스토리보드/10_임시생성이미지_2026-08-08_22-33_01.png` — 2,067,106 B
+- `스토리보드/11_임시생성이미지_2026-08-08_22-33_02.png` — 2,206,861 B
+- `스토리보드/12_임시생성이미지_2026-08-09_03-47_01.png` — 2,195,407 B
+- `스토리보드/13_임시생성이미지_2026-08-09_03-47_02.png` — 2,027,568 B
+- `스토리보드/50_SUPERNOVA_APPROVED_vs_FINAL_MASTER.jpg` — 1,347,524 B
+- `스토리보드/50_SUPERNOVA_FINAL_CONTACT_SHEET.jpg` — 1,065,647 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오전 08_16_52 (1).png` — 2,397,695 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오전 08_16_53 (2).png` — 2,175,554 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오전 08_16_54 (3).png` — 2,140,786 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오전 08_16_54 (4).png` — 2,125,063 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 05_14_50 (1).png` — 2,342,132 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 05_14_50 (2).png` — 2,382,066 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 05_14_51 (3).png` — 2,493,251 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 05_14_51 (4).png` — 2,243,210 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 08_19_39 (1).png` — 2,307,626 B
+- `스토리보드/ChatGPT Image 2026년 8월 9일 오후 08_19_40 (2).png` — 2,286,994 B
+- `코덱스 고화질/exec-0a037efb-cb8d-4a28-869d-0834e75d4967.png` — 1,635,087 B
+- `코덱스 고화질/exec-0b1b4133-c5cd-47af-a334-71aa057a9b42.png` — 1,563,620 B
+- `코덱스 고화질/exec-112f13f7-a2a6-4dc7-bad3-6320efe8ffc2.png` — 2,036,269 B
+- `코덱스 고화질/exec-11c261c9-c856-43ce-82f5-65f920f50e54.png` — 1,949,260 B
+- `코덱스 고화질/exec-1f23ede2-31ff-42db-87f4-8961e483250e.png` — 1,670,565 B
+- `코덱스 고화질/exec-23b4deeb-4dff-4670-95f6-f3b1af61731e.png` — 1,829,129 B
+- `코덱스 고화질/exec-2766f428-bc23-48fa-a4e5-5a27ee580521.png` — 1,981,124 B
+- `코덱스 고화질/exec-2e50c83d-f332-4e14-88b5-1731140918e9.png` — 1,997,891 B
+- `코덱스 고화질/exec-326f7a63-9965-4b2b-bd62-6f4e64cae843.png` — 2,053,047 B
+- `코덱스 고화질/exec-58b6b7a4-5046-480f-968c-96e39802ac5e.png` — 1,599,903 B
+- `코덱스 고화질/exec-5a56cbf8-6231-493d-add5-dbc6bcb7b7bf.png` — 2,386,802 B
+- `코덱스 고화질/exec-6f8baf06-09a8-4ee7-b7ba-fe5d18811fb5.png` — 1,719,262 B
+- `코덱스 고화질/exec-8c50d083-8048-426f-9fd3-4ccc09f438a5.png` — 1,911,436 B
+- `코덱스 고화질/exec-8d3360c9-9e8f-4fae-b3f0-533d511eb06e.png` — 2,719,154 B
+- `코덱스 고화질/exec-952be3be-105a-4ada-bf5b-77a6deda7d96.png` — 1,877,947 B
+- `코덱스 고화질/exec-9786535a-6eb6-4858-b014-601226510371.png` — 2,712,976 B
+- `코덱스 고화질/exec-9a3ba869-775a-494e-ae6b-c56c6f05cf26.png` — 1,852,339 B
+- `코덱스 고화질/exec-a94b8bd2-21cf-4c58-8b56-bd434bc806ca.png` — 2,009,015 B
+- `코덱스 고화질/exec-ac1875e3-cefb-4865-bf1b-f64073f88a93.png` — 2,191,743 B
+- `코덱스 고화질/exec-bf78c160-bbf2-4815-ad13-0a49487db040.png` — 1,657,663 B
+- `코덱스 고화질/exec-c9be37d1-8f84-4178-9d62-5c754ab91b49.png` — 1,730,056 B
+- `코덱스 고화질/exec-cf24e1f1-78b9-43f0-87c0-eb150a2a8cc0.png` — 1,968,726 B
+- `코덱스 고화질/exec-d42b2488-9f46-4bfd-8c7e-1dff5ca82b50.png` — 1,803,832 B
+- `코덱스 고화질/exec-d59d333f-9176-4617-b606-d1e6f870abb9.png` — 1,596,065 B
+- `코덱스 고화질/exec-db0d042b-6d85-4919-940f-1c7a3668cd5f.png` — 2,143,717 B
+- `코덱스 고화질/exec-e9342f0c-dae6-4f35-8ffc-cbed13c84940.png` — 1,669,591 B
+- `코덱스 고화질/exec-eab8150b-1287-46bb-844f-a88d2a792767.png` — 1,757,293 B
+- `코덱스 고화질/exec-f76d4344-bd9b-483e-a49e-6275f5f1d4bb.png` — 1,995,956 B
+- `코덱스 고화질/exec-fb3cfd18-b766-449d-9a71-4168325b3b04.png` — 2,671,526 B
+- `코덱스 고화질/exec-ff50ba02-6198-40e1-9176-f19c3caf663c.png` — 1,798,723 B
+
+### 51_네온인간분석_인터랙티브홍보대문 — 8 files, 19,574,411 bytes
+
+- `10_병행안_네온인간분석_홍보대문_바로보기.html` — 2,782,365 B
+- `10_실행영상_병행안_네온인간분석_홍보대문.mp4` — 2,545,122 B
+- `녹화_2026_08_14_03_29_55_614.mp4` — 8,624,180 B
+- `desktop-contactsheet-neon-human-analysis-v1.jpg` — 290,428 B
+- `desktop-execution-neon-human-analysis-v1.mp4` — 2,545,122 B
+- `implementation-note-neon-human-analysis-v1.md` — 2,147 B
+- `lovetree-neon-human-analysis-promo-gate-v1.html` — 2,782,365 B
+- `scene-structure-neon-human-analysis-v1.md` — 2,682 B
+
+### 52_글로벌모먼트오빗_3D네트워크 — 62 files, 225,956,718 bytes
+
+- `00_참고영상_분석/01_참고영상_타임코드분석_v1.md` — 4,736 B
+- `00_참고영상_분석/02_참고영상_LoveTree대응보드_v1.jpg` — 382,569 B
+- `00_참고영상_분석/03_3D모션프로토타입_5모먼트.html` — 1,731,728 B
+- `4-1기 작품/3d-structure-map-moment-orbit-v1.md` — 3,387 B
+- `4-1기 작품/52_4-1기_V2_HARD_RESET_인물사진0_우주3D러브트리코어_POC제작지시_v1.md` — 12,873 B
+- `4-1기 작품/52_4-1기_V3_REFERENCE_EARTH_ORBIT_재해석최소화_최종제작지시_2026-08-09.md` — 11,299 B
+- `4-1기 작품/desktop-execution-moment-orbit-v1.mp4` — 2,471,775 B
+- `4-1기 작품/interaction-test-moment-orbit-v1.json` — 931 B
+- `4-1기 작품/lovetree-52-3d-moment-orbit-exact-reference-v1.html` — 3,703,876 B
+- `4-1기 작품/lovetree-52-v2-cosmic-core-poc.html` — 21,860 B
+- `4-1기 작품/mobile-execution-moment-orbit-v1.mp4` — 4,355,568 B
+- `4-1기 작품/reference-vs-lovetree-moment-orbit-v1.jpg` — 262,856 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/00_작업지시/52_4-1기_V2_HARD_RESET_인물사진0_우주3D러브트리코어_POC제작지시_v1.md` — 12,873 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/desktop-poc-8to10s.mp4` — 794,933 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/lovetree-52-v2-cosmic-core-poc.html` — 21,860 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/mobile-poc-8to10s.mp4` — 507,579 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/v1-v2-difference.md` — 1,910 B
+- `4-1기 작품/V2_COSMIC_LOVETREE_CORE_POC/v2-3d-structure-map.md` — 2,719 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/00_제작지시/52_4-1기_V3_REFERENCE_EARTH_ORBIT_최종제작지시_2026-08-09.md` — 11,299 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/01_실행및비교/desktop-execution-v3-reference-earth-orbit-20s.mp4` — 1,515,266 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/01_실행및비교/mobile-execution-v3-reference-earth-orbit-20s.mp4` — 618,271 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/01_실행및비교/reference-vs-v3-8frame-comparison-board.jpg` — 227,397 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/01_실행및비교/reference-vs-v3-side-by-side-20s.mp4` — 3,460,109 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/02_구조및검증/interaction-test-v3.json` — 906 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/02_구조및검증/reference-fidelity-check-v3.json` — 1,443 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/02_구조및검증/v3-3d-structure-map.md` — 2,071 B
+- `4-1기 작품/V3_REFERENCE_EARTH_ORBIT/04_결과본/lovetree-52-v3-reference-earth-orbit.html` — 1,140,569 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_REFERENCE_vs_V5_FRAMEBOARD.jpg` — 449,186 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_REFERENCE_vs_V5_SIDE_BY_SIDE.mp4` — 6,678,680 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_DESKTOP_FULLPAGE.jpg` — 179,308 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_MOBILE_FULLPAGE.jpg` — 48,398 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_PACKAGE.zip` — 21,487,506 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_REFERENCE_EARTH_LIGHT_ORBIT_20s.mp4` — 9,356,495 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_REFERENCE_EARTH_LIGHT_ORBIT_PREVIEW_STANDALONE.html` — 3,323,406 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_REFERENCE_EARTH_LIGHT_ORBIT.html` — 3,323,406 B
+- `52_V5_REFERENCE_EARTH_LIGHT_ORBIT/52_V5_VALIDATION.json` — 4,908 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE_PREVIEW_STANDALONE.html` — 3,332,982 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_REFERENCE_vs_V6_FRAMEBOARD.jpg` — 624,270 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_REFERENCE_vs_V6_SIDE_BY_SIDE.mp4` — 6,513,310 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_DESKTOP_FULLPAGE.jpg` — 324,307 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE_20s.mp4` — 12,729,170 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE_PREVIEW_STANDALONE.html` — 3,332,982 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE.html` — 3,332,982 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_MOBILE_FULLPAGE.jpg` — 76,302 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_PACKAGE.zip` — 25,034,546 B
+- `52_V6_GLOBAL_ORBIT_CONSOLE_LOVETREE/52_V6_VALIDATION.json` — 9,130 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6_vs_V6.1_INTERACTION_SHEET.jpg` — 244,301 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_GUIDED_ORBIT_STATE.jpg` — 162,527 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_INTERACTION_EXECUTION.mp4` — 10,969,640 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_LOVETREE_ORBIT_VIEW_PREVIEW_STANDALONE.html` — 3,368,362 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_LOVETREE_ORBIT_VIEW.html` — 3,368,362 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_MOMENT_CLICK_STATE.jpg` — 236,129 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_PACKAGE.zip` — 16,579,811 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_VALIDATION.json` — 4,846 B
+- `52_V6.1_INTERACTIVE_ORBIT_NAVIGATOR/52_V6.1_WALK_FROM_HERE_STATE.jpg` — 161,447 B
+- `80_작업지시_및_검증기록/01_지시서_이력/00_지시이력_인수인계_INDEX_2026-08-10_v1.md` — 1,746 B
+- `80_작업지시_및_검증기록/01_지시서_이력/01_5기_V5_REFERENCE_EARTH_LIGHT_ORBIT_재제작지시_v1.md` — 1,743 B
+- `80_작업지시_및_검증기록/01_지시서_이력/02_5기_V6_GLOBAL_ORBIT_CONSOLE_확장지시_v1.md` — 2,014 B
+- `80_작업지시_및_검증기록/01_지시서_이력/03_5기_V6.1_INTERACTIVE_ORBIT_NAVIGATOR_제품화지시_v1.md` — 2,356 B
+- `80_작업지시_및_검증기록/01_지시서_이력/99_52_실패원인_개선과정_인수인계_v1.md` — 1,991 B
+- `녹화_2026_08_10_05_34_58_390.mp4` — 60,410,003 B
+- `reference-earth-orbit-source-20s.mp4` — 8,997,503 B
+
+### 53_모먼트노드_라이트펄스_커넥션플로우 — 20 files, 7,573,827 bytes
+
+- `53_LOVETREE_NODE_LIGHT_FLOW_PREVIEW_STANDALONE_v2.html` — 39,162 B
+- `53_LOVETREE_NODE_LIGHT_FLOW_v2.html` — 39,162 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_DESKTOP_FULLPAGE.jpg` — 116,789 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_LOVETREE_NODE_LIGHT_FLOW_PREVIEW_STANDALONE_v1.html` — 31,131 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_LOVETREE_NODE_LIGHT_FLOW_v1.html` — 31,131 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_MOBILE_FULLPAGE.jpg` — 44,650 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_MOTION_PARAMETERS.json` — 2,733 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_MOTION_STATE_SHEET.jpg` — 235,401 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_REFERENCE_vs_LOVETREE_MOTION_COMPARISON.mp4` — 683,467 B
+- `53_NODE_LIGHT_FLOW_PACKAGE/53_VALIDATION.json` — 4,063 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_DESKTOP_FULLPAGE_v2.jpg` — 118,397 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_LOVETREE_NODE_LIGHT_FLOW_PREVIEW_STANDALONE_v2.html` — 39,162 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_LOVETREE_NODE_LIGHT_FLOW_v2.html` — 39,162 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_MOBILE_FULLPAGE_v2.jpg` — 44,563 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_MOTION_PARAMETERS_v2.json` — 1,529 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_MOTION_STATE_SHEET_v2.jpg` — 138,973 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_V1_vs_V2_CONNECTION_VISIBILITY.jpg` — 127,095 B
+- `53_NODE_LIGHT_FLOW_V2_PACKAGE/53_VALIDATION_v2.json` — 4,041 B
+- `53_REFERENCE_vs_LOVETREE_MOTION_COMPARISON.mp4` — 683,467 B
+- `녹화_2026_08_10_03_51_52_308.mp4` — 5,149,749 B
+
+### 54_운영스튜디오_워크플로우 — 42 files, 34,349,600 bytes
+
+- `★_녹화영상_54_러브트리_운영스튜디오_V2.1_2026-08-11.mp4` — 9,745,463 B
+- `★_참고영상_01_다크AI대시보드_3D패널전환.mp4` — 9,263,240 B
+- `★_참고영상_02_컬러타임라인_스케줄편집기.mp4` — 2,461,271 B
+- `★_최종선택_54_러브트리_운영스튜디오_V2.1_바로보기.html` — 96,622 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/01_설계·벤치마크/01_벤치마크_분석.md` — 2,997 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/01_설계·벤치마크/02_제품_인터랙션_설계.md` — 4,258 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/02_실행HTML/01_V2_단독실행.html` — 81,819 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/01_최종검증.json` — 4,223 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/02_제품오너_인계검증.json` — 5,787 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/03_데스크톱_검수.md` — 2,160 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/04_모바일_검수.md` — 1,154 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/05_인터랙션_검증.json` — 792 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/06_편집의미_검증.json` — 649 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/07_모바일_터치_검증.json` — 401 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/03_검증/08_런타임_검증.json` — 441 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/04_리뷰·이미지/01_V2_브라우저_실행영상_보관본.mp4` — 1,338,083 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/04_리뷰·이미지/02_대시보드→타임라인_전환검수.jpg` — 146,603 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/04_리뷰·이미지/03_메모리타임라인_인터랙션검수.jpg` — 158,063 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/V2_바로보기.html` — 81,819 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/V2_브라우저_실행영상.mp4` — 1,338,083 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/V2_사용설명서.txt` — 7,353 B
+- `01_버전별_결과물/01_V2_대시보드·메모리타임라인/V2_전체패키지.zip` — 5,883,485 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/00_V2.1_읽어보기.md` — 447 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/01_다크_컨트롤룸.png` — 566,034 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/02_기본_다이어리.png` — 279,283 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/03_고급_경로편집.png` — 203,932 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/04_모바일_고급화면.png` — 91,601 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/05_V2.1_최종검증.json` — 2,268 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/06_V2.1_수용기준_검증.json` — 5,379 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/07_V2.1_품질검수기록.md` — 1,657 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/V2.1_브라우저_실행영상.mp4` — 659,318 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/V2.1_사용설명서.txt` — 6,486 B
+- `01_버전별_결과물/02_V2.1_한국어·다이어리사용성_최신/V2.1_전체패키지.zip` — 1,835,142 B
+- `02_작업지시·기록/00_초기작업지시_v1.txt` — 8,866 B
+- `02_작업지시·기록/01_지시서·검증기록/01_지시서_이력/02_54_V2_디자인팀장5기_수정작업지시_2026-08-10.md` — 18,665 B
+- `02_작업지시·기록/01_지시서·검증기록/01_지시서_이력/03_54_V2_디자인팀장6기_실행지시_2026-08-10.md` — 19,011 B
+- `02_작업지시·기록/01_지시서·검증기록/01_지시서_이력/04_54_결과물_드라이브정리·사용설명서_추가지시_2026-08-10.md` — 4,568 B
+- `02_작업지시·기록/01_지시서·검증기록/01_지시서_이력/05_54_V2.1_한글화·다이어리사용성_수정지시_2026-08-10.md` — 12,626 B
+- `02_작업지시·기록/01_지시서·검증기록/02_V2_사용설명서_초안.txt` — 3,869 B
+- `02_작업지시·기록/01_지시서·검증기록/03_V2.1_사용설명서_개정안.txt` — 3,518 B
+- `02_작업지시·기록/02_작업상태_기록_v2.md` — 995 B
+- `02_작업지시·기록/03_작업상태_기록_v3.md` — 1,169 B
+
+### 55_자유연결_경로편집 — 57 files, 22,734,759 bytes
+
+- `★_녹화영상_55_LUPT_자유연결_V1.2_직접조작검수.mp4` — 926,067 B
+- `★_참고영상_55_케이블라우팅_벤치마크.mp4` — 2,058,859 B
+- `★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` — 55,327 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/00_V1_읽어보기.md` — 1,958 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/01_설계·분석/01_벤치마크_분석.md` — 1,755 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/01_설계·분석/02_인터랙션_설계.md` — 2,076 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/02_실행HTML/01_V1_메인HTML.html` — 32,422 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/01_V1_최종검증.json` — 2,713 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/02_데스크톱_검수.md` — 1,015 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/03_모바일_검수.md` — 704 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/04_상태_비교시트.jpg` — 186,781 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/05_데스크톱_전체화면.jpg` — 93,904 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/03_검증·리뷰/06_모바일_전체화면.jpg` — 41,637 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/V1_바로보기.html` — 32,422 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/V1_브라우저_실행영상.mp4` — 1,489,916 B
+- `01_버전별_결과물/01_V1_라이브_커넥션_라우터/V1_전체패키지.zip` — 3,278,683 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/00_V1.1_읽어보기.md` — 2,383 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/01_설계·벤치마크/01_벤치마크_재검토.md` — 2,437 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/01_설계·벤치마크/02_인터랙션_설계.md` — 3,087 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/02_실행HTML/01_V1.1_메인HTML.html` — 48,890 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/02_실행HTML/02_V1.1_단독실행HTML.html` — 48,890 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/03_검증/01_V1.1_최종검증.json` — 1,845 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/03_검증/02_데스크톱_검수.md` — 554 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/03_검증/03_모바일_검수.md` — 476 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/04_리뷰·이미지/01_V1.1_브라우저_실행영상.mp4` — 1,414,791 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/04_리뷰·이미지/02_V1_vs_V1.1_스타일비교.jpg` — 295,117 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/04_리뷰·이미지/03_벤치마크_vs_V1.1_연결동작비교.jpg` — 328,479 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/04_리뷰·이미지/04_데스크톱_전체화면.jpg` — 141,097 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/04_리뷰·이미지/05_모바일_전체화면.jpg` — 49,470 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/V1.1_바로보기.html` — 48,890 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/V1.1_브라우저_실행영상.mp4` — 1,414,791 B
+- `01_버전별_결과물/02_V1.1_자유연결_패치베이/V1.1_전체패키지.zip` — 2,831,047 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/00_V1.2_읽어보기.md` — 1,043 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/01_설계/01_V1.2_사용성_변경기록.md` — 895 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/01_설계/02_직접조작_수용기준.md` — 626 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/02_실행HTML/01_V1.2_메인HTML.html` — 55,327 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/02_실행HTML/02_V1.2_단독실행HTML.html` — 55,327 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/03_검증/01_V1.2_최종검증.json` — 2,467 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/03_검증/02_데스크톱_검수.md` — 1,040 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/03_검증/03_모바일_검수.md` — 488 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/04_리뷰·이미지/01_V1.2_직접조작_브라우저실행영상.mp4` — 926,067 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/04_리뷰·이미지/02_V1.2_직접조작_증빙.jpg` — 216,035 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/04_리뷰·이미지/03_V1.1_vs_V1.2_사용성비교.jpg` — 151,960 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/04_리뷰·이미지/04_데스크톱_전체화면.jpg` — 108,286 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/04_리뷰·이미지/05_모바일_전체화면.jpg` — 46,896 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/V1.2_사용설명서.txt` — 3,516 B
+- `01_버전별_결과물/03_V1.2_직접조작_QA_최신/V1.2_전체패키지.zip` — 1,957,043 B
+- `02_작업지시·기록/00_V1_디자인팀장5기_1차작업지시_2026-08-10.md` — 18,934 B
+- `02_작업지시·기록/01_초기지시·벤치마크_보존/00_55_LUPT_작업상태_INDEX_2026-08-10_v1.md` — 1,384 B
+- `02_작업지시·기록/01_초기지시·벤치마크_보존/00_벤치마크/BENCHMARK_케이블매니지먼트_녹화_2026_08_09_17_12_36_587.mp4` — 2,058,859 B
+- `02_작업지시·기록/01_초기지시·벤치마크_보존/00_벤치마크/BENCHMARK_CONTACT_SHEET_12FRAMES.jpg` — 182,131 B
+- `02_작업지시·기록/01_초기지시·벤치마크_보존/80_작업지시_및_검증기록/01_지시서_이력/01_55_LUPT_LIVING_CONNECTION_ROUTER_V1_디자인팀장5기_1차작업지시_2026-08-10.md` — 18,934 B
+- `02_작업지시·기록/01_초기지시·벤치마크_보존/참고-녹화_2026_08_09_17_12_36_587.mp4` — 2,058,859 B
+- `02_작업지시·기록/02_작업지시·검증기록/01_지시서_이력/02_V1.1_자유연결패치베이_디자인팀장6기_수정지시_2026-08-10.md` — 18,466 B
+- `02_작업지시·기록/02_작업지시·검증기록/01_지시서_이력/03_V1.2_직접조작QA·사용성수정지시_2026-08-10.md` — 8,944 B
+- `02_작업지시·기록/03_작업상태_기록_v2.md` — 1,582 B
+- `02_작업지시·기록/04_작업상태_기록_v3.md` — 1,167 B
+
+### 56_세로형_모먼트관계망_전체조망 — 22 files, 53,187,694 bytes
+
+- `★_참고영상_네온관계망_세로형네트워크맵.mp4` — 37,423,790 B
+- `01_버전1_후보자료/검증결과_버전1.json` — 3,902 B
+- `01_버전1_후보자료/구현설명_버전1.md` — 4,377 B
+- `01_버전1_후보자료/데스크톱_실행영상_버전1.mp4` — 902,685 B
+- `01_버전1_후보자료/모바일_실행영상_버전1.mp4` — 261,918 B
+- `01_버전1_후보자료/후보_버전1_세로형_모먼트관계망_전체조망.html` — 27,625 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/검증결과_버전1.1.json` — 3,585 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/구현설명_버전1.1.md` — 2,529 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/데스크톱_실행영상_버전1.1.mp4` — 342,041 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/모바일_실행영상_버전1.1.mp4` — 115,633 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/원본대비_비교설명.md` — 3,651 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/원본대비_시각비교.jpg` — 261,273 B
+- `02_버전1.1_밝은배경·그래프형상보정_후보자료/후보_버전1.1_세로형_모먼트관계망_전체조망.html` — 31,144 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/검증결과_버전1.2.json` — 6,136 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/경로따라가기_전체Sequence_QA.jpg` — 109,161 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/구현설명_버전1.2.md` — 5,406 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/데스크톱_실행영상_버전1.2.mp4` — 571,405 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/모바일_실행영상_버전1.2.mp4` — 227,953 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/원본_V1.1_V1.2_경로형상비교.jpg` — 295,992 B
+- `03_버전1.2_경로계층·전체경로표시_후보자료/FirstMoment_01_02_03_전체경로Reveal_QA.jpg` — 89,088 B
+- `녹화_2026_08_11_23_03_05_179.mp4` — 12,452,639 B
+- `후보_버전1.2_세로형_모먼트관계망_전체조망.html` — 45,761 B
+
+### 57_리빙글라스_모먼트카드 — 62 files, 38,445,886 bytes
+
+- `★_참고영상_컬러카드마인드맵_자동전개.mp4` — 6,048,305 B
+- `★_최종_버전1.2_리빙글라스_모먼트카드.html` — 671,480 B
+- `01_버전1_기본버전_자료/★_대표본_V1_사용설명서.txt` — 5,057 B
+- `01_버전1_기본버전_자료/00_README_V1.md` — 938 B
+- `01_버전1_기본버전_자료/01_지시·분석/01_57_LIVING_GLASS_MOMENT_CARDS_V1_디자인팀장6기_신규작업지시_2026-08-11.md` — 17,868 B
+- `01_버전1_기본버전_자료/01_지시·분석/02_57_V1.1_REAL_MEDIA_AND_SELECTION_BLOOM_디자인팀장6기_수정지시_2026-08-11.md` — 11,648 B
+- `01_버전1_기본버전_자료/01_지시·분석/57_REFERENCE_ANALYSIS.md` — 2,354 B
+- `01_버전1_기본버전_자료/01_지시·분석/99_CANCELLED_44_오분류지시_보존_2026-08-11.md` — 16,853 B
+- `01_버전1_기본버전_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_STANDALONE.html` — 334,962 B
+- `01_버전1_기본버전_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS.html` — 32,463 B
+- `01_버전1_기본버전_자료/03_디자인자산/moment_1.jpg` — 75,288 B
+- `01_버전1_기본버전_자료/03_디자인자산/moment_2.jpg` — 74,431 B
+- `01_버전1_기본버전_자료/03_디자인자산/moment_3.jpg` — 77,150 B
+- `01_버전1_기본버전_자료/04_검증자료/★_57_REFERENCE_vs_HERO_VISUAL_GATE.jpg` — 154,354 B
+- `01_버전1_기본버전_자료/04_검증자료/57_ACCEPTANCE.json` — 749 B
+- `01_버전1_기본버전_자료/04_검증자료/57_KEY_STATE_SHEET.jpg` — 195,064 B
+- `01_버전1_기본버전_자료/04_검증자료/57_MOBILE_INTERACTION.mp4` — 387,432 B
+- `01_버전1_기본버전_자료/04_검증자료/57_QA.json` — 6,036 B
+- `01_버전1_기본버전_자료/04_검증자료/57_VALIDATION.json` — 3,014 B
+- `01_버전1_기본버전_자료/04_검증자료/57_VISUAL_QA_REPORT.md` — 2,274 B
+- `01_버전1_기본버전_자료/버전1_실행영상_리빙글라스_모먼트카드.mp4` — 2,404,364 B
+- `02_버전1.1_실제미디어_선택빛_자료/★_57_LIVING_GLASS_MOMENT_CARDS_V1.1_사용설명서.txt` — 6,281 B
+- `02_버전1.1_실제미디어_선택빛_자료/★_실행영상_57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.mp4` — 1,425,114 B
+- `02_버전1.1_실제미디어_선택빛_자료/★_현재후보_57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.html` — 666,876 B
+- `02_버전1.1_실제미디어_선택빛_자료/00_README_V1.1.md` — 666 B
+- `02_버전1.1_실제미디어_선택빛_자료/01_분석/02_57_V1.1_REAL_MEDIA_AND_SELECTION_BLOOM_디자인팀장6기_수정지시_2026-08-11.md` — 11,648 B
+- `02_버전1.1_실제미디어_선택빛_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA_STANDALONE.html` — 666,876 B
+- `02_버전1.1_실제미디어_선택빛_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.1_REAL_MEDIA.html` — 50,880 B
+- `02_버전1.1_실제미디어_선택빛_자료/03_미디어자산/moment_1.jpg` — 75,288 B
+- `02_버전1.1_실제미디어_선택빛_자료/03_미디어자산/moment_2_demo.mp4` — 157,986 B
+- `02_버전1.1_실제미디어_선택빛_자료/03_미디어자산/moment_2.jpg` — 74,431 B
+- `02_버전1.1_실제미디어_선택빛_자료/03_미디어자산/moment_3.jpg` — 77,150 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/★_57_V1.1_SELECTION_MEDIA_KEY_STATES.jpg` — 174,185 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_CORE_QA.json` — 2,807 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_LOCAL_VIDEO_PLAYING.png` — 270,434 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_MOBILE_QA.json` — 677 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_QA_REPORT.md` — 2,681 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_REDUCED_MOTION_QA.json` — 59 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_SELECTED_BLOOM.png` — 882,915 B
+- `02_버전1.1_실제미디어_선택빛_자료/04_검증자료/57_V1.1_YOUTUBE_QA.json` — 805 B
+- `02_버전1.1_실제미디어_선택빛_자료/57_V1.1_VALIDATION.json` — 1,180 B
+- `03_버전1.2_최종후보_자료/★_대표본_V1.2_사용설명서.txt` — 3,074 B
+- `03_버전1.2_최종후보_자료/00_README_V1.2.md` — 398 B
+- `03_버전1.2_최종후보_자료/01_분석/57_V1.2_YOUTUBE_THUMBNAIL_FIX_NOTE.md` — 855 B
+- `03_버전1.2_최종후보_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.2_YOUTUBE_LIVE_THUMBNAIL_STANDALONE.html` — 671,480 B
+- `03_버전1.2_최종후보_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.2_YOUTUBE_LIVE_THUMBNAIL.html` — 671,480 B
+- `03_버전1.2_최종후보_자료/03_검증자료/★_57_V1.2_MOBILE_FIRST.png` — 298,628 B
+- `03_버전1.2_최종후보_자료/03_검증자료/★_57_V1.2_MOBILE_MEDIA_EDIT.png` — 72,601 B
+- `03_버전1.2_최종후보_자료/03_검증자료/★_57_V1.2_MOBILE_SELECTED_DETAIL.png` — 230,767 B
+- `03_버전1.2_최종후보_자료/03_검증자료/★_57_V1.2_SIDE_BY_SIDE_AND_SAVED_CARD.jpg` — 71,038 B
+- `03_버전1.2_최종후보_자료/03_검증자료/57_V1.2_MOBILE_QA.json` — 1,090 B
+- `03_버전1.2_최종후보_자료/03_검증자료/57_V1.2_QA_REPORT.md` — 2,469 B
+- `03_버전1.2_최종후보_자료/03_검증자료/57_V1.2_SEQUENTIAL_URL_SWITCH_QA.json` — 486 B
+- `03_버전1.2_최종후보_자료/03_검증자료/57_V1.2_SIDE_BY_SIDE_QA.json` — 4,326 B
+- `03_버전1.2_최종후보_자료/57_V1.2_VALIDATION.json` — 1,529 B
+- `04_버전1.3_모바일반응형수정_자료/모바일390_미디어편집.png` — 87,389 B
+- `04_버전1.3_모바일반응형수정_자료/모바일390_상세화면.png` — 225,964 B
+- `04_버전1.3_모바일반응형수정_자료/모바일390_첫화면.png` — 286,986 B
+- `04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json` — 1,897 B
+- `04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html` — 676,320 B
+- `모바일_확인본_버전1.2_유튜브_실시간썸네일.html` — 676,439 B
+- `제품오너_검토녹화_2026-08-11_16-12.mp4` — 19,389,647 B
+
+### 58_리빙메모리_핀보드_시네마틱 — 60 files, 130,907,539 bytes
+
+- `★_모바일_실행영상_58_리빙메모리_핀보드.mp4` — 781,303 B
+- `★_참고영상_원본_핀보드.mp4` — 58,299,201 B
+- `★_최종_58_리빙메모리_핀보드.html` — 532,697 B
+- `00_작업지시/01_58_LIVING_MEMORY_PINBOARD_CINEMATIC_V1_디자인팀장5기_신규작업지시_2026-08-11.md` — 23,485 B
+- `00_작업지시/02_참고영상_직접분석.md` — 1,540 B
+- `00_작업지시/03_시네마틱_연출설계.md` — 1,327 B
+- `00_작업지시/04_58_유튜브실제미디어표시_모바일반응형_버전폴더정리_설계팀장11기_수정지시_2026-08-11.md` — 12,194 B
+- `00_작업지시/04_58_유튜브실제미디어표시·모바일반응형·버전폴더정리_설계팀장11기_수정지시_2026-08-11.docx` — -1 B
+- `버전_1.0_최초후보/01_화면/58_LIVING_MEMORY_PINBOARD_STANDALONE.html` — 456,984 B
+- `버전_1.0_최초후보/01_화면/58_LIVING_MEMORY_PINBOARD.html` — 456,984 B
+- `버전_1.0_최초후보/02_자산/01_첫모먼트.jpg` — 41,559 B
+- `버전_1.0_최초후보/02_자산/02_글랜스모먼트.jpg` — 50,221 B
+- `버전_1.0_최초후보/02_자산/03_인터뷰모먼트.jpg` — 39,901 B
+- `버전_1.0_최초후보/02_자산/04_나이트모먼트.jpg` — 48,452 B
+- `버전_1.0_최초후보/02_자산/05_노트모먼트.jpg` — 37,807 B
+- `버전_1.0_최초후보/02_자산/06_링크미리보기.jpg` — 44,489 B
+- `버전_1.0_최초후보/02_자산/07_스테이지_비디오루프.mp4` — 47,824 B
+- `버전_1.0_최초후보/03_검수/01_데스크톱_첫화면_VisualGate.jpg` — 153,980 B
+- `버전_1.0_최초후보/03_검수/02_모바일_전체화면.jpg` — 25,847 B
+- `버전_1.0_최초후보/03_검수/03_Connection_WHYNEXT_상태.jpg` — 178,781 B
+- `버전_1.0_최초후보/03_검수/04_Cinema_MomentFocus.jpg` — 106,981 B
+- `버전_1.0_최초후보/03_검수/05_Cinema_BoardBloom.jpg` — 107,717 B
+- `버전_1.0_최초후보/03_검수/06_실제실행영상_검수시트.jpg` — 210,833 B
+- `버전_1.0_최초후보/03_검수/58_LIVING_MEMORY_PINBOARD_VALIDATION.json` — 5,187 B
+- `버전_1.0_최초후보/데스크톱_실행영상.mp4` — 4,445,912 B
+- `버전_1.0_최초후보/사용설명서.txt` — 2,975 B
+- `버전_1.0_최초후보/이전_전체패키지.zip` — 6,362,167 B
+- `버전_1.0_최초후보/현재후보.html` — 456,984 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/★_58_LIVING_MEMORY_PINBOARD_V1.1_사용설명서.txt` — 4,788 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/★_실행영상_58_LIVING_MEMORY_PINBOARD_V1.1.mp4` — 6,561,995 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/★_현재후보_58_LIVING_MEMORY_PINBOARD_V1.1.html` — 509,115 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/01_화면/01_V1.1_메인HTML.html` — 509,115 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/01_화면/02_V1.1_단독실행HTML.html` — 509,115 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/01_V1.1_최종검증.json` — 2,920 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/02_V1_vs_V1.1_수정전후_비교.jpg` — 129,577 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/03_편집·유튜브_라이브미리보기_증빙.jpg` — 88,892 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/04_다음순간·다중경로선택_증빙.jpg` — 203,993 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/05_리플레이_일시정지·진입_증빙.jpg` — 124,749 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/06_테마·핀·카드드래그_증빙.jpg` — 157,503 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/07_모바일_증빙.jpg` — 28,292 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/02_검수/08_실제실행영상_검수시트.jpg` — 311,862 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/58_LIVING_MEMORY_PINBOARD_V1.1_PACKAGE.zip` — 10,449,365 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/58_V1.1_수정전후_비교요약.md` — 1,828 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/58_V1.1_추가기능_체크리스트.md` — 1,655 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/이전_루트복사본_사용설명서.txt` — 4,788 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/이전_루트복사본_실행영상.mp4` — 6,561,995 B
+- `버전_1.1_직접편집·리플레이제어·보드꾸미기/이전_루트복사본_현재후보.html` — 509,115 B
+- `버전_1.2_유튜브실제미디어·모바일보정/58_최종종료_검증결과.json` — 690 B
+- `버전_1.2_유튜브실제미디어·모바일보정/58_최종종료_검증기록.md` — 1,083 B
+- `버전_1.2_유튜브실제미디어·모바일보정/검증결과.json` — 12,078 B
+- `버전_1.2_유튜브실제미디어·모바일보정/데스크톱_실행영상.mp4` — 2,959,182 B
+- `버전_1.2_유튜브실제미디어·모바일보정/모바일_3종_반응형_검수.jpg` — 85,654 B
+- `버전_1.2_유튜브실제미디어·모바일보정/사용설명서.txt` — 2,356 B
+- `버전_1.2_유튜브실제미디어·모바일보정/수정전후_비교요약.md` — 1,777 B
+- `버전_1.2_유튜브실제미디어·모바일보정/유튜브_실제URL·폴백_검수.jpg` — 65,662 B
+- `버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_모바일실행영상.mp4` — 781,303 B
+- `버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html` — 532,697 B
+- `버전_1.2_유튜브실제미디어·모바일보정/추가기능_체크리스트.md` — 981 B
+- `버전_1.2_유튜브실제미디어·모바일보정/현재후보.html` — 532,697 B
+- `제품오너_네트워크검토녹화_2026-08-11_18-23.mp4` — 26,327,386 B
+
+### 59_메모리스케치북_페이지여정 — 50 files, 100,413,339 bytes
+
+- `00_작업지시/00_59_메모리스케치북_통합설계_MASTER_설계팀장11기_2026-08-11.md` — 10,402 B
+- `00_작업지시/01_57완료_및_59페이지전환기능검증_디자인팀장5기_작업지시_2026-08-11.md` — 5,395 B
+- `00_작업지시/02_58완료_및_59돋보기책물성기능검증_디자인팀장6기_작업지시_2026-08-11.md` — 6,717 B
+- `00_작업지시/03_59_통합시각·모바일인계_디자인팀장6기_후속작업지시_2026-08-11.md` — 7,519 B
+- `00_작업지시/04_59_통합V1최종HTML_디자인팀장5기_후속작업지시_2026-08-11.md` — 9,683 B
+- `00_작업지시/05_59_디자인팀장5기_단독통합V1_최종작업지시_2026-08-11.md` — 10,402 B
+- `00_작업지시/07_V1.1_실제링크·타이포보정_작업기록/07_59_V1.1_실제링크Moment입력·타이포보정_디자인팀장5기_수정지시_2026-08-11.md` — 11,160 B
+- `00_작업지시/10_59_V5_스토리ON·인라인편집·빠른페이지턴·시네마틱배경_디자인팀장5기_확장지시_2026-08-11.md` — 22,046 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_01_남성_커넥션스카이.png` — 2,599,253 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_02_남성_메모리필드.png` — 2,877,640 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_03_남성_벚꽃러브트리.png` — 3,691,123 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_04_여성_커넥션스카이.png` — 2,870,774 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_05_여성_메모리필드.png` — 2,903,228 B
+- `01_참고원본/제품오너첨부_시네마틱배경후보/남성·여성_메모리배경세트/배경후보_06_여성_벚꽃러브트리.png` — 3,637,429 B
+- `01_참고원본/참고영상_1_수채화여행스케치북_페이지전환.mp4` — 9,636,452 B
+- `01_참고원본/참고영상_2_건축스케치아카이브_돋보기탐색.mp4` — 12,913,190 B
+- `03_6기_돋보기탐색·책물성_기능검증/검증결과.json` — 4,314 B
+- `03_6기_돋보기탐색·책물성_기능검증/기능검증_설명.md` — 1,253 B
+- `03_6기_돋보기탐색·책물성_기능검증/기능검증.html` — 42,207 B
+- `03_6기_돋보기탐색·책물성_기능검증/데스크톱_실행영상.mp4` — 344,256 B
+- `03_6기_돋보기탐색·책물성_기능검증/모바일_실행영상.mp4` — 179,170 B
+- `녹화_2026_08_12_01_00_58_643.mp4` — 30,939,523 B
+- `버전1_통합후보/검증결과.json` — 7,016 B
+- `버전1_통합후보/데스크톱_실행영상.mp4` — 716,270 B
+- `버전1_통합후보/모바일_실행영상.mp4` — 168,511 B
+- `버전1_통합후보/사용설명서.txt` — 2,105 B
+- `버전1_통합후보/통합적용_설명.md` — 4,599 B
+- `버전1_통합후보/현재후보.html` — 65,640 B
+- `버전1_통합후보/QA_데스크톱_페이지전환·돋보기.jpg` — 133,050 B
+- `버전1_통합후보/QA_모바일_단일페이지·제스처.jpg` — 94,676 B
+- `버전3_링크입력·타이포보정_최신후보/검증결과.json` — 5,416 B
+- `버전3_링크입력·타이포보정_최신후보/데스크톱_실행영상.mp4` — 861,858 B
+- `버전3_링크입력·타이포보정_최신후보/링크Moment_입력·원본열기_QA.jpg` — 261,732 B
+- `버전3_링크입력·타이포보정_최신후보/모바일_실행영상.mp4` — 188,332 B
+- `버전3_링크입력·타이포보정_최신후보/수정전후_설명.md` — 2,675 B
+- `버전3_링크입력·타이포보정_최신후보/타이포_A_한국어에디토리얼.jpg` — 133,587 B
+- `버전3_링크입력·타이포보정_최신후보/타이포_B_부드러운기억책.jpg` — 131,997 B
+- `버전3_링크입력·타이포보정_최신후보/현재후보.html` — 81,049 B
+- `버전4_캐릭터실자산_최신후보/수정내용.md` — 533 B
+- `버전4_캐릭터실자산_최신후보/현재후보.html` — 120,614 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/검증결과.json` — 9,694 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/데스크톱_실행영상.mp4` — 4,987,161 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/마우스직접페이지턴·빠른넘김_QA.jpg` — 212,023 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/모바일_실행영상.mp4` — 1,698,205 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/미디어드리프트_QA.jpg` — 120,612 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/배경3종_동일화면_비교.jpg` — 124,565 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/인라인편집_메모·링크·미디어_QA.jpg` — 164,752 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html` — 17,192,064 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/StoryON_자동페이지재생_QA.jpg` — 198,218 B
+- `버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/V4→V5_변경설명.md` — 3,249 B
+
+### 60_3D모먼트클러스터_심층탐색_55,56,59연결버전 — 29 files, 98,307,686 bytes
+
+- `00_작업지시/11_60_3D모먼트클러스터_심층탐색_디자인팀장6기_MASTER작업지시_2026-08-11.md` — 19,846 B
+- `00_작업지시/12_60_V1.1_4개핵심메뉴_실제기능연결_디자인팀장6기_수정지시_2026-08-12.md` — 7,117 B
+- `00_작업지시/13_60_V1.2_실제Track59·55·56_네비게이션_디자인팀장6기_수정지시_2026-08-12.md` — 10,022 B
+- `01_참고원본/★_참고영상_화이트관계망_노드클러스터맵.mp4` — 73,285,559 B
+- `녹화_2026_08_12_01_40_04_253.mp4` — 20,503,419 B
+- `버전1.0_후보/3D회전·SemanticZoom_QA.jpg` — 99,070 B
+- `버전1.0_후보/검증결과.json` — 5,522 B
+- `버전1.0_후보/구현설명.md` — 4,805 B
+- `버전1.0_후보/데스크톱_실행영상.mp4` — 902,967 B
+- `버전1.0_후보/모바일_실행영상.mp4` — 222,835 B
+- `버전1.0_후보/원본_vs_Track56_vs_Track60_역할·화면비교.jpg` — 70,808 B
+- `버전1.0_후보/현재후보.html` — 28,653 B
+- `버전1.0_후보/BridgeMoment_클러스터연결Reveal_QA.jpg` — 74,774 B
+- `버전1.1_핵심메뉴기능연결_후보/4개핵심버튼_실제동작_QA.jpg` — 117,517 B
+- `버전1.1_핵심메뉴기능연결_후보/검증결과.json` — 7,170 B
+- `버전1.1_핵심메뉴기능연결_후보/데스크톱_실행영상.mp4` — 596,292 B
+- `버전1.1_핵심메뉴기능연결_후보/모바일_실행영상.mp4` — 326,503 B
+- `버전1.1_핵심메뉴기능연결_후보/현재후보.html` — 52,981 B
+- `버전1.1_핵심메뉴기능연결_후보/MomentViewer·Book·Connection·Path_Handoff_QA.jpg` — 121,863 B
+- `버전1.1_핵심메뉴기능연결_후보/V1→V1.1_기능연결설명.md` — 3,406 B
+- `버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html` — 55,260 B
+- `버전1.2_실제트랙네비게이션_후보/검증결과.json` — 23,811 B
+- `버전1.2_실제트랙네비게이션_후보/데스크톱_실행영상.mp4` — 815,802 B
+- `버전1.2_실제트랙네비게이션_후보/모바일_실행영상.mp4` — 293,355 B
+- `버전1.2_실제트랙네비게이션_후보/MomentViewer_실제클릭_QA.jpg` — 109,865 B
+- `버전1.2_실제트랙네비게이션_후보/Track55_실제페이지열림_QA.jpg` — 162,647 B
+- `버전1.2_실제트랙네비게이션_후보/Track56_실제페이지열림_QA.jpg` — 128,098 B
+- `버전1.2_실제트랙네비게이션_후보/Track59_실제페이지열림_QA.jpg` — 252,096 B
+- `버전1.2_실제트랙네비게이션_후보/V1.1→V1.2_실제네비게이션설명.md` — 5,623 B
+
+### 61_감정경로_연결검토실 — 99 files, 54,061,408 bytes
+
+- `00_작업지시/14_디자인팀장7기_임명및_61_감정경로연결검토실_1차작업지시_2026-08-12.md` — 23,069 B
+- `00_작업지시/16_디자인팀장7기_61_V1.2_다중여성캐릭터·연속스토리경로_수정지시_2026-08-12.md` — 10,910 B
+- `00_작업지시/18_디자인팀장7기_61_V1.3_큰글씨·3단계연결가이드_수정지시_2026-08-13.md` — 18,012 B
+- `00_작업지시/19_디자인팀장7기_61_V1.4_초보팬·다음모먼트추천·선택형LoveTreeBuilder_수정지시_2026-08-13.md` — 19,445 B
+- `00_작업지시/20_디자인팀장7기_61_V1.4_실서비스형가상지표·추천통계_추가지시_2026-08-13.md` — 11,955 B
+- `00_작업지시/21_디자인팀장7기_61_V1.4_다중여성자산·대규모추천분기·실서비스형선택강화_추가지시_2026-08-13.md` — 15,476 B
+- `00_작업지시/23_디자인팀장7기_61_V1.5_실제트랙네비게이션·YouTubeSeed·Undo_수정지시_2026-08-13.md` — 20,949 B
+- `00_작업지시/26_디자인팀장7기_61_V1.6_상시CrossTrack액션·첫화면56·55·59노출_긴급수정지시_2026-08-13.md` — 11,049 B
+- `00_작업지시/27_디자인팀장7기_61_V1.7_로컬HTML직접연결·정확한Target검증_수정지시_2026-08-13.md` — 12,521 B
+- `01_참고원본/★_참고영상_멀티에이전트_사고대응워룸.mp4` — 11,012,959 B
+- `01_참고원본/제품오너추가_추천선택UX_참고이미지/제품오너참고_노래부르는여성_Moment후보.png` — 3,006,327 B
+- `01_참고원본/제품오너추가_추천선택UX_참고이미지/제품오너참고_댄스·핑크무대여성_Moment후보.png` — 3,053,104 B
+- `녹화_2026_08_13_20_57_52_27.mp4` — 16,175,940 B
+- `버전1.0_후보/검증결과.json` — 6,593 B
+- `버전1.0_후보/구현설명.md` — 5,176 B
+- `버전1.0_후보/데스크톱_실행영상.mp4` — 690,008 B
+- `버전1.0_후보/모바일_실행영상.mp4` — 216,259 B
+- `버전1.0_후보/현재후보.html` — 303,195 B
+- `버전1.0_후보/Main·Branch·Hold_ConnectionDecision_QA.jpg` — 187,554 B
+- `버전1.0_후보/MemoryLens_6종_Evidence_QA.jpg` — 229,191 B
+- `버전1.0_후보/Reference_vs_기존02Workflow_vs_Track61_차별화.jpg` — 178,889 B
+- `버전1.0_후보/Track55·56·59_Handoff_QA.jpg` — 132,440 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/검증결과.json` — 6,670 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/데스크톱_실행영상.mp4` — 831,188 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/모바일_실행영상.mp4` — 331,395 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/여성캐릭터자산_적용QA.jpg` — 142,573 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/현재후보.html` — 68,240 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/현재Moment·후보A·후보B_의사결정가시성_QA.jpg` — 187,392 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/Main·Branch·Hold_더쉬운버튼구조_QA.jpg` — 67,149 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/Track55·56·59_Handoff_QA.jpg` — 56,381 B
+- `버전1.1_여성캐릭터자산·직관성강화_후보/V1→V1.1_직관성강화설명.md` — 3,991 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/검증결과.json` — 5,784 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/데스크톱_실행영상.mp4` — 692,603 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/모바일_실행영상.mp4` — 513,621 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/여성캐릭터_다양성·Moment정합성_QA.jpg` — 300,323 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/연속Main→Branch→BranchContinue_스토리성장_QA.jpg` — 210,617 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/현재후보.html` — 389,876 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/StoryContextStrip_후보비교_QA.jpg` — 207,569 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/Track55·56·59_Handoff_QA.jpg` — 113,023 B
+- `버전1.2_다중여성캐릭터·연속스토리경로_후보/V1.1→V1.2_다중캐릭터·스토리경로설명.md` — 6,542 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/100퍼센트줌_큰글씨가독성_QA.jpg` — 204,376 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/검증결과.json` — 7,421 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/다음Moment선택→WHYNEXT→연결_3단계_QA.jpg` — 147,545 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/데스크톱_실행영상.mp4` — 458,578 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/모바일_실행영상.mp4` — 140,026 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/현재후보.html` — 388,529 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/Main·Branch_쉬운그림설명_QA.jpg` — 146,194 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/StoryPath_연속성_QA.jpg` — 128,279 B
+- `버전1.3_큰글씨·3단계연결가이드_후보/V1.2→V1.3_기능단순화·가독성개선.md` — 4,796 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/검증결과.json` — 6,691 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/데스크톱_실행영상.mp4` — 774,679 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/모바일_실행영상.mp4` — 321,368 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/실서비스형_가상지표·팬반응_QA.jpg` — 122,849 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/여성자산_18Moment·6캐릭터·8장면_다양성_QA.jpg` — 304,531 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/추천3갈래→2차추천→BranchContinue_QA.jpg` — 211,132 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/현재후보.html` — 482,969 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/확장추천12개·필터_QA.jpg` — 244,220 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/Track56·55·59_실제Handoff_QA.jpg` — 132,667 B
+- `버전1.4_초보팬·다음모먼트추천·선택형빌더_후보/V1.3→V1.4_다중여성자산·대규모추천분기_설명.md` — 4,034 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/검증결과.json` — 7,620 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/데스크톱_실행영상.mp4` — 891,057 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/모바일_실행영상.mp4` — 218,726 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/현재후보.html` — 488,588 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/Main·Branch_1StepUndo_StateRestore_QA.jpg` — 234,742 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/Track61→Track55_실제TargetOpen_QA.jpg` — 223,229 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/Track61→Track56_실제TargetOpen_QA.jpg` — 212,306 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/Track61→Track59_실제TargetOpen_QA.jpg` — 260,993 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/V1.4→V1.5_실제네비게이션·YouTube·Undo_수정설명.md` — 5,502 B
+- `버전1.5_실제트랙네비게이션·YouTubeSeed·Undo_후보/YouTubeURL입력→실제URL보존→WHY→연결_QA.jpg` — 161,925 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/검증결과.json` — 60,232 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/데스크톱_실행영상.mp4` — 316,430 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/모바일_실행영상.mp4` — 127,990 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/모바일390_하단3TrackDock_상시노출_QA.jpg` — 97,063 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/첫화면_전체경로·고급연결편집·책으로보기_상시노출_QA.jpg` — 208,969 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/초기화면_Track56·55·59_ClickAttempt_QA.jpg` — 165,401 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/현재후보.html` — 491,190 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/Choose·WHY·Connect·Done_3CrossTrack버튼_상시노출_QA.jpg` — 184,977 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/V1.5→V1.6_상시CrossTrackAction_수정설명.md` — 4,478 B
+- `버전1.6_상시트랙액션·실제네비게이션_후보/V1.5기능회귀없음_QA.jpg` — 122,525 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/검증결과.json` — 10,543 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/데스크톱_실행영상.mp4` — 530,444 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/링크3번째계속안돼서 내가 녹화해서 줌.mp4` — 1,195,770 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/모바일_실행영상.mp4` — 257,799 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/첫화면_56·55·59_상시노출_QA.jpg` — 280,917 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/현재후보.html` — 493,980 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/GoogleDrive화면_유입없음·V1.6회귀없음_QA.jpg` — 254,924 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/Track55_정확한LocalHTML·Title·UI_QA.jpg` — 279,468 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/Track56_정확한LocalHTML·Title·UI_QA.jpg` — 261,645 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/Track59_정확한LocalHTML·Title·UI_QA.jpg` — 323,692 B
+- `버전1.7_로컬HTML직접연결·정확한Target검증_후보/V1.6→V1.7_로컬HTML정확한Target수정설명.md` — 4,580 B
+- `버전1.8_실제Drive폴더명정정_후보/현재후보.html` — 493,941 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/100Moment·12Branch_축약작업뷰_QA.jpg` — 163,708 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/검증결과.json` — 2,831 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/모바일390_100Moment축약_QA.jpg` — 64,367 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/모바일390_MemoryGlass·Dock_QA.jpg` — 56,647 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/첫화면_MemoryGlass_QA.jpg` — 173,330 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/현재후보.html` — 509,063 B
+- `버전1.9_메모리글래스·대규모트리축약_후보/V1.8→V1.9_MemoryGlass·100MomentScale_수정설명.md` — 3,911 B
+- `현재후보.html` — 509,063 B
+
+### 62_기억조각상_원형레일전시 — 77 files, 167,537,338 bytes
+
+- `00_작업지시/17_디자인팀장8기_임명및_62_기억조각상_원형레일전시_REFERENCE_FIDELITY_V1_작업지시_2026-08-12.md` — 25,805 B
+- `00_작업지시/22_디자인팀장8기_62_V1.1_신규조각상교체·포즈다양화·미디어뷰어·메뉴기능_수정지시_2026-08-13.md` — 13,901 B
+- `01_참고원본/★_참고영상_패션아트_조각상_스크롤전시.mp4` — 7,441,334 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/01_HTML/index-v1.html` — 24,074 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/01_HTML/index-v2.html` — 16,766 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/01_HTML/index-v3.html` — 27,101 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/02_분석자료/벤치마킹_분석.md` — 1,482 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/02_분석자료/V3_수정·검수요약.md` — 1,811 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/02_분석자료/V3_인물누끼_생성.py` — 2,967 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/02_분석자료/V3_QA_scene1.png` — 291,838 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/02_분석자료/V3_QA_scene2.png` — 313,087 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/01_stage-singing.png` — 1,176,392 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/02_dance.png` — 1,353,588 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/03_livestream.png` — 1,425,576 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/04_interview.png` — 1,411,187 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/05_photoshoot.png` — 1,391,057 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v2/06_practice.png` — 1,449,232 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/01_stage-singing.png` — 917,410 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/02_dance.png` — 1,073,819 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/03_livestream.png` — 1,036,268 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/04_interview.png` — 910,377 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/05_photoshoot.png` — 895,841 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images-v3/06_practice.png` — 1,013,429 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images/01_noir-idol.png` — 1,878,325 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images/02_veil-idol.png` — 1,828,173 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images/03_pearl-idol.png` — 1,626,346 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/03_ASSETS/images/04_lovetree-sculpture.png` — 2,124,197 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/최종본_12_러브트리_기억조각상_원형궤도전시.html` — 470 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/최종본_V2_12_러브트리_컬러모먼트_원형궤도전시.html` — 538 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/최종본_V3_12_러브트리_살아있는종이극장_원형궤도전시.html` — 442 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/README_실행안내.txt` — 579 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/01_HTML/index-v1.html` — 26,566 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/02_분석자료/벤치마킹_분석.md` — 1,420 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/02_분석자료/벤치마킹_컨택트시트.jpg` — 149,121 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/02_분석자료/벤치마킹_타임라인.jpg` — 143,245 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/cast-fullbody.jpg` — 89,627 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/cast-primary.png` — 2,163,260 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/cast-secondary.png` — 1,925,699 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/lovetree-center.png` — 2,643,734 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/lovetree-glowing.png` — 2,762,669 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/moment-01.jpg` — 114,542 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/moment-02.jpg` — 100,272 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/03_ASSETS/images/moment-03.jpg` — 128,804 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/04_REFERENCE/참고영상_패션아트_조각상_스크롤전시.mp4` — 7,441,334 B
+- `02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시/V11_기억조각상_스크롤전시_대문/최종본_V11_기억조각상_스크롤전시_대문.html` — 667 B
+- `03_V1.1_신규조각상자산/신규조각상_01_정면스탠딩_블랙실버.png` — 2,298,719 B
+- `03_V1.1_신규조각상자산/신규조각상_02_벤치착석_블랙실버.png` — 2,178,508 B
+- `03_V1.1_신규조각상자산/신규조각상_03_체어착석_블랙실버.png` — 2,235,357 B
+- `03_V1.1_신규조각상자산/신규조각상_04_뒤돌아보기_블랙실버.png` — 1,846,336 B
+- `03_V1.1_신규조각상자산/신규조각상_05_필러기대기_블랙실버.png` — 2,153,842 B
+- `03_V1.1_신규조각상자산/신규조각상_06_마이크퍼포먼스_블랙실버.png` — 2,123,451 B
+- `62_기억조각상_원형레일전시.html` — 20,728,647 B
+- `녹화_2026_08_13_16_07_05_384.mp4` — 17,421,476 B
+- `모바일_390x844_실행영상.mp4` — 975,752 B
+- `버전1.0_레퍼런스피델리티_재구축_후보.html` — 5,834,579 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/검증결과.json` — 41,237 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/구현설명.md` — 4,452 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/누끼_Alpha_4배경검증_QA.jpg` — 728,103 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/데스크톱_1920x1080_실행영상.mp4` — 2,194,664 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/모바일_390x844_실행영상.mp4` — 1,722,005 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/버전1.0_레퍼런스피델리티_재구축_후보.html` — 5,834,579 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/원형Rail_연속이동_QA.jpg` — 142,424 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/HorizontalSceneTravel_중간프레임_QA.jpg` — 120,146 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/Reference_4장면_피델리티비교_QA.jpg` — 376,193 B
+- `버전1.0_레퍼런스피델리티_재구축_후보/Reference_vs_CodexV1_V2_V3_vs_Track62.jpg` — 164,653 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/검증결과.json` — 13,953 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/녹화_2026_08_13_16_07_05_384.mp4` — 17,421,476 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/데스크톱_1920x1080_실행영상.mp4` — 3,140,302 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/모바일_390x844_실행영상.mp4` — 975,752 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/신규6조각상_Alpha_4배경검증_QA.jpg` — 789,499 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/현재후보.html` — 20,728,647 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/ABOUT·SCULPTURES·MEMORYFILMS·JOURNAL·MYTREE_메뉴동작_QA.jpg` — 146,258 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/MediaViewer_모노톤→컬러리빌_QA.jpg` — 66,991 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/SculptureClick→MediaViewer→StateRestore_QA.jpg` — 105,017 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/Standing→Seated→BackView→Performance_포즈다양성_QA.jpg` — 216,836 B
+- `버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/V1→V1.1_조각상다양화·미디어Viewer·메뉴설명.md` — 1,778 B
+- `참고영상_패션아트_조각상_스크롤전시.mp4` — 7,441,334 B
+
+### 63_모먼트필드_3D뷰스튜디오 — 39 files, 194,102,950 bytes
+
+- `00_작업지시/24_디자인팀장6기_63_모먼트필드_3D뷰스튜디오_V1_신규작업지시_2026-08-13.md` — 28,292 B
+- `00_작업지시/29_디자인팀장6기_63_V1.1_실서비스형미디어시드·프리셋확장·LoveTreeViewStudio_수정지시_2026-08-13.md` — 16,142 B
+- `00_작업지시/31_디자인팀장6기_63_V1.2_프리셋시인성·자동맞춤·실제동작보정_수정지시_2026-08-13.md` — 22,195 B
+- `00_작업지시/35_디자인팀장6기_63_V1.3_V1.1엔진복귀·성능복구·선별UX이식_긴급수정지시_2026-08-14.md` — 20,136 B
+- `00_작업지시/99_이전지시_보존/24_디자인팀장9기_63_모먼트필드_3D뷰스튜디오_V1_신규작업지시_2026-08-13.md` — 27,516 B
+- `01_참고원본/★_참고영상_3D포토콜라주_카드클라우드편집.mp4` — 43,394,198 B
+- `02_참고프레임분석/참고영상_14프레임_동작·툴구조_분석.jpg` — 388,313 B
+- `녹화_2026_08_13_23_27_50_55.mp4` — 37,637,369 B
+- `녹화_2026_08_13_23_30_03_876.mp4` — 94,733,644 B
+- `버전1.0_후보/18개이상_LayoutTool_실제형상차이_QA.jpg` — 403,316 B
+- `버전1.0_후보/검증결과.json` — 4,768 B
+- `버전1.0_후보/구현설명.md` — 4,401 B
+- `버전1.0_후보/데스크톱_실행영상.mp4` — 2,961,383 B
+- `버전1.0_후보/모바일_실행영상.mp4` — 745,657 B
+- `버전1.0_후보/현재후보.html` — 127,835 B
+- `버전1.0_후보/LoveTree전용4View·Connection·WHY_NEXT_QA.jpg` — 211,950 B
+- `버전1.0_후보/Photo·Video·Memo·Link_동일MomentField_QA.jpg` — 99,664 B
+- `버전1.0_후보/Reference_vs_Track63_EditorShell·ToolLibrary·Inspector_비교_QA.jpg` — 128,930 B
+- `버전1.0_후보/RightInspector_Slider_실시간변화_QA.jpg` — 150,502 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/32+_ViewPresets·Heart·Tree·Flower_symbolic_QA.jpg` — 400,385 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/검증결과.json` — 6,585 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/데스크톱_실행영상.mp4` — 3,920,609 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/모바일_실행영상.mp4` — 662,191 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/실제샘플_Photo·Video·Memo·Link_혼합world_QA.jpg` — 203,715 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/우측Inspector_Frame·Media·Motion·Story·LoveTreeStyle_QA.jpg` — 202,641 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/현재후보.html` — 1,069,571 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/Reference_vs_Track63_V1.1_preset-driven_UX_비교_QA.jpg` — 237,083 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/SampleSeedSet·Ratio·Fitting·Playback_실제동작_QA.jpg` — 239,056 B
+- `버전1.1_실서비스형미디어시드·프리셋확장_후보/V1→V1.1_실서비스형미디어시드·프리셋확장_구현설명.md` — 3,710 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/44프리셋_실제미리보기·의미형상_QA.jpg` — 286,781 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/검증결과.json` — 12,426 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/데스크톱_실행영상.mp4` — 3,030,571 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/모바일_실행영상.mp4` — 332,306 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/현재후보.html` — 1,111,636 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/FrameRatio·Preset별_AUTO_FIT_QA.jpg` — 284,164 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/Heart·Tree·Branch·Flower_이름없이형상식별_QA.jpg` — 349,291 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/MovingCard_직접클릭·Viewer일치·Drag분리_QA.jpg` — 318,759 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/QuickAdjust·Connection계층·Action동작정직성_QA.jpg` — 319,311 B
+- `버전1.2_프리셋시인성·자동맞춤·실제동작보정_후보/V1.1→V1.2_프리셋시인성·자동맞춤·실제동작보정_설명.md` — 5,948 B
+
+### 64_부유모먼트_웰컴오빗_입장포털O — 43 files, 74,650,691 bytes
+
+- `★_참고영상_부유카드포트폴리오_웰컴오빗.mp4` — 22,264,995 B
+- `00_작업지시/25_디자인팀장8기_64_부유모먼트_웰컴오빗_입장포털_V1_신규작업지시_2026-08-13.md` — 20,341 B
+- `00_작업지시/28_디자인팀장8기_64_V1.1_실제미디어뷰어·카드피팅·Track59로컬직접연결_수정지시_2026-08-13.md` — 15,800 B
+- `00_작업지시/33_디자인팀장8기_64_V1.2.1_책으로보기_실제경로정정_긴급수정지시_2026-08-13.md` — 10,361 B
+- `01_참고원본/참고영상_16프레임_분석ContactSheet.png` — 1,134,360 B
+- `녹화_2026_08_13_22_27_27_62.mp4` — 22,020,614 B
+- `버전1.0_후보/검증결과.json` — 16,901 B
+- `버전1.0_후보/구현설명.md` — 5,552 B
+- `버전1.0_후보/데스크톱_실행영상.mp4` — 2,021,399 B
+- `버전1.0_후보/모바일_실행영상.mp4` — 330,338 B
+- `버전1.0_후보/현재후보.html` — 2,789,779 B
+- `버전1.0_후보/FloatingCard→MomentFocus→WHYNEXT→Return_QA.jpg` — 153,571 B
+- `버전1.0_후보/Foreground·Mid·Far_3Depth_실제Projection_QA.jpg` — 170,124 B
+- `버전1.0_후보/MomentFocus→PathContinue→BranchChoice_QA.jpg` — 126,703 B
+- `버전1.0_후보/Photo·Video·Memo·Link_부유MomentWorld_QA.jpg` — 156,810 B
+- `버전1.0_후보/Reference_vs_Track64_웰컴중앙여백·부유카드·깊이비교_QA.jpg` — 150,612 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/검증결과.json` — 7,622 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/데스크톱_실행영상.mp4` — 1,334,856 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/모바일_실행영상.mp4` — 558,170 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/이상하게나오는거 녹화함.mp4` — 11,060,534 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/책으로보기→Track59_LocalHTML직접Open_QA.jpg` — 46,088 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/현재후보.html` — 2,690,589 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/MediaXClose→OrbitStateRestore_QA.jpg` — 143,770 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/MixedMediaPathContinue→BranchChoice_QA.jpg` — 241,188 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/Photo·Video·Link·Memo_실제Viewer_QA.jpg` — 200,842 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/Portrait·FullBody·Sitting·VideoPoster_CardFitting_QA.jpg` — 76,585 B
+- `버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/V1→V1.1_미디어뷰어·카드피팅·Track59직접연결_수정설명.md` — 3,922 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/검증결과.json` — 6,649 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/데스크톱_실행영상.mp4` — 863,894 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/모바일_실행영상.mp4` — 318,273 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/책으로보기→Track59_LocalHTML직접Open_QA.jpg` — 42,464 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/현재후보.html` — 1,565,139 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/Card Direct Open Desktop·Mobile QA.jpg` — 66,569 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/Curated Asset Pool_남·여·표정·형식다양성_QA.jpg` — 259,566 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/MixedMediaPathContinue→BranchChoice_품질일치_QA.jpg` — 136,788 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/Portrait·Full-body·Sitting·VideoPoster_CardFitting_QA.jpg` — 165,832 B
+- `버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/V1.1→V1.2_직접카드오픈·자산재선별·뷰어일치성_수정설명.md` — 1,931 B
+- `버전1.3_책으로보기_경로정정_후보/검증결과.json` — 8,243 B
+- `버전1.3_책으로보기_경로정정_후보/책으로보기_로컬Open_제품오너확인대기_QA.jpg` — 165,710 B
+- `버전1.3_책으로보기_경로정정_후보/현재후보.html` — 1,565,313 B
+- `버전1.3_책으로보기_경로정정_후보/Track59_실제폴더명·상대경로_QA.jpg` — 164,046 B
+- `버전1.3_책으로보기_경로정정_후보/V1.2→V1.2.1_Track59경로정정_설명.md` — 2,535 B
+- `현재후보.html` — 1,565,313 B
+
+### 65_입덕단서_시네마틱에디토리얼 — 472 files, 1,130,609,796 bytes
+
+- `02_설계지시/33_디자인팀장10기_65_입덕단서_시네마틱에디토리얼_V1_작업지시_2026-08-13.docx` — -1 B
+- `02_설계지시/35_디자인팀장8기_65_V1.1_REFERENCE_VISUAL_FIDELITY_RESCUE_수정지시_2026-08-14.md` — 19,513 B
+- `02_설계지시/36_디자인팀장12기_65_V1.5_제품오너구도LOCK·시네마틱트레일러·고해상도자산전면복구_수정지시_2026-08-14.md` — 20,434 B
+- `02_설계지시/37_디자인팀장12기_65_V1.5.1_OWNER_RED_CIRCLE·S02반대눈각도·S01타이포LOCK_긴급재지시_2026-08-15.md` — 16,758 B
+- `02_설계지시/39_디자인팀장13기_65_V1.7_DESIGN_FIRST·OWNER_KEYFRAME_LOCK·S01-S03_CINEMATIC_VERTICAL_SLICE_신규작업지시_2026-08-15.md` — 13,854 B
+- `65_입덕단서_시네마틱에디토리얼.mp4` — 109,833,746 B
+- `비디오/초안1.mp4` — 17,654,453 B
+- `비디오/초안2.mp4` — 3,868,060 B
+- `비디오/V13_설계팀장8기_DIRECTOR_CUT_H3_OWNERPICK_CINEMATIC_후보.mp4` — 39,582,419 B
+- `비디오/V14_설계팀장8기_OWNERPICK_DIVERSITY_CINEMATIC_2026-08-17.mp4` — 38,468,927 B
+- `스토리/2cff6493-e58e-4d06-95ab-120102318b83.png` — 2,844,067 B
+- `스토리/65_V2_ASSET_CONTACT_SHEET.png` — 3,490,694 B
+- `스토리/65_V2_DESKTOP_CONTACT_SHEET.png` — 3,738,438 B
+- `스토리/65_V2_MOBILE_CONTACT_SHEET.png` — 1,610,258 B
+- `스토리/79d57179-e78f-47ee-9981-291279e64aba.png` — 2,316,511 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오전 01_03_27.png` — 3,429,918 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오전 02_54_39 (1).png` — 3,476,603 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오전 02_54_39 (2).png` — 3,455,350 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 05_37_01 (1).png` — 2,916,857 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 05_37_02 (2).png` — 3,390,136 B
+- `스토리/ChatGPT Image 2026년 8월 14일 오후 07_30_19.png` — 3,553,039 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 01_56_47.png` — 2,855,479 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 02_23_56.png` — 2,917,600 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 02_25_39.png` — 2,555,544 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 02_28_54 (2).png` — 2,671,638 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 02_28_55 (3).png` — 2,653,504 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 11_30_44.png` — 2,187,772 B
+- `스토리/ChatGPT Image 2026년 8월 15일 오후 11_35_10.png` — 2,389,139 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 06_17_54.png` — 1,651,821 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 06_18_26.png` — 2,007,444 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 07_52_20 (1).png` — 1,874,706 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 07_52_20 (2).png` — 1,729,204 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 08_11_49 (1).png` — 1,968,125 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 08_11_49 (2).png` — 2,022,132 B
+- `스토리/ChatGPT Image 2026년 8월 16일 오후 08_11_49 (3).png` — 1,994,818 B
+- `오너픽/노래1.png` — 2,576,903 B
+- `오너픽/노래2.png` — 2,438,634 B
+- `오너픽/노래3.png` — 2,416,271 B
+- `오너픽/노래4-티비.png` — 2,071,539 B
+- `오너픽/노래5-티비2.png` — 2,013,249 B
+- `오너픽/누끼1.png` — 1,916,821 B
+- `오너픽/누끼2.png` — 1,738,335 B
+- `오너픽/누끼3.png` — 1,894,185 B
+- `오너픽/누끼4.png` — 1,640,192 B
+- `오너픽/뒷모습1.png` — 1,868,636 B
+- `오너픽/뒷모습2.png` — 2,135,943 B
+- `오너픽/뒷모습3.png` — 2,003,767 B
+- `오너픽/뒷모습4.png` — 2,137,504 B
+- `오너픽/러브트리1.JPG` — 21,618 B
+- `오너픽/러브트리2.png` — 2,859,371 B
+- `오너픽/러브트리3.jpg` — 819,173 B
+- `오너픽/러브트리4.JPG` — 26,091 B
+- `오너픽/마이크1.png` — 2,202,297 B
+- `오너픽/마이크2.png` — 2,010,857 B
+- `오너픽/망원경1.png` — 1,694,245 B
+- `오너픽/망원경2.png` — 2,292,064 B
+- `오너픽/모으기1.png` — 2,525,782 B
+- `오너픽/사진1.png` — 2,754,304 B
+- `오너픽/사진2.png` — 2,341,579 B
+- `오너픽/여자1.png` — 2,138,084 B
+- `오너픽/여자2.png` — 2,362,143 B
+- `오너픽/여자3.png` — 2,361,300 B
+- `오너픽/여자4.png` — 2,452,758 B
+- `오너픽/여자5.png` — 2,022,761 B
+- `오너픽/여자6.png` — 2,176,513 B
+- `오너픽/여자7.png` — 2,047,048 B
+- `오너픽/연결1.png` — 2,812,045 B
+- `오너픽/연결2.png` — 2,322,733 B
+- `오너픽/연결3.png` — 2,233,813 B
+- `오너픽/연결4.jpg` — 646,366 B
+- `오너픽/연결5.png` — 2,251,780 B
+- `오너픽/오른쪽3.png` — 2,509,987 B
+- `오너픽/오른쪽눈1.png` — 2,036,051 B
+- `오너픽/오른쪽눈2.jpg` — 801,917 B
+- `오너픽/왼쪽눈1.JPG` — 22,330 B
+- `오너픽/조사1.png` — 2,031,784 B
+- `오너픽/조사2.png` — 2,202,551 B
+- `오너픽/조사3.png` — 2,116,598 B
+- `오너픽/조사4.png` — 1,844,038 B
+- `오너픽/조사5.png` — 2,234,135 B
+- `오너픽/조사6.png` — 2,031,741 B
+- `오너픽/테이프,티비.png` — 1,960,238 B
+- `오너픽/테이프1-온.png` — 2,126,383 B
+- `오너픽/테이프2-오프.png` — 2,193,266 B
+- `오너픽/퍼스트클루1.JPG` — 17,265 B
+- `오너픽/퍼스트클루2.png` — 2,497,683 B
+- `오너픽/퍼스트클루3.png` — 2,755,503 B
+- `오너픽/퍼스트클루이후.png` — 2,548,850 B
+- `오너픽/흑백1.JPG` — 27,031 B
+- `오너픽/흑백2.JPG` — 24,117 B
+- `오너픽/흑백3.png` — 2,512,500 B
+- `오너픽/흑백4.png` — 1,874,013 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 08_58_43 (1).png` — 1,671,542 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 08_58_44 (2).png` — 2,128,439 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 08_58_45 (3).png` — 1,384,043 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 08_58_45 (4).png` — 2,175,800 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 08_58_45 (5).png` — 2,267,996 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_21_10 (1).png` — 1,398,694 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_21_11 (2).png` — 1,773,894 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_21_11 (3).png` — 2,171,065 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_21_11 (4).png` — 1,547,307 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_21_11 (5).png` — 2,166,802 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_26_13 (1).png` — 2,386,116 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_26_15 (2).png` — 2,109,849 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_26_15 (3).png` — 1,427,221 B
+- `오너픽/ChatGPT Image 2026년 8월 16일 오후 09_26_15 (4).png` — 2,387,300 B
+- `이미지-고화질/0001-2366028564141676088.png` — 303,284 B
+- `이미지-고화질/0001-8243226077611894093.png` — 232,203 B
+- `이미지-고화질/0d9d6825-dfde-49aa-8bfc-5a5046af8198.png` — 1,694,245 B
+- `이미지-고화질/18812e4b-d903-4bf1-b966-eb4f270a7b07.png` — 3,004,363 B
+- `이미지-고화질/18e3f3a8-f62d-408e-a4c8-53b6f67242f6.png` — 2,047,048 B
+- `이미지-고화질/2a676fd3-7a39-4221-83c8-fb5a2a79c2c7.png` — 2,512,500 B
+- `이미지-고화질/46130ce3-92fb-4c47-a5d2-a9b367733b8a.png` — 1,844,038 B
+- `이미지-고화질/4c434215-80a8-4e96-ab5a-5c2bb488a12b.png` — 2,525,782 B
+- `이미지-고화질/4ef6f902-113b-416b-8668-d3de8ebc0c08.png` — 2,251,780 B
+- `이미지-고화질/6a9c4fe6-a876-48a9-b1d4-d8265fc5b6f4.png` — 2,126,383 B
+- `이미지-고화질/6f963894-18a5-445e-92e7-c2977d86c14c.png` — 2,292,064 B
+- `이미지-고화질/7ddd7002-ab69-404e-8de5-055c22712adb.png` — 1,868,636 B
+- `이미지-고화질/8dc45c82-01fa-499d-85a3-5e622b7ca6c5.png` — 2,233,813 B
+- `이미지-고화질/a0840f30-a69f-4fa5-9d23-8cd2c776ee44.png` — 2,812,045 B
+- `이미지-고화질/c2ad6ea4-3ec5-4cd6-926a-36a36542eaa8.png` — 2,322,733 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_36 (1).png` — 2,383,833 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (2).png` — 1,839,645 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (3).png` — 2,509,987 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (4).png` — 2,576,903 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_38 (5).png` — 2,138,084 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_41 (7).png` — 2,335,855 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 05_12_42 (8).png` — 2,362,143 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_15_51 (1).png` — 1,916,821 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_15_53 (2).png` — 1,738,335 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_15_55 (3).png` — 1,894,185 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_15_57 (4).png` — 2,403,361 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_15_59 (5).png` — 1,874,013 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_16_00 (6).png` — 2,438,634 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_16_01 (7).png` — 2,361,300 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_16_02 (8).png` — 2,137,504 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_16_04 (9).png` — 2,022,761 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 14일 오후 09_16_08 (10).png` — 2,859,371 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 15일 오후 02_39_21 (1).png` — 2,497,683 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 15일 오후 02_39_21 (2).png` — 2,797,384 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 15일 오후 02_39_21 (3).png` — 2,755,503 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_42 (1).png` — 2,266,972 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (2).png` — 1,640,192 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (3).png` — 2,754,304 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (4).png` — 2,176,513 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (5).png` — 2,452,758 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (6).png` — 2,416,271 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (7).png` — 2,003,767 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_34_44 (8).png` — 2,010,857 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_44 (1).png` — 2,548,850 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_45 (2).png` — 2,036,051 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_45 (3).png` — 2,234,135 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_46 (4).png` — 1,960,238 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_46 (5).png` — 2,135,943 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 04_52_46 (6).png` — 2,202,297 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 05_01_01 (1).png` — 2,031,741 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 05_01_02 (2).png` — 2,031,784 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 05_01_02 (3).png` — 2,193,266 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 05_01_02 (4).png` — 2,013,249 B
+- `이미지-고화질/ChatGPT Image 2026년 8월 16일 오후 05_01_02 (5).png` — 2,202,551 B
+- `이미지-고화질/d027483b-0a38-4029-bfdd-0e53aed9d15a.png` — 2,341,579 B
+- `이미지-고화질/fa863625-5777-4caf-b7b6-33ff27eb0f6d.png` — 2,116,598 B
+- `이미지-고화질/fcaabbba-1229-4772-965e-351437fa50d3.png` — 2,071,539 B
+- `이미지-고화질/S01_FIRST_CLUE_1536w.jpg` — 674,574 B
+- `이미지-고화질/S02_LOOK_AGAIN_1536w.jpg` — 801,917 B
+- `이미지-고화질/S08_SAW_HEARD_FELT_1536w.jpg` — 646,366 B
+- `이미지-고화질/S10_MY_LOVETREE_1536w.jpg` — 819,173 B
+- `이미지-저화질_얼굴뭉개짐/S01_FIRST_CLUE_1536w.jpg` — 674,574 B
+- `이미지-저화질_얼굴뭉개짐/S02_LOOK_AGAIN_1536w.jpg` — 801,917 B
+- `이미지-저화질_얼굴뭉개짐/S03_FOLLOW_THE_FEELING_1536w.jpg` — 764,519 B
+- `이미지-저화질_얼굴뭉개짐/S04_PLATFORM_HOP_1536w.jpg` — 789,993 B
+- `이미지-저화질_얼굴뭉개짐/S05_MOMENTS_MADE_OF_FEELING_1536w.jpg` — 698,954 B
+- `이미지-저화질_얼굴뭉개짐/S06_MOMENT_STACK_1536w.jpg` — 691,861 B
+- `이미지-저화질_얼굴뭉개짐/S07_LOVETREE_LENS_1536w.jpg` — 712,551 B
+- `이미지-저화질_얼굴뭉개짐/S08_SAW_HEARD_FELT_1536w.jpg` — 646,366 B
+- `이미지-저화질_얼굴뭉개짐/S09_WHY_NEXT_1536w.jpg` — 763,687 B
+- `이미지-저화질_얼굴뭉개짐/S10_MY_LOVETREE_1536w.jpg` — 819,173 B
+- `잘못된것/1.JPG` — 62,065 B
+- `잘못된것/1a0893f1-f636-4740-a011-8bcd4df4baa2.png` — 914,363 B
+- `잘못된것/2.JPG` — 65,388 B
+- `잘못된것/3.JPG` — 67,037 B
+- `잘못된것/4.JPG` — 78,415 B
+- `잘못된것/5.JPG` — 74,795 B
+- `잘못된것/6.JPG` — 54,245 B
+- `잘못된것/7.JPG` — 109,927 B
+- `잘못된것/76184d5f-49a1-43ac-a994-0b7abc288a48.png` — 904,059 B
+- `잘못된것/951d3449-6faf-46c0-9b84-12afcf8b24fd.png` — 927,555 B
+- `잘못된것/badbd257-f11c-4146-b6c3-f00f292cecc8.png` — 883,560 B
+- `잘못된것/ChatGPT Image 2026년 8월 14일 오후 08_46_37.png` — 3,492,861 B
+- `참고영상-미니맥스H3_공간브랜드_에디토리얼.mp4` — 64,191,254 B
+- `참고영상과 비교/65_V2.1_H3_33CUT_FORENSIC_BOARD.png` — 11,292,791 B
+- `참고영상과 비교/문제장면_S01·S02·S03·S04_교체전후_QA.jpg` — 515,872 B
+- `참고영상과 비교/문제장면_S07·S09·S10_교체전후_QA.jpg` — 447,106 B
+- `참고영상과 비교/타이포·카피·가독성보정_QA.jpg` — 395,083 B
+- `참고영상과 비교/H3_REFERENCE_33CUT_CONTACT_01.jpg` — 334,536 B
+- `참고영상과 비교/H3_REFERENCE_33CUT_CONTACT_02.jpg` — 320,157 B
+- `참고영상과 비교/H3_REFERENCE_33CUT_CONTACT_03.jpg` — 242,045 B
+- `참고영상과 비교/REFERENCE_vs_TRACK65_V1.7_S01-S03.mp4` — 4,348,858 B
+- `참고영상과 비교/V1.2구조유지·V1.3시각품질상승_QA.jpg` — 476,489 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/00_README_먼저보기.md` — 2,320 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/녹화_2026_08_15_19_29_40_563.mp4` — 18,228,496 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/현재후보.html` — 42,803 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/eye_story_face_hires.png` — 2,509,987 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/fan_a_runner.png` — 1,839,645 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/s01_hero_stairs.png` — 2,497,683 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/s02_eye_left_macro.png` — 2,403,361 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/s10_lovetree.png` — 2,859,371 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_back_turn_right.png` — 2,137,504 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_bw_frontal.png` — 1,874,013 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_frontal_camera.png` — 2,022,761 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_interview_left.png` — 2,363,472 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_interview_right.png` — 2,138,084 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_stage_mic.png` — 2,438,634 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/assets/subject_warm_left.png` — 2,361,300 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_00_7s.png` — 1,972,676 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_06_2s.png` — 2,063,892 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_10_8s.png` — 1,649,117 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_19_8s.png` — 827,821 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_23_8s.png` — 1,649,149 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_28_3s.png` — 1,398,806 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_32_4s.png` — 1,839,008 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/motion_41_0s.png` — 2,346,441 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/S02_반대각도_최종.jpg` — 292,248 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/S08_3각도_완성.jpg` — 268,069 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/S10_최종완성.jpg` — 359,796 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/SCROLL_00_start.png` — 1,921,238 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/SCROLL_02_6.4s.png` — 2,536,065 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/SCROLL_08_32.3s.png` — 1,441,484 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/QA_스크린샷/V1.6_최종영상_10장면_콘택트시트.jpg` — 115,270 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/tools/render_track65.mjs` — 3,469 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/Track65_V1.6_43초_시네마틱미리보기.mp4` — 37,987,935 B
+- `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6/V1.6_각도·빨간원반영_QA.md` — 3,387 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M01_SHORTS.jpg` — 118,996 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M02_STAGE.jpg` — 147,511 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M03_INTERVIEW.jpg` — 173,835 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M04_COMMENT.jpg` — 120,793 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M05_VARIETY.jpg` — 91,982 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/M06_CONVERSION.jpg` — 148,028 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/P01_WALKING.png` — 219,363 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/P05_EDITORIAL_PORTRAIT.jpg` — 278,309 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/P06_CLOSE_UP.jpg` — 225,350 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/S03_MEDIA_ORBIT_PLATE.jpg` — 140,363 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/S08_FELT.jpg` — 278,309 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/01_Assets/TRACK65_VISUAL_ATLAS_MASTER.png` — 3,429,918 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/현재후보.html` — 49,187 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/Desktop_1440x900_실행영상.mp4` — 2,916,698 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/Mobile_390x844_실행영상.mp4` — 938,882 B
+- `V1_비주얼피델리티·리얼미디어강화_후보/Reference_vs_V1_vs_V1.1_6KeyScenes_QA.jpg` — 976,855 B
+- `V10_오너픽전체_H3_SCROLL_HTML_후보/★_현재후보_65_V2.2.1_OWNERPICK_FULL_H3_SCROLL_CINEMATIC.html` — 22,346 B
+- `V10_오너픽전체_H3_SCROLL_HTML_후보/녹화_2026_08_17_00_44_09_925.mp4` — 19,319,027 B
+- `V10_오너픽전체_H3_SCROLL_HTML_후보/ASSET_USAGE_MANIFEST.json` — 2,287 B
+- `V10_오너픽전체_H3_SCROLL_HTML_후보/STATIC_QA.md` — 578 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/녹화_2026_08_17_00_06_32_772.mp4` — 5,540,814 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/설계팀장8기_Track65_오너픽_HTML_비교후보_단일파일_2026-08-16.html` — 11,953,118 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/assets/camera.png` — 2,176,513 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/assets/portrait.png` — 2,671,256 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/assets/protagonist.png` — 1,640,192 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/assets/stairs.png` — 2,548,850 B
+- `V11-설계팀장8기_Track65_오너픽_HTML_비교후보_2026-08-16/track65_ownerpick_compare_prototype.html` — 28,919 B
+- `V12_H3_SELECTIVE_16CUT_후보/★_현재후보_65_V2.2.3_H3_SELECTIVE_16CUT_SCROLL_CINEMATIC.html` — 11,910 B
+- `V12_H3_SELECTIVE_16CUT_후보/V2.2.3_RENDER_QA_CONTACT.jpg` — 446,086 B
+- `V12_H3_SELECTIVE_16CUT_후보/V2.2.3_RENDER_QA.md` — 950 B
+- `V12_H3_SELECTIVE_16CUT_후보/V2.2.3_REVISION_NOTE.md` — 831 B
+- `V12_H3_SELECTIVE_16CUT_후보/V2.2.3_SELECTED_ASSET_MANIFEST.json` — 4,308 B
+- `V13_설계팀장8기_DIRECTOR_CUT_H3_OWNERPICK_CINEMATIC_후보/★_설계팀장8기_Track65_V12_DIRECTOR_CUT_H3_OWNERPICK_CINEMATIC_2026-08-17.html` — 15,272,516 B
+- `V14_설계팀장8기_OWNERPICK_DIVERSITY_CINEMATIC_2026-08-17/V14_설계팀장8기_OWNERPICK_DIVERSITY_CINEMATIC_2026-08-17.html` — 15,027,345 B
+- `V15_설계팀장8기_Track65_V15_COMPARE_REFINED_2026-08-17/설계팀장8기_Track65_V15_COMPARE_REFINED_2026-08-17.html` — 15,024,455 B
+- `V16_설계팀장8기_65_V2.3_H3_KINETIC_33BEAT_DIRECTOR_CUT_최종비교후보_2026-08-17/★_설계팀장8기_65_V2.3_H3_KINETIC_33BEAT_DIRECTOR_CUT_최종비교후보_2026-08-17.html` — 47,614 B
+- `V17_디자인팀장15기_H3_MOTION_EDITING_후보/★_현재후보_65_V2.2.4_H3_MOTION_EDITING_CINEMATIC.html` — 29,302 B
+- `V17_디자인팀장15기_H3_MOTION_EDITING_후보/V2.2.4_MOTION_EDITING_NOTE.md` — 1,636 B
+- `V17_디자인팀장15기_H3_MOTION_EDITING_후보/V2.2.4_STATIC_QA.md` — 687 B
+- `V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html` — 41,333 B
+- `V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/V2.2.5_EXTENDED_EDITING_NOTE.md` — 1,079 B
+- `V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/V2.2.5_STATIC_QA.md` — 763 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/검증결과.json` — 5,942 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/누끼실패→정상알파복구_QA.jpg` — 254,149 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/데스크톱_실행영상.mp4` — 2,080,418 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/모바일_실행영상.mp4` — 751,313 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/문제자산_3·4·6·7·9·12_교체전후_QA.jpg` — 540,860 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/저해상도→고해상도_얼굴선예도복구_QA.jpg` — 305,250 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/현재후보.html` — 5,239,363 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/S03·S04·S06·S07·S09_클로즈업디테일_QA.jpg` — 248,732 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/V1.1_vs_V1.2_구조유지·자산품질상승_QA.jpg` — 374,242 B
+- `V2_저해상도자산전면교체·누끼정리·고해상도리얼미디어복구_후보/V1.1→V1.2_저해상도자산전면교체·누끼정리·고해상도복구_설명.md` — 4,000 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/검증결과.json` — 6,330 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/데스크톱 실행영상.mp4` — 3,868,060 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/모바일 실행영상.mp4` — 1,270,499 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/문제장면_S01·S02·S03·S04_교체전후_QA.jpg` — 515,872 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/문제장면_S07·S09·S10_교체전후_QA.jpg` — 447,106 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/전신누끼·고해상도얼굴·카드품질_QA.jpg` — 379,344 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/타이포·카피·가독성보정_QA.jpg` — 395,083 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/현재후보.html` — 5,834,936 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/V1.2→V1.3 수정설명.md` — 2,702 B
+- `V3_인물고해상도교체·누끼정밀복구·타이포보정_후보/V1.2구조유지·V1.3시각품질상승_QA.jpg` — 476,489 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/10Scene_Desktop_QA.jpg` — 259,226 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/10Scene_Mobile_QA.jpg` — 298,300 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/검증결과.json` — 872 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/데스크톱_장면워크스루.mp4` — 1,400,073 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/모바일_장면워크스루.mp4` — 473,545 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/자산다양성_S03·S06·S08_QA.jpg` — 122,342 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/제품오너선호장면_조합_QA.jpg` — 217,144 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/타이포·한글·MyLoveTree_QA.jpg` — 205,920 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/현재후보.html` — 11,111,495 B
+- `V4_제품오너선호포스터조합·자산다양성·MyLoveTree복구_후보/V1.3→V1.4_제품오너선호조합·자산다양성·MyLoveTree복구_설명.md` — 2,012 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/00_OWNER_REVIEW_REPORT.md` — 2,667 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/검증결과.json` — 1,071 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/ANIMATIC_CONTACT.jpg` — 85,288 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/CODEX_MOTION_SPEC.md` — 3,217 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/handoff_keyframes/S01-S02_HANDOFF_KEYFRAMES_CONTACT.jpg` — 78,373 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/handoff_keyframes/S02-S03_HANDOFF_KEYFRAMES_CONTACT.jpg` — 161,900 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/motion_keyframes/S01_MOTION_KEYFRAMES_CONTACT.jpg` — 140,038 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/motion_keyframes/S02_MOTION_KEYFRAMES_CONTACT.jpg` — 247,202 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/motion_keyframes/S03_MOTION_KEYFRAMES_CONTACT.jpg` — 236,454 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/plates/S01_HIGHRES_CINEMATIC_PLATE.jpg` — 515,435 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/plates/S02_HIGHRES_CINEMATIC_PLATE.jpg` — 502,597 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/plates/S03_HIGHRES_CINEMATIC_PLATE.jpg` — 362,615 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/REFERENCE_vs_TRACK65_V1.7_S01-S03.mp4` — 4,348,858 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/S01_TYPE_OWNER_MATCH.jpg` — 241,986 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/S02_OWNER_vs_HOLD.jpg` — 438,806 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/S03_OWNER_vs_HOLD.jpg` — 377,838 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/SHA256SUMS.txt` — 5,491 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/SOURCE_MAP.json` — 750 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/Track65_V1.7_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보.zip` — 25,945,145 B
+- `V5_DESIGN_FIRST_S01-S03_CINEMATIC_DIRECTION_SLICE_후보/TRACK65_V1.7_S01-S03_OWNER_REVIEW.mp4` — 5,638,888 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/★_현재후보_65_V2_LUSION_H3_SCROLL_CINEMATIC.html` — 50,765 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/00_HOLD_TRACK65_V2_REFERENCE_FIDELITY_FAIL_2026-08-16.md` — 705 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H01.png` — 2,812,045 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H02.png` — 2,251,780 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H03.png` — 2,292,064 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H04.png` — 2,233,813 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H05.png` — 2,322,733 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H06.png` — 2,525,782 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H07.png` — 2,512,500 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H08.png` — 3,004,363 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H09.png` — 2,755,503 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H10.png` — 2,797,384 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H11.png` — 2,497,683 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H12.jpg` — 819,173 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H13.jpg` — 646,366 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H14.jpg` — 801,917 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H15.jpg` — 674,574 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H16.png` — 2,859,371 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H17.png` — 2,022,761 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H18.png` — 2,137,504 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H19.png` — 2,361,300 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H20.png` — 2,438,634 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H21.png` — 1,874,013 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H22.png` — 2,403,361 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H23.png` — 1,894,185 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H24.png` — 1,738,335 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H25.png` — 1,916,821 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H26.png` — 2,362,143 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H27.png` — 2,335,855 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H28.png` — 2,363,472 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H29.png` — 2,138,084 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H30.png` — 2,576,903 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H31.png` — 2,509,987 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H32.png` — 1,839,645 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/H33.png` — 2,383,833 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K01.jpg` — 764,519 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K02.jpg` — 789,993 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K03.jpg` — 698,954 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K04.jpg` — 691,861 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K05.jpg` — 712,551 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/01_Assets/K06.jpg` — 763,687 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_ASSET_CONTACT_SHEET.png` — 3,490,694 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_ASSET_USAGE_MAP.md` — 6,473 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_DESKTOP_CONTACT_SHEET.png` — 3,738,438 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_HANDOFF_CONTACT_SHEET.png` — 1,814,998 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_MOBILE_CONTACT_SHEET.png` — 1,610,258 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_QA_REPORT.md` — 8,242 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_QA_RESULTS.json` — 2,326 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_SCENE_TIMELINE.md` — 9,040 B
+- `V6_LUSION_H3_SCROLL_CINEMATIC_CANDIDATE/65_V2_SCROLL_CAPTURE.mp4` — 9,610,627 B
+- `V7/★_현재후보_65_V2_LUSION_H3_SCROLL_CINEMATIC.html` — 50,765 B
+- `V7/65_V2_ASSET_USAGE_MAP.md` — 6,473 B
+- `V7/65_V2_HANDOFF_CONTACT_SHEET.png` — 1,814,998 B
+- `V7/65_V2_QA_REPORT.md` — 8,242 B
+- `V7/65_V2_QA_RESULTS.json` — 2,326 B
+- `V7/65_V2_SCENE_TIMELINE.md` — 9,040 B
+- `V7/65_V2_SCROLL_CAPTURE.mp4` — 9,610,627 B
+- `V7/65_V2_SHA256SUMS.txt` — 580 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/00_REFERENCE_FORENSICS/65_V2.1_H3_33CUT_FORENSIC_BOARD.png` — 11,292,791 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/00_REFERENCE_FORENSICS/65_V2.1_H3_33CUT_MAP.md` — 10,868 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/00_REFERENCE_FORENSICS/H3_REFERENCE_33CUT_CONTACT_01.jpg` — 334,536 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/00_REFERENCE_FORENSICS/H3_REFERENCE_33CUT_CONTACT_02.jpg` — 320,157 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/00_REFERENCE_FORENSICS/H3_REFERENCE_33CUT_CONTACT_03.jpg` — 242,045 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_MENU_FUNCTION_BOARD.png` — 1,969,127 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_NEW_HIGHRES_SHOT_LIST.md` — 5,083 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_STATIC_STORYBOARD_01.png` — 2,182,354 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_STATIC_STORYBOARD_02.png` — 3,719,911 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_STATIC_STORYBOARD_03.png` — 2,973,475 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/65_V2.1_STATIC_STORYBOARD_MAP.md` — 10,055 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/설계팀장8기_65_V2.1_GATE_B_STATIC_STORYBOARD_디자인팀장15기_작업지시_2026-08-16.md` — 24,255 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_01.png` — 283,884 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_02.png` — 115,759 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_03.png` — 1,285,147 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_04.png` — 2,390,059 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_05.png` — 155,727 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_06.png` — 44,845 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_07.png` — 196,734 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_08.png` — 331,051 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_09.png` — 141,826 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_10.png` — 429,033 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_11.png` — 190,691 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_12.png` — 942,476 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_13.png` — 1,426,477 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_14.png` — 394,593 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_15.png` — 1,526,166 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_16.png` — 1,001,787 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_17.png` — 1,060,202 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_18.png` — 779,034 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_19.png` — 582,217 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_20.png` — 614,441 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_21.png` — 315,362 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_22.png` — 1,104,728 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_23.png` — 607,992 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_24.png` — 1,259,178 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_25.png` — 33,456 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_26.png` — 43,883 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_27.png` — 1,009,660 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_28.png` — 2,169,003 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_29.png` — 182,348 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_30.png` — 19,231 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_31.png` — 23,691 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_32.png` — 28,749 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/02_STORYBOARD/frames/CUT_33.png` — 3,344,107 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/00_REFERENCE_LOCK/65_V2.1.1_10ANCHOR_LOCK_BOARD.png` — 9,748,344 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/01_ASSET_AUDIT/03_MISSING_SHOT_REVALIDATION.md` — 4,858 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/01_ASSET_AUDIT/05_33CUT_ASSET_COVERAGE_AFTER_GENERATION.md` — 4,045 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/01_ASSET_AUDIT/65_V2.1.1_HIGHRES_ASSET_CONTACT_SHEET.png` — 7,429,457 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/01_ASSET_AUDIT/65_V2.1.1_HIGHRES_ASSET_LEDGER.md` — 11,917 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/02_NEW_HIGHRES/04_NEW_HIGHRES_GENERATED_CONTACT_SHEET.png` — 1,497,103 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/03_STORY_LOCKED_REBUILD/설계팀장8기_65_V2.1.1_GATE_B_REJECT_10ANCHOR_33CUT_STORY_LOCKED_REBUILD_디자인팀장15기_전면재작업지시_2026-08-16.md` — 20,572 B
+- `V8.1_H3_33CUT_FORENSIC_REBUILD_후보/설계팀장8기_65_V2.1_GATE_C_FINAL_자산다양성강화_디자인팀장15기_최종작업지시_2026-08-16.md` — 15,501 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_01_The_First_Clue.png` — 2,112,825 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_04_Left_Eye_+_Instant_Photo.png` — 1,308,405 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_11_Left-Eye_Portrait.png` — 1,384,198 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_19_Stage_Revelation.png` — 1,660,820 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_23_What_I_Saw_Heard_Felt.png` — 1,234,486 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_29_Floating_Photo_Memory.png` — 940,360 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_31_Hanging_Photo_Cards.png` — 950,322 B
+- `V9_오너픽전면활용·스토리재정렬_후보/02_REPRESENTATIVE_8/REP_33_Final_LoveTree.png` — 2,374,604 B
+- `V9_오너픽전면활용·스토리재정렬_후보/A_TRACK65_V2.2_33CUT_CONTACT_SHEET.png` — 5,261,901 B
+- `V9_오너픽전면활용·스토리재정렬_후보/B_REPRESENTATIVE_8CUT_OVERVIEW.png` — 1,542,351 B
+- `V9_오너픽전면활용·스토리재정렬_후보/C_ASSET_USAGE_NOTE.md` — 2,146 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/01_PLANNING/01_33CUT_VARIATION_MATRIX.md` — 10,003 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/01_PLANNING/02_OWNERPICK_USAGE_LEDGER.md` — 10,903 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/01_PLANNING/03_KEEP_REJECT_HOLD_AUDIT.md` — 7,938 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/01_PLANNING/04_ANIMATION_SHOT_PLAN.md` — 4,116 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_02_CLUE_FRACTURE.png` — 180,959 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_05_SIGNAL_APERTURE.png` — 169,532 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_06_EMOTIONAL_PULSE.png` — 167,859 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_07_OWNERPICK_SCREEN_WORLD.png` — 1,217,424 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_09_PLATFORM_ARCHITECTURE.png` — 142,679 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_12_DEEP_PHOTO_TUNNEL.png` — 169,346 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_15_MYSTERY_CITY_FRAGMENTS.png` — 115,534 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_20_SIGNAL_OVER_CITY.png` — 139,335 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_24_MEMORY_SOUND_EXPANSION.png` — 173,920 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_28_RECOGNITION_APERTURE.png` — 159,286 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_29_PHOTO_CONSTELLATION.png` — 1,000,192 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/02_NEW_ANIMATION/CUT_32_PRE_REVEAL_HALO.png` — 208,526 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/03_NEW_LIVEACTION/CUT_19_SUBJECT_B_TRUE_STAGE_WIDE.png` — 2,386,990 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/03_NEW_LIVEACTION/CUT_30_FAN_ENTERS_MEMORY_SPACE.png` — 503,816 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/04_OBJECT_ENVIRONMENT/CUT_10_SCREEN_PORTAL.png` — 170,531 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/04_OBJECT_ENVIRONMENT/CUT_13_PROJECTED_SOURCE_THRESHOLD.png` — 240,435 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/04_OBJECT_ENVIRONMENT/CUT_17_OPTICAL_DEVICE_MACRO.png` — 96,892 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/04_OBJECT_ENVIRONMENT/CUT_22_RADIO_TUNER_OBJECT.png` — 91,513 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/04_OBJECT_ENVIRONMENT/CUT_31_FLOATING_MEMORY_LANTERNS.png` — 345,253 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/05_NEW_ANIMATION_BATCH_CONTACT_SHEET.png` — 2,567,645 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/06_NEW_LIVEACTION_BATCH_CONTACT_SHEET.png` — 3,325,067 B
+- `V9.1.2_DUPLICATE_BAN_ANIMATION_EXPANSION_후보/07_FINAL_33CUT_COVERAGE_BOARD.png` — 7,090,511 B
+
+### 66_첫트리만들기_인터랙티브스크롤가이드 — 36 files, 48,397,205 bytes
+
+- `★_참고영상_전력망서비스_인터랙티브스크롤.mp4` — 25,393,432 B
+- `00_작업지시/32_디자인팀장7기_66_첫트리만들기_인터랙티브스크롤가이드_V1_신규작업지시_2026-08-13.md` — 25,092 B
+- `00_작업지시/34_디자인팀장7기_66_V1.1_참고영상그대로복원·색상·레이아웃·스크롤동작_긴급수정지시_2026-08-13.md` — 23,678 B
+- `00_작업지시/36_디자인팀장7기_66_V1.2_제품목적·실제Moment체험강화_수정지시_2026-08-14.md` — 13,536 B
+- `녹화_2026_08_14_01_39_46_462.mp4` — 9,036,270 B
+- `버전1.0_후보/검증결과.json` — 3,443 B
+- `버전1.0_후보/구현설명.md` — 4,889 B
+- `버전1.0_후보/데스크톱_실행영상.mp4` — 609,939 B
+- `버전1.0_후보/모바일_실행영상.mp4` — 268,647 B
+- `버전1.0_후보/현재후보.html` — 320,169 B
+- `버전1.0_후보/Desktop·Mobile_첫트리온보딩_가독성·기능_QA.jpg` — 100,526 B
+- `버전1.0_후보/Hero→6단계_GrowthWorld_연속변형_QA.jpg` — 113,098 B
+- `버전1.0_후보/Moment→WHYNEXT→Main·Branch→TreeGrowth_QA.jpg` — 80,277 B
+- `버전1.0_후보/Reference_vs_Track66_Hero·StickyProcess·IsometricWorld_QA.jpg` — 86,708 B
+- `버전1.0_후보/ScrollProgress_중간프레임·Reverse_QA.jpg` — 75,744 B
+- `버전1.1_레퍼런스충실도복원_후보/검증결과.json` — 3,344 B
+- `버전1.1_레퍼런스충실도복원_후보/데스크톱_실행영상.mp4` — 957,492 B
+- `버전1.1_레퍼런스충실도복원_후보/모바일_실행영상.mp4` — 318,648 B
+- `버전1.1_레퍼런스충실도복원_후보/현재후보.html` — 27,323 B
+- `버전1.1_레퍼런스충실도복원_후보/Desktop·Mobile_ReferencePalette·Typography·Spacing_QA.jpg` — 61,575 B
+- `버전1.1_레퍼런스충실도복원_후보/Reference_vs_Track66_V1.1_4StepProcess_QA.jpg` — 83,964 B
+- `버전1.1_레퍼런스충실도복원_후보/Reference_vs_Track66_V1.1_Hero_ExactFidelity_QA.jpg` — 62,066 B
+- `버전1.1_레퍼런스충실도복원_후보/Reference_vs_Track66_V1.1_IsometricMorph·Reverse_QA.jpg` — 92,483 B
+- `버전1.1_레퍼런스충실도복원_후보/Reference_vs_Track66_V1.1_TwoCard·FAQ·CTA·Footer_QA.jpg` — 241,002 B
+- `버전1.1_레퍼런스충실도복원_후보/V1→V1.1_레퍼런스충실도복원_설명.md` — 3,916 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/검증결과.json` — 5,097 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/녹화_2026_08_14_01_39_46_462.mp4` — 9,036,270 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/데스크톱_실행영상.mp4` — 676,630 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/모바일_실행영상.mp4` — 167,272 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/첫Moment입력→Miniature반영_QA.jpg` — 41,642 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html` — 166,996 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/Main·Branch_첫Tree생성_QA.jpg` — 51,246 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/NextMoment_3후보선택→WHYNEXT_QA.jpg` — 53,319 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/Reference디자인_LOCK·LoveTree제품목적_강화_QA.jpg` — 95,864 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/V1.1_vs_V1.2_ReferenceFidelity회귀없음_QA.jpg` — 91,059 B
+- `버전1.2_제품목적·실제Moment체험강화_후보/V1.1→V1.2_제품목적·첫Tree체험강화_설명.md` — 4,549 B
+
+### 67_메모리테이프_인터랙티브롤 — 260 files, 823,602,900 bytes
+
+- `01_V2_GRAYBOX_BASE/00_README.md` — 2,075 B
+- `01_V2_GRAYBOX_BASE/01_BENCHMARK_FORENSICS.md` — 10,377 B
+- `01_V2_GRAYBOX_BASE/02_ASSET_USAGE_MAP.md` — 776 B
+- `01_V2_GRAYBOX_BASE/03_IMPLEMENTATION_NOTES.md` — 6,576 B
+- `01_V2_GRAYBOX_BASE/04_QA_REPORT.md` — 6,023 B
+- `01_V2_GRAYBOX_BASE/evidence/benchmark_keyframes/benchmark_contact_sheet.jpg` — 567,951 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/05_orbit.png` — 48,440 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/06_rewind_complete.png` — 19,792 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/1920_01_s_curve.png` — 58,641 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/1920_02_circle.png` — 53,545 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/1920_03_figure8.png` — 62,155 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/1920_04_self_crossing.png` — 54,201 B
+- `01_V2_GRAYBOX_BASE/evidence/graybox/mobile_touch_fallback.png` — 23,243 B
+- `01_V2_GRAYBOX_BASE/evidence/videos/track67_v2_graybox_interaction_2026-08-16.mp4` — 489,405 B
+- `01_V2_GRAYBOX_BASE/qa/FINAL_EVIDENCE_MANIFEST.txt` — 1,088 B
+- `01_V2_GRAYBOX_BASE/qa/metrics.json` — 1,269 B
+- `01_V2_GRAYBOX_BASE/qa/SHA256SUMS.txt` — 2,936 B
+- `01_V2_GRAYBOX_BASE/track67_v2_graybox.html` — 17,155 B
+- `01_V2_GRAYBOX_BASE/Track67_V2_LAXSPACE_MEMORY_TAPE_GRAYBOX_REVIEW_2026-08-16.zip` — 4,021,798 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/05_V2.1_GRAYBOX_CORRECTION_REPORT.md` — 7,186 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/06_V2.1_GRAYBOX_QA.md` — 4,172 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/01_circumference_spin_test.mp4` — 82,643 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/02_contact_straight.png` — 29,371 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/03_contact_left_curve.png` — 38,646 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/04_contact_right_curve.png` — 39,771 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/04b_contact_reversal_pre.png` — 29,236 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/05_figure8_front.png` — 141,723 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/06_figure8_orbit.png` — 121,197 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/07_self_cross_front.png` — 99,038 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/08_self_cross_low_angle.png` — 83,803 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/09_u_turn_170.png` — 65,852 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/10_u_turn_175.png` — 65,096 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/11_u_turn_near180.png` — 61,454 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/12_rewind_test.mp4` — 472,917 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/13_full_graybox_v2.1_review.mp4` — 721,667 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/14_benchmark_fit_side_by_side.jpg` — 164,223 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/evidence/v2.1_evidence/15_metrics_summary.json` — 4,796 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/qa/V2.1_EVIDENCE_MANIFEST.txt` — 920 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/qa/V2.1_SHA256SUMS.txt` — 2,504 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/Track67_V2.1_GRAYBOX_PHYSICS_CORRECTION_REVIEW_2026-08-16.zip` — 10,357,387 B
+- `02_V2.1_GRAYBOX_PHYSICS_CORRECTION/track67_v2.1_graybox_physics_correction.html` — 27,137 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/ASSET_USAGE_MAP.json` — 6,172 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M01_FIRST_CLUE_STAIRS.png` — 2,755,503 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M02_FAN_A_MAIN.png` — 1,916,821 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M03_EYE_MACRO.png` — 2,509,987 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M04_PURPLE_STAGE.png` — 2,576,903 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M05_MICROPHONE.png` — 2,438,634 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M06_INTERVIEW_CANDID.png` — 2,361,300 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M07_BW_EDITORIAL.png` — 1,874,013 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M08_BLUE_NOIR.png` — 2,137,504 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M09_CAMERA_MOMENT.png` — 2,022,761 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M10_POLAROID_PORTRAIT.png` — 2,362,143 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M11_FIRST_CLUE_KEYFRAME.jpg` — 674,574 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M12_MY_LOVETREE.jpg` — 819,173 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M13_FILM_STRIP.png` — 2,335,855 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M14_WARM_CANDID.png` — 2,363,472 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M15_NATURAL_PORTRAIT.png` — 2,138,084 B
+- `03_V2.2_REAL_TEXTURE_PROOF/01_TEXTURE_PROOF_ASSETS/M16_WIDE_FINAL.png` — 2,859,371 B
+- `03_V2.2_REAL_TEXTURE_PROOF/07_V2.2_TEXTURE_PROOF_REPORT.md` — 7,575 B
+- `03_V2.2_REAL_TEXTURE_PROOF/08_V2.2_TEXTURE_PROOF_QA.md` — 3,188 B
+- `03_V2.2_REAL_TEXTURE_PROOF/09_V2.2_ASSET_USAGE_MAP.md` — 2,295 B
+- `03_V2.2_REAL_TEXTURE_PROOF/설계팀장8기_67_V2.2_REAL_TEXTURE_PROOF_디자인팀장16기_작업지시_2026-08-16.md` — 12,347 B
+- `03_V2.2_REAL_TEXTURE_PROOF/atlas/atlas_metadata.json` — 7,081 B
+- `03_V2.2_REAL_TEXTURE_PROOF/atlas/lovetree_texture_proof_atlas_4096.jpg` — 3,641,102 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/01_straight_texture.png` — 136,952 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/02_s_curve_texture.png` — 309,973 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/03_circle_texture.png` — 275,488 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/04_figure8_texture.png` — 342,005 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/05_self_cross_texture.png` — 178,325 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/06_roll_front_texture.png` — 333,631 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/07_roll_side_texture.png` — 281,491 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/08_roll_back_orbit_texture.png` — 298,108 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/09_contact_uv_closeup.png` — 430,168 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/10_rewind_texture.png` — 286,332 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/11_texture_proof_interaction.mp4` — 1,034,563 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/12_roll_to_ribbon_continuity.mp4` — 182,944 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/13_texture_debug_uv.mp4` — 223,302 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/14_asset_contact_sheet.png` — 2,181,806 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/15_atlas_preview.png` — 3,464,678 B
+- `03_V2.2_REAL_TEXTURE_PROOF/evidence/16_metrics_summary.json` — 618 B
+- `03_V2.2_REAL_TEXTURE_PROOF/Track67_V2.2_REAL_TEXTURE_PROOF_REVIEW_2026-08-16.zip` — 50,137,747 B
+- `03_V2.2_REAL_TEXTURE_PROOF/track67_v2.2_real_texture_proof.html` — 4,889,313 B
+- `03_V2.2_REAL_TEXTURE_PROOF/V2.2_EVIDENCE_MANIFEST.txt` — 1,523 B
+- `03_V2.2_REAL_TEXTURE_PROOF/V2.2_SHA256SUMS.txt` — 4,097 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M01_FIRST_CLUE_STAIRS.png` — 2,755,503 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M02_FAN_A_MAIN.png` — 1,916,821 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M03_EYE_MACRO.png` — 2,509,987 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M04_PURPLE_STAGE.png` — 2,576,903 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M05_MICROPHONE.png` — 2,438,634 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M06_INTERVIEW_CANDID.png` — 2,361,300 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M07_BW_EDITORIAL.png` — 1,874,013 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M08_BLUE_NOIR.png` — 2,137,504 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M09_CAMERA_MOMENT.png` — 2,022,761 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M10_POLAROID_PORTRAIT.png` — 2,362,143 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M11_FIRST_CLUE_KEYFRAME.jpg` — 674,574 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M12_MY_LOVETREE.jpg` — 819,173 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M13_FILM_STRIP.png` — 2,335,855 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M14_WARM_CANDID.png` — 2,363,472 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M15_NATURAL_PORTRAIT.png` — 2,138,084 B
+- `04_V2.3_INTERACTIVE_INSPECTION/01_Assets/M16_WIDE_FINAL.png` — 2,859,371 B
+- `04_V2.3_INTERACTIVE_INSPECTION/09_V2.3_INTERACTION_REPORT.md` — 6,391 B
+- `04_V2.3_INTERACTIVE_INSPECTION/10_V2.3_INTERACTION_QA.md` — 3,786 B
+- `04_V2.3_INTERACTIVE_INSPECTION/설계팀장8기_67_V2.3_INTERACTIVE_INSPECTION_디자인팀장16기_작업지시_2026-08-16.md` — 10,342 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/01_draw_mode.png` — 278,814 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/02_hover_focus.png` — 306,785 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/03_inspect_open.png` — 940,079 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/04_inspect_landscape.png` — 1,071,403 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/05_inspect_portrait.png` — 940,051 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/06_inspect_self_cross_front.png` — 724,553 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/07_inspect_prev_next.png` — 939,915 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/08_return_to_draw.png` — 312,771 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/09_mobile_inspect.png` — 153,205 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/10_reduced_motion_inspect.png` — 1,088,742 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/11_draw_to_inspect_to_draw.mp4` — 540,464 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/12_self_cross_select_front_surface.mp4` — 173,993 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/13_prev_next_sequence.mp4` — 276,760 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/14_mobile_touch_inspect.mp4` — 91,099 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/15_interaction_state_map.png` — 89,777 B
+- `04_V2.3_INTERACTIVE_INSPECTION/evidence/16_metrics_summary.json` — 8,552 B
+- `04_V2.3_INTERACTIVE_INSPECTION/Track67_V2.3_INTERACTIVE_INSPECTION_REVIEW_2026-08-16.zip` — 44,681,102 B
+- `04_V2.3_INTERACTIVE_INSPECTION/track67_v2.3_interactive_inspection.html` — 4,903,847 B
+- `04_V2.3_INTERACTIVE_INSPECTION/V2.3_EVIDENCE_MANIFEST.txt` — 1,344 B
+- `04_V2.3_INTERACTIVE_INSPECTION/V2.3_SHA256SUMS.txt` — 3,733 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M01_FIRST_CLUE_STAIRS.png` — 2,755,503 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M01_FIRST_CLUE_STAIRS.png` — 2,755,503 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M01_FIRST_CLUE_STAIRS.png` — 2,755,503 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M02_FAN_A_MAIN.png` — 1,916,821 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M02_FAN_A_MAIN.png` — 1,916,821 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M03_EYE_MACRO.png` — 2,509,987 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M03_EYE_MACRO.png` — 2,509,987 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M04_PURPLE_STAGE.png` — 2,576,903 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M04_PURPLE_STAGE.png` — 2,576,903 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M05_MICROPHONE.png` — 2,438,634 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M05_MICROPHONE.png` — 2,438,634 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M06_INTERVIEW_CANDID.png` — 2,361,300 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M06_INTERVIEW_CANDID.png` — 2,361,300 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M07_BW_EDITORIAL.png` — 1,874,013 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M07_BW_EDITORIAL.png` — 1,874,013 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M08_BLUE_NOIR.png` — 2,137,504 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M08_BLUE_NOIR.png` — 2,137,504 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M09_CAMERA_MOMENT.png` — 2,022,761 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M09_CAMERA_MOMENT.png` — 2,022,761 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M10_POLAROID_PORTRAIT.png` — 2,362,143 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M10_POLAROID_PORTRAIT.png` — 2,362,143 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M11_FIRST_CLUE_KEYFRAME.jpg` — 674,574 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M11_FIRST_CLUE_KEYFRAME.jpg` — 674,574 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M12_MY_LOVETREE.jpg` — 819,173 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M12_MY_LOVETREE.jpg` — 819,173 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M13_FILM_STRIP.png` — 2,335,855 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M13_FILM_STRIP.png` — 2,335,855 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M14_WARM_CANDID.png` — 2,363,472 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M14_WARM_CANDID.png` — 2,363,472 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M15_NATURAL_PORTRAIT.png` — 2,138,084 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M15_NATURAL_PORTRAIT.png` — 2,138,084 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M16_WIDE_FINAL.png` — 2,859,371 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/01_Assets/M16_WIDE_FINAL.png` — 2,859,371 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/11_V2.4_PERSISTENCE_REPORT.md` — 3,059 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/11_V2.4_PERSISTENCE_REPORT.md` — 1,298 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/12_V2.4_WORKS_TARGET_AUDIT.md` — 2,572 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/12_V2.4_WORKS_TARGET_AUDIT.md` — 2,321 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/13_V2.4_PERFORMANCE_QA.md` — 1,025 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/13_V2.4_PERFORMANCE_QA.md` — 799 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/14_V2.4_REGRESSION_QA.md` — 1,482 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/14_V2.4_REGRESSION_QA.md` — 971 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/설계팀장8기_67_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION_디자인팀장16기_작업지시_2026-08-16.md` — 20,685 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/01_persistent_start.png` — 860,911 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/01_persistent_start.png` — 257,289 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/02_persistent_over900.png` — 925,968 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/02_persistent_over900.png` — 1,026,970 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/03_persistent_3000plus.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/04_oldest_ribbon_still_visible.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/05_oldest_ribbon_inspect.png` — 348,867 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/06_chunk_boundary_straight.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/07_chunk_boundary_curve.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/08_chunk_boundary_texture.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/09_cross_between_chunks.png` — 1,746,032 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/10_cross_between_chunks_inspect.png` — 348,867 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/11_full_rewind_from_long_path.mp4` — 222,751 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/12_long_path_draw.mp4` — 224,444 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/13_works_closed.png` — 1,746,038 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/14_works_open.png` — 510,471 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/15_works_hover_preview.png` — 510,471 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/16_metrics_summary.json` — 3,538 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/16_works_current_track.png` — 510,471 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/17_open_track66.mp4` — 9,587 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/18_open_track64.mp4` — 9,435 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/19_return_to_track67_state_preserved.mp4` — 379,489 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/20_mobile_works_open.png` — 44,972 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/21_mobile_open_other_track.mp4` — 9,587 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/22_persistent_world_acceptance.mp4` — 449,019 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/evidence/23_works_navigation_acceptance.mp4` — 188,949 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/Track67_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION_REVIEW_2026-08-16.zip` — 74,758,212 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/Track67_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION_REVIEW_2026-08-16.zip` — 54,060,841 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/track67_v2.4_persistent_world_works_navigation.html` — 4,929,831 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/track67_v2.4_persistent_world_works_navigation.html` — 4,918,234 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/track67_v2.4_persistent_world_works_navigation.html` — 4,913,964 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/V2.4_EVIDENCE_MANIFEST.txt` — 649 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/V2.4_EVIDENCE_MANIFEST.txt` — 1,653 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/V2.4_SHA256SUMS.txt` — 3,307 B
+- `05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/V2.4_SHA256SUMS.txt` — 4,914 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/15_V2.4.1_STATE_01_04_DESIGN_REVIEW.md` — 2,831 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/evidence/01_STATE_01_WORKS_BAR_CLOSED.png` — 691,463 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/evidence/02_STATE_02_WORKS_PANEL_OPEN.png` — 390,097 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/evidence/03_STATE_03_TRACK_HOVER_REAL_PREVIEW.png` — 570,573 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/evidence/04_STATE_04_TRACK_SELECTED_OPEN_WORK.png` — 570,637 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/Track67_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY_CANDIDATE_2026-08-16.zip` — 14,118,737 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/track67_v2.4.1_works_archive_nav_reference_fidelity.html` — 10,497,719 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/V2.4.1_SHA256SUMS.txt` — 774 B
+- `06_V2.4.1_WORKS_ARCHIVE_NAV_REFERENCE_FIDELITY/V2.4.1_STATE_01_04_RUNTIME.json` — 2,073 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/16_V2.4.2_WORKS_COMPARE_MENU_REPORT.md` — 2,471 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/evidence/01_V2.4.2_09WORKS_TRACK62_NEW_SELECTED.png` — 463,874 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/evidence/02_V2.4.2_MEMORY_ATLAS_SELECTED.png` — 694,452 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/evidence/03_V2.4.2_LIVING_VIDEO_GRAPH_SELECTED.png` — 483,629 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/evidence/04_V2.4.2_CLOSED_ENGINE_PRESERVED.png` — 94,980 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/Track67_V2.4.2_WORKS_COMPARE_MENU_CANDIDATE_2026-08-16.zip` — 30,556,447 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html` — 12,265,511 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/V2.4.2_RUNTIME.json` — 2,052 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/V2.4.2_SHA256SUMS.txt` — 1,881 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works_previews/living_graph.png` — 347,844 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works_previews/track13_atlas.png` — 732,607 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works_previews/track62_new.png` — 244,673 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works/01_리빙영상기억그래프_v1.html` — 36,008 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works/04_메모리아틀라스_현재채택_진주360_v4.html` — 52,824 B
+- `07_V2.4.2_WORKS_COMPARE_MENU/works/62_기억조각상_원형레일전시.html` — 20,728,647 B
+- `67_메모리테이프_인터랙티브롤.mp4` — 32,739,777 B
+- `지시서/00_설계팀장8기_디자인팀장_전달지시서_INDEX_2026-08-16.md` — 1,365 B
+- `지시서/설계팀장8기_13_V2_LAXSPACE_MEMORY_TAPE_디자인팀장_신규작업지시_최신본_2026-08-16.md` — 25,038 B
+- `참고영상.mp4` — 183,073,543 B
+- `코덱스 작업물/3.JPG` — 72,416 B
+- `코덱스 작업물/녹화_2026_08_15_20_03_50_39.mp4` — 14,071,086 B
+- `코덱스 작업물/러브트리_메모리오빗_실행.html` — 25,499 B
+- `코덱스 작업물/실패작/녹화_2026_08_15_23_54_56_741.mp4` — 4,628,725 B
+- `코덱스 작업물/실패작/녹화_2026_08_15_23_59_52_383.mp4` — 1,670,424 B
+- `코덱스 작업물/실패작/녹화_2026_08_16_01_26_24_754.mp4` — 17,149,222 B
+- `코덱스 작업물/이미지/S01_FIRST_CLUE_1536w.jpg` — 674,574 B
+- `코덱스 작업물/이미지/S02_LOOK_AGAIN_1536w.jpg` — 801,917 B
+- `코덱스 작업물/이미지/S03_FOLLOW_THE_FEELING_1536w.jpg` — 764,519 B
+- `코덱스 작업물/이미지/S04_PLATFORM_HOP_1536w.jpg` — 789,993 B
+- `코덱스 작업물/이미지/S05_MOMENTS_MADE_OF_FEELING_1536w.jpg` — 698,954 B
+- `코덱스 작업물/이미지/S06_MOMENT_STACK_1536w.jpg` — 691,861 B
+- `코덱스 작업물/이미지/S07_LOVETREE_LENS_1536w.jpg` — 712,551 B
+- `코덱스 작업물/이미지/S08_SAW_HEARD_FELT_1536w.jpg` — 646,366 B
+- `코덱스 작업물/이미지/S09_WHY_NEXT_1536w.jpg` — 763,687 B
+- `코덱스 작업물/이미지/S10_MY_LOVETREE_1536w.jpg` — 819,173 B
+- `코덱스 작업물/Codex 이미지 2026년 8월 16일 오전 12_38_40.png` — 437,298 B
+- `코덱스 작업물/Codex 이미지 2026년 8월 16일 오전 12_38_47.png` — 374,511 B
+- `코덱스 작업물/Codex 이미지 2026년 8월 16일 오전 12_38_53.png` — 480,781 B
+- `코덱스 작업물/Codex 이미지 2026년 8월 16일 오전 12_38_55.png` — 451,406 B
+- `코덱스 작업물/memory-paper-roll-v2.png` — 1,537,789 B
+- `코덱스 작업물/S01_FIRST_CLUE_1536w.jpg` — 674,574 B
+- `코덱스 작업물/S02_LOOK_AGAIN_1536w.jpg` — 801,917 B
+- `코덱스 작업물/S03_FOLLOW_THE_FEELING_1536w.jpg` — 764,519 B
+- `코덱스 작업물/S04_PLATFORM_HOP_1536w.jpg` — 789,993 B
+- `코덱스 작업물/S05_MOMENTS_MADE_OF_FEELING_1536w.jpg` — 698,954 B
+- `코덱스 작업물/S06_MOMENT_STACK_1536w.jpg` — 691,861 B
+- `코덱스 작업물/S07_LOVETREE_LENS_1536w.jpg` — 712,551 B
+- `코덱스 작업물/S08_SAW_HEARD_FELT_1536w.jpg` — 646,366 B
+- `코덱스 작업물/S09_WHY_NEXT_1536w.jpg` — 763,687 B
+- `코덱스 작업물/S10_MY_LOVETREE_1536w.jpg` — 819,173 B
+- `track67_v2.4.2_works_compare_menu.html` — 12,265,511 B
+
+### 68_인물감정경로_모션아카이브 — 78 files, 287,965,614 bytes
+
+- `1.PROMPT.txt` — 13,409 B
+- `68-1_인물감정경로_모션아카이브.mp4` — 12,677,958 B
+- `68-2_인물감정경로_모션아카이브_혼혈.mp4` — 41,871,645 B
+- `68-3_물감정경로_모션아카이브_동양인.mp4` — 44,420,025 B
+- `ChatGPT Image 2026년 8월 17일 오전 01_06_23.png` — 1,736,806 B
+- `evidence/02_HERO_DESKTOP.png` — 1,646,992 B
+- `evidence/03_HERO_RIGHT_GAZE.png` — 1,667,275 B
+- `evidence/05_GALLERY_DEEP.png` — 336,932 B
+- `evidence/06_OUTRO_CTA.png` — 43,294 B
+- `evidence/07_TREE_OVERLAY.png` — 88,249 B
+- `images/01.png` — 1,864,548 B
+- `images/02.png` — 2,031,825 B
+- `images/03.png` — 1,860,675 B
+- `images/04.png` — 1,842,341 B
+- `images/05.png` — 1,459,649 B
+- `images/06.png` — 1,734,205 B
+- `images/07.png` — 1,773,216 B
+- `images/08.png` — 1,908,180 B
+- `images/09.png` — 1,715,727 B
+- `images/동양인01.png` — 1,813,828 B
+- `images/동양인02.png` — 1,871,481 B
+- `images/동양인03.png` — 2,035,128 B
+- `images/동양인04.png` — 1,478,799 B
+- `images/동양인05.png` — 1,715,876 B
+- `images/동양인06.png` — 2,074,268 B
+- `images/동양인07.png` — 1,843,218 B
+- `images/동양인08.png` — 1,777,216 B
+- `images/동양인09.png` — 1,792,944 B
+- `images/참고01.png` — 651,698 B
+- `images/참고02.png` — 669,702 B
+- `images/참고03.png` — 275,635 B
+- `images/참고04.png` — 647,409 B
+- `images/참고05.png` — 294,737 B
+- `images/참고06.png` — 280,373 B
+- `images/참고07.png` — 400,408 B
+- `images/참고08.png` — 268,665 B
+- `V1-선택/lovetree_motion_archive_experiment.html` — 12,553 B
+- `V1-lovetree_motion_archive_experiment.html` — 12,553 B
+- `V2/01_TRACK68_COMPLETE_REPORT.md` — 1,989 B
+- `V2/녹화_2026_08_17_01_32_47_881.mp4` — 8,889,276 B
+- `V2/Track68_LOVETREE_MOTION_ARCHIVE_COMPLETE_CANDIDATE_2026-08-17.zip` — 39,345,897 B
+- `V2/track68_lovetree_motion_archive_complete_SELF_CONTAINED.html` — 13,813,451 B
+- `V2/track68_lovetree_motion_archive_complete.html` — 21,001 B
+- `V3_원본Hero_2종비교/68_V3_COMPARE_LAUNCHER.html` — 1,855 B
+- `V3_원본Hero_2종비교/68_V3A_01-09_신비혼혈형_원본Hero.html` — 15,696 B
+- `V3_원본Hero_2종비교/68_V3B_동양인01-09_원본Hero.html` — 15,785 B
+- `V3_원본Hero_2종비교/녹화_2026_08_17_02_31_55_383.mp4` — 8,228,954 B
+- `V3_원본Hero_2종비교/evidence/01_V3A_01-09_CONTACT.png` — 3,436,108 B
+- `V3_원본Hero_2종비교/evidence/02_V3B_동양인01-09_CONTACT.png` — 3,503,384 B
+- `V3_원본Hero_2종비교/evidence/03_V1_ORIGINAL_HERO_RECORDING_CONTACT.jpg` — 207,399 B
+- `V3_원본Hero_2종비교/evidence/04_V2_FAILURE_MISMATCH_CONTACT.jpg` — 175,780 B
+- `V3_원본Hero_2종비교/README_V3.md` — 1,720 B
+- `V3_원본Hero_2종비교/Track68_V3_ORIGINAL_HERO_2MODEL_COMPARE_2026-08-17.zip` — 32,359,954 B
+- `V4_V1구도복원_2종비교/68_V3.1_COMPARE_LAUNCHER.html` — 1,359 B
+- `V4_V1구도복원_2종비교/68_V3.1A_01-09_신비혼혈형_V1구도복원.html` — 10,836 B
+- `V4_V1구도복원_2종비교/68_V3.1B_동양인01-09_V1구도복원.html` — 10,910 B
+- `V4_V1구도복원_2종비교/README_V3.1.md` — 883 B
+- `V4_V1구도복원_2종비교/Track68_V3.1_V1_LAYOUT_RESTORE_2MODEL_COMPARE_2026-08-17.zip` — 10,254 B
+- `V5_PORTAL_WORKS_NAV/68_V3.2_COMPARE_LAUNCHER.html` — 1,361 B
+- `V5_PORTAL_WORKS_NAV/68_V3.2A_신비혼혈형_V1구도_PORTAL_WORKS.html` — 18,849 B
+- `V5_PORTAL_WORKS_NAV/68_V3.2B_동양인형_V1구도_PORTAL_WORKS.html` — 18,923 B
+- `V5_PORTAL_WORKS_NAV/README_V3.2.md` — 1,047 B
+- `V5_PORTAL_WORKS_NAV/Track68_V3.2_PORTAL_WORKS_2MODEL_COMPARE_2026-08-17.zip` — 32,365,178 B
+- `V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html` — 1,260 B
+- `V6_CODEX_PORTALS/68_V3.3A_신비혼혈형_CODEX_PORTALS.html` — 18,562 B
+- `V6_CODEX_PORTALS/68_V3.3B_동양인형_CODEX_PORTALS.html` — 18,643 B
+- `V6_CODEX_PORTALS/README_V3.3.md` — 333 B
+- `V6_CODEX_PORTALS/Track68_V3.3_CODEX_PORTALS_2MODEL_COMPARE_2026-08-17.zip` — 15,232 B
+- `V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html` — 823 B
+- `V7_C14_ASSET_PATH_FIX/68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html` — 18,565 B
+- `V7_C14_ASSET_PATH_FIX/68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html` — 18,646 B
+- `V7_C14_ASSET_PATH_FIX/README_V3.3.1.md` — 452 B
+- `V7_C14_ASSET_PATH_FIX/Track68_V3.3.1_C14_ASSET_PATH_FIX_2MODEL_COMPARE_2026-08-17.zip` — 15,212 B
+- `V8_LAUNCHER_ENGLISH/68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html` — 18,565 B
+- `V8_LAUNCHER_ENGLISH/68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html` — 18,646 B
+- `V8_LAUNCHER_ENGLISH/68_V3.3.2_COMPARE_LAUNCHER_ENGLISH.html` — 2,670 B
+- `video/hero_left.mp4` — 2,485,522 B
+- `video/hero_right.mp4` — 2,265,192 B
+
+### 69_풀뷰포트폴리오_러브트리모션랜딩 — 40 files, 73,153,681 bytes
+
+- `02_COMPARISON.md` — 2,653 B
+- `04dd23f9-acc4-4471-9d22-a9ea7a8e6a56.png` — 904,464 B
+- `69_풀뷰포트폴리오_러브트리모션랜딩.mp4` — 26,223,001 B
+- `69_v3_exact_source_multi_template_portal.html` — 27,600 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html` — 27,600 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/V3_QA.md` — 903 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/V3_TEMPLATE_LINK_MAP.md` — 896 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/01_first_journey.html` — 111,950 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/02_cinematic_clue.html` — 41,333 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/03_first_tree.html` — 166,996 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/04_connection_review.html` — 509,063 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/05_free_connection.html` — 55,327 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/06_memory_tape.html` — 12,265,511 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/07_motion_archive.html` — 823 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/08_global_discovery.html` — 4,898,093 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/09_memory_storybook.html` — 17,192,064 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/10_replay_300_finale.html` — 26,280 B
+- `선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/11_moment_composer.html` — 427,043 B
+- `A_ORIGINAL_PROMPT_EXACT/00_ORIGINAL_MOTIONSITES_PROMPT.txt` — 10,556 B
+- `A_ORIGINAL_PROMPT_EXACT/2.Digital Director.txt` — 10,813 B
+- `A_ORIGINAL_PROMPT_EXACT/A_original_exact.html` — 10,257 B
+- `A_ORIGINAL_PROMPT_EXACT/A_vite_react_source.zip` — 5,096 B
+- `B_LOVETREE_ADAPTED/01_LOVETREE_ADAPTED_PROMPT.txt` — 10,210 B
+- `B_LOVETREE_ADAPTED/B_lovetree_adapted.html` — 10,852 B
+- `B_LOVETREE_ADAPTED/B_vite_react_source.zip` — 5,164 B
+- `C_V2_TEMPLATE_NAV_PORTAL/69_v2_template_nav_portal.html` — 25,757 B
+- `C_V2_TEMPLATE_NAV_PORTAL/잘안됨.mp4` — 7,028,823 B
+- `C_V2_TEMPLATE_NAV_PORTAL/evidence/V2_QA.md` — 1,118 B
+- `C_V2_TEMPLATE_NAV_PORTAL/V2_TEMPLATE_LINK_MAP.md` — 2,290 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/00_README.md` — 1,106 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/04_WORK_SCOPE_AND_DECISIONS.md` — 987 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/05_WORK_PROCESS_LOG.md` — 915 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/06_RESULT_SUMMARY.md` — 671 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html` — 11,099 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/assets/hero-male.png` — 1,565,694 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/evidence/69_V4_result_preview.png` — 1,565,694 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/PROMPTS/01_PROMPT_A_PERSON_CINEMATIC_PORTAL.txt` — 1,441 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/PROMPTS/02_PROMPT_B_MEMORY_FRAGMENT_FIELD.txt` — 1,257 B
+- `E_V4_A_PERSON_CINEMATIC_PORTAL/PROMPTS/03_PROMPT_C_PRODUCT_PATHWAY_INTERFACE.txt` — 1,195 B
+- `evidence/QA_RENDER_NOTES.txt` — 1,086 B
+
+### 70_모먼트리빌_퓨처에디토리얼 — 143 files, 866,552,116 bytes
+
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/00_MASTER/00_MASTER_Track70_19기_현황분석·자산판정·제작게이트_2026-08-17_v1.docx` — -1 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_01_MotionSites_원본프롬프트.md` — 10,619 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_02_LoveTree_Override.md` — 4,237 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_03_APPROVED_4MODEL_REFERENCE.png` — 1,851,143 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_04_V2.1_NAV_RETURN_FIX.html` — 31,282 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_05_Track70_기준동작녹화.mp4` — 15,363,185 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/01_SOURCE_LOCK/SOURCE_LOCK_06_V3_ONE_MASTER_EXACT_RULE.docx` — -1 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/02_CLEAN_LOCK/CANDIDATE_LOCK_LT01_CLEAN_MASTER.png` — 2,892,369 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/02_CLEAN_LOCK/CANDIDATE_LOCK_LT02_CLEAN_MASTER.png` — 2,965,461 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/02_CLEAN_LOCK/CANDIDATE_LOCK_LT03_CLEAN_MASTER.png` — 2,850,755 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/02_CLEAN_LOCK/CANDIDATE_LOCK_LT04_CLEAN_MASTER.png` — 2,807,883 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/Track70_female_new_shell_blink.gif` — 1,200,972 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/Track70_male_A_1_4_blink.gif` — 1,129,079 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/Track70_male_B_2_5_blink.gif` — 1,227,314 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/V9_QA_REFERENCE_LT01_SHELL.png` — 3,058,928 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/V9_QA_REFERENCE_LT02_SHELL.png` — 3,273,509 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/V9_QA_REFERENCE_LT03_SHELL.png` — 2,879,057 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/03_PAIR_QA/V9_QA_REFERENCE_LT04_SHELL.png` — 2,826,080 B
+- `00_CURRENT_19기_TRACK70_분석·제작게이트/06_보관/Track70_newpair_01_05_blink.gif` — 1,124,653 B
+- `01_V1_EXISTING_8ASSET_ORIGINAL_REVEAL/70_V1_EXISTING_8ASSET_ORIGINAL_REVEAL_디자인팀장19기.html` — 21,226,321 B
+- `02_V2_EXACT_PAIR_RATIO_GARMENT_FIX/70_V2_EXACT_PAIR_RATIO_GARMENT_FIX_디자인팀장19기.html` — 31,426,899 B
+- `03_V3_EXACT_PAIR_STRONG_SHELL_FIX/70_V3_EXACT_PAIR_STRONG_SHELL_FIX_디자인팀장19기.html` — 31,427,586 B
+- `04_V4_TWO_PHOTO_HARD_REVEAL_GARMENT/70_V4_TWO_PHOTO_HARD_REVEAL_GARMENT_디자인팀장19기.html` — 31,426,659 B
+- `05_V5_SMALL_CURSOR_STRONG_PHOTO_REVEAL/70_V5_SMALL_CURSOR_STRONG_PHOTO_REVEAL_디자인팀장19기.html` — 30,464,445 B
+- `06_V6_PAIR_ALIGNMENT_FIX/70_V6_PAIR_ALIGNMENT_FIX_디자인팀장19기.html` — 30,464,905 B
+- `07_V7_APPROVED_4PAIR_SMALL_REVEAL/70_V7_APPROVED_4PAIR_SMALL_REVEAL_디자인팀장19기.html` — 24,530,741 B
+- `08_V8_DEFAULT_SHELL_REVERSE_REVEAL/70_V8_DEFAULT_SHELL_REVERSE_REVEAL_디자인팀장19기.html` — 24,531,889 B
+- `09_V9_FULL_BLEED_TRAIL_REVEAL/70_V9_FULL_BLEED_TRAIL_REVEAL_디자인팀장19기.html` — 24,535,330 B
+- `10_V10_FAST_TRAIL_REVEAL/70_V10_FAST_TRAIL_REVEAL_디자인팀장19기.html` — 24,535,343 B
+- `70_LOVETREE_MOTIONSITES_STANDALONE_PROMPT.md` — 14,626 B
+- `70_V3_WHITE_VEIL_EMOTIONAL_REVEAL_PROMPT_디자인팀장18기.docx` — -1 B
+- `비교/70_COMPARE.html` — 2,100 B
+- `비교/70_COMPARE.html` — 2,100 B
+- `비교/70_V2_COMPARE_WITH_V1.html` — 2,121 B
+- `선택-11_V11_INSTANT_CANVAS_TRAIL_REVEAL/70_V11_INSTANT_CANVAS_TRAIL_REVEAL_디자인팀장19기.html` — 24,536,470 B
+- `선택-11_V11_INSTANT_CANVAS_TRAIL_REVEAL/README_V11_INSTANT_CANVAS_TRAIL_REVEAL.txt` — 804 B
+- `선택-V3_NAV_RETURN_FIX/70_V2.1_COMPARE_WITH_V2.html` — 2,146 B
+- `선택-V3_NAV_RETURN_FIX/70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html` — 31,282 B
+- `선택-V3_NAV_RETURN_FIX/README_70_V2.1_NAV_RETURN_FIX.md` — 1,434 B
+- `선택1-70_모먼트리빌_퓨처에디토리얼.mp4` — 15,363,185 B
+- `선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html` — 31,282 B
+- `선택2-70_모먼트리빌_퓨처에디토리얼.mp4` — 17,808,710 B
+- `선택2-70_V11_INSTANT_CANVAS_TRAIL_REVEAL_디자인팀장19기.html` — 24,536,470 B
+- `실패/70_V11_EXACT_PAIR_RATIO_GARMENT_FIX_디자인팀장19기.html` — 31,426,899 B
+- `실패/70_V12_EXACT_PAIR_STRONG_SHELL_FIX_디자인팀장19기.html` — 31,427,586 B
+- `실패/70_V13_TWO_PHOTO_HARD_REVEAL_GARMENT_디자인팀장19기.html` — 31,426,659 B
+- `실패/70_V14_SMALL_CURSOR_STRONG_PHOTO_REVEAL_디자인팀장19기.html` — 30,464,445 B
+- `실패/70_V15_PAIR_ALIGNMENT_FIX_디자인팀장19기.html` — 30,464,905 B
+- `실패/70_V16_APPROVED_4PAIR_SMALL_REVEAL_디자인팀장19기.html` — 24,530,741 B
+- `실패/70_V17_DEFAULT_SHELL_REVERSE_REVEAL_디자인팀장19기.html` — 24,531,889 B
+- `실패/70_V18_FULL_BLEED_TRAIL_REVEAL_디자인팀장19기.html` — 24,535,330 B
+- `실패/70_V19_FAST_TRAIL_REVEAL_디자인팀장19기.html` — 24,535,343 B
+- `실패/녹화_2026_08_17_15_39_42_909.mp4` — 13,497,699 B
+- `실패/녹화_2026_08_17_15_51_48_40.mp4` — 1,234,417 B
+- `실패/녹화_2026_08_17_22_13_20_388.mp4` — 6,309,394 B
+- `실패/녹화_2026_08_17_22_20_54_413.mp4` — 4,632,258 B
+- `실패/녹화_2026_08_17_22_27_50_242.mp4` — 4,968,777 B
+- `실패/녹화_2026_08_17_22_34_20_330.mp4` — 2,666,163 B
+- `실패/녹화_2026_08_17_22_43_11_226.mp4` — 4,576,706 B
+- `실패/녹화_2026_08_18_00_32_26_352.mp4` — 2,511,612 B
+- `실패/V2_PORTAL_NAV/70_V2_LOVETREE_MOMENT_REVEAL_PORTAL_NAV.html` — 29,646 B
+- `실패/V2_PORTAL_NAV/README_70_V2_PORTAL_NAV.md` — 1,631 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/70_V5_SINGLE_SYNTHETIC_HUMAN_SCROLL_PROMPT.md` — 2,586 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/70_V5_SINGLE_SYNTHETIC_HUMAN_SCROLL.html` — 16,715 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/assets/LT_01_portrait.jpg` — 349,049 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/assets/LT_02_portrait.jpg` — 366,794 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/assets/LT_03_portrait.jpg` — 339,989 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/assets/LT_04_portrait.jpg` — 328,818 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/assets/SOURCE_4MODEL_APPROVED_REFERENCE.png` — 1,851,143 B
+- `실패/V5_SINGLE_SYNTHETIC_HUMAN_SCROLL/README_70_V5.md` — 932 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/70_V6_DUAL_STATE_BODY_REVEAL_PROMPT.md` — 2,208 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/70_V6_DUAL_STATE_BODY_REVEAL.html` — 1,992,403 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_01_CLEAN.jpg` — 172,177 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_01_SHELL.jpg` — 194,092 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_02_CLEAN.jpg` — 185,415 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_02_SHELL.jpg` — 199,240 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_03_CLEAN.jpg` — 170,211 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/assets/LT_03_SHELL.jpg` — 184,723 B
+- `실패/V6_DUAL_STATE_BODY_REVEAL/README_70_V6.md` — 1,039 B
+- `실패/V7_FINAL_8ASSET_DUAL_REVEAL/70_V7_FINAL_DUAL_STATE_REVEAL_PROMPT.md` — 1,243 B
+- `실패/V7_FINAL_8ASSET_DUAL_REVEAL/70_V7.1_FINAL_DUAL_STATE_REVEAL_SELF_CONTAINED.html` — 4,259,960 B
+- `실패/V7_FINAL_8ASSET_DUAL_REVEAL/README_70_V7.md` — 767 B
+- `실패/V8_EXACT_SINGLE_BASE_REVEAL_PROOF/70_V8_LT01_EXACT_SINGLE_BASE_PROGRAMMATIC_SHELL_PROOF.html` — 590,493 B
+- `실패/V8_EXACT_SINGLE_BASE_REVEAL_PROOF/README_70_V8_LT01_PROOF.md` — 838 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/70_V9_EXACT_PAIR_LARGE_REVEAL_SELF_CONTAINED.html` — 4,661,107 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT01_CLEAN_EXACT.png` — 2,892,369 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT01_SHELL_EXACT.png` — 3,058,928 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT02_CLEAN_EXACT.png` — 2,965,461 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT02_SHELL_EXACT.png` — 3,273,509 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT03_CLEAN_EXACT.png` — 2,850,755 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT03_SHELL_EXACT.png` — 2,879,057 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT04_CLEAN_EXACT.png` — 2,807,883 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/assets/LT04_SHELL_EXACT.png` — 2,826,080 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/README_70_V9.md` — 464 B
+- `실패/V9_EXACT_PAIR_LARGE_REVEAL/track70_v9_exact_pairs.zip` — 42,590,077 B
+- `이미지/0e6684c0-f339-4025-82c5-4526d20ce30e.png` — 2,128,101 B
+- `이미지/20cbc518-b216-4928-be2b-8bfe80f6fdd2.png` — 1,825,206 B
+- `이미지/2f2a6dd5-ce06-468f-baeb-822fd2bed9c5.png` — 2,276,552 B
+- `이미지/56b097a3-d562-4fd9-8667-b661762fdca9.png` — 2,161,191 B
+- `이미지/5c8a2ef2-254c-457e-92d1-36f9ce49cdfc.png` — 1,861,796 B
+- `이미지/60dfbbf6-35cd-4289-9154-11abf4318adb.png` — 2,528,932 B
+- `이미지/9ba977ee-07db-4796-b620-71d5734050e3.png` — 2,003,231 B
+- `이미지/b5e00f03-f31c-4b02-97e7-eec8c0ae70d3.png` — 2,073,538 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_01 (1).png` — 1,900,782 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_01 (2).png` — 1,893,478 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_02 (3).png` — 1,995,045 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_02 (4).png` — 1,784,027 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_03 (5).png` — 1,977,797 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_53_03 (6).png` — 1,998,640 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 02_54_34.png` — 1,851,143 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_18_17 (1).png` — 2,089,523 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_18_17 (2).png` — 2,090,083 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_21_13.png` — 2,080,979 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_21_48.png` — 2,220,673 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_32_37 (1).png` — 2,375,973 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_32_37 (2).png` — 2,299,462 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_47_40 (1).png` — 2,375,865 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 03_47_41 (2).png` — 2,449,639 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 05_28_24 (1).png` — 2,641,404 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 05_28_24 (2).png` — 2,620,171 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 05_32_28.png` — 2,454,068 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (1).png` — 1,943,324 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (2).png` — 2,138,785 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (3).png` — 2,186,946 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (4).png` — 2,131,432 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (5).png` — 1,880,735 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (6).png` — 1,877,218 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (7).png` — 1,888,479 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 06_09_34 (8).png` — 1,849,552 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_40 (1).png` — 2,100,547 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_42 (2).png` — 2,141,026 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_42 (3).png` — 2,331,591 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_42 (4).png` — 2,252,280 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_43 (5).png` — 1,930,630 B
+- `이미지/ChatGPT Image 2026년 8월 17일 오후 11_33_43 (6).png` — 1,937,909 B
+- `이미지/e2eae55f-8c56-4688-8cd6-d3e10c272bd3.png` — 1,720,328 B
+- `이미지/e3f94067-bcdc-4abf-8e90-bb44de8aff14.png` — 2,028,056 B
+- `A_ORIGINAL_PROMPT_EXACT/3.Synth Mode.txt` — 10,816 B
+- `A_ORIGINAL_PROMPT_EXACT/70_A_ORIGINAL_LGPSM_PROMPT_REPLICA.html` — 19,644 B
+- `A_ORIGINAL_PROMPT_EXACT/70_A_SOURCE_MOTIONSITES_PROMPT.md` — 10,619 B
+- `B_LOVETREE_ADAPTED/70_B_LOVETREE_MOMENT_REVEAL.html` — 20,815 B
+- `B_LOVETREE_ADAPTED/70_B_LOVETREE_PROMPT_OVERRIDE.md` — 4,237 B
+- `README_70.md` — 1,852 B
+
+### 71_러브트리_감정경로헬릭스_인터랙티브대문_V1 — 100 files, 110,724,280 bytes
+
+- `71_러브트리_감정경로헬릭스_인터랙티브대문_V1.mp4` — 16,611,419 B
+- `설계팀장9기_71_V2_GABE_EXACT_GLASS_ORBIT_긴급수정지시_2026-08-17.md` — 13,048 B
+- `실패/녹화_2026_08_18_01_17_37_455.mp4` — 7,222,848 B
+- `실패/녹화_2026_08_18_01_18_09_420.mp4` — 2,030,049 B
+- `참고영상.mp4` — 22,588,284 B
+- `V1/01_분석/01_컨셉판단.md` — 249 B
+- `V1/01_작업개요.md` — 520 B
+- `V1/02_개발과정/build_track16.py` — 30,613 B
+- `V1/02_구현요약.md` — 765 B
+- `V1/03_에셋/01_first_look.jpg` — 183,902 B
+- `V1/03_에셋/02_look_again.jpg` — 292,694 B
+- `V1/03_에셋/03_stage_light.jpg` — 241,835 B
+- `V1/03_에셋/04_off_stage.jpg` — 184,142 B
+- `V1/03_에셋/05_small_gesture.jpg` — 212,854 B
+- `V1/03_에셋/06_fan_echo.jpg` — 135,520 B
+- `V1/03_에셋/07_my_path.jpg` — 205,585 B
+- `V1/03_에셋/08_my_lovetree.jpg` — 224,179 B
+- `V1/03_에셋/moment_03_stage_light.mp4` — 606,220 B
+- `V1/03_에셋/moment_atlas_8192x1024.jpg` — 1,012,396 B
+- `V1/03_재사용자산목록.md` — 396 B
+- `V1/04_녹화/Track16_V1_전체시연.mp4` — 8,785,599 B
+- `V1/04_QA.md` — 1,662 B
+- `V1/05_QA/01_HERO_HELIX.png` — 952,511 B
+- `V1/05_QA/02_DRAG_ROTATION.png` — 944,935 B
+- `V1/05_QA/03_INDEX_DRAWER.png` — 950,275 B
+- `V1/05_QA/04_DETAIL_UNFOLD.png` — 1,008,496 B
+- `V1/05_QA/QA_RUNTIME_RESULT.txt` — 188 B
+- `V1/06_프롬프트_기록/01_V1_BUILD_NOTE.md` — 138 B
+- `V1/07_메모/참고영상_미확보.md` — 306 B
+- `V1/개발본.html` — 22,599 B
+- `V1/설계팀장9기_16_러브트리_감정경로헬릭스_인터랙티브대문_V1_신규작업지시_2026-08-17.md` — 16,594 B
+- `V1/최종본.html` — 4,421,666 B
+- `V1/Track16_LOVETREE_EMOTION_PATH_HELIX_V1_REVIEW_2026-08-17.zip` — 23,033,245 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A_NOTES.md` — 2,181 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A_REFERENCE_COMPARISON.png` — 514,760 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A.html` — 11,398 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A2_NOTES.md` — 2,953 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A2_REFERENCE_COMPARISON.png` — 441,981 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A2.html` — 12,150 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A3_NOTES.md` — 3,096 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A3_REFERENCE_COMPARISON.png` — 1,086,288 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A3.html` — 14,172 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A4_NOTES.md` — 3,906 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A4_OBJECT_TRACE_BOARD.png` — 448,173 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A4_REFERENCE_COMPARISON.png` — 889,866 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A4.html` — 13,002 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A5_JELLY_SHAPE_PROOF.png` — 310,870 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A5_NOTES.md` — 2,104 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A5_REFERENCE_COMPARISON.png` — 891,500 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A5.html` — 11,120 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A6_JELLY_PAIR_PROOF_v2.png` — 661,203 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/71_V2_GATE_A6_PAIR_NOTES_v2.md` — 945 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A1_REJECT_A2_정밀교정지시_2026-08-17.md` — 8,624 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A3_REJECT_A4_REFERENCE_GLASS_OBJECT_RECONSTRUCTION_2026-08-17.md` — 9,859 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A4_REJECT_A5_SOLID_JELLY_LENS_긴급재정의_2026-08-17.md` — 11,032 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A5_REJECT_A6_CLEAR_JELLY_DISC_IRREGULAR_OVERLAP_2026-08-17.md` — 10,911 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A6_JELLY_PAIR_PROOF_우선진행승인_2026-08-17.md` — 4,565 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A6_PAIR_PROOF_NOT_PASS_광학존재감_정밀교정_2026-08-17.md` — 7,434 B
+- `V2_GABE_EXACT_GLASS_ORBIT_후보/설계팀장9기_71_V2_GATE_A6_v2_PAIR_PROOF_ARTIFACT_AVAILABILITY_HOLD_2026-08-17.md` — 1,684 B
+- `V3_A6_PAIR_PROOF_v3/71_V2_GATE_A6_JELLY_PAIR_PROOF_v3.png` — 712,112 B
+- `V3_A6_PAIR_PROOF_v3/71_V2_GATE_A6_PAIR_NOTES_v3.md` — 2,241 B
+- `V3_A6_PAIR_PROOF_v3/설계팀장9기_71_V2_GATE_A6_PAIR_v2_REJECT_v3_OPTICAL_PERIMETER_INTERNAL_REFRACTION_2026-08-17.md` — 9,768 B
+- `V4_A6_PAIR_PROOF_v4/71_V2_GATE_A6_JELLY_PAIR_PROOF_v4.png` — 683,749 B
+- `V4_A6_PAIR_PROOF_v4/71_V2_GATE_A6_PAIR_NOTES_v4.md` — 2,641 B
+- `V4_A6_PAIR_PROOF_v4/설계팀장9기_71_V2_GATE_A6_PAIR_v3_REJECT_v4_SMOOTH_CONTINUOUS_REFRACTION_2026-08-17.md` — 10,160 B
+- `V5_A6_REFERENCE_TRACE_PAIR_v5/71_V2_GATE_A6_JELLY_PAIR_PROOF_v5.png` — 719,062 B
+- `V5_A6_REFERENCE_TRACE_PAIR_v5/71_V2_GATE_A6_PAIR_NOTES_v5.md` — 1,911 B
+- `V5_A6_REFERENCE_TRACE_PAIR_v5/71_V2_GATE_A6_REF_TRACE_MAP_v5.png` — 599,571 B
+- `V5_A6_REFERENCE_TRACE_PAIR_v5/설계팀장9기_71_V2_GATE_A6_PAIR_v4_REJECT_v5_REFERENCE_TRACE_OPTICAL_MAP_2026-08-17.md` — 9,887 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_A6_DESIGN_TOOL_PAIR_PROOF.png` — 1,027,500 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_A6_DESIGN_TOOL_SURFACE_NOTES.md` — 2,765 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_FINAL_CANDIDATE_SCREEN.png` — 562,829 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_FINAL_NOTES.md` — 1,869 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_FINAL_REFERENCE_COMPARISON.png` — 772,448 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/71_V6_FINAL.html` — 750,816 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/설계팀장9기_71_V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF_2026-08-17.md` — 8,383 B
+- `V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF/설계팀장9기_71_V6_FINAL_ONE_SHOT_반복Gate종료_최종후보일괄완성_2026-08-17.md` — 6,417 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_ENDLESS_REEL_EVIDENCE_R2.3.mp4` — 783,145 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTION_EVIDENCE_R2.2.mp4` — 263,245 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTION_EVIDENCE_R2.mp4` — 238,100 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTION_EVIDENCE.mp4` — 529,367 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.1.html` — 15,947 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.2.html` — 22,857 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.3.html` — 24,004 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.4.html` — 24,039 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.html` — 16,281 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE.html` — 2,019,938 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_MOTION_EVIDENCE_R2.mp4` — 338,432 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_MOTION_EVIDENCE.mp4` — 907,171 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_NOTES_R2.2.md` — 4,184 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_NOTES_R2.3.md` — 2,767 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_NOTES_R2.4.md` — 1,612 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_NOTES_R2.md` — 3,442 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_NOTES.md` — 7,508 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_STATIC_COMPARE.png` — 710,793 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_STATIC_SCREEN_R2.2.png` — 201,667 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_STATIC_SCREEN_R2.3.png` — 193,545 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_STATIC_SCREEN_R2.png` — 233,257 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/디자인팀장19기_선임및_Track71_V7_FINAL_MOTION_INTERACTIVE_ACTIVATION_작업지시_2026-08-17.md` — 10,582 B
+- `V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/Track71_V7_R2.3_ENDLESS_REEL_ROUTE_FIX.zip` — 976,759 B
+
+### 72_에디토리얼모먼트아카이브_디스커버리월 — 130 files, 337,068,038 bytes
+
+- `00_ANALYSIS_참고영상_분석/72_GATE_A2_RESULT_VIDEO_CONTACT_SHEET.jpg` — 575,330 B
+- `00_ANALYSIS_참고영상_분석/72_GATE_A2_SOURCE_SELECTION.md` — 1,519 B
+- `00_ANALYSIS_참고영상_분석/72_GATE_A2_STATIC_ASSET_CONTACT_SHEET.jpg` — 119,389 B
+- `00_ANALYSIS_참고영상_분석/72_REFERENCE_FRAME_ANALYSIS.md` — 1,798 B
+- `00_ANALYSIS_참고영상_분석/REFERENCE_12FRAME_CONTACT_SHEET.jpg` — 436,432 B
+- `00_ASSETS_작업자산/A2_VIDEO_POSTERS/52_t8.36.jpg` — 252,173 B
+- `00_ASSETS_작업자산/A2_VIDEO_POSTERS/59_t11.01.jpg` — 334,043 B
+- `00_ASSETS_작업자산/A2_VIDEO_POSTERS/65_t69.77.jpg` — 321,867 B
+- `00_ASSETS_작업자산/A2_VIDEO_POSTERS/67_t11.40.jpg` — 338,817 B
+- `00_ASSETS_작업자산/ASSET_MANIFEST.md` — 710 B
+- `00_ASSETS_작업자산/GATE_A_SELECTED_18_MEDIA_ASSETS.zip` — 889,450 B
+- `00_REFERENCE_참고원본/REFERENCE_REPRESENTATIVE_29.83s.jpg` — 395,263 B
+- `72_에디토리얼모먼트아카이브_디스커버리월.mp4` — 14,303,546 B
+- `91_ARCHIVE_초기QA/72_V1_GATE_A_STATIC_QA.md` — 535 B
+- `92_ARCHIVE_메모/디자인팀장17기_72_GATE_A_WORKLOG_2026-08-17.md` — 1,698 B
+- `93_ARCHIVE_과정지시서/설계팀장9기_72_에디토리얼모먼트아카이브_디스커버리월_V1_신규작업지시_2026-08-17.md` — 18,150 B
+- `93_ARCHIVE_과정지시서/설계팀장9기_72_GATE_A1_REJECT_A2_실제영상_사물_전신_LoveTree_이종미디어재구성_2026-08-17.md` — 15,638 B
+- `93_ARCHIVE_과정지시서/설계팀장9기_72_GATE_A2_REJECT_A3_타이포_4컬럼Masonry_종합교정_2026-08-17.md` — 15,263 B
+- `99_ARCHIVE_중복복사본/99_REFERENCE_ROOT_COPY_72_V1_GATE_C1.html` — 14,488,255 B
+- `99_ARCHIVE_중복복사본/녹화_2026_08_15_22_00_23_155.mp4` — 88,398,471 B
+- `선택1-V3_72_에디토리얼모먼트아카이브.html` — 14,488,255 B
+- `선택1-V5_HYBRID_NATIVE_RATIO_MASONRY_후보/72_V4.3_HYBRID_MAPPING.md` — 1,392 B
+- `선택2-V4.3_HYBRID_NATIVE_RATIO_72_에디토리얼모먼트아카이브.html` — 10,987,253 B
+- `선택3-V4.4_EDITORIAL_MINIMAL_72_에디토리얼모먼트아카이브.html` — 10,987,060 B
+- `참고영상.mp4` — 88,398,471 B
+- `V1_레이아웃_자산큐레이션_PASS/72_V1_GATE_A_CANDIDATE_SCREEN.png` — 396,629 B
+- `V1_레이아웃_자산큐레이션_PASS/72_V1_GATE_A_NOTES.md` — 2,368 B
+- `V1_레이아웃_자산큐레이션_PASS/72_V1_GATE_A_REFERENCE_COMPARISON.png` — 965,901 B
+- `V1_레이아웃_자산큐레이션_PASS/72_V1_GATE_A.html` — 1,238,078 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/72_V1_GATE_A2_ASSET_LEDGER.md` — 3,349 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/72_V1_GATE_A2_CANDIDATE_SCREEN.png` — 1,735,918 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/72_V1_GATE_A2_NOTES.md` — 2,990 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/72_V1_GATE_A2_REFERENCE_COMPARISON.png` — 3,201,755 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/72_V1_GATE_A2.html` — 10,672 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.2_REJECT_이종미디어재구성/MASTER_설계팀장9기_72_GATE_A2_실제영상_사물_전신_LoveTree_이종미디어재구성_2026-08-17.md` — 15,638 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.3_REJECT_4컬럼Masonry교정/72_V1_GATE_A3_REFERENCE_COMPARISON.png` — 3,130,745 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.3_REJECT_4컬럼Masonry교정/MASTER_설계팀장9기_72_GATE_A2_REJECT_A3_타이포_4컬럼Masonry_종합교정_2026-08-17.md` — 15,263 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_A3_5_SLOT08_WATERCOLOR_CANDIDATES.png` — 669,796 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5_ASSET_LEDGER.md` — 4,169 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5_ASSET_LOCK_BOARD.png` — 1,110,683 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5_CANDIDATE_SCREEN.png` — 1,377,369 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5_NOTES.md` — 2,245 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5_REFERENCE_COMPARISON.png` — 2,847,272 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/72_V1_GATE_A3_5.html` — 13,818,025 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/설계팀장9기_72_A3.5_PASS_GATE_B_재승인_FirstViewAssetLock유지_2026-08-17.md` — 4,349 B
+- `V1_레이아웃_자산큐레이션_PASS/V1.4_PASS_제품오너_자산LOCK/MASTER_설계팀장9기_72_A3.5_제품오너지정_정밀자산큐레이션_LOCK_2026-08-17.md` — 14,471 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/52_DARK_NETWORK_8.36.jpg` — 252,173 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/59_MEMORY_SKETCHBOOK_11.01.jpg` — 334,043 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/65_FIRST_CLUE_25.04.jpg` — 291,218 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/67_MEMORY_TAPE_11.40.jpg` — 338,817 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m14_A1_ARCHIVE.webp` — 36,218 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m15_A1_ARCHIVE.webp` — 34,812 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m17_A1_ARCHIVE.webp` — 28,810 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m19_A1_ARCHIVE.webp` — 45,846 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m20_A1_ARCHIVE.webp` — 28,894 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m21_A1_ARCHIVE.jpg` — 48,933 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m22_A1_ARCHIVE.webp` — 28,628 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m24_A1_ARCHIVE.jpg` — 78,771 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m25_A1_ARCHIVE.jpg` — 70,150 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m27_A1_ARCHIVE.jpg` — 68,117 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m28_A1_ARCHIVE.jpg` — 53,170 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m30_A1_ARCHIVE.jpg` — 55,194 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m31_A1_ARCHIVE.jpg` — 48,273 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m33_A1_ARCHIVE.jpg` — 61,720 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m34_A1_ARCHIVE.jpg` — 53,353 B
+- `V2_36모먼트_미디어뷰어_PASS/72_GATE_B_ASSETS/m36_A1_ARCHIVE.jpg` — 65,051 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B_DESKTOP_SCROLL.mp4` — 2,282,989 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B_FILTER.mp4` — 1,487,346 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B_FIRST_VIEW_LOCK_CHECK.md` — 2,011 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B_MOBILE.mp4` — 480,651 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B_QA.md` — 4,339 B
+- `V2_36모먼트_미디어뷰어_PASS/72_V1_GATE_B.html` — 22,144 B
+- `V2_36모먼트_미디어뷰어_PASS/설계팀장9기_72_GATE_A3_PASS_GATE_B_SCROLL_FILTER_RESPONSIVE_지시_2026-08-17.md` — 7,052 B
+- `V2_36모먼트_미디어뷰어_PASS/MASTER_설계팀장9기_72_A3.5_PASS_GATE_B_재승인_FirstViewAssetLock유지_2026-08-17.md` — 4,349 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/52_DARK_NETWORK_8.36.jpg` — 252,173 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/59_MEMORY_SKETCHBOOK_11.01.jpg` — 334,043 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/65_FIRST_CLUE_25.04.jpg` — 291,218 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/67_MEMORY_TAPE_11.40.jpg` — 338,817 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/H_000_alpha_trim.png` — 76,214 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/lubt-bloom_alpha_trim.png` — 189,658 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m14_A1_ARCHIVE.webp` — 36,218 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m15_A1_ARCHIVE.webp` — 34,812 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m17_A1_ARCHIVE.webp` — 28,810 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m19_A1_ARCHIVE.webp` — 45,846 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m20_A1_ARCHIVE.webp` — 28,894 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m21_A1_ARCHIVE.jpg` — 48,933 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m22_A1_ARCHIVE.webp` — 28,628 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m24_A1_ARCHIVE.jpg` — 78,771 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m25_A1_ARCHIVE.jpg` — 70,150 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m27_A1_ARCHIVE.jpg` — 68,117 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m28_A1_ARCHIVE.jpg` — 53,170 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m30_A1_ARCHIVE.jpg` — 55,194 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m31_A1_ARCHIVE.jpg` — 48,273 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m33_A1_ARCHIVE.jpg` — 61,720 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m34_A1_ARCHIVE.jpg` — 53,353 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_GATE_B1_ASSETS/m36_A1_ARCHIVE.jpg` — 65,051 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_36_ASSET_FIT_CONTACT_SHEET.png` — 2,234,735 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_ASSET_FIT_AUDIT.md` — 5,982 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_LIVE_VIDEO_SCROLL.mp4` — 969,339 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_MEDIA_CLICK_VIEWER.mp4` — 1,208,171 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_MEMO_CLICK.mp4` — 266,552 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_MOBILE.mp4` — 256,358 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1_QA.md` — 4,657 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/72_V1_GATE_B1.html` — 37,640 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.1_OLDER_COMPARISON_B1/MASTER_설계팀장9기_72_GATE_B_REJECT_B1_미디어비율_누끼검수_스크롤재생_클릭열기_긴급수정_2026-08-17.md` — 14,665 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_36_ASSET_FIT_CONTACT_SHEET.png` — 1,167,043 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_ASSET_FIT_AUDIT.md` — 5,947 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_LIVE_VIDEO_SCROLL.mp4` — 405,551 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_MEDIA_CLICK_VIEWER.mp4` — 540,248 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_MEMO_CLICK.mp4` — 230,364 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_MOBILE.mp4` — 229,185 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1_QA.md` — 4,734 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/72_V1_GATE_B1.html` — 14,471,510 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/설계팀장9기_72_GATE_B_REJECT_B1_미디어비율_누끼검수_스크롤재생_클릭열기_긴급수정_2026-08-17.md` — 14,665 B
+- `V2_36모먼트_미디어뷰어_PASS/V2.2_FINAL_PASS_미디어Fit_LiveVideo_Viewer/설계팀장9기_72_GATE_B1_FINAL_PASS_기록_2026-08-17.md` — 3,616 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/★_FINAL_V3_72_에디토리얼모먼트아카이브.html` — 14,488,255 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1_CONNECTION_TRAVERSAL.mp4` — 257,075 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1_MOBILE.mp4` — 170,423 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1_PATH_LEDGER.md` — 3,639 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1_QA.md` — 6,213 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1_REPLAY.mp4` — 513,526 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/72_V1_GATE_C1.html` — 14,488,255 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/설계팀장9기_72_GATE_C1_PASS_승인기록_2026-08-17.md` — 4,204 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/설계팀장9기_72_GATE_C1_PASS_FINAL_CANDIDATE_종료승인_2026-08-17.md` — 5,250 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.1_FINAL_CANDIDATE_Connection_Replay/MASTER_설계팀장9기_72_GATE_C1_MOMENT_CONNECTION_TRAVERSAL_REPLAY_작업지시_2026-08-17.md` — 10,896 B
+- `V3_감정경로_Connection_Replay_FINAL/V3.2_STOP_NOT_REQUIRED_C2/설계팀장9기_72_GATE_C2_REPLAY_COMPLETION_PATH_SUMMARY_작업지시_2026-08-17.md` — 8,867 B
+- `V4_VIDEO_FIRST_PRODUCT_INTEGRATION/V4.1_28_VIDEO_8_TEXT_후보/★_FINAL_V4_VIDEO_FIRST_72_에디토리얼모먼트아카이브.html` — 47,784 B
+- `V4_VIDEO_FIRST_PRODUCT_INTEGRATION/V4.1_28_VIDEO_8_TEXT_후보/72_V4_VIDEO_FIRST_MAPPING.md` — 3,356 B
+- `V4_VIDEO_FIRST_PRODUCT_INTEGRATION/V4.2_VARIABLE_RATIO_VIDEO_MASONRY_후보/★_FINAL_V4.2_VARIABLE_RATIO_VIDEO_MASONRY_72_에디토리얼모먼트아카이브.html` — 48,589 B
+- `V4_VIDEO_FIRST_PRODUCT_INTEGRATION/V4.2_VARIABLE_RATIO_VIDEO_MASONRY_후보/72_V4.2_VARIABLE_RATIO_MAP.md` — 1,146 B
+
+### 73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1 — 48 files, 44,351,231 bytes
+
+- `4.Retro-Futurist.txt` — 5,794 B
+- `73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1.mp4` — 19,370,101 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/01_USED_AUDIO/typewriter-key-1_USED_V4.2.mp3` — 4,940 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/01_USED_AUDIO/typewriter-line-break-1_USED_V4.2.mp3` — 8,396 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/02_RECORDS/73_V4_2_CHANGELOG.md` — 1,257 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/02_RECORDS/73_V4_2_QA.md` — 886 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/03_SOURCE_AUDIO_REFERENCE/SOURCE_typewriter-key-1.mp3` — 40,805 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/03_SOURCE_AUDIO_REFERENCE/SOURCE_typewriter-line-break-1.mp3` — 40,805 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/04_UNUSED_AUDIO_NOTE/UNUSED_AUDIO_NOTE.md` — 627 B
+- `선택-V6_DUAL_TYPEWRITER_SOUND_SELECTOR/73_V4_2_DUAL_TYPEWRITER_SOUND_SELECTOR.html` — 61,463 B
+- `타자기소리/typewriter-1.mp3` — 1,369,637 B
+- `타자기소리/typewriter-2.mp3` — 82,331 B
+- `타자기소리/typewriter-backspace-1.mp3` — 75,410 B
+- `타자기소리/typewriter-forward-1.mp3` — 114,629 B
+- `타자기소리/typewriter-key-1.mp3` — 40,805 B
+- `타자기소리/typewriter-line-break-1.mp3` — 40,805 B
+- `타자기소리/typewriter-paper-1.mp3` — 56,954 B
+- `타자기소리/typewriter-paper-roll-up-1.mp3` — 73,103 B
+- `타자기소리/typewriter-return-1.mp3` — 61,568 B
+- `타자기소리/typewriter-space-bar-1.mp3` — 69,258 B
+- `V1/73_lovetree_mainframe_hero_v1.zip` — 9,029 B
+- `V1/index.html` — 676 B
+- `V1/package.json` — 546 B
+- `V1/postcss.config.js` — 81 B
+- `V1/README.md` — 774 B
+- `V1/src/App.tsx` — 10,510 B
+- `V1/src/index.css` — 978 B
+- `V1/src/main.tsx` — 237 B
+- `V1/tailwind.config.js` — 170 B
+- `V1/tsconfig.app.json` — 507 B
+- `V1/tsconfig.json` — 119 B
+- `V1/tsconfig.node.json` — 211 B
+- `V1/vite.config.ts` — 136 B
+- `V2_STANDALONE_DIRECT_OPEN_FIX/73_V2_STANDALONE_DIRECT_OPEN.html` — 18,982 B
+- `V2_STANDALONE_DIRECT_OPEN_FIX/녹화_2026_08_17_23_47_54_535.mp4` — 2,633,352 B
+- `V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_FAST_SCRUB_TEMPLATE_PORTAL.html` — 35,213 B
+- `V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_MENU_ROUTE_AUDIT.md` — 1,443 B
+- `V3_FAST_SCRUB_TEMPLATE_PORTAL/73_V3_QA.md` — 813 B
+- `V3_FAST_SCRUB_TEMPLATE_PORTAL/녹화_2026_08_18_00_25_47_646.mp4` — 20,005,089 B
+- `V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_CHANGELOG_AND_ROUTE_AUDIT.md` — 1,918 B
+- `V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_QA.md` — 1,107 B
+- `V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL/73_V4_REPEAT_TYPEWRITER_SOUND_CLEAN_PORTAL.html` — 39,196 B
+- `V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/73_V5_CHANGELOG.md` — 1,804 B
+- `V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/73_V5_QA.md` — 1,371 B
+- `V5_ORBIT_MORPH_LOVETREE_TEMPLATE_PORTAL/index.html` — 25,459 B
+- `V5_PINNED_DESKTOP_MENUS/73_V4_1_CHANGELOG.md` — 968 B
+- `V5_PINNED_DESKTOP_MENUS/73_V4_1_PINNED_DESKTOP_MENUS.html` — 40,190 B
+- `V5_PINNED_DESKTOP_MENUS/73_V4_1_QA.md` — 778 B
+
+### 74_오빗모프_러브트리_템플릿포털_V1 — 11 files, 22,291,130 bytes
+
+- `5.Orbit Flora.txt` — 9,697 B
+- `74_오빗모프_러브트리_템플릿포털_V1.mp4` — 22,201,260 B
+- `V1/00_기존프롬프트_ORBIT_SECURE_SYSTEM.md` — 9,503 B
+- `V1/01_러브트리적용프롬프트_TRACK74.md` — 12,785 B
+- `V1/02_TRACK74_적용기록.md` — 909 B
+- `V1/03_TRACK74_QA.md` — 922 B
+- `V1/index.html` — 25,536 B
+- `V2_70경로_고딕타이포_열매트리로고/01_러브트리적용프롬프트_TRACK74_V2.md` — 1,947 B
+- `V2_70경로_고딕타이포_열매트리로고/02_V2_CHANGELOG.md` — 877 B
+- `V2_70경로_고딕타이포_열매트리로고/03_V2_QA.md` — 682 B
+- `V2_70경로_고딕타이포_열매트리로고/index.html` — 27,012 B
+
+### 앞으로만들것 — 11 files, 106,940,730 bytes
+
+- `녹화_2026_08_15_20_04_49_965.mp4` — 6,220,560 B
+- `녹화_2026_08_15_20_07_03_406.mp4` — 4,065,234 B
+- `녹화_2026_08_15_20_07_38_146.mp4` — 7,863,589 B
+- `녹화_2026_08_15_20_54_23_147.mp4` — 18,432,745 B
+- `녹화_2026_08_15_20_57_43_759.mp4` — 27,254,184 B
+- `녹화_2026_08_15_20_59_19_8.mp4` — 8,586,933 B
+- `녹화_2026_08_15_21_02_09_248.mp4` — 8,525,080 B
+- `녹화_2026_08_15_21_06_43_683.mp4` — 7,292,761 B
+- `녹화_2026_08_15_21_07_05_471.mp4` — 4,733,752 B
+- `녹화_2026_08_15_21_09_45_159.mp4` — 8,154,006 B
+- `녹화_2026_08_15_21_10_53_630.mp4` — 5,811,886 B

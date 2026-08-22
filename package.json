@@ -9,6 +9,8 @@
     "dev": "vinext dev",
     "preview:deploy:safe": "node scripts/deploy-isolated-preview.mjs",
     "v4:e2e:preflight": "node scripts/check-v4-runtime-e2e-preflight.mjs",
+    "v4:e2e:verify-runtime": "node scripts/verify-v4-runtime-e2e-target.mjs",
+    "v4:e2e:cleanup": "node scripts/cleanup-v4-runtime-e2e.mjs",
     "production:build:safe": "node scripts/build-production-safe.mjs",
     "production:deploy:safe": "node scripts/deploy-production-safe.mjs",
     "build": "vinext build && node scripts/prune-rsc-assets.mjs",
@@ -18,6 +20,8 @@
     "design:intake:validate": "node --import tsx scripts/design-intake-validate.mjs",
     "design:intake:scaffold": "node --import tsx scripts/design-intake-scaffold.mjs",
     "design:intake:freshness": "node --import tsx scripts/design-intake-source-freshness.mjs",
+    "design:intake:observe": "node --import tsx scripts/design-intake-drive-observe.mjs",
+    "design:intake:freshness:live": "node --import tsx scripts/design-intake-source-freshness-live.mjs",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check"

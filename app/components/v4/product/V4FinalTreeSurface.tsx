@@ -53,7 +53,7 @@ function OverviewSurface({ tree, moments }: { tree: TreeRecord; moments: MemoryR
   const emotions = emotionCounts(moments);
   const mediaCount = moments.filter((memory) => Boolean(memory.sourceUrl)).length;
   const connectedCount = moments.filter((memory) => Boolean(memory.parentId)).length;
-  const recent = [...moments].slice(-4).reverse();
+  const tailMoments = [...moments].slice(-4).reverse();
   const pulse = moments.length ? Math.round(Math.min(99, 55 + mediaCount * 4 + connectedCount * 3 + emotions.length * 2)) : 0;
   const questions = [
     {
@@ -63,7 +63,7 @@ function OverviewSurface({ tree, moments }: { tree: TreeRecord; moments: MemoryR
     },
     {
       title: "처음과 지금 사이, 무엇이 달라졌나요?",
-      copy: first && last ? `${formatTreeDate(dateValue(first))}의 첫 기록에서 ${formatTreeDate(dateValue(last))}의 최근 기록까지 이어졌어요.` : "두 번째 순간부터 변화의 흐름을 읽을 수 있어요.",
+      copy: first && last ? `${formatTreeDate(dateValue(first))}의 첫 기록에서 ${formatTreeDate(dateValue(last))}의 마지막 순서의 기록까지 이어졌어요.` : "두 번째 순간부터 변화의 흐름을 읽을 수 있어요.",
       theme: "blue",
     },
     {
@@ -73,7 +73,7 @@ function OverviewSurface({ tree, moments }: { tree: TreeRecord; moments: MemoryR
     },
     {
       title: "지금 이 나무에 무엇을 해볼까요?",
-      copy: mediaCount < moments.length ? "출처가 없는 순간에 영상·노래·책 링크를 덧붙여 기억의 맥락을 선명하게 만들어 보세요." : "최근 순간 하나를 다시 열어 연결 이유를 확인해 보세요.",
+      copy: mediaCount < moments.length ? "출처가 없는 순간에 영상·노래·책 링크를 덧붙여 기억의 맥락을 선명하게 만들어 보세요." : "이어진 순간 하나를 다시 열어 연결 이유를 확인해 보세요.",
       theme: "pink",
     },
   ];
@@ -101,9 +101,9 @@ function OverviewSurface({ tree, moments }: { tree: TreeRecord; moments: MemoryR
               <div className="v4-overview-bar"><i style={{ width: `${pulse}%` }} /></div>
               <dl className="v4-overview-stats"><div><dt>Moments</dt><dd>{moments.length}</dd></div><div><dt>Connections</dt><dd>{connectedCount}</dd></div><div><dt>Media</dt><dd>{mediaCount}</dd></div></dl>
             </> : null}
-            {question === 1 ? <><h2>최근에 달라진 장면</h2><div className="v4-overview-moments">{recent.map((memory, index) => <article key={memory.id}><span className="v4-overview-thumb" style={resolveMemoryThumbnail(memory) ? { backgroundImage: `url(${resolveMemoryThumbnail(memory)})` } : undefined} /><div><strong>{memoryTitle(memory, index)}</strong><small>{formatTreeDate(dateValue(memory))}</small></div></article>)}</div></> : null}
+            {question === 1 ? <><h2>이어진 장면</h2><div className="v4-overview-moments">{tailMoments.map((memory, index) => <article key={memory.id}><span className="v4-overview-thumb" style={resolveMemoryThumbnail(memory) ? { backgroundImage: `url(${resolveMemoryThumbnail(memory)})` } : undefined} /><div><strong>{memoryTitle(memory, index)}</strong><small>{formatTreeDate(dateValue(memory))}</small></div></article>)}</div></> : null}
             {question === 2 ? <><h2>마음의 결</h2><div className="v4-overview-emotions">{(emotions.length ? emotions : [["아직 태그 없음", 0] as [string, number]]).slice(0, 5).map(([tag, count]) => <div key={tag}><span>{tag}</span><i><b style={{ width: `${moments.length ? Math.max(8, count / moments.length * 100) : 8}%` }} /></i><em>{count}</em></div>)}</div></> : null}
-            {question === 3 ? <><h2>다음 행동</h2><div className="v4-overview-actions"><article><b>01</b><span>최근 순간 다시 보기</span></article><article><b>02</b><span>끊긴 순간 연결하기</span></article><article><b>03</b><span>새 감정 태그 남기기</span></article></div></> : null}
+            {question === 3 ? <><h2>다음 행동</h2><div className="v4-overview-actions"><article><b>01</b><span>이어진 순간 다시 보기</span></article><article><b>02</b><span>끊긴 순간 연결하기</span></article><article><b>03</b><span>새 감정 태그 남기기</span></article></div></> : null}
           </div>
         </div>
       </div>
@@ -205,6 +205,7 @@ function GraphSurface({ moments }: { moments: MemoryRecord[] }) {
   }, [mode, visible]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
   const chosen = moments.find((memory) => memory.id === selected) ?? null;
+  const chosenParent = chosen?.parentId ? (moments.find((memory) => memory.id === chosen.parentId) ?? null) : null;
   const paths = nodes.flatMap((node) => {
     if (!node.parentId) return [];
     const parent = byId.get(node.parentId);
@@ -225,7 +226,7 @@ function GraphSurface({ moments }: { moments: MemoryRecord[] }) {
             {nodes.map((node, index) => <article key={node.id} className={`v4-graph-node${selected === node.id ? " is-active" : ""}`} style={{ left: node.x, top: node.y }} onClick={() => setSelected(node.id)}><span className="v4-graph-node-media" style={resolveMemoryThumbnail(node.memory) ? { backgroundImage: `url(${resolveMemoryThumbnail(node.memory)})` } : undefined} /><small>{String(index + 1).padStart(2, "0")} · {(node.memory.emotionTags || ["moment"])[0]}</small><strong>{memoryTitle(node.memory, index)}</strong></article>)}
           </div>
         </div>
-        <aside className="v4-graph-inspector"><small>{mode.toUpperCase()} INSPECTOR</small>{chosen ? <><h2>{memoryTitle(chosen)}</h2><p>{chosen.memo || "이 순간에 남긴 마음"}</p><dl><div><dt>Date</dt><dd>{formatTreeDate(dateValue(chosen))}</dd></div><div><dt>Parent</dt><dd>{chosen.parentId ? "connected" : "root"}</dd></div><div><dt>Tags</dt><dd>{(chosen.emotionTags || []).join(" · ") || "—"}</dd></div></dl>{isSafeExternalUrl(chosen.sourceUrl) ? <a href={chosen.sourceUrl} target="_blank" rel="noreferrer noopener">Source ↗</a> : null}</> : <p>노드를 선택해 주세요.</p>}<div className="v4-graph-telemetry"><span>VISIBLE {nodes.length}</span><span>EDGES {paths.length}</span><span>MODE {mode}</span></div></aside>
+        <aside className="v4-graph-inspector"><small>{mode.toUpperCase()} INSPECTOR</small>{chosen ? <><h2>{memoryTitle(chosen)}</h2><p>{chosen.memo || "이 순간에 남긴 마음"}</p><dl><div><dt>Date</dt><dd>{formatTreeDate(dateValue(chosen))}</dd></div><div><dt>Parent</dt><dd>{chosenParent ? memoryTitle(chosenParent) : chosen.parentId ? "connected" : "root"}</dd></div>{chosen.parentId ? <div><dt>WHY NEXT</dt><dd>{chosen.connectionReason?.trim() ? chosen.connectionReason : "이전 순간과 이어지는 관계"}</dd></div> : null}<div><dt>Tags</dt><dd>{(chosen.emotionTags || []).join(" · ") || "—"}</dd></div></dl>{isSafeExternalUrl(chosen.sourceUrl) ? <a href={chosen.sourceUrl} target="_blank" rel="noreferrer noopener">Source ↗</a> : null}</> : <p>노드를 선택해 주세요.</p>}<div className="v4-graph-telemetry"><span>VISIBLE {nodes.length}</span><span>EDGES {paths.length}</span><span>MODE {mode}</span></div></aside>
       </div>
     </section>
   );

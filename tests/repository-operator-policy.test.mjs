@@ -28,13 +28,26 @@ test("README and operator guide reflect current V4/Next product authority and st
   assert.doesNotMatch(agents, /Backend API:\s*Cloudflare Workers \(D1\/Drizzle ORM\)/);
 });
 
-test("WSL policy keeps active repository work off Windows-mounted paths", () => {
+test("workspace policy keeps active repository work off cross-mounted paths", () => {
   assert.match(readme, /\$HOME\/worktrees\/\*\*/);
   assert.match(agents, /\$HOME\/worktrees\/\*\*/);
-  assert.match(agents, /Do not run repository workloads from Windows-mounted paths/);
+  assert.match(agents, /## Workspace policy: WSL \/ Windows dual-track/);
+  assert.match(agents, /Do not run repository workloads from cross-mounted paths such as `\/mnt\/c\/\*\*` or `\/mnt\/g\/\*\*`/);
+  assert.doesNotMatch(agents, /Do not run repository workloads from Windows-mounted paths/);
   assert.match(wslPolicy, /Do not use `\/mnt\/c\/\*\*`, `\/mnt\/g\/\*\*`/);
   assert.match(wslPolicy, /npm run typecheck/);
   assert.match(wslPolicy, /Playwright \/ Chromium/);
+});
+
+test("dual-track workspace policy enforces lane isolation and heavy-process gates", () => {
+  assert.match(agents, /\*\*One worktree per Lane\.\*\*/);
+  assert.match(agents, /\*\*OS ownership is fixed per Lane\.\*\*/);
+  assert.match(agents, /### Shared root is a sync surface only/);
+  assert.match(agents, /Heavy processes require CTO pre-approval/);
+  assert.match(agents, /### GitHub is the single ledger/);
+  assert.match(agents, /Before starting work: `git fetch origin` and base the Lane on current `origin\/main`\./);
+  assert.match(agents, /push the Lane branch and open\/update the PR\. Local-only commits are not a completion state\./);
+  assert.doesNotMatch(agents, /Mandatory WSL-native workspace/);
 });
 
 test("release policy records the lightweight demo loop without weakening high-risk gates", () => {

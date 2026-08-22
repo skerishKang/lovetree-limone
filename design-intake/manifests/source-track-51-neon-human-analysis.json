@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-51-neon-human-analysis",
+  "sourceTrackId": "Track51",
+  "title": "네온인간분석 인터랙티브홍보대문 (Source Gate Registration)",
+  "classification": "NEW_LINEAGE",
+  "lifecycle": "REFERENCE_PINNED",
+  "scenarioId": "cinematic-brand",
+  "productJob": "Parallel promotional front-door candidate: a neon human-analysis landing that reframes the Neon Pilot teaser sequence as a scrollable gate — hero pointer parallax with synthetic Core 5 cast hook, biometric/radar analysis phases, white exhibition and face/eye lens, thermal city moment destination, dossier/connection hovers and a Moment Saved CTA. Registration only — no product adoption implied.",
+  "summary": "Source Track 51 registered at PROMO_GATE_V1_VISUAL_REVIEW_CANDIDATE status (implementation note). Single self-contained HTML (2,782,365 B; CSS + SVG + vanilla JS, no external requests, 19 data-URI embedded images) built as a NEW parallel promo gate — 기존 V4.2/V4.2b overwrite 없음, Production 반영 없음, 기존 대문 채택본과의 관계는 미결(오너 승인 전 대체·확정 금지 명시). Synthetic Core 5 assets only, no real-person replication, aircraft assets excluded. Desktop 1440×900 headless QA recorded (0 errors); mobile QA absent. Byte-identical alias copies (10_병행안… html/mp4, different Drive IDs) isolated with dual-ID records; #287 snapshot triple-hash match confirmed.",
+  "provenance": {
+    "sourceLabel": "51_네온인간분석_인터랙티브홍보대문 / Issue #308 source gate registration",
+    "sourceFiles": [
+      "lovetree-neon-human-analysis-promo-gate-v1.html",
+      "implementation-note-neon-human-analysis-v1.md",
+      "scene-structure-neon-human-analysis-v1.md",
+      "desktop-contactsheet-neon-human-analysis-v1.jpg"
+    ],
+    "rightsStatus": "sibling-source-owned"
+  },
+  "lineageReservation": {
+    "status": "HOLD",
+    "note": "Lineage51 is NOT allocated. Repository lineage number is not reserved by this manifest; the promo gate's relation to the adopted front door and the Neon Pilot line is reviewed only after owner visual review (Issue #308)."
+  },
+  "adoption": {
+    "status": "HOLD",
+    "note": "PROMO_GATE_V1_VISUAL_REVIEW_CANDIDATE; NOT_OWNER_APPROVED — 기존 대문 채택본 대체 금지 · Production 반영 금지 · 공식 첫여정 기본 UI 확정 금지 (implementation note 판정문); IMPLEMENTATION_RELEASE=NO; CANONICAL_V4_ADOPTION=NO."
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "PROMO_GATE_V1_VISUAL_REVIEW_CANDIDATE",
+    "authorityObservedAt": "2026-08-21T00:00:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "sourceArtifacts": [
+    {
+      "filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+      "driveId": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+      "bytes": 2782365,
+      "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+      "role": "executable",
+      "status": "PINNED"
+    },
+    {
+      "filename": "implementation-note-neon-human-analysis-v1.md",
+      "driveId": "1r-O344-PUN4b5Svz1kPWMIZT4VOf52N-",
+      "bytes": 2147,
+      "sha256": "fbebfdf30d78c670cabac435e50c543d9381c0dd5d521d9903b0bf56f9b73490",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "scene-structure-neon-human-analysis-v1.md",
+      "driveId": "1PrLjOEEzilZZEsJ6z-gmRqUC8OXzz41d",
+      "bytes": 2682,
+      "sha256": "0edcabc44d24bec15f8cfe23cc80705e3249dc65617275757e9c5553fe3dbfd8",
+      "role": "implementation-note",
+      "status": "PINNED"
+    },
+    {
+      "filename": "desktop-contactsheet-neon-human-analysis-v1.jpg",
+      "driveId": "1Ci0g6sbvQikpp4O8vs8yQPAFdrtSo0fj",
+      "bytes": 290428,
+      "sha256": "da2196658e14a4db256523fbdc9d36a1c79907e7b89bc89c50443c5d19d83cf5",
+      "role": "reference-image",
+      "status": "PINNED"
+    },
+    {
+      "filename": "desktop-execution-neon-human-analysis-v1.mp4",
+      "driveId": "1fmX2JRYz320JJhIw0K2iS39c6e5MIIRs",
+      "bytes": 2545122,
+      "sha256": "3b876cf113630d6873ce6035f0dd60a9053a9440cf3ee62b1a87441f8781ad61",
+      "role": "reference-video",
+      "status": "PENDING"
+    },
+    {
+      "filename": "녹화_2026_08_14_03_29_55_614.mp4",
+      "driveId": "12IxrxV1ApFd00wkIDZFes0EDbOTgtl1T",
+      "bytes": 8624180,
+      "sha256": "afaa499a8514b162e12a82da9097812d1d184cfec0322e3da101017f32c7ea8c",
+      "role": "reference-video",
+      "status": "PENDING"
+    }
+  ],
+  "reusableCapabilities": [],
+  "sourceDefects": [
+    "NOT_OWNER_APPROVED: visual review candidate only — adopted front door must not be replaced before owner review",
+    "PARALLEL_RELATION_UNRESOLVED: relation between this parallel promo gate, the adopted front door and the Neon Pilot sequence has no recorded decision",
+    "DUPLICATE_ALIAS_OBJECTS: byte-identical alias copies exist under different Drive IDs (html 1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt / 1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8; mp4 1fmX2JRYz320JJhIw0K2iS39c6e5MIIRs / 1cnJTp18Z9F3B-ptLnKD0xjm1HQQOQ7BD) — canonical paths committed once, aliases index-only",
+    "DESKTOP_ONLY_QA: verification limited to headless Chromium 1440×900; no mobile viewport evidence in the source package"
+  ],
+  "nativeRemediations": [
+    "owner performs visual review and records the promo gate's disposition vs the adopted front door",
+    "add mobile viewport QA evidence before any native review",
+    "only after authority closes: executable/source QA → exact fingerprint → repository native intake/proving"
+  ],
+  "sourceOnlyValues": [
+    "synthetic Core 5 cast assets only — real-person replication stays forbidden",
+    "19 embedded data-URI images are prototype fixtures, never product truth",
+    "headline/CTA copy (KEEP THE MOMENT THAT MOVED YOU / SCAN THE MOMENT / FOLLOW THE SIGNAL) is candidate-only wording",
+    "forbidden motifs carry over: POWER/CHARM stat tables, character résumés, extreme lone-eye closeups, black fringe/dirty skin"
+  ],
+  "backendScope": "BACKEND_FREE"
+}

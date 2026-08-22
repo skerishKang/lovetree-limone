@@ -18,7 +18,13 @@ import {
   createVideoFigureTurntableState,
   normalizeVideoFigureLookIndex,
   reduceVideoFigureTurntable,
+  angleStepFromHorizontalDelta,
 } from "../lib/videofigure-turntable.ts";
+import {
+  orderedFrameIndex,
+  stepFrame,
+  directionFromDelta,
+} from "../lib/design-runtime/ordered-frame";
 
 test("Lineage 58 registers V1 baseline and V2 current candidate without canonical V4 adoption", () => {
   const lineage = DESIGN_LINEAGES.find((item) => item.number === 58);
@@ -116,4 +122,67 @@ test("source authority remains V1/V2 Drive fingerprints and no real media pipeli
   assert.equal(LINEAGE_58_VIDEOFIGURE_SOURCE.v2RuntimeBytes, 27918);
   assert.equal(LINEAGE_58_VIDEOFIGURE_SOURCE.renderingTier, "sprite-2.5d");
   assert.equal(LINEAGE_58_VIDEOFIGURE_SOURCE.route, "/design-lab/lineages/58/v2");
+});
+
+test("P2 ordered-frame core produces identical angle selection results as the local VideoFigure reducer", () => {
+  const config = { lookCount: 10, resumePolicy: "resume-after-idle" };
+  let state = createVideoFigureTurntableState(config);
+
+  // Direct select: both wrap identically
+  for (const idx of [0, 1, 7, 8, -1, 100]) {
+    state = reduceVideoFigureTurntable(state, { type: "select-angle", index: idx, manual: true }, config);
+    assert.equal(state.angleIndex, orderedFrameIndex(idx, 8), `select-angle index ${idx}`);
+  }
+
+  // Step: both wrap identically
+  for (const delta of [-1, 1]) {
+    const before = state.angleIndex;
+    state = reduceVideoFigureTurntable(state, { type: "step-angle", delta, manual: true }, config);
+    assert.equal(state.angleIndex, stepFrame(before, delta, 8), `step-angle delta ${delta}`);
+  }
+
+  // Large step sequence using P2 stepFrame directly
+  state = createVideoFigureTurntableState(config);
+  const stepped = stepFrame(0, 13, 8);
+  assert.equal(stepped, 5, "P2 stepFrame(0, 13, 8) wraps to 5");
+
+  // directionFromDelta reproduces angleStepFromHorizontalDelta exactly
+  for (const deltaX of [-50, -24, -10, 0, 10, 24, 50]) {
+    const abs = Math.abs(deltaX);
+    const expected = abs < 24 ? 0 : deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
+    assert.equal(directionFromDelta(deltaX, -1, 24), expected, `directionFromDelta deltaX=${deltaX}`);
+  }
+
+  // Threshold = 0 (no threshold)
+  assert.equal(directionFromDelta(1, -1, 0), -1);
+  assert.equal(directionFromDelta(-1, -1, 0), 1);
+});
+
+test("angleStepFromHorizontalDelta backward-compat adapter — default threshold 24 pinned", () => {
+  // Default threshold = 24
+  assert.equal(angleStepFromHorizontalDelta(23), 0);
+  assert.equal(angleStepFromHorizontalDelta(-23), 0);
+  assert.equal(angleStepFromHorizontalDelta(24), -1);
+  assert.equal(angleStepFromHorizontalDelta(-24), 1);
+  assert.equal(angleStepFromHorizontalDelta(0), 0);
+});
+
+test("angleStepFromHorizontalDelta backward-compat adapter — custom threshold pass-through", () => {
+  // threshold = 10
+  assert.equal(angleStepFromHorizontalDelta(9, 10), 0);
+  assert.equal(angleStepFromHorizontalDelta(10, 10), -1);
+  assert.equal(angleStepFromHorizontalDelta(-9, 10), 0);
+  assert.equal(angleStepFromHorizontalDelta(-10, 10), 1);
+});
+
+test("angleStepFromHorizontalDelta equivalent to directionFromDelta with positiveDeltaDirection=-1", () => {
+  for (const deltaX of [-50, -24, -10, 0, 10, 24, 50]) {
+    for (const threshold of [0, 10, 24, 48]) {
+      assert.equal(
+        angleStepFromHorizontalDelta(deltaX, threshold),
+        directionFromDelta(deltaX, -1, threshold),
+        `deltaX=${deltaX} threshold=${threshold}`,
+      );
+    }
+  }
 });

@@ -1,0 +1,230 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: replay-motion
+SCREEN: moment-node-connection-light
+VERSION: v2
+STATUS: design-review
+SCOPE: V1 motion engine preserved + visible Connection skeleton + saturated energy + Living Tree climax
+BASE_BENCHMARKS: 네온로딩오브젝트_컨트롤패널.mp4, AI에이전트연결_노드워크플로우.mp4
+IMAGE_GENERATION: 0
+DATE: 2026-08-10
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree · Moment Node Light Flow v2</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#090a0d;
+  --bg2:#0d0e12;
+  --panel:rgba(17,18,23,.72);
+  --panel-solid:#121319;
+  --ink:#f3efe8;
+  --muted:#958f88;
+  --faint:#57535a;
+  --hair:rgba(255,255,255,.08);
+  --track:rgba(230,226,220,.06);
+  --ivory:#f3ecde;
+  --cyan:#9ce8ef;
+  --violet:#b8a6ff;
+  --rose:#ef9bb7;
+  --gold:#dfcda7;
+  --shadow:0 22px 80px rgba(0,0,0,.46);
+  --radius:24px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+button,input{font:inherit}
+body{
+  background:
+    radial-gradient(circle at 18% 16%,rgba(184,166,255,.055),transparent 28%),
+    radial-gradient(circle at 82% 78%,rgba(239,155,183,.045),transparent 30%),
+    linear-gradient(180deg,#090a0d 0%,#0a0b0f 45%,#08090c 100%);
+  overflow-x:hidden;
+}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:70px;padding:0 clamp(18px,4vw,54px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.055);position:relative;z-index:12;background:rgba(9,10,13,.62);backdrop-filter:blur(16px)}
+.brand{display:flex;gap:12px;align-items:center}.brand-mark{width:28px;height:28px;position:relative}.brand-mark:before,.brand-mark:after{content:"";position:absolute;border:1px solid rgba(243,236,222,.32);border-radius:50%}.brand-mark:before{inset:2px 8px 9px 2px;transform:rotate(-25deg)}.brand-mark:after{inset:9px 2px 2px 8px;transform:rotate(25deg)}
+.brand strong{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.02em;font-size:18px}.brand span{display:block;color:var(--muted);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:2px}
+.status{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#7f7b78;border:1px solid rgba(255,255,255,.07);border-radius:999px;padding:8px 10px;background:rgba(255,255,255,.025)}
+.stage-shell{flex:1;min-height:760px;position:relative;padding:24px clamp(14px,2.5vw,36px) 30px;display:flex;flex-direction:column}
+.hero-copy{position:absolute;left:clamp(22px,5vw,78px);top:42px;z-index:8;max-width:430px;pointer-events:none}
+.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#77747a;margin-bottom:10px}.hero-copy h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(30px,4.4vw,66px);line-height:.98;letter-spacing:-.045em;margin:0;color:#f2eee7}.hero-copy p{max-width:360px;color:#8c8786;font-size:13px;line-height:1.6;margin:16px 0 0}
+.tree-wrap{position:relative;flex:1;min-height:690px;overflow:hidden;border:1px solid rgba(255,255,255,.055);border-radius:28px;background:linear-gradient(180deg,rgba(14,15,19,.84),rgba(8,9,12,.96));box-shadow:var(--shadow);isolation:isolate}
+.tree-wrap:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);background-size:52px 52px;mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 82%,transparent 100%);pointer-events:none}
+.tree-wrap:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 46% 48%,transparent 0 15%,rgba(0,0,0,.08) 50%,rgba(0,0,0,.25) 100%);pointer-events:none;z-index:1}
+.flow-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;overflow:visible}
+.connection-track{fill:none;stroke-width:var(--connection-base-stroke,1.45);vector-effect:non-scaling-stroke;opacity:var(--connection-base-opacity,.19);transition:opacity .45s ease,filter .45s ease}
+.connection-active-outer{fill:none;stroke-width:9;vector-effect:non-scaling-stroke;opacity:0;filter:url(#connectionBloom);mix-blend-mode:screen;pointer-events:none;transition:opacity .16s ease}
+.connection-active-inner{fill:none;stroke-width:2.25;vector-effect:non-scaling-stroke;opacity:0;filter:url(#sharpGlow);mix-blend-mode:screen;pointer-events:none;transition:opacity .12s ease}
+.connection-memory{fill:none;stroke-width:1.7;vector-effect:non-scaling-stroke;opacity:0;filter:url(#memoryGlow);mix-blend-mode:screen;transition:opacity .5s ease}
+.connection-hit{fill:none;stroke:transparent;stroke-width:20;pointer-events:stroke;cursor:default}.trail-dot{pointer-events:none;mix-blend-mode:screen}.tip-dot{pointer-events:none;mix-blend-mode:screen}.flow-bloom{mix-blend-mode:screen;pointer-events:none}
+.tree-wrap.living-tree{box-shadow:var(--shadow),inset 0 0 90px rgba(65,140,255,.035)}
+.nodes{position:absolute;inset:0;z-index:4}.moment{position:absolute;width:clamp(150px,15vw,218px);min-height:78px;border-radius:var(--node-radius,21px);transform:translate(-50%,-50%);background:linear-gradient(145deg,rgba(32,32,39,.74),rgba(14,15,20,.68));border:1px solid rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 16px 45px rgba(0,0,0,.22);backdrop-filter:blur(12px);padding:14px 16px 13px 17px;transition:transform .35s cubic-bezier(.2,.8,.2,1),background .3s ease,box-shadow .35s ease;overflow:visible}
+.moment:before{content:"";position:absolute;inset:7px;border-radius:calc(var(--node-radius,21px) - 7px);background:radial-gradient(circle at 18% 50%,var(--node-wash,rgba(243,236,222,.08)),transparent 50%);opacity:.55;pointer-events:none;transition:opacity .18s ease,filter .18s ease}.moment:after{content:"";position:absolute;inset:-10px;border-radius:calc(var(--node-radius,21px) + 10px);border:1px solid transparent;box-shadow:0 0 0 rgba(255,255,255,0);pointer-events:none;transition:box-shadow .22s ease,border-color .22s ease,opacity .22s ease;opacity:0}.moment.arrival:before{opacity:var(--arrival-wash-opacity,.86);filter:saturate(1.4) brightness(1.18)}.moment.arrival:after{border-color:color-mix(in srgb,var(--node-color) 64%,transparent);box-shadow:0 0 var(--arrival-halo,30px) color-mix(in srgb,var(--node-color) 34%,transparent),0 0 var(--arrival-bloom,78px) color-mix(in srgb,var(--node-color) 19%,transparent);opacity:1}.moment:hover{transform:translate(-50%,-50%) scale(1.022);background:linear-gradient(145deg,rgba(37,37,45,.86),rgba(16,17,22,.8));box-shadow:0 16px 52px rgba(0,0,0,.35),0 0 30px color-mix(in srgb,var(--node-color) 8%,transparent)}
+.moment .kicker{position:relative;z-index:1;text-transform:uppercase;letter-spacing:.18em;font-size:8px;color:color-mix(in srgb,var(--node-color) 68%,#888);margin-bottom:7px}.moment .title{position:relative;z-index:1;font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.16;letter-spacing:-.018em;color:#e9e5df;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.moment .meta{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;color:#706e72;font-size:9px;margin-top:8px}.moment .core{position:absolute;right:14px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--node-color);box-shadow:0 0 12px color-mix(in srgb,var(--node-color) 45%,transparent);opacity:.18;transition:opacity .2s ease,box-shadow .2s ease,background .2s ease}.moment.awake .core{opacity:.86;box-shadow:0 0 12px color-mix(in srgb,var(--node-color) 70%,transparent),0 0 32px color-mix(in srgb,var(--node-color) 28%,transparent)}.moment.arrival .core{background:#fff;opacity:1;box-shadow:0 0 6px #fff,0 0 var(--arrival-core,22px) var(--node-color),0 0 var(--arrival-bloom,78px) color-mix(in srgb,var(--node-color) 28%,transparent)}
+.node-track{fill:none;stroke:rgba(235,232,227,var(--track-opacity,.06));stroke-width:var(--stroke-width,1.3);vector-effect:non-scaling-stroke;pointer-events:none}.node-memory{fill:none;stroke-width:1.3;vector-effect:non-scaling-stroke;opacity:0;transition:opacity .45s ease}
+.controls{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:9;display:flex;align-items:center;gap:8px;padding:7px;border:1px solid rgba(255,255,255,.075);background:rgba(15,16,20,.72);backdrop-filter:blur(14px);border-radius:999px;box-shadow:0 12px 42px rgba(0,0,0,.36)}.controls button{border:0;background:transparent;color:#9d9896;padding:10px 14px;border-radius:999px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:.2s ease}.controls button:hover{background:rgba(255,255,255,.055);color:#eee8df}.controls .primary{background:#ebe5dc;color:#17171b;font-weight:700}.controls .primary:hover{background:#fffaf1;color:#111}.controls button:disabled{opacity:.35;cursor:not-allowed}
+.timeline{position:absolute;left:clamp(18px,3vw,38px);right:clamp(18px,3vw,38px);bottom:86px;height:1px;background:rgba(255,255,255,.055);z-index:7}.timeline-fill{height:1px;width:0;background:linear-gradient(90deg,rgba(56,232,255,.56),rgba(139,92,255,.72),rgba(255,79,163,.72));box-shadow:0 0 13px rgba(65,140,255,.24);transition:width .08s linear}.timeline-label{position:absolute;right:0;top:10px;color:#57545a;font-size:8px;letter-spacing:.16em;text-transform:uppercase}
+.message{position:absolute;right:clamp(22px,5vw,78px);top:122px;bottom:auto;z-index:8;text-align:right;max-width:360px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .8s ease,transform .8s ease}.message.visible{opacity:1;transform:none}.message strong{display:block;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(21px,2vw,32px);letter-spacing:-.025em;color:#e8e2da}.message span{display:block;color:#777278;font-size:10px;letter-spacing:.17em;text-transform:uppercase;margin-top:7px}
+.relation-pop{position:absolute;z-index:11;pointer-events:none;opacity:0;transform:translate(-50%,-50%) translateY(5px);transition:opacity .16s ease,transform .16s ease;background:rgba(18,19,24,.92);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:8px 12px;color:#cfc9c2;font-size:10px;box-shadow:0 12px 36px rgba(0,0,0,.4);white-space:nowrap}.relation-pop.show{opacity:1;transform:translate(-50%,-50%)}
+.debug{display:none;position:absolute;right:18px;top:18px;width:270px;z-index:30;background:rgba(19,20,25,.94);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.58);padding:14px;backdrop-filter:blur(20px)}.debug.visible{display:block}.debug h2{font-size:13px;margin:0 0 3px}.debug .sub{font-size:9px;color:#77737a;margin-bottom:12px}.mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#0d0e12;border-radius:10px;padding:3px;margin-bottom:12px}.mode-toggle button{border:0;border-radius:8px;padding:8px 6px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#777;background:transparent;cursor:pointer}.mode-toggle button.active{background:#2a2b31;color:#eee}.row{display:grid;grid-template-columns:1fr 64px;gap:10px;align-items:center;margin:8px 0}.row label{font-size:9px;color:#aaa5a4}.row input[type=range]{grid-column:1 / -1;width:100%;accent-color:#d8d2ca}.value{font-size:9px;text-align:right;color:#d7d2cc;font-variant-numeric:tabular-nums}.debug .buttons{display:flex;gap:6px;margin-top:12px}.debug .buttons button{flex:1;border:1px solid rgba(255,255,255,.08);background:#23242a;color:#aaa;padding:8px;border-radius:9px;font-size:9px;cursor:pointer}
+.benchmark .moment{background:linear-gradient(145deg,rgba(32,34,44,.78),rgba(17,18,26,.75));--node-color:#8da8ff !important;--node-wash:rgba(100,125,255,.11)!important}.benchmark .hero-copy h1{color:#d9ddf2}.benchmark .hero-copy p{color:#777b8b}.benchmark .message strong{color:#dfe4ff}
+@media(max-width:900px){.stage-shell{min-height:780px}.hero-copy{top:26px;max-width:270px}.hero-copy p{display:none}.tree-wrap{min-height:710px}.moment{width:150px;min-height:69px;padding:12px 13px}.moment .title{font-size:14px}.moment .meta{font-size:8px}.controls{bottom:20px;max-width:calc(100% - 24px);gap:2px}.controls button{padding:10px 10px;font-size:8px}.timeline{bottom:78px}.message{right:20px;top:110px;bottom:auto}.debug{right:8px;top:8px;width:245px}}
+@media(max-width:560px){.topbar{height:58px;padding:0 16px}.brand span,.status{display:none}.stage-shell{padding:10px;min-height:730px}.tree-wrap{border-radius:20px;min-height:690px}.hero-copy{left:20px;top:22px}.hero-copy h1{font-size:31px;max-width:230px}.eyebrow{font-size:8px}.moment{width:128px;min-height:62px;padding:10px 11px}.moment .kicker{font-size:6.5px;margin-bottom:5px}.moment .title{font-size:12.5px}.moment .meta{font-size:7px;margin-top:6px}.controls{width:auto;bottom:14px}.controls button{padding:9px 8px;font-size:7px}.timeline{left:16px;right:16px;bottom:68px}.message{display:none}.debug{position:fixed;top:64px;right:8px;max-height:calc(100vh - 74px);overflow:auto}}
+@media(prefers-reduced-motion:reduce){.moment,.message,.connection-track,.connection-active-outer,.connection-active-inner,.connection-memory,.node-memory{transition:none!important}.flow-bloom{display:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true"></div><div><strong>LoveTree</strong><span>Emotional Path Replay</span></div></div>
+    <div class="status" id="statusText">Motion system · v2</div>
+  </header>
+  <main class="stage-shell">
+    <section class="tree-wrap" id="treeWrap" aria-label="LoveTree Moment connection replay demo">
+      <div class="hero-copy"><div class="eyebrow">Moment → Connection → Moment</div><h1>Follow the feeling<br>that moved you.</h1><p>빛은 장식이 아니라 다음 순간을 찾아가게 만든 감정의 인과관계를 따라 이동합니다.</p></div>
+      <svg class="flow-svg" id="flowSvg" aria-hidden="true"><defs id="flowDefs">
+        <filter id="softGlow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="4.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="hotGlow" x="-180%" y="-180%" width="460%" height="460%"><feGaussianBlur stdDeviation="7.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="sharpGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="connectionBloom" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur stdDeviation="7.2"/></filter>
+        <filter id="memoryGlow" x="-100%" y="-150%" width="300%" height="400%"><feGaussianBlur stdDeviation="2.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs><g id="connectionLayer"></g><g id="activeGlowLayer"></g><g id="activePathLayer"></g><g id="nodeOutlineLayer"></g><g id="memoryLayer"></g><g id="trailLayer"></g><g id="tipLayer"></g></svg>
+      <div class="nodes" id="nodes"></div>
+      <div class="relation-pop" id="relationPop"></div>
+      <div class="message" id="message"><strong>YOUR MOMENTS BECOME A PATH.</strong><span>Replay the route that made your heart move.</span></div>
+      <div class="timeline"><div class="timeline-fill" id="timelineFill"></div><div class="timeline-label">Emotional path replay</div></div>
+      <div class="controls" role="group" aria-label="Path replay controls"><button class="primary" id="playBtn">PLAY PATH</button><button id="pauseBtn">PAUSE</button><button id="replayBtn">REPLAY</button><button id="speedBtn">SPEED 1×</button></div>
+      <aside class="debug" id="debugPanel" aria-label="Motion debug controls"><h2>Motion Control</h2><div class="sub">V2 connection visibility tuning · ?debug=1</div><div class="mode-toggle"><button id="modeBenchmark">BENCHMARK</button><button class="active" id="modeLoveTree">LOVETREE</button></div><div id="debugRows"></div><div class="buttons"><button id="resetDebug">Reset</button><button id="closeDebug">Hide</button></div></aside>
+    </section>
+  </main>
+</div>
+<script>
+(() => {
+  'use strict';
+  const NS='http://www.w3.org/2000/svg';
+  const params={
+    speed:1.05,
+    trailLength:58,
+    shimmerOpacity:.78,
+    tipSize:4.25,
+    borderRadius:21,
+    strokeWidth:1.45,
+    trackOpacity:.075,
+    glowStrength:1.72,
+    baseConnectionOpacity:.22,
+    activeConnectionOpacity:.82,
+    memoryTraceOpacity:.39,
+    colorSaturation:1.28,
+    arrivalImpact:1.46,
+    completedTreeGlow:1.34
+  };
+  const defaults={...params};
+  const nodesData=[
+    {id:'m1',x:.28,y:.40,color:'#f3ecde',accent:'#FFD36A',wash:'rgba(255,211,106,.10)',k:'FIRST MOMENT',title:'처음 멈춰 본 장면',meta:['2026.05.12','궁금함']},
+    {id:'m2',x:.46,y:.49,color:'#9ce8ef',accent:'#38E8FF',wash:'rgba(56,232,255,.10)',k:'NEXT MOMENT',title:'표정이 자꾸 생각나서',meta:['+ 18 min','다시 검색']},
+    {id:'m3',x:.68,y:.34,color:'#b8a6ff',accent:'#8B5CFF',wash:'rgba(139,92,255,.10)',k:'MOMENT 03',title:'무대 밖 말투가 궁금해져',meta:['+ 41 min','호기심']},
+    {id:'m4',x:.81,y:.52,color:'#ef9bb7',accent:'#FF4FA3',wash:'rgba(255,79,163,.095)',k:'MOMENT 04',title:'웃는 순간에서 마음이 움직여',meta:['+ 1 h','설렘']},
+    {id:'m5',x:.58,y:.67,color:'#dfcda7',accent:'#FFD36A',wash:'rgba(255,211,106,.095)',k:'MOMENT 05',title:'팬의 추천을 따라간 밤',meta:['DAY 2','놀람']},
+    {id:'m6',x:.35,y:.76,color:'#b8a6ff',accent:'#A56BFF',wash:'rgba(165,107,255,.10)',k:'MOMENT 06',title:'이제 좋아한다고 인정해',meta:['DAY 3','몰입']},
+    {id:'m7',x:.69,y:.81,color:'#ef9bb7',accent:'#FF5AC8',wash:'rgba(255,90,200,.10)',k:'TURNING POINT',title:'완전히 빠진 순간',meta:['DAY 5','FALL IN LOVE']}
+  ];
+  const edgesData=[
+    {id:'e1',from:'m1',to:'m2',colors:['#38E8FF','#418CFF'],label:'Because the expression stayed with me…'},
+    {id:'e2',from:'m2',to:'m3',colors:['#38E8FF','#8B5CFF'],label:'I wanted to see another side.'},
+    {id:'e3',from:'m3',to:'m4',colors:['#8B5CFF','#FF4FA3'],label:'That small laugh changed the feeling.'},
+    {id:'e4',from:'m4',to:'m5',colors:['#FF4FA3','#A56BFF'],label:'A fan said: watch this next.'},
+    {id:'e5',from:'m5',to:'m6',colors:['#A56BFF','#418CFF'],label:'I kept searching on my own.'},
+    {id:'e6',from:'m6',to:'m7',colors:['#418CFF','#FF5AC8'],label:'This was the moment I admitted it.'}
+  ];
+  const state={running:false,paused:false,token:0,fromNode:0,speedMult:1,mode:'lovetree',replayProgress:0};
+  const q=new URLSearchParams(location.search);
+  const el={app:document.getElementById('app'),wrap:document.getElementById('treeWrap'),svg:document.getElementById('flowSvg'),defs:document.getElementById('flowDefs'),nodes:document.getElementById('nodes'),connectionLayer:document.getElementById('connectionLayer'),activeGlowLayer:document.getElementById('activeGlowLayer'),activePathLayer:document.getElementById('activePathLayer'),outlineLayer:document.getElementById('nodeOutlineLayer'),memoryLayer:document.getElementById('memoryLayer'),trailLayer:document.getElementById('trailLayer'),tipLayer:document.getElementById('tipLayer'),relationPop:document.getElementById('relationPop'),timelineFill:document.getElementById('timelineFill'),message:document.getElementById('message'),play:document.getElementById('playBtn'),pause:document.getElementById('pauseBtn'),replay:document.getElementById('replayBtn'),speed:document.getElementById('speedBtn'),debug:document.getElementById('debugPanel'),rows:document.getElementById('debugRows'),modeBenchmark:document.getElementById('modeBenchmark'),modeLoveTree:document.getElementById('modeLoveTree')};
+  const nodeEls=new Map(), nodePaths=new Map(), nodeMemory=new Map(), edgePaths=new Map(), edgeMemory=new Map(), edgeActive=new Map(), edgeBase=new Map();
+  const svgEl=(name,attrs={})=>{const n=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);return n};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  function createNodes(){
+    nodesData.forEach((d,i)=>{const n=document.createElement('button');n.type='button';n.className='moment';n.dataset.id=d.id;n.setAttribute('aria-label',`${d.k} ${d.title}에서 경로 재생`);n.style.left=`${d.x*100}%`;n.style.top=`${d.y*100}%`;n.style.setProperty('--node-color',d.accent||d.color);n.style.setProperty('--node-wash',d.wash);n.innerHTML=`<span class="core"></span><div class="kicker">${d.k}</div><div class="title">${d.title}</div><div class="meta"><span>${d.meta[0]}</span><span>${d.meta[1]}</span></div>`;n.addEventListener('click',()=>startReplay(i));el.nodes.appendChild(n);nodeEls.set(d.id,n)});
+  }
+  function roundedRectPath(x,y,w,h,r){r=Math.min(r,w/2,h/2);const x2=x+w,y2=y+h;return `M ${x+r} ${y} H ${x2-r} Q ${x2} ${y} ${x2} ${y+r} V ${y2-r} Q ${x2} ${y2} ${x2-r} ${y2} H ${x+r} Q ${x} ${y2} ${x} ${y2-r} V ${y+r} Q ${x} ${y} ${x+r} ${y} Z`}
+  function hexToHsl(hex){const [r,g,b]=hex.match(/\w\w/g).map(x=>parseInt(x,16)/255),max=Math.max(r,g,b),min=Math.min(r,g,b);let h=0,s=0,l=(max+min)/2;if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4}h/=6}return[h,s,l]}
+  function hslToHex(h,s,l){const hue=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};let r,g,b;if(s===0)r=g=b=l;else{const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;r=hue(p,q,h+1/3);g=hue(p,q,h);b=hue(p,q,h-1/3)}return '#'+[r,g,b].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('')}
+  function saturateHex(hex,mult=1){const [h,s,l]=hexToHsl(hex);return hslToHex(h,clamp(s*mult,0,1),l)}
+  function nodeColor(d){return state.mode==='benchmark'?d.color:saturateHex(d.accent||d.color,params.colorSaturation)}
+  function edgePair(e){return state.mode==='benchmark'?['#7f94d8','#a7b5ee']:e.colors.map(c=>saturateHex(c,params.colorSaturation))}
+  function updatePalette(){nodesData.forEach(d=>{const n=nodeEls.get(d.id);if(n)n.style.setProperty('--node-color',nodeColor(d))})}
+  function nodeAnchorPoint(nodeId,towardId){const p=nodePaths.get(nodeId),L=p.getTotalLength(),tb=nodeEls.get(towardId).getBoundingClientRect(),rb=el.wrap.getBoundingClientRect(),target={x:tb.left-rb.left+tb.width/2,y:tb.top-rb.top+tb.height/2};let best=0,dist=Infinity;for(let i=0;i<=180;i++){const q=p.getPointAtLength(L*i/180),dd=(q.x-target.x)**2+(q.y-target.y)**2;if(dd<dist){dist=dd;best=i/180}}const point=p.getPointAtLength(L*best);return{x:point.x,y:point.y,fraction:best}}
+  function geom(){
+    const rb=el.wrap.getBoundingClientRect();el.svg.setAttribute('viewBox',`0 0 ${rb.width} ${rb.height}`);
+    el.connectionLayer.replaceChildren();el.activeGlowLayer.replaceChildren();el.activePathLayer.replaceChildren();el.outlineLayer.replaceChildren();el.memoryLayer.replaceChildren();
+    el.defs.querySelectorAll('.edge-gradient').forEach(n=>n.remove());edgePaths.clear();edgeMemory.clear();edgeActive.clear();edgeBase.clear();nodePaths.clear();nodeMemory.clear();
+    const boxes={};
+    updatePalette();
+    nodesData.forEach(d=>{const b=nodeEls.get(d.id).getBoundingClientRect();boxes[d.id]={x:b.left-rb.left,y:b.top-rb.top,w:b.width,h:b.height,cx:b.left-rb.left+b.width/2,cy:b.top-rb.top+b.height/2};const p=svgEl('path',{d:roundedRectPath(boxes[d.id].x,boxes[d.id].y,boxes[d.id].w,boxes[d.id].h,params.borderRadius),class:'node-track','data-node':d.id});p.style.setProperty('--track-opacity',params.trackOpacity);p.style.setProperty('--stroke-width',params.strokeWidth);el.outlineLayer.appendChild(p);nodePaths.set(d.id,p);const mem=svgEl('path',{d:p.getAttribute('d'),class:'node-memory',stroke:nodeColor(d),'data-node-memory':d.id});el.memoryLayer.appendChild(mem);nodeMemory.set(d.id,mem)});
+    edgesData.forEach((e,i)=>{const a=boxes[e.from],b=boxes[e.to],start=nodeAnchorPoint(e.from,e.to),end=nodeAnchorPoint(e.to,e.from),sx=start.x,sy=start.y,tx=end.x,ty=end.y,dx=tx-sx,dy=ty-sy;
+      // V2 branch grammar: shared-direction tangent first, then organic fork. Endpoints remain exact node-perimeter anchors.
+      const horizontal=Math.abs(dx)>Math.abs(dy)*.78,branchSign=[1,-1,-1,1,1,-1][i]||1,bend=Math.min(84,Math.max(28,(Math.abs(dx)+Math.abs(dy))*.12));
+      let c1x=sx+dx*.31,c1y=sy+dy*.18,c2x=sx+dx*.70,c2y=sy+dy*.82;
+      if(horizontal){c1y+=branchSign*bend;c2y-=branchSign*bend*.42}else{c1x+=branchSign*bend;c2x-=branchSign*bend*.42}
+      if(i===0||i===4){c1x=sx+dx*.18;c1y=sy+dy*.38;c2x=sx+dx*.56;c2y=sy+dy*.82}
+      const pathD=`M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${tx} ${ty}`;
+      const [c0,c1]=edgePair(e),grad=svgEl('linearGradient',{id:`grad-${e.id}`,class:'edge-gradient',gradientUnits:'userSpaceOnUse',x1:sx,y1:sy,x2:tx,y2:ty});grad.append(svgEl('stop',{offset:'0%','stop-color':c0}),svgEl('stop',{offset:'100%','stop-color':c1}));el.defs.appendChild(grad);
+      const stroke=`url(#grad-${e.id})`,track=svgEl('path',{d:pathD,class:'connection-track',stroke,'data-edge':e.id}),outer=svgEl('path',{d:pathD,class:'connection-active-outer',stroke,'data-edge-active-outer':e.id}),inner=svgEl('path',{d:pathD,class:'connection-active-inner',stroke,'data-edge-active-inner':e.id}),mem=svgEl('path',{d:pathD,class:'connection-memory',stroke,'data-edge-memory':e.id}),hit=svgEl('path',{d:pathD,class:'connection-hit','data-edge-hit':e.id});
+      hit.addEventListener('mouseenter',()=>showRelation(e,mem));hit.addEventListener('mouseleave',hideRelation);el.connectionLayer.append(track,hit);el.activeGlowLayer.appendChild(outer);el.activePathLayer.appendChild(inner);el.memoryLayer.appendChild(mem);edgePaths.set(e.id,track);edgeBase.set(e.id,track);edgeActive.set(e.id,{outer,inner});edgeMemory.set(e.id,mem)
+    });
+    applyParamStyles();
+  }
+  function mixColor(a,b,t){const p=s=>s.match(/\w\w/g).map(x=>parseInt(x,16)),A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+  function showRelation(e,path){const L=path.getTotalLength(),pt=path.getPointAtLength(L*.5),rb=el.wrap.getBoundingClientRect();el.relationPop.textContent=e.label;el.relationPop.style.left=pt.x+'px';el.relationPop.style.top=pt.y+'px';el.relationPop.classList.add('show')}
+  function hideRelation(){el.relationPop.classList.remove('show')}
+  function applyParamStyles(){
+    document.documentElement.style.setProperty('--node-radius',params.borderRadius+'px');document.documentElement.style.setProperty('--track-opacity',params.trackOpacity);document.documentElement.style.setProperty('--stroke-width',params.strokeWidth);
+    const impact=params.arrivalImpact;document.documentElement.style.setProperty('--arrival-halo',(20+impact*8)+'px');document.documentElement.style.setProperty('--arrival-bloom',(46+impact*25)+'px');document.documentElement.style.setProperty('--arrival-core',(12+impact*8)+'px');document.documentElement.style.setProperty('--arrival-wash-opacity',Math.min(.98,.58+impact*.2));
+    document.querySelectorAll('.connection-track').forEach(p=>{p.style.strokeWidth=Math.max(1.2,Math.min(1.6,params.strokeWidth))+'px';p.style.opacity=state.mode==='benchmark'?params.trackOpacity:params.baseConnectionOpacity});
+    document.querySelectorAll('.connection-active-inner').forEach(p=>{p.style.strokeWidth=Math.min(3,Math.max(1.8,params.strokeWidth*1.55))+'px'});document.querySelectorAll('.connection-active-outer').forEach(p=>{p.style.strokeWidth=(6+params.glowStrength*3.2)+'px'});
+    document.querySelectorAll('.connection-memory').forEach(p=>{p.style.strokeWidth=Math.min(2.2,Math.max(1.35,params.strokeWidth*1.15))+'px'});document.querySelectorAll('.node-track').forEach(p=>{p.style.strokeWidth=params.strokeWidth;p.style.stroke=`rgba(235,232,227,${params.trackOpacity})`});updatePalette()
+  }
+  const rafWait=()=>new Promise(r=>requestAnimationFrame(r));
+  async function waitWhilePaused(token){while(state.paused&&token===state.token) await new Promise(r=>setTimeout(r,50))}
+  function clearPulse(){el.trailLayer.replaceChildren();el.tipLayer.replaceChildren()}
+  function animateAlong(path,{duration=900,color='#fff',start=0,end=1,token=state.token,onProgress=null,tipScale=1,intensity=1}={}){
+    return new Promise(resolve=>{const L=path.getTotalLength(),trailN=clamp(Math.round(params.trailLength/2.45),6,34),tipR=params.tipSize*tipScale,halo=svgEl('circle',{r:tipR*3.45,fill:color,opacity:.17*params.glowStrength*intensity,class:'flow-bloom',filter:'url(#hotGlow)'}),tip=svgEl('circle',{r:tipR,fill:'#ffffff',class:'tip-dot',filter:'url(#sharpGlow)'});el.tipLayer.append(halo,tip);const dots=[];for(let i=0;i<trailN;i++){const c=svgEl('circle',{r:Math.max(.55,tipR*(1-i/trailN)*.76),fill:color,class:'trail-dot'});c.setAttribute('filter','url(#softGlow)');el.trailLayer.appendChild(c);dots.push(c)}let t0=performance.now(),pausedAt=0;
+      function frame(now){if(token!==state.token){tip.remove();halo.remove();dots.forEach(d=>d.remove());return resolve(false)}if(state.paused){pausedAt=now;return requestAnimationFrame(frame)}if(pausedAt){t0+=now-pausedAt;pausedAt=0}const raw=clamp((now-t0)/(duration/(params.speed*state.speedMult)),0,1),ease=raw<.08?raw*(.88+raw*1.5):raw,p=start+(end-start)*ease,pos=((p%1)+1)%1,pt=path.getPointAtLength(pos*L);tip.setAttribute('cx',pt.x);tip.setAttribute('cy',pt.y);halo.setAttribute('cx',pt.x);halo.setAttribute('cy',pt.y);halo.setAttribute('opacity',(.12*params.glowStrength*intensity+.09*Math.sin(raw*Math.PI)).toFixed(3));const trailFrac=Math.max(.007,params.trailLength/Math.max(L,1));dots.forEach((d,i)=>{const back=trailFrac*(i+1)/trailN;let pp=p-back;if(pp<start)pp=start;const q=((pp%1)+1)%1,qp=path.getPointAtLength(q*L),fall=1-(i+1)/(trailN+1);d.setAttribute('cx',qp.x);d.setAttribute('cy',qp.y);d.setAttribute('opacity',(params.shimmerOpacity*intensity*Math.pow(fall,1.75)).toFixed(3))});onProgress?.(raw);if(raw<1)requestAnimationFrame(frame);else{tip.remove();halo.remove();dots.forEach(d=>d.remove());resolve(true)}}requestAnimationFrame(frame)})
+  }
+  function anchorFraction(nodeId,towardId){const p=nodePaths.get(nodeId),L=p.getTotalLength();const nb=nodeEls.get(nodeId).getBoundingClientRect(),tb=nodeEls.get(towardId).getBoundingClientRect(),rb=el.wrap.getBoundingClientRect();const target={x:tb.left-rb.left+tb.width/2,y:tb.top-rb.top+tb.height/2};let best=0,dist=Infinity;for(let i=0;i<=120;i++){const q=p.getPointAtLength(L*i/120),dd=(q.x-target.x)**2+(q.y-target.y)**2;if(dd<dist){dist=dd;best=i/120}}return best}
+  async function pulseNode(index,fromId=null,toId=null,token=state.token){const d=nodesData[index],p=nodePaths.get(d.id),mem=nodeMemory.get(d.id),n=nodeEls.get(d.id);n.classList.add('awake');let start=.04;if(fromId)start=anchorFraction(d.id,fromId);let end=start+1;if(toId){const exit=anchorFraction(d.id,toId);let delta=exit-start;while(delta<0)delta+=1;end=start+1+delta}mem.setAttribute('stroke',nodeColor(d));mem.style.opacity=.20;const ok=await animateAlong(p,{duration:900,color:nodeColor(d),start,end,token});if(ok)mem.style.opacity=.34;return ok}
+  async function pulseEdge(index,token=state.token){const e=edgesData[index],p=edgePaths.get(e.id),mem=edgeMemory.get(e.id),active=edgeActive.get(e.id),[a,b]=edgePair(e),c=mixColor(a,b,.48);active.inner.style.opacity=state.mode==='benchmark'?.28:params.activeConnectionOpacity;active.outer.style.opacity=state.mode==='benchmark'?.06:Math.min(.42,params.activeConnectionOpacity*.34*params.glowStrength);mem.style.opacity=state.mode==='benchmark'?.10:Math.max(.12,params.memoryTraceOpacity*.34);const ok=await animateAlong(p,{duration:740,color:c,start:0,end:1,token,onProgress:r=>{mem.style.opacity=(state.mode==='benchmark'?(.10+.18*r):(.12+(params.memoryTraceOpacity-.12)*r)).toFixed(3)}});active.inner.style.opacity=0;active.outer.style.opacity=0;if(ok)mem.style.opacity=state.mode==='benchmark'?.28:params.memoryTraceOpacity;return ok}
+  async function impact(index,token=state.token){if(token!==state.token)return false;const n=nodeEls.get(nodesData[index].id);n.classList.add('arrival','awake');await new Promise(r=>setTimeout(r,(210+params.arrivalImpact*38)/(params.speed*state.speedMult)));n.classList.remove('arrival');return token===state.token}
+  async function startReplay(fromIndex=0){state.token++;const token=state.token;state.running=true;state.paused=false;state.fromNode=fromIndex;state.replayProgress=0;el.wrap.classList.remove('living-tree');el.message.classList.remove('visible');el.play.textContent='PLAYING';el.play.disabled=true;el.pause.textContent='PAUSE';resetVisual(fromIndex>0);const totalSteps=(nodesData.length-fromIndex)*2-1;let done=0;for(let i=fromIndex;i<nodesData.length;i++){
+      const prev=i>fromIndex?nodesData[i-1].id:null,next=i<nodesData.length-1?nodesData[i+1].id:null;
+      if(i===fromIndex) await impact(i,token);
+      if(!await pulseNode(i,prev,next,token))break;done++;updateProgress(done/totalSteps);
+      if(i<nodesData.length-1){if(!await pulseEdge(i,token))break;done++;updateProgress(done/totalSteps);if(!await impact(i+1,token))break}
+    }
+    if(token===state.token){state.running=false;el.play.disabled=false;el.play.textContent='PLAY PATH';updateProgress(1);startClimax(token)}
+  }
+  function startClimax(token){if(token!==state.token)return;el.wrap.classList.add('living-tree');const stable=state.mode==='benchmark'?.28:params.memoryTraceOpacity,peak=Math.min(.68,stable*(1+.42*params.completedTreeGlow));edgeMemory.forEach(p=>p.style.opacity=peak);nodeMemory.forEach(p=>p.style.opacity=Math.min(.58,.30+.13*params.completedTreeGlow));edgeBase.forEach(p=>p.style.opacity=state.mode==='benchmark'?params.trackOpacity:Math.min(.34,params.baseConnectionOpacity+.055*params.completedTreeGlow));nodesData.forEach(d=>nodeEls.get(d.id).classList.add('awake'));
+    setTimeout(()=>{if(token!==state.token)return;edgeMemory.forEach(p=>p.style.opacity=stable);edgeBase.forEach(p=>p.style.opacity=state.mode==='benchmark'?params.trackOpacity:params.baseConnectionOpacity);el.message.classList.add('visible')},650);
+    const secondaries=[1,3,5];secondaries.forEach((idx,j)=>setTimeout(async()=>{if(token!==state.token||state.running)return;const p=edgePaths.get(edgesData[idx].id),[a,b]=edgePair(edgesData[idx]),c=mixColor(a,b,.52);await animateAlong(p,{duration:3200+j*420,color:c,start:0,end:1,token,tipScale:.48,intensity:.56})},820+j*620))
+  }
+  function resetVisual(keepEarlier=false){clearPulse();el.wrap.classList.remove('living-tree');nodeEls.forEach(n=>n.classList.remove('arrival','awake'));nodeMemory.forEach(p=>p.style.opacity=0);edgeMemory.forEach(p=>p.style.opacity=0);edgeActive.forEach(({outer,inner})=>{outer.style.opacity=0;inner.style.opacity=0});edgeBase.forEach(p=>p.style.opacity=state.mode==='benchmark'?params.trackOpacity:params.baseConnectionOpacity);el.timelineFill.style.width='0%';if(keepEarlier){for(let i=0;i<state.fromNode;i++){nodeEls.get(nodesData[i].id).classList.add('awake');nodeMemory.get(nodesData[i].id).style.opacity=.28;if(i<edgesData.length)edgeMemory.get(edgesData[i].id).style.opacity=state.mode==='benchmark'?.28:params.memoryTraceOpacity}}}
+  function updateProgress(v){state.replayProgress=v;el.timelineFill.style.width=`${clamp(v,0,1)*100}%`}
+  function togglePause(){if(!state.running)return;state.paused=!state.paused;el.pause.textContent=state.paused?'RESUME':'PAUSE'}
+  function cycleSpeed(){const values=[.75,1,1.25,1.5,2],i=values.indexOf(state.speedMult);state.speedMult=values[(i+1)%values.length];el.speed.textContent=`SPEED ${state.speedMult}×`}
+  function setMode(mode){state.mode=mode;el.app.classList.toggle('benchmark',mode==='benchmark');el.modeBenchmark.classList.toggle('active',mode==='benchmark');el.modeLoveTree.classList.toggle('active',mode==='lovetree');if(mode==='benchmark'){Object.assign(params,{speed:.8,trailLength:41,shimmerOpacity:.60,tipSize:1.8,borderRadius:13,strokeWidth:1.3,trackOpacity:.05,glowStrength:.92,baseConnectionOpacity:.05,activeConnectionOpacity:.32,memoryTraceOpacity:.28,colorSaturation:.6,arrivalImpact:.85,completedTreeGlow:.65})}else Object.assign(params,defaults);syncDebug();geom()}
+  const controlDefs=[['speed','Speed',.2,3,.1],['trailLength','Trail Length',6,72,1],['shimmerOpacity','Shimmer Opacity',.05,1,.05],['tipSize','Tip Size',.7,6,.1],['borderRadius','Border Radius',6,34,1],['strokeWidth','Stroke Width',.6,3,.1],['trackOpacity','Track Opacity',.01,.35,.01],['glowStrength','Glow Strength',.2,2.4,.1],['baseConnectionOpacity','Base Connection Opacity',.05,.35,.01],['activeConnectionOpacity','Active Connection Opacity',.2,.95,.01],['memoryTraceOpacity','Memory Trace Opacity',.08,.6,.01],['colorSaturation','Color Saturation',.4,1.8,.05],['arrivalImpact','Arrival Impact',.6,2.2,.05],['completedTreeGlow','Completed Tree Glow',.4,2,.05]];
+  function buildDebug(){controlDefs.forEach(([key,label,min,max,step])=>{const wrap=document.createElement('div');wrap.className='row';wrap.innerHTML=`<label for="dbg-${key}">${label}</label><span class="value" id="val-${key}"></span><input id="dbg-${key}" type="range" min="${min}" max="${max}" step="${step}">`;const inp=wrap.querySelector('input');inp.addEventListener('input',()=>{params[key]=Number(inp.value);wrap.querySelector('.value').textContent=Number(inp.value).toFixed(step<1?(step===.01?2:1):0);if(['borderRadius','strokeWidth','trackOpacity','baseConnectionOpacity','colorSaturation'].includes(key))geom();else applyParamStyles()});el.rows.appendChild(wrap)});syncDebug()}
+  function syncDebug(){controlDefs.forEach(([key,,, ,step])=>{const inp=document.getElementById('dbg-'+key),v=document.getElementById('val-'+key);if(!inp)return;inp.value=params[key];v.textContent=Number(params[key]).toFixed(step<1?(step===.01?2:1):0)})}
+  el.play.addEventListener('click',()=>startReplay(0));el.pause.addEventListener('click',togglePause);el.replay.addEventListener('click',()=>startReplay(0));el.speed.addEventListener('click',cycleSpeed);el.modeBenchmark.addEventListener('click',()=>setMode('benchmark'));el.modeLoveTree.addEventListener('click',()=>setMode('lovetree'));document.getElementById('resetDebug').addEventListener('click',()=>setMode(state.mode));document.getElementById('closeDebug').addEventListener('click',()=>el.debug.classList.remove('visible'));
+  createNodes();buildDebug();if(q.get('debug')==='1')el.debug.classList.add('visible');if(q.get('mode')==='benchmark')setMode('benchmark');
+  const ro=new ResizeObserver(()=>{geom()});ro.observe(el.wrap);requestAnimationFrame(()=>{geom();if(q.get('autoplay')!=='0'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)setTimeout(()=>startReplay(0),700)});
+  document.addEventListener('keydown',ev=>{if(ev.code==='Space'&&ev.target===document.body){ev.preventDefault();state.running?togglePause():startReplay(0)}if(ev.key==='r'||ev.key==='R')startReplay(0)});
+  window.__LOVE_TREE_MOTION__={params,state,startReplay,resetVisual,geom,setMode,nodesData,edgesData};
+})();
+</script>
+</body>
+</html>

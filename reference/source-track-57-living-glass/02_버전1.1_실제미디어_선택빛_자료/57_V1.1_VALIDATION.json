@@ -1,0 +1,44 @@
+{
+  "track": 57,
+  "version": "V1.1",
+  "status": "CANDIDATE_FOR_PRODUCT_OWNER_REVIEW",
+  "scope": [
+    "REAL_MEDIA",
+    "SELECTED_LIGHT_BLOOM"
+  ],
+  "v1_preserved": {
+    "sha256": "df7a4fcb09468d756a60d8fc2a72cae74952a21a916c89375cbfa1332048f61d",
+    "expected": "df7a4fcb09468d756a60d8fc2a72cae74952a21a916c89375cbfa1332048f61d"
+  },
+  "static": {
+    "three_js_refs": 0,
+    "webgl_refs": 0,
+    "external_script_src": 0,
+    "external_stylesheet": 0,
+    "media_kind_present": true,
+    "youtube_parser": true,
+    "safe_http_url": true,
+    "selected_bloom": true,
+    "arrival_bloom": true,
+    "thread_orb": true,
+    "spring_solver_preserved": true,
+    "cursor_glare_preserved": true
+  },
+  "qa": {
+    "core": true,
+    "youtube_contract": true,
+    "mobile": true,
+    "reduced_motion": true
+  },
+  "youtube_live_network": "BLOCKED_BY_MANAGED_CHROMIUM_POLICY",
+  "actual_playback_evidence": "local MP4 in actual Chromium recording",
+  "recording": {
+    "duration_seconds": 37.9,
+    "width": 1440,
+    "height": 900,
+    "fps": 30,
+    "codec": "h264"
+  },
+  "candidate_sha256": "1849572b17c973f0e687e380a564c62f21069eeb67971eaf2d4252cede7884bd",
+  "pass": true
+}

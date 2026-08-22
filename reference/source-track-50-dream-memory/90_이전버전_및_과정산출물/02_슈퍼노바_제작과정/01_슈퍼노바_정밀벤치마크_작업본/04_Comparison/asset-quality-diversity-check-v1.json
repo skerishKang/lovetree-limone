@@ -1,0 +1,82 @@
+{
+  "status": "ASSET_STAGE_PASS_CANDIDATE_HTML_HOLD",
+  "female_character_system": {
+    "named_cast_count": 6,
+    "named_cast_appearances_excluding_ambient_group": {
+      "A": 4,
+      "B": 4,
+      "C": 2,
+      "D": 2,
+      "E": 4,
+      "F": 2
+    },
+    "ambient_group_shots": [
+      "S13",
+      "S15"
+    ]
+  },
+  "quality": {
+    "master_count": 26,
+    "all_exact_1920x1080": true,
+    "thumbnail_upscale_used": false,
+    "source_generation_resolution": "2048x1170 or 2048x1175 for Firefly photos; 1920x1080 for logo plates",
+    "scene_specific_assets": true
+  },
+  "reuse": {
+    "same_source_file_reused_across_shots": false,
+    "rapid_montage_uses_separate_files": true,
+    "same_camera_start_end_plate_exception": [
+      "S15_group_six.png",
+      "S15b_empty_debris.png"
+    ],
+    "near_duplicate_ahash_pairs_under_18": [
+      {
+        "a": "S16_lovetree_neon_logo.png",
+        "b": "S17_lovetree_wireframe_logo.png",
+        "ahash_distance": 8
+      }
+    ]
+  },
+  "visual_distribution": {
+    "dark_cyan": [
+      "S01",
+      "S03",
+      "S05",
+      "S08",
+      "S11",
+      "S15"
+    ],
+    "electric_blue": [
+      "S08",
+      "S11",
+      "S15",
+      "S17"
+    ],
+    "vivid_pink": [
+      "S06",
+      "S10",
+      "S14",
+      "S16",
+      "S18"
+    ],
+    "bright_white": [
+      "S07",
+      "S14a-g"
+    ],
+    "warm_orange": [
+      "S04a",
+      "S12"
+    ],
+    "black": [
+      "S13",
+      "S16",
+      "S17",
+      "S18"
+    ]
+  },
+  "self_review_notes": [
+    "S02 distortion is intentional optical-lens distortion, not a general low-quality face.",
+    "S11 uses a stylized short-bob visual; face remains full-resolution but should be visually rechecked by product owner.",
+    "S13 and S15 group characters are purposely not treated as locked identities; they increase teaser-world density without forcing repeated portraits."
+  ]
+}

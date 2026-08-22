@@ -1,0 +1,95 @@
+name: Track66 V1.2 native browser QA evidence
+
+# Evidence-only workflow for PR #217 (Track66 V1.2 continuous-scroll first
+# journey). It runs the dedicated native QA helper `qa/track66-native-browser-qa.mjs`
+# (intentionally OUTSIDE the standard `tests/*.test.mjs` corpus so the shared
+# A-track fail-closed browser inventory is NOT affected) and uploads the
+# 7 screenshots + qa-results.json (8 files total) as a GitHub artifact so the
+# Web CTO can review them directly. It does NOT modify backend/API/DB/Auth, nor
+# issue #204. Pure additive QA evidence gate.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  track66-native-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install chromium
+
+      - name: Run Track66 V1.2 native browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/track66-native-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/v4/journey?v12=1" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/track66-native-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/track66-native-qa-server.log
+            exit 1
+          fi
+
+          mkdir -p qa-artifacts/track66-native
+          TRACK66_QA_URL="http://127.0.0.1:3000" \
+            node qa/track66-native-browser-qa.mjs
+
+      - name: Upload Track66 native QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track66-v12-native-qa-evidence
+          # Artifact contents (8 files): 7 PNG screenshots + qa-results.json
+          #   desktop-1280x800.png, desktop-1280x800-viewport.png,
+          #   desktop-1280x800-reduced-motion.png, phone-390x844.png,
+          #   phone-390x844-viewport.png, mobile-320x720.png,
+          #   mobile-320x720-viewport.png, qa-results.json
+          path: |
+            qa-artifacts/track66-native/*.png
+            qa-artifacts/track66-native/qa-results.json
+          if-no-files-found: warn

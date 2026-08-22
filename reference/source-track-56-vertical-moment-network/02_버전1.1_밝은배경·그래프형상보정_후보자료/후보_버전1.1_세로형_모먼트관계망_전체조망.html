@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
+<title>LoveTree · 세로형 모먼트관계망 전체조망 · 버전1.1 후보</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f8f5f2;--bg2:#f3f1f7;--ink:#26242d;--muted:#777481;
+  --panel:rgba(255,255,255,.76);--panel-strong:rgba(255,255,255,.92);--line:rgba(78,73,88,.12);
+  --violet:#8e6af0;--rose:#e85f91;--cyan:#29a9c7;--amber:#d9962f;--mint:#3aaa82;--blue:#557fd6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,"Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{position:relative;width:100%;height:100%;overflow:hidden;background:
+  radial-gradient(900px 700px at 15% 12%,rgba(232,95,145,.08),transparent 68%),
+  radial-gradient(900px 900px at 88% 42%,rgba(142,106,240,.07),transparent 70%),
+  radial-gradient(850px 900px at 24% 88%,rgba(41,169,199,.055),transparent 70%),
+  linear-gradient(180deg,#fbfaf8 0%,#f7f4f2 48%,#f2f0f6 100%)}
+#stage{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.paper-noise{position:absolute;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E")}
+.topbar{position:absolute;left:20px;right:20px;top:16px;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;pointer-events:none}
+.brand,.top-actions{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid rgba(72,65,82,.11);border-radius:999px;background:rgba(255,255,255,.74);box-shadow:0 8px 28px rgba(68,55,72,.07);backdrop-filter:blur(18px)}
+.brand-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--violet));box-shadow:0 0 14px rgba(232,95,145,.25)}
+.brand b{font-size:11px;letter-spacing:.14em}.brand span{font-size:10px;color:rgba(55,51,61,.46)}
+.top-actions{display:flex;gap:7px}.pill{height:36px;padding:0 13px;border-radius:999px;border:1px solid rgba(77,71,87,.12);background:rgba(255,255,255,.72);font-size:10px;color:rgba(51,47,57,.65);box-shadow:0 8px 24px rgba(70,60,78,.05);backdrop-filter:blur(16px)}
+.pill:hover,.pill:focus-visible{outline:none;border-color:rgba(79,70,91,.28);background:#fff;color:#26242d}
+.hero{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:16;text-align:center;pointer-events:none;width:min(790px,calc(100vw - 52px));transition:opacity .28s ease,transform .28s ease}
+.hero.dim{opacity:.07;transform:translateX(-50%) translateY(-14px)}
+.eyebrow{font-size:9px;letter-spacing:.23em;color:rgba(50,45,57,.38);margin-bottom:9px}.hero h1{margin:0;font-weight:650;font-size:clamp(29px,3.4vw,50px);letter-spacing:-.055em;line-height:1.07;color:#2b2831}.hero p{margin:10px auto 0;max-width:650px;font-size:12px;line-height:1.68;color:rgba(50,45,57,.52)}
+.left-rail{position:absolute;left:20px;top:116px;bottom:22px;z-index:24;width:210px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.legend,.controls{pointer-events:auto;border:1px solid rgba(76,68,86,.11);border-radius:20px;background:rgba(255,255,255,.72);backdrop-filter:blur(18px);padding:13px;box-shadow:0 14px 40px rgba(69,56,76,.06)}
+.legend h3,.controls h3{font-size:9px;letter-spacing:.14em;color:rgba(47,43,52,.42);margin:0 0 9px}.legend-row{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:10px;color:rgba(47,43,52,.64)}.swatch{width:7px;height:7px;border-radius:50%}
+.controls{display:grid;gap:7px}.control-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mini{height:34px;border:1px solid rgba(76,68,86,.10);background:rgba(250,248,249,.82);border-radius:11px;font-size:10px;color:rgba(47,43,52,.62)}.mini:hover,.mini:focus-visible{outline:none;color:#26242d;border-color:rgba(76,68,86,.24);background:#fff}
+.progress-rail{position:absolute;right:20px;top:116px;bottom:26px;z-index:25;width:40px;border-radius:22px;border:1px solid rgba(75,67,84,.10);background:rgba(255,255,255,.67);backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;padding:13px 0;pointer-events:auto;box-shadow:0 12px 34px rgba(62,51,69,.06)}
+.progress-line{position:relative;flex:1;width:2px;background:rgba(59,54,65,.10);border-radius:99px;margin:8px 0}.progress-thumb{position:absolute;left:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:#3b3742;border:3px solid #fff;box-shadow:0 2px 9px rgba(45,39,50,.20)}.progress-label{font-size:8px;letter-spacing:.08em;color:rgba(47,43,52,.40);writing-mode:vertical-rl;transform:rotate(180deg)}
+.detail{position:absolute;right:74px;top:116px;bottom:26px;width:350px;z-index:28;border-radius:24px;border:1px solid rgba(81,72,91,.12);background:linear-gradient(150deg,rgba(255,255,255,.94),rgba(248,246,249,.89));backdrop-filter:blur(24px);box-shadow:0 28px 74px rgba(59,46,68,.14);padding:18px;transform:translateX(calc(100% + 110px));opacity:0;transition:.34s cubic-bezier(.2,.8,.2,1);overflow:auto}.detail.open{transform:none;opacity:1}
+.detail-kicker{font-size:9px;letter-spacing:.16em;color:rgba(47,43,52,.42)}.detail h2{font-size:25px;line-height:1.18;letter-spacing:-.04em;margin:8px 0 11px}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}.chip{font-size:9px;padding:6px 8px;border:1px solid rgba(75,67,84,.10);border-radius:999px;background:rgba(255,255,255,.78);color:rgba(47,43,52,.62)}
+.detail-block{padding:13px 14px;border:1px solid rgba(75,67,84,.08);border-radius:15px;background:rgba(255,255,255,.58);margin-top:9px}.detail-block span{display:block;font-size:8px;letter-spacing:.12em;color:rgba(47,43,52,.40);margin-bottom:6px}.detail-block p{margin:0;font-size:11px;line-height:1.7;color:rgba(47,43,52,.72)}
+.path-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:7px;margin-top:13px}.action{height:43px;border-radius:13px;border:1px solid rgba(75,67,84,.11);background:#fff;font-size:10px}.action.primary{color:#fff;background:linear-gradient(135deg,#8f68e9,#d45c92);border:0;box-shadow:0 9px 24px rgba(132,83,151,.18)}.close{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(75,67,84,.10);background:#fff}
+.toast{position:absolute;left:50%;bottom:26px;z-index:40;transform:translate(-50%,16px);opacity:0;pointer-events:none;padding:10px 15px;border-radius:999px;background:rgba(45,41,49,.88);font-size:10px;color:#fff;transition:.25s ease}.toast.show{opacity:1;transform:translate(-50%,0)}
+.mobile-ribbon{display:none}
+@media(max-width:980px){.left-rail{display:none}.hero{top:65px}.detail{right:16px;width:330px}.progress-rail{right:10px}}
+@media(max-width:640px){
+ .topbar{left:9px;right:9px;top:9px}.brand{padding:8px 10px}.brand span{display:none}.top-actions .pill:first-child{display:none}.hero{top:61px;width:calc(100vw - 30px)}.hero h1{font-size:27px}.hero p{font-size:11px;line-height:1.55;max-width:345px}.progress-rail{display:none}
+ .detail{left:6px;right:6px;top:auto;bottom:6px;width:auto;max-height:66svh;border-radius:23px 23px 17px 17px;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom));transform:translateY(calc(100% + 40px))}.detail.open{transform:translateY(0)}.detail h2{font-size:22px}.path-actions{grid-template-columns:1fr}.action{min-height:48px}
+ .mobile-ribbon{display:flex;position:absolute;left:8px;right:8px;bottom:10px;z-index:26;gap:6px;padding:6px;overflow-x:auto;scrollbar-width:none;border:1px solid rgba(73,65,83,.10);border-radius:16px;background:rgba(255,255,255,.86);box-shadow:0 12px 32px rgba(55,44,64,.12);backdrop-filter:blur(18px)}.mobile-ribbon::-webkit-scrollbar{display:none}.mobile-ribbon button{flex:0 0 auto;height:40px;padding:0 12px;border-radius:12px;border:0;background:transparent;font-size:10px;color:rgba(47,43,52,.56)}.mobile-ribbon button.active{background:#302c35;color:#fff}.toast{top:56px;bottom:auto;max-width:calc(100vw - 22px);border-radius:15px;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+ <canvas id="stage" aria-label="세로형 모먼트 관계망 전체조망"></canvas><div class="paper-noise"></div>
+ <header class="topbar"><div class="brand"><i class="brand-dot"></i><b>LOVETREE</b><span>MY TREE · OTHER VIEWS · 관계 지도</span></div><div class="top-actions"><button class="pill" id="overviewBtn">전체조망</button><button class="pill" id="helpBtn">사용법</button></div></header>
+ <div class="hero"><div class="eyebrow">VERTICAL MOMENT NETWORK · V1.1 VISUAL RESCUE</div><h1>쌓여 온 관계망을,<br/>자라난 모습 그대로 훑어봅니다.</h1><p>작은 점은 실제 Moment, 선은 실제 Connection입니다. 큰 허브와 중형 앵커는 Season·Person·Emotion·Path를 묶어 보여주는 보기 전용 집계입니다.</p></div>
+ <aside class="left-rail"><div class="legend"><h3>감정 클러스터</h3><div class="legend-row"><i class="swatch" style="background:#e85f91"></i>처음 빠져든 순간</div><div class="legend-row"><i class="swatch" style="background:#8e6af0"></i>무대와 퍼포먼스</div><div class="legend-row"><i class="swatch" style="background:#29a9c7"></i>콘텐츠 탐색</div><div class="legend-row"><i class="swatch" style="background:#d9962f"></i>사람과 관계</div><div class="legend-row"><i class="swatch" style="background:#3aaa82"></i>다시 찾은 기억</div><div class="legend-row"><i class="swatch" style="background:#557fd6"></i>다음 계절</div></div><div class="controls"><h3>탐색</h3><div class="control-row"><button class="mini" id="zoomIn">확대 +</button><button class="mini" id="zoomOut">축소 −</button></div><button class="mini" id="focusFirst">First Moment</button><button class="mini" id="resetFocus">선택 해제</button></div></aside>
+ <aside class="progress-rail" id="progressRail"><div class="progress-label">TOP → BOTTOM</div><div class="progress-line" id="progressLine"><i class="progress-thumb" id="progressThumb"></i></div></aside>
+ <aside class="detail" id="detail"><button class="close" id="detailClose">×</button><div class="detail-kicker" id="detailKicker">MOMENT</div><h2 id="detailTitle"></h2><div class="chips"><span class="chip" id="detailDate"></span><span class="chip" id="detailEmotion"></span><span class="chip" id="detailCluster"></span></div><div class="detail-block"><span>내 메모</span><p id="detailNote"></p></div><div class="detail-block"><span>WHY NEXT · 다음 순간으로 이어진 이유</span><p id="detailWhy"></p></div><div class="detail-block"><span>다음 목적지</span><p id="detailNext"></p></div><div class="path-actions"><button class="action" id="openMoment">Moment 열기</button><button class="action primary" id="followPath">이 경로 따라가기 →</button></div></aside>
+ <div class="mobile-ribbon" id="mobileRibbon"></div><div class="toast" id="toast"></div>
+</div>
+<script>
+(()=>{
+const canvas=document.getElementById('stage'),ctx=canvas.getContext('2d',{alpha:false});
+const $=id=>document.getElementById(id), dpr=Math.min(2,devicePixelRatio||1), reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COLORS=['#e85f91','#8e6af0','#29a9c7','#d9962f','#3aaa82','#557fd6'];
+const CLUSTERS=[
+ {id:'c0',name:'처음 빠져든 순간',sub:'FIRST MOMENT · 설렘',color:COLORS[0],x:700,y:560,count:28,shape:'fan',sx:420,sy:330,hubR:22,anchors:2},
+ {id:'c1',name:'무대와 퍼포먼스',sub:'PATH · 몰입',color:COLORS[1],x:920,y:1260,count:56,shape:'double',sx:520,sy:430,hubR:31,anchors:4},
+ {id:'c2',name:'콘텐츠 탐색',sub:'DISCOVERY · 호기심',color:COLORS[2],x:690,y:1940,count:68,shape:'knot',sx:520,sy:440,hubR:27,anchors:4},
+ {id:'c3',name:'사람과 관계',sub:'PEOPLE · 애정',color:COLORS[3],x:970,y:2660,count:44,shape:'ellipse',sx:590,sy:350,hubR:24,anchors:3},
+ {id:'c4',name:'다시 찾은 기억',sub:'REVISIT · 그리움',color:COLORS[4],x:720,y:3380,count:32,shape:'branch',sx:520,sy:420,hubR:20,anchors:2},
+ {id:'c5',name:'다음 계절',sub:'SEASON · 기대',color:COLORS[5],x:920,y:4120,count:60,shape:'cloud',sx:620,sy:500,hubR:33,anchors:4}
+];
+const WORLD={w:1660,h:4680};
+let seed=907331;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};const rr=(a,b)=>a+(b-a)*rnd();
+const titles=['처음 눈에 들어온 무대','연습실 짧은 영상','밤새 다시 본 직캠','처음 저장한 인터뷰','표정이 남은 엔딩','이 장면 때문에 다음 영상을 찾음','무대 뒤 한마디','팬이 올린 짧은 클립','공식 사진 속 손짓','그날의 플레이리스트','링크를 따라 발견한 라이브','다른 멤버와의 장면','댓글에서 찾은 정보','무대 의상 기록','다시 본 첫 영상','친구에게 보낸 링크','콘서트 전날 메모','처음 간 팝업','사진 한 장의 기억','우연히 들은 라디오','예전 저장을 다시 열다','그날의 감정 메모','다음 컴백 티저','오래 남은 한 문장','새 계절의 첫 저장'];
+const notes=['표정 하나가 오래 남았다.','그때의 소리까지 같이 기억난다.','이 장면에서 감정이 한 번 더 깊어졌다.','다른 순간을 찾게 만든 작은 단서였다.','나중에 다시 보고 싶어서 바로 저장했다.'];
+const whys=['이 장면의 표정이 계속 생각나서 다음 영상을 찾았어요.','짧은 한마디가 궁금증을 남겨 관련 인터뷰로 이어졌어요.','같은 날의 다른 시점을 보고 싶어서 다음 Moment를 열었어요.','이 감정이 끝나지 않아 비슷한 무대를 계속 찾아봤어요.','친구에게 보여주고 싶어 다음 링크까지 저장했어요.'];
+const nodes=[],edges=[],anchors=[];
+function sampleShape(c,i){
+ let x=0,y=0,a,t;
+ if(c.shape==='fan') {a=rr(-2.55,.55);t=Math.pow(rnd(),.64);x=Math.cos(a)*c.sx*t+rr(-45,45);y=Math.sin(a)*c.sy*t+rr(-45,45)}
+ else if(c.shape==='double'){const left=rnd()<.64;if(left){x=-185+rr(-220,175);y=-55+rr(-250,205)}else{x=185+rr(-145,235);y=95+rr(-195,270)}if(rnd()<.18){x+=rr(-170,170);y+=rr(170,330)}}
+ else if(c.shape==='knot'){a=rr(0,Math.PI*2);t=Math.pow(rnd(),.48);x=Math.cos(a)*c.sx*t+Math.sin(a*3)*90+rr(-55,55);y=Math.sin(a)*c.sy*t+Math.cos(a*2)*80+rr(-45,45);}
+ else if(c.shape==='ellipse'){a=rr(0,Math.PI*2);t=Math.pow(rnd(),.60);x=Math.cos(a)*c.sx*t+rr(-55,55);y=Math.sin(a)*c.sy*t+rr(-40,40);}
+ else if(c.shape==='branch'){const branch=Math.floor(rr(0,4));const ang=[-2.4,-1.55,-.55,.15][branch]+rr(-.2,.2);t=rr(.25,1);x=Math.cos(ang)*c.sx*t+rr(-50,50);y=Math.sin(ang)*c.sy*t+rr(-45,45);}
+ else {a=rr(0,Math.PI*2);t=Math.pow(rnd(),.55);x=Math.cos(a)*c.sx*t+Math.sin(a*2)*95+rr(-50,50);y=Math.sin(a)*c.sy*t+rr(-60,60);}
+ return {x:c.x+x,y:c.y+y};
+}
+CLUSTERS.forEach((c,ci)=>{
+ c.kind='cluster';c.r=c.hubR;c.index=ci;
+ for(let a=0;a<c.anchors;a++){
+   const ang=(a/c.anchors)*Math.PI*2+rr(-.5,.5), dist=rr(c.sx*.24,c.sx*.52);const an={id:`a${ci}_${a}`,kind:'anchor',cluster:ci,x:c.x+Math.cos(ang)*dist,y:c.y+Math.sin(ang)*dist*.72,r:rr(13,19),color:c.color,label:''};anchors.push(an);
+ }
+ const cNodes=[];
+ for(let i=0;i<c.count;i++){
+   const p=sampleShape(c,i);const n={id:`m${ci}_${i}`,kind:'moment',cluster:ci,x:p.x,y:p.y,r:i%17===0?7.2:rr(3.3,5.8),color:c.color,title:titles[(ci*7+i)%titles.length],date:`202${2+((ci+i)%5)}.${String(1+((i*2+ci)%12)).padStart(2,'0')}.${String(3+((i*3)%24)).padStart(2,'0')}`,emotion:['설렘','몰입','호기심','애정','그리움','기대'][(ci+i)%6],note:notes[(ci+i)%notes.length],why:whys[(ci*2+i)%whys.length],source:['YouTube','Photo','Note','Link','Video'][i%5],first:ci===0&&i===0};nodes.push(n);cNodes.push(n);
+ }
+ cNodes.sort((a,b)=>a.y-b.y || a.x-b.x);
+ for(let i=0;i<cNodes.length-1;i++) edges.push({a:cNodes[i].id,b:cNodes[i+1].id,cluster:ci,kind:'path',why:whys[(ci+i)%whys.length]});
+ // nearest-neighbor local graph, not hub spokes
+ for(let i=0;i<cNodes.length;i++){
+   const n=cNodes[i], near=cNodes.map(m=>({m,d:Math.hypot(n.x-m.x,n.y-m.y)})).filter(v=>v.m!==n).sort((a,b)=>a.d-b.d).slice(0,3+(i%2));
+   near.forEach((v,j)=>{if(j<2 || (j===2&&rnd()<.45)) edges.push({a:n.id,b:v.m.id,cluster:ci,kind:'local'})});
+ }
+ // anchors connect to a limited local subset
+ const aa=anchors.filter(a=>a.cluster===ci);
+ aa.forEach((an,ai)=>{
+   const near=cNodes.map(m=>({m,d:Math.hypot(an.x-m.x,an.y-m.y)})).sort((a,b)=>a.d-b.d).slice(0,6+ai*2);near.forEach(v=>edges.push({a:an.id,b:v.m.id,cluster:ci,kind:'anchor'}));
+   if(ai===0) edges.push({a:c.id,b:an.id,cluster:ci,kind:'anchor'});
+   else edges.push({a:aa[ai-1].id,b:an.id,cluster:ci,kind:'anchor'});
+ });
+ // hub only connects to sparse anchors plus 2 representative moments
+ cNodes.filter((_,i)=>i===0||i===Math.floor(cNodes.length*.63)).forEach(n=>edges.push({a:c.id,b:n.id,cluster:ci,kind:'hub'}));
+});
+// multiple inter-cluster bridges and cross-connections
+for(let ci=0;ci<CLUSTERS.length-1;ci++){
+ const A=nodes.filter(n=>n.cluster===ci).sort((a,b)=>b.y-a.y).slice(0,12), B=nodes.filter(n=>n.cluster===ci+1).sort((a,b)=>a.y-b.y).slice(0,12);
+ edges.push({a:CLUSTERS[ci].id,b:CLUSTERS[ci+1].id,cluster:ci,kind:'bridge'});
+ for(let k=0;k<4;k++){edges.push({a:A[Math.floor(rr(0,A.length))].id,b:B[Math.floor(rr(0,B.length))].id,cluster:ci,kind:k<2?'bridge':'cross'});}
+ const aAn=anchors.filter(a=>a.cluster===ci).slice(-1)[0],bAn=anchors.filter(a=>a.cluster===ci+1)[0];if(aAn&&bAn)edges.push({a:aAn.id,b:bAn.id,cluster:ci,kind:'bridge'});
+}
+// extra overlapping cross-links between near clusters
+for(let i=0;i<72;i++){const ci=Math.floor(rr(0,5)),A=nodes.filter(n=>n.cluster===ci),B=nodes.filter(n=>n.cluster===ci+(rnd()<.72?1:Math.min(2,5-ci)));if(A.length&&B.length)edges.push({a:A[Math.floor(rr(0,A.length))].id,b:B[Math.floor(rr(0,B.length))].id,cluster:ci,kind:'cross'});}
+const all=[...CLUSTERS,...anchors,...nodes],byId=Object.fromEntries(all.map(n=>[n.id,n]));
+nodes.forEach(n=>{const outs=edges.filter(e=>e.a===n.id&&e.kind==='path');n.next=outs[0]?.b||null});
+let state={scale:1,tx:0,ty:0,drag:false,lastX:0,lastY:0,downX:0,downY:0,hover:null,selected:null,cluster:null,routeEdge:null,routeProgress:0,auto:false,mobile:innerWidth<=640,mobileCluster:0};
+let vw=0,vh=0,last=performance.now();const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const hexRgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const w2s=(x,y)=>({x:x*state.scale+state.tx,y:y*state.scale+state.ty}),s2w=(x,y)=>({x:(x-state.tx)/state.scale,y:(y-state.ty)/state.scale}),visible=(p,m=100)=>p.x>-m&&p.x<vw+m&&p.y>-m&&p.y<vh+m;
+function setupMobileRibbon(){const r=$('mobileRibbon');r.innerHTML='';CLUSTERS.forEach((c,i)=>{const b=document.createElement('button');b.textContent=c.name;b.dataset.i=i;b.onclick=()=>selectCluster(c);r.appendChild(b)});syncRibbon()}
+function syncRibbon(){document.querySelectorAll('#mobileRibbon button').forEach((b,i)=>b.classList.toggle('active',i===state.mobileCluster))}
+function resize(){vw=innerWidth;vh=innerHeight;canvas.width=Math.round(vw*dpr);canvas.height=Math.round(vh*dpr);canvas.style.width=vw+'px';canvas.style.height=vh+'px';ctx.setTransform(dpr,0,0,dpr,0,0);state.mobile=vw<=640;if(state.mobile){state.mobileCluster=clamp(state.mobileCluster,0,5);centerMobileCluster(state.mobileCluster,false)}else if(!state.selected&&!state.cluster){overview(false)}}
+function overview(show=true){state.selected=null;state.cluster=null;$('detail').classList.remove('open');document.querySelector('.hero').classList.remove('dim');if(state.mobile){centerMobileCluster(state.mobileCluster,false)}else{state.scale=Math.min(.38,(vw-290)/WORLD.w);state.tx=(vw-WORLD.w*state.scale)/2;state.ty=76}if(show)toast(state.mobile?'클러스터 리본에서 영역을 골라 탐색하세요.':'전체 유기적 관계망을 다시 봅니다.')}
+function mobileFit(c){return clamp(Math.min((vw-32)/(c.sx*1.65),(vh-190)/(c.sy*1.65)),.38,.66)}
+function centerMobileCluster(ci,show=true){const c=CLUSTERS[ci];state.mobileCluster=ci;state.cluster={...c,index:ci};state.selected=null;state.scale=mobileFit(c);state.tx=vw/2-c.x*state.scale;state.ty=vh*.48-c.y*state.scale;document.querySelector('.hero').classList.add('dim');$('detail').classList.remove('open');syncRibbon();if(show)toast(`${c.name}의 로컬 관계망을 봅니다.`)}
+function centerOn(n,scale){state.scale=state.mobile?(scale||Math.max(.62,mobileFit(CLUSTERS[n.cluster??n.index??0])*1.2)):(scale||.98);state.tx=vw/2-n.x*state.scale;state.ty=vh*.49-n.y*state.scale;document.querySelector('.hero').classList.add('dim')}
+function selectCluster(c){state.mobileCluster=c.index;state.cluster={...c,index:c.index};state.selected=null;centerOn(c,state.mobile?mobileFit(c):.92);$('detail').classList.remove('open');syncRibbon();toast(`${c.name} 클러스터에 집중합니다.`)}
+function selectMoment(n,center=false){state.selected=n;state.mobileCluster=n.cluster;state.cluster={...CLUSTERS[n.cluster],index:n.cluster};if(center)centerOn(n,state.mobile?.88:1.03);$('detailKicker').textContent=n.first?'FIRST MOMENT':'MOMENT';$('detailTitle').textContent=n.title;$('detailDate').textContent=n.date;$('detailEmotion').textContent=n.emotion;$('detailCluster').textContent=CLUSTERS[n.cluster].name;$('detailNote').textContent=n.note;$('detailWhy').textContent=n.why;$('detailNext').textContent=n.next?(byId[n.next]?.title||'다음 Moment'):'이 경로의 마지막 Moment';$('detail').classList.add('open');syncRibbon();toast('선택 Moment와 감정 경로를 우선 표시합니다.')}
+function hitTest(sx,sy){const w=s2w(sx,sy);let best=null,bd=Infinity;for(const n of [...nodes,...anchors,...CLUSTERS]){const d=Math.hypot(w.x-n.x,w.y-n.y),hit=(n.kind==='cluster'?64:n.kind==='anchor'?34:18)/Math.max(.45,state.scale);if(d<hit&&d<bd){best=n;bd=d}}return best}
+function neighborsOf(id){const s=new Set([id]);edges.forEach(e=>{if(e.a===id)s.add(e.b);if(e.b===id)s.add(e.a)});return s}
+function edgeAlpha(e){if(state.selected){const n=neighborsOf(state.selected.id);return n.has(e.a)&&n.has(e.b)?(e.kind==='path'?.9:.72):.028}if(state.cluster){return e.cluster===state.cluster.index?.46:.045}return e.kind==='bridge'?.20:e.kind==='cross'?.10:.115}
+function nodeAlpha(n){if(state.selected){const ns=neighborsOf(state.selected.id);return ns.has(n.id)?.95:.16}if(state.cluster)return n.cluster===state.cluster.index||n.id===state.cluster.id?.92:.18;return .82}
+function drawEdge(e){const a=byId[e.a],b=byId[e.b];if(!a||!b)return;if(state.mobile&&state.cluster&&e.cluster!==state.cluster.index)return;const A=w2s(a.x,a.y),B=w2s(b.x,b.y);if(!visible(A,220)&&!visible(B,220))return;const al=edgeAlpha(e);if(state.mobile&&al<.04)return;let core='82,76,88';if(al>.52){const c=hexRgb(a.color||COLORS[a.cluster||0]);core=c.join(',')}ctx.beginPath();const dx=B.x-A.x,dy=B.y-A.y;const bend=(e.kind==='bridge'||e.kind==='cross'?Math.min(78,Math.abs(dx)*.18+28):18)*state.scale;ctx.moveTo(A.x,A.y);ctx.bezierCurveTo(A.x+dx*.34+bend*(dy>0?1:-1),A.y+dy*.28,B.x-dx*.28-bend*(dy>0?1:-1),B.y-dy*.26,B.x,B.y);ctx.strokeStyle=`rgba(${core},${al})`;ctx.lineWidth=(al>.52?1.5:(e.kind==='bridge'?1.05:.72))*Math.max(.75,state.scale);if(al>.7){ctx.shadowColor=a.color||'#8e6af0';ctx.shadowBlur=6}else ctx.shadowBlur=0;ctx.stroke();ctx.shadowBlur=0}
+function drawNode(n){if(state.mobile&&state.cluster&&n.cluster!==state.cluster.index)return;const p=w2s(n.x,n.y);if(!visible(p,90))return;const al=nodeAlpha(n),rgb=hexRgb(n.color),sel=state.selected?.id===n.id,hov=state.hover?.id===n.id;let r=n.r*state.scale;if(n.kind==='anchor')r*=1.05;if(sel)r=Math.max(r,9);if(sel||hov){ctx.fillStyle=`rgba(${rgb.join(',')},.11)`;ctx.beginPath();ctx.arc(p.x,p.y,r*3.2,0,Math.PI*2);ctx.fill()}ctx.fillStyle=sel?'#fff':`rgba(${rgb.join(',')},${al})`;ctx.strokeStyle=`rgba(${rgb.join(',')},${Math.min(1,al+.08)})`;ctx.lineWidth=n.kind==='anchor'?1.15:.65;ctx.shadowColor=n.color;ctx.shadowBlur=sel?16:(n.kind==='anchor'&&al>.5?7:0);ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1.7,r),0,Math.PI*2);ctx.fill();if(n.kind==='anchor')ctx.stroke();ctx.shadowBlur=0;if(n.first){ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,r+5,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='rgba(232,95,145,.34)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,r+8,0,Math.PI*2);ctx.stroke()}
+ const macro=state.scale<.55;if(!macro&&n.kind==='anchor'&&n.label){ctx.font='600 10px Pretendard,sans-serif';ctx.fillStyle='rgba(42,38,47,.64)';ctx.textAlign='left';ctx.fillText(n.label,p.x+r+8,p.y+3)}if((sel||hov)&&!state.mobile){ctx.font='600 11px Pretendard,sans-serif';ctx.fillStyle='rgba(40,36,45,.86)';ctx.textAlign='left';ctx.fillText(n.title||n.label||'',p.x+r+12,p.y-2);if(n.kind==='moment'){ctx.font='9px Pretendard,sans-serif';ctx.fillStyle='rgba(40,36,45,.48)';ctx.fillText(`${n.emotion} · ${n.date}`,p.x+r+12,p.y+12)}}}
+function drawHub(c){if(state.mobile&&state.cluster&&c.index!==state.cluster.index)return;const p=w2s(c.x,c.y);if(!visible(p,160))return;const active=!state.selected&&(!state.cluster||state.cluster.index===c.index),rgb=hexRgb(c.color),r=c.r*state.scale;const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r*2.5);g.addColorStop(0,`rgba(${rgb.join(',')},${active?.19:.06})`);g.addColorStop(1,`rgba(${rgb.join(',')},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,r*2.5,0,Math.PI*2);ctx.fill();const solid=[0,3,4].includes(c.index);ctx.fillStyle=solid?`rgba(${rgb.join(',')},${active?.86:.34})`:'rgba(255,255,255,.92)';ctx.strokeStyle=`rgba(${rgb.join(',')},${active?.86:.30})`;ctx.lineWidth=solid?.7:1.2;ctx.shadowColor=c.color;ctx.shadowBlur=active?10:2;ctx.beginPath();ctx.arc(p.x,p.y,Math.max(8,r),0,Math.PI*2);ctx.fill();if(!solid)ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle=solid?'rgba(255,255,255,.96)':(active?'rgba(45,40,50,.86)':'rgba(45,40,50,.38)');ctx.font=`700 ${Math.max(9,11*state.scale)}px Pretendard,sans-serif`;ctx.textAlign='center';ctx.fillText(String(c.index+1).padStart(2,'0'),p.x,p.y+4);if(!state.mobile||state.scale>.82){ctx.textAlign='left';ctx.fillStyle=active?'rgba(41,37,45,.80)':'rgba(41,37,45,.38)';ctx.font=`650 ${Math.max(10,12*state.scale)}px Pretendard,sans-serif`;ctx.fillText(c.name,p.x+r+12,p.y-2);ctx.fillStyle='rgba(41,37,45,.38)';ctx.font=`${Math.max(8,9*state.scale)}px Pretendard,sans-serif`;ctx.fillText(c.sub,p.x+r+12,p.y+13)}}
+function draw(){ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);const bg=ctx.createLinearGradient(0,0,0,vh);bg.addColorStop(0,'#fbfaf8');bg.addColorStop(.55,'#f7f4f2');bg.addColorStop(1,'#f1eff5');ctx.fillStyle=bg;ctx.fillRect(0,0,vw,vh);edges.forEach(drawEdge);CLUSTERS.forEach(drawHub);anchors.forEach(drawNode);nodes.forEach(drawNode);if(state.routeEdge){const a=byId[state.routeEdge.a],b=byId[state.routeEdge.b],A=w2s(a.x,a.y),B=w2s(b.x,b.y),t=state.routeProgress,x=A.x+(B.x-A.x)*t,y=A.y+(B.y-A.y)*t;const g=ctx.createRadialGradient(x,y,0,x,y,17);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.22,'rgba(232,95,145,.82)');g.addColorStop(1,'rgba(232,95,145,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,17,0,Math.PI*2);ctx.fill()}ctx.restore();updateProgress();requestAnimationFrame(loop)}
+function loop(now){if(state.auto&&!reduced&&state.routeEdge){state.routeProgress+=(now-last)/950;if(state.routeProgress>=1){state.routeProgress=0;const dest=byId[state.routeEdge.b];if(dest?.kind==='moment')selectMoment(dest,true);state.auto=false;state.routeEdge=null}}last=now;draw()}
+function follow(){if(!state.selected?.next){toast('현재 Moment는 이 경로의 마지막입니다.');return}const e=edges.find(e=>e.a===state.selected.id&&e.b===state.selected.next)||{a:state.selected.id,b:state.selected.next};state.routeEdge=e;state.routeProgress=0;state.auto=true;toast(state.selected.why)}
+function zoomAt(f,cx=vw/2,cy=vh/2){const before=s2w(cx,cy);state.scale=clamp(state.scale*f,state.mobile?.58:.28,1.65);state.tx=cx-before.x*state.scale;state.ty=cy-before.y*state.scale}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2100)}
+function updateProgress(){if(state.mobile)return;const y=(-state.ty+vh*.5)/state.scale;$('progressThumb').style.top=`${clamp(y/WORLD.h,0,1)*100}%`}
+canvas.addEventListener('pointerdown',e=>{state.drag=true;state.lastX=e.clientX;state.lastY=e.clientY;state.downX=e.clientX;state.downY=e.clientY;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(state.drag){state.tx+=e.clientX-state.lastX;state.ty+=e.clientY-state.lastY;state.lastX=e.clientX;state.lastY=e.clientY;document.querySelector('.hero').classList.add('dim');return}const h=hitTest(e.clientX,e.clientY);state.hover=h?.kind==='moment'?h:null;canvas.style.cursor=h?'pointer':'grab'});
+canvas.addEventListener('pointerup',e=>{const dx=Math.abs(e.clientX-state.downX),dy=Math.abs(e.clientY-state.downY);state.drag=false;if(dx<7&&dy<7){const h=hitTest(e.clientX,e.clientY);if(h?.kind==='cluster')selectCluster(h);else if(h?.kind==='moment')selectMoment(h);else if(h?.kind==='anchor')selectCluster(CLUSTERS[h.cluster])}});canvas.addEventListener('pointercancel',()=>state.drag=false);
+canvas.addEventListener('wheel',e=>{e.preventDefault();if(e.ctrlKey||Math.abs(e.deltaX)>Math.abs(e.deltaY))zoomAt(e.deltaY<0?1.08:.92,e.clientX,e.clientY);else state.ty-=e.deltaY*.82;document.querySelector('.hero').classList.add('dim')},{passive:false});
+$('zoomIn').onclick=()=>zoomAt(1.18);$('zoomOut').onclick=()=>zoomAt(.84);$('overviewBtn').onclick=()=>overview();$('resetFocus').onclick=()=>overview();$('focusFirst').onclick=()=>selectMoment(nodes.find(n=>n.first),true);$('detailClose').onclick=()=>$('detail').classList.remove('open');$('followPath').onclick=follow;$('openMoment').onclick=()=>toast('Prototype: 실제 제품에서는 원본 Moment viewer를 엽니다.');$('helpBtn').onclick=()=>toast(state.mobile?'아래 클러스터 리본 → 로컬 관계망 → Moment → WHY NEXT':'휠/드래그로 세로 탐색 → 클러스터 → Moment → WHY NEXT');$('progressRail').addEventListener('pointerdown',e=>{const r=$('progressLine').getBoundingClientRect(),p=clamp((e.clientY-r.top)/r.height,0,1);state.ty=vh*.5-(p*WORLD.h)*state.scale});
+window.__lovetreeStats={moments:nodes.length,anchors:anchors.length,edges:edges.length,clusters:CLUSTERS.map(c=>({name:c.name,count:c.count,shape:c.shape,hubR:c.hubR}))};window.__lt={overview,selectCluster,selectMoment,follow,state,CLUSTERS,nodes};addEventListener('resize',resize);setupMobileRibbon();resize();last=performance.now();requestAnimationFrame(loop);setTimeout(()=>toast(state.mobile?'클러스터 리본에서 한 영역을 골라보세요.':'위에서 아래로 관계망의 밀도 변화를 훑어보세요.'),650);
+})();
+</script>
+</body>
+</html>

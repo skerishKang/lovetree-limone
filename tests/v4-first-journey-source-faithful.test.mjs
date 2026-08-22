@@ -48,7 +48,10 @@ async function openPage(browser, url, viewport) {
   page.on("console", (msg) => {
     if (msg.type() === "error") errors.push(`console:${msg.text()}`);
   });
-  const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
+  // #248 moves canonical V1.2 to the default product route. This historical
+  // source-faithful suite remains intact against the explicit V1 reference/demo.
+  const resolvedUrl = url === `${BASE}/v4/journey` ? `${url}?legacy=1` : url;
+  const resp = await page.goto(resolvedUrl, { waitUntil: "networkidle", timeout: 20000 });
   return { page, errors, status: resp.status() };
 }
 
