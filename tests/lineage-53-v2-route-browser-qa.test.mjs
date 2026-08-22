@@ -69,11 +69,62 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
 
         const activePath = page.locator(".lt53-motion__connection-active-inner");
         await page.getByRole("button", { name: "PAUSE", exact: true }).click();
-        await page.waitForTimeout(120);
+        // #362: the old 120ms/380ms fixed-delay double sample raced the pause
+        // commit itself. If React committed the paused state after the first
+        // sample, the light kept advancing and the identity assert failed
+        // spuriously — the same timing-dependent family kilo-1 fixed for the
+        // RESUME side in #360. Wait for the commit instead: the control label
+        // flips PAUSE -> RESUME in the same React commit whose effects set
+        // pausedRef (Lineage53V2Motion.tsx), so a visible RESUME proves the
+        // freeze is armed before observation starts.
+        await page.waitForFunction(
+          () =>
+            [...document.querySelectorAll(".lt53-motion__controls button")].some(
+              (button) => button.textContent?.trim() === "RESUME",
+            ),
+          undefined,
+          { timeout: 45000, polling: 100 },
+        );
+        // Let the commit's passive effects (the pausedRef sync in
+        // Lineage53V2Motion.tsx) settle across an animation-frame boundary
+        // before sampling the offset.
+        await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
         const pausedOffset = await activePath.evaluate((node) => node.style.strokeDashoffset);
-        await page.waitForTimeout(380);
-        const pausedOffsetAfter = await activePath.evaluate((node) => node.style.strokeDashoffset);
-        assert.equal(pausedOffsetAfter, pausedOffset, `${scenario.label}: pause freezes the active Connection light`);
+        // Freeze contract, unchanged in purpose and strictly stronger in
+        // observation: prove the offset holds still across a bounded window.
+        // The old code compared two instants ~500ms apart; this watches every
+        // animation frame for a full second (rAF polling), so it can only
+        // catch more. Any movement is a hard failure with diagnostics; the
+        // expected path is the timeout — nothing moved means frozen.
+        // Predicate runs in Playwright's isolated world: no cross-realm
+        // constructors (see #360).
+        try {
+          await page.waitForFunction(
+            (previous) => {
+              const node = document.querySelector(".lt53-motion__connection-active-inner");
+              return Boolean(node) && node.style.strokeDashoffset !== previous;
+            },
+            pausedOffset,
+            { timeout: 1000, polling: "raf" },
+          );
+          const diag = await page.evaluate(
+            (start) =>
+              JSON.stringify({
+                offsetStart: start,
+                offsetNow: document.querySelector(".lt53-motion__connection-active-inner")?.style.strokeDashoffset ?? null,
+                controls: [...document.querySelectorAll(".lt53-motion__controls button")].map((b) => `${b.textContent}${b.disabled ? ":disabled" : ""}`),
+              }),
+            pausedOffset,
+          ).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+          assert.fail(`${scenario.label}: pause must freeze the active Connection light [${diag}]`);
+        } catch (error) {
+          // The waitForFunction timeout IS the freeze contract holding.
+          // This playwright build exposes no TimeoutError symbol (#362), but
+          // timeout failures still carry name === `"TimeoutError"`; anything
+          // else (evaluate/page failure) propagates. The assert.fail above
+          // carries our own label/name, so it always propagates too.
+          if (error?.name !== "TimeoutError") throw error;
+        }
 
         await page.getByRole("button", { name: "RESUME", exact: true }).click();
         // The light advances on the animation frame after the resume commit.
