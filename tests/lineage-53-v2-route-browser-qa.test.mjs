@@ -76,7 +76,19 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
         assert.equal(pausedOffsetAfter, pausedOffset, `${scenario.label}: pause freezes the active Connection light`);
 
         await page.getByRole("button", { name: "RESUME", exact: true }).click();
-        await page.waitForTimeout(320);
+        // The light advances one rAF frame after the resume commit; under CI
+        // runner load the first frame can land well past any fixed sleep
+        // (observed '37' === '37' in production-deploy runs). Wait for the
+        // offset to actually change instead — bounded, explicit timeout, and
+        // the not-equal contract below is unchanged.
+        await page.waitForFunction(
+          (previous) => {
+            const node = document.querySelector(".lt53-motion__connection-active-inner");
+            return node instanceof HTMLElement && node.style.strokeDashoffset !== previous;
+          },
+          pausedOffset,
+          { timeout: 5000, polling: 50 },
+        );
         const resumedOffset = await activePath.evaluate((node) => node.style.strokeDashoffset);
         assert.notEqual(resumedOffset, pausedOffset, `${scenario.label}: resume continues the active Connection light`);
 
