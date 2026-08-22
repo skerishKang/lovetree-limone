@@ -42,6 +42,54 @@ async function captureErrors(page) {
   return errors;
 }
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#374 pattern):
+// every value-change expectation polls for the actual transition with an
+// explicit timeout/polling budget; the original assertion stays verbatim
+// below it, and a timeout fails loudly with self-classifying diagnostics
+// attached so a recurrence classifies itself.
+const CONDITION_WAIT = { timeout: 15000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, null, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+function classifyViewerState() {
+  const viewer = document.getElementById("viewer");
+  const canvas = document.querySelector("canvas");
+  const gl = canvas?.getContext("webgl2") || null;
+  const api = window.textureAPI;
+  let metrics = null;
+  try {
+    metrics = typeof api?.metrics === "function" ? api.metrics() : null;
+  } catch {
+    metrics = null;
+  }
+  return {
+    viewerExists: !!viewer,
+    viewerHidden: viewer ? viewer.hidden : null,
+    mode: metrics ? metrics.mode : "no-metrics",
+    activeElementId: document.activeElement
+      ? document.activeElement.id || document.activeElement.tagName
+      : null,
+    canvasExists: !!canvas,
+    glValid: gl ? !gl.isContextLost() : null,
+    textureApiPresent: !!api,
+    atlasReady: typeof api?.ready === "function" ? api.ready() : false,
+    fps: metrics ? metrics.fps : null,
+    rawPoints: metrics ? metrics.rawPoints : null,
+    smoothedVertices: metrics ? metrics.smoothedVertices : null,
+  };
+}
+
+const RENDER_READY_WAIT = { timeout: 20000, polling: 100 };
+
 /**
  * Wait for the WebGL ribbon to render and the textureAPI to be ready.
  */
@@ -54,7 +102,27 @@ async function waitForReady(page) {
     },
     { timeout: 20000 },
   );
-  await page.waitForTimeout(2000);
+  // Issue #396: the former unconditional 2000ms settle sleep here was a
+  // transition wait, not an observation window, so it converts to a concrete
+  // observable render-readiness condition. metrics().fps > 0 is only reported
+  // after the rAF loop completes a 500ms stats window while actually drawing
+  // frames, so it proves real rendering happened instead of racing a fixed
+  // delay. Path/geometry counters (rawPoints/smoothedVertices) were measured
+  // on this page and stay at 1/0 in the initial draw mode — ribbon geometry
+  // is built lazily by the persistent-chunk system — so they are NOT valid
+  // readiness signals here.
+  await waitForCondition(
+    page,
+    () => {
+      const api = window.textureAPI;
+      if (!api || typeof api.metrics !== "function") return false;
+      const m = api.metrics();
+      return m.fps > 0;
+    },
+    () => ({ renderReadiness: "waiting for metrics().fps > 0" }),
+    "render readiness (fps > 0)",
+    RENDER_READY_WAIT,
+  );
 }
 
 /**
@@ -64,7 +132,17 @@ async function openInspectProgrammatic(page, momentIdx) {
   await page.evaluate((idx) => {
     window.textureAPI.openMoment(idx);
   }, momentIdx);
-  await page.waitForTimeout(500);
+  // Issue #396: post-open fixed sleep replaced by bounded semantic wait for
+  // the actual inspect-open transition (viewer visible + mode === "inspect").
+  await waitForCondition(
+    page,
+    () => {
+      const viewer = document.getElementById("viewer");
+      return !!viewer && viewer.hidden === false && window.textureAPI.metrics().mode === "inspect";
+    },
+    classifyViewerState,
+    `inspect dialog open after openMoment(${momentIdx})`,
+  );
 }
 
 /**
@@ -163,6 +241,10 @@ test("B. INSPECT_FREEZE — world state frozen during inspect dialog", async () 
     });
     assert.ok(frameBefore, "Must be able to read WebGL pixels before freeze check");
 
+    // Issue #396: PRESERVED temporal observation window. INSPECT_FREEZE is a
+    // time-based contract — the 2000ms elapsed duration itself is what is
+    // under test (the world must stay frozen across it), so it must not be
+    // collapsed into a condition wait.
     await page.waitForTimeout(2000);
 
     const frameAfter = await page.evaluate(() => {
@@ -261,7 +343,14 @@ test("D. INSPECT_FOCUS — focus moves to inspect dialog on open", async () => {
     await openInspectProgrammatic(page, 1);
 
     // openInspect() calls viewerClose.focus() in rAF
-    await page.waitForTimeout(200);
+    // Issue #396: fixed 200ms sleep replaced by bounded wait for the actual
+    // focus transition onto #viewerClose.
+    await waitForCondition(
+      page,
+      () => document.activeElement === document.getElementById("viewerClose"),
+      classifyViewerState,
+      "focus moves to #viewerClose after inspect open",
+    );
 
     const focusState = await page.evaluate(() => {
       const active = document.activeElement;
@@ -314,7 +403,17 @@ test("E. INSPECT_ESCAPE — Escape key closes inspect dialog", async () => {
     assert.equal(beforeEscape.role, "dialog", "viewer MUST have role='dialog' BEFORE Escape");
 
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(500);
+    // Issue #396: fixed 500ms sleep replaced by bounded wait for the actual
+    // close transition (viewer hidden + mode leaves "inspect").
+    await waitForCondition(
+      page,
+      () => {
+        const viewer = document.getElementById("viewer");
+        return !!viewer && viewer.hidden === true && window.textureAPI.metrics().mode !== "inspect";
+      },
+      classifyViewerState,
+      "viewer hidden + mode !== 'inspect' after Escape",
+    );
 
     // FAIL-CLOSED: after Escape, dialog MUST be hidden
     const afterEscape = await page.evaluate(() => {
@@ -351,7 +450,29 @@ test("F. INSPECT_RESTORE — canvas/runtime restores after inspect close", async
 
     await openInspectProgrammatic(page, 1);
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(500);
+    // Issue #396: fixed 500ms sleep replaced by bounded wait for the actual
+    // runtime restore transition (viewer hidden + visible canvas + valid
+    // WebGL context + non-inspect mode).
+    await waitForCondition(
+      page,
+      () => {
+        const canvas = document.querySelector("canvas");
+        const viewer = document.getElementById("viewer");
+        const gl = canvas?.getContext("webgl2") || null;
+        return (
+          !!canvas &&
+          canvas.offsetHeight > 0 &&
+          canvas.offsetWidth > 0 &&
+          !!viewer &&
+          viewer.hidden === true &&
+          !!gl &&
+          !gl.isContextLost() &&
+          window.textureAPI.metrics().mode !== "inspect"
+        );
+      },
+      classifyViewerState,
+      "runtime restored after Escape (visible canvas, valid WebGL, mode !== 'inspect')",
+    );
 
     const restored = await page.evaluate(() => {
       const canvas = document.querySelector("canvas");
@@ -469,7 +590,17 @@ async function assertGenuineTouch(page, label, width, height) {
     const tapX = box.x + hitPos.x;
     const tapY = box.y + hitPos.y;
     await page.touchscreen.tap(tapX, tapY);
-    await page.waitForTimeout(500);
+    // Issue #396: fixed 500ms sleep replaced by bounded wait for the actual
+    // inspect-open transition triggered by a genuine ribbon hit.
+    await waitForCondition(
+      page,
+      () => {
+        const viewer = document.getElementById("viewer");
+        return !!viewer && viewer.hidden === false && window.textureAPI.metrics().mode === "inspect";
+      },
+      classifyViewerState,
+      `viewer visible + mode === 'inspect' after genuine touch hit at ${label}`,
+    );
 
     const state = await page.evaluate(() => {
       const viewer = document.getElementById("viewer");
@@ -488,6 +619,9 @@ async function assertGenuineTouch(page, label, width, height) {
     const tapX = box.x + box.width / 2;
     const tapY = box.y + box.height / 2;
     await page.touchscreen.tap(tapX, tapY);
+    // Issue #396: PRESERVED negative observation window. This 500ms is not a
+    // transition wait — the elapsed interval itself is the spec: after a real
+    // miss, no delayed inspect may appear during this window.
     await page.waitForTimeout(500);
 
     const touchState = await page.evaluate(() => {
