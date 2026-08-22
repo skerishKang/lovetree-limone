@@ -278,6 +278,27 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: ["test-results/lineage-64-floating-moment"],
   },
+  {
+    id: "lineage-63",
+    label: "Lineage 63 Moment Field 3D View Studio",
+    route: "/design-lab/lineages/63",
+    validationClass: "source-fidelity",
+    impactPrefixes: [
+      "app/design-lab/lineages/63/",
+      "lib/lineage-63/",
+      "tests/lineage-63",
+      "docs/product/lineages/63",
+    ],
+    assetGate: null,
+    browserGates: ["tests/lineage-63-route-browser-qa.mjs"],
+    viewports: [
+      { width: 1280, height: 800 },
+      { width: 390, height: 844, mobile: true },
+      { width: 320, height: 720, mobile: true },
+    ],
+    captureReducedMotion: true,
+    extraEvidencePaths: ["test-results/lineage-63-native"],
+  },
 ]);
 
 function matchesPrefix(path, prefix) {
