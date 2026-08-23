@@ -28,6 +28,62 @@ function captureErrors(page) {
   return errors;
 }
 
+// Bounded conditional-wait standard (#365/#424 kilo methodology): every
+// expected state change polls the ACTUAL transition with an explicit
+// timeout/polling budget; the original assertions stay verbatim below the
+// waits, and a timeout fails loudly with a self-classifying snapshot.
+// The autoplay poll loop keeps its own 100ms cadence — that is already good
+// bounded polling (per the #424 classification) and is deliberately preserved.
+const CONDITION_WAIT = { timeout: 10000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (error) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${error.message}`,
+    );
+  }
+}
+
+// Observational stability probe for genuinely temporal contracts: a boolean
+// page state must REMAIN true across a bounded window (negative observations
+// like "no premature autoplay tick"). Samples the live state instead of
+// sleeping; the window length mirrors the original grace envelope and is part
+// of the tested contract, not a timeout inflation.
+async function expectStateStableFor(page, condition, classify, label, windowMs, arg = null) {
+  const deadline = Date.now() + windowMs;
+  while (Date.now() < deadline) {
+    const ok = await page.evaluate(condition, arg).catch(() => false);
+    if (!ok) {
+      const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+      assert.fail(
+        `${label}: state flipped during ${windowMs}ms stability window (self-classification: ${JSON.stringify(diag)})`,
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+}
+
+const classifyVideofigure = () => {
+  const img = document.querySelector(".lt58-videofigure__viewport img");
+  return {
+    autoPressed: document.querySelector(".lt58-videofigure__actions button")?.getAttribute("aria-pressed") ?? null,
+    firstAnglePressed: document.querySelector(".lt58-videofigure__angle-controls > div button")?.getAttribute("aria-pressed") ?? null,
+    frame: img?.getAttribute("src")?.split("/").pop() ?? null,
+    hint: document.querySelector(".lt58-videofigure__drag-hint")?.textContent ?? null,
+    scrollY: Math.round(window.scrollY),
+  };
+};
+
+const classifyLayout = () => {
+  const rect = document.querySelector(".lt58-videofigure__figure-zone")?.getBoundingClientRect();
+  return rect
+    ? { top: Math.round(rect.top), bottom: Math.round(rect.bottom), w: Math.round(rect.width), h: Math.round(rect.height), scrollY: Math.round(window.scrollY) }
+    : null;
+};
+
 async function openRoute(browser, viewport, options = {}) {
   const context = await browser.newContext({ viewport, ...options });
   const page = await context.newPage();
@@ -159,9 +215,27 @@ async function assertAutoplayAndManualTakeover(page) {
   await page.mouse.up();
   assert.match(await page.locator(".lt58-videofigure__drag-hint").innerText(), /MANUAL AUTHORITY/, "manual drag immediately owns turntable");
   const manualSrc = await page.locator(".lt58-videofigure__viewport img").getAttribute("src");
-  await page.waitForTimeout(450);
+  // Negative observation (temporal contract, per the #424 classification):
+  // after manual drag owns the turntable, the frame must NOT change across a
+  // bounded window mirroring the original 450ms grace envelope — observed by
+  // sampling instead of sleeping.
+  await expectStateStableFor(
+    page,
+    (src) => document.querySelector(".lt58-videofigure__viewport img")?.getAttribute("src") === src,
+    classifyVideofigure,
+    "manual takeover prevents premature autoplay tick",
+    450,
+    manualSrc,
+  );
   assert.equal(await page.locator(".lt58-videofigure__viewport img").getAttribute("src"), manualSrc, "manual takeover prevents premature autoplay tick");
-  await page.waitForTimeout(900);
+  // AUTO resume is an expected completion: observe the hint actually
+  // transitioning back to AUTO AUTHORITY instead of sleeping past it.
+  await waitForCondition(
+    page,
+    () => /AUTO AUTHORITY/.test(document.querySelector(".lt58-videofigure__drag-hint")?.textContent ?? ""),
+    classifyVideofigure,
+    "resume-after-idle restores AUTO authority",
+  );
   assert.match(await page.locator(".lt58-videofigure__drag-hint").innerText(), /AUTO AUTHORITY/, "resume-after-idle policy restores autoplay authority");
 }
 
@@ -209,18 +283,45 @@ async function assertMobileTouchAuthority(context, page, label) {
   // Real touch begins where the figure is visible; the look/angle clicks above may have
   // scrolled the zone off-viewport, so bring it back on-screen before measuring/ swiping.
   await zone.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(80);
+  // Geometry settle: observe the zone visible in the viewport (its top edge
+  // at/inside the viewport top, height intact) instead of sleeping a fixed
+  // 80ms. scrollIntoViewIfNeeded can leave the top edge sub-pixel above the
+  // fold (-0.14px observed), so the contract is visibility, not perfection.
+  await waitForCondition(
+    page,
+    () => {
+      const rect = document.querySelector(".lt58-videofigure__figure-zone")?.getBoundingClientRect();
+      return Boolean(rect) && rect.top >= -1 && rect.top < window.innerHeight && rect.height > 0;
+    },
+    classifyLayout,
+    `${label}: touch figure zone settled in viewport`,
+  );
   const box = await zone.boundingBox();
   assert.ok(box, `${label}: touch figure zone exists`);
   await dispatchTouchSwipe(context, page, box, { x: 0.70, y: 0.50 }, { x: 0.30, y: 0.50 });
-  await page.waitForTimeout(80);
+  // Angle transition: observe the first angle button actually losing its
+  // pressed state instead of sleeping a fixed 80ms.
+  await waitForCondition(
+    page,
+    () => document.querySelector(".lt58-videofigure__angle-controls > div button")?.getAttribute("aria-pressed") !== "true",
+    classifyVideofigure,
+    `${label}: horizontal touch changes angle`,
+  );
   assert.notEqual(await page.locator(".lt58-videofigure__angle-controls > div button").first().getAttribute("aria-pressed"), "true", `${label}: real horizontal touch changes angle`);
 
   const scrollCapacity = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
   if (scrollCapacity > 40) {
     const beforeScroll = await page.evaluate(() => window.scrollY);
     await dispatchTouchSwipe(context, page, box, { x: 0.50, y: 0.74 }, { x: 0.50, y: 0.26 });
-    await page.waitForTimeout(160);
+    // Vertical scroll transition: observe the page actually scrolling down
+    // instead of sleeping a fixed 160ms.
+    await waitForCondition(
+      page,
+      (y) => window.scrollY > y + 4,
+      classifyVideofigure,
+      `${label}: vertical touch scrolls the page`,
+      beforeScroll,
+    );
     const afterScroll = await page.evaluate(() => window.scrollY);
     assert.ok(afterScroll > beforeScroll + 4, `${label}: vertical touch remains owned by page scroll`);
   }
@@ -249,7 +350,15 @@ async function assertReducedMotion(browser) {
   const { context, page, errors } = await openRoute(browser, { width: 390, height: 844 }, { reducedMotion: "reduce", isMobile: true, hasTouch: true });
   try {
     const auto = page.locator(".lt58-videofigure__actions button").first();
-    await page.waitForTimeout(100);
+    // Default-state proof: autoplay must be OFF from mount — observe aria-
+    // pressed="false" actually rendering (post-hydration) instead of sleeping
+    // a fixed 100ms.
+    await waitForCondition(
+      page,
+      () => document.querySelector(".lt58-videofigure__actions button")?.getAttribute("aria-pressed") === "false",
+      classifyVideofigure,
+      "reduced motion: autoplay control renders with default OFF state",
+    );
     assert.equal(await auto.getAttribute("aria-pressed"), "false", "reduced motion disables automatic 360 by default");
     const animations = await page.evaluate(() => ({
       ring: getComputedStyle(document.querySelector(".lt58-videofigure__ring")).animationName,

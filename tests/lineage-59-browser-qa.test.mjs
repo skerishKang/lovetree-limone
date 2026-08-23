@@ -79,7 +79,7 @@ async function bookState(page) {
  * by the component's pointer handlers (curl appears mid-gesture) and the final
  * release is decided by `resolveDragCommit`.
  */
-async function gestureShortDistance(page, { delayMs, sampleMid }) {
+async function gestureShortDistance(page, { delayMs, sampleMid, settle }) {
   const box = await page.locator(".lt59-book__page").boundingBox();
   assert.ok(box, "page element must have a bounding box");
   const startX = box.x + box.width * 0.6;
@@ -105,11 +105,30 @@ async function gestureShortDistance(page, { delayMs, sampleMid }) {
       if (sampleMid && i === 5) {
         window.__midCurl = Boolean(document.querySelector(".lt59-book__curl-shadow"));
       }
+      // INPUT_PACING (issue #425): delayMs between synthetic moves is the
+      // measured-velocity input itself — trackFlick() timestamps each move
+      // and resolveDragCommit() compares that velocity against
+      // FLICK_VELOCITY_THRESHOLD. Short delay = flick, long delay = slow
+      // drag over the same distance. This is the contract under test,
+      // not a timing smell; it stays.
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
     fire("pointerup", endX);
   }, { startX, y, endX, delayMs, sampleMid });
-  await page.waitForTimeout(300);
+  if (settle === "await-curl-reset") {
+    // TRANSITION_COMPLETION (issue #425): the cancel branch resets
+    // curlProgress to 0 synchronously and the curl shadow unmounts because
+    // it is conditionally rendered ({curlProgress > 0}). Waiting for that
+    // detachment is the real settled-state signal for negative
+    // observations (page unchanged, curl gone) — replaces the old fixed
+    // 300ms blanket delay.
+    await page.locator(".lt59-book__curl-shadow").waitFor({
+      state: "detached",
+      timeout: 5000,
+    });
+  }
+  // Commit callers need no settle here: their next step is already a
+  // bounded wait on the committed page state (".lt59-book__page-num").
   const midCurl = sampleMid ? await page.evaluate(() => Boolean(window.__midCurl)) : true;
   return { midCurl, distance };
 }
@@ -295,7 +314,11 @@ test("Lineage 59 V5 slow drag over the same short distance cancels", async () =>
   const browser = await chromium.launch();
   try {
     const { page, errors } = await openRoute(browser, { width: 1280, height: 800 });
-    const { midCurl, distance } = await gestureShortDistance(page, { delayMs: 90, sampleMid: true });
+    const { midCurl, distance } = await gestureShortDistance(page, {
+      delayMs: 90,
+      sampleMid: true,
+      settle: "await-curl-reset",
+    });
     assert.ok(distance > 0, "gesture distance must be non-zero");
     assert.equal(midCurl, true, "the slow drag was actually tracked (curl visible mid-gesture)");
     const pageNum = await page.locator(".lt59-book__page-num").innerText();
@@ -335,6 +358,9 @@ test("Lineage 59 V5 pointercancel never commits and never changes selection", as
       fire("pointerdown", startX);
       for (let i = 1; i <= 5; i += 1) {
         fire("pointermove", startX - i * 30);
+        // INPUT_PACING (issue #425): 2ms moves make this a fast drag; the
+        // pacing is the velocity input the cancel contract is tested
+        // against, so it stays.
         await new Promise((resolve) => setTimeout(resolve, 2));
       }
       const curlMidDrag = Boolean(document.querySelector(".lt59-book__curl-shadow"));
@@ -343,7 +369,16 @@ test("Lineage 59 V5 pointercancel never commits and never changes selection", as
       const indexBefore = book.getAttribute("data-moment-index");
       return { momentBefore, indexBefore, curlMidDrag };
     });
-    await page.waitForTimeout(400);
+    // TRANSITION_COMPLETION (issue #425): pointercancel resolves through
+    // resolvePointerCancel() → finishDrag → setCurl(cancelPageTurn) with
+    // curlProgress 0, so the conditionally rendered curl shadow unmounts.
+    // Waiting for that detachment — then asserting page/selection unchanged
+    // and curl gone — replaces the old fixed 400ms blanket delay while
+    // keeping every assertion exactly as strict as before.
+    await page.locator(".lt59-book__curl-shadow").waitFor({
+      state: "detached",
+      timeout: 5000,
+    });
     const after = await bookState(page);
     assert.equal(result.curlMidDrag, true, "the cancelled gesture was in motion (curl visible before cancel)");
     assert.equal(after.momentId, result.momentBefore, "pointercancel must not change the Moment");

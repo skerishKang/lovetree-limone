@@ -176,7 +176,33 @@ test("Lineage 53 V2 — native route matches the source replay contract at deskt
 
         const thirdMoment = page.locator(".lt53-motion__moment").nth(2);
         await thirdMoment.click();
-        await page.waitForTimeout(100);
+        // #427: the old 100ms fixed delay raced the click's own commit chain.
+        // startReplay (Lineage53V2Motion.tsx) sets the prior-path memory set
+        // synchronously, and the replay effect marks the clicked Moment in the
+        // following commit — so wait for that transition instead of guessing a
+        // wall-clock offset. The two assertions below are unchanged.
+        try {
+          await page.waitForFunction(
+            () =>
+              document.querySelectorAll(".lt53-motion__connection-memory").length === 2 &&
+              Boolean(
+                document.querySelectorAll(".lt53-motion__moment")[2]?.classList.contains("is-active") ||
+                  document.querySelectorAll(".lt53-motion__moment")[2]?.classList.contains("is-awake"),
+              ),
+            undefined,
+            { timeout: 3000, polling: 100 },
+          );
+        } catch {
+          const diag = await page.evaluate(
+            () =>
+              JSON.stringify({
+                memoryCount: document.querySelectorAll(".lt53-motion__connection-memory").length,
+                thirdMomentClasses: document.querySelectorAll(".lt53-motion__moment")[2]?.className ?? null,
+                controls: [...document.querySelectorAll(".lt53-motion__controls button")].map((button) => `${button.textContent}${button.disabled ? ":disabled" : ""}`),
+              }),
+          ).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+          assert.fail(`${scenario.label}: replay-from-Moment transition did not commit [${diag}]`);
+        }
         assert.equal(await page.locator(".lt53-motion__connection-memory").count(), 2, `${scenario.label}: replay-from-Moment preserves prior path memory`);
         assert.ok(await thirdMoment.evaluate((node) => node.classList.contains("is-active") || node.classList.contains("is-awake")), `${scenario.label}: clicked Moment starts the replay sequence there`);
 
@@ -220,10 +246,37 @@ test("Lineage 53 V2 — reduced motion blocks autoplay and keeps explicit manual
   try {
     const { page, errors } = await openRoute(browser, { width: 1280, height: 800 }, { reducedMotion: "reduce" });
     try {
-      await page.waitForTimeout(1200);
-      assert.equal(await page.locator(".lt53-motion__connection-active-inner").count(), 0, "reduced-motion mode does not autoplay the replay");
+      // #427: readiness first. The reduced-motion gate renders only after the
+      // matchMedia sync committed reducedMotion === true (Lineage53V2Motion.tsx);
+      // from that commit on the autoplay effect early-returns, so its 700ms
+      // setTimeout is structurally never armed — suppression, not delay.
       const gate = page.getByRole("button", { name: /모션 감소 설정 활성/ });
-      await gate.waitFor();
+      await gate.waitFor({ timeout: 15000 });
+      // READINESS + NEGATIVE_OBSERVATION: watch for any autoplay onset across
+      // a bounded window that extends past the suppressed timer's would-be
+      // fire point (T_sync + 700ms). Resolving is failure by definition; the
+      // expected path is the timeout. The wall-clock budget stays exactly the
+      // old 1200ms — it is observed (100ms polling) instead of slept, and the
+      // count assertion below is unchanged.
+      try {
+        await page.waitForFunction(
+          () => document.querySelectorAll(".lt53-motion__connection-active-inner").length > 0,
+          undefined,
+          { timeout: 1200, polling: 100 },
+        );
+        const diag = await page.evaluate(
+          () =>
+            JSON.stringify({
+              rootClasses: document.querySelector(".lt53-motion")?.className ?? null,
+              gatePresent: !!document.querySelector(".lt53-motion__reduced-gate"),
+              activeInnerCount: document.querySelectorAll(".lt53-motion__connection-active-inner").length,
+            }),
+        ).catch((error) => `diag-unavailable: ${error?.message ?? error}`);
+        assert.fail(`reduced-motion mode does not autoplay the replay [${diag}]`);
+      } catch (error) {
+        if (error?.name !== "TimeoutError") throw error;
+      }
+      assert.equal(await page.locator(".lt53-motion__connection-active-inner").count(), 0, "reduced-motion mode does not autoplay the replay");
       await gate.click();
       await page.locator(".lt53-motion__connection-active-inner").waitFor({ timeout: 3000 });
       assert.equal(errors.length, 0, `reduced-motion manual playback has no runtime/console errors: ${errors.join(" | ")}`);
