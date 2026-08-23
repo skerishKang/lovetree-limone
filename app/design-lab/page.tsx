@@ -38,13 +38,13 @@ export default function DesignLabPage() {
         {DESIGN_SCENARIOS.map((scenario) => (
           <a key={scenario.id} href={`#${scenario.id}`}>{scenario.label}</a>
         ))}
-        <a href="#design-lineages">Design Lineages</a>
         <a href="#experience-capabilities">Experience Capabilities</a>
+        <a href="#design-lineages">Design Lineages</a>
       </nav>
 
       <DesignVariantExplorer />
-      <DesignLineageOverview />
       <ExperienceCapabilityLibrary />
+      <DesignLineageOverview />
 
       <footer className="lt-lab__footer">
         <p>새 디자인은 새 제품 버전을 만드는 대신 Lineage → Revision → Scenario Variant와 재사용 Capability로 분류합니다.</p>
