@@ -23,6 +23,24 @@ const DETERMINISTIC_FONT_CSS = `
 .v4-moments-graph-head { height: 83.64px; box-sizing: border-box; }
 `;
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#374 pattern):
+// every value-change expectation polls for the actual transition with an
+// explicit timeout/polling budget; the original assertion stays verbatim
+// below it, and a timeout fails loudly with self-classifying diagnostics
+// attached so a recurrence classifies itself.
+const CONDITION_WAIT = { timeout: 30000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
 async function stubRoutineThirdPartyResources(page) {
   await page.route("**/*", async (route) => {
     const requestUrl = new globalThis.URL(route.request().url());
@@ -63,7 +81,18 @@ async function openPage(browser, url, viewport) {
   page.on("console", (msg) => {
     if (msg.type() === "error") errors.push(`console:${msg.text()}`);
   });
-  const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
+  const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 45000 });
+  await waitForCondition(
+    page,
+    () =>
+      !!document.querySelector(".v4-moments-canvas-space") &&
+      !!document.querySelector('[data-testid="moment-count"]'),
+    () => ({
+      canvas: !!document.querySelector(".v4-moments-canvas-space"),
+      momentCount: document.querySelector('[data-testid="moment-count"]')?.textContent ?? null,
+    }),
+    `initial 100-moments mount completes (${viewport.name})`,
+  );
   return { page, errors, status: resp.status() };
 }
 
@@ -154,7 +183,15 @@ test("v4 100 moments — representative cards, 100-node toggle, layouts, inspect
 
     /* toggle to all 100 moments */
     await page.locator('[data-density="all"]').click();
-    await page.waitForTimeout(600);
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll("[data-moment-id]").length >= 100,
+      () => ({
+        rendered: document.querySelectorAll("[data-moment-id]").length,
+        allPressed: document.querySelector('[data-density="all"]')?.getAttribute("aria-pressed") ?? null,
+      }),
+      "all toggle renders 100+ moments",
+    );
     const allCount = await page.$$eval("[data-moment-id]", (els) => els.length);
     assert.ok(allCount >= 100, `all toggle shows 100+ moments (got ${allCount})`);
     const momentCountText = await page.locator('[data-testid="moment-count"]').textContent();
@@ -174,7 +211,27 @@ test("v4 100 moments — representative cards, 100-node toggle, layouts, inspect
     let changed = 0;
     for (const [key] of layouts) {
       await page.locator(`[data-layout="${key}"]`).click();
-      await page.waitForTimeout(500);
+      await waitForCondition(
+        page,
+        (prev) => {
+          const el = document.querySelector('[data-testid="node-moment-50"]');
+          if (!el) return false;
+          const left = el.style.left;
+          const top = el.style.top;
+          if (!left || !top) return false;
+          return !prev || left !== prev.left || top !== prev.top;
+        },
+        (prev) => {
+          const el = document.querySelector('[data-testid="node-moment-50"]');
+          return {
+            left: el?.style.left ?? null,
+            top: el?.style.top ?? null,
+            prev,
+          };
+        },
+        `${key} layout renders a distinct moment-50 position`,
+        previous,
+      );
       const p = await posOf("moment-50");
       assert.ok(p.left && p.top, `${key} layout renders node positions`);
       if (previous && (previous.left !== p.left || previous.top !== p.top)) changed += 1;
@@ -184,7 +241,15 @@ test("v4 100 moments — representative cards, 100-node toggle, layouts, inspect
 
     /* density back to representative */
     await page.locator('[data-density="representative"]').click();
-    await page.waitForTimeout(500);
+    await waitForCondition(
+      page,
+      () => document.querySelectorAll("[data-moment-id]").length === 6,
+      () => ({
+        rendered: document.querySelectorAll("[data-moment-id]").length,
+        repPressed: document.querySelector('[data-density="representative"]')?.getAttribute("aria-pressed") ?? null,
+      }),
+      "representative density restores 6 moments",
+    );
     const backCount = await page.$$eval("[data-moment-id]", (els) => els.length);
     assert.equal(backCount, 6, "representative density restored");
 
@@ -192,29 +257,78 @@ test("v4 100 moments — representative cards, 100-node toggle, layouts, inspect
     const tabs = page.locator('[role="tab"]');
     assert.equal(await tabs.count(), 3, "inspector has 3 tabs");
     await page.locator('[aria-controls="panel-selected"]').click();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.getElementById("panel-selected");
+        return !!el && !el.hasAttribute("hidden") && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.getElementById("panel-selected"),
+        hidden: document.getElementById("panel-selected")?.hasAttribute("hidden") ?? null,
+      }),
+      "selected tab panel opens",
+    );
     assert.ok(await page.locator('[data-testid="selected-panel"]').isVisible(), "selected tab panel visible");
     await page.locator('[aria-controls="panel-temperature"]').click();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.getElementById("panel-temperature");
+        return !!el && !el.hasAttribute("hidden") && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.getElementById("panel-temperature"),
+        hidden: document.getElementById("panel-temperature")?.hasAttribute("hidden") ?? null,
+      }),
+      "temperature tab panel opens",
+    );
 
     /* temperature: three metrics (creator tree grain, moment fan reaction, subject fan temp) */
     assert.ok(await page.locator('[data-testid="temp-creator"]').isVisible(), "creator tree grain metric visible");
     const creatorText = await page.locator('[data-testid="temp-creator"]').textContent();
     assert.match(creatorText, /나의 트리 결/, "creator metric shows 나의 트리 결");
     await page.locator(".v4-moments-temperature-tabs button", { hasText: "주연 전체" }).click();
-    await page.waitForTimeout(300);
-    assert.ok(await page.locator('[data-testid="temp-subject"]').isVisible(), "subject fan temperature metric visible");
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.querySelector('[data-testid="temp-subject"]');
+        return !!el && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.querySelector('[data-testid="temp-subject"]'),
+        activeTab: document.querySelector(".v4-moments-temperature-tabs button.active")?.textContent ?? null,
+      }),
+      "subject fan temperature metric becomes visible",
+    );
     const subjectText = await page.locator('[data-testid="temp-subject"]').textContent();
     assert.match(subjectText, /주연 전체 팬 온도/, "subject metric shows 주연 전체 팬 온도");
     await page.locator(".v4-moments-temperature-tabs button", { hasText: "이 순간의 팬 반응" }).click();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () =>
+        Array.from(document.querySelectorAll(".v4-moments-temperature-tabs button")).some(
+          (b) => (b.textContent || "").includes("이 순간의 팬 반응") && b.classList.contains("active"),
+        ),
+      () => ({
+        activeTab: document.querySelector(".v4-moments-temperature-tabs button.active")?.textContent ?? null,
+      }),
+      "moment fan reaction tab activates",
+    );
     const momentMetric = await page.locator('[data-testid="temp-moment"]').isVisible();
     assert.ok(momentMetric || true, "moment fan reaction metric present");
 
     /* node selection */
     await page.locator('[aria-controls="panel-selected"]').click();
     await page.locator('[data-testid="node-moment-1"]').click({ force: true });
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => document.querySelector('[data-testid="node-moment-1"]')?.classList.contains("selected") === true,
+      () => ({
+        classes: document.querySelector('[data-testid="node-moment-1"]')?.className ?? null,
+      }),
+      "clicked node receives selected state",
+    );
     assert.ok(
       await page.locator('[data-testid="node-moment-1"]').evaluate((el) => el.classList.contains("selected")),
       "selected node receives selected class",
@@ -242,7 +356,15 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
     /* zoom via buttons */
     const zBefore = await zoomLabel();
     await page.locator("#zoomIn").click();
-    await page.waitForTimeout(200);
+    await waitForCondition(
+      page,
+      (prev) => document.querySelector('[data-testid="zoom-label"]')?.textContent !== prev,
+      () => ({
+        label: document.querySelector('[data-testid="zoom-label"]')?.textContent ?? null,
+      }),
+      "zoom in changes the zoom label",
+      zBefore,
+    );
     const zAfter = await zoomLabel();
     assert.notEqual(zAfter, zBefore, "zoom in changes zoom level");
 
@@ -262,7 +384,15 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
     await page.mouse.down();
     await page.mouse.move(wrap.x + 30 + 80, wrap.y + 30 + 60, { steps: 5 });
     await page.mouse.up();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      (prev) => (document.querySelector(".v4-moments-canvas-space")?.style.transform || "") !== prev,
+      () => ({
+        transform: document.querySelector(".v4-moments-canvas-space")?.style.transform ?? null,
+      }),
+      "canvas pan updates the canvas transform",
+      transformBefore,
+    );
     const transformAfter = await page.$eval(".v4-moments-canvas-space", (el) => el.style.transform);
     assert.notEqual(transformAfter, transformBefore, "canvas pan changes transform");
 
@@ -274,7 +404,16 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
     await page.mouse.down();
     await page.mouse.move(nodeBox.x + nodeBox.width / 2 + 70, nodeBox.y + nodeBox.height / 2 + 50, { steps: 5 });
     await page.mouse.up();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      (prev) =>
+        (document.querySelector('[data-testid="node-moment-24"]')?.style.left || "") !== prev,
+      () => ({
+        left: document.querySelector('[data-testid="node-moment-24"]')?.style.left ?? null,
+      }),
+      "node drag moves node-moment-24",
+      nodePosBefore,
+    );
     const nodePosAfter = await page.$eval('[data-testid="node-moment-24"]', (el) => el.style.left);
     assert.notEqual(nodePosAfter, nodePosBefore, "node drag changes node position");
 
@@ -287,21 +426,60 @@ test("v4 100 moments — pan, zoom, fit, node drag, connection drag, minimap, re
     await page.mouse.down();
     await page.mouse.move(toBox.x + toBox.width / 2, toBox.y + toBox.height / 2, { steps: 8 });
     await page.mouse.up();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      (prev) => document.querySelectorAll(".v4-moments-edge-path").length > prev,
+      () => ({
+        edges: document.querySelectorAll(".v4-moments-edge-path").length,
+      }),
+      "connection drag adds a new edge",
+      edgesBefore,
+    );
     const edgesAfter = await page.$$eval(".v4-moments-edge-path", (els) => els.length);
     assert.ok(edgesAfter > edgesBefore, `connection drag adds a new edge (${edgesBefore} -> ${edgesAfter})`);
 
     /* season overlay reopen and review */
     await page.locator("#seasonReturn").click();
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.getElementById("completionOverlay");
+        return !!el && el.getAttribute("data-hidden") !== "true" && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.getElementById("completionOverlay"),
+        hidden: document.getElementById("completionOverlay")?.getAttribute("data-hidden") ?? null,
+      }),
+      "season completion overlay reopens",
+    );
     assert.ok(await page.locator("#completionOverlay").isVisible(), "season completion overlay reopens");
     await page.locator("#startReview").click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.getElementById("reviewOverlay");
+        return !!el && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.getElementById("reviewOverlay"),
+      }),
+      "review overlay opens",
+    );
     assert.ok(await page.locator("#reviewOverlay").isVisible(), "review overlay opens");
 
     /* decision dialog with season2 / continuous / course */
     await page.locator("#reviewDecision").click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const el = document.getElementById("decisionDialog");
+        return !!el && el.getClientRects().length > 0;
+      },
+      () => ({
+        present: !!document.getElementById("decisionDialog"),
+      }),
+      "decision dialog opens",
+    );
     assert.ok(await page.locator("#decisionDialog").isVisible(), "decision dialog opens");
     const decisionText = await page.locator("#decisionDialog").textContent();
     assert.match(decisionText, /시즌 2로 이어가기/, "decision dialog offers season2");
@@ -347,7 +525,26 @@ test("v4 100 moments — layout framing matches original, grid representative vi
     };
     for (const [key, exp] of Object.entries(expected)) {
       await page.locator(`[data-layout="${key}"]`).click();
-      await page.waitForTimeout(500);
+      await waitForCondition(
+        page,
+        (target) => {
+          const m = (document.querySelector(".v4-moments-canvas-space")?.style.transform || "").match(
+            /translate\(([-\d.]+)px, ([-\d.]+)px\) scale\(([\d.]+)\)/,
+          );
+          if (!m) return false;
+          return (
+            Math.abs(parseFloat(m[1]) - target.x) <= 6 &&
+            Math.abs(parseFloat(m[2]) - target.y) <= 6 &&
+            Math.abs(parseFloat(m[3]) - target.s) <= 0.02
+          );
+        },
+        (target) => ({
+          transform: document.querySelector(".v4-moments-canvas-space")?.style.transform ?? null,
+          expected: target,
+        }),
+        `${key} layout settles at original framing`,
+        exp,
+      );
       const t = parseTf(await tf());
       assert.ok(t, `${key} transform present`);
       assert.ok(closeTo(t.x, exp.x, 6), `${key} framing x ~ ${exp.x} (${t.x})`);
@@ -357,7 +554,28 @@ test("v4 100 moments — layout framing matches original, grid representative vi
 
     /* grid representative cards remain visible in frame */
     await page.locator('[data-layout="grid"]').click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const wrap = document.querySelector("#canvasWrap")?.getBoundingClientRect();
+        if (!wrap) return false;
+        const reps = ["moment-1", "moment-24", "moment-50", "moment-78", "moment-100"];
+        return (
+          reps.filter((id) => {
+            const el = document.querySelector(`[data-testid="node-${id}"]`);
+            if (!el) return false;
+            const r = el.getBoundingClientRect();
+            return r.left < wrap.right && r.right > wrap.left && r.top < wrap.bottom && r.bottom > wrap.top;
+          }).length >= 4
+        );
+      },
+      () => {
+        const wrap = document.querySelector("#canvasWrap")?.getBoundingClientRect();
+        const counts = { wrapPresent: !!wrap };
+        return counts;
+      },
+      "grid framing brings representative cards into view",
+    );
     const gridVisible = await page.evaluate(() => {
       const wrap = document.querySelector("#canvasWrap").getBoundingClientRect();
       const reps = ["moment-1", "moment-24", "moment-50", "moment-78", "moment-100"];
@@ -372,7 +590,18 @@ test("v4 100 moments — layout framing matches original, grid representative vi
 
     /* minimap viewport syncs with initial transform */
     await page.locator('[data-layout="radial"]').click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const vp = document.querySelector(".v4-moments-mini-viewport");
+        return !!vp && !!vp.style.width;
+      },
+      () => ({
+        present: !!document.querySelector(".v4-moments-mini-viewport"),
+        width: document.querySelector(".v4-moments-mini-viewport")?.style.width ?? null,
+      }),
+      "minimap viewport box appears after framing",
+    );
     const minimap = await page.evaluate(() => {
       const vp = document.querySelector(".v4-moments-mini-viewport");
       return vp ? { w: vp.style.width, h: vp.style.height, left: vp.style.left, top: vp.style.top } : null;
@@ -385,6 +614,9 @@ test("v4 100 moments — layout framing matches original, grid representative vi
     await dismissCompletion(mobile.page);
     await mobile.page.waitForTimeout(400);
     const beforeScroll = await mobile.page.evaluate(() => window.scrollY);
+    // Deliberate observation window (#365/#374 precedent): the property under
+    // test is scroll ABSENCE over a fixed interval, so a bounded wait cannot
+    // replace it; the assertion below carries before/after self-classification.
     await mobile.page.locator("button", { hasText: "온도" }).first().click({ force: true }).catch(() => {});
     await mobile.page.waitForTimeout(400);
     const afterScroll = await mobile.page.evaluate(() => window.scrollY);
