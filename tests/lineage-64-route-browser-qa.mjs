@@ -133,9 +133,48 @@ async function waitForFocusInside(page, label, timeout = 3000) {
   for (;;) {
     if (await focusInside(page)) return;
     if (Date.now() - start > timeout) break;
+    // Poll interval inside a bounded polling loop — intentionally NOT a fixed
+    // completion sleep (#417 classification: poll-interval window).
     await page.waitForTimeout(50);
   }
   assert.ok(await focusInside(page), `${label}: Viewer initial focus is inside the dialog`);
+}
+
+// #417: bounded condition wait for transition/readiness waits that have a
+// concrete semantic observable. Explicit timeout, explicit polling, and a
+// self-classifying diagnostic naming the exact unmet observable.
+const CONDITION_WAIT_TIMEOUT_MS = 10000;
+const CONDITION_WAIT_POLLING_MS = 50;
+
+async function waitForPageCondition(page, description, predicate, predicateArg) {
+  try {
+    await page.waitForFunction(predicate, predicateArg, {
+      timeout: CONDITION_WAIT_TIMEOUT_MS,
+      polling: CONDITION_WAIT_POLLING_MS,
+    });
+  } catch (error) {
+    throw new Error(
+      `CONDITION_WAIT_TIMEOUT after ${CONDITION_WAIT_TIMEOUT_MS}ms: ${description}`,
+      { cause: error },
+    );
+  }
+}
+
+// #417: wait until the world rotateY angle differs from `beforeAngle`, i.e. the
+// RAF loop has applied the dispatched wheel/drag/touch input to the camera.
+async function waitForWorldAngleChange(page, beforeAngle, label, actionDescription) {
+  await waitForPageCondition(
+    page,
+    `${label}: world rotateY angle must change away from ${beforeAngle}deg after ${actionDescription} (RAF camera update never observed)`,
+    (prev) => {
+      const match = /rotateY\(([-0-9.]+)deg\)/.exec(
+        document.querySelector('[data-rendering="css3d-dom"]')?.style.transform || "",
+      );
+      const angle = match ? parseFloat(match[1]) : null;
+      return angle !== null && angle !== prev;
+    },
+    beforeAngle,
+  );
 }
 
 async function assertViewerFocusTrap(page, label) {
@@ -233,8 +272,13 @@ async function assertDragDoesNotOpenViewer(page, label, center) {
   await page.mouse.down();
   await page.mouse.move(center.x - 70, center.y, { steps: 10 });
   await page.mouse.up();
+  // #417: negative-observation window. The pointer pipeline needs a settle
+  // interval after mouse-up to resolve gesture-vs-click before the absence
+  // assertion is meaningful; the full window is preserved and the absence
+  // check now fails with a self-classifying diagnostic instead of silently
+  // sampling at an arbitrary moment.
   await page.waitForTimeout(150);
-  assert.equal(await page.getByRole("dialog").count(), 0, `${label}: drag above threshold does NOT open Viewer`);
+  assert.equal(await page.getByRole("dialog").count(), 0, `${label}: drag above threshold does NOT open Viewer (checked after 150ms arbitration settle window)`);
   return startAngle;
 }
 
@@ -268,6 +312,8 @@ async function touchTap(client, x, y, holdMs = 60) {
   // A real tap has a non-zero hold; an instantaneous start/end CDP pair can be
   // dropped as a tap (no synthesized pointerup/click), which is the source of
   // intermittent "tap did not open" flakes.
+  // #417 classification: genuine input-pacing hold modelling real touchscreen
+  // semantics — NOT a completion wait; preserved deliberately.
   await new Promise((resolve) => setTimeout(resolve, holdMs));
   await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 }
@@ -296,11 +342,18 @@ try {
     await assertCenterVoidAndDepth(desktop.page, "1280x800");
 
     // A. TRUE AMBIENT AUTO-ORBIT in normal idle mode: world angle advances on its own.
+    // #417: the 650ms sampling window is the ambient-motion temporal contract —
+    // the idle RAF loop must produce a meaningful (> 1deg) rotation across it.
+    // The full window is preserved; the sampled delta assertion now carries a
+    // self-classifying diagnostic naming the window and the measured delta.
     const ambient0 = await worldAngle(desktop.page);
     await desktop.page.waitForTimeout(650);
     const ambient1 = await worldAngle(desktop.page);
+    if (ambient1 === null || ambient0 === null) {
+      throw new Error(`1280x800: AMBIENT_WINDOW_CHECK_FAILED after 650ms window: world angle unreadable (rotateY missing from css3d transform)`);
+    }
     assert.notEqual(ambient0, ambient1, "1280x800: untouched normal mode auto-orbits (ambient angle changed)");
-    assert.ok(Math.abs(ambient1 - ambient0) > 1, `1280x800: ambient orbit delta is meaningful (${(ambient1 - ambient0).toFixed(2)}deg)`);
+    assert.ok(Math.abs(ambient1 - ambient0) > 1, `1280x800: ambient orbit delta is meaningful after the 650ms ambient window (${(ambient1 - ambient0).toFixed(2)}deg)`);
 
     const center = await waitForFrontCard(desktop.page, "1280x800");
     const openedId = await openViewerFromCard(desktop.page, center);
@@ -327,10 +380,16 @@ try {
     await waitForReducedMotionFlag(desktopRM.page, "reduced-motion");
 
     // D. reduced-motion idle: NO auto-orbit.
+    // #417: the 650ms window is a negative temporal contract — under
+    // reduced motion the idle world must NOT move across it. The full window
+    // is preserved; failure carries a self-classifying diagnostic.
     const idle0 = await worldAngle(desktopRM.page);
     await desktopRM.page.waitForTimeout(650);
     const idle1 = await worldAngle(desktopRM.page);
-    assert.equal(idle0, idle1, `reduced-motion: idle world angle is unchanged (${idle0}deg)`);
+    if (idle1 === null || idle0 === null) {
+      throw new Error(`reduced-motion: NEGATIVE_WINDOW_CHECK_FAILED after 650ms window: world angle unreadable (rotateY missing from css3d transform)`);
+    }
+    assert.equal(idle0, idle1, `reduced-motion: idle world angle is unchanged across the 650ms negative-observation window (${idle0}deg)`);
 
     // C. real wheel input changes world/camera geometry. Dispatch real wheel
     // events (deltaY) to the orbit surface; the measured rotateY change proves the
@@ -340,7 +399,9 @@ try {
     const beforeWheel = await worldAngle(desktopRM.page);
     await desktopRM.page.dispatchEvent('[data-rendering="css3d-dom"]', "wheel", { deltaY: 160 });
     await desktopRM.page.dispatchEvent('[data-rendering="css3d-dom"]', "wheel", { deltaY: 160 });
-    await desktopRM.page.waitForTimeout(80);
+    // #417: completion wait — the RAF loop applies the wheel delta to rotateY;
+    // wait for that observable instead of a fixed 80ms sleep.
+    await waitForWorldAngleChange(desktopRM.page, beforeWheel, "reduced-motion desktop", "wheel input");
     const afterWheel = await worldAngle(desktopRM.page);
     assert.ok(
       Math.abs(afterWheel - beforeWheel) > 1,
@@ -354,7 +415,9 @@ try {
     await desktopRM.page.mouse.down();
     await desktopRM.page.mouse.move(dragCenter.x - 70, dragCenter.y, { steps: 10 });
     await desktopRM.page.mouse.up();
-    await desktopRM.page.waitForTimeout(60);
+    // #417: completion wait — the RAF loop applies the drag delta to rotateY;
+    // wait for that observable instead of a fixed 60ms sleep.
+    await waitForWorldAngleChange(desktopRM.page, beforeDrag, "reduced-motion desktop", "manual pointer drag");
     const afterDrag = await worldAngle(desktopRM.page);
     assert.notEqual(beforeDrag, afterDrag, `reduced-motion: manual drag still rotates world (${beforeDrag} -> ${afterDrag})`);
 
@@ -396,16 +459,21 @@ try {
       const swipeCenter = await waitForFrontCard(mobile.page, `${spec.label} swipe`);
       const vw = mobile.page.viewportSize()?.width ?? 390;
       await touchSwipe(client, swipeCenter.x, swipeCenter.y, swipeTargetX(swipeCenter.x, vw), swipeCenter.y);
+      // #417: negative-observation window after touch gesture — the pointer
+      // pipeline needs a settle interval to resolve swipe-vs-tap before the
+      // absence assertion is meaningful; window preserved with a
+      // self-classifying diagnostic message.
       await mobile.page.waitForTimeout(150);
-      assert.equal(await mobile.page.getByRole("dialog").count(), 0, `${spec.label}: real touch swipe does NOT open Viewer`);
+      assert.equal(await mobile.page.getByRole("dialog").count(), 0, `${spec.label}: real touch swipe does NOT open Viewer (checked after 150ms arbitration settle window)`);
 
       // pointercancel must clear pending ownership — never open.
       const cancelCenter = await waitForFrontCard(mobile.page, `${spec.label} cancel`);
       await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: cancelCenter.x, y: cancelCenter.y }] });
       await client.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: cancelCenter.x + 30, y: cancelCenter.y }] });
       await client.send("Input.dispatchTouchEvent", { type: "touchCancel", touchPoints: [] });
+      // #417: negative-observation window after pointercancel (same rationale).
       await mobile.page.waitForTimeout(150);
-      assert.equal(await mobile.page.getByRole("dialog").count(), 0, `${spec.label}: pointercancel clears pending — no accidental Viewer`);
+      assert.equal(await mobile.page.getByRole("dialog").count(), 0, `${spec.label}: pointercancel clears pending — no accidental Viewer (checked after 150ms settle window)`);
 
       assert.deepEqual(mobile.errors, [], `${spec.label}: no console/page errors: ${mobile.errors.join(" | ")}`);
     } finally {
@@ -423,10 +491,15 @@ try {
     await waitForReducedMotionFlag(reduced.page, "reduced-motion mobile");
 
     // D. reduced-motion idle: NO auto-orbit.
+    // #417: 650ms negative temporal contract — full window preserved with a
+    // self-classifying diagnostic on failure.
     const idle0 = await worldAngle(reduced.page);
     await reduced.page.waitForTimeout(650);
     const idle1 = await worldAngle(reduced.page);
-    assert.equal(idle0, idle1, `reduced-motion mobile: idle world angle is unchanged (${idle0}deg)`);
+    if (idle1 === null || idle0 === null) {
+      throw new Error(`reduced-motion mobile: NEGATIVE_WINDOW_CHECK_FAILED after 650ms window: world angle unreadable (rotateY missing from css3d transform)`);
+    }
+    assert.equal(idle0, idle1, `reduced-motion mobile: idle world angle is unchanged across the 650ms negative-observation window (${idle0}deg)`);
 
     // B/D. real touch swipe changes the world angle (manual ownership, isolated).
     const swipeStart = await waitForFrontCard(reduced.page, "reduced-motion mobile swipe");
@@ -434,7 +507,9 @@ try {
     const targetX = swipeTargetX(swipeStart.x, rvw);
     const beforeSwipe = await worldAngle(reduced.page);
     await touchSwipe(rClient, swipeStart.x, swipeStart.y, targetX, swipeStart.y);
-    await reduced.page.waitForTimeout(80);
+    // #417: completion wait — RAF applies the swipe delta to rotateY; wait for
+    // that observable instead of a fixed 80ms sleep.
+    await waitForWorldAngleChange(reduced.page, beforeSwipe, "reduced-motion mobile", "real touch swipe");
     const afterSwipe = await worldAngle(reduced.page);
     const delta1 = afterSwipe - beforeSwipe;
     assert.notEqual(beforeSwipe, afterSwipe, `reduced-motion mobile: real touch swipe rotates world (${beforeSwipe} -> ${afterSwipe})`);
@@ -446,7 +521,9 @@ try {
     const firstDir = targetX - swipeStart.x;
     const reverseTargetX = Math.max(10, Math.min(rvw - 10, reverseStart.x - firstDir));
     await touchSwipe(rClient, reverseStart.x, reverseStart.y, reverseTargetX, reverseStart.y);
-    await reduced.page.waitForTimeout(80);
+    // #417: completion wait — RAF applies the reverse swipe delta; wait for the
+    // observable instead of a fixed 80ms sleep.
+    await waitForWorldAngleChange(reduced.page, afterSwipe, "reduced-motion mobile", "reverse touch swipe");
     const afterReverse = await worldAngle(reduced.page);
     const delta2 = afterReverse - afterSwipe;
     assert.notEqual(delta1, 0, "reduced-motion mobile: first swipe produced a delta");
