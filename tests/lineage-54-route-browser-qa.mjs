@@ -16,6 +16,143 @@ const EXPECTED_ASSETS = [
   "petal-runner-open-v3.png",
 ];
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#370/#374/#400
+// pattern): every expected state change polls for the actual transition with
+// an explicit timeout/polling budget; the original assertions stay verbatim
+// below the waits, and a timeout fails loudly with self-classifying
+// diagnostics attached so a recurrence classifies itself.  Fixed sleeps that
+// approximated real product transitions are replaced; the genuine
+// negative-observation window in the reduced-motion gate stays fixed on
+// purpose (rationale documented at that site).
+const CONDITION_WAIT = { timeout: 10000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+function lt54StageState() {
+  return {
+    scrollY: Math.round(window.scrollY),
+    innerHeight: window.innerHeight,
+    maxScroll: Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
+    stageDriving: Boolean(document.querySelector(".lt54-stage.is-driving")),
+    petalCount: document.querySelectorAll(".lt54-petals i").length,
+    carSrc: document.querySelector(".lt54-car")?.getAttribute("src") ?? null,
+    chapterCount: document.querySelector(".lt54-chapter-count")?.textContent?.trim() ?? null,
+    wrapDragging: Boolean(document.querySelector(".lt54-car-wrap")?.classList.contains("is-dragging")),
+  };
+}
+
+// Site 1 (was 220ms): the wheel gesture over the stage must hand scrolling to
+// the OUTER page.  Poll for any scroll movement, then let the original
+// magnitude assertion decide whether the response is strong enough — the wait
+// deliberately does not encode the assertion threshold.
+async function waitForOuterScrollMoved(page, before, label) {
+  await waitForCondition(
+    page,
+    (previous) => Math.round(window.scrollY) > previous,
+    lt54StageState,
+    `${label}: outer page starts scrolling after the wheel gesture`,
+    before,
+    { timeout: 3000, polling: 50 },
+  );
+}
+
+// Site 2 (was 2500ms): PETAL_LIFETIME_MS (2400ms) is a scheduled product
+// lifetime in Lineage54PetalRunner.tsx (triggerBloom -> schedule(clear,
+// PETAL_LIFETIME_MS)), so the lifetime contract itself stays in the source
+// and is preserved.  What the fixed sleep approximated is the SCHEDULED
+// CLEANUP becoming observable; poll for it with a budget sized at ~2.5x the
+// source lifetime instead of assuming wall-clock.  The positive observation
+// (arrival bloom renders particles) stays asserted before this wait.
+async function waitForBloomCleanup(page, label) {
+  await waitForCondition(
+    page,
+    () => document.querySelectorAll(".lt54-petals i").length === 0,
+    lt54StageState,
+    `${label}: bloom particles clean up within the source petal lifetime`,
+    null,
+    { timeout: 6000, polling: 50 },
+  );
+}
+
+// Sites 3/6 (were 220ms): a pointer/touch release swaps the free-orbit
+// vehicle through the VEHICLE_FADE_MS (170ms) source pipeline.  Poll for the
+// new source; every release assertion below stays verbatim.
+async function waitForVehicleSourceChange(page, beforeSrc, label) {
+  await waitForCondition(
+    page,
+    (previous) => (document.querySelector(".lt54-car")?.getAttribute("src") ?? null) !== previous,
+    lt54StageState,
+    `${label}: free-orbit vehicle source changes after release`,
+    beforeSrc,
+    { timeout: 3000, polling: 50 },
+  );
+}
+
+// Site 4 (was 250ms): the pre-touch settle is input-pacing/geometry
+// stabilization for CDP touch coordinates.  The pacing intent is preserved
+// but observed instead of assumed: poll until the target rect is identical on
+// two consecutive polls, so the gesture never samples a moving layout and
+// cannot pass by accident of wall-clock.
+async function waitForTouchTargetSettled(page, selector, label) {
+  await waitForCondition(
+    page,
+    (sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      const key = [rect.x, rect.y, rect.width, rect.height].map((v) => v.toFixed(1)).join(",");
+      const previous = window.__lt54TouchSettleKey;
+      window.__lt54TouchSettleKey = key;
+      return previous === key;
+    },
+    (sel) => ({ found: Boolean(document.querySelector(sel)) }),
+    `${label}: touch target rect settles`,
+    selector,
+  );
+}
+
+// Site 5 (was 380ms x2): the mobile STORY & SERVICE panel slides on a 0.35s
+// transform transition driven by the .is-open class.  Poll for the class to
+// commit AND the rect to stop moving (two identical consecutive polls); the
+// original geometry assertions stay verbatim below.
+async function waitForMobilePanelTransition(page, expectedOpen, label) {
+  await waitForCondition(
+    page,
+    (expected) => {
+      const el = document.querySelector(".lt54-side--right");
+      if (!el) return false;
+      if (el.classList.contains("is-open") !== expected) return false;
+      const rect = el.getBoundingClientRect();
+      const key = [rect.x, rect.y, rect.width, rect.height].map((v) => v.toFixed(1)).join(",");
+      const previous = window.__lt54PanelSettleKey;
+      window.__lt54PanelSettleKey = key;
+      return previous === key;
+    },
+    () => {
+      const el = document.querySelector(".lt54-side--right");
+      const rect = el?.getBoundingClientRect();
+      return {
+        found: Boolean(el),
+        isOpen: el?.classList.contains("is-open") ?? null,
+        rect: rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null,
+        transform: el ? getComputedStyle(el).transform : null,
+      };
+    },
+    `${label}: panel ${expectedOpen ? "open" : "close"} transition settles`,
+    expectedOpen,
+    { timeout: 3000, polling: 50 },
+  );
+}
+
 async function captureErrors(page) {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -101,7 +238,7 @@ async function assertOuterScrollPriority(page) {
   const y = Math.max(1, Math.min(viewport.height - 2, box.y + Math.min(box.height * 0.35, 260)));
   await page.mouse.move(x, y);
   await page.mouse.wheel(0, 420);
-  await page.waitForTimeout(220);
+  await waitForOuterScrollMoved(page, before, "1280x800");
   const after = await page.evaluate(() => Math.round(window.scrollY));
   assert.ok(after > before + 40, `outer page retains wheel scrolling over the stage: ${before} -> ${after}`);
 }
@@ -190,7 +327,7 @@ async function assertDesktopArrivalAndReplay(page) {
   assert.ok(await page.locator(".lt54-petals i").count() > 0, "arrival bloom renders particles");
   await assertVehicleInsideStage(page, "1280x800 final arrival");
   await screenshot(page, "desktop-final-arrival");
-  await page.waitForTimeout(2500);
+  await waitForBloomCleanup(page, "1280x800");
   assert.equal(await page.locator(".lt54-petals i").count(), 0, "arrival bloom cleans itself up after source lifetime");
 
   await page.getByRole("button", { name: "REPLAY THE JOURNEY", exact: true }).click();
@@ -210,7 +347,7 @@ async function assertDesktopDrag(page) {
   await page.mouse.move(box.x + box.width * 0.72, box.y + box.height * 0.55, { steps: 5 });
   assert.equal(await wrap.evaluate((node) => node.classList.contains("is-dragging")), true, "dragging class is active during pointer drag");
   await page.mouse.up();
-  await page.waitForTimeout(220);
+  await waitForVehicleSourceChange(page, before, "1280x800");
   const after = await page.locator(".lt54-car").getAttribute("src");
   assert.notEqual(after, before, "desktop drag changes free vehicle view");
   assert.match(await page.locator(".lt54-chapter-count").innerText(), /FREE ORBIT/);
@@ -220,7 +357,7 @@ async function assertDesktopDrag(page) {
 
 async function dispatchTouchDrag(page, locator) {
   await locator.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(250);
+  await waitForTouchTargetSettled(page, ".lt54-car-wrap", "390x844");
   const box = await locator.boundingBox();
   assert.ok(box, "mobile touch target exists");
   const session = await page.context().newCDPSession(page);
@@ -254,17 +391,17 @@ async function assertMobilePanelAndTouch(page) {
   assert.ok(before, "mobile service panel exists off-canvas");
   assert.ok(before.x >= 390 - 4, `mobile panel starts off-canvas (${before.x})`);
   await page.getByRole("button", { name: "STORY & SERVICE" }).click();
-  await page.waitForTimeout(380);
+  await waitForMobilePanelTransition(page, true, "390x844");
   const opened = await panel.boundingBox();
   assert.ok(opened, "mobile service panel opens");
   assert.ok(opened.x >= 0 && opened.x + opened.width <= 390 + 1, "mobile service panel fits viewport when open");
 
   await page.getByRole("button", { name: "STORY & SERVICE" }).click();
-  await page.waitForTimeout(380);
+  await waitForMobilePanelTransition(page, false, "390x844");
   const wrap = page.locator(".lt54-car-wrap");
   const beforeSrc = await page.locator(".lt54-car").getAttribute("src");
   await dispatchTouchDrag(page, wrap);
-  await page.waitForTimeout(220);
+  await waitForVehicleSourceChange(page, beforeSrc, "390x844");
   const afterSrc = await page.locator(".lt54-car").getAttribute("src");
   assert.notEqual(afterSrc, beforeSrc, "mobile touch drag changes free vehicle view");
   assert.match(await page.locator(".lt54-chapter-count").innerText(), /FREE ORBIT/);
@@ -318,6 +455,11 @@ test("Lineage 54 V4 — reduced motion changes chapters immediately without trav
     try {
       await assertExactAssetsReady(page, "reduced-motion");
       await page.locator(".lt54-story-list button").filter({ hasText: "CONNECTION" }).click();
+      // Genuine negative-observation window (preserved on purpose): reduced
+      // motion must NEVER enter the travel animation, so this fixed 80ms
+      // samples the absence of a state transition that has no positive
+      // observable.  It is an input-pacing window for a negative assertion,
+      // not a transition wait — converting it would weaken the contract.
       await page.waitForTimeout(80);
       assert.equal(await page.locator(".lt54-stage.is-driving").count(), 0, "reduced motion never enters travel animation state");
       assert.match(await page.locator(".lt54-car").getAttribute("src"), /petal-runner-rear-v3\.png$/);

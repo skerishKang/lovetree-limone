@@ -12,6 +12,50 @@ if (gate.status !== 0) {
 }
 assert.match(gate.stdout, /LINEAGE_56_EXACT_ASSET_GATE_PASS/);
 
+// ── Bounded semantic wait (Issue #423 timing hardening) ──────────────────
+// Replaces the former fixed waitForTimeout(1250) completion sleep after the
+// primary stage action. Source behavior (app/design-lab/lineages/56/v3/
+// CrystalMemoryAtelierV3.tsx): the primary button only toggles autoplay, and
+// the autoplay effect applies the FIRST expression synchronously on start,
+// so the status flip is a state transition with no temporal-observation
+// component (the 1150ms interval only schedules subsequent cycles).
+// Polls the concrete DOM observable with an explicit timeout and surfaces a
+// self-classifying diagnostic on timeout. No assertion is removed or
+// weakened — the original doesNotMatch assertion still runs afterwards.
+const STATUS_TRANSITION_TIMEOUT_MS = 5000;
+const STATUS_POLL_INTERVAL_MS = 50;
+
+// Waits until .lt56__status text no longer matches patternSource (a regex
+// source string WITHOUT delimiters — it is compiled via new RegExp).
+// Interval polling + explicit timeout + self-classifying timeout diagnostics.
+async function waitForStatusLeaves(page, patternSource, label, timeoutMs = STATUS_TRANSITION_TIMEOUT_MS) {
+  const statusLoc = page.locator(".lt56__status");
+  try {
+    await page.waitForFunction(
+      (pattern) => {
+        const el = document.querySelector(".lt56__status");
+        if (!el) return false;
+        return !new RegExp(pattern).test(el.innerText ?? "");
+      },
+      patternSource,
+      { timeout: timeoutMs, polling: STATUS_POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let detail;
+    try {
+      detail = {
+        statusText: await statusLoc.innerText(),
+        ariaPressed: await page.locator(".lt56__stage-actions .is-primary").getAttribute("aria-pressed"),
+      };
+    } catch {
+      detail = "status probe unavailable";
+    }
+    throw new Error(
+      `TIMEOUT waiting for ${label} within ${timeoutMs}ms — ${JSON.stringify(detail)} (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
 const browser = await chromium.launch({ headless: true });
 const cases = [
   { name: "desktop", viewport: { width: 1280, height: 800 }, touch: false },
@@ -66,7 +110,14 @@ try {
     }
 
     await page.locator('.lt56__stage-actions .is-primary').click();
-    await page.waitForTimeout(1250);
+    // Transition completion observed via the status observable (source
+    // applies the first autoplay expression synchronously on start); the
+    // assertion itself is unchanged.
+    await waitForStatusLeaves(
+      page,
+      "PROFILE VIEW",
+      "primary action to leave PROFILE VIEW",
+    );
     assert.doesNotMatch(await page.locator('.lt56__status').innerText(), /PROFILE VIEW/);
     await page.locator('.lt56__stage-actions button').nth(1).click();
     assert.match(await page.locator('.lt56__status').innerText(), /SLEEPING/);
