@@ -13,6 +13,13 @@
 //   - Portal fail-closed execution: 4 resolved + 5 HOLD + unknown + forged
 //   - Reduced-motion RAF stop semantics (not cursor CSS only)
 //   - Media fallback (local hero, not CloudFront)
+//
+// Issue #412 timing policy: fixed-timing transition waits are replaced by
+// bounded semantic polling (explicit timeout + poll interval +
+// self-classifying diagnostics) on concrete product/DOM observables. The
+// fixed delays that remain are NOT transition-completion waits — see the
+// Timing Policy block below for the preserved input-pacing / temporal-
+// observation windows.
 
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
@@ -38,6 +45,30 @@ const EXPECTED_ROUTES = {
   C09: "/design-lab/lineages/54/v4",
   C08: "/design-lab/lineages/56/v3",
 };
+
+// ── Timing Policy (Issue #412 hardening) ──────────────────────────────────
+//
+// Preserved fixed delays — each is an input-pacing window or a genuine
+// temporal observation, not a completion wait:
+//   - INPUT_PACING_MS: spacing between synthetic keystrokes (Tab/Shift+Tab
+//     containment walks) and settling after programmatic focus before a
+//     keypress. Keyboard events are delivered asynchronously; these windows
+//     pace input, they do not await UI work.
+//   - INPUT_FOCUS_SETTLE_MS: slightly longer settle after focusing a control
+//     before beginning a keyboard walk (keystroke-target determinism).
+//   - TEMPORAL_TOUCH_OBSERVATION_MS: wall-clock observation window for media
+//     playback state (currentTime advance / autoplay attempt) after a
+//     genuine touchscreen tap. The observation itself requires time.
+//
+// Everything that awaits a UI transition uses bounded semantic polling below.
+const INPUT_PACING_MS = 100;
+const INPUT_FOCUS_SETTLE_MS = 200;
+const TEMPORAL_TOUCH_OBSERVATION_MS = 1200;
+
+// Bounded-wait budgets (explicit timeouts; never inflated to mask failures).
+const WAIT_TIMEOUT_MS = 5000;
+const MODE_TRANSITION_TIMEOUT_MS = 15000;
+const POLL_INTERVAL_MS = 50;
 
 let totalPass = 0;
 let totalFail = 0;
@@ -80,6 +111,310 @@ async function getIframeFrame(page) {
   const frame = await handle.contentFrame();
   await handle.dispose();
   return frame;
+}
+
+// ── Bounded semantic wait helpers (Issue #412) ────────────────────────────
+
+// Poll a classify() probe until it reports { ready: true } or the explicit
+// timeout elapses. The last observation is surfaced in the thrown error so a
+// failure self-classifies (stale banner vs missing element vs probe error).
+async function waitForSemantic(page, classify, label, timeoutMs = WAIT_TIMEOUT_MS) {
+  const deadline = Date.now() + timeoutMs;
+  let lastObservation = "probe never succeeded";
+  while (Date.now() < deadline) {
+    try {
+      const observation = await classify();
+      if (observation.ready) return observation;
+      lastObservation = JSON.stringify(observation.detail);
+    } catch (error) {
+      lastObservation = `probe error: ${error && error.message ? error.message : String(error)}`;
+    }
+    await page.waitForTimeout(POLL_INTERVAL_MS);
+  }
+  throw new Error(
+    `TIMEOUT waiting for ${label} within ${timeoutMs}ms — last observation: ${lastObservation}`,
+  );
+}
+
+// launcher -> A/B mode transition. The runner flips data-mode synchronously,
+// then fetches + SHA-verifies the pinned source bytes before mounting the
+// variant iframe (fail-closed gate). Wait for BOTH observables:
+//   1. the freshly mounted iframe carrying data-mode=<mode> — its srcdoc
+//      document cannot belong to the previous mode, and no ready iframe is
+//      mounted while verification is pending
+//   2. the mode's own document being live inside the frame (#view exists only
+//      in variant documents), so frame.evaluate targets this variant's DOM
+// Returns the live contentFrame resolved from the mounted element.
+async function waitForModeReady(page, mode, timeoutMs = MODE_TRANSITION_TIMEOUT_MS) {
+  await page
+    .locator(`iframe[data-source-state='ready'][data-mode='${mode}']`)
+    .waitFor({ timeout: timeoutMs });
+  const frame = await getIframeFrame(page);
+  assert.ok(frame, `${mode} variant iframe contentFrame must exist`);
+  try {
+    await frame.waitForFunction(
+      () => document.getElementById("view") !== null,
+      undefined,
+      // Interval polling: RAF-based polling starves once the host bridge
+      // no-ops requestAnimationFrame (reduced-motion readiness ordering).
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    throw new Error(
+      `TIMEOUT waiting for ${mode} iframe document (#view) within ${timeoutMs}ms — ${error.message.split("\n")[0]}`,
+    );
+  }
+  return frame;
+}
+
+// WORKS overlay open transition (.open class) inside the variant iframe.
+function waitForWorksOverlayOpen(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  return frame
+    .waitForFunction(
+      () => document.getElementById("worksOverlay")?.classList.contains("open") === true,
+      undefined,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    )
+    .catch(async (error) => {
+      let detail;
+      try {
+        const state = await frame.evaluate(() => {
+          const overlay = document.getElementById("worksOverlay");
+          return { present: !!overlay, className: overlay ? overlay.className : null };
+        });
+        detail = `overlay present=${state.present}, className=${JSON.stringify(state.className)}`;
+      } catch {
+        detail = "overlay probe unavailable";
+      }
+      throw new Error(
+        `TIMEOUT waiting for WORKS overlay to open within ${timeoutMs}ms — ${detail} (${error.message.split("\n")[0]})`,
+      );
+    });
+}
+
+// WORKS overlay close transition (.open class removal) inside the variant iframe.
+function waitForWorksOverlayClosed(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  return frame
+    .waitForFunction(
+      () => {
+        const overlay = document.getElementById("worksOverlay");
+        return !!overlay && !overlay.classList.contains("open");
+      },
+      undefined,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    )
+    .catch(async (error) => {
+      let detail;
+      try {
+        const state = await frame.evaluate(() => {
+          const overlay = document.getElementById("worksOverlay");
+          return { present: !!overlay, className: overlay ? overlay.className : null };
+        });
+        detail = `overlay present=${state.present}, className=${JSON.stringify(state.className)}`;
+      } catch {
+        detail = "overlay probe unavailable";
+      }
+      throw new Error(
+        `TIMEOUT waiting for WORKS overlay to close within ${timeoutMs}ms — ${detail} (${error.message.split("\n")[0]})`,
+      );
+    });
+}
+
+// Open the WORKS overlay through the source's own #view click surface, then
+// wait for the overlay-open transition observable.
+async function openWorksOverlay(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  await frame.evaluate(() => document.getElementById("view")?.click());
+  await waitForWorksOverlayOpen(frame, timeoutMs);
+}
+
+// Programmatic focus handoff (openWorks moves focus to #worksClose,
+// closeMoves restore paths move it out of the overlay).
+async function waitForFocusedId(frame, expectedId, timeoutMs = WAIT_TIMEOUT_MS) {
+  try {
+    await frame.waitForFunction(
+      (id) => document.activeElement?.id === id,
+      expectedId,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let actual = null;
+    try {
+      actual = await frame.evaluate(() => document.activeElement?.id ?? null);
+    } catch {}
+    throw new Error(
+      `TIMEOUT waiting for focus on #${expectedId} within ${timeoutMs}ms — activeElement=${
+        actual ? `#${actual}` : String(actual)
+      } (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
+// Background inert application while the modal is open (host bridge cleanup).
+async function waitForBackgroundInert(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  try {
+    await frame.waitForFunction(
+      () => {
+        const spacer = document.getElementById("scroll-spacer");
+        if (!spacer) return false;
+        for (const child of spacer.children) {
+          if (child.hasAttribute("inert")) return true;
+        }
+        return false;
+      },
+      undefined,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let count = -1;
+    try {
+      count = await frame.evaluate(() => {
+        const spacer = document.getElementById("scroll-spacer");
+        if (!spacer) return -1;
+        let n = 0;
+        for (const child of spacer.children) {
+          if (child.hasAttribute("inert")) n++;
+        }
+        return n;
+      });
+    } catch {}
+    throw new Error(
+      `TIMEOUT waiting for background inert within ${timeoutMs}ms — inert children=${count} (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
+// Inert cleanup after close: nothing in the document remains inert.
+async function waitForInertRemoved(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  try {
+    await frame.waitForFunction(
+      () => !document.querySelector("[inert]"),
+      undefined,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let sample = null;
+    try {
+      sample = await frame.evaluate(() =>
+        Array.from(document.querySelectorAll("[inert]"))
+          .slice(0, 3)
+          .map((el) => el.id || el.tagName),
+      );
+    } catch {}
+    throw new Error(
+      `TIMEOUT waiting for inert cleanup within ${timeoutMs}ms — still-inert=${JSON.stringify(sample)} (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
+// Host-bridge reduced-motion readiness: applyReducedMotion() replaces
+// requestAnimationFrame with a JS no-op only after DOMContentLoaded, which
+// can lag well behind the variant document's #view becoming available.
+// Poll the replacement itself (the assertion's own frame observable).
+async function waitForHostBridgeReducedMotionApplied(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  try {
+    await frame.waitForFunction(
+      () => {
+        const s = window.requestAnimationFrame.toString();
+        return !s.includes("native") && !s.includes("[native");
+      },
+      undefined,
+      // Interval polling is REQUIRED here: the reduced-motion no-op RAF
+      // starves Playwright's default RAF-based predicate polling.
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let detail;
+    try {
+      detail = await frame.evaluate(() => {
+        const spacer = document.getElementById("scroll-spacer");
+        return {
+          rafSnippet: window.requestAnimationFrame.toString().slice(0, 60),
+          reduceMatches: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          readyState: document.readyState,
+          hasSpacer: !!spacer,
+          cursor: spacer ? getComputedStyle(spacer).cursor : null,
+        };
+      });
+    } catch {
+      detail = "frame probe unavailable";
+    }
+    throw new Error(
+      `TIMEOUT waiting for host-bridge reduced-motion application within ${timeoutMs}ms — ${JSON.stringify(detail)} (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
+// Focus leaves the closed overlay: closeWorks() calls view.focus(), but the
+// view is scale(0)/unfocusable off scroll-end (focusing steps no-op), so the
+// observable "focus no longer inside the overlay" lands only after the
+// browser's focus fixup for the hidden close button — poll it directly.
+async function waitForFocusLeftOverlay(frame, timeoutMs = WAIT_TIMEOUT_MS) {
+  try {
+    await frame.waitForFunction(
+      () => {
+        const overlay = document.getElementById("worksOverlay");
+        return !overlay || !overlay.contains(document.activeElement);
+      },
+      undefined,
+      { timeout: timeoutMs, polling: POLL_INTERVAL_MS },
+    );
+  } catch (error) {
+    let detail;
+    try {
+      detail = await frame.evaluate(() => ({
+        focusId: document.activeElement?.id ?? null,
+        focusTag: document.activeElement?.tagName ?? null,
+        overlayOpen: document.getElementById("worksOverlay")?.classList.contains("open") ?? null,
+      }));
+    } catch {
+      detail = "frame probe unavailable";
+    }
+    throw new Error(
+      `TIMEOUT waiting for focus to leave the closed overlay within ${timeoutMs}ms — ${JSON.stringify(detail)} (${error.message.split("\n")[0]})`,
+    );
+  }
+}
+
+// Parent-side portal event banner: rendered when a bridge message lands.
+// Poll for the exact expected target+status pair so a stale banner left over
+// from a previously exercised portal can never satisfy a later assertion.
+async function waitForPortalEvent(page, targetId, status, timeoutMs = WAIT_TIMEOUT_MS) {
+  return waitForSemantic(
+    page,
+    () =>
+      page.evaluate(([t, s]) => {
+        const banner = document.querySelector("[data-portal-target]");
+        return {
+          ready:
+            !!banner &&
+            banner.getAttribute("data-portal-target") === t &&
+            banner.getAttribute("data-portal-status") === s,
+          detail: banner
+            ? `${banner.getAttribute("data-portal-target")}/${banner.getAttribute("data-portal-status")}`
+            : "no portal banner rendered",
+        };
+      }, [targetId, status]),
+    `portal event banner target=${targetId} status=${status}`,
+    timeoutMs,
+  );
+}
+
+// Dismiss the portal event banner and wait for the removal observable.
+// The banner is the page's only role=status region and its only button is
+// the dismiss control; the CSS-module class name is hashed, so the original
+// `.dismissBtn` class locator could never match — address it structurally.
+async function dismissPortalEvent(page, timeoutMs = WAIT_TIMEOUT_MS) {
+  await page.locator("[role='status'] button").click({ timeout: timeoutMs });
+  await waitForSemantic(
+    page,
+    () =>
+      page.evaluate(() => ({
+        ready: !document.querySelector("[data-portal-target]"),
+        detail: "portal banner removed",
+      })),
+    "portal banner dismissal",
+    timeoutMs,
+  );
 }
 
 console.log("Source Track 68 V3.3.2 — browser QA (genuine execution)");
@@ -125,7 +460,8 @@ for (const vp of VIEWPORTS) {
   // ── A variant ──
   await check(`${vp.label}: A variant opens via mode button`, async () => {
     await page.locator("button[aria-pressed]").nth(1).click();
-    await page.waitForTimeout(500);
+    // Transition: launcher -> A re-verifies bytes, then mounts a fresh A iframe.
+    await waitForModeReady(page, "A");
     assert.equal(await page.locator("main[data-runner-state]").getAttribute("data-mode"), "A");
     await page.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
   });
@@ -158,7 +494,8 @@ for (const vp of VIEWPORTS) {
   // ── B variant ──
   await check(`${vp.label}: B variant opens via mode button`, async () => {
     await page.locator("button[aria-pressed]").nth(2).click();
-    await page.waitForTimeout(500);
+    // Transition: A -> B re-verifies bytes, then mounts a fresh B iframe.
+    await waitForModeReady(page, "B");
     assert.equal(await page.locator("main[data-runner-state]").getAttribute("data-mode"), "B");
     await page.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
   });
@@ -181,7 +518,8 @@ for (const vp of VIEWPORTS) {
   // ── WORKS overlay has dialog semantics (host bridge) ──
   await check(`${vp.label}: WORKS overlay has role=dialog aria-modal (host bridge)`, async () => {
     await page.locator("button[aria-pressed]").nth(1).click();
-    await page.waitForTimeout(500);
+    // Transition: B -> A re-verifies bytes, then mounts a fresh A iframe.
+    await waitForModeReady(page, "A");
     const frame = await getIframeFrame(page);
     const role = await frame.evaluate(() => document.getElementById("worksOverlay")?.getAttribute("role"));
     const modal = await frame.evaluate(() => document.getElementById("worksOverlay")?.getAttribute("aria-modal"));
@@ -192,23 +530,24 @@ for (const vp of VIEWPORTS) {
   // ── WORKS modal lifecycle (genuine execution) ──
   await check(`${vp.label}: WORKS open — focus enters #worksClose`, async () => {
     const frame = await getIframeFrame(page);
-    // Programmatically trigger openWorks() inside the iframe
-    await frame.evaluate(() => {
-      const view = document.getElementById("view");
-      if (view) view.click();
-    });
-    await page.waitForTimeout(400);
+    // Programmatically trigger openWorks() inside the iframe, then wait for
+    // the overlay-open transition observable.
+    await openWorksOverlay(frame);
     const isOpen = await frame.evaluate(() =>
       document.getElementById("worksOverlay")?.classList.contains("open"),
     );
     assert.ok(isOpen, "WORKS overlay must open");
-    // Verify focus entered #worksClose
+    // Programmatic focus handoff: wait until focus actually entered #worksClose.
+    await waitForFocusedId(frame, "worksClose");
     const activeId = await frame.evaluate(() => document.activeElement?.id);
     assert.equal(activeId, "worksClose", `focus must enter #worksClose (got #${activeId})`);
   });
 
   await check(`${vp.label}: WORKS open — background is inert`, async () => {
     const frame = await getIframeFrame(page);
+    // Bounded confirmation that the host bridge applied inert to background
+    // children after modal open (immediate-pass when already applied).
+    await waitForBackgroundInert(frame);
     const inertCount = await frame.evaluate(() => {
       const spacer = document.getElementById("scroll-spacer");
       if (!spacer) return 0;
@@ -227,7 +566,8 @@ for (const vp of VIEWPORTS) {
     await frame.focus("body");
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
-      await page.waitForTimeout(100);
+      // Input pacing between synthetic keystrokes — not a completion wait.
+      await page.waitForTimeout(INPUT_PACING_MS);
     }
     const focusInOverlay = await frame.evaluate(() => {
       const overlay = document.getElementById("worksOverlay");
@@ -241,7 +581,8 @@ for (const vp of VIEWPORTS) {
     await frame.focus("body");
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Shift+Tab");
-      await page.waitForTimeout(100);
+      // Input pacing between synthetic keystrokes — not a completion wait.
+      await page.waitForTimeout(INPUT_PACING_MS);
     }
     const focusInOverlay = await frame.evaluate(() => {
       const overlay = document.getElementById("worksOverlay");
@@ -254,9 +595,14 @@ for (const vp of VIEWPORTS) {
     const frame = await getIframeFrame(page);
     // Focus the close button to ensure Escape fires from within the overlay
     await frame.evaluate(() => document.getElementById("worksClose")?.focus());
-    await page.waitForTimeout(100);
+    // Settle after programmatic focus before the keypress (input pacing).
+    await page.waitForTimeout(INPUT_PACING_MS);
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(500);
+    // Transitions: overlay close, inert cleanup, and focus leaving the
+    // closed overlay are observed, not timed.
+    await waitForWorksOverlayClosed(frame);
+    await waitForInertRemoved(frame);
+    await waitForFocusLeftOverlay(frame);
     const result = await frame.evaluate(() => {
       const overlay = document.getElementById("worksOverlay");
       const view = document.getElementById("view");
@@ -285,14 +631,25 @@ for (const vp of VIEWPORTS) {
     // Use Playwright locator to explicitly focus a mode button in the parent page,
     // then use real keyboard Tab+Enter from that starting point
     await page.locator("button[aria-pressed]").first().focus();
-    await page.waitForTimeout(200);
+    // Settle after programmatic focus before the keyboard walk (input pacing).
+    await page.waitForTimeout(INPUT_FOCUS_SETTLE_MS);
     // Now Tab to the next button and press Enter
     await page.keyboard.press("Tab");
-    await page.waitForTimeout(100);
+    // Pacing between keystrokes — not a completion wait.
+    await page.waitForTimeout(INPUT_PACING_MS);
     let isButton = await page.evaluate(() => document.activeElement?.tagName === "BUTTON");
     assert.ok(isButton, "Tab from focused button must reach another button");
     await page.keyboard.press("Enter");
-    await page.waitForTimeout(300);
+    // Transition: Enter activates the mode button -> setMode flips data-mode.
+    // Poll until the mode actually leaves launcher (self-classifying detail).
+    await waitForSemantic(
+      page,
+      async () => {
+        const mode = await page.locator("main[data-runner-state]").getAttribute("data-mode");
+        return { ready: mode !== "launcher", detail: { dataMode: mode } };
+      },
+      "keyboard Enter to activate a mode button (data-mode leaves launcher)",
+    );
     const mode = await page.locator("main[data-runner-state]").getAttribute("data-mode");
     assert.ok(mode === "A" || mode === "B" || mode === "launcher", `keyboard Enter changed mode to ${mode}`);
   });
@@ -307,13 +664,9 @@ for (const vp of VIEWPORTS) {
     await touchPage.goto(ROUTE, { waitUntil: "networkidle", timeout: 45000 });
     await touchPage.locator("main[data-runner-state='ready']").waitFor({ timeout: 15000 });
     await touchPage.locator("button[aria-pressed]").nth(1).click();
-    await touchPage.waitForTimeout(500);
+    // Transition: launcher -> A re-verifies bytes, then mounts a fresh A iframe.
+    const tf = await waitForModeReady(touchPage, "A");
     await touchPage.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
-
-    const tfIframeEl = touchPage.locator("iframe[data-source-state='ready']");
-    const tfHandle = await tfIframeEl.elementHandle();
-    const tf = await tfHandle.contentFrame();
-    await tfHandle.dispose();
 
     // Verify coarse pointer mode is active (source detects non-fine pointer)
     const isCoarsePointer = await tf.evaluate(() => {
@@ -341,7 +694,10 @@ for (const vp of VIEWPORTS) {
       iframeBox.x + iframeBox.width / 2,
       iframeBox.y + iframeBox.height / 3,
     );
-    await touchPage.waitForTimeout(1200);
+    // Genuine temporal observation: media playback state needs wall-clock time
+    // to manifest after the tap — this window observes, it does not await a
+    // UI transition (the transition observables are read after the window).
+    await touchPage.waitForTimeout(TEMPORAL_TOUCH_OBSERVATION_MS);
 
     const afterTouch = await tf.evaluate(() => {
       const left = document.getElementById("leftVideo");
@@ -392,13 +748,13 @@ for (const vp of VIEWPORTS) {
   // Exercise DESIGN_LAB_TARGET portals — prove parent recomputes exact routes
   await check(`${vp.label}: DESIGN_LAB_TARGET portals produce exact route events`, async () => {
     await page.locator("button[aria-pressed]").nth(1).click();
-    await page.waitForTimeout(500);
+    // Transition: A is already verified — wait for the fresh A mount regardless.
+    await waitForModeReady(page, "A");
     const frame = await getIframeFrame(page);
 
     for (const targetId of DESIGN_LAB_TARGETS) {
-      // Open WORKS overlay
-      await frame.evaluate(() => document.getElementById("view")?.click());
-      await page.waitForTimeout(300);
+      // Open WORKS overlay (observed via .open, not timed)
+      await openWorksOverlay(frame);
       // Click the WORKS row for this target
       await frame.evaluate((tid) => {
         const rows = document.querySelectorAll(".work-row:not(.current)");
@@ -409,7 +765,9 @@ for (const vp of VIEWPORTS) {
           }
         }
       }, targetId);
-      await page.waitForTimeout(300);
+      // Bridge message -> parent recomputes + renders the banner. Poll for the
+      // exact target+status pair (a stale banner cannot satisfy this).
+      await waitForPortalEvent(page, targetId, "DESIGN_LAB_TARGET");
 
       // Read the parent-rendered portal event
       const portalEl = page.locator("[data-portal-target]").first();
@@ -421,16 +779,17 @@ for (const vp of VIEWPORTS) {
       assert.equal(eventStatus, "DESIGN_LAB_TARGET", `portal ${targetId} status must be DESIGN_LAB_TARGET`);
       assert.equal(eventLink, EXPECTED_ROUTES[targetId], `portal ${targetId} route must be ${EXPECTED_ROUTES[targetId]}`);
 
-      await page.locator(".dismissBtn").click().catch(() => {});
-      await page.waitForTimeout(200);
+      await dismissPortalEvent(page);
+      // Settle after dismissal before the next overlay interaction (input pacing).
+      await page.waitForTimeout(INPUT_PACING_MS);
     }
   });
 
   await check(`${vp.label}: HOLD_UNRESOLVED portals fail closed (no navigation)`, async () => {
     const frame = await getIframeFrame(page);
     for (const targetId of HOLD_TARGETS) {
-      await frame.evaluate(() => document.getElementById("view")?.click());
-      await page.waitForTimeout(300);
+      // Open WORKS overlay (observed via .open, not timed)
+      await openWorksOverlay(frame);
       await frame.evaluate((tid) => {
         const rows = document.querySelectorAll(".work-row:not(.current)");
         for (const row of rows) {
@@ -440,7 +799,8 @@ for (const vp of VIEWPORTS) {
           }
         }
       }, targetId);
-      await page.waitForTimeout(300);
+      // Bridge message -> parent recomputes HOLD status. Poll for the exact pair.
+      await waitForPortalEvent(page, targetId, "HOLD_UNRESOLVED");
 
       const portalEl = page.locator("[data-portal-target]").first();
       const eventStatus = await portalEl.getAttribute("data-portal-status").catch(() => null);
@@ -449,8 +809,9 @@ for (const vp of VIEWPORTS) {
       const hasLink = await portalEl.evaluate((el) => el.querySelector("a") !== null).catch(() => false);
       assert.equal(hasLink, false, `HOLD portal ${targetId} must not render a navigation link`);
 
-      await page.locator(".dismissBtn").click().catch(() => {});
-      await page.waitForTimeout(200);
+      await dismissPortalEvent(page);
+      // Settle after dismissal before the next overlay interaction (input pacing).
+      await page.waitForTimeout(INPUT_PACING_MS);
     }
   });
 
@@ -463,12 +824,14 @@ for (const vp of VIEWPORTS) {
         "*",
       );
     });
-    await page.waitForTimeout(300);
+    // Poll for the recomputed HOLD banner for this exact target.
+    await waitForPortalEvent(page, "UNKNOWN_TARGET", "HOLD_UNRESOLVED");
     const portalEl = page.locator("[data-portal-target]").first();
     const eventStatus = await portalEl.getAttribute("data-portal-status").catch(() => null);
     assert.equal(eventStatus, "HOLD_UNRESOLVED", "unknown target must be HOLD_UNRESOLVED (parent recompute)");
-    await page.locator(".dismissBtn").click().catch(() => {});
-    await page.waitForTimeout(200);
+    await dismissPortalEvent(page);
+    // Settle after dismissal (input pacing).
+    await page.waitForTimeout(INPUT_PACING_MS);
   });
 
   await check(`${vp.label}: forged child status/route cannot escape parent ledger`, async () => {
@@ -480,7 +843,8 @@ for (const vp of VIEWPORTS) {
         "*",
       );
     });
-    await page.waitForTimeout(300);
+    // Poll for the parent-overridden HOLD banner for target 65.
+    await waitForPortalEvent(page, "65", "HOLD_UNRESOLVED");
     const portalEl = page.locator("[data-portal-target]").first();
     const eventTarget = await portalEl.getAttribute("data-portal-target").catch(() => null);
     const eventStatus = await portalEl.getAttribute("data-portal-status").catch(() => null);
@@ -488,8 +852,9 @@ for (const vp of VIEWPORTS) {
     assert.equal(eventStatus, "HOLD_UNRESOLVED", "forged DESIGN_LAB_TARGET for HOLD target must be overridden to HOLD_UNRESOLVED by parent");
     const hasLink = await portalEl.evaluate((el) => el.querySelector("a") !== null).catch(() => false);
     assert.equal(hasLink, false, "forged route must not render a link");
-    await page.locator(".dismissBtn").click().catch(() => {});
-    await page.waitForTimeout(200);
+    await dismissPortalEvent(page);
+    // Settle after dismissal (input pacing).
+    await page.waitForTimeout(INPUT_PACING_MS);
   });
 
   // ── Reduced-motion RAF stop semantics ──
@@ -502,15 +867,14 @@ for (const vp of VIEWPORTS) {
     await reducedPage.goto(ROUTE, { waitUntil: "networkidle", timeout: 45000 });
     await reducedPage.locator("main[data-runner-state='ready']").waitFor({ timeout: 15000 });
     await reducedPage.locator("button[aria-pressed]").nth(1).click();
-    await reducedPage.waitForTimeout(500);
+    // Transition: launcher -> A re-verifies bytes, then mounts a fresh A iframe.
+    const rf = await waitForModeReady(reducedPage, "A");
     await reducedPage.locator("iframe[data-source-state='ready']").waitFor({ timeout: 10000 });
-
-    // Use iframe element -> contentFrame binding (works cross-origin)
-    const rfIframeEl = reducedPage.locator("iframe[data-source-state='ready']");
-    const rfHandle = await rfIframeEl.elementHandle();
-    const rf = await rfHandle.contentFrame();
-    await rfHandle.dispose();
     assert.ok(rf, "reduced-motion iframe frame must exist");
+
+    // Readiness: the host bridge swaps requestAnimationFrame for a no-op
+    // after DOMContentLoaded — observe the replacement, not a fixed delay.
+    await waitForHostBridgeReducedMotionApplied(rf);
 
     // Verify RAF was replaced with a no-op (not native code)
     const rafReplaced = await rf.evaluate(() => {
