@@ -34,16 +34,16 @@ export default function DesignLabPage() {
       </header>
 
       <nav className="lt-lab__jump" aria-label="Design Lab 바로가기">
-        <a href="#design-lineages">Design Lineages</a>
         <a href="#scenario-variants">Scenario Variants</a>
         {DESIGN_SCENARIOS.map((scenario) => (
           <a key={scenario.id} href={`#${scenario.id}`}>{scenario.label}</a>
         ))}
+        <a href="#design-lineages">Design Lineages</a>
         <a href="#experience-capabilities">Experience Capabilities</a>
       </nav>
 
-      <DesignLineageOverview />
       <DesignVariantExplorer />
+      <DesignLineageOverview />
       <ExperienceCapabilityLibrary />
 
       <footer className="lt-lab__footer">
