@@ -4,6 +4,9 @@ import { chromium } from "playwright";
 
 const BASE = process.env.V4_BASE_URL || "http://localhost:3000";
 const URL = `${BASE}/design-lab/capabilities/memory-anatomy`;
+const CONDITION_WAIT = Object.freeze({ timeout: 10000, polling: 50 });
+const STORY_COMPLETION_TIMEOUT = 15000;
+const REDUCED_MOTION_NO_AUTOPLAY_OBSERVATION_MS = 1000;
 const LAYERS = [
   ["SOURCE VIDEO", "ORIGINAL"],
   ["MOMENT CUT", "TIMECODE"],
@@ -21,6 +24,24 @@ function captureErrors(page) {
     if (message.type() === "error") errors.push(`console:${message.text()}`);
   });
   return errors;
+}
+
+async function waitForCondition(page, label, condition, arg, options = {}) {
+  const timeout = options.timeout ?? CONDITION_WAIT.timeout;
+  const polling = options.polling ?? CONDITION_WAIT.polling;
+  try {
+    await page.waitForFunction(condition, arg, { timeout, polling });
+  } catch (error) {
+    throw new Error(`${label}: CONDITION_WAIT timed out after ${timeout}ms (polling=${polling}ms)`, { cause: error });
+  }
+}
+
+async function waitForVisible(locator, label, timeout = CONDITION_WAIT.timeout) {
+  try {
+    await locator.waitFor({ state: "visible", timeout });
+  } catch (error) {
+    throw new Error(`${label}: CONDITION_WAIT visible state timed out after ${timeout}ms`, { cause: error });
+  }
 }
 
 async function openRoute(browser, viewport, options = {}) {
@@ -98,7 +119,12 @@ async function exerciseWheelAuthority(page, label) {
   const beforeOuter = await page.evaluate(() => scrollY);
   const outerDelta = beforeOuter > 80 ? -240 : 240;
   await page.mouse.wheel(0, outerDelta);
-  await page.waitForTimeout(120);
+  await waitForCondition(
+    page,
+    `${label}: outer page scroll wins before spatial authority`,
+    ({ before }) => Math.round(window.scrollY) !== Math.round(before),
+    { before: beforeOuter },
+  );
   const afterOuter = await page.evaluate(() => scrollY);
   assert.notEqual(Math.round(afterOuter), Math.round(beforeOuter), `${label}: outer page scroll wins before spatial authority`);
 
@@ -109,7 +135,15 @@ async function exerciseWheelAuthority(page, label) {
   const beforeControlledScroll = await page.evaluate(() => scrollY);
   const beforeExplosion = Number(await slider.inputValue());
   await page.mouse.wheel(0, 220);
-  await page.waitForTimeout(120);
+  await waitForCondition(
+    page,
+    `${label}: spatial wheel changes explosion amount`,
+    ({ before }) => {
+      const range = document.querySelector('input[type="range"]');
+      return range instanceof HTMLInputElement && Number(range.value) !== before;
+    },
+    { before: beforeExplosion },
+  );
   const afterControlledScroll = await page.evaluate(() => scrollY);
   const afterExplosion = Number(await slider.inputValue());
   assert.ok(Math.abs(afterControlledScroll - beforeControlledScroll) <= 2, `${label}: spatial wheel does not move the outer page`);
@@ -144,7 +178,15 @@ async function exerciseTouchDrag(page, label) {
   await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y, radiusX: 2, radiusY: 2, force: 1, id: 1 }] });
   await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: x + 55, y: y - 34, radiusX: 2, radiusY: 2, force: 1, id: 1 }] });
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await page.waitForTimeout(80);
+  await waitForCondition(
+    page,
+    `${label}: real Chromium touch drag changes stack orientation`,
+    ({ beforeStyle }) => {
+      const node = document.querySelector('[data-spatial-authority="true"] [style*="--rotation-x"]');
+      return node?.getAttribute("style") !== beforeStyle;
+    },
+    { beforeStyle: before },
+  );
   const after = await stack.getAttribute("style");
   assert.notEqual(after, before, `${label}: real Chromium touch drag changes stack orientation`);
 }
@@ -161,8 +203,8 @@ async function exerciseSpatialLayerSelection(page, label) {
 
 async function exercisePlaybackAndTakeover(page, label) {
   await page.getByRole("button", { name: "REPLAY FROM 01", exact: true }).click();
-  await page.waitForTimeout(930);
-  await page.getByRole("heading", { name: "MOMENT CUT", exact: true }).waitFor();
+  await waitForVisible(page.getByRole("heading", { name: "MOMENT CUT", exact: true }), `${label}: story advances to MOMENT CUT`);
+  await waitForVisible(page.getByRole("button", { name: "Ⅱ PAUSE STORY", exact: true }), `${label}: story enters playing state`);
   assert.equal(await page.getByRole("button", { name: "Ⅱ PAUSE STORY", exact: true }).count(), 1, `${label}: story enters playing state`);
 
   await layerButton(page, "MY NOTE", "PERSONAL").click();
@@ -170,8 +212,11 @@ async function exercisePlaybackAndTakeover(page, label) {
   assert.equal(await page.getByRole("heading", { name: "MY NOTE", exact: true }).count(), 1, `${label}: manual takeover keeps user selection`);
 
   await page.getByRole("button", { name: "REPLAY FROM 01", exact: true }).click();
-  await page.waitForTimeout(6400);
-  await page.getByRole("button", { name: "↻ REPLAY STORY", exact: true }).waitFor();
+  await waitForVisible(
+    page.getByRole("button", { name: "↻ REPLAY STORY", exact: true }),
+    `${label}: story reaches explicit completion state`,
+    STORY_COMPLETION_TIMEOUT,
+  );
   assert.equal(await page.getByRole("heading", { name: "CONNECTION", exact: true }).count(), 1, `${label}: story reaches layer 7`);
   assert.equal(await page.getByRole("slider", { name: "Explosion amount" }).inputValue(), "0", `${label}: story completion reassembles the stack`);
 }
@@ -211,7 +256,9 @@ test("Memory Anatomy — reduced motion preserves all semantics without animated
   try {
     const { page, errors } = await openRoute(browser, { width: 1280, height: 800 }, { reducedMotion: "reduce" });
     try {
-      await page.waitForTimeout(1000);
+      // Intentional negative-observation window: this proves autoplay stays absent for a full second.
+      // It is not transition settling and therefore is deliberately retained as a fixed observation interval.
+      await page.waitForTimeout(REDUCED_MOTION_NO_AUTOPLAY_OBSERVATION_MS);
       assert.equal(await page.getByRole("heading", { name: "SOURCE VIDEO", exact: true }).count(), 1, "reduced motion does not autoplay");
       const stage = page.locator('[data-spatial-authority="false"]');
       const stack = stage.locator('[style*="--rotation-x"]');
@@ -219,7 +266,10 @@ test("Memory Anatomy — reduced motion preserves all semantics without animated
       const spatialLayer = stage.locator('[style*="--layer-color"]').first();
       assert.equal(await spatialLayer.evaluate((node) => getComputedStyle(node).transitionDuration), "0s", "reduced motion removes depth transition timing");
       await page.getByRole("button", { name: "▶ PLAY 1→7 STORY", exact: true }).click();
-      await page.waitForTimeout(930);
+      await waitForVisible(
+        page.getByRole("heading", { name: "MOMENT CUT", exact: true }),
+        "reduced motion: explicit story playback advances semantic state",
+      );
       assert.equal(await page.getByRole("heading", { name: "MOMENT CUT", exact: true }).count(), 1, "explicit story playback still advances semantic state");
       assert.equal(errors.length, 0, `reduced motion has no page/console errors: ${errors.join(" | ")}`);
     } finally {
