@@ -34,7 +34,15 @@ test("workspace policy keeps active repository work off cross-mounted paths", ()
   assert.match(agents, /## Workspace policy: WSL \/ Windows dual-track/);
   assert.match(agents, /Do not run repository workloads from cross-mounted paths such as `\/mnt\/c\/\*\*` or `\/mnt\/g\/\*\*`/);
   assert.doesNotMatch(agents, /Do not run repository workloads from Windows-mounted paths/);
-  assert.match(wslPolicy, /Do not use `\/mnt\/c\/\*\*`, `\/mnt\/g\/\*\*`/);
+
+  const crossMountedProhibition = wslPolicy
+    .split("\n")
+    .find((line) => line.includes("/mnt/c/**") && line.includes("/mnt/g/**"));
+  assert.ok(crossMountedProhibition, "workspace policy must name both /mnt/c/** and /mnt/g/**");
+  assert.match(crossMountedProhibition, /^Do not (?:use|run)\b/);
+  assert.match(crossMountedProhibition, /active repository (?:workspace|workloads)/);
+  assert.match(crossMountedProhibition, /Windows-mounted (?:filesystem|paths)/);
+
   assert.match(wslPolicy, /npm run typecheck/);
   assert.match(wslPolicy, /Playwright \/ Chromium/);
 });
