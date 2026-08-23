@@ -46,11 +46,15 @@ const REAL_FIXTURE_NAMES = [
 // Track59/Track61/Track64 become intentionally non-scaffoldable after their proving
 // PRs apply all three live registry seams. Re-running the factory must fail closed
 // instead of duplicating the already-materialized lineage/candidate/fidelity identities.
+// Track60/Track63 are registered in lib/design-lineages.ts (#367 D6 편입: L60 V1.2
+// direct registration, L63 merged via PR #191), so scaffolding their fixtures now
+// fails closed at the registry seam too — see the repeat-scaffold regression below.
 const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
   (name) =>
     name !== "track-59-living-memory-book" &&
-    name !== "track-60-3d-moment-cluster" && // materialized on main (Lineage60 V1.2) — see pickUnregisteredFixture
+    name !== "track-60-3d-moment-cluster" && // registered in lib/design-lineages.ts (#367 D6)
     name !== "track-61-guided-next-moment-builder" &&
+    name !== "track-63-moment-field-view-studio" && // registered in lib/design-lineages.ts (#367 D6, PR #191)
     name !== "track-64-floating-moment-entry-portal",
 );
 
@@ -59,12 +63,13 @@ const PRE_REGISTRATION_FIXTURE_NAMES = REAL_FIXTURE_NAMES.filter(
 // (already-materialized identity) and the --write test reported a false
 // integration failure (#237). Derive a fixture that is genuinely unregistered
 // on the current main so the scaffold does not collide. Avoids hard-coded
-// "next track" assumptions for future registrations. Track63 (PR #191 HOLD) is
-// excluded so this test never touches that scope.
+// "next track" assumptions for future registrations. Track63 is registered in
+// lib/design-lineages.ts (#367 D6, PR #191 병합분) — keep it excluded so the
+// picker only returns fixtures that still scaffold successfully.
 function pickUnregisteredFixture() {
   const blocked = new Set([
-    "track-60-3d-moment-cluster", // materialized on main (Lineage60 V1.2)
-    "track-63-moment-field-view-studio", // PR #191 HARD HOLD — do not touch
+    "track-60-3d-moment-cluster", // registered in lib/design-lineages.ts (#367 D6)
+    "track-63-moment-field-view-studio", // registered in lib/design-lineages.ts (#367 D6, PR #191)
   ]);
   const candidate = PRE_REGISTRATION_FIXTURE_NAMES.find((name) => {
     if (blocked.has(name)) return false;
@@ -464,7 +469,9 @@ test("9. existing filesystem paths are never overwritten", () => {
 /* ------------------------------------------------------------------ */
 
 test("10. identical manifest produces an identical plan", () => {
-  const manifest = fixture("track-60-3d-moment-cluster");
+  // Track60's fixture identity is registered in lib/design-lineages.ts (#367 D6),
+  // so determinism runs on a real still-scaffoldable fixture instead.
+  const manifest = fixture("track-56-vertical-moment-network");
   const root = withTempRoot();
   try {
     const first = buildScaffoldPlan(manifest, { root, fidelityTargets: LIVE_TARGETS });
@@ -483,7 +490,10 @@ test("10. identical manifest produces an identical plan", () => {
 test("11. scaffold plans cover all three registry seams", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
+    // Track60's fixture identity is registered in lib/design-lineages.ts
+    // (#367 D6), so the NEW_LINEAGE full-entry scenario runs on a genuinely
+    // unregistered identity instead.
+    const plan = buildScaffoldPlan(newLineageManifest(), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
@@ -534,10 +544,12 @@ test("11. scaffold plans cover all three registry seams", () => {
     assert.equal(eligible.registrySeams.find((seam) => seam.seam === "designLab").entry.candidate.status, "implemented");
 
     // Non-executable candidates must still declare every seam (deferred/N-A).
-    const pending = buildScaffoldPlan(fixture("track-63-moment-field-view-studio"), {
-      root,
-      fidelityTargets: LIVE_TARGETS,
-    });
+    // (Track63's fixture identity is registry-registered per #367 D6, so the
+    // EXECUTABLE_PENDING scenario uses a synthesized pre-executable manifest.)
+    const pending = buildScaffoldPlan(
+      newLineageManifest({ lifecycle: "EXECUTABLE_PENDING", route: undefined, rendering: "unresolved" }),
+      { root, fidelityTargets: LIVE_TARGETS },
+    );
     assert.deepEqual(
       pending.registrySeams.map((seam) => seam.seam),
       ["designLineages", "designLab", "designFidelity"],
@@ -1027,6 +1039,30 @@ test("fixtures: Track59 applied registry seams fail closed on repeat scaffold", 
   }
 });
 
+test("regression: registered lineage fixtures (Track60/Track63) fail closed on scaffold (#367 D6)", () => {
+  // CTO 판정 (#367 comment, option 1): D6 registers L60/L63 in
+  // lib/design-lineages.ts, so re-scaffolding their intake fixtures must fail
+  // closed with an already-exists registry collision instead of duplicating the
+  // lineage identities. This converts the D6 fixture collision into regression
+  // coverage for the fail-closed intake contract.
+  const root = withTempRoot();
+  try {
+    const registeredFixtures = new Map([
+      ["track-60-3d-moment-cluster", /lineageNumber 60 already exists in lib\/design-lineages\.ts/],
+      ["track-63-moment-field-view-studio", /lineageNumber 63 already exists in lib\/design-lineages\.ts/],
+    ]);
+    for (const [name, collisionPattern] of registeredFixtures) {
+      assert.throws(
+        () => buildScaffoldPlan(fixture(name), { root, fidelityTargets: LIVE_TARGETS }),
+        (error) => error instanceof IntakeCollisionError && collisionPattern.test(error.message),
+        `${name} must fail closed against the realized design-lineages registry`,
+      );
+    }
+  } finally {
+    cleanup(root);
+  }
+});
+
 test("fixtures: all repository manifests parse and scaffold cleanly", () => {
   for (const name of REAL_FIXTURE_NAMES) {
     const manifest = parseIntakeManifest(fixture(name));
@@ -1319,10 +1355,12 @@ test("regression: Track55/56 cross-namespace mappings are preserved", () => {
   assert.notEqual(track56.designLineageId, "lt-56-crystal-memory-atelier");
 });
 
-test("regression: reuse checklist + adoption report are generated for real fixtures", () => {
+test("regression: reuse checklist + adoption report are generated for new-lineage scaffolds", () => {
   const root = withTempRoot();
   try {
-    const plan = buildScaffoldPlan(fixture("track-60-3d-moment-cluster"), {
+    // Track60's fixture identity is registry-registered (#367 D6); the
+    // generated-report coverage runs on a genuinely unregistered NEW_LINEAGE.
+    const plan = buildScaffoldPlan(newLineageManifest(), {
       root,
       fidelityTargets: LIVE_TARGETS,
     });
