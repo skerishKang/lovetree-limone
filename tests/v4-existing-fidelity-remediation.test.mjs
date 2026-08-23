@@ -8,6 +8,37 @@ const MOBILE = { width: 390, height: 844 };
 const YT_A = "https://www.youtube.com/watch?v=ScMzIvxBSi4";
 const YT_B = "https://www.youtube.com/watch?v=ysz5S6PUM-U";
 
+// Bounded conditional-wait standard (kilo-1 methodology, #360/#370/#374/#400
+// pattern): transition-completion waits poll for the actual DOM state change
+// with an explicit timeout/polling budget and fail with self-classifying
+// diagnostics.  The First Journey dwell windows are NOT converted — the
+// negative samples (180/140/130ms) plus elapsed lower-bound assertions
+// (>=420/320/310ms) validate a scheduled product pacing contract implemented
+// in V4FirstJourneyFidelityBridge.tsx (`replayAfter` delays 480/360/350ms),
+// so they stay fixed by design.
+const CONDITION_WAIT = { timeout: 5000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+function momentsUiState() {
+  return {
+    completionHidden: document.querySelector("#completionOverlay")?.getAttribute("data-hidden") ?? null,
+    videoDialogHidden: document.querySelector("#videoModal")?.getAttribute("data-hidden") ?? null,
+    iframeCount: document.querySelectorAll("iframe[data-exact-range-player='true']").length,
+    selectedPlayCount: document.querySelectorAll("#selectedPlay").length,
+    selectedKicker: document.querySelector(".v4-moments-selected-kicker span")?.textContent?.trim() ?? null,
+  };
+}
+
 async function dismissCompletion(page) {
   for (let i = 0; i < 8; i += 1) {
     const hidden = await page
@@ -19,8 +50,30 @@ async function dismissCompletion(page) {
       .locator("#openTreeOnly")
       .click({ timeout: 3000 })
       .catch(() => page.locator("#plant101Now").click({ timeout: 3000 }).catch(() => {}));
+    // Bounded retry interval (kept as a poll loop, not a transition wait):
+    // each click synchronously flips `overlay` to "none", so the loop only
+    // re-samples after the React commit; 250ms stays the retry pacing and
+    // the loop still exits as soon as the attribute is observed hidden.
     await page.waitForTimeout(250);
   }
+}
+
+// Site: non-video node selection -> playback control must NOT appear.  The
+// click commits `selectedId` synchronously in React state; poll for the
+// selected panel to actually show the non-video node instead of assuming the
+// re-render landed.  The negative assertion below stays verbatim.
+async function waitForSelectedNode(page, nodeId, label) {
+  await waitForCondition(
+    page,
+    (id) => {
+      const kicker = document.querySelector(".v4-moments-selected-kicker span")?.textContent || "";
+      const number = id.replace("moment-", "");
+      return kicker.includes(`${number}번째`);
+    },
+    momentsUiState,
+    `${label}: selected panel shows node ${nodeId}`,
+    nodeId,
+  );
 }
 
 async function startJourney(page) {
@@ -84,7 +137,19 @@ test("v4 existing fidelity — First Journey restores source story, preview, nar
     );
     await page.waitForSelector("#memory-form", { timeout: 3000 });
     assert.ok(Date.now() - submittedAt >= 420, "Step 1 source-like ~480ms dwell is preserved");
-    await page.waitForTimeout(40);
+    // Post-transition storage sample (was a fixed 40ms): the bridge writes
+    // localStorage in a `later(…, 0)` callback right after the replayed
+    // submit.  The memory-form presence above proves the transition ran, so
+    // poll briefly for the storage record itself instead of assuming the
+    // microtask landed; every stored-value assertion below stays verbatim.
+    await waitForCondition(
+      page,
+      () => Boolean(JSON.parse(localStorage.getItem("lovetree-first-journey-unified") || "{}").firstMoment),
+      () => ({ raw: localStorage.getItem("lovetree-first-journey-united") ?? localStorage.getItem("lovetree-first-journey-unified") }),
+      "step1: unified first-journey state is persisted",
+      null,
+      { timeout: 2000, polling: 25 },
+    );
     const stored = await page.evaluate(() =>
       JSON.parse(localStorage.getItem("lovetree-first-journey-unified") || "{}"),
     );
@@ -172,7 +237,9 @@ test("v4 existing fidelity — 100 Moments plays the saved exact range inside th
       await dismissCompletion(page);
       await page.locator('[aria-controls="panel-selected"]').click();
       await page.locator('[data-testid="node-moment-1"]').click({ force: true });
-      await page.waitForTimeout(100);
+      // Transition completion (was 100ms): poll until the selected panel
+      // really shows moment-1 (the video node) before touching playback.
+      await waitForSelectedNode(page, "moment-1", `${viewport.width}x${viewport.height}`);
       await page.locator("#selectedPlay").click();
       const frame = page.locator("iframe[data-exact-range-player='true']");
       await frame.waitFor({ state: "attached", timeout: 3000 });
@@ -209,11 +276,25 @@ test("v4 existing fidelity — 100 Moments plays the saved exact range inside th
       );
 
       await page.locator("#videoClose").click();
-      await page.waitForTimeout(80);
+      // Transition completion (was 80ms): closeDialog() flips the modal's
+      // data-hidden attribute and the MutationObserver-driven sync in
+      // V4Moments100ExactRangePlayback removes the iframe.  Poll for the
+      // actual removal; the removal assertion below stays verbatim.
+      await waitForCondition(
+        page,
+        () => document.querySelectorAll("iframe[data-exact-range-player='true']").length === 0,
+        momentsUiState,
+        `${viewport.width}x${viewport.height}: iframe removed after modal close`,
+        null,
+        { timeout: 3000, polling: 50 },
+      );
       assert.equal(await frame.count(), 0, "closing the modal removes the iframe and stops playback");
 
       await page.locator('[data-testid="node-moment-50"]').click({ force: true });
-      await page.waitForTimeout(80);
+      // Transition completion (was 80ms): the selection re-render is the
+      // observable; the playback-control absence assertion below stays
+      // verbatim and only runs once the panel really shows moment-50.
+      await waitForSelectedNode(page, "moment-50", `${viewport.width}x${viewport.height}`);
       assert.equal(
         await page.locator("#selectedPlay").count(),
         0,
