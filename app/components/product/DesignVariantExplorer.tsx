@@ -134,7 +134,9 @@ export default function DesignVariantExplorer() {
       ) : (
         <div className="lt-lab__scenarios">
           {visibleScenarios.map((item) => {
-            const candidates = filtered.filter((candidate) => candidate.scenarioId === item.id);
+            const candidates = filtered
+              .filter((candidate) => candidate.scenarioId === item.id)
+              .sort((left, right) => Number(Boolean(right.route)) - Number(Boolean(left.route)));
             if (candidates.length === 0) return null;
             return (
               <section className="lt-lab__scenario" id={item.id} key={item.id}>
