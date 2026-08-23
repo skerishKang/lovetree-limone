@@ -17,16 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
-      # Disposable PostgreSQL for the explicit backend integration gate.
-      # tests/integration/** is not auto-discovered by the A-track standard
-      # corpus, so the real-database with-first-memory atomicity contract is
-      # exercised here against a fresh service container instead.
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          # Trust auth: the disposable service container needs no password, so
-          # no credential value ever appears in this workflow (GitGuardian).
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: lovetree_wfm
         ports:
@@ -68,6 +62,125 @@ jobs:
           DATABASE_URL="postgres://postgres@127.0.0.1:5432/lovetree_wfm" \
             node --import tsx tests/integration/with-first-memory-atomicity.mjs
 
+      # Cheap fail-closed source classification runs before downloading Chromium.
+      - name: Browser inventory and partition fail-closed contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t all_standard < <(
+            find tests -maxdepth 1 -type f -name '*.test.mjs' \
+              ! -name 'lineage-52-route-browser-qa.test.mjs' \
+              ! -name 'lineage-53-v2-route-browser-qa.test.mjs' \
+              ! -name 'memory-anatomy-route-browser-qa.test.mjs' \
+              -print | sort
+          )
+          if [ "${#all_standard[@]}" -eq 0 ]; then
+            echo "FAIL-CLOSED: no standard tests discovered" >&2
+            exit 1
+          fi
+
+          detect_pw() {
+            grep -Eq "from ['\"]playwright['\"]|import\(['\"]playwright['\"]\)|@playwright/test|chromium\.launch|firefox\.launch|webkit\.launch" "$1"
+          }
+
+          browser_tests=()
+          non_browser_tests=()
+          for f in "${all_standard[@]}"; do
+            if detect_pw "$f"; then
+              browser_tests+=("$f")
+            else
+              non_browser_tests+=("$f")
+            fi
+          done
+
+          for f in "${non_browser_tests[@]}"; do
+            if detect_pw "$f"; then
+              echo "FAIL-CLOSED: Playwright test mis-classified as non-browser: $f" >&2
+              exit 1
+            fi
+          done
+          for f in "${browser_tests[@]}"; do
+            if ! detect_pw "$f"; then
+              echo "FAIL-CLOSED: browser bucket entry without Playwright usage: $f" >&2
+              exit 1
+            fi
+          done
+
+          expected_browser_tests=(
+            tests/v4-additional-source-baseline.test.mjs
+            tests/v4-cinematic-v6.test.mjs
+            tests/v4-cinematic.test.mjs
+            tests/v4-existing-fidelity-remediation.test.mjs
+            tests/v4-final-product-surfaces-browser.test.mjs
+            tests/v4-first-journey-source-faithful.test.mjs
+            tests/v4-first-journey-persistence-behavioral.test.mjs
+            tests/v4-moments-100-source-faithful.test.mjs
+            tests/lineage-59-browser-qa.test.mjs
+            tests/track67-v242-browser-qa.test.mjs
+            tests/track67-native-inspect-acceptance.test.mjs
+          )
+          expected_browser_count=11
+
+          printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
+          printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt
+          printf '%s\n' "${browser_tests[@]}" | sort > /tmp/atrack-browser-tests.txt
+          printf '%s\n' "${non_browser_tests[@]}" | sort > /tmp/atrack-non-browser-tests.txt
+
+          if [ "${#expected_browser_tests[@]}" -ne "$expected_browser_count" ]; then
+            echo "FAIL-CLOSED: expected browser inventory count mismatch (declared ${expected_browser_count}, listed ${#expected_browser_tests[@]})" >&2
+            exit 1
+          fi
+          if [ "$(sort -u /tmp/atrack-expected-browser.txt | wc -l)" -ne "$expected_browser_count" ]; then
+            echo "FAIL-CLOSED: expected browser inventory contains duplicate entries" >&2
+            exit 1
+          fi
+          if [ "${#browser_tests[@]}" -eq 0 ]; then
+            echo "FAIL-CLOSED: browser bucket is empty, but ${expected_browser_count} standard browser tests are expected" >&2
+            exit 1
+          fi
+
+          missing_from_corpus="$(comm -23 /tmp/atrack-expected-browser.txt /tmp/atrack-standard-corpus.txt)"
+          if [ -n "$missing_from_corpus" ]; then
+            echo "FAIL-CLOSED: expected browser test(s) absent from the standard corpus:" >&2
+            printf '%s\n' "$missing_from_corpus" | sed 's/^/  /' >&2
+            exit 1
+          fi
+
+          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-browser-tests.txt > /tmp/atrack-browser-setdiff.txt; then
+            echo "FAIL-CLOSED: standard browser inventory drift (expected set != detected set)" >&2
+            cat /tmp/atrack-browser-setdiff.txt >&2
+            exit 1
+          fi
+
+          : > /tmp/atrack-broad-browser.txt
+          for f in "${all_standard[@]}"; do
+            if grep -Eq "(import|require)[^;]*(playwright|puppeteer)|\.launch\(|\.newContext\(|\.newPage\(" "$f"; then
+              printf '%s\n' "$f" >> /tmp/atrack-broad-browser.txt
+            fi
+          done
+          sort -o /tmp/atrack-broad-browser.txt /tmp/atrack-broad-browser.txt
+          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-broad-browser.txt > /tmp/atrack-broad-setdiff.txt; then
+            echo "FAIL-CLOSED: independent cross-detector disagrees with expected browser inventory" >&2
+            cat /tmp/atrack-broad-setdiff.txt >&2
+            exit 1
+          fi
+
+          if [ "$(( ${#browser_tests[@]} + ${#non_browser_tests[@]} ))" -ne "${#all_standard[@]}" ]; then
+            echo "FAIL-CLOSED: partition size mismatch" >&2
+            exit 1
+          fi
+
+          echo "standard tests: ${#all_standard[@]}"
+          echo "standard non-browser tests: ${#non_browser_tests[@]}"
+          echo "standard browser tests: ${#browser_tests[@]} (matches expected inventory)"
+
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.55.0-chromium
+
       - name: Prepare Playwright runtime
         run: |
           npm install --no-save --package-lock=false playwright@1.55.0
@@ -101,48 +214,21 @@ jobs:
             cat /tmp/lineage-53-v2-server.log
             exit 1
           fi
-
           node --import tsx --test tests/lineage-53-v2-route-browser-qa.test.mjs
 
-      - name: Unit and integration tests
+      - name: Start A-track exact-head application server
         shell: bash
         run: |
           set -euo pipefail
           npm start > /tmp/a-track-p0-server.log 2>&1 &
-          server_pid=$!
-          cleanup() {
-            kill "$server_pid" 2>/dev/null || true
-            wait "$server_pid" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          run_gate() {
-            local label="$1"
-            shift
-            local log="/tmp/a-track-${label}.log"
-            local status
-            set +e
-            "$@" 2>&1 | tee "$log"
-            status=${PIPESTATUS[0]}
-            set -e
-            if [ "$status" -ne 0 ]; then
-              local details
-              details="$(tail -n 40 "$log" | tr '\n' ' ' | cut -c1-4000)"
-              details="${details//'%'/'%25'}"
-              details="${details//$'\r'/'%0D'}"
-              details="${details//$'\n'/'%0A'}"
-              echo "::error title=A-track subgate failed::A_TRACK_SUBGATE_FAIL=${label} | ${details}"
-              return "$status"
-            fi
-          }
-
+          echo $! > /tmp/a-track-p0-server.pid
           ready=0
           for attempt in {1..60}; do
             if curl --fail --silent --show-error http://127.0.0.1:3000/v4 > /dev/null; then
               ready=1
               break
             fi
-            if ! kill -0 "$server_pid" 2>/dev/null; then
+            if ! kill -0 "$(cat /tmp/a-track-p0-server.pid)" 2>/dev/null; then
               cat /tmp/a-track-p0-server.log
               exit 1
             fi
@@ -153,182 +239,75 @@ jobs:
             exit 1
           fi
 
-          run_gate memory-anatomy-route \
-            node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs
+      - name: Unit/integration — memory-anatomy-route
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --test tests/memory-anatomy-route-browser-qa.test.mjs 2>&1 | tee /tmp/a-track-memory-anatomy-route.log
 
-          # --- standard_tests partitioning: isolate Playwright browser tests ---
-          mapfile -t all_standard < <(
-            find tests -maxdepth 1 -type f -name '*.test.mjs' \
-              ! -name 'lineage-52-route-browser-qa.test.mjs' \
-              ! -name 'lineage-53-v2-route-browser-qa.test.mjs' \
-              ! -name 'memory-anatomy-route-browser-qa.test.mjs' \
-              -print | sort
-          )
-          if [ "${#all_standard[@]}" -eq 0 ]; then
-            echo "No standard tests discovered" >&2
-            exit 1
+      - name: Unit/integration — standard-non-browser-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t non_browser_tests < /tmp/atrack-non-browser-tests.txt
+          node --import tsx --test "${non_browser_tests[@]}" 2>&1 | tee /tmp/a-track-standard-non-browser-tests.log
+
+      - name: Unit/integration — standard-browser-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t browser_tests < /tmp/atrack-browser-tests.txt
+          LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
+          TRACK67_BASE_URL=http://127.0.0.1:3000 \
+            node --import tsx --test --test-concurrency=1 "${browser_tests[@]}" 2>&1 | tee /tmp/a-track-standard-browser-tests.log
+
+      - name: Unit/integration — lineage-52-route
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs 2>&1 | tee /tmp/a-track-lineage-52-route.log
+
+      - name: Unit/integration — lineage-52-direct-navigation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs 2>&1 | tee /tmp/a-track-lineage-52-direct-navigation.log
+
+      - name: Surface A-track failure diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo '## A-track failure diagnostics'
+            echo
+            for f in /tmp/a-track-*.log /tmp/atrack-*setdiff.txt; do
+              [ -f "$f" ] || continue
+              echo "### $f"
+              echo '```text'
+              tail -n 80 "$f"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload A-track failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-track-failure-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
+          path: |
+            /tmp/a-track-*.log
+            /tmp/atrack-*.txt
+
+      - name: Stop A-track application server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/a-track-p0-server.pid ]; then
+            kill "$(cat /tmp/a-track-p0-server.pid)" 2>/dev/null || true
+            wait "$(cat /tmp/a-track-p0-server.pid)" 2>/dev/null || true
           fi
-
-          detect_pw() {
-            grep -Eq "from ['\"]playwright['\"]|import\(['\"]playwright['\"]\)|@playwright/test|chromium\.launch|firefox\.launch|webkit\.launch" "$1"
-          }
-
-          browser_tests=()
-          non_browser_tests=()
-          for f in "${all_standard[@]}"; do
-            if detect_pw "$f"; then
-              browser_tests+=("$f")
-            else
-              non_browser_tests+=("$f")
-            fi
-          done
-
-          # Fail-closed guard: a Playwright-using test must never sit in the
-          # parallel non-browser bucket, and every browser-bucket entry must
-          # actually use Playwright. Prevents silent mis-classification that
-          # would reintroduce shared-browser nondeterminism.
-          for f in "${non_browser_tests[@]}"; do
-            if detect_pw "$f"; then
-              echo "FAIL-CLOSED: Playwright test mis-classified as non-browser: $f" >&2
-              exit 1
-            fi
-          done
-          for f in "${browser_tests[@]}"; do
-            if ! detect_pw "$f"; then
-              echo "FAIL-CLOSED: browser bucket entry without Playwright usage: $f" >&2
-              exit 1
-            fi
-          done
-
-          # --- Authoritative expected browser inventory (fail-closed proof) ---
-          # The two loops above only re-run detect_pw(), so on their own they
-          # cannot prove the partition is correct: a detector that stops
-          # recognising a browser test would place it in the non-browser bucket
-          # AND agree with itself that this is fine. The inventory below is the
-          # independent expectation detect_pw() is validated against. It is
-          # maintained by hand on purpose.
-          #
-          # Adding or renaming a browser-driving standard test MUST fail this
-          # gate until this list is updated, so a new browser test can never
-          # silently join the parallel bucket.
-          expected_browser_tests=(
-            tests/v4-additional-source-baseline.test.mjs
-            tests/v4-cinematic-v6.test.mjs
-            tests/v4-cinematic.test.mjs
-            tests/v4-existing-fidelity-remediation.test.mjs
-            tests/v4-final-product-surfaces-browser.test.mjs
-            tests/v4-first-journey-source-faithful.test.mjs
-            tests/v4-first-journey-persistence-behavioral.test.mjs
-            tests/v4-moments-100-source-faithful.test.mjs
-            tests/lineage-59-browser-qa.test.mjs
-            tests/track67-v242-browser-qa.test.mjs
-            tests/track67-native-inspect-acceptance.test.mjs
-          )
-          expected_browser_count=11
-
-          printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
-          printf '%s\n' "${all_standard[@]}" | sort > /tmp/atrack-standard-corpus.txt
-
-          # Inventory self-consistency: declared count must match the declared
-          # set, and the set must not contain duplicates. Guards against a
-          # careless edit that weakens the expectation itself.
-          if [ "${#expected_browser_tests[@]}" -ne "$expected_browser_count" ]; then
-            echo "FAIL-CLOSED: expected browser inventory count mismatch (declared ${expected_browser_count}, listed ${#expected_browser_tests[@]})" >&2
-            exit 1
-          fi
-          if [ "$(sort -u /tmp/atrack-expected-browser.txt | wc -l)" -ne "$expected_browser_count" ]; then
-            echo "FAIL-CLOSED: expected browser inventory contains duplicate entries" >&2
-            exit 1
-          fi
-
-          # This repository is known to contain standard browser tests, so an
-          # empty browser bucket is always a detector regression and never a
-          # legitimate state. Reject it explicitly.
-          if [ "${#browser_tests[@]}" -eq 0 ]; then
-            echo "FAIL-CLOSED: browser bucket is empty, but ${expected_browser_count} standard browser tests are expected" >&2
-            exit 1
-          fi
-
-          # Every expected browser test must still be part of the standard
-          # corpus, otherwise the expectation is silently vacuous.
-          missing_from_corpus="$(comm -23 /tmp/atrack-expected-browser.txt /tmp/atrack-standard-corpus.txt)"
-          if [ -n "$missing_from_corpus" ]; then
-            echo "FAIL-CLOSED: expected browser test(s) absent from the standard corpus:" >&2
-            printf '%s\n' "$missing_from_corpus" | sed 's/^/  /' >&2
-            echo "Update expected_browser_tests in this workflow if the test was intentionally removed or renamed." >&2
-            exit 1
-          fi
-
-          # Exact-set comparison, not a count comparison: this also catches a
-          # same-count substitution where one browser test replaces another.
-          printf '%s\n' "${browser_tests[@]}" | sort > /tmp/atrack-actual-browser.txt
-          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-actual-browser.txt > /tmp/atrack-browser-setdiff.txt; then
-            echo "FAIL-CLOSED: standard browser inventory drift (expected set != detected set)" >&2
-            echo "  '-' = expected by this workflow, '+' = detected by detect_pw()" >&2
-            sed 's/^/  /' /tmp/atrack-browser-setdiff.txt >&2
-            echo "Either detect_pw() regressed, or the browser corpus changed and expected_browser_tests must be updated." >&2
-            exit 1
-          fi
-
-          # Independent cross-detector: a separately implemented, structural
-          # browser-signal scan. It keys off import/require specifiers and
-          # browser-launch call shapes instead of detect_pw()'s literal
-          # patterns, so it also covers forms detect_pw() would miss (for
-          # example `require('playwright')`). It is matched against the same
-          # inventory in BOTH directions: an extra file means an unlisted
-          # browser test, a missing file means this cross-check itself
-          # regressed and can no longer be trusted. Because the two detectors
-          # share no pattern, one of them breaking cannot disable both the
-          # partition and this proof at the same time.
-          : > /tmp/atrack-broad-browser.txt
-          for f in "${all_standard[@]}"; do
-            if grep -Eq "(import|require)[^;]*(playwright|puppeteer)|\.launch\(|\.newContext\(|\.newPage\(" "$f"; then
-              printf '%s\n' "$f" >> /tmp/atrack-broad-browser.txt
-            fi
-          done
-          sort -o /tmp/atrack-broad-browser.txt /tmp/atrack-broad-browser.txt
-          if ! diff -u /tmp/atrack-expected-browser.txt /tmp/atrack-broad-browser.txt > /tmp/atrack-broad-setdiff.txt; then
-            echo "FAIL-CLOSED: independent cross-detector disagrees with the expected browser inventory" >&2
-            echo "  '-' = expected by this workflow, '+' = flagged by the cross-detector" >&2
-            sed 's/^/  /' /tmp/atrack-broad-setdiff.txt >&2
-            echo "A '+' line is a browser test missing from expected_browser_tests; add it so it runs serially with --test-concurrency=1." >&2
-            echo "A '-' line means the cross-detector no longer recognises a known browser test and must be repaired." >&2
-            exit 1
-          fi
-
-          # Partition integrity: every standard test landed in exactly one
-          # bucket (nothing dropped, nothing double-counted).
-          if [ "$(( ${#browser_tests[@]} + ${#non_browser_tests[@]} ))" -ne "${#all_standard[@]}" ]; then
-            echo "FAIL-CLOSED: partition size mismatch (browser ${#browser_tests[@]} + non-browser ${#non_browser_tests[@]} != standard ${#all_standard[@]})" >&2
-            exit 1
-          fi
-
-          echo "standard tests: ${#all_standard[@]}"
-          echo "standard non-browser tests: ${#non_browser_tests[@]}"
-          echo "standard browser tests: ${#browser_tests[@]} (matches expected inventory)"
-
-          # Non-browser standard tests keep normal Node test concurrency.
-          run_gate standard-non-browser-tests \
-            node --import tsx --test "${non_browser_tests[@]}"
-
-          # Browser standard tests run file-serial (--test-concurrency=1) to
-          # remove shared-browser nondeterminism under concurrent execution.
-          # No empty-bucket fallback: a zero-sized browser bucket already
-          # failed closed above, so this gate always executes.
-          # Lineage 59 V5 browser QA targets the same A-track `npm start`
-          # server (port 3000); local runs use LINEAGE59_BASE_URL (default 3160).
-          run_gate standard-browser-tests \
-            env LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
-            env TRACK67_BASE_URL=http://127.0.0.1:3000 \
-            node --import tsx --test --test-concurrency=1 "${browser_tests[@]}"
-
-          echo "Running Lineage 52 actual-route browser QA in isolation"
-          run_gate lineage-52-route \
-            node --import tsx --test tests/lineage-52-route-browser-qa.test.mjs
-
-          echo "Running Lineage 52 direct-navigation browser security QA"
-          run_gate lineage-52-direct-navigation \
-            node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs
 
       - name: V4 Orbit canonical actual-route browser QA
         shell: bash
@@ -359,9 +338,6 @@ jobs:
             exit 1
           fi
 
-          # PR #156 Orbit canonical browser QA across desktop 1280x800,
-          # mobile 390x844 real touch, 320x720 and reduced motion.  A
-          # failure here fails the A-track (no skip, no xfail).
           V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
             node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
 
