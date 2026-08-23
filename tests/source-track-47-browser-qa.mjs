@@ -121,6 +121,77 @@ function unexpectedOf(errors) {
   return errors.filter((e) => !e.expected).map((e) => e.raw);
 }
 
+// Bounded conditional-wait standard (#365/#413 kilo methodology): every
+// expected state change polls the ACTUAL transition with an explicit
+// timeout/polling budget; the original assertions stay verbatim below the
+// waits, and a timeout fails loudly with a self-classifying snapshot
+// attached so a recurrence classifies itself. No fixed sleeps.
+const CONDITION_WAIT = { timeout: 10000, polling: 50 };
+
+async function waitForCondition(pageLike, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await pageLike.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (error) {
+    const diag = await pageLike.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${error.message}`,
+    );
+  }
+}
+
+// Durability probe: observe a boolean page state REMAIN true across a
+// bounded grace window (temporal contracts like "the pinned menu survives
+// the pointer leaving"). Samples the live state instead of sleeping — a
+// flip fails immediately with classification; completing the window proves
+// the held state. The window length is part of the tested contract, not a
+// timeout inflation.
+async function expectStateStableFor(pageLike, condition, classify, label, windowMs, arg = null) {
+  const deadline = Date.now() + windowMs;
+  while (Date.now() < deadline) {
+    const ok = await pageLike.evaluate(condition, arg).catch(() => false);
+    if (!ok) {
+      const diag = await pageLike.evaluate(classify, arg).catch((diagErr) => ({ diagError: diagErr.message }));
+      assert.fail(
+        `${label}: state flipped during ${windowMs}ms stability window (self-classification: ${JSON.stringify(diag)})`,
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+}
+
+// Self-classifying snapshots for every surface Track47 asserts on.
+const classifyNav = () => ({
+  expanded: Array.from(document.querySelectorAll("[data-nav-menu]")).map(
+    (t) => `${t.getAttribute("data-nav-menu")}=${t.getAttribute("aria-expanded")}`,
+  ),
+  active:
+    document.activeElement?.getAttribute("data-route-key")
+    ?? document.activeElement?.getAttribute("data-nav-menu")
+    ?? null,
+  status: document.querySelector("[role='status']")?.textContent ?? null,
+});
+
+const classifyStage = () => {
+  const main = document.querySelector("main[data-act]");
+  return {
+    act: main?.getAttribute("data-act") ?? null,
+    mode: main?.getAttribute("data-mode") ?? null,
+    failure: main?.getAttribute("data-failure") ?? null,
+    reduced: main?.getAttribute("data-reduced") ?? null,
+    ctaReady: main?.getAttribute("data-cta-ready") ?? null,
+    scrollY: Math.round(window.scrollY),
+  };
+};
+
+const classifyMedia = () => {
+  const video = document.querySelector("video");
+  return {
+    paused: video?.paused ?? null,
+    t: typeof video?.currentTime === "number" ? Number(video.currentTime.toFixed(2)) : null,
+    now: document.querySelector('[role="slider"]')?.getAttribute("aria-valuenow") ?? null,
+  };
+};
+
 async function overflowX(page) {
   return page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -167,13 +238,26 @@ function navContract() {
     record("06 Moments trigger click pins the menu open", async () => {
       const trigger = navPage.locator('[data-nav-menu="moments"]');
       await trigger.click();
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true",
+        classifyNav,
+        "moments trigger click pins menu open",
+      );
       assert.equal(await trigger.getAttribute("aria-expanded"), "true");
       assert.equal(await trigger.getAttribute("aria-haspopup"), "true");
     }),
     record("07 pointer leaving the trigger keeps the pinned menu open", async () => {
       await navPage.mouse.move(640, 500);
-      await navPage.waitForTimeout(400);
+      // Temporal contract: pinned state must SURVIVE the pointer leaving —
+      // observed across a bounded stability window instead of a fixed sleep.
+      await expectStateStableFor(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true",
+        classifyNav,
+        "pinned menu survives pointer leaving",
+        400,
+      );
       assert.equal(
         await navPage.locator('[data-nav-menu="moments"]').getAttribute("aria-expanded"),
         "true",
@@ -183,8 +267,30 @@ function navContract() {
     record("08 first menu option receives keyboard focus on open", async () => {
       // The trigger was opened (and its first option focused) in check 06;
       // the menu is pinned open through check 07. Re-clicking would toggle
-      // it CLOSED (source V4.2.5 trigger contract), so only verify focus.
-      await navPage.waitForTimeout(350);
+      // it CLOSED (source V4.2.5 trigger contract), so only verify focus
+      // once the focused option is actually inside the moments group.
+      await waitForCondition(
+        navPage,
+        () =>
+          document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group") === "moments"
+          && document.activeElement?.getAttribute("data-route-key") === "moment57",
+        classifyNav,
+        "first moments option focused on open",
+      );
+      // Settle proof: the opened+focused state must REMAIN stable before the
+      // next interaction (the source finishes its open-initialization on a
+      // deferred frame; interacting earlier exercises a race the pinned
+      // contract never promised). Bounded observational window, mirroring the
+      // original 350ms settle envelope without a blind sleep.
+      await expectStateStableFor(
+        navPage,
+        () =>
+          document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true"
+          && document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group") === "moments",
+        classifyNav,
+        "opened+focused state settles",
+        150,
+      );
       const active = await navPage.evaluate(() => ({
         key: document.activeElement?.getAttribute("data-route-key"),
         menu: document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group"),
@@ -204,7 +310,12 @@ function navContract() {
         "menu must be pinned-open before Escape (left by check 08)",
       );
       await navPage.keyboard.press("Escape");
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "false",
+        classifyNav,
+        "Escape closes the open menu",
+      );
       assert.equal(
         await navPage.locator('[data-nav-menu="moments"]').getAttribute("aria-expanded"),
         "false",
@@ -215,7 +326,16 @@ function navContract() {
         "moments",
         "trigger focus restored",
       );
-      await navPage.waitForTimeout(350);
+      // Focus restoration must not re-open the menu: observe the closed
+      // state SURVIVING focus restore across a bounded stability window
+      // instead of sleeping past it.
+      await expectStateStableFor(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "false",
+        classifyNav,
+        "focus restore does not reopen menu",
+        350,
+      );
       assert.equal(
         await navPage.locator('[data-nav-menu="moments"]').getAttribute("aria-expanded"),
         "false",
@@ -224,13 +344,23 @@ function navContract() {
     }),
     record("10 outside click closes the pinned menu", async () => {
       await navPage.locator('[data-nav-menu="moments"]').click();
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true",
+        classifyNav,
+        "trigger click pins menu for outside-click check",
+      );
       assert.equal(
         await navPage.locator('[data-nav-menu="moments"]').getAttribute("aria-expanded"),
         "true",
       );
       await navPage.mouse.click(640, 650);
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "false",
+        classifyNav,
+        "outside click closes the pinned menu",
+      );
       assert.equal(
         await navPage.locator('[data-nav-menu="moments"]').getAttribute("aria-expanded"),
         "false",
@@ -240,15 +370,56 @@ function navContract() {
       for (const menu of ["connections", "mytree"]) {
         const trigger = navPage.locator(`[data-nav-menu="${menu}"]`);
         await trigger.click();
-        await navPage.waitForTimeout(250);
+        await waitForCondition(
+          navPage,
+          (m) => document.querySelector(`[data-nav-menu="${m}"]`)?.getAttribute("aria-expanded") === "true",
+          classifyNav,
+          `${menu} opens`,
+          menu,
+        );
         assert.equal(await trigger.getAttribute("aria-expanded"), "true", `${menu} opens`);
+        await waitForCondition(
+          navPage,
+          (m) =>
+            document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group") === m,
+          classifyNav,
+          `${menu} first option focused`,
+          menu,
+        );
+        // Settle proof before the next interaction: the source finishes its
+        // open-initialization on a deferred frame; Escape must observe the
+        // settled open+focused state, not the race window. Bounded
+        // observational window mirroring the original 250ms settle envelope.
+        await expectStateStableFor(
+          navPage,
+          (m) =>
+            document.querySelector(`[data-nav-menu="${m}"]`)?.getAttribute("aria-expanded") === "true"
+            && document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group") === m,
+          classifyNav,
+          `${menu} opened+focused state settles`,
+          150,
+          menu,
+        );
         const active = await navPage.evaluate(() =>
           document.activeElement?.closest("[data-nav-group]")?.getAttribute("data-nav-group"),
         );
         assert.equal(active, menu, `${menu} first option focused`);
         await navPage.keyboard.press("Escape");
-        await navPage.waitForTimeout(250);
+        await waitForCondition(
+          navPage,
+          (m) => document.querySelector(`[data-nav-menu="${m}"]`)?.getAttribute("aria-expanded") === "false",
+          classifyNav,
+          `${menu} Escape close`,
+          menu,
+        );
         assert.equal(await trigger.getAttribute("aria-expanded"), "false", `${menu} Escape close`);
+        await waitForCondition(
+          navPage,
+          (m) => document.activeElement?.getAttribute("data-nav-menu") === m,
+          classifyNav,
+          `${menu} trigger focus restored`,
+          menu,
+        );
         assert.equal(
           await navPage.evaluate(() => document.activeElement?.getAttribute("data-nav-menu")),
           menu,
@@ -259,7 +430,12 @@ function navContract() {
     record("12 unresolved routes cannot fake navigate; the one resolved target works", async () => {
       const urlBefore = navPage.url();
       await navPage.locator('[data-nav-menu="moments"]').click();
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true",
+        classifyNav,
+        "moments menu opens for HOLD option probe",
+      );
       const holdOption = navPage.locator('[data-route-key="moment57"]');
 assert.equal(
   await holdOption.getAttribute("aria-disabled"),
@@ -267,7 +443,25 @@ assert.equal(
   "HOLD option must be aria-disabled for real users",
 );
 await holdOption.click({ force: true });
-      await navPage.waitForTimeout(400);
+      await waitForCondition(
+        navPage,
+        () =>
+          document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "false"
+          && (document.querySelector("[role='status']")?.textContent ?? "").includes("REVIEW PENDING"),
+        classifyNav,
+        "HOLD option click closes menu with REVIEW PENDING status and no navigation",
+      );
+      // No-navigation is an absence-of-transition contract: observe the URL
+      // REMAINING unchanged across a bounded stability window instead of
+      // sleeping past the danger zone.
+      await expectStateStableFor(
+        navPage,
+        (u) => window.location.href === u,
+        classifyNav,
+        "HOLD option does not navigate",
+        400,
+        urlBefore,
+      );
       assert.equal(navPage.url(), urlBefore, "HOLD option must not navigate");
       assert.match(await navPage.locator("[role='status']").innerText(), /REVIEW PENDING/);
       assert.equal(
@@ -276,7 +470,13 @@ await holdOption.click({ force: true });
         "option click closes the menu",
       );
       await navPage.locator('[data-nav-menu="moments"]').click();
-      await navPage.waitForTimeout(250);
+      await waitForCondition(
+        navPage,
+        () => document.querySelector('[data-nav-menu="moments"]')?.getAttribute("aria-expanded") === "true"
+          && document.querySelector('[data-route-key="moment64"]') !== null,
+        classifyNav,
+        "moments menu reopened for resolved route navigation",
+      );
       await navPage.locator('[data-route-key="moment64"]').click();
       await navPage.waitForURL("**/design-lab/lineages/64/v1-2-1", { timeout: 10000 });
       await navPage.goto(NATIVE, { waitUntil: "networkidle" });
@@ -304,10 +504,20 @@ function mobileViewportChecks(label, viewport) {
       );
       if (PHASE === "exact") {
         await mp.mouse.wheel(0, 180);
-        await mp.waitForTimeout(400);
+        await waitForCondition(
+          mp,
+          () => (window.scrollY || window.pageYOffset) > 0,
+          classifyStage,
+          `${label}: initial wheel engages scroll`,
+        );
         const ms = await maxScroll(mp);
         await mp.evaluate((y) => window.scrollTo({ top: y }), ms - 2);
-        await mp.waitForTimeout(900);
+        await waitForCondition(
+          mp,
+          () => document.querySelector("main[data-act]")?.getAttribute("data-act") === "5",
+          classifyStage,
+          `${label}: bottom scroll reaches ACT 5`,
+        );
         assert.equal(await attr(mp, "data-act"), "5", `${label}: reaches ACT 5`);
         await mp.screenshot({ path: `${SHOTS}/native-mobile-${label}-act5.png` });
       } else {
@@ -320,7 +530,26 @@ function mobileViewportChecks(label, viewport) {
         assert.equal(await attr(mp, "data-reduced"), "true", `${label}: reduced-motion state detected`);
         const ms = await maxScroll(mp);
         await mp.evaluate((y) => window.scrollTo({ top: y }), ms - 2);
-        await mp.waitForTimeout(600);
+        await waitForCondition(
+          mp,
+          () => {
+            const act = document.querySelector("main[data-act]")?.getAttribute("data-act");
+            return act != null && ["1", "2", "3", "4", "5"].includes(act);
+          },
+          classifyStage,
+          `${label}: story identity present after bottom scroll`,
+        );
+        await expectStateStableFor(
+          mp,
+          () => {
+            const main = document.querySelector("main[data-act]");
+            return ["1", "2", "3", "4", "5"].includes(main?.getAttribute("data-act") ?? "")
+              && main?.getAttribute("data-mode") === "PAUSED";
+          },
+          classifyStage,
+          `${label}: story identity + PAUSED hold stable`,
+          600,
+        );
         const act = await attr(mp, "data-act");
         assert.ok(
           ["1", "2", "3", "4", "5"].includes(act),
@@ -361,7 +590,12 @@ if (PHASE === "exact") {
       { timeout: 10000 },
     );
     await page.mouse.wheel(0, 240);
-    await page.waitForTimeout(350);
+    await waitForCondition(
+      page,
+      () => document.querySelector("main[data-act]")?.getAttribute("data-mode") === "USER_CONTROLLED",
+      classifyStage,
+      "wheel engages USER_CONTROLLED",
+    );
     assert.equal(await attr(page, "data-mode"), "USER_CONTROLLED");
     const ms = await maxScroll(page);
     // Scroll-ratio → ACT mapping per the pinned source ACTS timeline
@@ -377,12 +611,24 @@ if (PHASE === "exact") {
       [0.999, "5"],
     ]) {
       await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * ratio));
-      await page.waitForTimeout(500);
+      await waitForCondition(
+        page,
+        (expectedAct) => document.querySelector("main[data-act]")?.getAttribute("data-act") === expectedAct,
+        classifyStage,
+        `ratio ${ratio} maps to ACT ${expectedAct}`,
+        expectedAct,
+      );
       assert.equal(await attr(page, "data-act"), expectedAct, `ratio ${ratio}`);
     }
     await page.screenshot({ path: `${SHOTS}/native-desktop-act5.png` });
     await page.evaluate(() => window.scrollTo({ top: 0 }));
-    await page.waitForTimeout(700);
+    await waitForCondition(
+      page,
+      () => document.querySelector("main[data-act]")?.getAttribute("data-act") === "1",
+      classifyStage,
+      "scroll back to top returns to ACT 1",
+    );
+    assert.equal(await attr(page, "data-act"), "1");
     await page.screenshot({ path: `${SHOTS}/native-desktop-act1.png` });
     await page.close();
   });
@@ -393,10 +639,23 @@ if (PHASE === "exact") {
       { timeout: 10000 },
     );
     await page.mouse.wheel(0, 120);
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      () => (window.scrollY || window.pageYOffset) > 0,
+      classifyStage,
+      "rail check: wheel engages scroll",
+    );
     const ms = await maxScroll(page);
     await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * 0.6));
-    await page.waitForTimeout(700);
+    await waitForCondition(
+      page,
+      () => {
+        const now = Number(document.querySelector('[role="slider"]')?.getAttribute("aria-valuenow") ?? "NaN");
+        return Number.isFinite(now) && now > 40 && now < 90;
+      },
+      classifyMedia,
+      "rail reflects mid-film progress (aria-valuenow 40..90)",
+    );
     const now = Number(await page.locator('[role="slider"]').getAttribute("aria-valuenow"));
     assert.ok(now > 40 && now < 90, `rail aria-valuenow=${now}`);
     const pausedBefore = await page.evaluate(() =>
@@ -404,44 +663,106 @@ if (PHASE === "exact") {
     );
     assert.equal(pausedBefore, true, "user authority pauses the film");
     await page.getByRole("button", { name: "Play", exact: true }).click();
-    await page.waitForTimeout(900);
+    // Playback is a temporal claim: observe currentTime ADVANCING while the
+    // film runs instead of sleeping a fixed duration.
+    await waitForCondition(
+      page,
+      () => {
+        const video = document.querySelector("video");
+        return Boolean(video) && !video.paused && video.currentTime > 0;
+      },
+      classifyMedia,
+      "Play resumes the exact video",
+    );
+    const tAtPlay = await page.evaluate(() => document.querySelector("video")?.currentTime ?? -1);
+    await expectStateStableFor(
+      page,
+      (since) => {
+        const video = document.querySelector("video");
+        return Boolean(video) && !video.paused && video.currentTime >= since;
+      },
+      classifyMedia,
+      "playback continues advancing",
+      900,
+      tAtPlay,
+    );
     const playing = await page.evaluate(() => {
       const video = document.querySelector("video");
       return video ? !video.paused && video.currentTime > 0 : false;
     });
     assert.equal(playing, true, "Play resumes the exact video");
     await page.getByRole("button", { name: "Pause", exact: true }).click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => {
+        const video = document.querySelector("video");
+        return Boolean(video) && video.paused;
+      },
+      classifyMedia,
+      "Pause halts playback",
+    );
     assert.equal(await page.evaluate(() => document.querySelector("video")?.paused), true);
     await page.locator('[role="slider"]').focus();
     // Source V4.2.5 rail keydown: dir = (ArrowUp || ArrowRight) ? +1 : -1 —
     // ArrowUp/ArrowRight seek FORWARD (+4%), ArrowDown/ArrowLeft seek back.
     await page.keyboard.press("ArrowUp");
-    await page.waitForTimeout(300);
+    await waitForCondition(
+      page,
+      (before) => Number(document.querySelector('[role="slider"]')?.getAttribute("aria-valuenow") ?? "NaN") >= before,
+      classifyMedia,
+      "rail keyboard seek advances aria-valuenow",
+      now,
+    );
     const after = Number(await page.locator('[role="slider"]').getAttribute("aria-valuenow"));
     assert.ok(after >= now, "rail keyboard seek works");
     await page.close();
   });
   record("05 CTA appears on ACT 5 completion timing with the exact film", async (browser) => {
     const { page } = await openNative(browser, { width: 1280, height: 800 });
-    await page.waitForTimeout(600);
+    // Early-state proof: observe cta-ready=false REMAINING false across a
+    // bounded stability window instead of sleeping through the early phase.
+    await expectStateStableFor(
+      page,
+      () => document.querySelector("main[data-act]")?.getAttribute("data-cta-ready") === "false",
+      classifyStage,
+      "CTA hidden early",
+      600,
+    );
     assert.equal(await attr(page, "data-cta-ready"), "false", "CTA hidden early");
     await page.mouse.wheel(0, 200);
-    await page.waitForTimeout(250);
+    await waitForCondition(
+      page,
+      () => (window.scrollY || window.pageYOffset) > 0,
+      classifyStage,
+      "CTA check: wheel engages scroll",
+    );
     const ms = await maxScroll(page);
     await page.evaluate((y) => window.scrollTo({ top: y }), ms - 2);
     await page.waitForFunction(
       () => document.querySelector("main[data-act]")?.getAttribute("data-cta-ready") === "true",
       { timeout: 10000 },
     );
-    await page.waitForTimeout(900);
+    await waitForCondition(
+      page,
+      () => {
+        const cta = document.querySelector("[data-cta='first-moment']");
+        return Boolean(cta) && cta.isVisible();
+      },
+      classifyStage,
+      "첫 순간 심기 CTA visible at ACT 5",
+    );
     assert.equal(
       await page.locator("[data-cta='first-moment']").isVisible(),
       true,
       "첫 순간 심기 CTA visible at ACT 5",
     );
     await page.locator("[data-cta='first-moment']").click();
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => (document.querySelector("[role='status']")?.textContent ?? "").includes("ROUTE MAPPING PROOF"),
+      classifyNav,
+      "CTA click proves /v4 route mapping in status",
+    );
     assert.match(
       await page.locator("[role='status']").innerText(),
       /ROUTE MAPPING PROOF/,
@@ -463,7 +784,13 @@ if (PHASE === "exact") {
     );
     const ms = await maxScroll(page);
     await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * 0.9));
-    await page.waitForTimeout(500);
+    await waitForCondition(
+      page,
+      (expectedAct) => document.querySelector("main[data-act]")?.getAttribute("data-act") === expectedAct,
+      classifyStage,
+      "exact reduced-motion bottom scroll reaches ACT 5",
+      "5",
+    );
     assert.equal(await attr(page, "data-act"), "5");
     await page.screenshot({ path: `${SHOTS}/native-desktop-reduced-act5.png` });
     await page.close();
@@ -498,7 +825,19 @@ if (PHASE === "exact") {
     assert.equal(fallbackVisible, true, "HOLD fallback message visible (video absent)");
     // enterUser is blocked under failure exactly like the source.
     await page.mouse.wheel(0, 240);
-    await page.waitForTimeout(400);
+    await waitForCondition(
+      page,
+      () => document.querySelector("main[data-act]")?.getAttribute("data-mode") === "PAUSED",
+      classifyStage,
+      "wheel keeps failure state PAUSED (no fake playback)",
+    );
+    await expectStateStableFor(
+      page,
+      () => document.querySelector("main[data-act]")?.getAttribute("data-mode") === "PAUSED",
+      classifyStage,
+      "PAUSED hold stable after wheel",
+      400,
+    );
     assert.equal(await attr(page, "data-mode"), "PAUSED");
     await page.close();
   });
@@ -549,7 +888,22 @@ if (PHASE === "exact") {
     const button = page.getByRole("button", { name: /^Play$|^Pause$/ });
     if ((await button.innerText()) === "Play") {
       await button.click();
-      await page.waitForTimeout(700);
+      await waitForCondition(
+        page,
+        () => document.querySelector("main[data-act]")?.getAttribute("data-mode") === "PAUSED",
+        classifyStage,
+        "play toggle on failed source settles to PAUSED",
+      );
+      await expectStateStableFor(
+        page,
+        () => {
+          const btn = Array.from(document.querySelectorAll("button")).find((b) => /^Play$/.test(b.textContent ?? ""));
+          return Boolean(btn) && document.querySelector("main[data-act]")?.getAttribute("data-mode") === "PAUSED";
+        },
+        classifyStage,
+        "failed-source play toggle stays settled (button Play, mode PAUSED)",
+        700,
+      );
       assert.equal(await button.innerText(), "Play");
       assert.equal(await attr(page, "data-mode"), "PAUSED");
     }
@@ -581,7 +935,27 @@ if (PHASE === "exact") {
     // claim live playback, and the reduced-motion UI remains usable.
     const ms = await maxScroll(page);
     await page.evaluate((y) => window.scrollTo({ top: y }), Math.round(ms * 0.9));
-    await page.waitForTimeout(500);
+    await waitForCondition(
+      page,
+      () => {
+        const main = document.querySelector("main[data-act]");
+        return ["1", "2", "3", "4", "5"].includes(main?.getAttribute("data-act") ?? "")
+          && main?.getAttribute("data-mode") === "PAUSED";
+      },
+      classifyStage,
+      "HOLD reduced-motion: story identity present and controls PAUSED",
+    );
+    await expectStateStableFor(
+      page,
+      () => {
+        const main = document.querySelector("main[data-act]");
+        return ["1", "2", "3", "4", "5"].includes(main?.getAttribute("data-act") ?? "")
+          && main?.getAttribute("data-mode") === "PAUSED";
+      },
+      classifyStage,
+      "HOLD reduced-motion continuity stable across window",
+      500,
+    );
     const act = await attr(page, "data-act");
     assert.ok(
       ["1", "2", "3", "4", "5"].includes(act),
@@ -620,7 +994,10 @@ record("source runner: SHA-verified exact bytes + sandbox + truthful video state
       return video && video.readyState >= 2;
     }, { timeout: 20000 });
     await frame.evaluate(() => window.__lovetreeQA?.seek(12.95));
-    await frame.waitForTimeout(700);
+    await frame.waitForFunction(
+      () => window.__lovetreeQA?.getState()?.act === 5,
+      { timeout: 10000, polling: 50 },
+    );
     assert.equal(await frame.evaluate(() => window.__lovetreeQA?.getState().act), 5);
     assert.equal(
       await frame.evaluate(() => window.__lovetreeQA?.getState().mode),
@@ -668,7 +1045,15 @@ record("source runner: SHA-verified exact bytes + sandbox + truthful video state
 
 record("17/18/19 desktop console errors=0, page errors=0, overflow=0", async (browser) => {
   const { page, errors } = await openNative(browser, { width: 1280, height: 800 });
-  await page.waitForTimeout(800);
+  // Error-budget proof: observe the unexpected-error budget REMAINING empty
+  // across a bounded stability window instead of sleeping a fixed duration.
+  await expectStateStableFor(
+    page,
+    () => true,
+    classifyStage,
+    "desktop final error-budget window",
+    800,
+  );
   assert.deepEqual(
     unexpectedOf(errors),
     [],
