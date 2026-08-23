@@ -38,13 +38,60 @@ async function mockApi(page) {
   });
 }
 
+// Bounded conditional-wait standard (#360/#374/#382/#404 pattern):
+// every transition/readiness expectation polls for the actual semantic
+// condition with an explicit timeout/polling budget; the original assertion
+// stays verbatim below it, and a timeout fails loudly with self-classifying
+// diagnostics attached so a recurrence classifies itself.
+const CONDITION_WAIT = { timeout: 30000, polling: 50 };
+
+async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
+  try {
+    await page.waitForFunction(condition, arg, { timeout: wait.timeout, polling: wait.polling });
+  } catch (err) {
+    const diag = await page.evaluate(classify).catch((diagErr) => ({ diagError: diagErr.message }));
+    assert.fail(
+      `${label}: condition not met within ${wait.timeout}ms (self-classification: ${JSON.stringify(diag)}) :: ${err.message}`,
+    );
+  }
+}
+
+// Route-level render-complete observables (#408): each marker exists in the
+// DOM only after that route's API-backed content has actually rendered.
+// Registering them per-route keeps open() honest — an unknown route fails
+// loudly instead of silently skipping readiness.
+function readinessFor(route) {
+  if (route === "/v4/community") return { text: "Every lasting obsession" };
+  if (route.endsWith("/overview")) return { selector: "#v4-overview-title" };
+  if (route.endsWith("/story")) return { selector: ".v4-story-scroll-space[data-story-chapters]" };
+  if (route.endsWith("/graph")) return { selector: ".v4-graph-node" };
+  if (route.endsWith("/replay")) return { selector: ".v4-vinyl-disc" };
+  if (route.endsWith("/studio")) return { text: "스튜디오는 이 러브트리의 소유자만 사용할 수 있어요." };
+  throw new Error(`no readiness observable registered for route: ${route}`);
+}
+
 async function open(browser, route, viewport) {
   const page = await browser.newPage({ viewport });
   await mockApi(page);
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   const response = await page.goto(`${BASE}${route}`, { waitUntil: "networkidle", timeout: 30000 });
-  await page.waitForTimeout(350);
+  const readiness = readinessFor(route);
+  await waitForCondition(
+    page,
+    readiness.selector
+      ? (sel) => Boolean(document.querySelector(sel))
+      : (needle) => typeof document.body?.innerText === "string" && document.body.innerText.includes(needle),
+    () => ({
+      pathname: location.pathname,
+      visibleHeading: document.querySelector("h1, h2")?.textContent ?? null,
+      bodyTextSample: typeof document.body?.innerText === "string" ? document.body.innerText.slice(0, 160) : "",
+      scrollY,
+      documentReadyState: document.readyState,
+    }),
+    `route readiness ${route}`,
+    readiness.selector ?? readiness.text,
+  );
   return { page, pageErrors, status: response?.status() ?? 0 };
 }
 
@@ -92,7 +139,38 @@ for (const viewport of [{ name: "desktop", width: 1280, height: 800 }, { name: "
           const sticky = await opened.page.locator(".v4-story-sticky").evaluate((node) => getComputedStyle(node).position);
           assert.equal(sticky, "sticky");
           await opened.page.locator(".v4-story-rail button").nth(2).click();
-          await opened.page.waitForTimeout(650);
+          // Chapter transition (#408): the click applies chapter state
+          // immediately and then drives a smooth scroll whose progress
+          // handler recomputes the chapter mid-flight, so the target state
+          // can transiently appear and revert. Require the chapter-3 state
+          // (rail selection + sticky heading) to PERSIST across consecutive
+          // polls instead of sleeping a fixed 650ms.
+          await waitForCondition(
+            opened.page,
+            () => {
+              const buttons = [...document.querySelectorAll(".v4-story-rail button")];
+              const third = buttons[2];
+              const stickyHeading = document.querySelector(".v4-story-sticky h1");
+              const settled =
+                Boolean(third?.classList.contains("is-active")) &&
+                stickyHeading?.textContent?.trim() === "여름 여행";
+              const state = window;
+              state.__finalSurfacesChapter3Ticks =
+                settled ? (state.__finalSurfacesChapter3Ticks ?? 0) + 1 : 0;
+              return state.__finalSurfacesChapter3Ticks >= 8;
+            },
+            () => ({
+              pathname: location.pathname,
+              visibleHeading: document.querySelector(".v4-story-sticky h1")?.textContent?.trim() ?? null,
+              activeStoryIndex: [...document.querySelectorAll(".v4-story-rail button")]
+                .findIndex((button) => button.classList.contains("is-active")),
+              railState: [...document.querySelectorAll(".v4-story-rail button")]
+                .map((button) => (button.classList.contains("is-active") ? 1 : 0)),
+              scrollY,
+              documentReadyState: document.readyState,
+            }),
+            'story chapter 3 ("여름 여행") settled after rail click',
+          );
           assert.ok(await opened.page.getByRole("heading", { name: "여름 여행", exact: true }).count());
         }
         if (route === "graph") {
