@@ -25,6 +25,16 @@ const ONE_PIXEL_PNG = Buffer.from(
   "base64",
 );
 
+// Source contract (V4FirstJourney.tsx showScreen guard): a locked stage
+// click is refused with exactly one of these messages, surfaced through the
+// role="status" toast ([data-testid="toast"]).
+const REFUSAL_MESSAGES = {
+  1: "첫 순간을 먼저 심어 주세요.",
+  2: "첫 마음 카드를 먼저 피워 주세요.",
+  3: "다음 순간을 하나 연결해 주세요.",
+};
+const refusalMessage = (idx) => REFUSAL_MESSAGES[idx];
+
 async function stubRoutineThirdPartyResources(page) {
   await page.route("**/*", async (route) => {
     const requestUrl = new URL(route.request().url());
@@ -124,7 +134,17 @@ test("v4 first journey — locked stages cannot be reached directly", async () =
     }
     for (const idx of [1, 2, 3]) {
       await stageBtns.nth(idx).click({ force: true }).catch(() => {});
-      await page.waitForTimeout(150);
+      // Semantic wait (issue #414): the source contract rejects a locked
+      // stage click synchronously in showScreen() — the guard fails and the
+      // refusal surfaces as a role="status" toast ([data-testid="toast"],
+      // auto-cleared after 2600ms). Waiting for that toast is the genuine
+      // negative observation window: it proves the click was processed and
+      // actively refused, instead of guessing with a fixed 150ms delay.
+      // The screen-state assertions below stay exactly as before.
+      const refusal = page
+        .locator('[data-testid="toast"]')
+        .filter({ hasText: refusalMessage[idx] });
+      await refusal.waitFor({ state: "visible", timeout: 8000 });
       const advanced = await page.evaluate(() => {
         return {
           memoryForm: document.querySelector("#memory-form") !== null,
@@ -163,7 +183,14 @@ test("v4 first journey — full flow, storage keys, refresh restore, ESC modal",
     }
     await page.waitForSelector("#name-form", { timeout: 8000 });
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(150);
+    // Semantic wait (issue #414): the source renders the modal with
+    // `{modalOpen && ...}` — no exit transition, so Escape unmounts it
+    // synchronously. Waiting on hidden+detached is the honest readiness
+    // signal (replaces the old fixed 150ms guess).
+    await page.waitForSelector("#name-form", {
+      state: "detached",
+      timeout: 8000,
+    });
     assert.equal(await page.locator("#name-form").count(), 0, "ESC closes the modal");
 
     await page.getByRole("button", { name: /첫 순간 심기/ }).first().click();
@@ -245,7 +272,14 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
     const { page, errors } = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[0]);
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "networkidle" });
-    await page.waitForTimeout(600);
+    // Semantic wait (issue #414): instead of a fixed 600ms settle, wait for
+    // the concrete render readiness marker — the 3 browse mini cards the
+    // composition assertions below inspect. Bounded at 8s, no retry masking.
+    await page.waitForFunction(
+      () => document.querySelectorAll(".v4-j-mini").length === 3,
+      undefined,
+      { timeout: 8000, polling: 100 },
+    );
 
     const landing = await page.evaluate(() => {
       const hero = document.querySelector(".v4-j-hero");
@@ -320,7 +354,12 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
     assert.match(modal.ctaBg, /linear-gradient/, "modal primary CTA is a filled gradient");
     assert.equal(modal.ctaColor, "rgb(255, 253, 248)", "modal primary CTA uses light text");
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(200);
+    // Semantic wait (issue #414): same `{modalOpen && ...}` unmount
+    // contract as the ESC modal check above — wait for detached, not 200ms.
+    await page.waitForSelector("#name-form", {
+      state: "detached",
+      timeout: 8000,
+    });
 
     /* growth landscape cards + central connector */
     await page.evaluate(({ YT_A, YT_B }) => {
@@ -370,7 +409,14 @@ test("v4 first journey — restored source composition (landing 2-col, growth la
     const mobilePage = await openPage(browser, `${BASE}/v4/journey`, VIEWPORTS[4]);
     await mobilePage.page.evaluate(() => localStorage.clear());
     await mobilePage.page.reload({ waitUntil: "networkidle" });
-    await mobilePage.page.waitForTimeout(500);
+    // Semantic wait (issue #414): wait for the concrete readiness marker —
+    // the 4 stage buttons the nav assertions below inspect — instead of a
+    // fixed 500ms settle.
+    await mobilePage.page.waitForFunction(
+      () => document.querySelectorAll(".v4-journey-stage-btn").length === 4,
+      undefined,
+      { timeout: 8000, polling: 100 },
+    );
     const nav = await mobilePage.page.evaluate(() => {
       const btns = Array.from(document.querySelectorAll(".v4-journey-stage-btn"));
       const navEl = document.querySelector(".v4-journey-stage-nav");
