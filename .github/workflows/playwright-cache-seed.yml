@@ -1,0 +1,28 @@
+name: Playwright Chromium cache seed
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/playwright-cache-seed.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Restore Playwright Chromium cache
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.55.0-chromium
+
+      - name: Seed Playwright Chromium on cache miss
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx --yes playwright@1.55.0 install chromium
