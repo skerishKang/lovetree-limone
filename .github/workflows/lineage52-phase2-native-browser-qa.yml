@@ -4,9 +4,30 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/lineage52-phase2-native-browser-qa.yml'
+      - 'app/design-lab/lineages/52/phase-2/**'
+      - 'qa/lineage-52-phase2-native-browser-qa.mjs'
+      - 'tests/lineage-52-phase2-spatial-core.test.mjs'
+      - 'lib/lineage-52/**'
+      - 'lib/design-runtime/transport*'
   workflow_dispatch:
 
 permissions:
