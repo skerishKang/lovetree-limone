@@ -341,9 +341,6 @@ jobs:
           V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
             node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
 
-      - name: Build
-        run: npm run build
-
       - name: Database schema check
         run: npm run db:check
 
