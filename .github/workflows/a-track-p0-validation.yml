@@ -213,7 +213,7 @@ jobs:
             /tmp/lineage-53-v2-server.log \
             "$pid_file" \
             http://127.0.0.1:3000/design-lab/lineages/53/v2
-          node --import tsx --test tests/lineage-53-v2-route-browser-qa.test.mjs
+          node --import tsx --test tests/lineage-53-v2-route-browser-qa.test.mjs 2>&1 | tee /tmp/a-track-lineage-53-v2-route.log
 
           trap - EXIT
           atrack_stop_server_group "$pid_file"
@@ -283,7 +283,7 @@ jobs:
             "$pid_file" \
             http://127.0.0.1:3000/v4/subjects/demo/orbit
           V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
-            node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
+            node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs 2>&1 | tee /tmp/a-track-v4-orbit-canonical.log
 
           trap - EXIT
           atrack_stop_server_group "$pid_file"
