@@ -37,16 +37,28 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-test('active browser workflows use the exact patched Playwright baseline and no vulnerable 1.55.0 pin', () => {
+test('root manifest and canonical lock pin the accepted patched Playwright baseline', () => {
+  const manifest = JSON.parse(read('package.json'));
+  const lock = JSON.parse(read('package-lock.json'));
+
+  assert.equal(manifest.devDependencies?.playwright, BASELINE);
+  assert.equal(lock.packages?.['']?.devDependencies?.playwright, BASELINE);
+  assert.equal(lock.packages?.['node_modules/playwright']?.version, BASELINE);
+  assert.equal(lock.packages?.['node_modules/playwright']?.dependencies?.['playwright-core'], BASELINE);
+  assert.equal(lock.packages?.['node_modules/playwright-core']?.version, BASELINE);
+  assert.equal(lock.packages?.['node_modules/playwright']?.dev, true);
+  assert.equal(lock.packages?.['node_modules/playwright-core']?.dev, true);
+});
+
+test('active browser workflows rely on npm ci and never reintroduce mutable Playwright package installs', () => {
   assert.equal(activeBrowserWorkflows.length, 11);
   assert.equal(withDepsWorkflows.size, 4);
 
   for (const path of activeBrowserWorkflows) {
     const source = read(path);
-    const exactPin = new RegExp(`playwright@${escapeRegExp(BASELINE)}`, 'g');
-    const pins = source.match(exactPin) ?? [];
 
-    assert.equal(pins.length, 1, `${path} must install exactly one playwright@${BASELINE} package`);
+    assert.match(source, /run:\s*npm ci/, `${path} must install the canonical lock with npm ci`);
+    assert.doesNotMatch(source, /npm install[^\n]*playwright@/, `${path} must not mutate node_modules with a dynamic Playwright install`);
     assert.doesNotMatch(source, /playwright@1\.55\.0/, `${path} still references vulnerable Playwright 1.55.0`);
 
     if (withDepsWorkflows.has(path)) {
@@ -59,7 +71,7 @@ test('active browser workflows use the exact patched Playwright baseline and no 
   }
 });
 
-test('cache seed and A-track cache identity move atomically with the patched baseline', () => {
+test('cache seed and A-track cache identity remain atomic with the patched baseline', () => {
   const seed = read(seedPath);
   const atrack = read('.github/workflows/a-track-p0-validation.yml');
   const cacheKey = `${'${{ runner.os }}'}-playwright-${BASELINE}-chromium`;
