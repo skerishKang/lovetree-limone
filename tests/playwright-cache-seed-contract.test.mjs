@@ -5,7 +5,7 @@ import test from 'node:test';
 const seed = readFileSync('.github/workflows/playwright-cache-seed.yml', 'utf8');
 const atrack = readFileSync('.github/workflows/a-track-p0-validation.yml', 'utf8');
 
-const cacheKeyPattern = /key:\s*\$\{\{ runner\.os \}\}-playwright-1\.55\.0-chromium/;
+const cacheKeyPattern = /key:\s*\$\{\{ runner\.os \}\}-playwright-1\.55\.1-chromium/;
 
 test('trusted-main Playwright cache seed matches A-track without privileged execution', () => {
   assert.match(atrack, cacheKeyPattern, 'A-track cache key contract changed');
@@ -23,5 +23,5 @@ test('trusted-main Playwright cache seed matches A-track without privileged exec
   assert.doesNotMatch(seed, /actions\/checkout@/);
 
   assert.match(seed, /if:\s*steps\.playwright-cache\.outputs\.cache-hit != 'true'/);
-  assert.match(seed, /npx --yes playwright@1\.55\.0 install chromium/);
+  assert.match(seed, /npx --yes playwright@1\.55\.1 install chromium/);
 });

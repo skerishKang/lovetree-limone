@@ -65,7 +65,7 @@ jobs:
 
       - name: Prepare Playwright runtime
         run: |
-          npm install --no-save --package-lock=false playwright@1.55.0
+          npm install --no-save --package-lock=false playwright@1.55.1
           npx playwright install --with-deps chromium
 
       - name: Run Track62 V1.1 continuous exhibition rail browser QA
