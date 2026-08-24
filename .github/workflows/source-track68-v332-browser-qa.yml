@@ -67,7 +67,6 @@ jobs:
 
       - name: Prepare Playwright runtime
         run: |
-          npm install --no-save --package-lock=false playwright@1.55.1
           npx playwright install chromium
 
       - name: Verify exact Track68 V3.3.2 assets
