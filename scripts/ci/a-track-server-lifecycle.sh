@@ -18,7 +18,7 @@ atrack_start_server_group() {
   local ready_url="$3"
   local server_pid
 
-  atrack_assert_port_3000_free
+  atrack_assert_port_3000_free || return 1
   if ! command -v setsid >/dev/null 2>&1; then
     echo "FAIL-CLOSED: setsid is required for A-track server process-group ownership" >&2
     return 1
