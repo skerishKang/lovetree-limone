@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const ledgerPath = new URL('../design-intake/master-design-coverage.json', import.meta.url);
@@ -162,6 +162,8 @@ test('the #468 audited missing set is reconciled without conflating coverage and
   assert.equal(byId(14).coverage_state, 'MISSING');
   assert.equal(byId(14).reconciliation_disposition, 'DUPLICATE_FAMILY');
   assert.equal(byId(14).family_anchor_master_id, 13);
+  assert.deepEqual(byId(13).github_issue, [471]);
+  assert.deepEqual(byId(14).github_issue, [471]);
   assert.equal(byId(2).family_anchor_master_id, 1);
   assert.equal(byId(3).family_anchor_master_id, 1);
   assert.deepEqual(byId(52).superseded_by, [53]);
@@ -175,6 +177,7 @@ test('snapshot-backed audited rows pin real repository provenance from #284/#287
     assert.ok(row.github_issue.includes(284), 'master_id=' + id + ' must reference #284');
     assert.ok(row.github_pr.includes(287), 'master_id=' + id + ' must reference PR #287');
     assert.match(row.reference_path, /^reference\/source-tracks-snapshot\//);
+    assert.ok(existsSync(new URL('../' + row.reference_path, import.meta.url)), 'master_id=' + id + ' snapshot path must exist');
     assert.equal(row.current_main_present, true);
     assert.equal(row.coverage_state, 'PARTIAL');
   }
@@ -183,6 +186,7 @@ test('snapshot-backed audited rows pin real repository provenance from #284/#287
   assert.equal(byId(107).coverage_state, 'COVERED');
   assert.equal(byId(107).reconciliation_disposition, 'ALIAS_FOUND');
   assert.equal(byId(107).manifest_path, 'app/components/v4/v4-source-manifest.ts');
+  assert.ok(existsSync(new URL('../' + byId(107).reference_path, import.meta.url)), 'master_id=107 snapshot path must exist');
 });
 
 test('Track17 and Track18 Drive snapshot identities remain isolated from colliding GitHub namespaces', () => {
