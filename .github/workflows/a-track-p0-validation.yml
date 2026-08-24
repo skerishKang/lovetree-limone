@@ -179,10 +179,22 @@ jobs:
           echo "standard browser tests: ${#browser_tests[@]} (matches expected inventory)"
 
       - name: Cache Playwright Chromium
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-1.55.0-chromium
+
+      - name: Report Playwright Chromium cache outcome
+        shell: bash
+        run: |
+          {
+            echo '## Playwright Chromium cache'
+            echo
+            echo '- path: `~/.cache/ms-playwright`'
+            echo '- key: `${{ runner.os }}-playwright-1.55.0-chromium`'
+            echo '- cache-hit: `${{ steps.playwright-cache.outputs.cache-hit }}`'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare Playwright runtime
         run: |
