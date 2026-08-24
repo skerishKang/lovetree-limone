@@ -18,10 +18,10 @@ test('A-track exposes Playwright cache outcome without changing cache identity',
   assert.match(cache, /id:\s*playwright-cache/);
   assert.match(cache, /uses:\s*actions\/cache@v4/);
   assert.match(cache, /path:\s*~\/\.cache\/ms-playwright/);
-  assert.match(cache, /key:\s*\$\{\{ runner\.os \}\}-playwright-1\.55\.0-chromium/);
+  assert.match(cache, /key:\s*\$\{\{ runner\.os \}\}-playwright-1\.55\.1-chromium/);
 
   assert.match(report, /GITHUB_STEP_SUMMARY/);
   assert.match(report, /steps\.playwright-cache\.outputs\.cache-hit/);
-  assert.match(report, /runner\.os \}\}-playwright-1\.55\.0-chromium/);
+  assert.match(report, /runner\.os \}\}-playwright-1\.55\.1-chromium/);
   assert.doesNotMatch(report, /continue-on-error|if:\s*failure\(\)|if:\s*success\(\)/);
 });
