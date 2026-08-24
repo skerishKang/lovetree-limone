@@ -77,7 +77,6 @@ jobs:
 
       - name: Prepare Playwright runtime
         run: |
-          npm install --no-save --package-lock=false playwright@1.55.1
           npx playwright install --with-deps chromium
 
       - name: Run Track18 exact asset 8/8 browser QA
