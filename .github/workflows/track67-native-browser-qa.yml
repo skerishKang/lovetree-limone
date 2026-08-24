@@ -12,6 +12,9 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - AGENTS.md
+      - docs/operations/**
   workflow_dispatch:
 
 permissions:
