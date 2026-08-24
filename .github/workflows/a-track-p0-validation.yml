@@ -250,33 +250,6 @@ jobs:
           set -euo pipefail
           node --import tsx --test tests/lineage-52-direct-navigation-browser-qa.mjs 2>&1 | tee /tmp/a-track-lineage-52-direct-navigation.log
 
-      - name: Surface A-track failure diagnostics
-        if: failure()
-        shell: bash
-        run: |
-          {
-            echo '## A-track failure diagnostics'
-            echo
-            for f in /tmp/a-track-*.log /tmp/atrack-*setdiff.txt; do
-              [ -f "$f" ] || continue
-              echo "### $f"
-              echo '```text'
-              tail -n 80 "$f"
-              echo '```'
-            done
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload A-track failure diagnostics
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: a-track-failure-diagnostics
-          if-no-files-found: warn
-          retention-days: 3
-          path: |
-            /tmp/a-track-*.log
-            /tmp/atrack-*.txt
-
       - name: Stop A-track application server
         if: always()
         shell: bash
@@ -310,3 +283,32 @@ jobs:
           name: v4-orbit-canonical-155-screenshots
           path: /tmp/v4-orbit-canonical-155-screenshots/*.png
           if-no-files-found: warn
+
+      - name: Surface A-track failure diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo '## A-track failure diagnostics'
+            echo
+            for f in /tmp/a-track-*.log /tmp/lineage-53-v2-server.log /tmp/v4-orbit-route-server.log /tmp/atrack-*setdiff.txt; do
+              [ -f "$f" ] || continue
+              echo "### $f"
+              echo '```text'
+              tail -n 80 "$f"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload A-track failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-track-failure-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
+          path: |
+            /tmp/a-track-*.log
+            /tmp/lineage-53-v2-server.log
+            /tmp/v4-orbit-route-server.log
+            /tmp/atrack-*.txt
