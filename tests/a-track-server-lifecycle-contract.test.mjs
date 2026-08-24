@@ -6,6 +6,7 @@ const workflow = readFileSync('.github/workflows/a-track-p0-validation.yml', 'ut
 const helper = readFileSync('scripts/ci/a-track-server-lifecycle.sh', 'utf8');
 
 test('A-track browser servers are process-group owned and fail closed on port reuse', () => {
+  assert.match(helper, /atrack_assert_port_3000_free \|\| return 1/);
   assert.match(helper, /setsid npm start/);
   assert.match(helper, /kill -- -"\$server_pid"/);
   assert.match(helper, /kill -0 "\$server_pid"/);
