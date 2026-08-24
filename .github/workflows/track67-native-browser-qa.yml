@@ -12,9 +12,28 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/track67-native-browser-qa.yml'
+      - 'app/design-lab/lineages/67/v2-4/native/**'
+      - 'qa/track67-native-browser-qa.mjs'
+      - 'lib/lineage-67-v24/**'
   workflow_dispatch:
 
 permissions:

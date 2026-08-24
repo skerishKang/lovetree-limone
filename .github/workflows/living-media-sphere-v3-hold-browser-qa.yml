@@ -8,9 +8,28 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/living-media-sphere-v3-hold-browser-qa.yml'
+      - 'app/design-lab/source-families/living-media-sphere/v3/source/**'
+      - 'tests/living-media-sphere-v3-browser-qa.mjs'
+      - 'lib/living-media-sphere-v3/**'
   workflow_dispatch:
 
 permissions:

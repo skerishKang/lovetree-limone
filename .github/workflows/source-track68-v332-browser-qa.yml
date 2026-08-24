@@ -14,9 +14,28 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/source-track68-v332-browser-qa.yml'
+      - 'app/design-lab/source-tracks/68/v3-3-2/compare/**'
+      - 'tests/source-track68-v332-browser-qa.mjs'
+      - 'scripts/verify-source-track68-v332-assets.mjs'
   workflow_dispatch:
 
 permissions:

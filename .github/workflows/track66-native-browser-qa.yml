@@ -12,9 +12,38 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/track66-native-browser-qa.yml'
+      - 'app/v4/journey/page.tsx'
+      - 'app/components/v4/V4FirstJourney.tsx'
+      - 'app/components/v4/V4FirstJourneyV12.tsx'
+      - 'app/components/v4/V4FirstJourneyFidelityBridge.tsx'
+      - 'app/components/EmailAuthForm*'
+      - 'app/styles/v4/first-journey.css'
+      - 'app/styles/v4/first-journey-v12.css'
+      - 'app/styles/v4/existing-fidelity-remediation.css'
+      - 'lib/api*'
+      - 'lib/auth*'
+      - 'lib/firebase*'
+      - 'lib/first-tree-create-client*'
+      - 'qa/track66-native-browser-qa.mjs'
   workflow_dispatch:
 
 permissions:
