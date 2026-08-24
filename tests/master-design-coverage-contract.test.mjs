@@ -64,6 +64,19 @@ test('master design ledger has exactly the 108 corpus rows', () => {
   assert.equal(new Set(ids).size, 108);
 });
 
+test('reconciliation authority metadata is explicit and versioned', () => {
+  assert.equal(ledger.repository_baseline, '3158f42fc7f6b4571454fdfc1e8b5ae95c92ee6c');
+  assert.equal(ledger.reconciliation_issue, 470);
+  assert.equal(ledger.reconciliation_audit_issue, 468);
+  assert.deepEqual(ledger.policy.reconciliation_vocabulary, [
+    'PARTIAL_PROVENANCE',
+    'ALIAS_FOUND',
+    'DUPLICATE_FAMILY',
+    'SUPERSEDED',
+    'TRUE_MISSING',
+  ]);
+});
+
 test('master design ledger preserves the exact Product Job inventory', () => {
   const actual = Object.fromEntries(Object.keys(expectedJobCounts).map((job) => [job, 0]));
   for (const row of ledger.rows) {
