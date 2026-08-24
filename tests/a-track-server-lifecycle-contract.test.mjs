@@ -10,8 +10,12 @@ test('A-track browser servers are process-group owned and fail closed on port re
   assert.match(helper, /setsid npm start/);
   assert.match(helper, /kill -- -"\$server_pid"/);
   assert.match(helper, /kill -0 "\$server_pid"/);
-  assert.match(helper, /\/dev\/tcp\/127\.0\.0\.1\/3000/);
+  assert.match(helper, /atrack_port_3000_owned_by_group "\$server_pid"/);
+  assert.match(helper, /lsof -nP -t -iTCP:3000 -sTCP:LISTEN/);
+  assert.match(helper, /fuser -n tcp 3000/);
+  assert.match(helper, /ss -ltnp 'sport = :3000'/);
   assert.match(helper, /FAIL-CLOSED: port 3000 is already occupied before A-track server launch/);
+  assert.match(helper, /FAIL-CLOSED: readiness on port 3000 is not owned by the intended A-track server process group/);
   assert.match(helper, /FAIL-CLOSED: port 3000 is still occupied after A-track server cleanup/);
 
   const helperSources = workflow.match(/source scripts\/ci\/a-track-server-lifecycle\.sh/g) ?? [];
