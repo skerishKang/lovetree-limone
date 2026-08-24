@@ -166,8 +166,13 @@ jobs:
             return acc;
           }, {});
           const expected = { PARTIAL_PROVENANCE:18, ALIAS_FOUND:1, DUPLICATE_FAMILY:3, SUPERSEDED:1, TRUE_MISSING:1 };
-          if (JSON.stringify(dispositionCounts) !== JSON.stringify(expected)) {
-            throw new Error(`disposition mismatch ${JSON.stringify(dispositionCounts)}`);
+          for (const [key, value] of Object.entries(expected)) {
+            if (dispositionCounts[key] !== value) {
+              throw new Error(`disposition mismatch ${key}: expected=${value} actual=${dispositionCounts[key]}`);
+            }
+          }
+          if (Object.keys(dispositionCounts).length !== Object.keys(expected).length) {
+            throw new Error(`unexpected disposition keys ${JSON.stringify(dispositionCounts)}`);
           }
 
           fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2) + '\n');
@@ -179,7 +184,57 @@ jobs:
           test = test.replace("assert.equal(ledger.summary.covered, 73);\n  assert.equal(ledger.summary.partial, 11);\n  assert.equal(ledger.summary.missing, 24);", "assert.equal(ledger.summary.covered, 74);\n  assert.equal(ledger.summary.partial, 32);\n  assert.equal(ledger.summary.missing, 2);\n  assert.equal(ledger.summary.audited_missing_rows, 24);\n  assert.equal(ledger.summary.audited_missing_normalized_unique_families, 20);\n  assert.equal(ledger.summary.true_missing_unique_families, 1);");
           test = test.replace("  'source_freshness',\n];", "  'source_freshness',\n  'reconciliation_disposition',\n  'family_anchor_master_id',\n];");
 
-          test += `\n\ntest('the #468 audited missing set is reconciled without conflating coverage and identity disposition', () => {\n  const auditedIds = [1,2,3,10,13,14,30,32,33,34,35,47,48,49,50,51,52,53,68,69,70,81,82,107];\n  const expectedDisposition = { PARTIAL_PROVENANCE: 18, ALIAS_FOUND: 1, DUPLICATE_FAMILY: 3, SUPERSEDED: 1, TRUE_MISSING: 1 };\n  const actual = {};\n  for (const id of auditedIds) {\n    const value = byId(id).reconciliation_disposition;\n    actual[value] = (actual[value] ?? 0) + 1;\n  }\n  assert.deepEqual(actual, expectedDisposition);\n  assert.equal(byId(13).coverage_state, 'MISSING');\n  assert.equal(byId(13).reconciliation_disposition, 'TRUE_MISSING');\n  assert.equal(byId(14).coverage_state, 'MISSING');\n  assert.equal(byId(14).reconciliation_disposition, 'DUPLICATE_FAMILY');\n  assert.equal(byId(14).family_anchor_master_id, 13);\n  assert.equal(byId(2).family_anchor_master_id, 1);\n  assert.equal(byId(3).family_anchor_master_id, 1);\n  assert.deepEqual(byId(52).superseded_by, [53]);\n  assert.deepEqual(byId(53).supersedes, [52]);\n});\n\ntest('snapshot-backed audited rows pin real repository provenance from #284/#287', () => {\n  const partialSnapshotIds = [1,2,3,10,30,32,33,34,35,47,48,49,50,51,52,53,68,69,70,81,82];\n  for (const id of partialSnapshotIds) {\n    const row = byId(id);\n    assert.ok(row.github_issue.includes(284), \\`master_id=\\${id} must reference #284\\`);\n    assert.ok(row.github_pr.includes(287), \\`master_id=\\${id} must reference PR #287\\`);\n    assert.match(row.reference_path, /^reference\\/source-tracks-snapshot\\//);\n    assert.equal(row.current_main_present, true);\n    assert.equal(row.coverage_state, 'PARTIAL');\n  }\n  assert.deepEqual(byId(107).github_issue, [30, 284]);\n  assert.ok(byId(107).github_pr.includes(287));\n  assert.equal(byId(107).coverage_state, 'COVERED');\n  assert.equal(byId(107).reconciliation_disposition, 'ALIAS_FOUND');\n  assert.equal(byId(107).manifest_path, 'app/components/v4/v4-source-manifest.ts');\n});\n\ntest('Track17 and Track18 Drive snapshot identities remain isolated from colliding GitHub namespaces', () => {\n  assert.equal(byId(49).semantic_identity, 'Drive Track17 Living Memory Terrain');\n  assert.equal(byId(49).namespace_type, 'drive-source-snapshot');\n  assert.equal(byId(50).semantic_identity, 'Drive Track18 Memory Core Electric Aurora');\n  assert.equal(byId(50).namespace_type, 'drive-source-snapshot');\n  assert.notEqual(byId(50).semantic_identity, 'Source Track18 Fragment Loader');\n  assert.ok(ledger.namespace_guards.includes('Drive Track17 Living Memory Terrain != historical GitHub Track17 Global Shell'));\n  assert.ok(ledger.namespace_guards.includes('Drive Track18 Memory Core Electric Aurora != current Source Track18 Fragment Loader'));\n});\n`;
+          test += [
+            '',
+            '',
+            "test('the #468 audited missing set is reconciled without conflating coverage and identity disposition', () => {",
+            '  const auditedIds = [1,2,3,10,13,14,30,32,33,34,35,47,48,49,50,51,52,53,68,69,70,81,82,107];',
+            '  const expectedDisposition = { PARTIAL_PROVENANCE: 18, ALIAS_FOUND: 1, DUPLICATE_FAMILY: 3, SUPERSEDED: 1, TRUE_MISSING: 1 };',
+            '  const actual = {};',
+            '  for (const id of auditedIds) {',
+            '    const value = byId(id).reconciliation_disposition;',
+            '    actual[value] = (actual[value] ?? 0) + 1;',
+            '  }',
+            '  assert.deepEqual(actual, expectedDisposition);',
+            "  assert.equal(byId(13).coverage_state, 'MISSING');",
+            "  assert.equal(byId(13).reconciliation_disposition, 'TRUE_MISSING');",
+            "  assert.equal(byId(14).coverage_state, 'MISSING');",
+            "  assert.equal(byId(14).reconciliation_disposition, 'DUPLICATE_FAMILY');",
+            '  assert.equal(byId(14).family_anchor_master_id, 13);',
+            '  assert.equal(byId(2).family_anchor_master_id, 1);',
+            '  assert.equal(byId(3).family_anchor_master_id, 1);',
+            '  assert.deepEqual(byId(52).superseded_by, [53]);',
+            '  assert.deepEqual(byId(53).supersedes, [52]);',
+            '});',
+            '',
+            "test('snapshot-backed audited rows pin real repository provenance from #284/#287', () => {",
+            '  const partialSnapshotIds = [1,2,3,10,30,32,33,34,35,47,48,49,50,51,52,53,68,69,70,81,82];',
+            '  for (const id of partialSnapshotIds) {',
+            '    const row = byId(id);',
+            "    assert.ok(row.github_issue.includes(284), 'master_id=' + id + ' must reference #284');",
+            "    assert.ok(row.github_pr.includes(287), 'master_id=' + id + ' must reference PR #287');",
+            '    assert.match(row.reference_path, /^reference\\/source-tracks-snapshot\\//);',
+            '    assert.equal(row.current_main_present, true);',
+            "    assert.equal(row.coverage_state, 'PARTIAL');",
+            '  }',
+            '  assert.deepEqual(byId(107).github_issue, [30, 284]);',
+            '  assert.ok(byId(107).github_pr.includes(287));',
+            "  assert.equal(byId(107).coverage_state, 'COVERED');",
+            "  assert.equal(byId(107).reconciliation_disposition, 'ALIAS_FOUND');",
+            "  assert.equal(byId(107).manifest_path, 'app/components/v4/v4-source-manifest.ts');",
+            '});',
+            '',
+            "test('Track17 and Track18 Drive snapshot identities remain isolated from colliding GitHub namespaces', () => {",
+            "  assert.equal(byId(49).semantic_identity, 'Drive Track17 Living Memory Terrain');",
+            "  assert.equal(byId(49).namespace_type, 'drive-source-snapshot');",
+            "  assert.equal(byId(50).semantic_identity, 'Drive Track18 Memory Core Electric Aurora');",
+            "  assert.equal(byId(50).namespace_type, 'drive-source-snapshot');",
+            "  assert.notEqual(byId(50).semantic_identity, 'Source Track18 Fragment Loader');",
+            "  assert.ok(ledger.namespace_guards.includes('Drive Track17 Living Memory Terrain != historical GitHub Track17 Global Shell'));",
+            "  assert.ok(ledger.namespace_guards.includes('Drive Track18 Memory Core Electric Aurora != current Source Track18 Fragment Loader'));",
+            '});',
+            '',
+          ].join('\n');
           fs.writeFileSync(testPath, test);
           NODE
 
