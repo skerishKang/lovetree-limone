@@ -49,6 +49,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Database schema check
+        run: npm run db:check
+
       - name: Build test prerequisites
         run: npm run build
 
@@ -340,9 +343,6 @@ jobs:
 
           V4_ORBIT_SCREENSHOT_DIR=/tmp/v4-orbit-canonical-155-screenshots \
             node --import tsx --test tests/v4-orbit-canonical-browser-qa.mjs
-
-      - name: Database schema check
-        run: npm run db:check
 
       - name: Upload V4 Orbit canonical screenshots
         if: always()
