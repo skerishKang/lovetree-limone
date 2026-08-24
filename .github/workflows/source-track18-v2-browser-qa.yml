@@ -4,9 +4,33 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - AGENTS.md
-      - docs/operations/**
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'scripts/apply-vinext-static-cache-posix-keys.mjs'
+      - 'scripts/prune-rsc-assets.mjs'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/flow.css'
+      - 'app/tree-pages.css'
+      - 'lib/auth.tsx'
+      - 'lib/auth-errors.ts'
+      - 'lib/firebase.ts'
+      - 'public/**'
+      - 'assets/**'
+      - '.github/workflows/source-track18-v2-browser-qa.yml'
+      - 'app/design-lab/source-tracks/18/v2/source/**'
+      - 'qa/source-track-18-v2-browser-qa.mjs'
+      - 'tests/source-track-18-*.test.mjs'
+      - 'design-intake/manifests/source-track-18-fragment-loader-v2.json'
+      - 'lib/source-track-18/**'
+      - 'drizzle.config.ts'
+      - 'db/**'
+      - 'drizzle/**'
   workflow_dispatch:
 
 permissions:
