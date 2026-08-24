@@ -75,6 +75,20 @@ Before Ready or merge:
 
 Do not infer acceptance from a historical fixed workflow count. The previous observed count of 12 pull-request workflows was an implementation state, not the semantic definition of acceptance.
 
+## Operations-only rollout verification
+
+After the initial Issue #439 trigger change lands on `main`, the first real pull request whose changed-file set is entirely within `AGENTS.md` and/or `docs/operations/**` is also the rollout proof for the applicability contract.
+
+For that exact head, the expected pull-request workflow set is exactly:
+
+- `A-track P0 validation`
+- `Design Fidelity Validation`
+- `Design Source Freshness Observer`
+
+The nine dedicated track/lineage/source-family evidence workflows listed above must not be created for that operations-only exact head. If any of them is created, or if any of the three global workflows is missing, the rollout verification fails and the trigger contract must be corrected before treating the optimization as proven.
+
+The proof PR must still remain Draft until every applicable exact-head workflow is GREEN and the normal main/head/review gates pass.
+
 ## Future optimization boundary
 
 Issue #439 may later consider repeated bootstrap reduction or self-hosted runners, but those changes require separate evidence. This policy does not authorize:
