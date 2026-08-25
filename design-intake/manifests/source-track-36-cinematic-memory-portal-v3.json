@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-36-cinematic-memory-portal-v3",
+  "sourceTrackId": "Track36",
+  "title": "Track36 Cinematic Memory Portal V3 HOME visual donor",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "REFERENCE_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "cinematic-brand",
+  "productJob": "HOME entry visual/cinematic donor only; canonical Auth/API/DB/first-Moment persistence and returning-user resolution remain owned by /v4.",
+  "summary": "Issue #473 normalizes 108-master rows 1/2/3 as one Track36 family and pins the existing #284/#287 repository snapshot as the V3 source authority. Direct standalone HOME adoption is rejected because the source executable hard-codes a 980px minimum viewport and hands off to a local/static first-journey iframe instead of the canonical product spine. The bounded Design Lab donor proof reuses only the bright local-entry palette, layered portal depth, petal/paper-glass material and cinematic entry treatment, then hands control to /v4 without replacing product data truth.",
+  "provenance": {
+    "sourceLabel": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html via Issue #284 / merged PR #287",
+    "sourceFiles": [
+      "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+      "SHA256SUMS.txt"
+    ],
+    "rightsStatus": "repository snapshot provenance pinned by #284/#287; no external runtime dependency observed in V3; legal ownership not independently re-audited by #473"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V3",
+    "authorityObservedAt": "2026-08-24T23:56:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": [],
+  "trulyNewPrimitive": "none — bounded HOME visual donor over existing canonical product spine",
+  "sourceDefects": [
+    "source .page hard-codes min-width:980px and min-height:650px, so 390x844 cannot be treated as mobile-ready",
+    "source iframe resolves to a local/static lovetree-first-journey-unified-v1.html path rather than canonical /v4 authority",
+    "source document-level Enter handler activates portal entry globally rather than scoping activation to the focused control",
+    "source interaction is primarily pointer/parallax driven and contains no dedicated touch adaptation contract"
+  ],
+  "nativeRemediations": [
+    "remove the 980px minimum-width assumption and use a single-column mobile layout at <=820px with 390px controls spanning the available width",
+    "replace the source iframe/local-file handoff with a host-owned navigation to /v4 so Auth/API/DB/first-Moment and returning-user resolution remain canonical",
+    "use native links/buttons with explicit focus-visible treatment; no document-global Enter activation",
+    "honor prefers-reduced-motion by disabling decorative motion and immediately handing control to /v4"
+  ],
+  "sourceOnlyValues": [
+    "04_디자인-채택본/0.첫여정통합-3개html합본/lovetree-first-journey-unified-v1.html",
+    "file:///D:/LoveTree-work/ source-local handoff",
+    "로그인 없이 첫 여정 연결됨",
+    "min-width:980px",
+    "master rows 2 and 3 are duplicate-family evidence; master row 1 is the family anchor"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Issue #473 disposition: USE_AS_DONOR_TO_EXISTING_NATIVE. Track36 is not a standalone canonical HOME implementation; the donor route is an internal proving surface and production /v4 is unchanged."
+  },
+  "reservation": {
+    "held": true,
+    "note": "No canonical route switch or lineage allocation. Product-owner acceptance of any Track36 donor styling remains separate."
+  },
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track36 V3 bounded HOME visual donor proof"
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": false,
+    "receiverConsume": false,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}
