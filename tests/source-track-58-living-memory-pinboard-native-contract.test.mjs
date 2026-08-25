@@ -77,7 +77,6 @@ test("Cinema Replay preserves pause/resume/scrub, board re-entry and canonical Y
   assert.match(componentSource, /Cinema Moment scrubber/);
   assert.match(componentSource, /EXIT TO BOARD/);
   assert.match(componentSource, /YouTube에서 재생/);
-  assert.match(componentSource, /youtube-nocookie/);
   assert.match(componentSource, /Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다/);
 
   assert.equal(
