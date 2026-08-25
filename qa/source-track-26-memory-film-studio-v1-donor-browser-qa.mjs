@@ -99,16 +99,25 @@ test("Track26 320x720 mobile remains touch-operable without overflow", async () 
   } finally { await context.close(); await browser.close(); }
 });
 
-test("Track26 keyboard and reduced-motion contracts survive together", async () => {
+test("Track26 keyboard, native button activation, and reduced-motion contracts survive together", async () => {
   const run = await openProof({ width: 1280, height: 800, reducedMotion: "reduce" });
   const { browser, context, page, errors, writes } = run;
   try {
     const studio = page.locator("[data-track26-donor=film-session]");
+    const scrubber = page.getByLabel("필름 장면 위치");
     await studio.focus();
     await page.keyboard.press("ArrowRight");
     assert.equal(await page.getByRole("heading", { name: "두 번째 장면" }).count(), 1);
     await page.keyboard.press("Shift+ArrowLeft");
-    assert.equal(await page.getByLabel("필름 장면 위치").inputValue(), "0", "keyboard reorder must keep playhead synchronized");
+    assert.equal(await scrubber.inputValue(), "0", "keyboard reorder must keep playhead synchronized");
+
+    const moveBack = page.getByRole("button", { name: "장면 뒤로" });
+    await moveBack.focus();
+    await page.keyboard.press("Space");
+    assert.equal(await scrubber.inputValue(), "1", "Space on a focused reorder button must preserve native button activation");
+    assert.equal(await page.getByRole("button", { name: "PLAY" }).count(), 1, "native button Space must not be hijacked by the global transport shortcut");
+
+    await studio.focus();
     await page.keyboard.press("Space");
     assert.equal(await page.getByRole("button", { name: "PAUSE" }).count(), 1);
     const animation = await page.locator("[data-playing=true] div").first().evaluate((node) => getComputedStyle(node).animationName);
