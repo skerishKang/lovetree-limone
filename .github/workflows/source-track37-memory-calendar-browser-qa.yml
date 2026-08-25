@@ -1,0 +1,113 @@
+name: Source Track37 Memory Calendar archive donor browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/v4/trees/**/archive/calendar/**'
+      - 'lib/source-track-37/**'
+      - 'lib/moment-model.ts'
+      - 'lib/use-tree-moments.ts'
+      - 'lib/tree-types.ts'
+      - 'reference/source-tracks-snapshot/37_기억달력_메모리패드/**'
+      - 'design-intake/source-track-37-memory-calendar-archive-donor.json'
+      - 'tests/source-track-37-memory-calendar-contract.test.mjs'
+      - 'qa/source-track-37-memory-calendar-browser-qa.mjs'
+      - '.github/workflows/source-track37-memory-calendar-browser-qa.yml'
+      - 'drizzle.config.ts'
+      - 'db/**'
+      - 'drizzle/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-track37-memory-calendar-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Track37 focused date-truth/source contract
+        run: node --import tsx --test tests/source-track-37-memory-calendar-contract.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Track37 Memory Calendar browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/track37-browser-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/v4" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/track37-browser-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/track37-browser-qa-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/track37-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            TRACK37_SCREENSHOT_DIR="/tmp/track37-browser-qa" \
+            node qa/source-track-37-memory-calendar-browser-qa.mjs
+
+      - name: Upload Track37 browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-track37-memory-calendar-browser-evidence
+          path: /tmp/track37-browser-qa/*.png
+          if-no-files-found: warn
