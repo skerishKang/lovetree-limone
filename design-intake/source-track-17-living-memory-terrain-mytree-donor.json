@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "source-track-17-living-memory-terrain-mytree-donor",
+  "productJob": "MYTREE",
+  "disposition": "USE_AS_VISUAL_FUNCTION_DONOR",
+  "nativeRouteTemplate": "/trees/:treeId/terrain",
+  "source": {
+    "semanticFamily": "Drive Track17 Living Memory Terrain",
+    "folderName": "17_리빙메모리지형",
+    "driveFolderId": "1FLKFJZrTFl6vk5P1NxqaqDerctFshrtM",
+    "filename": "01_리빙메모리지형_현재채택_가로화면안전_v1-2.html",
+    "driveFileId": "12KgvI1OsJKjrv-zPOqsQOvH9cS4QovjM",
+    "bytes": 1953464,
+    "sha256": "2110fabd6e7ad4362e65af8474f66e5b468fb342dc9c96a0ca78930b225e694e",
+    "repositorySnapshot": "reference/source-tracks-snapshot/17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html"
+  },
+  "namespaceGuard": {
+    "rule": "Drive Track17 Living Memory Terrain != historical GitHub Track17 Global Shell",
+    "numericAliasAllowed": false,
+    "historicalGlobalShellAdoptedByThisManifest": false
+  },
+  "donatedVisualFunctions": [
+    "layered terrain field",
+    "Moment point selection",
+    "parent-child connection trace",
+    "landscape-safe spatial lens",
+    "reduced-motion-safe presentation"
+  ],
+  "canonicalRuntimeAuthority": {
+    "hook": "useTreeMoments(treeId)",
+    "treeRead": "GET /api/trees/:id",
+    "momentRead": "GET /api/trees/:id/memories",
+    "selectedMomentAuthority": "existing useTreeMoments selectedMomentId",
+    "durableWriteAdded": false,
+    "authProviderChanged": false,
+    "apiChanged": false,
+    "dbChanged": false
+  },
+  "sourceSemanticsNotPromoted": [
+    "hardcoded sample M01..M05 rows",
+    "hardcoded sample return counts",
+    "hardcoded sample Season formation state",
+    "sample emotion labels as product truth",
+    "demo/capture query state"
+  ],
+  "truthBoundary": {
+    "emotionScoreInference": false,
+    "returnCountInference": false,
+    "seasonEntityInference": false,
+    "importanceInference": false,
+    "missingParentFabrication": false
+  },
+  "releaseBoundary": {
+    "defaultWorkspaceNavigationChanged": false,
+    "canonicalRouteReplaced": false,
+    "productionSwitch": false,
+    "pr191Touched": false,
+    "centralLedgerTouched": false
+  }
+}
