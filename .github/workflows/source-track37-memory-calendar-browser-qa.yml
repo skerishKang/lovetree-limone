@@ -22,7 +22,7 @@ on:
       - 'design-intake/source-track-37-memory-calendar-archive-donor.json'
       - 'tests/source-track-37-memory-calendar-contract.test.mjs'
       - 'qa/source-track-37-memory-calendar-browser-qa.mjs'
-      - 'qa/source-track-37-memory-calendar-visual-fidelity-closure-v2.mjs'
+      - 'qa/source-track-37-memory-calendar-visual-fidelity-final.mjs'
       - '.github/workflows/source-track37-memory-calendar-browser-qa.yml'
       - 'drizzle.config.ts'
       - 'db/**'
@@ -106,7 +106,7 @@ jobs:
             node qa/source-track-37-memory-calendar-browser-qa.mjs
           V4_BASE_URL="http://127.0.0.1:3000" \
             TRACK37_SCREENSHOT_DIR="/tmp/track37-browser-qa" \
-            node qa/source-track-37-memory-calendar-visual-fidelity-closure-v2.mjs
+            node qa/source-track-37-memory-calendar-visual-fidelity-final.mjs
 
       - name: Upload Track37 browser QA evidence
         if: always()
