@@ -74,6 +74,15 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     assert.ok(await indexDialog.isVisible(), `${name}: keyboard I must open index`);
     await page.keyboard.press("Escape");
     await indexDialog.waitFor({ state: "hidden" });
+
+    const selectedCard = page.locator("button[data-codex14-card='true'][aria-current='true']");
+    const box = await selectedCard.boundingBox();
+    assert.ok(box, `${name}: selected spatial card must have a pointer target`);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 - 72, box.y + box.height / 2, { steps: 4 });
+    await page.mouse.up();
+    assert.equal(await selectedTitle(page), "기억 2", `${name}: spatial drag must advance exactly one Moment without activating the card`);
   }
 
   const inspect = page.getByRole("button", { name: "기억 자세히 보기" });
