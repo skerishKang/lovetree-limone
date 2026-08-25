@@ -33,32 +33,67 @@ async function openProof({ width, height, hasTouch = false, isMobile = false, re
   return { browser, context, page, errors, writes };
 }
 
-test("Track26 desktop proves film assembly without durable writes", async () => {
+async function assertNoHorizontalOverflow(page, label) {
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  assert.ok(overflow <= 1, `${label}: horizontal overflow ${overflow}px`);
+}
+
+test("Track26 desktop proves film assembly controls, reorder/scrub sync, and no durable writes", async () => {
   const run = await openProof({ width: 1280, height: 800 });
   const { browser, context, page, errors, writes } = run;
   try {
     assert.equal(await page.locator("[data-track26-donor=film-session]").count(), 1);
     assert.equal(await page.getByRole("button", { name: /첫 장면/ }).count(), 1);
+
     await page.getByRole("button", { name: /두 번째 장면/ }).click();
     await page.getByLabel("HEADLINE").fill("세션용 새 헤드라인");
+    await page.getByLabel(/DURATION/).fill("9");
+    assert.equal(await page.getByText("TIMELINE · 21s").count(), 1, "duration edit must update session timeline duration");
+
     await page.getByRole("button", { name: "9:16" }).click();
+    assert.equal(await page.getByRole("button", { name: "9:16" }).getAttribute("aria-pressed"), "true");
     await page.getByRole("button", { name: "SLOW PUSH" }).click();
+    assert.equal(await page.getByRole("button", { name: "SLOW PUSH" }).getAttribute("aria-pressed"), "true");
+
+    const scrubber = page.getByLabel("필름 장면 위치");
+    assert.equal(await scrubber.inputValue(), "1");
     await page.getByRole("button", { name: "장면 앞당기기" }).click();
     assert.equal(await page.getByRole("heading", { name: "세션용 새 헤드라인" }).count(), 1);
+    assert.equal(await scrubber.inputValue(), "0", "reorder must keep timeline playhead aligned with selected scene");
+
+    await scrubber.fill("2");
+    assert.equal(await page.getByRole("heading", { name: "마지막 장면" }).count(), 1, "timeline scrub must select the matching reordered scene");
+
+    await assertNoHorizontalOverflow(page, "desktop-1280");
     assert.deepEqual(writes, []);
     assert.equal(await page.evaluate(() => localStorage.getItem("lovetree-memory-film-studio-v1")), null);
     assert.deepEqual(errors, []);
   } finally { await context.close(); await browser.close(); }
 });
 
-test("Track26 mobile touch and overflow contract remains operable", async () => {
+test("Track26 390x844 mobile touch and overflow contract remains operable", async () => {
   const run = await openProof({ width: 390, height: 844, hasTouch: true, isMobile: true });
   const { browser, context, page, errors, writes } = run;
   try {
     await page.getByRole("button", { name: /두 번째 장면/ }).tap();
     await page.getByRole("button", { name: "PLAY" }).tap();
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    assert.ok(overflow <= 1, `horizontal overflow ${overflow}px`);
+    await page.getByRole("button", { name: "4:5" }).tap();
+    assert.equal(await page.getByRole("button", { name: "4:5" }).getAttribute("aria-pressed"), "true");
+    await assertNoHorizontalOverflow(page, "mobile-390x844");
+    assert.deepEqual(writes, []);
+    assert.deepEqual(errors, []);
+  } finally { await context.close(); await browser.close(); }
+});
+
+test("Track26 320x720 mobile remains touch-operable without overflow", async () => {
+  const run = await openProof({ width: 320, height: 720, hasTouch: true, isMobile: true });
+  const { browser, context, page, errors, writes } = run;
+  try {
+    await page.getByRole("button", { name: /마지막 장면/ }).tap();
+    assert.equal(await page.getByRole("heading", { name: "마지막 장면" }).count(), 1);
+    await page.getByRole("button", { name: "장면 앞당기기" }).tap();
+    assert.equal(await page.getByLabel("필름 장면 위치").inputValue(), "1", "320px touch reorder must keep playhead synchronized");
+    await assertNoHorizontalOverflow(page, "mobile-320x720");
     assert.deepEqual(writes, []);
     assert.deepEqual(errors, []);
   } finally { await context.close(); await browser.close(); }
@@ -73,6 +108,7 @@ test("Track26 keyboard and reduced-motion contracts survive together", async () 
     await page.keyboard.press("ArrowRight");
     assert.equal(await page.getByRole("heading", { name: "두 번째 장면" }).count(), 1);
     await page.keyboard.press("Shift+ArrowLeft");
+    assert.equal(await page.getByLabel("필름 장면 위치").inputValue(), "0", "keyboard reorder must keep playhead synchronized");
     await page.keyboard.press("Space");
     assert.equal(await page.getByRole("button", { name: "PAUSE" }).count(), 1);
     const animation = await page.locator("[data-playing=true] div").first().evaluate((node) => getComputedStyle(node).animationName);
