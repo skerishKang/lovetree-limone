@@ -60,6 +60,8 @@ test("source cinematic phase language and 12.15 second pacing are preserved", ()
   assert.match(styles, /--rose:/);
   assert.match(styles, /--teal:/);
   assert.match(styles, /paperNoise/);
+  assert.match(styles, /--serif:\s*"Gowun Batang"/);
+  assert.match(styles, /--sans:\s*"Gowun Dodum"/);
 });
 
 test("fingerprint-only source binaries are not silently promoted into Product runtime", () => {
