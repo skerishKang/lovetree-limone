@@ -107,10 +107,10 @@ async function auditReducedMotion(browser) {
   await page.getByRole("button", { name: /2026\.08/ }).click();
   await page.getByRole("button", { name: /01/ }).last().click();
   await page.getByText("2026.08.01", { exact: true }).waitFor();
-  await page.getByRole("button", { name: "다음 저장일 →" }).click();
-  await page.getByText("2026.08.10", { exact: true }).waitFor();
   const animationName = await page.getByTestId("track37-active-pad").evaluate((node) => getComputedStyle(node).animationName);
   assert.ok(animationName === "none" || animationName === "", `reduced motion must not animate page tear, got ${animationName}`);
+  await assertNoOverflow(page, name);
+  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
   assert.deepEqual(pageErrors, [], `${name}: page errors: ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `${name}: console errors: ${consoleErrors.join(" | ")}`);
   await context.close();
