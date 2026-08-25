@@ -99,6 +99,8 @@ async function openSurface(browser, { width, height, touch = false, reducedMotio
 }
 
 async function performTouchDrag(context, page, stage) {
+  await stage.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(60);
   const box = await stage.boundingBox();
   if (!box) throw new Error("Track70 touch stage has no bounding box");
   const cdp = await context.newCDPSession(page);
