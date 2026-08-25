@@ -1,0 +1,77 @@
+name: Track09 Full Memory Summary Dashboard source browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'reference/source-tracks-snapshot/09_전체기억_요약대시보드/**'
+      - 'design-intake/source-track-09-full-memory-summary-dashboard-mytree-donor.json'
+      - 'tests/source-track-09-summary-dashboard-donor-contract.test.mjs'
+      - 'qa/source-track-09-summary-dashboard-source-browser-qa.mjs'
+      - '.github/workflows/source-track09-summary-dashboard-source-browser-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-track09-summary-dashboard-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Track09 donor contract
+        run: node --test tests/source-track-09-summary-dashboard-donor-contract.test.mjs
+
+      - name: Prepare Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start static source server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/track09-static-server.log 2>&1 &
+          echo $! > /tmp/track09-static-server.pid
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/track09-static-server.log
+          exit 1
+
+      - name: Run Track09 source browser QA
+        env:
+          TRACK09_SOURCE_QA_URL: http://127.0.0.1:4173
+        run: node qa/source-track-09-summary-dashboard-source-browser-qa.mjs
+
+      - name: Stop static source server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/track09-static-server.pid ]; then
+            kill "$(cat /tmp/track09-static-server.pid)" 2>/dev/null || true
+          fi
+
+      - name: Upload Track09 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-track09-summary-dashboard-browser-qa
+          path: qa-artifacts/source-track09-summary-dashboard/
+          if-no-files-found: warn
