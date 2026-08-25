@@ -52,19 +52,22 @@ export default function Track37MemoryCalendar({ treeId }: { treeId: string }) {
   const { tree, albumMoments, loading, error } = useTreeMoments(treeId);
   const months = useMemo(() => track37ProjectCalendar(albumMoments), [albumMoments]);
   const days = useMemo(() => track37FlattenDays(months), [months]);
-  const [activeDateKey, setActiveDateKey] = useState<string | null>(null);
+  const indexedMomentCount = useMemo(
+    () => months.reduce((count, month) => count + month.momentCount, 0),
+    [months],
+  );
+  const excludedUndatedCount = Math.max(0, albumMoments.length - indexedMomentCount);
+  const [requestedDateKey, setRequestedDateKey] = useState<string | null>(null);
   const [turnDirection, setTurnDirection] = useState<"previous" | "next" | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const pointerStartX = useRef<number | null>(null);
   const pointerStartY = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (days.length === 0) {
-      setActiveDateKey(null);
-      return;
-    }
-    setActiveDateKey((current) => current && days.some((day) => day.key === current) ? current : days[days.length - 1].key);
-  }, [days]);
+  const activeDateKey = useMemo(() => {
+    if (days.length === 0) return null;
+    if (requestedDateKey && days.some((day) => day.key === requestedDateKey)) return requestedDateKey;
+    return days[days.length - 1].key;
+  }, [days, requestedDateKey]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -86,7 +89,7 @@ export default function Track37MemoryCalendar({ treeId }: { treeId: string }) {
   const selectDate = useCallback((key: string, direction?: "previous" | "next") => {
     if (key === activeDateKey) return;
     setTurnDirection(reducedMotion ? null : direction ?? "next");
-    setActiveDateKey(key);
+    setRequestedDateKey(key);
     if (!reducedMotion) window.setTimeout(() => setTurnDirection(null), 420);
   }, [activeDateKey, reducedMotion]);
 
@@ -112,7 +115,11 @@ export default function Track37MemoryCalendar({ treeId }: { treeId: string }) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     pointerStartX.current = event.clientX;
     pointerStartY.current = event.clientY;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
+    try {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Synthetic QA pointers and older touch engines can lack an active capture target.
+    }
   }, []);
 
   const clearPointer = useCallback(() => {
@@ -178,7 +185,7 @@ export default function Track37MemoryCalendar({ treeId }: { treeId: string }) {
         <aside className={styles.indexPanel}>
           <div className={styles.indexHeading}>
             <span>DATE INDEX</span>
-            <strong>{days.length} days · {albumMoments.length} Moments</strong>
+            <strong>{days.length} days · {indexedMomentCount} dated Moments</strong>
           </div>
           <div className={styles.months} aria-label="기억 월 선택">
             {months.map((month) => (
@@ -210,6 +217,7 @@ export default function Track37MemoryCalendar({ treeId }: { treeId: string }) {
           </div>
           <p className={styles.truthNote}>
             없는 날짜, 기념일, 재방문일, 중요도일, Season 날짜는 생성하지 않습니다.
+            {excludedUndatedCount > 0 ? ` 명시적 저장 날짜가 없는 ${excludedUndatedCount}개 Moment는 달력에서 제외했습니다.` : ""}
           </p>
         </aside>
 
