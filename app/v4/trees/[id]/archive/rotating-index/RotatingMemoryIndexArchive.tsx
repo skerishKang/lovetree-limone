@@ -113,14 +113,19 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
   }, [albumMoments, selectMoment, selectedMomentId]);
 
   useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
     const sync = () => {
-      setReducedMotion(query.matches);
-      if (query.matches) setAutoRotate(false);
+      setReducedMotion(reducedQuery.matches);
+      if (reducedQuery.matches || coarsePointerQuery.matches) setAutoRotate(false);
     };
     sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
+    reducedQuery.addEventListener("change", sync);
+    coarsePointerQuery.addEventListener("change", sync);
+    return () => {
+      reducedQuery.removeEventListener("change", sync);
+      coarsePointerQuery.removeEventListener("change", sync);
+    };
   }, []);
 
   useEffect(() => {
