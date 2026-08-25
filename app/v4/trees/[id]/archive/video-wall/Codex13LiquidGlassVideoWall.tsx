@@ -228,7 +228,6 @@ export default function Codex13LiquidGlassVideoWall({ treeId }: { treeId: string
   }, [reducedMotion]);
 
   const onWheel = useCallback((event: ReactWheelEvent<HTMLElement>) => {
-    event.preventDefault();
     const x = -event.deltaX - (Math.abs(event.deltaX) < Math.abs(event.deltaY) ? event.deltaY * 0.42 : 0);
     const y = -event.deltaY * 0.36;
     moveBy(x, y);
