@@ -253,6 +253,16 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track17 validates a canonical /trees/:treeId terrain donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and must not promote source demo return/Season semantics.",
   }),
   Object.freeze({
+    id: "source-track-38-v1-discover-donor-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track38 V1 Voyager DISCOVER donor dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
+    route: "/design-lab/source-tracks/38/v1/donor", routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/38/v1/donor/", "lib/source-track-38/", "design-intake/manifests/source-track-38-voyager-space-memory-map-v1.json", "reference/source-tracks-snapshot/38_보이저_우주기억지도/", "qa/source-track-38-v1-discover-donor-browser-qa.mjs", "tests/source-track-38-v1-donor-contract.test.mjs", ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/source-track-38-v1-discover-donor-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_API_SHAPE_VERIFIED_WITH_DETERMINISTIC_BROWSER_FIXTURES", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track38 donor reads canonical /api/community Tree/Memory data. Generic Design Fidelity route capture has no DATABASE_URL and produces an environment-only API 500, while the dedicated workflow deterministically intercepts the canonical API shape and verifies desktop/mobile/touch/keyboard/reduced-motion behavior without promoting source fixtures into product truth.",
+  }),
+  Object.freeze({
     id: "source-track-68-v3-3-2-compare-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track68 V3.3.2 bounded source compare — external equivalence HOLD", validationClass: "truthful-hold",
     route: "/design-lab/source-tracks/68/v3-3-2/compare",
