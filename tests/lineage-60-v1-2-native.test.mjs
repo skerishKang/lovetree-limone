@@ -8,7 +8,7 @@ import {
   getClusterOf,
 } from "../lib/lineage-60/data.ts";
 import { parseIntakeManifest } from "../lib/design-intake/manifest.ts";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const repoRoot = process.cwd();
@@ -82,4 +82,26 @@ test("Track60 intake manifest keeps factory-internal consistency and backend-fre
   assert.equal(parsed.route?.path, "/design-lab/lineages/60/v1-2", "route matches implemented native route");
   assert.equal(parsed.rendering, "canvas-3d-projection", "software-projected canvas 3D discriminant");
   assert.equal(parsed.backendScope, "BACKEND_FREE", "no Cluster/BridgeMoment DB entity");
+});
+
+test("Track60 cross-track handoffs resolve to current repository routes", () => {
+  const pageSource = readFileSync(
+    path.join(repoRoot, "app/design-lab/lineages/60/v1-2/page.tsx"),
+    "utf8",
+  );
+  const currentTargets = [
+    ["Track55", "/v4/trees/demo/graph", "app/v4/trees/demo/graph/page.tsx"],
+    ["Track56", "/design-lab/lineages/53/v2", "app/design-lab/lineages/53/v2/page.tsx"],
+    ["Track59", "/design-lab/lineages/59/v5", "app/design-lab/lineages/59/v5/page.tsx"],
+  ];
+
+  for (const [track, href, routeFile] of currentTargets) {
+    assert.ok(pageSource.includes(`href=\"${href}\"`), `${track} handoff points to ${href}`);
+    assert.ok(existsSync(path.join(repoRoot, routeFile)), `${track} target route exists in the repository`);
+  }
+
+  assert.ok(
+    !pageSource.includes("Track59 → HOLD") && !pageSource.includes("route not yet adopted"),
+    "Track59 no longer advertises the historical HOLD after Lineage59 V5 landed",
+  );
 });
