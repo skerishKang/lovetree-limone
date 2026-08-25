@@ -63,6 +63,8 @@ test("native archive keeps high-visual grammar while hardening mobile/input/acce
   assert.match(routeSource, /event\.code === "Space"/);
   assert.match(routeSource, /showModal\(\)/);
   assert.match(routeSource, /prefers-reduced-motion: reduce/);
+  assert.match(routeSource, /pointer: coarse/);
+  assert.match(routeSource, /reducedQuery\.matches \|\| coarsePointerQuery\.matches/);
   assert.match(cssSource, /perspective:\s*1650px/);
   assert.match(cssSource, /translate3d\(/);
   assert.match(cssSource, /@media \(max-width: 760px\)/);
