@@ -187,21 +187,28 @@ export default function Codex13LiquidGlassVideoWall({ treeId }: { treeId: string
 
   const onPointerDown = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (inspectorOpen) return;
-    draggingRef.current = true;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    draggingRef.current = false;
     pointerIdRef.current = event.pointerId;
     pointerRef.current = { x: event.clientX, y: event.clientY, moved: 0 };
     velocityRef.current = { x: 0, y: 0 };
-    event.currentTarget.setPointerCapture(event.pointerId);
   }, [inspectorOpen]);
 
   const onPointerMove = useCallback((event: ReactPointerEvent<HTMLElement>) => {
-    if (!draggingRef.current || pointerIdRef.current !== event.pointerId) return;
+    if (pointerIdRef.current !== event.pointerId) return;
     const previous = pointerRef.current;
     const dx = event.clientX - previous.x;
     const dy = event.clientY - previous.y;
     previous.x = event.clientX;
     previous.y = event.clientY;
     previous.moved += Math.hypot(dx, dy);
+
+    if (!draggingRef.current && previous.moved < 5) return;
+    if (!draggingRef.current) {
+      draggingRef.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
     setPhase((current) => ({ x: current.x + dx, y: current.y + dy }));
     if (!reducedMotion) velocityRef.current = { x: dx * 0.72, y: dy * 0.72 };
   }, [reducedMotion]);
@@ -209,10 +216,11 @@ export default function Codex13LiquidGlassVideoWall({ treeId }: { treeId: string
   const finishPointer = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (pointerIdRef.current !== event.pointerId) return;
     const moved = pointerRef.current.moved;
+    const wasDragging = draggingRef.current;
     draggingRef.current = false;
     pointerIdRef.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    if (moved > 5) {
+    if (wasDragging || moved >= 5) {
       suppressClickRef.current = true;
       window.setTimeout(() => { suppressClickRef.current = false; }, 0);
     }
