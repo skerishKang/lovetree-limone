@@ -205,6 +205,30 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze([]),
   }),
+  Object.freeze({
+    id: "source-track-24-v1-video-memory-workflow-donor",
+    label: "Track24 V1 Video Memory Workflow bounded donor proof",
+    route: "/design-lab/source-tracks/24/v1/donor",
+    routeEntry: "app/design-lab/source-tracks/24/v1/donor/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/24/v1/donor/",
+      "lib/sourceTrack24V1DonorNative.ts",
+      "design-intake/source-track-24-video-memory-workflow-v1-donor.json",
+      "reference/source-tracks-snapshot/24_영상기억_워크플로우/",
+      "qa/source-track-24-v1-donor-browser-qa.mjs",
+      "tests/source-track-24-v1-donor-contract.test.mjs",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; EXTERNAL_DEMO_VIDEO_NOT_PROMOTED; CANONICAL_V4_HANDOFF_PRESERVED",
+    browserGates: Object.freeze(["qa/source-track-24-v1-donor-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-24-v1-donor-browser-qa.mjs",
+    dedicatedWorkflow: null,
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze([]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
