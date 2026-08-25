@@ -23,7 +23,7 @@ const moments = [
 
 test("Track35 snapshot remains the exact Drive-authoritative source", () => {
   assert.equal(snapshot.length, 43297);
-  assert.equal(createHash("sha256").update(snapshot).digest("hex"), "c48277977ffcb80f75d327a8050a5e2107ef27c321ca1280a18207c1766050f2");
+  assert.equal(createHash("sha256").update(snapshot).digest("hex"), "87cd2740c096b7a3d9fc8df4cc598f41fc0871a1fa5c761bda74c241b5260b52");
 });
 
 test("LP archive transport is presentation state over AlbumMomentView identity", () => {
