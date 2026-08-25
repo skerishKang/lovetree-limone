@@ -105,7 +105,8 @@ try {
     await nearest().focus();
     await screenshot(page, "visual-desktop-1280x800-selected-media");
 
-    await nearest().click();
+    await main.focus();
+    await page.keyboard.press("Enter");
     const dialog = page.getByRole("dialog");
     await dialog.waitFor();
     await screenshot(page, "visual-desktop-1280x800-inspector-open");
@@ -127,10 +128,11 @@ try {
       isMobile: true,
       reducedMotion: "no-preference",
     });
+    const main = page.locator("main[data-codex13-native='archive-video-wall']");
     await page.waitForTimeout(80);
     await screenshot(page, "visual-mobile-390x844-initial");
-    const nearest = page.locator("[data-wall-slot][tabindex='0']").first();
-    await nearest.tap();
+    await main.focus();
+    await page.keyboard.press("Enter");
     const dialog = page.getByRole("dialog");
     await dialog.waitFor();
     await screenshot(page, "visual-mobile-390x844-inspector-open");
