@@ -260,14 +260,17 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
                 const d = edgePath(from, to, index);
                 const midX = (from.x + to.x) / 2;
                 const midY = (from.y + to.y) / 2 + (index % 2 ? 14 : -14);
-                const labelWidth = Math.max(72, Math.min(176, edge.label.length * 6 + 22));
+                const label = edge.label.trim();
+                const labelWidth = label ? Math.max(72, Math.min(176, label.length * 6 + 22)) : 0;
                 return (
                   <g key={`${edge.from}-${edge.to}`} style={{ opacity: value }}>
                     <path className={`${styles.edge}${related ? ` ${styles.edgeRelated}` : ""}`} d={d} pathLength={1} style={{ strokeDasharray: related ? "0.055 0.035" : 1, strokeDashoffset: related ? 0 : 1 - value }} />
-                    <g className={styles.edgeLabel} transform={`translate(${midX} ${midY})`}>
-                      <rect x={-labelWidth / 2} y="-11" width={labelWidth} height="22" rx="8" />
-                      <text x="0" y="1">{clip(edge.label, 24)}</text>
-                    </g>
+                    {label ? (
+                      <g className={styles.edgeLabel} transform={`translate(${midX} ${midY})`}>
+                        <rect x={-labelWidth / 2} y="-11" width={labelWidth} height="22" rx="8" />
+                        <text x="0" y="1">{clip(label, 24)}</text>
+                      </g>
+                    ) : null}
                   </g>
                 );
               })}
