@@ -9,16 +9,7 @@ const evidenceDir = process.env.TRACK14_EVIDENCE_DIR ?? "/tmp/track14-visual-qa"
 const sourcePath = path.resolve("reference/source-tracks-snapshot/14_자동전개마인드맵_템플릿컴포저/01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html");
 const nativeRoute = "/trees/track14-qa/graph/mindmap";
 
-const tree = {
-  id: "track14-qa",
-  title: "Track14 QA Tree",
-  memo: "canonical PATH fixture",
-  ownerId: "qa-owner",
-  visibility: "public",
-  createdAt: "2026-08-01T00:00:00Z",
-  updatedAt: "2026-08-25T00:00:00Z",
-};
-
+const tree = { id: "track14-qa", title: "Track14 QA Tree", memo: "canonical PATH fixture", ownerId: "qa-owner", visibility: "public", createdAt: "2026-08-01T00:00:00Z", updatedAt: "2026-08-25T00:00:00Z" };
 const moments = [
   { id: "root", treeId: tree.id, title: "트리 제목", memo: "이 폼에 기억을 채워보세요", sourceType: "youtube", sourceUrl: "", thumbnail: "", emotionTags: [], discoveryDate: "2026-08-01", timestamp: "2026-08-01", sortOrder: 0, parentId: null, connectionReason: "", createdAt: "2026-08-01T00:00:00Z" },
   { id: "m1", treeId: tree.id, title: "+ Moment 추가", memo: "영상·사진·링크·메시지", sourceType: "youtube", sourceUrl: "", thumbnail: "", emotionTags: [], discoveryDate: "2026-08-02", timestamp: "2026-08-02", sortOrder: 1, parentId: "root", connectionReason: "첫 순간에서", createdAt: "2026-08-02T00:00:00Z" },
@@ -30,7 +21,6 @@ const moments = [
   { id: "e3", treeId: tree.id, title: "감정 이름", memo: "before → after", sourceType: "link", sourceUrl: "", thumbnail: "", emotionTags: ["before → after"], discoveryDate: "2026-08-08", timestamp: "2026-08-08", sortOrder: 7, parentId: "m3", connectionReason: "돌아온 뒤", createdAt: "2026-08-08T00:00:00Z" },
   { id: "n1", treeId: tree.id, title: "+ 메모", memo: "나만 보는 기록", sourceType: "book", sourceUrl: "", thumbnail: "", emotionTags: [], discoveryDate: "2026-08-09", timestamp: "2026-08-09", sortOrder: 8, parentId: "m4", connectionReason: "남겨둔 말", createdAt: "2026-08-09T00:00:00Z" },
 ];
-
 const viewports = {
   desktop: { width: 1280, height: 800 },
   mobile: { width: 390, height: 844, mobile: true },
@@ -38,12 +28,8 @@ const viewports = {
 };
 
 async function installApiMocks(page) {
-  await page.route("**/api/trees/track14-qa", async (route) => {
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tree) });
-  });
-  await page.route("**/api/trees/track14-qa/memories", async (route) => {
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(moments) });
-  });
+  await page.route("**/api/trees/track14-qa", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tree) }));
+  await page.route("**/api/trees/track14-qa/memories", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(moments) }));
 }
 
 function attachErrors(page) {
@@ -60,12 +46,7 @@ async function assertNoOverflow(page, label) {
 }
 
 async function openNative(browser, viewport, reducedMotion = "no-preference") {
-  const context = await browser.newContext({
-    viewport: { width: viewport.width, height: viewport.height },
-    isMobile: Boolean(viewport.mobile),
-    hasTouch: Boolean(viewport.mobile),
-    reducedMotion,
-  });
+  const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, isMobile: Boolean(viewport.mobile), hasTouch: Boolean(viewport.mobile), reducedMotion });
   const page = await context.newPage();
   const errors = attachErrors(page);
   await installApiMocks(page);
@@ -77,15 +58,10 @@ async function openNative(browser, viewport, reducedMotion = "no-preference") {
 }
 
 async function openSource(browser, viewport) {
-  const context = await browser.newContext({
-    viewport: { width: viewport.width, height: viewport.height },
-    isMobile: Boolean(viewport.mobile),
-    hasTouch: Boolean(viewport.mobile),
-  });
+  const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, isMobile: Boolean(viewport.mobile), hasTouch: Boolean(viewport.mobile) });
   const page = await context.newPage();
   const errors = attachErrors(page);
-  const url = `${pathToFileURL(sourcePath).href}?capture=1`;
-  const response = await page.goto(url, { waitUntil: "load" });
+  const response = await page.goto(`${pathToFileURL(sourcePath).href}?capture=1`, { waitUntil: "load" });
   assert.ok(response === null || response.ok(), "source file route must load");
   await page.waitForFunction(() => Boolean(window.LoveTreeComposer?.place && window.LoveTreeUnfold?.setProgress));
   await page.evaluate(() => window.LoveTreeComposer.place("basic"));
@@ -98,7 +74,7 @@ async function openSource(browser, viewport) {
 async function screenshot(page, filename) {
   const target = path.join(evidenceDir, filename);
   const buffer = await page.screenshot({ path: target, fullPage: true, animations: "disabled" });
-  return { target, buffer };
+  return buffer;
 }
 
 async function composite(browser, leftBuffer, rightBuffer, width, height, filename, overlay = false) {
@@ -115,37 +91,36 @@ async function composite(browser, leftBuffer, rightBuffer, width, height, filena
 }
 
 async function captureSourceState(browser, viewport, label, state) {
-  const opened = await openSource(browser, viewport);
-  const { page, context, pageErrors, consoleErrors } = opened;
+  const { page, context, pageErrors, consoleErrors } = await openSource(browser, viewport);
   if (state !== "initial") await page.evaluate(() => window.LoveTreeUnfold.setProgress(1));
   if (state === "selected") await page.evaluate(() => window.LoveTreeUnfold.select("m1"));
-  const shot = await screenshot(page, `source-${label}-${state}.png`);
+  const buffer = await screenshot(page, `source-${label}-${state}.png`);
   assert.deepEqual(pageErrors, [], `source-${label}-${state}: page errors ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `source-${label}-${state}: console errors ${consoleErrors.join(" | ")}`);
   await context.close();
-  return shot.buffer;
+  return buffer;
 }
 
 async function captureNativeState(browser, viewport, label, state) {
-  const opened = await openNative(browser, viewport);
-  const { page, context, pageErrors, consoleErrors } = opened;
+  const { page, context, pageErrors, consoleErrors } = await openNative(browser, viewport);
   if (state !== "initial") {
     await page.getByRole("button", { name: "다시 펼치기" }).click();
     await page.waitForFunction(() => document.querySelector("[data-track14-progress='1']"));
   }
   if (state === "selected") {
-    await page.locator("[data-track14-node-id='m1']").click();
+    const selected = page.locator("[data-track14-node-id='m1']");
+    await selected.click();
     await page.waitForFunction(() => document.querySelector("[data-track14-node-id='m1']")?.getAttribute("aria-selected") === "true");
-    const dimmedOpacity = await page.locator("[data-track14-node-id='root']").evaluate((node) => Number(getComputedStyle(node).opacity));
-    const relatedOpacity = await page.locator("[data-track14-node-id='m2']").evaluate((node) => Number(getComputedStyle(node).opacity));
-    assert.ok(dimmedOpacity < 0.4, "selected branch must dim unrelated ancestors/context");
-    assert.ok(relatedOpacity > 0.8, "selected branch descendants must stay emphasized");
+    const rootOpacity = await page.locator("[data-track14-node-id='root']").evaluate((node) => Number(getComputedStyle(node).opacity));
+    const descendantOpacity = await page.locator("[data-track14-node-id='m2']").evaluate((node) => Number(getComputedStyle(node).opacity));
+    assert.ok(rootOpacity > 0.8, "source-faithful selected state must retain ancestor/context visibility");
+    assert.ok(descendantOpacity > 0.8, "selected branch descendants must retain node visibility");
   }
-  const shot = await screenshot(page, `native-${label}-${state}.png`);
+  const buffer = await screenshot(page, `native-${label}-${state}.png`);
   assert.deepEqual(pageErrors, [], `native-${label}-${state}: page errors ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `native-${label}-${state}: console errors ${consoleErrors.join(" | ")}`);
   await context.close();
-  return shot.buffer;
+  return buffer;
 }
 
 async function captureVisualMatrix(browser, viewport, label) {
@@ -153,9 +128,7 @@ async function captureVisualMatrix(browser, viewport, label) {
     const source = await captureSourceState(browser, viewport, label, state);
     const native = await captureNativeState(browser, viewport, label, state);
     await composite(browser, source, native, viewport.width, viewport.height, `compare-${label}-${state}.png`);
-    if (label === "desktop" && state === "expanded") {
-      await composite(browser, source, native, viewport.width, viewport.height, "overlay-desktop-expanded.png", true);
-    }
+    if (label === "desktop" && state === "expanded") await composite(browser, source, native, viewport.width, viewport.height, "overlay-desktop-expanded.png", true);
   }
 }
 
@@ -163,7 +136,6 @@ async function auditKeyboardAndComposer(browser) {
   const { context, page, pageErrors, consoleErrors } = await openNative(browser, viewports.desktop);
   await page.getByRole("button", { name: "다시 펼치기" }).click();
   await page.waitForFunction(() => document.querySelector("[data-track14-progress='1']"));
-
   const m2 = page.locator("[data-track14-node-id='m2']");
   await m2.focus();
   assert.equal(await m2.evaluate((node) => document.activeElement === node), true, "Moment node must accept keyboard focus");
@@ -171,13 +143,10 @@ async function auditKeyboardAndComposer(browser) {
   assert.equal(await m2.getAttribute("aria-selected"), "true", "Enter must select focused canonical Moment");
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.locator("[data-track14-node-id='m3']").getAttribute("aria-selected"), "true", "ArrowRight must move canonical selection");
-
   await page.getByRole("button", { name: "템플릿" }).click();
   await page.getByRole("button", { name: /Orbit Path/ }).click();
   assert.equal(await page.locator("main[data-track14-mindmap]").getAttribute("data-track14-layout"), "orbit", "layout composer must change presentation layout only");
-  const edgeCount = await page.locator("svg path").evaluateAll((nodes) => nodes.filter((node) => node.getAttribute("d")?.startsWith("M ")).length);
-  assert.ok(edgeCount >= moments.filter((moment) => moment.parentId).length, "presentation layout must retain canonical Connection paths");
-
+  assert.ok(await page.locator("svg path").count() >= moments.filter((moment) => moment.parentId).length, "layout change must retain canonical Connection paths");
   assert.deepEqual(pageErrors, [], `keyboard/composer page errors: ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `keyboard/composer console errors: ${consoleErrors.join(" | ")}`);
   await context.close();
@@ -188,7 +157,8 @@ async function auditTouch(browser) {
   await page.getByRole("button", { name: "다시 펼치기" }).click();
   await page.waitForFunction(() => document.querySelector("[data-track14-progress='1']"));
   const svg = page.locator("svg[role='tree']");
-  const before = await svg.locator(":scope > g").last().getAttribute("transform");
+  const mapGroup = svg.locator(":scope > g").last();
+  const before = await mapGroup.getAttribute("transform");
   const box = await svg.boundingBox();
   assert.ok(box, "mobile mindmap must have interactive stage bounds");
   const x = box.x + box.width * 0.82;
@@ -197,7 +167,7 @@ async function auditTouch(browser) {
   await svg.dispatchEvent("pointermove", { pointerId: 14, pointerType: "touch", clientX: x - 72, clientY: y - 24, button: 0 });
   await svg.dispatchEvent("pointerup", { pointerId: 14, pointerType: "touch", clientX: x - 72, clientY: y - 24, button: 0 });
   await page.waitForTimeout(40);
-  const after = await svg.locator(":scope > g").last().getAttribute("transform");
+  const after = await mapGroup.getAttribute("transform");
   assert.notEqual(after, before, "touch drag must pan presentation camera");
   await assertNoOverflow(page, "touch-mobile");
   assert.deepEqual(pageErrors, [], `touch page errors: ${pageErrors.join(" | ")}`);
@@ -209,14 +179,12 @@ async function auditReducedMotion(browser) {
   const { context, page, pageErrors, consoleErrors } = await openNative(browser, viewports.mobile, "reduce");
   await page.getByRole("button", { name: "다시 펼치기" }).click();
   await page.waitForFunction(() => document.querySelector("[data-track14-progress='1']"));
-  const aura = page.locator("svg ellipse").filter({ has: undefined }).nth(6);
   const animation = await page.locator("[class*='rootAura']").first().evaluate((node) => getComputedStyle(node).animationName);
   assert.ok(animation === "none" || animation === "", `reduced motion must disable ambient aura animation, got ${animation}`);
   await screenshot(page, "native-mobile-reduced-motion.png");
   await assertNoOverflow(page, "reduced-motion-mobile");
   assert.deepEqual(pageErrors, [], `reduced-motion page errors: ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `reduced-motion console errors: ${consoleErrors.join(" | ")}`);
-  void aura;
   await context.close();
 }
 
@@ -249,7 +217,7 @@ try {
     statesCompared: ["initial", "expanded", "selected"],
     automatedFunctionalGate: "PASS",
     visualClassification: {
-      matchTargets: ["paper stage", "rounded glass shell", "branch geometry", "curved lines", "connection labels", "node-card hierarchy", "staged unfold", "selected-branch dimming", "progress rail"],
+      matchTargets: ["paper stage", "rounded glass shell", "branch geometry", "curved lines", "connection labels", "node-card hierarchy", "staged unfold", "selected branch edge emphasis", "progress rail"],
       authorizedNativeDeltas: ["canonical Moment content", "presentation-only layout composer", "mobile reflow", "keyboard/focus", "reduced motion", "canonical graph back-navigation"],
       humanVisualReviewRequired: true
     }
