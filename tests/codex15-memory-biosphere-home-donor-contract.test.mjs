@@ -19,7 +19,7 @@ function sha256(path) {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
-test("Issue #493 pins the exact Drive V2 executable and all four source assets", () => {
+test("Issue #493 pins the fresh Drive V2 executable and all four source assets", () => {
   assert.equal(authority.issue, 493);
   assert.equal(authority.disposition, "USE_AS_HIGH_VISUAL_HOME_DONOR");
   assert.equal(authority.drive.executableName, "최종본.html");
@@ -32,6 +32,12 @@ test("Issue #493 pins the exact Drive V2 executable and all four source assets",
     "bloom-final.webp",
     "sphere-final-v2.png",
   ]);
+  assert.deepEqual(authority.sourceAssets.map((asset) => asset.sha256), [
+    "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+    "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+    "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+    "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+  ]);
 });
 
 test("runtime media are explicit optimized derivatives, not substituted source fingerprints", () => {
@@ -42,7 +48,7 @@ test("runtime media are explicit optimized derivatives, not substituted source f
     assert.equal(sha256(diskPath), asset.sha256, asset.path);
   }
   assert.equal(authority.runtimeDerivatives[3].sourceName, "sphere-final-v2.png");
-  assert.equal(authority.sourceAssets[3].sha256, "f82c54bc888b046aa06f528bc1fc2bec032447953f44a078f7ec683b75c9467f");
+  assert.equal(authority.sourceAssets[3].sha256, "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785");
   assert.notEqual(authority.runtimeDerivatives[3].sha256, authority.sourceAssets[3].sha256);
 });
 
@@ -74,6 +80,8 @@ test("V2 head-centered reveal grammar and touch/keyboard parity are explicit", (
   assert.match(component, /pointerType === "touch"/);
   assert.match(component, /ArrowLeft/);
   assert.match(component, /ArrowRight/);
+  assert.match(component, /ArrowUp/);
+  assert.match(component, /ArrowDown/);
   assert.match(component, /Home/);
   assert.match(component, /End/);
   assert.match(component, /stateButtonsRef\.current\[safeIndex\]\?\.focus/);
