@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { AlbumMomentView } from "@/lib/moment-model";
 import { useTreeMoments } from "@/lib/use-tree-moments";
-import { SOURCE_TRACK_26_FILM_STUDIO } from "@/lib/source-track-26/memory-film-studio-v1-donor";
 import styles from "./track26-memory-film-studio.module.css";
 
 type Aspect = "16:9" | "9:16" | "1:1" | "4:5";
@@ -76,10 +75,12 @@ function FilmSession({ treeId, title, moments }: { treeId: string; title: string
     if (["input", "textarea", "select", "button", "a"].includes(tag)) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      event.shiftKey ? moveScene(-1) : selectAt(selectedIndex - 1);
+      if (event.shiftKey) moveScene(-1);
+      else selectAt(selectedIndex - 1);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      event.shiftKey ? moveScene(1) : selectAt(selectedIndex + 1);
+      if (event.shiftKey) moveScene(1);
+      else selectAt(selectedIndex + 1);
     } else if (event.key === " ") {
       event.preventDefault();
       setPlaying((value) => !value);
