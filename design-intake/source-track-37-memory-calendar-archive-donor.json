@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "issue": 489,
+  "parentIssue": 344,
+  "productJob": "ARCHIVE",
+  "productDisposition": "USE_AS_VISUAL_FUNCTION_DONOR",
+  "sourceAuthority": {
+    "semanticName": "Drive Track37 Memory Calendar / Tear-off Memory Pad",
+    "folder": "37_기억달력_메모리패드",
+    "file": "01_기억달력_뜯어쓰는메모리패드.html",
+    "driveFileId": "13o_pSkZLATGiw2KaD3WsI4Dt_wHYFmlR",
+    "repositoryPath": "reference/source-tracks-snapshot/37_기억달력_메모리패드/01_기억달력_뜯어쓰는메모리패드.html",
+    "repositoryBlobSha": "09087fc0635a5375dd5e863022b86092eb56cfe8",
+    "bytes": 36195,
+    "sha256": "63ab49382fe9798515bf91bf5683b9224d0902f6f7b041757d8ddcd3dd57750e"
+  },
+  "sourceTruthBoundary": {
+    "hardcodedDemoCalendarSemantics": [
+      "peopleData fixture identities",
+      "day 01..04 fixture labels",
+      "2026 · AUG · MEMORY fixture date strings",
+      "prototype YouTube ids and source labels",
+      "in-memory torn/archive state"
+    ],
+    "mustNotBecomeCanonical": [
+      "anniversary date",
+      "importance date",
+      "return/revisit date",
+      "season date",
+      "prototype day index",
+      "prototype person grouping"
+    ]
+  },
+  "nativeProof": {
+    "route": "/v4/trees/:treeId/archive/calendar",
+    "dataAuthority": "existing useTreeMoments(treeId) -> canonical AlbumMomentView projection",
+    "dateAuthority": "existing Moment discoveryDate or timestamp only; invalid/missing explicit YYYY-MM-DD values fail closed and are not placed on the calendar",
+    "newBackend": false,
+    "newDatabaseEntity": false,
+    "newApi": false,
+    "runtimeDemoFallback": false
+  },
+  "donorElements": [
+    "stored-date navigation",
+    "memory-by-date browsing",
+    "derived archive date index",
+    "tear-off paper-pad metaphor",
+    "swipe/keyboard date transition"
+  ],
+  "nativeRemediation": [
+    "canonical Moment data replaces all source fixtures",
+    "no autoplay YouTube iframe copied from source",
+    "keyboard ArrowLeft/ArrowRight date navigation",
+    "touch/pointer horizontal swipe",
+    "visible focus",
+    "320px responsive guard",
+    "prefers-reduced-motion semantic parity",
+    "missing/invalid dates fail closed instead of being invented"
+  ],
+  "comparators": {
+    "track35": "LP playback/media archive; separate sibling route /v4/trees/:id/archive/lp",
+    "lineage59": "physical book/path replay rather than date indexing",
+    "track62": "continuous exhibition rail capability rather than calendar indexing",
+    "track67": "continuous tape/history travel rather than stored-date browsing"
+  },
+  "parallelSafety": {
+    "sharedRegistryTouched": false,
+    "forbiddenFiles": [
+      "scripts/design-fidelity-validation-inventory.mjs",
+      "design-intake/master-design-coverage.json",
+      "tests/master-design-coverage-contract.test.mjs"
+    ],
+    "sharedNavigationTouched": false,
+    "pr191Touched": false,
+    "centralRegistryHandoffRequired": true
+  }
+}
