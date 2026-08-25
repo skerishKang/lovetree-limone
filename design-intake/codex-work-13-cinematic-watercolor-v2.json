@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "family_id": "Codex-work-13 LoveTree Cinematic Watercolor V2",
+  "intake_issue": 471,
+  "authority_issues": [344, 468, 469],
+  "master_rows": [13, 14],
+  "family_anchor": 13,
+  "duplicate_recording_row": 14,
+  "product_job": "SUBJECT",
+  "source_authority": "V2",
+  "drive": {
+    "parent_storage_path": "47_시즌수채화블_통합개발",
+    "parent_storage_track_alias": false,
+    "family_folder": "코덱스 작업물-13_러브트리_시네마틱수채화",
+    "family_folder_id": "12xDI-sLJXVZdDBp1PDPjA-kXU6DeSndS",
+    "v2_folder": "03_완성사이트_V2_영상중심대문",
+    "v2_folder_id": "1cmhnDjdP0UP04INXqlFsxnTgTeNkcqlT",
+    "assets_folder": "assets",
+    "assets_folder_id": "1yYrW1jmJ8NB47KEb5W_WOPRFa-6RRy-O"
+  },
+  "namespace": {
+    "repository_lineage": null,
+    "source_track_alias": null,
+    "parent_storage_track_47_is_source_track_47": false,
+    "number_only_aliasing_forbidden": true
+  },
+  "executable": {
+    "filename": "00_실행_러브트리_시네마틱수채화_V2.html",
+    "drive_file_id": "1zSk20dUCFDjjLwz5uoMax3lWAXh1u7rF",
+    "bytes": 19365,
+    "md5": "bdf94584510c6a7817b857f521c4fede",
+    "index_filename": "index.html",
+    "index_drive_file_id": "1RF7yzI2sg118dV4NdN84gXQfd9REwIQ-",
+    "index_bytes": 19365,
+    "index_md5": "bdf94584510c6a7817b857f521c4fede",
+    "index_match": true
+  },
+  "authority_documents": [
+    {
+      "filename": "개발내용.md",
+      "drive_file_id": "144btFe098pg3fbG0gZhrVnagenV2Z66x",
+      "bytes": 1944,
+      "md5": "e34d86a130a295cd4197f1228670b49f",
+      "role": "development-authority"
+    },
+    {
+      "filename": "README_실행안내.txt",
+      "drive_file_id": "1h7S3JTIYwExcf6Ow8yvRFX_dARQOsDnD",
+      "bytes": 1585,
+      "md5": "c64a5ad4085107d16f674b4e266b0614",
+      "role": "execution-authority"
+    }
+  ],
+  "required_assets": [
+    {
+      "filename": "01-moment-awakens-clean.mp4",
+      "drive_file_id": "1BoyX3FF4qMMeoNv0pstI56xO2lJqm0fw",
+      "bytes": 3421328,
+      "md5": "38a078edd6afd5249c5c5d7d01f37fb4",
+      "role": "opening-cinematic"
+    },
+    {
+      "filename": "02-season-becomes-lovetree-clean.mp4",
+      "drive_file_id": "14UZkq6X46c_hqktrNF2hmQdhAMOqcM1o",
+      "bytes": 5594765,
+      "md5": "2d6c4fada408dec057d1addee6aeee4e",
+      "role": "connection-to-season-cinematic"
+    },
+    {
+      "filename": "03-quiet-editorial.png",
+      "drive_file_id": "1ACfWF2DYd2HfT8iPgXBsyD81Ro17xeOa",
+      "bytes": 2436662,
+      "md5": "682cef8c9e05b7db9adb641f539bbea9",
+      "role": "poster-and-quiet-editorial"
+    },
+    {
+      "filename": "04-paths-editorial.png",
+      "drive_file_id": "1sF7IuiBtkDesA_ODvHJDpWRcv_6pgTfc",
+      "bytes": 2901881,
+      "md5": "88338c2b6698a59371437c364bd6dcae",
+      "role": "path-editorial"
+    },
+    {
+      "filename": "05-bloom-editorial.png",
+      "drive_file_id": "1lttDjdr4QN1bEY2TG36FngG1VLCPXyyl",
+      "bytes": 3014192,
+      "md5": "b7991f9e439197ab04b3554b381bbb5f",
+      "role": "bloom-editorial"
+    },
+    {
+      "filename": "06-season-cover.png",
+      "drive_file_id": "1iLHXmTr9hw_NjdG8SnemWj7JHkUStrW7",
+      "bytes": 2929558,
+      "md5": "e70f62f60b7f8f78a590ceca1d8bf9d4",
+      "role": "season-cover"
+    },
+    {
+      "filename": "07-lovetree-overhead-final.png",
+      "drive_file_id": "16oBdZD-mjVBtgoX545YlfJAgw8_4p47j",
+      "bytes": 2635847,
+      "md5": "09efae09c7b720b59e2b28eb59953ac7",
+      "role": "final-poster-reduced-motion-fallback"
+    }
+  ],
+  "recordings": [
+    {
+      "master_row": 13,
+      "filename": "녹화_2026_08_13_23_03_02_988.mp4",
+      "drive_file_id": "1lQ_8XURf1urCQaVyMcbCNEp4svYaSsD_",
+      "bytes": 11788540,
+      "md5": "ad0fd43069d1f567eb20b8ebd1133052",
+      "role": "family-anchor-recording-evidence"
+    },
+    {
+      "master_row": 14,
+      "filename": "녹화_2026_08_13_23_58_56_620.mp4",
+      "drive_file_id": "1q7ICZl0dtoIAao3nMX0HRC5PnUtlvfMB",
+      "bytes": 19730720,
+      "md5": "c3ac967839110774051145e2fd6037f7",
+      "role": "duplicate-family-recording-evidence"
+    }
+  ],
+  "functional_unit": {
+    "folder_package_required": true,
+    "runtime_files": [
+      "00_실행_러브트리_시네마틱수채화_V2.html",
+      "assets/01-moment-awakens-clean.mp4",
+      "assets/02-season-becomes-lovetree-clean.mp4",
+      "assets/03-quiet-editorial.png",
+      "assets/04-paths-editorial.png",
+      "assets/05-bloom-editorial.png",
+      "assets/06-season-cover.png",
+      "assets/07-lovetree-overhead-final.png"
+    ],
+    "isolated_html_is_runnable": false
+  },
+  "source_character": {
+    "inline_css": true,
+    "inline_javascript": true,
+    "relative_asset_graph": true,
+    "external_runtime_required": false,
+    "mobile_source": "PRESENT",
+    "reduced_motion_source": "PRESENT",
+    "autoplay_fallback": "PRESENT",
+    "replay_control": "PRESENT",
+    "muted_playsinline_video": true,
+    "accessibility": {
+      "major_image_alt_text": "PRESENT",
+      "aria_labels": "PRESENT",
+      "aria_live": "PRESENT"
+    }
+  },
+  "fingerprint_authority": {
+    "algorithm": "MD5",
+    "repository_index": "docs/design-intake/drive-snapshot/2026-08-21/MD5SUMS-full-tree.txt",
+    "drive_metadata_and_folder_listing_reverified": true,
+    "observed_date": "2026-08-25"
+  },
+  "repository_intake": {
+    "intake_type": "PROVENANCE_MANIFEST",
+    "binary_archive_status": "FINGERPRINT_ONLY",
+    "runnable_snapshot_materialized": false,
+    "reason": "Current connected GitHub write surface safely creates UTF-8 text files but does not provide a binary upload path for the required MP4/PNG package. Identity intake therefore pins immutable Drive IDs, exact byte counts, MD5 fingerprints, and the required asset graph without inventing or corrupting binary objects.",
+    "binary_archival_child_issue": "NOT_REQUIRED_FOR_ISSUE_471_COMPLETION; REQUIRED_ONLY_IF_A_RUNNABLE_REPOSITORY_SNAPSHOT_IS_LATER_MANDATED"
+  },
+  "adoption": {
+    "mode": "VISUAL_PRESENTATION_DONOR",
+    "structural_base": "/v4/subjects",
+    "product_disposition": "V4_SUBJECT_VISUAL_DONOR",
+    "distinct_native_required": false,
+    "parallel_subject_application_authorized": false
+  }
+}
