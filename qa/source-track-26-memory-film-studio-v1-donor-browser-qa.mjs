@@ -34,8 +34,32 @@ async function openProof({ width, height, hasTouch = false, isMobile = false, re
 }
 
 async function assertNoHorizontalOverflow(page, label) {
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  assert.ok(overflow <= 1, `${label}: horizontal overflow ${overflow}px`);
+  const diagnostic = await page.evaluate(() => {
+    const root = document.documentElement;
+    const viewportWidth = window.innerWidth;
+    const offenders = [...document.querySelectorAll("body *")]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName.toLowerCase(),
+          className: typeof element.className === "string" ? element.className : "",
+          text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80),
+          left: Math.round(rect.left * 100) / 100,
+          right: Math.round(rect.right * 100) / 100,
+          width: Math.round(rect.width * 100) / 100,
+        };
+      })
+      .filter((entry) => entry.right > viewportWidth + 1 || entry.left < -1)
+      .slice(0, 12);
+    return {
+      innerWidth: viewportWidth,
+      clientWidth: root.clientWidth,
+      scrollWidth: root.scrollWidth,
+      overflow: root.scrollWidth - root.clientWidth,
+      offenders,
+    };
+  });
+  assert.ok(diagnostic.overflow <= 1, `${label}: horizontal overflow ${diagnostic.overflow}px; offenders=${JSON.stringify(diagnostic.offenders)}`);
 }
 
 test("Track26 desktop proves film assembly controls, reorder/scrub sync, and no durable writes", async () => {
