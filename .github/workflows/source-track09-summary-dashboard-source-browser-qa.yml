@@ -22,8 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout exact PR head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,6 +35,16 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Verify exact checked-out head
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          echo "TRACK09_EXACT_HEAD=$actual"
+          test "$actual" = "$expected"
 
       - name: Verify Track09 donor contract
         run: node --test tests/source-track-09-summary-dashboard-donor-contract.test.mjs
