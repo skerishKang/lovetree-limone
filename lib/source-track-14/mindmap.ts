@@ -167,7 +167,7 @@ export function track14BuildProjection<T extends Track14MomentLike>(
     return [{
       from: moment.parentId,
       to: moment.id,
-      label: moment.connectionReason?.trim() || "이전 순간과 이어지는 관계",
+      label: moment.connectionReason?.trim() || "",
       depth,
       revealAt: Math.max(0.12, (target?.revealAt ?? 0.4) - 0.085),
     } satisfies Track14ProjectedEdge];
