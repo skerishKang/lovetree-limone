@@ -100,7 +100,9 @@ test("browser evidence captures initial and every source-comparable native state
   assert.match(qa, /phone-390x844/);
   assert.match(qa, /mobile-320x720/);
   assert.match(qa, /-initial\.png/);
-  for (const state of ["human", "trace", "bloom", "sphere"]) assert.match(qa, new RegExp(`\\$\\{viewport\\}-${state}\\.png`));
+  assert.match(qa, /captureStateEvidence/);
+  assert.match(qa, /\["human", "trace", "bloom", "sphere"\]/);
+  assert.match(qa, /\$\{outDir\}\/\$\{viewport\}-\$\{state\}\.png/);
 });
 
 test("Track74 and Track36 stay comparators instead of replacing canonical HOME", () => {
