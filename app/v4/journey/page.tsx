@@ -4,6 +4,7 @@ import V4FirstJourneyFidelityBridge from "@/app/components/v4/V4FirstJourneyFide
 import "@/app/styles/v4/first-journey.css";
 import "@/app/styles/v4/first-journey-v12.css";
 import "@/app/styles/v4/existing-fidelity-remediation.css";
+import "@/app/styles/v4/first-journey-track02-typography-repair.css";
 
 const STORAGE_KEY = "lovetree-first-journey-unified";
 
