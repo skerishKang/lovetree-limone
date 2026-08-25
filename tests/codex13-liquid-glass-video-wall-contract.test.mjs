@@ -22,6 +22,7 @@ import {
 const routeSource = readFileSync("app/v4/trees/[id]/archive/video-wall/Codex13LiquidGlassVideoWall.tsx", "utf8");
 const cssSource = readFileSync("app/v4/trees/[id]/archive/video-wall/codex13-liquid-glass-video-wall.module.css", "utf8");
 const helperSource = readFileSync("lib/source-codex-13/liquid-glass-video-wall.ts", "utf8");
+const browserQaSource = readFileSync("qa/codex13-liquid-glass-video-wall-browser-qa.mjs", "utf8");
 
 const moment = (id, sourceType, sourceUrl, thumbnail = "") => ({
   id,
@@ -114,4 +115,18 @@ test("native route preserves canonical, input, dialog and reduced-motion boundar
   assert.match(cssSource, /@media \(max-width: 360px\)/);
   assert.match(cssSource, /@media \(prefers-reduced-motion: reduce\)/);
   assert.doesNotMatch(cssSource, /min-width:\s*(980|1040|1200)px/);
+});
+
+test("browser QA exercises real direct-video node lifetime instead of a zero-decoder fixture", () => {
+  assert.match(browserQaSource, /sourceType:\s*"video"/);
+  assert.match(browserQaSource, /media\.codex13\.test\/qa-\$\{index \+ 1\}\.webm/);
+  assert.match(browserQaSource, /liveWallVideos > 0/);
+  assert.match(browserQaSource, /liveWallVideos <= activeLimit/);
+  assert.match(browserQaSource, /inspector open must unmount every wall video decoder/);
+  assert.match(browserQaSource, /post-inspector resume/);
+  assert.match(browserQaSource, /page\.mouse\.wheel/);
+  assert.match(browserQaSource, /page\.mouse\.down\(\)/);
+  assert.match(browserQaSource, /nearestButton\.tap\(\)/);
+  assert.match(browserQaSource, /message\.type\(\) === "error"/);
+  assert.match(browserQaSource, /ambient\/inertial presentation loop must not move the wall/);
 });
