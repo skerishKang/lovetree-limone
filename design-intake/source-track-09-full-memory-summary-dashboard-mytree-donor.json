@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "id": "source-track-09-full-memory-summary-dashboard-mytree-donor",
+  "masterRow": 47,
+  "productJob": "MYTREE",
+  "disposition": "USE_AS_VISUAL_FUNCTION_DONOR",
+  "source": {
+    "semanticFamily": "Drive Track09 Full Memory Summary Dashboard",
+    "folderName": "09_전체기억_요약대시보드",
+    "filename": "01_전체기억_요약대시보드.html",
+    "bytes": 25265,
+    "sha256": "ed7c42c5ccce92a1e6f5d7e986f3b061a59e29cca390aef6cf86b4d91d1e0b41",
+    "repositorySnapshot": "reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html"
+  },
+  "baseImplementation": {
+    "routeTemplate": "/trees/:treeId/overview",
+    "component": "app/components/v4/product/V4FinalTreeSurface.tsx#OverviewSurface",
+    "routeFile": "app/trees/[id]/overview/page.tsx",
+    "canonicalHook": "useTreeMoments(treeId)",
+    "nativeFoundation": "Track64 V1.2.1",
+    "complementaryLens": "Drive Track17 Living Memory Terrain donor",
+    "livingMediaSphereRole": "media-interaction evidence only; not MYTREE canonical owner"
+  },
+  "donatedVisualFunctions": [
+    "question-to-answer summary framing",
+    "left question rail plus right result-card composition",
+    "whole-memory visual hierarchy",
+    "current-state summary card grammar",
+    "timeline/change summary grammar",
+    "small next-action framing without numeric recommendation authority",
+    "responsive two-column-to-stacked composition"
+  ],
+  "canonicalDataBoundary": {
+    "allowedPersistedOrDirectlyDerivedInputs": [
+      "Tree.id",
+      "Tree.title",
+      "Tree.createdAt",
+      "Tree.updatedAt",
+      "Moment.id",
+      "Moment.title",
+      "Moment.memo",
+      "Moment.sourceType",
+      "Moment.sourceUrl",
+      "Moment.thumbnail",
+      "Moment.timestamp",
+      "Moment.createdAt",
+      "Moment.emotionTags",
+      "Moment.parentId",
+      "Moment.connectionReason"
+    ],
+    "allowedSummaryDerivations": [
+      "Moment count",
+      "sourceType counts",
+      "sourceUrl-present media count",
+      "parentId-present connection count",
+      "first/latest Moment ordering from persisted timestamps",
+      "emotion tag occurrence counts when explicitly labeled as counts"
+    ],
+    "sourceDemoFactsNotPromoted": [
+      "93 videos",
+      "2026.08.04 demo date",
+      "184 days",
+      "emotion percentages such as excitement 42%",
+      "weekly +8",
+      "7 until Season completion",
+      "flower-bud growth stage",
+      "300-Moment completed-tree threshold",
+      "future Season prediction",
+      "numeric action recommendation scores",
+      "hardcoded YouTube/video identities"
+    ],
+    "nonCanonicalPresentationMetricsExcluded": [
+      "V4FinalTreeSurface overview pulse/100",
+      "importance score",
+      "revisit count",
+      "emotion score",
+      "Season entity/state",
+      "growth/health score",
+      "future prediction score"
+    ]
+  },
+  "releaseBoundary": {
+    "newMytreeApplication": false,
+    "newProductionRoute": false,
+    "defaultNavigationChanged": false,
+    "authChanged": false,
+    "apiChanged": false,
+    "dbChanged": false,
+    "schemaChanged": false,
+    "sharedFidelityRegistryTouched": false,
+    "masterCoverageLedgerTouched": false,
+    "masterCoverageContractTouched": false,
+    "pr191Touched": false
+  },
+  "sourceBrowserProof": {
+    "qa": "qa/source-track-09-summary-dashboard-source-browser-qa.mjs",
+    "workflow": ".github/workflows/source-track09-summary-dashboard-source-browser-qa.yml",
+    "scope": "source visual/function donor responsiveness and interaction only; demo values remain non-canonical"
+  }
+}

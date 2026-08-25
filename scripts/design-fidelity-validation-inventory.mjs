@@ -361,6 +361,22 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     holdSemantics: "Dedicated Track68 CI proves the pinned local compare package, exact local assets, A/B behavior, and actual-route interactions; it must never be reported as FULL source-fidelity equivalence while CloudFront byte equivalence remains HOLD.",
     reason: "The bounded local compare runner is implementation-ready and locally exact, but original CloudFront hero-byte equivalence is not proven and direct CloudFront hotlink is not authorized; keep central fidelity classification truthful HOLD.",
   }),
+  Object.freeze({
+    id: "source-track-09-summary-dashboard-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track09 Full Memory Summary Dashboard MYTREE donor dedicated source QA", validationClass: "dedicated-source-browser-qa",
+    route: "/trees/:treeId/overview", routeEntry: "app/trees/[id]/overview/page.tsx",
+    impactPrefixes: Object.freeze([
+      "design-intake/source-track-09-full-memory-summary-dashboard-mytree-donor.json",
+      "qa/source-track-09-summary-dashboard-source-browser-qa.mjs",
+      "tests/source-track-09-summary-dashboard-donor-contract.test.mjs",
+      ".github/workflows/source-track09-summary-dashboard-source-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/source-track-09-summary-dashboard-source-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track09-summary-dashboard-source-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; EXISTING_CANONICAL_OVERVIEW_REUSED; DEMO_STATIC_CLAIMS_NOT_PROMOTED",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track09 is a bounded visual-function donor over the existing canonical MYTREE overview; its dedicated workflow proves the exact source donor and responsive interaction evidence without creating a second product route or promoting demo metrics as product truth.",
+  }),
 ]);
 
 export const FUTURE_MERGE_GUARDS = Object.freeze([]);
