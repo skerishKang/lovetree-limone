@@ -287,6 +287,16 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track35 validates the canonical /v4/trees/:treeId/archive/lp ARCHIVE lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no LP-specific backend, persistence, or media authority.",
   }),
   Object.freeze({
+    id: "codex-work-13-cinematic-watercolor-v2-subject-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex-work-13 Cinematic Watercolor V2 canonical SUBJECT donor QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/subjects/cinematic-watercolor-v2", routeEntry: "app/v4/subjects/cinematic-watercolor-v2/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/subjects/cinematic-watercolor-v2/", "app/components/v4/V4PersonAlbums.tsx", "app/components/v4/v4-subject-albums.ts", "design-intake/codex-work-13-cinematic-watercolor-v2.json", "qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs", "tests/codex-work-13-cinematic-watercolor-v2-native-contract.test.mjs", ".github/workflows/codex-work-13-cinematic-watercolor-v2-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex-work-13-cinematic-watercolor-v2-browser-qa.yml",
+    exactAssetStatus: "SOURCE_BINARIES_FINGERPRINT_ONLY; CANONICAL_RUNTIME_REUSES_EXISTING_SUBJECT_PROJECTION", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Cinematic Watercolor V2 validates a bounded canonical /v4/subjects presentation donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no parallel SUBJECT application, backend, persistence, or source-binary product authority.",
+  }),
+  Object.freeze({
     id: "source-track-38-v1-discover-donor-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track38 V1 Voyager DISCOVER donor dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
     route: "/design-lab/source-tracks/38/v1/donor", routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
