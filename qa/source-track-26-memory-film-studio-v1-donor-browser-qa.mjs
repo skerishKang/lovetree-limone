@@ -33,34 +33,117 @@ async function openProof({ width, height, hasTouch = false, isMobile = false, re
   return { browser, context, page, errors, writes };
 }
 
-async function assertNoHorizontalOverflow(page, label) {
-  const diagnostic = await page.evaluate(() => {
-    const root = document.documentElement;
-    const viewportWidth = window.innerWidth;
-    const offenders = [...document.querySelectorAll("body *")]
-      .map((element) => {
-        const rect = element.getBoundingClientRect();
-        return {
-          tag: element.tagName.toLowerCase(),
-          className: typeof element.className === "string" ? element.className : "",
-          text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80),
-          left: Math.round(rect.left * 100) / 100,
-          right: Math.round(rect.right * 100) / 100,
-          width: Math.round(rect.width * 100) / 100,
-        };
-      })
-      .filter((entry) => entry.right > viewportWidth + 1)
-      .sort((a, b) => b.right - a.right)
-      .slice(0, 12);
-    return {
-      innerWidth: viewportWidth,
-      clientWidth: root.clientWidth,
-      scrollWidth: root.scrollWidth,
-      overflow: root.scrollWidth - root.clientWidth,
-      offenders,
+async function measureHorizontalGeometry(page, label) {
+  const diagnostic = await page.evaluate(async (phase) => {
+    const html = document.documentElement;
+    const body = document.body;
+    const root = document.querySelector("[data-track26-donor=film-session]");
+    const round = (value) => Math.round(value * 100) / 100;
+    const rect = (element) => {
+      if (!element) return null;
+      const r = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        tag: element.tagName.toLowerCase(),
+        className: typeof element.className === "string" ? element.className : "",
+        left: round(r.left), right: round(r.right), width: round(r.width),
+        scrollWidth: element.scrollWidth, clientWidth: element.clientWidth, offsetWidth: element.offsetWidth,
+        boxSizing: style.boxSizing, widthCss: style.width, minWidth: style.minWidth, maxWidth: style.maxWidth,
+        paddingLeft: style.paddingLeft, paddingRight: style.paddingRight,
+        borderLeft: style.borderLeftWidth, borderRight: style.borderRightWidth,
+        marginLeft: style.marginLeft, marginRight: style.marginRight,
+        overflowX: style.overflowX, display: style.display, position: style.position,
+        gap: style.gap, columnGap: style.columnGap, gridTemplateColumns: style.gridTemplateColumns,
+        transform: style.transform,
+      };
     };
-  });
-  assert.ok(diagnostic.overflow <= 1, `${label}: horizontal overflow ${diagnostic.overflow}px; offenders=${JSON.stringify(diagnostic.offenders)}`);
+    const viewportWidth = window.innerWidth;
+    const regularRightOffenders = [...document.querySelectorAll("body *")]
+      .map((element) => ({ element, data: rect(element) }))
+      .filter(({ data }) => data && data.right > viewportWidth + 0.01)
+      .sort((a, b) => b.data.right - a.data.right)
+      .slice(0, 12)
+      .map(({ element, data }) => ({ ...data, text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80) }));
+    const pseudo = [];
+    for (const element of document.querySelectorAll("body *")) {
+      for (const which of ["::before", "::after"]) {
+        const style = getComputedStyle(element, which);
+        if (style.content && style.content !== "none" && style.content !== "normal") {
+          pseudo.push({
+            host: element.tagName.toLowerCase(),
+            hostClass: typeof element.className === "string" ? element.className : "",
+            which,
+            content: style.content,
+            position: style.position,
+            left: style.left,
+            right: style.right,
+            width: style.width,
+            marginLeft: style.marginLeft,
+            marginRight: style.marginRight,
+            transform: style.transform,
+            boxSizing: style.boxSizing,
+          });
+        }
+      }
+    }
+    const layoutContainers = [...document.querySelectorAll("body *")]
+      .map((element) => ({ element, data: rect(element) }))
+      .filter(({ data }) => data && (data.display.includes("grid") || data.display.includes("flex") || data.scrollWidth > data.clientWidth))
+      .map(({ element, data }) => ({ ...data, text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 55) }))
+      .sort((a, b) => (b.scrollWidth - b.clientWidth) - (a.scrollWidth - a.clientWidth))
+      .slice(0, 16);
+    const widthWithOverride = async (cssText) => {
+      const style = document.createElement("style");
+      style.textContent = cssText;
+      document.head.appendChild(style);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const result = {
+        htmlScroll: html.scrollWidth,
+        htmlClient: html.clientWidth,
+        bodyScroll: body.scrollWidth,
+        bodyClient: body.clientWidth,
+        rootScroll: root?.scrollWidth ?? null,
+        rootClient: root?.clientWidth ?? null,
+      };
+      style.remove();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      return result;
+    };
+    const variants = {
+      noPseudo: await widthWithOverride("[data-track26-donor=film-session] *,[data-track26-donor=film-session] *::before,[data-track26-donor=film-session] *::after{content:none!important}"),
+      noTransform: await widthWithOverride("[data-track26-donor=film-session] *{transform:none!important}"),
+      noOutline: await widthWithOverride("[data-track26-donor=film-session] *{outline:none!important;outline-offset:0!important}"),
+      minWidthZero: await widthWithOverride("[data-track26-donor=film-session] *{min-width:0!important}"),
+      noHorizontalBorder: await widthWithOverride("[data-track26-donor=film-session] *{border-left-width:0!important;border-right-width:0!important}"),
+      noGap: await widthWithOverride("[data-track26-donor=film-session] *{column-gap:0!important}"),
+    };
+    return {
+      phase,
+      viewport: {
+        innerWidth: window.innerWidth,
+        outerWidth: window.outerWidth,
+        visualViewportWidth: window.visualViewport?.width ?? null,
+        devicePixelRatio: window.devicePixelRatio,
+        scrollX: window.scrollX,
+      },
+      html: rect(html),
+      body: rect(body),
+      root: rect(root),
+      active: rect(document.activeElement),
+      regularRightOffenders,
+      pseudo,
+      layoutContainers,
+      variants,
+    };
+  }, label);
+  console.log(`[track26-horizontal-geometry] ${JSON.stringify(diagnostic)}`);
+  return diagnostic;
+}
+
+async function assertNoHorizontalOverflow(page, label) {
+  const diagnostic = await measureHorizontalGeometry(page, label);
+  const overflow = diagnostic.html.scrollWidth - diagnostic.html.clientWidth;
+  assert.equal(overflow, 0, `${label}: horizontal overflow must be zero, got ${overflow}px; offenders=${JSON.stringify(diagnostic.regularRightOffenders)}`);
 }
 
 test("Track26 desktop proves film assembly controls, reorder/scrub sync, and no durable writes", async () => {
@@ -69,26 +152,21 @@ test("Track26 desktop proves film assembly controls, reorder/scrub sync, and no 
   try {
     assert.equal(await page.locator("[data-track26-donor=film-session]").count(), 1);
     assert.equal(await page.getByRole("button", { name: /첫 장면/ }).count(), 1);
-
     await page.getByRole("button", { name: /두 번째 장면/ }).click();
     await page.getByLabel("HEADLINE").fill("세션용 새 헤드라인");
     await page.getByLabel(/DURATION/).fill("9");
     assert.equal(await page.getByText("TIMELINE · 21s").count(), 1, "duration edit must update session timeline duration");
-
     await page.getByRole("button", { name: "9:16", exact: true }).click();
     assert.equal(await page.getByRole("button", { name: "9:16", exact: true }).getAttribute("aria-pressed"), "true");
     await page.getByRole("button", { name: "SLOW PUSH", exact: true }).click();
     assert.equal(await page.getByRole("button", { name: "SLOW PUSH", exact: true }).getAttribute("aria-pressed"), "true");
-
     const scrubber = page.getByLabel("필름 장면 위치");
     assert.equal(await scrubber.inputValue(), "1");
     await page.getByRole("button", { name: "장면 앞당기기" }).click();
     assert.equal(await page.getByRole("heading", { name: "세션용 새 헤드라인" }).count(), 1);
     assert.equal(await scrubber.inputValue(), "0", "reorder must keep timeline playhead aligned with selected scene");
-
     await scrubber.fill("2");
     assert.equal(await page.getByRole("heading", { name: "마지막 장면" }).count(), 1, "timeline scrub must select the matching reordered scene");
-
     await assertNoHorizontalOverflow(page, "desktop-1280");
     assert.deepEqual(writes, []);
     assert.equal(await page.evaluate(() => localStorage.getItem("lovetree-memory-film-studio-v1")), null);
@@ -114,9 +192,15 @@ test("Track26 320x720 mobile remains touch-operable without overflow", async () 
   const run = await openProof({ width: 320, height: 720, hasTouch: true, isMobile: true });
   const { browser, context, page, errors, writes } = run;
   try {
+    const initial = await measureHorizontalGeometry(page, "mobile-320x720-initial");
+    console.log(`[track26-320-phase] initialOverflow=${initial.html.scrollWidth - initial.html.clientWidth}`);
     await page.getByRole("button", { name: /마지막 장면/ }).tap();
+    const selected = await measureHorizontalGeometry(page, "mobile-320x720-after-select");
+    console.log(`[track26-320-phase] afterSelectOverflow=${selected.html.scrollWidth - selected.html.clientWidth}`);
     assert.equal(await page.getByRole("heading", { name: "마지막 장면" }).count(), 1);
     await page.getByRole("button", { name: "장면 앞당기기" }).tap();
+    const reordered = await measureHorizontalGeometry(page, "mobile-320x720-after-reorder");
+    console.log(`[track26-320-phase] afterReorderOverflow=${reordered.html.scrollWidth - reordered.html.clientWidth}`);
     assert.equal(await page.getByLabel("필름 장면 위치").inputValue(), "1", "320px touch reorder must keep playhead synchronized");
     await assertNoHorizontalOverflow(page, "mobile-320x720");
     assert.deepEqual(writes, []);
@@ -135,13 +219,11 @@ test("Track26 keyboard, native button activation, and reduced-motion contracts s
     assert.equal(await page.getByRole("heading", { name: "두 번째 장면" }).count(), 1);
     await page.keyboard.press("Shift+ArrowLeft");
     assert.equal(await scrubber.inputValue(), "0", "keyboard reorder must keep playhead synchronized");
-
     const moveBack = page.getByRole("button", { name: "장면 뒤로" });
     await moveBack.focus();
     await page.keyboard.press("Space");
     assert.equal(await scrubber.inputValue(), "1", "Space on a focused reorder button must preserve native button activation");
     assert.equal(await page.getByRole("button", { name: "PLAY" }).count(), 1, "native button Space must not be hijacked by the global transport shortcut");
-
     await studio.focus();
     await page.keyboard.press("Space");
     assert.equal(await page.getByRole("button", { name: "PAUSE" }).count(), 1);
