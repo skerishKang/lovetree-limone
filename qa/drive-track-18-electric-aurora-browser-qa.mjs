@@ -72,7 +72,9 @@ try {
   const response = await reducedPage.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
   assert.ok(response?.ok(), "reduced-motion: route must return 2xx");
   await reducedPage.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
-  assert.equal(await reducedPage.locator("main").getAttribute("data-reduced-motion"), "true", "reduced-motion: JS motion policy must be active");
+  const reducedRoot = reducedPage.locator('main[data-reduced-motion="true"]');
+  await reducedRoot.waitFor({ state: "visible" });
+  assert.equal(await reducedRoot.getAttribute("data-reduced-motion"), "true", "reduced-motion: JS motion policy must be active");
   const runningAnimations = await reducedPage.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length);
   assert.equal(runningAnimations, 0, "reduced-motion: ambient CSS animation must stop");
   const controls = reducedPage.locator('button[aria-pressed]');
