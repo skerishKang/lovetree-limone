@@ -23,9 +23,9 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
   ],
   runtimeDerivatives: [
     { path: "/v4/memory-biosphere/human-final.webp", sourceName: "human-final.webp", bytes: 7898, width: 420, height: 525, sha256: "0ec52256d45c3ec4ba4469cfb1dc7034245c7c1e5b6178c047bf14a2e4f57ce9" },
-    { path: "/v4/memory-biosphere/trace-final.webp", sourceName: "trace-final.webp", bytes: 9702, width: 420, height: 525, sha256: "57c285bf60fe794716a459c83ed2021b80fbbdd658300657e46cc6ea2271e630" },
+    { path: "/v4/memory-biosphere/trace-final.webp", sourceName: "trace-final.webp", bytes: 9700, width: 420, height: 525, sha256: "3a5fb1700eaa4e69b2312c3f8c2d3e4c24d8ff2d949a0ef4d3fcf8df26620c6a" },
     { path: "/v4/memory-biosphere/bloom-final.webp", sourceName: "bloom-final.webp", bytes: 12876, width: 420, height: 526, sha256: "413787c91cf34a7358c9dbac3af466c937ca10bafeb37c0cdf0d193e13d213a9" },
-    { path: "/v4/memory-biosphere/sphere-final-v2.webp", sourceName: "sphere-final-v2.png", bytes: 18952, width: 420, height: 525, sha256: "3521b0c2cf6157fe09506b382ccfd17f6af484bdff281701f9bd1a63f8f3f623" },
+    { path: "/v4/memory-biosphere/sphere-final-v2.webp", sourceName: "sphere-final-v2.png", bytes: 15065, width: 420, height: 525, sha256: "f91fe2dcafc2313652d84b8c39490298b5e3816296df0dbb7eac9da278bc6db4" },
   ],
   sourceInteraction: { stateOrder: ["human", "trace", "bloom", "sphere"], proximityModel: "head-centered-elliptical-distance", autoCycle: false, explicitStateButtons: true },
   canonicalBoundary: {
