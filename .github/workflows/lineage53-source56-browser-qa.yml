@@ -1,0 +1,66 @@
+name: Lineage53 Source56 vertical network browser QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/design-lab/lineages/53/53-v3-vertical-network-overview/**'
+      - 'lib/lineage-53-source56.ts'
+      - 'design-intake/source-56-lineage53-extension.json'
+      - 'tests/lineage-53-source56-extension.test.mjs'
+      - 'qa/lineage-53-source56-browser-qa.mjs'
+      - '.github/workflows/lineage53-source56-browser-qa.yml'
+      - 'reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source56-lineage53-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Focused Source56 contract
+        run: node --import tsx --test tests/lineage-53-source56-extension.test.mjs
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install chromium
+      - name: Native browser smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/source56-server.log 2>&1 &
+          server_pid=$!
+          cleanup() { kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/lineages/53/53-v3-vertical-network-overview" > /dev/null; then ready=1; break; fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then cat /tmp/source56-server.log; exit 1; fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then cat /tmp/source56-server.log; exit 1; fi
+          SOURCE56_QA_URL="http://127.0.0.1:3000" node qa/lineage-53-source56-browser-qa.mjs
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lineage53-source56-browser-evidence
+          path: qa/evidence/lineage-53-source56/*.png
+          if-no-files-found: warn
