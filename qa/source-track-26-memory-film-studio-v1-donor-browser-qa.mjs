@@ -50,10 +50,10 @@ test("Track26 desktop proves film assembly controls, reorder/scrub sync, and no 
     await page.getByLabel(/DURATION/).fill("9");
     assert.equal(await page.getByText("TIMELINE · 21s").count(), 1, "duration edit must update session timeline duration");
 
-    await page.getByRole("button", { name: "9:16" }).click();
-    assert.equal(await page.getByRole("button", { name: "9:16" }).getAttribute("aria-pressed"), "true");
-    await page.getByRole("button", { name: "SLOW PUSH" }).click();
-    assert.equal(await page.getByRole("button", { name: "SLOW PUSH" }).getAttribute("aria-pressed"), "true");
+    await page.getByRole("button", { name: "9:16", exact: true }).click();
+    assert.equal(await page.getByRole("button", { name: "9:16", exact: true }).getAttribute("aria-pressed"), "true");
+    await page.getByRole("button", { name: "SLOW PUSH", exact: true }).click();
+    assert.equal(await page.getByRole("button", { name: "SLOW PUSH", exact: true }).getAttribute("aria-pressed"), "true");
 
     const scrubber = page.getByLabel("필름 장면 위치");
     assert.equal(await scrubber.inputValue(), "1");
@@ -77,8 +77,8 @@ test("Track26 390x844 mobile touch and overflow contract remains operable", asyn
   try {
     await page.getByRole("button", { name: /두 번째 장면/ }).tap();
     await page.getByRole("button", { name: "PLAY" }).tap();
-    await page.getByRole("button", { name: "4:5" }).tap();
-    assert.equal(await page.getByRole("button", { name: "4:5" }).getAttribute("aria-pressed"), "true");
+    await page.getByRole("button", { name: "4:5", exact: true }).tap();
+    assert.equal(await page.getByRole("button", { name: "4:5", exact: true }).getAttribute("aria-pressed"), "true");
     await assertNoHorizontalOverflow(page, "mobile-390x844");
     assert.deepEqual(writes, []);
     assert.deepEqual(errors, []);
