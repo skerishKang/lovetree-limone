@@ -1,4 +1,4 @@
-import { eq, and, sql, isNull, isNotNull, gt } from "drizzle-orm";
+import { eq, and, sql, isNull, isNotNull } from "drizzle-orm";
 import type { ApiContext } from "./handler";
 import { json, errorResponse, matchRoute, parseBody } from "./handler";
 import {
@@ -12,6 +12,10 @@ import { getReadableTree, getReadableMemory } from "./access";
 import { validate, validationError, REACTION_TYPE_VALUES, type ReactionTypeValue } from "./validate";
 
 const VIEW_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+export function getTreeViewWindowStart(now: Date): Date {
+  return new Date(Math.floor(now.getTime() / VIEW_WINDOW_MS) * VIEW_WINDOW_MS);
+}
 
 const REACTION_RULES = {
   type: { kind: "string", required: true, trim: true, allowed: REACTION_TYPE_VALUES },
@@ -227,9 +231,10 @@ async function toggleTreeLike(ctx: ApiContext): Promise<Response> {
  * Records a tree view.
  *
  * Anonymous view mutation is intentionally disabled (501) because a
- * client-supplied anonymous actor key cannot be trusted. For authenticated
- * users the dedup window is computed server-side from the authenticated uid,
- * so retries within the window are counted once.
+ * client-supplied anonymous actor key cannot be trusted. Authenticated views
+ * use a deterministic server-side 24h bucket. The existing DB unique key is
+ * the final claim authority, and the counter changes only inside the same SQL
+ * statement that wins that claim.
  */
 async function recordTreeView(ctx: ApiContext): Promise<Response> {
   const user = await requireAuthUser(ctx);
@@ -240,45 +245,59 @@ async function recordTreeView(ctx: ApiContext): Promise<Response> {
   if (!tree) return errorResponse("Not found", 404);
 
   const now = new Date();
-  const windowStart = new Date(now.getTime() - VIEW_WINDOW_MS);
+  const windowStart = getTreeViewWindowStart(now);
+  const eventId = crypto.randomUUID();
 
-  const recent = await ctx.db
-    .select({ id: treeViewDedupEvents.id })
-    .from(treeViewDedupEvents)
-    .where(and(
-      eq(treeViewDedupEvents.treeId, treeId),
-      eq(treeViewDedupEvents.actorKind, "user"),
-      eq(treeViewDedupEvents.actorKey, user.uid),
-      gt(treeViewDedupEvents.createdAt, windowStart)
-    ));
+  const claimResult = await ctx.db.execute(sql`
+    with claimed as (
+      insert into tree_view_dedup_events (
+        id,
+        tree_id,
+        actor_key,
+        actor_kind,
+        counted_window_start,
+        source,
+        created_at
+      ) values (
+        ${eventId},
+        ${treeId},
+        ${user.uid},
+        'user',
+        ${windowStart},
+        'authenticated_tree_view',
+        ${now}
+      )
+      on conflict (tree_id, actor_kind, actor_key, counted_window_start) do nothing
+      returning id
+    ),
+    counted as (
+      insert into tree_social_counts (tree_id, like_count, view_count, updated_at)
+      select ${treeId}, 0, 1, ${now}
+      from claimed
+      on conflict (tree_id) do update set
+        view_count = tree_social_counts.view_count + 1,
+        updated_at = excluded.updated_at
+      returning tree_id
+    )
+    select
+      exists(select 1 from claimed) as claimed,
+      exists(select 1 from counted) as counted
+  `);
 
-  if (recent[0]) {
+  const resultRows = (
+    Array.isArray(claimResult)
+      ? claimResult
+      : (claimResult as unknown as { rows?: unknown[] }).rows ?? []
+  ) as Array<{ claimed?: boolean; counted?: boolean }>;
+  const claimed = resultRows[0]?.claimed === true;
+  const counted = resultRows[0]?.counted === true;
+
+  if (!claimed) {
     return json({ recorded: false, deduped: true });
   }
-
-  await ctx.db.batch([
-    ctx.db.insert(treeViewDedupEvents).values({
-      id: crypto.randomUUID(),
-      treeId,
-      actorKey: user.uid,
-      actorKind: "user",
-      countedWindowStart: windowStart,
-      source: "authenticated_tree_view",
-      createdAt: now,
-    }),
-    ctx.db.insert(treeSocialCounts).values({
-      treeId,
-      likeCount: 0,
-      viewCount: 1,
-      updatedAt: now,
-    }).onConflictDoNothing(),
-    ctx.db.update(treeSocialCounts)
-      .set({
-        viewCount: sql`view_count + 1`,
-        updatedAt: now,
-      })
-      .where(eq(treeSocialCounts.treeId, treeId)),
-  ]);
+  if (!counted) {
+    throw new Error("Tree view claim acquired without counter update");
+  }
 
   return json({ recorded: true }, 201);
 }
