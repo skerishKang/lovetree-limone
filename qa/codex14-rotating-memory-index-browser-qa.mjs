@@ -34,6 +34,12 @@ async function selectedTitle(page) {
   return page.locator("button[aria-current='true'] strong").first().textContent();
 }
 
+async function settlePaint(page) {
+  await page.evaluate(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  }));
+}
+
 async function swipeTouch(context, page, box) {
   const client = await context.newCDPSession(page);
   const fromX = Math.round(box.x + box.width / 2);
@@ -117,6 +123,7 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     assert.equal(await selectedTitle(page), "기억 2", `${name}: spatial drag must advance exactly one Moment without activating the card`);
 
     await page.mouse.wheel(0, 120);
+    await settlePaint(page);
     assert.equal(await selectedTitle(page), "기억 3", `${name}: wheel traversal must advance exactly one Moment`);
   }
 
