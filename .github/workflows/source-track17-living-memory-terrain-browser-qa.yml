@@ -1,0 +1,106 @@
+name: Source Track17 Living Memory Terrain MYTREE donor browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/tree-pages.css'
+      - 'app/trees/**/terrain/**'
+      - 'app/components/TreeViewShell.tsx'
+      - 'app/components/ViewSwitcher.tsx'
+      - 'lib/api*'
+      - 'lib/auth*'
+      - 'lib/firebase*'
+      - 'lib/tree-types.ts'
+      - 'lib/use-tree-moments.ts'
+      - 'lib/source-track-17/**'
+      - 'design-intake/source-track-17-living-memory-terrain-mytree-donor.json'
+      - 'tests/source-track-17-living-memory-terrain-contract.test.mjs'
+      - 'qa/source-track-17-living-memory-terrain-browser-qa.mjs'
+      - '.github/workflows/source-track17-living-memory-terrain-browser-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-track17-living-memory-terrain-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Track17 canonical-data contract
+        run: node --import tsx --test tests/source-track-17-living-memory-terrain-contract.test.mjs
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install chromium
+
+      - name: Run Track17 Living Memory Terrain browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/source-track17-terrain-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/trees/qa-track17/terrain" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/source-track17-terrain-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/source-track17-terrain-server.log
+            exit 1
+          fi
+
+          mkdir -p qa-artifacts/source-track17-living-memory-terrain
+          TRACK17_TERRAIN_QA_URL="http://127.0.0.1:3000" \
+            node qa/source-track-17-living-memory-terrain-browser-qa.mjs
+
+      - name: Upload Track17 terrain QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-track17-living-memory-terrain-qa-evidence
+          path: |
+            qa-artifacts/source-track17-living-memory-terrain/*.png
+            qa-artifacts/source-track17-living-memory-terrain/qa-results.json
+          if-no-files-found: warn

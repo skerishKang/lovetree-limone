@@ -243,6 +243,16 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track66 validates canonical /v4 journey behavior in its dedicated workflow; it is not a Design Lab/source-fidelity target.",
   }),
   Object.freeze({
+    id: "source-track-17-living-memory-terrain-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Drive Track17 Living Memory Terrain canonical MYTREE donor QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/trees/:treeId/terrain", routeEntry: "app/trees/[id]/terrain/page.tsx",
+    impactPrefixes: Object.freeze(["app/trees/[id]/terrain/", "lib/source-track-17/", "design-intake/source-track-17-living-memory-terrain-mytree-donor.json", "qa/source-track-17-living-memory-terrain-browser-qa.mjs", "tests/source-track-17-living-memory-terrain-contract.test.mjs", ".github/workflows/source-track17-living-memory-terrain-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/source-track-17-living-memory-terrain-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track17-living-memory-terrain-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_TREE_MOMENT_DATA", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track17 validates a canonical /trees/:treeId terrain donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and must not promote source demo return/Season semantics.",
+  }),
+  Object.freeze({
     id: "source-track-68-v3-3-2-compare-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track68 V3.3.2 bounded source compare — external equivalence HOLD", validationClass: "truthful-hold",
     route: "/design-lab/source-tracks/68/v3-3-2/compare",
