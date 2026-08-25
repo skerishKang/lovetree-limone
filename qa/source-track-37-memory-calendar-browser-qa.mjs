@@ -55,6 +55,7 @@ async function auditDesktop(browser) {
   const { context, page, pageErrors, consoleErrors } = await openPage(browser, { name, width: 1280, height: 800 });
   await assertNoOverflow(page, name);
 
+  await page.getByRole("button", { name: /2026\.08/ }).click();
   await page.getByRole("button", { name: /01/ }).last().click();
   await page.getByText("2026.08.01", { exact: true }).waitFor();
   assert.equal(await page.getByText("8월 첫 기억", { exact: true }).count(), 1, "stored date must expose first canonical Moment");
