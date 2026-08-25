@@ -102,7 +102,7 @@ A repository `TrackNN`, `LineageNN`, Codex number, Issue number or PR number is 
 | 54 | `54_러브트리_작업실_워크플로우` | TOOLS | `HOLD_NOT_PRODUCT_READY` | source authority still ambiguous in master ledger; no native route | #405 | NO | resolve source authority; MUST NOT alias to Lineage54 Petal Runner |
 | 55 | `55_자유연결_경로편집` | TOOLS / PATH | `CANONICAL_EXISTING_SURFACE` | selective capability reuse in current graph/editor family; no dedicated Source55 native app | #162/#344 | YES | keep source capability separate from Lineage55 Moonlit Blossom; dedicated native only if unique value remains |
 | 56 | `56_세로형_모먼트관계망_전체조망` | PATH | `IMPLEMENTATION_IN_PROGRESS` | bounded Lineage53 extension `/design-lab/lineages/53/53-v3-vertical-network-overview` | #163, PR #522 | NO | exact-head CI + independent visual review; no Lineage56 allocation |
-| 57 | `57_리빙글라스_모먼트카드` | MOMENT | `HOLD_NOT_PRODUCT_READY` | covered alternate source; no source-specific native route | #309 | NO | compare with canonical Moment/Track62 before adopting; MUST NOT alias Lineage57 Living Character |
+| 57 | `57_리빙글라스_모먼트카드` | MOMENT | `IMPLEMENTATION_IN_PROGRESS` | staging native `/design-lab/source-tracks/57/v1-3-native`; reusable Living Glass Moment visual-system candidate | #309, PR #525 | NO | exact-head CI + independent Source↔Native screenshot fidelity review; MUST NOT alias Lineage57 Living Character |
 | 58 | `58_리빙메모리_핀보드_시네마틱` | MYTREE | `IMPLEMENTATION_IN_PROGRESS` | staging native `/design-lab/source-tracks/58/v1-2-native` | #310, PR #523 | NO | exact-head CI + independent visual review; MUST NOT allocate Lineage58 VideoFigure identity |
 | 59 | `59_리빙메모리북` | ARCHIVE | `NATIVE_IMPLEMENTED` | Lineage59 V5 `/design-lab/lineages/59/v5` | #161, merged PR #237 lineage implementation | YES | canonical `/v4` adoption still separate; rights/large-asset holds remain as recorded |
 | 60 | `60_3D모먼트클러스터_심층탐색_55,56,59연결버전` | PATH | `NATIVE_IMPLEMENTED` | existing native `/design-lab/lineages/60/v1-2`; current handoff patch open | #160, merged PR #232; PR #521 | YES | PR #521 currentizes Source59 handoff; core native already on main |
@@ -130,9 +130,9 @@ The 74 numeric slots classify as:
 | `NATIVE_IMPLEMENTED` | 10 |
 | `PRODUCT_DONOR_INTEGRATED` | 6 |
 | `CANONICAL_EXISTING_SURFACE` | 20 |
-| `IMPLEMENTATION_IN_PROGRESS` | 7 |
+| `IMPLEMENTATION_IN_PROGRESS` | 8 |
 | `SOURCE_GATE_ONLY` | 1 |
-| `HOLD_NOT_PRODUCT_READY` | 18 |
+| `HOLD_NOT_PRODUCT_READY` | 17 |
 | `UNMAPPED_NEEDS_AUDIT` | 8 |
 | `SOURCE_ID_GAP` | 4 |
 | **TOTAL** | **74** |
@@ -146,6 +146,7 @@ The following source lanes are already active and are excluded from new CENTRAL 
 - Source60 — PR #521
 - Source56 — PR #522
 - Source58 — PR #523
+- Source57 — PR #525
 - Source01 — PR #505
 - Source14 — PR #507
 - Source26 — PR #500
@@ -164,7 +165,7 @@ The next implementation lane should come only from rows classified `HOLD_NOT_PRO
 
 Current best non-collision review candidates, in order:
 
-1. **Source71 — `71_감정헬릭스_입체탐색`**: already classified as an alternate visual donor pending native; likely PATH value without colliding with active Source56/58/60 workers.
+1. **Source71 — `71_감정헬릭스_입체탐색`**: already classified as an alternate visual donor pending native; likely PATH value without colliding with active Source56/57/58/60 workers.
 2. **Source72 — `72_에디토리얼모먼트아카이브_디스커버리월`**: high visual DISCOVER candidate, but must prove it adds value beyond `/v4/community`.
 3. **Source39 — `39_LP커버플로우_미디어갤러리`**: must first prove incremental value beyond native Source35 LP and existing Orbit archive.
 4. **Source21 — `21_기억의문_시네마틱대문`**: potentially strong HOME/ENTRY candidate, but current HOME already has Source36 donor, Source74 native and a separate Memory Biosphere lane; duplication risk is high.
