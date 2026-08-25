@@ -6,8 +6,8 @@
   --rose: #aa536d;
   --teal: #3e7f7c;
   --gold: #bf9362;
-  --serif: "Iowan Old Style", Baskerville, "Noto Serif KR", "Times New Roman", serif;
-  --sans: Pretendard, "Noto Sans KR", "Segoe UI", sans-serif;
+  --serif: "Gowun Batang", "Noto Serif KR", "Iowan Old Style", Baskerville, serif;
+  --sans: "Gowun Dodum", Pretendard, "Noto Sans KR", "Segoe UI", sans-serif;
   position: relative;
   overflow: clip;
   background: var(--paper);
