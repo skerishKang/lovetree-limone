@@ -22,6 +22,7 @@ on:
       - 'design-intake/source-track-14-auto-expanding-mindmap-v2-4-donor.json'
       - 'tests/source-track-14-auto-expanding-mindmap-contract.test.mjs'
       - 'qa/source-track-14-auto-expanding-mindmap-browser-qa.mjs'
+      - 'qa/source-track-14-compact-visual-fidelity-closure.mjs'
       - '.github/workflows/source-track14-auto-expanding-mindmap-browser-qa.yml'
       - 'drizzle.config.ts'
       - 'db/**'
@@ -100,9 +101,10 @@ jobs:
           fi
 
           mkdir -p /tmp/track14-visual-qa
-          V4_BASE_URL="http://127.0.0.1:3000" \
-            TRACK14_EVIDENCE_DIR="/tmp/track14-visual-qa" \
-            node qa/source-track-14-auto-expanding-mindmap-browser-qa.mjs
+          export V4_BASE_URL="http://127.0.0.1:3000"
+          export TRACK14_EVIDENCE_DIR="/tmp/track14-visual-qa"
+          node qa/source-track-14-auto-expanding-mindmap-browser-qa.mjs
+          node qa/source-track-14-compact-visual-fidelity-closure.mjs
 
       - name: Upload Track14 source-native visual evidence
         if: always()
