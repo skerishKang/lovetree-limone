@@ -37,10 +37,14 @@ async function openProof({ width, height, hasTouch = false, isMobile = false, re
 }
 
 async function measureHorizontalGeometry(page, label) {
-  const diagnostic = await page.evaluate(async (phase) => {
+  const diagnostic = await page.evaluate((phase) => {
     const html = document.documentElement;
     const body = document.body;
     const root = document.querySelector("[data-track26-donor=film-session]");
+    const studio = root?.querySelector("section[class*='studio']") ?? null;
+    const asides = root ? [...root.querySelectorAll("aside")] : [];
+    const inspector = asides.find((node) => node.textContent?.includes("SCENE INSPECTOR")) ?? null;
+    const storyboard = asides.find((node) => node.textContent?.includes("STORYBOARD")) ?? null;
     const round = (value) => Math.round(value * 100) / 100;
     const rect = (element) => {
       if (!element) return null;
@@ -51,63 +55,34 @@ async function measureHorizontalGeometry(page, label) {
         className: typeof element.className === "string" ? element.className : "",
         left: round(r.left), right: round(r.right), width: round(r.width),
         scrollWidth: element.scrollWidth, clientWidth: element.clientWidth, offsetWidth: element.offsetWidth,
-        boxSizing: style.boxSizing, widthCss: style.width, minWidth: style.minWidth, maxWidth: style.maxWidth,
+        boxSizing: style.boxSizing, widthCss: style.width, minWidth: style.minWidth,
         paddingLeft: style.paddingLeft, paddingRight: style.paddingRight,
         borderLeft: style.borderLeftWidth, borderRight: style.borderRightWidth,
-        marginLeft: style.marginLeft, marginRight: style.marginRight,
-        overflowX: style.overflowX, display: style.display, position: style.position,
-        gap: style.gap, columnGap: style.columnGap, gridTemplateColumns: style.gridTemplateColumns,
-        transform: style.transform,
+        overflowX: style.overflowX, display: style.display, gap: style.gap,
+        gridTemplateColumns: style.gridTemplateColumns, transform: style.transform,
       };
     };
-    const viewportWidth = document.documentElement.clientWidth;
-    const regularRightOffenders = [...document.querySelectorAll("body *")]
-      .map((element) => ({ element, data: rect(element) }))
-      .filter(({ element, data }) => {
-        if (!data || data.right <= viewportWidth + 0.01) return false;
+    const viewportWidth = html.clientWidth;
+    const rightOffenders = [...document.querySelectorAll("body *")]
+      .filter((element) => {
+        const r = element.getBoundingClientRect();
+        if (r.right <= viewportWidth + 0.01) return false;
         const scroller = element.closest("ol");
         return !(scroller && getComputedStyle(scroller).overflowX === "auto");
       })
-      .sort((a, b) => b.data.right - a.data.right)
       .slice(0, 12)
-      .map(({ element, data }) => ({ ...data, text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80) }));
+      .map((element) => ({ ...rect(element), text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80) }));
     const pseudo = [];
     for (const element of document.querySelectorAll("body *")) {
       for (const which of ["::before", "::after"]) {
         const style = getComputedStyle(element, which);
-        if (style.content && style.content !== "none" && style.content !== "normal") {
-          pseudo.push({ host: element.tagName.toLowerCase(), hostClass: typeof element.className === "string" ? element.className : "", which, content: style.content, position: style.position, left: style.left, right: style.right, width: style.width, marginLeft: style.marginLeft, marginRight: style.marginRight, transform: style.transform, boxSizing: style.boxSizing });
-        }
+        if (style.content && style.content !== "none" && style.content !== "normal") pseudo.push({ host: element.tagName.toLowerCase(), which, content: style.content, width: style.width, transform: style.transform });
       }
     }
-    const layoutContainers = [...document.querySelectorAll("body *")]
-      .map((element) => ({ element, data: rect(element) }))
-      .filter(({ data }) => data && (data.display.includes("grid") || data.display.includes("flex") || data.scrollWidth > data.clientWidth))
-      .map(({ element, data }) => ({ ...data, text: (element.textContent || "").replace(/\s+/g, " ").trim().slice(0, 55) }))
-      .sort((a, b) => (b.scrollWidth - b.clientWidth) - (a.scrollWidth - a.clientWidth))
-      .slice(0, 16);
-    const widthWithOverride = async (cssText) => {
-      const style = document.createElement("style");
-      style.textContent = cssText;
-      document.head.appendChild(style);
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      const result = { htmlScroll: html.scrollWidth, htmlClient: html.clientWidth, bodyScroll: body.scrollWidth, bodyClient: body.clientWidth, rootScroll: root?.scrollWidth ?? null, rootClient: root?.clientWidth ?? null };
-      style.remove();
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      return result;
-    };
-    const variants = {
-      noPseudo: await widthWithOverride("[data-track26-donor=film-session] *,[data-track26-donor=film-session] *::before,[data-track26-donor=film-session] *::after{content:none!important}"),
-      noTransform: await widthWithOverride("[data-track26-donor=film-session] *{transform:none!important}"),
-      noOutline: await widthWithOverride("[data-track26-donor=film-session] *{outline:none!important;outline-offset:0!important}"),
-      minWidthZero: await widthWithOverride("[data-track26-donor=film-session] *{min-width:0!important}"),
-      noHorizontalBorder: await widthWithOverride("[data-track26-donor=film-session] *{border-left-width:0!important;border-right-width:0!important}"),
-      noGap: await widthWithOverride("[data-track26-donor=film-session] *{column-gap:0!important}"),
-    };
     return {
       phase,
-      viewport: { innerWidth: window.innerWidth, outerWidth: window.outerWidth, visualViewportWidth: window.visualViewport?.width ?? null, devicePixelRatio: window.devicePixelRatio, scrollX: window.scrollX },
-      html: rect(html), body: rect(body), root: rect(root), active: rect(document.activeElement), regularRightOffenders, pseudo, layoutContainers, variants,
+      viewport: { innerWidth: window.innerWidth, outerWidth: window.outerWidth, visualViewportWidth: window.visualViewport?.width ?? null, devicePixelRatio: window.devicePixelRatio },
+      html: rect(html), body: rect(body), root: rect(root), studio: rect(studio), storyboard: rect(storyboard), inspector: rect(inspector), rightOffenders, pseudo,
     };
   }, label);
   console.log(`[track26-horizontal-geometry] ${JSON.stringify(diagnostic)}`);
@@ -116,32 +91,48 @@ async function measureHorizontalGeometry(page, label) {
 
 async function assertNoHorizontalOverflow(page, label) {
   const diagnostic = await measureHorizontalGeometry(page, label);
-  const overflow = diagnostic.html.scrollWidth - diagnostic.html.clientWidth;
-  assert.equal(overflow, 0, `${label}: horizontal overflow must be zero, got ${overflow}px; offenders=${JSON.stringify(diagnostic.regularRightOffenders)}`);
+  const htmlOverflow = diagnostic.html.scrollWidth - diagnostic.html.clientWidth;
+  const bodyOverflow = diagnostic.body.scrollWidth - diagnostic.body.clientWidth;
+  const rootOverflow = diagnostic.root.scrollWidth - diagnostic.root.clientWidth;
+  assert.equal(htmlOverflow, 0, `${label}: documentElement overflow must be zero, got ${htmlOverflow}px`);
+  assert.equal(bodyOverflow, 0, `${label}: body overflow must be zero, got ${bodyOverflow}px`);
+  assert.equal(rootOverflow, 0, `${label}: Track26 root overflow must be zero, got ${rootOverflow}px`);
+  return diagnostic;
 }
 
 async function openSourceStudio(browser, width, height) {
   const sourceHtml = await readFile(sourcePath, "utf8");
   const context = await browser.newContext({ viewport: { width, height } });
+  await context.addInitScript(() => {
+    window.requestAnimationFrame = () => 0;
+    window.cancelAnimationFrame = () => {};
+  });
   const page = await context.newPage();
   await page.setContent(sourceHtml, { waitUntil: "load" });
-  await page.evaluate(() => window.FilmStudioAPI.enterStudio());
-  await page.locator("#studioShell:not(.hidden)").waitFor();
-  await page.locator("#storyRail .scene-item").first().waitFor();
-  await page.evaluate(() => window.FilmStudioAPI.selectStudio(1));
+  await page.evaluate(() => {
+    window.FilmStudioAPI.enterStudio();
+    window.FilmStudioAPI.selectStudio(1);
+    window.FilmStudioAPI.renderCapture();
+  });
+  await page.locator("#studioShell:not(.hidden)").waitFor({ timeout: 5_000 });
+  await page.locator("#storyRail .scene-item").first().waitFor({ timeout: 5_000 });
   return { context, page };
 }
 
-async function captureAnchorBuffers(sourcePage, nativePage, width) {
-  const sourceRail = await sourcePage.locator("#storyRail").screenshot();
-  const sourceTimeline = await sourcePage.locator(".timeline").screenshot();
-  if (width <= 760) await sourcePage.locator("#inspectToggle").click();
-  const sourceInspector = await sourcePage.locator("#inspector").screenshot();
-  if (width <= 760) await sourcePage.locator("#inspectToggle").click();
+async function shot(locator) {
+  return locator.screenshot({ animations: "disabled", timeout: 5_000 });
+}
 
-  const nativeRail = await nativePage.locator("aside").filter({ hasText: "STORYBOARD" }).first().screenshot();
-  const nativeTimeline = await nativePage.getByLabel("필름 장면 위치").locator("..").screenshot();
-  const nativeInspector = await nativePage.locator("aside").filter({ hasText: "SCENE INSPECTOR" }).first().screenshot();
+async function captureAnchorBuffers(sourcePage, nativePage, width) {
+  const sourceRail = await shot(sourcePage.locator("#storyRail"));
+  const sourceTimeline = await shot(sourcePage.locator(".timeline"));
+  if (width <= 760) await sourcePage.locator("#inspectToggle").click({ timeout: 5_000 });
+  const sourceInspector = await shot(sourcePage.locator("#inspector"));
+  if (width <= 760) await sourcePage.locator("#inspectToggle").click({ timeout: 5_000 });
+
+  const nativeRail = await shot(nativePage.locator("aside").filter({ hasText: "STORYBOARD" }).first());
+  const nativeTimeline = await shot(nativePage.getByLabel("필름 장면 위치").locator(".."));
+  const nativeInspector = await shot(nativePage.locator("aside").filter({ hasText: "SCENE INSPECTOR" }).first());
   return { sourceRail, sourceTimeline, sourceInspector, nativeRail, nativeTimeline, nativeInspector };
 }
 
@@ -158,7 +149,7 @@ async function buildComparisonBoard(browser, name, width, height, sourceViewport
   ];
   const rowsHtml = rows.map(([label, source, native]) => `<section><h2>${label}</h2><div class="pair"><figure><figcaption>SOURCE</figcaption><img src="${imageData(source)}"></figure><figure><figcaption>NATIVE</figcaption><img src="${imageData(native)}"></figure></div></section>`).join("");
   await board.setContent(`<!doctype html><style>html{background:#080808;color:#eee;font-family:Arial,sans-serif}body{margin:0;padding:28px}h1{margin:0 0 8px;font-size:26px}p{margin:0 0 24px;color:#aaa}h2{font-size:13px;letter-spacing:.16em;color:#d9ad80;margin:26px 0 10px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}figure{margin:0;background:#111;border:1px solid #333;padding:10px;min-width:0}figcaption{font-size:10px;letter-spacing:.16em;color:#aaa;margin-bottom:8px}img{display:block;width:100%;height:auto;object-fit:contain;background:#000}.viewport img{max-height:520px;object-fit:contain}</style><body><h1>Track26 Source ↔ Native Visual Fidelity</h1><p>${name} · ${width}×${height} · scene rail / timeline / inspector-editor anchors</p><section><h2>FULL VIEWPORT</h2><div class="pair viewport"><figure><figcaption>SOURCE</figcaption><img src="${imageData(sourceViewport)}"></figure><figure><figcaption>NATIVE</figcaption><img src="${imageData(nativeViewport)}"></figure></div></section>${rowsHtml}</body>`);
-  await board.screenshot({ path: `${artifactDir}/${name}-side-by-side.png`, fullPage: true });
+  await board.screenshot({ path: `${artifactDir}/${name}-side-by-side.png`, fullPage: true, animations: "disabled" });
   await board.close();
 }
 
@@ -176,8 +167,8 @@ async function captureVisualEvidence(width, height, name) {
   await assertNoHorizontalOverflow(nativePage, `visual-${name}`);
 
   await mkdir(artifactDir, { recursive: true });
-  const sourceViewport = await source.page.screenshot({ path: `${artifactDir}/${name}-source.png` });
-  const nativeViewport = await nativePage.screenshot({ path: `${artifactDir}/${name}-native.png` });
+  const sourceViewport = await source.page.screenshot({ path: `${artifactDir}/${name}-source.png`, animations: "disabled" });
+  const nativeViewport = await nativePage.screenshot({ path: `${artifactDir}/${name}-native.png`, animations: "disabled" });
   const anchors = await captureAnchorBuffers(source.page, nativePage, width);
   await buildComparisonBoard(browser, name, width, height, sourceViewport, nativeViewport, anchors);
 
@@ -232,17 +223,14 @@ test("Track26 320x720 mobile remains touch-operable with exact zero overflow", a
   const run = await openProof({ width: 320, height: 720, hasTouch: true, isMobile: true });
   const { browser, context, page, errors, writes } = run;
   try {
-    const initial = await measureHorizontalGeometry(page, "mobile-320x720-initial");
-    assert.equal(initial.html.scrollWidth - initial.html.clientWidth, 0, "320px initial render must have zero root overflow");
+    const initial = await assertNoHorizontalOverflow(page, "mobile-320x720-initial");
+    assert.equal(initial.inspector.scrollWidth, initial.inspector.clientWidth, "320px inspector grid must not exceed its content box");
     await page.getByRole("button", { name: /마지막 장면/ }).tap();
-    const selected = await measureHorizontalGeometry(page, "mobile-320x720-after-select");
-    assert.equal(selected.html.scrollWidth - selected.html.clientWidth, 0, "320px selection must preserve zero root overflow");
+    await assertNoHorizontalOverflow(page, "mobile-320x720-after-select");
     assert.equal(await page.getByRole("heading", { name: "마지막 장면" }).count(), 1);
     await page.getByRole("button", { name: "장면 앞당기기" }).tap();
-    const reordered = await measureHorizontalGeometry(page, "mobile-320x720-after-reorder");
-    assert.equal(reordered.html.scrollWidth - reordered.html.clientWidth, 0, "320px reorder must preserve zero root overflow");
+    await assertNoHorizontalOverflow(page, "mobile-320x720-after-reorder");
     assert.equal(await page.getByLabel("필름 장면 위치").inputValue(), "1", "320px touch reorder must keep playhead synchronized");
-    await assertNoHorizontalOverflow(page, "mobile-320x720");
     assert.deepEqual(writes, []);
     assert.deepEqual(errors, []);
   } finally { await context.close(); await browser.close(); }
