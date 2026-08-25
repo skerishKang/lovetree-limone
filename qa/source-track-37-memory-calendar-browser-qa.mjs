@@ -106,6 +106,7 @@ async function auditReducedMotion(browser) {
   const { context, page, pageErrors, consoleErrors } = await openPage(browser, { name, width: 390, height: 844, mobile: true }, "reduce");
   await page.getByRole("button", { name: /2026\.08/ }).click();
   await page.getByRole("button", { name: /01/ }).last().click();
+  await page.getByText("2026.08.01", { exact: true }).waitFor();
   await page.getByRole("button", { name: "다음 저장일 →" }).click();
   await page.getByText("2026.08.10", { exact: true }).waitFor();
   const animationName = await page.getByTestId("track37-active-pad").evaluate((node) => getComputedStyle(node).animationName);
