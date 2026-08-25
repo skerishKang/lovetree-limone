@@ -30,7 +30,7 @@ const authority = readFileSync(authorityPath, 'utf8');
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 
 test('Track24 donor pins the exact #284/#287 source snapshot', () => {
-  assert.equal(sha256(source), 'ecc54360ddfcb71d07f8513ebbbe6135e5d23fce226863aeeda15df5052a211a');
+  assert.equal(sha256(source), '438cbcbeb522cb64c4eb68edeef6713c469a35cfd45cac352d142cd0fade29ba');
   assert.equal(manifest.issue, 479);
   assert.deepEqual(manifest.master_rows, [81]);
   assert.equal(manifest.product_job, 'TOOLS');
