@@ -1,0 +1,98 @@
+name: Codex13 Liquid Glass video wall native browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/v4/trees/**/archive/video-wall/**'
+      - 'lib/source-codex-13/**'
+      - 'lib/moment-model.ts'
+      - 'lib/use-tree-moments.ts'
+      - 'tests/codex13-liquid-glass-video-wall-contract.test.mjs'
+      - 'qa/codex13-liquid-glass-video-wall-browser-qa.mjs'
+      - '.github/workflows/codex13-liquid-glass-video-wall-browser-qa.yml'
+      - 'drizzle.config.ts'
+      - 'db/**'
+      - 'drizzle/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codex13-liquid-glass-video-wall:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Codex13 focused contracts
+        run: node --import tsx --test tests/codex13-liquid-glass-video-wall-contract.test.mjs
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Database schema check
+        run: npm run db:check
+      - name: Build
+        run: npm run build
+      - name: Prepare Playwright runtime
+        run: npx playwright install --with-deps chromium
+      - name: Run Codex13 Liquid Glass browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/codex13-browser-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/v4" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/codex13-browser-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/codex13-browser-qa-server.log
+            exit 1
+          fi
+          mkdir -p /tmp/codex13-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            CODEX13_SCREENSHOT_DIR="/tmp/codex13-browser-qa" \
+            node qa/codex13-liquid-glass-video-wall-browser-qa.mjs
+      - name: Upload Codex13 browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex13-liquid-glass-video-wall-browser-evidence
+          path: /tmp/codex13-browser-qa/*.png
+          if-no-files-found: warn
