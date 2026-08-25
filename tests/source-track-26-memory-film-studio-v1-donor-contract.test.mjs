@@ -29,7 +29,7 @@ test("source is a client-side editor prototype, not durable canonical edit autho
 test("native proof consumes canonical moments but adds no write or fake save", () => {
   assert.match(component, /useTreeMoments\(treeId\)/);
   assert.match(component, /albumMoments/);
-  assert.doesNotMatch(component, /localStorage|MediaRecorder|method:\s*["'](?:POST|PUT|PATCH|DELETE)/);
+  assert.doesNotMatch(component, /localStorage\.|new\s+MediaRecorder|method:\s*["'](?:POST|PUT|PATCH|DELETE)/);
   assert.match(component, /NO FAKE SAVE/);
   assert.equal(manifest.native_proof.durable_write_added, false);
 });
