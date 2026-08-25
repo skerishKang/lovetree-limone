@@ -97,6 +97,42 @@
 .state{min-height:100svh;display:grid;place-content:center;gap:12px;text-align:center;padding:28px;background:#f7f1e8;color:#4e3f3b}.state h1,.state p{margin:0}.state a{color:#98505e}
 
 @media(max-width:1050px){.topbar{padding:16px 18px;height:76px}.brand{min-width:auto}.brandCopy small{display:none}.toolButton{padding:0 10px}.stageShell{inset:70px 12px 68px;border-radius:24px}.introCopy{left:28px;bottom:26px}.progressRail{right:28px;bottom:26px}}
-@media(max-width:700px){.app{min-height:100svh}.topbar{height:64px;padding:11px 12px;gap:8px}.brandMark{width:34px;height:34px}.brandCopy strong{font-size:15px}.brandCopy small{display:none}.toolbar{gap:3px}.toolButton{height:34px;padding:0 8px;font-size:9px}.iconButton{height:34px;min-width:30px;padding:0 6px}.toolButton:not(.primary):first-child{font-size:0}.toolButton:not(.primary):first-child::after{content:"폼";font-size:9px}.stageShell{inset:64px 8px 82px;border-radius:22px}.modeCaption{top:17px}.modeCaption strong{font-size:14px}.introCopy{left:21px;right:21px;bottom:25px;max-width:none}.introCopy h1{font-size:26px;margin-top:6px}.introCopy p{display:none}.progressRail{left:21px;right:21px;bottom:12px;width:auto}.selectionNote{left:17px;right:17px;top:58px;max-width:none}.drawer{width:100vw;padding:20px}.layoutCards>button{grid-template-columns:96px 1fr}.layoutPreview{height:62px}}
-@media(max-width:350px){.brandCopy strong{font-size:13px}.toolButton{padding:0 6px}.iconButton{min-width:27px}.stageShell{left:6px;right:6px}.introCopy h1{font-size:23px}}
+@media(max-width:700px){
+  .app{min-height:100svh}
+  .topbar{height:64px;padding:8px 10px;gap:6px}
+  .brand{min-width:0;max-width:165px;flex:1 1 auto;gap:8px}
+  .brandMark{width:30px;height:30px;flex:0 0 auto}
+  .brandCopy{min-width:0}
+  .brandCopy strong{font-size:14px;line-height:1.12;letter-spacing:.02em}
+  .brandCopy small{display:none}
+  .toolbar{gap:2px;padding:3px;flex:0 0 auto}
+  .toolButton,.iconButton{height:32px}
+  .toolButton{padding:0 7px;font-size:9px}
+  .iconButton{min-width:30px;padding:0 5px}
+  .toolButton:not(.primary):first-child{width:34px;padding:0;font-size:0}
+  .toolButton:not(.primary):first-child::after{content:"▦";font-size:13px}
+  .primary{width:34px;padding:0;font-size:0}
+  .primary::after{content:"↻";font-size:15px;line-height:1}
+  .toolButton:last-child{width:34px;padding:0;font-size:8px}
+  .stageShell{inset:64px 8px 82px;border-radius:22px}
+  .stageShell>div[aria-hidden="true"]:not(.modeCaption){display:none}
+  .modeCaption{top:17px}
+  .modeCaption strong{font-size:14px}
+  .introCopy{left:21px;right:21px;bottom:25px;max-width:none}
+  .introCopy h1{font-size:26px;margin-top:6px}
+  .introCopy p{display:none}
+  .progressRail{left:21px;right:21px;bottom:12px;width:auto}
+  .selectionNote{left:17px;right:17px;top:58px;max-width:none}
+  .drawer{width:100vw;padding:20px}
+  .layoutCards>button{grid-template-columns:96px 1fr}
+  .layoutPreview{height:62px}
+}
+@media(max-width:350px){
+  .brand{max-width:150px}
+  .brandCopy strong{font-size:13px}
+  .toolbar .toolButton:first-child,.toolbar .toolButton:last-child{display:none}
+  .iconButton{min-width:28px}
+  .stageShell{left:6px;right:6px}
+  .introCopy h1{font-size:23px}
+}
 @media(prefers-reduced-motion:reduce){.app::after,.rootAura,.petal{animation:none!important}.edge,.node,.progressRail>i>b,.drawer,.scrim{transition-duration:.01ms!important}}
