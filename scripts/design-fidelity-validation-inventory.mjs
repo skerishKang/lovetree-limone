@@ -229,6 +229,30 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze([]),
   }),
+  Object.freeze({
+    id: "drive-track-18-electric-aurora-donor",
+    label: "Drive Track18 Electric Aurora MYTREE visual donor",
+    route: "/design-lab/drive-track-18-electric-aurora",
+    routeEntry: "app/design-lab/drive-track-18-electric-aurora/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/drive-track-18-electric-aurora/",
+      "lib/drive-track-18-electric-aurora/",
+      "reference/source-tracks-snapshot/18_메모리코어_전기오로라/",
+      "qa/drive-track-18-electric-aurora-browser-qa.mjs",
+      "tests/drive-track-18-electric-aurora-contract.test.mjs",
+      ".github/workflows/drive-track-18-electric-aurora-browser-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; DRIVE_TRACK18_NAMESPACE_SEPARATE_FROM_SOURCE_TRACK18; CANONICAL_MOMENT_PRESENTATION_ONLY",
+    browserGates: Object.freeze(["qa/drive-track-18-electric-aurora-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/drive-track-18-electric-aurora-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/drive-track-18-electric-aurora-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze([]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([

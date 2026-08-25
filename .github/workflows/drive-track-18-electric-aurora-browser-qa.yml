@@ -1,0 +1,104 @@
+name: Drive Track18 Electric Aurora donor browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/design-lab/drive-track-18-electric-aurora/**'
+      - 'lib/drive-track-18-electric-aurora/**'
+      - 'lib/moment-model.ts'
+      - 'reference/source-tracks-snapshot/18_메모리코어_전기오로라/**'
+      - 'tests/drive-track-18-electric-aurora-contract.test.mjs'
+      - 'qa/drive-track-18-electric-aurora-browser-qa.mjs'
+      - '.github/workflows/drive-track-18-electric-aurora-browser-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  electric-aurora-donor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Electric Aurora focused contracts
+        run: node --import tsx --test tests/drive-track-18-electric-aurora-contract.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install chromium
+
+      - name: Run Electric Aurora browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/electric-aurora-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/drive-track-18-electric-aurora" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/electric-aurora-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/electric-aurora-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/electric-aurora-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            ELECTRIC_AURORA_SCREENSHOT_DIR="/tmp/electric-aurora-browser-qa" \
+            node qa/drive-track-18-electric-aurora-browser-qa.mjs
+
+      - name: Upload Electric Aurora browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drive-track-18-electric-aurora-browser-evidence
+          path: /tmp/electric-aurora-browser-qa/*.png
+          if-no-files-found: warn
