@@ -36,26 +36,32 @@ const FAMILY_LABELS = [
   "06 다음 계절",
 ] as const;
 
+const FAMILY_SUBTITLES = [
+  "ORIGIN · 설렘",
+  "PATH · 몰입",
+  "DISCOVERY · 호기심",
+  "PEOPLE · 애정",
+  "REVISIT · 그리움",
+  "SEASON · 기대",
+] as const;
+
 const FAMILY_COLORS = ["#e45d8d", "#8b69e8", "#2ca4c0", "#d49231", "#3aa27c", "#547cd0"] as const;
 
-const TITLES = [
-  ["처음 눈에 들어온 무대", "밤새 다시 본 직캠", "처음 저장한 인터뷰", "표정이 남은 엔딩", "친구에게 보낸 첫 링크"],
-  ["무대와 퍼포먼스", "연습실 짧은 영상", "라이브에서 발견한 습관", "콘서트 전날 메모", "의상 디테일 기록"],
-  ["콘텐츠 탐색의 시작", "팬이 올린 짧은 클립", "댓글에서 찾은 정보", "오래 남은 한 문장", "예전 라디오 다시 듣기"],
-  ["사람과 관계를 보기 시작", "다른 멤버와의 장면", "팬과 나눈 짧은 대화", "함께 웃던 순간", "관계 메모"],
-  ["다시 찾은 첫 영상", "예전 저장을 다시 열다", "그날의 감정 메모", "다시 이어진 플레이리스트", "친구와 다시 본 장면"],
-  ["다음 계절의 첫 저장", "다음 컴백 티저", "새로운 무대 예고", "다음에 보고 싶은 것", "새 계절 메모"],
-] as const;
+/** Source56 V1.2 visual hierarchy: number of independent primary routes in each family. */
+export const SOURCE56_PRIMARY_PATH_COUNTS = [3, 4, 4, 3, 3, 4] as const;
 
-const NOTES = [
-  "처음의 감정이 다음 장면을 찾게 만들었다.",
-  "완성된 무대 이전의 과정과 움직임이 궁금해졌다.",
-  "한 링크가 다른 콘텐츠와 맥락으로 탐색을 넓혔다.",
-  "혼자 있는 모습에서 관계 속 모습으로 관심이 확장됐다.",
-  "시간이 지난 뒤 같은 기억을 다시 보며 감정의 변화를 느꼈다.",
-  "기억의 끝이 아니라 다음 계절을 기다리는 시작으로 남았다.",
+const EMOTIONS = ["설렘", "몰입", "호기심", "애정", "그리움", "기대"] as const;
+const SOURCE_TYPES: readonly Source56Moment["sourceType"][] = ["video", "photo", "link", "memo"];
+const FAMILY_SEEDS = [
+  "처음 눈에 들어온 장면",
+  "무대의 움직임을 따라간 순간",
+  "콘텐츠를 더 찾아보기 시작한 순간",
+  "사람과 관계 속 모습을 보기 시작한 순간",
+  "예전 기억을 다시 연 순간",
+  "다음 계절을 기다리기 시작한 순간",
 ] as const;
-
+const PRIMARY_WORDS = ["표정", "움직임", "목소리", "장면"] as const;
+const SECONDARY_WORDS = ["다른 시점", "짧은 기록", "연결된 단서", "다시 본 기억"] as const;
 const WHY = [
   "표정이 계속 생각나서 같은 흐름의 다음 Moment를 열었다.",
   "퍼포먼스의 작은 디테일을 더 확인하고 싶어 다음 장면으로 이어졌다.",
@@ -64,9 +70,6 @@ const WHY = [
   "예전과 지금의 감정 차이를 확인하려 오래된 저장을 다시 열었다.",
   "새로운 활동의 단서가 앞으로의 Moment를 기다리게 했다.",
 ] as const;
-
-const SOURCE_TYPES: readonly Source56Moment["sourceType"][] = ["video", "photo", "link", "memo", "video"];
-const EMOTIONS = ["설렘", "몰입", "호기심", "애정", "그리움", "기대"] as const;
 
 const firstMoment: Source56Moment = {
   id: "m-first",
@@ -78,59 +81,134 @@ const firstMoment: Source56Moment = {
   first: true,
 };
 
-const familyMoments: Source56Moment[] = TITLES.flatMap((titles, familyIndex) =>
-  titles.map((title, itemIndex) => ({
-    id: `m${String(familyIndex + 1).padStart(2, "0")}-${itemIndex + 1}`,
+function familyPrefix(familyIndex: number) {
+  return `m${String(familyIndex + 1).padStart(2, "0")}`;
+}
+
+function makeMoment(
+  id: string,
+  title: string,
+  familyIndex: number,
+  ordinal: number,
+): Source56Moment {
+  const month = 5 + Math.floor(familyIndex / 2);
+  const day = 3 + ((familyIndex * 7 + ordinal * 3) % 24);
+  return {
+    id,
     title,
-    date: `2026.${String(5 + Math.floor(familyIndex / 2)).padStart(2, "0")}.${String(12 + familyIndex * 3 + itemIndex).padStart(2, "0")}`,
+    date: `2026.${String(month).padStart(2, "0")}.${String(day).padStart(2, "0")}`,
     emotion: EMOTIONS[familyIndex],
-    note: NOTES[familyIndex],
-    sourceType: SOURCE_TYPES[itemIndex],
-  })),
-);
+    note: `${FAMILY_LABELS[familyIndex]} 안에서 ${PRIMARY_WORDS[ordinal % PRIMARY_WORDS.length]}의 맥락이 다음 기억으로 이어졌다.`,
+    sourceType: SOURCE_TYPES[ordinal % SOURCE_TYPES.length],
+  };
+}
 
-/** Canonical fixture authority for this Design Lab proof: Moment only. */
-export const SOURCE56_MOMENTS: readonly Source56Moment[] = [firstMoment, ...familyMoments];
-
+/**
+ * Design-Lab fixture authority remains Moment + Connection only. The denser
+ * fixture mirrors Source56's visual/path topology without persisting PathFamily,
+ * Hub, Cluster, or path records.
+ */
+const moments: Source56Moment[] = [firstMoment];
 const connections: Source56Connection[] = [];
-for (let familyIndex = 0; familyIndex < TITLES.length; familyIndex += 1) {
-  const prefix = `m${String(familyIndex + 1).padStart(2, "0")}`;
+
+for (let familyIndex = 0; familyIndex < SOURCE56_PRIMARY_PATH_COUNTS.length; familyIndex += 1) {
+  const prefix = familyPrefix(familyIndex);
+  const entryId = `${prefix}-entry`;
+  moments.push(makeMoment(entryId, FAMILY_SEEDS[familyIndex], familyIndex, 0));
   connections.push({
     id: `c-first-${familyIndex + 1}`,
     fromMomentId: firstMoment.id,
-    toMomentId: `${prefix}-1`,
+    toMomentId: entryId,
     whyNext: WHY[familyIndex],
   });
-  connections.push({ id: `c-${familyIndex + 1}-1`, fromMomentId: `${prefix}-1`, toMomentId: `${prefix}-2`, whyNext: WHY[familyIndex] });
-  connections.push({ id: `c-${familyIndex + 1}-2`, fromMomentId: `${prefix}-2`, toMomentId: `${prefix}-3`, whyNext: WHY[familyIndex] });
-  connections.push({ id: `c-${familyIndex + 1}-3`, fromMomentId: `${prefix}-3`, toMomentId: `${prefix}-4`, whyNext: WHY[familyIndex] });
-  connections.push({ id: `c-${familyIndex + 1}-s`, fromMomentId: `${prefix}-2`, toMomentId: `${prefix}-5`, whyNext: `주경로에서 갈라진 보조 Connection · ${WHY[familyIndex]}` });
+
+  const primaryCount = SOURCE56_PRIMARY_PATH_COUNTS[familyIndex];
+  for (let pathIndex = 0; pathIndex < primaryCount; pathIndex += 1) {
+    const letter = String.fromCharCode(65 + pathIndex);
+    const primaryIds: string[] = [];
+    for (let step = 0; step < 4; step += 1) {
+      const id = `${prefix}-p${pathIndex + 1}-${step + 1}`;
+      primaryIds.push(id);
+      const title = step === 0
+        ? `${FAMILY_LABELS[familyIndex].slice(3)} · 주경로 ${letter}`
+        : `${PRIMARY_WORDS[(pathIndex + step) % PRIMARY_WORDS.length]}에서 이어진 ${step + 1}번째 Moment`;
+      moments.push(makeMoment(id, title, familyIndex, pathIndex * 8 + step + 1));
+    }
+
+    connections.push({
+      id: `c-${familyIndex + 1}-p${pathIndex + 1}-entry`,
+      fromMomentId: entryId,
+      toMomentId: primaryIds[0],
+      whyNext: `${FAMILY_LABELS[familyIndex]}의 주경로 ${letter}가 여기서 시작된다.`,
+    });
+    for (let step = 0; step < primaryIds.length - 1; step += 1) {
+      connections.push({
+        id: `c-${familyIndex + 1}-p${pathIndex + 1}-${step + 1}`,
+        fromMomentId: primaryIds[step],
+        toMomentId: primaryIds[step + 1],
+        whyNext: WHY[familyIndex],
+      });
+    }
+
+    const branchParent = primaryIds[1];
+    const secondaryIds = [1, 2].map((step) => `${prefix}-p${pathIndex + 1}-s${step}`);
+    secondaryIds.forEach((id, step) => {
+      moments.push(makeMoment(
+        id,
+        `${SECONDARY_WORDS[(familyIndex + pathIndex + step) % SECONDARY_WORDS.length]} · 보조 경로 ${letter}${step + 1}`,
+        familyIndex,
+        pathIndex * 8 + 5 + step,
+      ));
+    });
+    connections.push({
+      id: `c-${familyIndex + 1}-p${pathIndex + 1}-branch`,
+      fromMomentId: branchParent,
+      toMomentId: secondaryIds[0],
+      whyNext: `주경로 ${letter}에서 갈라진 보조 Connection · ${WHY[familyIndex]}`,
+    });
+    connections.push({
+      id: `c-${familyIndex + 1}-p${pathIndex + 1}-secondary`,
+      fromMomentId: secondaryIds[0],
+      toMomentId: secondaryIds[1],
+      whyNext: `보조 경로에서 발견한 단서를 한 번 더 따라갔다.`,
+    });
+  }
 }
 
-/** Canonical fixture authority for this Design Lab proof: Connection only. */
+export const SOURCE56_MOMENTS: readonly Source56Moment[] = moments;
 export const SOURCE56_CONNECTIONS: readonly Source56Connection[] = connections;
+
+export type Source56SecondaryPath = {
+  readonly id: string;
+  readonly label: string;
+  readonly parentMomentId: string;
+  readonly momentIds: readonly string[];
+};
+
+export type Source56PrimaryPath = {
+  readonly id: string;
+  readonly label: string;
+  readonly momentIds: readonly string[];
+  readonly secondaryBranches: readonly Source56SecondaryPath[];
+};
 
 export type Source56PathFamily = {
   readonly id: string;
   readonly label: string;
+  readonly subtitle: string;
   readonly color: string;
   readonly seedMomentId: string;
   readonly momentIds: readonly string[];
   readonly primaryMomentIds: readonly string[];
   readonly secondaryMomentIds: readonly string[];
+  readonly primaryPaths: readonly Source56PrimaryPath[];
 };
 
-/**
- * PathFamily / Hub / Cluster are presentation-only projections. They are derived
- * from Moment + Connection topology and are never persisted or sent to an API.
- */
-export function deriveSource56PathFamilies(
-  moments: readonly Source56Moment[] = SOURCE56_MOMENTS,
-  edges: readonly Source56Connection[] = SOURCE56_CONNECTIONS,
-): readonly Source56PathFamily[] {
-  const first = moments.find((moment) => moment.first);
-  if (!first) return [];
-  const validIds = new Set(moments.map((moment) => moment.id));
+function buildOutgoing(
+  momentsInput: readonly Source56Moment[],
+  edges: readonly Source56Connection[],
+) {
+  const validIds = new Set(momentsInput.map((moment) => moment.id));
   const outgoing = new Map<string, Source56Connection[]>();
   for (const edge of edges) {
     if (!validIds.has(edge.fromMomentId) || !validIds.has(edge.toMomentId)) continue;
@@ -138,29 +216,79 @@ export function deriveSource56PathFamilies(
     current.push(edge);
     outgoing.set(edge.fromMomentId, current);
   }
-  const seeds = (outgoing.get(first.id) ?? []).slice(0, FAMILY_LABELS.length);
-  return seeds.map((seed, familyIndex) => {
-    const visited = new Set<string>();
-    const primary: string[] = [];
-    const secondary: string[] = [];
-    let cursor = seed.toMomentId;
-    while (cursor && !visited.has(cursor)) {
-      visited.add(cursor);
-      primary.push(cursor);
-      const next = outgoing.get(cursor) ?? [];
-      for (const branch of next.slice(1)) {
-        if (!visited.has(branch.toMomentId)) secondary.push(branch.toMomentId);
+  return outgoing;
+}
+
+function followSingleBranch(
+  seedId: string,
+  outgoing: Map<string, Source56Connection[]>,
+): string[] {
+  const ids: string[] = [];
+  const seen = new Set<string>();
+  let cursor = seedId;
+  while (cursor && !seen.has(cursor)) {
+    seen.add(cursor);
+    ids.push(cursor);
+    cursor = outgoing.get(cursor)?.[0]?.toMomentId ?? "";
+  }
+  return ids;
+}
+
+/**
+ * VIEW_DERIVED projection only. Family/primary/secondary hierarchy is inferred
+ * from Moment + Connection topology and never written to storage or an API.
+ */
+export function deriveSource56PathFamilies(
+  momentsInput: readonly Source56Moment[] = SOURCE56_MOMENTS,
+  edges: readonly Source56Connection[] = SOURCE56_CONNECTIONS,
+): readonly Source56PathFamily[] {
+  const first = momentsInput.find((moment) => moment.first);
+  if (!first) return [];
+  const outgoing = buildOutgoing(momentsInput, edges);
+  const familySeeds = (outgoing.get(first.id) ?? []).slice(0, FAMILY_LABELS.length);
+
+  return familySeeds.map((familySeed, familyIndex) => {
+    const entryId = familySeed.toMomentId;
+    const roots = outgoing.get(entryId) ?? [];
+    const primaryPaths = roots.map((root, pathIndex): Source56PrimaryPath => {
+      const primaryIds: string[] = [];
+      const secondaryBranches: Source56SecondaryPath[] = [];
+      const seen = new Set<string>();
+      let cursor = root.toMomentId;
+      while (cursor && !seen.has(cursor)) {
+        seen.add(cursor);
+        primaryIds.push(cursor);
+        const next = outgoing.get(cursor) ?? [];
+        next.slice(1).forEach((branch, branchIndex) => {
+          secondaryBranches.push({
+            id: `family-${familyIndex + 1}-primary-${pathIndex + 1}-secondary-${branchIndex + 1}`,
+            label: `${String(familyIndex + 1).padStart(2, "0")} · 주경로 ${String.fromCharCode(65 + pathIndex)} · 분기 ${branchIndex + 1}`,
+            parentMomentId: cursor,
+            momentIds: followSingleBranch(branch.toMomentId, outgoing),
+          });
+        });
+        cursor = next[0]?.toMomentId ?? "";
       }
-      cursor = next[0]?.toMomentId ?? "";
-    }
+      return {
+        id: `family-${familyIndex + 1}-primary-${pathIndex + 1}`,
+        label: `${String(familyIndex + 1).padStart(2, "0")} · 주경로 ${String.fromCharCode(65 + pathIndex)}`,
+        momentIds: primaryIds,
+        secondaryBranches,
+      };
+    });
+
+    const primaryMomentIds = primaryPaths.flatMap((path) => path.momentIds);
+    const secondaryMomentIds = primaryPaths.flatMap((path) => path.secondaryBranches.flatMap((branch) => branch.momentIds));
     return {
       id: `family-${familyIndex + 1}`,
       label: FAMILY_LABELS[familyIndex],
+      subtitle: FAMILY_SUBTITLES[familyIndex],
       color: FAMILY_COLORS[familyIndex],
-      seedMomentId: seed.toMomentId,
-      momentIds: [...primary, ...secondary],
-      primaryMomentIds: primary,
-      secondaryMomentIds: secondary,
+      seedMomentId: entryId,
+      momentIds: [entryId, ...primaryMomentIds, ...secondaryMomentIds],
+      primaryMomentIds,
+      secondaryMomentIds,
+      primaryPaths,
     };
   });
 }
