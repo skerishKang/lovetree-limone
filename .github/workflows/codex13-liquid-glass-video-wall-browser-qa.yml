@@ -19,6 +19,7 @@ on:
       - 'lib/use-tree-moments.ts'
       - 'tests/codex13-liquid-glass-video-wall-contract.test.mjs'
       - 'qa/codex13-liquid-glass-video-wall-browser-qa.mjs'
+      - 'qa/codex13-liquid-glass-video-wall-visual-evidence.mjs'
       - '.github/workflows/codex13-liquid-glass-video-wall-browser-qa.yml'
       - 'drizzle.config.ts'
       - 'db/**'
@@ -89,6 +90,9 @@ jobs:
           V4_BASE_URL="http://127.0.0.1:3000" \
             CODEX13_SCREENSHOT_DIR="/tmp/codex13-browser-qa" \
             node qa/codex13-liquid-glass-video-wall-browser-qa.mjs
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            CODEX13_SCREENSHOT_DIR="/tmp/codex13-browser-qa" \
+            node qa/codex13-liquid-glass-video-wall-visual-evidence.mjs
       - name: Upload Codex13 browser QA evidence
         if: always()
         uses: actions/upload-artifact@v4
