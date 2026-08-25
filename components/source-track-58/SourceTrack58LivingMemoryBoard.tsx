@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
 import type { AlbumMomentView, CanonicalMoment } from "@/lib/moment-model";
 import {
   SOURCE_58_BOARD_THEMES,
@@ -14,7 +22,6 @@ import { useTreeMoments } from "@/lib/use-tree-moments";
 import styles from "./source-track-58-living-memory-board.module.css";
 
 type BoardMoment = CanonicalMoment & { album: AlbumMomentView };
-
 type BoardPoint = ReturnType<typeof source58BoardSlot>;
 
 function formatMomentDate(moment: BoardMoment) {
@@ -22,7 +29,11 @@ function formatMomentDate(moment: BoardMoment) {
   if (!value) return "날짜 미정";
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return String(value).replaceAll("-", ".");
-  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "short", day: "numeric" }).format(date);
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
 }
 
 function sourceTypeLabel(sourceType: string) {
@@ -47,6 +58,7 @@ function threadPath(from: BoardPoint, to: BoardPoint) {
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
+
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setReduced(media.matches);
@@ -54,6 +66,7 @@ function useReducedMotion() {
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
+
   return reduced;
 }
 
@@ -70,6 +83,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
     updateMoment,
     refresh,
   } = useTreeMoments(treeId);
+
   const reducedMotion = useReducedMotion();
   const [theme, setTheme] = useState<Source58BoardTheme>("pearl");
   const [cinemaOpen, setCinemaOpen] = useState(false);
@@ -122,49 +136,40 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
   }, [moments, selectMoment, selectedMomentId]);
 
   useEffect(() => {
-    if (!selected) return;
-    setDraftTitle(selected.title);
-    setDraftMemo(selected.memo);
-    setEditOpen(false);
-    setSaveState("idle");
-  }, [selected?.id, selected?.memo, selected?.title]);
-
-  useEffect(() => {
-    setEmbedRequested(false);
-  }, [cinemaIndex]);
-
-  useEffect(() => {
-    if (reducedMotion) setCinemaPlaying(false);
-  }, [reducedMotion]);
-
-  useEffect(() => {
-    if (!cinemaOpen || !cinemaPlaying || reducedMotion || moments.length < 2) return;
+    if (!cinemaOpen || !cinemaPlaying || reducedMotion || moments.length < 2 || embedRequested) return;
     const timer = window.setInterval(() => {
       setCinemaIndex((current) => (current + 1) % moments.length);
     }, 4200);
     return () => window.clearInterval(timer);
-  }, [cinemaOpen, cinemaPlaying, moments.length, reducedMotion]);
+  }, [cinemaOpen, cinemaPlaying, embedRequested, moments.length, reducedMotion]);
 
   useEffect(() => {
     if (!cinemaOpen) return;
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setCinemaOpen(false);
-        const active = moments[cinemaIndex];
-        if (active) selectMoment(active.id);
-      }
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      const active = moments[cinemaIndex];
+      if (active) selectMoment(active.id);
+      setCinemaPlaying(false);
+      setCinemaOpen(false);
+      window.requestAnimationFrame(() => active && cardRefs.current.get(active.id)?.focus());
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [cinemaIndex, cinemaOpen, moments, selectMoment]);
 
+  const closeEdit = useCallback(() => {
+    setEditOpen(false);
+    setSaveState("idle");
+  }, []);
+
   const chooseMoment = useCallback(
     (id: string, moveFocus = false) => {
+      closeEdit();
       selectMoment(id);
       if (moveFocus) window.requestAnimationFrame(() => cardRefs.current.get(id)?.focus());
     },
-    [selectMoment],
+    [closeEdit, selectMoment],
   );
 
   const chooseRelativeMoment = useCallback(
@@ -190,6 +195,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
   };
 
   const openCinema = (startId?: string) => {
+    closeEdit();
     const start = startId ? moments.findIndex((moment) => moment.id === startId) : selectedIndex;
     setCinemaIndex(start >= 0 ? start : 0);
     setCinemaPlaying(!reducedMotion);
@@ -201,8 +207,27 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
     const active = moments[cinemaIndex];
     if (active) selectMoment(active.id);
     setCinemaPlaying(false);
+    setEmbedRequested(false);
     setCinemaOpen(false);
     window.requestAnimationFrame(() => active && cardRefs.current.get(active.id)?.focus());
+  };
+
+  const setCinemaMomentIndex = useCallback((nextIndex: number) => {
+    setEmbedRequested(false);
+    setCinemaIndex(nextIndex);
+  }, []);
+
+  const requestCinemaEmbed = useCallback(() => {
+    setCinemaPlaying(false);
+    setEmbedRequested(true);
+  }, []);
+
+  const beginEdit = () => {
+    if (!selected || !isOwner) return;
+    setDraftTitle(selected.title);
+    setDraftMemo(selected.memo);
+    setSaveState("idle");
+    setEditOpen(true);
   };
 
   const saveMoment = async () => {
@@ -272,7 +297,9 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
         </section>
       ) : null}
 
-      {!error && loading ? <section className={styles.statusCard} aria-live="polite">Moment board를 불러오는 중…</section> : null}
+      {!error && loading ? (
+        <section className={styles.statusCard} aria-live="polite">Moment board를 불러오는 중…</section>
+      ) : null}
 
       {!error && !loading ? (
         <div className={styles.workspace}>
@@ -286,7 +313,12 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                 aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
               >
                 <div className={styles.boardTexture} aria-hidden="true" />
-                <svg className={styles.thread} viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Canonical Connection living thread">
+                <svg
+                  className={styles.thread}
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  aria-label="Canonical Connection living thread"
+                >
                   {connections.map((connection) => (
                     <g key={connection.id}>
                       <path className={styles.threadShadow} d={threadPath(connection.from, connection.to)} />
@@ -323,14 +355,14 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                         left: `${slot.x}%`,
                         top: `${slot.y}%`,
                         "--card-rotate": `${slot.rotate}deg`,
-                      } as React.CSSProperties}
+                      } as CSSProperties}
                       onClick={() => chooseMoment(moment.id)}
                       onDoubleClick={() => openCinema(moment.id)}
                     >
                       <span className={styles.pin} data-pin={index % 6} aria-hidden="true" />
                       {moment.album.thumbnail ? (
                         <span className={styles.cardMedia}>
-                          {/* Canonical thumbnail URLs are runtime data; a native img avoids inventing an image proxy contract. */}
+                          {/* Canonical thumbnail URLs are runtime data; avoid inventing an image proxy contract. */}
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={moment.album.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
                         </span>
@@ -382,10 +414,12 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
 
                 {!editOpen ? (
                   <div className={styles.momentCopy}>
-                    <p className={styles.momentSource}>{sourceTypeLabel(selected.sourceType)} · {formatMomentDate(selected)}</p>
+                    <p className={styles.momentSource}>
+                      {sourceTypeLabel(selected.sourceType)} · {formatMomentDate(selected)}
+                    </p>
                     <h2>{selected.title || "제목 없는 Moment"}</h2>
                     <p>{selected.memo || "메모가 없습니다."}</p>
-                    <button type="button" className={styles.editButton} onClick={() => setEditOpen(true)} disabled={!isOwner}>
+                    <button type="button" className={styles.editButton} onClick={beginEdit} disabled={!isOwner}>
                       {isOwner ? "EDIT CANONICAL MOMENT" : "READ ONLY · OWNER EDIT"}
                     </button>
                   </div>
@@ -406,8 +440,10 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                       <textarea value={draftMemo} onChange={(event) => setDraftMemo(event.target.value)} rows={5} />
                     </label>
                     <div className={styles.editActions}>
-                      <button type="button" onClick={() => setEditOpen(false)}>CANCEL</button>
-                      <button type="submit" disabled={saveState === "saving"}>{saveState === "saving" ? "SAVING…" : "SAVE"}</button>
+                      <button type="button" onClick={closeEdit}>CANCEL</button>
+                      <button type="submit" disabled={saveState === "saving"}>
+                        {saveState === "saving" ? "SAVING…" : "SAVE"}
+                      </button>
                     </div>
                     {saveState === "error" ? <p role="alert">Canonical Moment 저장에 실패했습니다.</p> : null}
                   </form>
@@ -418,11 +454,16 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                     <span>CONNECTION</span>
                     <strong id="source58-why-next">WHY NEXT</strong>
                   </div>
+
                   {selected.parentId ? (
                     <div className={styles.incomingConnection}>
                       <small>이 Moment가 이어진 이유</small>
                       <p>{selected.connectionReason || "connectionReason이 비어 있습니다."}</p>
-                      {parent ? <button type="button" onClick={() => chooseMoment(parent.id, true)}>← {parent.title || "이전 Moment"}</button> : null}
+                      {parent ? (
+                        <button type="button" onClick={() => chooseMoment(parent.id, true)}>
+                          ← {parent.title || "이전 Moment"}
+                        </button>
+                      ) : null}
                     </div>
                   ) : (
                     <p className={styles.rootMoment}>ROOT MOMENT · parentId 없음</p>
@@ -449,11 +490,16 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                 </section>
 
                 {source58SafeExternalUrl(selected.sourceUrl) ? (
-                  <a className={styles.sourceLink} href={selected.sourceUrl} target="_blank" rel="noreferrer">OPEN CANONICAL MEDIA SOURCE ↗</a>
+                  <a className={styles.sourceLink} href={selected.sourceUrl} target="_blank" rel="noreferrer">
+                    OPEN CANONICAL MEDIA SOURCE ↗
+                  </a>
                 ) : null}
               </>
             ) : (
-              <div className={styles.noSelection}><h2>Select a Moment</h2><p>핀보드의 카드를 선택하세요.</p></div>
+              <div className={styles.noSelection}>
+                <h2>Select a Moment</h2>
+                <p>핀보드의 카드를 선택하세요.</p>
+              </div>
             )}
           </aside>
         </div>
@@ -469,12 +515,12 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
         <CinemaReplay
           moments={moments}
           index={Math.min(cinemaIndex, moments.length - 1)}
-          playing={cinemaPlaying}
+          playing={cinemaPlaying && !reducedMotion}
           reducedMotion={reducedMotion}
           embedRequested={embedRequested}
-          onIndex={(index) => setCinemaIndex(index)}
-          onPlaying={(playing) => setCinemaPlaying(playing)}
-          onEmbedRequested={setEmbedRequested}
+          onIndex={setCinemaMomentIndex}
+          onPlaying={setCinemaPlaying}
+          onEmbedRequested={requestCinemaEmbed}
           onExit={exitCinema}
         />
       ) : null}
@@ -500,7 +546,7 @@ function CinemaReplay({
   embedRequested: boolean;
   onIndex: (index: number) => void;
   onPlaying: (playing: boolean) => void;
-  onEmbedRequested: (requested: boolean) => void;
+  onEmbedRequested: () => void;
   onExit: () => void;
 }) {
   const moment = moments[index];
@@ -519,7 +565,9 @@ function CinemaReplay({
         <button type="button" onClick={onExit}>BOARD ↗</button>
       </header>
 
-      <div className={styles.cinemaProgress} aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
+      <div className={styles.cinemaProgress} aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
+      </div>
 
       <section className={styles.cinemaStage} aria-live="polite">
         <div className={styles.cinemaMedia}>
@@ -537,17 +585,33 @@ function CinemaReplay({
           ) : (
             <div className={styles.cinemaMediaFallback}>{sourceTypeLabel(moment.sourceType)}</div>
           )}
+
           {embedUrl && !embedRequested ? (
-            <button className={styles.playOverlay} type="button" onClick={() => onEmbedRequested(true)}>PLAY CANONICAL YOUTUBE</button>
+            <button className={styles.playOverlay} type="button" onClick={onEmbedRequested}>
+              PLAY CANONICAL YOUTUBE
+            </button>
           ) : null}
         </div>
+
         <div className={styles.cinemaCopy}>
-          <p>{String(index + 1).padStart(2, "0")} / {String(moments.length).padStart(2, "0")} · {formatMomentDate(moment)}</p>
+          <p>
+            {String(index + 1).padStart(2, "0")} / {String(moments.length).padStart(2, "0")} · {formatMomentDate(moment)}
+          </p>
           <h3>{moment.title || "제목 없는 Moment"}</h3>
           <blockquote>{moment.memo || moment.connectionReason || "기록된 메모가 없습니다."}</blockquote>
-          {moment.connectionReason ? <span className={styles.cinemaReason}>WHY NEXT · {moment.connectionReason}</span> : null}
-          {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noreferrer">{embedUrl ? "YouTube에서 재생 ↗" : "원본 미디어 열기 ↗"}</a> : null}
-          {embedUrl ? <small>Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다. 원본 링크 fallback을 항상 유지합니다.</small> : null}
+          {moment.connectionReason ? (
+            <span className={styles.cinemaReason}>WHY NEXT · {moment.connectionReason}</span>
+          ) : null}
+          {sourceUrl ? (
+            <a href={sourceUrl} target="_blank" rel="noreferrer">
+              {embedUrl ? "YouTube에서 재생 ↗" : "원본 미디어 열기 ↗"}
+            </a>
+          ) : null}
+          {embedUrl ? (
+            <small>
+              Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다. 원본 링크 fallback을 항상 유지합니다.
+            </small>
+          ) : null}
         </div>
       </section>
 
