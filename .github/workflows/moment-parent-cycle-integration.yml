@@ -1,0 +1,70 @@
+name: Moment parent-cycle integrity
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'server/api/memories.ts'
+      - 'server/api/memory-parent-integrity.ts'
+      - 'tests/integration/moment-parent-cycle.mjs'
+      - '.github/workflows/moment-parent-cycle-integration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moment-parent-cycle-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parent-cycle-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: lovetree_parent_cycle
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify exact checked-out head
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          echo "ISSUE509_EXACT_HEAD=$actual"
+          test "$actual" = "$expected"
+
+      - name: Run real PostgreSQL parent-cycle regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATABASE_URL="postgres://postgres@127.0.0.1:5432/lovetree_parent_cycle" \
+            node --import tsx tests/integration/moment-parent-cycle.mjs
