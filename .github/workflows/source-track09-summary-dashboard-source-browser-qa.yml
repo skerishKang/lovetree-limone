@@ -20,7 +20,7 @@ concurrency:
 jobs:
   source-browser-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +36,9 @@ jobs:
 
       - name: Verify Track09 donor contract
         run: node --test tests/source-track-09-summary-dashboard-donor-contract.test.mjs
+
+      - name: Build canonical Native application
+        run: npm run build
 
       - name: Prepare Playwright Chromium
         run: npx playwright install --with-deps chromium
@@ -55,10 +58,29 @@ jobs:
           cat /tmp/track09-static-server.log
           exit 1
 
-      - name: Run Track09 source browser QA
+      - name: Start canonical Native application server
+        shell: bash
+        run: |
+          set -euo pipefail
+          source scripts/ci/a-track-server-lifecycle.sh
+          atrack_start_server_group \
+            /tmp/track09-native-server.log \
+            /tmp/track09-native-server.pid \
+            http://127.0.0.1:3000/trees/track09-qa-tree/overview
+
+      - name: Run Track09 Source ↔ Native Chromium closure QA
         env:
           TRACK09_SOURCE_QA_URL: http://127.0.0.1:4173
+          TRACK09_NATIVE_QA_URL: http://127.0.0.1:3000
         run: node qa/source-track-09-summary-dashboard-source-browser-qa.mjs
+
+      - name: Stop canonical Native application server
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          source scripts/ci/a-track-server-lifecycle.sh
+          atrack_stop_server_group /tmp/track09-native-server.pid
 
       - name: Stop static source server
         if: always()
@@ -68,7 +90,15 @@ jobs:
             kill "$(cat /tmp/track09-static-server.pid)" 2>/dev/null || true
           fi
 
-      - name: Upload Track09 QA evidence
+      - name: Surface Track09 Native server diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          if [ -f /tmp/track09-native-server.log ]; then
+            tail -n 120 /tmp/track09-native-server.log
+          fi
+
+      - name: Upload Track09 Source ↔ Native QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
