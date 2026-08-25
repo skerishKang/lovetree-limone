@@ -1,4 +1,5 @@
 import V4OrbitMorphTemplatePortal from "@/app/components/v4/V4OrbitMorphTemplatePortal";
+import Track74MobileMenuInitialFocus from "./Track74MobileMenuInitialFocus";
 
 export const metadata = {
   title: "Track 74 V2 Orbit Morph Portal — LoveTree Design Lab",
@@ -7,5 +8,10 @@ export const metadata = {
 };
 
 export default function SourceTrack74NativePage() {
-  return <V4OrbitMorphTemplatePortal />;
+  return (
+    <>
+      <V4OrbitMorphTemplatePortal />
+      <Track74MobileMenuInitialFocus />
+    </>
+  );
 }
