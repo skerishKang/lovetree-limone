@@ -11,8 +11,8 @@ import {
   type PointerEvent as ReactPointerEvent,
   type WheelEvent as ReactWheelEvent,
 } from "react";
-import { useTreeMoments } from "@/lib/use-tree-moments";
 import type { TreeMomentView } from "@/lib/moment-model";
+import { useTreeMoments } from "@/lib/use-tree-moments";
 import {
   track14BuildProjection,
   track14Descendants,
@@ -24,7 +24,7 @@ import {
 import styles from "./track14-mindmap.module.css";
 
 const LAYOUTS: Array<{ id: Track14LayoutMode; label: string; title: string; copy: string }> = [
-  { id: "branch", label: "Branch", title: "Path Tree", copy: "저장된 parentId 관계를 가지 구조로 펼칩니다." },
+  { id: "branch", label: "Branch", title: "A tree of moments", copy: "저장된 parentId 관계를 가지 구조로 펼칩니다." },
   { id: "orbit", label: "Orbit", title: "Orbit Path", copy: "같은 Connection을 원형 공간 배치로만 바꿉니다." },
   { id: "journey", label: "Journey", title: "Journey Path", copy: "같은 Connection을 흐르는 경로처럼 배치합니다." },
   { id: "timeline", label: "Timeline", title: "Timeline Path", copy: "같은 Connection을 세로 흐름으로 배치합니다." },
@@ -41,23 +41,18 @@ function clip(value: string, max: number) {
   return normalized.length > max ? `${normalized.slice(0, max - 1)}…` : normalized;
 }
 
-function toneFor(moment: TreeMomentView, index: number): "rose" | "sage" | "lavender" | "gold" {
+function toneFor(moment: TreeMomentView): "neutral" | "rose" | "lavender" {
   const source = moment.sourceType.toLowerCase();
   if (source === "book" || source === "song" || source === "audio") return "lavender";
-  if (source === "link") return "sage";
-  if (source === "image" || source === "photo") return "gold";
-  return index % 5 === 4 ? "sage" : "rose";
+  if (moment.emotionTags.length > 0 || moment.title.includes("감정")) return "rose";
+  return "neutral";
 }
 
 function nodeSize(node: Track14ProjectedNode<TreeMomentView>) {
   return node.depth === 0 ? { width: 214, height: 104 } : { width: 190, height: 82 };
 }
 
-function edgePath(
-  from: Track14ProjectedNode<TreeMomentView>,
-  to: Track14ProjectedNode<TreeMomentView>,
-  index: number,
-) {
+function edgePath(from: Track14ProjectedNode<TreeMomentView>, to: Track14ProjectedNode<TreeMomentView>, index: number) {
   const fromSize = nodeSize(from);
   const toSize = nodeSize(to);
   const dx = to.x - from.x;
@@ -82,14 +77,7 @@ function edgePath(
 }
 
 export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
-  const {
-    tree,
-    treeMoments,
-    loading,
-    error,
-    selectedMomentId,
-    selectMoment,
-  } = useTreeMoments(treeId);
+  const { tree, treeMoments, loading, error, selectedMomentId, selectMoment } = useTreeMoments(treeId);
   const [layout, setLayout] = useState<Track14LayoutMode>("branch");
   const [progress, setProgress] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -119,19 +107,9 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
     if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
   }, []);
 
-  const projection = useMemo(
-    () => track14BuildProjection(treeMoments, layout, mobile),
-    [treeMoments, layout, mobile],
-  );
+  const projection = useMemo(() => track14BuildProjection(treeMoments, layout, mobile), [treeMoments, layout, mobile]);
   const nodeById = useMemo(() => new Map(projection.nodes.map((node) => [node.id, node])), [projection.nodes]);
-  const branchIds = useMemo(
-    () => track14Descendants(projection.edges, selectedMomentId),
-    [projection.edges, selectedMomentId],
-  );
-  const selectedMoment = useMemo(
-    () => treeMoments.find((moment) => moment.id === selectedMomentId) ?? null,
-    [treeMoments, selectedMomentId],
-  );
+  const branchIds = useMemo(() => track14Descendants(projection.edges, selectedMomentId), [projection.edges, selectedMomentId]);
 
   const playUnfold = useCallback(() => {
     if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
@@ -168,13 +146,7 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
 
   const onStagePointerDown = useCallback((event: ReactPointerEvent<SVGSVGElement>) => {
     if ((event.target as Element).closest("[data-track14-node]")) return;
-    dragRef.current = {
-      pointerId: event.pointerId,
-      x: event.clientX,
-      y: event.clientY,
-      cameraX: camera.x,
-      cameraY: camera.y,
-    };
+    dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, cameraX: camera.x, cameraY: camera.y };
     try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* best effort */ }
     selectMoment(null);
   }, [camera.x, camera.y, selectMoment]);
@@ -229,21 +201,13 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
       <header className={styles.topbar}>
         <Link className={styles.brand} href={`/trees/${encodeURIComponent(treeId)}/graph`} aria-label="canonical Graph로 돌아가기">
           <span className={styles.brandMark} aria-hidden="true" />
-          <span className={styles.brandCopy}><strong>LoveTree Path Composer</strong><small>Unfold · focus · follow why next</small></span>
+          <span className={styles.brandCopy}><strong>LoveTree Template Composer</strong><small>DRAG · UNFOLD · FILL YOUR MOMENTS</small></span>
         </Link>
-
         <nav className={styles.tabs} aria-label="PATH 시각 배치">
           {LAYOUTS.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className={layout === item.id ? styles.tabActive : undefined}
-              onClick={() => selectLayout(item.id)}
-              aria-pressed={layout === item.id}
-            >{item.label}</button>
+            <button type="button" key={item.id} className={layout === item.id ? styles.tabActive : undefined} onClick={() => selectLayout(item.id)} aria-pressed={layout === item.id}>{item.label}</button>
           ))}
         </nav>
-
         <div className={styles.toolbar} aria-label="마인드맵 조작">
           <button type="button" onClick={() => setDrawerOpen(true)} className={styles.toolButton}>템플릿</button>
           <button type="button" onClick={playUnfold} className={`${styles.toolButton} ${styles.primary}`}>다시 펼치기</button>
@@ -274,7 +238,6 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
             <g className={styles.petals} aria-hidden="true">
               {PETALS.map(([cx, cy, rx, ry, rotate], index) => <ellipse key={index} className={styles.petal} cx={cx} cy={cy} rx={rx} ry={ry} transform={`rotate(${rotate} ${cx} ${cy})`} />)}
             </g>
-
             {layout === "orbit" ? <><ellipse className={styles.guide} cx="0" cy="0" rx="360" ry="245" /><ellipse className={styles.guide} cx="0" cy="0" rx="455" ry="325" /></> : null}
             {layout === "journey" ? <path className={styles.journeyGuide} d="M -520 -225 C -310 80 -190 -300 55 -105 S 255 270 510 215" /> : null}
             {layout === "timeline" ? <path className={styles.guide} d="M 0 -300 C -30 -170 30 -70 0 20 S -25 180 0 310" /> : null}
@@ -293,16 +256,15 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
                 const to = nodeById.get(edge.to);
                 if (!from || !to) return null;
                 const value = track14RevealValue(progress, edge.revealAt, 0.13);
-                const related = selectedMomentId ? branchIds.has(edge.from) && branchIds.has(edge.to) : false;
-                const dimmed = Boolean(selectedMomentId) && !related;
+                const related = Boolean(selectedMomentId) && branchIds.has(edge.from) && branchIds.has(edge.to);
                 const d = edgePath(from, to, index);
                 const midX = (from.x + to.x) / 2;
                 const midY = (from.y + to.y) / 2 + (index % 2 ? 14 : -14);
                 const labelWidth = Math.max(72, Math.min(176, edge.label.length * 6 + 22));
                 return (
                   <g key={`${edge.from}-${edge.to}`} style={{ opacity: value }}>
-                    <path className={`${styles.edge}${related ? ` ${styles.edgeRelated}` : ""}${dimmed ? ` ${styles.dimmed}` : ""}`} d={d} pathLength={1} style={{ strokeDasharray: 1, strokeDashoffset: 1 - value }} />
-                    <g className={`${styles.edgeLabel}${dimmed ? ` ${styles.dimmed}` : ""}`} transform={`translate(${midX} ${midY})`}>
+                    <path className={`${styles.edge}${related ? ` ${styles.edgeRelated}` : ""}`} d={d} pathLength={1} style={{ strokeDasharray: related ? "0.055 0.035" : 1, strokeDashoffset: related ? 0 : 1 - value }} />
+                    <g className={styles.edgeLabel} transform={`translate(${midX} ${midY})`}>
                       <rect x={-labelWidth / 2} y="-11" width={labelWidth} height="22" rx="8" />
                       <text x="0" y="1">{clip(edge.label, 24)}</text>
                     </g>
@@ -315,17 +277,18 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
               {projection.nodes.map((node, index) => {
                 const value = track14RevealValue(progress, node.revealAt, 0.12);
                 const size = nodeSize(node);
-                const tone = node.depth === 0 ? "rose" : toneFor(node.source, index);
+                const tone = node.depth === 0 ? "neutral" : toneFor(node.source);
                 const selected = node.id === selectedMomentId;
-                const dimmed = Boolean(selectedMomentId) && !branchIds.has(node.id);
-                const subtitle = node.source.emotionTags[0] || node.source.sourceType || "Moment";
+                const subtitle = node.source.memo?.trim() || node.source.emotionTags[0] || node.source.sourceType || "Moment";
+                const accent = tone === "lavender" ? "#9a87b8" : "#c86e79";
+                const cardFill = tone === "lavender" ? "rgba(242,237,248,.96)" : tone === "rose" ? "rgba(253,239,241,.96)" : "rgba(255,251,246,.96)";
                 return (
                   <g
                     key={node.id}
                     data-track14-node="true"
                     data-track14-node-id={node.id}
                     data-track14-depth={node.depth}
-                    className={`${styles.node} ${styles[`tone_${tone}`]}${selected ? ` ${styles.selected}` : ""}${dimmed ? ` ${styles.dimmed}` : ""}`}
+                    className={`${styles.node}${selected ? ` ${styles.selected}` : ""}`}
                     transform={`translate(${node.x} ${node.y}) scale(${(0.18 + value * 0.82).toFixed(4)} ${(0.72 + value * 0.28).toFixed(4)})`}
                     style={{ opacity: value, pointerEvents: value > 0.82 ? "auto" : "none" }}
                     role="treeitem"
@@ -342,13 +305,13 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
                     }}
                   >
                     <rect className={styles.nodeShadow} x={-size.width / 2 + 4} y={-size.height / 2 + 8} width={size.width - 8} height={size.height - 4} rx={node.depth === 0 ? 25 : 18} />
-                    <rect className={styles.nodeCard} x={-size.width / 2} y={-size.height / 2} width={size.width} height={size.height} rx={node.depth === 0 ? 25 : 18} />
-                    <line className={styles.nodeAccent} x1={-size.width / 2 + 18} y1={-size.height / 2 + 13} x2={-size.width / 2 + 48} y2={-size.height / 2 + 13} />
-                    <circle className={styles.nodeDot} cx={-size.width / 2 + 21} cy="-1" r={node.depth === 0 ? 7 : 5} />
+                    <rect className={styles.nodeCard} style={{ fill: cardFill }} x={-size.width / 2} y={-size.height / 2} width={size.width} height={size.height} rx={node.depth === 0 ? 25 : 18} />
+                    <line className={styles.nodeAccent} style={{ stroke: accent }} x1={-size.width / 2 + 18} y1={-size.height / 2 + 13} x2={-size.width / 2 + 48} y2={-size.height / 2 + 13} />
+                    <circle className={styles.nodeDot} style={{ fill: accent }} cx={-size.width / 2 + 21} cy="-1" r={node.depth === 0 ? 7 : 5} />
                     {node.depth === 0 ? <path className={styles.seedLeaf} d="M -91 4 C -82 -15 -64 -20 -54 -11 C -58 3 -71 10 -88 8 M -88 8 C -76 8 -65 14 -59 25" /> : null}
-                    <text className={styles.eyebrow} x={-size.width / 2 + (node.depth === 0 ? 44 : 38)} y={node.depth === 0 ? -22 : -14}>{node.depth === 0 ? "FIRST MOMENT" : `MOMENT · ${String(index + 1).padStart(2, "0")}`}</text>
+                    <text className={styles.eyebrow} x={-size.width / 2 + (node.depth === 0 ? 44 : 38)} y={node.depth === 0 ? -22 : -14}>{node.depth === 0 ? "LOVE TREE" : tone === "rose" ? "EMOTION" : tone === "lavender" ? "NOTE" : `MOMENT · ${String(index + 1).padStart(2, "0")}`}</text>
                     <text className={styles.nodeTitle} x={-size.width / 2 + (node.depth === 0 ? 44 : 38)} y={node.depth === 0 ? 6 : 8}>{clip(node.source.title, node.depth === 0 ? 16 : 14)}</text>
-                    <text className={styles.nodeSubtitle} x={-size.width / 2 + (node.depth === 0 ? 44 : 38)} y={node.depth === 0 ? 27 : 27}>{clip(subtitle, 18)}</text>
+                    <text className={styles.nodeSubtitle} x={-size.width / 2 + (node.depth === 0 ? 44 : 38)} y={node.depth === 0 ? 27 : 27}>{clip(subtitle, 20)}</text>
                   </g>
                 );
               })}
@@ -357,23 +320,15 @@ export default function Track14MindmapDonor({ treeId }: { treeId: string }) {
         </svg>
 
         <div className={styles.introCopy}>
-          <span>FROM MOMENT TO WHY NEXT</span>
-          <h1>기억이 경로로<br />펼쳐집니다.</h1>
-          <p>Moment와 저장된 Connection을 그대로 두고,<br />Track14의 가지·전개·집중 문법만 입혔습니다.</p>
+          <span>FROM SEED TO MEMORY</span>
+          <h1>기억이 트리로 열립니다</h1>
+          <p>첫 순간에서 시작해 감정의 인과관계가 가지와 노드로 차분히 맺힙니다.</p>
         </div>
-
+        <div aria-hidden="true" style={{ position: "absolute", left: "50%", bottom: mobile ? 48 : 22, transform: "translateX(-50%)", zIndex: 10, padding: "9px 16px", borderRadius: 999, color: "#fffaf6", background: "rgba(67,52,47,.86)", fontSize: 10, letterSpacing: ".01em", boxShadow: "0 9px 24px rgba(65,47,41,.14)", whiteSpace: "nowrap" }}>가운데에서 폼이 좌르륵 펼쳐집니다.</div>
         <div className={styles.progressRail} aria-live="polite">
           <div><span>{phase}</span><strong>{String(Math.round(progress * 100)).padStart(2, "0")}%</strong></div>
           <i><b style={{ width: `${progress * 100}%` }} /></i>
         </div>
-
-        {selectedMoment ? (
-          <div className={styles.selectionNote} aria-live="polite">
-            <span>SELECTED PATH</span>
-            <strong>{clip(selectedMoment.title, 28)}</strong>
-            <small>{selectedMoment.parentId ? (selectedMoment.connectionReason?.trim() || "이전 순간과 이어지는 관계") : "First Moment"}</small>
-          </div>
-        ) : null}
       </section>
 
       <div className={`${styles.scrim}${drawerOpen ? ` ${styles.scrimOpen}` : ""}`} onClick={() => setDrawerOpen(false)} aria-hidden="true" />
