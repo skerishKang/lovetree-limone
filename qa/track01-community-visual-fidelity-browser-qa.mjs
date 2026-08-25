@@ -68,11 +68,17 @@ async function installDeterministicNetwork(context) {
 async function sourcePage(browser, viewport) {
   const context = await browser.newContext({ viewport, hasTouch: viewport.width <= 390, isMobile: viewport.width <= 390 });
   await installDeterministicNetwork(context);
+  await context.route("http://track01-source.local/", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "text/html; charset=utf-8",
+      body: fs.readFileSync(SOURCE, "utf8"),
+    });
+  });
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${BASE}/v4/community`, { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.setContent(fs.readFileSync(SOURCE, "utf8"), { waitUntil: "domcontentloaded" });
+  await page.goto("http://track01-source.local/", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.locator("#grid .tree-card").first().waitFor({ state: "visible", timeout: 10000 });
   return { context, page, errors };
 }
