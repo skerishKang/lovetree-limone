@@ -27,6 +27,7 @@ on:
       - 'design-intake/source-track-70-moment-reveal-native-donor.json'
       - 'tests/source-track-70-moment-reveal-contract.test.mjs'
       - 'qa/source-track-70-moment-reveal-browser-qa.mjs'
+      - 'qa/source-track-70-moment-reveal-visual-closure.mjs'
       - '.github/workflows/source-track70-moment-reveal-browser-qa.yml'
   workflow_dispatch:
 
@@ -95,6 +96,8 @@ jobs:
           mkdir -p qa-artifacts/source-track70-moment-reveal
           TRACK70_REVEAL_QA_URL="http://127.0.0.1:3000" \
             node qa/source-track-70-moment-reveal-browser-qa.mjs
+          TRACK70_REVEAL_QA_URL="http://127.0.0.1:3000" \
+            node qa/source-track-70-moment-reveal-visual-closure.mjs
 
       - name: Upload Track70 reveal QA evidence
         if: always()
