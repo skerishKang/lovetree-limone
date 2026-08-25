@@ -47,12 +47,9 @@ export function Track70MomentReveal({ treeId, treeTitle, moments }: Track70Momen
   const timers = useRef(new Map<number, number>());
   const touchStart = useRef<{ pointerId: number; x: number; y: number; pointerType: string } | null>(null);
 
-  const selectedMoment = moments[selectedIndex] ?? null;
+  const safeSelectedIndex = Math.min(selectedIndex, Math.max(0, moments.length - 1));
+  const selectedMoment = moments[safeSelectedIndex] ?? null;
   const media = track70CanonicalMedia(selectedMoment);
-
-  useEffect(() => {
-    setSelectedIndex((current) => Math.min(current, Math.max(0, moments.length - 1)));
-  }, [moments.length]);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -96,8 +93,8 @@ export function Track70MomentReveal({ treeId, treeTitle, moments }: Track70Momen
 
   const step = useCallback((delta: number) => {
     if (!moments.length) return;
-    selectIndex(track70AdjacentIndex(selectedIndex, delta, moments.length));
-  }, [moments.length, selectIndex, selectedIndex]);
+    selectIndex(track70AdjacentIndex(safeSelectedIndex, delta, moments.length));
+  }, [moments.length, safeSelectedIndex, selectIndex]);
 
   const toggleReveal = useCallback(() => {
     if (!media) return;
@@ -199,12 +196,12 @@ export function Track70MomentReveal({ treeId, treeTitle, moments }: Track70Momen
           <div className={styles.selectorList}>
             {moments.map((moment, index) => (
               <button
-                className={`${styles.selectorButton} ${index === selectedIndex ? styles.selectorButtonActive : ""}`}
+                className={`${styles.selectorButton} ${index === safeSelectedIndex ? styles.selectorButtonActive : ""}`}
                 data-testid="track70-moment-selector"
                 data-moment-id={moment.id}
                 key={moment.id}
                 type="button"
-                aria-current={index === selectedIndex ? "true" : undefined}
+                aria-current={index === safeSelectedIndex ? "true" : undefined}
                 onClick={() => selectIndex(index)}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>
@@ -254,7 +251,7 @@ export function Track70MomentReveal({ treeId, treeTitle, moments }: Track70Momen
 
           <div className={styles.transport}>
             <button type="button" onClick={() => step(-1)} aria-label="이전 Moment">←</button>
-            <span aria-live="polite">{selectedIndex + 1} / {moments.length}</span>
+            <span aria-live="polite">{safeSelectedIndex + 1} / {moments.length}</span>
             <button type="button" onClick={() => step(1)} aria-label="다음 Moment">→</button>
           </div>
 
@@ -263,7 +260,7 @@ export function Track70MomentReveal({ treeId, treeTitle, moments }: Track70Momen
               <span>{selectedMoment.sourceType || "moment"}</span>
               {momentDate ? <time>{momentDate}</time> : null}
             </div>
-            <h2>{selectedMoment.title || `Moment ${selectedIndex + 1}`}</h2>
+            <h2>{selectedMoment.title || `Moment ${safeSelectedIndex + 1}`}</h2>
             {selectedMoment.memo ? <p>{selectedMoment.memo}</p> : null}
             {selectedMoment.emotionTags?.length ? (
               <div className={styles.tags}>{selectedMoment.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
