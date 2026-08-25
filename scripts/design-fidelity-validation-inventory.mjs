@@ -277,6 +277,16 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track17 validates a canonical /trees/:treeId terrain donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and must not promote source demo return/Season semantics.",
   }),
   Object.freeze({
+    id: "source-track-35-lp-archive-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track35 LP Player canonical ARCHIVE native QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/trees/:treeId/archive/lp", routeEntry: "app/v4/trees/[id]/archive/lp/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/trees/[id]/archive/lp/", "lib/source-track-35/", "qa/track35-lp-player-browser-qa.mjs", "tests/track35-lp-player-contract.test.mjs", ".github/workflows/track35-lp-player-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/track35-lp-player-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track35-lp-player-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_EXISTING_MOMENT_MEDIA", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track35 validates the canonical /v4/trees/:treeId/archive/lp ARCHIVE lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no LP-specific backend, persistence, or media authority.",
+  }),
+  Object.freeze({
     id: "source-track-38-v1-discover-donor-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track38 V1 Voyager DISCOVER donor dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
     route: "/design-lab/source-tracks/38/v1/donor", routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
