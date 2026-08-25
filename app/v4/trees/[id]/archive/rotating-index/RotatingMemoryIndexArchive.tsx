@@ -250,7 +250,6 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
     const target = event.target as HTMLElement;
     if (target.closest("a, input, select, textarea, dialog")) return;
     if (Math.abs(event.deltaY) < 6 && Math.abs(event.deltaX) < 6) return;
-    event.preventDefault();
     const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
     move(delta > 0 ? 1 : -1);
   }, [move]);
