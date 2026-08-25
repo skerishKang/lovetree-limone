@@ -134,7 +134,6 @@ export default function CinematicWatercolorSubjectLens() {
   function onPointerDown(event: PointerEvent<HTMLElement>) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     pointerStartX.current = event.clientX;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
   }
 
   function onPointerUp(event: PointerEvent<HTMLElement>) {
