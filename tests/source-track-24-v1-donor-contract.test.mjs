@@ -8,7 +8,7 @@ const sourcePath = new URL(
   import.meta.url,
 );
 const manifestPath = new URL(
-  '../design-intake/manifests/source-track-24-video-memory-workflow-v1-donor.json',
+  '../design-intake/source-track-24-video-memory-workflow-v1-donor.json',
   import.meta.url,
 );
 const componentPath = new URL(
