@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "stableId": "source-track-38-voyager-space-memory-map-v1",
+  "sourceTrackId": "Track38",
+  "title": "Track38 Voyager Space Memory Map V1 DISCOVER visual/function donor",
+  "classification": "REFERENCE_CAPABILITY_ONLY",
+  "lifecycle": "REFERENCE_PINNED",
+  "rendering": "dom-2d",
+  "scenarioId": "community-discovery",
+  "productJob": "DISCOVER visual/spatial donor only; canonical public Tree/Memory authority, search/discovery semantics and read-only public-tree navigation remain owned by /v4/community.",
+  "summary": "Issue #477 re-reviews Track38 against current-main Discover. Direct standalone adoption is rejected because the source is a canvas prototype over synthetic celebrity/video fixtures, direct YouTube thumbnail/embed runtime and continuous auto-orbit without a reduced-motion or keyboard-node contract. Current /v4/community already owns public discovery and V4PublicTree already renders actual public-memory relationships. The bounded Design Lab donor proof therefore consumes the existing public community APIs and reuses only Track38's cosmic spatial field, node constellation, parent-child lines, selected-memory inspector and map-layout grammar.",
+  "provenance": {
+    "sourceLabel": "Drive 38_보이저_우주기억지도 / 01_보이저_우주영상기억지도.html (file 1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-) mirrored byte-exact under reference/source-tracks-snapshot/38_보이저_우주기억지도",
+    "sourceFiles": [
+      "01_보이저_우주영상기억지도.html",
+      "SHA256SUMS.txt"
+    ],
+    "rightsStatus": "repository snapshot provenance pinned; external YouTube fixture/runtime usage is source-reference-only and is not copied into the donor implementation"
+  },
+  "sourceSnapshot": {
+    "revisionLabel": "V1",
+    "authorityObservedAt": "2026-08-25T00:11:00.000Z",
+    "sourceAuthorityState": "CURRENT_AT_OBSERVATION"
+  },
+  "reusableCapabilities": [],
+  "runtimePrimitives": [],
+  "trulyNewPrimitive": "none — bounded DISCOVER presentation donor over existing /v4/community public Tree/Memory authority",
+  "sourceDefects": [
+    "source person/video/emotion fixtures are synthetic and cannot become canonical public discovery truth",
+    "source generates thumbnails from i.ytimg.com and embeds youtube.com directly from fixture video ids",
+    "source runs requestAnimationFrame continuously and defaults auto orbit on without a prefers-reduced-motion contract",
+    "source canvas nodes are not keyboard focus targets; keyboard handling is limited to Escape",
+    "source touch-action:none and wheel preventDefault make the canvas own mobile/wheel interaction too aggressively for canonical Discover"
+  ],
+  "nativeRemediations": [
+    "consume only existing /api/community/trees and /api/community/memories public data; do not add schema/API/Auth state",
+    "render public memories as native DOM buttons with actual parentId edges instead of synthetic graph fixtures",
+    "provide native search, emotion filters, layout, zoom, pan and reset controls that are keyboard/touch reachable",
+    "remove direct YouTube iframe/thumbnail dependencies from the bounded donor proof",
+    "honor prefers-reduced-motion and do not auto-orbit or continuously animate the map",
+    "keep canonical navigation at /v4/community and /v4/community/trees/:id"
+  ],
+  "sourceOnlyValues": [
+    "synthetic celebrity names and 18 hard-coded YouTube video ids",
+    "generated 24 emotion fragments per source video",
+    "random cross-edge generation",
+    "https://i.ytimg.com thumbnail construction",
+    "https://www.youtube.com/embed direct player",
+    "continuous requestAnimationFrame auto-orbit state"
+  ],
+  "backendScope": "BACKEND_FREE",
+  "adoption": {
+    "status": "SOURCE_REFERENCE_ONLY",
+    "note": "Issue #477 disposition: USE_AS_VISUAL_FUNCTION_DONOR. Existing /v4/community remains canonical DISCOVER; this route is an isolated Design Lab proof only."
+  },
+  "reservation": {
+    "held": true,
+    "note": "No top-level product shell, backend, shared navigation or canonical route replacement is created by Issue #477."
+  },
+  "fidelityTargetMetadata": {
+    "validationClass": "interaction-contract",
+    "label": "Track38 V1 bounded DISCOVER visual/function donor proof"
+  },
+  "navigationHandoff": {
+    "targetMapping": true,
+    "urlResolution": true,
+    "openCall": true,
+    "actualTargetOpen": true,
+    "receiverConsume": true,
+    "sameMomentFocus": false
+  },
+  "derivedDisplay": [],
+  "qa": {
+    "viewports": [
+      { "width": 1280, "height": 800 },
+      { "width": 390, "height": 844, "mobile": true }
+    ],
+    "reducedMotion": true,
+    "keyboardFocus": true,
+    "pointer": true,
+    "touch": true,
+    "horizontalOverflowZero": true,
+    "consoleErrorsZero": true,
+    "pageErrorsZero": true
+  }
+}
