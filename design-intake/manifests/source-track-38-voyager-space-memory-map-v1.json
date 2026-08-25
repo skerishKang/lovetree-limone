@@ -6,7 +6,7 @@
   "classification": "REFERENCE_CAPABILITY_ONLY",
   "lifecycle": "REFERENCE_PINNED",
   "rendering": "dom-2d",
-  "scenarioId": "community-discovery",
+  "scenarioId": "community",
   "productJob": "DISCOVER visual/spatial donor only; canonical public Tree/Memory authority, search/discovery semantics and read-only public-tree navigation remain owned by /v4/community.",
   "summary": "Issue #477 re-reviews Track38 against current-main Discover. Direct standalone adoption is rejected because the source is a canvas prototype over synthetic celebrity/video fixtures, direct YouTube thumbnail/embed runtime and continuous auto-orbit without a reduced-motion or keyboard-node contract. Current /v4/community already owns public discovery and V4PublicTree already renders actual public-memory relationships. The bounded Design Lab donor proof therefore consumes the existing public community APIs and reuses only Track38's cosmic spatial field, node constellation, parent-child lines, selected-memory inspector and map-layout grammar.",
   "provenance": {
