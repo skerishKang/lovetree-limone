@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "issue": 494,
+  "stableId": "codex14-rotating-memory-index-archive",
+  "productJob": "ARCHIVE",
+  "productDisposition": "ADOPT_AS_ARCHIVE_NATIVE",
+  "source": {
+    "label": "Codex14 Rotating Memory Index",
+    "driveFileId": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "fileName": "최종본.html",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+    "modifiedTime": "2026-08-16T13:45:04.987Z",
+    "byteIdenticalDevelopmentTwin": {
+      "driveFileId": "1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost",
+      "fileName": "05_개발본.html",
+      "bytes": 19631,
+      "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
+    },
+    "fixtureMedia": {
+      "count": 89,
+      "videoFolderDriveId": "1hP6kA-ezQsqCfwMEIBhS_p9Xt1oyd1kg",
+      "posterFolderDriveId": "1k2FAbsLu3nh7Aes6bNwDEdaP41n_SMjK",
+      "productPolicy": "SOURCE_REFERENCE_ONLY_DO_NOT_PROMOTE_89_FILM_FIXTURE_TO_CANONICAL_DATA"
+    }
+  },
+  "native": {
+    "route": "/v4/trees/[id]/archive/rotating-index",
+    "baseArchive": "useTreeMoments(treeId) -> canonical AlbumMomentView[]",
+    "canonicalTruth": [
+      "Moment identity/order/content from AlbumMomentView",
+      "media from sourceType/sourceUrl/thumbnail",
+      "selection written only through useTreeMoments.selectMoment"
+    ],
+    "presentationRuntimeOnly": [
+      "rotation angle",
+      "auto-rotation enabled state",
+      "pointer drag state",
+      "index dialog open state",
+      "inspector dialog open state"
+    ],
+    "highVisualElements": [
+      "CSS-3D rotating indexed card sculpture",
+      "editorial archive typography",
+      "depth and selected-card emphasis",
+      "full selected Moment media inspector",
+      "premium transition pacing",
+      "spatial drag/wheel/swipe browsing",
+      "visual index drawer"
+    ],
+    "nativeRemediations": [
+      "source hardcoded 89 synthetic films replaced by canonical Moments",
+      "source sibling media dependency replaced by canonical Moment media",
+      "source perpetual motion disabled under prefers-reduced-motion",
+      "visible focus restored",
+      "dialog semantics, Escape close and trigger-focus restoration",
+      "mobile 390x844 and 320x720 layouts",
+      "keyboard arrows/space/I and touch/pointer parity"
+    ]
+  },
+  "backend": {
+    "newArchiveEntity": false,
+    "newTable": false,
+    "newSchema": false,
+    "newApi": false
+  },
+  "collisionBoundary": {
+    "track35Pr": 485,
+    "track35Route": "/v4/trees/[id]/archive/lp",
+    "track37Pr": 497,
+    "track37Route": "/v4/trees/[id]/archive/calendar",
+    "strategy": "FILE_DISJOINT_ISOLATED_ARCHIVE_ROUTE"
+  },
+  "centralSharedFilesModified": false,
+  "centralRegistryHandoffRequired": true
+}
