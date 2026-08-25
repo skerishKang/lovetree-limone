@@ -56,14 +56,13 @@ function FilmSession({ treeId, title, moments }: { treeId: string; title: string
 
   function moveScene(direction: -1 | 1) {
     if (!selected) return;
-    setOrder((current) => {
-      const index = current.indexOf(selected.id);
-      const next = index + direction;
-      if (index < 0 || next < 0 || next >= current.length) return current;
-      const copy = [...current];
-      [copy[index], copy[next]] = [copy[next], copy[index]];
-      return copy;
-    });
+    const index = order.indexOf(selected.id);
+    const next = index + direction;
+    if (index < 0 || next < 0 || next >= order.length) return;
+    const copy = [...order];
+    [copy[index], copy[next]] = [copy[next], copy[index]];
+    setOrder(copy);
+    setPlayhead(next);
   }
 
   function updateDraft(patch: Partial<SceneDraft>) {
