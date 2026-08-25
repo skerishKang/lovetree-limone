@@ -22,7 +22,9 @@ on:
       - 'reference/source-tracks-snapshot/01_0730작업물/**'
       - 'qa/track01-community-visual-fidelity-browser-qa.mjs'
       - 'qa/track01-community-precentral-browser-gate.mjs'
+      - 'qa/track01-community-precentral-final-gate.mjs'
       - 'tests/track01-community-visual-fidelity-contract.test.mjs'
+      - 'tests/v4-final-product-surfaces.test.mjs'
       - '.github/workflows/track01-community-visual-fidelity-browser-qa.yml'
   workflow_dispatch:
 
@@ -102,7 +104,7 @@ jobs:
           TRACK01_QA_URL="http://127.0.0.1:3000" \
             node qa/track01-community-visual-fidelity-browser-qa.mjs
           TRACK01_QA_URL="http://127.0.0.1:3000" \
-            node qa/track01-community-precentral-browser-gate.mjs
+            node qa/track01-community-precentral-final-gate.mjs
 
       - name: Upload Track01 visual fidelity evidence
         if: always()
@@ -112,5 +114,5 @@ jobs:
           path: |
             qa-artifacts/track01-community-visual-fidelity/*.png
             qa-artifacts/track01-community-visual-fidelity/visual-fidelity.json
-            qa-artifacts/track01-community-visual-fidelity/precentral-gate.json
+            qa-artifacts/track01-community-visual-fidelity/precentral-final-gate.json
           if-no-files-found: warn
