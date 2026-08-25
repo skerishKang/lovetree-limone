@@ -15,20 +15,24 @@ const record = (viewport, check, ok, detail = "") => {
   assert.equal(ok, true, `${viewport}: ${check}${detail ? ` (${detail})` : ""}`);
 };
 
+async function captureStateEvidence(page, viewport) {
+  const stage = page.getByTestId("memory-biosphere-stage");
+  for (const state of ["human", "trace", "bloom", "sphere"]) {
+    await page.locator(`[data-testid="memory-biosphere-state-button"][data-state="${state}"]`).click();
+    await page.waitForTimeout(260);
+    record(viewport, `explicit ${state} state resolves`, await stage.getAttribute("data-active-state") === state, String(await stage.getAttribute("data-active-state")));
+    await page.screenshot({ path: `${outDir}/${viewport}-${state}.png`, fullPage: true });
+  }
+}
+
 async function runViewport(browser, name, width, height, { touch = false } = {}) {
-  const context = await browser.newContext({
-    viewport: { width, height },
-    hasTouch: touch,
-    isMobile: touch,
-  });
+  const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch, isMobile: touch });
   const page = await context.newPage();
   const pageErrors = [];
   const consoleErrors = [];
   const apiRequests = [];
   page.on("pageerror", (error) => pageErrors.push(String(error)));
-  page.on("console", (message) => {
-    if (message.type() === "error") consoleErrors.push(message.text());
-  });
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
   page.on("request", (request) => {
     try {
       const pathname = new URL(request.url()).pathname;
@@ -55,8 +59,10 @@ async function runViewport(browser, name, width, height, { touch = false } = {})
 
   const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
   record(name, "horizontal overflow is zero", overflow <= 1, `overflow:${overflow}`);
-
   const storageBefore = await page.evaluate(() => Object.keys(localStorage).sort());
+
+  await page.screenshot({ path: `${outDir}/${name}-initial.png`, fullPage: true });
+  await captureStateEvidence(page, name);
 
   if (!touch) {
     const box = await stage.boundingBox();
@@ -68,7 +74,7 @@ async function runViewport(browser, name, width, height, { touch = false } = {})
     await page.waitForTimeout(80);
     record(name, "head-centered pointer resolves Memory Sphere", await stage.getAttribute("data-active-state") === "sphere", String(await stage.getAttribute("data-active-state")));
   } else {
-    const bloom = page.getByTestId("memory-biosphere-state-button").filter({ has: page.locator("text=Bloom") });
+    const bloom = page.locator('[data-testid="memory-biosphere-state-button"][data-state="bloom"]');
     await bloom.tap();
     record(name, "touch tap selects Bloom without hover", await stage.getAttribute("data-active-state") === "bloom", String(await stage.getAttribute("data-active-state")));
     const sphere = page.locator('[data-testid="memory-biosphere-state-button"][data-state="sphere"]');
@@ -80,18 +86,25 @@ async function runViewport(browser, name, width, height, { touch = false } = {})
   await firstButton.focus();
   await firstButton.press("ArrowRight");
   record(name, "keyboard ArrowRight selects Trace", await stage.getAttribute("data-active-state") === "trace", String(await stage.getAttribute("data-active-state")));
-  const focusedState = await page.evaluate(() => document.activeElement?.getAttribute("data-state"));
-  record(name, "keyboard selection moves focus", focusedState === "trace", String(focusedState));
+  record(name, "keyboard selection moves focus", await page.evaluate(() => document.activeElement?.getAttribute("data-state")) === "trace");
+  await page.keyboard.press("ArrowDown");
+  record(name, "keyboard ArrowDown selects Bloom", await stage.getAttribute("data-active-state") === "bloom", String(await stage.getAttribute("data-active-state")));
+  await page.keyboard.press("ArrowLeft");
+  record(name, "keyboard ArrowLeft returns Trace", await stage.getAttribute("data-active-state") === "trace", String(await stage.getAttribute("data-active-state")));
+  await page.keyboard.press("ArrowUp");
+  record(name, "keyboard ArrowUp returns Human", await stage.getAttribute("data-active-state") === "human", String(await stage.getAttribute("data-active-state")));
   await page.keyboard.press("End");
   record(name, "keyboard End selects Sphere", await stage.getAttribute("data-active-state") === "sphere", String(await stage.getAttribute("data-active-state")));
+  await page.keyboard.press("Home");
+  record(name, "keyboard Home selects Human", await stage.getAttribute("data-active-state") === "human", String(await stage.getAttribute("data-active-state")));
+  const focusOutline = await page.locator('[data-testid="memory-biosphere-state-button"][data-state="human"]').evaluate((node) => getComputedStyle(node).outlineStyle);
+  record(name, "state control focus is visibly styled", focusOutline !== "none", focusOutline);
 
   const storageAfter = await page.evaluate(() => Object.keys(localStorage).sort());
   record(name, "donor interaction adds no local persistence", JSON.stringify(storageBefore) === JSON.stringify(storageAfter), `${storageBefore.length}->${storageAfter.length}`);
   record(name, "donor route makes no product API request", apiRequests.length === 0, apiRequests.join(","));
   record(name, "page errors zero", pageErrors.length === 0, pageErrors.join(" | "));
   record(name, "console errors zero", consoleErrors.length === 0, consoleErrors.join(" | "));
-
-  await page.screenshot({ path: `${outDir}/${name}.png`, fullPage: true });
   await context.close();
 }
 
