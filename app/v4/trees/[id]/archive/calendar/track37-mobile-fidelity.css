@@ -1,0 +1,19 @@
+[data-track37-native="archive-calendar"] article[data-testid="track37-active-pad"] {
+  grid-template-rows: 31px auto minmax(0, 1fr) auto;
+}
+
+[data-track37-native="archive-calendar"] article[data-testid="track37-active-pad"] > div:first-child {
+  grid-row: 1;
+}
+
+[data-track37-native="archive-calendar"] article[data-testid="track37-active-pad"] > header {
+  grid-row: 2;
+}
+
+[data-track37-native="archive-calendar"] article[data-testid="track37-active-pad"] > header + div {
+  grid-row: 3;
+}
+
+[data-track37-native="archive-calendar"] article[data-testid="track37-active-pad"] > footer {
+  grid-row: 4;
+}
