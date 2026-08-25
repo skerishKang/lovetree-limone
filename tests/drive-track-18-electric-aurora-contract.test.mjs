@@ -10,7 +10,6 @@ import {
 } from "../lib/drive-track-18-electric-aurora/authority.ts";
 import { DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE } from "../lib/drive-track-18-electric-aurora/provenance.ts";
 
-const root = new URL("../", import.meta.url);
 const sourcePath = new URL(
   "../reference/source-tracks-snapshot/18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html",
   import.meta.url,
@@ -27,10 +26,13 @@ test("Electric Aurora exact source fingerprint stays pinned", async () => {
 
 test("Drive Track18 Electric Aurora is not GitHub Source Track18 Fragment Loader", async () => {
   const fragmentProvenance = await readFile(new URL("../lib/source-track-18/provenance.ts", import.meta.url), "utf8");
-  assert.match(fragmentProvenance, /01_Fragment-loader_Full-screen_Scroll_Video\.html/);
+  assert.match(fragmentProvenance, /SOURCE_TRACK_18_TITLE = "LoveTree — Identity Fragment Loader V2"/);
+  assert.match(fragmentProvenance, /\/design-lab-assets\/source-tracks\/18\/v2\/index\.html/);
+  assert.match(fragmentProvenance, /runnerRoute: "\/design-lab\/source-tracks\/18\/v2\/source"/);
+  assert.doesNotMatch(fragmentProvenance, /메모리코어_전기오로라|electric-aurora/i);
   assert.equal(DRIVE_TRACK_18_ELECTRIC_AURORA_ID, "drive-track-18-electric-aurora");
   assert.equal(DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE.fragmentLoaderNamespace.relationshipToElectricAurora, "SEPARATE_IDENTITY_DO_NOT_ALIAS");
-  assert.notEqual(DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE.sourceFile, DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE.fragmentLoaderNamespace.sourceFile);
+  assert.notEqual(DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE.nativeRoute, "/design-lab/source-tracks/18/v2/source");
 });
 
 test("Electric Aurora projection uses canonical Moment fields and does not promote source demo semantics", () => {
@@ -76,5 +78,3 @@ test("native donor keeps semantic namespace and accessibility/mobile motion cont
   assert.match(authority, /CanonicalMoment/);
   assert.doesNotMatch(page, /energy|importance|return-distance|season-count|activity-score/i);
 });
-
-void root;
