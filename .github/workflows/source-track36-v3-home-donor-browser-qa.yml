@@ -1,0 +1,113 @@
+name: Track36 V3 HOME donor browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/design-lab/source-tracks/36/v3/donor/**'
+      - 'lib/source-track-36/**'
+      - 'design-intake/manifests/source-track-36-cinematic-memory-portal-v3.json'
+      - 'reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/**'
+      - 'tests/source-track-36-v3-donor-contract.test.mjs'
+      - 'qa/source-track-36-v3-home-donor-browser-qa.mjs'
+      - '.github/workflows/source-track36-v3-home-donor-browser-qa.yml'
+      - 'drizzle.config.ts'
+      - 'db/**'
+      - 'drizzle/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-track36-v3-home-donor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Track36 donor manifest
+        run: npm run design:intake:validate -- design-intake/manifests/source-track-36-cinematic-memory-portal-v3.json
+
+      - name: Track36 focused contracts
+        run: node --import tsx --test tests/source-track-36-v3-donor-contract.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Track36 HOME donor browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/track36-browser-qa-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/source-tracks/36/v3/donor" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/track36-browser-qa-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/track36-browser-qa-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/track36-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            TRACK36_SCREENSHOT_DIR="/tmp/track36-browser-qa" \
+            node qa/source-track-36-v3-home-donor-browser-qa.mjs
+
+      - name: Upload Track36 browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track36-v3-home-donor-browser-evidence
+          path: /tmp/track36-browser-qa/*.png
+          if-no-files-found: warn
