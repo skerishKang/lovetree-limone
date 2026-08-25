@@ -193,16 +193,19 @@ async function nativeState(state) {
     await page.waitForFunction(() => document.querySelector("[data-track14-progress='1']"));
     await assertNativeNodesFitStage(page);
   }
+  let buffer;
   if (state === "selected") {
     const selected = page.locator("[data-track14-node-id='m1']");
     await selected.tap();
     assert.equal(await selected.getAttribute("aria-selected"), "true", "320 touch tap must select canonical Moment");
+    buffer = await capture(page, `native-320x720-${state}.png`);
     const before = await page.locator("svg[role='tree'] > g").last().getAttribute("transform");
     await page.getByRole("button", { name: "확대" }).tap();
     const after = await page.locator("svg[role='tree'] > g").last().getAttribute("transform");
     assert.notEqual(after, before, "320 touch zoom control must update presentation camera only");
+  } else {
+    buffer = await capture(page, `native-320x720-${state}.png`);
   }
-  const buffer = await capture(page, `native-320x720-${state}.png`);
   assert.deepEqual(pageErrors, [], `native-320-${state}: page errors ${pageErrors.join(" | ")}`);
   assert.deepEqual(consoleErrors, [], `native-320-${state}: console errors ${consoleErrors.join(" | ")}`);
   await context.close();
@@ -222,6 +225,7 @@ try {
     states: ["initial", "expanded", "selected"],
     sourceExecutable: path.basename(sourcePath),
     sourceNativeSideBySide: true,
+    selectedScreenshotBeforeTouchZoomAssertion: true,
     overlayExpanded: true,
     toolbarClippingGuard: true,
     nativeNodeClippingGuard: true,
