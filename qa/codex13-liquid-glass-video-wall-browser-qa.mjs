@@ -68,11 +68,11 @@ async function auditViewport(browser, { name, width, height, mobile = false, red
   if (!mobile) {
     await main.focus();
     const nearest = page.locator("[data-wall-slot][tabindex='0']").first();
-    const before = await nearest.getAttribute("style");
+    const beforeSlot = await nearest.getAttribute("data-wall-slot");
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(40);
-    const after = await page.locator("[data-wall-slot][tabindex='0']").first().getAttribute("style");
-    assert.notEqual(after, before, `${name}: ArrowRight must move the spatial field`);
+    const afterSlot = await page.locator("[data-wall-slot][tabindex='0']").first().getAttribute("data-wall-slot");
+    assert.notEqual(afterSlot, beforeSlot, `${name}: ArrowRight must move a different wall cell into the nearest position`);
     await page.keyboard.press("Home");
   }
 
