@@ -56,6 +56,17 @@ test("Track14 projection preserves canonical parentId and WHY NEXT truth across 
   }
 });
 
+test("Track14 never invents WHY NEXT text when canonical connectionReason is absent", () => {
+  const projection = track14BuildProjection([
+    { id: "root", parentId: null, connectionReason: null, sortOrder: 0 },
+    { id: "child", parentId: "root", connectionReason: null, sortOrder: 1 },
+  ], "branch", false);
+  assert.equal(projection.edges.length, 1);
+  assert.equal(projection.edges[0].from, "root");
+  assert.equal(projection.edges[0].to, "child");
+  assert.equal(projection.edges[0].label, "");
+});
+
 test("Track14 branch focus is a view-only descendant projection", () => {
   const projection = track14BuildProjection(moments, "branch", false);
   assert.deepEqual([...track14Descendants(projection.edges, "m2")], ["m2", "e2", "m4", "n1"]);
