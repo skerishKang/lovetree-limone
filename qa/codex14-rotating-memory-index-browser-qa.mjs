@@ -85,10 +85,13 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     scrollWidth: document.documentElement.scrollWidth,
   }));
   assert.ok(dimensions.scrollWidth <= dimensions.innerWidth, `${name}: horizontal overflow ${dimensions.scrollWidth} > ${dimensions.innerWidth}`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-initial.png`, fullPage: true });
 
   if (mobile) {
     await page.getByRole("button", { name: "기억 2 선택" }).tap();
     assert.equal(await selectedTitle(page), "기억 2", `${name}: touch tap must select canonical Moment`);
+    await page.screenshot({ path: `${screenshotDir}/${name}-selected.png`, fullPage: true });
+
     await page.getByRole("button", { name: "다음 기억" }).tap();
     assert.equal(await selectedTitle(page), "기억 3", `${name}: touch transport must advance`);
 
@@ -97,10 +100,13 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     assert.ok(box, `${name}: selected spatial card must keep visible geometry for touch swipe`);
     await swipeTouch(context, page, box);
     assert.equal(await selectedTitle(page), "기억 4", `${name}: horizontal touch swipe must advance exactly one Moment`);
+    await page.screenshot({ path: `${screenshotDir}/${name}-travel.png`, fullPage: true });
   } else {
     await main.focus();
     await page.keyboard.press("ArrowRight");
     assert.equal(await selectedTitle(page), "기억 2", `${name}: ArrowRight must advance`);
+    await page.screenshot({ path: `${screenshotDir}/${name}-selected.png`, fullPage: true });
+
     await page.keyboard.press("ArrowLeft");
     assert.equal(await selectedTitle(page), "기억 1", `${name}: ArrowLeft must reverse`);
     await page.keyboard.press("Space");
@@ -109,6 +115,7 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     const indexDialog = page.getByRole("dialog", { name: "Moving Memory Index" });
     await indexDialog.waitFor();
     assert.ok(await indexDialog.isVisible(), `${name}: keyboard I must open index`);
+    await page.screenshot({ path: `${screenshotDir}/${name}-index.png`, fullPage: true });
     await page.keyboard.press("Escape");
     await indexDialog.waitFor({ state: "hidden" });
     await page.waitForFunction(() => document.activeElement?.textContent?.includes("Index"));
@@ -121,6 +128,7 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     await page.mouse.move(box.x + box.width / 2 - 72, box.y + box.height / 2, { steps: 4 });
     await page.mouse.up();
     assert.equal(await selectedTitle(page), "기억 2", `${name}: spatial drag must advance exactly one Moment without activating the card`);
+    await page.screenshot({ path: `${screenshotDir}/${name}-travel.png`, fullPage: true });
 
     await page.mouse.wheel(0, 120);
     await settlePaint(page);
@@ -132,6 +140,7 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
   const inspector = page.getByRole("dialog", { name: /기억 \d+/ });
   await inspector.waitFor();
   assert.ok(await inspector.isVisible(), `${name}: selected Moment inspector must open`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-inspector.png`, fullPage: true });
   await page.keyboard.press("Escape");
   await inspector.waitFor({ state: "hidden" });
   await page.waitForFunction(() => document.activeElement?.textContent?.includes("기억 자세히 보기"));
