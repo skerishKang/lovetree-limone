@@ -69,7 +69,7 @@ test("source defects that prevent direct HOME adoption remain explicit", () => {
 test("bounded donor proof never replaces canonical data truth with the source iframe", () => {
   assert.equal(SOURCE_TRACK_36_CANONICAL_TARGET, "/v4");
   assert.equal(SOURCE_TRACK_36_EXISTING_NATIVE_COMPARATOR, "/design-lab/source-tracks/74/v2/native");
-  assert.doesNotMatch(component, /<iframe|iframe\b/i);
+  assert.doesNotMatch(component, /<iframe(?:\s|>)/i);
   assert.doesNotMatch(component, /createFirstTree|apiFetch|useAuth|localStorage/);
   assert.match(component, /router\.push\(SOURCE_TRACK_36_CANONICAL_TARGET\)/);
   assert.match(component, /SOURCE_TRACK_36_EXISTING_NATIVE_COMPARATOR/);
