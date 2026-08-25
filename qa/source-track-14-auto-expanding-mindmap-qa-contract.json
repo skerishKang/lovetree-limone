@@ -1,0 +1,35 @@
+{
+  "issue": 488,
+  "source": "reference/source-tracks-snapshot/14_자동전개마인드맵_템플릿컴포저/01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html",
+  "nativeRoute": "/trees/track14-qa/graph/mindmap",
+  "viewports": {
+    "desktop": "1280x800",
+    "mobile": "390x844",
+    "compactNative": "320x720"
+  },
+  "pairedStates": ["initial", "expanded", "selected"],
+  "requiredArtifacts": [
+    "source-desktop-initial.png",
+    "native-desktop-initial.png",
+    "compare-desktop-initial.png",
+    "source-desktop-expanded.png",
+    "native-desktop-expanded.png",
+    "compare-desktop-expanded.png",
+    "source-desktop-selected.png",
+    "native-desktop-selected.png",
+    "compare-desktop-selected.png",
+    "source-mobile-initial.png",
+    "native-mobile-initial.png",
+    "compare-mobile-initial.png",
+    "source-mobile-expanded.png",
+    "native-mobile-expanded.png",
+    "compare-mobile-expanded.png",
+    "source-mobile-selected.png",
+    "native-mobile-selected.png",
+    "compare-mobile-selected.png",
+    "overlay-desktop-expanded.png",
+    "native-320x720-expanded.png",
+    "native-mobile-reduced-motion.png",
+    "visual-fidelity-summary.json"
+  ]
+}
