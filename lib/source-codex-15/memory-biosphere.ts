@@ -22,7 +22,7 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
       bytes: 144840,
       width: 1122,
       height: 1402,
-      sha256: "a6ae551703ec259587674a176b326ad0aaacdf6eaacc46a1a8137e4788c19a59",
+      sha256: "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
     },
     {
       name: "trace-final.webp",
@@ -30,7 +30,7 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
       bytes: 164614,
       width: 1122,
       height: 1402,
-      sha256: "8bd8e462cb8eaa03da10ad3dc89310234be3169a613a065903db10175ac3c589",
+      sha256: "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
     },
     {
       name: "bloom-final.webp",
@@ -38,7 +38,7 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
       bytes: 194886,
       width: 1121,
       height: 1403,
-      sha256: "1a772f1c2ebd69df02e28960ced4576cc81217ef4f36b3f42b64cb0687488757",
+      sha256: "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
     },
     {
       name: "sphere-final-v2.png",
@@ -46,7 +46,7 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
       bytes: 2217886,
       width: 1122,
       height: 1402,
-      sha256: "f82c54bc888b046aa06f528bc1fc2bec032447953f44a078f7ec683b75c9467f",
+      sha256: "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
     },
   ],
   runtimeDerivatives: [
@@ -56,7 +56,7 @@ export const CODEX15_MEMORY_BIOSPHERE_AUTHORITY = {
       bytes: 7898,
       width: 420,
       height: 525,
-      sha256: "82a5d0a45e63b7823b0bc4e09a55689a92f767ab8fb127df4fd1d17b75111eaf",
+      sha256: "0ec522eb0f6ff2fad877241d0c77c90e22178f4b93f4e3c21f7eb93fd4a78441",
     },
     {
       path: "/v4/memory-biosphere/trace-final.webp",
