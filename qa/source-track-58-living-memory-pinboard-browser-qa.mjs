@@ -141,7 +141,11 @@ async function openCanonicalBoard(page, name) {
   const cards = page.locator('button[aria-label$="선택"]');
   await cards.nth(4).waitFor();
   assert.equal(await cards.count(), 5, `${name}: all canonical QA Moments must be pinned`);
-  assert.equal(await page.locator("svg[aria-label='Canonical Connection living thread'] path").count(), 8, `${name}: four connections require shadow + main paths`);
+  assert.equal(
+    await page.locator("svg[aria-label='Canonical Connection living thread'] path").count(),
+    8,
+    `${name}: four connections require shadow + main paths`,
+  );
   return cards;
 }
 
@@ -173,19 +177,39 @@ async function auditDesktop() {
   await cards.nth(0).focus();
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(30);
-  assert.equal(await cards.nth(1).getAttribute("aria-pressed"), "true", `${name}: ArrowRight must select next canonical Moment`);
-  assert.equal(await cards.nth(1).evaluate((node) => node === document.activeElement), true, `${name}: keyboard selection must move visible focus`);
+  assert.equal(
+    await cards.nth(1).getAttribute("aria-pressed"),
+    "true",
+    `${name}: ArrowRight must select next canonical Moment`,
+  );
+  assert.equal(
+    await cards.nth(1).evaluate((node) => node === document.activeElement),
+    true,
+    `${name}: keyboard selection must move visible focus`,
+  );
 
   await cards.nth(0).click();
   await page.getByText("NEXT MOMENT · 2 CHOICES").waitFor();
-  assert.equal(await page.locator("aside[aria-label='Selected Moment inspector'] button").filter({ hasText: "Window song" }).count(), 1, `${name}: first Connection choice missing`);
-  assert.equal(await page.locator("aside[aria-label='Selected Moment inspector'] button").filter({ hasText: "Second path" }).count(), 1, `${name}: second Connection choice missing`);
+  assert.equal(
+    await page.locator("aside[aria-label='Selected Moment inspector'] button").filter({ hasText: "Window song" }).count(),
+    1,
+    `${name}: first Connection choice missing`,
+  );
+  assert.equal(
+    await page.locator("aside[aria-label='Selected Moment inspector'] button").filter({ hasText: "Second path" }).count(),
+    1,
+    `${name}: second Connection choice missing`,
+  );
 
   const ownerEdit = page.getByRole("button", { name: "READ ONLY · OWNER EDIT" });
   assert.equal(await ownerEdit.isDisabled(), true, `${name}: unauthenticated QA must not mutate canonical Moment`);
 
   await page.getByRole("button", { name: "Gold" }).click();
-  assert.equal(await page.locator("main[data-source-track='58']").getAttribute("data-theme"), "gold", `${name}: board theme must stay local presentation state`);
+  assert.equal(
+    await page.locator("main[data-source-track='58']").getAttribute("data-theme"),
+    "gold",
+    `${name}: board theme must stay local presentation state`,
+  );
 
   await page.getByRole("button", { name: "CINEMA REPLAY" }).click();
   const dialog = page.getByRole("dialog");
@@ -207,15 +231,20 @@ async function auditDesktop() {
   await page.getByText(/Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다/).waitFor();
   await page.getByRole("button", { name: "RESUME" }).waitFor();
 
-  await page.getByLabel("Cinema Moment scrubber").evaluate((node) => {
-    node.value = "2";
-    node.dispatchEvent(new Event("input", { bubbles: true }));
-    node.dispatchEvent(new Event("change", { bubbles: true }));
-  });
+  const scrubber = page.getByLabel("Cinema Moment scrubber");
+  await scrubber.focus();
+  await page.keyboard.press("Home");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   await page.getByRole("heading", { name: "Second path" }).waitFor();
+
   await page.getByRole("button", { name: "EXIT TO BOARD" }).click();
   await dialog.waitFor({ state: "detached" });
-  assert.equal(await cards.nth(2).getAttribute("aria-pressed"), "true", `${name}: Cinema exit must re-enter board on active Moment`);
+  assert.equal(
+    await cards.nth(2).getAttribute("aria-pressed"),
+    "true",
+    `${name}: Cinema exit must re-enter board on active Moment`,
+  );
 
   await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
@@ -233,7 +262,11 @@ async function auditMobile({ name, width, height }) {
   await cards.nth(2).tap();
   assert.equal(await cards.nth(2).getAttribute("aria-pressed"), "true", `${name}: touch must select canonical Moment`);
   await page.getByRole("button", { name: "Tint" }).tap();
-  assert.equal(await page.locator("main[data-source-track='58']").getAttribute("data-theme"), "tint", `${name}: touch theme parity failed`);
+  assert.equal(
+    await page.locator("main[data-source-track='58']").getAttribute("data-theme"),
+    "tint",
+    `${name}: touch theme parity failed`,
+  );
   await page.getByRole("button", { name: "CINEMA REPLAY" }).tap();
   await page.getByRole("dialog").waitFor();
   await assertNoOverflow(page, `${name}-cinema`);
@@ -260,7 +293,9 @@ async function auditReducedMotion() {
   await root.waitFor();
   assert.equal(await root.getAttribute("data-reduced-motion"), "true", `${name}: JS reduced-motion state missing`);
   await page.waitForTimeout(50);
-  const running = await page.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length);
+  const running = await page.evaluate(
+    () => document.getAnimations().filter((animation) => animation.playState === "running").length,
+  );
   assert.equal(running, 0, `${name}: reduced-motion must leave no running ambient animations`);
   await page.getByRole("button", { name: "CINEMA REPLAY" }).tap();
   const reducedButton = page.getByRole("button", { name: "REDUCED MOTION" });
