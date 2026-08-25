@@ -5,6 +5,7 @@ import path from "node:path";
 const BASE = process.env.TRACK09_SOURCE_QA_URL || "http://127.0.0.1:4173";
 const SOURCE_PATH = "/reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html";
 const OUT = path.resolve(process.cwd(), "qa-artifacts/source-track09-summary-dashboard");
+const TRANSPARENT_PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/6W9qWQAAAABJRU5ErkJggg==", "base64");
 fs.mkdirSync(OUT, { recursive: true });
 
 const VIEWPORTS = [
@@ -18,12 +19,20 @@ const views = ["stand", "changed", "future", "next"];
 async function blockExternalDemoMedia(context) {
   await context.route(/^https:\/\//, async (route) => {
     const url = route.request().url();
-    if (url.startsWith("https://fonts.googleapis.com/") ||
-        url.startsWith("https://fonts.gstatic.com/") ||
-        url.startsWith("https://i.ytimg.com/") ||
-        url.startsWith("https://www.youtube") ||
-        url.startsWith("https://youtube")) {
-      await route.abort();
+    if (url.startsWith("https://fonts.googleapis.com/")) {
+      await route.fulfill({ status: 200, contentType: "text/css", body: "" });
+      return;
+    }
+    if (url.startsWith("https://fonts.gstatic.com/")) {
+      await route.fulfill({ status: 204, body: "" });
+      return;
+    }
+    if (url.startsWith("https://i.ytimg.com/")) {
+      await route.fulfill({ status: 200, contentType: "image/png", body: TRANSPARENT_PNG });
+      return;
+    }
+    if (url.startsWith("https://www.youtube") || url.startsWith("https://youtube")) {
+      await route.fulfill({ status: 204, body: "" });
       return;
     }
     await route.continue();
@@ -56,7 +65,11 @@ async function main() {
     await blockExternalDemoMedia(context);
     const page = await context.newPage();
     const pageErrors = [];
+    const consoleErrors = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
 
     await page.goto(`${BASE}${encodeURI(SOURCE_PATH)}`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.locator(".workspace").waitFor({ state: "visible", timeout: 10000 });
@@ -66,7 +79,8 @@ async function main() {
 
     for (let index = 0; index < views.length; index += 1) {
       const question = questions.nth(index);
-      await question.click();
+      if (viewport.touch) await question.tap();
+      else await question.click();
       await waitForSourceView(page, views[index]);
       const expanded = await question.getAttribute("aria-expanded");
       const activeScreen = page.locator(`.card-screen[data-screen="${views[index]}"]`);
@@ -76,6 +90,14 @@ async function main() {
 
     await questions.first().focus();
     record(viewport.name, "question keyboard focusable", await questions.first().evaluate((element) => document.activeElement === element));
+    await page.keyboard.press("Enter");
+    await waitForSourceView(page, "stand");
+    record(viewport.name, "keyboard Enter activates summary result", await questions.first().getAttribute("aria-expanded") === "true");
+
+    await questions.nth(1).focus();
+    await page.keyboard.press("Space");
+    await waitForSourceView(page, "changed");
+    record(viewport.name, "keyboard Space activates summary result", await questions.nth(1).getAttribute("aria-expanded") === "true");
 
     const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
     record(viewport.name, "horizontal overflow zero", overflow <= 1, `overflow:${overflow}`);
@@ -83,6 +105,7 @@ async function main() {
     const copy = await page.locator("body").innerText();
     record(viewport.name, "source fixture evidence remains visible only in source proof", copy.includes("93") && copy.includes("시즌"));
     record(viewport.name, "page errors zero", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
+    record(viewport.name, "console errors zero", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
 
     await page.screenshot({ path: path.join(OUT, `${viewport.name}.png`), fullPage: true });
     await context.close();
@@ -92,11 +115,19 @@ async function main() {
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
     await blockExternalDemoMedia(context);
     const page = await context.newPage();
+    const pageErrors = [];
+    const consoleErrors = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
     await page.goto(`${BASE}${encodeURI(SOURCE_PATH)}`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.locator(".question").first().waitFor({ state: "visible", timeout: 10000 });
     const duration = await page.locator(".question").first().evaluate((element) => getComputedStyle(element).transitionDuration);
     const seconds = duration.split(",").map((value) => value.trim()).map((value) => value.endsWith("ms") ? Number.parseFloat(value) / 1000 : Number.parseFloat(value));
     record("reduced-motion", "source transition duration collapses", seconds.every((value) => Number.isFinite(value) && value <= 0.001), duration);
+    record("reduced-motion", "page errors zero", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
+    record("reduced-motion", "console errors zero", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
     await page.screenshot({ path: path.join(OUT, "desktop-1280x800-reduced-motion.png"), fullPage: true });
     await context.close();
   }
