@@ -73,7 +73,7 @@ function FilmSession({ treeId, title, moments }: { treeId: string; title: string
   function onKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
     const target = event.target as HTMLElement;
     const tag = target.tagName.toLowerCase();
-    if (["input", "textarea", "select"].includes(tag)) return;
+    if (["input", "textarea", "select", "button", "a"].includes(tag)) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       event.shiftKey ? moveScene(-1) : selectAt(selectedIndex - 1);
