@@ -30,6 +30,18 @@ async function blockExternalDemoMedia(context) {
   });
 }
 
+async function waitForSourceView(page, view) {
+  await page.waitForFunction((expectedView) => {
+    const screen = document.querySelector(`.card-screen[data-screen="${expectedView}"]`);
+    return screen?.classList.contains("active") === true;
+  }, view, { timeout: 2500 });
+
+  await page.waitForFunction(() => {
+    const pill = document.getElementById("progressPill");
+    return pill?.classList.contains("show") !== true;
+  }, undefined, { timeout: 2500 });
+}
+
 async function main() {
   const browser = await chromium.launch();
   const checks = [];
@@ -55,6 +67,7 @@ async function main() {
     for (let index = 0; index < views.length; index += 1) {
       const question = questions.nth(index);
       await question.click();
+      await waitForSourceView(page, views[index]);
       const expanded = await question.getAttribute("aria-expanded");
       const activeScreen = page.locator(`.card-screen[data-screen="${views[index]}"]`);
       record(viewport.name, `question ${views[index]} expands`, expanded === "true", String(expanded));
