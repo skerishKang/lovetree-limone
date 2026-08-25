@@ -47,11 +47,48 @@ async function installCanonicalApi(context) {
 }
 
 async function assertAlignedCanonicalLayers(page, record, viewport) {
-  const shellSrc = await page.locator('[data-layer="shell"] img').getAttribute("src");
-  const cleanSrc = await page.locator('[data-layer="clean"] img').getAttribute("src");
+  const shell = page.locator('[data-layer="shell"] img');
+  const clean = page.locator('[data-layer="clean"] img');
+  const shellSrc = await shell.getAttribute("src");
+  const cleanSrc = await clean.getAttribute("src");
   record(viewport, "same canonical media reused by both layers", shellSrc === cleanSrc && shellSrc?.startsWith("data:image/svg+xml") === true, `${shellSrc?.slice(0, 32)} / ${cleanSrc?.slice(0, 32)}`);
+
+  const [shellFrame, cleanFrame] = await Promise.all([
+    shell.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, objectFit: style.objectFit, objectPosition: style.objectPosition };
+    }),
+    clean.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, objectFit: style.objectFit, objectPosition: style.objectPosition };
+    }),
+  ]);
+  const epsilon = 0.5;
+  const sameFrame = ["x", "y", "width", "height"].every((key) => Math.abs(shellFrame[key] - cleanFrame[key]) <= epsilon)
+    && shellFrame.objectFit === cleanFrame.objectFit
+    && shellFrame.objectPosition === cleanFrame.objectPosition;
+  record(viewport, "exact same-frame geometry/object-fit alignment", sameFrame, JSON.stringify({ shellFrame, cleanFrame }));
+
   const sourceHref = await page.getByTestId("track70-source-link").getAttribute("href");
   record(viewport, "canonical sourceUrl preserved", sourceHref === MOMENTS[0].sourceUrl, String(sourceHref));
+}
+
+async function performTouchDrag(context, page, stage) {
+  const box = await stage.boundingBox();
+  if (!box) throw new Error("Track70 touch stage has no bounding box");
+  const cdp = await context.newCDPSession(page);
+  const start = { x: box.x + box.width * 0.32, y: box.y + box.height * 0.52 };
+  const middle = { x: box.x + box.width * 0.48, y: box.y + box.height * 0.52 };
+  const end = { x: box.x + box.width * 0.64, y: box.y + box.height * 0.52 };
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [start] });
+  await page.waitForTimeout(30);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [middle] });
+  await page.waitForTimeout(30);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [end] });
+  await page.waitForTimeout(30);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
 }
 
 async function main() {
@@ -68,9 +105,14 @@ async function main() {
     await installCanonicalApi(context);
     const page = await context.newPage();
     const pageErrors = [];
+    const consoleErrors = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
 
-    await page.goto(`${BASE}/trees/${TREE.id}/album/reveal`, { waitUntil: "networkidle", timeout: 30000 });
+    const response = await page.goto(`${BASE}/trees/${TREE.id}/album/reveal`, { waitUntil: "networkidle", timeout: 30000 });
+    record(viewport.name, "route response 2xx", response?.ok() === true, `${response?.status() ?? "no-response"}`);
     const surface = page.getByTestId("track70-moment-reveal");
     await surface.waitFor({ state: "visible", timeout: 10000 });
     const stage = page.getByTestId("track70-reveal-stage");
@@ -95,6 +137,10 @@ async function main() {
       record(viewport.name, "touch tap has hover-equivalent reveal", await stage.getAttribute("data-reveal-state") === "pinned");
       await stage.tap();
       record(viewport.name, "touch tap toggles reveal closed", await stage.getAttribute("data-reveal-state") === "rest");
+      await performTouchDrag(context, page, stage);
+      record(viewport.name, "touch drag paints reveal trail", await stage.getAttribute("data-reveal-state") === "trail");
+      await page.waitForTimeout(1100);
+      record(viewport.name, "touch drag trail lingers then clears", await stage.getAttribute("data-reveal-state") === "rest");
     }
 
     await stage.focus();
@@ -108,6 +154,7 @@ async function main() {
     await page.getByTestId("track70-moment-selector").nth(2).click();
     record(viewport.name, "missing canonical thumbnail fails closed", (await stage.textContent())?.includes("canonical thumbnail") === true);
     record(viewport.name, "page errors 0", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
+    record(viewport.name, "console errors 0", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
 
     await page.screenshot({ path: path.join(OUT, `${viewport.name}.png`), fullPage: true });
     await context.close();
@@ -117,10 +164,18 @@ async function main() {
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
     await installCanonicalApi(context);
     const page = await context.newPage();
-    await page.goto(`${BASE}/trees/${TREE.id}/album/reveal`, { waitUntil: "networkidle", timeout: 30000 });
+    const pageErrors = [];
+    const consoleErrors = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
+    const response = await page.goto(`${BASE}/trees/${TREE.id}/album/reveal`, { waitUntil: "networkidle", timeout: 30000 });
+    record("reduced-motion", "route response 2xx", response?.ok() === true, `${response?.status() ?? "no-response"}`);
     const stage = page.getByTestId("track70-reveal-stage");
     await stage.waitFor({ state: "visible", timeout: 10000 });
     record("reduced-motion", "runtime detects reduced motion", await stage.getAttribute("data-reduced-motion") === "true");
+    await assertAlignedCanonicalLayers(page, record, "reduced-motion");
     await stage.focus();
     await page.keyboard.press("Enter");
     record("reduced-motion", "semantic reveal still works", await stage.getAttribute("data-reveal-state") === "pinned");
@@ -132,6 +187,10 @@ async function main() {
     await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.4);
     await page.waitForTimeout(80);
     record("reduced-motion", "pointer trail motion disabled", await stage.getAttribute("data-reveal-state") === "rest");
+    const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth));
+    record("reduced-motion", "horizontal overflow 0", overflow === 0, `overflow:${overflow}`);
+    record("reduced-motion", "page errors 0", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
+    record("reduced-motion", "console errors 0", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
     await page.screenshot({ path: path.join(OUT, "desktop-1280x800-reduced-motion.png"), fullPage: true });
     await context.close();
   }
