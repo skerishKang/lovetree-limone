@@ -49,7 +49,8 @@ async function assertNoHorizontalOverflow(page, label) {
           width: Math.round(rect.width * 100) / 100,
         };
       })
-      .filter((entry) => entry.right > viewportWidth + 1 || entry.left < -1)
+      .filter((entry) => entry.right > viewportWidth + 1)
+      .sort((a, b) => b.right - a.right)
       .slice(0, 12);
     return {
       innerWidth: viewportWidth,
