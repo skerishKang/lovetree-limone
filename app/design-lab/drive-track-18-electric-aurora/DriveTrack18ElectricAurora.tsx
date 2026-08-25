@@ -186,13 +186,12 @@ export default function DriveTrack18ElectricAurora({ moments }: Props) {
           <div className={styles.aurora} aria-hidden="true" />
           <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" data-testid="electric-aurora-canvas" />
           <div className={styles.core} aria-hidden="true"><span /><i /></div>
-          <div className={styles.nodes} role="list" aria-label="기억 코어 선택">
+          <div className={styles.nodes} aria-label="기억 코어 선택">
             {projected.map((moment, index) => (
               <button
                 key={moment.id}
                 ref={(node) => { buttonRefs.current[index] = node; }}
                 type="button"
-                role="listitem"
                 className={styles.node}
                 data-slot={index % 8}
                 aria-pressed={moment.isSelected}
