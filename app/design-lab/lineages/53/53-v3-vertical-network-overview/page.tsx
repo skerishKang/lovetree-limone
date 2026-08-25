@@ -6,6 +6,13 @@ import { SOURCE56_AUTHORITY } from "@/lib/lineage-53-source56";
 export default function Lineage53Source56VerticalNetworkPage() {
   return (
     <main style={{ minHeight: "100vh", overflowX: "clip", color: "#292630", background: "#f7f4f2" }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .s56[data-network-mode="FIRST · 01/02/03 REVEAL"] .s56-inspector {
+            display: none;
+          }
+        }
+      `}</style>
       <Lineage53VerticalNetworkOverview />
 
       <section aria-label="Source56 implementation diagnostics" style={{ maxWidth: 1240, margin: "0 auto", padding: "42px 20px 64px" }}>
