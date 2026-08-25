@@ -1,0 +1,394 @@
+.surface {
+  --terrain-ink: #f5eee9;
+  --terrain-muted: #b8adb8;
+  --terrain-line: rgba(231, 218, 211, 0.2);
+  --terrain-pink: #ef749a;
+  --terrain-teal: #3db8b5;
+  --terrain-violet: #996fd6;
+  min-height: calc(100vh - 146px);
+  padding: clamp(22px, 3vw, 46px);
+  color: var(--terrain-ink);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(239, 116, 154, 0.12), transparent 30%),
+    radial-gradient(circle at 82% 22%, rgba(61, 184, 181, 0.1), transparent 34%),
+    linear-gradient(145deg, #100d16 0%, #0b0d13 52%, #12101a 100%);
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  max-width: 1440px;
+  margin: 0 auto 24px;
+}
+
+.eyebrow,
+.inspectorKicker {
+  margin: 0 0 8px;
+  color: var(--terrain-teal);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.header h1 {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(30px, 4vw, 58px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.intro {
+  max-width: 760px;
+  margin: 14px 0 0;
+  color: var(--terrain-muted);
+  line-height: 1.65;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(86px, 1fr));
+  gap: 1px;
+  min-width: min(100%, 340px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.metrics span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  background: rgba(10, 11, 16, 0.84);
+  color: var(--terrain-muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metrics strong {
+  color: var(--terrain-ink);
+  font-size: 20px;
+  letter-spacing: -0.04em;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 340px);
+  gap: 18px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.stage {
+  position: relative;
+  min-height: min(68vh, 720px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  background:
+    linear-gradient(rgba(255,255,255,.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px),
+    radial-gradient(circle at 50% 52%, rgba(153, 111, 214, 0.11), transparent 38%),
+    #0a0c12;
+  background-size: 48px 48px, 48px 48px, auto, auto;
+  isolation: isolate;
+}
+
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 9, 14, 0.02), rgba(8, 9, 14, 0.36));
+  z-index: 2;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.terrainFill {
+  fill: url(#track17-terrain-fill);
+}
+
+.contour {
+  fill: none;
+  stroke: rgba(235, 226, 221, 0.16);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.connection {
+  fill: none;
+  stroke: rgba(61, 184, 181, 0.7);
+  stroke-width: 2.2;
+  stroke-dasharray: 8 10;
+  vector-effect: non-scaling-stroke;
+  animation: terrainFlow 5s linear infinite;
+}
+
+.nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+
+.node {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  color: #f9f3ef;
+  background: transparent;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.node i {
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  background: var(--terrain-pink);
+  box-shadow: 0 0 0 7px rgba(239, 116, 154, 0.1), 0 0 28px rgba(239, 116, 154, 0.52);
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  z-index: -1;
+}
+
+.node:nth-child(3n + 2) i {
+  background: var(--terrain-teal);
+  box-shadow: 0 0 0 7px rgba(61, 184, 181, 0.1), 0 0 28px rgba(61, 184, 181, 0.44);
+}
+
+.node:nth-child(3n) i {
+  background: var(--terrain-violet);
+  box-shadow: 0 0 0 7px rgba(153, 111, 214, 0.1), 0 0 28px rgba(153, 111, 214, 0.44);
+}
+
+.node span {
+  position: absolute;
+  top: 42px;
+  min-width: 34px;
+  color: rgba(245, 238, 233, 0.76);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.node:hover i,
+.nodeActive i {
+  transform: scale(1.38);
+  background: #f7e7dc;
+  box-shadow: 0 0 0 10px rgba(247, 231, 220, 0.12), 0 0 36px rgba(247, 231, 220, 0.6);
+}
+
+.node:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.stageLegend {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 18px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  z-index: 5;
+  color: rgba(245, 238, 233, 0.5);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.stageLegend i {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(239,116,154,.4), rgba(61,184,181,.4), rgba(153,111,214,.4));
+}
+
+.inspector {
+  min-height: 360px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  background: rgba(13, 14, 20, 0.9);
+  box-shadow: 0 24px 80px rgba(0,0,0,.22);
+}
+
+.inspectorTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--terrain-muted);
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+
+.inspector h2 {
+  margin: 18px 0 10px;
+  font-size: clamp(24px, 2.6vw, 36px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.inspector p {
+  color: var(--terrain-muted);
+  line-height: 1.65;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 16px 0;
+}
+
+.tags span,
+.truthList span {
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  color: #d8ced8;
+  background: rgba(255,255,255,.035);
+  font-size: 11px;
+}
+
+.connectionTruth {
+  margin: 24px 0;
+  padding: 16px;
+  border-left: 2px solid var(--terrain-teal);
+  background: rgba(61, 184, 181, 0.055);
+}
+
+.connectionTruth small {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--terrain-teal);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.connectionTruth strong {
+  display: block;
+  font-size: 14px;
+}
+
+.connectionTruth p {
+  margin-bottom: 0;
+}
+
+.detailLink,
+.clearButton,
+.empty a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detailLink,
+.empty a {
+  color: #0a0c12;
+  background: #f4ebe5;
+  text-decoration: none;
+}
+
+.clearButton {
+  margin-left: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--terrain-ink);
+  background: transparent;
+  cursor: pointer;
+}
+
+.truthList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 24px;
+}
+
+.warning,
+.empty {
+  max-width: 1440px;
+  margin: 18px auto 0;
+}
+
+.warning {
+  color: #dcbf8a;
+  font-size: 12px;
+}
+
+.empty {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 24px;
+  background: rgba(10,12,18,.84);
+}
+
+.empty strong {
+  font-size: 24px;
+}
+
+.empty p {
+  max-width: 520px;
+  margin: 0 0 8px;
+  color: var(--terrain-muted);
+}
+
+@keyframes terrainFlow {
+  to { stroke-dashoffset: -72; }
+}
+
+@media (max-width: 900px) {
+  .surface { padding: 20px; }
+  .header { align-items: stretch; flex-direction: column; gap: 18px; }
+  .metrics { width: 100%; }
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .stage { min-height: 54vh; }
+  .inspector { min-height: 0; }
+}
+
+@media (max-width: 560px) {
+  .surface { padding: 14px; }
+  .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .metrics span { padding: 10px 8px; }
+  .metrics strong { font-size: 17px; }
+  .stage { min-height: 430px; border-radius: 18px; }
+  .inspector { padding: 18px; border-radius: 18px; }
+  .node { width: 52px; height: 52px; }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .surface { padding-top: 14px; }
+  .header { margin-bottom: 12px; }
+  .intro { margin-top: 8px; }
+  .workspace { grid-template-columns: minmax(0, 1fr) minmax(250px, 310px); }
+  .stage { min-height: 410px; }
+  .inspector { min-height: 410px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connection { animation: none; }
+  .node i { transition: none; }
+}
