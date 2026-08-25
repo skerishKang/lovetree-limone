@@ -94,6 +94,7 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
   const inspectorTriggerRef = useRef<HTMLElement | null>(null);
   const indexTriggerRef = useRef<HTMLButtonElement | null>(null);
   const pointerRef = useRef<{ id: number; startX: number; lastX: number; moved: number } | null>(null);
+  const suppressClickRef = useRef(false);
   const frameRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
 
@@ -197,7 +198,10 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
   }, []);
 
   const onCardClick = useCallback((event: ReactMouseEvent<HTMLButtonElement>, momentIndex: number) => {
-    if ((pointerRef.current?.moved ?? 0) > 6) return;
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
     if (momentIndex !== activeIndex) {
       selectAt(momentIndex);
       return;
@@ -207,6 +211,11 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
 
   const onPointerDown = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    const card = target.closest("[data-codex14-card='true']");
+    const interactive = target.closest("a, button, input, select, textarea, [role='button']");
+    if (interactive && !card) return;
+    suppressClickRef.current = false;
     pointerRef.current = { id: event.pointerId, startX: event.clientX, lastX: event.clientX, moved: 0 };
     event.currentTarget.setPointerCapture(event.pointerId);
     setDragging(true);
@@ -218,6 +227,7 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
     const dx = event.clientX - pointer.lastX;
     pointer.lastX = event.clientX;
     pointer.moved = Math.max(pointer.moved, Math.abs(event.clientX - pointer.startX));
+    if (pointer.moved > 6) suppressClickRef.current = true;
     if (pointer.moved > 3) setRotation((value) => value + dx * 0.2);
   }, []);
 
@@ -232,6 +242,8 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
   }, [move]);
 
   const onWheel = useCallback((event: ReactWheelEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest("a, input, select, textarea, dialog")) return;
     if (Math.abs(event.deltaY) < 6 && Math.abs(event.deltaX) < 6) return;
     event.preventDefault();
     const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -302,6 +314,7 @@ export default function RotatingMemoryIndexArchive({ treeId }: { treeId: string 
                   className={`${styles.card} ${selected ? styles.selected : ""}`}
                   style={cardStyle(offset, rotation)}
                   data-offset={offset}
+                  data-codex14-card="true"
                   aria-current={selected ? "true" : undefined}
                   aria-label={`${moment.title || "제목 없는 기억"}${selected ? " 상세 열기" : " 선택"}`}
                   onClick={(event) => onCardClick(event, momentIndex)}
