@@ -74,3 +74,10 @@ jobs:
             exit 1
           fi
           V4_BASE_URL='http://127.0.0.1:3000' node qa/source-track-26-memory-film-studio-v1-donor-browser-qa.mjs
+      - name: Upload Track26 visual fidelity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track26-memory-film-studio-visual-qa
+          path: qa/artifacts/track26-memory-film-studio/
+          if-no-files-found: warn
