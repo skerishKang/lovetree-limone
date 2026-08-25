@@ -17,9 +17,8 @@ const VIEWPORTS = [
   { name: "phone-390x844", width: 390, height: 844, touch: true },
   { name: "mobile-320x720", width: 320, height: 720, touch: true },
 ];
-
 const STATES = ["initial-whole-memory", "stand", "changed", "future", "next"];
-const views = ["stand", "changed", "future", "next"];
+const VIEWS = ["stand", "changed", "future", "next"];
 
 const TREE_FIXTURE = {
   id: TREE_ID,
@@ -31,132 +30,24 @@ const TREE_FIXTURE = {
 };
 
 const MOMENT_FIXTURES = [
-  {
-    id: "track09-m1",
-    treeId: TREE_ID,
-    title: "처음 마음을 멈춘 장면",
-    memo: "처음 저장한 순간",
-    sourceType: "video",
-    sourceUrl: "https://example.test/media/first.mp4",
-    timestamp: "2026-02-02T10:00:00.000Z",
-    createdAt: "2026-02-02T10:00:00.000Z",
-    emotionTags: ["설렘"],
-    parentId: null,
-    connectionReason: "",
-  },
-  {
-    id: "track09-m2",
-    treeId: TREE_ID,
-    title: "다시 보고 싶던 순간",
-    memo: "한 번 더 저장한 기억",
-    sourceType: "note",
-    sourceUrl: "",
-    timestamp: "2026-03-10T10:00:00.000Z",
-    createdAt: "2026-03-10T10:00:00.000Z",
-    emotionTags: ["설렘", "몰입"],
-    parentId: "track09-m1",
-    connectionReason: "처음 장면에서 이어짐",
-  },
-  {
-    id: "track09-m3",
-    treeId: TREE_ID,
-    title: "오래 남은 인터뷰",
-    memo: "말투가 편안했던 날",
-    sourceType: "video",
-    sourceUrl: "https://example.test/media/interview.mp4",
-    timestamp: "2026-04-19T10:00:00.000Z",
-    createdAt: "2026-04-19T10:00:00.000Z",
-    emotionTags: ["편안함"],
-    parentId: "track09-m2",
-    connectionReason: "감정이 달라진 순간",
-  },
-  {
-    id: "track09-m4",
-    treeId: TREE_ID,
-    title: "조용히 웃던 장면",
-    memo: "편안함이 커진 기억",
-    sourceType: "note",
-    sourceUrl: "",
-    timestamp: "2026-05-06T10:00:00.000Z",
-    createdAt: "2026-05-06T10:00:00.000Z",
-    emotionTags: ["편안함"],
-    parentId: null,
-    connectionReason: "",
-  },
-  {
-    id: "track09-m5",
-    treeId: TREE_ID,
-    title: "함께 이어 본 무대",
-    memo: "관계가 생긴 기억",
-    sourceType: "video",
-    sourceUrl: "https://example.test/media/stage.mp4",
-    timestamp: "2026-06-01T10:00:00.000Z",
-    createdAt: "2026-06-01T10:00:00.000Z",
-    emotionTags: ["몰입"],
-    parentId: "track09-m3",
-    connectionReason: "비슷한 장면",
-  },
-  {
-    id: "track09-m6",
-    treeId: TREE_ID,
-    title: "비 오는 날의 기록",
-    memo: "다른 결의 감정을 남김",
-    sourceType: "note",
-    sourceUrl: "",
-    timestamp: "2026-06-28T10:00:00.000Z",
-    createdAt: "2026-06-28T10:00:00.000Z",
-    emotionTags: ["편안함"],
-    parentId: "track09-m4",
-    connectionReason: "같은 감정",
-  },
-  {
-    id: "track09-m7",
-    treeId: TREE_ID,
-    title: "최근 다시 찾은 영상",
-    memo: "오래 보고 싶은 장면",
-    sourceType: "video",
-    sourceUrl: "https://example.test/media/recent.mp4",
-    timestamp: "2026-07-21T10:00:00.000Z",
-    createdAt: "2026-07-21T10:00:00.000Z",
-    emotionTags: ["설렘"],
-    parentId: null,
-    connectionReason: "",
-  },
-  {
-    id: "track09-m8",
-    treeId: TREE_ID,
-    title: "오늘 남긴 마지막 순간",
-    memo: "지금의 마음을 기록",
-    sourceType: "note",
-    sourceUrl: "",
-    timestamp: "2026-08-04T10:00:00.000Z",
-    createdAt: "2026-08-04T10:00:00.000Z",
-    emotionTags: ["편안함", "몰입"],
-    parentId: "track09-m7",
-    connectionReason: "최근 흐름",
-  },
+  { id: "track09-m1", treeId: TREE_ID, title: "처음 마음을 멈춘 장면", memo: "처음 저장한 순간", sourceType: "video", sourceUrl: "https://example.test/media/first.mp4", timestamp: "2026-02-02T10:00:00.000Z", createdAt: "2026-02-02T10:00:00.000Z", emotionTags: ["설렘"], parentId: null, connectionReason: "" },
+  { id: "track09-m2", treeId: TREE_ID, title: "다시 보고 싶던 순간", memo: "한 번 더 저장한 기억", sourceType: "note", sourceUrl: "", timestamp: "2026-03-10T10:00:00.000Z", createdAt: "2026-03-10T10:00:00.000Z", emotionTags: ["설렘", "몰입"], parentId: "track09-m1", connectionReason: "처음 장면에서 이어짐" },
+  { id: "track09-m3", treeId: TREE_ID, title: "오래 남은 인터뷰", memo: "말투가 편안했던 날", sourceType: "video", sourceUrl: "https://example.test/media/interview.mp4", timestamp: "2026-04-19T10:00:00.000Z", createdAt: "2026-04-19T10:00:00.000Z", emotionTags: ["편안함"], parentId: "track09-m2", connectionReason: "감정이 달라진 순간" },
+  { id: "track09-m4", treeId: TREE_ID, title: "조용히 웃던 장면", memo: "편안함이 커진 기억", sourceType: "note", sourceUrl: "", timestamp: "2026-05-06T10:00:00.000Z", createdAt: "2026-05-06T10:00:00.000Z", emotionTags: ["편안함"], parentId: null, connectionReason: "" },
+  { id: "track09-m5", treeId: TREE_ID, title: "함께 이어 본 무대", memo: "관계가 생긴 기억", sourceType: "video", sourceUrl: "https://example.test/media/stage.mp4", timestamp: "2026-06-01T10:00:00.000Z", createdAt: "2026-06-01T10:00:00.000Z", emotionTags: ["몰입"], parentId: "track09-m3", connectionReason: "비슷한 장면" },
+  { id: "track09-m6", treeId: TREE_ID, title: "비 오는 날의 기록", memo: "다른 결의 감정을 남김", sourceType: "note", sourceUrl: "", timestamp: "2026-06-28T10:00:00.000Z", createdAt: "2026-06-28T10:00:00.000Z", emotionTags: ["편안함"], parentId: "track09-m4", connectionReason: "같은 감정" },
+  { id: "track09-m7", treeId: TREE_ID, title: "최근 다시 찾은 영상", memo: "오래 보고 싶은 장면", sourceType: "video", sourceUrl: "https://example.test/media/recent.mp4", timestamp: "2026-07-21T10:00:00.000Z", createdAt: "2026-07-21T10:00:00.000Z", emotionTags: ["설렘"], parentId: null, connectionReason: "" },
+  { id: "track09-m8", treeId: TREE_ID, title: "오늘 남긴 마지막 순간", memo: "지금의 마음을 기록", sourceType: "note", sourceUrl: "", timestamp: "2026-08-04T10:00:00.000Z", createdAt: "2026-08-04T10:00:00.000Z", emotionTags: ["편안함", "몰입"], parentId: "track09-m7", connectionReason: "최근 흐름" },
 ];
 
 async function blockExternalDemoMedia(context) {
   await context.route(/^https:\/\//, async (route) => {
     const url = route.request().url();
-    if (url.startsWith("https://fonts.googleapis.com/")) {
-      await route.fulfill({ status: 200, contentType: "text/css", body: "" });
-      return;
-    }
-    if (url.startsWith("https://fonts.gstatic.com/")) {
-      await route.fulfill({ status: 204, body: "" });
-      return;
-    }
-    if (url.startsWith("https://i.ytimg.com/")) {
-      await route.fulfill({ status: 200, contentType: "image/png", body: TRANSPARENT_PNG });
-      return;
-    }
-    if (url.startsWith("https://www.youtube") || url.startsWith("https://youtube")) {
-      await route.fulfill({ status: 204, body: "" });
-      return;
-    }
-    await route.continue();
+    if (url.startsWith("https://fonts.googleapis.com/")) return route.fulfill({ status: 200, contentType: "text/css", body: "" });
+    if (url.startsWith("https://fonts.gstatic.com/")) return route.fulfill({ status: 204, body: "" });
+    if (url.startsWith("https://i.ytimg.com/")) return route.fulfill({ status: 200, contentType: "image/png", body: TRANSPARENT_PNG });
+    if (url.startsWith("https://www.youtube") || url.startsWith("https://youtube")) return route.fulfill({ status: 204, body: "" });
+    return route.continue();
   });
 }
 
@@ -164,19 +55,10 @@ async function mockNativeCanonicalData(context) {
   await context.route("**/api/**", async (route) => {
     const request = route.request();
     const pathname = new URL(request.url()).pathname;
-    if (request.method() !== "GET") {
-      await route.fulfill({ status: 405, contentType: "application/json", body: JSON.stringify({ error: "QA_READ_ONLY" }) });
-      return;
-    }
-    if (pathname === `/api/trees/${TREE_ID}`) {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TREE_FIXTURE) });
-      return;
-    }
-    if (pathname === `/api/trees/${TREE_ID}/memories`) {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(MOMENT_FIXTURES) });
-      return;
-    }
-    await route.continue();
+    if (request.method() !== "GET") return route.fulfill({ status: 405, contentType: "application/json", body: JSON.stringify({ error: "QA_READ_ONLY" }) });
+    if (pathname === `/api/trees/${TREE_ID}`) return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(TREE_FIXTURE) });
+    if (pathname === `/api/trees/${TREE_ID}/memories`) return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(MOMENT_FIXTURES) });
+    return route.continue();
   });
 }
 
@@ -184,21 +66,13 @@ function attachErrorCapture(page) {
   const pageErrors = [];
   const consoleErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") consoleErrors.push(message.text());
-  });
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
   return { pageErrors, consoleErrors };
 }
 
 async function waitForSourceView(page, view) {
-  await page.waitForFunction((expectedView) => {
-    const screen = document.querySelector(`.card-screen[data-screen="${expectedView}"]`);
-    return screen?.classList.contains("active") === true;
-  }, view, { timeout: 3000 });
-  await page.waitForFunction(() => {
-    const pill = document.getElementById("progressPill");
-    return pill?.classList.contains("show") !== true;
-  }, undefined, { timeout: 3000 });
+  await page.waitForFunction((expectedView) => document.querySelector(`.card-screen[data-screen="${expectedView}"]`)?.classList.contains("active") === true, view, { timeout: 3000 });
+  await page.waitForFunction(() => !document.getElementById("progressPill")?.classList.contains("show"), undefined, { timeout: 3000 });
 }
 
 async function waitForNativeView(page, index) {
@@ -210,15 +84,13 @@ async function waitForNativeView(page, index) {
 
 async function activateSource(page, index, touch) {
   const question = page.locator(".question").nth(index);
-  if (touch) await question.tap();
-  else await question.click();
-  await waitForSourceView(page, views[index]);
+  if (touch) await question.tap(); else await question.click();
+  await waitForSourceView(page, VIEWS[index]);
 }
 
 async function activateNative(page, index, touch) {
   const question = page.locator(".v4-overview-question").nth(index);
-  if (touch) await question.tap();
-  else await question.click();
+  if (touch) await question.tap(); else await question.click();
   await waitForNativeView(page, index);
 }
 
@@ -234,7 +106,7 @@ async function makeComparisonSheet(comparePage, viewport, state, sourceFile, nat
   await comparePage.screenshot({ path: path.join(COMPARE_OUT, `${viewport.name}-${state}-source-vs-native.png`), fullPage: true });
 }
 
-async function capturePair(browser, viewport, sourcePage, nativePage, comparePage, state) {
+async function capturePair(viewport, sourcePage, nativePage, comparePage, state) {
   const sourceFile = path.join(COMPARE_OUT, `${viewport.name}-${state}-source.png`);
   const nativeFile = path.join(COMPARE_OUT, `${viewport.name}-${state}-native.png`);
   await sourcePage.screenshot({ path: sourceFile, fullPage: true });
@@ -249,19 +121,9 @@ async function main() {
   const record = (viewport, check, pass, detail = "") => checks.push({ viewport, check, pass, detail });
 
   for (const viewport of VIEWPORTS) {
-    const sourceContext = await browser.newContext({
-      viewport: { width: viewport.width, height: viewport.height },
-      hasTouch: viewport.touch,
-      isMobile: viewport.touch,
-    });
-    const nativeContext = await browser.newContext({
-      viewport: { width: viewport.width, height: viewport.height },
-      hasTouch: viewport.touch,
-      isMobile: viewport.touch,
-    });
-    const compareContext = await browser.newContext({
-      viewport: { width: viewport.width * 2 + 64, height: Math.max(800, viewport.height) },
-    });
+    const sourceContext = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, hasTouch: viewport.touch, isMobile: viewport.touch });
+    const nativeContext = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, hasTouch: viewport.touch, isMobile: viewport.touch });
+    const compareContext = await browser.newContext({ viewport: { width: viewport.width * 2 + 64, height: Math.max(800, viewport.height) } });
     await blockExternalDemoMedia(sourceContext);
     await mockNativeCanonicalData(nativeContext);
 
@@ -274,7 +136,6 @@ async function main() {
     await sourcePage.goto(`${SOURCE_BASE}${encodeURI(SOURCE_PATH)}`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await sourcePage.locator(".workspace").waitFor({ state: "visible", timeout: 10000 });
     await waitForSourceView(sourcePage, "stand");
-
     await nativePage.goto(`${NATIVE_BASE}${NATIVE_PATH}`, { waitUntil: "domcontentloaded", timeout: 30000 });
     await nativePage.locator(".v4-overview-workspace").waitFor({ state: "visible", timeout: 10000 });
     await waitForNativeView(nativePage, 0);
@@ -288,17 +149,19 @@ async function main() {
     record(viewport.name, "source whole-memory hierarchy exists", await sourcePage.locator(".intro h1").count() === 1 && await sourcePage.locator(".workspace").count() === 1);
     record(viewport.name, "native whole-memory hierarchy exists", await nativePage.locator("#v4-overview-title").count() === 1 && await nativePage.locator(".v4-overview-workspace").count() === 1);
 
-    await capturePair(browser, viewport, sourcePage, nativePage, comparePage, "initial-whole-memory");
+    const initialNativeCopy = await nativePage.locator("body").innerText();
+    record(viewport.name, "native canonical Moment count rendered", initialNativeCopy.includes("8개의 순간") && initialNativeCopy.includes("Moments") && initialNativeCopy.includes("8"));
+
+    await capturePair(viewport, sourcePage, nativePage, comparePage, "initial-whole-memory");
     evidence.push(`${viewport.name}-initial-whole-memory-source-vs-native.png`);
 
-    for (let index = 0; index < views.length; index += 1) {
+    for (let index = 0; index < VIEWS.length; index += 1) {
       await activateSource(sourcePage, index, viewport.touch);
       await activateNative(nativePage, index, viewport.touch);
-      const sourceExpanded = await sourceQuestions.nth(index).getAttribute("aria-expanded");
-      record(viewport.name, `source ${views[index]} transition`, sourceExpanded === "true", String(sourceExpanded));
-      record(viewport.name, `native ${views[index]} transition`, await nativeQuestions.nth(index).evaluate((element) => element.classList.contains("is-active")));
-      await capturePair(browser, viewport, sourcePage, nativePage, comparePage, views[index]);
-      evidence.push(`${viewport.name}-${views[index]}-source-vs-native.png`);
+      record(viewport.name, `source ${VIEWS[index]} transition`, await sourceQuestions.nth(index).getAttribute("aria-expanded") === "true");
+      record(viewport.name, `native ${VIEWS[index]} transition`, await nativeQuestions.nth(index).evaluate((element) => element.classList.contains("is-active")));
+      await capturePair(viewport, sourcePage, nativePage, comparePage, VIEWS[index]);
+      evidence.push(`${viewport.name}-${VIEWS[index]}-source-vs-native.png`);
     }
 
     await sourceQuestions.first().focus();
@@ -306,7 +169,6 @@ async function main() {
     await sourcePage.keyboard.press("Enter");
     await waitForSourceView(sourcePage, "stand");
     record(viewport.name, "source Enter activation", await sourceQuestions.first().getAttribute("aria-expanded") === "true");
-
     await nativeQuestions.first().focus();
     record(viewport.name, "native keyboard focusable", await nativeQuestions.first().evaluate((element) => document.activeElement === element));
     await nativePage.keyboard.press("Enter");
@@ -317,7 +179,6 @@ async function main() {
     await sourcePage.keyboard.press("Space");
     await waitForSourceView(sourcePage, "changed");
     record(viewport.name, "source Space activation", await sourceQuestions.nth(1).getAttribute("aria-expanded") === "true");
-
     await nativeQuestions.nth(1).focus();
     await nativePage.keyboard.press("Space");
     await waitForNativeView(nativePage, 1);
@@ -334,8 +195,6 @@ async function main() {
     const blockedNativeClaims = ["93", "184일", "42%", "+ 8개", "시즌 완성까지 7개", "꽃망울", "300개", "91%"];
     const leaked = blockedNativeClaims.filter((claim) => nativeCopy.includes(claim));
     record(viewport.name, "native source-fixture leak zero", leaked.length === 0, leaked.join(", "));
-    record(viewport.name, "native canonical Moment count rendered", nativeCopy.includes("8개의 순간") && nativeCopy.includes("Moments") && nativeCopy.includes("8"));
-
     record(viewport.name, "source page errors zero", sourceErrors.pageErrors.length === 0, sourceErrors.pageErrors.slice(0, 3).join(" | "));
     record(viewport.name, "source console errors zero", sourceErrors.consoleErrors.length === 0, sourceErrors.consoleErrors.slice(0, 3).join(" | "));
     record(viewport.name, "native page errors zero", nativeErrors.pageErrors.length === 0, nativeErrors.pageErrors.slice(0, 3).join(" | "));
@@ -367,7 +226,6 @@ async function main() {
     const nativeDuration = await nativePage.locator(".v4-overview-question").first().evaluate((element) => getComputedStyle(element).transitionDuration);
     const nativeSeconds = nativeDuration.split(",").map((value) => value.trim()).map((value) => value.endsWith("ms") ? Number.parseFloat(value) / 1000 : Number.parseFloat(value));
     record("reduced-motion", "native transition duration collapses", nativeSeconds.every((value) => Number.isFinite(value) && value <= 0.001), nativeDuration);
-
     record("reduced-motion", "source page errors zero", sourceErrors.pageErrors.length === 0, sourceErrors.pageErrors.slice(0, 3).join(" | "));
     record("reduced-motion", "source console errors zero", sourceErrors.consoleErrors.length === 0, sourceErrors.consoleErrors.slice(0, 3).join(" | "));
     record("reduced-motion", "native page errors zero", nativeErrors.pageErrors.length === 0, nativeErrors.pageErrors.slice(0, 3).join(" | "));
@@ -385,7 +243,7 @@ async function main() {
     source: `${SOURCE_BASE}${SOURCE_PATH}`,
     native: `${NATIVE_BASE}${NATIVE_PATH}`,
     states: STATES,
-    viewports: VIEWPORTS.map(({ name, width, height, touch }) => ({ name, width, height, touch })),
+    viewports: VIEWPORTS,
     comparisonEvidence: evidence,
     results: checks,
   }, null, 2));
