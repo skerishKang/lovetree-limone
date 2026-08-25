@@ -22,20 +22,23 @@ const emotionSets = [
   ["계절", "설렘", "추억"],
   ["추억", "응원", "청춘"],
 ];
-const memoriesByTree = Object.fromEntries(trees.map((tree, treeIndex) => [tree.id, Array.from({ length: 5 }, (_, index) => ({
-  id: `${tree.id}-m${index + 1}`,
-  treeId: tree.id,
-  parentId: index ? `${tree.id}-m${index}` : null,
-  connectionReason: index ? ["댓글을 따라 다시 찾았어요", "다른 모습을 더 찾아봤어요", "직접 다시 검색했어요", "팬의 추천으로 이어졌어요"][index - 1] : null,
-  title: ["처음 마음이 멈춘 장면", "다시 찾아본 순간", "오래 남은 한 문장", "무대 밖의 이야기", "추천으로 이어진 기억"][index],
-  memo: ["첫 장면에서 마음이 먼저 멈췄습니다.", "다시 찾은 이유가 선명하게 남았습니다.", "힘든 날마다 조용히 꺼내 보는 문장이 됐습니다.", "조금 더 알고 싶어 이어서 찾아본 순간입니다.", "다른 사람의 추천이 새로운 가지가 됐습니다."][index],
-  sourceType: "youtube",
-  sourceUrl: `https://www.youtube.com/watch?v=${imageIds[(treeIndex + index) % imageIds.length]}`,
-  thumbnail: `https://img.youtube.com/vi/${imageIds[(treeIndex + index) % imageIds.length]}/hqdefault.jpg`,
-  emotionTags: emotionSets[treeIndex],
-  visibility: "public",
-  timestamp: `2026-07-${String(20 + treeIndex + index).padStart(2, "0")}T12:00:00.000Z`,
-})]));
+const memoriesByTree = Object.fromEntries(trees.map((tree, treeIndex) => [
+  tree.id,
+  Array.from({ length: 5 }, (_, index) => ({
+    id: `${tree.id}-m${index + 1}`,
+    treeId: tree.id,
+    parentId: index ? `${tree.id}-m${index}` : null,
+    connectionReason: index ? ["댓글을 따라 다시 찾았어요", "다른 모습을 더 찾아봤어요", "직접 다시 검색했어요", "팬의 추천으로 이어졌어요"][index - 1] : null,
+    title: ["처음 마음이 멈춘 장면", "다시 찾아본 순간", "오래 남은 한 문장", "무대 밖의 이야기", "추천으로 이어진 기억"][index],
+    memo: ["첫 장면에서 마음이 먼저 멈췄습니다.", "다시 찾은 이유가 선명하게 남았습니다.", "힘든 날마다 조용히 꺼내 보는 문장이 됐습니다.", "조금 더 알고 싶어 이어서 찾아본 순간입니다.", "다른 사람의 추천이 새로운 가지가 됐습니다."][index],
+    sourceType: "youtube",
+    sourceUrl: `https://www.youtube.com/watch?v=${imageIds[(treeIndex + index) % imageIds.length]}`,
+    thumbnail: `https://img.youtube.com/vi/${imageIds[(treeIndex + index) % imageIds.length]}/hqdefault.jpg`,
+    emotionTags: emotionSets[treeIndex],
+    visibility: "public",
+    timestamp: `2026-07-${String(20 + treeIndex + index).padStart(2, "0")}T12:00:00.000Z`,
+  })),
+]));
 
 function sha256(file) {
   return crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
@@ -68,6 +71,7 @@ async function sourcePage(browser, viewport) {
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(`${BASE}/v4/community`, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.setContent(fs.readFileSync(SOURCE, "utf8"), { waitUntil: "domcontentloaded" });
   await page.locator("#grid .tree-card").first().waitFor({ state: "visible", timeout: 10000 });
   return { context, page, errors };
@@ -106,25 +110,29 @@ async function diff(browser, sourcePath, nativePath, outputPath, width, height) 
   const a = fs.readFileSync(sourcePath).toString("base64");
   const b = fs.readFileSync(nativePath).toString("base64");
   await page.setContent(`<canvas id="c" width="${width}" height="${height}"></canvas>`);
-  await page.evaluate(async ({ a, b, width, height }) => {
+  await page.evaluate(async ({ leftB64, rightB64, canvasWidth, canvasHeight }) => {
     const load = (src) => new Promise((resolve) => { const image = new Image(); image.onload = () => resolve(image); image.src = src; });
-    const [left, right] = await Promise.all([load(`data:image/png;base64,${a}`), load(`data:image/png;base64,${b}`)]);
-    const c = document.getElementById("c");
-    const ctx = c.getContext("2d");
-    const scratch = document.createElement("canvas"); scratch.width = width; scratch.height = height;
+    const [left, right] = await Promise.all([load(`data:image/png;base64,${leftB64}`), load(`data:image/png;base64,${rightB64}`)]);
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const scratch = document.createElement("canvas");
+    scratch.width = canvasWidth;
+    scratch.height = canvasHeight;
     const sctx = scratch.getContext("2d");
-    ctx.drawImage(left, 0, 0, width, height); const A = ctx.getImageData(0, 0, width, height);
-    sctx.drawImage(right, 0, 0, width, height); const B = sctx.getImageData(0, 0, width, height);
-    const out = ctx.createImageData(width, height);
-    for (let i = 0; i < A.data.length; i += 4) {
-      const delta = (Math.abs(A.data[i] - B.data[i]) + Math.abs(A.data[i + 1] - B.data[i + 1]) + Math.abs(A.data[i + 2] - B.data[i + 2])) / 3;
-      out.data[i] = Math.min(255, delta * 2.2);
-      out.data[i + 1] = delta < 16 ? 12 : Math.min(255, delta * .45);
-      out.data[i + 2] = delta < 16 ? 12 : Math.min(255, delta * .45);
-      out.data[i + 3] = 255;
+    ctx.drawImage(left, 0, 0, canvasWidth, canvasHeight);
+    const first = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+    sctx.drawImage(right, 0, 0, canvasWidth, canvasHeight);
+    const second = sctx.getImageData(0, 0, canvasWidth, canvasHeight);
+    const out = ctx.createImageData(canvasWidth, canvasHeight);
+    for (let index = 0; index < first.data.length; index += 4) {
+      const delta = (Math.abs(first.data[index] - second.data[index]) + Math.abs(first.data[index + 1] - second.data[index + 1]) + Math.abs(first.data[index + 2] - second.data[index + 2])) / 3;
+      out.data[index] = Math.min(255, delta * 2.2);
+      out.data[index + 1] = delta < 16 ? 12 : Math.min(255, delta * .45);
+      out.data[index + 2] = delta < 16 ? 12 : Math.min(255, delta * .45);
+      out.data[index + 3] = 255;
     }
     ctx.putImageData(out, 0, 0);
-  }, { a, b, width, height });
+  }, { leftB64: a, rightB64: b, canvasWidth: width, canvasHeight: height });
   await page.locator("#c").screenshot({ path: outputPath });
   await context.close();
 }
@@ -134,42 +142,28 @@ async function captureDesktopAnchors(browser, checks) {
   const source = await sourcePage(browser, viewport);
   const native = await nativePage(browser, viewport);
   const nativeIsTrack01 = await native.page.locator('[data-track01-native="community"]').count() > 0;
-  checks.push({ viewport: "desktop-1280x800", check: "native Track01 fidelity surface present", pass: nativeIsTrack01, informational: !nativeIsTrack01 });
+  checks.push({ viewport: "desktop-1280x800", check: "native Track01 fidelity surface present", pass: nativeIsTrack01 });
 
   const pairs = [];
   pairs.push(["desktop-initial", await screenshot(source.page, "source-desktop-initial.png"), await screenshot(native.page, "native-desktop-initial.png")]);
 
   await source.page.locator('[data-tree="red"]').click();
-  if (nativeIsTrack01) {
-    await native.page.locator('[data-track01-tree-card][data-tree-id="qa-red"]').click();
-  } else {
-    const latest = native.page.getByRole("button", { name: "New Paths" });
-    if (await latest.count()) await latest.click();
-  }
+  await native.page.locator('[data-track01-tree-card][data-tree-id="qa-red"]').click();
   pairs.push(["compare-state", await screenshot(source.page, "source-compare-state.png"), await screenshot(native.page, "native-compare-state.png")]);
 
   await source.page.locator('[data-tree="season"]').click();
-  if (nativeIsTrack01) {
-    await native.page.locator('[data-track01-tree-card][data-tree-id="qa-season"]').click();
-    await native.page.locator('[data-track01-preview]').scrollIntoViewIfNeeded();
-  } else {
-    const feature = native.page.locator(".v4-global-feature");
-    if (await feature.count()) await feature.scrollIntoViewIfNeeded();
-  }
+  await native.page.locator('[data-track01-tree-card][data-tree-id="qa-season"]').click();
+  await native.page.locator('[data-track01-preview]').scrollIntoViewIfNeeded();
   await source.page.locator(".preview").scrollIntoViewIfNeeded();
   pairs.push(["large-preview", await screenshot(source.page, "source-large-preview.png"), await screenshot(native.page, "native-large-preview.png")]);
 
   await source.page.locator("#open").click();
   await source.page.locator("#overlay.opened").waitFor({ state: "visible" });
   await source.page.locator(".node").nth(1).click();
-  let nativeFullTree = false;
-  if (nativeIsTrack01) {
-    await native.page.locator('[data-track01-open]').click();
-    await native.page.locator('[data-track01-full-tree]').waitFor({ state: "visible" });
-    await native.page.locator('[data-track01-moment-node]').nth(1).click();
-    nativeFullTree = true;
-  }
-  checks.push({ viewport: "desktop-1280x800", check: "full-tree/deeper-detail semantic state available", pass: nativeFullTree, informational: !nativeIsTrack01 });
+  await native.page.locator('[data-track01-open]').click();
+  await native.page.locator('[data-track01-full-tree]').waitFor({ state: "visible" });
+  await native.page.locator('[data-track01-moment-node]').nth(1).click();
+  checks.push({ viewport: "desktop-1280x800", check: "full-tree/deeper-detail semantic state available", pass: true });
   pairs.push(["full-tree", await screenshot(source.page, "source-full-tree.png"), await screenshot(native.page, "native-full-tree.png")]);
 
   for (const [name, sourcePath, nativePath] of pairs) {
@@ -185,7 +179,6 @@ async function captureDesktopAnchors(browser, checks) {
   checks.push({ viewport: "desktop-1280x800", check: "native page errors 0", pass: native.errors.length === 0, detail: native.errors });
   await source.context.close();
   await native.context.close();
-  return nativeIsTrack01;
 }
 
 async function captureMobile(browser, checks, width, height, includeSource = true) {
@@ -208,40 +201,53 @@ async function captureMobile(browser, checks, width, height, includeSource = tru
   await native.context.close();
 }
 
-async function captureReducedMotion(browser, checks) {
-  const native = await nativePage(browser, { width: 390, height: 844 }, "reduce");
-  const track01 = await native.page.locator('[data-track01-native="community"]').count() > 0;
-  if (track01) {
-    const transition = await native.page.locator('[data-track01-preview]').evaluate((node) => getComputedStyle(node).transitionDuration);
-    checks.push({ viewport: "reduced-motion", check: "Track01 transitions collapse", pass: transition === "0s" || transition.split(",").every((value) => value.trim() === "0s"), detail: transition });
-  }
-  await screenshot(native.page, "native-mobile-reduced-motion.png");
-  await native.context.close();
+async function captureKeyboardAndMotion(browser, checks) {
+  const keyboard = await nativePage(browser, { width: 1280, height: 800 });
+  const firstCard = keyboard.page.locator('[data-track01-tree-card]').first();
+  await firstCard.focus();
+  checks.push({ viewport: "keyboard", check: "candidate card receives focus", pass: await firstCard.evaluate((node) => document.activeElement === node) });
+  await keyboard.page.keyboard.press("Enter");
+  await keyboard.page.locator('[data-track01-open]').focus();
+  await keyboard.page.keyboard.press("Enter");
+  await keyboard.page.locator('[data-track01-full-tree]').waitFor({ state: "visible" });
+  const secondNode = keyboard.page.locator('[data-track01-moment-node]').nth(1);
+  await secondNode.focus();
+  checks.push({ viewport: "keyboard", check: "full-tree Moment node receives focus", pass: await secondNode.evaluate((node) => document.activeElement === node) });
+  await keyboard.page.keyboard.press("Enter");
+  await keyboard.page.keyboard.press("Escape");
+  checks.push({ viewport: "keyboard", check: "Escape closes full-tree and restores trigger focus", pass: await keyboard.page.locator('[data-track01-open]').evaluate((node) => document.activeElement === node) });
+  await keyboard.context.close();
+
+  const reduced = await nativePage(browser, { width: 390, height: 844 }, "reduce");
+  const transition = await reduced.page.locator('[data-track01-preview]').evaluate((node) => getComputedStyle(node).transitionDuration);
+  checks.push({ viewport: "reduced-motion", check: "Track01 transitions collapse", pass: transition === "0s" || transition.split(",").every((value) => value.trim() === "0s"), detail: transition });
+  await screenshot(reduced.page, "native-mobile-reduced-motion.png");
+  await reduced.context.close();
 }
 
 async function main() {
   const sourceHash = sha256(SOURCE);
   const checks = [{ viewport: "source", check: "pinned SHA256 matches executable", pass: sourceHash === EXPECTED_SHA256, detail: sourceHash }];
   const browser = await chromium.launch();
-  const nativeIsTrack01 = await captureDesktopAnchors(browser, checks);
+  await captureDesktopAnchors(browser, checks);
   await captureMobile(browser, checks, 390, 844, true);
   await captureMobile(browser, checks, 320, 720, false);
-  await captureReducedMotion(browser, checks);
+  await captureKeyboardAndMotion(browser, checks);
   await browser.close();
 
-  const hardFailures = checks.filter((check) => !check.pass && !check.informational);
+  const failures = checks.filter((check) => !check.pass);
   const result = {
     source: SOURCE,
     sourceSha256: sourceHash,
     expectedSha256: EXPECTED_SHA256,
     nativeRoute: "/v4/community",
-    nativeMode: nativeIsTrack01 ? "track01-fidelity" : "pre-repair-baseline",
-    summary: { checks: checks.length, hardFailures: hardFailures.length },
+    nativeMode: "track01-fidelity",
+    summary: { checks: checks.length, failures: failures.length },
     checks,
   };
   fs.writeFileSync(path.join(OUT, "visual-fidelity.json"), JSON.stringify(result, null, 2));
-  for (const check of checks) console.log(`${check.pass ? "PASS" : check.informational ? "BASELINE-DEFECT" : "FAIL"}  ${check.viewport}  ${check.check}`);
-  if (hardFailures.length) process.exit(1);
+  for (const check of checks) console.log(`${check.pass ? "PASS" : "FAIL"}  ${check.viewport}  ${check.check}${check.detail !== undefined ? `  [${JSON.stringify(check.detail)}]` : ""}`);
+  if (failures.length) process.exit(1);
 }
 
 main().catch((error) => {
