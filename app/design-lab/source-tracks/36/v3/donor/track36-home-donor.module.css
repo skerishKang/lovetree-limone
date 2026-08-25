@@ -80,17 +80,17 @@
 }
 .depth i {
   position: absolute;
-  inset: calc(var(--ring, 0) * 7%);
+  inset: 0;
   border: clamp(5px, .85vw, 12px) solid rgba(255,255,255,.7);
   border-radius: 24% / 21%;
   clip-path: polygon(8% 0,92% 0,100% 12%,100% 88%,92% 100%,8% 100%,0 88%,0 12%);
   box-shadow: 0 18px 42px rgba(85,119,121,.09), inset 0 0 24px rgba(205,113,128,.08);
   animation: breathe 4.8s ease-in-out infinite alternate;
 }
-.depth i:nth-child(1) { --ring: 0; opacity: .9; }
-.depth i:nth-child(2) { --ring: 1; opacity: .72; animation-delay: 100ms; }
-.depth i:nth-child(3) { --ring: 2; opacity: .55; animation-delay: 200ms; }
-.depth i:nth-child(4) { --ring: 3; opacity: .38; animation-delay: 300ms; }
+.depth i:nth-child(1) { opacity: .9; }
+.depth i:nth-child(2) { inset: 7%; opacity: .72; animation-delay: 100ms; }
+.depth i:nth-child(3) { inset: 14%; opacity: .55; animation-delay: 200ms; }
+.depth i:nth-child(4) { inset: 21%; opacity: .38; animation-delay: 300ms; }
 
 .petals { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
 .petals i {
