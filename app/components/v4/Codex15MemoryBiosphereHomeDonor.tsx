@@ -122,7 +122,7 @@ export default function Codex15MemoryBiosphereHomeDonor() {
   const focusState = useCallback((index: number) => {
     const safeIndex = Math.min(states.length - 1, Math.max(0, index));
     setState(safeIndex);
-    requestAnimationFrame(() => stateButtonsRef.current[safeIndex]?.focus());
+    stateButtonsRef.current[safeIndex]?.focus();
   }, [setState]);
 
   const onStateKeyDown = useCallback((event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
