@@ -1,0 +1,108 @@
+name: Codex-work-13 Cinematic Watercolor V2 SUBJECT browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/components/v4/V4PersonAlbums.tsx'
+      - 'app/components/v4/v4-subject-albums.ts'
+      - 'app/styles/v4/archive.css'
+      - 'app/v4/subjects/cinematic-watercolor-v2/**'
+      - 'design-intake/codex-work-13-cinematic-watercolor-v2.json'
+      - 'tests/codex-work-13-cinematic-watercolor-v2-native-contract.test.mjs'
+      - 'qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs'
+      - '.github/workflows/codex-work-13-cinematic-watercolor-v2-browser-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cinematic-watercolor-subject-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Issue492 focused donor contract
+        run: node --import tsx --test tests/codex-work-13-cinematic-watercolor-v2-native-contract.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install chromium
+
+      - name: Run Cinematic Watercolor SUBJECT browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/cinematic-watercolor-v2-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/v4/subjects/cinematic-watercolor-v2" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/cinematic-watercolor-v2-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/cinematic-watercolor-v2-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/cinematic-watercolor-v2-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            CINEMATIC_WATERCOLOR_SCREENSHOT_DIR="/tmp/cinematic-watercolor-v2-browser-qa" \
+            node qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs
+
+      - name: Upload Cinematic Watercolor browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-work-13-cinematic-watercolor-v2-browser-evidence
+          path: /tmp/cinematic-watercolor-v2-browser-qa/*.png
+          if-no-files-found: warn
