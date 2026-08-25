@@ -205,6 +205,31 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze([]),
   }),
+  Object.freeze({
+    id: "source-track-38-v1-discover-donor",
+    label: "Track38 V1 Voyager Space Memory Map DISCOVER donor proof",
+    route: "/design-lab/source-tracks/38/v1/donor",
+    routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/38/v1/donor/",
+      "lib/source-track-38/",
+      "design-intake/manifests/source-track-38-voyager-space-memory-map-v1.json",
+      "reference/source-tracks-snapshot/38_보이저_우주기억지도/",
+      "qa/source-track-38-v1-discover-donor-browser-qa.mjs",
+      "tests/source-track-38-v1-donor-contract.test.mjs",
+      ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_PUBLIC_TREE_MEMORY_RUNTIME; SYNTHETIC_SOURCE_FIXTURES_NOT_PROMOTED",
+    browserGates: Object.freeze(["qa/source-track-38-v1-discover-donor-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-38-v1-discover-donor-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze([]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
