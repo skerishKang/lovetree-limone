@@ -9,23 +9,36 @@ const route = "/design-lab/drive-track-18-electric-aurora";
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 
-async function auditViewport({ name, width, height, mobile = false }) {
-  const context = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile });
-  const page = await context.newPage();
+function captureBrowserErrors(page) {
   const consoleErrors = [];
   const pageErrors = [];
-  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
   page.on("pageerror", (error) => pageErrors.push(error.message));
+  return { consoleErrors, pageErrors };
+}
 
-  const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
-  assert.ok(response?.ok(), `${name}: route must return 2xx`);
-  await page.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
-
+async function assertNoOverflow(page, name) {
   const dimensions = await page.evaluate(() => ({
     innerWidth: window.innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
   }));
-  assert.ok(dimensions.scrollWidth <= dimensions.innerWidth, `${name}: horizontal overflow ${dimensions.scrollWidth} > ${dimensions.innerWidth}`);
+  assert.ok(
+    dimensions.scrollWidth <= dimensions.innerWidth,
+    `${name}: horizontal overflow ${dimensions.scrollWidth} > ${dimensions.innerWidth}`,
+  );
+}
+
+async function auditViewport({ name, width, height, mobile = false }) {
+  const context = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile });
+  const page = await context.newPage();
+  const { consoleErrors, pageErrors } = captureBrowserErrors(page);
+
+  const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
+  assert.ok(response?.ok(), `${name}: route must return 2xx`);
+  await page.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
+  await assertNoOverflow(page, name);
 
   const momentButtons = page.locator('button[aria-pressed]');
   assert.equal(await momentButtons.count(), 6, `${name}: six canonical Moment controls expected`);
@@ -55,34 +68,84 @@ async function auditViewport({ name, width, height, mobile = false }) {
   await context.close();
 }
 
-try {
-  await auditViewport({ name: "desktop-1280x800", width: 1280, height: 800 });
-  await auditViewport({ name: "mobile-390x844", width: 390, height: 844, mobile: true });
-  await auditViewport({ name: "mobile-320x720", width: 320, height: 720, mobile: true });
+async function auditWebGlFailSoft() {
+  const name = "webgl-fail-soft-390x844";
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
+  await context.addInitScript(() => {
+    const originalGetContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function patchedGetContext(type, ...args) {
+      if (type === "webgl" || type === "experimental-webgl") return null;
+      return originalGetContext.call(this, type, ...args);
+    };
+  });
+  const page = await context.newPage();
+  const { consoleErrors, pageErrors } = captureBrowserErrors(page);
 
-  const reducedContext = await browser.newContext({
+  const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
+  assert.ok(response?.ok(), `${name}: route must return 2xx`);
+  await page.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
+  await assertNoOverflow(page, name);
+
+  const canvas = page.getByTestId("electric-aurora-canvas");
+  await canvas.waitFor({ state: "visible" });
+  assert.equal(await canvas.getAttribute("data-renderer"), "css-fallback", `${name}: unavailable WebGL must fail soft to CSS`);
+
+  const controls = page.locator('button[aria-pressed]');
+  await controls.nth(0).focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await controls.nth(1).getAttribute("aria-pressed"), "true", `${name}: manual selection must survive WebGL loss`);
+  await controls.nth(2).tap();
+  assert.equal(await controls.nth(2).getAttribute("aria-pressed"), "true", `${name}: touch selection must survive WebGL loss`);
+
+  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
+  assert.deepEqual(consoleErrors, [], `${name}: console errors: ${consoleErrors.join(" | ")}`);
+  assert.deepEqual(pageErrors, [], `${name}: page errors: ${pageErrors.join(" | ")}`);
+  await context.close();
+}
+
+async function auditReducedMotion() {
+  const name = "reduced-motion-390x844";
+  const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     hasTouch: true,
     isMobile: true,
     reducedMotion: "reduce",
   });
-  const reducedPage = await reducedContext.newPage();
-  const reducedErrors = [];
-  reducedPage.on("console", (message) => { if (message.type() === "error") reducedErrors.push(message.text()); });
-  const response = await reducedPage.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
-  assert.ok(response?.ok(), "reduced-motion: route must return 2xx");
-  await reducedPage.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
-  const reducedRoot = reducedPage.locator('main[data-reduced-motion="true"]');
+  const page = await context.newPage();
+  const { consoleErrors, pageErrors } = captureBrowserErrors(page);
+
+  const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
+  assert.ok(response?.ok(), `${name}: route must return 2xx`);
+  await page.getByRole("heading", { name: "Memory Core · Electric Aurora" }).waitFor();
+  await assertNoOverflow(page, name);
+
+  const reducedRoot = page.locator('main[data-reduced-motion="true"]');
   await reducedRoot.waitFor({ state: "visible" });
-  assert.equal(await reducedRoot.getAttribute("data-reduced-motion"), "true", "reduced-motion: JS motion policy must be active");
-  const runningAnimations = await reducedPage.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length);
-  assert.equal(runningAnimations, 0, "reduced-motion: ambient CSS animation must stop");
-  const controls = reducedPage.locator('button[aria-pressed]');
+  assert.equal(await reducedRoot.getAttribute("data-reduced-motion"), "true", `${name}: JS motion policy must be active`);
+  const runningAnimations = await page.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length);
+  assert.equal(runningAnimations, 0, `${name}: ambient CSS animation must stop`);
+
+  const controls = page.locator('button[aria-pressed]');
   await controls.nth(0).focus();
-  await reducedPage.keyboard.press("ArrowRight");
-  assert.equal(await controls.nth(1).getAttribute("aria-pressed"), "true", "reduced-motion: manual keyboard selection remains available");
-  assert.deepEqual(reducedErrors, [], `reduced-motion: console errors: ${reducedErrors.join(" | ")}`);
-  await reducedContext.close();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await controls.nth(1).getAttribute("aria-pressed"), "true", `${name}: manual keyboard selection remains available`);
+
+  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
+  assert.deepEqual(consoleErrors, [], `${name}: console errors: ${consoleErrors.join(" | ")}`);
+  assert.deepEqual(pageErrors, [], `${name}: page errors: ${pageErrors.join(" | ")}`);
+  await context.close();
+}
+
+try {
+  await auditViewport({ name: "desktop-1280x800", width: 1280, height: 800 });
+  await auditViewport({ name: "mobile-390x844", width: 390, height: 844, mobile: true });
+  await auditViewport({ name: "mobile-320x720", width: 320, height: 720, mobile: true });
+  await auditWebGlFailSoft();
+  await auditReducedMotion();
 
   console.log("DRIVE_TRACK_18_ELECTRIC_AURORA_BROWSER_QA=PASS");
 } finally {
