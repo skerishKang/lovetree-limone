@@ -1,0 +1,52 @@
+{
+  "issue": 490,
+  "master_rows": [82],
+  "product_job": "TOOLS",
+  "family": "26_메모리필름스튜디오",
+  "source_authority": {
+    "path": "reference/source-tracks-snapshot/26_메모리필름스튜디오/01_메모리필름스튜디오_v1.html",
+    "filename": "01_메모리필름스튜디오_v1.html",
+    "bytes": 48201,
+    "git_blob": "04a729148fdd4f29d4192aab6211e89dea8614b2",
+    "sha256": "52bf3308053b1c805b963e775f41085caa7cdfdf123df0a7009a401a80e293d6",
+    "snapshot_issue": 284,
+    "snapshot_pr": 287
+  },
+  "source_character": {
+    "interactive_editor_prototype": true,
+    "canonical_persistence": false,
+    "hardcoded_demo_project": true,
+    "local_storage_project_state": true,
+    "client_canvas_poster_export": true,
+    "client_media_recorder_webm_export": true,
+    "source_reduced_motion_contract": true,
+    "native_proof_reduced_motion_contract": true,
+    "native_proof_mobile_contract": true,
+    "native_proof_keyboard_touch_contract": true
+  },
+  "product_disposition": "USE_AS_VISUAL_FUNCTION_DONOR",
+  "editor_base": "useTreeMoments(treeId) + canonical AlbumMomentView",
+  "donor_elements": [
+    "storyboard scene rail and reorder",
+    "film stage preview",
+    "scene duration and aspect composition",
+    "camera framing presets",
+    "timeline scrub and transport",
+    "selected-scene inspector"
+  ],
+  "excluded_behaviors": [
+    "hard-coded source project data",
+    "localStorage save/load",
+    "fake durable film edit",
+    "parallel editor backend",
+    "new database schema",
+    "new media storage"
+  ],
+  "native_proof": {
+    "route": "/design-lab/source-tracks/26/v1/donor",
+    "canonical_handoff": "/trees/:treeId",
+    "production_route_mutation": false,
+    "canonical_data_mutation": false,
+    "durable_write_added": false
+  }
+}
