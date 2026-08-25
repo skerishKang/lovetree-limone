@@ -192,14 +192,19 @@ async function auditDesktop() {
   await dialog.waitFor();
   await page.getByRole("heading", { name: "Cinema Replay — Moments" }).waitFor();
   await page.getByRole("link", { name: "YouTube에서 재생 ↗" }).waitFor();
+
+  const pause = page.getByRole("button", { name: "PAUSE" });
+  await pause.click();
+  const resume = page.getByRole("button", { name: "RESUME" });
+  await resume.waitFor();
+  await resume.click();
+  await page.getByRole("button", { name: "PAUSE" }).waitFor();
+
   await page.getByRole("button", { name: "PLAY CANONICAL YOUTUBE" }).click();
   const iframe = page.locator("iframe");
   await iframe.waitFor();
   assert.match(await iframe.getAttribute("src"), /^https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ/);
   await page.getByText(/Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다/).waitFor();
-
-  const pause = page.getByRole("button", { name: "PAUSE" });
-  await pause.click();
   await page.getByRole("button", { name: "RESUME" }).waitFor();
 
   await page.getByLabel("Cinema Moment scrubber").evaluate((node) => {
