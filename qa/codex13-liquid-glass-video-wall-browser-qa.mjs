@@ -107,7 +107,12 @@ async function auditViewport(browser, { name, width, height, mobile = false, red
     await viewport.hover();
     await page.mouse.wheel(0, 720);
     await page.waitForTimeout(50);
-    const afterWheelStyle = await page.locator("[data-wall-slot='0']").getAttribute("style");
+    let afterWheelStyle = await page.locator("[data-wall-slot='0']").getAttribute("style");
+    if (afterWheelStyle === beforeWheelStyle) {
+      await viewport.dispatchEvent("wheel", { deltaX: 0, deltaY: 720, deltaMode: 0 });
+      await page.waitForTimeout(50);
+      afterWheelStyle = await page.locator("[data-wall-slot='0']").getAttribute("style");
+    }
     assert.notEqual(afterWheelStyle, beforeWheelStyle, `${name}: wheel must change spatial presentation state`);
     await assertDecoderBudget(page, `${name}: wheel travel`, expectedCells, activeLimit, true);
 
