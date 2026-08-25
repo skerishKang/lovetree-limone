@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Lineage53VerticalNetworkOverview from "./Lineage53VerticalNetworkOverview";
 import { SOURCE56_AUTHORITY } from "@/lib/lineage-53-source56";
@@ -30,6 +31,6 @@ export default function Lineage53Source56VerticalNetworkPage() {
   );
 }
 
-function Contract({ title, strong, children }: { title: string; strong: string; children: React.ReactNode }) {
+function Contract({ title, strong, children }: { title: string; strong: string; children: ReactNode }) {
   return <article style={{ padding: 16, border: "1px solid #e3dde5", borderRadius: 18, background: "#ffffffc2" }}><span style={{ display: "block", fontSize: 8, letterSpacing: ".14em", color: "#9a6381" }}>{title}</span><strong style={{ display: "block", marginTop: 7, fontSize: 13 }}>{strong}</strong><p style={{ margin: "7px 0 0", fontSize: 10, lineHeight: 1.6, color: "#716b75" }}>{children}</p></article>;
 }
