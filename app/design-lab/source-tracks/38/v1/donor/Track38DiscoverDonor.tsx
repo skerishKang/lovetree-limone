@@ -112,10 +112,7 @@ export default function Track38DiscoverDonor() {
   }, []);
 
   useEffect(() => {
-    if (!treeId) {
-      setMemories([]);
-      return;
-    }
+    if (!treeId) return;
     let active = true;
     async function loadMemories() {
       setMemoryLoading(true);
