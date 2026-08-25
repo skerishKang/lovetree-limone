@@ -34,6 +34,31 @@ async function selectedTitle(page) {
   return page.locator("button[aria-current='true'] strong").first().textContent();
 }
 
+async function swipeTouch(context, page, box) {
+  const client = await context.newCDPSession(page);
+  const fromX = Math.round(box.x + box.width / 2);
+  const fromY = Math.round(box.y + box.height / 2);
+  const toX = fromX - 72;
+  try {
+    await client.send("Input.dispatchTouchEvent", {
+      type: "touchStart",
+      touchPoints: [{ x: fromX, y: fromY }],
+    });
+    for (let step = 1; step <= 4; step += 1) {
+      await client.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{
+          x: Math.round(fromX + ((toX - fromX) * step) / 4),
+          y: fromY,
+        }],
+      });
+    }
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  } finally {
+    await client.detach();
+  }
+}
+
 async function auditViewport(browser, { name, width, height, mobile = false }) {
   const context = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile });
   const page = await context.newPage();
@@ -60,6 +85,12 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     assert.equal(await selectedTitle(page), "기억 2", `${name}: touch tap must select canonical Moment`);
     await page.getByRole("button", { name: "다음 기억" }).tap();
     assert.equal(await selectedTitle(page), "기억 3", `${name}: touch transport must advance`);
+
+    const selectedCard = page.locator("button[data-codex14-card='true'][aria-current='true']");
+    const box = await selectedCard.boundingBox();
+    assert.ok(box, `${name}: selected spatial card must keep visible geometry for touch swipe`);
+    await swipeTouch(context, page, box);
+    assert.equal(await selectedTitle(page), "기억 4", `${name}: horizontal touch swipe must advance exactly one Moment`);
   } else {
     await main.focus();
     await page.keyboard.press("ArrowRight");
@@ -74,6 +105,7 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     assert.ok(await indexDialog.isVisible(), `${name}: keyboard I must open index`);
     await page.keyboard.press("Escape");
     await indexDialog.waitFor({ state: "hidden" });
+    await page.waitForFunction(() => document.activeElement?.textContent?.includes("Index"));
 
     const selectedCard = page.locator("button[data-codex14-card='true'][aria-current='true']");
     const box = await selectedCard.boundingBox();
@@ -83,6 +115,9 @@ async function auditViewport(browser, { name, width, height, mobile = false }) {
     await page.mouse.move(box.x + box.width / 2 - 72, box.y + box.height / 2, { steps: 4 });
     await page.mouse.up();
     assert.equal(await selectedTitle(page), "기억 2", `${name}: spatial drag must advance exactly one Moment without activating the card`);
+
+    await page.mouse.wheel(0, 120);
+    assert.equal(await selectedTitle(page), "기억 3", `${name}: wheel traversal must advance exactly one Moment`);
   }
 
   const inspect = page.getByRole("button", { name: "기억 자세히 보기" });
@@ -111,7 +146,9 @@ try {
   const page = await context.newPage();
   await installApiMocks(page);
   const pageErrors = [];
+  const consoleErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
   await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });
   const main = page.locator("main[data-codex14-native='archive']");
   await main.waitFor();
@@ -121,9 +158,12 @@ try {
   assert.equal(await autoButton.isDisabled(), true, "reduced-motion: automatic spatial rotation must be disabled");
   const transitionDuration = await page.locator("button[aria-current='true']").first().evaluate((node) => getComputedStyle(node).transitionDuration);
   assert.ok(transitionDuration === "0s" || transitionDuration.split(",").every((part) => part.trim() === "0s"), `reduced-motion: card transition must be off, got ${transitionDuration}`);
+  const dimensions = await page.evaluate(() => ({ innerWidth: window.innerWidth, scrollWidth: document.documentElement.scrollWidth }));
+  assert.ok(dimensions.scrollWidth <= dimensions.innerWidth, `reduced-motion: horizontal overflow ${dimensions.scrollWidth} > ${dimensions.innerWidth}`);
   await page.getByRole("button", { name: "다음 기억" }).tap();
   assert.equal(await selectedTitle(page), "기억 2", "reduced-motion: semantic touch traversal remains available");
   assert.deepEqual(pageErrors, [], `reduced-motion: page errors: ${pageErrors.join(" | ")}`);
+  assert.deepEqual(consoleErrors, [], `reduced-motion: console errors: ${consoleErrors.join(" | ")}`);
   await context.close();
   console.log("CODEX14_ROTATING_MEMORY_INDEX_BROWSER_QA=PASS");
 } finally {
