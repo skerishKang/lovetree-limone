@@ -321,6 +321,16 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Cinematic Watercolor V2 validates a bounded canonical /v4/subjects presentation donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no parallel SUBJECT application, backend, persistence, or source-binary product authority.",
   }),
   Object.freeze({
+    id: "codex14-rotating-memory-index-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex14 Rotating Memory Index canonical ARCHIVE native QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/trees/:treeId/archive/rotating-index", routeEntry: "app/v4/trees/[id]/archive/rotating-index/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/trees/[id]/archive/rotating-index/", "lib/codex14/", "design-intake/codex14-rotating-memory-index-archive-native.json", "qa/codex14-rotating-memory-index-browser-qa.mjs", "tests/codex14-rotating-memory-index-contract.test.mjs", ".github/workflows/codex14-rotating-memory-index-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/codex14-rotating-memory-index-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex14-rotating-memory-index-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_EXISTING_MOMENT_MEDIA", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Codex14 validates a bounded canonical ARCHIVE presentation over existing Moment/media authority in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no archive backend, persistence, schema, API, or parallel media authority.",
+  }),
+  Object.freeze({
     id: "source-track-38-v1-discover-donor-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track38 V1 Voyager DISCOVER donor dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
     route: "/design-lab/source-tracks/38/v1/donor", routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
