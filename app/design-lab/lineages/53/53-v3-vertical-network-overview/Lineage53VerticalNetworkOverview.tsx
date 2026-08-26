@@ -23,7 +23,6 @@ import {
 } from "@/lib/design-runtime/selection";
 
 const FIRST_INDEX = SOURCE56_MOMENTS.findIndex((moment) => moment.first);
-const WORLD = { width: 1700, height: 4800 } as const;
 const CLUSTER_LAYOUT = [
   { x: 660, y: 610, spread: 520, angles: [-2.15, -1.3, -0.42] },
   { x: 990, y: 1305, spread: 550, angles: [-2.72, -1.88, -0.98, -0.18] },
@@ -232,7 +231,10 @@ export default function Lineage53VerticalNetworkOverview() {
 
   const selectIndex = (index: number, familyIndex: number | null) => {
     setSelectedIndex(normalizeSelectionIndex(index, SOURCE56_MOMENTS.length, "clamp"));
-    if (familyIndex !== null) setActiveFamilyIndex(familyIndex);
+    if (familyIndex !== null) {
+      setActiveFamilyIndex(familyIndex);
+      setOriginReveal(false);
+    }
     dispatchTransport({ type: "pause" });
   };
 
