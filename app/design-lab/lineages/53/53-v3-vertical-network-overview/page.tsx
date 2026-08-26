@@ -8,6 +8,9 @@ export default function Lineage53Source56VerticalNetworkPage() {
     <main style={{ minHeight: "100vh", overflowX: "clip", color: "#292630", background: "#f7f4f2" }}>
       <style>{`
         @media (max-width: 640px) {
+          .s56 .s56-inspector {
+            bottom: 112px !important;
+          }
           .s56[data-network-mode="FIRST · 01/02/03 REVEAL"] .s56-inspector {
             display: none;
           }
