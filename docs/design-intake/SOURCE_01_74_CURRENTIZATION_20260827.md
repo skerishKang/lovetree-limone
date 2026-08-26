@@ -67,7 +67,8 @@ Known number reuse that must remain split:
 2. `코덱스작업물-12_러브트리_입덕단서_시네마틱에디토리얼_V1.6` is a separate source identity connected to the Source65 provenance family;
 3. `0_코덱스작업물-12_러브트리_기억의문_시네마틱대문_V1` is another separate source package with its own 13,547-byte final HTML;
 4. Source21 `기억의문_시네마틱대문` current candidate is a different 7,960-byte V2.8.2 executable, repository SHA256 `08741f881bb8cb93d833a6d9967d28e780f97c99ff65718136d5cfb1314fc246`; same name/concept does not prove executable lineage;
-5. primary Codex13 Liquid Glass and `Codex-work-13 Cinematic Watercolor V2` are separate families. Watercolor provenance intake #474 and its donor implementation are already merged.
+5. primary Codex13 Liquid Glass and `Codex-work-13 Cinematic Watercolor V2` are separate families. Watercolor provenance intake #474 and its donor implementation are already merged;
+6. global Drive name search also finds a generic folder named `코덱스 작업물` (Drive `1_gqLSw-ZHDhAMSi4T5k7i6hYTwoT7NXe`), but its parent is Source67 `67_메모리테이프_인터랙티브롤` (Drive `1mp0zz3MBZl_K6P9Guv3aBWJqvzOKsHL4`). It is a nested Source67 development artifact, **not** another top-level Codex family.
 
 Thus:
 
@@ -75,6 +76,7 @@ Thus:
 SIBLING_CODEX_TRANSFER = PRESENT
 SIBLING_RESEND_REQUIRED = NO
 NUMERIC_ONLY_CODEX_ALIASING = FORBIDDEN
+GENERIC_CODEX_WORK_FOLDER = SOURCE67_NESTED_ARTIFACT
 ```
 
 ## 4. 108-master interpretation
