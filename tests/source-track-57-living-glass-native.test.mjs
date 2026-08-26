@@ -16,6 +16,7 @@ const CARD = "app/components/moment-presentation/LivingGlassMomentCard.tsx";
 const INSPECTOR = "app/components/moment-presentation/LivingGlassMomentInspector.tsx";
 const GALLERY = "app/components/moment-presentation/LivingGlassMomentGallery.tsx";
 const CSS = "app/styles/source-track-57-living-glass.css";
+const NEXT_CONFIG = "next.config.ts";
 
 const EXPECTED_SHA = "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace";
 const EXPECTED_BYTES = 676_320;
@@ -81,6 +82,13 @@ test("exact preserved Source57 media is routed through canonical thumbnail prese
   assert.match(lib, /sourceType: "video"/);
   assert.match(read(CARD), /moment\.thumbnail/);
   assert.match(read(INSPECTOR), /moment\.thumbnail/);
+});
+
+test("Source57 exact-media bypass stays component-local instead of changing global Next image behavior", () => {
+  const card = read(CARD);
+  const nextConfig = read(NEXT_CONFIG);
+  assert.match(card, /<Image[\s\S]*?\bunoptimized\b[\s\S]*?\/>/);
+  assert.doesNotMatch(nextConfig, /images\s*:\s*\{[\s\S]*?unoptimized\s*:\s*true/);
 });
 
 test("pointer, touch-compatible pointer events, keyboard and visible-focus contracts are present", () => {
