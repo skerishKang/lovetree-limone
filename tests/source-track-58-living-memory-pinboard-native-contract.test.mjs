@@ -69,11 +69,11 @@ test("Source58 restores the authoritative six material themes", () => {
     ["Pearl", "Warm Cork", "Letter", "Blossom", "Night", "Mint"],
   );
   for (const theme of ["pearl", "cork", "letter", "blossom", "night", "mint"]) {
-    assert.match(repairCssSource, new RegExp(`data-theme=\\"${theme}\\"`));
+    assert.match(repairCssSource, new RegExp(`data-theme="${theme}"`));
   }
   assert.match(repairCssSource, /repeating-linear-gradient/);
-  assert.match(repairCssSource, /data-theme=\\"night\\"/);
-  assert.match(repairCssSource, /data-theme=\\"mint\\"/);
+  assert.match(repairCssSource, /data-theme="night"/);
+  assert.match(repairCssSource, /data-theme="mint"/);
 });
 
 test("Source58 spatial projection scales beyond nine Moments without modulo-slot collapse", () => {
@@ -86,17 +86,17 @@ test("Source58 spatial projection scales beyond nine Moments without modulo-slot
     "first 40 view-derived Moment positions must be spatially unique",
   );
   assert.equal(source58BoardSlot(9).style, "compact");
-  assert.match(repairCssSource, /:has\(> button\[data-card-style=\\"compact\\"\]\)/);
+  assert.match(repairCssSource, /:has\(> button\[data-card-style="compact"\]\)/);
   assert.match(repairCssSource, /min-height:\s*980px/);
 });
 
 test("Living Thread uses layered glow/color/core and selected-path emphasis", () => {
   assert.match(componentSource, /Canonical Connection living thread/);
-  assert.match(componentSource, /data-layer=\"glow\"/);
-  assert.match(componentSource, /data-layer=\"color\"/);
-  assert.match(componentSource, /data-layer=\"core\"/);
+  assert.match(componentSource, /data-layer="glow"/);
+  assert.match(componentSource, /data-layer="color"/);
+  assert.match(componentSource, /data-layer="core"/);
   assert.match(componentSource, /data-active=\{String\(activePath\)\}/);
-  assert.match(repairCssSource, /g\[data-active=\\"true\\"\]/);
+  assert.match(repairCssSource, /g\[data-active="true"\]/);
   assert.match(componentSource, /WHY NEXT/);
   assert.match(componentSource, /NEXT MOMENT/);
   assert.match(componentSource, /children\.length > 1/);
