@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type CSSProperties } from "react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ViewSwitcher } from "@/app/components/ViewSwitcher";
 import { useTreeMoments } from "@/lib/use-tree-moments";
@@ -15,7 +15,6 @@ type NetworkNode = {
   memo: string;
   sourceType: string;
   emotion: string;
-  date: string;
   depth: number;
   x: number;
   y: number;
@@ -50,7 +49,6 @@ export default function TreeRelationshipsPage() {
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const momentId = searchParams.get("moment");
   const {
-    tree,
     treeMoments,
     loading,
     error,
@@ -61,7 +59,7 @@ export default function TreeRelationshipsPage() {
 
   const nodes = useMemo<NetworkNode[]>(() => {
     return treeMoments.map((moment, index) => {
-      const depth = Number.isFinite(moment.depth) ? Math.max(0, moment.depth) : 0;
+      const depth = Math.max(0, moment.depth);
       const column = clamp(depth, 0, 4);
       const lateral = ((index % 3) - 1) * 34;
       return {
@@ -72,7 +70,6 @@ export default function TreeRelationshipsPage() {
         memo: moment.memo || "메모가 없습니다.",
         sourceType: moment.sourceType || "moment",
         emotion: moment.emotionTags[0] ?? "기억",
-        date: moment.discoveryDate || moment.timestamp || "",
         depth,
         x: clamp(120 + column * 178 + lateral, 92, 908),
         y: 105 + index * 118,
@@ -168,7 +165,7 @@ export default function TreeRelationshipsPage() {
                     key={node.id}
                     type="button"
                     className={`${styles.node}${isSelected ? ` ${styles.nodeSelected}` : ""}${muted ? ` ${styles.nodeMuted}` : ""}`}
-                    style={{ left: `${node.x / 10}%`, top: node.y, "--tone": node.tone } as React.CSSProperties}
+                    style={{ left: `${node.x / 10}%`, top: node.y, "--tone": node.tone } as CSSProperties}
                     aria-pressed={isSelected}
                     aria-label={`${node.title} 선택`}
                     data-network-moment-id={node.id}
