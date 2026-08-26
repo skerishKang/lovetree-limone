@@ -35,7 +35,11 @@ jobs:
           node-version: 22
 
       - name: Registry and inventory contract tests
-        run: node --test tests/design-fidelity-validation-orchestration.test.mjs tests/design-fidelity-inventory-drift.test.mjs
+        run: >-
+          node --test
+          tests/design-fidelity-validation-orchestration.test.mjs
+          tests/design-fidelity-inventory-drift.test.mjs
+          tests/design-fidelity-batch1-preregistration.test.mjs
 
       - name: Plan impacted target matrix
         id: plan
