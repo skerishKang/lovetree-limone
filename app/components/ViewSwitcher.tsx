@@ -30,7 +30,18 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
   const encodedId = encodeURIComponent(treeId);
   const suffix = momentId ? `?moment=${encodeURIComponent(momentId)}` : "";
   return (
-    <nav className="view-switcher" aria-label="보기 전환">
+    <nav
+      className="view-switcher"
+      aria-label="보기 전환"
+      data-narrow-scroll-container="true"
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+        overflowX: "auto",
+        overscrollBehaviorX: "contain",
+        WebkitOverflowScrolling: "touch",
+      }}
+    >
       {VIEWS.filter((view) => !view.ownerOnly || isOwner).map((view) => (
         <Link
           key={view.kind}
