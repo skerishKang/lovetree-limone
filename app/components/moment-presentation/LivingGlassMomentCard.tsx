@@ -194,6 +194,7 @@ export function LivingGlassMomentCard({
             src={moment.thumbnail}
             alt=""
             fill
+            unoptimized
             sizes="(max-width: 880px) 82vw, 360px"
             className="living-glass-media-image"
             priority={moment.sortOrder === 0}
