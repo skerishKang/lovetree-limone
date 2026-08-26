@@ -1,0 +1,11 @@
+.living-glass-card-wrap:focus {
+  outline: 2px solid rgba(255, 255, 255, .92);
+  outline-offset: 4px;
+}
+
+.living-glass-card-wrap:focus .living-glass-card {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, .52),
+    0 36px 90px rgba(0, 0, 0, .62),
+    0 0 78px var(--aura);
+}
