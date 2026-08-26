@@ -62,9 +62,9 @@ test("desktop selected hierarchy restores bloom, recede and in-viewport fixed in
   assert.match(css, /0 0 105px color-mix/);
   assert.match(css, /@media \(min-width: 881px\)/);
   assert.match(css, /position: fixed/);
-  assert.match(css, /top: 118px/);
+  assert.match(css, /top: 104px/);
   assert.match(css, /right: 28px/);
-  assert.match(css, /bottom: 28px/);
+  assert.match(css, /bottom: 24px/);
   assert.match(inspector, /living-glass-inspector-media/);
   assert.match(inspector, /WHY NEXT/);
 });

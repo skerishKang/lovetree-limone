@@ -4,6 +4,9 @@ const LINEAGE_52_INERT_SOURCE =
   "/design-lab-assets/lineages/52/v3/lovetree-52-v3-reference-earth-orbit.txt";
 
 const nextConfig: NextConfig = {
+  images: {
+    unoptimized: true,
+  },
   async headers() {
     return [
       {

@@ -112,9 +112,8 @@ export function source57MomentDate(moment: TreeMomentView): string {
   const raw = moment.discoveryDate || moment.timestamp;
   const date = new Date(raw);
   if (Number.isNaN(date.getTime())) return raw;
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}. ${month}. ${day}.`;
 }

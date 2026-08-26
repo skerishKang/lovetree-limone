@@ -97,9 +97,14 @@
   transform: translateY(0) translateZ(38px);
 }
 
+.source57-app .living-glass-card-wrap.is-selected .living-glass-card {
+  opacity: 1;
+}
+
 .source57-app .living-glass-gallery-shell.has-selection .living-glass-card-wrap:not(.is-selected) .living-glass-card {
   opacity: .68;
   filter: saturate(.82) brightness(.84);
+  transition-duration: 0s;
 }
 
 .source57-app .living-glass-card-wrap.is-selected .living-glass-card {
@@ -136,9 +141,9 @@
   .source57-app .living-glass-inspector {
     position: fixed;
     z-index: 30;
-    top: 118px;
+    top: 104px;
     right: 28px;
-    bottom: 28px;
+    bottom: 24px;
     width: min(400px, calc(100vw - 40px));
     max-height: none;
     border-radius: 28px;

@@ -729,13 +729,14 @@
     right: 8px;
     bottom: max(8px, env(safe-area-inset-bottom));
     width: auto;
-    max-height: min(78svh, 650px);
+    max-height: min(72svh, 650px);
     border-radius: 26px 26px 20px 20px;
-    animation-name: source57-sheet-in;
+    animation: source57-sheet-in .1s ease both;
+    animation-delay: 0s;
   }
 
   @keyframes source57-sheet-in {
-    from { opacity: 0; transform: translate3d(0, 26px, 0) scale(.985); }
+    from { opacity: 0; transform: translate3d(0, 8px, 0) scale(.995); }
     to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
   }
 

@@ -301,6 +301,7 @@ async function auditReducedMotion() {
     reducedTransform === "none" || reducedTransform === "matrix(1, 0, 0, 1, 0, 0)",
     `${name}: reduced motion must suppress decorative card transform (received ${reducedTransform})`,
   );
+  await page.waitForTimeout(80);
   const runningAnimations = await page.evaluate(() => document.getAnimations().filter((animation) => animation.playState === "running").length);
   assert.equal(runningAnimations, 0, `${name}: reduced motion left running decorative animations`);
   assert.match(await inspector.innerText(), /WHY NEXT/, `${name}: semantic inspector/WHY NEXT must remain available`);
