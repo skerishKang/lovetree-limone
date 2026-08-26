@@ -98,6 +98,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
   const [cinemaIndex, setCinemaIndex] = useState(0);
   const [cinemaPlaying, setCinemaPlaying] = useState(false);
   const [embedRequested, setEmbedRequested] = useState(false);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [draftTitle, setDraftTitle] = useState("");
   const [draftMemo, setDraftMemo] = useState("");
@@ -162,6 +163,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
       if (active) selectMoment(active.id);
       setCinemaPlaying(false);
       setCinemaOpen(false);
+      setMobileInspectorOpen(true);
       window.requestAnimationFrame(() => active && cardRefs.current.get(active.id)?.focus());
     };
     window.addEventListener("keydown", onKeyDown);
@@ -177,6 +179,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
     (id: string, moveFocus = false) => {
       closeEdit();
       selectMoment(id);
+      setMobileInspectorOpen(true);
       if (moveFocus) window.requestAnimationFrame(() => cardRefs.current.get(id)?.focus());
     },
     [closeEdit, selectMoment],
@@ -206,6 +209,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
 
   const openCinema = (startId?: string) => {
     closeEdit();
+    setMobileInspectorOpen(false);
     const start = startId ? moments.findIndex((moment) => moment.id === startId) : selectedIndex;
     setCinemaIndex(start >= 0 ? start : 0);
     setCinemaPlaying(!reducedMotion);
@@ -219,6 +223,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
     setCinemaPlaying(false);
     setEmbedRequested(false);
     setCinemaOpen(false);
+    setMobileInspectorOpen(true);
     window.requestAnimationFrame(() => active && cardRefs.current.get(active.id)?.focus());
   };
 
@@ -318,6 +323,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
               <div
                 className={styles.board}
                 data-testid="source58-board"
+                data-mobile-spatial-board="true"
                 onKeyDown={onBoardKeyDown}
                 tabIndex={0}
                 aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
@@ -364,14 +370,19 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                       }}
                       type="button"
                       className={styles.card}
+                      data-source58-card="true"
                       data-card-style={slot.style}
                       data-selected={String(selectedCard)}
                       data-parent-id={moment.parentId ?? ""}
+                      data-slot-x={slot.x}
+                      data-slot-y={slot.y}
                       aria-pressed={selectedCard}
                       aria-label={`${moment.title || "제목 없는 Moment"} 선택`}
                       style={{
                         left: `${slot.x}%`,
                         top: `${slot.y}%`,
+                        "--source58-x": `${slot.x}%`,
+                        "--source58-y": `${slot.y}%`,
                         "--card-rotate": `${slot.rotate}deg`,
                       } as CSSProperties}
                       onClick={() => chooseMoment(moment.id)}
@@ -379,18 +390,20 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                     >
                       <span className={styles.pin} data-pin={index % 6} aria-hidden="true" />
                       {moment.album.thumbnail ? (
-                        <span className={styles.cardMedia}>
+                        <span className={styles.cardMedia} data-source58-card-media>
                           {/* Canonical thumbnail URLs are runtime data; avoid inventing an image proxy contract. */}
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={moment.album.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
                         </span>
                       ) : (
-                        <span className={styles.mediaFallback}>{sourceTypeLabel(moment.sourceType)}</span>
+                        <span className={styles.mediaFallback} data-source58-card-media>{sourceTypeLabel(moment.sourceType)}</span>
                       )}
-                      <span className={styles.cardType}>{sourceTypeLabel(moment.sourceType)}</span>
+                      <span className={styles.cardType} data-source58-card-type>{sourceTypeLabel(moment.sourceType)}</span>
                       <strong>{moment.title || "제목 없는 Moment"}</strong>
-                      <span className={styles.cardDate}>{formatMomentDate(moment)}</span>
-                      {moment.connectionReason ? <span className={styles.cardReason}>{moment.connectionReason}</span> : null}
+                      <span className={styles.cardDate} data-source58-card-date>{formatMomentDate(moment)}</span>
+                      {moment.connectionReason ? (
+                        <span className={styles.cardReason} data-source58-card-reason>{moment.connectionReason}</span>
+                      ) : null}
                     </button>
                   );
                 })}
@@ -414,16 +427,29 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
             </div>
           </section>
 
-          <aside className={styles.inspector} aria-label="Selected Moment inspector">
+          <aside
+            className={styles.inspector}
+            aria-label="Selected Moment inspector"
+            data-mobile-open={String(mobileInspectorOpen)}
+          >
             {selected ? (
               <>
-                <div className={styles.inspectorTopline}>
+                <div className={styles.inspectorTopline} data-source58-inspector-topline>
                   <span>SELECTED MOMENT</span>
                   <span>{selectedIndex + 1} / {moments.length}</span>
+                  <button
+                    type="button"
+                    data-mobile-inspector-close
+                    aria-label="Close selected Moment inspector"
+                    style={{ display: "none" }}
+                    onClick={() => setMobileInspectorOpen(false)}
+                  >
+                    BOARD
+                  </button>
                 </div>
 
                 {selected.album.thumbnail ? (
-                  <div className={styles.inspectorMedia}>
+                  <div className={styles.inspectorMedia} data-source58-inspector-media>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={selected.album.thumbnail} alt="" referrerPolicy="no-referrer" />
                     <button type="button" onClick={() => openCinema(selected.id)}>REPLAY IN CINEMA</button>
@@ -431,19 +457,26 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                 ) : null}
 
                 {!editOpen ? (
-                  <div className={styles.momentCopy}>
-                    <p className={styles.momentSource}>
+                  <div className={styles.momentCopy} data-source58-moment-copy>
+                    <p className={styles.momentSource} data-source58-moment-source>
                       {sourceTypeLabel(selected.sourceType)} · {formatMomentDate(selected)}
                     </p>
                     <h2>{selected.title || "제목 없는 Moment"}</h2>
                     <p>{selected.memo || "메모가 없습니다."}</p>
-                    <button type="button" className={styles.editButton} onClick={beginEdit} disabled={!isOwner}>
+                    <button
+                      type="button"
+                      className={styles.editButton}
+                      data-source58-edit-button
+                      onClick={beginEdit}
+                      disabled={!isOwner}
+                    >
                       {isOwner ? "EDIT CANONICAL MOMENT" : "READ ONLY · OWNER EDIT"}
                     </button>
                   </div>
                 ) : (
                   <form
                     className={styles.editForm}
+                    data-source58-edit-form
                     onSubmit={(event) => {
                       event.preventDefault();
                       void saveMoment();
@@ -467,14 +500,18 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                   </form>
                 )}
 
-                <section className={styles.connectionPanel} aria-labelledby="source58-why-next">
-                  <div className={styles.connectionHeading}>
+                <section
+                  className={styles.connectionPanel}
+                  data-source58-connection-panel
+                  aria-labelledby="source58-why-next"
+                >
+                  <div className={styles.connectionHeading} data-source58-connection-heading>
                     <span>CONNECTION</span>
                     <strong id="source58-why-next">WHY NEXT</strong>
                   </div>
 
                   {selected.parentId ? (
-                    <div className={styles.incomingConnection}>
+                    <div className={styles.incomingConnection} data-source58-incoming-connection>
                       <small>이 Moment가 이어진 이유</small>
                       <p>{selected.connectionReason || "connectionReason이 비어 있습니다."}</p>
                       {parent ? (
@@ -484,10 +521,10 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                       ) : null}
                     </div>
                   ) : (
-                    <p className={styles.rootMoment}>ROOT MOMENT · parentId 없음</p>
+                    <p className={styles.rootMoment} data-source58-root-moment>ROOT MOMENT · parentId 없음</p>
                   )}
 
-                  <div className={styles.nextChoices}>
+                  <div className={styles.nextChoices} data-source58-next-choices>
                     <small>{children.length > 1 ? `NEXT MOMENT · ${children.length} CHOICES` : "NEXT MOMENT"}</small>
                     {children.length > 0 ? (
                       children.map((child) => (
@@ -508,7 +545,13 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                 </section>
 
                 {source58SafeExternalUrl(selected.sourceUrl) ? (
-                  <a className={styles.sourceLink} href={selected.sourceUrl} target="_blank" rel="noreferrer">
+                  <a
+                    className={styles.sourceLink}
+                    data-source58-source-link
+                    href={selected.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     OPEN CANONICAL MEDIA SOURCE ↗
                   </a>
                 ) : null}
