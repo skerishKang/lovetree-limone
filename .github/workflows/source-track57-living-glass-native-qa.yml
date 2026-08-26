@@ -6,9 +6,12 @@ on:
       - 'app/design-lab/source-tracks/57/v1-3-native/**'
       - 'app/components/moment-presentation/LivingGlassMoment*.tsx'
       - 'app/styles/source-track-57-living-glass.css'
+      - 'app/styles/source-track-57-living-glass-focus.css'
+      - 'app/styles/source-track-57-living-glass-repair.css'
       - 'lib/source-track-57-living-glass.ts'
       - 'public/reference/source-track-57-living-glass/**'
       - 'tests/source-track-57-living-glass-native.test.mjs'
+      - 'tests/source-track-57-visual-repair-contract.test.mjs'
       - 'qa/source-track-57-living-glass-browser-qa.mjs'
       - '.github/workflows/source-track57-living-glass-native-qa.yml'
   workflow_dispatch:
@@ -49,8 +52,8 @@ jobs:
           echo "SOURCE57_EXACT_HEAD=$actual"
           test "$actual" = "$expected"
 
-      - name: Focused Source57 native contract
-        run: node --test tests/source-track-57-living-glass-native.test.mjs
+      - name: Focused Source57 native + repair contracts
+        run: node --test tests/source-track-57-living-glass-native.test.mjs tests/source-track-57-visual-repair-contract.test.mjs
 
       - name: Lint
         run: npm run lint
