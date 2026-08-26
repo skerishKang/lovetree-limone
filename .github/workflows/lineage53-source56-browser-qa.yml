@@ -30,6 +30,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Install Korean fonts for deterministic glyph rendering
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
       - run: npm ci
       - name: Focused Source56 contract
         run: node --import tsx --test tests/lineage-53-source56-extension.test.mjs

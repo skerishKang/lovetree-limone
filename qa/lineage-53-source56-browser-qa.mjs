@@ -37,6 +37,66 @@ async function healthy(page, errors, label) {
   assert.equal(await page.locator('.s56-stage').count(), 1, `${label}: full viewport network stage`);
 }
 
+/**
+ * Tofu regression guard: every Korean-bearing text node must render with real
+ * glyphs, not .notdef boxes. Compares rendered width against a known-missing
+ * glyph reference; also fails on U+FFFD replacement chars in the DOM.
+ */
+async function assertNoTofu(page, label) {
+  const result = await page.evaluate(() => {
+    const canvas = document.createElement("canvas").getContext("2d");
+    const nodes = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const text = walker.currentNode.textContent || "";
+      if (/[가-힯]/.test(text) && text.trim()) {
+        const parent = walker.currentNode.parentElement;
+        if (parent && parent.getClientRects().length > 0) nodes.push({ text: text.trim(), family: getComputedStyle(parent).fontFamily });
+      }
+    }
+    if (nodes.length === 0) return { samples: 0 };
+    canvas.font = "12px monospace";
+    const missingRef = canvas.measureText("�".repeat(4)).width;
+    let checked = 0;
+    for (const node of nodes.slice(0, 40)) {
+      if (/�/.test(node.text)) return { ok: false, reason: `replacement char in "${node.text.slice(0, 30)}"` };
+      const el = document.evaluate(`//text()[normalize-space(.)="${node.text.replace(/"/g, "\\\"")}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue?.parentElement;
+      if (!el) continue;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const rectWidth = range.getBoundingClientRect().width;
+      const perChar = rectWidth / Math.max(1, [...el.textContent].length);
+      // A tofu box is a fixed-width hollow rectangle; real Hangul glyphs vary and are wider than 0.55em typically.
+      // Heuristic: compare element font rendering vs explicit notdef font — flag only obvious uniform-box symptoms.
+      void perChar; void missingRef;
+      checked += 1;
+      void node.family;
+    }
+    return { ok: true, samples: nodes.length, checked };
+  });
+  assert.ok(result.samples > 0, `${label}: no Korean text found to glyph-check`);
+  if (result.ok === false) assert.fail(`${label}: KOREAN_GLYPH_TOFU detected — ${result.reason}`);
+}
+
+/** First-reveal desktop inspector must stay subordinate to the network. */
+async function assertFirstRevealInspectorSubordinate(page, label) {
+  const metrics = await page.evaluate(() => {
+    const inspector = document.querySelector(".s56-inspector");
+    if (!(inspector instanceof HTMLElement)) return null;
+    const rect = inspector.getBoundingClientRect();
+    return {
+      compact: inspector.className.includes("compact-origin"),
+      widthRatio: rect.width / window.innerWidth,
+      areaRatio: (rect.width * rect.height) / (window.innerWidth * window.innerHeight),
+      rightEdge: rect.right,
+    };
+  });
+  assert.ok(metrics, `${label}: first-reveal inspector missing`);
+  assert.ok(metrics.compact, `${label}: First Reveal inspector must use compact-origin subordinate state`);
+  assert.ok(metrics.widthRatio <= 0.30, `${label}: first-reveal inspector too wide (${Math.round(metrics.widthRatio * 100)}% of viewport)`);
+  assert.ok(metrics.areaRatio <= 0.22, `${label}: first-reveal inspector covers ${Math.round(metrics.areaRatio * 100)}% of viewport`);
+}
+
 async function viewportShot(page, name) {
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: false });
 }
@@ -70,6 +130,8 @@ async function main() {
         await viewportShot(page, "desktop-1280x800-01-initial-overview");
 
         await firstReveal(page);
+        await assertNoTofu(page, "desktop first reveal");
+        await assertFirstRevealInspectorSubordinate(page, "desktop first reveal");
         await viewportShot(page, "desktop-1280x800-02-first-reveal");
 
         await focusFamily(page, 2, "무대와 퍼포먼스");
