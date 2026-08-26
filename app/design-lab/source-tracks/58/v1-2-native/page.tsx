@@ -1,4 +1,5 @@
 import SourceTrack58LivingMemoryBoard from "@/components/source-track-58/SourceTrack58LivingMemoryBoard";
+import repairStyles from "./source58-visual-repair.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -11,5 +12,9 @@ export default async function SourceTrack58NativePage({ searchParams }: SourceTr
   const rawTreeId = params.treeId;
   const treeId = Array.isArray(rawTreeId) ? rawTreeId[0] ?? "" : rawTreeId ?? "";
 
-  return <SourceTrack58LivingMemoryBoard treeId={treeId.trim()} />;
+  return (
+    <div className={repairStyles.repairScope}>
+      <SourceTrack58LivingMemoryBoard treeId={treeId.trim()} />
+    </div>
+  );
 }
