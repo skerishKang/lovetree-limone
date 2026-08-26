@@ -117,6 +117,7 @@ async function auditDesktop() {
   await inspector.waitFor({ state: "visible" });
   assert.equal(await selected.getAttribute("data-selected"), "true", `${name}: selected card identity missing`);
   assert.match(await inspector.innerText(), /WHY NEXT/, `${name}: selected inspector must expose WHY NEXT`);
+  await page.waitForTimeout(420);
 
   const selectedMetrics = await galleryMetrics(page);
   assert.ok(selectedMetrics, `${name}: selected gallery metrics unavailable`);
