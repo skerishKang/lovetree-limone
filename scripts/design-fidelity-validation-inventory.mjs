@@ -253,6 +253,61 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze([]),
   }),
+  Object.freeze({
+    id: "source-56-lineage53-vertical-network",
+    label: "Source56 Vertical Moment Network bounded Lineage53 extension",
+    route: "/design-lab/lineages/53/53-v3-vertical-network-overview",
+    routeEntry: "app/design-lab/lineages/53/53-v3-vertical-network-overview/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    preregistered: true,
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/53/53-v3-vertical-network-overview/",
+      "lib/lineage-53-source56.ts",
+      "design-intake/source-56-lineage53-extension.json",
+      "qa/lineage-53-source56-browser-qa.mjs",
+      "tests/lineage-53-source56-extension.test.mjs",
+      ".github/workflows/lineage53-source56-browser-qa.yml",
+      "reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; LINEAGE53_EXTENSION; NO_LINEAGE56_COLLISION",
+    browserGates: Object.freeze(["qa/lineage-53-source56-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/lineage-53-source56-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/lineage53-source56-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/lineage-53-source56"]),
+  }),
+  Object.freeze({
+    id: "source-57-living-glass-v1-3-native",
+    label: "Source57 Living Glass Moment V1.3 native",
+    route: "/design-lab/source-tracks/57/v1-3-native",
+    routeEntry: "app/design-lab/source-tracks/57/v1-3-native/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    preregistered: true,
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/57/v1-3-native/",
+      "app/components/moment-presentation/LivingGlassMoment",
+      "app/styles/source-track-57-living-glass",
+      "lib/source-track-57-living-glass.ts",
+      "public/reference/source-track-57-living-glass/",
+      "qa/source-track-57-living-glass-browser-qa.mjs",
+      "qa/source-track-57-visual-repair-browser-qa.mjs",
+      "tests/source-track-57-living-glass-native.test.mjs",
+      "tests/source-track-57-visual-repair-contract.test.mjs",
+      ".github/workflows/source-track57-living-glass-native-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; SEPARATE_SOURCE57_NAMESPACE; NO_LINEAGE57_COLLISION",
+    browserGates: Object.freeze(["qa/source-track-57-visual-repair-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-57-visual-repair-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track57-living-glass-native-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa-artifacts/source-track57-living-glass"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
@@ -378,49 +433,6 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track09 is a bounded visual-function donor over the existing canonical MYTREE overview; its dedicated workflow proves the exact source donor and responsive interaction evidence without creating a second product route or promoting demo metrics as product truth.",
   }),
   Object.freeze({
-    id: "source-56-lineage53-vertical-network-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
-    label: "Source56 Vertical Moment Network Lineage53 extension dedicated QA", validationClass: "dedicated-source-browser-qa",
-    route: "/design-lab/lineages/53/53-v3-vertical-network-overview",
-    routeEntry: "app/design-lab/lineages/53/53-v3-vertical-network-overview/page.tsx",
-    impactPrefixes: Object.freeze([
-      "app/design-lab/lineages/53/53-v3-vertical-network-overview/",
-      "lib/lineage-53-source56.ts",
-      "design-intake/source-56-lineage53-extension.json",
-      "qa/lineage-53-source56-browser-qa.mjs",
-      "tests/lineage-53-source56-extension.test.mjs",
-      ".github/workflows/lineage53-source56-browser-qa.yml",
-      "reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/",
-    ]),
-    actualRouteBrowserGate: "qa/lineage-53-source56-browser-qa.mjs",
-    dedicatedWorkflow: ".github/workflows/lineage53-source56-browser-qa.yml",
-    exactAssetStatus: "REFERENCE_SOURCE_PINNED; LINEAGE53_EXTENSION; NO_LINEAGE56_COLLISION",
-    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
-    reason: "Source56 is a bounded Lineage53 extension with its own exact-head browser workflow; the dedicated gate owns Source56 visual/interaction evidence without reclassifying it as repository Lineage56 or weakening existing Lineage53 V2 coverage.",
-  }),
-  Object.freeze({
-    id: "source-57-living-glass-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
-    label: "Source57 Living Glass Moment native dedicated QA", validationClass: "dedicated-source-browser-qa",
-    route: "/design-lab/source-tracks/57/v1-3-native",
-    routeEntry: "app/design-lab/source-tracks/57/v1-3-native/page.tsx",
-    impactPrefixes: Object.freeze([
-      "app/design-lab/source-tracks/57/v1-3-native/",
-      "app/components/moment-presentation/LivingGlassMoment",
-      "app/styles/source-track-57-living-glass",
-      "lib/source-track-57-living-glass.ts",
-      "public/reference/source-track-57-living-glass/",
-      "qa/source-track-57-living-glass-browser-qa.mjs",
-      "qa/source-track-57-visual-repair-browser-qa.mjs",
-      "tests/source-track-57-living-glass-native.test.mjs",
-      "tests/source-track-57-visual-repair-contract.test.mjs",
-      ".github/workflows/source-track57-living-glass-native-qa.yml",
-    ]),
-    actualRouteBrowserGate: "qa/source-track-57-visual-repair-browser-qa.mjs",
-    dedicatedWorkflow: ".github/workflows/source-track57-living-glass-native-qa.yml",
-    exactAssetStatus: "REFERENCE_SOURCE_PINNED; SEPARATE_SOURCE57_NAMESPACE; NO_LINEAGE57_COLLISION",
-    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
-    reason: "Source57 Living Glass is a separate source-track native candidate, not repository Lineage57 Living Character World; its dedicated exact-head workflow owns the responsive Living Glass visual/interaction certification surface.",
-  }),
-  Object.freeze({
     id: "source-58-living-memory-pinboard-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Source58 Living Memory Pinboard native dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
     route: "/design-lab/source-tracks/58/v1-2-native",
@@ -439,7 +451,7 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     dedicatedWorkflow: ".github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml",
     exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_TREE_MOMENT_FIXTURES_IN_QA_ONLY; NO_LINEAGE58_COLLISION",
     viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
-    reason: "Source58 Living Memory Pinboard is a separate source-track staging native, not repository Lineage58 VideoFigure Atelier; its dedicated workflow runs canonical-shape fixtures plus desktop/mobile spatial browser gates without promoting fixtures into runtime product truth.",
+    reason: "Source58 needs a canonical treeId and deterministic canonical-shape network fixtures to prove the Pinboard surface. Generic central route capture cannot supply that environment, so the dedicated workflow owns desktop/mobile spatial certification without promoting fixtures into runtime product truth or reclassifying repository Lineage58.",
   }),
 ]);
 
@@ -476,11 +488,18 @@ export function validateDesignFidelityInventory({ registeredTargets = DESIGN_FID
 
 export function getDesignFidelityTarget(id) { return DESIGN_FIDELITY_TARGETS.find((target) => target.id === id) ?? null; }
 const supplementalMaterialized = (target, cwd) => [target.routeEntry, ...target.browserGates, ...(target.assetGate ? [target.assetGate.verifier] : [])].every((p) => existsSync(path.join(cwd, p)));
+const targetEvidencePaths = (target) => [target.routeEntry, ...target.browserGates, target.dedicatedWorkflow, ...(target.assetGate ? [target.assetGate.verifier] : [])].filter(Boolean);
+const targetMaterialization = (target, cwd) => {
+  const paths = targetEvidencePaths(target);
+  const present = paths.filter((p) => existsSync(path.join(cwd, p)));
+  return { paths, none: present.length === 0, full: present.length === paths.length, present };
+};
+const targetMaterializedForPlanning = (target, cwd) => target.preregistered === true ? targetMaterialization(target, cwd).full : supplementalMaterialized(target, cwd);
 const exclusionEvidencePaths = (entry) => [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean);
 const exclusionMaterialization = (entry, cwd) => {
   const paths = exclusionEvidencePaths(entry);
   const present = paths.filter((p) => existsSync(path.join(cwd, p)));
-  return { paths, none: present.length === 0, full: present.length === paths.length };
+  return { paths, none: present.length === 0, full: present.length === paths.length, present };
 };
 
 export function discoverDedicatedPlaywrightWorkflows(cwd = process.cwd()) {
@@ -498,7 +517,18 @@ export function assertDedicatedWorkflowCoverage(cwd = process.cwd(), { registere
 
 export function validateRepositoryInventory(cwd = process.cwd()) {
   validateDesignFidelityInventory();
-  for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
+  for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) {
+    if (target.preregistered === true) {
+      const state = targetMaterialization(target, cwd);
+      if (state.none) continue;
+      if (!state.full) {
+        const missing = state.paths.filter((p) => !state.present.includes(p));
+        throw new Error(`${target.id}: preregistered target is partially materialized; missing: ${missing.join(", ")}`);
+      }
+      continue;
+    }
+    if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
+  }
   for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) {
     const state = exclusionMaterialization(entry, cwd);
     if (entry.preregistered === true && state.none) continue;
@@ -523,7 +553,7 @@ export function planDesignFidelityInventory(changedPaths, { addedPaths = [], cwd
   if (future.length) throw new Error(`FUTURE_MERGE_GUARD: ${future.map((entry) => `${entry.id} (${entry.requiredResolution})`).join("; ")}`);
   const globalChange = changed.some((p) => GLOBAL_PREFIXES.some((prefix) => matches(p, prefix)));
   const base = globalChange ? BASE_TARGETS.filter((target) => baseTargetIsMaterialized(target, cwd)) : selectBaseTargets(changed, cwd);
-  const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || supplementalMaterialized(target, cwd))) || impacted(target, changed));
+  const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || targetMaterializedForPlanning(target, cwd))) || impacted(target, changed));
   const targets = [...new Map([...base, ...supplemental].map((target) => [target.id, target])).values()];
   const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => {
     if (impacted(entry, changed)) return true;
