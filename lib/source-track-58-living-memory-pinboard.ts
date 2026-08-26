@@ -11,15 +11,15 @@ export const SOURCE_TRACK_58_STAGING = {
   route: "/design-lab/source-tracks/58/v1-2-native",
 } as const;
 
-export type Source58BoardTheme = "pearl" | "gold" | "black" | "plum" | "tint" | "wood";
+export type Source58BoardTheme = "pearl" | "cork" | "letter" | "blossom" | "night" | "mint";
 
 export const SOURCE_58_BOARD_THEMES: readonly { id: Source58BoardTheme; label: string }[] = [
   { id: "pearl", label: "Pearl" },
-  { id: "gold", label: "Gold" },
-  { id: "black", label: "Black" },
-  { id: "plum", label: "Deep Plum" },
-  { id: "tint", label: "Tint" },
-  { id: "wood", label: "Wood" },
+  { id: "cork", label: "Warm Cork" },
+  { id: "letter", label: "Letter" },
+  { id: "blossom", label: "Blossom" },
+  { id: "night", label: "Night" },
+  { id: "mint", label: "Mint" },
 ];
 
 const SOURCE_58_BOARD_SLOTS = [
@@ -34,16 +34,33 @@ const SOURCE_58_BOARD_SLOTS = [
   { x: 79, y: 72, rotate: -3, style: "note" },
 ] as const;
 
+// Source58's native proof originally reused the nine slots above with a tiny lap drift,
+// which caused deterministic near-overlap from Moment 10 onward. Keep the accepted
+// first-nine composition, then move larger Trees onto a deterministic extended field.
+// This is presentation-only VIEW_DERIVED geometry; no Path/board position persistence.
+const SOURCE_58_EXTENDED_SLOTS = [
+  [5, 90], [45, 90], [85, 30], [85, 90], [5, 60], [30, 25], [40, 55], [85, 5],
+  [5, 30], [5, 75], [25, 85], [65, 85], [50, 25], [85, 60], [65, 35], [60, 5],
+  [60, 55], [20, 55], [45, 75], [20, 5], [35, 45], [25, 35], [85, 15], [85, 40],
+  [5, 50], [5, 5], [50, 15], [25, 15], [70, 25], [45, 65], [5, 40],
+] as const;
+
+const EXTENDED_STYLES = ["compact", "photo", "ticket", "compact", "note", "msg"] as const;
+
 export function source58BoardSlot(index: number) {
-  const slot = SOURCE_58_BOARD_SLOTS[index % SOURCE_58_BOARD_SLOTS.length];
-  const lap = Math.floor(index / SOURCE_58_BOARD_SLOTS.length);
-  if (lap === 0) return slot;
-  const drift = (lap % 3) * 2;
+  if (index < SOURCE_58_BOARD_SLOTS.length) return SOURCE_58_BOARD_SLOTS[index];
+
+  const extendedIndex = index - SOURCE_58_BOARD_SLOTS.length;
+  const base = SOURCE_58_EXTENDED_SLOTS[extendedIndex % SOURCE_58_EXTENDED_SLOTS.length];
+  const cycle = Math.floor(extendedIndex / SOURCE_58_EXTENDED_SLOTS.length);
+  const phase = cycle % 4;
+  const xDrift = phase === 0 ? 0 : phase === 1 ? -2 : phase === 2 ? 2 : -1;
+  const yDrift = phase === 0 ? 0 : phase === 1 ? 2 : phase === 2 ? -2 : 1;
   return {
-    ...slot,
-    x: Math.min(82, Math.max(7, slot.x + (lap % 2 === 0 ? drift : -drift))),
-    y: Math.min(78, Math.max(7, slot.y + drift)),
-    rotate: slot.rotate + (lap % 2 === 0 ? 1 : -1),
+    x: Math.min(88, Math.max(3, base[0] + xDrift)),
+    y: Math.min(92, Math.max(3, base[1] + yDrift)),
+    rotate: ((index * 5) % 9) - 4,
+    style: EXTENDED_STYLES[extendedIndex % EXTENDED_STYLES.length],
   };
 }
 
