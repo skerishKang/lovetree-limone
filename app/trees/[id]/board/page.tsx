@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ViewSwitcher } from "@/app/components/ViewSwitcher";
 import SourceTrack58LivingMemoryBoard from "@/components/source-track-58/SourceTrack58LivingMemoryBoard";
 import mobileSpatialStyles from "@/app/design-lab/source-tracks/58/v1-2-native/source58-mobile-spatial-p0.module.css";
@@ -9,9 +10,22 @@ import repairStyles from "@/app/design-lab/source-tracks/58/v1-2-native/source58
 
 export default function TreeLivingBoardPage() {
   const params = useParams<{ id: string | string[] }>();
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const momentId = searchParams.get("moment");
+
+  const syncMomentToUrl = useCallback(
+    (nextMomentId: string | null) => {
+      const next = new URLSearchParams(searchParams.toString());
+      if (nextMomentId) next.set("moment", nextMomentId);
+      else next.delete("moment");
+      const query = next.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   return (
     <div className="tree-page" data-mvp-source="58" data-tree-id={treeId}>
@@ -30,7 +44,11 @@ export default function TreeLivingBoardPage() {
       </div>
 
       <div className={`${repairStyles.repairScope} ${mobileSpatialStyles.mobileSpatialScope}`}>
-        <SourceTrack58LivingMemoryBoard treeId={treeId} />
+        <SourceTrack58LivingMemoryBoard
+          treeId={treeId}
+          initialMomentId={momentId}
+          onMomentChange={syncMomentToUrl}
+        />
       </div>
     </div>
   );
