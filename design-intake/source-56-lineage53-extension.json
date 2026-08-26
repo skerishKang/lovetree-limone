@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "Source 56",
+  "sourceFolder": "56_세로형_모먼트관계망_전체조망",
+  "revision": "V1.2",
+  "executable": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+  "bytes": 45761,
+  "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+  "repositoryFamily": "lt-53-emotional-path-replay",
+  "lineageNumber": 53,
+  "newLineage": false,
+  "capabilityRelation": "CAP-14 aligned extension evidence",
+  "targetRoute": "/design-lab/lineages/53/53-v3-vertical-network-overview",
+  "canonicalData": ["Moment", "Connection"],
+  "viewDerivedOnly": ["PathFamily", "Hub", "Cluster", "overview grouping"],
+  "reuse": ["P3 guided transport authority", "P4 canonical selection synchronizer", "Lineage53 Moment→Connection→Moment semantics"],
+  "forbidden": ["new DB", "new API", "new Path persistence", "new Hub persistence", "new Cluster persistence", "Lineage56 mutation", "Lineage53 V2 overwrite", "/v4 adoption", "source HTML runtime execution"],
+  "visualQaAuthority": "MODEL-2 independent Source↔Native review",
+  "selfVisualPassClaim": false
+}
