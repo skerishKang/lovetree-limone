@@ -321,6 +321,7 @@ async function auditMobile({ name, width, height }) {
   await cards.nth(2).tap();
   assert.equal(await cards.nth(2).getAttribute("aria-pressed"), "true", `${name}: touch must select canonical Moment`);
   await page.screenshot({ path: `${screenshotDir}/${name}-selected.png`, fullPage: false });
+  await page.getByRole("button", { name: "Close selected Moment inspector" }).tap();
   await page.getByRole("button", { name: "Mint" }).tap();
   assert.equal(
     await page.locator("main[data-source-track='58']").getAttribute("data-theme"),
