@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export type ViewKind = "tree" | "overview" | "timeline" | "album" | "story" | "graph" | "replay" | "studio";
+export type ViewKind = "tree" | "board" | "overview" | "timeline" | "album" | "story" | "graph" | "replay" | "studio";
 
 interface ViewSwitcherProps {
   treeId: string;
@@ -13,6 +13,7 @@ interface ViewSwitcherProps {
 
 const VIEWS: { kind: ViewKind; label: string; path: string; ownerOnly?: boolean }[] = [
   { kind: "tree", label: "트리", path: "" },
+  { kind: "board", label: "보드", path: "/board" },
   { kind: "overview", label: "한눈에", path: "/overview" },
   { kind: "timeline", label: "타임라인", path: "/timeline" },
   { kind: "album", label: "앨범", path: "/album" },
