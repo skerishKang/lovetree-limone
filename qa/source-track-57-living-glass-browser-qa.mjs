@@ -99,7 +99,10 @@ try {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.waitForTimeout(50);
     const reducedTransform = await keyboardCard.locator(".living-glass-card").evaluate((element) => getComputedStyle(element).transform);
-    assert.equal(reducedTransform, "none", `${viewport.name}: reduced motion must suppress card transform`);
+    assert.ok(
+      reducedTransform === "none" || reducedTransform === "matrix(1, 0, 0, 1, 0, 0)",
+      `${viewport.name}: reduced motion must suppress card transform (received ${reducedTransform})`,
+    );
 
     assert.deepEqual(pageErrors, [], `${viewport.name}: page errors ${pageErrors.join(" | ")}`);
     assert.deepEqual(consoleErrors, [], `${viewport.name}: console errors ${consoleErrors.join(" | ")}`);
