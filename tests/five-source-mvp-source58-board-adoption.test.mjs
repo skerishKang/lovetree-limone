@@ -27,10 +27,13 @@ test("existing tree + moment navigation protocol remains the only cross-view pro
   assert.doesNotMatch(boardRoute, /selectedMomentStore|globalMoment|localStorage|sessionStorage|indexedDB/);
 });
 
-test("Source58 product binding stays optional so Design Lab staging behavior remains valid", () => {
+test("Source58 product binding stays optional and preserves the original canonical hook contract", () => {
   assert.match(source58Board, /initialMomentId\?: string \| null/);
   assert.match(source58Board, /onMomentChange\?: \(momentId: string \| null\) => void/);
-  assert.match(source58Board, /useTreeMoments\(treeId, undefined, initialMomentId \?\? undefined\)/);
+  assert.match(source58Board, /useTreeMoments\(treeId\)/);
+  assert.match(source58Board, /momentById\.has\(initialMomentId\)/);
+  assert.match(source58Board, /selectTreeMoment\(initialMomentId\)/);
+  assert.match(source58Board, /!selectedMomentId && !initialMomentId && moments\[0\]/);
   assert.match(source58Board, /onMomentChange\?\.\(id\)/);
   assert.doesNotMatch(source58Board, /useRouter|usePathname|useSearchParams/);
 });
