@@ -5,7 +5,6 @@ import { chromium } from "playwright";
 const baseUrl = process.env.FIVE_SOURCE_MVP_QA_URL ?? "http://127.0.0.1:3000";
 const screenshotDir = process.env.FIVE_SOURCE_MVP_SCREENSHOT_DIR ?? "/tmp/five-source-mvp-browser-qa";
 const treeId = "five-source-mvp-qa-tree";
-const initialMomentId = "m-child";
 const pixel = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='400'%3E%3Crect width='640' height='400' fill='%23d9cbd3'/%3E%3C/svg%3E";
 
 const qaTree = {
@@ -82,14 +81,6 @@ const qaMoments = [
   },
 ];
 
-const views = [
-  { label: "Moment", source: "57", path: "" },
-  { label: "보드", source: "58", path: "/board" },
-  { label: "관계", source: "56", path: "/relationships" },
-  { label: "탐색", source: "60", path: "/explore" },
-  { label: "포털", source: "64", path: "/portal" },
-];
-
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 
@@ -141,7 +132,11 @@ async function clickView(page, name, source, momentId, screenshotPrefix) {
   const link = switcher.getByRole("link", { name, exact: true });
   const href = await link.getAttribute("href");
   assert.ok(href?.includes(`/trees/${treeId}`), `${screenshotPrefix}: view link lost Tree identity`);
-  assert.ok(href?.includes(`moment=${encodeURIComponent(momentId)}`), `${screenshotPrefix}: view link lost Moment identity`);
+  if (momentId) {
+    assert.ok(href?.includes(`moment=${encodeURIComponent(momentId)}`), `${screenshotPrefix}: view link lost Moment identity`);
+  } else {
+    assert.ok(!href?.includes("moment="), `${screenshotPrefix}: view link invented Moment identity`);
+  }
   await link.click();
   await waitForSource(page, source);
   await assertMomentQuery(page, momentId, screenshotPrefix);
@@ -156,16 +151,20 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   const errors = captureErrors(page);
   await installCanonicalFixtures(page);
 
-  const initial = `${baseUrl}/trees/${treeId}?moment=${initialMomentId}`;
+  // Source57 uses a real aria-modal Moment inspector when ?moment= is present.
+  // Validate the shared presentation language before selection, then enter Board
+  // through an actual user-clickable ViewSwitcher path. Moment continuity begins
+  // after the Board selection writes canonical presentation state to the URL.
+  const initial = `${baseUrl}/trees/${treeId}`;
   const response = await page.goto(initial, { waitUntil: "domcontentloaded" });
   assert.ok(response?.ok(), `${name}: canonical Tree route must return 2xx`);
   await waitForSource(page, "57");
   await page.getByText("Five Source Canonical QA Tree").first().waitFor();
-  await assertMomentQuery(page, initialMomentId, `${name}-source57`);
+  await assertMomentQuery(page, null, `${name}-source57`);
   await assertNoDocumentOverflow(page, `${name}-source57`);
   await page.screenshot({ path: `${screenshotDir}/${name}-57.png`, fullPage: false });
 
-  await clickView(page, "보드", "58", initialMomentId, `${name}-58`);
+  await clickView(page, "보드", "58", null, `${name}-58`);
 
   // Source58 selection is presentation state written back with router.replace.
   const rootCard = page.getByRole("button", { name: "First light 선택" });
@@ -174,16 +173,17 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   await page.waitForURL((url) => url.searchParams.get("moment") === "m-root");
   await assertMomentQuery(page, "m-root", `${name}-58-replaced`);
 
-  // Because board selection uses replace, Back returns to the invoking canonical Tree detail.
+  // Because board selection uses replace, Back returns to the invoking canonical
+  // Tree detail without manufacturing a hidden selection-history entry.
   await page.goBack({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "57");
-  await assertMomentQuery(page, initialMomentId, `${name}-57-back-from-board`);
+  await assertMomentQuery(page, null, `${name}-57-back-from-board`);
   await page.goForward({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "58");
   await assertMomentQuery(page, "m-root", `${name}-58-forward`);
 
   await clickView(page, "관계", "56", "m-root", `${name}-56`);
-  assert.ok(await page.getByText("WHY NEXT", { exact: true }).count(), `${name}: Source56 relationship semantics missing`);
+  assert.ok(await page.getByText(/WHY NEXT ·/).count(), `${name}: Source56 relationship semantics missing`);
 
   await clickView(page, "탐색", "60", "m-root", `${name}-60`);
   assert.ok(await page.locator("canvas").count(), `${name}: Source60 3D projection canvas missing`);
