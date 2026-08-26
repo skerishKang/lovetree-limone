@@ -20,7 +20,9 @@ on:
       - 'lib/moment-model.ts'
       - 'lib/tree-types.ts'
       - 'tests/source-track-58-living-memory-pinboard-native-contract.test.mjs'
+      - 'tests/source-track-58-mobile-spatial-repair-contract.test.mjs'
       - 'qa/source-track-58-living-memory-pinboard-browser-qa.mjs'
+      - 'qa/source-track-58-mobile-spatial-repair-browser-qa.mjs'
       - '.github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml'
   workflow_dispatch:
 
@@ -49,7 +51,10 @@ jobs:
         run: npm ci
 
       - name: Source58 focused contracts
-        run: node --import tsx --test tests/source-track-58-living-memory-pinboard-native-contract.test.mjs
+        run: >-
+          node --import tsx --test
+          tests/source-track-58-living-memory-pinboard-native-contract.test.mjs
+          tests/source-track-58-mobile-spatial-repair-contract.test.mjs
 
       - name: Lint
         run: npm run lint
@@ -96,6 +101,9 @@ jobs:
           V4_BASE_URL="http://127.0.0.1:3000" \
             SOURCE58_SCREENSHOT_DIR="/tmp/source58-living-memory-pinboard-browser-qa" \
             node qa/source-track-58-living-memory-pinboard-browser-qa.mjs
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            SOURCE58_SCREENSHOT_DIR="/tmp/source58-living-memory-pinboard-browser-qa" \
+            node qa/source-track-58-mobile-spatial-repair-browser-qa.mjs
 
       - name: Upload Source58 browser QA evidence
         if: always()
