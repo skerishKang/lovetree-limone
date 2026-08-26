@@ -7,6 +7,8 @@ const route = readFileSync("app/trees/[id]/explore/page.tsx", "utf8");
 const projection = readFileSync("lib/lineage-60/projection.ts", "utf8");
 const sourceData = readFileSync("lib/lineage-60/data.ts", "utf8");
 
+const directDurableWrite = /\b(?:fetch|apiFetch)\s*\(|\bmethod\s*:\s*["'](?:POST|PUT|PATCH|DELETE)["']|\b(?:prisma|drizzle|neon|firebase|supabase)\b/iu;
+
 test("Source60 is adopted as a Tree-scoped deep explore mode", () => {
   assert.match(viewSwitcher, /kind: "explore", label: "탐색", path: "\/explore"/);
   assert.match(route, /data-mvp-source="60"/);
@@ -26,7 +28,7 @@ test("cluster and bridge identities are view-derived only", () => {
   assert.match(route, /Cluster \/ Bridge = VIEW_DERIVED/);
   assert.match(route, /parent\.cluster !== moment\.cluster/);
   assert.match(route, /bridgeIds/);
-  assert.doesNotMatch(route, /fetch\(|apiFetch\(|POST|PUT|DELETE|prisma|drizzle|neon|firebase|supabase/iu);
+  assert.doesNotMatch(route, directDurableWrite);
 });
 
 test("Source60 software projection and depth hit authority are reused", () => {
