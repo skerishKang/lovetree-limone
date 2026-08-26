@@ -32,6 +32,12 @@ type BoardConnection = {
   to: BoardPoint;
 };
 
+type SourceTrack58LivingMemoryBoardProps = {
+  treeId: string;
+  initialMomentId?: string | null;
+  onMomentChange?: (momentId: string | null) => void;
+};
+
 function formatMomentDate(moment: BoardMoment) {
   const value = moment.discoveryDate || moment.timestamp || moment.createdAt;
   if (!value) return "날짜 미정";
@@ -78,7 +84,11 @@ function useReducedMotion() {
   return reduced;
 }
 
-export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: string }) {
+export default function SourceTrack58LivingMemoryBoard({
+  treeId,
+  initialMomentId,
+  onMomentChange,
+}: SourceTrack58LivingMemoryBoardProps) {
   const {
     tree,
     canonicalMoments,
@@ -87,10 +97,18 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
     error,
     isOwner,
     selectedMomentId,
-    selectMoment,
+    selectMoment: selectTreeMoment,
     updateMoment,
     refresh,
-  } = useTreeMoments(treeId);
+  } = useTreeMoments(treeId, undefined, initialMomentId ?? undefined);
+
+  const selectMoment = useCallback(
+    (id: string | null) => {
+      selectTreeMoment(id);
+      onMomentChange?.(id);
+    },
+    [onMomentChange, selectTreeMoment],
+  );
 
   const reducedMotion = useReducedMotion();
   const [theme, setTheme] = useState<Source58BoardTheme>("pearl");
