@@ -377,6 +377,70 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
     reason: "Track09 is a bounded visual-function donor over the existing canonical MYTREE overview; its dedicated workflow proves the exact source donor and responsive interaction evidence without creating a second product route or promoting demo metrics as product truth.",
   }),
+  Object.freeze({
+    id: "source-56-lineage53-vertical-network-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Source56 Vertical Moment Network Lineage53 extension dedicated QA", validationClass: "dedicated-source-browser-qa",
+    route: "/design-lab/lineages/53/53-v3-vertical-network-overview",
+    routeEntry: "app/design-lab/lineages/53/53-v3-vertical-network-overview/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/53/53-v3-vertical-network-overview/",
+      "lib/lineage-53-source56.ts",
+      "design-intake/source-56-lineage53-extension.json",
+      "qa/lineage-53-source56-browser-qa.mjs",
+      "tests/lineage-53-source56-extension.test.mjs",
+      ".github/workflows/lineage53-source56-browser-qa.yml",
+      "reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/",
+    ]),
+    actualRouteBrowserGate: "qa/lineage-53-source56-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/lineage53-source56-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; LINEAGE53_EXTENSION; NO_LINEAGE56_COLLISION",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Source56 is a bounded Lineage53 extension with its own exact-head browser workflow; the dedicated gate owns Source56 visual/interaction evidence without reclassifying it as repository Lineage56 or weakening existing Lineage53 V2 coverage.",
+  }),
+  Object.freeze({
+    id: "source-57-living-glass-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Source57 Living Glass Moment native dedicated QA", validationClass: "dedicated-source-browser-qa",
+    route: "/design-lab/source-tracks/57/v1-3-native",
+    routeEntry: "app/design-lab/source-tracks/57/v1-3-native/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/57/v1-3-native/",
+      "app/components/moment-presentation/LivingGlassMoment",
+      "app/styles/source-track-57-living-glass",
+      "lib/source-track-57-living-glass.ts",
+      "public/reference/source-track-57-living-glass/",
+      "qa/source-track-57-living-glass-browser-qa.mjs",
+      "qa/source-track-57-visual-repair-browser-qa.mjs",
+      "tests/source-track-57-living-glass-native.test.mjs",
+      "tests/source-track-57-visual-repair-contract.test.mjs",
+      ".github/workflows/source-track57-living-glass-native-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/source-track-57-visual-repair-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track57-living-glass-native-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; SEPARATE_SOURCE57_NAMESPACE; NO_LINEAGE57_COLLISION",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Source57 Living Glass is a separate source-track native candidate, not repository Lineage57 Living Character World; its dedicated exact-head workflow owns the responsive Living Glass visual/interaction certification surface.",
+  }),
+  Object.freeze({
+    id: "source-58-living-memory-pinboard-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Source58 Living Memory Pinboard native dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
+    route: "/design-lab/source-tracks/58/v1-2-native",
+    routeEntry: "app/design-lab/source-tracks/58/v1-2-native/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/58/v1-2-native/",
+      "components/source-track-58/",
+      "lib/source-track-58-living-memory-pinboard.ts",
+      "qa/source-track-58-living-memory-pinboard-browser-qa.mjs",
+      "qa/source-track-58-mobile-spatial-repair-browser-qa.mjs",
+      "tests/source-track-58-living-memory-pinboard-native-contract.test.mjs",
+      "tests/source-track-58-mobile-spatial-repair-contract.test.mjs",
+      ".github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/source-track-58-living-memory-pinboard-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_TREE_MOMENT_FIXTURES_IN_QA_ONLY; NO_LINEAGE58_COLLISION",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Source58 Living Memory Pinboard is a separate source-track staging native, not repository Lineage58 VideoFigure Atelier; its dedicated workflow runs canonical-shape fixtures plus desktop/mobile spatial browser gates without promoting fixtures into runtime product truth.",
+  }),
 ]);
 
 export const FUTURE_MERGE_GUARDS = Object.freeze([]);
@@ -412,6 +476,12 @@ export function validateDesignFidelityInventory({ registeredTargets = DESIGN_FID
 
 export function getDesignFidelityTarget(id) { return DESIGN_FIDELITY_TARGETS.find((target) => target.id === id) ?? null; }
 const supplementalMaterialized = (target, cwd) => [target.routeEntry, ...target.browserGates, ...(target.assetGate ? [target.assetGate.verifier] : [])].every((p) => existsSync(path.join(cwd, p)));
+const exclusionEvidencePaths = (entry) => [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean);
+const exclusionMaterialization = (entry, cwd) => {
+  const paths = exclusionEvidencePaths(entry);
+  const present = paths.filter((p) => existsSync(path.join(cwd, p)));
+  return { paths, none: present.length === 0, full: present.length === paths.length };
+};
 
 export function discoverDedicatedPlaywrightWorkflows(cwd = process.cwd()) {
   const dir = path.join(cwd, ".github", "workflows");
@@ -429,7 +499,11 @@ export function assertDedicatedWorkflowCoverage(cwd = process.cwd(), { registere
 export function validateRepositoryInventory(cwd = process.cwd()) {
   validateDesignFidelityInventory();
   for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
-  for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) for (const p of [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean)) if (!existsSync(path.join(cwd, p))) throw new Error(`${entry.id}: configured evidence path missing: ${p}`);
+  for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) {
+    const state = exclusionMaterialization(entry, cwd);
+    if (entry.preregistered === true && state.none) continue;
+    for (const p of state.paths) if (!existsSync(path.join(cwd, p))) throw new Error(`${entry.id}: configured evidence path missing: ${p}`);
+  }
   assertDedicatedWorkflowCoverage(cwd);
   return true;
 }
@@ -451,6 +525,11 @@ export function planDesignFidelityInventory(changedPaths, { addedPaths = [], cwd
   const base = globalChange ? BASE_TARGETS.filter((target) => baseTargetIsMaterialized(target, cwd)) : selectBaseTargets(changed, cwd);
   const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || supplementalMaterialized(target, cwd))) || impacted(target, changed));
   const targets = [...new Map([...base, ...supplemental].map((target) => [target.id, target])).values()];
-  const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => globalChange || impacted(entry, changed));
+  const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => {
+    if (impacted(entry, changed)) return true;
+    if (!globalChange) return false;
+    if (entry.preregistered !== true) return true;
+    return !validateFilesystem || exclusionMaterialization(entry, cwd).full;
+  });
   return { targets, exclusions, futureGuards: [], genuinelyNoImpact: targets.length === 0 && exclusions.length === 0 };
 }
