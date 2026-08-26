@@ -24,6 +24,14 @@ import styles from "./source-track-58-living-memory-board.module.css";
 type BoardMoment = CanonicalMoment & { album: AlbumMomentView };
 type BoardPoint = ReturnType<typeof source58BoardSlot>;
 
+type BoardConnection = {
+  id: string;
+  fromId: string;
+  toId: string;
+  from: BoardPoint;
+  to: BoardPoint;
+};
+
 function formatMomentDate(moment: BoardMoment) {
   const value = moment.discoveryDate || moment.timestamp || moment.createdAt;
   if (!value) return "날짜 미정";
@@ -119,14 +127,16 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
 
   const parent = selected?.parentId ? momentById.get(selected.parentId) ?? null : null;
 
-  const connections = useMemo(
+  const connections = useMemo<BoardConnection[]>(
     () =>
       moments.flatMap((moment) => {
         if (!moment.parentId) return [];
         const parentMoment = momentById.get(moment.parentId);
         const from = parentMoment ? slotById.get(parentMoment.id) : null;
         const to = slotById.get(moment.id);
-        return from && to ? [{ id: `${moment.parentId}->${moment.id}`, from, to }] : [];
+        return from && to && parentMoment
+          ? [{ id: `${moment.parentId}->${moment.id}`, fromId: parentMoment.id, toId: moment.id, from, to }]
+          : [];
       }),
     [momentById, moments, slotById],
   );
@@ -319,12 +329,19 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                   preserveAspectRatio="none"
                   aria-label="Canonical Connection living thread"
                 >
-                  {connections.map((connection) => (
-                    <g key={connection.id}>
-                      <path className={styles.threadShadow} d={threadPath(connection.from, connection.to)} />
-                      <path className={styles.threadMain} d={threadPath(connection.from, connection.to)} />
-                    </g>
-                  ))}
+                  {connections.map((connection) => {
+                    const activePath = Boolean(
+                      selected && (connection.fromId === selected.id || connection.toId === selected.id),
+                    );
+                    const path = threadPath(connection.from, connection.to);
+                    return (
+                      <g key={connection.id} data-active={String(activePath)} data-connection-id={connection.id}>
+                        <path className={styles.threadShadow} data-layer="glow" d={path} />
+                        <path className={styles.threadMain} data-layer="color" d={path} />
+                        <path className={styles.threadMain} data-layer="core" d={path} />
+                      </g>
+                    );
+                  })}
                 </svg>
 
                 {moments.length === 0 ? (
@@ -349,6 +366,7 @@ export default function SourceTrack58LivingMemoryBoard({ treeId }: { treeId: str
                       className={styles.card}
                       data-card-style={slot.style}
                       data-selected={String(selectedCard)}
+                      data-parent-id={moment.parentId ?? ""}
                       aria-pressed={selectedCard}
                       aria-label={`${moment.title || "제목 없는 Moment"} 선택`}
                       style={{
@@ -553,10 +571,60 @@ function CinemaReplay({
   const embedUrl = source58YouTubeEmbedUrl(moment.sourceUrl, moment.videoOffsetSeconds ?? 0);
   const sourceUrl = source58SafeExternalUrl(moment.sourceUrl);
   const progress = moments.length <= 1 ? 100 : (index / (moments.length - 1)) * 100;
+  const momentById = new Map(moments.map((item) => [item.id, item]));
+  const slotById = new Map(moments.map((item, momentIndex) => [item.id, source58BoardSlot(momentIndex)]));
+  const connections: BoardConnection[] = moments.flatMap((item) => {
+    if (!item.parentId) return [];
+    const parentMoment = momentById.get(item.parentId);
+    const from = parentMoment ? slotById.get(parentMoment.id) : null;
+    const to = slotById.get(item.id);
+    return from && to && parentMoment
+      ? [{ id: `${parentMoment.id}->${item.id}`, fromId: parentMoment.id, toId: item.id, from, to }]
+      : [];
+  });
 
   return (
-    <div className={styles.cinema} role="dialog" aria-modal="true" aria-labelledby="source58-cinema-heading">
+    <div
+      className={styles.cinema}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="source58-cinema-heading"
+      data-cinema-active-id={moment.id}
+    >
       <div className={styles.cinemaAmbient} aria-hidden="true" />
+      <div data-cinema-board-context aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          {connections.map((connection) => {
+            const activePath = connection.fromId === moment.id || connection.toId === moment.id;
+            const path = threadPath(connection.from, connection.to);
+            return (
+              <g key={connection.id} data-active={String(activePath)}>
+                <path data-layer="glow" d={path} />
+                <path data-layer="color" d={path} />
+                <path data-layer="core" d={path} />
+              </g>
+            );
+          })}
+        </svg>
+        {moments.map((memory, memoryIndex) => {
+          const slot = slotById.get(memory.id) ?? source58BoardSlot(memoryIndex);
+          return (
+            <span
+              key={memory.id}
+              data-cinema-memory
+              data-active={String(memory.id === moment.id)}
+              style={{
+                left: `${slot.x}%`,
+                top: `${slot.y}%`,
+                "--cinema-rotate": `${slot.rotate}deg`,
+              } as CSSProperties}
+            >
+              {memory.title || "Moment"}
+            </span>
+          );
+        })}
+      </div>
+
       <header className={styles.cinemaHeader}>
         <div>
           <p>LOVETREE · LIVING MEMORY</p>
@@ -569,7 +637,7 @@ function CinemaReplay({
         <span style={{ width: `${progress}%` }} />
       </div>
 
-      <section className={styles.cinemaStage} aria-live="polite">
+      <section className={styles.cinemaStage} data-cinema-spotlight aria-live="polite">
         <div className={styles.cinemaMedia}>
           {embedRequested && embedUrl ? (
             <iframe
