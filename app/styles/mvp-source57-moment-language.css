@@ -1,0 +1,191 @@
+.source57-moment-language {
+  --s57-purple: #8f70d6;
+  --s57-pink: #d77ca7;
+  --s57-amber: #d79a69;
+}
+
+.source57-moment-language .memory-board {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(560px 280px at 18% 12%, rgba(143, 112, 214, 0.12), transparent 70%),
+    radial-gradient(520px 300px at 78% 32%, rgba(215, 124, 167, 0.09), transparent 72%),
+    linear-gradient(160deg, rgba(18, 16, 25, 0.96), rgba(9, 9, 13, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+.source57-moment-language .memory-board-heading,
+.source57-moment-language .memory-board-heading .eyebrow,
+.source57-moment-language .memory-board-heading h2,
+.source57-moment-language .memory-board-heading > span {
+  color: rgba(248, 245, 249, 0.78);
+}
+
+.source57-moment-language .memory-list {
+  perspective: 1400px;
+}
+
+.source57-moment-language .memory-record {
+  --s57-tone: var(--s57-purple);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  color: #f8f5f9;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0.07)),
+    radial-gradient(120% 95% at 50% 110%, color-mix(in srgb, var(--s57-tone) 38%, transparent), transparent 68%),
+    rgba(22, 21, 29, 0.66);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 22px 54px rgba(0, 0, 0, 0.34),
+    0 0 42px color-mix(in srgb, var(--s57-tone) 13%, transparent);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+}
+
+.source57-moment-language .memory-record:nth-child(3n + 2) { --s57-tone: var(--s57-pink); }
+.source57-moment-language .memory-record:nth-child(3n) { --s57-tone: var(--s57-amber); }
+
+.source57-moment-language .memory-record::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.13), transparent 32%, color-mix(in srgb, var(--s57-tone) 13%, transparent));
+}
+
+.source57-moment-language .memory-record:hover,
+.source57-moment-language .memory-record:focus-visible,
+.source57-moment-language .memory-record.selected {
+  transform: translateY(-3px) scale(1.008);
+  border-color: color-mix(in srgb, var(--s57-tone) 56%, rgba(255, 255, 255, 0.34));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 30px 72px rgba(0, 0, 0, 0.44),
+    0 0 64px color-mix(in srgb, var(--s57-tone) 34%, transparent);
+}
+
+.source57-moment-language .memory-record:not(.selected):has(~ .memory-record.selected),
+.source57-moment-language .memory-list:has(.memory-record.selected) .memory-record:not(.selected) {
+  opacity: 0.76;
+}
+
+.source57-moment-language .memory-record-media {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(6, 6, 10, 0.58);
+  box-shadow: inset 0 0 34px color-mix(in srgb, var(--s57-tone) 18%, transparent);
+}
+
+.source57-moment-language .memory-record-body h3,
+.source57-moment-language .memory-record-body p,
+.source57-moment-language .memory-record-meta,
+.source57-moment-language .moment-detail-parent,
+.source57-moment-language .memory-record-index {
+  color: rgba(248, 245, 249, 0.86);
+}
+
+.source57-product-detail-scope .modal-backdrop {
+  background:
+    radial-gradient(circle at 48% 42%, rgba(143, 112, 214, 0.13), transparent 42%),
+    rgba(5, 5, 8, 0.76);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+
+.source57-product-detail-scope .moment-detail-modal {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 30px;
+  color: #f8f5f9;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.035) 42%, rgba(255, 255, 255, 0.075)),
+    radial-gradient(115% 82% at 50% 108%, rgba(143, 112, 214, 0.34), transparent 68%),
+    rgba(20, 19, 27, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 42px 110px rgba(0, 0, 0, 0.62),
+    0 0 82px rgba(143, 112, 214, 0.25);
+  backdrop-filter: blur(30px) saturate(148%);
+  -webkit-backdrop-filter: blur(30px) saturate(148%);
+}
+
+.source57-product-detail-scope .moment-detail-modal::before {
+  content: "LIVING GLASS · SOURCE 57";
+  display: block;
+  margin: 0 0 14px;
+  color: rgba(238, 217, 242, 0.52);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.source57-product-detail-scope .moment-detail-title,
+.source57-product-detail-scope .moment-detail-memo,
+.source57-product-detail-scope .moment-detail-source,
+.source57-product-detail-scope .moment-detail-date,
+.source57-product-detail-scope .moment-detail-parent,
+.source57-product-detail-scope .moment-detail-parent-title {
+  color: rgba(248, 245, 249, 0.9);
+}
+
+.source57-product-detail-scope .moment-detail-thumb {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 22px;
+  box-shadow: inset 0 0 44px rgba(143, 112, 214, 0.16), 0 20px 44px rgba(0, 0, 0, 0.34);
+}
+
+.source57-product-detail-scope .moment-detail-parent {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.source57-product-detail-scope .moment-detail-parent::before {
+  content: "WHY NEXT";
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(224, 188, 232, 0.68);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.source57-product-detail-scope .modal-close:focus-visible,
+.source57-product-detail-scope .moment-detail-modal button:focus-visible,
+.source57-moment-language .memory-record:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.92);
+  outline-offset: 4px;
+}
+
+@media (max-width: 720px) {
+  .source57-moment-language .memory-record {
+    border-radius: 22px;
+  }
+
+  .source57-product-detail-scope .moment-detail-modal {
+    border-radius: 26px 26px 0 0;
+    max-height: 74svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .source57-moment-language .memory-record {
+    transition: none;
+  }
+
+  .source57-moment-language .memory-record:hover,
+  .source57-moment-language .memory-record:focus-visible,
+  .source57-moment-language .memory-record.selected {
+    transform: none;
+  }
+}
