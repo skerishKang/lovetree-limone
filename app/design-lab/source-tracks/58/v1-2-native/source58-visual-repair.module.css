@@ -1,0 +1,362 @@
+.repairScope {
+  display: contents;
+}
+
+/* Source58 V1.2 theme grammar: each theme changes ambient world + board material,
+   not just a single board gradient. All values are presentation-only. */
+.repairScope :global(main[data-source-track="58"]) {
+  transition: background 420ms ease, color 260ms ease;
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="pearl"]) {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(154, 87, 146, 0.3), transparent 30rem),
+    radial-gradient(circle at 88% 28%, rgba(255, 202, 224, 0.08), transparent 26rem),
+    linear-gradient(145deg, #35112f 0%, #2e0f2b 46%, #150713 100%);
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="cork"]) {
+  background:
+    radial-gradient(circle at 15% 12%, rgba(229, 170, 102, 0.23), transparent 30rem),
+    radial-gradient(circle at 82% 34%, rgba(145, 85, 46, 0.2), transparent 28rem),
+    linear-gradient(145deg, #3a2418 0%, #25150f 48%, #100907 100%);
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="letter"]) {
+  background:
+    radial-gradient(circle at 20% 5%, rgba(163, 143, 226, 0.19), transparent 31rem),
+    radial-gradient(circle at 78% 68%, rgba(117, 88, 153, 0.14), transparent 28rem),
+    linear-gradient(145deg, #2b213a 0%, #1a1425 52%, #0e0b13 100%);
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="blossom"]) {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255, 143, 190, 0.28), transparent 29rem),
+    radial-gradient(circle at 82% 22%, rgba(255, 202, 218, 0.18), transparent 25rem),
+    radial-gradient(circle at 55% 95%, rgba(180, 80, 139, 0.16), transparent 32rem),
+    linear-gradient(145deg, #431b39 0%, #2d1028 48%, #130912 100%);
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="night"]) {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(87, 142, 230, 0.2), transparent 29rem),
+    radial-gradient(circle at 85% 30%, rgba(98, 76, 183, 0.14), transparent 27rem),
+    linear-gradient(145deg, #101a34 0%, #0a1125 50%, #050812 100%);
+}
+
+.repairScope :global(main[data-source-track="58"][data-theme="mint"]) {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(120, 225, 193, 0.18), transparent 30rem),
+    radial-gradient(circle at 85% 30%, rgba(176, 235, 215, 0.12), transparent 27rem),
+    linear-gradient(145deg, #17352f 0%, #10251f 49%, #07130f 100%);
+}
+
+/* Board materials. */
+.repairScope :global(main[data-theme="pearl"] [data-testid="source58-board"]) {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.98), transparent 36%),
+    radial-gradient(circle at 78% 84%, rgba(245, 219, 231, .28), transparent 31%),
+    linear-gradient(135deg, #fffaf3, #eee3e5);
+  box-shadow: inset 0 0 0 1px rgba(93, 61, 75, .13), inset 0 0 90px rgba(114, 73, 89, .08), 0 22px 55px rgba(17, 3, 15, .12);
+}
+
+.repairScope :global(main[data-theme="cork"] [data-testid="source58-board"]) {
+  background:
+    radial-gradient(circle at 13% 18%, rgba(105, 65, 35, .17) 0 2px, transparent 3px),
+    radial-gradient(circle at 68% 31%, rgba(116, 72, 38, .13) 0 2px, transparent 3px),
+    radial-gradient(circle at 37% 76%, rgba(91, 55, 31, .12) 0 1px, transparent 3px),
+    repeating-linear-gradient(17deg, rgba(95, 57, 33, .055) 0 1px, transparent 1px 8px),
+    linear-gradient(135deg, #e9c99d, #cda77f);
+  background-size: 31px 27px, 37px 33px, 23px 29px, auto, auto;
+  box-shadow: inset 0 0 70px rgba(91, 50, 26, .18), inset 0 0 0 1px rgba(93, 54, 29, .25), 0 28px 65px rgba(10, 3, 2, .24);
+}
+
+.repairScope :global(main[data-theme="letter"] [data-testid="source58-board"]) {
+  background:
+    linear-gradient(90deg, transparent 0 7.5%, rgba(211, 103, 118, .22) 7.6% 7.8%, transparent 7.9%),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(103, 121, 176, .18) 31px, transparent 32px),
+    linear-gradient(135deg, #fffdf4, #f0e9d9);
+  box-shadow: inset 0 0 75px rgba(71, 63, 101, .08), inset 0 0 0 1px rgba(91, 80, 116, .14), 0 25px 58px rgba(8, 4, 12, .17);
+}
+
+.repairScope :global(main[data-theme="blossom"] [data-testid="source58-board"]) {
+  background:
+    radial-gradient(ellipse at 18% 20%, rgba(255, 151, 188, .2) 0 6px, transparent 7px),
+    radial-gradient(ellipse at 22% 24%, rgba(255, 183, 207, .17) 0 5px, transparent 6px),
+    radial-gradient(ellipse at 74% 32%, rgba(233, 126, 171, .18) 0 7px, transparent 8px),
+    radial-gradient(ellipse at 67% 78%, rgba(255, 190, 215, .18) 0 6px, transparent 7px),
+    linear-gradient(135deg, #fff0f5, #f4dce6);
+  background-size: 94px 86px, 110px 98px, 128px 112px, 118px 106px, auto;
+  box-shadow: inset 0 0 86px rgba(160, 65, 108, .1), inset 0 0 0 1px rgba(150, 74, 105, .13), 0 28px 68px rgba(25, 5, 20, .19);
+}
+
+.repairScope :global(main[data-theme="night"] [data-testid="source58-board"]) {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(87, 165, 255, .14), transparent 32%),
+    radial-gradient(circle at 76% 72%, rgba(127, 103, 227, .1), transparent 34%),
+    linear-gradient(135deg, #17203a, #0f1629);
+  box-shadow: inset 0 0 86px rgba(0, 0, 0, .32), inset 0 0 0 1px rgba(130, 172, 236, .16), 0 32px 75px rgba(0, 0, 0, .35);
+}
+
+.repairScope :global(main[data-theme="mint"] [data-testid="source58-board"]) {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.72), transparent 37%),
+    repeating-linear-gradient(20deg, rgba(38, 111, 91, .025) 0 1px, transparent 1px 9px),
+    linear-gradient(135deg, #edf9f3, #d8ebe3);
+  box-shadow: inset 0 0 82px rgba(48, 116, 95, .08), inset 0 0 0 1px rgba(51, 112, 94, .14), 0 26px 66px rgba(3, 20, 14, .2);
+}
+
+/* Cards adapt to board material without changing canonical Moment truth. */
+.repairScope :global(main[data-theme="cork"] button[data-card-style]) {
+  background-color: #fff9ea;
+  box-shadow: 0 18px 38px rgba(79, 44, 20, .22), 0 2px 4px rgba(63, 35, 19, .16);
+}
+
+.repairScope :global(main[data-theme="letter"] button[data-card-style]) {
+  background-image: repeating-linear-gradient(0deg, transparent 0 22px, rgba(115, 134, 183, .1) 23px, transparent 24px);
+  background-color: #fffdf5;
+}
+
+.repairScope :global(main[data-theme="blossom"] button[data-card-style]) {
+  background-color: #fff8fb;
+  box-shadow: 0 20px 42px rgba(108, 36, 78, .19), 0 0 24px rgba(255, 146, 191, .08);
+}
+
+.repairScope :global(main[data-theme="night"] button[data-card-style]) {
+  color: #f4f7ff;
+  background: linear-gradient(155deg, rgba(31, 43, 73, .98), rgba(16, 23, 42, .98));
+  border-color: rgba(147, 185, 243, .16);
+  box-shadow: 0 20px 46px rgba(0,0,0,.38), 0 0 26px rgba(83, 143, 228, .07);
+}
+
+.repairScope :global(main[data-theme="night"] button[data-card-style] span) {
+  color: rgba(226, 235, 252, .78);
+}
+
+.repairScope :global(main[data-theme="night"] button[data-card-style] strong) {
+  color: #f7f9ff;
+}
+
+.repairScope :global(main[data-theme="mint"] button[data-card-style]) {
+  background-color: #f8fffb;
+  box-shadow: 0 18px 40px rgba(26, 83, 66, .17), 0 0 22px rgba(113, 218, 183, .07);
+}
+
+/* Pin richness: larger illuminated heads and shape variation. */
+.repairScope :global(main[data-source-track="58"] span[data-pin]) {
+  width: 22px;
+  height: 22px;
+  top: 1px;
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 4px 7px rgba(35,17,30,.32), 0 0 0 5px rgba(255,255,255,.2), 0 0 20px rgba(255, 112, 172, .22);
+}
+
+.repairScope :global(main[data-source-track="58"] span[data-pin]::after) {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,.2);
+  opacity: .65;
+}
+
+.repairScope :global(main[data-source-track="58"] span[data-pin="1"]) { border-radius: 45% 55% 48% 52%; box-shadow: 0 4px 7px rgba(35,17,30,.32), 0 0 19px rgba(236,92,108,.4); }
+.repairScope :global(main[data-source-track="58"] span[data-pin="2"]) { border-radius: 50% 44% 55% 45%; box-shadow: 0 4px 7px rgba(35,17,30,.32), 0 0 20px rgba(222,169,65,.38); }
+.repairScope :global(main[data-source-track="58"] span[data-pin="3"]) { border-radius: 42% 58% 50% 50%; box-shadow: 0 4px 7px rgba(35,17,30,.32), 0 0 20px rgba(73,145,189,.36); }
+.repairScope :global(main[data-source-track="58"] span[data-pin="5"]) { box-shadow: 0 4px 7px rgba(35,17,30,.32), 0 0 22px rgba(163,88,151,.42); }
+
+/* Living Thread: glow + color wave + white core. */
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g path[data-layer="glow"]) {
+  stroke: rgba(173, 83, 151, .28);
+  stroke-width: 9;
+  filter: drop-shadow(0 0 5px rgba(182, 85, 159, .48)) drop-shadow(0 0 12px rgba(109, 57, 150, .23));
+}
+
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g path[data-layer="color"]) {
+  stroke: #9d4f89;
+  stroke-width: 4;
+  stroke-dasharray: 5 2;
+  filter: drop-shadow(0 0 4px rgba(157, 79, 137, .48));
+  animation: source58ThreadWave 6.2s linear infinite;
+}
+
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g path[data-layer="core"]) {
+  stroke: rgba(255,255,255,.88);
+  stroke-width: 1.25;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,.4));
+}
+
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g[data-active="true"] path[data-layer="glow"]) {
+  stroke: rgba(255, 107, 178, .55);
+  stroke-width: 12;
+  filter: drop-shadow(0 0 8px rgba(255, 90, 172, .7)) drop-shadow(0 0 18px rgba(165, 91, 240, .38));
+}
+
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g[data-active="true"] path[data-layer="color"]) {
+  stroke: #e666af;
+  stroke-width: 5.2;
+}
+
+.repairScope :global(svg[aria-label="Canonical Connection living thread"] g[data-active="true"] path[data-layer="core"]) {
+  stroke: #fff7fb;
+  stroke-width: 1.8;
+}
+
+@keyframes source58ThreadWave {
+  to { stroke-dashoffset: -42; }
+}
+
+/* Larger Trees expand the view-derived field rather than piling Moment 10+ onto
+   the first nine slots. Mobile keeps its accepted single-column adaptation. */
+@media (min-width: 761px) {
+  .repairScope :global([data-testid="source58-board"]:has(> button[data-card-style="compact"])) {
+    min-height: 980px;
+    aspect-ratio: auto;
+  }
+
+  .repairScope :global([data-testid="source58-board"]:has(> button:nth-of-type(22))) {
+    min-height: 1320px;
+  }
+
+  .repairScope :global([data-testid="source58-board"] > button[data-card-style="compact"]) {
+    width: clamp(118px, 11.5vw, 148px);
+    min-height: 126px;
+    padding: 13px 12px 12px;
+  }
+
+  .repairScope :global([data-testid="source58-board"] > button[data-card-style="compact"] > span:first-of-type:not([data-pin])) {
+    max-height: 86px;
+  }
+}
+
+/* Cinema remains a dialog semantically, but visually becomes a spotlight layer on
+   the board/path world instead of an opaque detached generic modal. */
+.repairScope :global([role="dialog"][aria-labelledby="source58-cinema-heading"]) {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(19, 6, 18, .28) 0 24%, rgba(13, 5, 16, .72) 67%, rgba(8, 3, 11, .92) 100%) !important;
+  backdrop-filter: blur(4px) saturate(.88);
+}
+
+.repairScope :global([data-cinema-board-context]) {
+  position: fixed;
+  inset: 76px clamp(18px, 4vw, 70px) 84px;
+  z-index: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,250,243,.16), rgba(238,227,229,.08));
+  box-shadow: inset 0 0 75px rgba(255,255,255,.04), 0 30px 80px rgba(0,0,0,.24);
+  opacity: .7;
+  pointer-events: none;
+}
+
+.repairScope :global([data-cinema-board-context] svg) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .72;
+}
+
+.repairScope :global([data-cinema-board-context] [data-cinema-memory]) {
+  position: absolute;
+  width: clamp(76px, 8vw, 118px);
+  min-height: 58px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 11px;
+  background: rgba(255, 250, 247, .84);
+  color: #3b2036;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+  opacity: .24;
+  transform: translate(-50%, -50%) rotate(var(--cinema-rotate, 0deg)) scale(.86);
+  font: 600 9px/1.25 Georgia, serif;
+  overflow: hidden;
+  max-height: 68px;
+}
+
+.repairScope :global([data-cinema-board-context] [data-cinema-memory][data-active="true"]) {
+  z-index: 3;
+  opacity: .96;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.08);
+  border-color: rgba(255,255,255,.8);
+  box-shadow: 0 18px 42px rgba(0,0,0,.25), 0 0 0 2px rgba(255,255,255,.45), 0 0 38px rgba(255, 101, 175, .55);
+}
+
+.repairScope :global([data-cinema-board-context] g[data-active="true"] path[data-layer="glow"]) {
+  stroke: rgba(255, 102, 178, .72);
+  stroke-width: 11;
+}
+
+.repairScope :global([data-cinema-spotlight]) {
+  position: relative;
+  z-index: 2 !important;
+  width: min(1120px, 92%) !important;
+  margin: auto !important;
+  padding: clamp(16px, 2.5vw, 30px) !important;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 28px;
+  background: rgba(16, 7, 19, .72);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 32px 88px rgba(0,0,0,.34), 0 0 54px rgba(153, 77, 141, .12);
+}
+
+.repairScope :global([data-cinema-spotlight] > div:first-child) {
+  box-shadow: 0 34px 88px rgba(0,0,0,.4), 0 0 48px rgba(255, 101, 175, .16) !important;
+}
+
+/* Make the visual world lead over staging metadata without removing truth. */
+.repairScope :global(main[data-source-track="58"] > header) {
+  min-height: 66px;
+  margin-bottom: 10px;
+}
+
+.repairScope :global(main[data-source-track="58"] > section[aria-label="데이터 권위"]) {
+  opacity: .58;
+  padding-block: 7px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 760px) {
+  .repairScope :global(main[data-source-track="58"] > header) {
+    min-height: auto;
+    margin-bottom: 8px;
+  }
+
+  .repairScope :global(main[data-source-track="58"] > section[aria-label="데이터 권위"]) {
+    display: none;
+  }
+
+  .repairScope :global(svg[aria-label="Canonical Connection living thread"]) {
+    background: linear-gradient(#d271ad, #8050a6 50%, #4b8b81) !important;
+    box-shadow: 0 0 10px rgba(218, 105, 177, .42), 0 0 22px rgba(125, 78, 171, .22);
+    opacity: .78 !important;
+  }
+
+  .repairScope :global([data-cinema-board-context]) {
+    inset: 64px 8px 88px;
+    opacity: .34;
+  }
+
+  .repairScope :global([data-cinema-board-context] [data-cinema-memory]) {
+    width: 68px;
+    min-height: 46px;
+    font-size: 7px;
+  }
+
+  .repairScope :global([data-cinema-spotlight]) {
+    width: 96% !important;
+    padding: 12px !important;
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repairScope :global(svg[aria-label="Canonical Connection living thread"] path[data-layer="color"]),
+  .repairScope :global(main[data-source-track="58"]),
+  .repairScope :global([data-cinema-board-context] [data-cinema-memory]) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
