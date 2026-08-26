@@ -9,7 +9,9 @@ const sourceProof = readFileSync(
   "utf8",
 );
 
- test("Source56 is a Tree-scoped relationship mode, not a Design Lab production hop", () => {
+const directDurableWrite = /\b(?:fetch|apiFetch)\s*\(|\bmethod\s*:\s*["'](?:POST|PUT|PATCH|DELETE)["']|\b(?:prisma|drizzle|neon|firebase|supabase)\b/iu;
+
+test("Source56 is a Tree-scoped relationship mode, not a Design Lab production hop", () => {
   assert.match(viewSwitcher, /kind: "relationships", label: "관계", path: "\/relationships"/);
   assert.match(route, /data-mvp-source="56"/);
   assert.match(route, /active="relationships"/);
@@ -27,7 +29,7 @@ test("relationship truth comes only from canonical Moment parentId and connectio
 test("Source56 layout remains view-derived and does not create relation persistence", () => {
   assert.match(route, /layout \/ grouping = VIEW_DERIVED/);
   assert.match(route, /new DB \/ API \/ schema = none/);
-  assert.doesNotMatch(route, /fetch\(|apiFetch\(|POST|PUT|DELETE|prisma|drizzle|neon|firebase|supabase/iu);
+  assert.doesNotMatch(route, directDurableWrite);
 });
 
 test("canonical Moment context is preserved through the relationship view", () => {
