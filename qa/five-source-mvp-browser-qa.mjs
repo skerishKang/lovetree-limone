@@ -132,11 +132,7 @@ async function clickView(page, name, source, momentId, screenshotPrefix) {
   const link = switcher.getByRole("link", { name, exact: true });
   const href = await link.getAttribute("href");
   assert.ok(href?.includes(`/trees/${treeId}`), `${screenshotPrefix}: view link lost Tree identity`);
-  if (momentId) {
-    assert.ok(href?.includes(`moment=${encodeURIComponent(momentId)}`), `${screenshotPrefix}: view link lost Moment identity`);
-  } else {
-    assert.ok(!href?.includes("moment="), `${screenshotPrefix}: view link invented Moment identity`);
-  }
+  assert.ok(href?.includes(`moment=${encodeURIComponent(momentId)}`), `${screenshotPrefix}: view link lost Moment identity`);
   await link.click();
   await waitForSource(page, source);
   await assertMomentQuery(page, momentId, screenshotPrefix);
@@ -152,9 +148,8 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   await installCanonicalFixtures(page);
 
   // Source57 uses a real aria-modal Moment inspector when ?moment= is present.
-  // Validate the shared presentation language before selection, then enter Board
-  // through an actual user-clickable ViewSwitcher path. Moment continuity begins
-  // after the Board selection writes canonical presentation state to the URL.
+  // Validate the shared presentation language before selection so the background
+  // ViewSwitcher remains legitimately user-interactable.
   const initial = `${baseUrl}/trees/${treeId}`;
   const response = await page.goto(initial, { waitUntil: "domcontentloaded" });
   assert.ok(response?.ok(), `${name}: canonical Tree route must return 2xx`);
@@ -164,36 +159,48 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   await assertNoDocumentOverflow(page, `${name}-source57`);
   await page.screenshot({ path: `${screenshotDir}/${name}-57.png`, fullPage: false });
 
-  await clickView(page, "보드", "58", null, `${name}-58`);
-
-  // Source58 selection is presentation state written back with router.replace.
-  const rootCard = page.getByRole("button", { name: "First light 선택" });
-  await rootCard.waitFor();
-  await rootCard.click();
+  // Board is entered without an invented Moment. Source58's existing contract then
+  // selects the first canonical Moment and writes it back with router.replace.
+  const boardSwitcher = page.getByRole("navigation", { name: "보기 전환" });
+  const boardLink = boardSwitcher.getByRole("link", { name: "보드", exact: true });
+  const boardHref = await boardLink.getAttribute("href");
+  assert.ok(boardHref?.includes(`/trees/${treeId}/board`), `${name}-58: board link lost Tree identity`);
+  assert.ok(!boardHref?.includes("moment="), `${name}-58: board link invented Moment identity`);
+  await boardLink.click();
+  await waitForSource(page, "58");
   await page.waitForURL((url) => url.searchParams.get("moment") === "m-root");
-  await assertMomentQuery(page, "m-root", `${name}-58-replaced`);
+  await assertMomentQuery(page, "m-root", `${name}-58-default`);
+  await assertNoDocumentOverflow(page, `${name}-58-default`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-58.png`, fullPage: false });
 
-  // Because board selection uses replace, Back returns to the invoking canonical
-  // Tree detail without manufacturing a hidden selection-history entry.
+  // User selection is presentation state and must replace, not stack, history.
+  const childCard = page.getByRole("button", { name: "Second path 선택" });
+  await childCard.waitFor();
+  await childCard.click();
+  await page.waitForURL((url) => url.searchParams.get("moment") === "m-child");
+  await assertMomentQuery(page, "m-child", `${name}-58-replaced`);
+
+  // Back returns to the invoking canonical Tree detail. Forward restores the board
+  // with the final selected Moment because Source58 selection used router.replace.
   await page.goBack({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "57");
   await assertMomentQuery(page, null, `${name}-57-back-from-board`);
   await page.goForward({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "58");
-  await assertMomentQuery(page, "m-root", `${name}-58-forward`);
+  await assertMomentQuery(page, "m-child", `${name}-58-forward`);
 
-  await clickView(page, "관계", "56", "m-root", `${name}-56`);
+  await clickView(page, "관계", "56", "m-child", `${name}-56`);
   assert.ok(await page.getByText(/WHY NEXT ·/).count(), `${name}: Source56 relationship semantics missing`);
 
-  await clickView(page, "탐색", "60", "m-root", `${name}-60`);
+  await clickView(page, "탐색", "60", "m-child", `${name}-60`);
   assert.ok(await page.locator("canvas").count(), `${name}: Source60 3D projection canvas missing`);
 
-  await clickView(page, "포털", "64", "m-root", `${name}-64`);
+  await clickView(page, "포털", "64", "m-child", `${name}-64`);
   assert.ok(await page.getByText("Tree already resolved", { exact: true }).count(), `${name}: Source64 post-resolution boundary missing`);
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "60");
-  await assertMomentQuery(page, "m-root", `${name}-60-back-from-portal`);
+  await assertMomentQuery(page, "m-child", `${name}-60-back-from-portal`);
   await assertNoDocumentOverflow(page, `${name}-60-back-from-portal`);
 
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
