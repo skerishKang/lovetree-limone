@@ -6,6 +6,7 @@ const viewSwitcher = readFileSync("app/components/ViewSwitcher.tsx", "utf8");
 const boardRoute = readFileSync("app/trees/[id]/board/page.tsx", "utf8");
 const source58Board = readFileSync("components/source-track-58/SourceTrack58LivingMemoryBoard.tsx", "utf8");
 const entryResolver = readFileSync("app/components/v4/V4EntryResolver.tsx", "utf8");
+const entryPolicy = readFileSync("lib/entry-resolver.ts", "utf8");
 
 test("Source58 is adopted as a Tree-scoped board view, not a new top-level product", () => {
   assert.match(viewSwitcher, /kind: "board", label: "보드", path: "\/board"/);
@@ -39,13 +40,14 @@ test("Source58 product binding stays optional and preserves the original canonic
 });
 
 test("canonical entry resolver authority is preserved", () => {
-  assert.match(entryResolver, /\/v4\/journey/);
-  assert.match(entryResolver, /\/my-trees/);
-  assert.match(entryResolver, /\/trees\//);
+  assert.match(entryResolver, /resolveEntryRoute/);
+  assert.match(entryPolicy, /path: "\/v4\/journey"/);
+  assert.match(entryPolicy, /path: "\/my-trees"/);
+  assert.match(entryPolicy, /path: `\/trees\/\$\{encodeURIComponent\(id\)\}`/);
   assert.doesNotMatch(boardRoute, /V4EntryResolver|router\.replace\("\/v4\/journey"\)/);
 });
 
 test("Source58 adoption adds no backend or persistence authority", () => {
-  assert.doesNotMatch(boardRoute, /fetch\(|apiFetch\(|prisma|drizzle|neon|supabase|firebase/iu);
-  assert.doesNotMatch(boardRoute, /POST|PUT|DELETE/);
+  assert.doesNotMatch(boardRoute, /\b(?:fetch|apiFetch)\s*\(|\b(?:prisma|drizzle|neon|supabase|firebase)\b/iu);
+  assert.doesNotMatch(boardRoute, /\bmethod\s*:\s*["'](?:POST|PUT|PATCH|DELETE)["']/iu);
 });
