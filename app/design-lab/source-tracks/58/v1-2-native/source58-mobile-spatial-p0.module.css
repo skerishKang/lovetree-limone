@@ -7,16 +7,6 @@
  * Geometry stays VIEW_DERIVED. Canonical Moment/Connection truth is unchanged.
  */
 @media (max-width: 760px) {
-  .mobileSpatialScope :global(main[data-source-track="58"] .workspace) {
-    position: relative;
-    display: block;
-  }
-
-  .mobileSpatialScope :global(main[data-source-track="58"] .boardSection) {
-    position: relative;
-    z-index: 1;
-  }
-
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]) {
     --source58-mobile-card-width: clamp(96px, 30vw, 116px);
     --source58-mobile-card-height: 118px;
@@ -73,6 +63,7 @@
     margin: 0 !important;
     padding: 9px 9px 8px !important;
     display: flex !important;
+    flex-direction: column !important;
     grid-template-columns: none !important;
     grid-template-rows: none !important;
     gap: 3px !important;
@@ -85,7 +76,7 @@
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card]:hover),
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card][data-selected="true"]) {
     z-index: 5 !important;
-    transform: translateY(-3px) rotate(calc(var(--card-rotate) * .35)) scale(1.035) !important;
+    transform: translateY(-3px) rotate(0deg) scale(1.035) !important;
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > span[data-pin]) {
@@ -99,8 +90,7 @@
     grid-row: auto !important;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > span:first-of-type + span),
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > .mediaFallback) {
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] [data-source58-card-media]) {
     width: 100% !important;
     min-height: 0 !important;
     height: 52px !important;
@@ -118,18 +108,18 @@
     line-height: 1.08;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] .cardType) {
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] [data-source58-card-type]) {
     margin-top: 0;
     font-size: 6px;
     letter-spacing: .1em;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] .cardDate) {
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] [data-source58-card-date]) {
     font-size: 7px;
     line-height: 1;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] .cardReason) {
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] [data-source58-card-reason]) {
     display: none;
   }
 
@@ -166,7 +156,7 @@
     pointer-events: auto;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] > div:first-child) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-inspector-topline]) {
     grid-column: 1 / -1;
     position: sticky;
     top: 0;
@@ -177,6 +167,9 @@
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] [data-mobile-inspector-close]) {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
     min-height: 28px;
     margin-left: auto;
     border: 1px solid rgba(255,255,255,.14);
@@ -190,7 +183,7 @@
     cursor: pointer;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .inspectorMedia) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-inspector-media]) {
     grid-column: 1;
     width: auto !important;
     height: 112px;
@@ -199,31 +192,31 @@
     border-radius: 13px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .inspectorMedia button) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-inspector-media] button) {
     inset: auto 7px 7px 7px !important;
     min-height: 28px;
     padding: 0 7px;
     font-size: 6px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .momentCopy),
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .editForm) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-moment-copy]),
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-edit-form]) {
     grid-column: 2;
     padding: 10px 10px 8px 6px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .momentSource) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-moment-source]) {
     margin-bottom: 4px;
     font-size: 7px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .momentCopy h2) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-moment-copy] h2) {
     margin-bottom: 6px;
     font-size: 20px;
     line-height: 1;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .momentCopy > p:last-of-type) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-moment-copy] > p:last-of-type) {
     margin-bottom: 8px;
     max-height: 70px;
     overflow: auto;
@@ -231,45 +224,45 @@
     line-height: 1.35;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .editButton) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-edit-button]) {
     min-height: 28px;
     padding-inline: 8px;
     font-size: 7px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .connectionPanel) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-connection-panel]) {
     grid-column: 1 / -1;
     padding: 10px 12px 12px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .connectionHeading) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-connection-heading]) {
     margin-bottom: 7px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .connectionHeading strong) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-connection-heading] strong) {
     font-size: 16px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .incomingConnection) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-incoming-connection]) {
     padding: 8px 9px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .incomingConnection p),
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .rootMoment) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-incoming-connection] p),
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-root-moment]) {
     margin: 5px 0 6px;
     font-size: 10px;
     line-height: 1.35;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .nextChoices) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-next-choices]) {
     margin-top: 8px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .nextChoices button) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-next-choices] button) {
     padding: 7px 8px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .sourceLink) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-source-link]) {
     grid-column: 1 / -1;
     margin: 0 12px 12px;
     padding: 9px;
@@ -287,8 +280,7 @@
     padding: 8px 7px 7px !important;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > span:first-of-type + span),
-  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > .mediaFallback) {
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] [data-source58-card-media]) {
     height: 46px !important;
     flex-basis: 46px;
   }
@@ -301,7 +293,7 @@
     grid-template-columns: 96px minmax(0, 1fr);
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"] .inspectorMedia) {
+  .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-inspector-media]) {
     height: 100px;
     margin-left: 8px !important;
   }
