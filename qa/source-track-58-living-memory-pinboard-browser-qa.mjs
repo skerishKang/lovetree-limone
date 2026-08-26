@@ -93,6 +93,26 @@ const qaMoments = [
   },
 ];
 
+const qaLargeMoments = [...qaMoments];
+for (let index = 5; index < 14; index += 1) {
+  const previousId = index === 5 ? "m-last" : `m-large-${index - 1}`;
+  qaLargeMoments.push({
+    id: `m-large-${index}`,
+    treeId,
+    parentId: previousId,
+    connectionReason: `Large-tree canonical connection ${index}`,
+    title: `Large Moment ${index}`,
+    memo: `Canonical large-tree Moment ${index}`,
+    sourceType: index % 2 === 0 ? "video" : "other",
+    sourceUrl: `https://example.test/large-${index}`,
+    thumbnail: pixel,
+    discoveryDate: `2026-02-${String(index + 1).padStart(2, "0")}`,
+    timestamp: `2026-02-${String(index + 1).padStart(2, "0")}`,
+    sortOrder: index + 1,
+    emotionTags: [],
+  });
+}
+
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 
@@ -106,9 +126,9 @@ function captureBrowserErrors(page) {
   return { consoleErrors, pageErrors };
 }
 
-async function installCanonicalFixtures(page) {
+async function installCanonicalFixtures(page, moments = qaMoments) {
   await page.route(`**/api/trees/${treeId}/memories`, async (requestRoute) => {
-    await requestRoute.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(qaMoments) });
+    await requestRoute.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(moments) });
   });
   await page.route(`**/api/trees/${treeId}`, async (requestRoute) => {
     await requestRoute.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(qaTree) });
@@ -132,19 +152,20 @@ async function assertNoOverflow(page, name) {
   assert.ok(dimensions.rootWidth <= dimensions.innerWidth, `${name}: root overflow ${dimensions.rootWidth} > ${dimensions.innerWidth}`);
 }
 
-async function openCanonicalBoard(page, name) {
-  await installCanonicalFixtures(page);
+async function openCanonicalBoard(page, name, moments = qaMoments) {
+  await installCanonicalFixtures(page, moments);
   const response = await page.goto(`${baseUrl}${route}?treeId=${treeId}`, { waitUntil: "domcontentloaded" });
   assert.ok(response?.ok(), `${name}: native staging route must return 2xx`);
   await page.getByRole("heading", { name: "Living Memory Pinboard" }).waitFor();
   await page.getByText("Canonical QA Tree").waitFor();
   const cards = page.locator('button[aria-label$="선택"]');
-  await cards.nth(4).waitFor();
-  assert.equal(await cards.count(), 5, `${name}: all canonical QA Moments must be pinned`);
+  await cards.nth(moments.length - 1).waitFor();
+  assert.equal(await cards.count(), moments.length, `${name}: all canonical QA Moments must be pinned`);
+  const connectionCount = moments.filter((moment) => moment.parentId).length;
   assert.equal(
     await page.locator("svg[aria-label='Canonical Connection living thread'] path").count(),
-    8,
-    `${name}: four connections require shadow + main paths`,
+    connectionCount * 3,
+    `${name}: each canonical connection requires glow + color + core paths`,
   );
   return cards;
 }
@@ -160,7 +181,7 @@ async function auditGate() {
   assert.match(await page.getByText(/실제 Tree의 canonical Moment/).innerText(), /canonical Moment/);
   assert.equal(await page.locator('button[aria-label$="선택"]').count(), 0, `${name}: no runtime demo Moments allowed`);
   await assertNoOverflow(page, name);
-  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
+  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: false });
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
   assert.deepEqual(errors.pageErrors, [], `${name}: page errors: ${errors.pageErrors.join(" | ")}`);
   await context.close();
@@ -173,6 +194,7 @@ async function auditDesktop() {
   const errors = captureBrowserErrors(page);
   const cards = await openCanonicalBoard(page, name);
   await assertNoOverflow(page, name);
+  await page.screenshot({ path: `${screenshotDir}/${name}-initial.png`, fullPage: false });
 
   await cards.nth(0).focus();
   await page.keyboard.press("ArrowRight");
@@ -200,22 +222,32 @@ async function auditDesktop() {
     1,
     `${name}: second Connection choice missing`,
   );
+  assert.equal(
+    await page.locator("svg[aria-label='Canonical Connection living thread'] g[data-active='true']").count(),
+    2,
+    `${name}: root selection must visually emphasize both canonical child paths`,
+  );
+  await page.screenshot({ path: `${screenshotDir}/${name}-selected.png`, fullPage: false });
 
   const ownerEdit = page.getByRole("button", { name: "READ ONLY · OWNER EDIT" });
   assert.equal(await ownerEdit.isDisabled(), true, `${name}: unauthenticated QA must not mutate canonical Moment`);
 
-  await page.getByRole("button", { name: "Gold" }).click();
+  await page.getByRole("button", { name: "Warm Cork" }).click();
   assert.equal(
     await page.locator("main[data-source-track='58']").getAttribute("data-theme"),
-    "gold",
+    "cork",
     `${name}: board theme must stay local presentation state`,
   );
+  await page.screenshot({ path: `${screenshotDir}/${name}-warm-cork.png`, fullPage: false });
 
   await page.getByRole("button", { name: "CINEMA REPLAY" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.waitFor();
   await page.getByRole("heading", { name: "Cinema Replay — Moments" }).waitFor();
   await page.getByRole("link", { name: "YouTube에서 재생 ↗" }).waitFor();
+  assert.equal(await dialog.locator("[data-cinema-board-context]").count(), 1, `${name}: Cinema keeps board context`);
+  assert.equal(await dialog.locator("[data-cinema-memory][data-active='true']").count(), 1, `${name}: Cinema has one active Moment spotlight`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-cinema.png`, fullPage: false });
 
   const pause = page.getByRole("button", { name: "PAUSE" });
   await pause.click();
@@ -245,8 +277,34 @@ async function auditDesktop() {
     "true",
     `${name}: Cinema exit must re-enter board on active Moment`,
   );
+  await page.screenshot({ path: `${screenshotDir}/${name}-return.png`, fullPage: false });
 
-  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
+  assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
+  assert.deepEqual(errors.pageErrors, [], `${name}: page errors: ${errors.pageErrors.join(" | ")}`);
+  await context.close();
+}
+
+async function auditLargeTree() {
+  const name = "large-tree-1280x800";
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await context.newPage();
+  const errors = captureBrowserErrors(page);
+  const cards = await openCanonicalBoard(page, name, qaLargeMoments);
+  await assertNoOverflow(page, name);
+  const boardHeight = await page.getByTestId("source58-board").evaluate((node) => node.getBoundingClientRect().height);
+  assert.ok(boardHeight >= 900, `${name}: >9 Moment field must expand, height=${boardHeight}`);
+  const centers = await cards.evaluateAll((nodes) => nodes.map((node) => {
+    const rect = node.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }));
+  let minimumDistance = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < centers.length; i += 1) {
+    for (let j = i + 1; j < centers.length; j += 1) {
+      minimumDistance = Math.min(minimumDistance, Math.hypot(centers[i].x - centers[j].x, centers[i].y - centers[j].y));
+    }
+  }
+  assert.ok(minimumDistance >= 55, `${name}: deterministic card centers collapse at ${minimumDistance.toFixed(1)}px`);
+  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: false });
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
   assert.deepEqual(errors.pageErrors, [], `${name}: page errors: ${errors.pageErrors.join(" | ")}`);
   await context.close();
@@ -258,21 +316,25 @@ async function auditMobile({ name, width, height }) {
   const errors = captureBrowserErrors(page);
   const cards = await openCanonicalBoard(page, name);
   await assertNoOverflow(page, name);
+  await page.screenshot({ path: `${screenshotDir}/${name}-initial.png`, fullPage: false });
 
   await cards.nth(2).tap();
   assert.equal(await cards.nth(2).getAttribute("aria-pressed"), "true", `${name}: touch must select canonical Moment`);
-  await page.getByRole("button", { name: "Tint" }).tap();
+  await page.screenshot({ path: `${screenshotDir}/${name}-selected.png`, fullPage: false });
+  await page.getByRole("button", { name: "Mint" }).tap();
   assert.equal(
     await page.locator("main[data-source-track='58']").getAttribute("data-theme"),
-    "tint",
+    "mint",
     `${name}: touch theme parity failed`,
   );
   await page.getByRole("button", { name: "CINEMA REPLAY" }).tap();
   await page.getByRole("dialog").waitFor();
+  assert.equal(await page.locator("[data-cinema-board-context]").count(), 1, `${name}: mobile Cinema keeps spatial board context`);
   await assertNoOverflow(page, `${name}-cinema`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-cinema.png`, fullPage: false });
   await page.getByRole("button", { name: "EXIT TO BOARD" }).tap();
+  await page.screenshot({ path: `${screenshotDir}/${name}-return.png`, fullPage: false });
 
-  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
   assert.deepEqual(errors.pageErrors, [], `${name}: page errors: ${errors.pageErrors.join(" | ")}`);
   await context.close();
@@ -297,12 +359,15 @@ async function auditReducedMotion() {
     () => document.getAnimations().filter((animation) => animation.playState === "running").length,
   );
   assert.equal(running, 0, `${name}: reduced-motion must leave no running ambient animations`);
+  await page.screenshot({ path: `${screenshotDir}/${name}-initial.png`, fullPage: false });
   await page.getByRole("button", { name: "CINEMA REPLAY" }).tap();
   const reducedButton = page.getByRole("button", { name: "REDUCED MOTION" });
   await reducedButton.waitFor();
   assert.equal(await reducedButton.isDisabled(), true, `${name}: Cinema autoplay must stay disabled under reduced motion`);
   await assertNoOverflow(page, name);
-  await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
+  await page.screenshot({ path: `${screenshotDir}/${name}-cinema.png`, fullPage: false });
+  await page.getByRole("button", { name: "NEXT" }).tap();
+  await page.screenshot({ path: `${screenshotDir}/${name}-manual.png`, fullPage: false });
   assert.deepEqual(errors.consoleErrors, [], `${name}: console errors: ${errors.consoleErrors.join(" | ")}`);
   assert.deepEqual(errors.pageErrors, [], `${name}: page errors: ${errors.pageErrors.join(" | ")}`);
   await context.close();
@@ -311,12 +376,14 @@ async function auditReducedMotion() {
 try {
   await auditGate();
   await auditDesktop();
+  await auditLargeTree();
   await auditMobile({ name: "mobile-390x844", width: 390, height: 844 });
   await auditMobile({ name: "mobile-320x720", width: 320, height: 720 });
   await auditReducedMotion();
   console.log("SOURCE58_LIVING_MEMORY_PINBOARD_BROWSER_QA=PASS");
   console.log("SOURCE58_YOUTUBE_LIVE_PLAYBACK=NOT_CLAIMED");
   console.log("SOURCE58_YOUTUBE_EMBED_WIRING=STUB_VERIFIED_WITH_FALLBACK");
+  console.log("SOURCE58_VISUAL_REPAIR_VIEWPORT_EVIDENCE=TRUE");
 } finally {
   await browser.close();
 }
