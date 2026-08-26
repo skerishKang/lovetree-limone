@@ -12,11 +12,13 @@ import {
 const pagePath = "app/design-lab/source-tracks/58/v1-2-native/page.tsx";
 const componentPath = "components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
 const cssPath = "components/source-track-58/source-track-58-living-memory-board.module.css";
+const repairCssPath = "app/design-lab/source-tracks/58/v1-2-native/source58-visual-repair.module.css";
 
-const [pageSource, componentSource, cssSource] = await Promise.all([
+const [pageSource, componentSource, cssSource, repairCssSource] = await Promise.all([
   readFile(pagePath, "utf8"),
   readFile(componentPath, "utf8"),
   readFile(cssPath, "utf8"),
+  readFile(repairCssPath, "utf8"),
 ]);
 
 test("Source58 keeps the authorized collision-safe staging identity", () => {
@@ -57,25 +59,58 @@ test("source fixture data is not promoted into the runtime board", () => {
   assert.doesNotMatch(componentSource, /mockMoment|demoMoment|fixtureMoment/i);
 });
 
-test("Source58 board grammar keeps all six presentation-only themes and deterministic spatial slots", () => {
+test("Source58 restores the authoritative six material themes", () => {
   assert.deepEqual(
     SOURCE_58_BOARD_THEMES.map((theme) => theme.id),
-    ["pearl", "gold", "black", "plum", "tint", "wood"],
+    ["pearl", "cork", "letter", "blossom", "night", "mint"],
   );
+  assert.deepEqual(
+    SOURCE_58_BOARD_THEMES.map((theme) => theme.label),
+    ["Pearl", "Warm Cork", "Letter", "Blossom", "Night", "Mint"],
+  );
+  for (const theme of ["pearl", "cork", "letter", "blossom", "night", "mint"]) {
+    assert.match(repairCssSource, new RegExp(`data-theme=\\"${theme}\\"`));
+  }
+  assert.match(repairCssSource, /repeating-linear-gradient/);
+  assert.match(repairCssSource, /data-theme=\\"night\\"/);
+  assert.match(repairCssSource, /data-theme=\\"mint\\"/);
+});
+
+test("Source58 spatial projection scales beyond nine Moments without modulo-slot collapse", () => {
   assert.deepEqual(source58BoardSlot(0), { x: 11, y: 14, rotate: -3, style: "polaroid" });
   assert.notDeepEqual(source58BoardSlot(0), source58BoardSlot(1));
+  const firstForty = Array.from({ length: 40 }, (_, index) => source58BoardSlot(index));
+  assert.equal(
+    new Set(firstForty.map((slot) => `${slot.x}:${slot.y}`)).size,
+    40,
+    "first 40 view-derived Moment positions must be spatially unique",
+  );
+  assert.equal(source58BoardSlot(9).style, "compact");
+  assert.match(repairCssSource, /:has\(> button\[data-card-style=\\"compact\\"\]\)/);
+  assert.match(repairCssSource, /min-height:\s*980px/);
+});
+
+test("Living Thread uses layered glow/color/core and selected-path emphasis", () => {
   assert.match(componentSource, /Canonical Connection living thread/);
+  assert.match(componentSource, /data-layer=\"glow\"/);
+  assert.match(componentSource, /data-layer=\"color\"/);
+  assert.match(componentSource, /data-layer=\"core\"/);
+  assert.match(componentSource, /data-active=\{String\(activePath\)\}/);
+  assert.match(repairCssSource, /g\[data-active=\\"true\\"\]/);
   assert.match(componentSource, /WHY NEXT/);
   assert.match(componentSource, /NEXT MOMENT/);
   assert.match(componentSource, /children\.length > 1/);
 });
 
-test("Cinema Replay preserves pause/resume/scrub, board re-entry and canonical YouTube fallback", () => {
+test("Cinema Replay preserves controls while restoring in-board spatial context", () => {
   assert.match(componentSource, /Cinema Replay — Moments/);
   assert.match(componentSource, /PAUSE/);
   assert.match(componentSource, /RESUME/);
   assert.match(componentSource, /Cinema Moment scrubber/);
   assert.match(componentSource, /EXIT TO BOARD/);
+  assert.match(componentSource, /data-cinema-board-context/);
+  assert.match(componentSource, /data-cinema-memory/);
+  assert.match(componentSource, /data-cinema-spotlight/);
   assert.match(componentSource, /YouTube에서 재생/);
   assert.match(componentSource, /Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다/);
 
@@ -99,5 +134,6 @@ test("keyboard focus, touch-safe native controls and reduced-motion policy are p
   assert.match(cssSource, /@media \(max-width: 760px\)/);
   assert.match(cssSource, /@media \(max-width: 360px\)/);
   assert.match(cssSource, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(repairCssSource, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(cssSource, /overflow-x: clip/);
 });
