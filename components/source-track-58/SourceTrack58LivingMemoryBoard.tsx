@@ -100,7 +100,7 @@ export default function SourceTrack58LivingMemoryBoard({
     selectMoment: selectTreeMoment,
     updateMoment,
     refresh,
-  } = useTreeMoments(treeId, undefined, initialMomentId ?? undefined);
+  } = useTreeMoments(treeId);
 
   const selectMoment = useCallback(
     (id: string | null) => {
@@ -161,8 +161,13 @@ export default function SourceTrack58LivingMemoryBoard({
   );
 
   useEffect(() => {
-    if (!selectedMomentId && moments[0]) selectMoment(moments[0].id);
-  }, [moments, selectMoment, selectedMomentId]);
+    if (!initialMomentId || selectedMomentId === initialMomentId) return;
+    if (momentById.has(initialMomentId)) selectTreeMoment(initialMomentId);
+  }, [initialMomentId, momentById, selectTreeMoment, selectedMomentId]);
+
+  useEffect(() => {
+    if (!selectedMomentId && !initialMomentId && moments[0]) selectMoment(moments[0].id);
+  }, [initialMomentId, moments, selectMoment, selectedMomentId]);
 
   useEffect(() => {
     if (!cinemaOpen || !cinemaPlaying || reducedMotion || moments.length < 2 || embedRequested) return;
