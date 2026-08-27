@@ -17,7 +17,7 @@ test("Source64 portal lives only after canonical Tree resolution", () => {
   assert.match(viewSwitcher, /kind: "portal", label: "포털", path: "\/portal"/);
   assert.match(portal, /useParams<\{ id: string \| string\[\] \}>/);
   assert.match(portal, /data-mvp-source="64"/);
-  assert.match(portal, /Tree already resolved/);
+  assert.match(portal, /useTreeMoments\(treeId, undefined, momentId \?\? undefined\)/);
   assert.doesNotMatch(portal, /import\s+.*V4EntryResolver|<V4EntryResolver|treeCount|\/v4\/journey/);
 });
 

@@ -27,8 +27,10 @@ test("relationship truth comes only from canonical Moment parentId and connectio
 });
 
 test("Source56 layout remains view-derived and does not create relation persistence", () => {
-  assert.match(route, /layout \/ grouping = VIEW_DERIVED/);
-  assert.match(route, /new DB \/ API \/ schema = none/);
+  assert.match(route, /const nodes = useMemo<NetworkNode\[\]>\(\(\) =>/);
+  assert.match(route, /const depth = Math\.max\(0, moment\.depth\)/);
+  assert.match(route, /x: clamp\(120 \+ column \* 178 \+ lateral, 92, 908\)/);
+  assert.match(route, /y: 105 \+ index \* 118/);
   assert.doesNotMatch(route, directDurableWrite);
 });
 
