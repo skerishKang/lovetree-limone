@@ -205,6 +205,109 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     captureReducedMotion: true,
     extraEvidencePaths: Object.freeze([]),
   }),
+  Object.freeze({
+    id: "source-track-24-v1-video-memory-workflow-donor",
+    label: "Track24 V1 Video Memory Workflow bounded donor proof",
+    route: "/design-lab/source-tracks/24/v1/donor",
+    routeEntry: "app/design-lab/source-tracks/24/v1/donor/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/24/v1/donor/",
+      "lib/sourceTrack24V1DonorNative.ts",
+      "design-intake/source-track-24-video-memory-workflow-v1-donor.json",
+      "reference/source-tracks-snapshot/24_영상기억_워크플로우/",
+      "qa/source-track-24-v1-donor-browser-qa.mjs",
+      "tests/source-track-24-v1-donor-contract.test.mjs",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; EXTERNAL_DEMO_VIDEO_NOT_PROMOTED; CANONICAL_V4_HANDOFF_PRESERVED",
+    browserGates: Object.freeze(["qa/source-track-24-v1-donor-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-24-v1-donor-browser-qa.mjs",
+    dedicatedWorkflow: null,
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze([]),
+  }),
+  Object.freeze({
+    id: "drive-track-18-electric-aurora-donor",
+    label: "Drive Track18 Electric Aurora MYTREE visual donor",
+    route: "/design-lab/drive-track-18-electric-aurora",
+    routeEntry: "app/design-lab/drive-track-18-electric-aurora/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/drive-track-18-electric-aurora/",
+      "lib/drive-track-18-electric-aurora/",
+      "reference/source-tracks-snapshot/18_메모리코어_전기오로라/",
+      "qa/drive-track-18-electric-aurora-browser-qa.mjs",
+      "tests/drive-track-18-electric-aurora-contract.test.mjs",
+      ".github/workflows/drive-track-18-electric-aurora-browser-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; DRIVE_TRACK18_NAMESPACE_SEPARATE_FROM_SOURCE_TRACK18; CANONICAL_MOMENT_PRESENTATION_ONLY",
+    browserGates: Object.freeze(["qa/drive-track-18-electric-aurora-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/drive-track-18-electric-aurora-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/drive-track-18-electric-aurora-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze([]),
+  }),
+  Object.freeze({
+    id: "source-56-lineage53-vertical-network",
+    label: "Source56 Vertical Moment Network bounded Lineage53 extension",
+    route: "/design-lab/lineages/53/53-v3-vertical-network-overview",
+    routeEntry: "app/design-lab/lineages/53/53-v3-vertical-network-overview/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    preregistered: true,
+    impactPrefixes: Object.freeze([
+      "app/design-lab/lineages/53/53-v3-vertical-network-overview/",
+      "lib/lineage-53-source56.ts",
+      "design-intake/source-56-lineage53-extension.json",
+      "qa/lineage-53-source56-browser-qa.mjs",
+      "tests/lineage-53-source56-extension.test.mjs",
+      ".github/workflows/lineage53-source56-browser-qa.yml",
+      "reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; LINEAGE53_EXTENSION; NO_LINEAGE56_COLLISION",
+    browserGates: Object.freeze(["qa/lineage-53-source56-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/lineage-53-source56-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/lineage53-source56-browser-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa/evidence/lineage-53-source56"]),
+  }),
+  Object.freeze({
+    id: "source-57-living-glass-v1-3-native",
+    label: "Source57 Living Glass Moment V1.3 native",
+    route: "/design-lab/source-tracks/57/v1-3-native",
+    routeEntry: "app/design-lab/source-tracks/57/v1-3-native/page.tsx",
+    validationClass: "interaction-contract",
+    inventoryDisposition: "REGISTERED_TARGET",
+    preregistered: true,
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/57/v1-3-native/",
+      "app/components/moment-presentation/LivingGlassMoment",
+      "app/styles/source-track-57-living-glass",
+      "lib/source-track-57-living-glass.ts",
+      "public/reference/source-track-57-living-glass/",
+      "qa/source-track-57-living-glass-browser-qa.mjs",
+      "qa/source-track-57-visual-repair-browser-qa.mjs",
+      "tests/source-track-57-living-glass-native.test.mjs",
+      "tests/source-track-57-visual-repair-contract.test.mjs",
+      ".github/workflows/source-track57-living-glass-native-qa.yml",
+    ]),
+    assetGate: null,
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; SEPARATE_SOURCE57_NAMESPACE; NO_LINEAGE57_COLLISION",
+    browserGates: Object.freeze(["qa/source-track-57-visual-repair-browser-qa.mjs"]),
+    actualRouteBrowserGate: "qa/source-track-57-visual-repair-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track57-living-glass-native-qa.yml",
+    viewports: VIEWPORTS,
+    captureReducedMotion: true,
+    extraEvidencePaths: Object.freeze(["qa-artifacts/source-track57-living-glass"]),
+  }),
 ]);
 
 export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
@@ -253,6 +356,85 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     reason: "Track17 validates a canonical /trees/:treeId terrain donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and must not promote source demo return/Season semantics.",
   }),
   Object.freeze({
+    id: "source-track-35-lp-archive-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track35 LP Player canonical ARCHIVE native QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/trees/:treeId/archive/lp", routeEntry: "app/v4/trees/[id]/archive/lp/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/trees/[id]/archive/lp/", "lib/source-track-35/", "qa/track35-lp-player-browser-qa.mjs", "tests/track35-lp-player-contract.test.mjs", ".github/workflows/track35-lp-player-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/track35-lp-player-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/track35-lp-player-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_EXISTING_MOMENT_MEDIA", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track35 validates the canonical /v4/trees/:treeId/archive/lp ARCHIVE lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no LP-specific backend, persistence, or media authority.",
+  }),
+  Object.freeze({
+    id: "codex-work-13-cinematic-watercolor-v2-subject-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex-work-13 Cinematic Watercolor V2 canonical SUBJECT donor QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/subjects/cinematic-watercolor-v2", routeEntry: "app/v4/subjects/cinematic-watercolor-v2/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/subjects/cinematic-watercolor-v2/", "app/components/v4/V4PersonAlbums.tsx", "app/components/v4/v4-subject-albums.ts", "design-intake/codex-work-13-cinematic-watercolor-v2.json", "qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs", "tests/codex-work-13-cinematic-watercolor-v2-native-contract.test.mjs", ".github/workflows/codex-work-13-cinematic-watercolor-v2-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/codex-work-13-cinematic-watercolor-v2-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex-work-13-cinematic-watercolor-v2-browser-qa.yml",
+    exactAssetStatus: "SOURCE_BINARIES_FINGERPRINT_ONLY; CANONICAL_RUNTIME_REUSES_EXISTING_SUBJECT_PROJECTION", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Cinematic Watercolor V2 validates a bounded canonical /v4/subjects presentation donor lens in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no parallel SUBJECT application, backend, persistence, or source-binary product authority.",
+  }),
+  Object.freeze({
+    id: "codex14-rotating-memory-index-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex14 Rotating Memory Index canonical ARCHIVE native QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/trees/:treeId/archive/rotating-index", routeEntry: "app/v4/trees/[id]/archive/rotating-index/page.tsx",
+    impactPrefixes: Object.freeze(["app/v4/trees/[id]/archive/rotating-index/", "lib/codex14/", "design-intake/codex14-rotating-memory-index-archive-native.json", "qa/codex14-rotating-memory-index-browser-qa.mjs", "tests/codex14-rotating-memory-index-contract.test.mjs", ".github/workflows/codex14-rotating-memory-index-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/codex14-rotating-memory-index-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex14-rotating-memory-index-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_EXISTING_MOMENT_MEDIA", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Codex14 validates a bounded canonical ARCHIVE presentation over existing Moment/media authority in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no archive backend, persistence, schema, API, or parallel media authority.",
+  }),
+  Object.freeze({
+    id: "codex13-liquid-glass-video-wall-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex13 Liquid Glass Video Wall canonical ARCHIVE native QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/trees/:treeId/archive/video-wall", routeEntry: "app/v4/trees/[id]/archive/video-wall/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/v4/trees/[id]/archive/video-wall/",
+      "lib/source-codex-13/",
+      "qa/codex13-liquid-glass-video-wall-browser-qa.mjs",
+      "qa/codex13-liquid-glass-video-wall-visual-evidence.mjs",
+      "tests/codex13-liquid-glass-video-wall-contract.test.mjs",
+      ".github/workflows/codex13-liquid-glass-video-wall-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/codex13-liquid-glass-video-wall-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex13-liquid-glass-video-wall-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_RUNTIME_USES_EXISTING_MOMENT_MEDIA",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Codex13 validates a bounded canonical ARCHIVE Liquid Glass video-wall presentation over existing Moment/media authority in its dedicated workflow; it is not a Design Lab/source-fidelity certification target and adds no archive backend, persistence, queue/player state, schema, API, or parallel media authority.",
+  }),
+  Object.freeze({
+    id: "codex15-memory-biosphere-home-donor-dedicated-product-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Codex15 Memory Biosphere canonical HOME donor QA", validationClass: "canonical-product-dedicated-qa",
+    route: "/v4/memory-biosphere", routeEntry: "app/v4/memory-biosphere/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/components/v4/Codex15MemoryBiosphereHomeDonor.tsx",
+      "app/styles/v4/codex15-memory-biosphere-home-donor.css",
+      "app/v4/memory-biosphere/",
+      "lib/source-codex-15/",
+      "public/v4/memory-biosphere/",
+      "qa/codex15-memory-biosphere-home-donor-browser-qa.mjs",
+      "qa/codex15-memory-biosphere-home-donor-visual-evidence.mjs",
+      "tests/codex15-memory-biosphere-home-donor-contract.test.mjs",
+      ".github/workflows/codex15-memory-biosphere-home-donor-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/codex15-memory-biosphere-home-donor-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/codex15-memory-biosphere-home-donor-browser-qa.yml",
+    exactAssetStatus: "EXACT_V2_SOURCE_ASSETS_PINNED; OPTIMIZED_RUNTIME_DERIVATIVES_EXPLICITLY_DOCUMENTED; CANONICAL_V4_AUTHORITY_PRESERVED",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Codex15 validates a bounded high-visual HOME donor over existing canonical /v4 authority in its dedicated workflow; it is not a second HOME application or Design Lab/source-fidelity certification target and adds no Auth, API, backend, DB/schema, persistence, createFirstTree, returning-user resolver, or parallel product authority.",
+  }),
+  Object.freeze({
+    id: "source-track-38-v1-discover-donor-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track38 V1 Voyager DISCOVER donor dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
+    route: "/design-lab/source-tracks/38/v1/donor", routeEntry: "app/design-lab/source-tracks/38/v1/donor/page.tsx",
+    impactPrefixes: Object.freeze(["app/design-lab/source-tracks/38/v1/donor/", "lib/source-track-38/", "design-intake/manifests/source-track-38-voyager-space-memory-map-v1.json", "reference/source-tracks-snapshot/38_보이저_우주기억지도/", "qa/source-track-38-v1-discover-donor-browser-qa.mjs", "tests/source-track-38-v1-donor-contract.test.mjs", ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml"]),
+    actualRouteBrowserGate: "qa/source-track-38-v1-discover-donor-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track38-v1-discover-donor-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_API_SHAPE_VERIFIED_WITH_DETERMINISTIC_BROWSER_FIXTURES", viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track38 donor reads canonical /api/community Tree/Memory data. Generic Design Fidelity route capture has no DATABASE_URL and produces an environment-only API 500, while the dedicated workflow deterministically intercepts the canonical API shape and verifies desktop/mobile/touch/keyboard/reduced-motion behavior without promoting source fixtures into product truth.",
+  }),
+  Object.freeze({
     id: "source-track-68-v3-3-2-compare-hold", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
     label: "Track68 V3.3.2 bounded source compare — external equivalence HOLD", validationClass: "truthful-hold",
     route: "/design-lab/source-tracks/68/v3-3-2/compare",
@@ -273,13 +455,50 @@ export const EXPLICIT_MACHINE_CHECKED_EXCLUSIONS = Object.freeze([
     holdSemantics: "Dedicated Track68 CI proves the pinned local compare package, exact local assets, A/B behavior, and actual-route interactions; it must never be reported as FULL source-fidelity equivalence while CloudFront byte equivalence remains HOLD.",
     reason: "The bounded local compare runner is implementation-ready and locally exact, but original CloudFront hero-byte equivalence is not proven and direct CloudFront hotlink is not authorized; keep central fidelity classification truthful HOLD.",
   }),
+  Object.freeze({
+    id: "source-track-09-summary-dashboard-dedicated-source-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Track09 Full Memory Summary Dashboard MYTREE donor dedicated source QA", validationClass: "dedicated-source-browser-qa",
+    route: "/trees/:treeId/overview", routeEntry: "app/trees/[id]/overview/page.tsx",
+    impactPrefixes: Object.freeze([
+      "design-intake/source-track-09-full-memory-summary-dashboard-mytree-donor.json",
+      "qa/source-track-09-summary-dashboard-source-browser-qa.mjs",
+      "tests/source-track-09-summary-dashboard-donor-contract.test.mjs",
+      ".github/workflows/source-track09-summary-dashboard-source-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/source-track-09-summary-dashboard-source-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track09-summary-dashboard-source-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; EXISTING_CANONICAL_OVERVIEW_REUSED; DEMO_STATIC_CLAIMS_NOT_PROMOTED",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null,
+    reason: "Track09 is a bounded visual-function donor over the existing canonical MYTREE overview; its dedicated workflow proves the exact source donor and responsive interaction evidence without creating a second product route or promoting demo metrics as product truth.",
+  }),
+  Object.freeze({
+    id: "source-58-living-memory-pinboard-dedicated-fixture-qa", disposition: "EXPLICIT_MACHINE_CHECKED_EXCLUSION",
+    label: "Source58 Living Memory Pinboard native dedicated fixture-backed QA", validationClass: "dedicated-fixture-browser-qa",
+    route: "/design-lab/source-tracks/58/v1-2-native",
+    routeEntry: "app/design-lab/source-tracks/58/v1-2-native/page.tsx",
+    impactPrefixes: Object.freeze([
+      "app/design-lab/source-tracks/58/v1-2-native/",
+      "components/source-track-58/",
+      "lib/source-track-58-living-memory-pinboard.ts",
+      "qa/source-track-58-living-memory-pinboard-browser-qa.mjs",
+      "qa/source-track-58-mobile-spatial-repair-browser-qa.mjs",
+      "tests/source-track-58-living-memory-pinboard-native-contract.test.mjs",
+      "tests/source-track-58-mobile-spatial-repair-contract.test.mjs",
+      ".github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml",
+    ]),
+    actualRouteBrowserGate: "qa/source-track-58-living-memory-pinboard-browser-qa.mjs",
+    dedicatedWorkflow: ".github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml",
+    exactAssetStatus: "REFERENCE_SOURCE_PINNED; CANONICAL_TREE_MOMENT_FIXTURES_IN_QA_ONLY; NO_LINEAGE58_COLLISION",
+    viewports: VIEWPORTS, reducedMotion: true, holdSemantics: null, preregistered: true,
+    reason: "Source58 needs a canonical treeId and deterministic canonical-shape network fixtures to prove the Pinboard surface. Generic central route capture cannot supply that environment, so the dedicated workflow owns desktop/mobile spatial certification without promoting fixtures into runtime product truth or reclassifying repository Lineage58.",
+  }),
 ]);
 
 export const FUTURE_MERGE_GUARDS = Object.freeze([]);
 
 export const DESIGN_FIDELITY_TARGETS = Object.freeze([...BASE_TARGETS, ...SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS]);
 const GLOBAL_PREFIXES = Object.freeze([...GLOBAL_ORCHESTRATION_PREFIXES, "scripts/design-fidelity-validation-inventory.mjs", "tests/design-fidelity-inventory-drift.test.mjs"]);
-const NON_TARGET_WORKFLOWS = new Set([".github/workflows/design-fidelity-validation.yml", ".github/workflows/a-track-p0-validation.yml", ".github/workflows/production-auto-deploy.yml"]);
+const NON_TARGET_WORKFLOWS = new Set([".github/workflows/design-fidelity-validation.yml", ".github/workflows/a-track-p0-validation.yml", ".github/workflows/production-auto-deploy.yml", ".github/workflows/five-source-semantic-ux.yml"]);
 const matches = (p, prefix) => p === prefix || p.startsWith(prefix);
 const nonempty = (v) => typeof v === "string" && v.trim().length > 0;
 
@@ -308,6 +527,19 @@ export function validateDesignFidelityInventory({ registeredTargets = DESIGN_FID
 
 export function getDesignFidelityTarget(id) { return DESIGN_FIDELITY_TARGETS.find((target) => target.id === id) ?? null; }
 const supplementalMaterialized = (target, cwd) => [target.routeEntry, ...target.browserGates, ...(target.assetGate ? [target.assetGate.verifier] : [])].every((p) => existsSync(path.join(cwd, p)));
+const targetEvidencePaths = (target) => [target.routeEntry, ...target.browserGates, target.dedicatedWorkflow, ...(target.assetGate ? [target.assetGate.verifier] : [])].filter(Boolean);
+const targetMaterialization = (target, cwd) => {
+  const paths = targetEvidencePaths(target);
+  const present = paths.filter((p) => existsSync(path.join(cwd, p)));
+  return { paths, none: present.length === 0, full: present.length === paths.length, present };
+};
+const targetMaterializedForPlanning = (target, cwd) => target.preregistered === true ? targetMaterialization(target, cwd).full : supplementalMaterialized(target, cwd);
+const exclusionEvidencePaths = (entry) => [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean);
+const exclusionMaterialization = (entry, cwd) => {
+  const paths = exclusionEvidencePaths(entry);
+  const present = paths.filter((p) => existsSync(path.join(cwd, p)));
+  return { paths, none: present.length === 0, full: present.length === paths.length, present };
+};
 
 export function discoverDedicatedPlaywrightWorkflows(cwd = process.cwd()) {
   const dir = path.join(cwd, ".github", "workflows");
@@ -324,8 +556,23 @@ export function assertDedicatedWorkflowCoverage(cwd = process.cwd(), { registere
 
 export function validateRepositoryInventory(cwd = process.cwd()) {
   validateDesignFidelityInventory();
-  for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
-  for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) for (const p of [entry.routeEntry, entry.actualRouteBrowserGate, entry.dedicatedWorkflow].filter(Boolean)) if (!existsSync(path.join(cwd, p))) throw new Error(`${entry.id}: configured evidence path missing: ${p}`);
+  for (const target of SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS) {
+    if (target.preregistered === true) {
+      const state = targetMaterialization(target, cwd);
+      if (state.none) continue;
+      if (!state.full) {
+        const missing = state.paths.filter((p) => !state.present.includes(p));
+        throw new Error(`${target.id}: preregistered target is partially materialized; missing: ${missing.join(", ")}`);
+      }
+      continue;
+    }
+    if (!supplementalMaterialized(target, cwd)) throw new Error(`${target.id}: registered target is not materialized`);
+  }
+  for (const entry of EXPLICIT_MACHINE_CHECKED_EXCLUSIONS) {
+    const state = exclusionMaterialization(entry, cwd);
+    if (entry.preregistered === true && state.none) continue;
+    for (const p of state.paths) if (!existsSync(path.join(cwd, p))) throw new Error(`${entry.id}: configured evidence path missing: ${p}`);
+  }
   assertDedicatedWorkflowCoverage(cwd);
   return true;
 }
@@ -345,8 +592,13 @@ export function planDesignFidelityInventory(changedPaths, { addedPaths = [], cwd
   if (future.length) throw new Error(`FUTURE_MERGE_GUARD: ${future.map((entry) => `${entry.id} (${entry.requiredResolution})`).join("; ")}`);
   const globalChange = changed.some((p) => GLOBAL_PREFIXES.some((prefix) => matches(p, prefix)));
   const base = globalChange ? BASE_TARGETS.filter((target) => baseTargetIsMaterialized(target, cwd)) : selectBaseTargets(changed, cwd);
-  const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || supplementalMaterialized(target, cwd))) || impacted(target, changed));
+  const supplemental = SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS.filter((target) => (globalChange && (!validateFilesystem || targetMaterializedForPlanning(target, cwd))) || impacted(target, changed));
   const targets = [...new Map([...base, ...supplemental].map((target) => [target.id, target])).values()];
-  const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => globalChange || impacted(entry, changed));
+  const exclusions = EXPLICIT_MACHINE_CHECKED_EXCLUSIONS.filter((entry) => {
+    if (impacted(entry, changed)) return true;
+    if (!globalChange) return false;
+    if (entry.preregistered !== true) return true;
+    return !validateFilesystem || exclusionMaterialization(entry, cwd).full;
+  });
   return { targets, exclusions, futureGuards: [], genuinelyNoImpact: targets.length === 0 && exclusions.length === 0 };
 }
