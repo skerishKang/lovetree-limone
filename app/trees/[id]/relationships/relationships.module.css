@@ -28,7 +28,7 @@
   z-index: 16;
   left: 50%;
   top: 28px;
-  width: min(970px, calc(100vw - 58px));
+  width: min(1120px, calc(100vw - 58px));
   transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
@@ -42,12 +42,13 @@
 
 .hero h1 {
   margin: 8px 0 0;
-  font: 650 clamp(30px,3.4vw,48px)/1.05 Inter, Pretendard, "Noto Sans KR", sans-serif;
+  font: 650 clamp(30px,3.2vw,44px)/1.03 Inter, Pretendard, "Noto Sans KR", sans-serif;
   letter-spacing: -.055em;
+  white-space: nowrap;
 }
 
 .hero p {
-  max-width: 690px;
+  max-width: 720px;
   margin: 8px auto 0;
   color: rgba(50,45,57,.52);
   font-size: 11px;
@@ -148,32 +149,33 @@
   --tone: #9b939f;
   fill: none;
   stroke: var(--tone);
-  stroke-width: 3;
+  stroke-width: 3.5;
   stroke-linecap: round;
-  opacity: .22;
+  opacity: .28;
   transition: opacity .25s ease, stroke-width .25s ease;
 }
 
-.edgeActive { opacity: .9; stroke-width: 6; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 28%, transparent)); }
+.edgeActive { opacity: .92; stroke-width: 6.5; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 28%, transparent)); }
 .muted { opacity: .08 !important; }
 
 .hub { --tone: #8b69e8; transition: opacity .25s ease; }
-.hubHalo { fill: none; stroke: var(--tone); stroke-width: 1.5; opacity: .14; }
-.hubCore { fill: var(--tone); opacity: .13; stroke: var(--tone); stroke-width: 2; }
-.hub text { fill: #342f3a; font: 700 17px Inter, Pretendard, sans-serif; letter-spacing: -.03em; }
+.hubHalo { fill: none; stroke: var(--tone); stroke-width: 1.8; opacity: .16; }
+.hubCore { fill: var(--tone); opacity: .15; stroke: var(--tone); stroke-width: 2.4; }
+.hub text { fill: #342f3a; font: 700 20px Inter, Pretendard, sans-serif; letter-spacing: -.03em; }
 
 .node { --tone: #e45d8d; cursor: pointer; transition: opacity .22s ease; }
 .hit { fill: transparent; pointer-events: all; }
-.ring { fill: #fff; stroke: var(--tone); stroke-width: 3; opacity: .94; transition: stroke-width .18s ease; }
+.ring { fill: #fff; stroke: var(--tone); stroke-width: 3.4; opacity: .96; transition: stroke-width .18s ease; }
 .core { fill: var(--tone); filter: drop-shadow(0 5px 12px rgba(77,59,82,.2)); }
 .node[data-hierarchy="origin"] .ring,
-.node[data-hierarchy="entry"] .ring { stroke-width: 5; }
-.node[data-hierarchy="secondary"] .ring { stroke-width: 2; opacity: .72; }
-.node[data-hierarchy="secondary"] .core { opacity: .72; }
+.node[data-hierarchy="entry"] .ring { stroke-width: 5.5; }
+.node[data-hierarchy="primary"] .ring { stroke-width: 3.8; }
+.node[data-hierarchy="secondary"] .ring { stroke-width: 2.4; opacity: .8; }
+.node[data-hierarchy="secondary"] .core { opacity: .78; }
 .nodeSelected .ring { stroke-width: 7; }
 .node:focus-visible { outline: none; }
 .node:focus-visible .ring { stroke: #302c35; stroke-width: 8; filter: drop-shadow(0 0 8px #fff); }
-.nodeLabel { fill: #514a55; font: 700 11px Inter, Pretendard, sans-serif; letter-spacing: .09em; pointer-events: none; }
+.nodeLabel { fill: #514a55; font: 700 13px Inter, Pretendard, sans-serif; letter-spacing: .09em; pointer-events: none; }
 
 .status {
   position: absolute;
@@ -256,7 +258,7 @@
 @media (max-width: 760px) {
   .stage { height: calc(100svh - 118px); min-height: 620px; }
   .hero { top: 24px; width: calc(100vw - 28px); }
-  .hero h1 { font-size: clamp(26px,9vw,38px); }
+  .hero h1 { font-size: clamp(26px,9vw,38px); white-space: normal; }
   .hero p { display: none; }
   .legend { left: 10px; top: 116px; width: 180px; padding: 9px; opacity: .9; }
   .legend button { min-height: 30px; font-size: 7px; }
