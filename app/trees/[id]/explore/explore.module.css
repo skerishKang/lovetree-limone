@@ -7,6 +7,11 @@
     linear-gradient(180deg, #08090d 0%, #050609 100%);
 }
 
+:global(.tree-page[data-mvp-source="60"] .tree-view-switcher-bar) {
+  position: relative;
+  z-index: 3;
+}
+
 .hero {
   max-width: 1480px;
   margin: 0 auto 12px;
