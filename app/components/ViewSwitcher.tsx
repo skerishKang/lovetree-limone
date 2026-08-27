@@ -59,65 +59,81 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
   const secondaryActive = SECONDARY_VIEWS.some((view) => view.kind === active);
 
   return (
-    <nav
-      className="view-switcher"
-      aria-label="보기 전환"
-      data-narrow-scroll-container="true"
+    <div
       data-semantic-navigation="true"
       style={{
-        width: "100%",
-        maxWidth: "100%",
-        overflowX: "auto",
-        overscrollBehaviorX: "contain",
-        WebkitOverflowScrolling: "touch",
-        justifyContent: "flex-start",
+        position: "relative",
+        display: "flex",
         alignItems: "center",
+        gap: 4,
+        width: "100%",
+        minWidth: 0,
+        flex: "1 1 auto",
       }}
     >
-      {PRIMARY_VIEWS.map((view) => (
-        <Link
-          key={view.kind}
-          href={hrefFor(view)}
-          className={`view-tab${active === view.kind ? " view-tab-active" : ""}`}
-          aria-current={active === view.kind ? "page" : undefined}
-          data-view-tier="primary"
-          style={{ flex: "0 0 auto", whiteSpace: "nowrap" }}
-        >
-          {view.label}
-        </Link>
-      ))}
-
-      <Link
-        href={hrefFor(PORTAL_VIEW)}
-        className={`view-tab${active === "portal" ? " view-tab-active" : ""}`}
-        aria-current={active === "portal" ? "page" : undefined}
-        data-view-tier="return"
+      <nav
+        className="view-switcher"
+        aria-label="보기 전환"
+        data-narrow-scroll-container="true"
+        data-semantic-primary-scroll="true"
         style={{
-          flex: "0 0 auto",
-          whiteSpace: "nowrap",
-          marginInlineStart: 8,
-          borderInlineStart: "1px solid currentColor",
-          paddingInlineStart: 14,
+          width: "100%",
+          maxWidth: "100%",
+          minWidth: 0,
+          overflowX: "auto",
+          overflowY: "hidden",
+          overscrollBehaviorX: "contain",
+          WebkitOverflowScrolling: "touch",
+          justifyContent: "flex-start",
+          alignItems: "center",
         }}
       >
-        포털
-      </Link>
+        {PRIMARY_VIEWS.map((view) => (
+          <Link
+            key={view.kind}
+            href={hrefFor(view)}
+            className={`view-tab${active === view.kind ? " view-tab-active" : ""}`}
+            aria-current={active === view.kind ? "page" : undefined}
+            data-view-tier="primary"
+            style={{ flex: "0 0 auto", whiteSpace: "nowrap" }}
+          >
+            {view.label}
+          </Link>
+        ))}
+
+        <Link
+          href={hrefFor(PORTAL_VIEW)}
+          className={`view-tab${active === "portal" ? " view-tab-active" : ""}`}
+          aria-current={active === "portal" ? "page" : undefined}
+          data-view-tier="return"
+          style={{
+            flex: "0 0 auto",
+            whiteSpace: "nowrap",
+            marginInlineStart: 8,
+            borderInlineStart: "1px solid currentColor",
+            paddingInlineStart: 14,
+          }}
+        >
+          포털
+        </Link>
+      </nav>
 
       <details
         data-view-tier="secondary"
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 4,
+          position: "relative",
           flex: "0 0 auto",
-          marginInlineStart: 4,
-          whiteSpace: "nowrap",
         }}
       >
         <summary
           className={`view-tab${secondaryActive ? " view-tab-active" : ""}`}
           aria-current={secondaryActive ? "page" : undefined}
-          style={{ cursor: "pointer", whiteSpace: "nowrap", listStyle: "none" }}
+          style={{
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+            listStyle: "none",
+            userSelect: "none",
+          }}
         >
           더보기
         </summary>
@@ -125,9 +141,17 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
           role="group"
           aria-label="보조 보기"
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
+            position: "absolute",
+            insetInlineEnd: 0,
+            top: "calc(100% + 8px)",
+            zIndex: 60,
+            minWidth: 180,
+            maxWidth: "min(240px, calc(100vw - 24px))",
+            padding: 8,
+            border: "1px solid rgba(255,255,255,.12)",
+            borderRadius: 14,
+            background: "rgba(20, 20, 24, 0.96)",
+            boxShadow: "0 14px 40px rgba(0, 0, 0, 0.28)",
           }}
         >
           {SECONDARY_VIEWS.filter((view) => !view.ownerOnly || isOwner).map((view) => (
@@ -136,13 +160,13 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
               href={hrefFor(view)}
               className={`view-tab${active === view.kind ? " view-tab-active" : ""}`}
               aria-current={active === view.kind ? "page" : undefined}
-              style={{ flex: "0 0 auto", whiteSpace: "nowrap" }}
+              style={{ display: "block", whiteSpace: "nowrap" }}
             >
               {view.label}
             </Link>
           ))}
         </div>
       </details>
-    </nav>
+    </div>
   );
 }
