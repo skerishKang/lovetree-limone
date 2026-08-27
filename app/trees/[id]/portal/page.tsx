@@ -7,8 +7,27 @@ import { ViewSwitcher } from "@/app/components/ViewSwitcher";
 import { useTreeMoments } from "@/lib/use-tree-moments";
 import styles from "./portal.module.css";
 
-const ORBIT_LIMIT = 16;
-const ACCENTS = ["#9b6fc0", "#d06f9e", "#d99a6a", "#718fc8", "#8baa8e"];
+const ACCENTS = ["#ff91b8", "#8fb6ff", "#9be7c4", "#ffd27d", "#c79bff"];
+const DEPTHS = [
+  { radius: 360, scale: 1.14 },
+  { radius: 520, scale: .92 },
+  { radius: 700, scale: .6 },
+] as const;
+
+function orbitPlacement(index: number) {
+  const familyIndex = index % 5;
+  const memberIndex = Math.floor(index / 5);
+  const depth = DEPTHS[(index * 5 + familyIndex) % DEPTHS.length];
+  const angle = familyIndex * 72 + (memberIndex - 1.5) * 13;
+  const rad = (angle * Math.PI) / 180;
+  const x = Math.sin(rad) * depth.radius;
+  const z = Math.cos(rad) * depth.radius;
+  const y = (memberIndex - 1.5) * 82 + ((familyIndex % 2) ? 22 : -18);
+  return {
+    accent: ACCENTS[familyIndex],
+    transform: `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${angle.toFixed(1)}deg) scale(${depth.scale})`,
+  };
+}
 
 export default function TreePortalPage() {
   const params = useParams<{ id: string | string[] }>();
@@ -31,8 +50,9 @@ export default function TreePortalPage() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const worldRef = useRef<HTMLDivElement | null>(null);
   const angleRef = useRef(0);
+  const velocityRef = useRef(0);
 
-  const orbitMoments = useMemo(() => treeMoments.slice(0, ORBIT_LIMIT), [treeMoments]);
+  const orbitMoments = useMemo(() => treeMoments.slice(0, 24), [treeMoments]);
   const byId = useMemo(() => new Map(treeMoments.map((moment) => [moment.id, moment])), [treeMoments]);
   const selected = selectedMomentId ? byId.get(selectedMomentId) ?? null : null;
   const children = selected ? treeMoments.filter((moment) => moment.parentId === selected.id) : [];
@@ -48,7 +68,10 @@ export default function TreePortalPage() {
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(media.matches);
+    const sync = () => {
+      setReducedMotion(media.matches);
+      if (media.matches) velocityRef.current = 0;
+    };
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
@@ -60,7 +83,12 @@ export default function TreePortalPage() {
     const loop = (now: number) => {
       const dt = Math.min(64, now - last);
       last = now;
-      if (!reducedMotion && !selectedMomentId) angleRef.current += dt * .008;
+      if (!reducedMotion && !selectedMomentId) {
+        angleRef.current += dt * .01;
+        angleRef.current += velocityRef.current * dt;
+        velocityRef.current *= .96;
+        if (Math.abs(velocityRef.current) < .0004) velocityRef.current = 0;
+      }
       if (worldRef.current) worldRef.current.style.transform = `rotateY(${angleRef.current.toFixed(3)}deg)`;
       raf = requestAnimationFrame(loop);
     };
@@ -70,11 +98,12 @@ export default function TreePortalPage() {
 
   const rotate = (delta: number) => {
     angleRef.current += delta;
+    velocityRef.current = Math.max(-.06, Math.min(.06, delta * .002));
     if (worldRef.current) worldRef.current.style.transform = `rotateY(${angleRef.current.toFixed(3)}deg)`;
   };
 
   const onWheel = (event: WheelEvent<HTMLDivElement>) => {
-    rotate(event.deltaY * .035);
+    rotate(event.deltaY * .055);
   };
 
   const encodedTreeId = encodeURIComponent(treeId);
@@ -98,13 +127,13 @@ export default function TreePortalPage() {
         <div className={styles.truth} aria-label="포털 사용 안내">
           <span>Moment를 선택해 이어보기</span>
           <span>휠 또는 버튼으로 궤도 돌리기</span>
-          <span>선택한 순간에서 다른 보기 열기</span>
+          <span>전경·중경·후경의 기억 둘러보기</span>
           <span>Esc 또는 닫기로 돌아가기</span>
         </div>
         <header className={styles.welcome}>
           <small>WELCOME BACK</small>
           <h1>{tree?.title || "나의 LoveTree"}</h1>
-          <p>다시 돌아온 러브트리에서 떠 있는 Moment를 천천히 둘러보세요. 마음이 머무는 순간을 고르면 그 기억부터 자연스럽게 이어갈 수 있습니다.</p>
+          <p>다시 돌아온 러브트리에서 떠 있는 Moment를 천천히 둘러보세요. 앞과 뒤로 겹쳐진 기억 가운데 마음이 머무는 순간을 고르면 그 기억부터 이어갈 수 있습니다.</p>
         </header>
 
         {loading ? <div className={styles.state} aria-busy="true">기억을 불러오는 중…</div> : null}
@@ -114,18 +143,13 @@ export default function TreePortalPage() {
           <section className={styles.scene} aria-label="떠 있는 Moment 포털">
             <div className={styles.world} ref={worldRef} data-rendering="css3d-dom" data-reduced-motion={String(reducedMotion)}>
               {orbitMoments.map((moment, index) => {
-                const count = Math.max(orbitMoments.length, 1);
-                const angle = (index / count) * 360;
-                const radius = count < 5 ? 280 : 380;
-                const y = ((index % 3) - 1) * 48;
-                const accent = ACCENTS[index % ACCENTS.length];
-                const transform = `rotateY(${angle}deg) translateZ(${radius}px) rotateY(${-angle}deg) translateY(${y}px)`;
+                const placement = orbitPlacement(index);
                 return (
                   <button
                     key={moment.id}
                     type="button"
                     className={`${styles.card}${selectedMomentId === moment.id ? ` ${styles.cardSelected}` : ""}`}
-                    style={{ transform, "--accent": accent } as CSSProperties}
+                    style={{ transform: placement.transform, "--accent": placement.accent } as CSSProperties}
                     aria-pressed={selectedMomentId === moment.id}
                     onClick={() => syncMomentToUrl(moment.id)}
                   >
@@ -136,7 +160,7 @@ export default function TreePortalPage() {
                       ) : <span className={styles.mediaFallback}>{moment.sourceType.toUpperCase()}</span>}
                     </span>
                     <span className={styles.cardCopy}>
-                      <small>{moment.emotionTags[0] ?? "MOMENT"}</small>
+                      <small>{moment.emotionTags[0] ?? "MOMENT"} · {String(index + 1).padStart(2, "0")}</small>
                       <strong>{moment.title || "제목 없는 Moment"}</strong>
                       <p>{moment.memo || moment.connectionReason || "기억이 이곳에 머물러 있습니다."}</p>
                     </span>
