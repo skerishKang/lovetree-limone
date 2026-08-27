@@ -25,6 +25,7 @@ jobs:
       NEXT_PUBLIC_FIREBASE_PROJECT_ID: relovetree
       PREVIEW_WORKER: lovetree-limone-five-source-preview
       PREVIEW_BASE_URL: https://lovetree-limone-five-source-preview.charliekant.workers.dev
+      PREVIEW_ENTRY_URL: https://lovetree-limone-five-source-preview.charliekant.workers.dev/trees/five-source-preview
       EXPECTED_APP_MAIN_SHA: 11e7a1b2b70601141452b45750a049f54841134c
 
     steps:
@@ -33,14 +34,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify application source is exact final main
+      - name: Verify bounded preview-only delta
         shell: bash
         run: |
           set -euo pipefail
-          changed="$(git diff --name-only "$EXPECTED_APP_MAIN_SHA" HEAD)"
-          if [ "$changed" != ".github/workflows/five-source-isolated-preview-deploy.yml" ]; then
-            echo "BLOCKED: preview branch contains application changes:" >&2
-            printf '%s\n' "$changed" >&2
+          git diff --name-only "$EXPECTED_APP_MAIN_SHA" HEAD | sort > /tmp/preview-changed.txt
+          printf '%s\n' \
+            '.github/workflows/five-source-isolated-preview-deploy.yml' \
+            'lib/api.ts' | sort > /tmp/preview-expected.txt
+          if ! diff -u /tmp/preview-expected.txt /tmp/preview-changed.txt; then
+            echo 'BLOCKED: preview branch contains files outside the isolated deployment/data seam.' >&2
             exit 1
           fi
 
@@ -59,16 +62,17 @@ jobs:
           set -euo pipefail
           missing=()
           for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DATABASE_URL NEXT_PUBLIC_FIREBASE_API_KEY NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN; do
-            if [ -z "${!name:-}" ]; then
-              missing+=("$name")
-            fi
+            if [ -z "${!name:-}" ]; then missing+=("$name"); fi
           done
           if [ "${#missing[@]}" -ne 0 ]; then
             printf 'BLOCKED: missing preview configuration name(s): %s\n' "${missing[*]}" >&2
             exit 1
           fi
 
-      - name: Build exact application artifact
+      - name: Typecheck preview seam
+        run: npm run typecheck
+
+      - name: Build isolated preview artifact
         run: npm run build
 
       - name: Guarded isolated preview dry-run
@@ -108,21 +112,27 @@ jobs:
           printf '%s' "$DATABASE_URL" | npx wrangler secret put DATABASE_URL \
             --config .preview-safe-config/wrangler-isolated-preview.json
 
-      - name: Preview smoke
+      - name: Preview HTTP smoke
         shell: bash
         run: |
           set -euo pipefail
           for attempt in {1..30}; do
-            code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 "$PREVIEW_BASE_URL/")"
+            code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 "$PREVIEW_ENTRY_URL")"
             case "$code" in
               200|301|302|307|308) break ;;
-              *) if [ "$attempt" -eq 30 ]; then echo "BLOCKED: preview root HTTP $code" >&2; exit 1; fi ;;
+              *) if [ "$attempt" -eq 30 ]; then echo "BLOCKED: preview entry HTTP $code" >&2; exit 1; fi ;;
             esac
             sleep 2
           done
-          for route in / /v4 /design-lab; do
+          for route in \
+            /trees/five-source-preview \
+            /trees/five-source-preview/board \
+            /trees/five-source-preview/relationships \
+            /trees/five-source-preview/explore \
+            /trees/five-source-preview/portal; do
             code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 "${PREVIEW_BASE_URL}${route}")"
             printf '%s -> HTTP %s\n' "$route" "$code"
+            [ "$code" = '200' ] || exit 1
           done
 
       - name: Prepare live Chromium
@@ -134,135 +144,118 @@ jobs:
           set -euo pipefail
           mkdir -p .preview-live-qa
           node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
           import fs from 'node:fs';
           import { chromium } from 'playwright';
 
           const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
-
-          const communityResponse = await fetch(`${base}/api/community/trees?view=summary&sort=popular&limit=24`);
-          if (!communityResponse.ok) {
-            throw new Error(`public tree discovery failed: HTTP ${communityResponse.status}`);
-          }
-          const publicTrees = await communityResponse.json();
-          if (!Array.isArray(publicTrees) || publicTrees.length === 0) {
-            throw new Error('public tree discovery returned no real trees');
-          }
-
-          let candidate = null;
-          for (const tree of publicTrees) {
-            if (!tree || typeof tree.id !== 'string' || !tree.id) continue;
-            const treeId = tree.id;
-            const [treeResponse, momentsResponse] = await Promise.all([
-              fetch(`${base}/api/trees/${encodeURIComponent(treeId)}`),
-              fetch(`${base}/api/trees/${encodeURIComponent(treeId)}/memories`),
-            ]);
-            if (!treeResponse.ok || !momentsResponse.ok) continue;
-            const moments = await momentsResponse.json().catch(() => []);
-            if (!Array.isArray(moments) || moments.length === 0) continue;
-            candidate = { treeId, momentCount: moments.length };
-            break;
-          }
-          if (!candidate) {
-            throw new Error('no public community tree is readable through canonical tree APIs');
-          }
-
-          const treeId = candidate.treeId;
-          const expected = {
-            '기억': `/trees/${encodeURIComponent(treeId)}`,
-            '보드': `/trees/${encodeURIComponent(treeId)}/board`,
-            '관계': `/trees/${encodeURIComponent(treeId)}/relationships`,
-            '탐색': `/trees/${encodeURIComponent(treeId)}/explore`,
-            '포털': `/trees/${encodeURIComponent(treeId)}/portal`,
-          };
+          const treeId = 'five-source-preview';
+          const screenshotDir = '.preview-live-qa';
           const browser = await chromium.launch({ headless: true });
-          const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-          const records = [];
-          let selectedMoment = null;
+          const proof = { treeId, entryUrl: `${base}/trees/${treeId}`, viewports: [] };
 
-          async function waitForTreeResolution() {
-            await page.waitForFunction(() => Boolean(
-              document.querySelector('.tree-detail-content') ||
-              document.querySelector('.tree-page-state h1')
-            ), null, { timeout: 20000 });
+          async function waitForSource(page, source) {
+            await page.locator(`[data-mvp-source="${source}"]`).first().waitFor({ state: 'visible', timeout: 20000 });
           }
-          async function settle() {
-            await page.waitForLoadState('domcontentloaded');
-            await page.waitForTimeout(900);
+          async function assertMomentQuery(page, momentId, label) {
+            const current = new URL(page.url());
+            assert.equal(current.searchParams.get('moment'), momentId, `${label}: Moment identity changed`);
+            assert.match(current.pathname, new RegExp(`^/trees/${treeId}(?:/|$)`), `${label}: Tree identity changed`);
           }
-          async function assertHealthy(label) {
-            const errorState = page.locator('.tree-page-state h1');
-            if (await errorState.count()) {
-              throw new Error(`${label}: tree error state: ${await errorState.first().innerText()}`);
-            }
+          async function assertNoOverflow(page, label) {
+            const metrics = await page.evaluate(() => ({
+              viewport: window.innerWidth,
+              body: document.body.scrollWidth,
+              root: document.documentElement.scrollWidth,
+            }));
+            assert.ok(metrics.body <= metrics.viewport, `${label}: body overflow ${metrics.body} > ${metrics.viewport}`);
+            assert.ok(metrics.root <= metrics.viewport, `${label}: root overflow ${metrics.root} > ${metrics.viewport}`);
+          }
+          async function clickView(page, name, source, momentId, prefix, records) {
             const nav = page.getByRole('navigation', { name: '보기 전환' });
-            if (!(await nav.count())) throw new Error(`${label}: semantic view navigation missing`);
-          }
-          async function capture(label, file) {
-            await page.screenshot({ path: `.preview-live-qa/${file}.png`, fullPage: true });
-            records.push({ label, url: page.url(), title: await page.title() });
-          }
-          async function clickView(label, file) {
-            const link = page.getByRole('link', { name: label, exact: true });
-            await link.click({ force: true });
-            await page.waitForURL((url) => (
-              url.pathname === expected[label] &&
-              url.searchParams.get('moment') === selectedMoment
-            ), { timeout: 15000 });
-            await settle();
-            await assertHealthy(label);
-            const current = page.getByRole('link', { name: label, exact: true });
-            if ((await current.getAttribute('aria-current')) !== 'page') {
-              throw new Error(`${label}: aria-current=page missing`);
-            }
-            await capture(label, file);
+            const link = nav.getByRole('link', { name, exact: true });
+            const href = await link.getAttribute('href');
+            assert.ok(href?.includes(`/trees/${treeId}`), `${prefix}: Tree identity missing from href`);
+            assert.ok(href?.includes(`moment=${encodeURIComponent(momentId)}`), `${prefix}: Moment identity missing from href`);
+            await link.click();
+            await waitForSource(page, source);
+            await assertMomentQuery(page, momentId, prefix);
+            assert.equal(await page.getByRole('navigation', { name: '보기 전환' }).getByRole('link', { name, exact: true }).getAttribute('aria-current'), 'page');
+            await assertNoOverflow(page, prefix);
+            await page.screenshot({ path: `${screenshotDir}/${prefix}.png`, fullPage: false });
+            records.push({ name, source, url: page.url() });
           }
 
-          await page.goto(`${base}${expected['기억']}`, { waitUntil: 'domcontentloaded' });
-          await waitForTreeResolution();
-          await assertHealthy('기억');
-          if (!(await page.locator('.tree-detail-content').count())) {
-            throw new Error(`기억: canonical Source57 product content missing for real tree ${treeId}`);
-          }
-          await capture('기억', '01-memory');
+          async function auditViewport({ name, width, height, reducedMotion = false }) {
+            const context = await browser.newContext({
+              viewport: { width, height },
+              hasTouch: width <= 390,
+              isMobile: width <= 390,
+            });
+            const page = await context.newPage();
+            if (reducedMotion) await page.emulateMedia({ reducedMotion: 'reduce' });
+            const records = [];
 
-          const firstMoment = page.locator('.memory-record').first();
-          if (!(await firstMoment.count())) {
-            throw new Error(`기억: real public tree ${treeId} rendered no selectable Moment`);
-          }
-          await firstMoment.click();
-          await page.waitForURL((url) => Boolean(url.searchParams.get('moment')), { timeout: 10000 });
-          selectedMoment = new URL(page.url()).searchParams.get('moment');
-          if (!selectedMoment) throw new Error('Moment selection did not produce ?moment= state');
-          records.push({ label: 'Moment selected', url: page.url(), title: await page.title() });
+            const response = await page.goto(`${base}/trees/${treeId}`, { waitUntil: 'domcontentloaded' });
+            assert.ok(response?.ok(), `${name}: entry route must return 2xx`);
+            await waitForSource(page, '57');
+            await page.getByText('LoveTree Five-View Preview').first().waitFor({ timeout: 15000 });
+            await assertMomentQuery(page, null, `${name}-57`);
+            await assertNoOverflow(page, `${name}-57`);
+            await page.screenshot({ path: `${screenshotDir}/${name}-57.png`, fullPage: false });
+            records.push({ name: '기억', source: '57', url: page.url() });
 
-          await clickView('보드', '02-board');
-          await clickView('관계', '03-relationships');
-          await clickView('탐색', '04-explore');
-          await clickView('포털', '05-portal');
+            const boardNav = page.getByRole('navigation', { name: '보기 전환' });
+            const boardLink = boardNav.getByRole('link', { name: '보드', exact: true });
+            assert.ok((await boardLink.getAttribute('href'))?.includes(`/trees/${treeId}/board`));
+            await boardLink.click();
+            await waitForSource(page, '58');
+            await page.waitForURL((url) => url.searchParams.get('moment') === 'm-root', { timeout: 15000 });
+            await assertMomentQuery(page, 'm-root', `${name}-58-default`);
+            await assertNoOverflow(page, `${name}-58-default`);
+            await page.screenshot({ path: `${screenshotDir}/${name}-58.png`, fullPage: false });
+            records.push({ name: '보드', source: '58', url: page.url() });
 
-          await page.goBack();
-          await settle();
-          if (new URL(page.url()).pathname !== expected['탐색']) {
-            throw new Error(`Back: expected ${expected['탐색']} but got ${new URL(page.url()).pathname}`);
-          }
-          if (new URL(page.url()).searchParams.get('moment') !== selectedMoment) {
-            throw new Error('Back: selected Moment query was not preserved');
-          }
-          records.push({ label: 'Back→탐색', url: page.url(), title: await page.title() });
+            const childCard = page.getByRole('button', { name: 'Second path 선택' });
+            await childCard.waitFor({ timeout: 15000 });
+            await childCard.click();
+            await page.waitForURL((url) => url.searchParams.get('moment') === 'm-child', { timeout: 15000 });
 
-          fs.writeFileSync('.preview-live-qa/result.json', JSON.stringify({
-            treeId,
-            selectedMoment,
-            publicMomentCount: candidate.momentCount,
-            records,
-          }, null, 2));
-          console.log(JSON.stringify({
-            treeId,
-            selectedMoment,
-            publicMomentCount: candidate.momentCount,
-            records,
-          }, null, 2));
-          await browser.close();
+            await page.goBack({ waitUntil: 'domcontentloaded' });
+            await waitForSource(page, '57');
+            await assertMomentQuery(page, null, `${name}-57-back`);
+            await page.goForward({ waitUntil: 'domcontentloaded' });
+            await waitForSource(page, '58');
+            await assertMomentQuery(page, 'm-child', `${name}-58-forward`);
+
+            await clickView(page, '관계', '56', 'm-child', `${name}-56`, records);
+            assert.equal(await page.locator('[data-network-moment-id="m-child"]').getAttribute('aria-pressed'), 'true');
+
+            await clickView(page, '탐색', '60', 'm-child', `${name}-60`, records);
+            assert.ok(await page.locator('canvas').count(), `${name}: Source60 canvas missing`);
+
+            await clickView(page, '포털', '64', 'm-child', `${name}-64`, records);
+            assert.ok(await page.locator('[data-rendering="css3d-dom"]').count(), `${name}: Source64 CSS3D rendering missing`);
+
+            await page.goBack({ waitUntil: 'domcontentloaded' });
+            await waitForSource(page, '60');
+            await assertMomentQuery(page, 'm-child', `${name}-60-back-from-portal`);
+            records.push({ name: '뒤로→탐색', source: '60', url: page.url() });
+
+            proof.viewports.push({ name, width, height, reducedMotion, records });
+            await context.close();
+          }
+
+          try {
+            await auditViewport({ name: 'desktop-1280x800', width: 1280, height: 800 });
+            await auditViewport({ name: 'phone-390x844', width: 390, height: 844 });
+            await auditViewport({ name: 'narrow-320x720-reduced', width: 320, height: 720, reducedMotion: true });
+            fs.writeFileSync(`${screenshotDir}/result.json`, JSON.stringify(proof, null, 2));
+            console.log(JSON.stringify(proof, null, 2));
+            console.log('LIVE_FIVE_SOURCE_PREVIEW_QA_PASS');
+          } finally {
+            await browser.close();
+          }
           NODE
 
       - name: Upload live click evidence
@@ -280,11 +273,11 @@ jobs:
           {
             echo '## LoveTree five-source isolated preview'
             echo
-            echo "- app source main: \`$EXPECTED_APP_MAIN_SHA\`"
-            echo "- deployment wrapper commit: \`$(git rev-parse HEAD)\`"
+            echo "- production app baseline: \`$EXPECTED_APP_MAIN_SHA\`"
+            echo "- preview wrapper head: \`$(git rev-parse HEAD)\`"
             echo "- Worker: \`$PREVIEW_WORKER\`"
-            echo "- URL: $PREVIEW_BASE_URL"
-            echo '- mode: staging / API mutations disabled'
-            echo '- live Chromium: real public Tree five-view click QA PASS'
+            echo "- entry URL: $PREVIEW_ENTRY_URL"
+            echo '- data: isolated read-only preview fixture; no DB writes'
+            echo '- live Chromium: desktop + phone + narrow/reduced-motion five-view click QA PASS'
             echo '- Production Worker touched: no'
           } >> "$GITHUB_STEP_SUMMARY"
