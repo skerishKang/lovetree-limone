@@ -40,12 +40,12 @@ type Family = {
 
 const TONES = ["#e45d8d", "#806ce4", "#26a2c4", "#d4942d", "#3aa37a", "#5279ca"];
 const FAMILY_CENTERS = [
-  { x: 1010, y: 1030 },
-  { x: 700, y: 1800 },
-  { x: 1035, y: 2580 },
-  { x: 700, y: 3360 },
-  { x: 990, y: 4140 },
-  { x: 690, y: 4880 },
+  { x: 660, y: 610 },
+  { x: 990, y: 1305 },
+  { x: 705, y: 2060 },
+  { x: 1010, y: 2800 },
+  { x: 690, y: 3540 },
+  { x: 950, y: 4290 },
 ];
 const PRIMARY_ANGLES = [-2.68, -1.92, -1.16, -.38];
 
@@ -144,8 +144,8 @@ export default function TreeRelationshipsPage() {
       depth: 0,
       familyId: null,
       hierarchy: "origin",
-      x: 740,
-      y: 560,
+      x: 618,
+      y: 628,
       tone: TONES[0],
     }];
 
@@ -191,7 +191,7 @@ export default function TreeRelationshipsPage() {
   const outgoing = selected ? edges.filter((edge) => edge.from.id === selected.id) : [];
   const activeFamilyIndex = activeFamilyId ? (familyIndexById.get(activeFamilyId) ?? null) : null;
   const cameraViewBox = useMemo(() => {
-    if (activeFamilyIndex === null) return "0 0 1700 2200";
+    if (activeFamilyIndex === null) return "0 0 1700 2100";
     const center = FAMILY_CENTERS[activeFamilyIndex] ?? FAMILY_CENTERS[0];
     const top = Math.max(0, center.y - 860);
     return `0 ${top} 1700 1800`;
