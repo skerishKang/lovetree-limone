@@ -1,23 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useTreeMoments } from "@/lib/use-tree-moments";
 import { useMomentUrlState } from "@/lib/use-moment-url";
+import type { LivingGlassPresentation } from "@/lib/source-track-57-living-glass";
+import { LivingGlassMomentGallery } from "@/app/components/moment-presentation/LivingGlassMomentGallery";
 import EmailAuthForm from "../../components/EmailAuthForm";
 import { TreeViewShell } from "../../components/TreeViewShell";
-import { MomentDetailModal } from "../../components/MomentDetailModal";
 import { MomentComposerModal } from "../../components/MomentComposerModal";
-import { MomentThumbnail } from "../../components/MomentThumbnail";
 import "../../styles/email-auth.css";
-import "../../styles/mvp-source57-moment-language.css";
-import {
-  formatTreeDate,
-  memoryDiscoveryDate,
-  sourceTypeLabel,
-  type MemoryRecord,
-} from "@/lib/tree-types";
+import "../../styles/source-track-57-living-glass.css";
+import "../../styles/source-track-57-living-glass-focus.css";
+import "../../styles/source-track-57-living-glass-repair.css";
+import "../../styles/source-track-57-living-glass-repair-motion.css";
+
+const SOURCE57_TONES = [
+  ["#8f70d6", "rgba(143,112,214,.52)"],
+  ["#d77ca7", "rgba(215,124,167,.48)"],
+  ["#d79a69", "rgba(215,154,105,.46)"],
+  ["#739bc7", "rgba(115,155,199,.44)"],
+  ["#7da58f", "rgba(125,165,143,.44)"],
+] as const;
+
+function mediaLabel(sourceType: string) {
+  const normalized = sourceType.toLowerCase();
+  if (normalized.includes("video") || normalized.includes("youtube")) return "VIDEO MOMENT";
+  if (normalized.includes("song")) return "SONG MOMENT";
+  if (normalized.includes("book")) return "BOOK MOMENT";
+  if (normalized.includes("travel")) return "TRAVEL MOMENT";
+  return "IMAGE MOMENT";
+}
 
 export default function TreeDetailPage() {
   const params = useParams<{ id: string | string[] }>();
@@ -38,9 +52,6 @@ export default function TreeDetailPage() {
     selectMoment,
     refresh,
     createMoment,
-    updateMoment,
-    deleteMoment,
-    highlightMomentId,
   } = useTreeMoments(treeId, highlightParam ?? undefined, momentParam ?? undefined);
 
   const { handleSelectMoment } = useMomentUrlState({
@@ -52,6 +63,22 @@ export default function TreeDetailPage() {
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+
+  const presentationById = useMemo<Record<string, LivingGlassPresentation>>(() => {
+    return Object.fromEntries(treeMoments.map((moment, index) => {
+      const [tone, aura] = SOURCE57_TONES[index % SOURCE57_TONES.length];
+      const connectionLabel = moment.parentId
+        ? (moment.connectionReason?.trim() || "이전 기억에서 이어진 순간")
+        : "이 LoveTree가 시작된 순간";
+      return [moment.id, {
+        tone,
+        aura,
+        mediaLabel: mediaLabel(moment.sourceType),
+        whyNext: moment.connectionReason?.trim() || "이 순간 뒤에 이어진 기억의 결을 따라가 보세요.",
+        connectionLabel,
+      }];
+    }));
+  }, [treeMoments]);
 
   if (authLoading || loading) {
     return <TreeViewShell treeId={treeId} activeView="tree"><div className="tree-page-state" aria-busy="true">러브트리를 불러오고 있어요…</div></TreeViewShell>;
@@ -84,87 +111,30 @@ export default function TreeDetailPage() {
       isOwner={isOwner}
       onAddMoment={() => setIsComposerOpen(true)}
     >
-      <section className="tree-detail-content source57-moment-language" data-mvp-source="57" aria-labelledby="tree-detail-title">
-        <div className="tree-detail-heading">
-          <div>
-            <p className="eyebrow">{tree.visibility === "private" ? "private love garden" : "a living love garden"}</p>
-            <h1 id="tree-detail-title">{tree.title}</h1>
-            <p>{tree.memo || "마음이 멈춘 순간들이 이어지는 러브트리"}</p>
-          </div>
-          <div className="tree-detail-meta">
-            <span>{tree.visibility === "private" ? "▣ 비공개" : "◉ 공개 러브트리"}</span>
-            <strong>{moments.length}개의 순간</strong>
-            <small>시작 {formatTreeDate(tree.createdAt)}</small>
-          </div>
-        </div>
+      <div className="source57-app" data-mvp-source="57" data-tree-id={treeId}>
+        <div className="source57-memory-haze" aria-hidden="true" />
+        <div className="source57-petal-trace" aria-hidden="true" />
+        <div className="source57-vignette" aria-hidden="true" />
 
-        <section className="memory-board" aria-labelledby="memory-list-title">
-          <div className="memory-board-heading">
-            <div><p className="eyebrow">connected moments</p><h2 id="memory-list-title">이어진 순간들</h2></div>
-            <span>{moments.length} moments</span>
-          </div>
-          {moments.length === 0 ? (
-            <div className="memory-empty"><span aria-hidden="true">✦</span><p>아직 기록된 순간이 없어요.</p>{isOwner ? <button className="button button-quiet" type="button" onClick={() => setIsComposerOpen(true)}>첫 순간 남기기</button> : null}</div>
-          ) : (
-            <div className="memory-list">
-              {treeMoments.map((moment, index) => {
-                const memory: MemoryRecord = moments.find((m) => m.id === moment.id) ?? moment as unknown as MemoryRecord;
-                const isHighlighted = moment.id === highlightMomentId;
-                const isSelected = moment.id === selectedMomentId;
-                return (
-                  <article
-                    className={`memory-record${index === 0 ? " memory-root" : ""}${isHighlighted ? " highlighted" : ""}${isSelected ? " selected" : ""}`}
-                    key={moment.id}
-                    onClick={() => handleSelectMoment(moment.id)}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSelectMoment(moment.id); } }}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={isSelected}
-                    aria-label={`${moment.title || "이름 없는 순간"} 상세 보기`}
-                  >
-                    <div className="memory-record-index">{String(treeMoments.length - index).padStart(2, "0")}</div>
-                    <div className={`memory-record-media memory-media-${index % 4}`}>
-                      {memory.thumbnail ? (
-                        <MomentThumbnail src={memory.thumbnail} alt="" sourceType={memory.sourceType} className="memory-record-img" placeholderClassName="memory-record-placeholder" />
-                      ) : (
-                        <span aria-hidden="true">{memory.sourceType === "song" ? "♫" : memory.sourceType === "book" ? "▤" : "✦"}</span>
-                      )}
-                    </div>
-                    <div className="memory-record-body">
-                      <div className="memory-record-meta"><span>{sourceTypeLabel(memory.sourceType)}</span><time>{formatTreeDate(memoryDiscoveryDate(memory))}</time></div>
-                      <h3>{moment.title || `순간 ${treeMoments.length - index}`}</h3>
-                      <p>{moment.memo || "이 순간에 남긴 마음"}</p>
-                      {memory.emotionTags && memory.emotionTags.length > 0 ? <div className="memory-tags">{memory.emotionTags.map((tag) => <span key={tag}>#{tag}</span>)}</div> : null}
-                      {memory.sourceUrl ? <a className="memory-source" href={memory.sourceUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>출처 열기 ↗</a> : null}
-                     {memory.parentId ? (
-                       <div className="moment-detail-parent">
-                         <span className="moment-detail-parent-label">이전 순간에서 이어짐</span>
-                         {memory.connectionReason && memory.connectionReason.trim() ? (
-                           <p className="moment-detail-parent-title">{memory.connectionReason}</p>
-                         ) : (
-                           <p className="moment-detail-parent-title timeline-relation-generic">이전 순간과 이어지는 관계</p>
-                         )}
-                       </div>
-                     ) : null}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          )}
+        <section className="source57-hero" aria-labelledby="tree-detail-title">
+          <p className="source57-eyebrow">LIVING GLASS · {tree.title}</p>
+          <h1 id="tree-detail-title">기억은 유리가 아니라, 빛을 머금은 순간이 됩니다.</h1>
+          <p>{tree.memo || "저장된 순간의 미디어와 감정, 시간과 연결 이유를 Living Glass surface 위에서 천천히 다시 만나보세요."}</p>
         </section>
-      </section>
 
-      <div className="source57-product-detail-scope" data-mvp-source="57">
-        <MomentDetailModal
-          key={selectedMomentId ?? "none"}
-          moment={selectedMoment}
-          isOwner={isOwner}
-          onClose={() => handleSelectMoment(null)}
-          onUpdate={updateMoment}
-          onDelete={deleteMoment}
-          parentOptions={moments}
-        />
+        {treeMoments.length > 0 ? (
+          <LivingGlassMomentGallery
+            moments={treeMoments}
+            presentationById={presentationById}
+            selectedId={selectedMomentId}
+            onSelectedIdChange={handleSelectMoment}
+          />
+        ) : (
+          <div className="tree-page-state">
+            <p>아직 기록된 순간이 없어요.</p>
+            {isOwner ? <button className="button button-quiet" type="button" onClick={() => setIsComposerOpen(true)}>첫 순간 남기기</button> : null}
+          </div>
+        )}
       </div>
 
       {isComposerOpen ? (
