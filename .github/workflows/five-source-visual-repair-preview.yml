@@ -145,11 +145,7 @@ jobs:
           }
 
           async function assertNoHorizontalOverflow(page, label) {
-            const metrics = await page.evaluate(() => ({
-              viewport: window.innerWidth,
-              body: document.body.scrollWidth,
-              root: document.documentElement.scrollWidth,
-            }));
+            const metrics = await page.evaluate(() => ({ viewport: window.innerWidth, body: document.body.scrollWidth, root: document.documentElement.scrollWidth }));
             assert.ok(metrics.body <= metrics.viewport, `${label}: body overflow ${metrics.body} > ${metrics.viewport}`);
             assert.ok(metrics.root <= metrics.viewport, `${label}: root overflow ${metrics.root} > ${metrics.viewport}`);
           }
@@ -194,15 +190,10 @@ jobs:
           }
 
           async function auditViewport({ name, width, height, reducedMotion = false }) {
-            const context = await browser.newContext({
-              viewport: { width, height },
-              hasTouch: width <= 390,
-              isMobile: width <= 390,
-            });
+            const context = await browser.newContext({ viewport: { width, height }, hasTouch: width <= 390, isMobile: width <= 390 });
             const page = await context.newPage();
             if (reducedMotion) await page.emulateMedia({ reducedMotion: 'reduce' });
             const records = [];
-
             try {
               const response = await page.goto(`${base}/trees/${treeId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
               assert.ok(response?.ok(), `${name}: entry route must be 2xx`);
@@ -277,3 +268,5 @@ jobs:
           path: preview-live-qa
           if-no-files-found: error
           retention-days: 14
+
+# retrigger after transient checkout stall; product tree unchanged
