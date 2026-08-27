@@ -190,13 +190,17 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   await assertMomentQuery(page, "m-child", `${name}-58-forward`);
 
   await clickView(page, "관계", "56", "m-child", `${name}-56`);
-  assert.ok(await page.getByText(/WHY NEXT ·/).count(), `${name}: Source56 relationship semantics missing`);
+  assert.equal(
+    await page.locator('[data-network-moment-id="m-child"]').getAttribute("aria-pressed"),
+    "true",
+    `${name}: Source56 selected-Moment relationship continuity missing`,
+  );
 
   await clickView(page, "탐색", "60", "m-child", `${name}-60`);
   assert.ok(await page.locator("canvas").count(), `${name}: Source60 3D projection canvas missing`);
 
   await clickView(page, "포털", "64", "m-child", `${name}-64`);
-  assert.ok(await page.getByText("Tree already resolved", { exact: true }).count(), `${name}: Source64 post-resolution boundary missing`);
+  assert.ok(await page.locator('[data-rendering="css3d-dom"]').count(), `${name}: Source64 CSS3D portal rendering missing`);
 
   await page.goBack({ waitUntil: "domcontentloaded" });
   await waitForSource(page, "60");

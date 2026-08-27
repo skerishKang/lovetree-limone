@@ -382,18 +382,19 @@ export default function TreeExplorePage() {
       <main className={styles.shell}>
         <header className={styles.hero}>
           <div>
-            <small>SOURCE 60 · CANONICAL DEEP EXPLORE</small>
+            <small>기억의 공간</small>
             <h1>3D Moment Cluster Explorer</h1>
           </div>
           <p>
-            {tree?.title ? `${tree.title}의 ` : ""}실제 Moment를 3D memory field로 봅니다. Cluster와 Bridge Moment는 현재 Tree에서 계산되는 보기 속성이며 저장되지 않습니다.
+            {tree?.title ? `${tree.title}의 ` : ""}Moment를 기억의 무리와 연결로 펼쳐봅니다. 서로 다른 기억 사이를 잇는
+            Bridge Moment를 발견하고, 전체 Tree 속에서 지금 선택한 순간의 위치를 살펴보세요.
           </p>
         </header>
-        <div className={styles.truth} aria-label="3D 탐색 데이터 권위">
-          <span>Moment / parent relation = canonical</span>
-          <span>Cluster / Bridge = VIEW_DERIVED</span>
-          <span>Canvas 2D software projection</span>
-          <span>new DB / API / schema = none</span>
+        <div className={styles.truth} aria-label="3D 탐색 안내">
+          <span>드래그로 회전</span>
+          <span>휠 또는 + / −로 확대</span>
+          <span>Moment를 눌러 선택</span>
+          <span>BRIDGE는 기억 무리를 잇는 순간</span>
         </div>
 
         {loading ? <div className={styles.state} aria-busy="true">3D 기억 필드를 불러오는 중…</div> : null}
@@ -402,7 +403,7 @@ export default function TreeExplorePage() {
         {!loading && !error ? (
           <div className={styles.explorer}>
             <aside className={styles.panel} aria-label="Moment cluster list">
-              <p className={styles.panelTitle}>Moments · semantic list</p>
+              <p className={styles.panelTitle}>Moments · memory map</p>
               {CLUSTERS.map((cluster) => {
                 const members = membersByCluster.get(cluster.key) ?? [];
                 if (members.length === 0) return null;
@@ -433,8 +434,8 @@ export default function TreeExplorePage() {
 
             <section className={styles.stage} ref={stageRef} aria-label="3D Moment field">
               <div className={styles.controls}>
-                <button className={styles.control} type="button" onClick={resetCamera}>RESET CAMERA</button>
-                {selectedMomentId ? <button className={styles.control} type="button" onClick={() => syncMomentToUrl(null)}>CLEAR MOMENT</button> : null}
+                <button className={styles.control} type="button" onClick={resetCamera}>시점 초기화</button>
+                {selectedMomentId ? <button className={styles.control} type="button" onClick={() => syncMomentToUrl(null)}>선택 해제</button> : null}
               </div>
               <canvas
                 ref={canvasRef}
@@ -450,31 +451,31 @@ export default function TreeExplorePage() {
                 onWheel={onWheel}
                 onKeyDown={onCanvasKeyDown}
               />
-              <p className={styles.hint}>drag rotate · wheel zoom · click Moment · keyboard arrows / + / − / Home</p>
+              <p className={styles.hint}>드래그 회전 · 휠 확대/축소 · Moment 선택 · 방향키 / + / − / Home</p>
             </section>
 
-            <aside className={styles.panel} aria-label="Selected Moment cluster inspector">
-              <p className={styles.panelTitle}>Inspector</p>
+            <aside className={styles.panel} aria-label="선택한 Moment 탐색 상세">
+              <p className={styles.panelTitle}>선택한 순간</p>
               {selected ? (
                 <div className={styles.inspector}>
-                  <p className={styles.meta}>{clusterSpec(selected.cluster).label}{selectedBridge ? " · BRIDGE MOMENT" : ""}</p>
+                  <p className={styles.meta}>{clusterSpec(selected.cluster).label}{selectedBridge ? " · BRIDGE" : ""}</p>
                   <h2>{selected.title}</h2>
                   <p className={styles.meta}>{selected.sourceType.toUpperCase()}</p>
                   <div className={styles.tagRow}>{selected.emotionTags.map((tag) => <span className={styles.tag} key={tag}>#{tag}</span>)}</div>
                   <p className={styles.memo}>{selected.memo}</p>
                   <div className={styles.why}>
-                    <strong>WHY NEXT</strong>
+                    <strong>이어진 이유</strong>
                     <p>{selected.connectionReason || "이전 Moment와 이어지는 이유가 아직 기록되지 않았습니다."}</p>
                   </div>
                   {selectedBridge ? (
                     <div className={styles.bridgeBox}>
-                      <strong>VIEW-DERIVED BRIDGE</strong>
+                      <strong>기억 사이를 잇는 순간</strong>
                       <p>{selectedParent ? clusterSpec(selectedParent.cluster).label : "시작"} → {clusterSpec(selected.cluster).label}</p>
                     </div>
                   ) : null}
                   {selectedChildren.length > 0 ? (
                     <div className={styles.bridgeBox}>
-                      <strong>NEXT MOMENTS</strong>
+                      <strong>다음으로 이어진 순간</strong>
                       <p>{selectedChildren.map((child) => child.title).join(" · ")}</p>
                     </div>
                   ) : null}

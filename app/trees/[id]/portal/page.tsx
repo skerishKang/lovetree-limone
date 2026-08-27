@@ -95,23 +95,23 @@ export default function TreePortalPage() {
 
       <main className={styles.stage} onWheel={onWheel}>
         <div className={styles.ambient} aria-hidden="true" />
-        <div className={styles.truth} aria-label="Portal authority">
-          <span>Tree already resolved</span>
-          <span>Moment = canonical</span>
-          <span>orbit = VIEW_DERIVED</span>
-          <span>V4EntryResolver untouched</span>
+        <div className={styles.truth} aria-label="포털 사용 안내">
+          <span>Moment를 선택해 이어보기</span>
+          <span>휠 또는 버튼으로 궤도 돌리기</span>
+          <span>선택한 순간에서 다른 보기 열기</span>
+          <span>Esc 또는 닫기로 돌아가기</span>
         </div>
         <header className={styles.welcome}>
-          <small>WELCOME BACK · SOURCE 64</small>
+          <small>WELCOME BACK</small>
           <h1>{tree?.title || "나의 LoveTree"}</h1>
-          <p>이미 선택된 Tree 안에서 부유하는 Moment를 다시 만납니다. 이 포털은 Tree를 결정하지 않고, 결정된 Tree로 다시 들어가는 시각적 입구만 담당합니다.</p>
+          <p>다시 돌아온 러브트리에서 떠 있는 Moment를 천천히 둘러보세요. 마음이 머무는 순간을 고르면 그 기억부터 자연스럽게 이어갈 수 있습니다.</p>
         </header>
 
-        {loading ? <div className={styles.state} aria-busy="true">Moment orbit를 불러오는 중…</div> : null}
+        {loading ? <div className={styles.state} aria-busy="true">기억을 불러오는 중…</div> : null}
         {!loading && error ? <div className={styles.state} role="alert">{error}</div> : null}
 
         {!loading && !error ? (
-          <section className={styles.scene} aria-label="Floating Moment portal">
+          <section className={styles.scene} aria-label="떠 있는 Moment 포털">
             <div className={styles.world} ref={worldRef} data-rendering="css3d-dom" data-reduced-motion={String(reducedMotion)}>
               {orbitMoments.map((moment, index) => {
                 const count = Math.max(orbitMoments.length, 1);
@@ -155,7 +155,7 @@ export default function TreePortalPage() {
             </button>
 
             {listOpen ? (
-              <div className={styles.list} role="listbox" aria-label="Portal Moment index">
+              <div className={styles.list} role="listbox" aria-label="포털 Moment 목록">
                 {treeMoments.map((moment) => (
                   <button
                     key={moment.id}
@@ -171,10 +171,10 @@ export default function TreePortalPage() {
               </div>
             ) : null}
 
-            <div className={styles.controls} aria-label="Portal orbit controls">
-              <button className={styles.control} type="button" onClick={() => rotate(-24)}>← ROTATE</button>
-              <button className={styles.control} type="button" onClick={() => rotate(24)}>ROTATE →</button>
-              {selectedMomentId ? <button className={styles.control} type="button" onClick={() => syncMomentToUrl(null)}>CLOSE MOMENT</button> : null}
+            <div className={styles.controls} aria-label="포털 궤도 조작">
+              <button className={styles.control} type="button" onClick={() => rotate(-24)}>← 돌리기</button>
+              <button className={styles.control} type="button" onClick={() => rotate(24)}>돌리기 →</button>
+              {selectedMomentId ? <button className={styles.control} type="button" onClick={() => syncMomentToUrl(null)}>선택 닫기</button> : null}
             </div>
           </section>
         ) : null}
@@ -202,16 +202,16 @@ export default function TreePortalPage() {
                 ) : <span className={styles.mediaFallback}>{selected.sourceType.toUpperCase()}</span>}
               </div>
               <div className={styles.viewerBody}>
-                <small>SELECTED MOMENT · {selected.emotionTags.join(" · ") || "기억"}</small>
+                <small>선택한 순간 · {selected.emotionTags.join(" · ") || "기억"}</small>
                 <h2 id="source64-viewer-title">{selected.title || "제목 없는 Moment"}</h2>
                 <p>{selected.memo || "이 순간에 남긴 마음"}</p>
                 <div className={styles.why}>
-                  <strong>WHY NEXT</strong>
+                  <strong>이어진 이유</strong>
                   <p>{selected.connectionReason || (selected.parentId ? "이전 Moment와 연결되어 있습니다." : "이 Moment에서 LoveTree가 시작됩니다.")}</p>
                 </div>
                 {children.length > 0 ? (
                   <div className={styles.why}>
-                    <strong>NEXT MOMENT</strong>
+                    <strong>다음으로 이어진 순간</strong>
                     {children.map((child) => (
                       <button key={child.id} type="button" className={styles.control} onClick={() => syncMomentToUrl(child.id)}>
                         {child.title || "다음 Moment"} →
