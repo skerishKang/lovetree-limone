@@ -31,6 +31,12 @@ test("Source60 keeps canonical ViewSwitcher above the interactive explore canvas
   assert.match(styles, /z-index:\s*3/);
 });
 
+test("narrow ViewSwitcher keeps non-shrinking single-line hit targets", () => {
+  assert.match(viewSwitcher, /flex:\s*"0 0 auto"/);
+  assert.match(viewSwitcher, /whiteSpace:\s*"nowrap"/);
+  assert.match(viewSwitcher, /overflowX:\s*"auto"/);
+});
+
 test("cluster and bridge identities are view-derived only", () => {
   assert.match(route, /Cluster \/ Bridge = VIEW_DERIVED/);
   assert.match(route, /parent\.cluster !== moment\.cluster/);
