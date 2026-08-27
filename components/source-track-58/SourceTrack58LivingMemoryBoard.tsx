@@ -36,6 +36,7 @@ type SourceTrack58LivingMemoryBoardProps = {
   treeId: string;
   initialMomentId?: string | null;
   onMomentChange?: (momentId: string | null) => void;
+  mode?: "staging" | "product";
 };
 
 function formatMomentDate(moment: BoardMoment) {
@@ -88,7 +89,9 @@ export default function SourceTrack58LivingMemoryBoard({
   treeId,
   initialMomentId,
   onMomentChange,
+  mode = "staging",
 }: SourceTrack58LivingMemoryBoardProps) {
+  const productMode = mode === "product";
   const {
     tree,
     canonicalMoments,
@@ -300,15 +303,16 @@ export default function SourceTrack58LivingMemoryBoard({
     <main
       className={styles.shell}
       data-source-track="58"
+      data-source58-mode={mode}
       data-reduced-motion={String(reducedMotion)}
       data-theme={theme}
     >
       <div className={styles.ambient} aria-hidden="true" />
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>LOVETREE · SOURCE 58 NATIVE CANDIDATE</p>
+          <p className={styles.eyebrow}>{productMode ? "LOVETREE · LIVING MEMORY" : "LOVETREE · SOURCE 58 NATIVE CANDIDATE"}</p>
           <h1>Living Memory Pinboard</h1>
-          <p className={styles.subtitle}>{tree?.title || "MYTREE canonical workspace"}</p>
+          <p className={styles.subtitle}>{tree?.title || (productMode ? "나의 기억 보드" : "MYTREE canonical workspace")}</p>
         </div>
         <div className={styles.headerActions}>
           <button type="button" className={styles.ghostButton} onClick={() => void refresh()} disabled={loading}>
@@ -320,16 +324,25 @@ export default function SourceTrack58LivingMemoryBoard({
         </div>
       </header>
 
-      <section className={styles.truthStrip} aria-label="데이터 권위">
-        <strong>CANONICAL TRUTH</strong>
-        <span>Moment · parentId / connectionReason · sourceType / sourceUrl / thumbnail</span>
-        <span>Board position · theme · selection · cinema = VIEW_DERIVED</span>
-        <span>새 DB / API / Auth / schema 없음</span>
-      </section>
+      {productMode ? (
+        <section className={styles.truthStrip} aria-label="기억 보드 사용 안내">
+          <strong>기억을 펼쳐보세요</strong>
+          <span>카드를 선택해 한 순간에 집중</span>
+          <span>실로 이어진 기억의 흐름 확인</span>
+          <span>테마를 바꾸거나 Cinema로 다시 보기</span>
+        </section>
+      ) : (
+        <section className={styles.truthStrip} aria-label="데이터 권위">
+          <strong>CANONICAL TRUTH</strong>
+          <span>Moment · parentId / connectionReason · sourceType / sourceUrl / thumbnail</span>
+          <span>Board position · theme · selection · cinema = VIEW_DERIVED</span>
+          <span>새 DB / API / Auth / schema 없음</span>
+        </section>
+      )}
 
       {error ? (
         <section className={styles.statusCard} role="alert">
-          <strong>Canonical Tree를 불러오지 못했습니다.</strong>
+          <strong>{productMode ? "러브트리를 불러오지 못했습니다." : "Canonical Tree를 불러오지 못했습니다."}</strong>
           <span>{error}</span>
           <button type="button" onClick={() => void refresh()}>다시 시도</button>
         </section>
@@ -356,7 +369,7 @@ export default function SourceTrack58LivingMemoryBoard({
                   className={styles.thread}
                   viewBox="0 0 100 100"
                   preserveAspectRatio="none"
-                  aria-label="Canonical Connection living thread"
+                  aria-label={productMode ? "Moment 사이를 잇는 기억의 실" : "Canonical Connection living thread"}
                 >
                   {connections.map((connection) => {
                     const activePath = Boolean(
@@ -376,8 +389,8 @@ export default function SourceTrack58LivingMemoryBoard({
                 {moments.length === 0 ? (
                   <div className={styles.emptyBoard}>
                     <span className={styles.emptyPin} aria-hidden="true" />
-                    <h2>아직 pinned Moment가 없습니다.</h2>
-                    <p>이 화면은 Source58 demo card를 대신 만들지 않습니다.</p>
+                    <h2>{productMode ? "아직 보드에 펼칠 Moment가 없습니다." : "아직 pinned Moment가 없습니다."}</h2>
+                    <p>{productMode ? "Moment를 기록하면 이곳에서 기억을 카드처럼 펼쳐볼 수 있습니다." : "이 화면은 Source58 demo card를 대신 만들지 않습니다."}</p>
                   </div>
                 ) : null}
 
@@ -433,7 +446,7 @@ export default function SourceTrack58LivingMemoryBoard({
               </div>
 
               <nav className={styles.themeRail} aria-label="Board theme">
-                <span>BOARD THEME · LOCAL VIEW</span>
+                <span>{productMode ? "보드 분위기" : "BOARD THEME · LOCAL VIEW"}</span>
                 <div>
                   {SOURCE_58_BOARD_THEMES.map((item) => (
                     <button
@@ -452,18 +465,18 @@ export default function SourceTrack58LivingMemoryBoard({
 
           <aside
             className={styles.inspector}
-            aria-label="Selected Moment inspector"
+            aria-label={productMode ? "선택한 Moment 상세" : "Selected Moment inspector"}
             data-mobile-open={String(mobileInspectorOpen)}
           >
             {selected ? (
               <>
                 <div className={styles.inspectorTopline} data-source58-inspector-topline>
-                  <span>SELECTED MOMENT</span>
+                  <span>{productMode ? "선택한 Moment" : "SELECTED MOMENT"}</span>
                   <span>{selectedIndex + 1} / {moments.length}</span>
                   <button
                     type="button"
                     data-mobile-inspector-close
-                    aria-label="Close selected Moment inspector"
+                    aria-label={productMode ? "선택한 Moment 상세 닫기" : "Close selected Moment inspector"}
                     style={{ display: "none" }}
                     onClick={() => setMobileInspectorOpen(false)}
                   >
@@ -475,7 +488,7 @@ export default function SourceTrack58LivingMemoryBoard({
                   <div className={styles.inspectorMedia} data-source58-inspector-media>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={selected.album.thumbnail} alt="" referrerPolicy="no-referrer" />
-                    <button type="button" onClick={() => openCinema(selected.id)}>REPLAY IN CINEMA</button>
+                    <button type="button" onClick={() => openCinema(selected.id)}>{productMode ? "Cinema로 다시 보기" : "REPLAY IN CINEMA"}</button>
                   </div>
                 ) : null}
 
@@ -493,7 +506,9 @@ export default function SourceTrack58LivingMemoryBoard({
                       onClick={beginEdit}
                       disabled={!isOwner}
                     >
-                      {isOwner ? "EDIT CANONICAL MOMENT" : "READ ONLY · OWNER EDIT"}
+                      {productMode
+                        ? (isOwner ? "Moment 편집" : "소유자만 편집할 수 있습니다")
+                        : (isOwner ? "EDIT CANONICAL MOMENT" : "READ ONLY · OWNER EDIT")}
                     </button>
                   </div>
                 ) : (
@@ -506,20 +521,20 @@ export default function SourceTrack58LivingMemoryBoard({
                     }}
                   >
                     <label>
-                      TITLE
+                      {productMode ? "제목" : "TITLE"}
                       <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)} maxLength={160} />
                     </label>
                     <label>
-                      MEMO
+                      {productMode ? "메모" : "MEMO"}
                       <textarea value={draftMemo} onChange={(event) => setDraftMemo(event.target.value)} rows={5} />
                     </label>
                     <div className={styles.editActions}>
-                      <button type="button" onClick={closeEdit}>CANCEL</button>
+                      <button type="button" onClick={closeEdit}>{productMode ? "취소" : "CANCEL"}</button>
                       <button type="submit" disabled={saveState === "saving"}>
-                        {saveState === "saving" ? "SAVING…" : "SAVE"}
+                        {saveState === "saving" ? (productMode ? "저장 중…" : "SAVING…") : (productMode ? "저장" : "SAVE")}
                       </button>
                     </div>
-                    {saveState === "error" ? <p role="alert">Canonical Moment 저장에 실패했습니다.</p> : null}
+                    {saveState === "error" ? <p role="alert">{productMode ? "Moment 저장에 실패했습니다." : "Canonical Moment 저장에 실패했습니다."}</p> : null}
                   </form>
                 )}
 
@@ -529,14 +544,14 @@ export default function SourceTrack58LivingMemoryBoard({
                   aria-labelledby="source58-why-next"
                 >
                   <div className={styles.connectionHeading} data-source58-connection-heading>
-                    <span>CONNECTION</span>
-                    <strong id="source58-why-next">WHY NEXT</strong>
+                    <span>{productMode ? "기억의 연결" : "CONNECTION"}</span>
+                    <strong id="source58-why-next">{productMode ? "이어진 이유" : "WHY NEXT"}</strong>
                   </div>
 
                   {selected.parentId ? (
                     <div className={styles.incomingConnection} data-source58-incoming-connection>
                       <small>이 Moment가 이어진 이유</small>
-                      <p>{selected.connectionReason || "connectionReason이 비어 있습니다."}</p>
+                      <p>{selected.connectionReason || (productMode ? "이어진 이유가 아직 기록되지 않았습니다." : "connectionReason이 비어 있습니다.")}</p>
                       {parent ? (
                         <button type="button" onClick={() => chooseMoment(parent.id, true)}>
                           ← {parent.title || "이전 Moment"}
@@ -544,22 +559,24 @@ export default function SourceTrack58LivingMemoryBoard({
                       ) : null}
                     </div>
                   ) : (
-                    <p className={styles.rootMoment} data-source58-root-moment>ROOT MOMENT · parentId 없음</p>
+                    <p className={styles.rootMoment} data-source58-root-moment>{productMode ? "이 Moment에서 기억의 흐름이 시작됩니다." : "ROOT MOMENT · parentId 없음"}</p>
                   )}
 
                   <div className={styles.nextChoices} data-source58-next-choices>
-                    <small>{children.length > 1 ? `NEXT MOMENT · ${children.length} CHOICES` : "NEXT MOMENT"}</small>
+                    <small>{productMode
+                      ? (children.length > 1 ? `다음으로 이어진 Moment · ${children.length}개` : "다음으로 이어진 Moment")
+                      : (children.length > 1 ? `NEXT MOMENT · ${children.length} CHOICES` : "NEXT MOMENT")}</small>
                     {children.length > 0 ? (
                       children.map((child) => (
                         <button key={child.id} type="button" onClick={() => chooseMoment(child.id, true)}>
                           <span>{child.title || "제목 없는 Moment"}</span>
-                          <em>{child.connectionReason || "WHY NEXT 미기록"}</em>
+                          <em>{child.connectionReason || (productMode ? "이어진 이유 미기록" : "WHY NEXT 미기록")}</em>
                         </button>
                       ))
                     ) : moments.length > 1 ? (
                       <button type="button" onClick={() => chooseRelativeMoment(1)}>
                         <span>시간 순서의 다음 Moment</span>
-                        <em>직접 child Connection 없음</em>
+                        <em>{productMode ? "직접 이어진 다음 기억은 없습니다." : "직접 child Connection 없음"}</em>
                       </button>
                     ) : (
                       <p>연결된 다음 Moment가 없습니다.</p>
@@ -575,13 +592,13 @@ export default function SourceTrack58LivingMemoryBoard({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    OPEN CANONICAL MEDIA SOURCE ↗
+                    {productMode ? "원본 미디어 열기 ↗" : "OPEN CANONICAL MEDIA SOURCE ↗"}
                   </a>
                 ) : null}
               </>
             ) : (
               <div className={styles.noSelection}>
-                <h2>Select a Moment</h2>
+                <h2>{productMode ? "Moment를 선택하세요" : "Select a Moment"}</h2>
                 <p>핀보드의 카드를 선택하세요.</p>
               </div>
             )}
@@ -589,11 +606,19 @@ export default function SourceTrack58LivingMemoryBoard({
         </div>
       ) : null}
 
-      <footer className={styles.footer}>
-        <span>{SOURCE_TRACK_58_STAGING.revision}</span>
-        <span>Source SHA256 · {SOURCE_TRACK_58_STAGING.sha256.slice(0, 12)}…</span>
-        <span>STAGING ONLY · NOT LINEAGE 58</span>
-      </footer>
+      {productMode ? (
+        <footer className={styles.footer}>
+          <span>Living Memory Board</span>
+          <span>선택한 Moment를 중심으로 기억을 이어봅니다.</span>
+          <span>테마와 재생 방식은 언제든 바꿀 수 있습니다.</span>
+        </footer>
+      ) : (
+        <footer className={styles.footer}>
+          <span>{SOURCE_TRACK_58_STAGING.revision}</span>
+          <span>Source SHA256 · {SOURCE_TRACK_58_STAGING.sha256.slice(0, 12)}…</span>
+          <span>STAGING ONLY · NOT LINEAGE 58</span>
+        </footer>
+      )}
 
       {cinemaOpen && moments.length > 0 ? (
         <CinemaReplay
@@ -602,6 +627,7 @@ export default function SourceTrack58LivingMemoryBoard({
           playing={cinemaPlaying && !reducedMotion}
           reducedMotion={reducedMotion}
           embedRequested={embedRequested}
+          productMode={productMode}
           onIndex={setCinemaMomentIndex}
           onPlaying={setCinemaPlaying}
           onEmbedRequested={requestCinemaEmbed}
@@ -618,6 +644,7 @@ function CinemaReplay({
   playing,
   reducedMotion,
   embedRequested,
+  productMode,
   onIndex,
   onPlaying,
   onEmbedRequested,
@@ -628,6 +655,7 @@ function CinemaReplay({
   playing: boolean;
   reducedMotion: boolean;
   embedRequested: boolean;
+  productMode: boolean;
   onIndex: (index: number) => void;
   onPlaying: (playing: boolean) => void;
   onEmbedRequested: () => void;
@@ -722,7 +750,7 @@ function CinemaReplay({
 
           {embedUrl && !embedRequested ? (
             <button className={styles.playOverlay} type="button" onClick={onEmbedRequested}>
-              PLAY CANONICAL YOUTUBE
+              {productMode ? "YOUTUBE에서 재생" : "PLAY CANONICAL YOUTUBE"}
             </button>
           ) : null}
         </div>
@@ -734,7 +762,7 @@ function CinemaReplay({
           <h3>{moment.title || "제목 없는 Moment"}</h3>
           <blockquote>{moment.memo || moment.connectionReason || "기록된 메모가 없습니다."}</blockquote>
           {moment.connectionReason ? (
-            <span className={styles.cinemaReason}>WHY NEXT · {moment.connectionReason}</span>
+            <span className={styles.cinemaReason}>{productMode ? "이어진 이유" : "WHY NEXT"} · {moment.connectionReason}</span>
           ) : null}
           {sourceUrl ? (
             <a href={sourceUrl} target="_blank" rel="noreferrer">
@@ -743,7 +771,9 @@ function CinemaReplay({
           ) : null}
           {embedUrl ? (
             <small>
-              Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다. 원본 링크 fallback을 항상 유지합니다.
+              {productMode
+                ? "재생이 열리지 않으면 원본 링크에서 이어서 볼 수 있습니다."
+                : "Embed playback은 실행 환경 정책에 따라 차단될 수 있습니다. 원본 링크 fallback을 항상 유지합니다."}
             </small>
           ) : null}
         </div>
@@ -751,11 +781,11 @@ function CinemaReplay({
 
       <footer className={styles.cinemaControls}>
         <button type="button" onClick={() => onPlaying(!playing)} disabled={reducedMotion}>
-          {reducedMotion ? "REDUCED MOTION" : playing ? "PAUSE" : "RESUME"}
+          {reducedMotion ? (productMode ? "모션 줄이기 사용 중" : "REDUCED MOTION") : playing ? (productMode ? "일시정지" : "PAUSE") : (productMode ? "계속 재생" : "RESUME")}
         </button>
-        <button type="button" onClick={() => onIndex((index - 1 + moments.length) % moments.length)}>PREV</button>
+        <button type="button" onClick={() => onIndex((index - 1 + moments.length) % moments.length)}>{productMode ? "이전" : "PREV"}</button>
         <label>
-          <span>SCRUB</span>
+          <span>{productMode ? "Moment 이동" : "SCRUB"}</span>
           <input
             aria-label="Cinema Moment scrubber"
             type="range"
@@ -766,8 +796,8 @@ function CinemaReplay({
             onChange={(event) => onIndex(Number(event.target.value))}
           />
         </label>
-        <button type="button" onClick={() => onIndex((index + 1) % moments.length)}>NEXT</button>
-        <button type="button" onClick={onExit}>EXIT TO BOARD</button>
+        <button type="button" onClick={() => onIndex((index + 1) % moments.length)}>{productMode ? "다음" : "NEXT"}</button>
+        <button type="button" onClick={onExit}>{productMode ? "보드로 돌아가기" : "EXIT TO BOARD"}</button>
       </footer>
     </div>
   );
