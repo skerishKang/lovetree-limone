@@ -1,0 +1,71 @@
+name: Issue 510 Tree view dedupe concurrency
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'server/api/social.ts'
+      - 'db/schema.ts'
+      - 'drizzle/**'
+      - 'tests/tree-view-dedupe-concurrency-contract.test.mjs'
+      - 'tests/integration/tree-view-dedupe-concurrency.mjs'
+      - '.github/workflows/issue510-tree-view-dedupe-concurrency.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tree-view-dedupe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: lovetree_tree_view_510
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Focused deterministic-window and DB-authority contract
+        run: node --import tsx --test tests/tree-view-dedupe-concurrency-contract.test.mjs
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Database schema check
+        run: npm run db:check
+
+      - name: Real PostgreSQL concurrent/retry dedupe proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATABASE_URL="postgres://postgres@127.0.0.1:5432/lovetree_tree_view_510" \
+            node --import tsx tests/integration/tree-view-dedupe-concurrency.mjs
