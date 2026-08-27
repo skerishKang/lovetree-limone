@@ -70,8 +70,8 @@ assert.equal(gaps["CODEX:03"].bytes, 32775);
 assert.equal(gaps["CODEX:03"].sha256, "47dee98f61008ee1c054fb6055717f1e15346e30b039f7e0080e3d54ffe3daef");
 assert.equal(gaps["CODEX:03"].new_subject_app, false);
 
-assert.equal(codex.summary.primary_drive_design_folder_count, 20);
-assert.equal(codex.summary.normalized_primary_family_count, 18);
+assert.equal(codex.counts.primaryCodexDesignFolders, 20);
+assert.equal(codex.counts.normalizedPrimaryCodexFamilies, 18);
 
 for (const [job, review] of Object.entries(current.product_jobs)) {
   assert.equal(review.ground_up_new_native, false, `${job} cannot authorize broad ground-up native work`);
