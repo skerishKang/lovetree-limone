@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   formatTreeDate,
@@ -71,6 +73,8 @@ function formatOffset(seconds: number | null | undefined): string | null {
 type PanelMode = "view" | "edit" | "delete-confirm";
 
 export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete, parentOptions }: MomentDetailModalProps) {
+  const params = useParams<{ id: string | string[] }>();
+  const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const [mode, setMode] = useState<PanelMode>("view");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -146,6 +150,8 @@ export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete
 
   const parentMoment = moment.parentId ? parentOptions.find((m) => m.id === moment.parentId) : undefined;
   const offset = formatOffset(moment.videoOffsetSeconds ?? videoOffsetSecondsFromUrl(moment.sourceUrl || ""));
+  const crossViewSuffix = `?moment=${encodeURIComponent(moment.id)}`;
+  const encodedTreeId = encodeURIComponent(treeId);
 
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
@@ -217,6 +223,32 @@ export function MomentDetailModal({ moment, isOwner, onClose, onUpdate, onDelete
                 )}
               </div>
             ) : null}
+
+            {treeId ? (
+              <nav
+                aria-label="이 Moment를 다른 방식으로 보기"
+                data-semantic-moment-actions="memory"
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 8,
+                  marginBlockStart: 18,
+                  paddingBlockStart: 14,
+                  borderBlockStart: "1px solid rgba(127,127,127,.24)",
+                }}
+              >
+                <Link className="button button-quiet" data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/board${crossViewSuffix}`}>
+                  보드에서 보기
+                </Link>
+                <Link className="button button-quiet" data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/relationships${crossViewSuffix}`}>
+                  왜 이어졌는지 보기
+                </Link>
+                <Link className="button button-quiet" data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/explore${crossViewSuffix}`}>
+                  기억 세계에서 탐색
+                </Link>
+              </nav>
+            ) : null}
+
             {isOwner ? <div className="moment-detail-actions"><button className="button button-quiet" type="button" onClick={() => { setMode("edit"); setFeedback(null); }}>수정</button><button className="button button-quiet" type="button" onClick={() => { setMode("delete-confirm"); setFeedback(null); }}>삭제</button></div> : null}
           </>
         )}
