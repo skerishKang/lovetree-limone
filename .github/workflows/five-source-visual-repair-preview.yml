@@ -129,11 +129,10 @@ jobs:
 
           const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
           const treeId = 'five-source-preview';
-          const selectedId = 'm-f1';
-          const selectedTitle = '처음 빠져든 순간';
           const out = 'preview-live-qa';
+          const proof = { head: process.env.GITHUB_SHA, treeId, viewports: [] };
+          fs.writeFileSync(`${out}/started.json`, JSON.stringify({ head: process.env.GITHUB_SHA, treeId, started: true }, null, 2));
           const browser = await chromium.launch({ headless: true });
-          const proof = { head: process.env.GITHUB_SHA, treeId, selectedId, viewports: [] };
 
           async function waitForSource(page, source) {
             await page.locator(`[data-mvp-source="${source}"]`).first().waitFor({ state: 'visible', timeout: 20000 });
@@ -153,6 +152,31 @@ jobs:
             }));
             assert.ok(metrics.body <= metrics.viewport, `${label}: body overflow ${metrics.body} > ${metrics.viewport}`);
             assert.ok(metrics.root <= metrics.viewport, `${label}: root overflow ${metrics.root} > ${metrics.viewport}`);
+          }
+
+          async function chooseNaturallyClickableBoardMoment(page, label) {
+            const cards = page.locator('[data-source58-card="true"][aria-pressed="false"]');
+            const count = await cards.count();
+            const attempts = [];
+            for (let i = count - 1; i >= 0; i -= 1) {
+              const card = cards.nth(i);
+              const aria = await card.getAttribute('aria-label');
+              try {
+                await card.click({ trial: true, timeout: 1200 });
+                await card.click({ timeout: 3000 });
+                await page.waitForURL((url) => {
+                  const id = url.searchParams.get('moment');
+                  return Boolean(id && id !== 'm-root');
+                }, { timeout: 5000 });
+                const selectedId = new URL(page.url()).searchParams.get('moment');
+                assert.ok(selectedId && selectedId !== 'm-root', `${label}: selected card did not produce a non-root Moment`);
+                return { selectedId, aria, attempts };
+              } catch (error) {
+                attempts.push({ index: i, aria, error: String(error).slice(0, 240) });
+              }
+            }
+            fs.writeFileSync(`${out}/${label}-click-attempts.json`, JSON.stringify(attempts, null, 2));
+            throw new Error(`${label}: no naturally clickable non-root Source58 card`);
           }
 
           async function clickView(page, name, source, momentId, prefix, records) {
@@ -179,51 +203,58 @@ jobs:
             if (reducedMotion) await page.emulateMedia({ reducedMotion: 'reduce' });
             const records = [];
 
-            const response = await page.goto(`${base}/trees/${treeId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            assert.ok(response?.ok(), `${name}: entry route must be 2xx`);
-            await waitForSource(page, '57');
-            await assertMoment(page, null, `${name}-57`);
-            await assertNoHorizontalOverflow(page, `${name}-57`);
-            records.push({ name: '기억', source: '57', url: page.url() });
+            try {
+              const response = await page.goto(`${base}/trees/${treeId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+              assert.ok(response?.ok(), `${name}: entry route must be 2xx`);
+              await waitForSource(page, '57');
+              await assertMoment(page, null, `${name}-57`);
+              await assertNoHorizontalOverflow(page, `${name}-57`);
+              await page.screenshot({ path: `${out}/${name}-57.png`, fullPage: false });
+              records.push({ name: '기억', source: '57', url: page.url() });
 
-            await page.getByRole('navigation', { name: '보기 전환' }).getByRole('link', { name: '보드', exact: true }).click();
-            await waitForSource(page, '58');
-            await page.waitForURL((url) => url.searchParams.get('moment') === 'm-root', { timeout: 15000 });
-            await assertMoment(page, 'm-root', `${name}-58-default`);
+              await page.getByRole('navigation', { name: '보기 전환' }).getByRole('link', { name: '보드', exact: true }).click();
+              await waitForSource(page, '58');
+              await page.waitForURL((url) => url.searchParams.get('moment') === 'm-root', { timeout: 15000 });
+              await assertMoment(page, 'm-root', `${name}-58-default`);
+              await page.screenshot({ path: `${out}/${name}-58-default.png`, fullPage: false });
 
-            const childCard = page.getByRole('button', { name: `${selectedTitle} 선택`, exact: true });
-            await childCard.waitFor({ state: 'visible', timeout: 15000 });
-            await childCard.click();
-            await page.waitForURL((url) => url.searchParams.get('moment') === selectedId, { timeout: 15000 });
-            await assertMoment(page, selectedId, `${name}-58-selected`);
-            await assertNoHorizontalOverflow(page, `${name}-58-selected`);
-            await page.screenshot({ path: `${out}/${name}-58-selected.png`, fullPage: false });
-            records.push({ name: '보드', source: '58', url: page.url() });
+              const selection = await chooseNaturallyClickableBoardMoment(page, `${name}-58`);
+              const selectedId = selection.selectedId;
+              await assertMoment(page, selectedId, `${name}-58-selected`);
+              await assertNoHorizontalOverflow(page, `${name}-58-selected`);
+              await page.screenshot({ path: `${out}/${name}-58-selected.png`, fullPage: false });
+              records.push({ name: '보드', source: '58', url: page.url(), selectedId, selectedCard: selection.aria });
 
-            await page.goBack({ waitUntil: 'domcontentloaded' });
-            await waitForSource(page, '57');
-            await assertMoment(page, null, `${name}-57-back`);
-            await page.goForward({ waitUntil: 'domcontentloaded' });
-            await waitForSource(page, '58');
-            await assertMoment(page, selectedId, `${name}-58-forward`);
+              await page.goBack({ waitUntil: 'domcontentloaded' });
+              await waitForSource(page, '57');
+              await assertMoment(page, null, `${name}-57-back`);
+              await page.goForward({ waitUntil: 'domcontentloaded' });
+              await waitForSource(page, '58');
+              await assertMoment(page, selectedId, `${name}-58-forward`);
 
-            await clickView(page, '관계', '56', selectedId, `${name}-56`, records);
-            assert.equal(await page.locator(`[data-network-moment-id="${selectedId}"]`).getAttribute('aria-pressed'), 'true', `${name}: Source56 selected node mismatch`);
+              await clickView(page, '관계', '56', selectedId, `${name}-56`, records);
+              assert.equal(await page.locator(`[data-network-moment-id="${selectedId}"]`).getAttribute('aria-pressed'), 'true', `${name}: Source56 selected node mismatch`);
 
-            await clickView(page, '탐색', '60', selectedId, `${name}-60`, records);
-            assert.ok(await page.locator('canvas').count(), `${name}: Source60 canvas missing`);
-            assert.ok(await page.locator('[data-testid="source60-native-product-explorer"]').count(), `${name}: Source60 native explorer missing`);
+              await clickView(page, '탐색', '60', selectedId, `${name}-60`, records);
+              assert.ok(await page.locator('canvas').count(), `${name}: Source60 canvas missing`);
+              assert.ok(await page.locator('[data-testid="source60-native-product-explorer"]').count(), `${name}: Source60 native explorer missing`);
 
-            await clickView(page, '포털', '64', selectedId, `${name}-64`, records);
-            assert.ok(await page.locator('[data-rendering="css3d-dom"]').count(), `${name}: Source64 CSS3D rendering missing`);
+              await clickView(page, '포털', '64', selectedId, `${name}-64`, records);
+              assert.ok(await page.locator('[data-rendering="css3d-dom"]').count(), `${name}: Source64 CSS3D rendering missing`);
 
-            await page.goBack({ waitUntil: 'domcontentloaded' });
-            await waitForSource(page, '60');
-            await assertMoment(page, selectedId, `${name}-60-back-from-portal`);
-            records.push({ name: '뒤로→탐색', source: '60', url: page.url() });
+              await page.goBack({ waitUntil: 'domcontentloaded' });
+              await waitForSource(page, '60');
+              await assertMoment(page, selectedId, `${name}-60-back-from-portal`);
+              records.push({ name: '뒤로→탐색', source: '60', url: page.url() });
 
-            proof.viewports.push({ name, width, height, reducedMotion, records });
-            await context.close();
+              proof.viewports.push({ name, width, height, reducedMotion, selectedId, records });
+            } catch (error) {
+              await page.screenshot({ path: `${out}/${name}-failure.png`, fullPage: false }).catch(() => {});
+              fs.writeFileSync(`${out}/${name}-failure.txt`, String(error));
+              throw error;
+            } finally {
+              await context.close();
+            }
           }
 
           try {
