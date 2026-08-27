@@ -38,6 +38,11 @@ function themeFor(sourceType: Track60Moment["sourceType"], isRoot: boolean): The
   return "growth";
 }
 
+function dateString(value: string | Date | null | undefined): string {
+  if (value instanceof Date) return value.toISOString();
+  return value || "1970-01-01T00:00:00.000Z";
+}
+
 export default function TreeExplorePage() {
   const params = useParams<{ id: string | string[] }>();
   const searchParams = useSearchParams();
@@ -59,8 +64,7 @@ export default function TreeExplorePage() {
       title: moment.title || "제목 없는 Moment",
       memo: moment.memo || "이 순간에 남긴 기억",
       sourceType,
-      sourceUrl: moment.sourceUrl || undefined,
-      discoveryDate: moment.discoveryDate || moment.timestamp || moment.createdAt,
+      discoveryDate: dateString(moment.discoveryDate || moment.timestamp || moment.createdAt),
       emotionTags: moment.emotionTags,
       parentId: moment.parentId,
       connectionReason: moment.connectionReason || (moment.parentId ? "이전 Moment에서 이어진 기억" : "이 LoveTree의 시작 Moment"),
