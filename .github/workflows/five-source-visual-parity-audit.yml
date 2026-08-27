@@ -6,6 +6,9 @@ on:
       - preview/five-source-rc-20260827
     paths:
       - '.github/workflows/five-source-visual-parity-audit.yml'
+      - 'app/trees/**'
+      - 'app/components/moment-presentation/**'
+      - 'components/source-track-58/**'
 
 permissions:
   contents: read
@@ -43,31 +46,11 @@ jobs:
 
           const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
           const pairs = [
-            {
-              source: '57',
-              native: '/design-lab/source-tracks/57/v1-3-native',
-              current: '/trees/five-source-preview',
-            },
-            {
-              source: '58',
-              native: '/design-lab/source-tracks/58/v1-2-native?treeId=five-source-preview',
-              current: '/trees/five-source-preview/board',
-            },
-            {
-              source: '56',
-              native: '/design-lab/lineages/53/53-v3-vertical-network-overview',
-              current: '/trees/five-source-preview/relationships',
-            },
-            {
-              source: '60',
-              native: '/design-lab/lineages/60/v1-2',
-              current: '/trees/five-source-preview/explore',
-            },
-            {
-              source: '64',
-              native: '/design-lab/lineages/64/v1-2-1',
-              current: '/trees/five-source-preview/portal',
-            },
+            { source: '57', native: '/design-lab/source-tracks/57/v1-3-native', current: '/trees/five-source-preview' },
+            { source: '58', native: '/design-lab/source-tracks/58/v1-2-native?treeId=five-source-preview', current: '/trees/five-source-preview/board' },
+            { source: '56', native: '/design-lab/lineages/53/53-v3-vertical-network-overview', current: '/trees/five-source-preview/relationships' },
+            { source: '60', native: '/design-lab/lineages/60/v1-2', current: '/trees/five-source-preview/explore' },
+            { source: '64', native: '/design-lab/lineages/64/v1-2-1', current: '/trees/five-source-preview/portal' },
           ];
 
           const browser = await chromium.launch({ headless: true });
