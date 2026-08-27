@@ -38,7 +38,7 @@ test("narrow ViewSwitcher keeps non-shrinking single-line hit targets", () => {
 });
 
 test("cluster and bridge identities are view-derived only", () => {
-  assert.match(route, /Cluster \/ Bridge = VIEW_DERIVED/);
+  assert.match(route, /cluster: clusterFor\(moment\.sourceType, moment\.isRoot\)/);
   assert.match(route, /parent\.cluster !== moment\.cluster/);
   assert.match(route, /bridgeIds/);
   assert.doesNotMatch(route, directDurableWrite);

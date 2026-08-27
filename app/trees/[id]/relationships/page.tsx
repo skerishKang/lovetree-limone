@@ -127,18 +127,18 @@ export default function TreeRelationshipsPage() {
 
       <section className={styles.shell} aria-labelledby="relationships-title">
         <header className={styles.hero}>
-          <small>SOURCE 56 · CANONICAL RELATIONSHIP VIEW</small>
+          <small>기억의 연결</small>
           <h1 id="relationships-title">처음의 마음에서, 어떤 길들이 자라났는지 봅니다.</h1>
           <p>
-            이 화면은 Source56의 세로형 관계망 문법을 실제 Tree의 Moment와 parentId / connectionReason 위에 투영합니다.
-            경로 그룹·허브·배치는 보기 상태일 뿐 새 데이터로 저장하지 않습니다.
+            한 순간에서 다음 순간으로 이어진 이유를 따라가 보세요. 각 Moment를 선택하면 이전 기억과 다음 기억이
+            어떻게 이어지는지 한눈에 살펴볼 수 있습니다.
           </p>
         </header>
-        <div className={styles.truth} aria-label="관계 데이터 권위">
-          <span>Moment = canonical</span>
-          <span>Connection = parentId + connectionReason</span>
-          <span>layout / grouping = VIEW_DERIVED</span>
-          <span>new DB / API / schema = none</span>
+        <div className={styles.truth} aria-label="관계 보기 안내">
+          <span>이전 순간</span>
+          <span>이어진 이유</span>
+          <span>다음 순간</span>
+          <span>선택한 Moment 중심으로 보기</span>
         </div>
 
         {loading ? <div className={styles.state} aria-busy="true">관계망을 불러오는 중…</div> : null}
@@ -171,17 +171,17 @@ export default function TreeRelationshipsPage() {
                     data-network-moment-id={node.id}
                     onClick={() => syncMomentToUrl(node.id)}
                   >
-                    <span className={styles.nodeMeta}><span>DEPTH {node.depth}</span><span>{String(index + 1).padStart(2, "0")}</span></span>
+                    <span className={styles.nodeMeta}><span>단계 {node.depth}</span><span>{String(index + 1).padStart(2, "0")}</span></span>
                     <strong>{node.title}</strong>
-                    {node.connectionReason ? <span className={styles.nodeReason}>WHY NEXT · {node.connectionReason}</span> : null}
+                    {node.connectionReason ? <span className={styles.nodeReason}>이어진 이유 · {node.connectionReason}</span> : null}
                   </button>
                 );
               })}
 
               {selected ? (
-                <aside className={styles.inspector} aria-label="Selected Moment relationship inspector">
+                <aside className={styles.inspector} aria-label="선택한 Moment 관계 상세">
                   <button className={styles.inspectorClose} type="button" onClick={() => syncMomentToUrl(null)} aria-label="관계 상세 닫기">×</button>
-                  <small>SELECTED MOMENT · SOURCE 56</small>
+                  <small>선택한 순간</small>
                   <h2>{selected.title}</h2>
                   <div className={styles.inspectorMeta}>{selected.sourceType.toUpperCase()} · {selected.emotion}</div>
                   <article>
@@ -189,11 +189,11 @@ export default function TreeRelationshipsPage() {
                     <p>{selected.memo}</p>
                   </article>
                   <article>
-                    <strong>WHY NEXT · INCOMING</strong>
+                    <strong>이어진 이유</strong>
                     <p>{selectedIncoming?.reason ?? "이 Moment는 현재 Tree의 시작 지점입니다."}</p>
                   </article>
                   <article>
-                    <strong>NEXT CONNECTIONS</strong>
+                    <strong>다음으로 이어진 순간</strong>
                     <p>{outgoing.length > 0 ? outgoing.map((edge) => edge.reason).join(" · ") : "현재 이어진 다음 Moment가 없습니다."}</p>
                   </article>
                 </aside>
