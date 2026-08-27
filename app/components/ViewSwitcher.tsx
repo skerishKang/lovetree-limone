@@ -48,6 +48,7 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
           href={`/trees/${encodedId}${view.path}${suffix}`}
           className={`view-tab${active === view.kind ? " view-tab-active" : ""}`}
           aria-current={active === view.kind ? "page" : undefined}
+          style={{ flex: "0 0 auto", whiteSpace: "nowrap" }}
         >
           {view.label}
         </Link>
