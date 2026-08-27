@@ -28,7 +28,7 @@
   z-index: 16;
   left: 50%;
   top: 28px;
-  width: min(790px, calc(100vw - 58px));
+  width: min(970px, calc(100vw - 58px));
   transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
