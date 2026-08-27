@@ -145,7 +145,7 @@ Design / source / lineage / presentation / frontend implementation files:
 - `lib/v4-orbit-selection.ts` — V4 orbit selection
 - `lib/videofigure-turntable.ts` — Videofigure turntable
 
-### 5b. SHARED_CORE_BRIDGE_LIB (shared with NEW — NOT OLD-owned)
+### 5b. SHARED_CORE_BRIDGE_LIB (optional host/shell reuse — NOT source capsule dependency)
 
 Backend / Auth / API bridge files used by both OLD and NEW generations:
 
@@ -157,7 +157,7 @@ Backend / Auth / API bridge files used by both OLD and NEW generations:
 | `lib/auth-token-provider.ts` | Auth token provider |
 | `lib/firebase.ts` | Firebase configuration — bridges frontend to Firebase |
 
-These files are **SHARED** between OLD and NEW. Neither generation exclusively owns them. They bridge frontend to canonical backend (Auth, API, Firebase).
+These are **OPTIONAL** for NEW host/shell reuse. Source capsules must NOT depend on them directly. They bridge frontend to canonical backend (Auth, API, Firebase).
 
 ## 6. Design Intake (`design-intake/`)
 

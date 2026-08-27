@@ -35,19 +35,26 @@ The following remain **single canonical authority** regardless of frontend gener
 - **Cache**: `worker/cache-policy.ts`
 - **Image optimization**: via `vinext/server/image-optimization`
 
-## 2. SHARED_CORE_BRIDGE_LIB
+### SHARED_BACKEND_CONTRACT = MANDATORY
 
-These `lib/` files are **SHARED** between OLD and NEW generations. Neither generation exclusively owns them. They bridge frontend to canonical backend.
+All frontend generations consume the **same** canonical HTTP API. The backend contract (endpoints, data shapes, auth flow) is mandatory and shared. No generation may fork or bypass it.
+
+## 2. SHARED_CORE_BRIDGE_LIB (optional host/shell reuse)
+
+These `lib/` files are **OPTIONAL** for NEW host/shell reuse. Source capsules must NOT depend on them directly.
 
 | File | Role |
 |------|------|
 | `lib/api.ts` | API client — bridges frontend to backend API |
-| `lib/auth.tsx` | Auth provider — bridges frontend to Firebase Auth |
+| `lib/auth.tsx` | Auth provider — bridges frontend to Firebase Auth (React) |
 | `lib/auth-errors.ts` | Auth error handling |
 | `lib/auth-token-provider.ts` | Auth token provider — bridges frontend to auth tokens |
 | `lib/firebase.ts` | Firebase configuration — bridges frontend to Firebase |
 
-**Rule**: Both OLD and NEW consume these files. Neither may fork or rewrite them without cross-repo authority.
+**Policy**:
+- **SHARED_BACKEND_CONTRACT = MANDATORY**: All generations consume the same canonical HTTP API
+- **SHARED_CORE_BRIDGE_LIB = OPTIONAL HOST/SHELL REUSE**: The React/TS bridge files in `lib/` may be reused by the NEW shell/host, but are NOT a source capsule dependency
+- **Source capsules**: Framework-independent plain JS. Use canonical HTTP API directly via a plain JS adapter. Auth/Tree/Moment context is received through the NEW shell/host bridge.
 
 ## 3. OLD_FRONTEND_LIB
 
@@ -88,11 +95,12 @@ See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
 - Route structure: `app/v2/`, `app/v3/`, `app/v4/`, `app/design-lab/`
 
 ### NEW Generation (V1)
-- Must consume the **same** SHARED_CORE_BRIDGE_LIB files
+- **SHARED_BACKEND_CONTRACT = MANDATORY**: Must consume the same canonical HTTP API
+- **SHARED_CORE_BRIDGE_LIB = OPTIONAL**: May reuse React/TS bridge files in host/shell, but source capsules do NOT depend on them
+- **Source capsules**: Framework-independent plain JS adapter uses canonical HTTP API directly
 - Must not fork backend truth
 - Must not create a second canonical DB writer
 - Route structure: `/new/v1/...` (proving namespace)
-- Adapter layer bridges source UI data shapes to canonical API responses
 
 ### Shared Rules
 1. Both generations may read from the same backend simultaneously
@@ -100,7 +108,8 @@ See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
 3. Neither generation creates its own database tables
 4. Neither generation creates its own authentication system
 5. Neither generation deploys its own Worker
-6. SHARED_CORE_BRIDGE_LIB files are consumed, not forked
+6. SHARED_BACKEND_CONTRACT is mandatory for all generations
+7. SHARED_CORE_BRIDGE_LIB is optional host/shell reuse — source capsules do not depend on it
 
 ## 6. Adapter Contract (NEW/V1)
 
@@ -111,10 +120,13 @@ canonical backend/API data → source UI expected data shape
 source UI events → canonical product route/state/action
 ```
 
+The adapter is **plain JS**. It uses the canonical HTTP API directly. It does NOT import React/TS bridge files from `lib/`.
+
 Constraints:
 - Adapter must not rewrite source HTML/CSS/JS visual hierarchy
 - Adapter must not fork backend truth
 - Adapter must be thin — it bridges, it does not own
+- Adapter must be framework-independent (plain JS)
 
 ## 7. Boundary Violations (STOP)
 
@@ -127,6 +139,7 @@ The following are boundary violations that halt work:
 - Deploying a separate Worker for NEW generation
 - Exposing new secrets or provider configurations
 - Mutating Production data for validation
+- Source capsule importing React/TS bridge from SHARED_CORE_BRIDGE_LIB
 - Forking SHARED_CORE_BRIDGE_LIB files
 
 ## 8. Migration Path
@@ -136,5 +149,6 @@ When NEW/V1 achieves source parity:
 1. NEW proving routes may be promoted to product routes
 2. OLD routes may be deprecated (not deleted)
 3. Backend remains single canonical authority throughout
-4. SHARED_CORE_BRIDGE_LIB remains shared throughout
-5. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend changes
+4. SHARED_BACKEND_CONTRACT remains mandatory throughout
+5. SHARED_CORE_BRIDGE_LIB remains optional host/shell reuse
+6. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend changes

@@ -47,9 +47,24 @@ The goal: freeze all existing LoveTree frontend as `OLD`, create a new `NEW/V1` 
 `lib/` is **NOT** entirely OLD. It is split into two logical zones:
 
 - **OLD_FRONTEND_LIB**: Design/source/lineage/presentation/frontend implementation files (OLD-owned)
-- **SHARED_CORE_BRIDGE_LIB**: `lib/api.ts`, `lib/auth.tsx`, `lib/auth-errors.ts`, `lib/auth-token-provider.ts`, `lib/firebase.ts` (shared with NEW — NOT OLD-owned)
+- **SHARED_CORE_BRIDGE_LIB**: `lib/api.ts`, `lib/auth.tsx`, `lib/auth-errors.ts`, `lib/auth-token-provider.ts`, `lib/firebase.ts` — **OPTIONAL host/shell reuse, NOT source capsule dependency**
 
 No physical file movement. Logical documentation split only.
+
+### Key Policy
+
+```
+SHARED_BACKEND_CONTRACT = MANDATORY
+  All generations consume the same canonical HTTP API.
+
+SHARED_CORE_BRIDGE_LIB = OPTIONAL HOST/SHELL REUSE
+  React/TS bridge files may be reused by NEW shell/host,
+  but source capsules do NOT depend on them.
+
+SOURCE CAPSULE = FRAMEWORK-INDEPENDENT PLAIN JS
+  Uses canonical HTTP API directly via plain JS adapter.
+  Auth/Tree/Moment context via NEW shell/host bridge.
+```
 
 ## 3. Migration Mode
 
@@ -84,42 +99,32 @@ Physical migration was rejected because **structural beauty is subordinate to ru
 │  │   OLD (Legacy)       │  │   NEW/V1 (Source)        │  │
 │  │                      │  │                          │  │
 │  │  app/ (in place)     │  │  new/v1/sources/         │  │
-│  │  OLD_FRONTEND_LIB    │  │  new/v1/adapters/        │  │
-│  │  components/         │  │  new/v1/shell/           │  │
-│  │  design-intake/      │  │  new/v1/shared/          │  │
-│  │                      │  │                          │  │
-│  │  Manifest only:      │  │  Active development:      │  │
-│  │  old/README.md       │  │  new/v1/README.md        │  │
-│  │  old/MANIFEST.md     │  │  new/v1/VERSION.md       │  │
+│  │  OLD_FRONTEND_LIB    │  │  (framework-indep. JS)   │  │
+│  │  components/         │  │  new/v1/adapters/        │  │
+│  │  design-intake/      │  │  (plain JS, canonical    │  │
+│  │                      │  │   HTTP API directly)     │  │
+│  │  Manifest only:      │  │  new/v1/shell/           │  │
+│  │  old/README.md       │  │  new/v1/shared/          │  │
+│  │  old/MANIFEST.md     │  │                          │  │
 │  └──────────┬───────────┘  └──────────┬───────────────┘  │
 │             │                          │                   │
 │             └──────────┬───────────────┘                   │
 │                        │                                   │
-│         ┌──────────────▼──────────────┐                   │
-│         │   SHARED_CORE_BRIDGE_LIB    │                   │
-│         │   lib/api.ts                │                   │
-│         │   lib/auth.tsx              │                   │
-│         │   lib/auth-errors.ts        │                   │
-│         │   lib/auth-token-provider.ts│                   │
-│         │   lib/firebase.ts           │                   │
-│         └──────────────┬──────────────┘                   │
+│  SHARED_BACKEND_CONTRACT = MANDATORY                       │
+│  (all generations consume same canonical HTTP API)         │
+│                        │                                   │
+│  SHARED_CORE_BRIDGE_LIB = OPTIONAL HOST/SHELL REUSE       │
+│  (React/TS bridge — source capsules do NOT depend)         │
 │                        │                                   │
 │              ┌─────────▼─────────┐                         │
 │              │     CORE          │                         │
 │              │  (Boundary Docs)  │                         │
-│              │                   │                         │
-│              │  core/README.md   │                         │
-│              │  core/BOUNDARY.md │                         │
 │              └─────────┬─────────┘                         │
 │                        │                                   │
 │  ┌─────────────────────▼─────────────────────────────────┐│
 │  │           SHARED BACKEND (UNCHANGED)                   ││
-│  │                                                        ││
-│  │  db/schema.ts  ← Canonical DB schema                  ││
-│  │  db/index.ts   ← DB access                            ││
-│  │  drizzle/      ← Migrations                           ││
-│  │  server/api/   ← Backend API                          ││
-│  │  worker/       ← Cloudflare Worker                    ││
+│  │  db/schema.ts · db/index.ts · drizzle/                 ││
+│  │  server/api/ · worker/                                 ││
 │  └────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -130,10 +135,9 @@ Physical migration was rejected because **structural beauty is subordinate to ru
 
 ```
 AUTHORITATIVE HTML/CSS/JS
-→ DOM/CSS/JS exact preservation
-→ optional physical separation
-→ thin adapter
-→ canonical backend connection
+→ framework-independent plain JS
+→ canonical HTTP API via plain JS adapter
+→ Auth/Tree/Moment context via shell/host bridge
 → visual/interaction parity verification
 → only later optional React migration
 ```
@@ -148,7 +152,7 @@ AUTHORITATIVE HTML/CSS/JS
 6. Preserve relative asset paths
 7. Preserve behavior
 8. Create `source-manifest.json`
-9. Create adapter in `new/v1/adapters/`
+9. Create plain JS adapter in `new/v1/adapters/` (canonical HTTP API, no React/TS import)
 10. Verify visual/interaction parity
 
 ### What React/Next Conversion Is NOT
@@ -156,6 +160,7 @@ AUTHORITATIVE HTML/CSS/JS
 - React/Next/TSX conversion is NOT required for source implementation
 - React migration is only done in a separately approved migration step
 - The default is exact HTML/CSS/JS preservation
+- Source capsules are framework-independent plain JS
 
 ## 6. Proving Namespace
 
@@ -186,6 +191,7 @@ This task performs:
 - ✅ New scaffold directories (`new/v1/sources/`, etc.)
 - ✅ Logical namespace declarations
 - ✅ lib/ ownership split (documentation only)
+- ✅ SHARED_CORE_BRIDGE_LIB policy clarification
 
 This task does NOT:
 
@@ -208,14 +214,19 @@ This task does NOT:
 - [ ] No backend/schema/Auth/API mutation
 - [ ] `old/` manifest exists with lib/ split
 - [ ] `new/v1/` scaffold exists
-- [ ] `core/` boundary docs exist with SHARED_CORE_BRIDGE_LIB
+- [ ] `core/` boundary docs exist with SHARED_CORE_BRIDGE_LIB policy
 - [ ] `docs/architecture/FRONTEND_GENERATION_RESET.md` exists
 - [ ] Existing build still works
 - [ ] Existing tests still pass
 
 ## 10. Next Steps
 
-1. **SOURCE58_NEW_V1_REFERENCE_IMPLEMENTATION** — First sour
-ce implementation in `new/v1/sources/source-58/`
-2. Integration CTO review of this architecture
-3. Promotion of proven sources to product routes (separate step)
+1. **#547 architecture closure** — Integration 
+CTO review completion
+2. **NEW operating standard** — Define NEW/V1 operating rules:
+   - Source numbering scheme
+   - Folder/file numbering conventions
+   - RAW / runtime / adapter / evidence structure
+   - Revision tracking rules
+   - Cache busting strategy
+3. **Source58 NEW/V1 reference implementation** — First source implementation in `new/v1/sources/source-58/`

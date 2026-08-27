@@ -6,23 +6,17 @@
 
 ---
 
-## PRE-COMMIT SNAPSHOT
+## Architecture Establishment
 
 ```
-CURRENT_MAIN = 25ddf26c0761aee092a008ce2d91d525e1589034
-BRANCH = architecture/new-v1-frontend-generation-reset
-COMMIT_STATUS = UNTRACKED (pre-commit)
-```
-
-## POST-PUSH FINAL STATUS
-
-```
-FINAL_HEAD = 3545c5580e5c6d5a02c544ba2b5a54da5f2ba9f3
-DRAFT_PR = #547
+INITIAL_ARCHITECTURE_COMMIT = 3545c5580e5c6d5a02c544ba2b5a54da5f2ba9f3
+CURRENT_PR_HEAD = GitHub PR #547 head is Source of Truth
 BRANCH = architecture/new-v1-frontend-generation-reset
 REMOTE = origin → https://github.com/skerishKang/lovetree-limone.git
 REMOTE_BRANCH_PUSHED = YES
 ```
+
+Do not hard-code SHA in documents. PR #547 head is the canonical reference.
 
 ## Migration Mode
 
@@ -51,10 +45,25 @@ SHARED_CORE_BRIDGE_LIB =
   lib/auth-errors.ts
   lib/auth-token-provider.ts
   lib/firebase.ts
-  (shared with NEW — NOT OLD-owned)
+  OPTIONAL HOST/SHELL REUSE — NOT SOURCE CAPSULE DEPENDENCY
 ```
 
 Physical file movement: NONE. Logical documentation split only.
+
+## Key Policy
+
+```
+SHARED_BACKEND_CONTRACT = MANDATORY
+  All generations consume the same canonical HTTP API.
+
+SHARED_CORE_BRIDGE_LIB = OPTIONAL HOST/SHELL REUSE
+  React/TS bridge files may be reused by NEW shell/host,
+  but source capsules do NOT depend on them.
+
+SOURCE CAPSULE = FRAMEWORK-INDEPENDENT PLAIN JS
+  Uses canonical HTTP API directly via plain JS adapter.
+  Auth/Tree/Moment context via NEW shell/host bridge.
+```
 
 ## Directory Ownership
 
@@ -73,7 +82,7 @@ AUTH_MUTATION = NO
 API_SEMANTIC_MUTATION = NO
 ```
 
-## Changed Files (12 — all new, zero modified)
+## Changed Files
 
 ```
 old/README.md
@@ -94,7 +103,7 @@ GENRESET_PREFLIGHT_REPORT.md
 
 ```
 EXISTING_RUNTIME_STATUS = PASS (no regression)
-  - Zero modified files
+  - Zero modified tracked files
   - All existing routes untouched
   - All backend files untouched
   - DB/Auth/API untouched
@@ -105,7 +114,7 @@ EXISTING_RUNTIME_STATUS = PASS (no regression)
 
 ```
 TESTS = NOT RUN (npm ci timeout on NTFS — too slow for 2509-file node_modules)
-  Justification: zero modified files = zero regression risk
+  Justification: zero modified tracked files = zero regression risk
   Evidence: git diff --name-only returns empty (no changes to existing files)
 ```
 
@@ -131,3 +140,14 @@ Issues #539, #540, #541-#545:
   Action = No continuation in this task
   Reason = Created before this architecture decision
 ```
+
+## Architecture Next Steps
+
+1. **#547 architecture closure** — Integration CTO review completion
+2. **NEW operating standard** — Define NEW/V1 operating rules:
+   - Source numbering scheme
+   - Folder/file numbering conventions
+   - RAW / runtime / adapter / evidence structure
+   - Revision tracking rules
+   - Cache busting strategy
+3. **Source58 NEW/V1 reference implementation** — First source implementation in `new/v1/sources/source-58/`

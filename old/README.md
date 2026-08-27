@@ -38,24 +38,24 @@ Design / source / lineage / presentation / frontend implementation files:
 - `lib/intent-path-prototype.ts`, `lib/media-inspection-prototype.ts`, `lib/question-lens-prototype.ts`
 - `lib/videofigure-turntable.ts`
 
-### SHARED_CORE_BRIDGE_LIB (shared with NEW — NOT OLD-owned)
+### SHARED_CORE_BRIDGE_LIB (optional host/shell reuse — NOT source capsule dependency)
 
-Backend / Auth / API bridge files used by both OLD and NEW:
+Backend / Auth / API bridge files. These are **OPTIONAL** for NEW host/shell reuse. Source capsules must NOT depend on them directly.
 
 - `lib/api.ts` — API client
-- `lib/auth.tsx` — Auth provider
+- `lib/auth.tsx` — Auth provider (React)
 - `lib/auth-errors.ts` — Auth error handling
 - `lib/auth-token-provider.ts` — Auth token provider
 - `lib/firebase.ts` — Firebase configuration
 
-These files are **SHARED** between OLD and NEW. Neither generation exclusively owns them. They bridge frontend to canonical backend.
+**Policy**: Source capsules (`new/v1/sources/`) remain framework-independent plain JS. They use canonical HTTP API directly via a plain JS adapter. Auth/Tree/Moment context is received through the NEW shell/host bridge, not via direct React/TS import of these files.
 
 ## What Does NOT Live Here
 
 - New source-faithful implementations → `new/v1/`
 - Backend / DB / Auth boundary contracts → `core/`
 - Source implementations → `new/v1/sources/`
-- SHARED_CORE_BRIDGE_LIB files (shared with NEW)
+- SHARED_CORE_BRIDGE_LIB files (optional host reuse, not source capsule dependency)
 
 ## Migration Context
 
@@ -70,4 +70,4 @@ The existing frontend files remain at their current paths because Next.js App Ro
 3. Do not fork backend truth from legacy paths
 4. NEW development belongs under `new/v1/`
 5. Legacy source/design history may be referenced but does not control NEW implementation
-6. SHARED_CORE_BRIDGE_LIB files are shared — both generations may consume them
+6. SHARED_CORE_BRIDGE_LIB is optional host/shell reuse — source capsules do not depend on it
