@@ -249,6 +249,23 @@ jobs:
           TRACK67_BASE_URL=http://127.0.0.1:3000 \
             node --import tsx --test --test-concurrency=1 "${browser_tests[@]}" 2>&1 | tee /tmp/a-track-standard-browser-tests.log
 
+      - name: Five-source MVP continuity browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          FIVE_SOURCE_MVP_QA_URL=http://127.0.0.1:3000 \
+          FIVE_SOURCE_MVP_SCREENSHOT_DIR=/tmp/five-source-mvp-browser-qa \
+            node qa/five-source-mvp-browser-qa.mjs 2>&1 | tee /tmp/a-track-five-source-mvp-browser-qa.log
+
+      - name: Upload five-source MVP browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-source-mvp-browser-evidence
+          path: /tmp/five-source-mvp-browser-qa/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Unit/integration — lineage-52-route
         shell: bash
         run: |
