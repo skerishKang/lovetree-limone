@@ -47,6 +47,7 @@ const FAMILY_CENTERS = [
   { x: 990, y: 4140 },
   { x: 690, y: 4880 },
 ];
+const PRIMARY_ANGLES = [-2.68, -1.92, -1.16, -.38];
 
 function snap(value: number) {
   return Number(value.toFixed(2));
@@ -58,6 +59,28 @@ function edgePath(edge: NetworkEdge) {
   const bend = Math.max(48, Math.min(180, Math.hypot(dx, dy) * .27));
   const side = dx >= 0 ? 1 : -1;
   return `M ${edge.from.x} ${edge.from.y} C ${snap(edge.from.x + bend * side)} ${snap(edge.from.y + dy * .2)}, ${snap(edge.to.x - bend * side)} ${snap(edge.to.y - dy * .2)}, ${edge.to.x} ${edge.to.y}`;
+}
+
+function pointOnFamily(center: { x: number; y: number }, localIndex: number) {
+  if (localIndex <= 0) return center;
+  if (localIndex <= 4) {
+    const angle = PRIMARY_ANGLES[localIndex - 1] ?? PRIMARY_ANGLES[0];
+    const radius = 250 + (localIndex % 2) * 42;
+    return {
+      x: snap(center.x + Math.cos(angle) * radius),
+      y: snap(center.y + Math.sin(angle) * radius * .76),
+    };
+  }
+  const branchIndex = localIndex - 5;
+  const primaryIndex = branchIndex + 1;
+  const angle = PRIMARY_ANGLES[branchIndex] ?? PRIMARY_ANGLES[0];
+  const primaryRadius = 250 + (primaryIndex % 2) * 42;
+  const secondaryAngle = angle + (branchIndex % 2 === 0 ? -.28 : .34);
+  const radius = primaryRadius + 175;
+  return {
+    x: snap(center.x + Math.cos(secondaryAngle) * radius),
+    y: snap(center.y + Math.sin(secondaryAngle) * radius * .76),
+  };
 }
 
 export default function TreeRelationshipsPage() {
@@ -134,12 +157,8 @@ export default function TreeRelationshipsPage() {
       const family = families[familyIndex];
       const members = family?.memberIds ?? [];
       const localIndex = Math.max(0, members.indexOf(moment.id));
-      const localDepth = Math.max(0, moment.depth - 1);
       const entry = moment.id === familyId;
-      const angle = -2.65 + ((localIndex * 1.47 + localDepth * .52) % 2.95);
-      const radius = entry ? 0 : 115 + localDepth * 105 + (localIndex % 3) * 52;
-      const x = entry ? center.x : center.x + Math.cos(angle) * radius;
-      const y = entry ? center.y : center.y + Math.sin(angle) * radius * .74 + localIndex * 16;
+      const point = pointOnFamily(center, localIndex);
       results.push({
         id: moment.id,
         parentId: moment.parentId,
@@ -150,9 +169,9 @@ export default function TreeRelationshipsPage() {
         emotion: moment.emotionTags[0] ?? "기억",
         depth: moment.depth,
         familyId,
-        hierarchy: entry ? "entry" : localDepth <= 1 ? "primary" : "secondary",
-        x: snap(x),
-        y: snap(y),
+        hierarchy: entry ? "entry" : localIndex <= 4 ? "primary" : "secondary",
+        x: point.x,
+        y: point.y,
         tone: TONES[familyIndex % TONES.length],
       });
     }
@@ -170,9 +189,13 @@ export default function TreeRelationshipsPage() {
   const selected = selectedMomentId ? nodeById.get(selectedMomentId) ?? null : null;
   const selectedIncoming = selected?.parentId ? edges.find((edge) => edge.to.id === selected.id) ?? null : null;
   const outgoing = selected ? edges.filter((edge) => edge.from.id === selected.id) : [];
-  const usedFamilyCount = Math.max(1, families.length);
-  const worldHeight = Math.max(2300, 1020 + usedFamilyCount * 780);
-  const cameraHeight = Math.min(worldHeight, Math.max(2200, 1150 + usedFamilyCount * 560));
+  const activeFamilyIndex = activeFamilyId ? (familyIndexById.get(activeFamilyId) ?? null) : null;
+  const cameraViewBox = useMemo(() => {
+    if (activeFamilyIndex === null) return "0 0 1700 2200";
+    const center = FAMILY_CENTERS[activeFamilyIndex] ?? FAMILY_CENTERS[0];
+    const top = Math.max(0, center.y - 860);
+    return `0 ${top} 1700 1800`;
+  }, [activeFamilyIndex]);
 
   const syncMomentToUrl = useCallback((nextMomentId: string | null) => {
     selectMoment(nextMomentId);
@@ -208,7 +231,7 @@ export default function TreeRelationshipsPage() {
         <aside className={styles.legend} aria-label="주요 경로 그룹">
           <strong>주요 경로 그룹</strong>
           <button type="button" className={!activeFamilyId ? styles.legendActive : ""} onClick={() => setActiveFamilyId(null)}>First Moment · 전체조망</button>
-          {families.map((family, index) => (
+          {families.map((family) => (
             <button key={family.id} type="button" className={activeFamilyId === family.id ? styles.legendActive : ""} style={{ "--tone": family.tone } as CSSProperties} onClick={() => setActiveFamilyId((current) => current === family.id ? null : family.id)}>
               <i /><span>{family.label}</span><small>{family.memberIds.length} MOMENTS</small>
             </button>
@@ -226,7 +249,7 @@ export default function TreeRelationshipsPage() {
         {!loading && !error && nodes.length === 0 ? <div className={styles.state}>아직 연결해 볼 Moment가 없습니다.</div> : null}
 
         {!loading && !error && nodes.length > 0 ? (
-          <svg className={styles.world} viewBox={`0 0 1700 ${cameraHeight}`} preserveAspectRatio="xMidYMid meet" aria-label="Moment 관계 공간망">
+          <svg className={styles.world} viewBox={cameraViewBox} preserveAspectRatio="xMidYMid meet" aria-label="Moment 관계 공간망">
             <g aria-hidden="true">
               {edges.map((edge) => {
                 const active = Boolean(selected && (edge.from.id === selected.id || edge.to.id === selected.id));
@@ -265,7 +288,7 @@ export default function TreeRelationshipsPage() {
           </svg>
         ) : null}
 
-        <p className={styles.status}>{activeFamilyId ? "선택한 주요 경로만 밝게 표시하고 있습니다." : "OVERVIEW · First Moment에서 시작된 모든 주요 경로를 펼쳐 봅니다."}</p>
+        <p className={styles.status}>{activeFamilyId ? "선택한 주요 경로만 밝게 표시하고 있습니다." : "OVERVIEW · First Moment에서 시작된 주요 경로를 원본 배율로 조망합니다."}</p>
 
         {selected ? (
           <aside className={styles.inspector} aria-label="선택한 Moment 관계 상세">
