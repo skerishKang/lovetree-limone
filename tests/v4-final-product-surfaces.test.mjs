@@ -5,17 +5,32 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("final V4 Tree family exposes Overview Story Graph Replay and owner-only Studio", async () => {
+test("final V4 Tree family exposes semantic navigation tiers while compatibility routes remain materialized", async () => {
   const switcher = await read("app/components/ViewSwitcher.tsx");
-  for (const kind of ["overview", "story", "graph", "replay", "studio"]) {
+
+  for (const kind of ["tree", "board", "relationships", "explore"]) {
     assert.match(switcher, new RegExp(`kind: \\\"${kind}\\\"`));
   }
+  assert.match(switcher, /const PRIMARY_VIEWS/);
+  assert.match(switcher, /const PORTAL_VIEW/);
+  assert.match(switcher, /const SECONDARY_VIEWS/);
+  assert.match(switcher, /data-view-tier="primary"/);
+  assert.match(switcher, /data-view-tier="return"/);
+  assert.match(switcher, /data-view-tier="secondary"/);
+  assert.match(switcher, /ownerOnly: true/);
+  assert.match(switcher, /!view\.ownerOnly \|\| isOwner/);
+
   for (const kind of ["overview", "graph", "replay", "studio"]) {
     assert.match(await read(`app/trees/[id]/${kind}/page.tsx`), new RegExp(`mode=\\\"${kind}\\\"`));
   }
   assert.match(await read("app/trees/[id]/story/page.tsx"), /V4PublicStorySticky/);
-  assert.match(switcher, /ownerOnly: true/);
-  assert.match(switcher, /!view\.ownerOnly \|\| isOwner/);
+
+  // Album / Graph / Replay are intentionally not primary navigation after the
+  // Five-Source semantic consolidation, but their compatibility routes remain.
+  for (const kind of ["album", "graph", "replay"]) {
+    assert.match(switcher, new RegExp(`\\\"${kind}\\\"`));
+    assert.ok(await read(`app/trees/[id]/${kind}/page.tsx`));
+  }
 });
 
 test("Overview derives safe metrics and recent Moment rows open canonical detail", async () => {

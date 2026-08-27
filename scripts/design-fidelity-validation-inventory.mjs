@@ -477,7 +477,7 @@ export const FUTURE_MERGE_GUARDS = Object.freeze([]);
 
 export const DESIGN_FIDELITY_TARGETS = Object.freeze([...BASE_TARGETS, ...SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS]);
 const GLOBAL_PREFIXES = Object.freeze([...GLOBAL_ORCHESTRATION_PREFIXES, "scripts/design-fidelity-validation-inventory.mjs", "tests/design-fidelity-inventory-drift.test.mjs"]);
-const NON_TARGET_WORKFLOWS = new Set([".github/workflows/design-fidelity-validation.yml", ".github/workflows/a-track-p0-validation.yml", ".github/workflows/production-auto-deploy.yml"]);
+const NON_TARGET_WORKFLOWS = new Set([".github/workflows/design-fidelity-validation.yml", ".github/workflows/a-track-p0-validation.yml", ".github/workflows/production-auto-deploy.yml", ".github/workflows/five-source-semantic-ux.yml"]);
 const matches = (p, prefix) => p === prefix || p.startsWith(prefix);
 const nonempty = (v) => typeof v === "string" && v.trim().length > 0;
 
