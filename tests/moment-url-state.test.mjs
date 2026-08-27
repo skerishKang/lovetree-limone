@@ -58,7 +58,7 @@ test("empty query produces a bare path", () => {
 
 // ---- Structural wiring (multi-part contracts, not single-line greps) ----
 
-test("all three views wire selection through useMomentUrlState with onSelect", () => {
+test("all canonical selection surfaces wire through replace-history URL state", () => {
   for (const file of [
     "app/trees/[id]/page.tsx",
     "app/trees/[id]/timeline/page.tsx",
@@ -69,12 +69,21 @@ test("all three views wire selection through useMomentUrlState with onSelect", (
     assert.match(page, /onSelect: selectMoment/);
     assert.match(page, /handleSelectMoment\(/);
   }
+
+  const hook = read("lib/use-moment-url.ts");
+  assert.match(hook, /router\.replace\(/);
 });
 
-test("ViewSwitcher preserves the selected moment across view links", () => {
+test("ViewSwitcher preserves selected Moment across semantic navigation tiers", () => {
   const switcher = read("app/components/ViewSwitcher.tsx");
+  assert.match(switcher, /const PRIMARY_VIEWS/);
+  assert.match(switcher, /const PORTAL_VIEW/);
+  assert.match(switcher, /const SECONDARY_VIEWS/);
   assert.match(switcher, /suffix = momentId \? `\?moment=\$\{encodeURIComponent\(momentId\)\}` : ""/);
-  assert.match(switcher, /href={`\/trees\/\$\{encodedId\}\$\{view\.path\}\$\{suffix\}`}/);
+  assert.match(switcher, /hrefFor = \(view: ViewItem\) => `\/trees\/\$\{encodedId\}\$\{view\.path\}\$\{suffix\}`/);
+  assert.match(switcher, /data-view-tier="primary"/);
+  assert.match(switcher, /data-view-tier="return"/);
+  assert.match(switcher, /data-view-tier="secondary"/);
 });
 
 test("the URL hook preserves the current pathname instead of rebuilding it from treeId", () => {
