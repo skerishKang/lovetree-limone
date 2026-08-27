@@ -9,6 +9,7 @@ on:
       - 'app/trees/**'
       - 'app/components/moment-presentation/**'
       - 'components/source-track-58/**'
+      - 'lib/api.ts'
       - 'lib/source-track-57-living-glass.ts'
 
 permissions:
@@ -83,11 +84,7 @@ jobs:
           node --input-type=module <<'NODE'
           import path from 'node:path';
           import { buildSafePreviewConfig } from './scripts/lib/isolated-preview-deploy-guard.mjs';
-          await buildSafePreviewConfig({
-            repoRoot: process.cwd(),
-            workerName: process.env.PREVIEW_WORKER,
-            outputDir: path.join(process.cwd(), '.preview-safe-config'),
-          });
+          await buildSafePreviewConfig({ repoRoot: process.cwd(), workerName: process.env.PREVIEW_WORKER, outputDir: path.join(process.cwd(), '.preview-safe-config') });
           NODE
 
       - name: Attach read-only preview database secret
