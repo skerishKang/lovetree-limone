@@ -68,7 +68,6 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
         width: "100%",
         maxWidth: "100%",
         overflowX: "auto",
-        overflowY: "visible",
         overscrollBehaviorX: "contain",
         WebkitOverflowScrolling: "touch",
         justifyContent: "flex-start",
@@ -107,9 +106,12 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
       <details
         data-view-tier="secondary"
         style={{
-          position: "relative",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4,
           flex: "0 0 auto",
           marginInlineStart: 4,
+          whiteSpace: "nowrap",
         }}
       >
         <summary
@@ -123,15 +125,9 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
           role="group"
           aria-label="보조 보기"
           style={{
-            position: "absolute",
-            insetInlineEnd: 0,
-            top: "calc(100% + 8px)",
-            zIndex: 40,
-            minWidth: 180,
-            padding: 8,
-            borderRadius: 14,
-            background: "rgba(20, 20, 24, 0.96)",
-            boxShadow: "0 14px 40px rgba(0, 0, 0, 0.28)",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
           }}
         >
           {SECONDARY_VIEWS.filter((view) => !view.ownerOnly || isOwner).map((view) => (
@@ -140,7 +136,7 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
               href={hrefFor(view)}
               className={`view-tab${active === view.kind ? " view-tab-active" : ""}`}
               aria-current={active === view.kind ? "page" : undefined}
-              style={{ display: "block", whiteSpace: "nowrap" }}
+              style={{ flex: "0 0 auto", whiteSpace: "nowrap" }}
             >
               {view.label}
             </Link>
