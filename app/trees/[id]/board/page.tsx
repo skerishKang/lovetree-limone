@@ -48,6 +48,7 @@ export default function TreeLivingBoardPage() {
           treeId={treeId}
           initialMomentId={momentId}
           onMomentChange={syncMomentToUrl}
+          mode="product"
         />
       </div>
     </div>
