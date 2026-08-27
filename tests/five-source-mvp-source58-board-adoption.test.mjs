@@ -28,6 +28,13 @@ test("existing tree + moment navigation protocol remains the only cross-view pro
   assert.doesNotMatch(boardRoute, /selectedMomentStore|globalMoment|localStorage|sessionStorage|indexedDB/);
 });
 
+test("shared ViewSwitcher remains a left-anchored non-shrinking horizontal scroller on narrow screens", () => {
+  assert.match(viewSwitcher, /overflowX:\s*"auto"/);
+  assert.match(viewSwitcher, /justifyContent:\s*"flex-start"/);
+  assert.match(viewSwitcher, /flex:\s*"0 0 auto"/);
+  assert.match(viewSwitcher, /whiteSpace:\s*"nowrap"/);
+});
+
 test("Source58 product binding stays optional and preserves the original canonical hook contract", () => {
   assert.match(source58Board, /initialMomentId\?: string \| null/);
   assert.match(source58Board, /onMomentChange\?: \(momentId: string \| null\) => void/);
