@@ -120,7 +120,7 @@ jobs:
             esac
             sleep 2
           done
-          for route in / /v4 /design-lab /trees/demo /trees/demo/board /trees/demo/relationships /trees/demo/explore /trees/demo/portal; do
+          for route in / /v4 /design-lab; do
             code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 "${PREVIEW_BASE_URL}${route}")"
             printf '%s -> HTTP %s\n' "$route" "$code"
           done
@@ -138,18 +138,53 @@ jobs:
           import { chromium } from 'playwright';
 
           const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
-          const treeId = 'demo';
+
+          const communityResponse = await fetch(`${base}/api/community/trees?view=summary&sort=popular&limit=24`);
+          if (!communityResponse.ok) {
+            throw new Error(`public tree discovery failed: HTTP ${communityResponse.status}`);
+          }
+          const publicTrees = await communityResponse.json();
+          if (!Array.isArray(publicTrees) || publicTrees.length === 0) {
+            throw new Error('public tree discovery returned no real trees');
+          }
+
+          let candidate = null;
+          for (const tree of publicTrees) {
+            if (!tree || typeof tree.id !== 'string' || !tree.id) continue;
+            const treeId = tree.id;
+            const [treeResponse, momentsResponse] = await Promise.all([
+              fetch(`${base}/api/trees/${encodeURIComponent(treeId)}`),
+              fetch(`${base}/api/trees/${encodeURIComponent(treeId)}/memories`),
+            ]);
+            if (!treeResponse.ok || !momentsResponse.ok) continue;
+            const moments = await momentsResponse.json().catch(() => []);
+            if (!Array.isArray(moments) || moments.length === 0) continue;
+            candidate = { treeId, momentCount: moments.length };
+            break;
+          }
+          if (!candidate) {
+            throw new Error('no public community tree is readable through canonical tree APIs');
+          }
+
+          const treeId = candidate.treeId;
           const expected = {
-            '기억': `/trees/${treeId}`,
-            '보드': `/trees/${treeId}/board`,
-            '관계': `/trees/${treeId}/relationships`,
-            '탐색': `/trees/${treeId}/explore`,
-            '포털': `/trees/${treeId}/portal`,
+            '기억': `/trees/${encodeURIComponent(treeId)}`,
+            '보드': `/trees/${encodeURIComponent(treeId)}/board`,
+            '관계': `/trees/${encodeURIComponent(treeId)}/relationships`,
+            '탐색': `/trees/${encodeURIComponent(treeId)}/explore`,
+            '포털': `/trees/${encodeURIComponent(treeId)}/portal`,
           };
           const browser = await chromium.launch({ headless: true });
           const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
           const records = [];
+          let selectedMoment = null;
 
+          async function waitForTreeResolution() {
+            await page.waitForFunction(() => Boolean(
+              document.querySelector('.tree-detail-content') ||
+              document.querySelector('.tree-page-state h1')
+            ), null, { timeout: 20000 });
+          }
           async function settle() {
             await page.waitForLoadState('domcontentloaded');
             await page.waitForTimeout(900);
@@ -169,7 +204,10 @@ jobs:
           async function clickView(label, file) {
             const link = page.getByRole('link', { name: label, exact: true });
             await link.click({ force: true });
-            await page.waitForURL((url) => url.pathname === expected[label] && url.searchParams.get('moment') === selectedMoment, { timeout: 15000 });
+            await page.waitForURL((url) => (
+              url.pathname === expected[label] &&
+              url.searchParams.get('moment') === selectedMoment
+            ), { timeout: 15000 });
             await settle();
             await assertHealthy(label);
             const current = page.getByRole('link', { name: label, exact: true });
@@ -180,21 +218,22 @@ jobs:
           }
 
           await page.goto(`${base}${expected['기억']}`, { waitUntil: 'domcontentloaded' });
-          await settle();
+          await waitForTreeResolution();
           await assertHealthy('기억');
           if (!(await page.locator('.tree-detail-content').count())) {
-            throw new Error('기억: canonical Source57 product content missing for demo tree');
+            throw new Error(`기억: canonical Source57 product content missing for real tree ${treeId}`);
           }
           await capture('기억', '01-memory');
 
-          let selectedMoment = null;
           const firstMoment = page.locator('.memory-record').first();
-          if (await firstMoment.count()) {
-            await firstMoment.click();
-            await page.waitForURL((url) => Boolean(url.searchParams.get('moment')), { timeout: 10000 });
-            selectedMoment = new URL(page.url()).searchParams.get('moment');
-            if (!selectedMoment) throw new Error('Moment selection did not produce ?moment= state');
+          if (!(await firstMoment.count())) {
+            throw new Error(`기억: real public tree ${treeId} rendered no selectable Moment`);
           }
+          await firstMoment.click();
+          await page.waitForURL((url) => Boolean(url.searchParams.get('moment')), { timeout: 10000 });
+          selectedMoment = new URL(page.url()).searchParams.get('moment');
+          if (!selectedMoment) throw new Error('Moment selection did not produce ?moment= state');
+          records.push({ label: 'Moment selected', url: page.url(), title: await page.title() });
 
           await clickView('보드', '02-board');
           await clickView('관계', '03-relationships');
@@ -211,8 +250,18 @@ jobs:
           }
           records.push({ label: 'Back→탐색', url: page.url(), title: await page.title() });
 
-          fs.writeFileSync('.preview-live-qa/result.json', JSON.stringify({ treeId, selectedMoment, records }, null, 2));
-          console.log(JSON.stringify({ treeId, selectedMoment, records }, null, 2));
+          fs.writeFileSync('.preview-live-qa/result.json', JSON.stringify({
+            treeId,
+            selectedMoment,
+            publicMomentCount: candidate.momentCount,
+            records,
+          }, null, 2));
+          console.log(JSON.stringify({
+            treeId,
+            selectedMoment,
+            publicMomentCount: candidate.momentCount,
+            records,
+          }, null, 2));
           await browser.close();
           NODE
 
@@ -236,6 +285,6 @@ jobs:
             echo "- Worker: \`$PREVIEW_WORKER\`"
             echo "- URL: $PREVIEW_BASE_URL"
             echo '- mode: staging / API mutations disabled'
-            echo '- live Chromium: five-view click QA PASS'
+            echo '- live Chromium: real public Tree five-view click QA PASS'
             echo '- Production Worker touched: no'
           } >> "$GITHUB_STEP_SUMMARY"
