@@ -1,0 +1,114 @@
+name: Five-source visual parity audit
+
+on:
+  push:
+    branches:
+      - preview/five-source-rc-20260827
+    paths:
+      - '.github/workflows/five-source-visual-parity-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PREVIEW_BASE_URL: https://lovetree-limone-five-source-preview.charliekant.workers.dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture native and canonical pairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p visual-audit
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
+          const pairs = [
+            {
+              source: '57',
+              native: '/design-lab/source-tracks/57/v1-3-native',
+              current: '/trees/five-source-preview',
+            },
+            {
+              source: '58',
+              native: '/design-lab/source-tracks/58/v1-2-native',
+              current: '/trees/five-source-preview/board?moment=m-root',
+            },
+            {
+              source: '56',
+              native: '/design-lab/lineages/53/53-v3-vertical-network-overview',
+              current: '/trees/five-source-preview/relationships?moment=m-child',
+            },
+            {
+              source: '60',
+              native: '/design-lab/lineages/60/v1-2',
+              current: '/trees/five-source-preview/explore?moment=m-child',
+            },
+            {
+              source: '64',
+              native: '/design-lab/lineages/64/v1-2-1',
+              current: '/trees/five-source-preview/portal?moment=m-child',
+            },
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+          const report = [];
+
+          async function capture(pathname, out) {
+            const page = await context.newPage();
+            const response = await page.goto(`${base}${pathname}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            const status = response?.status() ?? null;
+            await page.waitForTimeout(2200);
+            const title = await page.title();
+            const metrics = await page.evaluate(() => ({
+              bodyWidth: document.body.scrollWidth,
+              bodyHeight: document.body.scrollHeight,
+              viewportWidth: window.innerWidth,
+              viewportHeight: window.innerHeight,
+              text: document.body.innerText.slice(0, 1200),
+            }));
+            await page.screenshot({ path: `visual-audit/${out}`, fullPage: false });
+            await page.close();
+            return { pathname, status, title, ...metrics };
+          }
+
+          try {
+            for (const pair of pairs) {
+              const native = await capture(pair.native, `source${pair.source}-native.png`);
+              const current = await capture(pair.current, `source${pair.source}-current.png`);
+              report.push({ source: pair.source, native, current });
+            }
+            fs.writeFileSync('visual-audit/report.json', JSON.stringify(report, null, 2));
+            console.log(JSON.stringify(report, null, 2));
+          } finally {
+            await browser.close();
+          }
+          NODE
+
+      - name: Upload parity screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-source-visual-parity-audit
+          path: visual-audit
+          if-no-files-found: error
+          retention-days: 14
