@@ -60,6 +60,8 @@ Source Capsules remain at `new/sources/`. They are **referenced**, not copied.
 
 ## Manifest Format
 
+The source capsule manifest follows the canonical schema in `SOURCE_CAPSULE_STANDARD.md`. A version-level composition references source `CAPSULE_ID`s:
+
 ```json
 {
   "version": "v1",
@@ -74,6 +76,8 @@ Source Capsules remain at `new/sources/`. They are **referenced**, not copied.
   "created": "2026-08-28"
 }
 ```
+
+Composition references only the preallocated Five-Source set (`SRC056/SRC057/SRC058/SRC060/SRC064`). Identities are resolved through manifest `RELATIONS[]`, never by number matching.
 
 ## Rules
 

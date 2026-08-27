@@ -28,3 +28,23 @@ new/sources/SRC058/
 - Source adapter is NOT inside Source authority
 - Source does not know about Product/React/Backend
 - One Source Capsule per local worker (no cross-capsule edits)
+
+## Namespace
+
+Source identity uses the `SRC` prefix within the fixed namespace `SRC / TRK / LIN / CDX / CAP / MST / FAM`. Equal numbers across prefixes imply **no** relation (`SRC058 != TRK058 != LIN058`). The 108 evaluation corpus is `MST001`–`MST108`, **not** `SRC001`–`SRC108`.
+
+## Parallel Intake
+
+Intake follows central allocation. A `CAPSULE_ID` is allocated first and the exact path handed to a worker; the worker modifies only `new/sources/<PREALLOCATED_CAPSULE_ID>/**`. Workers must not self-allocate IDs or edit the global registry, standards, versions, or other capsules.
+
+Currently only the Five-Source set is preallocated:
+
+```
+SRC056
+SRC057
+SRC058
+SRC060
+SRC064
+```
+
+No full 108 Source allocation is assumed in advance.

@@ -41,7 +41,7 @@ new/
 └── standards/        — Operating standards and conventions
 ```
 
-**Status**: SCAFFOLDED. Standards drafted. Ready for first source intake.
+**Status**: SCAFFOLDED. Standards drafted and namespace closed. Ready for Five-Source intake after PR #547 review + CI + merge.
 
 ### CORE (Shared Backend Boundary)
 
@@ -59,6 +59,16 @@ SOURCE_REVISION ≠ PRODUCT_VERSION
 - Source Capsules have their own revision (SRC058 V1.2)
 - Product Versions reference sources (NEW V1 = SRC064 + SRC057 + SRC056 + SRC060 + SRC058)
 - These are **separate axes** — never conflated
+
+## 3a. Identity Namespace
+
+The NEW identity namespace is fixed:
+
+```
+SRC / TRK / LIN / CDX / CAP / MST / FAM
+```
+
+Equal numbers across prefixes imply **no** relation (`SRC058 != TRK058 != LIN058`). The 108 evaluation corpus is `MST001`–`MST108`, **not** `SRC001`–`SRC108`. Only the Five-Source set is preallocated (`SRC056/SRC057/SRC058/SRC060/SRC064`). Relationships are declared via manifest `RELATIONS[]`, and intake follows central allocation.
 
 ## 4. lib/ Ownership Split
 
@@ -187,6 +197,8 @@ This task does NOT:
 
 ## 12. Next Steps
 
-1. **#547 architecture closure** — Integration CTO review completion
-2. **Source56/57/58/60/64 intake** — First source capsules in `new/sources/`
-3. **V1 composition** — Connect sources to product version via adapters
+1. **Namespace / standards closure** — merge PR #547 after exact-head review + CI
+2. **Five-Source Intake** — first capsules in `new/sources/` (SRC056/SRC057/SRC058/SRC060/SRC064) under central allocation
+3. **Five-Source calibration**
+4. **108 evaluation corpus / 88 family intake expansion** — `MST001`–`MST108` and `FAMxxx` allocations
+5. **V1 composition** — Connect sources to product version via adapters

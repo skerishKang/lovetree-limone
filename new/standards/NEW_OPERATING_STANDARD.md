@@ -46,6 +46,26 @@ SOURCE CAPSULE = FRAMEWORK-INDEPENDENT PLAIN JS
   Auth/Tree/Moment context via NEW shell/host bridge.
 ```
 
+## Identity Namespace
+
+The NEW identity namespace is fixed:
+
+```
+SRC / TRK / LIN / CDX / CAP / MST / FAM
+```
+
+- `SRC` = authoritative Source
+- `TRK` = Track
+- `LIN` = Lineage
+- `CDX` = Codex
+- `CAP` = Capability
+- `MST` = 108 evaluation / master row
+- `FAM` = normalized unique family
+
+An equal number across prefixes implies **no** relation. `SRC058 != TRK058 != LIN058`, `CDX008 != LIN008`. Relationships are declared only through the explicit `RELATIONS[]` array in the capsule manifest.
+
+The **108 evaluation corpus** is `MST001`–`MST108`. It is **not** `SRC001`–`SRC108`. `MST` (evaluation row identity) and `SRC` (source authority identity) are different entities. No full 108 Source allocation is assumed; only the Five-Source preallocation exists (`SRC056/SRC057/SRC058/SRC060/SRC064`).
+
 ## Proving Namespace
 
 NEW uses `/new/...` as its proving namespace.

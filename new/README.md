@@ -20,6 +20,14 @@ new/
 └── standards/        — Operating standards and conventions
 ```
 
+## Identity Namespace
+
+```
+SRC / TRK / LIN / CDX / CAP / MST / FAM
+```
+
+Equal numbers across prefixes imply **no** relation (`SRC058 != TRK058 != LIN058`). The 108 evaluation corpus is `MST001`–`MST108`, **not** `SRC001`–`SRC108`. Only the Five-Source set is preallocated: `SRC056/SRC057/SRC058/SRC060/SRC064`.
+
 ## Key Principle
 
 **SOURCE_REVISION ≠ PRODUCT_VERSION**

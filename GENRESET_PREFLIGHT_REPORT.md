@@ -75,6 +75,8 @@ SOURCE58_NEW_V1_REFERENCE_IMPLEMENTATION = HOLD
 
 ## Architecture Next Steps
 
-1. **#547 architecture closure** — Integration CTO review completion
-2. **Source56/57/58/60/64 intake** — First source capsules in `new/sources/`
-3. **V1 composition** — Connect sources to product version via adapters
+1. **Namespace / standards closure** — merge PR #547 after exact-head review + CI
+2. **Five-Source Intake** — first capsules in `new/sources/` (SRC056/SRC057/SRC058/SRC060/SRC064) under central allocation
+3. **Five-Source calibration**
+4. **108 evaluation corpus / 88 family intake expansion** — `MST001`–`MST108` and `FAMxxx` allocations
+5. **V1 composition** — Connect sources to product version via adapters
