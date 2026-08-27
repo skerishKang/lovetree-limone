@@ -20,6 +20,8 @@ test("Five-Source primary navigation is semantic and legacy routes are not prima
   assert.match(source, /data-view-tier="primary"/);
   assert.match(source, /data-view-tier="return"/);
   assert.match(source, /data-view-tier="secondary"/);
+  assert.match(source, /data-semantic-primary-scroll="true"/);
+  assert.match(source, /<\/nav>\s*<details[\s\S]*data-view-tier="secondary"/);
   assert.match(source, /label: "한눈에"/);
   assert.match(source, /label: "타임라인"/);
   assert.match(source, /label: "공개 스토리"/);
@@ -56,7 +58,13 @@ test("Board, Relationships and Explore expose Moment-aware cross-view actions", 
   assert.match(layout, /<MomentContextActions \/>/);
 });
 
-test("in-view Moment selection stays replace-history on Five-Source presentation views", async () => {
+test("in-view Moment selection stays replace-history on all Five-Source presentation views", async () => {
+  const treePage = await read("app/trees/[id]/page.tsx");
+  const momentUrl = await read("lib/use-moment-url.ts");
+  assert.match(treePage, /useMomentUrlState/);
+  assert.match(momentUrl, /router\.replace\(/);
+  assert.match(momentUrl, /next\.set\("moment", id\)/);
+
   const files = await Promise.all([
     read("app/trees/[id]/board/page.tsx"),
     read("app/trees/[id]/relationships/page.tsx"),
