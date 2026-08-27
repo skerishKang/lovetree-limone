@@ -26,7 +26,7 @@
 .hero {
   position: absolute;
   z-index: 16;
-  left: calc(50% + 24px);
+  left: calc(50% + 124px);
   top: 28px;
   width: min(1120px, calc(100vw - 58px));
   transform: translateX(-50%);
