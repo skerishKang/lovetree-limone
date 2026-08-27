@@ -186,7 +186,9 @@ async function desktopJourney() {
   await relationshipActions.getByRole("link", { name: "공간에서 탐색", exact: true }).click();
   await waitForSource(page, "60");
   await assertMoment(page, "m-grandchild", "desktop-explore-grandchild");
-  assert.ok(await page.locator("canvas").count(), "desktop: Source60 canvas missing");
+  const exploreCanvas = page.getByRole("img", { name: /3D Moment Cluster Explorer/ });
+  await exploreCanvas.waitFor({ state: "visible" });
+  assert.equal(await exploreCanvas.count(), 1, "desktop: Source60 canvas missing");
   await page.screenshot({ path: `${screenshotDir}/desktop-1280-source60-context-actions.png`, fullPage: false });
 
   // View changes push; in-view Moment selections replace. Two Backs must therefore
