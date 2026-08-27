@@ -100,7 +100,7 @@ See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
 - **Source capsules**: Framework-independent plain JS adapter uses canonical HTTP API directly
 - Must not fork backend truth
 - Must not create a second canonical DB writer
-- Route structure: `/new/v1/...` (proving namespace)
+- Route structure: `/new/...` (proving namespace)
 
 ### Shared Rules
 1. Both generations may read from the same backend simultaneously
@@ -113,7 +113,7 @@ See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
 
 ## 6. Adapter Contract (NEW/V1)
 
-The adapter layer in `new/v1/adapters/` serves one purpose:
+The adapter layer in `new/versions/v1/adapters/` serves one purpose:
 
 ```
 canonical backend/API data → source UI expected data shape

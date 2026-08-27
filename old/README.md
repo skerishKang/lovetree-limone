@@ -48,13 +48,13 @@ Backend / Auth / API bridge files. These are **OPTIONAL** for NEW host/shell reu
 - `lib/auth-token-provider.ts` — Auth token provider
 - `lib/firebase.ts` — Firebase configuration
 
-**Policy**: Source capsules (`new/v1/sources/`) remain framework-independent plain JS. They use canonical HTTP API directly via a plain JS adapter. Auth/Tree/Moment context is received through the NEW shell/host bridge, not via direct React/TS import of these files.
+**Policy**: Source capsules (`new/sources/`) remain framework-independent plain JS. They use canonical HTTP API directly via a plain JS adapter. Auth/Tree/Moment context is received through the NEW shell/host bridge, not via direct React/TS import of these files.
 
 ## What Does NOT Live Here
 
-- New source-faithful implementations → `new/v1/`
+- New source-faithful implementations → `new/sources/`
 - Backend / DB / Auth boundary contracts → `core/`
-- Source implementations → `new/v1/sources/`
+- Product version composition → `new/versions/`
 - SHARED_CORE_BRIDGE_LIB files (optional host reuse, not source capsule dependency)
 
 ## Migration Context
@@ -68,6 +68,6 @@ The existing frontend files remain at their current paths because Next.js App Ro
 1. Do not begin new product design work under legacy paths
 2. Do not delete legacy code — it is preserved as historical evidence
 3. Do not fork backend truth from legacy paths
-4. NEW development belongs under `new/v1/`
+4. NEW development belongs under `new/sources/` or `new/versions/`
 5. Legacy source/design history may be referenced but does not control NEW implementation
 6. SHARED_CORE_BRIDGE_LIB is optional host/shell reuse — source capsules do not depend on it
