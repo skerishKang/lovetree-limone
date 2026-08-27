@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 const viewSwitcher = readFileSync("app/components/ViewSwitcher.tsx", "utf8");
 const route = readFileSync("app/trees/[id]/explore/page.tsx", "utf8");
+const styles = readFileSync("app/trees/[id]/explore/explore.module.css", "utf8");
 const projection = readFileSync("lib/lineage-60/projection.ts", "utf8");
 const sourceData = readFileSync("lib/lineage-60/data.ts", "utf8");
 
@@ -22,6 +23,12 @@ test("canonical explorer uses actual Tree Moments and preserves moment query aut
   assert.match(route, /next\.set\("moment", nextMomentId\)/);
   assert.match(route, /router\.replace\(/);
   assert.doesNotMatch(route, /TRACK60_MOMENTS|buildTrack60Moments/);
+});
+
+test("Source60 keeps canonical ViewSwitcher above the interactive explore canvas", () => {
+  assert.match(styles, /tree-page\[data-mvp-source="60"\][\s\S]*tree-view-switcher-bar/);
+  assert.match(styles, /position:\s*relative/);
+  assert.match(styles, /z-index:\s*3/);
 });
 
 test("cluster and bridge identities are view-derived only", () => {
