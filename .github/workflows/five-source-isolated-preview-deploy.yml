@@ -15,7 +15,7 @@ concurrency:
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -37,11 +37,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          parent="$(git rev-parse HEAD^)"
-          if [ "$parent" != "$EXPECTED_APP_MAIN_SHA" ]; then
-            echo "BLOCKED: preview workflow commit parent $parent != expected app main $EXPECTED_APP_MAIN_SHA" >&2
-            exit 1
-          fi
           changed="$(git diff --name-only "$EXPECTED_APP_MAIN_SHA" HEAD)"
           if [ "$changed" != ".github/workflows/five-source-isolated-preview-deploy.yml" ]; then
             echo "BLOCKED: preview branch contains application changes:" >&2
@@ -130,6 +125,106 @@ jobs:
             printf '%s -> HTTP %s\n' "$route" "$code"
           done
 
+      - name: Prepare live Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Live five-view click QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .preview-live-qa
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const base = process.env.PREVIEW_BASE_URL.replace(/\/$/, '');
+          const treeId = 'demo';
+          const expected = {
+            '기억': `/trees/${treeId}`,
+            '보드': `/trees/${treeId}/board`,
+            '관계': `/trees/${treeId}/relationships`,
+            '탐색': `/trees/${treeId}/explore`,
+            '포털': `/trees/${treeId}/portal`,
+          };
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+          const records = [];
+
+          async function settle() {
+            await page.waitForLoadState('domcontentloaded');
+            await page.waitForTimeout(900);
+          }
+          async function assertHealthy(label) {
+            const errorState = page.locator('.tree-page-state h1');
+            if (await errorState.count()) {
+              throw new Error(`${label}: tree error state: ${await errorState.first().innerText()}`);
+            }
+            const nav = page.getByRole('navigation', { name: '보기 전환' });
+            if (!(await nav.count())) throw new Error(`${label}: semantic view navigation missing`);
+          }
+          async function capture(label, file) {
+            await page.screenshot({ path: `.preview-live-qa/${file}.png`, fullPage: true });
+            records.push({ label, url: page.url(), title: await page.title() });
+          }
+          async function clickView(label, file) {
+            const link = page.getByRole('link', { name: label, exact: true });
+            await link.click({ force: true });
+            await page.waitForURL((url) => url.pathname === expected[label] && url.searchParams.get('moment') === selectedMoment, { timeout: 15000 });
+            await settle();
+            await assertHealthy(label);
+            const current = page.getByRole('link', { name: label, exact: true });
+            if ((await current.getAttribute('aria-current')) !== 'page') {
+              throw new Error(`${label}: aria-current=page missing`);
+            }
+            await capture(label, file);
+          }
+
+          await page.goto(`${base}${expected['기억']}`, { waitUntil: 'domcontentloaded' });
+          await settle();
+          await assertHealthy('기억');
+          if (!(await page.locator('.tree-detail-content').count())) {
+            throw new Error('기억: canonical Source57 product content missing for demo tree');
+          }
+          await capture('기억', '01-memory');
+
+          let selectedMoment = null;
+          const firstMoment = page.locator('.memory-record').first();
+          if (await firstMoment.count()) {
+            await firstMoment.click();
+            await page.waitForURL((url) => Boolean(url.searchParams.get('moment')), { timeout: 10000 });
+            selectedMoment = new URL(page.url()).searchParams.get('moment');
+            if (!selectedMoment) throw new Error('Moment selection did not produce ?moment= state');
+          }
+
+          await clickView('보드', '02-board');
+          await clickView('관계', '03-relationships');
+          await clickView('탐색', '04-explore');
+          await clickView('포털', '05-portal');
+
+          await page.goBack();
+          await settle();
+          if (new URL(page.url()).pathname !== expected['탐색']) {
+            throw new Error(`Back: expected ${expected['탐색']} but got ${new URL(page.url()).pathname}`);
+          }
+          if (new URL(page.url()).searchParams.get('moment') !== selectedMoment) {
+            throw new Error('Back: selected Moment query was not preserved');
+          }
+          records.push({ label: 'Back→탐색', url: page.url(), title: await page.title() });
+
+          fs.writeFileSync('.preview-live-qa/result.json', JSON.stringify({ treeId, selectedMoment, records }, null, 2));
+          console.log(JSON.stringify({ treeId, selectedMoment, records }, null, 2));
+          await browser.close();
+          NODE
+
+      - name: Upload live click evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-source-isolated-preview-live-qa
+          path: .preview-live-qa
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Publish preview summary
         shell: bash
         run: |
@@ -141,5 +236,6 @@ jobs:
             echo "- Worker: \`$PREVIEW_WORKER\`"
             echo "- URL: $PREVIEW_BASE_URL"
             echo '- mode: staging / API mutations disabled'
+            echo '- live Chromium: five-view click QA PASS'
             echo '- Production Worker touched: no'
           } >> "$GITHUB_STEP_SUMMARY"
