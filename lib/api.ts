@@ -32,61 +32,96 @@ const FIVE_SOURCE_PREVIEW_TREE = {
   updatedAt: "2026-08-27T00:00:00.000Z",
 };
 
-// Visual-fidelity fixture only. Six root branches exercise Source56's full vertical
-// network grammar while the media mix is intentionally balanced across Source60's
-// four view-derived clusters. Nothing here is persisted or treated as product truth.
-const PREVIEW_MOMENT_SPECS = [
-  ["m-root", null, "First light", "첫 번째 기억에서 러브트리가 시작됩니다.", "youtube", "warm", null],
+type PreviewFamily = {
+  key: string;
+  title: string;
+  sourceTypes: readonly string[];
+  emotions: readonly string[];
+};
 
-  ["m-f1", "m-root", "Rain window", "비 오는 날의 창가에서 시작된 첫 번째 길입니다.", "video", "soft", "첫 빛에서 움직이는 장면으로 이어졌다"],
-  ["m-f1-a", "m-f1", "Quiet frame", "잠시 멈춘 표정과 빛을 오래 기억합니다.", "image", "light", "움직임 속에서 한 장면이 남았다"],
-  ["m-f1-b", "m-f1-a", "Side street", "낯선 골목을 걷던 기억이 다음 장면을 열었습니다.", "travel", "wander", "한 장면에서 새로운 장소로 이어졌다"],
+const PREVIEW_FAMILIES: readonly PreviewFamily[] = [
+  { key: "f1", title: "처음 빠져든 순간", sourceTypes: ["video", "image", "travel"], emotions: ["설렘", "빛", "몰입"] },
+  { key: "f2", title: "무대와 퍼포먼스", sourceTypes: ["song", "book", "song"], emotions: ["울림", "여운", "환호"] },
+  { key: "f3", title: "콘텐츠 탐색", sourceTypes: ["memo", "link", "memo"], emotions: ["단서", "호기심", "기록"] },
+  { key: "f4", title: "사람과 관계", sourceTypes: ["image", "video", "image"], emotions: ["온기", "움직임", "친밀"] },
+  { key: "f5", title: "다시 찾은 기억", sourceTypes: ["book", "song", "book"], emotions: ["문장", "그리움", "성장"] },
+  { key: "f6", title: "다음 계절", sourceTypes: ["link", "memo", "link"], emotions: ["장소", "아침", "귀환"] },
+];
 
-  ["m-f2", "m-root", "First refrain", "처음 함께 들었던 노래가 두 번째 길을 만들었습니다.", "song", "echo", "첫 마음이 음악으로 이어졌다"],
-  ["m-f2-a", "m-f2", "Dog-eared page", "접힌 책장의 문장이 오래 남았습니다.", "book", "tender", "노래의 여운이 문장으로 이어졌다"],
-  ["m-f2-b", "m-f2-a", "Encore", "다시 들은 노래가 이전 장면을 다른 색으로 보여줍니다.", "song", "reprise", "문장이 다시 음악을 불러냈다"],
+function isoDay(index: number) {
+  return new Date(Date.UTC(2026, 0, index + 1)).toISOString();
+}
 
-  ["m-f3", "m-root", "Margin note", "짧은 메모가 세 번째 기억의 길을 열었습니다.", "memo", "note", "첫 기억에서 작은 기록이 갈라져 나왔다"],
-  ["m-f3-a", "m-f3", "Saved link", "다시 보고 싶어 남겨 둔 링크입니다.", "link", "curious", "메모에서 바깥의 단서로 이어졌다"],
-  ["m-f3-b", "m-f3-a", "Late memo", "하루 끝에 적은 짧은 문장이 남았습니다.", "memo", "calm", "단서를 따라 다시 내 기록으로 돌아왔다"],
-
-  ["m-f4", "m-root", "Blue hour", "해가 진 뒤에도 남아 있던 푸른 시간입니다.", "image", "blue", "첫 기억의 빛이 다른 색의 장면으로 이어졌다"],
-  ["m-f4-a", "m-f4", "Night train", "움직이는 창밖 풍경이 새로운 길을 열었습니다.", "video", "motion", "푸른 시간이 이동의 기억으로 이어졌다"],
-  ["m-f4-b", "m-f4-a", "Arrival light", "도착한 곳에서 익숙한 감정을 다시 만났습니다.", "image", "arrival", "이동 끝에서 다시 빛을 발견했다"],
-
-  ["m-f5", "m-root", "Small letter", "짧은 편지가 다섯 번째 길을 만들었습니다.", "book", "letter", "첫 마음이 글로 이어졌다"],
-  ["m-f5-a", "m-f5", "Old song", "한 소절이 오래전 장면을 다시 불러냈습니다.", "song", "nostalgia", "문장의 감정이 음악으로 이어졌다"],
-  ["m-f5-b", "m-f5-a", "Second chapter", "다시 펼친 책에서 다른 의미를 발견했습니다.", "book", "growth", "노래의 여운이 다음 문장으로 이어졌다"],
-
-  ["m-f6", "m-root", "Shared place", "함께 저장한 장소가 마지막 길을 열었습니다.", "link", "place", "첫 기억에서 다시 찾아갈 장소로 이어졌다"],
-  ["m-f6-a", "m-f6", "Morning note", "다음 날 아침 적어 둔 작은 기록입니다.", "memo", "morning", "장소의 기억이 짧은 메모로 남았다"],
-  ["m-f6-b", "m-f6-a", "Return link", "언젠가 다시 열어 볼 단서를 남겼습니다.", "link", "return", "메모가 다시 바깥의 기억으로 이어졌다"],
-] as const;
-
-const FIVE_SOURCE_PREVIEW_MOMENTS = PREVIEW_MOMENT_SPECS.map((spec, index) => {
-  const [id, parentId, title, memo, sourceType, emotion, connectionReason] = spec;
-  const day = String(index + 1).padStart(2, "0");
-  const sourceUrl = sourceType === "youtube"
-    ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    : `https://example.test/preview/${id}`;
-  return {
-    id,
+function buildPreviewMoments() {
+  const moments: Array<Record<string, unknown>> = [];
+  const rootDate = isoDay(0);
+  moments.push({
+    id: "m-root",
     treeId: FIVE_SOURCE_PREVIEW_TREE_ID,
-    parentId,
-    connectionReason,
-    title,
-    memo,
-    sourceType,
-    sourceUrl,
-    thumbnail: previewThumbnail(index),
-    discoveryDate: `2026-01-${day}`,
-    timestamp: `2026-01-${day}`,
-    createdAt: `2026-01-${day}T00:00:00.000Z`,
-    sortOrder: index + 1,
-    emotionTags: [emotion],
+    parentId: null,
+    connectionReason: null,
+    title: "First light",
+    memo: "첫 번째 기억에서 러브트리가 시작됩니다.",
+    sourceType: "youtube",
+    sourceUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: previewThumbnail(0),
+    discoveryDate: rootDate,
+    timestamp: rootDate,
+    createdAt: rootDate,
+    sortOrder: 1,
+    emotionTags: ["warm"],
     visibility: "public",
-  };
-});
+  });
+
+  let index = 1;
+  PREVIEW_FAMILIES.forEach((family, familyIndex) => {
+    const entryId = `m-${family.key}`;
+    for (let memberIndex = 0; memberIndex < 9; memberIndex += 1) {
+      const id = memberIndex === 0 ? entryId : `${entryId}-${memberIndex}`;
+      const primaryParent = memberIndex === 0
+        ? "m-root"
+        : memberIndex <= 4
+          ? entryId
+          : `${entryId}-${memberIndex - 4}`;
+      const sourceType = family.sourceTypes[memberIndex % family.sourceTypes.length];
+      const date = isoDay(index);
+      const title = memberIndex === 0
+        ? family.title
+        : `${family.title} · ${String(memberIndex + 1).padStart(2, "0")}`;
+      const connectionReason = memberIndex === 0
+        ? `First Moment에서 ${family.title}의 주요 경로가 시작되었습니다.`
+        : memberIndex <= 4
+          ? `${family.title}의 주경로에서 이어진 기억입니다.`
+          : `${family.title}의 보조 경로로 갈라진 기억입니다.`;
+      moments.push({
+        id,
+        treeId: FIVE_SOURCE_PREVIEW_TREE_ID,
+        parentId: primaryParent,
+        connectionReason,
+        title,
+        memo: `${family.title} 안에서 발견한 ${memberIndex === 0 ? "첫" : "다음"} 순간입니다. 원본 공간 밀도를 검증하기 위한 읽기 전용 Preview 기억입니다.`,
+        sourceType,
+        sourceUrl: `https://example.test/preview/${id}`,
+        thumbnail: previewThumbnail(index + familyIndex),
+        discoveryDate: date,
+        timestamp: date,
+        createdAt: date,
+        sortOrder: index + 1,
+        emotionTags: [family.emotions[memberIndex % family.emotions.length]],
+        visibility: "public",
+      });
+      index += 1;
+    }
+  });
+
+  return moments;
+}
+
+// Visual-fidelity fixture only: 1 root + 6 families × 9 Moment = 55 Moment.
+// This approximates the authoritative Source56/60/64 source density so screenshot
+// comparison measures implementation fidelity rather than an artificially sparse demo.
+// It exists only on the isolated Preview host and is never persisted as product truth.
+const FIVE_SOURCE_PREVIEW_MOMENTS = buildPreviewMoments();
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
