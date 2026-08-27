@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useCallback, useMemo } from "react";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ViewSwitcher } from "@/app/components/ViewSwitcher";
-import Lineage60ClusterExplorer from "@/app/design-lab/lineages/60/v1-2/Lineage60ClusterExplorer";
 import { useTreeMoments } from "@/lib/use-tree-moments";
 import {
   deriveBridges,
@@ -12,6 +11,7 @@ import {
   type ThemeKey,
   type Track60Moment,
 } from "@/lib/lineage-60/data";
+import ProductLineage60Explorer from "./ProductLineage60Explorer";
 import styles from "./explore.module.css";
 
 const CLUSTER_SPECS: Array<Omit<ClusterView, "memberIds">> = [
@@ -45,6 +45,8 @@ function dateString(value: string | Date | null | undefined): string {
 
 export default function TreeExplorePage() {
   const params = useParams<{ id: string | string[] }>();
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const momentId = searchParams.get("moment");
@@ -79,6 +81,14 @@ export default function TreeExplorePage() {
   })).filter((cluster) => cluster.memberIds.length > 0), [moments]);
 
   const bridges = useMemo(() => deriveBridges(moments), [moments]);
+
+  const syncMomentToUrl = useCallback((nextMomentId: string | null) => {
+    const next = new URLSearchParams(searchParams.toString());
+    if (nextMomentId) next.set("moment", nextMomentId);
+    else next.delete("moment");
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   return (
     <div className="tree-page" data-mvp-source="60" data-tree-id={treeId}>
@@ -117,9 +127,13 @@ export default function TreeExplorePage() {
         {!loading && !error && moments.length === 0 ? <div className={styles.state}>탐색할 Moment가 없습니다.</div> : null}
 
         {!loading && !error && moments.length > 0 ? (
-          <div data-testid="source60-native-product-explorer">
-            <Lineage60ClusterExplorer moments={moments} clusters={clusters} bridges={bridges} />
-          </div>
+          <ProductLineage60Explorer
+            moments={moments}
+            clusters={clusters}
+            bridges={bridges}
+            selectedMomentId={selectedMomentId}
+            onSelectedMomentChange={syncMomentToUrl}
+          />
         ) : null}
       </main>
     </div>
