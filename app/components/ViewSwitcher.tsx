@@ -62,13 +62,11 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
     <div
       data-semantic-navigation="true"
       style={{
-        position: "relative",
         display: "flex",
         alignItems: "center",
         gap: 4,
         width: "100%",
-        minWidth: 0,
-        flex: "1 1 auto",
+        maxWidth: "100%",
       }}
     >
       <nav
@@ -77,11 +75,10 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
         data-narrow-scroll-container="true"
         data-semantic-primary-scroll="true"
         style={{
-          width: "100%",
-          maxWidth: "100%",
+          flex: "1 1 auto",
           minWidth: 0,
+          maxWidth: "100%",
           overflowX: "auto",
-          overflowY: "hidden",
           overscrollBehaviorX: "contain",
           WebkitOverflowScrolling: "touch",
           justifyContent: "flex-start",
@@ -128,12 +125,7 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
         <summary
           className={`view-tab${secondaryActive ? " view-tab-active" : ""}`}
           aria-current={secondaryActive ? "page" : undefined}
-          style={{
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-            listStyle: "none",
-            userSelect: "none",
-          }}
+          style={{ cursor: "pointer", whiteSpace: "nowrap", listStyle: "none" }}
         >
           더보기
         </summary>
@@ -144,11 +136,9 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
             position: "absolute",
             insetInlineEnd: 0,
             top: "calc(100% + 8px)",
-            zIndex: 60,
+            zIndex: 40,
             minWidth: 180,
-            maxWidth: "min(240px, calc(100vw - 24px))",
             padding: 8,
-            border: "1px solid rgba(255,255,255,.12)",
             borderRadius: 14,
             background: "rgba(20, 20, 24, 0.96)",
             boxShadow: "0 14px 40px rgba(0, 0, 0, 0.28)",
