@@ -95,3 +95,5 @@ jobs:
           path: visual-audit
           if-no-files-found: error
           retention-days: 14
+
+# manual parity recapture after isolated preview deploy 3fd33be5
