@@ -101,14 +101,61 @@ Primary current source areas include:
 
 Do not rely on old repository descriptions that refer to D1 or removed `public/pages`, `public/js`, or `public/css` trees as current backend/product authority.
 
+## Source implementation semantics — P0 current authority
+
+Issue #537 and `docs/design-intake/IMPLEMENTATION_FIDELITY_CONTRACT.md` define the current meaning of source implementation.
+
+When the product owner explicitly requests **IMPLEMENT / PORT / RECREATE / 원본대로 구현** for an authoritative executable design source, that executable is the **normative UI/UX specification**. Default to faithful-port mode, not donor/adaptation mode.
+
+For faithful-port work:
+
+- preserve composition, spatial hierarchy, layout, typography, colors, effects, media staging, depth, animation, interaction sequence and action result;
+- translate runtime/framework mechanics as needed;
+- bind existing canonical Tree/Moment/Connection/media/Auth/API data behind the faithful visual/interaction surface;
+- accessibility and responsive defect repair are allowed when they do not redesign the source identity;
+- do not silently simplify the source into a theme, grammar, visual language, donor layer or existing canonical surface;
+- prefer `NATIVE VISUAL SURFACE + CANONICAL DATA ADAPTER + PRODUCT NAVIGATION SHELL` when a source-faithful native surface exists.
+
+The following are explicitly different states:
+
+```text
+PRODUCT_DONOR_INTEGRATED != IMPLEMENTED
+CANONICAL_EXISTING_SURFACE != IMPLEMENTED
+NATIVE_PROVING_COMPLETE != PRODUCT_FIDELITY_PASS
+CANONICAL_ROUTE_INTEGRATED != PRODUCT_FIDELITY_PASS
+CI_GREEN != VISUAL_FIDELITY_PASS
+INTERACTION_CONTRACT_PASS != VISUAL_FIDELITY_PASS
+```
+
+For an authoritative source explicitly requested to be implemented/ported, use the current state sequence:
+
+```text
+SOURCE_PINNED
+→ NATIVE_PORT_COMPLETE
+→ VISUAL_FIDELITY_PASS
+→ INTERACTION_FIDELITY_PASS
+→ CANONICAL_DATA_BOUND
+→ CANONICAL_ROUTE_INTEGRATED
+→ PRODUCT_FIDELITY_PASS
+→ PRODUCTION_READY
+```
+
+`IMPLEMENTED = YES` is permitted only after `PRODUCT_FIDELITY_PASS` for that faithful-port task.
+
+Bounded reinterpretation is allowed only when the owner/task explicitly requests **DONOR / ADAPT / INSPIRED / GRAMMAR / CAPABILITY EXTRACTION / MECHANICS EXTRACTION**. Such work must be reported as donor/adaptation work and must not be counted as a faithful source implementation.
+
+A Design Fidelity target registered only as `interaction-contract`, screenshot existence, or a healthy browser gate does not certify source visual parity. Source-faithful work requires matched authoritative-source → native → canonical visual and interaction evidence as defined by Issue #537.
+
 ## External source preservation
 
-Google Drive and sibling-project originals are evidence/reference sources unless a task explicitly says otherwise.
+Google Drive and sibling-project originals are evidence/reference sources for provenance and donor tasks, but an authoritative executable becomes a **normative UI/UX specification** when the task explicitly requests IMPLEMENT / PORT / RECREATE / 원본대로 구현.
 
 - Treat Drive originals as read-only.
 - Do not move, rewrite, format, minify or delete source originals.
 - Preserve exact bytes/SHA-256 when an intake contract requires source fidelity.
-- Do not silently turn a sibling project into LoveTree product code. Extract only the approved Variant/Capability mechanics.
+- For donor/adaptation tasks, extract only the explicitly approved Variant/Capability mechanics.
+- For faithful-port tasks, do **not** replace the source with mechanics-only extraction; preserve the observable source visual/interaction identity and adapt canonical data behind it.
+- Do not promote demo/source fixture values into canonical Product truth merely to achieve visual fidelity; substitute truthful canonical values while preserving the visual/interaction structure.
 - New intake follows `Lineage → Revision → Variant/Capability` and the newest explicit product-owner/design-lead decision takes precedence while older revisions remain preserved as history.
 
 The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository. For current shared-platform architecture, however, fresh connected GitHub authority in LoveBud #4004/#4005/#4006 is controlling rather than an old mirrored snapshot.
@@ -248,4 +295,4 @@ When a secret or environment variable is required, report only the variable name
 
 ## Operating principle
 
-Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, and leave a clearly named blocker instead of weakening a fail-closed contract.
+Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, **distinguish donor/adaptation from faithful implementation**, and leave a clearly named blocker instead of weakening a fail-closed contract.
