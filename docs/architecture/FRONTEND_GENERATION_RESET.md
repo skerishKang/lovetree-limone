@@ -16,10 +16,10 @@ The goal: freeze all existing LoveTree frontend as `OLD`, create a new `NEW/V1` 
 
 ### OLD (Legacy Frontend)
 
-- All existing frontend: `app/`, `lib/`, `components/`, `design-intake/`, `design-lab/`
+- All existing frontend: `app/`, `components/`, `design-intake/`, `design-lab/`
 - Product generations: V2, V3, V4/Next
-- Source track implementations in `lib/`
-- Design lineage implementations in `lib/`
+- Source track implementations in `lib/` (OLD_FRONTEND_LIB zone)
+- Design lineage implementations in `lib/` (OLD_FRONTEND_LIB zone)
 - Historical static HTML files at root
 - Legacy test suite
 
@@ -41,6 +41,15 @@ The goal: freeze all existing LoveTree frontend as `OLD`, create a new `NEW/V1` 
 - Boundary documentation: `core/FRONTEND_BACKEND_BOUNDARY.md`
 
 **Status**: DOCUMENTED. No backend files moved.
+
+### lib/ Ownership Split
+
+`lib/` is **NOT** entirely OLD. It is split into two logical zones:
+
+- **OLD_FRONTEND_LIB**: Design/source/lineage/presentation/frontend implementation files (OLD-owned)
+- **SHARED_CORE_BRIDGE_LIB**: `lib/api.ts`, `lib/auth.tsx`, `lib/auth-errors.ts`, `lib/auth-token-provider.ts`, `lib/firebase.ts` (shared with NEW — NOT OLD-owned)
+
+No physical file movement. Logical documentation split only.
 
 ## 3. Migration Mode
 
@@ -68,42 +77,51 @@ Physical migration was rejected because **structural beauty is subordinate to ru
 ## 4. Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    REPOSITORY ROOT                    │
-│                                                       │
-│  ┌──────────────────────┐  ┌──────────────────────┐  │
-│  │   OLD (Legacy)       │  │   NEW/V1 (Source)    │  │
-│  │                      │  │                      │  │
-│  │  app/ (in place)     │  │  new/v1/sources/     │  │
-│  │  lib/ (in place)     │  │  new/v1/adapters/    │  │
-│  │  components/         │  │  new/v1/shell/       │  │
-│  │  design-intake/      │  │  new/v1/shared/      │  │
-│  │                      │  │                      │  │
-│  │  Manifest only:      │  │  Active development:  │  │
-│  │  old/README.md       │  │  new/v1/README.md    │  │
-│  │  old/MANIFEST.md     │  │  new/v1/VERSION.md   │  │
-│  └──────────┬───────────┘  └──────────┬───────────┘  │
-│             │                          │               │
-│             └──────────┬───────────────┘               │
-│                        │                               │
-│              ┌─────────▼─────────┐                     │
-│              │     CORE          │                     │
-│              │  (Boundary Docs)  │                     │
-│              │                   │                     │
-│              │  core/README.md   │                     │
-│              │  core/BOUNDARY.md │                     │
-│              └─────────┬─────────┘                     │
-│                        │                               │
-│  ┌─────────────────────▼─────────────────────────────┐│
-│  │           SHARED BACKEND (UNCHANGED)               ││
-│  │                                                    ││
-│  │  db/schema.ts  ← Canonical DB schema              ││
-│  │  db/index.ts   ← DB access                        ││
-│  │  drizzle/      ← Migrations                       ││
-│  │  server/api/   ← Backend API                      ││
-│  │  worker/       ← Cloudflare Worker                ││
-│  └────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    REPOSITORY ROOT                        │
+│                                                           │
+│  ┌──────────────────────┐  ┌──────────────────────────┐  │
+│  │   OLD (Legacy)       │  │   NEW/V1 (Source)        │  │
+│  │                      │  │                          │  │
+│  │  app/ (in place)     │  │  new/v1/sources/         │  │
+│  │  OLD_FRONTEND_LIB    │  │  new/v1/adapters/        │  │
+│  │  components/         │  │  new/v1/shell/           │  │
+│  │  design-intake/      │  │  new/v1/shared/          │  │
+│  │                      │  │                          │  │
+│  │  Manifest only:      │  │  Active development:      │  │
+│  │  old/README.md       │  │  new/v1/README.md        │  │
+│  │  old/MANIFEST.md     │  │  new/v1/VERSION.md       │  │
+│  └──────────┬───────────┘  └──────────┬───────────────┘  │
+│             │                          │                   │
+│             └──────────┬───────────────┘                   │
+│                        │                                   │
+│         ┌──────────────▼──────────────┐                   │
+│         │   SHARED_CORE_BRIDGE_LIB    │                   │
+│         │   lib/api.ts                │                   │
+│         │   lib/auth.tsx              │                   │
+│         │   lib/auth-errors.ts        │                   │
+│         │   lib/auth-token-provider.ts│                   │
+│         │   lib/firebase.ts           │                   │
+│         └──────────────┬──────────────┘                   │
+│                        │                                   │
+│              ┌─────────▼─────────┐                         │
+│              │     CORE          │                         │
+│              │  (Boundary Docs)  │                         │
+│              │                   │                         │
+│              │  core/README.md   │                         │
+│              │  core/BOUNDARY.md │                         │
+│              └─────────┬─────────┘                         │
+│                        │                                   │
+│  ┌─────────────────────▼─────────────────────────────────┐│
+│  │           SHARED BACKEND (UNCHANGED)                   ││
+│  │                                                        ││
+│  │  db/schema.ts  ← Canonical DB schema                  ││
+│  │  db/index.ts   ← DB access                            ││
+│  │  drizzle/      ← Migrations                           ││
+│  │  server/api/   ← Backend API                          ││
+│  │  worker/       ← Cloudflare Worker                    ││
+│  └────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## 5. Source Implementation Rules
@@ -167,6 +185,7 @@ This task performs:
 - ✅ New documentation files (`old/`, `new/`, `core/`, `docs/architecture/`)
 - ✅ New scaffold directories (`new/v1/sources/`, etc.)
 - ✅ Logical namespace declarations
+- ✅ lib/ ownership split (documentation only)
 
 This task does NOT:
 
@@ -181,20 +200,22 @@ This task does NOT:
 - ❌ Delete existing frontend code
 - ❌ Rewrite existing frontend code
 - ❌ Move existing files physically
+- ❌ Fork SHARED_CORE_BRIDGE_LIB files
 
 ## 9. Verification
 
-- [ ] `git diff` shows only new files
+- [ ] `git diff` shows only new/modified documentation files
 - [ ] No backend/schema/Auth/API mutation
-- [ ] `old/` manifest exists
+- [ ] `old/` manifest exists with lib/ split
 - [ ] `new/v1/` scaffold exists
-- [ ] `core/` boundary docs exist
+- [ ] `core/` boundary docs exist with SHARED_CORE_BRIDGE_LIB
 - [ ] `docs/architecture/FRONTEND_GENERATION_RESET.md` exists
 - [ ] Existing build still works
 - [ ] Existing tests still pass
 
 ## 10. Next Steps
 
-1. **SOURCE58_NEW_V1_REFERENCE_IMPLEMENTATION** — First source implementation in `new/v1/sources/source-58/`
+1. **SOURCE58_NEW_V1_REFERENCE_IMPLEMENTATION** — First sour
+ce implementation in `new/v1/sources/source-58/`
 2. Integration CTO review of this architecture
 3. Promotion of proven sources to product routes (separate step)

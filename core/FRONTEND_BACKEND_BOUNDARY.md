@@ -12,7 +12,6 @@ The following remain **single canonical authority** regardless of frontend gener
 ### Authentication
 - **Current**: Firebase Authentication (`relovetree` project)
 - **Target**: Staged Neon Auth migration (LoveBud #4006)
-- **Path**: `lib/firebase.ts`, `lib/auth.tsx`, `lib/auth-token-provider.ts`
 - **API**: `server/api/auth.ts`
 
 ### Database
@@ -36,7 +35,32 @@ The following remain **single canonical authority** regardless of frontend gener
 - **Cache**: `worker/cache-policy.ts`
 - **Image optimization**: via `vinext/server/image-optimization`
 
-## 2. Data Model (Canonical)
+## 2. SHARED_CORE_BRIDGE_LIB
+
+These `lib/` files are **SHARED** between OLD and NEW generations. Neither generation exclusively owns them. They bridge frontend to canonical backend.
+
+| File | Role |
+|------|------|
+| `lib/api.ts` | API client — bridges frontend to backend API |
+| `lib/auth.tsx` | Auth provider — bridges frontend to Firebase Auth |
+| `lib/auth-errors.ts` | Auth error handling |
+| `lib/auth-token-provider.ts` | Auth token provider — bridges frontend to auth tokens |
+| `lib/firebase.ts` | Firebase configuration — bridges frontend to Firebase |
+
+**Rule**: Both OLD and NEW consume these files. Neither may fork or rewrite them without cross-repo authority.
+
+## 3. OLD_FRONTEND_LIB
+
+All other `lib/` files are OLD-owned frontend implementation:
+
+- Design system (`lib/design-*`, `lib/experience-*`, `lib/design-runtime/`)
+- Lineage source implementations (`lib/lineage-*`)
+- Source track implementations (`lib/source-track-*`, `lib/source-codex-*`, `lib/codex14/`)
+- Frontend-specific utilities (`lib/moment-model.ts`, `lib/tree-types.ts`, `lib/v4-orbit-*`, etc.)
+
+See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
+
+## 4. Data Model (Canonical)
 
 ### Tree
 - Core entity representing a user's tree
@@ -56,15 +80,15 @@ The following remain **single canonical authority** regardless of frontend gener
 - Comments on moments/trees
 - Writable via `server/api/comments.ts`
 
-## 3. Frontend Consumption Rules
+## 5. Frontend Consumption Rules
 
 ### OLD Generation (Legacy)
-- Consumes backend via `lib/api.ts`, `lib/auth.tsx`
+- Consumes backend via SHARED_CORE_BRIDGE_LIB (`lib/api.ts`, `lib/auth.tsx`)
 - May use direct Firebase SDK calls via `lib/firebase.ts`
 - Route structure: `app/v2/`, `app/v3/`, `app/v4/`, `app/design-lab/`
 
 ### NEW Generation (V1)
-- Must consume the **same** backend authority
+- Must consume the **same** SHARED_CORE_BRIDGE_LIB files
 - Must not fork backend truth
 - Must not create a second canonical DB writer
 - Route structure: `/new/v1/...` (proving namespace)
@@ -76,8 +100,9 @@ The following remain **single canonical authority** regardless of frontend gener
 3. Neither generation creates its own database tables
 4. Neither generation creates its own authentication system
 5. Neither generation deploys its own Worker
+6. SHARED_CORE_BRIDGE_LIB files are consumed, not forked
 
-## 4. Adapter Contract (NEW/V1)
+## 6. Adapter Contract (NEW/V1)
 
 The adapter layer in `new/v1/adapters/` serves one purpose:
 
@@ -91,7 +116,7 @@ Constraints:
 - Adapter must not fork backend truth
 - Adapter must be thin — it bridges, it does not own
 
-## 5. Boundary Violations (STOP)
+## 7. Boundary Violations (STOP)
 
 The following are boundary violations that halt work:
 
@@ -102,12 +127,14 @@ The following are boundary violations that halt work:
 - Deploying a separate Worker for NEW generation
 - Exposing new secrets or provider configurations
 - Mutating Production data for validation
+- Forking SHARED_CORE_BRIDGE_LIB files
 
-## 6. Migration Path
+## 8. Migration Path
 
 When NEW/V1 achieves source parity:
 
 1. NEW proving routes may be promoted to product routes
 2. OLD routes may be deprecated (not deleted)
 3. Backend remains single canonical authority throughout
-4. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend changes
+4. SHARED_CORE_BRIDGE_LIB remains shared throughout
+5. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend changes

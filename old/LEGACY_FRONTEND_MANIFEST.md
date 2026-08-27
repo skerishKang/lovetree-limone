@@ -80,22 +80,15 @@
 - `app/components/v3/` — V3-specific components
 - `app/components/v4/` — V4-specific components (Landing, FirstJourney, OrbitMorphTemplate, BookShelf variants, CommunityDiscovery, JourneyDock, TreeWorkspace, etc.)
 
-## 5. Shared Libraries (`lib/`)
+## 5. `lib/` Ownership Split
 
-### Core Infrastructure
-- `lib/api.ts` — API client
-- `lib/auth.tsx` — Auth provider
-- `lib/auth-errors.ts` — Auth error handling
-- `lib/auth-token-provider.ts` — Auth token provider
-- `lib/firebase.ts` — Firebase configuration
-- `lib/first-tree-create-client.ts` — First tree creation
-- `lib/tree-types.ts` — Tree type definitions
-- `lib/moment-model.ts` — Moment model
-- `lib/moment-url.ts` — Moment URL handling
-- `lib/use-moment-url.ts` — Moment URL hook
-- `lib/use-tree-moments.ts` — Tree moments hook
+`lib/` is **NOT** entirely OLD-owned. It is split into two logical zones.
 
-### Design System
+### 5a. OLD_FRONTEND_LIB (legacy ownership)
+
+Design / source / lineage / presentation / frontend implementation files:
+
+#### Design System
 - `lib/design-lab.ts` — Design lab utilities
 - `lib/design-lineages.ts` — Design lineages
 - `lib/design-intake/` — Design intake system
@@ -106,7 +99,7 @@
 - `lib/experience-capability-audit-batch2.ts` — Audit batch 2
 - `lib/experience-runtime/` — Experience runtime
 
-### Lineage Source Implementations
+#### Lineage Source Implementations
 - `lib/lineage-52/` — Lineage 52
 - `lib/lineage-52-v3-source.ts` — Lineage 52 V3 source
 - `lib/lineage-53-source56.ts` — Lineage 53 Source 56
@@ -122,7 +115,7 @@
 - `lib/lineage-64/` — Lineage 64
 - `lib/lineage-67-v24/` — Lineage 67 V24
 
-### Source Track Implementations
+#### Source Track Implementations
 - `lib/source-codex-13/` — Source Codex 13
 - `lib/codex14/` — Source Codex 14
 - `lib/source-codex-15/` — Source Codex 15
@@ -138,7 +131,7 @@
 - `lib/sourceTrack24V1DonorNative.ts` — Source Track 24 V1 Donor Native
 - `lib/living-media-sphere-v3/` — Living Media Sphere V3
 
-### Other
+#### Other Frontend Implementation
 - `lib/drive-track-18-electric-aurora/` — Drive Track 18 Electric Aurora
 - `lib/graph/` — Graph utilities
 - `lib/intent-path-prototype.ts` — Intent path prototype
@@ -151,6 +144,20 @@
 - `lib/v4-orbit-product.ts` — V4 orbit product
 - `lib/v4-orbit-selection.ts` — V4 orbit selection
 - `lib/videofigure-turntable.ts` — Videofigure turntable
+
+### 5b. SHARED_CORE_BRIDGE_LIB (shared with NEW — NOT OLD-owned)
+
+Backend / Auth / API bridge files used by both OLD and NEW generations:
+
+| File | Role |
+|------|------|
+| `lib/api.ts` | API client — bridges frontend to backend |
+| `lib/auth.tsx` | Auth provider — bridges frontend to Firebase Auth |
+| `lib/auth-errors.ts` | Auth error handling |
+| `lib/auth-token-provider.ts` | Auth token provider |
+| `lib/firebase.ts` | Firebase configuration — bridges frontend to Firebase |
+
+These files are **SHARED** between OLD and NEW. Neither generation exclusively owns them. They bridge frontend to canonical backend (Auth, API, Firebase).
 
 ## 6. Design Intake (`design-intake/`)
 
@@ -181,6 +188,7 @@ These areas are **shared** between OLD and NEW and remain at root level:
 - `drizzle/` — Migrations (CORE)
 - `server/api/` — Backend API (CORE)
 - `worker/` — Cloudflare Worker (CORE)
+- `lib/api.ts`, `lib/auth.tsx`, `lib/auth-errors.ts`, `lib/auth-token-provider.ts`, `lib/firebase.ts` — SHARED_CORE_BRIDGE_LIB
 - `package.json`, `next.config.ts`, `tsconfig.json` — Build config (ROOT)
 - `public/` — Static assets (ROOT)
 - `scripts/` — Build/deploy scripts (ROOT)
