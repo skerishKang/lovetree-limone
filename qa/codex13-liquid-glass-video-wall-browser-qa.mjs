@@ -6,7 +6,7 @@ const baseUrl = process.env.V4_BASE_URL ?? "http://127.0.0.1:3000";
 const screenshotDir = process.env.CODEX13_SCREENSHOT_DIR ?? "/tmp/codex13-browser-qa";
 const route = "/v4/trees/codex13-qa/archive/video-wall";
 const pixel = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop stop-color='%23364253'/%3E%3Cstop offset='1' stop-color='%230e131b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='360' fill='url(%23g)'/%3E%3C/svg%3E";
-const tinyWebmBase64 = "GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAISEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEjTbuMU6uEHFO7a1OsggH87AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjEuNy4xMDNXQYxMYXZmNjEuNy4xMDNEiYhAXgAAAAAAABZUrmvIrgEAAAAAAAA/14EBc8WIReQDyixbYGycgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QCYloA4JCwgRC6gRCagQJVsIRVuYEBElTDZ0B/c3OfY8CAZ8iZRaOHRU5DT0RFUkSHjExhdmY2MS43LjEwM3Nz2mPAi2PFiEXkA8osW2BsZ8ilRaOHRU5DT0RFUkSHmExhdmM2MS4xOS4xMDEgbGlidnB4LXZwOWfIoUWjiERVUkFUSU9ORIeTMDA6MDA6MDAuMTIwMDAwMDAwAB9DtnXP54EAo6CBAACAgkmDQgAA8AD2ADgkHBhKAAAwYAAAEL///UiMAKOTgQAoAIYAQJKcAFAAAAMgAABCQKOTgQBQAIYAQJKcAE7gAAMgAABCQBxTu2uRu4+zgQC3iveBAfGCAajwgQM=";
+const tinyWebmBase64 = "GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAISEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHWTbuMU6uEElTDZ1OsggEjTbuMU6uEHFO7a1OsggH87AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsCrXsYMPQkBNgIxMYXZmNjEuNy4xMDNXQYxMYXZmNjEuNy4xMDNEiYhAXgAAAAAAABZUrmvIrgEAAAAAAAA/14EBc8WIReQDyixbYGycgQAitZyDdW5kiIEAhoVWX1ZQOYOBASPjg4QCYloA4JCwgRC6gRCagQJVsIRVuYEBElTDZ0B/c3OfY8CAZ8iZRaOHRU5DT0RFUkSHjExhdmY2MS43LjEwM3Nz2mPAi2PFiEXkA8osW2BsZ8ilRaOHRU5DT0RFUkSHmExhdmM2MS4xOS4xMDEgbGlidnB4LXZwOWfIoUWjiERVUkFUSU9ORIeTMDA6MDA6MDAuMTIwMDAwMDAwAB9DtnXP54EAo6CBAACAgkmDQgAA8AD2ADgkHBhKAAAwYAAAEL///UiMAKOTgQAoAIYAQJKcAFAAAAMgAABCQKOTgQBQAIYAQJKcAE7gAAMgAABCQBxTu2uRu4+zgQC3iveBAfGCAajwgQM=";
 
 const tree = { id: "codex13-qa", title: "Codex13 QA Tree", ownerId: "qa-owner", visibility: "public" };
 const memories = Array.from({ length: 9 }, (_, index) => ({
@@ -148,8 +148,12 @@ async function auditViewport(browser, { name, width, height, mobile = false, red
 
   await page.keyboard.press("Escape");
   await dialog.waitFor({ state: "hidden" });
-  await page.waitForTimeout(80);
   assert.equal(await nearestButton.evaluate((node) => document.activeElement === node), true, `${name}: inspector must restore trigger focus`);
+  await page.waitForFunction(
+    () => document.querySelectorAll("[data-wall-slot] video").length > 0,
+    null,
+    { timeout: 2000 },
+  );
   await assertDecoderBudget(page, `${name}: post-inspector resume`, expectedCells, activeLimit, true);
 
   await page.screenshot({ path: `${screenshotDir}/${name}.png`, fullPage: true });
