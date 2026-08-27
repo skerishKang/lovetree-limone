@@ -9,15 +9,26 @@ import { LivingGlassMomentInspector } from "./LivingGlassMomentInspector";
 export function LivingGlassMomentGallery({
   moments,
   presentationById,
+  selectedId,
+  onSelectedIdChange,
 }: {
   moments: TreeMomentView[];
   presentationById: Record<string, LivingGlassPresentation>;
+  selectedId?: string | null;
+  onSelectedIdChange?: (momentId: string | null) => void;
 }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  const selectedMoment = moments.find((moment) => moment.id === selectedId) ?? null;
+  const controlled = selectedId !== undefined;
+  const activeSelectedId = controlled ? selectedId : internalSelectedId;
+  const selectedMoment = moments.find((moment) => moment.id === activeSelectedId) ?? null;
   const selectedPresentation = selectedMoment ? presentationById[selectedMoment.id] : undefined;
   const selectedIndex = selectedMoment ? moments.findIndex((moment) => moment.id === selectedMoment.id) : -1;
+
+  const setSelection = (nextId: string | null) => {
+    if (!controlled) setInternalSelectedId(nextId);
+    onSelectedIdChange?.(nextId);
+  };
 
   const scrollMomentIntoView = (index: number) => {
     if (typeof window === "undefined" || !window.matchMedia("(max-width: 880px)").matches) return;
@@ -31,7 +42,7 @@ export function LivingGlassMomentGallery({
 
   const selectMoment = (moment: TreeMomentView) => {
     const index = moments.findIndex((candidate) => candidate.id === moment.id);
-    setSelectedId(moment.id);
+    setSelection(moment.id);
     if (index >= 0) scrollMomentIntoView(index);
   };
 
@@ -41,7 +52,7 @@ export function LivingGlassMomentGallery({
     const nextIndex = (currentIndex + direction + moments.length) % moments.length;
     const next = moments[nextIndex];
     if (!next) return;
-    setSelectedId(next.id);
+    setSelection(next.id);
     scrollMomentIntoView(nextIndex);
   };
 
@@ -49,7 +60,7 @@ export function LivingGlassMomentGallery({
     <section
       className={`living-glass-gallery-shell${selectedMoment ? " has-selection" : ""}`}
       aria-label="Living Glass Moments"
-      data-selected-id={selectedId ?? ""}
+      data-selected-id={activeSelectedId ?? ""}
       data-selected-index={selectedIndex}
     >
       <div
@@ -66,7 +77,7 @@ export function LivingGlassMomentGallery({
               key={moment.id}
               moment={moment}
               presentation={presentation}
-              selected={selectedId === moment.id}
+              selected={activeSelectedId === moment.id}
               onSelect={selectMoment}
               onNavigate={navigateMoment}
             />
@@ -87,7 +98,7 @@ export function LivingGlassMomentGallery({
         <LivingGlassMomentInspector
           moment={selectedMoment}
           presentation={selectedPresentation}
-          onClose={() => setSelectedId(null)}
+          onClose={() => setSelection(null)}
         />
       ) : null}
     </section>
