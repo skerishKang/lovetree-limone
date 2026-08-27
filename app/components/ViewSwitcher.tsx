@@ -40,6 +40,7 @@ export function ViewSwitcher({ treeId, active, momentId, isOwner = false }: View
         overflowX: "auto",
         overscrollBehaviorX: "contain",
         WebkitOverflowScrolling: "touch",
+        justifyContent: "flex-start",
       }}
     >
       {VIEWS.filter((view) => !view.ownerOnly || isOwner).map((view) => (
