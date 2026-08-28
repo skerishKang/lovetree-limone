@@ -12,6 +12,8 @@ import {
   track64FamilySplit,
   track64MediaMix,
 } from "../lib/lineage-64/data.ts";
+import { SOURCE64_SOURCE_SLOTS } from "../lib/lineage-64/source-slots.ts";
+import { toLineage64Moments } from "../lib/lineage-64/product-adapter.ts";
 import {
   beginGesture,
   cancelGesture,
@@ -55,6 +57,45 @@ test("40 Moment world keeps the Photo18 / Video10 / Memo7 / Link5 media mix", ()
   assert.equal(split.foreground + split.mid + split.far, 40);
   const families = track64FamilySplit();
   assert.deepEqual(Object.values(families), [8, 8, 8, 8, 8]);
+});
+
+test("Phase 1 preserves original A media mapping and memo-only surfaces", () => {
+  assert.equal(SOURCE64_SOURCE_SLOTS.length, 40);
+  assert.equal(SOURCE64_SOURCE_SLOTS.filter((slot) => slot.mediaUrl).length, 33);
+  assert.equal(SOURCE64_SOURCE_SLOTS.filter((slot) => slot.kind === "memo").length, 7);
+  assert.equal(SOURCE64_SOURCE_SLOTS.filter((slot) => slot.kind === "memo" && !slot.mediaUrl).length, 7);
+  for (const slot of SOURCE64_SOURCE_SLOTS.filter((item) => item.kind !== "memo")) {
+    assert.match(slot.mediaUrl ?? "", /^\/reference\/lineage-64-source\/m\d+\.(?:webp|jpg)$/);
+    assert.match(slot.mediaSha256 ?? "", /^[a-f0-9]{64}$/);
+  }
+});
+
+test("canonical moments reuse Source64 presentation slots without independent orbit recomputation", () => {
+  const canonical = SOURCE64_SOURCE_SLOTS.map((slot, index) => ({
+    id: `canonical-${index + 1}`,
+    treeId: "tree",
+    parentId: index ? `canonical-${index}` : null,
+    connectionReason: null,
+    title: slot.title,
+    memo: slot.memo,
+    sourceType: slot.kind,
+    thumbnail: slot.kind === "memo" ? "" : "https://example.invalid/canonical.png",
+    emotionTags: [],
+    timestamp: slot.date,
+    discoveryDate: slot.date,
+    sortOrder: index + 1,
+    isRoot: index === 0,
+    depth: index,
+    createdAt: null,
+  }));
+  const projected = toLineage64Moments(canonical);
+  assert.equal(projected.length, SOURCE64_SOURCE_SLOTS.length);
+  projected.forEach((moment, index) => {
+    const slot = SOURCE64_SOURCE_SLOTS[index];
+    assert.equal(moment.family, slot.family);
+    assert.equal(moment.depthTier, slot.depthTier);
+    assert.deepEqual(moment.world, slot.world);
+  });
 });
 
 test("every Moment carries stable world coordinates and per-Moment fitting metadata", () => {

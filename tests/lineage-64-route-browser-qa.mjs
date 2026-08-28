@@ -46,9 +46,12 @@ async function assertNoHorizontalOverflow(page, label) {
 // strict-mode violation. Source-faithful: only the kicker reads exactly that.
 async function assertCenterVoidAndDepth(page, label) {
   assert.ok(await page.getByText("WELCOME BACK", { exact: true }).isVisible(), `${label}: center Welcome void is readable`);
-  assert.equal(await page.locator('[data-depth-tier="foreground"]').count(), 9, `${label}: 9 foreground cards`);
-  assert.equal(await page.locator('[data-depth-tier="mid"]').count(), 13, `${label}: 13 mid cards`);
-  assert.equal(await page.locator('[data-depth-tier="far"]').count(), 18, `${label}: 18 far cards`);
+  // Source64 A's pinned zOffset slots resolve to 10 foreground, 18 mid,
+  // and 12 far cards. These counts are part of the source topology, not a
+  // synthetic canonical-row distribution.
+  assert.equal(await page.locator('[data-depth-tier="foreground"]').count(), 10, `${label}: 10 foreground cards`);
+  assert.equal(await page.locator('[data-depth-tier="mid"]').count(), 18, `${label}: 18 mid cards`);
+  assert.equal(await page.locator('[data-depth-tier="far"]').count(), 12, `${label}: 12 far cards`);
 }
 
 // Live world camera angle (rotateY deg) written by the ambient/drag/wheel RAF loop.

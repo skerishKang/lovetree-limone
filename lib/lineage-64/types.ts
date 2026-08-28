@@ -10,7 +10,7 @@ export interface MomentFitting {
   mediaType: MediaKind;
   fitMode: FitMode;
   objectPosition: string;
-  focalPoint: string;
+  focalPoint: string | { x: number; y: number };
   viewerFitMode: FitMode;
   viewerObjectPosition: string;
 }
@@ -20,6 +20,8 @@ export interface MomentWorldCoord {
   radius: number;
   y: number;
   scale: number;
+  phaseOffset?: number;
+  zOffset?: number;
 }
 
 export interface MomentRecord {

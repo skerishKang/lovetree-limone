@@ -32,21 +32,22 @@ interface Source64Ring {
   zBase: number;
   band: number;
   phaseOffset: number;
+  speed: number;
 }
 
 // Ported from the pinned executable's RINGS table. The source uses five
 // independent orbital families rather than one radius per depth tier.
 const SOURCE64_RINGS: Record<MomentRecord["family"], Source64Ring> = {
-  f1: { radiusX: 700, radiusY: 330, zAmplitude: 420, zBase: 0, band: 0, phaseOffset: 0 },
-  f2: { radiusX: 520, radiusY: 260, zAmplitude: 330, zBase: -80, band: 0, phaseOffset: 0.31 },
-  f3: { radiusX: 900, radiusY: 430, zAmplitude: 520, zBase: -40, band: 0, phaseOffset: 0.62 },
-  f4: { radiusX: 760, radiusY: 260, zAmplitude: 460, zBase: -120, band: -250, phaseOffset: 0.93 },
-  f5: { radiusX: 780, radiusY: 250, zAmplitude: 470, zBase: -100, band: 250, phaseOffset: 1.24 },
+  f1: { radiusX: 700, radiusY: 330, zAmplitude: 420, zBase: 0, band: 0, phaseOffset: 0, speed: 1 },
+  f2: { radiusX: 520, radiusY: 260, zAmplitude: 330, zBase: -80, band: 0, phaseOffset: 0.31, speed: 1.18 },
+  f3: { radiusX: 900, radiusY: 430, zAmplitude: 520, zBase: -40, band: 0, phaseOffset: 0.62, speed: 0.82 },
+  f4: { radiusX: 760, radiusY: 260, zAmplitude: 460, zBase: -120, band: -250, phaseOffset: 0.93, speed: 0.92 },
+  f5: { radiusX: 780, radiusY: 250, zAmplitude: 470, zBase: -100, band: 250, phaseOffset: 1.24, speed: 1.06 },
 };
 
 function cardTransform(m: MomentRecord, compact = false): string {
   const ring = SOURCE64_RINGS[m.family];
-  const theta = (m.world.angle * Math.PI) / 180;
+  const theta = (m.world.angle * Math.PI) / 180 + (m.world.phaseOffset ?? 0);
   let x = Math.cos(theta) * ring.radiusX;
   let y =
     Math.sin(theta) * ring.radiusY +
@@ -54,7 +55,8 @@ function cardTransform(m: MomentRecord, compact = false): string {
     Math.sin(theta * 1.7 + ring.phaseOffset * 3) * 45;
   let z =
     Math.sin(theta + 1.1 + ring.phaseOffset * 4) * ring.zAmplitude +
-    ring.zBase;
+    ring.zBase +
+    (m.world.zOffset ?? 0);
 
   // The executable projects coordinates to viewport pixels. CSS 3D keeps the
   // source distances on desktop, but narrow touch viewports need the same
@@ -86,9 +88,9 @@ function cardTransform(m: MomentRecord, compact = false): string {
 function surfaceStyle(m: MomentRecord, variant: "card" | "viewer"): CSSProperties {
   const fit = variant === "viewer" ? m.fitting.viewerFitMode : m.fitting.fitMode;
   const position = variant === "viewer" ? m.fitting.viewerObjectPosition : m.fitting.objectPosition;
-  const size = fit === "cover" ? "100% 100%" : fit === "contain" ? "contain" : "contain";
+  const size = fit === "cover" ? "100% 100%" : "contain";
   return {
-    backgroundImage: `radial-gradient(circle at 50% 35%, ${m.accent} 0%, #1a1020 60%, #06070b 100%)`,
+    ...(m.mediaUrl ? {} : { backgroundImage: `linear-gradient(160deg, ${m.accent} 0%, #1a1020 60%, #06070b 100%)` }),
     backgroundSize: size,
     backgroundPosition: position,
     backgroundRepeat: "no-repeat",
@@ -408,6 +410,10 @@ export default function Lineage64FloatingMomentPortal({
           data-viewer-fit-mode={moment.fitting.viewerFitMode}
           aria-hidden="true"
         >
+          {moment.mediaUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className={styles.mediaImage} style={mediaImageStyle(moment, variant)} src={moment.mediaUrl} alt="" referrerPolicy="no-referrer" />
+          ) : null}
           <span className={styles.linkNote}>
             {moment.externalUrl ? "외부 연결 있음" : "연결된 소스 없음 (데모) · URL 발명 금지"}
           </span>
