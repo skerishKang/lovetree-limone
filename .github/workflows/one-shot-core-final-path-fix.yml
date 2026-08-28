@@ -1,0 +1,69 @@
+name: One-shot final CORE runtime path repair
+
+on:
+  push:
+    branches:
+      - refactor/core-runtime-boundary-v1
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repair exact remaining stale paths
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path('tests/pr39-backend-targeted.test.mjs'): [
+                  ('./drizzle/0002_fixed_scarlet_spider.sql', './core/runtime/drizzle/0002_fixed_scarlet_spider.sql'),
+              ],
+              Path('tests/v4-p2-memory-contracts.test.mjs'): [
+                  ('drizzle/0003_peaceful_radioactive_man.sql', 'core/runtime/drizzle/0003_peaceful_radioactive_man.sql'),
+                  ('db/schema.ts', 'core/runtime/db/schema.ts'),
+              ],
+          }
+
+          for path, pairs in replacements.items():
+              before = path.read_text(encoding='utf-8')
+              after = before
+              for old, new in pairs:
+                  if old not in after:
+                      raise SystemExit(f'missing expected stale path {old!r} in {path}')
+                  after = after.replace(old, new)
+              if after == before:
+                  raise SystemExit(f'no change made in {path}')
+              path.write_text(after, encoding='utf-8')
+
+          checks = {
+              Path('tests/pr39-backend-targeted.test.mjs'): ['./drizzle/0002_fixed_scarlet_spider.sql'],
+              Path('tests/v4-p2-memory-contracts.test.mjs'): ['drizzle/0003_peaceful_radioactive_man.sql', 'db/schema.ts'],
+          }
+          for path, stale in checks.items():
+              text = path.read_text(encoding='utf-8')
+              for token in stale:
+                  if token in text:
+                      raise SystemExit(f'residual stale path {token!r} in {path}')
+          PY
+
+          git diff --check
+          git diff -- tests/pr39-backend-targeted.test.mjs tests/v4-p2-memory-contracts.test.mjs
+
+      - name: Commit repair and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/one-shot-core-final-path-fix.yml
+          git add tests/pr39-backend-targeted.test.mjs tests/v4-p2-memory-contracts.test.mjs
+          git commit -m "test(core): fix final relocated runtime path consumers"
+          git push origin HEAD:refactor/core-runtime-boundary-v1
