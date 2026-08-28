@@ -47,7 +47,10 @@ export default function TreePortalPage() {
       {loading ? <div className="tree-page-state" aria-busy="true">기억을 불러오는 중…</div> : null}
       {!loading && error ? <div className="tree-page-state" role="alert">{error}</div> : null}
       {!loading && !error ? (
-        <main aria-label="떠 있는 Moment 포털" data-rendering="css3d-dom">
+        <main
+          aria-label={`${tree?.title || "나의 LoveTree"} · 떠 있는 Moment 포털`}
+          data-rendering="css3d-dom"
+        >
           <Lineage64FloatingMomentPortal
             moments={moments}
             initialMomentId={momentId}

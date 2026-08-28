@@ -169,7 +169,7 @@ async function captureCanonical(browser, width, height, reduced = false) {
     await page.getByRole("dialog").waitFor({ state: "visible" });
     results.canonical[label].selected = await save(page, "C-canonical", label, "selected-moment");
     results.canonical[label].viewer = await save(page, "C-canonical", label, "viewer-open");
-    await page.getByRole("button", { name: "닫기" }).click();
+    await page.getByRole("button", { name: "Moment 포털 닫기" }).click();
     await page.waitForURL((url) => url.searchParams.get("moment") === null);
     results.canonical[label].primaryOrbitInteraction = await save(page, "C-canonical", label, "primary-orbit-interaction");
     if (reduced) results.canonical[label].reducedMotion = await save(page, "C-canonical", label, "reduced-motion");

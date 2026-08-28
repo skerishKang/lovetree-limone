@@ -300,6 +300,26 @@ export default function Lineage64FloatingMomentPortal({
     [openMoment],
   );
 
+  const openFirstMoment = useCallback(() => {
+    const first = moments[0];
+    if (!first) return;
+    openMoment(first.id, listToggleRef.current);
+    setAnnounce(`첫 순간을 열었습니다: ${first.title}`);
+  }, [moments, openMoment]);
+
+  const openContinueMoment = useCallback(() => {
+    const next = active ? moments[(active.index + 1) % momentCount] : moments[0];
+    if (!next) return;
+    openMoment(next.id, listToggleRef.current);
+    setAnnounce(`이어 보던 순간을 열었습니다: ${next.title}`);
+  }, [active, momentCount, moments, openMoment]);
+
+  const openTreeIndex = useCallback(() => {
+    setListOpen(true);
+    listToggleRef.current?.focus();
+    setAnnounce("Moment 목록을 열었습니다.");
+  }, []);
+
   const renderSurface = (moment: MomentRecord, variant: "card" | "viewer") => {
     if (moment.kind === "memo") {
       return (
@@ -365,21 +385,32 @@ export default function Lineage64FloatingMomentPortal({
         ref={backgroundRef}
         data-background="true"
       >
-        <div className={styles.welcome} aria-hidden="true">
-          <p className={styles.welcomeKicker}>WELCOME BACK</p>
-          <h2 className={styles.welcomeTitle}>부유모먼트 웰컴오빗</h2>
-          <p className={styles.welcomeSub}>연속된 부유 3D 카드 우주에서 하나의 Moment를 선택해 경로로 재진입하세요.</p>
+        <div className={styles.sourceTopbar}>
+          <Link className={styles.sourceBrand} href={canonicalTreePath ?? "/design-lab/lineages/64/v1-2-1"}>
+            LOVETREE · MEMORY ORBIT
+          </Link>
+          <button
+            type="button"
+            className={styles.menuButton}
+            ref={listToggleRef}
+            onClick={() => setListOpen((v) => !v)}
+            aria-expanded={listOpen}
+            aria-controls="lineage64-moment-list"
+            aria-label="MENU · 시맨틱 목록 / 키보드 인덱스"
+          >
+            MENU
+          </button>
         </div>
-
-      <button
-        type="button"
-        className={styles.semanticToggle}
-        ref={listToggleRef}
-        onClick={() => setListOpen((v) => !v)}
-        aria-expanded={listOpen}
-      >
-        시맨틱 목록 / 키보드 인덱스
-      </button>
+        <div className={styles.welcome}>
+          <p className={styles.welcomeKicker}>WELCOME BACK</p>
+          <h2 className={styles.welcomeTitle}>다시, 그 순간으로.</h2>
+          <p className={styles.welcomeSub}>기억은 아직 여기에서 이어지고 있어요.</p>
+          <div className={styles.welcomeActions}>
+            <button type="button" onClick={openContinueMoment}>이어 보던 순간</button>
+            <button type="button" onClick={openFirstMoment}>첫 순간으로</button>
+            <button type="button" onClick={openTreeIndex}>내 트리 보기</button>
+          </div>
+        </div>
 
       <div
         className={styles.world}
@@ -461,7 +492,7 @@ export default function Lineage64FloatingMomentPortal({
                 ref={closeRef}
                 className={styles.closeBtn}
                 onClick={closeViewer}
-                aria-label="닫기"
+                aria-label="Moment 포털 닫기"
               >
                 ✕
               </button>

@@ -1,5 +1,71 @@
 .browse-grid .tree-card { color: inherit; text-decoration: none; }
 
+/* Source64 is a viewport-native welcome surface. Keep the product shell in the
+   DOM for route semantics, but let the source-faithful stage own the first view. */
+.tree-page[data-mvp-source="64"] {
+  min-height: 100svh;
+  padding: 0;
+  overflow: hidden;
+  background: #020204;
+}
+
+.tree-page[data-mvp-source="64"] > .tree-page-topbar,
+.tree-page[data-mvp-source="64"] > .tree-view-switcher-bar {
+  position: absolute;
+  z-index: 100;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tree-page[data-mvp-source="64"] > main[data-rendering="css3d-dom"] {
+  min-height: 100svh;
+}
+
+/* Keep the canonical shell visually out of the source-faithful viewport, but
+   restore it when a keyboard or assistive-technology user enters the shell. */
+.tree-page[data-mvp-source="64"] > .tree-page-topbar:focus-within,
+.tree-page[data-mvp-source="64"] > .tree-view-switcher-bar:focus-within {
+  position: fixed;
+  z-index: 120;
+  inset: 12px 12px auto;
+  display: flex;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 8px;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 12px;
+  background: rgba(7,7,12,.92);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+}
+
+.tree-page[data-mvp-source="64"] > .tree-view-switcher-bar:focus-within {
+  inset: 64px 12px auto;
+}
+
+.lineage64-review-page {
+  min-height: 100vh;
+  overflow-x: clip;
+  background: #06070b;
+}
+
+.lineage64-review-stage {
+  width: 100%;
+  height: 100svh;
+}
+
+.lineage64-review-metadata {
+  padding: 14px;
+}
+
 .tree-page {
   min-height: 100vh;
   padding: 24px 28px 72px;
