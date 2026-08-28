@@ -20,6 +20,19 @@ async function openRoute(browser, viewport, options = {}) {
   const response = await page.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
   assert.ok(response?.ok(), `Lineage 64 route HTTP ${response?.status()}`);
   await page.locator('[data-rendering="css3d-dom"]').waitFor({ timeout: 15000 });
+  await page.locator('[data-source64-revision="64-v1-2-1"]').waitFor({ timeout: 15000 });
+  const readiness = await page.locator('[data-source64-revision="64-v1-2-1"]').evaluate((stage) => {
+    const cards = [...stage.querySelectorAll('[data-moment-id]')];
+    const finite = cards.every((card) => {
+      const rect = card.getBoundingClientRect();
+      return [rect.x, rect.y, rect.width, rect.height].every(Number.isFinite) && rect.width > 0 && rect.height > 0;
+    });
+    return { momentCount: stage.getAttribute('data-source64-moment-count'), familyCount: stage.getAttribute('data-source64-family-count'), cardCount: cards.length, finite };
+  });
+  assert.equal(readiness.momentCount, '40', 'Source64 readiness marker must expose 40 Moments');
+  assert.equal(readiness.familyCount, '5', 'Source64 readiness marker must expose five orbital families');
+  assert.equal(readiness.cardCount, 40, 'Source64 readiness marker must expose 40 card nodes');
+  assert.equal(readiness.finite, true, 'Source64 card geometry must be finite and non-zero before interaction');
   return { context, page, errors };
 }
 

@@ -76,8 +76,100 @@ function viewportLabel(width, height) {
   return `${width}x${height}`;
 }
 
+async function assertSourceGeometry(page, label) {
+  const geometry = await page.evaluate(() => {
+    const cards = [...document.querySelectorAll("#world .card")];
+    const center = document.querySelector("#center");
+    const centerRect = center?.getBoundingClientRect();
+    const rings = window.__TRACK64__?.getCards?.().map((card) => card.ring) ?? [];
+    const centerArea = centerRect ? centerRect.width * centerRect.height : 0;
+    const overlaps = centerRect
+      ? cards.map((card) => {
+          const rect = card.getBoundingClientRect();
+          const width = Math.max(0, Math.min(rect.right, centerRect.right) - Math.max(rect.left, centerRect.left));
+          const height = Math.max(0, Math.min(rect.bottom, centerRect.bottom) - Math.max(rect.top, centerRect.top));
+          return (width * height) / Math.max(centerArea, 1);
+        })
+      : [];
+    return {
+      cardCount: cards.length,
+      ringCount: new Set(rings).size,
+      centerVisible: Boolean(centerRect && centerRect.width > 0 && centerRect.height > 0),
+      maxCenterOverlap: Math.max(0, ...overlaps),
+    };
+  });
+  assert.equal(geometry.cardCount, 40, `${label}: source must render 40 Moments`);
+  assert.equal(geometry.ringCount, 5, `${label}: source must preserve five orbital families`);
+  assert.equal(geometry.centerVisible, true, `${label}: source Welcome center must remain visible`);
+  assert.ok(geometry.maxCenterOverlap < 0.45, `${label}: source cards over-occlude Welcome center`);
+}
+
+async function assertProductGeometry(page, label, width) {
+  const geometry = await page.evaluate(() => {
+    const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+    const welcome = document.querySelector('[data-source64-welcome="true"]');
+    const cards = [...document.querySelectorAll("[data-moment-id]")];
+    const welcomeRect = welcome?.getBoundingClientRect();
+    const welcomeArea = welcomeRect ? welcomeRect.width * welcomeRect.height : 0;
+    const overlaps = welcomeRect
+      ? cards.map((card) => {
+          const rect = card.getBoundingClientRect();
+          const cardArea = rect.width * rect.height;
+          const overlapWidth = Math.max(0, Math.min(rect.right, welcomeRect.right) - Math.max(rect.left, welcomeRect.left));
+          const overlapHeight = Math.max(0, Math.min(rect.bottom, welcomeRect.bottom) - Math.max(rect.top, welcomeRect.top));
+          return (overlapWidth * overlapHeight) / Math.max(Math.min(welcomeArea, cardArea), 1);
+        })
+      : [];
+    const depths = Object.fromEntries(["foreground", "mid", "far"].map((tier) => [tier, cards.filter((card) => card.dataset.depthTier === tier).length]));
+    const finiteCardGeometry = cards.every((card) => {
+      const rect = card.getBoundingClientRect();
+      return [rect.x, rect.y, rect.width, rect.height].every(Number.isFinite) && rect.width > 0 && rect.height > 0;
+    });
+    return {
+      revision: stage?.getAttribute("data-source64-revision"),
+      momentCount: stage?.getAttribute("data-source64-moment-count"),
+      familyCount: stage?.getAttribute("data-source64-family-count"),
+      cardCount: cards.length,
+      depthCount: depths,
+      centerVisible: Boolean(welcomeRect && welcomeRect.width > 0 && welcomeRect.height > 0),
+      finiteCardGeometry,
+      maxWelcomeOverlap: Math.max(0, ...overlaps),
+    };
+  });
+  assert.equal(geometry.revision, "64-v1-2-1", `${label}: stale or foreign Source64 surface detected`);
+  assert.equal(Number(geometry.momentCount), 40, `${label}: product must render 40 Moments`);
+  assert.equal(Number(geometry.familyCount), 5, `${label}: product must preserve five orbital families`);
+  assert.equal(geometry.cardCount, 40, `${label}: product card count drifted`);
+  assert.ok(geometry.depthCount.foreground > 0 && geometry.depthCount.mid > 0 && geometry.depthCount.far > 0, `${label}: depth tiers missing`);
+  assert.equal(geometry.centerVisible, true, `${label}: product Welcome center must remain visible`);
+  assert.equal(geometry.finiteCardGeometry, true, `${label}: product card geometry must be finite and non-zero`);
+  assert.ok(geometry.maxWelcomeOverlap < 0.65, `${label}: product cards over-occlude Welcome center`);
+
+  const viewer = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').boundingBox();
+  const layout = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').evaluate((shell) => {
+    const style = getComputedStyle(shell);
+    const visual = shell.querySelector('[data-source64-media-visual="true"]')?.getBoundingClientRect();
+    const info = shell.querySelector('[data-source64-media-info="true"]')?.getBoundingClientRect();
+    return {
+      columns: style.gridTemplateColumns,
+      rows: style.gridTemplateRows,
+      visualWidth: visual?.width ?? 0,
+      infoWidth: info?.width ?? 0,
+    };
+  });
+  assert.ok(viewer && viewer.width <= width + 1, `${label}: viewer escapes viewport`);
+  if (width > 700) {
+    assert.equal(layout.columns.split(" ").length, 2, `${label}: desktop viewer must use two columns`);
+    assert.ok(layout.visualWidth / Math.max(layout.infoWidth, 1) > 1.65, `${label}: desktop viewer media/info split is not source-like`);
+    assert.ok(layout.infoWidth >= 300, `${label}: desktop viewer info column is too narrow`);
+  } else {
+    assert.equal(layout.columns.split(" ").length, 1, `${label}: mobile viewer must stack media/info`);
+    assert.ok(layout.rows.split(" ").length >= 2, `${label}: mobile viewer rows are missing`);
+  }
+}
+
 async function captureSource(browser, width, height, reduced = false) {
-  const label = viewportLabel(width, height);
+  const label = `${viewportLabel(width, height)}${reduced ? "-reduced" : ""}`;
   const context = await browser.newContext({ viewport: { width, height } });
   const page = await context.newPage();
   if (reduced) await page.emulateMedia({ reducedMotion: "reduce" });
@@ -85,6 +177,7 @@ async function captureSource(browser, width, height, reduced = false) {
   try {
     await page.goto(`file://${sourcePath}`, { waitUntil: "load" });
     await page.waitForSelector("#world .card", { timeout: 15000 });
+    await assertSourceGeometry(page, `A-source-${label}`);
     results.source[label] ??= {};
     results.source[label].initial = await save(page, "A-source", label, "initial");
 
@@ -106,7 +199,7 @@ async function captureSource(browser, width, height, reduced = false) {
 }
 
 async function captureNative(browser, width, height, reduced = false) {
-  const label = viewportLabel(width, height);
+  const label = `${viewportLabel(width, height)}${reduced ? "-reduced" : ""}`;
   const context = await browser.newContext({
     viewport: { width, height },
     reducedMotion: reduced ? "reduce" : undefined,
@@ -129,6 +222,7 @@ async function captureNative(browser, width, height, reduced = false) {
     await firstOption.waitFor({ state: "attached", timeout: 8000 });
     await firstOption.click();
     await page.getByRole("dialog").waitFor({ state: "visible" });
+    await assertProductGeometry(page, `B-native-${label}`, width);
     results.native[label].selected = await save(page, "B-native", label, "selected-moment");
     await page.getByRole("button", { name: /PATH CONTINUE/ }).click();
     await page.getByRole("dialog").waitFor({ state: "visible" });
@@ -146,7 +240,7 @@ async function captureNative(browser, width, height, reduced = false) {
 }
 
 async function captureCanonical(browser, width, height, reduced = false) {
-  const label = viewportLabel(width, height);
+  const label = `${viewportLabel(width, height)}${reduced ? "-reduced" : ""}`;
   const context = await browser.newContext({
     viewport: { width, height },
     hasTouch: width <= 390,
@@ -170,6 +264,7 @@ async function captureCanonical(browser, width, height, reduced = false) {
 
     await page.goto(`${base}/trees/${treeId}/portal?moment=moment-01`, { waitUntil: "domcontentloaded" });
     await page.getByRole("dialog").waitFor({ state: "visible" });
+    await assertProductGeometry(page, `C-canonical-${label}`, width);
     results.canonical[label].selected = await save(page, "C-canonical", label, "selected-moment");
     results.canonical[label].viewer = await save(page, "C-canonical", label, "viewer-open");
     await page.getByRole("button", { name: "Moment 포털 닫기" }).click();
@@ -189,9 +284,11 @@ try {
     await captureNative(browser, width, height);
     await captureCanonical(browser, width, height);
   }
-  await captureSource(browser, 320, 720, true);
-  await captureNative(browser, 320, 720, true);
-  await captureCanonical(browser, 320, 720, true);
+  for (const [width, height] of viewports) {
+    await captureSource(browser, width, height, true);
+    await captureNative(browser, width, height, true);
+    await captureCanonical(browser, width, height, true);
+  }
 } finally {
   await browser.close();
 }

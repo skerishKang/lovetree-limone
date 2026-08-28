@@ -16,7 +16,6 @@
 .background {
   position: absolute;
   inset: 0;
-  transform-style: preserve-3d;
 }
 
 .welcome {
@@ -53,8 +52,9 @@
 .world {
   position: absolute;
   inset: 0;
+  z-index: 3;
   transform-style: preserve-3d;
-  transform-origin: 50% 46%;
+  transform-origin: 50% 50%;
   will-change: transform;
 }
 
@@ -388,13 +388,302 @@
   }
 }
 
-@media (max-width: 330px) {
-  .card {
-    width: 128px;
-    height: 176px;
-    margin: -88px 0 0 -64px;
+
+/* Source64 repair: preserve the executable's central void, depth-led card
+   treatment, and wide mediaViewer/mediaShell composition. */
+.welcome {
+  z-index: 20;
+  width: min(540px, 64vw);
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.card {
+  width: 180px;
+  height: 232px;
+  margin: -116px 0 0 -90px;
+  border-radius: 14px;
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 24px 60px rgba(0,0,0,.38);
+}
+
+.card[data-depth-tier="foreground"] {
+  width: 226px;
+  height: 292px;
+  margin: -146px 0 0 -113px;
+  border-radius: 16px;
+  z-index: 4;
+}
+
+.card[data-depth-tier="mid"] {
+  width: 180px;
+  height: 232px;
+  margin: -116px 0 0 -90px;
+  opacity: .82;
+  z-index: 2;
+}
+
+.card[data-depth-tier="far"] {
+  width: 128px;
+  height: 166px;
+  margin: -83px 0 0 -64px;
+  opacity: .58;
+  border-radius: 11px;
+  z-index: 1;
+}
+
+.card[data-depth-tier="foreground"] .mediaImage,
+.card[data-depth-tier="mid"] .mediaImage,
+.card[data-depth-tier="far"] .mediaImage {
+  filter: saturate(.66) brightness(.86);
+  transform: scale(1.02);
+}
+
+.card[data-depth-tier="foreground"]:hover .mediaImage,
+.card[data-depth-tier="mid"]:hover .mediaImage,
+.card[data-depth-tier="far"]:hover .mediaImage {
+  filter: saturate(1) brightness(.98);
+  transform: scale(1.055);
+}
+
+.viewerOverlay {
+  z-index: 82;
+  padding: 5vh 5vw;
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(9px);
+}
+
+.mediaShell {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 92vw);
+  max-height: 88vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .72fr);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 22px;
+  background: rgba(7,7,11,.89);
+  box-shadow: 0 40px 110px rgba(0,0,0,.68);
+  color: #ece5df;
+}
+
+.mediaVisual {
+  position: relative;
+  min-height: min(68vh, 720px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 42%, #171720 0, #0b0b10 46%, #050507 100%);
+}
+
+.mediaVisual .mediaSurface {
+  position: absolute;
+  inset: 0;
+}
+
+.mediaVisual .mediaImage {
+  width: 100%;
+  height: 100%;
+  max-height: 72vh;
+  object-fit: var(--viewer-fit, contain);
+  object-position: var(--viewer-pos, 50% 50%);
+  filter: none;
+}
+
+.mediaVisual [data-fit-mode="contain"] .mediaImage {
+  padding: 22px;
+}
+
+.mediaClose {
+  position: absolute;
+  z-index: 10;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 50%;
+  background: rgba(3,3,6,.74);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.mediaClose:hover {
+  background: #eee9e0;
+  color: #111;
+}
+
+.mediaInfo {
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 28px;
+}
+
+.mediaKicker {
+  margin: 0;
+  color: #a9a4b1;
+  font-size: 10px;
+  letter-spacing: .19em;
+}
+
+.mediaTitle {
+  margin: 9px 0 10px;
+  color: #f7f2ec;
+  font-size: 34px;
+  letter-spacing: -.045em;
+}
+
+.mediaMeta {
+  margin: 0;
+  color: #888391;
+  font-size: 10px;
+}
+
+.mediaWhy {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.mediaWhy strong {
+  color: #d28c9a;
+  font-size: 9px;
+  letter-spacing: .17em;
+}
+
+.mediaWhy p {
+  color: #d4d0d6;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.mediaActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.mediaFoot {
+  margin: 8px 0 0;
+  color: #7d756f;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .welcome {
+    top: 48%;
+    width: 78vw;
+  }
+
+  .welcome::before {
+    inset: -26px -30px;
+  }
+
+  .card[data-depth-tier="foreground"] {
+    width: 168px;
+    height: 218px;
+    margin: -109px 0 0 -84px;
+  }
+
+  .card[data-depth-tier="mid"] {
+    width: 132px;
+    height: 172px;
+    margin: -86px 0 0 -66px;
+  }
+
+  .card[data-depth-tier="far"] {
+    width: 108px;
+    height: 140px;
+    margin: -70px 0 0 -54px;
+  }
+
+  .viewerOverlay {
+    padding: 12px;
+  }
+
+  .mediaShell {
+    width: 100%;
+    max-height: 94vh;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(280px, 48vh) minmax(0, 1fr);
+    border-radius: 18px;
+  }
+
+  .mediaVisual {
+    min-height: 0;
+  }
+
+  .mediaVisual .mediaImage {
+    max-height: 48vh;
+  }
+
+  .mediaVisual [data-fit-mode="contain"] .mediaImage {
+    padding: 14px;
+  }
+
+  .mediaInfo {
+    padding: 19px 18px 22px;
+  }
+
+  .mediaTitle {
+    font-size: 27px;
+  }
+
+  .mediaWhy {
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+
+  .mediaWhy p {
+    font-size: 12px;
+  }
+
+  .mediaClose {
+    top: 10px;
+    right: 10px;
+    width: 48px;
+    height: 48px;
   }
 }
+
+@media (max-width: 330px) {
+  .card[data-depth-tier="foreground"] {
+    width: 146px;
+    height: 190px;
+    margin: -95px 0 0 -73px;
+  }
+
+  .card[data-depth-tier="mid"] {
+    width: 116px;
+    height: 152px;
+    margin: -76px 0 0 -58px;
+  }
+
+  .card[data-depth-tier="far"] {
+    width: 92px;
+    height: 120px;
+    margin: -60px 0 0 -46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mediaShell,
+  .mediaClose,
+  .mediaImage {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .world {

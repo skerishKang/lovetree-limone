@@ -25,11 +25,62 @@ import styles from "./lineage-64.module.css";
 // is open, or while a pointer drag owns the world. Manual drag/wheel add on top.
 const AMBIENT_DEG_PER_MS = 0.01;
 
-function cardTransform(m: MomentRecord): string {
-  const rad = (m.world.angle * Math.PI) / 180;
-  const x = Math.sin(rad) * m.world.radius;
-  const z = Math.cos(rad) * m.world.radius;
-  return `translate3d(${x.toFixed(1)}px, ${m.world.y}px, ${z.toFixed(1)}px) rotateY(${m.world.angle}deg) scale(${m.world.scale})`;
+interface Source64Ring {
+  radiusX: number;
+  radiusY: number;
+  zAmplitude: number;
+  zBase: number;
+  band: number;
+  phaseOffset: number;
+}
+
+// Ported from the pinned executable's RINGS table. The source uses five
+// independent orbital families rather than one radius per depth tier.
+const SOURCE64_RINGS: Record<MomentRecord["family"], Source64Ring> = {
+  f1: { radiusX: 700, radiusY: 330, zAmplitude: 420, zBase: 0, band: 0, phaseOffset: 0 },
+  f2: { radiusX: 520, radiusY: 260, zAmplitude: 330, zBase: -80, band: 0, phaseOffset: 0.31 },
+  f3: { radiusX: 900, radiusY: 430, zAmplitude: 520, zBase: -40, band: 0, phaseOffset: 0.62 },
+  f4: { radiusX: 760, radiusY: 260, zAmplitude: 460, zBase: -120, band: -250, phaseOffset: 0.93 },
+  f5: { radiusX: 780, radiusY: 250, zAmplitude: 470, zBase: -100, band: 250, phaseOffset: 1.24 },
+};
+
+function cardTransform(m: MomentRecord, compact = false): string {
+  const ring = SOURCE64_RINGS[m.family];
+  const theta = (m.world.angle * Math.PI) / 180;
+  let x = Math.cos(theta) * ring.radiusX;
+  let y =
+    Math.sin(theta) * ring.radiusY +
+    ring.band +
+    Math.sin(theta * 1.7 + ring.phaseOffset * 3) * 45;
+  let z =
+    Math.sin(theta + 1.1 + ring.phaseOffset * 4) * ring.zAmplitude +
+    ring.zBase;
+
+  // The executable projects coordinates to viewport pixels. CSS 3D keeps the
+  // source distances on desktop, but narrow touch viewports need the same
+  // projection compressed before browser perspective/clipping is applied.
+  const projectionScale = compact ? 0.22 : 1;
+  x *= projectionScale;
+  y *= projectionScale;
+  z *= projectionScale;
+
+  // Preserve the executable's clear central Welcome void. This is applied to
+  // projected ring coordinates, not to a radius scalar (which cannot detect
+  // whether a card is actually crossing the center).
+  const centerVoidLimit = compact ? 1.5 : 1;
+  const centerDistance = Math.sqrt((x / (520 * projectionScale)) ** 2 + (y / (260 * projectionScale)) ** 2);
+  if (centerDistance < centerVoidLimit && z < 260 * projectionScale) {
+    const push = (centerVoidLimit - centerDistance) * 900 * projectionScale;
+    x += (x >= 0 ? 1 : -1) * push;
+    y += (y >= 0 ? 1 : -1) * push * 0.2;
+  }
+
+  const perspectiveScale = Math.max(0.18, Math.min(1.82, 1050 / (1050 - z)));
+  const scale = m.world.scale * perspectiveScale;
+  const rotateX = Math.sin(theta) * 9;
+  const rotateY = Math.cos(theta) * 18;
+  const rotateZ = Math.sin(theta * 0.6) * 7;
+  return `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) rotateZ(${rotateZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
 }
 
 function surfaceStyle(m: MomentRecord, variant: "card" | "viewer"): CSSProperties {
@@ -74,6 +125,7 @@ export default function Lineage64FloatingMomentPortal({
   canonicalTreeId,
 }: Lineage64FloatingMomentPortalProps) {
   const momentCount = moments.length;
+  const familyCount = useMemo(() => new Set(moments.map((moment) => moment.family)).size, [moments]);
   const [state, dispatch] = useReducer(
     reduceFloatingMoment,
     initialMomentId,
@@ -379,7 +431,13 @@ export default function Lineage64FloatingMomentPortal({
   };
 
   return (
-    <div className={styles.stage} onWheel={handleWheel}>
+    <div
+      className={styles.stage}
+      onWheel={handleWheel}
+      data-source64-revision="64-v1-2-1"
+      data-source64-moment-count={momentCount}
+      data-source64-family-count={familyCount}
+    >
       <div
         className={styles.background}
         ref={backgroundRef}
@@ -401,7 +459,7 @@ export default function Lineage64FloatingMomentPortal({
             MENU
           </button>
         </div>
-        <div className={styles.welcome}>
+        <div className={styles.welcome} data-source64-welcome="true">
           <p className={styles.welcomeKicker}>WELCOME BACK</p>
           <h2 className={styles.welcomeTitle}>다시, 그 순간으로.</h2>
           <p className={styles.welcomeSub}>기억은 아직 여기에서 이어지고 있어요.</p>
@@ -426,7 +484,7 @@ export default function Lineage64FloatingMomentPortal({
               key={moment.id}
               type="button"
               className={styles.card}
-              style={{ transform: cardTransform(moment) }}
+              style={{ transform: cardTransform(moment, coarse) }}
               data-moment-id={moment.id}
               data-depth-tier={moment.depthTier}
               data-family={moment.family}
@@ -474,23 +532,28 @@ export default function Lineage64FloatingMomentPortal({
       </div>
 
       {state.viewerOpen && active && (
-        <div className={styles.viewerOverlay}>
+        <div className={styles.viewerOverlay} data-source64-viewer="true">
           <div
-            className={styles.viewer}
+            className={styles.mediaShell}
             ref={viewerRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="lineage64-viewer-title"
             onKeyDown={handleViewerKeyDown}
+            data-selected-moment-id={active.id}
+            data-viewer-layout="mediaShell"
           >
-            <div className={styles.viewerHead}>
-              <h3 id="lineage64-viewer-title" className={styles.viewerTitle}>
-                {active.title}
-              </h3>
+            <div
+              className={styles.mediaVisual}
+              data-source64-media-visual="true"
+              data-viewer-fit-mode={active.fitting.viewerFitMode}
+              data-depth-tier={active.depthTier}
+            >
+              {renderSurface(active, "viewer")}
               <button
                 type="button"
                 ref={closeRef}
-                className={styles.closeBtn}
+                className={styles.mediaClose}
                 onClick={closeViewer}
                 aria-label="Moment 포털 닫기"
               >
@@ -498,58 +561,57 @@ export default function Lineage64FloatingMomentPortal({
               </button>
             </div>
 
-            <div
-              className={styles.viewerMedia}
-              data-selected-moment-id={active.id}
-              data-viewer-fit-mode={active.fitting.viewerFitMode}
-              data-depth-tier={active.depthTier}
-            >
-              {renderSurface(active, "viewer")}
-            </div>
+            <div className={styles.mediaInfo} data-source64-media-info="true">
+              <p className={styles.mediaKicker}>
+                MOMENT · {KIND_LABEL[active.kind]} · {active.family.toUpperCase()}
+              </p>
+              <h3 id="lineage64-viewer-title" className={styles.mediaTitle}>
+                {active.title}
+              </h3>
+              <p className={styles.mediaMeta}>
+                {active.date} · {active.depthTier} · {active.fitting.viewerFitMode}
+              </p>
 
-            <p className={styles.viewerMeta}>
-              {active.date} · {KIND_LABEL[active.kind]} · {active.family} · {active.depthTier}
-            </p>
+              <div className={styles.mediaWhy}>
+                <strong>{canonicalTreePath ? "이어진 순간" : "WHY NEXT"}</strong>
+                <p>
+                  {canonicalTreePath
+                    ? "이 순간의 canonical 기록을 이어서 확인하세요. 오빗의 위치와 깊이는 이 화면의 presentation state입니다."
+                    : `${active.title} 과 이어지는 다음 기억으로의 연결 제안 (SOURCE DEMO · NON-CANONICAL). recent / important / resume 은 제품 정책 또는 파생 데모 값이며 canonical truth 가 아닙니다.`}
+                </p>
+              </div>
 
-            <div className={styles.viewerWhy}>
-              <strong>{canonicalTreePath ? "이어진 순간" : "WHY NEXT"}</strong>
-              <p>
+              <div className={styles.mediaActions}>
+                {canonicalTreePath ? (
+                  <>
+                    <Link className={styles.btn} href={`${canonicalTreePath}${canonicalMomentSuffix}`}>Moment 상세</Link>
+                    <Link className={styles.btn} href={`${canonicalTreePath}/board${canonicalMomentSuffix}`}>Living Board</Link>
+                    <Link className={styles.btn} href={`${canonicalTreePath}/relationships${canonicalMomentSuffix}`}>관계 보기</Link>
+                    <Link className={styles.btn} href={`${canonicalTreePath}/explore${canonicalMomentSuffix}`}>3D 탐색</Link>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className={styles.btn} onClick={continuePath}>
+                      PATH CONTINUE (데모)
+                    </button>
+                    <button type="button" className={styles.btn} onClick={branchChoice}>
+                      BRANCH CHOICE (데모)
+                    </button>
+                    {active.kind === "link" && active.externalUrl && (
+                      <a className={styles.btn} href={active.externalUrl} target="_blank" rel="noopener noreferrer">
+                        외부 열기
+                      </a>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <p className={styles.mediaFoot}>
                 {canonicalTreePath
-                  ? "이 순간의 canonical 기록을 이어서 확인하세요. 오빗의 위치와 깊이는 이 화면의 presentation state입니다."
-                  : `${active.title} 과 이어지는 다음 기억으로의 연결 제안 (SOURCE DEMO · NON-CANONICAL). recent / important / resume 은 제품 정책 또는 파생 데모 값이며 canonical truth 가 아닙니다.`}
+                  ? "CANONICAL TREE DATA · orbit geometry is presentation-only · no persistence added"
+                  : "SOURCE DEMO / NON-PERSISTENT / SIMULATED · canonical /v4 채택 없음 · MY TREE 및 Track59 정식 라우트는 미발명."}
               </p>
             </div>
-
-            <div className={styles.viewerActions}>
-              {canonicalTreePath ? (
-                <>
-                  <Link className={styles.btn} href={`${canonicalTreePath}${canonicalMomentSuffix}`}>Moment 상세</Link>
-                  <Link className={styles.btn} href={`${canonicalTreePath}/board${canonicalMomentSuffix}`}>Living Board</Link>
-                  <Link className={styles.btn} href={`${canonicalTreePath}/relationships${canonicalMomentSuffix}`}>관계 보기</Link>
-                  <Link className={styles.btn} href={`${canonicalTreePath}/explore${canonicalMomentSuffix}`}>3D 탐색</Link>
-                </>
-              ) : (
-                <>
-                  <button type="button" className={styles.btn} onClick={continuePath}>
-                    PATH CONTINUE (데모)
-                  </button>
-                  <button type="button" className={styles.btn} onClick={branchChoice}>
-                    BRANCH CHOICE (데모)
-                  </button>
-                  {active.kind === "link" && active.externalUrl && (
-                    <a className={styles.btn} href={active.externalUrl} target="_blank" rel="noopener noreferrer">
-                      외부 열기
-                    </a>
-                  )}
-                </>
-              )}
-            </div>
-
-            <p className={styles.viewerFoot}>
-              {canonicalTreePath
-                ? "CANONICAL TREE DATA · orbit geometry is presentation-only · no persistence added"
-                : "SOURCE DEMO / NON-PERSISTENT / SIMULATED · canonical /v4 채택 없음 · MY TREE 및 Track59 정식 라우트는 미발명."}
-            </p>
           </div>
         </div>
       )}
