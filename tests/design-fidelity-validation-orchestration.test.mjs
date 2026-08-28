@@ -14,6 +14,7 @@ const REQUIRED_TARGETS = [
   "lineage-56-v3",
   "lineage-57-v2",
   "lineage-58-v2",
+  "source60-p0-fidelity",
   "lineage-61-61-v1-9",
   "lineage-64-v1-2-1",
   "lineage-63",
@@ -53,6 +54,10 @@ test("direct candidate changes select only their matching fidelity target", () =
   assert.deepEqual(
     selectImpactedTargets(["public/design-lab/lineages/58/videofigure/frames/A_000.png"]).map((target) => target.id),
     ["lineage-58-v2"],
+  );
+  assert.deepEqual(
+    selectImpactedTargets(["app/components/source60/Source60FaithfulSurface.tsx"]).map((target) => target.id),
+    ["source60-p0-fidelity"],
   );
   assert.deepEqual(
     selectImpactedTargets(["app/design-lab/lineages/61/61-v1-9/page.tsx"]).map((target) => target.id),
@@ -96,6 +101,7 @@ test("orchestration changes self-validate against materialized browser targets",
   const selected = selectImpactedTargets([".github/workflows/design-fidelity-validation.yml"])
     .map((target) => target.id);
   assert.ok(selected.includes("lineage-53-v2"), "current-main Lineage 53 browser gate exercises orchestration changes");
+  assert.ok(selected.includes("source60-p0-fidelity"), "Source60 P0 A/B/C gate exercises orchestration changes");
   assert.ok(selected.includes("lineage-61-61-v1-9"), "Lineage61 proving target exercises orchestration changes");
 });
 
