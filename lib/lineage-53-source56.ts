@@ -27,6 +27,11 @@ export type Source56Connection = {
   readonly whyNext: string;
 };
 
+export type Source56PresentationData = {
+  readonly moments: readonly Source56Moment[];
+  readonly connections: readonly Source56Connection[];
+};
+
 const FAMILY_LABELS = [
   "01 처음 빠져든 순간",
   "02 무대와 퍼포먼스",

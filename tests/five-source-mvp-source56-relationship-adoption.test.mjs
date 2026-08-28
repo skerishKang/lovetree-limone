@@ -4,45 +4,59 @@ import { readFileSync } from "node:fs";
 
 const viewSwitcher = readFileSync("app/components/ViewSwitcher.tsx", "utf8");
 const route = readFileSync("app/trees/[id]/relationships/page.tsx", "utf8");
-const sourceProof = readFileSync(
+const adapter = readFileSync("app/trees/[id]/relationships/source56-canonical-adapter.ts", "utf8");
+const native = readFileSync(
   "app/design-lab/lineages/53/53-v3-vertical-network-overview/Lineage53VerticalNetworkOverview.tsx",
   "utf8",
 );
+const durableWrite = /\b(?:fetch|apiFetch)\s*\(|\bmethod\s*:\s*["'](?:POST|PUT|PATCH|DELETE)["']|\b(?:prisma|drizzle|neon|firebase|supabase)\b/iu;
 
-const directDurableWrite = /\b(?:fetch|apiFetch)\s*\(|\bmethod\s*:\s*["'](?:POST|PUT|PATCH|DELETE)["']|\b(?:prisma|drizzle|neon|firebase|supabase)\b/iu;
-
-test("Source56 is a Tree-scoped relationship mode, not a Design Lab production hop", () => {
+test("Source56 remains a Tree-scoped canonical relationship mode", () => {
   assert.match(viewSwitcher, /kind: "relationships", label: "관계", path: "\/relationships"/);
   assert.match(route, /data-mvp-source="56"/);
   assert.match(route, /active="relationships"/);
   assert.doesNotMatch(route, /href=["'`]\/design-lab\/lineages\/53/);
 });
 
-test("relationship truth comes only from canonical Moment parentId and connectionReason", () => {
-  assert.match(route, /useTreeMoments\(treeId, undefined, momentId \?\? undefined\)/);
-  assert.match(route, /parentId: moment\.parentId/);
-  assert.match(route, /connectionReason: moment\.connectionReason/);
-  assert.match(route, /node\.connectionReason \|\| "이전 Moment에서 이어진 관계"/);
+test("canonical route reuses the native Source56 surface through a Moment adapter", () => {
+  assert.ok(route.includes("Lineage53VerticalNetworkOverview"));
+  assert.ok(route.includes("presentationData={presentationData}"));
+  assert.ok(route.includes("selectedMomentId={selectedMomentId}"));
+  assert.ok(route.includes("onSelectMoment={syncMomentToUrl}"));
+  assert.ok(route.includes("adaptCanonicalMomentsToSource56(treeMoments)"));
+  assert.match(adapter, /parentId/);
+  assert.match(adapter, /connectionReason/);
+  assert.match(adapter, /VIEW_DERIVED/);
   assert.doesNotMatch(route, /SOURCE56_MOMENTS|SOURCE56_CONNECTIONS|deriveSource56PathFamilies/);
 });
 
-test("Source56 layout remains view-derived and does not create relation persistence", () => {
-  assert.match(route, /const nodes = useMemo<NetworkNode\[\]>\(\(\) =>/);
-  assert.match(route, /const depth = Math\.max\(0, moment\.depth\)/);
-  assert.match(route, /x: clamp\(120 \+ column \* 178 \+ lateral, 92, 908\)/);
-  assert.match(route, /y: 105 \+ index \* 118/);
-  assert.doesNotMatch(route, directDurableWrite);
+test("native Source56 keeps the faithful route, playback, branch, and reduced-motion contract", () => {
+  assert.match(native, /FIRST · 01\/02\/03 REVEAL/);
+  assert.match(native, /Primary path/);
+  assert.match(native, /secondaryBranches/);
+  assert.match(native, /choosePrimary/);
+  assert.match(native, /chooseSecondary/);
+  assert.match(native, /data-reduced-motion/);
+  assert.match(native, /design-runtime\/transport/);
+  assert.match(native, /design-runtime\/selection/);
 });
 
-test("canonical Moment context is preserved through the relationship view", () => {
+test("canonical Moment URL context remains authoritative", () => {
   assert.match(route, /const momentId = searchParams\.get\("moment"\)/);
+  assert.match(route, /selectMoment\(nextMomentId\)/);
   assert.match(route, /next\.set\("moment", nextMomentId\)/);
   assert.match(route, /router\.replace\(/);
-  assert.match(route, /ViewSwitcher treeId=\{treeId\} active="relationships" momentId=\{selectedMomentId\}/);
+  assert.ok(route.includes('ViewSwitcher treeId={treeId} active="relationships" momentId={selectedMomentId}'));
 });
 
-test("authoritative Source56 proof remains available as fidelity reference", () => {
-  assert.match(sourceProof, /SOURCE56_CONNECTIONS/);
-  assert.match(sourceProof, /deriveSource56PathFamilies/);
-  assert.match(sourceProof, /FIRST · 01\/02\/03 REVEAL/);
+test("Source56 canonical wiring creates no relation persistence or backend surface", () => {
+  assert.doesNotMatch(route, durableWrite);
+  assert.doesNotMatch(adapter, durableWrite);
+  assert.doesNotMatch(route, /relation table|edge table|path table|new DB|new API/iu);
+});
+
+test("authoritative Source56 native proof remains available as fidelity reference", () => {
+  assert.match(native, /SOURCE56_CONNECTIONS/);
+  assert.match(native, /deriveSource56PathFamilies/);
+  assert.match(native, /FIRST · 01\/02\/03 REVEAL/);
 });

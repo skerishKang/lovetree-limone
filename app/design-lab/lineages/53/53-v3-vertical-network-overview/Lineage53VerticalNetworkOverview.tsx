@@ -6,9 +6,10 @@ import {
   SOURCE56_CONNECTIONS,
   SOURCE56_MOMENTS,
   deriveSource56PathFamilies,
-  incomingSource56Connection,
+  type Source56Connection,
   type Source56Moment,
   type Source56PathFamily,
+  type Source56PresentationData,
   type Source56SecondaryPath,
 } from "@/lib/lineage-53-source56";
 import {
@@ -22,7 +23,11 @@ import {
   stepSelectionIndex,
 } from "@/lib/design-runtime/selection";
 
-const FIRST_INDEX = SOURCE56_MOMENTS.findIndex((moment) => moment.first);
+const DEFAULT_PRESENTATION_DATA: Source56PresentationData = {
+  moments: SOURCE56_MOMENTS,
+  connections: SOURCE56_CONNECTIONS,
+};
+
 const CLUSTER_LAYOUT = [
   { x: 660, y: 610, spread: 520, angles: [-2.15, -1.3, -0.42] },
   { x: 990, y: 1305, spread: 550, angles: [-2.72, -1.88, -0.98, -0.18] },
@@ -62,8 +67,8 @@ type BranchChoice = {
   branch: Source56SecondaryPath;
 };
 
-function momentIndex(id: string) {
-  return SOURCE56_MOMENTS.findIndex((moment) => moment.id === id);
+function momentIndex(moments: readonly Source56Moment[], id: string) {
+  return moments.findIndex((moment) => moment.id === id);
 }
 
 function pointOnPrimary(
@@ -90,9 +95,14 @@ function snap(value: number) {
   return Number(value.toFixed(2));
 }
 
-function makeLayout(families: readonly Source56PathFamily[]) {
+function makeLayout(
+  families: readonly Source56PathFamily[],
+  moments: readonly Source56Moment[],
+  connections: readonly Source56Connection[],
+) {
   const nodes = new Map<string, LayoutNode>();
-  const first = SOURCE56_MOMENTS[FIRST_INDEX];
+  const first = moments.find((moment) => moment.first);
+  if (!first) return { nodes: [], edges: [] };
   nodes.set(first.id, {
     moment: first,
     familyIndex: null,
@@ -104,7 +114,7 @@ function makeLayout(families: readonly Source56PathFamily[]) {
 
   families.forEach((family, familyIndex) => {
     const center = CLUSTER_LAYOUT[familyIndex];
-    const entry = SOURCE56_MOMENTS[momentIndex(family.seedMomentId)];
+    const entry = moments[momentIndex(moments, family.seedMomentId)];
     nodes.set(entry.id, {
       moment: entry,
       familyIndex,
@@ -117,7 +127,7 @@ function makeLayout(families: readonly Source56PathFamily[]) {
     family.primaryPaths.forEach((path, pathIndex) => {
       const angle = center.angles[pathIndex] ?? center.angles[center.angles.length - 1];
       path.momentIds.forEach((id, step) => {
-        const moment = SOURCE56_MOMENTS[momentIndex(id)];
+        const moment = moments[momentIndex(moments, id)];
         const point = pointOnPrimary(center, angle, step, pathIndex);
         nodes.set(id, {
           moment,
@@ -134,7 +144,7 @@ function makeLayout(families: readonly Source56PathFamily[]) {
         if (!parent) return;
         const branchAngle = angle + (pathIndex % 2 === 0 ? 0.58 : -0.62) + branchIndex * 0.18;
         branch.momentIds.forEach((id, step) => {
-          const moment = SOURCE56_MOMENTS[momentIndex(id)];
+          const moment = moments[momentIndex(moments, id)];
           const distance = 92 + step * 78;
           nodes.set(id, {
             moment,
@@ -154,7 +164,7 @@ function makeLayout(families: readonly Source56PathFamily[]) {
   families.forEach((family, familyIndex) => family.momentIds.forEach((id) => familyByMoment.set(id, familyIndex)));
   nodes.forEach((node, id) => hierarchyByMoment.set(id, node.hierarchy));
 
-  const edges: LayoutEdge[] = SOURCE56_CONNECTIONS.flatMap((connection) => {
+  const edges: LayoutEdge[] = connections.flatMap((connection) => {
     const from = nodes.get(connection.fromMomentId);
     const to = nodes.get(connection.toMomentId);
     if (!from || !to) return [];
@@ -184,9 +194,31 @@ function nodeFamilyIndex(families: readonly Source56PathFamily[], momentId: stri
   return families.findIndex((family) => family.momentIds.includes(momentId));
 }
 
-export default function Lineage53VerticalNetworkOverview() {
-  const families = useMemo(() => deriveSource56PathFamilies(), []);
-  const layout = useMemo(() => makeLayout(families), [families]);
+function incomingConnection(connections: readonly Source56Connection[], momentId: string) {
+  return connections.find((connection) => connection.toMomentId === momentId);
+}
+
+export type Lineage53VerticalNetworkOverviewProps = {
+  presentationData?: Source56PresentationData;
+  selectedMomentId?: string | null;
+  onSelectMoment?: (momentId: string | null) => void;
+};
+
+export default function Lineage53VerticalNetworkOverview({
+  presentationData = DEFAULT_PRESENTATION_DATA,
+  selectedMomentId: externalSelectedMomentId = null,
+  onSelectMoment,
+}: Lineage53VerticalNetworkOverviewProps) {
+  const { moments, connections } = presentationData;
+  const firstIndex = moments.findIndex((moment) => moment.first);
+  const families = useMemo(
+    () => deriveSource56PathFamilies(moments, connections),
+    [connections, moments],
+  );
+  const layout = useMemo(
+    () => makeLayout(families, moments, connections),
+    [connections, families, moments],
+  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [activeFamilyIndex, setActiveFamilyIndex] = useState<number | null>(null);
   const [originReveal, setOriginReveal] = useState(false);
@@ -202,10 +234,35 @@ export default function Lineage53VerticalNetworkOverview() {
     () => createTransportAuthorityState({ initialPlaying: false }),
   );
 
-  const selected = selectedIndex === null ? undefined : selectedItem(SOURCE56_MOMENTS, selectedIndex, "clamp");
+  const selected = selectedIndex === null ? undefined : selectedItem(moments, selectedIndex, "clamp");
   const selectedFamilyIndex = selected ? nodeFamilyIndex(families, selected.id) : -1;
   const activeFamily = activeFamilyIndex === null ? null : families[activeFamilyIndex];
-  const incoming = selected ? incomingSource56Connection(selected.id) : undefined;
+  const incoming = selected ? incomingConnection(connections, selected.id) : undefined;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (!externalSelectedMomentId && selectedIndex === null) return;
+      const nextIndex = externalSelectedMomentId
+        ? momentIndex(moments, externalSelectedMomentId)
+        : -1;
+      const nextSelectedIndex = nextIndex >= 0 ? nextIndex : null;
+      const nextFamilyIndex = nextSelectedIndex === null
+        ? null
+        : (() => {
+          const familyIndex = nodeFamilyIndex(families, externalSelectedMomentId!);
+          return familyIndex >= 0 ? familyIndex : null;
+        })();
+      if (nextSelectedIndex === selectedIndex && (nextSelectedIndex === null || nextFamilyIndex === activeFamilyIndex)) return;
+      setSelectedIndex(nextSelectedIndex);
+      setActiveFamilyIndex(nextFamilyIndex);
+      setOriginReveal(nextSelectedIndex === firstIndex && nextSelectedIndex !== null);
+      setPlayback(null);
+      setBranchChoice(null);
+      setSkipBranchParent(null);
+      dispatchTransport({ type: "pause" });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [activeFamilyIndex, externalSelectedMomentId, families, firstIndex, moments, selectedIndex]);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -239,7 +296,9 @@ export default function Lineage53VerticalNetworkOverview() {
   }, [activeFamilyIndex, compact, originReveal]);
 
   const selectIndex = (index: number, familyIndex: number | null) => {
-    setSelectedIndex(normalizeSelectionIndex(index, SOURCE56_MOMENTS.length, "clamp"));
+    const normalized = normalizeSelectionIndex(index, moments.length, "clamp");
+    setSelectedIndex(normalized);
+    onSelectMoment?.(moments[normalized]?.id ?? null);
     if (familyIndex !== null) {
       setActiveFamilyIndex(familyIndex);
       setOriginReveal(false);
@@ -248,14 +307,15 @@ export default function Lineage53VerticalNetworkOverview() {
   };
 
   const selectMoment = (id: string, familyIndex: number | null) => {
-    const index = momentIndex(id);
+    const index = momentIndex(moments, id);
     if (index < 0) return;
-    if (id === SOURCE56_MOMENTS[FIRST_INDEX].id) {
-      setSelectedIndex(FIRST_INDEX);
+    if (index === firstIndex) {
+      setSelectedIndex(firstIndex);
       setActiveFamilyIndex(null);
       setOriginReveal(true);
       setPlayback(null);
       setBranchChoice(null);
+      onSelectMoment?.(id);
       dispatchTransport({ type: "pause" });
       return;
     }
@@ -264,6 +324,7 @@ export default function Lineage53VerticalNetworkOverview() {
 
   const resetOverview = () => {
     setSelectedIndex(null);
+    onSelectMoment?.(null);
     setActiveFamilyIndex(null);
     setOriginReveal(false);
     setPlayback(null);
@@ -272,12 +333,15 @@ export default function Lineage53VerticalNetworkOverview() {
     dispatchTransport({ type: "pause" });
   };
 
-  const revealOrigin = () => selectMoment(SOURCE56_MOMENTS[FIRST_INDEX].id, null);
+  const revealOrigin = () => {
+    if (firstIndex >= 0) selectMoment(moments[firstIndex].id, null);
+  };
 
   const focusFamily = (familyIndex: number) => {
     setActiveFamilyIndex(familyIndex);
     setOriginReveal(false);
     setSelectedIndex(null);
+    onSelectMoment?.(null);
     setPlayback(null);
     setBranchChoice(null);
     setSkipBranchParent(null);
@@ -292,7 +356,9 @@ export default function Lineage53VerticalNetworkOverview() {
     setPlayback({ familyIndex, pathIndex, kind: "primary", ids: path.momentIds, cursor: 0 });
     setBranchChoice(null);
     setSkipBranchParent(null);
-    setSelectedIndex(momentIndex(path.momentIds[0]));
+    const firstPathIndex = momentIndex(moments, path.momentIds[0]);
+    setSelectedIndex(firstPathIndex);
+    onSelectMoment?.(path.momentIds[0]);
     dispatchTransport({ type: reducedMotion ? "pause" : "play" });
   };
 
@@ -314,7 +380,9 @@ export default function Lineage53VerticalNetworkOverview() {
     if (playback.cursor >= playback.ids.length - 1) return;
     const nextCursor = playback.cursor + 1;
     setPlayback({ ...playback, cursor: nextCursor });
-    setSelectedIndex(momentIndex(playback.ids[nextCursor]));
+    const nextIndex = momentIndex(moments, playback.ids[nextCursor]);
+    setSelectedIndex(nextIndex);
+    onSelectMoment?.(playback.ids[nextCursor]);
     setSkipBranchParent(null);
   };
 
@@ -336,7 +404,8 @@ export default function Lineage53VerticalNetworkOverview() {
       }
       const nextCursor = playback.cursor + 1;
       setPlayback({ ...playback, cursor: nextCursor });
-      setSelectedIndex(momentIndex(playback.ids[nextCursor]));
+      setSelectedIndex(momentIndex(moments, playback.ids[nextCursor]));
+      onSelectMoment?.(playback.ids[nextCursor]);
       setSkipBranchParent(null);
     }, 820);
     return () => window.clearTimeout(timer);
@@ -363,7 +432,8 @@ export default function Lineage53VerticalNetworkOverview() {
       if (playback.cursor < playback.ids.length - 1) {
         const nextCursor = playback.cursor + 1;
         setPlayback({ ...playback, cursor: nextCursor });
-        setSelectedIndex(momentIndex(playback.ids[nextCursor]));
+        setSelectedIndex(momentIndex(moments, playback.ids[nextCursor]));
+        onSelectMoment?.(playback.ids[nextCursor]);
         setSkipBranchParent(null);
       }
       dispatchTransport({ type: "pause" });
@@ -383,7 +453,8 @@ export default function Lineage53VerticalNetworkOverview() {
       ids,
       cursor: 0,
     });
-    setSelectedIndex(momentIndex(ids[0]));
+    setSelectedIndex(momentIndex(moments, ids[0]));
+    onSelectMoment?.(ids[0]);
     setBranchChoice(null);
     setSkipBranchParent(null);
     dispatchTransport({ type: reducedMotion ? "pause" : "play" });
@@ -397,15 +468,16 @@ export default function Lineage53VerticalNetworkOverview() {
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    const current = selectedIndex ?? FIRST_INDEX;
+    const current = selectedIndex ?? firstIndex;
     let next = current;
-    if (event.key === "ArrowDown") next = stepSelectionIndex(current, 1, SOURCE56_MOMENTS.length, "wrap");
-    if (event.key === "ArrowUp") next = stepSelectionIndex(current, -1, SOURCE56_MOMENTS.length, "wrap");
+    if (event.key === "ArrowDown") next = stepSelectionIndex(current, 1, moments.length, "wrap");
+    if (event.key === "ArrowUp") next = stepSelectionIndex(current, -1, moments.length, "wrap");
     if (event.key === "Home") next = 0;
-    if (event.key === "End") next = SOURCE56_MOMENTS.length - 1;
-    const moment = SOURCE56_MOMENTS[next];
+    if (event.key === "End") next = moments.length - 1;
+    const moment = moments[next];
     const familyIndex = nodeFamilyIndex(families, moment.id);
     setSelectedIndex(next);
+    onSelectMoment?.(moment.id);
     setActiveFamilyIndex(familyIndex >= 0 ? familyIndex : null);
     setOriginReveal(moment.first === true);
     dispatchTransport({ type: "pause" });
@@ -415,15 +487,16 @@ export default function Lineage53VerticalNetworkOverview() {
   const onListKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    const current = selectedIndex ?? FIRST_INDEX;
+    const current = selectedIndex ?? firstIndex;
     let next = current;
-    if (event.key === "ArrowDown") next = stepSelectionIndex(current, 1, SOURCE56_MOMENTS.length, "wrap");
-    if (event.key === "ArrowUp") next = stepSelectionIndex(current, -1, SOURCE56_MOMENTS.length, "wrap");
+    if (event.key === "ArrowDown") next = stepSelectionIndex(current, 1, moments.length, "wrap");
+    if (event.key === "ArrowUp") next = stepSelectionIndex(current, -1, moments.length, "wrap");
     if (event.key === "Home") next = 0;
-    if (event.key === "End") next = SOURCE56_MOMENTS.length - 1;
-    const moment = SOURCE56_MOMENTS[next];
+    if (event.key === "End") next = moments.length - 1;
+    const moment = moments[next];
     const familyIndex = nodeFamilyIndex(families, moment.id);
     setSelectedIndex(next);
+    onSelectMoment?.(moment.id);
     setActiveFamilyIndex(familyIndex >= 0 ? familyIndex : null);
     setOriginReveal(moment.first === true);
     window.requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-list-moment-id="${moment.id}"]`)?.focus());
@@ -575,7 +648,7 @@ export default function Lineage53VerticalNetworkOverview() {
         ) : null}
 
         <div className={`s56-list${listOpen ? " open" : ""}`} role="listbox" aria-label="Moment semantic selection list" aria-activedescendant={selected ? `s56-list-${selected.id}` : undefined} onKeyDown={onListKeyDown}>
-          {SOURCE56_MOMENTS.map((moment, index) => {
+          {moments.map((moment, index) => {
             const familyIndex = nodeFamilyIndex(families, moment.id);
             return (
               <button
