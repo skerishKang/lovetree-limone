@@ -21,7 +21,7 @@
   ],
 
   "AUTHORITY_SYSTEM": "GOOGLE_DRIVE_SIBLING_SOURCE",
-  "AUTHORITY_CAPTURED_AT": "2026-08-13T00:00:00.000Z",
+  "AUTHORITY_CAPTURED_AT": "2026-08-28T09:10:00.000Z",
 
   "AUTHORITATIVE_FOLDER": "64_부유모먼트_웰컴오빗_입장포털O",
   "AUTHORITATIVE_FILE": "현재후보.html",
@@ -34,8 +34,8 @@
   "RAW_MODE": "EXACT_COPY",
 
   "DRIVE_FOLDER_ID": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
-  "DRIVE_FILE_ID": "1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g",
-  "ORIGINAL_LOCATION": "Google Drive / 64_부유모먼트_웰컴오빗_입장포털O/현재후보.html",
+  "DRIVE_FILE_ID": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+  "ORIGINAL_LOCATION": "Google Drive / 64_부유모먼트_웰컴오빗_입장포털O/현재후보.html (root-level promoted authority)",
 
   "MIME_TYPE": "text/html",
   "ENTRY_FILE": "SRC064-01-01-original.html",
@@ -51,7 +51,15 @@
     }
   ],
   "ASSETS": [],
-  "EXTERNAL_DEPENDENCIES": [],
+  "EXTERNAL_DEPENDENCIES": [
+    {
+      "path": "../../59_메모리스케치북_페이지여정/버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html",
+      "role": "navigation-target",
+      "type": "relative-local-file",
+      "note": "openStoryBook() uses window.open / location.href to navigate to this Track59 target via local file: protocol. Legacy Drive folder reference, not a canonical TRK/SRC ID.",
+      "legacy_context": "Track59 — Living Memory Book V5 (책으로 보기)"
+    }
+  ],
 
   "RELATIONS": [],
 
