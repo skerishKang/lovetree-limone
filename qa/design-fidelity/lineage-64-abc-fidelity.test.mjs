@@ -119,9 +119,11 @@ async function captureNative(browser, width, height, reduced = false) {
     results.native[label] ??= {};
     results.native[label].initial = await save(page, "B-native", label, "initial");
 
-    await page.getByRole("button", { name: /시맨틱 목록/ }).click();
+    const menuToggle = page.getByRole("button", { name: /시맨틱 목록/ });
+    await menuToggle.waitFor({ state: "visible", timeout: 15000 });
+    await menuToggle.click();
     const list = page.locator('[role="listbox"]');
-    await list.waitFor({ state: "visible", timeout: 8000 });
+    await list.waitFor({ state: "visible", timeout: 15000 });
     const firstOption = list.locator('[role="option"]').first();
     await firstOption.waitFor({ state: "attached", timeout: 8000 });
     await firstOption.click();
