@@ -1,0 +1,96 @@
+{
+  "MANIFEST_SCHEMA_VERSION": "1.0",
+  "CAPSULE_ID": "SRC064",
+  "TYPE": "SOURCE_CAPSULE",
+
+  "IDENTITY_TOKEN": "64",
+  "BASE_NUMBER": 64,
+  "VARIANT_TOKEN": null,
+
+  "TITLE": "Floating Moment Welcome Orbit V1.2.1 — Portal",
+
+  "IDENTITY_SCOPE": "NEW_FIVE_SOURCE_CALIBRATION",
+  "IDENTITY_ORIGIN": "design-intake/manifests/track-64-floating-moment-entry-portal.json",
+  "LEGACY_IDENTIFIERS": [
+    {
+      "prefix": "TRK",
+      "value": "Track64",
+      "scope": "drive-historical",
+      "note": "Drive folder label 64_부유모먼트_웰컴오빗_입장포털O"
+    }
+  ],
+
+  "AUTHORITY_SYSTEM": "GOOGLE_DRIVE_SIBLING_SOURCE",
+  "AUTHORITY_CAPTURED_AT": "2026-08-13T00:00:00.000Z",
+
+  "AUTHORITATIVE_FOLDER": "64_부유모먼트_웰컴오빗_입장포털O",
+  "AUTHORITATIVE_FILE": "현재후보.html",
+  "SOURCE_REVISION": "V1.2.1",
+
+  "SOURCE_BYTES": 1565313,
+  "SOURCE_SHA256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+  "RAW_BYTES": 1565313,
+  "RAW_SHA256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+  "RAW_MODE": "EXACT_COPY",
+
+  "DRIVE_FOLDER_ID": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+  "DRIVE_FILE_ID": "1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g",
+  "ORIGINAL_LOCATION": "Google Drive / 64_부유모먼트_웰컴오빗_입장포털O/현재후보.html",
+
+  "MIME_TYPE": "text/html",
+  "ENTRY_FILE": "SRC064-01-01-original.html",
+
+  "RAW_FILES": [
+    {
+      "path": "SRC064-01-raw/SRC064-01-01-original.html",
+      "role": "authoritative-executable",
+      "mime_type": "text/html",
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+      "intake_mode": "EXACT_COPY"
+    }
+  ],
+  "ASSETS": [],
+  "EXTERNAL_DEPENDENCIES": [],
+
+  "RELATIONS": [],
+
+  "MASTER_ROW_IDS": [],
+  "NORMALIZED_FAMILY_ID": null,
+
+  "RIGHTS_STATUS": "sibling-source-owned",
+  "THIRD_PARTY_PROVENANCE": "Google Drive sibling design source; not a LoveTree-original creation",
+
+  "WORKFLOW_STATUS": {
+    "RAW_STATUS": "INTAKE_COMPLETE",
+    "SPLIT_STATUS": "NOT_STARTED",
+    "PARITY_STATUS": "NOT_STARTED",
+    "PRODUCT_USAGE": "NOT_STARTED"
+  },
+
+  "INLINE_PAYLOAD": {
+    "INLINE_CSS": {
+      "present": true,
+      "count": 1,
+      "encoded_bytes": 17661,
+      "decoded_bytes": 17661
+    },
+    "INLINE_JS": {
+      "present": true,
+      "count": 1,
+      "encoded_bytes": 1539527,
+      "decoded_bytes": 1539527
+    },
+    "INLINE_MEDIA": {
+      "present": true,
+      "count": 34,
+      "encoded_bytes": 1492040,
+      "decoded_bytes": 1118996
+    }
+  },
+
+  "RENDERING": "css3d-dom",
+  "SCENARIO_ID": "entry-onboarding",
+  "PRODUCT_JOB": "A returning user enters LoveTree / My Tree, sees recent / important / First Moments living in one continuous floating 3D card universe, selects one memory, and re-enters the emotional path from that Moment — a returning-user Memory Entry Portal.",
+  "BACKEND_SCOPE": "BACKEND_FREE"
+}
