@@ -1,0 +1,73 @@
+{
+  "MANIFEST_SCHEMA_VERSION": "1.0",
+  "CAPSULE_ID": "SRC060",
+  "TYPE": "SOURCE_CAPSULE",
+  "IDENTITY_TOKEN": "60",
+  "BASE_NUMBER": 60,
+  "VARIANT_TOKEN": null,
+  "TITLE": "3D Moment Cluster Explorer V1.2 — Real Cross-Track Navigation",
+  "IDENTITY_SCOPE": "LOVETREE_NEW_FIVE_SOURCE",
+  "IDENTITY_ORIGIN": "design-intake/manifests/track-60-3d-moment-cluster.json",
+  "LEGACY_IDENTIFIERS": [
+    "Track60",
+    "LT60",
+    "track-60-3d-moment-cluster",
+    "lt-60-3d-moment-cluster-explorer",
+    "60_3D모먼트클러스터_심층탐색_55,56,59연결버전"
+  ],
+  "AUTHORITY_SYSTEM": "GOOGLE_DRIVE",
+  "AUTHORITY_CAPTURED_AT": "2026-08-13T00:00:00.000Z",
+  "AUTHORITATIVE_FOLDER": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙_네비게이션_후보",
+  "AUTHORITATIVE_FILE": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+  "SOURCE_REVISION": "V1.2",
+  "SOURCE_BYTES": 55260,
+  "SOURCE_SHA256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+  "RAW_BYTES": 55260,
+  "RAW_SHA256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+  "RAW_MODE": "EXACT_COPY",
+  "DRIVE_FOLDER_ID": "1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T",
+  "DRIVE_FILE_ID": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+  "ORIGINAL_LOCATION": "gdrive://1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T/버전1.2_실제트랙_네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+  "MIME_TYPE": "text/html",
+  "ENTRY_FILE": "SRC060-01-01-original.html",
+  "RAW_FILES": [
+    {
+      "PATH": "SRC060-01-raw/SRC060-01-01-original.html",
+      "BYTES": 55260,
+      "SHA256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+      "MIME_TYPE": "text/html",
+      "ROLE": "executable"
+    }
+  ],
+  "ASSETS": [],
+  "EXTERNAL_DEPENDENCIES": [],
+  "INLINE_CSS": {
+    "present": true,
+    "count": 1,
+    "encoded_bytes": 0,
+    "decoded_bytes": 15565
+  },
+  "INLINE_JS": {
+    "present": true,
+    "count": 2,
+    "encoded_bytes": 0,
+    "decoded_bytes": 34115
+  },
+  "INLINE_MEDIA": {
+    "present": false,
+    "count": 0,
+    "encoded_bytes": 0,
+    "decoded_bytes": 0
+  },
+  "RELATIONS": [],
+  "MASTER_ROW_IDS": [],
+  "NORMALIZED_FAMILY_ID": null,
+  "RIGHTS_STATUS": "sibling-source-owned",
+  "THIRD_PARTY_PROVENANCE": null,
+  "WORKFLOW_STATUS": {
+    "RAW_STATUS": "INTAKE_COMPLETE",
+    "SPLIT_STATUS": "NOT_STARTED",
+    "PARITY_STATUS": "NOT_STARTED",
+    "PRODUCT_USAGE": "NOT_STARTED"
+  }
+}
