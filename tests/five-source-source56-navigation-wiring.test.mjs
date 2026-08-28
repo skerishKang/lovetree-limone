@@ -33,6 +33,14 @@ test("Source56 restores scroll/selection continuity for an inbound ?moment= from
   assert.match(route, /scrollIntoView\(\{ block: "center", inline: "center", behavior: "auto" \}\)/);
 });
 
+test("Source56 keeps URL selection authoritative across browser history and invalid Moments", () => {
+  // Browser back/forward changes the query without remounting this client route.
+  assert.match(route, /selectMoment\(momentId \?\? null\)/);
+  assert.match(route, /\[momentId, selectMoment\]/);
+  // An invalid canonical Moment resolves to no selected node rather than a stale inspector.
+  assert.match(route, /selectedMomentId \? nodeById\.get\(selectedMomentId\) \?\? null : null/);
+});
+
 test("Source56 still owns the canonical relationship mode and uses canonical Moment truth", () => {
   assert.match(route, /data-mvp-source="56"/);
   assert.match(route, /ViewSwitcher treeId=\{treeId\} active="relationships" momentId=\{selectedMomentId\}/);

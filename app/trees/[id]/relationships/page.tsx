@@ -108,6 +108,12 @@ export default function TreeRelationshipsPage() {
   // so the user lands where they left off (no new DB/relation state required).
   const worldRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    // Keep browser back/forward and direct URL changes authoritative for the
+    // presentation-only selection state; no relation data is persisted here.
+    selectMoment(momentId ?? null);
+  }, [momentId, selectMoment]);
+
+  useEffect(() => {
     if (!selectedMomentId) return;
     const target = worldRef.current?.querySelector<HTMLElement>(
       `[data-network-moment-id="${selectedMomentId}"]`,
