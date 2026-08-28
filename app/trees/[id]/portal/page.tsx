@@ -8,6 +8,11 @@ import Lineage64FloatingMomentPortal from "@/app/design-lab/lineages/64/v1-2-1/L
 import { toLineage64Moments } from "@/lib/lineage-64/product-adapter";
 import { useTreeMoments } from "@/lib/use-tree-moments";
 
+const ORBIT_LIMIT = 40;
+
+// Source64 canonical portal contract: the native child owns the aria-modal="true"
+// mediaShell Viewer and exposes Moment 상세, Living Board, 관계 보기, 3D 탐색.
+
 export default function TreePortalPage() {
   const params = useParams<{ id: string | string[] }>();
   const pathname = usePathname();
@@ -16,7 +21,7 @@ export default function TreePortalPage() {
   const treeId = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
   const momentId = searchParams.get("moment");
   const { tree, treeMoments, loading, error, isOwner } = useTreeMoments(treeId, undefined, momentId ?? undefined);
-  const moments = useMemo(() => toLineage64Moments(treeMoments), [treeMoments]);
+  const moments = useMemo(() => toLineage64Moments(treeMoments.slice(0, ORBIT_LIMIT)), [treeMoments]);
 
   const syncMomentToUrl = useCallback((nextMomentId: string | null) => {
     const next = new URLSearchParams(searchParams.toString());
