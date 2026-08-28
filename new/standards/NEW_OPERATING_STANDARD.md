@@ -66,6 +66,27 @@ An equal number across prefixes implies **no** relation. `SRC058 != TRK058 != LI
 
 The **108 evaluation corpus** is `MST001`–`MST108`. It is **not** `SRC001`–`SRC108`. `MST` (evaluation row identity) and `SRC` (source authority identity) are different entities. No full 108 Source allocation is assumed; only the Five-Source preallocation exists (`SRC056/SRC057/SRC058/SRC060/SRC064`).
 
+## Workspace / Drive Sync Boundary
+
+NEW work inherits the repository-wide workspace contract in `AGENTS.md` and `docs/operations/GOOGLE_DRIVE_LOCAL_SYNC_AUTHORITY.md`.
+
+```text
+GITHUB_REMOTE = DURABLE_CODE_LEDGER
+DESIGN_AUTHORITY_DRIVE = READ_ONLY_BY_DEFAULT
+VERIFIED_REPOSITORY_SYNC_MIRROR = INDIRECT_LOCAL_SYNC_SURFACE
+LOCAL_SHARED_ROOT = G:\Ddrive\BatangD\task\workdiary\lovetree-limone
+LOCAL_SHARED_ROOT_ROLE = SYNC_ADMIN_SURFACE_NOT_DEVELOPMENT_WORKSPACE
+```
+
+Rules:
+
+- Do not treat every Google Drive folder as read-only or every Drive folder as mutable. First classify it as source authority vs verified repository sync mirror.
+- An authenticated Drive connector is not direct Windows access, but a mutation against the exact Google Drive for desktop synchronized repository mirror can propagate to the local `G:` sync root. Treat it as `INDIRECT_LOCAL_WORKSPACE_MUTATION`.
+- Same-name Drive copies/snapshots are not authority. Exact folder ID and repository markers must be proven before any Drive-side workspace mutation; unresolved mapping means `STOP`.
+- Source authority folders (`03_디자인채택본`, `코덱스`, `결과물`, etc.) remain read-only by default.
+- The shared sync root is not a build/test/implementation workspace. Development remains per-Lane worktree based.
+- Drive synchronization never replaces Git branch/commit/PR/CI history. Any synchronized repository file move must be reconciled through Git before completion.
+
 ## Proving Namespace
 
 NEW uses `/new/...` as its proving namespace.
