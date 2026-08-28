@@ -269,7 +269,10 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
       "docs/product/lineages/64",
     ],
     assetGate: null,
-    browserGates: ["tests/lineage-64-route-browser-qa.mjs"],
+    browserGates: [
+      "tests/lineage-64-route-browser-qa.mjs",
+      "tests/lineage-64-abc-fidelity.test.mjs",
+    ],
     viewports: [
       { width: 1280, height: 800 },
       { width: 390, height: 844, mobile: true },
