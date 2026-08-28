@@ -184,7 +184,35 @@ Windows-mounted drives may be used for read-only source archives and exported ev
 
 ### Shared root is a sync surface only
 
-The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a workspace. Do not edit, build, test, run servers or otherwise perform task work directly inside it. Only sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`); do all real work in a per-Lane worktree.
+The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a development workspace. Do not build, test, run servers, install packages, run browser automation, or perform ordinary code implementation directly inside it. Sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`). When the product owner explicitly requests bounded repository structure or file-lifecycle administration, the verified Google Drive for desktop mirror may also be used as an indirect sync-admin channel under the policy below. Do all implementation work in a per-Lane worktree.
+
+### Google Drive sync proxy semantics — mandatory
+
+`G:\Ddrive\BatangD\task\workdiary\lovetree-limone` may be mirrored by Google Drive for desktop. An authenticated Google Drive connector does not provide direct Windows/NTFS access, but create/move/rename/delete operations against the **exact synchronized Drive folder** can propagate through Google Drive for desktop and change the local shared sync root. Treat such operations as `INDIRECT_LOCAL_WORKSPACE_MUTATION`, not as remote-only changes.
+
+Always distinguish these Drive classes:
+
+```text
+DESIGN_AUTHORITY_DRIVE
+= 03_디자인채택본 / 코덱스 / 결과물 / other source-provenance authority
+= READ_ONLY_BY_DEFAULT
+
+VERIFIED_REPOSITORY_SYNC_MIRROR
+= exact Drive folder proven to mirror the shared repository root
+= INDIRECT_LOCAL_SYNC_SURFACE
+```
+
+Hard rules:
+
+- Never infer the sync target from the folder name alone. Same-name backups/snapshots/copies may exist.
+- Before Drive-side workspace mutation, verify the exact Drive folder ID, parent chain and repository marker files (`package.json`, `.gitignore`, `AGENTS.md`, and expected repository directories). If exact mapping is unresolved, `UNKNOWN_STOP = zero mutation`.
+- The existing rule "Treat Drive originals as read-only" applies to **design/source authority**, not automatically to a separately verified repository sync mirror.
+- Drive-side workspace administration is allowed only when explicitly authorized and bounded. Never mutate `.git/**`, secrets, `node_modules/**`, generated caches, or unrelated paths.
+- A Drive move in the synchronized repository can appear locally as Git rename/add/delete state. Drive sync is transport, not Git history. Reconcile the result on the correct branch/worktree, inspect `git status`/diff, then commit, push and use the normal PR/integration path.
+- Never use Drive sync to bypass branch isolation, review, CI or GitHub history.
+- When the owner refers to the local `G:` path, do not answer only "I cannot access your local drive" if authenticated Drive access exists. First check whether the exact synchronized Drive mapping and requested Drive operation can be proven. Conversely, do not promise local propagation until that mapping is proven.
+
+Full contract: `docs/operations/GOOGLE_DRIVE_LOCAL_SYNC_AUTHORITY.md`.
 
 ### Heavy processes require CTO pre-approval
 
