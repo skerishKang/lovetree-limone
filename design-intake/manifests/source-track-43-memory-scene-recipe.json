@@ -49,8 +49,8 @@
     }
   ],
   "intakeContract": {
-    "preservedReferencePath": "old/reference/source-track-43-memory-scene-recipe/",
-    "checksumLedger": "old/reference/source-track-43-memory-scene-recipe/SHA256SUMS",
+    "preservedReferencePath": "reference/source-track-43-memory-scene-recipe/",
+    "checksumLedger": "reference/source-track-43-memory-scene-recipe/SHA256SUMS",
     "verifiedIndependently": true,
     "verifiedAgainst": "local SHA256SUMS generated at preservation time (53 files); no prior historical pin exists for this track, so this preservation establishes the first fingerprint baseline",
     "commitSizeContract": "#287 standard: total committed <= 50MB, single file <= 10MB. One oversize file (03_참고영상_기억장면레시피_원본.mp4, 28,841,597 B) is preserved on the lane worktree and fingerprinted above but excluded from git; see docs/design-intake/source-track-43-gate.md FILE_INDEX."

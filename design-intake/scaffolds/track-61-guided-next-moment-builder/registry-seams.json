@@ -64,7 +64,7 @@
         "validationClass": "interaction-contract",
         "impactPrefixes": [
           "app/design-lab/lineages/61/61-v1-9/",
-          "old/reference/design-intake/track-61-guided-next-moment-builder/",
+          "reference/design-intake/track-61-guided-next-moment-builder/",
           "tests/track-61-guided-next-moment-builder-",
           "docs/product/design-intake/track-61-guided-next-moment-builder/",
           "design-intake/manifests/track-61-guided-next-moment-builder",

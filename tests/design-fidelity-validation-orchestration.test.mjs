@@ -86,7 +86,7 @@ test("source-only authoritative asset changes select the exact fidelity target",
   );
   assert.deepEqual(
     selectImpactedTargets([
-      "old/reference/design-lab/capabilities/memory-anatomy/02-memory-stack.html",
+      "reference/design-lab/capabilities/memory-anatomy/02-memory-stack.html",
     ]).map((target) => target.id),
     ["memory-anatomy"],
   );

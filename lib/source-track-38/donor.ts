@@ -4,7 +4,7 @@ export const SOURCE_TRACK_38_FAMILY = {
   sourceTrackId: "Track38",
   stableId: "source-track-38-voyager-space-memory-map-v1",
   sourceRevision: "V1",
-  sourcePath: "old/reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
+  sourcePath: "reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
   sourceBytes: 35935,
   sourceSha256: "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
   sourceGitBlob: "0e393316c8682215634546724950aba91ab7ba7e",

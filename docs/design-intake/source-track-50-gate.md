@@ -3,7 +3,7 @@
 Issue: #307 · Refs: #80 #236 #287
 Classification: `NEW_LINEAGE_CANDIDATE + CINEMATIC_BRAND + SOURCE_REFERENCE_ONLY`
 Manifest: `design-intake/manifests/source-track-50-dream-memory.json`
-Preservation: `old/reference/source-track-50-dream-memory/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
+Preservation: `reference/source-track-50-dream-memory/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
 
 ## Design authority
 
@@ -27,7 +27,7 @@ PRODUCTION SOURCE  = DO NOT MODIFY (Drive originals read-only)
   (`[[지피티 작업]]/[01_러브트리]/03_디자인채택본/50_드림메모리_시네마틱`), observed 2026-08-21.
 - Full-tree read-only transport via rclone (`copy --transfers 4`, WSL-native ext4 worktree):
   360 Drive objects listed → 360 files preserved locally (760.9 MiB).
-- `SHA256SUMS` (below, and at `old/reference/source-track-50-dream-memory/SHA256SUMS`) pins all
+- `SHA256SUMS` (below, and at `reference/source-track-50-dream-memory/SHA256SUMS`) pins all
   360 transported files from the fresh local copy.
 - Drive-native MD5 spot checks passed (`00_50번_작업완료_읽어보기.md`,
   `01_최종홈페이지_실행본.html`, `08_최종사이트_검증결과.json`) — no mismatch, no OPEN flag.
@@ -93,4 +93,4 @@ d35725878b23b955886896016d1f417245554b3ba60c1ee09df4b83650819eec  ./01_최종채
 c1028c268a3077c53884459cb005cd312c898082156ca6cc66aaedbf6fc6b41f  ./01_최종채택본_시네마틱_웹사이트_슈퍼노바/04_승인영상_모바일_최종마스터.mp4 (PENDING, 지문만)
 ```
 
-Full tree pin: `old/reference/source-track-50-dream-memory/SHA256SUMS` (360 entries).
+Full tree pin: `reference/source-track-50-dream-memory/SHA256SUMS` (360 entries).

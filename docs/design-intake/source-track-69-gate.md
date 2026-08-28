@@ -3,7 +3,7 @@
 Issue: #290 · Refs: #80 #236
 Classification: `NEW_LINEAGE (reservation HOLD) + REFERENCE_PINNED`
 Manifest: `design-intake/manifests/source-track-69-fullviewport-portfolio.json`
-Provenance: `old/reference/source-track-69-fullviewport-portfolio/`
+Provenance: `reference/source-track-69-fullviewport-portfolio/`
 
 ## Design authority
 
@@ -53,7 +53,7 @@ owner-approved single revision
 
 Fresh preservation pin (this registration):
 
-- Preserved to `old/reference/source-track-69-fullviewport-portfolio/` via read-only
+- Preserved to `reference/source-track-69-fullviewport-portfolio/` via read-only
   `rclone copy --transfers 2`; Drive originals untouched.
 - Full preservation at registration: 40 files, 73,153,681 bytes; `rclone check --one-way`
   against the live Drive folder at 2026-08-21T03:58:51Z: **0 differences found,

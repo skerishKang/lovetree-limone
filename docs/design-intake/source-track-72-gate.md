@@ -28,8 +28,8 @@ byte-identical to the C1 final executable; 선택2/선택3 are distinct post-clo
 ## What this lane registered
 
 - Manifest: `design-intake/manifests/source-track-72-editorial-archive.json` (`sourceTrackId: "Track72"`)
-- Preservation: `old/reference/source-track-72-editorial-archive/` — 105 files / 28.4MB pinned byte-exact;
-  full 130-file SHA256 table in `old/reference/source-track-72-editorial-archive/PROVENANCE.md`
+- Preservation: `reference/source-track-72-editorial-archive/` — 105 files / 28.4MB pinned byte-exact;
+  full 130-file SHA256 table in `reference/source-track-72-editorial-archive/PROVENANCE.md`
 - Duplicate isolation: 26 byte-identical groups recorded; `_HOLD_DUPLICATE_72_디자인팀장17기_2026-08-17`
   (empty quarantine folder) traced with `OPEN_DUPLICATE_TRACE_RECORDED`
 

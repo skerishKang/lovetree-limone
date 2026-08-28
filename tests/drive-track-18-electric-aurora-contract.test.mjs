@@ -11,7 +11,7 @@ import {
 import { DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE } from "../lib/drive-track-18-electric-aurora/provenance.ts";
 
 const sourcePath = new URL(
-  "../old/reference/source-tracks-snapshot/18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html",
+  "../reference/source-tracks-snapshot/18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html",
   import.meta.url,
 );
 

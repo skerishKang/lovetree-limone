@@ -10,7 +10,7 @@
   "productJob": "HOME entry visual/cinematic donor only; canonical Auth/API/DB/first-Moment persistence and returning-user resolution remain owned by /v4.",
   "summary": "Issue #473 normalizes 108-master rows 1/2/3 as one Track36 family and pins the existing #284/#287 repository snapshot as the V3 source authority. Direct standalone HOME adoption is rejected because the source executable hard-codes a 980px minimum viewport and hands off to a local/static first-journey iframe instead of the canonical product spine. The bounded Design Lab donor proof reuses only the bright local-entry palette, layered portal depth, petal/paper-glass material and cinematic entry treatment, then hands control to /v4 without replacing product data truth.",
   "provenance": {
-    "sourceLabel": "old/reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html via Issue #284 / merged PR #287",
+    "sourceLabel": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html via Issue #284 / merged PR #287",
     "sourceFiles": [
       "01_시네마틱메모리포털_밝은로컬진입_v3.html",
       "SHA256SUMS.txt"

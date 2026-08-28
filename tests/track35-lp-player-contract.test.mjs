@@ -14,7 +14,7 @@ import {
 
 const routeSource = readFileSync("app/v4/trees/[id]/archive/lp/Track35LpArchive.tsx", "utf8");
 const cssSource = readFileSync("app/v4/trees/[id]/archive/lp/track35-lp-archive.module.css", "utf8");
-const snapshot = readFileSync("old/reference/source-tracks-snapshot/35_LP플레이어/01_LP플레이어_영상기억.html");
+const snapshot = readFileSync("reference/source-tracks-snapshot/35_LP플레이어/01_LP플레이어_영상기억.html");
 const moments = [
   { id: "m1", treeId: "t", title: "one", memo: "", thumbnail: "", sourceType: "youtube", sourceUrl: "https://youtu.be/dQw4w9WgXcQ", emotionTags: [], timestamp: "", discoveryDate: "", sortOrder: 0, createdAt: null },
   { id: "m2", treeId: "t", title: "two", memo: "", thumbnail: "", sourceType: "image", sourceUrl: "https://example.test/a.jpg", emotionTags: [], timestamp: "", discoveryDate: "", sortOrder: 1, createdAt: null },

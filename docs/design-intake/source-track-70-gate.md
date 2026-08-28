@@ -3,7 +3,7 @@
 Issue: #291 · Refs: #80 #236 #287 #344
 Classification: `NEW_LINEAGE_CANDIDATE + CINEMATIC_BRAND_EDITORIAL + SOURCE_REFERENCE_ONLY`
 Manifest: `design-intake/manifests/source-track-70-moment-reveal-editorial.json`
-Preservation: `old/reference/source-track-70-moment-reveal-editorial/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
+Preservation: `reference/source-track-70-moment-reveal-editorial/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
 
 ## Design authority
 
@@ -34,7 +34,7 @@ PRODUCTION SOURCE  = DO NOT MODIFY (Drive originals read-only)
   143 Drive objects listed → 142 unique files preserved locally.
   `비교/70_COMPARE.html` is two same-name Drive objects; transported = `1gA0sMsPB8n9TyOemi1nkXKQeEBKS7JCt`
   (modtime-matched), skipped duplicate = `16doWQLeAp-syGq-PQUkoegaD7N8buyJ5`.
-- `SHA256SUMS` (below, and at `old/reference/source-track-70-moment-reveal-editorial/SHA256SUMS`) pins all
+- `SHA256SUMS` (below, and at `reference/source-track-70-moment-reveal-editorial/SHA256SUMS`) pins all
   142 transported files from the fresh local copy.
 - Drive-native MD5 spot checks passed (`README_70.md`, `선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html`).
 - Fresh hash vs Drive history pin: Google Drive exposes no server-side SHA256 (#287 finding), so the

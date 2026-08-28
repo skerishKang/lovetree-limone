@@ -2,7 +2,7 @@
 
 `B_TRACK_READY_FOR_V4_ADOPTION_GATE`
 
-- Intake: `old/reference/v4-incoming-telegram-20260808` — 46 HTML confirmed.
+- Intake: `reference/v4-incoming-telegram-20260808` — 46 HTML confirmed.
 - Baseline: `main` @ `97aa06294d328ed0e816ee8518699d735ac41231`.
 - Analysis branch: `audit/v4-telegram-46-sources-20260808`.
 - Detailed fingerprint/dependency inventory: [`TELEGRAM_46_SOURCE_INVENTORY_20260808.md`](./TELEGRAM_46_SOURCE_INVENTORY_20260808.md).

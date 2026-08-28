@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const sourcePath = new URL(
-  '../old/reference/source-tracks-snapshot/24_영상기억_워크플로우/01_영상기억워크플로우_v1.html',
+  '../reference/source-tracks-snapshot/24_영상기억_워크플로우/01_영상기억워크플로우_v1.html',
   import.meta.url,
 );
 const manifestPath = new URL(

@@ -3,7 +3,7 @@
 Issue: #303 · Refs: #80 #289
 Classification basis: sibling execution contract exists (`01_실행계약_모먼트정밀보정도구_v1.txt`) — LoveTree design-lead adoption decision still PENDING
 Manifest: `design-intake/manifests/source-track-45-moment-precision.json`
-Provenance: `old/reference/source-track-45-moment-precision/` (+ `SHA256SUMS`)
+Provenance: `reference/source-track-45-moment-precision/` (+ `SHA256SUMS`)
 
 ## Design authority
 
@@ -35,7 +35,7 @@ excluded from the repository commit** — their Drive ID + bytes + SHA256 finger
 recorded below instead. No non-video file exceeded 10 MB, so no additional exclusion was
 needed and no exception approval was required.
 
-Committed set: 177 files pinned in `old/reference/source-track-45-moment-precision/SHA256SUMS`.
+Committed set: 177 files pinned in `reference/source-track-45-moment-precision/SHA256SUMS`.
 Key artifacts:
 
 | File | Bytes | SHA-256 | Drive ID | Status |
@@ -77,9 +77,9 @@ package name `LoveTree-Moment-Polish-Lab-v1/`). Reconciliation against fresh has
 ```text
 173 / 175  path-mapped exact match (LoveTree-Moment-Polish-Lab-v1/* → 03_완성패키지_v1/*)
   2 / 175  relocated by Drive restructuring, content-matched elsewhere:
-           old/reference/reference-video.mp4     → 03_참고영상_모먼트정밀보정도구_원본.mp4
+           reference/reference-video.mp4     → 03_참고영상_모먼트정밀보정도구_원본.mp4
              (9f3a1081f5b3c857… matches fresh hash exactly)
-           old/reference/execution-contract.txt  → 01_실행계약_중복보존본.txt =
+           reference/execution-contract.txt  → 01_실행계약_중복보존본.txt =
                                                40_문서자료/01_실행계약_….txt
              (ca43f706fe5000ff… matches fresh hash exactly)
 MISMATCHES = 0 → both fresh hashes and the historical pin are recorded; no OPEN flag.
@@ -113,7 +113,7 @@ claims for those states are forbidden.
 
 ```text
 SOURCE_TRACK_45_INTAKE      = RECORDED (preservation gate complete)
-PRESERVED_EVIDENCE          = old/reference/source-track-45-moment-precision/
+PRESERVED_EVIDENCE          = reference/source-track-45-moment-precision/
                               (177 committed files + SHA256SUMS; 5 video fingerprints above)
 LINEAGE45_RESERVATION       = HOLD (no repository lineage number allocated)
 CANONICAL_V4_ADOPTION       = NO

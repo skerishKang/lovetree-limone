@@ -4,7 +4,7 @@ export const DRIVE_TRACK_18_ELECTRIC_AURORA_PROVENANCE = Object.freeze({
   driveFolder: "18_메모리코어_전기오로라",
   sourceFile: "01_메모리코어_전기오로라_v1.html",
   sourcePath:
-    "old/reference/source-tracks-snapshot/18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html",
+    "reference/source-tracks-snapshot/18_메모리코어_전기오로라/01_메모리코어_전기오로라_v1.html",
   sha256: "8c46647d2d2a573d87484cbf2c3ad532f57a32c1742cf252be83029cf6025d7b",
   productJob: "MYTREE",
   disposition: "USE_AS_VISUAL_FUNCTION_DONOR",

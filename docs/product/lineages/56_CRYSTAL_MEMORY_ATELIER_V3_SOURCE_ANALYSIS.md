@@ -22,7 +22,7 @@ Primary V3 source:
 - file: `index-v3.html`
 - bytes: `19,262`
 - SHA256: `9a7bb3415dade7d6fd04cecfe1be6ae04595d3b46d326f2b596dab819633a66c`
-- repository preservation path: `old/reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html`
+- repository preservation path: `reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html`
 
 The repository copy is required to remain byte-exact.
 
@@ -66,7 +66,7 @@ The implementation environment cannot safely attach binary blobs to the existing
 
 Required target directory:
 
-`public/old/reference/lineage-56-crystal-memory-atelier-v3/assets/`
+`public/reference/lineage-56-crystal-memory-atelier-v3/assets/`
 
 Required files and exact fingerprints are pinned in `lib/lineage-56-crystal-memory-source.ts` and enforced by `scripts/verify-lineage-56-assets.mjs`.
 

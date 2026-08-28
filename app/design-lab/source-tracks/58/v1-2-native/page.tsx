@@ -1,4 +1,4 @@
-import SourceTrack58LivingMemoryBoard from "@/old/components/source-track-58/SourceTrack58LivingMemoryBoard";
+import SourceTrack58LivingMemoryBoard from "@/components/source-track-58/SourceTrack58LivingMemoryBoard";
 import mobileSpatialStyles from "./source58-mobile-spatial-p0.module.css";
 import repairStyles from "./source58-visual-repair.module.css";
 

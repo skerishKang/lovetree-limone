@@ -14,7 +14,7 @@ kilo-2 VERIFICATION.md §4가 보고한 "수입계열 9종 물리중복(~7.1 MiB
 
 ## 2. 방법
 
-1. `old/reference/source-tracks-snapshot/` 대상 9 디렉터리(18파일)의 blob OID·바이트수를 `git ls-tree -r -l origin/main`으로 추출
+1. `reference/source-tracks-snapshot/` 대상 9 디렉터리(18파일)의 blob OID·바이트수를 `git ls-tree -r -l origin/main`으로 추출
 2. origin/main **전체 트리**(2,320 엔트리)를 대상으로 동일 OID 조인 — git content-addressable 저장소 특성상 동일 OID = 바이트 완전 동일
 3. SHA256은 마스터 기준선 `2026-08-21/SHA256SUMS.txt`(70엔트리)의 핀 값을 인용
 4. "기존 수입 위치"의 페이로드 존재 여부는 해당 위치의 ls-tree 크기 분포로 실측
@@ -27,10 +27,10 @@ kilo-2 VERIFICATION.md §4가 보고한 "수입계열 9종 물리중복(~7.1 MiB
 
 | 트랙 | 스냅샷 파일 | 크기(B) | SHA256 (마스터 핀) | blob OID | 동일 사본 위치 (전수 조인 실측) |
 |---|---|---|---|---|---|
-| 55 | `55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` | 55,327 | `768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd` ★ | `1a9dcc6c60d7ca92f37c85b6488ab8958409d775` | `old/reference/source-track-55-lupt/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` 외 계열 2곳 + `old/reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/05_free_connection.html` (계 4곳) |
-| 56 | `56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html` | 45,761 | `1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909` | `c715695cfb56ad2472496bd3e33d633a06d042de` | `old/reference/source-track-56-vertical-moment-network/후보_버전1.2_세로형_모먼트관계망_전체조망.html` |
-| 61 | `61_감정경로_연결검토실/현재후보.html` | 509,063 | `834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe` | `1dd96291c9c1c108786b8cde4d5822d0b7fc89d0` | `old/reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/04_connection_review.html` |
-| 66 | `66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html` | 166,996 | `b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6` | `02ab6bff18f14615d9c58ba853dcfab384318f80` | `old/reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/03_first_tree.html`
+| 55 | `55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` | 55,327 | `768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd` ★ | `1a9dcc6c60d7ca92f37c85b6488ab8958409d775` | `reference/source-track-55-lupt/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html` 외 계열 2곳 + `reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/05_free_connection.html` (계 4곳) |
+| 56 | `56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html` | 45,761 | `1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909` | `c715695cfb56ad2472496bd3e33d633a06d042de` | `reference/source-track-56-vertical-moment-network/후보_버전1.2_세로형_모먼트관계망_전체조망.html` |
+| 61 | `61_감정경로_연결검토실/현재후보.html` | 509,063 | `834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe` | `1dd96291c9c1c108786b8cde4d5822d0b7fc89d0` | `reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/04_connection_review.html` |
+| 66 | `66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html` | 166,996 | `b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6` | `02ab6bff18f14615d9c58ba853dcfab384318f80` | `reference/source-track-69-fullviewport-portfolio/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/03_first_tree.html`
 
 콘텐츠 순합계 777,147 B + 상기 4개 디렉터리의 `SHA256SUMS.txt` 489 B = 777,636 B.
 
@@ -44,7 +44,7 @@ kilo-2 VERIFICATION.md §4가 보고한 "수입계열 9종 물리중복(~7.1 MiB
 | 64 | `64_부유모먼트_웰컴오빗_입장포털O/현재후보.html` | 1,565,313 | `80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d` | `59d40da9708c0c88756f37d291f0de30633d1868` | `design-intake/manifests/track-64-floating-moment-entry-portal.json` 메타데이터만 |
 | 67 | `67_메모리테이프_인터랙티브롤/05_V2.4_PERSISTENT_WORLD_WORKS_NAVIGATION/track67_v2.4_persistent_world_works_navigation.html` | 4,913,964 | `3733d39d18d86689f0fcea5fb4fe96388a938ca672b785281b69c368fb5463cd` | `cbf6f6948009f6598afdc74e53f166f5eab5367b` | `public/design-lab-assets/lineages/67/v2-4/`는 PNG 자산만 보유(M01~M06…) — 4.9MB HTML 없음 |
 
-이 5종은 kilo-2 §4 표의 "기존 수입 위치"에 **동일 바이트가 존재하지 않는다**. 해당 위치는 제품 편입 자산(PNG) 또는 매니페스트 메타데이터만 보유하며, 실행 가능한 원본 HTML 페이로드의 라이브 트리 내 유일 보관처가 `old/reference/source-tracks-snapshot/`이다.
+이 5종은 kilo-2 §4 표의 "기존 수입 위치"에 **동일 바이트가 존재하지 않는다**. 해당 위치는 제품 편입 자산(PNG) 또는 매니페스트 메타데이터만 보유하며, 실행 가능한 원본 HTML 페이로드의 라이브 트리 내 유일 보관처가 `reference/source-tracks-snapshot/`이다.
 
 ### 3.3 디렉터리별 `SHA256SUMS.txt` 9종 (합계 1,138 B)
 
@@ -67,7 +67,7 @@ kilo-2 VERIFICATION.md §4가 보고한 "수입계열 9종 물리중복(~7.1 MiB
 
 ```bash
 # 1) 대상 18파일의 OID·크기 추출
-git ls-tree -r -l origin/main -- old/reference/source-tracks-snapshot/<9디렉터리>
+git ls-tree -r -l origin/main -- reference/source-tracks-snapshot/<9디렉터리>
 
 # 2) 전체 트리 OID 맵과 조인 → 동일 OID 개수 집계
 git ls-tree -r -l origin/main   # 전수 (2,320 엔트리)
@@ -76,5 +76,5 @@ git ls-tree -r -l origin/main   # 전수 (2,320 엔트리)
 git show origin/main:docs/design-intake/drive-snapshot/2026-08-21/SHA256SUMS.txt
 
 # 4) 기준선 유효성 (변경 없음을 재확인)
-cd old/reference/source-tracks-snapshot && sha256sum -c ../../docs/design-intake/drive-snapshot/2026-08-21/SHA256SUMS.txt --quiet
+cd reference/source-tracks-snapshot && sha256sum -c ../../docs/design-intake/drive-snapshot/2026-08-21/SHA256SUMS.txt --quiet
 ```

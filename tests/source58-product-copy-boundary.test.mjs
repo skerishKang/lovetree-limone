@@ -14,7 +14,7 @@ test("Source58 canonical Board explicitly enables product copy while Design Lab 
 });
 
 test("Source58 shared component keeps staging authority evidence and adds a bounded product mode", async () => {
-  const source = await read("old/components/source-track-58/SourceTrack58LivingMemoryBoard.tsx");
+  const source = await read("components/source-track-58/SourceTrack58LivingMemoryBoard.tsx");
 
   assert.match(source, /mode\?: "staging" \| "product"/);
   assert.match(source, /mode = "staging"/);
@@ -48,7 +48,7 @@ test("Source58 shared component keeps staging authority evidence and adds a boun
 
 test("Source58 product mode changes copy only, not canonical Moment selection/history wiring", async () => {
   const productRoute = await read("app/trees/[id]/board/page.tsx");
-  const source = await read("old/components/source-track-58/SourceTrack58LivingMemoryBoard.tsx");
+  const source = await read("components/source-track-58/SourceTrack58LivingMemoryBoard.tsx");
 
   assert.match(productRoute, /router\.replace\(/);
   assert.match(productRoute, /next\.set\("moment", nextMomentId\)/);

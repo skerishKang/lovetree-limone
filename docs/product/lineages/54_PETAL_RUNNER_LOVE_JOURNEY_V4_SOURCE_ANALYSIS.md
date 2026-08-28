@@ -106,7 +106,7 @@ The five authoritative PNG objects were re-listed from the V4 folder, freshly ra
 
 Target asset path:
 
-`public/old/reference/lineage-54-petal-runner-v4/assets/`
+`public/reference/lineage-54-petal-runner-v4/assets/`
 
 The review component uses this exact path contract and shows `ASSET TRANSFER HOLD` only when an expected asset is actually missing or has failed to decode.
 

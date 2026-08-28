@@ -2,7 +2,7 @@
 
 Issue: #305 · Refs: #80 · pattern: #236/#287/#289
 Manifest: `design-intake/manifests/source-track-48-idol-tree-neon-pilot.json`
-Preservation: `old/reference/source-track-48-idol-tree-neon-pilot/`
+Preservation: `reference/source-track-48-idol-tree-neon-pilot/`
 Drive folder: `48_아이돌러브트리_네온파일럿` (`1RsVSpzqmi2Gdnge0msJHiaMZ5FDe7QMQ`) — 334 files / 684,669,025 B
 
 ## Source identity

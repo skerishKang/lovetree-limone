@@ -2,7 +2,7 @@
 
 Issue: #313 · Refs: #80 · pattern: #236/#287/#289
 Manifest: `design-intake/manifests/source-track-73-mainframe-hero.json`
-Preservation: `old/reference/source-track-73-mainframe-hero/`
+Preservation: `reference/source-track-73-mainframe-hero/`
 Drive folder: `73_메인프레임_마우스스크럽_러브트리히어로랜딩_V1` (`1_rflZqy4e1RsvlpRhTrcPrmy0wi0xyPE`) — 48 files / 44,351,231 B
 
 ## Source identity

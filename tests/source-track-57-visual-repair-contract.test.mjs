@@ -6,7 +6,7 @@ import test from "node:test";
 const ROOT = process.cwd();
 const read = (relative) => fs.readFileSync(path.join(ROOT, relative), "utf8");
 
-const SOURCE = "old/reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html";
+const SOURCE = "reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html";
 const CARD = "app/components/moment-presentation/LivingGlassMomentCard.tsx";
 const GALLERY = "app/components/moment-presentation/LivingGlassMomentGallery.tsx";
 const INSPECTOR = "app/components/moment-presentation/LivingGlassMomentInspector.tsx";

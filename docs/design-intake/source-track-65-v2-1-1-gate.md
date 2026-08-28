@@ -3,7 +3,7 @@
 Issue: #236 · Refs: #80 #141 #157 #201
 Classification: `ENTRY_MATERIAL + CINEMATIC_EDITORIAL_EXPERIENCE + SOURCE_FIDELITY_REBUILD`
 Manifest: `design-intake/manifests/source-track-65-cinematic-editorial.json`
-Provenance: `old/reference/design-intake/source-track-65-cinematic-editorial/`
+Provenance: `reference/design-intake/source-track-65-cinematic-editorial/`
 
 ## Design authority
 
@@ -74,7 +74,7 @@ IMPLEMENTATION_RELEASE      = NO
 ```
 
 Artifact pinning state: all three reference artifacts are PINNED byte-exact under
-`old/reference/design-intake/source-track-65-cinematic-editorial/` —
+`reference/design-intake/source-track-65-cinematic-editorial/` —
 V1 instruction docx (26,086 B, SHA256 `42cee224…c41c20`),
 V2 expansion instruction md (30,965 B, SHA256 `7ad5580c…acee`),
 historical V2 executable HTML (50,765 B, SHA256 `b2fadd39…73b0`, verified against the sibling

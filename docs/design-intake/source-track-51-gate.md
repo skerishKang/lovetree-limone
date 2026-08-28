@@ -3,7 +3,7 @@
 Issue: #308 · Refs: #80 · pattern precedents #236 #287 #289
 Classification: `NEW_LINEAGE_CANDIDATE + CINEMATIC_BRAND_PROMO_GATE + SOURCE_REFERENCE_ONLY`
 Manifest: `design-intake/manifests/source-track-51-neon-human-analysis.json`
-Preservation: `old/reference/source-track-51-neon-human-analysis/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
+Preservation: `reference/source-track-51-neon-human-analysis/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
 
 ## Design authority
 
@@ -30,7 +30,7 @@ PRODUCTION SOURCE  = DO NOT MODIFY (Drive originals read-only)
 - `SHA256SUMS` pins all 8 transported files from the fresh local copy.
 - Integrity: **all 8 files verified OK against Drive-native MD5** (full-tree check).
 - Triple hash comparison (#287 snapshot): snapshot copy
-  `old/reference/source-tracks-snapshot/51_네온인간분석_인터랙티브홍보대문/10_병행안_네온인간분석_홍보대문_바로보기.html`
+  `reference/source-tracks-snapshot/51_네온인간분석_인터랙티브홍보대문/10_병행안_네온인간분석_홍보대문_바로보기.html`
   (`5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014`) is byte-identical to this fresh
   transport and to Drive-native MD5 — fresh hash ↔ Drive history pin ↔ prior repo snapshot agree.
 

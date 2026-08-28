@@ -10,7 +10,7 @@
     "filename": "01_전체기억_요약대시보드.html",
     "bytes": 25265,
     "sha256": "ed7c42c5ccce92a1e6f5d7e986f3b061a59e29cca390aef6cf86b4d91d1e0b41",
-    "repositorySnapshot": "old/reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html"
+    "repositorySnapshot": "reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html"
   },
   "baseImplementation": {
     "routeTemplate": "/trees/:treeId/overview",

@@ -292,6 +292,6 @@ HTML/RSC: Cache-Control
 
 - Cloudflare Workers Static Assets headers: https://developers.cloudflare.com/workers/static-assets/headers/
 - Cloudflare Workers Static Assets: https://developers.cloudflare.com/workers/static-assets/
-- Cloudflare Vite plugin static assets: https://developers.cloudflare.com/workers/vite-plugin/old/reference/static-assets/
+- Cloudflare Vite plugin static assets: https://developers.cloudflare.com/workers/vite-plugin/reference/static-assets/
 
 이 문서는 V1·V2·V3 모두에 적용된다. 특정 버전 구현 문서가 이 정책과 충돌하면 이 운영 정책을 우선한다.

@@ -83,7 +83,7 @@
 
 ### 2.2 lovetree-accordion-album-archive-v3-fixed
 
-- SOURCE_PRESENT: 예 (기존 `old/reference/v3/sibling-prototypes/`와 **md5 동일** `19dbd82c…`)
+- SOURCE_PRESENT: 예 (기존 `reference/v3/sibling-prototypes/`와 **md5 동일** `19dbd82c…`)
 - CURRENT_ROUTE_EXISTS: 예 `/v4/subjects/demo/accordion`
 - CURRENT_DESIGN_MATCH: PARTIAL_MATCH
 - CURRENT_INTERACTION_MATCH: PARTIAL_MATCH
@@ -345,7 +345,7 @@
 | lovetree-growing-tree-300-plus-v2-freegraph | `V4Growth300Plus` | `/v4/trees/demo/growth/300-plus` |
 | lovetree-growing-tree-season-archive-v3 | `V4SeasonArchive` | `/v4/trees/demo/seasons` |
 
-(리포지토리 내 `old/reference/`, `[샘플]/`에서 이 3개 HTML 존재를 재확인했고, 없음을 확인.)
+(리포지토리 내 `reference/`, `[샘플]/`에서 이 3개 HTML 존재를 재확인했고, 없음을 확인.)
 
 ---
 

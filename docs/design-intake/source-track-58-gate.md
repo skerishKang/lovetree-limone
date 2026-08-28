@@ -3,7 +3,7 @@
 Issue: #310 · Refs: #80 #287
 Classification: `TREE_WORKSPACE_MOMENT_PRESENTATION + CINEMATIC_BOARD + SOURCE_FIDELITY_REBUILD`
 Manifest: `design-intake/manifests/source-track-58-living-memory-pinboard.json`
-Provenance: `old/reference/source-track-58-living-memory-pinboard/`
+Provenance: `reference/source-track-58-living-memory-pinboard/`
 
 ## Design authority
 
@@ -83,7 +83,7 @@ IMPLEMENTATION_RELEASE      = NO
 ```
 
 Artifact pinning state: all five registered text/executable artifacts are PINNED under
-`old/reference/source-track-58-living-memory-pinboard/` —
+`reference/source-track-58-living-memory-pinboard/` —
 
 - V1.2 final executable HTML (532,697 B, SHA256 `9fd5b6e7…a7d3cb5`; MD5 equals the #287 snapshot;
   content-identical to the two Drive copies under `버전_1.2…/`),

@@ -12,7 +12,7 @@
     "driveFileId": "12KgvI1OsJKjrv-zPOqsQOvH9cS4QovjM",
     "bytes": 1953464,
     "sha256": "2110fabd6e7ad4362e65af8474f66e5b468fb342dc9c96a0ca78930b225e694e",
-    "repositorySnapshot": "old/reference/source-tracks-snapshot/17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html"
+    "repositorySnapshot": "reference/source-tracks-snapshot/17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html"
   },
   "namespaceGuard": {
     "rule": "Drive Track17 Living Memory Terrain != historical GitHub Track17 Global Shell",

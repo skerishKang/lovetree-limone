@@ -29,7 +29,7 @@ State: `UNVERIFIED_HISTORICAL_GIT_SNAPSHOT`
 
 Repository path:
 
-`old/reference/lineage-55-moonlit-blossom-v1/source/index-v1.html`
+`reference/lineage-55-moonlit-blossom-v1/source/index-v1.html`
 
 Observed identity: `LoveTree Memory Blossom Hero v1`
 

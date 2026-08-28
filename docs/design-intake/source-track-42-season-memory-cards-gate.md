@@ -3,7 +3,7 @@
 Issue: #296 · Refs: #80 · pattern: #236/#287
 Classification: `ENTRY_MATERIAL + SEASON_MEMORY_BROWSING + SOURCE_FIDELITY_REPRODUCTION`
 Manifest: `design-intake/manifests/source-track-42-season-memory-cards.json`
-Preservation: `old/reference/source-track-42-season-memory-cards/` (33 files, 20,421,344 B, byte-exact)
+Preservation: `reference/source-track-42-season-memory-cards/` (33 files, 20,421,344 B, byte-exact)
 
 ## Source identity
 
@@ -15,7 +15,7 @@ LoveTree season-memory content. Existing adopted sources were not modified by th
 
 ## Preservation
 
-- Full folder copied byte-exact into `old/reference/source-track-42-season-memory-cards/`
+- Full folder copied byte-exact into `reference/source-track-42-season-memory-cards/`
   (33 files / 20,421,344 B; largest single file 7,458,409 B — inside the 50 MB total /
   10 MB per-file commit caps; nothing reduced to index-only).
 - `SHA256SUMS.txt` pins all 33 files.

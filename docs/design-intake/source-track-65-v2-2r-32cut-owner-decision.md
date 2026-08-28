@@ -19,13 +19,13 @@ The approved story spine remains:
 
 ## Preservation boundary
 
-`old/reference/source-track-65/V9_오너픽전면활용·스토리재정렬_후보/C_ASSET_USAGE_NOTE.md` is a preserved Drive-source object, not a mutable governance ledger.
+`reference/source-track-65/V9_오너픽전면활용·스토리재정렬_후보/C_ASSET_USAGE_NOTE.md` is a preserved Drive-source object, not a mutable governance ledger.
 
 It remains byte-exact and pinned by:
 
 - Drive ID `1IpnBvtU0oO9KwGnKcIzs3mij-A8vAfXl`;
 - SHA-256 `f459ed62ed55361b178303408a31c25ea80aa96138cba5bd70a238a36e00babf`;
-- `old/reference/source-track-65/SHA256SUMS`;
+- `reference/source-track-65/SHA256SUMS`;
 - `design-intake/manifests/source-track-65-cinematic-editorial-v2-2.json`.
 
 Therefore the original `C_ASSET_USAGE_NOTE.md` is intentionally left unchanged. Editing that file in place would invalidate the preserved-source fingerprint while retaining the same Drive identity.

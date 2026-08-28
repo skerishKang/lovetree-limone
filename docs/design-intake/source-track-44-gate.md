@@ -3,7 +3,7 @@
 Issue: #302 · Refs: #80
 Classification: `ENTRY_MATERIAL + TREE_WORKSPACE_MOMENT_PRESENTATION + SOURCE_FIDELITY_REBUILD`
 Manifest: `design-intake/manifests/source-track-44-handopen-memory-composer.json`
-Provenance: `old/reference/source-track-44-handopen-memory-composer/`
+Provenance: `reference/source-track-44-handopen-memory-composer/`
 
 ## Design authority
 
@@ -74,7 +74,7 @@ IMPLEMENTATION_RELEASE      = NO
 ```
 
 Artifact pinning state: all four registered text/executable artifacts are PINNED under
-`old/reference/source-track-44-handopen-memory-composer/` —
+`reference/source-track-44-handopen-memory-composer/` —
 
 - V2 composer executable HTML (427,043 B, SHA256 `8fd6a4f1…5d705a`, MD5 equals the same-day
   full-tree Drive snapshot),

@@ -3,7 +3,7 @@
 Issue: #340 · Refs: #80 #287 #289
 Classification basis: PARTIAL — motion-analysis notes exist; no 작업지시/design-lead instruction and no recorded product-owner decision in folder → adoption PENDING
 Manifest: `design-intake/manifests/source-track-40-goldenfruit.json`
-Provenance: `old/reference/source-track-40-goldenfruit/` (+ `SHA256SUMS`, selected set)
+Provenance: `reference/source-track-40-goldenfruit/` (+ `SHA256SUMS`, selected set)
 
 ## Design authority
 
@@ -195,7 +195,7 @@ design-lead classification/adoption decision
 
 ```text
 SOURCE_TRACK_40_INTAKE      = RECORDED (preservation gate complete)
-PRESERVED_EVIDENCE          = old/reference/source-track-40-goldenfruit/
+PRESERVED_EVIDENCE          = reference/source-track-40-goldenfruit/
                               (12 committed files + SHA256SUMS; 57 withheld fingerprints
                                in this doc and as PENDING manifest entries)
 LINEAGE40_RESERVATION       = HOLD (no repository lineage number allocated)
