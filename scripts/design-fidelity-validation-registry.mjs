@@ -187,6 +187,36 @@ export const DESIGN_FIDELITY_TARGETS = Object.freeze([
     extraEvidencePaths: ["test-results/lineage-58-videofigure"],
   },
   {
+    id: "lineage-60-v1-2",
+    label: "Lineage 60 V1.2 3D Moment Cluster Explorer",
+    route: "/design-lab/lineages/60/v1-2",
+    validationClass: "interaction-contract",
+    impactPrefixes: [
+      "app/design-lab/lineages/60/",
+      "app/trees/[id]/explore/",
+      "app/components/source60/",
+      "lib/lineage-60/",
+      "qa/lineage-60-v12-native-browser-qa.mjs",
+      "qa/source60-p0-fidelity-browser-qa.mjs",
+      "tests/lineage-60/",
+    ],
+    assetGate: null,
+    browserGates: [
+      "qa/lineage-60-v12-native-browser-qa.mjs",
+      "qa/source60-p0-fidelity-browser-qa.mjs",
+    ],
+    viewports: [
+      { width: 1280, height: 800 },
+      { width: 390, height: 844, mobile: true },
+      { width: 320, height: 720, mobile: true },
+    ],
+    captureReducedMotion: true,
+    extraEvidencePaths: [
+      "qa/evidence/lineage-60",
+      "qa/evidence/source60-p0",
+    ],
+  },
+  {
     id: "lineage-61-61-v1-9",
     label: "Guided Next Moment LoveTree Builder V1.9",
     route: "/design-lab/lineages/61/61-v1-9",
