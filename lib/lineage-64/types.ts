@@ -32,6 +32,7 @@ export interface MomentRecord {
   depthTier: DepthTier;
   summary: string;
   externalUrl?: string;
+  mediaUrl?: string;
   accent: string;
   fitting: MomentFitting;
   world: MomentWorldCoord;

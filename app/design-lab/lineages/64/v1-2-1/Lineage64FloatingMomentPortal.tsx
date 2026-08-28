@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import {
@@ -18,8 +19,6 @@ import {
 } from "@/lib/lineage-64/state";
 import type { MomentRecord } from "@/lib/lineage-64/types";
 import styles from "./lineage-64.module.css";
-
-const MOMENT_COUNT = TRACK64_MOMENTS.length;
 
 // TRUE AMBIENT AUTO-ORBIT: a continuous, bounded idle orbit in normal motion.
 // Independent of any user inertia. Disabled under reduced motion, while the Viewer
@@ -45,6 +44,15 @@ function surfaceStyle(m: MomentRecord, variant: "card" | "viewer"): CSSPropertie
   };
 }
 
+function mediaImageStyle(m: MomentRecord, variant: "card" | "viewer"): CSSProperties {
+  const fit = variant === "viewer" ? m.fitting.viewerFitMode : m.fitting.fitMode;
+  const position = variant === "viewer" ? m.fitting.viewerObjectPosition : m.fitting.objectPosition;
+  return {
+    objectFit: fit === "cover" ? "cover" : "contain",
+    objectPosition: position,
+  };
+}
+
 const KIND_LABEL: Record<MomentRecord["kind"], string> = {
   photo: "PHOTO",
   video: "VIDEO",
@@ -52,11 +60,28 @@ const KIND_LABEL: Record<MomentRecord["kind"], string> = {
   link: "LINK",
 };
 
-export default function Lineage64FloatingMomentPortal() {
+interface Lineage64FloatingMomentPortalProps {
+  moments?: readonly MomentRecord[];
+  initialMomentId?: string | null;
+  onMomentChange?: (momentId: string | null) => void;
+  canonicalTreeId?: string;
+}
+
+export default function Lineage64FloatingMomentPortal({
+  moments = TRACK64_MOMENTS,
+  initialMomentId = null,
+  onMomentChange,
+  canonicalTreeId,
+}: Lineage64FloatingMomentPortalProps) {
+  const momentCount = moments.length;
   const [state, dispatch] = useReducer(
     reduceFloatingMoment,
-    undefined,
-    () => ({ selectedMomentId: null, viewerOpen: false, focusedIndex: 0 }),
+    initialMomentId,
+    (selectedMomentId) => ({
+      selectedMomentId,
+      viewerOpen: Boolean(selectedMomentId),
+      focusedIndex: 0,
+    }),
   );
   const [coarse, setCoarse] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -75,7 +100,9 @@ export default function Lineage64FloatingMomentPortal() {
   const velocityRef = useRef(0);
 
   const threshold = coarse ? TRACK64_GESTURE.mobileTapThreshold : TRACK64_GESTURE.desktopTapThreshold;
-  const active = useMemo(() => selectedMoment(TRACK64_MOMENTS, state), [state]);
+  const active = useMemo(() => selectedMoment(moments, state), [moments, state]);
+  const canonicalMomentSuffix = active && canonicalTreeId ? `?moment=${encodeURIComponent(active.id)}` : "";
+  const canonicalTreePath = canonicalTreeId ? `/trees/${encodeURIComponent(canonicalTreeId)}` : null;
 
   useEffect(() => {
     const coarseQuery = window.matchMedia("(pointer: coarse)");
@@ -147,13 +174,15 @@ export default function Lineage64FloatingMomentPortal() {
 
   const closeViewer = useCallback(() => {
     dispatch({ type: "close-viewer" });
+    onMomentChange?.(null);
     setAnnounce("뷰어를 닫았습니다.");
-  }, []);
+  }, [onMomentChange]);
 
   const openMoment = useCallback((momentId: string, origin: HTMLElement | null) => {
     triggerRef.current = origin;
     dispatch({ type: "open-viewer", momentId });
-  }, []);
+    onMomentChange?.(momentId);
+  }, [onMomentChange]);
 
   const handlePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLButtonElement>, moment: MomentRecord) => {
@@ -249,17 +278,18 @@ export default function Lineage64FloatingMomentPortal() {
 
   const continuePath = useCallback(() => {
     if (!active) return;
-    const next = TRACK64_MOMENTS[(active.index + 1) % MOMENT_COUNT];
+    const next = moments[(active.index + 1) % momentCount];
     openMoment(next.id, closeRef.current);
     setAnnounce(`PATH CONTINUE 데모: ${next.title}`);
-  }, [active, openMoment]);
+  }, [active, momentCount, moments, openMoment]);
 
   const branchChoice = useCallback(() => {
     if (!active) return;
-    const branch = TRACK64_MOMENTS.find((m) => m.family !== active.family) ?? TRACK64_MOMENTS[(active.index + 2) % MOMENT_COUNT];
+    const branch = moments.find((m) => m.family !== active.family) ?? moments[(active.index + 2) % momentCount];
+    if (!branch) return;
     openMoment(branch.id, closeRef.current);
     setAnnounce(`BRANCH CHOICE 데모: ${branch.title}`);
-  }, [active, openMoment]);
+  }, [active, momentCount, moments, openMoment]);
 
   const selectFromList = useCallback(
     (moment: MomentRecord) => {
@@ -288,6 +318,10 @@ export default function Lineage64FloatingMomentPortal() {
           data-viewer-fit-mode={moment.fitting.viewerFitMode}
           aria-hidden="true"
         >
+          {moment.mediaUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className={styles.mediaImage} style={mediaImageStyle(moment, variant)} src={moment.mediaUrl} alt="" referrerPolicy="no-referrer" />
+          ) : null}
           <span className={styles.playAffordance} aria-hidden="true">▶</span>
           <span className={styles.posterNote}>POSTER / PREVIEW ONLY · 실제 재생 없음</span>
         </div>
@@ -315,7 +349,12 @@ export default function Lineage64FloatingMomentPortal() {
         data-fit-mode={moment.fitting.fitMode}
         data-viewer-fit-mode={moment.fitting.viewerFitMode}
         aria-hidden="true"
-      />
+      >
+        {moment.mediaUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className={styles.mediaImage} style={mediaImageStyle(moment, variant)} src={moment.mediaUrl} alt="" referrerPolicy="no-referrer" />
+        ) : null}
+      </div>
     );
   };
 
@@ -349,7 +388,7 @@ export default function Lineage64FloatingMomentPortal() {
         data-rendering="css3d-dom"
         data-reduced-motion={reducedMotion ? "reduce" : "no-preference"}
       >
-        {TRACK64_MOMENTS.map((moment) => {
+        {moments.map((moment) => {
           const isSelected = state.selectedMomentId === moment.id;
           return (
             <button
@@ -387,7 +426,7 @@ export default function Lineage64FloatingMomentPortal() {
 
       {listOpen && (
         <div className={styles.listPanel} role="listbox" aria-label="Moment 시맨틱 목록">
-          {TRACK64_MOMENTS.map((moment) => (
+          {moments.map((moment) => (
             <button
               key={moment.id}
               type="button"
@@ -442,29 +481,43 @@ export default function Lineage64FloatingMomentPortal() {
             </p>
 
             <div className={styles.viewerWhy}>
-              <strong>WHY NEXT</strong>
+              <strong>{canonicalTreePath ? "이어진 순간" : "WHY NEXT"}</strong>
               <p>
-                {active.title} 과 이어지는 다음 기억으로의 연결 제안 (SOURCE DEMO · NON-CANONICAL). recent / important /
-                resume 은 제품 정책 또는 파생 데모 값이며 canonical truth 가 아닙니다.
+                {canonicalTreePath
+                  ? "이 순간의 canonical 기록을 이어서 확인하세요. 오빗의 위치와 깊이는 이 화면의 presentation state입니다."
+                  : `${active.title} 과 이어지는 다음 기억으로의 연결 제안 (SOURCE DEMO · NON-CANONICAL). recent / important / resume 은 제품 정책 또는 파생 데모 값이며 canonical truth 가 아닙니다.`}
               </p>
             </div>
 
             <div className={styles.viewerActions}>
-              <button type="button" className={styles.btn} onClick={continuePath}>
-                PATH CONTINUE (데모)
-              </button>
-              <button type="button" className={styles.btn} onClick={branchChoice}>
-                BRANCH CHOICE (데모)
-              </button>
-              {active.kind === "link" && active.externalUrl && (
-                <a className={styles.btn} href={active.externalUrl} target="_blank" rel="noopener noreferrer">
-                  외부 열기
-                </a>
+              {canonicalTreePath ? (
+                <>
+                  <Link className={styles.btn} href={`${canonicalTreePath}${canonicalMomentSuffix}`}>Moment 상세</Link>
+                  <Link className={styles.btn} href={`${canonicalTreePath}/board${canonicalMomentSuffix}`}>Living Board</Link>
+                  <Link className={styles.btn} href={`${canonicalTreePath}/relationships${canonicalMomentSuffix}`}>관계 보기</Link>
+                  <Link className={styles.btn} href={`${canonicalTreePath}/explore${canonicalMomentSuffix}`}>3D 탐색</Link>
+                </>
+              ) : (
+                <>
+                  <button type="button" className={styles.btn} onClick={continuePath}>
+                    PATH CONTINUE (데모)
+                  </button>
+                  <button type="button" className={styles.btn} onClick={branchChoice}>
+                    BRANCH CHOICE (데모)
+                  </button>
+                  {active.kind === "link" && active.externalUrl && (
+                    <a className={styles.btn} href={active.externalUrl} target="_blank" rel="noopener noreferrer">
+                      외부 열기
+                    </a>
+                  )}
+                </>
               )}
             </div>
 
             <p className={styles.viewerFoot}>
-              SOURCE DEMO / NON-PERSISTENT / SIMULATED · canonical /v4 채택 없음 · MY TREE 및 Track59 정식 라우트는 미발명.
+              {canonicalTreePath
+                ? "CANONICAL TREE DATA · orbit geometry is presentation-only · no persistence added"
+                : "SOURCE DEMO / NON-PERSISTENT / SIMULATED · canonical /v4 채택 없음 · MY TREE 및 Track59 정식 라우트는 미발명."}
             </p>
           </div>
         </div>
