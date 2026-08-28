@@ -6,7 +6,7 @@ import {
   getReadableTree,
   getOwnedTree,
   getOwnedMemory,
-} from "../server/api/access.ts";
+} from "../core/runtime/server/api/access.ts";
 
 function mockDb(rows) {
   return {
