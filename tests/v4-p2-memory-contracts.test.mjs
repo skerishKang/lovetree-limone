@@ -73,7 +73,7 @@ test("explicitly nullable string rules preserve parentId null without changing l
 });
 
 test("P2 migration is additive and non-destructive", async () => {
-  const migration = await read("drizzle/0003_peaceful_radioactive_man.sql");
+  const migration = await read("core/runtime/drizzle/0003_peaceful_radioactive_man.sql");
   assert.match(migration, /ADD COLUMN "connection_reason" text/);
   assert.match(migration, /ADD COLUMN "discovery_date" date/);
   assert.match(migration, /ADD COLUMN "video_offset_seconds" integer/);
@@ -81,9 +81,9 @@ test("P2 migration is additive and non-destructive", async () => {
 });
 
 test("schema and all Memory write paths include the P2 fields", async () => {
-  const schema = await read("db/schema.ts");
-  const memories = await read("server/api/memories.ts");
-  const trees = await read("server/api/trees.ts");
+  const schema = await read("core/runtime/db/schema.ts");
+  const memories = await read("core/runtime/server/api/memories.ts");
+  const trees = await read("core/runtime/server/api/trees.ts");
   for (const token of ["connectionReason", "discoveryDate", "videoOffsetSeconds"]) {
     assert.match(schema, new RegExp(token));
     assert.match(memories, new RegExp(token));

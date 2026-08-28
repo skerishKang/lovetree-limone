@@ -962,7 +962,7 @@ test("update can set sortOrder with ownership check", async () => {
 
 test("migration 0002 adds nullable sort_order, partial unique index, and backfill", async () => {
   const fs = await import("node:fs/promises");
-  const sql = await fs.readFile("./drizzle/0002_fixed_scarlet_spider.sql", "utf8");
+  const sql = await fs.readFile("./core/runtime/drizzle/0002_fixed_scarlet_spider.sql", "utf8");
   assert.ok(sql.includes("ADD COLUMN"), "adds sort_order column");
   assert.ok(!/DEFAULT\s+0\s+NOT\s+NULL/.test(sql), "does NOT apply DEFAULT 0 NOT NULL (Expand)");
   assert.ok(sql.includes("ROW_NUMBER"), "backfills with ROW_NUMBER");
@@ -982,7 +982,7 @@ test("migration 0002 adds nullable sort_order, partial unique index, and backfil
 test("0003_sort_order_backfill.sql does not exist", async () => {
   const fs = await import("node:fs/promises");
   await assert.rejects(
-    fs.access("./drizzle/0003_sort_order_backfill.sql"),
+    fs.access("./core/runtime/drizzle/0003_sort_order_backfill.sql"),
     /ENOENT/,
     "0003 file should be removed"
   );
