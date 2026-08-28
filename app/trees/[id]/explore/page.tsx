@@ -455,7 +455,6 @@ export default function TreeExplorePage() {
                         role="treeitem"
                         data-cluster-item="true"
                         className={`${styles.item}${selectedMomentId === moment.id ? ` ${styles.itemSelected}` : ""}`}
-                        aria-pressed={selectedMomentId === moment.id}
                         aria-selected={selectedMomentId === moment.id}
                         aria-level={1}
                         aria-setsize={moments.length}
