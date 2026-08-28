@@ -13,7 +13,7 @@ import {
   selectedMemoryLayer,
 } from "../lib/memory-anatomy.ts";
 
-const SOURCE = new URL("../reference/design-lab/capabilities/memory-anatomy/02-memory-stack.html", import.meta.url);
+const SOURCE = new URL("../old/reference/design-lab/capabilities/memory-anatomy/02-memory-stack.html", import.meta.url);
 const COMPONENT = new URL("../app/design-lab/capabilities/memory-anatomy/MemoryAnatomyExperience.tsx", import.meta.url);
 const CSS = new URL("../app/design-lab/capabilities/memory-anatomy/memory-anatomy.module.css", import.meta.url);
 

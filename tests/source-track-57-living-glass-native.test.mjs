@@ -8,7 +8,7 @@ const ROOT = process.cwd();
 const read = (relative) => fs.readFileSync(path.join(ROOT, relative), "utf8");
 const exists = (relative) => fs.existsSync(path.join(ROOT, relative));
 
-const SOURCE_PATH = "reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html";
+const SOURCE_PATH = "old/reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html";
 const ROUTE_PATH = "app/design-lab/source-tracks/57/v1-3-native/page.tsx";
 const ROUTE_COMPONENT = "app/design-lab/source-tracks/57/v1-3-native/Source57LivingGlassNative.tsx";
 const LIB = "lib/source-track-57-living-glass.ts";

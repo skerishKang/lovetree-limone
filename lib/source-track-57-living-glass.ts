@@ -11,7 +11,7 @@ export const SOURCE57_AUTHORITY = {
   bytes: 676_320,
   sha256: "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
   repositorySource:
-    "reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+    "old/reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
 } as const;
 
 export type LivingGlassPresentation = {

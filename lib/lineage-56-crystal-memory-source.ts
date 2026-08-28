@@ -13,7 +13,7 @@ export const LINEAGE_56_SOURCE = {
   sourceBytes: 19_262,
   sourceSha256: "9a7bb3415dade7d6fd04cecfe1be6ae04595d3b46d326f2b596dab819633a66c",
   sourceGitBlobSha: "883e9f0aa1fe18d79fdbb6cc7163ecf69ae63d88",
-  sourcePath: "reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html",
+  sourcePath: "old/reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html",
   runnerRoute: "/design-lab/lineages/56/v3",
   implementationMode: "native-react-2.5d-review",
   productBoundary: "design-lab-candidate-only",

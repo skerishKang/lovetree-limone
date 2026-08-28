@@ -9,7 +9,7 @@ This document converts the completed Telegram 46-source audit into the final pro
 - Repository: `skerishKang/lovetree-limone`
 - Current main baseline used by the B audit: `97aa06294d328ed0e816ee8518699d735ac41231`
 - A-track P0 product-spine candidate: PR #46, code gate green; runtime E2E remains blocked by lack of an isolated writable non-production Firebase/API/DB chain.
-- Telegram intake: `reference/v4-incoming-telegram-20260808` — 46 HTML sources.
+- Telegram intake: `old/reference/v4-incoming-telegram-20260808` — 46 HTML sources.
 - Prior B audit:
   - `docs/v4/TELEGRAM_46_SOURCE_INVENTORY_20260808.md`
   - `docs/v4/TELEGRAM_46_SOURCE_CLASSIFICATION_20260808.md`

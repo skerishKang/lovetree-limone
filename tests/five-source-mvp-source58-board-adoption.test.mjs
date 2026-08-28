@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 const viewSwitcher = readFileSync("app/components/ViewSwitcher.tsx", "utf8");
 const boardRoute = readFileSync("app/trees/[id]/board/page.tsx", "utf8");
-const source58Board = readFileSync("components/source-track-58/SourceTrack58LivingMemoryBoard.tsx", "utf8");
+const source58Board = readFileSync("old/components/source-track-58/SourceTrack58LivingMemoryBoard.tsx", "utf8");
 const entryResolver = readFileSync("app/components/v4/V4EntryResolver.tsx", "utf8");
 const entryPolicy = readFileSync("lib/entry-resolver.ts", "utf8");
 

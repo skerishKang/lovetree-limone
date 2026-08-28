@@ -6,7 +6,7 @@
 //   V4_BASE_URL=http://127.0.0.1:3000 node qa/lineage55-native-browser-qa.mjs
 //
 // Proves the interaction contract extracted from the git-preserved source
-// fixture (reference/lineage-55-moonlit-blossom-v1/source/index-v1.html):
+// fixture (old/reference/lineage-55-moonlit-blossom-v1/source/index-v1.html):
 //   SEED → FEELING → MOMENTS → BLOOM staged progression, flower click,
 //   Space/Arrow keys, throttled wheel, header pill jumps, memory-card jumps,
 //   auto-play toggle (2100ms), and the 36-petal BLOOM burst.

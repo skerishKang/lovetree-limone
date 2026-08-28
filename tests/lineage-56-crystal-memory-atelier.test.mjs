@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
-const source = new URL("reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html", root);
+const source = new URL("old/reference/lineage-56-crystal-memory-atelier-v3/source/index-v3.html", root);
 const componentUrl = new URL("app/design-lab/lineages/56/v3/CrystalMemoryAtelierV3.tsx", root);
 const metadataUrl = new URL("lib/lineage-56-crystal-memory-source.ts", root);
 const cssUrl = new URL("app/styles/lineage-56-crystal-memory-atelier.css", root);

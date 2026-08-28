@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const manifestPath = "design-intake/source-track-09-full-memory-summary-dashboard-mytree-donor.json";
-const sourcePath = "reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html";
+const sourcePath = "old/reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html";
 const overviewPath = "app/components/v4/product/V4FinalTreeSurface.tsx";
 const overviewRoutePath = "app/trees/[id]/overview/page.tsx";
 

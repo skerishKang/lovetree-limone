@@ -4,7 +4,7 @@ import test from "node:test";
 import { SOURCE_TRACK_58_STAGING, source58BoardSlot } from "../lib/source-track-58-living-memory-pinboard.ts";
 
 const pagePath = "app/design-lab/source-tracks/58/v1-2-native/page.tsx";
-const componentPath = "components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
+const componentPath = "old/components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
 const mobileCssPath = "app/design-lab/source-tracks/58/v1-2-native/source58-mobile-spatial-p0.module.css";
 
 const [pageSource, componentSource, mobileCss] = await Promise.all([

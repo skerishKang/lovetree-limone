@@ -9,7 +9,7 @@ async function readApp(path) {
 }
 
 async function readRef(path) {
-  return readFile(new URL(`reference/${path}`, root), "utf8");
+  return readFile(new URL(`old/reference/${path}`, root), "utf8");
 }
 
 // 1. the canonical archive surface exists

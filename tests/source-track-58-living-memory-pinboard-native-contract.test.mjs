@@ -10,8 +10,8 @@ import {
 } from "../lib/source-track-58-living-memory-pinboard.ts";
 
 const pagePath = "app/design-lab/source-tracks/58/v1-2-native/page.tsx";
-const componentPath = "components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
-const cssPath = "components/source-track-58/source-track-58-living-memory-board.module.css";
+const componentPath = "old/components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
+const cssPath = "old/components/source-track-58/source-track-58-living-memory-board.module.css";
 const repairCssPath = "app/design-lab/source-tracks/58/v1-2-native/source58-visual-repair.module.css";
 
 const [pageSource, componentSource, cssSource, repairCssSource] = await Promise.all([

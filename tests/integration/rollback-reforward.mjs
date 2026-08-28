@@ -94,7 +94,7 @@ async function main() {
   const st2 = await pool.query("select count(*) filter(where sort_order is null)::int nl from memories where tree_id=$1", [treeId]);
   rec("NULLs preserved", st2.rows[0].nl, 2);
 
-  // 4. re-forward backfill (inline copy of ops/releases/sort-order/reforward-backfill.sql)
+  // 4. re-forward backfill (inline copy of old/ops/releases/sort-order/reforward-backfill.sql)
   await pool.query(`
     WITH ranked AS (
       SELECT m.id,

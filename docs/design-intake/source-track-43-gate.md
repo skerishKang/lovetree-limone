@@ -6,8 +6,8 @@ Refs: #80 (intake rules) · #236 / #287 patterns (commit-size + fingerprint cont
 ## Authority
 
 - adopted-design Drive mirror: `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/43_기억장면_레시피도구` (53 objects, 39.24 MiB)
-- preserved read-only at: `reference/source-track-43-memory-scene-recipe/`
-- checksum ledger: `reference/source-track-43-memory-scene-recipe/SHA256SUMS` (53 entries, self-reference excluded)
+- preserved read-only at: `old/reference/source-track-43-memory-scene-recipe/`
+- checksum ledger: `old/reference/source-track-43-memory-scene-recipe/SHA256SUMS` (53 entries, self-reference excluded)
 - manifest: `design-intake/manifests/source-track-43-memory-scene-recipe.json` (`REFERENCE_CAPABILITY_ONLY` / `EXECUTABLE_FINGERPRINT_PINNED` / `dom-2d`, lineageReservation=HOLD, adoption=HOLD)
 
 ## Executable identity
@@ -30,7 +30,7 @@ Committed set: 52 of 53 preserved files (~10.9 MB total) — under both caps.
 
 ### FILE_INDEX — oversize exclusion (preserved + fingerprinted, NOT committed)
 
-| path (under reference/source-track-43-memory-scene-recipe/) | bytes | SHA-256 | Drive ID | manifest status |
+| path (under old/reference/source-track-43-memory-scene-recipe/) | bytes | SHA-256 | Drive ID | manifest status |
 |---|---:|---|---|---|
 | `03_참고영상_기억장면레시피_원본.mp4` | 28,841,597 | `73ff927e8a645828934ca53307635a8925ee428fc98a32f42484f58fdc512625` | `1byhtwOM-zKmX9zHeVcDVeHeOmtrZ4wLA` | PENDING |
 

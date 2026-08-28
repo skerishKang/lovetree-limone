@@ -2,7 +2,7 @@
  * Source Track 74 — 오빗모프_러브트리_템플릿포털_V1 (Orbit Morph Template Portal)
  * Pinned source identity. Every constant here comes from the gate registration
  * (Issue #314, PR #342 merged commit 0596e40c) and its preserved tree:
- *   reference/source-track-74-orbitmorph-portal/
+ *   old/reference/source-track-74-orbitmorph-portal/
  * Nothing may drift without a new explicit owner decision.
  *
  * SOURCE TRACK 74 is NOT a repository Design Lineage. No lineage number is
@@ -20,9 +20,9 @@ export const SOURCE_TRACK_74_TITLE =
 export const SOURCE_TRACK_74_DRIVE_FOLDER_ID =
   "1TTr4NWYWzoZ3JP0Owc5K4zo0dVuu5wbr" as const;
 
-/** Preserved read-only tree at reference/source-track-74-orbitmorph-portal/. */
+/** Preserved read-only tree at old/reference/source-track-74-orbitmorph-portal/. */
 export const SOURCE_TRACK_74_PRESERVED_ROOT =
-  "reference/source-track-74-orbitmorph-portal" as const;
+  "old/reference/source-track-74-orbitmorph-portal" as const;
 
 /** Both revision executables are committed and pinned by #314. */
 export const SOURCE_TRACK_74_EXECUTABLES = Object.freeze([

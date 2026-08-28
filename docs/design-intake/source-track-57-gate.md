@@ -3,7 +3,7 @@
 Issue: #309 · Refs: #80 #289 #303
 Classification basis: sibling design-lead instructions exist (디자인팀장6기 V1 신규작업지시 + V1.1 수정지시); product-owner verdict NOT recorded in folder → adoption PENDING
 Manifest: `design-intake/manifests/source-track-57-living-glass.json`
-Provenance: `reference/source-track-57-living-glass/` (+ `SHA256SUMS`)
+Provenance: `old/reference/source-track-57-living-glass/` (+ `SHA256SUMS`)
 
 ## Design authority
 
@@ -37,7 +37,7 @@ from the repository commit** — fingerprints recorded below. No non-video file 
 10 MB (largest committed file ≈ 0.68 MB), so no additional exclusion and no exception
 approval was required.
 
-Committed set: 56 files pinned in `reference/source-track-57-living-glass/SHA256SUMS`.
+Committed set: 56 files pinned in `old/reference/source-track-57-living-glass/SHA256SUMS`.
 Key artifacts:
 
 | File | Bytes | SHA-256 | Drive ID | Status |
@@ -134,7 +134,7 @@ product-owner verdict + design-lead classification decision
 
 ```text
 SOURCE_TRACK_57_INTAKE      = RECORDED (preservation gate complete)
-PRESERVED_EVIDENCE          = reference/source-track-57-living-glass/
+PRESERVED_EVIDENCE          = old/reference/source-track-57-living-glass/
                               (56 committed files + SHA256SUMS; 6 video fingerprints above)
 LINEAGE57_RESERVATION       = HOLD (no repository lineage number allocated)
 CANONICAL_V4_ADOPTION       = NO

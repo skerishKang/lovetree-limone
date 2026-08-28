@@ -4,7 +4,7 @@
 - 스캔 시각: 2026-08-21 (KST) · 파일 수: 5,334 · 총 바이트: 11,825,229,300
 - 본 인덱스는 삭제·변조 감지 기준선이다. Drive 원본은 수정·삭제·이동하지 않았다(복사만 수행).
 - 해시: 전체 트리는 Drive 네이티브 MD5 → `MD5SUMS-full-tree.txt`. SHA256은 Drive 서버사이드 미지원이므로 보존 분만 로컬 계산 → `SHA256SUMS.txt` 및 트랙 폴더별 `SHA256SUMS.txt`.
-- 선별 보존 위치: `reference/source-tracks-snapshot/<트랙번호>_<이름>/` (트랙당 최신 실행본 1개, .html/.md, ≤5MB)
+- 선별 보존 위치: `old/reference/source-tracks-snapshot/<트랙번호>_<이름>/` (트랙당 최신 실행본 1개, .html/.md, ≤5MB)
 
 ## 트랙별 보존 결과
 

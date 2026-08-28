@@ -7,7 +7,7 @@
 // Phases:
 //   A. Intentional failure right before index creation inside a transaction
 //      -> full rollback (no sort_order column, seed data unchanged)
-//   B. Normal run of ops/releases/sort-order/production-expand.sql
+//   B. Normal run of old/ops/releases/sort-order/production-expand.sql
 //      -> nullable column, no default, deterministic backfill, partial unique
 //   C. Re-run after success -> fails cleanly, Expand state stays consistent
 //      (documented failure mode; recovery is: do not re-run, the column exists)
@@ -77,7 +77,7 @@ async function main() {
   rec("A: seed rows unchanged", (await pool.query("SELECT count(*)::int n FROM memories")).rows[0].n, preCount);
 
   // ============ B. Normal run of the real ops file (BEGIN/COMMIT inside) ============
-  await pool.query(strip(await file("ops/releases/sort-order/production-expand.sql")));
+  await pool.query(strip(await file("old/ops/releases/sort-order/production-expand.sql")));
   rec("B: column exists, nullable", (await pool.query(`SELECT is_nullable FROM information_schema.columns WHERE table_name='memories' AND column_name='sort_order'`)).rows[0].is_nullable, "YES");
   rec("B: no default", (await pool.query(`SELECT column_default FROM information_schema.columns WHERE table_name='memories' AND column_name='sort_order'`)).rows[0].column_default, null);
   const orders = await pool.query(`SELECT sort_order FROM memories WHERE tree_id='tree-a' ORDER BY sort_order`);
@@ -90,7 +90,7 @@ async function main() {
   // ============ C. Re-run after success -> clean failure, consistent state ============
   let rerunFailed = false;
   try {
-    await pool.query(strip(await file("ops/releases/sort-order/production-expand.sql")));
+    await pool.query(strip(await file("old/ops/releases/sort-order/production-expand.sql")));
   } catch (e) {
     rerunFailed = String(e.message).includes('column "sort_order" of relation "memories" already exists');
   }

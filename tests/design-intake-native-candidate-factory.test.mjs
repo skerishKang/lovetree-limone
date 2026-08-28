@@ -445,7 +445,7 @@ test("9. existing filesystem paths are never overwritten", () => {
       });
       const blocker2 = path.join(
         root2,
-        "reference/design-intake/track-test-new-lineage/PROVENANCE.md",
+        "old/reference/design-intake/track-test-new-lineage/PROVENANCE.md",
       );
       mkdirSync(path.dirname(blocker2), { recursive: true });
       writeFileSync(blocker2, "BLOCKED", "utf8");
@@ -794,7 +794,7 @@ test("16. scaffold plans never write under canonical /v4 product trees", () => {
         );
         assert.ok(
           write.path.startsWith("design-intake/") ||
-            write.path.startsWith("reference/") ||
+            write.path.startsWith("old/reference/") ||
             write.path.startsWith("app/design-lab/") ||
             write.path.startsWith("tests/") ||
             write.path.startsWith("scripts/") ||
@@ -1461,7 +1461,7 @@ test("hardening: unsafe exact-asset targetPaths are rejected", () => {
   });
   for (const targetPath of [
     "public/../../app/v4/x.png",
-    "reference/../outside",
+    "old/reference/../outside",
     "../../../v4/foo",
     "public/./x.png",
     "public//x.png",
@@ -1477,12 +1477,12 @@ test("hardening: unsafe exact-asset targetPaths are rejected", () => {
     };
     assert.throws(() => parseIntakeManifest(manifest), IntakeManifestError, `targetPath '${targetPath}' must be rejected`);
   }
-  // Safe public/** and reference/** targets are accepted.
+  // Safe public/** and old/reference/** targets are accepted.
   assert.doesNotThrow(() => parseIntakeManifest(base));
   const reference = {
     ...base,
     exactAssets: [
-      { ...base.exactAssets[0], targetPath: "reference/design-intake/track-test-new-lineage/sprite.png" },
+      { ...base.exactAssets[0], targetPath: "old/reference/design-intake/track-test-new-lineage/sprite.png" },
     ],
   };
   assert.doesNotThrow(() => parseIntakeManifest(reference));
