@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ViewSwitcher } from "@/app/components/ViewSwitcher";
-import SourceTrack58LivingMemoryBoard from "@/components/source-track-58/SourceTrack58LivingMemoryBoard";
+import SourceTrack58LivingMemoryBoard from "@/old/components/source-track-58/SourceTrack58LivingMemoryBoard";
 import mobileSpatialStyles from "@/app/design-lab/source-tracks/58/v1-2-native/source58-mobile-spatial-p0.module.css";
 import repairStyles from "@/app/design-lab/source-tracks/58/v1-2-native/source58-visual-repair.module.css";
 

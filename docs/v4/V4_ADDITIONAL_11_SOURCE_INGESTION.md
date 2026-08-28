@@ -33,18 +33,18 @@ All 11 files were discovered in:
 None. The `[샘플]/` directory did not exist in the repository at the time
 of this ingestion.
 
-### B. reference/에 동일 SHA 파일이 있어 [샘플]로 복사한 파일 (exact duplicate)
+### B. old/reference/에 동일 SHA 파일이 있어 [샘플]로 복사한 파일 (exact duplicate)
 
-These 4 files already exist under `reference/v3/sibling-prototypes/` with
+These 4 files already exist under `old/reference/v3/sibling-prototypes/` with
 identical SHA-256 hashes. They were copied to `[샘플]/` to establish
 `[샘플]` as the canonical original-preservation location.
 
 | Filename | Existing Path | SHA-256 |
 |----------|---------------|---------|
-| `lovetree-accordion-album-archive-v3-fixed.html` | `reference/v3/sibling-prototypes/` | `5c02aa02b9c9894a49ce62d919dbfc163a2bc9b802be19eba682be9e46752f77` |
-| `lovetree-folding-person-archive.html` | `reference/v3/sibling-prototypes/` | `762d1bd3d332e22d5d2ebd113c5a2163506a6f80e5696d830408d6712fe06c64` |
-| `lovetree-liquid-orbit-video-gallery.html` | `reference/v3/sibling-prototypes/` | `ca96061286d47047b73dee0addf7c4dc09c86def0bae644e49be8422fee8ccbb` |
-| `lovetree-motion-archive-v5-video-click-autoplay.html` | `reference/v3/sibling-prototypes/` | `c4297518897762b5b65063e6b1a6046e482a5964ae5df90fc942df055be1a178` |
+| `lovetree-accordion-album-archive-v3-fixed.html` | `old/reference/v3/sibling-prototypes/` | `5c02aa02b9c9894a49ce62d919dbfc163a2bc9b802be19eba682be9e46752f77` |
+| `lovetree-folding-person-archive.html` | `old/reference/v3/sibling-prototypes/` | `762d1bd3d332e22d5d2ebd113c5a2163506a6f80e5696d830408d6712fe06c64` |
+| `lovetree-liquid-orbit-video-gallery.html` | `old/reference/v3/sibling-prototypes/` | `ca96061286d47047b73dee0addf7c4dc09c86def0bae644e49be8422fee8ccbb` |
+| `lovetree-motion-archive-v5-video-click-autoplay.html` | `old/reference/v3/sibling-prototypes/` | `c4297518897762b5b65063e6b1a6046e482a5964ae5df90fc942df055be1a178` |
 
 ### C. 저장소 전체에 동일 SHA가 없어 신규로 [샘플]에 추가한 파일 (entirely new source)
 

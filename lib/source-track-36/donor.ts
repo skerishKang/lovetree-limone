@@ -6,7 +6,7 @@ export const SOURCE_TRACK_36_FAMILY = {
   sourceRevision: "V3",
   sourceFilename: "01_시네마틱메모리포털_밝은로컬진입_v3.html",
   snapshotPath:
-    "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
+    "old/reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
   sourceBytes: 22561,
   sourceSha256: "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
   provenanceIssues: [284, 468, 470, 473] as const,

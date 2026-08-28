@@ -11,7 +11,7 @@ export const SOURCE57_AUTHORITY = {
   bytes: 676_320,
   sha256: "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
   repositorySource:
-    "reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+    "old/reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
 } as const;
 
 export type LivingGlassPresentation = {
@@ -63,7 +63,7 @@ export const SOURCE57_NATIVE_MOMENTS: TreeMomentView[] = [
     title: "처음 마음이 머문 장면",
     memo: "빛과 표정이 함께 남아서 다시 열어 보고 싶은 순간.",
     sourceType: "image",
-    thumbnail: "/reference/source-track-57-living-glass/moment-1.jpg",
+    thumbnail: "/old/reference/source-track-57-living-glass/moment-1.jpg",
     emotionTags: ["설렘"],
     timestamp: "2026-05-18T12:10:00.000Z",
     discoveryDate: "2026-05-18T12:10:00.000Z",
@@ -80,7 +80,7 @@ export const SOURCE57_NATIVE_MOMENTS: TreeMomentView[] = [
     title: "움직임 속에 남은 온도",
     memo: "짧게 지나갔지만 표정과 목소리의 분위기가 오래 남은 기억.",
     sourceType: "video",
-    thumbnail: "/reference/source-track-57-living-glass/moment-2.jpg",
+    thumbnail: "/old/reference/source-track-57-living-glass/moment-2.jpg",
     emotionTags: ["몰입"],
     timestamp: "2026-06-02T18:40:00.000Z",
     discoveryDate: "2026-06-02T18:40:00.000Z",
@@ -97,7 +97,7 @@ export const SOURCE57_NATIVE_MOMENTS: TreeMomentView[] = [
     title: "오래 지나도 선명한 기억",
     memo: "시간이 지난 뒤에도 첫 느낌과 다음 이야기를 함께 떠올리게 하는 Moment.",
     sourceType: "image",
-    thumbnail: "/reference/source-track-57-living-glass/moment-3.jpg",
+    thumbnail: "/old/reference/source-track-57-living-glass/moment-3.jpg",
     emotionTags: ["따뜻함"],
     timestamp: "2026-07-11T09:25:00.000Z",
     discoveryDate: "2026-07-11T09:25:00.000Z",

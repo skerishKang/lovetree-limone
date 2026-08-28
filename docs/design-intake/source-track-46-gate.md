@@ -3,7 +3,7 @@
 Issue: #304 · Refs: #80 · pattern precedents #236 #287 #289
 Classification: `NEW_LINEAGE_CANDIDATE + GROWTH_MILESTONES_SEASON_BOOK + SOURCE_REFERENCE_ONLY`
 Manifest: `design-intake/manifests/source-track-46-popup-season.json`
-Preservation: `reference/source-track-46-popup-season/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
+Preservation: `old/reference/source-track-46-popup-season/` (full local tree) · `PROVENANCE.md` · `SHA256SUMS`
 
 ## Design authority
 
@@ -30,7 +30,7 @@ PRODUCTION SOURCE  = DO NOT MODIFY (Drive originals read-only)
 - Integrity: **all 13 files verified OK against Drive-native MD5** (full-tree check).
 - Fresh hash vs Drive history pin: executable SHA256 `8537502c867191b821535ced8a658d985eeb78ca75baf447762b3def51f5cbb7`
   is byte-identical across (1) this fresh transport, (2) Drive-native MD5, and (3) the merged #287 snapshot copy
-  `reference/source-tracks-snapshot/46_팝업시즌_기억책/01_팝업시즌_기억책.html` incl. its own `SHA256SUMS.txt`.
+  `old/reference/source-tracks-snapshot/46_팝업시즌_기억책/01_팝업시즌_기억책.html` incl. its own `SHA256SUMS.txt`.
   No mismatch — no OPEN flag required for identity.
 
 ## Repository commit selection (guardrail ≤50MB total / ≤10MB per file / videos fingerprint-only)

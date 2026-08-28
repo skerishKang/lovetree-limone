@@ -3,7 +3,7 @@
 Issue: #311 · Refs: #80 · 패턴 선례 #236 #287 #289
 Classification: `NEW_LINEAGE (reservation HOLD) + REFERENCE_PINNED`
 Manifest: `design-intake/manifests/source-track-71-emotion-helix.json`
-Provenance: `reference/source-track-71-emotion-helix/`
+Provenance: `old/reference/source-track-71-emotion-helix/`
 
 ## Design authority
 
@@ -74,7 +74,7 @@ hashes** — no 이중 객체 isolation flag required at registration.
 
 Fresh preservation pin (this registration):
 
-- Preserved to `reference/source-track-71-emotion-helix/` via read-only
+- Preserved to `old/reference/source-track-71-emotion-helix/` via read-only
   `rclone copy --transfers 2`; Drive originals untouched.
 - Full preservation: 100 files, 110,724,280 bytes; `rclone check --one-way` against the live
   Drive folder at 2026-08-21T06:14:59Z: **0 differences found, 100 matching files**.

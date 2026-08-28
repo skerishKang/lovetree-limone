@@ -3,7 +3,7 @@
 Issue: #236 · Lane: preservation + SHA256SUMS + manifest(HOLD) + gate document. No implementation.
 Refs: #80 (intake rules) · parent gate `docs/design-intake/source-track-65-v2-1-1-gate.md` · patterns: #287/#289 (commit-size + fingerprint contract)
 Manifest: `design-intake/manifests/source-track-65-cinematic-editorial-v2-2.json`
-Preservation: `reference/source-track-65/`
+Preservation: `old/reference/source-track-65/`
 Drive folder: `65_입덕단서_시네마틱에디토리얼` root `1WKpu_AE89-HbEL4xV0y_eyQqiUASdxJb`, revision folder `V9_오너픽전면활용·스토리재정렬_후보` (`1-6uhhzVoQm4m8LTjjTC04MqVhFap12yU`) — 11 objects, 18,772,418 B
 
 ## Authority
@@ -15,8 +15,8 @@ Drive folder: `65_입덕단서_시네마틱에디토리얼` root `1WKpu_AE89-HbE
 ## Preservation (caps: 50 MB total / 10 MB per file — no exclusions required)
 
 - All **11 of 11 objects preserved byte-exact**: 18,772,418 B total; every object ≤ 10 MiB.
-- checksum ledger: `reference/source-track-65/SHA256SUMS` (11 entries, self-reference excluded).
-- provenance record: `reference/source-track-65/PROVENANCE.md`.
+- checksum ledger: `old/reference/source-track-65/SHA256SUMS` (11 entries, self-reference excluded).
+- provenance record: `old/reference/source-track-65/PROVENANCE.md`.
 
 ### Executable identity
 

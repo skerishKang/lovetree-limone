@@ -33,7 +33,7 @@ export const LINEAGE_55_MOONLIT_BLOSSOM_SOURCE = {
     state: "UNVERIFIED_HISTORICAL_GIT_SNAPSHOT",
     origin: "UNRESOLVED",
     identity: "LoveTree Memory Blossom Hero v1",
-    repositoryPath: "reference/lineage-55-moonlit-blossom-v1/source/index-v1.html",
+    repositoryPath: "old/reference/lineage-55-moonlit-blossom-v1/source/index-v1.html",
     gitBlobSha: "3590e5fbe3af35c364f9ca3444901ee2671e18e5",
     canonicalDriveV1: false,
     observedFixtureContract: {
@@ -67,7 +67,7 @@ export const LINEAGE_55_MOONLIT_BLOSSOM_SOURCE = {
     implementationGate: "GO_AFTER_PROVENANCE_SPLIT_TESTS_GREEN",
     newLineage: false,
   },
-  assetBasePath: "/reference/lineage-55-moonlit-blossom-v1/assets",
+  assetBasePath: "/old/reference/lineage-55-moonlit-blossom-v1/assets",
   historicalAssetSourceState: "HISTORICAL_ASSET_SOURCE_UNRESOLVED",
   v2AssetAliasState: "V1_V2_5_OF_5_BYTE_IDENTICAL_DIFFERENT_DRIVE_OBJECTS",
   assets: [

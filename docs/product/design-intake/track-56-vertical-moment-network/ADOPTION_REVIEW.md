@@ -9,8 +9,8 @@
 
 ## Preservation evidence
 
-- preserved path: `reference/source-track-56-vertical-moment-network/` (22 files, read-only `rclone copy` from the adopted-design Drive mirror `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/56_세로형_모먼트관계망_전체조망`)
-- checksum ledger: `reference/source-track-56-vertical-moment-network/SHA256SUMS` (22 entries, self-reference excluded)
+- preserved path: `old/reference/source-track-56-vertical-moment-network/` (22 files, read-only `rclone copy` from the adopted-design Drive mirror `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/56_세로형_모먼트관계망_전체조망`)
+- checksum ledger: `old/reference/source-track-56-vertical-moment-network/SHA256SUMS` (22 entries, self-reference excluded)
 - executable identity confirmed: `후보_버전1.2_세로형_모먼트관계망_전체조망.html` = 45,761 B, SHA-256 `1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909`
 - provenance contract result: fresh preservation digest **equals** both the manifest pin and the Issue #163 body historical pin — no divergence, no OPEN flag required (contrast: Track55/#162 carries an unresolved dual-fingerprint flag)
 

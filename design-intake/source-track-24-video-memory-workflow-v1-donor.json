@@ -4,7 +4,7 @@
   "product_job": "TOOLS",
   "family": "24_영상기억_워크플로우",
   "source_authority": {
-    "path": "reference/source-tracks-snapshot/24_영상기억_워크플로우/01_영상기억워크플로우_v1.html",
+    "path": "old/reference/source-tracks-snapshot/24_영상기억_워크플로우/01_영상기억워크플로우_v1.html",
     "filename": "01_영상기억워크플로우_v1.html",
     "sha256": "438cbcbeb522cb64c4eb68edeef6713c469a35cfd45cac352d142cd0fade29ba",
     "snapshot_issue": 284,

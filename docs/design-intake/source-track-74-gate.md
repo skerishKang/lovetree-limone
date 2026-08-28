@@ -6,8 +6,8 @@ Refs: #80 (intake rules) · #236 / #287 / #289 patterns (commit-size + fingerpri
 ## Authority
 
 - adopted-design Drive mirror: `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/74_오빗모프_러브트리_템플릿포털_V1` (Drive folder `1TTr4NWYWzoZ3JP0Owc5K4zo0dVuu5wbr`, 11 objects, 21.26 MiB)
-- preserved read-only at: `reference/source-track-74-orbitmorph-portal/`
-- checksum ledger: `reference/source-track-74-orbitmorph-portal/SHA256SUMS` (11 entries, self-reference excluded)
+- preserved read-only at: `old/reference/source-track-74-orbitmorph-portal/`
+- checksum ledger: `old/reference/source-track-74-orbitmorph-portal/SHA256SUMS` (11 entries, self-reference excluded)
 - manifest: `design-intake/manifests/source-track-74-orbitmorph-portal.json` (`REFERENCE_CAPABILITY_ONLY` / `EXECUTABLE_FINGERPRINT_PINNED` / `dom-2d`, lineage reservation HOLD-by-omission, adoption HOLD)
 - revision ladder: V1 → **V2 (`V2_70경로_고딕타이포_열매트리로고`) = current candidate**; V2 preserves V1 structure/imagery/morph-trail/entrance and applies four product-owner corrections (Track70 menu path, gothic typography, LOVETREE wordmark width, fruit-tree candidate logo)
 

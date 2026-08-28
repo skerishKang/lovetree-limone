@@ -6,8 +6,8 @@ Refs: #80 (intake rules) · #236 / #287 / #289 patterns (commit-size + fingerpri
 ## Authority
 
 - adopted-design Drive mirror: `[[지피티 작업]]/[01_러브트리]/03_디자인채택본/49_아이돌모먼트_리빌포털` (Drive folder `15rgq99I_5hdd-6w33vUUX3nZvxiQ7TKj`, 1.151 GiB, 559 files)
-- preserved read-only at: `reference/source-track-49-idol-moment-reveal/`
-- checksum ledger: `reference/source-track-49-idol-moment-reveal/SHA256SUMS` (559 entries, self-reference excluded)
+- preserved read-only at: `old/reference/source-track-49-idol-moment-reveal/`
+- checksum ledger: `old/reference/source-track-49-idol-moment-reveal/SHA256SUMS` (559 entries, self-reference excluded)
 - manifest: `design-intake/manifests/source-track-49-idol-moment-reveal.json` (`REFERENCE_CAPABILITY_ONLY` / `EXECUTABLE_FINGERPRINT_PINNED` / `dom-2d`, lineage reservation HOLD-by-omission, adoption HOLD)
 - current candidate: `01_버전별_결과물/16_슈퍼휴먼_인터랙티브웹_v1.4_현재후보/`
 

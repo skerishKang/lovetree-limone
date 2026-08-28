@@ -23,7 +23,7 @@ V4 therefore follows these rules:
 2. Integration happens through route, state and data continuity. Distinct source screens are not made visually identical.
 3. React may normalize state, accessibility and reusable mechanics only.
 4. V3 components and styles are not visual dependencies of V4.
-5. An HTML file stored under `reference/**` is not implemented until its design is reachable in `/v4/**`.
+5. An HTML file stored under `old/reference/**` is not implemented until its design is reachable in `/v4/**`.
 6. The four separately supplied archive HTML files are mandatory full-screen product experiences.
 7. Local execution, full tests, browser acceptance and Preview deployment occur only after all implementation phases are complete.
 

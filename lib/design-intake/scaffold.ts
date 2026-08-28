@@ -341,7 +341,7 @@ function designFidelitySeam(
   // every runtime exact asset target participate in impact selection.
   const impactPrefixes = [
     `app${routePath}/`,
-    `reference/design-intake/${manifest.stableId}/`,
+    `old/reference/design-intake/${manifest.stableId}/`,
     `tests/${manifest.stableId}-`,
     `docs/product/design-intake/${manifest.stableId}/`,
     `design-intake/manifests/${manifest.stableId}`,
@@ -954,7 +954,7 @@ export function buildScaffoldPlan(
       content: reuseChecklistContent(manifest),
     },
     {
-      path: `reference/design-intake/${manifest.stableId}/PROVENANCE.md`,
+      path: `old/reference/design-intake/${manifest.stableId}/PROVENANCE.md`,
       kind: "provenance",
       content: provenanceContent(manifest),
     },

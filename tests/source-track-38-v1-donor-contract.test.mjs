@@ -13,11 +13,11 @@ import {
 } from "../lib/source-track-38/donor.ts";
 
 const sourceUrl = new URL(
-  "../reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
+  "../old/reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
   import.meta.url,
 );
 const sumsUrl = new URL(
-  "../reference/source-tracks-snapshot/38_보이저_우주기억지도/SHA256SUMS.txt",
+  "../old/reference/source-tracks-snapshot/38_보이저_우주기억지도/SHA256SUMS.txt",
   import.meta.url,
 );
 const componentUrl = new URL(

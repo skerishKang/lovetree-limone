@@ -4,7 +4,7 @@ import path from "node:path";
 
 const SOURCE_BASE = process.env.TRACK09_SOURCE_QA_URL || "http://127.0.0.1:4173";
 const NATIVE_BASE = process.env.TRACK09_NATIVE_QA_URL || "http://127.0.0.1:3000";
-const SOURCE_PATH = "/reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html";
+const SOURCE_PATH = "/old/reference/source-tracks-snapshot/09_전체기억_요약대시보드/01_전체기억_요약대시보드.html";
 const TREE_ID = "track09-qa-tree";
 const NATIVE_PATH = `/trees/${TREE_ID}/overview`;
 const OUT = path.resolve(process.cwd(), "qa-artifacts/source-track09-summary-dashboard");

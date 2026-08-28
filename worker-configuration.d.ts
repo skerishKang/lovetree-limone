@@ -10868,7 +10868,7 @@ interface IncomingRequestCfPropertiesBotManagementBase {
      */
     corporateProxy: boolean;
     /**
-     * A boolean value that's true if the request matches [file extensions](https://developers.cloudflare.com/bots/reference/static-resources/) for many types of static resources.
+     * A boolean value that's true if the request matches [file extensions](https://developers.cloudflare.com/bots/old/reference/static-resources/) for many types of static resources.
      */
     staticResource: boolean;
     /**

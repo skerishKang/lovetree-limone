@@ -14,7 +14,7 @@ export const LINEAGE_54_PETAL_RUNNER_SOURCE = {
   sourceBytes: 21_337,
   sourceSha256: "ea9295e8d8a9fb14d6a0df8ec16e294a13df666770e285a2bbbf69807e38ebd9",
   runnerRoute: "/design-lab/lineages/54/v4",
-  assetBasePath: "/reference/lineage-54-petal-runner-v4/assets",
+  assetBasePath: "/old/reference/lineage-54-petal-runner-v4/assets",
   currentDisposition: "source-fidelity-candidate-exact-assets-verified",
   reviewLabel: "SOURCE-VERIFIED IMPLEMENTATION — EXACT ASSETS VERIFIED",
   chapters: ["FIRST MOMENT", "FEELING GROWS", "CONNECTION", "LOVE BLOOMS"],

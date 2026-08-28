@@ -45,7 +45,7 @@ async function walk(dir, acc = []) {
 // 1. exact byte-identical preservation verified by hashing actual file bytes
 test("all four sibling prototypes match their exact SHA-256 and byte size", async () => {
   for (const [file, expected] of Object.entries(EXPECTED)) {
-    const buf = await readFile(new URL(`reference/v3/sibling-prototypes/${file}`, root));
+    const buf = await readFile(new URL(`old/reference/v3/sibling-prototypes/${file}`, root));
     const actualSha = createHash("sha256").update(buf).digest("hex");
     assert.equal(actualSha, expected.sha256, `${file} SHA-256 mismatch`);
     assert.equal(buf.byteLength, expected.size, `${file} byte size mismatch`);
@@ -55,7 +55,7 @@ test("all four sibling prototypes match their exact SHA-256 and byte size", asyn
 // 2. inventory document is complete
 test("sibling prototype inventory lists every file with SHA-256 and size", async () => {
   const inventory = await readFile(
-    new URL("reference/v3/sibling-prototypes/INVENTORY.md", root),
+    new URL("old/reference/v3/sibling-prototypes/INVENTORY.md", root),
     "utf8",
   );
   for (const [file, expected] of Object.entries(EXPECTED)) {
@@ -111,12 +111,12 @@ test("runtime product code never iframes or inlines the originals", async () => 
 // 6. each original file has a line count and HTML title recorded
 test("inventory records line counts and HTML titles", async () => {
   const inventory = await readFile(
-    new URL("reference/v3/sibling-prototypes/INVENTORY.md", root),
+    new URL("old/reference/v3/sibling-prototypes/INVENTORY.md", root),
     "utf8",
   );
   const files = await Promise.all(
     Object.keys(EXPECTED).map(async (file) => {
-      const buf = await readFile(new URL(`reference/v3/sibling-prototypes/${file}`, root), "utf8");
+      const buf = await readFile(new URL(`old/reference/v3/sibling-prototypes/${file}`, root), "utf8");
       return {
         file,
         lines: (buf.match(/\n/g) ?? []).length,

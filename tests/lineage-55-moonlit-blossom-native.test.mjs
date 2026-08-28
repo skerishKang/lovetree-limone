@@ -63,7 +63,7 @@ test("lineage 55 memory cast jumps follow the source wiring", () => {
 });
 
 test("lineage 55 assets resolve under the canonical public base path", () => {
-  assert.equal(LINEAGE_55_ASSET_BASE, "/reference/lineage-55-moonlit-blossom-v1/assets");
+  assert.equal(LINEAGE_55_ASSET_BASE, "/old/reference/lineage-55-moonlit-blossom-v1/assets");
   for (const card of LINEAGE_55_MEMORY_CARDS) {
     assert.ok(card.image.startsWith(`${LINEAGE_55_ASSET_BASE}/portraits/`));
   }

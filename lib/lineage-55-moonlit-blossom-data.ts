@@ -7,7 +7,7 @@ export const LINEAGE_55_TIMING = {
   petalMaxDelayMs: 180,
 } as const;
 
-export const LINEAGE_55_ASSET_BASE = "/reference/lineage-55-moonlit-blossom-v1/assets";
+export const LINEAGE_55_ASSET_BASE = "/old/reference/lineage-55-moonlit-blossom-v1/assets";
 
 export const LINEAGE_55_FLOWER_IMAGE = {
   src: `${LINEAGE_55_ASSET_BASE}/flowers/lovetree-memory-blossom-hero-v1.png`,

@@ -20,10 +20,10 @@
 
 ### ② Repository mirror
 
-- path: `reference/source-track-55-lupt/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html`
+- path: `old/reference/source-track-55-lupt/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html`
 - bytes: **55,327**
 - sha256 run1/run2: **`768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd`** (both runs identical)
-- ledger cross-check: entry in `reference/source-track-55-lupt/SHA256SUMS` matches; `sha256sum -c` → OK
+- ledger cross-check: entry in `old/reference/source-track-55-lupt/SHA256SUMS` matches; `sha256sum -c` → OK
 - `cmp` fresh-download ↔ mirror: **byte-identical**
 
 ### ③ Recorded pin texts (no file measured — text comparison only)

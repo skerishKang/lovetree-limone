@@ -538,8 +538,8 @@ const IDENTIFIER_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
 /** CR/LF/NUL/control chars are rejected in any manifest string (C). */
 const CONTROL_CHAR_PATTERN = /[\u0000-\u001f\u007f]/;
-/** Repository-relative exact-asset target: public/** or reference/** only (B). */
-const REPO_TARGET_PREFIXES = ["public/", "reference/"] as const;
+/** Repository-relative exact-asset target: public/** or old/reference/** only (B). */
+const REPO_TARGET_PREFIXES = ["public/", "old/reference/"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -577,7 +577,7 @@ function expectOptionalString(value: unknown, field: string, problems: string[])
 /**
  * Fail-closed repository-relative target path check (B): forward-slash
  * normalized, no `.`/`..` segments, no absolute/drive/backslash paths, and the
- * normalized destination must live exactly under public/** or reference/**.
+ * normalized destination must live exactly under public/** or old/reference/**.
  * Returns null when safe, else a problem description.
  */
 export function checkSafeTargetPath(targetPath: string): string | null {
@@ -592,7 +592,7 @@ export function checkSafeTargetPath(targetPath: string): string | null {
   }
   const normalized = segments.join("/");
   if (!REPO_TARGET_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
-    return "targetPath must be under public/ or reference/";
+    return "targetPath must be under public/ or old/reference/";
   }
   return null;
 }

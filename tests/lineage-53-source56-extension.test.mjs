@@ -10,7 +10,7 @@ import {
   deriveSource56PathFamilies,
 } from "../lib/lineage-53-source56.ts";
 
-const SOURCE_PATH = "reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html";
+const SOURCE_PATH = "old/reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html";
 const COMPONENT_PATH = "app/design-lab/lineages/53/53-v3-vertical-network-overview/Lineage53VerticalNetworkOverview.tsx";
 const PAGE_PATH = "app/design-lab/lineages/53/53-v3-vertical-network-overview/page.tsx";
 const MANIFEST_PATH = "design-intake/source-56-lineage53-extension.json";

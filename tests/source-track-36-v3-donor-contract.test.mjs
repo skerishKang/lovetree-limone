@@ -12,11 +12,11 @@ import {
 } from "../lib/source-track-36/donor.ts";
 
 const snapshotUrl = new URL(
-  "../reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
+  "../old/reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
   import.meta.url,
 );
 const sumsUrl = new URL(
-  "../reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/SHA256SUMS.txt",
+  "../old/reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/SHA256SUMS.txt",
   import.meta.url,
 );
 const componentUrl = new URL(

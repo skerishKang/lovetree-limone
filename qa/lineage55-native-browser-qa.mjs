@@ -6,14 +6,14 @@
 //   V4_BASE_URL=http://127.0.0.1:3000 node qa/lineage55-native-browser-qa.mjs
 //
 // Proves the interaction contract extracted from the git-preserved source
-// fixture (reference/lineage-55-moonlit-blossom-v1/source/index-v1.html):
+// fixture (old/reference/lineage-55-moonlit-blossom-v1/source/index-v1.html):
 //   SEED → FEELING → MOMENTS → BLOOM staged progression, flower click,
 //   Space/Arrow keys, throttled wheel, header pill jumps, memory-card jumps,
 //   auto-play toggle (2100ms), and the 36-petal BLOOM burst.
 // The original fixture is NEVER executed or modified; comparison is limited to
 // this contract plus captured screenshots of the native route.
 //
-// Known-benign noise: /reference/lineage-55-moonlit-blossom-v1/assets/** image
+// Known-benign noise: /old/reference/lineage-55-moonlit-blossom-v1/assets/** image
 // requests 404 until the held provenance assets are materialized. Resource
 // load failures for that prefix are recorded but do not fail the contract.
 
@@ -135,7 +135,7 @@ const overflow = await page.evaluate(
 record("L. no horizontal overflow", overflow <= 0, `overflowPx=${overflow}`);
 
 const isBenignAssetMiss = (entry) =>
-  entry.url.includes("/reference/lineage-55-moonlit-blossom-v1/assets/");
+  entry.url.includes("/old/reference/lineage-55-moonlit-blossom-v1/assets/");
 const benignConsoleErrors = consoleErrors.filter(isBenignAssetMiss);
 const hardConsoleErrors = consoleErrors.filter((entry) => !isBenignAssetMiss(entry));
 record("M1. no unexpected console errors", hardConsoleErrors.length === 0, hardConsoleErrors.map((entry) => entry.text).join(" | "));

@@ -8,7 +8,7 @@ export const TRACK17_LIVING_MEMORY_TERRAIN_SOURCE = {
   driveFileId: "12KgvI1OsJKjrv-zPOqsQOvH9cS4QovjM",
   bytes: 1_953_464,
   sha256: "2110fabd6e7ad4362e65af8474f66e5b468fb342dc9c96a0ca78930b225e694e",
-  repositorySnapshot: "reference/source-tracks-snapshot/17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html",
+  repositorySnapshot: "old/reference/source-tracks-snapshot/17_리빙메모리지형/01_리빙메모리지형_현재채택_가로화면안전_v1-2.html",
   namespaceGuard: "DRIVE_TRACK17_LIVING_MEMORY_TERRAIN_NE_HISTORICAL_GITHUB_TRACK17_GLOBAL_SHELL",
   disposition: "USE_AS_VISUAL_FUNCTION_DONOR",
 } as const;

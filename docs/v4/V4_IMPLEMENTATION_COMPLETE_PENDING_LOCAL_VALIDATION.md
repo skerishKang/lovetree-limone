@@ -29,7 +29,7 @@ For this V4 branch, `ported` means:
 
 - the supplied HTML is represented by a reachable `/v4/**` React/TSX screen;
 - its defining layout, visual language and interaction model have a dedicated implementation;
-- it is not counted merely because an HTML file exists under `reference/**`;
+- it is not counted merely because an HTML file exists under `old/reference/**`;
 - it is not delivered as an iframe;
 - V3 visual components and styles are not reused;
 - the screen is reachable through the persistent V4 journey dock.

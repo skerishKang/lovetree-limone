@@ -3,7 +3,7 @@
 Issue: #289 · Refs: #80 #236
 Classification basis: `UNKNOWN — PENDING` (no instruction/design-lead document in source folder)
 Manifest: `design-intake/manifests/source-track-41-memory-pocket.json`
-Provenance: `reference/source-track-41-memory-pocket/` (+ `SHA256SUMS`)
+Provenance: `old/reference/source-track-41-memory-pocket/` (+ `SHA256SUMS`)
 
 ## Design authority
 
@@ -78,7 +78,7 @@ instruction/design-lead classification decision
 
 ```text
 SOURCE_TRACK_41_INTAKE      = RECORDED (preservation gate complete)
-PRESERVED_EVIDENCE          = reference/source-track-41-memory-pocket/ (2 files + SHA256SUMS;
+PRESERVED_EVIDENCE          = old/reference/source-track-41-memory-pocket/ (2 files + SHA256SUMS;
                               video bytes removed in #328, fingerprints retained)
 LINEAGE41_RESERVATION       = HOLD (no repository lineage number allocated)
 CANONICAL_V4_ADOPTION       = NO

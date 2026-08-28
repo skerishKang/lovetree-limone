@@ -11,11 +11,11 @@ export interface Lineage57Asset {
 
 const c = (id: string, expression: string, driveId: string, bytes: number, sha256: string): Lineage57Asset => ({
   filename: `${id}-${expression}.webp`, driveId, bytes, width: 362, height: 362, mode: "RGB", sha256,
-  targetPath: `public/reference/lineage-57-living-character-world-v2/assets/characters/${id}/${id}-${expression}.webp`,
+  targetPath: `public/old/reference/lineage-57-living-character-world-v2/assets/characters/${id}/${id}-${expression}.webp`,
 });
 const l = (pose: string, driveId: string, bytes: number, sha256: string): Lineage57Asset => ({
   filename: `lubt-${pose}.png`, driveId, bytes, width: 512, height: 512, mode: "RGBA", sha256,
-  targetPath: `public/reference/lineage-57-living-character-world-v2/assets/lubt/lubt-${pose}.png`,
+  targetPath: `public/old/reference/lineage-57-living-character-world-v2/assets/lubt/lubt-${pose}.png`,
 });
 
 export const LINEAGE_57_CHARACTER_ASSETS: readonly Lineage57Asset[] = [
