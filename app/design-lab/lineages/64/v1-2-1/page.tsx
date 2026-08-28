@@ -12,7 +12,7 @@ export default function Lineage64FloatingMomentPortalPage() {
   const mix = track64MediaMix();
   const split = track64DepthSplit();
   return (
-    <main className="lineage64-review-page">
+    <main className="lineage64-review-page" style={{ overflowX: "clip" }}>
       <div className="lineage64-review-stage">
         <Lineage64FloatingMomentPortal />
       </div>
