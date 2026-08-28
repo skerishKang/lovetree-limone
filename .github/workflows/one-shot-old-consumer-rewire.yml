@@ -1,4 +1,4 @@
-name: One-shot OLD moved-path consumer rewire
+name: One-shot OLD consumer rewrite rollback
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  rewire-moved-old-consumers:
+  rollback-overbroad-rewrite:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -17,103 +17,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Rewrite approved non-workflow moved-path consumers
+      - name: Revert only overbroad consumer rewrite commit
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import re, subprocess
-
-          tracked = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
-          changed = []
-          counts = {
-              'reference/ -> old/reference/': 0,
-              'components/source-track-58/ -> old/components/source-track-58/': 0,
-              'assets/home-hero.mp4 -> old/assets/home-hero.mp4': 0,
-              'ops/releases/ -> old/ops/releases/': 0,
-          }
-
-          for rel in tracked:
-              if (not rel or rel.startswith('old/') or rel.startswith('.github/workflows/')
-                      or rel == '.github/workflows/one-shot-old-consumer-rewire.yml'):
-                  continue
-              p = Path(rel)
-              if not p.is_file():
-                  continue
-              try:
-                  raw = p.read_bytes()
-                  if b'\0' in raw:
-                      continue
-                  text = raw.decode('utf-8')
-              except (UnicodeDecodeError, OSError):
-                  continue
-              before = text
-
-              text, n = re.subn(r'(?<!old/)reference/', 'old/reference/', text)
-              counts['reference/ -> old/reference/'] += n
-              text, n = re.subn(r'(?<!old/)components/source-track-58/', 'old/components/source-track-58/', text)
-              counts['components/source-track-58/ -> old/components/source-track-58/'] += n
-              text, n = re.subn(r'(?<!old/)assets/home-hero\.mp4', 'old/assets/home-hero.mp4', text)
-              counts['assets/home-hero.mp4 -> old/assets/home-hero.mp4'] += n
-              text, n = re.subn(r'(?<!old/)ops/releases/', 'old/ops/releases/', text)
-              counts['ops/releases/ -> old/ops/releases/'] += n
-
-              if text != before:
-                  p.write_text(text, encoding='utf-8')
-                  changed.append(rel)
-
-          eslint = Path('eslint.config.mjs')
-          text = eslint.read_text(encoding='utf-8')
-          marker = '    "old/reference/**",\n'
-          if marker not in text:
-              raise SystemExit('expected old/reference ignore missing after physical-path rewrite')
-          if '    "old/workspace-archive/**",\n' not in text:
-              text = text.replace(marker, marker + '    "old/workspace-archive/**",\n')
-              eslint.write_text(text, encoding='utf-8')
-              if 'eslint.config.mjs' not in changed:
-                  changed.append('eslint.config.mjs')
-
-          print('replacement counts:')
-          for k,v in counts.items(): print(f'  {k}: {v}')
-          print(f'changed files: {len(changed)}')
-          for rel in changed: print(rel)
-
-          residuals = []
-          patterns = [
-              re.compile(r'(?<!old/)reference/'),
-              re.compile(r'(?<!old/)components/source-track-58/'),
-              re.compile(r'(?<!old/)assets/home-hero\.mp4'),
-              re.compile(r'(?<!old/)ops/releases/'),
-          ]
-          for rel in tracked:
-              if not rel or rel.startswith('old/') or rel.startswith('.github/workflows/'):
-                  continue
-              p=Path(rel)
-              if not p.is_file(): continue
-              try: text=p.read_text(encoding='utf-8')
-              except (UnicodeDecodeError,OSError): continue
-              for pat in patterns:
-                  if pat.search(text): residuals.append((rel,pat.pattern))
-          if residuals:
-              for item in residuals: print('RESIDUAL', item)
-              raise SystemExit('residual approved non-workflow moved-path consumer remains')
-          PY
-
-          git diff --check
-          git diff --stat
-
-      - name: Verify lint boundary after archive move
-        shell: bash
-        run: |
-          npm ci
-          npm run lint
-
-      - name: Commit non-workflow path-only consumer rewires
-        shell: bash
-        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- ':!.github/workflows'
-          git commit -m "test(old): rewire consumers to archived Drive paths"
+          git revert --no-edit 8b50216697b1c4603acdd9e8756f7ecb1989e7e4
+          git diff HEAD^ --check
           git push origin HEAD:refactor/old-drive-alignment-v1
