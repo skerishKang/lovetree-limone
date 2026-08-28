@@ -7,13 +7,42 @@
  * Geometry stays VIEW_DERIVED. Canonical Moment/Connection truth is unchanged.
  */
 @media (max-width: 760px) {
+  .mobileSpatialScope :global(main[data-source-track="58"] .header) {
+    min-height: 0 !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .header h1) {
+    font-size: clamp(28px, 8.5vw, 42px) !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .headerActions button) {
+    min-height: 34px !important;
+    padding-inline: 11px !important;
+    font-size: 8px !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .truthStrip) {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 5px 8px !important;
+    margin-bottom: 10px !important;
+    padding: 7px 9px !important;
+    font-size: 8px !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"][data-source58-mode="product"] .truthStrip span) {
+    display: none !important;
+  }
+
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]) {
     --source58-mobile-card-width: clamp(96px, 30vw, 116px);
     --source58-mobile-card-height: 118px;
     position: relative !important;
     display: block !important;
     min-height: 0 !important;
-    height: clamp(430px, 61dvh, 500px);
+    height: clamp(380px, 54dvh, 460px);
     aspect-ratio: auto !important;
     padding: 0 !important;
     overflow: hidden !important;
@@ -32,7 +61,8 @@
     pointer-events: none;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Canonical Connection living thread"]) {
+  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Canonical Connection living thread"]),
+  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Moment 사이를 잇는 기억의 실"]) {
     position: absolute !important;
     inset: 0 !important;
     left: 0 !important;
@@ -48,7 +78,8 @@
     box-shadow: none !important;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Canonical Connection living thread"] path) {
+  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Canonical Connection living thread"] path),
+  .mobileSpatialScope :global(main[data-source-track="58"] svg[aria-label="Moment 사이를 잇는 기억의 실"] path) {
     display: block !important;
   }
 
@@ -127,6 +158,39 @@
    * Source mobile detail grammar: foreground sheet over a still-visible board.
    * Initial board is unobstructed; selecting a card opens this presentation-only sheet.
    */
+  .mobileSpatialScope :global(main[data-source-track="58"] .themeRail) {
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow: hidden;
+    padding: 8px 3px 2px !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .themeRail > span) {
+    flex: 0 0 auto;
+    font-size: 8px;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .themeRail > div) {
+    min-width: 0;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .themeRail > div::-webkit-scrollbar) {
+    display: none;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .themeRail button) {
+    flex: 0 0 auto;
+    min-height: 28px;
+    padding-inline: 8px;
+    font-size: 8px;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open]),
   .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"]) {
     position: fixed !important;
     z-index: 70 !important;
@@ -150,7 +214,7 @@
     transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 150ms ease;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"][data-mobile-open="true"]) {
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open="true"]) {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
@@ -273,7 +337,7 @@
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]) {
     --source58-mobile-card-width: clamp(86px, 29vw, 94px);
     --source58-mobile-card-height: 108px;
-    height: clamp(410px, 58dvh, 440px);
+    height: clamp(360px, 52dvh, 410px);
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card]) {
@@ -285,7 +349,7 @@
     flex-basis: 46px;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"]) {
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open]) {
     left: 8px !important;
     right: 8px !important;
     bottom: 8px !important;
@@ -301,7 +365,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card]),
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"]) {
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open]) {
     transition: none !important;
   }
 }

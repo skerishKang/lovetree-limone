@@ -903,7 +903,16 @@
 
 .cinemaControls input { width: 100%; accent-color: #d8ad6f; }
 
-@media (max-width: 980px) {
+@media (min-width: 761px) {
+  /* Keep the last source slots inside the visible board when the board is
+     narrower than the native canvas. The slot values remain view-derived. */
+  .card {
+    left: max(12px, min(var(--source58-x), calc(100% - clamp(140px, 14vw, 176px) - 12px))) !important;
+    top: max(18px, min(var(--source58-y), calc(100% - 146px - 18px))) !important;
+  }
+}
+
+@media (max-width: 1180px) {
   .workspace { grid-template-columns: minmax(0, 1fr); }
   .inspector { min-height: 0; }
   .noSelection { min-height: 220px; }
