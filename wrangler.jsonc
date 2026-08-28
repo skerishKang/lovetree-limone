@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lovetree-limone",
-  "main": "worker/index.ts",
+  "main": "core/runtime/worker/index.ts",
   "compatibility_date": "2026-07-01",
   "assets": {
     "directory": "dist/client",

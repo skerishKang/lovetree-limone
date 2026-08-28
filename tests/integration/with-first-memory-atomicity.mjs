@@ -22,9 +22,9 @@ import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { readFile } from "node:fs/promises";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import * as schema from "../../db/schema.ts";
-import { treesRouter, deterministicId } from "../../server/api/trees.ts";
-import { memoriesRouter } from "../../server/api/memories.ts";
+import * as schema from "../../core/runtime/db/schema.ts";
+import { treesRouter, deterministicId } from "../../core/runtime/server/api/trees.ts";
+import { memoriesRouter } from "../../core/runtime/server/api/memories.ts";
 
 const DB_CONN = process.env.DATABASE_URL;
 if (!DB_CONN) {
@@ -41,7 +41,7 @@ const pool = new Pool({ connectionString: DB_CONN });
 const db = drizzle(pool, { schema });
 
 const strip = (s) => s.replace(/--> statement-breakpoint/g, "");
-const file = (p) => readFile(new URL(`../../${p}`, import.meta.url), "utf8");
+const file = (p) => readFile(new URL(`../../core/runtime/${p}`, import.meta.url), "utf8");
 
 // Firebase JWKS mock so requireAuthUser can verify locally-issued tokens.
 const { privateKey, publicKey } = generateKeyPairSync("rsa", {

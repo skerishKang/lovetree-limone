@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validate, VISIBILITY_VALUES, SOURCE_TYPE_VALUES } from "../server/api/validate.ts";
+import { validate, VISIBILITY_VALUES, SOURCE_TYPE_VALUES } from "../core/runtime/server/api/validate.ts";
 
 const COMMENT_RULES = {
   body: { kind: "string", required: true, trim: true, minLength: 1, maxLength: 1000 },

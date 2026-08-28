@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
-import { json, errorResponse } from "../server/api/http.ts";
-import { handleApiRequest } from "../server/api/handler.ts";
+import { json, errorResponse } from "../core/runtime/server/api/http.ts";
+import { handleApiRequest } from "../core/runtime/server/api/handler.ts";
 import {
   applyDefaultDynamicCachePolicy,
   DEFAULT_DYNAMIC_CACHE_CONTROL,
-} from "../worker/cache-policy.ts";
+} from "../core/runtime/worker/cache-policy.ts";
 import {
   handleImageOptimization,
   DEFAULT_DEVICE_SIZES,
@@ -19,8 +19,8 @@ const sourceHeaders = new URL("public/_headers", root);
 const builtHeaders = new URL("dist/client/_headers", root);
 const clientAssets = new URL("dist/client/assets/", root);
 const policyDocument = new URL("docs/operations/CACHE_AND_ASSET_VERSIONING_POLICY.md", root);
-const workerSource = new URL("worker/index.ts", root);
-const cachePolicySource = new URL("worker/cache-policy.ts", root);
+const workerSource = new URL("core/runtime/worker/index.ts", root);
+const cachePolicySource = new URL("core/runtime/worker/cache-policy.ts", root);
 
 const IMMUTABLE_ASSET_POLICY = "Cache-Control: public, max-age=31536000, immutable";
 const NO_STORE_POLICY = "private, no-store";

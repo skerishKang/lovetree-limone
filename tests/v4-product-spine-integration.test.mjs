@@ -40,9 +40,9 @@ test("V4 discovery creates Tree + first Memory through the existing authenticate
 test("current Memory.timestamp contract remains a validated YYYY-MM-DD date", async () => {
   const [landing, validate, treesApi, memoryContract] = await Promise.all([
     read("app/components/v4/V4Landing.tsx"),
-    read("server/api/validate.ts"),
-    read("server/api/trees.ts"),
-    read("server/api/memory-contract.ts"),
+    read("core/runtime/server/api/validate.ts"),
+    read("core/runtime/server/api/trees.ts"),
+    read("core/runtime/server/api/memory-contract.ts"),
   ]);
 
   assert.match(validate, /export function isValidTimestamp/);

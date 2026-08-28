@@ -2,37 +2,38 @@
 
 > Established: 2026-08-28
 > Authority: Cross-repository platform authority (LoveBud #4004, LoveTree #152)
+> Physical runtime boundary currentized: 2026-08-28
 
 ---
 
 ## 1. Canonical Backend Authority
 
-The following remain **single canonical authority** regardless of frontend generation:
+The following remain **single canonical authority** regardless of frontend generation. The 2026-08-28 physical relocation changes paths only; it does not change backend semantics.
 
 ### Authentication
 - **Current**: Firebase Authentication (`relovetree` project)
 - **Target**: Staged Neon Auth migration (LoveBud #4006)
-- **API**: `server/api/auth.ts`
+- **API**: `core/runtime/server/api/auth.ts`
 
 ### Database
 - **Engine**: Neon PostgreSQL via Drizzle ORM
-- **Schema**: `db/schema.ts` — single source of truth
-- **Access**: `db/index.ts`
-- **Migrations**: `drizzle/` — ordered migration files
+- **Schema**: `core/runtime/db/schema.ts` — single source of truth
+- **Access**: `core/runtime/db/index.ts`
+- **Migrations**: `core/runtime/drizzle/` — ordered migration files
 - **Authority**: LoveBud #4005 for schema convergence
 
 ### API
-- **Handler**: `server/api/handler.ts`
-- **Routes**: `server/api/trees.ts`, `server/api/memories.ts`, `server/api/comments.ts`, `server/api/social.ts`
-- **Access control**: `server/api/access.ts`
-- **Auth**: `server/api/auth.ts`
-- **Validation**: `server/api/validate.ts`
-- **Errors**: `server/api/errors.ts`
-- **HTTP**: `server/api/http.ts`
+- **Handler**: `core/runtime/server/api/handler.ts`
+- **Routes**: `core/runtime/server/api/trees.ts`, `core/runtime/server/api/memories.ts`, `core/runtime/server/api/comments.ts`, `core/runtime/server/api/social.ts`
+- **Access control**: `core/runtime/server/api/access.ts`
+- **Auth**: `core/runtime/server/api/auth.ts`
+- **Validation**: `core/runtime/server/api/validate.ts`
+- **Errors**: `core/runtime/server/api/errors.ts`
+- **HTTP**: `core/runtime/server/api/http.ts`
 
 ### Runtime
-- **Worker**: `worker/index.ts` (Cloudflare Worker `lovetree-limone`)
-- **Cache**: `worker/cache-policy.ts`
+- **Worker**: `core/runtime/worker/index.ts` (Cloudflare Worker `lovetree-limone`)
+- **Cache**: `core/runtime/worker/cache-policy.ts`
 - **Image optimization**: via `vinext/server/image-optimization`
 
 ### SHARED_BACKEND_CONTRACT = MANDATORY
@@ -41,7 +42,7 @@ All frontend generations consume the **same** canonical HTTP API. The backend co
 
 ## 2. SHARED_CORE_BRIDGE_LIB (optional host/shell reuse)
 
-These `lib/` files are **OPTIONAL** for NEW host/shell reuse. Source capsules must NOT depend on them directly.
+These `lib/` files remain **OPTIONAL** for NEW host/shell reuse. Source capsules must NOT depend on them directly.
 
 | File | Role |
 |------|------|
@@ -72,20 +73,20 @@ See `old/LEGACY_FRONTEND_MANIFEST.md` §5a for the complete inventory.
 ### Tree
 - Core entity representing a user's tree
 - Has subjects, moments, connections
-- Writable via `server/api/trees.ts`
+- Writable via `core/runtime/server/api/trees.ts`
 
 ### Moment
 - Core entity representing a memory/moment
 - Belongs to a tree
-- Writable via `server/api/memories.ts`
+- Writable via `core/runtime/server/api/memories.ts`
 
 ### Connection
 - Social relationship between trees/users
-- Writable via `server/api/social.ts`
+- Writable via `core/runtime/server/api/social.ts`
 
 ### Comment
 - Comments on moments/trees
-- Writable via `server/api/comments.ts`
+- Writable via `core/runtime/server/api/comments.ts`
 
 ## 5. Frontend Consumption Rules
 
@@ -134,15 +135,29 @@ The following are boundary violations that halt work:
 
 - Creating a second database writer
 - Creating a second authentication system
-- Forking `db/schema.ts`
-- Modifying `server/api/` semantics without cross-repo authority
+- Forking `core/runtime/db/schema.ts`
+- Modifying `core/runtime/server/api/` semantics without cross-repo authority
 - Deploying a separate Worker for NEW generation
 - Exposing new secrets or provider configurations
 - Mutating Production data for validation
 - Source capsule importing React/TS bridge from SHARED_CORE_BRIDGE_LIB
 - Forking SHARED_CORE_BRIDGE_LIB files
 
-## 8. Migration Path
+## 8. Physical Runtime Relocation Rule
+
+The canonical backend runtime is physically grouped under `core/runtime/`:
+
+```
+core/runtime/
+├─ db/
+├─ drizzle/
+├─ server/
+└─ worker/
+```
+
+This relocation is **mechanical path ownership only**. It must preserve the exact schema, migrations, API behavior, Auth behavior, Worker behavior, and Production data semantics. Root build/deploy configuration may point into `core/runtime/**`; no duplicate canonical backend may exist.
+
+## 9. Migration Path
 
 When NEW/V1 achieves source parity:
 
@@ -151,4 +166,4 @@ When NEW/V1 achieves source parity:
 3. Backend remains single canonical authority throughout
 4. SHARED_BACKEND_CONTRACT remains mandatory throughout
 5. SHARED_CORE_BRIDGE_LIB remains optional host/shell reuse
-6. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend changes
+6. Cross-repo authority (LoveBud #4004/#4005/#4006) governs any backend semantic changes

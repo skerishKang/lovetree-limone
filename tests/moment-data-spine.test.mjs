@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import { treesRouter } from "../server/api/trees.ts";
-import { memoriesRouter } from "../server/api/memories.ts";
-import { trees, memories } from "../db/schema.ts";
+import { treesRouter } from "../core/runtime/server/api/trees.ts";
+import { memoriesRouter } from "../core/runtime/server/api/memories.ts";
+import { trees, memories } from "../core/runtime/db/schema.ts";
 import {
   toCanonicalMoment,
   toTreeMoment,

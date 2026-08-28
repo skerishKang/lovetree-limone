@@ -8,8 +8,8 @@ import {
   databaseHostFromUrl,
   e2eHealthIdentity,
   evaluateMutationGate,
-} from "../server/api/e2e-safety.ts";
-import { handleApiRequest } from "../server/api/handler.ts";
+} from "../core/runtime/server/api/e2e-safety.ts";
+import { handleApiRequest } from "../core/runtime/server/api/handler.ts";
 import {
   APPROVED_E2E_NEON_HOST,
   PRODUCTION_NEON_HOST,

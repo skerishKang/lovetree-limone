@@ -58,7 +58,7 @@ test("lib api helper sends Bearer token", async () => {
 });
 
 test("db schema uses PostgreSQL (pgTable)", async () => {
-  const schema = await readFile(new URL("../db/schema.ts", import.meta.url), "utf8");
+  const schema = await readFile(new URL("../core/runtime/db/schema.ts", import.meta.url), "utf8");
   assert.match(schema, /pgTable/);
   assert.match(schema, /drizzle-orm\/pg-core/);
   assert.match(schema, /jsonb/);
@@ -73,7 +73,7 @@ test("db schema uses PostgreSQL (pgTable)", async () => {
 });
 
 test("db schema enforces foreign keys and unique constraints", async () => {
-  const schema = await readFile(new URL("../db/schema.ts", import.meta.url), "utf8");
+  const schema = await readFile(new URL("../core/runtime/db/schema.ts", import.meta.url), "utf8");
   assert.match(schema, /references\(\(\) => trees\.id/);
   assert.match(schema, /onDelete: "cascade"/);
   assert.match(schema, /reactions_memory_owner_type_uniq/);
@@ -83,14 +83,14 @@ test("db schema enforces foreign keys and unique constraints", async () => {
 });
 
 test("db connection uses Neon HTTP driver", async () => {
-  const dbIndex = await readFile(new URL("../db/index.ts", import.meta.url), "utf8");
+  const dbIndex = await readFile(new URL("../core/runtime/db/index.ts", import.meta.url), "utf8");
   assert.match(dbIndex, /@neondatabase\/serverless/);
   assert.match(dbIndex, /drizzle-orm\/neon-http/);
   assert.match(dbIndex, /DATABASE_URL/);
 });
 
 test("api routes are properly structured", async () => {
-  const handler = await readFile(new URL("../server/api/handler.ts", import.meta.url), "utf8");
+  const handler = await readFile(new URL("../core/runtime/server/api/handler.ts", import.meta.url), "utf8");
   assert.match(handler, /handleApiRequest/);
   assert.match(handler, /treesRouter/);
   assert.match(handler, /memoriesRouter/);
@@ -99,7 +99,7 @@ test("api routes are properly structured", async () => {
 });
 
 test("worker references api handler", async () => {
-  const worker = await readFile(new URL("../worker/index.ts", import.meta.url), "utf8");
+  const worker = await readFile(new URL("../core/runtime/worker/index.ts", import.meta.url), "utf8");
   assert.match(worker, /handleApiRequest/);
   assert.match(worker, /vinext\/server\/app-router-entry/);
 });
