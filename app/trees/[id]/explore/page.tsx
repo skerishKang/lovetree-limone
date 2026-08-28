@@ -134,6 +134,7 @@ export default function TreeExplorePage() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const cameraRef = useRef<Camera>({ ...DEFAULT_CAMERA, target: [...DEFAULT_CAMERA.target] as Vec3 });
   const viewportRef = useRef({ w: 800, h: 560, dpr: 1 });
   const gestureRef = useRef({
@@ -366,6 +367,28 @@ export default function TreeExplorePage() {
     event.preventDefault();
   };
 
+  const onListKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    const list = listRef.current;
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll<HTMLButtonElement>('[data-cluster-item]'));
+    const currentIndex = items.indexOf(event.target as HTMLButtonElement);
+    if (currentIndex === -1) return;
+    let nextIndex = -1;
+    if (event.key === "ArrowDown") {
+      nextIndex = Math.min(currentIndex + 1, items.length - 1);
+    } else if (event.key === "ArrowUp") {
+      nextIndex = Math.max(currentIndex - 1, 0);
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = items.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    items[nextIndex]?.focus();
+  }, []);
+
   return (
     <div className="tree-page" data-mvp-source="60" data-tree-id={treeId}>
       <header className="tree-page-topbar">
@@ -402,13 +425,24 @@ export default function TreeExplorePage() {
 
         {!loading && !error ? (
           <div className={styles.explorer}>
-            <aside className={styles.panel} aria-label="Moment cluster list">
+            <aside
+              className={styles.panel}
+              ref={listRef}
+              role="tree"
+              aria-label="Moment cluster tree"
+              onKeyDown={onListKeyDown}
+            >
               <p className={styles.panelTitle}>Moments · memory map</p>
               {CLUSTERS.map((cluster) => {
                 const members = membersByCluster.get(cluster.key) ?? [];
                 if (members.length === 0) return null;
                 return (
-                  <section className={styles.cluster} key={cluster.key} aria-label={cluster.label}>
+                  <section
+                    className={styles.cluster}
+                    key={cluster.key}
+                    role="group"
+                    aria-label={cluster.label}
+                  >
                     <div className={styles.clusterHeader}>
                       <i className={styles.dot} style={{ background: cluster.color, color: cluster.color }} />
                       <strong>{cluster.label}</strong>
@@ -418,8 +452,14 @@ export default function TreeExplorePage() {
                       <button
                         key={moment.id}
                         type="button"
+                        role="treeitem"
+                        data-cluster-item="true"
                         className={`${styles.item}${selectedMomentId === moment.id ? ` ${styles.itemSelected}` : ""}`}
                         aria-pressed={selectedMomentId === moment.id}
+                        aria-selected={selectedMomentId === moment.id}
+                        aria-level={1}
+                        aria-setsize={moments.length}
+                        aria-posinset={moments.indexOf(moment) + 1}
                         onClick={() => syncMomentToUrl(moment.id)}
                       >
                         {moment.title.length > 28 ? `${moment.title.slice(0, 27)}…` : moment.title}
