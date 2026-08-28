@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFile } from "node:fs/promises";
 
 const repairSql = await readFile(
-  new URL("../drizzle/0002_neon_dev_schema_reconciliation.sql", import.meta.url),
+  new URL("../core/runtime/drizzle/0002_neon_dev_schema_reconciliation.sql", import.meta.url),
   "utf8",
 );
 
@@ -18,8 +18,8 @@ test("Neon reconciliation is additive and guarded", () => {
 });
 
 test("Neon reconciliation does not alter the canonical migration files", async () => {
-  const first = await readFile(new URL("../drizzle/0000_flippant_warlock.sql", import.meta.url), "utf8");
-  const second = await readFile(new URL("../drizzle/0001_perpetual_deathbird.sql", import.meta.url), "utf8");
+  const first = await readFile(new URL("../core/runtime/drizzle/0000_flippant_warlock.sql", import.meta.url), "utf8");
+  const second = await readFile(new URL("../core/runtime/drizzle/0001_perpetual_deathbird.sql", import.meta.url), "utf8");
   assert.match(first, /CREATE TABLE "trees"/);
   assert.match(second, /ALTER TABLE "trees" ADD COLUMN "client_key"/);
 });

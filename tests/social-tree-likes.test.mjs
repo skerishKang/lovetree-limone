@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import { socialRouter } from "../server/api/social.ts";
-import { trees, treeLikes, treeSocialCounts } from "../db/schema.ts";
+import { socialRouter } from "../core/runtime/server/api/social.ts";
+import { trees, treeLikes, treeSocialCounts } from "../core/runtime/db/schema.ts";
 
 const PROJECT_ID = "relovetree";
 const USER_ID = "social-like-user";

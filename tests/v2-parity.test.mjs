@@ -157,7 +157,7 @@ test("shared auth, API, and DB core are unchanged", async () => {
   assert.match(auth, /createUserWithEmailAndPassword/);
   const api = await readRoot("lib/api.ts");
   assert.match(api, /Bearer/);
-  const schema = await readRoot("db/schema.ts");
+  const schema = await readRoot("core/runtime/db/schema.ts");
   assert.match(schema, /pgTable/);
 });
 

@@ -3,7 +3,7 @@ import test from "node:test";
 import { readdir, readFile } from "node:fs/promises";
 
 async function migrationSql() {
-  const dir = new URL("../drizzle/", import.meta.url);
+  const dir = new URL("../core/runtime/drizzle/", import.meta.url);
   const files = (await readdir(dir))
     .filter((f) => /^\d{4}_\w+\.sql$/.test(f))
     .sort();

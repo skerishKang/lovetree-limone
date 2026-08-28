@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import { memoriesRouter, isUniqueViolation } from "../server/api/memories.ts";
-import { memories, trees } from "../db/schema.ts";
+import { memoriesRouter, isUniqueViolation } from "../core/runtime/server/api/memories.ts";
+import { memories, trees } from "../core/runtime/db/schema.ts";
 
 const PROJECT_ID = "relovetree";
 const USER_ID = "rollback-compat-user";

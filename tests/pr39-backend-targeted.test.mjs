@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import { memoriesRouter } from "../server/api/memories.ts";
-import { treesRouter, deterministicId } from "../server/api/trees.ts";
-import { memories, trees, treeSocialCounts } from "../db/schema.ts";
+import { memoriesRouter } from "../core/runtime/server/api/memories.ts";
+import { treesRouter, deterministicId } from "../core/runtime/server/api/trees.ts";
+import { memories, trees, treeSocialCounts } from "../core/runtime/db/schema.ts";
 
 const PROJECT_ID = "relovetree";
 const USER_ID = "backend-target-user";

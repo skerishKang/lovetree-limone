@@ -6,8 +6,8 @@ import {
   normalizeMemoryUpdateInput,
   parseVideoOffsetSeconds,
   validateMemoryDateCompatibility,
-} from "../server/api/memory-contract.ts";
-import { validate } from "../server/api/validate.ts";
+} from "../core/runtime/server/api/memory-contract.ts";
+import { validate } from "../core/runtime/server/api/validate.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
