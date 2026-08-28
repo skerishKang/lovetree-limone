@@ -54,6 +54,36 @@ async function assertCenterVoidAndDepth(page, label) {
   assert.equal(await page.locator('[data-depth-tier="far"]').count(), 12, `${label}: 12 far cards`);
 }
 
+async function assertIndependentFamilyTemporalOrbit(page, label) {
+  const readPhases = () => page.locator('[data-moment-id]').evaluateAll((cards) => {
+    const phases = new Map();
+    for (const card of cards) {
+      const family = card.getAttribute('data-family');
+      if (!family || phases.has(family)) continue;
+      phases.set(family, Number(card.getAttribute('data-orbital-phase')));
+    }
+    return Object.fromEntries(phases);
+  });
+
+  const before = await readPhases();
+  await page.waitForTimeout(650);
+  const after = await readPhases();
+  const deltas = Object.fromEntries(
+    Object.keys(before).map((family) => [family, after[family] - before[family]]),
+  );
+  const expected = { f1: 1, f2: 1.18, f3: 0.82, f4: 0.92, f5: 1.06 };
+  assert.deepEqual(Object.keys(deltas).sort(), Object.keys(expected).sort(), `${label}: all five temporal families expose phase metadata`);
+  assert.ok(Object.values(deltas).every((delta) => delta > 0), `${label}: every family phase advances during normal motion`);
+  for (const family of Object.keys(expected)) {
+    const ratio = deltas[family] / deltas.f1;
+    assert.ok(
+      Math.abs(ratio - expected[family]) < 0.04,
+      `${label}: ${family} phase delta ratio ${ratio.toFixed(3)} tracks source speed ${expected[family]}`,
+    );
+  }
+  assert.ok(new Set(Object.values(deltas).map((delta) => delta.toFixed(4))).size > 1, `${label}: family phases must not be a rigid shared rotation`);
+}
+
 // Live world camera angle (rotateY deg) written by the ambient/drag/wheel RAF loop.
 async function worldAngle(page) {
   return page.locator('[data-rendering="css3d-dom"]').evaluate((el) => {
@@ -356,6 +386,7 @@ try {
   try {
     await assertNoHorizontalOverflow(desktop.page, "1280x800");
     await assertCenterVoidAndDepth(desktop.page, "1280x800");
+    await assertIndependentFamilyTemporalOrbit(desktop.page, "1280x800");
 
     // A. TRUE AMBIENT AUTO-ORBIT in normal idle mode: world angle advances on its own.
     // #417: the 650ms sampling window is the ambient-motion temporal contract —

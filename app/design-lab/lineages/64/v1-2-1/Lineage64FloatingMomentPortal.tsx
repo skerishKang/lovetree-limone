@@ -18,6 +18,7 @@ import {
   selectedMoment,
 } from "@/lib/lineage-64/state";
 import type { MomentRecord } from "@/lib/lineage-64/types";
+import { source64OrbitalPhase, SOURCE64_RING_SPEEDS } from "@/lib/lineage-64/orbit";
 import styles from "./lineage-64.module.css";
 
 // TRUE AMBIENT AUTO-ORBIT: a continuous, bounded idle orbit in normal motion.
@@ -45,9 +46,9 @@ const SOURCE64_RINGS: Record<MomentRecord["family"], Source64Ring> = {
   f5: { radiusX: 780, radiusY: 250, zAmplitude: 470, zBase: -100, band: 250, phaseOffset: 1.24, speed: 1.06 },
 };
 
-function cardTransform(m: MomentRecord, compact = false): string {
+function cardTransform(m: MomentRecord, orbitalPhase = 0, compact = false): string {
   const ring = SOURCE64_RINGS[m.family];
-  const theta = (m.world.angle * Math.PI) / 180 + (m.world.phaseOffset ?? 0);
+  const theta = (m.world.angle * Math.PI) / 180 + source64OrbitalPhase(orbitalPhase, m.family, m.world.phaseOffset ?? 0);
   let x = Math.cos(theta) * ring.radiusX;
   let y =
     Math.sin(theta) * ring.radiusY +
@@ -139,6 +140,7 @@ export default function Lineage64FloatingMomentPortal({
   );
   const [coarse, setCoarse] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [orbitalPhase, setOrbitalPhase] = useState(0);
   const [listOpen, setListOpen] = useState(false);
   const [announce, setAnnounce] = useState("");
 
@@ -151,6 +153,7 @@ export default function Lineage64FloatingMomentPortal({
   const pendingRef = useRef(createPendingGesture());
   const draggingRef = useRef(false);
   const cameraAngleRef = useRef(0);
+  const orbitalPhaseRef = useRef(0);
   const velocityRef = useRef(0);
 
   const threshold = coarse ? TRACK64_GESTURE.mobileTapThreshold : TRACK64_GESTURE.desktopTapThreshold;
@@ -177,6 +180,8 @@ export default function Lineage64FloatingMomentPortal({
   }, []);
 
   // Ambient orbit RAF — paused while reduced motion / viewer open / dragging.
+  // The shared camera remains an input layer; Source64's five ring families
+  // also advance on their own phase with independent ring.speed values.
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
@@ -184,16 +189,17 @@ export default function Lineage64FloatingMomentPortal({
       const dt = Math.min(64, now - last);
       last = now;
       if (!reducedMotion && !state.viewerOpen && !draggingRef.current) {
-        // TRUE AMBIENT AUTO-ORBIT: continuous bounded idle orbit, plus any user
-        // inertia from drag/wheel (which decays). Drag owns the world, so while
-        // draggingRef is set the ambient baseline is suppressed and only the
-        // pointer delta (applied in handlePointerMove) moves the camera.
         cameraAngleRef.current += AMBIENT_DEG_PER_MS * dt;
         cameraAngleRef.current += velocityRef.current * dt;
         velocityRef.current *= 0.96;
         if (Math.abs(velocityRef.current) < 0.0004) velocityRef.current = 0;
+        orbitalPhaseRef.current += (dt / 1000) * 0.9;
+        setOrbitalPhase(orbitalPhaseRef.current);
       }
-      if (worldRef.current) worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+      if (worldRef.current) {
+        worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+        worldRef.current.dataset.orbitalPhase = orbitalPhaseRef.current.toFixed(6);
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -490,10 +496,12 @@ export default function Lineage64FloatingMomentPortal({
               key={moment.id}
               type="button"
               className={styles.card}
-              style={{ transform: cardTransform(moment, coarse) }}
+              style={{ transform: cardTransform(moment, orbitalPhase, coarse) }}
               data-moment-id={moment.id}
               data-depth-tier={moment.depthTier}
               data-family={moment.family}
+              data-orbital-speed={SOURCE64_RING_SPEEDS[moment.family]}
+              data-orbital-phase={source64OrbitalPhase(orbitalPhase, moment.family, moment.world.phaseOffset ?? 0).toFixed(6)}
               data-fit-mode={moment.fitting.fitMode}
               data-selected={isSelected ? "true" : "false"}
               aria-pressed={isSelected}

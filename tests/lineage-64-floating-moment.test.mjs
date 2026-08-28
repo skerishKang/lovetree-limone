@@ -13,6 +13,7 @@ import {
   track64MediaMix,
 } from "../lib/lineage-64/data.ts";
 import { SOURCE64_SOURCE_SLOTS } from "../lib/lineage-64/source-slots.ts";
+import { SOURCE64_RING_SPEEDS, source64OrbitalPhase } from "../lib/lineage-64/orbit.ts";
 import { toLineage64Moments } from "../lib/lineage-64/product-adapter.ts";
 import {
   beginGesture,
@@ -57,6 +58,24 @@ test("40 Moment world keeps the Photo18 / Video10 / Memo7 / Link5 media mix", ()
   assert.equal(split.foreground + split.mid + split.far, 40);
   const families = track64FamilySplit();
   assert.deepEqual(Object.values(families), [8, 8, 8, 8, 8]);
+});
+
+test("Source64 temporal orbit uses independent family speeds instead of rigid shared rotation", () => {
+  const families = ["f1", "f2", "f3", "f4", "f5"];
+  const phaseStart = 0.25;
+  const phaseEnd = 1.25;
+  const deltas = Object.fromEntries(
+    families.map((family) => [
+      family,
+      source64OrbitalPhase(phaseEnd, family) - source64OrbitalPhase(phaseStart, family),
+    ]),
+  );
+
+  assert.deepEqual(SOURCE64_RING_SPEEDS, { f1: 1, f2: 1.18, f3: 0.82, f4: 0.92, f5: 1.06 });
+  for (const [family, expected] of Object.entries({ f1: 1, f2: 1.18, f3: 0.82, f4: 0.92, f5: 1.06 })) {
+    assert.ok(Math.abs(deltas[family] - expected) < 1e-9, `${family} delta must match source speed`);
+  }
+  assert.ok(new Set(Object.values(deltas)).size > 1, "family phase deltas must not collapse to one rigid shared rotation");
 });
 
 test("Phase 1 preserves original A media mapping and memo-only surfaces", () => {
