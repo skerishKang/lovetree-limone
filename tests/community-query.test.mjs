@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getDb } from "../db/index.ts";
+import { getDb } from "../core/runtime/db/index.ts";
 import {
   buildCommunityTreesQuery,
   buildGrowingTreesQuery,
   listCommunityTrees,
-} from "../server/api/trees.ts";
+} from "../core/runtime/server/api/trees.ts";
 
 const db = getDb("postgresql://user@example.com/database");
 

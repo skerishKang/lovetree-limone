@@ -1,23 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getDb } from "../db/index.ts";
-import { memories, trees } from "../db/schema.ts";
+import { getDb } from "../core/runtime/db/index.ts";
+import { memories, trees } from "../core/runtime/db/schema.ts";
 import {
   getReadableMemory,
   isCommunityMemoryReadable,
   isMemoryReadable,
   resolveMemoryVisibility,
-} from "../server/api/access.ts";
+} from "../core/runtime/server/api/access.ts";
 import {
   buildCommunityTreesQuery,
   buildGrowingTreesQuery,
   BROWSE_MIN_PUBLIC_MOMENTS,
   isBrowseEligible,
-} from "../server/api/trees.ts";
+} from "../core/runtime/server/api/trees.ts";
 import {
   buildCommunityMemoriesQuery,
   memoriesRouter,
-} from "../server/api/memories.ts";
+} from "../core/runtime/server/api/memories.ts";
 
 const OWNER_ID = "p1-owner";
 const OTHER_ID = "p1-other";

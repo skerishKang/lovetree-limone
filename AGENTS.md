@@ -101,14 +101,61 @@ Primary current source areas include:
 
 Do not rely on old repository descriptions that refer to D1 or removed `public/pages`, `public/js`, or `public/css` trees as current backend/product authority.
 
+## Source implementation semantics — P0 current authority
+
+Issue #537 and `docs/design-intake/IMPLEMENTATION_FIDELITY_CONTRACT.md` define the current meaning of source implementation.
+
+When the product owner explicitly requests **IMPLEMENT / PORT / RECREATE / 원본대로 구현** for an authoritative executable design source, that executable is the **normative UI/UX specification**. Default to faithful-port mode, not donor/adaptation mode.
+
+For faithful-port work:
+
+- preserve composition, spatial hierarchy, layout, typography, colors, effects, media staging, depth, animation, interaction sequence and action result;
+- translate runtime/framework mechanics as needed;
+- bind existing canonical Tree/Moment/Connection/media/Auth/API data behind the faithful visual/interaction surface;
+- accessibility and responsive defect repair are allowed when they do not redesign the source identity;
+- do not silently simplify the source into a theme, grammar, visual language, donor layer or existing canonical surface;
+- prefer `NATIVE VISUAL SURFACE + CANONICAL DATA ADAPTER + PRODUCT NAVIGATION SHELL` when a source-faithful native surface exists.
+
+The following are explicitly different states:
+
+```text
+PRODUCT_DONOR_INTEGRATED != IMPLEMENTED
+CANONICAL_EXISTING_SURFACE != IMPLEMENTED
+NATIVE_PROVING_COMPLETE != PRODUCT_FIDELITY_PASS
+CANONICAL_ROUTE_INTEGRATED != PRODUCT_FIDELITY_PASS
+CI_GREEN != VISUAL_FIDELITY_PASS
+INTERACTION_CONTRACT_PASS != VISUAL_FIDELITY_PASS
+```
+
+For an authoritative source explicitly requested to be implemented/ported, use the current state sequence:
+
+```text
+SOURCE_PINNED
+→ NATIVE_PORT_COMPLETE
+→ VISUAL_FIDELITY_PASS
+→ INTERACTION_FIDELITY_PASS
+→ CANONICAL_DATA_BOUND
+→ CANONICAL_ROUTE_INTEGRATED
+→ PRODUCT_FIDELITY_PASS
+→ PRODUCTION_READY
+```
+
+`IMPLEMENTED = YES` is permitted only after `PRODUCT_FIDELITY_PASS` for that faithful-port task.
+
+Bounded reinterpretation is allowed only when the owner/task explicitly requests **DONOR / ADAPT / INSPIRED / GRAMMAR / CAPABILITY EXTRACTION / MECHANICS EXTRACTION**. Such work must be reported as donor/adaptation work and must not be counted as a faithful source implementation.
+
+A Design Fidelity target registered only as `interaction-contract`, screenshot existence, or a healthy browser gate does not certify source visual parity. Source-faithful work requires matched authoritative-source → native → canonical visual and interaction evidence as defined by Issue #537.
+
 ## External source preservation
 
-Google Drive and sibling-project originals are evidence/reference sources unless a task explicitly says otherwise.
+Google Drive and sibling-project originals are evidence/reference sources for provenance and donor tasks, but an authoritative executable becomes a **normative UI/UX specification** when the task explicitly requests IMPLEMENT / PORT / RECREATE / 원본대로 구현.
 
 - Treat Drive originals as read-only.
 - Do not move, rewrite, format, minify or delete source originals.
 - Preserve exact bytes/SHA-256 when an intake contract requires source fidelity.
-- Do not silently turn a sibling project into LoveTree product code. Extract only the approved Variant/Capability mechanics.
+- For donor/adaptation tasks, extract only the explicitly approved Variant/Capability mechanics.
+- For faithful-port tasks, do **not** replace the source with mechanics-only extraction; preserve the observable source visual/interaction identity and adapt canonical data behind it.
+- Do not promote demo/source fixture values into canonical Product truth merely to achieve visual fidelity; substitute truthful canonical values while preserving the visual/interaction structure.
 - New intake follows `Lineage → Revision → Variant/Capability` and the newest explicit product-owner/design-lead decision takes precedence while older revisions remain preserved as history.
 
 The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository. For current shared-platform architecture, however, fresh connected GitHub authority in LoveBud #4004/#4005/#4006 is controlling rather than an old mirrored snapshot.
@@ -137,7 +184,35 @@ Windows-mounted drives may be used for read-only source archives and exported ev
 
 ### Shared root is a sync surface only
 
-The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a workspace. Do not edit, build, test, run servers or otherwise perform task work directly inside it. Only sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`); do all real work in a per-Lane worktree.
+The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a development workspace. Do not build, test, run servers, install packages, run browser automation, or perform ordinary code implementation directly inside it. Sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`). When the product owner explicitly requests bounded repository structure or file-lifecycle administration, the verified Google Drive for desktop mirror may also be used as an indirect sync-admin channel under the policy below. Do all implementation work in a per-Lane worktree.
+
+### Google Drive sync proxy semantics — mandatory
+
+`G:\Ddrive\BatangD\task\workdiary\lovetree-limone` may be mirrored by Google Drive for desktop. An authenticated Google Drive connector does not provide direct Windows/NTFS access, but create/move/rename/delete operations against the **exact synchronized Drive folder** can propagate through Google Drive for desktop and change the local shared sync root. Treat such operations as `INDIRECT_LOCAL_WORKSPACE_MUTATION`, not as remote-only changes.
+
+Always distinguish these Drive classes:
+
+```text
+DESIGN_AUTHORITY_DRIVE
+= 03_디자인채택본 / 코덱스 / 결과물 / other source-provenance authority
+= READ_ONLY_BY_DEFAULT
+
+VERIFIED_REPOSITORY_SYNC_MIRROR
+= exact Drive folder proven to mirror the shared repository root
+= INDIRECT_LOCAL_SYNC_SURFACE
+```
+
+Hard rules:
+
+- Never infer the sync target from the folder name alone. Same-name backups/snapshots/copies may exist.
+- Before Drive-side workspace mutation, verify the exact Drive folder ID, parent chain and repository marker files (`package.json`, `.gitignore`, `AGENTS.md`, and expected repository directories). If exact mapping is unresolved, `UNKNOWN_STOP = zero mutation`.
+- The existing rule "Treat Drive originals as read-only" applies to **design/source authority**, not automatically to a separately verified repository sync mirror.
+- Drive-side workspace administration is allowed only when explicitly authorized and bounded. Never mutate `.git/**`, secrets, `node_modules/**`, generated caches, or unrelated paths.
+- A Drive move in the synchronized repository can appear locally as Git rename/add/delete state. Drive sync is transport, not Git history. Reconcile the result on the correct branch/worktree, inspect `git status`/diff, then commit, push and use the normal PR/integration path.
+- Never use Drive sync to bypass branch isolation, review, CI or GitHub history.
+- When the owner refers to the local `G:` path, do not answer only "I cannot access your local drive" if authenticated Drive access exists. First check whether the exact synchronized Drive mapping and requested Drive operation can be proven. Conversely, do not promise local propagation until that mapping is proven.
+
+Full contract: `docs/operations/GOOGLE_DRIVE_LOCAL_SYNC_AUTHORITY.md`.
 
 ### Heavy processes require CTO pre-approval
 
@@ -248,4 +323,4 @@ When a secret or environment variable is required, report only the variable name
 
 ## Operating principle
 
-Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, and leave a clearly named blocker instead of weakening a fail-closed contract.
+Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, **distinguish donor/adaptation from faithful implementation**, and leave a clearly named blocker instead of weakening a fail-closed contract.

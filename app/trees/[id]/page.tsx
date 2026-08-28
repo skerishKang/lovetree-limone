@@ -11,6 +11,7 @@ import { MomentDetailModal } from "../../components/MomentDetailModal";
 import { MomentComposerModal } from "../../components/MomentComposerModal";
 import { MomentThumbnail } from "../../components/MomentThumbnail";
 import "../../styles/email-auth.css";
+import "../../styles/mvp-source57-moment-language.css";
 import {
   formatTreeDate,
   memoryDiscoveryDate,
@@ -83,7 +84,7 @@ export default function TreeDetailPage() {
       isOwner={isOwner}
       onAddMoment={() => setIsComposerOpen(true)}
     >
-      <section className="tree-detail-content" aria-labelledby="tree-detail-title">
+      <section className="tree-detail-content source57-moment-language" data-mvp-source="57" aria-labelledby="tree-detail-title">
         <div className="tree-detail-heading">
           <div>
             <p className="eyebrow">{tree.visibility === "private" ? "private love garden" : "a living love garden"}</p>
@@ -154,15 +155,17 @@ export default function TreeDetailPage() {
         </section>
       </section>
 
-      <MomentDetailModal
-        key={selectedMomentId ?? "none"}
-        moment={selectedMoment}
-        isOwner={isOwner}
-        onClose={() => handleSelectMoment(null)}
-        onUpdate={updateMoment}
-        onDelete={deleteMoment}
-        parentOptions={moments}
-      />
+      <div className="source57-product-detail-scope" data-mvp-source="57">
+        <MomentDetailModal
+          key={selectedMomentId ?? "none"}
+          moment={selectedMoment}
+          isOwner={isOwner}
+          onClose={() => handleSelectMoment(null)}
+          onUpdate={updateMoment}
+          onDelete={deleteMoment}
+          parentOptions={moments}
+        />
+      </div>
 
       {isComposerOpen ? (
         <MomentComposerModal

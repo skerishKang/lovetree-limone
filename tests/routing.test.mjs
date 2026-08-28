@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile, stat } from "node:fs/promises";
-import { matchRoute } from "../server/api/http.ts";
-import { deterministicId } from "../server/api/trees.ts";
+import { matchRoute } from "../core/runtime/server/api/http.ts";
+import { deterministicId } from "../core/runtime/server/api/trees.ts";
 
 test("matchRoute extracts params", () => {
   const params = matchRoute("/api/trees/abc/memories", "/api/trees/:treeId/memories");
@@ -22,11 +22,11 @@ test("matchRoute decodes URL params", () => {
 
 test("dev server route conflict resolved: api/trees.ts no longer at root", async () => {
   await assert.rejects(stat(new URL("../api/trees.ts", import.meta.url)));
-  await stat(new URL("../server/api/trees.ts", import.meta.url));
+  await stat(new URL("../core/runtime/server/api/trees.ts", import.meta.url));
 });
 
 test("worker references server api handler", async () => {
-  const worker = await readFile(new URL("../worker/index.ts", import.meta.url), "utf8");
+  const worker = await readFile(new URL("../core/runtime/worker/index.ts", import.meta.url), "utf8");
   assert.match(worker, /..\/server\/api/);
   assert.match(worker, /handleApiRequest/);
 });

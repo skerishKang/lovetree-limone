@@ -1,0 +1,424 @@
+.source57-app .living-glass-selection-bloom {
+  position: absolute;
+  inset: -8px;
+  z-index: 7;
+  pointer-events: none;
+  border-radius: 36px;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    color-mix(in srgb, var(--tone) 48%, white 16%) 0%,
+    color-mix(in srgb, var(--tone) 28%, transparent) 28%,
+    transparent 69%
+  );
+  filter: blur(7px);
+  transform: translateZ(34px) scale(.82);
+  transition: opacity .3s ease, transform .36s cubic-bezier(.2, .8, .2, 1), filter .3s ease;
+}
+
+.source57-app .living-glass-edge-runner {
+  position: absolute;
+  inset: -2px;
+  z-index: 10;
+  pointer-events: none;
+  padding: 2px;
+  border-radius: 32px;
+  opacity: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 15%,
+    color-mix(in srgb, var(--tone) 70%, white 30%) 22%,
+    transparent 31% 56%,
+    rgba(255,255,255,.38) 63%,
+    transparent 72%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--tone) 62%, transparent));
+}
+
+.source57-app .living-glass-selected-mark {
+  position: absolute;
+  right: 22px;
+  bottom: 18px;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--tone) 34%, rgba(255,255,255,.12));
+  border-radius: 999px;
+  color: rgba(255,255,255,.82);
+  background: color-mix(in srgb, var(--tone) 16%, rgba(9,8,13,.62));
+  box-shadow: 0 8px 24px rgba(0,0,0,.24);
+  backdrop-filter: blur(10px);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: .13em;
+  opacity: 0;
+  transform: translateY(7px) translateZ(38px);
+  transition: opacity .28s ease, transform .35s ease;
+  pointer-events: none;
+}
+
+.source57-app .living-glass-selected-mark::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+  box-shadow: 0 0 12px var(--tone);
+}
+
+.source57-app .living-glass-card-wrap.is-selected {
+  z-index: 8;
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-glow-field {
+  opacity: .78;
+  filter: blur(38px);
+  transform: translateZ(-30px) scale(1.035);
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-selection-bloom {
+  opacity: .48;
+  transform: translateZ(34px) scale(1);
+  animation: source57-selected-breath 3.6s ease-in-out infinite;
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-edge-runner {
+  animation: source57-edge-shimmer .78s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-selected-mark {
+  opacity: 1;
+  transform: translateY(0) translateZ(38px);
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-card {
+  opacity: 1;
+}
+
+.source57-app .living-glass-gallery-shell.has-selection .living-glass-card-wrap:not(.is-selected) .living-glass-card {
+  opacity: .68;
+  filter: saturate(.82) brightness(.84);
+  transition-duration: 0s;
+}
+
+.source57-app .living-glass-card-wrap.is-selected .living-glass-card {
+  border-color: color-mix(in srgb, var(--tone) 54%, rgba(255,255,255,.34));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.44),
+    inset 0 0 36px color-mix(in srgb, var(--tone) 13%, transparent),
+    0 46px 118px rgba(0,0,0,.7),
+    0 0 105px color-mix(in srgb, var(--tone) 45%, transparent),
+    0 0 36px color-mix(in srgb, var(--tone) 34%, transparent);
+}
+
+.source57-app .living-glass-mobile-travel-cue {
+  display: none;
+}
+
+@keyframes source57-selected-breath {
+  0%, 100% { opacity: .42; filter: blur(7px); }
+  50% { opacity: .60; filter: blur(9px); }
+}
+
+@keyframes source57-edge-shimmer {
+  0% { opacity: 0; transform: rotate(0deg) scale(.98); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(270deg) scale(1.01); }
+}
+
+@media (min-width: 881px) {
+  .source57-app .living-glass-gallery-shell.has-selection .living-glass-gallery {
+    max-width: 1060px;
+    transform: translateX(-120px);
+  }
+
+  .source57-app .living-glass-inspector {
+    position: fixed;
+    z-index: 30;
+    top: 104px;
+    right: 28px;
+    bottom: 24px;
+    width: min(400px, calc(100vw - 40px));
+    max-height: none;
+    border-radius: 28px;
+    background: linear-gradient(155deg, rgba(34,30,39,.82), rgba(12,11,17,.78));
+    box-shadow:
+      0 30px 100px rgba(0,0,0,.62),
+      inset 0 1px 0 rgba(255,255,255,.12),
+      -34px 0 90px color-mix(in srgb, #d77ca7 9%, transparent);
+    backdrop-filter: blur(30px) saturate(135%);
+    -webkit-backdrop-filter: blur(30px) saturate(135%);
+  }
+
+  .source57-app .living-glass-inspector-media {
+    height: 190px;
+    margin-inline: 18px;
+  }
+
+  .source57-app .living-glass-inspector-body {
+    padding: 18px 20px 22px;
+  }
+
+  .source57-app .living-glass-inspector-facts {
+    opacity: .72;
+  }
+
+  .source57-app .living-glass-why-next {
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 880px) {
+  .source57-app .living-glass-gallery-shell {
+    overflow: visible;
+    padding: 10px 18px 92px;
+  }
+
+  .source57-app .living-glass-gallery,
+  .source57-app .living-glass-gallery-shell.has-selection .living-glass-gallery {
+    display: flex;
+    max-width: none;
+    margin: 34px -18px 0;
+    padding: 8px 18px 30px;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 18px;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    transform: none;
+    perspective: 1400px;
+  }
+
+  .source57-app .living-glass-gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .source57-app .living-glass-card-wrap {
+    flex: 0 0 min(82vw, 350px);
+    min-width: 0;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    touch-action: pan-y;
+  }
+
+  .source57-app .living-glass-gallery-shell.has-selection .living-glass-card-wrap:not(.is-selected) .living-glass-card {
+    opacity: .78;
+    filter: saturate(.86) brightness(.86);
+  }
+
+  .source57-app .living-glass-mobile-travel-cue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 auto;
+    color: rgba(255,255,255,.36);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .14em;
+  }
+
+  .source57-app .living-glass-mobile-travel-cue > div {
+    display: flex;
+    gap: 5px;
+  }
+
+  .source57-app .living-glass-mobile-travel-cue i {
+    width: 22px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    transition: width .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+
+  .source57-app .living-glass-mobile-travel-cue i[data-active="true"] {
+    width: 30px;
+    background: linear-gradient(90deg, #a36cff, #f07bb3, #f0a853);
+    box-shadow: 0 0 16px rgba(240,123,179,.25);
+  }
+
+  .source57-app .living-glass-inspector {
+    position: fixed;
+    z-index: 60;
+    top: auto;
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: auto;
+    max-height: 72svh;
+    border-radius: 26px 26px 20px 20px;
+    background:
+      linear-gradient(155deg, rgba(255,255,255,.12), rgba(255,255,255,.035) 36%, rgba(255,255,255,.05)),
+      rgba(15,14,20,.80);
+    box-shadow: 0 30px 100px rgba(0,0,0,.64), inset 0 1px rgba(255,255,255,.12);
+    backdrop-filter: blur(28px) saturate(132%);
+    -webkit-backdrop-filter: blur(28px) saturate(132%);
+  }
+
+  .source57-app .living-glass-inspector-handle {
+    display: block;
+  }
+
+  .source57-app .living-glass-inspector-media {
+    height: min(190px, 28svh);
+    min-height: 148px;
+  }
+}
+
+@media (max-width: 520px) {
+  .source57-app .living-glass-gallery,
+  .source57-app .living-glass-gallery-shell.has-selection .living-glass-gallery {
+    margin: 27px -16px 0;
+    padding: 6px 20px 24px;
+    gap: 12px;
+    scroll-padding-inline: 20px;
+  }
+
+  .source57-app .living-glass-card-wrap {
+    flex-basis: min(calc(100vw - 52px), 360px);
+  }
+
+  .source57-app .living-glass-card {
+    height: 430px;
+    min-height: 0;
+    border-radius: 26px;
+  }
+
+  .source57-app .living-glass-media {
+    inset: 12px 12px auto;
+    height: 194px;
+    min-height: 0;
+    border-radius: 18px;
+  }
+
+  .source57-app .living-glass-card-copy {
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+  }
+
+  .source57-app .living-glass-card-label {
+    margin-bottom: 7px;
+    font-size: 9.5px;
+    letter-spacing: .14em;
+  }
+
+  .source57-app .living-glass-card-copy h2 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .source57-app .living-glass-meta-row {
+    gap: 7px;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+
+  .source57-app .living-glass-note {
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .source57-app .living-glass-connection-cue {
+    gap: 8px;
+    padding-top: 11px;
+  }
+
+  .source57-app .living-glass-selected-mark {
+    right: 18px;
+    bottom: 15px;
+    font-size: 8.5px;
+  }
+
+  .source57-app .living-glass-inspector {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    max-height: 72svh;
+    border-radius: 24px;
+  }
+
+  .source57-app .living-glass-inspector-header {
+    padding: 13px 16px 11px;
+  }
+
+  .source57-app .living-glass-inspector-header button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .source57-app .living-glass-inspector-media {
+    height: 156px;
+    min-height: 0;
+    margin: 0 12px;
+    border-radius: 18px;
+  }
+
+  .source57-app .living-glass-inspector-body {
+    padding: 14px 16px 18px;
+  }
+
+  .source57-app .living-glass-inspector-body h2 {
+    font-size: 21px;
+  }
+
+  .source57-app .living-glass-inspector-note {
+    margin-bottom: 13px;
+    font-size: 12px;
+    line-height: 1.58;
+  }
+
+  .source57-app .living-glass-inspector-facts {
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .source57-app .living-glass-why-next {
+    padding: 12px 13px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .source57-app .living-glass-card-wrap {
+    flex-basis: calc(100vw - 42px);
+  }
+
+  .source57-app .living-glass-card {
+    height: 422px;
+  }
+
+  .source57-app .living-glass-media {
+    height: 186px;
+  }
+
+  .source57-app .living-glass-card-copy h2 {
+    font-size: 19px;
+  }
+
+  .source57-app .living-glass-inspector-body h2 {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .source57-app .living-glass-selection-bloom,
+  .source57-app .living-glass-edge-runner {
+    animation: none !important;
+  }
+
+  .source57-app .living-glass-gallery {
+    scroll-behavior: auto !important;
+  }
+}

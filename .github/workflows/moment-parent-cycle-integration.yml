@@ -5,8 +5,9 @@ on:
     branches:
       - main
     paths:
-      - 'server/api/memories.ts'
-      - 'server/api/memory-parent-integrity.ts'
+      - 'core/runtime/server/api/memories.ts'
+      - 'core/runtime/server/api/memory-parent-integrity.ts'
+      - 'core/runtime/server/api/trees.ts'
       - 'tests/integration/moment-parent-cycle.mjs'
       - '.github/workflows/moment-parent-cycle-integration.yml'
   workflow_dispatch:

@@ -7,8 +7,9 @@ import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { readFile } from "node:fs/promises";
 import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
-import * as schema from "../../db/schema.ts";
-import { memoriesRouter } from "../../server/api/memories.ts";
+import * as schema from "../../core/runtime/db/schema.ts";
+import { memoriesRouter } from "../../core/runtime/server/api/memories.ts";
+import { treesRouter } from "../../core/runtime/server/api/trees.ts";
 
 const DB_CONN = process.env.DATABASE_URL;
 if (!DB_CONN) {
@@ -93,9 +94,9 @@ function apiContext({ method, path, body, uid = "user-a" }) {
   };
 }
 
-async function call(options) {
+async function call(options, router = memoriesRouter) {
   try {
-    const response = await memoriesRouter(apiContext(options));
+    const response = await router(apiContext(options));
     return {
       status: response.status,
       body: response.status === 204 ? null : await response.json().catch(() => null),
@@ -127,10 +128,10 @@ async function parentOf(id) {
 async function setupSchema() {
   await pool.query("DROP SCHEMA public CASCADE");
   await pool.query("CREATE SCHEMA public");
-  await pool.query(strip(await file("drizzle/0000_flippant_warlock.sql")));
-  await pool.query(strip(await file("drizzle/0001_perpetual_deathbird.sql")));
-  await pool.query(strip(await file("drizzle/0002_fixed_scarlet_spider.sql")));
-  await pool.query(strip(await file("drizzle/0003_peaceful_radioactive_man.sql")));
+  await pool.query(strip(await file("core/runtime/drizzle/0000_flippant_warlock.sql")));
+  await pool.query(strip(await file("core/runtime/drizzle/0001_perpetual_deathbird.sql")));
+  await pool.query(strip(await file("core/runtime/drizzle/0002_fixed_scarlet_spider.sql")));
+  await pool.query(strip(await file("core/runtime/drizzle/0003_peaceful_radioactive_man.sql")));
 }
 
 async function seed() {
@@ -161,9 +162,56 @@ async function put(id, body) {
   return call({ method: "PUT", path: `/api/memories/${id}`, body });
 }
 
+async function createNested(treeId, body) {
+  return call(
+    { method: "POST", path: `/api/trees/${treeId}/memories`, body },
+    memoriesRouter
+  );
+}
+
+async function createTreeWithFirstMemory(body) {
+  return call(
+    { method: "POST", path: "/api/trees/with-first-memory", body },
+    treesRouter
+  );
+}
+
 async function main() {
   await setupSchema();
   await seed();
+
+  // Create contracts: valid same-tree parent succeeds; cross-tree parent is rejected before insert.
+  const validCreate = await createNested("tree-a", { title: "created", parentId: "b" });
+  record("valid same-tree create status", validCreate.status, 201);
+  const validCreateId = validCreate.body?.id;
+  record("valid same-tree create parent", validCreate.body?.parentId, "b");
+  const crossTreeCreate = await createNested("tree-a", { title: "cross", parentId: "cross" });
+  record("cross-tree create status", crossTreeCreate.status, 400);
+  record(
+    "cross-tree create error",
+    bodyIncludes(crossTreeCreate, "parentId must reference a memory in the same tree"),
+    true
+  );
+  record("cross-tree create did not write", validCreateId ? await parentOf(validCreateId) : null, "b");
+
+  // The atomic first-memory route creates a new Tree, so an existing external parent is invalid.
+  const firstMemory = await createTreeWithFirstMemory({
+    clientKey: `cycle-first-${Date.now()}`,
+    title: "First Tree",
+    memory: { title: "First Moment" },
+  });
+  record("first-memory without parent succeeds", firstMemory.status, 201);
+  const firstMemoryExternalParent = await createTreeWithFirstMemory({
+    clientKey: `cycle-first-parent-${Date.now()}`,
+    title: "Invalid First Tree",
+    memory: { title: "First Moment", parentId: "b" },
+  });
+  record("first-memory external parent rejects", firstMemoryExternalParent.status, 400);
+  record(
+    "first-memory external parent error",
+    bodyIncludes(firstMemoryExternalParent, "parentId must reference a memory in the same tree"),
+    true
+  );
 
   // A. Self-parent must fail without changing the row.
   const self = await put("a", { parentId: "a" });

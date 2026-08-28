@@ -1,0 +1,114 @@
+name: Source58 Living Memory Pinboard native browser QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'vite.config.ts'
+      - 'postcss.config.mjs'
+      - 'tsconfig.json'
+      - 'app/layout.tsx'
+      - 'app/globals.css'
+      - 'app/design-lab/source-tracks/58/v1-2-native/**'
+      - 'components/source-track-58/**'
+      - 'lib/source-track-58-living-memory-pinboard.ts'
+      - 'lib/use-tree-moments.ts'
+      - 'lib/moment-model.ts'
+      - 'lib/tree-types.ts'
+      - 'tests/source-track-58-living-memory-pinboard-native-contract.test.mjs'
+      - 'tests/source-track-58-mobile-spatial-repair-contract.test.mjs'
+      - 'qa/source-track-58-living-memory-pinboard-browser-qa.mjs'
+      - 'qa/source-track-58-mobile-spatial-repair-browser-qa.mjs'
+      - '.github/workflows/source-track-58-living-memory-pinboard-browser-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source58-native-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Source58 focused contracts
+        run: >-
+          node --import tsx --test
+          tests/source-track-58-living-memory-pinboard-native-contract.test.mjs
+          tests/source-track-58-mobile-spatial-repair-contract.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare Playwright runtime
+        run: npx playwright install chromium
+
+      - name: Run Source58 browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/source58-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/design-lab/source-tracks/58/v1-2-native" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/source58-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/source58-server.log
+            exit 1
+          fi
+
+          mkdir -p /tmp/source58-living-memory-pinboard-browser-qa
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            SOURCE58_SCREENSHOT_DIR="/tmp/source58-living-memory-pinboard-browser-qa" \
+            node qa/source-track-58-living-memory-pinboard-browser-qa.mjs
+          V4_BASE_URL="http://127.0.0.1:3000" \
+            SOURCE58_SCREENSHOT_DIR="/tmp/source58-living-memory-pinboard-browser-qa" \
+            node qa/source-track-58-mobile-spatial-repair-browser-qa.mjs
+
+      - name: Upload Source58 browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-track-58-living-memory-pinboard-browser-evidence
+          path: /tmp/source58-living-memory-pinboard-browser-qa/*.png
+          if-no-files-found: warn

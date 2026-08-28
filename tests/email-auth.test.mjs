@@ -63,7 +63,7 @@ test("existing ID token flow retained (currentUser.getIdToken)", async () => {
 test("no separate auth backend or session introduced", async () => {
   const api = await readRoot("lib/api.ts");
   assert.doesNotMatch(api, /session|login\(|password/);
-  const schema = await readRoot("db/schema.ts");
+  const schema = await readRoot("core/runtime/db/schema.ts");
   assert.doesNotMatch(schema, /UserAccount|user_session|email_login/i);
 });
 

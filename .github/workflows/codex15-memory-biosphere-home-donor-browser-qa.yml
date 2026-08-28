@@ -1,0 +1,80 @@
+name: Codex15 Memory Biosphere HOME donor browser QA
+
+on:
+  pull_request:
+    paths:
+      - "app/components/v4/Codex15MemoryBiosphereHomeDonor.tsx"
+      - "app/styles/v4/codex15-memory-biosphere-home-donor.css"
+      - "app/v4/memory-biosphere/**"
+      - "lib/source-codex-15/**"
+      - "public/v4/memory-biosphere/**"
+      - "qa/codex15-memory-biosphere-home-donor-browser-qa.mjs"
+      - "tests/codex15-memory-biosphere-home-donor-contract.test.mjs"
+      - ".github/workflows/codex15-memory-biosphere-home-donor-browser-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex15-memory-biosphere-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codex15-memory-biosphere-home-donor-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Issue 493 source and canonical-boundary contract
+        run: node --import tsx --test tests/codex15-memory-biosphere-home-donor-contract.test.mjs
+      - name: Build
+        run: npm run build
+      - name: Prepare Playwright runtime
+        run: npx playwright install chromium
+      - name: Run Memory Biosphere responsive browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/codex15-memory-biosphere-server.log 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "http://127.0.0.1:3000/v4/memory-biosphere" > /dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat /tmp/codex15-memory-biosphere-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/codex15-memory-biosphere-server.log
+            exit 1
+          fi
+
+          CODEX15_BIOSPHERE_QA_URL="http://127.0.0.1:3000" \
+            node qa/codex15-memory-biosphere-home-donor-browser-qa.mjs
+      - name: Upload Memory Biosphere QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex15-memory-biosphere-home-donor-qa-evidence
+          path: |
+            qa-artifacts/codex15-memory-biosphere/*.png
+            qa-artifacts/codex15-memory-biosphere/qa-results.json
+          if-no-files-found: warn

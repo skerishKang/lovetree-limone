@@ -104,11 +104,16 @@ export default async function Lineage60ClusterExplorerPage({
         />
         <CrossItem
           track="Track56"
-          label="emotional path replay variant family"
-          href="/design-lab/lineages/53/v2"
+          label="vertical Moment network overview / emotional path replay family"
+          href="/design-lab/lineages/53/53-v3-vertical-network-overview"
           hold={false}
         />
-        <CrossItem track="Track59" label="living memory book (route not yet adopted)" href={null} hold />
+        <CrossItem
+          track="Track59"
+          label="living memory book / path replay family"
+          href="/design-lab/lineages/59/v5"
+          hold={false}
+        />
       </section>
 
       <section
@@ -143,7 +148,7 @@ export default async function Lineage60ClusterExplorerPage({
         />
         <Contract
           title="CROSS-TRACK HANDOFF"
-          body="Track55 → /v4/trees/demo/graph (resolved). Track56 → /design-lab/lineages/53/v2 (resolved). Track59 → HOLD (no adopted repository route). No file://, ../Track59 or window.open to local HTML — no fake navigation PASS."
+          body="Track55 → /v4/trees/demo/graph (resolved). Track56 → /design-lab/lineages/53/53-v3-vertical-network-overview (resolved). Track59 → /design-lab/lineages/59/v5 (resolved). No file://, source-relative HTML or window.open to local source files — no fake navigation PASS."
         />
       </section>
     </main>

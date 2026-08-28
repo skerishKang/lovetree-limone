@@ -1,0 +1,124 @@
+name: Five-source semantic UX
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "app/components/ViewSwitcher.tsx"
+      - "app/components/MomentDetailModal.tsx"
+      - "app/components/MomentContextActions.tsx"
+      - "app/trees/[id]/layout.tsx"
+      - "qa/five-source-semantic-ux-browser-qa.mjs"
+      - "tests/five-source-semantic-ux-navigation.test.mjs"
+      - ".github/workflows/five-source-semantic-ux.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  semantic-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Assert exact-head checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          echo "EXPECTED_HEAD=$expected"
+          echo "ACTUAL_HEAD=$actual"
+          test "$actual" = "$expected"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build exact head
+        run: npm run build
+
+      - name: Semantic navigation contract test
+        run: node --import tsx --test tests/five-source-semantic-ux-navigation.test.mjs
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: Start exact-head application server
+        shell: bash
+        run: |
+          set -euo pipefail
+          source scripts/ci/a-track-server-lifecycle.sh
+          atrack_start_server_group \
+            /tmp/five-source-semantic-ux-server.log \
+            /tmp/five-source-semantic-ux-server.pid \
+            http://127.0.0.1:3000/v4
+
+      - name: Semantic UX browser QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          SEMANTIC_UX_QA_URL=http://127.0.0.1:3000 \
+          SEMANTIC_UX_SCREENSHOT_DIR=/tmp/five-source-semantic-ux-screenshots \
+            node qa/five-source-semantic-ux-browser-qa.mjs 2>&1 | tee /tmp/five-source-semantic-ux-browser.log
+
+      - name: Upload semantic UX screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-source-semantic-ux-screenshots
+          path: /tmp/five-source-semantic-ux-screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Stop exact-head application server
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          source scripts/ci/a-track-server-lifecycle.sh
+          atrack_stop_server_group /tmp/five-source-semantic-ux-server.pid
+
+      - name: Surface diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo '## Five-source semantic UX failure diagnostics'
+            echo
+            for f in /tmp/five-source-semantic-ux-server.log /tmp/five-source-semantic-ux-browser.log; do
+              [ -f "$f" ] || continue
+              echo "### $f"
+              echo '```text'
+              tail -n 120 "$f"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-source-semantic-ux-failure-diagnostics
+          path: |
+            /tmp/five-source-semantic-ux-server.log
+            /tmp/five-source-semantic-ux-browser.log
+          if-no-files-found: warn
+          retention-days: 3

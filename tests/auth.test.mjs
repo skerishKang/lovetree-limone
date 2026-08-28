@@ -4,7 +4,7 @@ import { createSign, generateKeyPairSync, createPublicKey } from "node:crypto";
 import {
   verifyFirebaseToken,
   extractBearerToken,
-} from "../server/api/auth.ts";
+} from "../core/runtime/server/api/auth.ts";
 
 const PROJECT_ID = "relovetree";
 
