@@ -2,45 +2,37 @@
 
 ## Identity
 
-`CORE` = the shared product and backend boundary that both OLD and NEW frontend generations consume.
+`CORE` = the single shared product/backend authority consumed by both OLD and NEW frontend generations.
 
-## Principle
+## Current physical boundary
 
-**CORE does not create new backend code.** It documents the boundary contracts that both frontend generations must respect.
+The canonical backend runtime is physically grouped under `core/runtime/` without changing backend semantics:
 
-## What Lives Here
+| Area | Canonical path |
+|------|----------------|
+| Database schema | `core/runtime/db/schema.ts` |
+| Database access | `core/runtime/db/index.ts` |
+| Migrations | `core/runtime/drizzle/` |
+| Backend API | `core/runtime/server/api/` |
+| Cloudflare Worker | `core/runtime/worker/` |
+
+Root build/deploy configuration remains at repository root and points to these canonical CORE paths.
+
+## Invariants
+
+- This relocation is path-only. It does **not** create a second backend.
+- No database schema or migration semantics change.
+- No API endpoint, request/response contract, Auth behavior, provider, secret, or Production data changes.
+- OLD and NEW continue to consume the same canonical HTTP API.
+- A second DB writer, Auth system, API fork, or Worker remains forbidden.
+
+## Boundary documents
 
 | File | Purpose |
 |------|---------|
-| `FRONTEND_BACKEND_BOUNDARY.md` | Canonical boundary contract between frontend generations and backend |
+| `FRONTEND_BACKEND_BOUNDARY.md` | Canonical frontend/backend contract |
+| `runtime/` | Physical location of canonical backend runtime |
 
-## What Does NOT Live Here
+## Migration rule
 
-- No backend files are moved into `core/`
-- No database schema changes
-- No API changes
-- No Auth changes
-- No provider/secret changes
-
-## Authority
-
-The actual backend lives at:
-
-| Area | Path | Authority |
-|------|------|-----------|
-| Database schema | `db/schema.ts` | Canonical |
-| Database access | `db/index.ts` | Canonical |
-| Migrations | `drizzle/` | Canonical |
-| Backend API | `server/api/` | Canonical |
-| Cloudflare Worker | `worker/` | Canonical |
-| Build config | `next.config.ts`, `wrangler.jsonc` | Canonical |
-
-`core/` documents the boundary — it does not duplicate or replace these paths.
-
-## Rules
-
-1. Do not move backend files into `core/`
-2. Do not create a second canonical backend writer
-3. Do not fork database truth
-4. Both OLD and NEW may temporarily consume the same backend
-5. Backend migration (if needed) belongs in a separate issue
+Any remaining root-path consumers must be migrated to `core/runtime/**` before legacy compatibility paths are removed. CI must remain GREEN at each step.
