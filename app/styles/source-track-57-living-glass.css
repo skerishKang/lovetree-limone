@@ -774,10 +774,9 @@
   .source57-app *,
   .source57-app *::before,
   .source57-app *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
+    animation: none !important;
     scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
+    transition: none !important;
   }
 
   .source57-memory-haze { animation: none !important; }
