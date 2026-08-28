@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { chromium } from "playwright";
@@ -49,6 +50,9 @@ const viewports = [
 ];
 const checkedOutHead = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 const workflowSha = process.env.GITHUB_SHA ?? null;
+const pullRequestHead = process.env.GITHUB_EVENT_PATH
+  ? JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, "utf8")).pull_request?.head?.sha ?? null
+  : null;
 const results = { source: {}, native: {}, canonical: {}, errors: {} };
 
 await mkdir(evidence, { recursive: true });
@@ -196,6 +200,7 @@ await writeFile(
     generatedAt: new Date().toISOString(),
     checkedOutHead,
     workflowSha,
+    pullRequestHead,
     sourcePath: path.relative(root, sourcePath),
     nativeRoute: "/design-lab/lineages/64/v1-2-1",
     canonicalRoute: `/trees/:id/portal`,
