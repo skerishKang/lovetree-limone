@@ -2,238 +2,111 @@
   "MANIFEST_SCHEMA_VERSION": "1.0",
   "CAPSULE_ID": "SRC057",
   "TYPE": "SOURCE_CAPSULE",
-
   "IDENTITY_TOKEN": "57",
   "BASE_NUMBER": 57,
   "VARIANT_TOKEN": null,
-
-  "TITLE": "Lineage 57 — Living Character World V2 (Moment source authority)",
-
-  "IDENTITY_SCOPE": "Five-Source preallocation slot (Moment surface in NEW V1 composition: Moment = SRC057)",
-  "IDENTITY_ORIGIN": "design-lab/lineages/57/v2 → reference/lineage-57-living-character-world-v{1,2} → Drive folders 1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH (V2) and 1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F (V1)",
+  "TITLE": "Source57 — Living Glass Moment Cards (57_리빙글라스_모먼트카드)",
+  "IDENTITY_SCOPE": "Five-Source preallocation slot — SRC057 (NOT LIN057 Living Character World)",
+  "IDENTITY_ORIGIN": "Drive 57_리빙글라스_모먼트카드 (folder 1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz) → ★_최종_버전1.2_리빙글라스_모먼트카드.html (V1.2 final candidate) and 후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html (V1.3 candidate). Corrects PR #550 wrong authority (LIN057 Living Character World was not SRC057).",
   "LEGACY_IDENTIFIERS": [
-    "lt-57-living-character-world",
-    "57-v1-living-character-world",
-    "57-v2-reactive-character-lubt",
-    "Lineage 57 Living Character World V2",
-    "Source57LivingGlassNative (sibling surface, NOT equivalent authority)"
+    "57_리빙글라스_모먼트카드",
+    "Source57 Living Glass Moment Cards",
+    "Track 57 Living Glass Moment Cards",
+    "LIN057 Living Character World (DISTINCT — not SRC057, removed from this capsule)"
   ],
-
-  "AUTHORITY_SYSTEM": "Google Drive (authoritative design source) → lovetree-limone reference/lineage-57-living-character-world-v{1,2}/source/.xz.b64 deterministic lossless archive",
-  "AUTHORITY_CAPTURED_AT": "2026-08-28 (FRESH READ: archives decoded from current main reference/, SHA256 reconfirmed against SOURCE_PROVENANCE.md declaration)",
-
-  "AUTHORITATIVE_FOLDER": "Drive folder 1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH (V2) ; 1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F (V1 baseline)",
-  "AUTHORITATIVE_FILE": "V2 index.html (authoritative current revision); V1 index.html preserved as baseline",
-  "SOURCE_REVISION": "V2 (current) over V1 (baseline) — V2 = V1 base composition + V2 interaction overlay (added <link rel='stylesheet' href='living-world-v2.css'> and <script src='living-world-v2.js'></script> per SOURCE_PROVENANCE.md)",
-
-  "SOURCE_BYTES": 22310,
-  "SOURCE_SHA256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
-  "RAW_BYTES": 39495,
-  "RAW_SHA256": "see RAW_FILES[] (V2 index.html + V2 js + V2 css + V1 index.html each with independent verified SHA256; bundle SHA256 is not a single primary key)",
+  "AUTHORITY_SYSTEM": "Google Drive — 57_리빙글라스_모먼트카드 (folder 1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz) containing V1 / V1.1 / V1.2_final_candidate / V1.3_mobile_candidate hierarchy",
+  "AUTHORITY_CAPTURED_AT": "2026-08-28T09:55+09:00 (FRESH rclone lsjson + rclone cat byte/sha verification)",
+  "AUTHORITATIVE_FOLDER": "Drive folder 1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz — 57_리빙글라스_모먼트카드 (path: [[지피티 작업]]/[01_러브트리]/03_디자인채택본/57_리빙글라스_모먼트카드)",
+  "AUTHORITATIVE_FILE": "★_최종_버전1.2_리빙글라스_모먼트카드.html (V1.2 final candidate, promoted at folder root) — byte-identical duplicates exist in 03_버전1.2_최종후보_자료/02_화면원본/",
+  "SOURCE_REVISION": "V1.2 final candidate (folder 03_버전1.2_최종후보_자료, validation status CANDIDATE_FOR_PRODUCT_OWNER_REVIEW, pass:true). V1.3 mobile-responsive candidate (folder 04_버전1.3_모바일반응형수정_자료) is separate unadopted candidate. V1 baseline and V1.1 REAL_MEDIA are historical revisions in 01_버전1_기본버전_자료 and 02_버전1.1_실제미디어_선택빛_자료.",
+  "SOURCE_BYTES": 671480,
+  "SOURCE_SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+  "RAW_BYTES": 671480,
+  "RAW_SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
   "RAW_MODE": "EXACT_COPY",
-
-  "DRIVE_FOLDER_ID": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
-  "DRIVE_FILE_ID": "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
-  "ORIGINAL_LOCATION": "Google Drive folder 1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH (V2) ; Drive folder 1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F (V1)",
-
-  "MIME_TYPE": "text/html; charset=utf-8 (entry) | application/javascript (companion) | text/css (companion)",
-  "ENTRY_FILE": "lineage-57-living-character-world-v2-index.html",
-
+  "DRIVE_FOLDER_ID": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+  "DRIVE_FILE_ID": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+  "ORIGINAL_LOCATION": "Drive 57_리빙글라스_모먼트카드/★_최종_버전1.2_리빙글라스_모먼트카드.html (ID 17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R, folder 1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz)",
+  "MIME_TYPE": "text/html; charset=utf-8",
+  "ENTRY_FILE": "57-living-glass-moment-cards-V1.2.html",
   "RAW_FILES": [
     {
-      "PATH": "SRC057-01-raw/lineage-57-living-character-world-v2-index.html",
-      "ROLE": "entry-authoritative-v2",
-      "BYTES": 22310,
-      "SHA256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
-      "DRIVE_FILE_ID": "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
-      "DRIVE_FOLDER_ID": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
-      "MIME_TYPE": "text/html; charset=utf-8"
+      "PATH": "SRC057-01-raw/57-living-glass-moment-cards-V1.2.html",
+      "ROLE": "entry-V1.2-final-candidate-promoted-root",
+      "BYTES": 671480,
+      "SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+      "DRIVE_FILE_ID": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+      "DRIVE_FOLDER_ID": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+      "MIME_TYPE": "text/html; charset=utf-8",
+      "NOTE": "Promoted at folder root with ★ prefix. Byte-identical duplicates: 1_CJ-PAWwDSz4mNLg3fIUPjyOHJewqdD- and 1gA3K4kkkSaMWz2m7dNxfja4NQo6nkW_c in 03_버전1.2/02_화면원본/"
     },
     {
-      "PATH": "SRC057-01-raw/lineage-57-living-character-world-v2.js",
-      "ROLE": "companion-script-v2-overlay",
-      "BYTES": 14449,
-      "SHA256": "6c0d33c96fc507d2732bb92d4d0b0a65e66014fb5ede159d5862e359b51e1838",
-      "DRIVE_FILE_ID": "1fd42ni1Y287_v1yHGjhc5zdw2Pn_CQTc",
-      "DRIVE_FOLDER_ID": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
-      "MIME_TYPE": "application/javascript"
-    },
-    {
-      "PATH": "SRC057-01-raw/lineage-57-living-character-world-v2.css",
-      "ROLE": "companion-stylesheet-v2-overlay",
-      "BYTES": 2736,
-      "SHA256": "b8c3a829ebeef1432ef01edf633bb6b2da184bf0147eed0047489cfe9b0f2214",
-      "DRIVE_FILE_ID": "1_ajrjUZby-689e8qblcyawX-BT3xfHqy",
-      "DRIVE_FOLDER_ID": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
-      "MIME_TYPE": "text/css"
-    },
-    {
-      "PATH": "SRC057-01-raw/lineage-57-living-character-world-v1-index.html",
-      "ROLE": "baseline-v1-frozen",
-      "BYTES": 22218,
-      "SHA256": "d71197cf97db913a7498e8ce732acf4f094e13d83fde06129d04c265fd1b6710",
-      "DRIVE_FILE_ID": "1X2TXWCXCe8wFIf7NsQk5jMiOw7T2JmAQ",
-      "DRIVE_FOLDER_ID": "1xRwrB3GA8qfyhpDhPid0LIL3mRkPzf3F",
-      "MIME_TYPE": "text/html; charset=utf-8"
+      "PATH": "SRC057-01-raw/57-living-glass-moment-cards-V1.3-candidate.html",
+      "ROLE": "candidate-V1.3-mobile-responsive-unadopted",
+      "BYTES": 676320,
+      "SHA256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+      "DRIVE_FILE_ID": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+      "DRIVE_FOLDER_ID": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+      "MIME_TYPE": "text/html; charset=utf-8",
+      "NOTE": "04_버전1.3_모바일반응형수정_자료 — separate candidate, pass:true per 버전1.3_모바일반응형_검증결과.json, not adopted as canonical SOURCE"
     }
   ],
-  "ASSETS": [
-    {
-      "PATH": "characters/M01/M01-*.webp × 12 expressions (neutral,smile,laugh,wink,shy,surprise,angry,sing,talk,cry,touched,sleepy)",
-      "ROLE": "character-expression-frames",
-      "MIME_TYPE": "image/webp",
-      "BYTES": 71864,
-      "SHA256": "see lib/lineage-57-assets.ts LINEAGE_57_CHARACTER_ASSETS (48 entries)",
-      "DRIVE_FILE_ID": "see lib/lineage-57-assets.ts (one Drive file ID per expression per character)",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "characters/M02/M02-*.webp × 12 expressions",
-      "ROLE": "character-expression-frames",
-      "MIME_TYPE": "image/webp",
-      "BYTES": 86444,
-      "SHA256": "see lib/lineage-57-assets.ts LINEAGE_57_CHARACTER_ASSETS (48 entries)",
-      "DRIVE_FILE_ID": "see lib/lineage-57-assets.ts",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "characters/F01/F01-*.webp × 12 expressions",
-      "ROLE": "character-expression-frames",
-      "MIME_TYPE": "image/webp",
-      "BYTES": 107968,
-      "SHA256": "see lib/lineage-57-assets.ts LINEAGE_57_CHARACTER_ASSETS (48 entries)",
-      "DRIVE_FILE_ID": "see lib/lineage-57-assets.ts",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "characters/F02/F02-*.webp × 12 expressions",
-      "ROLE": "character-expression-frames",
-      "MIME_TYPE": "image/webp",
-      "BYTES": 92550,
-      "SHA256": "see lib/lineage-57-assets.ts LINEAGE_57_CHARACTER_ASSETS (48 entries)",
-      "DRIVE_FILE_ID": "see lib/lineage-57-assets.ts",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-idle.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 128008,
-      "SHA256": "fbc36d5741ba18e227045a3127e7945490d2d0bcd52d60707173e71f6b213af0",
-      "DRIVE_FILE_ID": "1YibyPbJD_ctfjujkAo1-I1uSVUj1_BMr",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-heart.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 136977,
-      "SHA256": "a340ef518d05ab1ba468a7f6eb27b8531ed8b44126c3c0f0c3c77f8c0e1c825a",
-      "DRIVE_FILE_ID": "1vF8l1ANFOk6KCnhKjRGfzhIu2jKNd5TN",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-scan.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 161005,
-      "SHA256": "344c16202a2e1d18cf6b8c44ac895947312ec39196fef1a570d4116fdec2e7c9",
-      "DRIVE_FILE_ID": "18DZkGunEwFvU5h5U6kA6lDnWl9MEz5eR",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-guide.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 200528,
-      "SHA256": "3bf54d766cb9ab2857d812a4de9924d1fa01f80c9e0a7c5b08d9a867fef065b6",
-      "DRIVE_FILE_ID": "1MAfv2GNuAsgms_wIAh37jiJE53DmuoK9",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-magic.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 139114,
-      "SHA256": "20696898e498db2a5ea7f5803847c47e9b8785bcf8758de43ac026b8045cff3f",
-      "DRIVE_FILE_ID": "1MCCAnk3IAOtZsUHRjZUBWkcVwOygLa5y",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    },
-    {
-      "PATH": "lubt/lubt-bloom.png",
-      "ROLE": "lubt-pose",
-      "MIME_TYPE": "image/png",
-      "BYTES": 199669,
-      "SHA256": "61d634973e388a6545640c5a341668d07c0fdd802ab18bf8ee6b396196b1d68c",
-      "DRIVE_FILE_ID": "1GZfX-lwEqIFIFL7rug2hlYatuYyUFTSd",
-      "INTAKE_MODE": "AUTHORITY_POINTER"
-    }
-  ],
-  "EXTERNAL_DEPENDENCIES": [
-    {
-      "KIND": "sibling-css",
-      "PATH": "living-world-v2.css",
-      "INTAKE_FILE": "SRC057-01-raw/lineage-57-living-character-world-v2.css"
-    },
-    {
-      "KIND": "sibling-js",
-      "PATH": "living-world-v2.js",
-      "INTAKE_FILE": "SRC057-01-raw/lineage-57-living-character-world-v2.js"
-    }
-  ],
-
+  "ASSETS": [],
+  "EXTERNAL_DEPENDENCIES": [],
   "INLINE_PAYLOADS": {
     "INLINE_CSS": {
       "present": true,
       "count": 1,
-      "encoded_bytes": 10605,
-      "decoded_bytes": 10605
+      "encoded_bytes": 27440,
+      "decoded_bytes": 27440
     },
     "INLINE_JS": {
       "present": true,
       "count": 1,
-      "encoded_bytes": 8204,
-      "decoded_bytes": 8204
+      "encoded_bytes": 637968,
+      "decoded_bytes": 637968
     },
     "INLINE_MEDIA": {
-      "present": false,
-      "count": 0,
-      "encoded_bytes": 0,
-      "decoded_bytes": 0
+      "present": true,
+      "count": 5,
+      "encoded_bytes": 616012,
+      "decoded_bytes": 462005
     }
   },
-
-  "RELATIONS": [
-    {
-      "relation": "BASELINE_OF",
-      "target": "SRC057",
-      "evidence": "V1 index.html is the V1 baseline from which V2 entry derives by appending CSS+JS links (see SOURCE_PROVENANCE.md §Revision relationship)"
-    },
-    {
-      "relation": "PRODUCT_ROLE",
-      "target": "Moment",
-      "evidence": "new/versions/v1/README.md and new/standards/VERSION_COMPOSITION_STANDARD.md: 'Moment = SRC057'"
-    }
-  ],
-
+  "DUPLICATE_AUTHORITY": {
+    "STATUS": "OPEN",
+    "V1_2_DUPLICATES": [
+      {
+        "PATH": "★_최종_버전1.2_리빙글라스_모먼트카드.html (folder root)",
+        "DRIVE_FILE_ID": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+        "BYTES": 671480,
+        "SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+        "ROLE": "promoted-root-candidate"
+      },
+      {
+        "PATH": "03_버전1.2_최종후보_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.2_YOUTUBE_LIVE_THUMBNAIL.html",
+        "DRIVE_FILE_ID": "1_CJ-PAWwDSz4mNLg3fIUPjyOHJewqdD-",
+        "BYTES": 671480,
+        "SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+        "ROLE": "duplicate-copy"
+      },
+      {
+        "PATH": "03_버전1.2_최종후보_자료/02_화면원본/57_LIVING_GLASS_MOMENT_CARDS_V1.2_YOUTUBE_LIVE_THUMBNAIL_STANDALONE.html",
+        "DRIVE_FILE_ID": "1gA3K4kkkSaMWz2m7dNxfja4NQo6nkW_c",
+        "BYTES": 671480,
+        "SHA256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+        "ROLE": "duplicate-copy (STANDALONE variant)"
+      }
+    ],
+    "V1_2_VS_V1_3_SELECTION": "V1.2 is folder-root promoted ★ candidate (CANDIDATE_FOR_PRODUCT_OWNER_REVIEW, pass:true per 57_V1.2_VALIDATION.json) but not yet FINAL_ADOPTED; V1.3 is separate mobile-responsive candidate (pass:true per 버전1.3_모바일반응형_검증결과.json) awaiting product-owner adoption decision. Single canonical SOURCE selection requires explicit product-owner adoption evidence."
+  },
+  "RELATIONS": [],
   "MASTER_ROW_IDS": [],
   "NORMALIZED_FAMILY_ID": null,
-
-  "RIGHTS_STATUS": "Internal LoveTree authoritative design source. No third-party redistribution intended. Drive originals treated read-only per AGENTS.md External source preservation.",
-  "THIRD_PARTY_PROVENANCE": "Authoritative originals are first-party design source from the LoveTree design owner. No third-party assets in the 3-file entry bundle (index.html, living-world-v2.js, living-world-v2.css). 54 character/lubt assets (48 webp + 6 png) are first-party per lib/lineage-57-assets.ts Drive ID table.",
-
-  "SOURCE_BOUNDARIES": {
-    "productJob": "Person/Subject representation → Character emotional reaction → Lubt contextual response → optional symbolic Moment capture",
-    "capabilityCandidate": "Reactive Character + Memory Guide",
-    "saveBoundary": "SOURCE DEMO / NON-PERSISTENT",
-    "excluded": [
-      "WebGL", "Three.js", "camera", "portal", "hotspot", "node graph",
-      "Tree navigation", "Connection traversal", "canonical cast", "domain 120-state taxonomy"
-    ]
-  },
-
+  "RIGHTS_STATUS": "Internal LoveTree authoritative design source. No third-party redistribution. Drive originals read-only.",
+  "THIRD_PARTY_PROVENANCE": "First-party design source from LoveTree design owner. No third-party assets in entry HTML (inline base64 payloads are first-party fixture thumbnails for YouTube preview interception per 57_V1.2_VALIDATION.json managedChromiumNetworkMode).",
   "WORKFLOW_STATUS": {
-    "RAW_STATUS": "INTAKE_COMPLETE",
+    "RAW_STATUS": "BLOCKED",
     "SPLIT_STATUS": "NOT_STARTED",
     "PARITY_STATUS": "NOT_STARTED",
     "PRODUCT_USAGE": "NOT_STARTED"
