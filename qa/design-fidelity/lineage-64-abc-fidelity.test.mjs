@@ -121,7 +121,8 @@ async function captureNative(browser, width, height, reduced = false) {
 
     const menuToggle = page.getByRole("button", { name: /시맨틱 목록/ });
     await menuToggle.waitFor({ state: "visible", timeout: 15000 });
-    await menuToggle.click();
+    await menuToggle.click({ force: true });
+    await page.locator('button[aria-expanded="true"]').waitFor({ state: "attached", timeout: 5000 });
     const list = page.locator('[role="listbox"]');
     await list.waitFor({ state: "visible", timeout: 15000 });
     const firstOption = list.locator('[role="option"]').first();
