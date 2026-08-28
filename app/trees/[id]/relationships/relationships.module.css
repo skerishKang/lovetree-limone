@@ -246,6 +246,52 @@
   line-height: 1.55;
 }
 
+.crossSource {
+  margin-top: 14px;
+  padding: 12px 13px;
+  border: 1px solid #e5dee5;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .58);
+}
+
+.crossSource strong {
+  display: block;
+  color: #9a6381;
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.crossSourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.crossSourceLink {
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, #a66b8a 30%, #ded6df);
+  border-radius: 999px;
+  color: #6f5360;
+  font-size: 9px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.crossSourceLink:hover,
+.crossSourceLink:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, #a66b8a 56%, #ded6df);
+  background: rgba(255, 255, 255, .82);
+  outline: none;
+}
+
+.crossSourceLink:focus-visible {
+  outline: 2px solid #5e4656;
+  outline-offset: 2px;
+}
+
 .empty,
 .state {
   max-width: 760px;

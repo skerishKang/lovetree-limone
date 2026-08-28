@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ViewSwitcher } from "@/app/components/ViewSwitcher";
 import { useTreeMoments } from "@/lib/use-tree-moments";
@@ -100,6 +100,21 @@ export default function TreeRelationshipsPage() {
   const outgoing = selected ? edges.filter((edge) => edge.from.id === selected.id) : [];
   const worldHeight = Math.max(720, 210 + nodes.length * 118);
 
+  const encodedTreeId = encodeURIComponent(treeId);
+  const momentSuffix = selectedMomentId ? `?moment=${encodeURIComponent(selectedMomentId)}` : "";
+
+  // Selected-node continuity + return-state restoration: when Source56 is entered
+  // from Source57/58/60/64 with ?moment=, bring the already-selected node into view
+  // so the user lands where they left off (no new DB/relation state required).
+  const worldRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selectedMomentId) return;
+    const target = worldRef.current?.querySelector<HTMLElement>(
+      `[data-network-moment-id="${selectedMomentId}"]`,
+    );
+    target?.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
+  }, [selectedMomentId]);
+
   const syncMomentToUrl = useCallback(
     (nextMomentId: string | null) => {
       selectMoment(nextMomentId);
@@ -149,7 +164,7 @@ export default function TreeRelationshipsPage() {
 
         {!loading && !error && nodes.length > 0 ? (
           <div className={styles.viewport}>
-            <div className={styles.world} style={{ height: worldHeight }} data-testid="source56-canonical-network">
+            <div ref={worldRef} className={styles.world} style={{ height: worldHeight }} data-testid="source56-canonical-network">
               <svg className={styles.edges} viewBox={`0 0 1000 ${worldHeight}`} preserveAspectRatio="none" aria-hidden="true">
                 {edges.map((edge) => {
                   const active = Boolean(selected && (edge.from.id === selected.id || edge.to.id === selected.id));
@@ -196,6 +211,15 @@ export default function TreeRelationshipsPage() {
                     <strong>다음으로 이어진 순간</strong>
                     <p>{outgoing.length > 0 ? outgoing.map((edge) => edge.reason).join(" · ") : "현재 이어진 다음 Moment가 없습니다."}</p>
                   </article>
+                  <nav className={styles.crossSource} aria-label="이 Moment를 다른 보기로 열기">
+                    <strong>이 Moment 다른 보기</strong>
+                    <div className={styles.crossSourceRow}>
+                      <Link className={styles.crossSourceLink} data-semantic-view-transition="push" href={`/trees/${encodedTreeId}${momentSuffix}`}>기억 카드 · 57</Link>
+                      <Link className={styles.crossSourceLink} data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/board${momentSuffix}`}>보드 · 58</Link>
+                      <Link className={styles.crossSourceLink} data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/explore${momentSuffix}`}>클러스터 탐색 · 60</Link>
+                      <Link className={styles.crossSourceLink} data-semantic-view-transition="push" href={`/trees/${encodedTreeId}/portal${momentSuffix}`}>포털 · 64</Link>
+                    </div>
+                  </nav>
                 </aside>
               ) : null}
             </div>
