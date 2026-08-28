@@ -10,18 +10,20 @@
   "TITLE": "세로형 모먼트관계망 전체조망 (Vertical Moment Relationship Network Overview) — V1.2",
 
   "IDENTITY_SCOPE": "NEW Five-Source calibration (Parent #548) — Connections/Relationships product surface",
-  "IDENTITY_ORIGIN": "Central preallocation SRC056 mapped to the Connections product surface; authoritative sibling/Drive source is the Vertical Moment Relationship Network (세로형 모먼트관계망 전체조망 V1.2). The SRC056 preallocation number does not imply a Track/Lineage relation by itself; relations are recorded in RELATIONS[] from evidence only.",
+  "IDENTITY_ORIGIN": "Central preallocation SRC056 mapped to the Connections product surface (new/versions/v1/README.md and new/standards/VERSION_COMPOSITION_STANDARD.md: 'Connections → SRC056'). Authoritative sibling/Drive source is the Vertical Moment Relationship Network (세로형 모먼트관계망 전체조망 V1.2). The SRC056 preallocation number does not imply a Track/Lineage relation by itself; relations are recorded in RELATIONS[] from canonical allocation evidence only. No canonical TRK/LIN/CDX/CAP/MST/FAM allocation exists for SRC056; all free-form identifiers are preserved in LEGACY_IDENTIFIERS.",
   "LEGACY_IDENTIFIERS": [
     "Source 56",
     "Track56",
     "source-track-56-vertical-moment-network",
     "56_세로형_모먼트관계망_전체조망",
     "lt-53-emotional-path-replay",
+    "Connections",
+    "Connections (NEW V1)",
     "후보_버전1.2_세로형_모먼트관계망_전체조망.html"
   ],
 
   "AUTHORITY_SYSTEM": "Google Drive (sibling design repository reference sync, read-only)",
-  "AUTHORITY_CAPTURED_AT": "2026-08-28T09:16:00+09:00",
+  "AUTHORITY_CAPTURED_AT": "2026-08-28T09:40:00+09:00",
 
   "AUTHORITATIVE_FOLDER": "56_세로형_모먼트관계망_전체조망",
   "AUTHORITATIVE_FILE": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
@@ -53,11 +55,7 @@
   "ASSETS": [],
   "EXTERNAL_DEPENDENCIES": [],
 
-  "RELATIONS": [
-    { "relation": "SOURCE_OF", "target": "source-track-56-vertical-moment-network" },
-    { "relation": "LINEAGE_VARIANT_OF", "target": "lt-53-emotional-path-replay" },
-    { "relation": "PRODUCT_SURFACE", "target": "Connections (NEW V1)" }
-  ],
+  "RELATIONS": [],
 
   "MASTER_ROW_IDS": [],
   "NORMALIZED_FAMILY_ID": null,
@@ -73,8 +71,8 @@
   },
 
   "INLINE_PAYLOADS": {
-    "INLINE_CSS": { "present": true, "count": 1, "encoded_bytes": 0, "decoded_bytes": 0 },
-    "INLINE_JS": { "present": true, "count": 1, "encoded_bytes": 0, "decoded_bytes": 0 },
-    "INLINE_MEDIA": { "present": true, "count": 1, "encoded_bytes": 34, "decoded_bytes": 13 }
+    "INLINE_CSS": { "present": true, "count": 1, "encoded_bytes": 10420, "decoded_bytes": 10420 },
+    "INLINE_JS": { "present": true, "count": 1, "encoded_bytes": 31600, "decoded_bytes": 31600 },
+    "INLINE_MEDIA": { "present": true, "count": 1, "encoded_bytes": 297, "decoded_bytes": 248 }
   }
 }
