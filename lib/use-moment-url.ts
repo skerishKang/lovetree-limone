@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { replaceTreeViewQuery } from "./moment-url";
 import type { MemoryRecord } from "./tree-types";
@@ -45,6 +45,23 @@ export function useMomentUrlState(opts: {
       return () => window.clearTimeout(timer);
     }
   }, [loading, momentParam, moments, pushState]);
+
+  // Inbound selected Moment handling: sync the URL ?moment=<id> param into
+  // the selected Moment state when data has loaded. This covers direct URL
+  // refresh resilience, inbound navigation from other views, and return-state
+  // preservation on browser back/forward — all without inventing moments or
+  // touching shared routing state.
+  const syncedMomentParamRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (loading || !momentParam) {
+      syncedMomentParamRef.current = null;
+      return;
+    }
+    if (!moments.some((m) => m.id === momentParam)) return;
+    if (syncedMomentParamRef.current === momentParam) return;
+    syncedMomentParamRef.current = momentParam;
+    onSelect(momentParam);
+  }, [loading, momentParam, moments, onSelect]);
 
   // The ?highlight= URL parameter is transient: it is removed as soon as the
   // tree data has loaded (the visual highlight itself expires via the
