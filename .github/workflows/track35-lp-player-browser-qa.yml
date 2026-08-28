@@ -17,13 +17,13 @@ on:
       - 'lib/source-track-35/**'
       - 'lib/moment-model.ts'
       - 'lib/use-tree-moments.ts'
-      - 'reference/source-tracks-snapshot/35_LP플레이어/**'
+      - 'old/reference/source-tracks-snapshot/35_LP플레이어/**'
       - 'tests/track35-lp-player-contract.test.mjs'
       - 'qa/track35-lp-player-browser-qa.mjs'
       - '.github/workflows/track35-lp-player-browser-qa.yml'
       - 'drizzle.config.ts'
-      - 'db/**'
-      - 'drizzle/**'
+      - 'core/runtime/db/**'
+      - 'core/runtime/drizzle/**'
   workflow_dispatch:
 
 permissions:

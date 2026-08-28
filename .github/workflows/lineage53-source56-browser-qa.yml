@@ -10,7 +10,7 @@ on:
       - 'tests/lineage-53-source56-extension.test.mjs'
       - 'qa/lineage-53-source56-browser-qa.mjs'
       - '.github/workflows/lineage53-source56-browser-qa.yml'
-      - 'reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/**'
+      - 'old/reference/source-tracks-snapshot/56_세로형_모먼트관계망_전체조망/**'
   workflow_dispatch:
 
 permissions:

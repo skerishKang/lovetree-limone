@@ -17,13 +17,13 @@ on:
       - 'lib/source-track-38/**'
       - 'lib/api.ts'
       - 'design-intake/manifests/source-track-38-voyager-space-memory-map-v1.json'
-      - 'reference/source-tracks-snapshot/38_보이저_우주기억지도/**'
+      - 'old/reference/source-tracks-snapshot/38_보이저_우주기억지도/**'
       - 'tests/source-track-38-v1-donor-contract.test.mjs'
       - 'qa/source-track-38-v1-discover-donor-browser-qa.mjs'
       - '.github/workflows/source-track38-v1-discover-donor-browser-qa.yml'
       - 'drizzle.config.ts'
-      - 'db/**'
-      - 'drizzle/**'
+      - 'core/runtime/db/**'
+      - 'core/runtime/drizzle/**'
   workflow_dispatch:
 
 permissions:

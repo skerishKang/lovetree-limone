@@ -16,7 +16,7 @@ on:
       - 'app/design-lab/drive-track-18-electric-aurora/**'
       - 'lib/drive-track-18-electric-aurora/**'
       - 'lib/moment-model.ts'
-      - 'reference/source-tracks-snapshot/18_메모리코어_전기오로라/**'
+      - 'old/reference/source-tracks-snapshot/18_메모리코어_전기오로라/**'
       - 'tests/drive-track-18-electric-aurora-contract.test.mjs'
       - 'qa/drive-track-18-electric-aurora-browser-qa.mjs'
       - '.github/workflows/drive-track-18-electric-aurora-browser-qa.yml'

@@ -16,13 +16,13 @@ on:
       - 'app/design-lab/source-tracks/36/v3/donor/**'
       - 'lib/source-track-36/**'
       - 'design-intake/manifests/source-track-36-cinematic-memory-portal-v3.json'
-      - 'reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/**'
+      - 'old/reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/**'
       - 'tests/source-track-36-v3-donor-contract.test.mjs'
       - 'qa/source-track-36-v3-home-donor-browser-qa.mjs'
       - '.github/workflows/source-track36-v3-home-donor-browser-qa.yml'
       - 'drizzle.config.ts'
-      - 'db/**'
-      - 'drizzle/**'
+      - 'core/runtime/db/**'
+      - 'core/runtime/drizzle/**'
   workflow_dispatch:
 
 permissions:

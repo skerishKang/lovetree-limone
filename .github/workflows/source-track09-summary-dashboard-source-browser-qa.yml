@@ -3,7 +3,7 @@ name: Track09 Full Memory Summary Dashboard source browser QA
 on:
   pull_request:
     paths:
-      - 'reference/source-tracks-snapshot/09_전체기억_요약대시보드/**'
+      - 'old/reference/source-tracks-snapshot/09_전체기억_요약대시보드/**'
       - 'design-intake/source-track-09-full-memory-summary-dashboard-mytree-donor.json'
       - 'tests/source-track-09-summary-dashboard-donor-contract.test.mjs'
       - 'qa/source-track-09-summary-dashboard-source-browser-qa.mjs'

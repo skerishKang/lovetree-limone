@@ -14,7 +14,7 @@ on:
       - 'app/layout.tsx'
       - 'app/globals.css'
       - 'app/design-lab/source-tracks/58/v1-2-native/**'
-      - 'components/source-track-58/**'
+      - 'old/components/source-track-58/**'
       - 'lib/source-track-58-living-memory-pinboard.ts'
       - 'lib/use-tree-moments.ts'
       - 'lib/moment-model.ts'
