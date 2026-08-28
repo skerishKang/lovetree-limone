@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { handleApiRequest } from "../server/api/handler.ts";
-import { sanitizeError } from "../server/api/errors.ts";
+import { handleApiRequest } from "../core/runtime/server/api/handler.ts";
+import { sanitizeError } from "../core/runtime/server/api/errors.ts";
 
 test("API database exception becomes a generic 500 with a requestId", async () => {
   const logged = [];
