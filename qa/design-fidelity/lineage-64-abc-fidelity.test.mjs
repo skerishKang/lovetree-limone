@@ -256,8 +256,8 @@ async function captureCanonical(browser, width, height, reduced = false) {
     await page.route(`**/api/trees/${treeId}`, (route) =>
       route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tree) }),
     );
-    await page.goto(`${base}/trees/${treeId}/portal`, { waitUntil: "domcontentloaded" });
-    await page.locator('[data-mvp-source="64"]').waitFor({ state: "visible" });
+    await page.goto(`${base}/trees/${treeId}/portal`, { waitUntil: "commit" });
+    await page.locator('[data-source64-revision="64-v1-2-1"]').waitFor({ state: "attached", timeout: 15000 });
     await page.locator('[data-rendering="css3d-dom"][data-reduced-motion]').waitFor({ state: "attached" });
     results.canonical[label] ??= {};
     results.canonical[label].initial = await save(page, "C-canonical", label, "initial");
