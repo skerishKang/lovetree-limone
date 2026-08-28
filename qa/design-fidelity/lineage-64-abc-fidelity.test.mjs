@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -46,6 +47,8 @@ const viewports = [
   [390, 844],
   [320, 720],
 ];
+const checkedOutHead = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const workflowSha = process.env.GITHUB_SHA ?? null;
 const results = { source: {}, native: {}, canonical: {}, errors: {} };
 
 await mkdir(evidence, { recursive: true });
@@ -191,7 +194,8 @@ await writeFile(
   path.join(evidence, "abc-results.json"),
   `${JSON.stringify({
     generatedAt: new Date().toISOString(),
-    head: process.env.GITHUB_SHA ?? "local",
+    checkedOutHead,
+    workflowSha,
     sourcePath: path.relative(root, sourcePath),
     nativeRoute: "/design-lab/lineages/64/v1-2-1",
     canonicalRoute: `/trees/:id/portal`,
