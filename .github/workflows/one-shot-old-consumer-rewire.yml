@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Rewrite only approved moved-path consumers
+      - name: Rewrite approved non-workflow moved-path consumers
         shell: bash
         run: |
           set -euo pipefail
@@ -35,7 +35,8 @@ jobs:
           }
 
           for rel in tracked:
-              if not rel or rel.startswith('old/') or rel == '.github/workflows/one-shot-old-consumer-rewire.yml':
+              if (not rel or rel.startswith('old/') or rel.startswith('.github/workflows/')
+                      or rel == '.github/workflows/one-shot-old-consumer-rewire.yml'):
                   continue
               p = Path(rel)
               if not p.is_file():
@@ -78,7 +79,6 @@ jobs:
           print(f'changed files: {len(changed)}')
           for rel in changed: print(rel)
 
-          # Fail closed if active files still point at the known moved prefixes.
           residuals = []
           patterns = [
               re.compile(r'(?<!old/)reference/'),
@@ -87,7 +87,7 @@ jobs:
               re.compile(r'(?<!old/)ops/releases/'),
           ]
           for rel in tracked:
-              if not rel or rel.startswith('old/') or rel == '.github/workflows/one-shot-old-consumer-rewire.yml':
+              if not rel or rel.startswith('old/') or rel.startswith('.github/workflows/'):
                   continue
               p=Path(rel)
               if not p.is_file(): continue
@@ -97,7 +97,7 @@ jobs:
                   if pat.search(text): residuals.append((rel,pat.pattern))
           if residuals:
               for item in residuals: print('RESIDUAL', item)
-              raise SystemExit('residual approved moved-path consumer remains')
+              raise SystemExit('residual approved non-workflow moved-path consumer remains')
           PY
 
           git diff --check
@@ -109,11 +109,11 @@ jobs:
           npm ci
           npm run lint
 
-      - name: Commit path-only consumer rewires
+      - name: Commit non-workflow path-only consumer rewires
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A -- ':!.github/workflows'
           git commit -m "test(old): rewire consumers to archived Drive paths"
           git push origin HEAD:refactor/old-drive-alignment-v1
