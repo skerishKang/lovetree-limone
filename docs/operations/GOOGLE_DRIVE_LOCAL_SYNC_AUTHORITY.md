@@ -30,6 +30,21 @@ LOCAL_SHARED_SYNC_ROOT
 
 These classes must not be conflated.
 
+## Current verified sync mapping
+
+Current mapping verified on 2026-08-28:
+
+```text
+LOCAL_SHARED_SYNC_ROOT = G:\Ddrive\BatangD\task\workdiary\lovetree-limone
+DRIVE_FOLDER_ID = 1RkUVTc0JAZTZfmRJPHGrPVBgtc3zSEtm
+DRIVE_PARENT_ID = 1EagkkfuK-P5FARgFUwWvpA0d9vfWStWA
+DRIVE_PARENT_TITLE = 내 컴퓨터
+VERIFIED_MARKERS = .git / AGENTS.md / package.json / .gitignore / old / new / core
+MAPPING_STATUS = VERIFIED_CURRENTLY
+```
+
+This is a current verified mapping, not an eternal name-based alias. Re-verify the folder ID, parent chain, and repository markers if metadata or workspace topology diverges.
+
 ## Google Drive for desktop semantics
 
 When the local shared root is synchronized to a specific Google Drive folder:
@@ -78,14 +93,39 @@ The shared root is not an execution workspace. Do not run builds, tests, package
 
 When the product owner explicitly requests repository/file organization, bounded file/folder lifecycle administration may be performed against the **verified repository sync mirror**, including cloud-side Drive operations that will synchronize locally.
 
-Even for authorized administration, do not mutate:
+### Hard prohibitions
+
+Never mutate through Drive administration:
 
 - `.git/**` internals;
 - secrets or local environment files;
-- `node_modules/**`;
-- generated caches/build outputs;
-- unrelated folders;
-- source-authority Drive folders.
+- authoritative design-source folders;
+- unrelated folders.
+
+Do not move `.wt` or active worktree/agent state without a separate exact activity audit.
+
+### Generated/local-state cleanup exception
+
+`node_modules`, `node_modules_old`, `dist`, `.wrangler`, `temp`, `tsconfig.tsbuildinfo`, browser/runtime caches and similar generated/local state are **do-not-touch by default**, but may be moved to a reversible archive inside the verified sync mirror when **all** of the following are true:
+
+1. the product owner explicitly requested physical repository cleanup;
+2. the exact Drive↔local sync mapping is verified;
+3. the target is proven Git-ignored or untracked;
+4. there is no active process/worktree dependency on the target;
+5. the operation is a bounded, non-destructive, reversible archive move;
+6. the destination is recorded and the resulting parent ID is verified.
+
+This exception does **not** apply to Git-tracked runtime source, `.git` internals, secrets, or design-source authority.
+
+Current cleanup convention:
+
+```text
+old/workspace-archive/
+├─ generated-local-state/
+├─ reports-and-outputs/
+├─ preserved-local-history/
+└─ legacy-audit-bundles/
+```
 
 ## Git remains mandatory
 
@@ -103,6 +143,8 @@ verify working tree
 ```
 
 Never use Google Drive operations to bypass branch isolation, review, CI, or Git history.
+
+Git-tracked runtime-source relocation such as moving `app/`, `lib/`, `server/`, `db/`, `drizzle/`, `worker/`, or `public/` into OLD/CORE is a **code-aware migration**, not ordinary Drive cleanup. Perform it on a dedicated Git branch with dependency/config updates and CI; do not blind-move those tracked paths through Drive.
 
 ## Agent response rule
 
@@ -127,5 +169,7 @@ VERIFIED_REPOSITORY_SYNC_MIRROR = INDIRECT_LOCAL_SYNC_SURFACE
 LOCAL_SHARED_ROOT = SYNC_ADMIN_SURFACE_NOT_DEVELOPMENT_WORKSPACE
 DRIVE_MUTATION_REQUIRES_EXACT_FOLDER_MAPPING = YES
 DRIVE_MUTATION_BYPASSES_GIT = NO
+GENERATED_LOCAL_STATE_CLEANUP = EXPLICIT_BOUNDED_ARCHIVE_ONLY
+TRACKED_RUNTIME_RELOCATION = CODE_AWARE_GIT_MIGRATION_ONLY
 UNKNOWN_MAPPING = STOP
 ```
