@@ -18,6 +18,8 @@ import { toLineage64Moments } from "../lib/lineage-64/product-adapter.ts";
 import {
   beginGesture,
   cancelGesture,
+  canDirectOpenViewer,
+  createFloatingMomentState,
   createPendingGesture,
   endGesture,
   moveGesture,
@@ -131,12 +133,43 @@ test("every Moment carries stable world coordinates and per-Moment fitting metad
   assert.ok(photoFitModes.has("cover") && photoFitModes.has("contain"));
 });
 
+test("Focus/Selected and Viewer are distinct observable states — selection never forces the Viewer", () => {
+  const fresh = createFloatingMomentState();
+  assert.equal(fresh.selectedMomentId, null);
+  assert.equal(fresh.viewerOpen, false);
+
+  // The known conflation (viewerOpen = Boolean(initialMomentId)) must not return:
+  // a canonical ?moment= establishes Focus authority only.
+  const focused = createFloatingMomentState({ initialMomentId: "moment-05" });
+  assert.equal(focused.selectedMomentId, "moment-05");
+  assert.equal(focused.viewerOpen, false);
+
+  // Back/Forward or external URL sync lands in Focus, never the Viewer.
+  const synced = reduceFloatingMoment(fresh, { type: "sync-url-moment", momentId: "moment-07" });
+  assert.equal(synced.selectedMomentId, "moment-07");
+  assert.equal(synced.viewerOpen, false);
+
+  // While Focus owns a Moment, direct card tap may not one-step into the Viewer.
+  assert.equal(canDirectOpenViewer(fresh), true);
+  assert.equal(canDirectOpenViewer(focused), false);
+  assert.equal(
+    canDirectOpenViewer({ selectedMomentId: "moment-05", viewerOpen: true, focusedIndex: 0 }),
+    false,
+  );
+
+  // URL cleared → both authorities released.
+  const cleared = reduceFloatingMoment(synced, { type: "sync-url-moment", momentId: null });
+  assert.equal(cleared.selectedMomentId, null);
+  assert.equal(cleared.viewerOpen, false);
+});
+
 test("one selected Moment authority is shared by card / focus / viewer / path / branch / list", () => {
   let state = reduceFloatingMoment(
-    { selectedMomentId: null, viewerOpen: false, focusedIndex: 0 },
+    createFloatingMomentState(),
     { type: "select", momentId: "moment-03" },
   );
   assert.equal(state.selectedMomentId, "moment-03");
+  assert.equal(state.viewerOpen, false, "select alone is Focus, not Viewer");
 
   state = reduceFloatingMoment(state, { type: "open-viewer", momentId: "moment-03" });
   assert.equal(state.selectedMomentId, "moment-03");
@@ -150,11 +183,22 @@ test("one selected Moment authority is shared by card / focus / viewer / path / 
   state = reduceFloatingMoment(state, { type: "close-viewer" });
   assert.equal(state.viewerOpen, false);
   assert.equal(state.selectedMomentId, "moment-03");
+
+  // RETURN TO ORBIT releases the Focus authority itself
+  state = reduceFloatingMoment(state, { type: "return-to-orbit" });
+  assert.equal(state.selectedMomentId, null);
+  assert.equal(state.viewerOpen, false);
+
+  // return-to-orbit from an open Viewer closes it first (source closeFocus)
+  let open = reduceFloatingMoment(createFloatingMomentState(), { type: "open-viewer", momentId: "moment-04" });
+  open = reduceFloatingMoment(open, { type: "return-to-orbit" });
+  assert.equal(open.selectedMomentId, null);
+  assert.equal(open.viewerOpen, false);
 });
 
 test("direct tap/click opens the Viewer; drag/swipe above threshold does not", () => {
-  const openCheck = (movement, threshold, downCardId, viewerOpen = false) =>
-    shouldOpenViewerOnPointerUp({ movement, threshold, downCardId, viewerOpen });
+  const openCheck = (movement, threshold, downCardId, focusOpen = false) =>
+    shouldOpenViewerOnPointerUp({ movement, threshold, downCardId, focusOpen });
 
   assert.equal(openCheck(4, TRACK64_GESTURE.desktopTapThreshold, "moment-01"), true);
   assert.equal(openCheck(9, TRACK64_GESTURE.desktopTapThreshold, "moment-01"), true);
@@ -162,10 +206,11 @@ test("direct tap/click opens the Viewer; drag/swipe above threshold does not", (
   assert.equal(openCheck(13, TRACK64_GESTURE.mobileTapThreshold, "moment-01"), true);
   assert.equal(openCheck(15, TRACK64_GESTURE.mobileTapThreshold, "moment-01"), false);
   assert.equal(openCheck(2, TRACK64_GESTURE.desktopTapThreshold, null), false);
+  // source endPointer gate: a live Focus (state.focusId) blocks one-step Viewer open
   assert.equal(openCheck(2, TRACK64_GESTURE.desktopTapThreshold, "moment-01", true), false);
 });
 
-test("endGesture opens only on a tap and always clears pending ownership", () => {
+test("endGesture opens only on a tap without live Focus and always clears pending ownership", () => {
   let pending = beginGesture(createPendingGesture(), 1, "moment-07", 100, 100);
   pending = moveGesture(pending, 104, 102, TRACK64_GESTURE.desktopTapThreshold); // 4px movement = tap
   const tap = endGesture(pending, TRACK64_GESTURE.desktopTapThreshold, false);
@@ -177,6 +222,12 @@ test("endGesture opens only on a tap and always clears pending ownership", () =>
   pending = moveGesture(pending, 140, 110, TRACK64_GESTURE.desktopTapThreshold); // drag
   const drag = endGesture(pending, TRACK64_GESTURE.desktopTapThreshold, false);
   assert.equal(drag.open, false);
+
+  // tap while another Moment owns Focus → no one-step Viewer open (source parity)
+  pending = beginGesture(createPendingGesture(), 3, "moment-09", 100, 100);
+  pending = moveGesture(pending, 102, 101, TRACK64_GESTURE.desktopTapThreshold);
+  const focusedTap = endGesture(pending, TRACK64_GESTURE.desktopTapThreshold, true);
+  assert.equal(focusedTap.open, false);
 });
 
 test("pointercancel and lostpointercapture recover without opening or sticking", () => {
@@ -186,7 +237,7 @@ test("pointercancel and lostpointercapture recover without opening or sticking",
   assert.equal(afterCancel.downCardId, null);
   assert.equal(afterCancel.pointerId, null);
   assert.equal(
-    shouldOpenViewerOnPointerUp({ movement: 0, threshold: 10, downCardId: afterCancel.downCardId, viewerOpen: false }),
+    shouldOpenViewerOnPointerUp({ movement: 0, threshold: 10, downCardId: afterCancel.downCardId, focusOpen: false }),
     false,
   );
 
@@ -196,7 +247,7 @@ test("pointercancel and lostpointercapture recover without opening or sticking",
   assert.equal(recovered.downCardId, null);
   assert.equal(recovered.dragActive, false);
   assert.equal(
-    shouldOpenViewerOnPointerUp({ movement: 0, threshold: 10, downCardId: recovered.downCardId, viewerOpen: false }),
+    shouldOpenViewerOnPointerUp({ movement: 0, threshold: 10, downCardId: recovered.downCardId, focusOpen: false }),
     false,
   );
 });

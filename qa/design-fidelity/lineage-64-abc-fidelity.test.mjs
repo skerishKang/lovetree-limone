@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -73,8 +74,22 @@ async function save(page, area, viewport, state) {
   return path.relative(root, file);
 }
 
+function sha256(relativePath) {
+  return createHash("sha256").update(readFileSync(path.join(root, relativePath))).digest("hex");
+}
+
 function viewportLabel(width, height) {
   return `${width}x${height}`;
+}
+
+// Focus and Viewer are distinct observable states: their captures must never be
+// accidental duplicates (same bytes ⇒ the transition did not actually render).
+function assertDistinctCaptures(focusShot, viewerShot, label) {
+  assert.notEqual(
+    sha256(focusShot),
+    sha256(viewerShot),
+    `${label}: Focus and Viewer captures are accidental duplicates — Viewer transition never rendered`,
+  );
 }
 
 async function assertSourceGeometry(page, label) {
@@ -105,7 +120,7 @@ async function assertSourceGeometry(page, label) {
   assert.ok(geometry.maxCenterOverlap < 0.45, `${label}: source cards over-occlude Welcome center`);
 }
 
-async function assertProductGeometry(page, label, width) {
+async function assertProductWorldGeometry(page, label) {
   const geometry = await page.evaluate(() => {
     const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
     const welcome = document.querySelector('[data-source64-welcome="true"]');
@@ -157,7 +172,9 @@ async function assertProductGeometry(page, label, width) {
   assert.equal(geometry.finiteCardGeometry, true, `${label}: product card geometry must be finite and non-zero`);
   assert.ok(geometry.maxWelcomeOverlap < 0.35, `${label}: product cards over-occlude Welcome center (${geometry.maxWelcomeOverlap})`);
   assert.equal(geometry.titleOverlaps, 0, `${label}: product cards must not occlude Welcome title`);
+}
 
+async function assertProductViewerLayout(page, label, width) {
   const viewer = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').boundingBox();
   const layout = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').evaluate((shell) => {
     const style = getComputedStyle(shell);
@@ -192,19 +209,42 @@ async function captureSource(browser, width, height, reduced = false) {
     await page.waitForSelector("#world .card", { timeout: 15000 });
     await assertSourceGeometry(page, `A-source-${label}`);
     results.source[label] ??= {};
-    results.source[label].initial = await save(page, "A-source", label, "initial");
+    results.source[label].stateProof ??= {};
 
-    await page.locator("#world .card").first().click({ force: true });
-    await page.locator("#focusLayer").waitFor({ state: "visible", timeout: 5000 });
-    results.source[label].selected = await save(page, "A-source", label, "selected-moment");
+    // Focus state: source-owned focusCard() transition — focusLayer open, Viewer closed.
+    await page.evaluate(() => window.__TRACK64__.focus("m01"));
+    await page.waitForFunction(
+      () => document.querySelector("#focusLayer")?.classList.contains("open")
+        && window.__TRACK64__.snapshot().focusId === "m01",
+    );
+    const focusProof = await page.evaluate(() => ({
+      focusId: window.__TRACK64__.snapshot().focusId,
+      viewer: window.__TRACK64__.getViewer(),
+      focusLayerOpen: document.querySelector("#focusLayer")?.classList.contains("open"),
+      focusInfoVisible: document.querySelector(".focusInfo")?.getBoundingClientRect().width > 0,
+      returnToOrbitVisible: document.querySelector("#closeFocus")?.textContent?.trim(),
+    }));
+    assert.equal(focusProof.focusLayerOpen, true, `A-source-${label}: focusLayer must be open in Focus state`);
+    assert.equal(focusProof.focusId, "m01", `A-source-${label}: source focus authority must be m01`);
+    assert.equal(focusProof.viewer.open, false, `A-source-${label}: Focus state must NOT force the Viewer open`);
+    assert.equal(focusProof.returnToOrbitVisible, "RETURN TO ORBIT", `A-source-${label}: RETURN TO ORBIT control is source-owned`);
+    results.source[label].stateProof.focus = focusProof;
+    results.source[label].focus = await save(page, "A-source", label, "focus");
+
+    // Viewer state: explicit openMoment() from Focus — Viewer opens, Focus persists behind it.
+    await page.evaluate(() => window.__TRACK64__.openViewer());
     await page.locator("#mediaViewer.open").waitFor({ state: "visible", timeout: 5000 });
-    results.source[label].viewer = await save(page, "A-source", label, "viewer-open");
-    await page.locator("#mediaClose").click();
-    await page.locator("#mediaViewer.open").waitFor({ state: "hidden" });
-    await page.locator("#closeFocus").click();
-    await page.locator("#focusLayer:not(.open)").waitFor({ state: "visible" });
-    results.source[label].primaryOrbitInteraction = await save(page, "A-source", label, "primary-orbit-interaction");
-    if (reduced) results.source[label].reducedMotion = results.source[label].initial;
+    const viewerProof = await page.evaluate(() => ({
+      focusId: window.__TRACK64__.snapshot().focusId,
+      viewer: window.__TRACK64__.getViewer(),
+      focusLayerOpen: document.querySelector("#focusLayer")?.classList.contains("open"),
+    }));
+    assert.equal(viewerProof.viewer.open, true, `A-source-${label}: Viewer must be open in Viewer state`);
+    assert.equal(viewerProof.viewer.momentId, "m01", `A-source-${label}: Viewer must show the focused Moment`);
+    assert.equal(viewerProof.focusLayerOpen, true, `A-source-${label}: Focus persists behind the Viewer`);
+    results.source[label].stateProof.viewer = viewerProof;
+    results.source[label].viewer = await save(page, "A-source", label, "viewer");
+    assertDistinctCaptures(results.source[label].focus, results.source[label].viewer, `A-source-${label}`);
   } finally {
     results.errors[`source-${label}${reduced ? "-reduced" : ""}`] = errors;
     await context.close();
@@ -222,30 +262,67 @@ async function captureNative(browser, width, height, reduced = false) {
   try {
     await page.goto(`${base}/design-lab/lineages/64/v1-2-1`, { waitUntil: "networkidle" });
     await page.locator('[data-rendering="css3d-dom"]').waitFor({ state: "visible" });
+    await assertProductWorldGeometry(page, `B-native-${label}`);
     results.native[label] ??= {};
-    results.native[label].initial = await save(page, "B-native", label, "initial");
+    results.native[label].stateProof ??= {};
 
+    // Focus state: semantic-list selection must land in Focus, never the Viewer.
     const menuToggle = page.getByRole("button", { name: /시맨틱 목록/ });
     await menuToggle.waitFor({ state: "visible", timeout: 15000 });
     await menuToggle.click({ force: true });
-    await page.locator('button[aria-expanded="true"]').waitFor({ state: "attached", timeout: 5000 });
     const list = page.locator('[role="listbox"]');
     await list.waitFor({ state: "visible", timeout: 15000 });
     const firstOption = list.locator('[role="option"]').first();
     await firstOption.waitFor({ state: "attached", timeout: 8000 });
     await firstOption.click();
-    await page.getByRole("dialog").waitFor({ state: "visible" });
-    await assertProductGeometry(page, `B-native-${label}`, width);
-    results.native[label].selected = await save(page, "B-native", label, "selected-moment");
-    await page.getByRole("button", { name: /PATH CONTINUE/ }).click();
-    await page.getByRole("dialog").waitFor({ state: "visible" });
-    results.native[label].continue = await save(page, "B-native", label, "continue");
-    await page.getByRole("button", { name: /BRANCH CHOICE/ }).click();
-    results.native[label].branch = await save(page, "B-native", label, "branch");
-    await page.getByRole("button", { name: "닫기" }).click();
-    await page.getByRole("dialog").waitFor({ state: "hidden" });
-    results.native[label].primaryOrbitInteraction = await save(page, "B-native", label, "primary-orbit-interaction");
-    if (reduced) results.native[label].reducedMotion = await save(page, "B-native", label, "reduced-motion");
+    await page.locator('[data-source64-focus="true"]').waitFor({ state: "attached", timeout: 8000 });
+    const focusProof = await page.evaluate(() => {
+      const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+      return {
+        focusOpen: stage?.getAttribute("data-source64-focus-open"),
+        viewerOpen: stage?.getAttribute("data-source64-viewer-open"),
+        focusedId: stage?.getAttribute("data-source64-focused-moment-id"),
+        focusLayer: !!document.querySelector('[data-source64-focus="true"]'),
+        focusInfo: !!document.querySelector('[data-source64-focus-info="true"]'),
+        returnToOrbit: document.querySelector('[data-source64-return-to-orbit="true"]')?.textContent?.trim(),
+        pinnedCard: document.querySelector('[data-moment-id="moment-01"]')?.getAttribute("data-focused"),
+        dimmedCards: document.querySelectorAll('[data-focus-dim="true"]').length,
+        dialogCount: document.querySelectorAll('[role="dialog"]').length,
+      };
+    });
+    assert.equal(focusProof.focusOpen, "true", `B-native-${label}: focus-open must be true after list selection`);
+    assert.equal(focusProof.viewerOpen, "false", `B-native-${label}: list selection must NOT open the Viewer`);
+    assert.equal(focusProof.focusedId, "moment-01", `B-native-${label}: Focus authority must own moment-01`);
+    assert.equal(focusProof.dialogCount, 0, `B-native-${label}: no dialog may exist in Focus state`);
+    assert.equal(focusProof.focusLayer, true, `B-native-${label}: source-owned focusLayer must render`);
+    assert.equal(focusProof.focusInfo, true, `B-native-${label}: source-owned focusInfo must render`);
+    assert.equal(focusProof.returnToOrbit, "RETURN TO ORBIT", `B-native-${label}: RETURN TO ORBIT control must render`);
+    assert.equal(focusProof.pinnedCard, "true", `B-native-${label}: selected card must be the pinned Focus card`);
+    assert.ok(focusProof.dimmedCards > 30, `B-native-${label}: world context must stay visible-but-receded`);
+    results.native[label].stateProof.focus = focusProof;
+    results.native[label].focus = await save(page, "B-native", label, "focus");
+
+    // Viewer state: explicit action from Focus opens the Source64 mediaShell Viewer.
+    await page.locator('[data-source64-open-viewer-from-focus="true"]').click();
+    await page.getByRole("dialog").waitFor({ state: "visible", timeout: 8000 });
+    const viewerProof = await page.evaluate(() => {
+      const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+      return {
+        focusOpen: stage?.getAttribute("data-source64-focus-open"),
+        viewerOpen: stage?.getAttribute("data-source64-viewer-open"),
+        focusedId: stage?.getAttribute("data-source64-focused-moment-id"),
+        dialogLayout: document.querySelector('[data-viewer-layout="mediaShell"]')?.getAttribute("data-selected-moment-id"),
+        dialogCount: document.querySelectorAll('[role="dialog"]').length,
+      };
+    });
+    assert.equal(viewerProof.viewerOpen, "true", `B-native-${label}: viewer-open must be true in Viewer state`);
+    assert.equal(viewerProof.focusOpen, "true", `B-native-${label}: Focus must persist behind the Viewer`);
+    assert.equal(viewerProof.dialogCount, 1, `B-native-${label}: exactly one Source64 Viewer dialog`);
+    assert.equal(viewerProof.dialogLayout, "moment-01", `B-native-${label}: Viewer must show the focused Moment`);
+    await assertProductViewerLayout(page, `B-native-${label}`, width);
+    results.native[label].stateProof.viewer = viewerProof;
+    results.native[label].viewer = await save(page, "B-native", label, "viewer");
+    assertDistinctCaptures(results.native[label].focus, results.native[label].viewer, `B-native-${label}`);
   } finally {
     results.errors[`native-${label}${reduced ? "-reduced" : ""}`] = errors;
     await context.close();
@@ -269,21 +346,62 @@ async function captureCanonical(browser, width, height, reduced = false) {
     await page.route(`**/api/trees/${treeId}`, (route) =>
       route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tree) }),
     );
+    results.canonical[label] ??= {};
+    results.canonical[label].stateProof ??= {};
+
+    // World geometry is checked in the orbit state, before any Focus pinning.
     await page.goto(`${base}/trees/${treeId}/portal`, { waitUntil: "commit" });
     await page.locator('[data-source64-revision="64-v1-2-1"]').waitFor({ state: "attached", timeout: 15000 });
     await page.locator('[data-rendering="css3d-dom"][data-reduced-motion]').waitFor({ state: "attached" });
-    results.canonical[label] ??= {};
-    results.canonical[label].initial = await save(page, "C-canonical", label, "initial");
+    await assertProductWorldGeometry(page, `C-canonical-${label}`);
 
-    await page.goto(`${base}/trees/${treeId}/portal?moment=moment-01`, { waitUntil: "domcontentloaded" });
-    await page.getByRole("dialog").waitFor({ state: "visible" });
-    await assertProductGeometry(page, `C-canonical-${label}`, width);
-    results.canonical[label].selected = await save(page, "C-canonical", label, "selected-moment");
-    results.canonical[label].viewer = await save(page, "C-canonical", label, "viewer-open");
-    await page.getByRole("button", { name: "Moment 포털 닫기" }).click();
-    await page.waitForURL((url) => url.searchParams.get("moment") === null);
-    results.canonical[label].primaryOrbitInteraction = await save(page, "C-canonical", label, "primary-orbit-interaction");
-    if (reduced) results.canonical[label].reducedMotion = await save(page, "C-canonical", label, "reduced-motion");
+    // Focus state: canonical ?moment= deep link must establish Focus without forcing the Viewer.
+    await page.goto(`${base}/trees/${treeId}/portal?moment=moment-01`, { waitUntil: "commit" });
+    await page.locator('[data-source64-revision="64-v1-2-1"]').waitFor({ state: "attached", timeout: 15000 });
+    await page.locator('[data-source64-focus="true"]').waitFor({ state: "attached", timeout: 15000 });
+    const focusProof = await page.evaluate(() => {
+      const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+      return {
+        urlMoment: new URL(location.href).searchParams.get("moment"),
+        focusOpen: stage?.getAttribute("data-source64-focus-open"),
+        viewerOpen: stage?.getAttribute("data-source64-viewer-open"),
+        focusedId: stage?.getAttribute("data-source64-focused-moment-id"),
+        focusLayer: !!document.querySelector('[data-source64-focus="true"]'),
+        focusInfo: !!document.querySelector('[data-source64-focus-info="true"]'),
+        pinnedCard: document.querySelector('[data-moment-id="moment-01"]')?.getAttribute("data-focused"),
+        dialogCount: document.querySelectorAll('[role="dialog"]').length,
+      };
+    });
+    assert.equal(focusProof.urlMoment, "moment-01", `C-canonical-${label}: canonical ?moment= must stay in the URL`);
+    assert.equal(focusProof.focusOpen, "true", `C-canonical-${label}: deep link must establish Focus authority`);
+    assert.equal(focusProof.viewerOpen, "false", `C-canonical-${label}: deep link must NOT force the Viewer open`);
+    assert.equal(focusProof.focusedId, "moment-01", `C-canonical-${label}: focused moment id`);
+    assert.equal(focusProof.dialogCount, 0, `C-canonical-${label}: no dialog may exist in Focus state`);
+    assert.equal(focusProof.pinnedCard, "true", `C-canonical-${label}: canonical deep link pins the Focus card`);
+    results.canonical[label].stateProof.focus = focusProof;
+    results.canonical[label].focus = await save(page, "C-canonical", label, "focus");
+
+    // Viewer state: explicit action from Focus opens the Source64 Viewer on canonical data.
+    await page.locator('[data-source64-open-viewer-from-focus="true"]').click();
+    await page.getByRole("dialog").waitFor({ state: "visible", timeout: 8000 });
+    const viewerProof = await page.evaluate(() => {
+      const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+      return {
+        focusOpen: stage?.getAttribute("data-source64-focus-open"),
+        viewerOpen: stage?.getAttribute("data-source64-viewer-open"),
+        focusedId: stage?.getAttribute("data-source64-focused-moment-id"),
+        dialogLayout: document.querySelector('[data-viewer-layout="mediaShell"]')?.getAttribute("data-selected-moment-id"),
+        dialogCount: document.querySelectorAll('[role="dialog"]').length,
+      };
+    });
+    assert.equal(viewerProof.viewerOpen, "true", `C-canonical-${label}: viewer-open must be true in Viewer state`);
+    assert.equal(viewerProof.focusOpen, "true", `C-canonical-${label}: Focus must persist behind the Viewer`);
+    assert.equal(viewerProof.dialogCount, 1, `C-canonical-${label}: exactly one Source64 Viewer dialog`);
+    assert.equal(viewerProof.dialogLayout, "moment-01", `C-canonical-${label}: Viewer must show the canonical Moment`);
+    await assertProductViewerLayout(page, `C-canonical-${label}`, width);
+    results.canonical[label].stateProof.viewer = viewerProof;
+    results.canonical[label].viewer = await save(page, "C-canonical", label, "viewer");
+    assertDistinctCaptures(results.canonical[label].focus, results.canonical[label].viewer, `C-canonical-${label}`);
   } finally {
     results.errors[`canonical-${label}${reduced ? "-reduced" : ""}`] = errors;
     await context.close();

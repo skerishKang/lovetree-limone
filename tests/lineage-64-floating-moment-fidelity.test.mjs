@@ -34,7 +34,12 @@ test("gesture and accessibility boundaries are represented explicitly", () => {
   assert.match(component, /role="dialog"/);
   assert.match(component, /aria-modal="true"/);
   assert.match(component, /aria-labelledby/);
-  assert.match(component, /e\.key === "Escape"/);
+  assert.match(component, /e\.key !== "Escape"/);
+  // Source parity: ONE document-level Escape consumer (viewer-close → focus-persist,
+  // focus-only → return-to-orbit). A second Escape branch double-fires on the same
+  // discrete keydown because React flushes synchronously before window bubbling.
+  assert.equal(component.split('"Escape"').length - 1, 1, 'Escape must be handled by exactly one global listener');
+  assert.match(component, /window\.addEventListener\("keydown"/);
   assert.match(component, /e\.key !== "Tab"/);
   assert.match(component, /triggerRef\.current\?\.focus/);
   assert.match(component, /aria-live="polite"/);
@@ -58,4 +63,29 @@ test("responsive fidelity surface covers required and narrow mobile viewports wi
   assert.match(css, /@media \(max-width:\s*390px\)/);
   assert.match(css, /@media \(max-width:\s*330px\)/);
   assert.match(page, /overflowX: "clip"/);
+});
+
+test("Focus presentation is source-owned (focusLayer/focusInfo) and distinct from the Viewer", () => {
+  // Source focus surface
+  assert.match(component, /data-source64-focus="true"/);
+  assert.match(component, /data-source64-focus-info="true"/);
+  assert.match(component, /data-source64-return-to-orbit="true"/);
+  assert.match(component, /RETURN TO ORBIT/);
+  assert.match(component, /미디어 다시 열기/);
+  // Source mediaViewer/mediaShell surface stays Source64-owned, not a generic modal
+  assert.match(component, /data-source64-viewer="true"/);
+  assert.match(component, /data-viewer-layout="mediaShell"/);
+  // Explicit DOM state proof for the two authorities
+  assert.match(component, /data-source64-focus-open=/);
+  assert.match(component, /data-source64-viewer-open=/);
+  // The removed conflation must not return in any form
+  assert.doesNotMatch(component, /viewerOpen:\s*Boolean\(/);
+  assert.doesNotMatch(component, /viewerOpen:\s*!!/);
+  assert.doesNotMatch(component, /viewerOpen:\s*initial/);
+  // focusLayer/focusInfo/focusBackdrop/closeFocus CSS ported from the pinned executable
+  assert.match(css, /\.focusLayer\s*\{/);
+  assert.match(css, /\.focusBackdrop\s*\{/);
+  assert.match(css, /\.focusInfo\s*\{/);
+  assert.match(css, /\.closeFocus\s*\{/);
+  assert.match(css, /data-focused="true"/);
 });

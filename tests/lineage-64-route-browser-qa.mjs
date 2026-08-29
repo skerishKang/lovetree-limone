@@ -323,7 +323,7 @@ async function assertBackgroundInert(page, label) {
     card?.focus();
     const cardFocusable = document.activeElement === card;
     // Restore focus to the dialog close control for the subsequent Escape step.
-    document.querySelector('[role="dialog"] [aria-label="닫기"]')?.focus();
+    document.querySelector('[role="dialog"] [aria-label*="닫기"]')?.focus();
     return {
       bgInert: bg ? bg.inert : null,
       worldInsideBg: insideBg(world),
@@ -369,6 +369,37 @@ async function assertDragDoesNotOpenViewer(page, label, center) {
   return startAngle;
 }
 
+// Explicit DOM/state proof that Focus and Viewer are separate observable states.
+// Polls briefly so the assertion observes the committed React state rather than
+// racing the commit boundary.
+async function assertFocusViewerState(page, label, { focus, viewer, focusedId }) {
+  try {
+    await page.waitForFunction(
+      ([f, v, id]) => {
+        const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
+        const dialogs = document.querySelectorAll('[role="dialog"]').length;
+        const layers = document.querySelectorAll('[data-source64-focus="true"]').length;
+        return (
+          stage?.getAttribute("data-source64-focus-open") === String(f) &&
+          stage?.getAttribute("data-source64-viewer-open") === String(v) &&
+          (stage?.getAttribute("data-source64-focused-moment-id") ?? "") === (id ?? "") &&
+          dialogs === (v ? 1 : 0) &&
+          layers === (f ? 1 : 0)
+        );
+      },
+      [focus, viewer, focusedId ?? ""],
+      { timeout: 4000 },
+    );
+  } catch {
+    const stage = page.locator('[data-source64-revision="64-v1-2-1"]');
+    assert.equal(await stage.getAttribute("data-source64-focus-open"), focus ? "true" : "false", `${label}: data-source64-focus-open must reflect Focus authority`);
+    assert.equal(await stage.getAttribute("data-source64-viewer-open"), viewer ? "true" : "false", `${label}: data-source64-viewer-open must reflect Viewer authority only`);
+    assert.equal(await stage.getAttribute("data-source64-focused-moment-id"), focusedId ?? "", `${label}: focused moment id`);
+    assert.equal(await page.getByRole("dialog").count(), viewer ? 1 : 0, `${label}: dialog presence must follow Viewer, never Focus`);
+    assert.equal(await page.locator('[data-source64-focus="true"]').count(), focus ? 1 : 0, `${label}: focusLayer presence must follow Focus authority`);
+  }
+}
+
 async function assertListKeyboardOpenAndClose(page, label) {
   const toggle = page.getByRole("button", { name: /시맨틱 목록/ });
   await toggle.focus();
@@ -378,15 +409,38 @@ async function assertListKeyboardOpenAndClose(page, label) {
   const option = list.getByRole("option").nth(4); // Moment 05
   await option.focus();
   await page.keyboard.press("Enter");
-  const dialog = page.getByRole("dialog");
-  await dialog.waitFor({ timeout: 8000 });
+
+  // Source parity: menu/index selection lands in Focus — world context stays
+  // visible and the Viewer is NOT opened.
+  const focusLayer = page.locator('[data-source64-focus="true"]');
+  await focusLayer.waitFor({ timeout: 8000 });
+  await assertFocusViewerState(page, `${label} list-select`, { focus: true, viewer: false, focusedId: "moment-05" });
   assert.equal(
-    await page.locator("[data-selected-moment-id]").getAttribute("data-selected-moment-id"),
-    "moment-05",
-    `${label}: semantic list opens Viewer for the selected Moment`,
+    await page.locator('[data-moment-id="moment-05"]').getAttribute("data-focused"),
+    "true",
+    `${label}: the selected card becomes the pinned Focus card`,
   );
+  assert.ok(
+    (await page.locator('[data-focus-dim="true"]').count()) > 30,
+    `${label}: the remaining world context stays visible-but-receded behind Focus`,
+  );
+
+  // From Focus, an explicit action opens the Viewer.
+  await page.locator('[data-source64-open-viewer-from-focus="true"]').click();
+  await page.getByRole("dialog").waitFor({ timeout: 8000 });
+  await assertFocusViewerState(page, `${label} viewer-from-focus`, { focus: true, viewer: true, focusedId: "moment-05" });
+  await assertViewerFocusTrap(page, label);
   await closeViewer(page);
-  assert.equal(await toggle.evaluate((node) => document.activeElement === node), true, `${label}: Escape restores focus to the list toggle`);
+
+  // Viewer close keeps the selected Moment (Focus persists); RETURN TO ORBIT releases it.
+  await assertFocusViewerState(page, `${label} viewer-closed`, { focus: true, viewer: false, focusedId: "moment-05" });
+  assert.ok(
+    await page.locator('[data-source64-focus="true"]').evaluate((el) => el.contains(document.activeElement)),
+    `${label}: focus is restored inside the Focus layer after the Viewer closes`,
+  );
+  await page.locator('[data-source64-return-to-orbit="true"]').click();
+  await assertFocusViewerState(page, `${label} returned`, { focus: false, viewer: false, focusedId: null });
+  assert.equal(await toggle.evaluate((node) => document.activeElement === node), true, `${label}: return-to-orbit restores focus to the list toggle`);
 }
 
 // ---- Real mobile touch helpers (CDP touch — genuine touchscreen input) ----
@@ -445,10 +499,18 @@ try {
 
     const center = await waitForFrontCard(desktop.page, "1280x800");
     const openedId = await openViewerFromCard(desktop.page, center);
+    await assertFocusViewerState(desktop.page, "1280x800 tap-open", { focus: true, viewer: true, focusedId: openedId });
     await assertViewerFocusTrap(desktop.page, "1280x800");
     await closeViewer(desktop.page);
+    await assertFocusViewerState(desktop.page, "1280x800 closed", { focus: true, viewer: false, focusedId: openedId });
+    assert.ok(
+      await desktop.page.locator('[data-source64-focus="true"]').evaluate((el) => el.contains(document.activeElement)),
+      "1280x800: Viewer close preserves Focus authority and returns focus into the Focus layer",
+    );
     const card = desktop.page.locator(`[data-moment-id="${openedId}"]`);
-    assert.equal(await card.evaluate((node) => document.activeElement === node), true, "1280x800: Escape restores focus to the originating card");
+    await desktop.page.locator('[data-source64-return-to-orbit="true"]').click();
+    await assertFocusViewerState(desktop.page, "1280x800 returned", { focus: false, viewer: false, focusedId: null });
+    assert.equal(await card.evaluate((node) => document.activeElement === node), true, "1280x800: RETURN TO ORBIT restores focus to the originating card");
 
     // B-style arbitration on real desktop pointer: drag does not open Viewer.
     const dragCenter = await waitForFrontCard(desktop.page, "1280x800 drag");
@@ -528,10 +590,26 @@ try {
       await assertCenterVoidAndDepth(mobile.page, spec.label);
 
       // B. short real touch tap OPENS the Viewer.
-      const center = await waitForFrontCard(mobile.page, spec.label);
-      await touchTap(client, center.x, center.y);
+      // The orbit keeps moving between hit-test and dispatch, so re-locate the
+      // front card for each attempt (max 3) before asserting the tap opened.
+      // A synthesized trailing click can land on the close control and dismiss
+      // the just-opened Viewer; that leaves Focus authority (source semantics),
+      // which blocks direct taps — release it before retrying.
       const dialog = mobile.page.getByRole("dialog");
-      await dialog.waitFor({ timeout: 8000 });
+      let tapped = false;
+      for (let attempt = 1; attempt <= 3 && !tapped; attempt += 1) {
+        if (await mobile.page.locator('[data-source64-focus-open="true"]').count()) {
+          await mobile.page.locator('[data-source64-return-to-orbit="true"]').click();
+          await mobile.page.waitForFunction(
+            () => document.querySelector('[data-source64-revision="64-v1-2-1"]')?.getAttribute("data-source64-focus-open") === "false",
+            { timeout: 4000 },
+          );
+        }
+        const center = await waitForFrontCard(mobile.page, spec.label);
+        await touchTap(client, center.x, center.y);
+        tapped = await dialog.waitFor({ timeout: 3000 }).then(() => true).catch(() => false);
+      }
+      assert.ok(tapped, `${spec.label}: real touch tap opens the Viewer within 3 re-located attempts`);
       const selectedId = await mobile.page.locator("[data-selected-moment-id]").getAttribute("data-selected-moment-id");
       assert.ok(selectedId?.startsWith("moment-"), `${spec.label}: real touch tap opens Viewer (${selectedId})`);
 
@@ -540,8 +618,15 @@ try {
       await assertBackgroundInert(mobile.page, spec.label);
 
       await closeViewer(mobile.page);
+      await assertFocusViewerState(mobile.page, `${spec.label} closed`, { focus: true, viewer: false, focusedId: selectedId });
+      assert.ok(
+        await mobile.page.locator('[data-source64-focus="true"]').evaluate((el) => el.contains(document.activeElement)),
+        `${spec.label}: Viewer close preserves Focus authority and returns focus into the Focus layer`,
+      );
       const card = mobile.page.locator(`[data-moment-id="${selectedId}"]`);
-      assert.equal(await card.evaluate((node) => document.activeElement === node), true, `${spec.label}: Escape restores focus to the tapped card`);
+      await mobile.page.locator('[data-source64-return-to-orbit="true"]').click();
+      await assertFocusViewerState(mobile.page, `${spec.label} returned`, { focus: false, viewer: false, focusedId: null });
+      assert.equal(await card.evaluate((node) => document.activeElement === node), true, `${spec.label}: RETURN TO ORBIT restores focus to the tapped card`);
 
       // B. real touch swipe above threshold does NOT open the Viewer.
       const swipeCenter = await waitForFrontCard(mobile.page, `${spec.label} swipe`);

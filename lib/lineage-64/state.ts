@@ -13,12 +13,20 @@ export type FloatingMomentAction =
   | { type: "select"; momentId: string }
   | { type: "open-viewer"; momentId: string }
   | { type: "close-viewer" }
+  | { type: "return-to-orbit" }
+  | { type: "sync-url-moment"; momentId: string | null }
   | { type: "focus-index"; index: number }
   | { type: "step"; delta: number };
 
-export function createFloatingMomentState(config?: { initialIndex?: number }): FloatingMomentState {
+export function createFloatingMomentState(config?: {
+  initialIndex?: number;
+  initialMomentId?: string | null;
+}): FloatingMomentState {
+  // Source64 state contract: a canonical ?moment= establishes Focus/Selected
+  // authority only. The Viewer (state.mediaViewerOpen in source) is a distinct
+  // observable state and is never implied by selection.
   return {
-    selectedMomentId: null,
+    selectedMomentId: config?.initialMomentId ?? null,
     viewerOpen: false,
     focusedIndex: config?.initialIndex ?? 0,
   };
@@ -38,6 +46,13 @@ export function reduceFloatingMoment(
       // Keep selectedMomentId so the focused Moment stays the visual authority while the world recedes;
       // only the modal closes. Spatial snapshot (camera/velocity/focus) is restored by the caller.
       return { ...state, viewerOpen: false };
+    case "return-to-orbit":
+      // Source closeFocus(): the Viewer (if open) closes first, then Focus authority is released.
+      return { ...state, selectedMomentId: null, viewerOpen: false };
+    case "sync-url-moment":
+      // Back/Forward and external ?moment= navigation land in Focus, never force the Viewer.
+      if (action.momentId === null) return { ...state, selectedMomentId: null, viewerOpen: false };
+      return { ...state, selectedMomentId: action.momentId, viewerOpen: false };
     case "focus-index":
       return { ...state, focusedIndex: ((action.index % MOMENT_COUNT) + MOMENT_COUNT) % MOMENT_COUNT };
     case "step":
@@ -108,23 +123,29 @@ export interface OpenCheck {
   movement: number;
   threshold: number;
   downCardId: string | null;
-  viewerOpen: boolean;
+  focusOpen: boolean;
 }
 
+// Source endPointer(): `openId = (dragMoved <= tapLimit && !state.focusId) ? downCardId : null`.
+// A short tap/click may one-step into the Viewer only while no Moment owns Focus.
 export function shouldOpenViewerOnPointerUp(check: OpenCheck): boolean {
-  return check.movement <= check.threshold && check.downCardId !== null && !check.viewerOpen;
+  return check.movement <= check.threshold && check.downCardId !== null && !check.focusOpen;
+}
+
+export function canDirectOpenViewer(state: FloatingMomentState): boolean {
+  return state.selectedMomentId === null;
 }
 
 export function endGesture(
   pending: PendingGesture,
   threshold: number,
-  viewerOpen: boolean,
+  focusOpen: boolean,
 ): { open: boolean; next: PendingGesture } {
   const open = shouldOpenViewerOnPointerUp({
     movement: pending.movement,
     threshold,
     downCardId: pending.downCardId,
-    viewerOpen,
+    focusOpen,
   });
   return { open, next: createPendingGesture() };
 }

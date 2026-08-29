@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from "react";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import {
   TRACK64_GESTURE,
   TRACK64_MOMENTS,
@@ -10,6 +10,8 @@ import {
 import {
   beginGesture,
   cancelGesture,
+  canDirectOpenViewer,
+  createFloatingMomentState,
   createPendingGesture,
   endGesture,
   moveGesture,
@@ -33,6 +35,31 @@ function cardTransform(m: MomentRecord, orbitalPhase = 0, compact = false): stri
   const rotateY = Math.cos(theta) * 18;
   const rotateZ = Math.sin(theta * 0.6) * 7;
   return `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) rotateZ(${rotateZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+}
+
+function subscribeViewport(onChange: () => void) {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+function getViewportSnapshot() {
+  return `${window.innerWidth}x${window.innerHeight}`;
+}
+
+function getViewportServerSnapshot() {
+  return "1280x800";
+}
+
+// Source focusCard(): the focused card pins to (33% width, 50% height) on wide
+// viewports / (50%, 34%) on compact, scale 1.58 / 1.36, while the world context
+// keeps orbiting behind it. The leading counter-rotation cancels the world's
+// live rotateY so the pinned position is screen-stable.
+function focusPinnedTransform(width: number, height: number, cameraDeg: number): string {
+  const compact = width < 700;
+  const ox = compact ? 0 : width * (0.33 - 0.5);
+  const oy = compact ? height * (0.34 - 0.5) : 0;
+  const scale = compact ? 1.36 : 1.58;
+  return `rotateY(${(-cameraDeg).toFixed(3)}deg) translate3d(${ox.toFixed(1)}px, ${oy.toFixed(1)}px, 0px) scale(${scale.toFixed(3)})`;
 }
 
 function surfaceStyle(m: MomentRecord, variant: "card" | "viewer"): CSSProperties {
@@ -81,17 +108,16 @@ export default function Lineage64FloatingMomentPortal({
   const [state, dispatch] = useReducer(
     reduceFloatingMoment,
     initialMomentId,
-    (selectedMomentId) => ({
-      selectedMomentId,
-      viewerOpen: Boolean(selectedMomentId),
-      focusedIndex: 0,
-    }),
+    (selectedMomentId) => createFloatingMomentState({ initialMomentId: selectedMomentId }),
   );
   const [coarse, setCoarse] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [orbitalPhase, setOrbitalPhase] = useState(0);
+  const [cameraAngle, setCameraAngle] = useState(0);
   const [listOpen, setListOpen] = useState(false);
   const [announce, setAnnounce] = useState("");
+  const viewportKey = useSyncExternalStore(subscribeViewport, getViewportSnapshot, getViewportServerSnapshot);
+  const [viewportWidth, viewportHeight] = viewportKey.split("x").map(Number);
 
   const worldRef = useRef<HTMLDivElement | null>(null);
   const backgroundRef = useRef<HTMLDivElement | null>(null);
@@ -99,11 +125,14 @@ export default function Lineage64FloatingMomentPortal({
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const listToggleRef = useRef<HTMLButtonElement | null>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  const focusOriginRef = useRef<HTMLElement | null>(null);
+  const focusReturnRef = useRef<HTMLButtonElement | null>(null);
   const pendingRef = useRef(createPendingGesture());
   const draggingRef = useRef(false);
   const cameraAngleRef = useRef(0);
   const orbitalPhaseRef = useRef(0);
   const velocityRef = useRef(0);
+  const lastMomentChangeRef = useRef<string | null | undefined>(initialMomentId);
 
   const threshold = coarse ? TRACK64_GESTURE.mobileTapThreshold : TRACK64_GESTURE.desktopTapThreshold;
   const active = useMemo(() => selectedMoment(moments, state), [moments, state]);
@@ -144,6 +173,7 @@ export default function Lineage64FloatingMomentPortal({
         if (Math.abs(velocityRef.current) < 0.0004) velocityRef.current = 0;
         orbitalPhaseRef.current += (dt / 1000) * 0.9;
         setOrbitalPhase(orbitalPhaseRef.current);
+        setCameraAngle(cameraAngleRef.current);
       }
       if (worldRef.current) {
         worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
@@ -177,21 +207,106 @@ export default function Lineage64FloatingMomentPortal({
       };
     }
     if (backgroundRef.current) backgroundRef.current.inert = false;
+    if (state.selectedMomentId) return;
     triggerRef.current?.focus();
     triggerRef.current = null;
-  }, [state.viewerOpen]);
+  }, [state.viewerOpen, state.selectedMomentId]);
+
+  // Source closeMediaViewer(): the Viewer closes but Focus authority persists,
+  // so focus returns into the Focus layer synchronously on the transition
+  // (layout effect), never to the original trigger.
+  const prevViewerOpenRef = useRef(false);
+  useLayoutEffect(() => {
+    const wasOpen = prevViewerOpenRef.current;
+    prevViewerOpenRef.current = state.viewerOpen;
+    if (wasOpen && !state.viewerOpen && state.selectedMomentId) {
+      focusReturnRef.current?.focus();
+    }
+  }, [state.viewerOpen, state.selectedMomentId]);
+
+  // Browser Back/Forward and external ?moment= changes re-establish Focus
+  // authority without ever forcing the Viewer open.
+  useEffect(() => {
+    if (initialMomentId === lastMomentChangeRef.current) return;
+    lastMomentChangeRef.current = initialMomentId;
+    dispatch({ type: "sync-url-moment", momentId: initialMomentId });
+  }, [initialMomentId]);
 
   const closeViewer = useCallback(() => {
+    // Source closeMediaViewer(): the Viewer closes and Focus authority persists,
+    // so the canonical ?moment= stays in the URL.
     dispatch({ type: "close-viewer" });
-    onMomentChange?.(null);
-    setAnnounce("뷰어를 닫았습니다.");
+    setAnnounce("뷰어를 닫았습니다. 포커스가 유지됩니다.");
+  }, []);
+
+  const focusMoment = useCallback((momentId: string, origin: HTMLElement | null) => {
+    triggerRef.current = origin;
+    focusOriginRef.current = origin;
+    lastMomentChangeRef.current = momentId;
+    dispatch({ type: "select", momentId });
+    onMomentChange?.(momentId);
   }, [onMomentChange]);
 
   const openMoment = useCallback((momentId: string, origin: HTMLElement | null) => {
     triggerRef.current = origin;
+    focusOriginRef.current = origin;
+    lastMomentChangeRef.current = momentId;
     dispatch({ type: "open-viewer", momentId });
     onMomentChange?.(momentId);
   }, [onMomentChange]);
+
+  const returnToOrbit = useCallback(() => {
+    // Source closeFocus(): `if(state.mediaViewerOpen){closeMediaViewer();return;}`
+    // — with a live Viewer, orbit return only closes the Viewer and Focus persists.
+    if (state.viewerOpen) {
+      dispatch({ type: "close-viewer" });
+      setAnnounce("뷰어를 닫았습니다. 포커스가 유지됩니다.");
+      return;
+    }
+    dispatch({ type: "return-to-orbit" });
+    lastMomentChangeRef.current = null;
+    onMomentChange?.(null);
+    focusOriginRef.current?.focus();
+    setAnnounce("RETURN TO ORBIT: 포커스를 해제하고 오빗으로 돌아갔습니다.");
+  }, [state.viewerOpen, onMomentChange]);
+
+  // Source document keydown (single handler): Escape closes the Viewer first
+  // (focus persists); with only Focus open, Escape performs RETURN TO ORBIT.
+  // One global listener is required: React flushes discrete events synchronously,
+  // so a dialog-level Escape handler plus a focus-only window listener would both
+  // consume the same keydown and skip straight past Focus to orbit.
+  useEffect(() => {
+    if (!state.selectedMomentId) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.preventDefault();
+      if (state.viewerOpen) {
+        dispatch({ type: "close-viewer" });
+        setAnnounce("뷰어를 닫았습니다. 포커스가 유지됩니다.");
+      } else {
+        returnToOrbit();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [state.selectedMomentId, state.viewerOpen, returnToOrbit]);
+
+  const openViewerFromFocus = useCallback((origin: HTMLElement | null) => {
+    if (!active) return;
+    triggerRef.current = origin ?? triggerRef.current;
+    dispatch({ type: "open-viewer", momentId: active.id });
+    setAnnounce(`${active.title} 뷰어를 열었습니다.`);
+  }, [active]);
+
+  // Source prevMoment/nextMoment/continuePath from the Focus layer: glide the
+  // Focus authority to the adjacent Moment — still Focus, never the Viewer.
+  const stepFocus = useCallback((delta: number) => {
+    if (!active) return;
+    const next = moments[(active.index + delta + momentCount) % momentCount];
+    if (!next) return;
+    focusMoment(next.id, triggerRef.current);
+    setAnnounce(`포커스 이동: ${next.title}`);
+  }, [active, moments, momentCount, focusMoment]);
 
   const handlePointerDown = useCallback(
     (e: ReactPointerEvent<HTMLButtonElement>, moment: MomentRecord) => {
@@ -220,6 +335,7 @@ export default function Lineage64FloatingMomentPortal({
         worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
         worldRef.current.dataset.orbitalPhase = orbitalPhaseRef.current.toFixed(6);
       }
+      setCameraAngle(cameraAngleRef.current);
     },
     [threshold],
   );
@@ -228,7 +344,7 @@ export default function Lineage64FloatingMomentPortal({
     (e: ReactPointerEvent<HTMLButtonElement>, moment: MomentRecord) => {
       const p = pendingRef.current;
       if (p.pointerId !== e.pointerId) return;
-      const result = endGesture(p, threshold, state.viewerOpen);
+      const result = endGesture(p, threshold, !canDirectOpenViewer(state));
       if (result.open && p.downCardId) {
         openMoment(p.downCardId, e.currentTarget);
         setAnnounce(`${moment.title} 뷰어를 열었습니다.`);
@@ -236,7 +352,7 @@ export default function Lineage64FloatingMomentPortal({
       pendingRef.current = result.next;
       draggingRef.current = false;
     },
-    [threshold, state.viewerOpen, openMoment],
+    [threshold, state, openMoment],
   );
 
   // pointercancel must clear pending card-open ownership — never open.
@@ -254,6 +370,9 @@ export default function Lineage64FloatingMomentPortal({
   const handleWheel = useCallback(
     (e: ReactWheelEvent<HTMLDivElement>) => {
       if (state.viewerOpen) return;
+      // Source wheel handler: `if(state.focusId) return` — Focus owns the world
+      // while active; manual wheel resumes only after RETURN TO ORBIT.
+      if (state.selectedMomentId) return;
       // Manual wheel ownership: rotate the world immediately and seed bounded
       // inertia. Allowed under reduced motion because it is an explicit user
       // gesture (same policy as manual drag/swipe), not ambient auto-orbit.
@@ -264,17 +383,14 @@ export default function Lineage64FloatingMomentPortal({
         worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
         worldRef.current.dataset.orbitalPhase = orbitalPhaseRef.current.toFixed(6);
       }
+      setCameraAngle(cameraAngleRef.current);
     },
-    [state.viewerOpen],
+    [state.viewerOpen, state.selectedMomentId],
   );
 
   const handleViewerKeyDown = useCallback(
     (e: ReactKeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        closeViewer();
-        return;
-      }
+      // Escape is handled by the single global keydown listener (source parity).
       if (e.key !== "Tab") return;
       const focusables = viewerRef.current?.querySelectorAll<HTMLElement>(
         'button, [href], [tabindex]:not([tabindex="-1"])',
@@ -290,7 +406,7 @@ export default function Lineage64FloatingMomentPortal({
         first.focus();
       }
     },
-    [closeViewer],
+    [],
   );
 
   const continuePath = useCallback(() => {
@@ -310,26 +426,27 @@ export default function Lineage64FloatingMomentPortal({
 
   const selectFromList = useCallback(
     (moment: MomentRecord) => {
-      openMoment(moment.id, listToggleRef.current);
+      // Source index/menu selection lands in Focus (focusCard), never the Viewer.
+      focusMoment(moment.id, listToggleRef.current);
       setListOpen(false);
-      setAnnounce(`목록에서 선택: ${moment.title}`);
+      setAnnounce(`목록에서 포커스: ${moment.title}`);
     },
-    [openMoment],
+    [focusMoment],
   );
 
   const openFirstMoment = useCallback(() => {
     const first = moments[0];
     if (!first) return;
-    openMoment(first.id, listToggleRef.current);
-    setAnnounce(`첫 순간을 열었습니다: ${first.title}`);
-  }, [moments, openMoment]);
+    focusMoment(first.id, null);
+    setAnnounce(`첫 순간에 포커스했습니다: ${first.title}`);
+  }, [moments, focusMoment]);
 
   const openContinueMoment = useCallback(() => {
     const next = active ? moments[(active.index + 1) % momentCount] : moments[0];
     if (!next) return;
-    openMoment(next.id, listToggleRef.current);
-    setAnnounce(`이어 보던 순간을 열었습니다: ${next.title}`);
-  }, [active, momentCount, moments, openMoment]);
+    focusMoment(next.id, null);
+    setAnnounce(`이어 보던 순간에 포커스했습니다: ${next.title}`);
+  }, [active, momentCount, moments, focusMoment]);
 
   const openTreeIndex = useCallback(() => {
     setListOpen(true);
@@ -408,6 +525,9 @@ export default function Lineage64FloatingMomentPortal({
       data-source64-revision="64-v1-2-1"
       data-source64-moment-count={momentCount}
       data-source64-family-count={familyCount}
+      data-source64-focus-open={state.selectedMomentId ? "true" : "false"}
+      data-source64-viewer-open={state.viewerOpen ? "true" : "false"}
+      data-source64-focused-moment-id={state.selectedMomentId ?? ""}
     >
       <div
         className={styles.background}
@@ -430,7 +550,7 @@ export default function Lineage64FloatingMomentPortal({
             MENU
           </button>
         </div>
-        <div className={styles.welcome} data-source64-welcome="true">
+        <div className={styles.welcome} data-source64-welcome="true" data-focused={state.selectedMomentId ? "true" : undefined}>
           <p className={styles.welcomeKicker}>WELCOME BACK</p>
           <h2 className={styles.welcomeTitle}>다시, 그 순간으로.</h2>
           <p className={styles.welcomeSub}>기억은 아직 여기에서 이어지고 있어요.</p>
@@ -450,12 +570,16 @@ export default function Lineage64FloatingMomentPortal({
       >
         {moments.map((moment) => {
           const isSelected = state.selectedMomentId === moment.id;
+          const focusActive = state.selectedMomentId !== null;
+          const transform = isSelected
+            ? focusPinnedTransform(viewportWidth, viewportHeight, cameraAngle)
+            : cardTransform(moment, orbitalPhase, coarse);
           return (
             <button
               key={moment.id}
               type="button"
               className={styles.card}
-              style={{ transform: cardTransform(moment, orbitalPhase, coarse) }}
+              style={{ transform }}
               data-moment-id={moment.id}
               data-depth-tier={moment.depthTier}
               data-family={moment.family}
@@ -464,6 +588,8 @@ export default function Lineage64FloatingMomentPortal({
               data-fit-mode={moment.fitting.fitMode}
               data-kind={moment.kind}
               data-selected={isSelected ? "true" : "false"}
+              data-focused={isSelected ? "true" : undefined}
+              data-focus-dim={focusActive && !isSelected ? "true" : undefined}
               aria-pressed={isSelected}
               aria-label={`${moment.title}, ${moment.date}, ${KIND_LABEL[moment.kind]}`}
               onPointerDown={(e) => handlePointerDown(e, moment)}
@@ -474,7 +600,7 @@ export default function Lineage64FloatingMomentPortal({
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  if (!state.viewerOpen) openMoment(moment.id, e.currentTarget);
+                  if (canDirectOpenViewer(state)) openMoment(moment.id, e.currentTarget);
                 }
               }}
             >
@@ -504,6 +630,67 @@ export default function Lineage64FloatingMomentPortal({
         </div>
       )}
       </div>
+
+      {active && (
+        <div
+          className={styles.focusLayer}
+          data-source64-focus="true"
+          data-focused-moment-id={active.id}
+          inert={state.viewerOpen || undefined}
+          role="group"
+          aria-label={`${active.title} Moment 포커스`}
+        >
+          <div className={styles.focusBackdrop} aria-hidden="true" />
+          <button
+            type="button"
+            className={styles.closeFocus}
+            ref={focusReturnRef}
+            onClick={returnToOrbit}
+            data-source64-return-to-orbit="true"
+          >
+            RETURN TO ORBIT
+          </button>
+          <div className={styles.focusInfo} data-source64-focus-info="true">
+            <p className={styles.focusKicker}>
+              MOMENT · {KIND_LABEL[active.kind]} · {active.family.toUpperCase()}{active.index === 0 ? " · FIRST" : ""}
+            </p>
+            <h2 className={styles.focusTitle} id="lineage64-focus-title">{active.title}</h2>
+            <p className={styles.focusMeta}>
+              {active.date} · {KIND_LABEL[active.kind]} · {active.depthTier}
+            </p>
+            <div className={styles.focusWhy}>
+              <strong>{canonicalTreePath ? "이어진 순간" : "WHY NEXT"}</strong>
+              <p>
+                {canonicalTreePath
+                  ? "이 순간이 포커스되었습니다. 오빗의 세계 컨텍스트는 그대로 보이며, 미디어 열기는 선택적입니다."
+                  : `${active.title} 과 이어지는 다음 기억으로의 연결 제안 (SOURCE DEMO · NON-CANONICAL). 포커스 상태이며 뷰어는 열리지 않았습니다.`}
+              </p>
+            </div>
+            <div className={styles.focusActions}>
+              <button
+                type="button"
+                className={styles.focusBtn}
+                onClick={(e) => openViewerFromFocus(e.currentTarget)}
+                data-source64-open-viewer-from-focus="true"
+              >
+                미디어 다시 열기
+              </button>
+              <button
+                type="button"
+                className={`${styles.focusBtn} ${styles.focusBtnPrimary}`}
+                onClick={() => stepFocus(1)}
+              >
+                이 경로 계속 보기
+              </button>
+              <button type="button" className={styles.focusBtn} onClick={() => stepFocus(-1)}>← PREV</button>
+              <button type="button" className={styles.focusBtn} onClick={() => stepFocus(1)}>NEXT →</button>
+              {canonicalTreePath ? (
+                <Link className={styles.focusBtn} href={`${canonicalTreePath}${canonicalMomentSuffix}`}>Moment 상세</Link>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
 
       {state.viewerOpen && active && (
         <div className={styles.viewerOverlay} data-source64-viewer="true">
