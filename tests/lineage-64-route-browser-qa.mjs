@@ -41,6 +41,146 @@ async function assertNoHorizontalOverflow(page, label) {
   assert.ok(overflow <= 1, `${label}: horizontal overflow ${overflow}px`);
 }
 
+// Source-derived mobile Focus bounds, measured directly from the authoritative
+// executable reference/source-tracks-snapshot/64_부유모먼트_웰컨오빗_입장포털O/현재후보.html
+// while its focusCard() state is active. The source focusInfo occupies 38.6% of a
+// 320x720 viewport (top 58.9%) and 30.7% of 390x844 (top 67.2%). A +/-4pp band is
+// granted for canonical copy length; anything past it means the mobile Focus
+// information has again become the dominant bottom sheet CENTRAL rejected.
+const SOURCE_FOCUS_INFO_BOUNDS = {
+  "320x720": { maxOccupationPct: 42.6, minTopPct: 54.9, sourceOccupationPct: 38.6, sourceTopPct: 58.9 },
+  "390x844": { maxOccupationPct: 34.7, minTopPct: 63.2, sourceOccupationPct: 30.7, sourceTopPct: 67.2 },
+};
+
+async function openFocusRoute(browser, viewport) {
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  const errors = captureErrors(page);
+  const response = await page.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
+  assert.ok(response?.ok(), `${viewport.width}x${viewport.height}: Focus route HTTP ${response?.status()}`);
+  await page.locator('[data-rendering="css3d-dom"]').waitFor({ timeout: 15000 });
+  await page.locator('[data-source64-revision="64-v1-2-1"]').waitFor({ timeout: 15000 });
+  // The design-lab route does not read ?moment= (canonical ?moment= is owned by the
+  // product route); "첫 순간으로" is the source first-moment selection and is a
+  // Focus-only entry — it must not auto-open the Viewer.
+  await page.locator('button:has-text("첫 순간으로")').first().click();
+  await page.locator('[data-source64-focus-info="true"]').waitFor({ timeout: 15000 });
+  return { context, page, errors };
+}
+
+async function assertSourceFocusPresentation(page, label, size) {
+  const bounds = SOURCE_FOCUS_INFO_BOUNDS[size];
+  assert.ok(bounds, `${label}: no source-derived bound registered for ${size}`);
+  // The focused card animates to its pinned source position over 0.46s. Wait for
+  // the observable rather than sampling mid-transition: if the card never lands
+  // inside the viewport this wait itself fails the label.
+  await page.waitForFunction(() => {
+    const el = document.querySelector('[data-moment-id][data-focused="true"]');
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    return (
+      r.width > 0 && r.height > 0 &&
+      r.top < window.innerHeight && r.bottom > 0 &&
+      r.left < window.innerWidth && r.right > 0
+    );
+  }, null, { timeout: 10000 }).catch(() => {
+    throw new Error(`${label}: focused card never settled inside the viewport`);
+  });
+  const m = await page.evaluate(() => {
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    const info = document.querySelector('[data-source64-focus-info="true"]');
+    const welcome = document.querySelector('[data-source64-welcome="true"]');
+    const focused = document.querySelector('[data-moment-id][data-focused="true"]');
+    const ir = info.getBoundingClientRect();
+    const wr = welcome?.getBoundingClientRect() ?? null;
+    const fr = focused?.getBoundingClientRect() ?? null;
+    return {
+      occupationPct: +((ir.height / vh) * 100).toFixed(1),
+      topPct: +((ir.top / vh) * 100).toFixed(1),
+      dialogCount: document.querySelectorAll('[role="dialog"]').length,
+      viewerOpen: document.querySelector("[data-source64-viewer-open]")?.getAttribute("data-source64-viewer-open") ?? null,
+      welcomeFilter: welcome ? getComputedStyle(welcome).filter : null,
+      welcomeVisible: !!wr && wr.width > 0 && wr.height > 0,
+      focusedCount: document.querySelectorAll('[data-moment-id][data-focused="true"]').length,
+      focusedId: focused?.getAttribute("data-moment-id") ?? null,
+      focusedInViewport: !!fr && fr.top < vh && fr.bottom > 0 && fr.left < vw && fr.right > 0,
+      dimTiers: [...document.querySelectorAll('[data-moment-id][data-focus-dim="true"]')].slice(0, 12).map((el) => ({
+        tier: el.getAttribute("data-depth-tier"),
+        opacity: +Number(getComputedStyle(el).opacity).toFixed(3),
+      })),
+    };
+  });
+
+  // 1. Focus is not the Viewer: no dialog, Viewer stays closed.
+  assert.equal(m.dialogCount, 0, `${label}: Focus must render dialogCount=0 (Viewer is the dialog state)`);
+  assert.equal(m.viewerOpen, "false", `${label}: canonical ?moment= must establish Focus without forcing the Viewer`);
+
+  // 2. Welcome title/actions remain present and are not blurred away.
+  assert.ok(m.welcomeVisible, `${label}: Welcome block must remain laid out during Focus`);
+  assert.ok(
+    m.welcomeFilter === "none" || m.welcomeFilter === "",
+    `${label}: Welcome must not carry an extra blur (${m.welcomeFilter})`,
+  );
+
+  // 3. focusInfo stays inside the source-derived mobile bounds.
+  assert.ok(
+    m.occupationPct <= bounds.maxOccupationPct,
+    `${label}: focusInfo occupation ${m.occupationPct}% exceeds source-derived bound ${bounds.maxOccupationPct}% (authoritative A = ${bounds.sourceOccupationPct}%)`,
+  );
+  assert.ok(
+    m.topPct >= bounds.minTopPct,
+    `${label}: focusInfo top ${m.topPct}% rose above source-derived bound ${bounds.minTopPct}% (authoritative A = ${bounds.sourceTopPct}%)`,
+  );
+
+  // 4. Focused card remains source-positioned and unique.
+  assert.equal(m.focusedCount, 1, `${label}: exactly one Moment must own Focus`);
+  assert.ok(m.focusedInViewport, `${label}: focused card must remain source-positioned inside the viewport`);
+
+  // 5. World depth hierarchy survives Focus: the authoritative executable dims by
+  //    depth tier instead of washing every card to one flat value.
+  const flat = new Set(m.dimTiers.map((d) => d.opacity));
+  assert.ok(
+    flat.size >= 2,
+    `${label}: Focus dimming must stay depth-differentiated (saw ${[...flat].join(", ")})`,
+  );
+  const far = m.dimTiers.filter((d) => d.tier === "far");
+  const near = m.dimTiers.filter((d) => d.tier !== "far");
+  if (far.length && near.length) {
+    const maxFar = Math.max(...far.map((d) => d.opacity));
+    const minNear = Math.min(...near.map((d) => d.opacity));
+    assert.ok(
+      maxFar < minNear,
+      `${label}: distant cards must recede further than near cards (far max ${maxFar} >= near min ${minNear})`,
+    );
+  }
+  return m;
+}
+
+async function assertViewerRemainsSeparateState(page, label) {
+  await page.locator('button:has-text("미디어 다시 열기")').first().click();
+  await page.getByRole("dialog").waitFor({ timeout: 8000 });
+  const opened = await page.evaluate(() => ({
+    viewerOpen: document.querySelector("[data-source64-viewer-open]")?.getAttribute("data-source64-viewer-open") ?? null,
+    focusedId: document.querySelector('[data-moment-id][data-focused="true"]')?.getAttribute("data-moment-id") ?? null,
+    dialogCount: document.querySelectorAll('[role="dialog"]').length,
+  }));
+  assert.equal(opened.viewerOpen, "true", `${label}: Viewer opens from Focus`);
+  assert.equal(opened.dialogCount, 1, `${label}: Viewer is the single dialog state`);
+  assert.ok(opened.focusedId, `${label}: Focus persists behind the Viewer`);
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(700);
+  const closed = await page.evaluate(() => ({
+    viewerOpen: document.querySelector("[data-source64-viewer-open]")?.getAttribute("data-source64-viewer-open") ?? null,
+    focusedId: document.querySelector('[data-moment-id][data-focused="true"]')?.getAttribute("data-moment-id") ?? null,
+    dialogCount: document.querySelectorAll('[role="dialog"]').length,
+  }));
+  assert.equal(closed.viewerOpen, "false", `${label}: Viewer closes back to Focus`);
+  assert.equal(closed.dialogCount, 0, `${label}: closing the Viewer must not leave a dialog`);
+  assert.ok(closed.focusedId, `${label}: closing the Viewer keeps Focus`);
+}
+
 // The welcome kicker text "WELCOME BACK" also appears inside the DOMAIN BOUNDARY
 // contract copy on the page, so the locator MUST be exact to avoid a Playwright
 // strict-mode violation. Source-faithful: only the kicker reads exactly that.
@@ -728,6 +868,30 @@ try {
     assert.deepEqual(reduced.errors, [], `reduced-motion mobile: no console/page errors: ${reduced.errors.join(" | ")}`);
   } finally {
     await reduced.context.close();
+  }
+
+  // ----------------------------------------------------------------------
+  // Mobile Focus presentation fidelity — source-derived bounds at 320x720 and 390x844.
+  // This is the residual CENTRAL rejected: the mobile focusInfo was a near-opaque
+  // bottom sheet over roughly half the viewport, suppressing the Welcome/world
+  // hierarchy. Geometry, state separation and depth hierarchy are all proven here.
+  // ----------------------------------------------------------------------
+  for (const size of ["320x720", "390x844"]) {
+    const [w, h] = size.split("x").map(Number);
+    const focus = await openFocusRoute(browser, { width: w, height: h });
+    try {
+      const label = `focus ${size}`;
+      const metrics = await assertSourceFocusPresentation(focus.page, label, size);
+      await assertNoHorizontalOverflow(focus.page, label);
+      await assertViewerRemainsSeparateState(focus.page, label);
+      assert.deepEqual(focus.errors, [], `${label}: no console/page errors: ${focus.errors.join(" | ")}`);
+      console.log(
+        `SOURCE64_FOCUS_PRESENTATION ${size}: occupation=${metrics.occupationPct}% top=${metrics.topPct}% ` +
+        `focused=${metrics.focusedId} dialogCount=${metrics.dialogCount}`,
+      );
+    } finally {
+      await focus.context.close();
+    }
   }
 
   console.log("LINEAGE_64_ROUTE_BROWSER_QA_PASS");

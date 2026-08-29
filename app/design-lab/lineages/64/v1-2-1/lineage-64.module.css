@@ -990,43 +990,62 @@
   color: #ece5df;
 }
 
+/* Source64 Focus typography/geometry is bound to the authoritative executable
+   (현재후보.html): .kicker 9px/.22em, h2 clamp(25px,3vw,44px) with line-height
+   .98 and 10px/8px margins, .meta 11px, .why 25px/18px with a 9px block label,
+   .why p 14px/1.55. Mobile (<=700px) collapses to a 27px title and 14px/12px
+   why. WHY NEXT is capped at the source-derived two-line budget on both. */
 .focusKicker {
   margin: 0;
-  color: #a9a4b1;
-  font-size: 10px;
-  letter-spacing: 0.19em;
+  color: #9f99aa;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  line-height: normal;
 }
 
 .focusTitle {
-  margin: 9px 0 10px;
+  margin: 10px 0 8px;
   color: #f7f2ec;
-  font-size: 30px;
-  letter-spacing: -0.045em;
+  font-size: clamp(25px, 3vw, 44px);
+  letter-spacing: -0.05em;
+  line-height: 0.98;
 }
 
 .focusMeta {
   margin: 0;
-  color: #888391;
-  font-size: 10px;
+  color: #9d98a4;
+  font-size: 11px;
+  line-height: normal;
 }
 
 .focusWhy {
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 25px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .focusWhy strong {
-  color: #d28c9a;
+  display: block;
+  color: #d6a0aa;
   font-size: 9px;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.2em;
+  line-height: normal;
+  margin-bottom: 9px;
 }
 
 .focusWhy p {
-  margin: 8px 0 0;
-  color: #d4d0d6;
-  font-size: 13px;
+  margin: 0;
+  color: #ddd8e0;
+  font-size: 14px;
   line-height: 1.55;
+  /* Authoritative A renders WHY NEXT at most two lines inside the wide
+     focusInfo. Canonical copy is longer than the source sample, so cap the
+     panel at the same source-derived line budget instead of letting the sheet
+     grow past A's 40.3% desktop occupation. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .focusActions {
@@ -1074,10 +1093,24 @@
   transition: transform 0.46s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, filter 0.3s ease;
 }
 
+/* Focus dimming is depth-differentiated exactly as the authoritative executable
+   renders it: distant cards recede to ~0.018 with blur(2.5px) while near and
+   foreground cards stay ~0.061-0.097 with blur(1.3px). A flat single value
+   collapses the orbit depth hierarchy and makes the world read as a dead wash. */
 .card[data-focus-dim="true"] {
-  opacity: 0.1;
+  opacity: 0.061;
   filter: blur(1.3px);
   transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.card[data-focus-dim="true"][data-depth-tier="far"] {
+  opacity: 0.018;
+  filter: blur(2.5px);
+}
+
+.card[data-focus-dim="true"][data-depth-tier="foreground"] {
+  opacity: 0.097;
+  filter: blur(1.3px);
 }
 
 @media (max-width: 700px) {
@@ -1092,8 +1125,24 @@
     border-radius: 18px;
   }
 
+  /* Mobile Focus must stay a subordinate information panel over the live orbit,
+     not a dominant bottom sheet. Authoritative A occupies 38.6% of a 320x720
+     viewport and 30.7% of 390x844; these mobile values, plus the 3-line cap on
+     the WHY NEXT copy, keep the native panel inside that source-derived bound. */
   .focusTitle {
-    font-size: 24px;
+    font-size: 27px;
+  }
+
+  .focusWhy {
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+
+  .focusWhy p {
+    font-size: 12px;
+    /* Authoritative A shows exactly two WHY NEXT lines at 320x720 (37px). Keep
+       the same line budget so native Focus stays a subordinate panel. */
+    -webkit-line-clamp: 2;
   }
 
   .closeFocus {
