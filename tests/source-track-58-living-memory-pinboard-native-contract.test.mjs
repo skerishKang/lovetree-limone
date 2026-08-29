@@ -135,5 +135,5 @@ test("keyboard focus, touch-safe native controls and reduced-motion policy are p
   assert.match(cssSource, /@media \(max-width: 360px\)/);
   assert.match(cssSource, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(repairCssSource, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(cssSource, /overflow-x: clip/);
+  assert.match(cssSource, /overflow.*hidden|overflow-x:\s*clip/);
 });

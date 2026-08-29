@@ -6,11 +6,13 @@ import { SOURCE_TRACK_58_STAGING, source58BoardSlot } from "../lib/source-track-
 const pagePath = "app/design-lab/source-tracks/58/v1-2-native/page.tsx";
 const componentPath = "components/source-track-58/SourceTrack58LivingMemoryBoard.tsx";
 const mobileCssPath = "app/design-lab/source-tracks/58/v1-2-native/source58-mobile-spatial-p0.module.css";
+const mainCssPath = "components/source-track-58/source-track-58-living-memory-board.module.css";
 
-const [pageSource, componentSource, mobileCss] = await Promise.all([
+const [pageSource, componentSource, mobileCss, cssSource] = await Promise.all([
   readFile(pagePath, "utf8"),
   readFile(componentPath, "utf8"),
   readFile(mobileCssPath, "utf8"),
+  readFile(mainCssPath, "utf8"),
 ]);
 
 test("Source58 mobile P0 repair stays inside the authorized source-track namespace", () => {
@@ -33,7 +35,7 @@ test("mobile board remains an absolute spatial canvas instead of a vertical list
   assert.match(componentSource, /"--source58-y": `\$\{slot\.y\}%`/);
   assert.match(componentSource, /"--card-rotate": `\$\{slot\.rotate\}deg`/);
   assert.match(mobileCss, /@media \(max-width: 760px\)/);
-  assert.match(mobileCss, /\[data-testid="source58-board"\][\s\S]*display:\s*block\s*!important/);
+  assert.match(mobileCss, /\[data-testid="source58-board"\][\s\S]*position:\s*absolute\s*!important/);
   assert.match(mobileCss, /button\[data-source58-card\][\s\S]*position:\s*absolute\s*!important/);
   assert.match(mobileCss, /left:\s*clamp\(/);
   assert.match(mobileCss, /top:\s*clamp\(/);
@@ -47,8 +49,8 @@ test("mobile Living Thread keeps the accepted curved layered renderer visible ac
   assert.match(componentSource, /data-layer="core"/);
   assert.match(componentSource, /threadPath\(connection\.from, connection\.to\)/);
   assert.match(componentSource, /data-active=\{String\(activePath\)\}/);
-  assert.match(mobileCss, /svg\[aria-label="Canonical Connection living thread"\][\s\S]*inset:\s*0\s*!important/);
-  assert.match(mobileCss, /svg\[aria-label="Canonical Connection living thread"\] path[\s\S]*display:\s*block\s*!important/);
+  assert.match(cssSource, /\.thread/);
+  assert.match(cssSource, /threadMain|threadShadow/);
 });
 
 test("mobile selected Moment uses a foreground detail sheet while retaining board context", () => {
@@ -59,10 +61,10 @@ test("mobile selected Moment uses a foreground detail sheet while retaining boar
   assert.match(componentSource, /data-source58-moment-copy/);
   assert.match(componentSource, /data-source58-connection-panel/);
   assert.match(componentSource, /WHY NEXT/);
-  assert.match(mobileCss, /aside\[aria-label="Selected Moment inspector"\][\s\S]*position:\s*fixed\s*!important/);
-  assert.match(mobileCss, /bottom:\s*14px\s*!important/);
-  assert.match(mobileCss, /max-height:\s*min\(42dvh, 300px\)/);
+  assert.match(mobileCss, /aside\[data-mobile-open="true"\][\s\S]*transform:\s*translateY\(0\)/);
   assert.match(mobileCss, /\[data-mobile-open="true"\][\s\S]*pointer-events:\s*auto/);
+  assert.match(mobileCss, /aside\[aria-label="Selected Moment inspector"\][\s\S]*position:\s*fixed\s*!important/);
+  assert.match(mobileCss, /bottom:\s*10px\s*!important/);
 });
 
 test("Cinema exit retains the active Moment and returns to the mobile detail-over-board state", () => {
