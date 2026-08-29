@@ -226,6 +226,54 @@ test("Track59 handoff keeps mapping proven but actual open / receive unproven", 
   assert.equal(TRACK64_V1_2_1_HANDOFF.sameMomentFocus, false);
 });
 
+test("source media mapping preserves original-A assets and memo text-only purity", () => {
+  const photo = TRACK64_MOMENTS.filter((m) => m.kind === "photo");
+  const video = TRACK64_MOMENTS.filter((m) => m.kind === "video");
+  const link = TRACK64_MOMENTS.filter((m) => m.kind === "link");
+  const memo = TRACK64_MOMENTS.filter((m) => m.kind === "memo");
+
+  assert.equal(photo.length, 18);
+  assert.equal(video.length, 10);
+  assert.equal(link.length, 5);
+  assert.equal(memo.length, 7);
+
+  // All 33 non-memo moments must have valid source mediaUrl
+  for (const m of [...photo, ...video, ...link]) {
+    assert.ok(m.mediaUrl, `moment ${m.id} (${m.kind}) must have mediaUrl`);
+    assert.ok(m.mediaUrl.startsWith("/reference/lineage-64-source/"), `moment ${m.id} mediaUrl must point to source assets`);
+  }
+
+  // All 7 memo moments must be text-only without fake mediaUrl
+  for (const m of memo) {
+    assert.equal(m.mediaUrl, undefined, `memo ${m.id} must not have fake mediaUrl`);
+    assert.ok(m.title.length > 0, `memo ${m.id} must have text title`);
+    assert.ok(m.date.length > 0, `memo ${m.id} must have date`);
+  }
+});
+
+test("YouTube presentation adapter deterministically normalizes URLs and derives thumbnails", async () => {
+  const { extractYouTubeVideoId, getYouTubeMediaInfo } = await import("../lib/lineage-64/youtube.ts");
+
+  // Valid formats
+  assert.equal(extractYouTubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ"), "dQw4w9WgXcQ");
+  assert.equal(extractYouTubeVideoId("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s"), "dQw4w9WgXcQ");
+  assert.equal(extractYouTubeVideoId("https://youtu.be/dQw4w9WgXcQ"), "dQw4w9WgXcQ");
+  assert.equal(extractYouTubeVideoId("https://www.youtube.com/shorts/dQw4w9WgXcQ"), "dQw4w9WgXcQ");
+  assert.equal(extractYouTubeVideoId("https://www.youtube.com/embed/dQw4w9WgXcQ"), "dQw4w9WgXcQ");
+  assert.equal(extractYouTubeVideoId("dQw4w9WgXcQ"), "dQw4w9WgXcQ");
+
+  // Invalid formats
+  assert.equal(extractYouTubeVideoId(""), null);
+  assert.equal(extractYouTubeVideoId(null), null);
+  assert.equal(extractYouTubeVideoId("https://example.com/not-youtube"), null);
+  assert.equal(extractYouTubeVideoId("short"), null);
+
+  // Metadata derivation
+  const info = getYouTubeMediaInfo("https://youtu.be/dQw4w9WgXcQ");
+  assert.ok(info);
+  assert.equal(info.watchUrl, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+});
+
 test("source64CardPosition preserves clean central Welcome void across viewports and orbit phases", () => {
   const samplePhases = [0, 0.5, 1.0, 1.8, 3.14, 5.0, 10.0];
   for (const compact of [false, true]) {
@@ -249,3 +297,5 @@ test("source64CardPosition preserves clean central Welcome void across viewports
     }
   }
 });
+
+

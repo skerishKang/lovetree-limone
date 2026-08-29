@@ -1,6 +1,7 @@
 import type { TreeMomentView } from "@/lib/moment-model";
 import type { MediaKind, MomentRecord } from "./types";
 import { source64SlotForIndex } from "./source-slots";
+import { getYouTubeMediaInfo } from "./youtube";
 
 const ACCENTS = ["#ff91b8", "#8fb6ff", "#9be7c4", "#ffd27d", "#c79bff"] as const;
 
@@ -22,6 +23,18 @@ export function toLineage64Moments(treeMoments: readonly TreeMomentView[]): Mome
     const slot = source64SlotForIndex(index);
     const kind = mediaKind(moment);
 
+    // Resolve thumbnail/mediaUrl from canonical thumbnail or deterministic YouTube info
+    let mediaUrl = moment.thumbnail || undefined;
+    let externalUrl: string | undefined = undefined;
+
+    if (kind === "video" || moment.sourceType.toLowerCase() === "youtube") {
+      const ytInfo = getYouTubeMediaInfo(moment.thumbnail);
+      if (ytInfo) {
+        if (!mediaUrl) mediaUrl = ytInfo.thumbnailUrl;
+        externalUrl = ytInfo.watchUrl;
+      }
+    }
+
     return {
       id: moment.id,
       index,
@@ -31,7 +44,8 @@ export function toLineage64Moments(treeMoments: readonly TreeMomentView[]): Mome
       family: slot.family,
       depthTier: slot.depthTier,
       summary: moment.memo || moment.connectionReason || "이 순간에 남긴 마음",
-      ...(moment.thumbnail ? { mediaUrl: moment.thumbnail } : {}),
+      ...(mediaUrl ? { mediaUrl } : {}),
+      ...(externalUrl ? { externalUrl } : {}),
       accent: ACCENTS[slot.index % ACCENTS.length],
       fitting: { ...slot.fitting, mediaType: kind },
       // Source64 slot topology is view-derived and stays fixed; canonical row
