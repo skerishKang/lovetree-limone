@@ -60,8 +60,8 @@ test("mobile selected Moment uses a foreground detail sheet while retaining boar
   assert.match(componentSource, /data-source58-connection-panel/);
   assert.match(componentSource, /WHY NEXT/);
   assert.match(mobileCss, /aside\[aria-label="Selected Moment inspector"\][\s\S]*position:\s*fixed\s*!important/);
-  assert.match(mobileCss, /bottom:\s*10px\s*!important/);
-  assert.match(mobileCss, /max-height:\s*min\(55dvh, 450px\)/);
+  assert.match(mobileCss, /bottom:\s*14px\s*!important/);
+  assert.match(mobileCss, /max-height:\s*min\(42dvh, 300px\)/);
   assert.match(mobileCss, /\[data-mobile-open="true"\][\s\S]*pointer-events:\s*auto/);
 });
 
