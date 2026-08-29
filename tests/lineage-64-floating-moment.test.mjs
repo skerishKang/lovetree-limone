@@ -13,7 +13,7 @@ import {
   track64MediaMix,
 } from "../lib/lineage-64/data.ts";
 import { SOURCE64_SOURCE_SLOTS } from "../lib/lineage-64/source-slots.ts";
-import { SOURCE64_RING_SPEEDS, source64OrbitalPhase } from "../lib/lineage-64/orbit.ts";
+import { SOURCE64_RING_SPEEDS, source64CardPosition, source64OrbitalPhase } from "../lib/lineage-64/orbit.ts";
 import { toLineage64Moments } from "../lib/lineage-64/product-adapter.ts";
 import {
   beginGesture,
@@ -224,4 +224,28 @@ test("Track59 handoff keeps mapping proven but actual open / receive unproven", 
   assert.equal(TRACK64_V1_2_1_HANDOFF.actualTargetOpen, false);
   assert.equal(TRACK64_V1_2_1_HANDOFF.receiverConsume, false);
   assert.equal(TRACK64_V1_2_1_HANDOFF.sameMomentFocus, false);
+});
+
+test("source64CardPosition preserves clean central Welcome void across viewports and orbit phases", () => {
+  const samplePhases = [0, 0.5, 1.0, 1.8, 3.14, 5.0, 10.0];
+  for (const compact of [false, true]) {
+    const voidLimitX = compact ? 220 : 380;
+    const voidLimitY = compact ? 150 : 210;
+
+    for (const phase of samplePhases) {
+      for (const m of TRACK64_MOMENTS) {
+        const { x, y, z } = source64CardPosition(m, phase, compact);
+        assert.ok(Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z));
+        // If card is near front (z < 260), it must not enter the protected central void
+        if (z < 260) {
+          const inVoid = Math.abs(x) < voidLimitX * 0.65 && Math.abs(y) < voidLimitY * 0.65;
+          assert.equal(
+            inVoid,
+            false,
+            `card ${m.id} at phase ${phase} (compact=${compact}) violated central void (x=${x.toFixed(1)}, y=${y.toFixed(1)}, z=${z.toFixed(1)})`,
+          );
+        }
+      }
+    }
+  }
 });

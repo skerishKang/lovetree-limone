@@ -52,6 +52,31 @@ async function assertCenterVoidAndDepth(page, label) {
   assert.equal(await page.locator('[data-depth-tier="foreground"]').count(), 10, `${label}: 10 foreground cards`);
   assert.equal(await page.locator('[data-depth-tier="mid"]').count(), 18, `${label}: 18 mid cards`);
   assert.equal(await page.locator('[data-depth-tier="far"]').count(), 12, `${label}: 12 far cards`);
+
+  // Assert actual DOM bounding boxes: no card may obscure the Welcome title text or actions
+  const checkVoid = () => page.evaluate(() => {
+    const welcome = document.querySelector('[data-source64-welcome="true"]');
+    const title = welcome?.querySelector('h2, .welcomeTitle');
+    const cards = [...document.querySelectorAll('[data-moment-id]')];
+    if (!welcome || !title) return { ok: false };
+    const titleRect = title.getBoundingClientRect();
+    const overlaps = cards.filter((card) => {
+      const r = card.getBoundingClientRect();
+      const overlapW = Math.max(0, Math.min(r.right, titleRect.right) - Math.max(r.left, titleRect.left));
+      const overlapH = Math.max(0, Math.min(r.bottom, titleRect.bottom) - Math.max(r.top, titleRect.top));
+      return overlapW > 0 && overlapH > 0;
+    });
+    return { ok: true, overlappingCards: overlaps.length };
+  });
+
+  const initialCheck = await checkVoid();
+  assert.equal(initialCheck.ok, true, `${label}: Welcome title must be present in DOM`);
+  assert.equal(initialCheck.overlappingCards, 0, `${label}: initial frame must have 0 cards overlapping Welcome title`);
+
+  // Orbit-advanced state check
+  await page.waitForTimeout(400);
+  const advancedCheck = await checkVoid();
+  assert.equal(advancedCheck.overlappingCards, 0, `${label}: orbit-advanced frame must have 0 cards overlapping Welcome title`);
 }
 
 async function assertIndependentFamilyTemporalOrbit(page, label) {
@@ -99,18 +124,34 @@ async function frontCardCenter(page) {
   return page.evaluate(() => {
     const cards = Array.from(document.querySelectorAll("[data-moment-id]"));
     const cardOf = (el) => (el?.hasAttribute?.("data-moment-id") ? el : el?.closest?.("[data-moment-id]") ?? null);
-    for (const card of cards) {
+    
+    // Prefer foreground cards first, then mid, then far
+    const sorted = [...cards].sort((a, b) => {
+      const tierRank = { foreground: 0, mid: 1, far: 2 };
+      const ta = tierRank[a.getAttribute("data-depth-tier")] ?? 1;
+      const tb = tierRank[b.getAttribute("data-depth-tier")] ?? 1;
+      return ta - tb;
+    });
+
+    for (const card of sorted) {
       const rect = card.getBoundingClientRect();
       if (rect.width < 12 || rect.height < 12) continue;
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      if (cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight) continue;
-      const hit = cardOf(document.elementFromPoint(cx, cy));
-      if (hit && hit === card) return { x: Math.round(cx), y: Math.round(cy), id: card.getAttribute("data-moment-id") };
+      for (const px of [0.5, 0.25, 0.75]) {
+        for (const py of [0.5, 0.25, 0.75]) {
+          const cx = rect.left + rect.width * px;
+          const cy = rect.top + rect.height * py;
+          if (cx < 10 || cy < 50 || cx > window.innerWidth - 10 || cy > window.innerHeight - 30) continue;
+          const hit = cardOf(document.elementFromPoint(cx, cy));
+          if (hit && hit === card) {
+            return { x: Math.round(cx), y: Math.round(cy), id: card.getAttribute("data-moment-id") };
+          }
+        }
+      }
     }
+
     const step = 16;
-    for (let y = 24; y < window.innerHeight; y += step) {
-      for (let x = 24; x < window.innerWidth; x += step) {
+    for (let y = 60; y < window.innerHeight - 30; y += step) {
+      for (let x = 20; x < window.innerWidth - 20; x += step) {
         const hit = cardOf(document.elementFromPoint(x, y));
         if (hit) return { x, y, id: hit.getAttribute("data-moment-id") };
       }
@@ -566,8 +607,17 @@ try {
     // first swipe's horizontal direction.
     const reverseStart = await waitForFrontCard(reduced.page, "reduced-motion mobile reverse");
     const firstDir = targetX - swipeStart.x;
-    const reverseTargetX = Math.max(10, Math.min(rvw - 10, reverseStart.x - firstDir));
-    await touchSwipe(rClient, reverseStart.x, reverseStart.y, reverseTargetX, reverseStart.y);
+    const revDir = -Math.sign(firstDir || 1);
+    let revStartX = reverseStart.x;
+    let reverseTargetX = revStartX + revDir * 70;
+    if (reverseTargetX > rvw - 10) {
+      revStartX = Math.max(10, rvw - 80);
+      reverseTargetX = revStartX - 70;
+    } else if (reverseTargetX < 10) {
+      revStartX = Math.min(rvw - 10, 80);
+      reverseTargetX = revStartX + 70;
+    }
+    await touchSwipe(rClient, revStartX, reverseStart.y, reverseTargetX, reverseStart.y);
     // #417: completion wait — RAF applies the reverse swipe delta; wait for the
     // observable instead of a fixed 80ms sleep.
     await waitForWorldAngleChange(reduced.page, afterSwipe, "reduced-motion mobile", "reverse touch swipe");

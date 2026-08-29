@@ -56,12 +56,14 @@
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
   will-change: transform;
+  pointer-events: none;
 }
 
 .card {
   position: absolute;
   top: 50%;
   left: 50%;
+  pointer-events: auto;
   width: 200px;
   height: 272px;
   margin: -136px 0 0 -100px;
@@ -134,11 +136,40 @@
   position: absolute;
   inset: 0;
   padding: 16px;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #f1e9e2;
-  background: linear-gradient(160deg, #1c1320 0%, #0c0a12 100%);
-  overflow: auto;
+  background: linear-gradient(145deg, #f4f0e8, #d9d2c8);
+  color: #151419;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  overflow: hidden;
+}
+
+.memoKicker {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #766e64;
+  text-transform: uppercase;
+}
+
+.memoText {
+  font-size: 14px;
+  line-height: 1.32;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #151419;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.memoFoot {
+  font-size: 9px;
+  color: #81786e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cardBadge {
@@ -408,25 +439,25 @@
 }
 
 .card[data-depth-tier="foreground"] {
-  width: 226px;
-  height: 292px;
-  margin: -146px 0 0 -113px;
-  border-radius: 16px;
+  width: 210px;
+  height: 272px;
+  margin: -136px 0 0 -105px;
+  border-radius: 15px;
   z-index: 4;
 }
 
 .card[data-depth-tier="mid"] {
-  width: 180px;
-  height: 232px;
-  margin: -116px 0 0 -90px;
+  width: 172px;
+  height: 222px;
+  margin: -111px 0 0 -86px;
   opacity: .82;
   z-index: 2;
 }
 
 .card[data-depth-tier="far"] {
-  width: 128px;
-  height: 166px;
-  margin: -83px 0 0 -64px;
+  width: 124px;
+  height: 160px;
+  margin: -80px 0 0 -62px;
   opacity: .58;
   border-radius: 11px;
   z-index: 1;
@@ -589,21 +620,24 @@
   }
 
   .card[data-depth-tier="foreground"] {
-    width: 168px;
-    height: 218px;
-    margin: -109px 0 0 -84px;
+    width: 156px;
+    height: 204px;
+    margin: -102px 0 0 -78px;
+    border-radius: 13px;
   }
 
   .card[data-depth-tier="mid"] {
-    width: 132px;
-    height: 172px;
-    margin: -86px 0 0 -66px;
+    width: 130px;
+    height: 170px;
+    margin: -85px 0 0 -65px;
+    border-radius: 11px;
   }
 
   .card[data-depth-tier="far"] {
-    width: 108px;
-    height: 140px;
-    margin: -70px 0 0 -54px;
+    width: 94px;
+    height: 124px;
+    margin: -62px 0 0 -47px;
+    border-radius: 9px;
   }
 
   .viewerOverlay {
@@ -655,23 +689,49 @@
   }
 }
 
-@media (max-width: 330px) {
+@media (max-width: 390px) {
   .card[data-depth-tier="foreground"] {
-    width: 146px;
-    height: 190px;
-    margin: -95px 0 0 -73px;
+    width: 138px;
+    height: 180px;
+    margin: -90px 0 0 -69px;
+    border-radius: 12px;
   }
 
   .card[data-depth-tier="mid"] {
-    width: 116px;
-    height: 152px;
-    margin: -76px 0 0 -58px;
+    width: 114px;
+    height: 148px;
+    margin: -74px 0 0 -57px;
+    border-radius: 10px;
   }
 
   .card[data-depth-tier="far"] {
-    width: 92px;
-    height: 120px;
-    margin: -60px 0 0 -46px;
+    width: 82px;
+    height: 108px;
+    margin: -54px 0 0 -41px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 330px) {
+  .card[data-depth-tier="foreground"] {
+    width: 120px;
+    height: 156px;
+    margin: -78px 0 0 -60px;
+    border-radius: 10px;
+  }
+
+  .card[data-depth-tier="mid"] {
+    width: 98px;
+    height: 128px;
+    margin: -64px 0 0 -49px;
+    border-radius: 9px;
+  }
+
+  .card[data-depth-tier="far"] {
+    width: 70px;
+    height: 92px;
+    margin: -46px 0 0 -35px;
+    border-radius: 7px;
   }
 }
 

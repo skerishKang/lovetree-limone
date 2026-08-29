@@ -13,13 +13,14 @@ const sourcePath = path.join(
 );
 const evidence = path.join(root, "test-results/design-fidelity/lineage-64-v1-2-1/abc");
 const treeId = "source64-abc-fidelity-tree";
-const pixel =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='400'%3E%3Crect width='640' height='400' fill='%23d9cbd3'/%3E%3C/svg%3E";
 const moments = Array.from({ length: 40 }, (_, index) => {
   const id = `moment-${String(index + 1).padStart(2, "0")}`;
   const parentId = index === 0 ? null : `moment-${String(Math.floor((index - 1) / 2) + 1).padStart(2, "0")}`;
   const sourceType = index < 18 ? "photo" : index < 28 ? "video" : index < 35 ? "memo" : "link";
   const date = `2026-${String((index % 12) + 1).padStart(2, "0")}-${String((index % 27) + 1).padStart(2, "0")}`;
+  const hue = (index * 37) % 360;
+  const thumbnail = sourceType === "memo" ? "" :
+    `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g${index}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='hsl(${hue}, 42%25, 28%25)'/%3E%3Cstop offset='100%25' stop-color='hsl(${(hue + 45) % 360}, 50%25, 14%25)'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='400' fill='url(%23g${index})'/%3E%3C/svg%3E`;
   return {
     id,
     treeId,
@@ -29,7 +30,7 @@ const moments = Array.from({ length: 40 }, (_, index) => {
     memo: sourceType === "memo" ? "Canonical memo Moment" : `Canonical ${sourceType} Moment`,
     sourceType,
     sourceUrl: "",
-    thumbnail: pixel,
+    thumbnail,
     discoveryDate: date,
     timestamp: date,
     createdAt: `2026-01-01T00:00:${String(index).padStart(2, "0")}.000Z`,
@@ -108,8 +109,10 @@ async function assertProductGeometry(page, label, width) {
   const geometry = await page.evaluate(() => {
     const stage = document.querySelector('[data-source64-revision="64-v1-2-1"]');
     const welcome = document.querySelector('[data-source64-welcome="true"]');
+    const title = welcome?.querySelector("h2, .welcomeTitle");
     const cards = [...document.querySelectorAll("[data-moment-id]")];
     const welcomeRect = welcome?.getBoundingClientRect();
+    const titleRect = title?.getBoundingClientRect();
     const welcomeArea = welcomeRect ? welcomeRect.width * welcomeRect.height : 0;
     const overlaps = welcomeRect
       ? cards.map((card) => {
@@ -120,6 +123,14 @@ async function assertProductGeometry(page, label, width) {
           return (overlapWidth * overlapHeight) / Math.max(Math.min(welcomeArea, cardArea), 1);
         })
       : [];
+    const titleOverlaps = titleRect
+      ? cards.filter((card) => {
+          const rect = card.getBoundingClientRect();
+          const w = Math.max(0, Math.min(rect.right, titleRect.right) - Math.max(rect.left, titleRect.left));
+          const h = Math.max(0, Math.min(rect.bottom, titleRect.bottom) - Math.max(rect.top, titleRect.top));
+          return w > 0 && h > 0;
+        }).length
+      : 0;
     const depths = Object.fromEntries(["foreground", "mid", "far"].map((tier) => [tier, cards.filter((card) => card.dataset.depthTier === tier).length]));
     const finiteCardGeometry = cards.every((card) => {
       const rect = card.getBoundingClientRect();
@@ -134,6 +145,7 @@ async function assertProductGeometry(page, label, width) {
       centerVisible: Boolean(welcomeRect && welcomeRect.width > 0 && welcomeRect.height > 0),
       finiteCardGeometry,
       maxWelcomeOverlap: Math.max(0, ...overlaps),
+      titleOverlaps,
     };
   });
   assert.equal(geometry.revision, "64-v1-2-1", `${label}: stale or foreign Source64 surface detected`);
@@ -143,7 +155,8 @@ async function assertProductGeometry(page, label, width) {
   assert.ok(geometry.depthCount.foreground > 0 && geometry.depthCount.mid > 0 && geometry.depthCount.far > 0, `${label}: depth tiers missing`);
   assert.equal(geometry.centerVisible, true, `${label}: product Welcome center must remain visible`);
   assert.equal(geometry.finiteCardGeometry, true, `${label}: product card geometry must be finite and non-zero`);
-  assert.ok(geometry.maxWelcomeOverlap < 0.65, `${label}: product cards over-occlude Welcome center`);
+  assert.ok(geometry.maxWelcomeOverlap < 0.35, `${label}: product cards over-occlude Welcome center (${geometry.maxWelcomeOverlap})`);
+  assert.equal(geometry.titleOverlaps, 0, `${label}: product cards must not occlude Welcome title`);
 
   const viewer = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').boundingBox();
   const layout = await page.locator('[data-source64-viewer="true"] [data-viewer-layout="mediaShell"]').evaluate((shell) => {

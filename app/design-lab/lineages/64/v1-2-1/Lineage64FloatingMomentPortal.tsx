@@ -18,7 +18,7 @@ import {
   selectedMoment,
 } from "@/lib/lineage-64/state";
 import type { MomentRecord } from "@/lib/lineage-64/types";
-import { source64OrbitalPhase, SOURCE64_RING_SPEEDS } from "@/lib/lineage-64/orbit";
+import { source64CardPosition, source64OrbitalPhase, SOURCE64_RING_SPEEDS } from "@/lib/lineage-64/orbit";
 import styles from "./lineage-64.module.css";
 
 // TRUE AMBIENT AUTO-ORBIT: a continuous, bounded idle orbit in normal motion.
@@ -26,60 +26,9 @@ import styles from "./lineage-64.module.css";
 // is open, or while a pointer drag owns the world. Manual drag/wheel add on top.
 const AMBIENT_DEG_PER_MS = 0.01;
 
-interface Source64Ring {
-  radiusX: number;
-  radiusY: number;
-  zAmplitude: number;
-  zBase: number;
-  band: number;
-  phaseOffset: number;
-  speed: number;
-}
-
-// Ported from the pinned executable's RINGS table. The source uses five
-// independent orbital families rather than one radius per depth tier.
-const SOURCE64_RINGS: Record<MomentRecord["family"], Source64Ring> = {
-  f1: { radiusX: 700, radiusY: 330, zAmplitude: 420, zBase: 0, band: 0, phaseOffset: 0, speed: 1 },
-  f2: { radiusX: 520, radiusY: 260, zAmplitude: 330, zBase: -80, band: 0, phaseOffset: 0.31, speed: 1.18 },
-  f3: { radiusX: 900, radiusY: 430, zAmplitude: 520, zBase: -40, band: 0, phaseOffset: 0.62, speed: 0.82 },
-  f4: { radiusX: 760, radiusY: 260, zAmplitude: 460, zBase: -120, band: -250, phaseOffset: 0.93, speed: 0.92 },
-  f5: { radiusX: 780, radiusY: 250, zAmplitude: 470, zBase: -100, band: 250, phaseOffset: 1.24, speed: 1.06 },
-};
-
 function cardTransform(m: MomentRecord, orbitalPhase = 0, compact = false): string {
-  const ring = SOURCE64_RINGS[m.family];
-  const theta = (m.world.angle * Math.PI) / 180 + source64OrbitalPhase(orbitalPhase, m.family, m.world.phaseOffset ?? 0);
-  let x = Math.cos(theta) * ring.radiusX;
-  let y =
-    Math.sin(theta) * ring.radiusY +
-    ring.band +
-    Math.sin(theta * 1.7 + ring.phaseOffset * 3) * 45;
-  let z =
-    Math.sin(theta + 1.1 + ring.phaseOffset * 4) * ring.zAmplitude +
-    ring.zBase +
-    (m.world.zOffset ?? 0);
-
-  // The executable projects coordinates to viewport pixels. CSS 3D keeps the
-  // source distances on desktop, but narrow touch viewports need the same
-  // projection compressed before browser perspective/clipping is applied.
-  const projectionScale = compact ? 0.22 : 1;
-  x *= projectionScale;
-  y *= projectionScale;
-  z *= projectionScale;
-
-  // Preserve the executable's clear central Welcome void. This is applied to
-  // projected ring coordinates, not to a radius scalar (which cannot detect
-  // whether a card is actually crossing the center).
-  const centerVoidLimit = compact ? 1.5 : 1;
-  const centerDistance = Math.sqrt((x / (520 * projectionScale)) ** 2 + (y / (260 * projectionScale)) ** 2);
-  if (centerDistance < centerVoidLimit && z < 260 * projectionScale) {
-    const push = (centerVoidLimit - centerDistance) * 900 * projectionScale;
-    x += (x >= 0 ? 1 : -1) * push;
-    y += (y >= 0 ? 1 : -1) * push * 0.2;
-  }
-
-  const perspectiveScale = Math.max(0.18, Math.min(1.82, 1050 / (1050 - z)));
-  const scale = m.world.scale * perspectiveScale;
+  const { x, y, z, theta } = source64CardPosition(m, orbitalPhase, compact);
+  const scale = m.world.scale;
   const rotateX = Math.sin(theta) * 9;
   const rotateY = Math.cos(theta) * 18;
   const rotateZ = Math.sin(theta * 0.6) * 7;
@@ -264,9 +213,13 @@ export default function Lineage64FloatingMomentPortal({
       const dx = e.clientX - p.lastX;
       cameraAngleRef.current += dx * 0.25;
       velocityRef.current = Math.max(-0.06, Math.min(0.06, dx * 0.02));
+      orbitalPhaseRef.current += dx * 0.0038;
       pendingRef.current = moveGesture(p, e.clientX, e.clientY, threshold);
       if (pendingRef.current.dragActive) draggingRef.current = true;
-      if (worldRef.current) worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+      if (worldRef.current) {
+        worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+        worldRef.current.dataset.orbitalPhase = orbitalPhaseRef.current.toFixed(6);
+      }
     },
     [threshold],
   );
@@ -306,7 +259,11 @@ export default function Lineage64FloatingMomentPortal({
       // gesture (same policy as manual drag/swipe), not ambient auto-orbit.
       cameraAngleRef.current += e.deltaY * 0.06;
       velocityRef.current = Math.max(-0.06, Math.min(0.06, velocityRef.current + e.deltaY * 0.0006));
-      if (worldRef.current) worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+      orbitalPhaseRef.current += e.deltaY * 0.001;
+      if (worldRef.current) {
+        worldRef.current.style.transform = `rotateY(${cameraAngleRef.current.toFixed(3)}deg)`;
+        worldRef.current.dataset.orbitalPhase = orbitalPhaseRef.current.toFixed(6);
+      }
     },
     [state.viewerOpen],
   );
@@ -384,7 +341,9 @@ export default function Lineage64FloatingMomentPortal({
     if (moment.kind === "memo") {
       return (
         <div className={styles.memoBody} data-fit-mode={moment.fitting.fitMode}>
-          {moment.summary}
+          <div className={styles.memoKicker}>MEMO · {moment.date}</div>
+          <div className={styles.memoText}>{moment.title}</div>
+          <div className={styles.memoFoot}>{moment.summary}</div>
         </div>
       );
     }
@@ -503,6 +462,7 @@ export default function Lineage64FloatingMomentPortal({
               data-orbital-speed={SOURCE64_RING_SPEEDS[moment.family]}
               data-orbital-phase={source64OrbitalPhase(orbitalPhase, moment.family, moment.world.phaseOffset ?? 0).toFixed(6)}
               data-fit-mode={moment.fitting.fitMode}
+              data-kind={moment.kind}
               data-selected={isSelected ? "true" : "false"}
               aria-pressed={isSelected}
               aria-label={`${moment.title}, ${moment.date}, ${KIND_LABEL[moment.kind]}`}
