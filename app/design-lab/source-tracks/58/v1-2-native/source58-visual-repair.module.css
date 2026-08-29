@@ -319,17 +319,14 @@
   margin-bottom: 8px;
 }
 
-/* Source58 P0 board geometry: compact centered world 1600x1000, pearl surface inset 48 radius 34 */
+/* Source58 V1.2 board: 1600x1000 world with transform scaling, no width override needed */
 .repairScope :global([data-testid="source58-board"]) {
-  --source58-z: 0.62;
-  width: calc(1600px * var(--source58-z)) !important;
-  height: calc(1000px * var(--source58-z)) !important;
-  max-width: calc(100vw - 24px) !important;
-  border-radius: 34px !important;
+  width: 1600px !important;
+  height: 1000px !important;
 }
 
 .repairScope :global([data-testid="source58-board"]::after) {
-  inset: calc(48px * var(--source58-z, 0.62)) !important;
+  inset: 48px !important;
   border-radius: 18px !important;
 }
 

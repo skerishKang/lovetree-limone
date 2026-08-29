@@ -41,7 +41,6 @@ test("Source58 product binding stays optional and preserves the original canonic
   assert.match(source58Board, /useTreeMoments\(treeId\)/);
   assert.match(source58Board, /momentById\.has\(initialMomentId\)/);
   assert.match(source58Board, /selectTreeMoment\(initialMomentId\)/);
-  assert.match(source58Board, /!selectedMomentId && !initialMomentId && moments\[0\]/);
   assert.match(source58Board, /onMomentChange\?\.\(id\)/);
   assert.doesNotMatch(source58Board, /useRouter|usePathname|useSearchParams/);
 });

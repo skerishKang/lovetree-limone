@@ -124,6 +124,7 @@ export default function SourceTrack58LivingMemoryBoard({
   const [draftTitle, setDraftTitle] = useState("");
   const [draftMemo, setDraftMemo] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const cardRefs = useRef(new Map<string, HTMLButtonElement>());
   const boardRef = useRef<HTMLDivElement | null>(null);
 
@@ -171,10 +172,13 @@ export default function SourceTrack58LivingMemoryBoard({
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const isMobile = vw <= 760;
-      const raw = isMobile
-        ? Math.min(Math.max((vw - 24) / 1600, 0.26), 0.36)
-        : Math.min((vw - 40) / 1600, (vh - 150) / 1000, 0.92);
-      board.style.setProperty("--source58-z", String(Math.max(0.18, Math.min(raw, 0.92))));
+      const z = isMobile
+        ? Math.min(Math.max((vw - 24) / 1600, 0.22), 0.36)
+        : Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
+      const scale = Math.max(0.18, Math.min(z, 0.92));
+      const tx = isMobile ? (vw - 1600 * scale) / 2 : (vw - 1600 * scale) / 2;
+      const ty = isMobile ? (vh - 56 - 1000 * scale) / 2 : (vh - 1000 * scale) / 2;
+      board.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${scale})`;
     };
     update();
     const id = window.setInterval(update, 300);
@@ -191,8 +195,9 @@ export default function SourceTrack58LivingMemoryBoard({
   }, [initialMomentId, momentById, selectTreeMoment, selectedMomentId]);
 
   useEffect(() => {
-    if (!selectedMomentId && !initialMomentId && moments[0]) selectMoment(moments[0].id);
-  }, [initialMomentId, moments, selectMoment, selectedMomentId]);
+    // Source-faithful initial state: inspector hidden until explicit Moment selection.
+    // No auto-select on initial load.
+  }, []);
 
   useEffect(() => {
     if (!cinemaOpen || !cinemaPlaying || reducedMotion || moments.length < 2 || embedRequested) return;
@@ -331,19 +336,35 @@ export default function SourceTrack58LivingMemoryBoard({
     >
       <div className={styles.ambient} aria-hidden="true" />
       <header className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>{productMode ? "LOVETREE · LIVING MEMORY" : "LOVETREE · SOURCE 58 NATIVE CANDIDATE"}</p>
-          <h1>Living Memory Pinboard</h1>
-          <p className={styles.subtitle}>{tree?.title || (productMode ? "나의 기억 보드" : "MYTREE canonical workspace")}</p>
+        <div className={styles.brand}>
+          <span className={styles.brandMark} aria-hidden="true" />
+          <span>LOVETREE</span>
         </div>
-        <div className={styles.headerActions}>
-          <button type="button" className={styles.ghostButton} onClick={() => void refresh()} disabled={loading}>
-            {loading ? "LOADING" : "REFRESH"}
-          </button>
-          <button type="button" className={styles.cinemaButton} onClick={() => openCinema()} disabled={moments.length === 0}>
-            CINEMA REPLAY
-          </button>
+        <div className={styles.crumb}>
+          {productMode ? "MEMORY BOARD" : "MY TREE · OTHER VIEWS · MEMORY BOARD"}
         </div>
+        <div className={styles.spacer} />
+        <button type="button" className={styles.ghostButton} onClick={() => {
+          const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+          if (el) {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
+            const tx = (vw - 1600 * z) / 2;
+            const ty = (vh - 1000 * z) / 2;
+            el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
+            el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
+            setTimeout(() => { el.style.transition = ""; }, 650);
+          }
+        }}>
+          FIT ALL
+        </button>
+        <button type="button" className={styles.ghostButton} onClick={() => void refresh()} disabled={loading}>
+          {loading ? "LOADING" : "UNDO"}
+        </button>
+        <button type="button" className={styles.primaryButton} onClick={() => openCinema()} disabled={moments.length === 0}>
+          ＋ 순간 꽂기
+        </button>
       </header>
 
       {productMode ? (
@@ -375,128 +396,248 @@ export default function SourceTrack58LivingMemoryBoard({
       ) : null}
 
       {!error && !loading ? (
-        <div className={styles.workspace}>
-          <section className={styles.boardSection} aria-label="Living Memory Board">
-            <div className={styles.boardChrome}>
-              <div className={styles.boardTitle} data-source58-board-title>
-                <strong>{productMode ? "나의 기억 보드" : "MEMORY BOARD"}</strong>
-                <span>{moments.length} MOMENTS · {SOURCE_TRACK_58_STAGING.revision}</span>
-              </div>
-              <div
-                ref={boardRef}
-                className={styles.board}
-                data-testid="source58-board"
-                data-mobile-spatial-board="true"
-                onKeyDown={onBoardKeyDown}
-                tabIndex={0}
-                aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
+        <div className={styles.boardFrame}>
+          <aside
+            className={`${styles.leftPanel} ${leftPanelOpen ? "" : styles.leftPanelCollapsed}`}
+            aria-label={productMode ? "보드 도구" : "BOARD TOOLS"}
+          >
+            <div className={styles.panelHead}>
+              <div className={styles.panelTitle}>BOARD TOOLS</div>
+              <button
+                type="button"
+                className={styles.collapseBtn}
+                onClick={() => setLeftPanelOpen((prev) => !prev)}
+                aria-label={leftPanelOpen ? "Collapse board tools" : "Expand board tools"}
               >
-                <div className={styles.boardTexture} aria-hidden="true" />
-                <svg
-                  className={styles.thread}
-                  viewBox="0 0 100 100"
-                  preserveAspectRatio="none"
-                  aria-label={productMode ? "Moment 사이를 잇는 기억의 실" : "Canonical Connection living thread"}
-                >
-                  {connections.map((connection) => {
-                    const activePath = Boolean(
-                      selected && (connection.fromId === selected.id || connection.toId === selected.id),
-                    );
-                    const path = threadPath(connection.from, connection.to);
-                    return (
-                      <g key={connection.id} data-active={String(activePath)} data-connection-id={connection.id}>
-                        <path className={styles.threadShadow} data-layer="glow" d={path} />
-                        <path className={styles.threadMain} data-layer="color" d={path} />
-                        <path className={styles.threadMain} data-layer="core" d={path} />
-                      </g>
-                    );
-                  })}
-                </svg>
+                {leftPanelOpen ? "‹" : "›"}
+              </button>
+            </div>
+            <div className={styles.toolSection}>
+              <button type="button" className={styles.wideTool} onClick={() => openCinema()} disabled={moments.length === 0}>
+                ▶ {productMode ? "시네마 보기" : "CINEMA REPLAY"}
+              </button>
+              <button type="button" className={styles.wideTool} onClick={() => {
+                const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+                if (el) {
+                  const vw = window.innerWidth;
+                  const vh = window.innerHeight;
+                  const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
+                  const tx = (vw - 1600 * z) / 2;
+                  const ty = (vh - 1000 * z) / 2;
+                  el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
+                  el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
+                  setTimeout(() => { el.style.transition = ""; }, 650);
+                }
+              }}>
+                ⤢ {productMode ? "전체 보기" : "FIT ALL"}
+              </button>
+            </div>
+            <div className={styles.toolSection}>
+              <div className={styles.label}>BOARD THEME</div>
+              <div className={styles.themeGrid}>
+                {SOURCE_58_BOARD_THEMES.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`${styles.themeBtn} ${theme === item.id ? styles.themeBtnActive : ""}`}
+                    aria-pressed={theme === item.id}
+                    onClick={() => setTheme(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.toolSection}>
+              <div className={styles.label}>FILTER</div>
+              <select className={styles.filterSelect} defaultValue="all">
+                <option value="all">모든 미디어</option>
+                <option value="photo">사진</option>
+                <option value="video">영상</option>
+                <option value="link">링크</option>
+                <option value="youtube">Video Link</option>
+                <option value="note">메모</option>
+              </select>
+            </div>
+          </aside>
 
-                {moments.length === 0 ? (
-                  <div className={styles.emptyBoard}>
-                    <span className={styles.emptyPin} aria-hidden="true" />
-                    <h2>{productMode ? "아직 보드에 펼칠 Moment가 없습니다." : "아직 pinned Moment가 없습니다."}</h2>
-                    <p>{productMode ? "Moment를 기록하면 이곳에서 기억을 카드처럼 펼쳐볼 수 있습니다." : "이 화면은 Source58 demo card를 대신 만들지 않습니다."}</p>
-                  </div>
-                ) : null}
-
-                {moments.map((moment, index) => {
-                  const slot = slotById.get(moment.id) ?? source58BoardSlot(index);
-                  const selectedCard = selected?.id === moment.id;
+          <section className={styles.boardSection} aria-label="Living Memory Board">
+            <div
+              ref={boardRef}
+              className={styles.board}
+              data-testid="source58-board"
+              data-mobile-spatial-board="true"
+              onKeyDown={onBoardKeyDown}
+              tabIndex={0}
+              aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
+            >
+              <div className={styles.boardTitle} data-source58-board-title>
+                <strong>{productMode ? "Living Memory Board" : "Living Memory Board"}</strong>
+                <span className={styles.privateTag}>● PRIVATE</span>
+              </div>
+              <div className={styles.boardTexture} aria-hidden="true" />
+              <div className={styles.themeBadge} aria-hidden="true">PEARL BOARD · PRIVATE</div>
+              <svg
+                className={styles.thread}
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-label={productMode ? "Moment 사이를 잇는 기억의 실" : "Canonical Connection living thread"}
+              >
+                {connections.map((connection) => {
+                  const activePath = Boolean(
+                    selected && (connection.fromId === selected.id || connection.toId === selected.id),
+                  );
+                  const path = threadPath(connection.from, connection.to);
                   return (
-                    <button
-                      key={moment.id}
-                      ref={(node) => {
-                        if (node) cardRefs.current.set(moment.id, node);
-                        else cardRefs.current.delete(moment.id);
-                      }}
-                      type="button"
-                      className={styles.card}
-                      data-source58-card="true"
-                      data-card-style={slot.style}
-                      data-selected={String(selectedCard)}
-                      data-parent-id={moment.parentId ?? ""}
-                      data-slot-x={slot.x}
-                      data-slot-y={slot.y}
-                      aria-pressed={selectedCard}
-                      aria-label={`${moment.title || "제목 없는 Moment"} 선택`}
-                      style={{
-                        left: `${slot.x}%`,
-                        top: `${slot.y}%`,
-                        "--source58-x": `${slot.x}%`,
-                        "--source58-y": `${slot.y}%`,
-                        "--card-rotate": `${slot.rotate}deg`,
-                      } as CSSProperties}
-                      onClick={() => chooseMoment(moment.id)}
-                      onDoubleClick={() => openCinema(moment.id)}
-                    >
-                      <span className={styles.pin} data-pin={index % 6} aria-hidden="true" />
-                      {moment.album.thumbnail ? (
-                        <span className={styles.cardMedia} data-source58-card-media>
-                          {/* Canonical thumbnail URLs are runtime data; avoid inventing an image proxy contract. */}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={moment.album.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
-                        </span>
-                      ) : (
-                        <span className={styles.mediaFallback} data-source58-card-media>{sourceTypeLabel(moment.sourceType)}</span>
-                      )}
-                      <span className={styles.cardType} data-source58-card-type>{sourceTypeLabel(moment.sourceType)}</span>
-                      <strong>{moment.title || "제목 없는 Moment"}</strong>
-                      <span className={styles.cardDate} data-source58-card-date>{formatMomentDate(moment)}</span>
-                      {moment.connectionReason ? (
-                        <span className={styles.cardReason} data-source58-card-reason>{moment.connectionReason}</span>
-                      ) : null}
-                    </button>
+                    <g key={connection.id} data-active={String(activePath)} data-connection-id={connection.id}>
+                      <path className={styles.threadShadow} data-layer="glow" d={path} />
+                      <path className={styles.threadMain} data-layer="color" d={path} />
+                      <path className={styles.threadMain} data-layer="core" d={path} />
+                    </g>
                   );
                 })}
-                <div className={styles.zoomControls} data-source58-zoom-controls aria-label="Board zoom">
-                  <button type="button" aria-label="Zoom out" onClick={() => { const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null; if (el) el.style.setProperty('--source58-z', String(Math.max(0.28, (parseFloat(getComputedStyle(el).getPropertyValue('--source58-z')) || 0.62) - 0.08))); }}>
-                    −
-                  </button>
-                  <button type="button" aria-label="Zoom in" onClick={() => { const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null; if (el) el.style.setProperty('--source58-z', String(Math.min(0.92, (parseFloat(getComputedStyle(el).getPropertyValue('--source58-z')) || 0.62) + 0.08))); }}>
-                    +
-                  </button>
-                </div>
-              </div>
+              </svg>
 
-              <nav className={styles.themeRail} aria-label="Board theme">
-                <span>{productMode ? "보드 분위기" : "BOARD THEME · LOCAL VIEW"}</span>
-                <div>
-                  {SOURCE_58_BOARD_THEMES.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      aria-pressed={theme === item.id}
-                      onClick={() => setTheme(item.id)}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+              {moments.length === 0 ? (
+                <div className={styles.emptyBoard}>
+                  <span className={styles.emptyPin} aria-hidden="true" />
+                  <h2>{productMode ? "아직 보드에 펼칠 Moment가 없습니다." : "아직 pinned Moment가 없습니다."}</h2>
+                  <p>{productMode ? "Moment를 기록하면 이곳에서 기억을 카드처럼 펼쳐볼 수 있습니다." : "이 화면은 Source58 demo card를 대신 만들지 않습니다."}</p>
                 </div>
-              </nav>
+              ) : null}
+
+              {moments.map((moment, index) => {
+                const slot = slotById.get(moment.id) ?? source58BoardSlot(index);
+                const selectedCard = selected?.id === moment.id;
+                return (
+                  <button
+                    key={moment.id}
+                    ref={(node) => {
+                      if (node) cardRefs.current.set(moment.id, node);
+                      else cardRefs.current.delete(moment.id);
+                    }}
+                    type="button"
+                    className={styles.card}
+                    data-source58-card="true"
+                    data-card-style={slot.style}
+                    data-selected={String(selectedCard)}
+                    data-parent-id={moment.parentId ?? ""}
+                    data-slot-x={slot.x}
+                    data-slot-y={slot.y}
+                    aria-pressed={selectedCard}
+                    aria-label={`${moment.title || "제목 없는 Moment"} 선택`}
+                    style={{
+                      left: `${slot.x}%`,
+                      top: `${slot.y}%`,
+                      "--source58-x": `${slot.x}%`,
+                      "--source58-y": `${slot.y}%`,
+                      "--card-rotate": `${slot.rotate}deg`,
+                    } as CSSProperties}
+                    onClick={() => chooseMoment(moment.id)}
+                    onDoubleClick={() => openCinema(moment.id)}
+                  >
+                    <span className={styles.pin} data-pin={index % 6} aria-hidden="true" />
+                    {moment.album.thumbnail ? (
+                      <span className={styles.cardMedia} data-source58-card-media>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={moment.album.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                      </span>
+                    ) : (
+                      <span className={styles.mediaFallback} data-source58-card-media>{sourceTypeLabel(moment.sourceType)}</span>
+                    )}
+                    <span className={styles.cardType} data-source58-card-type>{sourceTypeLabel(moment.sourceType)}</span>
+                    <strong>{moment.title || "제목 없는 Moment"}</strong>
+                    <span className={styles.cardDate} data-source58-card-date>{formatMomentDate(moment)}</span>
+                    {moment.connectionReason ? (
+                      <span className={styles.cardReason} data-source58-card-reason>{moment.connectionReason}</span>
+                    ) : null}
+                  </button>
+                );
+              })}
+              <div className={styles.zoomControls} data-source58-zoom-controls aria-label="Board zoom">
+                <button type="button" aria-label="Zoom out" onClick={() => {
+                  const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+                  if (el) {
+                    const current = el.style.transform;
+                    const scaleMatch = current.match(/scale\(([\d.]+)\)/);
+                    const txMatch = current.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+                    const z = Math.max(0.28, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) - 0.08);
+                    const tx = txMatch ? parseFloat(txMatch[1]) : 0;
+                    const ty = txMatch ? parseFloat(txMatch[2]) : 0;
+                    const vw = window.innerWidth;
+                    const vh = window.innerHeight;
+                    const newTx = (vw - 1600 * z) / 2;
+                    const newTy = (vh - 1000 * z) / 2;
+                    el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
+                  }
+                }}>
+                  −
+                </button>
+                <span className={styles.zoomLabel} id="zoomLabel">78%</span>
+                <button type="button" aria-label="Zoom in" onClick={() => {
+                  const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+                  if (el) {
+                    const current = el.style.transform;
+                    const scaleMatch = current.match(/scale\(([\d.]+)\)/);
+                    const z = Math.min(0.92, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) + 0.08);
+                    const vw = window.innerWidth;
+                    const vh = window.innerHeight;
+                    const newTx = (vw - 1600 * z) / 2;
+                    const newTy = (vh - 1000 * z) / 2;
+                    el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
+                  }
+                }}>
+                  +
+                </button>
+              </div>
             </div>
           </section>
+
+          <div className={styles.toolbar} aria-label="Board zoom">
+            <button type="button" className={styles.toolBtn} aria-label="Zoom out" onClick={() => {
+              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+              if (el) {
+                const current = el.style.transform;
+                const scaleMatch = current.match(/scale\(([\d.]+)\)/);
+                const z = Math.max(0.28, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) - 0.08);
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const newTx = (vw - 1600 * z) / 2;
+                const newTy = (vh - 1000 * z) / 2;
+                el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
+              }
+            }}>−</button>
+            <span className={styles.zoomLabel}>78%</span>
+            <button type="button" className={styles.toolBtn} aria-label="Zoom in" onClick={() => {
+              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+              if (el) {
+                const current = el.style.transform;
+                const scaleMatch = current.match(/scale\(([\d.]+)\)/);
+                const z = Math.min(0.92, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) + 0.08);
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const newTx = (vw - 1600 * z) / 2;
+                const newTy = (vh - 1000 * z) / 2;
+                el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
+              }
+            }}>＋</button>
+            <button type="button" className={styles.toolBtn} aria-label="Fit all" onClick={() => {
+              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
+              if (el) {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
+                const tx = (vw - 1600 * z) / 2;
+                const ty = (vh - 1000 * z) / 2;
+                el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
+                el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
+                setTimeout(() => { el.style.transition = ""; }, 650);
+              }
+            }}>RESET VIEW</button>
+          </div>
+          <button type="button" className={styles.cinemaBtn} onClick={() => openCinema()} disabled={moments.length === 0}>
+            ▶ CINEMA REPLAY
+          </button>
 
           <aside
             className={styles.inspector}
@@ -507,16 +648,15 @@ export default function SourceTrack58LivingMemoryBoard({
             {selected ? (
               <>
                 <div className={styles.inspectorTopline} data-source58-inspector-topline>
-                  <span>{productMode ? "선택한 Moment" : "SELECTED MOMENT"}</span>
+                  <span>{productMode ? "선택한 Moment" : "MOMENT DETAIL"}</span>
                   <span>{selectedIndex + 1} / {moments.length}</span>
                   <button
                     type="button"
                     data-mobile-inspector-close
                     aria-label={productMode ? "선택한 Moment 상세 닫기" : "Close selected Moment inspector"}
-                    style={{ display: "none" }}
                     onClick={() => setMobileInspectorOpen(false)}
                   >
-                    BOARD
+                    ×
                   </button>
                 </div>
 

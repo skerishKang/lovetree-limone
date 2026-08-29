@@ -23,7 +23,7 @@ test("Source58 shared component keeps staging authority evidence and adds a boun
 
   // Design Lab/source-fidelity evidence must remain available in the shared component.
   assert.match(source, /SOURCE 58 · NATIVE STAGING/);
-  assert.match(source, /LOVETREE · SOURCE 58 NATIVE CANDIDATE/);
+  assert.match(source, /MY TREE · OTHER VIEWS · MEMORY BOARD/);
   assert.match(source, /CANONICAL TRUTH/);
   assert.match(source, /Board position · theme · selection · cinema = VIEW_DERIVED/);
   assert.match(source, /새 DB \/ API \/ Auth \/ schema 없음/);
