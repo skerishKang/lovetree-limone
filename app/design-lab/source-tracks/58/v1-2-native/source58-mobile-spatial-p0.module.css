@@ -37,16 +37,37 @@
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]) {
-    --source58-mobile-card-width: clamp(96px, 30vw, 116px);
-    --source58-mobile-card-height: 118px;
+    --source58-mobile-card-width: clamp(88px, 26vw, 104px);
+    --source58-mobile-card-height: 108px;
+    --source58-z: 0.26;
+    width: min(calc(1600px * var(--source58-z)), calc(100vw - 20px)) !important;
+    height: calc(1000px * var(--source58-z)) !important;
+    max-height: 340px !important;
+    min-height: 0 !important;
+    margin: 14px auto 8px !important;
     position: relative !important;
     display: block !important;
-    min-height: 0 !important;
-    height: clamp(380px, 54dvh, 460px);
     aspect-ratio: auto !important;
     padding: 0 !important;
     overflow: hidden !important;
     isolation: isolate;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .boardChrome) {
+    padding: 6px !important;
+    margin: 0 auto !important;
+    width: fit-content !important;
+    max-width: calc(100vw - 12px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] .boardSection) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]::before) {
@@ -194,28 +215,29 @@
   .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"]) {
     position: fixed !important;
     z-index: 70 !important;
-    left: 10px !important;
-    right: 10px !important;
-    bottom: 10px !important;
-    width: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 14px !important;
+    top: auto !important;
+    width: min(300px, calc(100vw - 28px)) !important;
     min-height: 0 !important;
-    max-height: min(55dvh, 450px);
+    max-height: min(42dvh, 300px) !important;
     overflow: auto !important;
     display: grid;
-    grid-template-columns: minmax(104px, .42fr) minmax(0, .58fr);
+    grid-template-columns: 96px minmax(0, 1fr);
     align-items: start;
-    border-radius: 22px !important;
-    background: rgba(22, 6, 20, .88) !important;
-    box-shadow: 0 28px 72px rgba(8, 2, 7, .52), 0 0 0 1px rgba(255,255,255,.07);
+    border-radius: 20px !important;
+    background: rgba(22, 6, 20, .92) !important;
+    box-shadow: 0 28px 72px rgba(8, 2, 7, .58), 0 0 0 1px rgba(255,255,255,.08);
     backdrop-filter: blur(20px) saturate(1.08);
-    transform: translateY(calc(100% + 26px));
+    transform: translateX(-50%) translateY(calc(100% + 24px)) !important;
     opacity: 0;
     pointer-events: none;
     transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 150ms ease;
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open="true"]) {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0) !important;
     opacity: 1;
     pointer-events: auto;
   }
@@ -335,9 +357,12 @@
 
 @media (max-width: 360px) {
   .mobileSpatialScope :global(main[data-source-track="58"] [data-testid="source58-board"]) {
-    --source58-mobile-card-width: clamp(86px, 29vw, 94px);
-    --source58-mobile-card-height: 108px;
-    height: clamp(360px, 52dvh, 410px);
+    --source58-mobile-card-width: clamp(80px, 28vw, 90px);
+    --source58-mobile-card-height: 102px;
+    --source58-z: 0.26;
+    width: min(calc(1600px * var(--source58-z)), calc(100vw - 16px)) !important;
+    height: calc(1000px * var(--source58-z)) !important;
+    max-height: 290px !important;
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card]) {
@@ -350,11 +375,17 @@
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open]) {
-    left: 8px !important;
-    right: 8px !important;
-    bottom: 8px !important;
-    max-height: min(54dvh, 390px);
-    grid-template-columns: 96px minmax(0, 1fr);
+    left: 50% !important;
+    right: auto !important;
+    bottom: 12px !important;
+    top: auto !important;
+    width: min(282px, calc(100vw - 20px)) !important;
+    max-height: min(40dvh, 280px) !important;
+    transform: translateX(-50%) translateY(calc(100% + 20px)) !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open="true"]) {
+    transform: translateX(-50%) translateY(0) !important;
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] [data-source58-inspector-media]) {

@@ -308,14 +308,29 @@
 
 /* Make the visual world lead over staging metadata without removing truth. */
 .repairScope :global(main[data-source-track="58"] > header) {
-  min-height: 66px;
-  margin-bottom: 10px;
+  min-height: 52px;
+  margin-bottom: 6px;
 }
 
 .repairScope :global(main[data-source-track="58"] > section[aria-label="데이터 권위"]) {
-  opacity: .58;
-  padding-block: 7px;
-  margin-bottom: 10px;
+  display: none;
+  opacity: .52;
+  padding-block: 6px;
+  margin-bottom: 8px;
+}
+
+/* Source58 P0 board geometry: compact centered world 1600x1000, pearl surface inset 48 radius 34 */
+.repairScope :global([data-testid="source58-board"]) {
+  --source58-z: 0.62;
+  width: calc(1600px * var(--source58-z)) !important;
+  height: calc(1000px * var(--source58-z)) !important;
+  max-width: calc(100vw - 24px) !important;
+  border-radius: 34px !important;
+}
+
+.repairScope :global([data-testid="source58-board"]::after) {
+  inset: calc(48px * var(--source58-z, 0.62)) !important;
+  border-radius: 18px !important;
 }
 
 @media (max-width: 760px) {

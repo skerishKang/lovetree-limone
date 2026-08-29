@@ -125,6 +125,7 @@ export default function SourceTrack58LivingMemoryBoard({
   const [draftMemo, setDraftMemo] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const cardRefs = useRef(new Map<string, HTMLButtonElement>());
+  const boardRef = useRef<HTMLDivElement | null>(null);
 
   const moments = useMemo<BoardMoment[]>(() => {
     const canonicalById = new Map(canonicalMoments.map((moment) => [moment.id, moment]));
@@ -162,6 +163,27 @@ export default function SourceTrack58LivingMemoryBoard({
       }),
     [momentById, moments, slotById],
   );
+
+  useEffect(() => {
+    const update = () => {
+      const board = (boardRef.current ?? document.querySelector('[data-testid="source58-board"]')) as HTMLElement | null;
+      if (!board) return;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const isMobile = vw <= 760;
+      const raw = isMobile
+        ? Math.min(Math.max((vw - 24) / 1600, 0.26), 0.36)
+        : Math.min((vw - 40) / 1600, (vh - 150) / 1000, 0.92);
+      board.style.setProperty("--source58-z", String(Math.max(0.18, Math.min(raw, 0.92))));
+    };
+    update();
+    const id = window.setInterval(update, 300);
+    window.addEventListener("resize", update);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("resize", update);
+    };
+  }, [moments.length]);
 
   useEffect(() => {
     if (!initialMomentId || selectedMomentId === initialMomentId) return;
@@ -356,7 +378,12 @@ export default function SourceTrack58LivingMemoryBoard({
         <div className={styles.workspace}>
           <section className={styles.boardSection} aria-label="Living Memory Board">
             <div className={styles.boardChrome}>
+              <div className={styles.boardTitle} data-source58-board-title>
+                <strong>{productMode ? "나의 기억 보드" : "MEMORY BOARD"}</strong>
+                <span>{moments.length} MOMENTS · {SOURCE_TRACK_58_STAGING.revision}</span>
+              </div>
               <div
+                ref={boardRef}
                 className={styles.board}
                 data-testid="source58-board"
                 data-mobile-spatial-board="true"
@@ -443,6 +470,14 @@ export default function SourceTrack58LivingMemoryBoard({
                     </button>
                   );
                 })}
+                <div className={styles.zoomControls} data-source58-zoom-controls aria-label="Board zoom">
+                  <button type="button" aria-label="Zoom out" onClick={() => { const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null; if (el) el.style.setProperty('--source58-z', String(Math.max(0.28, (parseFloat(getComputedStyle(el).getPropertyValue('--source58-z')) || 0.62) - 0.08))); }}>
+                    −
+                  </button>
+                  <button type="button" aria-label="Zoom in" onClick={() => { const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null; if (el) el.style.setProperty('--source58-z', String(Math.min(0.92, (parseFloat(getComputedStyle(el).getPropertyValue('--source58-z')) || 0.62) + 0.08))); }}>
+                    +
+                  </button>
+                </div>
               </div>
 
               <nav className={styles.themeRail} aria-label="Board theme">
@@ -467,6 +502,7 @@ export default function SourceTrack58LivingMemoryBoard({
             className={styles.inspector}
             aria-label={productMode ? "선택한 Moment 상세" : "Selected Moment inspector"}
             data-mobile-open={String(mobileInspectorOpen)}
+            data-has-selection={String(Boolean(selected))}
           >
             {selected ? (
               <>
