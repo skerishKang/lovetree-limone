@@ -1,0 +1,95 @@
+name: NEW Source Capsule Gate
+
+on:
+  pull_request:
+    paths:
+      - 'new/sources/**'
+      - 'new/standards/**'
+      - 'scripts/new/**'
+      - 'tests/new-source-machine-gates.test.mjs'
+      - '.github/workflows/new-source-capsule-gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'new/sources/**'
+      - 'new/standards/**'
+      - 'scripts/new/**'
+      - 'tests/new-source-machine-gates.test.mjs'
+      - '.github/workflows/new-source-capsule-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  schema-and-unit:
+    name: schema-and-unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Validate machine schemas
+        run: node scripts/new/validate-source-capsule.mjs --self-test
+      - name: Run fail-closed gate tests
+        run: node --test tests/new-source-machine-gates.test.mjs
+
+  changed-capsules:
+    name: changed-capsules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Validate changed Source capsules only
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${PR_BASE_SHA:-}" ]]; then
+            BASE_SHA="$PR_BASE_SHA"
+          elif [[ -n "${PUSH_BEFORE_SHA:-}" && "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then
+            BASE_SHA="$PUSH_BEFORE_SHA"
+          else
+            BASE_SHA="$(git rev-parse HEAD^)"
+          fi
+
+          mapfile -t CAPSULES < <(
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'new/sources/SRC*/**' \
+              | awk -F/ '/^new\/sources\/SRC[0-9][0-9][0-9]\// {print $1"/"$2"/"$3}' \
+              | sort -u
+          )
+
+          if [[ ${#CAPSULES[@]} -eq 0 ]]; then
+            echo 'CHANGED_SOURCE_CAPSULES=NONE'
+            node scripts/new/validate-source-capsule.mjs --self-test
+            exit 0
+          fi
+
+          printf 'CHANGED_SOURCE_CAPSULES=%s\n' "${CAPSULES[*]}"
+          node scripts/new/validate-source-capsule.mjs "${CAPSULES[@]}"
+
+  exact-head-completeness:
+    name: exact-head-completeness
+    if: always()
+    needs: [schema-and-unit, changed-capsules]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail closed on cancelled, skipped, missing, or failed prerequisite
+        shell: bash
+        env:
+          SCHEMA_RESULT: ${{ needs.schema-and-unit.result }}
+          CAPSULE_RESULT: ${{ needs.changed-capsules.result }}
+        run: |
+          set -euo pipefail
+          [[ "$SCHEMA_RESULT" == 'success' ]] || { echo "schema-and-unit=$SCHEMA_RESULT"; exit 1; }
+          [[ "$CAPSULE_RESULT" == 'success' ]] || { echo "changed-capsules=$CAPSULE_RESULT"; exit 1; }
+          echo 'NEW_SOURCE_EXACT_HEAD_COMPLETENESS=PASS'
