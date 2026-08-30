@@ -51,7 +51,16 @@ export function aggregateSourceFreshness(input) {
     };
   }
 
-  invariant(input.CAPSULE_RESULTS.length > 0, 'APPLICABLE requires at least one capsule result');
+  if (input.CAPSULE_RESULTS.length === 0) {
+    return {
+      SCHEMA_VERSION: '1.0',
+      HEAD_SHA: input.HEAD_SHA,
+      BASE_SHA: input.BASE_SHA,
+      VERDICT: 'UNKNOWN',
+      REASON: input.REASON,
+      CAPSULES: []
+    };
+  }
 
   let verdict = 'PASS';
   for (const row of input.CAPSULE_RESULTS) {
@@ -89,6 +98,13 @@ function selfTest() {
     CAPSULE_RESULTS: [{ CAPSULE_ID: 'SRC056', CAPSULE_GATE: 'PASS', LIVE_AUTHORITY_GATE: 'MISSING' }]
   });
   invariant(unknown.VERDICT === 'UNKNOWN', 'self-test UNKNOWN aggregation failed');
+
+  const unknownNoEvidence = aggregateSourceFreshness({
+    SCHEMA_VERSION: '1.0', HEAD_SHA: head, BASE_SHA: base,
+    APPLICABILITY: 'APPLICABLE', REASON: 'Source-facing paths changed but trusted evidence is unavailable',
+    CAPSULE_RESULTS: []
+  });
+  invariant(unknownNoEvidence.VERDICT === 'UNKNOWN', 'self-test empty applicable aggregation must be UNKNOWN');
 
   const fail = aggregateSourceFreshness({
     SCHEMA_VERSION: '1.0', HEAD_SHA: head, BASE_SHA: base,
