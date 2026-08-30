@@ -1,43 +1,53 @@
 # Repository Collaboration Guide
 
-## Current product authority
+## 0. Current owner authority
 
 This repository is the active LoveTree Limone product repository.
 
-- Product families exposed by the current architecture are **Legacy** and **Next**.
-- Current product implementation authority is **V4 / Next**.
-- `/v2/**` and `/v3/**` are historical comparison surfaces, not competing product programs to resume by default.
-- `/design-lab/**` is an internal review/R&D surface for Design Lineages, Revisions, Scenario Variants and Experience Capabilities.
-- Numbered design tracks such as 48–53 are **Design Lineages**, not new LoveTree product generations.
+When this file conflicts with older issue/PR wording or subordinate operations documents, use the newest explicit Product Owner decision recorded here and in the linked current policy documents.
 
-Do not infer a new product generation from a V1/V2/V3/V4 label inside one design lineage. Use the intake rules tracked by Design Ops issue #80.
+Two owner decisions are controlling for current work:
 
-## Cross-repository platform authority — mandatory for Auth/DB/backend/provider work
+```text
+SOURCE WORK
+= preserve the sibling/original executable
+→ mechanically split the single-file HTML into maintainable HTML/CSS/JS/assets
+→ do not redesign, reinterpret or framework-convert during the split
+→ connect Product data/navigation through separate integration/adapters
+→ compose verified source modules into multiple MVP versions
 
-LoveTree is **not** an independently canonical backend/auth/data product.
+ORDINARY REVERSIBLE PRODUCT WORK
+= Production first
+→ inspect the real Production result
+→ KEEP / FIX FORWARD / ROLLBACK
+```
 
-Primary cross-repository authority:
+Controlling release policy:
+
+`docs/operations/PRODUCTION_FIRST_ROLLBACK_POLICY.md`
+
+## 1. Product / backend authority
+
+LoveTree is not an independently canonical second backend/auth/data product.
+
+Primary cross-repository authority remains:
 
 - `skerishKang/LoveBud#4004` — one shared Product auth/backend/data authority;
 - `skerishKang/lovetree-limone#152` — LoveTree-side guardrail;
 - `skerishKang/LoveBud#4005` — DB/schema/data convergence when relevant;
-- `skerishKang/LoveBud#4006` — shared Firebase → staged Neon Auth migration when relevant;
-- `docs/architecture/SHARED_LOVE_PLATFORM_AUTHORITY.md` — repository mirror once merged.
+- `skerishKang/LoveBud#4006` — shared Firebase → staged Neon Auth migration when relevant.
 
-Current Product architecture during migration:
+Current runtime stack:
 
-```text
-LoveBud + LoveTree
-= ONE Product authentication authority
-= ONE shared backend/API authority
-= ONE canonical writable Tree/Memory/social data authority
+- UI: Next.js / React / TypeScript where the Product shell currently uses them;
+- Runtime/API: Cloudflare Worker;
+- Database: Neon PostgreSQL through the shared Product authority;
+- Auth: Firebase Authentication during the current migration stage;
+- Production Worker identity: `lovetree-limone`.
 
-current Product auth = shared Firebase Auth
-target auth = staged Neon Auth migration through stable account mapping
-LoveTree separate DB = TRANSITIONAL_BRIDGE_NONCANONICAL
-```
+Do not create a second canonical Product DB/Auth/API/provider authority merely because a source/MVP needs integration.
 
-Before creating, configuring, binding, deploying, deleting, or reusing any Firebase, Neon, Cloudflare Worker, DB, Auth, secret, route, Preview, E2E, or provider resource, fresh-read the authorities above and classify the exact target as one of:
+For Auth/DB/provider changes, classify the target before mutation:
 
 ```text
 CANONICAL_PRODUCT_AUTHORITY
@@ -48,279 +58,266 @@ HISTORICAL_EVIDENCE_ONLY
 UNKNOWN_STOP
 ```
 
-`UNKNOWN_STOP` means zero mutation.
+`UNKNOWN_STOP` means zero high-risk provider/DB/Auth mutation until identity is resolved.
 
-A dedicated E2E/prototype resource never becomes Product authority merely because it exists or passes tests:
+## 2. Source implementation semantics — current authority
 
-```text
-DEDICATED_E2E_FIREBASE != NEW_PRODUCT_AUTHORITY
-ISOLATED_E2E_WORKER != NEW_SHARED_BACKEND
-DISPOSABLE_NEON_BRANCH != NEW_CANONICAL_DB
-```
+### 2.1 What the owner means by source implementation
 
-Any Auth/DB/backend/provider/mutable-E2E worker must report before mutation:
+The sibling/design source is commonly one large HTML file containing HTML, inline CSS, inline JS and asset references.
 
-```text
-PARENT_4004_READ = YES
-LOVETREE_152_READ = YES
-DATA_4005_READ_IF_RELEVANT = YES/NA
-AUTH_4006_READ_IF_RELEVANT = YES/NA
-CURRENT_REMOTE_FRESH = YES
-CURRENT_PROVIDER_IDENTITY_FRESH = YES/NA
-RESOURCE_CLASS = <classification>
-SECOND_CANONICAL_WRITER_CREATED = NO
-SECOND_PRODUCT_AUTHORITY_CREATED = NO
-TEST_RESOURCE_PROMOTED_TO_PRODUCT = NO
-PRODUCT_CUTOVER_EXPLICITLY_AUTHORIZED = YES/NO
-ARCHITECTURE_CONSISTENCY_GATE = PASS/STOP
-```
+The immediate implementation goal is **structural modularization, not reinterpretation**.
 
-`STOP` means zero provider/DB mutation. Historical row counts, branch IDs, SHAs, deployment IDs, and old issue comments are evidence only; fresh-query the exact current target before acting.
-
-## Runtime stack
-
-- UI: Next.js 16 / React 19 / TypeScript / Tailwind 4
-- Runtime/API: Cloudflare Worker
-- Database: Neon PostgreSQL through Drizzle ORM
-- Auth: Firebase Authentication (`relovetree` is the Production Firebase project)
-- Production Worker: `lovetree-limone`
-
-The runtime stack above describes the current LoveTree implementation/bridge surface. It does **not** override the cross-repository platform authority or promote the LoveTree DB/Worker/Auth configuration into a second canonical Product backend.
-
-Primary current source areas include:
-
-- `app/` — App Router pages and product surfaces
-- `app/components/v4/` — source-faithful V4 product implementation
-- `app/design-lab/` — internal design/capability review routes
-- `lib/` — shared product/domain/adapters and registries
-- `server/api/` — API behavior
-- `db/` and `drizzle/` — PostgreSQL schema/migration authority
-- `worker/` — Cloudflare Worker entry/runtime
-- `scripts/` — build, deployment and operational guards
-- `docs/` — product, architecture and operations authority
-
-Do not rely on old repository descriptions that refer to D1 or removed `public/pages`, `public/js`, or `public/css` trees as current backend/product authority.
-
-## Source implementation semantics — P0 current authority
-
-Issue #537 and `docs/design-intake/IMPLEMENTATION_FIDELITY_CONTRACT.md` define the current meaning of source implementation.
-
-When the product owner explicitly requests **IMPLEMENT / PORT / RECREATE / 원본대로 구현** for an authoritative executable design source, that executable is the **normative UI/UX specification**. Default to faithful-port mode, not donor/adaptation mode.
-
-For faithful-port work:
-
-- preserve composition, spatial hierarchy, layout, typography, colors, effects, media staging, depth, animation, interaction sequence and action result;
-- translate runtime/framework mechanics as needed;
-- bind existing canonical Tree/Moment/Connection/media/Auth/API data behind the faithful visual/interaction surface;
-- accessibility and responsive defect repair are allowed when they do not redesign the source identity;
-- do not silently simplify the source into a theme, grammar, visual language, donor layer or existing canonical surface;
-- prefer `NATIVE VISUAL SURFACE + CANONICAL DATA ADAPTER + PRODUCT NAVIGATION SHELL` when a source-faithful native surface exists.
-
-The following are explicitly different states:
+Default transformation:
 
 ```text
-PRODUCT_DONOR_INTEGRATED != IMPLEMENTED
-CANONICAL_EXISTING_SURFACE != IMPLEMENTED
-NATIVE_PROVING_COMPLETE != PRODUCT_FIDELITY_PASS
-CANONICAL_ROUTE_INTEGRATED != PRODUCT_FIDELITY_PASS
-CI_GREEN != VISUAL_FIDELITY_PASS
-INTERACTION_CONTRACT_PASS != VISUAL_FIDELITY_PASS
+original single HTML
+├─ markup
+├─ <style>…</style>
+├─ <script>…</script>
+└─ asset references
+
+        ↓ mechanical structural split
+
+source module
+├─ raw/original.html
+├─ split/index.html
+├─ split/styles.css
+├─ split/script.js
+├─ split/assets/**
+└─ manifest / equivalence evidence
 ```
 
-For an authoritative source explicitly requested to be implemented/ported, use the current state sequence:
+The `split` surface is the original source reorganized into maintainable files. It is not a new design and not a framework rewrite.
+
+### 2.2 Allowed during structural split
+
+Allowed by default:
+
+- move inline CSS into external CSS without changing its meaning;
+- move inline JS into external JS without changing its behavior/order;
+- add the minimum `<link>` / `<script src>` glue needed to reconnect the extracted files;
+- rebase relative asset paths only when required because the file location changed;
+- preserve assets in a maintainable local structure;
+- add tests/evidence that compare original and split behavior;
+- add separate adapter/bridge code outside the source visual/interaction implementation.
+
+### 2.3 Forbidden during structural split
+
+Unless the Product Owner explicitly authorizes a separate redesign/refactor task, do not:
+
+- convert source HTML/JS into React/TSX merely because the Product shell uses React;
+- rewrite DOM hierarchy;
+- rewrite CSS layout algorithms;
+- change colors, typography, sizes, positions, spacing, effects or depth;
+- add new responsive breakpoints or mobile redesign;
+- replace source interaction with a different interaction model;
+- generalize or abstract layout/state logic;
+- optimize, beautify or refactor source code in a way that changes observable behavior;
+- silently repair a source oddity;
+- treat donor/visual-language/canonical reinterpretation as source implementation.
+
+If safe splitting would change execution semantics, preserve that portion intact until an equivalent split is proven.
+
+### 2.4 Source library and MVP composition are separate axes
+
+The intended next-generation architecture is a source library plus independently versioned MVP compositions.
+
+Conceptually:
 
 ```text
-SOURCE_PINNED
-→ NATIVE_PORT_COMPLETE
-→ VISUAL_FIDELITY_PASS
-→ INTERACTION_FIDELITY_PASS
-→ CANONICAL_DATA_BOUND
-→ CANONICAL_ROUTE_INTEGRATED
-→ PRODUCT_FIDELITY_PASS
-→ PRODUCTION_READY
+source library
+├─ 001
+├─ 002
+├─ …
+└─ 108
+
+MVP compositions
+├─ version-001
+├─ version-002
+├─ version-003
+└─ experiments/**
 ```
 
-`IMPLEMENTED = YES` is permitted only after `PRODUCT_FIDELITY_PASS` for that faithful-port task.
+The 108 result slots do not automatically mean 108 distinct Source identities. Preserve `MST`, `SRC`, `LIN`, `TRK`, `CDX`, `FAM` or other explicit identity namespaces separately in metadata.
 
-Bounded reinterpretation is allowed only when the owner/task explicitly requests **DONOR / ADAPT / INSPIRED / GRAMMAR / CAPABILITY EXTRACTION / MECHANICS EXTRACTION**. Such work must be reported as donor/adaptation work and must not be counted as a faithful source implementation.
+A Source module must not become owned by one MVP. MVPs select/compose Source modules through separate shell/route/adapter code.
 
-A Design Fidelity target registered only as `interaction-contract`, screenshot existence, or a healthy browser gate does not certify source visual parity. Source-faithful work requires matched authoritative-source → native → canonical visual and interaction evidence as defined by Issue #537.
-
-## External source preservation
-
-Google Drive and sibling-project originals are evidence/reference sources for provenance and donor tasks, but an authoritative executable becomes a **normative UI/UX specification** when the task explicitly requests IMPLEMENT / PORT / RECREATE / 원본대로 구현.
-
-- Treat Drive originals as read-only.
-- Do not move, rewrite, format, minify or delete source originals.
-- Preserve exact bytes/SHA-256 when an intake contract requires source fidelity.
-- For donor/adaptation tasks, extract only the explicitly approved Variant/Capability mechanics.
-- For faithful-port tasks, do **not** replace the source with mechanics-only extraction; preserve the observable source visual/interaction identity and adapt canonical data behind it.
-- Do not promote demo/source fixture values into canonical Product truth merely to achieve visual fidelity; substitute truthful canonical values while preserving the visual/interaction structure.
-- New intake follows `Lineage → Revision → Variant/Capability` and the newest explicit product-owner/design-lead decision takes precedence while older revisions remain preserved as history.
-
-The historical LoveBud repository is a source of product/backend intent. Do not destructively modify its mirrored/source copy when working in this repository. For current shared-platform architecture, however, fresh connected GitHub authority in LoveBud #4004/#4005/#4006 is controlling rather than an old mirrored snapshot.
-
-## Workspace policy: WSL / Windows dual-track
-
-**Authority precedence:** this `AGENTS.md` workspace policy is controlling. If any subordinate operations/workspace document conflicts with it, follow `AGENTS.md` and treat the conflicting subordinate wording as stale until it is reconciled.
-
-Both WSL and Windows are approved environments for active development and verification. Work happens only in dedicated per-Lane worktrees, never in a bare or shared checkout. When a task is OS-neutral, prefer Windows first; use WSL for Linux-resident worktrees and Linux-specific needs.
-
-- **One worktree per Lane.** Every concurrent work Lane (agent/session/work room) owns exactly one dedicated worktree on its declared OS-native filesystem:
-  - WSL: `$HOME/worktrees/**`
-  - Windows: a dedicated per-Lane worktree directory on a native NTFS path
-- **OS ownership is fixed per Lane.** Each Lane declares its owning OS (WSL or Windows) at start and must not switch OS mid-task. Never run one Lane's worktree from both operating systems.
-- Do not run repository workloads from cross-mounted paths such as `/mnt/c/**` or `/mnt/g/**`; run them inside the Lane's own worktree on the owning OS's native filesystem.
-
-Prohibited on cross-mounted paths (`/mnt/c/**`, `/mnt/g/**` and equivalents):
-
-- `npm ci` / `npm install`
-- lint, typecheck, tests, build or `db:check`
-- development servers
-- Playwright / Chromium / browser capture matrices
-- bulk generation/scanning/copying of repository working files
-
-Windows-mounted drives may be used for read-only source archives and exported evidence/artifacts after the owning Lane's work is complete.
-
-### Shared root is a sync surface only
-
-The shared root checkout `G:\Ddrive\BatangD\task\workdiary\lovetree-limone` is not a development workspace. Do not build, test, run servers, install packages, run browser automation, or perform ordinary code implementation directly inside it. Sync and worktree administration are allowed there (`git fetch`, `git push`, `git worktree add/remove/list`). When the product owner explicitly requests bounded repository structure or file-lifecycle administration, the verified Google Drive for desktop mirror may also be used as an indirect sync-admin channel under the policy below. Do all implementation work in a per-Lane worktree.
-
-### Google Drive sync proxy semantics — mandatory
-
-`G:\Ddrive\BatangD\task\workdiary\lovetree-limone` may be mirrored by Google Drive for desktop. An authenticated Google Drive connector does not provide direct Windows/NTFS access, but create/move/rename/delete operations against the **exact synchronized Drive folder** can propagate through Google Drive for desktop and change the local shared sync root. Treat such operations as `INDIRECT_LOCAL_WORKSPACE_MUTATION`, not as remote-only changes.
-
-Always distinguish these Drive classes:
+Preferred boundary:
 
 ```text
-DESIGN_AUTHORITY_DRIVE
-= 03_디자인채택본 / 코덱스 / 결과물 / other source-provenance authority
-= READ_ONLY_BY_DEFAULT
-
-VERIFIED_REPOSITORY_SYNC_MIRROR
-= exact Drive folder proven to mirror the shared repository root
-= INDIRECT_LOCAL_SYNC_SURFACE
+RAW ORIGINAL
+→ STRUCTURAL SPLIT
+→ STRUCTURAL EQUIVALENCE
+→ MVP-SPECIFIC ADAPTER / BRIDGE
+→ MVP VERSION
 ```
 
-Hard rules:
+Do not merge several Source implementations into one canonical visual surface before their individual split modules exist and remain independently reusable.
 
-- Never infer the sync target from the folder name alone. Same-name backups/snapshots/copies may exist.
-- Before Drive-side workspace mutation, verify the exact Drive folder ID, parent chain and repository marker files (`package.json`, `.gitignore`, `AGENTS.md`, and expected repository directories). If exact mapping is unresolved, `UNKNOWN_STOP = zero mutation`.
-- The existing rule "Treat Drive originals as read-only" applies to **design/source authority**, not automatically to a separately verified repository sync mirror.
-- Drive-side workspace administration is allowed only when explicitly authorized and bounded. Never mutate `.git/**`, secrets, `node_modules/**`, generated caches, or unrelated paths.
-- A Drive move in the synchronized repository can appear locally as Git rename/add/delete state. Drive sync is transport, not Git history. Reconcile the result on the correct branch/worktree, inspect `git status`/diff, then commit, push and use the normal PR/integration path.
-- Never use Drive sync to bypass branch isolation, review, CI or GitHub history.
-- When the owner refers to the local `G:` path, do not answer only "I cannot access your local drive" if authenticated Drive access exists. First check whether the exact synchronized Drive mapping and requested Drive operation can be proven. Conversely, do not promise local propagation until that mapping is proven.
+## 3. External source preservation
 
-Full contract: `docs/operations/GOOGLE_DRIVE_LOCAL_SYNC_AUTHORITY.md`.
+Google Drive sibling/design originals are source authority and are read-only by default.
 
-### Heavy processes require CTO pre-approval
+- Do not rewrite, format, minify, rename or delete the authority object merely to make repository work easier.
+- Preserve exact file/folder identity and SHA-256 when provenance is required.
+- Repository `raw/` copies are preservation/replay material; repository `split/` files are maintainable structural decompositions of that authority.
+- A change to the Product/MVP adapter does not authorize mutation of the underlying Source design.
 
-Docker, virtual machines and other heavyweight processes (container runtimes, emulators, large parallel builds, bulk capture/scanning jobs) must not be started without explicit prior CTO approval. This rule is codified following an unauthorized Docker execution incident. Record the approval (issue or message link) before launching.
+Historical OLD and current NEW implementations are evidence/regression material unless and until the Product Owner explicitly adopts part of them into the redesigned source-library/MVP architecture.
 
-### GitHub is the single ledger
+## 4. Production-first / rollback-first owner policy
 
-All durable work state lives on GitHub, not on any local disk.
+For ordinary **reversible** UI/UX/product/source-integration work, Production is the Product Owner's preferred acceptance environment.
 
-- Before starting work: `git fetch origin` and base the Lane on current `origin/main`.
-- After finishing work: push the Lane branch and open/update the PR. Local-only commits are not a completion state.
-
-Before implementation or validation, record:
-
-```bash
-pwd
-df -T .
-node --version
-npm --version
-git branch --show-current
-git rev-parse HEAD
-git status --short
-git remote -v
-```
-
-Stop rather than guess when the filesystem, branch, starting SHA or worktree state differs from the assignment.
-
-See `docs/operations/WSL_WORKSPACE_POLICY.md` for migration/recovery details.
-
-## Branch and change isolation
-
-- `main` is the integration/release baseline. Do not develop directly on it.
-- Use an issue-linked or purpose-specific branch/worktree.
-- Re-fetch and record current `origin/main` before starting work that depends on the latest baseline.
-- Do not force-push `main`, reset `main`, or rewrite unrelated branches.
-- Do not mix unrelated product, ops, DB/Auth and design-intake work in one patch.
-- Historical/stacked Draft PRs must not be merged merely because they are old; first prove that their content is not already absorbed or superseded.
-- Keep new implementation PRs Draft until their exact head has the required automated evidence and the current task authorizes advancement.
-
-## Validation
-
-For ordinary code changes, use the repository's current validation scripts from the Lane's owning native workspace (WSL or Windows, per the workspace policy above):
-
-```bash
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run db:check
-```
-
-Use narrower targeted tests during implementation when useful, but final evidence must match the scope of the change. Do not suppress failing tests to obtain green status.
-
-The GitHub A-track workflow is an important exact-head gate, but a local/mock/browser-mechanics harness must not be described as a deployed Preview or Production acceptance result.
-
-## Current demo release policy
-
-LoveTree is currently in a pre-user demo/integration phase. For ordinary reversible UI/UX/product-screen changes, the preferred lightweight loop is:
+Default loop:
 
 ```text
-implementation → CI GREEN → Production demo → direct visual review → fix/redeploy
+bounded implementation
+→ Production
+→ direct Product Owner/operator inspection
+→ KEEP
+   or FIX FORWARD
+   or ROLLBACK / REVERT
 ```
 
-This replaces the older policy that required a separate Preview cycle for every ordinary UI change.
+A separate Preview is optional.
 
-This simplification does **not** remove safety gates for irreversible or high-risk work. Treat these separately and fail closed:
+Broad local QA and CI GREEN are not mandatory pre-Production gates for an explicitly owner-authorized reversible change when the previous known-working state and rollback path are available.
 
-- DB schema migration / destructive data change
-- Production data mutation or cleanup
-- Auth/Firebase policy or identity changes
-- payment/billing
-- secrets/bindings
-- security/privacy boundary changes
-- Worker target/routing changes
-- any change with an uncertain rollback path
+Tests and CI remain useful for:
 
-Production deployment must use the repository's guarded Production path. Never use an ad-hoc raw deploy to bypass `production:build:safe` / `production:deploy:safe` or their current successors.
+- diagnosing a defect seen in Production;
+- converting known historical failures into regression checks;
+- repeated automation;
+- post-deploy verification;
+- hard-to-rollback/high-risk work.
 
-The repository-side automatic `main → Production` workflow is active. `.github/workflows/production-auto-deploy.yml` runs on `main` pushes and remains fail-closed on missing Production configuration or guard failure. Emergency pause is explicit: set repository variable `LOVETREE_PRODUCTION_AUTO_DEPLOY=false`. Do not disable guards or substitute raw Wrangler deployment.
+Do not fabricate/suppress test results. If a test was run and failed, report the failure accurately. The policy change is about **release order**, not falsifying evidence.
 
-See `docs/operations/LOVETREE_RELEASE_OPERATING_POLICY.md`.
+Use these reporting fields where useful:
 
-## Production safety
+```text
+PRODUCTION_CHANGED = YES/NO
+SOURCE_SHA = <exact commit>
+PRODUCTION_VERSION = <exact deployment/version>
+PREVIOUS_KNOWN_WORKING = <exact identity>
+PRODUCTION_OBSERVED = YES/NO
+OWNER_ACCEPTED = YES/NO/PENDING
+ROLLBACK_READY = YES/NO
+KNOWN_DEFECT = <exact defect or NONE>
+CI_ACCEPTED = YES/NO/NOT_USED_FOR_PREPROD_GATE
+```
 
-Protected Production identities include:
+Full release contract:
+
+`docs/operations/PRODUCTION_FIRST_ROLLBACK_POLICY.md`
+
+`docs/operations/LOVETREE_RELEASE_OPERATING_POLICY.md`
+
+## 5. High-risk exception boundary
+
+Production-first is not blanket authority for operations where rollback is uncertain or durable harm is plausible.
+
+Treat separately unless the Product Owner gives explicit target-level authorization and a recovery plan:
+
+- destructive DB/schema migration;
+- irreversible Production data deletion/mutation;
+- Auth/Firebase identity or authorization policy changes;
+- payment/billing/money movement;
+- secrets/credentials/bindings;
+- security/privacy/trust-boundary changes;
+- provider/account ownership changes;
+- Worker/domain routing changes with uncertain recovery;
+- any change for which the previous state cannot be restored quickly and reliably.
+
+For these, fail closed around irreversible harm and recovery uncertainty.
+
+Never expose secret values in source, logs, PR comments or reports.
+
+## 6. Git / workspaces / durable history
+
+GitHub is the durable code ledger.
+
+- Fresh-read the current remote before a decision that depends on current state.
+- Do not force-push or destructively rewrite `main` history.
+- Do not use `git clean`, destructive reset or history rewrite merely to recover from a failed product attempt.
+- Preserve failed Production attempts as auditable commits/reverts when possible.
+- Use dedicated worktrees/branches when they materially help parallelism or isolation, but do not turn branch/PR ceremony into a mandatory pre-Production staging requirement for an owner-authorized reversible change.
+
+Both WSL and Windows may be used in OS-native worktrees. Do not run heavy repository workloads from cross-mounted paths when an OS-native worktree is available.
+
+The shared Google Drive for desktop mirror is a synchronization/admin surface, not a substitute for Git history.
+
+Source-authority Drive folders remain read-only by default.
+
+## 7. Heavy processes
+
+Docker, virtual machines, emulators, large parallel builds and bulk browser-capture/scanning jobs should not be started reflexively.
+
+Use them only when they materially answer the current task. Existing explicit CTO/owner approval requirements for heavyweight infrastructure remain in force.
+
+Do not build an elaborate test harness merely because it is possible when the Product Owner has asked for a direct reversible Production iteration.
+
+## 8. CI interpretation
+
+CI is evidence.
+
+When a PR is intentionally evaluated under CI acceptance, report all applicable exact-head workflow conclusions truthfully. A failed/cancelled applicable workflow is not GREEN.
+
+But distinguish:
+
+```text
+CI_ACCEPTED
+!=
+PRODUCTION_OWNER_ACCEPTED
+```
+
+For ordinary reversible Production-first iteration, CI may run concurrently or after deployment.
+
+See:
+
+`docs/operations/CI_WORKFLOW_APPLICABILITY.md`
+
+## 9. Production deployment identity
+
+Protected Product identities include:
 
 - Worker: `lovetree-limone`
 - Firebase project: `relovetree`
 
-Do not create or deploy to an accidental `lovetree-limone-production` Worker.
+Do not accidentally deploy to a similarly named unintended Worker.
 
-Never expose secret values in source, logs, PR comments or reports. Production verification may use read-only metadata/state checks required by the guard. Do not mutate Production DB/Firebase merely to make a validation gate pass.
+Preserve rollback identity for ordinary reversible deployments.
 
-Firebase validation must not use user-creating probes such as anonymous signup. Disposable mutable Runtime E2E belongs only on the isolated non-Production/test topology tracked by #67, and any dedicated resource there remains `TEST_ISOLATION_ONLY` rather than Product authority.
+Do not mutate Production DB/Firebase merely to make a validation gate pass.
 
-## Files and secrets
+Automatic deployment and guard implementation details are documented in:
 
-Never commit:
+`docs/operations/GITHUB_PRODUCTION_AUTO_DEPLOY.md`
 
-- `.env*`, `.dev.vars` or local secret files
-- API tokens, passwords, private keys or database URLs
-- dependency directories (`node_modules`)
-- generated build/test output unless explicitly part of an approved artifact contract
-- local browser profiles/logs/caches
+If existing automation still imposes broad pre-Production validation that conflicts with the current owner release order, classify that as **legacy workflow behavior to reconcile**, not as the desired owner policy.
 
-When a secret or environment variable is required, report only the variable name and whether it is present/missing; never print the value.
+## 10. Operating principle
 
-## Operating principle
+Prefer the simplest operation that actually matches the Product Owner's stated goal.
 
-Prefer a small, evidence-backed change over an invented completion. Preserve source/design provenance, distinguish prototype/test/bridge status from Product adoption, **distinguish donor/adaptation from faithful implementation**, and leave a clearly named blocker instead of weakening a fail-closed contract.
+For Source work:
+
+```text
+PRESERVE ORIGINAL
+SPLIT STRUCTURALLY
+DO NOT REINTERPRET
+CONNECT OUTSIDE THE SOURCE
+COMPOSE MVP VERSIONS SEPARATELY
+```
+
+For ordinary reversible product work:
+
+```text
+PRODUCTION FIRST
+OBSERVE THE REAL RESULT
+KEEP / FIX / ROLLBACK
+```
+
+Do not replace either simple instruction with a more elaborate process unless the task genuinely requires it.
