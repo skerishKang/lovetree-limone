@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { assertExactHeadBinding } from '../scripts/new/validate-exact-head.mjs';
 import { validateCapsule } from '../scripts/new/validate-source-capsule.mjs';
 import { validateRuntimePolicy } from '../scripts/new/validate-source-runtime-policy.mjs';
 import { validateRecoveryImport } from '../scripts/new/validate-source-recovery-import.mjs';
@@ -45,9 +46,9 @@ function mutateFile(filePath, edit) {
 }
 
 function makeCapsule({
-  capsuleId = 'SRC999',
-  family = 'Synthetic Gate Fixture',
-  title = 'Synthetic Gate Fixture',
+  capsuleId = 'SRC056',
+  family = 'Vertical Moment Relationship Network Overview',
+  title = 'Vertical Moment Relationship Network Overview',
   adoptionStatus = 'ADOPTED',
   duplicateStatus = 'CLEAR',
   s0 = 'PASS',
@@ -211,6 +212,11 @@ test('01 WRONG_FAMILY_IN_NAMESPACE', () => {
   assert.throws(() => validateFixture(capsule), /WRONG_FAMILY_IN_NAMESPACE/);
 });
 
+test('UNREGISTERED_SOURCE_IDENTITY', () => {
+  const capsule = makeCapsule({ capsuleId: 'SRC999', family: 'Synthetic Gate Fixture', title: 'Synthetic Gate Fixture' });
+  assert.throws(() => validateFixture(capsule), /UNREGISTERED_SOURCE_IDENTITY/);
+});
+
 test('02 DUPLICATE_AUTHORITY_UNRESOLVED', () => {
   const capsule = makeCapsule({ duplicateStatus: 'OPEN' });
   assert.throws(() => validateFixture(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
@@ -245,6 +251,11 @@ test('07 REQUIRED_CHECK_CANCELLED_OR_MISSING', () => {
   assert.throws(() => validateRequiredCheckStates(states), /not success/);
   delete states[REQUIRED_NEW_CHECKS[0]];
   assert.throws(() => validateRequiredCheckStates(states), /required check missing/);
+});
+
+test('EXACT_HEAD_BINDING_REJECTS_SYNTHETIC_MERGE_SHA', () => {
+  assert.equal(assertExactHeadBinding(SHA_A, SHA_A), true);
+  assert.throws(() => assertExactHeadBinding(SHA_B, SHA_A), /EXACT_HEAD_BINDING_FAIL/);
 });
 
 test('08 OLD_REPAIR_WHILE_NEW_HOLD_ACTIVE', () => {
@@ -326,7 +337,8 @@ test('S0_PASS_REQUIRES_TRUSTED_EPHEMERAL_LIVE_EVIDENCE', () => {
 
 test('COMMITTED_LIVE_AUTHORITY_INSIDE_CAPSULE_IS_REJECTED', () => {
   const capsule = makeCapsule();
-  const committedPath = path.join(capsule, 'SRC999-00-live-authority.json');
+  const capsuleId = path.basename(capsule);
+  const committedPath = path.join(capsule, `${capsuleId}-00-live-authority.json`);
   fs.copyFileSync(livePathFor(capsule), committedPath);
   assert.throws(() => validateCapsule(capsule, { liveAuthorityPath: committedPath }), /CI-ephemeral and outside the capsule tree/);
 });
