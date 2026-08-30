@@ -45,7 +45,7 @@ No later stage may PASS while an earlier required stage is FAIL, BLOCKED, UNKNOW
 - `source-identity-registry.json` — capsule→source-family identity binding for the Five-Source calibration set
 - `source-capsule.schema.json` — normalized capsule manifest, schema version `2.0`
 - `source-authority-record.schema.json` — exact Drive/source/adoption/duplicate authority
-- `source-live-authority-verification.schema.json` — bounded live Drive observation record
+- `source-live-authority-verification.schema.json` — trusted bounded live Drive observation record format
 - `source-recovery-import.schema.json` — OLD→NEW recovery classification with `SOURCE_CONTRACT_IMPACT=NONE`
 - `source-baseline.schema.json` — immutable A/source baseline contract including intentional source quirks
 - `source-evidence-manifest.schema.json` — artifact inventory with exact SHA-256
@@ -58,14 +58,13 @@ Freeform PR prose is informational only. It must not compete with these records 
 
 ## Conventional capsule files
 
-For `SRC056` the machine paths are:
+For `SRC056` the committed capsule structure is:
 
 ```text
 new/sources/SRC056/
 ├─ SRC056-00-manifest.json
 ├─ SRC056-00-authority.json
 ├─ SRC056-00-authority-summary.json
-├─ SRC056-00-live-authority.json
 ├─ SRC056-00-recovery-import.json         # only when OLD material is imported/reused
 ├─ SRC056-01-raw/**
 ├─ SRC056-02-runtime/
@@ -83,6 +82,14 @@ new/sources/SRC056/
 └─ SRC056-04-tests/**
 ```
 
+Live authority evidence is deliberately **not** committed into the capsule. The trusted CI observer writes ephemeral evidence outside the repository tree, for example:
+
+```text
+$RUNNER_TEMP/lovetree-live/SRC056-live-authority.json
+```
+
+The validator consumes it through `LOVETREE_LIVE_AUTHORITY_DIR`, `LOVETREE_LIVE_AUTHORITY_RECORD`, or an explicit trusted caller argument. A file inside the capsule tree is rejected as non-ephemeral.
+
 ## S0 identity and live authority rules
 
 S0 can PASS only when:
@@ -94,14 +101,43 @@ S0 can PASS only when:
 - adoption is explicit and resolves to the capsule revision;
 - duplicate/variant authority is `CLEAR`;
 - generated authority summary matches the authority record exactly;
-- a bounded live Drive observation record matches the same folder ID, file ID, bytes and SHA-256;
+- the manifest declares `LIVE_AUTHORITY_MODE = TRUSTED_CI_EPHEMERAL`;
+- trusted CI supplies a fresh bounded Drive observation matching the same folder ID, file ID, bytes and SHA-256;
 - the live observation is no older than 24 hours.
 
 Version number, filename, timestamp or `pass:true` alone never selects authority.
 
-Unresolved adoption, duplicate authority, wrong family, missing live observation or stale/mismatched live tuple forces fail-closed behavior.
+Unresolved adoption, duplicate authority, wrong family, missing trusted live observation or stale/mismatched live tuple forces fail-closed behavior.
 
-The checked-in live observation record is a verification binding, not a substitute for a trusted Drive observer. A repository-side trusted observer/WIF path must still be deployed and independently verified before system-wide readiness can be declared.
+The live observation is runtime verification evidence, not repository state. Committing a 24-hour observation record would create meaningless daily-churn commits and eventually stale-green behavior; therefore committed live observation records are forbidden by the validator.
+
+## Trusted live Source authority observer
+
+`scripts/new/observe-source-live-authority.mjs` is the Source-specific trusted observer CLI.
+
+It:
+
+- accepts only the short-lived `DESIGN_INTAKE_DRIVE_ACCESS_TOKEN` credential contract;
+- refuses service-account JSON keys and OAuth refresh-token style long-lived credentials;
+- performs Google Drive API v3 read-only GET requests only;
+- verifies exact file ID and direct parent folder ID;
+- verifies provider-declared byte count;
+- streams source bytes through bounded SHA-256 hashing (default maximum 256 MiB);
+- fails closed on size mismatch, hash mismatch, parent mismatch, API failure or hash bound overflow;
+- emits a `TRUSTED_DRIVE_OBSERVER` live-authority record into a caller-supplied temporary output directory.
+
+Example future trusted job invocation after Google WIF is provisioned:
+
+```text
+node scripts/new/observe-source-live-authority.mjs \
+  --capsule new/sources/SRC056 \
+  --out-dir "$RUNNER_TEMP/lovetree-live"
+
+LOVETREE_LIVE_AUTHORITY_DIR="$RUNNER_TEMP/lovetree-live" \
+  node scripts/new/validate-source-capsule.mjs new/sources/SRC056
+```
+
+The CLI being present does **not** mean the WIF identity or privileged workflow is provisioned. Until the Google-side trust binding and GitHub trusted job are operational, live-system readiness remains NO.
 
 ## S1 raw rules
 
@@ -235,7 +271,7 @@ Both WEB and Luna1 must independently PASS against the same source authority, po
 15. `SELF_DECLARED_PASS_WITHOUT_DERIVED_EVIDENCE`
 16. `UNPROTECTED_PROMOTION_PATH`
 
-Additional regression checks cover stale live authority observations, invalid recovery-import impact, pre-S2 runtime creation, TSX/React conversion and large-inline exception handling.
+Additional regression checks cover stale/missing ephemeral live authority observations, rejection of committed live observation files, invalid recovery-import impact, pre-S2 runtime creation, TSX/React conversion and large-inline exception handling.
 
 One synthetic positive S0/S1 fixture is useful for validator health, but it does **not** satisfy the required real-source calibration. Final V2 control acceptance remains:
 
@@ -271,7 +307,7 @@ Cancelled, skipped, missing or failed prerequisite jobs are not PASS.
 - stable NEW checks configured as required checks;
 - administrator/emergency bypass handling explicitly audited;
 - exact-head required checks all `success`;
-- trusted live-authority observation path ready;
+- trusted live-authority observer path ready;
 - at least sixteen negative fixtures and all passing;
 - recovery-import enforcement active.
 
@@ -281,4 +317,4 @@ This validator intentionally reports NOT_READY against an unprotected repository
 
 Workflow checks are necessary but not sufficient while `main` has no repository-level required-check protection/ruleset. Do not declare the #564 system complete or broad implementation released until the intended stable NEW gate checks are configured as repository-level merge requirements and independently verified.
 
-Likewise, a checked-in live authority verification record is not enough by itself: the trusted Drive observer/WIF execution path must be operational and bound into the promotion process.
+Likewise, Source live-authority code is necessary but not sufficient. The Google-side WIF trust binding, dedicated read-only identity, trusted GitHub job, and exact-head merge-time aggregation remain operational requirements before `LIVE_AUTHORITY_PATH_READY=YES`.
