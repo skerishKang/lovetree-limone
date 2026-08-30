@@ -54,6 +54,13 @@ function validateExceptionLedger(items, kind) {
   }
 }
 
+export function validateParityStatuses(parity, kind = 'PARITY') {
+  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'QUIRK_PRESERVATION_STATUS', 'REVIEW_STATUS']) {
+    assert(parity[key] === PASS, `${kind}.${key} must PASS`);
+  }
+  return true;
+}
+
 function validateParity(filePath, kind, capsuleRoot, capsuleId, sourceSha, authorityHash, authorityRevision, evidenceHash) {
   assert(fs.existsSync(filePath), `${kind} parity record missing: ${filePath}`);
   const parity = readJson(filePath);
@@ -78,12 +85,12 @@ function validateParity(filePath, kind, capsuleRoot, capsuleId, sourceSha, autho
   if (kind === 'SOURCE_TO_PORT') assert(roles.has('PORT_B'), 'SOURCE_TO_PORT requires independent PORT_B artifacts');
   if (kind === 'SOURCE_TO_PRODUCT') assert(roles.has('PRODUCT_C'), 'SOURCE_TO_PRODUCT requires independent PRODUCT_C artifacts');
   for (const [index, artifact] of parity.ARTIFACTS.entries()) verifyArtifactHash(capsuleRoot, artifact, `${kind}.ARTIFACTS[${index}]`);
-  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'QUIRK_PRESERVATION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `${kind}.${key} must PASS`);
+  validateParityStatuses(parity, kind);
   validateExceptionLedger(parity.EXCEPTION_LEDGER, kind);
   return { record: parity, hash: sha256File(filePath) };
 }
 
-function assertIndependentBC(sourcePort, sourceProduct) {
+export function assertIndependentBC(sourcePort, sourceProduct) {
   const bPaths = new Set(sourcePort.ARTIFACTS.filter((a) => a.ROLE === 'PORT_B').map((a) => a.PATH));
   const cPaths = new Set(sourceProduct.ARTIFACTS.filter((a) => a.ROLE === 'PRODUCT_C').map((a) => a.PATH));
   for (const filePath of cPaths) assert(!bPaths.has(filePath), `B_C_SCREENSHOT_ALIAS: PRODUCT_C reuses PORT_B artifact path ${filePath}`);
@@ -94,20 +101,34 @@ function assertIndependentBC(sourcePort, sourceProduct) {
   return true;
 }
 
+export function assertVerificationBinding(record, expected) {
+  assert(record.VERIFIER === expected.verifier, `${expected.verifier} VERIFIER mismatch`);
+  assert(record.SOURCE_SHA256 === expected.sourceSha, `${expected.verifier} source hash mismatch`);
+  assert(record.AUTHORITY_RECORD_SHA256 === expected.authorityHash, `${expected.verifier} authority hash stale`);
+  assert(record.AUTHORITY_RECORD_REVISION === expected.authorityRevision, `${expected.verifier} authority revision stale`);
+  assert(record.EXACT_PORT_HEAD_SHA === expected.portHead, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: ${expected.verifier} exact port head mismatch`);
+  assert(record.EXACT_PRODUCT_HEAD_SHA === expected.productHead, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: ${expected.verifier} exact product head mismatch`);
+  assert(record.PARITY_RECORD_SHA256 === expected.productParityHash, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: ${expected.verifier} parity record hash stale`);
+  assert(record.EVIDENCE_MANIFEST_SHA256 === expected.evidenceHash, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: ${expected.verifier} evidence manifest hash stale`);
+  assert(record.STATUS === PASS, `${expected.verifier} verification must PASS`);
+  return true;
+}
+
 function validateVerification(filePath, expectedVerifier, capsuleId, sourceSha, authorityHash, authorityRevision, portHead, productHead, productParityHash, evidenceHash) {
   assert(fs.existsSync(filePath), `${expectedVerifier} verification record missing: ${filePath}`);
   const record = readJson(filePath);
   assert(record.SCHEMA_VERSION === '1.0', `${expectedVerifier} schema must be 1.0`);
   assert(record.CAPSULE_ID === capsuleId, `${expectedVerifier} CAPSULE_ID mismatch`);
-  assert(record.VERIFIER === expectedVerifier, `${expectedVerifier} VERIFIER mismatch`);
-  assert(record.SOURCE_SHA256 === sourceSha, `${expectedVerifier} source hash mismatch`);
-  assert(record.AUTHORITY_RECORD_SHA256 === authorityHash, `${expectedVerifier} authority hash stale`);
-  assert(record.AUTHORITY_RECORD_REVISION === authorityRevision, `${expectedVerifier} authority revision stale`);
-  assert(record.EXACT_PORT_HEAD_SHA === portHead, `${expectedVerifier} exact port head mismatch`);
-  assert(record.EXACT_PRODUCT_HEAD_SHA === productHead, `${expectedVerifier} exact product head mismatch`);
-  assert(record.PARITY_RECORD_SHA256 === productParityHash, `${expectedVerifier} parity record hash stale`);
-  assert(record.EVIDENCE_MANIFEST_SHA256 === evidenceHash, `${expectedVerifier} evidence manifest hash stale`);
-  assert(record.STATUS === PASS, `${expectedVerifier} verification must PASS`);
+  assertVerificationBinding(record, {
+    verifier: expectedVerifier,
+    sourceSha,
+    authorityHash,
+    authorityRevision,
+    portHead,
+    productHead,
+    productParityHash,
+    evidenceHash
+  });
   return { record, hash: sha256File(filePath) };
 }
 
@@ -166,7 +187,7 @@ export function validatePromotion(capsuleRootInput) {
   assert(promotion.WEB_VERIFICATION?.STATUS === PASS, 'promotion WEB_VERIFICATION.STATUS must PASS');
   assert(promotion.LUNA1_VERIFICATION?.STATUS === PASS, 'promotion LUNA1_VERIFICATION.STATUS must PASS');
   assert(promotion.WEB_VERIFICATION.RECORD_SHA256 === web.hash, 'promotion WEB verification hash stale');
-  assert(promotion.LUNA1_VERIFICATION.RECORD_SHA256 === luna.hash, 'promotion LUNA1 verification hash stale');
+  assert(promotion.LUNA1_VERIFICATION.RECORD_SHA256 === luna.hash, 'promotion Luna1 verification hash stale');
   assert(promotion.WEB_VERIFICATION.VERIFIED_HEAD_SHA === promotion.EXACT_PRODUCT_HEAD_SHA, 'WEB verified head mismatch');
   assert(promotion.LUNA1_VERIFICATION.VERIFIED_HEAD_SHA === promotion.EXACT_PRODUCT_HEAD_SHA, 'Luna1 verified head mismatch');
 
