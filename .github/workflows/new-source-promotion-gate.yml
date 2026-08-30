@@ -39,6 +39,7 @@ jobs:
           node --check scripts/new/source-gate-lib.mjs
           node --check scripts/new/generate-source-authority-summary.mjs
           node --check scripts/new/validate-source-capsule.mjs
+          node --check scripts/new/validate-source-runtime-policy.mjs
           node --check scripts/new/validate-version-composition.mjs
           node --check scripts/new/validate-source-promotion.mjs
       - run: node scripts/new/validate-source-capsule.mjs --self-test
