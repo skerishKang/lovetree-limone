@@ -17,7 +17,7 @@ S4_SOURCE_SPLIT_PARITY       = PASS
 
 ```text
 DRIVE_FOLDER_ID = 1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G
-DRIVE_FILE_ID   = 1UDURMSsyI0f5Lyqu-jIT3SqH0BKgcxa
+DRIVE_FILE_ID   = 1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa
 FILE            = 후보_버전1.2_세로형_모먼트관계망_전체조망.html
 REVISION        = V1.2
 BYTES           = 45761
@@ -69,4 +69,4 @@ The mobile ORIGIN_REVEAL graph/headline overlap is frozen Source behavior and wa
 
 S5 adapter, product shell, componentization, and MVP composition are not part of S4 acceptance. No product/backend/DB/Auth/Production mutation occurred.
 
-The accepted evidence is bound to the source authority SHA and to the exact source capture head recorded in `accepted-parity.json`. This report is a statement of evidence, not a replacement for repository required-check enforcement.
+The accepted evidence is bound to the source authority SHA and to the exact source capture head recorded in `accepted-parity.json`. This report does not substitute for repository required-check enforcement or later product parity.
