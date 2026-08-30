@@ -1,0 +1,163 @@
+name: NEW Source Promotion Gate
+
+on:
+  pull_request:
+    paths:
+      - 'new/sources/**'
+      - 'new/versions/**'
+      - 'new/standards/**'
+      - 'scripts/new/**'
+      - 'tests/new-source-machine-gates.test.mjs'
+      - '.github/workflows/new-source-promotion-gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'new/sources/**'
+      - 'new/versions/**'
+      - 'new/standards/**'
+      - 'scripts/new/**'
+      - 'tests/new-source-machine-gates.test.mjs'
+      - '.github/workflows/new-source-promotion-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  machine-contract:
+    name: machine-contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - run: node scripts/new/validate-source-capsule.mjs --self-test
+      - run: node --test tests/new-source-machine-gates.test.mjs
+
+  composition-boundary:
+    name: composition-boundary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Validate affected MVP version compositions
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${PR_BASE_SHA:-}" ]]; then BASE_SHA="$PR_BASE_SHA";
+          elif [[ -n "${PUSH_BEFORE_SHA:-}" && "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then BASE_SHA="$PUSH_BEFORE_SHA";
+          else BASE_SHA="$(git rev-parse HEAD^)"; fi
+
+          mapfile -t VERSION_DIRS < <(
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'new/versions/**' \
+              | awk -F/ '/^new\/versions\/[^/]+\// {print $1"/"$2"/"$3}' \
+              | sort -u
+          )
+
+          if [[ ${#VERSION_DIRS[@]} -eq 0 ]]; then
+            echo 'AFFECTED_MVP_VERSIONS=NONE'
+            exit 0
+          fi
+
+          for VERSION_DIR in "${VERSION_DIRS[@]}"; do
+            MANIFEST="$VERSION_DIR/manifest/composition.json"
+            [[ -f "$MANIFEST" ]] || { echo "VERSION_COMPOSITION_GATE=FAIL missing $MANIFEST"; exit 1; }
+            node scripts/new/validate-version-composition.mjs "$MANIFEST"
+          done
+
+  source-version-scope-separation:
+    name: source-version-scope-separation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Block Source runtime mutation in MVP composition lanes
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${PR_BASE_SHA:-}" ]]; then BASE_SHA="$PR_BASE_SHA";
+          elif [[ -n "${PUSH_BEFORE_SHA:-}" && "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then BASE_SHA="$PUSH_BEFORE_SHA";
+          else BASE_SHA="$(git rev-parse HEAD^)"; fi
+
+          VERSION_CHANGES="$(git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'new/versions/**')"
+          RUNTIME_CHANGES="$(git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'new/sources/SRC*/SRC*-02-runtime/**')"
+
+          if [[ -n "$VERSION_CHANGES" && -n "$RUNTIME_CHANGES" ]]; then
+            echo 'SOURCE_VERSION_SCOPE_SEPARATION=FAIL'
+            echo 'MVP composition and Source visual/runtime mutation are mixed in one lane.'
+            echo "$RUNTIME_CHANGES"
+            exit 1
+          fi
+          echo 'SOURCE_VERSION_SCOPE_SEPARATION=PASS'
+
+  promotion-records:
+    name: promotion-records
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Validate changed promotion records
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${PR_BASE_SHA:-}" ]]; then BASE_SHA="$PR_BASE_SHA";
+          elif [[ -n "${PUSH_BEFORE_SHA:-}" && "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then BASE_SHA="$PUSH_BEFORE_SHA";
+          else BASE_SHA="$(git rev-parse HEAD^)"; fi
+
+          mapfile -t CAPSULES < <(
+            git diff --name-only "$BASE_SHA" "$GITHUB_SHA" -- 'new/sources/SRC*/SRC*-03-evidence/*-03-06-promotion.json' \
+              | awk -F/ '/^new\/sources\/SRC[0-9][0-9][0-9]\// {print $1"/"$2"/"$3}' \
+              | sort -u
+          )
+
+          if [[ ${#CAPSULES[@]} -eq 0 ]]; then
+            echo 'CHANGED_PROMOTION_RECORDS=NONE'
+            exit 0
+          fi
+          node scripts/new/validate-source-promotion.mjs "${CAPSULES[@]}"
+
+  exact-head-completeness:
+    name: exact-head-completeness
+    if: always()
+    needs: [machine-contract, composition-boundary, source-version-scope-separation, promotion-records]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every prerequisite at this exact head
+        shell: bash
+        env:
+          MACHINE_RESULT: ${{ needs.machine-contract.result }}
+          COMPOSITION_RESULT: ${{ needs.composition-boundary.result }}
+          SEPARATION_RESULT: ${{ needs.source-version-scope-separation.result }}
+          PROMOTION_RESULT: ${{ needs.promotion-records.result }}
+        run: |
+          set -euo pipefail
+          for pair in \
+            "machine-contract:$MACHINE_RESULT" \
+            "composition-boundary:$COMPOSITION_RESULT" \
+            "source-version-scope-separation:$SEPARATION_RESULT" \
+            "promotion-records:$PROMOTION_RESULT"; do
+            NAME="${pair%%:*}"; RESULT="${pair#*:}"
+            [[ "$RESULT" == 'success' ]] || { echo "$NAME=$RESULT"; exit 1; }
+          done
+          echo 'NEW_SOURCE_PROMOTION_EXACT_HEAD_COMPLETENESS=PASS'
