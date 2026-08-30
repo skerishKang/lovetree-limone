@@ -1,0 +1,30 @@
+name: NEW Old Repair Promotion Guard
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: old-repair-promotion-guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block superseded repair train while NEW generation hold is active
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          case "${PR_NUMBER:-}" in
+            559|560|561|562|563)
+              echo "OLD_REPAIR_PROMOTION_GUARD=FAIL PR=${PR_NUMBER}"
+              echo 'PR is evidence/reference only under #564 and must not be promoted.'
+              exit 1
+              ;;
+            *)
+              echo "OLD_REPAIR_PROMOTION_GUARD=PASS PR=${PR_NUMBER:-NA}"
+              ;;
+          esac
