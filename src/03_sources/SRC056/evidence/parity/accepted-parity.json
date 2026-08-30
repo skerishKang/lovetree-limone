@@ -40,6 +40,7 @@
   },
   "notes": [
     "The mobile ORIGIN_REVEAL graph/headline overlap is frozen Source behavior and was not repaired.",
-    "No adapter, product shell, componentization, or product data was introduced."
+    "No adapter, product shell, componentization, or product data was introduced.",
+    "Accepted from artifact evidence generated at exact source head f74bdd34a0f9d54ff285c3c7f287d8021ea988d9; acceptance commit is the provenance-record commit, not a rerun of the captured A/B evidence."
   ]
 }
