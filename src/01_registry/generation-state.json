@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "issue": 569,
+  "phase": "SETUP",
+  "active_root": "src/",
+  "real_source_runtime_started": false,
+  "real_codex_runtime_started": false,
+  "broad_108_rollout_released": false,
+  "first_calibration": "SRC056",
+  "second_replay": null,
+  "notes": [
+    "SETUP phase allows governance/registry/templates/harness only.",
+    "Transition to CALIBRATION requires a separate reviewed change with fresh authority evidence."
+  ]
+}
