@@ -34,6 +34,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
+      - name: Parse every NEW gate executable
+        run: |
+          node --check scripts/new/source-gate-lib.mjs
+          node --check scripts/new/generate-source-authority-summary.mjs
+          node --check scripts/new/validate-source-capsule.mjs
+          node --check scripts/new/validate-version-composition.mjs
+          node --check scripts/new/validate-source-promotion.mjs
       - run: node scripts/new/validate-source-capsule.mjs --self-test
       - run: node --test tests/new-source-machine-gates.test.mjs
 
