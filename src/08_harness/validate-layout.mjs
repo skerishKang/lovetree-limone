@@ -146,6 +146,31 @@ if (state?.phase === 'SETUP') {
       if (stages[stage] === false) sawFalse = true;
     }
     if (stages.identity_verified !== true || stages.raw_authority_locked !== true) fail(`${sourceId}: identity/raw authority must be complete before calibration`);
+
+    const acceptedRel = `${base}/baseline/accepted-baseline.json`;
+    const acceptedFull = path.join(repoRoot, acceptedRel);
+    if (stages.baseline_captured === true) {
+      requirePath(acceptedRel);
+      const accepted = readJson(acceptedRel);
+      if (accepted) {
+        if (manifest.baseline_ref !== 'baseline/accepted-baseline.json') fail(`${sourceId}: baseline_ref must point to accepted baseline record`);
+        if (accepted.source_id !== sourceId) fail(`${sourceId}: accepted baseline source_id mismatch`);
+        if (accepted.status !== 'ACCEPTED') fail(`${sourceId}: accepted baseline status must be ACCEPTED`);
+        if (accepted.review_method !== 'DIRECT_CENTRAL_ARTIFACT_REVIEW') fail(`${sourceId}: accepted baseline must record direct artifact review`);
+        if (!/^[0-9a-f]{40}$/.test(accepted.captured_head ?? '')) fail(`${sourceId}: accepted baseline captured_head must be a full SHA`);
+        if (accepted.authority?.sha256 !== manifest.authority?.sha256) fail(`${sourceId}: accepted baseline authority SHA mismatch`);
+        if (accepted.authority?.bytes !== manifest.authority?.bytes) fail(`${sourceId}: accepted baseline authority byte count mismatch`);
+        if (!Number.isInteger(accepted.workflow?.run_id) || accepted.workflow.run_id <= 0) fail(`${sourceId}: accepted baseline workflow run id missing`);
+        if (accepted.workflow?.conclusion !== 'SUCCESS') fail(`${sourceId}: accepted baseline workflow must be SUCCESS`);
+        if (!Number.isInteger(accepted.artifact?.id) || accepted.artifact.id <= 0) fail(`${sourceId}: accepted baseline artifact id missing`);
+        if (!/^sha256:[0-9a-f]{64}$/.test(accepted.artifact?.digest ?? '')) fail(`${sourceId}: accepted baseline artifact digest invalid`);
+        if (!Array.isArray(accepted.reviewed_viewports) || accepted.reviewed_viewports.length !== 3) fail(`${sourceId}: accepted baseline must cover three viewports`);
+        if (accepted.next_stage_authorized !== 'MECHANICAL_SPLIT') fail(`${sourceId}: accepted baseline must explicitly authorize mechanical split next`);
+      }
+    } else if (fs.existsSync(acceptedFull)) {
+      fail(`${sourceId}: accepted baseline record cannot exist while baseline_captured is false`);
+    }
+
     if (stages.mechanical_split_complete === true) {
       for (const required of ['split/index.html','split/styles.css','split/script.js']) requirePath(`${base}/${required}`);
     }

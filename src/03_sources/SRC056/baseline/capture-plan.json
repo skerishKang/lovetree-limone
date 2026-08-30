@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "source_id": "SRC056",
-  "status": "PENDING_EXACT_HEAD_CI",
+  "status": "ACCEPTED",
   "surface": "original/original.html",
   "viewports": [
     { "width": 1280, "height": 800 },
@@ -18,5 +18,10 @@
     "interaction outcomes",
     "console/page errors"
   ],
-  "pass_rule": "Baseline is not captured until exact-head CI artifact is directly reviewed and bound back into the Source record."
+  "accepted_evidence": "accepted-baseline.json",
+  "captured_head": "faaaa61584abda27d4bb704287053567ac635d7e",
+  "workflow_run_id": 33323476599,
+  "artifact_id": 9735564304,
+  "artifact_digest": "sha256:d4e5ca523dd23adae8df4334958f6c81dbf60ed2f7e09c715ff131d54d6ec7b8",
+  "pass_rule": "Baseline is accepted only from a directly reviewed exact-head artifact whose frozen original remains byte-identical to locked authority."
 }

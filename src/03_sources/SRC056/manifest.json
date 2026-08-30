@@ -15,10 +15,11 @@
   "master_rows": [],
   "family_ref": null,
   "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
-    "baseline_captured": false,
+    "baseline_captured": true,
     "mechanical_split_complete": false,
     "source_split_parity_pass": false
   },
