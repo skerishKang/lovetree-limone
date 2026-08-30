@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-recovery-import-1.0.json",
+  "title": "LoveTree OLD-to-NEW Recovery Import Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "SCHEMA_VERSION",
+    "CAPSULE_ID",
+    "SOURCE_SHA256",
+    "CREATED_AT",
+    "ITEMS",
+    "STATUS"
+  ],
+  "properties": {
+    "SCHEMA_VERSION": { "const": "1.0" },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "SOURCE_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "CREATED_AT": { "type": "string", "format": "date-time" },
+    "ITEMS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["PATH", "CLASSIFICATION", "ORIGIN_REF", "SOURCE_CONTRACT_IMPACT", "SHA256"],
+        "properties": {
+          "PATH": { "type": "string", "minLength": 1 },
+          "CLASSIFICATION": {
+            "enum": ["REUSE_EXACT", "REUSE_AFTER_VERIFY", "REGRESSION_CORPUS", "REPORT_ONLY", "DISCARD_FROM_NEW_RUNTIME"]
+          },
+          "ORIGIN_REF": { "type": "string", "minLength": 1 },
+          "SOURCE_CONTRACT_IMPACT": { "const": "NONE" },
+          "SHA256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] }
+  }
+}

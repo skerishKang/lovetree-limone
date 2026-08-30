@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/version-composition-1.0.json",
+  "title": "LoveTree NEW MVP Version Composition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "version", "name", "sources", "created"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "version": { "type": "string", "pattern": "^v[0-9]+(?:[.-][A-Za-z0-9]+)*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^SRC[0-9]{3}$" }
+    },
+    "created": { "type": "string", "format": "date" }
+  }
+}

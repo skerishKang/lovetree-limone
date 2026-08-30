@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-parity-result-1.0.json",
+  "title": "LoveTree Source Parity Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "SCHEMA_VERSION",
+    "CAPSULE_ID",
+    "PARITY_KIND",
+    "SOURCE_SHA256",
+    "AUTHORITY_RECORD_SHA256",
+    "AUTHORITY_RECORD_REVISION",
+    "EXACT_PORT_HEAD_SHA",
+    "EXACT_PRODUCT_HEAD_SHA",
+    "EVIDENCE_MANIFEST_SHA256",
+    "VIEWPORT_STATES",
+    "ARTIFACTS",
+    "GEOMETRY_STATUS",
+    "STYLE_STATUS",
+    "INTERACTION_STATUS",
+    "QUIRK_PRESERVATION_STATUS",
+    "EXCEPTION_LEDGER",
+    "REVIEW_STATUS"
+  ],
+  "properties": {
+    "SCHEMA_VERSION": { "const": "1.0" },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "PARITY_KIND": { "enum": ["SOURCE_TO_PORT", "SOURCE_TO_PRODUCT"] },
+    "SOURCE_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_REVISION": { "type": "integer", "minimum": 1 },
+    "EXACT_PORT_HEAD_SHA": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "EXACT_PRODUCT_HEAD_SHA": { "type": ["string", "null"], "pattern": "^[a-f0-9]{40}$" },
+    "EVIDENCE_MANIFEST_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "VIEWPORT_STATES": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["VIEWPORT", "STATE"],
+        "properties": {
+          "VIEWPORT": { "type": "string", "minLength": 1 },
+          "STATE": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "ARTIFACTS": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ROLE", "PATH", "SHA256", "VIEWPORT", "STATE"],
+        "properties": {
+          "ROLE": { "enum": ["SOURCE_A", "PORT_B", "PRODUCT_C", "GEOMETRY", "STYLE", "INTERACTION", "OTHER"] },
+          "PATH": { "type": "string", "minLength": 1 },
+          "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "VIEWPORT": { "type": "string", "minLength": 1 },
+          "STATE": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "GEOMETRY_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "STYLE_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "INTERACTION_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "QUIRK_PRESERVATION_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "EXCEPTION_LEDGER": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["DELTA", "AUTHORIZED_BY", "EVIDENCE_REF"],
+        "properties": {
+          "DELTA": { "type": "string", "minLength": 1 },
+          "AUTHORIZED_BY": { "enum": ["OWNER", "DELEGATED_OWNER"] },
+          "EVIDENCE_REF": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "REVIEW_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] }
+  }
+}

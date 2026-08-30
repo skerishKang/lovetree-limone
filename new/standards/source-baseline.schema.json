@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-baseline-1.0.json",
+  "title": "LoveTree Source Baseline A Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "SCHEMA_VERSION",
+    "CAPSULE_ID",
+    "SOURCE_SHA256",
+    "AUTHORITY_RECORD_SHA256",
+    "AUTHORITY_RECORD_REVISION",
+    "SOURCE_REVISION",
+    "CAPTURED_AT",
+    "VIEWPORTS",
+    "STATES",
+    "DOM_LANDMARKS",
+    "INTERACTIONS",
+    "SOURCE_QUIRKS",
+    "ARTIFACTS",
+    "STATUS"
+  ],
+  "properties": {
+    "SCHEMA_VERSION": { "const": "1.0" },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "SOURCE_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_REVISION": { "type": "integer", "minimum": 1 },
+    "SOURCE_REVISION": { "type": "string", "minLength": 1 },
+    "CAPTURED_AT": { "type": "string", "format": "date-time" },
+    "VIEWPORTS": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["WIDTH", "HEIGHT"],
+        "properties": {
+          "WIDTH": { "type": "integer", "minimum": 1 },
+          "HEIGHT": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "STATES": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "DOM_LANDMARKS": { "type": "array", "items": { "type": "object" } },
+    "INTERACTIONS": { "type": "array", "items": { "type": "object" } },
+    "SOURCE_QUIRKS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ID", "DESCRIPTION", "EVIDENCE_REF"],
+        "properties": {
+          "ID": { "type": "string", "minLength": 1 },
+          "DESCRIPTION": { "type": "string", "minLength": 1 },
+          "EVIDENCE_REF": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "ARTIFACTS": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ROLE", "PATH", "SHA256"],
+        "properties": {
+          "ROLE": { "type": "string", "minLength": 1 },
+          "PATH": { "type": "string", "minLength": 1 },
+          "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "VIEWPORT": { "type": ["string", "null"] },
+          "STATE": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] }
+  }
+}
