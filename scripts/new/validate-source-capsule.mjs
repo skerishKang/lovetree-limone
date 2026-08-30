@@ -21,6 +21,8 @@ import {
   validateAuthorityRecord,
   verifyArtifactHash
 } from './source-gate-lib.mjs';
+import { validateLiveAuthorityRecord } from './validate-source-live-authority.mjs';
+import { validateRecoveryImport } from './validate-source-recovery-import.mjs';
 
 const repoRoot = process.cwd();
 
@@ -56,11 +58,25 @@ function findManifest(capsuleRoot) {
 function conventionalPaths(capsuleRoot, capsuleId) {
   return {
     authority: path.join(capsuleRoot, `${capsuleId}-00-authority.json`),
+    liveAuthority: path.join(capsuleRoot, `${capsuleId}-00-live-authority.json`),
+    recovery: path.join(capsuleRoot, `${capsuleId}-00-recovery-import.json`),
     summary: path.join(capsuleRoot, `${capsuleId}-00-authority-summary.json`),
     baseline: path.join(capsuleRoot, `${capsuleId}-03-evidence`, `${capsuleId}-03-01-baseline-a.json`),
     parity: path.join(capsuleRoot, `${capsuleId}-03-evidence`, `${capsuleId}-03-02-source-port-parity.json`),
     runtime: path.join(capsuleRoot, `${capsuleId}-02-runtime`)
   };
+}
+
+function validateRegisteredIdentity(capsuleId, manifest, authority) {
+  const registryPath = path.join(repoRoot, 'new', 'standards', 'source-identity-registry.json');
+  assert(fs.existsSync(registryPath), 'source identity registry missing');
+  const registry = readJson(registryPath);
+  assert(registry.SCHEMA_VERSION === '1.0', 'source identity registry schema must be 1.0');
+  const entry = registry.SOURCES?.[capsuleId];
+  if (!entry) return true;
+  assert(authority.SOURCE_FAMILY === entry.CANONICAL_FAMILY, `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} expected ${entry.CANONICAL_FAMILY}, got ${authority.SOURCE_FAMILY}`);
+  assert(Array.isArray(entry.TITLE_HINTS) && entry.TITLE_HINTS.some((hint) => manifest.TITLE.includes(hint)), `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} title does not match registered family`);
+  return true;
 }
 
 function validateBaseline(filePath, manifest, authority, authorityHash) {
@@ -74,6 +90,7 @@ function validateBaseline(filePath, manifest, authority, authorityHash) {
   const viewportSet = new Set(baseline.VIEWPORTS.map((v) => `${v.WIDTH}x${v.HEIGHT}`));
   for (const required of ['1280x800', '390x844', '320x720']) assert(viewportSet.has(required), `baseline missing required viewport ${required}`);
   assert(Array.isArray(baseline.STATES) && baseline.STATES.length > 0, 'baseline requires states');
+  assert(Array.isArray(baseline.SOURCE_QUIRKS), 'baseline SOURCE_QUIRKS must be an array');
   assert(Array.isArray(baseline.ARTIFACTS) && baseline.ARTIFACTS.length > 0, 'baseline requires artifacts');
   for (const [index, artifact] of baseline.ARTIFACTS.entries()) verifyArtifactHash(path.dirname(manifest.__path), artifact, `baseline.ARTIFACTS[${index}]`);
   assert(baseline.STATUS === PASS, 'baseline STATUS must PASS when BASELINE_A_PRESENT=PASS');
@@ -97,8 +114,10 @@ function validateParity(filePath, manifest, authority, authorityHash, runtimePat
   assertSha256(parity.EVIDENCE_MANIFEST_SHA256, 'parity.EVIDENCE_MANIFEST_SHA256');
   assert(Array.isArray(parity.VIEWPORT_STATES) && parity.VIEWPORT_STATES.length > 0, 'parity requires viewport/state matrix');
   assert(Array.isArray(parity.ARTIFACTS) && parity.ARTIFACTS.length > 0, 'parity requires artifacts');
+  const roles = new Set(parity.ARTIFACTS.map((artifact) => artifact.ROLE));
+  assert(roles.has('SOURCE_A') && roles.has('PORT_B'), 'SOURCE_TO_PORT parity requires independent SOURCE_A and PORT_B artifacts');
   for (const [index, artifact] of parity.ARTIFACTS.entries()) verifyArtifactHash(path.dirname(manifest.__path), artifact, `parity.ARTIFACTS[${index}]`);
-  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `parity ${key} must PASS`);
+  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'QUIRK_PRESERVATION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `parity ${key} must PASS`);
   assert(Array.isArray(parity.EXCEPTION_LEDGER), 'parity EXCEPTION_LEDGER must be array');
   return parity;
 }
@@ -110,8 +129,9 @@ export function validateCapsule(capsuleRootInput) {
   Object.defineProperty(manifest, '__path', { value: manifestPath, enumerable: false });
   const capsuleId = path.basename(capsuleRoot);
 
-  assertExactKeys(manifest, ['MANIFEST_SCHEMA_VERSION', 'CAPSULE_ID', 'TYPE', 'IDENTITY_TOKEN', 'BASE_NUMBER', 'VARIANT_TOKEN', 'TITLE', 'SOURCE_REVISION', 'RAW_MODE', 'AUTHORITY_RECORD', 'RAW_FILES', 'ASSETS', 'EXTERNAL_DEPENDENCIES', 'INLINE_PAYLOADS', 'RELATIONS', 'WORKFLOW_STATUS'], 'manifest');
-  assertRequiredKeys(manifest, ['MANIFEST_SCHEMA_VERSION', 'CAPSULE_ID', 'TYPE', 'IDENTITY_TOKEN', 'BASE_NUMBER', 'VARIANT_TOKEN', 'TITLE', 'SOURCE_REVISION', 'RAW_MODE', 'AUTHORITY_RECORD', 'RAW_FILES', 'ASSETS', 'EXTERNAL_DEPENDENCIES', 'INLINE_PAYLOADS', 'RELATIONS', 'WORKFLOW_STATUS'], 'manifest');
+  const manifestKeys = ['MANIFEST_SCHEMA_VERSION', 'CAPSULE_ID', 'TYPE', 'IDENTITY_TOKEN', 'BASE_NUMBER', 'VARIANT_TOKEN', 'TITLE', 'SOURCE_REVISION', 'RAW_MODE', 'AUTHORITY_RECORD', 'LIVE_AUTHORITY_RECORD', 'RECOVERY_IMPORT_RECORD', 'RAW_FILES', 'ASSETS', 'EXTERNAL_DEPENDENCIES', 'INLINE_PAYLOADS', 'RELATIONS', 'WORKFLOW_STATUS'];
+  assertExactKeys(manifest, manifestKeys, 'manifest');
+  assertRequiredKeys(manifest, manifestKeys, 'manifest');
   assert(manifest.MANIFEST_SCHEMA_VERSION === '2.0', 'MANIFEST_SCHEMA_VERSION must be 2.0');
   assert(manifest.CAPSULE_ID === capsuleId, `CAPSULE_ID ${manifest.CAPSULE_ID} does not match directory ${capsuleId}`);
   assertString(manifest.CAPSULE_ID, 'CAPSULE_ID', { pattern: /^SRC[0-9]{3}$/ });
@@ -125,6 +145,8 @@ export function validateCapsule(capsuleRootInput) {
   assertString(manifest.SOURCE_REVISION, 'SOURCE_REVISION');
   assert(['EXACT_COPY', 'AUTHORITY_POINTER'].includes(manifest.RAW_MODE), 'RAW_MODE invalid');
   assertString(manifest.AUTHORITY_RECORD, 'AUTHORITY_RECORD');
+  assert(manifest.LIVE_AUTHORITY_RECORD === null || typeof manifest.LIVE_AUTHORITY_RECORD === 'string', 'LIVE_AUTHORITY_RECORD must be string|null');
+  assert(manifest.RECOVERY_IMPORT_RECORD === null || typeof manifest.RECOVERY_IMPORT_RECORD === 'string', 'RECOVERY_IMPORT_RECORD must be string|null');
 
   assert(Array.isArray(manifest.RAW_FILES) && manifest.RAW_FILES.length > 0, 'RAW_FILES requires >=1 record');
   manifest.RAW_FILES.forEach((record, index) => validateFileRecord(record, `RAW_FILES[${index}]`));
@@ -161,12 +183,13 @@ export function validateCapsule(capsuleRootInput) {
   assert(authority.CAPSULE_ID === manifest.CAPSULE_ID, 'authority CAPSULE_ID mismatch');
   assert(authority.SOURCE_REVISION === manifest.SOURCE_REVISION, 'authority SOURCE_REVISION mismatch');
   assert(authority.AUTHORITY.MODE === manifest.RAW_MODE, 'authority MODE != manifest RAW_MODE');
+  validateRegisteredIdentity(capsuleId, manifest, authority);
   const authorityHash = sha256File(authorityPath);
 
   assert(fs.existsSync(paths.summary), `generated authority summary missing: ${paths.summary}`);
   const actualSummary = readJson(paths.summary);
   const expectedSummary = authoritySummary(authority);
-  assert(stableJson(actualSummary) === stableJson(expectedSummary), 'authority summary is stale or hand-edited');
+  assert(stableJson(actualSummary) === stableJson(expectedSummary), 'PR_BODY_MANIFEST_HEAD_DRIFT: authority summary is stale or hand-edited');
 
   const rawMatch = manifest.RAW_FILES.some((raw) => raw.BYTES === authority.AUTHORITY.BYTES && raw.SHA256 === authority.AUTHORITY.SHA256 && raw.INTAKE_MODE === manifest.RAW_MODE);
   assert(rawMatch, 'RAW_FILES does not bind exact authority bytes/hash/mode');
@@ -181,9 +204,23 @@ export function validateCapsule(capsuleRootInput) {
     assert(sha256File(rawPath) === exactRaw.SHA256, 'EXACT_COPY SHA256 mismatch');
   }
 
-  const identityCanPass = authority.ADOPTION.STATUS === 'ADOPTED' && authority.ADOPTION.ADOPTED_REVISION === manifest.SOURCE_REVISION && authority.DUPLICATES.STATUS === 'CLEAR';
-  if (workflow.IDENTITY_VERIFIED === PASS) assert(identityCanPass, 'S0 PASS forbidden: adoption/duplicate authority unresolved');
-  if (!identityCanPass) assert(workflow.IDENTITY_VERIFIED !== PASS, 'ambiguous authority must fail closed at S0');
+  let liveAuthorityPass = false;
+  if (manifest.LIVE_AUTHORITY_RECORD !== null) {
+    const livePath = path.resolve(capsuleRoot, manifest.LIVE_AUTHORITY_RECORD);
+    assert(livePath === paths.liveAuthority, `LIVE_AUTHORITY_RECORD must be ${path.basename(paths.liveAuthority)}`);
+    validateLiveAuthorityRecord(livePath, { capsuleId, authority, authorityHash });
+    liveAuthorityPass = true;
+  }
+
+  if (manifest.RECOVERY_IMPORT_RECORD !== null) {
+    const recoveryPath = path.resolve(capsuleRoot, manifest.RECOVERY_IMPORT_RECORD);
+    assert(recoveryPath === paths.recovery, `RECOVERY_IMPORT_RECORD must be ${path.basename(paths.recovery)}`);
+    validateRecoveryImport(recoveryPath, { capsuleId, sourceSha: authority.AUTHORITY.SHA256, repoRoot });
+  }
+
+  const identityCanPass = authority.ADOPTION.STATUS === 'ADOPTED' && authority.ADOPTION.ADOPTED_REVISION === manifest.SOURCE_REVISION && authority.DUPLICATES.STATUS === 'CLEAR' && liveAuthorityPass;
+  if (workflow.IDENTITY_VERIFIED === PASS) assert(identityCanPass, 'S0 PASS forbidden: adoption/duplicate/live authority unresolved');
+  if (!identityCanPass) assert(workflow.IDENTITY_VERIFIED !== PASS, 'ambiguous or stale authority must fail closed at S0');
 
   if (workflow.RAW_AUTHORITY_LOCKED === PASS) assert(workflow.IDENTITY_VERIFIED === PASS, 'S1 PASS requires S0 PASS');
 
@@ -216,17 +253,23 @@ function selfTest() {
   const schemaFiles = [
     'new/standards/source-capsule.schema.json',
     'new/standards/source-authority-record.schema.json',
+    'new/standards/source-live-authority-verification.schema.json',
+    'new/standards/source-recovery-import.schema.json',
     'new/standards/source-baseline.schema.json',
     'new/standards/source-parity-result.schema.json',
     'new/standards/source-promotion-record.schema.json',
     'new/standards/source-verification-record.schema.json',
-    'new/standards/source-evidence-manifest.schema.json'
+    'new/standards/source-evidence-manifest.schema.json',
+    'new/standards/version-composition.schema.json'
   ];
   for (const relative of schemaFiles) {
     const schema = readJson(path.join(repoRoot, relative));
     assert(schema.$schema === 'https://json-schema.org/draft/2020-12/schema', `${relative} must declare draft 2020-12`);
     assertString(schema.$id, `${relative}.$id`);
   }
+  const registry = readJson(path.join(repoRoot, 'new/standards/source-identity-registry.json'));
+  assert(registry.SCHEMA_VERSION === '1.0', 'source identity registry must be schema 1.0');
+  assert(Object.keys(registry.SOURCES ?? {}).length >= 5, 'source identity registry must include Five-Source calibration identities');
   console.log('NEW_SOURCE_CAPSULE_SCHEMA_SELF_TEST=PASS');
 }
 
