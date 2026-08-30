@@ -12,6 +12,7 @@
     "AUTHORITY_RECORD_REVISION",
     "EXACT_PORT_HEAD_SHA",
     "EXACT_PRODUCT_HEAD_SHA",
+    "PRODUCT_BOUND_PATHS",
     "SOURCE_PORT_PARITY_RECORD_SHA256",
     "SOURCE_PRODUCT_PARITY_RECORD_SHA256",
     "EVIDENCE_MANIFEST_SHA256",
@@ -28,6 +29,12 @@
     "AUTHORITY_RECORD_REVISION": { "type": "integer", "minimum": 1 },
     "EXACT_PORT_HEAD_SHA": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
     "EXACT_PRODUCT_HEAD_SHA": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "PRODUCT_BOUND_PATHS": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
     "SOURCE_PORT_PARITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "SOURCE_PRODUCT_PARITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "EVIDENCE_MANIFEST_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
