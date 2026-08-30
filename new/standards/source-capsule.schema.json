@@ -15,7 +15,7 @@
     "SOURCE_REVISION",
     "RAW_MODE",
     "AUTHORITY_RECORD",
-    "LIVE_AUTHORITY_RECORD",
+    "LIVE_AUTHORITY_MODE",
     "RECOVERY_IMPORT_RECORD",
     "RAW_FILES",
     "ASSETS",
@@ -35,7 +35,7 @@
     "SOURCE_REVISION": { "type": "string", "minLength": 1 },
     "RAW_MODE": { "enum": ["EXACT_COPY", "AUTHORITY_POINTER"] },
     "AUTHORITY_RECORD": { "type": "string", "minLength": 1 },
-    "LIVE_AUTHORITY_RECORD": { "type": ["string", "null"] },
+    "LIVE_AUTHORITY_MODE": { "const": "TRUSTED_CI_EPHEMERAL" },
     "RECOVERY_IMPORT_RECORD": { "type": ["string", "null"] },
     "RAW_FILES": {
       "type": "array",
