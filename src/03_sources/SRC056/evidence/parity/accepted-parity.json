@@ -38,7 +38,6 @@
     "mobile_reviewed": true,
     "source_native_mobile_overlap_preserved": true
   },
-  "accepted_at": "2026-08-30T21:00:00Z",
   "notes": [
     "The mobile ORIGIN_REVEAL graph/headline overlap is frozen Source behavior and was not repaired.",
     "No adapter, product shell, componentization, or product data was introduced."

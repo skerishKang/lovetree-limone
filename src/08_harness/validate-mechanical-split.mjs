@@ -23,12 +23,11 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   if (!fs.existsSync(materializationPath)) fail(`${sourceId}: materialization record missing`);
   const record = JSON.parse(fs.readFileSync(materializationPath, 'utf8'));
   if (record.source_id !== sourceId) fail(`${sourceId}: materialization source_id mismatch`);
-  if (record.status !== 'MATERIALIZED_PENDING_PARITY') fail(`${sourceId}: materialization status must remain pending parity`);
+  if (!['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(record.status)) fail(`${sourceId}: invalid materialization status`);
   if (record.generation !== 'MECHANICAL_INLINE_EXTRACTION') fail(`${sourceId}: non-mechanical split generation`);
   if (record.authority?.bytes !== manifest.authority?.bytes || record.authority?.sha256 !== manifest.authority?.sha256) fail(`${sourceId}: materialization authority drift`);
   if (record.contracts?.exact_single_style_extraction !== true || record.contracts?.exact_single_script_extraction !== true || record.contracts?.round_trip_byte_identity !== true) fail(`${sourceId}: extraction contract incomplete`);
   if (record.contracts?.redesign_or_refactor !== false || record.contracts?.framework_conversion !== false || record.contracts?.product_data_injection !== false) fail(`${sourceId}: forbidden transformation recorded`);
-  if (record.parity_status !== 'PENDING_EXACT_HEAD_CAPTURE') fail(`${sourceId}: S3 must remain parity-pending`);
 
   const required = ['split/index.html', 'split/styles.css', 'split/script.js'];
   const bytesByPath = {};
@@ -59,6 +58,21 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   const originalBytes = fs.readFileSync(path.join(sourceDir, 'original', 'original.html'));
   if (reconstructedBytes.compare(originalBytes) !== 0) fail(`${sourceId}: split does not round-trip byte-identically to frozen original`);
   if (originalBytes.length !== manifest.authority.bytes || sha256(originalBytes) !== manifest.authority.sha256) fail(`${sourceId}: frozen original no longer matches authority`);
+
+  if (record.status === 'ACCEPTED') {
+    const parityRef = record.parity_ref || manifest.parity_ref;
+    if (!parityRef) fail(`${sourceId}: accepted materialization missing parity reference`);
+    const parityPath = path.join(sourceDir, parityRef);
+    if (!fs.existsSync(parityPath)) fail(`${sourceId}: accepted parity evidence missing`);
+    const parity = JSON.parse(fs.readFileSync(parityPath, 'utf8'));
+    if (parity.source_id !== sourceId || parity.status !== 'ACCEPTED') fail(`${sourceId}: accepted parity record invalid`);
+    if (parity.source_head !== 'f74bdd34a0f9d54ff285c3c7f287d8021ea988d9') fail(`${sourceId}: accepted parity source head drift`);
+    if (parity.authority?.sha256 !== manifest.authority?.sha256 || parity.authority?.bytes !== manifest.authority?.bytes) fail(`${sourceId}: accepted parity authority drift`);
+    if (parity.comparisons?.dom !== 'EQUAL' || parity.comparisons?.geometry !== 'EQUAL' || parity.comparisons?.computed_style !== 'EQUAL' || parity.comparisons?.runtime_state !== 'EQUAL' || parity.comparisons?.interactions !== 'EQUAL' || parity.comparisons?.screenshots !== 'BYTE_IDENTICAL') fail(`${sourceId}: accepted parity result is not fully PASS`);
+    if (parity.browser_errors !== 0) fail(`${sourceId}: accepted parity browser errors present`);
+  } else if (record.parity_status !== 'PENDING_EXACT_HEAD_CAPTURE') {
+    fail(`${sourceId}: pending materialization must declare pending parity`);
+  }
 
   console.log(`SRC_MECHANICAL_SPLIT_VALIDATE_PASS=${sourceId}`);
   validated += 1;
