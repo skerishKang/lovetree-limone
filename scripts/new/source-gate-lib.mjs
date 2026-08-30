@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 export const PASS = 'PASS';
 export const STAGE_VALUES = new Set(['PASS', 'FAIL', 'BLOCKED', 'UNKNOWN', 'NOT_STARTED']);
@@ -80,6 +81,22 @@ export function assertStage(value, label) {
   assert(STAGE_VALUES.has(value), `${label} has invalid stage value: ${value}`);
 }
 
+export function gitIsAncestor(ancestor, descendant = 'HEAD') {
+  try {
+    execFileSync('git', ['merge-base', '--is-ancestor', ancestor, descendant], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function gitChangedPathsSince(baseSha, scopedPaths) {
+  assertGitSha(baseSha, 'baseSha');
+  assert(Array.isArray(scopedPaths) && scopedPaths.length > 0, 'scopedPaths must be a non-empty array');
+  const output = execFileSync('git', ['diff', '--name-only', `${baseSha}..HEAD`, '--', ...scopedPaths], { encoding: 'utf8' }).trim();
+  return output ? output.split('\n').filter(Boolean) : [];
+}
+
 export function validateAuthorityRecord(record) {
   assertExactKeys(record, ['SCHEMA_VERSION', 'RECORD_REVISION', 'CAPSULE_ID', 'SOURCE_FAMILY', 'SOURCE_REVISION', 'AUTHORITY', 'ADOPTION', 'DUPLICATES'], 'authority');
   assertRequiredKeys(record, ['SCHEMA_VERSION', 'RECORD_REVISION', 'CAPSULE_ID', 'SOURCE_FAMILY', 'SOURCE_REVISION', 'AUTHORITY', 'ADOPTION', 'DUPLICATES'], 'authority');
@@ -147,8 +164,9 @@ export function authoritySummary(record) {
 }
 
 export function verifyArtifactHash(root, artifact, label) {
+  const resolvedRoot = path.resolve(root);
   const target = path.resolve(root, artifact.PATH);
-  assert(target.startsWith(path.resolve(root) + path.sep), `${label} path escapes capsule root`);
+  assert(target === resolvedRoot || target.startsWith(resolvedRoot + path.sep), `${label} path escapes capsule root`);
   assert(fs.existsSync(target), `${label} missing artifact: ${artifact.PATH}`);
   assertSha256(artifact.SHA256, `${label}.SHA256`);
   assert(sha256File(target) === artifact.SHA256, `${label} artifact hash mismatch: ${artifact.PATH}`);
