@@ -72,7 +72,7 @@ export const SUPPLEMENTAL_DESIGN_FIDELITY_TARGETS = Object.freeze([
     ]),
     assetGate: null,
     exactAssetStatus: "NOT_REQUIRED",
-    browserGates: Object.freeze(["qa/design-fidelity/lineage-52-phase2-native-browser-qa.mjs"]),
+    browserGates: Object.freeze(["qa/lineage-52-phase2-native-browser-qa.mjs"]),
     actualRouteBrowserGate: "qa/lineage-52-phase2-native-browser-qa.mjs",
     dedicatedWorkflow: ".github/workflows/lineage52-phase2-native-browser-qa.yml",
     viewports: VIEWPORTS,
