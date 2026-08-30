@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { validateCapsule } from '../scripts/new/validate-source-capsule.mjs';
+import { validateRuntimePolicy } from '../scripts/new/validate-source-runtime-policy.mjs';
 import { authoritySummary, stableJson } from '../scripts/new/source-gate-lib.mjs';
 
 function sha256(buffer) {
@@ -96,6 +97,22 @@ function makeCapsule({ adoptionStatus = 'ADOPTED', duplicateStatus = 'CLEAR', s0
   return capsuleRoot;
 }
 
+function setBaselineStatus(capsuleRoot, value) {
+  const manifestPath = path.join(capsuleRoot, 'SRC999-00-manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  manifest.WORKFLOW_STATUS.BASELINE_A_PRESENT = value;
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
+function makeRuntime(capsuleRoot, { react = false, tsx = false } = {}) {
+  const runtime = path.join(capsuleRoot, 'SRC999-02-runtime');
+  fs.mkdirSync(runtime, { recursive: true });
+  fs.writeFileSync(path.join(runtime, 'SRC999-02-01-index.html'), '<!doctype html><link rel="stylesheet" href="SRC999-02-02-styles.css"><script src="SRC999-02-03-app.js"></script>');
+  fs.writeFileSync(path.join(runtime, 'SRC999-02-02-styles.css'), 'body{margin:0}');
+  fs.writeFileSync(path.join(runtime, 'SRC999-02-03-app.js'), react ? "import React from 'react';\nwindow.x=1;\n" : 'window.x=1;\n');
+  if (tsx) fs.writeFileSync(path.join(runtime, 'ConvertedSurface.tsx'), 'export default function ConvertedSurface(){return <div/>}');
+}
+
 test('S0/S1 passes only with explicit adopted authority and exact raw binding', () => {
   const capsule = makeCapsule();
   const result = validateCapsule(capsule);
@@ -125,4 +142,31 @@ test('large inline owner exception permits deterministic EXACT_COPY policy', () 
     largeInlineException: { AUTHORIZED_BY: 'OWNER', EVIDENCE_REF: 'issue:#test', REASON: 'fixture proves explicit exception path' }
   });
   assert.equal(validateCapsule(capsule).workflow.IDENTITY_VERIFIED, 'PASS');
+});
+
+test('runtime files cannot appear before baseline S2 PASS', () => {
+  const capsule = makeCapsule();
+  makeRuntime(capsule);
+  assert.throws(() => validateRuntimePolicy(capsule), /S3 work cannot begin before S2 PASS/);
+});
+
+test('structural runtime rejects TSX framework conversion even after S2', () => {
+  const capsule = makeCapsule();
+  setBaselineStatus(capsule, 'PASS');
+  makeRuntime(capsule, { tsx: true });
+  assert.throws(() => validateRuntimePolicy(capsule), /FRAMEWORK_CONVERSION_FORBIDDEN/);
+});
+
+test('structural runtime rejects React imports even in .js files', () => {
+  const capsule = makeCapsule();
+  setBaselineStatus(capsule, 'PASS');
+  makeRuntime(capsule, { react: true });
+  assert.throws(() => validateRuntimePolicy(capsule), /REACT_NEXT_FORBIDDEN/);
+});
+
+test('plain HTML CSS JS runtime is permitted after S2', () => {
+  const capsule = makeCapsule();
+  setBaselineStatus(capsule, 'PASS');
+  makeRuntime(capsule);
+  assert.equal(validateRuntimePolicy(capsule).runtimeFiles, 3);
 });
