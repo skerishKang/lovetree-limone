@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-capsule-2.0.json",
+  "title": "LoveTree NEW Source Capsule Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "MANIFEST_SCHEMA_VERSION",
+    "CAPSULE_ID",
+    "TYPE",
+    "IDENTITY_TOKEN",
+    "BASE_NUMBER",
+    "VARIANT_TOKEN",
+    "TITLE",
+    "SOURCE_REVISION",
+    "RAW_MODE",
+    "AUTHORITY_RECORD",
+    "RAW_FILES",
+    "ASSETS",
+    "EXTERNAL_DEPENDENCIES",
+    "INLINE_PAYLOADS",
+    "RELATIONS",
+    "WORKFLOW_STATUS"
+  ],
+  "properties": {
+    "MANIFEST_SCHEMA_VERSION": { "const": "2.0" },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "TYPE": { "const": "SOURCE_CAPSULE" },
+    "IDENTITY_TOKEN": { "type": "string", "pattern": "^[0-9]{1,3}$" },
+    "BASE_NUMBER": { "type": "integer", "minimum": 0, "maximum": 999 },
+    "VARIANT_TOKEN": { "type": ["string", "null"] },
+    "TITLE": { "type": "string", "minLength": 1 },
+    "SOURCE_REVISION": { "type": "string", "minLength": 1 },
+    "RAW_MODE": { "enum": ["EXACT_COPY", "AUTHORITY_POINTER"] },
+    "AUTHORITY_RECORD": { "type": "string", "minLength": 1 },
+    "RAW_FILES": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/fileRecord" }
+    },
+    "ASSETS": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fileRecord" }
+    },
+    "EXTERNAL_DEPENDENCIES": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["KIND", "REFERENCE", "STATUS"],
+        "properties": {
+          "KIND": { "type": "string", "minLength": 1 },
+          "REFERENCE": { "type": "string", "minLength": 1 },
+          "STATUS": { "enum": ["PINNED", "UNRESOLVED", "NOT_REQUIRED"] }
+        }
+      }
+    },
+    "INLINE_PAYLOADS": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["INLINE_CSS", "INLINE_JS", "INLINE_MEDIA", "LARGE_INLINE_THRESHOLD_BYTES", "LARGE_INLINE_EXCEPTION"],
+      "properties": {
+        "INLINE_CSS": { "$ref": "#/$defs/inlinePayload" },
+        "INLINE_JS": { "$ref": "#/$defs/inlinePayload" },
+        "INLINE_MEDIA": { "$ref": "#/$defs/inlinePayload" },
+        "LARGE_INLINE_THRESHOLD_BYTES": { "const": 1048576 },
+        "LARGE_INLINE_EXCEPTION": {
+          "type": ["object", "null"],
+          "properties": {
+            "AUTHORIZED_BY": { "enum": ["OWNER", "DELEGATED_OWNER"] },
+            "EVIDENCE_REF": { "type": "string", "minLength": 1 },
+            "REASON": { "type": "string", "minLength": 1 }
+          },
+          "required": ["AUTHORIZED_BY", "EVIDENCE_REF", "REASON"],
+          "additionalProperties": false
+        }
+      }
+    },
+    "RELATIONS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["relation", "target"],
+        "properties": {
+          "relation": { "type": "string", "minLength": 1 },
+          "target": { "type": "string", "pattern": "^(SRC|TRK|LIN|CDX|CAP|MST|FAM)[A-Za-z0-9-]+$" }
+        }
+      }
+    },
+    "WORKFLOW_STATUS": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["IDENTITY_VERIFIED", "RAW_AUTHORITY_LOCKED", "BASELINE_A_PRESENT", "MECHANICAL_PORT_COMPLETE", "SOURCE_PORT_PARITY", "PRODUCT_USAGE"],
+      "properties": {
+        "IDENTITY_VERIFIED": { "$ref": "#/$defs/stageStatus" },
+        "RAW_AUTHORITY_LOCKED": { "$ref": "#/$defs/stageStatus" },
+        "BASELINE_A_PRESENT": { "$ref": "#/$defs/stageStatus" },
+        "MECHANICAL_PORT_COMPLETE": { "$ref": "#/$defs/stageStatus" },
+        "SOURCE_PORT_PARITY": { "$ref": "#/$defs/stageStatus" },
+        "PRODUCT_USAGE": { "enum": ["NONE", "ELIGIBLE", "BOUND", "PROMOTED"] }
+      }
+    }
+  },
+  "$defs": {
+    "stageStatus": { "enum": ["PASS", "FAIL", "BLOCKED", "UNKNOWN", "NOT_STARTED"] },
+    "fileRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["PATH", "ROLE", "MIME_TYPE", "BYTES", "SHA256", "INTAKE_MODE"],
+      "properties": {
+        "PATH": { "type": "string", "minLength": 1 },
+        "ROLE": { "type": "string", "minLength": 1 },
+        "MIME_TYPE": { "type": "string", "minLength": 1 },
+        "BYTES": { "type": "integer", "minimum": 0 },
+        "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "DRIVE_FILE_ID": { "type": ["string", "null"] },
+        "INTAKE_MODE": { "enum": ["EXACT_COPY", "AUTHORITY_POINTER"] }
+      }
+    },
+    "inlinePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["present", "count", "encoded_bytes", "decoded_bytes"],
+      "properties": {
+        "present": { "type": "boolean" },
+        "count": { "type": "integer", "minimum": 0 },
+        "encoded_bytes": { "type": "integer", "minimum": 0 },
+        "decoded_bytes": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
