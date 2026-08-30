@@ -1,37 +1,58 @@
-# GitHub → Cloudflare guarded Production deployment
+# GitHub → Cloudflare Production deployment
 
 Issue: #75
 
+## Operating authority
+
+For ordinary reversible LoveTree product/UI iteration, the Product Owner's current preference is **Production-first / rollback-first**.
+
+Controlling policy:
+
+`docs/operations/PRODUCTION_FIRST_ROLLBACK_POLICY.md`
+
+The deployment path should preserve exact Production identity and rollback information without turning broad pre-Production testing into the default reason to delay a reversible Production change.
+
 ## Goal
 
-Normal release path:
+Desired ordinary reversible loop:
 
-`merge/push to main → validation → exact Production build → guarded Cloudflare deploy → post-deploy smoke`
+```text
+bounded change
+→ Production deployment
+→ direct Product Owner / operator inspection
+→ KEEP / FIX FORWARD / ROLLBACK
+```
 
-The workflow reuses the repository's existing fail-closed Production guard. It never replaces it with a raw `wrangler deploy` command.
+Preview and exhaustive pre-Production CI are optional aids for ordinary reversible changes, not universal gates.
 
 ## Workflow
 
 `.github/workflows/production-auto-deploy.yml`
 
-Triggers:
+Current triggers include:
 
 - push to `main`;
 - manual `workflow_dispatch`.
 
-Automatic Production deployment is **default ON**. The job runs whenever `main` changes unless repository variable:
+Automatic Production deployment is controlled by repository variable:
 
-`LOVETREE_PRODUCTION_AUTO_DEPLOY=false`
+`LOVETREE_PRODUCTION_AUTO_DEPLOY`
 
-is explicitly set as an emergency pause switch.
+`false` is the explicit emergency pause state.
 
-The Production smoke target is pinned to the verified Worker URL:
+The Production Worker target remains:
+
+```text
+lovetree-limone
+```
+
+Verified public Worker URL:
 
 `https://lovetree-limone.charliekant.workers.dev`
 
 ## Required repository secrets
 
-Configure these once in GitHub repository Actions secrets. Never commit their values.
+Required secret names may include:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
@@ -39,64 +60,101 @@ Configure these once in GitHub repository Actions secrets. Never commit their va
 - `NEXT_PUBLIC_FIREBASE_API_KEY`
 - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
 
-`DATABASE_URL` must point to the verified Production Neon database:
+Never print, log or commit their values.
 
-- project: `autumn-cherry-54971674`
-- branch: `br-holy-scene-azwi84gb`
-- database: `neondb`
+The current automatic deployment path performs no intentional Production DB migration/write and no Firebase user/data mutation merely to validate a UI release.
 
-The current Production DB is already Expand compliant. Automatic deployment does **no Production DB migration/write**.
+## Deployment-safety responsibilities
 
-`NEXT_PUBLIC_FIREBASE_PROJECT_ID` is pinned to `relovetree`. Automatic deployment performs **no Firebase user/data mutation**.
+The Production deployment path should continue to protect:
 
-The Cloudflare token must only have permissions needed to inspect and deploy the existing `lovetree-limone` Worker.
+- exact Worker identity;
+- exact source/deployment identity;
+- required Production configuration presence;
+- binding/target sanity;
+- previous active Worker version or equivalent rollback identity;
+- post-deploy visibility of what actually reached Production.
 
-## Fail-closed sequence
+These are deployment/recovery controls.
 
-1. Checkout full history and refresh `origin/main`.
-2. Require `HEAD == origin/main` and a clean worktree.
-3. Require all configured Production secrets to exist.
-4. Run lint, typecheck, targeted contracts, full suite, build and schema validation.
-5. Run `npm run production:build:safe`.
-6. Resolve the current active `lovetree-limone` Worker version.
-7. Run `production:deploy:safe` without `--execute` and require dry-run PASS.
-8. Re-run the same guarded command with `--execute`.
-9. Require the active Worker version to change.
-10. Smoke the pinned Production URL at `/`, `/v4`, representative Tree routes, Subjects, Community and `/design-lab`.
-11. Publish source SHA, old/new Worker versions and rollback command in the Actions summary.
+They must not be confused with an exhaustive product test plan.
 
-Any missing secret, wrong Worker identity, source mismatch, dirty checkout, binding drift, DB Expand-state failure, stale build provenance, Firebase build-config failure, Cloudflare failure, deploy failure or smoke failure stops the workflow.
+## Production-first behavior
 
-## Explicitly prohibited shortcuts
+For ordinary reversible product/UI/source-integration changes, the desired sequence is:
 
-- no raw ad-hoc `wrangler deploy`;
-- no `lovetree-limone-production` target;
-- no force push or main reset;
-- no Production DB migration/write performed by the workflow;
-- no Firebase user/data mutation;
-- no secret values in logs or summaries;
-- no treating a failed post-deploy smoke as success.
+1. identify the bounded change;
+2. preserve the previous known-working Production identity;
+3. deploy the change to the real `lovetree-limone` Production Worker;
+4. inspect the exact affected Production route/behavior;
+5. keep the change if correct;
+6. fix forward if the defect is small and obvious;
+7. rollback/revert if the result is wrong, broad or uncertain.
+
+CI, lint, typecheck, broad browser matrices and Preview may run when useful, but are not the Product Owner's mandatory pre-Production acceptance environment for ordinary reversible changes.
+
+If an automated workflow currently performs broad validation before deployment, that is an implementation detail/legacy control to be reconciled separately. Do not describe it as the Product Owner's desired release order after this policy change.
+
+## Post-deploy observation
+
+Production observation is primary for ordinary reversible changes.
+
+Recommended reporting fields:
+
+```text
+SOURCE_SHA = <exact commit>
+PRODUCTION_VERSION = <exact Worker/deployment id>
+PREVIOUS_VERSION = <rollback identity>
+PRODUCTION_OBSERVED = YES/NO
+OWNER_ACCEPTED = YES/NO/PENDING
+ROLLBACK_READY = YES/NO
+KNOWN_DEFECT = <exact defect or NONE>
+```
+
+A failed post-deploy observation is not a reason to pretend success. It is a reason to fix or roll back promptly.
+
+## High-risk exception boundary
+
+Do not use ordinary Production-first UI iteration as blanket authority for:
+
+- destructive or irreversible DB/data mutation;
+- Auth/Firebase identity or authorization changes;
+- payments/billing;
+- secrets/credentials/account configuration;
+- security/privacy trust-boundary changes;
+- provider/account authority changes;
+- domain/Worker routing changes with uncertain rollback.
+
+Those require explicit target-level recovery/safety treatment.
+
+## Prohibited shortcuts
+
+Even under Production-first operation:
+
+- do not deploy to an accidental `lovetree-limone-production` target;
+- do not print secrets;
+- do not mutate Production DB/Firebase merely to make a validation step pass;
+- do not rewrite Git history to hide a failed Production attempt;
+- do not leave a known broken Production state in place merely to finish testing.
 
 ## Emergency pause
 
-Set repository variable:
+Set:
 
 `LOVETREE_PRODUCTION_AUTO_DEPLOY=false`
 
-Only use this to intentionally stop automatic Production releases. Removing the variable or setting any value other than `false` restores default-on behavior.
+when Production deployment itself must be paused.
 
 ## Rollback
 
-Every successful run records the previous active Worker version and prints:
+Rollback/revert is a normal first-class operating action.
 
-`npx wrangler rollback <previous-version-id> --name lovetree-limone`
+Every ordinary reversible Production deployment should preserve the previous active version or exact previous source identity so the operator can restore the known-working state quickly.
 
-Rollback remains an explicit controlled action. The workflow does not automatically deploy again after a failed smoke.
+The preferred mindset is:
 
-## First activation
-
-1. Add the five required Actions secrets from the already verified local Production deployment environment.
-2. Do not run any DB migration; Production is already compliant.
-3. Run `workflow_dispatch` once, or merge a normal validated change into `main`.
-4. Confirm source SHA, previous/new Worker version, smoke result and rollback command.
-5. From then on, every normal `main` update automatically uses the same guarded path.
+```text
+DEPLOY EARLY
+OBSERVE THE REAL PRODUCT
+ROLL BACK WHEN WRONG
+```
