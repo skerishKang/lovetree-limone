@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-verification-record-1.0.json",
+  "title": "LoveTree Independent Source Verification Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "SCHEMA_VERSION",
+    "CAPSULE_ID",
+    "VERIFIER",
+    "SOURCE_SHA256",
+    "AUTHORITY_RECORD_SHA256",
+    "AUTHORITY_RECORD_REVISION",
+    "EXACT_PORT_HEAD_SHA",
+    "EXACT_PRODUCT_HEAD_SHA",
+    "PARITY_RECORD_SHA256",
+    "EVIDENCE_MANIFEST_SHA256",
+    "STATUS"
+  ],
+  "properties": {
+    "SCHEMA_VERSION": { "const": "1.0" },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "VERIFIER": { "enum": ["WEB", "LUNA1"] },
+    "SOURCE_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "AUTHORITY_RECORD_REVISION": { "type": "integer", "minimum": 1 },
+    "EXACT_PORT_HEAD_SHA": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "EXACT_PRODUCT_HEAD_SHA": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "PARITY_RECORD_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "EVIDENCE_MANIFEST_SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] }
+  }
+}
