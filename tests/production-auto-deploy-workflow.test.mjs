@@ -47,11 +47,14 @@ test("required Production secrets are names only and smoke uses the exact HTTPS 
   assert.match(workflow, /\/design-lab/);
 });
 
-test("operations doc records default-on behavior, emergency pause, and rollback", () => {
-  assert.match(docs, /default.*ON/i);
-  assert.match(docs, /LOVETREE_PRODUCTION_AUTO_DEPLOY=false/);
+test("operations doc records Production-first behavior, emergency pause, and rollback discipline", () => {
+  assert.match(docs, /Production-first \/ rollback-first/i);
+  assert.match(docs, /LOVETREE_PRODUCTION_AUTO_DEPLOY/);
+  assert.match(docs, /`false` is the explicit emergency pause state/);
   assert.match(docs, /https:\/\/lovetree-limone\.charliekant\.workers\.dev/);
-  assert.match(docs, /npx wrangler rollback <previous-version-id> --name lovetree-limone/);
-  assert.match(docs, /no Production DB migration\/write/i);
+  assert.match(docs, /previous active version or exact previous source identity/);
+  assert.match(docs, /Rollback\/revert is a normal first-class operating action/);
+  assert.match(workflow, /npx wrangler rollback .* --name lovetree-limone/);
+  assert.match(docs, /no intentional Production DB migration\/write/i);
   assert.match(docs, /no Firebase user\/data mutation/i);
 });
