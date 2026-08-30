@@ -49,6 +49,7 @@ jobs:
           node --check scripts/new/validate-source-system-readiness.mjs
       - run: node scripts/new/validate-source-capsule.mjs --self-test
       - run: node scripts/new/aggregate-source-freshness.mjs --self-test
+      - run: node scripts/new/validate-source-system-readiness.mjs --self-test
       - run: node --test tests/new-source-machine-gates.test.mjs
 
   composition-boundary:
