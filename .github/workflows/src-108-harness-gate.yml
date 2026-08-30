@@ -41,6 +41,30 @@ jobs:
       - name: Validate clean 108-corpus generation root
         run: node src/08_harness/validate-layout.mjs
 
+      - name: Generate mechanical split candidate from frozen original
+        id: split_candidate
+        shell: bash
+        env:
+          SRC_SPLIT_CANDIDATE_DIR: /tmp/src-mechanical-split-candidate
+        run: |
+          set -euo pipefail
+          rm -rf "$SRC_SPLIT_CANDIDATE_DIR"
+          node src/08_harness/materialize-mechanical-split.mjs | tee /tmp/src-mechanical-split-candidate.log
+          if find "$SRC_SPLIT_CANDIDATE_DIR" -type f -name candidate-manifest.json -print -quit 2>/dev/null | grep -q .; then
+            echo 'generated=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'generated=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload mechanical split candidate
+        if: steps.split_candidate.outputs.generated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: src-mechanical-split-candidate-${{ github.event.pull_request.head.sha }}
+          path: /tmp/src-mechanical-split-candidate/**
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Read generation phase
         id: generation
         shell: bash
