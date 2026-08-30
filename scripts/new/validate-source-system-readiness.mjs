@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { assert, readJson } from './source-gate-lib.mjs';
 
@@ -8,12 +7,20 @@ export const REQUIRED_NEW_CHECKS = [
   'NEW Source Promotion Gate / exact-head-completeness',
   'NEW Old Repair Promotion Guard / old-repair-promotion-guard'
 ];
+export const OLD_REPAIR_PRS = new Set([559, 560, 561, 562, 563]);
 
 export function validateRequiredCheckStates(states, required = REQUIRED_NEW_CHECKS) {
   assert(states && typeof states === 'object' && !Array.isArray(states), 'required check states must be an object');
   for (const name of required) {
     assert(Object.hasOwn(states, name), `required check missing: ${name}`);
     assert(states[name] === 'success', `required check is not success: ${name}=${states[name]}`);
+  }
+  return true;
+}
+
+export function validateOldRepairPromotion({ prNumber, holdActive, exceptionAuthorized = false }) {
+  if (holdActive && OLD_REPAIR_PRS.has(Number(prNumber))) {
+    assert(exceptionAuthorized === true, `OLD_REPAIR_WHILE_NEW_HOLD_ACTIVE: PR #${prNumber} is evidence/reference only under #564`);
   }
   return true;
 }
