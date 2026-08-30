@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
+<title>LoveTree · 세로형 모먼트관계망 전체조망 · 버전1.2 후보</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="app">
+ <canvas id="stage" aria-label="세로형 모먼트 관계망 전체조망"></canvas><div class="paper-noise"></div>
+ <header class="topbar"><div class="brand"><i class="brand-dot"></i><b>LOVETREE</b><span>MY TREE · OTHER VIEWS · 관계 지도</span></div><div class="top-actions"><span class="mode-pill" id="modePill">OVERVIEW</span><button class="pill" id="overviewBtn">전체조망</button><button class="pill" id="helpBtn">사용법</button></div></header>
+ <div class="hero"><div class="eyebrow">VERTICAL MOMENT NETWORK · V1.2 PATH HIERARCHY & ROUTE REVEAL</div><h1>처음의 마음에서,<br/>어떤 길들이 자라났는지 봅니다.</h1><p>관계망은 랜덤한 점 구름이 아니라 실제 감정 경로의 성장 구조입니다. 01·02·03을 누르면 각 경로 그룹 전체가 보이고, First Moment에서는 세 주요 방향이 함께 펼쳐집니다.</p></div>
+ <aside class="left-rail"><div class="legend"><h3>주요 경로 그룹</h3><div class="legend-row"><i class="swatch" style="background:#e45d8d"></i>01 처음 빠져든 순간</div><div class="legend-row"><i class="swatch" style="background:#8b69e8"></i>02 무대와 퍼포먼스</div><div class="legend-row"><i class="swatch" style="background:#2ca4c0"></i>03 콘텐츠 탐색</div><div class="legend-row"><i class="swatch" style="background:#d49231"></i>04 사람과 관계</div><div class="legend-row"><i class="swatch" style="background:#3aa27c"></i>05 다시 찾은 기억</div><div class="legend-row"><i class="swatch" style="background:#547cd0"></i>06 다음 계절</div></div><div class="controls"><h3>탐색 모드</h3><button class="mini origin" id="focusFirst">First Moment · 전체 분기</button><div class="control-row"><button class="mini" id="zoomIn">확대 +</button><button class="mini" id="zoomOut">축소 −</button></div><button class="mini" id="resetFocus">전체조망으로</button></div></aside>
+ <aside class="progress-rail" id="progressRail"><div class="progress-label">TOP → BOTTOM</div><div class="progress-line" id="progressLine"><i class="progress-thumb" id="progressThumb"></i></div></aside>
+ <aside class="detail" id="detail"><button class="close" id="detailClose">×</button><div class="detail-kicker" id="detailKicker">MOMENT</div><h2 id="detailTitle"></h2><div class="chips"><span class="chip" id="detailDate"></span><span class="chip" id="detailEmotion"></span><span class="chip" id="detailCluster"></span><span class="chip" id="detailPath"></span></div><div class="detail-block"><span>내 메모</span><p id="detailNote"></p></div><div class="detail-block"><span>WHY NEXT · 다음 순간으로 이어진 이유</span><p id="detailWhy"></p></div><div class="detail-block"><span>경로 맥락</span><p id="detailNext"></p></div><div class="path-actions"><button class="action" id="openMoment">Moment 열기</button><button class="action primary" id="followPath">이 경로 끝까지 따라가기 →</button></div></aside>
+ <div class="route-status" id="routeStatus"><b id="routeStatusTitle"></b><span id="routeStatusText"></span></div>
+ <div class="branch-chooser" id="branchChooser"><h3>여기서 경로가 갈라집니다</h3><p>지금까지 온 길은 유지됩니다. 어느 감정 경로로 이어갈까요?</p><div class="branch-options" id="branchOptions"></div></div>
+ <div class="mobile-ribbon" id="mobileRibbon"></div><div class="toast" id="toast"></div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

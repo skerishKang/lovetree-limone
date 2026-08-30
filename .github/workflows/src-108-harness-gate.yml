@@ -9,7 +9,7 @@ on:
       - '.github/workflows/src-108-harness-gate.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate:
@@ -41,6 +41,9 @@ jobs:
       - name: Validate clean 108-corpus generation root
         run: node src/08_harness/validate-layout.mjs
 
+      - name: Validate materialized mechanical split
+        run: node src/08_harness/validate-mechanical-split.mjs
+
       - name: Generate mechanical split candidate from frozen original
         id: split_candidate
         shell: bash
@@ -55,40 +58,6 @@ jobs:
           else
             echo 'generated=false' >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Stage mechanical split candidate as unreferenced Git blobs
-        if: steps.split_candidate.outputs.generated == 'true' && github.event.pull_request.head.repo.full_name == github.repository
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPOSITORY: ${{ github.repository }}
-          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
-          SRC_SPLIT_CANDIDATE_DIR: /tmp/src-mechanical-split-candidate
-        run: |
-          set -euo pipefail
-          out="$SRC_SPLIT_CANDIDATE_DIR/remote-blobs.json"
-          jq -n --arg head "$SRC_EXACT_HEAD" '{schema_version:"1.0", exact_head:$head, blobs:{}}' > "$out"
-          while IFS= read -r candidate; do
-            source_id="$(basename "$(dirname "$candidate")")"
-            for name in index.html styles.css script.js; do
-              file="$SRC_SPLIT_CANDIDATE_DIR/$source_id/split/$name"
-              test -f "$file"
-              encoded="$(base64 -w0 "$file")"
-              payload="$(jq -n --arg content "$encoded" '{content:$content,encoding:"base64"}')"
-              response="$(curl -fsS -X POST \
-                -H "Authorization: Bearer $GH_TOKEN" \
-                -H 'Accept: application/vnd.github+json' \
-                -H 'X-GitHub-Api-Version: 2022-11-28' \
-                "https://api.github.com/repos/$GH_REPOSITORY/git/blobs" \
-                -d "$payload")"
-              sha="$(jq -r '.sha // empty' <<<"$response")"
-              test -n "$sha"
-              key="$source_id/split/$name"
-              jq --arg key "$key" --arg sha "$sha" '.blobs[$key]=$sha' "$out" > "$out.tmp"
-              mv "$out.tmp" "$out"
-            done
-          done < <(find "$SRC_SPLIT_CANDIDATE_DIR" -mindepth 2 -maxdepth 2 -type f -name candidate-manifest.json | sort)
-          cat "$out"
 
       - name: Upload mechanical split candidate
         if: steps.split_candidate.outputs.generated == 'true'
