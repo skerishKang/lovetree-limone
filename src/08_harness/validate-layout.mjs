@@ -60,8 +60,10 @@ for (const required of [
   'src/00_governance/PARITY_CONTRACT.md',
   'src/01_registry/namespaces.json',
   'src/01_registry/master-108.registry.json',
+  'src/01_registry/identity-mappings.json',
   'src/01_registry/calibration-batch.json',
   'src/01_registry/generation-state.json',
+  'src/02_master/README.md',
   'src/02_master/_template/record.example.json',
   'src/03_sources/_template/README.md',
   'src/03_sources/_template/manifest.example.json',
@@ -69,7 +71,8 @@ for (const required of [
   'src/05_families/_template/family.example.json',
   'src/06_components/README.md',
   'src/07_compositions/README.md',
-  'src/08_harness/README.md'
+  'src/08_harness/README.md',
+  'src/09_reports/SETUP_STATUS.md'
 ]) requirePath(required);
 
 const namespaces = readJson('src/01_registry/namespaces.json');
@@ -98,11 +101,21 @@ if (master) {
   if (master.default_mapping_status !== 'UNRESOLVED') fail('master rows must default to UNRESOLVED');
 }
 
+const mappings = readJson('src/01_registry/identity-mappings.json');
+if (mappings) {
+  const policy = mappings.mapping_policy ?? {};
+  if (policy.numeric_equality_implies_identity !== false) fail('numeric equality must not imply identity');
+  if (policy.filename_only_resolution_allowed !== false) fail('filename-only identity resolution must remain forbidden');
+  if (policy.source_to_lineage_automatic !== false) fail('automatic Source→Lineage mapping must remain forbidden');
+  if (policy.codex_to_source_renumbering_allowed !== false) fail('Codex→Source renumbering must remain forbidden');
+  if (policy.family_allocation_requires_evidence !== true) fail('FAM allocation must require evidence');
+}
+
 const calibration = readJson('src/01_registry/calibration-batch.json');
 if (calibration) {
   const expectedSet = new Set(['SRC064', 'SRC058', 'SRC057', 'SRC056', 'SRC060']);
   const actual = calibration.selected_sources;
-  if (!Array.isArray(actual) || actual.length !== 5 || actual.some((id) => !expectedSet.has(id))) {
+  if (!Array.isArray(actual) || actual.length !== 5 || new Set(actual).size !== 5 || actual.some((id) => !expectedSet.has(id))) {
     fail('calibration batch must contain exactly SRC064/SRC058/SRC057/SRC056/SRC060');
   }
   if (calibration.first_calibration?.source_id !== 'SRC056') fail('first calibration must remain SRC056');
@@ -120,11 +133,14 @@ for (const name of familyDirs) requirePath(`src/05_families/${name}/family.json`
 for (const name of masterDirs) requirePath(`src/02_master/${name}/record.json`);
 
 if (state?.phase === 'SETUP') {
+  if (state.active_root !== 'src/') fail('SETUP active_root must be src/');
   if (state.real_source_runtime_started !== false || state.real_codex_runtime_started !== false) {
     fail('SETUP phase must declare real runtime not started');
   }
+  if (state.broad_108_rollout_released !== false) fail('SETUP phase cannot release broad 108 rollout');
   if (sourceDirs.length !== 0) fail('SETUP phase must not contain active SRC runtime folders');
   if (codexDirs.length !== 0) fail('SETUP phase must not contain active CDX runtime folders');
+  if (familyDirs.length !== 0) fail('SETUP phase must not allocate active FAM folders');
 }
 
 for (const base of ['src/03_sources', 'src/04_codex']) {
@@ -147,6 +163,7 @@ if (failures.length) {
 
 console.log('SRC_108_HARNESS_GATE=PASS');
 console.log(`MASTER_ROW_COUNT=${master?.master_keys?.length ?? 'UNKNOWN'}`);
+console.log(`IDENTITY_MAPPING_COUNT=${mappings?.mappings?.length ?? 'UNKNOWN'}`);
 console.log(`ACTIVE_SOURCE_COUNT=${sourceDirs.length}`);
 console.log(`ACTIVE_CODEX_COUNT=${codexDirs.length}`);
 console.log(`ACTIVE_FAMILY_COUNT=${familyDirs.length}`);
