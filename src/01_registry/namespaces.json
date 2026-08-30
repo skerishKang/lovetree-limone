@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "active_root": "src/",
+  "namespaces": {
+    "MST": {"pattern": "^MST\\d{3}$", "meaning": "108-result master/evaluation row", "canonical": true},
+    "SRC": {"pattern": "^SRC\\d{3}$", "meaning": "Source provenance/design family", "canonical": true},
+    "CDX": {"pattern": "^CDX(?:\\d{3}|\\d{3}-\\d+)$", "meaning": "Codex provenance/design family", "canonical": true},
+    "FAM": {"pattern": "^FAM\\d{3}$", "meaning": "normalized family allocated from evidence", "canonical": true},
+    "TRK": {"pattern": "^TRK\\d{3}$", "meaning": "runtime/development Track", "canonical": false},
+    "LIN": {"pattern": "^LIN\\d{3}$", "meaning": "repository Lineage", "canonical": true},
+    "CAP": {"pattern": "^CAP\\d{3}$", "meaning": "capability identity", "canonical": true}
+  },
+  "cross_namespace_rule": "Numeric equality never establishes identity.",
+  "source_number_rule": "Source numbers are immutable provenance; do not compact or renumber.",
+  "codex_rule": "Codex folders remain Codex identities; do not convert them to Source75+."
+}

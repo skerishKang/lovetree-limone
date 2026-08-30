@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "selection_authority": "#527/#564",
+  "selected_sources": ["SRC064", "SRC058", "SRC057", "SRC056", "SRC060"],
+  "first_calibration": {
+    "source_id": "SRC056",
+    "reason": "small/simple standalone HTML candidate for first mechanical split calibration",
+    "status": "NOT_STARTED"
+  },
+  "second_replay": {
+    "candidate_sources": ["SRC064", "SRC058"],
+    "selection_status": "PENDING_FIRST_CALIBRATION_RESULT",
+    "requirement": "must be materially different from SRC056 and must not require changing governing rules"
+  },
+  "remaining_sources": ["SRC057", "SRC060"],
+  "broad_108_expansion": "HOLD_UNTIL_TWO_MATERIALLY_DIFFERENT_REPLAYS_PASS",
+  "real_source_runtime_started": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "family_id": "FAM000",
+  "status": "UNALLOCATED_TEMPLATE",
+  "canonical_name": null,
+  "authority_members": [],
+  "master_rows": [],
+  "duplicate_members": [],
+  "superseded_members": [],
+  "selection_status": "UNRESOLVED",
+  "allocation_rule": "Allocate a FAM id only after evidence proves normalized-family identity. Never allocate from matching numeric suffixes or filenames alone."
+}
