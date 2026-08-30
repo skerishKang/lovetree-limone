@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC056",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
-    "exact_head": "00c7a156bf02b54834125a02023b466dde24add6",
-    "workflow_run_id": 33325014085,
+    "exact_head": "f74bdd34a0f9d54ff285c3c7f287d8021ea988d9",
+    "workflow_run_id": 33325458977,
     "artifact_id": 9735966285,
     "artifact_name": "src-mechanical-split-candidate-00c7a156bf02b54834125a02023b466dde24add6",
     "artifact_digest": "sha256:1e6b54e891a5773a47871eb65132acfc01832708d5cfdd379957be35681fefc3"
@@ -45,5 +45,6 @@
     "framework_conversion": false,
     "product_data_injection": false
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE"
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json"
 }
