@@ -58,7 +58,6 @@ function findManifest(capsuleRoot) {
 function conventionalPaths(capsuleRoot, capsuleId) {
   return {
     authority: path.join(capsuleRoot, `${capsuleId}-00-authority.json`),
-    liveAuthority: path.join(capsuleRoot, `${capsuleId}-00-live-authority.json`),
     recovery: path.join(capsuleRoot, `${capsuleId}-00-recovery-import.json`),
     summary: path.join(capsuleRoot, `${capsuleId}-00-authority-summary.json`),
     baseline: path.join(capsuleRoot, `${capsuleId}-03-evidence`, `${capsuleId}-03-01-baseline-a.json`),
@@ -77,6 +76,13 @@ function validateRegisteredIdentity(capsuleId, manifest, authority) {
   assert(authority.SOURCE_FAMILY === entry.CANONICAL_FAMILY, `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} expected ${entry.CANONICAL_FAMILY}, got ${authority.SOURCE_FAMILY}`);
   assert(Array.isArray(entry.TITLE_HINTS) && entry.TITLE_HINTS.some((hint) => manifest.TITLE.includes(hint)), `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} title does not match registered family`);
   return true;
+}
+
+function resolveLiveAuthorityPath(capsuleId, options) {
+  if (options.liveAuthorityPath) return path.resolve(options.liveAuthorityPath);
+  if (process.env.LOVETREE_LIVE_AUTHORITY_DIR) return path.resolve(process.env.LOVETREE_LIVE_AUTHORITY_DIR, `${capsuleId}-live-authority.json`);
+  if (process.env.LOVETREE_LIVE_AUTHORITY_RECORD) return path.resolve(process.env.LOVETREE_LIVE_AUTHORITY_RECORD);
+  return null;
 }
 
 function validateBaseline(filePath, manifest, authority, authorityHash) {
@@ -122,14 +128,14 @@ function validateParity(filePath, manifest, authority, authorityHash, runtimePat
   return parity;
 }
 
-export function validateCapsule(capsuleRootInput) {
+export function validateCapsule(capsuleRootInput, options = {}) {
   const capsuleRoot = path.resolve(capsuleRootInput);
   const manifestPath = findManifest(capsuleRoot);
   const manifest = readJson(manifestPath);
   Object.defineProperty(manifest, '__path', { value: manifestPath, enumerable: false });
   const capsuleId = path.basename(capsuleRoot);
 
-  const manifestKeys = ['MANIFEST_SCHEMA_VERSION', 'CAPSULE_ID', 'TYPE', 'IDENTITY_TOKEN', 'BASE_NUMBER', 'VARIANT_TOKEN', 'TITLE', 'SOURCE_REVISION', 'RAW_MODE', 'AUTHORITY_RECORD', 'LIVE_AUTHORITY_RECORD', 'RECOVERY_IMPORT_RECORD', 'RAW_FILES', 'ASSETS', 'EXTERNAL_DEPENDENCIES', 'INLINE_PAYLOADS', 'RELATIONS', 'WORKFLOW_STATUS'];
+  const manifestKeys = ['MANIFEST_SCHEMA_VERSION', 'CAPSULE_ID', 'TYPE', 'IDENTITY_TOKEN', 'BASE_NUMBER', 'VARIANT_TOKEN', 'TITLE', 'SOURCE_REVISION', 'RAW_MODE', 'AUTHORITY_RECORD', 'LIVE_AUTHORITY_MODE', 'RECOVERY_IMPORT_RECORD', 'RAW_FILES', 'ASSETS', 'EXTERNAL_DEPENDENCIES', 'INLINE_PAYLOADS', 'RELATIONS', 'WORKFLOW_STATUS'];
   assertExactKeys(manifest, manifestKeys, 'manifest');
   assertRequiredKeys(manifest, manifestKeys, 'manifest');
   assert(manifest.MANIFEST_SCHEMA_VERSION === '2.0', 'MANIFEST_SCHEMA_VERSION must be 2.0');
@@ -145,7 +151,7 @@ export function validateCapsule(capsuleRootInput) {
   assertString(manifest.SOURCE_REVISION, 'SOURCE_REVISION');
   assert(['EXACT_COPY', 'AUTHORITY_POINTER'].includes(manifest.RAW_MODE), 'RAW_MODE invalid');
   assertString(manifest.AUTHORITY_RECORD, 'AUTHORITY_RECORD');
-  assert(manifest.LIVE_AUTHORITY_RECORD === null || typeof manifest.LIVE_AUTHORITY_RECORD === 'string', 'LIVE_AUTHORITY_RECORD must be string|null');
+  assert(manifest.LIVE_AUTHORITY_MODE === 'TRUSTED_CI_EPHEMERAL', 'LIVE_AUTHORITY_MODE must be TRUSTED_CI_EPHEMERAL');
   assert(manifest.RECOVERY_IMPORT_RECORD === null || typeof manifest.RECOVERY_IMPORT_RECORD === 'string', 'RECOVERY_IMPORT_RECORD must be string|null');
 
   assert(Array.isArray(manifest.RAW_FILES) && manifest.RAW_FILES.length > 0, 'RAW_FILES requires >=1 record');
@@ -205,9 +211,9 @@ export function validateCapsule(capsuleRootInput) {
   }
 
   let liveAuthorityPass = false;
-  if (manifest.LIVE_AUTHORITY_RECORD !== null) {
-    const livePath = path.resolve(capsuleRoot, manifest.LIVE_AUTHORITY_RECORD);
-    assert(livePath === paths.liveAuthority, `LIVE_AUTHORITY_RECORD must be ${path.basename(paths.liveAuthority)}`);
+  const livePath = resolveLiveAuthorityPath(capsuleId, options);
+  if (livePath !== null) {
+    assert(!(livePath === capsuleRoot || livePath.startsWith(capsuleRoot + path.sep)), 'live authority evidence must be CI-ephemeral and outside the capsule tree');
     validateLiveAuthorityRecord(livePath, { capsuleId, authority, authorityHash });
     liveAuthorityPass = true;
   }
@@ -219,7 +225,7 @@ export function validateCapsule(capsuleRootInput) {
   }
 
   const identityCanPass = authority.ADOPTION.STATUS === 'ADOPTED' && authority.ADOPTION.ADOPTED_REVISION === manifest.SOURCE_REVISION && authority.DUPLICATES.STATUS === 'CLEAR' && liveAuthorityPass;
-  if (workflow.IDENTITY_VERIFIED === PASS) assert(identityCanPass, 'S0 PASS forbidden: adoption/duplicate/live authority unresolved');
+  if (workflow.IDENTITY_VERIFIED === PASS) assert(identityCanPass, 'S0 PASS forbidden: adoption/duplicate/trusted live authority unresolved');
   if (!identityCanPass) assert(workflow.IDENTITY_VERIFIED !== PASS, 'ambiguous or stale authority must fail closed at S0');
 
   if (workflow.RAW_AUTHORITY_LOCKED === PASS) assert(workflow.IDENTITY_VERIFIED === PASS, 'S1 PASS requires S0 PASS');
