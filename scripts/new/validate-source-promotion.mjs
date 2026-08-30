@@ -6,8 +6,6 @@ import {
   PASS,
   assert,
   assertGitSha,
-  assertInteger,
-  assertSha256,
   assertString,
   gitChangedPathsSince,
   gitIsAncestor,
@@ -46,6 +44,16 @@ function validateEvidenceManifest(filePath, capsuleRoot, capsuleId, sourceSha, a
   return { record: evidence, hash: sha256File(filePath) };
 }
 
+function validateExceptionLedger(items, kind) {
+  assert(Array.isArray(items), `${kind}.EXCEPTION_LEDGER must be array`);
+  for (const [index, item] of items.entries()) {
+    assert(item && typeof item === 'object', `${kind}.EXCEPTION_LEDGER[${index}] must be object`);
+    assertString(item.DELTA, `${kind}.EXCEPTION_LEDGER[${index}].DELTA`);
+    assert(['OWNER', 'DELEGATED_OWNER'].includes(item.AUTHORIZED_BY), `${kind}.EXCEPTION_LEDGER[${index}].AUTHORIZED_BY invalid`);
+    assertString(item.EVIDENCE_REF, `${kind}.EXCEPTION_LEDGER[${index}].EVIDENCE_REF`);
+  }
+}
+
 function validateParity(filePath, kind, capsuleRoot, capsuleId, sourceSha, authorityHash, authorityRevision, evidenceHash) {
   assert(fs.existsSync(filePath), `${kind} parity record missing: ${filePath}`);
   const parity = readJson(filePath);
@@ -65,10 +73,25 @@ function validateParity(filePath, kind, capsuleRoot, capsuleId, sourceSha, autho
   }
   assert(parity.EVIDENCE_MANIFEST_SHA256 === evidenceHash, `${kind} evidence manifest hash stale`);
   assert(Array.isArray(parity.ARTIFACTS) && parity.ARTIFACTS.length > 0, `${kind} parity requires artifacts`);
+  const roles = new Set(parity.ARTIFACTS.map((artifact) => artifact.ROLE));
+  assert(roles.has('SOURCE_A'), `${kind} requires SOURCE_A artifacts`);
+  if (kind === 'SOURCE_TO_PORT') assert(roles.has('PORT_B'), 'SOURCE_TO_PORT requires independent PORT_B artifacts');
+  if (kind === 'SOURCE_TO_PRODUCT') assert(roles.has('PRODUCT_C'), 'SOURCE_TO_PRODUCT requires independent PRODUCT_C artifacts');
   for (const [index, artifact] of parity.ARTIFACTS.entries()) verifyArtifactHash(capsuleRoot, artifact, `${kind}.ARTIFACTS[${index}]`);
-  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `${kind}.${key} must PASS`);
-  assert(Array.isArray(parity.EXCEPTION_LEDGER), `${kind}.EXCEPTION_LEDGER must be array`);
+  for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'QUIRK_PRESERVATION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `${kind}.${key} must PASS`);
+  validateExceptionLedger(parity.EXCEPTION_LEDGER, kind);
   return { record: parity, hash: sha256File(filePath) };
+}
+
+function assertIndependentBC(sourcePort, sourceProduct) {
+  const bPaths = new Set(sourcePort.ARTIFACTS.filter((a) => a.ROLE === 'PORT_B').map((a) => a.PATH));
+  const cPaths = new Set(sourceProduct.ARTIFACTS.filter((a) => a.ROLE === 'PRODUCT_C').map((a) => a.PATH));
+  for (const filePath of cPaths) assert(!bPaths.has(filePath), `B_C_SCREENSHOT_ALIAS: PRODUCT_C reuses PORT_B artifact path ${filePath}`);
+
+  const bKeys = new Set(sourcePort.ARTIFACTS.filter((a) => a.ROLE === 'PORT_B').map((a) => `${a.VIEWPORT}::${a.STATE}`));
+  const cKeys = new Set(sourceProduct.ARTIFACTS.filter((a) => a.ROLE === 'PRODUCT_C').map((a) => `${a.VIEWPORT}::${a.STATE}`));
+  for (const key of bKeys) assert(cKeys.has(key), `SOURCE_TO_PRODUCT missing PRODUCT_C capture for ${key}`);
+  return true;
 }
 
 function validateVerification(filePath, expectedVerifier, capsuleId, sourceSha, authorityHash, authorityRevision, portHead, productHead, productParityHash, evidenceHash) {
@@ -106,6 +129,7 @@ export function validatePromotion(capsuleRootInput) {
   const sourcePort = validateParity(p.sourcePortParity, 'SOURCE_TO_PORT', capsuleRoot, capsuleId, sourceSha, authorityHash, authorityRevision, evidence.hash);
   const sourceProduct = validateParity(p.sourceProductParity, 'SOURCE_TO_PRODUCT', capsuleRoot, capsuleId, sourceSha, authorityHash, authorityRevision, evidence.hash);
   assert(sourceProduct.record.EXACT_PORT_HEAD_SHA === sourcePort.record.EXACT_PORT_HEAD_SHA, 'product parity references different port head');
+  assertIndependentBC(sourcePort.record, sourceProduct.record);
 
   assert(fs.existsSync(p.promotion), `promotion record missing: ${p.promotion}`);
   const promotion = readJson(p.promotion);
@@ -127,11 +151,11 @@ export function validatePromotion(capsuleRootInput) {
     assert(!path.isAbsolute(boundPath) && !boundPath.includes('..'), `unsafe PRODUCT_BOUND_PATHS entry: ${boundPath}`);
   }
   const productDrift = gitChangedPathsSince(promotion.EXACT_PRODUCT_HEAD_SHA, promotion.PRODUCT_BOUND_PATHS);
-  assert(productDrift.length === 0, `promotion evidence stale: product-bound files changed after EXACT_PRODUCT_HEAD_SHA: ${productDrift.join(', ')}`);
+  assert(productDrift.length === 0, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: product-bound files changed after EXACT_PRODUCT_HEAD_SHA: ${productDrift.join(', ')}`);
 
   const runtimeRelative = path.relative(repoRoot, path.join(capsuleRoot, `${capsuleId}-02-runtime`)).replaceAll('\\', '/');
   const portDrift = gitChangedPathsSince(promotion.EXACT_PORT_HEAD_SHA, [runtimeRelative]);
-  assert(portDrift.length === 0, `promotion evidence stale: source runtime changed after EXACT_PORT_HEAD_SHA: ${portDrift.join(', ')}`);
+  assert(portDrift.length === 0, `VERIFICATION_STALE_AFTER_HEAD_CHANGE: source runtime changed after EXACT_PORT_HEAD_SHA: ${portDrift.join(', ')}`);
 
   assert(promotion.SOURCE_PORT_PARITY_RECORD_SHA256 === sourcePort.hash, 'promotion source-port parity hash stale');
   assert(promotion.SOURCE_PRODUCT_PARITY_RECORD_SHA256 === sourceProduct.hash, 'promotion source-product parity hash stale');
