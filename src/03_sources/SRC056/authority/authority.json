@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC056",
+  "authority_system": "Google Drive",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-08-30T15:18:13Z",
+  "drive_folder_id": "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G",
+  "drive_file_id": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa",
+  "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+  "revision": "V1.2",
+  "mime_type": "text/html",
+  "bytes": 45761,
+  "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+  "transport": {
+    "classification": "REUSE_EXACT",
+    "historical_pr": 552,
+    "historical_head_sha": "3d26a9dfe22f0c9dd6a2919328ae2fe0decf2ab2",
+    "historical_path": "new/sources/SRC056/SRC056-01-raw/SRC056-01-01-original.html",
+    "git_blob_sha1": "c715695cfb56ad2472496bd3e33d633a06d042de",
+    "verification": "Git blob SHA-1 recomputed from fresh Drive bytes and matched exactly. Historical metadata is not authority."
+  }
+}

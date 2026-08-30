@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC056",
+  "status": "PENDING_EXACT_HEAD_CI",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": ["OVERVIEW", "ORIGIN_REVEAL"],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "canvas dimensions",
+    "runtime mode/state",
+    "interaction outcomes",
+    "console/page errors"
+  ],
+  "pass_rule": "Baseline is not captured until exact-head CI artifact is directly reviewed and bound back into the Source record."
+}

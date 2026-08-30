@@ -15,7 +15,7 @@ jobs:
   validate:
     name: SRC 108 Harness Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - name: Checkout exact PR head
         uses: actions/checkout@v4
@@ -36,6 +36,47 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Validate clean 108-corpus generation root
         run: node src/08_harness/validate-layout.mjs
+
+      - name: Read generation phase
+        id: generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          phase="$(node -p "JSON.parse(require('fs').readFileSync('src/01_registry/generation-state.json','utf8')).phase")"
+          echo "phase=$phase" >> "$GITHUB_OUTPUT"
+          echo "GENERATION_PHASE=$phase"
+
+      - name: Install dependencies for calibration browser evidence
+        if: steps.generation.outputs.phase == 'CALIBRATION'
+        run: npm ci
+
+      - name: Cache Playwright Chromium
+        if: steps.generation.outputs.phase == 'CALIBRATION'
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-src108-playwright-1.55.1-chromium
+
+      - name: Prepare Chromium
+        if: steps.generation.outputs.phase == 'CALIBRATION'
+        run: npx playwright install chromium
+
+      - name: Capture frozen Source baseline
+        if: steps.generation.outputs.phase == 'CALIBRATION'
+        env:
+          SRC_BASELINE_EVIDENCE_DIR: /tmp/src-baseline-evidence
+        run: node src/08_harness/capture-source-baseline.mjs
+
+      - name: Upload Source baseline evidence
+        if: always() && steps.generation.outputs.phase == 'CALIBRATION'
+        uses: actions/upload-artifact@v4
+        with:
+          name: src-calibration-baseline-${{ github.event.pull_request.head.sha }}
+          path: /tmp/src-baseline-evidence/**
+          if-no-files-found: error
+          retention-days: 14

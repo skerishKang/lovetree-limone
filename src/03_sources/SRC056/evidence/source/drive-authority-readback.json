@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC056",
+  "verified_at_utc": "2026-08-30T15:18:13Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G",
+    "file_id": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa",
+    "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+    "mime_type": "text/html",
+    "created_time": "2026-08-11T13:44:12.212Z",
+    "modified_time": "2026-08-11T13:44:12.212Z",
+    "bytes": 45761,
+    "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909"
+  },
+  "git_transport_crosscheck": {
+    "historical_pr": 552,
+    "historical_head_sha": "3d26a9dfe22f0c9dd6a2919328ae2fe0decf2ab2",
+    "path": "new/sources/SRC056/SRC056-01-raw/SRC056-01-01-original.html",
+    "observed_blob_sha1": "c715695cfb56ad2472496bd3e33d633a06d042de",
+    "recomputed_blob_sha1_from_fresh_drive_bytes": "c715695cfb56ad2472496bd3e33d633a06d042de",
+    "byte_identity": "PASS",
+    "reuse_classification": "REUSE_EXACT"
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_historical_pr_text": false
+  }
+}
