@@ -570,7 +570,7 @@
   color: #34283d;
 }
 
-.boardTitle strong {
+.boardTitle h1 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 29px;
@@ -1219,22 +1219,25 @@
     left: 20px;
     top: 14px;
   }
-  .boardTitle strong {
+  .boardTitle h1 {
     font-size: 20px;
   }
   .privateTag { display: none; }
   .inspector {
-    left: 10px;
-    right: 10px;
-    top: auto;
-    bottom: 10px;
-    width: auto;
-    max-height: 52vh;
-    transform: translateY(110%);
+    position: fixed;
+    left: 8px !important;
+    right: 8px !important;
+    top: auto !important;
+    bottom: 64px !important;
+    width: auto !important;
+    min-height: 0 !important;
+    height: 62vh !important;
+    max-height: 62vh !important;
+    transform: translateY(110%) !important;
     border-radius: 20px;
   }
-  .inspector[data-has-selection="true"] {
-    transform: translateY(0);
+  .inspector[data-mobile-open="true"][data-has-selection="true"] {
+    transform: translateY(0) !important;
   }
   .zoomControls {
     left: 10px;
@@ -1252,7 +1255,7 @@
 
 @media (max-width: 360px) {
   .primaryButton { font-size: 10px; padding: 0 9px; height: 32px; }
-  .boardTitle strong { font-size: 17px; }
+  .boardTitle h1 { font-size: 17px; }
   .themeGrid { grid-template-columns: 1fr; }
   .gateMeta div { grid-template-columns: 1fr; gap: 3px; }
 }

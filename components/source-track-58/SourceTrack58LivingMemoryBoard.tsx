@@ -32,6 +32,28 @@ type BoardConnection = {
   to: BoardPoint;
 };
 
+type BoardTransform = {
+  scale: number;
+  x: number;
+  y: number;
+};
+
+const SOURCE58_WORLD_WIDTH = 1600;
+const SOURCE58_WORLD_HEIGHT = 1000;
+
+function source58FitTransform(viewportWidth: number, frameHeight: number): BoardTransform {
+  const scale = Math.min(
+    (viewportWidth - 40) / SOURCE58_WORLD_WIDTH,
+    (frameHeight - 40) / SOURCE58_WORLD_HEIGHT,
+    0.92,
+  );
+  return {
+    scale: Math.max(0.12, scale),
+    x: (viewportWidth - SOURCE58_WORLD_WIDTH * scale) / 2,
+    y: (frameHeight - SOURCE58_WORLD_HEIGHT * scale) / 2,
+  };
+}
+
 type SourceTrack58LivingMemoryBoardProps = {
   treeId: string;
   initialMomentId?: string | null;
@@ -125,8 +147,31 @@ export default function SourceTrack58LivingMemoryBoard({
   const [draftMemo, setDraftMemo] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
+  const [boardTransform, setBoardTransform] = useState<BoardTransform>(() => source58FitTransform(1600, 1000));
   const cardRefs = useRef(new Map<string, HTMLButtonElement>());
+  const boardFrameRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
+
+  const fitBoard = useCallback(() => {
+    const frame = boardFrameRef.current;
+    if (!frame) return;
+    const rect = frame.getBoundingClientRect();
+    setBoardTransform(source58FitTransform(rect.width, rect.height));
+  }, []);
+
+  const zoomBoard = useCallback((delta: number) => {
+    const frame = boardFrameRef.current;
+    if (!frame) return;
+    const rect = frame.getBoundingClientRect();
+    setBoardTransform((current) => {
+      const scale = Math.max(0.18, Math.min(0.92, current.scale + delta));
+      return {
+        scale,
+        x: (rect.width - SOURCE58_WORLD_WIDTH * scale) / 2,
+        y: (rect.height - SOURCE58_WORLD_HEIGHT * scale) / 2,
+      };
+    });
+  }, []);
 
   const moments = useMemo<BoardMoment[]>(() => {
     const canonicalById = new Map(canonicalMoments.map((moment) => [moment.id, moment]));
@@ -166,38 +211,18 @@ export default function SourceTrack58LivingMemoryBoard({
   );
 
   useEffect(() => {
-    const update = () => {
-      const board = (boardRef.current ?? document.querySelector('[data-testid="source58-board"]')) as HTMLElement | null;
-      if (!board) return;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const isMobile = vw <= 760;
-      const z = isMobile
-        ? Math.min(Math.max((vw - 24) / 1600, 0.22), 0.36)
-        : Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
-      const scale = Math.max(0.18, Math.min(z, 0.92));
-      const tx = isMobile ? (vw - 1600 * scale) / 2 : (vw - 1600 * scale) / 2;
-      const ty = isMobile ? (vh - 56 - 1000 * scale) / 2 : (vh - 1000 * scale) / 2;
-      board.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${scale})`;
-    };
-    update();
-    const id = window.setInterval(update, 300);
-    window.addEventListener("resize", update);
-    return () => {
-      window.clearInterval(id);
-      window.removeEventListener("resize", update);
-    };
-  }, [moments.length]);
+    fitBoard();
+    const frame = boardFrameRef.current;
+    if (!frame) return;
+    const observer = new ResizeObserver(() => fitBoard());
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [fitBoard, loading, moments.length]);
 
   useEffect(() => {
     if (!initialMomentId || selectedMomentId === initialMomentId) return;
     if (momentById.has(initialMomentId)) selectTreeMoment(initialMomentId);
   }, [initialMomentId, momentById, selectTreeMoment, selectedMomentId]);
-
-  useEffect(() => {
-    // Source-faithful initial state: inspector hidden until explicit Moment selection.
-    // No auto-select on initial load.
-  }, []);
 
   useEffect(() => {
     if (!cinemaOpen || !cinemaPlaying || reducedMotion || moments.length < 2 || embedRequested) return;
@@ -341,22 +366,11 @@ export default function SourceTrack58LivingMemoryBoard({
           <span>LOVETREE</span>
         </div>
         <div className={styles.crumb}>
+          {tree?.title ? `${tree.title} · ` : ""}
           {productMode ? "MEMORY BOARD" : "MY TREE · OTHER VIEWS · MEMORY BOARD"}
         </div>
         <div className={styles.spacer} />
-        <button type="button" className={styles.ghostButton} onClick={() => {
-          const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-          if (el) {
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
-            const tx = (vw - 1600 * z) / 2;
-            const ty = (vh - 1000 * z) / 2;
-            el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
-            el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
-            setTimeout(() => { el.style.transition = ""; }, 650);
-          }
-        }}>
+        <button type="button" className={styles.ghostButton} onClick={() => fitBoard()}>
           FIT ALL
         </button>
         <button type="button" className={styles.ghostButton} onClick={() => void refresh()} disabled={loading}>
@@ -396,7 +410,7 @@ export default function SourceTrack58LivingMemoryBoard({
       ) : null}
 
       {!error && !loading ? (
-        <div className={styles.boardFrame}>
+        <div ref={boardFrameRef} className={styles.boardFrame}>
           <aside
             className={`${styles.leftPanel} ${leftPanelOpen ? "" : styles.leftPanelCollapsed}`}
             aria-label={productMode ? "보드 도구" : "BOARD TOOLS"}
@@ -416,19 +430,7 @@ export default function SourceTrack58LivingMemoryBoard({
               <button type="button" className={styles.wideTool} onClick={() => openCinema()} disabled={moments.length === 0}>
                 ▶ {productMode ? "시네마 보기" : "CINEMA REPLAY"}
               </button>
-              <button type="button" className={styles.wideTool} onClick={() => {
-                const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-                if (el) {
-                  const vw = window.innerWidth;
-                  const vh = window.innerHeight;
-                  const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
-                  const tx = (vw - 1600 * z) / 2;
-                  const ty = (vh - 1000 * z) / 2;
-                  el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
-                  el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
-                  setTimeout(() => { el.style.transition = ""; }, 650);
-                }
-              }}>
+              <button type="button" className={styles.wideTool} onClick={() => fitBoard()}>
                 ⤢ {productMode ? "전체 보기" : "FIT ALL"}
               </button>
             </div>
@@ -467,12 +469,16 @@ export default function SourceTrack58LivingMemoryBoard({
               className={styles.board}
               data-testid="source58-board"
               data-mobile-spatial-board="true"
+              data-board-scale={boardTransform.scale.toFixed(4)}
               onKeyDown={onBoardKeyDown}
+              style={{
+                transform: `translate(${boardTransform.x}px, ${boardTransform.y}px) scale(${boardTransform.scale})`,
+              }}
               tabIndex={0}
               aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
             >
               <div className={styles.boardTitle} data-source58-board-title>
-                <strong>{productMode ? "Living Memory Board" : "Living Memory Board"}</strong>
+                <h1 aria-label="Living Memory Pinboard">Living Memory Board</h1>
                 <span className={styles.privateTag}>● PRIVATE</span>
               </div>
               <div className={styles.boardTexture} aria-hidden="true" />
@@ -555,38 +561,11 @@ export default function SourceTrack58LivingMemoryBoard({
                 );
               })}
               <div className={styles.zoomControls} data-source58-zoom-controls aria-label="Board zoom">
-                <button type="button" aria-label="Zoom out" onClick={() => {
-                  const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-                  if (el) {
-                    const current = el.style.transform;
-                    const scaleMatch = current.match(/scale\(([\d.]+)\)/);
-                    const txMatch = current.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-                    const z = Math.max(0.28, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) - 0.08);
-                    const tx = txMatch ? parseFloat(txMatch[1]) : 0;
-                    const ty = txMatch ? parseFloat(txMatch[2]) : 0;
-                    const vw = window.innerWidth;
-                    const vh = window.innerHeight;
-                    const newTx = (vw - 1600 * z) / 2;
-                    const newTy = (vh - 1000 * z) / 2;
-                    el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
-                  }
-                }}>
+                <button type="button" aria-label="Zoom out" onClick={() => zoomBoard(-0.08)}>
                   −
                 </button>
-                <span className={styles.zoomLabel} id="zoomLabel">78%</span>
-                <button type="button" aria-label="Zoom in" onClick={() => {
-                  const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-                  if (el) {
-                    const current = el.style.transform;
-                    const scaleMatch = current.match(/scale\(([\d.]+)\)/);
-                    const z = Math.min(0.92, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) + 0.08);
-                    const vw = window.innerWidth;
-                    const vh = window.innerHeight;
-                    const newTx = (vw - 1600 * z) / 2;
-                    const newTy = (vh - 1000 * z) / 2;
-                    el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
-                  }
-                }}>
+                <span className={styles.zoomLabel} id="zoomLabel">{Math.round(boardTransform.scale * 100)}%</span>
+                <button type="button" aria-label="Zoom in" onClick={() => zoomBoard(0.08)}>
                   +
                 </button>
               </div>
@@ -594,46 +573,10 @@ export default function SourceTrack58LivingMemoryBoard({
           </section>
 
           <div className={styles.toolbar} aria-label="Board zoom">
-            <button type="button" className={styles.toolBtn} aria-label="Zoom out" onClick={() => {
-              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-              if (el) {
-                const current = el.style.transform;
-                const scaleMatch = current.match(/scale\(([\d.]+)\)/);
-                const z = Math.max(0.28, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) - 0.08);
-                const vw = window.innerWidth;
-                const vh = window.innerHeight;
-                const newTx = (vw - 1600 * z) / 2;
-                const newTy = (vh - 1000 * z) / 2;
-                el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
-              }
-            }}>−</button>
-            <span className={styles.zoomLabel}>78%</span>
-            <button type="button" className={styles.toolBtn} aria-label="Zoom in" onClick={() => {
-              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-              if (el) {
-                const current = el.style.transform;
-                const scaleMatch = current.match(/scale\(([\d.]+)\)/);
-                const z = Math.min(0.92, (scaleMatch ? parseFloat(scaleMatch[1]) : 0.78) + 0.08);
-                const vw = window.innerWidth;
-                const vh = window.innerHeight;
-                const newTx = (vw - 1600 * z) / 2;
-                const newTy = (vh - 1000 * z) / 2;
-                el.style.transform = `translate(${newTx}px, ${Math.max(0, newTy)}px) scale(${z})`;
-              }
-            }}>＋</button>
-            <button type="button" className={styles.toolBtn} aria-label="Fit all" onClick={() => {
-              const el = document.querySelector('[data-testid="source58-board"]') as HTMLElement | null;
-              if (el) {
-                const vw = window.innerWidth;
-                const vh = window.innerHeight;
-                const z = Math.min((vw - 40) / 1600, (vh - 40) / 1000, 0.92);
-                const tx = (vw - 1600 * z) / 2;
-                const ty = (vh - 1000 * z) / 2;
-                el.style.transition = "transform 0.6s cubic-bezier(.22,.8,.2,1)";
-                el.style.transform = `translate(${tx}px, ${Math.max(0, ty)}px) scale(${z})`;
-                setTimeout(() => { el.style.transition = ""; }, 650);
-              }
-            }}>RESET VIEW</button>
+            <button type="button" className={styles.toolBtn} aria-label="Zoom out" onClick={() => zoomBoard(-0.08)}>−</button>
+            <span className={styles.zoomLabel}>{Math.round(boardTransform.scale * 100)}%</span>
+            <button type="button" className={styles.toolBtn} aria-label="Zoom in" onClick={() => zoomBoard(0.08)}>＋</button>
+            <button type="button" className={styles.toolBtn} aria-label="Fit all" onClick={() => fitBoard()}>RESET VIEW</button>
           </div>
           <button type="button" className={styles.cinemaBtn} onClick={() => openCinema()} disabled={moments.length === 0}>
             ▶ CINEMA REPLAY

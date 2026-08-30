@@ -39,7 +39,7 @@ const SOURCE_58_BOARD_SLOTS = [
 // first-nine composition, then move larger Trees onto a deterministic extended field.
 // This is presentation-only VIEW_DERIVED geometry; no Path/board position persistence.
 const SOURCE_58_EXTENDED_SLOTS = [
-  [5, 90], [45, 90], [85, 30], [85, 90], [5, 60], [30, 25], [40, 55], [85, 5],
+  [5, 90], [45, 90], [85, 30], [88, 5], [5, 60], [30, 25], [40, 55], [85, 5],
   [5, 30], [5, 75], [25, 85], [65, 85], [50, 25], [85, 60], [65, 35], [60, 5],
   [60, 55], [20, 55], [45, 75], [20, 5], [35, 45], [25, 35], [85, 15], [85, 40],
   [5, 50], [5, 5], [50, 15], [25, 15], [70, 25], [45, 65], [5, 40],
@@ -56,11 +56,17 @@ export function source58BoardSlot(index: number) {
   const phase = cycle % 4;
   const xDrift = phase === 0 ? 0 : phase === 1 ? -2 : phase === 2 ? 2 : -1;
   const yDrift = phase === 0 ? 0 : phase === 1 ? 2 : phase === 2 ? -2 : 1;
+  const style = EXTENDED_STYLES[extendedIndex % EXTENDED_STYLES.length];
+  // Extended slots use card top-left percentages. Reserve enough right/bottom
+  // margin for the actual card body and small source rotations so FIT ALL does
+  // not hide material outside the 1600x1000 Source58 world.
+  const maxX = style === "compact" ? 86 : 78;
+  const maxY = style === "compact" ? 82 : 68;
   return {
-    x: Math.min(88, Math.max(3, base[0] + xDrift)),
-    y: Math.min(92, Math.max(3, base[1] + yDrift)),
+    x: Math.min(maxX, Math.max(14, base[0] + xDrift)),
+    y: Math.min(maxY, Math.max(8, base[1] + yDrift)),
     rotate: ((index * 5) % 9) - 4,
-    style: EXTENDED_STYLES[extendedIndex % EXTENDED_STYLES.length],
+    style,
   };
 }
 

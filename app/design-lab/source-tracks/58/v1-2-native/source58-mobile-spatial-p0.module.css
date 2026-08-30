@@ -57,7 +57,7 @@
     z-index: 4;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] .boardTitle strong) {
+  .mobileSpatialScope :global(main[data-source-track="58"] .boardTitle h1) {
     font-size: 18px;
     color: rgba(255, 255, 255, 0.9);
   }
@@ -124,6 +124,10 @@
     transform: rotate(var(--card-rotate)) translateY(-4px) !important;
   }
 
+  .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card][data-slot-x="48"][data-slot-y="39"]) {
+    top: calc(var(--source58-y) - 80px) !important;
+  }
+
   .mobileSpatialScope :global(main[data-source-track="58"] button[data-source58-card] > span[data-pin]) {
     left: 50% !important;
     top: -13px !important;
@@ -167,13 +171,14 @@
   .mobileSpatialScope :global(main[data-source-track="58"] aside[aria-label="Selected Moment inspector"]) {
     position: fixed !important;
     z-index: 70 !important;
-    left: 10px !important;
-    right: 10px !important;
-    bottom: 10px !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 64px !important;
     top: auto !important;
     width: auto !important;
     min-height: 0 !important;
-    max-height: 52vh !important;
+    height: 62vh !important;
+    max-height: 62vh !important;
     overflow: auto !important;
     display: block;
     border-radius: 20px !important;
@@ -187,7 +192,13 @@
     padding: 20px !important;
   }
 
-  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open="true"]) {
+  /* The sheet is viewport-fixed; never inherit the desktop inspector's
+     horizontal transform when mobile selection opens. */
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open][data-has-selection="true"]) {
+    transform: translateY(110%) !important;
+  }
+
+  .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open="true"][data-has-selection="true"]) {
     transform: translateY(0) !important;
     opacity: 1;
     pointer-events: auto;
@@ -303,7 +314,7 @@
 }
 
 @media (max-width: 360px) {
-  .mobileSpatialScope :global(main[data-source-track="58"] .boardTitle strong) {
+  .mobileSpatialScope :global(main[data-source-track="58"] .boardTitle h1) {
     font-size: 16px;
   }
 
@@ -318,8 +329,9 @@
   }
 
   .mobileSpatialScope :global(main[data-source-track="58"] aside[data-mobile-open]) {
-    bottom: 8px !important;
-    max-height: 48vh !important;
+    bottom: 64px !important;
+    height: 62vh !important;
+    max-height: 62vh !important;
   }
 }
 

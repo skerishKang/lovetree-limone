@@ -53,11 +53,10 @@
 
 /* Board materials. */
 .repairScope :global(main[data-theme="pearl"] [data-testid="source58-board"]) {
-  background:
-    radial-gradient(circle at 20% 10%, rgba(255,255,255,.98), transparent 36%),
-    radial-gradient(circle at 78% 84%, rgba(245, 219, 231, .28), transparent 31%),
-    linear-gradient(135deg, #fffaf3, #eee3e5);
-  box-shadow: inset 0 0 0 1px rgba(93, 61, 75, .13), inset 0 0 90px rgba(114, 73, 89, .08), 0 22px 55px rgba(17, 3, 15, .12);
+  /* The authoritative Pearl surface is one ivory material gradient. Thread/card
+     color belongs to their own layers and must not repaint the board. */
+  background: linear-gradient(145deg, #fffaf3, #eee3e5);
+  box-shadow: 0 45px 90px rgba(0, 0, 0, .48), inset 0 0 0 1px rgba(255, 255, 255, .72), inset 0 0 70px rgba(160, 109, 159, .10);
 }
 
 .repairScope :global(main[data-theme="cork"] [data-testid="source58-board"]) {
@@ -228,6 +227,13 @@
   .repairScope :global([data-testid="source58-board"] > button[data-card-style="compact"] > span:first-of-type:not([data-pin])) {
     max-height: 86px;
   }
+
+  /* Compact cards are materially taller than the standard 240px cards. Their
+     top-left slot must reserve the full rendered body, not the old generic
+     card height, before FIT ALL is judged. */
+  .repairScope :global([data-testid="source58-board"] > button[data-card-style="compact"]) {
+    top: max(80px, min(var(--source58-y), calc(100% - 304px - 40px))) !important;
+  }
 }
 
 /* Cinema remains a dialog semantically, but visually becomes a spotlight layer on
@@ -341,8 +347,9 @@
   }
 
   .repairScope :global(svg[aria-label="Canonical Connection living thread"]) {
-    background: linear-gradient(#d271ad, #8050a6 50%, #4b8b81) !important;
-    box-shadow: 0 0 10px rgba(218, 105, 177, .42), 0 0 22px rgba(125, 78, 171, .22);
+    /* Thread color belongs to the paths, not the board material. */
+    background: none !important;
+    box-shadow: none;
     opacity: .78 !important;
   }
 

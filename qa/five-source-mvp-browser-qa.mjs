@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 
 const baseUrl = process.env.FIVE_SOURCE_MVP_QA_URL ?? "http://127.0.0.1:3000";
@@ -79,10 +79,74 @@ const qaMoments = [
     sortOrder: 4,
     emotionTags: ["branch"],
   },
+  {
+    id: "m-no-media",
+    treeId,
+    parentId: "m-root",
+    connectionReason: "첫 빛이 다음 기억으로 이어졌다",
+    title: "No media moment",
+    memo: "Canonical selected Moment with no thumbnail or media placeholder.",
+    sourceType: "other",
+    sourceUrl: "",
+    thumbnail: null,
+    discoveryDate: "2026-01-05",
+    timestamp: "2026-01-05",
+    createdAt: "2026-01-05T00:00:00.000Z",
+    sortOrder: 5,
+    emotionTags: [],
+  },
 ];
 
 await mkdir(screenshotDir, { recursive: true });
+const canonicalCaptureManifest = [];
 const browser = await chromium.launch({ headless: true });
+
+async function captureCanonicalSource58(page, name, state, selectedId) {
+  const viewport = page.viewportSize();
+  const url = new URL(page.url());
+  assert.equal(url.pathname, `/trees/${treeId}/board`, `${name}-${state}: canonical Source58 pathname drifted`);
+  assert.equal(url.searchParams.get("moment"), selectedId, `${name}-${state}: canonical selected Moment drifted`);
+  canonicalCaptureManifest.push({
+    file: `${name}-58-${state}.png`,
+    url: page.url(),
+    pathname: url.pathname,
+    treeId,
+    moment: url.searchParams.get("moment"),
+    viewport,
+    selectedId,
+  });
+  await page.screenshot({ path: `${screenshotDir}/${name}-58-${state}.png`, fullPage: false });
+}
+
+async function assertCanonicalNoMediaGeometry(page, name) {
+  const viewport = page.viewportSize();
+  await page.waitForTimeout(420);
+  const metrics = await page.locator("aside[aria-label='선택한 Moment 상세']").evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+      bottom: rect.bottom,
+      mediaCount: node.querySelectorAll("[data-source58-inspector-media]").length,
+      bodyWidth: document.body.scrollWidth,
+      rootWidth: document.documentElement.scrollWidth,
+    };
+  });
+  assert.equal(metrics.mediaCount, 0, `${name}-58-no-media: canonical inspector invented media`);
+  if (viewport.width <= 760) {
+    const expectedHeight = viewport.height * 0.62;
+    const expectedTop = viewport.height - 64 - expectedHeight;
+    assert.ok(Math.abs(metrics.left - 8) <= 4, `${name}-58-no-media: inspector left ${metrics.left} != 8`);
+    assert.ok(Math.abs(metrics.width - (viewport.width - 16)) <= 6, `${name}-58-no-media: inspector width ${metrics.width} != ${viewport.width - 16}`);
+    assert.ok(Math.abs(metrics.height - expectedHeight) <= 18, `${name}-58-no-media: inspector height ${metrics.height} != ${expectedHeight}`);
+    assert.ok(Math.abs(metrics.top - expectedTop) <= 12, `${name}-58-no-media: inspector top ${metrics.top} != ${expectedTop}`);
+    assert.ok(Math.abs(metrics.bottom - (viewport.height - 64)) <= 12, `${name}-58-no-media: inspector bottom ${metrics.bottom} != ${viewport.height - 64}`);
+  }
+  assert.ok(metrics.bodyWidth <= viewport.width, `${name}-58-no-media: body overflow ${metrics.bodyWidth} > ${viewport.width}`);
+  assert.ok(metrics.rootWidth <= viewport.width, `${name}-58-no-media: root overflow ${metrics.rootWidth} > ${viewport.width}`);
+}
 
 function captureErrors(page) {
   const consoleErrors = [];
@@ -159,8 +223,8 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   await assertNoDocumentOverflow(page, `${name}-source57`);
   await page.screenshot({ path: `${screenshotDir}/${name}-57.png`, fullPage: false });
 
-  // Board is entered without an invented Moment. Source58's existing contract then
-  // selects the first canonical Moment and writes it back with router.replace.
+  // Board is entered without an invented Moment. Source58 keeps the inspector
+  // hidden until the user explicitly selects a canonical Moment.
   const boardSwitcher = page.getByRole("navigation", { name: "보기 전환" });
   const boardLink = boardSwitcher.getByRole("link", { name: "보드", exact: true });
   const boardHref = await boardLink.getAttribute("href");
@@ -168,17 +232,42 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   assert.ok(!boardHref?.includes("moment="), `${name}-58: board link invented Moment identity`);
   await boardLink.click();
   await waitForSource(page, "58");
-  await page.waitForURL((url) => url.searchParams.get("moment") === "m-root");
-  await assertMomentQuery(page, "m-root", `${name}-58-default`);
-  await assertNoDocumentOverflow(page, `${name}-58-default`);
-  await page.screenshot({ path: `${screenshotDir}/${name}-58.png`, fullPage: false });
+  await page.locator('main[data-source-track="58"]').waitFor({ state: "visible" });
+  await page.locator("aside[aria-label='Selected Moment inspector'], aside[aria-label='선택한 Moment 상세']").waitFor({ state: "attached" });
+  await page.waitForURL((url) => url.searchParams.get("moment") === null);
+  await assertMomentQuery(page, null, `${name}-58-initial`);
+  const initialInspector = page.locator("aside[aria-label='Selected Moment inspector'], aside[aria-label='선택한 Moment 상세']");
+  assert.equal(await initialInspector.count(), 1, `${name}-58-initial: inspector surface must remain mounted for accessibility`);
+  assert.equal(
+    await initialInspector.getAttribute("data-has-selection"),
+    "false",
+    `${name}-58-initial: inspector must remain hidden before explicit selection`,
+  );
+  await assertNoDocumentOverflow(page, `${name}-58-initial`);
+  await captureCanonicalSource58(page, name, "initial", null);
 
-  // User selection is presentation state and must replace, not stack, history.
+  // True canonical no-media evidence must come from /trees/:id/board.
+  const noMediaCard = page.getByRole("button", { name: "No media moment 선택" });
+  await noMediaCard.click();
+  await page.waitForURL((url) => url.searchParams.get("moment") === "m-no-media");
+  const productInspector = page.locator("aside[aria-label='선택한 Moment 상세']");
+  await productInspector.waitFor();
+  await assertCanonicalNoMediaGeometry(page, name);
+  await captureCanonicalSource58(page, name, "no-media-selected", "m-no-media");
+
+  // Explicit user selection establishes the canonical Moment identity and uses
+  // router.replace so the invoking Tree detail remains the Back destination.
+  const rootCard = page.getByRole("button", { name: "First light 선택" });
+  await rootCard.click();
+  await page.waitForURL((url) => url.searchParams.get("moment") === "m-root");
+  await assertMomentQuery(page, "m-root", `${name}-58-explicit-root`);
+  await captureCanonicalSource58(page, name, "selected", "m-root");
+
   const childCard = page.getByRole("button", { name: "Second path 선택" });
   await childCard.waitFor();
   await childCard.click();
   await page.waitForURL((url) => url.searchParams.get("moment") === "m-child");
-  await assertMomentQuery(page, "m-child", `${name}-58-replaced`);
+  await assertMomentQuery(page, "m-child", `${name}-58-explicit-child`);
 
   // Back returns to the invoking canonical Tree detail. Forward restores the board
   // with the final selected Moment because Source58 selection used router.replace.
@@ -215,7 +304,13 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
 try {
   await auditViewport({ name: "desktop-1280x800", width: 1280, height: 800 });
   await auditViewport({ name: "phone-390x844", width: 390, height: 844 });
+  await auditViewport({ name: "narrow-320x720", width: 320, height: 720 });
   await auditViewport({ name: "narrow-320x720-reduced", width: 320, height: 720, reducedMotion: true });
+  await writeFile(`${screenshotDir}/CANONICAL_SOURCE58_CAPTURE_MANIFEST.json`, JSON.stringify({
+    route: `/trees/${treeId}/board`,
+    treeId,
+    captures: canonicalCaptureManifest,
+  }, null, 2));
   console.log("FIVE_SOURCE_MVP_BROWSER_QA_PASS");
 } finally {
   await browser.close();

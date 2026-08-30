@@ -38,7 +38,7 @@ async function openBoard(page, name) {
   const response = await page.goto(`${baseUrl}${route}?treeId=${treeId}`, { waitUntil: "domcontentloaded" });
   assert.ok(response?.ok(), `${name}: route must return 2xx`);
   await page.getByRole("heading", { name: "Living Memory Pinboard" }).waitFor();
-  await page.getByText("Source58 Spatial Repair QA Tree").waitFor();
+  await page.getByText("Source58 Spatial Repair QA Tree").waitFor({ state: "attached" });
   const cards = page.locator("button[data-source58-card]");
   await cards.nth(qaMoments.length - 1).waitFor();
   assert.equal(await cards.count(), qaMoments.length, `${name}: canonical Moment count mismatch`);
@@ -131,6 +131,20 @@ async function auditMobile(name, width, height) {
   assert.equal(await board.getAttribute("data-mobile-spatial-board"), "true");
   assert.equal(await inspector.getAttribute("data-mobile-open"), "false");
   assertSpatial(await spatialMetrics(page), `${name}-initial`);
+  const initialGeometry = await page.evaluate(() => {
+    const boardNode = document.querySelector('[data-testid="source58-board"]');
+    const board = boardNode?.getBoundingClientRect();
+    const frame = boardNode?.parentElement?.parentElement?.getBoundingClientRect();
+    const theme = document.querySelector('main[data-source-track="58"]')?.getAttribute("data-theme");
+    return board && frame ? { board, frame, theme } : null;
+  });
+  assert.ok(initialGeometry, `${name}-initial: geometry unavailable`);
+  const initialTolerance = 2;
+  const expectedScale = (width - 40) / 1600;
+  assert.ok(Math.abs(initialGeometry.board.width - 1600 * expectedScale) <= initialTolerance, `${name}-initial: source board width drifted`);
+  assert.ok(Math.abs(initialGeometry.board.left - 20) <= initialTolerance, `${name}-initial: source board x drifted`);
+  assert.ok(Math.abs(initialGeometry.board.top - (56 + (height - 56 - 1000 * expectedScale) / 2)) <= initialTolerance, `${name}-initial: source board y drifted`);
+  assert.equal(initialGeometry.theme, "pearl", `${name}-initial: default theme must be Pearl`);
   await assertNoOverflow(page, `${name}-initial`);
   await page.screenshot({ path: `${screenshotDir}/repair-${name}-initial-spatial.png`, fullPage: false });
 
@@ -148,10 +162,28 @@ async function auditMobile(name, width, height) {
     if (!boardNode || !inspectorNode || !media) return null;
     const b = boardNode.getBoundingClientRect();
     const i = inspectorNode.getBoundingClientRect();
-    return { boardTop: b.top, inspectorTop: i.top, mediaHeight: media.getBoundingClientRect().height, position: getComputedStyle(inspectorNode).position };
+    return {
+      boardTop: b.top,
+      boardBottom: b.bottom,
+      boardLeft: b.left,
+      boardRight: b.right,
+      inspectorTop: i.top,
+      mediaHeight: media.getBoundingClientRect().height,
+      position: getComputedStyle(inspectorNode).position,
+    };
   });
   assert.ok(detail && detail.position === "fixed" && detail.mediaHeight > 40, `${name}: foreground inspector hierarchy missing`);
-  assert.ok(detail.inspectorTop - detail.boardTop >= 90, `${name}: board context not visible behind inspector`);
+  assert.ok(detail.boardRight > 0 && detail.boardLeft < width && detail.boardBottom > 56, `${name}: board context is not mounted in the viewport`);
+  const expectedInspectorWidth = width - 16;
+  const expectedInspectorHeight = height * 0.62;
+  const selectedInspector = await inspector.evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+  });
+  assert.ok(Math.abs(selectedInspector.left - 8) <= 2, `${name}: A inspector left geometry drifted`);
+  assert.ok(Math.abs(selectedInspector.width - expectedInspectorWidth) <= 2, `${name}: A inspector width geometry drifted`);
+  assert.ok(selectedInspector.height <= expectedInspectorHeight + 2, `${name}: inspector exceeds A max-height`);
+  assert.ok(selectedInspector.top >= height - expectedInspectorHeight - 66, `${name}: inspector does not use A lower-sheet geometry`);
   await assertNoOverflow(page, `${name}-selected`);
   await page.screenshot({ path: `${screenshotDir}/repair-${name}-selected-inspector.png`, fullPage: false });
 

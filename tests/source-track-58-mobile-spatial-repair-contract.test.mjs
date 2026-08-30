@@ -64,7 +64,8 @@ test("mobile selected Moment uses a foreground detail sheet while retaining boar
   assert.match(mobileCss, /aside\[data-mobile-open="true"\][\s\S]*transform:\s*translateY\(0\)/);
   assert.match(mobileCss, /\[data-mobile-open="true"\][\s\S]*pointer-events:\s*auto/);
   assert.match(mobileCss, /aside\[aria-label="Selected Moment inspector"\][\s\S]*position:\s*fixed\s*!important/);
-  assert.match(mobileCss, /bottom:\s*10px\s*!important/);
+  assert.match(mobileCss, /bottom:\s*64px\s*!important/);
+  assert.match(mobileCss, /max-height:\s*62vh\s*!important/);
 });
 
 test("Cinema exit retains the active Moment and returns to the mobile detail-over-board state", () => {
