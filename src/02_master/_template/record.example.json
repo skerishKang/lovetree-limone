@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST000",
+  "legacy_master_id": 0,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": null,
+  "product_job": null,
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}
