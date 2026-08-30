@@ -32,6 +32,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
+      - name: Parse NEW capsule executables
+        run: |
+          node --check scripts/new/source-gate-lib.mjs
+          node --check scripts/new/validate-source-capsule.mjs
+          node --check scripts/new/validate-source-runtime-policy.mjs
       - name: Validate machine schemas
         run: node scripts/new/validate-source-capsule.mjs --self-test
       - name: Run fail-closed gate tests
@@ -76,6 +81,7 @@ jobs:
 
           printf 'CHANGED_SOURCE_CAPSULES=%s\n' "${CAPSULES[*]}"
           node scripts/new/validate-source-capsule.mjs "${CAPSULES[@]}"
+          node scripts/new/validate-source-runtime-policy.mjs "${CAPSULES[@]}"
 
   exact-head-completeness:
     name: exact-head-completeness
