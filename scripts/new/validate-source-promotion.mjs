@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import {
   PASS,
   assert,
@@ -17,7 +18,6 @@ import {
 } from './source-gate-lib.mjs';
 import { validateCapsule } from './validate-source-capsule.mjs';
 
-const args = process.argv.slice(2);
 const repoRoot = process.cwd();
 
 function pathsFor(capsuleRoot, capsuleId) {
@@ -67,6 +67,7 @@ function validateParity(filePath, kind, capsuleRoot, capsuleId, sourceSha, autho
   assert(Array.isArray(parity.ARTIFACTS) && parity.ARTIFACTS.length > 0, `${kind} parity requires artifacts`);
   for (const [index, artifact] of parity.ARTIFACTS.entries()) verifyArtifactHash(capsuleRoot, artifact, `${kind}.ARTIFACTS[${index}]`);
   for (const key of ['GEOMETRY_STATUS', 'STYLE_STATUS', 'INTERACTION_STATUS', 'REVIEW_STATUS']) assert(parity[key] === PASS, `${kind}.${key} must PASS`);
+  assert(Array.isArray(parity.EXCEPTION_LEDGER), `${kind}.EXCEPTION_LEDGER must be array`);
   return { record: parity, hash: sha256File(filePath) };
 }
 
@@ -92,6 +93,7 @@ export function validatePromotion(capsuleRootInput) {
   const capsuleId = path.basename(capsuleRoot);
   const capsuleResult = validateCapsule(capsuleRoot);
   assert(capsuleResult.workflow.SOURCE_PORT_PARITY === PASS, 'promotion requires S4 SOURCE_PORT_PARITY=PASS');
+  assert(['BOUND', 'PROMOTED'].includes(capsuleResult.workflow.PRODUCT_USAGE), 'promotion requires capsule PRODUCT_USAGE=BOUND|PROMOTED');
 
   const p = pathsFor(capsuleRoot, capsuleId);
   const authority = readJson(p.authority);
@@ -151,15 +153,20 @@ export function validatePromotion(capsuleRootInput) {
   return { capsuleId, productHead: promotion.EXACT_PRODUCT_HEAD_SHA };
 }
 
-if (args.length === 0) {
-  console.error('usage: node scripts/new/validate-source-promotion.mjs <new/sources/SRCxxx> [...]');
-  process.exit(2);
+function runCli() {
+  const args = process.argv.slice(2);
+  if (args.length === 0) {
+    console.error('usage: node scripts/new/validate-source-promotion.mjs <new/sources/SRCxxx> [...]');
+    process.exitCode = 2;
+    return;
+  }
+  try {
+    const results = args.map((item) => validatePromotion(item));
+    for (const result of results) console.log(`SOURCE_PROMOTION_GATE=PASS CAPSULE=${result.capsuleId} PRODUCT_HEAD=${result.productHead}`);
+  } catch (error) {
+    console.error(`SOURCE_PROMOTION_GATE=FAIL ${error.message}`);
+    process.exitCode = 1;
+  }
 }
 
-try {
-  const results = args.map((item) => validatePromotion(item));
-  for (const result of results) console.log(`SOURCE_PROMOTION_GATE=PASS CAPSULE=${result.capsuleId} PRODUCT_HEAD=${result.productHead}`);
-} catch (error) {
-  console.error(`SOURCE_PROMOTION_GATE=FAIL ${error.message}`);
-  process.exit(1);
-}
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) runCli();
