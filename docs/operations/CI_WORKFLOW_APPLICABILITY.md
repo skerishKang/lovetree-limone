@@ -2,99 +2,108 @@
 
 ## Status
 
-This document defines how pull-request CI applicability is interpreted for LoveTree exact-head acceptance.
+This document defines how GitHub CI is interpreted when a LoveTree change uses a PR/CI review path.
 
-It does not weaken the A-track gate, branch protection, product/browser coverage, or exact-head identity requirements.
+It does **not** make CI GREEN a mandatory pre-Production gate for ordinary reversible UI/product iteration.
 
-## Acceptance rule
+Controlling Product Owner release preference:
 
-The merge acceptance rule is:
+`docs/operations/PRODUCTION_FIRST_ROLLBACK_POLICY.md`
+
+## Two separate questions
+
+Do not conflate:
+
+```text
+A. Is this CI workflow applicable to this exact head?
+B. May the Product Owner inspect this bounded reversible change in Production?
+```
+
+For a PR that is being accepted under CI policy, applicable workflows must still be reported truthfully. A failed/cancelled applicable workflow is not GREEN.
+
+However, for an explicitly owner-authorized **reversible Production-first trial with a known rollback path**, CI GREEN is not a mandatory precondition for Production observation.
+
+## CI acceptance rule when CI acceptance is being used
 
 ```text
 ALL APPLICABLE EXACT-HEAD WORKFLOWS GREEN
 ```
 
-A workflow is **applicable** when its checked-in trigger contract causes GitHub Actions to create a pull-request run for the current exact head.
+This means only that a PR/head has passed the repository's CI acceptance contract. It does **not** mean "the Product Owner may not see Production until this is true."
 
-A workflow that is intentionally out of scope for a pull request under its reviewed path trigger is not a missing or bypassed check. A workflow that is applicable but pending, cancelled, or failed is not GREEN and blocks acceptance under the normal merge policy.
+A workflow is applicable when its checked-in trigger contract creates a run for the exact head.
+
+A workflow intentionally out of scope under its reviewed trigger is not a missing check. A workflow that is applicable but pending, cancelled or failed is not GREEN.
 
 ## Global pull-request gates
 
-The following workflows remain globally applicable to pull requests targeting `main` and are not path-scoped by Issue #439:
-
-- `A-track P0 validation` — authoritative repository integration gate.
-- `Design Fidelity Validation` — global planner/result gate; its internal planner decides whether a heavy fidelity target matrix is required.
-- `Design Source Freshness Observer` — global unprivileged observer/security contract.
-
-Production deployment is outside the Issue #439 pull-request fan-out optimization scope.
-
-## Track / lineage evidence workflows
-
-The following workflows are dedicated track, lineage, or source-family evidence gates:
-
-- `Lineage52 Phase2 native spatial primitive QA`
-- `Lineage60 V1.2 native browser QA evidence`
-- `Living Media Sphere V3 hold browser QA evidence`
-- `Track18 V2 source runner exact asset 8/8 closure QA`
-- `Track47 V4.2.5 hold browser QA evidence`
-- `Track68 V3.3.2 browser QA evidence`
-- `Track62 V1.1 continuous exhibition rail native browser QA`
-- `Track66 V1.2 native browser QA evidence`
-- `Track67 V2.4.2 native browser QA evidence`
-
-These workflows retain their normal `pull_request` trigger for `main`, but may ignore a pull request only when **every changed path** is repository operations/policy-only:
-
-```text
-AGENTS.md
-docs/operations/**
-```
-
-GitHub `paths-ignore` semantics are intentionally used here: if a pull request contains any non-ignored path, the workflow remains applicable.
-
-## Fail-closed mixed-change behavior
-
-Examples:
-
-- only `AGENTS.md` and/or `docs/operations/**` changed → the dedicated evidence workflows above are not applicable;
-- product/source/test/config + operations docs changed → the dedicated evidence workflows remain applicable;
-- a dedicated workflow file itself changed → that workflow remains applicable because `.github/workflows/**` is not ignored;
-- design/source documentation outside `docs/operations/**` changed → the dedicated evidence workflows remain applicable unless a later reviewed trigger contract explicitly says otherwise.
-
-This deliberately avoids a broad `docs/**` exclusion because design/source documentation can carry QA semantics.
-
-## Exact-head review procedure
-
-Before Ready or merge:
-
-1. fresh-query current `main`;
-2. fresh-query the PR head/base and changed files;
-3. identify the workflows applicable to that exact head from the checked-in trigger contracts;
-4. require every applicable exact-head workflow to complete successfully;
-5. confirm no blocking review or unresolved review thread;
-6. if `main` moved from the PR base, stop and reconcile under the repository merge-forward policy before accepting the PR.
-
-Do not infer acceptance from a historical fixed workflow count. The previous observed count of 12 pull-request workflows was an implementation state, not the semantic definition of acceptance.
-
-## Operations-only rollout verification
-
-After the initial Issue #439 trigger change lands on `main`, the first real pull request whose changed-file set is entirely within `AGENTS.md` and/or `docs/operations/**` is also the rollout proof for the applicability contract.
-
-For that exact head, the expected pull-request workflow set is exactly:
+Current global PR workflows include:
 
 - `A-track P0 validation`
 - `Design Fidelity Validation`
 - `Design Source Freshness Observer`
 
-The nine dedicated track/lineage/source-family evidence workflows listed above must not be created for that operations-only exact head. If any of them is created, or if any of the three global workflows is missing, the rollout verification fails and the trigger contract must be corrected before treating the optimization as proven.
+These are evidence/automation contracts for PR review. They are not substitutes for direct Production inspection and are not the Product Owner's required pre-Production viewing environment for ordinary reversible changes.
 
-The proof PR must still remain Draft until every applicable exact-head workflow is GREEN and the normal main/head/review gates pass.
+## Dedicated track / lineage evidence workflows
 
-## Future optimization boundary
+Track-, lineage- and source-family workflows remain useful for regression evidence. Their applicability is determined by their checked-in trigger contracts.
 
-Issue #439 may later consider repeated bootstrap reduction or self-hosted runners, but those changes require separate evidence. This policy does not authorize:
+Operations-only changes may still be excluded by `paths-ignore` where the workflow contract says so.
 
-- path-scoping the A-track;
-- removing or skipping tests inside an applicable workflow;
-- weakening fail-closed browser inventories;
-- moving Production/provider/DB/Auth mutation into CI optimization work;
-- treating a failed applicable workflow as optional.
+Do not broaden or narrow workflow applicability merely to make a result appear green.
+
+## Production-first interaction
+
+For ordinary reversible UI/product/source-integration work, the preferred owner loop is:
+
+```text
+bounded implementation
+→ Production
+→ direct observation
+→ keep / fix forward / rollback
+```
+
+CI may:
+
+- run concurrently;
+- run after the Production change;
+- be used to diagnose a Production defect;
+- become a regression test after the defect is understood.
+
+Do not delay an explicitly owner-authorized reversible Production trial solely because a broad pre-Production CI matrix has not finished.
+
+If CI reports a real failure, record it accurately. Do not suppress, relabel or falsify it.
+
+## High-risk boundary
+
+The Production-first preference does not remove separate recovery/safety gates for irreversible or hard-to-rollback changes such as destructive DB/data operations, Auth policy, payments, secrets, security/privacy boundaries or uncertain provider/routing changes.
+
+For those changes, fail closed around durable harm and rollback uncertainty.
+
+## Exact-head review procedure
+
+When a PR is being reviewed for CI acceptance:
+
+1. fresh-query current `main`;
+2. fresh-query PR head/base and changed files;
+3. determine workflows applicable to that exact head;
+4. report every applicable workflow conclusion truthfully;
+5. record blocking reviews/threads when relevant;
+6. distinguish `CI_ACCEPTED` from `PRODUCTION_OBSERVED`.
+
+Use explicit fields:
+
+```text
+CI_ACCEPTED = YES/NO/NOT_USED_FOR_PREPROD_GATE
+PRODUCTION_CHANGED = YES/NO
+PRODUCTION_OBSERVED = YES/NO
+ROLLBACK_READY = YES/NO
+OWNER_ACCEPTED = YES/NO/PENDING
+```
+
+## Historical wording
+
+Older policy that treated Draft state + all applicable exact-head workflows GREEN as a universal prerequisite before ordinary reversible Production observation is no longer the Product Owner's default operating preference.
+
+CI remains valuable evidence. It is not the default staging barrier between the Product Owner and a reversible Production result.
