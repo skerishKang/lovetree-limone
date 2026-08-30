@@ -1,0 +1,41 @@
+name: SRC 108 Reimplementation Harness Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - '.github/workflows/src-108-harness-gate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: SRC 108 Harness Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact-head binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha }}'
+          actual="$(git rev-parse HEAD)"
+          echo "EXPECTED_HEAD=$expected"
+          echo "ACTUAL_HEAD=$actual"
+          test "$actual" = "$expected"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate clean 108-corpus generation root
+        run: node src/08_harness/validate-layout.mjs
