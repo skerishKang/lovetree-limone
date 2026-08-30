@@ -72,7 +72,7 @@ function validateRegisteredIdentity(capsuleId, manifest, authority) {
   const registry = readJson(registryPath);
   assert(registry.SCHEMA_VERSION === '1.0', 'source identity registry schema must be 1.0');
   const entry = registry.SOURCES?.[capsuleId];
-  if (!entry) return true;
+  assert(entry, `UNREGISTERED_SOURCE_IDENTITY: ${capsuleId} is not mapped in source identity registry`);
   assert(authority.SOURCE_FAMILY === entry.CANONICAL_FAMILY, `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} expected ${entry.CANONICAL_FAMILY}, got ${authority.SOURCE_FAMILY}`);
   assert(Array.isArray(entry.TITLE_HINTS) && entry.TITLE_HINTS.some((hint) => manifest.TITLE.includes(hint)), `WRONG_FAMILY_IN_NAMESPACE: ${capsuleId} title does not match registered family`);
   return true;
