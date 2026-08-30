@@ -4,6 +4,11 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { assert, assertInteger, assertSha256, assertString, readJson, sha256File } from './source-gate-lib.mjs';
 
+// Re-exporting the trusted observer makes the existing capsule-gate import chain
+// parse/load the observer module in exact-head CI even before the privileged WIF
+// workflow is activated.
+export { assertCredentialContract, observeSourceAuthority } from './observe-source-live-authority.mjs';
+
 export const LIVE_AUTHORITY_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 export function validateLiveAuthorityRecord(filePathInput, { capsuleId, authority, authorityHash, nowMs = Date.now() }) {
