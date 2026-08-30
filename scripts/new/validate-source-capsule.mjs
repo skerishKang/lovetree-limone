@@ -12,9 +12,10 @@ import {
   assertStage,
   assertString,
   authoritySummary,
+  gitChangedPathsSince,
+  gitIsAncestor,
   readJson,
   sha256File,
-  sha256Json,
   stableJson,
   validateAuthorityRecord,
   verifyArtifactHash
@@ -62,13 +63,13 @@ function conventionalPaths(capsuleRoot, capsuleId) {
   };
 }
 
-function validateBaseline(filePath, manifest, authorityHash) {
+function validateBaseline(filePath, manifest, authority, authorityHash) {
   const baseline = readJson(filePath);
   assert(baseline.SCHEMA_VERSION === '1.0', 'baseline.SCHEMA_VERSION must be 1.0');
   assert(baseline.CAPSULE_ID === manifest.CAPSULE_ID, 'baseline CAPSULE_ID mismatch');
-  assert(baseline.SOURCE_SHA256 === readJson(path.resolve(path.dirname(manifest.__path), manifest.AUTHORITY_RECORD)).AUTHORITY.SHA256, 'baseline SOURCE_SHA256 mismatch');
+  assert(baseline.SOURCE_SHA256 === authority.AUTHORITY.SHA256, 'baseline SOURCE_SHA256 mismatch');
   assert(baseline.AUTHORITY_RECORD_SHA256 === authorityHash, 'baseline authority hash stale');
-  assertInteger(baseline.AUTHORITY_RECORD_REVISION, 'baseline.AUTHORITY_RECORD_REVISION', 1);
+  assert(baseline.AUTHORITY_RECORD_REVISION === authority.RECORD_REVISION, 'baseline authority record revision stale');
   assert(Array.isArray(baseline.VIEWPORTS) && baseline.VIEWPORTS.length >= 3, 'baseline requires >=3 viewports');
   const viewportSet = new Set(baseline.VIEWPORTS.map((v) => `${v.WIDTH}x${v.HEIGHT}`));
   for (const required of ['1280x800', '390x844', '320x720']) assert(viewportSet.has(required), `baseline missing required viewport ${required}`);
@@ -79,17 +80,19 @@ function validateBaseline(filePath, manifest, authorityHash) {
   return baseline;
 }
 
-function validateParity(filePath, manifest, authorityHash) {
+function validateParity(filePath, manifest, authority, authorityHash, runtimePath) {
   const parity = readJson(filePath);
   assert(parity.SCHEMA_VERSION === '1.0', 'parity.SCHEMA_VERSION must be 1.0');
   assert(parity.CAPSULE_ID === manifest.CAPSULE_ID, 'parity CAPSULE_ID mismatch');
   assert(parity.PARITY_KIND === 'SOURCE_TO_PORT', 'S4 parity record must be SOURCE_TO_PORT');
-  const authority = readJson(path.resolve(path.dirname(manifest.__path), manifest.AUTHORITY_RECORD));
   assert(parity.SOURCE_SHA256 === authority.AUTHORITY.SHA256, 'parity SOURCE_SHA256 mismatch');
   assert(parity.AUTHORITY_RECORD_SHA256 === authorityHash, 'parity authority hash stale');
   assert(parity.AUTHORITY_RECORD_REVISION === authority.RECORD_REVISION, 'parity authority revision stale');
   assertString(parity.EXACT_PORT_HEAD_SHA, 'parity.EXACT_PORT_HEAD_SHA', { pattern: /^[a-f0-9]{40}$/ });
-  if (process.env.GITHUB_SHA) assert(parity.EXACT_PORT_HEAD_SHA === process.env.GITHUB_SHA, 'parity exact port head is stale for current GitHub head');
+  assert(gitIsAncestor(parity.EXACT_PORT_HEAD_SHA), 'parity exact port head is not an ancestor of current HEAD');
+  const runtimeRelative = path.relative(repoRoot, runtimePath).replaceAll('\\', '/');
+  const drift = gitChangedPathsSince(parity.EXACT_PORT_HEAD_SHA, [runtimeRelative]);
+  assert(drift.length === 0, `S4 evidence stale: runtime changed after EXACT_PORT_HEAD_SHA: ${drift.join(', ')}`);
   assert(parity.EXACT_PRODUCT_HEAD_SHA === null, 'SOURCE_TO_PORT parity must not claim product head');
   assertSha256(parity.EVIDENCE_MANIFEST_SHA256, 'parity.EVIDENCE_MANIFEST_SHA256');
   assert(Array.isArray(parity.VIEWPORT_STATES) && parity.VIEWPORT_STATES.length > 0, 'parity requires viewport/state matrix');
@@ -158,7 +161,7 @@ export function validateCapsule(capsuleRootInput) {
   assert(authority.CAPSULE_ID === manifest.CAPSULE_ID, 'authority CAPSULE_ID mismatch');
   assert(authority.SOURCE_REVISION === manifest.SOURCE_REVISION, 'authority SOURCE_REVISION mismatch');
   assert(authority.AUTHORITY.MODE === manifest.RAW_MODE, 'authority MODE != manifest RAW_MODE');
-  const authorityHash = sha256Json(authority);
+  const authorityHash = sha256File(authorityPath);
 
   assert(fs.existsSync(paths.summary), `generated authority summary missing: ${paths.summary}`);
   const actualSummary = readJson(paths.summary);
@@ -187,8 +190,7 @@ export function validateCapsule(capsuleRootInput) {
   if (workflow.BASELINE_A_PRESENT === PASS) {
     assert(workflow.RAW_AUTHORITY_LOCKED === PASS, 'S2 PASS requires S1 PASS');
     assert(fs.existsSync(paths.baseline), `S2 PASS requires baseline record: ${paths.baseline}`);
-    const baseline = validateBaseline(paths.baseline, manifest, authorityHash);
-    assert(baseline.AUTHORITY_RECORD_REVISION === authority.RECORD_REVISION, 'baseline authority record revision stale');
+    validateBaseline(paths.baseline, manifest, authority, authorityHash);
   }
 
   if (workflow.MECHANICAL_PORT_COMPLETE === PASS) {
@@ -202,7 +204,7 @@ export function validateCapsule(capsuleRootInput) {
   if (workflow.SOURCE_PORT_PARITY === PASS) {
     assert(workflow.MECHANICAL_PORT_COMPLETE === PASS, 'S4 PASS requires S3 PASS');
     assert(fs.existsSync(paths.parity), `S4 PASS requires parity record: ${paths.parity}`);
-    validateParity(paths.parity, manifest, authorityHash);
+    validateParity(paths.parity, manifest, authority, authorityHash, paths.runtime);
   }
 
   if (workflow.PRODUCT_USAGE !== 'NONE') assert(workflow.SOURCE_PORT_PARITY === PASS, 'product composition/use requires S4 PASS');
@@ -216,7 +218,8 @@ function selfTest() {
     'new/standards/source-authority-record.schema.json',
     'new/standards/source-baseline.schema.json',
     'new/standards/source-parity-result.schema.json',
-    'new/standards/source-promotion-record.schema.json'
+    'new/standards/source-promotion-record.schema.json',
+    'new/standards/source-verification-record.schema.json'
   ];
   for (const relative of schemaFiles) {
     const schema = readJson(path.join(repoRoot, relative));
