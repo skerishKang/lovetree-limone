@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "authority": ["#80", "#527", "#569"],
+  "mapping_policy": {
+    "numeric_equality_implies_identity": false,
+    "filename_only_resolution_allowed": false,
+    "source_to_lineage_automatic": false,
+    "codex_to_source_renumbering_allowed": false,
+    "family_allocation_requires_evidence": true
+  },
+  "mappings": [],
+  "notes": [
+    "Empty mappings are intentional during SETUP.",
+    "Each future mapping must cite exact provenance/authority evidence and may link one or more MST rows to SRC/CDX/OTHER and later FAM."
+  ]
+}
