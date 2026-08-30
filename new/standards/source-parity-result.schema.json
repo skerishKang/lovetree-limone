@@ -19,6 +19,7 @@
     "GEOMETRY_STATUS",
     "STYLE_STATUS",
     "INTERACTION_STATUS",
+    "QUIRK_PRESERVATION_STATUS",
     "EXCEPTION_LEDGER",
     "REVIEW_STATUS"
   ],
@@ -53,7 +54,7 @@
         "additionalProperties": false,
         "required": ["ROLE", "PATH", "SHA256", "VIEWPORT", "STATE"],
         "properties": {
-          "ROLE": { "type": "string", "minLength": 1 },
+          "ROLE": { "enum": ["SOURCE_A", "PORT_B", "PRODUCT_C", "GEOMETRY", "STYLE", "INTERACTION", "OTHER"] },
           "PATH": { "type": "string", "minLength": 1 },
           "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
           "VIEWPORT": { "type": "string", "minLength": 1 },
@@ -64,6 +65,7 @@
     "GEOMETRY_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
     "STYLE_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
     "INTERACTION_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "QUIRK_PRESERVATION_STATUS": { "enum": ["PASS", "FAIL", "BLOCKED"] },
     "EXCEPTION_LEDGER": {
       "type": "array",
       "items": {
