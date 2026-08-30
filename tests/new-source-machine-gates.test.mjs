@@ -24,6 +24,7 @@ const HASH_A = 'a'.repeat(64);
 const HASH_B = 'b'.repeat(64);
 const SHA_A = 'a'.repeat(40);
 const SHA_B = 'b'.repeat(40);
+const liveEvidencePaths = new Map();
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -35,6 +36,12 @@ function writeJson(filePath, value) {
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function mutateFile(filePath, edit) {
+  const value = readJson(filePath);
+  edit(value);
+  writeJson(filePath, value);
 }
 
 function makeCapsule({
@@ -109,7 +116,9 @@ function makeCapsule({
       STATUS: 'PASS',
       ...liveOverrides
     };
-    writeJson(path.join(capsuleRoot, `${capsuleId}-00-live-authority.json`), liveRecord);
+    const livePath = path.join(root, `${capsuleId}-live-authority.json`);
+    writeJson(livePath, liveRecord);
+    liveEvidencePaths.set(capsuleRoot, livePath);
   }
 
   const payloadBytes = largeInline ? 1_048_576 : 64;
@@ -124,7 +133,7 @@ function makeCapsule({
     SOURCE_REVISION: 'V1.0',
     RAW_MODE: 'EXACT_COPY',
     AUTHORITY_RECORD: `${capsuleId}-00-authority.json`,
-    LIVE_AUTHORITY_RECORD: live ? `${capsuleId}-00-live-authority.json` : null,
+    LIVE_AUTHORITY_MODE: 'TRUSTED_CI_EPHEMERAL',
     RECOVERY_IMPORT_RECORD: null,
     RAW_FILES: [{
       PATH: `${capsuleId}-01-raw/${capsuleId}-01-01-original.html`,
@@ -158,12 +167,17 @@ function makeCapsule({
   return capsuleRoot;
 }
 
+function livePathFor(capsuleRoot) {
+  return liveEvidencePaths.get(capsuleRoot) ?? null;
+}
+
+function validateFixture(capsuleRoot) {
+  return validateCapsule(capsuleRoot, { liveAuthorityPath: livePathFor(capsuleRoot) });
+}
+
 function mutate(capsuleRoot, suffix, edit) {
   const capsuleId = path.basename(capsuleRoot);
-  const filePath = path.join(capsuleRoot, `${capsuleId}${suffix}`);
-  const value = readJson(filePath);
-  edit(value);
-  writeJson(filePath, value);
+  mutateFile(path.join(capsuleRoot, `${capsuleId}${suffix}`), edit);
 }
 
 function setWorkflow(capsuleRoot, patch) {
@@ -194,35 +208,35 @@ function passingParity(overrides = {}) {
 // #564 mandatory 16-case fail-closed regression corpus.
 test('01 WRONG_FAMILY_IN_NAMESPACE', () => {
   const capsule = makeCapsule({ capsuleId: 'SRC057', family: 'Living Character World', title: 'Living Character World' });
-  assert.throws(() => validateCapsule(capsule), /WRONG_FAMILY_IN_NAMESPACE/);
+  assert.throws(() => validateFixture(capsule), /WRONG_FAMILY_IN_NAMESPACE/);
 });
 
 test('02 DUPLICATE_AUTHORITY_UNRESOLVED', () => {
   const capsule = makeCapsule({ duplicateStatus: 'OPEN' });
-  assert.throws(() => validateCapsule(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
+  assert.throws(() => validateFixture(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
 });
 
 test('03 REVISION_ADOPTION_AMBIGUOUS', () => {
   const capsule = makeCapsule({ adoptionStatus: 'UNRESOLVED' });
-  assert.throws(() => validateCapsule(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
+  assert.throws(() => validateFixture(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
 });
 
 test('04 PR_BODY_MANIFEST_HEAD_DRIFT', () => {
   const capsule = makeCapsule();
   mutate(capsule, '-00-authority-summary.json', (summary) => { summary.SOURCE_FAMILY = 'stale-summary'; });
-  assert.throws(() => validateCapsule(capsule), /PR_BODY_MANIFEST_HEAD_DRIFT/);
+  assert.throws(() => validateFixture(capsule), /PR_BODY_MANIFEST_HEAD_DRIFT/);
 });
 
 test('05 DRIVE_AUTHORITY_TUPLE_STALE_OR_WRONG', () => {
   const capsule = makeCapsule();
-  mutate(capsule, '-00-live-authority.json', (record) => { record.DRIVE_FILE_ID = 'wrong-file-id'; });
-  assert.throws(() => validateCapsule(capsule), /live Drive file tuple mismatch/);
+  mutateFile(livePathFor(capsule), (record) => { record.DRIVE_FILE_ID = 'wrong-file-id'; });
+  assert.throws(() => validateFixture(capsule), /live Drive file tuple mismatch/);
 });
 
 test('06 MANIFEST_SCHEMA_SHAPE_DRIFT', () => {
   const capsule = makeCapsule();
   mutate(capsule, '-00-manifest.json', (manifest) => { manifest.INLINE_PAYLOAD = {}; });
-  assert.throws(() => validateCapsule(capsule), /unsupported keys/);
+  assert.throws(() => validateFixture(capsule), /unsupported keys/);
 });
 
 test('07 REQUIRED_CHECK_CANCELLED_OR_MISSING', () => {
@@ -286,7 +300,7 @@ test('14 VERIFICATION_STALE_AFTER_HEAD_CHANGE', () => {
 test('15 SELF_DECLARED_PASS_WITHOUT_DERIVED_EVIDENCE', () => {
   const capsule = makeCapsule();
   setWorkflow(capsule, { BASELINE_A_PRESENT: 'PASS' });
-  assert.throws(() => validateCapsule(capsule), /S2 PASS requires baseline record/);
+  assert.throws(() => validateFixture(capsule), /S2 PASS requires baseline record/);
 });
 
 test('16 UNPROTECTED_PROMOTION_PATH', () => {
@@ -302,7 +316,19 @@ test('16 UNPROTECTED_PROMOTION_PATH', () => {
 test('LIVE_AUTHORITY_STALE_AFTER_24H', () => {
   const old = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
   const capsule = makeCapsule({ liveOverrides: { OBSERVED_AT: old } });
-  assert.throws(() => validateCapsule(capsule), /stale \(>24h\)/);
+  assert.throws(() => validateFixture(capsule), /stale \(>24h\)/);
+});
+
+test('S0_PASS_REQUIRES_TRUSTED_EPHEMERAL_LIVE_EVIDENCE', () => {
+  const capsule = makeCapsule({ live: false });
+  assert.throws(() => validateCapsule(capsule), /S0 PASS forbidden|ambiguous or stale authority/);
+});
+
+test('COMMITTED_LIVE_AUTHORITY_INSIDE_CAPSULE_IS_REJECTED', () => {
+  const capsule = makeCapsule();
+  const committedPath = path.join(capsule, 'SRC999-00-live-authority.json');
+  fs.copyFileSync(livePathFor(capsule), committedPath);
+  assert.throws(() => validateCapsule(capsule, { liveAuthorityPath: committedPath }), /CI-ephemeral and outside the capsule tree/);
 });
 
 test('OLD_TO_NEW_RECOVERY_IMPORT_REQUIRES_SOURCE_CONTRACT_IMPACT_NONE', () => {
@@ -325,16 +351,16 @@ test('OLD_TO_NEW_RECOVERY_IMPORT_REQUIRES_SOURCE_CONTRACT_IMPACT_NONE', () => {
   assert.throws(() => validateRecoveryImport(recordPath, { capsuleId: 'SRC999', sourceSha: HASH_A, repoRoot: root }), /SOURCE_CONTRACT_IMPACT must be NONE/);
 });
 
-test('S0_S1_POSITIVE_EXPLICIT_ADOPTION_LIVE_TUPLE_AND_RAW_BINDING', () => {
+test('S0_S1_POSITIVE_EXPLICIT_ADOPTION_EPHEMERAL_LIVE_TUPLE_AND_RAW_BINDING', () => {
   const capsule = makeCapsule();
-  const result = validateCapsule(capsule);
+  const result = validateFixture(capsule);
   assert.equal(result.workflow.IDENTITY_VERIFIED, 'PASS');
   assert.equal(result.workflow.RAW_AUTHORITY_LOCKED, 'PASS');
 });
 
 test('LARGE_INLINE_EXACT_COPY_REQUIRES_OWNER_EXCEPTION', () => {
   const capsule = makeCapsule({ largeInline: true });
-  assert.throws(() => validateCapsule(capsule), /owner-authorized exception/);
+  assert.throws(() => validateFixture(capsule), /owner-authorized exception/);
 });
 
 test('LARGE_INLINE_OWNER_EXCEPTION_IS_EXPLICIT_AND_DETERMINISTIC', () => {
@@ -342,7 +368,7 @@ test('LARGE_INLINE_OWNER_EXCEPTION_IS_EXPLICIT_AND_DETERMINISTIC', () => {
     largeInline: true,
     largeInlineException: { AUTHORIZED_BY: 'OWNER', EVIDENCE_REF: 'issue:#test', REASON: 'explicit fixture exception' }
   });
-  assert.equal(validateCapsule(capsule).workflow.IDENTITY_VERIFIED, 'PASS');
+  assert.equal(validateFixture(capsule).workflow.IDENTITY_VERIFIED, 'PASS');
 });
 
 test('RUNTIME_FILES_CANNOT_APPEAR_BEFORE_S2', () => {
