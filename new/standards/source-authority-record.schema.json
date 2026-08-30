@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lovetree.local/schema/source-authority-record-1.0.json",
+  "title": "LoveTree Source Authority Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "SCHEMA_VERSION",
+    "RECORD_REVISION",
+    "CAPSULE_ID",
+    "SOURCE_FAMILY",
+    "SOURCE_REVISION",
+    "AUTHORITY",
+    "ADOPTION",
+    "DUPLICATES"
+  ],
+  "properties": {
+    "SCHEMA_VERSION": { "const": "1.0" },
+    "RECORD_REVISION": { "type": "integer", "minimum": 1 },
+    "CAPSULE_ID": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "SOURCE_FAMILY": { "type": "string", "minLength": 1 },
+    "SOURCE_REVISION": { "type": "string", "minLength": 1 },
+    "AUTHORITY": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "MODE",
+        "FOLDER_NAME",
+        "FILE_NAME",
+        "BYTES",
+        "SHA256",
+        "CAPTURED_AT",
+        "MIME_TYPE",
+        "DRIVE_FOLDER_ID",
+        "DRIVE_FILE_ID"
+      ],
+      "properties": {
+        "MODE": { "enum": ["EXACT_COPY", "AUTHORITY_POINTER"] },
+        "FOLDER_NAME": { "type": "string", "minLength": 1 },
+        "FILE_NAME": { "type": "string", "minLength": 1 },
+        "BYTES": { "type": "integer", "minimum": 0 },
+        "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "CAPTURED_AT": { "type": "string", "format": "date-time" },
+        "MIME_TYPE": { "type": "string", "minLength": 1 },
+        "DRIVE_FOLDER_ID": { "type": "string", "minLength": 1 },
+        "DRIVE_FILE_ID": { "type": "string", "minLength": 1 },
+        "ORIGINAL_LOCATION": { "type": ["string", "null"] }
+      }
+    },
+    "ADOPTION": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["STATUS", "DECISION_SOURCE", "ADOPTED_REVISION", "EVIDENCE_REF"],
+      "properties": {
+        "STATUS": { "enum": ["ADOPTED", "UNRESOLVED", "REJECTED"] },
+        "DECISION_SOURCE": { "enum": ["OWNER", "DELEGATED_OWNER", "GOVERNED_RECORD", "UNRESOLVED"] },
+        "ADOPTED_REVISION": { "type": ["string", "null"] },
+        "EVIDENCE_REF": { "type": ["string", "null"] }
+      }
+    },
+    "DUPLICATES": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["STATUS", "ALTERNATIVES"],
+      "properties": {
+        "STATUS": { "enum": ["CLEAR", "OPEN"] },
+        "ALTERNATIVES": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["REVISION", "FILE_NAME", "BYTES", "SHA256", "STATUS"],
+            "properties": {
+              "REVISION": { "type": "string", "minLength": 1 },
+              "FILE_NAME": { "type": "string", "minLength": 1 },
+              "BYTES": { "type": "integer", "minimum": 0 },
+              "SHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+              "STATUS": { "enum": ["CANDIDATE", "SUPERSEDED", "REJECTED", "UNKNOWN"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}
