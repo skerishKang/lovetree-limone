@@ -130,6 +130,9 @@ async function captureVariant(browser, url, viewport, sourceOut, variant, source
   const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
   if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
   await page.waitForFunction(() => window.__lt && window.__lovetreeStats, null, { timeout: 15000 });
+  // The Source intentionally schedules a startup toast at 650ms. Consume that timer
+  // before comparing stable Source states so original/split load latency cannot race it.
+  await page.waitForTimeout(900);
   await settle(page);
   const label = `${viewport.width}x${viewport.height}`;
   const overview = await page.evaluate(collectPageState);
