@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import {
   LARGE_INLINE_THRESHOLD_BYTES,
   PASS,
@@ -21,7 +22,6 @@ import {
   verifyArtifactHash
 } from './source-gate-lib.mjs';
 
-const args = process.argv.slice(2);
 const repoRoot = process.cwd();
 
 function validateInlinePayload(payload, label) {
@@ -219,7 +219,8 @@ function selfTest() {
     'new/standards/source-baseline.schema.json',
     'new/standards/source-parity-result.schema.json',
     'new/standards/source-promotion-record.schema.json',
-    'new/standards/source-verification-record.schema.json'
+    'new/standards/source-verification-record.schema.json',
+    'new/standards/source-evidence-manifest.schema.json'
   ];
   for (const relative of schemaFiles) {
     const schema = readJson(path.join(repoRoot, relative));
@@ -229,20 +230,24 @@ function selfTest() {
   console.log('NEW_SOURCE_CAPSULE_SCHEMA_SELF_TEST=PASS');
 }
 
-if (args.includes('--self-test')) {
-  selfTest();
-  process.exit(0);
+function runCli() {
+  const args = process.argv.slice(2);
+  if (args.includes('--self-test')) {
+    selfTest();
+    return;
+  }
+  if (args.length === 0) {
+    console.error('usage: node scripts/new/validate-source-capsule.mjs <new/sources/SRCxxx> [...] | --self-test');
+    process.exitCode = 2;
+    return;
+  }
+  try {
+    const results = args.map((item) => validateCapsule(item));
+    for (const result of results) console.log(`SOURCE_CAPSULE_GATE=PASS CAPSULE=${result.capsuleId}`);
+  } catch (error) {
+    console.error(`SOURCE_CAPSULE_GATE=FAIL ${error.message}`);
+    process.exitCode = 1;
+  }
 }
 
-if (args.length === 0) {
-  console.error('usage: node scripts/new/validate-source-capsule.mjs <new/sources/SRCxxx> [...] | --self-test');
-  process.exit(2);
-}
-
-try {
-  const results = args.map((item) => validateCapsule(item));
-  for (const result of results) console.log(`SOURCE_CAPSULE_GATE=PASS CAPSULE=${result.capsuleId}`);
-} catch (error) {
-  console.error(`SOURCE_CAPSULE_GATE=FAIL ${error.message}`);
-  process.exit(1);
-}
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) runCli();
