@@ -40,15 +40,16 @@ Google Drive and sibling-project source files are treated as read-only evidence/
 
 ## Local development
 
-Active repository work must run from a WSL-native Linux workspace, normally under:
+Repository work uses an OS-native Lane rather than a repository-wide WSL mandate.
 
-```text
-$HOME/worktrees/**
-```
+- OS-neutral mutation and ordinary local validation default to a dedicated Windows-native worktree.
+- Linux-specific work, or a Lane explicitly owned by WSL, uses a WSL-native worktree such as `$HOME/worktrees/**`.
+- One active mutation Lane keeps one owning OS for its lifetime; cross-OS verification uses a separate read-only exact-head worktree when needed.
+- Do not run WSL repository workloads from Windows-mounted `/mnt/c/**` or `/mnt/g/**` paths.
+- The shared root is an administration/sync surface, not an execution workspace.
+- GitHub Actions Linux remains the final exact-head integration authority unless a later explicit repository policy changes that rule.
 
-Do not run npm/build/test/dev-server/Playwright workloads from Windows-mounted `/mnt/c/**` or `/mnt/g/**` worktrees.
-
-Install and run the current full validation sequence with:
+Install and run the current validation commands from the Lane's owning native workspace as appropriate to task scope and current OS-parity evidence:
 
 ```bash
 npm ci
@@ -67,13 +68,15 @@ See:
 
 ## Release model
 
-During the current pre-user demo/integration phase, ordinary reversible UI/UX work uses the lightweight loop:
+During the current pre-user demo/integration phase, ordinary reversible UI/UX/product/source-integration work follows the Product Owner's Production-first / rollback-first loop:
 
 ```text
-implementation → CI GREEN → Production demo → direct visual review → fix/redeploy
+bounded implementation → Production → direct Product Owner/operator inspection → KEEP / FIX FORWARD / ROLLBACK
 ```
 
-This does not relax separate fail-closed handling for DB/Auth/payment/security/secrets/routing or other changes with an uncertain rollback path.
+Preview, local QA and CI remain useful evidence, but they are not mandatory pre-Production gates for an explicitly owner-authorized ordinary reversible change when the previous known-working state and rollback path are available.
+
+This does not relax separate fail-closed handling for destructive DB/data mutation, Auth/Firebase identity or authorization changes, payment/billing, secrets, privacy/security trust boundaries, provider/account authority, Worker/domain routing, or other changes with an uncertain rollback path.
 
 Production deployment must use the repository's guarded Production build/deploy path. Do not bypass it with an ad-hoc raw Worker deployment.
 
@@ -81,7 +84,7 @@ Repository-side automatic `main → Production` deployment is active. The workfl
 
 ## Collaboration
 
-- `main` is the integration/release baseline; develop on isolated issue/purpose branches.
+- `main` is the integration/release baseline; develop on isolated issue/purpose branches when branch isolation materially helps the task.
 - Preserve exact source bytes/SHA-256 when a source-fidelity contract requires it.
 - Do not revive historical V2/V3 program work as a competing current product without a new explicit product decision.
 - Keep prototype status distinct from product adoption.
