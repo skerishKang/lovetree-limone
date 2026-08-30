@@ -4,60 +4,92 @@
 
 LoveTree is currently operated as a pre-user demo/integration product. The active product direction is V4 / Next while Legacy and historical comparison routes remain preserved.
 
-The operating goal is to keep ordinary UI/product iteration fast enough for direct product-owner review without weakening irreversible infrastructure safety.
+The Product Owner's current operating preference is **Production-first / rollback-first** for ordinary reversible UI/product iteration.
+
+Controlling policy:
+
+`docs/operations/PRODUCTION_FIRST_ROLLBACK_POLICY.md`
 
 ## Ordinary reversible UI/UX loop
 
-For ordinary product-screen, layout, interaction and Design Lab work:
+For ordinary product-screen, layout, interaction, source-integration and Design Lab work, the default loop is:
 
 ```text
 implementation
-→ automated validation / CI GREEN
-→ merge/push to main
-→ guarded automatic Production deployment
-→ direct product-owner visual review
-→ remediation
-→ CI GREEN
-→ Production update
+→ Production
+→ direct Product Owner / operator review on the real Production surface
+→ KEEP
+   or FIX FORWARD
+   or ROLLBACK / REVERT
+→ repeat in Production as needed
 ```
 
-A separate Preview deployment is not a mandatory gate for every ordinary reversible UI change during this pre-user demo phase.
+A separate Preview deployment is optional, not mandatory.
 
-This policy replaces the older Preview-First proposal as the default demo workflow.
+A full local validation matrix or CI GREEN is also not a mandatory **pre-Production** gate for an ordinary reversible change when the Product Owner has authorized the Production-first operating mode and the previous working state can be restored.
 
-## What remains separately gated
+Tests/CI may run concurrently or after the Production change and remain useful for diagnosis and regression prevention.
 
-Do not treat these as ordinary UI releases:
+## Rollback identity is mandatory
+
+Production-first does not mean unrecoverable mutation.
+
+Before or at deployment, preserve enough information to identify:
+
+```text
+CURRENT_CHANGE = exact commit / deployment / scope
+PREVIOUS_KNOWN_WORKING = exact commit / deployment
+ROLLBACK_PATH = known and executable
+PRODUCTION_OBSERVATION_TARGET = exact route / behavior
+```
+
+If the change is wrong:
+
+- rollback/revert promptly when the defect is broad or unclear;
+- fix forward when the defect is small and obvious;
+- preserve the failed change as evidence instead of rewriting history.
+
+## Tests and CI
+
+For ordinary reversible product work, the preferred sequence is **not**:
+
+```text
+implementation → exhaustive tests → CI GREEN → Production
+```
+
+The preferred sequence is:
+
+```text
+implementation → Production → observe → keep/fix/rollback
+```
+
+Automated validation is evidence, not the Product Owner's mandatory viewing environment.
+
+Do not suppress or falsify test failures. If tests are run and fail, report the failure accurately; however, a failing or not-yet-run broad test matrix is not by itself a reason to prevent an explicitly owner-authorized reversible Production trial with a known rollback path.
+
+## High-risk exception boundary
+
+Do not treat these as ordinary reversible UI releases unless the Product Owner gives specific target-level authorization and a credible recovery plan:
 
 - destructive or irreversible DB migration/data mutation;
-- Production data cleanup;
+- Production data cleanup/deletion;
 - Firebase/Auth identity or authorization policy;
-- payment/billing;
+- payment/billing/money movement;
 - secrets, bindings or account configuration;
 - privacy/security trust-boundary changes;
-- Worker target/routing/domain changes;
-- changes with an uncertain rollback path;
-- disposable mutable Runtime E2E that could touch Production resources.
+- provider/account authority changes;
+- Worker/domain routing changes with uncertain recovery;
+- any change with an uncertain rollback path.
 
-These require their own issue/contract, explicit target identity, fail-closed checks and rollback/cleanup evidence.
+These cases remain fail-closed around irreversible harm and recovery, regardless of whether a test suite is green.
 
-## Branch and CI
+## Branch and integration
 
-- Develop on an isolated issue/purpose branch, not directly on `main`.
-- Re-fetch current `origin/main` before final integration.
-- Run the validation appropriate to the change. For normal code changes the repository full gate is:
+GitHub remains the durable ledger of what changed and what can be restored.
 
-```bash
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run db:check
-```
+For reversible product work, branch/PR/CI may be used when useful, but they are not a mandatory staging environment before the Product Owner can inspect the actual Production result.
 
-- Do not suppress a failing test or weaken a contract merely to obtain GREEN.
-- A mechanics-only local harness is not a deployed acceptance result.
+Do not force-push or rewrite history merely to hide a failed Production attempt. Prefer an explicit revert/rollback so the failed change remains auditable.
 
 ## Production deployment
 
@@ -69,85 +101,66 @@ lovetree-limone
 
 Never deploy to an accidental `lovetree-limone-production` target.
 
-The guarded Production path is defined by repository scripts including:
+Existing guarded deployment scripts may still be used to preserve exact Worker identity, bindings, build provenance and rollback identity. Their role is **deployment safety and recoverability**, not enforcing an exhaustive pre-Production product test ritual.
 
-```text
-production:build:safe
-production:deploy:safe
-```
-
-Use the scripts/source as the exact command contract. Do not replace them with an ad-hoc raw `wrangler deploy` that bypasses source-SHA, Worker identity, binding, build-provenance, Firebase-config, DB-state or current-version checks.
+Do not expose secret values in source, logs or reports.
 
 ## Automatic main → Production path
 
-The repository-side automatic Production deployment path is active. `.github/workflows/production-auto-deploy.yml` runs on pushes to `main` and may also be manually dispatched for controlled verification.
+The repository-side automatic Production deployment path remains available through `.github/workflows/production-auto-deploy.yml`.
 
-The steady-state path is:
+The operational intent after this policy change is:
 
 ```text
-merge/push to main
-→ required Production configuration presence check
-→ exact HEAD/origin-main verification
-→ full validation
-→ production:build:safe
-→ current Worker version verification
-→ guarded dry-run
-→ guarded deploy
-→ active-version verification
-→ Production smoke
-→ rollback identity in Actions summary
+main/product change
+→ guarded Production deployment with rollback identity
+→ real Production observation
+→ keep/fix/revert
 ```
 
-The workflow is fail-closed. Missing required Production configuration, source mismatch, dirty state, validation failure, DB guard failure, Worker identity/version mismatch, deployment guard failure or smoke failure must stop the release rather than bypass the guard.
+Any workflow step that exists solely to make broad pre-Production testing a mandatory gate for ordinary reversible UI/product iteration should be treated as legacy behavior to be reconciled separately from this document. Do not describe that legacy workflow behavior as the Product Owner's desired operating policy.
 
-Emergency pause is explicit: set repository variable `LOVETREE_PRODUCTION_AUTO_DEPLOY=false`. Normal operating state is enabled/default-on. Re-enabling must restore the variable to a non-false value such as `true`.
+Emergency pause remains explicit through repository variable `LOVETREE_PRODUCTION_AUTO_DEPLOY=false` when Production deployment itself must be stopped.
 
-Required Production secret names currently include:
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `DATABASE_URL`
-- `NEXT_PUBLIC_FIREBASE_API_KEY`
-- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
-
-Never print, log, commit or paste secret values into issue/PR evidence.
-
-## Firebase validation safety
+## Firebase / data safety
 
 Production Firebase project identity is `relovetree`.
 
-Do not use mutating Auth endpoints as configuration probes. In particular, do not call anonymous signup or another user-creation endpoint merely to verify an API key or project binding. Static configuration checks and non-mutating verification must be preferred.
+Do not create Production users or mutate Production data merely to test configuration. Disposable mutable Runtime E2E remains separate from ordinary Production visual/product review.
 
-An accidental anonymous-user creation during the 2026-08-10 auto-deploy setup was manually deleted in Firebase Console. The residual Production state was cleaned up, but the incident remains a reason to keep this rule explicit.
-
-Disposable authenticated Runtime E2E remains isolated under #67 and must not create users in Production Firebase.
+Production-first for UI/product iteration does not authorize irreversible data/auth mutation.
 
 ## Post-deploy review
 
-For ordinary UI/demo releases, visually review representative V4 routes after deployment. Failures become normal remediation work:
+Production is the primary acceptance surface for ordinary reversible changes.
+
+After deployment:
 
 ```text
-observe → fix branch → CI → merge → automatic Production update
+observe
+→ KEEP if correct
+→ FIX FORWARD if the defect is small and obvious
+→ ROLLBACK / REVERT if the result is wrong or uncertain
 ```
 
-Do not normalize a broken security/privacy/data boundary as a visual bug. Escalate it to the appropriate high-risk contract instead.
+A broken Production state should not be left in place merely to complete a test plan.
 
-## Runtime E2E
+## Design Lab and source work
 
-Authenticated mutable Runtime E2E remains separate from ordinary Production visual review. Disposable users/data must not be created in the Production Firebase project merely to validate a release. The isolated mutable E2E contract remains tracked separately (#67).
+`/design-lab/**` and source/module work may be inspected directly in Production when the change is bounded and reversible.
 
-## Design Lab and capabilities
-
-`/design-lab/**` is allowed to contain internal prototypes that are not final LoveTree UI. Capability status must stay explicit:
-
-```text
-observed → mapped/prototype-requested → prototyped → validated → adopted
-```
-
-`prototyped` does not mean product-adopted. Internal experiments may ship in the demo Design Lab when CI is green, but they should not silently replace source-faithful V4 product screens.
+Source fidelity, structural-split equivalence and known-regression tests remain valuable, but they should not turn into a separate long-running staging program that prevents direct Product Owner inspection of the actual result.
 
 ## Rollback
 
-Every Production release path must preserve enough identity to roll back the Worker to the exact previous version. Do not destroy compatible DB state during the normal Worker rollback window.
+Every reversible Production release should preserve the previous known-working identity and a practical rollback/revert path.
 
-If a deployment guard blocks, fix or resolve the blocker; do not mutate Production merely to make the guard green and do not bypass the guard.
+Rollback is a normal operating action, not an exceptional failure of the process.
+
+The governing preference is:
+
+```text
+PRODUCTION FIRST
+OBSERVE REAL RESULT
+KEEP / FIX / ROLLBACK
+```
