@@ -7,6 +7,7 @@ import { chromium } from 'playwright';
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
 const outRoot = process.env.SRC_BASELINE_EVIDENCE_DIR || '/tmp/src-baseline-evidence';
+const exactHead = process.env.SRC_EXACT_HEAD || null;
 const state = JSON.parse(fs.readFileSync(path.join(repoRoot, 'src/01_registry/generation-state.json'), 'utf8'));
 
 if (state.phase === 'SETUP') {
@@ -14,6 +15,7 @@ if (state.phase === 'SETUP') {
   process.exit(0);
 }
 if (state.phase !== 'CALIBRATION') throw new Error(`Unsupported generation phase for baseline capture: ${state.phase}`);
+if (!exactHead || !/^[0-9a-f]{40}$/.test(exactHead)) throw new Error('SRC_EXACT_HEAD must be the exact 40-char PR head SHA');
 
 const sourceIds = fs.readdirSync(sourceRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && /^SRC\d{3}$/.test(entry.name))
@@ -56,6 +58,7 @@ function collectPageState() {
       color: style.color,
       backgroundColor: style.backgroundColor,
       fontSize: style.fontSize,
+      fontFamily: style.fontFamily,
     }];
   }));
   const canvas = document.getElementById('stage');
@@ -104,6 +107,51 @@ async function startServer(sourceId, originalPath) {
   return server;
 }
 
+async function exerciseDesktop(page, sourceId, label, originReveal) {
+  await page.evaluate(() => window.__lt.overview(false));
+  const scaleBefore = await page.evaluate(() => window.__lt.state.scale);
+  await page.click('#zoomIn');
+  const scaleAfter = await page.evaluate(() => window.__lt.state.scale);
+  await page.click('#overviewBtn');
+  const modeAfterOverview = await page.evaluate(() => window.__lt.state.mode);
+  await page.click('#helpBtn');
+  const helpToastVisible = await page.evaluate(() => document.getElementById('toast')?.classList.contains('show') === true);
+  const interaction = {
+    controlSurface: 'DESKTOP_CONTROLS',
+    originRevealMode: originReveal.runtime.mode,
+    zoomInIncreasedScale: scaleAfter > scaleBefore,
+    scaleBefore: round(scaleBefore),
+    scaleAfter: round(scaleAfter),
+    overviewButtonMode: modeAfterOverview,
+    helpToastVisible,
+  };
+  if (interaction.originRevealMode !== 'ORIGIN_REVEAL') throw new Error(`${sourceId} ${label}: origin reveal failed`);
+  if (!interaction.zoomInIncreasedScale) throw new Error(`${sourceId} ${label}: zoom-in failed`);
+  if (interaction.overviewButtonMode !== 'OVERVIEW') throw new Error(`${sourceId} ${label}: overview button failed`);
+  if (!interaction.helpToastVisible) throw new Error(`${sourceId} ${label}: help toast failed`);
+  return interaction;
+}
+
+async function exerciseMobile(page, sourceId, label, originReveal) {
+  await page.evaluate(() => window.__lt.overview(false));
+  const firstCluster = page.locator('#mobileRibbon button[data-i="0"]');
+  await firstCluster.click();
+  await page.waitForFunction(() => window.__lt?.state?.mode === 'CLUSTER_PATH_OVERVIEW', null, { timeout: 5000 });
+  const clusterMode = await page.evaluate(() => window.__lt.state.mode);
+  await page.click('#helpBtn');
+  const helpToastVisible = await page.evaluate(() => document.getElementById('toast')?.classList.contains('show') === true);
+  const interaction = {
+    controlSurface: 'MOBILE_RIBBON',
+    originRevealMode: originReveal.runtime.mode,
+    clusterSelectionMode: clusterMode,
+    helpToastVisible,
+  };
+  if (interaction.originRevealMode !== 'ORIGIN_REVEAL') throw new Error(`${sourceId} ${label}: mobile origin reveal failed`);
+  if (interaction.clusterSelectionMode !== 'CLUSTER_PATH_OVERVIEW') throw new Error(`${sourceId} ${label}: mobile cluster selection failed`);
+  if (!interaction.helpToastVisible) throw new Error(`${sourceId} ${label}: mobile help toast failed`);
+  return interaction;
+}
+
 const browser = await chromium.launch({ headless: true });
 try {
   for (const sourceId of sourceIds) {
@@ -120,9 +168,9 @@ try {
     const { port } = server.address();
     try {
       const summary = {
-        schema_version: '1.0',
+        schema_version: '1.1',
         source_id: sourceId,
-        exact_head: process.env.GITHUB_SHA || null,
+        exact_head: exactHead,
         authority_sha256: manifest.authority.sha256,
         authority_bytes: manifest.authority.bytes,
         viewports: [],
@@ -147,33 +195,17 @@ try {
         const label = `${viewport.width}x${viewport.height}`;
         await page.screenshot({ path: path.join(sourceOut, `${label}-overview.png`) });
 
-        await page.click('#focusFirst');
+        const mobile = viewport.width <= 640;
+        if (mobile) await page.locator('#mobileRibbon button.origin').click();
+        else await page.click('#focusFirst');
         await page.waitForFunction(() => window.__lt?.state?.mode === 'ORIGIN_REVEAL', null, { timeout: 5000 });
         await page.evaluate(() => document.getElementById('toast')?.classList.remove('show'));
         const originReveal = await page.evaluate(collectPageState);
         await page.screenshot({ path: path.join(sourceOut, `${label}-origin-reveal.png`) });
 
-        await page.evaluate(() => window.__lt.overview(false));
-        const scaleBefore = await page.evaluate(() => window.__lt.state.scale);
-        await page.click('#zoomIn');
-        const scaleAfter = await page.evaluate(() => window.__lt.state.scale);
-        await page.click('#overviewBtn');
-        const modeAfterOverview = await page.evaluate(() => window.__lt.state.mode);
-        await page.click('#helpBtn');
-        const helpToastVisible = await page.evaluate(() => document.getElementById('toast')?.classList.contains('show') === true);
-
-        const interaction = {
-          originRevealMode: originReveal.runtime.mode,
-          zoomInIncreasedScale: scaleAfter > scaleBefore,
-          scaleBefore: round(scaleBefore),
-          scaleAfter: round(scaleAfter),
-          overviewButtonMode: modeAfterOverview,
-          helpToastVisible,
-        };
-        if (interaction.originRevealMode !== 'ORIGIN_REVEAL') throw new Error(`${sourceId} ${label}: origin reveal failed`);
-        if (!interaction.zoomInIncreasedScale) throw new Error(`${sourceId} ${label}: zoom-in failed`);
-        if (interaction.overviewButtonMode !== 'OVERVIEW') throw new Error(`${sourceId} ${label}: overview button failed`);
-        if (!interaction.helpToastVisible) throw new Error(`${sourceId} ${label}: help toast failed`);
+        const interaction = mobile
+          ? await exerciseMobile(page, sourceId, label, originReveal)
+          : await exerciseDesktop(page, sourceId, label, originReveal);
         if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
 
         const viewportEvidence = { viewport, overview, originReveal, interaction, errors };

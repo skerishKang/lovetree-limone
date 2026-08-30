@@ -15,7 +15,7 @@ jobs:
   validate:
     name: SRC 108 Harness Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout exact PR head
         uses: actions/checkout@v4
@@ -54,6 +54,16 @@ jobs:
         if: steps.generation.outputs.phase == 'CALIBRATION'
         run: npm ci
 
+      - name: Install Korean font for visual evidence
+        if: steps.generation.outputs.phase == 'CALIBRATION'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f
+          fc-match 'Noto Sans CJK KR'
+
       - name: Cache Playwright Chromium
         if: steps.generation.outputs.phase == 'CALIBRATION'
         id: playwright-cache
@@ -70,6 +80,7 @@ jobs:
         if: steps.generation.outputs.phase == 'CALIBRATION'
         env:
           SRC_BASELINE_EVIDENCE_DIR: /tmp/src-baseline-evidence
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
         run: node src/08_harness/capture-source-baseline.mjs
 
       - name: Upload Source baseline evidence
