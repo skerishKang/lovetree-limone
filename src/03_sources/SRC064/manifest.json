@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC064",
+  "source_folder_name": "64_부유모먼트_웰컴오빗_입장포털O",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/64_부유모먼트_웰컴오빗_입장포털O/현재후보.html",
+  "authority": {
+    "drive_folder_id": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+    "drive_file_id": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+    "filename": "현재후보.html",
+    "bytes": 1565313,
+    "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+    "revision": "V1.2.1",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-dom",
+    "scenario_id": "entry-onboarding",
+    "qa_hook": "window.__TRACK64__",
+    "interaction_surface": [
+      "WELCOME_IDLE",
+      "ORBIT_INTERACT",
+      "CARD_HOVER",
+      "CARD_FOCUSING",
+      "MOMENT_FOCUS",
+      "MOMENT_MEDIA_VIEWER",
+      "BRANCH_CHOICE",
+      "PATH_GLIDE",
+      "RETURN_ORBIT"
+    ],
+    "source_specific_controls": [
+      "menuBtn",
+      "openMoment",
+      "continuePath",
+      "prevMoment",
+      "nextMoment",
+      "storyBook",
+      "mediaClose",
+      "mediaPlay"
+    ]
+  }
+}

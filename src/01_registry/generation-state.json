@@ -8,11 +8,23 @@
   "broad_108_rollout_released": false,
   "first_calibration": "SRC056",
   "first_calibration_s4": "PASS",
-  "second_replay": null,
+  "second_replay": {
+    "source_id": "SRC064",
+    "status": "LOCAL_PASS_PENDING_EXACT_HEAD_CI",
+    "s0_identity_verified": "PASS",
+    "s1_raw_authority_locked": "PASS",
+    "s2_source_baseline_captured": "PASS_LOCAL_NATIVE_WSL",
+    "s3_mechanical_port_complete": "PASS",
+    "s4_source_split_parity": "PASS_LOCAL_NATIVE_WSL",
+    "materially_different_from": "SRC056",
+    "exact_head_ci_required": true
+  },
   "notes": [
     "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",
     "SRC056 is the first real calibration Source. No Codex, family, component, composition, or broad 108 rollout is released.",
     "SRC056 has completed S0 through S4 with accepted authority, baseline, mechanical split, and direct A/B parity evidence.",
-    "A materially different second replay remains required before broad 108 rollout."
+    "SRC064 is materially different from SRC056: CSS3D DOM orbit with 40 cards, focus transition, and media viewer.",
+    "SRC064 local native-WSL S0 through S4 evidence passed. Exact-head CI evidence remains required after this worktree is committed and pushed.",
+    "Broad 108 rollout remains held until SRC064 exact-head CI acceptance and the governing calibration review are complete."
   ]
 }

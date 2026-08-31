@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { captureTrack64Baseline } from './source064-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -188,11 +189,19 @@ try {
           timeout: 30000,
         });
         if (!response?.ok()) throw new Error(`${sourceId} baseline HTTP ${response?.status()}`);
+        const label = `${viewport.width}x${viewport.height}`;
+        if (sourceId === 'SRC064') {
+          const evidence = await captureTrack64Baseline(page, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.welcome.ids.length, elementCount: evidence.welcome.elementCount });
+          await page.close();
+          continue;
+        }
         await page.waitForFunction(() => window.__lt && window.__lovetreeStats, null, { timeout: 15000 });
         await settle(page);
 
         const overview = await page.evaluate(collectPageState);
-        const label = `${viewport.width}x${viewport.height}`;
         await page.screenshot({ path: path.join(sourceOut, `${label}-overview.png`) });
 
         const mobile = viewport.width <= 640;

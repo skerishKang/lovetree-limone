@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC064",
+  "verified_at_utc": "2026-08-28T09:10:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+    "file_id": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+    "filename": "현재후보.html",
+    "mime_type": "text/html",
+    "bytes": 1565313,
+    "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d"
+  },
+  "git_transport_crosscheck": {
+    "intake_pr": 549,
+    "intake_head_sha": "71f1790bcaa6a7471941ed90a016efccf5fbe6cd",
+    "path": "new/sources/SRC064/SRC064-01-raw/SRC064-01-01-original.html",
+    "byte_identity": "PASS",
+    "reuse_classification": "REUSE_EXACT"
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  }
+}

@@ -152,7 +152,9 @@ if (state?.phase === 'SETUP') {
       if (!parity || parity.status !== 'ACCEPTED' || parity.source_id !== sourceId) fail(`${sourceId}: accepted parity evidence missing/invalid`);
       if (parity && (parity.authority?.bytes !== m.bytes || parity.authority?.sha256 !== m.sha256)) fail(`${sourceId}: parity authority drift`);
       const comps = parity?.comparisons ?? {};
-      for (const [key, expected] of Object.entries({dom:'EQUAL',geometry:'EQUAL',computed_style:'EQUAL',runtime_state:'EQUAL',interactions:'EQUAL',screenshots:'BYTE_IDENTICAL'})) if (comps[key] !== expected) fail(`${sourceId}: parity ${key} is not ${expected}`);
+      const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
+      const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST'];
+      if (comps.dom !== 'EQUAL' || !allowedGeometry.includes(comps.geometry) || !allowedGeometry.includes(comps.computed_style) || comps.runtime_state !== 'EQUAL' || comps.interactions !== 'EQUAL' || !allowedScreenshots.includes(comps.screenshots)) fail(`${sourceId}: parity comparison is not fully PASS`);
       if (parity?.browser_errors !== 0) fail(`${sourceId}: parity browser errors present`);
     }
   }

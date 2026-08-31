@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC064",
+  "status": "PENDING",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": [
+    "WELCOME_IDLE",
+    "ORBIT_INTERACT",
+    "CARD_FOCUSING",
+    "MOMENT_FOCUS",
+    "MOMENT_MEDIA_VIEWER"
+  ],
+  "measurements": [
+    "id inventory",
+    "card inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "orbit runtime state",
+    "focus/viewer interaction outcomes",
+    "console/page errors"
+  ],
+  "accepted_evidence": "baseline/accepted-baseline.json",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority."
+}

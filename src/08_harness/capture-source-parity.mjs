@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -103,12 +104,14 @@ async function exercise(page, mobile) {
 }
 
 function startServer(sourceId, sourceDir) {
-  const files = new Map([
-    [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
-    [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
-    [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
-    [`/${sourceId}/split/script.js`, [path.join(sourceDir, 'split', 'script.js'), 'text/javascript; charset=utf-8']],
-  ]);
+  const files = sourceId === 'SRC064'
+    ? track64SourceFiles(sourceDir, sourceId)
+    : new Map([
+      [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
+      [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
+      [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
+      [`/${sourceId}/split/script.js`, [path.join(sourceDir, 'split', 'script.js'), 'text/javascript; charset=utf-8']],
+    ]);
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }
     const entry = files.get(req.url);
@@ -174,6 +177,29 @@ try {
     const summary = { schema_version: '1.0', source_id: sourceId, exact_head: exactHead, viewports: [] };
     try {
       for (const viewport of viewports) {
+        if (sourceId === 'SRC064') {
+          const original = await captureTrack64Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureTrack64Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          assert.deepStrictEqual(split.welcome, original.welcome, `${sourceId} ${viewport.width}x${viewport.height}: WELCOME state drift`);
+          assert.deepStrictEqual(split.focus, original.focus, `${sourceId} ${viewport.width}x${viewport.height}: MOMENT_FOCUS state drift`);
+          assert.deepStrictEqual(split.viewer, original.viewer, `${sourceId} ${viewport.width}x${viewport.height}: MEDIA_VIEWER state drift`);
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          const comparison = {
+            viewport,
+            welcome_state_equal: true,
+            focus_state_equal: true,
+            viewer_state_equal: true,
+            interaction_equal: true,
+            welcome_screenshot_sha_equal: split.screenshots.welcome_sha256 === original.screenshots.welcome_sha256,
+            focus_screenshot_sha_equal: split.screenshots.focus_sha256 === original.screenshots.focus_sha256,
+            viewer_screenshot_sha_equal: split.screenshots.viewer_sha256 === original.screenshots.viewer_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
         const original = await captureVariant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
         const split = await captureVariant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
         assert.deepStrictEqual(split.overview, original.overview, `${sourceId} ${viewport.width}x${viewport.height}: OVERVIEW state drift`);

@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC064",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_LOCAL_BROWSER_ARTIFACT_REVIEW",
+  "captured_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": null,
+    "conclusion": "SUCCESS_LOCAL_NATIVE_WSL"
+  },
+  "artifact": {
+    "name": "src-calibration-baseline-8de2c32",
+    "path": "/tmp/src-baseline-evidence-8de2c32/SRC064",
+    "evidence_binding": "exact-head-local-native-wsl"
+  },
+  "authority": {
+    "bytes": 1565313,
+    "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d"
+  },
+  "reviewed_viewports": [
+    { "width": 1280, "height": 800, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] },
+    { "width": 390, "height": 844, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] },
+    { "width": 320, "height": 720, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] }
+  ],
+  "interaction_results": {
+    "all_viewports": {
+      "control_surface": "MEMORY_ORBIT",
+      "card_count": 40,
+      "focus": "PASS",
+      "media_viewer": "PASS",
+      "menu_open_close": "PASS",
+      "browser_errors": 0
+    }
+  },
+  "visual_review": {
+    "desktop_welcome_focus_viewer_reviewed": true,
+    "mobile_welcome_focus_viewer_reviewed": true,
+    "source_native_observation": "CSS3D orbit and focus/viewer composition are frozen Source behavior and must not be redesigned during mechanical split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}
