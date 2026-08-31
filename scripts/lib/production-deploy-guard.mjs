@@ -372,7 +372,24 @@ export async function collectLiveWorkerMetadata({
     const subdomainEnabled = subdomain.success ? subdomain.body?.result?.enabled === true : null;
 
     const domains = await get(`/accounts/${accountId}/workers/domains?script=${workerName}`);
-    const domainList = domains.success && Array.isArray(domains.body?.result) ? domains.body.result : null;
+    const rawDomains = domains.success && Array.isArray(domains.body?.result) ? domains.body.result : null;
+    // The Cloudflare domains endpoint ignores the script filter and returns
+    // account-wide domains, so attribution must be done client-side: only
+    // entries whose service identity equals this Worker count as its custom
+    // domains. Entries with no resolvable service identity are neither passed
+    // nor dropped silently — they are counted as unattributable (fail-closed).
+    let selfDomains = null;
+    let unattributableDomains = 0;
+    if (rawDomains !== null) {
+      selfDomains = [];
+      for (const entry of rawDomains) {
+        const service = typeof entry?.service === "string" && entry.service.length > 0 ? entry.service : null;
+        const script = typeof entry?.script === "string" && entry.script.length > 0 ? entry.script : null;
+        const identity = service ?? script;
+        if (identity === null) unattributableDomains += 1;
+        else if (identity === workerName) selfDomains.push(entry);
+      }
+    }
 
     return {
       state: "ok",
@@ -384,7 +401,8 @@ export async function collectLiveWorkerMetadata({
       observability,
       subdomainEnabled,
       subdomainOk: subdomain.success,
-      domains: domainList,
+      domains: selfDomains,
+      domainsUnattributable: rawDomains === null ? null : unattributableDomains,
       domainsOk: domains.success,
     };
   } catch (error) {
@@ -426,16 +444,22 @@ export function verifyLiveWorkerDrift({
   }
   // Route / workers.dev target state must be *readable* (fail-closed): a
   // lookup failure for the workers.dev subdomain or the custom-domains list is
-  // a BLOCK, never a silent pass. Additionally, the production Worker is a
-  // workers.dev Worker with no custom routes — any custom domain attached to
-  // it is a route mismatch (BLOCK).
+  // a BLOCK, never a silent pass. The production Worker is a workers.dev
+  // Worker with no custom routes — any custom domain attributed to it is a
+  // route mismatch (BLOCK). Foreign-service domains (account-wide API noise)
+  // do not count, but domains that cannot be attributed at all are BLOCKed.
   if (live.subdomainOk !== true) {
     problems.push("workers.dev subdomain state could not be verified (lookup failed)");
   }
   if (live.domainsOk !== true) {
     problems.push("custom domains list could not be verified (lookup failed)");
-  } else if (Array.isArray(live.domains) && live.domains.length > 0) {
-    problems.push(`unexpected custom domains on production Worker (expected none): ${live.domains.length} domain(s)`);
+  } else {
+    if (live.domainsUnattributable > 0) {
+      problems.push(`custom domains with unresolvable service identity cannot be attributed (fail-closed): ${live.domainsUnattributable} domain(s)`);
+    }
+    if (Array.isArray(live.domains) && live.domains.length > 0) {
+      problems.push(`unexpected custom domains on production Worker (expected none): ${live.domains.length} domain(s)`);
+    }
   }
   return { ok: problems.length === 0, problems };
 }

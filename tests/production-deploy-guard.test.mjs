@@ -945,6 +945,58 @@ test("F6: unexpected custom domain (route mismatch) must BLOCK", async () => {
   assert.ok(problemNames(result).includes("live-worker-drift"));
 });
 
+test("F6: foreign-service account-wide domain must NOT count as lovetree-limone drift", async () => {
+  // Cloudflare /workers/domains ignores the script filter and returns
+  // account-wide domains (regression: run 33409004246 blocked on a domain
+  // belonging to the separate padiem-chat Worker). Only service identity
+  // matching the production Worker may count as its custom domain.
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    liveFetch: makeFakeLiveFetch({
+      customDomains: [{ hostname: "chat.padiem.net", service: "padiem-chat", environment: "production", enabled: true }],
+    }),
+  });
+  assert.equal(result.status, "DRY_RUN_GO");
+  assert.ok(!problemNames(result).includes("live-worker-drift"));
+});
+
+test("F6: mixed foreign + self domains must BLOCK on the self domain only", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    liveFetch: makeFakeLiveFetch({
+      customDomains: [
+        { hostname: "chat.padiem.net", service: "padiem-chat", environment: "production", enabled: true },
+        { hostname: "some.example.com", service: "lovetree-limone", environment: "production", enabled: true },
+      ],
+    }),
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+  const drift = result.checks.find((c) => c.name === "live-worker-drift");
+  assert.match(drift.detail, /1 domain\(s\)/);
+});
+
+test("F6: custom domain with missing service identity must BLOCK (fail-closed)", async () => {
+  const { dir, head } = await makeScratchRepo();
+  const fake = makeFakeRun();
+  const { result } = await runGuard({
+    dir,
+    head,
+    fake,
+    liveFetch: makeFakeLiveFetch({ customDomains: [{ hostname: "ambiguous.example.com", environment: "production" }] }),
+  });
+  assert.equal(result.status, "BLOCKED");
+  assert.ok(problemNames(result).includes("live-worker-drift"));
+});
+
 test("F6: no Cloudflare credentials must BLOCK (fail-closed)", async () => {
   const { dir, head } = await makeScratchRepo();
   const fake = makeFakeRun();
