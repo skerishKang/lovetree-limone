@@ -5,6 +5,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
+import { captureTrack60Baseline } from './source060-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -25,11 +26,19 @@ const sourceIds = fs.readdirSync(sourceRoot, { withFileTypes: true })
   .sort();
 if (!sourceIds.length) throw new Error(`${state.phase} requires at least one active Source`);
 
-const viewports = [
+const defaultViewports = [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
   { width: 320, height: 720 },
 ];
+const sourceViewports = {
+  SRC060: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
+};
+const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
 
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 const round = (value) => Math.round(value * 100) / 100;
@@ -178,7 +187,7 @@ try {
         viewports: [],
       };
 
-      for (const viewport of viewports) {
+      for (const viewport of viewportsFor(sourceId)) {
         const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
         const page = await context.newPage();
         const errors = [];
@@ -197,6 +206,15 @@ try {
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.welcome.ids.length, elementCount: evidence.welcome.elementCount });
+          await page.close();
+          await context.close();
+          continue;
+        }
+        if (sourceId === 'SRC060') {
+          const evidence = await captureTrack60Baseline(page, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.initial.state.ids.length, elementCount: evidence.states.initial.state.elementCount });
           await page.close();
           await context.close();
           continue;

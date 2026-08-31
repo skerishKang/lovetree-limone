@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC060",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_SOURCE_QA_ARTIFACT_REVIEW_PLUS_CENTRAL_LOCAL_CAPTURE",
+  "source_artifact": "Google Drive 60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/검증결과.json",
+  "source_artifact_sha256": "fea230422a7939fa1ac930a4bf49435a08424fcdaa63464cad60cd06e6697a8a",
+  "captured_head": "50121b2219620240ae29e2690a712989311cb857",
+  "local_capture": {
+    "harness": "src/08_harness/capture-source-baseline.mjs + src/08_harness/source060-driver.mjs",
+    "summary_sha256": "0d1e49310573155e72dc7930e983cf2a6489585bfa294751b320060c4b7ce9b0",
+    "method": "Chromium headless via local Playwright against frozen original over loopback HTTP",
+    "capture_note": "Local capture executed on the rollout working tree (base head + this branch's SRC060 harness/driver changes); the accepted record is bound to the source authority SHA256, not to a clean-code CI artifact.",
+    "repeat_runs": 2,
+    "cross_run_state_equality": "EQUAL",
+    "cross_run_canonical_pixel_digests": "STABLE",
+    "browser_errors": 0
+  },
+  "authority": {
+    "bytes": 55260,
+    "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+  },
+  "graph_expectations": {
+    "nodes": 1000,
+    "clusters": 9,
+    "bridge_records": 24
+  },
+  "reviewed_viewports": [
+    { "width": 1440, "height": 900, "states": ["INITIAL", "CLUSTER_FOCUS", "NODE_SELECT", "MOMENT_VIEWER", "BOOK_HANDOFF", "CONNECTION_HANDOFF", "PATH_PREVIEW"] },
+    { "width": 430, "height": 932, "states": ["INITIAL", "CLUSTER_FOCUS", "NODE_SELECT", "MOMENT_VIEWER", "BOOK_HANDOFF", "CONNECTION_HANDOFF", "PATH_PREVIEW"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "CLUSTER_FOCUS", "NODE_SELECT", "MOMENT_VIEWER", "BOOK_HANDOFF", "CONNECTION_HANDOFF", "PATH_PREVIEW"] }
+  ],
+  "interaction_results": {
+    "1440x900": {
+      "control_surface": "CANVAS_CLUSTER_POINTER",
+      "canvas_hover_tooltip": "PASS (tooltip open, node title rendered)",
+      "canvas_cluster_click": "PASS (selectedCluster=1, summary '무대와 공연')",
+      "search": "PASS (1 result, '처음 저장한 Moment')",
+      "bridge_toggle": "PASS (Bridge ON -> Bridge, toast shown)",
+      "reset": "PASS (selection cleared, zoom 0.82, panel/summary closed)"
+    },
+    "430x932": {
+      "control_surface": "CANVAS_CLUSTER_POINTER",
+      "canvas_hover_tooltip": "SOURCE_MOBILE_HOVER_DISABLED (innerWidth<=760 branch)",
+      "canvas_cluster_click": "PASS (selectedCluster=1 after deterministic camera pre-pin)",
+      "search": "PASS (1 result, '처음 저장한 Moment')",
+      "bridge_toggle": "PASS",
+      "reset": "PASS"
+    },
+    "390x844": {
+      "control_surface": "CANVAS_CLUSTER_POINTER",
+      "canvas_hover_tooltip": "SOURCE_MOBILE_HOVER_DISABLED (innerWidth<=760 branch)",
+      "canvas_cluster_click": "PASS (selectedCluster=1 after deterministic camera pre-pin)",
+      "search": "PASS (1 result, '처음 저장한 Moment')",
+      "bridge_toggle": "PASS",
+      "reset": "PASS"
+    },
+    "all_viewports": { "browser_errors": 0 }
+  },
+  "input_timing_policy": {
+    "rule": "No pointer input is applied before window.__LT60__.clusterProjection(0) is non-null (first draw frame). Applied identically to original and split.",
+    "source_native_defect": "nearestHit() can read the sparse clusterProjected array before the first draw() fills it when pointermove arrives before the first animation frame (TypeError).",
+    "classification": "SOURCE_NATIVE_DEFECT; NOT caused by mechanical split; NOT repaired during split (source repair is out of scope)."
+  },
+  "determinism_policy": {
+    "camera": "focusCluster/selectNode fly animations are allowed to complete under prefers-reduced-motion, then the camera is pinned to exact source values before each capture.",
+    "toast": "cleared and 450ms CSS-transition settle plus two animation frames before each capture.",
+    "screenshots": "raw PNGs retained as evidence; comparison digest is a canonical pixel digest (16x16 downsample, channels floored to /16) because the source's backdrop-filter blur compositing is +/-1 channel nondeterministic even over a static canvas."
+  },
+  "source_qa": {
+    "pass": true,
+    "browser_errors": 0,
+    "cross_track_navigation": "SOURCE_NATIVE HOLD (V1.2 handoff routes open real Track 55/56/59 URLs; not exercised during baseline or parity capture)"
+  },
+  "visual_review": "Source-native 3D moment-cluster canvas, glass panels and four action modals reviewed from captured PNGs at all three viewports; behavior matches Drive 검증결과.json QA record.",
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}

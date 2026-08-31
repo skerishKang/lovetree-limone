@@ -27,31 +27,41 @@ for (const sourceId of sourceIds) {
   if (originalBytes.length !== manifest.authority?.bytes) throw new Error(`${sourceId}: original byte count drift`);
   if (sha256(originalBytes) !== manifest.authority?.sha256) throw new Error(`${sourceId}: original SHA256 drift`);
 
-  for (const marker of ['<style>', '</style>', '<script>', '</script>']) {
-    if (count(original, marker) !== 1) throw new Error(`${sourceId}: expected exactly one ${marker}`);
-  }
+  if (count(original, '<style>') !== 1 || count(original, '</style>') !== 1) throw new Error(`${sourceId}: expected exactly one style block`);
+  const scriptOpenCount = count(original, '<script>');
+  if (scriptOpenCount < 1 || scriptOpenCount !== count(original, '</script>')) throw new Error(`${sourceId}: unbalanced inline script blocks`);
+  if (count(original, '<script') !== scriptOpenCount) throw new Error(`${sourceId}: attributed or external script tags are outside mechanical extraction scope`);
 
   const styleOpen = original.indexOf('<style>');
   const styleClose = original.indexOf('</style>', styleOpen + 7);
-  const scriptOpen = original.indexOf('<script>', styleClose + 8);
-  const scriptClose = original.indexOf('</script>', scriptOpen + 8);
-  if (!(styleOpen >= 0 && styleClose > styleOpen && scriptOpen > styleClose && scriptClose > scriptOpen)) {
-    throw new Error(`${sourceId}: invalid inline style/script ordering`);
+  if (!(styleOpen >= 0 && styleClose > styleOpen)) throw new Error(`${sourceId}: invalid inline style ordering`);
+
+  const blocks = [];
+  const gaps = [];
+  let searchFrom = styleClose + '</style>'.length;
+  for (let b = 0; b < scriptOpenCount; b += 1) {
+    const open = original.indexOf('<script>', searchFrom);
+    const close = original.indexOf('</script>', open + '<script>'.length);
+    if (open < 0 || close < 0) throw new Error(`${sourceId}: invalid inline script ordering`);
+    blocks.push({ open, close, length: close - (open + '<script>'.length), content: original.slice(open + '<script>'.length, close) });
+    if (b > 0) gaps.push(original.slice(blocks[b - 1].close + '</script>'.length, open));
+    searchFrom = close + '</script>'.length;
   }
 
   const css = original.slice(styleOpen + '<style>'.length, styleClose);
-  const js = original.slice(scriptOpen + '<script>'.length, scriptClose);
+  const js = blocks.map((block) => block.content).join('');
   const cssLink = '<link rel="stylesheet" href="./styles.css"/>';
   const scriptSrc = '<script src="./script.js"></script>';
+  const scriptRegion = blocks.map((block) => `<script>${block.content}</script>`).reduce((acc, part, i) => (i === 0 ? part : `${acc}${gaps[i - 1]}${part}`), '');
   const indexHtml = original.slice(0, styleOpen)
     + cssLink
-    + original.slice(styleClose + '</style>'.length, scriptOpen)
+    + original.slice(styleClose + '</style>'.length, blocks[0].open)
     + scriptSrc
-    + original.slice(scriptClose + '</script>'.length);
+    + original.slice(blocks[blocks.length - 1].close + '</script>'.length);
 
   const reconstructed = indexHtml
-    .replace(cssLink, `<style>${css}</style>`)
-    .replace(scriptSrc, `<script>${js}</script>`);
+    .replace(cssLink, () => `<style>${css}</style>`)
+    .replace(scriptSrc, () => scriptRegion);
   const reconstructedBytes = Buffer.from(reconstructed, 'utf8');
   if (reconstructedBytes.compare(originalBytes) !== 0) throw new Error(`${sourceId}: round-trip reconstruction is not byte-identical`);
 
@@ -76,8 +86,10 @@ for (const sourceId of sourceIds) {
     boundaries: {
       style_open: styleOpen,
       style_close: styleClose,
-      script_open: scriptOpen,
-      script_close: scriptClose,
+      script_open: blocks[0].open,
+      script_close: blocks[blocks.length - 1].close,
+      script_blocks: blocks.map((block) => ({ open: block.open, close: block.close, length: block.length })),
+      script_gaps: gaps,
     },
     outputs: {
       'split/index.html': { bytes: Buffer.byteLength(indexHtml), sha256: sha256(Buffer.from(indexHtml, 'utf8')) },
@@ -86,7 +98,8 @@ for (const sourceId of sourceIds) {
     },
     contracts: {
       exact_single_style_extraction: true,
-      exact_single_script_extraction: true,
+      exact_single_script_extraction: blocks.length === 1,
+      exact_script_blocks_extraction: true,
       round_trip_byte_identity: true,
       redesign_or_refactor: false,
       framework_conversion: false,
