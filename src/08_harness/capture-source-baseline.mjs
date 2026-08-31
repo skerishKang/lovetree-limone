@@ -178,7 +178,8 @@ try {
       };
 
       for (const viewport of viewports) {
-        const page = await browser.newPage({ viewport });
+        const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+        const page = await context.newPage();
         const errors = [];
         page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
         page.on('console', (message) => {
@@ -196,6 +197,7 @@ try {
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.welcome.ids.length, elementCount: evidence.welcome.elementCount });
           await page.close();
+          await context.close();
           continue;
         }
         await page.waitForFunction(() => window.__lt && window.__lovetreeStats, null, { timeout: 15000 });
@@ -221,6 +223,7 @@ try {
         fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify(viewportEvidence, null, 2));
         summary.viewports.push({ viewport, interaction, idCount: overview.ids.length, elementCount: overview.elementCount });
         await page.close();
+        await context.close();
       }
       fs.writeFileSync(path.join(sourceOut, 'summary.json'), JSON.stringify(summary, null, 2));
       console.log(`SRC_BASELINE_CAPTURE_PASS=${sourceId}`);
