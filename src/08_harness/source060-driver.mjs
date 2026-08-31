@@ -313,6 +313,12 @@ async function captureTrack60Page(page, sourceOut, variant, sourceId, label, err
   await page.evaluate(() => window.__LT60_V12__.closePath());
   await settleTrack60(page);
 
+  // pageerror delivery is asynchronous; drain any pending error events before
+  // the authoritative check so the variant-labelled check below is deterministic.
+  await page.waitForTimeout(150);
+  await page.evaluate(async () => {
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
   if (errors.length) throw new Error(`${sourceId} ${label} ${variant}: browser errors: ${errors.join('; ')}`);
   return {
     states: { initial, clusterFocus, nodeSelect, momentViewer, bookHandoff, connectionHandoff, pathPreview },
@@ -336,7 +342,7 @@ export async function captureTrack60Variant(browser, url, viewport, sourceOut, v
   const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
-  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
+  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
   try {
     const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });

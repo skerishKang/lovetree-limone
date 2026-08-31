@@ -142,7 +142,7 @@ async function captureVariant(browser, url, viewport, sourceOut, variant, source
   const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
-  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
+  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
   const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
   if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
