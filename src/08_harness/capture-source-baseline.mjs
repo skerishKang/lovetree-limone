@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { captureTrack64Baseline } from './source064-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -177,7 +178,8 @@ try {
       };
 
       for (const viewport of viewports) {
-        const page = await browser.newPage({ viewport });
+        const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+        const page = await context.newPage();
         const errors = [];
         page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
         page.on('console', (message) => {
@@ -188,11 +190,20 @@ try {
           timeout: 30000,
         });
         if (!response?.ok()) throw new Error(`${sourceId} baseline HTTP ${response?.status()}`);
+        const label = `${viewport.width}x${viewport.height}`;
+        if (sourceId === 'SRC064') {
+          const evidence = await captureTrack64Baseline(page, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.welcome.ids.length, elementCount: evidence.welcome.elementCount });
+          await page.close();
+          await context.close();
+          continue;
+        }
         await page.waitForFunction(() => window.__lt && window.__lovetreeStats, null, { timeout: 15000 });
         await settle(page);
 
         const overview = await page.evaluate(collectPageState);
-        const label = `${viewport.width}x${viewport.height}`;
         await page.screenshot({ path: path.join(sourceOut, `${label}-overview.png`) });
 
         const mobile = viewport.width <= 640;
@@ -212,6 +223,7 @@ try {
         fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify(viewportEvidence, null, 2));
         summary.viewports.push({ viewport, interaction, idCount: overview.ids.length, elementCount: overview.elementCount });
         await page.close();
+        await context.close();
       }
       fs.writeFileSync(path.join(sourceOut, 'summary.json'), JSON.stringify(summary, null, 2));
       console.log(`SRC_BASELINE_CAPTURE_PASS=${sourceId}`);

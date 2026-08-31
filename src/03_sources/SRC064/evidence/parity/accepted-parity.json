@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC064",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_LOCAL_BROWSER_ARTIFACT_REVIEW",
+  "source_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+  "evidence_binding": "LOCAL_NATIVE_WSL_WORKTREE_AT_CAPTURE_HEAD",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": null,
+    "conclusion": "SUCCESS_LOCAL_NATIVE_WSL"
+  },
+  "artifact": {
+    "name": "src-split-parity-evidence-pass-8de2c32",
+    "path": "/tmp/src-split-parity-evidence-pass-8de2c32/SRC064",
+    "summary_sha256": "LOCAL_ARTIFACT_RECORDED_IN_WORKTREE_CAPTURE"
+  },
+  "authority": {
+    "bytes": 1565313,
+    "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d"
+  },
+  "viewports": [
+    { "width": 1280, "height": 800, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] },
+    { "width": 390, "height": 844, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] },
+    { "width": 320, "height": 720, "states": ["WELCOME_IDLE", "MOMENT_FOCUS", "MOMENT_MEDIA_VIEWER"] }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "computed_style": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "browser_errors": 0,
+  "interaction_results": {
+    "all_viewports": {
+      "control_surface": "MEMORY_ORBIT",
+      "card_count": 40,
+      "focus": "PASS",
+      "media_viewer": "PASS",
+      "menu_open_close": "PASS"
+    }
+  },
+  "visual_review": {
+    "desktop_welcome_focus_viewer_reviewed": true,
+    "mobile_welcome_focus_viewer_reviewed": true,
+    "source_native_css3d_orbit_preserved": true,
+    "source_native_observation": "CSS3D orbit and focus/viewer composition remain frozen Source behavior; no source correction or redesign was introduced."
+  },
+  "notes": [
+    "Dynamic CSS3D card frame geometry and SVG connection rects are intentionally not treated as deterministic state fields; matched canonical screenshot pixel digests cover the rendered geometry.",
+    "The source and split were compared through the source-specific window.__TRACK64__ contract.",
+    "This is local evidence from the native WSL working tree. A pushed exact-head CI artifact must be regenerated after the implementation commit before describing CI or central artifact acceptance."
+  ]
+}
