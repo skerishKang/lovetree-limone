@@ -32,6 +32,58 @@ type BoardConnection = {
   to: BoardPoint;
 };
 
+type BoardTransform = {
+  scale: number;
+  x: number;
+  y: number;
+};
+
+const SOURCE58_IDENTITY_TRANSFORM: BoardTransform = { scale: 1, x: 0, y: 0 };
+const SOURCE58_MAX_BOARD_SCALE = 1;
+const SOURCE58_MIN_BOARD_SCALE = 0.62;
+const SOURCE58_INSPECTOR_GAP = 12;
+
+/*
+ * Shared Source58 board transform helper.
+ * Mobile and desktop board positioning — fit, reset, zoom and the mobile
+ * inspector reprojection — all resolve through this single formula.
+ * `windowHeight` is the vertical space the board may occupy relative to the
+ * frame top; `minY` allows the mobile inspector case to reproject the board
+ * upward without letting it escape the viewport.
+ */
+function source58BoardTransform(
+  frameWidth: number,
+  windowHeight: number,
+  boardWidth: number,
+  boardHeight: number,
+  scale: number,
+  minY = 0,
+): BoardTransform {
+  const clampedScale = Math.max(SOURCE58_MIN_BOARD_SCALE, Math.min(SOURCE58_MAX_BOARD_SCALE, scale));
+  return {
+    scale: clampedScale,
+    x: (frameWidth - boardWidth * clampedScale) / 2,
+    y: Math.max(minY, Math.min(0, windowHeight - boardHeight * clampedScale)),
+  };
+}
+
+function fitSource58Board(
+  frameWidth: number,
+  windowHeight: number,
+  boardWidth: number,
+  boardHeight: number,
+  minY = 0,
+): BoardTransform {
+  return source58BoardTransform(
+    frameWidth,
+    windowHeight,
+    boardWidth,
+    boardHeight,
+    Math.min(frameWidth / boardWidth, windowHeight / boardHeight),
+    minY,
+  );
+}
+
 type SourceTrack58LivingMemoryBoardProps = {
   treeId: string;
   initialMomentId?: string | null;
@@ -114,6 +166,7 @@ export default function SourceTrack58LivingMemoryBoard({
   );
 
   const reducedMotion = useReducedMotion();
+  const [mobileViewport, setMobileViewport] = useState(false);
   const [theme, setTheme] = useState<Source58BoardTheme>("pearl");
   const [cinemaOpen, setCinemaOpen] = useState(false);
   const [cinemaIndex, setCinemaIndex] = useState(0);
@@ -125,6 +178,12 @@ export default function SourceTrack58LivingMemoryBoard({
   const [draftMemo, setDraftMemo] = useState("");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const cardRefs = useRef(new Map<string, HTMLButtonElement>());
+  const boardRef = useRef<HTMLDivElement>(null);
+  const boardFrameRef = useRef<HTMLDivElement>(null);
+  const inspectorRef = useRef<HTMLElement>(null);
+  const manualScaleRef = useRef<number | null>(null);
+  const fitModeRef = useRef(false);
+  const [boardTransform, setBoardTransform] = useState<BoardTransform>(SOURCE58_IDENTITY_TRANSFORM);
 
   const moments = useMemo<BoardMoment[]>(() => {
     const canonicalById = new Map(canonicalMoments.map((moment) => [moment.id, moment]));
@@ -195,6 +254,88 @@ export default function SourceTrack58LivingMemoryBoard({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [cinemaIndex, cinemaOpen, moments, selectMoment]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 760px)");
+    const sync = () => setMobileViewport(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  /*
+   * VIEW_DERIVED board placement. Everything resolves through the shared
+   * source58BoardTransform / fitSource58Board helpers; this only measures the
+   * current placement window (mobile inspector open ⇒ reproject above the sheet).
+   */
+  const boardPlacementWindow = useCallback(() => {
+    const frame = boardFrameRef.current;
+    const board = boardRef.current;
+    if (!frame || !board) return null;
+    const frameWidth = frame.clientWidth;
+    const boardWidth = board.offsetWidth;
+    const boardHeight = board.offsetHeight;
+    if (frameWidth <= 0 || boardWidth <= 0 || boardHeight <= 0) return null;
+
+    if (!mobileViewport) {
+      return { frameWidth, windowHeight: frame.clientHeight, boardWidth, boardHeight, minY: 0 };
+    }
+
+    const frameTop = frame.getBoundingClientRect().top;
+    let available = window.innerHeight - frameTop;
+    const inspector = inspectorRef.current;
+    if (mobileInspectorOpen && inspector) {
+      const bottomOffset = Number.parseFloat(window.getComputedStyle(inspector).bottom) || 0;
+      const sheetTop = window.innerHeight - bottomOffset - inspector.offsetHeight;
+      available = sheetTop - frameTop - SOURCE58_INSPECTOR_GAP;
+    }
+    return {
+      frameWidth,
+      windowHeight: Math.max(160, available),
+      boardWidth,
+      boardHeight,
+      minY: Math.min(0, 8 - frameTop),
+    };
+  }, [mobileInspectorOpen, mobileViewport]);
+
+  const applyBoardPlacement = useCallback(() => {
+    const geometry = boardPlacementWindow();
+    if (!geometry) return;
+    const { frameWidth, windowHeight, boardWidth, boardHeight, minY } = geometry;
+    setBoardTransform(
+      manualScaleRef.current !== null
+        ? source58BoardTransform(frameWidth, windowHeight, boardWidth, boardHeight, manualScaleRef.current, minY)
+        : fitModeRef.current || mobileViewport
+          ? fitSource58Board(frameWidth, windowHeight, boardWidth, boardHeight, minY)
+          : SOURCE58_IDENTITY_TRANSFORM,
+    );
+  }, [boardPlacementWindow, mobileViewport]);
+
+  const fitBoard = useCallback(() => {
+    manualScaleRef.current = null;
+    fitModeRef.current = true;
+    applyBoardPlacement();
+  }, [applyBoardPlacement]);
+
+  const zoomBoard = useCallback(
+    (delta: number) => {
+      manualScaleRef.current = (manualScaleRef.current ?? boardTransform.scale) + delta;
+      applyBoardPlacement();
+    },
+    [applyBoardPlacement, boardTransform.scale],
+  );
+
+  useEffect(() => {
+    applyBoardPlacement();
+  }, [applyBoardPlacement, error, loading, moments.length, selectedMomentId, treeId]);
+
+  useEffect(() => {
+    const frame = boardFrameRef.current;
+    if (!frame || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => applyBoardPlacement());
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [applyBoardPlacement]);
 
   const closeEdit = useCallback(() => {
     setEditOpen(false);
@@ -315,6 +456,9 @@ export default function SourceTrack58LivingMemoryBoard({
           <p className={styles.subtitle}>{tree?.title || (productMode ? "나의 기억 보드" : "MYTREE canonical workspace")}</p>
         </div>
         <div className={styles.headerActions}>
+          <button type="button" className={styles.ghostButton} data-source58-fit="header" onClick={fitBoard}>
+            FIT ALL
+          </button>
           <button type="button" className={styles.ghostButton} onClick={() => void refresh()} disabled={loading}>
             {loading ? "LOADING" : "REFRESH"}
           </button>
@@ -356,13 +500,19 @@ export default function SourceTrack58LivingMemoryBoard({
         <div className={styles.workspace}>
           <section className={styles.boardSection} aria-label="Living Memory Board">
             <div className={styles.boardChrome}>
+              <div className={styles.boardFrame} data-source58-board-frame ref={boardFrameRef}>
               <div
                 className={styles.board}
+                ref={boardRef}
                 data-testid="source58-board"
                 data-mobile-spatial-board="true"
+                data-board-scale={boardTransform.scale.toFixed(3)}
+                style={{
+                  transform: `translate(${boardTransform.x}px, ${boardTransform.y}px) scale(${boardTransform.scale})`,
+                }}
                 onKeyDown={onBoardKeyDown}
                 tabIndex={0}
-                aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
+                aria-label="Moment핀보드. 방향키로 Moment를 이동할 수 있습니다."
               >
                 <div className={styles.boardTexture} aria-hidden="true" />
                 <svg
@@ -440,9 +590,25 @@ export default function SourceTrack58LivingMemoryBoard({
                       {moment.connectionReason ? (
                         <span className={styles.cardReason} data-source58-card-reason>{moment.connectionReason}</span>
                       ) : null}
-                    </button>
-                  );
-                })}
+                     </button>
+                   );
+                 })}
+               </div>
+
+               <div className={styles.boardViewControls} role="group" aria-label="Board view controls">
+                 <button type="button" aria-label="Zoom out" onClick={() => zoomBoard(-0.08)}>−</button>
+                 <span className={styles.zoomLabel}>{Math.round(boardTransform.scale * 100)}%</span>
+                 <button type="button" aria-label="Zoom in" onClick={() => zoomBoard(0.08)}>＋</button>
+                 <button type="button" data-source58-fit="board" onClick={fitBoard}>
+                   FIT ALL
+                 </button>
+               </div>
+              </div>
+
+              <div className={styles.viewToolbar}>
+                <button type="button" data-source58-fit="toolbar" onClick={fitBoard}>
+                  RESET VIEW
+                </button>
               </div>
 
               <nav className={styles.themeRail} aria-label="Board theme">
@@ -465,6 +631,7 @@ export default function SourceTrack58LivingMemoryBoard({
 
           <aside
             className={styles.inspector}
+            ref={inspectorRef}
             aria-label={productMode ? "선택한 Moment 상세" : "Selected Moment inspector"}
             data-mobile-open={String(mobileInspectorOpen)}
           >

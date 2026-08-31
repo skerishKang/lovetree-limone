@@ -152,6 +152,11 @@
   box-shadow: 0 35px 90px rgba(11, 2, 10, 0.36);
 }
 
+.boardFrame {
+  position: relative;
+  min-width: 0;
+}
+
 .board {
   --board-a: #fffdf8;
   --board-b: #f3eadf;
@@ -161,6 +166,7 @@
   overflow: hidden;
   border-radius: 18px;
   outline: none;
+  transform-origin: top left;
   background:
     radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.95), transparent 36%),
     linear-gradient(135deg, var(--board-a), var(--board-b));
@@ -421,6 +427,79 @@
   background: #fff8f2;
   color: var(--plum);
   border-color: transparent;
+}
+
+.boardViewControls {
+  position: absolute;
+  z-index: 6;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 5px;
+  border: 1px solid rgba(74, 45, 60, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 10px 26px rgba(11, 2, 10, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.boardViewControls button {
+  min-height: 26px;
+  border: 1px solid rgba(74, 45, 60, 0.12);
+  border-radius: 999px;
+  padding: 0 9px;
+  background: transparent;
+  color: #4a2d3c;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.boardViewControls button:hover {
+  background: rgba(74, 45, 60, 0.08);
+}
+
+.zoomLabel {
+  min-width: 40px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #4a2d3c;
+}
+
+.viewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 4px 0;
+}
+
+.viewToolbar button {
+  min-height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: transparent;
+  color: rgba(255, 248, 242, 0.72);
+  font: inherit;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.viewToolbar button:hover {
+  color: #fff8f2;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.boardViewControls button:focus-visible,
+.viewToolbar button:focus-visible {
+  outline: 3px solid #ffd18a;
+  outline-offset: 2px;
 }
 
 .inspector {
@@ -919,6 +998,8 @@
   .truthStrip { align-items: flex-start; flex-direction: column; }
   .boardChrome { padding: 7px; border-radius: 20px; }
   .board {
+    --source58-mobile-card-width: clamp(96px, 30vw, 116px);
+    --source58-mobile-card-height: 118px;
     min-height: 0;
     aspect-ratio: auto;
     display: grid;
@@ -981,6 +1062,10 @@
 @media (max-width: 360px) {
   .headerActions { flex-direction: column; }
   .headerActions button { width: 100%; }
+  .board {
+    --source58-mobile-card-width: clamp(86px, 29vw, 94px);
+    --source58-mobile-card-height: 108px;
+  }
   .card {
     width: calc(100% - 18px);
     margin-left: 18px;
