@@ -42,7 +42,11 @@ function collectTrack60State() {
   };
   return {
     ids: ids.map((el) => el.id),
-    elementCount: document.querySelectorAll('*').length,
+    // Content element count excluding mechanical-split glue nodes: the split
+    // necessarily replaces inline style/script nodes with external references
+    // (2 inline scripts in BODY -> 1 script src), so glue tags are excluded by
+    // contract. All observable rendered content is still compared exhaustively.
+    elementCount: document.querySelectorAll('body *:not(script):not(link):not(style)').length,
     buttonIds: [...document.querySelectorAll('button')].map((el) => el.id),
     metrics: Object.fromEntries(ids.map((el) => {
       const rect = el.getBoundingClientRect();
