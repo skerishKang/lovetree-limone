@@ -38,11 +38,11 @@ function cloneSource(sourceId = 'SRC056', targetId = 'SRC999') {
   return { root, base };
 }
 
-test('registry declares the formal Source rollout contract without releasing it', () => {
+test('registry declares the formal Source rollout contract and release state', () => {
   const state = JSON.parse(fs.readFileSync(path.join(repoRoot, 'src/01_registry/generation-state.json'), 'utf8'));
   assert.deepEqual(state.supported_phases, ['SETUP', 'CALIBRATION', 'ROLLOUT']);
-  assert.equal(state.phase, 'CALIBRATION');
-  assert.equal(state.broad_108_rollout_released, false);
+  assert.equal(state.phase, 'ROLLOUT');
+  assert.equal(state.broad_108_rollout_released, true);
   assert.equal(state.phase_contract.rollout.active_root, 'src/');
   assert.equal(state.phase_contract.rollout.allows_sources_outside_calibration_batch, true);
   assert.equal(state.phase_contract.rollout.mechanical_only_source_port, true);
@@ -57,13 +57,13 @@ test('registry declares the formal Source rollout contract without releasing it'
   ]);
 });
 
-test('current CALIBRATION fixture remains valid', () => {
+test('current ROLLOUT fixture remains valid', () => {
   const result = spawnSync(process.execPath, ['src/08_harness/validate-layout.mjs'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
   assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(result.stdout, /GENERATION_PHASE=CALIBRATION/);
+  assert.match(result.stdout, /GENERATION_PHASE=ROLLOUT/);
 });
 
 test('synthetic valid ROLLOUT state passes phase validation', () => {

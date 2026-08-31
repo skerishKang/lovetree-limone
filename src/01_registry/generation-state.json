@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "issue": 569,
-  "phase": "CALIBRATION",
+  "phase": "ROLLOUT",
   "supported_phases": ["SETUP", "CALIBRATION", "ROLLOUT"],
   "phase_contract": {
     "rollout": {
@@ -20,7 +20,7 @@
   "active_root": "src/",
   "real_source_runtime_started": true,
   "real_codex_runtime_started": false,
-  "broad_108_rollout_released": false,
+  "broad_108_rollout_released": true,
   "first_calibration": "SRC056",
   "first_calibration_s4": "PASS",
   "second_replay": {
@@ -48,11 +48,11 @@
   },
   "notes": [
     "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",
-    "SRC056 is the first real calibration Source. No Codex, family, component, composition, or broad 108 rollout is released.",
+    "SRC056 is the first real calibration Source. No Codex, family, component, or product composition runtime is released; Source mechanical rollout is now released.",
     "SRC056 has completed S0 through S4 with accepted authority, baseline, mechanical split, and direct A/B parity evidence.",
     "SRC064 is materially different from SRC056: CSS3D DOM orbit with 40 cards, focus transition, and media viewer.",
     "SRC064 exact-head PR CI passed at 18cec1d; the central job uploaded baseline evidence and validated the existing accepted parity while the new parity capture correctly skipped because the manifest was already accepted.",
     "SRC064 is merged to main at 5c85566 and the guarded Production deploy plus post-deploy smoke passed at run 33347420679.",
-    "Broad 108 rollout remains held pending the governing calibration review."
+    "Broad Source mechanical rollout is released; Codex, family, component, composition, product adoption, and backend/API/DB/Auth phases remain separate and unreleased."
   ]
 }
