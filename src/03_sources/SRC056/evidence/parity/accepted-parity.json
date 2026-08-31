@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC056",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_ARTIFACT_REVIEW",
+  "source_head": "f74bdd34a0f9d54ff285c3c7f287d8021ea988d9",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": 33325458977,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "id": 9736102792,
+    "name": "src-split-parity-f74bdd34a0f9d54ff285c3c7f287d8021ea988d9",
+    "digest": "sha256:217974421eb8715998c139d119515e7b306aa781412f794ed8e138371c33af30"
+  },
+  "authority": {
+    "bytes": 45761,
+    "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909"
+  },
+  "viewports": [
+    {"width":1280,"height":800,"states":["OVERVIEW","ORIGIN_REVEAL"]},
+    {"width":390,"height":844,"states":["OVERVIEW","ORIGIN_REVEAL"]},
+    {"width":320,"height":720,"states":["OVERVIEW","ORIGIN_REVEAL"]}
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL"
+  },
+  "browser_errors": 0,
+  "visual_review": {
+    "korean_text_rendered": true,
+    "desktop_reviewed": true,
+    "mobile_reviewed": true,
+    "source_native_mobile_overlap_preserved": true
+  },
+  "notes": [
+    "The mobile ORIGIN_REVEAL graph/headline overlap is frozen Source behavior and was not repaired.",
+    "No adapter, product shell, componentization, or product data was introduced.",
+    "Accepted from artifact evidence generated at exact source head f74bdd34a0f9d54ff285c3c7f287d8021ea988d9; acceptance commit is the provenance-record commit, not a rerun of the captured A/B evidence."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC056",
+  "source_folder_name": "56_세로형_모먼트관계망_전체조망",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+  "authority": {
+    "drive_folder_id": "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G",
+    "drive_file_id": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa",
+    "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+    "bytes": 45761,
+    "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+    "revision": "V1.2",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false
+}

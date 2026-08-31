@@ -1,15 +1,18 @@
 {
   "schema_version": "1.0",
   "issue": 569,
-  "phase": "SETUP",
+  "phase": "CALIBRATION",
   "active_root": "src/",
-  "real_source_runtime_started": false,
+  "real_source_runtime_started": true,
   "real_codex_runtime_started": false,
   "broad_108_rollout_released": false,
   "first_calibration": "SRC056",
+  "first_calibration_s4": "PASS",
   "second_replay": null,
   "notes": [
-    "SETUP phase allows governance/registry/templates/harness only.",
-    "Transition to CALIBRATION requires a separate reviewed change with fresh authority evidence."
+    "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",
+    "SRC056 is the first real calibration Source. No Codex, family, component, composition, or broad 108 rollout is released.",
+    "SRC056 has completed S0 through S4 with accepted authority, baseline, mechanical split, and direct A/B parity evidence.",
+    "A materially different second replay remains required before broad 108 rollout."
   ]
 }

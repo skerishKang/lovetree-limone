@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC056",
+  "status": "ACCEPTED",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": ["OVERVIEW", "ORIGIN_REVEAL"],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "canvas dimensions",
+    "runtime mode/state",
+    "interaction outcomes",
+    "console/page errors"
+  ],
+  "accepted_evidence": "accepted-baseline.json",
+  "captured_head": "faaaa61584abda27d4bb704287053567ac635d7e",
+  "workflow_run_id": 33323476599,
+  "artifact_id": 9735564304,
+  "artifact_digest": "sha256:d4e5ca523dd23adae8df4334958f6c81dbf60ed2f7e09c715ff131d54d6ec7b8",
+  "pass_rule": "Baseline is accepted only from a directly reviewed exact-head artifact whose frozen original remains byte-identical to locked authority."
+}

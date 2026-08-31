@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC056",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_ARTIFACT_REVIEW",
+  "captured_head": "faaaa61584abda27d4bb704287053567ac635d7e",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": 33323476599,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "id": 9735564304,
+    "name": "src-calibration-baseline-faaaa61584abda27d4bb704287053567ac635d7e",
+    "size_bytes": 2197372,
+    "digest": "sha256:d4e5ca523dd23adae8df4334958f6c81dbf60ed2f7e09c715ff131d54d6ec7b8"
+  },
+  "authority": {
+    "bytes": 45761,
+    "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909"
+  },
+  "reviewed_viewports": [
+    { "width": 1280, "height": 800, "states": ["OVERVIEW", "ORIGIN_REVEAL"] },
+    { "width": 390, "height": 844, "states": ["OVERVIEW", "ORIGIN_REVEAL"] },
+    { "width": 320, "height": 720, "states": ["OVERVIEW", "ORIGIN_REVEAL"] }
+  ],
+  "interaction_results": {
+    "1280x800": {
+      "control_surface": "DESKTOP_CONTROLS",
+      "origin_reveal": "PASS",
+      "zoom_in": "PASS",
+      "overview": "PASS",
+      "help": "PASS",
+      "browser_errors": 0
+    },
+    "390x844": {
+      "control_surface": "MOBILE_RIBBON",
+      "origin_reveal": "PASS",
+      "cluster_selection": "PASS",
+      "help": "PASS",
+      "browser_errors": 0
+    },
+    "320x720": {
+      "control_surface": "MOBILE_RIBBON",
+      "origin_reveal": "PASS",
+      "cluster_selection": "PASS",
+      "help": "PASS",
+      "browser_errors": 0
+    }
+  },
+  "evidence_sha256": {
+    "summary.json": "ee61d70f21a86027402a4855d621b7c020812e99280b30ff68fea275863ce674",
+    "1280x800.json": "ad4ec3cd81e349693471c3a557591bbcd7922b420c7112875fe22d0fa994617a",
+    "1280x800-overview.png": "5003de2daef58fd5d3d3e806defb6e716be0049ceec1b278ff2b8ffdc86131c7",
+    "1280x800-origin-reveal.png": "e866e3e7ff714c9b930af29cf30bdd4aceb4cb7b5831a09892cdd53b8d7d9a08",
+    "390x844.json": "bfc91fc428de12d5de94dea4919103e67876b106e357051ddfa966a567ab02c5",
+    "390x844-overview.png": "da6a2e1b75edf3680e09c324940dc1e4e903937a04f67c0e7fbd67cd6d13ca91",
+    "390x844-origin-reveal.png": "9512cfbdea28a3f0b3c45467689dd56ef59555d4e16ea8c57b7c03709c419d26",
+    "320x720.json": "60764736829e5ba9dce29fd6a3d7aed48fe881013932f096480d72a2842db527",
+    "320x720-overview.png": "6c4b8737950c4fc86fd7f6c3f237adc8c567e3865f79ac60758b0045f907439b",
+    "320x720-origin-reveal.png": "9eb7cca2df50377db36688855dcbb3e7c4c35087a6c779bd517dfdc529ce2f0b"
+  },
+  "visual_review": {
+    "korean_text_rendered": true,
+    "desktop_overview_and_origin_reveal_reviewed": true,
+    "mobile_overview_and_origin_reveal_reviewed": true,
+    "source_native_observation": "On mobile ORIGIN_REVEAL, graph content overlaps the headline region. This is frozen Source baseline behavior and must not be silently repaired during mechanical split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}
