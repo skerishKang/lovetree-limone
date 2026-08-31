@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST102",
+  "legacy_master_id": 102,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-17 Global Shell Rolling Menu",
+  "product_job": "SHELL",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-17 Global Shell",
+    "namespace_type=codex-source-local",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=shell_foundation",
+    "source_authority_version=V4 source-local",
+    "source_freshness=medium",
+    "source_runner_route=selected source-local Track17 V4",
+    "github_issue=245"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

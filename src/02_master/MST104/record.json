@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST104",
+  "legacy_master_id": 104,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track51 Neon Human Analysis Promo",
+  "product_job": "CAMPAIGN",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track51 Neon Human Analysis Promo",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=hold_no_executable",
+    "source_freshness=medium",
+    "source_runner_route=source-track-51",
+    "current_main_present=true",
+    "github_issue=308"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

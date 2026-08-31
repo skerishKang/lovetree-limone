@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST076",
+  "legacy_master_id": 76,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-04 Orbit Archive",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-04 Orbit Archive / V4 orbit capability",
+    "namespace_type=codex-capability-reuse",
+    "coverage_state=COVERED",
+    "mvp_review_state=selective_reuse",
+    "source_freshness=medium",
+    "native_route=/v4/subjects/demo/orbit",
+    "canonical_route=/v4/subjects/demo/orbit",
+    "current_main_present=true"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

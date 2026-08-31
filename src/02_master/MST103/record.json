@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST103",
+  "legacy_master_id": 103,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-18 Fragment Loader",
+  "product_job": "SHELL",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track18 Fragment Loader V2",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=transition_loading_donor",
+    "source_authority_version=V2",
+    "source_freshness=low",
+    "source_runner_route=/design-lab/source-tracks/18/v2/source",
+    "manifest_path=design-intake/manifests/source-track-18-fragment-loader-v2.json",
+    "current_main_present=true",
+    "github_issue=245,252,256",
+    "github_pr=255"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

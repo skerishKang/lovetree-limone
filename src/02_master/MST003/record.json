@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST003",
+  "legacy_master_id": 3,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "36-3 Cinematic Memory Portal",
+  "product_job": "HOME",
+  "mapping_status": "DUPLICATE_FAMILY",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "DUPLICATE_FAMILY",
+    "anchor_master": "MST001"
+  },
+  "notes": [
+    "semantic_identity=Drive Track36 Cinematic Memory Portal",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=function_visual_donor",
+    "reconciliation_disposition=DUPLICATE_FAMILY",
+    "source_authority_version=v3",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

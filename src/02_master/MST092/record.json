@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST092",
+  "legacy_master_id": 92,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "08 Rainbow Memory Canopy",
+  "product_job": "MILESTONE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=V4 Rainbow Memory Canopy",
+    "namespace_type=v4-source",
+    "coverage_state=COVERED",
+    "mvp_review_state=canonical",
+    "source_freshness=low",
+    "native_route=/v4/trees/demo/celebrate/canopy",
+    "canonical_route=/v4/trees/demo/celebrate/canopy",
+    "current_main_present=true",
+    "github_issue=30"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

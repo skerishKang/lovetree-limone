@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST054",
+  "legacy_master_id": 54,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track63 Moment Field 3D Studio",
+  "product_job": "MYTREE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track63 Moment Field 3D Studio",
+    "namespace_type=source-track-lineage-authority-gap",
+    "coverage_state=COVERED",
+    "mvp_review_state=hold_source_executable_pending",
+    "source_authority_version=V1.3 pending executable",
+    "source_freshness=high",
+    "source_runner_route=track-63",
+    "native_route=/design-lab/lineages/63",
+    "current_main_present=true",
+    "github_issue=164,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

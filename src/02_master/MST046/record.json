@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST046",
+  "legacy_master_id": 46,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track66 First Tree Interactive Guide",
+  "product_job": "CAPTURE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Track66 First Tree / First Journey golden path",
+    "namespace_type=product-capability",
+    "coverage_state=COVERED",
+    "mvp_review_state=golden_path_keep_function_donor",
+    "source_authority_version=V1.2",
+    "source_freshness=low",
+    "source_runner_route=track-66",
+    "native_route=/v4/journey",
+    "canonical_route=/v4/journey",
+    "current_main_present=true",
+    "github_issue=177,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

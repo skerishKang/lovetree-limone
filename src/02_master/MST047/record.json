@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST047",
+  "legacy_master_id": 47,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "09 Full Memory Summary Dashboard",
+  "product_job": "MYTREE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Drive Track09 Full Memory Summary Dashboard",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=visual_function_donor",
+    "reconciliation_disposition=PARTIAL_PROVENANCE",
+    "source_authority_version=current/unversioned",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/09_전체기억_요약대시보드/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

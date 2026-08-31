@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST024",
+  "legacy_master_id": 24,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track70 Future Editorial v2",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDES",
+    "targets": [
+      "MST023"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Source Track70 Future Editorial",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=ab_selection_open",
+    "source_authority_version=v2",
+    "source_freshness=medium",
+    "source_runner_route=source-track-70",
+    "current_main_present=true",
+    "github_issue=291,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

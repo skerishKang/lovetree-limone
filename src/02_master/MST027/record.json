@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST027",
+  "legacy_master_id": 27,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-03 Editorial Female",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-03 Editorial Memory Portal Female",
+    "namespace_type=codex-alias-unresolved",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=alternate",
+    "source_freshness=medium"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

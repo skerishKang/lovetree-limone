@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST071",
+  "legacy_master_id": 71,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track42 Season Memory Cards",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track42 Season Memory Cards",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=pending_native",
+    "source_freshness=low",
+    "source_runner_route=source-track-42",
+    "manifest_path=design-intake/manifests/source-track-42-season-memory-cards.json",
+    "current_main_present=true",
+    "github_issue=296"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

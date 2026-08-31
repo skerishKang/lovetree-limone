@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST084",
+  "legacy_master_id": 84,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track44 Memory Window Composer",
+  "product_job": "TOOLS",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track44 Memory Window Composer",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=alternate_visual_donor_pending_native",
+    "source_authority_version=V2 baseline",
+    "source_freshness=low",
+    "source_runner_route=source-track-44",
+    "manifest_path=design-intake/manifests/source-track-44-handopen-memory-composer.json",
+    "current_main_present=true",
+    "github_issue=302,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

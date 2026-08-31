@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST011",
+  "legacy_master_id": 11,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "52 Global Moment Orbit / 3D Network",
+  "product_job": "DISCOVER",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Lineage52 Global Moment Orbit",
+    "namespace_type=lineage",
+    "coverage_state=COVERED",
+    "mvp_review_state=alternate",
+    "source_freshness=low",
+    "source_runner_route=Lineage52 registry",
+    "native_route=/design-lab/lineages/52/v3",
+    "current_main_present=true",
+    "github_issue=93"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

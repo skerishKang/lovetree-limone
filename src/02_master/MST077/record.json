@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST077",
+  "legacy_master_id": 77,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-08 Crystal Atelier",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Lineage56 Crystal Atelier",
+    "namespace_type=lineage",
+    "coverage_state=COVERED",
+    "mvp_review_state=native_backlog_review",
+    "source_authority_version=V3",
+    "source_freshness=low",
+    "source_runner_route=Lineage56",
+    "native_route=/design-lab/lineages/56/v3",
+    "current_main_present=true",
+    "github_issue=137"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

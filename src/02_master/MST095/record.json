@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST095",
+  "legacy_master_id": 95,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track40 Cinematic Golden Fruit v3",
+  "product_job": "MILESTONE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDES",
+    "targets": [
+      "MST093",
+      "MST094"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Source Track40 Cinematic Golden Fruit",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=pending_native",
+    "source_authority_version=v3",
+    "source_freshness=low",
+    "source_runner_route=source-track-40",
+    "manifest_path=design-intake/manifests/source-track-40-goldenfruit.json",
+    "current_main_present=true",
+    "github_issue=340"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

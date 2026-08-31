@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST108",
+  "legacy_master_id": 108,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-06 3D Experience Collection",
+  "product_job": "LAB",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-06 3D Experience Collection suite",
+    "namespace_type=codex-suite-decomposed",
+    "coverage_state=COVERED",
+    "mvp_review_state=partial_suite_native_review",
+    "source_freshness=medium",
+    "source_runner_route=capability/lineage split",
+    "native_route=/design-lab/capabilities/memory-anatomy",
+    "canonical_route=selective capability reuse",
+    "current_main_present=true",
+    "github_issue=140,141"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

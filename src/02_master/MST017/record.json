@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST017",
+  "legacy_master_id": 17,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track49 Idol Moment Reveal Portal",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track49 Reveal Portal",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=selection_hold",
+    "source_freshness=medium",
+    "source_runner_route=source-track-49",
+    "current_main_present=true",
+    "github_issue=306,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

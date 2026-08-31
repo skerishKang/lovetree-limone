@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST036",
+  "legacy_master_id": 36,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "53 Moment Node Light Pulse Connection Flow",
+  "product_job": "PATH",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Lineage53 Moment Connection Flow",
+    "namespace_type=lineage",
+    "coverage_state=COVERED",
+    "mvp_review_state=primary",
+    "source_authority_version=V2",
+    "source_freshness=low",
+    "source_runner_route=Lineage53 registry",
+    "native_route=/design-lab/lineages/53/v2",
+    "current_main_present=true",
+    "github_issue=119,120"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

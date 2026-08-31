@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST012",
+  "legacy_master_id": 12,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track72 Editorial Moment Archive Discovery Wall",
+  "product_job": "DISCOVER",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track72 Editorial Discovery Wall",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=alternate_pending_implementation",
+    "source_freshness=low",
+    "source_runner_route=source-track-72",
+    "current_main_present=true",
+    "github_issue=312,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

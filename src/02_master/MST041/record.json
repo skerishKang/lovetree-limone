@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST041",
+  "legacy_master_id": 41,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track41 Memory Pocket",
+  "product_job": "MOMENT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track41 Memory Pocket",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=function_donor",
+    "source_freshness=low",
+    "source_runner_route=source-track-41",
+    "current_main_present=true",
+    "github_issue=289"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

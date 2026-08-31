@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST073",
+  "legacy_master_id": 73,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track58 Living Memory Pinboard",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track58 Living Memory Pinboard",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=alternate_pending_native",
+    "source_freshness=low",
+    "source_runner_route=source-track-58",
+    "current_main_present=true",
+    "github_issue=310"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

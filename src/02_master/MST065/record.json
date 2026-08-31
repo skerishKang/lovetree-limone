@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST065",
+  "legacy_master_id": 65,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "32 Actual Page Motion v2.1",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=V4 Person Bookshelf page-motion family",
+    "namespace_type=v4-source",
+    "coverage_state=COVERED",
+    "mvp_review_state=canonical_family",
+    "source_authority_version=v2.1",
+    "source_freshness=low",
+    "native_route=/v4/subjects/bookshelf/v2-1",
+    "canonical_route=/v4/subjects/bookshelf/v2-1",
+    "current_main_present=true",
+    "github_issue=30"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

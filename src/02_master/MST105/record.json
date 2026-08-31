@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST105",
+  "legacy_master_id": 105,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-05 Video Figure Atelier V2",
+  "product_job": "CAMPAIGN",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Lineage58 VideoFigure V2",
+    "namespace_type=lineage",
+    "coverage_state=COVERED",
+    "mvp_review_state=native_backlog_review",
+    "source_authority_version=V2",
+    "source_freshness=low",
+    "source_runner_route=Lineage58",
+    "native_route=/design-lab/lineages/58/v2",
+    "current_main_present=true"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}
