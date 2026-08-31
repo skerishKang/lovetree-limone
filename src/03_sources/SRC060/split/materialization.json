@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC060",
+  "status": "ACCEPTED",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "exact_head": "a4073bd8680d78f47acbf49174e259a9e4aa126b",
+    "workflow_run_id": 33404553174,
+    "artifact_name": "src-split-parity-a4073bd8680d78f47acbf49174e259a9e4aa126b",
+    "artifact_path": "/tmp/src-split-parity-evidence/SRC060",
+    "candidate_generated_at_head": "29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
+    "candidate_artifact_name": "src-mechanical-split-candidate-29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
+    "candidate_workflow_run_id": 33402000509
+  },
+  "authority": {
+    "bytes": 55260,
+    "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+  },
+  "boundaries": {
+    "style_open": 241,
+    "style_close": 15809,
+    "script_open": 20672,
+    "script_close": 53583,
+    "script_blocks": [
+      {
+        "open": 20672,
+        "close": 37633,
+        "length": 16953
+      },
+      {
+        "open": 37644,
+        "close": 53583,
+        "length": 15931
+      }
+    ],
+    "script_gaps": [
+      "\n\n"
+    ]
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 5608,
+      "sha256": "42ce0d5ebc129cae74e69fa0adbf90372bfd10a04071be53a493534044ca4755",
+      "git_blob_sha1": "f8aa76066da03142256a614a7399c0e92c99f9e0"
+    },
+    "split/styles.css": {
+      "bytes": 15565,
+      "sha256": "4cae9669daebad17da4eb9265b563539bbac50cf7affba53678ddc22f29dc09d",
+      "git_blob_sha1": "2c2977e2ef2d5012c8b2849984d6922a564fef14"
+    },
+    "split/script.js": {
+      "bytes": 34115,
+      "sha256": "7c9a593ca38570cfed1c44d636bd00ff32b4efcc934a111b11617a9dbf68e329",
+      "git_blob_sha1": "5a727509b79e65e9afe297298103ed6f7e891874"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": false,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json"
+}

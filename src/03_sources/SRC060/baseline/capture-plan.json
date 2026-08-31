@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC060",
+  "status": "PENDING",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1440, "height": 900 },
+    { "width": 430, "height": 932 },
+    { "width": 390, "height": 844 }
+  ],
+  "states": [
+    "INITIAL",
+    "CLUSTER_FOCUS",
+    "NODE_SELECT",
+    "MOMENT_VIEWER",
+    "BOOK_HANDOFF",
+    "CONNECTION_HANDOFF",
+    "PATH_PREVIEW"
+  ],
+  "measurements": [
+    "id inventory",
+    "canvas and overlay element rectangles",
+    "critical computed styles",
+    "cluster/node projection landmarks after first render frame",
+    "__LT60__ and __LT60_V12__ runtime state",
+    "focus/select/handoff interaction outcomes",
+    "console/page errors"
+  ],
+  "input_timing_policy": "Pointer interaction is applied only after source readiness (window.__LT60__ present and clusterProjection(0) non-null after the first projection frame). This identical gate is applied to original and split surfaces so the source-native pre-first-frame nearestHit race is never exercised and never repaired.",
+  "source_native_defect_note": "nearestHit() reads sparse clusterProjected entries before the first draw() fills them; a pointermove earlier than the first animation frame raises a TypeError in the untouched source. Classified SOURCE_NATIVE_DEFECT=YES, SPLIT_CAUSED=NO_EVIDENCE.",
+  "accepted_evidence": "baseline/accepted-baseline.json",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority."
+}

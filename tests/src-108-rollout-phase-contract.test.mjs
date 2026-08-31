@@ -4,13 +4,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { validateGenerationPhase } from '../src/08_harness/generation-phase-validator.mjs';
 import {
   validateMechanicalSplitSurface,
   validateSourceCapsules,
 } from '../src/08_harness/source-capsule-validator.mjs';
 
-const repoRoot = path.resolve(new URL('..', import.meta.url).pathname);
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const calibrationSet = new Set(['SRC064', 'SRC058', 'SRC057', 'SRC056', 'SRC060']);
 
 function cloneSource(sourceId = 'SRC056', targetId = 'SRC999') {

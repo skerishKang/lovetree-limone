@@ -6,6 +6,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mjs';
 import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mjs';
+import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -13,11 +14,19 @@ const outRoot = process.env.SRC_PARITY_EVIDENCE_DIR || '/tmp/src-split-parity-ev
 const exactHead = process.env.SRC_EXACT_HEAD || null;
 if (!exactHead || !/^[0-9a-f]{40}$/.test(exactHead)) throw new Error('SRC_EXACT_HEAD must be the exact 40-char PR head SHA');
 
-const viewports = [
+const defaultViewports = [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
   { width: 320, height: 720 },
 ];
+const sourceViewports = {
+  SRC060: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
+};
+const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 const round = (value) => Math.round(value * 100) / 100;
 
@@ -109,7 +118,9 @@ function startServer(sourceId, sourceDir) {
     ? track64SourceFiles(sourceDir, sourceId)
     : sourceId === 'SRC057'
       ? track57SourceFiles(sourceDir, sourceId)
-      : new Map([
+      : sourceId === 'SRC060'
+        ? track60SourceFiles(sourceDir, sourceId)
+        : new Map([
       [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
@@ -131,7 +142,7 @@ async function captureVariant(browser, url, viewport, sourceOut, variant, source
   const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
-  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
+  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
   const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
   if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
@@ -179,7 +190,7 @@ try {
     const { port } = server.address();
     const summary = { schema_version: '1.0', source_id: sourceId, exact_head: exactHead, viewports: [] };
     try {
-      for (const viewport of viewports) {
+      for (const viewport of viewportsFor(sourceId)) {
         if (sourceId === 'SRC064') {
           const original = await captureTrack64Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
           const split = await captureTrack64Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
@@ -196,6 +207,27 @@ try {
             welcome_screenshot_sha_equal: split.screenshots.welcome_sha256 === original.screenshots.welcome_sha256,
             focus_screenshot_sha_equal: split.screenshots.focus_sha256 === original.screenshots.focus_sha256,
             viewer_screenshot_sha_equal: split.screenshots.viewer_sha256 === original.screenshots.viewer_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC060') {
+          const original = await captureTrack60Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureTrack60Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          const stateKeys = ['initial', 'clusterFocus', 'nodeSelect', 'momentViewer', 'bookHandoff', 'connectionHandoff', 'pathPreview'];
+          for (const state of stateKeys) {
+            assert.deepStrictEqual(split.states[state].state, original.states[state].state, `${sourceId} ${viewport.width}x${viewport.height}: ${state} state drift`);
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          const comparison = {
+            viewport,
+            ...Object.fromEntries(stateKeys.map((state) => [`${state.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)}_state_equal`, true])),
+            interaction_equal: true,
+            initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
+            moment_viewer_screenshot_sha_equal: split.screenshots.moment_viewer_sha256 === original.screenshots.moment_viewer_sha256,
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,
           };

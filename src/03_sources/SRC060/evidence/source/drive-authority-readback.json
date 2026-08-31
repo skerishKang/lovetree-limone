@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC060",
+  "verified_at_utc": "2026-08-31T13:36:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+    "file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+    "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+    "mime_type": "text/html",
+    "bytes": 55260,
+    "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+  },
+  "identity_folder_crosscheck": {
+    "top_level_design_folder_id": "1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T",
+    "top_level_design_folder_name": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전",
+    "candidate_folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+    "candidate_folder_name": "버전1.2_실제트랙네비게이션_후보",
+    "note": "Intake manifest recorded the top-level identity folder; the fresh readback resolved the direct parent candidate folder on the live Drive."
+  },
+  "git_transport_crosscheck": {
+    "intake_pr": 553,
+    "intake_head_sha": "814c26f0fd2c23cc2be0a3bae370fccc5850ba86",
+    "path": "new/sources/SRC060/SRC060-01-raw/SRC060-01-01-original.html",
+    "byte_identity": "PASS",
+    "reuse_classification": "REUSE_EXACT"
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  }
+}

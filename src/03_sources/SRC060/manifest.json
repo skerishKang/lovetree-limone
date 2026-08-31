@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC060",
+  "source_folder_name": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+  "authority": {
+    "drive_folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+    "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+    "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+    "bytes": 55260,
+    "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+    "revision": "V1.2",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "canvas2d-3d-cluster-projection",
+    "scenario_id": "moment-cluster-deep-exploration",
+    "qa_hook": "window.__LT60__ / window.__LT60_V12__",
+    "inline_script_block_count": 2,
+    "interaction_surface": [
+      "UNIVERSE_IDLE",
+      "CLUSTER_FOCUS",
+      "NODE_SELECT",
+      "BRIDGE_MODE",
+      "MOMENT_VIEWER",
+      "BOOK_HANDOFF",
+      "CONNECTION_HANDOFF",
+      "PATH_PREVIEW",
+      "OVERLAY_CLOSE",
+      "RESET_VIEW"
+    ],
+    "source_specific_controls": [
+      "search",
+      "emotionFilter",
+      "bridgeMode",
+      "reset",
+      "openMomentViewer",
+      "openBookHandoff",
+      "openConnectionHandoff",
+      "openPathPreview"
+    ]
+  }
+}

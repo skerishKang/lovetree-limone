@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC060",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-08-31T13:36:00Z",
+  "drive_folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+  "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+  "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+  "revision": "V1.2",
+  "mime_type": "text/html",
+  "bytes": 55260,
+  "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+  "transport": {
+    "classification": "REUSE_EXACT",
+    "intake_pr": 553,
+    "intake_head_sha": "814c26f0fd2c23cc2be0a3bae370fccc5850ba86",
+    "intake_path": "new/sources/SRC060/SRC060-01-raw/SRC060-01-01-original.html",
+    "verification": "Git blob bytes and a fresh rclone Drive download were hashed independently and both matched the locked authority exactly. Intake metadata is provenance evidence, not authority."
+  }
+}
