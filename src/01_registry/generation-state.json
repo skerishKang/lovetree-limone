@@ -2,6 +2,21 @@
   "schema_version": "1.0",
   "issue": 569,
   "phase": "CALIBRATION",
+  "supported_phases": ["SETUP", "CALIBRATION", "ROLLOUT"],
+  "phase_contract": {
+    "rollout": {
+      "active_root": "src/",
+      "requires_real_source_runtime": true,
+      "requires_broad_108_rollout_released": true,
+      "allows_sources_outside_calibration_batch": true,
+      "codex_runtime_released": false,
+      "family_runtime_released": false,
+      "mechanical_only_source_port": true,
+      "fresh_authority_required_per_source": true,
+      "stage_order": ["S0", "S1", "S2", "S3", "S4"]
+    },
+    "downstream_phases_separate": ["CODEX", "FAMILY", "COMPONENTIZATION", "PRODUCT_COMPOSITION", "PRODUCT_ADOPTION", "BACKEND_API_DB_AUTH"]
+  },
   "active_root": "src/",
   "real_source_runtime_started": true,
   "real_codex_runtime_started": false,
