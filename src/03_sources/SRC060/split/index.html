@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<title>LoveTree · Track 60 V1.2 · Real Cross-Track Navigation</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body data-track-version="V1.2">
+<canvas id="stage" aria-label="3D 모먼트 클러스터 탐색"></canvas>
+<div class="topbar">
+  <div class="brand"><div class="mark"></div><div><strong>3D 모먼트 클러스터 심층탐색</strong><span>MY TREE · OTHER VIEWS · V1.2 REAL NAVIGATION</span></div></div>
+  <div class="controls">
+    <div class="searchbox"><input id="search" aria-label="Moment 검색" placeholder="Moment · 키워드 · 사람 검색"/><span class="glass">⌕</span><div id="searchResults" class="search-results"></div></div>
+    <select id="emotionFilter" aria-label="감정 필터"><option value="all">감정 전체</option><option>설렘</option><option>위로</option><option>감탄</option><option>그리움</option><option>몰입</option></select>
+    <button id="bridgeMode">Bridge</button><button id="reset" class="iconbtn" aria-label="전체 보기">⌂</button>
+  </div>
+</div>
+<div class="mobile-hint">드래그 회전 · 두 손가락 확대/축소 · 탭 탐색</div>
+<div id="clusterSummary" class="cluster-summary"><h3></h3><p></p><div class="bridge-list"></div></div>
+<div id="tooltip" class="tooltip"><b></b><small></small></div>
+<div id="panel" class="panel"><button class="close" aria-label="닫기">✕</button><div class="eyebrow">Moment Inspect</div><h2></h2><div class="meta"></div><div class="preview"></div><div class="why"><b>WHY NEXT</b><span></span></div><div class="bridgebox"></div><div class="actions"><button type="button" id="openMomentViewer">이 Moment 열기</button><button type="button" id="openBookHandoff">책에서 보기</button><button type="button" id="openConnectionHandoff">연결 편집</button><button type="button" id="openPathPreview" class="path">이 경로 전체 보기</button></div></div>
+<div class="legend"><span><i class="m"></i>Moment</span><span><i class="b"></i>Bridge Moment</span><span><i class="s"></i>Selected</span></div>
+<div class="orient" id="orient"><b>ORBIT</b></div>
+<div class="zoomlevel">SEMANTIC ZOOM<strong id="levelLabel">UNIVERSE</strong></div>
+
+<canvas id="pathOverlay" aria-hidden="true"></canvas>
+<div id="momentViewer" class="action-modal" role="dialog" aria-modal="true" aria-label="Full Moment Viewer"><div class="action-shell"><button type="button" class="action-close" data-close-action="momentViewer" aria-label="Moment Viewer 닫기">✕</button><div class="action-kicker">Full Moment Viewer</div><h2 class="action-title"></h2><p class="action-sub"></p><div class="viewer-grid"><div class="viewer-media"><div class="media-art"><div class="media-copy"></div></div></div><div class="viewer-side"><div class="detail-card source"></div><div class="detail-card note"></div><div class="detail-card whydetail"></div><div class="detail-card bridgeinfo"></div><div class="nav-moments"></div></div></div></div></div>
+<div id="bookHandoff" class="action-modal" role="dialog" aria-modal="true" aria-label="Memory Sketchbook handoff"><div class="action-shell"><button type="button" class="action-close" data-close-action="bookHandoff" aria-label="책 미리보기 닫기">✕</button><div class="action-kicker">Track 59 · Book Handoff Preview</div><h2 class="action-title"></h2><p class="action-sub">선택한 Moment를 그대로 Memory Sketchbook의 page/spread 문맥으로 넘깁니다.</p><div class="handoff-spread"><section class="book-page left"></section><section class="book-page right"></section></div><div class="handoff-actions"><button type="button" class="strong" data-route="59">Memory Sketchbook에서 계속 보기</button><button type="button" data-return-action="bookHandoff">60으로 돌아가기</button></div><div class="route-receipt"></div></div></div>
+<div id="connectionHandoff" class="action-modal" role="dialog" aria-modal="true" aria-label="Connection Edit handoff"><div class="action-shell narrow"><button type="button" class="action-close" data-close-action="connectionHandoff" aria-label="연결 편집 handoff 닫기">✕</button><div class="action-kicker">Track 55 · Connection Edit Handoff</div><h2 class="action-title">연결 편집으로 넘기기</h2><p class="action-sub">60에서는 구조를 발견하고, 실제 Connection 수정은 Track 55 편집 View로 넘깁니다.</p><div class="connection-flow"><div class="conn-moment current"></div><div class="conn-arrow">→<small></small></div><div class="conn-moment destination"></div></div><div class="bridge-note"></div><div class="handoff-actions"><button type="button" class="strong" data-route="55">Track 55 연결편집으로 이동</button><button type="button" data-return-action="connectionHandoff">60으로 돌아가기</button></div><div class="route-receipt"></div></div></div>
+<div id="pathPreview" class="path-preview" role="dialog" aria-label="Path Preview"><div class="action-kicker">Track 60 · Path Preview</div><h3></h3><div class="path-stats"></div><div class="path-route"></div><div class="path-play-status"></div><div class="handoff-actions"><button type="button" class="strong" data-path-play>경로 재생</button><button type="button" data-route="56">Track 56에서 전체 보기</button><button type="button" data-path-return>3D 탐색으로 돌아가기</button></div><div class="route-receipt"></div></div>
+<div id="toast" class="toast"></div>
+<script src="./script.js"></script>
+
+</body>
+</html>

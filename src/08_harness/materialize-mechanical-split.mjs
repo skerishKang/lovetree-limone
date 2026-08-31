@@ -103,6 +103,7 @@ for (const sourceId of sourceIds) {
       round_trip_byte_identity: true,
       redesign_or_refactor: false,
       framework_conversion: false,
+      product_data_injection: false,
     },
   };
   fs.writeFileSync(path.join(outRoot, sourceId, 'candidate-manifest.json'), JSON.stringify(candidate, null, 2));
