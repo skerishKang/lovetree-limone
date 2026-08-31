@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST020",
+  "legacy_master_id": 20,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track65 Cinematic Editorial",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track65 Cinematic Editorial",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=visual_donor_hold",
+    "source_authority_version=V2.2",
+    "source_freshness=high",
+    "source_runner_route=source-track-65",
+    "current_main_present=true",
+    "github_issue=236,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

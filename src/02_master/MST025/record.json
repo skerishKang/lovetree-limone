@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST025",
+  "legacy_master_id": 25,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-01 Superhuman Cinematic",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-01 / Track49 family candidate",
+    "namespace_type=codex-alias-unresolved",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=alternate",
+    "source_freshness=medium",
+    "source_runner_route=source-track-49 family",
+    "current_main_present=true",
+    "github_issue=306,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

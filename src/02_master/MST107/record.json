@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST107",
+  "legacy_master_id": 107,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "01 0730 work",
+  "product_job": "LAB",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=V4 23-source integration bundle / 01_0730 source alias",
+    "namespace_type=v4-source-bundle",
+    "coverage_state=COVERED",
+    "mvp_review_state=not_reviewed",
+    "reconciliation_disposition=ALIAS_FOUND",
+    "source_authority_version=mixed historical bundle / canonical V4 aliases",
+    "source_freshness=low",
+    "source_runner_route=multiple V4 source mappings via Issue #30",
+    "native_route=multiple /v4 routes via V4 source bundle",
+    "canonical_route=multiple /v4 routes via V4 source bundle",
+    "reference_path=reference/source-tracks-snapshot/01_0730작업물/",
+    "manifest_path=app/components/v4/v4-source-manifest.ts",
+    "current_main_present=true",
+    "github_issue=30,284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

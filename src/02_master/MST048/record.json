@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST048",
+  "legacy_master_id": 48,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "10 Memory Pulse Desktop",
+  "product_job": "MYTREE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Drive Track10 Memory Pulse Desktop",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=visual_function_donor",
+    "reconciliation_disposition=PARTIAL_PROVENANCE",
+    "source_authority_version=current/unversioned",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/10_메모리펄스_로그인홈/",
+    "current_main_present=true",
+    "github_issue=284,344",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST049",
+  "legacy_master_id": 49,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "17 Living Memory Terrain",
+  "product_job": "MYTREE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Drive Track17 Living Memory Terrain",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=alternate_foundation_donor",
+    "reconciliation_disposition=PARTIAL_PROVENANCE",
+    "source_authority_version=v1.2",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/17_리빙메모리지형/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST069",
+  "legacy_master_id": 69,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "37 Memory Calendar",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Drive Track37 Memory Calendar",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=not_reviewed",
+    "reconciliation_disposition=PARTIAL_PROVENANCE",
+    "source_authority_version=current/unversioned",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/37_기억달력_메모리패드/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

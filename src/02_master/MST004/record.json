@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST004",
+  "legacy_master_id": 4,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-15 Memory Biosphere",
+  "product_job": "HOME",
+  "mapping_status": "CODEX_RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "CDX",
+      "id": "CDX015",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-15 Memory Biosphere",
+    "namespace_type=codex",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=alternate_visual_donor",
+    "source_authority_version=V2 Drive evidence",
+    "source_freshness=medium",
+    "current_main_present=false",
+    "github_issue=344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

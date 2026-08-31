@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST022",
+  "legacy_master_id": 22,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track68 Human Emotional Path — Asian",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track68 Human Emotional Path",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=variant_selection_hold",
+    "source_authority_version=V3.3.2 compare",
+    "source_freshness=high",
+    "source_runner_route=/design-lab/source-tracks/68/v3-3-2/compare",
+    "current_main_present=true",
+    "github_issue=244,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

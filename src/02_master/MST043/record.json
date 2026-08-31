@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST043",
+  "legacy_master_id": 43,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track62 Circular Rail v1",
+  "product_job": "MOMENT",
+  "mapping_status": "SUPERSEDED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDED_BY",
+    "targets": [
+      "MST044"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Track62 Continuous Exhibition Rail",
+    "namespace_type=capability",
+    "coverage_state=COVERED",
+    "mvp_review_state=primary_family",
+    "source_authority_version=V11 latest lineage",
+    "source_freshness=medium",
+    "source_runner_route=track-62 manifests",
+    "native_route=/design-lab/capabilities/continuous-exhibition-rail",
+    "current_main_present=true",
+    "github_issue=159"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

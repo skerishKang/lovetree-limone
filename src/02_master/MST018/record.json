@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST018",
+  "legacy_master_id": 18,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track50 Dream Memory Cinematic v1",
+  "product_job": "SUBJECT",
+  "mapping_status": "SUPERSEDED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDED_BY",
+    "targets": [
+      "MST019"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Source Track50 Dream Memory Cinematic",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=superseded_hold",
+    "source_authority_version=v1",
+    "source_freshness=low",
+    "source_runner_route=source-track-50",
+    "current_main_present=true",
+    "github_issue=307"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

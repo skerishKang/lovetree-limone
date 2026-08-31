@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST080",
+  "legacy_master_id": 80,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-14 Rotating Memory Index",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-14 Rotating Memory Index",
+    "namespace_type=codex-source-local-unresolved",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=primary",
+    "source_freshness=medium",
+    "github_issue=244"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

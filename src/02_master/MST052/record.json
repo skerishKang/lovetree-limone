@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST052",
+  "legacy_master_id": 52,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "20-1 Living Memory Engine",
+  "product_job": "MYTREE",
+  "mapping_status": "SUPERSEDED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDED_BY",
+    "targets": [
+      "MST053"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Drive Track20 Living Memory Engine",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=ux_visual_donor",
+    "reconciliation_disposition=SUPERSEDED",
+    "source_authority_version=v1.1 family / older master state",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/20_리빙메모리엔진_버전통합/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

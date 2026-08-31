@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST081",
+  "legacy_master_id": 81,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "24 Video Memory Workflow",
+  "product_job": "TOOLS",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Drive Track24 Video Memory Workflow",
+    "namespace_type=drive-source-snapshot",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=candidate",
+    "reconciliation_disposition=PARTIAL_PROVENANCE",
+    "source_authority_version=v1",
+    "source_freshness=medium",
+    "reference_path=reference/source-tracks-snapshot/24_영상기억_워크플로우/",
+    "current_main_present=true",
+    "github_issue=284",
+    "github_pr=287"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

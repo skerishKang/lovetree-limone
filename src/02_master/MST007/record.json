@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST007",
+  "legacy_master_id": 7,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track74 OrbitMorph Portal",
+  "product_job": "HOME",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track74 OrbitMorph Portal",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=primary_hold_gate",
+    "source_authority_version=V2",
+    "source_freshness=medium",
+    "source_runner_route=source-track-74",
+    "native_route=/design-lab/source-tracks/74/v2/native",
+    "current_main_present=true",
+    "github_issue=314,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

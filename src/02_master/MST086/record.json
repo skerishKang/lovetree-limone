@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST086",
+  "legacy_master_id": 86,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track54 Operations Studio Workflow",
+  "product_job": "TOOLS",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track54 Operations Studio",
+    "namespace_type=source-track-authority-ambiguous",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=implementation_donor_hold",
+    "source_freshness=high",
+    "github_issue=405"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

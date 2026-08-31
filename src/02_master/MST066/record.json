@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST066",
+  "legacy_master_id": 66,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "33 Folding Archive",
+  "product_job": "ARCHIVE",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=V4 Folding Archive",
+    "namespace_type=v4-source",
+    "coverage_state=COVERED",
+    "mvp_review_state=canonical",
+    "source_freshness=low",
+    "native_route=/v4/subjects/demo/folding",
+    "canonical_route=/v4/subjects/demo/folding",
+    "current_main_present=true",
+    "github_issue=30"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

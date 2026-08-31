@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST026",
+  "legacy_master_id": 26,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-02 Editorial Male",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Codex-02 Editorial Memory Portal Male",
+    "namespace_type=codex-alias-unresolved",
+    "coverage_state=PARTIAL",
+    "mvp_review_state=primary",
+    "source_freshness=medium"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

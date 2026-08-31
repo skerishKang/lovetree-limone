@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST085",
+  "legacy_master_id": 85,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track45 Moment Precision Tool",
+  "product_job": "TOOLS",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": null,
+  "notes": [
+    "semantic_identity=Source Track45 Moment Precision",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=pending_native",
+    "source_freshness=low",
+    "source_runner_route=source-track-45",
+    "manifest_path=design-intake/manifests/source-track-45-moment-precision.json",
+    "current_main_present=true",
+    "github_issue=303"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

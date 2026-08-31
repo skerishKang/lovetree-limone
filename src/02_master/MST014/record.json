@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST014",
+  "legacy_master_id": 14,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Recording 08-13 23:58",
+  "product_job": "SUBJECT",
+  "mapping_status": "DUPLICATE_FAMILY",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "DUPLICATE_FAMILY",
+    "anchor_master": "MST013"
+  },
+  "notes": [
+    "semantic_identity=Codex-work-13 LoveTree Cinematic Watercolor V2",
+    "namespace_type=codex-drive-source",
+    "coverage_state=MISSING",
+    "mvp_review_state=not_reviewed",
+    "reconciliation_disposition=DUPLICATE_FAMILY",
+    "source_authority_version=V2",
+    "source_freshness=unresolved",
+    "current_main_present=false",
+    "github_issue=471"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST016",
+  "legacy_master_id": 16,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Track48 Neon Pilot v2",
+  "product_job": "SUBJECT",
+  "mapping_status": "UNRESOLVED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDES",
+    "targets": [
+      "MST015"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Source Track48 Neon Pilot",
+    "namespace_type=source-track",
+    "coverage_state=COVERED",
+    "mvp_review_state=hold_provenance_likeness",
+    "source_authority_version=v2",
+    "source_freshness=medium",
+    "source_runner_route=source-track-48",
+    "current_main_present=true",
+    "github_issue=305,344"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}

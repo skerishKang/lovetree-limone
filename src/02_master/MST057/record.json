@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "master_key": "MST057",
+  "legacy_master_id": 57,
+  "authority_ledger": "design-intake/master-design-coverage.json",
+  "master_filename": "Codex-12 Living Media Sphere v2",
+  "product_job": "MYTREE",
+  "mapping_status": "SUPERSEDED",
+  "identity_refs": [],
+  "family_ref": null,
+  "relation": {
+    "type": "SUPERSEDES",
+    "targets": [
+      "MST056"
+    ],
+    "superseded_by": [
+      "MST058"
+    ]
+  },
+  "notes": [
+    "semantic_identity=Living Media Sphere source family",
+    "namespace_type=source-family",
+    "coverage_state=COVERED",
+    "mvp_review_state=primary_family",
+    "source_authority_version=v2 baseline / v3 family authority",
+    "source_freshness=medium",
+    "source_runner_route=/design-lab/source-families/living-media-sphere/v3/source",
+    "current_main_present=true",
+    "github_issue=235,242"
+  ],
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+}
