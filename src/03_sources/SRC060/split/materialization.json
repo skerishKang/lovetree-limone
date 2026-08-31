@@ -1,13 +1,16 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC060",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
-    "exact_head": "29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
-    "workflow_run_id": 33402000509,
-    "artifact_name": "src-mechanical-split-candidate-29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
-    "artifact_path": "/tmp/src-mechanical-split-candidate/SRC060"
+    "exact_head": "a4073bd8680d78f47acbf49174e259a9e4aa126b",
+    "workflow_run_id": 33404553174,
+    "artifact_name": "src-split-parity-a4073bd8680d78f47acbf49174e259a9e4aa126b",
+    "artifact_path": "/tmp/src-split-parity-evidence/SRC060",
+    "candidate_generated_at_head": "29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
+    "candidate_artifact_name": "src-mechanical-split-candidate-29a8e9b82ba8e7f5083ec248f8b75cd34a236791",
+    "candidate_workflow_run_id": 33402000509
   },
   "authority": {
     "bytes": 55260,
@@ -60,6 +63,6 @@
     "framework_conversion": false,
     "product_data_injection": false
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_status": "PASS",
   "parity_ref": "evidence/parity/accepted-parity.json"
 }
