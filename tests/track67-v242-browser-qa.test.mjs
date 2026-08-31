@@ -529,6 +529,33 @@ test("G. INSPECT_HIGH_RES — inspect viewer shows high-resolution source asset"
 
     await openInspectProgrammatic(page, 1);
 
+    await waitForCondition(
+      page,
+      () => {
+        const viewerImg = document.getElementById("viewerImg");
+        const metrics = window.textureAPI.metrics();
+        return Boolean(
+          viewerImg?.complete &&
+            viewerImg.naturalWidth > 0 &&
+            viewerImg.naturalHeight > 0 &&
+            metrics.viewerDecodedEstimateMB > 1 &&
+            metrics.highresViewerAssetDimensions,
+        );
+      },
+      () => {
+        const viewerImg = document.getElementById("viewerImg");
+        const metrics = window.textureAPI.metrics();
+        return {
+          imgComplete: viewerImg?.complete || false,
+          imgNaturalWidth: viewerImg?.naturalWidth || 0,
+          imgNaturalHeight: viewerImg?.naturalHeight || 0,
+          reportedDimensions: metrics.highresViewerAssetDimensions || "",
+          decodedEstimateMB: metrics.viewerDecodedEstimateMB || 0,
+        };
+      },
+      "high-res viewer asset decode and metrics readiness",
+    );
+
     const highRes = await page.evaluate(() => {
       const viewerImg = document.getElementById("viewerImg");
       const metrics = window.textureAPI.metrics();
