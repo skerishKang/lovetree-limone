@@ -1,0 +1,78 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: signature-moments
+SCREEN: living-glass-moment-cards-v1.3
+VERSION: v1.3
+STATUS: design-review
+BASE_FILE: new-track-57
+SCOPE: preserve V1.2 desktop visual + repair mobile responsive typography, cards, sheets and media editing
+PRESERVE: Moment data, emotion, date, media, note, Connection reason
+DATE: 2026-08-11
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LoveTree · Living Moments V1.3</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="memory-haze"></div><div class="petal-trace"></div><div class="vignette"></div>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>LOVETREE · LIVING MOMENTS</span></div>
+    <div class="top-actions"><button class="quiet-btn" id="resetBtn">처음 상태</button><button class="quiet-btn" id="helpBtn">사용법</button></div>
+  </header>
+  <main class="hero">
+    <div class="eyebrow">GLASS MEMORY COLLECTION · V1.3</div>
+    <h1>가장 오래 남은 순간을,<br>살아 있는 기억 카드로 다시 봅니다.</h1>
+    <p>카드의 색은 그때의 감정에서 시작됩니다. 표면에 마우스를 움직여 빛과 깊이를 느끼고, 선택하면 다음 순간으로 이어진 이유까지 확인할 수 있습니다.</p>
+    <section class="collection" id="collection" aria-label="Signature Moments">
+      <svg class="thread-layer" id="threadSvg" aria-hidden="true"><defs><linearGradient id="threadGradient"><stop id="threadFrom" offset="0" stop-color="#b783ff"/><stop offset=".48" stop-color="#ffffff" stop-opacity=".88"/><stop id="threadTo" offset="1" stop-color="#ffc36f"/></linearGradient></defs><path class="thread-path" id="threadPath"/><circle class="thread-orb" id="threadOrb" r="4" fill="#fff"/></svg>
+    </section>
+    <div class="hint"><span>마우스를 카드 위에서 천천히 움직여 보세요</span><span class="dot"></span><span>클릭하면 Moment 상세</span><span class="dot"></span><span>모바일은 살짝 드래그</span></div>
+    <div class="extra-strip" aria-hidden="true"><span class="extra-dot active"></span><span class="extra-dot"></span><span class="extra-dot"></span><span class="extra-dot"></span><span class="extra-dot"></span></div>
+  </main>
+
+  <aside class="detail-panel" id="detailPanel" aria-hidden="true">
+    <div class="detail-head"><div><div class="detail-kicker" id="detailLabel">SIGNATURE MOMENT</div><h2 id="detailTitle"></h2></div><button class="close-btn" id="detailClose" aria-label="상세 닫기">×</button></div>
+    <div class="detail-media" id="detailMedia"><img id="detailImage" alt="선택한 Moment 미디어"></div>
+    <div class="detail-grid">
+      <div class="detail-item"><span>DATE</span><b id="detailDate"></b></div>
+      <div class="detail-item"><span>EMOTION</span><b id="detailEmotion"></b></div>
+      <div class="detail-item"><span>SOURCE / MEDIA</span><b id="detailSource"></b></div>
+      <div class="detail-item"><span>PRIVACY</span><b id="detailPrivacy"></b></div>
+    </div>
+    <div class="source-line"><div class="source-line-copy"><span>ORIGINAL SOURCE</span><b id="detailSourceUrl"></b></div><button class="link-edit-btn" id="editMedia">미디어 링크 연결</button></div>
+    <div class="detail-note"><span>내 메모</span><p id="detailNote"></p></div>
+    <div class="why-box"><span>왜 다음 순간으로 이어졌나요?</span><p id="detailWhy"></p></div>
+    <div class="detail-actions"><button class="action-btn" id="openMoment">Moment 열기</button><button class="action-btn primary" id="nextMoment">다음 순간 보기 →</button></div>
+    <div class="privacy">이 Prototype의 Moment는 데모 데이터입니다.</div>
+  </aside>
+  <div class="why-toast" id="whyToast"></div>
+
+  <div class="modal" id="viewerModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="viewer">
+      <div class="viewer-media" id="viewerMedia"></div>
+      <div class="viewer-copy"><div><h3 id="viewerTitle"></h3><p id="viewerMeta"></p></div><button class="viewer-close" id="viewerClose">닫기 · ESC</button></div>
+    </div>
+  </div>
+
+  <div class="modal edit-modal" id="editModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="viewer">
+      <form class="edit-form" id="mediaForm">
+        <div><h3>미디어 링크 연결</h3><p>카드 디자인은 그대로 두고 실제 원본 URL과 썸네일을 Moment에 연결합니다.</p></div>
+        <div class="edit-live-preview" id="editLivePreview"><img id="editPreviewImage" alt="YouTube 썸네일 Live Preview"><div class="edit-preview-copy"><div><span>LIVE PREVIEW</span><b id="editPreviewTitle">URL을 붙여 넣으면 즉시 보여요</b></div><div class="edit-preview-state" id="editPreviewState">YouTube watch / youtu.be / shorts 지원</div></div></div>
+        <div class="edit-row"><div class="field"><label for="mediaKindInput">미디어 종류</label><select id="mediaKindInput"><option value="youtube">YouTube</option><option value="video">Video URL</option><option value="image">Image URL</option><option value="link">General Link</option><option value="text">Text only</option></select></div><div class="field"><label for="startInput">시작 초</label><input id="startInput" type="number" min="0" step="1" inputmode="numeric"></div></div>
+        <div class="field"><label for="mediaUrlInput">영상 / 링크 URL</label><input id="mediaUrlInput" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off"></div>
+        <div class="field"><label for="sourceLabelInput">출처 표시</label><input id="sourceLabelInput" type="text" maxlength="60" placeholder="YouTube / Official MV"></div>
+        <div class="edit-error" id="editError" aria-live="polite"></div>
+        <div class="edit-actions"><button type="button" id="editCancel">취소</button><button class="save" type="submit">이 Moment에 연결</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

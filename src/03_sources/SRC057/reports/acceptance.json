@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC057",
+  "acceptance": "S0-S4_LOCAL_EVIDENCE_COMPLETE",
+  "authority": {
+    "bytes": 676320,
+    "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+    "revision": "V1.3",
+    "status": "LOCKED"
+  },
+  "stages": {
+    "S0_identity": "PASS",
+    "S1_raw_authority": "PASS",
+    "S2_baseline": "PASS_LOCAL_NATIVE_WSL",
+    "S3_mechanical_split": "PASS",
+    "S4_source_split_parity": "PASS_LOCAL_NATIVE_WSL"
+  },
+  "round_trip_byte_identical": true,
+  "viewports": ["1280x800", "390x844", "320x720"],
+  "browser_errors": 0,
+  "parity_evidence": "evidence/parity/accepted-parity.json",
+  "structural_test": "tests/mechanical-port.test.mjs",
+  "product_boundary": {
+    "adoption": "HOLD",
+    "lineage": "HOLD",
+    "fam_allocation": "NONE",
+    "componentization": "NONE",
+    "adapter": "NONE",
+    "product_integration": "NONE",
+    "react_tsx_conversion": "NONE"
+  },
+  "identity_collision_guard": {
+    "current_generation_namespace": "src",
+    "current_authority_path": "src/03_sources/SRC057/**",
+    "current_authority_title": "Living Glass V1.3 candidate",
+    "historical_authority_path": "new/sources/SRC057/**",
+    "historical_authority_status": "DEPRECATED_SUPERSEDED_GENERATION_CLAIM",
+    "historical_authority_bytes": 22310,
+    "historical_authority_sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+    "numeric_id_equality_is_not_identity_evidence": true,
+    "lineage_equivalence_inferred": false,
+    "historical_pr_550_imported": false,
+    "new_namespace_modified": false
+  },
+  "exact_head_ci": "PENDING_PR_HEAD",
+  "disposition": "READY_FOR_DRAFT_PR_AND_EXACT_HEAD_CI_REVIEW"
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC057",
+  "verified_at_utc": "2026-08-31T00:00:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+    "file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+    "filename": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+    "mime_type": "text/html",
+    "bytes": 676320,
+    "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+    "revision": "V1.3",
+    "source_snapshot": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-11"
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_historical_pr_text": false,
+    "lineage_number_allocated": false,
+    "product_adoption": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC057",
+  "status": "ACCEPTED",
+  "source_head": "e5f6d7f9800c2abea2257bcf9f98b179fa829e23",
+  "evidence_binding": "LOCAL_NATIVE_WSL_WORKTREE_AT_CAPTURE_HEAD",
+  "authority": {
+    "bytes": 676320,
+    "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace"
+  },
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": null,
+    "conclusion": "SUCCESS_LOCAL_NATIVE_WSL"
+  },
+  "method": "SOURCE57_STANDARD_HARNESS_DRIVER",
+  "viewports": [
+    { "width": 1280, "height": 800, "states": ["INITIAL", "SELECTED", "NEXT", "EDIT_PREVIEW", "VIEWER"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "SELECTED", "NEXT", "EDIT_PREVIEW", "VIEWER"] },
+    { "width": 320, "height": 720, "states": ["INITIAL", "SELECTED", "NEXT", "EDIT_PREVIEW", "VIEWER"] }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "computed_style": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "viewport_results": [
+    { "viewport": { "width": 1280, "height": 800 }, "states_equal": true, "interaction_equal": true, "initial_screenshot_sha_equal": true, "viewer_screenshot_sha_equal": true },
+    { "viewport": { "width": 390, "height": 844 }, "states_equal": true, "interaction_equal": true, "initial_screenshot_sha_equal": true, "viewer_screenshot_sha_equal": true },
+    { "viewport": { "width": 320, "height": 720 }, "states_equal": true, "interaction_equal": true, "initial_screenshot_sha_equal": true, "viewer_screenshot_sha_equal": true }
+  ],
+  "browser_errors": 0,
+  "adoption_status": "HOLD",
+  "lineage_reservation": "HOLD",
+  "note": "Mechanical HTML/CSS/JS source-to-split parity only. No React/TSX conversion, product integration, FAM allocation, componentization, or adapter is claimed."
+}

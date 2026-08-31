@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC057",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_SOURCE_QA_ARTIFACT_REVIEW",
+  "source_artifact": "reference/source-track-57-living-glass/04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json",
+  "authority": {
+    "bytes": 676320,
+    "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace"
+  },
+  "reviewed_viewports": [
+    {"width":390,"height":844,"states":["INITIAL","DETAIL","EDIT","YOUTUBE_PREVIEW"]},
+    {"width":430,"height":932,"states":["INITIAL","DETAIL","EDIT","YOUTUBE_PREVIEW"]},
+    {"width":1440,"height":900,"states":["INITIAL"]}
+  ],
+  "source_qa": {
+    "pass": true,
+    "browser_errors": 0,
+    "mobile_body_width_matches_viewport": true,
+    "youtube_preview_source_verified": true
+  },
+  "visual_review": "SOURCE_QA_ARTIFACT_ONLY; CENTRAL_SPLIT_PARITY_PENDING",
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}
