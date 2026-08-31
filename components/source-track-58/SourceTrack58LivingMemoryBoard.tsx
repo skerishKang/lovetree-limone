@@ -512,7 +512,7 @@ export default function SourceTrack58LivingMemoryBoard({
                 }}
                 onKeyDown={onBoardKeyDown}
                 tabIndex={0}
-                aria-label="Moment핀보드. 방향키로 Moment를 이동할 수 있습니다."
+                aria-label="Moment 핀보드. 방향키로 Moment를 이동할 수 있습니다."
               >
                 <div className={styles.boardTexture} aria-hidden="true" />
                 <svg
