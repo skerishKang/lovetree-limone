@@ -1,6 +1,6 @@
 # Issue #569 Rollout Phase Contract
 
-This report records the governance-only phase extension. It does not release broad rollout and does not add a Source capsule.
+This report records the governance-only phase extension and the subsequent Source mechanical-port release. It does not add a Source capsule.
 
 ## Defined phases
 
@@ -29,4 +29,4 @@ Only the Source membership scope differs: `CALIBRATION` is fixed-batch constrain
 
 This contract releases no Codex runtime, FAM/Lineage allocation, componentization, product adoption/composition, or backend/API/DB/Auth work. Source rollout does not imply any of those phases.
 
-The current registry remains `phase=CALIBRATION` with `broad_108_rollout_released=false`; the release-state mutation is a separate central governance decision.
+The registry is now `phase=ROLLOUT` with `broad_108_rollout_released=true`; this release enables Source mechanical-port intake only. The release does not imply Codex, Family, component, product, or backend phases.
