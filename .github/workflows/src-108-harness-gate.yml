@@ -77,12 +77,12 @@ jobs:
           echo "phase=$phase" >> "$GITHUB_OUTPUT"
           echo "GENERATION_PHASE=$phase"
 
-      - name: Install dependencies for calibration browser evidence
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+      - name: Install dependencies for Source browser evidence
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         run: npm ci
 
       - name: Install Korean font for visual evidence
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         shell: bash
         run: |
           set -euo pipefail
@@ -92,7 +92,7 @@ jobs:
           fc-match 'Noto Sans CJK KR'
 
       - name: Cache Playwright Chromium
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         id: playwright-cache
         uses: actions/cache@v4
         with:
@@ -100,18 +100,18 @@ jobs:
           key: ${{ runner.os }}-src108-playwright-1.55.1-chromium
 
       - name: Prepare Chromium
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         run: npx playwright install chromium
 
       - name: Capture frozen Source baseline
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         env:
           SRC_BASELINE_EVIDENCE_DIR: /tmp/src-baseline-evidence
           SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
         run: node src/08_harness/capture-source-baseline.mjs
 
       - name: Upload Source baseline evidence
-        if: always() && steps.generation.outputs.phase == 'CALIBRATION'
+        if: always() && contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         uses: actions/upload-artifact@v4
         with:
           name: src-calibration-baseline-${{ github.event.pull_request.head.sha }}
@@ -120,7 +120,7 @@ jobs:
           retention-days: 14
 
       - name: Capture original-to-split parity evidence
-        if: steps.generation.outputs.phase == 'CALIBRATION'
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         id: parity_capture
         shell: bash
         env:

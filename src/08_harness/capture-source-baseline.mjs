@@ -16,14 +16,14 @@ if (state.phase === 'SETUP') {
   console.log('SRC_BASELINE_CAPTURE=SKIPPED_SETUP');
   process.exit(0);
 }
-if (state.phase !== 'CALIBRATION') throw new Error(`Unsupported generation phase for baseline capture: ${state.phase}`);
+if (!['CALIBRATION', 'ROLLOUT'].includes(state.phase)) throw new Error(`Unsupported generation phase for baseline capture: ${state.phase}`);
 if (!exactHead || !/^[0-9a-f]{40}$/.test(exactHead)) throw new Error('SRC_EXACT_HEAD must be the exact 40-char PR head SHA');
 
 const sourceIds = fs.readdirSync(sourceRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && /^SRC\d{3}$/.test(entry.name))
   .map((entry) => entry.name)
   .sort();
-if (!sourceIds.length) throw new Error('CALIBRATION requires at least one active Source');
+if (!sourceIds.length) throw new Error(`${state.phase} requires at least one active Source`);
 
 const viewports = [
   { width: 1280, height: 800 },

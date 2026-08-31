@@ -13,9 +13,21 @@ The harness is the reusable implementation factory for the full corpus, not a fi
 - registry: prevent namespace collisions and duplicate implicit identities;
 - composition: allow only parity-approved components downstream.
 
-## Calibration rule
+## Phase contract
 
-The first calibration is SRC056. A materially different second source (candidate SRC064 or SRC058) must pass without changing the governing rules before broad 108-corpus rollout.
+The harness supports the explicit generation sequence:
+
+```text
+SETUP → CALIBRATION → ROLLOUT
+```
+
+The first calibration is SRC056. A materially different second source (candidate SRC064 or SRC058) must pass without changing the governing rules before the governing review can authorize `ROLLOUT`.
+
+`CALIBRATION` validates only the fixed five-source batch. `ROLLOUT` validates any active `SRCxxx` capsule, but reuses the same shared authority, frozen-original, S-stage ordering, baseline, mechanical split, parity, browser-error, and split-surface TypeScript/JSX prohibition checks. A fresh Source authority tuple is required for every capsule.
+
+The workflow runs the same fail-closed Source baseline and parity stages in both `CALIBRATION` and `ROLLOUT`; phase conditions must never silently skip those checks.
+
+`ROLLOUT` is Source-only. It does not release Codex, FAM, Lineage, componentization, product adoption/composition, or backend/API/DB/Auth work.
 
 ## Setup slice
 
