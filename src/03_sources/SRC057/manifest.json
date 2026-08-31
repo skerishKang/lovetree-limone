@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC057",
+  "source_folder_name": "57_리빙글라스_모먼트카드",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/57_리빙글라스_모먼트카드/04_버전1.3_모바일반응형수정_자료/후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+  "authority": {
+    "drive_folder_id": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+    "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+    "filename": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+    "bytes": 676320,
+    "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+    "revision": "V1.3",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "revision": "V1.3",
+    "rendering": "dom-css-2.5d",
+    "scenario_id": "relationship-retrospective",
+    "browser_qa_source": "04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json",
+    "adoption": "HOLD",
+    "lineage_reservation": "HOLD"
+  },
+  "identity_collision_boundary": {
+    "current_generation_namespace": "src",
+    "current_authority": {
+      "path": "src/03_sources/SRC057/**",
+      "title": "Living Glass V1.3 candidate",
+      "bytes": 676320,
+      "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace"
+    },
+    "historical_distinct_claim": {
+      "path": "new/sources/SRC057/**",
+      "status": "DEPRECATED_SUPERSEDED_GENERATION_CLAIM",
+      "bytes": 22310,
+      "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+      "title": "Living Character World"
+    },
+    "numeric_id_equality_is_not_identity_evidence": true,
+    "lineage_equivalence_inferred": false,
+    "historical_pr_550_imported": false,
+    "new_namespace_modified": false
+  }
+}

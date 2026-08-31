@@ -5,6 +5,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mjs';
+import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -106,7 +107,9 @@ async function exercise(page, mobile) {
 function startServer(sourceId, sourceDir) {
   const files = sourceId === 'SRC064'
     ? track64SourceFiles(sourceDir, sourceId)
-    : new Map([
+    : sourceId === 'SRC057'
+      ? track57SourceFiles(sourceDir, sourceId)
+      : new Map([
       [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
@@ -192,6 +195,30 @@ try {
             interaction_equal: true,
             welcome_screenshot_sha_equal: split.screenshots.welcome_sha256 === original.screenshots.welcome_sha256,
             focus_screenshot_sha_equal: split.screenshots.focus_sha256 === original.screenshots.focus_sha256,
+            viewer_screenshot_sha_equal: split.screenshots.viewer_sha256 === original.screenshots.viewer_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC057') {
+          const original = await captureTrack57Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureTrack57Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          for (const state of ['initial', 'selected', 'next', 'editPreview', 'viewer']) {
+            assert.deepStrictEqual(split[state], original[state], `${sourceId} ${viewport.width}x${viewport.height}: ${state} state drift`);
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          const comparison = {
+            viewport,
+            initial_state_equal: true,
+            selected_state_equal: true,
+            next_state_equal: true,
+            edit_preview_state_equal: true,
+            viewer_state_equal: true,
+            interaction_equal: true,
+            initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
             viewer_screenshot_sha_equal: split.screenshots.viewer_sha256 === original.screenshots.viewer_sha256,
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,

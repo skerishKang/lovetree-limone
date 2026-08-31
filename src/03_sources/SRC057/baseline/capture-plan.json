@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC057",
+  "method": "DIRECT_SOURCE_QA_ARTIFACT_REVIEW",
+  "source_artifact": "04_버전1.3_모바일반응형수정_자료/버전1.3_모바일반응형_검증결과.json",
+  "viewports": [
+    {"width":390,"height":844},
+    {"width":430,"height":932},
+    {"width":1440,"height":900}
+  ],
+  "states": ["INITIAL", "DETAIL", "EDIT", "YOUTUBE_PREVIEW"],
+  "mechanical_only": true,
+  "product_adoption": false
+}
