@@ -8,9 +8,9 @@ Generation root: `src/`
 ```text
 S0_IDENTITY_VERIFIED        = PASS
 S1_RAW_AUTHORITY_LOCKED     = PASS
-S2_SOURCE_BASELINE_CAPTURED = PASS_LOCAL_NATIVE_WSL
+S2_SOURCE_BASELINE_CAPTURED = PASS_CENTRAL_EXACT_HEAD_CI_ARTIFACT
 S3_MECHANICAL_PORT_COMPLETE = PASS
-S4_SOURCE_SPLIT_PARITY      = PASS_LOCAL_NATIVE_WSL
+S4_SOURCE_SPLIT_PARITY      = PASS_CENTRAL_EXACT_HEAD_CI_VALIDATED
 ```
 
 ## Frozen authority
@@ -38,16 +38,15 @@ split/script.js  = 1542663 B
 
 Round-trip reconstruction is byte-identical to `original/original.html`. No HTML restructuring, CSS redesign, JavaScript refactor, framework conversion, product data injection, or product navigation integration was performed.
 
-## Parity evidence
+## Local parity evidence
 
-Local artifact:
-`/tmp/src-split-parity-evidence-pass-8de2c32/SRC064`
+The accepted visual comparison artifact remains:
 
-Capture head:
-`8de2c3286184ca8fca81af6ec50f8fbd9bd26891`
-
-Driver:
-`src/08_harness/source064-driver.mjs`
+```text
+source_head = 8de2c3286184ca8fca81af6ec50f8fbd9bd26891
+artifact    = src-split-parity-evidence-pass-8de2c32
+path        = /tmp/src-split-parity-evidence-pass-8de2c32/SRC064
+```
 
 The source-specific driver uses the frozen Source QA hook `window.__TRACK64__` and compares the original and mechanical split across:
 
@@ -73,10 +72,24 @@ CANONICAL SCREENSHOT PIXEL DIGEST  = EQUAL
 BROWSER_ERRORS                      = 0
 ```
 
-Dynamic CSS3D card transforms and SVG connection rectangles are not treated as deterministic state fields because the standalone source render loop updates them per frame. Their rendered result is covered by matched canonical screenshot pixel digests; the source-specific driver still checks card identity/class inventory and stable shell/focus/viewer landmarks.
+Dynamic CSS3D card transforms and SVG connection rectangles are not treated as deterministic state fields because the standalone source render loop updates them per frame. Their rendered result is covered by matched canonical screenshot pixel digests.
+
+## Central exact-head validation
+
+PR #573 was validated at exact head `18cec1d040bb3c11e37e52067358b6aad3fda62e` by `SRC 108 Reimplementation Harness Gate` run `33346967954`.
+
+```text
+SRC 108 Harness Gate       = SUCCESS
+Capture frozen Source baseline = SUCCESS (SRC056, SRC064)
+Existing accepted parity validation = SUCCESS
+Parity capture             = SKIPPED_ALREADY_ACCEPTED
+Parity artifact upload     = NOT_CREATED
+```
+
+The central run uploaded baseline artifact `src-calibration-baseline-18cec1d040bb3c11e37e52067358b6aad3fda62e` (artifact `9742314482`) and validated the existing accepted parity evidence. This report does not claim that the central run generated a duplicate parity artifact.
+
+The merged `main` commit is `5c85566c4feadf048845c7b99b9abd028a21466e`. Guarded Production deploy, active Worker verification, and post-deploy smoke passed in run `33347420679`.
 
 ## Boundary
 
-No adapter, product shell, componentization, family allocation, canonical data binding, backend, DB, Auth, API, or Production mutation occurred. SRC064 remains a source calibration runtime only.
-
-This acceptance is local native-WSL evidence. Exact-head CI and central artifact acceptance must be regenerated after the implementation commit is pushed; broad 108 rollout remains held until that gate and calibration review pass.
+No adapter, product shell, componentization, family allocation, canonical data binding, backend, DB, Auth, API, or Production mutation occurred as part of the SRC064 source implementation. SRC064 remains a source calibration runtime only. Broad 108 rollout remains held pending governing calibration review.

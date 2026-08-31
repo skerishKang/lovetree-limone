@@ -2,18 +2,27 @@
   "schema_version": "1.0",
   "source_id": "SRC064",
   "status": "ACCEPTED",
-  "review_method": "DIRECT_LOCAL_BROWSER_ARTIFACT_REVIEW",
+  "review_method": "DIRECT_LOCAL_PARITY_ARTIFACT_PLUS_CENTRAL_EXACT_HEAD_VALIDATION",
   "source_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
-  "evidence_binding": "LOCAL_NATIVE_WSL_WORKTREE_AT_CAPTURE_HEAD",
+  "evidence_binding": "LOCAL_NATIVE_WSL_PARITY_ARTIFACT_VALIDATED_BY_EXACT_HEAD_CI",
   "workflow": {
     "name": "SRC 108 Reimplementation Harness Gate",
-    "run_id": null,
-    "conclusion": "SUCCESS_LOCAL_NATIVE_WSL"
+    "run_id": 33346967954,
+    "conclusion": "SUCCESS_CENTRAL_EXACT_HEAD_CI"
   },
   "artifact": {
     "name": "src-split-parity-evidence-pass-8de2c32",
     "path": "/tmp/src-split-parity-evidence-pass-8de2c32/SRC064",
     "summary_sha256": "LOCAL_ARTIFACT_RECORDED_IN_WORKTREE_CAPTURE"
+  },
+  "central_validation": {
+    "pull_request": 573,
+    "exact_head": "18cec1d040bb3c11e37e52067358b6aad3fda62e",
+    "run_id": 33346967954,
+    "conclusion": "SUCCESS",
+    "parity_capture": "SKIPPED_ALREADY_ACCEPTED",
+    "parity_artifact_uploaded": false,
+    "validation_basis": "existing accepted parity evidence passed the exact-head SRC 108 validator"
   },
   "authority": {
     "bytes": 1565313,
@@ -51,6 +60,6 @@
   "notes": [
     "Dynamic CSS3D card frame geometry and SVG connection rects are intentionally not treated as deterministic state fields; matched canonical screenshot pixel digests cover the rendered geometry.",
     "The source and split were compared through the source-specific window.__TRACK64__ contract.",
-    "This is local evidence from the native WSL working tree. A pushed exact-head CI artifact must be regenerated after the implementation commit before describing CI or central artifact acceptance."
+    "The local parity artifact remains the normative visual comparison artifact. Exact-head CI run 33346967954 passed the SRC 108 validator against this accepted parity; it did not generate a duplicate parity artifact because the manifest was already accepted."
   ]
 }

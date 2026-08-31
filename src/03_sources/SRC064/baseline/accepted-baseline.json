@@ -2,17 +2,21 @@
   "schema_version": "1.0",
   "source_id": "SRC064",
   "status": "ACCEPTED",
-  "review_method": "DIRECT_LOCAL_BROWSER_ARTIFACT_REVIEW",
-  "captured_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+  "review_method": "DIRECT_CENTRAL_CI_ARTIFACT_REVIEW",
+  "captured_head": "18cec1d040bb3c11e37e52067358b6aad3fda62e",
   "workflow": {
     "name": "SRC 108 Reimplementation Harness Gate",
-    "run_id": null,
-    "conclusion": "SUCCESS_LOCAL_NATIVE_WSL"
+    "run_id": 33346967954,
+    "conclusion": "SUCCESS_CENTRAL_EXACT_HEAD_CI"
   },
   "artifact": {
-    "name": "src-calibration-baseline-8de2c32",
-    "path": "/tmp/src-baseline-evidence-8de2c32/SRC064",
-    "evidence_binding": "exact-head-local-native-wsl"
+    "name": "src-calibration-baseline-18cec1d040bb3c11e37e52067358b6aad3fda62e",
+    "artifact_id": 9742314482,
+    "run_id": 33346967954,
+    "path": "GitHub Actions artifact for run 33346967954",
+    "zip_sha256": "f6955b3a5e54b6394c9105a4ff86910f925614d9a810e730b87f804ecb37e63e",
+    "summary_sha256": "3ec20fd7c8cb1cc3dea730f4240e9a17882ff9017a5cbb839dca1fda92f4e739",
+    "evidence_binding": "exact-head-central-ci-artifact"
   },
   "authority": {
     "bytes": 1565313,

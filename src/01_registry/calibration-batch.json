@@ -5,14 +5,21 @@
   "first_calibration": {
     "source_id": "SRC056",
     "reason": "small/simple standalone HTML candidate for first mechanical split calibration",
-    "status": "NOT_STARTED"
+    "status": "PASS"
   },
   "second_replay": {
     "candidate_sources": ["SRC064", "SRC058"],
-    "selection_status": "PENDING_FIRST_CALIBRATION_RESULT",
-    "requirement": "must be materially different from SRC056 and must not require changing governing rules"
+    "selection_status": "PASS_CENTRAL_EXACT_HEAD_CI",
+    "selected_source": "SRC064",
+    "requirement": "must be materially different from SRC056 and must not require changing governing rules",
+    "exact_head_ci": {
+      "pull_request": 573,
+      "head": "18cec1d040bb3c11e37e52067358b6aad3fda62e",
+      "run_id": 33346967954,
+      "conclusion": "SUCCESS"
+    }
   },
   "remaining_sources": ["SRC057", "SRC060"],
-  "broad_108_expansion": "HOLD_UNTIL_TWO_MATERIALLY_DIFFERENT_REPLAYS_PASS",
-  "real_source_runtime_started": false
+  "broad_108_expansion": "HOLD_UNTIL_GOVERNING_CALIBRATION_REVIEW",
+  "real_source_runtime_started": true
 }

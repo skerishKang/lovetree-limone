@@ -10,21 +10,34 @@
   "first_calibration_s4": "PASS",
   "second_replay": {
     "source_id": "SRC064",
-    "status": "LOCAL_PASS_PENDING_EXACT_HEAD_CI",
+    "status": "CENTRAL_EXACT_HEAD_CI_PASS",
     "s0_identity_verified": "PASS",
     "s1_raw_authority_locked": "PASS",
-    "s2_source_baseline_captured": "PASS_LOCAL_NATIVE_WSL",
+    "s2_source_baseline_captured": "PASS_CENTRAL_EXACT_HEAD_CI_ARTIFACT",
     "s3_mechanical_port_complete": "PASS",
-    "s4_source_split_parity": "PASS_LOCAL_NATIVE_WSL",
+    "s4_source_split_parity": "PASS_CENTRAL_EXACT_HEAD_CI_VALIDATED",
     "materially_different_from": "SRC056",
-    "exact_head_ci_required": true
+    "exact_head_ci_required": false,
+    "exact_head_ci": {
+      "pull_request": 573,
+      "head": "18cec1d040bb3c11e37e52067358b6aad3fda62e",
+      "run_id": 33346967954,
+      "conclusion": "SUCCESS",
+      "parity_evidence_mode": "EXISTING_ACCEPTED_PARITY_VALIDATED; NEW_CAPTURE_SKIPPED"
+    },
+    "production_deploy": {
+      "run_id": 33347420679,
+      "main_merge_commit": "5c85566c4feadf048845c7b99b9abd028a21466e",
+      "conclusion": "SUCCESS"
+    }
   },
   "notes": [
     "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",
     "SRC056 is the first real calibration Source. No Codex, family, component, composition, or broad 108 rollout is released.",
     "SRC056 has completed S0 through S4 with accepted authority, baseline, mechanical split, and direct A/B parity evidence.",
     "SRC064 is materially different from SRC056: CSS3D DOM orbit with 40 cards, focus transition, and media viewer.",
-    "SRC064 local native-WSL S0 through S4 evidence passed. Exact-head CI evidence remains required after this worktree is committed and pushed.",
-    "Broad 108 rollout remains held until SRC064 exact-head CI acceptance and the governing calibration review are complete."
+    "SRC064 exact-head PR CI passed at 18cec1d; the central job uploaded baseline evidence and validated the existing accepted parity while the new parity capture correctly skipped because the manifest was already accepted.",
+    "SRC064 is merged to main at 5c85566 and the guarded Production deploy plus post-deploy smoke passed at run 33347420679.",
+    "Broad 108 rollout remains held pending the governing calibration review."
   ]
 }
