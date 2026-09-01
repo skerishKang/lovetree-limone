@@ -70,6 +70,16 @@ test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-f
       assert.equal(sha256(dstBuf), sha256(srcBuf), `${id}/${file} SHA256 mismatch`);
     }
   }
+
+  // Hardening: source file set == destination file set (no extraneous or stale files)
+  const surfaceDirs = readdirSync(SURFACES_ROOT);
+  const expectedDirs = SOURCES.map((s) => s.surface).sort();
+  assert.deepEqual(surfaceDirs.sort(), expectedDirs, 'Surface directory set must strictly match expected 5 sources');
+
+  for (const dir of surfaceDirs) {
+    const files = readdirSync(join(SURFACES_ROOT, dir));
+    assert.deepEqual(files.sort(), ['index.html', 'script.js', 'styles.css'], `Directory ${dir} must strictly contain only split files`);
+  }
 });
 
 test('3. Direct DOM merge is not used; isolated surfaces architecture is enforced', () => {

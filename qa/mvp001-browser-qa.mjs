@@ -2,26 +2,26 @@
 /**
  * qa/mvp001-browser-qa.mjs
  *
- * Enhanced Central-Grade Runtime Parity & Browser QA Suite for MVP001.
+ * Final Central-Grade Runtime Parity & Browser QA Suite for MVP001.
  *
- * Requirements:
- * 1. Fail-closed zero errors:
- *    - PAGE_ERRORS === 0
- *    - CONSOLE_ERRORS === 0
- * 2. True A/B Runtime Parity:
- *    - A = direct run of src/03_sources/SRCxxx/split/index.html
- *    - B = execution INSIDE the actual /mvp/01 shell iframe (?step=<step>)
- * 3. Multi-viewport verification:
- *    - 1440x900 (Desktop)
- *    - 430x932 (Mobile iPhone 15 Pro Max)
- *    - 390x844 (Mobile iPhone 14/15)
- * 4. Deterministic matched screenshots saved to evidence/mvp001/a-b-parity/
- * 5. Iframe-specific gates:
- *    - Pointer/mouse input into iframe
- *    - Viewport 100% sizing
- *    - Primary source interaction inside iframe
- *    - Shell navigation non-occlusion & autohide toggle
- *    - Single active iframe lifecycle (flush on step switch)
+ * Enforces:
+ * 1. BLOCKER A: Post-interaction error fail-closed gate
+ *    - pageErrors === 0 and consoleErrors === 0 asserted BEFORE interaction
+ *    - deterministic postcondition waited and verified
+ *    - pageErrors === 0 and consoleErrors === 0 asserted AGAIN AFTER interaction
+ * 2. BLOCKER B: True observable postconditions (no matched no-op PASS)
+ *    - SRC064: #menuBtn opens #menuPanel (classList.contains('open') === true)
+ *    - SRC058: #plusBtn changes zoom; #fitBtn restores view to exact fit scale and updates #zoomLabel
+ *    - SRC056: #helpBtn displays #toast with guidance text (classList.contains('show') === true)
+ *    - SRC057: clicking card m2 updates selectedId === 'm2', adds is-selected class, opens #detailPanel
+ *    - SRC060: #bridgeMode updates button text to 'Bridge ON', activates toast, and sets bridgeMode state
+ * 3. BLOCKER C: Real iframe input gates
+ *    - IFRAME_POINTER: Real mouse click at bounding box coordinate inside iframe
+ *    - IFRAME_TOUCH: Real touchscreen tap at target coordinate in hasTouch context
+ *    - IFRAME_WHEEL: Real mouse wheel event dispatch modifying SRC058 zoom view
+ *    - IFRAME_KEYBOARD_FOCUS: Keyboard focus and Space key activation on SRC057 card
+ * 4. BLOCKER D: Matched A/B screenshot generation saved to evidence/mvp001/a-b-parity/
+ *    - 40 deterministic matched PNG files
  */
 
 import http from 'node:http';
@@ -31,7 +31,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const ROOT = join(import.meta.dirname, '..');
-const EVIDENCE_DIR = join(ROOT, 'evidence/mvp001/a-b-parity');
+const EVIDENCE_DIR = process.env.MVP001_EVIDENCE_DIR || join(ROOT, 'evidence/mvp001/a-b-parity');
 mkdirSync(EVIDENCE_DIR, { recursive: true });
 
 const MIME_TYPES = {
@@ -82,9 +82,9 @@ function createStaticServer() {
 }
 
 const VIEWPORTS = [
-  { name: '1440x900', width: 1440, height: 900, isDesktop: true },
-  { name: '430x932', width: 430, height: 932, isDesktop: false },
-  { name: '390x844', width: 390, height: 844, isDesktop: false },
+  { name: '1440x900', width: 1440, height: 900, isDesktop: true, hasTouch: false },
+  { name: '430x932', width: 430, height: 932, isDesktop: false, hasTouch: true },
+  { name: '390x844', width: 390, height: 844, isDesktop: false, hasTouch: true },
 ];
 
 const SOURCES = [
@@ -93,25 +93,38 @@ const SOURCES = [
     step: 'entry',
     label: '입장 포털',
     splitUrl: '/src/03_sources/SRC064/split/index.html',
-    async verifyState(contextHandle) {
-      // Returns element count and card count
+    async verifyInitialState(contextHandle) {
       return contextHandle.evaluate(() => {
         const track = window.__TRACK64__;
         return {
           cards: track?.getCards?.()?.length ?? document.querySelectorAll('.card').length,
           hasApp: !!document.getElementById('app'),
           hasMenuBtn: !!document.getElementById('menuBtn'),
+          menuPanelOpen: document.getElementById('menuPanel')?.classList.contains('open') ?? false,
         };
       });
     },
-    async exerciseInteraction(contextHandle) {
-      // Click #menuBtn to open menu panel
-      await contextHandle.click('#menuBtn');
+    async exerciseInteraction(contextHandle, page, isIframe) {
+      // Click #menuBtn
+      if (isIframe) {
+        // Real pointer coordinate dispatch
+        const box = await contextHandle.locator('#menuBtn').boundingBox();
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      } else {
+        await contextHandle.click('#menuBtn');
+      }
+
       await contextHandle.waitForFunction(() => {
-        const panel = document.getElementById('menuPanel');
-        return panel?.classList.contains('open') === true;
+        return document.getElementById('menuPanel')?.classList.contains('open') === true;
       }, null, { timeout: 5000 });
-      return { menuOpen: true };
+
+      const state = await contextHandle.evaluate(() => ({
+        menuPanelOpen: document.getElementById('menuPanel')?.classList.contains('open') ?? false,
+      }));
+
+      // Assert real postcondition (not a no-op)
+      assert.equal(state.menuPanelOpen, true, 'SRC064: #menuPanel must transition to OPEN');
+      return state;
     },
   },
   {
@@ -119,26 +132,52 @@ const SOURCES = [
     step: 'board',
     label: '리빙 보드',
     splitUrl: '/src/03_sources/SRC058/split/index.html',
-    async verifyState(contextHandle) {
+    async verifyInitialState(contextHandle) {
       return contextHandle.evaluate(() => {
         const cards = document.querySelectorAll('#cardLayer [data-id]').length;
-        const lt = window.__LT58;
         return {
           cards,
           hasApp: !!document.getElementById('app'),
           hasFitBtn: !!document.getElementById('fitBtn'),
-          selected: lt?.state?.selected ?? null,
+          initialZoom: document.getElementById('zoomLabel')?.textContent ?? null,
         };
       });
     },
-    async exerciseInteraction(contextHandle) {
-      // Click fit button
-      await contextHandle.click('#fitBtn');
-      await contextHandle.waitForTimeout(300);
-      return contextHandle.evaluate(() => ({
-        fitClicked: true,
-        zoomLabel: document.getElementById('zoomLabel')?.textContent ?? null,
-      }));
+    async exerciseInteraction(contextHandle, page, isIframe) {
+      const zoomInitial = await contextHandle.evaluate(() => document.getElementById('zoomLabel')?.textContent);
+
+      // 1. Click #plusBtn to zoom in and prove state change
+      if (isIframe) {
+        const boxPlus = await contextHandle.locator('#plusBtn').boundingBox();
+        await page.mouse.click(boxPlus.x + boxPlus.width / 2, boxPlus.y + boxPlus.height / 2);
+      } else {
+        await contextHandle.click('#plusBtn');
+      }
+      await contextHandle.waitForTimeout(250);
+
+      const zoomAfterPlus = await contextHandle.evaluate(() => document.getElementById('zoomLabel')?.textContent);
+      assert.notEqual(zoomAfterPlus, zoomInitial, 'SRC058: plusBtn must alter zoom state');
+
+      // 2. Click #fitBtn to restore exact fit scale
+      if (isIframe) {
+        const boxFit = await contextHandle.locator('#fitBtn').boundingBox();
+        await page.mouse.click(boxFit.x + boxFit.width / 2, boxFit.y + boxFit.height / 2);
+      } else {
+        await contextHandle.click('#fitBtn');
+      }
+      await contextHandle.waitForTimeout(250);
+
+      const zoomAfterFit = await contextHandle.evaluate(() => document.getElementById('zoomLabel')?.textContent);
+      const state = {
+        zoomInitial,
+        zoomAfterPlus,
+        zoomAfterFit,
+        fitRestored: zoomAfterFit === zoomInitial,
+      };
+
+      // Assert real postcondition
+      assert.equal(state.fitRestored, true, 'SRC058: fitBtn must restore exact fit scale');
+      return state;
     },
   },
   {
@@ -146,7 +185,7 @@ const SOURCES = [
     step: 'relationships',
     label: '관계망',
     splitUrl: '/src/03_sources/SRC056/split/index.html',
-    async verifyState(contextHandle) {
+    async verifyInitialState(contextHandle) {
       return contextHandle.evaluate(() => {
         const canvas = document.getElementById('stage');
         return {
@@ -154,17 +193,36 @@ const SOURCES = [
           canvasWidth: canvas?.width ?? 0,
           canvasHeight: canvas?.height ?? 0,
           hasOverviewBtn: !!document.getElementById('overviewBtn'),
-          mode: window.__lt?.state?.mode ?? null,
+          toastVisible: document.getElementById('toast')?.classList.contains('show') ?? false,
         };
       });
     },
-    async exerciseInteraction(contextHandle) {
-      // Click help button to open help modal
-      await contextHandle.click('#helpBtn');
-      await contextHandle.waitForTimeout(300);
-      return contextHandle.evaluate(() => ({
-        helpModalOpen: document.getElementById('helpModal')?.classList.contains('show') ?? false,
-      }));
+    async exerciseInteraction(contextHandle, page, isIframe) {
+      // Click #helpBtn
+      if (isIframe) {
+        const box = await contextHandle.locator('#helpBtn').boundingBox();
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      } else {
+        await contextHandle.click('#helpBtn');
+      }
+
+      await contextHandle.waitForFunction(() => {
+        const toast = document.getElementById('toast');
+        return toast?.classList.contains('show') === true;
+      }, null, { timeout: 5000 });
+
+      const state = await contextHandle.evaluate(() => {
+        const toast = document.getElementById('toast');
+        return {
+          toastVisible: toast?.classList.contains('show') ?? false,
+          toastHasGuidanceText: (toast?.textContent ?? '').includes('First'),
+        };
+      });
+
+      // Assert real postcondition
+      assert.equal(state.toastVisible, true, 'SRC056: toast must be visible after help click');
+      assert.equal(state.toastHasGuidanceText, true, 'SRC056: toast must contain guidance text');
+      return state;
     },
   },
   {
@@ -172,25 +230,41 @@ const SOURCES = [
     step: 'memory',
     label: '모먼트 상세',
     splitUrl: '/src/03_sources/SRC057/split/index.html',
-    async verifyState(contextHandle) {
+    async verifyInitialState(contextHandle) {
       return contextHandle.evaluate(() => {
         const cards = document.querySelectorAll('.card-wrap').length;
         return {
           cards,
           hasCollection: !!document.getElementById('collection'),
-          hasResetBtn: !!document.getElementById('resetBtn'),
-          selectedId: window.__LT57__?.selectedId ?? null,
+          initialSelectedId: window.__LT57__?.selectedId ?? null,
         };
       });
     },
-    async exerciseInteraction(contextHandle) {
-      // Select first card
-      await contextHandle.click('.card-wrap');
-      await contextHandle.waitForTimeout(300);
-      return contextHandle.evaluate(() => ({
+    async exerciseInteraction(contextHandle, page, isIframe) {
+      // Select card m2 (since m1 is selected on initial load)
+      const targetSelector = '[data-id="m2"]';
+      if (isIframe) {
+        const box = await contextHandle.locator(targetSelector).boundingBox();
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      } else {
+        await contextHandle.click(targetSelector);
+      }
+
+      await contextHandle.waitForFunction(() => {
+        return window.__LT57__?.selectedId === 'm2' && document.getElementById('detailPanel')?.classList.contains('open');
+      }, null, { timeout: 5000 });
+
+      const state = await contextHandle.evaluate(() => ({
         selectedId: window.__LT57__?.selectedId ?? null,
+        cardIsSelected: document.querySelector('[data-id="m2"]')?.classList.contains('is-selected') ?? false,
         detailOpen: document.getElementById('detailPanel')?.classList.contains('open') ?? false,
       }));
+
+      // Assert real postcondition
+      assert.equal(state.selectedId, 'm2', 'SRC057: selectedId must transition to m2');
+      assert.equal(state.cardIsSelected, true, 'SRC057: card m2 must have is-selected class');
+      assert.equal(state.detailOpen, true, 'SRC057: detailPanel must be open');
+      return state;
     },
   },
   {
@@ -198,7 +272,7 @@ const SOURCES = [
     step: 'explore',
     label: '심층 탐색',
     splitUrl: '/src/03_sources/SRC060/split/index.html',
-    async verifyState(contextHandle) {
+    async verifyInitialState(contextHandle) {
       return contextHandle.evaluate(() => {
         const canvas = document.getElementById('stage');
         return {
@@ -206,22 +280,38 @@ const SOURCES = [
           canvasWidth: canvas?.width ?? 0,
           canvasHeight: canvas?.height ?? 0,
           hasBridgeModeBtn: !!document.getElementById('bridgeMode'),
+          initialBridgeText: document.getElementById('bridgeMode')?.textContent?.trim() ?? null,
         };
       });
     },
-    async exerciseInteraction(contextHandle) {
-      // Toggle bridge mode
-      await contextHandle.click('#bridgeMode');
-      await contextHandle.waitForTimeout(300);
-      return contextHandle.evaluate(() => ({
-        bridgeActive: document.getElementById('bridgeMode')?.classList.contains('active') ?? false,
+    async exerciseInteraction(contextHandle, page, isIframe) {
+      // Click #bridgeMode
+      if (isIframe) {
+        const box = await contextHandle.locator('#bridgeMode').boundingBox();
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      } else {
+        await contextHandle.click('#bridgeMode');
+      }
+
+      await contextHandle.waitForFunction(() => {
+        return document.getElementById('bridgeMode')?.textContent?.trim() === 'Bridge ON';
+      }, null, { timeout: 5000 });
+
+      const state = await contextHandle.evaluate(() => ({
+        bridgeButtonText: document.getElementById('bridgeMode')?.textContent?.trim() ?? '',
+        toastOpen: document.getElementById('toast')?.classList.contains('open') ?? false,
       }));
+
+      // Assert real postcondition
+      assert.equal(state.bridgeButtonText, 'Bridge ON', 'SRC060: button text must change to Bridge ON');
+      assert.equal(state.toastOpen, true, 'SRC060: guidance toast must be open');
+      return state;
     },
   },
 ];
 
-async function runParityQA() {
-  console.log('=== MVP001 Central Bounded QA: A/B Runtime Parity ===\n');
+async function runFinalQA() {
+  console.log('=== MVP001 Final Central QA: Fail-Closed A/B Parity & Input Gates ===\n');
 
   const server = createStaticServer();
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -232,7 +322,7 @@ async function runParityQA() {
 
   const browser = await chromium.launch({ headless: true });
   let totalAssertions = 0;
-  const parityResults = {};
+  const paritySummary = {};
 
   try {
     for (const src of SOURCES) {
@@ -240,13 +330,16 @@ async function runParityQA() {
       console.log(`Auditing Source: ${src.id} (${src.label})`);
       console.log(`==================================================`);
 
-      let sourceParityPass = true;
-
       for (const vp of VIEWPORTS) {
         console.log(`\n  --- Viewport: ${vp.name} ---`);
 
-        // === [A] DIRECT SPLIT RUN ===
-        const contextA = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+        // ============================================================
+        // [A] DIRECT SPLIT EXECUTION
+        // ============================================================
+        const contextA = await browser.newContext({
+          viewport: { width: vp.width, height: vp.height },
+          hasTouch: vp.hasTouch,
+        });
         const pageA = await contextA.newPage();
 
         const pageErrorsA = [];
@@ -259,29 +352,43 @@ async function runParityQA() {
         await pageA.goto(`${baseUrl}${src.splitUrl}`, { waitUntil: 'load' });
         await pageA.waitForTimeout(500);
 
-        // Assert zero errors in A
-        assert.equal(pageErrorsA.length, 0, `[A direct] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsA.join('; ')}`);
-        assert.equal(consoleErrorsA.length, 0, `[A direct] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsA.join('; ')}`);
+        // Pre-interaction fail-closed check
+        assert.equal(pageErrorsA.length, 0, `[A initial] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsA.join('; ')}`);
+        assert.equal(consoleErrorsA.length, 0, `[A initial] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsA.join('; ')}`);
         totalAssertions += 2;
 
-        const stateA = await src.verifyState(pageA);
+        const initialStateA = await src.verifyInitialState(pageA);
 
         // Capture A initial screenshot
         const shotA = join(EVIDENCE_DIR, `${src.id}_${vp.width}_A_direct.png`);
         await pageA.screenshot({ path: shotA });
 
-        // Capture A interaction
-        let interactStateA = null;
+        let postStateA = null;
         if (vp.isDesktop) {
-          interactStateA = await src.exerciseInteraction(pageA);
+          // Perform interaction
+          postStateA = await src.exerciseInteraction(pageA, pageA, false);
+
+          // Allow any async handlers/rAF loops to settle
+          await pageA.waitForTimeout(300);
+
+          // Post-interaction fail-closed check (BLOCKER A)
+          assert.equal(pageErrorsA.length, 0, `[A post-interaction] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsA.join('; ')}`);
+          assert.equal(consoleErrorsA.length, 0, `[A post-interaction] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsA.join('; ')}`);
+          totalAssertions += 2;
+
           const shotAInteract = join(EVIDENCE_DIR, `${src.id}_${vp.width}_A_interact.png`);
           await pageA.screenshot({ path: shotAInteract });
         }
 
         await contextA.close();
 
-        // === [B] INSIDE ACTUAL /mvp/01 SHELL IFRAME ===
-        const contextB = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
+        // ============================================================
+        // [B] ACTUAL /mvp/01 SHELL IFRAME EXECUTION
+        // ============================================================
+        const contextB = await browser.newContext({
+          viewport: { width: vp.width, height: vp.height },
+          hasTouch: vp.hasTouch,
+        });
         const pageB = await contextB.newPage();
 
         const pageErrorsB = [];
@@ -291,121 +398,223 @@ async function runParityQA() {
           if (msg.type() === 'error') consoleErrorsB.push(msg.text());
         });
 
-        // Navigate directly to MVP shell query step
         await pageB.goto(`${baseUrl}/mvp/01?step=${src.step}`, { waitUntil: 'load' });
         await pageB.waitForTimeout(500);
 
-        // Assert single active iframe exists
+        // Verify single active iframe
         const iframeLocator = pageB.locator('iframe.mvp-surface-frame');
         assert.equal(await iframeLocator.count(), 1, `[B mvp] ${src.id} ${vp.name}: must have exactly 1 active iframe`);
         totalAssertions++;
 
-        // Assert iframe geometry spans full 100% viewport width and height
+        // Verify full viewport sizing
         const iframeBox = await iframeLocator.boundingBox();
         assert.ok(iframeBox.width >= vp.width - 16, `[B mvp] ${src.id} ${vp.name}: iframe width must span viewport`);
         assert.equal(iframeBox.height, vp.height, `[B mvp] ${src.id} ${vp.name}: iframe height must span viewport`);
         totalAssertions += 2;
 
-        // Access the actual iframe execution context
+        // Locate iframe frame context
         const frame = pageB.frame({ url: (u) => u.pathname.includes(src.id.toLowerCase()) });
-        assert.ok(frame, `[B mvp] ${src.id} ${vp.name}: could not locate iframe context for ${src.id}`);
+        assert.ok(frame, `[B mvp] ${src.id} ${vp.name}: iframe context not found`);
         totalAssertions++;
 
-        // Assert zero errors in B
-        assert.equal(pageErrorsB.length, 0, `[B mvp] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsB.join('; ')}`);
-        assert.equal(consoleErrorsB.length, 0, `[B mvp] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsB.join('; ')}`);
+        // Pre-interaction fail-closed check
+        assert.equal(pageErrorsB.length, 0, `[B initial] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsB.join('; ')}`);
+        assert.equal(consoleErrorsB.length, 0, `[B initial] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsB.join('; ')}`);
         totalAssertions += 2;
 
-        // Verify state inside iframe matches state in direct run
-        const stateB = await src.verifyState(frame);
-        assert.deepEqual(stateB, stateA, `[Parity] ${src.id} ${vp.name}: Initial state in iframe must match direct run`);
+        const initialStateB = await src.verifyInitialState(frame);
+        assert.deepEqual(initialStateB, initialStateA, `[Initial Parity] ${src.id} ${vp.name}: Initial state in iframe must match direct run`);
         totalAssertions++;
 
         // Capture B initial screenshot
         const shotB = join(EVIDENCE_DIR, `${src.id}_${vp.width}_B_mvp.png`);
         await pageB.screenshot({ path: shotB });
 
-        // Capture B interaction inside iframe
-        let interactStateB = null;
+        let postStateB = null;
         if (vp.isDesktop) {
-          interactStateB = await src.exerciseInteraction(frame);
-          assert.deepEqual(interactStateB, interactStateA, `[Parity] ${src.id} ${vp.name}: Interaction state in iframe must match direct run`);
+          // Perform interaction inside iframe via real pointer coordinate dispatch (BLOCKER C Pointer)
+          postStateB = await src.exerciseInteraction(frame, pageB, true);
+
+          // Allow async handlers/rAF loops to settle
+          await pageB.waitForTimeout(300);
+
+          // Post-interaction fail-closed check (BLOCKER A)
+          assert.equal(pageErrorsB.length, 0, `[B post-interaction] ${src.id} ${vp.name}: unexpected page errors: ${pageErrorsB.join('; ')}`);
+          assert.equal(consoleErrorsB.length, 0, `[B post-interaction] ${src.id} ${vp.name}: unexpected console errors: ${consoleErrorsB.join('; ')}`);
+          totalAssertions += 2;
+
+          assert.deepEqual(postStateB, postStateA, `[Post-Interaction Parity] ${src.id} ${vp.name}: Post-interaction state in iframe must match direct run`);
           totalAssertions++;
 
           const shotBInteract = join(EVIDENCE_DIR, `${src.id}_${vp.width}_B_interact.png`);
           await pageB.screenshot({ path: shotBInteract });
         }
 
-        // Verify shell navigation chrome non-occlusion & toggle
+        // Navigation chrome boundary & collapse check
         const navBox = await pageB.locator('#mvp-shell-nav').boundingBox();
-        assert.ok(navBox.y + navBox.height <= vp.height, 'Navigation chrome stays within bottom boundary');
-        // Toggle nav collapse
+        assert.ok(navBox.y + navBox.height <= vp.height, 'Nav chrome stays within viewport boundary');
         await pageB.click('#toggle-nav-btn');
-        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => el.classList.contains('collapsed')), 'Nav toggle collapses panel');
+        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => el.classList.contains('collapsed')), 'Nav collapses');
         await pageB.click('#toggle-nav-btn');
-        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => !el.classList.contains('collapsed')), 'Nav toggle expands panel');
+        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => !el.classList.contains('collapsed')), 'Nav expands');
         totalAssertions += 3;
 
         await contextB.close();
-        console.log(`    ✓ ${vp.name}: A/B runtime state matched, 0 errors, screenshots saved.`);
+        console.log(`    ✓ ${vp.name}: Initial & Post-interaction matched, 0 errors, screenshots saved.`);
       }
 
-      parityResults[src.id] = sourceParityPass ? 'PASS' : 'FAIL';
+      paritySummary[src.id] = 'PASS';
     }
 
+    // ============================================================
+    // BLOCKER C — DEDICATED INPUT GATES (Pointer, Touch, Wheel, Keyboard)
+    // ============================================================
+    console.log(`\n==================================================`);
+    console.log(`BLOCKER C — EXPLICIT INPUT GATES VERIFICATION`);
+    console.log(`==================================================`);
+
+    // 1. TOUCH INPUT GATE: Touchscreen tap in mobile viewport (390x844) on SRC064 menuBtn
+    console.log('--- Testing IFRAME_TOUCH Input Gate ---');
+    const touchContext = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      hasTouch: true,
+    });
+    const touchPage = await touchContext.newPage();
+    const touchErrors = [];
+    touchPage.on('pageerror', (e) => touchErrors.push(e.message));
+    touchPage.on('console', (m) => { if (m.type() === 'error') touchErrors.push(m.text()); });
+
+    await touchPage.goto(`${baseUrl}/mvp/01?step=entry`, { waitUntil: 'load' });
+    await touchPage.waitForTimeout(400);
+
+    const touchFrame = touchPage.frame({ url: (u) => u.pathname.includes('src064') });
+    assert.ok(touchFrame, 'Touch frame loaded');
+    const menuBox = await touchFrame.locator('#menuBtn').boundingBox();
+    assert.ok(menuBox, 'Menu button bounding box resolved');
+
+    // Perform actual touchscreen tap
+    await touchPage.touchscreen.tap(menuBox.x + menuBox.width / 2, menuBox.y + menuBox.height / 2);
+    await touchFrame.waitForFunction(() => document.getElementById('menuPanel')?.classList.contains('open') === true, null, { timeout: 5000 });
+    const touchMenuOpen = await touchFrame.evaluate(() => document.getElementById('menuPanel')?.classList.contains('open') === true);
+    assert.equal(touchMenuOpen, true, 'IFRAME_TOUCH: touchscreen tap opened menu panel');
+    assert.equal(touchErrors.length, 0, `IFRAME_TOUCH: zero errors: ${touchErrors.join('; ')}`);
+    totalAssertions += 3;
+    await touchContext.close();
+    console.log('  ✓ IFRAME_TOUCH: PASS');
+
+    // 2. WHEEL INPUT GATE: Mouse wheel dispatch over SRC058 zoom viewport
+    console.log('--- Testing IFRAME_WHEEL Input Gate ---');
+    const wheelContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const wheelPage = await wheelContext.newPage();
+    const wheelErrors = [];
+    wheelPage.on('pageerror', (e) => wheelErrors.push(e.message));
+    wheelPage.on('console', (m) => { if (m.type() === 'error') wheelErrors.push(m.text()); });
+
+    await wheelPage.goto(`${baseUrl}/mvp/01?step=board`, { waitUntil: 'load' });
+    await wheelPage.waitForTimeout(400);
+
+    const wheelFrame = wheelPage.frame({ url: (u) => u.pathname.includes('src058') });
+    assert.ok(wheelFrame, 'Wheel frame loaded');
+
+    const initialWheelZ = await wheelFrame.evaluate(() => window.__LT58.state.view.z);
+    // Dispatch real mouse wheel event over center of surface
+    await wheelPage.mouse.move(720, 450);
+    await wheelPage.mouse.wheel(0, -200);
+    await wheelPage.waitForTimeout(300);
+
+    const afterWheelZ = await wheelFrame.evaluate(() => window.__LT58.state.view.z);
+    assert.notEqual(afterWheelZ, initialWheelZ, 'IFRAME_WHEEL: wheel dispatch must alter zoom view.z');
+    assert.equal(wheelErrors.length, 0, `IFRAME_WHEEL: zero errors: ${wheelErrors.join('; ')}`);
+    totalAssertions += 3;
+    await wheelContext.close();
+    console.log('  ✓ IFRAME_WHEEL: PASS');
+
+    // 3. KEYBOARD / FOCUS GATE: Focus and Space-key activation in SRC057
+    console.log('--- Testing IFRAME_KEYBOARD_FOCUS Input Gate ---');
+    const keyContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const keyPage = await keyContext.newPage();
+    const keyErrors = [];
+    keyPage.on('pageerror', (e) => keyErrors.push(e.message));
+    keyPage.on('console', (m) => { if (m.type() === 'error') keyErrors.push(m.text()); });
+
+    await keyPage.goto(`${baseUrl}/mvp/01?step=memory`, { waitUntil: 'load' });
+    await keyPage.waitForTimeout(400);
+
+    const keyFrame = keyPage.frame({ url: (u) => u.pathname.includes('src057') });
+    assert.ok(keyFrame, 'Keyboard frame loaded');
+
+    // Focus card m2 inside iframe
+    await keyFrame.locator('[data-id="m2"]').focus();
+    const isFocused = await keyFrame.evaluate(() => document.activeElement?.dataset?.id === 'm2');
+    assert.equal(isFocused, true, 'IFRAME_KEYBOARD_FOCUS: card m2 received focus inside iframe');
+
+    // Press Space to activate
+    await keyPage.keyboard.press('Space');
+    await keyFrame.waitForFunction(() => window.__LT57__?.selectedId === 'm2', null, { timeout: 5000 });
+
+    const selectedViaKey = await keyFrame.evaluate(() => window.__LT57__?.selectedId);
+    assert.equal(selectedViaKey, 'm2', 'IFRAME_KEYBOARD_FOCUS: Space key activated selection of m2');
+
+    // Focus shell navigation and verify no trapping
+    await keyPage.locator('#next-btn').focus();
+    const shellBtnFocused = await keyPage.evaluate(() => document.activeElement?.id === 'next-btn');
+    assert.equal(shellBtnFocused, true, 'IFRAME_KEYBOARD_FOCUS: focus transitions back to shell without trapping');
+    assert.equal(keyErrors.length, 0, `IFRAME_KEYBOARD_FOCUS: zero errors: ${keyErrors.join('; ')}`);
+    totalAssertions += 4;
+    await keyContext.close();
+    console.log('  ✓ IFRAME_KEYBOARD_FOCUS: PASS');
+
+    // ============================================================
+    // SHELL LIFECYCLE & MULTI-STEP NAVIGATION
+    // ============================================================
     console.log(`\n==================================================`);
     console.log(`SHELL FUNCTIONAL LIFECYCLE & ROUTING AUDIT`);
     console.log(`==================================================`);
 
-    // Verify step progression, unmounting, and back/forward in single session
-    const contextShell = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-    const pageShell = await contextShell.newPage();
+    const shellContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const shellPage = await shellContext.newPage();
     const shellErrors = [];
-    pageShell.on('pageerror', (e) => shellErrors.push(e.message));
-    pageShell.on('console', (m) => { if (m.type() === 'error') shellErrors.push(m.text()); });
+    shellPage.on('pageerror', (e) => shellErrors.push(e.message));
+    shellPage.on('console', (m) => { if (m.type() === 'error') shellErrors.push(m.text()); });
 
-    await pageShell.goto(`${baseUrl}/mvp/01`, { waitUntil: 'load' });
-    await pageShell.waitForTimeout(400);
+    await shellPage.goto(`${baseUrl}/mvp/01`, { waitUntil: 'load' });
+    await shellPage.waitForTimeout(400);
 
-    // Step through entry -> board -> relationships -> memory -> explore
     for (let i = 1; i < SOURCES.length; i++) {
-      await pageShell.click('#next-btn');
-      await pageShell.waitForTimeout(400);
-      const activeUrl = pageShell.url();
-      assert.ok(activeUrl.includes(`step=${SOURCES[i].step}`), `Shell URL updated to step=${SOURCES[i].step}`);
-      assert.equal(await pageShell.locator('iframe.mvp-surface-frame').count(), 1, 'Only 1 active iframe on transition');
+      await shellPage.click('#next-btn');
+      await shellPage.waitForTimeout(400);
+      assert.ok(shellPage.url().includes(`step=${SOURCES[i].step}`), `Shell URL updated to step=${SOURCES[i].step}`);
+      assert.equal(await shellPage.locator('iframe.mvp-surface-frame').count(), 1, 'Strictly 1 active iframe on transition');
       totalAssertions += 2;
     }
 
-    // Step backwards
     for (let i = SOURCES.length - 2; i >= 0; i--) {
-      await pageShell.click('#prev-btn');
-      await pageShell.waitForTimeout(300);
-      assert.ok(pageShell.url().includes(`step=${SOURCES[i].step}`), `Shell URL updated backwards to step=${SOURCES[i].step}`);
-      assert.equal(await pageShell.locator('iframe.mvp-surface-frame').count(), 1, 'Only 1 active iframe on backwards transition');
+      await shellPage.click('#prev-btn');
+      await shellPage.waitForTimeout(300);
+      assert.ok(shellPage.url().includes(`step=${SOURCES[i].step}`), `Shell URL updated backwards to step=${SOURCES[i].step}`);
+      assert.equal(await shellPage.locator('iframe.mvp-surface-frame').count(), 1, 'Strictly 1 active iframe on backwards transition');
       totalAssertions += 2;
     }
 
-    // Invalid step fallback
-    await pageShell.goto(`${baseUrl}/mvp/01?step=bogus_step_id`, { waitUntil: 'load' });
-    await pageShell.waitForTimeout(300);
-    const fallbackSrc = await pageShell.locator('iframe.mvp-surface-frame').getAttribute('src');
+    await shellPage.goto(`${baseUrl}/mvp/01?step=bogus_step_id`, { waitUntil: 'load' });
+    await shellPage.waitForTimeout(300);
+    const fallbackSrc = await shellPage.locator('iframe.mvp-surface-frame').getAttribute('src');
     assert.ok(fallbackSrc.includes('src064'), 'Invalid step param falls back to entry');
     totalAssertions++;
 
-    assert.equal(shellErrors.length, 0, `Shell execution had unexpected errors: ${shellErrors.join('; ')}`);
+    assert.equal(shellErrors.length, 0, `Shell lifecycle had unexpected errors: ${shellErrors.join('; ')}`);
     totalAssertions++;
 
-    await contextShell.close();
+    await shellContext.close();
 
     console.log('\n========================================');
     console.log(`ALL TESTS COMPLETE: ${totalAssertions} assertions PASSED`);
     console.log('Parity Summary:');
-    for (const [id, res] of Object.entries(parityResults)) {
+    for (const [id, res] of Object.entries(paritySummary)) {
       console.log(`  ${id}_MVP_RUNTIME_PARITY = ${res}`);
     }
-    console.log('PAGE_ERRORS = 0');
-    console.log('CONSOLE_ERRORS = 0');
+    console.log('PAGE_ERRORS_AFTER_INTERACTION = 0');
+    console.log('CONSOLE_ERRORS_AFTER_INTERACTION = 0');
     console.log('========================================\n');
   } finally {
     await browser.close();
@@ -413,7 +622,7 @@ async function runParityQA() {
   }
 }
 
-runParityQA().catch((err) => {
-  console.error('\nQA RUNTIME FAILED:', err);
+runFinalQA().catch((err) => {
+  console.error('\nFINAL QA EXECUTION FAILED:', err);
   process.exit(1);
 });
