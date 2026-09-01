@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC047",
+  "authority_system": "Google Drive",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-01T15:04:33Z",
+  "drive_folder_id": "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH",
+  "drive_file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+  "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+  "revision": "V4.2.5",
+  "mime_type": "text/html",
+  "bytes": 40890,
+  "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+  "transport": {
+    "classification": "FRESH_DRIVE_EXACT",
+    "git_blob_sha1": "c05a4853d4ece774ba86c39d7b3563e24f4bed15",
+    "verification": "CENTRAL downloaded the current Drive authority, verified 40,890 bytes and SHA-256 exactly, and froze those bytes without redesign, refactor, split, or framework conversion."
+  }
+}
