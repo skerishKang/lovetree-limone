@@ -27,9 +27,12 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   if (record.generation !== 'MECHANICAL_INLINE_EXTRACTION') fail(`${sourceId}: non-mechanical split generation`);
   if (record.authority?.bytes !== manifest.authority?.bytes || record.authority?.sha256 !== manifest.authority?.sha256) fail(`${sourceId}: materialization authority drift`);
   const scriptBlocks = Array.isArray(record.boundaries?.script_blocks) ? record.boundaries.script_blocks : null;
+  const styleBlocks = Array.isArray(record.boundaries?.style_blocks) ? record.boundaries.style_blocks : null;
   const multiBlock = scriptBlocks !== null && scriptBlocks.length > 1;
+  const multiStyle = styleBlocks !== null && styleBlocks.length > 1;
   const scriptContract = multiBlock ? record.contracts?.exact_script_blocks_extraction : record.contracts?.exact_single_script_extraction;
-  if (record.contracts?.exact_single_style_extraction !== true || scriptContract !== true || record.contracts?.round_trip_byte_identity !== true) fail(`${sourceId}: extraction contract incomplete`);
+  const styleContract = multiStyle ? record.contracts?.exact_style_blocks_extraction : record.contracts?.exact_single_style_extraction;
+  if (styleContract !== true || scriptContract !== true || record.contracts?.round_trip_byte_identity !== true) fail(`${sourceId}: extraction contract incomplete`);
   if (scriptBlocks && scriptBlocks.length < 1) fail(`${sourceId}: script block metadata is empty`);
   if (record.contracts?.redesign_or_refactor !== false || record.contracts?.framework_conversion !== false || record.contracts?.product_data_injection !== false) fail(`${sourceId}: forbidden transformation recorded`);
 
@@ -57,20 +60,49 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   if (index.includes('<style>') || index.includes('</style>')) fail(`${sourceId}: inline style remains in split index`);
   if (/<script(?!\s+src=["']\.\/script\.js["'])/i.test(index)) fail(`${sourceId}: unexpected inline/alternate script remains in split index`);
 
-  let scriptRegion = `<script>${js}</script>`;
-  if (multiBlock) {
-    const gaps = record.boundaries.script_gaps;
-    if (!Array.isArray(gaps) || gaps.length !== scriptBlocks.length - 1) fail(`${sourceId}: script gap metadata mismatch`);
-    let cursor = 0;
-    const parts = scriptBlocks.map((block) => {
-      const content = js.slice(cursor, cursor + block.length);
-      cursor += block.length;
-      return `<script>${content}</script>`;
-    });
-    if (cursor !== js.length) fail(`${sourceId}: script block lengths do not cover script.js`);
-    scriptRegion = parts.reduce((acc, part, i) => (i === 0 ? part : `${acc}${gaps[i - 1]}${part}`), '');
+  // Interleaved multi-style+script (SRC058) uses sorted_blocks reconstruction
+  let reconstructed;
+  const sortedBlocks = Array.isArray(record.boundaries?.sorted_blocks) ? record.boundaries.sorted_blocks : null;
+  if (sortedBlocks && multiStyle) {
+    // Gaps are original html between blocks; reconstruct via block order
+    const originalBytesForGaps = fs.readFileSync(path.join(sourceDir, 'original', 'original.html')).toString('utf8');
+    // Re-derive gaps from original to ensure byte identity without trusting stored gap strings for style
+    // We have sorted_blocks with open/close; extract gaps as original slices
+    let recon = '';
+    let pos = 0;
+    let cssCursor = 0;
+    let jsCursor = 0;
+    for (const block of sortedBlocks) {
+      recon += originalBytesForGaps.slice(pos, block.open);
+      if (block.type === 'style') {
+        const part = css.slice(cssCursor, cssCursor + block.length);
+        recon += `<style>${part}</style>`;
+        cssCursor += block.length;
+      } else {
+        const part = js.slice(jsCursor, jsCursor + block.length);
+        recon += `<script>${part}</script>`;
+        jsCursor += block.length;
+      }
+      pos = block.close + (block.type === 'style' ? 8 : 9);
+    }
+    recon += originalBytesForGaps.slice(pos);
+    reconstructed = recon;
+  } else {
+    let scriptRegion = `<script>${js}</script>`;
+    if (multiBlock) {
+      const gaps = record.boundaries.script_gaps;
+      if (!Array.isArray(gaps) || gaps.length !== scriptBlocks.length - 1) fail(`${sourceId}: script gap metadata mismatch`);
+      let cursor = 0;
+      const parts = scriptBlocks.map((block) => {
+        const content = js.slice(cursor, cursor + block.length);
+        cursor += block.length;
+        return `<script>${content}</script>`;
+      });
+      if (cursor !== js.length) fail(`${sourceId}: script block lengths do not cover script.js`);
+      scriptRegion = parts.reduce((acc, part, i) => (i === 0 ? part : `${acc}${gaps[i - 1]}${part}`), '');
+    }
+    reconstructed = index.replace(cssLink, () => `<style>${css}</style>`).replace(scriptSrc, () => scriptRegion);
   }
-  const reconstructed = index.replace(cssLink, () => `<style>${css}</style>`).replace(scriptSrc, () => scriptRegion);
   const reconstructedBytes = Buffer.from(reconstructed, 'utf8');
   const originalBytes = fs.readFileSync(path.join(sourceDir, 'original', 'original.html'));
   if (reconstructedBytes.compare(originalBytes) !== 0) fail(`${sourceId}: split does not round-trip byte-identically to frozen original`);

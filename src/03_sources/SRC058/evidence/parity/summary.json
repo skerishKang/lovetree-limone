@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "exact_head": "1e7798d1380f10eb1689078de2c85972e4ef5d39",
+  "viewports": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "initial_state_equal": true,
+      "after_reset_state_equal": true,
+      "interaction_equal": true,
+      "initial_screenshot_sha_equal": true,
+      "after_reset_screenshot_sha_equal": true,
+      "original_screenshots": {
+        "initial_sha256": "012d2113c0150bdaaf1db65b085a36acdac08a1be1eaf3c8bb0cb0446ed29dcb",
+        "after_reset_sha256": "012d2113c0150bdaaf1db65b085a36acdac08a1be1eaf3c8bb0cb0446ed29dcb",
+        "cinema_sha256": "5e1ee6787cbd7b3deb14328433653167726731a74084b5a9d615de146f60c12f"
+      },
+      "split_screenshots": {
+        "initial_sha256": "012d2113c0150bdaaf1db65b085a36acdac08a1be1eaf3c8bb0cb0446ed29dcb",
+        "after_reset_sha256": "012d2113c0150bdaaf1db65b085a36acdac08a1be1eaf3c8bb0cb0446ed29dcb",
+        "cinema_sha256": "45facba5a7c8ab10fbd2aa1a4935decbceecb2ca84ac1df3fdea367bb5d442cc"
+      }
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "initial_state_equal": true,
+      "after_reset_state_equal": true,
+      "interaction_equal": true,
+      "initial_screenshot_sha_equal": false,
+      "after_reset_screenshot_sha_equal": true,
+      "original_screenshots": {
+        "initial_sha256": "b0d4c211c881c7f073f87a3f4004503e973e989fa780a2c77c09807968ebad5c",
+        "after_reset_sha256": "d4bf9860752c0749566973af6f8718f13d849f55c78ea3ad34d19596b9f593d9"
+      },
+      "split_screenshots": {
+        "initial_sha256": "d4bf9860752c0749566973af6f8718f13d849f55c78ea3ad34d19596b9f593d9",
+        "after_reset_sha256": "d4bf9860752c0749566973af6f8718f13d849f55c78ea3ad34d19596b9f593d9"
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "initial_state_equal": true,
+      "after_reset_state_equal": true,
+      "interaction_equal": true,
+      "initial_screenshot_sha_equal": false,
+      "after_reset_screenshot_sha_equal": true,
+      "original_screenshots": {
+        "initial_sha256": "1232462cf640ba1dc7e23491cd6b462cff9d9ea5739bd31a0c0bcaaa1cbadafc",
+        "after_reset_sha256": "c5604f5b1ceb3642cbedebba790e8bd2e6047ca6c03f07dada0e8329cedaaf19"
+      },
+      "split_screenshots": {
+        "initial_sha256": "c5604f5b1ceb3642cbedebba790e8bd2e6047ca6c03f07dada0e8329cedaaf19",
+        "after_reset_sha256": "c5604f5b1ceb3642cbedebba790e8bd2e6047ca6c03f07dada0e8329cedaaf19"
+      }
+    }
+  ]
+}

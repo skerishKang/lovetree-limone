@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_SOURCE_QA_CHROMIUM_HEADLESS_VIA_PLAYWRIGHT",
+  "source_artifact": "Google Drive 58_리빙메모리_핀보드_시네마틱/★_최종_58_리빙메모리_핀보드.html",
+  "captured_head": "1e7798d1380f10eb1689078de2c85972e4ef5d39",
+  "local_capture": {
+    "harness": "src/08_harness/capture-source-baseline.mjs + src/08_harness/source058-driver.mjs",
+    "summary_sha256": "pending",
+    "method": "Chromium headless via local Playwright against frozen original over loopback HTTP",
+    "capture_note": "Local capture executed on rollout branch at exact head; accepted record bound to source authority SHA256.",
+    "repeat_runs": 1,
+    "browser_errors": 0
+  },
+  "authority": {
+    "bytes": 532697,
+    "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+  },
+  "viewports": [
+    { "width": 1440, "height": 900, "states": ["INITIAL", "AFTER_RESET", "CINEMA"] },
+    { "width": 430, "height": 932, "states": ["INITIAL", "AFTER_RESET"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "AFTER_RESET"] }
+  ],
+  "interaction_results": {
+    "1440x900": { "controlSurface": "BOARD_SPATIAL", "themeOk": true, "zoomBefore": "79%", "zoomAfter": "89%", "selected": "m1", "browser_errors": 0 },
+    "430x932": { "controlSurface": "BOARD_SPATIAL", "themeOk": true, "zoomBefore": "24%", "zoomAfter": "34%", "selected": "m1", "browser_errors": 0 },
+    "390x844": { "controlSurface": "BOARD_SPATIAL", "themeOk": true, "zoomBefore": "22%", "zoomAfter": "32%", "selected": "m1", "browser_errors": 0 }
+  },
+  "source_qa": { "pass": true, "browser_errors": 0 },
+  "next_stage_authorized": "MECHANICAL_SPLIT",
+  "evidence_dir": "/tmp/src058-baseline-2/SRC058",
+  "captured_at": "2026-09-01T00:24:00Z"
+}

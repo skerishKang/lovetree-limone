@@ -6,6 +6,7 @@ import { chromium } from 'playwright';
 import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
+import { captureSRC58Baseline } from './source058-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -32,6 +33,11 @@ const defaultViewports = [
   { width: 320, height: 720 },
 ];
 const sourceViewports = {
+  SRC058: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
   SRC060: [
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
@@ -212,6 +218,15 @@ try {
         }
         if (sourceId === 'SRC060') {
           const evidence = await captureTrack60Baseline(page, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.initial.state.ids.length, elementCount: evidence.states.initial.state.elementCount });
+          await page.close();
+          await context.close();
+          continue;
+        }
+        if (sourceId === 'SRC058') {
+          const evidence = await captureSRC58Baseline(page, sourceOut, label);
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.initial.state.ids.length, elementCount: evidence.states.initial.state.elementCount });

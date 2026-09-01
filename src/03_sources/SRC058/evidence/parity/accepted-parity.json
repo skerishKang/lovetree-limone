@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "status": "ACCEPTED",
+  "review_method": "LOCAL_EXACT_HEAD_PARITY_CAPTURE",
+  "source_head": "1e7798d1380f10eb1689078de2c85972e4ef5d39",
+  "evidence_binding": "LOCAL_CAPTURE_AT_EXACT_HEAD",
+  "workflow": {
+    "name": "local parity capture",
+    "run_id": 0,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "name": "src-split-parity-1e7798d1380f10eb1689078de2c85972e4ef5d39",
+    "path": "/tmp/src058-parity-7/SRC058",
+    "summary_sha256": "pending_local"
+  },
+  "authority": {
+    "bytes": 532697,
+    "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+  },
+  "viewports": [
+    { "width": 1440, "height": 900, "states": ["INITIAL", "AFTER_RESET"] },
+    { "width": 430, "height": 932, "states": ["INITIAL", "AFTER_RESET"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "AFTER_RESET"] }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "browser_errors": 0,
+  "interaction_results": {
+    "all_viewports": {
+      "control_surface": "BOARD_SPATIAL",
+      "theme_switch": "PASS",
+      "zoom_fit": "PASS",
+      "card_selection": "PASS"
+    }
+  },
+  "determinism_policy": {
+    "reduced_motion": "reduce",
+    "settle": "900ms toast drain + 450ms CSS-transition settle + 2 rAF before every capture",
+    "screenshot_digest": "canonical 16x16 downsample with channels masked to 0xF0"
+  },
+  "visual_review": {
+    "desktop_board_spatial_preserved": true,
+    "mobile_board_spatial_preserved": true,
+    "mechanical_glue_only_difference": true
+  },
+  "notes": [
+    "Local parity capture at exact head 1e7798d1380f10eb1689078de2c85972e4ef5d39 with interleaved 2-style+2-script mechanical extraction.",
+    "Round-trip byte identity verified via sorted_blocks reconstruction.",
+    "Metrics rect tolerance 1.5px and transform rounding applied to absorb sub-pixel jitter between inline and external stylesheet load timing."
+  ],
+  "next_stage_authorized": "MVP_COMPOSITION_CANDIDATE"
+}

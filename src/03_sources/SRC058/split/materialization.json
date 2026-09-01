@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "status": "ACCEPTED",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "authority": {
+    "bytes": 532697,
+    "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+  },
+  "boundaries": {
+    "style_open": 213,
+    "style_close": 509669,
+    "script_open": 34793,
+    "script_close": 529292,
+    "style_blocks": [
+      {
+        "open": 213,
+        "close": 26372,
+        "length": 26152
+      },
+      {
+        "open": 506465,
+        "close": 509669,
+        "length": 3197
+      }
+    ],
+    "script_blocks": [
+      {
+        "open": 34793,
+        "close": 506455,
+        "length": 471654
+      },
+      {
+        "open": 509678,
+        "close": 529292,
+        "length": 19606
+      }
+    ],
+    "sorted_blocks": [
+      {
+        "type": "style",
+        "open": 213,
+        "close": 26372,
+        "length": 26152
+      },
+      {
+        "type": "script",
+        "open": 34793,
+        "close": 506455,
+        "length": 471654
+      },
+      {
+        "type": "style",
+        "open": 506465,
+        "close": 509669,
+        "length": 3197
+      },
+      {
+        "type": "script",
+        "open": 509678,
+        "close": 529292,
+        "length": 19606
+      }
+    ],
+    "gaps": {
+      "prefix_len": 213,
+      "suffix_len": 15,
+      "between": [
+        {
+          "from": 0,
+          "to": 1,
+          "from_type": "style",
+          "to_type": "script",
+          "length": 8413,
+          "preview": "</head><body><div class=\"app\" id=\"app\"><"
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "from_type": "script",
+          "to_type": "style",
+          "length": 1,
+          "preview": "\\n"
+        },
+        {
+          "from": 2,
+          "to": 3,
+          "from_type": "style",
+          "to_type": "script",
+          "length": 1,
+          "preview": "\\n"
+        }
+      ]
+    },
+    "script_gaps": [
+      "\n<style>\n/* === V1.2 FOCUSED REVISION: ACTUAL YOUTUBE MEDIA + MOBILE HARDENING === */\n.ytThumbWrap{position:relative;width:100%;height:100%;overflow:hidden;background:#17111f;display:grid;place-items:center}\n.ytThumbWrap>img{width:100%;height:100%;object-fit:cover;display:block}\n.ytLoadState{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;padding:6px 8px;border-radius:9px;background:rgba(20,13,29,.78);color:#f0e7f6;font-size:9px;letter-spacing:.02em;backdrop-filter:blur(8px);pointer-events:none}\n.ytLoadState.ok{opacity:0;transition:opacity .25s ease}\n.ytLoadState.fail{color:#ffe9f1;background:rgba(78,34,56,.84)}\n.ytSourceBadge{position:absolute;right:8px;top:8px;z-index:4;background:rgba(14,9,20,.78);color:#fff;border:1px solid rgba(255,255,255,.18);padding:4px 6px;border-radius:999px;font-size:8px;font-weight:750;letter-spacing:.06em}\n.viewerYouTube{width:100%;display:grid;gap:10px;padding:10px}\n.viewerYouTube iframe{width:100%;aspect-ratio:16/9;min-height:220px;border:0;border-radius:14px;background:#0b0810;display:block}\n.viewerFallback{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 4px 2px;color:#bdaec7;font-size:10px}\n.viewerFallback .miniBtn{margin-left:auto}\n.videoSourceChoice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}\n.videoSourceChoice label{display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#d7c8df;font-size:11px;background:rgba(255,255,255,.035)}\n.videoSourceChoice label:has(input:checked){border-color:rgba(255,102,159,.52);background:rgba(255,102,159,.08);color:#fff}\n.videoSourcePanel{margin-top:8px}.videoSourcePanel[hidden]{display:none!important}\n.netNote{font-size:9px;color:#9987a4;line-height:1.5;margin-top:6px}\n#viewerMedia{max-width:100%}\n@media(max-width:760px){\n  \n  #viewerModal .modal{width:calc(100vw - 16px)!important;max-width:none!important;max-height:92vh;overflow:auto;padding:16px!important}\n  .viewerYouTube{padding:0;gap:8px}.viewerYouTube iframe{min-height:0;width:100%;aspect-ratio:16/9;max-height:46vh}\n  .viewerFallback{font-size:9px;padding:4px 0}.viewerFallback .miniBtn{width:100%;margin:0}\n  .videoSourceChoice{grid-template-columns:1fr}.typeGrid{grid-template-columns:repeat(2,1fr)!important}\n  #addModal .modal,#editModal .modal{padding:15px!important;width:calc(100vw - 12px)!important;max-height:94vh!important}\n  #composerPreviewWrap,#editPreview{position:static!important;max-width:100%;overflow:hidden}\n  .previewCard{min-height:250px}.previewMedia{height:min(180px,31vh)}\n  .modalActions,.editActions{position:sticky;bottom:-1px;background:linear-gradient(180deg,rgba(24,15,30,0),rgba(24,15,30,.98) 26%);padding-top:20px;padding-bottom:2px;z-index:8}\n  .cinemaControls{max-width:calc(100vw - 12px);left:6px;right:6px;width:auto;gap:4px;transform:none}.cinCtl{min-width:0;padding:0 5px;font-size:9px}.enterBeat{font-size:9px}\n}\n@media(max-width:380px){#addModal .modal,#editModal .modal,#viewerModal .modal{width:calc(100vw - 8px)!important;padding:12px!important}.typeBtn{font-size:9px;padding:8px 4px}.field{font-size:12px}.cinemaControls{left:4px;right:4px;transform:none}}\n</style>\n"
+    ]
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 9441,
+      "sha256": "0eb1848c12492269474e8b867c1bd116f0fe7fdca568c1e7317f55dabd6d2340",
+      "git_blob_sha1": "378253eff37b236584b7160bf23470745039ae31"
+    },
+    "split/styles.css": {
+      "bytes": 29349,
+      "sha256": "0e3374585cf0b56ea46740b4d0d1cda54ca55314d3d889c9e7435fa9a37d37af",
+      "git_blob_sha1": "681a01541da11a0694f7d8f1317f1faec3315493"
+    },
+    "split/script.js": {
+      "bytes": 493922,
+      "sha256": "ec907cc43de7a04842acde4cbaae50a82eb4b7cb8ef19f2df33eee2302b5182b",
+      "git_blob_sha1": "9004c00b75ba847a77eb96f424005906a5b602bf"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": false,
+    "exact_style_blocks_extraction": true,
+    "exact_single_script_extraction": false,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "source_candidate": {
+    "exact_head": "1e7798d1380f10eb1689078de2c85972e4ef5d39",
+    "generation": "MECHANICAL_INLINE_EXTRACTION"
+  }
+}

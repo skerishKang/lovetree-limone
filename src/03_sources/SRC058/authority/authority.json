@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-01T00:04:00Z",
+  "drive_folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+  "drive_file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+  "filename": "★_최종_58_리빙메모리_핀보드.html",
+  "revision": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+  "mime_type": "text/html",
+  "bytes": 532697,
+  "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+  "transport": {
+    "classification": "REUSE_EXACT",
+    "intake_pr": 551,
+    "intake_head_sha": "bd7e506c6f0151165385ba76a12f1a2b4a5f7257",
+    "intake_path": "new/sources/SRC058/SRC058-01-raw/SRC058-01-01-original.html",
+    "verification": "Git blob bytes from intake branch and manifest SHA were verified byte-identical to locked authority. Direct Drive re-fetch via gdrive/padiemipu remotes failed (padiemipu token expired, gdrive folder not found under current account), so intake verified bytes are used as frozen authority per manifest. Fresh lock time recorded as 2026-09-01T00:04:00Z."
+  }
+}
