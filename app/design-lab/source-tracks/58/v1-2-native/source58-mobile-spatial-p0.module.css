@@ -141,7 +141,7 @@
     grid-template-columns: minmax(104px, .42fr) minmax(0, .58fr);
     align-items: start;
     border-radius: 22px !important;
-    background: rgba(22, 6, 20, .88) !important;
+    background: rgba(22, 6, 20, .97) !important;
     box-shadow: 0 28px 72px rgba(8, 2, 7, .52), 0 0 0 1px rgba(255,255,255,.07);
     backdrop-filter: blur(20px) saturate(1.08);
     transform: translateY(calc(100% + 26px));
