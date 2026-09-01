@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "composition_id": "MVP001",
+  "route_map": [
+    {
+      "route": "/trees/{treeId}",
+      "component_key": "source57-memory-detail",
+      "source_id": "SRC057",
+      "product_role": "MEMORY_DETAIL",
+      "viewSwitcher_kind": "tree",
+      "viewSwitcher_label": "기억"
+    },
+    {
+      "route": "/trees/{treeId}/board",
+      "component_key": "source58-living-board",
+      "source_id": "SRC058",
+      "product_role": "LIVING_BOARD",
+      "viewSwitcher_kind": "board",
+      "viewSwitcher_label": "보드"
+    },
+    {
+      "route": "/trees/{treeId}/relationships",
+      "component_key": "source56-relationship-overview",
+      "source_id": "SRC056",
+      "product_role": "RELATIONSHIP_OVERVIEW",
+      "viewSwitcher_kind": "relationships",
+      "viewSwitcher_label": "관계"
+    },
+    {
+      "route": "/trees/{treeId}/explore",
+      "component_key": "source60-deep-exploration",
+      "source_id": "SRC060",
+      "product_role": "DEEP_EXPLORATION",
+      "viewSwitcher_kind": "explore",
+      "viewSwitcher_label": "탐색"
+    },
+    {
+      "route": "/trees/{treeId}/portal",
+      "component_key": "source64-entry-portal",
+      "source_id": "SRC064",
+      "product_role": "ENTRY_PORTAL",
+      "viewSwitcher_kind": "portal",
+      "viewSwitcher_label": "포털"
+    }
+  ],
+  "shared_contracts": {
+    "viewSwitcher_non_shrinking": true,
+    "viewSwitcher_source": "app/components/ViewSwitcher.tsx",
+    "viewSwitcher_primary_views": [
+      "tree (기억, /trees/{treeId})",
+      "board (보드, /board)",
+      "relationships (관계, /relationships)",
+      "explore (탐색, /explore)"
+    ],
+    "viewSwitcher_portal_views": [
+      "portal (포털, /portal)"
+    ],
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)",
+    "data_source": "useTreeMoments(treeId, undefined, momentId ?? undefined)",
+    "no_durable_write": true,
+    "no_invented_moment_id": true
+  }
+}

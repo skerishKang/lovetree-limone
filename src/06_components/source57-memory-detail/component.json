@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "component_key": "source57-memory-detail",
+  "source_id": "SRC057",
+  "source_manifest_ref": "src/03_sources/SRC057/manifest.json",
+  "source_parity_ref": "src/03_sources/SRC057/evidence/parity/accepted-parity.json",
+  "product_role": "MEMORY_DETAIL",
+  "canonical_route_template": "/trees/{treeId}",
+  "product_implementation_refs": [
+    "app/trees/[id]/page.tsx",
+    "app/styles/mvp-source57-moment-language.css",
+    "app/components/MomentDetailModal.tsx",
+    "app/components/MomentComposerModal.tsx",
+    "app/components/MomentThumbnail.tsx"
+  ],
+  "admission": {
+    "status": "PASS",
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
+    "admitted_at": "2026-09-01T00:00:00Z",
+    "admitted_by": "Integration CTO"
+  },
+  "visual_semantics": {
+    "rendering": "dom-css-2.5d",
+    "scenario_id": "relationship-retrospective",
+    "viewSwitcher_kind": "tree",
+    "viewSwitcher_label": "기억",
+    "viewSwitcher_path": "",
+    "interaction_surface": [
+      "INITIAL",
+      "SELECTED",
+      "NEXT",
+      "EDIT_PREVIEW",
+      "VIEWER"
+    ],
+    "control_surface_desktop": "DESKTOP_CONTROLS",
+    "control_surface_mobile": "MOBILE_RIBBON"
+  },
+  "data_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "data_source": "useTreeMoments(treeId)",
+    "no_invented_moment_id": true,
+    "no_durable_write": true
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "evidence_refs": [
+    "src/03_sources/SRC057/baseline/accepted-baseline.json",
+    "src/03_sources/SRC057/evidence/parity/accepted-parity.json",
+    "src/03_sources/SRC057/authority/authority.json",
+    "src/03_sources/SRC057/reports/acceptance.json",
+    "tests/five-source-mvp-source57-presentation-adoption.test.mjs"
+  ],
+  "status": "ADMITTED"
+}

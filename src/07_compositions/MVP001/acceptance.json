@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "composition_id": "MVP001",
+  "acceptance_criteria": {
+    "all_components_admitted": {
+      "required": true,
+      "status": "PASS_ALL_5",
+      "detail": "SRC056, SRC057, SRC058, SRC060, SRC064 all admitted with PASS or PASS_REUSED_ACCEPTED_EVIDENCE"
+    },
+    "composition_contract_valid": {
+      "required": true,
+      "status": "PASS",
+      "detail": "Validated by src/08_harness/validate-mvp001-composition.mjs — 0 errors, 0 warnings"
+    },
+    "contract_test_pass": {
+      "required": true,
+      "status": "PASS",
+      "detail": "tests/mvp001-composition-contract.test.mjs — 10/10 node:test passed"
+    },
+    "existing_qa_pass": {
+      "required": true,
+      "status": "PASS",
+      "detail": "qa/five-source-mvp-browser-qa.mjs — FIVE_SOURCE_MVP_BROWSER_QA_PASS (desktop/phone/narrow-reduced viewports)"
+    },
+    "lint_pass": {
+      "required": true,
+      "status": "PASS",
+      "detail": "npm run lint — 0 errors (125 pre-existing warnings in source/test files)"
+    },
+    "typecheck_pass": {
+      "required": true,
+      "status": "PASS",
+      "detail": "tsc --noEmit — 0 errors"
+    },
+    "no_product_runtime_mutation": {
+      "required": true,
+      "status": "PASS",
+      "detail": "All changes additive (src/06_components, src/07_compositions, src/08_harness/validate-mvp001-composition.mjs, tests/mvp001-composition-contract.test.mjs). No changes to app/**, components/**, src/03_sources/**, DB, API, Auth, schema, or package dependencies."
+    }
+  },
+  "overall_status": "PASS",
+  "accepted_at": "2026-09-01T07:30:00Z",
+  "accepted_by": "Integration CTO"
+}

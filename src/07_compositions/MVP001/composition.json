@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "composition_id": "MVP001",
+  "composition_name": "Five-Source Product Surface Composition",
+  "description": "First formal composition that registers SRC064 (Entry Portal), SRC058 (Living Board), SRC056 (Relationship Overview), SRC057 (Memory Detail), and SRC060 (Deep Exploration) as reusable components and maps them to canonical product routes via ViewSwitcher.",
+  "phase": "ROLLOUT",
+  "composition_type": "PRODUCT_SURFACE",
+  "product_runtime_mutation": "NONE",
+  "source_authority_frozen": true,
+  "created_at": "2026-09-01T00:00:00Z",
+  "created_by": "Integration CTO",
+  "composition_contract": {
+    "source_geometry_silent_redesign": false,
+    "source_interaction_silent_redesign": false,
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "no_invented_moment_id": true,
+    "no_durable_write": true,
+    "no_product_runtime_mutation": true
+  },
+  "components": [
+    {
+      "component_key": "source64-entry-portal",
+      "source_id": "SRC064",
+      "product_role": "ENTRY_PORTAL",
+      "canonical_route": "/trees/{treeId}/portal",
+      "admission_status": "PASS",
+      "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (DIRECT_CENTRAL_CI_ARTIFACT_REVIEW, workflow run_id=33346967954)"
+    },
+    {
+      "component_key": "source58-living-board",
+      "source_id": "SRC058",
+      "product_role": "LIVING_BOARD",
+      "canonical_route": "/trees/{treeId}/board",
+      "admission_status": "PASS_REUSED_ACCEPTED_EVIDENCE",
+      "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (LOCAL_EXACT_HEAD_PARITY_CAPTURE, PR #585)"
+    },
+    {
+      "component_key": "source56-relationship-overview",
+      "source_id": "SRC056",
+      "product_role": "RELATIONSHIP_OVERVIEW",
+      "canonical_route": "/trees/{treeId}/relationships",
+      "admission_status": "PASS",
+      "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (first calibration source)"
+    },
+    {
+      "component_key": "source57-memory-detail",
+      "source_id": "SRC057",
+      "product_role": "MEMORY_DETAIL",
+      "canonical_route": "/trees/{treeId}",
+      "admission_status": "PASS",
+      "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (DIRECT_SOURCE_QA_ARTIFACT_REVIEW)"
+    },
+    {
+      "component_key": "source60-deep-exploration",
+      "source_id": "SRC060",
+      "product_role": "DEEP_EXPLORATION",
+      "canonical_route": "/trees/{treeId}/explore",
+      "admission_status": "PASS",
+      "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (CENTRAL_EXACT_HEAD_CI_PARITY_ARTIFACT_REVIEW, PR #586 canvas resize fix CLOSED)"
+    }
+  ],
+  "composition_evidence": [
+    "src/06_components/source64-entry-portal/component.json",
+    "src/06_components/source64-entry-portal/README.md",
+    "src/06_components/source58-living-board/component.json",
+    "src/06_components/source58-living-board/README.md",
+    "src/06_components/source56-relationship-overview/component.json",
+    "src/06_components/source56-relationship-overview/README.md",
+    "src/06_components/source57-memory-detail/component.json",
+    "src/06_components/source57-memory-detail/README.md",
+    "src/06_components/source60-deep-exploration/component.json",
+    "src/06_components/source60-deep-exploration/README.md",
+    "src/07_compositions/MVP001/composition.json",
+    "src/07_compositions/MVP001/route-map.json",
+    "src/07_compositions/MVP001/acceptance.json",
+    "src/08_harness/validate-mvp001-composition.mjs",
+    "tests/mvp001-composition-contract.test.mjs"
+  ],
+  "status": "COMPOSED"
+}
