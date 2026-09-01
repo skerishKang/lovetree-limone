@@ -1,0 +1,4438 @@
+{
+  "viewport": {
+    "width": 430,
+    "height": 932
+  },
+  "states": {
+    "initial": {
+      "state": {
+        "ids": [
+          "app",
+          "fitBtn",
+          "undoBtn",
+          "addBtn",
+          "viewport",
+          "world",
+          "threadSvg",
+          "glow",
+          "soft",
+          "threadLayer",
+          "hotTip",
+          "draftThread",
+          "cardLayer",
+          "minusBtn",
+          "zoomLabel",
+          "plusBtn",
+          "resetBtn",
+          "cinemaBtn",
+          "detail",
+          "detailClose",
+          "dTitle",
+          "dBasic",
+          "dConn",
+          "quickPin",
+          "quickCard",
+          "prevMoment",
+          "openMoment",
+          "nextMoment",
+          "replayFrom",
+          "cinemaFromMoment",
+          "startPathHere",
+          "editMomentBtn",
+          "addModal",
+          "typeGrid",
+          "formArea",
+          "mediaFile",
+          "addEmotion",
+          "addSource",
+          "addPinStyle",
+          "addCardStyle",
+          "addKeywordPicker",
+          "addCustomKeyword",
+          "addAddKeyword",
+          "momentTitle",
+          "momentEmotion",
+          "momentMemo",
+          "cancelAdd",
+          "confirmAdd",
+          "composerPreviewWrap",
+          "composerPreview",
+          "whyModal",
+          "whyInput",
+          "cancelWhy",
+          "saveWhy",
+          "viewerModal",
+          "vTitle",
+          "viewerMedia",
+          "vMeta",
+          "closeViewer",
+          "whyBubble",
+          "toast",
+          "leftPanel",
+          "leftCollapse",
+          "toolAdd",
+          "pathModeBtn",
+          "toolCinema",
+          "toolFit",
+          "mediaFilter",
+          "keywordFilter",
+          "themeGrid",
+          "defaultPin",
+          "defaultCard",
+          "themeBadge",
+          "nextChooser",
+          "nextChoices",
+          "postAdd",
+          "postAddTitle",
+          "connectPrevious",
+          "connectNext",
+          "connectLater",
+          "editModal",
+          "editFields",
+          "editPreview",
+          "editRevert",
+          "editCancel",
+          "editSave",
+          "cinemaControls",
+          "cinPrev",
+          "cinPlay",
+          "cinNext",
+          "cinRestart",
+          "cinProgress",
+          "beatLabel",
+          "enterBeat",
+          "cinExit",
+          "cursorRing",
+          "cinemaOverlay",
+          "cinemaTitle",
+          "cinemaCaption",
+          "finalCTA",
+          "walkAgain",
+          "backBoard",
+          "finalOpen"
+        ],
+        "elementCount": 424,
+        "buttonIds": [
+          "fitBtn",
+          "undoBtn",
+          "addBtn",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "minusBtn",
+          "plusBtn",
+          "resetBtn",
+          "cinemaBtn",
+          "detailClose",
+          "quickPin",
+          "quickCard",
+          "prevMoment",
+          "openMoment",
+          "nextMoment",
+          "replayFrom",
+          "cinemaFromMoment",
+          "startPathHere",
+          "editMomentBtn",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "addAddKeyword",
+          "cancelAdd",
+          "confirmAdd",
+          "cancelWhy",
+          "saveWhy",
+          "closeViewer",
+          "leftCollapse",
+          "toolAdd",
+          "pathModeBtn",
+          "toolCinema",
+          "toolFit",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "connectPrevious",
+          "connectNext",
+          "connectLater",
+          "editRevert",
+          "editCancel",
+          "editSave",
+          "cinPrev",
+          "cinPlay",
+          "cinNext",
+          "cinRestart",
+          "enterBeat",
+          "cinExit",
+          "walkAgain",
+          "backBoard",
+          "finalOpen"
+        ],
+        "metrics": {
+          "app": {
+            "tag": "DIV",
+            "className": "app",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 430,
+              "height": 932
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "fitBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(28, 17, 38, 0.75)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "16px"
+          },
+          "undoBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(28, 17, 38, 0.75)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "16px"
+          },
+          "addBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn primary",
+            "rect": {
+              "x": 337.406,
+              "y": 10.5,
+              "width": 80.594,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "11px"
+          },
+          "viewport": {
+            "tag": "DIV",
+            "className": "boardFrame",
+            "rect": {
+              "x": 0,
+              "y": 56,
+              "width": 430,
+              "height": 876
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "world": {
+            "tag": "DIV",
+            "className": "boardWorld",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 243.75
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "matrix(0.24375, 0, 0, 0.24375, 20, 316.125)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "threadSvg": {
+            "tag": "svg",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 243.75
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "5",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "glow": {
+            "tag": "filter",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "soft": {
+            "tag": "filter",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "threadLayer": {
+            "tag": "g",
+            "className": "",
+            "rect": {
+              "x": 103.363,
+              "y": 411.612,
+              "width": 232.537,
+              "height": 133.594
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "hotTip": {
+            "tag": "circle",
+            "className": "",
+            "rect": {
+              "x": 18.781,
+              "y": 370.906,
+              "width": 2.438,
+              "height": 2.438
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "draftThread": {
+            "tag": "path",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cardLayer": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "minusBtn": {
+            "tag": "BUTTON",
+            "className": "tool",
+            "rect": {
+              "x": 16,
+              "y": 876,
+              "width": 25.484,
+              "height": 38
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "zoomLabel": {
+            "tag": "SPAN",
+            "className": "zoomLabel",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(173, 154, 182)",
+            "fontSize": "11px"
+          },
+          "plusBtn": {
+            "tag": "BUTTON",
+            "className": "tool",
+            "rect": {
+              "x": 43.484,
+              "y": 876,
+              "width": 29,
+              "height": 38
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "resetBtn": {
+            "tag": "BUTTON",
+            "className": "tool hideMobile",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "cinemaBtn": {
+            "tag": "BUTTON",
+            "className": "cinemaBtn",
+            "rect": {
+              "x": 278.406,
+              "y": 828,
+              "width": 141.594,
+              "height": 42
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "50",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "detail": {
+            "tag": "ASIDE",
+            "className": "detail",
+            "rect": {
+              "x": 8,
+              "y": 948,
+              "width": 414,
+              "height": 486
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "55",
+            "transform": "matrix(1, 0, 0, 1, 0, 576)",
+            "backgroundColor": "rgba(25, 15, 33, 0.88)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "detailClose": {
+            "tag": "BUTTON",
+            "className": "close",
+            "rect": {
+              "x": 382.766,
+              "y": 963,
+              "width": 24.234,
+              "height": 23
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(201, 186, 207)",
+            "fontSize": "18px"
+          },
+          "dTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 29,
+              "y": 992,
+              "width": 372,
+              "height": 24
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "20px"
+          },
+          "dBasic": {
+            "tag": "DIV",
+            "className": "value",
+            "rect": {
+              "x": 29,
+              "y": 1060,
+              "width": 372,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 223, 233)",
+            "fontSize": "12px"
+          },
+          "dConn": {
+            "tag": "DIV",
+            "className": "value",
+            "rect": {
+              "x": 29,
+              "y": 1106,
+              "width": 372,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 223, 233)",
+            "fontSize": "12px"
+          },
+          "quickPin": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1218,
+              "width": 65.031,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "quickCard": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 102.031,
+              "y": 1218,
+              "width": 75.156,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "prevMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1281,
+              "width": 87.828,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "openMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 124.828,
+              "y": 1281,
+              "width": 89.328,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "nextMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 222.156,
+              "y": 1281,
+              "width": 87.828,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "replayFrom": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1323,
+              "width": 97.953,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "cinemaFromMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 134.953,
+              "y": 1323,
+              "width": 130.859,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "startPathHere": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 273.813,
+              "y": 1323,
+              "width": 120.734,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editMomentBtn": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1365,
+              "width": 42.25,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "addModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "typeGrid": {
+            "tag": "DIV",
+            "className": "typeGrid",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "formArea": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "mediaFile": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addEmotion": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addSource": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addPinStyle": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addCardStyle": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addKeywordPicker": {
+            "tag": "DIV",
+            "className": "keywordPicker",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addCustomKeyword": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addAddKeyword": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "momentTitle": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "momentEmotion": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "momentMemo": {
+            "tag": "TEXTAREA",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cancelAdd": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "confirmAdd": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "composerPreviewWrap": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.043)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "composerPreview": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "whyModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "whyInput": {
+            "tag": "TEXTAREA",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cancelWhy": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "saveWhy": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "viewerModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "vTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "viewerMedia": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(15, 10, 20)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "vMeta": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(188, 170, 195)",
+            "fontSize": "12px"
+          },
+          "closeViewer": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "whyBubble": {
+            "tag": "DIV",
+            "className": "whyBubble",
+            "rect": {
+              "x": 198,
+              "y": 71,
+              "width": 34,
+              "height": 26
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "75",
+            "transform": "matrix(1, 0, 0, 1, -17, -15)",
+            "backgroundColor": "rgba(22, 12, 30, 0.88)",
+            "color": "rgb(240, 230, 242)",
+            "fontSize": "12px"
+          },
+          "toast": {
+            "tag": "DIV",
+            "className": "toast",
+            "rect": {
+              "x": 198,
+              "y": 833,
+              "width": 34,
+              "height": 24
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "100",
+            "transform": "matrix(1, 0, 0, 1, -17, 20)",
+            "backgroundColor": "rgba(31, 18, 39, 0.92)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "12px"
+          },
+          "leftPanel": {
+            "tag": "DIV",
+            "className": "leftPanel",
+            "rect": {
+              "x": 8,
+              "y": 812,
+              "width": 414,
+              "height": 447.359
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "56",
+            "transform": "matrix(1, 0, 0, 1, 0, 405.359)",
+            "backgroundColor": "rgba(22, 13, 30, 0.9)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "leftCollapse": {
+            "tag": "BUTTON",
+            "className": "collapseBtn",
+            "rect": {
+              "x": 388.719,
+              "y": 827,
+              "width": 18.281,
+              "height": 22
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(191, 174, 200)",
+            "fontSize": "16px"
+          },
+          "toolAdd": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 872,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "pathModeBtn": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 912,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "toolCinema": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 952,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "toolFit": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 992,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "mediaFilter": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1071,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "keywordFilter": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1111,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "themeGrid": {
+            "tag": "DIV",
+            "className": "themeGrid",
+            "rect": {
+              "x": 23,
+              "y": 1187,
+              "width": 384,
+              "height": 106
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "defaultPin": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1335,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "defaultCard": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1411,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "themeBadge": {
+            "tag": "DIV",
+            "className": "themeBadge",
+            "rect": {
+              "x": 213.906,
+              "y": 78,
+              "width": 130.094,
+              "height": 11
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "8",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(108, 92, 115)",
+            "fontSize": "9px"
+          },
+          "nextChooser": {
+            "tag": "DIV",
+            "className": "nextChooser",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "85",
+            "transform": "none",
+            "backgroundColor": "rgba(21, 12, 29, 0.96)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "nextChoices": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "postAdd": {
+            "tag": "DIV",
+            "className": "postAdd",
+            "rect": {
+              "x": 15,
+              "y": 755,
+              "width": 400,
+              "height": 113
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "78",
+            "transform": "matrix(1, 0, 0, 1, -200, 20)",
+            "backgroundColor": "rgba(22, 12, 31, 0.94)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "postAddTitle": {
+            "tag": "STRONG",
+            "className": "",
+            "rect": {
+              "x": 30,
+              "y": 774,
+              "width": 93.891,
+              "height": 15
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "12px"
+          },
+          "connectPrevious": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 30,
+              "y": 819,
+              "width": 97.953,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "connectNext": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 135.953,
+              "y": 819,
+              "width": 128.313,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "connectLater": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 272.266,
+              "y": 819,
+              "width": 75.156,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editFields": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editPreview": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editRevert": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editCancel": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editSave": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "cinemaControls": {
+            "tag": "DIV",
+            "className": "cinemaControls",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "95",
+            "transform": "none",
+            "backgroundColor": "rgba(12, 7, 18, 0.86)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinPrev": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinPlay": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinNext": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinRestart": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinProgress": {
+            "tag": "INPUT",
+            "className": "cinProgress",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(16, 16, 16)",
+            "fontSize": "16px"
+          },
+          "beatLabel": {
+            "tag": "DIV",
+            "className": "beatLabel",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(203, 184, 211)",
+            "fontSize": "9px"
+          },
+          "enterBeat": {
+            "tag": "BUTTON",
+            "className": "cinCtl enterBeat",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 145, 0.13)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinExit": {
+            "tag": "BUTTON",
+            "className": "cinCtl hideOnMobileV11",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cursorRing": {
+            "tag": "DIV",
+            "className": "cursorRing",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "200",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaOverlay": {
+            "tag": "DIV",
+            "className": "cinemaOverlay",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "70",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaTitle": {
+            "tag": "DIV",
+            "className": "cinemaTitle",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaCaption": {
+            "tag": "DIV",
+            "className": "cinemaCaption",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(15, 8, 20, 0.7)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "finalCTA": {
+            "tag": "DIV",
+            "className": "finalCTA",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "walkAgain": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "backBoard": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.07)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "finalOpen": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.07)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          }
+        },
+        "cards": {
+          "count": 7,
+          "items": [
+            {
+              "id": "m1",
+              "x": 70.994,
+              "y": 432.046,
+              "w": 69.497,
+              "h": 80.338,
+              "rot": "-4deg"
+            },
+            {
+              "id": "m2",
+              "x": 146.671,
+              "y": 413.243,
+              "w": 62.886,
+              "h": 79.018,
+              "rot": "3deg"
+            },
+            {
+              "id": "m3",
+              "x": 239.257,
+              "y": 430.817,
+              "w": 61.503,
+              "h": 75.124,
+              "rot": "-2deg"
+            },
+            {
+              "id": "m4",
+              "x": 301.175,
+              "y": 467.577,
+              "w": 64.419,
+              "h": 83.84,
+              "rot": "4deg"
+            },
+            {
+              "id": "m5",
+              "x": 218.032,
+              "y": 516.129,
+              "w": 60.949,
+              "h": 59.252,
+              "rot": "2deg"
+            }
+          ]
+        },
+        "threads": 6,
+        "runtime": {
+          "moments": 7,
+          "connections": 6,
+          "view": {
+            "x": 20,
+            "y": 316.125,
+            "z": 0.24375
+          },
+          "selected": "m1",
+          "theme": "pearl",
+          "zoomLabel": "24%"
+        }
+      },
+      "pngSha": "b0d4c211c881c7f073f87a3f4004503e973e989fa780a2c77c09807968ebad5c",
+      "stateName": "INITIAL"
+    },
+    "afterReset": {
+      "state": {
+        "ids": [
+          "app",
+          "fitBtn",
+          "undoBtn",
+          "addBtn",
+          "viewport",
+          "world",
+          "threadSvg",
+          "glow",
+          "soft",
+          "threadLayer",
+          "hotTip",
+          "draftThread",
+          "cardLayer",
+          "minusBtn",
+          "zoomLabel",
+          "plusBtn",
+          "resetBtn",
+          "cinemaBtn",
+          "detail",
+          "detailClose",
+          "dTitle",
+          "dBasic",
+          "dConn",
+          "quickPin",
+          "quickCard",
+          "prevMoment",
+          "openMoment",
+          "nextMoment",
+          "replayFrom",
+          "cinemaFromMoment",
+          "startPathHere",
+          "editMomentBtn",
+          "addModal",
+          "typeGrid",
+          "formArea",
+          "mediaFile",
+          "addEmotion",
+          "addSource",
+          "addPinStyle",
+          "addCardStyle",
+          "addKeywordPicker",
+          "addCustomKeyword",
+          "addAddKeyword",
+          "momentTitle",
+          "momentEmotion",
+          "momentMemo",
+          "cancelAdd",
+          "confirmAdd",
+          "composerPreviewWrap",
+          "composerPreview",
+          "whyModal",
+          "whyInput",
+          "cancelWhy",
+          "saveWhy",
+          "viewerModal",
+          "vTitle",
+          "viewerMedia",
+          "vMeta",
+          "closeViewer",
+          "whyBubble",
+          "toast",
+          "leftPanel",
+          "leftCollapse",
+          "toolAdd",
+          "pathModeBtn",
+          "toolCinema",
+          "toolFit",
+          "mediaFilter",
+          "keywordFilter",
+          "themeGrid",
+          "defaultPin",
+          "defaultCard",
+          "themeBadge",
+          "nextChooser",
+          "nextChoices",
+          "postAdd",
+          "postAddTitle",
+          "connectPrevious",
+          "connectNext",
+          "connectLater",
+          "editModal",
+          "editFields",
+          "editPreview",
+          "editRevert",
+          "editCancel",
+          "editSave",
+          "cinemaControls",
+          "cinPrev",
+          "cinPlay",
+          "cinNext",
+          "cinRestart",
+          "cinProgress",
+          "beatLabel",
+          "enterBeat",
+          "cinExit",
+          "cursorRing",
+          "cinemaOverlay",
+          "cinemaTitle",
+          "cinemaCaption",
+          "finalCTA",
+          "walkAgain",
+          "backBoard",
+          "finalOpen"
+        ],
+        "elementCount": 424,
+        "buttonIds": [
+          "fitBtn",
+          "undoBtn",
+          "addBtn",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "minusBtn",
+          "plusBtn",
+          "resetBtn",
+          "cinemaBtn",
+          "detailClose",
+          "quickPin",
+          "quickCard",
+          "prevMoment",
+          "openMoment",
+          "nextMoment",
+          "replayFrom",
+          "cinemaFromMoment",
+          "startPathHere",
+          "editMomentBtn",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "addAddKeyword",
+          "cancelAdd",
+          "confirmAdd",
+          "cancelWhy",
+          "saveWhy",
+          "closeViewer",
+          "leftCollapse",
+          "toolAdd",
+          "pathModeBtn",
+          "toolCinema",
+          "toolFit",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "connectPrevious",
+          "connectNext",
+          "connectLater",
+          "editRevert",
+          "editCancel",
+          "editSave",
+          "cinPrev",
+          "cinPlay",
+          "cinNext",
+          "cinRestart",
+          "enterBeat",
+          "cinExit",
+          "walkAgain",
+          "backBoard",
+          "finalOpen"
+        ],
+        "metrics": {
+          "app": {
+            "tag": "DIV",
+            "className": "app",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 430,
+              "height": 932
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "fitBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(28, 17, 38, 0.75)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "16px"
+          },
+          "undoBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(28, 17, 38, 0.75)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "16px"
+          },
+          "addBtn": {
+            "tag": "BUTTON",
+            "className": "headbtn primary",
+            "rect": {
+              "x": 337.406,
+              "y": 10.5,
+              "width": 80.594,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 222, 238)",
+            "fontSize": "11px"
+          },
+          "viewport": {
+            "tag": "DIV",
+            "className": "boardFrame",
+            "rect": {
+              "x": 0,
+              "y": 56,
+              "width": 430,
+              "height": 876
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "world": {
+            "tag": "DIV",
+            "className": "boardWorld",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 243.75
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "matrix(0.24375, 0, 0, 0.24375, 20, 316.125)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "threadSvg": {
+            "tag": "svg",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 243.75
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "5",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "glow": {
+            "tag": "filter",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "soft": {
+            "tag": "filter",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "threadLayer": {
+            "tag": "g",
+            "className": "",
+            "rect": {
+              "x": 103.363,
+              "y": 411.612,
+              "width": 232.537,
+              "height": 134.503
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "hotTip": {
+            "tag": "circle",
+            "className": "",
+            "rect": {
+              "x": 18.781,
+              "y": 370.906,
+              "width": 2.438,
+              "height": 2.438
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "draftThread": {
+            "tag": "path",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cardLayer": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 20,
+              "y": 372.125,
+              "width": 390,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "minusBtn": {
+            "tag": "BUTTON",
+            "className": "tool",
+            "rect": {
+              "x": 16,
+              "y": 876,
+              "width": 25.484,
+              "height": 38
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "zoomLabel": {
+            "tag": "SPAN",
+            "className": "zoomLabel",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(173, 154, 182)",
+            "fontSize": "11px"
+          },
+          "plusBtn": {
+            "tag": "BUTTON",
+            "className": "tool",
+            "rect": {
+              "x": 43.484,
+              "y": 876,
+              "width": 29,
+              "height": 38
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "resetBtn": {
+            "tag": "BUTTON",
+            "className": "tool hideMobile",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(221, 207, 228)",
+            "fontSize": "11px"
+          },
+          "cinemaBtn": {
+            "tag": "BUTTON",
+            "className": "cinemaBtn",
+            "rect": {
+              "x": 278.406,
+              "y": 828,
+              "width": 141.594,
+              "height": 42
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "50",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "detail": {
+            "tag": "ASIDE",
+            "className": "detail",
+            "rect": {
+              "x": 8,
+              "y": 948,
+              "width": 414,
+              "height": 486
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "55",
+            "transform": "matrix(1, 0, 0, 1, 0, 576)",
+            "backgroundColor": "rgba(25, 15, 33, 0.88)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "detailClose": {
+            "tag": "BUTTON",
+            "className": "close",
+            "rect": {
+              "x": 382.766,
+              "y": 963,
+              "width": 24.234,
+              "height": 23
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(201, 186, 207)",
+            "fontSize": "18px"
+          },
+          "dTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 29,
+              "y": 992,
+              "width": 372,
+              "height": 24
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "20px"
+          },
+          "dBasic": {
+            "tag": "DIV",
+            "className": "value",
+            "rect": {
+              "x": 29,
+              "y": 1060,
+              "width": 372,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 223, 233)",
+            "fontSize": "12px"
+          },
+          "dConn": {
+            "tag": "DIV",
+            "className": "value",
+            "rect": {
+              "x": 29,
+              "y": 1106,
+              "width": 372,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(232, 223, 233)",
+            "fontSize": "12px"
+          },
+          "quickPin": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1218,
+              "width": 65.031,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "quickCard": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 102.031,
+              "y": 1218,
+              "width": 75.156,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "prevMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1281,
+              "width": 87.828,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "openMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 124.828,
+              "y": 1281,
+              "width": 89.328,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "nextMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 222.156,
+              "y": 1281,
+              "width": 87.828,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "replayFrom": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1323,
+              "width": 97.953,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "cinemaFromMoment": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 134.953,
+              "y": 1323,
+              "width": 130.859,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "startPathHere": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 273.813,
+              "y": 1323,
+              "width": 120.734,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editMomentBtn": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 29,
+              "y": 1365,
+              "width": 42.25,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "addModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "typeGrid": {
+            "tag": "DIV",
+            "className": "typeGrid",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "formArea": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "mediaFile": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addEmotion": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addSource": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addPinStyle": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addCardStyle": {
+            "tag": "SELECT",
+            "className": "field selectField",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13.3333px"
+          },
+          "addKeywordPicker": {
+            "tag": "DIV",
+            "className": "keywordPicker",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addCustomKeyword": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "addAddKeyword": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "momentTitle": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "momentEmotion": {
+            "tag": "INPUT",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "momentMemo": {
+            "tag": "TEXTAREA",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cancelAdd": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "confirmAdd": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "composerPreviewWrap": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.043)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "composerPreview": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "whyModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "whyInput": {
+            "tag": "TEXTAREA",
+            "className": "field",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cancelWhy": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "saveWhy": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "viewerModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "vTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "viewerMedia": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(15, 10, 20)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "vMeta": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(188, 170, 195)",
+            "fontSize": "12px"
+          },
+          "closeViewer": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "whyBubble": {
+            "tag": "DIV",
+            "className": "whyBubble",
+            "rect": {
+              "x": 198,
+              "y": 71,
+              "width": 34,
+              "height": 26
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "75",
+            "transform": "matrix(1, 0, 0, 1, -17, -15)",
+            "backgroundColor": "rgba(22, 12, 30, 0.88)",
+            "color": "rgb(240, 230, 242)",
+            "fontSize": "12px"
+          },
+          "toast": {
+            "tag": "DIV",
+            "className": "toast",
+            "rect": {
+              "x": 135.398,
+              "y": 796,
+              "width": 159.203,
+              "height": 41
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "100",
+            "transform": "matrix(1, 0, 0, 1, -79.6016, 0)",
+            "backgroundColor": "rgba(31, 18, 39, 0.92)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "12px"
+          },
+          "leftPanel": {
+            "tag": "DIV",
+            "className": "leftPanel",
+            "rect": {
+              "x": 8,
+              "y": 812,
+              "width": 414,
+              "height": 447.359
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "56",
+            "transform": "matrix(1, 0, 0, 1, 0, 405.359)",
+            "backgroundColor": "rgba(22, 13, 30, 0.9)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "leftCollapse": {
+            "tag": "BUTTON",
+            "className": "collapseBtn",
+            "rect": {
+              "x": 388.719,
+              "y": 827,
+              "width": 18.281,
+              "height": 22
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(191, 174, 200)",
+            "fontSize": "16px"
+          },
+          "toolAdd": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 872,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "pathModeBtn": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 912,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "toolCinema": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 952,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "toolFit": {
+            "tag": "BUTTON",
+            "className": "wideTool",
+            "rect": {
+              "x": 23,
+              "y": 992,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(238, 228, 240)",
+            "fontSize": "11px"
+          },
+          "mediaFilter": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1071,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "keywordFilter": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1111,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "themeGrid": {
+            "tag": "DIV",
+            "className": "themeGrid",
+            "rect": {
+              "x": 23,
+              "y": 1187,
+              "width": 384,
+              "height": 106
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "defaultPin": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1335,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "defaultCard": {
+            "tag": "SELECT",
+            "className": "filterSelect",
+            "rect": {
+              "x": 23,
+              "y": 1411,
+              "width": 384,
+              "height": 34
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(32, 21, 43)",
+            "color": "rgb(238, 238, 238)",
+            "fontSize": "10px"
+          },
+          "themeBadge": {
+            "tag": "DIV",
+            "className": "themeBadge",
+            "rect": {
+              "x": 213.906,
+              "y": 78,
+              "width": 130.094,
+              "height": 11
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "8",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(108, 92, 115)",
+            "fontSize": "9px"
+          },
+          "nextChooser": {
+            "tag": "DIV",
+            "className": "nextChooser",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "85",
+            "transform": "none",
+            "backgroundColor": "rgba(21, 12, 29, 0.96)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "nextChoices": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "postAdd": {
+            "tag": "DIV",
+            "className": "postAdd",
+            "rect": {
+              "x": 15,
+              "y": 755,
+              "width": 400,
+              "height": 113
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "78",
+            "transform": "matrix(1, 0, 0, 1, -200, 20)",
+            "backgroundColor": "rgba(22, 12, 31, 0.94)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "postAddTitle": {
+            "tag": "STRONG",
+            "className": "",
+            "rect": {
+              "x": 30,
+              "y": 774,
+              "width": 93.891,
+              "height": 15
+            },
+            "display": "inline",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "12px"
+          },
+          "connectPrevious": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 30,
+              "y": 819,
+              "width": 97.953,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "connectNext": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 135.953,
+              "y": 819,
+              "width": 128.313,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "connectLater": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 272.266,
+              "y": 819,
+              "width": 75.156,
+              "height": 34
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editModal": {
+            "tag": "DIV",
+            "className": "modalShade",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "80",
+            "transform": "none",
+            "backgroundColor": "rgba(8, 5, 13, 0.62)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editFields": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editPreview": {
+            "tag": "DIV",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "editRevert": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editCancel": {
+            "tag": "BUTTON",
+            "className": "miniBtn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.06)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "editSave": {
+            "tag": "BUTTON",
+            "className": "miniBtn accent",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 144, 0.14)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "11px"
+          },
+          "cinemaControls": {
+            "tag": "DIV",
+            "className": "cinemaControls",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "95",
+            "transform": "none",
+            "backgroundColor": "rgba(12, 7, 18, 0.86)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinPrev": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinPlay": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinNext": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinRestart": {
+            "tag": "BUTTON",
+            "className": "cinCtl",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinProgress": {
+            "tag": "INPUT",
+            "className": "cinProgress",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(16, 16, 16)",
+            "fontSize": "16px"
+          },
+          "beatLabel": {
+            "tag": "DIV",
+            "className": "beatLabel",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(203, 184, 211)",
+            "fontSize": "9px"
+          },
+          "enterBeat": {
+            "tag": "BUTTON",
+            "className": "cinCtl enterBeat",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 77, 145, 0.13)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cinExit": {
+            "tag": "BUTTON",
+            "className": "cinCtl hideOnMobileV11",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.055)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "9px"
+          },
+          "cursorRing": {
+            "tag": "DIV",
+            "className": "cursorRing",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "200",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaOverlay": {
+            "tag": "DIV",
+            "className": "cinemaOverlay",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "70",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaTitle": {
+            "tag": "DIV",
+            "className": "cinemaTitle",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "cinemaCaption": {
+            "tag": "DIV",
+            "className": "cinemaCaption",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "0",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(15, 8, 20, 0.7)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "finalCTA": {
+            "tag": "DIV",
+            "className": "finalCTA",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "walkAgain": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "backBoard": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.07)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "finalOpen": {
+            "tag": "BUTTON",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "inline-block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "zIndex": "auto",
+            "transform": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.07)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          }
+        },
+        "cards": {
+          "count": 7,
+          "items": [
+            {
+              "id": "m1",
+              "x": 70.994,
+              "y": 432.046,
+              "w": 69.497,
+              "h": 80.338,
+              "rot": "-4deg"
+            },
+            {
+              "id": "m2",
+              "x": 146.671,
+              "y": 413.243,
+              "w": 62.886,
+              "h": 79.018,
+              "rot": "3deg"
+            },
+            {
+              "id": "m3",
+              "x": 239.257,
+              "y": 430.817,
+              "w": 61.503,
+              "h": 75.124,
+              "rot": "-2deg"
+            },
+            {
+              "id": "m4",
+              "x": 301.175,
+              "y": 467.577,
+              "w": 64.419,
+              "h": 83.84,
+              "rot": "4deg"
+            },
+            {
+              "id": "m5",
+              "x": 218.032,
+              "y": 516.129,
+              "w": 60.949,
+              "h": 59.252,
+              "rot": "2deg"
+            }
+          ]
+        },
+        "threads": 6,
+        "runtime": {
+          "moments": 7,
+          "connections": 6,
+          "view": {
+            "x": 20,
+            "y": 316.125,
+            "z": 0.24375
+          },
+          "selected": "m1",
+          "theme": "pearl",
+          "zoomLabel": "24%"
+        }
+      },
+      "pngSha": "d4bf9860752c0749566973af6f8718f13d849f55c78ea3ad34d19596b9f593d9",
+      "stateName": "AFTER_RESET"
+    }
+  },
+  "interaction": {
+    "controlSurface": "BOARD_SPATIAL",
+    "themeOk": true,
+    "zoomBefore": "24%",
+    "zoomAfter": "34%",
+    "selected": "m1"
+  },
+  "errors": [],
+  "screenshots": {
+    "initial_sha256": "b0d4c211c881c7f073f87a3f4004503e973e989fa780a2c77c09807968ebad5c",
+    "after_reset_sha256": "d4bf9860752c0749566973af6f8718f13d849f55c78ea3ad34d19596b9f593d9"
+  }
+}

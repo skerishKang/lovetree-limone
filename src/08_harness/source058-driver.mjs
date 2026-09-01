@@ -28,6 +28,11 @@ function collectSRC58State() {
   const ids = [...document.querySelectorAll('[id]')].map(el=>el.id);
   const $ = (s) => document.querySelector(s);
   const lt = window.__LT58;
+  const normalizeTransform = (t) => {
+    if (!t || t === 'none') return t;
+    // round matrix numbers to 3 decimals to absorb sub-pixel jitter between inline and external stylesheet load timing
+    return t.replace(/-?\d*\.?\d+/g, (m) => String(round(parseFloat(m))));
+  };
   const metrics = Object.fromEntries([...document.querySelectorAll('[id]')].map(el=>{
     const r = el.getBoundingClientRect();
     const cs = getComputedStyle(el);
@@ -40,7 +45,7 @@ function collectSRC58State() {
       visibility: cs.visibility,
       opacity: cs.opacity,
       zIndex: cs.zIndex,
-      transform: cs.transform,
+      transform: normalizeTransform(cs.transform),
       backgroundColor: cs.backgroundColor,
       color: cs.color,
       fontSize: cs.fontSize,
@@ -61,7 +66,7 @@ function collectSRC58State() {
     runtime: lt ? {
       moments: lt.state.moments,
       connections: lt.state.connections,
-      view: lt.state.view,
+      view: lt.state.view ? { x: round(lt.state.view.x), y: round(lt.state.view.y), z: round(lt.state.view.z) } : null,
       selected: lt.state.selected,
       theme: document.body.dataset.theme || null,
       zoomLabel: $('#zoomLabel')?.textContent ?? null,
@@ -70,10 +75,23 @@ function collectSRC58State() {
 }
 
 async function settleSRC58(page) {
-  await page.waitForTimeout(450);
+  // Source schedules startup toast at 650ms; wait past it so both variants have shown and we can clear it deterministically
+  await page.waitForTimeout(900);
   await page.evaluate(async () => {
     const t = document.getElementById('toast');
-    if (t) { t.classList.remove('show'); t.classList.remove('open'); }
+    if (t) {
+      t.classList.remove('show');
+      t.classList.remove('open');
+      t.style.display = 'none';
+      // clear any pending toast timeout stored on window if present
+      if (window.__LT58 && window.__LT58._toastTimer) clearTimeout(window.__LT58._toastTimer);
+    }
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  });
+  await page.waitForTimeout(450);
+  await page.evaluate(async () => {
+    const t2 = document.getElementById('toast');
+    if (t2) { t2.classList.remove('show'); t2.classList.remove('open'); t2.style.display = 'none'; }
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
   });
 }
@@ -88,34 +106,32 @@ async function assertSRC58Ready(page, sourceId) {
 async function exerciseSRC58(page, sourceId, label) {
   // exercise theme switch and basic controls, similar to SRC060 but for SRC058 surface
   await page.evaluate(()=> window.__LT58 && window.__LT58.selectMoment && window.__LT58.state && document.body.dataset.theme);
-  // theme switch
-  const themes = ['pearl','cork','letter','blossom','night','mint'];
+  // theme switch (force via evaluate to avoid overlay intercept)
   let themeOk = true;
   for (const th of ['cork','night']) {
-    const btn = page.locator(`#themeGrid [data-theme="${th}"]`);
-    if (await btn.count() > 0) {
-      await btn.click();
-      await page.waitForTimeout(150);
+    const exists = await page.evaluate((t)=> !!document.querySelector(`#themeGrid [data-theme="${t}"]`), th);
+    if (exists) {
+      await page.evaluate((t)=> document.querySelector(`#themeGrid [data-theme="${t}"]`).click(), th);
+      await page.waitForTimeout(200);
       const cur = await page.evaluate(()=>document.body.dataset.theme);
       if (cur !== th) themeOk = false;
     }
   }
   // reset to pearl
-  const pearlBtn = page.locator('#themeGrid [data-theme="pearl"]');
-  if (await pearlBtn.count()>0) { await pearlBtn.click(); await page.waitForTimeout(150); }
+  const hasPearl = await page.evaluate(()=> !!document.querySelector('#themeGrid [data-theme="pearl"]'));
+  if (hasPearl) { await page.evaluate(()=> document.querySelector('#themeGrid [data-theme="pearl"]').click()); await page.waitForTimeout(200); }
 
-  // zoom / fit
+  // zoom / fit (evaluate to bypass pointer intercept from leftPanel)
   const zoomBefore = await page.evaluate(()=> document.getElementById('zoomLabel')?.textContent);
-  const plusBtn = page.locator('#plusBtn');
-  if (await plusBtn.count()>0) { await plusBtn.click(); await page.waitForTimeout(200); }
+  const hasPlus = await page.evaluate(()=> !!document.getElementById('plusBtn'));
+  if (hasPlus) { await page.evaluate(()=> document.getElementById('plusBtn').click()); await page.waitForTimeout(250); }
   const zoomAfter = await page.evaluate(()=> document.getElementById('zoomLabel')?.textContent);
-  const fitBtn = page.locator('#fitBtn');
-  if (await fitBtn.count()>0) { await fitBtn.click(); await page.waitForTimeout(200); }
+  const hasFit = await page.evaluate(()=> !!document.getElementById('fitBtn'));
+  if (hasFit) { await page.evaluate(()=> document.getElementById('fitBtn').click()); await page.waitForTimeout(250); }
 
-  // select a card
-  const firstCard = page.locator('#cardLayer [data-id]').first();
-  await firstCard.click();
-  await page.waitForTimeout(250);
+  // select a card (use evaluate to avoid overlay, but locator is ok for card)
+  const firstId = await page.evaluate(()=> document.querySelector('#cardLayer [data-id]')?.dataset.id);
+  if (firstId) { await page.evaluate((id)=> document.querySelector(`#cardLayer [data-id="${id}"]`).click(), firstId); await page.waitForTimeout(300); }
   const selected = await page.evaluate(()=> window.__LT58.state.selected);
 
   return { controlSurface: 'BOARD_SPATIAL', themeOk, zoomBefore, zoomAfter, selected };

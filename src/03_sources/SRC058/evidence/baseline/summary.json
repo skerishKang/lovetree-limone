@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC058",
+  "exact_head": "1e7798d1380f10eb1689078de2c85972e4ef5d39",
+  "authority_sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+  "authority_bytes": 532697,
+  "viewports": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "interaction": {
+        "controlSurface": "BOARD_SPATIAL",
+        "themeOk": true,
+        "zoomBefore": "79%",
+        "zoomAfter": "89%",
+        "selected": "m1"
+      },
+      "idCount": 103,
+      "elementCount": 424
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "interaction": {
+        "controlSurface": "BOARD_SPATIAL",
+        "themeOk": true,
+        "zoomBefore": "24%",
+        "zoomAfter": "34%",
+        "selected": "m1"
+      },
+      "idCount": 103,
+      "elementCount": 424
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "interaction": {
+        "controlSurface": "BOARD_SPATIAL",
+        "themeOk": true,
+        "zoomBefore": "22%",
+        "zoomAfter": "32%",
+        "selected": "m1"
+      },
+      "idCount": 103,
+      "elementCount": 424
+    }
+  ]
+}
