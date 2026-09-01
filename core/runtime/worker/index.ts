@@ -2,6 +2,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import handler from "vinext/server/app-router-entry";
 import { handleApiRequest } from "../server/api";
 import { applyDefaultDynamicCachePolicy } from "./cache-policy";
+import { resolveMvpStaticAssetPath } from "./mvp-router";
 
 interface Env {
   ASSETS: Fetcher;
@@ -41,6 +42,17 @@ const worker = {
 
     const apiResponse = await handleApiRequest(request, env);
     if (apiResponse) return apiResponse;
+
+    // Reserved MVP static namespace adapter: /mvp/NN, /mvp/NN/, /mvp/NN/*
+    const mvpAssetPath = resolveMvpStaticAssetPath(url.pathname);
+    if (mvpAssetPath && env.ASSETS) {
+      const assetUrl = new URL(mvpAssetPath, request.url);
+      const assetReq = new Request(assetUrl.toString(), request);
+      const assetRes = await env.ASSETS.fetch(assetReq);
+      if (assetRes.status !== 404) {
+        return assetRes;
+      }
+    }
 
     const appResponse = await handler.fetch(request, env, ctx);
     return applyDefaultDynamicCachePolicy(appResponse);

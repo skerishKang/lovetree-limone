@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoveTree MVP01 — Clean Five-Source Composition</title>
+  <link rel="stylesheet" href="/mvp/01/shell.css">
+</head>
+<body>
+  <div id="surface-container" aria-label="Active Source Surface"></div>
+
+  <!-- Minimal Floating Autohide Composition Chrome -->
+  <nav id="mvp-shell-nav" class="mvp-nav" aria-label="MVP001 Journey Navigation">
+    <div class="mvp-nav-panel" id="nav-panel">
+      <div class="mvp-nav-brand">
+        <span class="mvp-badge">MVP01</span>
+        <span class="mvp-step-title" id="step-title-display">입장 포털</span>
+      </div>
+      <div class="mvp-nav-steps" id="steps-selector">
+        <!-- Dynamically rendered step items -->
+      </div>
+      <div class="mvp-nav-controls">
+        <button id="prev-btn" class="nav-btn" aria-label="이전 단계" title="이전 단계">‹</button>
+        <span class="step-indicator" id="step-counter">1 / 5</span>
+        <button id="next-btn" class="nav-btn" aria-label="다음 단계" title="다음 단계">›</button>
+      </div>
+    </div>
+    <button id="toggle-nav-btn" class="toggle-btn" aria-label="내비게이션 토글" title="내비게이션 토글">
+      <span class="toggle-icon">⋮</span>
+    </button>
+  </nav>
+
+  <script src="/mvp/01/shell.js"></script>
+</body>
+</html>
