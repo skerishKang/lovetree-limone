@@ -18,10 +18,13 @@
 - **Revision**: V1.2.1
 - **Runtime policy**: `HTML_CSS_JS_MECHANICAL_ONLY`
 
-## Product Implementation
+## Product Implementation (direct)
 
 - `app/trees/[id]/portal/page.tsx`
 - `app/trees/[id]/portal/portal.module.css`
+
+## Related Navigation Authority (contextual, not direct portal implementation)
+
 - `app/components/v4/V4EntryResolver.tsx` (unchanged authority — lives outside Source64)
 - `lib/entry-resolver.ts`
 

@@ -14,8 +14,6 @@
   "admission": {
     "status": "PASS",
     "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
-    "admitted_at": "2026-09-01T00:00:00Z",
-    "admitted_by": "Integration CTO",
     "note": "SRC060 canvas resize defect (PR #586) fixed and closed. Post-fix render verified at 1440x900, 430x932, 390x844 with VISIBLE_CLUSTER_COUNT=4, VISIBLE_NODE_COUNT>=16, BRIDGE_LINES_VISIBLE=YES, ResizeObserver=ACTIVE."
   },
   "visual_semantics": {
@@ -44,7 +42,6 @@
     "moment_identity_preserved": true,
     "data_source": "useTreeMoments(treeId, undefined, momentId ?? undefined)",
     "no_invented_moment_id": true,
-    "no_durable_write": true,
     "cluster_identity": "VIEW_DERIVED (clusterFor(moment.sourceType, moment.isRoot))",
     "bridge_identity": "VIEW_DERIVED (parent.cluster !== moment.cluster)"
   },
@@ -58,7 +55,10 @@
     "src/03_sources/SRC060/baseline/accepted-baseline.json",
     "src/03_sources/SRC060/evidence/parity/accepted-parity.json",
     "src/03_sources/SRC060/authority/authority.json",
-    "tests/five-source-mvp-source60-explore-adoption.test.mjs"
+    "tests/five-source-mvp-source60-explore-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/",
+    "LoveTree_Evidence/mvp001-src060-focused-visual-closure-260901/",
+    "LoveTree_Evidence/mvp001-src060-resize-repair-260901/"
   ],
   "status": "ADMITTED"
 }

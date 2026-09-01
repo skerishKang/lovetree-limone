@@ -58,7 +58,10 @@
     "moment_url_state": "searchParams.get('moment')",
     "moment_url_sync": "next.set('moment', nextMomentId)",
     "data_source": "useTreeMoments(treeId, undefined, momentId ?? undefined)",
-    "no_durable_write": true,
+    "composition_registration_performs_durable_write": false,
+    "product_runtime_mutation": "NONE",
+    "source_authority_mutation": "NONE",
+    "source_split_mutation": "NONE",
     "no_invented_moment_id": true
   }
 }

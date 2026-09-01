@@ -2,24 +2,22 @@
   "schema_version": "1.0",
   "composition_id": "MVP001",
   "composition_name": "Five-Source Product Surface Composition",
-  "description": "First formal composition that registers SRC064 (Entry Portal), SRC058 (Living Board), SRC056 (Relationship Overview), SRC057 (Memory Detail), and SRC060 (Deep Exploration) as reusable components and maps them to canonical product routes via ViewSwitcher.",
+  "description": "First formal composition that registers SRC064 (Entry Portal), SRC058 (Living Board), SRC056 (Relationship Overview), SRC057 (Memory Detail), and SRC060 (Deep Exploration) as reusable components and maps them to canonical product routes via ViewSwitcher. This is a scoped downstream release (MVP001_ONLY), not a global componentization or product-composition release.",
   "phase": "ROLLOUT",
   "composition_type": "PRODUCT_SURFACE",
-  "product_runtime_mutation": "NONE",
-  "source_authority_frozen": true,
   "created_at": "2026-09-01T00:00:00Z",
   "created_by": "Integration CTO",
-  "composition_contract": {
-    "source_geometry_silent_redesign": false,
-    "source_interaction_silent_redesign": false,
-    "tree_identity_preserved": true,
-    "moment_identity_preserved": true,
-    "view_switcher_continuity": true,
-    "back_forward_continuity": true,
-    "no_invented_moment_id": true,
-    "no_durable_write": true,
-    "no_product_runtime_mutation": true
-  },
+  "entry_component": "source64-entry-portal",
+  "entry_route_template": "/trees/{treeId}/portal",
+  "flow_mode": "CANONICAL_SEMANTIC_JOURNEY_NOT_FORCED_WIZARD",
+  "flow": [
+    { "step": "entry", "component_key": "source64-entry-portal", "source_id": "SRC064" },
+    { "step": "memory", "component_key": "source57-memory-detail", "source_id": "SRC057" },
+    { "step": "board", "component_key": "source58-living-board", "source_id": "SRC058" },
+    { "step": "relationships", "component_key": "source56-relationship-overview", "source_id": "SRC056" },
+    { "step": "explore", "component_key": "source60-deep-exploration", "source_id": "SRC060" },
+    { "step": "return", "component_key": "source64-entry-portal", "source_id": "SRC064" }
+  ],
   "components": [
     {
       "component_key": "source64-entry-portal",
@@ -62,6 +60,45 @@
       "admission_reason": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5 (CENTRAL_EXACT_HEAD_CI_PARITY_ARTIFACT_REVIEW, PR #586 canvas resize fix CLOSED)"
     }
   ],
+  "blocking_sources": [],
+  "identity_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "no_invented_moment_id": true
+  },
+  "data_contract": {
+    "composition_registration_performs_durable_write": false,
+    "product_runtime_mutation": "NONE",
+    "source_authority_mutation": "NONE",
+    "source_split_mutation": "NONE"
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "visual_contract": {
+    "source_geometry_silent_redesign": false,
+    "source_interaction_silent_redesign": false,
+    "no_product_runtime_mutation": true
+  },
+  "admission_contract": {
+    "record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
+    "status": "CANDIDATE_PASS_ALL_5_PENDING_CENTRAL_EXACT_HEAD_REVIEW",
+    "accepted_by_owner": true,
+    "central_exact_head_review": "PENDING"
+  },
+  "downstream_release": {
+    "owner_downstream_release": true,
+    "release_scope": "MVP001_ONLY",
+    "global_componentization_released": false,
+    "global_product_composition_released": false,
+    "inferred_from_source_rollout": false,
+    "authorized_by_owner": true
+  },
   "composition_evidence": [
     "src/06_components/source64-entry-portal/component.json",
     "src/06_components/source64-entry-portal/README.md",

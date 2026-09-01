@@ -12,9 +12,7 @@
   ],
   "admission": {
     "status": "PASS",
-    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
-    "admitted_at": "2026-09-01T00:00:00Z",
-    "admitted_by": "Integration CTO"
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5"
   },
   "visual_semantics": {
     "rendering": "dom-css-2.5d",
@@ -35,8 +33,7 @@
     "tree_identity_preserved": true,
     "moment_identity_preserved": true,
     "data_source": "useTreeMoments(treeId)",
-    "no_invented_moment_id": true,
-    "no_durable_write": true
+    "no_invented_moment_id": true
   },
   "navigation_contract": {
     "view_switcher_continuity": true,
@@ -48,7 +45,8 @@
     "src/03_sources/SRC056/baseline/accepted-baseline.json",
     "src/03_sources/SRC056/evidence/parity/accepted-parity.json",
     "src/03_sources/SRC056/authority/authority.json",
-    "tests/five-source-mvp-source56-relationship-adoption.test.mjs"
+    "tests/five-source-mvp-source56-relationship-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/"
   ],
   "status": "ADMITTED"
 }
