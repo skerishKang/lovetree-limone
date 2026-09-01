@@ -1,0 +1,19 @@
+name: MVP001 Isolated Static Browser QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mvp001-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload MVP001 A/B Parity Screenshots Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvp001-isolated-static-ab-parity
+          path: "*.png"
+          retention-days: 14
