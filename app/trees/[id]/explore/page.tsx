@@ -161,6 +161,11 @@ export default function TreeExplorePage() {
     cameraRef.current = { ...DEFAULT_CAMERA, target: [...DEFAULT_CAMERA.target] as Vec3 };
   }, []);
 
+  // The stage/canvas only mount once `loading` is false and there is no `error`,
+  // so the sizing setup has to re-run on that transition. With an empty dep list
+  // the effect ran once while the canvas was still unmounted, returned early, and
+  // never re-registered — leaving the backing buffer at the 300x150 HTML default
+  // while the draw loop projected into `viewportRef`, clipping every node/edge.
   useEffect(() => {
     const stage = stageRef.current;
     const canvas = canvasRef.current;
@@ -182,7 +187,7 @@ export default function TreeExplorePage() {
       observer.disconnect();
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [loading, error]);
 
   const projectedCandidates = useCallback(() => moments.flatMap((moment) => {
     const position = positions.get(moment.id);

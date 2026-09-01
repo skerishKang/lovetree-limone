@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
+import { assertCanvasSized, readCanvasRenderMetrics } from "./lib/canvas-render-metrics.mjs";
 
 const baseUrl = process.env.FIVE_SOURCE_MVP_QA_URL ?? "http://127.0.0.1:3000";
 const screenshotDir = process.env.FIVE_SOURCE_MVP_SCREENSHOT_DIR ?? "/tmp/five-source-mvp-browser-qa";
@@ -197,7 +198,23 @@ async function auditViewport({ name, width, height, reducedMotion = false }) {
   );
 
   await clickView(page, "탐색", "60", "m-child", `${name}-60`);
-  assert.ok(await page.locator("canvas").count(), `${name}: Source60 3D projection canvas missing`);
+
+  // Source60 regression guard. Merely counting <canvas> elements used to pass
+  // while the backing buffer stayed at the 300x150 HTML default and the whole
+  // projected scene was clipped away — a silent blank 3D surface with zero
+  // console errors. Assert the buffer is actually sized to the CSS box, and that
+  // the surface carries rendered content rather than a flat background fill.
+  const source60Canvas = await readCanvasRenderMetrics(page);
+  assert.ok(source60Canvas, `${name}: Source60 3D projection canvas missing`);
+  assertCanvasSized(source60Canvas, `${name}-60`);
+  assert.ok(
+    source60Canvas.distinctColors > 8,
+    `${name}-60: Source60 canvas rendered only ${source60Canvas.distinctColors} distinct colors — 3D surface is blank`,
+  );
+  assert.ok(
+    source60Canvas.nonBgSamples > 120,
+    `${name}-60: Source60 canvas rendered only ${source60Canvas.nonBgSamples} non-background samples — no clusters/nodes/edges visible`,
+  );
 
   await clickView(page, "포털", "64", "m-child", `${name}-64`);
   assert.ok(await page.locator('[data-rendering="css3d-dom"]').count(), `${name}: Source64 CSS3D portal rendering missing`);
