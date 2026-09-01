@@ -193,7 +193,7 @@ const SOURCES = [
           canvasWidth: canvas?.width ?? 0,
           canvasHeight: canvas?.height ?? 0,
           hasOverviewBtn: !!document.getElementById('overviewBtn'),
-          toastVisible: document.getElementById('toast')?.classList.contains('show') ?? false,
+          mode: window.__lt?.state?.mode ?? null,
         };
       });
     },
@@ -458,6 +458,12 @@ async function runFinalQA() {
         await pageB.click('#toggle-nav-btn');
         assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => !el.classList.contains('collapsed')), 'Nav expands');
         totalAssertions += 3;
+
+        // Final fail-closed check after nav collapse/expand and before context close
+        await pageB.waitForTimeout(200);
+        assert.equal(pageErrorsB.length, 0, `[B final] ${src.id} ${vp.name}: unexpected page errors before context close: ${pageErrorsB.join('; ')}`);
+        assert.equal(consoleErrorsB.length, 0, `[B final] ${src.id} ${vp.name}: unexpected console errors before context close: ${consoleErrorsB.join('; ')}`);
+        totalAssertions += 2;
 
         await contextB.close();
         console.log(`    ✓ ${vp.name}: Initial & Post-interaction matched, 0 errors, screenshots saved.`);
