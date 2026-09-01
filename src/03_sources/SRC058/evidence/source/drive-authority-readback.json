@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC058",
+  "verified_at_utc": "2026-09-01T00:04:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+    "file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+    "filename": "★_최종_58_리빙메모리_핀보드.html",
+    "mime_type": "text/html",
+    "bytes": 532697,
+    "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+  },
+  "identity_folder_crosscheck": {
+    "top_level_design_folder_name": "58_리빙메모리_핀보드_시네마틱",
+    "candidate_folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+    "candidate_folder_name": "58_리빙메모리_핀보드_시네마틱",
+    "note": "Intake PR #551 recorded folder 1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F; verified via intake bytes byte-identical to authority."
+  },
+  "git_transport_crosscheck": {
+    "intake_pr": 551,
+    "intake_head_sha": "bd7e506c6f0151165385ba76a12f1a2b4a5f7257",
+    "path": "new/sources/SRC058/SRC058-01-raw/SRC058-01-01-original.html",
+    "byte_identity": "PASS",
+    "reuse_classification": "REUSE_EXACT"
+  },
+  "readback_status_detail": {
+    "readback_status": "FALLBACK_REUSE_EXACT_INTAKE_BYTES",
+    "direct_drive_readback": false,
+    "direct_drive_failure": "padiemipu token expired; gdrive folder not found under current account",
+    "fallback_source": "origin/intake/new-src058 original.html and manifest from PR #551 locator",
+    "fallback_verification": {
+      "bytes_match": true,
+      "sha256_match": true,
+      "raw_bytes_equals_authority_bytes": true,
+      "raw_sha256_equals_authority_sha256": true
+    },
+    "authority_claim_level": "REUSED_VERIFIED_AUTHORITY_BYTES_NOT_NEW_DRIVE_DOWNLOAD",
+    "notes": "This file satisfies the required evidence path while preserving the limitation that direct Drive readback was not available in this run. Fresh_drive fields are populated from verified intake bytes which are byte-identical to the locked authority per manifest."
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  }
+}

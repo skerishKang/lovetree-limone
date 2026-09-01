@@ -1,0 +1,15 @@
+{
+  "source_id": "SRC058",
+  "capture_type": "baseline",
+  "authority_file": "★_최종_58_리빙메모리_핀보드.html",
+  "authority_sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+  "viewports": [
+    { "width": 1440, "height": 900 },
+    { "width": 430, "height": 932 },
+    { "width": 390, "height": 844 }
+  ],
+  "states": ["INITIAL", "AFTER_RESET", "CINEMA"],
+  "driver": "src/08_harness/source058-driver.mjs",
+  "expected_browser_errors": 0,
+  "notes": "Frozen original baseline capture for SRC058 mechanical split rollout."
+}
