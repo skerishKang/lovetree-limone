@@ -4,8 +4,9 @@
  *
  * Fail-closed guard for the current clean-generation mechanical source phase.
  * Enforces that active src/ contains no TS/TSX/JSX files, no premature
- * component records beyond README.md, and no premature MVP compositions
- * beyond README.md.
+ * component records beyond README.md, no premature MVP compositions
+ * beyond README.md, and no reintroduced clean-generation MVP composition
+ * contract tests under tests/.
  *
  * Exit 0 = PASS, Exit 1 = FAIL (any violation).
  *
@@ -13,26 +14,12 @@
  */
 
 import { readdirSync, statSync, existsSync } from 'node:fs';
-import { join, relative, extname } from 'node:path';
+import { join, relative, extname, basename } from 'node:path';
 
 const SRC_ROOT = join(import.meta.dirname, '..');
 const ROOT = join(SRC_ROOT, '..');
 
 const FORBIDDEN_EXTENSIONS = new Set(['.ts', '.tsx', '.jsx']);
-
-/** Directories that may only contain README.md under current phase */
-const README_ONLY_DIRS = [
-  'src/06_components',
-  'src/07_compositions',
-];
-
-/** Files/dirs that must not exist in active src under current phase */
-const FORBIDDEN_PATTERNS = [
-  'src/06_components/source*-*/',
-  'src/07_compositions/MVP*/',
-  'src/08_harness/validate-mvp*.mjs',
-  'tests/mvp*-composition-contract.test.mjs',
-];
 
 let violations = [];
 
@@ -110,19 +97,48 @@ function checkCompositionsReadOnly() {
 }
 
 /**
- * Check 4: No MVP001/MVP* composition in active src
+ * Check 4: No active MVP composition/validator artifacts under src/
+ * Rejects files like validate-mvp*.mjs or MVP* directories.
+ * Exception: this guard script itself.
  */
 function checkNoMVPInSrc() {
   const allFiles = walkDir(join(ROOT, 'src'));
-  const mvpFiles = allFiles.filter(f => /mvp\d/i.test(f));
-  for (const f of mvpFiles) {
-    // Exception: the guard script itself in harness is fine, but MVP composition/validator files are not
+  const mvpFiles = allFiles.filter(f => {
     const rel = relative(ROOT, f);
-    if (rel.startsWith('src/08_harness/generation-phase-guard')) continue;
-    violations.push(`FORBIDDEN_MVP: ${rel} — MVP composition/validator not allowed in active src during current phase`);
+    if (rel.startsWith('src/08_harness/generation-phase-guard')) return false;
+    return /mvp\d/i.test(f);
+  });
+  for (const f of mvpFiles) {
+    violations.push(`FORBIDDEN_MVP: ${relative(ROOT, f)} — MVP composition/validator not allowed in active src during current phase`);
   }
-  if (mvpFiles.filter(f => !relative(ROOT, f).includes('generation-phase-guard')).length === 0) {
+  if (mvpFiles.length === 0) {
     console.log('PASS: No MVP composition/validator files in active src');
+  }
+}
+
+/**
+ * Check 5: No reintroduced clean-generation MVP composition contract tests
+ * Scoped specifically to mvpNNN-composition-contract.test.mjs patterns
+ * (or equivalently named clean-generation MVP composition contract artifacts).
+ */
+function checkNoMVPCompositionTests() {
+  const testsDir = join(ROOT, 'tests');
+  if (!existsSync(testsDir)) {
+    console.log('PASS: tests/ directory does not exist');
+    return;
+  }
+  const allTestFiles = walkDir(testsDir);
+  const forbidden = allTestFiles.filter(f => {
+    const name = basename(f);
+    // Match clean-generation MVP composition contract test pattern:
+    // mvp001-composition-contract.test.mjs, mvpNNN-composition-contract.test.mjs, etc.
+    return /^mvp\d+-composition-contract\.test\.mjs$/i.test(name);
+  });
+  for (const f of forbidden) {
+    violations.push(`FORBIDDEN_TEST: ${relative(ROOT, f)} — clean-generation MVP composition contract test not allowed during current phase`);
+  }
+  if (forbidden.length === 0) {
+    console.log('PASS: No clean-generation MVP composition contract tests in tests/');
   }
 }
 
@@ -135,6 +151,7 @@ checkNoTypeScriptInSrc();
 checkComponentsReadOnly();
 checkCompositionsReadOnly();
 checkNoMVPInSrc();
+checkNoMVPCompositionTests();
 
 console.log('');
 if (violations.length > 0) {
