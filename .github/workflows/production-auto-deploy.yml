@@ -205,7 +205,7 @@ jobs:
         run: |
           set -euo pipefail
           base="${PRODUCTION_BASE_URL%/}"
-          for route in / /v4 /v4/trees/demo /v4/trees/demo/graph /v4/trees/demo/timeline /v4/subjects /v4/community /design-lab; do
+          for route in / /v4 /v4/trees/demo /v4/trees/demo/graph /v4/trees/demo/timeline /v4/subjects /v4/community /design-lab /mvp/01 '/mvp/01?step=board' '/mvp/01?step=explore'; do
             url="${base}${route}"
             code="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 30 "$url")"
             case "$code" in
