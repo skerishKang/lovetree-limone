@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "component_key": "source64-entry-portal",
+  "source_id": "SRC064",
+  "source_manifest_ref": "src/03_sources/SRC064/manifest.json",
+  "source_parity_ref": "src/03_sources/SRC064/evidence/parity/accepted-parity.json",
+  "product_role": "ENTRY_PORTAL",
+  "canonical_route_template": "/trees/{treeId}/portal",
+  "product_implementation_refs": [
+    "app/trees/[id]/portal/page.tsx",
+    "app/trees/[id]/portal/portal.module.css"
+  ],
+  "related_navigation_authority_refs": [
+    "app/components/v4/V4EntryResolver.tsx",
+    "lib/entry-resolver.ts"
+  ],
+  "admission": {
+    "status": "PASS",
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
+    "note": "SRC064 entry portal verified by DIRECT_CENTRAL_CI_ARTIFACT_REVIEW (workflow run_id=33346967954, card_count=40). V4EntryResolver authority remains unchanged and lives outside Source64; portal consumes canonical Tree Moments with ORBIT_LIMIT=16 and no invented returning-user ranking."
+  },
+  "visual_semantics": {
+    "rendering": "css3d-dom",
+    "scenario_id": "entry-onboarding",
+    "qa_hook": "window.__TRACK64__",
+    "viewSwitcher_kind": "portal",
+    "viewSwitcher_label": "포털",
+    "viewSwitcher_path": "/portal",
+    "interaction_surface": [
+      "WELCOME_IDLE",
+      "ORBIT_INTERACT",
+      "CARD_HOVER",
+      "CARD_FOCUSING",
+      "MOMENT_FOCUS",
+      "MOMENT_MEDIA_VIEWER",
+      "BRANCH_CHOICE",
+      "PATH_GLIDE",
+      "RETURN_ORBIT"
+    ],
+    "source_specific_controls": [
+      "menuBtn",
+      "openMoment",
+      "continuePath",
+      "prevMoment",
+      "nextMoment",
+      "storyBook",
+      "mediaClose",
+      "mediaPlay"
+    ],
+    "control_surface": "CSS3D_ORBIT_POINTER"
+  },
+  "data_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "data_source": "useTreeMoments(treeId, undefined, momentId ?? undefined)",
+    "no_invented_moment_id": true,
+    "orbit_limit": 16,
+    "orbit_source": "treeMoments.slice(0, ORBIT_LIMIT)",
+    "no_invented_returning_user_ranking": true
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "evidence_refs": [
+    "src/03_sources/SRC064/baseline/accepted-baseline.json",
+    "src/03_sources/SRC064/evidence/parity/accepted-parity.json",
+    "src/03_sources/SRC064/authority/authority.json",
+    "tests/five-source-mvp-source64-portal-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/"
+  ],
+  "status": "ADMITTED"
+}

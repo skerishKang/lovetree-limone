@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "component_key": "source58-living-board",
+  "source_id": "SRC058",
+  "source_manifest_ref": "src/03_sources/SRC058/manifest.json",
+  "source_parity_ref": "src/03_sources/SRC058/evidence/parity/accepted-parity.json",
+  "product_role": "LIVING_BOARD",
+  "canonical_route_template": "/trees/{treeId}/board",
+  "product_implementation_refs": [
+    "app/trees/[id]/board/page.tsx",
+    "components/source-track-58/SourceTrack58LivingMemoryBoard.tsx",
+    "components/source-track-58/source-track-58-living-memory-board.module.css",
+    "app/design-lab/source-tracks/58/v1-2-native/source58-mobile-spatial-p0.module.css",
+    "app/design-lab/source-tracks/58/v1-2-native/source58-visual-repair.module.css"
+  ],
+  "admission": {
+    "status": "PASS_REUSED_ACCEPTED_EVIDENCE",
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
+    "note": "SRC058 admission reused accepted evidence from PR585 production visual acceptance (OWNER_VISUAL_ACCEPTANCE = PASS, OWNER_DECISION = KEEP). No re-audit performed."
+  },
+  "visual_semantics": {
+    "rendering": "living-memory-pinboard-cinematic",
+    "scenario_id": "58_living_memory_pinboard",
+    "qa_hook": "living-memory-board",
+    "viewSwitcher_kind": "board",
+    "viewSwitcher_label": "보드",
+    "viewSwitcher_path": "/board",
+    "interaction_surface": [
+      "BOARD_SPATIAL",
+      "THEME_SWITCH",
+      "CINEMA_PREVIEW",
+      "INSPECTOR_FOREGROUND",
+      "ZOOM_FIT"
+    ],
+    "control_surface": "BOARD_SPATIAL"
+  },
+  "data_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "data_source": "useTreeMoments(treeId)",
+    "no_invented_moment_id": true,
+    "binding_contract": {
+      "initialMomentId": "string | null (optional)",
+      "onMomentChange": "(momentId: string | null) => void (optional)"
+    }
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "evidence_refs": [
+    "src/03_sources/SRC058/baseline/accepted-baseline.json",
+    "src/03_sources/SRC058/evidence/parity/accepted-parity.json",
+    "src/03_sources/SRC058/authority/authority.json",
+    "tests/five-source-mvp-source58-board-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/",
+    "LoveTree_Evidence/src058-pr585-prod-owner-visual-260901/"
+  ],
+  "status": "ADMITTED"
+}

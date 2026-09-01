@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "composition_id": "MVP001",
+  "acceptance_criteria": {
+    "all_components_admitted": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "SRC056, SRC057, SRC058, SRC060, SRC064 candidate-admitted with PASS or PASS_REUSED_ACCEPTED_EVIDENCE; pending CENTRAL exact-head review"
+    },
+    "composition_contract_valid": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "Validated by src/08_harness/validate-mvp001-composition.mjs — fail-closed, 0 errors"
+    },
+    "contract_test_pass": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "tests/mvp001-composition-contract.test.mjs — executes validator (exit 0) + negative fail-closed cases"
+    },
+    "existing_qa_pass": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "qa/five-source-mvp-browser-qa.mjs — FIVE_SOURCE_MVP_BROWSER_QA_PASS (desktop/phone/narrow-reduced viewports)"
+    },
+    "lint_pass": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "npm run lint — 0 errors (pre-existing warnings in source/test files)"
+    },
+    "typecheck_pass": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "tsc --noEmit — 0 errors"
+    },
+    "no_product_runtime_mutation": {
+      "required": true,
+      "status": "CANDIDATE_PASS",
+      "detail": "git diff --name-only <base> HEAD shows no changes under app/**, components/**, src/03_sources/**; only additive MVP001 registration files changed"
+    }
+  },
+  "overall_status": "CANDIDATE_PASS_ALL_5_PENDING_CENTRAL_EXACT_HEAD_REVIEW",
+  "accepted_at": null,
+  "accepted_by": null
+}

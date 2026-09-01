@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "component_key": "source56-relationship-overview",
+  "source_id": "SRC056",
+  "source_manifest_ref": "src/03_sources/SRC056/manifest.json",
+  "source_parity_ref": "src/03_sources/SRC056/evidence/parity/accepted-parity.json",
+  "product_role": "RELATIONSHIP_OVERVIEW",
+  "canonical_route_template": "/trees/{treeId}/relationships",
+  "product_implementation_refs": [
+    "app/trees/[id]/relationships/page.tsx",
+    "app/trees/[id]/relationships/relationships.module.css"
+  ],
+  "admission": {
+    "status": "PASS",
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5"
+  },
+  "visual_semantics": {
+    "rendering": "dom-css-2.5d",
+    "scenario_id": "relationship-retrospective",
+    "viewSwitcher_kind": "relationships",
+    "viewSwitcher_label": "관계",
+    "viewSwitcher_path": "/relationships",
+    "interaction_surface": [
+      "OVERVIEW",
+      "ORIGIN_REVEAL",
+      "ZOOM_IN",
+      "HELP"
+    ],
+    "control_surface_desktop": "DESKTOP_CONTROLS",
+    "control_surface_mobile": "MOBILE_RIBBON"
+  },
+  "data_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "data_source": "useTreeMoments(treeId)",
+    "no_invented_moment_id": true
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "evidence_refs": [
+    "src/03_sources/SRC056/baseline/accepted-baseline.json",
+    "src/03_sources/SRC056/evidence/parity/accepted-parity.json",
+    "src/03_sources/SRC056/authority/authority.json",
+    "tests/five-source-mvp-source56-relationship-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/"
+  ],
+  "status": "ADMITTED"
+}

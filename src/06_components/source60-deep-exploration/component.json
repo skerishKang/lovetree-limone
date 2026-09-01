@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "component_key": "source60-deep-exploration",
+  "source_id": "SRC060",
+  "source_manifest_ref": "src/03_sources/SRC060/manifest.json",
+  "source_parity_ref": "src/03_sources/SRC060/evidence/parity/accepted-parity.json",
+  "product_role": "DEEP_EXPLORATION",
+  "canonical_route_template": "/trees/{treeId}/explore",
+  "product_implementation_refs": [
+    "app/trees/[id]/explore/page.tsx",
+    "app/trees/[id]/explore/explore.module.css",
+    "lib/lineage-60/projection.ts"
+  ],
+  "admission": {
+    "status": "PASS",
+    "admission_record": "MVP001_COMPONENT_ADMISSION = PASS_ALL_5",
+    "note": "SRC060 canvas resize defect (PR #586) fixed and closed. Post-fix render verified at 1440x900, 430x932, 390x844 with VISIBLE_CLUSTER_COUNT=4, VISIBLE_NODE_COUNT>=16, BRIDGE_LINES_VISIBLE=YES, ResizeObserver=ACTIVE."
+  },
+  "visual_semantics": {
+    "rendering": "canvas2d-3d-cluster-projection",
+    "scenario_id": "moment-cluster-deep-exploration",
+    "qa_hook": "window.__LT60__ / window.__LT60_V12__",
+    "viewSwitcher_kind": "explore",
+    "viewSwitcher_label": "탐색",
+    "viewSwitcher_path": "/explore",
+    "interaction_surface": [
+      "UNIVERSE_IDLE",
+      "CLUSTER_FOCUS",
+      "NODE_SELECT",
+      "BRIDGE_MODE",
+      "MOMENT_VIEWER",
+      "BOOK_HANDOFF",
+      "CONNECTION_HANDOFF",
+      "PATH_PREVIEW",
+      "OVERLAY_CLOSE",
+      "RESET_VIEW"
+    ],
+    "control_surface": "CANVAS_CLUSTER_POINTER"
+  },
+  "data_contract": {
+    "tree_identity_preserved": true,
+    "moment_identity_preserved": true,
+    "data_source": "useTreeMoments(treeId, undefined, momentId ?? undefined)",
+    "no_invented_moment_id": true,
+    "cluster_identity": "VIEW_DERIVED (clusterFor(moment.sourceType, moment.isRoot))",
+    "bridge_identity": "VIEW_DERIVED (parent.cluster !== moment.cluster)"
+  },
+  "navigation_contract": {
+    "view_switcher_continuity": true,
+    "back_forward_continuity": true,
+    "moment_url_state": "searchParams.get('moment')",
+    "moment_url_sync": "next.set('moment', nextMomentId)"
+  },
+  "evidence_refs": [
+    "src/03_sources/SRC060/baseline/accepted-baseline.json",
+    "src/03_sources/SRC060/evidence/parity/accepted-parity.json",
+    "src/03_sources/SRC060/authority/authority.json",
+    "tests/five-source-mvp-source60-explore-adoption.test.mjs",
+    "LoveTree_Evidence/mvp001-four-source-component-admission-260901/",
+    "LoveTree_Evidence/mvp001-src060-focused-visual-closure-260901/",
+    "LoveTree_Evidence/mvp001-src060-resize-repair-260901/"
+  ],
+  "status": "ADMITTED"
+}
