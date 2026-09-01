@@ -95,14 +95,16 @@ test("Studio is owner-only and restores real JSON PNG and WebM export fidelity",
   assert.match(source, /v4-composition-handle/);
 });
 
-test("Global Discovery Home consumes live Browse data and retains the editorial source hierarchy", async () => {
+test("Global Discovery Home consumes live Browse data and retains the Track01 source hierarchy", async () => {
   const page = await read("app/v4/community/page.tsx");
   const source = await read("app/components/v4/product/V4GlobalDiscoveryHome.tsx");
   assert.match(page, /V4GlobalDiscoveryHome/);
   assert.match(source, /\/api\/community\/trees\?view=summary/);
   assert.match(source, /\/api\/community\/memories\?treeId=/);
-  for (const phrase of ["Every lasting obsession", "PUBLIC GARDEN", "CURATED PATHS", "HOW A LOVETREE GROWS", "DISCOVER BY FEELING", "FEATURED LOVETREE", "WHAT CHANGES"]) assert.match(source, new RegExp(phrase));
+  for (const phrase of ["공개 러브트리 둘러보기", "마음이 머무는", "순간들을", "천천히 감상해보세요", "다른 사람들이 이어간 첫 순간과 감정의 흐름"]) assert.match(source, new RegExp(phrase));
+  for (const marker of ["data-track01-native", "data-track01-tree-card", "data-track01-preview", "data-track01-open", "data-track01-full-tree", "data-track01-moment-node"]) assert.match(source, new RegExp(marker));
   assert.doesNotMatch(source, /localStorage/);
+  assert.doesNotMatch(source, /<iframe/i);
 });
 
 test("Cinematic route uses the validated v6 International implementation", async () => {
