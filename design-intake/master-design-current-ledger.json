@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "lovetree-master-current-resolver-ledger",
+  "as_of_main": "e5f0152266ae15cc83bcb38bbfff9f4cfc79fcee",
+  "tracking_issue": 527,
+  "inputs": {
+    "baseline": "design-intake/master-design-coverage.json",
+    "codex": "design-intake/codex-current-implementation-overlay.json",
+    "drive_sheet": "1B9UX-8glidoYrt3cdF-wiiwinwPw1JZkrw87GKioDgk"
+  },
+  "resolution": {
+    "rows": 108,
+    "families": 88,
+    "precedence": ["current_overrides", "codex overlay", "baseline"],
+    "unoverridden": "INHERIT_BASELINE",
+    "unknown": "NULL_OR_HOLD_NEVER_GUESS",
+    "family_key": "family_anchor_master_id anchor semantic_identity; otherwise semantic_identity",
+    "namespace_rule": "numeric equality never aliases SOURCE/CODEX/LINEAGE"
+  },
+  "five_source": {
+    "state": "COMPLETE_MERGED_MAIN",
+    "routes": {
+      "SOURCE:57": "/trees/:treeId",
+      "SOURCE:58": "/trees/:treeId/board",
+      "SOURCE:56": "/trees/:treeId/relationships",
+      "SOURCE:60": "/trees/:treeId/explore",
+      "SOURCE:64": "/trees/:treeId/portal"
+    }
+  },
+  "current_overrides": {
+    "Track36": {"job":"HOME","ns":"SOURCE:36","prs":[475],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/design-lab/source-tracks/36/v3/donor","disposition":"USE_AS_DONOR_TO_EXISTING_NATIVE","qa":"MERGED_PROOF","hold":"NONE"},
+    "CodexWork13": {"job":"SUBJECT","ns":"CODEX_WORK:13","prs":[474,501],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/v4/subjects/cinematic-watercolor-v2","disposition":"USE_AS_CINEMATIC_VISUAL_DONOR","qa":"MERGED_PROOF","hold":"NONE"},
+    "Track38": {"job":"DISCOVER","ns":"SOURCE:38","prs":[483],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/design-lab/source-tracks/38/v1/donor","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"MERGED_PROOF","hold":"NONE"},
+    "DriveTrack17": {"job":"MYTREE","ns":"DRIVE_TRACK:17","prs":[482],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/trees/:treeId/terrain","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"MERGED_PROOF","hold":"NONE"},
+    "DriveTrack18": {"job":"MYTREE","ns":"DRIVE_TRACK:18","prs":[498],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/design-lab/drive-track-18-electric-aurora","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"MERGED_PROOF","hold":"NONE"},
+    "Track24": {"job":"TOOLS","ns":"SOURCE:24","prs":[484],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/design-lab/source-tracks/24/v1/donor","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"MERGED_PROOF","hold":"NONE"},
+    "Track35": {"job":"ARCHIVE","ns":"SOURCE:35","prs":[485],"state":"MERGED","impl":"NATIVE_IMPLEMENTED","main":true,"route":"/v4/trees/:treeId/archive/lp","disposition":"ADOPT_AS_ARCHIVE_NATIVE","qa":"MERGED_PROOF","hold":"NONE"},
+    "Track09": {"job":"MYTREE","ns":"SOURCE:09","prs":[499,519],"state":"CENTRAL_519_MERGED__WORKER_499_OPEN_STALE","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/trees/:treeId/overview","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"MERGED_CENTRAL_PROOF","hold":"WORKER_499_SUPERSEDED"},
+    "Codex14": {"job":"ARCHIVE","ns":"CODEX:14","prs":[502],"state":"MERGED","impl":"NATIVE_IMPLEMENTED","main":true,"route":"/v4/trees/:treeId/archive/rotating-index","disposition":"ADOPT_AS_ARCHIVE_NATIVE","qa":"MERGED_EXACT_HEAD_PROOF","hold":"NONE"},
+    "Source64": {"job":"MYTREE_ENTRY","ns":"SOURCE:64","prs":[196,529,531],"state":"MERGED","impl":"CANONICAL_FIVE_SOURCE_INTEGRATED","main":true,"route":"/trees/:treeId/portal","disposition":"REUSE_EXISTING_IMPLEMENTATION","qa":"FIVE_SOURCE_CONTINUITY_GREEN","hold":"NONE"},
+    "Track74": {"job":"HOME","ns":"SOURCE:74","prs":[518],"state":"MERGED_FIX","impl":"NATIVE_IMPLEMENTED_HOLD_GATE","main":true,"route":"/design-lab/source-tracks/74/v2/native","disposition":"PRIMARY_HOLD_GATE","qa":"MERGED_FOCUS_REPAIR","hold":"FINAL_CANONICAL_VISUAL_PROMOTION"},
+    "Track37": {"job":"ARCHIVE","ns":"SOURCE:37","prs":[497],"state":"OPEN_DRAFT","impl":"IMPLEMENTATION_PROOF_ON_DRAFT","main":false,"route":"/v4/trees/:treeId/archive/calendar","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"DRAFT_BROWSER_QA_EVIDENCE","hold":"CENTRAL_REGISTRY_AND_EXACT_HEAD_CLOSURE"},
+    "Track26": {"job":"TOOLS","ns":"SOURCE:26","prs":[500],"state":"OPEN_DRAFT","impl":"IMPLEMENTATION_PROOF_ON_DRAFT","main":false,"route":"/design-lab/source-tracks/26/v1/donor?treeId=:treeId","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"DRAFT_BROWSER_QA_EVIDENCE","hold":"CENTRAL_REGISTRY_HANDOFF"},
+    "Track14": {"job":"PATH","ns":"SOURCE:14","prs":[507],"state":"OPEN_DRAFT","impl":"IMPLEMENTATION_PROOF_ON_DRAFT","main":false,"route":"/trees/:treeId/graph/mindmap","disposition":"USE_AS_VISUAL_FUNCTION_DONOR","qa":"DRAFT_BROWSER_QA_EVIDENCE","hold":"CENTRAL_REGISTRY_HANDOFF"},
+    "Codex13": {"job":"ARCHIVE","ns":"CODEX:13","prs":[503,530],"state":"MERGED","impl":"NATIVE_IMPLEMENTED","main":true,"route":"/v4/trees/:treeId/archive/video-wall","disposition":"ADOPT_AS_ARCHIVE_NATIVE","qa":"EXACT_HEAD_CI_AND_BROWSER_GREEN","hold":"NONE"},
+    "Codex15": {"job":"HOME","ns":"CODEX:15","prs":[506,534],"state":"MERGED","impl":"PRODUCT_DONOR_INTEGRATED","main":true,"route":"/v4/memory-biosphere","disposition":"USE_AS_HIGH_VISUAL_HOME_DONOR","qa":"EXACT_HEAD_CI_AND_BROWSER_GREEN","hold":"FINAL_HOME_PROMOTION_DECISION_ONLY"},
+    "Track70": {"job":"MOMENT","ns":"SOURCE:70","prs":[504],"state":"OPEN_DRAFT","impl":"IMPLEMENTATION_PROOF_ON_DRAFT","main":false,"route":"/trees/:treeId/album/reveal","disposition":"USE_AS_HIGH_VISUAL_MOMENT_DONOR","qa":"DRAFT_BROWSER_QA_EVIDENCE","hold":"CENTRAL_REGISTRY_HANDOFF"},
+    "Track01": {"job":"DISCOVER","ns":"SOURCE:01","prs":[505],"state":"OPEN_DRAFT","impl":"CANONICAL_EXISTING_SURFACE_REPAIR_ON_DRAFT","main":true,"route":"/v4/community","disposition":"CANONICAL_EXISTING_SURFACE_REPAIR","qa":"EXACT_HEAD_CLOSURE_PENDING","hold":"VISUAL_FIDELITY_CLOSURE"},
+    "Source60": {"job":"PATH","ns":"SOURCE:60","prs":[521,529,531],"state":"MERGED","impl":"CANONICAL_FIVE_SOURCE_INTEGRATED","main":true,"route":"/trees/:treeId/explore","disposition":"REUSE_EXISTING_IMPLEMENTATION","qa":"FIVE_SOURCE_CONTINUITY_GREEN","hold":"NONE"},
+    "Source56": {"job":"PATH","ns":"SOURCE:56","prs":[522,529,531],"state":"MERGED","impl":"CANONICAL_FIVE_SOURCE_INTEGRATED","main":true,"route":"/trees/:treeId/relationships","disposition":"IMPLEMENT_AS_LINEAGE53_EXTENSION","qa":"FIVE_SOURCE_CONTINUITY_GREEN","hold":"NONE"},
+    "Source58": {"job":"MYTREE","ns":"SOURCE:58","prs":[523,529,531,533],"state":"MERGED","impl":"CANONICAL_FIVE_SOURCE_INTEGRATED","main":true,"route":"/trees/:treeId/board","disposition":"NEW_SEPARATE_SOURCE_CANDIDATE","qa":"FIVE_SOURCE_CONTINUITY_GREEN","hold":"NONE"},
+    "Source57": {"job":"MOMENT","ns":"SOURCE:57","prs":[525,529,531],"state":"MERGED","impl":"CANONICAL_FIVE_SOURCE_INTEGRATED","main":true,"route":"/trees/:treeId","disposition":"NEW_SEPARATE_SOURCE_CANDIDATE","qa":"FIVE_SOURCE_CONTINUITY_GREEN","hold":"NONE"},
+    "Track02": {"job":"CAPTURE","ns":"SOURCE:02","prs":[508],"state":"OPEN_DRAFT_EVIDENCE","impl":"EVIDENCE_ONLY","main":true,"route":"/v4/journey?legacy=1","disposition":"NO_PRODUCT_MUTATION","qa":"VISUAL_CLOSURE_EVIDENCE_PENDING","hold":"EVIDENCE_CLOSURE_ONLY"}
+  },
+  "product_jobs": {
+    "HOME": {"base":"/v4 canonical resolver","target":"Track74 OrbitMorph Portal","open_prs":[],"gap":"final HOME visual promotion / Track74 product gate","next":"CANONICAL_PROMOTION","owner":"PENDING_FINAL_PROMOTION","ground_up_new_native":false},
+    "DISCOVER": {"base":"/v4/community","target":"Track12 canonical","open_prs":[505],"gap":"Track01 fidelity closure","next":"CLOSE_EXISTING_SURFACE_FIDELITY","owner":"KEEP_CANONICAL","ground_up_new_native":false},
+    "CAPTURE": {"base":"/v4/journey V1.2","target":"First Journey integrated","open_prs":[508],"gap":"evidence closure only","next":"EVIDENCE_CLOSURE_ONLY","owner":"KEEP_CANONICAL","ground_up_new_native":false},
+    "MYTREE": {"base":"Track64 + canonical Tree/Moment","target":"Five-Source workspace lenses","open_prs":[],"gap":"no Batch1 wiring gap","next":"BATCH1_COMPOSITION_COMPLETE","owner":"KEEP_CANONICAL_DATA_SPINE","ground_up_new_native":false},
+    "PATH": {"base":"Lineage53 + canonical relationship data","target":"Source56 relationships + Source60 explore","open_prs":[507],"gap":"Track14 donor Draft only","next":"SELECTIVE_PATH_DONOR_CLOSURE","owner":"LINEAGE53_PRIMARY","ground_up_new_native":false},
+    "MOMENT": {"base":"canonical Moment/media + shared Moment UI","target":"Source57 Living Glass language","open_prs":[504],"gap":"Track70 donor closure","next":"SELECTIVE_MOMENT_VISUAL_INTEGRATION","owner":"CANONICAL_MOMENT_AUTHORITY","ground_up_new_native":false},
+    "ARCHIVE": {"base":"Lineage59 V5","target":"Codex14 + archive lenses","open_prs":[497],"gap":"Track37 closure + lens navigation","next":"CLOSE_TRACK37_THEN_NAVIGATION","owner":"LINEAGE59_BASE_MULTIPLE_LENSES","ground_up_new_native":false},
+    "EDITOR": {"base":"existing V4 editor/LUPT","target":"existing editor + bounded donors","open_prs":[500,507],"gap":"Track26/14 closure","next":"DONOR_INTEGRATION_INTO_EXISTING_EDITOR","owner":"KEEP_CANONICAL_EDITOR","ground_up_new_native":false},
+    "SUBJECT": {"base":"/v4/subjects","target":"Codex02 male + Codex03 female grammar","open_prs":[],"gap":"owner bounded-donor decision","next":"DONOR_DECISION_BEFORE_NEW_IMPLEMENTATION","owner":"OWNER_VISUAL_DECISION_PENDING","ground_up_new_native":false},
+    "SHELL": {"base":"current V4 shell / JourneyDock","target":"existing shell","open_prs":[],"gap":"bounded integration only if useful","next":"REFERENCE_AND_SELECTIVE_INTEGRATION","owner":"KEEP_CURRENT_SHELL","ground_up_new_native":false}
+  },
+  "source_native_gaps": {
+    "CODEX:02": {"job":"SUBJECT","file":"lovetree-editorial-memory-home-v3-1.html","drive":"1z54AuYoHn14kNr5MiXT4oZF_5KOt7gJQ","bytes":22412,"sha256":"30365a8d5bf7b7e6a1f6ec0b710d6e566d37d696cc1b700ede69d020a05ef1e9","base":"/v4/subjects","next":"BOUNDED_DONOR_DECISION","new_subject_app":false},
+    "CODEX:03": {"job":"SUBJECT","file":"lovetree-editorial-memory-home-female-v1.html","drive":"1Py_x5sKMOImvP3b2LPALZAVw_7A2Rc1-","bytes":32775,"sha256":"47dee98f61008ee1c054fb6055717f1e15346e30b039f7e0080e3d54ffe3daef","base":"/v4/subjects","next":"BOUNDED_DONOR_DECISION","new_subject_app":false}
+  },
+  "guards": ["SOURCE:56!=LINEAGE:56","SOURCE:57!=LINEAGE:57","SOURCE:58!=LINEAGE:58","CODEX:12!=CODEX_WORK:12","CODEX:13!=CODEX_WORK:13","DRIVE_TRACK:17!=GITHUB_TRACK:17","DRIVE_TRACK:18!=SOURCE:18"],
+  "closed_stale": ["Codex13 #503 draft","Codex15 #506 draft","Track09 #499 means not-main","Five-Source assembly incomplete"]
+}
