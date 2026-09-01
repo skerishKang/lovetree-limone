@@ -10,15 +10,19 @@
  *
  * Checks performed:
  *  - exactly 5 component records under src/06_components
+ *  - each component.json RECORD binds to canonical (source_id / product_role /
+ *    canonical_route_template) and declares source_manifest_ref / source_parity_ref
+ *    equal to the canonical src/03_sources/<id> paths (which exist & parity ACCEPTED)
  *  - component_key uniqueness and source_id uniqueness
- *  - each Source manifest exists and required mechanical stages are all true
- *  - each Source parity evidence exists and is ACCEPTED
+ *  - each Source manifest (via the record's declared ref) exists and required
+ *    mechanical stages are all true
+ *  - each Source parity evidence (via the record's declared ref) exists and is ACCEPTED
  *  - every product_implementation_ref exists and never points into
  *    src/03_sources/<id>/original/... or src/03_sources/<id>/split/...
- *  - all composition component refs resolve
+ *  - all composition component refs resolve and ALIGN with the actual records
  *  - entry component is source64-entry-portal at /trees/{treeId}/portal
  *  - flow refs resolve and begin/end at the entry component
- *  - route-map aligns with component records
+ *  - route-map aligns with the actual component records (not just composition.components)
  *  - blocking_sources is empty
  *  - admission_contract.status = CANDIDATE_PASS_ALL_5_PENDING_CENTRAL_EXACT_HEAD_REVIEW
  *  - identity continuity contract booleans all true
@@ -43,6 +47,15 @@ export const EXPECTED_SOURCES = ["SRC056", "SRC057", "SRC058", "SRC060", "SRC064
 export const EXPECTED_ENTRY_COMPONENT = "source64-entry-portal";
 export const EXPECTED_ENTRY_ROUTE = "/trees/{treeId}/portal";
 export const ADMISSION_CANDIDATE_STATUS = "CANDIDATE_PASS_ALL_5_PENDING_CENTRAL_EXACT_HEAD_REVIEW";
+
+/** Canonical expected per-component binding. Single source of truth. */
+export const COMPONENT_MAP = [
+  { id: "SRC056", key: "source56-relationship-overview", role: "RELATIONSHIP_OVERVIEW", canonical_route_template: "/trees/{treeId}/relationships" },
+  { id: "SRC057", key: "source57-memory-detail", role: "MEMORY_DETAIL", canonical_route_template: "/trees/{treeId}" },
+  { id: "SRC058", key: "source58-living-board", role: "LIVING_BOARD", canonical_route_template: "/trees/{treeId}/board" },
+  { id: "SRC060", key: "source60-deep-exploration", role: "DEEP_EXPLORATION", canonical_route_template: "/trees/{treeId}/explore" },
+  { id: "SRC064", key: "source64-entry-portal", role: "ENTRY_PORTAL", canonical_route_template: "/trees/{treeId}/portal" },
+];
 
 export const PROHIBITED_PRODUCT_IMPL_PREFIXES = ["src/03_sources/"];
 export const FORBIDDEN_IMPL_SUBPATHS = ["/original/", "/split/"];
@@ -153,6 +166,78 @@ export function checkAcceptanceVsComposition(acceptance, composition) {
   return errors;
 }
 
+/**
+ * Pure: validate a single component record against its canonical binding.
+ * Checks source_id, product_role, canonical_route_template, and that the
+ * declared source_manifest_ref / source_parity_ref equal the canonical paths.
+ */
+export function checkComponentRecordBinding(record, canonical) {
+  const errors = [];
+  if (!record || typeof record !== "object") { errors.push("component record missing"); return errors; }
+  if (record.source_id !== canonical.id) {
+    errors.push(`${record.component_key || "?"}: source_id must be ${canonical.id}, got ${record.source_id}`);
+  }
+  if (record.product_role !== canonical.role) {
+    errors.push(`${record.component_key}: product_role must be ${canonical.role}, got ${record.product_role}`);
+  }
+  if (record.canonical_route_template !== canonical.canonical_route_template) {
+    errors.push(`${record.component_key}: canonical_route_template must be ${canonical.canonical_route_template}, got ${record.canonical_route_template}`);
+  }
+  const expManifest = `src/03_sources/${canonical.id}/manifest.json`;
+  const expParity = `src/03_sources/${canonical.id}/evidence/parity/accepted-parity.json`;
+  if (record.source_manifest_ref !== expManifest) {
+    errors.push(`${record.component_key}: source_manifest_ref must be ${expManifest}, got ${record.source_manifest_ref}`);
+  }
+  if (record.source_parity_ref !== expParity) {
+    errors.push(`${record.component_key}: source_parity_ref must be ${expParity}, got ${record.source_parity_ref}`);
+  }
+  return errors;
+}
+
+/**
+ * Filesystem-backed: load the 5 canonical component records from the tree.
+ * Returns { records, errors } where errors covers missing dirs / unparseable
+ * component.json. Missing records are reported as errors but not added.
+ */
+export function loadComponentRecords(root, canonicalMap = COMPONENT_MAP) {
+  const records = [];
+  const errors = [];
+  for (const { id, key } of canonicalMap) {
+    const cjPath = resolve(root, "src/06_components", key, "component.json");
+    if (!existsSync(cjPath)) { errors.push(`Component directory/record missing: ${key}`); continue; }
+    try {
+      records.push(JSON.parse(readFileSync(cjPath, "utf8")));
+    } catch (e) {
+      errors.push(`parse error ${key}/component.json: ${e.message}`);
+    }
+  }
+  return { records, errors };
+}
+
+/**
+ * Pure: validate the full set of loaded records against the canonical map.
+ * Checks exactly 5 present, each canonical key present (no missing), each
+ * record binds correctly, and no unexpected/extra records exist.
+ */
+export function checkComponentRecordSet(records, canonicalMap = COMPONENT_MAP) {
+  const errors = [];
+  if (!Array.isArray(records) || records.length !== 5) {
+    errors.push(`Expected exactly 5 component records, found ${Array.isArray(records) ? records.length : "none"}`);
+  }
+  const byKey = new Map(records.map((r) => [r.component_key, r]));
+  const seen = new Set();
+  for (const c of canonicalMap) {
+    const rec = byKey.get(c.key);
+    if (!rec) { errors.push(`missing required component record: ${c.key}`); continue; }
+    seen.add(c.key);
+    for (const e of checkComponentRecordBinding(rec, c)) errors.push(e);
+  }
+  for (const r of records) {
+    if (!seen.has(r.component_key)) errors.push(`unexpected component record not in canonical map: ${r.component_key}`);
+  }
+  return errors;
+}
+
 // ---------------------------------------------------------------------------
 // Filesystem-backed validation (CLI path)
 // ---------------------------------------------------------------------------
@@ -200,32 +285,30 @@ export function runValidation(root) {
   const fail = (m) => { errors.push(m); console.error("  FAIL:", m); };
   const warn = (m) => { warnings.push(m); console.warn("  WARN:", m); };
 
-  console.log("\n[1] Component directory integrity");
-  const COMPONENT_MAP = [
-    { id: "SRC056", key: "source56-relationship-overview" },
-    { id: "SRC057", key: "source57-memory-detail" },
-    { id: "SRC058", key: "source58-living-board" },
-    { id: "SRC060", key: "source60-deep-exploration" },
-    { id: "SRC064", key: "source64-entry-portal" },
-  ];
+  console.log("\n[1] Component directory integrity + load records");
+  const { records, errors: loadErrors } = loadComponentRecords(root);
+  for (const e of loadErrors) fail(e);
 
-  const records = [];
-  for (const { id, key } of COMPONENT_MAP) {
+  for (const { key } of COMPONENT_MAP) {
     const dir = resolve(root, "src/06_components", key);
     if (!existsSync(dir)) { fail(`Component directory missing: ${key}`); continue; }
-    const cj = resolve(dir, "component.json");
-    const rm = resolve(dir, "README.md");
-    if (!existsSync(cj)) { fail(`component.json missing for ${key}`); continue; }
-    else pass(`component.json exists for ${key}`);
-    if (!existsSync(rm)) fail(`README.md missing for ${key}`);
+    pass(`component directory exists: ${key}`);
+    if (!existsSync(resolve(dir, "README.md"))) fail(`README.md missing for ${key}`);
     else pass(`README.md exists for ${key}`);
-    const rec = readJson(root, `src/06_components/${key}/component.json`);
-    if (!rec.ok) { fail(rec.error); continue; }
-    records.push(rec.data);
   }
 
   if (records.length !== 5) fail(`Expected exactly 5 component records, found ${records.length}`);
   else pass("exactly 5 component records present");
+
+  console.log("\n[1b] Component record canonical binding (source_id / product_role / canonical_route_template / declared refs)");
+  const recByKey = new Map(records.map((r) => [r.component_key, r]));
+  for (const c of COMPONENT_MAP) {
+    const rec = recByKey.get(c.key);
+    if (!rec) { fail(`missing required component record: ${c.key}`); continue; }
+    const be = checkComponentRecordBinding(rec, c);
+    for (const e of be) fail(e);
+    if (be.length === 0) pass(`${c.key}: canonical binding OK (${c.id} / ${c.role} / ${c.canonical_route_template})`);
+  }
 
   console.log("\n[2] Component record content + uniqueness");
   for (const r of records) {
@@ -235,20 +318,20 @@ export function runValidation(root) {
   for (const e of checkUniqueness(records)) fail(e);
   if (records.length === 5) pass("component_key and source_id uniqueness OK");
 
-  console.log("\n[3] Source authority + mechanical stage + parity evidence");
+  console.log("\n[3] Source authority + mechanical stage + parity (via declared refs)");
   for (const r of records) {
     const id = r.source_id;
-    const manifest = readJson(root, `src/03_sources/${id}/manifest.json`);
-    if (!manifest.ok) { fail(manifest.error); continue; }
-    pass(`${id}: manifest exists`);
+    const manifest = readJson(root, r.source_manifest_ref);
+    if (!manifest.ok) { fail(`${id}: source_manifest_ref (${r.source_manifest_ref}) not found: ${manifest.error}`); continue; }
+    pass(`${id}: source_manifest_ref resolves: ${r.source_manifest_ref}`);
     const stages = manifest.data.stages || {};
     for (const s of REQUIRED_STAGES) {
       if (stages[s] !== true) fail(`${id}: mechanical stage ${s} must be true`);
     }
     if (REQUIRED_STAGES.every((s) => stages[s] === true)) pass(`${id}: all 5 mechanical stages PASS`);
 
-    const parity = readJson(root, `src/03_sources/${id}/evidence/parity/accepted-parity.json`);
-    if (!parity.ok) { fail(parity.error); continue; }
+    const parity = readJson(root, r.source_parity_ref);
+    if (!parity.ok) { fail(`${id}: source_parity_ref (${r.source_parity_ref}) not found: ${parity.error}`); continue; }
     if (parity.data.status !== "ACCEPTED") fail(`${id}: parity evidence status must be ACCEPTED, got ${parity.data.status}`);
     else pass(`${id}: parity evidence ACCEPTED`);
   }
@@ -316,25 +399,37 @@ export function runValidation(root) {
       }
       if (flowOk) pass("flow refs resolve and begin/end at entry component");
     } else fail("flow missing or empty");
+
+    // composition.json components must align with the actual loaded component records
+    const compRecByKey = new Map(records.map((r) => [r.component_key, r]));
+    let compAlignOk = true;
+    for (const comp of c.components) {
+      const rec = compRecByKey.get(comp.component_key);
+      if (!rec) { fail(`composition component ${comp.component_key}: no matching component record`); compAlignOk = false; continue; }
+      if (comp.source_id !== rec.source_id) { fail(`composition ${comp.component_key}: source_id mismatch (record=${rec.source_id})`); compAlignOk = false; }
+      if (comp.product_role !== rec.product_role) { fail(`composition ${comp.component_key}: product_role mismatch (record=${rec.product_role})`); compAlignOk = false; }
+      if (comp.canonical_route !== rec.canonical_route_template) { fail(`composition ${comp.component_key}: canonical_route mismatch (record=${rec.canonical_route_template})`); compAlignOk = false; }
+    }
+    if (compAlignOk) pass("composition.json components align with actual component records");
   }
 
-  console.log("\n[6] route-map.json alignment");
+  console.log("\n[6] route-map.json alignment against actual component records");
   const rm = readJson(root, "src/07_compositions/MVP001/route-map.json");
   if (!rm.ok) fail(rm.error);
   else {
     const map = rm.data;
     if (!Array.isArray(map.route_map) || map.route_map.length !== 5) fail("route_map must have 5 entries");
     else pass("route_map has 5 entries");
-    const compKeys = new Set((comp.data?.components || []).map((x) => x.component_key));
-    const compById = new Map((comp.data?.components || []).map((x) => [x.component_key, x]));
+    const recByKey6 = new Map(records.map((r) => [r.component_key, r]));
     for (const entry of map.route_map) {
-      if (!compKeys.has(entry.component_key)) { fail(`route-map ${entry.component_key}: no matching component`); continue; }
-      const comp = compById.get(entry.component_key);
-      if (entry.source_id !== comp.source_id) fail(`route-map ${entry.component_key}: source_id mismatch`);
-      if (entry.route !== comp.canonical_route) fail(`route-map ${entry.component_key}: route mismatch (expected ${comp.canonical_route})`);
+      const rec = recByKey6.get(entry.component_key);
+      if (!rec) { fail(`route-map ${entry.component_key}: no matching component record`); continue; }
+      if (entry.source_id !== rec.source_id) fail(`route-map ${entry.component_key}: source_id mismatch (record=${rec.source_id})`);
+      if (entry.product_role !== rec.product_role) fail(`route-map ${entry.component_key}: product_role mismatch (record=${rec.product_role})`);
+      if (entry.route !== rec.canonical_route_template) fail(`route-map ${entry.component_key}: route mismatch (expected record canonical_route_template=${rec.canonical_route_template})`);
     }
-    if (map.route_map.length === 5 && map.route_map.every((e) => compKeys.has(e.component_key))) {
-      pass("route-map aligns with component records");
+    if (map.route_map.length === 5 && map.route_map.every((e) => recByKey6.has(e.component_key))) {
+      pass("route-map aligns with actual component records");
     }
   }
 

@@ -17,9 +17,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync, existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { readFileSync, existsSync, mkdtempSync, cpSync, rmSync } from "node:fs";
+import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { tmpdir } from "node:os";
 
 import {
   checkProductImplRefs,
@@ -28,6 +29,8 @@ import {
   checkAdmissionStatus,
   checkUniqueness,
   checkAcceptanceVsComposition,
+  loadComponentRecords,
+  checkComponentRecordSet,
   ADMISSION_CANDIDATE_STATUS,
 } from "../src/08_harness/validate-mvp001-composition.mjs";
 
@@ -203,9 +206,31 @@ test("Negative: acceptance/composition mismatch is rejected", () => {
   assert.ok(errs.length > 0, "should reject acceptance that self-certifies or mismatches composition");
 });
 
-test("Negative: missing component (fewer than 5) would fail validator", () => {
-  // The structural test above already asserts exactly 5 dirs exist; this
-  // documents that a missing component breaks uniqueness/count expectations.
-  const dirs = COMPONENTS.filter((c) => existsSync(`${COMPONENTS_DIR}/${c.key}`));
-  assert.equal(dirs.length, 5, "all 5 component directories must exist for the validator to pass");
+test("Negative: removing one required component directory fails the validator (fail-closed)", () => {
+  // Build a temporary fixture root that mirrors the real src/06_components tree,
+  // then physically remove one required component directory and assert the
+  // validator's record loader + set-binding check report errors. This exercises
+  // the real validator helpers on disk WITHOUT mutating any repository file.
+  const tmp = mkdtempSync(join(tmpdir(), "mvp001-neg-"));
+  try {
+    cpSync(resolve(ROOT, "src/06_components"), join(tmp, "src/06_components"), { recursive: true });
+    rmSync(join(tmp, "src/06_components/source60-deep-exploration"), { recursive: true, force: true });
+    const { records, errors: loadErrors } = loadComponentRecords(tmp);
+    const setErrors = checkComponentRecordSet(records);
+    const all = [...loadErrors, ...setErrors];
+    assert.ok(all.length > 0, "removing a required component dir must produce validation errors");
+    assert.ok(
+      all.some((e) => /source60-deep-exploration|missing required component/.test(e)),
+      `expected a missing-component error, got: ${all.join(" | ")}`
+    );
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("Positive: real component records bind cleanly to the canonical map", () => {
+  const { records, errors: loadErrors } = loadComponentRecords(ROOT);
+  assert.equal(loadErrors.length, 0, `load errors: ${loadErrors.join(" | ")}`);
+  const setErrors = checkComponentRecordSet(records);
+  assert.equal(setErrors.length, 0, `binding errors: ${setErrors.join(" | ")}`);
 });
