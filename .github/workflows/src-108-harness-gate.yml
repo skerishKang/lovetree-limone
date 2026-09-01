@@ -41,6 +41,9 @@ jobs:
       - name: Validate clean 108-corpus generation root
         run: node src/08_harness/validate-layout.mjs
 
+      - name: Validate generation phase boundaries
+        run: node src/08_harness/generation-phase-guard.mjs
+
       - name: Validate materialized mechanical split
         run: node src/08_harness/validate-mechanical-split.mjs
 
