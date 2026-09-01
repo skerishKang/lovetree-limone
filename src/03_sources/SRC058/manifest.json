@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC058",
+  "source_folder_name": "58_리빙메모리_핀보드_시네마틱",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/58_리빙메모리_핀보드_시네마틱/★_최종_58_리빙메모리_핀보드.html",
+  "authority": {
+    "drive_folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+    "drive_file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+    "filename": "★_최종_58_리빙메모리_핀보드.html",
+    "bytes": 532697,
+    "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+    "revision": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": false,
+    "mechanical_split_complete": false,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "living-memory-pinboard-cinematic",
+    "scenario_id": "58_living_memory_pinboard",
+    "qa_hook": "living-memory-board",
+    "inline_style_block_count": 2,
+    "inline_script_block_count": 2,
+    "inline_media_count": 7,
+    "interaction_surface": [
+      "BOARD_SPATIAL",
+      "THEME_SWITCH",
+      "CINEMA_PREVIEW",
+      "INSPECTOR_FOREGROUND",
+      "ZOOM_FIT"
+    ]
+  }
+}

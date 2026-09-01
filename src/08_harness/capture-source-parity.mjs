@@ -7,6 +7,7 @@ import { chromium } from 'playwright';
 import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mjs';
 import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mjs';
 import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mjs';
+import { captureSRC58Variant, src58SourceFiles } from './source058-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -20,6 +21,11 @@ const defaultViewports = [
   { width: 320, height: 720 },
 ];
 const sourceViewports = {
+  SRC058: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
   SRC060: [
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
@@ -118,9 +124,11 @@ function startServer(sourceId, sourceDir) {
     ? track64SourceFiles(sourceDir, sourceId)
     : sourceId === 'SRC057'
       ? track57SourceFiles(sourceDir, sourceId)
-      : sourceId === 'SRC060'
-        ? track60SourceFiles(sourceDir, sourceId)
-        : new Map([
+      : sourceId === 'SRC058'
+        ? src58SourceFiles(sourceDir, sourceId)
+        : sourceId === 'SRC060'
+          ? track60SourceFiles(sourceDir, sourceId)
+          : new Map([
       [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
@@ -228,6 +236,28 @@ try {
             interaction_equal: true,
             initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
             moment_viewer_screenshot_sha_equal: split.screenshots.moment_viewer_sha256 === original.screenshots.moment_viewer_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC058') {
+          const original = await captureSRC58Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureSRC58Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          for (const state of ['initial', 'afterReset']) {
+            assert.deepStrictEqual(split.states[state].state, original.states[state].state, `${sourceId} ${viewport.width}x${viewport.height}: ${state} state drift`);
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          // screenshots use canonical digest; allow stable blur jitter via byte-identical check handled in driver
+          const comparison = {
+            viewport,
+            initial_state_equal: true,
+            after_reset_state_equal: true,
+            interaction_equal: true,
+            initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
+            after_reset_screenshot_sha_equal: split.screenshots.after_reset_sha256 === original.screenshots.after_reset_sha256,
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,
           };
