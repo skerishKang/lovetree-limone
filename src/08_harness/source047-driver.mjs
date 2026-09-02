@@ -1,0 +1,394 @@
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
+
+// The Source uses backdrop-filter:blur() on several glass/overlay elements
+// (ghost-word LOVETREE, modal shell, mini-controls, nav-popover). GPU compositing
+// of that blur is +/-1 channel nondeterministic run-to-run even over static video
+// frames, so a raw PNG/IDAT digest jitters without any real visual change. This
+// binding digest downsamples to 16x16 and floors each channel to /16, making it
+// stable against sub-2/255 blur jitter yet still sensitive to real layout/color
+// drift. The exact DOM, geometry, computed style, runtime state and interactions
+// are asserted byte-equal separately; this canonical digest is the visual
+// backstop (same strategy as source060-driver.mjs).
+//
+// CI note: at small mobile widths (e.g. 390x844), font hinting/subpixel rendering
+// differs between OS/Chrome versions (Windows vs Linux). The resulting 16x16
+// canonical pixel data can drift by a handful of bytes. We therefore return BOTH
+// the stable SHA (for equality when platforms match) AND the raw bytes, and the
+// parity harness compares the raw bytes with a Hamming-distance threshold
+// (CANONICAL_PIXEL_MAX_HAMMING = 32 bytes out of 1024 = 3.1%) so that real
+// layout/color drift fails closed while platform font-rendering differences do
+// not. INITIAL is excluded from the strict visual hash (autoplay frame timing).
+async function canonicalPixelDigest(page, pngBuffer) {
+  const b64 = pngBuffer.toString('base64');
+  const data = await page.evaluate(async (src) => {
+    const img = new Image();
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = `data:image/png;base64,${src}`; });
+    const N = 16;
+    const canvas = document.createElement('canvas');
+    canvas.width = N;
+    canvas.height = N;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, N, N);
+    const px = ctx.getImageData(0, 0, N, N).data;
+    return Array.from(px, (v, i) => (i % 4 === 3 ? v : (v & 0xF0)));
+  }, b64);
+  const buf = Buffer.from(data);
+  return { hex: sha256(buf), raw: buf };
+}
+
+const ACTS = {
+  ACT1_FIRST_FEELING: 0.900,
+  ACT2_MOMENT: 4.100,
+  ACT3_BLOOM: 7.500,
+  ACT4_WHY_NEXT: 11.100,
+  ACT5_LOVETREE: 13.200,
+};
+
+const MOBILE_WIDTH = 820;
+
+function collectSRC47State() {
+  const round = (v) => Math.round(v * 1000) / 1000;
+  const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
+  const stage = document.getElementById('stage');
+  const video = document.getElementById('film');
+  const modal = document.getElementById('modal');
+  const navGroups = [...document.querySelectorAll('.nav-group')];
+  const activeNavGroup = navGroups.find(g => g.classList.contains('is-open'));
+
+  const metrics = Object.fromEntries([...document.querySelectorAll('[id]')].map(el => {
+    const r = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    return [el.id, {
+      tag: el.tagName,
+      className: typeof el.className === 'string' ? el.className : '',
+      rect: { x: round(r.x), y: round(r.y), width: round(r.width), height: round(r.height) },
+      display: cs.display,
+      visibility: cs.visibility,
+      opacity: cs.opacity,
+    }];
+  }));
+
+  return {
+    ids,
+    elementCount: document.querySelectorAll('body *:not(script):not(link):not(style)').length,
+    buttonIds: [...document.querySelectorAll('button')].map(el => el.id),
+    metrics,
+    runtime: {
+      mode: document.getElementById('stateChip')?.textContent ?? null,
+      act: stage?.dataset.act ? +stage.dataset.act : null,
+      videoFailed: stage?.classList.contains('video-failed') ?? false,
+      reducedMotion: stage?.classList.contains('reduced-motion') ?? false,
+      ctaReady: stage?.classList.contains('cta-ready') ?? false,
+      modalOpen: modal?.classList.contains('open') ?? false,
+      navPopoverOpen: activeNavGroup ? activeNavGroup.querySelector('[data-nav-menu]')?.textContent ?? null : null,
+    },
+    video: {
+      paused: video?.paused ?? true,
+      muted: video?.muted ?? true,
+      currentTime: video?.currentTime ?? 0,
+      duration: video?.duration ?? 0,
+      readyState: video?.readyState ?? 0,
+    },
+  };
+}
+
+async function settleSRC47(page) {
+  await page.evaluate(async () => {
+    document.getElementById('toast')?.classList.remove('show');
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+}
+
+async function assertSRC47Ready(page, sourceId) {
+  await waitForVideoReady(page, sourceId);
+  await settleSRC47(page);
+}
+
+async function waitForVideoReady(page, sourceId, timeout = 30000) {
+  // Give the page a moment to start fetching the MP4 after the load event;
+  // headless Chromium sometimes does not begin the media request until the
+  // first animation frame after navigation.
+  await page.waitForTimeout(3000);
+  await page.waitForFunction(() => {
+    const video = document.getElementById('film');
+    return video && video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0;
+  }, null, { timeout });
+}
+
+async function unlockVideo(page) {
+  // Headless Chromium blocks programmatic play/seek until a real user
+  // gesture. A click on the play control is a genuine user gesture and also
+  // starts the frozen script's own scrubLoop, which is what QA.seek relies on.
+  const playPause = page.locator('#playPause');
+  if (await playPause.count() === 0) {
+    throw new Error('SRC047: #playPause control not found — cannot unlock video');
+  }
+  await playPause.click();
+  await page.waitForTimeout(300);
+  await page.evaluate(() => {
+    const video = document.getElementById('film');
+    if (video) video.muted = true;
+  });
+}
+
+async function seekACT(page, actKey) {
+  const t = ACTS[actKey];
+  // Headless Chromium refuses to seek the MP4 until a real user gesture
+  // unlocks playback, and only honours currentTime while the element is
+  // playing. The frozen script's own QA.seek(t) is the canonical path: it
+  // pauses, sets scrubTime/targetTime, forces the scrubLoop to drive the
+  // frame, and applies the ACT composition. Use it rather than assigning
+  // currentTime directly.
+  await page.evaluate((target) => {
+    const video = document.getElementById('film');
+    if (video) video.muted = true;
+    window.__lovetreeQA.seek(target);
+  }, t);
+  await page.waitForFunction((target) => {
+    const video = document.getElementById('film');
+    return video && video.readyState >= 2 && Math.abs(video.currentTime - target) < 0.05;
+  }, t, { timeout: 20000 });
+  await page.waitForTimeout(500);
+}
+
+async function openModal(page, baseUrl) {
+  // Real Source-native trigger: the frozen script routes the firstMoment
+  // anchor through openComposer() only when ?demoComposer=1 is present.
+  // No class is assigned directly; the composer opens via the script's own handler.
+  const demoUrl = baseUrl + (baseUrl.includes('?') ? '&' : '?') + 'demoComposer=1';
+  const response = await page.goto(demoUrl, { waitUntil: 'load', timeout: 30000 });
+  if (!response?.ok()) throw new Error(`SRC047 modal pre-navigation HTTP ${response?.status()}`);
+  await waitForVideoReady(page, 'SRC047');
+  await settleSRC47(page);
+
+  const firstMoment = page.locator('[data-route="firstMoment"]').first();
+  if (await firstMoment.count() === 0) {
+    throw new Error('SRC047: firstMoment route anchor not found — cannot open modal natively');
+  }
+  await firstMoment.click();
+  await page.waitForFunction(() => {
+    const modal = document.getElementById('modal');
+    return modal && modal.classList.contains('open');
+  }, null, { timeout: 5000 });
+  await page.waitForTimeout(300);
+}
+
+async function closeModal(page) {
+  const closeBtn = page.locator('#closeModal');
+  if (await closeBtn.count() > 0) {
+    await closeBtn.click();
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('modal');
+      return modal && !modal.classList.contains('open');
+    }, null, { timeout: 5000 });
+  }
+}
+
+async function openNavPopover(page) {
+  const modal = page.locator('#modal');
+  if (await modal.count() > 0 && await modal.evaluate(el => el.classList.contains('open'))) {
+    await closeModal(page);
+    await page.waitForTimeout(200);
+  }
+  const navGroup = page.locator('.nav-group').first();
+  const trigger = navGroup.locator('[data-nav-menu]');
+  if (await trigger.count() === 0) {
+    throw new Error('SRC047: nav-group trigger not found');
+  }
+  // Real Source-native trigger: clicking the pinned nav trigger runs the
+  // script's own click handler, which toggles .is-open + aria-expanded.
+  await trigger.click();
+  await page.waitForFunction(() => {
+    const group = document.querySelector('.nav-group.is-open');
+    return !!group;
+  }, null, { timeout: 5000 });
+  await page.waitForTimeout(300);
+}
+
+async function captureState(page, sourceOut, label, stateName, variant = 'original') {
+  const state = await page.evaluate(collectSRC47State);
+  const png = await page.screenshot({
+    path: path.join(sourceOut, `${label}-${variant}-${stateName}.png`),
+    animations: 'disabled',
+  });
+  const canonical = await canonicalPixelDigest(page, png);
+  return { state, pngSha: sha256(png), pngCanonicalSha: canonical.hex, pngCanonicalRaw: canonical.raw, stateName };
+}
+
+async function exerciseSRC47(page, sourceId, label) {
+  const results = { controlSurface: 'CINEMATIC_FRONTDOOR' };
+
+  const playPause = page.locator('#playPause');
+  if (await playPause.count() > 0) {
+    await playPause.click();
+    await page.waitForTimeout(300);
+    results.playPauseClicked = true;
+  }
+
+  const muteBtn = page.locator('#muteBtn');
+  if (await muteBtn.count() > 0) {
+    await muteBtn.click();
+    await page.waitForTimeout(200);
+    results.muteClicked = true;
+  }
+
+  const progressRail = page.locator('#progressRail');
+  if (await progressRail.count() > 0) {
+    await progressRail.click();
+    await page.waitForTimeout(300);
+    results.progressRailClicked = true;
+  }
+
+  return results;
+}
+
+async function captureSRC47Page(page, baseUrl, sourceOut, variant, sourceId, label, errors = []) {
+  await waitForVideoReady(page, sourceId);
+  await settleSRC47(page);
+  if (errors.length) throw new Error(`${sourceId} ${variant}: browser errors before capture: ${errors.join('; ')}`);
+
+  const states = {};
+const screenshots = {};
+
+  // INITIAL first (after a real unlock gesture), then ACT1-5 via QA.seek,
+  // then MODAL, then NAV.
+  await unlockVideo(page);
+  states.INITIAL = await captureState(page, sourceOut, label, 'INITIAL', variant);
+  screenshots.initial_sha256 = states.INITIAL.pngSha;
+  screenshots.initial_canonical_sha256 = states.INITIAL.pngCanonicalSha;
+  screenshots.initial_canonical_raw_hex = states.INITIAL.pngCanonicalRaw.toString('hex');
+
+  for (const [name] of Object.entries(ACTS)) {
+    await seekACT(page, name);
+    states[name] = await captureState(page, sourceOut, label, name, variant);
+    screenshots[`${name.toLowerCase()}_sha256`] = states[name].pngSha;
+    screenshots[`${name.toLowerCase()}_canonical_sha256`] = states[name].pngCanonicalSha;
+    screenshots[`${name.toLowerCase()}_canonical_raw_hex`] = states[name].pngCanonicalRaw.toString('hex');
+  }
+
+  await openModal(page, baseUrl);
+  states.MODAL_OPEN = await captureState(page, sourceOut, label, 'MODAL_OPEN', variant);
+  screenshots.modal_sha256 = states.MODAL_OPEN.pngSha;
+  screenshots.modal_canonical_sha256 = states.MODAL_OPEN.pngCanonicalSha;
+  screenshots.modal_canonical_raw_hex = states.MODAL_OPEN.pngCanonicalRaw.toString('hex');
+
+  await closeModal(page);
+  await page.waitForTimeout(200);
+
+  const isMobile = page.viewportSize().width <= MOBILE_WIDTH;
+  if (!isMobile) {
+    await openNavPopover(page);
+    states.NAV_POPOVER_OPEN = await captureState(page, sourceOut, label, 'NAV_POPOVER_OPEN', variant);
+    screenshots.nav_sha256 = states.NAV_POPOVER_OPEN.pngSha;
+    screenshots.nav_canonical_sha256 = states.NAV_POPOVER_OPEN.pngCanonicalSha;
+    screenshots.nav_canonical_raw_hex = states.NAV_POPOVER_OPEN.pngCanonicalRaw.toString('hex');
+  } else {
+    states.NAV_POPOVER_OPEN = {
+      stateName: 'NOT_APPLICABLE_MOBILE',
+      state: { note: 'nav groups hidden by frozen responsive contract' },
+      pngSha: null,
+      pngCanonicalSha: null,
+      pngCanonicalRaw: null,
+    };
+    screenshots.nav_sha256 = null;
+    screenshots.nav_canonical_sha256 = null;
+    screenshots.nav_canonical_raw_hex = null;
+  }
+
+  const interaction = await exerciseSRC47(page, sourceId, `${label} ${variant}`);
+
+  if (errors.length) throw new Error(`${sourceId} ${label} ${variant}: browser errors: ${errors.join('; ')}`);
+
+  return {
+    states,
+    interaction,
+    errors,
+    screenshots,
+  };
+}
+
+export async function captureSRC47Baseline(page, baseUrl, sourceOut, label) {
+  return captureSRC47Page(page, baseUrl, sourceOut, 'original', 'SRC047', label);
+}
+
+export async function captureSRC47Variant(browser, url, viewport, sourceOut, variant, sourceId) {
+  const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
+  // Network gate (two layers):
+  // 1. response-status: fail closed if any required asset (authority MP4 or
+  //    poster image) served from /SRC047/assets/* or /SRC047/split/assets/*
+  //    returns HTTP status >= 400. This catches 404/500 on required files
+  //    that requestfailed alone would miss.
+  // 2. requestfailed: fail closed on genuine network failures. ERR_ABORTED
+  //    is ONLY ignored for the known SRC047 MP4 superseded-preload case
+  //    (Chromium cancels prior Range requests when seeking). All other
+  //    ERR_ABORTED failures are recorded. favicon is served as 204 by the
+  //    harness server so it never appears here.
+  const requiredAssetStatusErrors = [];
+  page.on('response', (response) => {
+    const url = response.url();
+    if ((url.includes('/SRC047/assets/') || url.includes('/SRC047/split/assets/')) && response.status() >= 400) {
+      requiredAssetStatusErrors.push(`required-asset-http-${response.status()}:${url}`);
+    }
+  });
+  page.on('requestfailed', (request) => {
+    const failure = request.failure();
+    const text = failure?.errorText ?? 'unknown';
+    const reqUrl = request.url();
+    const isMP4Asset = (reqUrl.includes('/SRC047/assets/') || reqUrl.includes('/SRC047/split/assets/')) && reqUrl.endsWith('.mp4');
+    if (text.includes('ERR_ABORTED') && isMP4Asset) return;
+    errors.push(`requestfailed:${reqUrl} :: ${text}`);
+  });
+  try {
+    const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+    if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
+    if (requiredAssetStatusErrors.length > 0) {
+      throw new Error(`${sourceId} ${variant}: required asset HTTP errors: ${requiredAssetStatusErrors.join('; ')}`);
+    }
+    return await captureSRC47Page(page, url, sourceOut, variant, sourceId, `${viewport.width}x${viewport.height}`, errors);
+  } finally {
+    await context.close();
+  }
+}
+
+export function src47SourceFiles(sourceDir, sourceId = 'SRC047') {
+  const files = new Map([
+    [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
+    [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
+    [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
+    [`/${sourceId}/split/script.js`, [path.join(sourceDir, 'split', 'script.js'), 'text/javascript; charset=utf-8']],
+  ]);
+
+  // The mechanically split index intentionally retains relative `assets/...`
+  // references (poster + MP4). The split file lives at /SRC047/split/index.html, so
+  // the browser resolves those references to /SRC047/split/assets/*. Register both
+  // the original-absolute and split-relative asset routes, both pointing at the
+  // frozen original asset directory, so original and split share the same
+  // authority assets through the parity server.
+  const assetsDir = path.join(sourceDir, 'original', 'assets');
+  if (fs.existsSync(assetsDir)) {
+    const assetFiles = fs.readdirSync(assetsDir);
+    for (const file of assetFiles) {
+      const ext = path.extname(file).toLowerCase();
+      let mimeType = 'application/octet-stream';
+      if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg';
+      if (ext === '.png') mimeType = 'image/png';
+      if (ext === '.mp4') mimeType = 'video/mp4';
+      files.set(`/${sourceId}/assets/${file}`, [path.join(assetsDir, file), mimeType]);
+      files.set(`/${sourceId}/split/assets/${file}`, [path.join(assetsDir, file), mimeType]);
+    }
+  }
+
+  return files;
+}
+
+export { collectSRC47State };

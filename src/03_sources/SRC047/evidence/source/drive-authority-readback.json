@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC047",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verified_at_utc": "2026-09-01T15:04:33Z",
+  "fresh_drive": {
+    "folder_id": "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH",
+    "file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+    "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+    "mime_type": "text/html",
+    "bytes": 40890,
+    "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+    "created_time": "2026-08-23T06:53:42.416Z",
+    "modified_time": "2026-08-23T06:53:42.416Z"
+  }
+}

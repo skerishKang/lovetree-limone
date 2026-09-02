@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC047",
+  "source_folder_name": "47_시즌수채화블_통합개발",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/47_시즌수채화블_통합개발/최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+  "authority": {
+    "drive_folder_id": "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH",
+    "drive_file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+    "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+    "bytes": 40890,
+    "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+    "revision": "V4.2.5",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST098"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false
+}

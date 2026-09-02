@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC047",
+  "status": "ACCEPTED",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "exact_head": "abd807fddd26596b6d634569b68e4fc954e8bf8f",
+    "workflow_run_id": 33597584160,
+    "artifact_id": 9833935360,
+    "artifact_name": "src-mechanical-split-candidate-abd807fddd26596b6d634569b68e4fc954e8bf8f",
+    "artifact_digest": "sha256:33e3542560983076c8d5ead2088673518f11dbbc50ad76e6e1db3bd486bb61fb",
+    "local_reproduction_match": "BYTE_IDENTICAL"
+  },
+  "parity_evidence": {
+    "exact_head": "046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+    "workflow_run_id": 33615088658,
+    "artifact_id": 9840796488,
+    "artifact_name": "src-split-parity-046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+    "artifact_digest": "sha256:532a0ac10666df099837c9723c6889f1d014b115a8eca429c942543cc63f9a2b"
+  },
+  "authority": {
+    "bytes": 40890,
+    "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596"
+  },
+  "boundaries": {
+    "style_open": 283,
+    "style_close": 15957,
+    "script_open": 22731,
+    "script_close": 39593,
+    "script_blocks": [
+      {
+        "open": 22731,
+        "close": 39593,
+        "length": 16854
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 7791,
+      "sha256": "8b9be3cf13357510f5973bfb0edb07f760ee3123bd90dbd2699135cfdd3e5712",
+      "git_blob_sha1": "fd14cb0091909b78678f179e693dc89213fe10b3"
+    },
+    "split/styles.css": {
+      "bytes": 15717,
+      "sha256": "73f117835220c85fef63405bbe679ed65e6c53d84303a9b88efe9c435c20a55a",
+      "git_blob_sha1": "02bd13b73ca6a3b4be70236d20fa110cbc9980cf"
+    },
+    "split/script.js": {
+      "bytes": 17429,
+      "sha256": "b5d2787c4d3b9d7adfcc289b54a963acf7fcf196c77b7b243ba5a1f31a51fe75",
+      "git_blob_sha1": "9d0c210b42b07fb270ec7a5b9701389b15d00ad5"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json"
+}

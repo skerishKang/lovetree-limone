@@ -22,6 +22,7 @@ const ORBIT_DRAG_FACTOR = 0.0045;
 // the real product state transitions — the `.is-dragging` stage lifecycle and
 // the canonical selection commit — never fixed sleeps.
 const CONDITION_WAIT = { timeout: 10000, polling: 50 };
+const HIT_POINT_WAIT = { timeout: 2500, polling: 50 };
 
 async function waitForCondition(page, condition, classify, label, arg = null, wait = CONDITION_WAIT) {
   try {
@@ -223,29 +224,34 @@ async function pointerDrag(page, dx, dy = 0, startPoint = null, settle = null) {
   }
 }
 
-// Return the visible centre of the card that is currently in a given position
-// in the orbit (index-based).  Cards move through 3-D transform so we find
-// the element by selector and compute its current bounding rect.
-// Find a point inside a card that actually hits THAT card.  In the 3-D orbit
-// the cards overlap, so an element's bounding-box centre can be covered by
-// another card; elementFromPoint finds the topmost hit at each candidate.
-async function cardHitPoint(page, index) {
+// Find a point inside a card that actually hits THAT card. In the 3-D orbit
+// cards overlap, so an element's bounding-box centre can be covered by a
+// neighbour; elementFromPoint identifies the topmost real hit target.
+// Discovery callers use the immediate scan. Direct click/tap callers may pass
+// a bounded wait so compositor hit-testing can converge after a settled CSS
+// transform without weakening the requirement that the real card be hit.
+async function cardHitPoint(page, index, wait = null) {
   const card = page.locator(".v4-liquid-card").nth(index);
-  const box = await card.boundingBox();
-  assert.ok(box, `card ${index} visible`);
-  for (let gy = 0.25; gy < 1; gy += 0.25) {
-    for (let gx = 0.25; gx < 1; gx += 0.25) {
-      const x = box.x + box.width * gx;
-      const y = box.y + box.height * gy;
-      const hitIdx = await page.evaluate(([px, py]) => {
-        const el = document.elementFromPoint(px, py);
-        const cardEl = el?.closest?.(".v4-liquid-card");
-        if (!cardEl) return -1;
-        return Array.from(document.querySelectorAll(".v4-liquid-card")).indexOf(cardEl);
-      }, [x, y]);
-      if (hitIdx === index) return { x, y };
+  const startedAt = Date.now();
+  do {
+    const box = await card.boundingBox();
+    assert.ok(box, `card ${index} visible`);
+    for (let gy = 0.25; gy < 1; gy += 0.25) {
+      for (let gx = 0.25; gx < 1; gx += 0.25) {
+        const x = box.x + box.width * gx;
+        const y = box.y + box.height * gy;
+        const hitIdx = await page.evaluate(([px, py]) => {
+          const el = document.elementFromPoint(px, py);
+          const cardEl = el?.closest?.(".v4-liquid-card");
+          if (!cardEl) return -1;
+          return Array.from(document.querySelectorAll(".v4-liquid-card")).indexOf(cardEl);
+        }, [x, y]);
+        if (hitIdx === index) return { x, y };
+      }
     }
-  }
+    if (!wait || Date.now() - startedAt >= wait.timeout) return null;
+    await page.waitForTimeout(wait.polling);
+  } while (Date.now() - startedAt < wait.timeout);
   return null;
 }
 
@@ -257,12 +263,12 @@ async function tapPoint(page, point) {
   await page.touchscreen.tap(point.x, point.y);
 }
 async function cardTap(page, index) {
-  const point = await cardHitPoint(page, index);
+  const point = await cardHitPoint(page, index, HIT_POINT_WAIT);
   assert.ok(point, `card ${index} has a reachable tap point`);
   await tapPoint(page, point);
 }
 async function cardClick(page, index, settle = null) {
-  const point = await cardHitPoint(page, index);
+  const point = await cardHitPoint(page, index, HIT_POINT_WAIT);
   assert.ok(point, `card ${index} has a reachable click point`);
   await page.mouse.click(point.x, point.y);
   if (settle?.expectedIdx != null) {
@@ -305,7 +311,7 @@ async function assertCardOriginDrag(page, fromIdx, dx) {
 }
 
 // Trigger a real pointercancel by injecting a second touch finger while the
-// first is still active.  Then verify stuck drag is cleared and the next
+// first is still active. Then verify stuck drag is cleared and the next
 // touch drag still works.
 async function assertPointerCancelRecovery(page) {
   const point = await findEmptyStagePoint(page);
@@ -345,7 +351,7 @@ async function assertPointerCancelRecovery(page) {
 }
 
 // Steal pointer capture from the stage while a drag is in progress so the
-// stage fires lostpointercapture.  Then verify no stuck state and the next
+// stage fires lostpointercapture. Then verify no stuck state and the next
 // drag still works.
 async function assertLostPointerCaptureRecovery(page) {
   const point = await findEmptyStagePoint(page);
@@ -485,7 +491,7 @@ test("V4 Orbit canonical adoption — desktop selection authority, drag snap, ra
       assert.equal(afterCard.cardIdx, openIdx, "clicking a non-selected card selects it canonically");
 
       // F. card-origin pointer drag — start inside a card, move past its
-      // bounds.  Pointer capture must keep the drag alive across the whole
+      // bounds. Pointer capture must keep the drag alive across the whole
       // gesture so that release produces exactly one canonical snap.
       const originIdx = (afterCard.cardIdx + 3) % afterCard.count;
       await assertCardOriginDrag(page, originIdx, 180);

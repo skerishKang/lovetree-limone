@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC047",
+  "status": "ACCEPTED",
+  "surface": "original/original.html",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 720
+    }
+  ],
+  "states": [
+    "INITIAL",
+    "ACT1_FIRST_FEELING",
+    "ACT2_MOMENT",
+    "ACT3_BLOOM",
+    "ACT4_WHY_NEXT",
+    "ACT5_LOVETREE",
+    "MODAL_OPEN",
+    "NAV_POPOVER_OPEN"
+  ],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "active act state",
+    "video state (paused/muted/currentTime)",
+    "modal visibility",
+    "nav popover state",
+    "progress rail state",
+    "console/page errors"
+  ],
+  "source_native_runtime": "window.__lovetreeQA",
+  "video_asset_status": "MATERIALIZED_FROM_DRIVEFS_HANDOFF",
+  "video_authority": {
+    "filename": "Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4",
+    "drive_file_id": "1dRmVkiHrV-dGJ4XNA4mp9ftKP5ozqRGT",
+    "bytes": 28650099,
+    "sha256": "28951ccb76923e0dfbbb60e7757ab2f6fa379e405731a386fa03b05a32a227ce",
+    "handoff_source": "F:\\내 드라이브\\SRC047_AUTHORITY_Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4",
+    "materialized_at": "src/03_sources/SRC047/original/assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4"
+  },
+  "poster_asset_status": "MATERIALIZED_FROM_PUBLIC",
+  "poster_authority": {
+    "filename": "poster-act01.jpg",
+    "drive_file_id": "1jQ6A4RX933xPik9HKZmoyU55d969Xwg0",
+    "bytes": 187679,
+    "sha256": "1056d9b89d49818dc43593c35b33648423d10aa340d3a69412bb88b71dcd8fdd"
+  },
+  "video_determinism_strategy": "Video element loads from materialized authority MP4. Seek to canonical ACT keyframes via window.__lovetreeQA.seek(t). Wait for seeked + settled render before capture.",
+  "accepted_evidence": "accepted-baseline.json",
+  "captured_head": "d0f07d08675fb574a4eb5d3163a131a951efd2ad",
+  "workflow_run_id": 33596466153,
+  "artifact_id": 9833658686,
+  "artifact_digest": "sha256:56aec301fc17655ad8e2c085b27982744f33cfef099a6cf760ac3a379af9528f",
+  "pass_rule": "Baseline is accepted only from a directly reviewed exact-head artifact whose frozen original remains byte-identical to locked authority."
+}

@@ -8,6 +8,23 @@ const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('he
 const gitBlobSha1 = (buffer) => crypto.createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${buffer.length}\0`), buffer])).digest('hex');
 const fail = (message) => { throw new Error(message); };
 
+function validateAcceptedParityComparisons(sourceId, parity) {
+  const comps = parity?.comparisons ?? {};
+  const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
+  const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST', 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD'];
+  if (comps.dom !== 'EQUAL' || !allowedGeometry.includes(comps.geometry) || !allowedGeometry.includes(comps.computed_style) || comps.runtime_state !== 'EQUAL' || comps.interactions !== 'EQUAL' || !allowedScreenshots.includes(comps.screenshots)) fail(`${sourceId}: accepted parity result is not fully PASS`);
+  if (comps.screenshots === 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD') {
+    const max = comps.canonical_pixel_hamming_max;
+    const threshold = comps.canonical_pixel_threshold;
+    if (!Number.isInteger(max) || max < 0) fail(`${sourceId}: parity canonical Hamming max invalid`);
+    if (!Number.isInteger(threshold) || threshold <= 0 || threshold > 32) fail(`${sourceId}: parity canonical Hamming threshold invalid`);
+    if (max > threshold) fail(`${sourceId}: parity canonical Hamming exceeds threshold`);
+    if (parity?.visual_review?.central_direct_artifact_review !== true) fail(`${sourceId}: Hamming parity requires direct CENTRAL artifact review`);
+    if (parity?.required_network_errors !== 0) fail(`${sourceId}: Hamming parity required-network errors present`);
+  }
+  if (parity?.browser_errors !== 0) fail(`${sourceId}: accepted parity browser errors present`);
+}
+
 let validated = 0;
 for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.test(id)).sort()) {
   const sourceDir = path.join(sourceRoot, sourceId);
@@ -60,14 +77,10 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   if (index.includes('<style>') || index.includes('</style>')) fail(`${sourceId}: inline style remains in split index`);
   if (/<script(?!\s+src=["']\.\/script\.js["'])/i.test(index)) fail(`${sourceId}: unexpected inline/alternate script remains in split index`);
 
-  // Interleaved multi-style+script (SRC058) uses sorted_blocks reconstruction
   let reconstructed;
   const sortedBlocks = Array.isArray(record.boundaries?.sorted_blocks) ? record.boundaries.sorted_blocks : null;
   if (sortedBlocks && multiStyle) {
-    // Gaps are original html between blocks; reconstruct via block order
     const originalBytesForGaps = fs.readFileSync(path.join(sourceDir, 'original', 'original.html')).toString('utf8');
-    // Re-derive gaps from original to ensure byte identity without trusting stored gap strings for style
-    // We have sorted_blocks with open/close; extract gaps as original slices
     let recon = '';
     let pos = 0;
     let cssCursor = 0;
@@ -116,13 +129,17 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
     const parity = JSON.parse(fs.readFileSync(parityPath, 'utf8'));
     if (parity.source_id !== sourceId || parity.status !== 'ACCEPTED') fail(`${sourceId}: accepted parity record invalid`);
     if (!/^[0-9a-f]{40}$/.test(parity.source_head ?? '')) fail(`${sourceId}: accepted parity source head is not an exact commit SHA`);
-    if (record.source_candidate?.exact_head && parity.source_head !== record.source_candidate.exact_head) fail(`${sourceId}: accepted parity source head drift`);
+
+    const parityBindingHead = record.parity_evidence?.exact_head ?? record.source_candidate?.exact_head;
+    if (parityBindingHead && parity.source_head !== parityBindingHead) fail(`${sourceId}: accepted parity source head drift`);
+    if (record.parity_evidence) {
+      if (!/^[0-9a-f]{40}$/.test(record.parity_evidence.exact_head ?? '')) fail(`${sourceId}: parity evidence head is not an exact commit SHA`);
+      if (record.parity_evidence.artifact_id !== parity.artifact?.id) fail(`${sourceId}: parity artifact id drift`);
+      if (record.parity_evidence.artifact_name !== parity.artifact?.name) fail(`${sourceId}: parity artifact name drift`);
+      if (record.parity_evidence.artifact_digest !== parity.artifact?.digest) fail(`${sourceId}: parity artifact digest drift`);
+    }
     if (parity.authority?.sha256 !== manifest.authority?.sha256 || parity.authority?.bytes !== manifest.authority?.bytes) fail(`${sourceId}: accepted parity authority drift`);
-    const parityComparisons = parity.comparisons ?? {};
-    const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
-    const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST'];
-    if (parityComparisons.dom !== 'EQUAL' || !allowedGeometry.includes(parityComparisons.geometry) || !allowedGeometry.includes(parityComparisons.computed_style) || parityComparisons.runtime_state !== 'EQUAL' || parityComparisons.interactions !== 'EQUAL' || !allowedScreenshots.includes(parityComparisons.screenshots)) fail(`${sourceId}: accepted parity result is not fully PASS`);
-    if (parity.browser_errors !== 0) fail(`${sourceId}: accepted parity browser errors present`);
+    validateAcceptedParityComparisons(sourceId, parity);
   } else if (record.parity_status !== 'PENDING_EXACT_HEAD_CAPTURE') {
     fail(`${sourceId}: pending materialization must declare pending parity`);
   }
