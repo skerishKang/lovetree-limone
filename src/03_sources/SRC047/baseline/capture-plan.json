@@ -1,12 +1,21 @@
 {
   "schema_version": "1.1",
   "source_id": "SRC047",
-  "status": "PENDING_EXACT_HEAD_CI",
+  "status": "ACCEPTED",
   "surface": "original/original.html",
   "viewports": [
-    { "width": 1280, "height": 800 },
-    { "width": 390, "height": 844 },
-    { "width": 320, "height": 720 }
+    {
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 720
+    }
   ],
   "states": [
     "INITIAL",
@@ -47,6 +56,10 @@
     "sha256": "1056d9b89d49818dc43593c35b33648423d10aa340d3a69412bb88b71dcd8fdd"
   },
   "video_determinism_strategy": "Video element loads from materialized authority MP4. Seek to canonical ACT keyframes via window.__lovetreeQA.seek(t). Wait for seeked + settled render before capture.",
-  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority.",
-  "accepted_evidence": "baseline/accepted-baseline.json"
+  "accepted_evidence": "accepted-baseline.json",
+  "captured_head": "d0f07d08675fb574a4eb5d3163a131a951efd2ad",
+  "workflow_run_id": 33596466153,
+  "artifact_id": 9833658686,
+  "artifact_digest": "sha256:56aec301fc17655ad8e2c085b27982744f33cfef099a6cf760ac3a379af9528f",
+  "pass_rule": "Baseline is accepted only from a directly reviewed exact-head artifact whose frozen original remains byte-identical to locked authority."
 }
