@@ -11,6 +11,13 @@
     "artifact_digest": "sha256:33e3542560983076c8d5ead2088673518f11dbbc50ad76e6e1db3bd486bb61fb",
     "local_reproduction_match": "BYTE_IDENTICAL"
   },
+  "parity_evidence": {
+    "exact_head": "046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+    "workflow_run_id": 33615088658,
+    "artifact_id": 9840796488,
+    "artifact_name": "src-split-parity-046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+    "artifact_digest": "sha256:532a0ac10666df099837c9723c6889f1d014b115a8eca429c942543cc63f9a2b"
+  },
   "authority": {
     "bytes": 40890,
     "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596"
