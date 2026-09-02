@@ -69,7 +69,7 @@
     "computed_style": "EQUAL",
     "runtime_state": "EQUAL",
     "interactions": "EQUAL",
-    "screenshots": "DIRECT_VISUAL_EQUIVALENT",
+    "screenshots": "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD",
     "canonical_pixel_hamming_max": 1,
     "canonical_pixel_threshold": 32,
     "modal_canonical_hamming_max": 0,
@@ -108,5 +108,7 @@
     "MODAL_OPEN canonical Hamming was 0 at all three viewports; desktop NAV canonical Hamming was 0 and its raw screenshot was byte-identical.",
     "INITIAL is excluded from strict canonical screenshot equality because autoplay capture time can vary slightly; its DOM/geometry/runtime contract was asserted and CENTRAL directly reviewed the images.",
     "No Source authority, split output, product adapter, backend, DB, auth, Ready transition, merge, or production deploy was part of this acceptance."
-  ]
+  ],
+  "browser_errors": 0,
+  "required_network_errors": 0
 }

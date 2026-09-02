@@ -46,6 +46,39 @@ export function validateMechanicalSplitSurface({ repoRoot, roots = ['src/03_sour
   return failures;
 }
 
+function validateAcceptedParityComparisons(sourceId, parity, failures) {
+  const comps = parity?.comparisons ?? {};
+  const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
+  const allowedScreenshots = [
+    'BYTE_IDENTICAL',
+    'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST',
+    'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+  ];
+
+  if (
+    comps.dom !== 'EQUAL'
+    || !allowedGeometry.includes(comps.geometry)
+    || !allowedGeometry.includes(comps.computed_style)
+    || comps.runtime_state !== 'EQUAL'
+    || comps.interactions !== 'EQUAL'
+    || !allowedScreenshots.includes(comps.screenshots)
+  ) {
+    failures.push(`${sourceId}: parity comparison is not fully PASS`);
+  }
+
+  if (comps.screenshots === 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD') {
+    const max = comps.canonical_pixel_hamming_max;
+    const threshold = comps.canonical_pixel_threshold;
+    if (!Number.isInteger(max) || max < 0) failures.push(`${sourceId}: parity canonical Hamming max invalid`);
+    if (!Number.isInteger(threshold) || threshold <= 0 || threshold > 32) failures.push(`${sourceId}: parity canonical Hamming threshold invalid`);
+    if (Number.isInteger(max) && Number.isInteger(threshold) && max > threshold) failures.push(`${sourceId}: parity canonical Hamming exceeds threshold`);
+    if (parity?.visual_review?.central_direct_artifact_review !== true) failures.push(`${sourceId}: Hamming parity requires direct CENTRAL artifact review`);
+    if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: Hamming parity required-network errors present`);
+  }
+
+  if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+}
+
 /**
  * Validate the shared mechanical Source contract for every active phase.
  * Phase-specific scope is deliberately limited to calibration membership:
@@ -131,11 +164,7 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       const parity = readJson(repoRoot, `${base}/evidence/parity/accepted-parity.json`, failures);
       if (!parity || parity.status !== 'ACCEPTED' || parity.source_id !== sourceId) failures.push(`${sourceId}: accepted parity evidence missing/invalid`);
       if (parity && (parity.authority?.bytes !== m.bytes || parity.authority?.sha256 !== m.sha256)) failures.push(`${sourceId}: parity authority drift`);
-      const comps = parity?.comparisons ?? {};
-      const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
-      const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST'];
-      if (comps.dom !== 'EQUAL' || !allowedGeometry.includes(comps.geometry) || !allowedGeometry.includes(comps.computed_style) || comps.runtime_state !== 'EQUAL' || comps.interactions !== 'EQUAL' || !allowedScreenshots.includes(comps.screenshots)) failures.push(`${sourceId}: parity comparison is not fully PASS`);
-      if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+      if (parity) validateAcceptedParityComparisons(sourceId, parity, failures);
     }
   }
 

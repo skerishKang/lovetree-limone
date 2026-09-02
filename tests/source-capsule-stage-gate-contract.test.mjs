@@ -79,7 +79,58 @@ function makeS1Fixture() {
       sha256: digest,
     },
   });
-  return { root, sourceId };
+  return { root, sourceId, authority };
+}
+
+function promoteFixtureToS4(root, sourceId, authority, parityOverrides = {}) {
+  const manifestPath = path.join(root, `src/03_sources/${sourceId}/manifest.json`);
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  manifest.stages.baseline_captured = true;
+  manifest.stages.mechanical_split_complete = true;
+  manifest.stages.source_split_parity_pass = true;
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+  writeJson(root, `src/03_sources/${sourceId}/baseline/capture-plan.json`, { status: 'ACCEPTED' });
+  writeJson(root, `src/03_sources/${sourceId}/baseline/accepted-baseline.json`, {
+    status: 'ACCEPTED',
+    source_id: sourceId,
+  });
+
+  for (const [name, content] of [
+    ['index.html', '<!doctype html><link rel="stylesheet" href="styles.css"><script src="script.js"></script>'],
+    ['styles.css', 'body{}\n'],
+    ['script.js', 'void 0;\n'],
+  ]) {
+    const target = path.join(root, `src/03_sources/${sourceId}/split/${name}`);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, content);
+  }
+  writeJson(root, `src/03_sources/${sourceId}/split/materialization.json`, {
+    source_id: sourceId,
+    status: 'ACCEPTED',
+    authority: { bytes: authority.bytes, sha256: authority.sha256 },
+  });
+
+  const parity = {
+    source_id: sourceId,
+    status: 'ACCEPTED',
+    authority: { bytes: authority.bytes, sha256: authority.sha256 },
+    comparisons: {
+      dom: 'EQUAL',
+      geometry: 'EQUAL',
+      computed_style: 'EQUAL',
+      runtime_state: 'EQUAL',
+      interactions: 'EQUAL',
+      screenshots: 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+      canonical_pixel_hamming_max: 1,
+      canonical_pixel_threshold: 32,
+    },
+    browser_errors: 0,
+    required_network_errors: 0,
+    visual_review: { central_direct_artifact_review: true },
+    ...parityOverrides,
+  };
+  writeJson(root, `src/03_sources/${sourceId}/evidence/parity/accepted-parity.json`, parity);
 }
 
 test('ROLLOUT accepts a truthful S1-only source capsule without S2/S3/S4 files', () => {
@@ -101,6 +152,53 @@ test('stage ordering remains fail-closed when S3 is asserted before S2', () => {
     const failures = validateSourceCapsules({ repoRoot: root, sourceDirs: [sourceId], phase: 'ROLLOUT', calibrationSet: new Set() });
     assert.ok(failures.some((message) => message.includes('stage ordering violated at mechanical_split_complete')));
     assert.ok(failures.some((message) => message.includes('mechanical split cannot precede accepted baseline')));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('S4 accepts bounded canonical Hamming parity only with direct CENTRAL review and zero errors', () => {
+  const { root, sourceId, authority } = makeS1Fixture();
+  try {
+    promoteFixtureToS4(root, sourceId, authority);
+    assert.deepEqual(validateSourceCapsules({ repoRoot: root, sourceDirs: [sourceId], phase: 'ROLLOUT', calibrationSet: new Set() }), []);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('S4 rejects canonical Hamming parity above the bounded threshold', () => {
+  const { root, sourceId, authority } = makeS1Fixture();
+  try {
+    promoteFixtureToS4(root, sourceId, authority, {
+      comparisons: {
+        dom: 'EQUAL',
+        geometry: 'EQUAL',
+        computed_style: 'EQUAL',
+        runtime_state: 'EQUAL',
+        interactions: 'EQUAL',
+        screenshots: 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+        canonical_pixel_hamming_max: 33,
+        canonical_pixel_threshold: 32,
+      },
+    });
+    const failures = validateSourceCapsules({ repoRoot: root, sourceDirs: [sourceId], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(failures.some((message) => message.includes('canonical Hamming exceeds threshold')));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('S4 rejects Hamming parity without direct CENTRAL review or with required-network errors', () => {
+  const { root, sourceId, authority } = makeS1Fixture();
+  try {
+    promoteFixtureToS4(root, sourceId, authority, {
+      required_network_errors: 1,
+      visual_review: { central_direct_artifact_review: false },
+    });
+    const failures = validateSourceCapsules({ repoRoot: root, sourceDirs: [sourceId], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(failures.some((message) => message.includes('requires direct CENTRAL artifact review')));
+    assert.ok(failures.some((message) => message.includes('required-network errors present')));
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
