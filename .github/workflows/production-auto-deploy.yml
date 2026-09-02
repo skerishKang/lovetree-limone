@@ -200,6 +200,57 @@ jobs:
         env:
           PREVIOUS_VERSION: ${{ steps.current.outputs.version_id }}
 
+      - name: Wait for Production static asset readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${PRODUCTION_BASE_URL%/}"
+          readiness_url="${base}/mvp/01"
+          body_file="$(mktemp)"
+          cleanup() {
+            rm -f "$body_file"
+          }
+          trap cleanup EXIT
+
+          # The Worker version can become active before its static ASSETS are
+          # available at every edge. Require the MVP entry asset itself to be
+          # ready before running the broader post-deploy smoke. The bounded
+          # exponential backoff waits at most 30 seconds total: 0, 2, 4, 8, 16.
+          delays=(0 2 4 8 16)
+          ready=0
+          for index in "${!delays[@]}"; do
+            attempt=$((index + 1))
+            delay="${delays[$index]}"
+            if [ "$delay" -gt 0 ]; then
+              sleep "$delay"
+            fi
+
+            : > "$body_file"
+            meta=""
+            if ! meta="$(curl --location --silent --show-error --output "$body_file" --write-out $'%{http_code}\t%{content_type}' --max-time 30 "$readiness_url")"; then
+              meta=$'000\t'
+            fi
+            IFS=$'\t' read -r code content_type <<< "$meta"
+
+            marker="NO"
+            if grep -Fq 'LoveTree MVP01' "$body_file"; then
+              marker="YES"
+            fi
+
+            if [ "$code" = "200" ] && [[ "$content_type" == text/html* ]] && [ "$marker" = "YES" ]; then
+              echo "Production static asset readiness PASS on attempt ${attempt}/${#delays[@]} (HTTP $code, content-type=$content_type, marker=$marker)"
+              ready=1
+              break
+            fi
+
+            echo "Production static asset readiness pending on attempt ${attempt}/${#delays[@]} (HTTP ${code:-000}, content-type=${content_type:-missing}, marker=$marker)"
+          done
+
+          if [ "$ready" -ne 1 ]; then
+            echo "BLOCKED: Production static asset readiness failed for /mvp/01 after ${#delays[@]} attempts" >&2
+            exit 1
+          fi
+
       - name: Post-deploy smoke
         shell: bash
         run: |
@@ -226,5 +277,6 @@ jobs:
             echo "- deployed version: \`${{ steps.deployed.outputs.version_id }}\`"
             echo "- base URL: ${PRODUCTION_BASE_URL%/}"
             echo "- rollback: \`npx wrangler rollback ${{ steps.current.outputs.version_id }} --name lovetree-limone\`"
+            echo '- static asset readiness: PASS'
             echo '- smoke: PASS'
           } >> "$GITHUB_STEP_SUMMARY"
