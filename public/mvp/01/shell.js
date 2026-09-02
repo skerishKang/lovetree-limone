@@ -17,9 +17,58 @@
   const nextBtn = document.getElementById('next-btn');
   const toggleBtn = document.getElementById('toggle-nav-btn');
   const navContainer = document.getElementById('mvp-shell-nav');
+  const navPanel = document.getElementById('nav-panel');
 
   let currentStepIndex = 0;
   let activeFrame = null;
+
+  // Autohide chrome: the shell starts collapsed so Source surfaces remain
+  // unobstructed. It opens only on explicit toggle and returns to collapsed
+  // after bounded idle time, never while the pointer or keyboard focus is inside.
+  const IDLE_AUTO_COLLAPSE_MS = 4000;
+  const DEFERRED_COLLAPSE_RETRY_MS = 1000;
+
+  let collapseTimer = null;
+  let pointerOverNav = false;
+  let focusInsideNav = false;
+
+  function isNavCollapsed() {
+    return navContainer.classList.contains('collapsed');
+  }
+
+  function clearAutoCollapse() {
+    if (collapseTimer !== null) {
+      clearTimeout(collapseTimer);
+      collapseTimer = null;
+    }
+  }
+
+  function scheduleAutoCollapse() {
+    clearAutoCollapse();
+    if (!isNavCollapsed()) {
+      collapseTimer = setTimeout(autoCollapseTick, IDLE_AUTO_COLLAPSE_MS);
+    }
+  }
+
+  function autoCollapseTick() {
+    collapseTimer = null;
+    if (isNavCollapsed()) return;
+    if (pointerOverNav || focusInsideNav) {
+      collapseTimer = setTimeout(autoCollapseTick, DEFERRED_COLLAPSE_RETRY_MS);
+      return;
+    }
+    setCollapsed(true);
+  }
+
+  function setCollapsed(collapsed) {
+    navContainer.classList.toggle('collapsed', collapsed);
+    toggleBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (collapsed) {
+      clearAutoCollapse();
+    } else {
+      scheduleAutoCollapse();
+    }
+  }
 
   function parseStepFromUrl() {
     try {
@@ -43,6 +92,7 @@
       chip.setAttribute('data-step-id', step.id);
       chip.addEventListener('click', () => {
         goToStep(idx, true);
+        scheduleAutoCollapse();
       });
       stepsSelector.appendChild(chip);
     });
@@ -101,26 +151,60 @@
   prevBtn.addEventListener('click', () => {
     if (currentStepIndex > 0) {
       goToStep(currentStepIndex - 1, true);
+      scheduleAutoCollapse();
     }
   });
 
   nextBtn.addEventListener('click', () => {
     if (currentStepIndex < STEPS.length - 1) {
       goToStep(currentStepIndex + 1, true);
+      scheduleAutoCollapse();
     }
   });
 
   toggleBtn.addEventListener('click', () => {
-    navContainer.classList.toggle('collapsed');
+    setCollapsed(!isNavCollapsed());
+  });
+
+  navContainer.addEventListener('pointerenter', () => {
+    pointerOverNav = true;
+  });
+
+  navContainer.addEventListener('pointerleave', () => {
+    pointerOverNav = false;
+    scheduleAutoCollapse();
+  });
+
+  navContainer.addEventListener('pointerdown', () => {
+    scheduleAutoCollapse();
+  });
+
+  navContainer.addEventListener('keydown', () => {
+    scheduleAutoCollapse();
+  });
+
+  // Focus guard covers the panel only: the always-visible toggle may keep
+  // focus after a mouse click without blocking auto-collapse forever.
+  navContainer.addEventListener('focusin', (event) => {
+    focusInsideNav = navPanel.contains(event.target);
+  });
+
+  navContainer.addEventListener('focusout', (event) => {
+    focusInsideNav = navPanel.contains(event.relatedTarget);
+    if (!focusInsideNav) {
+      scheduleAutoCollapse();
+    }
   });
 
   window.addEventListener('popstate', () => {
     const idx = parseStepFromUrl();
     setStep(idx, false);
+    scheduleAutoCollapse();
   });
 
   // Initial load
   renderStepsNav();
   const initialIndex = parseStepFromUrl();
   setStep(initialIndex, false);
+  setCollapsed(true);
 })();
