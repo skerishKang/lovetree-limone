@@ -7,7 +7,7 @@
  * 2. Materialized files in public/mvp/01/surfaces/ match source split bytes and sha256.
  * 3. Direct DOM merge is forbidden (isolated frames required).
  * 4. Five candidate surfaces exist with canonical step mappings.
- * 5. Invalid step fails safe to entry.
+ * 5. Invalid step fails safe to entry through the shared productization contract.
  * 6. Shell viewport geometry guarantees full 100vw/100vh iframe space without permanent shrinking header.
  * 7. Generation phase guard passes closed.
  */
@@ -18,6 +18,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { parseMvp001UrlState } from '../public/mvp/01/productization-contract.js';
 
 const ROOT = join(import.meta.dirname, '..');
 const SOURCES_ROOT = join(ROOT, 'src/03_sources');
@@ -71,7 +72,6 @@ test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-f
     }
   }
 
-  // Hardening: source file set == destination file set (no extraneous or stale files)
   const surfaceDirs = readdirSync(SURFACES_ROOT);
   const expectedDirs = SOURCES.map((s) => s.surface).sort();
   assert.deepEqual(surfaceDirs.sort(), expectedDirs, 'Surface directory set must strictly match expected 5 sources');
@@ -85,17 +85,16 @@ test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-f
 test('3. Direct DOM merge is not used; isolated surfaces architecture is enforced', () => {
   const shellHtml = readFileSync(join(ROOT, 'public/mvp/01/index.html'), 'utf8');
   const shellJs = readFileSync(join(ROOT, 'public/mvp/01/shell.js'), 'utf8');
+  const orchestratorJs = readFileSync(join(ROOT, 'public/mvp/01/product-orchestrator.js'), 'utf8');
 
-  // Must not concatenate source bodies into index.html
   assert.ok(!shellHtml.includes('living-memory-board'), 'Shell HTML must not contain SRC058 internal DOM');
   assert.ok(!shellHtml.includes('canvas2d-3d-cluster-projection'), 'Shell HTML must not contain SRC060 internal DOM');
 
-  // Must use iframe isolation
   assert.ok(shellJs.includes("document.createElement('iframe')"), 'Shell must mount isolated iframe surfaces');
-  assert.ok(shellJs.includes('.src = step.surface'), 'Shell must load surface through iframe src');
+  assert.ok(shellJs.includes('iframe.src = surfaceUrl'), 'Shell must load the orchestrator-provided surface URL through iframe src');
 
-  // Must cleanly dispose inactive iframes
-  assert.ok(shellJs.includes("activeFrame.src = 'about:blank'"), 'Shell must cleanly flush inactive iframe before unmounting');
+  assert.ok(shellJs.includes("frame.src = 'about:blank'"), 'Shell removeFrame adapter must flush iframe before removal');
+  assert.ok(orchestratorJs.includes('this.shell.removeFrame(frame)'), 'Orchestrator must delegate inactive-frame removal to shell adapter');
 });
 
 test('4. Five surfaces exist and canonical step mapping is exact', () => {
@@ -117,19 +116,15 @@ test('4. Five surfaces exist and canonical step mapping is exact', () => {
 });
 
 test('5. Invalid query step fails safe to entry', () => {
-  const shellJs = readFileSync(join(ROOT, 'public/mvp/01/shell.js'), 'utf8');
-  // Confirm fallback logic
-  assert.ok(shellJs.includes('return idx >= 0 ? idx : 0'), 'parseStepFromUrl must fallback to 0 (entry) on invalid step');
+  const context = parseMvp001UrlState('?step=not-a-real-step');
+  assert.equal(context.currentStep, 'entry', 'shared URL contract must fallback to entry on invalid step');
 });
 
 test('6. Shell viewport geometry guarantees full space without shrinking header', () => {
   const shellCss = readFileSync(join(ROOT, 'public/mvp/01/shell.css'), 'utf8');
 
-  // #surface-container must take full viewport width and height
   assert.ok(/#surface-container\s*\{[^}]*width:\s*100%/i.test(shellCss), 'surface container must span 100% width');
   assert.ok(/#surface-container\s*\{[^}]*height:\s*100%/i.test(shellCss), 'surface container must span 100% height');
-
-  // Navigation chrome must be floating overlay (position: fixed) and not reserve vertical layout space
   assert.ok(/\.mvp-nav\s*\{[^}]*position:\s*fixed/i.test(shellCss), 'mvp navigation chrome must be position: fixed overlay');
 });
 
