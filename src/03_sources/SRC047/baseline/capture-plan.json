@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC047",
+  "status": "PENDING_EXACT_HEAD_CI",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": [
+    "INITIAL",
+    "ACT1_FIRST_FEELING",
+    "ACT2_MOMENT",
+    "ACT3_BLOOM",
+    "ACT4_WHY_NEXT",
+    "ACT5_LOVETREE",
+    "MODAL_OPEN",
+    "NAV_POPOVER_OPEN"
+  ],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "active act state",
+    "video state (paused/muted/currentTime)",
+    "modal visibility",
+    "nav popover state",
+    "progress rail state",
+    "console/page errors"
+  ],
+  "source_native_runtime": "window.__lovetreeQA",
+  "video_asset_status": "MISSING_FROM_CAPSULE",
+  "poster_asset_status": "MATERIALIZED_FROM_PUBLIC",
+  "video_determinism_strategy": "Video element will fail to load without source video. Capture will document failure state via video-failed class on stage. This is source-native behavior, not a capture defect.",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority. Video asset gap must be resolved before acceptance.",
+  "accepted_evidence": "baseline/accepted-baseline.json"
+}

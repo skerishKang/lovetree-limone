@@ -7,6 +7,7 @@ import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
+import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -29,7 +30,13 @@ if (!sourceIds.length) throw new Error(`${state.phase} requires at least one act
 
 const baselineCaptureTargets = sourceIds.filter((sourceId) => {
   const manifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, sourceId, 'manifest.json'), 'utf8'));
-  return manifest.stages?.baseline_captured === true;
+  if (manifest.stages?.baseline_captured === true) return true;
+  const capturePlanPath = path.join(sourceRoot, sourceId, 'baseline', 'capture-plan.json');
+  if (fs.existsSync(capturePlanPath)) {
+    const capturePlan = JSON.parse(fs.readFileSync(capturePlanPath, 'utf8'));
+    if (capturePlan.status === 'PENDING_EXACT_HEAD_CI') return true;
+  }
+  return false;
 });
 if (!baselineCaptureTargets.length) {
   console.log('SRC_BASELINE_CAPTURE=SKIPPED_NO_TARGETS');
@@ -117,9 +124,26 @@ async function settle(page) {
   });
 }
 
-async function startServer(sourceId, originalPath) {
+async function startServer(sourceId, originalPath, sourceDir) {
+  const isSRC047 = sourceId === 'SRC047';
+  const assetFiles = isSRC047 ? src47SourceFiles(sourceDir, sourceId) : new Map();
+
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }
+
+    if (isSRC047 && assetFiles.has(req.url)) {
+      const [filePath, mimeType] = assetFiles.get(req.url);
+      if (!fs.existsSync(filePath)) {
+        res.statusCode = 404;
+        res.end('asset not found');
+        return;
+      }
+      res.statusCode = 200;
+      res.setHeader('content-type', mimeType);
+      res.end(fs.readFileSync(filePath));
+      return;
+    }
+
     if (req.url !== `/${sourceId}/original.html`) {
       res.statusCode = 404;
       res.end('not found');
@@ -190,7 +214,7 @@ try {
 
     const sourceOut = path.join(outRoot, sourceId);
     fs.mkdirSync(sourceOut, { recursive: true });
-    const server = await startServer(sourceId, originalPath);
+    const server = await startServer(sourceId, originalPath, sourceDir);
     const { port } = server.address();
     try {
       const summary = {
@@ -248,6 +272,15 @@ try {
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.initial.ids.length, elementCount: evidence.initial.elementCount });
+          await page.close();
+          await context.close();
+          continue;
+        }
+        if (sourceId === 'SRC047') {
+          const evidence = await captureSRC47Baseline(page, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.initial.state.ids.length, elementCount: evidence.states.initial.state.elementCount });
           await page.close();
           await context.close();
           continue;
