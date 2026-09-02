@@ -144,7 +144,7 @@ async function startServer(sourceId, originalPath, sourceDir) {
       return;
     }
 
-    if (req.url !== `/${sourceId}/original.html`) {
+    if (req.url !== `/${sourceId}/original.html` && new URL(req.url, 'http://127.0.0.1').pathname !== `/${sourceId}/original.html`) {
       res.statusCode = 404;
       res.end('not found');
       return;
@@ -276,11 +276,11 @@ try {
           await context.close();
           continue;
         }
-        if (sourceId === 'SRC047') {
-          const evidence = await captureSRC47Baseline(page, sourceOut, label);
+if (sourceId === 'SRC047') {
+          const evidence = await captureSRC47Baseline(page, `http://127.0.0.1:${port}/${sourceId}/original.html`, sourceOut, label);
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
-          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.initial.state.ids.length, elementCount: evidence.states.initial.state.elementCount });
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
           await page.close();
           await context.close();
           continue;
