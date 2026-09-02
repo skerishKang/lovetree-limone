@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-02T22:34:46.599Z",
+  "authority": {
+    "A_sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+    "B_sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+  },
+  "reconstructed": {
+    "A_sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+    "B_sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+  },
+  "roundtrip": {
+    "A": true,
+    "B": true
+  },
+  "passed": 42,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority A SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority B SHA-256 locked"
+    },
+    {
+      "id": "T14a",
+      "pass": true,
+      "detail": "authority byte sizes stable (18565/18646)"
+    },
+    {
+      "id": "T14b",
+      "pass": true,
+      "detail": "original/ + authority/ file sets intact"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "semantic A/B diff is exactly {title, imageUrls statement}"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "style span common A/B"
+    },
+    {
+      "id": "T03c",
+      "pass": true,
+      "detail": "script head/tail common A/B"
+    },
+    {
+      "id": "T04",
+      "pass": true,
+      "detail": "styles.css === authority style inner (6957 chars)"
+    },
+    {
+      "id": "T05a",
+      "pass": true,
+      "detail": "script.js carries tail marker"
+    },
+    {
+      "id": "T05b",
+      "pass": true,
+      "detail": "script.js tail === authority common JS tail"
+    },
+    {
+      "id": "T05c",
+      "pass": true,
+      "detail": "single imageUrls binding (selector-owned)"
+    },
+    {
+      "id": "T05d",
+      "pass": true,
+      "detail": "no inline script terminator inside script.js"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "A imageUrls exactly 9 exact paths"
+    },
+    {
+      "id": "T07",
+      "pass": true,
+      "detail": "B imageUrls exactly 9 exact paths"
+    },
+    {
+      "id": "T08/T09",
+      "pass": true,
+      "detail": "no cross-variant asset leakage"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "variant titles V3.3A vs V3.3B"
+    },
+    {
+      "id": "T20",
+      "pass": true,
+      "detail": "variant JS literals byte-match authority"
+    },
+    {
+      "id": "T20c",
+      "pass": true,
+      "detail": "bootstrap embeds both titles"
+    },
+    {
+      "id": "T11a",
+      "pass": true,
+      "detail": "bootstrap shape is single const imageUrls IIFE"
+    },
+    {
+      "id": "T11b",
+      "pass": true,
+      "detail": "mediaVariant \"A\" resolves A data + title"
+    },
+    {
+      "id": "T11c",
+      "pass": true,
+      "detail": "mediaVariant \"B\" resolves B data + title"
+    },
+    {
+      "id": "T10/T11-missing",
+      "pass": true,
+      "detail": "mediaVariant missing throws fail-closed"
+    },
+    {
+      "id": "T10/T11-null",
+      "pass": true,
+      "detail": "mediaVariant null throws fail-closed"
+    },
+    {
+      "id": "T10/T11-undefined",
+      "pass": true,
+      "detail": "mediaVariant undefined throws fail-closed"
+    },
+    {
+      "id": "T10/T11-empty",
+      "pass": true,
+      "detail": "mediaVariant empty throws fail-closed"
+    },
+    {
+      "id": "T10/T11-C",
+      "pass": true,
+      "detail": "mediaVariant C throws fail-closed"
+    },
+    {
+      "id": "T10/T11-lowercase-a",
+      "pass": true,
+      "detail": "mediaVariant lowercase-a throws fail-closed"
+    },
+    {
+      "id": "T10/T11-number",
+      "pass": true,
+      "detail": "mediaVariant number throws fail-closed"
+    },
+    {
+      "id": "T10/T11-AB",
+      "pass": true,
+      "detail": "mediaVariant AB throws fail-closed"
+    },
+    {
+      "id": "T11d",
+      "pass": true,
+      "detail": "no implicit default variant"
+    },
+    {
+      "id": "T11e",
+      "pass": true,
+      "detail": "shell carries no variant data (neutral)"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "A round-trip byte-identical to frozen authority"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "B round-trip byte-identical to frozen authority"
+    },
+    {
+      "id": "T05e",
+      "pass": true,
+      "detail": "shell reconnects via link + script src glue only"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T16",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split"
+    },
+    {
+      "id": "T17",
+      "pass": true,
+      "detail": "no product/MVP adapter in split"
+    },
+    {
+      "id": "T18",
+      "pass": true,
+      "detail": "hero MP4 absolute URLs unchanged"
+    },
+    {
+      "id": "T21a",
+      "pass": true,
+      "detail": "mechanical_split_complete=true"
+    },
+    {
+      "id": "T21b",
+      "pass": true,
+      "detail": "source_split_parity_pass=false (S4 separate)"
+    },
+    {
+      "id": "T21c",
+      "pass": true,
+      "detail": "mechanical_split_ref=\"split/materialization.json\""
+    },
+    {
+      "id": "T21d",
+      "pass": true,
+      "detail": "manifest authority locks untouched"
+    }
+  ]
+}

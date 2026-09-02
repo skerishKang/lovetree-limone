@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC068",
+  "source_folder_name": "68_러브트리_코드덱스포털_C14FIX",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/68_러브트리_코드덱스포털_C14FIX/",
+  "authority_mode": "DUAL_VARIANT",
+  "authority": {
+    "drive_folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+    "status": "LOCKED",
+    "variants": {
+      "A": {
+        "drive_file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+        "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+        "bytes": 18565,
+        "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+        "revision": "V3.3.1A"
+      },
+      "B": {
+        "drive_file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+        "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+        "bytes": 18646,
+        "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+        "revision": "V3.3.1B"
+      }
+    }
+  },
+  "variant_policy": "DUAL_MEDIA_VARIANT",
+  "variant_selector": {
+    "selector": "mediaVariant",
+    "allowed_values": [
+      "A",
+      "B"
+    ],
+    "default": null,
+    "fail_closed": true
+  },
+  "a_b_exclusive_selection": false,
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "DUAL_MEDIA_VARIANT",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": null,
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-dom",
+    "scenario_id": "codex-portals-c14fix",
+    "qa_hook": "window.__TRACK68__",
+    "interaction_surface": [
+      "HERO_VIDEO_SCRUB",
+      "SCROLL_PANEL_REVEAL",
+      "CARD_ARCHIVE_GRID",
+      "CARD_HOVER",
+      "CARD_FOCUS",
+      "CARD_PORTAL_LINK",
+      "WORKS_OVERLAY",
+      "WORKS_CATALOG"
+    ],
+    "variant_contract": {
+      "type": "DUAL_MEDIA_VARIANT",
+      "selector": "mediaVariant",
+      "valid_values": [
+        "A",
+        "B"
+      ],
+      "default_value": null,
+      "fail_closed": true
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { checkVariantEntry, resolveAuthorityMode, validateDualVariantSelector } from './dual-variant-mechanical.mjs';
 
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 
@@ -80,6 +81,145 @@ function validateAcceptedParityComparisons(sourceId, parity, failures) {
 }
 
 /**
+ * Validate a DUAL_VARIANT source capsule (one identity, two retained
+ * executable authorities, explicit neutral selector, no default, fail closed).
+ * SINGLE capsules never reach this branch; their behavior is unchanged.
+ */
+function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback }) {
+  const failures = [];
+  const fail = (message) => failures.push(`${sourceId}: ${message}`);
+
+  if (manifest.source_id !== sourceId || authority.source_id !== sourceId || driveReadback.source_id !== sourceId) {
+    fail('source_id identity drift');
+    return failures;
+  }
+
+  const mv = manifest.authority?.variants;
+  const av = authority.variants;
+  for (const [label, variants] of [['manifest', mv], ['authority', av]]) {
+    const keys = variants && typeof variants === 'object' && !Array.isArray(variants) ? Object.keys(variants).sort() : null;
+    if (JSON.stringify(keys) !== JSON.stringify(['A', 'B'])) fail(`${label} must define exactly variants A and B`);
+  }
+  if (manifest.authority?.status !== 'LOCKED') fail('manifest authority must be LOCKED');
+  if (authority.authority_status !== 'LOCKED') fail('authority must be LOCKED');
+  if (typeof manifest.authority?.drive_folder_id !== 'string' || manifest.authority.drive_folder_id.length === 0) fail('manifest Drive folder id missing');
+  if (authority.drive_folder_id !== manifest.authority?.drive_folder_id) fail('Drive folder id mismatch');
+
+  for (const key of ['A', 'B']) {
+    checkVariantEntry(`${sourceId}: manifest variant ${key}`, mv?.[key], failures);
+    checkVariantEntry(`${sourceId}: authority variant ${key}`, av?.[key], failures);
+    const m = mv?.[key];
+    const a = av?.[key];
+    if (m && a && typeof m === 'object' && typeof a === 'object' && !Array.isArray(m) && !Array.isArray(a)) {
+      if (m.drive_file_id !== a.drive_file_id) fail(`variant ${key} Drive file id mismatch`);
+      if (m.filename !== a.filename) fail(`variant ${key} Drive filename mismatch`);
+      if (m.bytes !== a.bytes) fail(`variant ${key} Drive byte count mismatch`);
+      if (m.sha256 !== a.sha256) fail(`variant ${key} Drive SHA256 mismatch`);
+    }
+  }
+
+  if (typeof driveReadback.verification_mode !== 'string' || driveReadback.verification_mode.length === 0) {
+    fail('Drive readback verification_mode must be a truthful non-empty label');
+  }
+  for (const key of ['A', 'B']) {
+    const entry = driveReadback.variants?.[key];
+    if (!entry || typeof entry !== 'object') {
+      fail(`Drive readback missing variant ${key}`);
+      continue;
+    }
+    if (entry.folder_id !== manifest.authority?.drive_folder_id) fail(`Drive readback variant ${key} folder id mismatch`);
+    if (entry.file_id !== mv?.[key]?.drive_file_id) fail(`Drive readback variant ${key} file id mismatch`);
+    if (entry.filename !== mv?.[key]?.filename) fail(`Drive readback variant ${key} filename mismatch`);
+    if (entry.bytes !== mv?.[key]?.bytes) fail(`Drive readback variant ${key} byte count mismatch`);
+    if (entry.sha256 !== mv?.[key]?.sha256) fail(`Drive readback variant ${key} SHA256 mismatch`);
+  }
+
+  validateDualVariantSelector(manifest.variant_selector, failures, `${sourceId}: manifest`);
+  if (authority.variant_selector !== undefined) {
+    validateDualVariantSelector(authority.variant_selector, failures, `${sourceId}: authority`);
+    if (JSON.stringify(authority.variant_selector) !== JSON.stringify(manifest.variant_selector)) fail('variant_selector drift between manifest and authority');
+  }
+
+  for (const [label, record] of [['manifest', manifest], ['authority', authority], ['drive-readback', driveReadback]]) {
+    if (new RegExp(`${sourceId}-[AB]`).test(JSON.stringify(record))) fail(`${label} derives a variant Source identity`);
+  }
+
+  const shaPath = path.join(repoRoot, base, 'authority/sha256.txt');
+  if (fs.existsSync(shaPath)) {
+    const text = fs.readFileSync(shaPath, 'utf8');
+    for (const key of ['A', 'B']) {
+      if (typeof mv?.[key]?.sha256 === 'string' && !text.includes(mv[key].sha256)) fail(`sha256.txt missing variant ${key} hash`);
+    }
+  }
+
+  for (const key of ['A', 'B']) requirePath(repoRoot, `${base}/original/${key}/original.html`, failures);
+  for (const key of ['A', 'B']) {
+    const originalPath = path.join(repoRoot, base, 'original', key, 'original.html');
+    if (!fs.existsSync(originalPath)) continue;
+    const original = fs.readFileSync(originalPath);
+    if (typeof mv?.[key]?.bytes === 'number' && original.length !== mv[key].bytes) fail(`frozen original ${key} byte count drift`);
+    if (typeof mv?.[key]?.sha256 === 'string' && sha256(original) !== mv[key].sha256) fail(`frozen original ${key} SHA256 drift`);
+  }
+
+  const stages = manifest.stages ?? {};
+  const ordered = ['identity_verified', 'raw_authority_locked', 'baseline_captured', 'mechanical_split_complete', 'source_split_parity_pass'];
+  let falseSeen = false;
+  for (const stage of ordered) {
+    if (typeof stages[stage] !== 'boolean') fail(`stage ${stage} must be boolean`);
+    if (falseSeen && stages[stage] === true) fail(`stage ordering violated at ${stage}`);
+    if (stages[stage] === false) falseSeen = true;
+  }
+  if (stages.identity_verified !== true || stages.raw_authority_locked !== true) fail('S0/S1 incomplete');
+
+  if (stages.baseline_captured === true) {
+    requirePath(repoRoot, `${base}/baseline/capture-plan.json`, failures);
+    requirePath(repoRoot, `${base}/baseline/accepted-baseline.json`, failures);
+    const acceptedBase = readJson(repoRoot, `${base}/baseline/accepted-baseline.json`, failures);
+    if (!acceptedBase || acceptedBase.status !== 'ACCEPTED' || acceptedBase.source_id !== sourceId) fail('accepted baseline invalid');
+    if (acceptedBase) {
+      for (const key of ['A', 'B']) {
+        if (acceptedBase.authority?.variants?.[key]?.sha256 !== mv?.[key]?.sha256 || acceptedBase.authority?.variants?.[key]?.bytes !== mv?.[key]?.bytes) {
+          fail(`accepted baseline variant ${key} authority drift`);
+        }
+      }
+    }
+  }
+
+  if (stages.mechanical_split_complete === true) {
+    if (stages.baseline_captured !== true) fail('mechanical split cannot precede accepted baseline');
+    for (const required of ['split/index.html', 'split/styles.css', 'split/script.js', 'split/materialization.json']) requirePath(repoRoot, `${base}/${required}`, failures);
+    const materialization = readJson(repoRoot, `${base}/split/materialization.json`, failures);
+    if (!materialization || !['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(materialization.status)) fail('invalid materialization status');
+    if (materialization) {
+      if (materialization.authority_mode !== 'DUAL_VARIANT') fail('materialization authority_mode must be DUAL_VARIANT');
+      for (const key of ['A', 'B']) {
+        if (materialization.authority?.variants?.[key]?.sha256 !== mv?.[key]?.sha256 || materialization.authority?.variants?.[key]?.bytes !== mv?.[key]?.bytes) {
+          fail(`materialization variant ${key} authority drift`);
+        }
+      }
+      if (materialization.variant_selector !== undefined && JSON.stringify(materialization.variant_selector) !== JSON.stringify(manifest.variant_selector)) {
+        fail('variant_selector drift between manifest and materialization');
+      }
+    }
+  }
+  if (stages.source_split_parity_pass === true) {
+    if (stages.mechanical_split_complete !== true) fail('parity cannot precede mechanical split');
+    const parity = readJson(repoRoot, `${base}/evidence/parity/accepted-parity.json`, failures);
+    if (!parity || parity.status !== 'ACCEPTED' || parity.source_id !== sourceId) fail('accepted parity evidence missing/invalid');
+    if (parity) {
+      for (const key of ['A', 'B']) {
+        if (parity.authority?.variants?.[key]?.sha256 !== mv?.[key]?.sha256 || parity.authority?.variants?.[key]?.bytes !== mv?.[key]?.bytes) {
+          fail(`parity variant ${key} authority drift`);
+        }
+      }
+      validateAcceptedParityComparisons(sourceId, parity, failures);
+    }
+  }
+
+  return failures;
+}
+
+/**
  * Validate the shared mechanical Source contract for every active phase.
  * Phase-specific scope is deliberately limited to calibration membership:
  * ROLLOUT accepts any registered SRCxxx capsule, while every capsule uses
@@ -105,7 +245,6 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       'manifest.json',
       'authority/authority.json',
       'authority/sha256.txt',
-      'original/original.html',
       'evidence/source/drive-authority-readback.json',
     ]) requirePath(repoRoot, `${base}/${required}`, failures);
 
@@ -113,6 +252,24 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     const authority = readJson(repoRoot, `${base}/authority/authority.json`, failures);
     const driveReadback = readJson(repoRoot, `${base}/evidence/source/drive-authority-readback.json`, failures);
     if (!manifest || !authority || !driveReadback) continue;
+
+    const { mode: authorityMode, agreement: authorityModeAgreement } = resolveAuthorityMode(manifest, authority);
+    if (!authorityModeAgreement) {
+      failures.push(`${sourceId}: authority_mode disagreement between manifest and authority`);
+      continue;
+    }
+    if (!authorityMode) {
+      failures.push(`${sourceId}: unknown authority_mode`);
+      continue;
+    }
+    if (authorityMode === 'DUAL_VARIANT') {
+      failures.push(...validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback }));
+      continue;
+    }
+
+    for (const required of [
+      'original/original.html',
+    ]) requirePath(repoRoot, `${base}/${required}`, failures);
 
     const m = manifest.authority ?? {};
     const a = authority;

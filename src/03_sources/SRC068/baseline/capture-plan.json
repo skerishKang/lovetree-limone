@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "status": "ACCEPTED",
+  "method": "Chromium headless via local Playwright against frozen originals over loopback HTTP (scripts/src068-s2-baseline-capture.mjs, mobile DPR3 + side-by-side passes)",
+  "viewports": [
+    {
+      "label": "DESKTOP",
+      "cssWidth": 1280,
+      "cssHeight": 800,
+      "dpr": 1
+    },
+    {
+      "label": "MOBILE",
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 3
+    }
+  ],
+  "scroll_positions": [
+    "INITIAL_HERO",
+    "ARCHIVE_GRID"
+  ]
+}

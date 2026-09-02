@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "authority_mode": "DUAL_VARIANT",
+  "status": "ACCEPTED",
+  "review_method": "LOCAL_MECHANICAL_BYTE_LOCK_PLUS_S2_BROWSER_BASELINE_REVIEW",
+  "s2_evidence": {
+    "zip": "SRC068_S2_DUAL_VARIANT_BASELINE_20260903.zip",
+    "zip_sha256": "4126471E9656069C8B63171815627C766DAADF3D1CD3AA3C8EBA0F0381BB3CDA",
+    "cloud_folder": "LoveTree_Evidence (199NHMgpe72-0iH8dyElVWFliNObSRrSZ)",
+    "captured_at": "2026-09-02T15:39:55Z",
+    "page_errors": 0
+  },
+  "authority": {
+    "variants": {
+      "A": {
+        "bytes": 18565,
+        "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
+      },
+      "B": {
+        "bytes": 18646,
+        "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+      }
+    }
+  },
+  "next_stage_authorized": "SPLIT_PARITY_S4_HOLD"
+}

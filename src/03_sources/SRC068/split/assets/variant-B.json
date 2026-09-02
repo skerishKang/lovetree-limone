@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "variant": "B",
+  "selector": "mediaVariant",
+  "title": "LoveTree Track68 V3.3B · Codex Portals",
+  "titleElement": "<title>LoveTree Track68 V3.3B · Codex Portals</title>",
+  "imageUrls": [
+    "../images/동양인01.png",
+    "../images/동양인02.png",
+    "../images/동양인03.png",
+    "../images/동양인04.png",
+    "../images/동양인05.png",
+    "../images/동양인06.png",
+    "../images/동양인07.png",
+    "../images/동양인08.png",
+    "../images/동양인09.png"
+  ],
+  "jsImageUrlsStatement": "const imageUrls=[\n'../images/동양인01.png',\n'../images/동양인02.png',\n'../images/동양인03.png',\n'../images/동양인04.png',\n'../images/동양인05.png',\n'../images/동양인06.png',\n'../images/동양인07.png',\n'../images/동양인08.png',\n'../images/동양인09.png'];"
+}

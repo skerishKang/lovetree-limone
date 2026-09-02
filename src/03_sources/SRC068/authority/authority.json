@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "authority_mode": "DUAL_VARIANT",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "drive_folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+  "variant_selector": {
+    "selector": "mediaVariant",
+    "allowed_values": [
+      "A",
+      "B"
+    ],
+    "default": null,
+    "fail_closed": true
+  },
+  "variants": {
+    "A": {
+      "drive_file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+      "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+      "bytes": 18565,
+      "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+      "revision": "V3.3.1A"
+    },
+    "B": {
+      "drive_file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+      "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+      "bytes": 18646,
+      "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+      "revision": "V3.3.1B"
+    }
+  }
+}

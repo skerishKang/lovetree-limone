@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { resolveAuthorityMode, validateDualVariantMechanicalSplit } from './dual-variant-mechanical.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -40,6 +41,16 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
   if (!fs.existsSync(materializationPath)) fail(`${sourceId}: materialization record missing`);
   const record = JSON.parse(fs.readFileSync(materializationPath, 'utf8'));
   if (record.source_id !== sourceId) fail(`${sourceId}: materialization source_id mismatch`);
+  const { mode: authorityMode, agreement: authorityModeAgreement } = resolveAuthorityMode(manifest, record);
+  if (!authorityModeAgreement) fail(`${sourceId}: authority_mode disagreement between manifest and materialization`);
+  if (!authorityMode) fail(`${sourceId}: unknown authority_mode`);
+  if (authorityMode === 'DUAL_VARIANT') {
+    if (manifest.authority_mode !== 'DUAL_VARIANT' || record.authority_mode !== 'DUAL_VARIANT') fail(`${sourceId}: dual authority_mode agreement required`);
+    for (const failure of validateDualVariantMechanicalSplit({ sourceDir, manifest, record })) fail(failure);
+    console.log(`SRC_MECHANICAL_SPLIT_VALIDATE_PASS=${sourceId}`);
+    validated += 1;
+    continue;
+  }
   if (!['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(record.status)) fail(`${sourceId}: invalid materialization status`);
   if (record.generation !== 'MECHANICAL_INLINE_EXTRACTION') fail(`${sourceId}: non-mechanical split generation`);
   if (record.authority?.bytes !== manifest.authority?.bytes || record.authority?.sha256 !== manifest.authority?.sha256) fail(`${sourceId}: materialization authority drift`);
