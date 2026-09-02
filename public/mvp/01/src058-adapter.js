@@ -101,12 +101,6 @@ function positionForIndex(index) {
   return { x, y, rot, color };
 }
 
-function isYtMoment(type, sourceUrl) {
-  if (String(type).toLowerCase() === 'youtube') return true;
-  const url = String(sourceUrl || '');
-  return url.includes('youtube.com') || url.includes('youtu.be');
-}
-
 export function projectMemoryToSrc058Moment(memory, index, allMemories) {
   requireIdentity(memory, 'Memory');
   if (!isNonEmptyString(memory.treeId)) {
@@ -125,9 +119,13 @@ export function projectMemoryToSrc058Moment(memory, index, allMemories) {
   }
 
   const pos = positionForIndex(index);
-  const mediaType = mapMediaType(memory.sourceType);
-  // Preserve native type for YouTube (isYtMoment)
-  const type = mediaType === 'video' && isYtMoment(memory.sourceType, memory.sourceUrl) ? 'youtube' : mediaType;
+  const type = mapMediaType(memory.sourceType);
+
+  // Asset mapping must follow runtime-consumed fields: m.asset for photo/link/video poster, m.video for video src
+  let asset = null;
+  if (type === 'photo' || type === 'link' || type === 'video' || type === 'youtube') {
+    asset = memory.thumbnail || '';
+  }
 
   return {
     id: memory.id,
@@ -141,9 +139,8 @@ export function projectMemoryToSrc058Moment(memory, index, allMemories) {
     y: pos.y,
     rot: pos.rot,
     color: pos.color,
-    asset: null,
+    asset,
     first: index === 0,
-    // Media presentation: keep Source-native URL contract via originalUrl = sourceUrl || url
     url: memory.sourceUrl || '',
     sourceUrl: memory.sourceUrl || '',
     video: type === 'video' ? memory.sourceUrl || null : null,

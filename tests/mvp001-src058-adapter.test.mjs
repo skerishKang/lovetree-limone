@@ -78,33 +78,56 @@ test('2. initial fixture count = 7', () => {
   assert.equal(r.moments.length, 7);
 });
 
-test('3. Source x/y/rot/color parity = 7/7', () => {
-  const expected = [
-    { x: 210, y: 255, rot: -4, color: 'rose' },
-    { x: 535, y: 175, rot: 3, color: 'violet' },
-    { x: 900, y: 245, rot: -2, color: 'cyan' },
-    { x: 1175, y: 400, rot: 4, color: 'rose' },
-    { x: 820, y: 595, rot: 2, color: 'violet' },
-    { x: 390, y: 610, rot: -3, color: 'cyan' },
-    { x: 1120, y: 690, rot: -2, color: 'amber' },
-  ];
+test('3. Source x/y/rot/color parity = 7/7 (source-anchored)', () => {
+  const script = readFileSync(join(import.meta.dirname, '../public/mvp/01/surfaces/src058/script.js'), 'utf8');
+  const start = script.indexOf('let moments=[');
+  assert.ok(start !== -1, 'frozen moments must exist');
+  let end = -1, depth = 0, inStr = false, esc = false, q = '';
+  for (let i = start; i < script.length; i++) {
+    const ch = script[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === q) inStr = false;
+      continue;
+    } else {
+      if (ch === "'" || ch === '"') { inStr = true; q = ch; continue; }
+      if (ch === '[') depth++;
+      else if (ch === ']') { depth--; if (depth === 0) { end = i; break; } }
+    }
+  }
+  assert.ok(end !== -1, 'moments end must be found');
+  let s = script.slice(start, end + 1);
+  s = s.replace(/asset:ASSET\.\w+/g, 'asset:null').replace(/video:ASSET\.\w+/g, 'video:null');
+  const sourceMoments = [];
+  const re = /id:'(m\d+)'[^}]*?x:(\d+)[^}]*?y:(\d+)[^}]*?rot:([-\d]+)[^}]*?color:'(\w+)'/g;
+  let m;
+  while ((m = re.exec(s)) !== null) {
+    sourceMoments.push({ id: m[1], x: Number(m[2]), y: Number(m[3]), rot: Number(m[4]), color: m[5] });
+    if (sourceMoments.length >= 7) break;
+  }
+  assert.equal(sourceMoments.length, 7, 'source must have 7 initial moments');
   const tree = makeTree();
-  const memories = expected.map((_, i) => makeMemory({ id: `m${i + 1}` }));
+  const memories = sourceMoments.map((sm) => makeMemory({ id: sm.id }));
   const r = projectMvp001ContextToSrc058({ tree, memories, selectedMemory: null });
   for (let i = 0; i < 7; i++) {
-    assert.equal(r.moments[i].x, expected[i].x, `index ${i} x`);
-    assert.equal(r.moments[i].y, expected[i].y, `index ${i} y`);
-    assert.equal(r.moments[i].rot, expected[i].rot, `index ${i} rot`);
-    assert.equal(r.moments[i].color, expected[i].color, `index ${i} color`);
+    assert.equal(r.moments[i].x, sourceMoments[i].x, `index ${i} x`);
+    assert.equal(r.moments[i].y, sourceMoments[i].y, `index ${i} y`);
+    assert.equal(r.moments[i].rot, sourceMoments[i].rot, `index ${i} rot`);
+    assert.equal(r.moments[i].color, sourceMoments[i].color, `index ${i} color`);
   }
 });
 
 test('4. native-add x/y/rot/color formula anchored to Source', () => {
+  const script = readFileSync(join(import.meta.dirname, '../public/mvp/01/surfaces/src058/script.js'), 'utf8');
+  // Extract native-add constants directly from frozen Source
+  assert.ok(script.includes('x:620+(moments.length%3)*120'), 'source must contain x formula 620+(...%3)*120');
+  assert.ok(script.includes('y:360+(moments.length%2)*100'), 'source must contain y formula 360+(...%2)*100');
+  assert.ok(script.includes('rot:[-4,3,-2,4,2][moments.length%5]'), 'source must contain rot array [-4,3,-2,4,2]');
+  assert.ok(script.includes("color:['rose','violet','cyan','amber'][moments.length%4]"), 'source must contain color array');
   const tree = makeTree();
-  // Create 13 memories to test indices 7..12 (0-based, so 7 is 8th)
   const memories = Array.from({ length: 13 }, (_, i) => makeMemory({ id: `m${i + 1}` }));
   const r = projectMvp001ContextToSrc058({ tree, memories, selectedMemory: null });
-  // Expected for index 7: x=620+(7%3)*120=740, y=360+(7%2)*100=460, rot=[-4,3,-2,4,2][7%5]=3? Wait 7%5=2 => -2, color 7%4=3 => amber
   const expected = [
     { index: 7, x: 740, y: 460, rot: -2, color: 'amber' },
     { index: 8, x: 860, y: 360, rot: 4, color: 'rose' },
@@ -120,6 +143,65 @@ test('4. native-add x/y/rot/color formula anchored to Source', () => {
     assert.equal(card.rot, e.rot, `index ${e.index} rot`);
     assert.equal(card.color, e.color, `index ${e.index} color`);
   }
+});
+
+test('5a. media type authority: video with YouTube URL remains video (no URL inference)', () => {
+  const tree = makeTree();
+  const mem = makeMemory({ id: 'm01', sourceType: 'video', sourceUrl: 'https://www.youtube.com/watch?v=abc123' });
+  const r = projectMvp001ContextToSrc058({ tree, memories: [mem], selectedMemory: null });
+  assert.equal(r.moments[0].type, 'video', 'sourceType video must remain video even with youtube URL');
+  assert.notEqual(r.moments[0].type, 'youtube');
+  const src = readFileSync(join(import.meta.dirname, '../public/mvp/01/src058-adapter.js'), 'utf8');
+  assert.ok(!src.includes('isYtMoment'), 'URL-based isYtMoment must be removed');
+  assert.ok(!src.includes('youtube.com') || src.includes('youtube') && !src.includes('includes'), 'no URL heuristic');
+});
+
+test('5b. photo thumbnail populates runtime-consumed asset', () => {
+  const tree = makeTree();
+  const thumb = 'https://example.com/thumb.jpg';
+  const m = makeMemory({ id: 'm01', sourceType: 'photo', thumbnail: thumb });
+  const r = projectMvp001ContextToSrc058({ tree, memories: [m], selectedMemory: null });
+  assert.equal(r.moments[0].asset, thumb, 'photo asset must be thumbnail');
+});
+
+test('5c. link thumbnail populates runtime-consumed asset', () => {
+  const tree = makeTree();
+  const thumb = 'https://example.com/link-thumb.jpg';
+  const m = makeMemory({ id: 'm01', sourceType: 'link', thumbnail: thumb });
+  const r = projectMvp001ContextToSrc058({ tree, memories: [m], selectedMemory: null });
+  assert.equal(r.moments[0].asset, thumb, 'link asset must be thumbnail');
+});
+
+test('5d. video thumbnail populates poster asset and sourceUrl populates video source', () => {
+  const tree = makeTree();
+  const thumb = 'https://example.com/poster.jpg';
+  const url = 'https://example.com/video.mp4';
+  const m = makeMemory({ id: 'm01', sourceType: 'video', thumbnail: thumb, sourceUrl: url });
+  const r = projectMvp001ContextToSrc058({ tree, memories: [m], selectedMemory: null });
+  assert.equal(r.moments[0].asset, thumb, 'video asset must be thumbnail poster');
+  assert.equal(r.moments[0].video, url, 'video must be canonical sourceUrl');
+});
+
+test('5e. YouTube canonical sourceUrl preserved and thumbnail populated, no videoId fabricated', () => {
+  const tree = makeTree();
+  const url = 'https://www.youtube.com/watch?v=abc123';
+  const thumb = 'https://example.com/yt-thumb.jpg';
+  const m = makeMemory({ id: 'm01', sourceType: 'youtube', sourceUrl: url, thumbnail: thumb });
+  const r = projectMvp001ContextToSrc058({ tree, memories: [m], selectedMemory: null });
+  assert.equal(r.moments[0].type, 'youtube');
+  assert.equal(r.moments[0].sourceUrl, url);
+  assert.equal(r.moments[0].url, url);
+  assert.equal(r.moments[0].thumbnailUrl, thumb);
+  assert.equal(r.moments[0].videoId, null, 'no fabricated videoId');
+  assert.equal(r.moments[0].videoSource, 'youtube');
+});
+
+test('5f. frozen Source still consumes m.asset, m.video, originalUrl', () => {
+  const script = readFileSync(join(import.meta.dirname, '../public/mvp/01/surfaces/src058/script.js'), 'utf8');
+  assert.ok(script.includes('m.asset'), 'Source must consume m.asset');
+  assert.ok(script.includes('m.video'), 'Source must consume m.video');
+  assert.ok(script.includes('originalUrl'), 'Source must consume originalUrl');
+  assert.ok(script.includes('isYtMoment') || script.includes('youtube'), 'Source has YouTube handling');
 });
 
 test('5. keywords not fabricated', () => {
