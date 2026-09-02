@@ -42,7 +42,7 @@ html, body {
   gap: 8px;
   max-width: 95vw;
   pointer-events: auto;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease, bottom 0.25s ease;
 }
 
 .mvp-nav-panel {
@@ -170,7 +170,8 @@ html, body {
   background: rgba(30, 34, 52, 0.95);
 }
 
-/* Collapsed state */
+/* Collapsed state: panel is removed from layout entirely so it cannot
+   occupy visual space or intercept pointer/hit-testing over the Source. */
 .mvp-nav.collapsed .mvp-nav-panel {
   display: none;
 }
@@ -179,6 +180,11 @@ html, body {
 @media (max-width: 640px) {
   .mvp-nav {
     bottom: 12px;
+  }
+  /* Collapsed toggle lifts above the Source status/hint line
+     (bottom text rows occupy the last ~25px at 390x844 / 430x932). */
+  .mvp-nav.collapsed {
+    bottom: 32px;
   }
   .mvp-nav-panel {
     gap: 8px;
