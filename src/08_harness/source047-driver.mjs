@@ -42,20 +42,6 @@ async function canonicalPixelDigest(page, pngBuffer) {
   return { hex: sha256(buf), raw: buf };
 }
 
-// Max Hamming distance (byte-level) allowed between two 16x16 canonical pixel
-// buffers before we treat them as drifted. 16x16 RGBA = 1024 bytes; 32 bytes
-// = 3.1%. A real layout bug shifts many more bytes; font-rendering differences
-// on mobile widths stay well inside this budget.
-const CANONICAL_PIXEL_MAX_HAMMING = 32;
-
-function hammingByteDistance(a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) throw new TypeError('canonical buffers must be Buffers');
-  if (a.length !== b.length) throw new Error(`canonical buffer length mismatch: ${a.length} vs ${b.length}`);
-  let d = 0;
-  for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) d++; }
-  return d;
-}
-
 const ACTS = {
   ACT1_FIRST_FEELING: 0.900,
   ACT2_MOMENT: 4.100,
@@ -337,22 +323,37 @@ export async function captureSRC47Variant(browser, url, viewport, sourceOut, var
   const errors = [];
   page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
-  // Network gate: SRC047 requires the poster image and the H.264 MP4 to load
-  // without failure. A genuine requestfailure (404, net error) on a required
-  // asset must fail closed so a broken video/picture cannot masquerade as parity.
-  // ERR_ABORTED is excluded: Chromium cancels prior Range/preload requests with
-  // ERR_ABORTED when seeking the media element (normal superseded-preload), and
-  // the video state assertions below already prove the MP4 decoded. favicon is
-  // served as 204 by the harness server so it never appears here.
+  // Network gate (two layers):
+  // 1. response-status: fail closed if any required asset (authority MP4 or
+  //    poster image) served from /SRC047/assets/* or /SRC047/split/assets/*
+  //    returns HTTP status >= 400. This catches 404/500 on required files
+  //    that requestfailed alone would miss.
+  // 2. requestfailed: fail closed on genuine network failures. ERR_ABORTED
+  //    is ONLY ignored for the known SRC047 MP4 superseded-preload case
+  //    (Chromium cancels prior Range requests when seeking). All other
+  //    ERR_ABORTED failures are recorded. favicon is served as 204 by the
+  //    harness server so it never appears here.
+  const requiredAssetStatusErrors = [];
+  page.on('response', (response) => {
+    const url = response.url();
+    if ((url.includes('/SRC047/assets/') || url.includes('/SRC047/split/assets/')) && response.status() >= 400) {
+      requiredAssetStatusErrors.push(`required-asset-http-${response.status()}:${url}`);
+    }
+  });
   page.on('requestfailed', (request) => {
     const failure = request.failure();
     const text = failure?.errorText ?? 'unknown';
-    if (text.includes('ERR_ABORTED')) return;
-    errors.push(`requestfailed:${request.url()} :: ${text}`);
+    const reqUrl = request.url();
+    const isMP4Asset = (reqUrl.includes('/SRC047/assets/') || reqUrl.includes('/SRC047/split/assets/')) && reqUrl.endsWith('.mp4');
+    if (text.includes('ERR_ABORTED') && isMP4Asset) return;
+    errors.push(`requestfailed:${reqUrl} :: ${text}`);
   });
   try {
     const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
+    if (requiredAssetStatusErrors.length > 0) {
+      throw new Error(`${sourceId} ${variant}: required asset HTTP errors: ${requiredAssetStatusErrors.join('; ')}`);
+    }
     return await captureSRC47Page(page, url, sourceOut, variant, sourceId, `${viewport.width}x${viewport.height}`, errors);
   } finally {
     await context.close();

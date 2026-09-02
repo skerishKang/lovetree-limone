@@ -384,12 +384,15 @@ try {
               if (viewport.width <= MOBILE_WIDTH) {
                 assert.equal(boName, 'NOT_APPLICABLE_MOBILE', `${sourceId} ${viewport.width}x${viewport.height}: ${state} split mobile contract drift`);
                 assert.equal(aoName, 'NOT_APPLICABLE_MOBILE', `${sourceId} ${viewport.width}x${viewport.height}: ${state} original mobile contract drift`);
-              } else {
-                assert.ok(bo.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split popover not opened`);
-                assert.ok(ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original popover not opened`);
-                assert.equal(bo.runtime.navPopoverOpen, ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} popover drift`);
+                continue;
               }
-              continue;
+              // Desktop NAV: assert popover label, then fall through to the
+              // common state assertions (ids, elementCount, buttonIds, metrics,
+              // video/runtime parity) below. Do NOT treat desktop NAV as
+              // label-only parity.
+              assert.ok(bo.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split popover not opened`);
+              assert.ok(ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original popover not opened`);
+              assert.equal(bo.runtime.navPopoverOpen, ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} popover drift`);
             }
             assert.deepStrictEqual(bo.ids, ao.ids, `${sourceId} ${viewport.width}x${viewport.height}: ${state} ids drift`);
             assert.equal(bo.elementCount, ao.elementCount, `${sourceId} ${viewport.width}x${viewport.height}: ${state} elementCount drift`);
@@ -427,6 +430,19 @@ try {
           // from the strict visual hash because autoplay frame timing can differ
           // between original and split load paths (its DOM/metrics are still
           // fully asserted above). Where raw PNG SHA is stable it is recorded too.
+          //
+          // The driver stores screenshots under a fixed set of keys (not derived
+          // from state name) so MODAL_OPEN maps to modal_* and NAV_POPOVER_OPEN
+          // maps to nav_*. Do NOT derive keys blindly from state.toLowerCase().
+          const STATE_SCREENSHOT_KEY = Object.freeze({
+            ACT1_FIRST_FEELING: 'act1_first_feeling',
+            ACT2_MOMENT: 'act2_moment',
+            ACT3_BLOOM: 'act3_bloom',
+            ACT4_WHY_NEXT: 'act4_why_next',
+            ACT5_LOVETREE: 'act5_lovetree',
+            MODAL_OPEN: 'modal',
+            NAV_POPOVER_OPEN: 'nav',
+          });
           function canonicalBufferDistance(oHex, sHex) {
             const a = Buffer.from(oHex, 'hex');
             const b = Buffer.from(sHex, 'hex');
@@ -439,25 +455,29 @@ try {
           const canonicalStates = ['ACT1_FIRST_FEELING', 'ACT2_MOMENT', 'ACT3_BLOOM', 'ACT4_WHY_NEXT', 'ACT5_LOVETREE', 'MODAL_OPEN'];
           const canonicalDistances = {};
           for (const state of canonicalStates) {
-            const rawKey = `${state.toLowerCase()}_canonical_raw_hex`;
-            const shaKey = `${state.toLowerCase()}_canonical_sha256`;
+            const key = STATE_SCREENSHOT_KEY[state];
+            const rawKey = `${key}_canonical_raw_hex`;
+            const shaKey = `${key}_canonical_sha256`;
             const oRaw = original.screenshots[rawKey], sRaw = split.screenshots[rawKey];
             const oSha = original.screenshots[shaKey], sSha = split.screenshots[shaKey];
-            canonicalDistances[`${state.toLowerCase()}_canonical_sha_equal`] = (oSha === sSha);
+            canonicalDistances[`${key}_canonical_sha_equal`] = (oSha === sSha);
             if (oRaw && sRaw) {
               const dist = canonicalBufferDistance(oRaw, sRaw);
-              canonicalDistances[`${state.toLowerCase()}_canonical_hamming`] = dist;
+              canonicalDistances[`${key}_canonical_hamming`] = dist;
               assert.ok(dist <= CANONICAL_MAX_HAMMING, `${sourceId} ${viewport.width}x${viewport.height}: ${state} canonical pixel buffer Hamming distance ${dist} exceeds ${CANONICAL_MAX_HAMMING}`);
             } else {
-              canonicalDistances[`${state.toLowerCase()}_canonical_hamming`] = null;
+              canonicalDistances[`${key}_canonical_hamming`] = null;
+              assert.fail(`${sourceId} ${viewport.width}x${viewport.height}: ${state} missing canonical raw buffer (key=${rawKey})`);
             }
           }
           if (viewport.width > MOBILE_WIDTH) {
-            const oNavRaw = original.screenshots.nav_canonical_raw_hex, sNavRaw = split.screenshots.nav_canonical_raw_hex;
+            const navKey = STATE_SCREENSHOT_KEY['NAV_POPOVER_OPEN'];
+            const oNavRaw = original.screenshots[`${navKey}_canonical_raw_hex`], sNavRaw = split.screenshots[`${navKey}_canonical_raw_hex`];
             const dist = canonicalBufferDistance(oNavRaw, sNavRaw);
             canonicalDistances.nav_canonical_hamming = dist;
             assert.ok(dist <= CANONICAL_MAX_HAMMING, `${sourceId} ${viewport.width}x${viewport.height}: NAV canonical pixel buffer Hamming distance ${dist} exceeds ${CANONICAL_MAX_HAMMING}`);
-            canonicalDistances.nav_canonical_sha_equal = true;
+            const oNavSha = original.screenshots[`${navKey}_canonical_sha256`], sNavSha = split.screenshots[`${navKey}_canonical_sha256`];
+            canonicalDistances.nav_canonical_sha_equal = (oNavSha === sNavSha);
           }
           const comparison = {
             viewport,
