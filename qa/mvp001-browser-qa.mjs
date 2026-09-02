@@ -450,14 +450,19 @@ async function runFinalQA() {
           await pageB.screenshot({ path: shotBInteract });
         }
 
-        // Navigation chrome boundary & collapse check
+        // Navigation chrome boundary & autohide contract:
+        // shell must start collapsed (Source unobstructed), open and close on explicit toggle.
         const navBox = await pageB.locator('#mvp-shell-nav').boundingBox();
         assert.ok(navBox.y + navBox.height <= vp.height, 'Nav chrome stays within viewport boundary');
-        await pageB.click('#toggle-nav-btn');
-        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => el.classList.contains('collapsed')), 'Nav collapses');
+        assert.ok(
+          await pageB.locator('#mvp-shell-nav').evaluate((el) => el.classList.contains('collapsed')),
+          'Nav starts collapsed so the Source surface is unobstructed',
+        );
         await pageB.click('#toggle-nav-btn');
         assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => !el.classList.contains('collapsed')), 'Nav expands');
-        totalAssertions += 3;
+        await pageB.click('#toggle-nav-btn');
+        assert.ok(await pageB.locator('#mvp-shell-nav').evaluate((el) => el.classList.contains('collapsed')), 'Nav collapses');
+        totalAssertions += 4;
 
         // Final fail-closed check after nav collapse/expand and before context close
         await pageB.waitForTimeout(200);
@@ -562,6 +567,8 @@ async function runFinalQA() {
     assert.equal(selectedViaKey, 'm2', 'IFRAME_KEYBOARD_FOCUS: Space key activated selection of m2');
 
     // Focus shell navigation and verify no trapping
+    // (shell starts collapsed; expand the chrome before keyboard focus)
+    await keyPage.click('#toggle-nav-btn');
     await keyPage.locator('#next-btn').focus();
     const shellBtnFocused = await keyPage.evaluate(() => document.activeElement?.id === 'next-btn');
     assert.equal(shellBtnFocused, true, 'IFRAME_KEYBOARD_FOCUS: focus transitions back to shell without trapping');
@@ -585,6 +592,22 @@ async function runFinalQA() {
 
     await shellPage.goto(`${baseUrl}/mvp/01`, { waitUntil: 'load' });
     await shellPage.waitForTimeout(400);
+
+    // Collapsed shell must not intercept pointer over the Source surface.
+    // Probe a point inside the expanded-panel band but clear of the toggle.
+    assert.ok(
+      await shellPage.evaluate(() => document.getElementById('mvp-shell-nav').classList.contains('collapsed')),
+      'Shell lifecycle: nav starts collapsed',
+    );
+    const hitOwner = await shellPage.evaluate(() => {
+      const el = document.elementFromPoint(Math.round(window.innerWidth * 0.28), window.innerHeight - 48);
+      return el ? el.tagName : 'NONE';
+    });
+    assert.equal(hitOwner, 'IFRAME', 'Shell lifecycle: collapsed panel must not own pointer hit-testing over the surface');
+    totalAssertions += 2;
+
+    // Expand the chrome for programmatic prev/next traversal
+    await shellPage.click('#toggle-nav-btn');
 
     for (let i = 1; i < SOURCES.length; i++) {
       await shellPage.click('#next-btn');
