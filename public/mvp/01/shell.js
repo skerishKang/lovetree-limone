@@ -19,7 +19,6 @@ const navContainer = document.getElementById('mvp-shell-nav');
 const navPanel = document.getElementById('nav-panel');
 
 let currentStepIndex = 0;
-let activeFrame = null;
 
 const IDLE_AUTO_COLLAPSE_MS = 4000;
 const DEFERRED_COLLAPSE_RETRY_MS = 1000;
@@ -70,7 +69,7 @@ const orchestrator = new ProductOrchestrator({
   createFrame(surfaceUrl, sessionId, sourceId) {
     const iframe = document.createElement('iframe');
     iframe.className = 'mvp-surface-frame';
-    iframe.title = `${sourceId} — ${STEPS.find((s) => s.srcId === sourceId)?.label || ''}`;
+    iframe.title = `${sourceId} — ${STEPS.find((step) => step.srcId === sourceId)?.label || ''}`;
     iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
     iframe.dataset.mvpSourceId = sourceId;
     iframe.dataset.mvpFrameSessionId = sessionId;
@@ -83,11 +82,6 @@ const orchestrator = new ProductOrchestrator({
       frame.src = 'about:blank';
     } catch {}
     frame.remove();
-  },
-  updateUrl(url) {
-    try {
-      window.history.pushState({ ...orchestrator.getContext() }, '', url);
-    } catch {}
   },
 });
 
@@ -102,50 +96,44 @@ function renderStepsNav() {
     chip.setAttribute('type', 'button');
     chip.setAttribute('data-step-id', step.id);
     chip.addEventListener('click', () => {
-      goToStep(idx, true);
+      goToStep(idx);
       scheduleAutoCollapse();
     });
     stepsSelector.appendChild(chip);
   });
 }
 
-function mountStep(stepIndex, updateUrl = true) {
-  if (stepIndex < 0 || stepIndex >= STEPS.length) return;
+function updateStepChrome(stepIndex) {
   const step = STEPS[stepIndex];
-
-  orchestrator.unmountFrame();
-
-  if (activeFrame) {
-    try {
-      activeFrame.src = 'about:blank';
-    } catch {}
-    activeFrame.remove();
-    activeFrame = null;
-  }
-
-  const { frame } = orchestrator.mountFrame(step.id, step.surface);
-  activeFrame = frame;
-
   currentStepIndex = stepIndex;
-
   titleDisplay.textContent = `${step.label} (${step.srcId})`;
   stepCounter.textContent = `${currentStepIndex + 1} / ${STEPS.length}`;
   prevBtn.disabled = currentStepIndex === 0;
   nextBtn.disabled = currentStepIndex === STEPS.length - 1;
 
   const chips = stepsSelector.querySelectorAll('.step-chip');
-  chips.forEach((c, idx) => {
-    c.classList.toggle('active', idx === currentStepIndex);
+  chips.forEach((chip, idx) => {
+    chip.classList.toggle('active', idx === currentStepIndex);
   });
-
-  if (updateUrl) {
-    orchestrator.updateUrl(serializeMvp001UrlState(orchestrator.getContext()));
-  }
 }
 
-function goToStep(index, updateUrl) {
-  if (index === currentStepIndex) return;
-  mountStep(index, updateUrl);
+function mountStep(stepIndex) {
+  if (stepIndex < 0 || stepIndex >= STEPS.length) return false;
+  const step = STEPS[stepIndex];
+
+  orchestrator.unmountFrame();
+  const mounted = orchestrator.mountFrame(step.id, step.surface);
+  if (!mounted) return false;
+
+  updateStepChrome(stepIndex);
+  return true;
+}
+
+function goToStep(index) {
+  if (index < 0 || index >= STEPS.length || index === currentStepIndex) return;
+  const result = orchestrator.navigateFromShell(STEPS[index].id);
+  if (!result.accepted) return;
+  mountStep(index);
 }
 
 function handleBridgeMessage(event) {
@@ -155,29 +143,37 @@ function handleBridgeMessage(event) {
   const result = orchestrator.handleBridgeMessage(event);
   if (!result.accepted) return;
 
-  if (result.type === 'NAVIGATE' && typeof result.stepIndex === 'number') {
-    mountStep(result.stepIndex, true);
+  if (result.type === 'NAVIGATE' && typeof result.stepIndex === 'number' && result.changed) {
+    mountStep(result.stepIndex);
   }
 }
 
 window.addEventListener('message', handleBridgeMessage);
 
 window.addEventListener('popstate', () => {
+  const previousStepIndex = currentStepIndex;
   const restored = orchestrator.onPopState();
-  mountStep(restored.stepIndex, false);
+
+  if (restored.stepIndex !== previousStepIndex) {
+    mountStep(restored.stepIndex);
+  } else {
+    orchestrator.reinitActiveFrame();
+    updateStepChrome(restored.stepIndex);
+  }
+
   scheduleAutoCollapse();
 });
 
 prevBtn.addEventListener('click', () => {
   if (currentStepIndex > 0) {
-    goToStep(currentStepIndex - 1, true);
+    goToStep(currentStepIndex - 1);
     scheduleAutoCollapse();
   }
 });
 
 nextBtn.addEventListener('click', () => {
   if (currentStepIndex < STEPS.length - 1) {
-    goToStep(currentStepIndex + 1, true);
+    goToStep(currentStepIndex + 1);
     scheduleAutoCollapse();
   }
 });
@@ -216,6 +212,6 @@ navContainer.addEventListener('focusout', (event) => {
 
 renderStepsNav();
 const initialContext = orchestrator.getContext();
-const initialIndex = MVP001_STEPS.indexOf(initialContext.currentStep);
-mountStep(initialIndex >= 0 ? initialIndex : 0, false);
+const initialIndex = STEPS.findIndex((step) => step.id === initialContext.currentStep);
+mountStep(initialIndex >= 0 ? initialIndex : 0);
 setCollapsed(true);

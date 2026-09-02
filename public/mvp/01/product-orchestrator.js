@@ -6,8 +6,20 @@ import {
   validateMvp001BridgeEnvelope,
 } from './productization-contract.js';
 
+const MUTATING_MESSAGE_TYPES = new Set(['TREE_SELECTED', 'MEMORY_SELECTED', 'NAVIGATE']);
+
 function generateSessionId() {
-  return 'frm-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
+    return `frm-${globalThis.crypto.randomUUID()}`;
+  }
+  return 'frm-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+}
+
+function normalizeRuntimeContext(context) {
+  return {
+    ...context,
+    selectedRelationshipId: null,
+  };
 }
 
 export class ProductOrchestrator {
@@ -15,7 +27,6 @@ export class ProductOrchestrator {
     this.shell = {
       createFrame: shellApi.createFrame || (() => null),
       removeFrame: shellApi.removeFrame || (() => {}),
-      updateUrl: shellApi.updateUrl || (() => {}),
       emitError: shellApi.emitError || (() => {}),
     };
 
@@ -29,9 +40,10 @@ export class ProductOrchestrator {
   }
 
   init() {
-    const urlContext = parseMvp001UrlState(window.location.search);
+    const urlContext = normalizeRuntimeContext(parseMvp001UrlState(window.location.search));
     this.context = urlContext;
-    this.contextRevision = urlContext.contextRevision || 1;
+    this.contextRevision = Math.max(1, urlContext.contextRevision || 1);
+    this.context.contextRevision = this.contextRevision;
     return this.context;
   }
 
@@ -44,7 +56,7 @@ export class ProductOrchestrator {
   }
 
   getStepIndexForSourceId(sourceId) {
-    const stepId = Object.entries(MVP001_SOURCE_BY_STEP).find(([, s]) => s === sourceId)?.[0];
+    const stepId = Object.entries(MVP001_SOURCE_BY_STEP).find(([, source]) => source === sourceId)?.[0];
     return stepId ? MVP001_STEPS.indexOf(stepId) : -1;
   }
 
@@ -54,7 +66,7 @@ export class ProductOrchestrator {
 
     const sessionId = generateSessionId();
     const frame = this.shell.createFrame(surfaceUrl, sessionId, sourceId);
-    if (!frame) return null;
+    if (!frame || !frame.contentWindow) return null;
 
     this.activeFrame = frame;
     this.activeFrameWindow = frame.contentWindow;
@@ -69,15 +81,21 @@ export class ProductOrchestrator {
     const sessionId = this.activeFrameSessionId;
     const sourceId = this.activeSourceId;
 
-    if (frame && sessionId && sourceId) {
+    if (frame && sessionId && sourceId && this.readySessions.has(sessionId)) {
       this.signalDispose(frame, sessionId, sourceId);
+    }
+
+    if (sessionId) {
+      this.readySessions.delete(sessionId);
+    }
+    if (frame) {
+      this.shell.removeFrame(frame);
     }
 
     this.activeFrame = null;
     this.activeFrameWindow = null;
     this.activeFrameSessionId = null;
     this.activeSourceId = null;
-    this.readySessions.delete(sessionId);
   }
 
   signalDispose(frame, sessionId, sourceId) {
@@ -105,7 +123,6 @@ export class ProductOrchestrator {
   sendSourceInit(frame, sessionId, sourceId) {
     const projection = { sourceId };
     const permissions = { canRead: true, canCreate: false, canUpdate: false, canDelete: false };
-
     const initPayload = {
       context: this.context,
       projection,
@@ -133,6 +150,43 @@ export class ProductOrchestrator {
     } catch {}
   }
 
+  reinitActiveFrame() {
+    const sessionId = this.activeFrameSessionId;
+    if (
+      this.activeFrame
+      && sessionId
+      && this.activeSourceId
+      && this.readySessions.has(sessionId)
+    ) {
+      this.sendSourceInit(this.activeFrame, sessionId, this.activeSourceId);
+      return true;
+    }
+    return false;
+  }
+
+  advanceRevision() {
+    this.contextRevision += 1;
+    this.context.contextRevision = this.contextRevision;
+  }
+
+  navigateFromShell(stepId) {
+    const stepIndex = MVP001_STEPS.indexOf(stepId);
+    if (stepIndex < 0) {
+      return { accepted: false, code: 'INVALID_TARGET_STEP' };
+    }
+    if (this.context.currentStep === stepId) {
+      return { accepted: true, changed: false, stepIndex, context: this.context };
+    }
+
+    this.context.currentStep = stepId;
+    this.context.navigationOrigin = 'shell';
+    this.context.selectedRelationshipId = null;
+    this.advanceRevision();
+    this.updateUrl();
+
+    return { accepted: true, changed: true, stepIndex, context: this.context };
+  }
+
   handleBridgeMessage(event) {
     const expectations = {
       activeSourceId: this.activeSourceId,
@@ -150,6 +204,13 @@ export class ProductOrchestrator {
 
     const message = result.value;
 
+    if (
+      MUTATING_MESSAGE_TYPES.has(message.type)
+      && message.contextRevision !== this.contextRevision
+    ) {
+      return { accepted: false, code: 'STALE_CONTEXT_REVISION' };
+    }
+
     if (message.type === 'SOURCE_READY') {
       this.readySessions.set(message.frameSessionId, true);
       if (message.frameSessionId === this.activeFrameSessionId && this.activeFrame) {
@@ -164,8 +225,8 @@ export class ProductOrchestrator {
         this.context.treeId = newTreeId;
         this.context.selectedMemoryId = null;
         this.context.selectedRelationshipId = null;
-        this.contextRevision++;
-        this.context.contextRevision = this.contextRevision;
+        this.context.navigationOrigin = `${message.sourceId}.TREE_SELECTED`;
+        this.advanceRevision();
         this.updateUrl();
       }
       return { accepted: true, type: 'TREE_SELECTED', context: this.context };
@@ -175,11 +236,13 @@ export class ProductOrchestrator {
       if (!this.context.treeId) {
         return { accepted: false, code: 'ORPHAN_MEMORY_SELECTION' };
       }
-      this.context.selectedMemoryId = message.payload.memoryId;
-      this.context.selectedRelationshipId = null;
-      this.contextRevision++;
-      this.context.contextRevision = this.contextRevision;
-      this.updateUrl();
+      if (message.payload.memoryId !== this.context.selectedMemoryId) {
+        this.context.selectedMemoryId = message.payload.memoryId;
+        this.context.selectedRelationshipId = null;
+        this.context.navigationOrigin = `${message.sourceId}.MEMORY_SELECTED`;
+        this.advanceRevision();
+        this.updateUrl();
+      }
       return { accepted: true, type: 'MEMORY_SELECTED', context: this.context };
     }
 
@@ -190,19 +253,27 @@ export class ProductOrchestrator {
         return { accepted: false, code: 'INVALID_TARGET_STEP' };
       }
 
+      let changed = targetStep !== this.context.currentStep;
+
       if (message.payload.memoryId !== undefined) {
         if (!this.context.treeId) {
           return { accepted: false, code: 'ORPHAN_MEMORY_IN_NAVIGATE' };
         }
-        this.context.selectedMemoryId = message.payload.memoryId;
+        if (message.payload.memoryId !== this.context.selectedMemoryId) {
+          this.context.selectedMemoryId = message.payload.memoryId;
+          changed = true;
+        }
       }
 
-      this.context.currentStep = targetStep;
-      this.contextRevision++;
-      this.context.contextRevision = this.contextRevision;
-      this.updateUrl();
+      if (changed) {
+        this.context.currentStep = targetStep;
+        this.context.selectedRelationshipId = null;
+        this.context.navigationOrigin = message.payload.origin;
+        this.advanceRevision();
+        this.updateUrl();
+      }
 
-      return { accepted: true, type: 'NAVIGATE', context: this.context, stepIndex };
+      return { accepted: true, type: 'NAVIGATE', context: this.context, stepIndex, changed };
     }
 
     if (message.type === 'ERROR') {
@@ -217,16 +288,18 @@ export class ProductOrchestrator {
     try {
       const current = new URL(window.location.href);
       const newUrl = new URL(url, current.origin);
-      if (current.search !== newUrl.search) {
+      if (current.pathname !== newUrl.pathname || current.search !== newUrl.search) {
         window.history.pushState({ ...this.context }, '', newUrl.toString());
       }
     } catch {}
   }
 
   onPopState() {
-    const restored = parseMvp001UrlState(window.location.search);
+    const restored = normalizeRuntimeContext(parseMvp001UrlState(window.location.search));
+    this.contextRevision = Math.max(this.contextRevision + 1, restored.contextRevision || 1);
+    restored.contextRevision = this.contextRevision;
+    restored.navigationOrigin = 'popstate';
     this.context = restored;
-    this.contextRevision = restored.contextRevision || 1;
     const stepIndex = MVP001_STEPS.indexOf(restored.currentStep);
     return { stepIndex: stepIndex >= 0 ? stepIndex : 0, context: this.context };
   }
