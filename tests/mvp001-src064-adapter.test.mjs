@@ -263,3 +263,91 @@ test('20. empty/missing duration does not crash adapter or runtime contract', ()
   assert.equal(rendered, '<div class="duration"></div>', 'empty duration must render safely');
   assert.doesNotThrow(() => projectMvp001ContextToSrc064({ tree, memories: [makeMemory({ id: 'm01', videoOffsetSeconds: null })], selectedMemory: null }));
 });
+
+test('21. 40 Memory input yields exactly 40 visible cards', () => {
+  const tree = makeTree();
+  const memories = Array.from({ length: 40 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const r = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: null });
+  assert.equal(r.cards.length, 40);
+  assert.equal(r.cards[0].id, 'm01');
+  assert.equal(r.cards[39].id, 'm40');
+});
+
+test('22. >40 Memory input caps to 40 and does not leak Memory 41+', () => {
+  const tree = makeTree();
+  const memories = Array.from({ length: 45 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const r = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: null });
+  assert.equal(r.cards.length, 40, 'visible capacity must be 40');
+  assert.ok(!r.cards.some((c) => c.id === 'm41'), 'm41 must not leak');
+  assert.ok(!r.cards.some((c) => c.id === 'm45'), 'm45 must not leak');
+});
+
+test('23. selected at position 41+ remains independently representable without leakage', () => {
+  const tree = makeTree();
+  const memories = Array.from({ length: 45 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const selected = memories[40]; // m41, outside visible window
+  const r = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: selected });
+  assert.equal(r.cards.length, 40);
+  assert.ok(!r.cards.some((c) => c.id === 'm41'), 'OUT_OF_WINDOW_SELECTED_LEAKAGE must be NO');
+  assert.equal(r.selectedCard.id, 'm41');
+  assert.equal(r.selectedCardId, 'm41');
+  assert.equal(r.focusedId, 'm41');
+});
+
+test('24. native geometry/layout slot parity 40/40', async () => {
+  const { SRC064_NATIVE_SLOTS } = await import('../public/mvp/01/src064-slots.js');
+  assert.equal(SRC064_NATIVE_SLOTS.length, 40, 'native slot count must be 40');
+  const tree = makeTree();
+  const memories = Array.from({ length: 40 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const { cards } = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: null });
+  const fields = ['ring', 'baseAngle', 'phaseOffset', 'zOffset', 'tiltX', 'tiltY', 'tiltZ', 'sizeClass', 'fitMode', 'objectPosition', 'focalPoint', 'viewerFitMode', 'viewerObjectPosition'];
+  for (let i = 0; i < 40; i++) {
+    const slot = SRC064_NATIVE_SLOTS[i];
+    const card = cards[i];
+    for (const f of fields) {
+      assert.deepEqual(card[f], slot[f], `slot ${i} field ${f} must match native`);
+    }
+  }
+});
+
+test('25. no invented geometry formula remains', () => {
+  const src = readFileSync(join(import.meta.dirname, '../public/mvp/01/src064-adapter.js'), 'utf8');
+  assert.ok(!src.includes('0.78539816339'), 'synthetic baseAngle formula must be removed');
+  assert.ok(!src.includes('cardBaseFromIndex'), 'synthetic helper must be removed');
+  assert.ok(src.includes('SRC064_NATIVE_SLOTS'), 'must use native slots');
+});
+
+test('26. source label fallback: artist wins', () => {
+  const tree = makeTree();
+  const m = makeMemory({ id: 'm01', artist: 'Artist', channelName: 'Channel', source: 'Source' });
+  const r = projectMvp001ContextToSrc064({ tree, memories: [m], selectedMemory: null });
+  assert.equal(r.cards[0].source, 'Artist');
+});
+
+test('27. source label fallback: channelName when artist absent', () => {
+  const tree = makeTree();
+  const m = makeMemory({ id: 'm01', artist: '', channelName: 'Channel', source: 'Source' });
+  // artist empty should fallback to channelName
+  const mem = { ...m, artist: '' };
+  const r = projectMvp001ContextToSrc064({ tree, memories: [mem], selectedMemory: null });
+  assert.equal(r.cards[0].source, 'Channel');
+});
+
+test('28. source label fallback: source when others absent, empty when all absent', () => {
+  const tree = makeTree();
+  const m1 = makeMemory({ id: 'm01', artist: '', channelName: '', source: 'Source' });
+  const r1 = projectMvp001ContextToSrc064({ tree, memories: [{ ...m1, artist: '', channelName: '' }], selectedMemory: null });
+  assert.equal(r1.cards[0].source, 'Source');
+  const m2 = makeMemory({ id: 'm02', artist: '', channelName: '', source: '' });
+  const r2 = projectMvp001ContextToSrc064({ tree, memories: [{ ...m2, artist: '', channelName: '', source: '' }], selectedMemory: null });
+  assert.equal(r2.cards[0].source, '');
+});
+
+test('29. no fabricated gender', () => {
+  const tree = makeTree();
+  const r = projectMvp001ContextToSrc064({ tree, memories: [makeMemory({ id: 'm01' })], selectedMemory: null });
+  assert.ok(!('gender' in r.cards[0]), 'product card must not contain gender field');
+  const src = readFileSync(join(import.meta.dirname, '../public/mvp/01/src064-adapter.js'), 'utf8');
+  assert.ok(!src.includes("gender: 'female'"), 'must not hard-code female');
+  assert.ok(!src.includes('gender'), 'adapter must not reference gender except via slot comment');
+});

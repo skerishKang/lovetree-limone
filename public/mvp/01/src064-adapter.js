@@ -12,6 +12,9 @@
  * - Handles empty presentation fields, fails closed on malformed identity
  */
 
+import { SRC064_NATIVE_SLOTS } from './src064-slots.js';
+
+const VISIBLE_CARD_CAPACITY = 40;
 const RING_ORDER = Object.freeze(['main', 'inner', 'outer', 'upper', 'lower']);
 const TYPE_MAP = Object.freeze({
   youtube: 'video',
@@ -68,20 +71,8 @@ function mapDate(memory) {
   return typeof raw === 'string' ? raw : String(raw ?? '');
 }
 
-function ringForIndex(index) {
-  return RING_ORDER[index % RING_ORDER.length];
-}
-
-function cardBaseFromIndex(index) {
-  // Deterministic geometry defaults; preserves orbit distribution without hard-coding original values
-  const ring = ringForIndex(index);
-  const baseAngle = (index * 0.7853981633974483) % (Math.PI * 2); // 45deg steps
-  const phaseOffset = (index * 0.13) % 1;
-  const zOffset = ((index % 5) - 2) * 28;
-  const tiltX = ((index % 3) - 1) * 6.4;
-  const tiltY = ((index % 5) - 2) * 4.2;
-  const tiltZ = ((index % 7) - 3) * 1.8;
-  return { ring, baseAngle, phaseOffset, zOffset, tiltX, tiltY, tiltZ };
+function slotForIndex(index) {
+  return SRC064_NATIVE_SLOTS[index] || SRC064_NATIVE_SLOTS[SRC064_NATIVE_SLOTS.length - 1];
 }
 
 export function projectMemoryToSrc064Card(memory, index, allMemories) {
@@ -102,7 +93,7 @@ export function projectMemoryToSrc064Card(memory, index, allMemories) {
   }
 
   const nextId = allMemories[index + 1]?.id ?? null;
-  const geo = cardBaseFromIndex(index);
+  const slot = slotForIndex(index);
   const mediaType = mapMediaType(memory.sourceType);
 
   return {
@@ -111,33 +102,32 @@ export function projectMemoryToSrc064Card(memory, index, allMemories) {
     mediaType,
     title: memory.title ?? '',
     image: memory.thumbnail ?? '',
-    ring: geo.ring,
-    baseAngle: geo.baseAngle,
-    phaseOffset: geo.phaseOffset,
-    zOffset: geo.zOffset,
-    tiltX: geo.tiltX,
-    tiltY: geo.tiltY,
-    tiltZ: geo.tiltZ,
-    sizeClass: 'sm',
+    ring: slot.ring,
+    baseAngle: slot.baseAngle,
+    phaseOffset: slot.phaseOffset,
+    zOffset: slot.zOffset,
+    tiltX: slot.tiltX,
+    tiltY: slot.tiltY,
+    tiltZ: slot.tiltZ,
+    sizeClass: slot.sizeClass,
     date: mapDate(memory),
     emotion: mapEmotion(memory.emotionTags),
     whyNext: memory.connectionReason ?? '',
-    first: index === 0,
+    first: slot.first,
     important: false,
-    source: memory.source ?? '',
+    source: memory.artist || memory.channelName || memory.source || '',
     duration: '',
     memo: memory.memo ?? '',
     next: nextId,
     branch: null,
-    fitMode: 'cover',
-    objectPosition: '50% 50%',
-    focalPoint: '50% 48%',
+    fitMode: slot.fitMode,
+    objectPosition: slot.objectPosition,
+    focalPoint: slot.focalPoint,
     externalUrl: memory.sourceUrl ?? null,
-    viewerFitMode: 'contain',
-    viewerObjectPosition: '50% 50%',
+    viewerFitMode: slot.viewerFitMode,
+    viewerObjectPosition: slot.viewerObjectPosition,
     curated: false,
-    curationClass: 'portrait',
-    gender: 'female',
+    curationClass: slot.curationClass,
     assetSource: 'PRODUCT MEDIA',
   };
 }
@@ -170,7 +160,8 @@ export function projectMvp001ContextToSrc064(context) {
     throw err;
   }
 
-  const cards = memories.map((m, idx) => projectMemoryToSrc064Card(m, idx, memories));
+  const visibleMemories = memories.slice(0, VISIBLE_CARD_CAPACITY);
+  const cards = visibleMemories.map((m, idx) => projectMemoryToSrc064Card(m, idx, visibleMemories));
 
   let selectedCard = null;
   let selectedCardId = null;
