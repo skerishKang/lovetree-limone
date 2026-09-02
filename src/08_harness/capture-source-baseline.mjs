@@ -27,6 +27,15 @@ const sourceIds = fs.readdirSync(sourceRoot, { withFileTypes: true })
   .sort();
 if (!sourceIds.length) throw new Error(`${state.phase} requires at least one active Source`);
 
+const baselineCaptureTargets = sourceIds.filter((sourceId) => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, sourceId, 'manifest.json'), 'utf8'));
+  return manifest.stages?.baseline_captured === true;
+});
+if (!baselineCaptureTargets.length) {
+  console.log('SRC_BASELINE_CAPTURE=SKIPPED_NO_TARGETS');
+  process.exit(0);
+}
+
 const defaultViewports = [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
@@ -171,7 +180,7 @@ async function exerciseMobile(page, sourceId, label, originReveal) {
 
 const browser = await chromium.launch({ headless: true });
 try {
-  for (const sourceId of sourceIds) {
+  for (const sourceId of baselineCaptureTargets) {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
     const originalPath = path.join(sourceDir, 'original', 'original.html');
