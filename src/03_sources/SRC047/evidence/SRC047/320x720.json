@@ -81,9 +81,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -104,7 +104,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 50.531,
               "height": 30
             },
             "display": "block",
@@ -115,9 +115,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 72.531,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -180,9 +180,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -193,9 +193,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -321,7 +321,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "AUTO_CINEMATIC",
           "act": 1,
           "videoFailed": false,
           "reducedMotion": true,
@@ -330,14 +330,14 @@
           "navPopoverOpen": null
         },
         "video": {
-          "paused": true,
+          "paused": false,
           "muted": true,
-          "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "currentTime": 1.176389,
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "bbeea94d6d1c6324be5fcfe9b3488e8fbcdd6f8c0e5b040fa3ed4f8f3c5db5cf",
+      "pngSha": "d076bb252e6c56054ec785eb668821e0e25f96713391361d55e4f056335826e4",
       "stateName": "INITIAL"
     },
     "ACT1_FIRST_FEELING": {
@@ -417,9 +417,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -440,7 +440,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -451,9 +451,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -516,9 +516,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -529,9 +529,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -657,7 +657,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 1,
           "videoFailed": false,
           "reducedMotion": true,
@@ -669,11 +669,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "bbeea94d6d1c6324be5fcfe9b3488e8fbcdd6f8c0e5b040fa3ed4f8f3c5db5cf",
+      "pngSha": "3044fbad73d045cc4c0e3b9ebff37d72d3053cbe9c5a738ddf63d8fc731b64d8",
       "stateName": "ACT1_FIRST_FEELING"
     },
     "ACT2_MOMENT": {
@@ -753,9 +753,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -776,7 +776,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -787,9 +787,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -852,9 +852,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -865,9 +865,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -993,7 +993,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 2,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1004,12 +1004,12 @@
         "video": {
           "paused": true,
           "muted": true,
-          "currentTime": 4.1,
-          "duration": null,
-          "readyState": 0
+          "currentTime": 4.099999,
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "4763f2cef3d0c9198ddcee581ed8ff99995789d8e5dd63efeaf6037c9ba907da",
+      "pngSha": "49e3acfc4577ec9f07daf0c231ca14759865f64d273efb1ba5145b9b4412b49e",
       "stateName": "ACT2_MOMENT"
     },
     "ACT3_BLOOM": {
@@ -1089,9 +1089,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1112,7 +1112,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -1123,9 +1123,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -1188,9 +1188,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -1201,9 +1201,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -1329,7 +1329,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 3,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1341,11 +1341,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 7.5,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "7badd3d8e5c23dc0b5a2960ed122a577a4ccd55fccc55fd069a5b8c36994451e",
+      "pngSha": "eb4083cd863e9f8e0f30d0b66ce78c71f3c05769b7f1a311975fdae819e8f6e9",
       "stateName": "ACT3_BLOOM"
     },
     "ACT4_WHY_NEXT": {
@@ -1425,9 +1425,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1448,7 +1448,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -1459,9 +1459,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -1524,9 +1524,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -1537,9 +1537,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -1665,7 +1665,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 4,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1677,11 +1677,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 11.1,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "366be2bf5a135312c0d265ea976fea7486abfcc38e78d31ee81ccb035e231976",
+      "pngSha": "e190198ae7d1c5d4a6753bde2d74a9ff244342b4f2395747dd88253bbbeacc80",
       "stateName": "ACT4_WHY_NEXT"
     },
     "ACT5_LOVETREE": {
@@ -1761,9 +1761,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1784,7 +1784,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -1795,9 +1795,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -1860,9 +1860,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -1873,9 +1873,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -2001,7 +2001,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 5,
           "videoFailed": false,
           "reducedMotion": true,
@@ -2013,11 +2013,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 13.2,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "2e98ec649d7d76cbea715125a0120aaccb835145efef220f73471f28ab90c769",
+      "pngSha": "3d54a9fc02fac4aaae550607f1f193b8391563a0ca29c067a464ccc1b3195c40",
       "stateName": "ACT5_LOVETREE"
     },
     "MODAL_OPEN": {
@@ -2097,9 +2097,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -2120,7 +2120,7 @@
             "rect": {
               "x": 14,
               "y": 674,
-              "width": 44.906,
+              "width": 43.922,
               "height": 30
             },
             "display": "block",
@@ -2131,9 +2131,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 66.906,
+              "x": 65.922,
               "y": 674,
-              "width": 54.031,
+              "width": 53.531,
               "height": 30
             },
             "display": "block",
@@ -2196,9 +2196,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 110.141,
+              "x": 110.961,
               "y": 644,
-              "width": 99.719,
+              "width": 98.078,
               "height": 48
             },
             "display": "flex",
@@ -2209,9 +2209,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 121.141,
+              "x": 121.961,
               "y": 653,
-              "width": 77.719,
+              "width": 76.078,
               "height": 30
             },
             "display": "block",
@@ -2302,7 +2302,7 @@
             "rect": {
               "x": 47,
               "y": 564.844,
-              "width": 129.828,
+              "width": 128.5,
               "height": 33
             },
             "display": "block",
@@ -2313,9 +2313,9 @@
             "tag": "BUTTON",
             "className": "cta primary",
             "rect": {
-              "x": 188.828,
+              "x": 187.5,
               "y": 561.344,
-              "width": 106.563,
+              "width": 107.891,
               "height": 40
             },
             "display": "flex",
@@ -2349,11 +2349,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "f5ce51ec40b51065f3474b684b48ecd02e07af1232f9050fb61bf3f71ccefd5b",
+      "pngSha": "fa9d95262f335c99c07692456359139db464c6f955c6db083b7955fdd990e626",
       "stateName": "MODAL_OPEN"
     },
     "NAV_POPOVER_OPEN": {
@@ -2372,12 +2372,12 @@
   },
   "errors": [],
   "screenshots": {
-    "initial_sha256": "bbeea94d6d1c6324be5fcfe9b3488e8fbcdd6f8c0e5b040fa3ed4f8f3c5db5cf",
-    "act1_first_feeling_sha256": "bbeea94d6d1c6324be5fcfe9b3488e8fbcdd6f8c0e5b040fa3ed4f8f3c5db5cf",
-    "act2_moment_sha256": "4763f2cef3d0c9198ddcee581ed8ff99995789d8e5dd63efeaf6037c9ba907da",
-    "act3_bloom_sha256": "7badd3d8e5c23dc0b5a2960ed122a577a4ccd55fccc55fd069a5b8c36994451e",
-    "act4_why_next_sha256": "366be2bf5a135312c0d265ea976fea7486abfcc38e78d31ee81ccb035e231976",
-    "act5_lovetree_sha256": "2e98ec649d7d76cbea715125a0120aaccb835145efef220f73471f28ab90c769",
-    "modal_sha256": "f5ce51ec40b51065f3474b684b48ecd02e07af1232f9050fb61bf3f71ccefd5b"
+    "initial_sha256": "d076bb252e6c56054ec785eb668821e0e25f96713391361d55e4f056335826e4",
+    "act1_first_feeling_sha256": "3044fbad73d045cc4c0e3b9ebff37d72d3053cbe9c5a738ddf63d8fc731b64d8",
+    "act2_moment_sha256": "49e3acfc4577ec9f07daf0c231ca14759865f64d273efb1ba5145b9b4412b49e",
+    "act3_bloom_sha256": "eb4083cd863e9f8e0f30d0b66ce78c71f3c05769b7f1a311975fdae819e8f6e9",
+    "act4_why_next_sha256": "e190198ae7d1c5d4a6753bde2d74a9ff244342b4f2395747dd88253bbbeacc80",
+    "act5_lovetree_sha256": "3d54a9fc02fac4aaae550607f1f193b8391563a0ca29c067a464ccc1b3195c40",
+    "modal_sha256": "fa9d95262f335c99c07692456359139db464c6f955c6db083b7955fdd990e626"
   }
 }

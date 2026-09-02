@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
@@ -30,7 +31,13 @@ if (!sourceIds.length) throw new Error(`${state.phase} requires at least one act
 
 const baselineCaptureTargets = sourceIds.filter((sourceId) => {
   const manifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, sourceId, 'manifest.json'), 'utf8'));
-  return manifest.stages?.baseline_captured === true;
+  if (manifest.stages?.baseline_captured === true) return true;
+  const capturePlanPath = path.join(sourceRoot, sourceId, 'baseline', 'capture-plan.json');
+  if (fs.existsSync(capturePlanPath)) {
+    const capturePlan = JSON.parse(fs.readFileSync(capturePlanPath, 'utf8'));
+    if (capturePlan.status === 'PENDING_EXACT_HEAD_CI') return true;
+  }
+  return false;
 });
 if (!baselineCaptureTargets.length) {
   console.log('SRC_BASELINE_CAPTURE=SKIPPED_NO_TARGETS');
@@ -124,30 +131,64 @@ async function startServer(sourceId, originalPath, sourceDir) {
 
 // Large video assets must support HTTP Range requests: without them
   // Chromium refuses to seek the MP4 past the first buffered segment and the
-  // cinematic baseline would silently fall back to the poster. Buffers are
-  // read into memory (28 MB max) rather than piped so an early client abort
-  // cannot leave the response stream hanging.
+  // cinematic baseline would silently fall back to the poster.
+  //
+  // IMPORTANT: fs.readFileSync does NOT support start/end as file offsets.
+  // Passing { start, end } is silently ignored and returns the WHOLE file,
+  // which made Content-Length report a partial length while the body was the
+  // full file. Load once into memory (28 MB max) and slice the exact window.
   const sendFile = (res, filePath, mimeType) => {
     const stat = fs.statSync(filePath);
     const range = res.req?.headers?.range;
+    const total = stat.size;
     if (range) {
       const match = /bytes=(\d*)-(\d*)/.exec(range);
-      if (!match) { res.statusCode = 416; res.end(); return; }
-      const start = match[1] ? +match[1] : 0;
-      const end = match[2] ? +match[2] : stat.size - 1;
+      if (!match) {
+        res.statusCode = 416;
+        res.setHeader('content-range', `bytes */${total}`);
+        res.setHeader('accept-ranges', 'bytes');
+        res.end();
+        return;
+      }
+      let start = match[1] ? +match[1] : 0;
+      let end = match[2] ? +match[2] : total - 1;
+      // RFC 7233 suffix range: bytes=-N means the last N bytes.
+      if (match[1] === '' && match[2] !== '') {
+        const suffixLen = +match[2];
+        if (!Number.isFinite(suffixLen) || suffixLen <= 0) {
+          res.statusCode = 416;
+          res.setHeader('content-range', `bytes */${total}`);
+          res.setHeader('accept-ranges', 'bytes');
+          res.end();
+          return;
+        }
+        start = Math.max(0, total - suffixLen);
+        end = total - 1;
+      }
+      if (!Number.isFinite(start) || !Number.isFinite(end) || start > end || start >= total) {
+        res.statusCode = 416;
+        res.setHeader('content-range', `bytes */${total}`);
+        res.setHeader('accept-ranges', 'bytes');
+        res.end();
+        return;
+      }
+      const clampedEnd = Math.min(end, total - 1);
+      const buf = fs.readFileSync(filePath);
+      const body = buf.subarray(start, clampedEnd + 1);
       res.statusCode = 206;
-      res.setHeader('content-range', `bytes ${start}-${end}/${stat.size}`);
+      res.setHeader('content-range', `bytes ${start}-${clampedEnd}/${total}`);
       res.setHeader('accept-ranges', 'bytes');
-      res.setHeader('content-length', end - start + 1);
+      res.setHeader('content-length', body.length);
       res.setHeader('content-type', mimeType);
-      res.end(fs.readFileSync(filePath, { start, end }));
+      res.end(body);
       return;
     }
+    const buf = fs.readFileSync(filePath);
     res.statusCode = 200;
     res.setHeader('accept-ranges', 'bytes');
-    res.setHeader('content-length', stat.size);
+    res.setHeader('content-length', buf.length);
     res.setHeader('content-type', mimeType);
-    res.end(fs.readFileSync(filePath));
+    res.end(buf);
   };
 
   const server = http.createServer((req, res) => {
@@ -222,7 +263,46 @@ async function exerciseMobile(page, sourceId, label, originReveal) {
   return interaction;
 }
 
-const browser = await chromium.launch({ headless: true });
+// Browser channel is configurable. SRC_BROWSER_CHANNEL=chrome forces the
+// branded Google Chrome binary (Playwright channel: 'chrome'). When unset the
+// bundled Playwright Chromium is used, preserving local/backward-compatible
+// behavior. CI sets SRC_BROWSER_CHANNEL=chrome and fails closed if the channel
+// binary is absent, so an S2 capture never silently falls back to Chromium.
+const browserChannel = process.env.SRC_BROWSER_CHANNEL || null;
+const launchOptions = { headless: true };
+if (browserChannel) {
+  // Fail closed: verify the channel binary is resolvable before launching.
+  // Playwright throws on launch if the channel is missing, but an explicit
+  // precheck produces a clear CI error instead of a launch-time crash.
+  const { execFileSync } = await import('node:child_process');
+  let chromeVersion = null;
+  try {
+    const candidates = process.platform === 'win32'
+      ? [
+          'chrome.exe',
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        ]
+      : [
+          'google-chrome',
+          'google-chrome-stable',
+          'chromium-browser',
+          'chromium',
+        ];
+    for (const c of candidates) {
+      try {
+        chromeVersion = execFileSync(c, ['--version'], { stdio: 'pipe', encoding: 'utf8' }).trim();
+        break;
+      } catch { /* try next */ }
+    }
+  } catch { /* ignore */ }
+  if (!chromeVersion) {
+    throw new Error(`SRC_BROWSER_CHANNEL=${browserChannel} requested but no branded browser binary was found; refusing to fall back to bundled Chromium`);
+  }
+  console.log(`SRC_BROWSER_CHANNEL=${browserChannel} -> ${chromeVersion}`);
+  launchOptions.channel = browserChannel;
+}
+const browser = await chromium.launch(launchOptions);
 try {
   for (const sourceId of baselineCaptureTargets) {
     const sourceDir = path.join(sourceRoot, sourceId);

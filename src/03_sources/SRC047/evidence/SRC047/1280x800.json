@@ -81,9 +81,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -104,7 +104,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 58.344,
               "height": 34
             },
             "display": "block",
@@ -115,9 +115,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 99.609,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -128,9 +128,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 169.328,
               "y": 742.172,
-              "width": 38.531,
+              "width": 83.516,
               "height": 10
             },
             "display": "block",
@@ -180,9 +180,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -193,9 +193,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -321,7 +321,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "AUTO_CINEMATIC",
           "act": 1,
           "videoFailed": false,
           "reducedMotion": true,
@@ -330,14 +330,14 @@
           "navPopoverOpen": null
         },
         "video": {
-          "paused": true,
+          "paused": false,
           "muted": true,
-          "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "currentTime": 1.183441,
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "1dbb1768862f934d3ed0770686ed314c9354dd5856e7722e631242bf5112d684",
+      "pngSha": "4505880a1cd22d21ea59b25445dc2e3bc5209cbadbee7ba572f3fcc51537620e",
       "stateName": "INITIAL"
     },
     "ACT1_FIRST_FEELING": {
@@ -417,9 +417,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -440,7 +440,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -451,9 +451,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -464,9 +464,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 93.641,
               "height": 10
             },
             "display": "block",
@@ -516,9 +516,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -529,9 +529,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -657,7 +657,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 1,
           "videoFailed": false,
           "reducedMotion": true,
@@ -669,11 +669,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "1dbb1768862f934d3ed0770686ed314c9354dd5856e7722e631242bf5112d684",
+      "pngSha": "bd9a12ea70a119c727a3e0195cf13861c39142f0461d01c78dbe9336e8e79250",
       "stateName": "ACT1_FIRST_FEELING"
     },
     "ACT2_MOMENT": {
@@ -753,9 +753,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -776,7 +776,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -787,9 +787,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -800,9 +800,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 93.641,
               "height": 10
             },
             "display": "block",
@@ -852,9 +852,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -865,9 +865,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -993,7 +993,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 2,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1004,12 +1004,12 @@
         "video": {
           "paused": true,
           "muted": true,
-          "currentTime": 4.1,
-          "duration": null,
-          "readyState": 0
+          "currentTime": 4.099999,
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "8752475024ce32d8e95cb8a59f6ae3516aa9cc30b0f74781e8caba2798d6fe84",
+      "pngSha": "2091e5220f6f31cfd703e535050b9bfdca24f467f3300c1bc8032d1477aab584",
       "stateName": "ACT2_MOMENT"
     },
     "ACT3_BLOOM": {
@@ -1089,9 +1089,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1112,7 +1112,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -1123,9 +1123,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -1136,9 +1136,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 93.641,
               "height": 10
             },
             "display": "block",
@@ -1188,9 +1188,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -1201,9 +1201,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -1329,7 +1329,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 3,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1341,11 +1341,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 7.5,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "542ebd52a6a91b194dea7d72be577dbf36cf67c4e75bff12b3903a46797f79c8",
+      "pngSha": "642a4d0eeafb270452fae48e496f53163720f141bb40b67d003308e19dbdc255",
       "stateName": "ACT3_BLOOM"
     },
     "ACT4_WHY_NEXT": {
@@ -1425,9 +1425,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1448,7 +1448,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -1459,9 +1459,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -1472,9 +1472,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 93.641,
               "height": 10
             },
             "display": "block",
@@ -1524,9 +1524,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -1537,9 +1537,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -1665,7 +1665,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 4,
           "videoFailed": false,
           "reducedMotion": true,
@@ -1677,11 +1677,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 11.1,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "3ec56a6a355719f6d1dc4bf79c360a444be8ef69c9fec3e0172f1073f971354d",
+      "pngSha": "bef966e37a11fef9f6d482d7a97818da22568fb271658bd0acf2dc3ba2f84f43",
       "stateName": "ACT4_WHY_NEXT"
     },
     "ACT5_LOVETREE": {
@@ -1761,9 +1761,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -1784,7 +1784,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -1795,9 +1795,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -1808,9 +1808,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 93.641,
               "height": 10
             },
             "display": "block",
@@ -1860,9 +1860,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -1873,9 +1873,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -2001,7 +2001,7 @@
           }
         },
         "runtime": {
-          "mode": "PAUSED",
+          "mode": "USER_CONTROLLED",
           "act": 5,
           "videoFailed": false,
           "reducedMotion": true,
@@ -2013,11 +2013,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 13.2,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "de2272bdefba96e626f04477b03e8ae8bf8540a031537fac56a8e724986a85b2",
+      "pngSha": "cd2befa712d9043873b1f48b309f6278aef8cda6d2240e3458f3abdb672aaef6",
       "stateName": "ACT5_LOVETREE"
     },
     "MODAL_OPEN": {
@@ -2097,9 +2097,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -2120,7 +2120,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -2131,9 +2131,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -2144,9 +2144,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 37.719,
               "height": 10
             },
             "display": "block",
@@ -2196,9 +2196,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -2209,9 +2209,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -2313,9 +2313,9 @@
             "tag": "BUTTON",
             "className": "cta primary",
             "rect": {
-              "x": 810.031,
+              "x": 807.266,
               "y": 558.969,
-              "width": 138.969,
+              "width": 141.734,
               "height": 44
             },
             "display": "flex",
@@ -2349,11 +2349,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "2418bfe50d27555bf535db672a56f7ffbab04195dd7a84345745635180b36491",
+      "pngSha": "507f94167d9c93ad66312a2c5aa0f48e03ebd592ba2ec6d847ea3f61c0866b17",
       "stateName": "MODAL_OPEN"
     },
     "NAV_POPOVER_OPEN": {
@@ -2433,9 +2433,9 @@
               "width": 0,
               "height": 0
             },
-            "display": "inline",
-            "visibility": "visible",
-            "opacity": "1"
+            "display": "",
+            "visibility": "",
+            "opacity": ""
           },
           "scrim": {
             "tag": "DIV",
@@ -2456,7 +2456,7 @@
             "rect": {
               "x": 33.266,
               "y": 730.172,
-              "width": 52.016,
+              "width": 50.922,
               "height": 34
             },
             "display": "block",
@@ -2467,9 +2467,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 93.281,
+              "x": 92.188,
               "y": 730.172,
-              "width": 62.281,
+              "width": 61.719,
               "height": 34
             },
             "display": "block",
@@ -2480,9 +2480,9 @@
             "tag": "SPAN",
             "className": "state-chip",
             "rect": {
-              "x": 163.563,
+              "x": 161.906,
               "y": 742.172,
-              "width": 38.531,
+              "width": 37.719,
               "height": 10
             },
             "display": "block",
@@ -2532,9 +2532,9 @@
             "tag": "DIV",
             "className": "reduced-card",
             "rect": {
-              "x": 518.977,
+              "x": 520.961,
               "y": 720,
-              "width": 242.047,
+              "width": 238.078,
               "height": 52
             },
             "display": "flex",
@@ -2545,9 +2545,9 @@
             "tag": "BUTTON",
             "className": "mini-btn",
             "rect": {
-              "x": 529.977,
+              "x": 531.961,
               "y": 729,
-              "width": 88.938,
+              "width": 87.094,
               "height": 34
             },
             "display": "block",
@@ -2685,11 +2685,11 @@
           "paused": true,
           "muted": true,
           "currentTime": 0.9,
-          "duration": null,
-          "readyState": 0
+          "duration": 14.187007,
+          "readyState": 4
         }
       },
-      "pngSha": "a811e42e2c1444a3d15a20af09adb393069e655820120a76d894ab4d931cb5f2",
+      "pngSha": "2586cbbcf4bf1994e9158c549c8f6553f0475ada9c0191fb253fd7e79f676b0a",
       "stateName": "NAV_POPOVER_OPEN"
     }
   },
@@ -2701,13 +2701,13 @@
   },
   "errors": [],
   "screenshots": {
-    "initial_sha256": "1dbb1768862f934d3ed0770686ed314c9354dd5856e7722e631242bf5112d684",
-    "act1_first_feeling_sha256": "1dbb1768862f934d3ed0770686ed314c9354dd5856e7722e631242bf5112d684",
-    "act2_moment_sha256": "8752475024ce32d8e95cb8a59f6ae3516aa9cc30b0f74781e8caba2798d6fe84",
-    "act3_bloom_sha256": "542ebd52a6a91b194dea7d72be577dbf36cf67c4e75bff12b3903a46797f79c8",
-    "act4_why_next_sha256": "3ec56a6a355719f6d1dc4bf79c360a444be8ef69c9fec3e0172f1073f971354d",
-    "act5_lovetree_sha256": "de2272bdefba96e626f04477b03e8ae8bf8540a031537fac56a8e724986a85b2",
-    "modal_sha256": "2418bfe50d27555bf535db672a56f7ffbab04195dd7a84345745635180b36491",
-    "nav_sha256": "a811e42e2c1444a3d15a20af09adb393069e655820120a76d894ab4d931cb5f2"
+    "initial_sha256": "4505880a1cd22d21ea59b25445dc2e3bc5209cbadbee7ba572f3fcc51537620e",
+    "act1_first_feeling_sha256": "bd9a12ea70a119c727a3e0195cf13861c39142f0461d01c78dbe9336e8e79250",
+    "act2_moment_sha256": "2091e5220f6f31cfd703e535050b9bfdca24f467f3300c1bc8032d1477aab584",
+    "act3_bloom_sha256": "642a4d0eeafb270452fae48e496f53163720f141bb40b67d003308e19dbdc255",
+    "act4_why_next_sha256": "bef966e37a11fef9f6d482d7a97818da22568fb271658bd0acf2dc3ba2f84f43",
+    "act5_lovetree_sha256": "cd2befa712d9043873b1f48b309f6278aef8cda6d2240e3458f3abdb672aaef6",
+    "modal_sha256": "507f94167d9c93ad66312a2c5aa0f48e03ebd592ba2ec6d847ea3f61c0866b17",
+    "nav_sha256": "2586cbbcf4bf1994e9158c549c8f6553f0475ada9c0191fb253fd7e79f676b0a"
   }
 }
