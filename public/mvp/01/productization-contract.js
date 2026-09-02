@@ -154,7 +154,9 @@ function searchParamsFrom(input) {
   if (typeof input !== 'string') return new URLSearchParams();
   const text = input.trim();
   if (/^https?:\/\//i.test(text)) return new URL(text).searchParams;
-  return new URLSearchParams(text.startsWith('?') ? text.slice(1) : text);
+  const queryIndex = text.indexOf('?');
+  if (queryIndex >= 0) return new URLSearchParams(text.slice(queryIndex + 1));
+  return new URLSearchParams(text);
 }
 
 function cleanUrlId(value) {
