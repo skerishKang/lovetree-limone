@@ -5,6 +5,7 @@ import {
   MVP001_BRIDGE_PROTOCOL,
   MVP001_BRIDGE_PROTOCOL_VERSION,
   MVP001_ID,
+  MVP001_READ_ONLY_BRIDGE_TYPES,
   MVP001_SOURCE_BY_STEP,
   MVP001_SOURCE_IDS,
   createMvp001Context,
@@ -183,7 +184,7 @@ test('NAVIGATE only accepts the five authorized MVP001 targets', () => {
   assert.equal(validateMvp001BridgeEnvelope(bad, expectations()).code, 'PAYLOAD');
 });
 
-test('RELATIONSHIP_SELECTED is accepted only for Sources that may project relationships', () => {
+test('RELATIONSHIP_SELECTED is default-denied until a canonical relationship authority is explicitly enabled', () => {
   const relationship = envelope({
     sourceId: 'SRC056',
     type: 'RELATIONSHIP_SELECTED',
@@ -193,8 +194,18 @@ test('RELATIONSHIP_SELECTED is accepted only for Sources that may project relati
       toMemoryId: 'memory-2',
     },
   });
-  const result = validateMvp001BridgeEnvelope(relationship, expectations({ activeSourceId: 'SRC056' }));
-  assert.equal(result.ok, true);
+  assert.equal(
+    validateMvp001BridgeEnvelope(relationship, expectations({ activeSourceId: 'SRC056' })).code,
+    'MESSAGE_TYPE',
+  );
+  const explicitlyEnabled = validateMvp001BridgeEnvelope(
+    relationship,
+    expectations({
+      activeSourceId: 'SRC056',
+      allowedTypes: [...MVP001_READ_ONLY_BRIDGE_TYPES, 'RELATIONSHIP_SELECTED'],
+    }),
+  );
+  assert.equal(explicitlyEnabled.ok, true);
 });
 
 test('SOURCE_INIT requires a valid canonical context and explicit read/write permissions', () => {

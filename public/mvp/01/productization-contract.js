@@ -22,9 +22,15 @@ export const MVP001_READ_ONLY_BRIDGE_TYPES = Object.freeze([
   'SOURCE_DISPOSE',
   'TREE_SELECTED',
   'MEMORY_SELECTED',
-  'RELATIONSHIP_SELECTED',
   'NAVIGATE',
   'ERROR',
+]);
+
+// A canonical relationship ID does not exist in the default first-beta model.
+// This event stays protocol-defined but must be explicitly enabled by a later
+// bounded Product decision instead of being accepted by default.
+export const MVP001_CONDITIONAL_BRIDGE_TYPES = Object.freeze([
+  'RELATIONSHIP_SELECTED',
 ]);
 
 export const MVP001_FUTURE_WRITE_BRIDGE_TYPES = Object.freeze([
