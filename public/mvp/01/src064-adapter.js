@@ -15,7 +15,6 @@
 import { SRC064_NATIVE_SLOTS } from './src064-slots.js';
 
 const VISIBLE_CARD_CAPACITY = 40;
-const RING_ORDER = Object.freeze(['main', 'inner', 'outer', 'upper', 'lower']);
 const TYPE_MAP = Object.freeze({
   youtube: 'video',
   video: 'video',
@@ -72,7 +71,17 @@ function mapDate(memory) {
 }
 
 function slotForIndex(index) {
-  return SRC064_NATIVE_SLOTS[index] || SRC064_NATIVE_SLOTS[SRC064_NATIVE_SLOTS.length - 1];
+  if (!Number.isInteger(index) || index < 0 || index >= SRC064_NATIVE_SLOTS.length) {
+    const err = new Error(`Invalid slot index ${index}`);
+    err.name = 'Src064AdapterError';
+    err.code = 'INVALID_SLOT_INDEX';
+    throw err;
+  }
+  return SRC064_NATIVE_SLOTS[index];
+}
+
+export function getSrc064Slot(index) {
+  return slotForIndex(index);
 }
 
 export function projectMemoryToSrc064Card(memory, index, allMemories) {
@@ -183,8 +192,11 @@ export function projectMvp001ContextToSrc064(context) {
       selectedCard = existing;
       focusedCard = existing;
     } else {
-      selectedCard = projectMemoryToSrc064Card(selectedMemory, 0, [selectedMemory]);
-      focusedCard = selectedCard;
+      const standalone = projectMemoryToSrc064Card(selectedMemory, 0, [selectedMemory]);
+      // Standalone direct-selected must not become semantic FIRST MOMENT
+      standalone.first = false;
+      selectedCard = standalone;
+      focusedCard = standalone;
     }
   }
 

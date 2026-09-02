@@ -294,18 +294,58 @@ test('23. selected at position 41+ remains independently representable without l
   assert.equal(r.focusedId, 'm41');
 });
 
-test('24. native geometry/layout slot parity 40/40', async () => {
+test('24. source CARDS extracted directly from frozen script vs slot table parity 40/40', async () => {
+  const script = readFileSync(join(import.meta.dirname, '../public/mvp/01/surfaces/src064/script.js'), 'utf8');
+  const start = script.indexOf('const CARDS=[');
+  assert.ok(start !== -1, 'frozen CARDS must exist');
+  // Extract CARDS array via bracket matching
+  let snippet = script.slice(start);
+  // Replace data URLs to avoid parsing huge strings
+  snippet = snippet.replace(/"image":"data:[^"]+"/g, '"image":"[DATA]"');
+  snippet = snippet.replace(/"assetSource":"data:[^"]+"/g, '"assetSource":"[DATA]"');
+  let depth = 0, inStr = false, esc = false, quote = '', end = -1;
+  for (let i = 0; i < snippet.length; i++) {
+    const ch = snippet[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === quote) inStr = false;
+      continue;
+    } else {
+      if (ch === '"' || ch === "'") { inStr = true; quote = ch; continue; }
+      if (ch === '[') depth++;
+      else if (ch === ']') { depth--; if (depth === 0) { end = i; break; } }
+    }
+  }
+  assert.ok(end !== -1, 'CARDS array end must be found');
+  let cardsStr = snippet.slice(0, end + 1);
+  cardsStr = cardsStr.slice(cardsStr.indexOf('['));
+  cardsStr = cardsStr.replace(/,\s*([\]}])/g, '$1');
+  const sourceCards = JSON.parse(cardsStr);
+  assert.equal(sourceCards.length, 40, 'SOURCE_CARD_COUNT must be 40');
   const { SRC064_NATIVE_SLOTS } = await import('../public/mvp/01/src064-slots.js');
-  assert.equal(SRC064_NATIVE_SLOTS.length, 40, 'native slot count must be 40');
+  assert.equal(SRC064_NATIVE_SLOTS.length, 40, 'NATIVE_SLOT_COUNT must be 40');
+  const fields = ['ring', 'baseAngle', 'phaseOffset', 'zOffset', 'tiltX', 'tiltY', 'tiltZ', 'sizeClass', 'fitMode', 'objectPosition', 'focalPoint', 'viewerFitMode', 'viewerObjectPosition', 'curationClass', 'first'];
+  for (let i = 0; i < 40; i++) {
+    const src = sourceCards[i];
+    const slot = SRC064_NATIVE_SLOTS[i];
+    for (const f of fields) {
+      const a = slot[f] ?? null;
+      const b = src[f] ?? null;
+      assert.deepEqual(a, b, `source -> slot parity: index ${i} field ${f}`);
+    }
+  }
+  // Also verify adapter cards match slots for visible 40
   const tree = makeTree();
   const memories = Array.from({ length: 40 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
   const { cards } = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: null });
-  const fields = ['ring', 'baseAngle', 'phaseOffset', 'zOffset', 'tiltX', 'tiltY', 'tiltZ', 'sizeClass', 'fitMode', 'objectPosition', 'focalPoint', 'viewerFitMode', 'viewerObjectPosition'];
   for (let i = 0; i < 40; i++) {
     const slot = SRC064_NATIVE_SLOTS[i];
     const card = cards[i];
     for (const f of fields) {
-      assert.deepEqual(card[f], slot[f], `slot ${i} field ${f} must match native`);
+      const a = card[f] ?? null;
+      const b = slot[f] ?? null;
+      assert.deepEqual(a, b, `adapter -> slot parity: index ${i} field ${f}`);
     }
   }
 });
@@ -349,5 +389,45 @@ test('29. no fabricated gender', () => {
   assert.ok(!('gender' in r.cards[0]), 'product card must not contain gender field');
   const src = readFileSync(join(import.meta.dirname, '../public/mvp/01/src064-adapter.js'), 'utf8');
   assert.ok(!src.includes("gender: 'female'"), 'must not hard-code female');
-  assert.ok(!src.includes('gender'), 'adapter must not reference gender except via slot comment');
+  // slot file may contain gender as presentation metadata, but adapter must not expose it
+  const adapterSrc = readFileSync(join(import.meta.dirname, '../public/mvp/01/src064-adapter.js'), 'utf8');
+  assert.ok(!adapterSrc.includes('gender'), 'adapter must not reference gender');
+});
+
+test('30. visible first card first true, standalone selected first false', () => {
+  const tree = makeTree();
+  const memories = Array.from({ length: 40 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const r1 = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: null });
+  assert.equal(r1.cards[0].first, true, 'visible first card must be true');
+  assert.equal(r1.cards[1].first, false, 'visible second must be false');
+  // selected at 41+ (outside visible window)
+  const overMemories = Array.from({ length: 45 }, (_, i) => makeMemory({ id: `m${String(i + 1).padStart(2, '0')}` }));
+  const selected41 = overMemories[40];
+  const r2 = projectMvp001ContextToSrc064({ tree, memories: overMemories, selectedMemory: selected41 });
+  assert.equal(r2.selectedCard.first, false, 'out-of-window selected must not be FIRST');
+  // unlisted selected
+  const unlisted = makeMemory({ id: 'm-unlisted', treeId: 'tree-1', visibility: 'unlisted' });
+  const r3 = projectMvp001ContextToSrc064({ tree, memories, selectedMemory: unlisted });
+  assert.equal(r3.selectedCard.first, false, 'unlisted selected must not be FIRST');
+});
+
+test('31. invalid slot index fails closed', async () => {
+  const { getSrc064Slot } = await import('../public/mvp/01/src064-adapter.js');
+  assert.throws(() => getSrc064Slot(-1), (e) => e.code === 'INVALID_SLOT_INDEX');
+  assert.throws(() => getSrc064Slot(40), (e) => e.code === 'INVALID_SLOT_INDEX');
+  assert.throws(() => getSrc064Slot(100), (e) => e.code === 'INVALID_SLOT_INDEX');
+  assert.throws(() => getSrc064Slot(1.5), (e) => e.code === 'INVALID_SLOT_INDEX');
+  assert.throws(() => getSrc064Slot('0'), (e) => e.code === 'INVALID_SLOT_INDEX');
+});
+
+test('32. slot table minimized to required fields only', async () => {
+  const { SRC064_NATIVE_SLOTS } = await import('../public/mvp/01/src064-slots.js');
+  const allowed = new Set(['ring', 'baseAngle', 'phaseOffset', 'zOffset', 'tiltX', 'tiltY', 'tiltZ', 'sizeClass', 'fitMode', 'objectPosition', 'focalPoint', 'viewerFitMode', 'viewerObjectPosition', 'curationClass', 'first']);
+  for (let i = 0; i < SRC064_NATIVE_SLOTS.length; i++) {
+    const slot = SRC064_NATIVE_SLOTS[i];
+    for (const k of Object.keys(slot)) {
+      assert.ok(allowed.has(k), `slot ${i} field ${k} must be in allowed minimal set`);
+    }
+  }
+  assert.equal(SRC064_NATIVE_SLOTS.length, 40);
 });
