@@ -4,6 +4,34 @@ import path from 'node:path';
 
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 
+// The Source uses backdrop-filter:blur() on several glass/overlay elements
+// (ghost-word LOVETREE, modal shell, mini-controls, nav-popover). GPU compositing
+// of that blur is +/-1 channel nondeterministic run-to-run even over static video
+// frames, so a raw PNG/IDAT digest jitters without any real visual change. This
+// binding digest downsamples to 16x16 and floors each channel to /16, making it
+// stable against sub-2/255 blur jitter yet still sensitive to real layout/color
+// drift. The exact DOM, geometry, computed style, runtime state and interactions
+// are asserted byte-equal separately; this canonical digest is the visual
+// backstop (same strategy as source060-driver.mjs).
+async function canonicalPixelDigest(page, pngBuffer) {
+  const b64 = pngBuffer.toString('base64');
+  const data = await page.evaluate(async (src) => {
+    const img = new Image();
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = `data:image/png;base64,${src}`; });
+    const N = 16;
+    const canvas = document.createElement('canvas');
+    canvas.width = N;
+    canvas.height = N;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, N, N);
+    const px = ctx.getImageData(0, 0, N, N).data;
+    return Array.from(px, (v, i) => (i % 4 === 3 ? v : (v & 0xF0)));
+  }, b64);
+  return sha256(Buffer.from(data));
+}
+
 const ACTS = {
   ACT1_FIRST_FEELING: 0.900,
   ACT2_MOMENT: 4.100,
@@ -173,13 +201,13 @@ async function openNavPopover(page) {
   await page.waitForTimeout(300);
 }
 
-async function captureState(page, sourceOut, label, stateName) {
+async function captureState(page, sourceOut, label, stateName, variant = 'original') {
   const state = await page.evaluate(collectSRC47State);
   const png = await page.screenshot({
-    path: path.join(sourceOut, `${label}-original-${stateName}.png`),
+    path: path.join(sourceOut, `${label}-${variant}-${stateName}.png`),
     animations: 'disabled',
   });
-  return { state, pngSha: sha256(png), stateName };
+  return { state, pngSha: sha256(png), pngCanonicalSha: await canonicalPixelDigest(page, png), stateName };
 }
 
 async function exerciseSRC47(page, sourceId, label) {
@@ -215,23 +243,26 @@ async function captureSRC47Page(page, baseUrl, sourceOut, variant, sourceId, lab
   if (errors.length) throw new Error(`${sourceId} ${variant}: browser errors before capture: ${errors.join('; ')}`);
 
   const states = {};
-  const screenshots = {};
+const screenshots = {};
 
   // INITIAL first (after a real unlock gesture), then ACT1-5 via QA.seek,
   // then MODAL, then NAV.
   await unlockVideo(page);
-  states.INITIAL = await captureState(page, sourceOut, label, 'INITIAL');
+  states.INITIAL = await captureState(page, sourceOut, label, 'INITIAL', variant);
   screenshots.initial_sha256 = states.INITIAL.pngSha;
+  screenshots.initial_canonical_sha256 = states.INITIAL.pngCanonicalSha;
 
   for (const [name] of Object.entries(ACTS)) {
     await seekACT(page, name);
-    states[name] = await captureState(page, sourceOut, label, name);
+    states[name] = await captureState(page, sourceOut, label, name, variant);
     screenshots[`${name.toLowerCase()}_sha256`] = states[name].pngSha;
+    screenshots[`${name.toLowerCase()}_canonical_sha256`] = states[name].pngCanonicalSha;
   }
 
   await openModal(page, baseUrl);
-  states.MODAL_OPEN = await captureState(page, sourceOut, label, 'MODAL_OPEN');
+  states.MODAL_OPEN = await captureState(page, sourceOut, label, 'MODAL_OPEN', variant);
   screenshots.modal_sha256 = states.MODAL_OPEN.pngSha;
+  screenshots.modal_canonical_sha256 = states.MODAL_OPEN.pngCanonicalSha;
 
   await closeModal(page);
   await page.waitForTimeout(200);
@@ -239,14 +270,18 @@ async function captureSRC47Page(page, baseUrl, sourceOut, variant, sourceId, lab
   const isMobile = page.viewportSize().width <= MOBILE_WIDTH;
   if (!isMobile) {
     await openNavPopover(page);
-    states.NAV_POPOVER_OPEN = await captureState(page, sourceOut, label, 'NAV_POPOVER_OPEN');
+    states.NAV_POPOVER_OPEN = await captureState(page, sourceOut, label, 'NAV_POPOVER_OPEN', variant);
     screenshots.nav_sha256 = states.NAV_POPOVER_OPEN.pngSha;
+    screenshots.nav_canonical_sha256 = states.NAV_POPOVER_OPEN.pngCanonicalSha;
   } else {
     states.NAV_POPOVER_OPEN = {
       stateName: 'NOT_APPLICABLE_MOBILE',
       state: { note: 'nav groups hidden by frozen responsive contract' },
       pngSha: null,
+      pngCanonicalSha: null,
     };
+    screenshots.nav_sha256 = null;
+    screenshots.nav_canonical_sha256 = null;
   }
 
   const interaction = await exerciseSRC47(page, sourceId, `${label} ${variant}`);
@@ -271,6 +306,19 @@ export async function captureSRC47Variant(browser, url, viewport, sourceOut, var
   const errors = [];
   page.on('pageerror', (error) => errors.push(`pageerror:${error.message}${error.stack ? ` @ ${error.stack.split('\n').slice(1, 3).join(' <- ').trim()}` : ''}`));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(`console:${message.text()}`); });
+  // Network gate: SRC047 requires the poster image and the H.264 MP4 to load
+  // without failure. A genuine requestfailure (404, net error) on a required
+  // asset must fail closed so a broken video/picture cannot masquerade as parity.
+  // ERR_ABORTED is excluded: Chromium cancels prior Range/preload requests with
+  // ERR_ABORTED when seeking the media element (normal superseded-preload), and
+  // the video state assertions below already prove the MP4 decoded. favicon is
+  // served as 204 by the harness server so it never appears here.
+  page.on('requestfailed', (request) => {
+    const failure = request.failure();
+    const text = failure?.errorText ?? 'unknown';
+    if (text.includes('ERR_ABORTED')) return;
+    errors.push(`requestfailed:${request.url()} :: ${text}`);
+  });
   try {
     const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     if (!response?.ok()) throw new Error(`${sourceId} ${variant}: HTTP ${response?.status()}`);
@@ -283,8 +331,17 @@ export async function captureSRC47Variant(browser, url, viewport, sourceOut, var
 export function src47SourceFiles(sourceDir, sourceId = 'SRC047') {
   const files = new Map([
     [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
+    [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
+    [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
+    [`/${sourceId}/split/script.js`, [path.join(sourceDir, 'split', 'script.js'), 'text/javascript; charset=utf-8']],
   ]);
 
+  // The mechanically split index intentionally retains relative `assets/...`
+  // references (poster + MP4). The split file lives at /SRC047/split/index.html, so
+  // the browser resolves those references to /SRC047/split/assets/*. Register both
+  // the original-absolute and split-relative asset routes, both pointing at the
+  // frozen original asset directory, so original and split share the same
+  // authority assets through the parity server.
   const assetsDir = path.join(sourceDir, 'original', 'assets');
   if (fs.existsSync(assetsDir)) {
     const assetFiles = fs.readdirSync(assetsDir);
@@ -295,6 +352,7 @@ export function src47SourceFiles(sourceDir, sourceId = 'SRC047') {
       if (ext === '.png') mimeType = 'image/png';
       if (ext === '.mp4') mimeType = 'video/mp4';
       files.set(`/${sourceId}/assets/${file}`, [path.join(assetsDir, file), mimeType]);
+      files.set(`/${sourceId}/split/assets/${file}`, [path.join(assetsDir, file), mimeType]);
     }
   }
 

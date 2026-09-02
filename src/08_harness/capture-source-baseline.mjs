@@ -9,6 +9,7 @@ import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
+import { sendFileRange } from './src-range.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -137,59 +138,7 @@ async function startServer(sourceId, originalPath, sourceDir) {
   // Passing { start, end } is silently ignored and returns the WHOLE file,
   // which made Content-Length report a partial length while the body was the
   // full file. Load once into memory (28 MB max) and slice the exact window.
-  const sendFile = (res, filePath, mimeType) => {
-    const stat = fs.statSync(filePath);
-    const range = res.req?.headers?.range;
-    const total = stat.size;
-    if (range) {
-      const match = /bytes=(\d*)-(\d*)/.exec(range);
-      if (!match) {
-        res.statusCode = 416;
-        res.setHeader('content-range', `bytes */${total}`);
-        res.setHeader('accept-ranges', 'bytes');
-        res.end();
-        return;
-      }
-      let start = match[1] ? +match[1] : 0;
-      let end = match[2] ? +match[2] : total - 1;
-      // RFC 7233 suffix range: bytes=-N means the last N bytes.
-      if (match[1] === '' && match[2] !== '') {
-        const suffixLen = +match[2];
-        if (!Number.isFinite(suffixLen) || suffixLen <= 0) {
-          res.statusCode = 416;
-          res.setHeader('content-range', `bytes */${total}`);
-          res.setHeader('accept-ranges', 'bytes');
-          res.end();
-          return;
-        }
-        start = Math.max(0, total - suffixLen);
-        end = total - 1;
-      }
-      if (!Number.isFinite(start) || !Number.isFinite(end) || start > end || start >= total) {
-        res.statusCode = 416;
-        res.setHeader('content-range', `bytes */${total}`);
-        res.setHeader('accept-ranges', 'bytes');
-        res.end();
-        return;
-      }
-      const clampedEnd = Math.min(end, total - 1);
-      const buf = fs.readFileSync(filePath);
-      const body = buf.subarray(start, clampedEnd + 1);
-      res.statusCode = 206;
-      res.setHeader('content-range', `bytes ${start}-${clampedEnd}/${total}`);
-      res.setHeader('accept-ranges', 'bytes');
-      res.setHeader('content-length', body.length);
-      res.setHeader('content-type', mimeType);
-      res.end(body);
-      return;
-    }
-    const buf = fs.readFileSync(filePath);
-    res.statusCode = 200;
-    res.setHeader('accept-ranges', 'bytes');
-    res.setHeader('content-length', buf.length);
-    res.setHeader('content-type', mimeType);
-    res.end(buf);
-  };
+  const sendFile = (res, filePath, mimeType) => sendFileRange(res, filePath, mimeType);
 
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }

@@ -8,6 +8,8 @@ import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mj
 import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mjs';
 import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mjs';
 import { captureSRC58Variant, src58SourceFiles } from './source058-driver.mjs';
+import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
+import { sendFileRange } from './src-range.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -35,6 +37,18 @@ const sourceViewports = {
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 const round = (value) => Math.round(value * 100) / 100;
+
+// SRC047 canonical cinematic ACT seek targets (seconds). These are the times the
+// frozen script's QA.seek drives both original and split to; INITIAL is excluded
+// from the currentTime assertion because autoplay timing may drift by a few ms.
+const ACTS = {
+  ACT1_FIRST_FEELING: 0.900,
+  ACT2_MOMENT: 4.100,
+  ACT3_BLOOM: 7.500,
+  ACT4_WHY_NEXT: 11.100,
+  ACT5_LOVETREE: 13.200,
+};
+const MOBILE_WIDTH = 820;
 
 function collectPageState() {
   const elements = [...document.querySelectorAll('[id]')];
@@ -128,7 +142,9 @@ function startServer(sourceId, sourceDir) {
         ? src58SourceFiles(sourceDir, sourceId)
         : sourceId === 'SRC060'
           ? track60SourceFiles(sourceDir, sourceId)
-          : new Map([
+          : sourceId === 'SRC047'
+            ? src47SourceFiles(sourceDir, sourceId)
+            : new Map([
       [`/${sourceId}/original.html`, [path.join(sourceDir, 'original', 'original.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/index.html`, [path.join(sourceDir, 'split', 'index.html'), 'text/html; charset=utf-8']],
       [`/${sourceId}/split/styles.css`, [path.join(sourceDir, 'split', 'styles.css'), 'text/css; charset=utf-8']],
@@ -136,14 +152,47 @@ function startServer(sourceId, sourceDir) {
     ]);
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }
-    const entry = files.get(req.url);
+    // Look up by pathname only: the SRC047 driver opens the modal by navigating
+    // to the same URL with ?demoComposer=1 appended, and the query string is not
+    // part of the route map.
+    const pathname = new URL(req.url, 'http://127.0.0.1').pathname;
+    const entry = files.get(pathname);
     if (!entry) { res.statusCode = 404; res.end('not found'); return; }
     const [file, type] = entry;
+    if (!fs.existsSync(file)) { res.statusCode = 404; res.end('not found'); return; }
+    // SRC047's 28 MB H.264/AAC MP4 is requested with Range by Chromium; serve the
+    // exact byte window so seeking past the first buffered segment works. The
+    // proven baseline Range contract is reused here rather than re-implemented.
+    if (type === 'video/mp4' || type === 'image/jpeg' || type === 'image/png') {
+      sendFileRange(res, file, type);
+      return;
+    }
     res.statusCode = 200;
     res.setHeader('content-type', type);
     res.end(fs.readFileSync(file));
   });
-  return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
+  // Chromium refuses to connect to a hardcoded set of "unsafe" ports (SIP 5060,
+  // mdns 5353, etc.). On Windows the OS may hand `listen(0)` one of those, which
+  // surfaces as net::ERR_UNSAFE_PORT at goto time. Pin to a safe candidate port
+  // first, falling back through the list and finally to an ephemeral port.
+  const SAFE_PORT_CANDIDATES = [8137, 8140, 8143, 8150, 8160, 8170, 8180, 8190];
+  return new Promise((resolve, reject) => {
+    let i = 0;
+    const tryNext = () => {
+      const port = i < SAFE_PORT_CANDIDATES.length ? SAFE_PORT_CANDIDATES[i++] : 0;
+      const onError = (e) => {
+        server.removeListener('error', onError);
+        if (e.code === 'EADDRINUSE' && i <= SAFE_PORT_CANDIDATES.length) return tryNext();
+        return reject(e);
+      };
+      server.once('error', onError);
+      server.listen(port, '127.0.0.1', () => {
+        server.removeListener('error', onError);
+        resolve(server);
+      });
+    };
+    tryNext();
+  });
 }
 
 async function captureVariant(browser, url, viewport, sourceOut, variant, sourceId) {
@@ -182,7 +231,20 @@ async function captureVariant(browser, url, viewport, sourceOut, variant, source
   };
 }
 
-const browser = await chromium.launch({ headless: true });
+// Browser channel is configurable. SRC_BROWSER_CHANNEL=chrome forces the branded
+// Google Chrome binary (Playwright channel: 'chrome'). SRC047's H.264/AAC MP4
+// cannot be decoded by the bundled Playwright Chromium, so the generic capture
+// path must not silently fall back to Chromium when CI requests chrome. When
+// unset, the bundled Playwright Chromium is used for Sources that do not require
+// Chrome. CI sets SRC_BROWSER_CHANNEL=chrome and the workflow verifies the branded
+// binary is installed before this step runs.
+const browserChannel = process.env.SRC_BROWSER_CHANNEL || null;
+const launchOptions = { headless: true };
+if (browserChannel) {
+  launchOptions.channel = browserChannel;
+  console.log(`SRC_BROWSER_CHANNEL=${browserChannel}`);
+}
+const browser = await chromium.launch(launchOptions);
 try {
   let captured = 0;
   for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.test(id)).sort()) {
@@ -286,6 +348,108 @@ try {
             interaction_equal: true,
             initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
             after_reset_screenshot_sha_equal: split.screenshots.after_reset_sha256 === original.screenshots.after_reset_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC047') {
+          const original = await captureSRC47Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureSRC47Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          const states = ['INITIAL', 'ACT1_FIRST_FEELING', 'ACT2_MOMENT', 'ACT3_BLOOM', 'ACT4_WHY_NEXT', 'ACT5_LOVETREE', 'MODAL_OPEN', 'NAV_POPOVER_OPEN'];
+          const eps = 1.5;
+          const metricsEqual = (am, bm) => {
+            const aKeys = Object.keys(am), bKeys = Object.keys(bm);
+            if (aKeys.length !== bKeys.length) return false;
+            for (const k of aKeys) {
+              if (!(k in bm)) return false;
+              const av = am[k], bv = bm[k];
+              for (const f of ['x', 'y', 'width', 'height']) { if (Math.abs(av.rect[f] - bv.rect[f]) > eps) return false; }
+              for (const f of ['display', 'visibility', 'opacity']) { if (av[f] !== bv[f]) return false; }
+            }
+            return true;
+          };
+          for (const state of states) {
+            const ao = original.states[state].state, bo = split.states[state].state;
+            if (state === 'NAV_POPOVER_OPEN') {
+              // Mobile contract: nav groups are hidden by the frozen responsive
+              // contract, so NAV_POPOVER_OPEN is NOT_APPLICABLE_MOBILE for both
+              // variants on mobile viewports (MOBILE_WIDTH = 820). On desktop it
+              // is a real opened popover state: runtime.navPopoverOpen is the
+              // text content of the opened nav-group's data-nav-menu trigger.
+              // stateName lives on the captureState wrapper, not on .state.
+              const aoName = original.states[state].stateName, boName = split.states[state].stateName;
+              if (viewport.width <= MOBILE_WIDTH) {
+                assert.equal(boName, 'NOT_APPLICABLE_MOBILE', `${sourceId} ${viewport.width}x${viewport.height}: ${state} split mobile contract drift`);
+                assert.equal(aoName, 'NOT_APPLICABLE_MOBILE', `${sourceId} ${viewport.width}x${viewport.height}: ${state} original mobile contract drift`);
+              } else {
+                assert.ok(bo.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split popover not opened`);
+                assert.ok(ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original popover not opened`);
+                assert.equal(bo.runtime.navPopoverOpen, ao.runtime.navPopoverOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} popover drift`);
+              }
+              continue;
+            }
+            assert.deepStrictEqual(bo.ids, ao.ids, `${sourceId} ${viewport.width}x${viewport.height}: ${state} ids drift`);
+            assert.equal(bo.elementCount, ao.elementCount, `${sourceId} ${viewport.width}x${viewport.height}: ${state} elementCount drift`);
+            assert.deepStrictEqual(bo.buttonIds, ao.buttonIds, `${sourceId} ${viewport.width}x${viewport.height}: ${state} buttonIds drift`);
+            assert.ok(metricsEqual(ao.metrics, bo.metrics), `${sourceId} ${viewport.width}x${viewport.height}: ${state} metrics drift (rect epsilon ${eps})`);
+            // Canonical ACT states must be deterministic: video must not have
+            // failed, duration must be finite and positive, readyState must be
+            // sufficient to have decoded the frame, and currentTime must sit on
+            // the canonical seek target within tolerance. videoFailed lives on
+            // runtime (stage.classList), not on the video sub-object.
+            assert.equal(bo.runtime.videoFailed, false, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split videoFailed`);
+            assert.equal(ao.runtime.videoFailed, false, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original videoFailed`);
+            assert.ok(Number.isFinite(ao.video.duration) && ao.video.duration > 0, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original duration`);
+            assert.ok(Number.isFinite(bo.video.duration) && bo.video.duration > 0, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split duration`);
+            assert.ok(ao.video.readyState >= 2, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original readyState`);
+            assert.ok(bo.video.readyState >= 2, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split readyState`);
+            assert.equal(bo.runtime.act, ao.runtime.act, `${sourceId} ${viewport.width}x${viewport.height}: ${state} act drift`);
+            assert.equal(bo.runtime.modalOpen, ao.runtime.modalOpen, `${sourceId} ${viewport.width}x${viewport.height}: ${state} modalOpen drift`);
+            if (state !== 'INITIAL' && ACTS[state] !== undefined) {
+              // INITIAL contains autoplay timing and may legitimately drift by a
+              // few ms; canonical ACT1-5 seeks are deterministic. MODAL_OPEN and
+              // NAV_POPOVER_OPEN are interaction states, not seek targets.
+              assert.ok(Math.abs(ao.video.currentTime - ACTS[state]) <= 0.05, `${sourceId} ${viewport.width}x${viewport.height}: ${state} original currentTime ${ao.video.currentTime} not at canonical ${ACTS[state]}`);
+              assert.ok(Math.abs(bo.video.currentTime - ACTS[state]) <= 0.05, `${sourceId} ${viewport.width}x${viewport.height}: ${state} split currentTime ${bo.video.currentTime} not at canonical ${ACTS[state]}`);
+            }
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          // Canonical pixel digest backstop: the Source uses backdrop-filter:blur()
+          // on glass overlays whose GPU compositing is +/-1 channel jittery run-to-run
+          // (same phenomenon SRC060 guards against). Require the canonical 16x16
+          // digest to match for the deterministic visual states so real layout/color
+          // drift fails closed while sub-2/255 blur jitter does not. INITIAL is
+          // excluded from a strict visual hash because autoplay frame timing can
+          // differ between original and split load paths (its DOM/metrics are still
+          // fully asserted above). Where raw PNG SHA is stable it is recorded too.
+          const canonicalStates = ['ACT1_FIRST_FEELING', 'ACT2_MOMENT', 'ACT3_BLOOM', 'ACT4_WHY_NEXT', 'ACT5_LOVETREE', 'MODAL_OPEN'];
+          const canonicalShas = {};
+          for (const state of canonicalStates) {
+            const aKey = `${state.toLowerCase()}_canonical_sha256`;
+            const oSha = original.screenshots[aKey], sSha = split.screenshots[aKey];
+            canonicalShas[`${state.toLowerCase()}_canonical_sha_equal`] = (oSha === sSha);
+            assert.ok(oSha === sSha, `${sourceId} ${viewport.width}x${viewport.height}: ${state} canonical pixel digest drift (not a raw blur-hash jitter)`);
+          }
+          if (viewport.width > MOBILE_WIDTH) {
+            assert.equal(split.screenshots.nav_canonical_sha256, original.screenshots.nav_canonical_sha256, `${sourceId} ${viewport.width}x${viewport.height}: NAV canonical pixel digest drift`);
+            canonicalShas.nav_canonical_sha_equal = true;
+          }
+          const comparison = {
+            viewport,
+            states: Object.fromEntries(states.map((state) => [`${state.toLowerCase()}_state_equal`, true])),
+            interaction_equal: true,
+            initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
+            act1_screenshot_sha_equal: split.screenshots.act1_first_feeling_sha256 === original.screenshots.act1_first_feeling_sha256,
+            act2_screenshot_sha_equal: split.screenshots.act2_moment_sha256 === original.screenshots.act2_moment_sha256,
+            act3_screenshot_sha_equal: split.screenshots.act3_bloom_sha256 === original.screenshots.act3_bloom_sha256,
+            act4_screenshot_sha_equal: split.screenshots.act4_why_next_sha256 === original.screenshots.act4_why_next_sha256,
+            act5_screenshot_sha_equal: split.screenshots.act5_lovetree_sha256 === original.screenshots.act5_lovetree_sha256,
+            modal_screenshot_sha_equal: split.screenshots.modal_sha256 === original.screenshots.modal_sha256,
+            nav_screenshot_sha_equal: viewport.width > MOBILE_WIDTH ? (split.screenshots.nav_sha256 === original.screenshots.nav_sha256) : true,
+            ...canonicalShas,
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,
           };

@@ -152,6 +152,7 @@ jobs:
         env:
           SRC_PARITY_EVIDENCE_DIR: /tmp/src-split-parity-evidence
           SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
         run: |
           set -euo pipefail
           rm -rf "$SRC_PARITY_EVIDENCE_DIR"
