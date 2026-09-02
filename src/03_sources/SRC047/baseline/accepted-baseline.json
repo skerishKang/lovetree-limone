@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC047",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_ARTIFACT_REVIEW",
+  "captured_head": "d0f07d08675fb574a4eb5d3163a131a951efd2ad",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": 33596466153,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "id": 9833658686,
+    "name": "src-calibration-baseline-d0f07d08675fb574a4eb5d3163a131a951efd2ad",
+    "size_bytes": 27254645,
+    "digest": "sha256:56aec301fc17655ad8e2c085b27982744f33cfef099a6cf760ac3a379af9528f"
+  },
+  "authority": {
+    "bytes": 40890,
+    "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596"
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1280,
+      "height": 800,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN:NOT_APPLICABLE_MOBILE"
+      ]
+    },
+    {
+      "width": 320,
+      "height": 720,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN:NOT_APPLICABLE_MOBILE"
+      ]
+    }
+  ],
+  "runtime_results": {
+    "video_failed": false,
+    "duration_seconds": 14.187007,
+    "ready_state": 4,
+    "act_seek_times": {
+      "ACT1_FIRST_FEELING": 0.9,
+      "ACT2_MOMENT": 4.099999,
+      "ACT3_BLOOM": 7.5,
+      "ACT4_WHY_NEXT": 11.1,
+      "ACT5_LOVETREE": 13.2
+    },
+    "browser_errors": 0
+  },
+  "evidence_inventory": {
+    "file_count": 26,
+    "png_count": 22,
+    "json_count": 4
+  },
+  "evidence_sha256": {
+    "1280x800-original-ACT1_FIRST_FEELING.png": "d50aed22b7fbf3ba84e1295f7bae65958581f9267d8555f1c97a95e23840809f",
+    "1280x800-original-ACT2_MOMENT.png": "4fb0b05d6577069ae352be645cfb9bc07200986bc5b951dff97f22554f50d17a",
+    "1280x800-original-ACT3_BLOOM.png": "6a4907a58fc064d6d12ecd3eaefffd21822d654a4b485b7debae1487876ab5b1",
+    "1280x800-original-ACT4_WHY_NEXT.png": "3a5ff8531dad9ac105d50bf0a09f34fc168a5ae43591d2db283192562afeb424",
+    "1280x800-original-ACT5_LOVETREE.png": "cef9c98ec7ae1b0af9080ae36e30ebbe24bad72ba015c720a624d8035c1d2041",
+    "1280x800-original-INITIAL.png": "a40c298d3d8c8c8a80fe965185195794b73e819b62fc6d455e286067636be27c",
+    "1280x800-original-MODAL_OPEN.png": "5d5d511226297746a4bd85f2f083693e48dd4a22a76b293a9a0fe1a3ab418511",
+    "1280x800-original-NAV_POPOVER_OPEN.png": "958b3e2aaec50bb775e7e19b0658fc7369dd9ede71fae2538fe1a81ad8c50cd5",
+    "1280x800.json": "5016f4f70a4dcd640de6cc0c2e001e85d3c74ddd17e34a1a988208a03cb23a15",
+    "390x844-original-ACT1_FIRST_FEELING.png": "8a3bc7acac1a742421b691c1221339ae6e053e97f8f3fd8a06c53301620e4537",
+    "390x844-original-ACT2_MOMENT.png": "7d71103f619510c94f70900d1a2add48c262f0974d54ce1e42b3198eae1700f3",
+    "390x844-original-ACT3_BLOOM.png": "3c6c7ffcfb728db004e56d27f85f5f4da5f966c06532e76f40432c0fb255332d",
+    "390x844-original-ACT4_WHY_NEXT.png": "383371ab51b21da2a7c4435c5dcf4f496d39032398f17b5de12b52ca41cba276",
+    "390x844-original-ACT5_LOVETREE.png": "fbc64c0e6e120cd11259553026cbee2f99f8ede19b583cd56d7a5e2c1854219f",
+    "390x844-original-INITIAL.png": "8d19597c99ab6f20b8235ba12c4061879f32eb4f15f8ebe4a712e13d800d9d89",
+    "390x844-original-MODAL_OPEN.png": "e610ce7482df049189ff76a82484304d327ffba8b48f48d62136675bdb26484c",
+    "390x844.json": "60e67c877b63d6633ac89e9268b1dbbd6fdbad5aa5954b1c85ffa51f81a08625",
+    "320x720-original-ACT1_FIRST_FEELING.png": "a7be7707d7e6db89a1f7e530ba151a6328cacb61ce49e948d4057844702ddd2a",
+    "320x720-original-ACT2_MOMENT.png": "5bb790c6066b3207cd7c514204803e9daf24c4f857e11e7747a8933c77d5992b",
+    "320x720-original-ACT3_BLOOM.png": "e58aaeb50d5de25f93138308d6d715d669faedff27eab208700191d16fd6f89b",
+    "320x720-original-ACT4_WHY_NEXT.png": "a5bfed12fded77638b5f1549884f9156a7d443b9b7d6fc9ae7f7ca14114c5a93",
+    "320x720-original-ACT5_LOVETREE.png": "af579ca6f464f0d9fc21d2e894a49b3260f6a432f4da1811715dcb47981b2c73",
+    "320x720-original-INITIAL.png": "c56246d06742ce9c802e70615d3669f17f56996d007491970b09ef33c0f94368",
+    "320x720-original-MODAL_OPEN.png": "fc83ddf1da25852c86efc97bc8a8f323114a803294ecc618966eebea94b287bf",
+    "320x720.json": "e1b8d96050b09089a89498141a8497b8d03c8e030878386082de11226bd3aa2f",
+    "summary.json": "2694a8fa69bb6acb9c6caa2515c408344d881b83913d91d7d8562c8c29200075"
+  },
+  "visual_review": {
+    "central_direct_png_review": true,
+    "desktop_states_reviewed": 8,
+    "mobile_390_applicable_states_reviewed": 7,
+    "mobile_320_applicable_states_reviewed": 7,
+    "video_frames_visible": true,
+    "black_or_blank_frames": false,
+    "poster_fallback_observed": false,
+    "desktop_modal_reviewed": true,
+    "desktop_nav_popover_reviewed": true,
+    "mobile_modal_reviewed": true,
+    "mobile_nav_contract": "NOT_APPLICABLE_MOBILE"
+  },
+  "acceptance_authority": {
+    "kind": "EXACT_HEAD_CI_ARTIFACT",
+    "repository_evidence_note": "Repository evidence committed at captured_head was generated before the exact-head CI rerun and is not byte-identical to this artifact; this accepted baseline is bound to the directly reviewed exact-head CI artifact above."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}

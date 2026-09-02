@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>LoveTree · Cinematic Front Door V4.2.5 · Pinned Navigation Menu Fix</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<main class="stage" id="stage" data-act="1" aria-live="polite">
+  <div class="video-world" aria-hidden="true">
+    <video id="film" muted playsinline preload="auto" poster="assets/poster-act01.jpg">
+      <source id="filmSource" src="assets/Track47_V4.2_Cinematic_DirectorCut_v2.1_CLEAN_1920x1080.mp4" type="video/mp4" />
+    </video>
+    <div class="poster-fallback"></div>
+  </div>
+  <div class="scrim" id="scrim" data-act="1"></div>
+
+  <nav class="nav" aria-label="LoveTree front door">
+    <a class="brand" href="#top" data-action="replay">LOVETREE</a>
+    <div class="nav-links">
+      <div class="nav-group">
+        <button class="nav-link" type="button" data-nav-menu="moments" aria-haspopup="true" aria-expanded="false">Moments</button>
+        <div class="nav-popover" role="menu" aria-label="Moment views">
+          <a class="nav-option" data-route="moment57" href="#"><span>Living Glass Cards</span><small>57 · MOMENT</small></a>
+          <a class="nav-option" data-route="moment58" href="#"><span>Living Memory Pinboard</span><small>58 · PINBOARD</small></a>
+          <a class="nav-option" data-route="moment62" href="#"><span>Memory Sculpture Rail</span><small>62 · SCULPTURE</small></a>
+          <a class="nav-option" data-route="moment63" href="#"><span>3D Moment Field Studio</span><small>63 · 3D FIELD</small></a>
+          <a class="nav-option" data-route="moment64" href="#"><span>Floating Moment Orbit</span><small>64 · ORBIT</small></a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-link" type="button" data-nav-menu="connections" aria-haspopup="true" aria-expanded="false">Connections</button>
+        <div class="nav-popover" role="menu" aria-label="Connection views">
+          <a class="nav-option" data-route="connection11" href="#"><span>Memory Graph Observatory</span><small>11 · GRAPH</small></a>
+          <a class="nav-option" data-route="connection16" href="#"><span>Memory Topology Lab</span><small>16 · TOPOLOGY</small></a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-link" type="button" data-nav-menu="mytree" aria-haspopup="true" aria-expanded="false">My Tree</button>
+        <div class="nav-popover" role="menu" aria-label="My Tree views">
+          <a class="nav-option" data-route="tree46" href="#"><span>Popup Season Memory Book</span><small>46 · MEMORY BOOK</small></a>
+          <a class="nav-option" data-route="tree35" href="#"><span>LP Memory Player</span><small>35 · PLAYER</small></a>
+          <a class="nav-option" data-route="tree39" href="#"><span>LP Coverflow Gallery</span><small>39 · GALLERY</small></a>
+        </div>
+      </div>
+      <a class="nav-plant" data-route="firstMoment" href="#">첫 순간 심기</a>
+    </div>
+  </nav>
+
+  <section class="scene-copy act-1 is-active" data-copy-act="1">
+    <p class="eyebrow">LOVETREE · FIRST FEELING</p>
+    <h1>마음이 움직인 순간은<br>그냥 지나가지 않습니다.</h1>
+    <p class="sub">한 장면이 오래 남았다면, 그게 첫 Moment입니다.</p>
+  </section>
+
+  <section class="scene-copy act-2" data-copy-act="2">
+    <p class="eyebrow">LOVETREE · MOMENT</p>
+    <h1>그 순간을 남기고.</h1>
+    <p class="sub">정확한 장면 · 그때의 마음 · 나만의 한 줄</p>
+  </section>
+
+  <section class="scene-copy act-3" data-copy-act="3">
+    <p class="eyebrow">LOVETREE · BLOOM</p>
+    <h1>하나의 순간이<br>다음 마음을 피워냅니다.</h1>
+    <p class="sub">흩어진 기억이 아니라, 이어져 온 하나의 감정 흐름.</p>
+  </section>
+
+  <section class="scene-copy act-4" data-copy-act="4">
+    <p class="eyebrow">LOVETREE · WHY NEXT</p>
+    <h1>왜 다음 장면을<br>찾아갔을까요?</h1>
+    <div class="reason-list" aria-label="Why next examples">
+      <span>표정이 계속 생각나서.</span>
+      <span>목소리가 궁금해서.</span>
+      <span>조금 더 알고 싶어서.</span>
+    </div>
+    <p class="tiny">CONNECTION · THE REASON YOU MOVED NEXT</p>
+  </section>
+
+  <section class="scene-copy act-5" data-copy-act="5">
+    <p class="eyebrow">LOVETREE · MY LOVETREE</p>
+    <h1>그 마음이 자라온 길.<br>My LoveTree.</h1>
+    <p class="sub">처음의 순간부터 지금까지, 나만의 감정 경로로 남깁니다.</p>
+    <div class="cta-row">
+      <a class="cta primary" data-route="firstMoment" href="#">첫 순간 심기</a>
+      <a class="cta" data-route="tree46" href="#">러브트리 둘러보기</a>
+      <button class="cta tertiary" data-action="replay">다시 보기</button>
+    </div>
+  </section>
+
+  <div class="ghost-word" aria-hidden="true">LOVETREE</div>
+
+  <div class="mini-controls" aria-label="cinematic controls">
+    <button class="mini-btn" id="playPause">Pause</button>
+    <button class="mini-btn" id="muteBtn" aria-pressed="true">Muted</button>
+    <span class="state-chip" id="stateChip">AUTO_CINEMATIC</span>
+  </div>
+
+  <div class="progress" aria-label="Act progress">
+    <div class="progress-copy">
+      <div class="progress-count" id="progressCount">01 / 05</div>
+      <div class="progress-label" id="progressLabel">FIRST FEELING</div>
+    </div>
+    <div class="progress-rail" id="progressRail" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+      <div class="progress-fill"></div><div class="progress-hit"></div>
+    </div>
+  </div>
+
+  <div class="reduced-card" id="reducedCard">
+    <button class="mini-btn" id="reducedPlay">Play video</button>
+    <span class="state-chip">5 KEYFRAME STILL MODE</span>
+  </div>
+
+  <section class="fallback-message" id="fallbackMessage">
+    <p class="eyebrow">LOVETREE</p>
+    <h2>마음이 움직인 순간부터,<br>LoveTree는 시작됩니다.</h2>
+    <a class="cta primary" data-route="firstMoment" href="#">첫 순간 심기</a>
+  </section>
+</main>
+
+<div class="modal-shell" id="modal" role="dialog" aria-modal="true" aria-labelledby="composerTitle">
+  <section class="composer">
+    <div class="composer-head">
+      <div>
+        <h2 id="composerTitle">어떤 순간이 마음에 남았나요?</h2>
+        <p class="note">독립 HTML 데모입니다. 입력은 서버에 저장되지 않습니다.</p>
+      </div>
+      <button class="close-btn" id="closeModal" aria-label="닫기">×</button>
+    </div>
+    <div class="field"><label for="momentUrl">URL</label><input id="momentUrl" type="url" placeholder="https://" autocomplete="off" /></div>
+    <div class="emotions" aria-label="quick emotion">
+      <button class="emotion" type="button">궁금해</button><button class="emotion" type="button">설레</button><button class="emotion" type="button">계속 생각나</button><button class="emotion" type="button">놀랐어</button>
+    </div>
+    <div class="field"><label for="momentLine">한 줄</label><textarea id="momentLine" maxlength="140" placeholder="왜 이 장면이 남았는지 한 줄만 적어도 됩니다."></textarea></div>
+    <div class="composer-actions">
+      <span class="demo-status" id="demoStatus">저장 기능은 연결하지 않았습니다.</span>
+      <button class="cta primary" id="demoPlant">이 순간 심기 · 데모</button>
+    </div>
+  </section>
+</div>
+
+<div class="route-notice" id="routeNotice" role="status" aria-live="polite">
+  실제 LoveTree 후보 연결은 Google Drive 동기화 로컬 HTML에서 실행됩니다.
+</div>
+
+<script src="./script.js"></script>
+</body>
+</html>

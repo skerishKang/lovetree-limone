@@ -46,11 +46,49 @@ export function validateMechanicalSplitSurface({ repoRoot, roots = ['src/03_sour
   return failures;
 }
 
+function validateAcceptedParityComparisons(sourceId, parity, failures) {
+  const comps = parity?.comparisons ?? {};
+  const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
+  const allowedScreenshots = [
+    'BYTE_IDENTICAL',
+    'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST',
+    'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+  ];
+
+  if (
+    comps.dom !== 'EQUAL'
+    || !allowedGeometry.includes(comps.geometry)
+    || !allowedGeometry.includes(comps.computed_style)
+    || comps.runtime_state !== 'EQUAL'
+    || comps.interactions !== 'EQUAL'
+    || !allowedScreenshots.includes(comps.screenshots)
+  ) {
+    failures.push(`${sourceId}: parity comparison is not fully PASS`);
+  }
+
+  if (comps.screenshots === 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD') {
+    const max = comps.canonical_pixel_hamming_max;
+    const threshold = comps.canonical_pixel_threshold;
+    if (!Number.isInteger(max) || max < 0) failures.push(`${sourceId}: parity canonical Hamming max invalid`);
+    if (!Number.isInteger(threshold) || threshold <= 0 || threshold > 32) failures.push(`${sourceId}: parity canonical Hamming threshold invalid`);
+    if (Number.isInteger(max) && Number.isInteger(threshold) && max > threshold) failures.push(`${sourceId}: parity canonical Hamming exceeds threshold`);
+    if (parity?.visual_review?.central_direct_artifact_review !== true) failures.push(`${sourceId}: Hamming parity requires direct CENTRAL artifact review`);
+    if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: Hamming parity required-network errors present`);
+  }
+
+  if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+}
+
 /**
  * Validate the shared mechanical Source contract for every active phase.
  * Phase-specific scope is deliberately limited to calibration membership:
  * ROLLOUT accepts any registered SRCxxx capsule, while every capsule uses
  * this same identity, authority, stage-order, baseline, split, and parity gate.
+ *
+ * Stage requirements are cumulative rather than all-or-nothing. An S1-only
+ * capsule is valid when identity + authority/original are complete and every
+ * downstream stage remains false. S2/S3/S4 files become mandatory only when
+ * the corresponding manifest stage is true.
  */
 export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibrationSet }) {
   const failures = [];
@@ -68,8 +106,6 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       'authority/authority.json',
       'authority/sha256.txt',
       'original/original.html',
-      'baseline/capture-plan.json',
-      'baseline/accepted-baseline.json',
       'evidence/source/drive-authority-readback.json',
     ]) requirePath(repoRoot, `${base}/${required}`, failures);
 
@@ -109,25 +145,26 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     }
     if (stages.identity_verified !== true || stages.raw_authority_locked !== true) failures.push(`${sourceId}: S0/S1 incomplete`);
 
-    const acceptedBase = readJson(repoRoot, `${base}/baseline/accepted-baseline.json`, failures);
-    if (!acceptedBase || acceptedBase.status !== 'ACCEPTED' || acceptedBase.source_id !== sourceId) failures.push(`${sourceId}: accepted baseline invalid`);
-    if (stages.baseline_captured !== true) failures.push(`${sourceId}: baseline_captured must be true before S3`);
+    if (stages.baseline_captured === true) {
+      requirePath(repoRoot, `${base}/baseline/capture-plan.json`, failures);
+      requirePath(repoRoot, `${base}/baseline/accepted-baseline.json`, failures);
+      const acceptedBase = readJson(repoRoot, `${base}/baseline/accepted-baseline.json`, failures);
+      if (!acceptedBase || acceptedBase.status !== 'ACCEPTED' || acceptedBase.source_id !== sourceId) failures.push(`${sourceId}: accepted baseline invalid`);
+    }
 
     if (stages.mechanical_split_complete === true) {
+      if (stages.baseline_captured !== true) failures.push(`${sourceId}: mechanical split cannot precede accepted baseline`);
       for (const required of ['split/index.html', 'split/styles.css', 'split/script.js', 'split/materialization.json']) requirePath(repoRoot, `${base}/${required}`, failures);
       const materialization = readJson(repoRoot, `${base}/split/materialization.json`, failures);
       if (!materialization || !['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(materialization.status)) failures.push(`${sourceId}: invalid materialization status`);
       if (materialization && (materialization.authority?.bytes !== m.bytes || materialization.authority?.sha256 !== m.sha256)) failures.push(`${sourceId}: materialization authority drift`);
     }
     if (stages.source_split_parity_pass === true) {
+      if (stages.mechanical_split_complete !== true) failures.push(`${sourceId}: parity cannot precede mechanical split`);
       const parity = readJson(repoRoot, `${base}/evidence/parity/accepted-parity.json`, failures);
       if (!parity || parity.status !== 'ACCEPTED' || parity.source_id !== sourceId) failures.push(`${sourceId}: accepted parity evidence missing/invalid`);
       if (parity && (parity.authority?.bytes !== m.bytes || parity.authority?.sha256 !== m.sha256)) failures.push(`${sourceId}: parity authority drift`);
-      const comps = parity?.comparisons ?? {};
-      const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
-      const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST'];
-      if (comps.dom !== 'EQUAL' || !allowedGeometry.includes(comps.geometry) || !allowedGeometry.includes(comps.computed_style) || comps.runtime_state !== 'EQUAL' || comps.interactions !== 'EQUAL' || !allowedScreenshots.includes(comps.screenshots)) failures.push(`${sourceId}: parity comparison is not fully PASS`);
-      if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+      if (parity) validateAcceptedParityComparisons(sourceId, parity, failures);
     }
   }
 

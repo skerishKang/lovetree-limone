@@ -1,0 +1,2383 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "states": {
+    "INITIAL": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 50.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 72.531,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "AUTO_CINEMATIC",
+          "act": 1,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": false,
+          "muted": true,
+          "currentTime": 1.173956,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "5e902d818e4de9bfd922118112ab71e72f865136b61983dec1251b95d3b3d228",
+      "stateName": "INITIAL"
+    },
+    "ACT1_FIRST_FEELING": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "USER_CONTROLLED",
+          "act": 1,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 0.9,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "c8ca58fc676e18d9f00c3bafd0f24f71bf83f1f71e9f374621e049e5faf9263d",
+      "stateName": "ACT1_FIRST_FEELING"
+    },
+    "ACT2_MOMENT": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "USER_CONTROLLED",
+          "act": 2,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 4.099999,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "50b52e1a88728041c8e71a6fbc867c355cebb5a92126886b8f5a934ec76110c8",
+      "stateName": "ACT2_MOMENT"
+    },
+    "ACT3_BLOOM": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "USER_CONTROLLED",
+          "act": 3,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 7.5,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "1307cbf0efebd8aff8ce4bb3505bb66266a29cb37e81f945913098ca216f6dc6",
+      "stateName": "ACT3_BLOOM"
+    },
+    "ACT4_WHY_NEXT": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "USER_CONTROLLED",
+          "act": 4,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 11.1,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "04580449878f7c0fd77311c7924c78e782f42c13710efba12e840c159a2b6de6",
+      "stateName": "ACT4_WHY_NEXT"
+    },
+    "ACT5_LOVETREE": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion cta-ready",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": -214.5,
+              "y": 0,
+              "width": 819,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "USER_CONTROLLED",
+          "act": 5,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": true,
+          "modalOpen": false,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 13.2,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "845cb781bc3a4f2fcb72013ac3b25f5dca3136fd92f7b8ab4e2cc0277f1990f4",
+      "stateName": "ACT5_LOVETREE"
+    },
+    "MODAL_OPEN": {
+      "state": {
+        "ids": [
+          "stage",
+          "film",
+          "filmSource",
+          "scrim",
+          "playPause",
+          "muteBtn",
+          "stateChip",
+          "progressCount",
+          "progressLabel",
+          "progressRail",
+          "reducedCard",
+          "reducedPlay",
+          "fallbackMessage",
+          "modal",
+          "composerTitle",
+          "closeModal",
+          "momentUrl",
+          "momentLine",
+          "demoStatus",
+          "demoPlant",
+          "routeNotice"
+        ],
+        "elementCount": 123,
+        "buttonIds": [
+          "",
+          "",
+          "",
+          "",
+          "playPause",
+          "muteBtn",
+          "reducedPlay",
+          "closeModal",
+          "",
+          "",
+          "",
+          "",
+          "demoPlant"
+        ],
+        "metrics": {
+          "stage": {
+            "tag": "MAIN",
+            "className": "stage reduced-motion",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "film": {
+            "tag": "VIDEO",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "filmSource": {
+            "tag": "SOURCE",
+            "className": "",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "",
+            "visibility": "",
+            "opacity": ""
+          },
+          "scrim": {
+            "tag": "DIV",
+            "className": "scrim",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "playPause": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 14,
+              "y": 798,
+              "width": 43.922,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "muteBtn": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 65.922,
+              "y": 798,
+              "width": 53.531,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "stateChip": {
+            "tag": "SPAN",
+            "className": "state-chip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressCount": {
+            "tag": "DIV",
+            "className": "progress-count",
+            "rect": {
+              "x": 263,
+              "y": 796,
+              "width": 90,
+              "height": 14
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "progressLabel": {
+            "tag": "DIV",
+            "className": "progress-label",
+            "rect": {
+              "x": 263,
+              "y": 816,
+              "width": 90,
+              "height": 10
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0.7"
+          },
+          "progressRail": {
+            "tag": "DIV",
+            "className": "progress-rail",
+            "rect": {
+              "x": 362,
+              "y": 758,
+              "width": 14,
+              "height": 68
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedCard": {
+            "tag": "DIV",
+            "className": "reduced-card",
+            "rect": {
+              "x": 145.961,
+              "y": 768,
+              "width": 98.078,
+              "height": 48
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "reducedPlay": {
+            "tag": "BUTTON",
+            "className": "mini-btn",
+            "rect": {
+              "x": 156.961,
+              "y": 777,
+              "width": 76.078,
+              "height": 30
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "fallbackMessage": {
+            "tag": "SECTION",
+            "className": "fallback-message",
+            "rect": {
+              "x": 20,
+              "y": 411.656,
+              "width": 350,
+              "height": 290.438
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          },
+          "modal": {
+            "tag": "DIV",
+            "className": "modal-shell open",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 844
+            },
+            "display": "grid",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "composerTitle": {
+            "tag": "H2",
+            "className": "",
+            "rect": {
+              "x": 47,
+              "y": 201.656,
+              "width": 260.797,
+              "height": 62.094
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "closeModal": {
+            "tag": "BUTTON",
+            "className": "close-btn",
+            "rect": {
+              "x": 327.797,
+              "y": 201.656,
+              "width": 32,
+              "height": 31
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentUrl": {
+            "tag": "INPUT",
+            "className": "",
+            "rect": {
+              "x": 47,
+              "y": 358.344,
+              "width": 312.797,
+              "height": 49
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "momentLine": {
+            "tag": "TEXTAREA",
+            "className": "",
+            "rect": {
+              "x": 47,
+              "y": 503.344,
+              "width": 312.797,
+              "height": 74
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoStatus": {
+            "tag": "SPAN",
+            "className": "demo-status",
+            "rect": {
+              "x": 47,
+              "y": 614.094,
+              "width": 154,
+              "height": 16.5
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "demoPlant": {
+            "tag": "BUTTON",
+            "className": "cta primary",
+            "rect": {
+              "x": 236.047,
+              "y": 602.344,
+              "width": 123.75,
+              "height": 40
+            },
+            "display": "flex",
+            "visibility": "visible",
+            "opacity": "1"
+          },
+          "routeNotice": {
+            "tag": "DIV",
+            "className": "route-notice",
+            "rect": {
+              "x": 97.5,
+              "y": 755.828,
+              "width": 195,
+              "height": 76.172
+            },
+            "display": "block",
+            "visibility": "visible",
+            "opacity": "0"
+          }
+        },
+        "runtime": {
+          "mode": "PAUSED",
+          "act": 1,
+          "videoFailed": false,
+          "reducedMotion": true,
+          "ctaReady": false,
+          "modalOpen": true,
+          "navPopoverOpen": null
+        },
+        "video": {
+          "paused": true,
+          "muted": true,
+          "currentTime": 0.9,
+          "duration": 14.187007,
+          "readyState": 4
+        }
+      },
+      "pngSha": "4c3dce2ad0e8e6b36d7b7240041bad253a388167088c4c0ddb8f328955256437",
+      "stateName": "MODAL_OPEN"
+    },
+    "NAV_POPOVER_OPEN": {
+      "stateName": "NOT_APPLICABLE_MOBILE",
+      "state": {
+        "note": "nav groups hidden by frozen responsive contract"
+      },
+      "pngSha": null
+    }
+  },
+  "interaction": {
+    "controlSurface": "CINEMATIC_FRONTDOOR",
+    "playPauseClicked": true,
+    "muteClicked": true,
+    "progressRailClicked": true
+  },
+  "errors": [],
+  "screenshots": {
+    "initial_sha256": "5e902d818e4de9bfd922118112ab71e72f865136b61983dec1251b95d3b3d228",
+    "act1_first_feeling_sha256": "c8ca58fc676e18d9f00c3bafd0f24f71bf83f1f71e9f374621e049e5faf9263d",
+    "act2_moment_sha256": "50b52e1a88728041c8e71a6fbc867c355cebb5a92126886b8f5a934ec76110c8",
+    "act3_bloom_sha256": "1307cbf0efebd8aff8ce4bb3505bb66266a29cb37e81f945913098ca216f6dc6",
+    "act4_why_next_sha256": "04580449878f7c0fd77311c7924c78e782f42c13710efba12e840c159a2b6de6",
+    "act5_lovetree_sha256": "845cb781bc3a4f2fcb72013ac3b25f5dca3136fd92f7b8ab4e2cc0277f1990f4",
+    "modal_sha256": "4c3dce2ad0e8e6b36d7b7240041bad253a388167088c4c0ddb8f328955256437"
+  }
+}

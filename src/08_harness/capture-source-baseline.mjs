@@ -2,11 +2,14 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
+import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
+import { sendFileRange } from './src-range.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -26,6 +29,21 @@ const sourceIds = fs.readdirSync(sourceRoot, { withFileTypes: true })
   .map((entry) => entry.name)
   .sort();
 if (!sourceIds.length) throw new Error(`${state.phase} requires at least one active Source`);
+
+const baselineCaptureTargets = sourceIds.filter((sourceId) => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, sourceId, 'manifest.json'), 'utf8'));
+  if (manifest.stages?.baseline_captured === true) return true;
+  const capturePlanPath = path.join(sourceRoot, sourceId, 'baseline', 'capture-plan.json');
+  if (fs.existsSync(capturePlanPath)) {
+    const capturePlan = JSON.parse(fs.readFileSync(capturePlanPath, 'utf8'));
+    if (capturePlan.status === 'PENDING_EXACT_HEAD_CI') return true;
+  }
+  return false;
+});
+if (!baselineCaptureTargets.length) {
+  console.log('SRC_BASELINE_CAPTURE=SKIPPED_NO_TARGETS');
+  process.exit(0);
+}
 
 const defaultViewports = [
   { width: 1280, height: 800 },
@@ -108,10 +126,35 @@ async function settle(page) {
   });
 }
 
-async function startServer(sourceId, originalPath) {
+async function startServer(sourceId, originalPath, sourceDir) {
+  const isSRC047 = sourceId === 'SRC047';
+  const assetFiles = isSRC047 ? src47SourceFiles(sourceDir, sourceId) : new Map();
+
+// Large video assets must support HTTP Range requests: without them
+  // Chromium refuses to seek the MP4 past the first buffered segment and the
+  // cinematic baseline would silently fall back to the poster.
+  //
+  // IMPORTANT: fs.readFileSync does NOT support start/end as file offsets.
+  // Passing { start, end } is silently ignored and returns the WHOLE file,
+  // which made Content-Length report a partial length while the body was the
+  // full file. Load once into memory (28 MB max) and slice the exact window.
+  const sendFile = (res, filePath, mimeType) => sendFileRange(res, filePath, mimeType);
+
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }
-    if (req.url !== `/${sourceId}/original.html`) {
+
+    if (isSRC047 && assetFiles.has(req.url)) {
+      const [filePath, mimeType] = assetFiles.get(req.url);
+      if (!fs.existsSync(filePath)) {
+        res.statusCode = 404;
+        res.end('asset not found');
+        return;
+      }
+      sendFile(res, filePath, mimeType);
+      return;
+    }
+
+    if (req.url !== `/${sourceId}/original.html` && new URL(req.url, 'http://127.0.0.1').pathname !== `/${sourceId}/original.html`) {
       res.statusCode = 404;
       res.end('not found');
       return;
@@ -169,9 +212,48 @@ async function exerciseMobile(page, sourceId, label, originReveal) {
   return interaction;
 }
 
-const browser = await chromium.launch({ headless: true });
+// Browser channel is configurable. SRC_BROWSER_CHANNEL=chrome forces the
+// branded Google Chrome binary (Playwright channel: 'chrome'). When unset the
+// bundled Playwright Chromium is used, preserving local/backward-compatible
+// behavior. CI sets SRC_BROWSER_CHANNEL=chrome and fails closed if the channel
+// binary is absent, so an S2 capture never silently falls back to Chromium.
+const browserChannel = process.env.SRC_BROWSER_CHANNEL || null;
+const launchOptions = { headless: true };
+if (browserChannel) {
+  // Fail closed: verify the channel binary is resolvable before launching.
+  // Playwright throws on launch if the channel is missing, but an explicit
+  // precheck produces a clear CI error instead of a launch-time crash.
+  const { execFileSync } = await import('node:child_process');
+  let chromeVersion = null;
+  try {
+    const candidates = process.platform === 'win32'
+      ? [
+          'chrome.exe',
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        ]
+      : [
+          'google-chrome',
+          'google-chrome-stable',
+          'chromium-browser',
+          'chromium',
+        ];
+    for (const c of candidates) {
+      try {
+        chromeVersion = execFileSync(c, ['--version'], { stdio: 'pipe', encoding: 'utf8' }).trim();
+        break;
+      } catch { /* try next */ }
+    }
+  } catch { /* ignore */ }
+  if (!chromeVersion) {
+    throw new Error(`SRC_BROWSER_CHANNEL=${browserChannel} requested but no branded browser binary was found; refusing to fall back to bundled Chromium`);
+  }
+  console.log(`SRC_BROWSER_CHANNEL=${browserChannel} -> ${chromeVersion}`);
+  launchOptions.channel = browserChannel;
+}
+const browser = await chromium.launch(launchOptions);
 try {
-  for (const sourceId of sourceIds) {
+  for (const sourceId of baselineCaptureTargets) {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
     const originalPath = path.join(sourceDir, 'original', 'original.html');
@@ -181,7 +263,7 @@ try {
 
     const sourceOut = path.join(outRoot, sourceId);
     fs.mkdirSync(sourceOut, { recursive: true });
-    const server = await startServer(sourceId, originalPath);
+    const server = await startServer(sourceId, originalPath, sourceDir);
     const { port } = server.address();
     try {
       const summary = {
@@ -239,6 +321,15 @@ try {
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.initial.ids.length, elementCount: evidence.initial.elementCount });
+          await page.close();
+          await context.close();
+          continue;
+        }
+if (sourceId === 'SRC047') {
+          const evidence = await captureSRC47Baseline(page, `http://127.0.0.1:${port}/${sourceId}/original.html`, sourceOut, label);
+          if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
           await page.close();
           await context.close();
           continue;
