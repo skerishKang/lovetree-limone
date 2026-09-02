@@ -18,11 +18,12 @@
   "family_ref": null,
   "duplicate_variant_status": "UNRESOLVED",
   "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
     "baseline_captured": true,
-    "mechanical_split_complete": false,
+    "mechanical_split_complete": true,
     "source_split_parity_pass": false
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
