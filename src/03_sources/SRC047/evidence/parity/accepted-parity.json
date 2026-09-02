@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC047",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_ARTIFACT_REVIEW",
+  "source_head": "046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": 33615088658,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "id": 9840796488,
+    "name": "src-split-parity-046eedbd731988bb5d6bb98316c0c23ab0dceb38",
+    "size_bytes": 24807470,
+    "digest": "sha256:532a0ac10666df099837c9723c6889f1d014b115a8eca429c942543cc63f9a2b"
+  },
+  "authority": {
+    "bytes": 40890,
+    "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596"
+  },
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 800,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN=NOT_APPLICABLE_MOBILE"
+      ]
+    },
+    {
+      "width": 320,
+      "height": 720,
+      "states": [
+        "INITIAL",
+        "ACT1_FIRST_FEELING",
+        "ACT2_MOMENT",
+        "ACT3_BLOOM",
+        "ACT4_WHY_NEXT",
+        "ACT5_LOVETREE",
+        "MODAL_OPEN",
+        "NAV_POPOVER_OPEN=NOT_APPLICABLE_MOBILE"
+      ]
+    }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "DIRECT_VISUAL_EQUIVALENT",
+    "canonical_pixel_hamming_max": 1,
+    "canonical_pixel_threshold": 32,
+    "modal_canonical_hamming_max": 0,
+    "desktop_nav_canonical_hamming": 0,
+    "modal_screenshots": "BYTE_IDENTICAL",
+    "desktop_nav_screenshot": "BYTE_IDENTICAL",
+    "initial_state": "DIRECT_VISUAL_REVIEW_ONLY_AUTOPLAY_TIMING"
+  },
+  "runtime": {
+    "video_failed": false,
+    "duration_seconds": 14.187007,
+    "ready_state_minimum": 4,
+    "canonical_act_times": [
+      0.9,
+      4.099999,
+      7.5,
+      11.1,
+      13.2
+    ],
+    "browser_errors": 0,
+    "required_network_errors": 0
+  },
+  "visual_review": {
+    "central_direct_artifact_review": true,
+    "desktop_reviewed": true,
+    "mobile_390_reviewed": true,
+    "mobile_320_reviewed": true,
+    "modal_reviewed": true,
+    "desktop_nav_reviewed": true,
+    "meaningful_original_split_drift": "NONE_OBSERVED"
+  },
+  "notes": [
+    "CENTRAL downloaded the exact-head GitHub Actions artifact and independently verified its ZIP SHA-256 against the recorded artifact digest.",
+    "CENTRAL directly reviewed original/split PNG pairs for ACT1-ACT5, MODAL_OPEN, desktop NAV_POPOVER_OPEN, and both mobile viewports.",
+    "Raw ACT PNG SHA values may differ from GPU/font rasterization jitter; deterministic canonical 16x16 pixel-buffer Hamming distance was at most 1 byte against a fail-closed threshold of 32.",
+    "MODAL_OPEN canonical Hamming was 0 at all three viewports; desktop NAV canonical Hamming was 0 and its raw screenshot was byte-identical.",
+    "INITIAL is excluded from strict canonical screenshot equality because autoplay capture time can vary slightly; its DOM/geometry/runtime contract was asserted and CENTRAL directly reviewed the images.",
+    "No Source authority, split output, product adapter, backend, DB, auth, Ready transition, merge, or production deploy was part of this acceptance."
+  ]
+}
