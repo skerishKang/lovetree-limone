@@ -73,27 +73,44 @@ async function assertSRC47Ready(page, sourceId) {
 }
 
 async function waitForVideoReady(page, sourceId, timeout = 30000) {
-  // Proven contract: the film element must reach readyState >= 1 with a real
-  // finite duration. Headless Chromium fires loadedmetadata reliably when the
-  // MP4 is served with the correct video/mp4 content-type; duration null or
-  // readyState 0 means the video never loaded (poster fallback path).
+  // Give the page a moment to start fetching the MP4 after the load event;
+  // headless Chromium sometimes does not begin the media request until the
+  // first animation frame after navigation.
+  await page.waitForTimeout(3000);
   await page.waitForFunction(() => {
     const video = document.getElementById('film');
     return video && video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0;
   }, null, { timeout });
 }
 
+async function unlockVideo(page) {
+  // Headless Chromium blocks programmatic play/seek until a real user
+  // gesture. A click on the play control is a genuine user gesture and also
+  // starts the frozen script's own scrubLoop, which is what QA.seek relies on.
+  const playPause = page.locator('#playPause');
+  if (await playPause.count() === 0) {
+    throw new Error('SRC047: #playPause control not found — cannot unlock video');
+  }
+  await playPause.click();
+  await page.waitForTimeout(300);
+  await page.evaluate(() => {
+    const video = document.getElementById('film');
+    if (video) video.muted = true;
+  });
+}
+
 async function seekACT(page, actKey) {
   const t = ACTS[actKey];
-  // Headless Chromium silently ignores currentTime assignment while the
-  // element is paused, so the element must play once, then pause, then seek.
+  // Headless Chromium refuses to seek the MP4 until a real user gesture
+  // unlocks playback, and only honours currentTime while the element is
+  // playing. The frozen script's own QA.seek(t) is the canonical path: it
+  // pauses, sets scrubTime/targetTime, forces the scrubLoop to drive the
+  // frame, and applies the ACT composition. Use it rather than assigning
+  // currentTime directly.
   await page.evaluate((target) => {
     const video = document.getElementById('film');
-    if (!video) return;
-    video.muted = true;
-    video.play();
-    video.pause();
-    video.currentTime = target;
+    if (video) video.muted = true;
+    window.__lovetreeQA.seek(target);
   }, t);
   await page.waitForFunction((target) => {
     const video = document.getElementById('film');
@@ -200,7 +217,9 @@ async function captureSRC47Page(page, baseUrl, sourceOut, variant, sourceId, lab
   const states = {};
   const screenshots = {};
 
-  // INITIAL first, then ACT1-5 via deterministic seek, then MODAL, then NAV.
+  // INITIAL first (after a real unlock gesture), then ACT1-5 via QA.seek,
+  // then MODAL, then NAV.
+  await unlockVideo(page);
   states.INITIAL = await captureState(page, sourceOut, label, 'INITIAL');
   screenshots.initial_sha256 = states.INITIAL.pngSha;
 

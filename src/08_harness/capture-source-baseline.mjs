@@ -30,13 +30,7 @@ if (!sourceIds.length) throw new Error(`${state.phase} requires at least one act
 
 const baselineCaptureTargets = sourceIds.filter((sourceId) => {
   const manifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, sourceId, 'manifest.json'), 'utf8'));
-  if (manifest.stages?.baseline_captured === true) return true;
-  const capturePlanPath = path.join(sourceRoot, sourceId, 'baseline', 'capture-plan.json');
-  if (fs.existsSync(capturePlanPath)) {
-    const capturePlan = JSON.parse(fs.readFileSync(capturePlanPath, 'utf8'));
-    if (capturePlan.status === 'PENDING_EXACT_HEAD_CI') return true;
-  }
-  return false;
+  return manifest.stages?.baseline_captured === true;
 });
 if (!baselineCaptureTargets.length) {
   console.log('SRC_BASELINE_CAPTURE=SKIPPED_NO_TARGETS');
@@ -128,6 +122,34 @@ async function startServer(sourceId, originalPath, sourceDir) {
   const isSRC047 = sourceId === 'SRC047';
   const assetFiles = isSRC047 ? src47SourceFiles(sourceDir, sourceId) : new Map();
 
+// Large video assets must support HTTP Range requests: without them
+  // Chromium refuses to seek the MP4 past the first buffered segment and the
+  // cinematic baseline would silently fall back to the poster. Buffers are
+  // read into memory (28 MB max) rather than piped so an early client abort
+  // cannot leave the response stream hanging.
+  const sendFile = (res, filePath, mimeType) => {
+    const stat = fs.statSync(filePath);
+    const range = res.req?.headers?.range;
+    if (range) {
+      const match = /bytes=(\d*)-(\d*)/.exec(range);
+      if (!match) { res.statusCode = 416; res.end(); return; }
+      const start = match[1] ? +match[1] : 0;
+      const end = match[2] ? +match[2] : stat.size - 1;
+      res.statusCode = 206;
+      res.setHeader('content-range', `bytes ${start}-${end}/${stat.size}`);
+      res.setHeader('accept-ranges', 'bytes');
+      res.setHeader('content-length', end - start + 1);
+      res.setHeader('content-type', mimeType);
+      res.end(fs.readFileSync(filePath, { start, end }));
+      return;
+    }
+    res.statusCode = 200;
+    res.setHeader('accept-ranges', 'bytes');
+    res.setHeader('content-length', stat.size);
+    res.setHeader('content-type', mimeType);
+    res.end(fs.readFileSync(filePath));
+  };
+
   const server = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') { res.statusCode = 204; res.end(); return; }
 
@@ -138,9 +160,7 @@ async function startServer(sourceId, originalPath, sourceDir) {
         res.end('asset not found');
         return;
       }
-      res.statusCode = 200;
-      res.setHeader('content-type', mimeType);
-      res.end(fs.readFileSync(filePath));
+      sendFile(res, filePath, mimeType);
       return;
     }
 
