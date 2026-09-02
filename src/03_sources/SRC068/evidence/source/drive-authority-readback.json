@@ -3,19 +3,22 @@
   "source_id": "SRC068",
   "authority_mode": "DUAL_VARIANT",
   "verified_at_utc": "2026-09-03T07:24:00Z",
-  "verification_mode": "LOCAL_RCLONE_DRIVE_READBACK",
-  "verification_note": "Fresh rclone Drive listing corroborated all 18 variant image bytes (id/size/md5) in the shared authority folder. The two HTML authority file IDs resolve to Drive objects recorded at S2 intake; live file-ID resolution for the HTMLs remains CENTRAL-pending. Locked SHA256 truth is enforced on local frozen originals by the harness itself.",
-  "central_acceptance": "PENDING",
+  "central_verified_at_utc": "2026-09-02T22:40:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verification_note": "CENTRAL directly re-read both authoritative HTML objects (A 1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph 18565 bytes, B 1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb 18646 bytes) in executable authority folder V8_LAUNCHER_ENGLISH (1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L); file IDs, filenames, byte counts and locked SHA256 values match. Locked SHA256 truth is additionally enforced on local frozen originals by the harness itself. The 18 variant image bytes remain corroborating evidence only (local rclone listing of the images folder, id/size/md5).",
+  "central_acceptance": "ACCEPTED",
   "variants": {
     "A": {
-      "folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+      "folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+      "folder_name": "V8_LAUNCHER_ENGLISH",
       "file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
       "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
       "bytes": 18565,
       "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
     },
     "B": {
-      "folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+      "folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+      "folder_name": "V8_LAUNCHER_ENGLISH",
       "file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
       "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
       "bytes": 18646,
@@ -24,6 +27,7 @@
   },
   "image_corroboration": {
     "folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+    "folder_role": "IMAGE_CORROBORATION_ONLY (compare evidence/package hierarchy; NOT the executable HTML authority folder)",
     "expected_images": 18,
     "matched_images": 18,
     "byte_sizes_match_authority": true,

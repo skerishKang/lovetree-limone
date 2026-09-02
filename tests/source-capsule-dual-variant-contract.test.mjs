@@ -59,7 +59,7 @@ function makeDualFixture({ sourceId = 'SRC068', mutate } = {}) {
   const readback = {
     schema_version: '1.0',
     source_id: sourceId,
-    verification_mode: 'LOCAL_RCLONE_DRIVE_READBACK',
+    verification_mode: 'CENTRAL_FRESH_DRIVE_READBACK',
     variants: {
       A: { folder_id: 'folder-68', file_id: 'file-68a', filename: 'a.html', bytes: originalA.length, sha256: digestA },
       B: { folder_id: 'folder-68', file_id: 'file-68b', filename: 'b.html', bytes: originalB.length, sha256: digestB },
@@ -120,6 +120,23 @@ test('dual-variant positive fixture validates clean', () => {
   const { root, sourceId } = makeDualFixture();
   try {
     assert.deepEqual(check(root, sourceId), []);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('dual rejects LOCAL rclone evidence as authority readback (CENTRAL fresh required)', () => {
+  const { root, sourceId } = makeDualFixture({
+    mutate: (capsule) => {
+      capsule.readback.verification_mode = 'LOCAL_RCLONE_DRIVE_READBACK';
+    },
+  });
+  try {
+    const failures = check(root, sourceId);
+    assert.ok(
+      failures.some((message) => message.includes('CENTRAL_FRESH_DRIVE_READBACK')),
+      'LOCAL-only readback must fail with a CENTRAL fresh Drive authority requirement',
+    );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

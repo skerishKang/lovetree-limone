@@ -118,8 +118,8 @@ function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, author
     }
   }
 
-  if (typeof driveReadback.verification_mode !== 'string' || driveReadback.verification_mode.length === 0) {
-    fail('Drive readback verification_mode must be a truthful non-empty label');
+  if (driveReadback.verification_mode !== 'CENTRAL_FRESH_DRIVE_READBACK') {
+    fail('Drive readback must be CENTRAL_FRESH_DRIVE_READBACK (LOCAL rclone evidence is corroboration only and cannot satisfy raw authority lock)');
   }
   for (const key of ['A', 'B']) {
     const entry = driveReadback.variants?.[key];
