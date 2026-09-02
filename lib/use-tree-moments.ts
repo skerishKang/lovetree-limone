@@ -87,9 +87,13 @@ export function useTreeMoments(
   const [selectedMomentId, setSelectedMomentId] = useState<string | null>(initialMomentId ?? null);
   const [highlightMomentId, setHighlightMomentId] = useState<string | null>(initialHighlightId ?? null);
   const highlightTimerRef = useRef<number | null>(null);
+  const refreshGenerationRef = useRef(0);
 
   const refresh = useCallback(async () => {
     if (!treeId) return;
+    const generation = ++refreshGenerationRef.current;
+    const isCurrent = () => generation === refreshGenerationRef.current;
+
     setLoading(true);
     setError(null);
     try {
@@ -97,8 +101,12 @@ export function useTreeMoments(
         apiFetch(`/api/trees/${encodeURIComponent(treeId)}`),
         apiFetch(`/api/trees/${encodeURIComponent(treeId)}/memories`),
       ]);
+      if (!isCurrent()) return;
+
       const treeData = (await treeResponse.json().catch(() => ({}))) as TreeRecord & { error?: string };
       const memoryData = (await memoryResponse.json().catch(() => [])) as MemoryRecord[] | { error?: string };
+      if (!isCurrent()) return;
+
       if (!treeResponse.ok) {
         setError(treeResponse.status === 404 ? "이 러브트리를 찾을 수 없어요." : "러브트리를 불러오지 못했어요.");
         return;
@@ -112,16 +120,19 @@ export function useTreeMoments(
       setMoments(rows);
       setSelectedMomentId((current) => current === null ? null : rows.some((m) => m.id === current) ? current : null);
     } catch {
-      setError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
+      if (isCurrent()) setError("네트워크 오류가 발생했어요. 다시 시도해 주세요.");
     } finally {
-      setLoading(false);
+      if (isCurrent()) setLoading(false);
     }
   }, [treeId]);
 
   useEffect(() => {
     if (authLoading) return;
     const timer = window.setTimeout(() => void refresh(), 0);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      refreshGenerationRef.current += 1;
+    };
   }, [authLoading, refresh]);
 
   useEffect(() => {
