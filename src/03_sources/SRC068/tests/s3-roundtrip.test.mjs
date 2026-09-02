@@ -23,11 +23,11 @@
  * Writes parity/s3-roundtrip.json as run evidence. No commits. No pushes.
  */
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
 
-const ROOT = path.join(__dirname, "..");
+const ROOT = path.join(import.meta.dirname, "..");
 const ORIG = path.join(ROOT, "original");
 const SPLIT = path.join(ROOT, "split");
 const ASSETS = path.join(SPLIT, "assets");

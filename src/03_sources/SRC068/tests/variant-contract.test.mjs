@@ -12,7 +12,9 @@
  * - Image paths follow expected pattern
  */
 
-const { resolveVariant, isValidVariant, VALID_VARIANTS, VARIANT_ASSETS } = require("../split/variant-contract.cjs");
+import contractExports from "../split/variant-contract.cjs";
+
+const { resolveVariant, isValidVariant, VALID_VARIANTS, VARIANT_ASSETS } = contractExports;
 
 let passed = 0;
 let failed = 0;

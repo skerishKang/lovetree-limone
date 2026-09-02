@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC068",
   "authority_mode": "DUAL_VARIANT",
-  "verified_at_utc": "2026-09-03T07:24:00Z",
+  "verified_at_utc": "2026-09-02T22:24:00Z",
   "central_verified_at_utc": "2026-09-02T22:40:00Z",
   "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
   "verification_note": "CENTRAL directly re-read both authoritative HTML objects (A 1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph 18565 bytes, B 1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb 18646 bytes) in executable authority folder V8_LAUNCHER_ENGLISH (1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L); file IDs, filenames, byte counts and locked SHA256 values match. Locked SHA256 truth is additionally enforced on local frozen originals by the harness itself. The 18 variant image bytes remain corroborating evidence only (local rclone listing of the images folder, id/size/md5).",
