@@ -1,0 +1,1561 @@
+{
+  "variant": "A",
+  "viewport": {
+    "width": 1280,
+    "height": 800,
+    "label": "DESKTOP"
+  },
+  "original": {
+    "states": {
+      "INITIAL_HERO": {
+        "title": "LoveTree Track68 V3.3A · Codex Portals",
+        "ids": [
+          "scroll-spacer",
+          "videoWrap",
+          "leftVideo",
+          "rightVideo",
+          "info",
+          "symbol",
+          "cursor",
+          "panel",
+          "galleryInner",
+          "grid",
+          "white",
+          "finalCopy",
+          "view",
+          "worksOverlay",
+          "worksClose",
+          "worksList"
+        ],
+        "elementCount": 161,
+        "buttonIds": [
+          "view",
+          "worksClose"
+        ],
+        "metrics": {
+          "scroll-spacer": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 5381
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "videoWrap": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(17, 17, 17)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "leftVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "rightVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "info": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 573.02,
+              "width": 330,
+              "height": 176.98
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "symbol": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 573.02,
+              "width": 330,
+              "height": 32
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "cursor": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "panel": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 800)",
+            "backgroundColor": "rgb(5, 5, 5)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "galleryInner": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 800,
+              "width": 1280,
+              "height": 3620.83
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "grid": {
+            "tag": "DIV",
+            "rect": {
+              "x": 40.95,
+              "y": 1104,
+              "width": 1198.09,
+              "height": 3076.83
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "white": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "finalCopy": {
+            "tag": "DIV",
+            "rect": {
+              "x": 32,
+              "y": 756,
+              "width": 264.72,
+              "height": 16
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "view": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 1248,
+              "y": 768,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(0, 0, 0, 0, 0, 0)",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "58px"
+          },
+          "worksOverlay": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(5, 5, 5, 0.98)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          },
+          "worksClose": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "22px"
+          },
+          "worksList": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          }
+        },
+        "images": [
+          "../images/01.png",
+          "../images/02.png",
+          "../images/03.png",
+          "../images/04.png",
+          "../images/05.png",
+          "../images/06.png",
+          "../images/07.png",
+          "../images/08.png",
+          "../images/09.png"
+        ],
+        "imageBasenames": [
+          "01.png",
+          "02.png",
+          "03.png",
+          "04.png",
+          "05.png",
+          "06.png",
+          "07.png",
+          "08.png",
+          "09.png"
+        ],
+        "tags": [
+          "01 · FIRST SPARK",
+          "02 · SAVED MOMENT",
+          "03 · WHY IT STAYED",
+          "04 · NEXT CONNECTION",
+          "05 · MY PATH",
+          "06 · LOOK BACK",
+          "07 · MY TREE",
+          "08 · AFTERGLOW",
+          "09 · REPLAY"
+        ],
+        "cards": 9,
+        "worksRows": 10,
+        "videos": [
+          {
+            "id": "leftVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4",
+            "readyState": 4,
+            "paused": true
+          },
+          {
+            "id": "rightVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4",
+            "readyState": 4,
+            "paused": true
+          }
+        ],
+        "scrollY": 0,
+        "innerWidth": 1280,
+        "innerHeight": 800,
+        "mediaVariant": null,
+        "worksOpen": false,
+        "panelTransform": "translateY(800px)",
+        "whiteOpacity": "0"
+      },
+      "ARCHIVE_GRID": {
+        "title": "LoveTree Track68 V3.3A · Codex Portals",
+        "ids": [
+          "scroll-spacer",
+          "videoWrap",
+          "leftVideo",
+          "rightVideo",
+          "info",
+          "symbol",
+          "cursor",
+          "panel",
+          "galleryInner",
+          "grid",
+          "white",
+          "finalCopy",
+          "view",
+          "worksOverlay",
+          "worksClose",
+          "worksList"
+        ],
+        "elementCount": 161,
+        "buttonIds": [
+          "view",
+          "worksClose"
+        ],
+        "metrics": {
+          "scroll-spacer": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": -4581,
+              "width": 1280,
+              "height": 5381
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "videoWrap": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(17, 17, 17)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "leftVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "rightVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "info": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 423.02,
+              "width": 330,
+              "height": 176.98
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0.45",
+            "transform": "matrix(1, 0, 0, 1, 0, -150)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "symbol": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 423.02,
+              "width": 330,
+              "height": 32
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "cursor": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "panel": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgb(5, 5, 5)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "galleryInner": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": -2981,
+              "width": 1280,
+              "height": 3620.83
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, -2981)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "grid": {
+            "tag": "DIV",
+            "rect": {
+              "x": 40.95,
+              "y": -2677,
+              "width": 1198.09,
+              "height": 3076.83
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "white": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "finalCopy": {
+            "tag": "DIV",
+            "rect": {
+              "x": 32,
+              "y": 756,
+              "width": 264.72,
+              "height": 16
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "view": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 918,
+              "y": 598,
+              "width": 330,
+              "height": 170
+            },
+            "display": "grid",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "58px"
+          },
+          "worksOverlay": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(5, 5, 5, 0.98)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          },
+          "worksClose": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "22px"
+          },
+          "worksList": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          }
+        },
+        "images": [
+          "../images/01.png",
+          "../images/02.png",
+          "../images/03.png",
+          "../images/04.png",
+          "../images/05.png",
+          "../images/06.png",
+          "../images/07.png",
+          "../images/08.png",
+          "../images/09.png"
+        ],
+        "imageBasenames": [
+          "01.png",
+          "02.png",
+          "03.png",
+          "04.png",
+          "05.png",
+          "06.png",
+          "07.png",
+          "08.png",
+          "09.png"
+        ],
+        "tags": [
+          "01 · FIRST SPARK",
+          "02 · SAVED MOMENT",
+          "03 · WHY IT STAYED",
+          "04 · NEXT CONNECTION",
+          "05 · MY PATH",
+          "06 · LOOK BACK",
+          "07 · MY TREE",
+          "08 · AFTERGLOW",
+          "09 · REPLAY"
+        ],
+        "cards": 9,
+        "worksRows": 10,
+        "videos": [
+          {
+            "id": "leftVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4",
+            "readyState": 4,
+            "paused": true
+          },
+          {
+            "id": "rightVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4",
+            "readyState": 4,
+            "paused": true
+          }
+        ],
+        "scrollY": 4581,
+        "innerWidth": 1280,
+        "innerHeight": 800,
+        "mediaVariant": null,
+        "worksOpen": false,
+        "panelTransform": "translateY(0px)",
+        "whiteOpacity": "1"
+      }
+    },
+    "screenshots": {
+      "INITIAL_HERO_sha256": "2f5c0452763d4f432b8c02226e115ff57e7bbd927d4558a8f9667eea2b9d5e13",
+      "ARCHIVE_GRID_sha256": "14f168023fe1ab46994a01c8a6563db17ce8cb6a6955b644a23801fdab9cbc92"
+    },
+    "interaction": {
+      "worksOpen": true,
+      "worksClosed": true,
+      "controlSurface": "WORKS_OVERLAY_VIA_VIEW_BUTTON"
+    },
+    "errors": [],
+    "failedRequests": [],
+    "imageRequests": [
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/01.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/02.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/03.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/04.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/05.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/07.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/06.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/08.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/original/images/09.png",
+        "status": 200
+      }
+    ]
+  },
+  "split": {
+    "states": {
+      "INITIAL_HERO": {
+        "title": "LoveTree Track68 V3.3A · Codex Portals",
+        "ids": [
+          "scroll-spacer",
+          "videoWrap",
+          "leftVideo",
+          "rightVideo",
+          "info",
+          "symbol",
+          "cursor",
+          "panel",
+          "galleryInner",
+          "grid",
+          "white",
+          "finalCopy",
+          "view",
+          "worksOverlay",
+          "worksClose",
+          "worksList"
+        ],
+        "elementCount": 161,
+        "buttonIds": [
+          "view",
+          "worksClose"
+        ],
+        "metrics": {
+          "scroll-spacer": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 5381
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "videoWrap": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(17, 17, 17)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "leftVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "rightVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "info": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 573.02,
+              "width": 330,
+              "height": 176.98
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "symbol": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 573.02,
+              "width": 330,
+              "height": 32
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "cursor": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "panel": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 800,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 800)",
+            "backgroundColor": "rgb(5, 5, 5)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "galleryInner": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 800,
+              "width": 1280,
+              "height": 3620.83
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "grid": {
+            "tag": "DIV",
+            "rect": {
+              "x": 40.95,
+              "y": 1104,
+              "width": 1198.09,
+              "height": 3076.83
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "white": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "finalCopy": {
+            "tag": "DIV",
+            "rect": {
+              "x": 32,
+              "y": 756,
+              "width": 264.72,
+              "height": 16
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "view": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 1248,
+              "y": 768,
+              "width": 0,
+              "height": 0
+            },
+            "display": "grid",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(0, 0, 0, 0, 0, 0)",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "58px"
+          },
+          "worksOverlay": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(5, 5, 5, 0.98)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          },
+          "worksClose": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "22px"
+          },
+          "worksList": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          }
+        },
+        "images": [
+          "../images/01.png",
+          "../images/02.png",
+          "../images/03.png",
+          "../images/04.png",
+          "../images/05.png",
+          "../images/06.png",
+          "../images/07.png",
+          "../images/08.png",
+          "../images/09.png"
+        ],
+        "imageBasenames": [
+          "01.png",
+          "02.png",
+          "03.png",
+          "04.png",
+          "05.png",
+          "06.png",
+          "07.png",
+          "08.png",
+          "09.png"
+        ],
+        "tags": [
+          "01 · FIRST SPARK",
+          "02 · SAVED MOMENT",
+          "03 · WHY IT STAYED",
+          "04 · NEXT CONNECTION",
+          "05 · MY PATH",
+          "06 · LOOK BACK",
+          "07 · MY TREE",
+          "08 · AFTERGLOW",
+          "09 · REPLAY"
+        ],
+        "cards": 9,
+        "worksRows": 10,
+        "videos": [
+          {
+            "id": "leftVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4",
+            "readyState": 4,
+            "paused": true
+          },
+          {
+            "id": "rightVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4",
+            "readyState": 4,
+            "paused": true
+          }
+        ],
+        "scrollY": 0,
+        "innerWidth": 1280,
+        "innerHeight": 800,
+        "mediaVariant": "A",
+        "worksOpen": false,
+        "panelTransform": "translateY(800px)",
+        "whiteOpacity": "0"
+      },
+      "ARCHIVE_GRID": {
+        "title": "LoveTree Track68 V3.3A · Codex Portals",
+        "ids": [
+          "scroll-spacer",
+          "videoWrap",
+          "leftVideo",
+          "rightVideo",
+          "info",
+          "symbol",
+          "cursor",
+          "panel",
+          "galleryInner",
+          "grid",
+          "white",
+          "finalCopy",
+          "view",
+          "worksOverlay",
+          "worksClose",
+          "worksList"
+        ],
+        "elementCount": 161,
+        "buttonIds": [
+          "view",
+          "worksClose"
+        ],
+        "metrics": {
+          "scroll-spacer": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": -4581,
+              "width": 1280,
+              "height": 5381
+            },
+            "display": "block",
+            "position": "relative",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "videoWrap": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(17, 17, 17)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "leftVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "rightVideo": {
+            "tag": "VIDEO",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "hidden",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "info": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 423.02,
+              "width": 330,
+              "height": 176.98
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "0.45",
+            "transform": "matrix(1, 0, 0, 1, 0, -150)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "symbol": {
+            "tag": "DIV",
+            "rect": {
+              "x": 918,
+              "y": 423.02,
+              "width": 330,
+              "height": 32
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "24px"
+          },
+          "cursor": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "16px"
+          },
+          "panel": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgb(5, 5, 5)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "galleryInner": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": -2981,
+              "width": 1280,
+              "height": 3620.83
+            },
+            "display": "block",
+            "position": "absolute",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, -2981)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "grid": {
+            "tag": "DIV",
+            "rect": {
+              "x": 40.95,
+              "y": -2677,
+              "width": 1198.09,
+              "height": 3076.83
+            },
+            "display": "grid",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "white": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 800
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px"
+          },
+          "finalCopy": {
+            "tag": "DIV",
+            "rect": {
+              "x": 32,
+              "y": 756,
+              "width": 264.72,
+              "height": 16
+            },
+            "display": "block",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "13px"
+          },
+          "view": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 918,
+              "y": 598,
+              "width": 330,
+              "height": 170
+            },
+            "display": "grid",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "matrix(1, 0, 0, 1, 0, 0)",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "58px"
+          },
+          "worksOverlay": {
+            "tag": "SECTION",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "none",
+            "position": "fixed",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(5, 5, 5, 0.98)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          },
+          "worksClose": {
+            "tag": "BUTTON",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "fontSize": "22px"
+          },
+          "worksList": {
+            "tag": "DIV",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0
+            },
+            "display": "block",
+            "position": "static",
+            "visibility": "visible",
+            "opacity": "1",
+            "transform": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(243, 243, 241)",
+            "fontSize": "16px"
+          }
+        },
+        "images": [
+          "../images/01.png",
+          "../images/02.png",
+          "../images/03.png",
+          "../images/04.png",
+          "../images/05.png",
+          "../images/06.png",
+          "../images/07.png",
+          "../images/08.png",
+          "../images/09.png"
+        ],
+        "imageBasenames": [
+          "01.png",
+          "02.png",
+          "03.png",
+          "04.png",
+          "05.png",
+          "06.png",
+          "07.png",
+          "08.png",
+          "09.png"
+        ],
+        "tags": [
+          "01 · FIRST SPARK",
+          "02 · SAVED MOMENT",
+          "03 · WHY IT STAYED",
+          "04 · NEXT CONNECTION",
+          "05 · MY PATH",
+          "06 · LOOK BACK",
+          "07 · MY TREE",
+          "08 · AFTERGLOW",
+          "09 · REPLAY"
+        ],
+        "cards": 9,
+        "worksRows": 10,
+        "videos": [
+          {
+            "id": "leftVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4",
+            "readyState": 4,
+            "paused": true
+          },
+          {
+            "id": "rightVideo",
+            "src": "https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4",
+            "readyState": 4,
+            "paused": true
+          }
+        ],
+        "scrollY": 4581,
+        "innerWidth": 1280,
+        "innerHeight": 800,
+        "mediaVariant": "A",
+        "worksOpen": false,
+        "panelTransform": "translateY(0px)",
+        "whiteOpacity": "1"
+      }
+    },
+    "screenshots": {
+      "INITIAL_HERO_sha256": "2f5c0452763d4f432b8c02226e115ff57e7bbd927d4558a8f9667eea2b9d5e13",
+      "ARCHIVE_GRID_sha256": "14f168023fe1ab46994a01c8a6563db17ce8cb6a6955b644a23801fdab9cbc92"
+    },
+    "interaction": {
+      "worksOpen": true,
+      "worksClosed": true,
+      "controlSurface": "WORKS_OVERLAY_VIA_VIEW_BUTTON"
+    },
+    "errors": [],
+    "failedRequests": [],
+    "imageRequests": [
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/01.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/02.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/03.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/04.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/05.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/06.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/07.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/08.png",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8137/SRC068/images/09.png",
+        "status": 200
+      }
+    ]
+  },
+  "comparison": {
+    "variant": "A",
+    "viewport": {
+      "width": 1280,
+      "height": 800,
+      "label": "DESKTOP"
+    },
+    "states_equal": {
+      "INITIAL_HERO": true,
+      "ARCHIVE_GRID": true
+    },
+    "interaction_equal": true,
+    "images_equal": true,
+    "cross_contamination": "ZERO",
+    "original_screenshots": {
+      "INITIAL_HERO_sha256": "2f5c0452763d4f432b8c02226e115ff57e7bbd927d4558a8f9667eea2b9d5e13",
+      "ARCHIVE_GRID_sha256": "14f168023fe1ab46994a01c8a6563db17ce8cb6a6955b644a23801fdab9cbc92"
+    },
+    "split_screenshots": {
+      "INITIAL_HERO_sha256": "2f5c0452763d4f432b8c02226e115ff57e7bbd927d4558a8f9667eea2b9d5e13",
+      "ARCHIVE_GRID_sha256": "14f168023fe1ab46994a01c8a6563db17ce8cb6a6955b644a23801fdab9cbc92"
+    }
+  }
+}
