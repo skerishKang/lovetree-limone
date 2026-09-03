@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "authority_mode": "DUAL_VARIANT",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_S4_DUAL_PARITY_ARTIFACT_PLUS_CENTRAL_VISUAL_REVIEW",
+  "source_head": "79732957aebaf49b9ce941fab78cd2dd22d0efc5",
+  "evidence_binding": "S4_DUAL_VARIANT_LOCAL_ARTIFACT_PLUS_CENTRAL_DIRECT_ZIP_REVIEW",
+  "pull_request": 608,
+  "exact_head_ci": {
+    "head": "79732957aebaf49b9ce941fab78cd2dd22d0efc5",
+    "conclusion": "SUCCESS",
+    "workflows": [
+      "SRC 108 Reimplementation Harness Gate",
+      "A-track P0 validation",
+      "NEW Old Repair Promotion Guard",
+      "Design Source Freshness Observer",
+      "Design Fidelity Validation"
+    ]
+  },
+  "authority": {
+    "variants": {
+      "A": {
+        "bytes": 18565,
+        "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
+      },
+      "B": {
+        "bytes": 18646,
+        "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+      }
+    }
+  },
+  "split": {
+    "index_sha256": "b888e373d20f169b16863b863c51ef9a0f6e75221f7f99d6512f41e5858b45c5",
+    "styles_sha256": "4d0b030d08aca71af79428bcbedff3b62f2a8e275e34c9b8d046dd7a6223970a",
+    "script_sha256": "9a80353c592c3d82583438bf657386a20897e8ee59a4ff0a67c033c9352c85ee"
+  },
+  "variant_selector": {
+    "selector": "mediaVariant",
+    "allowed_values": ["A", "B"],
+    "default": null,
+    "fail_closed": true
+  },
+  "viewports": [
+    { "width": 1280, "height": 800, "states": ["INITIAL_HERO", "ARCHIVE_GRID"] },
+    { "width": 390, "height": 844, "states": ["INITIAL_HERO", "ARCHIVE_GRID"] }
+  ],
+  "comparisons": {
+    "A_original_split": "PASS",
+    "B_original_split": "PASS",
+    "dom_state": "EQUAL",
+    "geometry": "EQUAL_WITHIN_1_5PX_STABLE_LANDMARK_TOLERANCE",
+    "interaction": "EQUAL",
+    "image_references": "EQUAL_PER_VARIANT",
+    "screenshots": "BYTE_IDENTICAL_ORIGINAL_VS_SPLIT_PER_VARIANT_VIEWPORT_STATE",
+    "a_b_cross_contamination": "ZERO"
+  },
+  "browser": {
+    "console_errors": 0,
+    "page_errors": 0,
+    "loopback_failed_requests": 0,
+    "external_failed_requests_observed": 0
+  },
+  "visual_review": {
+    "central_direct_review": true,
+    "desktop_reviewed": true,
+    "mobile_reviewed": true,
+    "variants_reviewed": ["A", "B"],
+    "states_reviewed": ["INITIAL_HERO", "ARCHIVE_GRID"],
+    "product_or_redesign_change": false
+  },
+  "drive_handoff": {
+    "folder_id": "199NHMgpe72-0iH8dyElVWFliNObSRrSZ",
+    "file_id": "17pXKkJt_-dsnp-UHH2jGSU0WuZPXZpjs",
+    "zip_name": "SRC068_S4_DUAL_PARITY_79732957.zip",
+    "zip_bytes": 3020470,
+    "zip_sha256": "dd2beedf762160a0bade48a24b89d88575dac2b3e8009d64e9218ce55a62f354",
+    "readback": "PASS"
+  },
+  "notes": [
+    "S4 archive image requests were served with deterministic loopback placeholder bytes because the executable authority is HTML-only; parity validates exact variant image references/request basenames and original-vs-split behavior, not A-vs-B archive-image aesthetics.",
+    "Actual A/B media-set visual differences were already reviewed and accepted during the S2 direct-asset baseline gate.",
+    "Original A/B HTML and all common split bytes remained unchanged throughout S4."
+  ]
+}
