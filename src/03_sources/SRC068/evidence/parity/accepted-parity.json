@@ -46,14 +46,23 @@
     { "width": 390, "height": 844, "states": ["INITIAL_HERO", "ARCHIVE_GRID"] }
   ],
   "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "computed_style": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL"
+  },
+  "browser_errors": 0,
+  "dual_variant_results": {
     "A_original_split": "PASS",
     "B_original_split": "PASS",
-    "dom_state": "EQUAL",
-    "geometry": "EQUAL_WITHIN_1_5PX_STABLE_LANDMARK_TOLERANCE",
-    "interaction": "EQUAL",
     "image_references": "EQUAL_PER_VARIANT",
-    "screenshots": "BYTE_IDENTICAL_ORIGINAL_VS_SPLIT_PER_VARIANT_VIEWPORT_STATE",
-    "a_b_cross_contamination": "ZERO"
+    "a_b_cross_contamination": "ZERO",
+    "archive_image_requests": {
+      "A": "9/9 HTTP 200 PER VIEWPORT PER SIDE",
+      "B": "9/9 HTTP 200 PER VIEWPORT PER SIDE"
+    }
   },
   "browser": {
     "console_errors": 0,
@@ -63,6 +72,7 @@
   },
   "visual_review": {
     "central_direct_review": true,
+    "central_direct_artifact_review": true,
     "desktop_reviewed": true,
     "mobile_reviewed": true,
     "variants_reviewed": ["A", "B"],
