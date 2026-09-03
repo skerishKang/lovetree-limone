@@ -35,23 +35,31 @@ test('bridge has standalone early-return guard (zero behavior without mvpSession
   assert.ok(guardMatch, 'Standalone guard missing: if (!SESSION || SOURCE_PARAM !== SOURCE) return');
 });
 
-test('bridge uses Memory-edit wording for edit entry (기억 수정)', () => {
+test('bridge uses exact Memory-edit wording for Product edit entry and heading', () => {
   const src = readFileSync(join(BASE, 'src057-product-bridge.js'), 'utf8');
-  assert.ok(src.includes('\\uAE30\\uC5EC\\u0020\\uB85C\\uC9C4'), 'Missing edit-entry Korean label');
+  assert.ok(src.includes("editBtn.textContent = '기억 수정'"), 'Missing exact 기억 수정 edit-entry label');
+  assert.ok(src.includes("heading.textContent = '기억 수정'"), 'Missing exact 기억 수정 modal heading');
 });
 
-test('bridge uses Memory-edit wording for modal heading (기억 수정)', () => {
+test('bridge uses exact Product description copy', () => {
   const src = readFileSync(join(BASE, 'src057-product-bridge.js'), 'utf8');
-  assert.ok(src.includes('setProductEditWording'), 'setProductEditWording function missing');
+  assert.ok(src.includes("desc.textContent = '제목과 메모를 수정합니다. 미디어 정보는 변경하지 않습니다.'"), 'Missing exact Product edit description');
 });
 
-test('bridge uses Korean labels for injected fields (제목/메모)', () => {
+test('bridge uses exact Korean labels for injected fields (제목/메모)', () => {
   const src = readFileSync(join(BASE, 'src057-product-bridge.js'), 'utf8');
-  assert.ok(src.includes('\\uC900\\uAD6D'), 'Missing 제목 label');
-  assert.ok(src.includes('\\uBA54\\uBCF4'), 'Missing 메모 label');
+  assert.ok(src.includes('>제목</label>'), 'Missing exact 제목 label');
+  assert.ok(src.includes('>메모</label>'), 'Missing exact 메모 label');
 });
 
-test('bridge uses 저장 submit button label', () => {
+test('bridge uses exact 변경사항 저장 submit label', () => {
   const src = readFileSync(join(BASE, 'src057-product-bridge.js'), 'utf8');
-  assert.ok(src.includes('\\uBC14\\uC601\\uC0AC\\uD56D\\u0020\\uAC00\\uB9AC'), 'Missing 변경사항 저장 label');
+  assert.ok(src.includes("saveBtn.textContent = '변경사항 저장'"), 'Missing exact 변경사항 저장 label');
+});
+
+test('bridge does not hard-code the legacy media-edit copy as Product replacement text', () => {
+  const src = readFileSync(join(BASE, 'src057-product-bridge.js'), 'utf8');
+  const replacementSection = src.slice(src.indexOf('function setProductEditWording'), src.indexOf('function hideEditEntries'));
+  assert.ok(!replacementSection.includes("'미디어 링크 연결'"));
+  assert.ok(!replacementSection.includes("'이 Moment에 연결'"));
 });
