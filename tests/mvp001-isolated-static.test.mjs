@@ -78,7 +78,10 @@ test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-f
 
   for (const dir of surfaceDirs) {
     const files = readdirSync(join(SURFACES_ROOT, dir));
-    assert.deepEqual(files.sort(), ['index.html', 'script.js', 'styles.css'], `Directory ${dir} must strictly contain only split files`);
+    const core = ['index.html', 'script.js', 'styles.css'];
+    const extras = files.filter((f) => !core.includes(f));
+    assert.ok(core.every((f) => files.includes(f)), `Directory ${dir} must contain core split files`);
+    assert.ok(extras.every((f) => f.endsWith('-product-bridge.js')), `Directory ${dir} may only contain authorized companion bridge files`);
   }
 });
 
@@ -91,7 +94,7 @@ test('3. Direct DOM merge is not used; isolated surfaces architecture is enforce
   assert.ok(!shellHtml.includes('canvas2d-3d-cluster-projection'), 'Shell HTML must not contain SRC060 internal DOM');
 
   assert.ok(shellJs.includes("document.createElement('iframe')"), 'Shell must mount isolated iframe surfaces');
-  assert.ok(shellJs.includes('iframe.src = surfaceUrl'), 'Shell must load the orchestrator-provided surface URL through iframe src');
+  assert.ok(shellJs.includes('iframe.src = buildSurfaceUrl(surfaceUrl, sessionId, sourceId)'), 'Shell must load the orchestrator-provided surface URL through iframe src');
 
   assert.ok(shellJs.includes("frame.src = 'about:blank'"), 'Shell removeFrame adapter must flush iframe before removal');
   assert.ok(orchestratorJs.includes('this.shell.removeFrame(frame)'), 'Orchestrator must delegate inactive-frame removal to shell adapter');

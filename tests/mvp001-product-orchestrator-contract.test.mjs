@@ -288,6 +288,7 @@ test('N. popstate/deep link restores step/tree/memory', () => {
 test('O. SOURCE_INIT permissions are read-only', () => {
   const { orchestrator, restore } = createOrchestrator('?step=memory&tree=tree-1');
   orchestrator.mountFrame('memory', '/mvp/01/surfaces/src057/index.html');
+  orchestrator.shell.getProjection = () => ({});
   let sentPayload = null;
   const originalPostMessage = orchestrator.activeFrame.contentWindow.postMessage;
   orchestrator.activeFrame.contentWindow.postMessage = (data, origin) => {

@@ -1,0 +1,188 @@
+{
+  "1440x900": {
+    "vp": "1440x900",
+    "pure": {
+      "status": {
+        "x": 26,
+        "y": 867,
+        "width": 168.390625,
+        "height": 11
+      },
+      "hint": {
+        "x": 1277.140625,
+        "y": 867,
+        "width": 136.859375,
+        "height": 11
+      }
+    },
+    "initialCollapsed": true,
+    "ariaExpanded": "false",
+    "panelBoxCollapsed": null,
+    "toggleBox": {
+      "x": 702,
+      "y": 840,
+      "width": 36,
+      "height": 36
+    },
+    "iframeMounted": true,
+    "iframeBox": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900
+    },
+    "probes": {
+      "statusCenter": "IFRAME",
+      "hintCenter": "IFRAME",
+      "bandLeft": "IFRAME",
+      "bandMidLeft": "IFRAME",
+      "bandMidRight": "IFRAME",
+      "bandRight": "IFRAME",
+      "bandTop": "IFRAME",
+      "bandBottom": "IFRAME"
+    },
+    "collapsedStatusOverlapPx2": 0,
+    "collapsedHintOverlapPx2": 0,
+    "toggleVsStatusOverlapPx2": 0,
+    "toggleVsHintOverlapPx2": 0,
+    "openExpanded": true,
+    "panelBoxOpen": {
+      "x": 310.671875,
+      "y": 828,
+      "width": 775.359375,
+      "height": 48
+    },
+    "openStatusOverlapPx2": 0,
+    "openHintOverlapPx2": 0,
+    "manualCloseOk": true,
+    "autoCollapsedAfterIdle": true,
+    "wheelReachesSource": {
+      "before": "1662.9,405.5",
+      "after": "1660.3,411.6",
+      "changed": true
+    },
+    "errors": []
+  },
+  "430x932": {
+    "vp": "430x932",
+    "pure": {
+      "status": {
+        "x": 16,
+        "y": 907,
+        "width": 168.390625,
+        "height": 11
+      },
+      "hint": {
+        "x": 277.140625,
+        "y": 907,
+        "width": 136.859375,
+        "height": 11
+      }
+    },
+    "initialCollapsed": true,
+    "ariaExpanded": "false",
+    "panelBoxCollapsed": null,
+    "toggleBox": {
+      "x": 197,
+      "y": 864,
+      "width": 36,
+      "height": 36
+    },
+    "iframeMounted": true,
+    "iframeBox": {
+      "x": 0,
+      "y": 0,
+      "width": 430,
+      "height": 932
+    },
+    "probes": {
+      "statusCenter": "IFRAME",
+      "hintCenter": "IFRAME",
+      "bandLeft": "IFRAME",
+      "bandRight": "IFRAME",
+      "bandAboveToggle": "IFRAME"
+    },
+    "collapsedStatusOverlapPx2": 0,
+    "collapsedHintOverlapPx2": 0,
+    "toggleVsStatusOverlapPx2": 0,
+    "toggleVsHintOverlapPx2": 0,
+    "openExpanded": true,
+    "panelBoxOpen": {
+      "x": 48.71875,
+      "y": 876,
+      "width": 290.328125,
+      "height": 44
+    },
+    "openStatusOverlapPx2": 1492.4,
+    "openHintOverlapPx2": 681,
+    "manualCloseOk": true,
+    "autoCollapsedAfterIdle": true,
+    "wheelReachesSource": {
+      "before": "1166.8,436.6",
+      "after": "1167,450.1",
+      "changed": true
+    },
+    "errors": []
+  },
+  "390x844": {
+    "vp": "390x844",
+    "pure": {
+      "status": {
+        "x": 16,
+        "y": 819,
+        "width": 168.390625,
+        "height": 11
+      },
+      "hint": {
+        "x": 237.140625,
+        "y": 819,
+        "width": 136.859375,
+        "height": 11
+      }
+    },
+    "initialCollapsed": true,
+    "ariaExpanded": "false",
+    "panelBoxCollapsed": null,
+    "toggleBox": {
+      "x": 177,
+      "y": 776,
+      "width": 36,
+      "height": 36
+    },
+    "iframeMounted": true,
+    "iframeBox": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    "probes": {
+      "statusCenter": "IFRAME",
+      "hintCenter": "IFRAME",
+      "bandLeft": "IFRAME",
+      "bandRight": "IFRAME",
+      "bandAboveToggle": "IFRAME"
+    },
+    "collapsedStatusOverlapPx2": 0,
+    "collapsedHintOverlapPx2": 0,
+    "toggleVsStatusOverlapPx2": 0,
+    "toggleVsHintOverlapPx2": 0,
+    "openExpanded": true,
+    "panelBoxOpen": {
+      "x": 28.71875,
+      "y": 788,
+      "width": 290.328125,
+      "height": 44
+    },
+    "openStatusOverlapPx2": 1712.4,
+    "openHintOverlapPx2": 901,
+    "manualCloseOk": true,
+    "autoCollapsedAfterIdle": true,
+    "wheelReachesSource": {
+      "before": "1147.1,394.2",
+      "after": "1147.7,408.8",
+      "changed": true
+    },
+    "errors": []
+  }
+}
