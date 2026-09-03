@@ -143,6 +143,7 @@ async function createHarness(initialSearch = '') {
     getElementById: (id) => elements[id] || null,
     createElement: (tag) => makeElement('', tag),
     activeElement: null,
+    body: { appendChild() {} },
   };
 
   globalThis.window = fakeWindow;
@@ -160,7 +161,9 @@ async function createHarness(initialSearch = '') {
     activeFrames: () => elements['surface-container'].children,
     currentFrameSrc: () => {
       const frames = elements['surface-container'].children;
-      return frames.length ? frames[frames.length - 1].src : null;
+      const src = frames.length ? frames[frames.length - 1].src : null;
+      if (!src) return src;
+      return src.split('?')[0];
     },
     advance(ms) {
       const target = now + ms;
@@ -311,7 +314,7 @@ test('CASE 8: pointer over nav or focus inside nav defers auto-collapse', async 
 test('repair preserves the isolated-iframe surface lifecycle contracts', () => {
   assert.ok(SHELL_JS.includes("import { ProductOrchestrator } from './product-orchestrator.js'"), 'shell must delegate product state/lifecycle to ProductOrchestrator');
   assert.ok(SHELL_JS.includes("document.createElement('iframe')"), 'shell must keep iframe isolation');
-  assert.ok(SHELL_JS.includes('iframe.src = surfaceUrl'), 'shell must keep orchestrator-provided surface src wiring');
+  assert.ok(SHELL_JS.includes('iframe.src = buildSurfaceUrl(surfaceUrl, sessionId, sourceId)'), 'shell must keep orchestrator-provided surface src wiring');
   assert.ok(SHELL_JS.includes("frame.src = 'about:blank'"), 'shell adapter must keep iframe flush on unmount');
   assert.equal(parseMvp001UrlState('?step=bogus').currentStep, 'entry', 'shared URL contract must keep invalid-step fail-safe');
 });

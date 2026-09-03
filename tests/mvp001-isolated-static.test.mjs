@@ -4,7 +4,9 @@
  * Verification suite for MVP001 Isolated Static realization.
  * Enforces:
  * 1. Source capsules in src/03_sources/ remain 100% untouched.
- * 2. Materialized files in public/mvp/01/surfaces/ match source split bytes and sha256.
+ * 2. Product surfaces in public/mvp/01/surfaces/ are derived from frozen source split:
+ *    styles.css byte-identical, index.html = authority + bridge tag only,
+ *    script.js = authority plus bounded Product seam, authority hooks preserved.
  * 3. Direct DOM merge is forbidden (isolated frames required).
  * 4. Five candidate surfaces exist with canonical step mappings.
  * 5. Invalid step fails safe to entry through the shared productization contract.
@@ -49,26 +51,105 @@ test('1. Source capsules in src/03_sources/ remain untouched and match authority
   }
 });
 
-test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-for-byte', () => {
+test('2. Product surfaces derive from frozen source split with derivation-manifest guard', () => {
+  const seamMarkers = {
+    SRC056: ['__LT56_SELECT__', '__LT56_COPY__'],
+    SRC057: ['__LT57_SELECT__', '__LT57_PRODUCT__'],
+    SRC058: ['__LT58_SELECT__', '__LT58_PRODUCT__'],
+    SRC060: ['__LT60_SELECT__'],
+    SRC064: ['__TRACK64_SELECT__'],
+  };
+
+  // Derivation manifest (PR #607 Blocker C): every Product byte is locked to
+  // the frozen authority plus the reviewed bounded seam. All fields are
+  // validated against actual bytes; hash mismatches, undeclared deltas, or
+  // undeclared seam identifiers fail the gate.
+  const manifestPath = join(ROOT, 'public/mvp/01/product-derivation-manifest.json');
+  assert.ok(existsSync(manifestPath), 'product-derivation-manifest.json must exist');
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  assert.equal(manifest.mvpId, 'MVP001');
+  assert.equal(manifest.schemaVersion, 1);
+  assert.deepEqual(
+    Object.keys(manifest.sources).sort(),
+    SOURCES.map((s) => s.id).sort(),
+    'manifest must declare exactly the five Product surfaces',
+  );
+
   for (const { id, surface } of SOURCES) {
+    const entry = manifest.sources[id];
+    assert.ok(entry, `manifest must contain ${id}`);
+    assert.deepEqual(
+      Object.keys(entry.authority).sort(),
+      ['index.html', 'script.js', 'styles.css'],
+      `${id} manifest authority must declare the three split files`,
+    );
+    assert.deepEqual(
+      Object.keys(entry.product).sort(),
+      ['index.html', 'script.js', 'styles.css'],
+      `${id} manifest product must declare the three split files`,
+    );
+
     const splitDir = join(SOURCES_ROOT, id, 'split');
     const targetDir = join(SURFACES_ROOT, surface);
 
     assert.ok(existsSync(targetDir), `Surface directory ${surface} must exist`);
 
-    const coreFiles = ['index.html', 'styles.css', 'script.js'];
-    for (const file of coreFiles) {
-      const srcFile = join(splitDir, file);
-      const dstFile = join(targetDir, file);
+    // (a) Authority hashes: the manifest must record the actual frozen bytes.
+    for (const file of ['index.html', 'script.js', 'styles.css']) {
+      const actual = sha256(readFileSync(join(splitDir, file)));
+      assert.equal(entry.authority[file], actual, `${id} manifest authority ${file} hash must equal actual src/03_sources bytes`);
+    }
 
-      assert.ok(existsSync(srcFile), `Source split file ${srcFile} must exist`);
-      assert.ok(existsSync(dstFile), `Materialized file ${dstFile} must exist`);
+    // (b) Product CSS hash: must be byte-identical to the authority CSS.
+    const cssSrc = readFileSync(join(splitDir, 'styles.css'));
+    const cssDst = readFileSync(join(targetDir, 'styles.css'));
+    assert.equal(sha256(cssDst), sha256(cssSrc), `${id}/styles.css must be byte-identical to authority`);
+    assert.equal(entry.product['styles.css'], entry.authority['styles.css'], `${id} manifest must lock product CSS to authority CSS`);
 
-      const srcBuf = readFileSync(srcFile);
-      const dstBuf = readFileSync(dstFile);
+    // (c) Product index: authority + exactly the declared bridge include.
+    const htmlSrc = readFileSync(join(splitDir, 'index.html'), 'utf8');
+    const htmlDst = readFileSync(join(targetDir, 'index.html'), 'utf8');
+    const bridgeTag = `<script src="./${surface}-product-bridge.js"></script>`;
+    assert.equal(entry.bridgeInclude.tag, bridgeTag, `${id} manifest bridge tag must match the surface include`);
+    assert.equal(entry.bridgeInclude.occurrences, 1, `${id} manifest must declare exactly one bridge include`);
+    const occurrences = htmlDst.split(bridgeTag).length - 1;
+    assert.equal(occurrences, 1, `${id}/index.html must reference its Product bridge exactly once`);
+    let htmlStripped = htmlDst.replace(`\n${bridgeTag}`, '').replace(bridgeTag, '');
+    assert.equal(htmlStripped, htmlSrc, `${id}/index.html must be authority plus bridge tag only`);
+    assert.equal(entry.product['index.html'], sha256(htmlDst), `${id} manifest product index hash must equal actual product bytes`);
 
-      assert.equal(dstBuf.length, srcBuf.length, `${id}/${file} byte length mismatch`);
-      assert.equal(sha256(dstBuf), sha256(srcBuf), `${id}/${file} SHA256 mismatch`);
+    // (d) Product script: must preserve authority identity hooks and carry
+    // only the declared bounded Product seam.
+    const jsSrc = readFileSync(join(splitDir, 'script.js'), 'utf8');
+    const jsDst = readFileSync(join(targetDir, 'script.js'), 'utf8');
+    const authHooks = [...jsSrc.matchAll(/window\.(__[A-Za-z0-9_]+)\s*=/g)].map((m) => m[1]);
+    assert.ok(authHooks.length > 0, `${id}/script.js authority must expose identity hooks`);
+    for (const hook of authHooks) {
+      assert.ok(new RegExp(`window\\.${hook}\\s*=`).test(jsDst), `${id}/script.js must preserve authority hook window.${hook}`);
+    }
+    assert.deepEqual(
+      entry.seamIdentifiers.sort(),
+      [...seamMarkers[id]].sort(),
+      `${id} manifest seam identifiers must match the reviewed bounded seam`,
+    );
+    for (const marker of seamMarkers[id]) {
+      assert.ok(jsDst.includes(marker), `${id}/script.js must expose bounded seam ${marker}`);
+      assert.ok(!jsSrc.includes(marker), `${id} authority script.js must not contain Product seam ${marker}`);
+    }
+    assert.equal(entry.product['script.js'], sha256(jsDst), `${id} manifest product script hash must equal actual product bytes (reviewed expected hash)`);
+
+    // (e) Companion bridge: exists exactly once, hash locked by the manifest.
+    assert.equal(entry.bridge.file, `${surface}-product-bridge.js`, `${id} manifest must declare the companion bridge file`);
+    const bridgePath = join(targetDir, entry.bridge.file);
+    assert.ok(existsSync(bridgePath), `${id} companion bridge must exist`);
+    assert.equal(entry.bridge.sha256, sha256(readFileSync(bridgePath)), `${id} manifest bridge hash must equal actual bridge bytes`);
+
+    // Authority split must contain no Product bridge references
+    for (const file of ['index.html', 'styles.css', 'script.js']) {
+      assert.ok(
+        !readFileSync(join(splitDir, file), 'utf8').includes('product-bridge'),
+        `${id} authority ${file} must not reference Product bridge`
+      );
     }
   }
 
@@ -78,7 +159,10 @@ test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-f
 
   for (const dir of surfaceDirs) {
     const files = readdirSync(join(SURFACES_ROOT, dir));
-    assert.deepEqual(files.sort(), ['index.html', 'script.js', 'styles.css'], `Directory ${dir} must strictly contain only split files`);
+    const core = ['index.html', 'script.js', 'styles.css'];
+    const extras = files.filter((f) => !core.includes(f));
+    assert.ok(core.every((f) => files.includes(f)), `Directory ${dir} must contain core split files`);
+    assert.ok(extras.every((f) => f.endsWith('-product-bridge.js')), `Directory ${dir} may only contain authorized companion bridge files`);
   }
 });
 
@@ -91,7 +175,7 @@ test('3. Direct DOM merge is not used; isolated surfaces architecture is enforce
   assert.ok(!shellHtml.includes('canvas2d-3d-cluster-projection'), 'Shell HTML must not contain SRC060 internal DOM');
 
   assert.ok(shellJs.includes("document.createElement('iframe')"), 'Shell must mount isolated iframe surfaces');
-  assert.ok(shellJs.includes('iframe.src = surfaceUrl'), 'Shell must load the orchestrator-provided surface URL through iframe src');
+  assert.ok(shellJs.includes('iframe.src = buildSurfaceUrl(surfaceUrl, sessionId, sourceId)'), 'Shell must load the orchestrator-provided surface URL through iframe src');
 
   assert.ok(shellJs.includes("frame.src = 'about:blank'"), 'Shell removeFrame adapter must flush iframe before removal');
   assert.ok(orchestratorJs.includes('this.shell.removeFrame(frame)'), 'Orchestrator must delegate inactive-frame removal to shell adapter');
