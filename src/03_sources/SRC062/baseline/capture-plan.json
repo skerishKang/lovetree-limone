@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC062",
+  "status": "CAPTURED_PENDING_CENTRAL_REVIEW",
+  "surface": "original/original.html",
+  "method": "Chromium headless via local Playwright against frozen original over loopback HTTP (src/08_harness/capture-src062-s2-baseline.mjs)",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "states": [
+    "INITIAL",
+    "VIEWER_OPEN"
+  ],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "station count",
+    "viewer open state and content",
+    "panel state",
+    "console/page errors",
+    "failed requests"
+  ]
+}
