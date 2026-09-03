@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC068",
   "authority_mode": "DUAL_VARIANT",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_provenance": {
     "derived_from": "uncommitted SRC068 S3 work product at old worksite HEAD a0c3a600 (temp-lovetree-clone), split runtime bytes preserved exactly",
@@ -126,6 +126,6 @@
     "framework_conversion": false,
     "product_data_injection": false
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": null
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json"
 }

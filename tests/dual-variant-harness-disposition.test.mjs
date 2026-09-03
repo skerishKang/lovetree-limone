@@ -64,18 +64,36 @@ test('SRC068 authority hashes unchanged and both frozen originals match (no sour
   assert.ok(!/SRC068-[AB]/.test(manifestText));
 });
 
-test('S4 HOLD is honored for SRC068 (negative: DUAL + no release => parity NOT run)', () => {
+test('historical S4 HOLD stays immutable after dedicated CENTRAL acceptance; generic harness still skips', () => {
   const manifest = readJson('src/03_sources/SRC068/manifest.json');
   const acceptedBaseline = readJson('src/03_sources/SRC068/baseline/accepted-baseline.json');
+  const acceptedParity = readJson('src/03_sources/SRC068/evidence/parity/accepted-parity.json');
+
+  // S2/S3 baseline history remains immutable: it records the pre-S4 HOLD that
+  // prevented the generic single-executable harness from choosing A or B.
   assert.equal(acceptedBaseline.next_stage_authorized, 'SPLIT_PARITY_S4_HOLD');
-  assert.equal(manifest.stages.mechanical_split_complete, true);
-  assert.equal(manifest.stages.source_split_parity_pass, false);
   assert.equal(isDualVariantS4Hold({ manifest, acceptedBaseline }), true);
-  const disposition = getDualVariantParityDisposition({ manifest, acceptedBaseline });
-  assert.deepEqual(disposition, { action: 'SKIP', reason: 'DUAL_VARIANT_S4_HOLD' });
-  // Baseline single capture must also SKIP (no single executable).
-  const baselineDisposition = getDualVariantBaselineDisposition({ manifest });
-  assert.deepEqual(baselineDisposition, { action: 'SKIP', reason: 'DUAL_VARIANT_NO_SINGLE_EXECUTABLE' });
+  assert.deepEqual(getDualVariantParityDisposition({ manifest, acceptedBaseline }), {
+    action: 'SKIP',
+    reason: 'DUAL_VARIANT_S4_HOLD',
+  });
+
+  // Dedicated S4 evidence was later reviewed and accepted by CENTRAL. Completion
+  // is recorded in current manifest/parity metadata without rewriting history or
+  // enabling the generic single parity path.
+  assert.equal(manifest.stages.mechanical_split_complete, true);
+  assert.equal(manifest.stages.source_split_parity_pass, true);
+  assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json');
+  assert.equal(acceptedParity.status, 'ACCEPTED');
+  assert.equal(acceptedParity.authority_mode, 'DUAL_VARIANT');
+  assert.equal(acceptedParity.visual_review.central_direct_review, true);
+  assert.equal(acceptedParity.browser_errors, 0);
+
+  // Baseline single capture must also continue to SKIP (no single executable).
+  assert.deepEqual(getDualVariantBaselineDisposition({ manifest }), {
+    action: 'SKIP',
+    reason: 'DUAL_VARIANT_NO_SINGLE_EXECUTABLE',
+  });
 });
 
 test('missing accepted-baseline fails closed as HOLD for DUAL_VARIANT', () => {
