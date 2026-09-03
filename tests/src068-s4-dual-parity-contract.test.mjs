@@ -31,7 +31,7 @@ const EXPECTED_IMAGES = {
   ],
 };
 
-test('SRC068 S4 source byte lock: no original/split mutation', () => {
+test('SRC068 S4 source byte lock and CENTRAL acceptance: no original/split mutation', () => {
   for (const [key, digest] of [['A', EXPECTED_A], ['B', EXPECTED_B]]) {
     const bytes = fs.readFileSync(path.join(SRC068, 'original', key, 'original.html'));
     assert.equal(sha256(bytes), digest, `original ${key} SHA256 drift`);
@@ -40,10 +40,28 @@ test('SRC068 S4 source byte lock: no original/split mutation', () => {
     const bytes = fs.readFileSync(path.join(SRC068, relative));
     assert.equal(sha256(bytes), digest, `${relative} SHA256 drift`);
   }
+
   const manifest = JSON.parse(fs.readFileSync(path.join(SRC068, 'manifest.json'), 'utf8'));
+  const acceptedParity = JSON.parse(
+    fs.readFileSync(path.join(SRC068, 'evidence', 'parity', 'accepted-parity.json'), 'utf8'),
+  );
+
   assert.equal(manifest.variant_selector.default, null, 'no default variant allowed');
   assert.equal(manifest.variant_selector.fail_closed, true);
-  assert.equal(manifest.stages.source_split_parity_pass, false, 'S4 remains CENTRAL_PENDING (not self-promoted)');
+  assert.equal(manifest.stages.source_split_parity_pass, true, 'CENTRAL-accepted S4 must be recorded as PASS');
+  assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json');
+
+  assert.equal(acceptedParity.source_id, 'SRC068');
+  assert.equal(acceptedParity.authority_mode, 'DUAL_VARIANT');
+  assert.equal(acceptedParity.status, 'ACCEPTED');
+  assert.equal(acceptedParity.browser_errors, 0);
+  assert.equal(acceptedParity.visual_review.central_direct_review, true);
+  assert.equal(acceptedParity.visual_review.desktop_reviewed, true);
+  assert.equal(acceptedParity.visual_review.mobile_reviewed, true);
+  assert.deepEqual(acceptedParity.visual_review.variants_reviewed, ['A', 'B']);
+  assert.equal(acceptedParity.dual_variant_results.A_original_split, 'PASS');
+  assert.equal(acceptedParity.dual_variant_results.B_original_split, 'PASS');
+  assert.equal(acceptedParity.dual_variant_results.a_b_cross_contamination, 'ZERO');
 });
 
 test('SRC068 S4 variant image sets: 9 each, disjoint, zero cross-contamination', () => {
@@ -60,6 +78,8 @@ test('SRC068 S4 variant image sets: 9 each, disjoint, zero cross-contamination',
 test('SRC068 S4 evidence complete: summary, manifest, paired PNGs and comparisons', () => {
   const summary = JSON.parse(fs.readFileSync(path.join(S4, 'summary.json'), 'utf8'));
   assert.equal(summary.source_id, 'SRC068');
+  // The capture-time summary remains immutable LOCAL_PASS_CENTRAL_PENDING evidence;
+  // CENTRAL acceptance is recorded separately in evidence/parity/accepted-parity.json.
   assert.equal(summary.status, 'LOCAL_PASS_CENTRAL_PENDING');
   assert.deepEqual(summary.variants, { A: { pass: true }, B: { pass: true } });
   assert.equal(summary.cross_contamination, 'ZERO');
