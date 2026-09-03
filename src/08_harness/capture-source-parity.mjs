@@ -10,6 +10,7 @@ import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mj
 import { captureSRC58Variant, src58SourceFiles } from './source058-driver.mjs';
 import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
+import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -251,6 +252,28 @@ try {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
     if (manifest.stages?.mechanical_split_complete !== true || manifest.stages?.source_split_parity_pass !== false) continue;
+    // DUAL_VARIANT + S4 HOLD: never silently promote into S4 and never pick A/B
+    // as an implicit canonical default. The generic single-executable parity
+    // harness cannot represent two retained authorities. SKIP with an explicit
+    // disposition using existing manifest/authority metadata. SINGLE behavior below
+    // is unchanged.
+    if (manifest?.authority_mode === 'DUAL_VARIANT') {
+      const variantKeys = listDualVariantKeys(manifest);
+      if (!variantKeys) throw new Error(`${sourceId}: DUAL_VARIANT authority must define exactly variants A and B`);
+      let acceptedBaseline = null;
+      const acceptedBaselinePath = path.join(sourceDir, 'baseline', 'accepted-baseline.json');
+      if (fs.existsSync(acceptedBaselinePath)) {
+        try {
+          acceptedBaseline = JSON.parse(fs.readFileSync(acceptedBaselinePath, 'utf8'));
+        } catch {
+          acceptedBaseline = null;
+        }
+      }
+      const disposition = getDualVariantParityDisposition({ manifest, acceptedBaseline });
+      const reason = disposition?.reason ?? 'DUAL_VARIANT_S4_HOLD';
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${reason} authority_mode=DUAL_VARIANT variants=${variantKeys.join(',')} s4_hold_respected=true`);
+      continue;
+    }
     for (const required of ['split/index.html', 'split/styles.css', 'split/script.js']) {
       if (!fs.existsSync(path.join(sourceDir, required))) throw new Error(`${sourceId}: missing ${required}`);
     }

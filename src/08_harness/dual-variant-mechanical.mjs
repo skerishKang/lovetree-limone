@@ -8,6 +8,13 @@ const gitBlobSha1 = (buffer) => crypto.createHash('sha1').update(Buffer.concat([
 const HEX64 = /^[0-9a-f]{64}$/;
 const VARIANT_KEYS = ['A', 'B'];
 
+export const DUAL_VARIANT_KEYS = Object.freeze(['A', 'B']);
+export const DUAL_S4_HOLD_REASONS = Object.freeze({
+  NO_SINGLE_EXECUTABLE: 'DUAL_VARIANT_NO_SINGLE_EXECUTABLE',
+  S4_HOLD: 'DUAL_VARIANT_S4_HOLD',
+  NO_DEDICATED_DRIVER: 'DUAL_VARIANT_NO_DEDICATED_DRIVER',
+});
+
 function isRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -46,6 +53,60 @@ export function validateDualVariantSelector(selector, failures, where) {
   if (JSON.stringify(selector.allowed_values) !== JSON.stringify(VARIANT_KEYS)) failures.push(`${where}: allowed_values must be exactly ["A","B"]`);
   if (selector.default !== null) failures.push(`${where}: default variant must be null (no default)`);
   if (selector.fail_closed !== true) failures.push(`${where}: fail_closed must be true`);
+}
+
+/**
+ * Deterministically enumerate DUAL_VARIANT keys from existing manifest metadata.
+ * Returns exactly ['A','B'] when the manifest is DUAL_VARIANT with A/B authority,
+ * otherwise null. Never selects a canonical default; callers must handle both
+ * variants or fail closed / SKIP with an explicit disposition.
+ */
+export function listDualVariantKeys(manifest) {
+  if (manifest?.authority_mode !== 'DUAL_VARIANT') return null;
+  if (JSON.stringify(variantKeysOf(manifest?.authority?.variants)) !== JSON.stringify(VARIANT_KEYS)) return null;
+  return ['A', 'B'];
+}
+
+/**
+ * Explicit S4 HOLD detection from existing metadata only.
+ * HOLD is true when the accepted baseline declares a HOLD-gated next stage
+ * (for example "SPLIT_PARITY_S4_HOLD"). No second metadata scheme is introduced;
+ * missing/invalid next_stage_authorized fails closed as HOLD for DUAL_VARIANT.
+ */
+export function isDualVariantS4Hold({ manifest, acceptedBaseline }) {
+  if (manifest?.authority_mode !== 'DUAL_VARIANT') return false;
+  const next = acceptedBaseline?.next_stage_authorized;
+  if (typeof next !== 'string') return true;
+  return next.includes('HOLD');
+}
+
+/**
+ * Fail-closed parity disposition for DUAL_VARIANT sources.
+ * SINGLE sources never reach this helper (returns null).
+ * DUAL_VARIANT never returns RUN_SINGLE; it returns SKIP with an explicit reason:
+ * - DUAL_VARIANT_S4_HOLD when the accepted baseline holds S4, or
+ * - DUAL_VARIANT_NO_DEDICATED_DRIVER when S4 is released but no dual parity
+ *   driver exists for the generic single-executable harness.
+ * Callers must not pick A or B as an implicit canonical default.
+ */
+export function getDualVariantParityDisposition({ manifest, acceptedBaseline }) {
+  if (manifest?.authority_mode !== 'DUAL_VARIANT') return null;
+  if (isDualVariantS4Hold({ manifest, acceptedBaseline })) {
+    return { action: 'SKIP', reason: DUAL_S4_HOLD_REASONS.S4_HOLD };
+  }
+  return { action: 'SKIP', reason: DUAL_S4_HOLD_REASONS.NO_DEDICATED_DRIVER };
+}
+
+/**
+ * Fail-closed baseline disposition for DUAL_VARIANT sources.
+ * The shared single-executable baseline harness cannot represent two retained
+ * authorities with one original/original.html path. DUAL_VARIANT must SKIP the
+ * single capture (after verifying both frozen originals) with an explicit reason.
+ * SINGLE sources never reach this helper (returns null).
+ */
+export function getDualVariantBaselineDisposition({ manifest }) {
+  if (manifest?.authority_mode !== 'DUAL_VARIANT') return null;
+  return { action: 'SKIP', reason: DUAL_S4_HOLD_REASONS.NO_SINGLE_EXECUTABLE };
 }
 
 function failOnVariantIdentityLeak(sourceId, value, failures, where) {

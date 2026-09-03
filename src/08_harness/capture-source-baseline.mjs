@@ -10,6 +10,7 @@ import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
+import { getDualVariantBaselineDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -256,6 +257,26 @@ try {
   for (const sourceId of baselineCaptureTargets) {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
+    // DUAL_VARIANT explicit recognition: the shared single-executable harness
+    // assumes src/03_sources/SRCxxx/original/original.html, but a DUAL_VARIANT
+    // source retains two authorities (original/A/original.html + original/B/original.html)
+    // with no implicit canonical default. Verify both frozen originals, then SKIP
+    // the single capture with an explicit disposition. SINGLE behavior below is unchanged.
+    const dualBaselineDisposition = getDualVariantBaselineDisposition({ manifest });
+    if (dualBaselineDisposition?.action === 'SKIP') {
+      const variantKeys = listDualVariantKeys(manifest);
+      if (!variantKeys) throw new Error(`${sourceId}: DUAL_VARIANT authority must define exactly variants A and B`);
+      for (const key of variantKeys) {
+        const variantPath = path.join(sourceDir, 'original', key, 'original.html');
+        const variantBytes = fs.readFileSync(variantPath);
+        const expected = manifest.authority?.variants?.[key];
+        if (!expected) throw new Error(`${sourceId}: DUAL_VARIANT manifest missing variant ${key} authority`);
+        if (variantBytes.length !== expected.bytes) throw new Error(`${sourceId} original variant ${key} byte count drift`);
+        if (sha256(variantBytes) !== expected.sha256) throw new Error(`${sourceId} original variant ${key} SHA256 drift`);
+      }
+      console.log(`SRC_BASELINE_CAPTURE_SKIP=${sourceId} reason=${dualBaselineDisposition.reason} authority_mode=DUAL_VARIANT variants=${variantKeys.join(',')}`);
+      continue;
+    }
     const originalPath = path.join(sourceDir, 'original', 'original.html');
     const bytes = fs.readFileSync(originalPath);
     if (bytes.length !== manifest.authority.bytes) throw new Error(`${sourceId} original byte count drift`);
