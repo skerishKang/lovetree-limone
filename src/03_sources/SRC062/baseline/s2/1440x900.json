@@ -1,0 +1,4090 @@
+{
+  "states": {
+    "D01_INITIAL_SCENE01": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 158,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 0,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(0, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 237.75,
+            "y": 143.82,
+            "width": 964.5,
+            "height": 638.28
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -489.594, -311.04)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1146.1,
+            "y": 164.5,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 284.14,
+            "y": 182.97,
+            "width": 83.22,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 277.66,
+            "y": 176.62,
+            "width": 570.87,
+            "height": 572.67
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "none"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 935.71,
+            "y": 197.99,
+            "width": 218.27,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 935.71,
+            "y": 226.56,
+            "width": 218.27,
+            "height": 0
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 935.71,
+            "y": 286.64,
+            "width": 218.27,
+            "height": 0
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 669.81,
+            "width": 99.95,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1044.53,
+            "y": 669.81,
+            "width": 55.34,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 711.18,
+            "width": 92.14,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 181.01,
+            "y": 135.32,
+            "width": 1077.97,
+            "height": 656.01
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -547.195, -319.68)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1202.84,
+            "y": 156,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 182,
+            "y": 136.3,
+            "width": 1076,
+            "height": 654.04
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "none"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 8,
+      "viewerOpen": false,
+      "viewerTitle": "",
+      "viewerStatus": "MEMORY REVEAL",
+      "viewerKicker": "MOMENT FILM · 01",
+      "panelOpen": false,
+      "sheetOpen": false,
+      "overlayOpen": false,
+      "progressLabel": "SCENE 01",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 0,
+        "targetPhase": 0,
+        "velocity": 0,
+        "active": 0,
+        "overlay": null,
+        "viewerId": null,
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          },
+          {
+            "i": 1,
+            "x": 874.2111206054688,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 1020.648193359375,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 1151.9290771484375,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 4,
+            "x": 1261.435546875,
+            "y": -131.04318237304688,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 1343.6473388671875,
+            "y": -262.6707763671875,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 1394.4200439453125,
+            "y": -409.32257080078125,
+            "active": false
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          },
+          {
+            "i": 1,
+            "centerX": 1699.2000732421875,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": 2678.400146484375,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": 3657.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 4,
+            "centerX": 4636.7998046875,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": 5616,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 6595.2001953125,
+            "opacity": 0.12,
+            "active": false
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, 0, 0)",
+          "matrix(1, 0, 0, 1, 0, 0)",
+          "matrix(1, 0, 0, 1, 0, 0)",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        ]
+      },
+      "viewerId": null,
+      "phase": 0,
+      "targetPhase": 0,
+      "velocity": 0,
+      "active": 0,
+      "overlay": null
+    },
+    "D02_RAIL_TRAVEL_SCENE04": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 158,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 45,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(0.5, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 237.75,
+            "y": 143.82,
+            "width": 964.5,
+            "height": 638.28
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -489.594, -311.04)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1146.1,
+            "y": 164.5,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 284.14,
+            "y": 182.97,
+            "width": 83.22,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 277.66,
+            "y": 176.62,
+            "width": 570.87,
+            "height": 572.67
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "none"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 935.71,
+            "y": 197.99,
+            "width": 218.27,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 935.71,
+            "y": 226.56,
+            "width": 218.27,
+            "height": 0
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 935.71,
+            "y": 286.64,
+            "width": 218.27,
+            "height": 0
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 669.81,
+            "width": 99.95,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1044.53,
+            "y": 669.81,
+            "width": 55.34,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 711.18,
+            "width": 92.14,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 181.01,
+            "y": 135.32,
+            "width": 1077.97,
+            "height": 656.01
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -547.195, -319.68)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1202.84,
+            "y": 156,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 182,
+            "y": 136.3,
+            "width": 1076,
+            "height": 654.04
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "none"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 8,
+      "viewerOpen": false,
+      "viewerTitle": "",
+      "viewerStatus": "MEMORY REVEAL",
+      "viewerKicker": "MOMENT FILM · 01",
+      "panelOpen": false,
+      "sheetOpen": false,
+      "overlayOpen": false,
+      "progressLabel": "SCENE 04",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 3.0000000000457336,
+        "targetPhase": 3,
+        "velocity": 0,
+        "active": 3,
+        "overlay": null,
+        "viewerId": null,
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 288.07098388671875,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 1,
+            "x": 419.3518371582031,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 565.7888793945312,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          },
+          {
+            "i": 4,
+            "x": 874.2111206054688,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 1020.648193359375,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 1151.9290771484375,
+            "y": -21.075355529785156,
+            "active": false
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": -2217.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 1,
+            "centerX": -1238.3999633789062,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": -259.1999816894531,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          },
+          {
+            "i": 4,
+            "centerX": 1699.2000732421875,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": 2678.400146484375,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 3657.60009765625,
+            "opacity": 0.12,
+            "active": false
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, -432, 0)",
+          "matrix(1, 0, 0, 1, -777.6, 0)",
+          "matrix(1, 0, 0, 1, -1036.8, 0)",
+          "matrix(1, 0, 0, 1, -1339.2, 0)"
+        ]
+      },
+      "viewerId": null,
+      "phase": 3.0000000000457336,
+      "targetPhase": 3,
+      "velocity": 0,
+      "active": 3,
+      "overlay": null
+    },
+    "D03_ACTIVE_VIEWER_SCENE04": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 158,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0.34",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 45,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(0.5, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 230.41,
+            "y": 126,
+            "width": 979.19,
+            "height": 648
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -489.594, -324)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1152.59,
+            "y": 147,
+            "width": 34,
+            "height": 34
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 277.5,
+            "y": 165.75,
+            "width": 84.48,
+            "height": 11
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 270.92,
+            "y": 159.3,
+            "width": 579.56,
+            "height": 581.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "auto"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 939,
+            "y": 181,
+            "width": 221.59,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 939,
+            "y": 210,
+            "width": 221.59,
+            "height": 68.22
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 939,
+            "y": 339.22,
+            "width": 221.59,
+            "height": 40.78
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 939,
+            "y": 660,
+            "width": 101.47,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1049.47,
+            "y": 660,
+            "width": 56.19,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 939,
+            "y": 702,
+            "width": 93.55,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 181.01,
+            "y": 135.32,
+            "width": 1077.97,
+            "height": 656.01
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -547.195, -319.68)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1202.84,
+            "y": 156,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 182,
+            "y": 136.3,
+            "width": 1076,
+            "height": 654.04
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "none"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 8,
+      "viewerOpen": true,
+      "viewerTitle": "지나쳤는데 다시 보고 싶어졌다.",
+      "viewerStatus": "MEMORY REVEAL",
+      "viewerKicker": "MOMENT FILM · 04",
+      "panelOpen": false,
+      "sheetOpen": false,
+      "overlayOpen": true,
+      "progressLabel": "SCENE 04",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 3,
+        "targetPhase": 3,
+        "velocity": 0,
+        "active": 3,
+        "overlay": "viewer",
+        "viewerId": "m04",
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 288.07098388671875,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 1,
+            "x": 419.3518371582031,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 565.7888793945312,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          },
+          {
+            "i": 4,
+            "x": 874.2111206054688,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 1020.648193359375,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 1151.9290771484375,
+            "y": -21.075355529785156,
+            "active": false
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": -2217.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 1,
+            "centerX": -1238.3999633789062,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": -259.1999816894531,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          },
+          {
+            "i": 4,
+            "centerX": 1699.2000732421875,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": 2678.400146484375,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 3657.60009765625,
+            "opacity": 0.12,
+            "active": false
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, -432, 0)",
+          "matrix(1, 0, 0, 1, -777.6, 0)",
+          "matrix(1, 0, 0, 1, -1036.8, 0)",
+          "matrix(1, 0, 0, 1, -1339.2, 0)"
+        ]
+      },
+      "viewerId": "m04",
+      "phase": 3,
+      "targetPhase": 3,
+      "velocity": 0,
+      "active": 3,
+      "overlay": "viewer"
+    },
+    "D04_MEMORY_FILMS_PANEL": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 192,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0.34",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 45,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(0.5, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 237.75,
+            "y": 143.82,
+            "width": 964.5,
+            "height": 638.28
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -489.594, -311.04)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1146.1,
+            "y": 164.5,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 284.14,
+            "y": 182.97,
+            "width": 83.22,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 277.66,
+            "y": 176.62,
+            "width": 570.87,
+            "height": 572.67
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "none"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 935.71,
+            "y": 197.99,
+            "width": 218.27,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 935.71,
+            "y": 226.56,
+            "width": 218.27,
+            "height": 67.2
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 935.71,
+            "y": 353.84,
+            "width": 218.27,
+            "height": 40.17
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 669.81,
+            "width": 99.95,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1044.53,
+            "y": 669.81,
+            "width": 55.34,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 711.18,
+            "width": 92.14,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 172.8,
+            "y": 117,
+            "width": 1094.39,
+            "height": 666
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -547.195, -333)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1210.2,
+            "y": 138,
+            "width": 34,
+            "height": 34
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 173.8,
+            "y": 118,
+            "width": 1092.39,
+            "height": 664
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "auto"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 14,
+      "viewerOpen": false,
+      "viewerTitle": "지나쳤는데 다시 보고 싶어졌다.",
+      "viewerStatus": "MEMORY REVEAL",
+      "viewerKicker": "MOMENT FILM · 04",
+      "panelOpen": true,
+      "sheetOpen": false,
+      "overlayOpen": true,
+      "progressLabel": "SCENE 04",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 3,
+        "targetPhase": 3,
+        "velocity": 0,
+        "active": 3,
+        "overlay": "panel",
+        "viewerId": "m04",
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 288.07098388671875,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 1,
+            "x": 419.3518371582031,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 565.7888793945312,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          },
+          {
+            "i": 4,
+            "x": 874.2111206054688,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 1020.648193359375,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 1151.9290771484375,
+            "y": -21.075355529785156,
+            "active": false
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": -2217.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 1,
+            "centerX": -1238.3999633789062,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": -259.1999816894531,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          },
+          {
+            "i": 4,
+            "centerX": 1699.2000732421875,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": 2678.400146484375,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 3657.60009765625,
+            "opacity": 0.12,
+            "active": false
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, -432, 0)",
+          "matrix(1, 0, 0, 1, -777.6, 0)",
+          "matrix(1, 0, 0, 1, -1036.8, 0)",
+          "matrix(1, 0, 0, 1, -1339.2, 0)"
+        ]
+      },
+      "viewerId": "m04",
+      "phase": 3,
+      "targetPhase": 3,
+      "velocity": 0,
+      "active": 3,
+      "overlay": "panel"
+    },
+    "D05_MY_TREE_PANEL": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 191,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0.34",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 45,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(0.5, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 237.75,
+            "y": 143.82,
+            "width": 964.5,
+            "height": 638.28
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -489.594, -311.04)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1146.1,
+            "y": 164.5,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 284.14,
+            "y": 182.97,
+            "width": 83.22,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 277.66,
+            "y": 176.62,
+            "width": 570.87,
+            "height": 572.67
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "none"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 935.71,
+            "y": 197.99,
+            "width": 218.27,
+            "height": 10.84
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 935.71,
+            "y": 226.56,
+            "width": 218.27,
+            "height": 67.2
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 935.71,
+            "y": 353.84,
+            "width": 218.27,
+            "height": 40.17
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 669.81,
+            "width": 99.95,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1044.53,
+            "y": 669.81,
+            "width": 55.34,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 935.71,
+            "y": 711.18,
+            "width": 92.14,
+            "height": 32.51
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 172.8,
+            "y": 117,
+            "width": 1094.39,
+            "height": 666
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -547.195, -333)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1210.2,
+            "y": 138,
+            "width": 34,
+            "height": 34
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 173.8,
+            "y": 118,
+            "width": 1092.39,
+            "height": 664
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "auto"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 8,
+      "viewerOpen": false,
+      "viewerTitle": "처음 눈이 멈춘 순간",
+      "viewerStatus": "MEMORY REVEAL",
+      "viewerKicker": "MOMENT FILM · 01",
+      "panelOpen": true,
+      "sheetOpen": false,
+      "overlayOpen": true,
+      "progressLabel": "SCENE 04",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 3,
+        "targetPhase": 3,
+        "velocity": 0,
+        "active": 3,
+        "overlay": "panel",
+        "viewerId": "m01",
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 288.07098388671875,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 1,
+            "x": 419.3518371582031,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 565.7888793945312,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          },
+          {
+            "i": 4,
+            "x": 874.2111206054688,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 1020.648193359375,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 1151.9290771484375,
+            "y": -21.075355529785156,
+            "active": false
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": -2217.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 1,
+            "centerX": -1238.3999633789062,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": -259.1999816894531,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          },
+          {
+            "i": 4,
+            "centerX": 1699.2000732421875,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": 2678.400146484375,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 3657.60009765625,
+            "opacity": 0.12,
+            "active": false
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, -432, 0)",
+          "matrix(1, 0, 0, 1, -777.6, 0)",
+          "matrix(1, 0, 0, 1, -1036.8, 0)",
+          "matrix(1, 0, 0, 1, -1339.2, 0)"
+        ]
+      },
+      "viewerId": "m01",
+      "phase": 3,
+      "targetPhase": 3,
+      "velocity": 0,
+      "active": 3,
+      "overlay": "panel"
+    },
+    "D06_SCENE07_MEMORY_PATH_VIEWER": {
+      "title": "LoveTree · Memory Sculpture V1.1",
+      "ids": [
+        "stage",
+        "mobileMenuButton",
+        "count",
+        "railRing",
+        "station",
+        "world",
+        "progressFill",
+        "progressLabel",
+        "overlayBackdrop",
+        "viewer",
+        "viewerClose",
+        "viewerStatus",
+        "viewerPoster",
+        "viewerKicker",
+        "viewerTitle",
+        "viewerWhy",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panel",
+        "panelClose",
+        "panelInner",
+        "mobileNavSheet",
+        "liveStatus"
+      ],
+      "elementCount": 191,
+      "buttonIds": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "mobileMenuButton",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "viewerClose",
+        "playMoment",
+        "saveMoment",
+        "viewerTree",
+        "panelClose",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "metrics": {
+        "stage": {
+          "tag": "MAIN",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "relative",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(249, 248, 243)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "mobileMenuButton": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "9px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "count": {
+          "tag": "SPAN",
+          "rect": {
+            "x": 1348.81,
+            "y": 37.11,
+            "width": 48,
+            "height": 15
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "10px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "railRing": {
+          "tag": "DIV",
+          "rect": {
+            "x": 28.8,
+            "y": -1251.89,
+            "width": 1382.39,
+            "height": 1382.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "station": {
+          "tag": "DIV",
+          "rect": {
+            "x": 711,
+            "y": 121.5,
+            "width": 18,
+            "height": 18
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -9, -9)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "world": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0.34",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "6",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "progressFill": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 772,
+            "width": 90,
+            "height": 1
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgb(24, 24, 24)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "progressLabel": {
+          "tag": "DIV",
+          "rect": {
+            "x": 1306.81,
+            "y": 781,
+            "width": 90,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(107, 104, 98)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "overlayBackdrop": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(247, 244, 238, 0.28)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "80",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewer": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 230.41,
+            "y": 126,
+            "width": 979.19,
+            "height": 648
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, -489.594, -324)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        },
+        "viewerClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1152.59,
+            "y": 147,
+            "width": 34,
+            "height": 34
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerStatus": {
+          "tag": "DIV",
+          "rect": {
+            "x": 277.5,
+            "y": 165.75,
+            "width": 78.33,
+            "height": 11
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgba(20, 20, 20, 0.62)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerPoster": {
+          "tag": "IMG",
+          "rect": {
+            "x": 270.92,
+            "y": 159.3,
+            "width": 579.56,
+            "height": 581.39
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "clip",
+          "pointerEvents": "auto"
+        },
+        "viewerKicker": {
+          "tag": "DIV",
+          "rect": {
+            "x": 939,
+            "y": 181,
+            "width": 221.59,
+            "height": 11
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(102, 97, 91)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerTitle": {
+          "tag": "H2",
+          "rect": {
+            "x": 939,
+            "y": 210,
+            "width": 221.59,
+            "height": 102.33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "33.12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerWhy": {
+          "tag": "P",
+          "rect": {
+            "x": 939,
+            "y": 373.33,
+            "width": 221.59,
+            "height": 40.78
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(87, 83, 78)",
+          "fontSize": "12px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "playMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 939,
+            "y": 660,
+            "width": 96.42,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgb(28, 28, 28)",
+          "color": "rgb(247, 244, 238)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "saveMoment": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1044.42,
+            "y": 660,
+            "width": 56.19,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "viewerTree": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 939,
+            "y": 702,
+            "width": 93.55,
+            "height": 33
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.38)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "8px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "panel": {
+          "tag": "SECTION",
+          "rect": {
+            "x": 181.01,
+            "y": 135.32,
+            "width": 1077.97,
+            "height": 656.01
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "0",
+          "transform": "matrix(0.985, 0, 0, 0.985, -547.195, -319.68)",
+          "backgroundColor": "rgba(247, 244, 238, 0.9)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "90",
+          "overflow": "hidden",
+          "pointerEvents": "none"
+        },
+        "panelClose": {
+          "tag": "BUTTON",
+          "rect": {
+            "x": 1202.84,
+            "y": 156,
+            "width": 33.49,
+            "height": 33.49
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(255, 255, 255, 0.34)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "18px",
+          "zIndex": "4",
+          "overflow": "visible",
+          "pointerEvents": "none"
+        },
+        "panelInner": {
+          "tag": "DIV",
+          "rect": {
+            "x": 182,
+            "y": 136.3,
+            "width": 1076,
+            "height": 654.04
+          },
+          "display": "block",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "auto",
+          "pointerEvents": "none"
+        },
+        "mobileNavSheet": {
+          "tag": "DIV",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          "display": "none",
+          "position": "static",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "visible",
+          "pointerEvents": "auto"
+        },
+        "liveStatus": {
+          "tag": "P",
+          "rect": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          },
+          "display": "block",
+          "position": "absolute",
+          "visibility": "visible",
+          "opacity": "1",
+          "transform": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(23, 23, 23)",
+          "fontSize": "16px",
+          "zIndex": "auto",
+          "overflow": "hidden",
+          "pointerEvents": "auto"
+        }
+      },
+      "stationCount": 1,
+      "imgCount": 8,
+      "viewerOpen": true,
+      "viewerTitle": "기억은 이어지고, 경로는 나의 Tree가 된다.",
+      "viewerStatus": "PATH SUMMARY",
+      "viewerKicker": "YOUR MEMORY PATH",
+      "panelOpen": false,
+      "sheetOpen": false,
+      "overlayOpen": true,
+      "progressLabel": "SCENE 07",
+      "railMomentButtons": 7,
+      "scrollY": 0,
+      "innerWidth": 1440,
+      "innerHeight": 900,
+      "trackState": {
+        "phase": 6,
+        "targetPhase": 6,
+        "velocity": 0,
+        "active": 6,
+        "overlay": "viewer",
+        "viewerId": "m07",
+        "metrics": {
+          "w": 1440,
+          "h": 900,
+          "R": 691.1999999999999,
+          "cx": 720,
+          "cy": -560.6999999999999,
+          "stationY": 130.5,
+          "nodeStep": 0.225,
+          "sceneSpacing": 979.2
+        },
+        "nodes": [
+          {
+            "i": 0,
+            "x": 45.580013275146484,
+            "y": -409.32257080078125,
+            "active": false
+          },
+          {
+            "i": 1,
+            "x": 96.35263442993164,
+            "y": -262.6707763671875,
+            "active": false
+          },
+          {
+            "i": 2,
+            "x": 178.56443786621094,
+            "y": -131.04318237304688,
+            "active": false
+          },
+          {
+            "i": 3,
+            "x": 288.07098388671875,
+            "y": -21.075355529785156,
+            "active": false
+          },
+          {
+            "i": 4,
+            "x": 419.3518371582031,
+            "y": 61.68903923034668,
+            "active": false
+          },
+          {
+            "i": 5,
+            "x": 565.7888793945312,
+            "y": 113.07769393920898,
+            "active": false
+          },
+          {
+            "i": 6,
+            "x": 720,
+            "y": 130.5,
+            "active": true
+          }
+        ],
+        "scenes": [
+          {
+            "i": 0,
+            "centerX": -5155.2001953125,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 1,
+            "centerX": -4176,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 2,
+            "centerX": -3196.7998046875,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 3,
+            "centerX": -2217.60009765625,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 4,
+            "centerX": -1238.3999633789062,
+            "opacity": 0.12,
+            "active": false
+          },
+          {
+            "i": 5,
+            "centerX": -259.1999816894531,
+            "opacity": 0.52,
+            "active": false
+          },
+          {
+            "i": 6,
+            "centerX": 720,
+            "opacity": 1,
+            "active": true
+          }
+        ],
+        "terrain": [
+          "matrix(1, 0, 0, 1, -864, 0)",
+          "matrix(1, 0, 0, 1, -1555.2, 0)",
+          "matrix(1, 0, 0, 1, -2073.6, 0)",
+          "matrix(1, 0, 0, 1, -2678.4, 0)"
+        ]
+      },
+      "viewerId": "m07",
+      "phase": 6,
+      "targetPhase": 6,
+      "velocity": 0,
+      "active": 6,
+      "overlay": "viewer"
+    }
+  },
+  "screenshots": {
+    "D01_INITIAL_SCENE01_sha256": "d630df4bc2dbdd80ddc1bcea02f7c0ac68db07ef956f45dc37ed9ce7add5dce7",
+    "D02_RAIL_TRAVEL_SCENE04_sha256": "1020bae7b0505fe34aef6dacef421ea922afefa5ebb7407ef2312cf9181c0cf0",
+    "D03_ACTIVE_VIEWER_SCENE04_sha256": "fb56d86523ac8ef836bc6d413db4f0cf66c18ffa456d5938bc4fe317fd607383",
+    "D04_MEMORY_FILMS_PANEL_sha256": "5667148c737564aa8c47c5a017f5b11520ae343d4832827ae2c8e8bad0be47dd",
+    "D05_MY_TREE_PANEL_sha256": "2cc43ef11e0d08ef40b2792ebd676d99471f0652689aff3417a8f686633b77c4",
+    "D06_SCENE07_MEMORY_PATH_VIEWER_sha256": "93eb6ace74095f594fe12b39c99908bad26f200525a6d25d0ae003c1506401a8"
+  },
+  "interaction": {
+    "RAIL_FRACTIONAL_MOVE": true,
+    "SNAP_TO_SCENE": true,
+    "ACTIVE_SCULPTURE_SHORT_TAP": "OPENS_VIEWER",
+    "DRAG_GREATER_THAN_9PX": "DOES_NOT_OPEN_VIEWER",
+    "VIEWER_CLOSE_PHASE_RESTORED": true,
+    "MEMORY_FILMS_CARD_TO_VIEWER": "OPENS_VIEWER",
+    "PANEL_CLOSE_PHASE_RESTORED": true,
+    "SCENE07_MEMORY_PATH": true
+  },
+  "errors": [],
+  "failedRequests": []
+}

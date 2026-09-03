@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC062",
+  "authority_system": "Google Drive",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-03T13:11:56Z",
+  "drive_folder_id": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+  "drive_folder_name": "62_기억조각상_원형레일전시",
+  "drive_file_id": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+  "filename": "62_기억조각상_원형레일전시.html",
+  "revision": "V1.1",
+  "mime_type": "text/html",
+  "bytes": 20728647,
+  "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+  "transport": {
+    "classification": "FRESH_DRIVE_EXACT",
+    "verification": "CENTRAL downloaded the current Drive authority plus the V1.1 candidate (Drive 1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S) and verified both are byte-identical: 20,728,647 bytes, SHA-256 bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8. Local worker re-downloaded file 1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi- and reproduced bytes/SHA exactly; frozen without redesign, refactor, split, or framework conversion."
+  },
+  "selection_note": "V1.1 design-lead instruction names the V1.1 candidate folder as current; source-root pointer resolves to identical bytes (V1_1_BYTE_IDENTITY=PASS). V1.0 file is revision history. Nested 02_코덱스 작업-12 folder is Codex/provenance material and does not override R0.4 primary Source identity SRC062."
+}

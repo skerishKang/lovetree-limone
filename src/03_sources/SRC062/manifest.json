@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC062",
+  "source_folder_name": "62_기억조각상_원형레일전시",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/62_기억조각상_원형레일전시/62_기억조각상_원형레일전시.html",
+  "authority": {
+    "drive_folder_id": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+    "drive_file_id": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+    "filename": "62_기억조각상_원형레일전시.html",
+    "bytes": 20728647,
+    "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+    "revision": "V1.1",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": null,
+  "parity_ref": null,
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": false,
+    "mechanical_split_complete": false,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false
+}

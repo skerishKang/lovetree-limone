@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.2",
+  "source_id": "SRC062",
+  "status": "CAPTURED_PENDING_CENTRAL_REVIEW",
+  "stage": "S2_BASELINE",
+  "surface": "original/original.html",
+  "method": "Chromium headless via local Playwright against frozen original over loopback HTTP (src/08_harness/capture-src062-s2-baseline.mjs)",
+  "viewports": [
+    {"width": 1440, "height": 900, "label": "DESKTOP"},
+    {"width": 390, "height": 844, "label": "MOBILE"},
+    {"width": 320, "height": 720, "label": "SMALL_MOBILE"}
+  ],
+  "states": [
+    "D01_INITIAL_SCENE01",
+    "D02_RAIL_TRAVEL_SCENE04",
+    "D03_ACTIVE_VIEWER_SCENE04",
+    "D04_MEMORY_FILMS_PANEL",
+    "D05_MY_TREE_PANEL",
+    "D06_SCENE07_MEMORY_PATH_VIEWER",
+    "M01_INITIAL_SCENE01",
+    "M02_MENU_SHEET",
+    "M03_SWIPE_TRAVEL_SCENE06",
+    "M04_ACTIVE_VIEWER_SCENE06",
+    "M05_MEMORY_FILMS_PANEL",
+    "M06_MY_TREE_PANEL"
+  ],
+  "interactions_proven": [
+    "RAIL_FRACTIONAL_MOVE",
+    "SNAP_TO_SCENE",
+    "ACTIVE_SCULPTURE_SHORT_TAP",
+    "DRAG_GREATER_THAN_9PX",
+    "VIEWER_CLOSE_PHASE_RESTORED",
+    "MEMORY_FILMS_CARD_TO_VIEWER",
+    "PANEL_CLOSE_PHASE_RESTORED",
+    "SCENE07_MEMORY_PATH"
+  ],
+  "measurements": [
+    "id inventory",
+    "source-defining element rectangles",
+    "critical computed styles",
+    "station count",
+    "viewer open state and content",
+    "panel state",
+    "track62 phase/targetPhase/active state",
+    "console/page errors",
+    "failed requests"
+  ],
+  "preserved_legacy_evidence": [
+    "1280x800-INITIAL.png",
+    "1280x800-VIEWER_OPEN.png",
+    "390x844-INITIAL.png",
+    "390x844-VIEWER_OPEN.png"
+  ]
+}
