@@ -4,7 +4,9 @@
  * Verification suite for MVP001 Isolated Static realization.
  * Enforces:
  * 1. Source capsules in src/03_sources/ remain 100% untouched.
- * 2. Materialized files in public/mvp/01/surfaces/ match source split bytes and sha256.
+ * 2. Product surfaces in public/mvp/01/surfaces/ are derived from frozen source split:
+ *    styles.css byte-identical, index.html = authority + bridge tag only,
+ *    script.js = authority plus bounded Product seam, authority hooks preserved.
  * 3. Direct DOM merge is forbidden (isolated frames required).
  * 4. Five candidate surfaces exist with canonical step mappings.
  * 5. Invalid step fails safe to entry through the shared productization contract.
@@ -49,26 +51,54 @@ test('1. Source capsules in src/03_sources/ remain untouched and match authority
   }
 });
 
-test('2. Materialized files in public/mvp/01/surfaces/ match source split byte-for-byte', () => {
+test('2. Product surfaces derive from frozen source split with bounded seam only', () => {
+  const seamMarkers = {
+    SRC056: ['__LT56_SELECT__', '__LT56_COPY__'],
+    SRC057: ['__LT57_SELECT__', '__LT57_PRODUCT__'],
+    SRC058: ['__LT58_SELECT__', '__LT58_PRODUCT__'],
+    SRC060: ['__LT60_SELECT__'],
+    SRC064: ['__TRACK64_SELECT__'],
+  };
+
   for (const { id, surface } of SOURCES) {
     const splitDir = join(SOURCES_ROOT, id, 'split');
     const targetDir = join(SURFACES_ROOT, surface);
 
     assert.ok(existsSync(targetDir), `Surface directory ${surface} must exist`);
 
-    const coreFiles = ['index.html', 'styles.css', 'script.js'];
-    for (const file of coreFiles) {
-      const srcFile = join(splitDir, file);
-      const dstFile = join(targetDir, file);
+    // styles.css must remain byte-identical to frozen authority
+    const cssSrc = readFileSync(join(splitDir, 'styles.css'));
+    const cssDst = readFileSync(join(targetDir, 'styles.css'));
+    assert.equal(sha256(cssDst), sha256(cssSrc), `${id}/styles.css must be byte-identical to authority`);
 
-      assert.ok(existsSync(srcFile), `Source split file ${srcFile} must exist`);
-      assert.ok(existsSync(dstFile), `Materialized file ${dstFile} must exist`);
+    // index.html must equal authority plus exactly one bridge script tag
+    const htmlSrc = readFileSync(join(splitDir, 'index.html'), 'utf8');
+    const htmlDst = readFileSync(join(targetDir, 'index.html'), 'utf8');
+    const bridgeTag = `<script src="./${surface}-product-bridge.js"></script>`;
+    assert.ok(htmlDst.includes(bridgeTag), `${id}/index.html must reference its Product bridge`);
+    let htmlStripped = htmlDst.replace(`\n${bridgeTag}`, '').replace(bridgeTag, '');
+    assert.ok(!htmlStripped.includes(bridgeTag), `${id}/index.html must reference its Product bridge exactly once`);
+    assert.equal(htmlStripped, htmlSrc, `${id}/index.html must be authority plus bridge tag only`);
 
-      const srcBuf = readFileSync(srcFile);
-      const dstBuf = readFileSync(dstFile);
+    // script.js must preserve authority identity hooks and carry only bounded Product seam
+    const jsSrc = readFileSync(join(splitDir, 'script.js'), 'utf8');
+    const jsDst = readFileSync(join(targetDir, 'script.js'), 'utf8');
+    const authHooks = [...jsSrc.matchAll(/window\.(__[A-Za-z0-9_]+)\s*=/g)].map((m) => m[1]);
+    assert.ok(authHooks.length > 0, `${id}/script.js authority must expose identity hooks`);
+    for (const hook of authHooks) {
+      assert.ok(new RegExp(`window\\.${hook}\\s*=`).test(jsDst), `${id}/script.js must preserve authority hook window.${hook}`);
+    }
+    for (const marker of seamMarkers[id]) {
+      assert.ok(jsDst.includes(marker), `${id}/script.js must expose bounded seam ${marker}`);
+      assert.ok(!jsSrc.includes(marker), `${id} authority script.js must not contain Product seam ${marker}`);
+    }
 
-      assert.equal(dstBuf.length, srcBuf.length, `${id}/${file} byte length mismatch`);
-      assert.equal(sha256(dstBuf), sha256(srcBuf), `${id}/${file} SHA256 mismatch`);
+    // Authority split must contain no Product bridge references
+    for (const file of ['index.html', 'styles.css', 'script.js']) {
+      assert.ok(
+        !readFileSync(join(splitDir, file), 'utf8').includes('product-bridge'),
+        `${id} authority ${file} must not reference Product bridge`
+      );
     }
   }
 
