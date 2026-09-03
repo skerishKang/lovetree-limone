@@ -61,17 +61,29 @@
     } catch (e) {}
   }
 
-  function validInit(data) {
+  // Trusted control envelope from the shell parent. Any same-origin sibling
+  // window dispatching synthetic events must not hydrate or dispose the Source.
+  // INIT additionally requires a monotonic integer contextRevision (checked by
+  // the caller); DISPOSE is a teardown signal bound to the session identity.
+  function validControl(event, type) {
+    if (!event || event.source !== parent) return null;
+    if (event.origin !== location.origin) return null;
+    var data = event.data;
     if (!data || typeof data !== 'object') return null;
     if (data.protocol !== PROTOCOL || data.protocolVersion !== VERSION) return null;
     if (data.mvpId !== MVP || data.sourceId !== SOURCE) return null;
-    if (data.frameSessionId !== SESSION || data.type !== 'SOURCE_INIT') return null;
+    if (data.frameSessionId !== SESSION || data.type !== type) return null;
+    if (type === 'SOURCE_INIT' && (!Number.isInteger(data.contextRevision) || data.contextRevision < 0)) return null;
+    return data;
+  }
+
+  function validInit(data) {
+    if (!data || typeof data !== 'object') return null;
     var payload = data.payload;
     if (!payload || typeof payload !== 'object') return null;
     if (!payload.context || typeof payload.context !== 'object') return null;
     if (!payload.projection || typeof payload.projection !== 'object') return null;
     if (!payload.permissions || payload.permissions.canRead !== true) return null;
-    if (!Number.isInteger(data.contextRevision) || data.contextRevision < 0) return null;
     return payload;
   }
 
@@ -97,23 +109,28 @@
   function onMessage(event) {
     var payload;
     try {
-      if (event.origin !== location.origin) return;
       if (event.data && event.data.type === 'SOURCE_DISPOSE') {
-        if (event.data.frameSessionId !== SESSION) return;
+        if (!validControl(event, 'SOURCE_DISPOSE')) return;
         try { window.removeEventListener('message', onMessage); } catch (e) {}
         idToIndex = {};
         indexToId = {};
         return;
       }
-      payload = validInit(event.data);
+      var envelope = validControl(event, 'SOURCE_INIT');
+      if (!envelope) return;
+      payload = validInit(envelope);
       if (!payload) return;
+      // Monotonic revision guard: an older INIT must never overwrite a newer
+      // applied projection. Same-revision re-INIT stays allowed (orchestrator
+      // re-sends the current revision on refresh/reload deterministically).
+      if (envelope.contextRevision < revision) return;
+      revision = envelope.contextRevision;
+      try {
+        applyProjection(payload.projection, payload.context);
+      } catch (e) {}
     } catch (e) {
       return;
     }
-    revision = event.data.contextRevision;
-    try {
-      applyProjection(payload.projection, payload.context);
-    } catch (e) {}
   }
 
   function applyProjection(projection, context) {

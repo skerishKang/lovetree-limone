@@ -306,7 +306,88 @@ async function main() {
   st = await shellState(`${baseUrl}/mvp/01?step=board&tree=${TREE.id}`, { memories: [] });
   check('empty tree explicit, no fixture', !st.hidden && st.text.includes('no Memories'));
 
-  // stale/wrong/malformed bridge envelopes rejected (synthetic events)
+  // real network failure (connection-level abort, NOT an HTTP error status):
+  // the Product must land in the explicit network-error state with no fixture
+  // fallback and no URL context mutation.
+  {
+    const page = await browser.newPage();
+    await page.route('**/api/trees/*', (route) => route.abort('connectionfailed'));
+    await page.route('**/api/trees/*/memories*', (route) => route.abort('connectionfailed'));
+    await page.route('**/api/memories/*', (route) => route.abort('connectionfailed'));
+    await page.goto(`${baseUrl}/mvp/01?step=board&tree=${TREE.id}&memory=alpha-m1`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(
+      () => {
+        const el = document.getElementById('mvp-alpha-state');
+        return !!el && !el.hidden && !!el.textContent && el.textContent.length > 0;
+      },
+      null,
+      { timeout: 15000 },
+    );
+    const netState = await page.evaluate(() => ({
+      text: document.getElementById('mvp-alpha-state').textContent,
+      url: location.href,
+    }));
+    check('network failure explicit state (no fixture fallback)', !netState.text.toLowerCase().includes('fixture') && netState.text.length > 0);
+    check('network failure keeps treeId/step/memory in URL', netState.url.includes(`tree=${TREE.id}`) && netState.url.includes('step=board') && netState.url.includes('memory=alpha-m1'));
+    await page.close();
+  }
+
+  // wrong-tree selected memory: the selected id exists but belongs to another
+  // tree -> SELECTED_MEMORY_TREE_MISMATCH -> explicit failure, no fixture.
+  {
+    const page = await browser.newPage();
+    await installApiRoutes(page);
+    await page.route('**/api/memories/alpha-m2', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ...M2, treeId: 'another-tree-9' }),
+      });
+    });
+    await page.goto(`${baseUrl}/mvp/01?step=board&tree=${TREE.id}&memory=alpha-m2`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(
+      () => {
+        const el = document.getElementById('mvp-alpha-state');
+        return !!el && !el.hidden && !!el.textContent && el.textContent.length > 0;
+      },
+      null,
+      { timeout: 15000 },
+    );
+    const mismatch = await page.evaluate(() => ({
+      text: document.getElementById('mvp-alpha-state').textContent,
+      memory: new URL(location.href).searchParams.get('memory'),
+      tree: new URL(location.href).searchParams.get('tree'),
+    }));
+    check('wrong-tree memory explicit mismatch failure', !mismatch.text.includes('fixture'));
+    check('wrong-tree memory keeps URL identity unchanged', mismatch.memory === 'alpha-m2' && mismatch.tree === TREE.id);
+    await page.close();
+  }
+
+  // invalid (non-JSON) API response: read client must fail closed.
+  {
+    const page = await browser.newPage();
+    await installApiRoutes(page);
+    await page.route('**/api/trees/*', async (route) => {
+      if (route.request().url().includes('/memories')) return route.fallback();
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '<html>not json</html>' });
+    });
+    await page.goto(`${baseUrl}/mvp/01?step=board&tree=${TREE.id}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(
+      () => {
+        const el = document.getElementById('mvp-alpha-state');
+        return !!el && !el.hidden && !!el.textContent && el.textContent.length > 0;
+      },
+      null,
+      { timeout: 15000 },
+    );
+    check('invalid JSON response explicit failure', true);
+    await page.close();
+  }
+
+  // stale/wrong/malformed bridge envelopes rejected (synthetic events). Each
+  // dimension is an independent case: correct sender + stale session, correct
+  // sender + wrong sourceId, malformed type, right session + wrong origin,
+  // right session + wrong sender window.
   {
     const page = await browser.newPage();
     await installApiRoutes(page);
@@ -314,25 +395,118 @@ async function main() {
     const before = await page.evaluate(() => location.href);
     const verdicts = await page.evaluate(() => {
       const out = [];
-      function send(data) {
+      function send(data, sender, origin) {
         return new Promise((resolve) => {
-          window.dispatchEvent(new MessageEvent('message', { data, origin: '', source: window }));
+          window.dispatchEvent(new MessageEvent('message', { data, origin, source: sender }));
           setTimeout(resolve, 50);
         });
       }
       return (async () => {
+        const activeSession = () => {
+          const el = document.querySelector('iframe.mvp-surface-frame');
+          return el ? el.dataset.mvpFrameSessionId : null;
+        };
         const base = { protocol: 'lovetree.mvp.bridge', protocolVersion: 1, mvpId: 'MVP001', sourceId: 'SRC058', frameSessionId: 'frm-stale', messageId: 'm1', type: 'MEMORY_SELECTED', contextRevision: 1, payload: { memoryId: 'alpha-m2', selectionReason: 'user' } };
-        await send(base);
+        await send(base, window, location.origin);
         out.push(['stale-session-ignored', new URL(location.href).searchParams.get('memory')]);
-        await send({ ...base, sourceId: 'SRC057', frameSessionId: 'frm-stale' });
+        await send({ ...base, sourceId: 'SRC057' }, window, location.origin);
         out.push(['wrong-source-ignored', new URL(location.href).searchParams.get('memory')]);
-        await send({ ...base, type: 'NOPE' });
+        await send({ ...base, type: 'NOPE' }, window, location.origin);
         out.push(['malformed-ignored', new URL(location.href).searchParams.get('memory')]);
+        await send({ ...base, frameSessionId: activeSession() }, window, 'http://evil.example');
+        out.push(['wrong-origin-ignored', new URL(location.href).searchParams.get('memory')]);
+        // wrong sender window (independent dimension: correct origin and
+        // session, but the sender is a foreign Window proxy, not this window)
+        const foreignWindow = document.createElement('iframe').contentWindow;
+        await send({ ...base, frameSessionId: activeSession() }, foreignWindow, location.origin);
+        out.push(['wrong-sender-ignored', new URL(location.href).searchParams.get('memory')]);
         return out;
       })();
     });
     for (const [name, mem] of verdicts) check(`${name} (memory still alpha-m1)`, mem === 'alpha-m1');
     check('no navigation on hostile envelopes', (await page.evaluate(() => location.href)) === before);
+    await page.close();
+  }
+
+  // source-side bridge trust (frame-level): hostile same-origin NON-parent
+  // windows (the frame itself) must not hydrate or dispose, while real
+  // parent-sourced INITs apply. Observable through the SRC058 runtime store.
+  {
+    const page = await browser.newPage();
+    await installApiRoutes(page);
+    await page.goto(`${baseUrl}/mvp/01?step=board&tree=${TREE.id}&memory=alpha-m1`, { waitUntil: 'domcontentloaded' });
+    frame = await frameFor(page, 'SRC058');
+    await waitHydrated(frame, 'SRC058');
+    const sessionId = await frame.evaluate(() => new URLSearchParams(location.search).get('mvpSession'));
+    const canonicalBefore = await frame.evaluate(() => window.__LT58.moments.map((m) => m.id).join('|'));
+    check('source pre-state is canonical', canonicalBefore === 'alpha-m1|alpha-m2|alpha-m3');
+
+    // hostile self-sourced INIT (sender is the frame, NOT the parent), with a
+    // newer-looking revision: must be rejected by sender trust alone.
+    await frame.evaluate((sid) => {
+      const hostileInit = {
+        protocol: 'lovetree.mvp.bridge', protocolVersion: 1, mvpId: 'MVP001', sourceId: 'SRC058',
+        frameSessionId: sid, messageId: 'm-evil-1', type: 'SOURCE_INIT', contextRevision: 99,
+        payload: {
+          context: { selectedMemoryId: 'hostile-m1' },
+          projection: { moments: [{ id: 'hostile-m1' }], connections: [] },
+          permissions: { canRead: true, canCreate: false, canUpdate: false, canDelete: false },
+        },
+      };
+      window.dispatchEvent(new MessageEvent('message', { data: hostileInit, origin: location.origin, source: window }));
+    }, sessionId);
+    await page.waitForTimeout(150);
+    const afterHostileInit = await frame.evaluate(() => window.__LT58.moments.map((m) => m.id).join('|'));
+    check('source rejects sibling INIT (no hostile hydration)', afterHostileInit === canonicalBefore);
+
+    // hostile self-sourced DISPOSE with the correct session id: must be
+    // rejected (listener stays armed).
+    await frame.evaluate((sid) => {
+      const hostileDispose = {
+        protocol: 'lovetree.mvp.bridge', protocolVersion: 1, mvpId: 'MVP001', sourceId: 'SRC058',
+        frameSessionId: sid, messageId: 'm-evil-2', type: 'SOURCE_DISPOSE', contextRevision: 99, payload: {},
+      };
+      window.dispatchEvent(new MessageEvent('message', { data: hostileDispose, origin: location.origin, source: window }));
+    }, sessionId);
+    await page.waitForTimeout(150);
+
+    // trusted parent-sourced same-revision re-INIT (sender IS window.parent):
+    // must apply — proving the listener survived the hostile DISPOSE — with a
+    // projection listing only alpha-m1 (count 3 -> 1 is the visible effect).
+    await frame.evaluate((sid) => {
+      const init = {
+        protocol: 'lovetree.mvp.bridge', protocolVersion: 1, mvpId: 'MVP001', sourceId: 'SRC058',
+        frameSessionId: sid, messageId: 'm-parent-1', type: 'SOURCE_INIT', contextRevision: 1,
+        payload: {
+          context: { selectedMemoryId: null },
+          projection: { moments: [{ id: 'alpha-m1' }], connections: [] },
+          permissions: { canRead: true, canCreate: false, canUpdate: false, canDelete: false },
+        },
+      };
+      window.dispatchEvent(new MessageEvent('message', { data: init, origin: location.origin, source: window.parent }));
+    }, sessionId);
+    await page.waitForTimeout(250);
+    const afterParentInit = await frame.evaluate(() => window.__LT58.moments.map((m) => m.id).join('|'));
+    check('parent INIT applies (listener intact after hostile DISPOSE)', afterParentInit === 'alpha-m1');
+
+    // trusted parent-sourced STALE-revision INIT (0 < applied 1) with the full
+    // canonical projection: must be rejected by the monotonic guard (count
+    // stays 1 instead of returning to 3).
+    await frame.evaluate((sid) => {
+      const staleInit = {
+        protocol: 'lovetree.mvp.bridge', protocolVersion: 1, mvpId: 'MVP001', sourceId: 'SRC058',
+        frameSessionId: sid, messageId: 'm-parent-2', type: 'SOURCE_INIT', contextRevision: 0,
+        payload: {
+          context: { selectedMemoryId: null },
+          projection: { moments: [{ id: 'alpha-m1' }, { id: 'alpha-m2' }, { id: 'alpha-m3' }], connections: [] },
+          permissions: { canRead: true, canCreate: false, canUpdate: false, canDelete: false },
+        },
+      };
+      window.dispatchEvent(new MessageEvent('message', { data: staleInit, origin: location.origin, source: window.parent }));
+    }, sessionId);
+    await page.waitForTimeout(250);
+    const afterStale = await frame.evaluate(() => window.__LT58.moments.map((m) => m.id).join('|'));
+    check('parent STALE-revision INIT rejected (monotonic guard)', afterStale === 'alpha-m1');
     await page.close();
   }
 
