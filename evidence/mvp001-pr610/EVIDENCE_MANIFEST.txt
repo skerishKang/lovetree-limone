@@ -1,0 +1,21 @@
+# SRC057 Update Evidence - PR #610
+
+HEAD_SHA=56f411a59d6b928d9ebd15073971d75fb5ca55f2
+EVIDENCE_ZIP=SRC057-Update-Evidence-56f411a5.zip
+ZIP_SHA256=7819D84BA88383EB235F78B644A66DE6DA32D05F58432D66C0F444E4CCFC4120
+ZIP_SIZE=376688
+GDRIVE_FILE_ID=17YwAek8HCU81hTbaAZ7gVCAtWU_HGGGs
+BRIDGE_SHA256=22c8f074d9aa8a9f497e6e5f22de0656ba76a638717181b5f3640b9703f83ee5
+
+## Screenshot contents
+- desktop-src057-update-modal.png (162850 bytes)
+- desktop-src057-update-saved.png (149577 bytes)
+- mobile-src057-update-modal.png (63721 bytes)
+- manifest.json (225 bytes)
+
+## Test results
+- 333/333 MVP001 unit tests: PASS
+- 7/7 wording-integrity tests: PASS
+- 21/21 E2E checks: PASS
+- 17/17 bridge-trust tests: PASS
+- Lint: 0 errors, 219 pre-existing warnings
