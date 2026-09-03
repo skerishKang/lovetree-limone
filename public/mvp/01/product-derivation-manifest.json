@@ -11,7 +11,7 @@
       },
       "product": {
         "index.html": "f90f889b3189225a6c2fdc00216a41a7d7e2df0aa7c3a985757ed8dce8080149",
-        "script.js": "3aba21e30e2bc4edcc9732eba4cdb6da5713cb6369bae9d415bc633d26d9ccfa",
+        "script.js": "3aba21e30e2bc4ed4edfec84527d4d3b55b755abd2216a0265676396b9324bd",
         "styles.css": "9f70b882ec82398a1e6f91ebf64c3f097cf130be4f70ad46248a23c6cf0d18dd"
       },
       "bridge": {
@@ -89,10 +89,10 @@
         "script.js": "458183b8621ead3233d2ee99af720644848743f918bff5f5cc0445b5e5bbe722",
         "styles.css": "29c2380364311720601054c9447288cb301d24f4a22646368051a68f4dba6fc3"
       },
- "bridge": {
-   "file": "src057-product-bridge.js",
-   "sha256": "22c8f074d9aa8a9f497e6e5f22de0656ba76a638717181b5f3640b9703f83ee5"
-  },
+      "bridge": {
+        "file": "src057-product-bridge.js",
+        "sha256": "f5cf3eda0b5903e2f13757e8624e34cb17b85833c87a6fe50b8c5349a1ffd3fa"
+      },
       "bridgeInclude": {
         "tag": "<script src=\"./src057-product-bridge.js\"></script>",
         "occurrences": 1,
@@ -105,7 +105,7 @@
     },
     "SRC060": {
       "authority": {
-        "index.html": "42ce0d5ebc129cae74e69fa0adbf90372bfd10a04071be53a493534044ca4755",
+        "index.html": "42ce0d503fbbc213a537a33de4fff7a2ec1d036d79c5d036695191e58767545",
         "script.js": "7c9a593ca38570cfed1c44d636bd00ff32b4efcc934a111b11617a9dbf68e329",
         "styles.css": "4cae9669daebad17da4eb9265b563539bbac50cf7affba53678ddc22f29dc09d"
       },
