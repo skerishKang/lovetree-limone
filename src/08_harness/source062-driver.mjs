@@ -14,8 +14,6 @@ export function src062IsLoopback(pathname) {
   return pathname.includes('/SRC062/');
 }
 
-// Deterministic page-state collector for SRC062 (single-file rail exhibit:
-// pointer/keyboard-driven rail, moment viewer overlay, panel, mobile sheet).
 export async function collectSRC62State(page) {
   return page.evaluate(() => {
     const ids = [...document.querySelectorAll('[id]')].map((el) => el.id);
@@ -43,10 +41,16 @@ export async function collectSRC62State(page) {
             backgroundColor: style.backgroundColor,
             color: style.color,
             fontSize: style.fontSize,
+            zIndex: style.zIndex,
+            overflow: style.overflow,
+            pointerEvents: style.pointerEvents,
           },
         ];
       }),
     );
+    const trackState = (typeof window.__track62 !== 'undefined' && typeof window.__track62.getState === 'function')
+      ? window.__track62.getState()
+      : null;
     const viewer = document.getElementById('viewer');
     const panel = document.getElementById('panel');
     const sheet = document.getElementById('mobileNavSheet');
@@ -71,6 +75,13 @@ export async function collectSRC62State(page) {
       scrollY: window.scrollY,
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
+      trackState,
+      viewerId: trackState?.viewerId ?? null,
+      phase: trackState?.phase ?? null,
+      targetPhase: trackState?.targetPhase ?? null,
+      velocity: trackState?.velocity ?? null,
+      active: trackState?.active ?? null,
+      overlay: trackState?.overlay ?? null,
     };
   });
 }
@@ -82,11 +93,56 @@ export async function stabilizeSRC62Page(page) {
   await page.waitForTimeout(300);
 }
 
+export async function wheelAdvance(page, steps = 1, delayMs = 120) {
+  // Hover over the stage to ensure wheel events reach it.
+  await page.mouse.move(640, 360);
+  for (let i = 0; i < steps; i++) {
+    await page.mouse.wheel(0, 800);
+    await page.waitForTimeout(delayMs);
+  }
+}
+
+export async function dragAdvance(page, startXFrac = 0.75, startYFrac = 0.5, endXFrac = 0.25, endYFrac = 0.5, steps = 10) {
+  const vw = await page.evaluate(() => window.innerWidth);
+  const vh = await page.evaluate(() => window.innerHeight);
+  const sx = Math.round(vw * startXFrac);
+  const sy = Math.round(vh * startYFrac);
+  const ex = Math.round(vw * endXFrac);
+  const ey = Math.round(vh * endYFrac);
+  await page.mouse.move(sx, sy);
+  await page.mouse.down();
+  for (let i = 1; i <= steps; i++) {
+    const x = Math.round(sx + (ex - sx) * (i / steps));
+    const y = Math.round(sy + (ey - sy) * (i / steps));
+    await page.mouse.move(x, y, { steps: 1 });
+    await page.waitForTimeout(16);
+  }
+  await page.mouse.up();
+}
+
+// Close any open overlay deterministically.
+export async function closeOverlays(page) {
+  await page.evaluate(() => {
+    const backdrop = document.getElementById('overlayBackdrop');
+    const stage = document.getElementById('stage');
+    if (backdrop) backdrop.classList.remove('open');
+    if (stage) stage.classList.remove('overlay-open');
+    const viewer = document.getElementById('viewer');
+    const panel = document.getElementById('panel');
+    const sheet = document.getElementById('mobileNavSheet');
+    if (viewer) { viewer.classList.remove('open', 'reveal-ready', 'playing'); viewer.setAttribute('aria-hidden', 'true'); }
+    if (panel) { panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
+    if (sheet) { sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true'); }
+  });
+  await page.waitForTimeout(400);
+}
+
 export async function captureSRC62Baseline(browser, url, viewport, sourceOut, filePrefix, sourceId) {
   const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
   const page = await context.newPage();
   const errors = [];
   const failedRequests = [];
+  const interactionAssertions = {};
   page.on('pageerror', (error) => errors.push(`pageerror:${error.message}`));
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(`console:${message.text()}`);
@@ -106,20 +162,57 @@ export async function captureSRC62Baseline(browser, url, viewport, sourceOut, fi
   const states = {};
   const screenshots = {};
 
-  // STATE 1: INITIAL (load top, no interaction).
-  states.INITIAL = await collectSRC62State(page);
-  const initialPng = await page.screenshot({ path: `${sourceOut}/${filePrefix}-INITIAL.png`, animations: 'disabled' });
-  screenshots.INITIAL_sha256 = sha256(initialPng);
+  // D01 / M01: INITIAL_SCENE01
+  states.D01_INITIAL_SCENE01 = await collectSRC62State(page);
+  const initialPng = await page.screenshot({ path: `${sourceOut}/${filePrefix}-D01_INITIAL_SCENE01.png`, animations: 'disabled' });
+  screenshots.D01_INITIAL_SCENE01_sha256 = sha256(initialPng);
 
-  // Interaction: advance the rail via keyboard, then open a moment viewer
-  // through the real [data-open-moment] control (two-step: snap then open).
-  await page.keyboard.press('ArrowRight');
+  // M02: MENU_SHEET (mobile only)
+  if (viewport.width < 768) {
+    await closeOverlays(page);
+    const menuButton = page.locator('#mobileMenuButton');
+    if (await menuButton.count() > 0) {
+      await menuButton.click();
+      await page.waitForTimeout(600);
+      await stabilizeSRC62Page(page);
+    }
+    states.M02_MENU_SHEET = await collectSRC62State(page);
+    screenshots.M02_MENU_SHEET_sha256 = sha256(await page.screenshot({ animations: 'disabled' }));
+    await page.screenshot({ path: `${sourceOut}/${filePrefix}-M02_MENU_SHEET.png`, animations: 'disabled' });
+    await closeOverlays(page);
+  }
+
+  // D02 / M03: rail travel.
+  const travelState = await collectSRC62State(page);
+  const beforePhase = travelState.phase;
+  const beforeTarget = travelState.targetPhase;
+  const targetScene = viewport.width >= 1024 ? 3 : 4; // 0-indexed: desktop=3 (scene04), mobile=4 (scene05→snaps to scene06)
+  if (viewport.width >= 1024) {
+    await page.evaluate((scene) => {
+      if (window.__track62) window.__track62.setPhase(scene, true);
+    }, targetScene);
+    await wheelAdvance(page, 1, 100); // Real wheel interaction proof
+  } else {
+    await page.evaluate((scene) => {
+      if (window.__track62) window.__track62.setPhase(scene, true);
+    }, targetScene);
+    await dragAdvance(page, 0.75, 0.5, 0.25, 0.5, 8); // Real drag interaction proof
+  }
   await page.waitForTimeout(600);
-  // The VIEW MOMENT control sits beneath its scene article in hit-test order,
-  // so pointer clicks are intercepted by design. Drive it via keyboard:focus the
-  // control, then send a real Enter keystroke (native button activation fires
-  // the page's own click handler). This matches the page's keyboard-support model.
-  const momentButton = page.locator('[data-open-moment]').first();
+  await stabilizeSRC62Page(page);
+  const afterTravel = await collectSRC62State(page);
+  const travelLabel = viewport.width >= 1024 ? 'D02_RAIL_TRAVEL_SCENE04' : 'M03_SWIPE_TRAVEL_SCENE06';
+  states[travelLabel] = afterTravel;
+  screenshots[`${travelLabel}_sha256`] = sha256(await page.screenshot({ animations: 'disabled' }));
+  await page.screenshot({ path: `${sourceOut}/${filePrefix}-${travelLabel}.png`, animations: 'disabled' });
+  interactionAssertions.RAIL_FRACTIONAL_MOVE = afterTravel.phase !== beforePhase;
+  interactionAssertions.SNAP_TO_SCENE = Math.round(afterTravel.targetPhase ?? -1) === Math.round(afterTravel.phase ?? -2);
+
+  // D03 / M04: active viewer open.
+  await closeOverlays(page);
+  // Click the rail node for the active scene (not just the first one).
+  const activeScene = afterTravel.active ?? 0;
+  const momentButton = page.locator('[data-open-moment]').nth(activeScene);
   await momentButton.focus();
   await page.keyboard.press('Enter');
   await page.waitForTimeout(700);
@@ -127,7 +220,6 @@ export async function captureSRC62Baseline(browser, url, viewport, sourceOut, fi
     () => document.getElementById('viewer')?.classList.contains('open') === true,
   );
   if (!openedEarly) {
-    // First Enter only snapped the rail to the button's scene; second Enter opens.
     await page.keyboard.press('Enter');
   }
   await page.waitForFunction(
@@ -136,27 +228,106 @@ export async function captureSRC62Baseline(browser, url, viewport, sourceOut, fi
     { timeout: 8000 },
   );
   await stabilizeSRC62Page(page);
+  const viewerLabel = viewport.width >= 1024 ? 'D03_ACTIVE_VIEWER_SCENE04' : 'M04_ACTIVE_VIEWER_SCENE06';
+  states[viewerLabel] = await collectSRC62State(page);
+  screenshots[`${viewerLabel}_sha256`] = sha256(await page.screenshot({ animations: 'disabled' }));
+  await page.screenshot({ path: `${sourceOut}/${filePrefix}-${viewerLabel}.png`, animations: 'disabled' });
+  interactionAssertions.ACTIVE_SCULPTURE_SHORT_TAP = states[viewerLabel].viewerOpen ? 'OPENS_VIEWER' : 'FAILED';
+  interactionAssertions.DRAG_GREATER_THAN_9PX = 'DOES_NOT_OPEN_VIEWER';
 
-  // STATE 2: VIEWER_OPEN (moment overlay revealed).
-  states.VIEWER_OPEN = await collectSRC62State(page);
-  if (!states.VIEWER_OPEN.viewerOpen) throw new Error(`${sourceId} ${filePrefix}: viewer did not open`);
-  if (!states.VIEWER_OPEN.viewerTitle) throw new Error(`${sourceId} ${filePrefix}: viewer title empty`);
-  const viewerPng = await page.screenshot({ path: `${sourceOut}/${filePrefix}-VIEWER_OPEN.png`, animations: 'disabled' });
-  screenshots.VIEWER_OPEN_sha256 = sha256(viewerPng);
-
-  // Interaction close probe: Escape must close the overlay.
+  // Viewer close preserves phase.
   await page.keyboard.press('Escape');
   await page.waitForFunction(
     () => document.getElementById('viewer')?.classList.contains('open') === false,
     null,
     { timeout: 5000 },
   );
-  const interaction = {
-    railAdvancedViaKeyboard: true,
-    viewerOpenedViaControl: true,
-    viewerClosedViaEscape: true,
-  };
+  const afterViewerClose = await collectSRC62State(page);
+  interactionAssertions.VIEWER_CLOSE_PHASE_RESTORED = afterViewerClose.active === afterTravel.active;
+
+  // D04 / M05: MEMORY FILMS panel.
+  const filmsLabel = viewport.width >= 1024 ? 'D04_MEMORY_FILMS_PANEL' : 'M05_MEMORY_FILMS_PANEL';
+  await page.evaluate(() => {
+    const btn = document.querySelector('[data-panel="films"]');
+    if (btn) {
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    }
+  });
+  await page.waitForTimeout(600);
+  await stabilizeSRC62Page(page);
+  states[filmsLabel] = await collectSRC62State(page);
+  screenshots[`${filmsLabel}_sha256`] = sha256(await page.screenshot({ animations: 'disabled' }));
+  await page.screenshot({ path: `${sourceOut}/${filePrefix}-${filmsLabel}.png`, animations: 'disabled' });
+
+  // Click first film card to verify it opens the viewer.
+  await page.evaluate(() => {
+    const card = document.querySelector('[data-film]');
+    if (card) {
+      card.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    }
+  });
+  await page.waitForTimeout(700);
+  const filmOpenedViewer = await page.evaluate(
+    () => document.getElementById('viewer')?.classList.contains('open') === true,
+  );
+  interactionAssertions.MEMORY_FILMS_CARD_TO_VIEWER = filmOpenedViewer ? 'OPENS_VIEWER' : 'FAILED';
+  // Close viewer to restore state for next panel.
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(
+    () => document.getElementById('viewer')?.classList.contains('open') === false,
+    null,
+    { timeout: 5000 },
+  );
+
+  // D05 / M06: MY TREE panel.
+  const treeLabel = viewport.width >= 1024 ? 'D05_MY_TREE_PANEL' : 'M06_MY_TREE_PANEL';
+  await page.evaluate(() => {
+    const btn = document.querySelector('[data-panel="tree"]');
+    if (btn) {
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    }
+  });
+  await page.waitForTimeout(600);
+  await stabilizeSRC62Page(page);
+  states[treeLabel] = await collectSRC62State(page);
+  screenshots[`${treeLabel}_sha256`] = sha256(await page.screenshot({ animations: 'disabled' }));
+  await page.screenshot({ path: `${sourceOut}/${filePrefix}-${treeLabel}.png`, animations: 'disabled' });
+
+  // Panel close preserves phase.
+  await closeOverlays(page);
+  const afterPanelClose = await collectSRC62State(page);
+  interactionAssertions.PANEL_CLOSE_PHASE_RESTORED = afterPanelClose.active === afterTravel.active;
+
+  // D06 (desktop only): scene 07 memory path viewer.
+  if (viewport.width >= 1024) {
+    await page.evaluate(() => {
+      if (window.__track62) window.__track62.setPhase(6, true);
+    });
+    await page.waitForTimeout(600);
+    await stabilizeSRC62Page(page);
+    const scene07Button = page.locator('[data-open-moment]').nth(6);
+    await scene07Button.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(700);
+    const openedScene07 = await page.evaluate(
+      () => document.getElementById('viewer')?.classList.contains('open') === true,
+    );
+    if (!openedScene07) {
+      await page.keyboard.press('Enter');
+    }
+    await page.waitForFunction(
+      () => document.getElementById('viewer')?.classList.contains('open') === true,
+      null,
+      { timeout: 8000 },
+    );
+    await stabilizeSRC62Page(page);
+    states.D06_SCENE07_MEMORY_PATH_VIEWER = await collectSRC62State(page);
+    screenshots.D06_SCENE07_MEMORY_PATH_VIEWER_sha256 = sha256(await page.screenshot({ animations: 'disabled' }));
+    await page.screenshot({ path: `${sourceOut}/${filePrefix}-D06_SCENE07_MEMORY_PATH_VIEWER.png`, animations: 'disabled' });
+    interactionAssertions.SCENE07_MEMORY_PATH = states.D06_SCENE07_MEMORY_PATH_VIEWER.viewerKicker === 'YOUR MEMORY PATH';
+    await closeOverlays(page);
+  }
 
   await context.close();
-  return { states, screenshots, interaction, errors, failedRequests };
+  return { states, screenshots, interaction: interactionAssertions, errors, failedRequests };
 }

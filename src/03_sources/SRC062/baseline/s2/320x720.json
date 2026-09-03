@@ -67,8 +67,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -85,7 +85,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -105,7 +105,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -125,10 +125,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -145,7 +145,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -167,8 +167,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -185,8 +185,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 0,
             "height": 1
           },
@@ -205,8 +205,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -227,8 +227,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -245,16 +245,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 118.92,
-            "width": 353.41,
-            "height": 631.82
+            "x": 15.01,
+            "y": 101.45,
+            "width": 289.97,
+            "height": 538.98
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -307.89)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -262.65)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -265,8 +265,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 323.44,
-            "y": 131.73,
+            "x": 256.72,
+            "y": 114.26,
             "width": 33.49,
             "height": 33.49
           },
@@ -285,10 +285,10 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 43.87,
-            "y": 140.25,
+            "x": 36.14,
+            "y": 119.77,
             "width": 83.22,
-            "height": 10.84
+            "height": 10.83
           },
           "display": "block",
           "position": "absolute",
@@ -305,10 +305,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 33.33,
-            "y": 133.46,
-            "width": 323.33,
-            "height": 311.98
+            "x": 27.51,
+            "y": 114,
+            "width": 264.95,
+            "height": 265.86
           },
           "display": "block",
           "position": "absolute",
@@ -325,10 +325,10 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 42.92,
-            "y": 483.65,
-            "width": 304.16,
-            "height": 10.83
+            "x": 39.64,
+            "y": 416.05,
+            "width": 240.72,
+            "height": 10.84
           },
           "display": "block",
           "position": "static",
@@ -345,9 +345,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 42.92,
-            "y": 504.33,
-            "width": 304.16,
+            "x": 39.64,
+            "y": 436.74,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -365,9 +365,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 42.92,
-            "y": 545.7,
-            "width": 295.5,
+            "x": 39.64,
+            "y": 478.11,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -385,8 +385,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 42.92,
-            "y": 567.37,
+            "x": 39.64,
+            "y": 499.78,
             "width": 81.54,
             "height": 27.58
           },
@@ -405,8 +405,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 130.37,
-            "y": 567.37,
+            "x": 127.09,
+            "y": 499.78,
             "width": 42.52,
             "height": 27.58
           },
@@ -425,8 +425,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.8,
-            "y": 567.37,
+            "x": 175.52,
+            "y": 499.78,
             "width": 74.72,
             "height": 27.58
           },
@@ -445,16 +445,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 110.95,
-            "width": 353.41,
-            "height": 648.44
+            "x": 15.01,
+            "y": 94.65,
+            "width": 289.97,
+            "height": 553.17
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -315.99)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -269.565)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -465,8 +465,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 315.56,
-            "y": 131.63,
+            "x": 248.84,
+            "y": 115.33,
             "width": 33.49,
             "height": 33.49
           },
@@ -485,10 +485,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 19.28,
-            "y": 111.93,
-            "width": 351.44,
-            "height": 646.47
+            "x": 16,
+            "y": 95.63,
+            "width": 288,
+            "height": 551.2
           },
           "display": "block",
           "position": "static",
@@ -555,8 +555,8 @@
       "progressLabel": "SCENE 01",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
         "phase": 0,
         "targetPhase": 0,
@@ -565,99 +565,99 @@
         "overlay": null,
         "viewerId": null,
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 1,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 2,
-            "x": 362.3600158691406,
-            "y": 60.22947692871094,
+            "x": 321.4877624511719,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 3,
-            "x": 427.1781005859375,
-            "y": -0.15480613708496094,
+            "x": 384.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 4,
-            "x": 471.25636291503906,
-            "y": -76.99716186523438,
+            "x": 426.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 5,
-            "x": 490.6575012207031,
-            "y": -163.43348693847656,
+            "x": 445.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 6,
-            "x": 483.6484375,
-            "y": -251.74270629882812,
+            "x": 438.5204162597656,
+            "y": -238.97979736328125,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 1,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 2,
-            "centerX": 881.4000854492188,
+            "centerX": 723.2000122070312,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": 1224.5999145507812,
+            "centerX": 1004.7999267578125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": 1567.8001098632812,
+            "centerX": 1286.4000244140625,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 1911,
+            "centerX": 1568.0000610351562,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 6,
-            "centerX": 2254.199951171875,
+            "centerX": 1849.5999755859375,
             "opacity": 0.12,
             "active": false
           }
@@ -743,8 +743,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -761,7 +761,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -781,7 +781,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -801,10 +801,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -821,7 +821,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -843,8 +843,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -861,8 +861,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 0,
             "height": 1
           },
@@ -881,8 +881,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -903,8 +903,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -921,16 +921,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 118.92,
-            "width": 353.41,
-            "height": 631.82
+            "x": 15.01,
+            "y": 101.45,
+            "width": 289.97,
+            "height": 538.98
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -307.89)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -262.65)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -941,8 +941,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 323.44,
-            "y": 131.73,
+            "x": 256.72,
+            "y": 114.26,
             "width": 33.49,
             "height": 33.49
           },
@@ -961,10 +961,10 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 43.87,
-            "y": 140.25,
+            "x": 36.14,
+            "y": 119.77,
             "width": 83.22,
-            "height": 10.84
+            "height": 10.83
           },
           "display": "block",
           "position": "absolute",
@@ -981,10 +981,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 33.33,
-            "y": 133.46,
-            "width": 323.33,
-            "height": 311.98
+            "x": 27.51,
+            "y": 114,
+            "width": 264.95,
+            "height": 265.86
           },
           "display": "block",
           "position": "absolute",
@@ -1001,10 +1001,10 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 42.92,
-            "y": 483.65,
-            "width": 304.16,
-            "height": 10.83
+            "x": 39.64,
+            "y": 416.05,
+            "width": 240.72,
+            "height": 10.84
           },
           "display": "block",
           "position": "static",
@@ -1021,9 +1021,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 42.92,
-            "y": 504.33,
-            "width": 304.16,
+            "x": 39.64,
+            "y": 436.74,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -1041,9 +1041,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 42.92,
-            "y": 545.7,
-            "width": 295.5,
+            "x": 39.64,
+            "y": 478.11,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -1061,8 +1061,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 42.92,
-            "y": 567.37,
+            "x": 39.64,
+            "y": 499.78,
             "width": 81.54,
             "height": 27.58
           },
@@ -1081,8 +1081,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 130.37,
-            "y": 567.37,
+            "x": 127.09,
+            "y": 499.78,
             "width": 42.52,
             "height": 27.58
           },
@@ -1101,8 +1101,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.8,
-            "y": 567.37,
+            "x": 175.52,
+            "y": 499.78,
             "width": 74.72,
             "height": 27.58
           },
@@ -1121,16 +1121,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 110.95,
-            "width": 353.41,
-            "height": 648.44
+            "x": 15.01,
+            "y": 94.65,
+            "width": 289.97,
+            "height": 553.17
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -315.99)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -269.565)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -1141,8 +1141,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 315.56,
-            "y": 131.63,
+            "x": 248.84,
+            "y": 115.33,
             "width": 33.49,
             "height": 33.49
           },
@@ -1161,10 +1161,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 19.28,
-            "y": 111.93,
-            "width": 351.44,
-            "height": 646.47
+            "x": 16,
+            "y": 95.63,
+            "width": 288,
+            "height": 551.2
           },
           "display": "block",
           "position": "static",
@@ -1181,7 +1181,7 @@
         "mobileNavSheet": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 116,
             "y": 48,
             "width": 190,
             "height": 183
@@ -1231,8 +1231,8 @@
       "progressLabel": "SCENE 01",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
         "phase": 0,
         "targetPhase": 0,
@@ -1241,99 +1241,99 @@
         "overlay": null,
         "viewerId": null,
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 1,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 2,
-            "x": 362.3600158691406,
-            "y": 60.22947692871094,
+            "x": 321.4877624511719,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 3,
-            "x": 427.1781005859375,
-            "y": -0.15480613708496094,
+            "x": 384.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 4,
-            "x": 471.25636291503906,
-            "y": -76.99716186523438,
+            "x": 426.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 5,
-            "x": 490.6575012207031,
-            "y": -163.43348693847656,
+            "x": 445.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 6,
-            "x": 483.6484375,
-            "y": -251.74270629882812,
+            "x": 438.5204162597656,
+            "y": -238.97979736328125,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 1,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 2,
-            "centerX": 881.4000854492188,
+            "centerX": 723.2000122070312,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": 1224.5999145507812,
+            "centerX": 1004.7999267578125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": 1567.8001098632812,
+            "centerX": 1286.4000244140625,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 1911,
+            "centerX": 1568.0000610351562,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 6,
-            "centerX": 2254.199951171875,
+            "centerX": 1849.5999755859375,
             "opacity": 0.12,
             "active": false
           }
@@ -1419,8 +1419,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -1437,7 +1437,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -1457,7 +1457,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -1477,10 +1477,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -1497,7 +1497,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -1519,8 +1519,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -1537,8 +1537,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 51.67,
             "height": 1
           },
@@ -1557,8 +1557,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -1579,8 +1579,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -1597,16 +1597,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 118.92,
-            "width": 353.41,
-            "height": 631.82
+            "x": 15.01,
+            "y": 101.45,
+            "width": 289.97,
+            "height": 538.98
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -307.89)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -262.65)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -1617,8 +1617,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 323.44,
-            "y": 131.73,
+            "x": 256.72,
+            "y": 114.26,
             "width": 33.49,
             "height": 33.49
           },
@@ -1637,10 +1637,10 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 43.87,
-            "y": 140.25,
+            "x": 36.14,
+            "y": 119.77,
             "width": 83.22,
-            "height": 10.84
+            "height": 10.83
           },
           "display": "block",
           "position": "absolute",
@@ -1657,10 +1657,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 33.33,
-            "y": 133.46,
-            "width": 323.33,
-            "height": 311.98
+            "x": 27.51,
+            "y": 114,
+            "width": 264.95,
+            "height": 265.86
           },
           "display": "block",
           "position": "absolute",
@@ -1677,10 +1677,10 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 42.92,
-            "y": 483.65,
-            "width": 304.16,
-            "height": 10.83
+            "x": 39.64,
+            "y": 416.05,
+            "width": 240.72,
+            "height": 10.84
           },
           "display": "block",
           "position": "static",
@@ -1697,9 +1697,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 42.92,
-            "y": 504.33,
-            "width": 304.16,
+            "x": 39.64,
+            "y": 436.74,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -1717,9 +1717,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 42.92,
-            "y": 545.7,
-            "width": 295.5,
+            "x": 39.64,
+            "y": 478.11,
+            "width": 240.72,
             "height": 0
           },
           "display": "block",
@@ -1737,8 +1737,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 42.92,
-            "y": 567.37,
+            "x": 39.64,
+            "y": 499.78,
             "width": 81.54,
             "height": 27.58
           },
@@ -1757,8 +1757,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 130.37,
-            "y": 567.37,
+            "x": 127.09,
+            "y": 499.78,
             "width": 42.52,
             "height": 27.58
           },
@@ -1777,8 +1777,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.8,
-            "y": 567.37,
+            "x": 175.52,
+            "y": 499.78,
             "width": 74.72,
             "height": 27.58
           },
@@ -1797,16 +1797,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 110.95,
-            "width": 353.41,
-            "height": 648.44
+            "x": 15.01,
+            "y": 94.65,
+            "width": 289.97,
+            "height": 553.17
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -315.99)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -269.565)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -1817,8 +1817,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 315.56,
-            "y": 131.63,
+            "x": 248.84,
+            "y": 115.33,
             "width": 33.49,
             "height": 33.49
           },
@@ -1837,10 +1837,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 19.28,
-            "y": 111.93,
-            "width": 351.44,
-            "height": 646.47
+            "x": 16,
+            "y": 95.63,
+            "width": 288,
+            "height": 551.2
           },
           "display": "block",
           "position": "static",
@@ -1907,122 +1907,122 @@
       "progressLabel": "SCENE 06",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
-        "phase": 4.9999999994867315,
+        "phase": 4.999999999505764,
         "targetPhase": 5,
         "velocity": 0,
         "active": 5,
         "overlay": null,
         "viewerId": null,
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": -100.65751647949219,
-            "y": -163.43348693847656,
+            "x": -125.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 1,
-            "x": -81.25638580322266,
-            "y": -76.99716186523438,
+            "x": -106.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 2,
-            "x": -37.178096771240234,
-            "y": -0.15480613708496094,
+            "x": -64.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 3,
-            "x": 27.639970779418945,
-            "y": 60.22947692871094,
+            "x": -1.4877471923828125,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 4,
-            "x": 107.40781021118164,
-            "y": 98.76173400878906,
+            "x": 75.4812240600586,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 5,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 6,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": -1520.9999389648438,
+            "centerX": -1247.9999389648438,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 1,
-            "centerX": -1177.7999877929688,
+            "centerX": -966.3999938964844,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 2,
-            "centerX": -834.5999145507812,
+            "centerX": -684.8000183105469,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": -491.3999938964844,
+            "centerX": -403.20001220703125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": -148.1999969482422,
+            "centerX": -121.60000610351562,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 6,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           }
         ],
         "terrain": [
-          "matrix(1, 0, 0, 1, -195, 0)",
-          "matrix(1, 0, 0, 1, -351, 0)",
-          "matrix(1, 0, 0, 1, -468, 0)",
-          "matrix(1, 0, 0, 1, -604.5, 0)"
+          "matrix(1, 0, 0, 1, -160, 0)",
+          "matrix(1, 0, 0, 1, -288, 0)",
+          "matrix(1, 0, 0, 1, -384, 0)",
+          "matrix(1, 0, 0, 1, -496, 0)"
         ]
       },
       "viewerId": null,
-      "phase": 4.9999999994867315,
+      "phase": 4.999999999505764,
       "targetPhase": 5,
       "velocity": 0,
       "active": 5,
@@ -2095,8 +2095,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -2113,7 +2113,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -2133,7 +2133,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -2153,10 +2153,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -2173,7 +2173,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -2195,8 +2195,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -2213,8 +2213,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 51.67,
             "height": 1
           },
@@ -2233,8 +2233,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -2255,8 +2255,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -2273,16 +2273,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 15.6,
-            "y": 101.28,
-            "width": 358.8,
-            "height": 641.44
+            "x": 12.8,
+            "y": 86.41,
+            "width": 294.39,
+            "height": 547.19
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "1",
-          "transform": "matrix(1, 0, 0, 1, -179.398, -320.719)",
+          "transform": "matrix(1, 0, 0, 1, -147.195, -273.594)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -2293,8 +2293,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 325.4,
-            "y": 114.28,
+            "x": 258.2,
+            "y": 99.41,
             "width": 34,
             "height": 34
           },
@@ -2313,8 +2313,8 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 41.57,
-            "y": 122.94,
+            "x": 34.26,
+            "y": 105,
             "width": 84.48,
             "height": 11
           },
@@ -2333,10 +2333,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 30.87,
-            "y": 116.05,
-            "width": 328.25,
-            "height": 316.73
+            "x": 25.49,
+            "y": 99.14,
+            "width": 268.98,
+            "height": 269.91
           },
           "display": "block",
           "position": "absolute",
@@ -2353,9 +2353,9 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 40.6,
-            "y": 471.56,
-            "width": 308.8,
+            "x": 37.8,
+            "y": 405.8,
+            "width": 244.39,
             "height": 11
           },
           "display": "block",
@@ -2373,9 +2373,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 40.6,
-            "y": 492.56,
-            "width": 308.8,
+            "x": 37.8,
+            "y": 426.8,
+            "width": 244.39,
             "height": 45.31
           },
           "display": "block",
@@ -2393,9 +2393,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 40.6,
-            "y": 579.88,
-            "width": 300,
+            "x": 37.8,
+            "y": 514.11,
+            "width": 244.39,
             "height": 15
           },
           "display": "block",
@@ -2413,8 +2413,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 40.6,
-            "y": 616.88,
+            "x": 37.8,
+            "y": 551.11,
             "width": 82.78,
             "height": 28
           },
@@ -2433,8 +2433,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 129.38,
-            "y": 616.88,
+            "x": 126.59,
+            "y": 551.11,
             "width": 43.17,
             "height": 28
           },
@@ -2453,8 +2453,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.55,
-            "y": 616.88,
+            "x": 175.76,
+            "y": 551.11,
             "width": 75.86,
             "height": 28
           },
@@ -2473,16 +2473,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 110.95,
-            "width": 353.41,
-            "height": 648.44
+            "x": 15.01,
+            "y": 94.65,
+            "width": 289.97,
+            "height": 553.17
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -315.99)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -269.565)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -2493,8 +2493,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 315.56,
-            "y": 131.63,
+            "x": 248.84,
+            "y": 115.33,
             "width": 33.49,
             "height": 33.49
           },
@@ -2513,10 +2513,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 19.28,
-            "y": 111.93,
-            "width": 351.44,
-            "height": 646.47
+            "x": 16,
+            "y": 95.63,
+            "width": 288,
+            "height": 551.2
           },
           "display": "block",
           "position": "static",
@@ -2583,8 +2583,8 @@
       "progressLabel": "SCENE 06",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
         "phase": 5,
         "targetPhase": 5,
@@ -2593,108 +2593,108 @@
         "overlay": "viewer",
         "viewerId": "m06",
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": -100.65751647949219,
-            "y": -163.43348693847656,
+            "x": -125.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 1,
-            "x": -81.25638580322266,
-            "y": -76.99716186523438,
+            "x": -106.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 2,
-            "x": -37.178096771240234,
-            "y": -0.15480613708496094,
+            "x": -64.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 3,
-            "x": 27.639970779418945,
-            "y": 60.22947692871094,
+            "x": -1.4877471923828125,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 4,
-            "x": 107.40781021118164,
-            "y": 98.76173400878906,
+            "x": 75.4812240600586,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 5,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 6,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": -1520.9999389648438,
+            "centerX": -1247.9999389648438,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 1,
-            "centerX": -1177.7999877929688,
+            "centerX": -966.3999938964844,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 2,
-            "centerX": -834.5999145507812,
+            "centerX": -684.8000183105469,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": -491.3999938964844,
+            "centerX": -403.20001220703125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": -148.1999969482422,
+            "centerX": -121.60000610351562,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 6,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           }
         ],
         "terrain": [
-          "matrix(1, 0, 0, 1, -195, 0)",
-          "matrix(1, 0, 0, 1, -351, 0)",
-          "matrix(1, 0, 0, 1, -468, 0)",
-          "matrix(1, 0, 0, 1, -604.5, 0)"
+          "matrix(1, 0, 0, 1, -160, 0)",
+          "matrix(1, 0, 0, 1, -288, 0)",
+          "matrix(1, 0, 0, 1, -384, 0)",
+          "matrix(1, 0, 0, 1, -496, 0)"
         ]
       },
       "viewerId": "m06",
@@ -2777,8 +2777,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -2795,7 +2795,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -2815,7 +2815,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -2835,10 +2835,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -2855,7 +2855,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -2877,8 +2877,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -2895,8 +2895,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 51.67,
             "height": 1
           },
@@ -2915,8 +2915,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -2937,8 +2937,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -2955,16 +2955,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 118.92,
-            "width": 353.41,
-            "height": 631.82
+            "x": 15.01,
+            "y": 101.45,
+            "width": 289.97,
+            "height": 538.98
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -307.89)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -262.65)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -2975,8 +2975,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 323.44,
-            "y": 131.73,
+            "x": 256.72,
+            "y": 114.26,
             "width": 33.49,
             "height": 33.49
           },
@@ -2995,10 +2995,10 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 43.87,
-            "y": 140.25,
+            "x": 36.14,
+            "y": 119.77,
             "width": 83.22,
-            "height": 10.84
+            "height": 10.83
           },
           "display": "block",
           "position": "absolute",
@@ -3015,10 +3015,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 33.33,
-            "y": 133.46,
-            "width": 323.33,
-            "height": 311.98
+            "x": 27.51,
+            "y": 114,
+            "width": 264.95,
+            "height": 265.86
           },
           "display": "block",
           "position": "absolute",
@@ -3035,10 +3035,10 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 42.92,
-            "y": 483.65,
-            "width": 304.16,
-            "height": 10.83
+            "x": 39.64,
+            "y": 416.05,
+            "width": 240.72,
+            "height": 10.84
           },
           "display": "block",
           "position": "static",
@@ -3055,9 +3055,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 42.92,
-            "y": 504.33,
-            "width": 304.16,
+            "x": 39.64,
+            "y": 436.74,
+            "width": 240.72,
             "height": 44.63
           },
           "display": "block",
@@ -3075,9 +3075,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 42.92,
-            "y": 590.34,
-            "width": 295.5,
+            "x": 39.64,
+            "y": 522.74,
+            "width": 240.72,
             "height": 14.77
           },
           "display": "block",
@@ -3095,8 +3095,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 42.92,
-            "y": 626.78,
+            "x": 39.64,
+            "y": 559.19,
             "width": 81.54,
             "height": 27.58
           },
@@ -3115,8 +3115,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 130.37,
-            "y": 626.78,
+            "x": 127.09,
+            "y": 559.19,
             "width": 42.52,
             "height": 27.58
           },
@@ -3135,8 +3135,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.8,
-            "y": 626.78,
+            "x": 175.52,
+            "y": 559.19,
             "width": 74.72,
             "height": 27.58
           },
@@ -3155,16 +3155,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 15.6,
-            "y": 92.84,
-            "width": 358.8,
-            "height": 658.31
+            "x": 12.8,
+            "y": 79.2,
+            "width": 294.39,
+            "height": 561.59
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "1",
-          "transform": "matrix(1, 0, 0, 1, -179.398, -329.156)",
+          "transform": "matrix(1, 0, 0, 1, -147.195, -280.797)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -3175,8 +3175,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 317.4,
-            "y": 113.84,
+            "x": 250.2,
+            "y": 100.2,
             "width": 34,
             "height": 34
           },
@@ -3195,10 +3195,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 16.6,
-            "y": 93.84,
-            "width": 356.8,
-            "height": 656.31
+            "x": 13.8,
+            "y": 80.2,
+            "width": 292.39,
+            "height": 559.59
           },
           "display": "block",
           "position": "static",
@@ -3265,8 +3265,8 @@
       "progressLabel": "SCENE 06",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
         "phase": 5,
         "targetPhase": 5,
@@ -3275,108 +3275,108 @@
         "overlay": "panel",
         "viewerId": "m06",
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": -100.65751647949219,
-            "y": -163.43348693847656,
+            "x": -125.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 1,
-            "x": -81.25638580322266,
-            "y": -76.99716186523438,
+            "x": -106.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 2,
-            "x": -37.178096771240234,
-            "y": -0.15480613708496094,
+            "x": -64.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 3,
-            "x": 27.639970779418945,
-            "y": 60.22947692871094,
+            "x": -1.4877471923828125,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 4,
-            "x": 107.40781021118164,
-            "y": 98.76173400878906,
+            "x": 75.4812240600586,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 5,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 6,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": -1520.9999389648438,
+            "centerX": -1247.9999389648438,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 1,
-            "centerX": -1177.7999877929688,
+            "centerX": -966.3999938964844,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 2,
-            "centerX": -834.5999145507812,
+            "centerX": -684.8000183105469,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": -491.3999938964844,
+            "centerX": -403.20001220703125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": -148.1999969482422,
+            "centerX": -121.60000610351562,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 6,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           }
         ],
         "terrain": [
-          "matrix(1, 0, 0, 1, -195, 0)",
-          "matrix(1, 0, 0, 1, -351, 0)",
-          "matrix(1, 0, 0, 1, -468, 0)",
-          "matrix(1, 0, 0, 1, -604.5, 0)"
+          "matrix(1, 0, 0, 1, -160, 0)",
+          "matrix(1, 0, 0, 1, -288, 0)",
+          "matrix(1, 0, 0, 1, -384, 0)",
+          "matrix(1, 0, 0, 1, -496, 0)"
         ]
       },
       "viewerId": "m06",
@@ -3455,8 +3455,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "relative",
@@ -3473,7 +3473,7 @@
         "mobileMenuButton": {
           "tag": "BUTTON",
           "rect": {
-            "x": 261,
+            "x": 191,
             "y": 20,
             "width": 44,
             "height": 15
@@ -3493,7 +3493,7 @@
         "count": {
           "tag": "SPAN",
           "rect": {
-            "x": 324,
+            "x": 254,
             "y": 20,
             "width": 48,
             "height": 15
@@ -3513,10 +3513,10 @@
         "railRing": {
           "tag": "DIV",
           "rect": {
-            "x": -101.39,
-            "y": -480.8,
-            "width": 592.8,
-            "height": 592.8
+            "x": -126,
+            "y": -460,
+            "width": 572,
+            "height": 572
           },
           "display": "block",
           "position": "absolute",
@@ -3533,7 +3533,7 @@
         "station": {
           "tag": "DIV",
           "rect": {
-            "x": 186,
+            "x": 151,
             "y": 103,
             "width": 18,
             "height": 18
@@ -3555,8 +3555,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -3573,8 +3573,8 @@
         "progressFill": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 736,
+            "x": 240,
+            "y": 612,
             "width": 51.67,
             "height": 1
           },
@@ -3593,8 +3593,8 @@
         "progressLabel": {
           "tag": "DIV",
           "rect": {
-            "x": 310,
-            "y": 745,
+            "x": 240,
+            "y": 621,
             "width": 62,
             "height": 11
           },
@@ -3615,8 +3615,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 390,
-            "height": 844
+            "width": 320,
+            "height": 720
           },
           "display": "block",
           "position": "absolute",
@@ -3633,16 +3633,16 @@
         "viewer": {
           "tag": "SECTION",
           "rect": {
-            "x": 18.29,
-            "y": 118.92,
-            "width": 353.41,
-            "height": 631.82
+            "x": 15.01,
+            "y": 101.45,
+            "width": 289.97,
+            "height": 538.98
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "0",
-          "transform": "matrix(0.985, 0, 0, 0.985, -179.398, -307.89)",
+          "transform": "matrix(0.985, 0, 0, 0.985, -147.195, -262.65)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -3653,8 +3653,8 @@
         "viewerClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 323.44,
-            "y": 131.73,
+            "x": 256.72,
+            "y": 114.26,
             "width": 33.49,
             "height": 33.49
           },
@@ -3673,10 +3673,10 @@
         "viewerStatus": {
           "tag": "DIV",
           "rect": {
-            "x": 43.87,
-            "y": 140.25,
+            "x": 36.14,
+            "y": 119.77,
             "width": 83.22,
-            "height": 10.84
+            "height": 10.83
           },
           "display": "block",
           "position": "absolute",
@@ -3693,10 +3693,10 @@
         "viewerPoster": {
           "tag": "IMG",
           "rect": {
-            "x": 33.33,
-            "y": 133.46,
-            "width": 323.33,
-            "height": 311.98
+            "x": 27.51,
+            "y": 114,
+            "width": 264.95,
+            "height": 265.86
           },
           "display": "block",
           "position": "absolute",
@@ -3713,10 +3713,10 @@
         "viewerKicker": {
           "tag": "DIV",
           "rect": {
-            "x": 42.92,
-            "y": 483.65,
-            "width": 304.16,
-            "height": 10.83
+            "x": 39.64,
+            "y": 416.05,
+            "width": 240.72,
+            "height": 10.84
           },
           "display": "block",
           "position": "static",
@@ -3733,9 +3733,9 @@
         "viewerTitle": {
           "tag": "H2",
           "rect": {
-            "x": 42.92,
-            "y": 504.33,
-            "width": 304.16,
+            "x": 39.64,
+            "y": 436.74,
+            "width": 240.72,
             "height": 22.32
           },
           "display": "block",
@@ -3753,9 +3753,9 @@
         "viewerWhy": {
           "tag": "P",
           "rect": {
-            "x": 42.92,
-            "y": 568.02,
-            "width": 295.5,
+            "x": 39.64,
+            "y": 500.43,
+            "width": 240.72,
             "height": 14.77
           },
           "display": "block",
@@ -3773,8 +3773,8 @@
         "playMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 42.92,
-            "y": 604.46,
+            "x": 39.64,
+            "y": 536.87,
             "width": 81.54,
             "height": 27.58
           },
@@ -3793,8 +3793,8 @@
         "saveMoment": {
           "tag": "BUTTON",
           "rect": {
-            "x": 130.37,
-            "y": 604.46,
+            "x": 127.09,
+            "y": 536.87,
             "width": 42.52,
             "height": 27.58
           },
@@ -3813,8 +3813,8 @@
         "viewerTree": {
           "tag": "BUTTON",
           "rect": {
-            "x": 178.8,
-            "y": 604.46,
+            "x": 175.52,
+            "y": 536.87,
             "width": 74.72,
             "height": 27.58
           },
@@ -3833,16 +3833,16 @@
         "panel": {
           "tag": "SECTION",
           "rect": {
-            "x": 15.6,
-            "y": 92.84,
-            "width": 358.8,
-            "height": 658.31
+            "x": 12.8,
+            "y": 79.2,
+            "width": 294.39,
+            "height": 561.59
           },
           "display": "block",
           "position": "absolute",
           "visibility": "visible",
           "opacity": "1",
-          "transform": "matrix(1, 0, 0, 1, -179.398, -329.156)",
+          "transform": "matrix(1, 0, 0, 1, -147.195, -280.797)",
           "backgroundColor": "rgba(247, 244, 238, 0.9)",
           "color": "rgb(23, 23, 23)",
           "fontSize": "16px",
@@ -3853,8 +3853,8 @@
         "panelClose": {
           "tag": "BUTTON",
           "rect": {
-            "x": 317.4,
-            "y": 113.84,
+            "x": 250.2,
+            "y": 100.2,
             "width": 34,
             "height": 34
           },
@@ -3873,10 +3873,10 @@
         "panelInner": {
           "tag": "DIV",
           "rect": {
-            "x": 16.6,
-            "y": 93.84,
-            "width": 356.8,
-            "height": 656.31
+            "x": 13.8,
+            "y": 80.2,
+            "width": 292.39,
+            "height": 559.59
           },
           "display": "block",
           "position": "static",
@@ -3943,8 +3943,8 @@
       "progressLabel": "SCENE 06",
       "railMomentButtons": 7,
       "scrollY": 0,
-      "innerWidth": 390,
-      "innerHeight": 844,
+      "innerWidth": 320,
+      "innerHeight": 720,
       "trackState": {
         "phase": 5,
         "targetPhase": 5,
@@ -3953,108 +3953,108 @@
         "overlay": "panel",
         "viewerId": "m01",
         "metrics": {
-          "w": 390,
-          "h": 844,
-          "R": 296.4,
-          "cx": 195,
-          "cy": -184.39999999999998,
+          "w": 320,
+          "h": 720,
+          "R": 286,
+          "cx": 160,
+          "cy": -174,
           "stationY": 112,
           "nodeStep": 0.3,
-          "sceneSpacing": 343.2
+          "sceneSpacing": 281.6
         },
         "nodes": [
           {
             "i": 0,
-            "x": -100.65751647949219,
-            "y": -163.43348693847656,
+            "x": -125.2835693359375,
+            "y": -153.7691650390625,
             "active": false
           },
           {
             "i": 1,
-            "x": -81.25638580322266,
-            "y": -76.99716186523438,
+            "x": -106.56317138671875,
+            "y": -70.36568450927734,
             "active": false
           },
           {
             "i": 2,
-            "x": -37.178096771240234,
-            "y": -0.15480613708496094,
+            "x": -64.031494140625,
+            "y": 3.7804508209228516,
             "active": false
           },
           {
             "i": 3,
-            "x": 27.639970779418945,
-            "y": 60.22947692871094,
+            "x": -1.4877471923828125,
+            "y": 62.04598808288574,
             "active": false
           },
           {
             "i": 4,
-            "x": 107.40781021118164,
-            "y": 98.76173400878906,
+            "x": 75.4812240600586,
+            "y": 99.22623443603516,
             "active": false
           },
           {
             "i": 5,
-            "x": 195,
+            "x": 160,
             "y": 112,
             "active": true
           },
           {
             "i": 6,
-            "x": 282.5921936035156,
-            "y": 98.76173400878906,
+            "x": 244.51879119873047,
+            "y": 99.22623443603516,
             "active": false
           }
         ],
         "scenes": [
           {
             "i": 0,
-            "centerX": -1520.9999389648438,
+            "centerX": -1247.9999389648438,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 1,
-            "centerX": -1177.7999877929688,
+            "centerX": -966.3999938964844,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 2,
-            "centerX": -834.5999145507812,
+            "centerX": -684.8000183105469,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 3,
-            "centerX": -491.3999938964844,
+            "centerX": -403.20001220703125,
             "opacity": 0.12,
             "active": false
           },
           {
             "i": 4,
-            "centerX": -148.1999969482422,
+            "centerX": -121.60000610351562,
             "opacity": 0.52,
             "active": false
           },
           {
             "i": 5,
-            "centerX": 195,
+            "centerX": 160,
             "opacity": 1,
             "active": true
           },
           {
             "i": 6,
-            "centerX": 538.2000427246094,
+            "centerX": 441.6000061035156,
             "opacity": 0.52,
             "active": false
           }
         ],
         "terrain": [
-          "matrix(1, 0, 0, 1, -195, 0)",
-          "matrix(1, 0, 0, 1, -351, 0)",
-          "matrix(1, 0, 0, 1, -468, 0)",
-          "matrix(1, 0, 0, 1, -604.5, 0)"
+          "matrix(1, 0, 0, 1, -160, 0)",
+          "matrix(1, 0, 0, 1, -288, 0)",
+          "matrix(1, 0, 0, 1, -384, 0)",
+          "matrix(1, 0, 0, 1, -496, 0)"
         ]
       },
       "viewerId": "m01",
@@ -4066,12 +4066,12 @@
     }
   },
   "screenshots": {
-    "D01_INITIAL_SCENE01_sha256": "2aa15b49dcb777d15d51862f4a52f9d518db1dd0524fc7c87975750223e54aec",
-    "M02_MENU_SHEET_sha256": "322842a14a4adc46f1570311da3bc54aea7c8491118cf180ff84d87f712de9eb",
-    "M03_SWIPE_TRAVEL_SCENE06_sha256": "6436963d8d48cc55945aac65f8a3c2dc8a2837db2e86ffd76e44273ca1a7d729",
-    "M04_ACTIVE_VIEWER_SCENE06_sha256": "91abb4caa2f6cfcd55f56b5c7d16abe20816817760e18fd9c28b189acd9e9f8d",
-    "M05_MEMORY_FILMS_PANEL_sha256": "4b8633ad6dcfe1775e9e707ac01b84f750923bd575dedb048d369611283a80fe",
-    "M06_MY_TREE_PANEL_sha256": "b791f5b289f6df2f0618c8d5c2955e1b41977e22916a64d8ad934ccbe8a6b60f"
+    "D01_INITIAL_SCENE01_sha256": "f34209408d5868c9672732c9816a8844b51d105fec1a9a15cb8a168f8445c9cb",
+    "M02_MENU_SHEET_sha256": "629b3bad30e0a656dca022145e7d4c8518183dc106bcc52c3090f50a58cfd5b9",
+    "M03_SWIPE_TRAVEL_SCENE06_sha256": "47ffac25ad73790c0871a8e41834fd07cca7d8ff1ed958e4f529c10b2da551cf",
+    "M04_ACTIVE_VIEWER_SCENE06_sha256": "e446db21a382678b0dca85462e0adef4731898a700e0263f6506a8b1e8c70e27",
+    "M05_MEMORY_FILMS_PANEL_sha256": "460819fd27d4bf5fa0b72db8d8387a671cbb09c695858e3296e67f144cee084f",
+    "M06_MY_TREE_PANEL_sha256": "bb644015f18733068511b98691159c216b1dea8355dc43f05ee73d43a6f63688"
   },
   "interaction": {
     "RAIL_FRACTIONAL_MOVE": true,

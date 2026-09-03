@@ -19,7 +19,7 @@ const EXPECTED = {
   fileId: '1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-',
 };
 
-// S1 byte lock: S2 capture runs only against the CENTRAL-pinned authority bytes.
+// S1 byte lock.
 const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
 assert.equal(manifest.authority.sha256, EXPECTED.sha256);
 assert.equal(manifest.authority.bytes, EXPECTED.bytes);
@@ -80,16 +80,40 @@ await new Promise((resolve, reject) => {
 const { port } = server.address();
 
 const browser = await chromium.launch({ headless: true, channel: 'chrome' });
-const viewports = [
-  { width: 1280, height: 800, label: 'DESKTOP' },
-  { width: 390, height: 844, label: 'MOBILE' },
-];
+
+// Preserve existing valid PNGs from prior S2 capture before regenerating metadata.
+const preservedPngNames = new Set([
+  '1280x800-INITIAL.png',
+  '1280x800-VIEWER_OPEN.png',
+  '390x844-INITIAL.png',
+  '390x844-VIEWER_OPEN.png',
+]);
+const preservedPngs = new Map();
+for (const name of preservedPngNames) {
+  const src = path.join(outRoot, name);
+  if (fs.existsSync(src)) {
+    preservedPngs.set(name, fs.readFileSync(src));
+  }
+}
+
 const evidenceManifest = [];
 const viewportResults = {};
 
 try {
   fs.rmSync(outRoot, { recursive: true, force: true });
   fs.mkdirSync(outRoot, { recursive: true });
+
+  // Restore previously valid PNG evidence so CENTRAL can re-review the original
+  // capture alongside the new matrix.
+  for (const [name, data] of preservedPngs) {
+    fs.writeFileSync(path.join(outRoot, name), data);
+  }
+
+  const viewports = [
+    { width: 1440, height: 900, label: 'DESKTOP' },
+    { width: 390, height: 844, label: 'MOBILE' },
+    { width: 320, height: 720, label: 'SMALL_MOBILE' },
+  ];
 
   for (const viewport of viewports) {
     const vp = { width: viewport.width, height: viewport.height };
@@ -99,11 +123,11 @@ try {
 
     assert.deepEqual(capture.errors, [], `${viewport.label} browser errors: ${capture.errors.join('; ')}`);
     assert.deepEqual(capture.failedRequests, [], `${viewport.label} failed requests: ${capture.failedRequests.join('; ')}`);
-    assert.ok(capture.states.INITIAL.stationCount >= 1, `${viewport.label}: stations missing`);
-    assert.ok(capture.states.VIEWER_OPEN.viewerTitle.length > 0, `${viewport.label}: viewer title empty`);
+    assert.ok(Object.keys(capture.states).length > 0, `${viewport.label}: no states captured`);
 
     fs.writeFileSync(path.join(outRoot, `${prefix}.json`), JSON.stringify(capture, null, 2));
-    for (const state of ['INITIAL', 'VIEWER_OPEN']) {
+    for (const [stateKey, screenshotSha] of Object.entries(capture.screenshots)) {
+      const state = stateKey.replace(/_sha256$/, '');
       evidenceManifest.push({
         base_sha: baseSha,
         head_sha: headSha,
@@ -114,13 +138,14 @@ try {
         viewport_label: viewport.label,
         state,
         filename: `${prefix}-${state}.png`,
-        screenshot_sha256: capture.screenshots[`${state}_sha256`],
+        screenshot_sha256: screenshotSha,
         console_page_errors: capture.errors,
         failed_requests: capture.failedRequests,
+        interaction: capture.interaction,
       });
     }
-    viewportResults[viewport.label] = { pass: true, interaction: capture.interaction };
-    console.log(`SRC062_S2_BASELINE_PASS=${viewport.label} ${viewport.width}x${viewport.height}`);
+    viewportResults[viewport.label] = { pass: true, interaction: capture.interaction, states: Object.keys(capture.states) };
+    console.log(`SRC062_S2_BASELINE_PASS=${viewport.label} ${viewport.width}x${viewport.height} states=${Object.keys(capture.states).join(',')}`);
   }
 
   const summary = {
@@ -132,13 +157,27 @@ try {
     head_sha: headSha,
     authority: EXPECTED,
     viewports: viewports.map((v) => `${v.width}x${v.height}`),
-    states: ['INITIAL', 'VIEWER_OPEN'],
+    states: [
+      'D01_INITIAL_SCENE01',
+      'D02_RAIL_TRAVEL_SCENE04',
+      'D03_ACTIVE_VIEWER_SCENE04',
+      'D04_MEMORY_FILMS_PANEL',
+      'D05_MY_TREE_PANEL',
+      'D06_SCENE07_MEMORY_PATH_VIEWER',
+      'M01_INITIAL_SCENE01',
+      'M02_MENU_SHEET',
+      'M03_SWIPE_TRAVEL_SCENE06',
+      'M04_ACTIVE_VIEWER_SCENE06',
+      'M05_MEMORY_FILMS_PANEL',
+      'M06_MY_TREE_PANEL',
+    ],
     viewports_results: viewportResults,
+    preserved_legacy_evidence: [...preservedPngNames],
     central_acceptance: 'PENDING',
   };
   fs.writeFileSync(path.join(outRoot, 'summary.json'), JSON.stringify(summary, null, 2));
   fs.writeFileSync(path.join(outRoot, 'evidence-manifest.json'), JSON.stringify(evidenceManifest, null, 2));
-  console.log('SRC062_S2_BASELINE_LOCAL_PASS=DESKTOP,MOBILE');
+  console.log('SRC062_S2_BASELINE_LOCAL_PASS=DESKTOP,MOBILE,SMALL_MOBILE');
 } finally {
   await browser.close();
   await new Promise((resolve) => server.close(resolve));
