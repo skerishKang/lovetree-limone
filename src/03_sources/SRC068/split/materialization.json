@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "authority_mode": "DUAL_VARIANT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_provenance": {
+    "derived_from": "uncommitted SRC068 S3 work product at old worksite HEAD a0c3a600 (temp-lovetree-clone), split runtime bytes preserved exactly",
+    "split_bytes_pinned": true
+  },
+  "authority": {
+    "drive_folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+    "status": "LOCKED",
+    "variants": {
+      "A": {
+        "drive_file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+        "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+        "bytes": 18565,
+        "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+        "revision": "V3.3.1A"
+      },
+      "B": {
+        "drive_file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+        "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+        "bytes": 18646,
+        "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+        "revision": "V3.3.1B"
+      }
+    }
+  },
+  "variant_selector": {
+    "selector": "mediaVariant",
+    "allowed_values": [
+      "A",
+      "B"
+    ],
+    "default": null,
+    "fail_closed": true
+  },
+  "variant_boundary": [
+    "documentTitle",
+    "archive imageUrls"
+  ],
+  "originals": {
+    "A": "original/A/original.html",
+    "B": "original/B/original.html"
+  },
+  "mechanics": {
+    "title_sentinel": "<!--SRC068_VARIANT_TITLE-->",
+    "css_link": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "script_src": "<script src=\"./script.js\"></script>",
+    "script_head": "\n",
+    "js_marker": "/*__SRC068_COMMON_JS_FOLLOWS__*/\n",
+    "bootstrap_bytes": 841,
+    "bootstrap_sha256": "84aab3e902641d4ac8f9c4f89c65bcb02eca095ed084249009cf52f87447cdf0",
+    "variants": {
+      "A": {
+        "title_element": "<title>LoveTree Track68 V3.3A · Codex Portals</title>",
+        "js_statement": "const imageUrls=[\n'../images/01.png',\n'../images/02.png',\n'../images/03.png',\n'../images/04.png',\n'../images/05.png',\n'../images/06.png',\n'../images/07.png',\n'../images/08.png',\n'../images/09.png'];"
+      },
+      "B": {
+        "title_element": "<title>LoveTree Track68 V3.3B · Codex Portals</title>",
+        "js_statement": "const imageUrls=[\n'../images/동양인01.png',\n'../images/동양인02.png',\n'../images/동양인03.png',\n'../images/동양인04.png',\n'../images/동양인05.png',\n'../images/동양인06.png',\n'../images/동양인07.png',\n'../images/동양인08.png',\n'../images/동양인09.png'];"
+      }
+    }
+  },
+  "boundaries": {
+    "title_element": {
+      "offset": 154,
+      "length": 53
+    },
+    "style_span": {
+      "open": 448,
+      "close": 7426
+    },
+    "script_span_A": {
+      "open": 9560,
+      "close": 18549
+    },
+    "image_urls_statement": {
+      "A": {
+        "offset": 9569,
+        "length": 198
+      },
+      "B": {
+        "offset": 9569,
+        "length": 279
+      }
+    }
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 2650,
+      "sha256": "b888e373d20f169b16863b863c51ef9a0f6e75221f7f99d6512f41e5858b45c5",
+      "git_blob_sha1": "4e00998f47217c1b8fe229ed8d05df5753ce8b80"
+    },
+    "split/styles.css": {
+      "bytes": 6963,
+      "sha256": "4d0b030d08aca71af79428bcbedff3b62f2a8e275e34c9b8d046dd7a6223970a",
+      "git_blob_sha1": "74b27e098c9e84736ebeda2769b366f0655a0cd2"
+    },
+    "split/script.js": {
+      "bytes": 9647,
+      "sha256": "9a80353c592c3d82583438bf657386a20897e8ee59a4ff0a67c033c9352c85ee",
+      "git_blob_sha1": "9683f997e5d2d55335a767b2f3f0f2ca281c8858"
+    },
+    "split/assets/variant-A.json": {
+      "bytes": 707,
+      "sha256": "1eaa3b498377ff62a9d102a4e57ac2b10b7b3ef6b56de56f0887dba322fb795f",
+      "git_blob_sha1": "199e8ffbc6aebb3505a06fd38f86343cd8018bb2"
+    },
+    "split/assets/variant-B.json": {
+      "bytes": 869,
+      "sha256": "ddaf844818ce9f6be32551dc6b4579d4e9869027a603f151178357d676015ace",
+      "git_blob_sha1": "e8d7e265461fbc1e97d6364ee1cb8f4c6814196a"
+    }
+  },
+  "contracts": {
+    "variant_selector_explicit": true,
+    "default_variant_none": true,
+    "invalid_variant_fail_closed": true,
+    "a_round_trip_byte_identity": true,
+    "b_round_trip_byte_identity": true,
+    "common_split": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_ref": null
+}

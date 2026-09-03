@@ -19,6 +19,14 @@ for (const sourceId of sourceIds) {
   const sourceDir = path.join(sourceRoot, sourceId);
   const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
   if (manifest.stages?.baseline_captured !== true || manifest.stages?.mechanical_split_complete !== false) continue;
+  // DUAL_VARIANT uses a dedicated dual mechanical flow (two retained authorities,
+  // no implicit canonical default). The single-executable candidate generator
+  // must SKIP rather than attempt original/original.html and fail ENOENT.
+  // SINGLE behavior below is unchanged.
+  if (manifest?.authority_mode === 'DUAL_VARIANT') {
+    console.log(`SRC_MECHANICAL_SPLIT_CANDIDATE_SKIP=${sourceId} reason=DUAL_VARIANT_NO_SINGLE_EXECUTABLE authority_mode=DUAL_VARIANT`);
+    continue;
+  }
 
   const originalPath = path.join(sourceDir, 'original', 'original.html');
   const originalBytes = fs.readFileSync(originalPath);

@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "generated_at": "2026-09-02T22:15:59Z",
+  "generation": "MECHANICAL_BYTE_SLICE",
+  "authority": {
+    "A": {
+      "bytes": 18565,
+      "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
+    },
+    "B": {
+      "bytes": 18646,
+      "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+    }
+  },
+  "encoding": {
+    "charset": "utf-8",
+    "bom": false,
+    "line_endings": "LF",
+    "trailing_newline": true
+  },
+  "boundaries": {
+    "title_element": {
+      "offset": 154,
+      "length": 54
+    },
+    "style_span": {
+      "open": 448,
+      "close": 7426,
+      "length": 6978
+    },
+    "script_span": {
+      "open": 9560,
+      "close": 18549,
+      "length": 8989
+    },
+    "image_urls_statement": {
+      "A": {
+        "offset": 9569,
+        "length": 198
+      },
+      "B": {
+        "offset": 9569,
+        "length": 279
+      }
+    }
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 2650,
+      "sha256": "b888e373d20f169b16863b863c51ef9a0f6e75221f7f99d6512f41e5858b45c5"
+    },
+    "split/styles.css": {
+      "bytes": 6963,
+      "sha256": "4d0b030d08aca71af79428bcbedff3b62f2a8e275e34c9b8d046dd7a6223970a"
+    },
+    "split/script.js": {
+      "bytes": 9647,
+      "sha256": "9a80353c592c3d82583438bf657386a20897e8ee59a4ff0a67c033c9352c85ee"
+    },
+    "split/assets/variant-A.json": {
+      "bytes": 707,
+      "sha256": "1eaa3b498377ff62a9d102a4e57ac2b10b7b3ef6b56de56f0887dba322fb795f"
+    },
+    "split/assets/variant-B.json": {
+      "bytes": 869,
+      "sha256": "ddaf844818ce9f6be32551dc6b4579d4e9869027a603f151178357d676015ace"
+    }
+  },
+  "contracts": {
+    "single_style_extraction": true,
+    "single_script_extraction": true,
+    "variant_boundary_title_plus_imageUrls_only": true,
+    "unexpected_a_b_differences": "NONE",
+    "selector": "mediaVariant",
+    "valid_values": [
+      "A",
+      "B"
+    ],
+    "default_value": null,
+    "fail_closed": true,
+    "round_trip_byte_identity": "PENDING_TEST",
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  }
+}

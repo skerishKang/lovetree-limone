@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "variant": "A",
+  "selector": "mediaVariant",
+  "title": "LoveTree Track68 V3.3A · Codex Portals",
+  "titleElement": "<title>LoveTree Track68 V3.3A · Codex Portals</title>",
+  "imageUrls": [
+    "../images/01.png",
+    "../images/02.png",
+    "../images/03.png",
+    "../images/04.png",
+    "../images/05.png",
+    "../images/06.png",
+    "../images/07.png",
+    "../images/08.png",
+    "../images/09.png"
+  ],
+  "jsImageUrlsStatement": "const imageUrls=[\n'../images/01.png',\n'../images/02.png',\n'../images/03.png',\n'../images/04.png',\n'../images/05.png',\n'../images/06.png',\n'../images/07.png',\n'../images/08.png',\n'../images/09.png'];"
+}

@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC068",
+  "authority_mode": "DUAL_VARIANT",
+  "verified_at_utc": "2026-09-02T22:24:00Z",
+  "central_verified_at_utc": "2026-09-02T22:40:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verification_note": "CENTRAL directly re-read both authoritative HTML objects (A 1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph 18565 bytes, B 1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb 18646 bytes) in executable authority folder V8_LAUNCHER_ENGLISH (1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L); file IDs, filenames, byte counts and locked SHA256 values match. Locked SHA256 truth is additionally enforced on local frozen originals by the harness itself. The 18 variant image bytes remain corroborating evidence only (local rclone listing of the images folder, id/size/md5).",
+  "central_acceptance": "ACCEPTED",
+  "variants": {
+    "A": {
+      "folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+      "folder_name": "V8_LAUNCHER_ENGLISH",
+      "file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+      "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+      "bytes": 18565,
+      "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
+    },
+    "B": {
+      "folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+      "folder_name": "V8_LAUNCHER_ENGLISH",
+      "file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+      "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+      "bytes": 18646,
+      "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004"
+    }
+  },
+  "image_corroboration": {
+    "folder_id": "1ztkqQnkxT6m6H8uE7TL9mK7HTu5HbPl4",
+    "folder_role": "IMAGE_CORROBORATION_ONLY (compare evidence/package hierarchy; NOT the executable HTML authority folder)",
+    "expected_images": 18,
+    "matched_images": 18,
+    "byte_sizes_match_authority": true,
+    "images": [
+      {
+        "filename": "01.png",
+        "bytes": 1864548,
+        "drive_file_id": "1ovajfAqAMHqy-af67kkiKbwOA-wqZfQK",
+        "md5": "9fae1b612608e0b26960caa3b252e811"
+      },
+      {
+        "filename": "02.png",
+        "bytes": 2031825,
+        "drive_file_id": "1dmOOLnWAHazw6mmBk-racve1plfDH8c1",
+        "md5": "80d100ed1f07ed372bcb70e2adfb7591"
+      },
+      {
+        "filename": "03.png",
+        "bytes": 1860675,
+        "drive_file_id": "1XwTbhEXkMkBd69ZXzw61BavIUT9ci0j5",
+        "md5": "35d449652924948e2ea61a3b686d04a9"
+      },
+      {
+        "filename": "04.png",
+        "bytes": 1842341,
+        "drive_file_id": "1TUeN1GBaWSmx7qo_CWqCn1CSzwjjS8Au",
+        "md5": "d1c7b81c80e532475952138abd5a66be"
+      },
+      {
+        "filename": "05.png",
+        "bytes": 1459649,
+        "drive_file_id": "1ryjnoXJEQOoASz3VObyLJXuvlc1kLzkZ",
+        "md5": "01d5d0e89d2db817ddd308325c078f6f"
+      },
+      {
+        "filename": "06.png",
+        "bytes": 1734205,
+        "drive_file_id": "1SvPfksYY6Mn0MfGFxAb1LNYyeH4B3WVf",
+        "md5": "ffb7f38f22746076886c8ef52a117465"
+      },
+      {
+        "filename": "07.png",
+        "bytes": 1773216,
+        "drive_file_id": "1qyS4KQ7AkowBfKO6FzQ0vxd2zdHZ8lMR",
+        "md5": "bd4668d5c5bc7379dd85ef0f1cec2e51"
+      },
+      {
+        "filename": "08.png",
+        "bytes": 1908180,
+        "drive_file_id": "1acHZiibCJco7qDptaguCwr0Yf7t0V5NJ",
+        "md5": "093a6d1d053f849a81b36f0b446402c4"
+      },
+      {
+        "filename": "09.png",
+        "bytes": 1715727,
+        "drive_file_id": "14or4Vl4OgGrDGn_UIqnQvf7qLFIzYuOO",
+        "md5": "f9a5a1bb9252f6c54d191b7ee8a7db8c"
+      },
+      {
+        "filename": "동양인01.png",
+        "bytes": 1813828,
+        "drive_file_id": "1y7mAJ5DhjbjZVud8vEXJdkwjuQXfjCYO",
+        "md5": "13b4f5a4ad0af058b226199634566352"
+      },
+      {
+        "filename": "동양인02.png",
+        "bytes": 1871481,
+        "drive_file_id": "169Hzjl1gUefT-gKvskaE_E4BWrZmkyst",
+        "md5": "6c39859a06625d22b13343cab44f9b6a"
+      },
+      {
+        "filename": "동양인03.png",
+        "bytes": 2035128,
+        "drive_file_id": "1yi5CU5xUoJwhLNOzhm_8mK3JfGBWDB94",
+        "md5": "ec566807dba211823fea0be27775380a"
+      },
+      {
+        "filename": "동양인04.png",
+        "bytes": 1478799,
+        "drive_file_id": "14sfh-xmWwbUe4OaCXaIXtutbXTh7fhxv",
+        "md5": "5e8b0ce8e1e8ba69921875a819b6a949"
+      },
+      {
+        "filename": "동양인05.png",
+        "bytes": 1715876,
+        "drive_file_id": "1h4pz4vH9pbRR7IIHF_vira2L9Wp-ezIV",
+        "md5": "d2d1114f70e617f53794b4c18eb63c32"
+      },
+      {
+        "filename": "동양인06.png",
+        "bytes": 2074268,
+        "drive_file_id": "1OXEHLHLxnrd5Q81nwrH3kVAlIl8Su5Pg",
+        "md5": "416ebd60ea2ca1258c5360f766a06608"
+      },
+      {
+        "filename": "동양인07.png",
+        "bytes": 1843218,
+        "drive_file_id": "11WIp9qIWzCkTcDbjIhUV4ZQylddF11-Y",
+        "md5": "8498e71d14bb69865eb072171dae0678"
+      },
+      {
+        "filename": "동양인08.png",
+        "bytes": 1777216,
+        "drive_file_id": "11M2tiMKo936AZ3ELtSTtkkAxmXfgK1_g",
+        "md5": "ced8133c0f94fdd751d86705d6d1e5e6"
+      },
+      {
+        "filename": "동양인09.png",
+        "bytes": 1792944,
+        "drive_file_id": "1qBJgnNhw87KyQpk9-8Y_bxgC8me6Mx_O",
+        "md5": "525a9f4688e7f1fda5f21f0ada4e9c99"
+      }
+    ]
+  }
+}
