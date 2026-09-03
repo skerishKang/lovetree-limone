@@ -143,9 +143,9 @@
       try { if (preview) preview.style.display = 'none'; } catch (e) {}
       var wrap = document.createElement('div');
       wrap.className = 'edit-row';
-      wrap.innerHTML = '<div class="field"><label for="mvpTitleInput">Title</label>'
+      wrap.innerHTML = '<div class="field"><label for="mvpTitleInput">\uC900\uAD6D</label>'
         + '<input id="mvpTitleInput" type="text" maxlength="120" autocomplete="off"></div>'
-        + '<div class="field"><label for="mvpMemoInput">Memo</label>'
+        + '<div class="field"><label for="mvpMemoInput">\uBA54\uBCF4</label>'
         + '<textarea id="mvpMemoInput" rows="3" maxlength="2000"></textarea></div>';
       var actions = form.querySelector('.edit-actions');
       if (actions) form.insertBefore(wrap, actions);
@@ -219,9 +219,23 @@
     } catch (e) {}
   }
 
+  function setProductEditWording() {
+    try {
+      var editBtn = document.getElementById('editMedia');
+      if (editBtn) editBtn.textContent = '\uAE30\uC5EC\u0020\uB85C\uC9C4';
+      var heading = document.querySelector('#editModal h3');
+      if (heading) heading.textContent = '\uAE30\uC5EC\u0020\uB85C\uC9C4';
+      var desc = document.querySelector('#editModal p');
+      if (desc) desc.textContent = '\uCE58\uAD6D\uACFC\u0020\uBA54\uBCF4\uB97C\u0020\uB85C\uC9C4\uD568\uB2C8\uB2E4\u002E\u0020\uBD70\uB4DC\uEC58\u0020\uC9C4\uBCF4\uB294\u0020\uBC14\uC601\uD568\uD788\uB2E4\uC2B7\uB2C8\uB2E4\u002E';
+      var saveBtn = document.querySelector('#mediaForm button.save, #mediaForm button[type="submit"]');
+      if (saveBtn) saveBtn.textContent = '\uBC14\uC601\uC0AC\uD56D\u0020\uAC00\uB9AC';
+    } catch (e) {}
+  }
+
   function hideEditEntries() {
     try {
       ensureProductEditFields();
+      setProductEditWording();
       observeEditModal();
       try {
         document.addEventListener('submit', onProductFormSubmitCapture, true);

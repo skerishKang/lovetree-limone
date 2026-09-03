@@ -104,8 +104,28 @@ async function main() {
   }, null, { timeout: 10000 });
   check('edit modal opens', true);
 
+  const entryText = await frame.evaluate(() => document.getElementById('editMedia')?.textContent);
+  check('edit entry shows Memory-edit label', entryText === '\uAE30\uC5EC\u0020\uB85C\uC9C4');
+  const headingText = await frame.evaluate(() => document.querySelector('#editModal h3')?.textContent);
+  check('modal heading shows Memory-edit label', headingText === '\uAE30\uC5EC\u0020\uB85C\uC9C4');
+  const descText = await frame.evaluate(() => document.querySelector('#editModal p')?.textContent);
+  check('modal description matches Memory-edit copy', descText === '\uCE58\uAD6D\uACFC\u0020\uBA54\uBCF4\uB97C\u0020\uB85C\uC9C4\uD568\uB2C8\uB2E4\u002E\u0020\uBD70\uB4DC\uEC58\u0020\uC9C4\uBCF4\uB294\u0020\uBC14\uC601\uD568\uD788\uB2E4\uC2B7\uB2C8\uB2E4\u002E');
+  const saveBtnText = await frame.evaluate(() => {
+    const b = document.querySelector('#mediaForm button.save, #mediaForm button[type="submit"]');
+    return b ? b.textContent : null;
+  });
+  check('submit button shows save label', saveBtnText === '\uBC14\uC601\uC0AC\uD56D\u0020\uAC00\uB9AC');
+  check('old media-link wording absent as active action', entryText !== '\uB2E4\uB9AC\uEC58\u0020\uB808\uB108\u0020\uAD6C\uACB0' && headingText !== '\uB2E4\uB9AC\uEC58\u0020\uB808\uB108\u0020\uAD6C\uACB0' && saveBtnText !== '\uB2E4\u004D\u006F\u006D\u0065\u006E\u0074\u0065\u0020\uB2E4\uB9AC\uBCF4\uAC00');
+
   const hasProductFields = await frame.evaluate(() => !!document.getElementById('mvpTitleInput') && !!document.getElementById('mvpMemoInput'));
   check('Product title/memo fields injected', hasProductFields);
+  const labelKor = await frame.evaluate(() => {
+    const t = document.querySelector('label[for="mvpTitleInput"]')?.textContent;
+    const m = document.querySelector('label[for="mvpMemoInput"]')?.textContent;
+    return t === '\uC900\uAD6D' && m === '\uBA54\uBCF4';
+  });
+  check('Product title/memo labels are Korean', labelKor);
+
   const mediaHidden = await frame.evaluate(() => {
     const a = document.getElementById('mediaKindInput');
     const b = document.getElementById('mediaUrlInput');
@@ -182,6 +202,8 @@ async function main() {
     return modal && modal.classList.contains('open');
   }, null, { timeout: 10000 });
   check('mobile edit modal opens with Product fields', !!(await mframe.evaluate(() => document.getElementById('mvpTitleInput'))));
+  const mobileEntry = await mframe.evaluate(() => document.getElementById('editMedia')?.textContent);
+  check('mobile edit entry shows Memory-edit label', mobileEntry === '\uAE30\uC5EC\u0020\uB85C\uC9C4');
   await mobile.screenshot({ path: `${shotDir}/mobile-src057-update-modal.png` });
   await mobile.close();
 

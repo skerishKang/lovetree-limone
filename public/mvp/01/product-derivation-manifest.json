@@ -91,7 +91,7 @@
       },
  "bridge": {
    "file": "src057-product-bridge.js",
-   "sha256": "063a4145c518c8a357ecb32d33ada7b15a71d6cfcc110253e908923613f55784"
+   "sha256": "22c8f074d9aa8a9f497e6e5f22de0656ba76a638717181b5f3640b9703f83ee5"
   },
       "bridgeInclude": {
         "tag": "<script src=\"./src057-product-bridge.js\"></script>",
