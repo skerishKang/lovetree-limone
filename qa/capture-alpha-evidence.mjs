@@ -45,7 +45,78 @@ const VIEWPORTS = [
   { name: 'mobile-430x932', width: 430, height: 932, isMobile: true, hasTouch: true },
 ];
 
+// Deterministic QA fixture media (QA_EVIDENCE_FIXTURE_DEFECT fix).
+// The canonical Alpha fixture uses https://example.com/alpha-*.jpg thumbnails.
+// QA browsers must not depend on external network: serve stable 1x1 PNG bytes.
+// Product runtime, adapters, bridges and Source assets are untouched.
+const DETERMINISTIC_ALPHA_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64',
+);
+
+async function installDeterministicMediaRoute(page) {
+  await page.route('https://example.com/alpha-*.jpg', (route) =>
+    route.fulfill({ status: 200, contentType: 'image/png', body: DETERMINISTIC_ALPHA_PNG }));
+}
+
+async function assertCanonicalMediaDecoded(frame, src) {
+  // Retry for late-appearing viewer/detail images after selection.
+  let lastProof = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await frame.waitForFunction(
+      () => {
+        try {
+          const imgs = [...document.querySelectorAll('img')].filter((img) => {
+            try {
+              return String(img.src || '').includes('example.com/alpha-');
+            } catch {
+              return false;
+            }
+          });
+          return imgs.length > 0 && imgs.every((img) => {
+            try {
+              return !!img.complete && (img.naturalWidth | 0) > 0 && (img.naturalHeight | 0) > 0;
+            } catch {
+              return false;
+            }
+          });
+        } catch {
+          return false;
+        }
+      },
+      null,
+      { timeout: 15000 },
+    ).catch(() => {});
+    await frame.evaluate(() => new Promise((r) => setTimeout(r, 500))).catch(() => {});
+    lastProof = await frame.evaluate(() => {
+      const imgs = [...document.querySelectorAll('img')].filter((img) => {
+        try {
+          return String(img.src || '').includes('example.com/alpha-');
+        } catch {
+          return false;
+        }
+      });
+      const details = imgs.map((img) => ({
+        src: String(img.src || ''),
+        complete: !!img.complete,
+        naturalWidth: img.naturalWidth | 0,
+        naturalHeight: img.naturalHeight | 0,
+      }));
+      const broken = details.filter((d) => !(d.complete && d.naturalWidth > 0 && d.naturalHeight > 0)).length;
+      return { total: imgs.length, broken, details };
+    });
+    if (lastProof && lastProof.total > 0 && lastProof.broken === 0) break;
+    await frame.evaluate(() => new Promise((r) => setTimeout(r, 1000))).catch(() => {});
+  }
+  const proof = lastProof;
+  assert.ok(proof && proof.total > 0, `${src} canonical media imgs present`);
+  assert.equal(proof.broken, 0, `${src} BROKEN_IMAGE_COUNT=0 (total ${proof.total})`);
+  console.log(`media-decode ${src}: total=${proof.total} broken=${proof.broken}`);
+  return proof;
+}
+
 async function installApiRoutes(page) {
+  await installDeterministicMediaRoute(page);
   await page.route('**/api/trees/*/memories*', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MEMORIES) }));
   await page.route('**/api/memories/*', (route) => {
@@ -175,6 +246,9 @@ async function main() {
       // selected: canonical selection through the authoritative path
       const selectedMemory = await selectCanonical(frame, step.src, page);
       await page.waitForTimeout(600);
+      if (step.src === 'SRC064' || step.src === 'SRC057') {
+        await assertCanonicalMediaDecoded(frame, step.src);
+      }
       const selectedFile = `${vp.name}-${step.src.toLowerCase()}-selected.png`;
       await page.screenshot({ path: `${shotDir}/${selectedFile}` });
       manifest.shots.push({

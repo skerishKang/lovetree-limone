@@ -100,7 +100,70 @@ async function gotoShellStep(page, stepId) {
   throw new Error(`mobile nav could not reach step ${stepId}`);
 }
 
+// Deterministic QA fixture media (QA_EVIDENCE_FIXTURE_DEFECT fix).
+// Canonical Alpha thumbnails (https://example.com/alpha-*.jpg) are served as
+// stable 1x1 PNG bytes. No external network, no production/Source mutation.
+const DETERMINISTIC_ALPHA_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64',
+);
+
+async function installDeterministicMediaRoute(page) {
+  await page.route('https://example.com/alpha-*.jpg', (route) =>
+    route.fulfill({ status: 200, contentType: 'image/png', body: DETERMINISTIC_ALPHA_PNG }));
+}
+
+async function assertCanonicalMediaDecoded(frame, src) {
+  await frame.waitForFunction(
+    () => {
+      try {
+        const imgs = [...document.querySelectorAll('img')].filter((img) => {
+          try {
+            return String(img.src || '').includes('example.com/alpha-');
+          } catch {
+            return false;
+          }
+        });
+        return imgs.length > 0 && imgs.every((img) => {
+          try {
+            return !!img.complete && (img.naturalWidth | 0) > 0 && (img.naturalHeight | 0) > 0;
+          } catch {
+            return false;
+          }
+        });
+      } catch {
+        return false;
+      }
+    },
+    null,
+    { timeout: 15000 },
+  );
+  const proof = await frame.evaluate(() => {
+    const imgs = [...document.querySelectorAll('img')].filter((img) => {
+      try {
+        return String(img.src || '').includes('example.com/alpha-');
+      } catch {
+        return false;
+      }
+    });
+    const details = imgs.map((img) => ({
+      src: String(img.src || ''),
+      complete: !!img.complete,
+      naturalWidth: img.naturalWidth | 0,
+      naturalHeight: img.naturalHeight | 0,
+    }));
+    const broken = details.filter((d) => !(d.complete && d.naturalWidth > 0 && d.naturalHeight > 0)).length;
+    return { total: imgs.length, broken, details };
+  });
+  assert.ok(proof.total > 0, `${src} canonical media imgs present`);
+  assert.equal(proof.broken, 0, `${src} BROKEN_IMAGE_COUNT=0 (total ${proof.total})`);
+  passed += 2;
+  console.log(`ok - ${src} canonical media decoded (total=${proof.total} broken=${proof.broken})`);
+  return proof;
+}
+
 async function installApiRoutes(page, { tree = TREE, memories = MEMORIES, fail = null } = {}) {
+  await installDeterministicMediaRoute(page);
   await page.route('**/api/trees/*/memories*', async (route) => {
     if (fail) return route.fulfill({ status: fail, contentType: 'application/json', body: '{}' });
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(memories) });
@@ -199,6 +262,7 @@ async function main() {
   await frame.locator('.card[data-id="alpha-m1"]').click({ force: true });
   await desktop.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m1', null, { timeout: 10000 });
   check('SRC064 roundtrip alpha-m1', true);
+  await assertCanonicalMediaDecoded(frame, 'SRC064');
   await desktop.screenshot({ path: `${shotDir}/desktop-entry-selected.png` });
 
   // board step via shell nav
@@ -299,6 +363,7 @@ async function main() {
   await frame.locator('.card-wrap[data-id="alpha-m1"]').click();
   await desktop.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m1', null, { timeout: 10000 });
   check('SRC057 roundtrip alpha-m1', true);
+  await assertCanonicalMediaDecoded(frame, 'SRC057');
   await desktop.screenshot({ path: `${shotDir}/desktop-memory-selected.png` });
 
   // explore
