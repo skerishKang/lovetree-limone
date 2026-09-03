@@ -61,12 +61,12 @@
       },
       "product": {
         "index.html": "5e863c937c428eef17610c02bf2fd2815b119495f1c013b4fc9dbf9c5d85973e",
-        "script.js": "19097f9412f45e4e42845b8cfceff7b4477c86d3242504c03363dcfca0548c3c",
+        "script.js": "b1a4d2c49f091c8a6b67300ab32285110658ecf383719d3d39742292468164cf",
         "styles.css": "57ee33f0f96807e7cc4d11d94fbbf78b6b775878addd31259b074aeac7e03b5e"
       },
       "bridge": {
         "file": "src056-product-bridge.js",
-        "sha256": "53c6a4ac2e63b8465cadcd17e4bb5c00eb40e8c5e1184789d0fc1ee8b9f7f65f"
+        "sha256": "7597ea4cf0f7ffd4f7b2dc6e59c6a06701a19747445cdc776bc880bad8c4074e"
       },
       "bridgeInclude": {
         "tag": "<script src=\"./src056-product-bridge.js\"></script>",

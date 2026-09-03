@@ -100,12 +100,18 @@
     } catch (e) {}
   }
 
+  // The renderer closures (drawEdge/drawPlaybackOrb/startPlayback/
+  // nextPlaybackEdge/playbackArrive/chooseBranch) resolve nodes through the
+  // lexical byId map created inside the source IIFE. The hook exposes that
+  // exact object as lt.byId, so canonical hydration must mutate it IN PLACE.
+  // Replacing the object (lt.byId = map / window.byId = map) would leave the
+  // closures looking up stale fixture nodes.
   function rebuildById(nodes) {
-    try {
-      var map = {};
-      nodes.forEach(function (n) { map[n.id] = n; });
-      window.byId = map;
-    } catch (e) {}
+    var map = lt.byId;
+    if (!map || typeof map !== 'object') return false;
+    Object.keys(map).forEach(function (k) { delete map[k]; });
+    nodes.forEach(function (n) { map[n.id] = n; });
+    return true;
   }
 
   // Pre-paint fixture neutralization (synchronous, before first rAF paint).
@@ -208,6 +214,12 @@
   }
 
   function applyProjection(projection, context) {
+    // Fail closed before touching any renderer state: without the in-place
+    // byId map the renderer closures would keep resolving stale fixture nodes.
+    if (!lt.byId || typeof lt.byId !== 'object') {
+      post('ERROR', { code: 'SRC056_BYID_UNAVAILABLE', stage: 'applyProjection' });
+      return;
+    }
     var moments = Array.isArray(projection.nodes) ? projection.nodes : [];
     var edges = Array.isArray(projection.edges) ? projection.edges : [];
     canonicalIds = {};

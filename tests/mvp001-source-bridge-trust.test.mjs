@@ -60,6 +60,9 @@ function buildWindow(sourceId, state) {
     return {
       __lt: {
         state: {}, nodes: [], edges: [], paths: [], CLUSTERS: [], pathById: {}, anchors: [],
+        // The real source hook exposes the renderer's lexical byId map; the
+        // bridge must mutate this exact object in place.
+        byId: {},
         selectMoment() { state.selected = true; }, overview() {},
       },
     };
@@ -191,6 +194,8 @@ function loadBridge(sourceId) {
     parent,
     sibling,
     listeners,
+    win,
+    posted,
     send(data, sender = parent, origin = ORIGIN) {
       for (const fn of [...listeners]) fn({ data, origin, source: sender });
     },
@@ -283,3 +288,34 @@ for (const sourceId of SOURCE_IDS) {
     assert.equal(b.listeners.size, 0, `${sourceId}: listener stays removed`);
   });
 }
+
+// Renderer-map binding (PR #607 central review): the SRC056 renderer closures
+// resolve nodes through the lexical byId map created inside the source IIFE.
+// The hook exposes that exact object as __lt.byId, so the bridge must mutate
+// it IN PLACE. Replacing the object (window.byId = map) left the closures
+// looking up stale fixture nodes.
+test('SRC056: canonical hydration mutates the renderer byId map in place', () => {
+  const b = loadBridge('SRC056');
+  const mapIdentity = b.win.__lt.byId;
+  assert.deepEqual(Object.keys(mapIdentity), [], 'bridge starts with a neutral byId map');
+
+  b.send(initEnvelope('SRC056', 'mem-a', 1));
+  assert.equal(b.win.__lt.byId, mapIdentity, 'byId object identity survives INIT');
+  assert.deepEqual(Object.keys(b.win.__lt.byId), ['mem-a'], 'canonical id present in byId');
+  assert.equal(b.win.__lt.byId['mem-a'], b.win.__lt.nodes[0], 'byId resolves to the canonical node object');
+  assert.equal(b.win.byId, undefined, 'no window.byId replacement is ever assigned');
+
+  b.send(initEnvelope('SRC056', 'mem-b', 2));
+  assert.equal(b.win.__lt.byId, mapIdentity, 'byId identity survives re-INIT');
+  assert.deepEqual(Object.keys(b.win.__lt.byId), ['mem-b'], 'stale keys are replaced in place');
+});
+
+test('SRC056: missing renderer byId hook fails closed without hydration', () => {
+  const b = loadBridge('SRC056');
+  delete b.win.__lt.byId;
+  b.send(initEnvelope('SRC056', 'mem-a', 1));
+  assert.deepEqual(b.probe(), [], 'renderer nodes are not hydrated through a missing map');
+  const err = b.posted.find((p) => p.msg.type === 'ERROR');
+  assert.ok(err, 'bridge reports a bridge ERROR instead of silently replacing the map');
+  assert.equal(err.msg.payload.code, 'SRC056_BYID_UNAVAILABLE');
+});

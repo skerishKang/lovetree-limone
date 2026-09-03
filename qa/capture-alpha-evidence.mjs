@@ -125,6 +125,26 @@ async function selectCanonical(frame, src, page) {
   return page.evaluate(() => new URL(location.href).searchParams.get('memory'));
 }
 
+async function capturePlayback(frame, page) {
+  // Real runtime path: select alpha-m1, let the shell re-INIT settle, then
+  // start playback through the source hook and wait for the first canonical
+  // arrival (alpha-m2) to reach the shell URL.
+  await frame.evaluate(() => {
+    const lt = window.__lt;
+    lt.selectMoment(lt.nodes.find((n) => n.id === 'alpha-m1'), false);
+    lt.__qaPrevSelected = lt.state.selected;
+  });
+  await page.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m1', null, { timeout: 10000 });
+  await frame.waitForFunction(
+    () => window.__lt.state.selected && window.__lt.state.selected !== window.__lt.__qaPrevSelected && window.__lt.state.selected.id === 'alpha-m1',
+    null,
+    { timeout: 10000 },
+  );
+  await frame.evaluate(() => window.__lt.startPlayback());
+  await page.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m2', null, { timeout: 20000 });
+  await page.waitForTimeout(600);
+}
+
 async function main() {
   await mkdir(shotDir, { recursive: true });
   const headSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -161,6 +181,17 @@ async function main() {
         viewport: vp.name, source: step.src, state: 'selected', filename: selectedFile,
         canonicalTreeId: TREE.id, canonicalSelectedMemoryId: selectedMemory,
       });
+
+      // SRC056 path-playback: first canonical arrival through the real runtime
+      if (step.src === 'SRC056') {
+        await capturePlayback(frame, page);
+        const playbackFile = `${vp.name}-${step.src.toLowerCase()}-path-playback.png`;
+        await page.screenshot({ path: `${shotDir}/${playbackFile}` });
+        manifest.shots.push({
+          viewport: vp.name, source: step.src, state: 'path-playback', filename: playbackFile,
+          canonicalTreeId: TREE.id, canonicalSelectedMemoryId: 'alpha-m2',
+        });
+      }
     }
     await page.close();
   }

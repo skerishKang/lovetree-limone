@@ -62,12 +62,42 @@ function check(name, cond) {
   console.log(`ok - ${name}`);
 }
 
-async function gotoShellStep(page, stepId) {
-  const chip = page.locator(`.step-chip[data-step-id="${stepId}"]`);
-  if (!(await chip.isVisible())) {
+async function expandShellNav(page) {
+  await page.waitForFunction(() => !!document.getElementById('mvp-shell-nav'), null, { timeout: 10000 });
+  const collapsed = await page.evaluate(() => document.getElementById('mvp-shell-nav').classList.contains('collapsed'));
+  if (collapsed) {
     await page.locator('#toggle-nav-btn').click();
+    await page.waitForFunction(
+      () => !document.getElementById('mvp-shell-nav')?.classList.contains('collapsed'),
+      null,
+      { timeout: 5000 },
+    );
   }
-  await chip.click();
+}
+
+async function gotoShellStep(page, stepId) {
+  const target = STEPS.findIndex((s) => s.id === stepId);
+  if (target < 0) throw new Error(`unknown step ${stepId}`);
+  const mobileNav = await page.evaluate(() => innerWidth <= 640);
+  if (!mobileNav) {
+    await expandShellNav(page);
+    const chip = page.locator(`.step-chip[data-step-id="${stepId}"]`);
+    await chip.waitFor({ state: 'visible', timeout: 5000 });
+    await chip.click();
+    return;
+  }
+  // Shell contract at <=640px: .mvp-nav-steps is display:none, so step chips
+  // are NEVER visible even when expanded. Walk the real prev/next UI instead.
+  for (let guard = 0; guard < STEPS.length; guard++) {
+    const at = await page.evaluate(() => new URL(location.href).searchParams.get('step'));
+    if (at === stepId) return;
+    const current = STEPS.findIndex((s) => s.id === at);
+    if (current < 0) throw new Error(`URL step unreadable on mobile: ${at}`);
+    await expandShellNav(page);
+    await page.locator(current < target ? '#next-btn' : '#prev-btn').click();
+    await page.waitForFunction((prev) => new URL(location.href).searchParams.get('step') !== prev, at, { timeout: 10000 });
+  }
+  throw new Error(`mobile nav could not reach step ${stepId}`);
 }
 
 async function installApiRoutes(page, { tree = TREE, memories = MEMORIES, fail = null } = {}) {
@@ -198,6 +228,20 @@ async function main() {
   check('SRC056 canonical nodes', JSON.stringify(rel.nodes.sort()) === JSON.stringify(['alpha-m1', 'alpha-m2', 'alpha-m3']));
   check('SRC056 canonical parent edges only', rel.edges.length === 2 && rel.edges.every((e) => e[2] === 'primary'));
   check('SRC056 no fixture cluster names', rel.clusters.every((n) => n === ''));
+  // Renderer-map binding proof: the bridge must have replaced the keys of the
+  // source's own lexical byId map (exposed as __lt.byId), not a window.byId
+  // shadow. Every canonical renderer edge must resolve through that map.
+  const mapProof = await frame.evaluate(() => {
+    const lt = window.__lt;
+    return {
+      keys: Object.keys(lt.byId).sort(),
+      edgeResolvable: lt.edges.length > 0 && lt.edges.every((e) => !!lt.byId[e.a] && !!lt.byId[e.b]),
+      windowShadow: window.byId !== undefined,
+    };
+  });
+  check('SRC056 byId map holds exactly the canonical ids', JSON.stringify(mapProof.keys) === JSON.stringify(['alpha-m1', 'alpha-m2', 'alpha-m3']));
+  check('SRC056 every renderer edge endpoint resolves through byId', mapProof.edgeResolvable);
+  check('SRC056 bridge no longer assigns the dead window.byId shadow', !mapProof.windowShadow);
   await desktop.screenshot({ path: `${shotDir}/desktop-relationships-initial.png` });
   // roundtrip: click alpha-m3 node via canvas center-of-node projection is unstable;
   // use the authoritative selection path the companion uses (selectMoment by id),
@@ -210,6 +254,39 @@ async function main() {
   await desktop.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m3', null, { timeout: 10000 });
   check('SRC056 roundtrip alpha-m3', true);
   await desktop.screenshot({ path: `${shotDir}/desktop-relationships-selected.png` });
+
+  // Path-playback regression (renderer byId binding): select alpha-m1 through
+  // the real source selection path, let the shell's re-INIT settle (it
+  // re-applies the canonical projection and re-selects the anchor), then start
+  // playback through the real runtime hook. The first arrival must travel the
+  // full playbackArrive -> __LT56_SELECT__ -> MEMORY_SELECTED -> shell URL
+  // chain. With the stale lexical byId map the orb draw throws inside the rAF
+  // loop and this URL never changes.
+  await frame.evaluate(() => {
+    const lt = window.__lt;
+    lt.selectMoment(lt.nodes.find((n) => n.id === 'alpha-m1'), false);
+    lt.__qaPrevSelected = lt.state.selected;
+  });
+  await desktop.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m1', null, { timeout: 10000 });
+  // The selection round-trip makes the shell re-INIT the frame, which
+  // re-hydrates the projection and re-applies selectMoment on a NEW node
+  // object. Wait for that re-application before starting playback, otherwise
+  // the pending re-INIT cancels the just-started playback.
+  await frame.waitForFunction(
+    () => window.__lt.state.selected && window.__lt.state.selected !== window.__lt.__qaPrevSelected && window.__lt.state.selected.id === 'alpha-m1',
+    null,
+    { timeout: 10000 },
+  );
+  await frame.evaluate(() => window.__lt.startPlayback());
+  await desktop.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m2', null, { timeout: 20000 });
+  check('SRC056 path playback arrives at canonical alpha-m2 through the shell', true);
+  const playback = await frame.evaluate(() => ({
+    selected: window.__lt.state.selected && window.__lt.state.selected.id,
+    keys: Object.keys(window.__lt.byId).sort(),
+  }));
+  check('SRC056 playback selection is the canonical next node', playback.selected === 'alpha-m2');
+  check('SRC056 byId map stays canonical after playback', JSON.stringify(playback.keys) === JSON.stringify(['alpha-m1', 'alpha-m2', 'alpha-m3']));
+  await desktop.screenshot({ path: `${shotDir}/desktop-relationships-playback.png` });
 
   // memory detail
   await gotoShellStep(desktop, 'memory');
@@ -284,6 +361,34 @@ async function main() {
   const selVisible = await frame.evaluate(() => !!document.querySelector('.card[data-id="alpha-m2"].selected, .card[data-id="alpha-m2"]'));
   check('mobile board shows selected canonical card', selVisible);
   await mobile.screenshot({ path: `${shotDir}/mobile-board-selected.png` });
+
+  // mobile relationships: canonical hydration + selection + path playback
+  await gotoShellStep(mobile, 'relationships');
+  frame = await frameFor(mobile, 'SRC056');
+  await frame.waitForFunction(() => window.__lt && window.__lt.nodes.length === 3, null, { timeout: 15000 });
+  await mobile.screenshot({ path: `${shotDir}/mobile-relationships-initial.png` });
+  await frame.evaluate(() => {
+    const lt = window.__lt;
+    lt.selectMoment(lt.nodes.find((n) => n.id === 'alpha-m3'), false);
+  });
+  await mobile.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m3', null, { timeout: 10000 });
+  check('mobile SRC056 roundtrip alpha-m3', true);
+  await mobile.screenshot({ path: `${shotDir}/mobile-relationships-selected.png` });
+  await frame.evaluate(() => {
+    const lt = window.__lt;
+    lt.selectMoment(lt.nodes.find((n) => n.id === 'alpha-m1'), false);
+    lt.__qaPrevSelected = lt.state.selected;
+  });
+  await mobile.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m1', null, { timeout: 10000 });
+  await frame.waitForFunction(
+    () => window.__lt.state.selected && window.__lt.state.selected !== window.__lt.__qaPrevSelected && window.__lt.state.selected.id === 'alpha-m1',
+    null,
+    { timeout: 10000 },
+  );
+  await frame.evaluate(() => window.__lt.startPlayback());
+  await mobile.waitForFunction(() => new URL(location.href).searchParams.get('memory') === 'alpha-m2', null, { timeout: 20000 });
+  check('mobile SRC056 path playback arrives at canonical alpha-m2', true);
+  await mobile.screenshot({ path: `${shotDir}/mobile-relationships-playback.png` });
   await mobile.close();
 
   // ---- 4. negatives (fail closed, no fixture fallback) ----
