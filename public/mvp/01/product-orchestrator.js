@@ -28,6 +28,7 @@ export class ProductOrchestrator {
       createFrame: shellApi.createFrame || (() => null),
       removeFrame: shellApi.removeFrame || (() => {}),
       emitError: shellApi.emitError || (() => {}),
+      getProjection: shellApi.getProjection || (() => null),
     };
 
     this.context = null;
@@ -121,8 +122,20 @@ export class ProductOrchestrator {
   }
 
   sendSourceInit(frame, sessionId, sourceId) {
-    const projection = { sourceId };
-    const permissions = { canRead: true, canCreate: false, canUpdate: false, canDelete: false };
+    // Adapter projection is supplied by the shell-owned Productized Alpha
+    // dispatch. Absent projection fails closed: the frame receives a
+    // context-only INIT with canRead:false and must stay fixture-free.
+    let resolved = null;
+    try {
+      resolved = this.shell.getProjection(sourceId, this.context);
+    } catch {
+      resolved = null;
+    }
+    const hasProjection = resolved !== null && resolved !== undefined;
+    const projection = hasProjection ? resolved : { sourceId };
+    const permissions = hasProjection
+      ? { canRead: true, canCreate: false, canUpdate: false, canDelete: false }
+      : { canRead: false, canCreate: false, canUpdate: false, canDelete: false };
     const initPayload = {
       context: this.context,
       projection,

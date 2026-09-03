@@ -1,0 +1,131 @@
+{
+  "$comment": "MVP001 Productized Alpha derivation manifest (PR #607 Blocker C). Locks each Product surface to its frozen Source authority plus the reviewed bounded seam. The regression suite (tests/mvp001-isolated-static.test.mjs) validates every field against actual bytes on disk: authority hashes must match src/03_sources/<ID>/split, product CSS must equal authority CSS, product index must equal authority index plus exactly the declared bridge include delta, product script.js must match the reviewed expected hash and differ from authority script only by the declared seam identifiers, and the companion bridge must exist exactly once. Regenerate with: node qa/generate-derivation-manifest.mjs",
+  "schemaVersion": 1,
+  "mvpId": "MVP001",
+  "sources": {
+    "SRC064": {
+      "authority": {
+        "index.html": "0d24cc9daee9089b2bd304a6a2ade45346a31a0732dd3e78913ffcd607abc0d4",
+        "script.js": "774936463eb2de3545edfec84527d4d3b55b755abd2216a0265676396b9324bd",
+        "styles.css": "9f70b882ec82398a1e6f91ebf64c3f097cf130be4f70ad46248a23c6cf0d18dd"
+      },
+      "product": {
+        "index.html": "f90f889b3189225a6c2fdc00216a41a7d7e2df0aa7c3a985757ed8dce8080149",
+        "script.js": "3aba21e30e2bc4edcc9732eba4cdb6da5713cb6369bae9d415bc633d26d9ccfa",
+        "styles.css": "9f70b882ec82398a1e6f91ebf64c3f097cf130be4f70ad46248a23c6cf0d18dd"
+      },
+      "bridge": {
+        "file": "src064-product-bridge.js",
+        "sha256": "f7853b3ff230b0c20c77ac3dc3c627e4a6c59b263721c25a3c10257b978fbf53"
+      },
+      "bridgeInclude": {
+        "tag": "<script src=\"./src064-product-bridge.js\"></script>",
+        "occurrences": 1,
+        "includeStyle": "inline"
+      },
+      "seamIdentifiers": [
+        "__TRACK64_SELECT__"
+      ],
+      "seamComment": "authoritative focus/close sites call __TRACK64_SELECT__(focusIdOrNull) with the runtime card id"
+    },
+    "SRC058": {
+      "authority": {
+        "index.html": "0eb1848c12492269474e8b867c1bd116f0fe7fdca568c1e7317f55dabd6d2340",
+        "script.js": "ec907cc43de7a04842acde4cbaae50a82eb4b7cb8ef19f2df33eee2302b5182b",
+        "styles.css": "0e3374585cf0b56ea46740b4d0d1cda54ca55314d3d889c9e7435fa9a37d37af"
+      },
+      "product": {
+        "index.html": "af51371483f68533ef92bdcba6e6a3dfdc82e4e57cb499b63cfc35681e419679",
+        "script.js": "78171bda0816026d8555b31fed12ca06176b7161c9a040706848fe99253a0b9d",
+        "styles.css": "0e3374585cf0b56ea46740b4d0d1cda54ca55314d3d889c9e7435fa9a37d37af"
+      },
+      "bridge": {
+        "file": "src058-product-bridge.js",
+        "sha256": "9c32dea4becacc7e26db8f501c92e300a952dece94ff1625f1f4904285aa3325"
+      },
+      "bridgeInclude": {
+        "tag": "<script src=\"./src058-product-bridge.js\"></script>",
+        "occurrences": 1,
+        "includeStyle": "own-line"
+      },
+      "seamIdentifiers": [
+        "__LT58_SELECT__",
+        "__LT58_PRODUCT__"
+      ]
+    },
+    "SRC056": {
+      "authority": {
+        "index.html": "7e0c97075f3d567d7ef6df5c6881d1f55ac5ed37dd28fb8f987885590bd10035",
+        "script.js": "f8f5be51bc1028d5149c6fbffdb4223bb52972847c14b17e2b13ec75472bfd0a",
+        "styles.css": "57ee33f0f96807e7cc4d11d94fbbf78b6b775878addd31259b074aeac7e03b5e"
+      },
+      "product": {
+        "index.html": "5e863c937c428eef17610c02bf2fd2815b119495f1c013b4fc9dbf9c5d85973e",
+        "script.js": "b1a4d2c49f091c8a6b67300ab32285110658ecf383719d3d39742292468164cf",
+        "styles.css": "57ee33f0f96807e7cc4d11d94fbbf78b6b775878addd31259b074aeac7e03b5e"
+      },
+      "bridge": {
+        "file": "src056-product-bridge.js",
+        "sha256": "7597ea4cf0f7ffd4f7b2dc6e59c6a06701a19747445cdc776bc880bad8c4074e"
+      },
+      "bridgeInclude": {
+        "tag": "<script src=\"./src056-product-bridge.js\"></script>",
+        "occurrences": 1,
+        "includeStyle": "own-line"
+      },
+      "seamIdentifiers": [
+        "__LT56_SELECT__",
+        "__LT56_COPY__"
+      ]
+    },
+    "SRC057": {
+      "authority": {
+        "index.html": "6e90a0d503fbbc213a537a33de4fff7a2ec1d036d79c5d036695191e58767545",
+        "script.js": "b44d627286571fc10ab5cbb3e24152cd08b256ba9187ad8ae7746ed943bd0472",
+        "styles.css": "29c2380364311720601054c9447288cb301d24f4a22646368051a68f4dba6fc3"
+      },
+      "product": {
+        "index.html": "d7049d4ac94645315fa407af510971f1b392adacd5acafe5e183c780b5f2d4f2",
+        "script.js": "458183b8621ead3233d2ee99af720644848743f918bff5f5cc0445b5e5bbe722",
+        "styles.css": "29c2380364311720601054c9447288cb301d24f4a22646368051a68f4dba6fc3"
+      },
+      "bridge": {
+        "file": "src057-product-bridge.js",
+        "sha256": "4cf015d5c4658a4e7fe5349c0b24ba6a398a93eb3f8ba191783f45f02e27e886"
+      },
+      "bridgeInclude": {
+        "tag": "<script src=\"./src057-product-bridge.js\"></script>",
+        "occurrences": 1,
+        "includeStyle": "own-line"
+      },
+      "seamIdentifiers": [
+        "__LT57_SELECT__",
+        "__LT57_PRODUCT__"
+      ]
+    },
+    "SRC060": {
+      "authority": {
+        "index.html": "42ce0d5ebc129cae74e69fa0adbf90372bfd10a04071be53a493534044ca4755",
+        "script.js": "7c9a593ca38570cfed1c44d636bd00ff32b4efcc934a111b11617a9dbf68e329",
+        "styles.css": "4cae9669daebad17da4eb9265b563539bbac50cf7affba53678ddc22f29dc09d"
+      },
+      "product": {
+        "index.html": "64553caf1866def3a85017b11cd98a4288aed89129b4ff9bce013457b0d63fab",
+        "script.js": "345cfac4830ae0d25d5ad3db1bccd5e7d08000345d0938bfa1c4594085c9538c",
+        "styles.css": "4cae9669daebad17da4eb9265b563539bbac50cf7affba53678ddc22f29dc09d"
+      },
+      "bridge": {
+        "file": "src060-product-bridge.js",
+        "sha256": "139ea4238c94febd93e64cd5de40c4d12ba72ea611f8a0a7788b1b6dc0e4ac29"
+      },
+      "bridgeInclude": {
+        "tag": "<script src=\"./src060-product-bridge.js\"></script>",
+        "occurrences": 1,
+        "includeStyle": "own-line"
+      },
+      "seamIdentifiers": [
+        "__LT60_SELECT__"
+      ]
+    }
+  }
+}

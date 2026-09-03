@@ -1,4 +1,7 @@
 import { ProductOrchestrator } from './product-orchestrator.js';
+import { buildSurfaceUrl, projectAlphaContext, mapAlphaReadError } from './productized-alpha.js';
+import { createMvp001ReadClient } from './read-client.js';
+import { loadMvp001ReadContext } from './read-context.js';
 
 const STEPS = [
   { id: 'entry', label: '입장 포털', srcId: 'SRC064', surface: '/mvp/01/surfaces/src064/index.html' },
@@ -73,7 +76,9 @@ const orchestrator = new ProductOrchestrator({
     iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
     iframe.dataset.mvpSourceId = sourceId;
     iframe.dataset.mvpFrameSessionId = sessionId;
-    iframe.src = surfaceUrl;
+    // Bootstrap carries ONLY the bridge session + source identity. Canonical
+    // data flows exclusively through validated SOURCE_INIT.
+    iframe.src = buildSurfaceUrl(surfaceUrl, sessionId, sourceId);
     container.appendChild(iframe);
     return iframe;
   },
@@ -83,7 +88,94 @@ const orchestrator = new ProductOrchestrator({
     } catch {}
     frame.remove();
   },
+  emitError(payload) {
+    showAlphaState('error', alphaErrorText(payload));
+  },
+  getProjection(sourceId) {
+    const entry = alphaProjections.get(sourceId);
+    if (!entry || entry.revision !== orchestrator.contextRevision) return null;
+    return entry.projection;
+  },
 });
+
+// ---- Read-only Productized Alpha read flow (shell-owned) ----
+// No fixture fallback: any read failure surfaces as an explicit Product state
+// and frames receive a context-only INIT with canRead:false.
+
+const alphaStateOverlay = document.createElement('div');
+alphaStateOverlay.id = 'mvp-alpha-state';
+alphaStateOverlay.setAttribute('role', 'status');
+alphaStateOverlay.hidden = true;
+document.body.appendChild(alphaStateOverlay);
+
+let alphaLoadSeq = 0;
+const alphaProjections = new Map();
+
+function alphaErrorText(payload) {
+  const code = payload && payload.code ? String(payload.code) : 'UNKNOWN';
+  return `MVP01 read unavailable (${code}). No demo content is shown.`;
+}
+
+function showAlphaState(status, text) {
+  if (!text) {
+    alphaStateOverlay.hidden = true;
+    alphaStateOverlay.textContent = '';
+    return;
+  }
+  alphaStateOverlay.hidden = false;
+  alphaStateOverlay.dataset.status = status;
+  alphaStateOverlay.textContent = text;
+}
+
+function createAlphaClient() {
+  const getAccessToken = typeof window.__MVP01_GET_ACCESS_TOKEN__ === 'function'
+    ? window.__MVP01_GET_ACCESS_TOKEN__
+    : undefined;
+  return createMvp001ReadClient({ fetchImpl: window.fetch.bind(window), getAccessToken });
+}
+
+async function refreshAlphaProjections() {
+  const seq = ++alphaLoadSeq;
+  const context = orchestrator.getContext();
+  if (!context || !context.treeId) {
+    alphaProjections.clear();
+    showAlphaState('hint', 'Select a Tree to begin the Productized Alpha journey.');
+    return { ok: false, code: 'NO_TREE' };
+  }
+  showAlphaState('loading', 'Loading canonical Tree…');
+  let readContext;
+  try {
+    const client = createAlphaClient();
+    readContext = await loadMvp001ReadContext({
+      client,
+      treeId: context.treeId,
+      selectedMemoryId: context.selectedMemoryId,
+    });
+  } catch (error) {
+    if (seq !== alphaLoadSeq) return { ok: false, code: 'STALE_LOAD' };
+    alphaProjections.clear();
+    const mapped = mapAlphaReadError(error);
+    showAlphaState(mapped.status, mapped.text);
+    return { ok: false, code: mapped.status };
+  }
+  if (seq !== alphaLoadSeq) return { ok: false, code: 'STALE_LOAD' };
+  alphaProjections.clear();
+  for (const step of STEPS) {
+    try {
+      const { projection } = projectAlphaContext(step.srcId, readContext);
+      alphaProjections.set(step.srcId, { revision: orchestrator.contextRevision, projection });
+    } catch {
+      // Per-source projection failure fails closed for that source only.
+    }
+  }
+  if (readContext.memories.length === 0) {
+    showAlphaState('empty', 'This Tree has no Memories yet. Nothing fixture-generated is shown.');
+  } else {
+    showAlphaState(null, null);
+  }
+  orchestrator.reinitActiveFrame();
+  return { ok: true, context: readContext };
+}
 
 orchestrator.init();
 
@@ -126,6 +218,9 @@ function mountStep(stepIndex) {
   if (!mounted) return false;
 
   updateStepChrome(stepIndex);
+  // Frame boots neutral (companion clears fixture pre-paint); projections
+  // follow async and re-INIT the active frame when ready.
+  void refreshAlphaProjections();
   return true;
 }
 
@@ -143,6 +238,13 @@ function handleBridgeMessage(event) {
   const result = orchestrator.handleBridgeMessage(event);
   if (!result.accepted) return;
 
+  if (
+    result.type === 'TREE_SELECTED'
+    || result.type === 'MEMORY_SELECTED'
+    || (result.type === 'NAVIGATE' && result.changed)
+  ) {
+    void refreshAlphaProjections();
+  }
   if (result.type === 'NAVIGATE' && typeof result.stepIndex === 'number' && result.changed) {
     mountStep(result.stepIndex);
   }

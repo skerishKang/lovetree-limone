@@ -59,7 +59,7 @@ function rotatePoint(n){let x=n.x-camera.tx,y=n.y-camera.ty,z=n.z-camera.tz;let 
 function projectXYZ(x,y,z){let f=780*camera.zoom, depth=1200+z, s=f/Math.max(300,depth);return [W/2+x*s,H/2+y*s,s,depth]}
 function semantic(){return camera.zoom<.90?0:camera.zoom<1.55?1:camera.zoom<2.45?2:3}
 function levelName(l){return ['UNIVERSE','CLUSTER','MOMENT FIELD','INSPECT'][l]}
-function edgeVisible(e,l){ if(l===0) return e.type==='bridge'||e.type==='local'; if(l===1) return e.type==='bridge'||e.type==='local'; return true }
+function edgeVisible(e,l){ if(l===0) return e.type==='bridge'||e.type==='local'||e.type==='parent'; if(l===1) return e.type==='bridge'||e.type==='local'||e.type==='parent'; return true }
 function selectedEdge(e){return selected!=null&&(e.a===selected||e.b===selected)}
 function filterAlpha(n){return filter==='all'||n.emotion===filter?1:.07}
 function draw(){
@@ -96,7 +96,7 @@ function nearestHit(x,y){let l=semantic();let best=null,bd=1e9;if(l<=1){clusters
  return best}
 function focusCluster(ci){selectedCluster=ci;selected=null;panel.classList.remove('open');let c=clusters[ci];flyTo(c.c[0],c.c[1],c.c[2],Math.max(camera.zoom,1.28));summary.classList.add('open');summary.querySelector('h3').textContent=c.name;summary.querySelector('p').textContent=`${c.n}개의 Moment · ${bridgeRecords.filter(r=>r.a===ci||r.b===ci).length}개의 Bridge Moment · View-only cluster`;
  let bl=summary.querySelector('.bridge-list');bl.innerHTML='';bridgeRecords.filter(r=>r.a===ci||r.b===ci).slice(0,5).forEach((r,k)=>{let b=document.createElement('button');b.textContent=`Bridge ${k+1}`;b.onclick=()=>selectNode(r.node,true);bl.appendChild(b)})}
-function selectNode(i,fly=false){selected=i;let n=nodes[i];selectedCluster=n.ci;if(fly){flyTo(n.x,n.y,n.z,Math.max(camera.zoom,2.35),560)}showPanel(n)}
+function selectNode(i,fly=false){selected=i;try{if(typeof globalThis.__LT60_SELECT__==='function')globalThis.__LT60_SELECT__(i)}catch(_){}let n=nodes[i];selectedCluster=n.ci;if(fly){flyTo(n.x,n.y,n.z,Math.max(camera.zoom,2.35),560)}showPanel(n)}
 function showPanel(n){panel.classList.add('open');panel.querySelector('h2').textContent=n.title;panel.querySelector('.meta').innerHTML=`<span class="chip">${n.date}</span><span class="chip">${n.emotion}</span><span class="chip">${n.type}</span><span class="chip">${n.person}</span><span class="chip">#${n.keyword}</span><span class="chip">${clusters[n.ci].name}</span>`;let e=edges.find(e=>e.a===n.id||e.b===n.id);panel.querySelector('.why span').textContent=e?.why||'이 감정이 다음 순간의 탐색을 열었다.';let bb=panel.querySelector('.bridgebox');if(n.bridge){let r=bridgeRecords.find(r=>r.node===n.id);bb.classList.add('open');bb.innerHTML=`<strong>Bridge Moment</strong><br>이 Moment가 <b>${clusters[r.a].name}</b>과 <b>${clusters[r.b].name}</b>을 이어줬어요.<br><small>WHY BEFORE → WHY NEXT를 양쪽 Connection에서 확인할 수 있습니다.</small>`}else bb.classList.remove('open')}
 function reset(){flyToken++;selected=null;selectedCluster=null;hovered=null;bridgeOnly=false;camera.yaw=-.18;camera.pitch=.10;camera.zoom=.82;camera.tx=camera.ty=camera.tz=0;panel.classList.remove('open');summary.classList.remove('open');document.getElementById('bridgeMode').textContent='Bridge';toast('전체 기억군 조망으로 돌아왔어요')}
 function toast(t){let el=document.getElementById('toast');el.textContent=t;el.classList.add('open');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('open'),1700)}
@@ -127,22 +127,22 @@ function snapshot(){return {camera:{yaw:lt.camera.yaw,pitch:lt.camera.pitch,zoom
 function restore(st){if(!st)return;Object.assign(lt.camera,st.camera);$('#emotionFilter').value=st.filter;if(st.selected!=null)lt.selectNode(st.selected,false)}
 function selectedNode(){return lt.selected==null?null:lt.nodes[lt.selected]}
 function incident(nodeId){return lt.edges.map((e,i)=>({...e,index:i})).filter(e=>e.a===nodeId||e.b===nodeId)}
-function localParent(nodeId){let x=lt.edges.map((e,i)=>({...e,index:i})).find(e=>e.type==='local'&&e.a===nodeId);return x||null}
-function localChildren(nodeId){return lt.edges.map((e,i)=>({...e,index:i})).filter(e=>e.type==='local'&&e.b===nodeId)}
+function localParent(nodeId){let x=lt.edges.map((e,i)=>({...e,index:i})).find(e=>(e.type==='local'||e.type==='parent')&&e.a===nodeId);return x||null}
+function localChildren(nodeId){return lt.edges.map((e,i)=>({...e,index:i})).filter(e=>(e.type==='local'||e.type==='parent')&&e.b===nodeId)}
 function context(n){
- const inc=incident(n.id), primary=inc.find(e=>e.type==='bridge')||inc.find(e=>e.type==='local')||inc[0];
+ const inc=incident(n.id), primary=inc.find(e=>e.type==='bridge')||inc.find(e=>e.type==='local')||inc.find(e=>e.type==='parent')||inc[0];
  const other=primary?lt.nodes[primary.a===n.id?primary.b:primary.a]:null;
  const parent=localParent(n.id); const prev=parent?lt.nodes[parent.b]:other;
  const child=localChildren(n.id)[0]; const next=child?lt.nodes[child.a]:other;
  const sourceNames={photo:'Photo Archive',video:'YouTube / Video',note:'Private Note',link:'Web Link',collage:'Collage / Letter'};
  const ext={photo:'jpg',video:'watch',note:'note',link:'source',collage:'letter'}[n.type]||'moment';
- return {edge:primary,prev,next,source:sourceNames[n.type]||'Moment Source',url:`https://example.com/lovetree/${ext}/${String(n.id).padStart(4,'0')}`,note:`${n.date}, ${n.person}을 보며 남긴 기록. “${n.keyword}”에서 시작된 ${n.emotion}의 감정이 이 순간을 오래 남게 했다.`,why:primary?.why||'이 감정이 다음 순간의 탐색을 열었다.'};
+ return {edge:primary,prev,next,source:sourceNames[n.type]||'Moment Source',url:`https://example.com/lovetree/${ext}/${String(n.id).padStart(4,'0')}`,note:(n.memo||'')||`${n.date}, ${n.person}을 보며 남긴 기록. “${n.keyword}”에서 시작된 ${n.emotion}의 감정이 이 순간을 오래 남게 했다.`,why:primary?.why||'이 감정이 다음 순간의 탐색을 열었다.'};
 }
 function modalOpen(el){modalState=snapshot();el.classList.add('open');el.querySelector('.action-close')?.focus()}
 function modalClose(el){el.classList.remove('open');restore(modalState);modalState=null}
 function momentChip(n){return `<span class="chip">${n.date}</span><span class="chip">${n.emotion}</span><span class="chip">${n.type}</span><span class="chip">${lt.clusters[n.ci].name}</span>${n.bridge?'<span class="chip">Bridge Moment</span>':''}`}
 function mediaHTML(n,c){
- const full={photo:`<b>Photo Moment</b><span>${n.title}<br>${n.person} · ${n.date}<br>선택한 사진 Moment를 큰 화면으로 확인합니다.</span>`,video:`<b>Video Poster</b><span>${n.title}<br>Prototype preview · 실제 제품에서는 sourceUrl의 허용된 player/poster가 연결됩니다.</span>`,note:`<b>전체 Note</b><span>${c.note}<br><br>${c.note}</span>`,link:`<b>Link Clipping</b><span>${n.title}<br>${c.url}<br><br>원본 source와 기록 당시의 감정을 함께 보존합니다.</span>`,collage:`<b>Collage / Letter</b><span>${n.title}<br><br>사진 조각 · 손글씨 · ${n.keyword} 메모가 한 장의 기억으로 묶인 Moment입니다.</span>`};return full[n.type]||full.photo
+ const full={photo:`<b>Photo Moment</b><span>${n.title}<br>${n.person} · ${n.date}<br>선택한 사진 Moment를 큰 화면으로 확인합니다.</span>`,video:`<b>Video Poster</b><span>${n.title}<br>Prototype preview · 실제 제품에서는 sourceUrl의 허용된 player/poster가 연결됩니다.</span>`,note:`<b>전체 Note</b><span>${c.note}<br><br>${c.note}</span>`,link:`<b>Link Clipping</b><span>${n.title}<br>${c.url}<br><br>원본 source와 기록 당시의 감정을 함께 보존합니다.</span>`,collage:`<b>Collage / Letter</b><span>${n.title}<br><br>사진 조각 · 손글씨 · ${n.keyword} 메모가 한 장의 기억으로 묶인 Moment입니다.</span>`};return full[n.type]||(n.type==='youtube'?full.video:full.photo)
 }
 function openViewer(){const n=selectedNode();if(!n)return;const c=context(n);modalOpen(viewer);viewer.querySelector('.action-title').textContent=n.title;viewer.querySelector('.action-sub').innerHTML=momentChip(n);let media=viewer.querySelector('.viewer-media');media.className='viewer-media '+n.type;viewer.querySelector('.media-copy').innerHTML=mediaHTML(n,c);viewer.querySelector('.source').innerHTML=`<b>SOURCE · CAPTURED</b>${c.source}<br>${n.date}<br>${n.type==='link'?`<a href="${c.url}" target="_blank" rel="noreferrer">프로토타입 원본 링크 열기 ↗</a>`:c.url}`;viewer.querySelector('.note').innerHTML=`<b>NOTE / CAPTION</b>${c.note}`;viewer.querySelector('.whydetail').innerHTML=`<b>WHY NEXT</b>${c.why}`;viewer.querySelector('.bridgeinfo').innerHTML=n.bridge?`<b>BRIDGE</b>이 Moment는 ${lt.clusters[n.ci].name}에서 다른 기억군으로 넘어가게 한 Bridge Moment입니다.`:`<b>CLUSTER</b>${lt.clusters[n.ci].name}에 속한 Moment입니다.`;let nav=viewer.querySelector('.nav-moments');nav.innerHTML=`<button data-nav="prev" ${c.prev?'':'disabled'}>← 이전 Moment<b>${c.prev?c.prev.title:'없음'}</b></button><button data-nav="next" ${c.next?'':'disabled'}>다음 Moment →<b>${c.next?c.next.title:'없음'}</b></button>`;nav.querySelector('[data-nav="prev"]')?.addEventListener('click',()=>{if(c.prev){modalClose(viewer);lt.selectNode(c.prev.id,false);openViewer()}});nav.querySelector('[data-nav="next"]')?.addEventListener('click',()=>{if(c.next){modalClose(viewer);lt.selectNode(c.next.id,false);openViewer()}})}
 function openBook(){const n=selectedNode();if(!n)return;const c=context(n);modalOpen(book);book.querySelector('.action-title').textContent=n.title;book.querySelector('.left').innerHTML=`<div class="book-cue">← ${c.prev?c.prev.title:'이전 페이지'}</div><div class="book-photo">${n.type.toUpperCase()} · ${n.title}</div><div class="book-cue">${n.date} · ${n.emotion}</div><span class="page-no">${n.id+1}</span>`;book.querySelector('.right').innerHTML=`<div class="book-cue">${c.next?c.next.title:'다음 페이지'} →</div><div class="book-note">${c.note}</div><div class="book-why"><b>WHY NEXT</b><br>${c.why}</div><span class="page-no">${n.id+2}</span>`;book.querySelector('.route-receipt').classList.remove('open')}
@@ -154,7 +154,7 @@ function routeFor(nodeId){
  while(seq.length<5){let kids=localChildren(cur).filter(e=>!seq.includes(e.a)).sort((a,b)=>lt.nodes[b.a].importance-lt.nodes[a.a].importance);if(!kids.length)break;let k=kids[0];seq.push(k.a);edgeIds.push(k.index);cur=k.a}
  // extend from the earliest node with a different child if necessary
  if(seq.length<4){for(const base of [...seq]){for(const k of localChildren(base)){if(!seq.includes(k.a)){seq.push(k.a);edgeIds.push(k.index);if(seq.length>=4)break}}if(seq.length>=4)break}}
- const orderedEdges=[];for(let i=0;i<seq.length-1;i++){let ei=lt.edges.findIndex(e=>e.type==='local'&&((e.a===seq[i]&&e.b===seq[i+1])||(e.b===seq[i]&&e.a===seq[i+1])));orderedEdges.push(ei)}
+ const orderedEdges=[];for(let i=0;i<seq.length-1;i++){let ei=lt.edges.findIndex(e=>(e.type==='local'||e.type==='parent')&&((e.a===seq[i]&&e.b===seq[i+1])||(e.b===seq[i]&&e.a===seq[i+1])));orderedEdges.push(ei)}
  const branches=seq.filter(id=>localChildren(id).length>1);return {nodes:seq,edgeIds:orderedEdges,branches}
 }
 function frameRoute(route){let ns=route.nodes.map(id=>lt.nodes[id]);let cx=ns.reduce((a,n)=>a+n.x,0)/ns.length,cy=ns.reduce((a,n)=>a+n.y,0)/ns.length,cz=ns.reduce((a,n)=>a+n.z,0)/ns.length;lt.camera.tx=cx;lt.camera.ty=cy;lt.camera.tz=cz;lt.camera.zoom=Math.max(1.18,Math.min(1.58,lt.camera.zoom))}

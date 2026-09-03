@@ -1,0 +1,272 @@
+{
+  "headSha": "a1b7c6018e7a2112296e187744ec2a12a3662068",
+  "baseUrl": "http://127.0.0.1:3101",
+  "treeId": "alpha-tree-1",
+  "generatedAt": "2026-09-03T07:30:34.079Z",
+  "shots": [
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC064",
+      "state": "initial",
+      "filename": "desktop-1440x900-src064-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC064",
+      "state": "selected",
+      "filename": "desktop-1440x900-src064-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC058",
+      "state": "initial",
+      "filename": "desktop-1440x900-src058-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC058",
+      "state": "selected",
+      "filename": "desktop-1440x900-src058-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC056",
+      "state": "initial",
+      "filename": "desktop-1440x900-src056-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC056",
+      "state": "selected",
+      "filename": "desktop-1440x900-src056-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m3"
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC056",
+      "state": "path-playback",
+      "filename": "desktop-1440x900-src056-path-playback.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC057",
+      "state": "initial",
+      "filename": "desktop-1440x900-src057-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC057",
+      "state": "selected",
+      "filename": "desktop-1440x900-src057-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC060",
+      "state": "initial",
+      "filename": "desktop-1440x900-src060-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "source": "SRC060",
+      "state": "selected",
+      "filename": "desktop-1440x900-src060-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC064",
+      "state": "initial",
+      "filename": "mobile-390x844-src064-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC064",
+      "state": "selected",
+      "filename": "mobile-390x844-src064-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC058",
+      "state": "initial",
+      "filename": "mobile-390x844-src058-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC058",
+      "state": "selected",
+      "filename": "mobile-390x844-src058-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC056",
+      "state": "initial",
+      "filename": "mobile-390x844-src056-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC056",
+      "state": "selected",
+      "filename": "mobile-390x844-src056-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m3"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC056",
+      "state": "path-playback",
+      "filename": "mobile-390x844-src056-path-playback.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC057",
+      "state": "initial",
+      "filename": "mobile-390x844-src057-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC057",
+      "state": "selected",
+      "filename": "mobile-390x844-src057-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC060",
+      "state": "initial",
+      "filename": "mobile-390x844-src060-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-390x844",
+      "source": "SRC060",
+      "state": "selected",
+      "filename": "mobile-390x844-src060-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC064",
+      "state": "initial",
+      "filename": "mobile-430x932-src064-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC064",
+      "state": "selected",
+      "filename": "mobile-430x932-src064-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC058",
+      "state": "initial",
+      "filename": "mobile-430x932-src058-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC058",
+      "state": "selected",
+      "filename": "mobile-430x932-src058-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC056",
+      "state": "initial",
+      "filename": "mobile-430x932-src056-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC056",
+      "state": "selected",
+      "filename": "mobile-430x932-src056-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m3"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC056",
+      "state": "path-playback",
+      "filename": "mobile-430x932-src056-path-playback.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC057",
+      "state": "initial",
+      "filename": "mobile-430x932-src057-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC057",
+      "state": "selected",
+      "filename": "mobile-430x932-src057-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m1"
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC060",
+      "state": "initial",
+      "filename": "mobile-430x932-src060-initial.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": null
+    },
+    {
+      "viewport": "mobile-430x932",
+      "source": "SRC060",
+      "state": "selected",
+      "filename": "mobile-430x932-src060-selected.png",
+      "canonicalTreeId": "alpha-tree-1",
+      "canonicalSelectedMemoryId": "alpha-m2"
+    }
+  ]
+}
