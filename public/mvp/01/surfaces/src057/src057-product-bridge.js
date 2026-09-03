@@ -8,8 +8,9 @@
  * collection DOM is rebuilt by the Source renderer itself), canonical selection
  * emission.
  *
- * Read-only: edit/media submit entries are inert in Product mode. Positional
- * prev/next paging is UI traversal only, never a relationship claim.
+ * Slice J: title/memo Product edit via UPDATE_MEMORY_REQUEST. Media fixture
+ * submit stays inert in Product mode. Positional prev/next paging is UI
+ * traversal only, never a relationship claim.
  */
 (function () {
   'use strict';
@@ -99,13 +100,133 @@
     if (hook && Array.isArray(hook.moments)) hook.moments.length = 0;
   } catch (e) {}
 
+  var lastSelectedId = null;
+  var lastMomentsById = {};
+
+  function currentSelectedId() {
+    if (lastSelectedId && canonicalIds[lastSelectedId]) return lastSelectedId;
+    try {
+      var sel = document.querySelector('.card-wrap.is-selected');
+      if (sel && sel.dataset && sel.dataset.id && canonicalIds[sel.dataset.id]) return sel.dataset.id;
+    } catch (e) {}
+    return null;
+  }
+
+  function findMoment(id) {
+    if (!id) return null;
+    if (lastMomentsById[id]) return lastMomentsById[id];
+    try {
+      var list = hook && Array.isArray(hook.moments) ? hook.moments : [];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] && list[i].id === id) return list[i];
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function ensureProductEditFields() {
+    try {
+      var form = document.getElementById('mediaForm');
+      if (!form || document.getElementById('mvpTitleInput')) return;
+      var mediaKindRow = document.getElementById('mediaKindInput');
+      var mediaUrlRow = document.getElementById('mediaUrlInput');
+      var sourceLabelRow = document.getElementById('sourceLabelInput');
+      var startRow = document.getElementById('startInput');
+      var preview = document.getElementById('editLivePreview');
+      [mediaKindRow, mediaUrlRow, sourceLabelRow, startRow].forEach(function (input) {
+        try {
+          if (!input) return;
+          var row = input.closest('.edit-row') || input.closest('.field') || input;
+          if (row) row.style.display = 'none';
+        } catch (e) {}
+      });
+      try { if (preview) preview.style.display = 'none'; } catch (e) {}
+      var wrap = document.createElement('div');
+      wrap.className = 'edit-row';
+      wrap.innerHTML = '<div class="field"><label for="mvpTitleInput">Title</label>'
+        + '<input id="mvpTitleInput" type="text" maxlength="120" autocomplete="off"></div>'
+        + '<div class="field"><label for="mvpMemoInput">Memo</label>'
+        + '<textarea id="mvpMemoInput" rows="3" maxlength="2000"></textarea></div>';
+      var actions = form.querySelector('.edit-actions');
+      if (actions) form.insertBefore(wrap, actions);
+      else form.appendChild(wrap);
+    } catch (e) {}
+  }
+
+  function prefillProductEditFields() {
+    try {
+      var id = currentSelectedId();
+      var m = findMoment(id);
+      var titleEl = document.getElementById('mvpTitleInput');
+      var memoEl = document.getElementById('mvpMemoInput');
+      var errEl = document.getElementById('editError');
+      if (errEl) errEl.textContent = '';
+      if (titleEl) titleEl.value = m && typeof m.title === 'string' ? m.title : '';
+      if (memoEl) memoEl.value = m && (typeof m.note === 'string' ? m.note : (typeof m.memo === 'string' ? m.memo : '')) || '';
+    } catch (e) {}
+  }
+
+  function makeWriteOperationId() {
+    try {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') return 'wop-' + window.crypto.randomUUID();
+    } catch (e) {}
+    return 'wop-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+  }
+
+  function onProductFormSubmitCapture(event) {
+    try {
+      var target = event && event.target;
+      if (!target || target.id !== 'mediaForm') return;
+      event.preventDefault();
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      var id = currentSelectedId();
+      var titleEl = document.getElementById('mvpTitleInput');
+      var memoEl = document.getElementById('mvpMemoInput');
+      var errEl = document.getElementById('editError');
+      var title = titleEl ? String(titleEl.value || '').trim() : '';
+      var memo = memoEl ? String(memoEl.value || '').trim() : '';
+      var fields = {};
+      if (title) fields.title = title.slice(0, 120);
+      if (memo) fields.memo = memo.slice(0, 2000);
+      if (!id || !canonicalIds[id]) {
+        if (errEl) errEl.textContent = 'Select a canonical Memory before saving.';
+        return;
+      }
+      if (!fields.title && !fields.memo) {
+        if (errEl) errEl.textContent = 'Enter a title and/or memo to save.';
+        return;
+      }
+      if (errEl) errEl.textContent = '';
+      post('UPDATE_MEMORY_REQUEST', {
+        memoryId: String(id),
+        fields: fields,
+        writeOperationId: makeWriteOperationId(),
+      });
+    } catch (e) {}
+  }
+
+  function observeEditModal() {
+    try {
+      var modal = document.getElementById('editModal');
+      if (!modal || typeof MutationObserver !== 'function') return;
+      var observer = new MutationObserver(function () {
+        try {
+          if (modal.classList.contains('open')) prefillProductEditFields();
+        } catch (e) {}
+      });
+      observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) {}
+  }
+
   function hideEditEntries() {
-    ['editMedia', 'mediaForm'].forEach(function (id) {
+    try {
+      ensureProductEditFields();
+      observeEditModal();
       try {
-        var el = document.getElementById(id);
-        if (el) el.style.display = 'none';
+        document.addEventListener('submit', onProductFormSubmitCapture, true);
       } catch (e) {}
-    });
+    } catch (e) {}
   }
 
   function onMessage(event) {
@@ -169,8 +290,17 @@
       if (!listed) standalone = projection.selectedMoment;
     }
     canonicalIds = {};
-    moments.forEach(function (m) { if (m && typeof m.id === 'string') canonicalIds[m.id] = true; });
-    if (standalone && typeof standalone.id === 'string') canonicalIds[standalone.id] = true;
+    lastMomentsById = {};
+    moments.forEach(function (m) {
+      if (m && typeof m.id === 'string') {
+        canonicalIds[m.id] = true;
+        lastMomentsById[m.id] = m;
+      }
+    });
+    if (standalone && typeof standalone.id === 'string') {
+      canonicalIds[standalone.id] = true;
+      lastMomentsById[standalone.id] = standalone;
+    }
     applying = true;
     try {
       hook.setProductMoments(moments.map(toFixtureShape).filter(function (m) { return m && m.id; }), standalone ? toFixtureShape(standalone) : null);
@@ -198,9 +328,10 @@
   window.__LT57_SELECT__ = function (id) {
     if (!id || applying) return;
     if (!canonicalIds[String(id)]) return;
+    lastSelectedId = String(id);
     post('MEMORY_SELECTED', { memoryId: String(id), selectionReason: 'user' });
   };
 
   window.addEventListener('message', onMessage);
-  post('SOURCE_READY', { capabilities: ['hydrate', 'select'], sourceRuntimeVersion: 'src057-product-bridge/1' });
+  post('SOURCE_READY', { capabilities: ['hydrate', 'select', 'update-title-memo'], sourceRuntimeVersion: 'src057-product-bridge/2' });
 })();

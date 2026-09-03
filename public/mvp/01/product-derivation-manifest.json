@@ -89,10 +89,10 @@
         "script.js": "458183b8621ead3233d2ee99af720644848743f918bff5f5cc0445b5e5bbe722",
         "styles.css": "29c2380364311720601054c9447288cb301d24f4a22646368051a68f4dba6fc3"
       },
-      "bridge": {
-        "file": "src057-product-bridge.js",
-        "sha256": "4cf015d5c4658a4e7fe5349c0b24ba6a398a93eb3f8ba191783f45f02e27e886"
-      },
+ "bridge": {
+   "file": "src057-product-bridge.js",
+   "sha256": "063a4145c518c8a357ecb32d33ada7b15a71d6cfcc110253e908923613f55784"
+  },
       "bridgeInclude": {
         "tag": "<script src=\"./src057-product-bridge.js\"></script>",
         "occurrences": 1,

@@ -41,11 +41,14 @@ export const MVP001_FUTURE_WRITE_BRIDGE_TYPES = Object.freeze([
   'UPDATE_PRESENTATION_REQUEST',
 ]);
 
+export const MVP001_SRC057_UPDATE_REQUEST_TYPE = 'UPDATE_MEMORY_REQUEST';
+export const MVP001_SRC057_UPDATE_FIELDS = Object.freeze(['title', 'memo']);
+
 export const MVP001_EVENT_TYPES_BY_SOURCE = Object.freeze({
   SRC064: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'TREE_SELECTED', 'MEMORY_SELECTED', 'NAVIGATE', 'ERROR']),
   SRC058: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'MEMORY_SELECTED', 'NAVIGATE', 'ERROR']),
   SRC056: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'MEMORY_SELECTED', 'RELATIONSHIP_SELECTED', 'NAVIGATE', 'ERROR']),
-  SRC057: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'MEMORY_SELECTED', 'NAVIGATE', 'ERROR']),
+  SRC057: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'MEMORY_SELECTED', 'NAVIGATE', 'ERROR', 'UPDATE_MEMORY_REQUEST']),
   SRC060: Object.freeze(['SOURCE_READY', 'SOURCE_INIT', 'SOURCE_DISPOSE', 'MEMORY_SELECTED', 'RELATIONSHIP_SELECTED', 'NAVIGATE', 'ERROR']),
 });
 
@@ -202,6 +205,31 @@ function validatePermissions(value) {
   return ['canRead', 'canCreate', 'canUpdate', 'canDelete'].every((key) => typeof value[key] === 'boolean');
 }
 
+function isTitleValue(value) {
+  return typeof value === 'string' && value.trim().length >= 1 && value.trim().length <= 120
+    && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function isMemoValue(value) {
+  return typeof value === 'string' && value.trim().length >= 1 && value.trim().length <= 2000
+    && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function validateUpdateMemoryRequestPayload(payload) {
+  if (!hasExactKeys(payload, ['memoryId', 'fields', 'writeOperationId'], ['baseUpdatedAt'])) return false;
+  if (!isOpaqueId(payload.memoryId)) return false;
+  if (!isMessageId(payload.writeOperationId)) return false;
+  if (payload.baseUpdatedAt !== undefined && typeof payload.baseUpdatedAt !== 'string') return false;
+  const fields = payload.fields;
+  if (!isPlainObject(fields)) return false;
+  const keys = Object.keys(fields);
+  if (keys.length < 1 || keys.length > 2) return false;
+  if (!keys.every((k) => k === 'title' || k === 'memo')) return false;
+  if ('title' in fields && !isTitleValue(fields.title)) return false;
+  if ('memo' in fields && !isMemoValue(fields.memo)) return false;
+  return true;
+}
+
 function validatePayload(type, payload) {
   switch (type) {
     case 'SOURCE_READY':
@@ -239,6 +267,13 @@ function validatePayload(type, payload) {
         && typeof payload.recoverable === 'boolean'
         && isBoundedText(payload.operation, 80)
         && (payload.requestId === undefined || isMessageId(payload.requestId));
+    case 'UPDATE_MEMORY_REQUEST':
+      return validateUpdateMemoryRequestPayload(payload);
+    case 'DATA_UPDATED':
+      return hasExactKeys(payload, ['memoryId'], ['writeOperationId', 'updatedAt'])
+        && isOpaqueId(payload.memoryId)
+        && (payload.writeOperationId === undefined || isMessageId(payload.writeOperationId))
+        && (payload.updatedAt === undefined || typeof payload.updatedAt === 'string');
     default:
       return false;
   }
