@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC062",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_IN_REPO_S2_EVIDENCE_REVIEW",
+  "accepted_via": {
+    "pull_request": 609,
+    "title": "test(clean108): capture SRC062 S2 baseline",
+    "merge_commit": "ca3d7749fb1c6f4467286c842645fe5e3022564c",
+    "merged_at_utc": "2026-09-03T23:38:05Z"
+  },
+  "capture": {
+    "stage": "S2_BASELINE_LOCAL_CAPTURE",
+    "surface": "original/original.html",
+    "base_sha": "1de4cb00fb0ec48466b4cce56d85ab1847c72d91",
+    "captured_head": "1ecbf9d0ce689334ff93f77ddd674a9ddd02976b",
+    "method": "Chromium headless via local Playwright against frozen original over loopback HTTP (src/08_harness/capture-src062-s2-baseline.mjs)",
+    "evidence_ref": "baseline/s2/evidence-manifest.json",
+    "summary_ref": "baseline/s2/summary.json",
+    "state_count": 18,
+    "page_errors": 0,
+    "failed_requests": 0
+  },
+  "authority": {
+    "fileId": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+    "revision": "V1.1",
+    "bytes": 20728647,
+    "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8"
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "label": "DESKTOP",
+      "states": [
+        "D01_INITIAL_SCENE01",
+        "D02_RAIL_TRAVEL_SCENE04",
+        "D03_ACTIVE_VIEWER_SCENE04",
+        "D04_MEMORY_FILMS_PANEL",
+        "D05_MY_TREE_PANEL",
+        "D06_SCENE07_MEMORY_PATH_VIEWER"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "label": "MOBILE",
+      "states": [
+        "D01_INITIAL_SCENE01",
+        "M02_MENU_SHEET",
+        "M03_SWIPE_TRAVEL_SCENE06",
+        "M04_ACTIVE_VIEWER_SCENE06",
+        "M05_MEMORY_FILMS_PANEL",
+        "M06_MY_TREE_PANEL"
+      ]
+    },
+    {
+      "width": 320,
+      "height": 720,
+      "label": "SMALL_MOBILE",
+      "states": [
+        "D01_INITIAL_SCENE01",
+        "M02_MENU_SHEET",
+        "M03_SWIPE_TRAVEL_SCENE06",
+        "M04_ACTIVE_VIEWER_SCENE06",
+        "M05_MEMORY_FILMS_PANEL",
+        "M06_MY_TREE_PANEL"
+      ]
+    }
+  ],
+  "interaction_results": {
+    "all_viewports": {
+      "RAIL_FRACTIONAL_MOVE": true,
+      "SNAP_TO_SCENE": true,
+      "ACTIVE_SCULPTURE_SHORT_TAP": "OPENS_VIEWER",
+      "DRAG_GREATER_THAN_9PX": "DOES_NOT_OPEN_VIEWER",
+      "VIEWER_CLOSE_PHASE_RESTORED": true,
+      "MEMORY_FILMS_CARD_TO_VIEWER": "OPENS_VIEWER",
+      "PANEL_CLOSE_PHASE_RESTORED": true,
+      "SCENE07_MEMORY_PATH": true
+    },
+    "desktop_only": {
+      "SCENE07_MEMORY_PATH": true
+    }
+  },
+  "visual_review": {
+    "central_direct_artifact_review": true,
+    "desktop_interaction_matrix_reviewed": true,
+    "mobile_interaction_matrix_reviewed": true,
+    "small_mobile_interaction_matrix_reviewed": true,
+    "source_native_observation": "Circular rail memory-sculpture station rail, snapshot-to-scene rail travel, viewer and Memory Films / My Tree panels are frozen Source behavior and must not be redesigned, repaired, or rewritten during mechanical split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT",
+  "parity_status": "HOLD"
+}

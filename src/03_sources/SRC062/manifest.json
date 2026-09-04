@@ -16,15 +16,45 @@
   "family_ref": null,
   "duplicate_variant_status": "UNRESOLVED",
   "baseline_ref": "baseline/accepted-baseline.json",
-  "mechanical_split_ref": null,
+  "mechanical_split_ref": "split/materialization.json",
   "parity_ref": null,
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
-    "baseline_captured": false,
-    "mechanical_split_complete": false,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
     "source_split_parity_pass": false
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
-  "tsx_allowed_during_split": false
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-circular-rail",
+    "scenario_id": "memory-sculpture-circular-rail",
+    "qa_hook": "window.__track62",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "interaction_surface": [
+      "RAIL_FRACTIONAL_MOVE",
+      "SNAP_TO_SCENE",
+      "ACTIVE_SCULPTURE_SHORT_TAP",
+      "DRAG_GREATER_THAN_9PX",
+      "VIEWER_CLOSE_PHASE_RESTORED",
+      "MEMORY_FILMS_CARD_TO_VIEWER",
+      "PANEL_CLOSE_PHASE_RESTORED",
+      "SCENE07_MEMORY_PATH"
+    ],
+    "source_specific_controls": [
+      "mobileMenuButton",
+      "railRing",
+      "station m01-m07",
+      "viewer",
+      "viewerClose",
+      "playMoment",
+      "saveMoment",
+      "panel",
+      "panelClose",
+      "mobileNavSheet",
+      "progressLabel"
+    ]
+  }
 }

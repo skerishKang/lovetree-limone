@@ -331,3 +331,14 @@ export async function captureSRC62Baseline(browser, url, viewport, sourceOut, fi
   await context.close();
   return { states, screenshots, interaction: interactionAssertions, errors, failedRequests };
 }
+
+/**
+ * Original-vs-split parity variant capture. Reuses the S2-proven
+ * captureSRC62Baseline interaction matrix verbatim; the variant label keeps
+ * original/split screenshot filenames distinct. Returns the same shape so
+ * the generic parity harness can deep-compare settled states.
+ */
+export async function captureSRC62Variant(browser, url, viewport, sourceOut, variant, sourceId) {
+  const label = `${viewport.width}x${viewport.height}-${variant}`;
+  return captureSRC62Baseline(browser, url, viewport, sourceOut, label, sourceId);
+}
