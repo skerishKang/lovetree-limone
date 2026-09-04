@@ -19,6 +19,19 @@ export const S2_CAPTURE_HARNESS_VERSION = 'clean108-m1-slice3-v1';
 
 const ALLOWED_ASSERTION_TYPES = new Set(['runtime', 'visible', 'hidden', 'text']);
 const FORBIDDEN_RUNTIME_SEGMENTS = new Set(['constructor', 'prototype', '__proto__']);
+const ACTION_TIMEOUT_TYPES = new Set([
+  'goto',
+  'click',
+  'fill',
+  'select',
+  'waitForRuntime',
+  'waitForSelectorState',
+]);
+const SAFE_SCREENSHOT_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+const MAX_ASSERTIONS = 128;
+const MAX_SCREENSHOTS = 32;
+const MAX_ASSERTION_TEXT = 8192;
+const MAX_RUNTIME_HEALTH_ENTRIES = 200;
 
 function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -87,6 +100,10 @@ function executableRoots(runtimeHookBinding) {
 }
 
 function validateAssertions(recipe, runtimeHookBinding) {
+  if (recipe.assertions.length > MAX_ASSERTIONS) {
+    throw new Error(`CAPTURE_ASSERTIONS_TOO_MANY:${recipe.assertions.length}`);
+  }
+
   const roots = executableRoots(runtimeHookBinding);
   for (const [index, assertion] of recipe.assertions.entries()) {
     if (!isPlainObject(assertion)) {
@@ -97,7 +114,7 @@ function validateAssertions(recipe, runtimeHookBinding) {
     }
 
     if (assertion.type === 'runtime') {
-      if (typeof assertion.path !== 'string' || assertion.path.length === 0) {
+      if (typeof assertion.path !== 'string' || assertion.path.length === 0 || assertion.path.length > 256) {
         throw new Error(`CAPTURE_ASSERTION_RUNTIME_PATH_REQUIRED:assertions[${index}]`);
       }
       const root = getExecutableHookRoot(assertion.path);
@@ -113,11 +130,16 @@ function validateAssertions(recipe, runtimeHookBinding) {
       continue;
     }
 
-    if (typeof assertion.selector !== 'string' || assertion.selector.length === 0) {
+    if (typeof assertion.selector !== 'string' || assertion.selector.length === 0 || assertion.selector.length > 512) {
       throw new Error(`CAPTURE_ASSERTION_SELECTOR_REQUIRED:assertions[${index}]`);
     }
-    if (assertion.type === 'text' && typeof assertion.equals !== 'string') {
-      throw new Error(`CAPTURE_ASSERTION_TEXT_EQUALS_REQUIRED:assertions[${index}]`);
+    if (assertion.type === 'text') {
+      if (typeof assertion.equals !== 'string') {
+        throw new Error(`CAPTURE_ASSERTION_TEXT_EQUALS_REQUIRED:assertions[${index}]`);
+      }
+      if (assertion.equals.length > MAX_ASSERTION_TEXT) {
+        throw new Error(`CAPTURE_ASSERTION_TEXT_TOO_LONG:assertions[${index}]`);
+      }
     }
   }
 }
@@ -134,31 +156,53 @@ function validateSnapshotFields(recipe) {
 }
 
 function validateScreenshots(recipe) {
+  if (recipe.screenshots.length > MAX_SCREENSHOTS) {
+    throw new Error(`CAPTURE_SCREENSHOTS_TOO_MANY:${recipe.screenshots.length}`);
+  }
+
   const seen = new Set();
   for (const [index, shot] of recipe.screenshots.entries()) {
-    if (!isPlainObject(shot) || typeof shot.name !== 'string' || shot.name.length === 0) {
-      throw new Error(`CAPTURE_SCREENSHOT_INVALID:screenshots[${index}]`);
+    if (!isPlainObject(shot) || typeof shot.name !== 'string' || !SAFE_SCREENSHOT_NAME.test(shot.name)) {
+      throw new Error(`CAPTURE_SCREENSHOT_NAME_UNSAFE:screenshots[${index}]`);
     }
     if (seen.has(shot.name)) throw new Error(`CAPTURE_SCREENSHOT_DUPLICATE_NAME:${shot.name}`);
     seen.add(shot.name);
   }
 }
 
+function withDefaultActionTimeout(recipe) {
+  return {
+    ...recipe,
+    actions: recipe.actions.map((action) => (
+      ACTION_TIMEOUT_TYPES.has(action.type) && action.timeoutMs === undefined
+        ? { ...action, timeoutMs: recipe.timeouts.actionMs }
+        : { ...action }
+    )),
+  };
+}
+
+function pushHealth(array, value) {
+  if (array.length < MAX_RUNTIME_HEALTH_ENTRIES) array.push(value);
+}
+
 function attachRuntimeHealth(page) {
-  const health = { consoleErrors: [], pageErrors: [], failedRequests: [] };
+  const health = { consoleErrors: [], pageErrors: [], failedRequests: [], truncated: false };
   const handlers = {
     console: (message) => {
       if (typeof message?.type === 'function' && message.type() === 'error') {
-        health.consoleErrors.push(typeof message.text === 'function' ? message.text() : String(message));
+        if (health.consoleErrors.length >= MAX_RUNTIME_HEALTH_ENTRIES) health.truncated = true;
+        pushHealth(health.consoleErrors, typeof message.text === 'function' ? message.text() : String(message));
       }
     },
     pageerror: (error) => {
-      health.pageErrors.push(error instanceof Error ? error.message : String(error));
+      if (health.pageErrors.length >= MAX_RUNTIME_HEALTH_ENTRIES) health.truncated = true;
+      pushHealth(health.pageErrors, error instanceof Error ? error.message : String(error));
     },
     requestfailed: (request) => {
+      if (health.failedRequests.length >= MAX_RUNTIME_HEALTH_ENTRIES) health.truncated = true;
       const url = typeof request?.url === 'function' ? request.url() : 'UNKNOWN';
       const failure = typeof request?.failure === 'function' ? request.failure() : null;
-      health.failedRequests.push({ url, errorText: failure?.errorText ?? null });
+      pushHealth(health.failedRequests, { url, errorText: failure?.errorText ?? null });
     },
   };
 
@@ -293,7 +337,14 @@ async function captureScreenshots(page, recipe) {
  *
  * No filesystem writes occur. The returned screenshotBuffers map is owned by
  * the caller and may later be persisted only by a separately reviewed output
- * layer.
+ * layer. Screenshot names are storage-safe tokens so a future persistence
+ * layer cannot reinterpret recipe names as paths.
+ *
+ * recipeMs is recorded as provenance but is not independently raced here:
+ * Promise.race cannot cancel an in-flight browser mutation safely. The v1
+ * adapter applies actionMs to executor operations that accept a timeout and
+ * leaves total recipe cancellation for a separately reviewed cancellable
+ * runner boundary.
  */
 export async function captureApprovedStateRecipe({
   page,
@@ -322,13 +373,19 @@ export async function captureApprovedStateRecipe({
     throw new Error('CAPTURE_TIMESTAMP_INVALID');
   }
 
+  const executionRecipe = withDefaultActionTimeout(recipe);
+  const executionValidation = validateExecutableStateRecipe(executionRecipe, { runtimeHookBinding, baseUrl });
+  if (!executionValidation.valid) {
+    throw new Error(`CAPTURE_EXECUTION_RECIPE_REJECTED:${executionValidation.errors.join('|')}`);
+  }
+
   if (typeof page.setViewportSize === 'function') {
     await page.setViewportSize({ width: recipe.viewport.width, height: recipe.viewport.height });
   }
 
   const healthCapture = attachRuntimeHealth(page);
   try {
-    const execution = await executeStateRecipe({ page, recipe, runtimeHookBinding, baseUrl });
+    const execution = await executeStateRecipe({ page, recipe: executionRecipe, runtimeHookBinding, baseUrl });
     const assertions = await runAssertions(page, recipe);
     const dom = await collectDomEvidence(page);
     const runtimeSnapshot = await captureRuntimeSnapshot(page, recipe);
@@ -345,6 +402,11 @@ export async function captureApprovedStateRecipe({
         authoritySha256: provenance.authoritySha256,
         browserVersion: provenance.browserVersion,
         viewport: { ...recipe.viewport },
+        timeouts: {
+          actionMs: recipe.timeouts.actionMs,
+          recipeMs: recipe.timeouts.recipeMs,
+          recipeMsEnforced: false,
+        },
         capturedAt,
         execution,
         assertions,
