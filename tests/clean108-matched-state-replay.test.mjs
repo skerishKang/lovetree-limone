@@ -54,7 +54,7 @@ function evidence() {
     browserVersion: 'Chrome/1',
     viewport: { width: 1280, height: 800, deviceScaleFactor: 1, reducedMotion: 'reduce' },
     capturedAt: '2026-09-04T00:00:00.000Z',
-    timeoutPolicy: { actionMs: 5000, recipeMs: 15000, recipeMsEnforced: false },
+    timeouts: { actionMs: 5000, recipeMs: 15000, recipeMsEnforced: false },
     execution: {
       sourceId: 'SRC056',
       stateId: 'OVERVIEW',
@@ -93,10 +93,11 @@ test('matched replay ignores only variant URL/capture timestamp and requires eve
   assert.deepEqual(result.differences, []);
 });
 
-test('matched replay fails closed on runtime or screenshot drift', () => {
+test('matched replay fails closed on runtime, screenshot, or timeout drift', () => {
   for (const mutate of [
     (split) => { split.runtimeSnapshot['state.scale'] = 0.4; },
     (split) => { split.screenshots[0].rawSha256 = 'd'.repeat(64); },
+    (split) => { split.timeouts.actionMs = 6000; },
   ]) {
     const original = evidence();
     const split = structuredClone(original);
@@ -106,6 +107,16 @@ test('matched replay fails closed on runtime or screenshot drift', () => {
     assert.equal(result.passed, false);
     assert.ok(result.differences.length >= 1);
   }
+});
+
+test('matched replay requires explicit timeout provenance on both variants', () => {
+  const original = evidence();
+  const split = structuredClone(original);
+  delete split.timeouts;
+  const result = compareMatchedStateReplay({ originalEvidence: original, splitEvidence: split });
+  assert.equal(result.passed, false);
+  assert.ok(result.differences.includes('split_timeouts_present'));
+  assert.ok(result.differences.includes('timeouts_equal'));
 });
 
 test('matched replay requires clean runtime health on both variants', () => {
