@@ -217,7 +217,7 @@ export function compareSRC047MediaViewerPair({
       const passed = originalWrapper.stateName === 'NOT_APPLICABLE_MOBILE'
         && splitWrapper.stateName === 'NOT_APPLICABLE_MOBILE';
       addError(errors, passed, `SRC047_MOBILE_NAV_DISPOSITION_DRIFT:${label}`);
-      stateResults[state] = passed;
+      stateResults[state] = passed ? 'NOT_APPLICABLE_MOBILE' : false;
       continue;
     }
 
@@ -428,7 +428,7 @@ export async function replayApprovedSRC047MediaViewerPair({
     }
 
     const matchedStateCount = viewports.reduce(
-      (sum, record) => sum + Object.values(record.states).filter(Boolean).length,
+      (sum, record) => sum + Object.values(record.states).filter((value) => value === true).length,
       0,
     );
     const summary = {
