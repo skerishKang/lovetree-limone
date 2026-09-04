@@ -288,6 +288,23 @@ try {
     if (bytes.length !== manifest.authority.bytes) throw new Error(`${sourceId} original byte count drift`);
     if (sha256(bytes) !== manifest.authority.sha256) throw new Error(`${sourceId} original SHA256 drift`);
 
+    // SRC071 explicit disposition: baseline was accepted by CENTRAL issue review of
+    // production-observed evidence (#589 comment 5545375429, captured_head 7f81281c,
+    // baseline/accepted-baseline.json). The generic single-executable baseline contract
+    // waits for the shared __lt/__lovetreeStats API that SRC071's frozen canvas runtime
+    // (window.__LOVE_TREE_V7_R24__) does not expose, and its 6 portal routes are
+    // Drive-mirror paths that 404 under repository hosting (SRC071_PORTAL_MAPPING_HOLD).
+    // Authority freeze above is still verified byte-for-byte every run; only the
+    // browser re-capture is skipped with an explicit disposition.
+    if (sourceId === 'SRC071') {
+      const acceptedBaselinePath = path.join(sourceDir, 'baseline', 'accepted-baseline.json');
+      const acceptedBaseline = JSON.parse(fs.readFileSync(acceptedBaselinePath, 'utf8'));
+      if (acceptedBaseline.status !== 'ACCEPTED') throw new Error('SRC071 baseline acceptance missing or not ACCEPTED');
+      if (acceptedBaseline.authority.sha256 !== manifest.authority.sha256) throw new Error('SRC071 accepted baseline authority does not match manifest authority');
+      console.log(`SRC_BASELINE_CAPTURE_SKIP=SRC071 reason=CENTRAL_ISSUE_ACCEPTED_EXTERNAL_BASELINE acceptance=issue-589-comment-5545375429 captured_head=${acceptedBaseline.captured_head} authority_verified=true`);
+      continue;
+    }
+
     const sourceOut = path.join(outRoot, sourceId);
     fs.mkdirSync(sourceOut, { recursive: true });
     const server = await startServer(sourceId, originalPath, sourceDir);
