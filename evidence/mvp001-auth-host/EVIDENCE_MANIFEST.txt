@@ -1,0 +1,30 @@
+# MVP001 Production Auth Host Evidence - Issue #596
+
+CAPTURE_HEAD=113c214026c65c17f8a9348926b55bd06a95d1fe
+CAPTURE_HEAD_SOURCE=evidence/mvp001-auth-host/manifest.json (written by qa/verify-mvp-auth-host.mjs at capture time)
+FINAL_EVIDENCE_HEAD=(evidence committed after capture; final head reported to CENTRAL in the lane report)
+NOTE: capture preceded the implementation commits. CAPTURE_HEAD is the runtime the pixels came from; it is NOT the final evidence head. No visual PASS is claimed here — CENTRAL reviews the captures directly.
+RUNTIME=production-layout replica (current public/ + freshly built dist/client/mvp/01/auth-host.js with FAKE Firebase client config; never real secrets)
+E2E_SCRIPT=qa/verify-mvp-auth-host.mjs
+E2E_RESULT=22/22 checks passed in the capture run (signed-out gate, fail-closed sign-in attempt, zero Authorization headers, JWT-free URLs/postMessages/storage/manifest)
+
+## Screenshot contents (factual description only, no acceptance claim)
+- desktop-auth-gate.png (108075 bytes, viewport 1280x800) SHA256=8757338720A49DFFAC4234126EF20F4BE70094017FBA32BFE3E48C3BE012D3E8
+  Observed: centered dark card over blurred surface; heading "로그인이 필요합니다"; body "내 러브트리 데이터를 불러오려면 로그인해 주세요. 로그인하지 않은 상태에서는 데모나 가짜 내용을 표시하지 않습니다."; white pill button "Google로 로그인".
+- mobile-auth-gate.png (56655 bytes, viewport 390x844 mobile) SHA256=758DF1B09F541241D68C6C4B4D80E281B1515B273C61EAE762450751D2A45832
+  Observed: same card and copy at mobile width, legible, no overflow.
+- manifest.json (263 bytes) SHA256=3DDB972D7AD8BCCDD1C3F1643838E6EDC9F70D44671AD34B50DD2F1EF59C2885
+  Scanned by the E2E script itself for JWT-shaped material: none found. Contains no token values.
+
+## Not captured (stated explicitly)
+- Authenticated normal Source view: unchanged by construction (host adds one module script + gate overlay hidden when authenticated; Slice J E2E re-verified 21/21 with host present). No new capture claimed.
+- Auth-restoring loading pill: transient; not distinctly captured.
+- Real Google sign-in: not drivable headlessly; sign-in attempt path covered fail-closed (inline error, gate retained, state never AUTHENTICATED).
+
+## Test results (local, this lane)
+- 26/26 auth-host unit tests (tests/mvp001-auth-host.test.mjs): PASS
+- 416/416 combined (tests/mvp001*.test.mjs + firebase-build-config + auth-token-provider + auth): PASS
+- 22/22 auth-host E2E (same run as this capture): PASS
+- 21/21 Slice J E2E with host present (observer mode, stub wins): PASS
+- Lint: 0 errors, 0 warnings in lane files (repo total 224 pre-existing warnings elsewhere)
+- tsc --noEmit: exit 0
