@@ -149,6 +149,29 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      # CLEAN-108 M1 Slice 4A real-browser pilot. Runs ONLY here, from the
+      # exact PR head sha (never the synthetic merge ref): the pilot requires
+      # SRC_EXACT_HEAD in CI and fails closed without it. SRC_BROWSER_CHANNEL
+      # pins the branded Chrome installed above.
+      - name: CLEAN-108 SRC056 real-browser matched replay pilot (exact head)
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        shell: bash
+        env:
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
+        run: |
+          set -euo pipefail
+          node --test tests/clean108-src056-real-browser-pilot.test.mjs | tee /tmp/clean108-src056-real-browser-pilot.log
+
+      - name: Upload CLEAN-108 SRC056 real-browser pilot proof
+        if: always() && contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        uses: actions/upload-artifact@v4
+        with:
+          name: clean108-src056-real-browser-pilot-${{ github.event.pull_request.head.sha }}
+          path: /tmp/clean108-src056-real-browser-pilot.log
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Capture frozen Source baseline
         if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         env:

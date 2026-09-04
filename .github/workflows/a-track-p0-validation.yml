@@ -71,11 +71,18 @@ jobs:
         run: |
           set -euo pipefail
 
+          # CLEAN-108 pilot is excluded from A-track standard discovery on
+          # purpose: A-track checks out the synthetic PR merge ref, while the
+          # CLEAN-108 real-browser proof must be tied to the PR head sha
+          # (SRC_EXACT_HEAD) and therefore runs only from
+          # .github/workflows/src-108-harness-gate.yml. The 11-test expected
+          # browser inventory is unchanged.
           mapfile -t all_standard < <(
             find tests -maxdepth 1 -type f -name '*.test.mjs' \
               ! -name 'lineage-52-route-browser-qa.test.mjs' \
               ! -name 'lineage-53-v2-route-browser-qa.test.mjs' \
               ! -name 'memory-anatomy-route-browser-qa.test.mjs' \
+              ! -name 'clean108-src056-real-browser-pilot.test.mjs' \
               -print | sort
           )
           if [ "${#all_standard[@]}" -eq 0 ]; then

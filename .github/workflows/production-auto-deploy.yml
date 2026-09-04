@@ -125,9 +125,26 @@ jobs:
             exit 1
           fi
 
+          # CLEAN-108 real-browser pilot is excluded from this post-merge run
+          # via an explicit find/mapfile inventory: it fails closed in CI
+          # without SRC_EXACT_HEAD (evidence must bind the PR head sha), so it
+          # is proven exclusively by src-108-harness-gate.yml on the exact
+          # head. Positional '!glob' negation is not honored by the Node 22
+          # test runner, hence the explicit inventory.
+          mapfile -t production_tests < <(
+            find tests -maxdepth 1 -type f -name '*.test.mjs' \
+              ! -name 'clean108-src056-real-browser-pilot.test.mjs' \
+              -print | sort
+          )
+
+          if [ "${#production_tests[@]}" -eq 0 ]; then
+            echo "BLOCKED: production test inventory unexpectedly empty" >&2
+            exit 1
+          fi
+
           TRACK67_BASE_URL=http://127.0.0.1:3000 \
             LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
-            node --import tsx --test 'tests/*.test.mjs'
+            node --import tsx --test "${production_tests[@]}"
 
       - name: Remove test byproducts (keep worktree-clean guard meaningful)
         shell: bash
