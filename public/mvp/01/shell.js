@@ -317,6 +317,29 @@ function handleBridgeMessage(event) {
 
 window.addEventListener('message', handleBridgeMessage);
 
+// ---- Trusted Product auth-host integration (bounded) ----
+// The auth host (auth-host.js, same top-level document) dispatches
+// 'mvp01:auth' carrying {status} only — never token material. On sign-in,
+// reload canonical state. On sign-out/account change, drop authenticated
+// projections immediately, drive the active frame to a context-only INIT
+// (canRead:false), and let the normal read path end in its explicit
+// unauthorized state. Source isolation and postMessage validation are
+// untouched.
+function handleMvpAuthEvent(event) {
+  const status = event && event.detail && event.detail.status;
+  if (status !== 'AUTHENTICATED' && status !== 'SIGNED_OUT') return;
+  if (status === 'AUTHENTICATED') {
+    void refreshAlphaProjections();
+    return;
+  }
+  alphaProjections.clear();
+  try { orchestrator.reinitActiveFrame(); } catch {}
+  showAlphaState('unauthorized', 'Signed out. Sign in to reload your Tree. No demo content is shown.');
+  void refreshAlphaProjections();
+}
+
+window.addEventListener('mvp01:auth', handleMvpAuthEvent);
+
 window.addEventListener('popstate', () => {
   const previousStepIndex = currentStepIndex;
   const restored = orchestrator.onPopState();
