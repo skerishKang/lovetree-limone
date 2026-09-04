@@ -1,0 +1,136 @@
+{
+  "sourceId": "SRC060",
+  "recipeVersion": "clean108-state-recipe-v1",
+  "viewports": [
+    { "width": 1440, "height": 900, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+    { "width": 430, "height": 932, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+    { "width": 390, "height": 844, "deviceScaleFactor": 1, "reducedMotion": "reduce" }
+  ],
+  "allowedTolerance": {
+    "geometryEpsPx": 0,
+    "floatDecimals": 3,
+    "canonicalHammingMax": 0,
+    "screenshot": "EXACT"
+  },
+  "timeouts": { "actionMs": 5000, "recipeMs": 30000 },
+  "notes": "CLEAN-108 M1 Slice 5 COMPLEX proof matrix derived from accepted SRC060 S2/S4. Screenshot comparison uses the accepted canonical16 masked pixel digest; Source capsules and legacy parity remain authoritative.",
+  "states": [
+    {
+      "stateId": "UNIVERSE_IDLE",
+      "actions": [
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": null },
+        { "type": "runtime", "path": "__LT60__.selectedCluster", "equals": null },
+        { "type": "hidden", "selector": "#panel" },
+        { "type": "hidden", "selector": "#clusterSummary" },
+        { "type": "text", "selector": "#bridgeMode", "equals": "Bridge" }
+      ],
+      "screenshots": [{ "name": "universe-idle", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "CLUSTER_FOCUS",
+      "actions": [
+        { "type": "evaluateHook", "hook": "__LT60__.focusCluster", "arg": 1 },
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selectedCluster", "equals": 1 },
+        { "type": "visible", "selector": "#clusterSummary" },
+        { "type": "text", "selector": "#clusterSummary h3", "equals": "무대와 공연" }
+      ],
+      "screenshots": [{ "name": "cluster-focus", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "NODE_SELECT",
+      "actions": [
+        { "type": "fill", "selector": "#search", "value": "First" },
+        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
+        { "type": "click", "selector": "#searchResults .result" },
+        { "type": "settle", "rAF": 2, "waitMs": 1900 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
+        { "type": "visible", "selector": "#panel" },
+        { "type": "text", "selector": "#panel h2", "equals": "처음 저장한 Moment" }
+      ],
+      "screenshots": [{ "name": "node-select", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "MOMENT_VIEWER",
+      "actions": [
+        { "type": "fill", "selector": "#search", "value": "First" },
+        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
+        { "type": "click", "selector": "#searchResults .result" },
+        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60_V12__.openViewer", "arg": null },
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
+        { "type": "visible", "selector": "#momentViewer" },
+        { "type": "text", "selector": "#momentViewer .action-title", "equals": "처음 저장한 Moment" }
+      ],
+      "screenshots": [{ "name": "moment-viewer", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "BOOK_HANDOFF",
+      "actions": [
+        { "type": "fill", "selector": "#search", "value": "First" },
+        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
+        { "type": "click", "selector": "#searchResults .result" },
+        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60_V12__.openBook", "arg": null },
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
+        { "type": "visible", "selector": "#bookHandoff" },
+        { "type": "text", "selector": "#bookHandoff .action-title", "equals": "처음 저장한 Moment" }
+      ],
+      "screenshots": [{ "name": "book-handoff", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "CONNECTION_HANDOFF",
+      "actions": [
+        { "type": "fill", "selector": "#search", "value": "First" },
+        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
+        { "type": "click", "selector": "#searchResults .result" },
+        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60_V12__.openConnection", "arg": null },
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
+        { "type": "visible", "selector": "#connectionHandoff" }
+      ],
+      "screenshots": [{ "name": "connection-handoff", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    },
+    {
+      "stateId": "PATH_PREVIEW",
+      "actions": [
+        { "type": "fill", "selector": "#search", "value": "First" },
+        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
+        { "type": "click", "selector": "#searchResults .result" },
+        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60_V12__.openPath", "arg": null },
+        { "type": "settle", "rAF": 2, "waitMs": 450 }
+      ],
+      "assertions": [
+        { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
+        { "type": "runtime", "path": "__LT60_V12__.path.active", "equals": true },
+        { "type": "visible", "selector": "#pathPreview" },
+        { "type": "visible", "selector": "#pathOverlay" }
+      ],
+      "screenshots": [{ "name": "path-preview", "animations": "disabled", "digest": "canonical16" }],
+      "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
+    }
+  ]
+}
