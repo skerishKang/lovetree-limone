@@ -130,7 +130,7 @@ test('setRuntime remains fail-closed for prototype paths, foreign roots, objects
   ambiguous.actions = [{ type: 'setRuntime', path: '__LT60__.camera.zoom', value: 1, fromPath: '__LT60__.camera.zoom' }];
   const ambiguousResult = validate(ambiguous);
   assert.equal(ambiguousResult.valid, false);
-  assert.ok(ambiguousResult.errors.includes('EXEC_SET_RUNTIME_EXACTLY_ONE_SOURCE_REQUIRED:actions[0]'));
+  assert.ok(ambiguousResult.errors.includes('SYNTAX:actions[0] setRuntime requires exactly one of value/fromPath'));
 });
 
 test('canonical normalization ignores raw PNG jitter but keeps canonical digest and content DOM parity fail-closed', () => {
