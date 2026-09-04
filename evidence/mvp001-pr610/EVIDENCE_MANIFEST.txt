@@ -1,21 +1,34 @@
-# SRC057 Update Evidence - PR #610
+# SRC057 Update Evidence - PR #610 (corrected-copy replacement set)
 
-HEAD_SHA=56f411a59d6b928d9ebd15073971d75fb5ca55f2
-EVIDENCE_ZIP=SRC057-Update-Evidence-56f411a5.zip
-ZIP_SHA256=7819D84BA88383EB235F78B644A66DE6DA32D05F58432D66C0F444E4CCFC4120
-ZIP_SIZE=376688
-GDRIVE_FILE_ID=17YwAek8HCU81hTbaAZ7gVCAtWU_HGGGs
-BRIDGE_SHA256=22c8f074d9aa8a9f497e6e5f22de0656ba76a638717181b5f3640b9703f83ee5
+CAPTURE_HEAD=85a1d53520a10afb95c65f56920268f70c2f054e
+CAPTURE_HEAD_SOURCE=evidence/mvp001-pr610/src057-update/manifest.json (written by qa/verify-src057-update.mjs at capture time)
+FINAL_EVIDENCE_HEAD=(evidence committed after capture; final head reported to CENTRAL in the lane report)
+NOTE: capture preceded the manifest-repair + evidence commits. CAPTURE_HEAD is the runtime the pixels came from; it is NOT the final evidence head.
+SUPERSEDES: SRC057-Update-Evidence-56f411a5.zip (corrupted-copy capture at 56f411a5; removed from the repo)
+EVIDENCE_ZIP=SRC057-Update-Evidence-85a1d535.zip
+ZIP_SHA256=B8B98F4F03EC77DA52282225F90C46EABBE18A04C2583460BAA08A53A6029181
+ZIP_SIZE=539777
+GDRIVE_FILE_ID=(not re-uploaded in this lane; prior ID 17YwAek8HCU81hTbaAZ7gVCAtWU_HGGGs belongs to the superseded corrupted-copy capture)
+BRIDGE_SHA256=4f4d84507a38931cd3d866eb52e2bd2240b2f0ead0e9893df7dc0a1ea584dc94
+BRIDGE_SHA_NOTE=lane brief cited f5cf3eda...; raw git blob, working-tree bytes, and exact-head CI actual all equal 4f4d8450...; the manifest records the true on-disk hash (see lane report)
 
-## Screenshot contents
-- desktop-src057-update-modal.png (162850 bytes)
-- desktop-src057-update-saved.png (149577 bytes)
-- mobile-src057-update-modal.png (63721 bytes)
-- manifest.json (225 bytes)
+## Screenshot contents (fresh capture from corrected runtime)
+- desktop-src057-update-modal.png (321862 bytes, viewport 1280x800, modal-open state) SHA256=66467248C3E7D1D7A081593498034F4E861F62DD6B1AE40519E7021CCC5A7D6D
+- desktop-src057-update-saved.png (150940 bytes, viewport 1280x800, post-save state) SHA256=902FA2EE9CBA96A1D4E03790E442F010DB8D4B741A088022B7B0F305B22EFC14
+- mobile-src057-update-modal.png (66352 bytes, viewport 390x844 mobile, modal-open state) SHA256=209B8AC91A152320CF5AA303DA568D55F2819365FF8520EB00222E0DFAD66C29
+- manifest.json (225 bytes) SHA256=B1DB6A527999C14027BB1F59F2B331886461A1D1001D10A323AEE39F8ADF7380
 
-## Test results
-- 333/333 MVP001 unit tests: PASS
-- 7/7 wording-integrity tests: PASS
-- 21/21 E2E checks: PASS
-- 17/17 bridge-trust tests: PASS
-- Lint: 0 errors, 219 pre-existing warnings
+## Direct visual review (human, full-resolution PNG inspection)
+- 기억 수정 heading/entry: PASS (desktop modal, desktop saved, mobile)
+- 제목 / 메모 labels: PASS (all three)
+- description (제목과 메모를 수정합니다. 미디어 정보는 변경하지 않습니다.): PASS (all three)
+- 변경사항 저장 button: PASS (all three)
+- corrupted literals (로진/가리/찌국/escape sequences): absent in all three
+
+## Test results (local, this lane)
+- 334/334 MVP001 suite (tests/mvp001*.test.mjs): PASS
+- 8/8 wording-integrity: PASS
+- 16/16 update-contract, 8/8 bridge-trust, 5/5 write-client, 20/20 adapter: PASS
+- 7/7 derivation/isolation guard: PASS
+- 21/21 E2E (qa/verify-src057-update.mjs, same run as this capture): PASS
+- Lint: 0 errors, 217 pre-existing warnings
