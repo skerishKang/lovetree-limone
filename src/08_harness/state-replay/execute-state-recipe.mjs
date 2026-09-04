@@ -12,6 +12,8 @@
 
 import { validateExecutableStateRecipe } from './validate-executable-state-recipe.mjs';
 
+const FORBIDDEN_RUNTIME_SEGMENTS = new Set(['constructor', 'prototype', '__proto__']);
+
 function stripWindowPrefix(value) {
   return value.startsWith('window.') ? value.slice('window.'.length) : value;
 }
@@ -19,7 +21,12 @@ function stripWindowPrefix(value) {
 function runtimeSegments(value) {
   const normalized = stripWindowPrefix(value);
   const segments = normalized.split('.');
-  if (!segments.length || segments.some((segment) => !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment))) {
+  if (
+    !segments.length
+    || segments.some(
+      (segment) => !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment) || FORBIDDEN_RUNTIME_SEGMENTS.has(segment),
+    )
+  ) {
     throw new Error(`EXEC_RUNTIME_PATH_INVALID:${value}`);
   }
   return segments;
@@ -33,20 +40,23 @@ function resolveGoto(actionUrl, baseUrl) {
   return target.href;
 }
 
-async function callHook(page, hook, arg, timeoutMs) {
+async function callHook(page, hook, arg) {
   const segments = runtimeSegments(hook);
-  return page.evaluate(({ segments: names, arg: value, timeoutMs: timeout }) => {
+  return page.evaluate(({ segments: names, arg: value }) => {
     let parent = window;
     let current = window;
     for (const name of names) {
+      if (current == null || !Object.prototype.hasOwnProperty.call(Object(current), name)) {
+        throw new Error(`trusted runtime hook own-property missing: ${names.join('.')}`);
+      }
       parent = current;
-      current = current?.[name];
+      current = current[name];
     }
     if (typeof current !== 'function') {
       throw new Error(`trusted runtime hook is not callable: ${names.join('.')}`);
     }
-    return current.call(parent, value, timeout);
-  }, { segments, arg, timeoutMs: timeoutMs ?? null });
+    return current.call(parent, value);
+  }, { segments, arg });
 }
 
 async function waitForRuntime(page, action) {
@@ -55,7 +65,10 @@ async function waitForRuntime(page, action) {
   await page.waitForFunction(
     ({ segments: names, hasEquals: compare, equals }) => {
       let current = window;
-      for (const name of names) current = current?.[name];
+      for (const name of names) {
+        if (current == null || !Object.prototype.hasOwnProperty.call(Object(current), name)) return false;
+        current = current[name];
+      }
       return compare ? Object.is(current, equals) : Boolean(current);
     },
     { segments, hasEquals, equals: action.equals },
@@ -152,7 +165,7 @@ async function executeAction(page, action, baseUrl) {
     case 'seekHook':
     case 'setPhaseHook':
     case 'evaluateHook':
-      await callHook(page, action.hook, action.arg, action.timeoutMs);
+      await callHook(page, action.hook, action.arg);
       return { type: action.type, hook: action.hook };
     case 'waitForRuntime':
       await waitForRuntime(page, action);
