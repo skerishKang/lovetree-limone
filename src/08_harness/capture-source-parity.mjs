@@ -8,6 +8,7 @@ import { captureTrack64Variant, track64SourceFiles } from './source064-driver.mj
 import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mjs';
 import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mjs';
 import { captureSRC58Variant, src58SourceFiles } from './source058-driver.mjs';
+import { captureSRC62Variant } from './source062-driver.mjs';
 import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
@@ -34,10 +35,29 @@ const sourceViewports = {
     { width: 430, height: 932 },
     { width: 390, height: 844 },
   ],
+  SRC062: [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+    { width: 320, height: 720 },
+  ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 const round = (value) => Math.round(value * 100) / 100;
+
+// SRC062 settle-physics floats (rail phase/targetPhase/velocity from
+// performance.now deltas) can carry sub-frame residuals after stabilization.
+// Normalize all numbers to 3 decimals before strict comparison: a real
+// one-scene drift (1.0) or layout shift still fails loudly, while 0.000x
+// jitter does not. Structure, text, styles, and geometry are unaffected.
+function normalizeSRC62ParityValue(value) {
+  if (typeof value === 'number') return Math.round(value * 1000) / 1000;
+  if (Array.isArray(value)) return value.map(normalizeSRC62ParityValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, normalizeSRC62ParityValue(v)]));
+  }
+  return value;
+}
 
 // SRC047 canonical cinematic ACT seek targets (seconds). These are the times the
 // frozen script's QA.seek drives both original and split to; INITIAL is excluded
@@ -98,6 +118,7 @@ function collectPageState() {
 }
 
 async function settle(page) {
+
   await page.evaluate(async () => {
     document.getElementById('toast')?.classList.remove('show');
     window.__lt?.overview(false);
@@ -539,6 +560,32 @@ try {
             interaction_equal: true,
             initial_screenshot_sha_equal: split.screenshots.initial_sha256 === original.screenshots.initial_sha256,
             viewer_screenshot_sha_equal: split.screenshots.viewer_sha256 === original.screenshots.viewer_sha256,
+            original_screenshots: original.screenshots,
+            split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC062') {
+          // SRC062 reuses its S2-proven interaction matrix for original/split
+          // parity. Settle-physics floats are normalized (see
+          // normalizeSRC62ParityValue); structure, text, styles, geometry,
+          // and the interaction assertion matrix compare strictly.
+          const original = await captureSRC62Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
+          const split = await captureSRC62Variant(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          const stateKeys = Object.keys(original.states);
+          assert.deepStrictEqual(Object.keys(split.states).sort(), [...stateKeys].sort(), `${sourceId} ${viewport.width}x${viewport.height}: captured state set drift`);
+          for (const state of stateKeys) {
+            assert.deepStrictEqual(normalizeSRC62ParityValue(split.states[state]), normalizeSRC62ParityValue(original.states[state]), `${sourceId} ${viewport.width}x${viewport.height}: ${state} state drift`);
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          const shotKeys = Object.keys(original.screenshots);
+          const comparison = {
+            viewport,
+            ...Object.fromEntries(stateKeys.map((k) => [`${k.toLowerCase()}_state_equal`, true])),
+            interaction_equal: true,
+            ...Object.fromEntries(shotKeys.map((k) => [`${k.replace(/_sha256$/, '').toLowerCase()}_screenshot_sha_equal`, split.screenshots[k] === original.screenshots[k]])),
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,
           };
