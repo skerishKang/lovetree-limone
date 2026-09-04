@@ -6,8 +6,9 @@
  *
  * Security / fidelity rules:
  * - source identity must match the source-bound runtime-hook binding
- * - only a BOUND runtime-hook registry result is executable in this v1 slice
- * - every hook/path used by the recipe must stay under the expected source hook
+ * - binding expectations must exactly match the analyzer's immutable registry
+ * - only hooks both expected AND actually discovered are executable
+ * - only a BOUND runtime-hook result is executable in this v1 slice
  * - prototype-chain segments are forbidden (`constructor`, `prototype`,
  *   `__proto__`) so a trusted root cannot tunnel into language intrinsics
  * - free-form waitForFunction/fn strings are syntax-valid legacy input but are
@@ -16,6 +17,9 @@
  * - DUAL_VARIANT / NO_EXPECTED_HOOK remains explicit-driver/plugin territory
  */
 
+import {
+  SOURCE_HOOK_REGISTRY,
+} from '../auto-analyzer/analyze-html.mjs';
 import { validateStateRecipe } from '../auto-analyzer/validate-state-recipe.mjs';
 
 export const EXECUTABLE_RECIPE_VERSION = 'clean108-executable-recipe-v1';
@@ -58,6 +62,13 @@ function hookRoot(value) {
   return /^__[A-Za-z0-9_$]+$/.test(root) ? root : null;
 }
 
+function sameStringSet(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right)) return false;
+  const a = [...new Set(left)].sort();
+  const b = [...new Set(right)].sort();
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
 function validateBinding(recipe, runtimeHookBinding, errors) {
   if (!runtimeHookBinding || typeof runtimeHookBinding !== 'object') {
     errors.push('EXEC_RUNTIME_BINDING_REQUIRED');
@@ -69,18 +80,39 @@ function validateBinding(recipe, runtimeHookBinding, errors) {
   if (runtimeHookBinding.status !== 'BOUND' || runtimeHookBinding.matched !== true) {
     errors.push(`EXEC_RUNTIME_BINDING_NOT_BOUND:${runtimeHookBinding.status ?? 'UNKNOWN'}`);
   }
-  if (!Array.isArray(runtimeHookBinding.expected) || runtimeHookBinding.expected.length === 0) {
-    errors.push('EXEC_RUNTIME_EXPECTED_HOOK_REQUIRED');
+
+  const registryEntry = SOURCE_HOOK_REGISTRY[recipe.sourceId];
+  if (!registryEntry || registryEntry.variant === 'DUAL_VARIANT' || registryEntry.expectedHooks.length === 0) {
+    errors.push(`EXEC_SOURCE_NOT_EXECUTABLE_BY_GENERIC_REPLAY:${recipe.sourceId}`);
     return;
   }
 
-  const expected = new Set(runtimeHookBinding.expected);
+  const registeredExpected = [...registryEntry.expectedHooks];
+  if (!sameStringSet(runtimeHookBinding.expected, registeredExpected)) {
+    errors.push(`EXEC_RUNTIME_BINDING_REGISTRY_MISMATCH:${recipe.sourceId}`);
+    return;
+  }
+  if (!Array.isArray(runtimeHookBinding.discovered)) {
+    errors.push('EXEC_RUNTIME_DISCOVERY_REQUIRED');
+    return;
+  }
+
+  const expected = new Set(registeredExpected);
+  const discovered = new Set(runtimeHookBinding.discovered);
+  const trusted = new Set(registeredExpected.filter((hook) => discovered.has(hook)));
+  if (trusted.size === 0) {
+    errors.push(`EXEC_RUNTIME_NO_DISCOVERED_EXPECTED_HOOK:${recipe.sourceId}`);
+    return;
+  }
+
   const topLevelPath = runtimePathSegments(recipe.runtimeHook?.name);
   const topLevelRoot = hookRoot(recipe.runtimeHook?.name);
   if (!topLevelPath) {
     errors.push(`EXEC_RUNTIME_PATH_FORBIDDEN:${recipe.runtimeHook?.name ?? 'UNKNOWN'}`);
   } else if (!topLevelRoot || !expected.has(topLevelRoot)) {
     errors.push(`EXEC_RUNTIME_HOOK_NOT_SOURCE_BOUND:${recipe.runtimeHook?.name ?? 'UNKNOWN'}`);
+  } else if (!trusted.has(topLevelRoot)) {
+    errors.push(`EXEC_RUNTIME_HOOK_NOT_DISCOVERED:${recipe.runtimeHook?.name ?? 'UNKNOWN'}`);
   }
 
   for (const [index, action] of recipe.actions.entries()) {
@@ -92,6 +124,8 @@ function validateBinding(recipe, runtimeHookBinding, errors) {
       errors.push(`EXEC_ACTION_RUNTIME_PATH_FORBIDDEN:actions[${index}]:${candidate}`);
     } else if (!root || !expected.has(root)) {
       errors.push(`EXEC_ACTION_HOOK_NOT_SOURCE_BOUND:actions[${index}]:${candidate}`);
+    } else if (!trusted.has(root)) {
+      errors.push(`EXEC_ACTION_HOOK_NOT_DISCOVERED:actions[${index}]:${candidate}`);
     }
   }
 }
