@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "clean108-state-recipe-v1",
+  "sourceId": "SRC056",
+  "notes": "Approved-state replay recipes for the SRC056 matched real-browser pilot. State names (OVERVIEW / ORIGIN_REVEAL) and viewports come from accepted baseline evidence (src/03_sources/SRC056/baseline/accepted-baseline.json). Every recipe is used UNCHANGED for both ORIGINAL and SPLIT; only the target entry URL differs per side.",
+  "recipes": [
+    {
+      "viewportKey": "1280x800",
+      "stateId": "OVERVIEW",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 1280, "height": 800, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "OVERVIEW",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "clearToast": "#toast", "waitMs": 950, "rAF": 2 },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "OVERVIEW", "timeoutMs": 8000 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "OVERVIEW" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "overview", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    },
+    {
+      "viewportKey": "1280x800",
+      "stateId": "ORIGIN_REVEAL",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 1280, "height": 800, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "ORIGIN_REVEAL",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "waitMs": 950, "rAF": 2 },
+          { "type": "click", "selector": "#focusFirst" },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL", "timeoutMs": 8000 },
+          { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 250 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "origin-reveal", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "OVERVIEW",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 390, "height": 844, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "OVERVIEW",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "clearToast": "#toast", "waitMs": 950, "rAF": 2 },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "OVERVIEW", "timeoutMs": 8000 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "OVERVIEW" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "overview", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "ORIGIN_REVEAL",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 390, "height": 844, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "ORIGIN_REVEAL",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "waitMs": 950, "rAF": 2 },
+          { "type": "click", "selector": "#mobileRibbon button.origin" },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL", "timeoutMs": 8000 },
+          { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 250 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "origin-reveal", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    },
+    {
+      "viewportKey": "320x720",
+      "stateId": "OVERVIEW",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 320, "height": 720, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "OVERVIEW",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "clearToast": "#toast", "waitMs": 950, "rAF": 2 },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "OVERVIEW", "timeoutMs": 8000 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "OVERVIEW" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "overview", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    },
+    {
+      "viewportKey": "320x720",
+      "stateId": "ORIGIN_REVEAL",
+      "recipe": {
+        "sourceId": "SRC056",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": { "width": 320, "height": 720, "deviceScaleFactor": 1, "reducedMotion": "reduce" },
+        "stateId": "ORIGIN_REVEAL",
+        "preconditions": [],
+        "actions": [
+          { "type": "evaluateHook", "hook": "__lt.overview", "arg": false },
+          { "type": "settle", "waitMs": 950, "rAF": 2 },
+          { "type": "click", "selector": "#mobileRibbon button.origin" },
+          { "type": "waitForRuntime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL", "timeoutMs": 8000 },
+          { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 250 }
+        ],
+        "settleCondition": {},
+        "assertions": [
+          { "type": "runtime", "path": "__lt.state.mode", "equals": "ORIGIN_REVEAL" },
+          { "type": "visible", "selector": "#stage" }
+        ],
+        "screenshots": [{ "name": "origin-reveal", "animations": "disabled", "digest": "raw" }],
+        "runtimeHook": { "name": "__lt", "snapshotFields": ["state.mode", "state.scale", "state.tx", "state.ty"] },
+        "allowedTolerance": { "geometryEpsPx": 0, "floatDecimals": 3, "screenshot": "EXACT" },
+        "timeouts": { "actionMs": 30000, "recipeMs": 90000 }
+      }
+    }
+  ]
+}
