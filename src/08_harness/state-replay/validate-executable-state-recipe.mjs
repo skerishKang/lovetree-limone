@@ -8,6 +8,8 @@
  * - source identity must match the source-bound runtime-hook binding
  * - only a BOUND runtime-hook registry result is executable in this v1 slice
  * - every hook/path used by the recipe must stay under the expected source hook
+ * - prototype-chain segments are forbidden (`constructor`, `prototype`,
+ *   `__proto__`) so a trusted root cannot tunnel into language intrinsics
  * - free-form waitForFunction/fn strings are syntax-valid legacy input but are
  *   NOT executable here (no recipe-provided JavaScript execution path)
  * - navigation is same-origin to the supplied baseline origin
@@ -35,10 +37,24 @@ const EXECUTABLE_ACTION_TYPES = new Set([
   'evaluateHook',
 ]);
 
-function hookRoot(value) {
+const FORBIDDEN_RUNTIME_SEGMENTS = new Set(['constructor', 'prototype', '__proto__']);
+
+function runtimePathSegments(value) {
   if (typeof value !== 'string' || value.length === 0) return null;
   const normalized = value.startsWith('window.') ? value.slice('window.'.length) : value;
-  const root = normalized.split('.')[0];
+  const segments = normalized.split('.');
+  if (!segments.length) return null;
+  for (const segment of segments) {
+    if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment)) return null;
+    if (FORBIDDEN_RUNTIME_SEGMENTS.has(segment)) return null;
+  }
+  return segments;
+}
+
+function hookRoot(value) {
+  const segments = runtimePathSegments(value);
+  if (!segments) return null;
+  const [root] = segments;
   return /^__[A-Za-z0-9_$]+$/.test(root) ? root : null;
 }
 
@@ -59,16 +75,22 @@ function validateBinding(recipe, runtimeHookBinding, errors) {
   }
 
   const expected = new Set(runtimeHookBinding.expected);
+  const topLevelPath = runtimePathSegments(recipe.runtimeHook?.name);
   const topLevelRoot = hookRoot(recipe.runtimeHook?.name);
-  if (!topLevelRoot || !expected.has(topLevelRoot)) {
+  if (!topLevelPath) {
+    errors.push(`EXEC_RUNTIME_PATH_FORBIDDEN:${recipe.runtimeHook?.name ?? 'UNKNOWN'}`);
+  } else if (!topLevelRoot || !expected.has(topLevelRoot)) {
     errors.push(`EXEC_RUNTIME_HOOK_NOT_SOURCE_BOUND:${recipe.runtimeHook?.name ?? 'UNKNOWN'}`);
   }
 
   for (const [index, action] of recipe.actions.entries()) {
     const candidate = action?.hook ?? action?.path;
     if (!candidate) continue;
+    const segments = runtimePathSegments(candidate);
     const root = hookRoot(candidate);
-    if (!root || !expected.has(root)) {
+    if (!segments) {
+      errors.push(`EXEC_ACTION_RUNTIME_PATH_FORBIDDEN:actions[${index}]:${candidate}`);
+    } else if (!root || !expected.has(root)) {
       errors.push(`EXEC_ACTION_HOOK_NOT_SOURCE_BOUND:actions[${index}]:${candidate}`);
     }
   }
