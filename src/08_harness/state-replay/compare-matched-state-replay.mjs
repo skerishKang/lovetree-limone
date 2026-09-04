@@ -30,6 +30,15 @@ function cleanHealth(health) {
   );
 }
 
+function hasTimeoutEvidence(evidence) {
+  return Boolean(
+    evidence.timeouts
+    && Number.isInteger(evidence.timeouts.actionMs)
+    && Number.isInteger(evidence.timeouts.recipeMs)
+    && evidence.timeouts.recipeMsEnforced === false
+  );
+}
+
 /**
  * Compare two Slice-3 capture outputs produced from the SAME approved recipe.
  * Variant navigation URL and capture timestamp are intentionally not parity
@@ -49,7 +58,9 @@ export function compareMatchedStateReplay({ originalEvidence, splitEvidence }) {
     authority_sha256_equal: channel(originalEvidence.authoritySha256, splitEvidence.authoritySha256),
     browser_version_equal: channel(originalEvidence.browserVersion, splitEvidence.browserVersion),
     viewport_equal: channel(originalEvidence.viewport, splitEvidence.viewport),
-    timeout_policy_equal: channel(originalEvidence.timeoutPolicy, splitEvidence.timeoutPolicy),
+    original_timeouts_present: hasTimeoutEvidence(originalEvidence),
+    split_timeouts_present: hasTimeoutEvidence(splitEvidence),
+    timeouts_equal: channel(originalEvidence.timeouts, splitEvidence.timeouts),
     execution_equal: channel(originalEvidence.execution, splitEvidence.execution),
     assertions_equal: channel(originalEvidence.assertions, splitEvidence.assertions),
     dom_equal_excluding_variant_url: channel(canonicalDom(originalEvidence.dom), canonicalDom(splitEvidence.dom)),
