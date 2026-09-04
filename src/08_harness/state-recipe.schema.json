@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "clean108-state-recipe-v1",
+  "title": "CLEAN-108 S2 state recipe v1",
+  "description": "Reproducible recipe for one source-defining runtime state. Tolerance is per-recipe/source only; global defaults are forbidden. Unknown actions/hooks are invalid. No executable code fields.",
+  "type": "object",
+  "required": ["sourceId", "recipeVersion", "viewport", "stateId", "preconditions", "actions", "settleCondition", "assertions", "screenshots", "runtimeHook", "allowedTolerance", "timeouts"],
+  "additionalProperties": false,
+  "properties": {
+    "sourceId": { "type": "string", "pattern": "^SRC[0-9]{3}$" },
+    "recipeVersion": { "type": "string", "minLength": 1 },
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer", "minimum": 200, "maximum": 7680 },
+        "height": { "type": "integer", "minimum": 200, "maximum": 4320 },
+        "deviceScaleFactor": { "type": "number", "minimum": 0.5, "maximum": 4 },
+        "reducedMotion": { "type": "string", "enum": ["reduce", "no-preference"] }
+      }
+    },
+    "stateId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "preconditions": { "type": "array", "items": { "type": "object" } },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["goto", "click", "fill", "select", "press", "wheel", "drag", "scrollTo", "seekHook", "setPhaseHook", "waitForFunction", "waitForRuntime", "waitForSelectorState", "settle", "evaluateHook"]
+          },
+          "selector": { "type": "string", "minLength": 1, "maxLength": 512 },
+          "value": {},
+          "key": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "url": { "type": "string", "minLength": 1, "maxLength": 1024 },
+          "deltaX": { "type": "number" },
+          "deltaY": { "type": "number" },
+          "repeat": { "type": "integer", "minimum": 1, "maximum": 64 },
+          "fromFraction": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "minimum": 0, "maximum": 1 } },
+          "toFraction": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "minimum": 0, "maximum": 1 } },
+          "steps": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "x": {},
+          "y": {},
+          "hook": { "type": "string", "minLength": 1, "maxLength": 256 },
+          "arg": {},
+          "fn": { "type": "string", "minLength": 1, "maxLength": 2048 },
+          "path": { "type": "string", "minLength": 1, "maxLength": 256 },
+          "equals": {},
+          "state": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "timeoutMs": { "type": "integer", "minimum": 100, "maximum": 120000 },
+          "rAF": { "type": "integer", "minimum": 0, "maximum": 16 },
+          "waitMs": { "type": "integer", "minimum": 0, "maximum": 30000 },
+          "clearToast": { "type": "string", "maxLength": 256 },
+          "pauseMedia": { "type": "boolean" },
+          "awaitFonts": { "type": "boolean" }
+        }
+      }
+    },
+    "settleCondition": { "type": "object" },
+    "assertions": { "type": "array", "items": { "type": "object" } },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "animations": { "type": "string", "enum": ["disabled", "allow"] },
+          "digest": { "type": "string", "enum": ["canonical16", "idat", "raw"] }
+        }
+      }
+    },
+    "runtimeHook": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "snapshotFields": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "allowedTolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "geometryEpsPx": { "type": "number", "minimum": 0, "maximum": 16 },
+        "floatDecimals": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "canonicalHammingMax": { "type": "integer", "minimum": 0, "maximum": 32 },
+        "screenshot": { "type": "string", "enum": ["EXACT", "HAMMING", "INFO_ONLY"] }
+      }
+    },
+    "timeouts": {
+      "type": "object",
+      "required": ["actionMs", "recipeMs"],
+      "additionalProperties": false,
+      "properties": {
+        "actionMs": { "type": "integer", "minimum": 100, "maximum": 120000 },
+        "recipeMs": { "type": "integer", "minimum": 1000, "maximum": 600000 }
+      }
+    },
+    "notes": { "type": "string", "maxLength": 4096 }
+  }
+}

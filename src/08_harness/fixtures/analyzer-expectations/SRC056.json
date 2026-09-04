@@ -1,0 +1,19 @@
+{
+  "fixture": "SIMPLE",
+  "sourceId": "SRC056",
+  "authority": {
+    "bytes": 45761,
+    "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909"
+  },
+  "expected": {
+    "s3Classification": "AUTO_SPLIT_SUPPORTED",
+    "inlineStyleBlocks": 1,
+    "inlineScriptBlocks": 1,
+    "attributedScriptCount": 0,
+    "externalScriptCount": 0,
+    "moduleScriptCount": 0,
+    "mustContainHooks": ["__lt"],
+    "mustContainFamilies": ["INITIAL", "SELECTED", "VIEWER"],
+    "mustNotClassifyAs": "AUTO_SPLIT_HOLD"
+  }
+}
