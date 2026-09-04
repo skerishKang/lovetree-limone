@@ -21,7 +21,7 @@
  *  - T16 no backend/DB/auth markers in split
  *  - T17 no product/MVP adapter wiring in split
  *  - T18 no assets/ directory (source is self-contained data URIs)
- *  - T19 manifest truth: S3 asserted, parity false, parity_ref null
+ *  - T19 manifest truth: S3 asserted, parity accepted, parity_ref bound
  *  - T20 materialization record matches files on disk
  *
  * Writes evidence/split/s3-roundtrip.json as run evidence. No commits. No pushes.
@@ -137,9 +137,9 @@ ok(!fs.existsSync(path.join(ROOT, "split/assets")), "T18", "no assets/ directory
 
 console.log("\nManifest / materialization truth:");
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
-ok(manifest.stages.mechanical_split_complete === true && manifest.stages.source_split_parity_pass === false && manifest.parity_ref === null, "T19", "S3 asserted, parity pending, no parity_ref");
+ok(manifest.stages.mechanical_split_complete === true && manifest.stages.source_split_parity_pass === true && manifest.parity_ref === "evidence/parity/accepted-parity.json", "T19", "S3 asserted, parity accepted, parity_ref bound");
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
-let matOk = mat.status === "MATERIALIZED_PENDING_PARITY" && mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE" && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA;
+let matOk = mat.status === "ACCEPTED" && mat.parity_status === "PASS" && mat.parity_ref === "evidence/parity/accepted-parity.json" && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA;
 for (const [rel, meta] of Object.entries(mat.outputs)) {
   const b = fs.readFileSync(path.join(ROOT, rel));
   if (b.length !== meta.bytes || sha256(b) !== meta.sha256) matOk = false;

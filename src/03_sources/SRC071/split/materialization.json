@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC071",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "authority": {
     "bytes": 24039,
@@ -47,6 +47,14 @@
     "framework_conversion": false,
     "product_data_injection": false
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": null
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "source_candidate": {
+    "exact_head": "d2e0c57c775b6aa0a90908a52f2225203dca2c5b",
+    "generation": "MECHANICAL_INLINE_EXTRACTION"
+  },
+  "provenance": {
+    "evidence_source_head": "d2e0c57c775b6aa0a90908a52f2225203dca2c5b",
+    "final_metadata_commit_head": "NOT EMBEDDED / external CI authority"
+  }
 }
