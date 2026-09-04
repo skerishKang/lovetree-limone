@@ -176,6 +176,53 @@ export async function verifyClientBundleHasFirebaseConfig({ clientDir, config })
   return { ok: problems.length === 0, problems };
 }
 
+// Verifies the standalone MVP001 auth-host browser artifact
+// (dist/client/mvp/01/auth-host.js, produced by
+// scripts/build-mvp-auth-host.mjs) exists and inlined the SAME Firebase
+// client config as the app bundle. Fails closed when the artifact is
+// absent, empty, or carries a different/blank config — a production deploy
+// must never serve a stale or config-less auth host to /mvp/01.
+// The apiKey is compared in-memory only and never appears in problems,
+// logs, or the manifest.
+export async function verifyMvpAuthHostArtifact({ clientDir, config }) {
+  const problems = [];
+  const artifactPath = path.join(clientDir, "mvp", "01", "auth-host.js");
+  let text = "";
+  try {
+    text = await readFile(artifactPath, "utf8");
+  } catch {
+    problems.push(
+      "MVP auth-host artifact missing: dist/client/mvp/01/auth-host.js was not emitted (scripts/build-mvp-auth-host.mjs must run in the build)"
+    );
+    return { ok: false, problems };
+  }
+  if (!text || text.length === 0) {
+    problems.push("MVP auth-host artifact is empty: dist/client/mvp/01/auth-host.js");
+    return { ok: false, problems };
+  }
+  if (!text.includes("mvp01:auth") || !text.includes("__MVP01_GET_ACCESS_TOKEN__")) {
+    problems.push(
+      "MVP auth-host artifact does not look like the auth host (missing provider seam markers) — stale or wrong file at dist/client/mvp/01/auth-host.js"
+    );
+  }
+  if (config.projectId && !text.includes(config.projectId)) {
+    problems.push(
+      `MVP auth-host artifact does not contain the Firebase projectId '${config.projectId}' — it was not built with the production config`
+    );
+  }
+  if (config.authDomain && !text.includes(config.authDomain)) {
+    problems.push(
+      "MVP auth-host artifact does not contain the Firebase authDomain — it was not built with the production config"
+    );
+  }
+  if (!config.apiKey || !text.includes(config.apiKey)) {
+    problems.push(
+      "MVP auth-host artifact does not contain the Firebase apiKey — it was not fully built with the production config"
+    );
+  }
+  return { ok: problems.length === 0, problems };
+}
+
 // Full build-time guard: validates env, returns a result suitable for the
 // build script. Never prints raw values.
 export function checkFirebaseBuildConfig(env = process.env) {

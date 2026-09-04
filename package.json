@@ -13,7 +13,7 @@
     "v4:e2e:cleanup": "node scripts/cleanup-v4-runtime-e2e.mjs",
     "production:build:safe": "node scripts/build-production-safe.mjs",
     "production:deploy:safe": "node scripts/deploy-production-safe.mjs",
-    "build": "vinext build && node scripts/prune-rsc-assets.mjs",
+    "build": "vinext build && node scripts/build-mvp-auth-host.mjs && node scripts/prune-rsc-assets.mjs",
     "start": "node scripts/apply-vinext-static-cache-posix-keys.mjs && vinext start",
     "postinstall": "node scripts/apply-vinext-static-cache-posix-keys.mjs",
     "test": "npm run build && node --import tsx --test 'tests/*.test.mjs'",
