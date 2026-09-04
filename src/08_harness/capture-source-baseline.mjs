@@ -9,6 +9,7 @@ import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
 import { captureSRC62Baseline } from './source062-driver.mjs';
+import { captureSRC71Baseline } from './source071-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantBaselineDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
@@ -67,6 +68,11 @@ const sourceViewports = {
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
     { width: 320, height: 720 },
+  ],
+  SRC071: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
   ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
@@ -288,23 +294,6 @@ try {
     if (bytes.length !== manifest.authority.bytes) throw new Error(`${sourceId} original byte count drift`);
     if (sha256(bytes) !== manifest.authority.sha256) throw new Error(`${sourceId} original SHA256 drift`);
 
-    // SRC071 explicit disposition: baseline was accepted by CENTRAL issue review of
-    // production-observed evidence (#589 comment 5545375429, captured_head 7f81281c,
-    // baseline/accepted-baseline.json). The generic single-executable baseline contract
-    // waits for the shared __lt/__lovetreeStats API that SRC071's frozen canvas runtime
-    // (window.__LOVE_TREE_V7_R24__) does not expose, and its 6 portal routes are
-    // Drive-mirror paths that 404 under repository hosting (SRC071_PORTAL_MAPPING_HOLD).
-    // Authority freeze above is still verified byte-for-byte every run; only the
-    // browser re-capture is skipped with an explicit disposition.
-    if (sourceId === 'SRC071') {
-      const acceptedBaselinePath = path.join(sourceDir, 'baseline', 'accepted-baseline.json');
-      const acceptedBaseline = JSON.parse(fs.readFileSync(acceptedBaselinePath, 'utf8'));
-      if (acceptedBaseline.status !== 'ACCEPTED') throw new Error('SRC071 baseline acceptance missing or not ACCEPTED');
-      if (acceptedBaseline.authority.sha256 !== manifest.authority.sha256) throw new Error('SRC071 accepted baseline authority does not match manifest authority');
-      console.log(`SRC_BASELINE_CAPTURE_SKIP=SRC071 reason=CENTRAL_ISSUE_ACCEPTED_EXTERNAL_BASELINE acceptance=issue-589-comment-5545375429 captured_head=${acceptedBaseline.captured_head} authority_verified=true`);
-      continue;
-    }
-
     const sourceOut = path.join(outRoot, sourceId);
     fs.mkdirSync(sourceOut, { recursive: true });
     const server = await startServer(sourceId, originalPath, sourceDir);
@@ -331,6 +320,18 @@ try {
           if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.D01_INITIAL_SCENE01.ids.length, elementCount: evidence.states.D01_INITIAL_SCENE01.elementCount });
+          continue;
+        }
+        if (sourceId === 'SRC071') {
+          // SRC071 exposes window.__LOVE_TREE_V7_R24__, not the legacy
+          // window.__lt/window.__lovetreeStats contract. Reuse its accepted
+          // V7 R2.4 S2/S4 interaction semantics rather than forcing the
+          // generic graph-source fallback.
+          const evidence = await captureSRC71Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
           continue;
         }
         const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
