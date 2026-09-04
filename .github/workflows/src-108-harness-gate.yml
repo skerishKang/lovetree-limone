@@ -111,6 +111,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Branded Google Chrome is the required browser channel for Source
+          # baseline capture (SRC047 S2 cinematic baseline). The bundled
+          # Playwright Chromium cannot decode the H.264 MP4 in this environment,
+          # so a silent Chromium fallback would produce a green-but-empty run.
+          # Fail closed if the channel binary is absent.
           if ! command -v google-chrome >/dev/null 2>&1 && ! command -v google-chrome-stable >/dev/null 2>&1; then
             echo "Branded Google Chrome not found; installing..."
             wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
