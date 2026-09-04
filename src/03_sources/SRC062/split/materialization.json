@@ -65,7 +65,7 @@
     "byte_identical": true
   },
   "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_ref": null,
   "next_stage": "S4_SOURCE_SPLIT_PARITY_HOLD",
   "next_stage_note": "S4 is explicitly NOT executed at S3. Split-vs-original visual/interaction parity capture and CENTRAL acceptance remain HOLD until separately released."
 }
