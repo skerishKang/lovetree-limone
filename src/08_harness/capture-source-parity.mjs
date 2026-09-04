@@ -12,6 +12,7 @@ import { captureSRC62Variant } from './source062-driver.mjs';
 import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
+import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -293,6 +294,16 @@ try {
       const disposition = getDualVariantParityDisposition({ manifest, acceptedBaseline });
       const reason = disposition?.reason ?? 'DUAL_VARIANT_S4_HOLD';
       console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${reason} authority_mode=DUAL_VARIANT variants=${variantKeys.join(',')} s4_hold_respected=true`);
+      continue;
+    }
+    // CONTEXT_AWARE_ONLY: the Source's own relative URLs only resolve from a
+    // canonical external directory depth, so neither repository surface is a
+    // valid runtime target here. Fail closed instead of capturing parity the
+    // Source cannot support. SINGLE sources with no capture_surface declaration
+    // are unaffected.
+    const surfaceDisposition = getCaptureSurfaceDisposition({ manifest });
+    if (surfaceDisposition) {
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${surfaceDisposition.reason} capture_surface=${surfaceDisposition.mode} required_serving=${surfaceDisposition.required_serving ?? 'UNKNOWN'}`);
       continue;
     }
     for (const required of ['split/index.html', 'split/styles.css', 'split/script.js']) {

@@ -301,6 +301,16 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       if (stages[stage] === false) falseSeen = true;
     }
     if (stages.identity_verified !== true || stages.raw_authority_locked !== true) failures.push(`${sourceId}: S0/S1 incomplete`);
+    // CONTEXT_AWARE_ONLY is a manifest-maintained opt-in: the Source's own
+    // relative URLs only resolve from a canonical external directory depth, so
+    // its repository path is not a runtime surface and parity cannot be
+    // accepted by loading split/index.html directly. Fail closed.
+    if (manifest.capture_surface?.mode === 'CONTEXT_AWARE_ONLY') {
+      if (stages.source_split_parity_pass !== false) failures.push(`${sourceId}: CONTEXT_AWARE_ONLY capture surface cannot claim source_split_parity_pass`);
+      if (stages.mechanical_split_complete === true && manifest.capture_surface?.shared_harness_disposition?.['capture-source-parity.mjs'] !== 'SKIP') {
+        failures.push(`${sourceId}: CONTEXT_AWARE_ONLY capsule must record the parity harness SKIP disposition`);
+      }
+    }
 
     if (stages.baseline_captured === true) {
       requirePath(repoRoot, `${base}/baseline/capture-plan.json`, failures);

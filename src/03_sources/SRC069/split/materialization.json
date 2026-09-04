@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "branch": "clean/src069-s3-mechanical-port",
+    "branch_base_head": "06e21763454da479e8bb949fadd8500427b776b8",
+    "exact_head": "06e21763454da479e8bb949fadd8500427b776b8",
+    "generation_method": "LOCAL_MATERIALIZER_REPRODUCTION",
+    "materializer": "src/08_harness/materialize-mechanical-split.mjs",
+    "materializer_invocation": "SRC_SPLIT_CANDIDATE_DIR=D:\\Temp\\src069-s3-candidate node src/08_harness/materialize-mechanical-split.mjs",
+    "artifact_path": "D:\\Temp\\src069-s3-candidate\\SRC069",
+    "materializer_result": "SRC_MECHANICAL_SPLIT_CANDIDATE_PASS=SRC069",
+    "ci_exact_head_reproduction": "PENDING"
+  },
+  "authority": {
+    "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "filename": "69_v3_exact_source_multi_template_portal.html",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 964,
+    "style_close": 12641,
+    "script_open": 19813,
+    "script_close": 27074,
+    "script_blocks": [
+      {
+        "open": 19813,
+        "close": 27074,
+        "length": 7253
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 8231,
+      "sha256": "723177c4adc27c46534287c3bf4e1bde0e9ba3e8da13a4b0ecd58fa7fc32810a",
+      "git_blob_sha1": "18aa231316e9156e25a465d124ff0e38c38d8d97"
+    },
+    "split/styles.css": {
+      "bytes": 11670,
+      "sha256": "99f10e63601bbf004389deee80596153b439642dc001a1064f0abf487b8ef764",
+      "git_blob_sha1": "90b4357a2d6072832978534091acec48f711bc8f"
+    },
+    "split/script.js": {
+      "bytes": 7746,
+      "sha256": "f38c510c427febc17c102918d19e5f88df5c20d38fc6b60083b0dd73d0873781",
+      "git_blob_sha1": "18c8660153e2578aaf1f21f970f1fc38c022debb"
+    }
+  },
+  "outputs_note": "No split/assets/** directory was created. The authority references no local file assets: its only markup src/href values are the four external stylesheet preconnect/font links, the CloudFront video, and the in-page SVG/anchor content. The templates table carries 11 portal paths, all of which are sibling Source authority-context dependencies and are therefore recorded as metadata in authority-context.json rather than vendored as split assets.",
+  "blank_at_eol_note": "split/styles.css retains the authority's final-line whitespace (newline followed by two spaces immediately before </style>) because the mechanical split must be byte-exact: styles.css is the authority style inner slice verbatim, and reconstructing <style>styles.css</style> + <script>script.js</script> over split/index.html must reproduce the frozen authority byte for byte (T05b, T09, T09b). Consequently `git diff --check --cached` reports a single unavoidable 'trailing whitespace / new blank line at EOF' flag at split/styles.css:81. That flag is authority-inherited formatting, not introduced by the split; stripping it would break byte round-trip identity. No repository workflow runs `git diff --check`, and no other staged path is flagged.",
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "portal_relative_urls_rebased": false,
+    "portal_targets_resolved_to_repository_paths": false,
+    "sibling_context_html_vendored": false,
+    "a11y_or_focus_behavior_modified": false
+  },
+  "portal_context_contract": {
+    "authority_context_ref": "../authority-context.json",
+    "runtime_context_required": true,
+    "semantic_portal_mapping_count": 11,
+    "relative_prefix": "../../",
+    "inventory_source": "derived from the authority's own templates table, not from an external description",
+    "preservation_invariant": "The exact set of portal relative URL strings in original/original.html must equal the exact set in split/script.js, byte for byte, in the same order.",
+    "verification_ref": "../evidence/s3/roundtrip.json#portal_relative_url_preservation",
+    "verification_test_ref": "../tests/s3-roundtrip.test.mjs"
+  },
+  "round_trip_evidence": {
+    "method": "src/08_harness/validate-mechanical-split.mjs + src/03_sources/SRC069/tests/s3-roundtrip.test.mjs",
+    "original_sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "reconstructed_sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "original_bytes": 27600,
+    "reconstructed_bytes": 27600,
+    "byte_identical": true
+  },
+  "frozen_defects_preserved": {
+    "D1_FOCUS_FALLS_TO_BODY_ON_WORKS_ROW_VIEWER_CLOSE": "PRESERVED_NOT_FIXED",
+    "D2_MOBILE_MENU_FOCUS_TRAPPED_ON_HIDDEN_MENU_CLOSE": "PRESERVED_NOT_FIXED",
+    "note": "The mechanical split extracts the authority's inline style and script verbatim, so both frozen focus defects survive into split/script.js unchanged. They are intentionally not repaired in this CLEAN lane."
+  },
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_status_note": "S4 parity is blocked on two conditions: an exact-head re-capture, and context-aware serving at the canonical selected-D virtual depth (see next_stage_note). Neither is executable from the repository split path alone.",
+  "parity_ref": null,
+  "next_stage": "S4_SOURCE_SPLIT_PARITY_HOLD",
+  "next_stage_note": "S4 is explicitly NOT executed at S3. SRC069 parity cannot be captured by loading the repository split path directly: both original and split must be served at the canonical selected-D virtual depth so the authority's own ../../ portal paths resolve. S4 requires a separate CENTRAL release."
+}

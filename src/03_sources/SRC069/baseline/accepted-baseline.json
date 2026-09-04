@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "status": "ACCEPTED",
+  "stage": "S2_AUTHORITY_CONTEXT_BASELINE",
+  "review_method": "DIRECT_CENTRAL_S2_EVIDENCE_REVIEW",
+  "accepted_via": {
+    "issue": 589,
+    "release_comment": "5543162150",
+    "automation": 611,
+    "stage_decisions": {
+      "S0": "PASS",
+      "S1": "PASS",
+      "S2": "PASS",
+      "S3": "RELEASED",
+      "S4": "NOT_RELEASED"
+    },
+    "accepted_at_utc": "2026-09-04T15:05:00Z"
+  },
+  "capture": {
+    "stage": "S2_AUTHORITY_CONTEXT_BASELINE",
+    "surface": "temporary read-only mirror reproducing the canonical selected-D directory depth",
+    "surface_local_path": "D:\\Temp\\src069-s2-candidate-c119b672\\",
+    "served_from": "127.0.0.1:8877",
+    "served_url": "http://127.0.0.1:8877/%5B01_%EB%9F%AC%EB%B8%8C%ED%8A%B8%EB%A6%AC%5D/03_%EB%94%94%EC%9E%90%EC%9D%B8%EC%B1%84%ED%83%9D%EB%B3%B8/69_%ED%92%80%EB%B7%B0%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4_%EB%9F%AC%EB%B8%8C%ED%8A%B8%EB%A6%AC%EB%AA%A8%EC%85%98%EB%9E%9C%EB%94%A9/%EC%84%A0%ED%83%9D-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html",
+    "mirror_file_count": 12,
+    "mirror_total_bytes": 35722083,
+    "mirror_vendored_into_repository": false,
+    "method": "Chromium headless via local Playwright against the frozen authority over loopback HTTP",
+    "state_count": 15,
+    "unexpected_js_errors": 0,
+    "page_errors": 0,
+    "failed_requests": 1,
+    "failed_request_detail": "favicon.ico HTTP 404 - LOCAL_SERVER_ARTIFACT (browser-initiated request; not referenced by the Source and not a Source defect)",
+    "console_note": "No portal-target, asset, or script console error occurred at any state. No JavaScript exception or page error occurred in any of the 4 navigations."
+  },
+  "authority": {
+    "fileId": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "revision": "V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
+  },
+  "accepted_s2_evidence": {
+    "bundle_id": "CLEAN108-SRC069-S2-CANDIDATE-260904",
+    "drive_folder_id": "1jNZIFqOlIf_N_de8uptsmTwc3ejoZro1",
+    "drive_path": "LoveTree_Evidence/CLEAN108-SRC069-S2-Candidate-260904/",
+    "report_file_id": "17N0w-qKs0tRu2bqVYf-iWwL4q78_IE1X",
+    "report_name": "SRC069_S2_AUTHORITY_CONTEXT_BASELINE_CANDIDATE_c119b672.md",
+    "screenshot_folder_id": "1qQS54ymnpWEJiLQ9pH-RTpOpeWdg3dQC",
+    "screenshot_count": 15,
+    "integrity": "rclone check --one-way against the staged bundle: 0 differences",
+    "storage_policy": "Evidence stays on Drive. The 15 PNGs are not copied into this capsule; this record references the immutable Drive bundle instead."
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "label": "DESKTOP",
+      "states": [
+        "INITIAL",
+        "WORKS_OPEN",
+        "VIEWER_TRACK02",
+        "VIEWER_TRACK59",
+        "ESC_FROM_VIEWER"
+      ]
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "label": "MOBILE",
+      "states": [
+        "INITIAL",
+        "MENU_OPEN",
+        "WORKS_OPEN",
+        "VIEWER_TRACK02",
+        "VIEWER_TRACK59"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "label": "SMALL_MOBILE",
+      "states": [
+        "INITIAL",
+        "MENU_OPEN",
+        "WORKS_OPEN",
+        "VIEWER_TRACK02",
+        "VIEWER_TRACK59"
+      ]
+    }
+  ],
+  "interaction_results": {
+    "all_viewports": {
+      "WORKS_OPEN_VIA_NAV_OR_MENU": true,
+      "WORKS_ROWS_RENDER_12": true,
+      "WORKS_PREVIEW_HOVER_AND_FOCUS": true,
+      "WORKS_ROW_OPENS_VIEWER": true,
+      "VIEWER_TRACK02_LOADED": true,
+      "PLAY_MEMORY_PATHS_OPENS_TRACK59": true,
+      "VIEWER_DISTINCT_TRACK59": true,
+      "WORKS_CLOSE_BUTTON": true,
+      "ESC_PRIORITY_VIEWER_THEN_WORKS_THEN_MENU": true,
+      "FOCUS_TRAP_ENTRY_FOR_ALL_THREE_OVERLAYS": true
+    },
+    "mobile_only": {
+      "MENU_OPEN": true,
+      "MENU_ITEM_STAGGER_100_TO_430_MS": true,
+      "WORKS_SINGLE_COLUMN": true,
+      "VIEWER_OPEN_WINDOW_BUTTON_HIDDEN": true,
+      "VIEWER_SOURCE_SUBTITLE_HIDDEN": true,
+      "OPENING_WORKS_AUTOCLOSES_MENU": true
+    }
+  },
+  "opened_target_identities": [
+    {
+      "template_key": "01",
+      "track": "02",
+      "iframe_title": "LoveTree \u00b7 \ud068\uc57c\uc815 \ud1a0\ud569",
+      "iframe_ready_state": "complete",
+      "inner_body_chars": 99236,
+      "source_folder": "02_첫여정통합-3개html합본",
+      "target_bytes": 111950
+    },
+    {
+      "template_key": "09",
+      "track": "59",
+      "iframe_title": "LoveTree \u00b7 Living Memory Book \u00b7 Track 59 V5",
+      "iframe_ready_state": "complete",
+      "inner_body_chars": 22064405,
+      "img_count": 8,
+      "source_folder": "59_\uba54\ubaa8\ub9ac\uc2a4\ud06c\ub9ac\ubd81_\ud398\uc774\uc9c0\uc57c\uc815",
+      "target_bytes": 17192064,
+      "distinct_from_track_02": true
+    }
+  ],
+  "portal_resolution": {
+    "resolved": 11,
+    "expected": 11,
+    "result": "11/11",
+    "method": "runtime relative URL resolution probe against the mirror at the canonical selected-D depth",
+    "note": "Every resolved content-length matched the Drive value byte-for-byte. Track 59 returned 17,192,064 bytes."
+  },
+  "remote_dependency_results": {
+    "cloudfront_video": "PASS",
+    "cloudfront_video_detail": "HTTP 206 Partial Content on all three viewports; readyState=4 (HAVE_ENOUGH_DATA); 1920x1080; paused=false; loop/autoplay/muted/playsinline honored",
+    "google_fonts": "PASS",
+    "onlinewebfonts_basis33": "PASS",
+    "document_fonts_size": 50,
+    "supersedes": "reference/source-track-69-fullviewport-portfolio/evidence/QA_RENDER_NOTES.txt",
+    "supersedes_note": "The recorded 'headless Chromium did not complete a screenshot while waiting on the remote CloudFront video/font assets' limitation did not occur in this runtime and is superseded for SRC069 purposes by the accepted S2 bundle."
+  },
+  "frozen_defects": [
+    {
+      "id": "D1",
+      "name": "FOCUS_FALLS_TO_BODY_ON_WORKS_ROW_VIEWER_CLOSE",
+      "classification": "SOURCE_DEFECT_FROZEN",
+      "accepted_into_baseline": true,
+      "fixed_in_this_lane": false,
+      "detail": "openTemplate() sets worksOverlay.hidden = true before returning control; the later lastFocus?.focus in closeViewer() targets the WORKS row, which is now inside a [hidden] container and therefore cannot receive focus, so focus falls through to BODY. Reproduced identically at 1440x900, 430x932, and 390x844. Contrast: ESC from a viewer opened on the visible .showreel button correctly restores focus to that button."
+    },
+    {
+      "id": "D2",
+      "name": "MOBILE_MENU_FOCUS_TRAPPED_ON_HIDDEN_MENU_CLOSE",
+      "classification": "SOURCE_DEFECT_FROZEN",
+      "accepted_into_baseline": true,
+      "fixed_in_this_lane": false,
+      "detail": "setMenu(false) toggles the open class, sets aria-hidden, and zeroes transition delays but implements no focus restoration, leaving focus on #menuClose inside #menuOverlay[aria-hidden=true]. Chromium confirms: 'Blocked aria-hidden on an element because its descendant retained focus... Element with focus: <button.icon-btn#menuClose>, Ancestor with aria-hidden: <div.menu-overlay#menuOverlay>'.",
+      "browser_evidence": "1 console WARNING at 430x932 (the only warning across the entire S2 session)"
+    }
+  ],
+  "defect_disposition_note": "D1 and D2 are recorded as frozen Source defects. They are NOT classified as PASS and are NOT fixed here. Any later fix belongs to a separate non-CLEAN lane.",
+  "next_stage_authorized": "MECHANICAL_SPLIT",
+  "parity_status": "HOLD"
+}

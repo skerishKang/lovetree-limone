@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verified_at_utc": "2026-09-04T16:13:30Z",
+  "identity_source": "CENTRAL release comment 5543162150 on Issue #589 names this file as the sole canonical SRC069 authority and supplies file ID, byte count, and SHA-256.",
+  "verified_by": "CLEAN-108 SRC069 S3 implementer reproduced the CENTRAL identity against live Google Drive; the Drive API SHA-256 for the live object matches the CENTRAL record and the materialized original.",
+  "fresh_drive": {
+    "folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+    "folder_name": "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "filename": "69_v3_exact_source_multi_template_portal.html",
+    "mime_type": "text/html",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "drive_api_sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "drive_modified_time": "2026-08-16T19:28:26.091Z"
+  },
+  "parent_chain": [
+    {
+      "id": "1sBdAyhjn5bDen4FswIcWKTeeCLzTZRni",
+      "name": "69_풀뷰포트폴리오_러브트리모션랜딩",
+      "role": "SOURCE_TRACK_FOLDER"
+    },
+    {
+      "id": "1-Llc1FMH_1fESTllFXFX7uFlJtishLuZ",
+      "name": "03_디자인채택본",
+      "role": "RELATIVE_ANCHOR_TARGET",
+      "note": "This is the directory that the authority's own ../../ prefix resolves to. It is the root of all 11 sibling portal targets."
+    },
+    {
+      "id": "1TPvk_RHGmArKy2D0YFPMIs5eBtYGHIgJ",
+      "name": "[01_러브트리]",
+      "role": "PROJECT_FOLDER"
+    }
+  ],
+  "root_copy_excluded": {
+    "file_id": "1WyiJtGv-EiBjA8Fih7XBbQRaE2hybNN7",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "disposition": "NOT_AUTHORITY",
+    "note": "Byte-identical to the canonical authority but stored at the Track 69 track-root depth, where the authority's own ../../ portal paths do NOT resolve. Excluded from the capsule by design: it was never downloaded, served, or rendered in this lane."
+  }
+}

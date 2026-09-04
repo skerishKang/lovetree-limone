@@ -1,0 +1,561 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-04T17:11:17.272Z",
+  "authority": {
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
+  },
+  "reconstructed": {
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
+  },
+  "round_trip": true,
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 964,
+    "style_close": 12641,
+    "script_open": 19813,
+    "script_close": 27074,
+    "script_blocks": [
+      {
+        "open": 19813,
+        "close": 27074,
+        "length": 7253
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 8231,
+      "sha256": "723177c4adc27c46534287c3bf4e1bde0e9ba3e8da13a4b0ecd58fa7fc32810a",
+      "git_blob_sha1": "18aa231316e9156e25a465d124ff0e38c38d8d97"
+    },
+    "split/styles.css": {
+      "bytes": 11670,
+      "sha256": "99f10e63601bbf004389deee80596153b439642dc001a1064f0abf487b8ef764",
+      "git_blob_sha1": "90b4357a2d6072832978534091acec48f711bc8f"
+    },
+    "split/script.js": {
+      "bytes": 7746,
+      "sha256": "f38c510c427febc17c102918d19e5f88df5c20d38fc6b60083b0dd73d0873781",
+      "git_blob_sha1": "18c8660153e2578aaf1f21f970f1fc38c022debb"
+    }
+  },
+  "portal_relative_url_preservation": {
+    "method": "regex extraction of path:'../../...' entries from the authority templates table and from split/script.js, then exact ordered + set comparison",
+    "authority_portal_count": 11,
+    "split_portal_count": 11,
+    "ordered_set_identical": true,
+    "prefixes_rewritten": false,
+    "targets_resolved_to_repository_paths": false,
+    "sibling_context_html_vendored": false,
+    "target_bytes_vendored": 0,
+    "target_identity_recorded": 11,
+    "authority_context_ref": "../authority-context.json",
+    "preservation_invariant": "The exact ordered set of portal relative URL strings in original/original.html equals the exact ordered set in split/script.js, byte for byte."
+  },
+  "s4_executed": false,
+  "s4_status": "HOLD",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
+    "required_serving": "CANONICAL_SELECTED_D_VIRTUAL_DEPTH",
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    }
+  },
+  "passed": 97,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority byte size stable (27600)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "frozen input layout intact"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "authority/sha256.txt matches locked SHA-256"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one style block (1/1)"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script, no attributed/external script tags"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "style span 964..12641"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "script span 19813..27074"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "style block precedes script block in document order"
+    },
+    {
+      "id": "T04f",
+      "pass": true,
+      "detail": "four external stylesheet/font <link> refs (4)"
+    },
+    {
+      "id": "T04g",
+      "pass": true,
+      "detail": "one external CloudFront background video src"
+    },
+    {
+      "id": "T04h",
+      "pass": true,
+      "detail": "authority markup carries zero <img> elements"
+    },
+    {
+      "id": "T04i",
+      "pass": true,
+      "detail": "no local repository-relative file references in authority markup"
+    },
+    {
+      "id": "T05a",
+      "pass": true,
+      "detail": "styles.css length matches authority style inner (11670)"
+    },
+    {
+      "id": "T05b",
+      "pass": true,
+      "detail": "styles.css === authority style inner (exact slice, order preserved)"
+    },
+    {
+      "id": "T06a",
+      "pass": true,
+      "detail": "script.js length matches authority script inner (7253)"
+    },
+    {
+      "id": "T06b",
+      "pass": true,
+      "detail": "script.js === authority script inner (exact slice, order preserved)"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one stylesheet glue reference"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one external script glue reference"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "no inline style remains in split index"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "no inline/alternate script remains in split index"
+    },
+    {
+      "id": "T07e",
+      "pass": true,
+      "detail": "zero inline script bodies; single closing tag belongs to the external script src"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "materialization source_id = SRC069"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "style boundary matches independent derivation"
+    },
+    {
+      "id": "T08c",
+      "pass": true,
+      "detail": "script boundary matches independent derivation"
+    },
+    {
+      "id": "T08d",
+      "pass": true,
+      "detail": "single script block recorded"
+    },
+    {
+      "id": "T08e",
+      "pass": true,
+      "detail": "script block length 7253 matches extracted JS"
+    },
+    {
+      "id": "T08f",
+      "pass": true,
+      "detail": "zero inter-script gaps recorded"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reconstructed byte-identical to frozen authority (27600 bytes)"
+    },
+    {
+      "id": "T09b",
+      "pass": true,
+      "detail": "reconstructed SHA-256 equals authority SHA-256"
+    },
+    {
+      "id": "T09c",
+      "pass": true,
+      "detail": "reconstructed byte size equals authority (27600)"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "rule/keyframe/property/z-index inventory unchanged ({\"rules\":162,\"keyframes\":0,\"media\":9,\"supports\":0,\"customProps\":0,\"zIndex\":6,\"position\":12,\"transitions\":11,\"animations\":1,\"selectors\":0})"
+    },
+    {
+      "id": "T10b",
+      "pass": true,
+      "detail": "styles.css is a byte-exact copy of the authority style inner (rule order preserved)"
+    },
+    {
+      "id": "T11a",
+      "pass": true,
+      "detail": "script source text identical => identical event/timing/pointer behavior"
+    },
+    {
+      "id": "T11b",
+      "pass": true,
+      "detail": "no inline script terminator inside script.js"
+    },
+    {
+      "id": "T11c",
+      "pass": true,
+      "detail": "event/animation/timer constant inventory unchanged ({\"addEventListener\":13,\"removeEventListener\":0,\"requestAnimationFrame\":0,\"setTimeout\":0,\"setInterval\":0,\"iife\":0,\"functions\":7,\"arrows\":17,\"templateLiterals\":6})"
+    },
+    {
+      "id": "T11d",
+      "pass": true,
+      "detail": "authority QA hook window.lovetreePortal preserved"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "split index is a pure positional splice of the authority (DOM order, ids, classes, data-* unchanged)"
+    },
+    {
+      "id": "T12b",
+      "pass": true,
+      "detail": "authority head, markup gap, and tail appear in original document order"
+    },
+    {
+      "id": "T12c",
+      "pass": true,
+      "detail": "20 unique authority element ids all present in split shell"
+    },
+    {
+      "id": "T12d",
+      "pass": true,
+      "detail": "62 unique authority class attributes all preserved"
+    },
+    {
+      "id": "T12e",
+      "pass": true,
+      "detail": "12 unique authority data-* attributes all preserved"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "no backend/DB/auth/provider markers in split runtime files"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no product/MVP/adapter or repository wiring in split shell"
+    },
+    {
+      "id": "T15b",
+      "pass": true,
+      "detail": "no TS/TSX/JSX files in split surface (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T15c",
+      "pass": true,
+      "detail": "split surface contains exactly the four expected files (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T15d",
+      "pass": true,
+      "detail": "no split/assets/** directory created (no local file assets referenced by the authority)"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "4 authority href references preserved byte-identical in split shell"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "1 authority src references preserved byte-identical in split shell"
+    },
+    {
+      "id": "T16c",
+      "pass": true,
+      "detail": "split shell adds exactly one deterministic stylesheet glue href"
+    },
+    {
+      "id": "T16d",
+      "pass": true,
+      "detail": "split shell adds exactly one deterministic script glue src"
+    },
+    {
+      "id": "T16e",
+      "pass": true,
+      "detail": "authority embeds zero data: URIs, so no media payload can drift"
+    },
+    {
+      "id": "T16f",
+      "pass": true,
+      "detail": "authority video element preserved verbatim in split shell"
+    },
+    {
+      "id": "T17a",
+      "pass": true,
+      "detail": "11 portal paths declared in the authority templates table"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "11 portal paths present in split/script.js"
+    },
+    {
+      "id": "T17c",
+      "pass": true,
+      "detail": "exact ordered set of portal relative URLs is byte-identical between authority and split"
+    },
+    {
+      "id": "T17d",
+      "pass": true,
+      "detail": "portal URL set equality (order-independent)"
+    },
+    {
+      "id": "T17e",
+      "pass": true,
+      "detail": "independent ../.. occurrence count preserved (11/11)"
+    },
+    {
+      "id": "T17f",
+      "pass": true,
+      "detail": "every portal path still carries the exact ../../ prefix"
+    },
+    {
+      "id": "T17g",
+      "pass": true,
+      "detail": "every portal path still targets a .html sibling file"
+    },
+    {
+      "id": "T17h",
+      "pass": true,
+      "detail": "no portal path was rebased to an absolute or protocol URL"
+    },
+    {
+      "id": "T17i",
+      "pass": true,
+      "detail": "no portal path was rebased to a root-relative repository URL"
+    },
+    {
+      "id": "T17j",
+      "pass": true,
+      "detail": "no portal path was rewritten to a repo/Drive/MVP location"
+    },
+    {
+      "id": "T17k",
+      "pass": true,
+      "detail": "portal paths are distinct (no duplicate/collapsed mappings)"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "authority-context declares runtime_context_required=true"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "root copy is explicitly not the authority"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "sibling portal context HTML is not vendored"
+    },
+    {
+      "id": "T18d",
+      "pass": true,
+      "detail": "11 portal targets recorded"
+    },
+    {
+      "id": "T18e",
+      "pass": true,
+      "detail": "authority-context relative_url set equals the authority's own portal set"
+    },
+    {
+      "id": "T18f",
+      "pass": true,
+      "detail": "every portal target records Drive file id + filename + bytes + SHA-256"
+    },
+    {
+      "id": "T18g",
+      "pass": true,
+      "detail": "portal target byte total reconciles (35,694,483 bytes recorded, none vendored)"
+    },
+    {
+      "id": "T18h",
+      "pass": true,
+      "detail": "portal target summary consistent"
+    },
+    {
+      "id": "T18i",
+      "pass": true,
+      "detail": "vendoring policy records zero repository vendoring"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "all split outputs match recorded bytes + SHA-256 + Git blob SHA-1"
+    },
+    {
+      "id": "T19b",
+      "pass": true,
+      "detail": "materialization authority agrees with frozen original"
+    },
+    {
+      "id": "T19c",
+      "pass": true,
+      "detail": "materialization contracts complete and all forbidden transformations unrecorded"
+    },
+    {
+      "id": "T19d",
+      "pass": true,
+      "detail": "generation = MECHANICAL_INLINE_EXTRACTION"
+    },
+    {
+      "id": "T19e",
+      "pass": true,
+      "detail": "recorded round-trip evidence matches the independent reconstruction"
+    },
+    {
+      "id": "T20a",
+      "pass": true,
+      "detail": "S0/S1/S2 stages complete"
+    },
+    {
+      "id": "T20b",
+      "pass": true,
+      "detail": "mechanical_split_complete=true"
+    },
+    {
+      "id": "T20c",
+      "pass": true,
+      "detail": "source_split_parity_pass=false (S4 parity NOT accepted)"
+    },
+    {
+      "id": "T20d",
+      "pass": true,
+      "detail": "mechanical_split_ref=\"split/materialization.json\""
+    },
+    {
+      "id": "T20e",
+      "pass": true,
+      "detail": "parity_ref=null at S3"
+    },
+    {
+      "id": "T20f",
+      "pass": true,
+      "detail": "runtime policy unchanged (HTML_CSS_JS_MECHANICAL_ONLY)"
+    },
+    {
+      "id": "T20g",
+      "pass": true,
+      "detail": "TSX remains forbidden during split"
+    },
+    {
+      "id": "T20h",
+      "pass": true,
+      "detail": "no S4 parity acceptance evidence created at S3"
+    },
+    {
+      "id": "T20i",
+      "pass": true,
+      "detail": "no parity/ capture directory created at S3"
+    },
+    {
+      "id": "T21",
+      "pass": true,
+      "detail": "materialization status = MATERIALIZED_PENDING_PARITY"
+    },
+    {
+      "id": "T21b",
+      "pass": true,
+      "detail": "parity_status = PENDING_EXACT_HEAD_CAPTURE"
+    },
+    {
+      "id": "T21c",
+      "pass": true,
+      "detail": "next_stage = S4_SOURCE_SPLIT_PARITY_HOLD"
+    },
+    {
+      "id": "T22a",
+      "pass": true,
+      "detail": "capture_surface.mode = CONTEXT_AWARE_ONLY"
+    },
+    {
+      "id": "T22b",
+      "pass": true,
+      "detail": "neither repository surface is claimed as a runtime-equivalent authority surface"
+    },
+    {
+      "id": "T22c",
+      "pass": true,
+      "detail": "shared single-executable harnesses SKIP this capsule by disposition"
+    },
+    {
+      "id": "T22d",
+      "pass": true,
+      "detail": "SKIP reason = CONTEXT_AWARE_SURFACE_ONLY"
+    },
+    {
+      "id": "T22e",
+      "pass": true,
+      "detail": "frozen defects D1/D2 recorded as preserved, not fixed"
+    },
+    {
+      "id": "T22f",
+      "pass": true,
+      "detail": "accepted S2 baseline authority agrees with frozen original"
+    }
+  ]
+}
