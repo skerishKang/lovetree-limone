@@ -12,6 +12,13 @@
  * - global-tolerance prohibition (tolerance is per-recipe/source only)
  * - arbitrary-code field prohibition (no shell/eval/code payloads)
  *
+ * LAYERING NOTE (CENTRAL Blocker B): this validator enforces SYNTAX only.
+ * `SYNTAX VALID` (a `__`-prefixed name passes the allowlist) is deliberately
+ * DISTINCT from `SOURCE-BOUND TRUSTED`. Trust is decided solely by the
+ * analyzer's SOURCE_HOOK_REGISTRY binding (analyze-html.mjs
+ * `runtimeHookBinding`), never by this allowlist. "__foo is syntactically
+ * valid" must never imply "therefore it is trusted for this Source".
+ *
  * No dependencies. No filesystem access. No eval. Deterministic.
  */
 

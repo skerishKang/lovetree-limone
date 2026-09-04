@@ -11,6 +11,11 @@
  * and NEVER falls back to `window.__lt` (or any hook) for unknown sources.
  * Unknown shapes are reported via `disposition.holds` (fail-closed).
  *
+ * Runtime-hook DISCOVERY is informational (`scripts.windowHooks`); runtime-hook
+ * TRUST is source-bound only: SOURCE IDENTITY + EXPECTED HOOK + EXPLICIT
+ * REGISTRY (see SOURCE_HOOK_REGISTRY). A familiar global name never implies
+ * that an arbitrary Source is understood.
+ *
  * Runtime: Node built-ins only.
  */
 
@@ -80,6 +85,62 @@ function signalPresent(html, patterns) {
     if (re.test(html)) return { present: true, evidence: name };
   }
   return { present: false, evidence: null };
+}
+
+/**
+ * Explicit v1 Source -> expected runtime-hook registry, built ONLY from
+ * already-verified authorities. Trust is granted only when the discovered
+ * hook set includes the registered expectation for that exact Source ID.
+ * A familiar name (e.g. `window.__lt`) NEVER implies a Source is understood.
+ *
+ * SRC068 is DUAL_VARIANT: no single runtime driver is registered, so no hook
+ * match can remove its AUTO_SPLIT_REQUIRES_PLUGIN / HOLD semantics.
+ */
+export const SOURCE_HOOK_REGISTRY = Object.freeze({
+  SRC056: Object.freeze({ expectedHooks: Object.freeze(['__lt']), notes: 'verified SIMPLE single-executable authority' }),
+  SRC060: Object.freeze({ expectedHooks: Object.freeze(['__LT60__', '__LT60_V12__']), notes: 'verified COMPLEX runtime authority' }),
+  SRC062: Object.freeze({ expectedHooks: Object.freeze(['__track62']), notes: 'accepted CLEAN_COMPLETE authority (read-only reference)' }),
+  SRC064: Object.freeze({ expectedHooks: Object.freeze(['__TRACK64__']), notes: 'verified portal runtime authority' }),
+  SRC068: Object.freeze({ variant: 'DUAL_VARIANT', expectedHooks: Object.freeze([]), notes: 'no generic hook trust; mechanical split requires plugin' }),
+});
+
+/**
+ * Compute the source-bound runtime hook binding.
+ *
+ * Status vocabulary:
+ *   BOUND                 - registered source, expected hook discovered
+ *   NO_EXPECTED_HOOK      - registered source with no single runtime-driver
+ *                           expectation (e.g. DUAL_VARIANT); nothing to bind
+ *   EXPECTED_HOOK_MISSING - registered source, expected hook NOT discovered
+ *   UNREGISTERED_SOURCE   - sourceId valid but absent from the registry
+ *   AMBIGUOUS             - document exposes hooks registered to other
+ *                           sources alongside its own; binding not trusted
+ *
+ * @param {string|null} sourceId normalized SRCxxx id (or null when unknown)
+ * @param {string[]} customHooks discovered `__`-style runtime hook names
+ * @returns {{sourceId: string|null, discovered: string[], expected: string[], matched: boolean, status: string}}
+ */
+function computeRuntimeHookBinding(sourceId, customHooks) {
+  const discovered = [...customHooks];
+  const entry = sourceId ? SOURCE_HOOK_REGISTRY[sourceId] : undefined;
+  if (!entry) {
+    return { sourceId, discovered, expected: [], matched: false, status: 'UNREGISTERED_SOURCE' };
+  }
+  const expected = [...entry.expectedHooks];
+  if (entry.variant === 'DUAL_VARIANT' || expected.length === 0) {
+    return { sourceId, discovered, expected, matched: false, status: 'NO_EXPECTED_HOOK' };
+  }
+  const matchedHooks = discovered.filter((h) => expected.includes(h));
+  const foreignHooks = discovered.filter(
+    (h) => !expected.includes(h) && Object.values(SOURCE_HOOK_REGISTRY).some((e) => e.expectedHooks.includes(h)),
+  );
+  if (matchedHooks.length > 0 && foreignHooks.length > 0) {
+    return { sourceId, discovered, expected, matched: false, status: 'AMBIGUOUS' };
+  }
+  if (matchedHooks.length > 0) {
+    return { sourceId, discovered, expected, matched: true, status: 'BOUND' };
+  }
+  return { sourceId, discovered, expected, matched: false, status: 'EXPECTED_HOOK_MISSING' };
 }
 
 /**
@@ -323,13 +384,34 @@ export function analyzeAuthorityHtml({ html, bytes = null, sourceId = null, auth
     propose('PLAYBACK', ['media/playback surface']);
   }
   if (runtimeCandidates.video || /poster=|<video/i.test(text)) propose('MEDIA_STATE', ['video/poster surface']);
+  // Discovery stays informational: list every exposed window global-looking
+  // hook (`__`-prefixed or historically known names). Familiarity NEVER
+  // grants trust — binding below is source-bound.
   const KNOWN_HOOKS = new Set(['__lt', '__LT57__', '__LT58__', '__LT60__', '__LT60_V12__', '__track62', '__TRACK64__', '__TRACK68__', '__lovetreeQA', '__lovetreeStats', '__LT60_V12__']);
   const customHooks = windowHooks.values.filter((h) => h.startsWith('__') || KNOWN_HOOKS.has(h));
   if (customHooks.length) {
     propose('CUSTOM_RUNTIME_HOOK', customHooks.slice(0, 8).map((h) => `window.${h}`));
-  } else if (click.present || wheel.present || dragSignals.present || touch.present) {
-    if (!holds.includes('UNKNOWN_RUNTIME_HOOK_HOLD')) holds.push('UNKNOWN_RUNTIME_HOOK_HOLD');
-    warnings.push('rich interaction surface with no recognized window runtime hook; journey needs a source-specific driver');
+  }
+
+  // Source-bound runtime hook binding: trust requires SOURCE IDENTITY +
+  // EXPECTED HOOK + EXPLICIT REGISTRY, never "the global name looks familiar".
+  const runtimeHookBinding = computeRuntimeHookBinding(normalizedSourceId, customHooks);
+  const richInteraction = click.present || wheel.present || dragSignals.present || touch.present;
+  if (runtimeHookBinding.status === 'BOUND') {
+    // Registered source with its expected hook present => binding trusted.
+    // Other HOLD conditions (unknown source, unsupported shape) still apply.
+  } else if (runtimeHookBinding.status === 'NO_EXPECTED_HOOK') {
+    // Registered source with no single runtime-driver expectation (e.g.
+    // DUAL_VARIANT): plugin/dual semantics govern; a hook match can never
+    // override that. Rich interaction with no driver still holds.
+    if (richInteraction) {
+      holds.push('UNKNOWN_RUNTIME_HOOK_HOLD');
+      warnings.push('rich interaction surface with no source-bound runtime hook driver; journey needs a source-specific driver');
+    }
+  } else {
+    // UNREGISTERED_SOURCE | EXPECTED_HOOK_MISSING | AMBIGUOUS => fail closed.
+    holds.push('UNBOUND_RUNTIME_HOOK_HOLD');
+    warnings.push(`no source-bound runtime hook binding (${runtimeHookBinding.status}); no generic fallback applied for ${normalizedSourceId ?? 'unknown source'}`);
   }
 
   return {
@@ -410,6 +492,7 @@ export function analyzeAuthorityHtml({ html, bytes = null, sourceId = null, auth
       variantSentinel: hasVariantSentinel,
       dualIndicators,
     },
+    runtimeHookBinding,
     s3Classification,
     s3Reasons,
     candidateStateFamilies: families,

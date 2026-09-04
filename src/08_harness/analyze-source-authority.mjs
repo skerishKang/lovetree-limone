@@ -4,17 +4,25 @@
  *
  * CLEAN-108 Auto Analyzer CLI — Slice 1 (#611).
  *
- * READ-ONLY: reads one authoritative single-HTML file (+ optional manifest),
- * writes an analysis JSON document to stdout (or --out <path>).
+ * ANALYZER CORE (`auto-analyzer/analyze-html.mjs`):
+ *   pure / read-only, no filesystem mutation of any kind.
+ *
+ * CLI:
+ *   authority (+ optional manifest) are READ-ONLY inputs.
+ *   analysis JSON may be written ONLY to an explicitly safe non-authority
+ *   path via --out; the destination is fail-closed guarded (see
+ *   guardOutputDestination) BEFORE any mkdir/write/rename side effect.
+ *
  * NEVER mutates the authority. NEVER selects canonical variants.
  * NEVER falls back to `window.__lt` (or any hook) for unknown sources —
- * unknown shapes are reported via `disposition.holds` (fail-closed).
+ * unknown shapes are reported via `disposition.holds` (fail-closed) and
+ * runtime-hook trust is source-bound via SOURCE_HOOK_REGISTRY.
  *
  * Usage:
  *   node src/08_harness/analyze-source-authority.mjs --input <original.html> [--source-id SRCxxx] [--manifest <manifest.json>] [--out <analysis.json>]
  *
  * Exit code is 0 on successful analysis (HOLD is a valid result, not a CLI
- * error). Non-zero only for I/O / usage errors.
+ * error). Non-zero only for I/O / usage / unsafe-output-path errors.
  *
  * Runtime: Node built-ins only.
  */
@@ -29,12 +37,55 @@ function usage() {
     'Usage: node src/08_harness/analyze-source-authority.mjs --input <html> [--source-id SRCxxx] [--manifest <manifest.json>] [--out <json>]',
     '',
     'Options:',
-    '  --input <path>       authoritative single-HTML file (required, read-only)',
+    '  --input <path>       authoritative single-HTML file (required, READ-ONLY input)',
     '  --source-id <id>     SRCxxx identity (optional; inferred from --manifest)',
-    '  --manifest <path>    parsed for authority_mode/dual-variant policy only',
-    '  --out <path>         write analysis JSON here instead of stdout',
+    '  --manifest <path>    parsed for authority_mode/dual-variant policy only (READ-ONLY input)',
+    '  --out <path>         write analysis JSON here instead of stdout; SAFE non-authority path',
+    '                       ONLY (rejected if it resolves to --input, to --manifest, or under',
+    '                       src/03_sources/** — fail closed before any write side effect)',
     '  --help               print this help',
   ].join('\n');
+}
+
+const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..');
+const SOURCE_CAPSULE_ROOT = path.join(REPO_ROOT, 'src', '03_sources');
+
+function samePath(a, b) {
+  const na = path.resolve(a);
+  const nb = path.resolve(b);
+  return process.platform === 'win32' ? na.toLowerCase() === nb.toLowerCase() : na === nb;
+}
+
+function isPathInside(child, parent) {
+  const rel = path.relative(parent, child);
+  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+}
+
+/**
+ * Fail-closed output destination guard (CENTRAL Blocker A).
+ *
+ * Rejects, in order, before ANY filesystem mutation (no mkdir, writeFile,
+ * touch, truncate, or rename may happen before this succeeds):
+ *   A1. --out resolving to the authority input path
+ *   A2. --out resolving to the manifest path (when --manifest is given)
+ *   A3. --out resolving inside the accepted Source capsule tree
+ *       (src/03_sources/** of this repository)
+ *
+ * A rejected invocation leaves authority bytes unchanged, manifest bytes
+ * unchanged, no output file, and no new output parent directory.
+ */
+function guardOutputDestination(args) {
+  if (!args.out) return;
+  const out = path.resolve(args.out);
+  if (samePath(out, args.input)) {
+    fail(`OUTPUT_EQUALS_INPUT_REJECTED: --out (${out}) resolves to the authority input itself; the authority is read-only`);
+  }
+  if (args.manifest && samePath(out, args.manifest)) {
+    fail(`OUTPUT_EQUALS_MANIFEST_REJECTED: --out (${out}) resolves to the manifest input; the manifest is read-only`);
+  }
+  if (isPathInside(out, SOURCE_CAPSULE_ROOT)) {
+    fail(`OUTPUT_UNDER_SRC03_REJECTED: --out (${out}) is inside the accepted Source capsule tree (${SOURCE_CAPSULE_ROOT}); the analyzer must never write into Source authority/capsule ownership`);
+  }
 }
 
 function parseArgs(argv) {
@@ -76,6 +127,10 @@ if (args.help) {
   process.exit(0);
 }
 if (!args.input) fail(`--input is required\n${usage()}`);
+
+// Output destination safety must be proven BEFORE any read/write side effect
+// (reads are read-only, but rejection must leave every file untouched).
+guardOutputDestination(args);
 
 let bytes;
 try {

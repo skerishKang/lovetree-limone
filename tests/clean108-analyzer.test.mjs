@@ -27,6 +27,24 @@ const FIXTURES = path.join(REPO_ROOT, 'src/08_harness/fixtures/analyzer-expectat
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 const readCapsule = (...parts) => fs.readFileSync(path.join(REPO_ROOT, 'src/03_sources', ...parts));
 
+/**
+ * Run the CLI expecting a non-zero fail-closed rejection and assert the
+ * exact machine-readable rejection marker appears on stderr.
+ */
+function runCliReject(args, expectedMarker) {
+  let code = 0;
+  let stderr = '';
+  try {
+    execFileSync('node', [ANALYZER_CLI, ...args], { encoding: 'utf8', stdio: 'pipe' });
+  } catch (error) {
+    code = typeof error.status === 'number' ? error.status : -1;
+    stderr = String(error.stderr ?? '');
+  }
+  assert.notEqual(code, 0, `CLI must exit non-zero on rejection; args=${JSON.stringify(args)}`);
+  assert.ok(stderr.includes(expectedMarker), `stderr must include ${expectedMarker}; got: ${JSON.stringify(stderr)}`);
+  return { code, stderr };
+}
+
 function familiesOf(analysis) {
   return analysis.candidateStateFamilies.map((entry) => entry.family);
 }
@@ -325,6 +343,127 @@ test('FIXTURE_SRC068_PASS', () => {
   assert.notEqual(sha256(bytesB), sha256(readCapsule('SRC068', 'original/A/original.html')), 'A/B authorities must differ');
 });
 
+// ---------------------------------------------------------------------------
+// Output destination guard — CENTRAL Blocker A (fail-closed, no side effects)
+// ---------------------------------------------------------------------------
+
+test('OUTPUT_EQUALS_INPUT_REJECTED', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC056/original/original.html');
+  const beforeBytes = fs.readFileSync(authority);
+  const beforeMtime = fs.statSync(authority).mtimeMs;
+  runCliReject(['--input', authority, '--out', authority], 'OUTPUT_EQUALS_INPUT_REJECTED');
+  assert.deepEqual(fs.readFileSync(authority), beforeBytes, 'authority bytes must be unchanged');
+  assert.equal(fs.statSync(authority).mtimeMs, beforeMtime, 'authority mtime must be unchanged');
+});
+
+test('OUTPUT_EQUALS_MANIFEST_REJECTED', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC068/original/A/original.html');
+  const manifest = path.join(REPO_ROOT, 'src/03_sources/SRC068/manifest.json');
+  const beforeBytes = fs.readFileSync(manifest);
+  const beforeMtime = fs.statSync(manifest).mtimeMs;
+  runCliReject(['--input', authority, '--manifest', manifest, '--out', manifest], 'OUTPUT_EQUALS_MANIFEST_REJECTED');
+  assert.deepEqual(fs.readFileSync(manifest), beforeBytes, 'manifest bytes must be unchanged');
+  assert.equal(fs.statSync(manifest).mtimeMs, beforeMtime, 'manifest mtime must be unchanged');
+});
+
+test('OUTPUT_UNDER_SRC03_REJECTED', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC056/original/original.html');
+  const out = path.join(REPO_ROOT, 'src/03_sources/SRC056/analysis.json');
+  runCliReject(['--input', authority, '--out', out], 'OUTPUT_UNDER_SRC03_REJECTED');
+  assert.ok(!fs.existsSync(out), 'no output file may exist after rejection');
+});
+
+test('NO_DIRECTORY_CREATION_ON_REJECT', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC056/original/original.html');
+  const deep = path.join(REPO_ROOT, 'src/03_sources/SRC056/reject-probe/nested/analysis.json');
+  runCliReject(['--input', authority, '--out', deep], 'OUTPUT_UNDER_SRC03_REJECTED');
+  assert.ok(!fs.existsSync(path.dirname(deep)), 'no new output parent directory may be created');
+});
+
+test('AUTHORITY_BYTES_UNCHANGED_ON_REJECT', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC056/original/original.html');
+  const beforeBytes = fs.readFileSync(authority);
+  const beforeMtime = fs.statSync(authority).mtimeMs;
+  for (const extra of [
+    ['--out', authority],
+    ['--out', path.join(REPO_ROOT, 'src/03_sources/SRC056/tmp/analysis.json')],
+  ]) {
+    runCliReject(['--input', authority, ...extra], 'REJECTED');
+  }
+  assert.deepEqual(fs.readFileSync(authority), beforeBytes, 'authority bytes changed after rejected runs');
+  assert.equal(fs.statSync(authority).mtimeMs, beforeMtime, 'authority mtime changed after rejected runs');
+});
+
+test('MANIFEST_BYTES_UNCHANGED_ON_REJECT', () => {
+  const authority = path.join(REPO_ROOT, 'src/03_sources/SRC068/original/A/original.html');
+  const manifest = path.join(REPO_ROOT, 'src/03_sources/SRC068/manifest.json');
+  const beforeBytes = fs.readFileSync(manifest);
+  const beforeMtime = fs.statSync(manifest).mtimeMs;
+  runCliReject(['--input', authority, '--manifest', manifest, '--out', manifest], 'OUTPUT_EQUALS_MANIFEST_REJECTED');
+  runCliReject(['--input', authority, '--manifest', manifest, '--out', path.join(REPO_ROOT, 'src/03_sources/SRC068/tmp/analysis.json')], 'OUTPUT_UNDER_SRC03_REJECTED');
+  assert.deepEqual(fs.readFileSync(manifest), beforeBytes, 'manifest bytes changed after rejected runs');
+  assert.equal(fs.statSync(manifest).mtimeMs, beforeMtime, 'manifest mtime changed after rejected runs');
+});
+
+// ---------------------------------------------------------------------------
+// Source-bound runtime hook binding — CENTRAL Blocker B (discovery vs trust)
+// ---------------------------------------------------------------------------
+
+test('VALID_UNREGISTERED_SOURCE_FAMILIAR_HOOK_HOLD', () => {
+  const html = '<html><head><style>a{}</style></head><body><div id="x"></div><script>window.__lt={mode:"x"};</script></body></html>';
+  const analysis = analyzeAuthorityHtml({ html, sourceId: 'SRC999' });
+  assert.ok(analysis.scripts.windowHooks.includes('__lt'), 'hook discovery must remain informational');
+  assert.equal(analysis.runtimeHookBinding.status, 'UNREGISTERED_SOURCE');
+  assert.equal(analysis.runtimeHookBinding.matched, false);
+  assert.deepEqual(analysis.runtimeHookBinding.expected, []);
+  assert.ok(analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'familiar __lt on unregistered source must HOLD');
+  assert.equal(analysis.disposition.status, 'HOLD');
+});
+
+test('REGISTERED_SOURCE_EXPECTED_HOOK_ACCEPTED', () => {
+  const bytes = readCapsule('SRC056', 'original/original.html');
+  const analysis = analyzeAuthorityHtml({ html: bytes.toString('utf8'), bytes, sourceId: 'SRC056' });
+  assert.equal(analysis.runtimeHookBinding.status, 'BOUND');
+  assert.equal(analysis.runtimeHookBinding.matched, true);
+  assert.ok(analysis.runtimeHookBinding.expected.includes('__lt'));
+  assert.ok(!analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'registered + expected hook must not hold on hook grounds');
+  assert.equal(analysis.s3Classification, 'AUTO_SPLIT_SUPPORTED');
+});
+
+test('REGISTERED_SOURCE_WRONG_HOOK_HOLD', () => {
+  const html = '<html><head><style>a{}</style></head><body><div id="x"></div><script>window.__track62={};</script></body></html>';
+  const analysis = analyzeAuthorityHtml({ html, sourceId: 'SRC056' });
+  assert.equal(analysis.runtimeHookBinding.status, 'EXPECTED_HOOK_MISSING');
+  assert.equal(analysis.runtimeHookBinding.matched, false);
+  assert.ok(analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'wrong hook on registered source must HOLD');
+  assert.equal(analysis.disposition.status, 'HOLD');
+});
+
+test('RICH_INTERACTIVE_UNREGISTERED_HOLDS', () => {
+  const html = '<html><head><style>a{}</style></head><body><div id="x"></div><script>el.addEventListener("wheel",h);document.addEventListener("pointerdown",p);</script></body></html>';
+  const analysis = analyzeAuthorityHtml({ html, sourceId: 'SRC999' });
+  assert.equal(analysis.runtimeHookBinding.status, 'UNREGISTERED_SOURCE');
+  assert.ok(analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'rich interactive source with no registered driver must HOLD');
+});
+
+test('CROSS_SOURCE_HOOK_MIX_AMBIGUOUS', () => {
+  const html = '<html><head><style>a{}</style></head><body><script>window.__lt={};window.__track62={};</script></body></html>';
+  const analysis = analyzeAuthorityHtml({ html, sourceId: 'SRC056' });
+  assert.equal(analysis.runtimeHookBinding.status, 'AMBIGUOUS');
+  assert.equal(analysis.runtimeHookBinding.matched, false);
+  assert.ok(analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'mixed-source hook exposure must not be trusted');
+});
+
+test('DUAL_VARIANT_HOOK_TRUST_NEVER_OVERRIDES', () => {
+  const bytes = readCapsule('SRC068', 'original/A/original.html');
+  const manifest = JSON.parse(readCapsule('SRC068', 'manifest.json').toString('utf8'));
+  const analysis = analyzeAuthorityHtml({ html: bytes.toString('utf8'), bytes, sourceId: 'SRC068', manifest });
+  assert.equal(analysis.s3Classification, 'AUTO_SPLIT_REQUIRES_PLUGIN', 'dual variant must stay plugin-required');
+  assert.equal(analysis.runtimeHookBinding.status, 'NO_EXPECTED_HOOK', 'no generic runtime-driver expectation for dual variant');
+  assert.equal(analysis.runtimeHookBinding.matched, false);
+  assert.ok(analysis.disposition.holds.length > 0, 'dual variant must remain HOLD');
+});
+
 test('UNKNOWN_SOURCE_FAIL_CLOSED', () => {
   const html = '<html><head><style>a{}</style></head><body><div id="x"></div><script>el.addEventListener("pointerdown",h);</script></body></html>';
   const noId = analyzeAuthorityHtml({ html });
@@ -345,6 +484,11 @@ test('SRC062_REFERENCE_RECALL_READONLY', () => {
   const analysis = analyzeAuthorityHtml({ html: bytes.toString('utf8'), bytes, sourceId: 'SRC062' });
   assert.ok(analysis.scripts.windowHooks.includes('__track62'), 'must discover __track62, never assume __lt');
   assert.ok(!analysis.scripts.windowHooks.includes('__lt') || true, 'informational only');
+  assert.equal(analysis.s3Classification, 'AUTO_SPLIT_SUPPORTED', 'SRC062 read-only reference classification drift');
+  assert.equal(analysis.runtimeHookBinding.status, 'BOUND', 'SRC062 <-> __track62 binding must be recognized');
+  assert.equal(analysis.runtimeHookBinding.matched, true);
+  assert.deepEqual(analysis.runtimeHookBinding.expected, ['__track62']);
+  assert.ok(!analysis.disposition.holds.includes('UNBOUND_RUNTIME_HOOK_HOLD'), 'accepted SRC062 binding must not hold on hook grounds');
   const families = familiesOf(analysis);
   for (const expected of ['WHEEL_TRAVEL', 'DRAG_TRAVEL', 'VIEWER', 'PANEL', 'MENU']) {
     assert.ok(families.includes(expected), `SRC062 reference recall missing ${expected}`);
