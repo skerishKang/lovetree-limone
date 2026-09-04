@@ -169,10 +169,18 @@ export async function captureStableStates({ browser, baseUrl, entryFile, side, o
     await page.waitForTimeout(500);
     await shot("03_REEL_OFFSET_470");
 
+    const paper2 = await page.evaluate(() => { const r = document.getElementById("paper").getBoundingClientRect(); return { cx: r.x + r.width / 2, cy: r.y + r.height / 2 }; });
+    await page.mouse.move(paper2.cx, paper2.cy);
     const vBefore = await page.evaluate(() => Math.round(window.__LOVE_TREE_V7_R24__.viewY * 1e6) / 1e6);
     await page.mouse.wheel(0, -300);
-    await page.waitForTimeout(3000);
-    const vAfter = await page.evaluate(() => Math.round(window.__LOVE_TREE_V7_R24__.viewY * 1e6) / 1e6);
+    let vAfter = vBefore;
+    let prevV = null;
+    for (let i = 0; i < 30; i++) {
+      await page.waitForTimeout(200);
+      vAfter = await page.evaluate(() => Math.round(window.__LOVE_TREE_V7_R24__.viewY * 1e6) / 1e6);
+      if (prevV === vAfter) break;
+      prevV = vAfter;
+    }
     results.push({ side, viewport: vp.name, state: "WHEEL_PROOF", viewYBefore: vBefore, viewYAfter: vAfter, delta: Math.round((vAfter - vBefore) * 1e4) / 1e4, moved: vAfter > vBefore });
 
     await page.keyboard.down("ArrowUp");
@@ -247,6 +255,13 @@ export async function captureLensState({ browser, baseUrl, entryFile, side, outD
     pressedCount: [...document.querySelectorAll(".hit")].filter((h) => h.getAttribute("aria-pressed") === "true").length,
   }));
   await page.waitForTimeout(2500);
+  let prevSha = null;
+  for (let i = 0; i < 25; i++) {
+    const sha = sha256str(await page.evaluate(() => document.getElementById("scene").toDataURL("image/png")));
+    if (sha === prevSha) break;
+    prevSha = sha;
+    await page.waitForTimeout(200);
+  }
   const guard = await scrollDriftGuard(page);
   const snap = await page.evaluate(SNAP_FX);
   snap.canvasDataURLSha = sha256str(snap.canvasDataURL);
