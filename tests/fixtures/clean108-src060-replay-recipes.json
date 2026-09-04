@@ -1,0 +1,3726 @@
+{
+  "schemaVersion": "clean108-state-recipe-v1",
+  "sourceId": "SRC060",
+  "authoritySha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+  "acceptedViewports": [
+    "1440x900",
+    "430x932",
+    "390x844"
+  ],
+  "acceptedStates": [
+    "UNIVERSE_IDLE",
+    "CLUSTER_FOCUS",
+    "NODE_SELECT",
+    "MOMENT_VIEWER",
+    "BOOK_HANDOFF",
+    "CONNECTION_HANDOFF",
+    "PATH_PREVIEW"
+  ],
+  "notes": [
+    "Approved-state replay recipes for the SRC060 matched real-browser pilot (7 states x 3 viewports = 21 pair replays).",
+    "State names and viewports come from the accepted parity record src/03_sources/SRC060/evidence/parity/accepted-parity.json.",
+    "Every recipe is used UNCHANGED for both ORIGINAL and SPLIT; only the target entry URL differs per side.",
+    "Camera contract: CLUSTER_FOCUS reproduces the accepted cluster-1 pin via the deterministic natural focusCluster(1) fly end-state (reduced-motion 80ms fly; yaw/pitch default -0.18/0.10); node states reproduce the accepted node-0 pin through the source-owned __LT60_V12__.restore(snapshot) call with recipe DATA (no property-write script).",
+    "Screenshots request digest=canonical16 (byte-identical canonical pixel digest contract; raw PNG jitter from backdrop-filter blur is not the comparison channel).",
+    "Cross-track navigation (openActualTarget / Track 55/56/59 routes) is NEVER called; those remain SOURCE_NATIVE HOLD.",
+    "Recipes are DATA only: fixed module-owned readiness predicate, fixed assertions, no free-form JS."
+  ],
+  "recipes": [
+    {
+      "viewportKey": "1440x900",
+      "stateId": "UNIVERSE_IDLE",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "UNIVERSE_IDLE",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "UNIVERSE"
+          },
+          {
+            "type": "hidden",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "hidden",
+            "selector": "#panel"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "universe-idle",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "CLUSTER_FOCUS",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CLUSTER_FOCUS",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -520
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 1
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "CLUSTER"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "text",
+            "selector": "#clusterSummary h3",
+            "equals": "무대와 공연"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "cluster-focus",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "NODE_SELECT",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "NODE_SELECT",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "node-select",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "MOMENT_VIEWER",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "MOMENT_VIEWER",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openViewer",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "text",
+            "selector": "#momentViewer .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "moment-viewer",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "BOOK_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "BOOK_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openBook",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#bookHandoff .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "book-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "CONNECTION_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CONNECTION_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openConnection",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#connectionHandoff h2",
+            "equals": "연결 편집으로 넘기기"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "connection-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "1440x900",
+      "stateId": "PATH_PREVIEW",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "PATH_PREVIEW",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openPath",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -16.422271603066473
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -21.404250711063
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 45.134658942168244
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#pathPreview"
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview h3",
+            "equals": "첫 입덕의 밀도 · 발견 경로"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.active",
+            "equals": true
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.nodes.length",
+            "equals": 4
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.playIndex",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview .path-play-status",
+            "equals": "현재 Path 전체가 3D graph 위에 강조되었습니다."
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "path-preview",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "UNIVERSE_IDLE",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "UNIVERSE_IDLE",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "UNIVERSE"
+          },
+          {
+            "type": "hidden",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "hidden",
+            "selector": "#panel"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "universe-idle",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "CLUSTER_FOCUS",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CLUSTER_FOCUS",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -520
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 1
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "CLUSTER"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "text",
+            "selector": "#clusterSummary h3",
+            "equals": "무대와 공연"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "cluster-focus",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "NODE_SELECT",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "NODE_SELECT",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "node-select",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "MOMENT_VIEWER",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "MOMENT_VIEWER",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openViewer",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "text",
+            "selector": "#momentViewer .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "moment-viewer",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "BOOK_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "BOOK_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openBook",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#bookHandoff .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "book-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "CONNECTION_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CONNECTION_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openConnection",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#connectionHandoff h2",
+            "equals": "연결 편집으로 넘기기"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "connection-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "430x932",
+      "stateId": "PATH_PREVIEW",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 430,
+          "height": 932,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "PATH_PREVIEW",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openPath",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -16.422271603066473
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -21.404250711063
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 45.134658942168244
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#pathPreview"
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview h3",
+            "equals": "첫 입덕의 밀도 · 발견 경로"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.active",
+            "equals": true
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.nodes.length",
+            "equals": 4
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.playIndex",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview .path-play-status",
+            "equals": "현재 Path 전체가 3D graph 위에 강조되었습니다."
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "path-preview",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "UNIVERSE_IDLE",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "UNIVERSE_IDLE",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "UNIVERSE"
+          },
+          {
+            "type": "hidden",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "hidden",
+            "selector": "#panel"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "universe-idle",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "CLUSTER_FOCUS",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CLUSTER_FOCUS",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": null
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -520
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 120
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 1
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "CLUSTER"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "text",
+            "selector": "#clusterSummary h3",
+            "equals": "무대와 공연"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "cluster-focus",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "NODE_SELECT",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "NODE_SELECT",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "node-select",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "MOMENT_VIEWER",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "MOMENT_VIEWER",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openViewer",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "text",
+            "selector": "#momentViewer .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "moment-viewer",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "BOOK_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "BOOK_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openBook",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#bookHandoff .action-title",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "book-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "CONNECTION_HANDOFF",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "CONNECTION_HANDOFF",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openConnection",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -32.306093298849376
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -134.65301744927234
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 89.80714860755452
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "text",
+            "selector": "#connectionHandoff h2",
+            "equals": "연결 편집으로 넘기기"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#pathPreview"
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "connection-handoff",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    },
+    {
+      "viewportKey": "390x844",
+      "stateId": "PATH_PREVIEW",
+      "recipe": {
+        "sourceId": "SRC060",
+        "recipeVersion": "clean108-state-recipe-v1",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "reducedMotion": "reduce"
+        },
+        "stateId": "PATH_PREVIEW",
+        "preconditions": [],
+        "settleCondition": {},
+        "runtimeHook": {
+          "name": "__LT60__",
+          "snapshotFields": [
+            "selected",
+            "selectedCluster",
+            "camera",
+            "semantic"
+          ]
+        },
+        "allowedTolerance": {
+          "geometryEpsPx": 0,
+          "floatDecimals": 3
+        },
+        "timeouts": {
+          "actionMs": 30000,
+          "recipeMs": 90000
+        },
+        "actions": [
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60__.focusCluster",
+            "arg": 1
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.restore",
+            "arg": {
+              "camera": {
+                "yaw": -0.18,
+                "pitch": 0.1,
+                "zoom": 2.35,
+                "tx": -32.306093298849376,
+                "ty": -134.65301744927234,
+                "tz": 89.80714860755452
+              },
+              "filter": "all",
+              "selected": 0
+            }
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 5000
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          },
+          {
+            "type": "evaluateHook",
+            "hook": "__LT60_V12__.openPath",
+            "arg": null
+          },
+          {
+            "type": "settle",
+            "clearToast": "#toast",
+            "waitMs": 450,
+            "rAF": 2
+          }
+        ],
+        "assertions": [
+          {
+            "type": "runtime",
+            "path": "__LT60__.selected",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.selectedCluster",
+            "equals": 0
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.yaw",
+            "equals": -0.18
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.pitch",
+            "equals": 0.1
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tx",
+            "equals": -16.422271603066473
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.ty",
+            "equals": -21.404250711063
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.camera.tz",
+            "equals": 45.134658942168244
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.semantic",
+            "equals": 2
+          },
+          {
+            "type": "text",
+            "selector": "#levelLabel",
+            "equals": "MOMENT FIELD"
+          },
+          {
+            "type": "visible",
+            "selector": "#clusterSummary"
+          },
+          {
+            "type": "visible",
+            "selector": "#panel"
+          },
+          {
+            "type": "text",
+            "selector": "#panel h2",
+            "equals": "처음 저장한 Moment"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.nodes.length",
+            "equals": 1000
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.clusters.length",
+            "equals": 9
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60__.bridgeRecords.length",
+            "equals": 24
+          },
+          {
+            "type": "visible",
+            "selector": "#pathPreview"
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview h3",
+            "equals": "첫 입덕의 밀도 · 발견 경로"
+          },
+          {
+            "type": "hidden",
+            "selector": "#momentViewer"
+          },
+          {
+            "type": "hidden",
+            "selector": "#bookHandoff"
+          },
+          {
+            "type": "hidden",
+            "selector": "#connectionHandoff"
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.active",
+            "equals": true
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.nodes.length",
+            "equals": 4
+          },
+          {
+            "type": "runtime",
+            "path": "__LT60_V12__.path.playIndex",
+            "equals": 0
+          },
+          {
+            "type": "text",
+            "selector": "#pathPreview .path-play-status",
+            "equals": "현재 Path 전체가 3D graph 위에 강조되었습니다."
+          }
+        ],
+        "screenshots": [
+          {
+            "name": "path-preview",
+            "animations": "disabled",
+            "digest": "canonical16"
+          }
+        ]
+      }
+    }
+  ]
+}

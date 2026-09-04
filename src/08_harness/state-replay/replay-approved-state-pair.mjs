@@ -10,8 +10,11 @@
  * This module adds the MISSING matched-pair orchestration:
  *   1. fail-closed target identity locks (authority / mechanical split)
  *   2. source-bound runtime hook binding derived from the locked authority
- *   3. v1 pilot support gate: SRC056 ONLY (another registered Source such as
- *      SRC060 holds with HOLD_SOURCE_NOT_RELEASED before any browser activity)
+ *   3. pilot support gate: released Sources only (SRC056 + SRC060); another
+ *      registered Source holds with HOLD_SOURCE_NOT_RELEASED before any
+ *      browser activity, SRC068 stays DUAL_VARIANT HOLD
+ *   3b. source readiness registry: fixed module-owned readiness predicate per
+ *      released Source (SRC056 / SRC060), applied identically to both sides
  *   4. loopback-only static serving of ORIGINAL + SPLIT at their real
  *      relative paths (no rewriting, no injection, no repair)
  *   5. EXACT SAME recipe replay on both sides through captureApprovedStateRecipe
@@ -44,18 +47,42 @@ import {
 import { captureApprovedStateRecipe } from './capture-approved-state-recipe.mjs';
 import { compareMatchedStateReplay } from './compare-matched-state-replay.mjs';
 
-export const MATCHED_PAIR_HARNESS_VERSION = 'clean108-m1-slice4a-v1';
-export const MATCHED_PAIR_COMPARISON_SCHEMA_VERSION = 'clean108-matched-pair-comparison-v1';
+export const MATCHED_PAIR_HARNESS_VERSION = 'clean108-m1-slice4a-v2';
+export const MATCHED_PAIR_COMPARISON_SCHEMA_VERSION = 'clean108-matched-pair-comparison-v2';
 
-// v1 pilot support gate: this harness release is SRC056 ONLY (issue #611
-// Slice 4A, corrective B). Another registered single-executable Source (e.g.
-// SRC060) is NOT released yet and must HOLD before any browser activity. A
-// later CENTRAL slice will extend this list.
-export const SUPPORTED_SOURCE_IDS = Object.freeze(['SRC056']);
+// Released Sources for the matched-pair pilot (issue #611): SRC056 (Slice 4A)
+// and SRC060 (Slice 4B). Any other registered single-executable Source is NOT
+// released yet and must HOLD before any browser activity. SRC068 stays
+// DUAL_VARIANT (HOLD_SOURCE_NOT_SINGLE_EXECUTABLE). A later CENTRAL slice
+// will extend this list.
+export const SUPPORTED_SOURCE_IDS = Object.freeze(['SRC056', 'SRC060']);
 
 export function isSourceReleasedForPilot(sourceId) {
   return typeof sourceId === 'string' && SUPPORTED_SOURCE_IDS.includes(sourceId);
 }
+
+// Module-owned fixed source readiness predicates (recipe values are DATA only;
+// every predicate below is fixed code). Each predicate must hold BEFORE the
+// capture adapter runs, identically for ORIGINAL and SPLIT.
+//
+// SRC056: simple authority exposes window.__lt + window.__lovetreeStats.
+// SRC060: the accepted parity readiness gate — both hooks present and the
+//   first projection frame drawn (clusterProjected/projected filled in the
+//   first draw()); this gates the source-native pre-first-frame nearestHit
+//   defect identically on both sides without repairing the source.
+export const SOURCE_READINESS_GATES = Object.freeze({
+  SRC056() {
+    return Boolean(window.__lt && window.__lovetreeStats);
+  },
+  SRC060() {
+    return Boolean(
+      window.__LT60__
+      && window.__LT60_V12__
+      && window.__LT60__.clusterProjection(0) != null
+      && window.__LT60__.projection(0) != null
+    );
+  },
+});
 
 export const MATCHED_PAIR_RESULTS = Object.freeze({
   EQUAL: 'EQUAL',
@@ -517,6 +544,12 @@ function pairResult(equal) {
   return equal ? MATCHED_PAIR_RESULTS.EQUAL : MATCHED_PAIR_RESULTS.DIFF;
 }
 
+// The compared digest follows the recipe-requested mode: raw for digest=raw,
+// canonical16 for digest=canonical16. Raw SHA256 + bytes remain evidence.
+function comparedDigest(shot) {
+  return shot.digestModeRequested === 'canonical16' ? (shot.canonical16Sha256 ?? null) : (shot.rawSha256 ?? null);
+}
+
 function screenshotShotDetail(original, split) {
   const left = Array.isArray(original) ? original : [];
   const right = Array.isArray(split) ? split : [];
@@ -528,8 +561,13 @@ function screenshotShotDetail(original, split) {
       shots.push({
         name: shot.name,
         missingOn: 'split',
+        digestModeRequested: shot.digestModeRequested ?? 'raw',
+        digestSha256Original: comparedDigest(shot),
+        digestSha256Split: null,
         rawSha256Original: shot.rawSha256,
         rawSha256Split: null,
+        canonical16Sha256Original: shot.canonical16Sha256 ?? null,
+        canonical16Sha256Split: null,
         bytesOriginal: shot.bytes,
         bytesSplit: null,
         equal: false,
@@ -538,11 +576,16 @@ function screenshotShotDetail(original, split) {
     }
     shots.push({
       name: shot.name,
+      digestModeRequested: shot.digestModeRequested ?? 'raw',
+      digestSha256Original: comparedDigest(shot),
+      digestSha256Split: comparedDigest(other),
       rawSha256Original: shot.rawSha256,
       rawSha256Split: other.rawSha256,
+      canonical16Sha256Original: shot.canonical16Sha256 ?? null,
+      canonical16Sha256Split: other.canonical16Sha256 ?? null,
       bytesOriginal: shot.bytes,
       bytesSplit: other.bytes,
-      equal: shot.rawSha256 === other.rawSha256 && shot.bytes === other.bytes,
+      equal: comparedDigest(shot) === comparedDigest(other),
     });
   }
   for (const shot of right) {
@@ -550,8 +593,13 @@ function screenshotShotDetail(original, split) {
       shots.push({
         name: shot.name,
         missingOn: 'original',
+        digestModeRequested: shot.digestModeRequested ?? 'raw',
+        digestSha256Original: null,
+        digestSha256Split: comparedDigest(shot),
         rawSha256Original: null,
         rawSha256Split: shot.rawSha256,
+        canonical16Sha256Original: null,
+        canonical16Sha256Split: shot.canonical16Sha256 ?? null,
         bytesOriginal: null,
         bytesSplit: shot.bytes,
         equal: false,
@@ -629,6 +677,12 @@ function buildComparisonRecord({ original, split, recipe, provenance }) {
       split: split.evidence.viewport,
       equal: channels.viewport.result === MATCHED_PAIR_RESULTS.EQUAL,
     },
+    domCount: {
+      contentElementCountOriginal: original.evidence.dom?.contentElementCount ?? null,
+      contentElementCountSplit: split.evidence.dom?.contentElementCount ?? null,
+      elementCountOriginal: original.evidence.dom?.elementCount ?? null,
+      elementCountSplit: split.evidence.dom?.elementCount ?? null,
+    },
     provenance: {
       exactHead: provenance.exactHead,
       authoritySha256: provenance.authoritySha256,
@@ -660,8 +714,10 @@ async function replaySide({ side, browser, binding, recipe, baseUrl, environment
     if (!response || typeof response.ok !== 'function' || !response.ok()) {
       return { side, captured: false, error: `HTTP ${typeof response?.status === 'function' ? response.status() : 'ERROR'} ${baseUrl}` };
     }
-    // Fixed module-owned runtime readiness gate (recipe values are data only).
-    await page.waitForFunction(() => Boolean(window.__lt && window.__lovetreeStats), null, { timeout: 15000 });
+    // Fixed module-owned source readiness gate chosen from the release registry
+    // (recipe values are data only; no recipe-supplied predicate ever runs).
+    const readinessGate = SOURCE_READINESS_GATES[recipe.sourceId];
+    await page.waitForFunction(readinessGate, null, { timeout: 15000 });
     const captured = await captureApprovedStateRecipe({
       page,
       recipe,
@@ -718,17 +774,27 @@ export async function replayApprovedStatePair({
   const original = originalLock.target;
   const split = splitLock.target;
 
-  // v1 pilot support gate (corrective B): SRC056 is the ONLY released Source
-  // in this harness version. A registered-but-unreleased Source such as SRC060
-  // must HOLD here — before server start, browserFactory invocation, browser
-  // context creation and page mutation. SRC068 is already held above as
-  // DUAL_VARIANT / SOURCE_NOT_SINGLE_EXECUTABLE and never reaches this gate.
+  // Pilot support gate: only released Sources reach the browser. A registered
+  // but unreleased Source must HOLD here — before server start, browserFactory
+  // invocation, browser context creation and page mutation. SRC068 is already
+  // held above as DUAL_VARIANT / SOURCE_NOT_SINGLE_EXECUTABLE and never
+  // reaches this gate.
   if (!isSourceReleasedForPilot(sourceId)) {
     return {
       ok: false,
       stage: 'pilot-support-gate',
       hold: MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_RELEASED,
-      error: `${sourceId} is not released for the v1 matched-pair pilot; SUPPORTED_SOURCE_IDS=${SUPPORTED_SOURCE_IDS.join(',')}`,
+      error: `${sourceId} is not released for the matched-pair pilot; SUPPORTED_SOURCE_IDS=${SUPPORTED_SOURCE_IDS.join(',')}`,
+    };
+  }
+  // Every released Source must own a fixed readiness predicate; a missing one
+  // is a harness defect and fails closed before any browser activity.
+  if (typeof SOURCE_READINESS_GATES[sourceId] !== 'function') {
+    return {
+      ok: false,
+      stage: 'readiness-gate',
+      hold: MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_RELEASED,
+      error: `no fixed readiness predicate registered for released source ${sourceId}`,
     };
   }
 

@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import { validateExecutableStateRecipe } from '../src/08_harness/state-replay/validate-executable-state-recipe.mjs';
+import { compareMatchedStateReplay } from '../src/08_harness/state-replay/compare-matched-state-replay.mjs';
 import {
   MATCHED_PAIR_HOLD_CODES,
   SUPPORTED_SOURCE_IDS,
@@ -35,6 +36,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
 const fixturesPath = path.join(__dirname, 'fixtures', 'clean108-src056-replay-recipes.json');
+const src060FixturesPath = path.join(__dirname, 'fixtures', 'clean108-src060-replay-recipes.json');
 
 const BINDING = Object.freeze({
   sourceId: 'SRC056',
@@ -243,9 +245,21 @@ class FakePage {
           title: 'Capsule',
           ids: ['stage', 'modePill', 'focusFirst', 'mobileRibbon', 'toast'],
           elementCount: 9,
+          // v2: glue-excluded rendered-content count (both sides identical here;
+          // raw elementCount differs for SRC060-style evidence, content does not)
+          contentElementCount: 7,
           scrollWidth: 1280,
           scrollHeight: 800,
         };
+      }
+      if (arg.captureKind === 'clean108-canonical16-v1') {
+        this.calls.push(['canonical16']);
+        // Deterministic canonical pixel byte array (RGBA 16x16 = 1024 bytes).
+        const data = new Array(16 * 16 * 4);
+        for (let i = 0; i < data.length; i += 1) {
+          data[i] = i % 4 === 3 ? 255 : ((i * 7) % 240);
+        }
+        return data;
       }
       if (typeof arg.captureKind === 'string' && arg.captureKind.startsWith('clean108-runtime-')) {
         const runtimePath = arg.segments.join('.');
@@ -427,23 +441,47 @@ test('SRC068 dual variant -> HOLD_SOURCE_NOT_SINGLE_EXECUTABLE before browser', 
   assert.equal(spy.invocations, 0);
 });
 
-test('registered but unreleased SRC060 -> HOLD_SOURCE_NOT_RELEASED before browser', async () => {
-  // SRC060 is a real registered single-executable Source (accepted capsule,
-  // BOUND runtime hook) that is NOT released for the v1 pilot. It must hold
-  // with HOLD_SOURCE_NOT_RELEASED before server start / browserFactory /
-  // context / page mutation — even though its target locks cleanly.
+test('SRC056 and SRC060 are released for the pilot; SRC068/unknown are not', () => {
+  assert.deepEqual(SUPPORTED_SOURCE_IDS, ['SRC056', 'SRC060']);
+  assert.equal(isSourceReleasedForPilot('SRC056'), true);
+  assert.equal(isSourceReleasedForPilot('SRC060'), true);
+  assert.equal(isSourceReleasedForPilot('SRC068'), false);
+  assert.equal(isSourceReleasedForPilot('SRC999'), false);
+  assert.equal(isSourceReleasedForPilot('SRC062'), false);
+});
+
+test('SRC060 accepted capsule target locks + runtime binding PASS (released source)', () => {
+  const original = resolveReplayTarget({ sourceRoot, sourceId: 'SRC060', side: 'original' });
+  assert.equal(original.ok, true, JSON.stringify(original));
+  assert.equal(original.target.lock.length, 1);
+  assert.equal(original.target.authoritySha256, 'c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf');
+
+  const split = resolveReplayTarget({ sourceRoot, sourceId: 'SRC060', side: 'split' });
+  assert.equal(split.ok, true, JSON.stringify(split));
+  assert.equal(split.target.lock.length, 3);
+  assert.deepEqual(split.target.lock.map((entry) => entry.file).sort(), ['split/index.html', 'split/script.js', 'split/styles.css']);
+
+  const binding = resolveRuntimeHookBinding({ sourceRoot, sourceId: 'SRC060' });
+  assert.equal(binding.ok, true);
+  assert.equal(binding.binding.status, 'BOUND');
+  assert.equal(binding.binding.matched, true);
+  assert.deepEqual([...binding.binding.discovered].sort(), ['__LT60_V12__', '__LT60__']);
+  assert.deepEqual([...binding.binding.expected].sort(), ['__LT60_V12__', '__LT60__']);
+});
+
+test('registered but unreleased SRC062 -> HOLD_SOURCE_NOT_RELEASED before browser', async () => {
+  // SRC062 is a real registered single-executable Source (accepted capsule,
+  // BOUND runtime hook) that is NOT released for the pilot. Its target locks
+  // cleanly, so the pilot-support gate is what fires — before server start /
+  // browserFactory / context / page mutation.
+  const originalLock = resolveReplayTarget({ sourceRoot, sourceId: 'SRC062', side: 'original' });
+  assert.equal(originalLock.ok, true, 'SRC062 original lock must pass so the gate is what holds');
   const spy = browserSpy();
   const result = await replayApprovedStatePair({
     sourceRoot,
-    sourceId: 'SRC060',
-    recipe: baseRecipe({ sourceId: 'SRC060' }),
-    binding: {
-      sourceId: 'SRC060',
-      discovered: ['__LT60__', '__LT60_V12__'],
-      expected: ['__LT60__', '__LT60_V12__'],
-      matched: true,
-      status: 'BOUND',
-    },
+    sourceId: 'SRC062',
+    recipe: baseRecipe({ sourceId: 'SRC062' }),
+    binding: { sourceId: 'SRC062', discovered: ['__track62'], expected: ['__track62'], matched: true, status: 'BOUND' },
     provenance: validProvenance(),
     browserFactory: spy.factory,
   });
@@ -451,10 +489,6 @@ test('registered but unreleased SRC060 -> HOLD_SOURCE_NOT_RELEASED before browse
   assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_RELEASED);
   assert.equal(result.stage, 'pilot-support-gate');
   assert.equal(spy.invocations, 0);
-  assert.deepEqual(SUPPORTED_SOURCE_IDS, ['SRC056']);
-  assert.equal(isSourceReleasedForPilot('SRC056'), true);
-  assert.equal(isSourceReleasedForPilot('SRC060'), false);
-  assert.equal(isSourceReleasedForPilot('SRC068'), false);
 });
 
 test('recipe/source mismatch -> HOLD_RECIPE_SOURCE_MISMATCH before browser', async () => {
@@ -685,4 +719,188 @@ test('new matched-pair module never uses eval or new Function', () => {
   const source = fs.readFileSync(modulePath, 'utf8');
   assert.ok(!/\beval\s*\(/.test(source), 'must not call eval(');
   assert.ok(!/\bnew\s+Function\s*\(/.test(source), 'must not call new Function(');
+});
+
+// ---------------------------------------------------------------------------
+// Slice 4B focused no-browser regressions: canonical16 digest, digest-aware
+// screenshot comparison, glue-excluded DOM count, SRC060 recipe surface
+// ---------------------------------------------------------------------------
+
+test('capture records canonical16Sha256 for digest=canonical16 and both DOM counts; pair comparison EQUAL', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'clean108-pair-c16-'));
+  try {
+    const { capsuleDir } = buildCapsule(tmp);
+    const recipe = baseRecipe({
+      screenshots: [{ name: 'canon', animations: 'disabled', digest: 'canonical16' }],
+    });
+    const browser = fakeBrowser();
+    const result = await replayApprovedStatePair({
+      sourceRoot: tmp,
+      sourceId: 'SRC056',
+      recipe,
+      binding: BINDING,
+      provenance: validProvenance(),
+      environment: { deviceScaleFactor: 1, reducedMotion: 'reduce' },
+      browserFactory: async () => browser,
+    });
+    assert.equal(result.ok, true, JSON.stringify(result));
+
+    for (const sideRecord of [result.originalRecord, result.splitRecord]) {
+      const shots = sideRecord.evidence.screenshots;
+      assert.equal(shots.length, 1);
+      assert.equal(shots[0].digestModeRequested, 'canonical16');
+      assert.equal(typeof shots[0].canonical16Sha256, 'string');
+      assert.match(shots[0].canonical16Sha256, /^[0-9a-f]{64}$/);
+      assert.equal(typeof shots[0].rawSha256, 'string');
+      assert.equal(typeof shots[0].bytes, 'number');
+      // v2 DOM evidence: both counts recorded
+      assert.equal(sideRecord.evidence.dom.contentElementCount, 7);
+      assert.equal(sideRecord.evidence.dom.elementCount, 9);
+    }
+
+    const comparison = result.comparisonRecord;
+    assert.equal(comparison.channels.screenshots.result, 'EQUAL');
+    assert.equal(comparison.channels.dom.result, 'EQUAL');
+    assert.equal(comparison.domCount.contentElementCountOriginal, 7);
+    assert.equal(comparison.domCount.contentElementCountSplit, 7);
+    // the canonical16 marker was actually exercised on both sides
+    const originalPage = browser.contexts[0].pages[0];
+    assert.ok(originalPage.calls.some((call) => call[0] === 'canonical16'), 'canonical16 marker must run for digest=canonical16');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('comparator is digest-aware: canonical16 equality wins over raw jitter; raw mode keeps raw semantics', () => {
+  const raw = { name: 's', digestModeRequested: 'raw', rawSha256: 'a'.repeat(64), bytes: 100 };
+  const rawJittered = { name: 's', digestModeRequested: 'raw', rawSha256: 'b'.repeat(64), bytes: 101 };
+  const c16 = { name: 's', digestModeRequested: 'canonical16', rawSha256: 'a'.repeat(64), canonical16Sha256: 'c'.repeat(64), bytes: 100 };
+  const c16RawJittered = { name: 's', digestModeRequested: 'canonical16', rawSha256: 'b'.repeat(64), canonical16Sha256: 'c'.repeat(64), bytes: 100 };
+
+  const base = {
+    sourceId: 'SRC060', stateId: 'S', exactHead: 'c'.repeat(40),
+    authoritySha256: 'c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf',
+    viewport: { width: 1440, height: 900 },
+    runtimeHealth: { consoleErrors: [], pageErrors: [], failedRequests: [] },
+    timeouts: { actionMs: 5000, recipeMs: 30000, recipeMsEnforced: false },
+  };
+  const evidence = (screenshots) => ({ ...base, screenshots });
+
+  // canonical16: raw jitter must NOT break equality; digest equality decides
+  const equalC16 = compareMatchedStateReplay({
+    originalEvidence: evidence([c16]),
+    splitEvidence: evidence([c16RawJittered]),
+  });
+  assert.equal(equalC16.comparisons.screenshots_equal, true, 'canonical16 equality must survive raw byte jitter');
+  assert.equal(equalC16.passed, true);
+
+  // canonical16 mismatch must break equality
+  const diffC16 = compareMatchedStateReplay({
+    originalEvidence: evidence([c16]),
+    splitEvidence: evidence([{ ...c16, canonical16Sha256: 'd'.repeat(64) }]),
+  });
+  assert.equal(diffC16.comparisons.screenshots_equal, false);
+
+  // raw mode keeps raw semantics (SRC056 unchanged)
+  const diffRaw = compareMatchedStateReplay({
+    originalEvidence: evidence([raw]),
+    splitEvidence: evidence([rawJittered]),
+  });
+  assert.equal(diffRaw.comparisons.screenshots_equal, false);
+});
+
+test('comparator DOM channel uses contentElementCount when present, else falls back to elementCount', () => {
+  const baseDom = {
+    url: 'http://x/SRC060/original.html', title: 't', ids: ['a', 'b'],
+    scrollWidth: 100, scrollHeight: 100,
+  };
+  const base = {
+    sourceId: 'SRC060', stateId: 'S', exactHead: 'c'.repeat(40),
+    authoritySha256: 'c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf',
+    viewport: { width: 1440, height: 900 }, screenshots: [],
+    runtimeHealth: { consoleErrors: [], pageErrors: [], failedRequests: [] },
+    timeouts: { actionMs: 5000, recipeMs: 30000, recipeMsEnforced: false },
+  };
+  // glue difference only: raw counts differ, rendered content counts identical
+  const original = { ...base, dom: { ...baseDom, elementCount: 122, contentElementCount: 113 } };
+  const split = { ...base, dom: { ...baseDom, elementCount: 121, contentElementCount: 113 } };
+  const equal = compareMatchedStateReplay({ originalEvidence: original, splitEvidence: split });
+  assert.equal(equal.comparisons.dom_equal_excluding_variant_url, true, 'contentElementCount must be the compared DOM count');
+  assert.equal(equal.passed, true);
+
+  // pre-v2 evidence without contentElementCount falls back to elementCount
+  const originalV1 = { ...base, dom: { ...baseDom, elementCount: 10 } };
+  const splitV1 = { ...base, dom: { ...baseDom, elementCount: 11 } };
+  const diff = compareMatchedStateReplay({ originalEvidence: originalV1, splitEvidence: splitV1 });
+  assert.equal(diff.comparisons.dom_equal_excluding_variant_url, false, 'elementCount fallback must apply for pre-v2 evidence');
+
+  // real rendered-content drift must still be caught
+  const drifted = { ...base, dom: { ...baseDom, elementCount: 122, contentElementCount: 114 } };
+  const drift = compareMatchedStateReplay({ originalEvidence: original, splitEvidence: drifted });
+  assert.equal(drift.comparisons.dom_equal_excluding_variant_url, false, 'contentElementCount drift must never be hidden');
+});
+
+test('all 21 SRC060 fixture recipes are executable against the real SRC060 binding and preflight clean', () => {
+  const fixtures = JSON.parse(fs.readFileSync(src060FixturesPath, 'utf8'));
+  assert.equal(fixtures.sourceId, 'SRC060');
+  assert.ok(fixtures.recipes.length === 21, `expected 21 recipes, got ${fixtures.recipes.length}`);
+
+  const bindingResult = resolveRuntimeHookBinding({ sourceRoot, sourceId: 'SRC060' });
+  assert.equal(bindingResult.ok, true);
+  const binding = bindingResult.binding;
+  assert.equal(binding.status, 'BOUND');
+
+  const provenance = validProvenance();
+  for (const { viewportKey, stateId, recipe } of fixtures.recipes) {
+    assert.equal(recipe.sourceId, 'SRC060');
+    assert.equal(recipe.stateId, stateId);
+
+    const executable = validateExecutableStateRecipe(recipe, { runtimeHookBinding: binding, baseUrl: 'http://127.0.0.1' });
+    assert.equal(executable.valid, true, `${viewportKey}/${stateId}: ${executable.errors.join('|')}`);
+
+    const preflight = preflightPairInputs({
+      recipe,
+      binding,
+      baseUrl: 'http://127.0.0.1',
+      provenance,
+      environment: { reducedMotion: 'reduce' },
+    });
+    assert.equal(preflight.ok, true, `${viewportKey}/${stateId}: ${preflight.errors.join('|')}`);
+
+    // screenshots all request canonical16 (accepted SRC060 digest contract)
+    for (const shot of recipe.screenshots) {
+      assert.equal(shot.digest, 'canonical16', `${viewportKey}/${stateId}: screenshot ${shot.name} must request canonical16`);
+    }
+    // never call the cross-track navigation surface
+    const serialized = JSON.stringify(recipe);
+    assert.ok(!serialized.includes('openActualTarget'), `${viewportKey}/${stateId}: cross-track navigation forbidden`);
+    assert.ok(!serialized.includes('routeFor'), `${viewportKey}/${stateId}: routeFor navigation forbidden`);
+    assert.ok(!serialized.includes('playPath'), `${viewportKey}/${stateId}: playPath timers forbidden`);
+  }
+});
+
+test('SRC060 recipes never reference released/rejected hooks outside the bound pair', () => {
+  const fixtures = JSON.parse(fs.readFileSync(src060FixturesPath, 'utf8'));
+  const bindingResult = resolveRuntimeHookBinding({ sourceRoot, sourceId: 'SRC060' });
+  const allowedRoots = new Set(['__LT60__', '__LT60_V12__']);
+  for (const { recipe } of fixtures.recipes) {
+    assert.equal(recipe.runtimeHook.name, '__LT60__');
+    for (const assertion of recipe.assertions) {
+      if (assertion.type === 'runtime') {
+        const root = assertion.path.split('.')[0];
+        assert.ok(allowedRoots.has(root), `runtime assertion root ${root} not bound for SRC060`);
+      }
+    }
+    for (const action of recipe.actions) {
+      for (const key of ['hook', 'path']) {
+        const value = action[key];
+        if (typeof value === 'string' && value.startsWith('__')) {
+          const root = value.split('.')[0];
+          assert.ok(allowedRoots.has(root), `action ${action.type} root ${root} not bound for SRC060`);
+        }
+      }
+    }
+    // multi-argument hook calls must not be needed: single-arg data only
+    assert.equal(bindingResult.ok, true);
+  }
 });

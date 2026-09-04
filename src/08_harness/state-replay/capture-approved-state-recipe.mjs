@@ -5,6 +5,16 @@
  * semantics on top of the merged declarative executor without changing the
  * legacy baseline/parity runners. Screenshot bytes are returned in-memory to
  * the caller; this module never writes Source capsules or evidence files.
+ *
+ * Slice 4B (SRC060) additive evidence fields:
+ *   - dom.contentElementCount: rendered-content element count excluding
+ *     mechanical-split glue tags (script/link/style in body), matching the
+ *     accepted SRC060 parity contract. Raw elementCount is retained.
+ *   - screenshots[].canonical16Sha256: recorded when the recipe requests
+ *     digest = canonical16 — the exact canonical 16x16 pixel digest already
+ *     defined in source060-driver.mjs (backdrop-filter blur is +/-1 channel
+ *     nondeterministic, so raw PNG bytes are not the accepted comparison
+ *     channel for SRC060). rawSha256 + bytes are always retained.
  */
 
 import crypto from 'node:crypto';
@@ -14,8 +24,8 @@ import {
   validateExecutableStateRecipe,
 } from './validate-executable-state-recipe.mjs';
 
-export const S2_RECIPE_EVIDENCE_SCHEMA_VERSION = 'clean108-s2-recipe-evidence-v1';
-export const S2_CAPTURE_HARNESS_VERSION = 'clean108-m1-slice3-v1';
+export const S2_RECIPE_EVIDENCE_SCHEMA_VERSION = 'clean108-s2-recipe-evidence-v2';
+export const S2_CAPTURE_HARNESS_VERSION = 'clean108-m1-slice3-v2';
 
 const ALLOWED_ASSERTION_TYPES = new Set(['runtime', 'visible', 'hidden', 'text']);
 const FORBIDDEN_RUNTIME_SEGMENTS = new Set(['constructor', 'prototype', '__proto__']);
@@ -233,7 +243,12 @@ async function collectDomEvidence(page) {
       url: location.href,
       title: document.title,
       ids,
+      // Raw element count (every tag, including mechanical-split glue).
       elementCount: document.querySelectorAll('*').length,
+      // Rendered-content count excluding mechanical glue tags exactly as the
+      // accepted SRC060 parity contract defines it (original/split differ in
+      // glue by design: inline style+2 inline scripts -> link+1 script src).
+      contentElementCount: document.querySelectorAll('body *:not(script):not(link):not(style)').length,
       scrollWidth: root?.scrollWidth ?? null,
       scrollHeight: root?.scrollHeight ?? null,
     };
@@ -315,6 +330,30 @@ async function captureRuntimeSnapshot(page, recipe) {
   return snapshot;
 }
 
+// Fixed module-owned canonical pixel digest (data argument only). This is the
+// EXACT algorithm of source060-driver.mjs's canonicalPixelDigest: render the
+// PNG to a 16x16 canvas with high image smoothing, then SHA256 the RGBA byte
+// array with RGB channels masked 0xF0 and alpha unchanged.
+async function canonical16PixelDigest(page, pngBuffer) {
+  const b64 = pngBuffer.toString('base64');
+  const data = await page.evaluate(async ({ captureKind, src }) => {
+    if (captureKind !== 'clean108-canonical16-v1') throw new Error('unexpected capture marker');
+    const img = new Image();
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = `data:image/png;base64,${src}`; });
+    const N = 16;
+    const canvas = document.createElement('canvas');
+    canvas.width = N;
+    canvas.height = N;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, N, N);
+    const px = ctx.getImageData(0, 0, N, N).data;
+    return Array.from(px, (v, i) => (i % 4 === 3 ? v : v & 0xF0));
+  }, { captureKind: 'clean108-canonical16-v1', src: b64 });
+  return crypto.createHash('sha256').update(Buffer.from(data)).digest('hex');
+}
+
 async function captureScreenshots(page, recipe) {
   const metadata = [];
   const buffers = new Map();
@@ -322,12 +361,17 @@ async function captureScreenshots(page, recipe) {
     const buffer = await page.screenshot({ animations: shot.animations ?? 'disabled' });
     if (!Buffer.isBuffer(buffer)) throw new Error(`CAPTURE_SCREENSHOT_BUFFER_REQUIRED:${shot.name}`);
     buffers.set(shot.name, buffer);
-    metadata.push({
+    const digestMode = shot.digest ?? 'raw';
+    const entry = {
       name: shot.name,
-      digestModeRequested: shot.digest ?? 'raw',
+      digestModeRequested: digestMode,
       rawSha256: crypto.createHash('sha256').update(buffer).digest('hex'),
       bytes: buffer.length,
-    });
+    };
+    if (digestMode === 'canonical16') {
+      entry.canonical16Sha256 = await canonical16PixelDigest(page, buffer);
+    }
+    metadata.push(entry);
   }
   return { metadata, buffers };
 }

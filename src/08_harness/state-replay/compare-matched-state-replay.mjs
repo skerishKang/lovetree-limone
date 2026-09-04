@@ -1,6 +1,6 @@
 import { isDeepStrictEqual } from 'node:util';
 
-export const MATCHED_REPLAY_COMPARISON_SCHEMA_VERSION = 'clean108-matched-replay-comparison-v1';
+export const MATCHED_REPLAY_COMPARISON_SCHEMA_VERSION = 'clean108-matched-replay-comparison-v2';
 
 function requireEvidence(label, value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -8,10 +8,43 @@ function requireEvidence(label, value) {
   }
 }
 
+// v2 (Slice 4B / SRC060): the DOM equality channel compares the glue-excluded
+// rendered-content count (contentElementCount) WHEN PRESENT, falling back to
+// the raw elementCount only for pre-v2 evidence. SRC060's mechanical split
+// differs in glue tags by design (inline style + 2 inline scripts -> link + 1
+// script src); the accepted parity contract counts body *:not(script):not
+// (link):not(style). Raw elementCount stays in the evidence (and in the
+// comparison record's domCount) as informational context but is NOT a parity
+// channel when contentElementCount exists.
 function canonicalDom(dom) {
   if (!dom || typeof dom !== 'object' || Array.isArray(dom)) return dom;
   const { url: _variantUrl, ...rest } = dom;
-  return rest;
+  const count = rest.contentElementCount !== undefined
+    ? { contentElementCount: rest.contentElementCount }
+    : { elementCount: rest.elementCount };
+  return {
+    title: rest.title,
+    ids: rest.ids,
+    count,
+    scrollWidth: rest.scrollWidth,
+    scrollHeight: rest.scrollHeight,
+  };
+}
+
+// v2: screenshots compare the digest the recipe actually requested — rawSha256
+// for digest=raw (SRC056 semantics unchanged) or canonical16Sha256 for
+// digest=canonical16 (SRC060 accepted parity: byte-identical canonical pixel
+// digest). Raw bytes are not the comparison channel for canonical16 evidence.
+function canonicalScreenshots(screenshots) {
+  if (!Array.isArray(screenshots)) return screenshots;
+  return screenshots.map((shot) => ({
+    name: shot?.name,
+    digestModeRequested: shot?.digestModeRequested ?? 'raw',
+    digestSha256: shot?.digestModeRequested === 'canonical16'
+      ? shot?.canonical16Sha256 ?? null
+      : shot?.rawSha256 ?? null,
+    bytes: shot?.bytes ?? null,
+  }));
 }
 
 function channel(left, right) {
@@ -68,7 +101,10 @@ export function compareMatchedStateReplay({ originalEvidence, splitEvidence }) {
     runtime_health_equal: channel(originalEvidence.runtimeHealth, splitEvidence.runtimeHealth),
     original_runtime_health_clean: cleanHealth(originalEvidence.runtimeHealth),
     split_runtime_health_clean: cleanHealth(splitEvidence.runtimeHealth),
-    screenshots_equal: channel(originalEvidence.screenshots, splitEvidence.screenshots),
+    screenshots_equal: channel(
+      canonicalScreenshots(originalEvidence.screenshots),
+      canonicalScreenshots(splitEvidence.screenshots),
+    ),
   };
 
   const differences = Object.entries(comparisons)
