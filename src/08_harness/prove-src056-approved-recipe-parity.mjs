@@ -101,6 +101,29 @@ function startServer() {
   });
 }
 
+function attachWholeRunHealth(page) {
+  const health = { consoleErrors: [], pageErrors: [], failedRequests: [] };
+  page.on('console', (message) => {
+    if (message.type() === 'error') health.consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => {
+    health.pageErrors.push(error instanceof Error ? error.message : String(error));
+  });
+  page.on('requestfailed', (request) => {
+    health.failedRequests.push({
+      url: request.url(),
+      errorText: request.failure()?.errorText ?? null,
+    });
+  });
+  return health;
+}
+
+function assertWholeRunHealthClean(health, variantUrl, stateId) {
+  if (health.consoleErrors.length || health.pageErrors.length || health.failedRequests.length) {
+    throw new Error(`SRC056_WHOLE_RUN_BROWSER_ERROR:${stateId}:${variantUrl}:${JSON.stringify(health)}`);
+  }
+}
+
 async function captureVariant({ browser, recipe, url, browserVersion }) {
   const context = await browser.newContext({
     viewport: { width: recipe.viewport.width, height: recipe.viewport.height },
@@ -108,6 +131,7 @@ async function captureVariant({ browser, recipe, url, browserVersion }) {
     reducedMotion: recipe.viewport.reducedMotion ?? 'reduce',
   });
   const page = await context.newPage();
+  const wholeRunHealth = attachWholeRunHealth(page);
   try {
     const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     if (!response?.ok()) throw new Error(`SRC056_REPLAY_HTTP_${response?.status() ?? 'ERROR'}:${url}`);
@@ -116,7 +140,7 @@ async function captureVariant({ browser, recipe, url, browserVersion }) {
     // source-owned timer before running either A or B recipe.
     await page.waitForTimeout(900);
 
-    return await captureApprovedStateRecipe({
+    const captured = await captureApprovedStateRecipe({
       page,
       recipe,
       runtimeHookBinding,
@@ -131,6 +155,8 @@ async function captureVariant({ browser, recipe, url, browserVersion }) {
         reducedMotion: recipe.viewport.reducedMotion ?? 'reduce',
       },
     });
+    assertWholeRunHealthClean(wholeRunHealth, url, recipe.stateId);
+    return captured;
   } finally {
     await context.close();
   }
