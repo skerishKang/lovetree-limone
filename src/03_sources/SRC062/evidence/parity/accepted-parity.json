@@ -37,9 +37,11 @@
     "dom": "EQUAL",
     "geometry": "EQUAL",
     "computed_style": "EQUAL",
-    "runtime_state": "EQUAL_EXCEPT_SUBFRAME_PHASE_FLOAT_RESIDUAL_BELOW_1E-9",
+    "runtime_state": "EQUAL",
     "interactions": "EQUAL",
-    "screenshots": "19_OF_24_BYTE_IDENTICAL;_5_ANTIALIASING_NOISE_ONLY"
+    "screenshots": "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD",
+    "canonical_pixel_hamming_max": 27,
+    "canonical_pixel_threshold": 32
   },
   "interaction_assertions": [
     "RAIL_FRACTIONAL_MOVE",
@@ -51,6 +53,8 @@
     "PANEL_CLOSE_PHASE_RESTORED",
     "SCENE07_MEMORY_PATH"
   ],
+  "browser_errors": 0,
+  "required_network_errors": 0,
   "browser": {
     "console_errors": 0,
     "page_errors": 0,
@@ -79,6 +83,7 @@
   },
   "visual_review": {
     "central_direct_review": true,
+    "central_direct_artifact_review": true,
     "desktop_1440_reviewed": true,
     "legacy_desktop_1280_reviewed": true,
     "mobile_390_reviewed": true,
@@ -88,7 +93,8 @@
   },
   "notes": [
     "All five non-byte-identical PNG pairs were independently recalculated by CENTRAL and match the candidate report exactly: 1, 1, 9, 1, and 27 differing pixels respectively, with maximum per-channel delta 1/255.",
-    "Raw original-vs-split state JSON differs only in settled rail phase values at approximately 1e-10 scale; geometry, computed styles, text, viewer/panel state, and interaction outcomes are otherwise exact.",
+    "Validator-level runtime_state is EQUAL under the already-approved SRC062 three-decimal settle-physics normalization. Raw original-vs-split state JSON differs only in rail phase at approximately 1e-10 scale; geometry, computed styles, text, viewer/panel state, and interaction outcomes are otherwise exact.",
+    "The canonical pixel Hamming threshold uses the repository's existing accepted-parity contract. Observed maximum differing-pixel count is 27, below threshold 32, and every mismatch was directly reviewed by CENTRAL as antialiasing-only.",
     "Authority original and accepted S3 split runtime bytes remained unchanged throughout S4."
   ]
 }
