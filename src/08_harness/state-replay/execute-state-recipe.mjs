@@ -18,14 +18,16 @@ function stripWindowPrefix(value) {
   return value.startsWith('window.') ? value.slice('window.'.length) : value;
 }
 
-function runtimeSegments(value) {
+function runtimeSegments(value, { allowNumeric = false } = {}) {
   const normalized = stripWindowPrefix(value);
   const segments = normalized.split('.');
   if (
     !segments.length
-    || segments.some(
-      (segment) => !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment) || FORBIDDEN_RUNTIME_SEGMENTS.has(segment),
-    )
+    || segments.some((segment) => {
+      const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment);
+      const numericIndex = allowNumeric && /^(0|[1-9][0-9]*)$/.test(segment);
+      return (!identifier && !numericIndex) || FORBIDDEN_RUNTIME_SEGMENTS.has(segment);
+    })
   ) {
     throw new Error(`EXEC_RUNTIME_PATH_INVALID:${value}`);
   }
@@ -57,6 +59,51 @@ async function callHook(page, hook, arg) {
     }
     return current.call(parent, value);
   }, { segments, arg });
+}
+
+async function setRuntime(page, action) {
+  const destination = runtimeSegments(action.path);
+  const source = action.fromPath ? runtimeSegments(action.fromPath, { allowNumeric: true }) : null;
+  const hasLiteral = Object.prototype.hasOwnProperty.call(action, 'value');
+  await page.evaluate(({ destination: to, source: from, hasLiteral: literal, value }) => {
+    const readOwnPath = (names) => {
+      let current = window;
+      for (const name of names) {
+        if (current == null || !Object.prototype.hasOwnProperty.call(Object(current), name)) {
+          throw new Error(`trusted runtime source own-property missing: ${names.join('.')}`);
+        }
+        current = current[name];
+      }
+      return current;
+    };
+
+    let parent = window;
+    for (const name of to.slice(0, -1)) {
+      if (parent == null || !Object.prototype.hasOwnProperty.call(Object(parent), name)) {
+        throw new Error(`trusted runtime destination parent missing: ${to.join('.')}`);
+      }
+      parent = parent[name];
+    }
+    const key = to.at(-1);
+    if (parent == null || !Object.prototype.hasOwnProperty.call(Object(parent), key)) {
+      throw new Error(`trusted runtime destination own-property missing: ${to.join('.')}`);
+    }
+
+    const next = literal ? value : readOwnPath(from);
+    const type = typeof next;
+    if (next !== null && !['string', 'number', 'boolean'].includes(type)) {
+      throw new Error(`trusted runtime assignment is not primitive: ${to.join('.')}`);
+    }
+    if (type === 'number' && !Number.isFinite(next)) {
+      throw new Error(`trusted runtime assignment is not finite: ${to.join('.')}`);
+    }
+    parent[key] = next;
+  }, {
+    destination,
+    source,
+    hasLiteral,
+    value: action.value,
+  });
 }
 
 async function waitForRuntime(page, action) {
@@ -167,6 +214,9 @@ async function executeAction(page, action, baseUrl) {
     case 'evaluateHook':
       await callHook(page, action.hook, action.arg);
       return { type: action.type, hook: action.hook };
+    case 'setRuntime':
+      await setRuntime(page, action);
+      return { type: action.type, path: action.path, fromPath: action.fromPath ?? null };
     case 'waitForRuntime':
       await waitForRuntime(page, action);
       return { type: action.type, path: action.path };
