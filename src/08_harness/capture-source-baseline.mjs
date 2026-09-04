@@ -8,6 +8,7 @@ import { captureTrack64Baseline } from './source064-driver.mjs';
 import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
+import { captureSRC62Baseline } from './source062-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantBaselineDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
@@ -61,6 +62,11 @@ const sourceViewports = {
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
     { width: 390, height: 844 },
+  ],
+  SRC062: [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+    { width: 320, height: 720 },
   ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
@@ -297,6 +303,19 @@ try {
       };
 
       for (const viewport of viewportsFor(sourceId)) {
+        const label = `${viewport.width}x${viewport.height}`;
+        if (sourceId === 'SRC062') {
+          // SRC062 owns a dedicated S2-proven driver (full desktop/mobile/
+          // small-mobile interaction matrix via window.__track62). It manages
+          // its own browser context. Route to it instead of the generic
+          // window.__lt fallback, which SRC062 does not implement.
+          const evidence = await captureSRC62Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.D01_INITIAL_SCENE01.ids.length, elementCount: evidence.states.D01_INITIAL_SCENE01.elementCount });
+          continue;
+        }
         const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
         const page = await context.newPage();
         const errors = [];
@@ -309,7 +328,6 @@ try {
           timeout: 30000,
         });
         if (!response?.ok()) throw new Error(`${sourceId} baseline HTTP ${response?.status()}`);
-        const label = `${viewport.width}x${viewport.height}`;
         if (sourceId === 'SRC064') {
           const evidence = await captureTrack64Baseline(page, sourceOut, label);
           if (errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${errors.join('; ')}`);
