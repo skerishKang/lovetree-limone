@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC062",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "exact_head": "ca3d7749fb1c6f4467286c842645fe5e3022564c",
+    "generation_method": "LOCAL_MATERIALIZER_REPRODUCTION",
+    "materializer": "src/08_harness/materialize-mechanical-split.mjs",
+    "artifact_path": "/src-mechanical-split-candidate/SRC062",
+    "ci_exact_head_reproduction": "PENDING"
+  },
+  "authority": {
+    "bytes": 20728647,
+    "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 559,
+    "style_close": 18333,
+    "script_open": 20712134,
+    "script_close": 20727194,
+    "script_blocks": [
+      {
+        "open": 20712134,
+        "close": 20727194,
+        "length": 15052
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 20694972,
+      "sha256": "b6fad69f235bae5d1e4666005a68282528ae28b8a7fc34c8297c9a053c50cb68",
+      "git_blob_sha1": "0e6cf4592c4c2fb7dedf158fa761623f8dfd14bd"
+    },
+    "split/styles.css": {
+      "bytes": 17769,
+      "sha256": "870ed0acd5807828e4f92c5d9f04481179da57989d87ecd4c0d0d6861b5e3bae",
+      "git_blob_sha1": "6ce7812779861752cac4c3375d9706012721d287"
+    },
+    "split/script.js": {
+      "bytes": 15953,
+      "sha256": "2252d05b01f7d0cefbf4d36d9b49ce694ef0a7869897ac9929288536a0825420",
+      "git_blob_sha1": "279e3734b61e319f929977c0ea3bb009482edf58"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "round_trip_evidence": {
+    "method": "src/08_harness/validate-mechanical-split.mjs + src/03_sources/SRC062/tests/s3-roundtrip.test.mjs",
+    "original_sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+    "reconstructed_sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+    "original_bytes": 20728647,
+    "reconstructed_bytes": 20728647,
+    "byte_identical": true
+  },
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "next_stage": "S4_SOURCE_SPLIT_PARITY_HOLD",
+  "next_stage_note": "S4 is explicitly NOT executed at S3. Split-vs-original visual/interaction parity capture and CENTRAL acceptance remain HOLD until separately released."
+}
