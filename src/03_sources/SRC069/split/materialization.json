@@ -7,13 +7,14 @@
   "source_candidate": {
     "branch": "clean/src069-s3-mechanical-port",
     "branch_base_head": "06e21763454da479e8bb949fadd8500427b776b8",
-    "exact_head": "06e21763454da479e8bb949fadd8500427b776b8",
+    "generation_input_head": "06e21763454da479e8bb949fadd8500427b776b8",
+    "provenance_field_note": "generation_input_head is the repository HEAD that was checked out when the mechanical split was generated locally. It is not the PR exact head and cannot be recorded here: the final PR head only exists after this file is committed, so embedding it would be self-referential and never true. The value is retained purely as historical generation provenance. Exact-head acceptance for this capsule is external to the capsule and is established by the GitHub PR record and CI at the PR head. The parity binding that validate-mechanical-split.mjs checks for an ACCEPTED materialization reads parity_evidence.exact_head, which is populated by the S4 parity capture itself and is therefore unaffected by this rename.",
     "generation_method": "LOCAL_MATERIALIZER_REPRODUCTION",
     "materializer": "src/08_harness/materialize-mechanical-split.mjs",
     "materializer_invocation": "SRC_SPLIT_CANDIDATE_DIR=D:\\Temp\\src069-s3-candidate node src/08_harness/materialize-mechanical-split.mjs",
     "artifact_path": "D:\\Temp\\src069-s3-candidate\\SRC069",
     "materializer_result": "SRC_MECHANICAL_SPLIT_CANDIDATE_PASS=SRC069",
-    "ci_exact_head_reproduction": "PENDING"
+    "ci_exact_head_reproduction": "OUT_OF_SCOPE_SEE_PROVENANCE_FIELD_NOTE"
   },
   "authority": {
     "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",

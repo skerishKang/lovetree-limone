@@ -14,7 +14,7 @@
       "track_folder": "69_풀뷰포트폴리오_러브트리모션랜딩",
       "selected_d_folder": "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL"
     },
-    "note": "The brackets are literal in the root folder name only (verified code points: 91,91,...,93,93). The Drive project folder's literal name is 01_러브트리 with no brackets; the [ ] around it in the path notation are decorative. The design folder name really is 03_디자인채택본 (U+CC64), which differs by one code point from the visually similar 03_디자인채택본 (U+CC65)."
+    "note": "The brackets are literal in the root folder name only (verified code points: 91,91,...,93,93). The Drive project folder literal name is 01_러브트리 with no brackets; the [ ] around it in the path notation are decorative. The design folder literal name is 03_디자인채택본 (code points U+0030 U+0033 U+005F U+B514 U+C790 U+C778 U+CC44 U+D0DD U+BCF8), verified byte-for-byte against the rclone mirror written from Drive during S2 and re-verified against the Drive listing at S4 hydration. The two visually similar Hangul jamo U+CC64 and U+CC65 are NOT involved here; an earlier draft of this note mislabeled the code points and was corrected."
   },
   "source_id_namespace": {
     "note": "The template `key` (01..11) is the portal slot index inside this Source. The `track` value (02, 06, 12, ...) is the adopted Track identity the slot points at. The two namespaces are not interchangeable and must not be merged by numeric equality.",

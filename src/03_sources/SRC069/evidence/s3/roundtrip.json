@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC069",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-04T17:12:49.369Z",
+  "run_at": "2026-09-04T22:27:14.683Z",
   "authority": {
     "bytes": 27600,
     "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
