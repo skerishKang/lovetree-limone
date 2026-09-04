@@ -1,12 +1,14 @@
 import {
   MVP001_SOURCE_BY_STEP,
   MVP001_STEPS,
+  MVP001_READ_ONLY_BRIDGE_TYPES,
   parseMvp001UrlState,
   serializeMvp001UrlState,
   validateMvp001BridgeEnvelope,
 } from './productization-contract.js';
 
-const MUTATING_MESSAGE_TYPES = new Set(['TREE_SELECTED', 'MEMORY_SELECTED', 'NAVIGATE']);
+const MUTATING_MESSAGE_TYPES = new Set(['TREE_SELECTED', 'MEMORY_SELECTED', 'NAVIGATE', 'UPDATE_MEMORY_REQUEST']);
+const SRC057_WRITE_ALLOWED_TYPES = Object.freeze([...MVP001_READ_ONLY_BRIDGE_TYPES, 'UPDATE_MEMORY_REQUEST']);
 
 function generateSessionId() {
   if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
@@ -208,6 +210,7 @@ export class ProductOrchestrator {
       senderOrigin: event.origin,
       senderWindow: event.source,
       activeFrameWindow: this.activeFrameWindow,
+      allowedTypes: SRC057_WRITE_ALLOWED_TYPES,
     };
 
     const result = validateMvp001BridgeEnvelope(event.data, expectations);
@@ -287,6 +290,15 @@ export class ProductOrchestrator {
       }
 
       return { accepted: true, type: 'NAVIGATE', context: this.context, stepIndex, changed };
+    }
+
+    if (message.type === 'UPDATE_MEMORY_REQUEST') {
+      if (message.sourceId !== 'SRC057') return { accepted: false, code: 'SOURCE_MESSAGE_TYPE' };
+      if (!this.context || !this.context.treeId) return { accepted: false, code: 'ORPHAN_MEMORY_SELECTION' };
+      if (message.payload.memoryId !== this.context.selectedMemoryId) {
+        return { accepted: false, code: 'ORPHAN_MEMORY_SELECTION' };
+      }
+      return { accepted: true, type: 'UPDATE_MEMORY_REQUEST', payload: message.payload, context: this.context };
     }
 
     if (message.type === 'ERROR') {

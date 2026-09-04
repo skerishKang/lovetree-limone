@@ -1,6 +1,7 @@
 import { ProductOrchestrator } from './product-orchestrator.js';
 import { buildSurfaceUrl, projectAlphaContext, mapAlphaReadError } from './productized-alpha.js';
 import { createMvp001ReadClient } from './read-client.js';
+import { createMvp001UpdateClient } from './write-client.js';
 import { loadMvp001ReadContext } from './read-context.js';
 
 const STEPS = [
@@ -134,6 +135,66 @@ function createAlphaClient() {
   return createMvp001ReadClient({ fetchImpl: window.fetch.bind(window), getAccessToken });
 }
 
+function createAlphaUpdateClient() {
+  const getAccessToken = typeof window.__MVP01_GET_ACCESS_TOKEN__ === 'function'
+    ? window.__MVP01_GET_ACCESS_TOKEN__
+    : undefined;
+  return createMvp001UpdateClient({ fetchImpl: window.fetch.bind(window), getAccessToken });
+}
+
+let pendingUpdate = null;
+let updateSeq = 0;
+
+function mapUpdateError(error) {
+  if (error && typeof error === 'object') {
+    if (error.name === 'AbortError') return { status: 'aborted', text: 'Update cancelled. No change was applied.' };
+    if (error.code === 'VALIDATION') return { status: 'error', text: 'Update rejected: check title/memo and retry. No change was applied.' };
+    if (error.code === 'UNAUTHORIZED') return { status: 'unauthorized', text: 'Sign-in required to save (401). No change was applied.' };
+    if (error.code === 'NOT_FOUND') return { status: 'not-found', text: 'Memory not found or not owned (404). No change was applied.' };
+    if (error.code === 'DISABLED') return { status: 'error', text: 'Saving is temporarily disabled (503). No change was applied.' };
+    if (error.code === 'NETWORK') return { status: 'network-error', text: 'Network unavailable during save. State was refetched; retry explicitly. No fixture content is shown.' };
+    if (error.code === 'SERVER') return { status: 'error', text: 'Save failed on the server. State was refetched; retry explicitly. No fixture content is shown.' };
+  }
+  return { status: 'error', text: 'Save unavailable. State was refetched. No fixture content is shown.' };
+}
+
+async function handleUpdateRequest(payload, envelope) {
+  if (pendingUpdate) return { ok: false, code: 'BUSY' };
+  const memoryId = payload && payload.memoryId;
+  const fields = payload && payload.fields;
+  const writeOperationId = payload && payload.writeOperationId;
+  const seq = ++updateSeq;
+  const frameSessionAtStart = orchestrator.activeFrameSessionId;
+  pendingUpdate = { writeOperationId, memoryId, seq };
+  showAlphaState('loading', 'Saving canonical Memory…');
+  let updated;
+  try {
+    const client = createAlphaUpdateClient();
+    updated = await client.updateMemory(memoryId, fields);
+  } catch (error) {
+    if (!pendingUpdate || pendingUpdate.seq !== seq) return { ok: false, code: 'STALE_WRITE' };
+    if (frameSessionAtStart !== orchestrator.activeFrameSessionId) {
+      pendingUpdate = null;
+      return { ok: false, code: 'STALE_FRAME' };
+    }
+    pendingUpdate = null;
+    const mapped = mapUpdateError(error);
+    showAlphaState(mapped.status, mapped.text);
+    void refreshAlphaProjections();
+    return { ok: false, code: mapped.status };
+  }
+  if (!pendingUpdate || pendingUpdate.seq !== seq) return { ok: false, code: 'STALE_WRITE' };
+  if (frameSessionAtStart !== orchestrator.activeFrameSessionId) {
+    pendingUpdate = null;
+    return { ok: false, code: 'STALE_FRAME' };
+  }
+  pendingUpdate = null;
+  void updated;
+  const refreshed = await refreshAlphaProjections();
+  if (!refreshed.ok) return { ok: false, code: refreshed.code };
+  return { ok: true };
+}
+
 async function refreshAlphaProjections() {
   const seq = ++alphaLoadSeq;
   const context = orchestrator.getContext();
@@ -238,6 +299,10 @@ function handleBridgeMessage(event) {
   const result = orchestrator.handleBridgeMessage(event);
   if (!result.accepted) return;
 
+  if (result.type === 'UPDATE_MEMORY_REQUEST') {
+    void handleUpdateRequest(result.payload, event.data);
+    return;
+  }
   if (
     result.type === 'TREE_SELECTED'
     || result.type === 'MEMORY_SELECTED'
