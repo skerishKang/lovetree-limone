@@ -12,7 +12,8 @@
   "actions": [
     {
       "type": "evaluateHook",
-      "hook": "__lt.originReveal"
+      "hook": "__lt.originReveal",
+      "arg": null
     },
     {
       "type": "waitForRuntime",
