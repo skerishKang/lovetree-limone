@@ -225,7 +225,8 @@ export async function verifyMvpAuthHostArtifact({ clientDir, config }) {
 
 // Full build-time guard: validates env, returns a result suitable for the
 // build script. Never prints raw values.
-export function checkFirebaseBuildConfig(env = process.env) {  const validation = validateFirebaseClientConfig(env);
+export function checkFirebaseBuildConfig(env = process.env) {
+  const validation = validateFirebaseClientConfig(env);
   const fingerprint = validation.ok
     ? firebaseConfigFingerprint(validation.config)
     : null;
