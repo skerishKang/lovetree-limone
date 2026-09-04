@@ -13,6 +13,8 @@
  *   `__proto__`) so a trusted root cannot tunnel into language intrinsics
  * - free-form waitForFunction/fn strings are syntax-valid legacy input but are
  *   NOT executable here (no recipe-provided JavaScript execution path)
+ * - setRuntime may assign only a primitive literal or a primitive read through
+ *   another source-bound own-property path; no expression/code evaluation exists
  * - navigation is same-origin to the supplied baseline origin
  * - DUAL_VARIANT / NO_EXPECTED_HOOK remains explicit-driver/plugin territory
  */
@@ -39,24 +41,26 @@ const EXECUTABLE_ACTION_TYPES = new Set([
   'waitForSelectorState',
   'settle',
   'evaluateHook',
+  'setRuntime',
 ]);
 
 const FORBIDDEN_RUNTIME_SEGMENTS = new Set(['constructor', 'prototype', '__proto__']);
 
-function runtimePathSegments(value) {
+function runtimePathSegments(value, { allowNumeric = false } = {}) {
   if (typeof value !== 'string' || value.length === 0) return null;
   const normalized = value.startsWith('window.') ? value.slice('window.'.length) : value;
   const segments = normalized.split('.');
   if (!segments.length) return null;
   for (const segment of segments) {
-    if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment)) return null;
-    if (FORBIDDEN_RUNTIME_SEGMENTS.has(segment)) return null;
+    const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(segment);
+    const numericIndex = allowNumeric && /^(0|[1-9][0-9]*)$/.test(segment);
+    if ((!identifier && !numericIndex) || FORBIDDEN_RUNTIME_SEGMENTS.has(segment)) return null;
   }
   return segments;
 }
 
-function hookRoot(value) {
-  const segments = runtimePathSegments(value);
+function hookRoot(value, options = {}) {
+  const segments = runtimePathSegments(value, options);
   if (!segments) return null;
   const [root] = segments;
   return /^__[A-Za-z0-9_$]+$/.test(root) ? root : null;
@@ -67,6 +71,18 @@ function sameStringSet(left, right) {
   const a = [...new Set(left)].sort();
   const b = [...new Set(right)].sort();
   return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function validateBoundRuntimePath({ candidate, allowNumeric, expected, trusted, errors, codePrefix }) {
+  const segments = runtimePathSegments(candidate, { allowNumeric });
+  const root = hookRoot(candidate, { allowNumeric });
+  if (!segments) {
+    errors.push(`${codePrefix}_RUNTIME_PATH_FORBIDDEN:${candidate}`);
+  } else if (!root || !expected.has(root)) {
+    errors.push(`${codePrefix}_HOOK_NOT_SOURCE_BOUND:${candidate}`);
+  } else if (!trusted.has(root)) {
+    errors.push(`${codePrefix}_HOOK_NOT_DISCOVERED:${candidate}`);
+  }
 }
 
 function validateBinding(recipe, runtimeHookBinding, errors) {
@@ -116,16 +132,20 @@ function validateBinding(recipe, runtimeHookBinding, errors) {
   }
 
   for (const [index, action] of recipe.actions.entries()) {
-    const candidate = action?.hook ?? action?.path;
-    if (!candidate) continue;
-    const segments = runtimePathSegments(candidate);
-    const root = hookRoot(candidate);
-    if (!segments) {
-      errors.push(`EXEC_ACTION_RUNTIME_PATH_FORBIDDEN:actions[${index}]:${candidate}`);
-    } else if (!root || !expected.has(root)) {
-      errors.push(`EXEC_ACTION_HOOK_NOT_SOURCE_BOUND:actions[${index}]:${candidate}`);
-    } else if (!trusted.has(root)) {
-      errors.push(`EXEC_ACTION_HOOK_NOT_DISCOVERED:actions[${index}]:${candidate}`);
+    for (const [field, candidate, allowNumeric] of [
+      ['hook', action?.hook, false],
+      ['path', action?.path, false],
+      ['fromPath', action?.fromPath, true],
+    ]) {
+      if (!candidate) continue;
+      validateBoundRuntimePath({
+        candidate,
+        allowNumeric,
+        expected,
+        trusted,
+        errors,
+        codePrefix: `EXEC_ACTION_${field.toUpperCase()}:actions[${index}]`,
+      });
     }
   }
 }
@@ -199,6 +219,28 @@ function validateActionShapes(recipe, errors) {
     if (action.type === 'waitForSelectorState' && action.state !== undefined) {
       if (!['attached', 'detached', 'visible', 'hidden'].includes(action.state)) {
         errors.push(`EXEC_SELECTOR_STATE_INVALID:actions[${index}]:${action.state}`);
+      }
+    }
+
+    if (action.type === 'setRuntime') {
+      if (typeof action.path !== 'string' || action.path.length === 0) {
+        errors.push(`EXEC_SET_RUNTIME_PATH_REQUIRED:actions[${index}]`);
+      }
+      const hasValue = Object.prototype.hasOwnProperty.call(action, 'value');
+      const hasFromPath = Object.prototype.hasOwnProperty.call(action, 'fromPath');
+      if (hasValue === hasFromPath) {
+        errors.push(`EXEC_SET_RUNTIME_EXACTLY_ONE_SOURCE_REQUIRED:actions[${index}]`);
+      }
+      if (hasValue) {
+        const valueType = typeof action.value;
+        if (action.value !== null && !['string', 'number', 'boolean'].includes(valueType)) {
+          errors.push(`EXEC_SET_RUNTIME_LITERAL_NOT_PRIMITIVE:actions[${index}]`);
+        } else if (valueType === 'number' && !Number.isFinite(action.value)) {
+          errors.push(`EXEC_SET_RUNTIME_LITERAL_NOT_FINITE:actions[${index}]`);
+        }
+      }
+      if (hasFromPath && (typeof action.fromPath !== 'string' || action.fromPath.length === 0)) {
+        errors.push(`EXEC_SET_RUNTIME_FROM_PATH_REQUIRED:actions[${index}]`);
       }
     }
   });
