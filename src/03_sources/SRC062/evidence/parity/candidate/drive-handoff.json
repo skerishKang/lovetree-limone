@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC062",
+  "stage": "S4_PARITY_CANDIDATE_HANDOFF",
+  "status": "CENTRAL_PENDING",
+  "zip_name": "SRC062_S4_PARITY_CANDIDATE_113c2140.zip",
+  "zip_bytes": 8014497,
+  "zip_sha256": "a54bb8a5c8ac2667fa2ccd32cccf9f98b2ea3932ddce22c1feeabe288fd9a3042",
+  "drive_folder": "LoveTree_Evidence",
+  "drive_file_id": "1Kr72OUn1K7G-si6iSrxvvA0aH1kaH-aJ",
+  "drive_readback": {
+    "verified_at_utc": "2026-09-04T09:03:00Z",
+    "name_match": true,
+    "size_match": true,
+    "size_bytes": 8014497,
+    "mime_type": "application/zip"
+  },
+  "contents": {
+    "paired_pngs": 48,
+    "viewport_comparison_jsons": [
+      "1440x900.json",
+      "390x844.json",
+      "320x720.json",
+      "1280x800.json"
+    ],
+    "evidence_manifest": "evidence-manifest.json",
+    "summary": "summary.json",
+    "manifest": "manifest.json",
+    "split_materialization": "split-materialization.json",
+    "accepted_baseline": "accepted-baseline.json"
+  },
+  "provenance": {
+    "capture_base_sha": "113c214026c65c17f8a9348926b55bd06a95d1fe",
+    "capture_head_sha": "113c214026c65c17f8a9348926b55bd06a95d1fe",
+    "authority_sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+    "capture_script": "src/08_harness/capture-src062-s4-parity.mjs"
+  },
+  "central_visual_acceptance": "PENDING"
+}
