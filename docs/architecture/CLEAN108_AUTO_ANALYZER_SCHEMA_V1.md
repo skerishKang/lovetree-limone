@@ -12,10 +12,12 @@ accepted Source capsule.
   authoritative HTML (+ optional manifest) as READ-ONLY inputs, emits
   analysis JSON to stdout (or `--out`). Never mutates the authority.
   The `--out` destination is fail-closed guarded BEFORE any write side
-  effect: rejected if it resolves to the input authority, to the manifest,
-  or inside `src/03_sources/**` (accepted Source capsule tree). Rejection
-  leaves authority/manifest bytes and mtimes untouched, creates no output
-  file and no output parent directory.
+  effect: rejected if it lexically or canonically resolves to the input
+  authority, to the manifest, or inside `src/03_sources/**` (accepted Source
+  capsule tree). Canonical resolution walks through the nearest existing
+  ancestor, so symlink/junction aliases cannot tunnel a write into protected
+  ownership. Rejection leaves authority/manifest bytes and mtimes untouched
+  and creates no output file or output parent directory.
 - `src/08_harness/auto-analyzer/analyze-html.mjs` — pure analysis core
   (`analyzeAuthorityHtml`). No I/O. No eval. Node built-ins only.
 - `src/08_harness/auto-analyzer/validate-state-recipe.mjs` — narrow
@@ -25,8 +27,11 @@ accepted Source capsule.
   (draft 2020-12) for the recipe shape.
 - `src/08_harness/fixtures/analyzer-expectations/SRC056.json|SRC060.json|SRC068.json`
   — narrow pinned expectations for SIMPLE / COMPLEX / DUAL_VARIANT.
-- `tests/clean108-analyzer.test.mjs` — 36 static tests. No browser. No
+- `tests/clean108-analyzer.test.mjs` — 36 static core tests. No browser. No
   network. No Drive. Temp-dir output only.
+- `tests/clean108-analyzer-output-path-safety.test.mjs` — 4 canonical-path
+  safety regressions covering authority alias, manifest alias, symlink/junction
+  parent into `src/03_sources/**`, and a safe external alias control.
 
 ## Analyzer contract (summary)
 
