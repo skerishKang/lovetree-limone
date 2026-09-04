@@ -13,12 +13,12 @@
     "screenshot": "EXACT"
   },
   "timeouts": { "actionMs": 5000, "recipeMs": 30000 },
-  "notes": "CLEAN-108 M1 Slice 5 COMPLEX proof matrix derived from accepted SRC060 S2/S4. Screenshot comparison uses the accepted canonical16 masked pixel digest; Source capsules and legacy parity remain authoritative.",
+  "notes": "CLEAN-108 M1 Slice 5 COMPLEX proof matrix derived from accepted SRC060 S2/S4. Camera pins and canonical16 screenshot policy reproduce source060-driver determinism without mutating Source bytes.",
   "states": [
     {
-      "stateId": "UNIVERSE_IDLE",
+      "stateId": "INITIAL",
       "actions": [
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": null },
@@ -27,14 +27,21 @@
         { "type": "hidden", "selector": "#clusterSummary" },
         { "type": "text", "selector": "#bridgeMode", "equals": "Bridge" }
       ],
-      "screenshots": [{ "name": "universe-idle", "animations": "disabled", "digest": "canonical16" }],
+      "screenshots": [{ "name": "initial", "animations": "disabled", "digest": "canonical16" }],
       "runtimeHook": { "name": "__LT60__", "snapshotFields": ["selected", "selectedCluster", "semantic", "camera", "visibleMobileMacroEstimate"] }
     },
     {
       "stateId": "CLUSTER_FOCUS",
       "actions": [
         { "type": "evaluateHook", "hook": "__LT60__.focusCluster", "arg": 1 },
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "rAF": 0, "waitMs": 220 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 1.28 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.clusters.1.c.0" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.clusters.1.c.1" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.clusters.1.c.2" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selectedCluster", "equals": 1 },
@@ -47,10 +54,15 @@
     {
       "stateId": "NODE_SELECT",
       "actions": [
-        { "type": "fill", "selector": "#search", "value": "First" },
-        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
-        { "type": "click", "selector": "#searchResults .result" },
-        { "type": "settle", "rAF": 2, "waitMs": 1900 }
+        { "type": "evaluateHook", "hook": "__LT60__.selectNode", "arg": 0 },
+        { "type": "settle", "rAF": 0, "waitMs": 1900 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 2.35 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.nodes.0.x" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.nodes.0.y" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.nodes.0.z" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
@@ -63,12 +75,17 @@
     {
       "stateId": "MOMENT_VIEWER",
       "actions": [
-        { "type": "fill", "selector": "#search", "value": "First" },
-        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
-        { "type": "click", "selector": "#searchResults .result" },
-        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60__.selectNode", "arg": 0 },
+        { "type": "settle", "rAF": 0, "waitMs": 1900 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 2.35 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.nodes.0.x" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.nodes.0.y" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.nodes.0.z" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 },
         { "type": "evaluateHook", "hook": "__LT60_V12__.openViewer", "arg": null },
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
@@ -81,12 +98,17 @@
     {
       "stateId": "BOOK_HANDOFF",
       "actions": [
-        { "type": "fill", "selector": "#search", "value": "First" },
-        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
-        { "type": "click", "selector": "#searchResults .result" },
-        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60__.selectNode", "arg": 0 },
+        { "type": "settle", "rAF": 0, "waitMs": 1900 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 2.35 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.nodes.0.x" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.nodes.0.y" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.nodes.0.z" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 },
         { "type": "evaluateHook", "hook": "__LT60_V12__.openBook", "arg": null },
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
@@ -99,12 +121,17 @@
     {
       "stateId": "CONNECTION_HANDOFF",
       "actions": [
-        { "type": "fill", "selector": "#search", "value": "First" },
-        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
-        { "type": "click", "selector": "#searchResults .result" },
-        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60__.selectNode", "arg": 0 },
+        { "type": "settle", "rAF": 0, "waitMs": 1900 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 2.35 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.nodes.0.x" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.nodes.0.y" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.nodes.0.z" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 },
         { "type": "evaluateHook", "hook": "__LT60_V12__.openConnection", "arg": null },
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
@@ -116,12 +143,17 @@
     {
       "stateId": "PATH_PREVIEW",
       "actions": [
-        { "type": "fill", "selector": "#search", "value": "First" },
-        { "type": "waitForSelectorState", "selector": "#searchResults .result", "state": "visible" },
-        { "type": "click", "selector": "#searchResults .result" },
-        { "type": "settle", "rAF": 2, "waitMs": 1900 },
+        { "type": "evaluateHook", "hook": "__LT60__.selectNode", "arg": 0 },
+        { "type": "settle", "rAF": 0, "waitMs": 1900 },
+        { "type": "setRuntime", "path": "__LT60__.camera.yaw", "value": -0.18 },
+        { "type": "setRuntime", "path": "__LT60__.camera.pitch", "value": 0.1 },
+        { "type": "setRuntime", "path": "__LT60__.camera.zoom", "value": 2.35 },
+        { "type": "setRuntime", "path": "__LT60__.camera.tx", "fromPath": "__LT60__.nodes.0.x" },
+        { "type": "setRuntime", "path": "__LT60__.camera.ty", "fromPath": "__LT60__.nodes.0.y" },
+        { "type": "setRuntime", "path": "__LT60__.camera.tz", "fromPath": "__LT60__.nodes.0.z" },
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 },
         { "type": "evaluateHook", "hook": "__LT60_V12__.openPath", "arg": null },
-        { "type": "settle", "rAF": 2, "waitMs": 450 }
+        { "type": "settle", "clearToast": "#toast", "rAF": 2, "waitMs": 450 }
       ],
       "assertions": [
         { "type": "runtime", "path": "__LT60__.selected", "equals": 0 },
