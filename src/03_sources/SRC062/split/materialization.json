@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC062",
   "stage": "S3_MECHANICAL_SPLIT",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
     "exact_head": "ca3d7749fb1c6f4467286c842645fe5e3022564c",
@@ -64,8 +64,8 @@
     "reconstructed_bytes": 20728647,
     "byte_identical": true
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": null,
-  "next_stage": "S4_SOURCE_SPLIT_PARITY_HOLD",
-  "next_stage_note": "S4 is explicitly NOT executed at S3. Split-vs-original visual/interaction parity capture and CENTRAL acceptance remain HOLD until separately released."
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "next_stage": "CLEAN_COMPLETE",
+  "next_stage_note": "S4 original-vs-split parity accepted by CENTRAL after direct review of all 24 state pairs across four viewports, including independent review of five antialiasing-only screenshot mismatches."
 }
