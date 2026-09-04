@@ -127,7 +127,10 @@ async function settle(page, action) {
   if (action.clearToast) {
     const target = page.locator(action.clearToast);
     if (typeof target.evaluate === 'function') {
-      await target.evaluate((element) => element.classList.remove('show'));
+      await target.evaluate((element) => {
+        element.classList.remove('show');
+        element.classList.remove('open');
+      });
     }
   }
   if (action.pauseMedia) {
