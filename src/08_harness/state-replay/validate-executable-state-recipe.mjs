@@ -73,18 +73,6 @@ function sameStringSet(left, right) {
   return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
-function validateBoundRuntimePath({ candidate, allowNumeric, expected, trusted, errors, codePrefix }) {
-  const segments = runtimePathSegments(candidate, { allowNumeric });
-  const root = hookRoot(candidate, { allowNumeric });
-  if (!segments) {
-    errors.push(`${codePrefix}_RUNTIME_PATH_FORBIDDEN:${candidate}`);
-  } else if (!root || !expected.has(root)) {
-    errors.push(`${codePrefix}_HOOK_NOT_SOURCE_BOUND:${candidate}`);
-  } else if (!trusted.has(root)) {
-    errors.push(`${codePrefix}_HOOK_NOT_DISCOVERED:${candidate}`);
-  }
-}
-
 function validateBinding(recipe, runtimeHookBinding, errors) {
   if (!runtimeHookBinding || typeof runtimeHookBinding !== 'object') {
     errors.push('EXEC_RUNTIME_BINDING_REQUIRED');
@@ -132,20 +120,29 @@ function validateBinding(recipe, runtimeHookBinding, errors) {
   }
 
   for (const [index, action] of recipe.actions.entries()) {
-    for (const [field, candidate, allowNumeric] of [
-      ['hook', action?.hook, false],
-      ['path', action?.path, false],
-      ['fromPath', action?.fromPath, true],
-    ]) {
-      if (!candidate) continue;
-      validateBoundRuntimePath({
-        candidate,
-        allowNumeric,
-        expected,
-        trusted,
-        errors,
-        codePrefix: `EXEC_ACTION_${field.toUpperCase()}:actions[${index}]`,
-      });
+    const candidate = action?.hook ?? action?.path;
+    if (candidate) {
+      const segments = runtimePathSegments(candidate);
+      const root = hookRoot(candidate);
+      if (!segments) {
+        errors.push(`EXEC_ACTION_RUNTIME_PATH_FORBIDDEN:actions[${index}]:${candidate}`);
+      } else if (!root || !expected.has(root)) {
+        errors.push(`EXEC_ACTION_HOOK_NOT_SOURCE_BOUND:actions[${index}]:${candidate}`);
+      } else if (!trusted.has(root)) {
+        errors.push(`EXEC_ACTION_HOOK_NOT_DISCOVERED:actions[${index}]:${candidate}`);
+      }
+    }
+
+    if (action?.fromPath) {
+      const segments = runtimePathSegments(action.fromPath, { allowNumeric: true });
+      const root = hookRoot(action.fromPath, { allowNumeric: true });
+      if (!segments) {
+        errors.push(`EXEC_ACTION_RUNTIME_PATH_FORBIDDEN:actions[${index}].fromPath:${action.fromPath}`);
+      } else if (!root || !expected.has(root)) {
+        errors.push(`EXEC_ACTION_HOOK_NOT_SOURCE_BOUND:actions[${index}].fromPath:${action.fromPath}`);
+      } else if (!trusted.has(root)) {
+        errors.push(`EXEC_ACTION_HOOK_NOT_DISCOVERED:actions[${index}].fromPath:${action.fromPath}`);
+      }
     }
   }
 }
