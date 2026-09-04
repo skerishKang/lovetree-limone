@@ -30,6 +30,10 @@
     </button>
   </nav>
 
+  <!-- Trusted Product auth host: installs window.__MVP01_GET_ACCESS_TOKEN__
+       (install-once, function only) before the shell evaluates. Source
+       surfaces are unaffected; they never receive token material. -->
+  <script type="module" src="/mvp/01/auth-host.js"></script>
   <script type="module" src="/mvp/01/shell.js"></script>
 </body>
 </html>

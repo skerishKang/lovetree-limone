@@ -26,6 +26,7 @@ import path from "node:path";
 import {
   checkFirebaseBuildConfig,
   verifyClientBundleHasFirebaseConfig,
+  verifyMvpAuthHostArtifact,
 } from "./lib/firebase-build-config.mjs";
 
 const repoRoot = path.resolve(import.meta.dirname, "..");
@@ -88,6 +89,22 @@ if (!bundleCheck.ok) {
   process.exit(1);
 }
 console.log("[production:build:safe] client bundle Firebase config verified (inlined)");
+
+// ── Post-build: verify the MVP001 auth-host artifact ─────────────────────
+// /mvp/01/auth-host.js must exist and carry the SAME inlined config, or the
+// static shell would boot with a stale/config-less host. Fail closed.
+const authHostCheck = await verifyMvpAuthHostArtifact({
+  clientDir,
+  config: fbCheck.config,
+});
+if (!authHostCheck.ok) {
+  console.error("[production:build:safe] BLOCKED — MVP auth-host artifact invalid:");
+  for (const problem of authHostCheck.problems) {
+    console.error(`  ✗ ${problem}`);
+  }
+  process.exit(1);
+}
+console.log("[production:build:safe] MVP auth-host artifact verified (dist/client/mvp/01/auth-host.js)");
 
 // ── Manifest ───────────────────────────────────────────────────────────────
 // Pass the fingerprint to the manifest writer via an env var so the manifest
