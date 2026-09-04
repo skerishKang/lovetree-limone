@@ -66,6 +66,12 @@
   },
   "parity_status": "PASS",
   "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_evidence": {
+    "exact_head": "113c214026c65c17f8a9348926b55bd06a95d1fe",
+    "artifact_id": "1Kr72OUn1K7G-si6iSrxvvA0aH1kaH-aJ",
+    "artifact_name": "SRC062_S4_PARITY_CANDIDATE_113c2140.zip",
+    "artifact_digest": "sha256:a54bb8a5c8ac2667fa2ccd32cccf9f98b2ea3932ddce22c1feeabe288fd9a3042"
+  },
   "next_stage": "CLEAN_COMPLETE",
   "next_stage_note": "S4 original-vs-split parity accepted by CENTRAL after direct review of all 24 state pairs across four viewports, including independent review of five antialiasing-only screenshot mismatches."
 }
