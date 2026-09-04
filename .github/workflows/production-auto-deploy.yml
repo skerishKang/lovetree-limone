@@ -125,9 +125,13 @@ jobs:
             exit 1
           fi
 
+          # CLEAN-108 real-browser pilot is excluded from this post-merge run:
+          # it fails closed in CI without SRC_EXACT_HEAD (evidence must bind
+          # the PR head sha), so it is proven exclusively by
+          # src-108-harness-gate.yml on the exact head.
           TRACK67_BASE_URL=http://127.0.0.1:3000 \
             LINEAGE59_BASE_URL=http://127.0.0.1:3000 \
-            node --import tsx --test 'tests/*.test.mjs'
+            node --import tsx --test 'tests/*.test.mjs' '!tests/clean108-src056-real-browser-pilot.test.mjs'
 
       - name: Remove test byproducts (keep worktree-clean guard meaningful)
         shell: bash

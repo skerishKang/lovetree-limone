@@ -20,10 +20,13 @@ import test from 'node:test';
 import { validateExecutableStateRecipe } from '../src/08_harness/state-replay/validate-executable-state-recipe.mjs';
 import {
   MATCHED_PAIR_HOLD_CODES,
+  SUPPORTED_SOURCE_IDS,
   assertRecipesIdentical,
   canonicalRecipeDigest,
+  isSourceReleasedForPilot,
   preflightPairInputs,
   replayApprovedStatePair,
+  resolveExactHead,
   resolveReplayTarget,
   resolveRuntimeHookBinding,
 } from '../src/08_harness/state-replay/replay-approved-state-pair.mjs';
@@ -410,10 +413,9 @@ test('unknown source -> HOLD_UNKNOWN_SOURCE before browser', async () => {
 });
 
 test('SRC068 dual variant -> HOLD_SOURCE_NOT_SINGLE_EXECUTABLE before browser', async () => {
-  const originalSourceRoot = sourceRoot;
   const spy = browserSpy();
   const result = await replayApprovedStatePair({
-    sourceRoot: originalSourceRoot,
+    sourceRoot,
     sourceId: 'SRC068',
     recipe: baseRecipe({ sourceId: 'SRC068', runtimeHook: { name: 'mediaVariant' } }),
     binding: { sourceId: 'SRC068', discovered: [], expected: [], matched: false, status: 'NO_EXPECTED_HOOK' },
@@ -423,6 +425,36 @@ test('SRC068 dual variant -> HOLD_SOURCE_NOT_SINGLE_EXECUTABLE before browser', 
   assert.equal(result.ok, false);
   assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_SINGLE_EXECUTABLE);
   assert.equal(spy.invocations, 0);
+});
+
+test('registered but unreleased SRC060 -> HOLD_SOURCE_NOT_RELEASED before browser', async () => {
+  // SRC060 is a real registered single-executable Source (accepted capsule,
+  // BOUND runtime hook) that is NOT released for the v1 pilot. It must hold
+  // with HOLD_SOURCE_NOT_RELEASED before server start / browserFactory /
+  // context / page mutation — even though its target locks cleanly.
+  const spy = browserSpy();
+  const result = await replayApprovedStatePair({
+    sourceRoot,
+    sourceId: 'SRC060',
+    recipe: baseRecipe({ sourceId: 'SRC060' }),
+    binding: {
+      sourceId: 'SRC060',
+      discovered: ['__LT60__', '__LT60_V12__'],
+      expected: ['__LT60__', '__LT60_V12__'],
+      matched: true,
+      status: 'BOUND',
+    },
+    provenance: validProvenance(),
+    browserFactory: spy.factory,
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_RELEASED);
+  assert.equal(result.stage, 'pilot-support-gate');
+  assert.equal(spy.invocations, 0);
+  assert.deepEqual(SUPPORTED_SOURCE_IDS, ['SRC056']);
+  assert.equal(isSourceReleasedForPilot('SRC056'), true);
+  assert.equal(isSourceReleasedForPilot('SRC060'), false);
+  assert.equal(isSourceReleasedForPilot('SRC068'), false);
 });
 
 test('recipe/source mismatch -> HOLD_RECIPE_SOURCE_MISMATCH before browser', async () => {
@@ -510,6 +542,67 @@ test('missing required environment -> HOLD_MISSING_REQUIRED_ENVIRONMENT before b
     },
     MATCHED_PAIR_HOLD_CODES.MISSING_REQUIRED_ENVIRONMENT,
   );
+});
+
+// ---------------------------------------------------------------------------
+// exact-head provenance rules (CI fail-closed, local git fallback)
+// ---------------------------------------------------------------------------
+
+test('resolveExactHead: CI without SRC_EXACT_HEAD fails closed', () => {
+  const result = resolveExactHead({ env: { CI: 'true' }, gitRevParse: () => 'c119b6728fa2ab51113a5d010dddb6a76214977c' });
+  assert.equal(result.ok, false);
+  assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE);
+  assert.match(result.error, /SRC_EXACT_HEAD/);
+});
+
+test('resolveExactHead: GITHUB_ACTIONS without SRC_EXACT_HEAD fails closed', () => {
+  const result = resolveExactHead({ env: { GITHUB_ACTIONS: 'true' } });
+  assert.equal(result.ok, false);
+  assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE);
+});
+
+test('resolveExactHead: CI with SRC_EXACT_HEAD uses the env head (never the merge sha)', () => {
+  const result = resolveExactHead({
+    env: { CI: 'true', SRC_EXACT_HEAD: '6ea0e3577a30c44fefec3ae0bd2788cd8cf1bcec' },
+    gitRevParse: () => '0000000000000000000000000000000000000000',
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.exactHead, '6ea0e3577a30c44fefec3ae0bd2788cd8cf1bcec');
+  assert.equal(result.source, 'env');
+  assert.equal(result.ci, true);
+});
+
+test('resolveExactHead: CI with malformed SRC_EXACT_HEAD fails closed', () => {
+  const result = resolveExactHead({ env: { CI: 'true', SRC_EXACT_HEAD: 'short' } });
+  assert.equal(result.ok, false);
+  assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE);
+});
+
+test('resolveExactHead: local dev keeps the git fallback', () => {
+  const result = resolveExactHead({
+    env: {},
+    gitRevParse: () => 'c119b6728fa2ab51113a5d010dddb6a76214977c',
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.exactHead, 'c119b6728fa2ab51113a5d010dddb6a76214977c');
+  assert.equal(result.source, 'git');
+  assert.equal(result.ci, false);
+});
+
+test('resolveExactHead: local env head wins over git fallback', () => {
+  const result = resolveExactHead({
+    env: { SRC_EXACT_HEAD: '6ea0e3577a30c44fefec3ae0bd2788cd8cf1bcec' },
+    gitRevParse: () => 'c119b6728fa2ab51113a5d010dddb6a76214977c',
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.exactHead, '6ea0e3577a30c44fefec3ae0bd2788cd8cf1bcec');
+  assert.equal(result.source, 'env');
+});
+
+test('resolveExactHead: no env and broken git fallback fails closed', () => {
+  const result = resolveExactHead({ env: {}, gitRevParse: () => { throw new Error('not a repo'); } });
+  assert.equal(result.ok, false);
+  assert.equal(result.hold, MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE);
 });
 
 // ---------------------------------------------------------------------------

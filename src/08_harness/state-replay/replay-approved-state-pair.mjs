@@ -10,11 +10,17 @@
  * This module adds the MISSING matched-pair orchestration:
  *   1. fail-closed target identity locks (authority / mechanical split)
  *   2. source-bound runtime hook binding derived from the locked authority
- *   3. loopback-only static serving of ORIGINAL + SPLIT at their real
+ *   3. v1 pilot support gate: SRC056 ONLY (another registered Source such as
+ *      SRC060 holds with HOLD_SOURCE_NOT_RELEASED before any browser activity)
+ *   4. loopback-only static serving of ORIGINAL + SPLIT at their real
  *      relative paths (no rewriting, no injection, no repair)
- *   4. EXACT SAME recipe replay on both sides through captureApprovedStateRecipe
- *   5. candidate comparison record envelope mapped from the merged comparator
+ *   5. EXACT SAME recipe replay on both sides through captureApprovedStateRecipe
+ *   6. candidate comparison record envelope mapped from the merged comparator
  *      (EQUAL / DIFF / HOLD / ERROR / NOT_APPLICABLE; no acceptance claim)
+ *
+ * Exact-head provenance: resolveExactHead() fails closed when CI (CI=true /
+ * GITHUB_ACTIONS=true) runs without SRC_EXACT_HEAD, so a synthetic merge SHA
+ * can never become the evidence head; local runs keep the git fallback.
  *
  * Security / fidelity invariants:
  *   - every fail-closed gate runs BEFORE a browser context is created
@@ -41,6 +47,16 @@ import { compareMatchedStateReplay } from './compare-matched-state-replay.mjs';
 export const MATCHED_PAIR_HARNESS_VERSION = 'clean108-m1-slice4a-v1';
 export const MATCHED_PAIR_COMPARISON_SCHEMA_VERSION = 'clean108-matched-pair-comparison-v1';
 
+// v1 pilot support gate: this harness release is SRC056 ONLY (issue #611
+// Slice 4A, corrective B). Another registered single-executable Source (e.g.
+// SRC060) is NOT released yet and must HOLD before any browser activity. A
+// later CENTRAL slice will extend this list.
+export const SUPPORTED_SOURCE_IDS = Object.freeze(['SRC056']);
+
+export function isSourceReleasedForPilot(sourceId) {
+  return typeof sourceId === 'string' && SUPPORTED_SOURCE_IDS.includes(sourceId);
+}
+
 export const MATCHED_PAIR_RESULTS = Object.freeze({
   EQUAL: 'EQUAL',
   DIFF: 'DIFF',
@@ -57,6 +73,7 @@ export const MATCHED_PAIR_HOLD_CODES = Object.freeze({
   SOURCE_NOT_SINGLE_EXECUTABLE: 'HOLD_SOURCE_NOT_SINGLE_EXECUTABLE',
   RECIPE_SOURCE_MISMATCH: 'HOLD_RECIPE_SOURCE_MISMATCH',
   RECIPE_MISMATCH: 'HOLD_RECIPE_MISMATCH',
+  SOURCE_NOT_RELEASED: 'HOLD_SOURCE_NOT_RELEASED',
   RECIPE_MUTATED_DURING_RUN: 'HOLD_RECIPE_MUTATED_DURING_RUN',
   INVALID_PROVENANCE: 'HOLD_INVALID_PROVENANCE',
   UNSUPPORTED_ACTION: 'HOLD_UNSUPPORTED_ACTION',
@@ -242,6 +259,58 @@ export function resolveRuntimeHookBinding({ sourceRoot, sourceId }) {
   }
   const analysis = analyzeAuthorityHtml({ html, sourceId });
   return { ok: true, binding: analysis.runtimeHookBinding, analysis };
+}
+
+// ---------------------------------------------------------------------------
+// exact-head provenance resolution (CI fail-closed, local git fallback)
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the exact-head SHA that must bind to the captured evidence.
+ *
+ * CI (CI=true or GITHUB_ACTIONS=true) checks out synthetic merge refs, so a
+ * silent `git rev-parse HEAD` fallback must never become authoritative there:
+ * the evidence head must come from SRC_EXACT_HEAD (the PR head sha). Fail
+ * closed when CI runs without it. Local development keeps the git fallback.
+ */
+export function resolveExactHead({ env = {}, gitRevParse = null } = {}) {
+  const isCi = ['CI', 'GITHUB_ACTIONS'].some((key) => {
+    const value = env[key];
+    return value === 'true' || value === '1';
+  });
+  const fromEnv = typeof env.SRC_EXACT_HEAD === 'string' && /^[0-9a-f]{40}$/.test(env.SRC_EXACT_HEAD)
+    ? env.SRC_EXACT_HEAD
+    : null;
+
+  if (isCi) {
+    if (fromEnv) {
+      return { ok: true, exactHead: fromEnv, source: 'env', ci: true };
+    }
+    return {
+      ok: false,
+      hold: MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE,
+      error: 'CI requires SRC_EXACT_HEAD (40-char hex); refusing git fallback on synthetic merge refs',
+      ci: true,
+    };
+  }
+
+  if (fromEnv) {
+    return { ok: true, exactHead: fromEnv, source: 'env', ci: false };
+  }
+  if (typeof gitRevParse === 'function') {
+    try {
+      const head = String(gitRevParse()).trim();
+      if (/^[0-9a-f]{40}$/.test(head)) {
+        return { ok: true, exactHead: head, source: 'git', ci: false };
+      }
+    } catch { /* fall through to fail-closed */ }
+  }
+  return {
+    ok: false,
+    hold: MATCHED_PAIR_HOLD_CODES.INVALID_PROVENANCE,
+    error: 'SRC_EXACT_HEAD required (40-char hex) and no local git fallback available',
+    ci: false,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -648,6 +717,20 @@ export async function replayApprovedStatePair({
   if (!splitLock.ok) return { ok: false, stage: 'target-lock:split', hold: splitLock.hold, error: splitLock.error };
   const original = originalLock.target;
   const split = splitLock.target;
+
+  // v1 pilot support gate (corrective B): SRC056 is the ONLY released Source
+  // in this harness version. A registered-but-unreleased Source such as SRC060
+  // must HOLD here — before server start, browserFactory invocation, browser
+  // context creation and page mutation. SRC068 is already held above as
+  // DUAL_VARIANT / SOURCE_NOT_SINGLE_EXECUTABLE and never reaches this gate.
+  if (!isSourceReleasedForPilot(sourceId)) {
+    return {
+      ok: false,
+      stage: 'pilot-support-gate',
+      hold: MATCHED_PAIR_HOLD_CODES.SOURCE_NOT_RELEASED,
+      error: `${sourceId} is not released for the v1 matched-pair pilot; SUPPORTED_SOURCE_IDS=${SUPPORTED_SOURCE_IDS.join(',')}`,
+    };
+  }
 
   if (!isRecord(recipe) || recipe.sourceId !== sourceId) {
     return { ok: false, stage: 'recipe', hold: MATCHED_PAIR_HOLD_CODES.RECIPE_SOURCE_MISMATCH, error: 'recipe.sourceId does not match sourceId' };

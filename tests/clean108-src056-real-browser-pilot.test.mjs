@@ -24,8 +24,10 @@ import { chromium } from 'playwright';
 
 import {
   replayApprovedStatePair,
+  resolveExactHead,
   resolveReplayTarget,
   resolveRuntimeHookBinding,
+  SUPPORTED_SOURCE_IDS,
 } from '../src/08_harness/state-replay/replay-approved-state-pair.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,11 +35,15 @@ const repoRoot = path.resolve(__dirname, '..');
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
 const fixtures = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'clean108-src056-replay-recipes.json'), 'utf8'));
 
-const exactHead = process.env.SRC_EXACT_HEAD
-  ?? execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-if (!/^[0-9a-f]{40}$/.test(exactHead)) {
-  throw new Error(`SRC_EXACT_HEAD must resolve to a 40-char SHA, got: ${exactHead}`);
-}
+// Exact-head provenance (corrective A / §3): in CI the evidence head MUST come
+// from SRC_EXACT_HEAD — never from `git rev-parse HEAD`, which would silently
+// resolve to a synthetic merge ref. resolveExactHead fails closed for that.
+const headResolution = resolveExactHead({
+  env: process.env,
+  gitRevParse: () => execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }),
+});
+assert.equal(headResolution.ok, true, headResolution.error);
+const exactHead = headResolution.exactHead;
 
 const originalLock = resolveReplayTarget({ sourceRoot, sourceId: 'SRC056', side: 'original' });
 assert.equal(originalLock.ok, true, `SRC056 original lock: ${originalLock.error ?? ''}`);
@@ -52,11 +58,15 @@ const ACCEPTED_VIEWPORTS = ['1280x800', '390x844', '320x720'];
 const ACCEPTED_STATES = ['OVERVIEW', 'ORIGIN_REVEAL'];
 
 async function launchBrowser() {
+  // CI (src-108-harness-gate.yml) pins SRC_BROWSER_CHANNEL=chrome; local
+  // development falls back to the bundled Chromium, then to branded Chrome.
+  const channel = process.env.SRC_BROWSER_CHANNEL;
+  if (channel === 'chrome') {
+    return chromium.launch({ headless: true, channel: 'chrome' });
+  }
   try {
     return await chromium.launch({ headless: true });
   } catch (error) {
-    // Local machines without the bundled Playwright browser fall back to the
-    // installed branded Chrome channel, mirroring SRC_BROWSER_CHANNEL=chrome.
     if (/executable doesn't exist/i.test(error?.message ?? '')) {
       return chromium.launch({ headless: true, channel: 'chrome' });
     }
@@ -75,6 +85,8 @@ test('SRC056 real-browser matched replay pilot (all accepted viewports + states)
   const browser = await launchBrowser();
   const summary = {
     exactHead,
+    exactHeadSource: headResolution.source,
+    supportedSourceIds: SUPPORTED_SOURCE_IDS,
     authoritySha256,
     browserVersion: null,
     sourceId: 'SRC056',
