@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-04T19:28:14.820Z",
+  "drive_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+  "design_root_folder_id": "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN",
+  "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+  "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+  "revision": "V7_FINAL_INTERACTIVE_R2.4",
+  "mime_type": "text/html",
+  "bytes": 24039,
+  "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+  "decoy_resolution": {
+    "noncanonical_same_name_file_ids": [
+      "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb"
+    ],
+    "rule": "Identity resolved by canonical Drive file id plus SHA-256 byte lock; filename alone never establishes identity."
+  },
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5545375429"
+}

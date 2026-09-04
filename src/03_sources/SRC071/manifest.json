@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC071",
+  "source_folder_name": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/71_러브트리_감정경로헬릭스_인터랙티브대문_V1/V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.4.html",
+  "authority": {
+    "drive_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+    "design_root_folder_id": "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN",
+    "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+    "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+    "revision": "V7_FINAL_INTERACTIVE_R2.4",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": null,
+  "authority_context_ref": "authority-context.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "canvas2d",
+    "scenario_id": "emotion-helix-portal",
+    "qa_hook": "window.__LOVE_TREE_V7_R24__",
+    "url_hooks": [
+      "?paused",
+      "?qa"
+    ],
+    "canvas_runtime": "2D",
+    "reel_cycle": 940,
+    "portal_mapping_status": "MAPPING_HOLD",
+    "relative_route_count": 6,
+    "interaction_surface": [
+      "INITIAL",
+      "THEME_BLACK",
+      "REEL_OFFSET_470",
+      "LENS_ACTIVATE_OPENING",
+      "MYTREE_404_SACRIFICIAL"
+    ],
+    "source_specific_controls": [
+      "drag",
+      "wheel",
+      "hold-key",
+      "hover",
+      "theme-toggle",
+      "endless-reel-wrap"
+    ]
+  }
+}
