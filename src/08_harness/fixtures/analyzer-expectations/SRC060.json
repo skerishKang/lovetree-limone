@@ -1,0 +1,19 @@
+{
+  "fixture": "COMPLEX",
+  "sourceId": "SRC060",
+  "authority": {
+    "bytes": 55260,
+    "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+  },
+  "expected": {
+    "s3Classification": "AUTO_SPLIT_SUPPORTED",
+    "inlineStyleBlocks": 1,
+    "inlineScriptBlocks": 2,
+    "attributedScriptCount": 0,
+    "externalScriptCount": 0,
+    "moduleScriptCount": 0,
+    "mustContainHooks": ["__LT60__", "__LT60_V12__"],
+    "mustContainFamilies": ["INITIAL", "VIEWER", "CUSTOM_RUNTIME_HOOK"],
+    "mustNotClassifyAs": "AUTO_SPLIT_HOLD"
+  }
+}

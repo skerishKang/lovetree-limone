@@ -1,0 +1,18 @@
+{
+  "fixture": "DUAL_VARIANT",
+  "sourceId": "SRC068",
+  "authority": {
+    "note": "DUAL_VARIANT has no single executable; expectations bind variant A frozen original as the single-file probe input",
+    "variantA": {
+      "bytes": 18565,
+      "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42"
+    }
+  },
+  "expected": {
+    "s3Classification": "AUTO_SPLIT_REQUIRES_PLUGIN",
+    "manifestAuthorityMode": "DUAL_VARIANT",
+    "mustContainFamilies": ["INITIAL"],
+    "mustNotClassifyAs": "AUTO_SPLIT_SUPPORTED",
+    "neverSingleDefault": true
+  }
+}
