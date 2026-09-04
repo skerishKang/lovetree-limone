@@ -174,16 +174,21 @@ class FakePage {
   }
 }
 
-test('captures one approved recipe into versioned in-memory S2 evidence', async () => {
-  const page = new FakePage();
-  const result = await captureApprovedStateRecipe({
+function capture(page, recipe = baseRecipe(), overrides = {}) {
+  return captureApprovedStateRecipe({
     page,
-    recipe: baseRecipe(),
+    recipe,
     runtimeHookBinding: BINDING,
     baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
     provenance: PROVENANCE,
     now: () => '2026-09-04T13:55:00.000Z',
+    ...overrides,
   });
+}
+
+test('captures one approved recipe into versioned in-memory S2 evidence', async () => {
+  const page = new FakePage();
+  const result = await capture(page);
 
   assert.equal(result.evidence.schemaVersion, S2_RECIPE_EVIDENCE_SCHEMA_VERSION);
   assert.equal(result.evidence.harnessVersion, S2_CAPTURE_HARNESS_VERSION);
@@ -194,6 +199,12 @@ test('captures one approved recipe into versioned in-memory S2 evidence', async 
   assert.equal(result.evidence.assertions.every((entry) => entry.passed), true);
   assert.deepEqual(result.evidence.runtimeSnapshot, { 'state.mode': 'READY' });
   assert.equal(result.evidence.runtimeHealth.consoleErrors.length, 0);
+  assert.equal(result.evidence.runtimeHealth.truncated, false);
+  assert.deepEqual(result.evidence.timeouts, {
+    actionMs: 2000,
+    recipeMs: 10000,
+    recipeMsEnforced: false,
+  });
   assert.equal(result.evidence.screenshots.length, 1);
   assert.equal(result.evidence.screenshots[0].bytes, Buffer.byteLength('clean108-fixture-shot'));
   assert.equal(
@@ -202,6 +213,22 @@ test('captures one approved recipe into versioned in-memory S2 evidence', async 
   );
   assert.equal(result.screenshotBuffers.get('ready').toString('utf8'), 'clean108-fixture-shot');
   assert.deepEqual(page.calls[0], ['setViewportSize', { width: 1280, height: 800 }]);
+
+  const gotoCall = page.calls.find((entry) => entry[0] === 'goto');
+  const clickCall = page.calls.find((entry) => entry[0] === 'click');
+  const waitCall = page.calls.find((entry) => entry[0] === 'waitFor');
+  assert.equal(gotoCall[2].timeout, 2000);
+  assert.equal(clickCall[2].timeout, 2000);
+  assert.equal(waitCall[2].timeout, 2000);
+});
+
+test('explicit per-action timeout overrides recipe actionMs', async () => {
+  const page = new FakePage();
+  const recipe = baseRecipe();
+  recipe.actions[1].timeoutMs = 777;
+  await capture(page, recipe);
+  const clickCall = page.calls.find((entry) => entry[0] === 'click');
+  assert.equal(clickCall[2].timeout, 777);
 });
 
 test('captures runtime health without converting it into silent acceptance', async () => {
@@ -212,14 +239,7 @@ test('captures runtime health without converting it into silent acceptance', asy
     this.page.emit('console', { type: () => 'error', text: () => 'fixture console error' });
   };
   try {
-    const result = await captureApprovedStateRecipe({
-      page,
-      recipe: baseRecipe(),
-      runtimeHookBinding: BINDING,
-      baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-      provenance: PROVENANCE,
-      now: () => '2026-09-04T13:55:00.000Z',
-    });
+    const result = await capture(page);
     assert.deepEqual(result.evidence.runtimeHealth.consoleErrors, ['fixture console error']);
   } finally {
     FakeLocator.prototype.click = originalClick;
@@ -231,16 +251,7 @@ test('rejects unsupported assertion before viewport or action mutation', async (
   const recipe = baseRecipe();
   recipe.assertions = [{ type: 'javascript', fn: 'return true' }];
 
-  await assert.rejects(
-    captureApprovedStateRecipe({
-      page,
-      recipe,
-      runtimeHookBinding: BINDING,
-      baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-      provenance: PROVENANCE,
-    }),
-    /CAPTURE_ASSERTION_UNSUPPORTED/,
-  );
+  await assert.rejects(capture(page, recipe), /CAPTURE_ASSERTION_UNSUPPORTED/);
   assert.deepEqual(page.calls, []);
 });
 
@@ -252,16 +263,7 @@ test('rejects unsupported preconditions and settle conditions before mutation', 
     const page = new FakePage();
     const recipe = baseRecipe();
     mutate(recipe);
-    await assert.rejects(
-      captureApprovedStateRecipe({
-        page,
-        recipe,
-        runtimeHookBinding: BINDING,
-        baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-        provenance: PROVENANCE,
-      }),
-      /CAPTURE_(PRECONDITIONS|SETTLE_CONDITION)_UNSUPPORTED_V1/,
-    );
+    await assert.rejects(capture(page, recipe), /CAPTURE_(PRECONDITIONS|SETTLE_CONDITION)_UNSUPPORTED_V1/);
     assert.deepEqual(page.calls, []);
   }
 });
@@ -271,18 +273,17 @@ test('rejects foreign and prototype-chain runtime assertions before mutation', a
     const page = new FakePage();
     const recipe = baseRecipe();
     recipe.assertions = [{ type: 'runtime', path, equals: 'READY' }];
-    await assert.rejects(
-      captureApprovedStateRecipe({
-        page,
-        recipe,
-        runtimeHookBinding: BINDING,
-        baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-        provenance: PROVENANCE,
-      }),
-      /CAPTURE_ASSERTION_RUNTIME_NOT_BOUND/,
-    );
+    await assert.rejects(capture(page, recipe), /CAPTURE_ASSERTION_RUNTIME_NOT_BOUND/);
     assert.deepEqual(page.calls, []);
   }
+});
+
+test('rejects object-valued runtime equality before mutation', async () => {
+  const page = new FakePage();
+  const recipe = baseRecipe();
+  recipe.assertions = [{ type: 'runtime', path: '__lt.state.mode', equals: { mode: 'READY' } }];
+  await assert.rejects(capture(page, recipe), /CAPTURE_ASSERTION_RUNTIME_EQUALS_UNSUPPORTED_V1/);
+  assert.deepEqual(page.calls, []);
 });
 
 test('requires declared device scale and reduced-motion environment to match', async () => {
@@ -292,54 +293,53 @@ test('requires declared device scale and reduced-motion environment to match', a
   recipe.viewport.reducedMotion = 'reduce';
 
   await assert.rejects(
-    captureApprovedStateRecipe({
-      page,
-      recipe,
-      runtimeHookBinding: BINDING,
-      baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-      provenance: PROVENANCE,
-      environment: { deviceScaleFactor: 1, reducedMotion: 'reduce' },
-    }),
+    capture(page, recipe, { environment: { deviceScaleFactor: 1, reducedMotion: 'reduce' } }),
     /CAPTURE_DEVICE_SCALE_FACTOR_MISMATCH/,
   );
   assert.deepEqual(page.calls, []);
 });
 
-test('rejects duplicate screenshot names before mutation', async () => {
+test('rejects unsafe and duplicate screenshot names before mutation', async () => {
+  for (const name of ['../escape', '.', '..', 'a/b', 'a\\b']) {
+    const page = new FakePage();
+    const recipe = baseRecipe();
+    recipe.screenshots = [{ name, digest: 'raw' }];
+    await assert.rejects(capture(page, recipe), /CAPTURE_SCREENSHOT_NAME_UNSAFE/);
+    assert.deepEqual(page.calls, []);
+  }
+
   const page = new FakePage();
   const recipe = baseRecipe();
   recipe.screenshots = [
     { name: 'same', digest: 'raw' },
     { name: 'same', digest: 'raw' },
   ];
-
-  await assert.rejects(
-    captureApprovedStateRecipe({
-      page,
-      recipe,
-      runtimeHookBinding: BINDING,
-      baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-      provenance: PROVENANCE,
-    }),
-    /CAPTURE_SCREENSHOT_DUPLICATE_NAME:same/,
-  );
+  await assert.rejects(capture(page, recipe), /CAPTURE_SCREENSHOT_DUPLICATE_NAME:same/);
   assert.deepEqual(page.calls, []);
+});
+
+test('rejects excessive assertion and screenshot counts before mutation', async () => {
+  {
+    const page = new FakePage();
+    const recipe = baseRecipe();
+    recipe.assertions = Array.from({ length: 129 }, () => ({ type: 'visible', selector: '#panel' }));
+    await assert.rejects(capture(page, recipe), /CAPTURE_ASSERTIONS_TOO_MANY:129/);
+    assert.deepEqual(page.calls, []);
+  }
+
+  {
+    const page = new FakePage();
+    const recipe = baseRecipe();
+    recipe.screenshots = Array.from({ length: 33 }, (_, index) => ({ name: `shot-${index}`, digest: 'raw' }));
+    await assert.rejects(capture(page, recipe), /CAPTURE_SCREENSHOTS_TOO_MANY:33/);
+    assert.deepEqual(page.calls, []);
+  }
 });
 
 test('fails closed when an approved assertion is not reached', async () => {
   const page = new FakePage();
   page.visibleSelectors.delete('#panel');
 
-  await assert.rejects(
-    captureApprovedStateRecipe({
-      page,
-      recipe: baseRecipe(),
-      runtimeHookBinding: BINDING,
-      baseUrl: 'http://127.0.0.1:8137/SRC056/original.html',
-      provenance: PROVENANCE,
-      now: () => '2026-09-04T13:55:00.000Z',
-    }),
-    /CAPTURE_ASSERTION_FAILED:assertions\[0\]:visible:#panel/,
-  );
+  await assert.rejects(capture(page), /CAPTURE_ASSERTION_FAILED:assertions\[0\]:visible:#panel/);
   assert.equal(page.calls.some((entry) => entry[0] === 'screenshot'), false);
 });
