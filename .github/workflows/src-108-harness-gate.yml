@@ -128,6 +128,27 @@ jobs:
           echo "GOOGLE_CHROME_VERSION=$CHROME_VERSION"
           test -n "$CHROME_VERSION"
 
+      - name: Prove SRC056 approved-recipe matched replay
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        shell: bash
+        env:
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
+        run: |
+          set -euo pipefail
+          rm -f /tmp/src056-approved-recipe-matched-replay.log
+          node src/08_harness/prove-src056-approved-recipe-parity.mjs | tee /tmp/src056-approved-recipe-matched-replay.log
+          grep -q "SRC056_APPROVED_RECIPE_MATCHED_REPLAY_PASS=${{ github.event.pull_request.head.sha }}" /tmp/src056-approved-recipe-matched-replay.log
+
+      - name: Upload SRC056 approved-recipe matched replay proof
+        if: always() && contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        uses: actions/upload-artifact@v4
+        with:
+          name: src056-approved-recipe-matched-replay-${{ github.event.pull_request.head.sha }}
+          path: /tmp/src056-approved-recipe-matched-replay.log
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Capture frozen Source baseline
         if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         env:

@@ -1,0 +1,74 @@
+{
+  "sourceId": "SRC056",
+  "recipeVersion": "clean108-state-recipe-v1",
+  "viewport": {
+    "width": 1280,
+    "height": 800,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce"
+  },
+  "stateId": "OVERVIEW",
+  "preconditions": [],
+  "actions": [
+    {
+      "type": "evaluateHook",
+      "hook": "__lt.overview",
+      "arg": false
+    },
+    {
+      "type": "waitForRuntime",
+      "path": "__lt.state.mode",
+      "equals": "OVERVIEW"
+    },
+    {
+      "type": "settle",
+      "clearToast": "#toast",
+      "rAF": 2,
+      "waitMs": 50
+    }
+  ],
+  "settleCondition": {},
+  "assertions": [
+    {
+      "type": "runtime",
+      "path": "__lt.state.mode",
+      "equals": "OVERVIEW"
+    },
+    {
+      "type": "visible",
+      "selector": "#stage"
+    },
+    {
+      "type": "text",
+      "selector": "#modePill",
+      "equals": "OVERVIEW"
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "overview",
+      "animations": "disabled",
+      "digest": "raw"
+    }
+  ],
+  "runtimeHook": {
+    "name": "__lt",
+    "snapshotFields": [
+      "state.mode",
+      "state.scale",
+      "state.tx",
+      "state.ty"
+    ]
+  },
+  "allowedTolerance": {
+    "geometryEpsPx": 0,
+    "floatDecimals": 3,
+    "canonicalHammingMax": 0,
+    "screenshot": "EXACT"
+  },
+  "timeouts": {
+    "actionMs": 5000,
+    "recipeMs": 15000
+  },
+  "notes": "CLEAN-108 M1 Slice 4 SIMPLE proof recipe derived from the already-accepted SRC056 OVERVIEW baseline state. This recipe does not replace accepted baseline evidence."
+}
