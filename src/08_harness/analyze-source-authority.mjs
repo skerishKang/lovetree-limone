@@ -41,8 +41,9 @@ function usage() {
     '  --source-id <id>     SRCxxx identity (optional; inferred from --manifest)',
     '  --manifest <path>    parsed for authority_mode/dual-variant policy only (READ-ONLY input)',
     '  --out <path>         write analysis JSON here instead of stdout; SAFE non-authority path',
-    '                       ONLY (rejected if it resolves to --input, to --manifest, or under',
-    '                       src/03_sources/** — fail closed before any write side effect)',
+    '                       ONLY (lexical + canonical target rejected when equal to --input/',
+    '                       --manifest or inside src/03_sources/**; symlink/junction aliases',
+    '                       cannot bypass the guard)',
     '  --help               print this help',
   ].join('\n');
 }
@@ -50,10 +51,13 @@ function usage() {
 const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..');
 const SOURCE_CAPSULE_ROOT = path.join(REPO_ROOT, 'src', '03_sources');
 
+function comparablePath(value) {
+  const resolved = path.resolve(value);
+  return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
+}
+
 function samePath(a, b) {
-  const na = path.resolve(a);
-  const nb = path.resolve(b);
-  return process.platform === 'win32' ? na.toLowerCase() === nb.toLowerCase() : na === nb;
+  return comparablePath(a) === comparablePath(b);
 }
 
 function isPathInside(child, parent) {
@@ -61,30 +65,94 @@ function isPathInside(child, parent) {
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
 }
 
+function realpathOrResolved(value) {
+  const resolved = path.resolve(value);
+  try {
+    return fs.realpathSync.native(resolved);
+  } catch (error) {
+    if (error?.code === 'ENOENT') return resolved;
+    fail(`OUTPUT_PATH_INSPECTION_FAILED: cannot canonicalize ${resolved}: ${error.message}`);
+  }
+}
+
 /**
- * Fail-closed output destination guard (CENTRAL Blocker A).
+ * Canonicalize a prospective write destination without creating anything.
  *
- * Rejects, in order, before ANY filesystem mutation (no mkdir, writeFile,
- * touch, truncate, or rename may happen before this succeeds):
- *   A1. --out resolving to the authority input path
- *   A2. --out resolving to the manifest path (when --manifest is given)
- *   A3. --out resolving inside the accepted Source capsule tree
- *       (src/03_sources/** of this repository)
+ * If the exact output does not exist, walk upward until the nearest existing
+ * ancestor, realpath that ancestor (thereby resolving symlink/junction
+ * indirection), then append the still-missing suffix. A broken symlink is
+ * fail-closed because lstat sees the link while realpath cannot resolve it.
+ */
+function canonicalWriteDestination(value) {
+  const resolved = path.resolve(value);
+  let cursor = resolved;
+  const suffix = [];
+
+  for (;;) {
+    let stat;
+    try {
+      stat = fs.lstatSync(cursor);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') {
+        fail(`OUTPUT_PATH_INSPECTION_FAILED: cannot inspect ${cursor}: ${error.message}`);
+      }
+      const parent = path.dirname(cursor);
+      if (parent === cursor) {
+        fail(`OUTPUT_PATH_INSPECTION_FAILED: no existing ancestor for ${resolved}`);
+      }
+      suffix.unshift(path.basename(cursor));
+      cursor = parent;
+      continue;
+    }
+
+    try {
+      const canonical = fs.realpathSync.native(cursor);
+      return path.join(canonical, ...suffix);
+    } catch (error) {
+      const kind = stat.isSymbolicLink() ? 'symlink/junction' : 'path';
+      fail(`OUTPUT_PATH_INSPECTION_FAILED: cannot resolve ${kind} ${cursor}: ${error.message}`);
+    }
+  }
+}
+
+/**
+ * Fail-closed output destination guard (CENTRAL Blocker A + canonical-path
+ * corrective).
+ *
+ * Rejects, before ANY filesystem mutation (no mkdir, writeFile, touch,
+ * truncate, or rename may happen before this succeeds):
+ *   A1. --out lexically OR canonically resolving to the authority input
+ *   A2. --out lexically OR canonically resolving to the manifest input
+ *   A3. --out lexically OR canonically resolving inside the accepted Source
+ *       capsule tree (src/03_sources/** of this repository)
+ *
+ * Canonical checks resolve existing symlink/junction components through the
+ * nearest existing ancestor, so an apparently external alias cannot tunnel a
+ * write back into Source authority/capsule ownership.
  *
  * A rejected invocation leaves authority bytes unchanged, manifest bytes
  * unchanged, no output file, and no new output parent directory.
  */
 function guardOutputDestination(args) {
   if (!args.out) return;
+
   const out = path.resolve(args.out);
-  if (samePath(out, args.input)) {
+  const input = path.resolve(args.input);
+  const manifest = args.manifest ? path.resolve(args.manifest) : null;
+
+  const canonicalOut = canonicalWriteDestination(out);
+  const canonicalInput = realpathOrResolved(input);
+  const canonicalManifest = manifest ? realpathOrResolved(manifest) : null;
+  const canonicalSourceRoot = realpathOrResolved(SOURCE_CAPSULE_ROOT);
+
+  if (samePath(out, input) || samePath(canonicalOut, canonicalInput)) {
     fail(`OUTPUT_EQUALS_INPUT_REJECTED: --out (${out}) resolves to the authority input itself; the authority is read-only`);
   }
-  if (args.manifest && samePath(out, args.manifest)) {
+  if (manifest && (samePath(out, manifest) || samePath(canonicalOut, canonicalManifest))) {
     fail(`OUTPUT_EQUALS_MANIFEST_REJECTED: --out (${out}) resolves to the manifest input; the manifest is read-only`);
   }
-  if (isPathInside(out, SOURCE_CAPSULE_ROOT)) {
-    fail(`OUTPUT_UNDER_SRC03_REJECTED: --out (${out}) is inside the accepted Source capsule tree (${SOURCE_CAPSULE_ROOT}); the analyzer must never write into Source authority/capsule ownership`);
+  if (isPathInside(out, SOURCE_CAPSULE_ROOT) || isPathInside(canonicalOut, canonicalSourceRoot)) {
+    fail(`OUTPUT_UNDER_SRC03_REJECTED: --out (${out}) resolves inside the accepted Source capsule tree (${SOURCE_CAPSULE_ROOT}); the analyzer must never write into Source authority/capsule ownership`);
   }
 }
 
