@@ -9,12 +9,15 @@
  *            set {047,057,058,060,062,064,071} plus SRC066; the parity harness
  *            routes its driver six {047,057,058,060,062,064} plus the SRC066
  *            SKIP (parity never grew an SRC071 route) — nothing added, removed,
- *            or renamed for any other Source.
- *  - T4      every worktree change to the two routed harnesses versus
- *            origin/main is a pure addition anchored on an SRC066 hunk:
- *            zero removed lines, and every diff hunk contains an added line
- *            naming SRC066/source066-driver. Legacy SRC047..SRC071 routing is
- *            therefore byte-for-byte unchanged.
+ *            or renamed for any other Source. Both sets equal origin/main
+ *            (the merge-forward changed nothing).
+ *  - T4      harness runtime scope is identical to origin/main: `git diff
+ *            origin/main` over the driver and the two routed harnesses is empty.
+ *            (This test file itself is branch-owned and excluded from the
+ *            identity check. Pre-merge this same test proved the #634 diff was
+ *            pure SRC066-anchored additions with zero removed lines; after the
+ *            #634 merge that proof is subsumed by runtime identity with main, so
+ *            the assertion now guards the merged steady state against edits.)
  *  - T5      fail-closed preserved: both harnesses still gate the generic path
  *            on the legacy window.__lt contract, so a Source with NEITHER a
  *            hook NOR a driver still trips the unchanged generic expectation
@@ -70,28 +73,22 @@ test('T2 baseline harness imports the driver exactly once; parity needs no impor
 test('T3 routing sets are the legacy set plus SRC066 in both harnesses', () => {
   assert.deepEqual(routingSet(readWorktree(BASELINE)), EXPECTED_BASELINE_ROUTED, 'baseline routes legacy set + SRC066');
   assert.deepEqual(routingSet(readWorktree(PARITY)), EXPECTED_PARITY_ROUTED, 'parity routes driver six + SRC066 skip');
-  assert.deepEqual(routingSet(gitShowMain(BASELINE)), [...LEGACY_ROUTED].sort(), 'origin/main baseline had exactly the legacy set');
+  assert.deepEqual(routingSet(gitShowMain(BASELINE)), EXPECTED_BASELINE_ROUTED, 'origin/main baseline routing equals worktree (merge changed nothing)');
+  assert.deepEqual(routingSet(gitShowMain(PARITY)), EXPECTED_PARITY_ROUTED, 'origin/main parity routing equals worktree (merge changed nothing)');
 });
 
-test('T4 all harness changes vs origin/main are pure SRC066-anchored additions', () => {
+test('T4 harness runtime scope is identical to origin/main (merge changed nothing)', () => {
   let diff;
   try {
-    diff = execFileSync('git', ['diff', '-U0', 'origin/main', '--', BASELINE, PARITY], { cwd: REPO_ROOT, encoding: 'utf8' });
+    diff = execFileSync(
+      'git',
+      ['diff', 'origin/main', '--', BASELINE, PARITY, 'src/08_harness/source066-driver.mjs'],
+      { cwd: REPO_ROOT, encoding: 'utf8' }
+    );
   } catch (error) {
     throw new Error(`routing proof requires git history: ${error.message}`);
   }
-  const removed = diff.split('\n').filter((l) => l.startsWith('-') && !l.startsWith('---'));
-  assert.equal(removed.length, 0, `zero removed lines across both harnesses (got: ${removed.slice(0, 3).join(' | ')})`);
-  const hunks = diff.split(/^@@ /m).slice(1);
-  assert.ok(hunks.length > 0, 'expected SRC066 addition hunks to exist');
-  hunks.forEach((hunk, i) => {
-    const added = hunk.split('\n').filter((l) => l.startsWith('+') && !l.startsWith('+++'));
-    assert.ok(added.length > 0, `hunk ${i} must add lines`);
-    assert.ok(
-      added.some((l) => /SRC066|source066-driver/i.test(l)),
-      `hunk ${i} must be SRC066-anchored (added: ${added.slice(0, 2).join(' | ').slice(0, 160)})`
-    );
-  });
+  assert.equal(diff.trim(), '', `harness runtime must not differ from origin/main (got: ${diff.slice(0, 300)})`);
 });
 
 test('T5 fail-closed generic hook gate is preserved in both harnesses', () => {
@@ -101,9 +98,10 @@ test('T5 fail-closed generic hook gate is preserved in both harnesses', () => {
     assert.ok(text.includes('#focusFirst'), `${label}: generic #focusFirst expectation still present`);
     assert.ok(text.includes('ORIGIN_REVEAL'), `${label}: generic ORIGIN_REVEAL expectation still present`);
   }
-  // T4 proves every non-SRC066 region is byte-identical to origin/main, so the
-  // generic fallback a hookless, driver-less Source falls into is unchanged:
-  // it still fails closed on the hook expectation instead of passing vaguely.
+  // T4 proves harness scope is identical to origin/main, so the generic
+  // fallback a hookless, driver-less Source falls into is the reviewed shared
+  // behavior: it still fails closed on the hook expectation instead of passing
+  // vaguely.
 });
 
 test('T6 baseline harness captures SRC066 at the S2 viewports', () => {
