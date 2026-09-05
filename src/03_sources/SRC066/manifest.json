@@ -25,7 +25,7 @@
     "mechanical_split_complete": true,
     "source_split_parity_pass": false
   },
-  "stages_note": "source_split_parity_pass=false because S4 parity is HOLD (not released for this lane). The S3 byte round-trip contract (tests/s3-roundtrip.test.mjs) passes independently.",
+  "stages_note": "source_split_parity_pass=false because the S4 parity candidate is captured but not yet accepted: CENTRAL released the S4 BOUNDED_SKIP and the exact-head candidate capture is committed at evidence/s4/ (summary.json status CANDIDATE_PASS_CENTRAL_PENDING, 18 matched original/split state pairs across 1440x900, 430x932, 390x844). The flag flips only with CENTRAL direct visual acceptance, together with parity_ref and evidence/parity/accepted-parity.json. No premature flip is made here. The S3 byte round-trip contract (tests/s3-roundtrip.test.mjs) passes independently.",
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
   "source_contract": {
