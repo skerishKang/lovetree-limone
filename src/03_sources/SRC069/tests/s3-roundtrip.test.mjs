@@ -364,21 +364,31 @@ ok(
 ok(mat.generation === "MECHANICAL_INLINE_EXTRACTION", "T19d", "generation = MECHANICAL_INLINE_EXTRACTION");
 ok(mat.round_trip_evidence?.byte_identical === true && mat.round_trip_evidence?.reconstructed_sha256 === LOCK_SHA256 && mat.round_trip_evidence?.reconstructed_bytes === LOCK_BYTES, "T19e", "recorded round-trip evidence matches the independent reconstruction");
 
-// ---- T20/T21/T22 stage flags and hold state ------------------------------------------------------
-console.log("\nStage flags (S4 remains HOLD):");
+// ---- T20/T21/T22 stage flags and acceptance state -----------------------------------------------
+console.log("\nStage flags (S4 accepted):");
 const manifest = JSON.parse(readTxt(path.join(ROOT, "manifest.json")));
 ok(manifest.stages.identity_verified === true && manifest.stages.raw_authority_locked === true && manifest.stages.baseline_captured === true, "T20a", "S0/S1/S2 stages complete");
 ok(manifest.stages.mechanical_split_complete === true, "T20b", "mechanical_split_complete=true");
-ok(manifest.stages.source_split_parity_pass === false, "T20c", "source_split_parity_pass=false (S4 parity NOT accepted)");
+ok(manifest.stages.source_split_parity_pass === true, "T20c", "source_split_parity_pass=true (S4 parity accepted)");
 ok(manifest.mechanical_split_ref === "split/materialization.json", "T20d", 'mechanical_split_ref="split/materialization.json"');
-ok(manifest.parity_ref === null, "T20e", "parity_ref=null at S3");
+ok(manifest.parity_ref === "evidence/parity/accepted-parity.json", "T20e", 'parity_ref="evidence/parity/accepted-parity.json"');
 ok(manifest.runtime_policy === "HTML_CSS_JS_MECHANICAL_ONLY", "T20f", `runtime policy unchanged (${manifest.runtime_policy})`);
 ok(manifest.tsx_allowed_during_split === false, "T20g", "TSX remains forbidden during split");
-ok(!fs.existsSync(path.join(ROOT, "evidence", "parity", "accepted-parity.json")), "T20h", "no S4 parity acceptance evidence created at S3");
+const acceptedParity = JSON.parse(readTxt(path.join(ROOT, "evidence", "parity", "accepted-parity.json")));
+ok(
+  acceptedParity.source_id === "SRC069" && acceptedParity.status === "ACCEPTED" &&
+    acceptedParity.comparison_policy?.canonical16_used === true &&
+    acceptedParity.comparison_policy?.canonical_scope === "VIDEO_VIEWER_STATES_ONLY" &&
+    acceptedParity.comparison_policy?.canonical16_states?.length === 3 &&
+    acceptedParity.comparison_policy?.non_video_states === "RAW_PNG_BYTE_IDENTICAL" &&
+    acceptedParity.comparison_policy?.global_visual_tolerance === false,
+  "T20h",
+  "S4 acceptance evidence exists and records the CENTRAL canonical policy truthfully"
+);
 ok(!fs.existsSync(path.join(ROOT, "parity")), "T20i", "no parity/ capture directory created at S3");
-ok(mat.status === "MATERIALIZED_PENDING_PARITY", "T21", "materialization status = MATERIALIZED_PENDING_PARITY");
-ok(mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE", "T21b", "parity_status = PENDING_EXACT_HEAD_CAPTURE");
-ok(mat.next_stage === "S4_SOURCE_SPLIT_PARITY_HOLD", "T21c", "next_stage = S4_SOURCE_SPLIT_PARITY_HOLD");
+ok(mat.status === "ACCEPTED", "T21", "materialization status = ACCEPTED");
+ok(mat.parity_status === "PASS", "T21b", "parity_status = PASS");
+ok(mat.next_stage === "ACCEPTED", "T21c", "next_stage = ACCEPTED");
 ok(manifest.capture_surface?.mode === "CONTEXT_AWARE_ONLY", "T22a", "capture_surface.mode = CONTEXT_AWARE_ONLY");
 ok(manifest.capture_surface?.repository_split_surface_runtime_equivalent === false && manifest.capture_surface?.repository_original_surface_runtime_equivalent === false, "T22b", "neither repository surface is claimed as a runtime-equivalent authority surface");
 ok(manifest.capture_surface?.shared_harness_disposition?.["capture-source-baseline.mjs"] === "SKIP" && manifest.capture_surface?.shared_harness_disposition?.["capture-source-parity.mjs"] === "SKIP", "T22c", "shared single-executable harnesses SKIP this capsule by disposition");

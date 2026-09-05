@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC069",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-04T22:27:14.683Z",
+  "run_at": "2026-09-05T12:41:22.990Z",
   "authority": {
     "bytes": 27600,
     "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
@@ -480,7 +480,7 @@
     {
       "id": "T20c",
       "pass": true,
-      "detail": "source_split_parity_pass=false (S4 parity NOT accepted)"
+      "detail": "source_split_parity_pass=true (S4 parity accepted)"
     },
     {
       "id": "T20d",
@@ -490,7 +490,7 @@
     {
       "id": "T20e",
       "pass": true,
-      "detail": "parity_ref=null at S3"
+      "detail": "parity_ref=\"evidence/parity/accepted-parity.json\""
     },
     {
       "id": "T20f",
@@ -505,7 +505,7 @@
     {
       "id": "T20h",
       "pass": true,
-      "detail": "no S4 parity acceptance evidence created at S3"
+      "detail": "S4 acceptance evidence exists and records the CENTRAL canonical policy truthfully"
     },
     {
       "id": "T20i",
@@ -515,17 +515,17 @@
     {
       "id": "T21",
       "pass": true,
-      "detail": "materialization status = MATERIALIZED_PENDING_PARITY"
+      "detail": "materialization status = ACCEPTED"
     },
     {
       "id": "T21b",
       "pass": true,
-      "detail": "parity_status = PENDING_EXACT_HEAD_CAPTURE"
+      "detail": "parity_status = PASS"
     },
     {
       "id": "T21c",
       "pass": true,
-      "detail": "next_stage = S4_SOURCE_SPLIT_PARITY_HOLD"
+      "detail": "next_stage = ACCEPTED"
     },
     {
       "id": "T22a",

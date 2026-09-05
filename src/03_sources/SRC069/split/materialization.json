@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC069",
   "stage": "S3_MECHANICAL_SPLIT",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
     "branch": "clean/src069-s3-mechanical-port",
@@ -93,9 +93,16 @@
     "D2_MOBILE_MENU_FOCUS_TRAPPED_ON_HIDDEN_MENU_CLOSE": "PRESERVED_NOT_FIXED",
     "note": "The mechanical split extracts the authority's inline style and script verbatim, so both frozen focus defects survive into split/script.js unchanged. They are intentionally not repaired in this CLEAN lane."
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_status_note": "S4 parity is blocked on two conditions: an exact-head re-capture, and context-aware serving at the canonical selected-D virtual depth (see next_stage_note). Neither is executable from the repository split path alone.",
-  "parity_ref": null,
-  "next_stage": "S4_SOURCE_SPLIT_PARITY_HOLD",
-  "next_stage_note": "S4 is explicitly NOT executed at S3. SRC069 parity cannot be captured by loading the repository split path directly: both original and split must be served at the canonical selected-D virtual depth so the authority's own ../../ portal paths resolve. S4 requires a separate CENTRAL release."
+  "parity_status": "PASS",
+  "parity_status_note": "S4 parity was captured at exact head ea5fbf0bdf1fcd290795641c56428fff5216ec37 with context-aware serving of both surfaces at the canonical selected-D virtual depth, under the CENTRAL binding video-state canonical policy (12 non-video states raw PNG byte identity; 3 enumerated video viewer states exact SRC060 canonical16 digest equality), and accepted by CENTRAL direct Drive S4 visual review (issue #589 comment 5551812640).",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_evidence": {
+    "exact_head": "ea5fbf0bdf1fcd290795641c56428fff5216ec37",
+    "binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+    "drive_folder_id": "1riwJjBgk0llGxqzzzG_O6dlYzBRTKM3h",
+    "central_acceptance_comment": 5551812640,
+    "note": "The evidence head is the capture head, not this metadata commit's head: the final metadata commit head cannot be embedded here without self-reference and is established externally by the GitHub PR record and CI."
+  },
+  "next_stage": "ACCEPTED",
+  "next_stage_note": "S4 parity is accepted and promoted by evidence/parity/accepted-parity.json. Ready/merge transitions remain owned by CENTRAL."
 }

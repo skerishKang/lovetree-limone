@@ -20,7 +20,7 @@
   "authority_context_note": "SRC069 is path-context-sensitive. Serving src/03_sources/SRC069/original/original.html or split/index.html directly from their repository paths is NOT runtime-equivalent to the authority: the authority's own ../../ portal paths resolve only from the canonical selected-D directory depth. authority-context.json records that depth and all 11 sibling portal target identities as metadata only. The ~35.7 MB target corpus is NOT vendored into this capsule, and no relative URL is rewritten.",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
-  "parity_ref": null,
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "capture_surface": {
     "mode": "CONTEXT_AWARE_ONLY",
     "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
@@ -41,7 +41,7 @@
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,

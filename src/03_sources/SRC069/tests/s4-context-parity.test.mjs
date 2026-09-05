@@ -27,7 +27,7 @@
  *  - C06  SRC060 keeps the generic path (disposition null)
  *  - C07  SRC068 keeps the DUAL_VARIANT path (helper returns null)
  *  - C08  undeclared / non-context-aware manifests are unaffected
- *  - C09  SRC069 has not claimed S4 acceptance
+ *  - C09  SRC069 acceptance metadata is coherent post-promotion
  *  - C10  the materialization provenance head is truthfully reframed
  *  - C11  the ~35.7 MB sibling context is still not vendored into the capsule
  *
@@ -139,11 +139,11 @@ check("C08a empty manifest unaffected", getCaptureSurfaceDisposition({ manifest:
 check("C08b SINGLE_EXECUTABLE mode unaffected", getCaptureSurfaceDisposition({ manifest: { capture_surface: { mode: "SINGLE_EXECUTABLE" } } }), null);
 check("C08c DUAL_VARIANT manifest short-circuits to null", getCaptureSurfaceDisposition({ manifest: { authority_mode: "DUAL_VARIANT", capture_surface: { mode: CONTEXT_AWARE_ONLY } } }), null);
 
-checkTrue("C09a SRC069 has not claimed S4 parity", src069Manifest.stages.source_split_parity_pass === false);
-check("C09b SRC069 parity_ref is still null", src069Manifest.parity_ref, null);
+checkTrue("C09a SRC069 has claimed S4 parity", src069Manifest.stages.source_split_parity_pass === true);
+check("C09b SRC069 parity_ref points at the accepted record", src069Manifest.parity_ref, "evidence/parity/accepted-parity.json");
 checkTrue(
-  "C09c no accepted parity artifact exists in the capsule",
-  !fs.existsSync(path.join(SRC_ROOT, "evidence", "parity", "accepted-parity.json")),
+  "C09c the accepted parity artifact exists in the capsule and is ACCEPTED",
+  readJson(path.join(SRC_ROOT, "evidence", "parity", "accepted-parity.json")).status === "ACCEPTED",
 );
 
 const materialization = readJson(path.join(SRC_ROOT, "split", "materialization.json"));
@@ -337,7 +337,7 @@ fs.writeFileSync(
       (state) => `| ${state.viewport} | ${state.state} | ${state.body_dom_equal} | ${state.runtime_state_equal} | ${state.geometry_equal} | ${state.text_equal} | ${state.screenshot_equal} | ${state.screenshot_sha_equal} | ${state.video_canonical16_state ? (state.canonical16_digest?.equal ? `digest-equal ${state.canonical16_digest.original.slice(0, 12)}` : `DIGEST-DIFF o=${state.canonical16_digest?.original ?? "?"} s=${state.canonical16_digest?.split ?? "?"}`) : "n/a (raw)"} | ${state.video_freeze_equal} |`,
     ),
     "",
-    "S4 is NOT accepted by this run. `source_split_parity_pass` remains false and `parity_ref` remains null until CENTRAL reviews the screenshots.",
+    "This capture run does not itself grant acceptance. S4 acceptance is established by CENTRAL review and recorded in `evidence/parity/accepted-parity.json`.",
     "",
   ].join("\n"),
 );
