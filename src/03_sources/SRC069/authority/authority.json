@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "authority_system": "Google Drive",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-04T16:13:30Z",
+  "drive_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+  "drive_folder_name": "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+  "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+  "filename": "69_v3_exact_source_multi_template_portal.html",
+  "revision": "V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+  "mime_type": "text/html",
+  "bytes": 27600,
+  "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+  "drive_modified_time": "2026-08-16T19:28:26.091Z",
+  "drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html",
+  "transport": {
+    "classification": "FRESH_DRIVE_EXACT",
+    "verification": "CENTRAL release comment 5543162150 names this file as the sole canonical SRC069 authority. This worker freshly re-downloaded file 1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C from live Drive on 2026-09-04 and reproduced 27,600 bytes / SHA-256 64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3 exactly. The Drive API returned the same SHA-256 for the live object, so the local copy, the Drive object, and the CENTRAL record agree. Frozen byte-exact; no BOM change, no line-ending normalization, no URL rewrite, no text edit."
+  },
+  "selection_note": "V3 (SELECTED-D) is the owner-selected exact-source multi-template portal: 11 works pages link other adopted tracks through Drive-local relative paths. The byte-identical track-root copy (1WyiJtGv-EiBjA8Fih7XBbQRaE2hybNN7) is NOT authority - it does not exist in this capsule and was never downloaded, served, or rendered. See authority-context.json: the selected-D directory depth is load-bearing because the authority's own ../../ portal paths resolve to the canonical design directory only from that depth.",
+  "runtime_context_required": true,
+  "runtime_context_ref": "authority-context.json"
+}

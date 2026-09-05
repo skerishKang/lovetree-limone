@@ -1,0 +1,359 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "record_type": "SOURCE_LOCAL_AUTHORITY_CONTEXT",
+  "generated_from": "original/original.html",
+  "generated_at_utc": "2026-09-04T16:25:00Z",
+  "generator_note": "Every portal relative_url and source_folder_identity value in this record was sliced from the frozen authority text at generation time. No URL was retyped, inferred, or rebased.",
+  "path_notation": {
+    "convention": "[[지피티 작업]]/[01_러브트리]/... follows the notation used by docs/design-intake/source-track-69-gate.md and the #589 release record.",
+    "literal_drive_names": {
+      "root_folder": "[[지피티 작업]]",
+      "project_folder": "01_러브트리",
+      "design_folder": "03_디자인채택본",
+      "track_folder": "69_풀뷰포트폴리오_러브트리모션랜딩",
+      "selected_d_folder": "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL"
+    },
+    "note": "The brackets are literal in the root folder name only (verified code points: 91,91,...,93,93). The Drive project folder literal name is 01_러브트리 with no brackets; the [ ] around it in the path notation are decorative. The design folder literal name is 03_디자인채택본 (code points U+0030 U+0033 U+005F U+B514 U+C790 U+C778 U+CC44 U+D0DD U+BCF8), verified byte-for-byte against the rclone mirror written from Drive during S2 and re-verified against the Drive listing at S4 hydration. The two visually similar Hangul jamo U+CC64 and U+CC65 are NOT involved here; an earlier draft of this note mislabeled the code points and was corrected."
+  },
+  "source_id_namespace": {
+    "note": "The template `key` (01..11) is the portal slot index inside this Source. The `track` value (02, 06, 12, ...) is the adopted Track identity the slot points at. The two namespaces are not interchangeable and must not be merged by numeric equality.",
+    "portal_slot_keys": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11"
+    ],
+    "adopted_track_ids": [
+      "02",
+      "06",
+      "12",
+      "44",
+      "55",
+      "59",
+      "61",
+      "65",
+      "66",
+      "67",
+      "68"
+    ]
+  },
+  "authority": {
+    "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "filename": "69_v3_exact_source_multi_template_portal.html",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "canonical_selected_D_drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html"
+  },
+  "runtime_context_required": true,
+  "repository_path_equivalence": {
+    "original_html_repository_path": "src/03_sources/SRC069/original/original.html",
+    "split_html_repository_path": "src/03_sources/SRC069/split/index.html",
+    "runtime_equivalent_in_repository": false,
+    "reason": "At the repository path the authority's own ../../ prefix resolves to src/01_ and its portal targets are absent. The bytes are correct and the DOM is unchanged; only the resolved location of the relative portal URLs differs. Correct runtime behavior therefore requires serving the capsule at the canonical selected-D virtual depth, not at its repository path."
+  },
+  "canonical_runtime_depth": {
+    "drive_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+    "drive_folder_name": "선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "note": "The authority lives one directory below the Track 69 folder, which sits one directory below the canonical design directory. From this depth, ../ is the Track 69 folder and ../../ is the canonical design directory."
+  },
+  "relative_anchor": {
+    "prefix": "../../",
+    "from": "document depth of 선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "resolves_to_drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본",
+    "resolves_to_drive_folder_id": "1-Llc1FMH_1fESTllFXFX7uFlJtishLuZ",
+    "intermediate_dir": {
+      "prefix": "../",
+      "resolves_to_drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩",
+      "resolves_to_drive_folder_id": "1sBdAyhjn5bDen4FswIcWKTeeCLzTZRni"
+    },
+    "runtime_verification": {
+      "bundle_id": "CLEAN108-SRC069-S2-CANDIDATE-260904",
+      "result": "11/11",
+      "note": "All 11 portal relative URLs resolved to HTTP 200 from the canonical selected-D depth in the accepted S2 bundle, and every resolved content-length matched the Drive value byte-for-byte."
+    }
+  },
+  "root_copy_authority": false,
+  "root_copy": {
+    "drive_file_id": "1WyiJtGv-EiBjA8Fih7XBbQRaE2hybNN7",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "authority": false,
+    "disposition": "NOT_AUTHORITY_EXCLUDED_FROM_CAPSULE",
+    "note": "Byte-identical to the canonical authority but stored at the Track 69 track-root depth, where the same ../../ prefix resolves to a sibling of the design directory instead of the design directory itself, so none of the 11 portal targets resolve. Never downloaded, served, or rendered in this lane."
+  },
+  "sibling_context_html_vendored": false,
+  "vendoring_policy": {
+    "mirror_total_bytes": 35722083,
+    "vendored_into_repository": false,
+    "locations_forbidden": [
+      "src/03_sources/SRC069/",
+      "src/08_harness/",
+      "tests/"
+    ],
+    "rationale": "The 11 target HTML files are external authority-context dependencies of this Source, not SRC069 split assets. This S3 task records their identity and hash metadata only. S4 will use a context-aware serving contract to hydrate them at the canonical virtual depth.",
+    "largest_target_bytes": 17192064
+  },
+  "portal_target_summary": {
+    "count": 11,
+    "total_target_bytes": 35694483,
+    "prefix": "../../",
+    "all_prefixes_match": true,
+    "all_have_drive_identity": true,
+    "distinct_adopted_tracks": [
+      "02",
+      "06",
+      "12",
+      "44",
+      "55",
+      "59",
+      "61",
+      "65",
+      "66",
+      "67",
+      "68"
+    ],
+    "distinct_source_folders": 11
+  },
+  "portal_targets": [
+    {
+      "key": "01",
+      "label_in_authority": "ABOUT (desktop-nav + menu)",
+      "track": "02",
+      "title": "FIRST JOURNEY",
+      "sub": "Landing · first Moment · first connection",
+      "relative_url": "../../02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html",
+      "source_folder_identity": {
+        "folder_name": "02_첫여정통합-3개html합본",
+        "drive_folder_id": "1rNwpZAPr19Qyd27BbfNdmw4wSF2BQzcd"
+      },
+      "target": {
+        "filename": "02_러브트리_첫여정통합_v1.html",
+        "drive_file_id": "1DBo9y2EeE1JGrrEx4qhnQVvLfV0crgCx",
+        "bytes": 111950,
+        "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html",
+      "copy": "Track 02 · the integrated first journey from naming a tree to planting the first emotional path."
+    },
+    {
+      "key": "02",
+      "label_in_authority": "DISCOVER chip",
+      "track": "65",
+      "title": "CINEMATIC CLUE",
+      "sub": "H3 extended motion editorial",
+      "relative_url": "../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html",
+      "source_folder_identity": {
+        "folder_name": "65_입덕단서_시네마틱에디토리얼",
+        "drive_folder_id": "1WKpu_AE89-HbEL4xV0y_eyQqiUASdxJb"
+      },
+      "target": {
+        "filename": "★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html",
+        "drive_file_id": "1UsRpqca0Xr7W4UO1QILaHp9zQ49XBeVw",
+        "bytes": 41333,
+        "sha256": "6e0b18db18d4adab85823907f7cc1238556ee9fcff5df2bc45dcffafa7658f0f"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html",
+      "copy": "Track 65 · cinematic entry where a small clue begins the path into fandom."
+    },
+    {
+      "key": "03",
+      "label_in_authority": "JOURNEY (desktop-nav + menu)",
+      "track": "66",
+      "title": "FIRST TREE",
+      "sub": "Interactive first-tree guide",
+      "relative_url": "../../66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+      "source_folder_identity": {
+        "folder_name": "66_첫트리만들기_인터랙티브스크롤가이드",
+        "drive_folder_id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs"
+      },
+      "target": {
+        "filename": "현재후보.html",
+        "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+        "bytes": 166996,
+        "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+      "copy": "Track 66 · interactive first-tree guide with an actual Moment, next reason and first branch."
+    },
+    {
+      "key": "04",
+      "label_in_authority": "MOMENTS (desktop-nav + menu)",
+      "track": "61",
+      "title": "CONNECTION REVIEW",
+      "sub": "Emotion-path review room",
+      "relative_url": "../../61_감정경로_연결검토실/현재후보.html",
+      "source_folder_identity": {
+        "folder_name": "61_감정경로_연결검토실",
+        "drive_folder_id": "1U7gUbIZ71oT5amvhvpGf-Hazx_dhLTZe"
+      },
+      "target": {
+        "filename": "현재후보.html",
+        "drive_file_id": "1qkD_Sy6r9MZYVycd-YkSR5jla6TBQi1l",
+        "bytes": 509063,
+        "sha256": "834fb634de5e039f95522a427f2ca20f0ed34d3c773bafbb51ced1ae14a43abe"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/61_감정경로_연결검토실/현재후보.html",
+      "copy": "Track 61 · review and compare why one Moment led to another."
+    },
+    {
+      "key": "05",
+      "label_in_authority": "CONNECT chip",
+      "track": "55",
+      "title": "FREE CONNECTION",
+      "sub": "Direct route editing",
+      "relative_url": "../../55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html",
+      "source_folder_identity": {
+        "folder_name": "55_자유연결_경로편집",
+        "drive_folder_id": "1BadZmcHHiGnKRAiGo6U6fc9ofNq69PUZ"
+      },
+      "target": {
+        "filename": "★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html",
+        "drive_file_id": "1hAnmi-bJ5OUSjjouznJQdLxf8VxHsqBS",
+        "bytes": 55327,
+        "sha256": "768a49f64da8621fc357a90401baa8f870351a6d27e58dc4d43dab89e80094bd"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/55_자유연결_경로편집/★_최종선택_55_LUPT_자유연결_V1.2_바로보기.html",
+      "copy": "Track 55 · direct manipulation for building and editing free emotional routes."
+    },
+    {
+      "key": "06",
+      "label_in_authority": "TREE (desktop-nav + menu)",
+      "track": "67",
+      "title": "MEMORY TAPE",
+      "sub": "V2.4.2 persistent world + WORKS",
+      "relative_url": "../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html",
+      "source_folder_identity": {
+        "folder_name": "67_메모리테이프_인터랙티브롤",
+        "drive_folder_id": "1mp0zz3MBZl_K6P9Guv3aBWJqvzOKsHL4"
+      },
+      "target": {
+        "filename": "track67_v2.4.2_works_compare_menu.html",
+        "drive_file_id": "18krSKEJ1QLA0bGFBh1MDg5Q261fJ-r5A",
+        "bytes": 12265511,
+        "sha256": "85210be6a3368edd8e5e2d55c94721d91cd031c2cabca1c6698ffabf1e65ae6f"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html",
+      "copy": "Track 67 · persistent interactive memory tape with its original internal WORKS comparison menu intact."
+    },
+    {
+      "key": "07",
+      "label_in_authority": "ARCHIVE (desktop-nav + menu)",
+      "track": "68",
+      "title": "MOTION ARCHIVE",
+      "sub": "V3.3.1 A/B launcher",
+      "relative_url": "../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html",
+      "source_folder_identity": {
+        "folder_name": "68_인물감정경로_모션아카이브",
+        "drive_folder_id": "1fv1AjuxstlAzeT3TABVNDmnFRFjvGJSh"
+      },
+      "target": {
+        "filename": "68_V3.3.1_COMPARE_LAUNCHER.html",
+        "drive_file_id": "1h8afMNtjdx5WZcJWEYbxblMXT4_S7kNc",
+        "bytes": 823,
+        "sha256": "daf675b2cdaf5006f16a897d5e8880395c2ac2038764c478e86243d6855049c4"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html",
+      "copy": "Track 68 · verified A/B launcher for two person-centered emotional-path motion archive candidates."
+    },
+    {
+      "key": "08",
+      "label_in_authority": "DISCOVERY (desktop-nav + menu)",
+      "track": "12",
+      "title": "GLOBAL DISCOVERY",
+      "sub": "Public path discovery home",
+      "relative_url": "../../12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html",
+      "source_folder_identity": {
+        "folder_name": "12_글로벌디스커버리_탐색홈",
+        "drive_folder_id": "19JdQcHw4tb7PdHwrTHPq8eSCL1_qXYh9"
+      },
+      "target": {
+        "filename": "01_글로벌디스커버리_탐색홈.html",
+        "drive_file_id": "1Xqr82ApKvgPccaFjbr0JuVfngNalxIjA",
+        "bytes": 4898093,
+        "sha256": "8c8a4c787c085167f195d7fce7b63ccc3df073e03822a4bfd803493dd8a3dd02"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/12_글로벌디스커버리_탐색홈/01_글로벌디스커버리_탐색홈.html",
+      "copy": "Track 12 · public discovery surface for finding other people’s routes and beginning a new exploration."
+    },
+    {
+      "key": "09",
+      "label_in_authority": "PLAY MEMORY PATHS showreel",
+      "track": "59",
+      "title": "MEMORY STORYBOOK",
+      "sub": "Page journey + story autoplay",
+      "relative_url": "../../59_메모리스케치북_페이지여정/버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html",
+      "source_folder_identity": {
+        "folder_name": "59_메모리스케치북_페이지여정",
+        "drive_folder_id": "1j3Vh-VpZFzJBqFPeSyJEpqbImCHao2ID"
+      },
+      "target": {
+        "filename": "현재후보.html",
+        "drive_file_id": "1Tof9O1c0lslWsgz2oY6R--drFuqTEC6d",
+        "bytes": 17192064,
+        "sha256": "763f8a2ffbe46d556fcfe7b2b57d505860be6e346bfe30223a8891a56e14be71"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/59_메모리스케치북_페이지여정/버전5_스토리자동재생·인라인편집·시네마틱배경_최신후보/현재후보.html",
+      "copy": "Track 59 · a page-based memory journey with story playback and inline editing."
+    },
+    {
+      "key": "10",
+      "label_in_authority": "REPLAY chip",
+      "track": "06",
+      "title": "300 MOMENT FINALE",
+      "sub": "Replay · celebration · transformation",
+      "relative_url": "../../06_300모먼트_피날레/01_300모먼트_피날레.html",
+      "source_folder_identity": {
+        "folder_name": "06_300모먼트_피날레",
+        "drive_folder_id": "1FtlY7NKQUPBOuFTr4xiuAyGrQuy7ltR-"
+      },
+      "target": {
+        "filename": "01_300모먼트_피날레.html",
+        "drive_file_id": "13e4tITukeanP3Sz7DRXDj96_lDuLIZ_v",
+        "bytes": 26280,
+        "sha256": "e0488699b7a5eb288a3347d1f5378da8b8457a03a320d25a34d0deec24e00f19"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/06_300모먼트_피날레/01_300모먼트_피날레.html",
+      "copy": "Track 06 · replay and celebrate a full season of 300 Moments without turning the milestone into a paywall."
+    },
+    {
+      "key": "11",
+      "label_in_authority": "Plant a moment (footer)",
+      "track": "44",
+      "title": "MOMENT COMPOSER",
+      "sub": "Hand-opened memory window",
+      "relative_url": "../../44_손으로여는기억창_컴포저/01_손으로여는기억창_컴포저_v2.html",
+      "source_folder_identity": {
+        "folder_name": "44_손으로여는기억창_컴포저",
+        "drive_folder_id": "1Pwv81tD0eneDYlf-hvVxb3j9fWVdHRhA"
+      },
+      "target": {
+        "filename": "01_손으로여는기억창_컴포저_v2.html",
+        "drive_file_id": "1LS-HFzbckmWeG75Wp7HdVGsNkuiGuuWI",
+        "bytes": 427043,
+        "sha256": "8fd6a4f14c2bb4dfa1f4ccb30dd95409f81e4159936bc70a3a62d7fddc5d705a"
+      },
+      "resolved_canonical_context_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/44_손으로여는기억창_컴포저/01_손으로여는기억창_컴포저_v2.html",
+      "copy": "Track 44 · a direct composer for opening and shaping a memory window by hand."
+    }
+  ],
+  "serving_contract_for_s4": {
+    "required": true,
+    "requirement": "CONTEXT_AWARE_SERVING_AT_CANONICAL_SELECTED_D_DEPTH",
+    "both_surfaces": [
+      "original/original.html",
+      "split/index.html"
+    ],
+    "note": "S4 parity for SRC069 requires serving BOTH the original and the split at the canonical selected-D virtual depth so the authority's own ../../ portal paths resolve identically for both. Loading the repository paths directly is not a valid S4 surface for this Source.",
+    "released": false,
+    "release_authority": "separate CENTRAL release"
+  }
+}
