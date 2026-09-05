@@ -624,8 +624,11 @@ try {
           // parameterized and owns its own browser context, so no driver edit and
           // no shared-harness rewrite is required; the driver itself still throws
           // on any browser error or failed request, keeping this path fail-closed.
-          const original = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);
-          const split = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, 'split', sourceId);
+          // The label is viewport scoped because the parity out directory is flat:
+          // it yields 1440x900-original-<state>.png (SRC062's convention) rather
+          // than letting a later viewport overwrite an earlier one's screenshot.
+          const original = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-original`, sourceId);
+          const split = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-split`, sourceId);
           const stateKeys = Object.keys(original.states);
           assert.deepStrictEqual(Object.keys(split.states).sort(), [...stateKeys].sort(), `${sourceId} ${viewport.width}x${viewport.height}: captured state set drift`);
           for (const state of stateKeys) {
