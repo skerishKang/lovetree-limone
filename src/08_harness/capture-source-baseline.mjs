@@ -9,6 +9,7 @@ import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
 import { captureSRC62Baseline } from './source062-driver.mjs';
+import { captureSRC66Baseline } from './source066-driver.mjs';
 import { captureSRC71Baseline } from './source071-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
@@ -71,6 +72,11 @@ const sourceViewports = {
     { width: 320, height: 720 },
   ],
   SRC071: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
+  SRC066: [
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
     { width: 390, height: 844 },
@@ -339,6 +345,19 @@ try {
           // V7 R2.4 S2/S4 interaction semantics rather than forcing the
           // generic graph-source fallback.
           const evidence = await captureSRC71Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
+          continue;
+        }
+        if (sourceId === 'SRC066') {
+          // SRC066 is hook-less by frozen S1 defect D9 (0 window.__*,
+          // 0 console.*, 0 data-testid), so the generic window.__lt fallback
+          // below cannot represent it. Route to its bounded S2-accepted
+          // DOM/geometry/scroll observer driver instead. No other Source is
+          // affected: every other sourceId keeps its existing route.
+          const evidence = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
           if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
           if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));

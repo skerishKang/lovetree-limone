@@ -1,0 +1,532 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-05T13:35:10.882Z",
+  "authority": {
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "reconstructed": {
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "round_trip": true,
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string. The authority carries 41 multibyte characters (bytes 166996 vs chars 166955); extraction and reconstruction operate on the lossless UTF-8 string, and byte identity is asserted on the re-encoded buffer.",
+    "style_open": 219,
+    "style_close": 19071,
+    "script_open": 148523,
+    "script_close": 166931,
+    "script_blocks": [
+      {
+        "open": 148523,
+        "close": 166931,
+        "length": 18400
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 129795,
+      "sha256": "00b6f6ac647ec5fc5f521ef355cf74501907b6adaffb4a9392e5e2cb3088be91",
+      "git_blob_sha1": "48358125ff94529acd385c7dca630264df74a7a8"
+    },
+    "split/styles.css": {
+      "bytes": 18845,
+      "sha256": "f215bc6d18dbbab3a42bfb3379461f488d01242b9dd863f6f58f656300bc7c0b",
+      "git_blob_sha1": "a560b53210b1e05854b5a85680df506fe48e99d8"
+    },
+    "split/script.js": {
+      "bytes": 18403,
+      "sha256": "149b9df94b1cb254f3c4a36e069bf0ea125bdc4fdec24b69bd68e7fe14459737",
+      "git_blob_sha1": "219b0aa16c8587649349f820f86a3b9c1f289c25"
+    }
+  },
+  "self_containment": {
+    "markup_img_data_uris": 12,
+    "script_data_uris": 1,
+    "external_references": 0,
+    "local_file_references": 0,
+    "assets_vendored": 0,
+    "paths_rebased": false
+  },
+  "storage_observation": {
+    "backend": "sessionStorage",
+    "keys": [
+      "lt66:first",
+      "lt66:candidate",
+      "lt66:why",
+      "lt66:route"
+    ],
+    "localStorage_uses": 0,
+    "method": "out-of-band source-text observation; no QA hooks added"
+  },
+  "s4_executed": false,
+  "s4_status": "HOLD",
+  "passed": 92,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01a",
+      "pass": true,
+      "detail": "authority is lossless UTF-8 (no lone surrogates)"
+    },
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority byte size stable (166996)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "capsule layout intact (CENTRAL S3 list + harness-gate authority/baseline files)"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "authority.json identity LOCKED"
+    },
+    {
+      "id": "T03c",
+      "pass": true,
+      "detail": "authority.json pins agree with frozen original"
+    },
+    {
+      "id": "T03d",
+      "pass": true,
+      "detail": "authority/sha256.txt matches locked SHA-256"
+    },
+    {
+      "id": "T03e",
+      "pass": true,
+      "detail": "drive readback mode = CENTRAL_FRESH_DRIVE_READBACK"
+    },
+    {
+      "id": "T03f",
+      "pass": true,
+      "detail": "drive readback pins agree with frozen original"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one bare style block (1/1)"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script, no attributed/external script tags"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "style span 219..19071"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "script span 148523..166931"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "style block precedes script block in document order"
+    },
+    {
+      "id": "T05a",
+      "pass": true,
+      "detail": "styles.css length matches authority style inner (18845)"
+    },
+    {
+      "id": "T05b",
+      "pass": true,
+      "detail": "styles.css === authority style inner (exact slice, order preserved)"
+    },
+    {
+      "id": "T06a",
+      "pass": true,
+      "detail": "script.js chars match authority script inner (18400)"
+    },
+    {
+      "id": "T06b",
+      "pass": true,
+      "detail": "script.js === authority script inner (exact slice, order preserved)"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one stylesheet glue reference"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one external script glue reference"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "no inline style remains in split index"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "zero inline script bodies; single closing tag belongs to the external script src"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "materialization source_id = SRC066"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "style boundary matches independent derivation"
+    },
+    {
+      "id": "T08c",
+      "pass": true,
+      "detail": "script boundary matches independent derivation"
+    },
+    {
+      "id": "T08d",
+      "pass": true,
+      "detail": "single script block recorded"
+    },
+    {
+      "id": "T08e",
+      "pass": true,
+      "detail": "script block length 18400 matches extracted JS chars"
+    },
+    {
+      "id": "T08f",
+      "pass": true,
+      "detail": "zero inter-script gaps recorded"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reconstructed byte-identical to frozen authority (166996 bytes)"
+    },
+    {
+      "id": "T09b",
+      "pass": true,
+      "detail": "reconstructed SHA-256 equals authority SHA-256"
+    },
+    {
+      "id": "T09c",
+      "pass": true,
+      "detail": "reconstructed byte size equals authority (166996)"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "rule/keyframe/property inventory unchanged ({\"rules\":211,\"keyframes\":1,\"media\":2,\"customProps\":82,\"transforms\":38})"
+    },
+    {
+      "id": "T10b",
+      "pass": true,
+      "detail": "styles.css is a byte-exact copy of the authority style inner (rule order preserved)"
+    },
+    {
+      "id": "T11a",
+      "pass": true,
+      "detail": "script source text identical => identical event/timing/scroll behavior"
+    },
+    {
+      "id": "T11b",
+      "pass": true,
+      "detail": "no inline script terminator inside script.js"
+    },
+    {
+      "id": "T11c",
+      "pass": true,
+      "detail": "sessionStorage get+set pair intact (storeGet/storeSet)"
+    },
+    {
+      "id": "T11d",
+      "pass": true,
+      "detail": "localStorage count is 0 (D3 source fact frozen)"
+    },
+    {
+      "id": "T11e",
+      "pass": true,
+      "detail": "D6 demo momentUrl default lives in markup (input value), preserved verbatim in shell (frozen, no fix)"
+    },
+    {
+      "id": "T11f",
+      "pass": true,
+      "detail": "zero QA hooks window.__* (D9 source fact frozen)"
+    },
+    {
+      "id": "T11g",
+      "pass": true,
+      "detail": "zero console.* in authority"
+    },
+    {
+      "id": "T11h",
+      "pass": true,
+      "detail": "zero data-testid in authority"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "split index is a pure positional splice of the authority (DOM order, ids, classes, data-* unchanged)"
+    },
+    {
+      "id": "T12c",
+      "pass": true,
+      "detail": "46 unique authority element ids all present in split shell"
+    },
+    {
+      "id": "T12d",
+      "pass": true,
+      "detail": "94 unique authority class attributes all preserved"
+    },
+    {
+      "id": "T12e",
+      "pass": true,
+      "detail": "16 unique authority data-* attributes all preserved"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "no backend/DB/auth/provider markers in split runtime files"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no product/MVP/adapter or repository wiring in split shell"
+    },
+    {
+      "id": "T15b",
+      "pass": true,
+      "detail": "no TS/TSX/JSX files in split surface (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T15c",
+      "pass": true,
+      "detail": "split surface contains exactly the four expected files (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T15d",
+      "pass": true,
+      "detail": "no split/assets/** directory created (no local file assets referenced by the authority)"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "12 markup <img> elements, every src a data: URI"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "5 #anchor hrefs preserved (href=\"#top\", href=\"#process\", href=\"#start\", href=\"#faq\", href=\"#footer\")"
+    },
+    {
+      "id": "T16c",
+      "pass": true,
+      "detail": "every #anchor href present verbatim in split shell"
+    },
+    {
+      "id": "T16d",
+      "pass": true,
+      "detail": "12 data: URIs in markup regions (all move with the shell)"
+    },
+    {
+      "id": "T16e",
+      "pass": true,
+      "detail": "1 data: fallback URI inside script.js (moves verbatim with the script)"
+    },
+    {
+      "id": "T16f",
+      "pass": true,
+      "detail": "zero external and zero root-relative src/href in authority"
+    },
+    {
+      "id": "T16g",
+      "pass": true,
+      "detail": "no local-file src/href in markup regions (nothing to vendor or rebase)"
+    },
+    {
+      "id": "T16h",
+      "pass": true,
+      "detail": "shell hrefs are authority hrefs plus exactly the stylesheet glue"
+    },
+    {
+      "id": "T16i",
+      "pass": true,
+      "detail": "shell srcs are authority srcs plus exactly the script glue"
+    },
+    {
+      "id": "T17a",
+      "pass": true,
+      "detail": "all 4 lt66:* sessionStorage keys present in script.js (lt66:first, lt66:candidate, lt66:why, lt66:route)"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "single storeSet/storeGet pair (writes are on-demand only, load writes nothing)"
+    },
+    {
+      "id": "T17c",
+      "pass": true,
+      "detail": "localStorage 0 in authority"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "0 preserve-3d / 0 perspective (no css3d-dom)"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "2D CSS transforms present (38 occurrences)"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "exactly 1 inline <svg> illustration"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "all split outputs match recorded bytes + SHA-256 + Git blob SHA-1"
+    },
+    {
+      "id": "T19b",
+      "pass": true,
+      "detail": "materialization authority agrees with frozen original"
+    },
+    {
+      "id": "T19c",
+      "pass": true,
+      "detail": "materialization contracts complete and all forbidden transformations unrecorded"
+    },
+    {
+      "id": "T19d",
+      "pass": true,
+      "detail": "generation = MECHANICAL_INLINE_EXTRACTION"
+    },
+    {
+      "id": "T19e",
+      "pass": true,
+      "detail": "recorded round-trip evidence matches the independent reconstruction"
+    },
+    {
+      "id": "T20a",
+      "pass": true,
+      "detail": "S0/S1/S2 stages complete"
+    },
+    {
+      "id": "T20b",
+      "pass": true,
+      "detail": "mechanical_split_complete=true"
+    },
+    {
+      "id": "T20c",
+      "pass": true,
+      "detail": "source_split_parity_pass=false (S4 parity HOLD, forbidden in this lane)"
+    },
+    {
+      "id": "T20d",
+      "pass": true,
+      "detail": "mechanical_split_ref=\"split/materialization.json\""
+    },
+    {
+      "id": "T20e",
+      "pass": true,
+      "detail": "runtime policy unchanged (HTML_CSS_JS_MECHANICAL_ONLY)"
+    },
+    {
+      "id": "T20f",
+      "pass": true,
+      "detail": "TSX remains forbidden during split"
+    },
+    {
+      "id": "T20g",
+      "pass": true,
+      "detail": "no parity/ artifact created at S3"
+    },
+    {
+      "id": "T20h",
+      "pass": true,
+      "detail": "materialization status = MATERIALIZED_PENDING_PARITY (gate-recognized S3 status)"
+    },
+    {
+      "id": "T20i",
+      "pass": true,
+      "detail": "parity pending exact-head capture, next stage S4_HOLD"
+    },
+    {
+      "id": "T20j",
+      "pass": true,
+      "detail": "accepted S2 baseline authority agrees with frozen original"
+    },
+    {
+      "id": "T21a",
+      "pass": true,
+      "detail": "driveFolderId = live root (D1 not reproduced)"
+    },
+    {
+      "id": "T21b",
+      "pass": true,
+      "detail": "source folder label exact (D2 not reproduced)"
+    },
+    {
+      "id": "T21c",
+      "pass": true,
+      "detail": "storage = sessionStorage, localStorage 0 (D3 not reproduced)"
+    },
+    {
+      "id": "T21d",
+      "pass": true,
+      "detail": "rendering = 2D CSS transforms + inline SVG (D4 not reproduced)"
+    },
+    {
+      "id": "T21e",
+      "pass": true,
+      "detail": "master_rows back-references MST046 (SRC047->MST098 precedent)"
+    },
+    {
+      "id": "T22a",
+      "pass": true,
+      "detail": "S2 bundle id referenced"
+    },
+    {
+      "id": "T22b",
+      "pass": true,
+      "detail": "S2 bundle MANIFEST sha referenced"
+    },
+    {
+      "id": "T22c",
+      "pass": true,
+      "detail": "frozen D1-D12 listed in baseline"
+    },
+    {
+      "id": "T22d",
+      "pass": true,
+      "detail": "baseline parity HOLD, S3 authorized"
+    },
+    {
+      "id": "T23",
+      "pass": true,
+      "detail": "all D1-D12 recorded as PRESERVED_NOT_FIXED"
+    },
+    {
+      "id": "T23b",
+      "pass": true,
+      "detail": "D6 demo URL survives verbatim in split/index.html input default (frozen)"
+    }
+  ]
+}
