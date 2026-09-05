@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>LoveTree — Track 71 V7 R2.4 Interactive Portal</title>
+<link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="viewport">
+  <main class="stage" id="stage" aria-label="LoveTree interactive emotion-lens portal">
+    <section class="paper" id="paper" data-theme="white">
+      <div class="scene-wrap"><canvas id="scene" aria-hidden="true"></canvas></div>
+      <div class="left-ui">
+        <h1 class="brand">LoveTree</h1>
+        <p class="copy" id="typedCopy" aria-label="Moments that moved your heart, connected into the path that made you a fan."></p>
+        <p class="meta">MOMENTS · CONNECTION · REPLAY · MY TREE</p>
+        <button class="cta" id="cta" type="button" aria-label="Open My Tree template">MY TREE</button>
+      </div>
+
+      <div class="theme-toggle" aria-label="Background theme">
+        <button id="themeWhite" type="button" aria-pressed="true">WHITE</button>
+        <button id="themeBlack" type="button" aria-pressed="false">BLACK</button>
+      </div>
+
+      <button class="hit" data-i="0" aria-label="Open First Clue template" aria-pressed="false"></button>
+      <button class="hit" data-i="1" aria-label="Open Moments archive template" aria-pressed="false"></button>
+      <button class="hit" data-i="2" aria-label="Open Connection motion archive template" aria-pressed="false"></button>
+      <button class="hit" data-i="3" aria-label="Open Replay memory orbit template" aria-pressed="false"></button>
+      <button class="hit" data-i="4" aria-label="Open My Tree biosphere template" aria-pressed="false"></button>
+      <button class="hit" data-i="5" aria-label="Open template portal" aria-pressed="false"></button>
+
+      <div class="drag-hint">DRAG / WHEEL / HOLD ↑↓ · ENDLESS</div>
+      <div class="portal-status" id="portalStatus" aria-live="polite"></div>
+      <div class="fade-cover" id="fadeCover"></div>
+    </section>
+  </main>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_DIRECT_DRIVE_S4_VISUAL_REVIEW",
+  "source_head": "d2e0c57c775b6aa0a90908a52f2225203dca2c5b",
+  "evidence_binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+  "central_acceptance_comment": 5545945293,
+  "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+  "pr_review_comment": 5545946606,
+  "authority": {
+    "file": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+    "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
+  },
+  "evidence": {
+    "drive_folder": "LoveTree_Evidence/CLEAN108-SRC071-S4-Candidate-260905/",
+    "drive_folder_id": "1P3RErOh4LZIsyExD_--ka2b1qTO2dyT5",
+    "drive_report_id": "12ZOQyVSMhs6qWpH8m1I3cfUM0I26wePR",
+    "drive_parity_meta_id": "16q49B7ws898sfZYdKkHWUnUDYRsbYJ6u",
+    "drive_runtime_id": "1-JH4AbOs2VAqkrDNYk9OSTqyA_vUXnZk",
+    "drive_comparison_id": "1eCMDPONY6SBBI8HrK2gS0iRIJ91uWYDx",
+    "drive_screenshots_folder_id": "1qTC6GUXwnoGrfz6dcwM-S3IO8VcSgHBB",
+    "readback": "26/26 objects re-downloaded and SHA256-verified MATCH",
+    "bundle_rewritten": false
+  },
+  "serving": {
+    "original": "http://127.0.0.1:3124/71_V7_FINAL_INTERACTIVE_R2.4.html",
+    "split": "http://127.0.0.1:3125/index.html",
+    "virtual_depth": "both entry files served at root depth of their own isolated tree; identical relative route resolution; no URL rewriting"
+  },
+  "viewports": [
+    { "width": 1440, "height": 900, "states": ["INITIAL", "THEME_BLACK", "REEL_OFFSET_470", "LENS_ACTIVATE_OPENING", "MYTREE_404"] },
+    { "width": 430, "height": 932, "states": ["INITIAL", "THEME_BLACK", "REEL_OFFSET_470"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "THEME_BLACK", "REEL_OFFSET_470"] }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL"
+  },
+  "disposition": {
+    "screenshots": "RAW_PNG_BYTE_IDENTICAL",
+    "matched_screenshot_states": "11/11",
+    "browser_errors": 0,
+    "unexpected_failed_requests": 0,
+    "scroll": "0,0 BOTH",
+    "my_tree": "EXPECTED_MAPPING_HOLD",
+    "mobile_stage_clip": "PRESERVED",
+    "canvas_runtime": "2D"
+  },
+  "tolerance_policy": {
+    "canonical16_used": false,
+    "hamming_tolerance_used": false,
+    "global_visual_tolerance": false,
+    "documented_normalizations": [
+      "body.outerHTML: single mechanical split glue (inline <script> vs <script src=\"./script.js\">) normalized to <script/>; all other body markup matched exactly",
+      "transient >=5-decimal float noise in DOM attribute strings normalized to N; getBoundingClientRect hit rects rounded to 2dp while lens scale converges; raw PNG byte identity is the authoritative visual check"
+    ]
+  },
+  "interaction_results": {
+    "theme_toggle_roundtrip": "PASS_BOTH",
+    "drag_viewy_during_drag": "205.2 BOTH",
+    "wheel_post_settle_delta": "EQUAL",
+    "key_hold_reel_velocity": "NON_ZERO BOTH",
+    "hover_target_and_cursor": "EQUAL",
+    "endless_reel_wrap_at_470": "EQUAL",
+    "lens_moment_qa_route": "QA ROUTE · CONNECTION · MOTION ARCHIVE, shown=true, selected=-1, face2=0.55, pressedCount=0 BOTH",
+    "mytree_sacrificial_click": "HTTP 404 at identical normalized URL, identical 404 page bodyText SHA and screenshot BOTH",
+    "animation_liveness_no_preference": "PASS_BOTH (canvas pixels change over 600ms; caretBlink active pre-completion)"
+  },
+  "determinism_policy": {
+    "reduced_motion": "reduce for all stable states; separate no-preference context for liveness only",
+    "device_scale_factor": 1,
+    "reel_positioning": "window.__LOVE_TREE_V7_R24__.dragTo(470) (exact)",
+    "lens_settle": "2500ms after QA ROUTE first paint",
+    "cross_run_reproduction": "suite executed at 2a79267a and d2e0c57c: 22/22 screenshots SHA-identical across runs; comparison.json byte-identical"
+  },
+  "browser_errors": 0,
+  "visual_review": {
+    "central_direct_drive_s4_visual_review": true,
+    "central_acceptance_comment": 5545945293,
+    "source_native_observation": "The split renders the identical V7 R2.4 emotion-helix portal: paper stage, endless reel geometry with wrap, theme surfaces, lens activation opening, mobile clip behavior and 404 mapping failure; the only structural difference is the mechanical glue (inline style + inline script replaced by one link and one script src)."
+  },
+  "frozen_defects_preserved": [
+    "SRC071_PORTAL_MAPPING_HOLD (MY TREE -> EXPECTED_MAPPING_HOLD; not promoted to functional navigation)",
+    "SRC071_MOBILE_STAGE_CLIP (preserved unmodified; renders byte-identically on both sides)"
+  ],
+  "notes": [
+    "Evidence was captured at exact head d2e0c57c775b6aa0a90908a52f2225203dca2c5b and accepted by CENTRAL direct Drive visual review; the accepted Drive bundle is immutable and was not rewritten by this metadata promotion.",
+    "The mechanical split round-trips byte-identically to the frozen 24039-byte authority original (validator-enforced).",
+    "No source repair, redesign, framework conversion or product data injection was introduced."
+  ],
+  "provenance": {
+    "evidence_source_head": "d2e0c57c775b6aa0a90908a52f2225203dca2c5b",
+    "final_metadata_commit_head": "NOT EMBEDDED / external CI authority"
+  }
+}
