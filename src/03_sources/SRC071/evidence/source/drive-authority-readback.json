@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "verified_at_utc": "2026-09-04T19:28:14.820Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+    "file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+    "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+    "mime_type": "text/html",
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
+  },
+  "readback_transport": {
+    "tool": "rclone v1.75.0",
+    "method": "folder-scoped copy by Drive folder id (1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV), 23 files listed, canonical file selected by Drive file id",
+    "byte_identity": "PASS",
+    "sha256_identity": "PASS"
+  },
+  "s2_crosscheck": {
+    "s2_authority_copy": "24039 bytes / 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+    "result": "MATCH"
+  },
+  "identity_non_inference": {
+    "master_rows": [],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  }
+}

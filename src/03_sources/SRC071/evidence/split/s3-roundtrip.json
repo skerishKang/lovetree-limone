@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-04T19:30:24.251Z",
+  "authority": {
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
+  },
+  "reconstructed": {
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
+  },
+  "roundtrip": true,
+  "routes": {
+    "count": 6,
+    "set_equal": true,
+    "order_equal": true
+  },
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "original locked at 24039 bytes"
+    },
+    {
+      "id": "T01b",
+      "pass": true,
+      "detail": "exactly one style block and one script block"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "styles.css === authority style inner (4460 chars)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "script.js === authority script inner (17276 chars)"
+    },
+    {
+      "id": "T04",
+      "pass": true,
+      "detail": "reconstruction byte-identical to frozen authority"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "link + script src glue only"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "exactly 6 relative .html route strings in split script (6)"
+    },
+    {
+      "id": "T07",
+      "pass": true,
+      "detail": "route set equality (exact strings)"
+    },
+    {
+      "id": "T08",
+      "pass": true,
+      "detail": "route order equality"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "route labels survive in order"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "fitStage mobile branch untouched"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "desktop fit branch untouched"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "endless reel constant untouched"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "?paused / ?qa / global API preserved"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "canvas runtime is 2D, never WebGL"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T16",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split"
+    },
+    {
+      "id": "T17",
+      "pass": true,
+      "detail": "no product/MVP adapter in split"
+    },
+    {
+      "id": "T18",
+      "pass": true,
+      "detail": "no assets/ directory (self-contained data URIs)"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "S3 asserted, parity pending, no parity_ref"
+    },
+    {
+      "id": "T20",
+      "pass": true,
+      "detail": "materialization record matches files on disk"
+    }
+  ]
+}

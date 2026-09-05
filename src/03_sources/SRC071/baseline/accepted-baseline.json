@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_PRODUCTION_OBSERVED_EVIDENCE",
+  "captured_head": "7f81281caa7650e4cca7a7355191e81043e80c42",
+  "central_acceptance": {
+    "issue": 589,
+    "comment_id": "5545375429",
+    "automation_issue": 611
+  },
+  "authority": {
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
+  },
+  "evidence": {
+    "drive_folder_id": "1oeS6YRAkWgT5fDUZX3z5LQ63TrjGs97B",
+    "drive_report_id": "1-aEkxlLZtAMsYzI0LA0tYB0NAXFEQfaq",
+    "screenshots_folder_id": "1XEYRsod6GF4kFQ9hFgjGpJKVhTBUTiFu",
+    "evidence_records": 30,
+    "png_count": 11,
+    "png_bytes_total": 775606
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "states": [
+        "INITIAL",
+        "THEME_BLACK",
+        "REEL_OFFSET_470",
+        "LENS_ACTIVATE_OPENING",
+        "MYTREE_404_SACRIFICIAL"
+      ]
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "states": [
+        "INITIAL",
+        "THEME_BLACK",
+        "REEL_OFFSET_470",
+        "LENS_ACTIVATE_OPENING"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "states": [
+        "INITIAL",
+        "THEME_BLACK",
+        "REEL_OFFSET_470",
+        "LENS_ACTIVATE_OPENING"
+      ]
+    }
+  ],
+  "interaction_results": {
+    "proofs": [
+      "drag",
+      "wheel",
+      "hold-key",
+      "hover",
+      "theme_toggle",
+      "endless_reel_wrap",
+      "animation_liveness"
+    ],
+    "source_runtime_errors": 0,
+    "expected_mapping_holds": 1
+  },
+  "canvas_runtime": "2D",
+  "accepted_defects": {
+    "SRC071_PORTAL_MAPPING_HOLD": "All 6 portal routes are relative Drive-mirror paths that 404 in repository/Preview hosting (sacrificial MY TREE 404 observed and accepted). Routes must survive the split byte-exactly; fixing mapping is a separate adapter-stage decision.",
+    "SRC071_MOBILE_STAGE_CLIP": "fitStage mobile branch scales by w/1050 with x=-(236*scale-12); content narrower than the 1920x1080 stage clips on small viewports. Frozen Source behavior; must not be repaired during split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}

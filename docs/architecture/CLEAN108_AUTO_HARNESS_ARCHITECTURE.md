@@ -1,9 +1,11 @@
 # CLEAN-108 Auto Harness Architecture
 
-Status: **Design / pilot architecture**  
-Standing issue: **#611**  
-Parent CLEAN program: **#589**  
-Governing fidelity process: **#564**
+- Status: **M1 accepted / Stage-1 production architecture**
+- Standing issue: **#611**
+- Parent CLEAN program: **#589**
+- Governing fidelity process: **#564**
+- M1 acceptance / Stage-1 release: **#611 comment 5546112083**
+- Maturity: M2 implemented/proven to current bounded scope; M3/Stage-1 released; **M4/Stage-2 NOT released**
 
 ## 1. Architectural goal
 
@@ -44,6 +46,73 @@ EVIDENCE CLASSIFIER
 ```
 
 The architecture is Source-preserving. It is not a frontend framework migration system.
+
+## 1a. Merged module map (current main)
+
+The conceptual components below are implemented by the following merged modules on
+current main. Every named module exists on main at the time of writing.
+
+```text
+Authority inspection/analysis:
+src/08_harness/analyze-source-authority.mjs
+src/08_harness/auto-analyzer/analyze-html.mjs
+
+State recipe schema / validation:
+src/08_harness/state-recipe.schema.json
+src/08_harness/auto-analyzer/validate-state-recipe.mjs
+src/08_harness/state-replay/validate-executable-state-recipe.mjs
+
+Executable recipe engine (bounded declarative actions):
+src/08_harness/state-replay/execute-state-recipe.mjs
+
+Recipe matrix expansion (viewport x state expansion):
+src/08_harness/state-replay/expand-recipe-matrix.mjs
+
+Approved-recipe capture adapter (evidence, no filesystem writes):
+src/08_harness/state-replay/capture-approved-state-recipe.mjs
+
+Matched comparison + evidence normalization:
+src/08_harness/state-replay/compare-matched-state-replay.mjs
+src/08_harness/state-replay/matched-evidence-normalization.mjs
+
+Thin real-browser matched-pair runner (SIMPLE family, SRC056-released):
+src/08_harness/state-replay/replay-approved-state-pair.mjs
+
+Per-family merged proof runners:
+src/08_harness/prove-src056-approved-recipe-parity.mjs
+src/08_harness/prove-src060-approved-recipe-parity.mjs
+src/08_harness/prove-src068-dual-variant-replay.mjs
+src/08_harness/prove-src047-media-viewer-replay.mjs
+src/08_harness/prove-src062-large-inline-replay.mjs (supplementary, merged PR #627)
+
+Source-specific replay plugins (DUAL_VARIANT / MEDIA_VIEWER / LARGE_INLINE families):
+src/08_harness/state-replay/replay-approved-dual-variant-pair.mjs
+src/08_harness/state-replay/replay-approved-src047-media-viewer-pair.mjs
+src/08_harness/state-replay/replay-approved-src062-large-inline-pair.mjs
+
+Mechanical splitter / capsule validators:
+src/08_harness/materialize-mechanical-split.mjs
+src/08_harness/validate-mechanical-split.mjs
+src/08_harness/dual-variant-mechanical.mjs
+src/08_harness/source-capsule-validator.mjs
+src/08_harness/validate-layout.mjs
+src/08_harness/generation-phase-guard.mjs
+
+Recipe fixtures (state recipes are DATA only):
+src/08_harness/fixtures/state-recipes/SRC056/overview.json
+src/08_harness/fixtures/state-recipes/SRC056/origin-reveal.json
+src/08_harness/fixtures/state-recipes/SRC060/approved-complex-matrix.json
+tests/fixtures/clean108-src056-replay-recipes.json
+```
+
+Exact-head CI that binds browser evidence to the PR head SHA (never a synthetic merge
+ref) is enforced by the merged workflows:
+
+```text
+.github/workflows/src-108-harness-gate.yml
+.github/workflows/clean108-src068-dual-variant-replay.yml
+.github/workflows/clean108-src047-media-viewer-replay.yml
+```
 
 ## 2. Component A — Authority Inspector
 
@@ -172,7 +241,10 @@ Example conceptual schema:
 }
 ```
 
-This is illustrative, not a fixed final JSON schema.
+The merged governing schema is `src/08_harness/state-recipe.schema.json` with recipe
+validation in `src/08_harness/auto-analyzer/validate-state-recipe.mjs` and executable
+validation in `src/08_harness/state-replay/validate-executable-state-recipe.mjs`.
+Recipes are DATA only: fixed action primitives, no recipe-supplied code.
 
 ### Recipe principles
 
@@ -257,11 +329,11 @@ Large inline data URIs are not automatically extracted.
 
 ## 9. Round-trip validator
 
-Where mechanically feasible, the harness should reconstruct an equivalent single-file representation and compare the relevant extracted content/order against the authority.
-
-The goal is not necessarily one universal byte-for-byte reconstruction for every possible HTML parser edge case. The goal is a deterministic proof that the split operation preserved the extracted source content and execution order without semantic rewriting.
-
-Any exception requires an explicit mechanical reason and review.
+The merged mechanical splitter (`src/08_harness/materialize-mechanical-split.mjs`)
+reconstructs the single-file representation from the split outputs and verifies
+**round-trip byte identity** (`round_trip_byte_identity: true`) before writing.
+`src/08_harness/validate-mechanical-split.mjs` re-validates every accepted capsule
+(currently 8/8). Any exception requires an explicit mechanical reason and review.
 
 ## 10. Component F — S4 Replay Runner
 
@@ -377,7 +449,9 @@ Rules:
 - cross-contamination explicitly tested
 - generic harness may skip fail-closed if a dedicated driver is required
 
-SRC068 is the reference regression family for this behavior.
+SRC068 is the merged DUAL_VARIANT proof family (see §20). The analyzer registry marks it
+DUAL_VARIANT with no generic hook trust; a merged plugin owns its replay. Authority
+decides which Sources are DUAL_VARIANT.
 
 ## 14. Simple / complex adapters
 
@@ -398,7 +472,10 @@ A driver may describe how to reach a state; it must not change Source bytes.
 
 ## 15. Evidence schema versioning
 
-Generated evidence should carry a schema/harness version once automation is shared across concurrent units.
+Generated evidence carries explicit schema/harness version fields on merged current main
+(`clean108-s2-recipe-evidence-v1`, `clean108-matched-replay-comparison-v1`,
+`clean108-matched-pair-comparison-v1`, `clean108-dual-variant-replay-v1`, per-family
+proof versions).
 
 Minimum provenance should include:
 
@@ -430,72 +507,236 @@ If a shared harness defect is discovered:
 
 This prevents one generic bug from invalidating many concurrent branches.
 
-## 17. Pilot regression families
+## 17. Bounded `setRuntime` action primitive
 
-Useful materially different patterns already available in the repository/history:
+`setRuntime` is a **bounded module-owned action primitive**, not arbitrary JavaScript.
+
+Purpose: reproduce **already-accepted deterministic runtime state** that a real
+interaction reaches but whose final numeric state a generic settle cannot guarantee
+(e.g. an accepted camera pin after a node select). It assigns only a primitive
+literal or a primitive read from a source-bound own-property path.
+
+SRC060 is the proof pattern: after `evaluateHook` drives the accepted interaction, the
+recipe pins the accepted camera values (`yaw/pitch/zoom/tx/ty/tz`) through bounded
+`setRuntime` actions, then settles before capture.
+
+Explicitly prohibited everywhere:
 
 ```text
-SRC056  graph/relationship runtime
-SRC057  detail/viewer runtime
-SRC058  board runtime
-SRC060  exploration/canvas-like runtime
-SRC064  large inline-data runtime
-SRC068  DUAL_VARIANT runtime
-SRC062  large inline-media + wheel/drag/swipe/viewer/panel runtime
+recipe arbitrary property expression
+eval
+new Function
+free-form callback
+recipe-supplied page.evaluate source
+unbounded / prototype-chain paths
+foreign (non-source-bound) roots
 ```
 
-Accepted capsules remain immutable. Use them as regression inputs or reference patterns, not rewrite targets.
+`setRuntime` is not appropriate for every Source. Sources whose accepted state is
+reached deterministically by declarative interaction need no pinning.
 
-## 18. Automation maturity gates
+## 18. Screenshot policies are Source-specific
 
-### M0 — manual-assisted
+The harness does **not** have one universal screenshot policy. Each merged proof uses
+its accepted policy:
 
-- static analyzer available
-- worker still writes most state recipes manually
+```text
+SRC056  raw/exact matched replay
+SRC060  canonical16: 16x16 downsample, RGB masked 0xF0, alpha unchanged,
+        exact canonical digest equality
+SRC047  accepted Source-specific canonical-Hamming policy, threshold inherited from
+        previously accepted Source evidence, drift beyond threshold fails closed
+SRC068  variant-specific exact/approved policy per A/B
+```
 
-### M1 — candidate-assisted
+Critical rule:
 
-- analyzer proposes interactions/states
-- worker approves/rejects candidates
-- S2 capture automated
+```text
+Source-specific accepted tolerance != global tolerance
+```
 
-### M2 — full mechanical pipeline
+A new Source may not borrow SRC047/SRC060 tolerance merely because it helps CI pass.
+Tolerance policy is accepted per Source from its own evidence, never globally relaxed.
 
-- approved recipe -> S2 capture -> S3 split -> S4 replay automated
+## 19. Content DOM normalization
 
-### M3 — parallel production
+The mechanical split moves inline `<style>`/`<script>` into external `styles.css`/
+`script.js`, so the raw tag count legitimately differs between original and split by
+mechanical glue. Where the accepted comparison policy requires, evidence normalization
+counts rendered content elements excluding the mechanical glue tags:
 
-- evidence classifier stable
-- shared harness regression suite stable
-- 4-6 independent units safe in parallel
+```text
+body *:not(script):not(link):not(style)
+```
 
-### M4 — scaled production
+Distinguish strictly:
 
-- 8-12+ workers safe
-- CENTRAL review load reduced by reliable high-confidence classification
+```text
+mechanical glue normalization   (allowed, bounded)
+meaningful DOM normalization    (forbidden)
+```
 
-## 19. Explicit non-goals
+Only mechanical glue is normalized away. Real content DOM differences remain fail-closed.
+
+## 20. Merged proof families (M1)
+
+These families are merged on current main as **materially different proof families**, not
+merely four Source IDs. Accepted capsules remain immutable regression inputs.
+
+### SIMPLE — SRC056
+
+```text
+2 states (OVERVIEW, ORIGIN_REVEAL) x 3 viewports = 6 matched pair replays
+raw screenshot exact comparison
+reference family for backwards-compatible matched replay
+```
+
+### COMPLEX — SRC060
+
+```text
+7 state families x 3 viewports = 21 matched pair replays
+1000 nodes / 9 clusters / 24 bridge records
+runtime hooks __LT60__ + __LT60_V12__
+deterministic accepted camera pinning (e.g. CONNECTION_HANDOFF 430x932 zoom = 2.35)
+canonical16 screenshot normalization
+Proves the automation is not limited to simple DOM-only Sources.
+```
+
+### DUAL_VARIANT — SRC068
+
+Merged proof architecture (not conceptual):
+
+```text
+identity = { sourceId, variant }
+explicit A/B selection
+no implicit default variant
+zero cross-contamination
+A/B desktop + mobile replay
+generic SINGLE executable path remains fail-closed for SRC068
+```
+
+Not every multi-revision Source is DUAL_VARIANT. Authority decides that classification;
+the analyzer records it, it never guesses it.
+
+### MEDIA/VIEWER — SRC047
+
+Merged fourth proof family. Verified architectural distinctions only:
+
+```text
+media/viewer runtime
+accepted Source-specific canonical-Hamming screenshot policy
+applicable-state matrix; N/A states (e.g. mobile nav where N/A) remain N/A
+rather than being fabricated
+branded-Chrome requirement enforced before browser work
+```
+
+### LARGE_INLINE — SRC062 (supplementary)
+
+Merged supplementary proof (PR #627) after M1 acceptance. Not a prerequisite to the
+M1 gate; it is additional regression hardening for a large-inline-media runtime with
+the same generic declarative pipeline.
+
+## 21. Automation maturity gates
+
+These gates describe what has been proven. M1 issue naming and the M0-M4 labels below
+are distinct terms and must not be conflated.
+
+```text
+M0 = satisfied historically (manual-assisted era)
+M1 = satisfied (candidate-assisted; S2 capture automated)
+M2 = implemented/proven to current bounded scope (approved recipe -> S2 capture ->
+     S3 split -> S4 replay automated; setRuntime + canonical digests + normalization
+     merged)
+M3 / Stage-1 controlled parallel production = RELEASED (4-6 workers; #611 comment
+     5546112083)
+M4 / Stage-2 scale = NOT RELEASED (8-12+ workers; requires observed stable operation
+     under Stage-1 and metrics not yet gathered)
+```
+
+## 22. Explicit non-goals
 
 This harness does not:
 
 - choose product UX
 - convert to React/Next
-- normalize code
+- normalize meaningful DOM
 - improve source responsiveness
 - repair source bugs
 - connect backend/DB/Auth
 - invent Source/Codex identity
 - make final visual acceptance autonomously
 
-## 20. Current implementation order
+## 23. Review-load reduction and exact-head CI
+
+Automation currently pre-classifies, per replay family:
 
 ```text
-SRC062 strict S2-S4 completion
--> extract reusable recipe/analyzer requirements
--> strengthen common analyzer/replay pipeline
--> prove against 3-5 materially different patterns
--> release 4-6 parallel units
--> measure and scale deliberately
+authority bytes/SHA
+recipe validation
+mechanical round-trip
+browser replay
+DOM/runtime comparison
+screenshot comparison
+browser error health (console/page/request)
+exact-head provenance
+pre-browser HOLD classification
+variant contamination checks
 ```
+
+CENTRAL still owns:
+
+```text
+authority choice
+S2 source-defining-state judgment
+parity-diff interpretation
+final visual acceptance
+Ready transition
+merge
+```
+
+Statement of evidence: **mechanical review-load reduction is demonstrated**; clock-time
+savings are not yet formally measured and are not claimed here.
+
+### Exact-head CI invariant
+
+```text
+CI evidence must bind to the exact PR head SHA
+github.event.pull_request.head.sha
+```
+
+Synthetic merge-ref fallback is forbidden where the merged harness enforces it
+(`resolveExactHead` fails closed under `CI=true`/`GITHUB_ACTIONS=true` without
+`SRC_EXACT_HEAD`). Local development may keep the git-HEAD fallback. This document does
+not rewrite CI semantics; it records the merged invariant.
+
+## 24. Current rollout sequence
+
+```text
+M1 pilot = COMPLETE / ACCEPTED
+
+Stage 1 (ACTIVE / RELEASED):
+  4-6 independent unit workers total
+  strict authority queue
+  unit-local branches/worktrees
+  shared harness changes separately released
+  CENTRAL final review
+
+Stage 2:
+  NOT RELEASED
+  measure Stage-1 stability first
+```
+
+Specific Source lanes currently in flight (e.g. SRC069, SRC071 materialization) are unit
+lanes, not permanent architecture dependencies.
+
+## 25. Issue #611 standing status
+
+```text
+#611 = standing automation/concurrency authority
+AUTO_CLOSE = NO
+ISSUE611_CLOSE = NO
+```
+
+M1 closure does not mean issue closure.
 
 Related: #611, #589, #564, #565.
