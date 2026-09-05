@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.1",
+  "codex_id": "CDX014",
+  "codex_folder_name": "14_러브트리_로테이팅메모리인덱스_V1",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/코덱스/14_러브트리_로테이팅메모리인덱스_V1/v1/최종본.html",
+  "authority": {
+    "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+    "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+    "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "filename": "최종본.html",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+    "revision": "V1",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST080"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "authority_context_note": "CDX014 is path-context-sensitive (SRC069-class, Drive-rename variant). Its runtime media prefix ../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/ refers to the AUTHORING-TIME sibling name; the live Drive sibling was renamed to 12-1_… on 2026-08-17. Serving original/original.html or split/index.html alone from the repository path is NOT runtime-equivalent (all 178 media would 404). Context-aware serving must reproduce the authoring-time sibling layout (junction/alias 12_… → 12-1 assets) with ZERO URL rewrites. authority-context.json records the rename fact, the fixture folder IDs, the serving contract, and all 178 media entries pinned (path/bytes/SHA256). No media byte is vendored into this capsule.",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": null,
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
+    "required_serving": "AUTHORING_TIME_SIBLING_LAYOUT",
+    "canonical_layout_ref": "authority-context.json#/canonical_runtime_layout",
+    "canonical_layout_folder_ids": {
+      "family_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+      "media_sibling_folder_id": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
+      "videos_folder_id": "1hP6kA-ezQsqCfwMEIBhS_p9Xt1oyd1kg",
+      "posters_folder_id": "1k2FAbsLu3nh7Aes6bNwDEdaP41n_SMjK"
+    },
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    },
+    "note": "Neither src/04_codex/CDX014/original/original.html nor split/index.html is a valid standalone runtime surface at its repository path. The authority's own ../12_…/assets/ media prefix resolves only from the authoring-time sibling layout recorded in authority-context.json. The shared single-executable baseline and parity harnesses therefore fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule instead of producing a green-but-wrong artifact or attempting a parity promotion the Source cannot support."
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-rotating-memory-index",
+    "scenario_id": "rotating-memory-index-archive",
+    "qa_hook": null,
+    "qa_hook_note": "No source-native QA hook exists. S2 assertions were DOM/geometry/runtime-snapshot based. No test-only hook was invented or injected.",
+    "media_entries": 178,
+    "media_prefix": "../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "external_network_dependencies": 0,
+    "interaction_surface": [
+      "INITIAL",
+      "INDEX_DRAWER_OPEN",
+      "VIEWER_OPEN",
+      "PAUSED"
+    ],
+    "interaction_proofs": [
+      "PREV_NEXT_NAVIGATION_001_002_001_089_WRAP",
+      "PAUSE_TOGGLE",
+      "INDEX_DRAWER_OPEN_CLOSE_ESC",
+      "VIEWER_OPEN_CLOSE_ESC"
+    ],
+    "frozen_defects": [
+      {
+        "id": "D1",
+        "name": "auto-rotation not gated on prefers-reduced-motion",
+        "disposition": "PRESERVED",
+        "note": "rAF auto-rotation loop keeps rotating under prefers-reduced-motion: reduce. Re-proven in S2 (9.19 degrees / 1500 ms under reducedMotion:reduce). DO NOT FIX."
+      }
+    ]
+  }
+}

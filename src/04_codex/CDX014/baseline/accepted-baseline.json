@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX014",
+  "status": "ACCEPTED",
+  "stage": "S2_AUTHORITY_CONTEXT_BASELINE",
+  "review_method": "DIRECT_CENTRAL_S2_EVIDENCE_REVIEW",
+  "accepted_via": {
+    "issue": 589,
+    "automation": 611,
+    "stage_decisions": {
+      "S0": "PASS",
+      "S1": "PASS",
+      "S2": "PASS",
+      "S3": "RELEASED",
+      "S4": "NOT_RELEASED"
+    },
+    "note": "CENTRAL S2 acceptance / S3 release decision for CDX014: CDX014_S2 = ACCEPT (CENTRAL direct visual review of the S2 candidate bundle + Drive folder). S4 remains NOT_RELEASED pending context-aware serving."
+  },
+  "capture": {
+    "stage": "S2_AUTHORITY_CONTEXT_BASELINE",
+    "surface": "read-only temp authority mirror outside the repository preserving the authoring-time sibling layout (junction alias 12_… → 12-1 assets)",
+    "surface_local_path": "D:\\Temp\\cdx014-s2-candidate-a70f8736\\",
+    "served_from": "127.0.0.1 loopback (bounded port)",
+    "method": "Real Chrome (channel chrome) via Playwright over loopback HTTP",
+    "mirror_media_files": 178,
+    "mirror_total_bytes": 1947644779,
+    "mirror_vendored_into_repository": false,
+    "media_sample_verified": "6/6 PASS (3 mp4 + 3 jpg; Drive-stream SHA256 == mirror SHA256, bytes equal)",
+    "state_count": 12,
+    "state_surface": "3 viewports x 4 states (INITIAL / INDEX_DRAWER_OPEN / VIEWER_OPEN / PAUSED)",
+    "interaction_proofs": "prev/next navigation 001→002→001→089 wrap, pause toggle (stable), index drawer open/close via ESC, viewer open/close via ESC, video actually playing (readyState 4, currentTime advancing, 1920w)",
+    "unexpected_js_errors": 0,
+    "page_errors": 0,
+    "failed_requests": 0,
+    "failed_request_note": "Only /favicon.ico HTTP 404 (page declares no favicon — local serving artifact, not a Source dependency). Media element net::ERR_ABORTED events are the runtime's own front-2 playback swap churn, not failed resolution. Every exercised media URL returned HTTP 200 through the authoring-alias path.",
+    "remote_requests": 0
+  },
+  "authority": {
+    "fileId": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "revision": "V1",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
+  },
+  "accepted_s2_evidence": {
+    "bundle_id": "CLEAN108-CDX014-S2-CANDIDATE-260905",
+    "local_bundle_path": "D:\\Temp\\cdx014-s2-candidate-a70f8736",
+    "drive_folder_id": "1EgR2Kvx0S5fXb6e-isGuBpOUjxVwJxpu",
+    "drive_path": "LoveTree_Evidence/CLEAN108-CDX014-S2-Candidate-260905/",
+    "report_name": "cdx014-s2-candidate-report.md",
+    "screenshot_count": 12,
+    "integrity": "16 files uploaded to Drive verified present; rclone check against the staged bundle: 0 differences",
+    "storage_policy": "Evidence stays on Drive and the local S2 bundle. Screenshots and state records are not copied into this capsule; this record references the immutable S2 bundle instead."
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "label": "DESKTOP",
+      "states": [
+        "INITIAL",
+        "INDEX_DRAWER_OPEN",
+        "VIEWER_OPEN",
+        "PAUSED"
+      ],
+      "result": "PASS"
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "label": "MOBILE_430",
+      "states": [
+        "INITIAL",
+        "INDEX_DRAWER_OPEN",
+        "VIEWER_OPEN",
+        "PAUSED"
+      ],
+      "result": "PASS"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "label": "MOBILE_390",
+      "states": [
+        "INITIAL",
+        "INDEX_DRAWER_OPEN",
+        "VIEWER_OPEN",
+        "PAUSED"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "d1_reduced_motion": {
+    "status": "PRESERVED",
+    "evidence": "Under prefers-reduced-motion: reduce the sculpture still rotated 9.19 degrees / 1500 ms (d1-reduced-motion-record.json in the S2 bundle)."
+  },
+  "mst080": {
+    "mapping_issued": true,
+    "note": "MST080 → CDX014 mapping issued in the S3 lane (mapping_status CODEX_RESOLVED, basis EXPLICIT_LEDGER_PROVENANCE). S2 recorded evidence only."
+  }
+}

@@ -1,0 +1,318 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX014",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "generated_at_utc": "2026-09-05T14:21:34.776Z",
+  "authority": {
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
+  },
+  "round_trip_byte_identity": true,
+  "round_trip_bytes": 19631,
+  "round_trip_sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+  "boundaries": {
+    "style_open": 268,
+    "style_close": 8960,
+    "script_open": 10556,
+    "script_close": 19359
+  },
+  "media_prefix_preservation": {
+    "prefix": "../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/",
+    "original_occurrences": 1,
+    "script_occurrences": 1,
+    "preserved": true
+  },
+  "media_entries_pinned": 178,
+  "media_pin_method": "S2_MIRROR_BYTE_EXACT",
+  "media_sample_pins_verified": 6,
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "media_prefix_rebased": false,
+    "sibling_media_vendored": false,
+    "a11y_or_focus_behavior_modified": false
+  },
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority byte size stable (19631)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "frozen input layout intact"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "manifest authority lock matches frozen authority"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one style block (1/1)"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script, no attributed/external script tags"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "zero http(s) references (0)"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "style boundary ordered"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "script boundary ordered"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "styles.css is the exact authority style inner slice"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "script.js is the exact authority script inner slice"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one stylesheet glue ref"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one script glue ref"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "no inline style block remains"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "no bare inline script open remains (only the script glue ref close tag exists)"
+    },
+    {
+      "id": "T07e",
+      "pass": true,
+      "detail": "glue refs appear exactly once each"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "materialization identity/generation"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "boundary metadata matches independent re-derivation"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reconstructed HTML is byte-identical to the frozen authority"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "CSS byte-exact and recorded hash matches"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "JS byte-exact and recorded hash matches"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "shell is a pure positional splice of the authority around the two block regions"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no framework/backend markers"
+    },
+    {
+      "id": "T14a",
+      "pass": true,
+      "detail": "media prefix preserved byte-identical original->script (1/1)"
+    },
+    {
+      "id": "T14b",
+      "pass": true,
+      "detail": "media prefix lives only in script.js"
+    },
+    {
+      "id": "T14c",
+      "pass": true,
+      "detail": "no split/assets directory (media not vendored)"
+    },
+    {
+      "id": "T14d",
+      "pass": true,
+      "detail": "materialization records no rebase / no vendoring"
+    },
+    {
+      "id": "T15a",
+      "pass": true,
+      "detail": "178 media entries pinned (178)"
+    },
+    {
+      "id": "T15b",
+      "pass": true,
+      "detail": "every entry carries path + bytes + sha256"
+    },
+    {
+      "id": "T15c",
+      "pass": true,
+      "detail": "all 178 paths unique"
+    },
+    {
+      "id": "T15d",
+      "pass": true,
+      "detail": "89 mp4 + 89 jpg (89/89)"
+    },
+    {
+      "id": "T15e",
+      "pass": true,
+      "detail": "6/6 S2 mirror-fidelity sample pins present exactly (6/6)"
+    },
+    {
+      "id": "T15f",
+      "pass": true,
+      "detail": "pin method recorded as S2 mirror byte-exact"
+    },
+    {
+      "id": "T15g",
+      "pass": true,
+      "detail": "sibling rename fact recorded"
+    },
+    {
+      "id": "T15h",
+      "pass": true,
+      "detail": "runtime context required, repository path not runtime-equivalent"
+    },
+    {
+      "id": "T15i",
+      "pass": true,
+      "detail": "capture surface CONTEXT_AWARE_ONLY"
+    },
+    {
+      "id": "T15j",
+      "pass": true,
+      "detail": "pin verification internally consistent (mirror 169/169 + live 9 = 178/178, 0 mismatches, byte sum consistent)"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "on-disk sha256 matches materialization record"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "git blob sha1 matches materialization record"
+    },
+    {
+      "id": "T17a",
+      "pass": true,
+      "detail": "S3 mechanical split complete"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "S4 parity NOT claimed"
+    },
+    {
+      "id": "T17c",
+      "pass": true,
+      "detail": "no parity artifact referenced"
+    },
+    {
+      "id": "T17d",
+      "pass": true,
+      "detail": "no parity evidence directory"
+    },
+    {
+      "id": "T17e",
+      "pass": true,
+      "detail": "capture_surface CONTEXT_AWARE_ONLY"
+    },
+    {
+      "id": "T17f",
+      "pass": true,
+      "detail": "shared harness SKIP disposition present"
+    },
+    {
+      "id": "T17g",
+      "pass": true,
+      "detail": "frozen defect D1 recorded PRESERVED"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "mapping_status CODEX_RESOLVED (CODEX_RESOLVED)"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "identity_refs contains CDX014 with EXPLICIT_LEDGER_PROVENANCE"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "notes cite ledger provenance"
+    },
+    {
+      "id": "T19a",
+      "pass": true,
+      "detail": "capsule root is src/04_codex/CDX014 (src/04_codex/CDX014)"
+    },
+    {
+      "id": "T19b",
+      "pass": true,
+      "detail": "no pre-#631 legacy capsule-path residue"
+    },
+    {
+      "id": "T19c",
+      "pass": true,
+      "detail": "manifest uses CDX template identity keys (codex_id/codex_folder_name), no Source-namespace key"
+    },
+    {
+      "id": "T19d",
+      "pass": true,
+      "detail": "materialization uses codex_id, no source_id key"
+    },
+    {
+      "id": "T19e",
+      "pass": true,
+      "detail": "MST080 notes cite the canonical capsule path only"
+    }
+  ],
+  "passed": 54,
+  "failed": 0,
+  "result": "PASS",
+  "s4_started": false,
+  "parity_acceptance_claimed": false
+}
