@@ -9,17 +9,25 @@
       "requires_real_source_runtime": true,
       "requires_broad_108_rollout_released": true,
       "allows_sources_outside_calibration_batch": true,
-      "codex_runtime_released": false,
+      "codex_runtime_released": true,
       "family_runtime_released": false,
       "mechanical_only_source_port": true,
       "fresh_authority_required_per_source": true,
       "stage_order": ["S0", "S1", "S2", "S3", "S4"]
     },
+    "codex": {
+      "mechanical_only_port": true,
+      "fresh_authority_required_per_capsule": true,
+      "stage_order": ["S0", "S1", "S2", "S3", "S4"],
+      "context_aware_serving_contracts_respected": true,
+      "cdx_identity_remains_cdx": true,
+      "note": "Codex capsule lanes released within ROLLOUT (Issue #589 comment 5551948253; CDX014 first Codex capsule lane). Codex identities are never converted into Source identities (namespaces.json codex_rule). Capsule lanes follow mechanical-only port, fresh authority per capsule, stage order S0-S4, and context-aware serving contracts."
+    },
     "downstream_phases_separate": ["CODEX", "FAMILY", "COMPONENTIZATION", "PRODUCT_COMPOSITION", "PRODUCT_ADOPTION", "BACKEND_API_DB_AUTH"]
   },
   "active_root": "src/",
   "real_source_runtime_started": true,
-  "real_codex_runtime_started": false,
+  "real_codex_runtime_started": true,
   "broad_108_rollout_released": true,
   "first_calibration": "SRC056",
   "first_calibration_s4": "PASS",
@@ -53,6 +61,7 @@
     "SRC064 is materially different from SRC056: CSS3D DOM orbit with 40 cards, focus transition, and media viewer.",
     "SRC064 exact-head PR CI passed at 18cec1d; the central job uploaded baseline evidence and validated the existing accepted parity while the new parity capture correctly skipped because the manifest was already accepted.",
     "SRC064 is merged to main at 5c85566 and the guarded Production deploy plus post-deploy smoke passed at run 33347420679.",
-    "Broad Source mechanical rollout is released; Codex, family, component, composition, product adoption, and backend/API/DB/Auth phases remain separate and unreleased."
+    "Broad Source mechanical rollout is released; Codex, family, component, composition, product adoption, and backend/API/DB/Auth phases remain separate and unreleased.",
+    "CODEX capsule lane released within ROLLOUT (Issue #589 comment 5551948253): CDX014 is the first Codex capsule lane. Codex identities remain CDX per namespaces.json codex_rule; capsule lanes follow mechanical-only port, fresh authority per capsule, stage order S0-S4, and context-aware serving contracts."
   ]
 }

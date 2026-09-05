@@ -48,6 +48,12 @@ test('registry declares the formal Source rollout contract and release state', (
   assert.equal(state.phase_contract.rollout.allows_sources_outside_calibration_batch, true);
   assert.equal(state.phase_contract.rollout.mechanical_only_source_port, true);
   assert.deepEqual(state.phase_contract.rollout.stage_order, ['S0', 'S1', 'S2', 'S3', 'S4']);
+  assert.equal(state.phase_contract.rollout.codex_runtime_released, true);
+  assert.equal(state.real_codex_runtime_started, true);
+  assert.equal(state.phase_contract.codex.mechanical_only_port, true);
+  assert.equal(state.phase_contract.codex.fresh_authority_required_per_capsule, true);
+  assert.equal(state.phase_contract.codex.context_aware_serving_contracts_respected, true);
+  assert.equal(state.phase_contract.codex.cdx_identity_remains_cdx, true);
   assert.deepEqual(state.phase_contract.downstream_phases_separate, [
     'CODEX',
     'FAMILY',
@@ -80,6 +86,89 @@ test('synthetic valid ROLLOUT state passes phase validation', () => {
     codexDirs: [],
     familyDirs: [],
   }), []);
+});
+
+test('ROLLOUT codex unreleased + CDX dir present fails closed (legacy regression)', () => {
+  assert.deepEqual(validateGenerationPhase({
+    state: {
+      phase: 'ROLLOUT',
+      active_root: 'src/',
+      real_source_runtime_started: true,
+      real_codex_runtime_started: false,
+      broad_108_rollout_released: true,
+      phase_contract: { rollout: { codex_runtime_released: false } },
+    },
+    sourceDirs: [],
+    codexDirs: ['CDX014'],
+    familyDirs: [],
+  }), ['ROLLOUT must not contain active CDX/FAM runtime']);
+});
+
+test('ROLLOUT codex released + CDX dir under src/04_codex passes', () => {
+  assert.deepEqual(validateGenerationPhase({
+    state: {
+      phase: 'ROLLOUT',
+      active_root: 'src/',
+      real_source_runtime_started: true,
+      real_codex_runtime_started: true,
+      broad_108_rollout_released: true,
+      phase_contract: { rollout: { codex_runtime_released: true } },
+    },
+    sourceDirs: ['SRC056'],
+    codexDirs: ['CDX014'],
+    familyDirs: [],
+  }), []);
+});
+
+test('ROLLOUT codex released + FAM dir present fails closed', () => {
+  assert.deepEqual(validateGenerationPhase({
+    state: {
+      phase: 'ROLLOUT',
+      active_root: 'src/',
+      real_source_runtime_started: true,
+      real_codex_runtime_started: true,
+      broad_108_rollout_released: true,
+      phase_contract: { rollout: { codex_runtime_released: true } },
+    },
+    sourceDirs: [],
+    codexDirs: ['CDX014'],
+    familyDirs: ['FAM001'],
+  }), ['ROLLOUT must not contain active FAM runtime']);
+});
+
+test('ROLLOUT codex released + codex runtime not started fails closed', () => {
+  assert.deepEqual(validateGenerationPhase({
+    state: {
+      phase: 'ROLLOUT',
+      active_root: 'src/',
+      real_source_runtime_started: true,
+      real_codex_runtime_started: false,
+      broad_108_rollout_released: true,
+      phase_contract: { rollout: { codex_runtime_released: true } },
+    },
+    sourceDirs: [],
+    codexDirs: ['CDX014'],
+    familyDirs: [],
+  }), ['ROLLOUT with codex_runtime_released=true must declare Codex runtime started']);
+});
+
+test('ROLLOUT Source-only tree passes in both codex release states', () => {
+  for (const codexReleased of [false, true]) {
+    const state = {
+      phase: 'ROLLOUT',
+      active_root: 'src/',
+      real_source_runtime_started: true,
+      real_codex_runtime_started: codexReleased,
+      broad_108_rollout_released: true,
+      phase_contract: { rollout: { codex_runtime_released: codexReleased } },
+    };
+    assert.deepEqual(validateGenerationPhase({
+      state,
+      sourceDirs: ['SRC056', 'SRC064'],
+      codexDirs: [],
+      familyDirs: [],
+    }), [], `codexReleased=${codexReleased}`);
+  }
 });
 
 test('ROLLOUT with broad release false fails closed', () => {
