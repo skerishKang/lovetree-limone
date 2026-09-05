@@ -230,7 +230,7 @@ checkTrue(
   ledgerTargets.targets.every((target) => target.path.startsWith("../../")),
 );
 
-const { runContextParity, SCREENSHOT_TOLERANCE } = await import("./lib/context-parity-runner.mjs");
+const { runContextParity, VIDEO_CANONICAL16_STATES, CANONICAL16_SPEC, GLOBAL_VISUAL_TOLERANCE, isVideoCanonical16State } = await import("./lib/context-parity-runner.mjs");
 const comparison = await runContextParity({
   repoRoot: REPO_ROOT,
   originalRoot: targetLock.original_root,
@@ -253,21 +253,42 @@ check("B16 body DOM channel equal", comparison.channels.body_dom_equal, true);
 check("B17 runtime state channel equal", comparison.channels.runtime_state_equal, true);
 check("B18 geometry channel equal", comparison.channels.geometry_equal, true);
 check("B19 text channel equal", comparison.channels.text_equal, true);
-check("B20 screenshot channel equal (byte SHA, or within the measured tolerance)", comparison.channels.screenshot_equal, true);
+check("B20 screenshot channel equal (raw SHA for non-video, exact canonical16 digest for the 3 video states)", comparison.channels.screenshot_equal, true);
 check(
-  "B20b strict screenshot byte equality measured and reported for every state",
-  comparison.channels.screenshot_sha_equal_states,
-  comparison.states.filter((s) => s.screenshot_sha_equal).length,
+  "B20b the canonical16 scope is exactly the 3 enumerated video viewer states",
+  comparison.channels.canonical16_video_states_total,
+  VIDEO_CANONICAL16_STATES.length,
+);
+check(
+  "B20c all 12 non-video states keep RAW PNG byte identity with no relaxation",
+  [comparison.channels.non_video_states_total, comparison.channels.non_video_states_raw_sha_equal],
+  [12, 12],
+);
+check(
+  "B20d all 3 video states are canonical16 digest equal",
+  comparison.channels.canonical16_video_states_digest_equal,
+  3,
 );
 checkTrue(
-  "B20c every screenshot difference is measured and inside the documented tolerance",
-  comparison.channels.screenshot_pixel_measured.every((entry) => entry.within_tolerance),
+  "B20e every video-state canonical16 digest pair is present and equal",
+  comparison.states
+    .filter((s) => isVideoCanonical16State(s.viewport, s.state))
+    .every((s) => s.canonical16_digest?.original && s.canonical16_digest.original === s.canonical16_digest.split && s.canonical16_digest.equal === true),
+  JSON.stringify(comparison.states.filter((s) => s.video_canonical16_state).map((s) => ({ viewport: s.viewport, state: s.state, digest: s.canonical16_digest }))),
+);
+checkTrue(
+  "B20f pixel measurement is recorded only for video states whose raw bytes differ, and never decides equality",
+  comparison.channels.screenshot_pixel_measured.every((entry) => isVideoCanonical16State(entry.viewport, entry.state)) &&
+    comparison.states.every((s) => (s.screenshot_pixel_diff === null) === (s.video_canonical16_state !== true || s.screenshot_sha_equal === true)),
   JSON.stringify(comparison.channels.screenshot_pixel_measured),
 );
 checkTrue(
-  "B20d the documented tolerance is the exported runner constant",
-  comparison.channels.screenshot_pixel_tolerance.max_channel_delta_sum === SCREENSHOT_TOLERANCE.max_channel_delta_sum &&
-    comparison.channels.screenshot_pixel_tolerance.max_differing_pixel_ratio === SCREENSHOT_TOLERANCE.max_differing_pixel_ratio,
+  "B20g the runner exports the canonical16 spec and keeps the global visual tolerance disabled",
+  comparison.channels.canonical16_spec.technique === CANONICAL16_SPEC.technique &&
+    comparison.channels.canonical16_spec.downsample === "16x16" &&
+    comparison.channels.canonical16_spec.rgb_channel_mask === "0xF0" &&
+    GLOBAL_VISUAL_TOLERANCE === false &&
+    comparison.channels.screenshot_pixel_tolerance === undefined,
 );
 check("B21 deterministic freeze applied identically", comparison.channels.video_freeze_equal, true);
 check("B22 interactions channel equal", comparison.channels.interactions_equal, true);
@@ -310,10 +331,10 @@ fs.writeFileSync(
     "",
     "## States",
     "",
-    "| viewport | state | body_dom | runtime | geometry | text | screenshot | freeze |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| viewport | state | body_dom | runtime | geometry | text | screenshot | sha_equal | canonical16 | freeze |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...comparison.states.map(
-      (state) => `| ${state.viewport} | ${state.state} | ${state.body_dom_equal} | ${state.runtime_state_equal} | ${state.geometry_equal} | ${state.text_equal} | ${state.screenshot_equal} | ${state.video_freeze_equal} |`,
+      (state) => `| ${state.viewport} | ${state.state} | ${state.body_dom_equal} | ${state.runtime_state_equal} | ${state.geometry_equal} | ${state.text_equal} | ${state.screenshot_equal} | ${state.screenshot_sha_equal} | ${state.video_canonical16_state ? (state.canonical16_digest?.equal ? `digest-equal ${state.canonical16_digest.original.slice(0, 12)}` : `DIGEST-DIFF o=${state.canonical16_digest?.original ?? "?"} s=${state.canonical16_digest?.split ?? "?"}`) : "n/a (raw)"} | ${state.video_freeze_equal} |`,
     ),
     "",
     "S4 is NOT accepted by this run. `source_split_parity_pass` remains false and `parity_ref` remains null until CENTRAL reviews the screenshots.",

@@ -70,22 +70,37 @@ export const ZERO_MOTION_STYLE = ['*', '*::before', '*::after']
   )
   .join('');
 
-// The screenshot channel is two-part. `screenshot_sha_equal` is the strict
-// bytes-plus-SHA equality. `screenshot_equal` additionally accepts a measured
-// pixel difference inside this tolerance, because headless Chrome does not
-// rasterise backdrop-filter and gradient regions bit-reproducibly.
+// CENTRAL canonical policy (260905, video-state canonical policy — binding):
+// the 12 non-video states keep RAW PNG byte-identity with no relaxation, and
+// exactly the 3 enumerated remote-video viewer states adopt the SRC060
+// canonical16-class normalization: whole frame downsampled to 16x16 with
+// high-quality smoothing, RGB channels floored to /16 (mask 0xF0), alpha
+// unchanged, exact SHA-256 digest equality of the 256-byte result.
 //
-// That is measured, not assumed: the SAME surface, captured twice in two
-// contexts of one browser, differed by 9,683 pixels at maxDeltaSum 11, which is
-// more than the original-versus-split difference. So byte equality is not
-// achievable for this Source and demanding it would make the channel flaky
-// rather than more truthful. The tolerance is ~3 per channel summed over RGBA
-// plus 0.5% of the frame, and every measurement that falls inside it is
-// recorded in full in the evidence.
-export const SCREENSHOT_TOLERANCE = Object.freeze({
-  max_channel_delta_sum: 12,
-  max_differing_pixel_ratio: 0.005,
+// This absorbs the bimodal video-decoder frame jitter measured in candidate
+// runs A/C/D/E (15-1269 px, max channel delta <= 8, only ever in these states)
+// without creating a global pixel tolerance: the digest comparison is exact,
+// any non-video SHA mismatch is a blocker, and the raw byte result plus the
+// measured pixel delta are still recorded for every video state.
+export const VIDEO_CANONICAL16_STATES = Object.freeze([
+  { viewport: '1440x900', state: 'VIEWER_TRACK59' },
+  { viewport: '390x844', state: 'VIEWER_TRACK59' },
+  { viewport: '430x932', state: 'VIEWER_TRACK02' },
+]);
+
+export const CANONICAL16_SPEC = Object.freeze({
+  technique: 'SRC060_CANONICAL16',
+  downsample: '16x16',
+  image_smoothing: 'high',
+  rgb_channel_mask: '0xF0',
+  alpha: 'unchanged',
+  digest: 'sha256',
 });
+
+export const GLOBAL_VISUAL_TOLERANCE = false;
+
+export const isVideoCanonical16State = (viewport, state) =>
+  VIDEO_CANONICAL16_STATES.some((entry) => entry.viewport === viewport && entry.state === state);
 
 // The mechanical split changes exactly one thing in <head>: the inline <style>
 // becomes <link rel="stylesheet" href="styles.css">, and the inline script becomes
@@ -659,9 +674,12 @@ async function captureScreenshot(page, outDir, surface, viewportKey, stateName) 
 }
 
 /**
- * Measures the pixel-level difference between two screenshot files. Only used
- * for states whose SHA comparison already failed, so the strict byte result is
- * never weakened silently: both numbers are reported.
+ * Measures the pixel-level difference between two screenshot files. Under the
+ * CENTRAL canonical policy this is a RECORDING instrument only: it runs for the
+ * enumerated video viewer states whose raw SHA differs, so the bimodal decode
+ * jitter is visible in the evidence. It never decides equality — the gate is
+ * raw byte identity for the 12 non-video states and exact canonical16 digest
+ * equality for the 3 video states.
  *
  * Decoded in a throwaway browser page rather than with an image library, so the
  * runner stays on Playwright and Node built-ins only. Data URLs are same origin,
@@ -676,7 +694,7 @@ export async function compareScreenshots(fileA, fileB) {
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.setContent('<!doctype html><html><body></body></html>');
-    const result = await page.evaluate(async ({ urlA, urlB, tolerance }) => {
+    const result = await page.evaluate(async ({ urlA, urlB }) => {
       const load = (url) =>
         new Promise((resolve, reject) => {
           const image = new Image();
@@ -706,7 +724,6 @@ export async function compareScreenshots(fileA, fileB) {
           max_channel_delta_sum: null,
           max_channel_delta: null,
           bbox: null,
-          within_tolerance: false,
         };
       }
       let differing = 0;
@@ -744,14 +761,56 @@ export async function compareScreenshots(fileA, fileB) {
         max_channel_delta_sum: maxSum,
         max_channel_delta: maxChannel,
         bbox: maxX >= 0 ? { x: [minX, maxX], y: [minY, maxY] } : null,
-        within_tolerance: ratio <= tolerance.max_differing_pixel_ratio && maxSum <= tolerance.max_channel_delta_sum,
       };
-    }, { urlA, urlB, tolerance: SCREENSHOT_TOLERANCE });
+    }, { urlA, urlB });
     await context.close();
     return result;
   } finally {
     await browser.close().catch(() => {});
   }
+}
+
+/**
+ * Canonical16 digest (SRC060 technique, adopted by CENTRAL for SRC069's three
+ * remote-video viewer states only). The whole frame is downsampled to 16x16
+ * with high-quality smoothing, RGB channels are floored to /16 (mask 0xF0),
+ * alpha is left unchanged, and the SHA-256 of the 256-byte result is the
+ * digest. Digest equality is exact — this is a normalization, not a tolerance.
+ * Decoded in a throwaway browser page so the runner stays on Playwright and
+ * Node built-ins only.
+ */
+export async function canonical16DigestsFor(files) {
+  const digests = {};
+  const pending = files.filter((file, index) => files.indexOf(file) === index);
+  if (pending.length === 0) return digests;
+  const browser = await chromium.launch({ headless: true, channel: BROWSER_CHANNEL, timeout: 60000 });
+  try {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    await page.setContent('<!doctype html><html><body></body></html>');
+    for (const file of pending) {
+      const b64 = fs.readFileSync(file).toString('base64');
+      const data = await page.evaluate(async (src) => {
+        const img = new Image();
+        await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = `data:image/png;base64,${src}`; });
+        const N = 16;
+        const canvas = document.createElement('canvas');
+        canvas.width = N;
+        canvas.height = N;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, N, N);
+        const px = ctx.getImageData(0, 0, N, N).data;
+        return Array.from(px, (v, i) => (i % 4 === 3 ? v : v & 0xF0));
+      }, b64);
+      digests[file] = crypto.createHash('sha256').update(Buffer.from(data)).digest('hex');
+    }
+    await context.close();
+  } finally {
+    await browser.close().catch(() => {});
+  }
+  return digests;
 }
 
 
@@ -1243,6 +1302,21 @@ function firstMobileMenuClose(interactions) {
 }
 
 async function compareSurfaces(original, split, { canonicalPath, head, originalRoot, splitRoot, outDir }) {
+  // Canonical16 digests are computed for the enumerated video viewer states on
+  // both surfaces, always — even when the raw bytes happen to match — so the
+  // stability evidence is complete for every capture run.
+  const canonicalFiles = [];
+  for (const [vi, oViewport] of original.viewports.entries()) {
+    const sViewport = split.viewports[vi];
+    for (const oState of oViewport.states) {
+      if (!isVideoCanonical16State(oViewport.viewport.key, oState.state)) continue;
+      canonicalFiles.push(path.join(outDir, oState.screenshot.file));
+      const sState = sViewport.states[oViewport.states.indexOf(oState)];
+      if (sState) canonicalFiles.push(path.join(outDir, sState.screenshot.file));
+    }
+  }
+  const canonicalDigests = await canonical16DigestsFor(canonicalFiles);
+
   const states = [];
   for (const [vi, oViewport] of original.viewports.entries()) {
     const sViewport = split.viewports[vi];
@@ -1256,13 +1330,23 @@ async function compareSurfaces(original, split, { canonicalPath, head, originalR
       const headGlueDiff = dataDiff.filter(isHeadGlueDiff);
       const bodyDiff = dataDiff.filter((entry) => !isHeadGlueDiff(entry));
       const oReq = oViewport.requests, sReq = sViewport.requests;
+      const oShotFile = path.join(outDir, oState.screenshot.file);
+      const sShotFile = path.join(outDir, sState.screenshot.file);
       const screenshotShaEqual = oState.screenshot.sha256 === sState.screenshot.sha256 && oState.screenshot.bytes === sState.screenshot.bytes;
-      // Only states whose bytes already differ get the measured pixel comparison,
-      // so the strict result is never weakened silently.
-      const screenshotPixelDiff = screenshotShaEqual
-        ? null
-        : await compareScreenshots(path.join(outDir, oState.screenshot.file), path.join(outDir, sState.screenshot.file));
-      const screenshotEqual = screenshotShaEqual || Boolean(screenshotPixelDiff && screenshotPixelDiff.within_tolerance);
+      const videoCanonical16State = isVideoCanonical16State(oViewport.viewport.key, oState.state);
+      // Pixel measurement is recorded only for video states whose raw bytes
+      // differ; it documents the absorbed jitter and never decides equality.
+      const screenshotPixelDiff = videoCanonical16State && !screenshotShaEqual ? await compareScreenshots(oShotFile, sShotFile) : null;
+      const canonical16Digest = videoCanonical16State
+        ? {
+            original: canonicalDigests[oShotFile] ?? null,
+            split: canonicalDigests[sShotFile] ?? null,
+          }
+        : null;
+      if (canonical16Digest) canonical16Digest.equal = canonical16Digest.original !== null && canonical16Digest.original === canonical16Digest.split;
+      // CENTRAL canonical policy: non-video states gate on RAW byte identity;
+      // the 3 enumerated video states gate on exact canonical16 digest equality.
+      const screenshotEqual = videoCanonical16State ? Boolean(canonical16Digest && canonical16Digest.equal) : screenshotShaEqual;
       states.push({
         viewport: oViewport.viewport.key,
         state: oState.state,
@@ -1275,6 +1359,8 @@ async function compareSurfaces(original, split, { canonicalPath, head, originalR
         screenshots: { original: oState.screenshot, split: sState.screenshot },
         screenshot_equal: screenshotEqual,
         screenshot_sha_equal: screenshotShaEqual,
+        video_canonical16_state: videoCanonical16State,
+        canonical16_digest: canonical16Digest,
         screenshot_pixel_diff: screenshotPixelDiff,
         screenshot_bytes: { original: oState.screenshot.bytes, split: sState.screenshot.bytes },
         video_freeze_equal: deepEqual(oState.video.freeze, sState.video.freeze),
@@ -1309,9 +1395,15 @@ async function compareSurfaces(original, split, { canonicalPath, head, originalR
     screenshot_equal: states.every((s) => s.screenshot_equal),
     screenshot_sha_equal: states.every((s) => s.screenshot_sha_equal),
     screenshot_sha_equal_states: states.filter((s) => s.screenshot_sha_equal).length,
-    screenshot_pixel_tolerance: SCREENSHOT_TOLERANCE,
+    canonical16_spec: CANONICAL16_SPEC,
+    canonical16_video_states: VIDEO_CANONICAL16_STATES,
+    canonical16_video_states_total: states.filter((s) => s.video_canonical16_state).length,
+    canonical16_video_states_digest_equal: states.filter((s) => s.video_canonical16_state && s.canonical16_digest?.equal).length,
+    canonical16_video_states_sha_equal: states.filter((s) => s.video_canonical16_state && s.screenshot_sha_equal).length,
+    non_video_states_total: states.filter((s) => !s.video_canonical16_state).length,
+    non_video_states_raw_sha_equal: states.filter((s) => !s.video_canonical16_state && s.screenshot_sha_equal).length,
     screenshot_pixel_measured: states
-      .filter((s) => !s.screenshot_sha_equal)
+      .filter((s) => s.screenshot_pixel_diff)
       .map((s) => ({
         viewport: s.viewport,
         state: s.state,
@@ -1319,7 +1411,6 @@ async function compareSurfaces(original, split, { canonicalPath, head, originalR
         differing_pixel_ratio: s.screenshot_pixel_diff?.differing_pixel_ratio ?? null,
         max_channel_delta_sum: s.screenshot_pixel_diff?.max_channel_delta_sum ?? null,
         max_channel_delta: s.screenshot_pixel_diff?.max_channel_delta ?? null,
-        within_tolerance: s.screenshot_pixel_diff?.within_tolerance ?? false,
       })),
     video_freeze_equal: states.every((s) => s.video_freeze_equal),
     console_errors_original: original.requests.console_errors.length,
@@ -1353,6 +1444,8 @@ async function compareSurfaces(original, split, { canonicalPath, head, originalR
   if (!channels.geometry_equal) blockers.push('GEOMETRY_DIFF');
   if (!channels.text_equal) blockers.push('TEXT_DIFF');
   if (!channels.screenshot_equal) blockers.push('VISUAL_PARITY_DIFF');
+  if (channels.canonical16_video_states_total !== VIDEO_CANONICAL16_STATES.length) blockers.push('CANONICAL16_SCOPE_MISMATCH');
+  if (channels.non_video_states_total + channels.canonical16_video_states_total !== EXPECTED_STATE_COUNT) blockers.push('CANONICAL16_STATE_MATRIX_INCOMPLETE');
   if (!channels.video_freeze_equal) blockers.push('VIDEO_FREEZE_DIFF');
   if (!channels.same_canonical_depth) blockers.push('CANONICAL_DEPTH_MISMATCH');
   if (!channels.interactions_equal) blockers.push('INTERACTION_DIFF');
