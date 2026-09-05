@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S2_BASELINE",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_S2_EVIDENCE_REVIEW",
+  "planned_surface": "loopback HTTP serving of the frozen authority bytes (single self-contained executable; PATH_CONTEXT_SENSITIVE = NO, so no mirror directory is required)",
+  "surface_note": "The S2 bundle (CLEAN108-SRC066-S2-Candidate-260905, 29 state records + 26 screenshots) was captured against the frozen authority served over loopback HTTP and accepted by CENTRAL direct evidence review. Evidence stays on Drive; this capsule references the immutable bundle via baseline/accepted-baseline.json.",
+  "viewports": [
+    { "width": 1920, "height": 1080, "label": "DESKTOP" },
+    { "width": 1440, "height": 900, "label": "DESKTOP" },
+    { "width": 430, "height": 932, "label": "MOBILE" },
+    { "width": 390, "height": 844, "label": "SMALL_MOBILE" }
+  ],
+  "states": [
+    "INITIAL",
+    "STEP1",
+    "STEP2",
+    "STEP3",
+    "STEP_FIRST",
+    "STEP_LAST",
+    "MID_MORPH",
+    "REVERSE_RETURN",
+    "FAQ_OPEN",
+    "FOOTER_REACHED",
+    "INTERACTION_SEED_SUBMIT",
+    "INTERACTION_CANDIDATE_WHY_ROUTE"
+  ],
+  "state_note": "STEP1/STEP2/STEP3/MID_MORPH/REVERSE_RETURN and both INTERACTION states are desktop-only (1920x1080 full walk; 1440x900 walk without interactions). Mobile viewports capture INITIAL, STEP_FIRST, STEP_LAST, FAQ_OPEN, FOOTER_REACHED. 29 state records + 26 screenshots total.",
+  "expected_state_record_count": 29,
+  "expected_screenshot_count": 26,
+  "remote_dependencies": [],
+  "remote_dependencies_note": "The authority loads zero external resources at runtime (1 document request + 9 inline data: assets per page load). No remote dependency exists to gate on.",
+  "frozen_defects_in_scope": [
+    "D1_MANIFEST_DEAD_DRIVE_FOLDER_ID",
+    "D2_MANIFEST_SOURCE_LABEL_MISNAME",
+    "D3_MANIFEST_LOCALSTORAGE_CLAIM",
+    "D4_MANIFEST_CSS3D_DOM_CLAIM",
+    "D5_DUAL_ISSUE_NUMBERS_UNRELATED",
+    "D6_INERT_DEMO_URL_DEFAULT",
+    "D7_ASSET_COUNT_DISCREPANCY",
+    "D8_SYNTHETIC_PERF_DATA",
+    "D9_NO_QA_HOOKS",
+    "D10_NO_OWNER_APPROVAL_ON_DRIVE",
+    "D11_MST_LEDGER_UNLINKED",
+    "D12_MINOR_STYLE_LABEL_NITS"
+  ],
+  "defect_policy": "RECORD_ONLY_NO_REPAIR",
+  "defect_policy_note": "D1–D12 are frozen Source defects accepted into the baseline. The CLEAN mechanical-split lane must not fix, improve, or rewrite source behavior. A later non-CLEAN lane may address them separately. The capsule manifest records D1–D4-correct values as new metadata; the underlying intake-manifest and source-file facts are preserved verbatim.",
+  "do_not": [
+    "recapture S2 in this lane",
+    "replace accepted S2 evidence",
+    "rebase or rewrite any URL",
+    "vendor any asset",
+    "fix any of D1–D12",
+    "add QA hooks, probes, or adapters",
+    "convert to React/TSX or any framework"
+  ]
+}

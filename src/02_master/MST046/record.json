@@ -5,8 +5,25 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Track66 First Tree Interactive Guide",
   "product_job": "CAPTURE",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
+  "mapping_status": "RESOLVED",
+  "identity_refs": ["SRC066"],
+  "explicit_ledger_provenance": {
+    "coverage_row": 46,
+    "coverage_row_title": "Track66 First Tree Interactive Guide",
+    "coverage_state": "COVERED",
+    "manifest_issue": 177,
+    "manifest_issue_note": "Issue #177 cited in the V1.2 intake manifest sourceLabel/adoption.note and in coverage row 46 [177, 344]",
+    "selection_basis": "V1.2 work-order chain 32->34->36 (설계팀장 11기 -> 디자인팀장 7기)",
+    "authority": {
+      "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+      "filename": "현재후보.html",
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+    },
+    "capsule_ref": "src/03_sources/SRC066",
+    "issued_in_lane": "clean/src066-s3-mechanical-port (S3 mechanical split; CENTRAL S3 release with MST046 issuance authorized)",
+    "central_binding": "SRC066_S2 ACCEPT; MST_MAPPING = MST046 evidence-only superseded by this issuance"
+  },
   "family_ref": null,
   "relation": null,
   "notes": [
@@ -20,7 +37,8 @@
     "native_route=/v4/journey",
     "canonical_route=/v4/journey",
     "current_main_present=true",
-    "github_issue=177,344"
+    "github_issue=177,344",
+    "mapping_resolved_by=SRC066_S3_lane: identity_refs=[SRC066]; capsule back-references this row via master_rows=[MST046] (SRC047->MST098 precedent)"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }

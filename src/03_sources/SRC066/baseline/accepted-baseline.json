@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "status": "ACCEPTED",
+  "stage": "S2_BASELINE_CAPTURE",
+  "review_method": "DIRECT_CENTRAL_S2_EVIDENCE_REVIEW",
+  "accepted_via": {
+    "issue": 589,
+    "automation": 611,
+    "channel": "CENTRAL_DIRECT_S2_ACCEPT_AND_S3_RELEASE",
+    "stage_decisions": {
+      "S0": "PASS",
+      "S1": "PASS",
+      "S2": "ACCEPT",
+      "S3": "RELEASED",
+      "S4": "NOT_RELEASED"
+    }
+  },
+  "capture": {
+    "stage": "S2_BASELINE_CAPTURE",
+    "surface": "loopback HTTP serving of the frozen authority bytes (single self-contained executable, no mirror required)",
+    "served_from": "127.0.0.1:8766",
+    "served_url": "http://127.0.0.1:8766/authority-live.html",
+    "method": "Chromium via local Playwright against the frozen authority over loopback HTTP; out-of-band DOM/geometry/scroll observers only, zero injected code",
+    "state_record_count": 29,
+    "screenshot_count": 26,
+    "unexpected_js_errors": 0,
+    "page_errors": 0,
+    "failed_requests": 0,
+    "external_requests": 0,
+    "mirror_required": false,
+    "console_note": "Exactly 1 advisory DevTools issue per page load ('A form field element should have an id or name attribute'). No JavaScript error and no uncaught exception occurred in any state or interaction."
+  },
+  "authority": {
+    "fileId": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "revision": "V1.2_제품목적·실제Moment체험강화_후보",
+    "bytes": 166996,
+    "md5": "6a0c98d77b31a72cf3e8ea0f05dde4b0",
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "accepted_s2_evidence": {
+    "bundle_id": "CLEAN108-SRC066-S2-Candidate-260905",
+    "drive_path": "LoveTree_Evidence/CLEAN108-SRC066-S2-Candidate-260905/",
+    "bundle_manifest_sha256": "f2aa5e3fa2ec918136cb4da7f97e0e702dc1b36ea13033b539ca0791b0e2aabc",
+    "bundle_sha256": "3eaea18a8f302952ba7f269da684e8ca35da824d80b7305a7413fab3a14e735",
+    "state_record_count": 29,
+    "screenshot_count": 26,
+    "integrity": "61/61 objects uploaded; MANIFEST.json and source/authority-live.html re-downloaded and SHA-256 matched",
+    "storage_policy": "Evidence stays on Drive. The 26 PNGs and 29 state records are not copied into this capsule; this record references the immutable Drive bundle instead."
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "label": "DESKTOP",
+      "scroll_height": 10026,
+      "states": ["INITIAL", "STEP1", "STEP2", "STEP3", "MID_MORPH", "REVERSE_RETURN", "FAQ_OPEN", "FOOTER_REACHED", "INTERACTION_SEED_SUBMIT", "INTERACTION_CANDIDATE_WHY_ROUTE"]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "label": "DESKTOP",
+      "scroll_height": 8393,
+      "states": ["INITIAL", "STEP1", "STEP2", "STEP3", "MID_MORPH", "REVERSE_RETURN", "FAQ_OPEN", "FOOTER_REACHED"]
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "label": "MOBILE",
+      "scroll_height": 7535,
+      "states": ["INITIAL", "STEP_FIRST", "STEP_LAST", "FAQ_OPEN", "FOOTER_REACHED"]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "label": "SMALL_MOBILE",
+      "scroll_height": 7002,
+      "states": ["INITIAL", "STEP_FIRST", "STEP_LAST", "FAQ_OPEN", "FOOTER_REACHED"]
+    }
+  ],
+  "geometry_vs_pinned": {
+    "hero_element": ".hero-copy (not #hero, which is the full 1905x1080 section)",
+    "hero_live_1920": [612.5, 183.594, 680, 202.484],
+    "hero_pinned": [620, 183.59375, 680, 202.484375],
+    "x_delta_note": "-7.5px on x (half the 15px scrollbar; clientWidth 1905 vs 1920). Serving-environment artifact, not a source defect.",
+    "header_h": 76,
+    "h1_font_size_px": 45.12,
+    "world_live_1920": [626.102, 523.797, 652.797, 291.594],
+    "process_offset_height": 4860,
+    "step_click_progressions": [0, 0.333333, 0.666667, 1],
+    "mid_morph_p05": "container static (trans=1); inner nodes mid-morph (whyLabel opacity 0.52272, orangeRail dashoffset 0.478188) — DISTINCT state",
+    "reverse_return": "restores INITIAL geometry exactly on both desktop viewports",
+    "mobile_world_width": "78vw exactly (430: 335.391; 390: 304.188) — mobile left:50% branch confirmed"
+  },
+  "interaction_results": {
+    "SESSIONSTORAGE_KEYS_WRITTEN_ON_DEMAND": ["lt66:first", "lt66:candidate", "lt66:why", "lt66:route"],
+    "LOAD_WRITES": 0,
+    "SEED_FORM_SUBMIT_WRITES_LT66_FIRST": true,
+    "CANDIDATE_CLICK_WRITES_LT66_CANDIDATE": true,
+    "SAVE_WHY_WRITES_LT66_WHY": true,
+    "ROUTE_CLICK_WRITES_LT66_ROUTE": true,
+    "TREE_LABEL_AFTER_BRANCH_ROUTE": "YOUR FIRST TREE · MAIN + BRANCH",
+    "PER_TAB_ISOLATION": true,
+    "PERSISTENCE_ACROSS_SAME_TAB_RELOAD": true
+  },
+  "frozen_defects": [
+    { "id": "D1", "name": "MANIFEST_DEAD_DRIVE_FOLDER_ID", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D2", "name": "MANIFEST_SOURCE_LABEL_MISNAME", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D3", "name": "MANIFEST_LOCALSTORAGE_CLAIM", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D4", "name": "MANIFEST_CSS3D_DOM_CLAIM", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D5", "name": "DUAL_ISSUE_NUMBERS_UNRELATED", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D6", "name": "INERT_DEMO_URL_DEFAULT", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false, "detail": "momentUrl input default https://youtube.com/watch?v=demo is a markup attribute; preserved verbatim into split/index.html; no fix." },
+    { "id": "D7", "name": "ASSET_COUNT_DISCREPANCY", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D8", "name": "SYNTHETIC_PERF_DATA", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D9", "name": "NO_QA_HOOKS", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D10", "name": "NO_OWNER_APPROVAL_ON_DRIVE", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false },
+    { "id": "D11", "name": "MST_LEDGER_UNLINKED", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false, "detail": "Ledger linkage is issued separately in the S3 lane via src/02_master/MST046/record.json (mapping_status RESOLVED, identity_refs [SRC066]); the split itself preserves the source bytes and cannot link the ledger." },
+    { "id": "D12", "name": "MINOR_STYLE_LABEL_NITS", "classification": "SOURCE_DEFECT_FROZEN", "accepted_into_baseline": true, "fixed_in_this_lane": false }
+  ],
+  "defect_disposition_note": "D1–D12 are recorded as frozen Source defects. They are NOT classified as PASS and are NOT fixed here. The capsule manifest (src/03_sources/SRC066/manifest.json) records D1–D4-correct values (live driveFolderId, exact folder label, sessionStorage, 2D rendering) as new metadata; the underlying intake-manifest and source-file facts are preserved verbatim by the mechanical split. Any later fix belongs to a separate non-CLEAN lane.",
+  "next_stage_authorized": "MECHANICAL_SPLIT",
+  "parity_status": "HOLD"
+}
