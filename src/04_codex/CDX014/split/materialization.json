@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX014",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "branch": "codex/cdx014-s3-mechanical-port",
+    "branch_base_head": "a70f8736f74c2fcd54a25e3c20fb2b1474fb2afd",
+    "generation_input_head": "a70f8736f74c2fcd54a25e3c20fb2b1474fb2afd",
+    "provenance_field_note": "generation_input_head is the repository HEAD checked out when the mechanical split was generated locally. It is not the PR exact head and cannot be recorded here: the final PR head only exists after this file is committed, so embedding it would be self-referential and never true. Exact-head acceptance for this capsule is external to the capsule and is established by the GitHub PR record and CI at the PR head. S4 parity is not executed for CDX014 (CONTEXT_AWARE_ONLY surface), so no parity exact_head field applies.",
+    "generation_method": "LOCAL_MATERIALIZER_ALGORITHM_REPRODUCTION",
+    "materializer_note": "The shared src/08_harness/materialize-mechanical-split.mjs scans only ^SRC\\d{3}$ capsule directories, so the CDX-namespace capsule generates through the identical byte-for-byte algorithm (same glue strings, same slice logic, same round-trip check) reproduced locally. No shared harness file was modified. The committed source-local tests/s3-roundtrip.test.mjs re-derives every boundary independently and proves byte round-trip identity.",
+    "artifact_path": "src/04_codex/CDX014/split",
+    "materializer_result": "LOCAL_ALGORITHM_REPRODUCTION - the shared materializer was NOT run for this capsule (it scans only src/03_sources and ^SRC\\\\d{3}$, so it cannot address src/04_codex/CDX014). The equivalent label from its output format would be SRC_MECHANICAL_SPLIT_CANDIDATE_PASS=CDX014.",
+    "ci_exact_head_reproduction": "OUT_OF_SCOPE_SEE_PROVENANCE_FIELD_NOTE"
+  },
+  "authority": {
+    "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "filename": "최종본.html",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 268,
+    "style_close": 8960,
+    "script_open": 10556,
+    "script_close": 19359,
+    "script_blocks": [
+      {
+        "open": 10556,
+        "close": 19359,
+        "length": 8795
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 2132,
+      "sha256": "5220ec3865c9237d202e6dc444004fc278a8eced63e2f9e2bc97a7b5424463e7",
+      "git_blob_sha1": "a99832f18019bb9c9a591db852f90d2db7d5005f"
+    },
+    "split/styles.css": {
+      "bytes": 8685,
+      "sha256": "9bde0d62485afc5faf9501dd72fd095dc4b44b1fb52c76c6766adb886cf56d51",
+      "git_blob_sha1": "0460e64579445c47072c112c6090d1dedebc5b65"
+    },
+    "split/script.js": {
+      "bytes": 8861,
+      "sha256": "b72c8283578c231fb23583099de2630640cefaceccf8b0ea693eb2dca31e6461",
+      "git_blob_sha1": "7e729f18f66e8585d1388e431dc569cac6f63d15"
+    }
+  },
+  "outputs_note": "No split/assets/** directory was created. The authority references no local file assets via markup tags: its only media references are the 178 runtime-synthesized URLs built from the single ../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/ prefix inside script.js. Those media files are sibling authority-context dependencies (89 mp4 + 89 jpg, 1,947,644,779 bytes total) and are recorded as pinned metadata in authority-context.json rather than vendored as split assets.",
+  "blank_at_eol_note": "split/styles.css and split/script.js retain the authority's final-line whitespace (newline followed by two spaces immediately before </style> and </script>) because the mechanical split must be byte-exact: styles.css is the authority style inner slice verbatim and script.js is the authority script inner slice verbatim, and reconstructing <style>styles.css</style> + <script>script.js</script> over split/index.html must reproduce the frozen authority byte for byte (T05, T06, T09, T12). Consequently `git diff --check` reports two unavoidable flags (split/styles.css:12 and split/script.js:20, each 'trailing whitespace' + 'new blank line at EOF'). Those flags are authority-inherited formatting, not introduced by the split; stripping either would break the 19631-byte round-trip identity. This matches the merged SRC069 capsule (src/03_sources/SRC069/split/materialization.json blank_at_eol_note, PR #623), which carries the same authority-inherited flag at its own split/styles.css. No repository workflow runs `git diff --check`, and no other staged path in this capsule is flagged.",
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "media_prefix_rebased": false,
+    "sibling_media_vendored": false,
+    "a11y_or_focus_behavior_modified": false
+  },
+  "context_contract": {
+    "authority_context_ref": "../authority-context.json",
+    "runtime_context_required": true,
+    "media_prefix": "../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/",
+    "media_entries_pinned": 178,
+    "preservation_invariant": "The exact media prefix string in original/original.html must equal the exact media prefix string in split/script.js, byte for byte.",
+    "verification_ref": "../evidence/s3/roundtrip.json#media_prefix_preservation"
+  }
+}
