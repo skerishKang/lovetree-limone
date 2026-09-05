@@ -20,7 +20,10 @@
  *  - T7 the canonical 16x16 pixel digest is byte-identical for all 18 pairs.
  *  - T8 every recorded screenshot digest is produced by a committed PNG.
  *  - T9 the frozen authority and the split outputs are unchanged.
- *  - T10 zero QA hooks: the driver, the SRC066 parity block and the three split
+ *  - T10 the Drive handoff record (zip name, size and sha256, the 36-PNG
+ *        inventory, the named non-identical pair) agrees with the committed
+ *        evidence rather than being hand-written prose.
+ *  - T11 zero QA hooks: the driver, the SRC066 parity block and the three split
  *        outputs read no window.__* contract, and all twelve frozen defects are
  *        still recorded as preserved.
  */
@@ -209,7 +212,39 @@ test('T9 frozen authority and split outputs are unchanged', () => {
   assert.equal(mat.round_trip_evidence.byte_identical, true);
 });
 
-test('T10 zero QA hooks and twelve frozen defects still preserved', () => {
+test('T10 the Drive handoff record matches the committed evidence', () => {
+  const handoff = readJson(`${S4}/drive-handoff.json`);
+  const summary = readJson(`${S4}/summary.json`);
+  const pixel = readJson(`${S4}/pixel-diff.json`);
+  const canonical = readJson(`${S4}/canonical-digest.json`);
+  const manifest = readJson(`${S4}/evidence-manifest.json`);
+  assert.equal(handoff.status, 'CENTRAL_PENDING');
+  assert.equal(handoff.central_visual_acceptance, 'PENDING');
+  assert.equal(handoff.provenance.capture_head_sha, summary.capture_head_sha);
+  assert.equal(handoff.provenance.capture_base_sha, summary.base_sha);
+  assert.deepEqual(handoff.provenance.harness_release_commits, Object.values(summary.harness_release_commits), 'handoff lists both harness release commits');
+  assert.equal(handoff.provenance.authority_sha256, summary.authority.sha256);
+  assert.equal(handoff.provenance.authority_bytes, summary.authority.bytes);
+  assert.equal(handoff.result.pair_count, summary.pair_count);
+  assert.equal(handoff.result.browser_errors + handoff.result.page_errors + handoff.result.failed_requests + handoff.result.external_requests, 0);
+  assert.equal(handoff.contents.paired_pngs, 36, '36 side PNGs for 18 pairs');
+  assert.equal(manifest.length, 36, 'evidence-manifest inventories one record per PNG');
+  const pngs = fs.readdirSync(path.join(REPO, S4)).filter((f) => f.endsWith('.png')).sort();
+  assert.deepEqual([...handoff.contents.s4_dir.filter((f) => f.endsWith('.png'))].sort(), pngs, 'handoff PNG list matches the directory');
+  assert.equal(pngs.length, 36);
+  const named = summary.screenshots.non_identical[0];
+  const q = handoff.result.single_non_identical_pair;
+  assert.equal(q.original_sha256, named.original_sha256, 'handoff names the real original digest');
+  assert.equal(q.split_sha256, named.split_sha256, 'handoff names the real split digest');
+  assert.equal(q.differing_pixels, named.visual_difference_result.differing_pixels);
+  assert.equal(q.max_channel_delta_0_255, named.visual_difference_result.max_channel_delta_0_255);
+  assert.deepEqual(q.diff_bbox, named.visual_difference_result.diff_bbox);
+  assert.equal(pixel.pairs_with_differing_pixels, 1);
+  assert.equal(canonical.canonical_sha_equal_count, 18);
+  assert.equal(canonical.max_canonical_hamming, 0);
+});
+
+test('T11 zero QA hooks and twelve frozen defects still preserved', () => {
   for (const rel of ['split/index.html', 'split/styles.css', 'split/script.js']) {
     assert.ok(!/window\.__[A-Za-z0-9_]/.test(readTxt(`${SRC}/${rel}`)), `${rel} adds no window.__* hook`);
   }
