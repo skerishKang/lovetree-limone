@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "codex_id": "CDX014",
   "stage": "S3_MECHANICAL_SPLIT",
-  "generated_at_utc": "2026-09-05T14:10:04.874Z",
+  "generated_at_utc": "2026-09-05T14:21:34.776Z",
   "authority": {
     "bytes": 19631,
     "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
