@@ -306,6 +306,18 @@ try {
       console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${surfaceDisposition.reason} capture_surface=${surfaceDisposition.mode} required_serving=${surfaceDisposition.required_serving ?? 'UNKNOWN'}`);
       continue;
     }
+    if (sourceId === 'SRC066') {
+      // SRC066 S4 parity is not claimed: no accepted-parity artifact exists and
+      // parity acceptance belongs to a later CENTRAL-reviewed S4 lane, so there
+      // is no parity semantics to capture against yet. The generic
+      // single-executable parity path additionally requires the legacy
+      // window.__lt runtime contract, which SRC066 provably does not expose
+      // (frozen S1 defect D9: zero QA hooks) — attempting it would fail closed
+      // on a hook expectation rather than on Source behavior. SKIP with an
+      // explicit not-yet-claimed disposition; SINGLE behavior below is unchanged.
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=S4_PARITY_NOT_CLAIMED s4_hold_respected=true`);
+      continue;
+    }
     for (const required of ['split/index.html', 'split/styles.css', 'split/script.js']) {
       if (!fs.existsSync(path.join(sourceDir, required))) throw new Error(`${sourceId}: missing ${required}`);
     }
