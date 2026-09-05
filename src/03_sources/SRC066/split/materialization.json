@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "status_note": "The mechanical split is complete and byte-verified; S4 parity is pending (HOLD, not released for this lane). MATERIALIZED_PENDING_PARITY is the gate-recognized S3 status. Final acceptance is established externally by the GitHub PR record and CI at the PR head.",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "branch": "clean/src066-s3-mechanical-port",
+    "branch_base_head": "c754767500073670d8e66bfa051c137218b0f91f",
+    "generation_input_head": "c754767500073670d8e66bfa051c137218b0f91f",
+    "provenance_field_note": "generation_input_head is the repository HEAD that was checked out when the mechanical split was generated locally. It is not the PR exact head and cannot be recorded here: the final PR head only exists after this file is committed, so embedding it would be self-referential and never true. The value is retained purely as historical generation provenance. Exact-head acceptance for this capsule is external to the capsule and is established by the GitHub PR record and CI at the PR head.",
+    "generation_method": "LOCAL_MECHANICAL_SPLITTER_REPRODUCTION",
+    "materializer": "ephemeral local splitter (logic independently re-derived and asserted by tests/s3-roundtrip.test.mjs; no shared harness used or modified)",
+    "glue_style": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "glue_script": "<script src=\"./script.js\"></script>",
+    "ci_exact_head_reproduction": "OUT_OF_SCOPE_SEE_PROVENANCE_FIELD_NOTE"
+  },
+  "authority": {
+    "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "filename": "현재후보.html",
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string. The authority carries 41 multibyte characters (bytes 166996 vs chars 166955); extraction and reconstruction operate on the lossless UTF-8 string, and byte identity is asserted on the re-encoded buffer.",
+    "style_open": 219,
+    "style_close": 19071,
+    "script_open": 148523,
+    "script_close": 166931,
+    "script_blocks": [
+      {
+        "open": 148523,
+        "close": 166931,
+        "length": 18400
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 129795,
+      "sha256": "00b6f6ac647ec5fc5f521ef355cf74501907b6adaffb4a9392e5e2cb3088be91",
+      "git_blob_sha1": "48358125ff94529acd385c7dca630264df74a7a8"
+    },
+    "split/styles.css": {
+      "bytes": 18845,
+      "sha256": "f215bc6d18dbbab3a42bfb3379461f488d01242b9dd863f6f58f656300bc7c0b",
+      "git_blob_sha1": "a560b53210b1e05854b5a85680df506fe48e99d8"
+    },
+    "split/script.js": {
+      "bytes": 18403,
+      "sha256": "149b9df94b1cb254f3c4a36e069bf0ea125bdc4fdec24b69bd68e7fe14459737",
+      "git_blob_sha1": "219b0aa16c8587649349f820f86a3b9c1f289c25"
+    }
+  },
+  "outputs_note": "No split/assets/** directory was created. The authority references zero local file assets and zero external URLs: markup carries 12 data: <img> URIs plus 5 #anchor hrefs, and the single inline script carries 1 data: fallback URI. Nothing is vendored and no relative URL is rewritten.",
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "local_assets_vendored": false,
+    "external_references_added": false,
+    "qa_hooks_added": false,
+    "a11y_or_focus_behavior_modified": false
+  },
+  "round_trip_evidence": {
+    "method": "src/03_sources/SRC066/tests/s3-roundtrip.test.mjs (source-local; no shared harness)",
+    "original_sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "reconstructed_sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "original_bytes": 166996,
+    "reconstructed_bytes": 166996,
+    "byte_identical": true
+  },
+  "frozen_defects_preserved": {
+    "D1_MANIFEST_DEAD_DRIVE_FOLDER_ID": "PRESERVED_NOT_FIXED",
+    "D2_MANIFEST_SOURCE_LABEL_MISNAME": "PRESERVED_NOT_FIXED",
+    "D3_MANIFEST_LOCALSTORAGE_CLAIM": "PRESERVED_NOT_FIXED",
+    "D4_MANIFEST_CSS3D_DOM_CLAIM": "PRESERVED_NOT_FIXED",
+    "D5_DUAL_ISSUE_NUMBERS_UNRELATED": "PRESERVED_NOT_FIXED",
+    "D6_INERT_DEMO_URL_DEFAULT": "PRESERVED_NOT_FIXED",
+    "D7_ASSET_COUNT_DISCREPANCY": "PRESERVED_NOT_FIXED",
+    "D8_SYNTHETIC_PERF_DATA": "PRESERVED_NOT_FIXED",
+    "D9_NO_QA_HOOKS": "PRESERVED_NOT_FIXED",
+    "D10_NO_OWNER_APPROVAL_ON_DRIVE": "PRESERVED_NOT_FIXED",
+    "D11_MST_LEDGER_UNLINKED": "PRESERVED_NOT_FIXED",
+    "D12_MINOR_STYLE_LABEL_NITS": "PRESERVED_NOT_FIXED",
+    "note": "The mechanical split extracts the authority's inline style and script verbatim, so all twelve frozen defects survive into the split outputs unchanged (D6's demo momentUrl input default lives on in split/index.html). They are intentionally not repaired in this CLEAN lane. D11 ledger linkage is issued separately via src/02_master/MST046/record.json in this same lane; the split itself cannot link the ledger."
+  },
+  "verification_ref": "../evidence/s3/roundtrip.json",
+  "verification_test_ref": "../tests/s3-roundtrip.test.mjs",
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_status_note": "S4 parity is not released for this lane and was not executed: no parity capture exists yet, so exact-head capture remains pending. No parity artifact exists. (CENTRAL lane instruction 'S4 forbidden / parity HOLD' maps to this gate-recognized pending declaration.)",
+  "next_stage": "S4_HOLD",
+  "next_stage_note": "S4 remains forbidden in this lane. Ready/merge transitions remain owned by CENTRAL."
+}
