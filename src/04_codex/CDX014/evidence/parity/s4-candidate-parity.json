@@ -131,11 +131,12 @@
     "Neither runtime surface file, authority-context.json nor baseline/ was modified by this run.",
     "No source repair, redesign, framework conversion or product data injection was introduced; the shared harness was not mutated.",
     "The verdict is not a promotion claim: stages.source_split_parity_pass stays false and parity_ref stays null until CENTRAL accepts the artifact.",
+    "Capture head 6b651f93295f53a01d2f75b5b9b874aa0fe26b58 is the branch tip at 2026-09-06T03:58Z. It was backfilled from the git reflog after the run because the GIT_HEAD override was unset and the record carried null; the harness now derives the head from `git rev-parse HEAD` automatically, and C21 fails closed if either evidence record is missing a 40-hex head or the two disagree.",
     "SCREENSHOT CHANNEL DID NOT REACH BYTE IDENTITY (verdict NOT_BYTE_IDENTICAL_ATTRIBUTED_TO_ROTATION_PHASE). Seven of eight channels are exactly EQUAL (dom, geometry, computed_style excluding the rAF-written transform triplet, runtime_state, interactions, media_identity, frozen_defect_d1). The settled cross-surface pixel delta is attributed to a rotation-phase difference between the two halted runs: every state has a measured non-zero phase difference, and the difference sits on the sculpture's silhouette edges where a fraction of a degree moves a whole panel edge by a sub-pixel amount and changes its anti-aliasing blend along its length. The original's own run-to-run control (a third settled run of the original) is recorded per state so the two can be compared directly. Freezing requestAnimationFrame from page load was tested as an alternative determinism protocol and rejected: it leaves all panels stacked at one rectangle with transform \"none\" and 22% of pixels different from the live render, so it would compare a degenerate page. Whether a phase-attributed screenshot verdict is sufficient for the parity claim is CENTRAL's decision."
   ],
   "provenance": {
     "serving_root": "D:\\Temp\\cdx014-s4-serving",
     "out_dir": "D:\\Temp\\cdx014-s4-out6",
-    "repository_head": null
+    "repository_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58"
   }
 }

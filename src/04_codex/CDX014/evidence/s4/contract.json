@@ -3,9 +3,9 @@
   "codex_id": "CDX014",
   "stage": "S4_CONTEXT_AWARE_SERVING_PARITY",
   "mode": "CONTRACT",
-  "generated_at": "2026-09-06T04:08:55.777Z",
-  "checks_passed": 22,
-  "checks_total": 22,
+  "generated_at": "2026-09-06T05:32:17.039Z",
+  "checks_passed": 23,
+  "checks_total": 23,
   "checks": [
     "C01 capture surface is CONTEXT_AWARE_ONLY / PATH_CONTEXT_SENSITIVE_SOURCE",
     "C02 both shared harnesses are dispositioned SKIP / CONTEXT_AWARE_SURFACE_ONLY",
@@ -28,7 +28,8 @@
     "C18 candidate parity artifact is coherent with the comparison record",
     "C19 the candidate artifact never claims manifest promotion",
     "C19b candidate status is READY_FOR_CENTRAL_S4_VISUAL_REVIEW (verdict STRUCTURAL_PARITY_ESTABLISHED_SCREENSHOT_CHANNEL_NOT_BYTE_IDENTICAL) with the manifest still fail-closed",
-    "C20 the candidate's promotion instruction still requires the literal validator path"
+    "C20 the candidate's promotion instruction still requires the literal validator path",
+    "C21 every evidence record is pinned to a 40-hex capture head and the two agree"
   ],
   "verdict": "CONTRACT_PASS",
   "note": "Contract mode proves the disposition and immutability invariants only. It never decides runtime parity and never sets stages.source_split_parity_pass."

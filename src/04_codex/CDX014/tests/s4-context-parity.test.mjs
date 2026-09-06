@@ -74,10 +74,24 @@ import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
 import crypto from "node:crypto";
+import { execFileSync } from "node:child_process";
 
 const CAPSULE = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(import.meta.dirname, "..", "..", "..", "..");
 const EVIDENCE_S4 = path.join(CAPSULE, "evidence", "s4");
+
+// The evidence is only meaningful against a named commit. Prefer an explicit
+// override (so a run can be pinned from the outside), otherwise read the
+// working tree's HEAD. Never leave this null silently: C21 fails closed on a
+// missing or malformed capture head.
+function repositoryHead() {
+  if (process.env.GIT_HEAD) return process.env.GIT_HEAD;
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" }).trim();
+  } catch {
+    return null;
+  }
+}
 
 const CODEX_ID = "CDX014";
 const CAPSULE_FOLDER = "12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1";
@@ -499,9 +513,20 @@ function runContractMode() {
       "C20 the candidate's promotion instruction still requires the literal validator path",
       JSON.stringify(candidate.promotion_instruction.required_for_context_aware_claim).includes("evidence/parity/accepted-parity.json"),
     );
+    const headRe = /^[0-9a-f]{40}$/;
+    const candidateHead = candidate.provenance?.repository_head;
+    const comparisonHead = comparison.repository_head;
+    checkTrue(
+      "C21 every evidence record is pinned to a 40-hex capture head and the two agree",
+      headRe.test(String(candidateHead ?? "")) &&
+        headRe.test(String(comparisonHead ?? "")) &&
+        candidateHead === comparisonHead,
+      `candidate.provenance.repository_head=${candidateHead} comparison.repository_head=${comparisonHead}`,
+    );
   } else {
     results.push("C18 candidate parity artifact coherence: NOT_RUN (no browser-mode capture yet)");
     results.push("C19 candidate verdict promotion discipline: NOT_RUN (no browser-mode capture yet)");
+    results.push("C21 capture-head provenance: NOT_RUN (no browser-mode capture yet)");
   }
 
   const record = {
@@ -1771,7 +1796,7 @@ async function runBrowserMode(servingRoot, outDir) {
       stage: "S4_CONTEXT_AWARE_SERVING_PARITY",
       review_method: "LOCAL_CONTEXT_AWARE_A_B_PARITY_REAL_CHROME",
       generated_at: new Date().toISOString(),
-      repository_head: process.env.GIT_HEAD ?? null,
+      repository_head: repositoryHead(),
       serving_root: servingRoot,
       out_dir: outDir,
       serving_layout: {
@@ -2117,7 +2142,7 @@ async function runBrowserMode(servingRoot, outDir) {
       provenance: {
         serving_root: servingRoot,
         out_dir: outDir,
-        repository_head: process.env.GIT_HEAD ?? null,
+        repository_head: repositoryHead(),
       },
     });
 

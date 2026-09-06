@@ -4,7 +4,7 @@
   "stage": "S4_CONTEXT_AWARE_SERVING_PARITY",
   "review_method": "LOCAL_CONTEXT_AWARE_A_B_PARITY_REAL_CHROME",
   "generated_at": "2026-09-06T03:58:33.310Z",
-  "repository_head": null,
+  "repository_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
   "serving_root": "D:\\Temp\\cdx014-s4-serving",
   "out_dir": "D:\\Temp\\cdx014-s4-out6",
   "serving_layout": {
