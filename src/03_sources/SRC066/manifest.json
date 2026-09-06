@@ -107,7 +107,7 @@
     "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
     "mirror_re_adjudication": {
       "at_utc": "2026-09-06",
-      "by": "CENTRAL — #589 comment 5557965745 (this re-adjudication; see the batch-pass record for the original)",
+      "by": "CENTRAL — #589 comment 5558541914 (this re-adjudication; see the batch-pass record for the original)",
       "basis": "PR #646 mirror sweep — docs/design-intake/mirror-sweep-2026-09-06.json + duplicate_variant_enumeration.mirror_sweep_2026_09_06; digest three-way verified (local Get-FileHash, mirror SHA256SUMS.txt, fresh_drive.sha256 equality)",
       "finding": "The parallel mirror (root 1Rva_gSN…, a scripted bulk-copy of the track-01…74 deliverable set) contains a byte-identical copy of the authority: 현재후보.html 166,996 B b50e16984774… — identical to the authority, reproducing the canonical track/revision nesting (66_…/버전1.2_제품목적·실제Moment체험강화_후보/). Step 1 of §2.3 re-opens (a second candidate object exists) and step 2 closes: identical SHA-256 → duplicate copy, not a variant.",
       "supersedes": "the batch-pass closing_step above, which was scoped to the canonical design root and did not cover the mirror (scope now recorded by the sweep)"
