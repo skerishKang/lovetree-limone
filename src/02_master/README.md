@@ -11,3 +11,5 @@ Each record must:
 - preserve duplicate and superseded relationships from the ledger;
 - keep `family_ref` null until a separate evidence-based family allocation;
 - never contain a canonical Source/Codex visual runtime.
+
+The canonical form of `identity_refs` is one typed object per element — `{ "namespace", "id", "basis" }` (`MST080`, `MST004`). Bare-string elements are not accepted for new issuances; `MST046` (`"SRC066"`) is retained as a documented legacy exception issued in the `SRC066` S3 lane before this rule was written. Two note keys are defined here at first use: `mapping_target_materialization` records whether an `identity_refs` target capsule exists in the repository (`UNMATERIALIZED` = ledger-backed but no capsule present), and `anchor_decision` records which existing `relation` anchor governs a row's open review state so a superseded or duplicate row is never adjudicated alone.

@@ -6,7 +6,13 @@
   "master_filename": "Track66 First Tree Interactive Guide",
   "product_job": "CAPTURE",
   "mapping_status": "RESOLVED",
-  "identity_refs": ["SRC066"],
+  "identity_refs": [
+    {
+      "namespace": "SRC",
+      "id": "SRC066",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
   "explicit_ledger_provenance": {
     "coverage_row": 46,
     "coverage_row_title": "Track66 First Tree Interactive Guide",

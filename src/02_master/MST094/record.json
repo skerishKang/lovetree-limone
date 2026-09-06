@@ -27,7 +27,8 @@
     "source_runner_route=source-track-40",
     "manifest_path=design-intake/manifests/source-track-40-goldenfruit.json",
     "current_main_present=true",
-    "github_issue=340"
+    "github_issue=340",
+    "anchor_decision=MST095 (relation.superseded_by[0]); relation.SUPERSEDES.targets=[MST093] preserved; SUPERSEDED retained; open mvp_review_state=pending_native is carried with the anchor decision"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }

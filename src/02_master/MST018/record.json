@@ -23,7 +23,8 @@
     "source_freshness=low",
     "source_runner_route=source-track-50",
     "current_main_present=true",
-    "github_issue=307"
+    "github_issue=307",
+    "anchor_decision=MST019 (relation.SUPERSEDED_BY.targets[0]): SUPERSEDED retained; open mvp_review_state=superseded_hold is carried with anchor MST019's decision, not decided on this row alone"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
