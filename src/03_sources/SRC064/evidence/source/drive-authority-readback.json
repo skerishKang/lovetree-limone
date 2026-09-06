@@ -133,7 +133,8 @@
         "1r2jwJn2joTQ-fWF-isCwbnIvNU_lR-_l (버전1.2_...: 1 HTML, 2 QA docs, 4 QA images, 2 media files)",
         "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6 (버전1.3_...: 1 HTML, 1 delta note, 1 QA json, 2 QA images)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the two 1565313-byte objects, the 1565139-byte near-duplicate, and both superseded revision candidates (2690589 and 2789779 bytes) were all downloaded and hashed"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the two 1565313-byte objects, the 1565139-byte near-duplicate, and both superseded revision candidates (2690589 and 2789779 bytes) were all downloaded and hashed",
+      "mirror_sweep_2026_09_06": "Superseded by the mirror sweep: the mirror adds a THIRD object carrying these authority bytes, outside the enumerated scope - 64_부유모먼트_웰컴오빗_입장포털O/현재후보.html, sha256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d. The statement above remains true of the enumerated scope listed here. See docs/design-intake/mirror-sweep-2026-09-06.json."
     },
     "sha256_addendum": {
       "reverified_at_utc": "2026-09-06T08:15:00Z",
@@ -170,6 +171,44 @@
       "conclusion": "Every HTML candidate in the SRC064 enumerated scope now carries a SHA-256. Neither completed candidate is content-identical to the V1.2.1 authority. The only byte-identical copies of the authority remain the two already recorded: the track-root authority and the copy inside the folder labelled 버전1.3."
     },
     "gap": null
+  },
+  "mirror_sweep_2026_09_06": {
+    "sweep_id": "MIRROR_SWEEP_2026-09-06",
+    "sweep_record": "docs/design-intake/mirror-sweep-2026-09-06.json",
+    "access_mode": "READ_ONLY",
+    "swept_at_utc": "2026-09-06T09:35:00Z",
+    "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+    "purpose": "CENTRAL [LOCAL 1] second priority: this capsule is already adjudicated DUPLICATE_COPY_SAME_SHA, so an additional mirror copy does not change the status value. Finding recorded only.",
+    "mirror_root": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "method": "rclone lsf -R --drive-root-folder-id over the mirror root for the full inventory; rclone copyto for the terminal HTML; local Get-FileHash -Algorithm SHA256; compared against fresh_drive.sha256 and against the mirror's own SHA256SUMS.txt",
+    "mirror_track_folder_present": true,
+    "mirror_path": "64_부유모먼트_웰컴오빗_입장포털O/현재후보.html",
+    "authority": {
+      "filename": "현재후보.html",
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d"
+    },
+    "mirror_object": {
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d"
+    },
+    "content_relation_to_authority": "BYTE_IDENTICAL",
+    "same_filename_as_authority": true,
+    "confirmation_count": 3,
+    "confirmations": [
+      "locally recomputed SHA-256 over the rclone copyto download of the mirror object",
+      "the mirror's own SHA256SUMS.txt asserts 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d for ./현재후보.html",
+      "that digest equals the fresh_drive.sha256 authority pin"
+    ],
+    "finding": "An additional byte-identical copy, held flat at the mirror's track level. The canonical enumeration recorded two objects carrying these bytes; the mirror adds a third at a location outside that scope. The DUPLICATE_COPY_SAME_SHA status value is unchanged by this, as CENTRAL anticipated.",
+    "manifest_falsified": false,
+    "status_value_unchanged": true,
+    "authority_unchanged": "The authority object is unchanged. fresh_drive is byte-for-byte identical to BASE.",
+    "adjudication": {
+      "performed": false,
+      "owner": "CENTRAL",
+      "note": "manifest.json was not touched."
+    }
   },
   "identity_non_inference": {
     "master_rows": [],

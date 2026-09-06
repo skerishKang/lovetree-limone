@@ -105,9 +105,49 @@
         "1oMG0zGJ34iHkbx5YpnJwqZLleMbirKGY (버전1.1_핵심메뉴기능연결_후보: 1 HTML, 4 QA docs, 2 media files, 2 QA images)",
         "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm (authority folder: authority HTML and its QA artifacts)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed",
+      "mirror_sweep_2026_09_06": "Superseded by the mirror sweep: a byte-identical copy of the V1.2 authority bytes exists in the parallel mirror at 60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html, sha256 c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf. The statement above is true of the enumerated scope listed here and false of the wider Drive. See docs/design-intake/mirror-sweep-2026-09-06.json."
     },
     "gap": null
+  },
+  "mirror_sweep_2026_09_06": {
+    "sweep_id": "MIRROR_SWEEP_2026-09-06",
+    "sweep_record": "docs/design-intake/mirror-sweep-2026-09-06.json",
+    "access_mode": "READ_ONLY",
+    "swept_at_utc": "2026-09-06T09:35:00Z",
+    "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+    "purpose": "CENTRAL [LOCAL 1]: the SINGLE_EXECUTABLE_NO_DUPLICATE status for this capsule was adjudicated by a different path than the enumeration above and shares its blind spot - the parallel mirror root is not reachable from any per-capsule enumeration path. This block records what the mirror sweep found for this capsule.",
+    "mirror_root": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "method": "rclone lsf -R --drive-root-folder-id over the mirror root for the full inventory; rclone copyto for the terminal HTML; local Get-FileHash -Algorithm SHA256; compared against fresh_drive.sha256 and against the mirror's own SHA256SUMS.txt",
+    "mirror_track_folder_present": true,
+    "mirror_path": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+    "authority": {
+      "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+      "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+      "bytes": 55260,
+      "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+    },
+    "mirror_object": {
+      "bytes": 55260,
+      "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf"
+    },
+    "content_relation_to_authority": "BYTE_IDENTICAL",
+    "same_filename_as_authority": true,
+    "same_revision_folder_relative_path": true,
+    "confirmation_count": 3,
+    "confirmations": [
+      "locally recomputed SHA-256 over the rclone copyto download of the mirror object",
+      "the mirror's own SHA256SUMS.txt asserts c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf for ./버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+      "that digest equals the fresh_drive.sha256 authority pin"
+    ],
+    "finding": "The parallel mirror holds a byte-identical copy of the authority, at the same V1.2 revision-folder relative path as the canonical revision-folder copy. The duplicate_variant_status SINGLE_EXECUTABLE_NO_DUPLICATE recorded in manifest.json at BASE does not survive contact with the mirror.",
+    "manifest_falsified": true,
+    "authority_unchanged": "The authority object is unchanged. fresh_drive is byte-for-byte identical to BASE.",
+    "adjudication": {
+      "performed": false,
+      "owner": "CENTRAL",
+      "note": "manifest.json was not touched. Re-adjudicating duplicate_variant_status is CENTRAL's action."
+    }
   },
   "identity_non_inference": {
     "master_rows": [],

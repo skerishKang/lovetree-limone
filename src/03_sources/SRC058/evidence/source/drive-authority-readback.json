@@ -133,9 +133,47 @@
         "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F (track root: 3 revision folders, 1 task folder, 1 HTML file, 3 media files)",
         "1eKHtbT36NE_Qv4dkDeJ75jLcInTskqqu (버전_1.2_...: 2 HTML files, 6 QA docs, 3 media files)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; all three HTML objects downloaded and hashed in the same run"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; all three HTML objects downloaded and hashed in the same run",
+      "mirror_sweep_2026_09_06": "Superseded by the mirror sweep: the mirror adds a FOURTH object carrying these authority bytes, outside the enumerated scope - 58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html, sha256 9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5. The statement above remains true of the enumerated scope listed here. See docs/design-intake/mirror-sweep-2026-09-06.json."
     },
     "gap": null
+  },
+  "mirror_sweep_2026_09_06": {
+    "sweep_id": "MIRROR_SWEEP_2026-09-06",
+    "sweep_record": "docs/design-intake/mirror-sweep-2026-09-06.json",
+    "access_mode": "READ_ONLY",
+    "swept_at_utc": "2026-09-06T09:35:00Z",
+    "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+    "purpose": "CENTRAL [LOCAL 1] second priority: this capsule is already adjudicated DUPLICATE_COPY_SAME_SHA, so an additional mirror copy does not change the status value. Finding recorded only.",
+    "mirror_root": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "method": "rclone lsf -R --drive-root-folder-id over the mirror root for the full inventory; rclone copyto for the terminal HTML; local Get-FileHash -Algorithm SHA256; compared against fresh_drive.sha256 and against the mirror's own SHA256SUMS.txt",
+    "mirror_track_folder_present": true,
+    "mirror_path": "58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html",
+    "authority": {
+      "filename": "★_최종_58_리빙메모리_핀보드.html",
+      "bytes": 532697,
+      "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+    },
+    "mirror_object": {
+      "bytes": 532697,
+      "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5"
+    },
+    "content_relation_to_authority": "BYTE_IDENTICAL",
+    "confirmation_count": 3,
+    "confirmations": [
+      "locally recomputed SHA-256 over the rclone copyto download of the mirror object",
+      "the mirror's own SHA256SUMS.txt asserts 9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5 for ./버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html",
+      "that digest equals the fresh_drive.sha256 authority pin"
+    ],
+    "finding": "An additional byte-identical copy. The canonical enumeration recorded three objects carrying these bytes; the mirror adds a fourth at a location outside that scope. The DUPLICATE_COPY_SAME_SHA status value is unchanged by this, as CENTRAL anticipated.",
+    "manifest_falsified": false,
+    "status_value_unchanged": true,
+    "authority_unchanged": "The authority object is unchanged. fresh_drive is byte-for-byte identical to BASE.",
+    "adjudication": {
+      "performed": false,
+      "owner": "CENTRAL",
+      "note": "manifest.json was not touched."
+    }
   },
   "identity_non_inference": {
     "master_rows": [],

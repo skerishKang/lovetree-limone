@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "record_type": "MIRROR_SWEEP",
+  "sweep_id": "MIRROR_SWEEP_2026-09-06",
+  "swept_at_utc": "2026-09-06T09:35:00Z",
+  "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+  "instruction": "Mirror sweep — blind-spot protection for the 4 SINGLE_EXECUTABLE_NO_DUPLICATE judgments. Read-only. Find the parallel mirror (root ID starting 1Rva_gSN...), enumerate it in full, hash the terminal HTML of each mirrored track, compare to the corresponding capsule authority SHA, and record facts and hashes only. Adjudication changes are CENTRAL's.",
+  "access_mode": "READ_ONLY",
+  "write_scope": "Evidence JSON only. No Drive object was created, modified, renamed, moved or deleted. No manifest duplicate_variant_status was changed.",
+  "base": {
+    "expected": "e23cbfa0670dcfb881ed61277c8c65c1387d9285",
+    "observed_via": "git ls-remote origin refs/heads/main",
+    "observed": "e23cbfa0670dcfb881ed61277c8c65c1387d9285",
+    "match": true,
+    "observed_at_utc": "2026-09-06T09:34:00Z"
+  },
+  "mirror_root": {
+    "drive_folder_id": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "folder_name": null,
+    "folder_name_note": "The root folder's own name was not fetched in this sweep; only its contents were enumerated. Its identity is established by the folder ID alone.",
+    "discovered_via": "SRC071 residual resolution in the #643 addendum: Drive API files.get on 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned parents[\"1_nuRwalky34UX2ebaaocvEyLQlw1N41C\"], and walking that chain upward two levels reached this root.",
+    "what_it_is": "A parallel mirror of the track-numbered design deliverable set, created outside the canonical design root. It is not reachable from any per-capsule enumeration path, which is why the earlier per-capsule enumerations were accurate as far as they went but blind to it.",
+    "not_reachable_from_canonical_design_root": true
+  },
+  "method": {
+    "enumeration": "rclone v1.75.0 lsf with --drive-root-folder-id 1Rva_gSNWwiguJDmaWUODd926NStpLHlW and -R for a full recursive listing of the mirror",
+    "download": "rclone copyto under the same --drive-root-folder-id, one terminal HTML per track",
+    "hashing": "local Get-FileHash -Algorithm SHA256 over the downloaded bytes",
+    "independent_corroboration": "each mirrored track folder carries a SHA256SUMS.txt written by whoever produced the copy; every one was downloaded and compared against the locally recomputed digest",
+    "comparison_target": "each capsule's fresh_drive.sha256 pin, read from the repo at BASE",
+    "tool_advisory": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every rclone call; all reads succeeded.",
+    "no_credentials_persisted": true
+  },
+  "inventory": {
+    "recursive_listing_lines": 227,
+    "track_folders_present": 70,
+    "track_numbers_present": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,64,65,66,67,69,70,71,72,73,74],
+    "track_numbers_absent": [47, 62, 63, 68],
+    "terminal_html_files": 70,
+    "sha256sums_manifests": 70,
+    "shape": "Every mirrored track holds exactly one terminal HTML deliverable and one SHA256SUMS.txt asserting its digest. This is a distribution/audit artifact set, not a working design tree.",
+    "revision_history_preserved": false,
+    "nested_subfolders": "17 tracks additionally keep their terminal revision subfolder (e.g. 56, 57, 58, 60, 64, 65, 66, 69, 71, 72, 73, 74); the rest hold the HTML flat at the track level.",
+    "enumerated_at_utc": "2026-09-06T09:34:00Z"
+  },
+  "priority_1_single_executable_no_duplicate": {
+    "instruction": "Protect the 4 SINGLE_EXECUTABLE_NO_DUPLICATE judgments, each made by a different path than the per-capsule enumerations and sharing the same 'the mirror is outside the search scope' blind spot.",
+    "results": [
+      {
+        "source_id": "SRC056",
+        "manifest_status_at_base": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+        "mirror_track_folder": "56_세로형_모먼트관계망_전체조망",
+        "mirror_path": "56_세로형_모먼트관계망_전체조망/후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+        "authority": { "drive_file_id": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa", "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html", "bytes": 45761, "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909" },
+        "mirror_object": { "bytes": 45761, "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "same_filename": true,
+        "mirror_manifest_assertion": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909  ./후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+        "manifest_falsified": true,
+        "note": "The mirror holds a byte-identical copy of the authority. The SINGLE_EXECUTABLE_NO_DUPLICATE status does not survive this sweep."
+      },
+      {
+        "source_id": "SRC057",
+        "manifest_status_at_base": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+        "mirror_track_folder": "57_리빙글라스_모먼트카드",
+        "mirror_path": "57_리빙글라스_모먼트카드/★_최종_버전1.2_리빙글라스_모먼트카드.html",
+        "authority": { "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg", "filename": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html", "bytes": 676320, "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace" },
+        "mirror_object": { "bytes": 671480, "sha256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834" },
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "same_filename": false,
+        "mirror_manifest_assertion": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834  ./★_최종_버전1.2_리빙글라스_모먼트카드.html",
+        "manifest_falsified": false,
+        "note": "The mirror holds the V1.2 candidate, 4840 bytes smaller than the V1.3 authority and content-different by hash. This is genuine revision history, not a duplicate. The SINGLE_EXECUTABLE_NO_DUPLICATE status stands on content grounds, though the enumeration that produced it never covered the mirror."
+      },
+      {
+        "source_id": "SRC060",
+        "manifest_status_at_base": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+        "mirror_track_folder": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전",
+        "mirror_path": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+        "authority": { "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M", "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html", "bytes": 55260, "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf" },
+        "mirror_object": { "bytes": 55260, "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "same_filename": true,
+        "mirror_manifest_assertion": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf  ./버전1.2_실제트랙네비게이션_후보/★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+        "manifest_falsified": true,
+        "note": "Byte-identical copy of the authority at the V1.2 revision-folder path. The SINGLE_EXECUTABLE_NO_DUPLICATE status does not survive this sweep."
+      },
+      {
+        "source_id": "SRC066",
+        "manifest_status_at_base": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+        "mirror_track_folder": "66_첫트리만들기_인터랙티브스크롤가이드",
+        "mirror_path": "66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+        "authority": { "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ", "filename": "현재후보.html", "bytes": 166996, "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6" },
+        "mirror_object": { "bytes": 166996, "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "same_filename": true,
+        "mirror_manifest_assertion": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6  ./버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+        "manifest_falsified": true,
+        "note": "Byte-identical copy of the authority, preserving the same track/revision nesting as the canonical location. The mirror reproduces the canonical path structure. The SINGLE_EXECUTABLE_NO_DUPLICATE status does not survive this sweep."
+      }
+    ],
+    "falsified_count": 3,
+    "falsified": ["SRC056", "SRC060", "SRC066"],
+    "surviving": ["SRC057"]
+  },
+  "priority_2_duplicate_copy_same_sha": {
+    "instruction": "These statuses already assert a copy exists, so an additional mirror copy does not change the value. Findings recorded only.",
+    "results": [
+      {
+        "source_id": "SRC058",
+        "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA",
+        "mirror_path": "58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html",
+        "authority": { "filename": "★_최종_58_리빙메모리_핀보드.html", "bytes": 532697, "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5" },
+        "mirror_object": { "bytes": 532697, "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "mirror_manifest_assertion": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5  ./버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html",
+        "note": "An additional byte-identical copy. The canonical enumeration recorded three objects carrying these bytes; the mirror adds a fourth, outside that scope. Status value unchanged."
+      },
+      {
+        "source_id": "SRC064",
+        "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA",
+        "mirror_path": "64_부유모먼트_웰컴오빗_입장포털O/현재후보.html",
+        "authority": { "filename": "현재후보.html", "bytes": 1565313, "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d" },
+        "mirror_object": { "bytes": 1565313, "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "mirror_manifest_assertion": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d  ./현재후보.html",
+        "note": "An additional byte-identical copy, flat at the track level. The canonical enumeration recorded two objects carrying these bytes; the mirror adds a third. Status value unchanged."
+      },
+      {
+        "source_id": "SRC069",
+        "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA",
+        "mirror_path": "69_풀뷰포트폴리오_러브트리모션랜딩/E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html",
+        "authority": { "filename": "69_v3_exact_source_multi_template_portal.html", "bytes": 27600, "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3" },
+        "mirror_object": { "bytes": 11099, "sha256": "208b556a28684afc96abb5d1a6a100c1c85c3853aba3f9cdeaa4c68bffff46a0" },
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "mirror_manifest_assertion": "208b556a28684afc96abb5d1a6a100c1c85c3853aba3f9cdeaa4c68bffff46a0  ./E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html",
+        "note": "The mirror's track-69 terminal deliverable is a different, smaller V4 artifact, not the v3 authority. Revision history only; no additional authority copy."
+      },
+      {
+        "source_id": "SRC071",
+        "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA",
+        "mirror_path": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1/V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.4.html",
+        "mirror_object": { "bytes": 24039, "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a" },
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "note": "Already resolved and adjudicated in the #643 addendum; the mirror copy is the basis of that adjudication. Recorded here for inventory completeness."
+      }
+    ]
+  },
+  "absent_tracks": {
+    "recorded_with_method": "Absence is recorded, not omitted. The proof is the full recursive listing of the mirror root: 227 lines covering 70 track folders, and no entry whose track number is 47, 62, 63 or 68. Verified explicitly by pattern match against the listing.",
+    "absent": [
+      { "track": 47, "source_id": "SRC047", "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA", "result": "NO_MIRROR_COPY", "note": "Track 47 has no folder in the mirror, so no additional copy exists there. Existing three-way identical set in the canonical tree is unaffected." },
+      { "track": 62, "source_id": "SRC062", "manifest_status_at_base": "DUPLICATE_COPY_SAME_SHA", "result": "NO_MIRROR_COPY", "note": "Track 62 has no folder in the mirror. Existing two-way identical set is unaffected." },
+      { "track": 63, "source_id": null, "result": "NO_MIRROR_COPY", "note": "Track 63 has no folder in the mirror and no SRC capsule is bound to it in this repo." },
+      { "track": 68, "source_id": "SRC068", "manifest_status_at_base": "DUAL_MEDIA_VARIANT", "result": "NO_MIRROR_COPY", "note": "Track 68 has no folder in the mirror. SRC068 is a dual media variant with no single Drive authority hash, so the sweep cannot compare it; the absence is recorded regardless." }
+    ]
+  },
+  "corpus_wide_limit": {
+    "note": "This sweep covers the one parallel mirror that is known, and it was enumerated exhaustively. It is not a Drive-wide duplicate search. No corpus-wide Drive name or hash query was obtainable: the shared client_id is quota-limited on the Queries metric and a files.list name predicate was demonstrably ignored by that client (it returned an unfiltered paginated listing with incompleteSearch false). No third copy of any authority is established or excluded.",
+    "established_copies": "per capsule, as recorded in each readback and here",
+    "unestablished": "any additional copy outside the canonical design-root subtree and this mirror"
+  },
+  "summary": {
+    "mirror_tracks_enumerated": 70,
+    "capsules_compared": 11,
+    "byte_identical_mirror_copy_found": ["SRC056", "SRC058", "SRC060", "SRC064", "SRC066", "SRC071"],
+    "content_different_from_authority": ["SRC057", "SRC069"],
+    "no_mirror_copy": ["SRC047", "SRC062", "SRC068"],
+    "single_executable_judgments_falsified": ["SRC056", "SRC060", "SRC066"],
+    "single_executable_judgments_surviving": ["SRC057"],
+    "three_way_confirmation": "every compared digest matches the locally recomputed hash AND the mirror's own SHA256SUMS.txt entry",
+    "no_authority_object_drifted": true
+  },
+  "adjudication": {
+    "performed": false,
+    "owner": "CENTRAL",
+    "note": "duplicate_variant_status was not changed in any manifest. manifest_falsified flags in priority_1_single_executable_no_duplicate are factual findings about whether a status survives contact with the mirror; re-adjudicating them is CENTRAL's action.",
+    "vocabulary_change_requested": false
+  }
+}
