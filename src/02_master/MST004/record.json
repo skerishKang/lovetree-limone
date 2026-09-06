@@ -23,7 +23,8 @@
     "source_authority_version=V2 Drive evidence",
     "source_freshness=medium",
     "current_main_present=false",
-    "github_issue=344"
+    "github_issue=344",
+    "mapping_target_materialization=UNMATERIALIZED: identity_refs target CDX:CDX015 has no capsule in src/04_codex/ (only CDX014 present); resolution rests on ledger row 4 (github_issue=344, github_pr=null, current_main_present=false, coverage_state=PARTIAL)"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
