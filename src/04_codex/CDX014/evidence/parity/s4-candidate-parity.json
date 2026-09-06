@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX014",
+  "status": "READY_FOR_CENTRAL_S4_VISUAL_REVIEW",
+  "verdict": "STRUCTURAL_PARITY_ESTABLISHED_SCREENSHOT_CHANNEL_NOT_BYTE_IDENTICAL",
+  "screenshot_channel": {
+    "byte_identical": false,
+    "verdict": "NOT_BYTE_IDENTICAL_ATTRIBUTED_TO_ROTATION_PHASE",
+    "note": "NOT byte-identical. Every settled cross-surface delta outside the Source's own video rectangles is attributed to a measured rotation-phase difference between the two halted runs; the halt protocol (the Source's own #pause control) necessarily freezes an arbitrary phase. The original's own run-to-run control is recorded per state so CENTRAL can compare. Accepting a phase-attributed screenshot verdict as sufficient for the parity claim is CENTRAL's decision."
+  },
+  "review_method": "LOCAL_CONTEXT_AWARE_A_B_PARITY_REAL_CHROME",
+  "stage": "S4_CONTEXT_AWARE_SERVING_PARITY",
+  "tracking_issue": "skerishKang/lovetree-limone#589",
+  "authority": {
+    "file": "original/original.html",
+    "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+    "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+    "authority_location": "cdx014 authority 14_러브트리_로테이팅메모리인덱스_V1/v1/최종본.html"
+  },
+  "context": {
+    "capture_surface": "CONTEXT_AWARE_ONLY",
+    "serving": "both surfaces served from two isolated roots reproducing the authoring-time sibling layout (12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1/12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/), original and split at identical relative depth, zero URL rewrites",
+    "media_pins_verified": 178,
+    "media_bytes_total": 1947644779,
+    "context_corpus_vendored_into_repository": false
+  },
+  "viewports": [
+    {
+      "key": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "cls": "desktop"
+    },
+    {
+      "key": "430x932",
+      "width": 430,
+      "height": 932,
+      "cls": "mobile"
+    },
+    {
+      "key": "390x844",
+      "width": 390,
+      "height": 844,
+      "cls": "mobile"
+    }
+  ],
+  "state_count": 12,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "NOT_BYTE_IDENTICAL_ATTRIBUTED_TO_ROTATION_PHASE"
+  },
+  "comparison_policy": {
+    "canonical16_used": true,
+    "canonical_scope": "ALL_STATES_SETTLED_FRAMES",
+    "settle_technique": "source-native #pause control (label Ⅱ) + 1700ms lerp convergence; identical on both surfaces",
+    "canonical16_technique": {
+      "name": "SRC060_CANONICAL16",
+      "downsample": "16x16",
+      "image_smoothing": "high",
+      "rgb_channel_mask": "0xF0",
+      "alpha": "unchanged",
+      "digest": "sha256 of the 256-byte result; equality is exact, a normalization not a tolerance",
+      "provenance": "src/08_harness/source060-driver.mjs canonicalPixelDigest; adopted by SRC069 S4"
+    },
+    "live_capture_role": "RECORDING_INSTRUMENT_ONLY_NEVER_DECIDES_EQUALITY",
+    "live_png_byte_identical_count": 0,
+    "run_to_run_control": {
+      "design": "a third settled run of the ORIGINAL surface per (viewport, state)",
+      "role": "evidence for CENTRAL, not a decision input",
+      "decision_rule": "a settled cross-surface delta counts as explained only when a non-zero rotation-phase difference was measured in that state; a delta with no phase difference to attribute it to fails the channel",
+      "attribution_holds": true,
+      "bound_pixels_per_degree": 88029,
+      "observed_max_pixels_per_degree": 85695,
+      "pooled_pixels_per_degree": {
+        "cross_surface": 34564,
+        "original_vs_own_repeat": 37470
+      },
+      "caution": "pixels-per-degree is a ratio of two noisy single-sample quantities and its run-to-run maximum is dominated by whichever state had the smallest phase difference; it is recorded so the two can be compared, not used as a threshold",
+      "control_canonical16_equal_count": 5
+    },
+    "computed_style_rotation_phase": {
+      "waivable_keys": [
+        "transform",
+        "transform_raw",
+        "transform_rotation_deg"
+      ],
+      "states_with_drift": 12,
+      "hard_difference_count": 0,
+      "delta_deg_max": 6.529999999999999
+    }
+  },
+  "frozen_defects_preserved": [
+    "D1_AUTO_ROTATION_NOT_GATED_ON_PREFERS_REDUCED_MOTION: FROZEN, PRESERVED_IDENTICALLY on both surfaces (original 9.69deg / split 9.91deg over 1500ms)"
+  ],
+  "browser_errors": 0,
+  "console_errors": 0,
+  "unexpected_failed_requests": 0,
+  "failed_responses": 0,
+  "remote_requests": 0,
+  "manifest_stage_claimed": false,
+  "promotion_instruction": {
+    "required_for_context_aware_claim": [
+      "copy evidence/parity/s4-candidate-parity.json to evidence/parity/accepted-parity.json with status=ACCEPTED and the CENTRAL review comment id",
+      "set manifest.stages.source_split_parity_pass=true",
+      "set manifest.parity_ref='evidence/parity/accepted-parity.json'"
+    ],
+    "validator_rule": "source-capsule-validator.mjs: CONTEXT_AWARE_ONLY may claim source_split_parity_pass only with parity_ref=evidence/parity/accepted-parity.json plus a validated accepted-parity artifact"
+  },
+  "visual_review": {
+    "central_direct_artifact_review": false,
+    "screenshots_for_review": [
+      "evidence\\s4\\screenshots\\original-INITIAL-settled.png",
+      "evidence\\s4\\screenshots\\split-INITIAL-settled.png",
+      "evidence\\s4\\screenshots\\original-INDEX_DRAWER_OPEN-settled.png",
+      "evidence\\s4\\screenshots\\split-INDEX_DRAWER_OPEN-settled.png",
+      "evidence\\s4\\screenshots\\original-VIEWER_OPEN-settled.png",
+      "evidence\\s4\\screenshots\\split-VIEWER_OPEN-settled.png",
+      "evidence\\s4\\screenshots\\original-PAUSED-settled.png",
+      "evidence\\s4\\screenshots\\split-PAUSED-settled.png"
+    ],
+    "full_capture_set_dir": "D:\\Temp\\cdx014-s4-out6\\screens"
+  },
+  "notes": [
+    "Evidence was captured against the frozen authority original (19631 B, sha256 0cef6497…) and the S3 mechanical split (index 5220ec38…, styles 9bde0d62…, script b72c8283…).",
+    "Neither runtime surface file, authority-context.json nor baseline/ was modified by this run.",
+    "No source repair, redesign, framework conversion or product data injection was introduced; the shared harness was not mutated.",
+    "The verdict is not a promotion claim: stages.source_split_parity_pass stays false and parity_ref stays null until CENTRAL accepts the artifact.",
+    "SCREENSHOT CHANNEL DID NOT REACH BYTE IDENTITY (verdict NOT_BYTE_IDENTICAL_ATTRIBUTED_TO_ROTATION_PHASE). Seven of eight channels are exactly EQUAL (dom, geometry, computed_style excluding the rAF-written transform triplet, runtime_state, interactions, media_identity, frozen_defect_d1). The settled cross-surface pixel delta is attributed to a rotation-phase difference between the two halted runs: every state has a measured non-zero phase difference, and the difference sits on the sculpture's silhouette edges where a fraction of a degree moves a whole panel edge by a sub-pixel amount and changes its anti-aliasing blend along its length. The original's own run-to-run control (a third settled run of the original) is recorded per state so the two can be compared directly. Freezing requestAnimationFrame from page load was tested as an alternative determinism protocol and rejected: it leaves all panels stacked at one rectangle with transform \"none\" and 22% of pixels different from the live render, so it would compare a degenerate page. Whether a phase-attributed screenshot verdict is sufficient for the parity claim is CENTRAL's decision."
+  ],
+  "provenance": {
+    "serving_root": "D:\\Temp\\cdx014-s4-serving",
+    "out_dir": "D:\\Temp\\cdx014-s4-out6",
+    "repository_head": null
+  }
+}
