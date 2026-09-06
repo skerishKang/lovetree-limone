@@ -13,19 +13,20 @@
     "status": "LOCKED"
   },
   "master_rows": ["MST046"],
-  "master_rows_note": "Back-reference to the resolved MST046 mapping issued in this same S3 lane (src/02_master/MST046/record.json: mapping_status RESOLVED, identity_refs [SRC066], EXPLICIT_LEDGER_PROVENANCE citing coverage row 46 + manifest Issue #177 + V1.2 work-order chain 32-34-36). Mirrors the SRC047 -> MST098 precedent.",
+  "master_rows_note": "Back-reference to the resolved MST046 mapping issued in this same S3 lane (src/02_master/MST046/record.json: mapping_status RESOLVED, identity_refs [{namespace SRC, id SRC066, basis EXPLICIT_LEDGER_PROVENANCE}] after the D11 typed-object normalization landed on main at 139b2c74, EXPLICIT_LEDGER_PROVENANCE citing coverage row 46 + manifest Issue #177 + V1.2 work-order chain 32-34-36). Mirrors the SRC047 -> MST098 precedent.",
   "family_ref": null,
   "duplicate_variant_status": "UNRESOLVED",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
-  "stages_note": "source_split_parity_pass=false because S4 parity is HOLD (not released for this lane). The S3 byte round-trip contract (tests/s3-roundtrip.test.mjs) passes independently.",
+  "stages_note": "source_split_parity_pass=true: CENTRAL accepted the SRC066 S4 parity candidate by direct Drive visual review (skerishKang/lovetree-limone#589 comment 5556645775) and parity_ref now resolves to evidence/parity/accepted-parity.json (status ACCEPTED, source_head = capture head 288f355a9ab47b2ba94a2416a5876e54e46f2753). 18 matched original/split state pairs across 1440x900, 430x932, 390x844; 17 pairs raw PNG byte-identical, 1 pair (1440x900/FOOTER_REACHED) canonical 16x16 pixel digest byte-identical at Hamming 0 of 1024 bytes. Ready/merge transitions remain owned by CENTRAL.",
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
   "source_contract": {

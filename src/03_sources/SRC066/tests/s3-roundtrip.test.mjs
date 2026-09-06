@@ -41,7 +41,7 @@
  *  - T18      rendering contract: 0 perspective/preserve-3d, 2D transforms
  *             present, exactly 1 inline <svg> (D4-correct metadata)
  *  - T19      materialization output hashes match on-disk files + git blobs
- *  - T20      stage flags: S3 complete, S4 parity HOLD, no parity artifact
+  *  - T20      stage flags: S3 complete, S4 parity accepted and referenced
  *  - T21      capsule manifest metadata correctness (D1-D4 NOT reproduced)
  *  - T22      accepted S2 baseline agrees with the frozen original
  *  - T23      frozen defects D1-D12 preserved, D6 demo URL intact
@@ -328,20 +328,23 @@ ok(
 ok(mat.generation === "MECHANICAL_INLINE_EXTRACTION", "T19d", "generation = MECHANICAL_INLINE_EXTRACTION");
 ok(mat.round_trip_evidence?.byte_identical === true && mat.round_trip_evidence?.reconstructed_sha256 === LOCK_SHA256 && mat.round_trip_evidence?.reconstructed_bytes === LOCK_BYTES, "T19e", "recorded round-trip evidence matches the independent reconstruction");
 
-// ---- T20 stage flags (S3 complete, S4 HOLD) ------------------------------------------------------
-console.log("\nStage flags (S3 complete, S4 HOLD):");
+// ---- T20 stage flags (S3 complete, S4 parity accepted) ----------------------------------------------
+console.log("\nStage flags (S3 complete, S4 parity accepted):");
 const manifest = JSON.parse(readTxt(path.join(ROOT, "manifest.json")));
 ok(manifest.stages.identity_verified === true && manifest.stages.raw_authority_locked === true && manifest.stages.baseline_captured === true, "T20a", "S0/S1/S2 stages complete");
 ok(manifest.stages.mechanical_split_complete === true, "T20b", "mechanical_split_complete=true");
-ok(manifest.stages.source_split_parity_pass === false, "T20c", "source_split_parity_pass=false (S4 parity HOLD, forbidden in this lane)");
+ok(manifest.stages.source_split_parity_pass === true, "T20c", "source_split_parity_pass=true (S4 parity accepted by CENTRAL)");
 ok(manifest.mechanical_split_ref === "split/materialization.json", "T20d", 'mechanical_split_ref="split/materialization.json"');
 ok(manifest.runtime_policy === "HTML_CSS_JS_MECHANICAL_ONLY", "T20e", `runtime policy unchanged (${manifest.runtime_policy})`);
 ok(manifest.tsx_allowed_during_split === false, "T20f", "TSX remains forbidden during split");
-ok(!fs.existsSync(path.join(ROOT, "evidence", "parity")), "T20g", "no parity/ artifact created at S3");
-ok(mat.status === "MATERIALIZED_PENDING_PARITY", "T20h", "materialization status = MATERIALIZED_PENDING_PARITY (gate-recognized S3 status)");
-ok(mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE" && mat.next_stage === "S4_HOLD", "T20i", "parity pending exact-head capture, next stage S4_HOLD");
+ok(manifest.parity_ref === "evidence/parity/accepted-parity.json", "T20g", 'parity_ref="evidence/parity/accepted-parity.json"');
+const acceptedParity = JSON.parse(readTxt(path.join(ROOT, "evidence", "parity", "accepted-parity.json")));
+ok(acceptedParity.source_id === "SRC066" && acceptedParity.status === "ACCEPTED" && acceptedParity.authority?.sha256 === LOCK_SHA256 && acceptedParity.authority?.bytes === LOCK_BYTES, "T20h", "accepted parity record exists and its authority agrees with the frozen original");
+ok(mat.status === "ACCEPTED", "T20i", "materialization status = ACCEPTED");
+ok(mat.parity_status === "PASS" && mat.next_stage === "ACCEPTED", "T20j", "parity_status = PASS, next_stage = ACCEPTED");
+ok(mat.parity_evidence?.exact_head === acceptedParity.source_head && /^[0-9a-f]{40}$/.test(acceptedParity.source_head), "T20k", "parity evidence head is an exact SHA equal to the accepted parity source head");
 const base = JSON.parse(readTxt(path.join(ROOT, "baseline", "accepted-baseline.json")));
-ok(base.status === "ACCEPTED" && base.source_id === "SRC066" && base.authority?.sha256 === LOCK_SHA256 && base.authority?.bytes === LOCK_BYTES, "T20j", "accepted S2 baseline authority agrees with frozen original");
+ok(base.status === "ACCEPTED" && base.source_id === "SRC066" && base.authority?.sha256 === LOCK_SHA256 && base.authority?.bytes === LOCK_BYTES, "T20l", "accepted S2 baseline authority agrees with frozen original");
 
 // ---- T21 manifest metadata correctness (D1-D4 NOT reproduced) --------------------------------------
 console.log("\nCapsule manifest metadata correctness:");
@@ -392,7 +395,8 @@ const report = {
     method: "out-of-band source-text observation; no QA hooks added",
   },
   s4_executed: false,
-  s4_status: "HOLD",
+  s4_status: "ACCEPTED",
+  s4_status_note: "This file does not execute S4; it only reads the accepted parity record. S4 parity was captured at evidence/s4/ and accepted by CENTRAL direct Drive visual review (skerishKang/lovetree-limone#589 comment 5556645775); the accepted record is evidence/parity/accepted-parity.json and is validated by validate-mechanical-split.mjs.",
   passed,
   failed,
   checks,
