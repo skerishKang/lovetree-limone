@@ -87,11 +87,12 @@
         "filename": "버전1.0_레퍼런스피델리티_재구축_후보.html",
         "location": "62_기억조각상_원형레일전시/버전1.0_레퍼런스피델리티_재구축_후보/",
         "bytes": 5834579,
-        "sha256": null,
+        "sha256": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f",
         "revision": "V1.0",
-        "content_relation_to_authority": "NOT_ASSESSED",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "content_relation_to_track_root_v1_0_twin": "BYTE_IDENTICAL",
         "disposition": "NOT_AUTHORITY",
-        "note": "Same filename and same byte size as the track-root V1.0 artifact, so very likely a location-only duplicate of it. Not hashed in this pass because both are excluded by revision regardless; flagging the size coincidence explicitly rather than inferring identity."
+        "note": "Size coincidence resolved by hashing in the addendum pass: byte-identical to the track-root V1.0 artifact 1kPi85a0_kw87OWNuVaf9MHTPNoEk9qgT (same filename, 5834579 bytes, sha256 5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f). Confirmed location-only duplicate of the superseded V1.0 revision, not of the V1.1 authority. Content-different from the authority."
       }
     ],
     "track_root_media_excluded": [
@@ -107,7 +108,42 @@
         "16T4LbYJWGK0FC_iDHDpp7-jwDBEXyy0A (버전1.0_...: 1 HTML, 2 QA docs, 5 QA images, 2 media files)",
         "1FxG1OhlqI7DQNvRlFENPdxufifmE1I2E (03_V1.1_신규조각상자산: 6 PNG assets, 0 HTML)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; both 20728647-byte objects were downloaded and hashed in the same run"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; both 20728647-byte objects and both 5834579-byte V1.0 objects were downloaded and hashed"
+    },
+    "sha256_addendum": {
+      "reverified_at_utc": "2026-09-06T08:15:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL addendum (b) instruction",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "purpose": "CENTRAL addendum (b): under the section 4.1 evidence bar every HTML candidate must carry a SHA-256, and the size coincidence flagged in the section 4.1 refresh had to be confirmed rather than inferred. The 5834579-byte V1.0 candidate still carried sha256: null; it was downloaded and hashed in this addendum pass.",
+      "transport": {
+        "tool": "rclone v1.75.0 (Windows-native)",
+        "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+        "remote": "gdrive:",
+        "method": "copyto download + local Get-FileHash -Algorithm SHA256",
+        "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+      },
+      "fields_completed": [
+        {
+          "drive_file_id": "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+          "bytes": 5834579,
+          "sha256_before": null,
+          "sha256_after": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f",
+          "content_relation_to_authority_before": "NOT_ASSESSED",
+          "content_relation_to_authority_after": "DIFFERENT_CONTENT"
+        }
+      ],
+      "coincidence_resolution": {
+        "question": "Is the V1.0 revision-folder candidate the same object as the track-root V1.0 candidate?",
+        "track_root_object": "1kPi85a0_kw87OWNuVaf9MHTPNoEk9qgT",
+        "revision_folder_object": "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+        "both_bytes": 5834579,
+        "both_sha256": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f",
+        "answer": "BYTE_IDENTICAL",
+        "evidence": "Both objects were downloaded and hashed locally; the SHA-256 digests match exactly."
+      },
+      "field_edits_are_value_completions_only": true,
+      "unchanged": "No key was removed, renamed or reordered. Every other value in this file is byte-for-byte unchanged from the section 4.1 refresh.",
+      "conclusion": "Every HTML candidate in the SRC062 enumerated scope now carries a SHA-256. The 5834579-byte V1.0 pair is a confirmed location-only duplicate of the superseded V1.0 revision and is content-different from the V1.1 authority. The V1.1 authority bytes still occur exactly twice: the track-root authority and the copy inside the V1.1 revision folder."
     },
     "gap": null
   }

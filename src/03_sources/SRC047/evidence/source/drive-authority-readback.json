@@ -90,24 +90,24 @@
         "filename": "1-lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html",
         "location": "47_시즌수채화블_통합개발/",
         "bytes": 7763478,
-        "sha256": null,
+        "sha256": "256f39b55c1d26e1eb68607b73d03fe89e28f36550ba3ed6c3548385ba58bcd5",
         "revision": "V3 (self-contained art-directed build)",
         "modified_time_utc": null,
         "content_relation_to_authority": "DIFFERENT_CONTENT",
         "disposition": "NOT_AUTHORITY",
-        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+        "note": "Superseded by revision; not a V4.2.5 candidate. sha256 filled by the 2026-09-06 addendum, upgrading the prior size-only DIFFERENT_CONTENT_BY_SIZE reading to a hash-confirmed DIFFERENT_CONTENT."
       },
       {
         "drive_file_id": "1faBWv5UxViVXZSVDxhwc3ZuKxEVHf_Zu",
         "filename": "2-lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html",
         "location": "47_시즌수채화블_통합개발/",
         "bytes": 4582531,
-        "sha256": null,
+        "sha256": "b964861fa48aced7acee282b160f526cf2fb8446d93413380bfe0f359a427c44",
         "revision": "UNLABELED_SELF_CONTAINED_BUILD",
         "modified_time_utc": null,
         "content_relation_to_authority": "DIFFERENT_CONTENT",
         "disposition": "NOT_AUTHORITY",
-        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+        "note": "Superseded by revision; not a V4.2.5 candidate. sha256 filled by the 2026-09-06 addendum, upgrading the prior size-only DIFFERENT_CONTENT_BY_SIZE reading to a hash-confirmed DIFFERENT_CONTENT."
       }
     ],
     "authority_revision_scope_non_html": [
@@ -124,8 +124,42 @@
         "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH (track root: 18 subfolders, 3 HTML files, 12 media files)",
         "1cQLZEA2auL2qaab9rP-0TjhcrFXC1m5m (12_V4.2.5 revision folder: 1 HTML file, 5 QA files, 1 assets directory)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed",
+      "not_covered": [
+        "The parallel track root 1Rva_gSNWwiguJDmaWUODd926NStpLHlW and its 62 track folders, discovered on 2026-09-06 while resolving SRC071. That root holds a partial mirror of the track-71 terminal revision and is not reachable from any SRC047 enumeration path. No SRC047 track-47 mirror was searched for under it."
+      ]
     },
-    "gap": null
+    "gap": null,
+    "sha256_addendum": {
+      "applied_at_utc": "2026-09-06T08:32:00Z",
+      "applied_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL addendum instruction",
+      "rationale": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1 asks for content identity, not size inference. Two sibling candidates were recorded with sha256 null and a size-only reasoning note; both are now hashed.",
+      "transport": "rclone v1.75.0 copyto from gdrive: under the track root, then local Get-FileHash -Algorithm SHA256",
+      "fields_completed": [
+        {
+          "drive_file_id": "1Eb3iO9dMrGjO_QrtG97Q8_L3P0XCWz3X",
+          "filename": "1-lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html",
+          "bytes": 7763478,
+          "sha256_before": null,
+          "sha256_after": "256f39b55c1d26e1eb68607b73d03fe89e28f36550ba3ed6c3548385ba58bcd5",
+          "content_relation_before": "DIFFERENT_CONTENT",
+          "content_relation_after": "DIFFERENT_CONTENT",
+          "confidence_change": "SIZE_ONLY_INFERRED to HASH_CONFIRMED"
+        },
+        {
+          "drive_file_id": "1faBWv5UxViVXZSVDxhwc3ZuKxEVHf_Zu",
+          "filename": "2-lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html",
+          "bytes": 4582531,
+          "sha256_before": null,
+          "sha256_after": "b964861fa48aced7acee282b160f526cf2fb8446d93413380bfe0f359a427c44",
+          "content_relation_before": "DIFFERENT_CONTENT",
+          "content_relation_after": "DIFFERENT_CONTENT",
+          "confidence_change": "SIZE_ONLY_INFERRED to HASH_CONFIRMED"
+        }
+      ],
+      "authority_unchanged": "The authority object 18tZB-eTCz6aeceNlbhXN3iEnfD1N442X remains 40890 bytes / 676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596. Neither completed hash equals the authority digest, so the two candidates remain distinct content and the negative_claim stands.",
+      "pre_existing_gap_carried_forward": "The modified_time_discrepancy recorded under authority_reverification (UNRESOLVED_RECORDING_MISMATCH) is untouched by this addendum and remains for CENTRAL reconciliation.",
+      "adjudication_not_performed": true
+    }
   }
 }
