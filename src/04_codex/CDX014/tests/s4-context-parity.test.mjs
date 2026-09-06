@@ -439,7 +439,7 @@ function runContractMode() {
     STATES,
   );
   check(
-    "C16 stage flags are fail-closed: S1-S3 complete, S4 parity NOT yet claimed",
+    "C16 stage flags are complete: S0-S4 all claimed and parity_ref is the validator's literal accepted-parity path",
     [
       stages.identity_verified,
       stages.raw_authority_locked,
@@ -448,18 +448,50 @@ function runContractMode() {
       stages.source_split_parity_pass,
       manifest.parity_ref,
     ],
-    [true, true, true, true, false, null],
+    [true, true, true, true, true, "evidence/parity/accepted-parity.json"],
+  );
+  const acceptedParityPath = path.join(CAPSULE, "evidence", "parity", "accepted-parity.json");
+  const candidatePath = path.join(CAPSULE, "evidence", "parity", "s4-candidate-parity.json");
+  const comparisonPath = path.join(EVIDENCE_S4, "comparison.json");
+  let acceptedParity = null;
+  if (fs.existsSync(acceptedParityPath)) acceptedParity = readJson(acceptedParityPath);
+  checkTrue(
+    "C17 the accepted-parity artifact is ACCEPTED for CDX014, authority-pinned, and validator-coherent",
+    !!acceptedParity &&
+      acceptedParity.status === "ACCEPTED" &&
+      acceptedParity.codex_id === CODEX_ID &&
+      acceptedParity.authority?.bytes === AUTHORITY_BYTES &&
+      acceptedParity.authority?.sha256 === AUTHORITY_SHA256 &&
+      acceptedParity.browser_errors === 0 &&
+      acceptedParity.required_network_errors === 0 &&
+      acceptedParity.comparisons?.dom === "EQUAL" &&
+      acceptedParity.comparisons?.geometry === "EQUAL" &&
+      acceptedParity.comparisons?.computed_style === "EQUAL" &&
+      acceptedParity.comparisons?.runtime_state === "EQUAL" &&
+      acceptedParity.comparisons?.interactions === "EQUAL" &&
+      acceptedParity.comparisons?.screenshots === "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD" &&
+      Number.isInteger(acceptedParity.comparisons?.canonical_pixel_hamming_max) &&
+      acceptedParity.comparisons.canonical_pixel_hamming_max >= 0 &&
+      Number.isInteger(acceptedParity.comparisons?.canonical_pixel_threshold) &&
+      acceptedParity.comparisons.canonical_pixel_threshold >= 1 &&
+      acceptedParity.comparisons.canonical_pixel_threshold <= 32 &&
+      acceptedParity.comparisons.canonical_pixel_hamming_max <= acceptedParity.comparisons.canonical_pixel_threshold &&
+      acceptedParity.visual_review?.central_direct_artifact_review === true,
+    acceptedParity
+      ? `status=${acceptedParity.status} tier=${acceptedParity.tier} hamming=${acceptedParity.comparisons?.canonical_pixel_hamming_max}/${acceptedParity.comparisons?.canonical_pixel_threshold}`
+      : "evidence/parity/accepted-parity.json is missing",
   );
   checkTrue(
-    "C17 no accepted-parity artifact exists (a CONTEXT_AWARE_ONLY claim would be unbacked)",
-    !fs.existsSync(path.join(CAPSULE, "evidence", "parity", "accepted-parity.json")),
+    "C17b the accepted record pins the capture head and matches the comparison record's head",
+    acceptedParity !== null &&
+      fs.existsSync(comparisonPath) &&
+      acceptedParity.capture_head === readJson(comparisonPath).repository_head,
+    `accepted.capture_head=${acceptedParity?.capture_head}`,
   );
 
   // C18/C19 are coherence gates for the candidate artifact when browser mode has
   // already run; they are informational otherwise so contract mode stays green
   // before any capture exists.
-  const candidatePath = path.join(CAPSULE, "evidence", "parity", "s4-candidate-parity.json");
-  const comparisonPath = path.join(EVIDENCE_S4, "comparison.json");
   if (fs.existsSync(candidatePath) && fs.existsSync(comparisonPath)) {
     const candidate = readJson(candidatePath);
     const comparison = readJson(comparisonPath);
@@ -498,16 +530,23 @@ function runContractMode() {
     );
     checkTrue(
       "C19 the candidate artifact never claims manifest promotion",
-      candidate.manifest_stage_claimed === false &&
-        manifest.stages.source_split_parity_pass === false &&
-        manifest.parity_ref === null,
+      candidate.manifest_stage_claimed === false,
+      "The committed candidate record is the pre-acceptance submission and must not claim promotion. Browser mode derives manifest_stage_claimed from the manifest, so a re-run performed after acceptance records true and this check fails — that means the file no longer represents a pre-acceptance candidate and the acceptance trail needs review.",
     );
-    if (candidate.status === "READY_FOR_CENTRAL_S4_VISUAL_REVIEW") {
+    checkTrue(
+      "C19c the manifest is promoted exactly as the validator requires for a CONTEXT_AWARE_ONLY capsule",
+      manifest.stages.source_split_parity_pass === true &&
+        manifest.parity_ref === "evidence/parity/accepted-parity.json" &&
+        manifest.capture_surface?.shared_harness_disposition?.["capture-source-parity.mjs"] === "SKIP" &&
+        manifest.capture_surface?.shared_harness_disposition?.["capture-source-baseline.mjs"] === "SKIP",
+      `source_split_parity_pass=${manifest.stages.source_split_parity_pass} parity_ref=${manifest.parity_ref} parity harness disposition=${manifest.capture_surface?.shared_harness_disposition?.["capture-source-parity.mjs"]}`,
+    );
+    if (candidate.status === "READY_FOR_CENTRAL_S4_VISUAL_REVIEW" && acceptedParity?.status === "ACCEPTED") {
       results.push(
-        `C19b candidate status is READY_FOR_CENTRAL_S4_VISUAL_REVIEW (verdict ${candidate.verdict ?? "n/a"}) with the manifest still fail-closed`,
+        `C19b the candidate was submitted READY_FOR_CENTRAL_S4_VISUAL_REVIEW (verdict ${candidate.verdict ?? "n/a"}) and the acceptance act is recorded at evidence/parity/accepted-parity.json (tier ${acceptedParity.tier ?? "n/a"}, central comment ${acceptedParity.central_acceptance_comment ?? "n/a"})`,
       );
     } else {
-      results.push(`C19b candidate status ${candidate.status} (verdict ${candidate.verdict ?? "n/a"}): a browser run whose every channel passes is still required`);
+      results.push(`C19b candidate status ${candidate.status ?? "n/a"} / accepted status ${acceptedParity?.status ?? "absent"}: a browser run whose every channel passes and a CENTRAL acceptance record are both required`);
     }
     checkTrue(
       "C20 the candidate's promotion instruction still requires the literal validator path",
@@ -516,12 +555,15 @@ function runContractMode() {
     const headRe = /^[0-9a-f]{40}$/;
     const candidateHead = candidate.provenance?.repository_head;
     const comparisonHead = comparison.repository_head;
+    const acceptedHead = acceptedParity?.capture_head;
     checkTrue(
-      "C21 every evidence record is pinned to a 40-hex capture head and the two agree",
+      "C21 every evidence record is pinned to a 40-hex capture head and all three agree",
       headRe.test(String(candidateHead ?? "")) &&
         headRe.test(String(comparisonHead ?? "")) &&
-        candidateHead === comparisonHead,
-      `candidate.provenance.repository_head=${candidateHead} comparison.repository_head=${comparisonHead}`,
+        headRe.test(String(acceptedHead ?? "")) &&
+        candidateHead === comparisonHead &&
+        candidateHead === acceptedHead,
+      `candidate=${candidateHead} comparison=${comparisonHead} accepted=${acceptedHead}`,
     );
   } else {
     results.push("C18 candidate parity artifact coherence: NOT_RUN (no browser-mode capture yet)");
@@ -539,7 +581,7 @@ function runContractMode() {
     checks_total: results.length,
     checks: results,
     verdict: "CONTRACT_PASS",
-    note: "Contract mode proves the disposition and immutability invariants only. It never decides runtime parity and never sets stages.source_split_parity_pass.",
+    note: "Contract mode proves the disposition, immutability, capture-head provenance and acceptance-coherence invariants only. It never decides runtime parity and never sets stages.source_split_parity_pass; it verifies the state CENTRAL set.",
   };
   writeJson(path.join(EVIDENCE_S4, "contract.json"), record);
   console.log(JSON.stringify({ mode: "CONTRACT", verdict: "CONTRACT_PASS", checks: results.length }, null, 2));
@@ -1933,7 +1975,7 @@ async function runBrowserMode(servingRoot, outDir) {
       failed_responses: requestLedger.original.failed_response_count + requestLedger.split.failed_response_count,
       unexpected_request_failures: clientLedger.original.unexpected_request_failures + clientLedger.split.unexpected_request_failures,
       remote_requests: clientLedger.original.remote_requests + clientLedger.split.remote_requests,
-      manifest_stage_claimed: false,
+      manifest_stage_claimed: manifest.stages?.source_split_parity_pass === true,
       verdict,
       failing_channels: Object.entries(channels)
         .filter(([name, value]) => !channelPasses(value))
@@ -2116,7 +2158,7 @@ async function runBrowserMode(servingRoot, outDir) {
       unexpected_failed_requests: clientLedger.original.unexpected_request_failures + clientLedger.split.unexpected_request_failures,
       failed_responses: requestLedger.original.failed_response_count + requestLedger.split.failed_response_count,
       remote_requests: clientLedger.original.remote_requests + clientLedger.split.remote_requests,
-      manifest_stage_claimed: false,
+      manifest_stage_claimed: manifest.stages?.source_split_parity_pass === true,
       promotion_instruction: {
         required_for_context_aware_claim: [
           "copy evidence/parity/s4-candidate-parity.json to evidence/parity/accepted-parity.json with status=ACCEPTED and the CENTRAL review comment id",

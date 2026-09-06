@@ -3,9 +3,9 @@
   "codex_id": "CDX014",
   "stage": "S4_CONTEXT_AWARE_SERVING_PARITY",
   "mode": "CONTRACT",
-  "generated_at": "2026-09-06T05:32:17.039Z",
-  "checks_passed": 23,
-  "checks_total": 23,
+  "generated_at": "2026-09-06T06:28:57.331Z",
+  "checks_passed": 25,
+  "checks_total": 25,
   "checks": [
     "C01 capture surface is CONTEXT_AWARE_ONLY / PATH_CONTEXT_SENSITIVE_SOURCE",
     "C02 both shared harnesses are dispositioned SKIP / CONTEXT_AWARE_SURFACE_ONLY",
@@ -23,14 +23,16 @@
     "C13 baseline is ACCEPTED for CDX014 and pins the same authority identity",
     "C14 frozen defect D1 is recorded PRESERVED (never fixed)",
     "C15 the four manifest interaction surfaces are the S4 state recipe",
-    "C16 stage flags are fail-closed: S1-S3 complete, S4 parity NOT yet claimed",
-    "C17 no accepted-parity artifact exists (a CONTEXT_AWARE_ONLY claim would be unbacked)",
+    "C16 stage flags are complete: S0-S4 all claimed and parity_ref is the validator's literal accepted-parity path",
+    "C17 the accepted-parity artifact is ACCEPTED for CDX014, authority-pinned, and validator-coherent",
+    "C17b the accepted record pins the capture head and matches the comparison record's head",
     "C18 candidate parity artifact is coherent with the comparison record",
     "C19 the candidate artifact never claims manifest promotion",
-    "C19b candidate status is READY_FOR_CENTRAL_S4_VISUAL_REVIEW (verdict STRUCTURAL_PARITY_ESTABLISHED_SCREENSHOT_CHANNEL_NOT_BYTE_IDENTICAL) with the manifest still fail-closed",
+    "C19c the manifest is promoted exactly as the validator requires for a CONTEXT_AWARE_ONLY capsule",
+    "C19b the candidate was submitted READY_FOR_CENTRAL_S4_VISUAL_REVIEW (verdict STRUCTURAL_PARITY_ESTABLISHED_SCREENSHOT_CHANNEL_NOT_BYTE_IDENTICAL) and the acceptance act is recorded at evidence/parity/accepted-parity.json (tier STRUCTURAL_PARITY_DETERMINISM_ENVELOPE, central comment 5557368158)",
     "C20 the candidate's promotion instruction still requires the literal validator path",
-    "C21 every evidence record is pinned to a 40-hex capture head and the two agree"
+    "C21 every evidence record is pinned to a 40-hex capture head and all three agree"
   ],
   "verdict": "CONTRACT_PASS",
-  "note": "Contract mode proves the disposition and immutability invariants only. It never decides runtime parity and never sets stages.source_split_parity_pass."
+  "note": "Contract mode proves the disposition, immutability, capture-head provenance and acceptance-coherence invariants only. It never decides runtime parity and never sets stages.source_split_parity_pass; it verifies the state CENTRAL set."
 }

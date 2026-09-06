@@ -12,8 +12,11 @@
  * split/index.html is a valid runtime surface at its repository path. That
  * fact is recorded in the capsule (capture_surface.mode = CONTEXT_AWARE_ONLY)
  * and the shared single-executable baseline/parity harnesses SKIP this
- * capsule by explicit disposition. S4 parity is therefore not started by
- * this file.
+ * capsule by explicit disposition. S4 parity was executed by the standalone
+ * context-aware harness (s4-context-parity.test.mjs) and accepted by CENTRAL
+ * at issue #589 comment 5557368158 under tier
+ * STRUCTURAL_PARITY_DETERMINISM_ENVELOPE; the shared-harness SKIP itself is
+ * unchanged and still valid.
  *
  * Proves:
  *  - T01/T02  frozen authority byte identity (SHA-256 + size, untouched)
@@ -35,9 +38,9 @@
  *             (path/bytes/SHA256), no media byte vendored; the 6 S2
  *             mirror-fidelity sample pins are present exactly
  *  - T16      materialization output hashes match on-disk files + git blobs
- *  - T17      stage flags: S3 complete, S4 parity NOT started, no parity
- *             artifact, capture_surface CONTEXT_AWARE_ONLY, frozen defect D1
- *             preserved
+  *  - T17      stage flags: S0-S4 complete, parity_ref set to the accepted
+  *             artifact, capture_surface CONTEXT_AWARE_ONLY, shared-harness
+  *             SKIP disposition present, frozen defect D1 preserved
  *  - T18      MST080 mapping issued (CODEX_RESOLVED, CDX014,
  *             EXPLICIT_LEDGER_PROVENANCE)
  *  - T19      capsule location + identity-key conformance: canonical
@@ -47,7 +50,7 @@
  *             zero residue of the pre-#631 src/03_sources capsule prefix
  *
  * Writes evidence/s3/roundtrip.json as S3 run evidence.
- * S4 is NOT executed here; S4 remains HOLD.
+ * S4 is not executed by this file; it is executed by s4-context-parity.test.mjs.
  */
 
 import fs from "node:fs";
@@ -257,9 +260,36 @@ ok(Object.entries(onDisk).every(([k, buf]) => gitBlobSha1(buf) === mat.outputs[k
 // ---- T17 stage flags -----------------------------------------------------------------
 console.log("\nStage flags:");
 ok(manifest.stages?.mechanical_split_complete === true, "T17a", "S3 mechanical split complete");
-ok(manifest.stages?.source_split_parity_pass === false, "T17b", "S4 parity NOT claimed");
-ok(manifest.parity_ref === null, "T17c", "no parity artifact referenced");
-ok(!fs.existsSync(path.join(ROOT, "evidence", "parity")), "T17d", "no parity evidence directory");
+ok(manifest.stages?.source_split_parity_pass === true, "T17b", "S4 parity claimed (accepted)");
+ok(manifest.parity_ref === "evidence/parity/accepted-parity.json", "T17c", "parity_ref points at the validator's literal accepted-parity path");
+const parityDir = path.join(ROOT, "evidence", "parity");
+const parityPath = path.join(parityDir, "accepted-parity.json");
+let parityOk = false;
+let parity;
+if (fs.existsSync(parityPath)) {
+  parity = JSON.parse(readTxt(parityPath));
+  parityOk = parity.status === "ACCEPTED"
+    && parity.codex_id === "CDX014"
+    && parity.authority?.bytes === LOCK_BYTES
+    && parity.authority?.sha256 === LOCK_SHA256
+    && parity.browser_errors === 0
+    && parity.required_network_errors === 0
+    && parity.comparisons?.dom === "EQUAL"
+    && parity.comparisons?.geometry === "EQUAL"
+    && parity.comparisons?.computed_style === "EQUAL"
+    && parity.comparisons?.runtime_state === "EQUAL"
+    && parity.comparisons?.interactions === "EQUAL"
+    && parity.comparisons?.screenshots === "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD"
+    && Number.isInteger(parity.comparisons?.canonical_pixel_hamming_max)
+    && parity.comparisons.canonical_pixel_hamming_max >= 0
+    && Number.isInteger(parity.comparisons?.canonical_pixel_threshold)
+    && parity.comparisons.canonical_pixel_threshold >= 1
+    && parity.comparisons.canonical_pixel_threshold <= 32
+    && parity.comparisons.canonical_pixel_hamming_max <= parity.comparisons.canonical_pixel_threshold
+    && parity.visual_review?.central_direct_artifact_review === true;
+}
+ok(parityOk, "T17d", "accepted-parity artifact present, ACCEPTED, authority-pinned and validator-coherent");
+ok(fs.existsSync(path.join(ROOT, "evidence", "parity", "s4-candidate-parity.json")), "T17d2", "the pre-acceptance candidate record is retained beside the accepted record");
 ok(manifest.capture_surface?.mode === "CONTEXT_AWARE_ONLY", "T17e", "capture_surface CONTEXT_AWARE_ONLY");
 ok(manifest.capture_surface?.shared_harness_disposition?.["capture-source-baseline.mjs"] === "SKIP"
   && manifest.capture_surface?.shared_harness_disposition?.["capture-source-parity.mjs"] === "SKIP", "T17f", "shared harness SKIP disposition present");
@@ -323,8 +353,12 @@ const evidence = {
   passed,
   failed,
   result: failed === 0 ? "PASS" : "FAIL",
-  s4_started: false,
-  parity_acceptance_claimed: false,
+  s4_started: true,
+  s4_executed_by: "src/04_codex/CDX014/tests/s4-context-parity.test.mjs (standalone context-aware harness; the shared harness SKIP disposition CONTEXT_AWARE_SURFACE_ONLY is unchanged)",
+  parity_acceptance_claimed: true,
+  parity_ref: "evidence/parity/accepted-parity.json",
+  parity_tier: parity ? parity.tier : null,
+  parity_capture_head: parity ? parity.capture_head : null,
 };
 const evDir = path.join(ROOT, "evidence", "s3");
 fs.mkdirSync(evDir, { recursive: true });
