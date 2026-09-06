@@ -19,13 +19,17 @@
  *  - T18 hero MP4 absolute CloudFront URLs unchanged in split
  *  - T19 variant titles correct (V3.3A vs V3.3B)
  *  - T20 variant imageUrls data correct (9 exact paths each)
+ *  - T21 manifest flags: S3 complete, S4 parity accepted and referenced
  *
- * Writes parity/s3-roundtrip.json as run evidence. No commits. No pushes.
+ * Writes S3 run evidence to an OS temp directory only; the committed
+ * parity/s3-roundtrip.json record is never overwritten by a test run.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
+import { execFileSync } from "node:child_process";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const ORIG = path.join(ROOT, "original");
@@ -56,6 +60,10 @@ function ok(cond, id, detail) {
 function sha256(buf) { return crypto.createHash("sha256").update(buf).digest("hex"); }
 function readBin(p) { return fs.readFileSync(p); }
 function readTxt(p) { return fs.readFileSync(p, "utf8"); }
+function commitExists(sha) {
+  try { execFileSync("git", ["-C", ROOT, "cat-file", "-e", `${sha}^{commit}`], { stdio: "ignore" }); return true; }
+  catch { return false; }
+}
 
 function findOriginal(tag) {
   const canonical = path.join(ORIG, tag, "original.html");
@@ -213,7 +221,18 @@ ok(shell.includes(MP4L) && shell.includes(MP4R), "T18", "hero MP4 absolute URLs 
 console.log("\nManifest flags:");
 const manifest = JSON.parse(readTxt(path.join(ROOT, "manifest.json")));
 ok(manifest.stages.mechanical_split_complete === true, "T21a", "mechanical_split_complete=true");
-ok(manifest.stages.source_split_parity_pass === false, "T21b", "source_split_parity_pass=false (S4 separate)");
+ok(manifest.stages.source_split_parity_pass === true, "T21b", "source_split_parity_pass=true (S4 dual-variant parity accepted by CENTRAL)");
+ok(manifest.parity_ref === "evidence/parity/accepted-parity.json", "T21b2", 'parity_ref="evidence/parity/accepted-parity.json"');
+const acceptedParity = JSON.parse(readTxt(path.join(ROOT, "evidence", "parity", "accepted-parity.json")));
+ok(
+  acceptedParity.status === "ACCEPTED" &&
+    acceptedParity.source_id === "SRC068" &&
+    acceptedParity.authority?.variants?.A?.sha256 === LOCK_A &&
+    acceptedParity.authority?.variants?.B?.sha256 === LOCK_B,
+  "T21b3",
+  "accepted parity record parses, is ACCEPTED for SRC068, and its dual-variant authority agrees with the frozen A/B originals"
+);
+ok(/^[0-9a-f]{40}$/.test(acceptedParity.source_head) && commitExists(acceptedParity.source_head), "T21b4", `accepted source_head ${acceptedParity.source_head} is a commit in this repository`);
 ok(manifest.mechanical_split_ref === "split/materialization.json", "T21c", 'mechanical_split_ref="split/materialization.json"');
 ok(
   manifest.authority.variants.A.sha256 === LOCK_A && manifest.authority.variants.B.sha256 === LOCK_B,
@@ -237,8 +256,13 @@ const report = {
   failed,
   checks,
 };
-fs.mkdirSync(path.join(ROOT, "parity"), { recursive: true });
-fs.writeFileSync(path.join(ROOT, "parity", "s3-roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+// Run evidence is written to a throwaway OS temp directory so that executing
+// this test never dirties the work tree or overwrites the committed capsule
+// record parity/s3-roundtrip.json (same rule as the post-#637 SRC066,
+// post-#639 CDX014 and post-#642 SRC062 rebinds).
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "src068-s3-roundtrip-"));
+fs.writeFileSync(path.join(tmpDir, "s3-roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+console.log(`Run evidence (temp, not committed): ${path.join(tmpDir, "s3-roundtrip.json")}`);
 
 console.log(`\n=== Results: ${passed} passed, ${failed} failed ===\n`);
 process.exit(failed > 0 ? 1 : 0);

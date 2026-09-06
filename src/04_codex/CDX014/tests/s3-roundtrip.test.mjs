@@ -49,13 +49,15 @@
  *             (codex_id / codex_folder_name, no Source-namespace key), and
  *             zero residue of the pre-#631 src/03_sources capsule prefix
  *
- * Writes evidence/s3/roundtrip.json as S3 run evidence.
+ * Writes S3 run evidence to an OS temp directory only; the committed
+ * evidence/s3/roundtrip.json record is never overwritten by a test run.
  * S4 is not executed by this file; it is executed by s4-context-parity.test.mjs.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const ORIGINAL = path.join(ROOT, "original", "original.html");
@@ -360,8 +362,12 @@ const evidence = {
   parity_tier: parity ? parity.tier : null,
   parity_capture_head: parity ? parity.capture_head : null,
 };
-const evDir = path.join(ROOT, "evidence", "s3");
-fs.mkdirSync(evDir, { recursive: true });
-fs.writeFileSync(path.join(evDir, "roundtrip.json"), JSON.stringify(evidence, null, 2));
+// Run evidence is written to a throwaway OS temp directory so that executing
+// this test never dirties the work tree or overwrites the committed capsule
+// record evidence/s3/roundtrip.json (same rule as the post-#637 SRC066,
+// post-#639 CDX014 and post-#642 SRC062 rebinds).
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "cdx014-s3-roundtrip-"));
+fs.writeFileSync(path.join(tmpDir, "roundtrip.json"), JSON.stringify(evidence, null, 2));
+console.log(`Run evidence (temp, not committed): ${path.join(tmpDir, "roundtrip.json")}`);
 console.log(`\nCDX014 S3 round-trip: ${passed} passed, ${failed} failed${failed === 0 ? " — PASS" : " — FAIL"}`);
 if (failed > 0) process.exit(1);
