@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC066",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-05T13:35:10.882Z",
+  "run_at": "2026-09-06T03:48:51.337Z",
   "authority": {
     "bytes": 166996,
     "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
@@ -64,8 +64,9 @@
     "method": "out-of-band source-text observation; no QA hooks added"
   },
   "s4_executed": false,
-  "s4_status": "HOLD",
-  "passed": 92,
+  "s4_status": "ACCEPTED",
+  "s4_status_note": "This file does not execute S4; it only reads the accepted parity record. S4 parity was captured at evidence/s4/ and accepted by CENTRAL direct Drive visual review (skerishKang/lovetree-limone#589 comment 5556645775); the accepted record is evidence/parity/accepted-parity.json and is validated by validate-mechanical-split.mjs.",
+  "passed": 94,
   "failed": 0,
   "checks": [
     {
@@ -436,7 +437,7 @@
     {
       "id": "T20c",
       "pass": true,
-      "detail": "source_split_parity_pass=false (S4 parity HOLD, forbidden in this lane)"
+      "detail": "source_split_parity_pass=true (S4 parity accepted by CENTRAL)"
     },
     {
       "id": "T20d",
@@ -456,20 +457,30 @@
     {
       "id": "T20g",
       "pass": true,
-      "detail": "no parity/ artifact created at S3"
+      "detail": "parity_ref=\"evidence/parity/accepted-parity.json\""
     },
     {
       "id": "T20h",
       "pass": true,
-      "detail": "materialization status = MATERIALIZED_PENDING_PARITY (gate-recognized S3 status)"
+      "detail": "accepted parity record exists and its authority agrees with the frozen original"
     },
     {
       "id": "T20i",
       "pass": true,
-      "detail": "parity pending exact-head capture, next stage S4_HOLD"
+      "detail": "materialization status = ACCEPTED"
     },
     {
       "id": "T20j",
+      "pass": true,
+      "detail": "parity_status = PASS, next_stage = ACCEPTED"
+    },
+    {
+      "id": "T20k",
+      "pass": true,
+      "detail": "parity evidence head is an exact SHA equal to the accepted parity source head"
+    },
+    {
+      "id": "T20l",
       "pass": true,
       "detail": "accepted S2 baseline authority agrees with frozen original"
     },
