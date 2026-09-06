@@ -18,6 +18,125 @@
     "byte_identity": "PASS",
     "reuse_classification": "REUSE_EXACT"
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:41:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+      "drive_folder_name": "64_부유모먼트_웰컴오빗_입장포털O",
+      "drive_file_id": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+      "filename": "현재후보.html",
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+      "revision": "V1.2.1",
+      "modified_time_utc": "2026-08-13T13:21:22.486Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1Mwfhz-Faca0Fj00q9a6dw4QrLn_F9Vcx", "folder_name": "버전1.0_후보", "revision": "V1.0", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1gWEQTiALGjsGuZuQGNpYIjiqg9L21F6H", "folder_name": "버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1r2jwJn2joTQ-fWF-isCwbnIvNU_lR-_l", "folder_name": "버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보", "revision": "V1.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6", "folder_name": "버전1.3_책으로보기_경로정정_후보", "revision": "V1.3 (folder label)", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false }
+    ],
+    "revision_label_discrepancy": {
+      "status": "REQUIRES_CENTRAL_DECISION",
+      "folder_label": "버전1.3_책으로보기_경로정정_후보",
+      "folder_id": "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6",
+      "contents_reveal_revision": "V1.2.1",
+      "evidence": [
+        "The folder carries the label 버전1.3, which is higher than the locked V1.2.1 authority revision.",
+        "Its HTML candidate 1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g 현재후보.html is 1565313 bytes with sha256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d: byte-identical to the locked V1.2.1 authority.",
+        "Its modifiedTime 2026-08-13T13:21:22.486Z is identical to the authority's, indicating a single upload event or an exact copy.",
+        "Its accompanying note is named V1.2→V1.2.1_Track59경로정정_설명.md, which describes a V1.2 to V1.2.1 delta rather than a V1.3 one."
+      ],
+      "conclusion": "A folder labelled one revision above the locked authority contains the locked authority's own bytes, not a new content variant. The folder label and its contents disagree. Adjudication is CENTRAL's decision; this pass records the evidence only.",
+      "disposition": "NOT_AUTHORITY"
+    },
+    "sibling_candidates": [
+      {
+        "drive_file_id": "1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g",
+        "filename": "현재후보.html",
+        "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.3_책으로보기_경로정정_후보/현재후보.html",
+        "bytes": 1565313,
+        "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+        "revision": "V1.2.1 (content) / V1.3 (folder label)",
+        "modified_time_utc": "2026-08-13T13:21:22.486Z",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical to the authority, found one labelled revision above it. Location-only duplicate inside a mislabelled folder; see revision_label_discrepancy."
+      },
+      {
+        "drive_file_id": "12poZncJ1fJHmT_ZH0rrYM_MY24wlnjX1",
+        "filename": "현재후보.html",
+        "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보/현재후보.html",
+        "bytes": 1565139,
+        "sha256": "859583f26df69a2727f040540a6d25c329025930055a03d6af2560f8d134b8cd",
+        "revision": "V1.2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Only 174 bytes smaller than the 1565313-byte authority, making it a plausible near-duplicate candidate; downloaded and hashed and confirmed content-different. This is the genuine V1.2 predecessor."
+      },
+      {
+        "drive_file_id": "10tYLwr8YEf92p5BHl8TzbvZV_CdgYWXy",
+        "filename": "현재후보.html",
+        "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/현재후보.html",
+        "bytes": 2690589,
+        "sha256": null,
+        "revision": "V1.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; roughly 1.7x the authority size. Not downloaded for hashing (excluded by revision)."
+      },
+      {
+        "drive_file_id": "17pRZOawMSijOBihHTw9hnppldFlAMEbm",
+        "filename": "현재후보.html",
+        "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.0_후보/현재후보.html",
+        "bytes": 2789779,
+        "sha256": null,
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision. Not downloaded for hashing (excluded by revision)."
+      }
+    ],
+    "v1_3_folder_non_html": [
+      { "drive_file_id": "1YXC0SZLpmy2Y-52j7bQyh4qlZwAna1DT", "name": "V1.2→V1.2.1_Track59경로정정_설명.md", "bytes": 2535, "disposition": "NOT_AUTHORITY", "note": "delta note whose own name states V1.2 to V1.2.1" },
+      { "drive_file_id": "1cws9ARVMaVXa3j9d8ZsxbdP8WnP2iMG5", "name": "검증결과.json", "bytes": 8243, "disposition": "NOT_AUTHORITY", "note": "QA result of the contents of this folder" },
+      { "drive_file_id": "1BRahDmNy_N9bvuyvt9q6MDKuhjUt4rhH", "name": "책으로보기_로컬Open_제품오너확인대기_QA.jpg", "bytes": 165710, "disposition": "NOT_AUTHORITY", "note": "QA screenshot" },
+      { "drive_file_id": "1_nAc7rbzsO0S6hF4Hbr4Aa1EbkrUq_mT", "name": "Track59_실제폴더명·상대경로_QA.jpg", "bytes": 164046, "disposition": "NOT_AUTHORITY", "note": "QA screenshot" }
+    ],
+    "non_revision_archives": [
+      { "folder_id": "10Hw8BS7UExSa1kwr3nh_9wQXaUwZ6CIm", "folder_name": "00_작업지시", "disposition": "NOT_AUTHORITY", "note": "task instructions folder" },
+      { "folder_id": "10kLFFHtn9CgmWOlU_PgBmNVtGM7IuFQv", "folder_name": "01_참고원본", "disposition": "NOT_AUTHORITY", "note": "reference source folder" }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "1rbxcW7PCHLQsQSw_Sb0zpoPqiR6DqVe3", "name": "★_참고영상_부유카드포트폴리오_웰컴오빗.mp4", "bytes": 22264995, "disposition": "NOT_AUTHORITY", "note": "reference video" },
+      { "drive_file_id": "1SrmMZ1VYj6RhjFXKLsKqba2VlNEENYVx", "name": "녹화_2026_08_13_22_27_27_62.mp4", "bytes": 22020614, "disposition": "NOT_AUTHORITY", "note": "owner review recording" }
+    ],
+    "negative_claim": {
+      "statement": "The V1.2.1 authority bytes occur exactly twice in the enumerated scope, both byte-identical: the authority at the track root and one copy inside the folder labelled 버전1.3. The genuine V1.2 predecessor (1565139 bytes) is content-different. No third content variant carrying the authority bytes exists in the enumerated scope. All four revision folders were enumerated.",
+      "enumerated_scope": [
+        "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN- (track root: 6 subfolders, 1 HTML file, 2 media files)",
+        "1Mwfhz-Faca0Fj00q9a6dw4QrLn_F9Vcx (버전1.0_후보: 1 HTML, 2 QA docs, 5 QA images, 2 media files)",
+        "1gWEQTiALGjsGuZuQGNpYIjiqg9L21F6H (버전1.1_...: 1 HTML, 2 QA docs, 6 QA images, 2 media files)",
+        "1r2jwJn2joTQ-fWF-isCwbnIvNU_lR-_l (버전1.2_...: 1 HTML, 2 QA docs, 4 QA images, 2 media files)",
+        "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6 (버전1.3_...: 1 HTML, 1 delta note, 1 QA json, 2 QA images)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the two 1565313-byte objects and the 1565139-byte near-duplicate were all downloaded and hashed in the same run"
+    },
+    "gap": null
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,

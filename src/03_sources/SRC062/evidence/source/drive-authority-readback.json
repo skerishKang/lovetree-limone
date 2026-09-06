@@ -12,5 +12,103 @@
     "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
     "created_time": "2026-08-16T14:16:27.496Z",
     "modified_time": "2026-08-16T14:16:27.496Z"
+  },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:41:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+      "drive_folder_name": "62_기억조각상_원형레일전시",
+      "drive_file_id": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+      "filename": "62_기억조각상_원형레일전시.html",
+      "bytes": 20728647,
+      "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+      "revision": "V1.1",
+      "modified_time_utc": "2026-08-16T14:16:27.496Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH",
+      "modified_time_vs_recorded": "MATCH"
+    },
+    "revision_label_note": {
+      "manifest_revision": "V1.1",
+      "authority_filename_revision_label": null,
+      "note": "The authority HTML carries no revision label in its filename, while a revision folder named 버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보 exists. The revision is established by manifest designation and folder structure, not by the authority filename."
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "16T4LbYJWGK0FC_iDHDpp7-jwDBEXyy0A", "folder_name": "버전1.0_레퍼런스피델리티_재구축_후보", "revision": "V1.0", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1hluQIixvMgnABN-y322xRjSlCWv75KE_", "folder_name": "버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V1.1",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns 6 subfolders and 4 root-level files. The only revision folders are 버전1.0_레퍼런스피델리티_재구축_후보 and 버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보. No revision beyond V1.1 exists."
+    },
+    "non_revision_archives": [
+      { "folder_id": "1D6wX9vj3iFGLSgWzPcY5SQoWdU92BVJP", "folder_name": "00_작업지시", "disposition": "NOT_AUTHORITY", "note": "task instructions folder" },
+      { "folder_id": "1vW6Vah-2h6SQpB1inZfJ56erLR_2pbwJ", "folder_name": "01_참고원본", "disposition": "NOT_AUTHORITY", "note": "reference source folder" },
+      { "folder_id": "1fjP8vTGcNULceJZxmY4Cbrgc8U54k4V2", "folder_name": "02_코덱스 작업-12_러브트리_기억조각상_원형궤도전시", "disposition": "NOT_AUTHORITY", "note": "external work artifact, not a source revision" },
+      { "folder_id": "1FxG1OhlqI7DQNvRlFENPdxufifmE1I2E", "folder_name": "03_V1.1_신규조각상자산", "disposition": "NOT_AUTHORITY", "note": "V1.1 sculpture asset folder: 6 PNG assets, no HTML" }
+    ],
+    "sibling_candidates": [
+      {
+        "drive_file_id": "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S",
+        "filename": "현재후보.html",
+        "location": "62_기억조각상_원형레일전시/버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보/현재후보.html",
+        "bytes": 20728647,
+        "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+        "revision": "V1.1",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held inside the V1.1 revision folder. The 20728647-byte object was downloaded and hashed in the same run as the authority; SHA-256 matches exactly. Location-only duplicate."
+      },
+      {
+        "drive_file_id": "1kPi85a0_kw87OWNuVaf9MHTPNoEk9qgT",
+        "filename": "버전1.0_레퍼런스피델리티_재구축_후보.html",
+        "location": "62_기억조각상_원형레일전시/ (track root)",
+        "bytes": 5834579,
+        "sha256": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f",
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Track-root V1.0 artifact alongside its V1.0 revision folder. Superseded by revision; content-different."
+      },
+      {
+        "drive_file_id": "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+        "filename": "버전1.0_레퍼런스피델리티_재구축_후보.html",
+        "location": "62_기억조각상_원형레일전시/버전1.0_레퍼런스피델리티_재구축_후보/",
+        "bytes": 5834579,
+        "sha256": null,
+        "revision": "V1.0",
+        "content_relation_to_authority": "NOT_ASSESSED",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Same filename and same byte size as the track-root V1.0 artifact, so very likely a location-only duplicate of it. Not hashed in this pass because both are excluded by revision regardless; flagging the size coincidence explicitly rather than inferring identity."
+      }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "1KDo5jgLxG2CCXl4CDR3RqMdg8r64B5Cg", "name": "녹화_2026_08_13_16_07_05_384.mp4", "bytes": 17421476, "disposition": "NOT_AUTHORITY", "note": "owner review recording" },
+      { "drive_file_id": "1OpzIXjibBo8vQ6XgLC-z5j_IYt4LcqLx", "name": "모바일_390x844_실행영상.mp4", "bytes": 975752, "disposition": "NOT_AUTHORITY", "note": "mobile run video" },
+      { "drive_file_id": "1c0LoAVQR1MwAFw9crZJt80xbfLKKkXbs", "name": "참고영상_패션아트_조각상_스크롤전시.mp4", "bytes": 7441334, "disposition": "NOT_AUTHORITY", "note": "reference video" }
+    ],
+    "negative_claim": {
+      "statement": "The V1.1 authority bytes occur exactly twice in the enumerated scope, both byte-identical and differing only in location: the authority at the track root under the canonical track filename, and one copy inside the V1.1 revision folder under the working filename 현재후보.html. No third object and no content-different variant carrying these bytes exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6 (track root: 6 subfolders, 2 HTML files, 3 media files)",
+        "1hluQIixvMgnABN-y322xRjSlCWv75KE_ (버전1.1_...: 1 HTML, 2 QA docs, 5 QA images, 3 media files)",
+        "16T4LbYJWGK0FC_iDHDpp7-jwDBEXyy0A (버전1.0_...: 1 HTML, 2 QA docs, 5 QA images, 2 media files)",
+        "1FxG1OhlqI7DQNvRlFENPdxufifmE1I2E (03_V1.1_신규조각상자산: 6 PNG assets, 0 HTML)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; both 20728647-byte objects were downloaded and hashed in the same run"
+    },
+    "gap": null
   }
 }

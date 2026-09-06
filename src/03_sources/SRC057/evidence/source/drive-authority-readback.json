@@ -13,6 +13,89 @@
     "revision": "V1.3",
     "source_snapshot": "UNVERSIONED_DRIVE_SNAPSHOT_2026-08-11"
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:35:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+      "drive_folder_name": "04_버전1.3_모바일반응형수정_자료",
+      "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+      "filename": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+      "bytes": 676320,
+      "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+      "revision": "V1.3",
+      "modified_time_utc": "2026-08-11T08:17:52.661Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "14QFZKsoMaHyRc1zsfKiA-zC8i6oE_EJV", "folder_name": "01_버전1_기본버전_자료", "revision": "V1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1GyURM8RW6ak60g3C0C3ynNyqck-BNuZb", "folder_name": "02_버전1.1_실제미디어_선택빛_자료", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "19SXWHbQSO8ly6pQEbI_TEILg4YKTHFv8", "folder_name": "03_버전1.2_최종후보_자료", "revision": "V1.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz", "folder_name": "04_버전1.3_모바일반응형수정_자료", "revision": "V1.3", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V1.3",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns exactly 4 numbered revision folders (01 through 04) plus 4 media files. No revision beyond V1.3 exists, so the authority is the terminal revision."
+    },
+    "authority_scope_contents": [
+      { "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg", "name": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html", "bytes": 676320, "disposition": "AUTHORITY", "note": "the authority object" },
+      { "drive_file_id": "1UvKoXF3urjBTwcnPxirOR8NRoyl2avG3", "name": "버전1.3_모바일반응형_검증결과.json", "bytes": 1897, "disposition": "NOT_AUTHORITY", "note": "V1.3 mobile-responsive QA result" },
+      { "drive_file_id": "1-irqmtsDGvJ6GdTW-G_N7vwIPKPXedkz", "name": "모바일390_미디어편집.png", "bytes": 87389, "disposition": "NOT_AUTHORITY", "note": "390px QA screenshot" },
+      { "drive_file_id": "1kIk5n5Sh0M4IXEgGtghqAbHF8LVZkPJ4", "name": "모바일390_상세화면.png", "bytes": 225964, "disposition": "NOT_AUTHORITY", "note": "390px QA screenshot" },
+      { "drive_file_id": "1HmJBeHWEsADVeXyIMTS7PwWoZAPAHt96", "name": "모바일390_첫화면.png", "bytes": 286986, "disposition": "NOT_AUTHORITY", "note": "390px QA screenshot" }
+    ],
+    "sibling_candidates": [
+      {
+        "drive_file_id": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+        "filename": "★_최종_버전1.2_리빙글라스_모먼트카드.html",
+        "location": "57_리빙글라스_모먼트카드/",
+        "bytes": 671480,
+        "sha256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+        "revision": "V1.2",
+        "modified_time_utc": "2026-08-11T08:02:21.312Z",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Track-root V1.2 '최종' artifact. Superseded by the V1.3 authority; content-different despite the '최종' label."
+      },
+      {
+        "drive_file_id": "1pSH7kqKpxt2CNpcL2LVlVxtPfitf94hP",
+        "filename": "모바일_확인본_버전1.2_유튜브_실시간썸네일.html",
+        "location": "57_리빙글라스_모먼트카드/",
+        "bytes": 676439,
+        "sha256": "98ee5906d27f08559200f16caf81f890415570a9392eb49b71c027686e38ae4c",
+        "revision": "V1.2",
+        "modified_time_utc": "2026-08-11T07:59:57.472Z",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Only 119 bytes larger than the 676320-byte V1.3 authority, which makes it a plausible near-duplicate candidate; downloaded and hashed and confirmed content-different. Superseded by revision."
+      }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "1pWqIaSpwWcHVtXqfB6ck_j4wjL6I5sNr", "name": "★_참고영상_컬러카드마인드맵_자동전개.mp4", "bytes": 6048305, "disposition": "NOT_AUTHORITY", "note": "reference video, not a Source HTML candidate" },
+      { "drive_file_id": "1ZOMRSNDJQZwO-8-Aj5cNFioPwPkdQ2uZ", "name": "제품오너_검토녹화_2026-08-11_16-12.mp4", "bytes": 19389647, "disposition": "NOT_AUTHORITY", "note": "owner review recording" }
+    ],
+    "negative_claim": {
+      "statement": "The V1.3 authority folder contains exactly one HTML file: the authority itself. Both V1.2 HTML artifacts at the track root were downloaded and hashed and are content-different. No duplicate or same-content copy of the authority exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz (04_버전1.3_...: 1 HTML, 1 QA json, 3 QA png)",
+        "57_리빙글라스_모먼트카드 track root (4 subfolders, 2 HTML files, 2 media files)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+    },
+    "gap": null
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,

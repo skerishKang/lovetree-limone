@@ -12,5 +12,120 @@
     "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
     "created_time": "2026-08-23T06:53:42.416Z",
     "modified_time": "2026-08-23T06:53:42.416Z"
+  },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:35:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH",
+      "drive_folder_name": "47_시즌수채화블_통합개발",
+      "drive_file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+      "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+      "bytes": 40890,
+      "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+      "revision": "V4.2.5",
+      "modified_time_utc": "2026-08-16T07:27:55.116Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH",
+      "modified_time_discrepancy": {
+        "recorded_in_fresh_drive_created_time": "2026-08-23T06:53:42.416Z",
+        "recorded_in_fresh_drive_modified_time": "2026-08-23T06:53:42.416Z",
+        "live_drive_modified_time_utc": "2026-08-16T07:27:55.116Z",
+        "status": "UNRESOLVED_RECORDING_MISMATCH",
+        "note": "The pre-existing fresh_drive time fields do not equal the live Drive modifiedTime returned by lsjson --stat. Not modified in this pass; reported to CENTRAL for reconciliation."
+      }
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "16ld5vBJO23Bd8TNH2wYN7Frm1ctWmHK3", "folder_name": "01_v1_svg", "revision": "V1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1kICbTJnlMcFXOg8Wt1Q3YFaXCoy2gtrS", "folder_name": "02_v2_svg", "revision": "V2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1-yEx6bgl4y85OQX3f6YKY_JeQZGQKKR6", "folder_name": "03_v3_WebGL_3D게이트", "revision": "V3", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1lQ6oxLqh2YsdmoDCD0h5rzQe38RIdoTH", "folder_name": "04_현재채택본_다중각도_v3_관련자료", "revision": "V3", "role": "SOURCE_REVISION_RELATED_MATERIAL", "is_authority_scope": false },
+      { "folder_id": "1I11IwpMCCboqePgAN2fYM137a12lNagn", "folder_name": "05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER", "revision": "V4", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1Rn-_NSMMhQEcABowaMfGMqvqeiPx-_J0", "folder_name": "06_시네마틱HTML미리보기", "revision": null, "role": "PREVIEW_MATERIAL", "is_authority_scope": false },
+      { "folder_id": "1hkZuWmtgfTiA6Xz06wFZLfHppiC96kDp", "folder_name": "07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보", "revision": "V4.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1c8vQct6ZxiOHwFT9YyU-wvDyv-EXW1ay", "folder_name": "08_버전4_REFERENCE_CINEMATIC_RESCUE_후보", "revision": "V4", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1TcCown90O5bC_1qbaV71cCSeThYeeB1f", "folder_name": "09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보", "revision": "V4.2.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1b4KYJTHHPo-QwK8rP0TBwAiaveb11Xa1", "folder_name": "10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보", "revision": "V4.2.3", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1bfFlWVDRQ2hJN8b3-rDuNmqF52qGJJPj", "folder_name": "11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보", "revision": "V4.2.4", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1cQLZEA2auL2qaab9rP-0TjhcrFXC1m5m", "folder_name": "12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보", "revision": "V4.2.5", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V4.2.5",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns 18 subfolders numbered 01 through 12 plus 6 non-revision archives; the highest revision prefix is 12_V4.2.5, which is the authority revision."
+    },
+    "non_revision_archives": [
+      { "folder_id": "1coHfHAA_ttBJP7SL9Q0oZ5e5VMyIkoVK", "folder_name": "고화질", "disposition": "NOT_AUTHORITY", "note": "image asset archive" },
+      { "folder_id": "1KQdB0ti1LemYDwmhV1UKEOpW57JmJl_D", "folder_name": "문서자료", "disposition": "NOT_AUTHORITY", "note": "document archive" },
+      { "folder_id": "1TtxqwYlF1vJIHXoD4rmsZiCjv8oaLhqF", "folder_name": "영상", "disposition": "NOT_AUTHORITY", "note": "video archive" },
+      { "folder_id": "11vGMsZQrfS5JBU95Lc8bJSAq9Agxuh7C", "folder_name": "이미지", "disposition": "NOT_AUTHORITY", "note": "image archive" },
+      { "folder_id": "1AfL3cMGUmlruxugHAq7HIOsS2yXRcAwu", "folder_name": "이전버전_소스보관", "disposition": "NOT_AUTHORITY", "note": "prior-version source archive; historical evidence only" },
+      { "folder_id": "12xDI-sLJXVZdDBp1PDPjA-kXU6DeSndS", "folder_name": "코덱스 작업물-13_러브트리_시네마틱수채화", "disposition": "NOT_AUTHORITY", "note": "external work artifact, not a source revision" }
+    ],
+    "sibling_candidates": [
+      {
+        "drive_file_id": "1aONTs8UGsz0Kzs3rpwhAhEPFyu1vo1Z7",
+        "filename": "현재후보.html",
+        "location": "47_시즌수채화블_통합개발/12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보/현재후보.html",
+        "bytes": 40890,
+        "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+        "revision": "V4.2.5",
+        "modified_time_utc": "2026-08-15T10:40:45.274Z",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held at the V4.2.5 revision-folder location, uploaded 2026-08-15. The authority track-root '최종선택-12_' copy was uploaded later, 2026-08-16. Canonical location is the track root; the revision-folder copy is a location-only duplicate."
+      },
+      {
+        "drive_file_id": "1Eb3iO9dMrGjO_QrtG97Q8_L3P0XCWz3X",
+        "filename": "1-lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html",
+        "location": "47_시즌수채화블_통합개발/",
+        "bytes": 7763478,
+        "sha256": null,
+        "revision": "V3 (self-contained art-directed build)",
+        "modified_time_utc": null,
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+      },
+      {
+        "drive_file_id": "1faBWv5UxViVXZSVDxhwc3ZuKxEVHf_Zu",
+        "filename": "2-lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html",
+        "location": "47_시즌수채화블_통합개발/",
+        "bytes": 4582531,
+        "sha256": null,
+        "revision": "UNLABELED_SELF_CONTAINED_BUILD",
+        "modified_time_utc": null,
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+      }
+    ],
+    "authority_revision_scope_non_html": [
+      { "drive_file_id": "1sEtia6jOuoippbQoLVwx4AP9RoV3_ndk", "name": "assets", "kind": "directory", "disposition": "NOT_AUTHORITY", "note": "asset directory co-located with the byte-identical sibling copy" },
+      { "drive_file_id": "1Occ4lE04Zp6iqEUwU-RL_ItE1kXE2D5h", "name": "01_OWNER_SELECTED_ROUTE_MAP.json", "bytes": 2130, "disposition": "NOT_AUTHORITY", "note": "supporting QA artifact of the V4.2.5 revision" },
+      { "drive_file_id": "1AKYP0b_pU_aZkZSZLtWGID-PG5XiahaU", "name": "02_ROUTE_SOURCE_AUDIT.md", "bytes": 1869, "disposition": "NOT_AUTHORITY", "note": "supporting QA artifact of the V4.2.5 revision" },
+      { "drive_file_id": "1wiORxLbaYFOM28fJvsp9v0aDCxsYBxJU", "name": "03_PINNED_MENU_INTERACTION_QA.md", "bytes": 874, "disposition": "NOT_AUTHORITY", "note": "supporting QA artifact of the V4.2.5 revision" },
+      { "drive_file_id": "1mlHW5oq3PQJgjhQU1chxKE0nyGnuNIbO", "name": "V4.2.4→V4.2.5_변경설명.md", "bytes": 1054, "disposition": "NOT_AUTHORITY", "note": "revision delta note" },
+      { "drive_file_id": "1Brp7jn-_V-IIZJRuJ4acFGlcvh1LSrCk", "name": "검증결과.json", "bytes": 1390, "disposition": "NOT_AUTHORITY", "note": "verification result of the V4.2.5 revision" }
+    ],
+    "negative_claim": {
+      "statement": "Within the enumerated V4.2.5 revision scope and the track root, the V4.2.5 authority bytes occur exactly twice: once at the authority track-root path and once as a byte-identical copy at the revision-folder path. No third content variant carrying the V4.2.5 bytes exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH (track root: 18 subfolders, 3 HTML files, 12 media files)",
+        "1cQLZEA2auL2qaab9rP-0TjhcrFXC1m5m (12_V4.2.5 revision folder: 1 HTML file, 5 QA files, 1 assets directory)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+    },
+    "gap": null
   }
 }
