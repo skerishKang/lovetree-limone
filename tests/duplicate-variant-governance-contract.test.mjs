@@ -179,7 +179,7 @@ test('misfire: a non-UNRESOLVED status with no note fails closed', () => {
   const manifest = readManifest('SRC056');
   const { duplicate_variant_note, ...rest } = manifest;
   const failures = validateDuplicateVariantGovernance(rest, 'SRC056');
-  assert.deepEqual(failures, ['SRC056: duplicate_variant_status "SINGLE_EXECUTABLE_NO_DUPLICATE" requires duplicate_variant_note']);
+  assert.deepEqual(failures, ['SRC056: duplicate_variant_status "DUPLICATE_COPY_SAME_SHA" requires duplicate_variant_note']);
 });
 
 test('misfire: a non-UNRESOLVED status whose note carries no readback reference fails closed', () => {
@@ -261,7 +261,7 @@ test('gate integration: deleting the note on a cloned capsule is caught by valid
       phase: 'ROLLOUT',
       calibrationSet: new Set(['SRC064', 'SRC058', 'SRC057', 'SRC056', 'SRC060']),
     });
-    assert.deepEqual(failures, ['SRC999: duplicate_variant_status "SINGLE_EXECUTABLE_NO_DUPLICATE" requires duplicate_variant_note']);
+    assert.deepEqual(failures, ['SRC999: duplicate_variant_status "DUPLICATE_COPY_SAME_SHA" requires duplicate_variant_note']);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
