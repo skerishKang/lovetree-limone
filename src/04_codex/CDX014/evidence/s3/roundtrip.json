@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "codex_id": "CDX014",
   "stage": "S3_MECHANICAL_SPLIT",
-  "generated_at_utc": "2026-09-05T14:21:34.776Z",
+  "generated_at_utc": "2026-09-06T06:28:01.653Z",
   "authority": {
     "bytes": 19631,
     "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361"
@@ -242,17 +242,22 @@
     {
       "id": "T17b",
       "pass": true,
-      "detail": "S4 parity NOT claimed"
+      "detail": "S4 parity claimed (accepted)"
     },
     {
       "id": "T17c",
       "pass": true,
-      "detail": "no parity artifact referenced"
+      "detail": "parity_ref points at the validator's literal accepted-parity path"
     },
     {
       "id": "T17d",
       "pass": true,
-      "detail": "no parity evidence directory"
+      "detail": "accepted-parity artifact present, ACCEPTED, authority-pinned and validator-coherent"
+    },
+    {
+      "id": "T17d2",
+      "pass": true,
+      "detail": "the pre-acceptance candidate record is retained beside the accepted record"
     },
     {
       "id": "T17e",
@@ -310,9 +315,13 @@
       "detail": "MST080 notes cite the canonical capsule path only"
     }
   ],
-  "passed": 54,
+  "passed": 55,
   "failed": 0,
   "result": "PASS",
-  "s4_started": false,
-  "parity_acceptance_claimed": false
+  "s4_started": true,
+  "s4_executed_by": "src/04_codex/CDX014/tests/s4-context-parity.test.mjs (standalone context-aware harness; the shared harness SKIP disposition CONTEXT_AWARE_SURFACE_ONLY is unchanged)",
+  "parity_acceptance_claimed": true,
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_tier": "STRUCTURAL_PARITY_DETERMINISM_ENVELOPE",
+  "parity_capture_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58"
 }
