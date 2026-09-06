@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -59,7 +59,14 @@
     "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
     "adjudicated_at_utc": "2026-09-06T08:01:51Z",
     "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
-    "closing_step": "step 3 — distinct SHA, no selector",
+    "mirror_re_adjudication": {
+      "at_utc": "2026-09-06",
+      "by": "CENTRAL — #589 comment 5557965745 (this re-adjudication; see the batch-pass record for the original)",
+      "basis": "PR #646 mirror sweep — docs/design-intake/mirror-sweep-2026-09-06.json + duplicate_variant_enumeration.mirror_sweep_2026_09_06; digest three-way verified (local Get-FileHash, mirror SHA256SUMS.txt, fresh_drive.sha256 equality)",
+      "finding": "The parallel mirror (root 1Rva_gSN…, a scripted bulk-copy of the track-01…74 deliverable set) contains a byte-identical copy of the authority: ★_현재후보_Track60_V1.2_REAL_NAVIGATION.html 55,260 B c35b66fb46b5… — identical to the authority, at the mirrored V1.2 path. Step 1 of §2.3 re-opens (a second candidate object exists) and step 2 closes: identical SHA-256 → duplicate copy, not a variant.",
+      "supersedes": "the batch-pass closing_step above, which was scoped to the canonical design root and did not cover the mirror (scope now recorded by the sweep)"
+    },
+    "closing_step": "step 2 — identical SHA-256 in the mirror (closed by re-adjudication 2026-09-06, see mirror_re_adjudication)",
     "closing_step_basis": "Step 1: three enumerated HTML objects (V1.0, V1.1, V1.2). Step 2: their SHA-256 values are DISTINCT (591f6273…, c788d677…, c35b66fb…). Step 3: no named selector exists or is needed — V1.0 (28653 B) and V1.1 (52981 B) are byte-distinct SUPERSEDED REVISIONS. Question A closes with no duplicate: exactly one executable authority, because the revision chain terminates at V1.2, which is the authority folder itself.",
     "revision_chain": [
       "unlabelled 00_작업지시 [TASK_INSTRUCTIONS]",
