@@ -15,7 +15,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -61,9 +61,16 @@
     "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
     "adjudicated_at_utc": "2026-09-06T08:01:51Z",
     "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
-    "retained_status_note": "Existing value retained unchanged. CENTRAL ruled SRC071 stays UNRESOLVED because step 2 is unevaluable: the second same-name object is unlocatable by path enumeration.",
-    "closing_step": "step 2 — unevaluable (candidate unlocatable)",
-    "closing_step_basis": "Step 1 of §2.3: the manifest lists a second same-name object, so the test passes and the case must be decided at step 2. Step 2 requires a SHA-256 for the candidate, but 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb could not be located by rclone path enumeration, so it could not be downloaded or hashed. The step is therefore UNEVALUABLE, not answered — per the rule's fail-closed ordering an unevaluable step does not close Question A.",
+    "retained_status_note": "Existing value retained unchanged. CENTRAL ruled SRC071 stays UNRESOLVED because step 2 is unevaluable: the second same-name object is unlocatable by path enumeration. [SUPERSEDED 2026-09-06 — see follow_up_adjudication: status is now DUPLICATE_COPY_SAME_SHA.]",
+    "closing_step": "step 2 — identical SHA-256 (closed by follow-up adjudication 2026-09-06, see follow_up_adjudication)",
+    "closing_step_basis": "Step 1 of §2.3: the manifest lists a second same-name object, so the test passes and the case must be decided at step 2. Step 2 requires a SHA-256 for the candidate, but 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb could not be located by rclone path enumeration, so it could not be downloaded or hashed. The step is therefore UNEVALUABLE, not answered — per the rule's fail-closed ordering an unevaluable step does not close Question A. Follow-up adjudication (PR #643 addendum) resolved the step: the object was located via Drive API parents metadata — in a parallel mirror outside the canonical tree — and is byte-identical to the authority.",
+    "follow_up_adjudication": {
+      "at_utc": "2026-09-06",
+      "by": "CENTRAL — #589 comment 5558144364",
+      "basis": "PR #643 addendum: Drive API files.get → parents → --drive-root-folder-id download → SHA-256; three-way verification (local Get-FileHash, Drive md5Checksum ↔ local MD5, mirror SHA256SUMS.txt)",
+      "finding": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb is byte-identical to the authority (24,039 B, 2a646b96e032…7452a) and lives in a parallel mirror of the track-01…74 deliverable set whose folder IDs are disjoint from the canonical tree — the reason path/name enumeration was structurally blind. Step 2 of §2.3 closes: identical SHA → duplicate copy, not a variant.",
+      "supersedes": "retained_status_note and the pre-follow-up closing_step above (kept as the first-pass record)"
+    },
     "authority_reverification": {
       "drive_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
       "drive_folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION",
@@ -96,12 +103,12 @@
       {
         "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
         "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
-        "bytes": null,
-        "sha256": null,
+        "bytes": 24039,
+        "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
         "revision": null,
-        "content_relation_to_authority": "UNDETERMINED",
+        "content_relation_to_authority": "DUPLICATE_COPY_SAME_SHA",
         "disposition": "NOT_AUTHORITY",
-        "note": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+        "note": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, now VERIFIED: byte-identical to the authority (PR #643 addendum; see follow_up_adjudication)."
       },
       {
         "filename": "71_V7_FINAL_INTERACTIVE.html",
@@ -158,8 +165,8 @@
       "manifest_designation": "noncanonical_same_name_file_ids",
       "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
       "expected_filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
-      "bytes": null,
-      "sha256": null,
+      "bytes": 24039,
+      "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
       "disposition": "NOT_AUTHORITY",
       "location_resolution": "NOT_FOUND_IN_ENUMERATED_SCOPES",
       "enumerated_scopes": [
@@ -172,7 +179,7 @@
       ],
       "recursive_scan_result": "Exactly one object named 71_V7_FINAL_INTERACTIVE_R2.4.html exists within the bounded recursive scan of the design root: the authority itself (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL, 24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a).",
       "direct_id_addressing_result": "rclone lsjson gdrive:17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned 'directory not found'; this backend does not resolve arbitrary file IDs by path, so the ID could not be addressed directly.",
-      "conclusion": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+      "conclusion": "[SUPERSEDED 2026-09-06 — see follow_up_adjudication: located via Drive API ID metadata, in a parallel mirror outside every enumerated scope] Originally: the second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, now VERIFIED: byte-identical to the authority (PR #643 addendum; see follow_up_adjudication)."
     },
     "revision_chain": [
       "V1 V1 [SOURCE_REVISION_FOLDER]",
@@ -195,7 +202,7 @@
       "object": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
       "missing": "bytes, sha256, location, and therefore same-content-or-distinct determination",
       "why_it_matters": "This is the corpus's strongest candidate for a genuine same-name duplicate, and step-2 adjudication of SRC071 depends on whether it is content-identical to the authority.",
-      "status": "OPEN_FOR_CENTRAL",
+      "status": "RESOLVED (follow-up adjudication 2026-09-06 — #589 comment 5558144364: byte-identical mirror copy, DUPLICATE_COPY_SAME_SHA; SHA captured via PR #643 addendum)",
       "step_blocked": "step 2 — identical-or-distinct SHA",
       "blocking_reason": "Resolve the file ID via the Drive API files.get or files.list with q='id' rather than a rclone path listing, or ask the file's uploader for its folder path."
     },
