@@ -109,6 +109,9 @@
     "readback": {
       "ref": "evidence/source/drive-authority-readback.json",
       "verified_at_utc": "2026-09-02T22:24:00Z",
+      "central_verified_at_utc": "2026-09-02T22:40:00Z",
+      "central_acceptance": "ACCEPTED",
+      "verified_by": "CENTRAL — direct re-read of both authoritative HTML objects, per the readback's verification_note; central_acceptance=ACCEPTED at central_verified_at_utc=2026-09-02T22:40:00Z",
       "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
       "block": "variants",
       "note": "SRC068 was not part of the 8-capsule batch-pass evidence refresh; the note cites the capsule's own existing readback, per the ruling table."
