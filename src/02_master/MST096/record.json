@@ -25,7 +25,8 @@
     "source_runner_route=/design-lab/source-tracks/47/v4-2-5/source",
     "native_route=/design-lab/source-tracks/47/v4-2-5/native",
     "current_main_present=true",
-    "github_issue=234"
+    "github_issue=234",
+    "anchor_decision=MST097,MST098 (relation.SUPERSEDED_BY.targets): SUPERSEDED retained; open mvp_review_state=native_backlog_review_hold is carried with the anchor decision, not decided on this row alone"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
