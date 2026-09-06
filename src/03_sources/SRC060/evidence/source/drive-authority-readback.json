@@ -25,6 +25,90 @@
     "byte_identity": "PASS",
     "reuse_classification": "REUSE_EXACT"
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:41:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+      "drive_folder_name": "버전1.2_실제트랙네비게이션_후보",
+      "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+      "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+      "bytes": 55260,
+      "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+      "revision": "V1.2",
+      "modified_time_utc": "2026-08-11T16:15:28.865Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1PGnQtqBRF_Lw2f24_OobVY5r3NkV-nuY", "folder_name": "00_작업지시", "revision": null, "role": "TASK_INSTRUCTIONS", "is_authority_scope": false },
+      { "folder_id": "1QYjt3svNmeJpi4sv1pfZ0AfO51cnhIoW", "folder_name": "01_참고원본", "revision": null, "role": "REFERENCE_SOURCE", "is_authority_scope": false },
+      { "folder_id": "1Brk5HDF084QC57wr4R3KerK5gCL0JU9D", "folder_name": "버전1.0_후보", "revision": "V1.0", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1oMG0zGJ34iHkbx5YpnJwqZLleMbirKGY", "folder_name": "버전1.1_핵심메뉴기능연결_후보", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm", "folder_name": "버전1.2_실제트랙네비게이션_후보", "revision": "V1.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "higher_revision_candidate_check": {
+      "question": "Does a higher revision candidate exist above the authority's two folders?",
+      "answer": "NO",
+      "highest_revision_present": "V1.2",
+      "higher_revision_folder_exists": false,
+      "evidence": "A complete lsjson listing of the top-level identity folder 1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T returns exactly five subfolders and one media file: 00_작업지시, 01_참고원본, 버전1.0_후보, 버전1.1_핵심메뉴기능연결_후보, 버전1.2_실제트랙네비게이션_후보, and 녹화_2026_08_12_01_40_04_253.mp4. The highest revision prefix present is 버전1.2, which is the authority folder. There is no folder above it.",
+      "track_root_media_excluded": [
+        { "drive_file_id": "1WScPu757Wyi04vG3QsA8lV-nTVNbkWzN", "name": "녹화_2026_08_12_01_40_04_253.mp4", "bytes": 20503419, "disposition": "NOT_AUTHORITY", "note": "owner review recording" }
+      ]
+    },
+    "sibling_candidates": [
+      {
+        "drive_file_id": "1xaQ7K75ekeyxrQ3ZGkXX9qHm7HI0Pe_9",
+        "filename": "현재후보.html",
+        "location": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.0_후보/현재후보.html",
+        "bytes": 28653,
+        "sha256": "591f62733a01747042e08a3f92e8e7d902f00ac16e4dd640b366e683e9bf30b7",
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority."
+      },
+      {
+        "drive_file_id": "1EEBTsYQCithFo-lQguPQLbqwbSslBVPI",
+        "filename": "현재후보.html",
+        "location": "60_3D모먼트클러스터_심층탐색_55,56,59연결버전/버전1.1_핵심메뉴기능연결_후보/현재후보.html",
+        "bytes": 52981,
+        "sha256": "c788d6772342674a53f6d3b134c1c92d8c4256dfe9aaec6455920237f380fd11",
+        "revision": "V1.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority. Every revision in the chain uses the same filename 현재후보.html, so filename alone cannot discriminate candidates."
+      }
+    ],
+    "authority_revision_scope_non_html": [
+      { "drive_file_id": "1j_J7DYQBbEeSwBGTsnjH4FRbJFs70_77", "name": "검증결과.json (V1.0)", "bytes": 5522, "disposition": "NOT_AUTHORITY", "note": "V1.0 QA result" },
+      { "drive_file_id": "1q1vqwJOPKJWBtLE2nNZUfIyJWds6jW24", "name": "구현설명.md (V1.0)", "bytes": 4805, "disposition": "NOT_AUTHORITY", "note": "V1.0 implementation note" },
+      { "drive_file_id": "1nNqmeOye9qSWDrfX2i6fBKXwSJPObTXF", "name": "검증결과.json (V1.1)", "bytes": 7170, "disposition": "NOT_AUTHORITY", "note": "V1.1 QA result" },
+      { "drive_file_id": "1ngdjrSH28tAnLi56pRCe-tcJ9dbXJwRS", "name": "V1→V1.1_기능연결설명.md", "bytes": 3406, "disposition": "NOT_AUTHORITY", "note": "V1 to V1.1 delta note" }
+    ],
+    "negative_claim": {
+      "statement": "The top-level identity folder is fully enumerated: 5 subfolders, 1 media file. The revision chain terminates at V1.2, which is the authority folder, so no higher revision candidate exists. All three revision candidates were downloaded and hashed; V1.0 and V1.1 are content-different. No duplicate or same-content copy of the V1.2 authority bytes exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T (identity folder: 5 subfolders, 1 media file)",
+        "1Brk5HDF084QC57wr4R3KerK5gCL0JU9D (버전1.0_후보: 1 HTML, 4 QA docs, 2 media files, 3 QA images)",
+        "1oMG0zGJ34iHkbx5YpnJwqZLleMbirKGY (버전1.1_핵심메뉴기능연결_후보: 1 HTML, 4 QA docs, 2 media files, 2 QA images)",
+        "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm (authority folder: authority HTML and its QA artifacts)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+    },
+    "gap": null
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,

@@ -22,6 +22,96 @@
     "byte_identity": "PASS",
     "reuse_classification": "REUSE_EXACT"
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:35:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G",
+      "drive_folder_name": "56_세로형_모먼트관계망_전체조망",
+      "drive_file_id": "1UDURMSsyI0zF5Lyqu-jIT3SqH0BKgcxa",
+      "filename": "후보_버전1.2_세로형_모먼트관계망_전체조망.html",
+      "bytes": 45761,
+      "sha256": "1828ef47acefd25f1f2b7cff0a3f58c74aa35e28bf127f41975491dcc156d909",
+      "revision": "V1.2",
+      "modified_time_utc": "2026-08-11T13:44:12.212Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH",
+      "modified_time_vs_recorded": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1tJpwJ9tZKVEbwceUrt_5-NOAEJ0l9pEe", "folder_name": "01_버전1_후보자료", "revision": "V1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1kZuwOQ9E-X5zMNoY9Hx_vBhB720RzLq0", "folder_name": "02_버전1.1_밝은배경·그래프형상보정_후보자료", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1sTgkXnbUAUDdu4aneHe98wrBoQLjFm8A", "folder_name": "03_버전1.2_경로계층·전체경로표시_후보자료", "revision": "V1.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V1.2",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns exactly 3 numbered revision folders (01, 02, 03), 2 media files and 1 HTML file. No revision beyond V1.2 exists."
+    },
+    "structural_note": {
+      "authority_html_location": "track root (1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G)",
+      "v1_2_revision_folder_contains_html": false,
+      "v1_2_revision_folder_contents": [
+        { "drive_file_id": "1mdlNWf-6stxRqAjmzCHlbkB2Co35AwOM", "name": "검증결과_버전1.2.json", "bytes": 6136, "disposition": "NOT_AUTHORITY", "note": "V1.2 QA result" },
+        { "drive_file_id": "1dgzrA2ZNHeikdVdUc2UDUwdL7UcAEw9a", "name": "구현설명_버전1.2.md", "bytes": 5406, "disposition": "NOT_AUTHORITY", "note": "V1.2 implementation note" },
+        { "drive_file_id": "1WSOUqGc6DrYNcWYbKaXbZRQWeS8cTVTX", "name": "경로따라가기_전체Sequence_QA.jpg", "bytes": 109161, "disposition": "NOT_AUTHORITY", "note": "V1.2 QA screenshot" },
+        { "drive_file_id": "1pphxl5LBvH8qGRcq6AI04PDy_V3XRdo2", "name": "FirstMoment_01_02_03_전체경로Reveal_QA.jpg", "bytes": 89088, "disposition": "NOT_AUTHORITY", "note": "V1.2 QA screenshot" },
+        { "drive_file_id": "1hAn1r4T81_UMpUJEEJ5dljar_BzYY3fa", "name": "원본_V1.1_V1.2_경로형상비교.jpg", "bytes": 295992, "disposition": "NOT_AUTHORITY", "note": "V1.1 vs V1.2 comparison" },
+        { "drive_file_id": "1lXQpWTjCymg_2O-wde5wdWgMzwKv9NSF", "name": "데스크톱_실행영상_버전1.2.mp4", "bytes": 571405, "disposition": "NOT_AUTHORITY", "note": "V1.2 run video" },
+        { "drive_file_id": "1HFu6HaWzNHkpPtk2FCJXLDQyipPkEyB8", "name": "모바일_실행영상_버전1.2.mp4", "bytes": 227953, "disposition": "NOT_AUTHORITY", "note": "V1.2 mobile run video" }
+      ],
+      "note": "The V1.2 revision folder holds only QA artifacts; the authority V1.2 HTML lives at the track root. Enumerated, not inferred."
+    },
+    "sibling_candidates": [
+      {
+        "drive_file_id": "1nb-B4lDV3tt33BDwqlkscNQTsO7yuPuZ",
+        "filename": "후보_버전1_세로형_모먼트관계망_전체조망.html",
+        "location": "56_세로형_모먼트관계망_전체조망/01_버전1_후보자료/",
+        "bytes": 27625,
+        "sha256": "21b57043b4814dd205403184a20192b71f634648026aca5fdd14364483007cb4",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority."
+      },
+      {
+        "drive_file_id": "1kzuzhUwepje3LkRa4eN36Kr89Lu8q2OZ",
+        "filename": "후보_버전1.1_세로형_모먼트관계망_전체조망.html",
+        "location": "56_세로형_모먼트관계망_전체조망/02_버전1.1_밝은배경·그래프형상보정_후보자료/",
+        "bytes": 31144,
+        "sha256": "67c7fcc239ca8d21793fe232650b99239a42dd0d336eb62565ed1647606ebcd1",
+        "revision": "V1.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority."
+      }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "1TnC9QAoDmr794erofd_8avbgn8Yh11Zr", "name": "★_참고영상_네온관계망_세로형네트워크맵.mp4", "bytes": 37423790, "disposition": "NOT_AUTHORITY", "note": "reference video, not a Source HTML candidate" },
+      { "drive_file_id": "1ZrvrciKnsqZokxzxpYOozYNYKYY90c6n", "name": "녹화_2026_08_11_23_03_05_179.mp4", "bytes": 12452639, "disposition": "NOT_AUTHORITY", "note": "owner review recording" }
+    ],
+    "negative_claim": {
+      "statement": "The V1.2 authority HTML is the only HTML at the track root and the only V1.2 candidate. The three revision folders are fully enumerated; V1 and V1.1 candidates were downloaded and hashed and are content-different. No duplicate or same-content copy of the authority exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1OrsNciW7WBS4wqIdyPXDGLEXp9tfGz7G (track root: 3 subfolders, 1 HTML file, 2 media files)",
+        "1tJpwJ9tZKVEbwceUrt_5-NOAEJ0l9pEe (01_버전1_후보자료: 1 HTML, 2 QA files, 2 media files)",
+        "1kZuwOQ9E-X5zMNoY9Hx_vBhB720RzLq0 (02_버전1.1_...: 1 HTML, 3 QA files, 2 media files)",
+        "1sTgkXnbUAUDdu4aneHe98wrBoQLjFm8A (03_버전1.2_...: 0 HTML, 7 QA/media files)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; identity asserted only where both sides were hashed"
+    },
+    "gap": null
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,

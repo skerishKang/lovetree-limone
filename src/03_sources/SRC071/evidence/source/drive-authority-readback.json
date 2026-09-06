@@ -21,6 +21,97 @@
     "s2_authority_copy": "24039 bytes / 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
     "result": "MATCH"
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:41:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson -R --max-depth for bounded recursive scans; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+      "drive_folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION",
+      "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+      "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+      "bytes": 24039,
+      "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+      "revision": "V7_FINAL_INTERACTIVE_R2.4",
+      "modified_time_utc": "2026-08-17T16:47:24.209Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1ynFx2R1sDHXJBgmH3TRO_BZLTe1KdNDD", "folder_name": "V1", "revision": "V1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1RIK7y5qrFrZ1Dp2NDPFJzrmfZcABHiu5", "folder_name": "V2_GABE_EXACT_GLASS_ORBIT_후보", "revision": "V2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1EjwtjAez8vcGrx30vrhQTRRmbGVCCx7X", "folder_name": "V3_A6_PAIR_PROOF_v3", "revision": "V3", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1d_URlRbLb_hAsaXTGgbEh4lZrTTz5_UG", "folder_name": "V4_A6_PAIR_PROOF_v4", "revision": "V4", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1bEPofc7XKQT9IAFYjNHED3AZMDRqhIIO", "folder_name": "V5_A6_REFERENCE_TRACE_PAIR_v5", "revision": "V5", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "136LYzF0qNWpanbGhLpo4nJGn_dUwT8O7", "folder_name": "V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF", "revision": "V6", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV", "folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION", "revision": "V7", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true },
+      { "folder_id": "1DHGQLrqgiv190GbDilBwS117XHaZy9Zq", "folder_name": "실패", "revision": null, "role": "REJECTED_ATTEMPTS", "is_authority_scope": false }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V7",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the design root 1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN returns 8 subfolders (V1 through V7 plus 실패) and 3 files. V7 is the terminal revision folder."
+    },
+    "authority_revision_inner_chain": [
+      { "drive_file_id": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn", "filename": "71_V7_FINAL_INTERACTIVE.html", "bytes": 2019938, "sha256": null, "revision": "V7 base", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Base V7 interactive build, superseded by the R2.x series. Not hashed (excluded by revision)." },
+      { "drive_file_id": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN", "filename": "71_V7_FINAL_INTERACTIVE_R2.html", "bytes": 16281, "sha256": null, "revision": "V7 R2", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
+      { "drive_file_id": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP", "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html", "bytes": 15947, "sha256": null, "revision": "V7 R2.1", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
+      { "drive_file_id": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp", "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html", "bytes": 22857, "sha256": null, "revision": "V7 R2.2", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
+      { "drive_file_id": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ", "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html", "bytes": 24004, "sha256": null, "revision": "V7 R2.3", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Direct predecessor of the authority, only 35 bytes smaller (24004 vs 24039), which makes it a plausible near-duplicate candidate. Not downloaded for hashing in this pass because a recursive lsjson scan of the design root proved the filename is unique and the byte sizes differ." }
+    ],
+    "design_root_files_excluded": [
+      { "drive_file_id": "1LofPbjHhhAh3owRhqFtozfAeU9Y_gdot", "name": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1.mp4", "bytes": 16611419, "disposition": "NOT_AUTHORITY", "note": "V1 recording" },
+      { "drive_file_id": "1WmrDXZHtwEsdbaFjnJ9__sPZpfPEghCX", "name": "참고영상.mp4", "bytes": 22588284, "disposition": "NOT_AUTHORITY", "note": "reference video" },
+      { "drive_file_id": "1VyCgQNeMsFDfnRtpMijPL0Qpd2tQiGpN", "name": "설계팀장9기_71_V2_GABE_EXACT_GLASS_ORBIT_긴급수정지시_2026-08-17.md", "bytes": 13048, "disposition": "NOT_AUTHORITY", "note": "design-team revision instruction" }
+    ],
+    "noncanonical_same_name_file": {
+      "manifest_designation": "noncanonical_same_name_file_ids",
+      "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
+      "expected_filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+      "bytes": null,
+      "sha256": null,
+      "disposition": "NOT_AUTHORITY",
+      "location_resolution": "NOT_FOUND_IN_ENUMERATED_SCOPES",
+      "enumerated_scopes": [
+        "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN design root: 11 entries listed (8 subfolders, 3 files)",
+        "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV V7 authority folder: 23 entries listed",
+        "children of V1, V2, V3, V4, V5, V6 and 실패: all listed",
+        "bounded recursive scan of the design root with --max-depth 3",
+        "bounded recursive scan of [[지피티 작업]]/[01_러브트리] with --max-depth 2 (covers every track folder at one level)",
+        "bounded recursive scan of the second remote gdriveb64: with --max-depth 2"
+      ],
+      "recursive_scan_result": "Exactly one object named 71_V7_FINAL_INTERACTIVE_R2.4.html exists within the bounded recursive scan of the design root: the authority itself (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL, 24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a).",
+      "direct_id_addressing_result": "rclone lsjson gdrive:17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned 'directory not found'; this backend does not resolve arbitrary file IDs by path, so the ID could not be addressed directly.",
+      "conclusion": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+    },
+    "negative_claim": {
+      "statement": "Within every enumerated scope, exactly one object carries the filename 71_V7_FINAL_INTERACTIVE_R2.4.html and it is the authority. No same-content duplicate of the authority bytes was found. The one manifest-listed noncanonical same-name file could not be located and therefore could not be hashed.",
+      "enumerated_scope": [
+        "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN design root and all 8 of its subfolders",
+        "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV V7 authority folder (23 entries)",
+        "[[지피티 작업]]/[01_러브트리] bounded recursive scan, max-depth 2",
+        "gdriveb64: bounded recursive scan, max-depth 2"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads"
+    },
+    "gap": {
+      "id": "SRC071_NONCANONICAL_SAME_NAME_UNRESOLVED",
+      "object": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
+      "missing": "bytes, sha256, location, and therefore same-content-or-distinct determination",
+      "why_it_matters": "This is the corpus's strongest candidate for a genuine same-name duplicate, and step-2 adjudication of SRC071 depends on whether it is content-identical to the authority.",
+      "status": "OPEN_FOR_CENTRAL",
+      "suggested_next_step": "Resolve the file ID via the Drive API files.get or files.list with q='id' rather than a rclone path listing, or ask the file's uploader for its folder path."
+    }
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,

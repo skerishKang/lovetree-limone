@@ -38,6 +38,105 @@
     "authority_claim_level": "REUSED_VERIFIED_AUTHORITY_BYTES_NOT_NEW_DRIVE_DOWNLOAD",
     "notes": "This file satisfies the required evidence path while preserving the limitation that direct Drive readback was not available in this run. Fresh_drive fields are populated from verified intake bytes which are byte-identical to the locked authority per manifest."
   },
+  "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL batch-pass step-1 instruction",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Step-1 evidence refresh only; duplicate adjudication is deferred to CDX014 S4 and is NOT performed here.",
+    "reverified_at_utc": "2026-09-06T06:35:00Z",
+    "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "direct_drive_readback_retry": {
+      "outcome": "SUCCEEDED",
+      "direct_drive_readback": true,
+      "note": "The readback_status_detail block above records a direct Drive readback failure from an earlier run (token expiry). In this pass the same folder was enumerated and the authority file was downloaded directly from the live Drive and hashed locally. The historical block is preserved unchanged; this block supersedes its limitation for enumeration purposes.",
+      "downloaded_from": "gdrive:[[지피티 작업]]/[01_러브트리]/03_디자인채택본/58_리빙메모리_핀보드_시네마틱/★_최종_58_리빙메모리_핀보드.html",
+      "bytes_observed": 532697,
+      "sha256_observed": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+      "drive_folder_name": "58_리빙메모리_핀보드_시네마틱",
+      "drive_file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+      "filename": "★_최종_58_리빙메모리_핀보드.html",
+      "bytes": 532697,
+      "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+      "revision": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+      "modified_time_utc": "2026-08-11T10:07:31.440Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1AM6aTZtp2LCZAWQt9TUo4Yn61vgiRZIJ", "folder_name": "버전_1.0_최초후보", "revision": "V1.0", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1s41-cRjD_1F1HpP3p_JCUpwzH3OX7wrA", "folder_name": "버전_1.1_직접편집·리플레이제어·보드꾸미기", "revision": "V1.1", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": false },
+      { "folder_id": "1eKHtbT36NE_Qv4dkDeJ75jLcInTskqqu", "folder_name": "버전_1.2_유튜브실제미디어·모바일보정", "revision": "V1.2", "role": "SOURCE_REVISION_FOLDER", "is_authority_scope": true }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V1.2",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns 3 revision folders (버전_1.0, 버전_1.1, 버전_1.2), 1 task folder (00_작업지시), 1 root HTML file and 3 media files. No revision beyond V1.2 exists."
+    },
+    "sibling_candidates": [
+      {
+        "drive_file_id": "166kedQn71FNYE1Pk2wniHd4a0G4w45uQ",
+        "filename": "현재후보.html",
+        "location": "58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/현재후보.html",
+        "bytes": 532697,
+        "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+        "revision": "V1.2",
+        "modified_time_utc": "2026-08-11T08:48:13.586Z",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held inside the V1.2 revision folder, uploaded 2026-08-11T08:48Z. The authority root copy was uploaded later at 2026-08-11T10:07Z. Location-only duplicate."
+      },
+      {
+        "drive_file_id": "1RHpymc_Sg3V8NQoXzQC4AK2ekax7lMW8",
+        "filename": "이전_루트최종복사본_현재후보.html",
+        "location": "58_리빙메모리_핀보드_시네마틱/버전_1.2_유튜브실제미디어·모바일보정/이전_루트최종복사본_현재후보.html",
+        "bytes": 532697,
+        "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+        "revision": "V1.2",
+        "modified_time_utc": null,
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Third byte-identical copy of the authority. The filename itself declares it a preserved copy of the former root final artifact. modifiedTime not separately captured for this object in this pass."
+      }
+    ],
+    "v1_2_revision_scope_non_html": [
+      { "drive_file_id": "1oMo5F5u4jAySPJUIFkiVk-3LZZzRH-VM", "name": "검증결과.json", "bytes": 12078, "disposition": "NOT_AUTHORITY", "note": "V1.2 QA result" },
+      { "drive_file_id": "1ooD_ldH9skqXjIzUwzhY4ZR81xPCtJzr", "name": "58_최종종료_검증결과.json", "bytes": 690, "disposition": "NOT_AUTHORITY", "note": "final-closeout QA result" },
+      { "drive_file_id": "1YLadaHe2n0gbVgVnlUXwWudYd3SVeThP", "name": "58_최종종료_검증기록.md", "bytes": 1083, "disposition": "NOT_AUTHORITY", "note": "final-closeout record" },
+      { "drive_file_id": "1tKKSM7mVKhBIti86arEzJsiP3RcUsDxh", "name": "사용설명서.txt", "bytes": 2356, "disposition": "NOT_AUTHORITY", "note": "usage notes" },
+      { "drive_file_id": "1vjglTzcdKUnAj9zZ-Sg4OSK-ktMDIw-P", "name": "수정전후_비교요약.md", "bytes": 1777, "disposition": "NOT_AUTHORITY", "note": "before/after summary" },
+      { "drive_file_id": "16SMld56m_KTluV9Pn5tLJ-aEVkTUBMhA", "name": "추가기능_체크리스트.md", "bytes": 981, "disposition": "NOT_AUTHORITY", "note": "feature checklist" },
+      { "drive_file_id": "1h2kxyZk5qqHYmq4ZvH4UqwJVNb2tW44v", "name": "데스크톱_실행영상.mp4", "bytes": 2959182, "disposition": "NOT_AUTHORITY", "note": "run video" },
+      { "drive_file_id": "1m56rpI87XTLMeWcTCF-6ldF7ZgAX770V", "name": "유튜브_실제URL·폴백_검수.jpg", "bytes": 65662, "disposition": "NOT_AUTHORITY", "note": "QA screenshot" },
+      { "drive_file_id": "1EADJwap4hzniH2D9gkBvxrM_UwI8YCo4", "name": "모바일_3종_반응형_검수.jpg", "bytes": 85654, "disposition": "NOT_AUTHORITY", "note": "QA screenshot" },
+      { "drive_file_id": "1sx1Ahuze1c5wy4IElSWUPBzK5yWX31CB", "name": "이전_루트최종복사본_모바일실행영상.mp4", "bytes": 781303, "disposition": "NOT_AUTHORITY", "note": "media twin of the 이전_루트최종복사본 copy set" }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "1mPQi4TJZ56Shr8d7kpjkAxJKaM3jYqHn", "name": "00_작업지시", "kind": "directory", "disposition": "NOT_AUTHORITY", "note": "task instructions folder" },
+      { "drive_file_id": "1Gna3xaKIzTw2AwzA2wOTJsDcQUtXgj2O", "name": "★_모바일_실행영상_58_리빙메모리_핀보드.mp4", "bytes": 781303, "disposition": "NOT_AUTHORITY", "note": "run video" },
+      { "drive_file_id": "1LUQnx33uoedVYxIDHpYgQVgsL50nkWOS", "name": "★_참고영상_원본_핀보드.mp4", "bytes": 58299201, "disposition": "NOT_AUTHORITY", "note": "reference video" },
+      { "drive_file_id": "1-crSP9xaKldX4uS5Li5mkndfSHj6J85q", "name": "제품오너_네트워크검토녹화_2026-08-11_18-23.mp4", "bytes": 26327386, "disposition": "NOT_AUTHORITY", "note": "owner review recording" }
+    ],
+    "negative_claim": {
+      "statement": "The V1.2 authority bytes occur exactly three times in the enumerated scope, all byte-identical and differing only in location and filename: the authority at the track root, one copy inside the V1.2 revision folder, and one explicitly-labelled preserved copy of the former root final artifact. No fourth object and no content-different variant carrying these bytes exists in the enumerated scope.",
+      "enumerated_scope": [
+        "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F (track root: 3 revision folders, 1 task folder, 1 HTML file, 3 media files)",
+        "1eKHtbT36NE_Qv4dkDeJ75jLcInTskqqu (버전_1.2_...: 2 HTML files, 6 QA docs, 3 media files)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; all three HTML objects downloaded and hashed in the same run"
+    },
+    "gap": null
+  },
   "identity_non_inference": {
     "master_rows": [],
     "family_ref": null,
