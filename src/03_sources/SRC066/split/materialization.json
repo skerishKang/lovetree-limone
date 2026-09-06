@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "source_id": "SRC066",
   "stage": "S3_MECHANICAL_SPLIT",
-  "status": "MATERIALIZED_PENDING_PARITY",
-  "status_note": "The mechanical split is complete and byte-verified. S4 parity is no longer HOLD: CENTRAL released it and the S4 candidate capture exists at evidence/s4/ (exact-head capture, 18 matched original/split state pairs across the three S2 viewports). MATERIALIZED_PENDING_PARITY is retained because it is the gate-recognized S3 status and the accepted-parity artifact plus CENTRAL visual acceptance do not exist yet; validate-mechanical-split requires this status to stay pending unless status is ACCEPTED with an accepted-parity reference. Final acceptance is established by evidence/parity/accepted-parity.json, externally.",
+  "status": "ACCEPTED",
+  "status_note": "The mechanical split is complete and byte-verified, and its S4 parity is now accepted. CENTRAL released the S4 BOUNDED_SKIP, the exact-head candidate was captured at evidence/s4/, and CENTRAL direct Drive visual review (skerishKang/lovetree-limone#589 comment 5556645775) accepted it: materialization.status is ACCEPTED with parity_ref and parity_evidence pointing at evidence/parity/accepted-parity.json, which validate-mechanical-split resolves and validates (status ACCEPTED, source_head an exact commit SHA equal to parity_evidence.exact_head, authority agreeing with the manifest, comparisons fully PASS, browser_errors 0).",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
     "branch": "clean/src066-s3-mechanical-port",
@@ -94,8 +94,18 @@
   },
   "verification_ref": "../evidence/s3/roundtrip.json",
   "verification_test_ref": "../tests/s3-roundtrip.test.mjs",
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_status_note": "The S4 parity capture has been executed at an exact head: evidence/s4/ holds the exact-head candidate capture (harness release commits 9b043336598bab41d30258d39205293dc9117b4b and 288f355a9ab47b2ba94a2416a5876e54e46f2753, capture head 288f355a9ab47b2ba94a2416a5876e54e46f2753, CANDIDATE_PASS). The field keeps the gate-recognized value PENDING_EXACT_HEAD_CAPTURE because the accepted-parity artifact does not exist yet: validate-mechanical-split accepts this value only while status is not ACCEPTED, and flipping it to PASS would require the accepted artifact in the same commit. CENTRAL visual acceptance promotes both.",
-  "next_stage": "S4_HOLD",
-  "next_stage_note": "S4 parity is released and captured as a CANDIDATE_PASS candidate at evidence/s4/, but the next stage for this capsule - S4 acceptance and the source_split_parity_pass flag flip - remains on HOLD pending CENTRAL direct visual acceptance of the 18 original/split pairs. This enum value is retained because it is asserted by the S3 round-trip contract (tests/s3-roundtrip.test.mjs T20i) and by the validator pairing above; the acceptance lane rewrites it. Ready/merge transitions remain owned by CENTRAL."
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_evidence": {
+    "exact_head": "288f355a9ab47b2ba94a2416a5876e54e46f2753",
+    "capture_base_sha": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+    "central_acceptance_comment": 5556645775,
+    "candidate_bundle": "LoveTree_Evidence/SRC066_S4_PARITY_CANDIDATE_288f355a.zip",
+    "candidate_bundle_sha256": "92fdf73957cfc94ab7cb20dc620cc516d5945bfe4dcffb7dea825050b2d94f15",
+    "note": "The evidence head is the capture head, not this metadata commit's head: the final metadata commit head cannot be embedded here without self-reference and is established externally by the GitHub PR record and CI."
+  },
+  "parity_status": "PASS",
+  "parity_status_note": "S4 parity PASS, accepted by CENTRAL direct Drive S4 visual review (skerishKang/lovetree-limone#589 comment 5556645775). The exact-head capture exists at evidence/s4/ (harness release commits 9b043336598bab41d30258d39205293dc9117b4b and 288f355a9ab47b2ba94a2416a5876e54e46f2753, capture head 288f355a9ab47b2ba94a2416a5876e54e46f2753) and the accepted record is evidence/parity/accepted-parity.json: 18 matched original/split state pairs, 17 raw PNG byte-identical, 1 pair (1440x900/FOOTER_REACHED) canonical 16x16 pixel digest byte-identical at Hamming 0 of 1024 bytes with 14 differing raw pixels at maximum per-channel delta 1/255. PENDING_EXACT_HEAD_CAPTURE was replaced by PASS in the same commit that created the accepted artifact, as validate-mechanical-split requires.",
+  "next_stage": "ACCEPTED",
+  "next_stage_note": "S4 parity is accepted and promoted by evidence/parity/accepted-parity.json. Ready/merge transitions remain owned by CENTRAL."
 }

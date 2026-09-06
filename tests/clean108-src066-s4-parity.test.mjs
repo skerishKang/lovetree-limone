@@ -2,10 +2,13 @@
  * CLEAN-108 SRC066 S4 SOURCE_PORT_PARITY contract (browserless, fail-closed).
  *
  * Binds the S4 candidate to its evidence without executing a browser:
- *  - T1 no premature promotion: the manifest parity flag is still false, no
- *       parity_ref exists, and no accepted-parity artifact was created.
- *  - T2 the S3 gate fields are intact; the notes now describe the released,
- *       captured-but-unaccepted S4 candidate instead of the old S4 HOLD.
+ *  - T1 promotion: the manifest parity flag is true, parity_ref resolves to an
+ *       ACCEPTED record carrying the CENTRAL acceptance comment and the capture
+ *       head, and the accepted record's tier counts and named differing pair
+ *       agree with the committed candidate evidence.
+ *  - T2 the materialization enum chain is promoted to ACCEPTED/PASS/ACCEPTED with
+ *       parity_ref + parity_evidence bound to the capture head, and the notes
+ *       describe the accepted state rather than the old S4 HOLD.
  *  - T3 the BOUNDED_SKIP is released in the shared parity harness by routing
  *       SRC066 to its existing S2 driver against both surfaces, at the S2
  *       viewports, with no new harness or driver.
@@ -44,25 +47,118 @@ const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(REPO, rel), 'utf8
 const readTxt = (rel) => fs.readFileSync(path.join(REPO, rel), 'utf8');
 const viewports = ['1440x900', '430x932', '390x844'];
 
-test('T1 no premature promotion: parity flag false, no ref, no accepted artifact', () => {
+test('T1 promotion: parity flag true, parity_ref resolves, accepted record agrees with the evidence', () => {
   const manifest = readJson(`${SRC}/manifest.json`);
+  const accepted = readJson(`${SRC}/evidence/parity/accepted-parity.json`);
+  const summary = readJson(`${S4}/summary.json`);
   assert.equal(manifest.source_id, 'SRC066');
-  assert.equal(manifest.stages.source_split_parity_pass, false, 'manifest parity flag must stay false until CENTRAL acceptance');
-  assert.equal(manifest.parity_ref, undefined, 'no parity_ref before acceptance');
-  assert.ok(!fs.existsSync(path.join(REPO, SRC, 'evidence', 'parity', 'accepted-parity.json')), 'no accepted-parity artifact created');
-  assert.match(manifest.stages_note, /not yet accepted/, 'stages_note explains the pending acceptance');
+  assert.equal(manifest.stages.source_split_parity_pass, true, 'CENTRAL accepted: manifest parity flag is true');
+  assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json');
+  assert.ok(fs.existsSync(path.join(REPO, SRC, manifest.parity_ref)), 'parity_ref resolves to a committed artifact');
+  assert.match(manifest.stages_note, /5556645775/, 'stages_note cites the CENTRAL acceptance comment');
+  assert.match(manifest.stages_note, /288f355a9ab47b2ba94a2416a5876e54e46f2753/, 'stages_note binds the capture head');
+
+  assert.equal(accepted.source_id, 'SRC066');
+  assert.equal(accepted.status, 'ACCEPTED');
+  assert.equal(accepted.review_method, 'CENTRAL_DIRECT_DRIVE_S4_VISUAL_REVIEW');
+  assert.equal(accepted.central_acceptance_comment, 5556645775);
+  assert.equal(accepted.central_acceptance_issue, 'skerishKang/lovetree-limone#589');
+  assert.match(accepted.source_head, /^[0-9a-f]{40}$/, 'accepted parity head is an exact 40-hex SHA');
+  assert.equal(accepted.source_head, summary.capture_head_sha, 'accepted parity is bound to the captured head');
+  assert.equal(accepted.provenance?.capture_base_sha, summary.base_sha, 'capture base SHA pinned');
+  assert.deepEqual(accepted.provenance?.harness_release_commits, summary.harness_release_commits, 'both harness release commits pinned');
+  assert.equal(accepted.authority.sha256, manifest.authority.sha256, 'authority SHA pinned');
+  assert.equal(accepted.authority.bytes, manifest.authority.bytes, 'authority byte count pinned');
+  assert.equal(accepted.authority.sha256, summary.authority.sha256, 'authority agrees with the capture evidence');
+  assert.equal(accepted.visual_review?.central_direct_drive_s4_visual_review, true);
+  assert.equal(accepted.visual_review?.central_direct_artifact_review, true, 'direct artifact review recorded');
+  assert.equal(accepted.visual_review?.central_acceptance_comment, 5556645775);
+  assert.equal(accepted.browser_errors, 0);
+  assert.equal(accepted.console_errors + accepted.page_errors + accepted.required_network_errors + accepted.external_requests, 0);
+
+  assert.equal(accepted.comparisons.dom, 'EQUAL');
+  assert.equal(accepted.comparisons.geometry, 'EQUAL');
+  assert.equal(accepted.comparisons.computed_style, 'EQUAL');
+  assert.equal(accepted.comparisons.runtime_state, 'EQUAL');
+  assert.equal(accepted.comparisons.interactions, 'EQUAL');
+  assert.equal(accepted.comparisons.screenshots, 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST', 'aggregate tier matches the validator vocabulary');
+  assert.deepEqual(
+    accepted.comparisons,
+    {
+      dom: summary.dom_parity,
+      geometry: summary.geometry_parity,
+      computed_style: summary.computed_style_parity,
+      runtime_state: summary.runtime_state_parity,
+      interactions: summary.interaction_parity,
+      state_set: summary.state_set_parity,
+      screenshots: 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST',
+    },
+    'accepted comparisons agree with the captured evidence dimensions'
+  );
+
+  const policy = accepted.comparison_policy;
+  assert.equal(policy.canonical16_used, true);
+  assert.equal(policy.canonical16_scope, 'ALL_18_PAIRS');
+  assert.equal(policy.canonical16_technique.buffer_bytes, 1024);
+  assert.equal(policy.global_visual_tolerance, false);
+  assert.equal(policy.screenshot_pixel_tolerance.startsWith('REMOVED'), true, 'no pixel tolerance decides equality');
+  assert.deepEqual(policy.pair_tiers, { BYTE_IDENTICAL: 17, CANONICAL_PIXEL_DIGEST: 1, note: policy.pair_tiers.note }, '17 raw-identical + 1 canonical-digest pair');
+  assert.equal(policy.pair_tiers.BYTE_IDENTICAL, summary.screenshots.byte_identical_pairs);
+  assert.equal(policy.pair_tiers.CANONICAL_PIXEL_DIGEST, summary.screenshots.non_identical_pairs);
+  assert.equal(policy.canonical16_result.pairs_identical, summary.screenshots.canonical_digest_pairs_identical);
+  assert.equal(policy.canonical16_result.buffer_bytes, summary.screenshots.canonical_digest_bytes);
+  assert.equal(policy.canonical16_result.max_hamming, summary.screenshots.canonical_digest_max_hamming);
+  assert.equal(policy.canonical16_result.max_hamming, 0, 'canonical Hamming is 0: a digest identity, not a tolerance');
+  assert.match(accepted.tier_authority, /5556645775/, 'tier decision cites the CENTRAL authority');
+
+  const pair = policy.non_byte_identical_pair;
+  const named = summary.screenshots.non_identical[0];
+  assert.equal(pair.viewport, '1440x900');
+  assert.equal(pair.state, 'FOOTER_REACHED');
+  assert.equal(pair.tier, 'CANONICAL_PIXEL_DIGEST');
+  assert.equal(pair.canonical_hamming, 0);
+  assert.equal(pair.original_sha256, named.original_sha256, 'accepted record names the real original digest');
+  assert.equal(pair.split_sha256, named.split_sha256, 'accepted record names the real split digest');
+  assert.equal(pair.original_bytes, named.original_bytes);
+  assert.equal(pair.split_bytes, named.split_bytes);
+  assert.equal(pair.raw_difference.differing_pixels, named.visual_difference_result.differing_pixels);
+  assert.equal(pair.raw_difference.differing_pixels, 14);
+  assert.equal(pair.raw_difference.total_pixels, named.visual_difference_result.total_pixels);
+  assert.equal(pair.raw_difference.max_channel_delta_0_255, named.visual_difference_result.max_channel_delta_0_255);
+  assert.equal(pair.raw_difference.max_channel_delta_0_255, 1);
+  assert.deepEqual(pair.raw_difference.diff_bbox, named.visual_difference_result.diff_bbox);
+  assert.equal(pair.original_png, named.original_png);
+  assert.equal(pair.split_png, named.split_png);
+  assert.match(pair.assessment, /ANTIALIASING_NOISE_ONLY/);
+  assert.equal(accepted.pair_count, summary.pair_count);
+  assert.equal(accepted.state_count, summary.pair_count);
+  assert.equal(accepted.viewports.length, summary.viewports.length);
+  for (const vp of viewports) {
+    assert.deepEqual([...accepted.viewports.find((v) => `${v.width}x${v.height}` === vp).states].sort(), [...summary.states_per_viewport[vp]].sort(), `${vp}: accepted states match the captured states`);
+  }
+  assert.equal(accepted.frozen_defects_preserved.length, 12, 'twelve frozen defects listed as preserved');
+  assert.match(accepted.frozen_defects_preserved.join('\n'), /D9_NO_QA_HOOKS/);
 });
 
-test('T2 S3 gate fields intact; notes describe the released S4 candidate', () => {
+test('T2 materialization enum chain promoted to ACCEPTED/PASS/ACCEPTED and bound to the capture head', () => {
   const mat = readJson(`${SRC}/split/materialization.json`);
-  assert.equal(mat.status, 'MATERIALIZED_PENDING_PARITY');
-  assert.equal(mat.parity_status, 'PENDING_EXACT_HEAD_CAPTURE');
-  assert.equal(mat.next_stage, 'S4_HOLD');
-  assert.match(mat.status_note, /CANDIDATE|candidate/);
-  assert.doesNotMatch(mat.status_note, /not released for this lane/, 'the old S4-HOLD wording must be gone');
-  assert.doesNotMatch(mat.parity_status_note, /was not executed/, 'the old "not executed" wording must be gone');
-  assert.match(mat.parity_status_note, /288f355a9ab47b2ba94a2416a5876e54e46f2753/, 'parity note binds the capture head');
+  const accepted = readJson(`${SRC}/evidence/parity/accepted-parity.json`);
+  assert.equal(mat.status, 'ACCEPTED');
+  assert.equal(mat.parity_status, 'PASS');
+  assert.equal(mat.next_stage, 'ACCEPTED');
+  assert.equal(mat.parity_ref, 'evidence/parity/accepted-parity.json');
+  assert.equal(mat.parity_evidence.exact_head, accepted.source_head, 'parity_evidence head equals the accepted parity head');
+  assert.match(mat.parity_evidence.exact_head, /^[0-9a-f]{40}$/);
+  assert.equal(mat.parity_evidence.capture_base_sha, accepted.provenance.capture_base_sha);
+  assert.equal(mat.parity_evidence.central_acceptance_comment, 5556645775);
+  assert.match(mat.status_note, /5556645775/, 'status note cites the CENTRAL acceptance comment');
+  assert.doesNotMatch(mat.status_note, /do not exist yet/, 'the "artifact does not exist" wording must be gone');
+  assert.doesNotMatch(mat.parity_status_note, /PENDING_EXACT_HEAD_CAPTURE was retained/, 'the pending-retention wording must be gone');
+  assert.match(mat.parity_status_note, /PENDING_EXACT_HEAD_CAPTURE was replaced by PASS/, 'the replacement is recorded');
+  assert.match(mat.next_stage_note, /Ready\/merge transitions remain owned by CENTRAL/);
   assert.equal(mat.source_candidate.branch, 'clean/src066-s3-mechanical-port');
+  assert.equal(mat.generation, 'MECHANICAL_INLINE_EXTRACTION');
+  assert.equal(mat.contracts.qa_hooks_added, false);
 });
 
 test('T3 BOUNDED_SKIP released: SRC066 parity route reuses the S2 driver and S2 viewports', () => {
@@ -98,13 +194,17 @@ test('T3 BOUNDED_SKIP released: SRC066 parity route reuses the S2 driver and S2 
   assert.ok(!/window\.__[A-Za-z0-9_]/.test(readTxt(DRIVER)), 'driver reads zero window.__* hooks');
 });
 
-test('T4 candidate summary is bound to an exact capture head the harness carries', () => {
+test('T4 candidate summary is the point-in-time candidate record bound to an exact capture head', () => {
   const summary = readJson(`${S4}/summary.json`);
   assert.equal(summary.source_id, 'SRC066');
+  // The candidate summary is evidence captured at the candidate moment and is not
+  // rewritten by the acceptance promotion (same convention as SRC069/SRC071): its
+  // pending flags describe the capture, while the acceptance itself lives in
+  // evidence/parity/accepted-parity.json.
   assert.equal(summary.status, 'CANDIDATE_PASS_CENTRAL_PENDING');
   assert.equal(summary.parity_result, 'CANDIDATE_PASS');
-  assert.equal(summary.source_split_parity_pass, false);
-  assert.equal(summary.central_visual_acceptance, 'PENDING');
+  assert.equal(summary.source_split_parity_pass, false, 'candidate record records the pre-acceptance gate state');
+  assert.equal(summary.central_visual_acceptance, 'PENDING', 'candidate record records the pre-acceptance review state');
   assert.match(summary.capture_head_sha, /^[0-9a-f]{40}$/, 'capture head is an exact 40-hex SHA');
   assert.equal(readJson(`${S4}/harness-summary.json`).exact_head, summary.capture_head_sha, 'harness output carries the same head');
   assert.match(summary.base_sha, /^[0-9a-f]{40}$/);
@@ -242,6 +342,14 @@ test('T10 the Drive handoff record matches the committed evidence', () => {
   assert.equal(pixel.pairs_with_differing_pixels, 1);
   assert.equal(canonical.canonical_sha_equal_count, 18);
   assert.equal(canonical.max_canonical_hamming, 0);
+  // The handoff stays the point-in-time CENTRAL_PENDING candidate record; the
+  // accepted record must cite the same immutable bundle.
+  const accepted = readJson(`${SRC}/evidence/parity/accepted-parity.json`);
+  assert.equal(accepted.drive_evidence.zip, handoff.zip_name, 'accepted record cites the same bundle name');
+  assert.equal(accepted.drive_evidence.bytes, handoff.zip_bytes);
+  assert.equal(accepted.drive_evidence.sha256, handoff.zip_sha256, 'accepted record cites the read-back bundle digest');
+  assert.equal(accepted.drive_evidence.folder, handoff.drive_folder);
+  assert.equal(accepted.drive_evidence.bundle_immutable, true);
 });
 
 test('T11 zero QA hooks and twelve frozen defects still preserved', () => {
