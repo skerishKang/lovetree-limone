@@ -13,7 +13,7 @@
     "status": "LOCKED"
   },
   "master_rows": ["MST046"],
-  "master_rows_note": "Back-reference to the resolved MST046 mapping issued in this same S3 lane (src/02_master/MST046/record.json: mapping_status RESOLVED, identity_refs [SRC066], EXPLICIT_LEDGER_PROVENANCE citing coverage row 46 + manifest Issue #177 + V1.2 work-order chain 32-34-36). Mirrors the SRC047 -> MST098 precedent.",
+  "master_rows_note": "Back-reference to the resolved MST046 mapping issued in this same S3 lane (src/02_master/MST046/record.json: mapping_status RESOLVED, identity_refs [{namespace SRC, id SRC066, basis EXPLICIT_LEDGER_PROVENANCE}] after the D11 typed-object normalization landed on main at 139b2c74, EXPLICIT_LEDGER_PROVENANCE citing coverage row 46 + manifest Issue #177 + V1.2 work-order chain 32-34-36). Mirrors the SRC047 -> MST098 precedent.",
   "family_ref": null,
   "duplicate_variant_status": "UNRESOLVED",
   "baseline_ref": "baseline/accepted-baseline.json",
