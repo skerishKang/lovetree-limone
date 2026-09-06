@@ -92,22 +92,22 @@
         "filename": "현재후보.html",
         "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보/현재후보.html",
         "bytes": 2690589,
-        "sha256": null,
+        "sha256": "4161dd724c28eab33c45573d0144e176b1b6fa1b3cb29647997b4777d74d5de2",
         "revision": "V1.1",
-        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
         "disposition": "NOT_AUTHORITY",
-        "note": "Superseded by revision; roughly 1.7x the authority size. Not downloaded for hashing (excluded by revision)."
+        "note": "Superseded by revision; roughly 1.7x the authority size. Downloaded and hashed in the addendum pass and confirmed content-different."
       },
       {
         "drive_file_id": "17pRZOawMSijOBihHTw9hnppldFlAMEbm",
         "filename": "현재후보.html",
         "location": "64_부유모먼트_웰컴오빗_입장포털O/버전1.0_후보/현재후보.html",
         "bytes": 2789779,
-        "sha256": null,
+        "sha256": "77a66ab248b7668ff8c8e20ca45dd9f3fc969d196f19081cf37bf8ee9d200166",
         "revision": "V1.0",
-        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
         "disposition": "NOT_AUTHORITY",
-        "note": "Superseded by revision. Not downloaded for hashing (excluded by revision)."
+        "note": "Superseded by revision. Downloaded and hashed in the addendum pass and confirmed content-different."
       }
     ],
     "v1_3_folder_non_html": [
@@ -133,7 +133,41 @@
         "1r2jwJn2joTQ-fWF-isCwbnIvNU_lR-_l (버전1.2_...: 1 HTML, 2 QA docs, 4 QA images, 2 media files)",
         "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6 (버전1.3_...: 1 HTML, 1 delta note, 1 QA json, 2 QA images)"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the two 1565313-byte objects and the 1565139-byte near-duplicate were all downloaded and hashed in the same run"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the two 1565313-byte objects, the 1565139-byte near-duplicate, and both superseded revision candidates (2690589 and 2789779 bytes) were all downloaded and hashed"
+    },
+    "sha256_addendum": {
+      "reverified_at_utc": "2026-09-06T08:15:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL addendum (b) instruction",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "purpose": "CENTRAL addendum (b): under the section 4.1 evidence bar every HTML candidate must carry a SHA-256. Two candidates still carried sha256: null after the section 4.1 refresh because they were excluded by revision before downloading. Both were downloaded and hashed in this addendum pass.",
+      "transport": {
+        "tool": "rclone v1.75.0 (Windows-native)",
+        "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+        "remote": "gdrive:",
+        "method": "copyto download + local Get-FileHash -Algorithm SHA256",
+        "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+      },
+      "fields_completed": [
+        {
+          "drive_file_id": "10tYLwr8YEf92p5BHl8TzbvZV_CdgYWXy",
+          "bytes": 2690589,
+          "sha256_before": null,
+          "sha256_after": "4161dd724c28eab33c45573d0144e176b1b6fa1b3cb29647997b4777d74d5de2",
+          "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE",
+          "content_relation_to_authority_after": "DIFFERENT_CONTENT"
+        },
+        {
+          "drive_file_id": "17pRZOawMSijOBihHTw9hnppldFlAMEbm",
+          "bytes": 2789779,
+          "sha256_before": null,
+          "sha256_after": "77a66ab248b7668ff8c8e20ca45dd9f3fc969d196f19081cf37bf8ee9d200166",
+          "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE",
+          "content_relation_to_authority_after": "DIFFERENT_CONTENT"
+        }
+      ],
+      "field_edits_are_value_completions_only": true,
+      "unchanged": "No key was removed, renamed or reordered. Every other value in this file is byte-for-byte unchanged from the section 4.1 refresh.",
+      "conclusion": "Every HTML candidate in the SRC064 enumerated scope now carries a SHA-256. Neither completed candidate is content-identical to the V1.2.1 authority. The only byte-identical copies of the authority remain the two already recorded: the track-root authority and the copy inside the folder labelled 버전1.3."
     },
     "gap": null
   },

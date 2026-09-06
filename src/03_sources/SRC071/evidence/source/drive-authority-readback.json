@@ -62,11 +62,11 @@
       "evidence": "Full lsjson listing of the design root 1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN returns 8 subfolders (V1 through V7 plus 실패) and 3 files. V7 is the terminal revision folder."
     },
     "authority_revision_inner_chain": [
-      { "drive_file_id": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn", "filename": "71_V7_FINAL_INTERACTIVE.html", "bytes": 2019938, "sha256": null, "revision": "V7 base", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Base V7 interactive build, superseded by the R2.x series. Not hashed (excluded by revision)." },
-      { "drive_file_id": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN", "filename": "71_V7_FINAL_INTERACTIVE_R2.html", "bytes": 16281, "sha256": null, "revision": "V7 R2", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
-      { "drive_file_id": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP", "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html", "bytes": 15947, "sha256": null, "revision": "V7 R2.1", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
-      { "drive_file_id": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp", "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html", "bytes": 22857, "sha256": null, "revision": "V7 R2.2", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Superseded. Not hashed (excluded by revision)." },
-      { "drive_file_id": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ", "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html", "bytes": 24004, "sha256": null, "revision": "V7 R2.3", "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE", "disposition": "NOT_AUTHORITY", "note": "Direct predecessor of the authority, only 35 bytes smaller (24004 vs 24039), which makes it a plausible near-duplicate candidate. Not downloaded for hashing in this pass because a recursive lsjson scan of the design root proved the filename is unique and the byte sizes differ." }
+      { "drive_file_id": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn", "filename": "71_V7_FINAL_INTERACTIVE.html", "bytes": 2019938, "sha256": "5f9180d0621953f6138d09058a6a8af064effda3e264c3ebad64440bcfed2b5b", "revision": "V7 base", "content_relation_to_authority": "DIFFERENT_CONTENT", "disposition": "NOT_AUTHORITY", "note": "Base V7 interactive build, superseded by the R2.x series. sha256 filled by the 2026-09-06 resolution addendum." },
+      { "drive_file_id": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN", "filename": "71_V7_FINAL_INTERACTIVE_R2.html", "bytes": 16281, "sha256": "2df11d51fdef388090a2e4bf858c6ef744805ccce96283a08c19119a60aa9983", "revision": "V7 R2", "content_relation_to_authority": "DIFFERENT_CONTENT", "disposition": "NOT_AUTHORITY", "note": "Superseded. sha256 filled by the 2026-09-06 resolution addendum." },
+      { "drive_file_id": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP", "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html", "bytes": 15947, "sha256": "2da033ea84cf2fea5b1dcb1e7fba44df9eab496ea702358ed8c098af1c5f7f0d", "revision": "V7 R2.1", "content_relation_to_authority": "DIFFERENT_CONTENT", "disposition": "NOT_AUTHORITY", "note": "Superseded. sha256 filled by the 2026-09-06 resolution addendum." },
+      { "drive_file_id": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp", "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html", "bytes": 22857, "sha256": "a666b73d7a1196494c29fd848ed624594a86bfee53dc13c822ff9337e492b286", "revision": "V7 R2.2", "content_relation_to_authority": "DIFFERENT_CONTENT", "disposition": "NOT_AUTHORITY", "note": "Superseded. sha256 filled by the 2026-09-06 resolution addendum." },
+      { "drive_file_id": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ", "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html", "bytes": 24004, "sha256": "994559f80c77410e494b8d184ed2b6a0642db9b856a9348d50b920a7df43cb31", "revision": "V7 R2.3", "content_relation_to_authority": "DIFFERENT_CONTENT", "disposition": "NOT_AUTHORITY", "note": "Direct predecessor of the authority, only 35 bytes smaller (24004 vs 24039). The hash now confirms it is content-distinct rather than a near-duplicate: a 35-byte delta produced a completely different SHA-256, so the two are not byte-equivalent." }
     ],
     "design_root_files_excluded": [
       { "drive_file_id": "1LofPbjHhhAh3owRhqFtozfAeU9Y_gdot", "name": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1.mp4", "bytes": 16611419, "disposition": "NOT_AUTHORITY", "note": "V1 recording" },
@@ -77,10 +77,51 @@
       "manifest_designation": "noncanonical_same_name_file_ids",
       "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
       "expected_filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
-      "bytes": null,
-      "sha256": null,
+      "bytes": 24039,
+      "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+      "md5_checksum_from_drive_api": "ce72deca6a53bc2caa3c54e34abb2c45",
+      "mime_type": "text/html",
+      "trashed": false,
+      "drive_api_created_time_utc": "2026-08-28T01:02:23.480Z",
+      "drive_api_modified_time_utc": "2026-08-28T00:32:40.954Z",
       "disposition": "NOT_AUTHORITY",
       "location_resolution": "NOT_FOUND_IN_ENUMERATED_SCOPES",
+      "resolved_location": "RESOLVED_VIA_DRIVE_API_FILES_GET",
+      "resolved_via": "Drive API v3 files.get?id=17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned parents[\"1_nuRwalky34UX2ebaaocvEyLQlw1N41C\"]; bytes then captured with rclone copyto using --drive-root-folder-id 1_nuRwalky34UX2ebaaocvEyLQlw1N41C",
+      "resolved_parent_folder": {
+        "drive_folder_id": "1_nuRwalky34UX2ebaaocvEyLQlw1N41C",
+        "folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION",
+        "mime_type": "application/vnd.google-apps.folder",
+        "drive_api_created_time_utc": "2026-08-28T01:02:23.470Z",
+        "drive_api_modified_time_utc": "2026-08-28T00:32:40.953Z",
+        "listing_result": "Exactly one file entry (this object) plus no subfolders",
+        "name_collision_note": "The folder name is byte-identical to the authority's V7 folder name, but the folder ID differs from the authority folder 1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV. Name matching is not identity matching."
+      },
+      "ancestor_chain": [
+        { "depth": 1, "drive_folder_id": "1_nuRwalky34UX2ebaaocvEyLQlw1N41C", "folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION", "role": "IMMEDIATE_PARENT", "created_time_utc": "2026-08-28T01:02:23.470Z" },
+        { "depth": 2, "drive_folder_id": "1G9_7idZDd6RR-3B493g_74Cfc1GAkvsu", "folder_name": "71_러브트리_감정경로헬릭스_인터랙티브대문_V1", "role": "GRANDPARENT", "created_time_utc": "2026-08-28T01:02:23.460Z", "listing_result": "Exactly two entries: SHA256SUMS.txt (141 bytes) and the V7_FINAL_MOTION_INTERACTIVE_ACTIVATION folder" },
+        { "depth": 3, "drive_folder_id": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW", "folder_name": null, "role": "GREAT_GRANDPARENT_PARALLEL_TRACK_ROOT", "listing_result": "62 folder entries named 01_ through 74_ (a full parallel enumeration of the track-numbered design deliverable set)" }
+      ],
+      "structure_interpretation": "The object is not a stray loose file. It sits inside a parallel track-01..74 mirror root whose depth-2 track-71 folder is a minimal partial copy containing only the terminal V7 revision folder plus a SHA256SUMS.txt manifest. Every directory in this chain was created within a 20 ms window on 2026-08-28T01:02:23Z, which is characteristic of a single scripted bulk-copy operation rather than iterative design work.",
+      "checklist_manifest_corroboration": {
+        "object": "SHA256SUMS.txt in the depth-2 cloned track-71 folder (drive_folder_id 1G9_7idZDd6RR-3B493g_74Cfc1GAkvsu)",
+        "bytes": 141,
+        "verbatim_content": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a  ./V7_FINAL_MOTION_INTERACTIVE_ACTIVATION/71_V7_FINAL_INTERACTIVE_R2.4.html",
+        "reading": "A checksum manifest written by whoever produced this copy, asserting a SHA-256 for exactly this relative path. It equals the authority manifest SHA-256 and the locally recomputed SHA-256 of the downloaded bytes."
+      },
+      "content_identity_vs_authority": {
+        "result": "BYTE_IDENTICAL",
+        "authority": "24039 bytes / 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL)",
+        "this_object": "24039 bytes / 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a (17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb)",
+        "confirmation_count": 3,
+        "confirmations": [
+          "locally recomputed SHA-256 over the rclone copyto download of the noncanonical object",
+          "the Drive API md5Checksum ce72deca6a53bc2caa3c54e34abb2c45 matches the locally recomputed MD5",
+          "the clone's own SHA256SUMS.txt asserts the identical digest for this exact relative path"
+        ],
+        "authority_status_note": "The manifest designation NOT_AUTHORITY is retained and unchanged. Byte identity does not upgrade this object to authority; authority is designated by source_id and Drive file id, not by content hash."
+      },
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto download; cross-checked against the Drive API md5Checksum and the folder's own SHA256SUMS.txt",
       "enumerated_scopes": [
         "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN design root: 11 entries listed (8 subfolders, 3 files)",
         "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV V7 authority folder: 23 entries listed",
@@ -89,27 +130,105 @@
         "bounded recursive scan of [[지피티 작업]]/[01_러브트리] with --max-depth 2 (covers every track folder at one level)",
         "bounded recursive scan of the second remote gdriveb64: with --max-depth 2"
       ],
-      "recursive_scan_result": "Exactly one object named 71_V7_FINAL_INTERACTIVE_R2.4.html exists within the bounded recursive scan of the design root: the authority itself (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL, 24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a).",
-      "direct_id_addressing_result": "rclone lsjson gdrive:17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned 'directory not found'; this backend does not resolve arbitrary file IDs by path, so the ID could not be addressed directly.",
-      "conclusion": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+      "why_enumeration_missed_it": "The cloned track-71 folder is not a descendant of the canonical design root 1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN. It hangs off a separate parallel track root 1Rva_gSNWwiguJDmaWUODd926NStpLHlW, which was never on any enumeration path. Because the folder and file names repeat verbatim from the canonical tree, path-based and name-based scans could never surface it; only ID-addressed API resolution finds it.",
+      "recursive_scan_result": "Exactly one object named 71_V7_FINAL_INTERACTIVE_R2.4.html exists within the bounded recursive scan of the design root: the authority itself (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL, 24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a). This scope-local finding remains true; it does not describe the whole Drive.",
+      "direct_id_addressing_result": "rclone lsjson gdrive:17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned 'directory not found'; this backend does not resolve arbitrary file IDs by path, so the ID could not be addressed directly. The Drive API files.get path did.",
+      "corpus_wide_name_search": {
+        "attempted": true,
+        "query": "files.list?q=name = \"71_V7_FINAL_INTERACTIVE_R2.4.html\"",
+        "result": "NOT_USABLE",
+        "evidence": "The response returned an unfiltered paginated listing unrelated to the predicate (including .git internals such as FETCH_HEAD, HEAD and SHA-256-named blobs, plus unrelated third-party HTML and CDX014_S4_PARITY_CANDIDATE_a649d9bd.zip) with incompleteSearch false and a nextPageToken present. The name filter was demonstrably ignored by this client, so it can neither prove nor disprove additional copies.",
+        "earlier_attempts": "Repeated attempts were rejected with 403 Quota exceeded for quota metric 'Queries' on the rclone shared client_id project 202264815644."
+      },
+      "copy_count_caveat": "Two objects carrying this filename are established: the authority and this noncanonical copy. A third is not established and not excluded. No exhaustive Drive-wide name search was obtained.",
+      "conclusion": "Resolved. The manifest-listed noncanonical same-name file is byte-identical to the authority (24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a), confirmed three ways. It is a later copy (created 2026-08-28, authority last modified 2026-08-17) inside a scripted partial-mirror of the terminal V7 revision. Its manifest designation NOT_AUTHORITY is retained. Adjudication of what this implies for SRC071 remains with CDX014 S4."
     },
     "negative_claim": {
-      "statement": "Within every enumerated scope, exactly one object carries the filename 71_V7_FINAL_INTERACTIVE_R2.4.html and it is the authority. No same-content duplicate of the authority bytes was found. The one manifest-listed noncanonical same-name file could not be located and therefore could not be hashed.",
+      "statement": "Corrected by the 2026-09-06 resolution addendum. The prior claim that no same-content duplicate of the authority bytes existed anywhere enumerated was based on the enumerated scopes below only, and is superseded: a same-content duplicate was found outside all of them. What remains true is narrower and scope-local: within the canonical design-root subtree, exactly one object carries the filename 71_V7_FINAL_INTERACTIVE_R2.4.html and it is the authority, and no other object inside that subtree is byte-identical to the authority. A Drive-wide negative claim is not supported; the corpus-wide name search could not be obtained.",
+      "superseded_portion": "The sentences 'No same-content duplicate of the authority bytes was found' and 'The one manifest-listed noncanonical same-name file could not be located and therefore could not be hashed' are no longer accurate. The duplicate was found and hashed in this addendum.",
       "enumerated_scope": [
         "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN design root and all 8 of its subfolders",
         "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV V7 authority folder (23 entries)",
         "[[지피티 작업]]/[01_러브트리] bounded recursive scan, max-depth 2",
         "gdriveb64: bounded recursive scan, max-depth 2"
       ],
-      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads"
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads",
+      "not_covered": [
+        "The parallel track root 1Rva_gSNWwiguJDmaWUODd926NStpLHlW and its 62 track folders",
+        "Any Drive subtree outside the canonical design root that is not reachable from the listed enumeration paths"
+      ]
     },
     "gap": {
       "id": "SRC071_NONCANONICAL_SAME_NAME_UNRESOLVED",
       "object": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
       "missing": "bytes, sha256, location, and therefore same-content-or-distinct determination",
       "why_it_matters": "This is the corpus's strongest candidate for a genuine same-name duplicate, and step-2 adjudication of SRC071 depends on whether it is content-identical to the authority.",
-      "status": "OPEN_FOR_CENTRAL",
-      "suggested_next_step": "Resolve the file ID via the Drive API files.get or files.list with q='id' rather than a rclone path listing, or ask the file's uploader for its folder path."
+      "status": "RESOLVED_2026-09-06",
+      "suggested_next_step": "Resolve the file ID via the Drive API files.get or files.list with q='id' rather than a rclone path listing, or ask the file's uploader for its folder path.",
+      "resolution": {
+        "resolved_at_utc": "2026-09-06T08:30:00Z",
+        "resolved_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL addendum instruction",
+        "method": "Drive API v3 files.get by ID (suggested path), then rclone copyto under --drive-root-folder-id, then local Get-FileHash",
+        "bytes": 24039,
+        "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+        "location": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW / 71_러브트리_감정경로헬릭스_인터랙티브대문_V1 (1G9_7idZDd6RR-3B493g_74Cfc1GAkvsu) / V7_FINAL_MOTION_INTERACTIVE_ACTIVATION (1_nuRwalky34UX2ebaaocvEyLQlw1N41C) / 71_V7_FINAL_INTERACTIVE_R2.4.html",
+        "determination": "CONTENT_IDENTICAL_TO_AUTHORITY",
+        "residual_unresolved": "Drive-wide copy count. A third object with this filename is neither established nor excluded; the corpus-wide name query was not usable with this client."
+      }
+    },
+    "resolution_addendum": {
+      "applied_at_utc": "2026-09-06T08:35:00Z",
+      "applied_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL addendum instructions (a) and (b)",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "transport": {
+        "tool": "rclone v1.75.0 (Windows-native)",
+        "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+        "remote": "gdrive:",
+        "method": "Drive API v3 files.get for ID-to-parent resolution; rclone copyto under --drive-root-folder-id; lsjson --drive-root-folder-id for folder enumeration; local Get-FileHash -Algorithm SHA256",
+        "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every rclone call; all reads succeeded.",
+        "quota_note": "The shared client_id project 202264815644 is limited on the 'Queries' quota metric; files.get succeeded only after a 75 second wait, and a corpus-wide files.list name query was never accepted. No credential was persisted to this file."
+      },
+      "part_a_residual_resolution": {
+        "instruction": "CENTRAL addendum (a): resolve the SRC071 residual by finding 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb and capturing bytes/SHA-256 via Drive API files.get -> parents -> rclone --drive-root-folder-id <parent> copyto.",
+        "fields_completed": [
+          { "field": "noncanonical_same_name_file.bytes", "before": null, "after": 24039 },
+          { "field": "noncanonical_same_name_file.sha256", "before": null, "after": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a" }
+        ],
+        "fields_added": [
+          "noncanonical_same_name_file.md5_checksum_from_drive_api",
+          "noncanonical_same_name_file.mime_type",
+          "noncanonical_same_name_file.trashed",
+          "noncanonical_same_name_file.drive_api_created_time_utc",
+          "noncanonical_same_name_file.drive_api_modified_time_utc",
+          "noncanonical_same_name_file.resolved_location",
+          "noncanonical_same_name_file.resolved_via",
+          "noncanonical_same_name_file.resolved_parent_folder",
+          "noncanonical_same_name_file.ancestor_chain",
+          "noncanonical_same_name_file.structure_interpretation",
+          "noncanonical_same_name_file.checklist_manifest_corroboration",
+          "noncanonical_same_name_file.content_identity_vs_authority",
+          "noncanonical_same_name_file.hash_method",
+          "noncanonical_same_name_file.why_enumeration_missed_it",
+          "noncanonical_same_name_file.corpus_wide_name_search",
+          "noncanonical_same_name_file.copy_count_caveat"
+        ],
+        "field_edits_are_value_completions_only": true,
+        "unchanged": "No key was removed or renamed. fresh_drive, readback_transport, s2_crosscheck, revision_chain_enumeration, revision_chain_termination, design_root_files_excluded and identity_non_inference are byte-for-byte unchanged from the section 4.1 refresh."
+      },
+      "part_b_v7_inner_chain_hash_completion": {
+        "instruction": "CENTRAL addendum (b) extended by the section 4.1 evidence bar: complete SHA-256 for the remaining unhashed HTML candidates, including the SRC071 authority revision inner chain.",
+        "fields_completed": [
+          { "drive_file_id": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn", "filename": "71_V7_FINAL_INTERACTIVE.html", "bytes": 2019938, "sha256_before": null, "sha256_after": "5f9180d0621953f6138d09058a6a8af064effda3e264c3ebad64440bcfed2b5b", "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE", "content_relation_to_authority_after": "DIFFERENT_CONTENT" },
+          { "drive_file_id": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN", "filename": "71_V7_FINAL_INTERACTIVE_R2.html", "bytes": 16281, "sha256_before": null, "sha256_after": "2df11d51fdef388090a2e4bf858c6ef744805ccce96283a08c19119a60aa9983", "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE", "content_relation_to_authority_after": "DIFFERENT_CONTENT" },
+          { "drive_file_id": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP", "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html", "bytes": 15947, "sha256_before": null, "sha256_after": "2da033ea84cf2fea5b1dcb1e7fba44df9eab496ea702358ed8c098af1c5f7f0d", "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE", "content_relation_to_authority_after": "DIFFERENT_CONTENT" },
+          { "drive_file_id": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp", "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html", "bytes": 22857, "sha256_before": null, "sha256_after": "a666b73d7a1196494c29fd848ed624594a86bfee53dc13c822ff9337e492b286", "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE", "content_relation_to_authority_after": "DIFFERENT_CONTENT" },
+          { "drive_file_id": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ", "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html", "bytes": 24004, "sha256_before": null, "sha256_after": "994559f80c77410e494b8d184ed2b6a0642db9b856a9348d50b920a7df43cb31", "content_relation_to_authority_before": "DIFFERENT_CONTENT_BY_SIZE", "content_relation_to_authority_after": "DIFFERENT_CONTENT" }
+        ],
+        "near_duplicate_question_answered": "R2.3 is only 35 bytes smaller than the authority (24004 vs 24039), which made it the leading near-duplicate candidate. Hashing confirms it is content-distinct: a 35-byte delta produced a wholly different SHA-256, so no Hamming-parity or diff adjudication is required for it."
+      },
+      "result_summary": "Every HTML candidate recorded in this capsule now carries a SHA-256. The manifest-listed noncanonical same-name file is confirmed byte-identical to the authority and was never a content variant; its NOT_AUTHORITY designation is retained. SRC071 therefore has zero content variants of the authority within the enumerated scope, and one location-only external mirror copy.",
+      "adjudication_not_performed": true,
+      "adjudication_owner": "CDX014 S4"
     }
   },
   "identity_non_inference": {
