@@ -16,7 +16,7 @@
     "MST098"
   ],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -28,5 +28,93 @@
     "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
-  "tsx_allowed_during_split": false
+  "tsx_allowed_during_split": false,
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA",
+    "closing_step_basis": "Step 1 of §2.3: the readback enumerates more than one file object that could serve as the V4.2.5 executable authority. Step 2: those objects are NOT distinct — the copy carries the authority's SHA-256 676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596 unchanged. Per §2.3 a byte-identical object is a duplicate COPY, not a variant. The V1 → V4.2.5 revision chain is otherwise clean (12 enumerated revision folders, V4.2.5 terminal, no higher revision).",
+    "revision_chain": [
+      "V1 01_v1_svg [SOURCE_REVISION_FOLDER]",
+      "V2 02_v2_svg [SOURCE_REVISION_FOLDER]",
+      "V3 03_v3_WebGL_3D게이트 [SOURCE_REVISION_FOLDER]",
+      "V3 04_현재채택본_다중각도_v3_관련자료 [SOURCE_REVISION_RELATED_MATERIAL]",
+      "V4 05_V4_REFERENCE_CINEMATIC_RESCUE_STATIC_MASTER [SOURCE_REVISION_FOLDER]",
+      "unlabelled 06_시네마틱HTML미리보기 [PREVIEW_MATERIAL]",
+      "V4.2 07_V4.2_워터마크프리시네마틱배경·달빛꽃UI_러브트리대문_후보 [SOURCE_REVISION_FOLDER]",
+      "V4 08_버전4_REFERENCE_CINEMATIC_RESCUE_후보 [SOURCE_REVISION_FOLDER]",
+      "V4.2.2 09_V4.2.2_CLEAN_VIDEO·CINEMATIC_FRONTDOOR_HTML_후보 [SOURCE_REVISION_FOLDER]",
+      "V4.2.3 10_V4.2.3_CINEMATIC_FRONTDOOR·REAL_LOCAL_ROUTE_NAVIGATION_후보 [SOURCE_REVISION_FOLDER]",
+      "V4.2.4 11_V4.2.4_CINEMATIC_FRONTDOOR·OWNER_SELECTED_ROUTE_COLLECTION_후보 [SOURCE_REVISION_FOLDER]",
+      "V4.2.5 12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보 [SOURCE_REVISION_FOLDER, AUTHORITY_SCOPE]"
+    ],
+    "authority_reverification": {
+      "drive_folder_id": "1PWsadH3MAPL8pkMeqybopk-WrASkl8AH",
+      "drive_folder_name": "47_시즌수채화블_통합개발",
+      "drive_file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+      "bytes": 40890,
+      "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+      "revision": "V4.2.5",
+      "modified_time_utc": "2026-08-16T07:27:55.116Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "최종선택-12_V4.2.5_CINEMATIC_FRONTDOOR·PINNED_NAV_MENU_FIX_후보.html",
+        "drive_file_id": "18tZB-eTCz6aeceNlbhXN3iEnfD1N442X",
+        "bytes": 40890,
+        "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+        "revision": "V4.2.5",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1aONTs8UGsz0Kzs3rpwhAhEPFyu1vo1Z7",
+        "bytes": 40890,
+        "sha256": "676f5220ec4e4c8c1b15c36eaeb6a2ee4320ecceb7e413b15eee585e8ed9a596",
+        "revision": "V4.2.5",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held at the V4.2.5 revision-folder location, uploaded 2026-08-15. The authority track-root '최종선택-12_' copy was uploaded later, 2026-08-16. Canonical location is the track root; the revision-folder copy is a location-only duplicate."
+      },
+      {
+        "filename": "1-lovetree-season-aquarelle-a-cinematic-v3-art-directed-self-contained.html",
+        "drive_file_id": "1Eb3iO9dMrGjO_QrtG97Q8_L3P0XCWz3X",
+        "bytes": 7763478,
+        "sha256": null,
+        "revision": "V3 (self-contained art-directed build)",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+      },
+      {
+        "filename": "2-lovetree-season-aquarelle-bloom-v5-cinematic-self-contained.html",
+        "drive_file_id": "1faBWv5UxViVXZSVDxhwc3ZuKxEVHf_Zu",
+        "bytes": 4582531,
+        "sha256": null,
+        "revision": "UNLABELED_SELF_CONTAINED_BUILD",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; not a V4.2.5 candidate. Not downloaded for hashing (excluded by revision)."
+      }
+    ],
+    "negative_claim": "Within the enumerated V4.2.5 revision scope and the track root, the V4.2.5 authority bytes occur exactly twice: once at the authority track-root path and once as a byte-identical copy at the revision-folder path. No third content variant carrying the V4.2.5 bytes exists in the enumerated scope.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: SRC047 has no unhashed HTML candidate. The two unhashed track-root builds (7763478 B / 4582531 B) are excluded by revision, not by size alone.",
+    "special_notes": [
+      "Non-blocking recording mismatch, recorded as UNRESOLVED_RECORDING_MISMATCH in the readback and accepted by CENTRAL as non-blocking: the pre-existing fresh_drive created/modified fields are 2026-08-23T06:53:42.416Z, while the live Drive modifiedTime is 2026-08-16T07:27:55.116Z. The manifest authority time fields were NOT modified in this edit.",
+      "Two track-root self-contained builds (1Eb3iO9dMrGjO_QrtG97Q8_L3P0XCWz3X 7763478 B, 1faBWv5UxViVXZSVDxhwc3ZuKxEVHf_Zu 4582531 B) were not downloaded or hashed — excluded by revision. Their exclusion rests on the folder/revision labels, not on a byte comparison."
+    ]
+  }
 }

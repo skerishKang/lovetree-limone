@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -52,5 +52,109 @@
       "mediaClose",
       "mediaPlay"
     ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA",
+    "closing_step_basis": "Step 1 of §2.3: the readback enumerates more than one file object that could serve as the authority. Step 2: the object inside the folder LABELLED 버전1.3 carries the V1.2.1 authority's SHA-256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d unchanged (1565313 B) and the same Drive modifiedTime — it is a MISLABELLED DUPLICATE COPY, not a newer revision. Per §2.3 a byte-identical object is a duplicate COPY, not a variant. The genuine V1.2 predecessor is byte-distinct and is revision history.",
+    "revision_chain": [
+      "V1.0 버전1.0_후보 [SOURCE_REVISION_FOLDER]",
+      "V1.1 버전1.1_실제미디어뷰어·카드피팅·Track59로컬연결_후보 [SOURCE_REVISION_FOLDER]",
+      "V1.2 버전1.2_직접카드오픈·자산재선별·뷰어일치성_후보 [SOURCE_REVISION_FOLDER]",
+      "V1.3 (folder label) 버전1.3_책으로보기_경로정정_후보 [SOURCE_REVISION_FOLDER]"
+    ],
+    "authority_reverification": {
+      "drive_folder_id": "1j792x7zyBJtMXm5KYdNNQJgPgatbQlN-",
+      "drive_folder_name": "64_부유모먼트_웰컴오빗_입장포털O",
+      "drive_file_id": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+      "bytes": 1565313,
+      "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+      "revision": "V1.2.1",
+      "modified_time_utc": "2026-08-13T13:21:22.486Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "18Q-kviMi4iP0Ns3o30jN6KBkipa1RInl",
+        "bytes": 1565313,
+        "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+        "revision": "V1.2.1",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g",
+        "bytes": 1565313,
+        "sha256": "80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d",
+        "revision": "V1.2.1 (content) / V1.3 (folder label)",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical to the authority, found one labelled revision above it. Location-only duplicate inside a mislabelled folder; see revision_label_discrepancy."
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "12poZncJ1fJHmT_ZH0rrYM_MY24wlnjX1",
+        "bytes": 1565139,
+        "sha256": "859583f26df69a2727f040540a6d25c329025930055a03d6af2560f8d134b8cd",
+        "revision": "V1.2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Only 174 bytes smaller than the 1565313-byte authority, making it a plausible near-duplicate candidate; downloaded and hashed and confirmed content-different. This is the genuine V1.2 predecessor."
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "10tYLwr8YEf92p5BHl8TzbvZV_CdgYWXy",
+        "bytes": 2690589,
+        "sha256": null,
+        "revision": "V1.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; roughly 1.7x the authority size. Not downloaded for hashing (excluded by revision)."
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "17pRZOawMSijOBihHTw9hnppldFlAMEbm",
+        "bytes": 2789779,
+        "sha256": null,
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision. Not downloaded for hashing (excluded by revision)."
+      }
+    ],
+    "negative_claim": "The V1.2.1 authority bytes occur exactly twice in the enumerated scope, both byte-identical: the authority at the track root and one copy inside the folder labelled 버전1.3. The genuine V1.2 predecessor (1565139 bytes) is content-different. No third content variant carrying the authority bytes exists in the enumerated scope. All four revision folders were enumerated.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: hash the two unhashed HTML candidates 10tYLwr8YEf92p5BHl8TzbvZV_CdgYWXy (현재후보.html, V1.1, 2690589 B) and 17pRZOawMSijOBihHTw9hnppldFlAMEbm (현재후보.html, V1.0, 2789779 B). Both are excluded as DIFFERENT_CONTENT_BY_SIZE, so no adjudication outcome depends on the hashes; this is completeness evidence only.",
+    "special_notes": [
+      "FOLDER-LABEL CONTRADICTION (the special case for this capsule): the folder labelled 버전1.3 contains a file whose bytes are the V1.2.1 authority — same SHA-256 and same Drive modifiedTime (2026-08-13T13:21:22.486Z). The label does not describe the content. Under §3.1 conditions 1–2 the two objects are a duplicate copy; the label is evidence, not a variant claim. The genuine V1.2 predecessor (12poZncJ1fJHmT_ZH0rrYM_MY24wlnjX1, 1565139 B, sha256 859583f26df6…) is byte-distinct and is revision history.",
+      "Four revision folders were enumerated and all four currently contain the same filename 현재후보.html; only the V1.2.1 instance matches the authority SHA-256."
+    ],
+    "revision_label_discrepancy": {
+      "status": "REQUIRES_CENTRAL_DECISION",
+      "folder_label": "버전1.3_책으로보기_경로정정_후보",
+      "folder_id": "1clob29lQZuKdaWF3KFGiPblKNsmqZ7k6",
+      "contents_reveal_revision": "V1.2.1",
+      "evidence": [
+        "The folder carries the label 버전1.3, which is higher than the locked V1.2.1 authority revision.",
+        "Its HTML candidate 1UX9OdJrl2HLBIssRzx7cooCBMebe9j2g 현재후보.html is 1565313 bytes with sha256 80886540bb8e3148a7336bf9999298897ac0ab921797a6534c89ea0029c6de5d: byte-identical to the locked V1.2.1 authority.",
+        "Its modifiedTime 2026-08-13T13:21:22.486Z is identical to the authority's, indicating a single upload event or an exact copy.",
+        "Its accompanying note is named V1.2→V1.2.1_Track59경로정정_설명.md, which describes a V1.2 to V1.2.1 delta rather than a V1.3 one."
+      ],
+      "conclusion": "A folder labelled one revision above the locked authority contains the locked authority's own bytes, not a new content variant. The folder label and its contents disagree. Adjudication is CENTRAL's decision; this pass records the evidence only.",
+      "disposition": "NOT_AUTHORITY"
+    }
   }
 }

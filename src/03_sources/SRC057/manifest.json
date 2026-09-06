@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -54,5 +54,79 @@
     "lineage_equivalence_inferred": false,
     "historical_pr_550_imported": false,
     "new_namespace_modified": false
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 3 — distinct SHA, no selector",
+    "closing_step_basis": "Step 1: three enumerated HTML objects (V1.3 authority, ★_최종 V1.2, 모바일_확인본 V1.2). Step 2: all three SHA-256 values are DISTINCT — the V1.2 pair (671480 B / 676439 B) differs from the V1.3 authority (676320 B) and from each other. Step 3: no named selector exists or is needed, so the two V1.2 objects are byte-distinct SUPERSEDED REVISIONS. Per §2.3 step 3 and §3.1 condition 4 that is revision history, not a variant. Question A closes with no duplicate: exactly one executable authority.",
+    "revision_chain": [
+      "V1 01_버전1_기본버전_자료 [SOURCE_REVISION_FOLDER]",
+      "V1.1 02_버전1.1_실제미디어_선택빛_자료 [SOURCE_REVISION_FOLDER]",
+      "V1.2 03_버전1.2_최종후보_자료 [SOURCE_REVISION_FOLDER]",
+      "V1.3 04_버전1.3_모바일반응형수정_자료 [SOURCE_REVISION_FOLDER, AUTHORITY_SCOPE]"
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V1.3",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the track root returns exactly 4 numbered revision folders (01 through 04) plus 4 media files. No revision beyond V1.3 exists, so the authority is the terminal revision."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1GQ_xP1Qhclzksz3QlVb7qRwEoo1-GCkz",
+      "drive_folder_name": "04_버전1.3_모바일반응형수정_자료",
+      "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+      "bytes": 676320,
+      "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+      "revision": "V1.3",
+      "modified_time_utc": "2026-08-11T08:17:52.661Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "후보_버전1.3_리빙글라스_모먼트카드_모바일반응형수정.html",
+        "drive_file_id": "1J4_JbDs256rYXMayx-6EOA95au5hYmRg",
+        "bytes": 676320,
+        "sha256": "ca30cdb430067a0649c9f3ee61c148f0b6e606220a9c05ba806ae0afffa66ace",
+        "revision": "V1.3",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "★_최종_버전1.2_리빙글라스_모먼트카드.html",
+        "drive_file_id": "17xogou18Gu2JrA7qqGd8JC4wEx_ooV5R",
+        "bytes": 671480,
+        "sha256": "18f2f79c5390f0fa31a7893d25a464cd93f35438874f7855bdba74faa7dae834",
+        "revision": "V1.2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Track-root V1.2 '최종' artifact. Superseded by the V1.3 authority; content-different despite the '최종' label."
+      },
+      {
+        "filename": "모바일_확인본_버전1.2_유튜브_실시간썸네일.html",
+        "drive_file_id": "1pSH7kqKpxt2CNpcL2LVlVxtPfitf94hP",
+        "bytes": 676439,
+        "sha256": "98ee5906d27f08559200f16caf81f890415570a9392eb49b71c027686e38ae4c",
+        "revision": "V1.2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Only 119 bytes larger than the 676320-byte V1.3 authority, which makes it a plausible near-duplicate candidate; downloaded and hashed and confirmed content-different. Superseded by revision."
+      }
+    ],
+    "negative_claim": "The V1.3 authority folder contains exactly one HTML file: the authority itself. Both V1.2 HTML artifacts at the track root were downloaded and hashed and are content-different. No duplicate or same-content copy of the authority exists in the enumerated scope.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC057. All three revision candidates were downloaded and hashed.",
+    "special_notes": [
+      "Filename markers ★_최종 and 모바일_확인본 are recorded as naming facts only; they were not used to select the authority. Selection rests on the revision chain terminating at V1.3."
+    ]
   }
 }

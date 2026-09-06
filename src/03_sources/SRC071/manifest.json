@@ -56,5 +56,154 @@
       "theme-toggle",
       "endless-reel-wrap"
     ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "retained_status_note": "Existing value retained unchanged. CENTRAL ruled SRC071 stays UNRESOLVED because step 2 is unevaluable: the second same-name object is unlocatable by path enumeration.",
+    "closing_step": "step 2 — unevaluable (candidate unlocatable)",
+    "closing_step_basis": "Step 1 of §2.3: the manifest lists a second same-name object, so the test passes and the case must be decided at step 2. Step 2 requires a SHA-256 for the candidate, but 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb could not be located by rclone path enumeration, so it could not be downloaded or hashed. The step is therefore UNEVALUABLE, not answered — per the rule's fail-closed ordering an unevaluable step does not close Question A.",
+    "authority_reverification": {
+      "drive_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+      "drive_folder_name": "V7_FINAL_MOTION_INTERACTIVE_ACTIVATION",
+      "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+      "bytes": 24039,
+      "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+      "revision": "V7_FINAL_INTERACTIVE_R2.4",
+      "modified_time_utc": "2026-08-17T16:47:24.209Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+        "drive_file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+        "bytes": 24039,
+        "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+        "revision": "V7_FINAL_INTERACTIVE_R2.4",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+        "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
+        "bytes": null,
+        "sha256": null,
+        "revision": null,
+        "content_relation_to_authority": "UNDETERMINED",
+        "disposition": "NOT_AUTHORITY",
+        "note": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE.html",
+        "drive_file_id": "1FrXl8rxxWgh_l0dwc3w2pjDy_m-AKCZn",
+        "bytes": 2019938,
+        "sha256": null,
+        "revision": "V7 base",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Base V7 interactive build, superseded by the R2.x series. Not hashed (excluded by revision)."
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.html",
+        "drive_file_id": "1E6zOB5tu3_rV0N-3xUqn04S-AmzNpGRN",
+        "bytes": 16281,
+        "sha256": null,
+        "revision": "V7 R2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded. Not hashed (excluded by revision)."
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.1.html",
+        "drive_file_id": "1f8dTIw43yCBhAIWi6wZjo41dIQUhD5rP",
+        "bytes": 15947,
+        "sha256": null,
+        "revision": "V7 R2.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded. Not hashed (excluded by revision)."
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.2.html",
+        "drive_file_id": "1vaILn3-6Boq4KXHsBDB41j8-1DoBo6jp",
+        "bytes": 22857,
+        "sha256": null,
+        "revision": "V7 R2.2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded. Not hashed (excluded by revision)."
+      },
+      {
+        "filename": "71_V7_FINAL_INTERACTIVE_R2.3.html",
+        "drive_file_id": "13hWCPG0UQf32oNMFWi5TZeVln7rGXZQZ",
+        "bytes": 24004,
+        "sha256": null,
+        "revision": "V7 R2.3",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Direct predecessor of the authority, only 35 bytes smaller (24004 vs 24039), which makes it a plausible near-duplicate candidate. Not downloaded for hashing in this pass because a recursive lsjson scan of the design root proved the filename is unique and the byte sizes differ."
+      }
+    ],
+    "noncanonical_same_name_file": {
+      "manifest_designation": "noncanonical_same_name_file_ids",
+      "drive_file_id": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
+      "expected_filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+      "bytes": null,
+      "sha256": null,
+      "disposition": "NOT_AUTHORITY",
+      "location_resolution": "NOT_FOUND_IN_ENUMERATED_SCOPES",
+      "enumerated_scopes": [
+        "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN design root: 11 entries listed (8 subfolders, 3 files)",
+        "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV V7 authority folder: 23 entries listed",
+        "children of V1, V2, V3, V4, V5, V6 and 실패: all listed",
+        "bounded recursive scan of the design root with --max-depth 3",
+        "bounded recursive scan of [[지피티 작업]]/[01_러브트리] with --max-depth 2 (covers every track folder at one level)",
+        "bounded recursive scan of the second remote gdriveb64: with --max-depth 2"
+      ],
+      "recursive_scan_result": "Exactly one object named 71_V7_FINAL_INTERACTIVE_R2.4.html exists within the bounded recursive scan of the design root: the authority itself (1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL, 24039 bytes, sha256 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a).",
+      "direct_id_addressing_result": "rclone lsjson gdrive:17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb returned 'directory not found'; this backend does not resolve arbitrary file IDs by path, so the ID could not be addressed directly.",
+      "conclusion": "The second same-name file could not be located in any enumerated scope, so its bytes and SHA-256 could not be captured. It is not confirmed to be a same-content duplicate, and it is not confirmed to be distinct. The manifest designation NOT_AUTHORITY is retained as declared, unverified."
+    },
+    "revision_chain": [
+      "V1 V1 [SOURCE_REVISION_FOLDER]",
+      "V2 V2_GABE_EXACT_GLASS_ORBIT_후보 [SOURCE_REVISION_FOLDER]",
+      "V3 V3_A6_PAIR_PROOF_v3 [SOURCE_REVISION_FOLDER]",
+      "V4 V4_A6_PAIR_PROOF_v4 [SOURCE_REVISION_FOLDER]",
+      "V5 V5_A6_REFERENCE_TRACE_PAIR_v5 [SOURCE_REVISION_FOLDER]",
+      "V6 V6_A6_REFERENCE_MATCH_DESIGN_TOOL_SURFACE_PROOF [SOURCE_REVISION_FOLDER]",
+      "V7 V7_FINAL_MOTION_INTERACTIVE_ACTIVATION [SOURCE_REVISION_FOLDER, AUTHORITY_SCOPE]",
+      "unlabelled 실패 [REJECTED_ATTEMPTS]"
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V7",
+      "higher_revision_folder_exists": false,
+      "evidence": "Full lsjson listing of the design root 1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN returns 8 subfolders (V1 through V7 plus 실패) and 3 files. V7 is the terminal revision folder."
+    },
+    "negative_claim": "Within every enumerated scope, exactly one object carries the filename 71_V7_FINAL_INTERACTIVE_R2.4.html and it is the authority. No same-content duplicate of the authority bytes was found. The one manifest-listed noncanonical same-name file could not be located and therefore could not be hashed.",
+    "open_state": {
+      "gap_id": "SRC071_NONCANONICAL_SAME_NAME_UNRESOLVED",
+      "object": "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb",
+      "missing": "bytes, sha256, location, and therefore same-content-or-distinct determination",
+      "why_it_matters": "This is the corpus's strongest candidate for a genuine same-name duplicate, and step-2 adjudication of SRC071 depends on whether it is content-identical to the authority.",
+      "status": "OPEN_FOR_CENTRAL",
+      "step_blocked": "step 2 — identical-or-distinct SHA",
+      "blocking_reason": "Resolve the file ID via the Drive API files.get or files.list with q='id' rather than a rclone path listing, or ask the file's uploader for its folder path."
+    },
+    "addendum_task": "LOCAL 1 addendum outstanding (this is the blocking item): resolve 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb through Drive API metadata (name / parents / size / md5) and then a --drive-root-folder-id <parent> download plus SHA-256, rather than a rclone path listing. If the file resolves and its SHA differs from the authority, a one-row follow-up adjudication upgrades SRC071 out of UNRESOLVED; if it matches, the value becomes DUPLICATE_COPY_SAME_SHA.",
+    "special_notes": [
+      "This is the corpus's strongest candidate for a genuine same-name duplicate: the same filename recorded at two file ids. Everything else in the capsule is clean — the V1 → V7 chain is fully enumerated (8 folders), V7 is terminal, and within every enumerated scope exactly one object carries the filename 71_V7_FINAL_INTERACTIVE_R2.4.html and it is the authority.",
+      "Manifest asymmetry, recorded for CENTRAL: the manifest declares authority_context_ref: authority-context.json but omits authority_context_required and capture_surface, while src/03_sources/SRC071/authority-context.json sets runtime_context_required: true. No field other than duplicate_variant_status / duplicate_variant_note was changed in this edit.",
+      "The revision chain is clean and terminal, so no variant claim is implied: the only question left is whether 17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb is byte-identical to 2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a or byte-distinct."
+    ]
   }
 }

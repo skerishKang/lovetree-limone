@@ -12,10 +12,12 @@
     "revision": "V1.2_제품목적·실제Moment체험강화_후보",
     "status": "LOCKED"
   },
-  "master_rows": ["MST046"],
+  "master_rows": [
+    "MST046"
+  ],
   "master_rows_note": "Back-reference to the resolved MST046 mapping issued in this same S3 lane (src/02_master/MST046/record.json: mapping_status RESOLVED, identity_refs [{namespace SRC, id SRC066, basis EXPLICIT_LEDGER_PROVENANCE}] after the D11 typed-object normalization landed on main at 139b2c74, EXPLICIT_LEDGER_PROVENANCE citing coverage row 46 + manifest Issue #177 + V1.2 work-order chain 32-34-36). Mirrors the SRC047 -> MST098 precedent.",
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -34,7 +36,12 @@
     "scenario_id": "first-tree-interactive-scroll-guide",
     "storage": {
       "backend": "sessionStorage",
-      "keys": ["lt66:first", "lt66:candidate", "lt66:why", "lt66:route"],
+      "keys": [
+        "lt66:first",
+        "lt66:candidate",
+        "lt66:why",
+        "lt66:route"
+      ],
       "localStorage_uses": 0
     },
     "qa_hook": null,
@@ -93,5 +100,70 @@
       "split_assets_dir": false,
       "path_rebase": false
     }
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 3 — distinct SHA, no selector",
+    "closing_step_basis": "Step 2: the two superseded objects (V1.0 320169 B, V1.1 27323 B) are byte-DISTINCT from the materialized authority (166996 B, sha256 b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6). Step 3: no named selector exists or is needed, so they are byte-distinct SUPERSEDED REVISIONS — revision history, not variants. Question A closes with no duplicate: exactly one executable authority.",
+    "authority_reverification": {
+      "drive_folder_id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
+      "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+      "filename": "현재후보.html",
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+      "revision": "V1.2_제품목적·실제Moment체험강화_후보"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-05T13:27:35Z",
+      "verified_by": "CLEAN-108 SRC066 S3 implementer reproduced the CENTRAL identity against live Google Drive on 2026-09-05: fresh rclone re-download reproduced 166,996 bytes / MD5 6a0c98d77b31a72cf3e8ea0f05dde4b0 / SHA-256 b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6, and the Drive API file metadata returned the same MD5/SHA-256, size, and modified time for the live object.",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "superseded_copies_excluded"
+    },
+    "candidate_table": [
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+        "bytes": 166996,
+        "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+        "revision": "V1.2_제품목적·실제Moment체험강화_후보",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": null,
+        "drive_file_id": null,
+        "bytes": 320169,
+        "sha256": null,
+        "revision": "V1.0",
+        "content_relation_to_authority": "DISTINCT_BYTES_UNHASHED",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded copy, recorded in the readback by byte count only. Never downloaded, served, or rendered in this lane."
+      },
+      {
+        "filename": null,
+        "drive_file_id": null,
+        "bytes": 27323,
+        "sha256": null,
+        "revision": "V1.1",
+        "content_relation_to_authority": "DISTINCT_BYTES_UNHASHED",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded copy, recorded in the readback by byte count only. Never downloaded, served, or rendered in this lane."
+      }
+    ],
+    "revision_chain": [
+      "버전1.2_제품목적·실제Moment체험강화_후보 [SOURCE_REVISION_FOLDER]",
+      "66_첫트리만들기_인터랙티브스크롤가이드 [SOURCE_TRACK_FOLDER]"
+    ],
+    "negative_claim": "The readback records exactly one materialized authority plus two superseded copies excluded by byte count. No same-content copy of the authority bytes was found in the lane.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC066. The two superseded copies are revision history per CENTRAL ruling; no byte comparison is outstanding.",
+    "special_notes": [
+      "This capsule was the §5.4 open gap of the rule document (byte-distinct superseded objects with no selector — no proposed vocabulary value expressed \"both distinct and unselectable\"). CENTRAL closed it by RULING, at #589 comment 5557317485 (2026-09-06T05:57:57Z), that the superseded V1.0 / V1.1 objects are revision history; no new vocabulary value was introduced. The §5.4 gap is now closed by adjudication rather than by a schema change.",
+      "The readback records the two superseded copies by byte count only — no file id and no SHA-256 — so the exclusion is not a step-1 duplication claim. The step-3 ruling rests on the byte counts plus the §5.4 ruling.",
+      "SRC066 is the only capsule in this edit set whose S4 parity is already ACCEPTED (evidence/parity/accepted-parity.json, captured at exact head 288f355a, promoted at #589 comment 5556645775). The S3 identity readback cited here was last verified 2026-09-05T13:27:35Z and predates neither superseded copy."
+    ]
   }
 }
