@@ -74,5 +74,82 @@
       "default_value": null,
       "fail_closed": true
     }
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "retained_status_note": "Existing value retained unchanged; this note is a BACKFILL so that SRC068, the only adjudicated precedent in the corpus, is also self-documenting under §4.2. No status change.",
+    "closing_step": "step 3 — distinct SHA with a named selector",
+    "closing_step_basis": "Both variants are byte-DISTINCT (18565 B / 18646 B, different SHA-256) and SELECTABLE at runtime through the named selector mediaVariant. All four §3.1 conditions hold, so these are true variants of one logical Source — the only case in the corpus that satisfies all four.",
+    "authority_reverification": {
+      "authority_mode": "DUAL_VARIANT",
+      "drive_folder_id": "1--wlBwQf5OPYkMq1m531I0vLvf03Mj5L",
+      "drive_folder_name": "V8_LAUNCHER_ENGLISH",
+      "verified_at_utc": "2026-09-02T22:24:00Z",
+      "central_verified_at_utc": "2026-09-02T22:40:00Z",
+      "central_acceptance": "ACCEPTED",
+      "variants": {
+        "A": {
+          "drive_file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+          "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+          "bytes": 18565,
+          "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+          "revision": "V3.3.1A"
+        },
+        "B": {
+          "drive_file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+          "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+          "bytes": 18646,
+          "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+          "revision": "V3.3.1B"
+        }
+      }
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-02T22:24:00Z",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "variants",
+      "note": "SRC068 was not part of the 8-capsule batch-pass evidence refresh; the note cites the capsule's own existing readback, per the ruling table."
+    },
+    "variant_selector": {
+      "selector": "mediaVariant",
+      "allowed_values": [
+        "A",
+        "B"
+      ],
+      "default": null,
+      "fail_closed": true
+    },
+    "candidate_table": [
+      {
+        "filename": "68_V3.3.1A_신비혼혈형_CODEX_PORTALS_C14FIX.html",
+        "drive_file_id": "1zfYWmgV5xdmP6Gjo1rMOdYv9PJG316ph",
+        "bytes": 18565,
+        "sha256": "9daa5f7690c6a95d5c5e75fc16b5d950533921d9f41ec008053fa4c79d566c42",
+        "revision": "V3.3.1A",
+        "content_relation_to_authority": "VARIANT_A",
+        "disposition": "AUTHORITY_VARIANT_A",
+        "note": "Byte-distinct from variant B; selectable via mediaVariant=A."
+      },
+      {
+        "filename": "68_V3.3.1B_동양인형_CODEX_PORTALS_C14FIX.html",
+        "drive_file_id": "1_xOVvvz1DdV0MFCkfQwqsJZUrkFTUrjb",
+        "bytes": 18646,
+        "sha256": "cb5553d399a728cd28422f8112f6cc59c185de68b522aa431e9d3bb1f4275004",
+        "revision": "V3.3.1B",
+        "content_relation_to_authority": "VARIANT_B",
+        "disposition": "AUTHORITY_VARIANT_B",
+        "note": "Byte-distinct from variant A; selectable via mediaVariant=B."
+      }
+    ],
+    "negative_claim": "Both objects are enumerated, hashed and recorded; there is no unenumerated candidate object for SRC068.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC068. Both variants were downloaded and hashed at the time of the accepted readback.",
+    "special_notes": [
+      "Constraint, unchanged by this edit: src/08_harness/dual-variant-mechanical.mjs freezes DUAL_VARIANT_KEYS = [A, B]. A third variant for any capsule would require a harness change first.",
+      "SRC068 is the corpus's only authority_mode = DUAL_VARIANT capsule; the other 11 resolve to SINGLE by default. It is also the only capsule whose variant_selector / authority.variants / source_contract.variant_contract are written, per §4.2."
+    ]
   }
 }

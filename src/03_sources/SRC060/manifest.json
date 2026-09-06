@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -53,6 +53,92 @@
       "openBookHandoff",
       "openConnectionHandoff",
       "openPathPreview"
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 3 — distinct SHA, no selector",
+    "closing_step_basis": "Step 1: three enumerated HTML objects (V1.0, V1.1, V1.2). Step 2: their SHA-256 values are DISTINCT (591f6273…, c788d677…, c35b66fb…). Step 3: no named selector exists or is needed — V1.0 (28653 B) and V1.1 (52981 B) are byte-distinct SUPERSEDED REVISIONS. Question A closes with no duplicate: exactly one executable authority, because the revision chain terminates at V1.2, which is the authority folder itself.",
+    "revision_chain": [
+      "unlabelled 00_작업지시 [TASK_INSTRUCTIONS]",
+      "unlabelled 01_참고원본 [REFERENCE_SOURCE]",
+      "V1.0 버전1.0_후보 [SOURCE_REVISION_FOLDER]",
+      "V1.1 버전1.1_핵심메뉴기능연결_후보 [SOURCE_REVISION_FOLDER]",
+      "V1.2 버전1.2_실제트랙네비게이션_후보 [SOURCE_REVISION_FOLDER, AUTHORITY_SCOPE]"
+    ],
+    "higher_revision_candidate_check": {
+      "question": "Does a higher revision candidate exist above the authority's two folders?",
+      "answer": "NO",
+      "highest_revision_present": "V1.2",
+      "higher_revision_folder_exists": false,
+      "evidence": "A complete lsjson listing of the top-level identity folder 1c5c0_GDYz3c4jt1rsraf8l3IIkMKZO8T returns exactly five subfolders and one media file: 00_작업지시, 01_참고원본, 버전1.0_후보, 버전1.1_핵심메뉴기능연결_후보, 버전1.2_실제트랙네비게이션_후보, and 녹화_2026_08_12_01_40_04_253.mp4. The highest revision prefix present is 버전1.2, which is the authority folder. There is no folder above it.",
+      "track_root_media_excluded": [
+        {
+          "drive_file_id": "1WScPu757Wyi04vG3QsA8lV-nTVNbkWzN",
+          "name": "녹화_2026_08_12_01_40_04_253.mp4",
+          "bytes": 20503419,
+          "disposition": "NOT_AUTHORITY",
+          "note": "owner review recording"
+        }
+      ]
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1SuDA9qtZiz6lETg9MAgpmeWd16IolUAm",
+      "drive_folder_name": "버전1.2_실제트랙네비게이션_후보",
+      "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+      "bytes": 55260,
+      "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+      "revision": "V1.2",
+      "modified_time_utc": "2026-08-11T16:15:28.865Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "★_현재후보_Track60_V1.2_REAL_NAVIGATION.html",
+        "drive_file_id": "1Pu6hSbIfW9X70jJCtRTs0WQyWaZvy_3M",
+        "bytes": 55260,
+        "sha256": "c35b66fb46b57958f7f52c7506ce20e467302f4bcf43b55001428d5d525a7fdf",
+        "revision": "V1.2",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1xaQ7K75ekeyxrQ3ZGkXX9qHm7HI0Pe_9",
+        "bytes": 28653,
+        "sha256": "591f62733a01747042e08a3f92e8e7d902f00ac16e4dd640b366e683e9bf30b7",
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority."
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1EEBTsYQCithFo-lQguPQLbqwbSslBVPI",
+        "bytes": 52981,
+        "sha256": "c788d6772342674a53f6d3b134c1c92d8c4256dfe9aaec6455920237f380fd11",
+        "revision": "V1.1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded by revision; content-different from the V1.2 authority. Every revision in the chain uses the same filename 현재후보.html, so filename alone cannot discriminate candidates."
+      }
+    ],
+    "negative_claim": "The top-level identity folder is fully enumerated: 5 subfolders, 1 media file. The revision chain terminates at V1.2, which is the authority folder, so no higher revision candidate exists. All three revision candidates were downloaded and hashed; V1.0 and V1.1 are content-different. No duplicate or same-content copy of the V1.2 authority bytes exists in the enumerated scope.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC060. All three revision candidates were downloaded and hashed.",
+    "special_notes": [
+      "SRC060 previously carried an identity/candidate folder mismatch (60_3D모먼트클러스터_심층탐색_55,56,59연결버전 as identity, 버전1.2_실제트랙네비게이션_후보 as candidate). The enumeration resolves it: the chain terminates at V1.2, which IS the authority folder, so no higher revision candidate exists."
     ]
   }
 }
