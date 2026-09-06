@@ -47,6 +47,100 @@ export function validateMechanicalSplitSurface({ repoRoot, roots = ['src/03_sour
   return failures;
 }
 
+export const DUPLICATE_VARIANT_VALUES = Object.freeze([
+  'UNRESOLVED',
+  'SINGLE_EXECUTABLE_NO_DUPLICATE',
+  'DUPLICATE_COPY_SAME_SHA',
+  'PATH_CONTEXT_VARIANT_ONLY',
+  'DUAL_MEDIA_VARIANT',
+]);
+
+export const DUPLICATE_VARIANT_OPEN_VALUE = Object.freeze('UNRESOLVED');
+
+const DUPLICATE_VARIANT_READBACK_MODE = Object.freeze('CENTRAL_FRESH_DRIVE_READBACK');
+const FOLLOW_UP_ADJUDICATION_FIELDS = Object.freeze(['at_utc', 'by', 'basis', 'finding']);
+
+function nonEmptyString(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function hasFreshDriveReadbackReference(note) {
+  const reference = isObject(note?.readback) ? note.readback : null;
+  return (
+    reference !== null
+    && nonEmptyString(reference.ref)
+    && nonEmptyString(reference.verified_at_utc)
+    && nonEmptyString(reference.verified_by)
+    && reference.verification_mode === DUPLICATE_VARIANT_READBACK_MODE
+  );
+}
+
+function hasFollowUpAdjudication(note) {
+  const followUp = isObject(note?.follow_up_adjudication) ? note.follow_up_adjudication : null;
+  if (followUp === null) return false;
+  return FOLLOW_UP_ADJUDICATION_FIELDS.every((field) => nonEmptyString(followUp[field]));
+}
+
+/**
+ * §7 fail-closed governance gate for `duplicate_variant_status` /
+ * `duplicate_variant_note` — rule
+ * `docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md` §7,
+ * adopted by CENTRAL at `#589` comment `5557317485` (wearing confirmed after the
+ * batch pass, so every capsule now carries a note).
+ *
+ * Fail closed on exactly two shapes:
+ *   (a) a status outside the adopted five-value vocabulary;
+ *   (b) a non-`UNRESOLVED` status whose `duplicate_variant_note` is missing, or
+ *       whose note cites neither a `CENTRAL_FRESH_DRIVE_READBACK` readback
+ *       (`readback.ref` + `readback.verified_at_utc` + `readback.verified_by`)
+ *       nor a structurally valid `follow_up_adjudication` block.
+ *
+ * A structurally valid `follow_up_adjudication` block is accepted as the
+ * alternative evidence basis for a capsule whose authority record is not a Drive
+ * readback (CDX014: `authority-context.json`). The shape is verified only —
+ * `at_utc` / `by` / `basis` / `finding` non-empty strings — and the content is
+ * not re-adjudicated here.
+ *
+ * A manifest without the field carries no claim: it inherits the template
+ * default `UNRESOLVED` (rule §7 point 2) and stays in the open state.
+ */
+export function validateDuplicateVariantGovernance(manifest, sourceId) {
+  const failures = [];
+  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) return failures;
+  const fail = (message) => failures.push(`${sourceId}: ${message}`);
+
+  const status = manifest.duplicate_variant_status;
+  if (status === undefined) return failures;
+  if (typeof status !== 'string' || !DUPLICATE_VARIANT_VALUES.includes(status)) {
+    fail(`duplicate_variant_status "${status}" is outside the adopted vocabulary (${DUPLICATE_VARIANT_VALUES.join(' | ')})`);
+    return failures;
+  }
+  if (status === DUPLICATE_VARIANT_OPEN_VALUE) return failures;
+
+  const note = isObject(manifest.duplicate_variant_note) ? manifest.duplicate_variant_note : null;
+  if (note === null) {
+    fail(`duplicate_variant_status "${status}" requires duplicate_variant_note`);
+    return failures;
+  }
+  if (!hasFreshDriveReadbackReference(note) && !hasFollowUpAdjudication(note)) {
+    fail(`duplicate_variant_status "${status}" requires duplicate_variant_note citing a ${DUPLICATE_VARIANT_READBACK_MODE} readback (readback.ref + readback.verified_at_utc + readback.verified_by) or a structurally valid follow_up_adjudication block`);
+  }
+  return failures;
+}
+
+export function validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs = [] }) {
+  const failures = [];
+  for (const codexId of codexDirs) {
+    const manifest = readJson(repoRoot, `src/04_codex/${codexId}/manifest.json`, failures);
+    if (manifest) failures.push(...validateDuplicateVariantGovernance(manifest, codexId));
+  }
+  return failures;
+}
+
 function validateAcceptedParityComparisons(sourceId, parity, failures) {
   const comps = parity?.comparisons ?? {};
   const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
@@ -252,6 +346,8 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     const authority = readJson(repoRoot, `${base}/authority/authority.json`, failures);
     const driveReadback = readJson(repoRoot, `${base}/evidence/source/drive-authority-readback.json`, failures);
     if (!manifest || !authority || !driveReadback) continue;
+
+    failures.push(...validateDuplicateVariantGovernance(manifest, sourceId));
 
     const { mode: authorityMode, agreement: authorityModeAgreement } = resolveAuthorityMode(manifest, authority);
     if (!authorityModeAgreement) {

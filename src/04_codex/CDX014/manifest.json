@@ -92,6 +92,14 @@
     "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
     "closing_step": "step 1 — single candidate",
     "closing_step_basis": "CENTRAL's ruling: step 1 of §2.3 fails — exactly one candidate object can serve as the executable authority, so Question A closes with no duplicate candidate. The 12_러브트리_리빙미디어스피어_인터랙티브대문_V1 → 12-1_… sibling folder rename is a path-context fact (§2.4), not a Question-A fact: a folder rename changes no file id and no byte.",
+    "follow_up_adjudication": {
+      "at_utc": "2026-09-06",
+      "by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+      "basis": "CDX014 has no evidence/source/drive-authority-readback.json artifact; its authority record is authority-context.json, which was computed from the accepted S2 read-only mirror (generated_at_utc 2026-09-05T21:15:00Z, sample-verified 6/6 during S2). The step-1 ruling rests on the family-folder enumeration recorded there, not on a CENTRAL_FRESH_DRIVE_READBACK. The byte-identical development twin 05_개발본.html (1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost, 19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361) is retained as evidence in candidate_table under disposition BYTE_IDENTICAL_REFERENCE_ONLY and is not counted in the step-1 basis above; whether it counts is CENTRAL's call, not this edit's.",
+      "finding": "CDX014 closes at step 1 of §2.3 with PATH_CONTEXT_VARIANT_ONLY. Because the cited authority record is authority-context.json rather than a CENTRAL_FRESH_DRIVE_READBACK readback, this block is the note's evidence basis for rule §7 check (b). The gate verifies this block's shape only — at_utc / by / basis / finding non-empty strings — and does not re-adjudicate its content.",
+      "basis_ref": "authority-context.json",
+      "supersedes": null
+    },
     "authority_reverification": {
       "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
       "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
