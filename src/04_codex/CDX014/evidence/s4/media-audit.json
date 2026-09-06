@@ -1,0 +1,29 @@
+{
+  "pins_total": 178,
+  "per_surface": {
+    "original": {
+      "url_shape": "http://127.0.0.1:8431/12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1/12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/...",
+      "document_path": "/original/original.html",
+      "resolved_200": 178,
+      "hash_matched": 178,
+      "failed": [],
+      "failed_count": 0
+    },
+    "split": {
+      "url_shape": "http://127.0.0.1:8441/12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1/12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/...",
+      "document_path": "/split/index.html",
+      "resolved_200": 178,
+      "hash_matched": 178,
+      "failed": [],
+      "failed_count": 0
+    }
+  },
+  "all_pins_resolved_on_both_surfaces": true,
+  "http_404_total": 0,
+  "url_rewrites_applied": 0,
+  "pin_manifest": {
+    "count": 178,
+    "total_bytes": 1947644779,
+    "sha256_of_entry_set": "311067307f6ec8cc76e5e00a48f560f4708b72193a18002874eeece17b77faf4"
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX014",
+  "source_id": "CDX014",
+  "identity_key_note": "CDX capsules carry codex_id as their canonical identity key (namespaces.json codex_rule). source_id is retained so the shared validateSourceCapsules parity reader resolves the identity if this artifact is ever re-read through the Source path. No CDX identity is converted into a Source identity.",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_DIRECT_S4_PARITY_ARTIFACT_REVIEW_PLUS_CONTEXT_AWARE_A_B_REPLAY",
+  "tier": "STRUCTURAL_PARITY_DETERMINISM_ENVELOPE",
+  "tier_authority": "skerishKang/lovetree-limone#589 comment 5557368158 (CENTRAL): PASS, adopting the LOCAL-3 proposed tier class STRUCTURAL_PARITY_DETERMINISM_ENVELOPE together with its definition, and accepting the capture-head provenance correction (6ab3b9ec + reflog backfill to 6b651f93).",
+  "tier_definition": "Structural parity may be claimed where every non-screenshot channel is exactly EQUAL and the settled cross-surface pixel delta lies at or inside the envelope established by the surface's own run-to-run control, with every residual pixel attributable to a measured non-zero rotation-phase difference.",
+  "tier_mechanical_mapping": {
+    "comparisons_screenshots": "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD",
+    "reason": "The adopted tier name has no class in the validator's screenshot vocabulary (validateAcceptedParityComparisons admits only BYTE_IDENTICAL, BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST, CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD). Per CENTRAL's 'schema name takes priority' instruction the mechanical field carries the validator value and the adopted tier name is recorded alongside it in tier / tier_authority with the envelope proof. This is not a downgrade: CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD is the strictest of the three, requiring both a bounded canonical Hamming max and direct CENTRAL artifact review.",
+    "validator": "src/08_harness/source-capsule-validator.mjs validateAcceptedParityComparisons (line 50)"
+  },
+  "central_acceptance_comment": 5557368158,
+  "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+  "pull_request": 639,
+  "source_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+  "capture_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+  "acceptance_branch_head": "526f14893dae870fd709286e5a3135384f11c044",
+  "acceptance_branch_head_note": "The merge-forward of origin/main 5acea89d3cd1a7092e73a4792885ab048804e46d immediately preceding this promotion commit (docs/design-intake duplicate-variant rule, #640, one file, zero conflicts, zero files under src/04_codex/CDX014/**). Verified with git ls-remote origin main immediately before the merge.",
+  "evidence_binding": "CONTEXT_AWARE_STANDALONE_HARNESS_RECORD_PLUS_CENTRAL_DIRECT_ZIP_REVIEW",
+  "authority": {
+    "file": "최종본.html",
+    "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+    "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+    "revision": "V1",
+    "status": "LOCKED",
+    "source_path": "[[지피티 작업]]/[01_러브트리]/코덱스/14_러브트리_로테이팅메모리인덱스_V1/v1/최종본.html"
+  },
+  "split": {
+    "index_sha256": "5220ec3865c9237d202e6dc444004fc278a8eced63e2f9e2bc97a7b5424463e7",
+    "styles_sha256": "9bde0d62485afc5faf9501dd72fd095dc4b44b1fb52c76c6766adb886cf56d51",
+    "script_sha256": "b72c8283578c231fb23583099de2630640cefaceccf8b0ea693eb2dca31e6461"
+  },
+  "context": {
+    "capture_surface": "CONTEXT_AWARE_ONLY",
+    "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
+    "required_serving": "AUTHORING_TIME_SIBLING_LAYOUT",
+    "serving": "Both surfaces served from two isolated virtual roots materialized from one serving root at D:\\Temp\\cdx014-s4-serving, each a faithful instance of the authoring-time sibling layout carrying only its own surface, both junctioning the same pin-verified media host. No URL rewriting.",
+    "repository_path_runtime_equivalent": false,
+    "shared_harness_disposition": "SKIP / CONTEXT_AWARE_SURFACE_ONLY for capture-source-baseline.mjs and capture-source-parity.mjs. The disposition is unchanged and still valid; the S4 evidence was produced by the standalone context-aware harness src/04_codex/CDX014/tests/s4-context-parity.test.mjs, which is the only executor of the parity claim for this capsule.",
+    "media_prefix": "../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/",
+    "url_rewrites_applied": 0,
+    "media": {
+      "entries_pinned": 178,
+      "total_bytes": 1947644779,
+      "pin_method": "S2_MIRROR_BYTE_EXACT",
+      "pin_manifest_sha256_of_entry_set": "311067307f6ec8cc76e5e00a48f560f4708b72193a18002874eeece17b77faf4",
+      "original_surface": { "resolved_200": 178, "hash_matched": 178, "failed_count": 0 },
+      "split_surface": { "resolved_200": 178, "hash_matched": 178, "failed_count": 0 },
+      "http_404_total": 0,
+      "vendored_into_capsule": false
+    }
+  },
+  "viewports": [
+    { "width": 1440, "height": 900, "class": "desktop", "states": ["INITIAL", "INDEX_DRAWER_OPEN", "VIEWER_OPEN", "PAUSED"] },
+    { "width": 430, "height": 932, "class": "mobile", "states": ["INITIAL", "INDEX_DRAWER_OPEN", "VIEWER_OPEN", "PAUSED"] },
+    { "width": 390, "height": 844, "class": "mobile", "states": ["INITIAL", "INDEX_DRAWER_OPEN", "VIEWER_OPEN", "PAUSED"] }
+  ],
+  "state_count": 12,
+  "pair_count": 12,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "media_identity": "EQUAL",
+    "screenshots": "CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD",
+    "canonical_pixel_hamming_max": 22,
+    "canonical_pixel_threshold": 32,
+    "frozen_defect_d1": "PRESERVED_IDENTICALLY"
+  },
+  "comparison_policy": {
+    "aggregate_tier": "STRUCTURAL_PARITY_DETERMINISM_ENVELOPE",
+    "canonical16_used": true,
+    "canonical16_scope": "ALL_12_SETTLED_PAIRS",
+    "canonical16_technique": {
+      "name": "SRC060_CANONICAL16",
+      "downsample": "16x16",
+      "image_smoothing": "high",
+      "rgb_channel_mask": "0xF0",
+      "alpha": "unchanged",
+      "buffer_bytes": 256,
+      "digest": "sha256 of the 256-byte result; equality is exact, a normalization not a tolerance",
+      "provenance": "src/08_harness/source060-driver.mjs canonicalPixelDigest, adopted by SRC069 S4 and by this capsule's standalone harness"
+    },
+    "hamming_units": "bytes of the 256-byte canonical digest buffer (SRC066 'canonical Hamming of N bytes' reading). The equivalent bit count is recorded per pair below and is 37 bits at the maximum pair.",
+    "canonical16_result": {
+      "pairs_identical": 5,
+      "pairs_compared": 12,
+      "max_hamming_bytes": 22,
+      "max_hamming_bits": 37,
+      "digest_bytes": 256,
+      "threshold_bytes": 32
+    },
+    "raw_png_byte_identical": {
+      "pairs_identical": 0,
+      "pairs_compared": 12,
+      "note": "Unachievable for this surface class by construction. An rAF-written inline transform is live on every panel at every captured frame, so two halted runs cannot produce identical bytes. The original fails the same test against its own repeat, also 0/12."
+    },
+    "decision_capture": "SETTLED_FRAME_VIA_SOURCE_NATIVE_PAUSE_CONTROL: click #pause iff its label is Ⅱ (auto-rotation on), then poll the panel rotateY until 3 consecutive samples agree within 0.005deg (130ms polls, 5000ms ceiling), then capture. The identical sequence and the identical waits are applied to both surfaces — a normalization, not a tolerance.",
+    "screenshot_pixel_tolerance": "REMOVED (the full-frame RGBA delta is retained only as a recording instrument; it never decides equality)",
+    "global_visual_tolerance": false
+  },
+  "determinism_envelope_proof": {
+    "purpose": "The Source auto-rotates the sculpture every rAF frame and the decision capture halts that rotation with the Source's own #pause control, which freezes whatever phase is current. Two settled runs of the SAME surface therefore land at different phases, and at the sculpture's silhouette edges a fraction of a degree moves a whole panel edge by a sub-pixel amount and changes its anti-aliasing blend along its entire length. A cross-surface delta is only meaningful relative to the surface's own repeat-to-repeat noise floor, so a third settled run of the original was captured per (viewport, state) and recorded alongside the cross-surface pair.",
+    "control_design": "ORIGINAL vs its own THIRD settled run at the same viewport and state",
+    "result": "Every cross-surface quantity lies at or inside the control envelope",
+    "table": {
+      "differing_pixels_outside_video_mask": { "cross_surface_max": 32097, "control_max": 33766 },
+      "rotation_phase_delta_deg_at_capture": { "cross_surface_max": 0.48, "control_max": 0.52 },
+      "canonical16_equal": { "cross_surface": "5/12", "control": "5/12" },
+      "raw_png_byte_identical": { "cross_surface": "0/12", "control": "0/12" }
+    },
+    "video_mask": "One mask set — the union of every <video> rectangle observed on all three runs — applied identically to every frame compared",
+    "attribution": {
+      "metric": "A cross-surface delta counts as explained only if a non-zero rotation-phase difference was actually measured in that state; a delta with no phase difference to attribute it to fails the channel",
+      "states_attributed": 12,
+      "states_compared": 12,
+      "holds": true
+    },
+    "pixels_per_degree": {
+      "observed_max": 85695,
+      "bound": 88029,
+      "pooled_cross_surface": 34564,
+      "pooled_control": 37470,
+      "authority": "INSTRUMENT ONLY, NOT A THRESHOLD. It is a ratio of two noisy single-sample quantities (a delta of a few thousand pixels over a phase difference of 0.02-0.48deg) and its run-to-run maximum is dominated by whichever state happened to have the smallest phase difference. In one earlier run of the same evidence the cross maximum exceeded the control maximum, in another it did not. Recorded in screenshots.policy.run_to_run_control.caution as non-authoritative."
+    },
+    "rejected_alternative": {
+      "protocol": "Freeze window.requestAnimationFrame / cancelAnimationFrame from page load via addInitScript",
+      "observed": "11 of 12 states produced byte-identical PNGs, but the page is degenerate: all 7 panels stacked at one rectangle [577,213,285,455], transform 'none', opacity 1, 0 posters loaded, 22% of pixels different from the live render",
+      "rejection_reason": "It would compare a degenerate page and would destroy the D1-preservation claim, which depends on the rotation actually running"
+    },
+    "viewer_open_exact_match": "In all three VIEWER_OPEN states 0 pixels differ outside the video mask — the sculpture silhouette matches exactly and the canonical digest is byte-identical (matching sha256, Hamming 0). The residual 465 / 78 / 64 differing pixels sits entirely inside the video mask and is video decode frame choice: the two pages pick a different frame of the same byte-identical mp4, present in the original against its own repeat as well (control 0 / 55 / 10 px)."
+  },
+  "pair_table": [
+    { "viewport": "1440x900", "state": "INITIAL", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 1, "canonical_hamming_bytes": 1, "sha256_original": "62434f14b0d6", "sha256_split": "17d29df11ecd", "diff_pixels": 75057, "outside_video_mask": 14600, "inside_video_mask": 60457, "max_channel_delta": 128, "diff_bbox": "x400-1065 y166-766", "original_deg": -5.05, "split_deg": -5.24, "phase_delta_deg": 0.19, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.54, "control_phase_delta_deg": 0.49, "control_diff_pixels": 115993, "control_outside_video_mask": 33766 },
+    { "viewport": "1440x900", "state": "INDEX_DRAWER_OPEN", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 37, "canonical_hamming_bytes": 22, "sha256_original": "b7cd61972109", "sha256_split": "cc1a66af298d", "diff_pixels": 123494, "outside_video_mask": 32097, "inside_video_mask": 91397, "max_channel_delta": 220, "diff_bbox": "x400-1066 y166-766", "original_deg": -5.09, "split_deg": -5.55, "phase_delta_deg": 0.46, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.34, "control_phase_delta_deg": 0.25, "control_diff_pixels": 96596, "control_outside_video_mask": 18101 },
+    { "viewport": "1440x900", "state": "VIEWER_OPEN", "raw_byte_identical": false, "canonical16_equal": true, "canonical_hamming_bits": 0, "canonical_hamming_bytes": 0, "sha256_original": "b8abce0ec44d", "sha256_split": "b8abce0ec44d", "diff_pixels": 465, "outside_video_mask": 0, "inside_video_mask": 465, "max_channel_delta": 200, "diff_bbox": "x142-1045 y432-879", "original_deg": -5.37, "split_deg": -5.41, "phase_delta_deg": 0.04, "attributed_to_phase": true, "control_canonical_equal": true, "control_deg": -5.45, "control_phase_delta_deg": 0.08, "control_diff_pixels": 0, "control_outside_video_mask": 0 },
+    { "viewport": "1440x900", "state": "PAUSED", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 4, "canonical_hamming_bytes": 2, "sha256_original": "17d29df11ecd", "sha256_split": "f931af1556d2", "diff_pixels": 81064, "outside_video_mask": 17139, "inside_video_mask": 63925, "max_channel_delta": 193, "diff_bbox": "x400-1066 y166-766", "original_deg": -5.23, "split_deg": -5.43, "phase_delta_deg": 0.2, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.4, "control_phase_delta_deg": 0.17, "control_diff_pixels": 77020, "control_outside_video_mask": 14965 },
+    { "viewport": "430x932", "state": "INITIAL", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 7, "canonical_hamming_bytes": 2, "sha256_original": "e18a0a3fb3ab", "sha256_split": "da56a7b96631", "diff_pixels": 28188, "outside_video_mask": 4720, "inside_video_mask": 23468, "max_channel_delta": 198, "diff_bbox": "x1-429 y252-711", "original_deg": -5.41, "split_deg": -5.29, "phase_delta_deg": 0.12, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.3, "control_phase_delta_deg": 0.11, "control_diff_pixels": 26863, "control_outside_video_mask": 4480 },
+    { "viewport": "430x932", "state": "INDEX_DRAWER_OPEN", "raw_byte_identical": false, "canonical16_equal": true, "canonical_hamming_bits": 0, "canonical_hamming_bytes": 0, "sha256_original": "42e49c2af629", "sha256_split": "42e49c2af629", "diff_pixels": 11700, "outside_video_mask": 4635, "inside_video_mask": 7065, "max_channel_delta": 35, "diff_bbox": "x0-429 y269-712", "original_deg": -5.42, "split_deg": -5.71, "phase_delta_deg": 0.29, "attributed_to_phase": true, "control_canonical_equal": true, "control_deg": -5.42, "control_phase_delta_deg": 0, "control_diff_pixels": 0, "control_outside_video_mask": 0 },
+    { "viewport": "430x932", "state": "VIEWER_OPEN", "raw_byte_identical": false, "canonical16_equal": true, "canonical_hamming_bits": 0, "canonical_hamming_bytes": 0, "sha256_original": "2c85f1071ada", "sha256_split": "2c85f1071ada", "diff_pixels": 78, "outside_video_mask": 0, "inside_video_mask": 78, "max_channel_delta": 196, "diff_bbox": "x55-400 y459-911", "original_deg": -5.4, "split_deg": -5.55, "phase_delta_deg": 0.15, "attributed_to_phase": true, "control_canonical_equal": true, "control_deg": -5.28, "control_phase_delta_deg": 0.12, "control_diff_pixels": 55, "control_outside_video_mask": 0 },
+    { "viewport": "430x932", "state": "PAUSED", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 13, "canonical_hamming_bytes": 5, "sha256_original": "7ee586ebbd7c", "sha256_split": "26e6b4650538", "diff_pixels": 45202, "outside_video_mask": 11919, "inside_video_mask": 33283, "max_channel_delta": 190, "diff_bbox": "x0-429 y251-712", "original_deg": -5.19, "split_deg": -5.54, "phase_delta_deg": 0.35, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.35, "control_phase_delta_deg": 0.16, "control_diff_pixels": 32590, "control_outside_video_mask": 6279 },
+    { "viewport": "390x844", "state": "INITIAL", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 17, "canonical_hamming_bytes": 8, "sha256_original": "463753548f0b", "sha256_split": "0a794bfe6a84", "diff_pixels": 39511, "outside_video_mask": 9155, "inside_video_mask": 30356, "max_channel_delta": 163, "diff_bbox": "x0-389 y208-669", "original_deg": -5.4, "split_deg": -5.66, "phase_delta_deg": 0.26, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.46, "control_phase_delta_deg": 0.06, "control_diff_pixels": 19906, "control_outside_video_mask": 3107 },
+    { "viewport": "390x844", "state": "INDEX_DRAWER_OPEN", "raw_byte_identical": false, "canonical16_equal": true, "canonical_hamming_bits": 0, "canonical_hamming_bytes": 0, "sha256_original": "53c97cd72807", "sha256_split": "53c97cd72807", "diff_pixels": 6892, "outside_video_mask": 6481, "inside_video_mask": 411, "max_channel_delta": 45, "diff_bbox": "x0-389 y230-644", "original_deg": -5.12, "split_deg": -5.52, "phase_delta_deg": 0.4, "attributed_to_phase": true, "control_canonical_equal": true, "control_deg": -5.54, "control_phase_delta_deg": 0.42, "control_diff_pixels": 7314, "control_outside_video_mask": 6900 },
+    { "viewport": "390x844", "state": "VIEWER_OPEN", "raw_byte_identical": false, "canonical16_equal": true, "canonical_hamming_bits": 0, "canonical_hamming_bytes": 0, "sha256_original": "0f09f3c0ae12", "sha256_split": "0f09f3c0ae12", "diff_pixels": 64, "outside_video_mask": 0, "inside_video_mask": 64, "max_channel_delta": 154, "diff_bbox": "x50-361 y415-823", "original_deg": -5.69, "split_deg": -5.21, "phase_delta_deg": 0.48, "attributed_to_phase": true, "control_canonical_equal": true, "control_deg": -5.17, "control_phase_delta_deg": 0.52, "control_diff_pixels": 10, "control_outside_video_mask": 0 },
+    { "viewport": "390x844", "state": "PAUSED", "raw_byte_identical": false, "canonical16_equal": false, "canonical_hamming_bits": 5, "canonical_hamming_bytes": 2, "sha256_original": "87cbf3b0686d", "sha256_split": "3194a845f183", "diff_pixels": 30050, "outside_video_mask": 5711, "inside_video_mask": 24339, "max_channel_delta": 199, "diff_bbox": "x0-389 y208-669", "original_deg": -5.43, "split_deg": -5.57, "phase_delta_deg": 0.14, "attributed_to_phase": true, "control_canonical_equal": false, "control_deg": -5.39, "control_phase_delta_deg": 0.04, "control_diff_pixels": 17362, "control_outside_video_mask": 3080 }
+  ],
+  "frozen_defects_preserved": [
+    "D1_AUTO_ROTATION_NOT_GATED_ON_PREFERS_REDUCED_MOTION: PRESERVED_IDENTICALLY on both surfaces. Under prefers-reduced-motion: reduce over a 1500 ms window the original rotates (delta 9.69deg) and the split rotates (delta 9.91deg); both keep rotating. Recorded PRESERVED, never fixed. See evidence/s4/d1-reduced-motion.json."
+  ],
+  "frozen_defects_note": "Parity is an equality target, never a repair target: no source repair, redesign, framework conversion, product data injection or QA hook was introduced. qa_hooks_added 0, source_bytes_changed 0.",
+  "browser_errors": 0,
+  "console_errors": 0,
+  "unexpected_failed_requests": 0,
+  "failed_responses": 0,
+  "required_network_errors": 0,
+  "remote_requests": 0,
+  "external_requests": 0,
+  "browser": {
+    "automation": "Playwright 1.55.1",
+    "channel": "chrome (branded Google Chrome)",
+    "version": "152.0.7977.76",
+    "headless": true,
+    "launch_args": ["--autoplay-policy=no-user-gesture-required", "--mute-audio"]
+  },
+  "contract_mode": {
+    "checks_passed": 25,
+    "checks_total": 25,
+    "verdict": "CONTRACT_PASS",
+    "record": "src/04_codex/CDX014/evidence/s4/contract.json",
+    "checks_added_by_promotion": [
+      "C17b the accepted record pins the capture head and matches the comparison record's head",
+      "C19c the manifest is promoted exactly as the validator requires for a CONTEXT_AWARE_ONLY capsule"
+    ]
+  },
+  "candidate_exact_head_ci": {
+    "head": "72e2cfdab47b81dcbaaa79ae8a8e2b531d0a6f4c",
+    "conclusion": "SUCCESS",
+    "workflows": [
+      "SRC 108 Reimplementation Harness Gate",
+      "A-track P0 validation",
+      "NEW Old Repair Promotion Guard",
+      "Design Source Freshness Observer",
+      "Design Fidelity Validation",
+      "CLEAN-108 SRC047 MEDIA/VIEWER Replay",
+      "CLEAN-108 SRC062 LARGE_INLINE Replay",
+      "CLEAN-108 SRC068 DUAL_VARIANT Replay"
+    ]
+  },
+  "drive_evidence": {
+    "remote": "gdrive:",
+    "folder": "LoveTree_Evidence",
+    "zip": "CDX014_S4_PARITY_CANDIDATE_a649d9bd.zip",
+    "bytes": 4218224,
+    "sha256": "3a6b88f9b6bc664f20adea1e8f29755feef8bc3336e104984b34d73ef44678da",
+    "content_count": 14,
+    "content_total_bytes": 4513131,
+    "contents": "evidence/s4/{comparison,media-audit,d1-reduced-motion,contract}.json, evidence/s4/screenshots/ (8 settled PNGs, 1440x900 x 4 states x 2 surfaces), evidence/parity/s4-candidate-parity.json, tests/s4-context-parity.test.mjs",
+    "hash_verified": true,
+    "readback": "sha256 3a6b88f9b6bc664f20adea1e8f29755feef8bc3336e104984b34d73ef44678da on the 4218224-byte re-download: MATCH (byte length and digest identical on both sides)",
+    "verification_method": "rclone copyto upload, then rclone copyto download to a local read-back path and SHA-256 both files with Windows Get-FileHash",
+    "file_id": "NOT CAPTURED: the installed rclone v1.75.0 build does not implement `rclone sha256sum` and rejects `rclone stat` / `rclone lsf --json`, so no Drive file id was recorded; identity is established by name, size and hash read-back",
+    "bundle_immutable": true,
+    "record": "src/04_codex/CDX014/evidence/s4/drive-handoff.json"
+  },
+  "visual_review": {
+    "central_direct_review": true,
+    "central_direct_artifact_review": true,
+    "central_acceptance_comment": 5557368158,
+    "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+    "all_12_original_split_pairs_reviewed": true,
+    "layout_or_visual_drift": false,
+    "product_or_redesign_change": false,
+    "source_native_observation": "The split renders the identical rotating memory index: css3d rotating memory index with the same chrome, index drawer, viewer open/close and pause toggle, the same 178 pinned media resolved byte-exact, and the same frozen D1 behaviour under prefers-reduced-motion: reduce. The only structural difference is the mechanical glue (one inline style block and one inline script block replaced by one stylesheet link and one script src)."
+  },
+  "capture_head_provenance": {
+    "capture_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "captured_at_utc": "2026-09-06T03:58:33.310Z",
+    "correction": "Both evidence records originally carried repository_head: null because the harness read an unset GIT_HEAD environment variable. Commit 6ab3b9ec derives the head from `git rev-parse HEAD` (an explicit GIT_HEAD override still wins) and adds C21, which fails closed unless both evidence records carry a matching 40-hex head. The two records were backfilled with 6b651f93, confirmed by the git reflog: HEAD sat at 6b651f93 from 2026-09-06 02:43:52 until the 14:06:17 evidence commit, and the evidence was generated at 03:58:33, so 6b651f93 is the capsule state the run actually exercised.",
+    "accepted_by_central": true,
+    "authority": "skerishKang/lovetree-limone#589 comment 5557368158"
+  },
+  "notes": [
+    "Evidence was captured at exact head 6b651f93295f53a01d2f75b5b9b874aa0fe26b58 and accepted by CENTRAL direct artifact review, issue #589 comment 5557368158. The accepted Drive bundle is immutable and was not rewritten by this metadata promotion.",
+    "Seven of eight compared dimensions are exactly EQUAL: dom, geometry, computed_style (excluding the rAF-written transform triplet, which is reported per state as an instrument and has hard_difference_count 0), runtime_state, interactions, media_identity, and frozen_defect_d1 as PRESERVED_IDENTICALLY.",
+    "All 178 media entries resolve with status 200 and hash_matched on BOTH surfaces, http_404_total 0, url_rewrites_applied 0, remote_requests 0, external_requests 0, browser errors 0, console errors 0, failed responses 0, unexpected request failures 0.",
+    "The screenshot channel did not reach raw byte identity and is accepted under the adopted STRUCTURAL_PARITY_DETERMINISM_ENVELOPE tier: the settled cross-surface delta lies at or inside the original's own repeat-to-repeat envelope (outside-mask 32,097 vs 33,766; phase 0.48deg vs 0.52deg; canonical16 equal 5/12 vs 5/12; raw PNG 0/12 vs 0/12), and every residual pixel is attributed to a measured non-zero rotation-phase difference in 12 of 12 states.",
+    "Raw PNG byte identity is unreachable for this surface class by construction: halting the continuous auto-rotation with the Source's own #pause control freezes whatever phase is current, so no 'identical between two runs' tier can be defined when the halt protocol samples its own animation clock. The original fails the same test against itself. Freezing requestAnimationFrame from page load was tested and rejected as degenerate.",
+    "Manifest promotion was performed as the CENTRAL acceptance act: stages.source_split_parity_pass set to true and parity_ref set to evidence/parity/accepted-parity.json (the literal path the validator requires for a CONTEXT_AWARE_ONLY capsule), with split/materialization.json status advanced MATERIALIZED_PENDING_PARITY -> ACCEPTED.",
+    "capture_surface.shared_harness_disposition stays SKIP / CONTEXT_AWARE_SURFACE_ONLY. The reason CDX014 cannot be served through the shared harness (authoring-time sibling layout) is invariant; only the explanatory note now records that the S4 evidence was produced by the standalone context-aware harness.",
+    "duplicate_variant_status remains UNRESOLVED and the 'Drive-rename variant' wording is NOT changed by this promotion. The duplicate-variant corpus rule (docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md, #640) is the next-stage adjudication, not this one.",
+    "Runtime bytes (original/original.html, split/index.html, split/styles.css, split/script.js) and authority-context.json were NOT modified by this promotion. No source repair, redesign, framework conversion, product-data injection or QA hook was introduced, and the shared harness was not mutated.",
+    "Local lint was not run: the worktree's only node_modules is a junction to the Playwright-only install needed for the browser run and eslint is absent. CI lint at exact head covers it.",
+    "Coverage boundary: the S4 harness captures CDX014 only. Once source_split_parity_pass is flipped the shared parity gate skips this capsule, so exact-head parity re-proof would require flipping the flag back first. Same trade-off as SRC066 (#637)."
+  ],
+  "provenance": {
+    "evidence_source_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "harness_release_commits": {
+      "s4_harness_and_candidate": "a76f83d5",
+      "capture_head_provenance_and_c21": "6ab3b9ec",
+      "drive_handoff_record": "72e2cfda"
+    },
+    "serving_root": "D:\\Temp\\cdx014-s4-serving",
+    "out_dir": "D:\\Temp\\cdx014-s4-out6",
+    "candidate_evidence": "src/04_codex/CDX014/evidence/s4/ (comparison.json compact projection, media-audit.json, d1-reduced-motion.json, contract.json, drive-handoff.json, screenshots/)",
+    "candidate_record": "src/04_codex/CDX014/evidence/parity/s4-candidate-parity.json",
+    "final_metadata_commit_head": "NOT EMBEDDED / external CI authority"
+  }
+}

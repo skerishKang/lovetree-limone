@@ -23,7 +23,7 @@
   "authority_context_note": "CDX014 is path-context-sensitive (SRC069-class, Drive-rename variant). Its runtime media prefix ../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/ refers to the AUTHORING-TIME sibling name; the live Drive sibling was renamed to 12-1_… on 2026-08-17. Serving original/original.html or split/index.html alone from the repository path is NOT runtime-equivalent (all 178 media would 404). Context-aware serving must reproduce the authoring-time sibling layout (junction/alias 12_… → 12-1 assets) with ZERO URL rewrites. authority-context.json records the rename fact, the fixture folder IDs, the serving contract, and all 178 media entries pinned (path/bytes/SHA256). No media byte is vendored into this capsule.",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
-  "parity_ref": null,
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "capture_surface": {
     "mode": "CONTEXT_AWARE_ONLY",
     "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
@@ -40,16 +40,18 @@
     "shared_harness_disposition": {
       "capture-source-baseline.mjs": "SKIP",
       "capture-source-parity.mjs": "SKIP",
-      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "s4_evidence_executor": "src/04_codex/CDX014/tests/s4-context-parity.test.mjs",
+      "disposition_note": "The SKIP is still valid and unchanged: CDX014's repository path is not a runtime surface, so neither shared single-executable harness can serve it. The S4 parity evidence was produced by the standalone context-aware harness named above, which reproduces the authoring-time sibling layout with zero URL rewrites. Accepted at evidence/parity/accepted-parity.json under tier STRUCTURAL_PARITY_DETERMINISM_ENVELOPE (issue #589 comment 5557368158)."
     },
-    "note": "Neither src/04_codex/CDX014/original/original.html nor split/index.html is a valid standalone runtime surface at its repository path. The authority's own ../12_…/assets/ media prefix resolves only from the authoring-time sibling layout recorded in authority-context.json. The shared single-executable baseline and parity harnesses therefore fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule instead of producing a green-but-wrong artifact or attempting a parity promotion the Source cannot support."
+    "note": "Neither src/04_codex/CDX014/original/original.html nor split/index.html is a valid standalone runtime surface at its repository path. The authority's own ../12_…/assets/ media prefix resolves only from the authoring-time sibling layout recorded in authority-context.json. The shared single-executable baseline and parity harnesses therefore fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule instead of producing a green-but-wrong artifact. The S4 parity claim was executed and accepted through the standalone context-aware harness at src/04_codex/CDX014/tests/s4-context-parity.test.mjs, with the record at evidence/parity/accepted-parity.json."
   },
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
