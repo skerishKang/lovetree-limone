@@ -23,17 +23,22 @@
  *  - T15 no product/MVP/adapter wiring in split runtime files
  *  - T16 media references preserved (data URIs + src/href inventory reconciled)
  *  - T17 materialization authority/output hashes match on-disk files + git blobs
- *  - T18 manifest stages: S3 complete, S4 parity NOT marked passed
- *  - T19 materialization status is MATERIALIZED_PENDING_PARITY
- *  - T20 parity_status is PENDING_EXACT_HEAD_CAPTURE
+ *  - T18 manifest stages: S3 complete, S4 parity accepted and referenced
+ *    (accepted-parity.json present, ACCEPTED, SRC062, source_head pinned to
+ *    the exact capture commit bound by the materialization parity evidence)
+ *  - T19 materialization status is ACCEPTED (S4 promoted)
+ *  - T20 parity_status is PASS (accepted by CENTRAL at #614)
  *
- * Writes evidence/s3/roundtrip.json as S3 run evidence.
- * S4 is NOT executed here; S4 remains HOLD.
+ * Writes S3 run evidence to an OS temp directory only; the committed
+ * evidence/s3/roundtrip.json record is never overwritten by a test run.
+ * S4 is NOT executed here; this file only reads the accepted parity record.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
+import { execFileSync } from "node:child_process";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const ORIGINAL = path.join(ROOT, "original", "original.html");
@@ -58,6 +63,10 @@ function ok(cond, id, detail) {
 }
 const sha256 = (buf) => crypto.createHash("sha256").update(buf).digest("hex");
 const gitBlobSha1 = (buf) => crypto.createHash("sha1").update(Buffer.concat([Buffer.from(`blob ${buf.length}\0`), buf])).digest("hex");
+function commitExists(sha) {
+  try { execFileSync("git", ["-C", ROOT, "cat-file", "-e", `${sha}^{commit}`], { stdio: "ignore" }); return true; }
+  catch { return false; }
+}
 const readBin = (p) => fs.readFileSync(p);
 const readTxt = (p) => fs.readFileSync(p, "utf8");
 const count = (text, needle) => text.split(needle).length - 1;
@@ -308,17 +317,21 @@ ok(
 ok(mat.generation === "MECHANICAL_INLINE_EXTRACTION", "T17d", "generation = MECHANICAL_INLINE_EXTRACTION");
 
 // ---- T18/T19/T20 stage flags -------------------------------------------------------
-console.log("\nStage flags (S4 remains HOLD):");
+console.log("\nStage flags (S4 accepted):");
 const manifest = JSON.parse(readTxt(path.join(ROOT, "manifest.json")));
 ok(manifest.stages.identity_verified === true && manifest.stages.raw_authority_locked === true && manifest.stages.baseline_captured === true, "T18a", "S0/S1/S2 stages complete");
 ok(manifest.stages.mechanical_split_complete === true, "T18b", "mechanical_split_complete=true");
-ok(manifest.stages.source_split_parity_pass === false, "T18c", "source_split_parity_pass=false (S4 parity NOT accepted)");
+ok(manifest.stages.source_split_parity_pass === true, "T18c", "source_split_parity_pass=true (S4 parity accepted by CENTRAL)");
 ok(manifest.mechanical_split_ref === "split/materialization.json", "T18d", 'mechanical_split_ref="split/materialization.json"');
 ok(manifest.runtime_policy === "HTML_CSS_JS_MECHANICAL_ONLY" && manifest.tsx_allowed_during_split === false, "T18e", "runtime policy unchanged (TSX forbidden)");
-ok(!fs.existsSync(path.join(ROOT, "evidence", "parity", "accepted-parity.json")), "T18f", "no S4 parity acceptance evidence created at S3");
+const acceptedParityPath = path.join(ROOT, "evidence", "parity", "accepted-parity.json");
+ok(fs.existsSync(acceptedParityPath), "T18f", "S4 parity acceptance evidence present at evidence/parity/accepted-parity.json");
+const acceptedParity = JSON.parse(readTxt(acceptedParityPath));
+ok(acceptedParity.status === "ACCEPTED" && acceptedParity.source_id === "SRC062" && acceptedParity.authority?.sha256 === LOCK_SHA256 && acceptedParity.authority?.bytes === LOCK_BYTES, "T18f2", "accepted parity record parses, is ACCEPTED for SRC062, and its authority agrees with the frozen original");
+ok(/^[0-9a-f]{40}$/.test(acceptedParity.source_head) && mat.parity_evidence?.exact_head === acceptedParity.source_head && commitExists(acceptedParity.source_head), "T18f3", `accepted source_head ${acceptedParity.source_head} equals the materialization parity_evidence exact head and is a commit in this repository`);
 ok(!fs.existsSync(path.join(ROOT, "parity")), "T18g", "no parity/ capture directory created at S3");
-ok(mat.status === "MATERIALIZED_PENDING_PARITY", "T19", "materialization status = MATERIALIZED_PENDING_PARITY");
-ok(mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE", "T20", "parity_status = PENDING_EXACT_HEAD_CAPTURE");
+ok(mat.status === "ACCEPTED", "T19", "materialization status = ACCEPTED");
+ok(mat.parity_status === "PASS", "T20", "parity_status = PASS");
 const base = JSON.parse(readTxt(path.join(ROOT, "baseline", "accepted-baseline.json")));
 ok(base.status === "ACCEPTED" && base.source_id === "SRC062" && base.authority?.sha256 === LOCK_SHA256 && base.authority?.bytes === LOCK_BYTES, "T20b", "accepted S2 baseline authority agrees with frozen original");
 
@@ -334,14 +347,19 @@ const report = {
   boundaries: mat.boundaries,
   outputs: mat.outputs,
   s4_executed: false,
-  s4_status: "HOLD",
+  s4_status: "ACCEPTED",
+  s4_status_note: "This file does not execute S4; it only reads the accepted parity record (evidence/parity/accepted-parity.json, CENTRAL-accepted at #614).",
   passed,
   failed,
   checks,
 };
-const outDir = path.join(ROOT, "evidence", "s3");
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+// Run evidence is written to a throwaway OS temp directory so that executing
+// this test never dirties the work tree or overwrites the committed capsule
+// record evidence/s3/roundtrip.json (defect fixed; same rule as the post-#637
+// SRC066 and post-#639 CDX014 rebinds).
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "src062-s3-roundtrip-"));
+fs.writeFileSync(path.join(tmpDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+console.log(`Run evidence (temp, not committed): ${path.join(tmpDir, "roundtrip.json")}`);
 
 console.log(`\n=== Results: ${passed} passed, ${failed} failed ===\n`);
 process.exit(failed > 0 ? 1 : 0);
