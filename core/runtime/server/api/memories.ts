@@ -29,10 +29,15 @@ import {
   serializeMemoryContract,
   validateMemoryDateCompatibility,
 } from "./memory-contract";
+import {
+  runSerializedParentMutation,
+  supportsSerializedParentMutation,
+} from "./memory-parent-integrity";
 
 const SORT_ORDER_MAX_RETRIES = 16;
 const SORT_ORDER_RETRY_BASE_DELAY_MS = 10;
 const SORT_ORDER_RETRY_MAX_DELAY_MS = 100;
+const PARENT_CYCLE_ERROR = "parentId must not create a cycle";
 
 function retryDelayMs(attempt: number): number {
   const exponential = Math.min(
@@ -131,6 +136,33 @@ function validateMemoryContent(body: Record<string, unknown>): string | null {
     return "title or memo is required";
   }
   return validateMemoryDateCompatibility(body);
+}
+
+function parentExistsInTree(parentId: string, treeId: string) {
+  return sql<boolean>`exists (
+    select 1
+    from ${memories} candidate_parent
+    where candidate_parent.id = ${parentId}
+      and candidate_parent.tree_id = ${treeId}
+  )`;
+}
+
+function parentChainExcludesMemory(memoryId: string, parentId: string, treeId: string) {
+  return sql<boolean>`not exists (
+    with recursive parent_chain(id, parent_id) as (
+      select candidate.id, candidate.parent_id
+      from ${memories} candidate
+      where candidate.id = ${parentId}
+        and candidate.tree_id = ${treeId}
+      union
+      select ancestor.id, ancestor.parent_id
+      from ${memories} ancestor
+      join parent_chain child on ancestor.id = child.parent_id
+      where ancestor.tree_id = ${treeId}
+         or ancestor.id = ${memoryId}
+    )
+    select 1 from parent_chain where id = ${memoryId}
+  )`;
 }
 
 async function findExistingByClientKey(
@@ -368,6 +400,9 @@ async function updateMemory(ctx: ApiContext): Promise<Response> {
     normalized.parentId !== undefined
       ? (normalized.parentId as string | null)
       : existing.parentId;
+  if (parentId === id) {
+    return validationError(PARENT_CYCLE_ERROR);
+  }
   if (!(await isParentInSameTree(ctx, targetTreeId, parentId))) {
     return validationError("parentId must reference a memory in the same tree");
   }
@@ -397,7 +432,44 @@ async function updateMemory(ctx: ApiContext): Promise<Response> {
     if (normalized[key] !== undefined) updates[key] = normalized[key];
   }
 
-  await ctx.db.update(memories).set(updates).where(eq(memories.id, id));
+  const relationshipMutation =
+    normalized.parentId !== undefined || normalized.treeId !== undefined;
+  if (relationshipMutation) {
+    if (!supportsSerializedParentMutation(ctx.db)) {
+      return errorResponse(
+        "Parent relationship update requires transactional database support",
+        503
+      );
+    }
+
+    const conditions = [eq(memories.id, id)];
+    if (parentId !== null) {
+      conditions.push(parentExistsInTree(parentId, targetTreeId));
+      conditions.push(parentChainExcludesMemory(id, parentId, targetTreeId));
+    }
+    const updateStatement = ctx.db
+      .update(memories)
+      .set(updates)
+      .where(and(...conditions))
+      .returning({ id: memories.id })
+      .toSQL();
+    const [writeRows] = await runSerializedParentMutation(
+      ctx.db,
+      [existing.treeId, targetTreeId],
+      [updateStatement]
+    );
+
+    if (!(writeRows as Record<string, unknown>[])[0]) {
+      if (parentId !== null && !(await isParentInSameTree(ctx, targetTreeId, parentId))) {
+        return validationError("parentId must reference a memory in the same tree");
+      }
+      if (parentId !== null) return validationError(PARENT_CYCLE_ERROR);
+      return errorResponse("Not found", 404);
+    }
+  } else {
+    await ctx.db.update(memories).set(updates).where(eq(memories.id, id));
+  }
+
   const updated = await ctx.db.select().from(memories).where(eq(memories.id, id));
   return json(serializeMemoryContract(updated[0]));
 }

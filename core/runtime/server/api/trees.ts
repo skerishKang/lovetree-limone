@@ -6,6 +6,7 @@ import { requireAuthUser } from "./auth";
 import {
   getOwnedTree,
   getReadableTree,
+  isParentInSameTree,
   isTreeOwner,
   resolveMemoryVisibility,
   VISIBILITY_PUBLIC,
@@ -490,6 +491,10 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
 
   const now = new Date();
   const treeId = await deterministicId(user.uid, "tree", parsed.value.clientKey as string);
+  const parentId = (normalizedMemory.parentId as string | null | undefined) ?? null;
+  if (!(await isParentInSameTree(ctx, treeId, parentId))) {
+    return validationError("parentId must reference a memory in the same tree");
+  }
   const memoryId = await deterministicId(user.uid, "tree", treeId, parsed.value.clientKey as string);
 
   const tree = {
