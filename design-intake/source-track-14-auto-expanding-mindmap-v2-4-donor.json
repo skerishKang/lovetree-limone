@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "issue": 488,
+  "parentIssue": 344,
+  "masterRow": 30,
+  "productJob": "PATH",
+  "productDisposition": "USE_AS_VISUAL_FUNCTION_DONOR",
+  "sourceAuthority": {
+    "semanticName": "Drive Track14 Auto-expanding Mindmap / Template Composer",
+    "folder": "14_자동전개마인드맵_템플릿컴포저",
+    "file": "01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html",
+    "driveFileId": "1HSYYqBTf6R4yyTBVHmnkZ_cb20aTWFEK",
+    "repositoryPath": "reference/source-tracks-snapshot/14_자동전개마인드맵_템플릿컴포저/01_자동전개마인드맵_현재채택_템플릿컴포저_v2-4.html",
+    "repositoryBlobSha": "26488eb6f4a56b3611b66456c156b487674a64d3",
+    "bytes": 87256,
+    "sha256": "c30d6e1ce861bffbeccbeaeab515a8d51fd4bf00704f7093f3b1aab505cc3d4c",
+    "embeddedVersion": "v2.4",
+    "embeddedBase": "v2.3",
+    "embeddedStatus": "design-review",
+    "issueAuthority": "Issue #488 identifies this exact V2.4 file as the current Track14 source."
+  },
+  "productBoundary": {
+    "canonicalAuthority": "existing useTreeMoments(treeId) -> canonical TreeMomentView parentId/connectionReason projection",
+    "existingPathBase": "current /trees/:treeId/graph plus Lineage53/CAP-14 path family",
+    "nativeRoute": "/trees/:treeId/graph/mindmap",
+    "newBackend": false,
+    "newPersistence": false,
+    "newDatabaseEntity": false,
+    "newApi": false,
+    "writesConnectionTruth": false,
+    "runtimeDemoFallback": false
+  },
+  "donorElements": [
+    "auto-expanding hierarchical mindmap composition",
+    "paper/cream spatial stage and premium node-card geometry",
+    "curved branch lines and WHY NEXT labels",
+    "selected-branch focus with unrelated-node dimming",
+    "presentation-only pan/zoom and layout composer",
+    "staged reveal progress and completion rhythm"
+  ],
+  "authorizedNativeDeltas": [
+    "source Basic/Person/Emotion/Season demo templates become Branch/Orbit/Journey/Timeline presentation-only layouts",
+    "source node/edge content editing is not copied because canonical Connection writes remain owned by existing product flows",
+    "source fixture entities are replaced by canonical Moments only",
+    "keyboard-visible focus and reduced-motion semantic parity are enforced",
+    "mobile reflow follows the source progressive vertical hierarchy without introducing new topology"
+  ],
+  "sourceTruthBoundary": {
+    "mustNotBecomeCanonical": [
+      "source sample branch identities",
+      "source template fixture counts",
+      "source Person/Emotion/Season pseudo-entity grouping",
+      "source local media/editor state",
+      "freshTemplate empty-slot labels",
+      "presentation layout choice",
+      "unfold progress",
+      "pan/zoom camera state"
+    ],
+    "connectionTruth": ["Moment.id", "Moment.parentId", "Moment.connectionReason"]
+  },
+  "visualFidelity": {
+    "requiredViewports": ["1280x800", "390x844", "320x720"],
+    "requiredStates": ["initial", "expanded", "selected-branch"],
+    "sourceNativeSideBySide": true,
+    "overlayRequested": true,
+    "humanVisualReviewRequired": true
+  },
+  "parallelSafety": {
+    "sharedRegistryTouched": false,
+    "sharedNavigationTouched": false,
+    "pr191Touched": false,
+    "forbiddenFiles": [
+      "scripts/design-fidelity-validation-inventory.mjs",
+      "design-intake/master-design-coverage.json",
+      "tests/master-design-coverage-contract.test.mjs"
+    ],
+    "centralRegistryHandoffRequired": true
+  }
+}
