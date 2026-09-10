@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "issue": 496,
+  "sourceGateIssue": 291,
+  "ownerDecisionIssue": 344,
+  "productJob": "MOMENT",
+  "productDisposition": "USE_AS_HIGH_VISUAL_MOMENT_DONOR",
+  "sourceSelection": "A+B_COMPOSITE_OWNER_QUEUED",
+  "sourceAuthority": {
+    "driveFolderId": "11wFgEktEN2oaQ3N2A-geQKp9HqxWn73H",
+    "candidateA": {
+      "filename": "선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html",
+      "driveId": "1M5ab-nid8efR1jY6kcID4LmRkXLoC1JC",
+      "bytes": 31282,
+      "sha256": "bbee4b839c73b9da95ea0b0f92e7ddb77447b669cdfa42d25678f374efe3b1c0",
+      "nativeRole": "navigation-and-editorial-structure-donor"
+    },
+    "candidateB": {
+      "filename": "선택2-70_V11_INSTANT_CANVAS_TRAIL_REVEAL_디자인팀장19기.html",
+      "embeddedExecutableVersion": "V20",
+      "driveId": "1qXH-hzYJqSYbMBwHWaTP7kBRckfVC6gC",
+      "bytes": 24536470,
+      "sha256": "4234b3104841ec5f63223d073e04ee39916fc4fc9993d0d9743ac9a21e7cc7a7",
+      "nativeRole": "zero-lag-reveal-and-linger-grammar-donor"
+    },
+    "ownerDecision": "Issue #344 queued both A and B on 2026-08-22; no single-winner selection is required. Issue #496 authorizes the bounded MOMENT implementation lane."
+  },
+  "canonicalBoundary": {
+    "momentModel": "lib/moment-model.ts::AlbumMomentView",
+    "runtimeProjection": "lib/use-tree-moments.ts::useTreeMoments",
+    "existingMomentSurface": "/trees/:treeId/album",
+    "nativeProofRoute": "/trees/:treeId/album/reveal",
+    "mediaRule": "The same canonical Moment thumbnail is reused for both aligned presentation layers. No second likeness/media record is invented. sourceUrl remains the original outbound media authority.",
+    "newBackend": false,
+    "newApi": false,
+    "newDatabase": false,
+    "newSchema": false,
+    "newPersistence": false
+  },
+  "highVisualElements": [
+    "future-editorial white-space staging",
+    "pointer trail reveal with linger",
+    "same-frame before/after alignment",
+    "strong veil-to-clean visual contrast",
+    "cinematic selected-Moment focus",
+    "editorial Moment selector rail"
+  ],
+  "interactionParity": {
+    "mouse": "hover/pointer trail reveal plus linger",
+    "touch": "tap toggles full reveal; drag paints the same reveal trail",
+    "keyboard": "Enter/Space toggles reveal; ArrowLeft/ArrowRight changes Moment; Escape clears reveal",
+    "reducedMotion": "pointer trail is disabled; explicit tap/keyboard reveal remains available without transition"
+  },
+  "provenanceBoundary": {
+    "sourcePairAssets": "REFERENCE_ONLY_NOT_PRODUCT_MEDIA",
+    "likenessHandling": "NO_IDENTITY_OR_SENSITIVE_ATTRIBUTE_INFERENCE",
+    "productMedia": "CANONICAL_MOMENT_MEDIA_ONLY"
+  },
+  "centralRegistryHandoffRequired": true
+}
