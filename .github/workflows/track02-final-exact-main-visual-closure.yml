@@ -1,0 +1,98 @@
+name: Track02 final exact-main visual closure
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/track02-final-exact-main-visual-closure.yml'
+      - 'qa/track02-final-exact-main-visual-closure.mjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  track02-final-closure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Source authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          src='reference/source-tracks-snapshot/02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html'
+          test "$(wc -c < "$src" | tr -d ' ')" = '111950'
+          echo '3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468  '"$src" | sha256sum -c -
+
+      - name: Build exact-main runtime
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install chromium
+
+      - name: Run focused legacy source-faithful contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/track02-next.log 2>&1 &
+          next_pid=$!
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/track02-source.log 2>&1 &
+          source_pid=$!
+          cleanup() {
+            kill "$next_pid" "$source_pid" 2>/dev/null || true
+            wait "$next_pid" 2>/dev/null || true
+            wait "$source_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          ready=0
+          for attempt in {1..90}; do
+            if curl --fail --silent 'http://127.0.0.1:3000/v4/journey?legacy=1' >/dev/null && curl --fail --silent 'http://127.0.0.1:4173/reference/source-tracks-snapshot/02_%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9-3%EA%B0%9Chtml%ED%95%A9%EB%B3%B8/02_%EB%9F%AC%EB%B8%8C%ED%8A%B8%EB%A6%AC_%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9_v1.html' >/dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$next_pid" 2>/dev/null; then
+              cat /tmp/track02-next.log
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/track02-next.log
+            cat /tmp/track02-source.log
+            exit 1
+          fi
+
+          V4_BASE_URL='http://127.0.0.1:3000' node --test tests/v4-first-journey-source-faithful.test.mjs
+
+          TRACK02_EXPECTED_MAIN='9544014e2e278d5d4bec1a57c5b68e85ad7e1c92' \
+          TRACK02_NATIVE_BASE='http://127.0.0.1:3000' \
+          TRACK02_SOURCE_BASE='http://127.0.0.1:4173' \
+          node qa/track02-final-exact-main-visual-closure.mjs
+
+          TRACK66_QA_URL='http://127.0.0.1:3000' node qa/track66-native-browser-qa.mjs
+
+      - name: Upload Track02 final closure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track02-final-exact-main-visual-closure
+          path: |
+            qa-artifacts/track02-final-closure/**
+            qa-artifacts/track66-native/**
+          if-no-files-found: warn

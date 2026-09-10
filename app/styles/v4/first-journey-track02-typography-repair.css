@@ -1,0 +1,11 @@
+/* Track02 source-fidelity repair: preserve Korean word boundaries in legacy First Journey display copy. */
+.v4-journey-page :is(
+  .v4-journey-flow h1,
+  .v4-journey-memory h1,
+  .v4-journey-connect h1,
+  .v4-j-success-panel h2,
+  .v4-j-growth-shell h1
+) {
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
