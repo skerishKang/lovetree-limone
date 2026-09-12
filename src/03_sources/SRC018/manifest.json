@@ -19,7 +19,21 @@
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": null,
+  "authority_context_required": true,
   "authority_context_ref": "authority-context.json",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_RUNTIME_ASSET_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS",
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    },
+    "note": "SRC018 has no legacy single-executable runtime hook (window.__lt / window.__lovetreeStats) and its runtime surface is not the standalone HTML: it requires the exact eight relative assets/cyber-0N.png files hydrated from an isolated virtual root. Serving original/original.html or split/index.html through the generic single-executable baseline/parity harness is therefore not runtime-equivalent and would fall through to a timeout. The shared capture harnesses fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule (getCaptureSurfaceDisposition) instead of producing a green-but-wrong artifact. Context-aware original/split parity, if released, must run through a SRC018-local runner that hydrates the same exact 8 assets on both sides. This flag is a manifest-maintained opt-in; it changes no Source bytes."
+  },
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,

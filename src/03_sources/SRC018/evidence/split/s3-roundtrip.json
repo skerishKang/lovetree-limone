@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC018",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-12T16:25:20.774Z",
+  "run_at": "2026-09-12T16:57:54.575Z",
   "authority": {
     "bytes": 25427,
     "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
@@ -19,7 +19,18 @@
     "reference_only_excluded": true
   },
   "track17_provenance_preserved": true,
-  "passed": 16,
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_RUNTIME_ASSET_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS",
+    "disposition": {
+      "action": "SKIP",
+      "reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "mode": "CONTEXT_AWARE_ONLY",
+      "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS"
+    }
+  },
+  "passed": 18,
   "failed": 0,
   "checks": [
     {
@@ -101,6 +112,16 @@
       "id": "T15",
       "pass": true,
       "detail": "materialization record matches files on disk (bytes + sha256 + git_blob_sha1)"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "manifest declares CONTEXT_AWARE_ONLY capture surface with exact-8-asset runtime reason + both shared-harness SKIP dispositions"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "existing getCaptureSurfaceDisposition fails SRC018 closed to SKIP (generic baseline/parity must not capture it)"
     }
   ]
 }

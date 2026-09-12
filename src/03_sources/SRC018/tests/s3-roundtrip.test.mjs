@@ -19,6 +19,7 @@
  *  - T13 no product/MVP adapter wiring in split
  *  - T14 manifest truth: S3 asserted, parity PENDING, parity_ref null
  *  - T15 materialization record matches files on disk (bytes + sha256 + git_blob_sha1)
+ *  - T16 truthful capture-surface contract: CONTEXT_AWARE_ONLY + generic baseline/parity SKIP
  *
  * Writes evidence/split/s3-roundtrip.json as run evidence. No commits. No pushes.
  */
@@ -26,6 +27,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { getCaptureSurfaceDisposition } from "../../../08_harness/capture-surface.mjs";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const sha256 = (b) => crypto.createHash("sha256").update(b).digest("hex");
@@ -139,6 +141,32 @@ for (const [rel, meta] of Object.entries(mat.outputs)) {
 }
 ok(matOk, "T15", "materialization record matches files on disk (bytes + sha256 + git_blob_sha1)");
 
+console.log("\nCapture-surface contract (truthful fail-closed classification):");
+const cs = manifest.capture_surface;
+ok(
+  manifest.authority_context_required === true &&
+    manifest.authority_context_ref === "authority-context.json" &&
+    cs?.mode === "CONTEXT_AWARE_ONLY" &&
+    cs?.reason === "EXACT_RUNTIME_ASSET_CONTEXT_REQUIRED" &&
+    cs?.required_serving === "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS" &&
+    cs?.repository_original_surface_runtime_equivalent === false &&
+    cs?.repository_split_surface_runtime_equivalent === false &&
+    cs?.shared_harness_disposition?.["capture-source-baseline.mjs"] === "SKIP" &&
+    cs?.shared_harness_disposition?.["capture-source-parity.mjs"] === "SKIP" &&
+    cs?.shared_harness_disposition?.skip_reason === "CONTEXT_AWARE_SURFACE_ONLY",
+  "T16a",
+  "manifest declares CONTEXT_AWARE_ONLY capture surface with exact-8-asset runtime reason + both shared-harness SKIP dispositions"
+);
+const disposition = getCaptureSurfaceDisposition({ manifest });
+ok(
+  disposition?.action === "SKIP" &&
+    disposition?.reason === "CONTEXT_AWARE_SURFACE_ONLY" &&
+    disposition?.mode === "CONTEXT_AWARE_ONLY" &&
+    disposition?.required_serving === "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS",
+  "T16b",
+  "existing getCaptureSurfaceDisposition fails SRC018 closed to SKIP (generic baseline/parity must not capture it)"
+);
+
 const report = {
   schema_version: "1.0",
   source_id: "SRC018",
@@ -149,6 +177,12 @@ const report = {
   roundtrip: recBytes.compare(originalBytes) === 0,
   assets: { referenced: refOk, byte_locked: assetLockOk, count: present.length, reference_only_excluded: noMemory },
   track17_provenance_preserved: shell.includes(TRACK17_HREF),
+  capture_surface: {
+    mode: cs?.mode ?? null,
+    reason: cs?.reason ?? null,
+    required_serving: cs?.required_serving ?? null,
+    disposition: disposition ?? null,
+  },
   passed,
   failed,
   checks,
