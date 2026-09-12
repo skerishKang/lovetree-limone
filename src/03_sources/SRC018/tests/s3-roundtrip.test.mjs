@@ -17,7 +17,7 @@
  *  - T11 no React/TS/TSX/JSX/Next/ESM import in split runtime files
  *  - T12 no backend/DB/auth markers in split
  *  - T13 no product/MVP adapter wiring in split
- *  - T14 manifest truth: S3 asserted, parity PENDING, parity_ref null
+ *  - T14 manifest truth: S3 split complete + S4 parity ACCEPTED, parity_ref -> accepted-parity.json
  *  - T15 materialization record matches files on disk (bytes + sha256 + git_blob_sha1)
  *  - T16 truthful capture-surface contract: CONTEXT_AWARE_ONLY + generic baseline/parity SKIP
  *
@@ -132,9 +132,9 @@ ok(!/mvp|product-derivation|adapter/i.test(shell + js), "T13", "no product/MVP a
 
 console.log("\nManifest / materialization truth:");
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
-ok(manifest.stages.mechanical_split_complete === true && manifest.stages.source_split_parity_pass === false && manifest.parity_ref === null, "T14", "S3 asserted, parity pending, parity_ref null");
+ok(manifest.stages.mechanical_split_complete === true && manifest.stages.source_split_parity_pass === true && manifest.parity_ref === "evidence/parity/accepted-parity.json", "T14", "S3 split complete + S4 parity ACCEPTED, parity_ref -> accepted-parity.json");
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
-let matOk = mat.status === "MATERIALIZED_PENDING_PARITY" && mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE" && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA;
+let matOk = mat.status === "ACCEPTED" && mat.parity_status === "PASS" && mat.parity_ref === "evidence/parity/accepted-parity.json" && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA;
 for (const [rel, meta] of Object.entries(mat.outputs)) {
   const b = fs.readFileSync(path.join(ROOT, rel));
   if (b.length !== meta.bytes || sha256(b) !== meta.sha256 || gitBlobSha1(b) !== meta.git_blob_sha1) matOk = false;

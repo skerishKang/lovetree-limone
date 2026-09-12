@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC018",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-12T16:57:54.575Z",
+  "run_at": "2026-09-12T20:06:42.731Z",
   "authority": {
     "bytes": 25427,
     "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
@@ -106,7 +106,7 @@
     {
       "id": "T14",
       "pass": true,
-      "detail": "S3 asserted, parity pending, parity_ref null"
+      "detail": "S3 split complete + S4 parity ACCEPTED, parity_ref -> accepted-parity.json"
     },
     {
       "id": "T15",
