@@ -5,8 +5,34 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Codex-18 Fragment Loader",
   "product_job": "SHELL",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
+  "mapping_status": "RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "SRC",
+      "id": "SRC018",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
+  "explicit_ledger_provenance": {
+    "coverage_row": 103,
+    "coverage_row_title": "Codex-18 Fragment Loader",
+    "semantic_identity": "Source Track18 Fragment Loader V2",
+    "coverage_state": "COVERED",
+    "github_issue": [245, 252, 256],
+    "github_pr": [255],
+    "manifest_path": "design-intake/manifests/source-track-18-fragment-loader-v2.json",
+    "source_runner_route": "/design-lab/source-tracks/18/v2/source",
+    "authority": {
+      "drive_file_id": "1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h",
+      "filename": "최종본.html",
+      "bytes": 25427,
+      "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
+    },
+    "identity_disambiguation": "MST103 (Source Track18 Fragment Loader V2) is distinct from MST050 (Drive Track18 Memory Core Electric Aurora); the coverage ledger records 'Drive Track18 Memory Core Electric Aurora != current Source Track18 Fragment Loader'. Numeric Track18 label equality does not establish identity.",
+    "capsule_ref": "src/03_sources/SRC018",
+    "issued_in_lane": "clean/src018-s3-mechanical-port (S3 mechanical split; CENTRAL S3 release with MST103 issuance authorized)",
+    "central_binding": "SRC018_S2 ACCEPT / S3 release = #589 comment 5646928896 (automation #611); MST_MAPPING = MST103 issued at S3 per SRC066/MST046 precedent"
+  },
   "family_ref": null,
   "relation": null,
   "notes": [
@@ -20,7 +46,8 @@
     "manifest_path=design-intake/manifests/source-track-18-fragment-loader-v2.json",
     "current_main_present=true",
     "github_issue=245,252,256",
-    "github_pr=255"
+    "github_pr=255",
+    "mapping_resolved_by=SRC018_S3_lane: identity_refs=[SRC018]; capsule back-references this row via master_rows=[MST103] (SRC066->MST046 precedent)"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }

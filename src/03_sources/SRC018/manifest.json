@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC018",
+  "source_folder_name": "18_러브트리_프래그먼트로더_V1",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/18_러브트리_프래그먼트로더_V1/버전2/최종본.html",
+  "authority": {
+    "drive_folder_id": "1txQn5exaLf__Wj1kc3umugA7XBqtprN2",
+    "assets_folder_id": "1OKRb8ZwXhmR1kjsGCaVWVHFZvJ22MhVr",
+    "drive_file_id": "1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h",
+    "filename": "최종본.html",
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0",
+    "revision": "V2",
+    "status": "LOCKED"
+  },
+  "master_rows": ["MST103"],
+  "family_ref": null,
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": null,
+  "authority_context_ref": "authority-context.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "dom-2d",
+    "scenario_id": "cinematic-brand",
+    "classification": "REFERENCE_CAPABILITY_ONLY",
+    "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+    "backend_scope": "BACKEND_FREE",
+    "asset_reference_form": "relative assets/cyber-0N.png in CSS url() plus bare cyber-0N.png string array in JS",
+    "runtime_asset_count": 8,
+    "source_local_provenance_href": "../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html",
+    "source_local_provenance_status": "PROVENANCE_ONLY_NOT_REPO_HREF",
+    "source_specific_controls": ["loading-progress", "identity-reveal", "x-dismiss-anchor", "enter-commit-anchor", "webaudio-presentation-cues"]
+  },
+  "runtime_assets": {
+    "target_dir": "split/assets",
+    "transfer_mode": "BYTE_EXACT_NO_REENCODE",
+    "pinned": [
+      { "filename": "cyber-01.png", "drive_file_id": "1ABse2T184pp-UR3ITjwvihjwB0fcfleh", "bytes": 1943324, "sha256": "b0f7610585cef166c3fac9224838b5a5a6027795bfc299bc0c4d5563aac1b6b7" },
+      { "filename": "cyber-02.png", "drive_file_id": "1DDrFW9U4-6hDNBTxOjmtZtnSBAUV23Vh", "bytes": 2138785, "sha256": "62e998b74cba61a4580844c6f47bffa434b604fc9dba89bfaac14d09cb4f6168" },
+      { "filename": "cyber-03.png", "drive_file_id": "1CisIPCiVJsHWx5Q7n-wkf4PnhlfDNlS-", "bytes": 2186946, "sha256": "230b40e23a1238872f406480247e008ee190d13dbf41834d080ff89d3bc34619" },
+      { "filename": "cyber-04.png", "drive_file_id": "1QHub3L4p_03IO8dGKsl84hNvoDDbCGym", "bytes": 2131432, "sha256": "5eff795552a75ac4d09fb2688367c20a191f2d4dcae2ff1891e7634e1a26dcc5" },
+      { "filename": "cyber-05.png", "drive_file_id": "1C6pnAbsJwVfEkmH6An5le3uEVUDI3zF7", "bytes": 1880735, "sha256": "41971fef71e9851e8aa85929afa644554777558c5313464ba5f434f03e9cbfbc" },
+      { "filename": "cyber-06.png", "drive_file_id": "15DfrpqeelPGLDQcwDjCO9A-A-_QSrj-T", "bytes": 1877218, "sha256": "bf048941d597ec45e57f12ead8e48746d9c88a3add231fc472fed9c9709173e6" },
+      { "filename": "cyber-07.png", "drive_file_id": "1tYrXLeqklK5xZUvzXrnYv1OrOEMwIAcw", "bytes": 1888479, "sha256": "43a6e22db9cfb104762dcd8ced6d621c1e83e54409c0179e80d2e076c1d0705a" },
+      { "filename": "cyber-08.png", "drive_file_id": "1kyXShflYJlg7yggl58UAdA_i4M4VJJXl", "bytes": 1849552, "sha256": "1b9861583a95c4f0e29f2a1f3ec9992394cb2236ed6979129bd53d55f7b1caf5" }
+    ],
+    "reference_only_excluded": [
+      { "filename": "memory-sphere.png", "drive_file_id": "1d7ce0_BrrVoErpbZKS_AGWdVoWlvf_Zw", "bytes": 2217886, "disposition": "REFERENCE_ONLY_NOT_COPIED" },
+      { "filename": "memory-bloom.webp", "drive_file_id": "1XN41_LFcGFhszf7ZHYtJQrPxVNJcE7Dc", "bytes": 194886, "disposition": "REFERENCE_ONLY_NOT_COPIED" },
+      { "filename": "memory-trace.webp", "drive_file_id": "1QNFeYm3xun7xH-n0kWLqqNAEAR5jRh0y", "bytes": 164614, "disposition": "REFERENCE_ONLY_NOT_COPIED" },
+      { "filename": "memory-human.webp", "drive_file_id": "1rNmTpVbw3iVks-6rMcb5RAsL9Vh5F34D", "bytes": 144840, "disposition": "REFERENCE_ONLY_NOT_COPIED" }
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§5 vocabulary, §7 fail-closed gate) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418; schema in src/08_harness/source-capsule-validator.mjs validateDuplicateVariantGovernance",
+    "adjudicated_at_utc": "2026-09-12T00:00:00Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5646928896 (S2 acceptance / S3 release; automation #611)",
+    "status_basis": "The V2 authority folder 1txQn5exaLf__Wj1kc3umugA7XBqtprN2 carries exactly one executable HTML object (최종본.html, 1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h). The only other HTML in the track lineage is the superseded V1 (see candidate_table), a prior revision, not a same-content duplicate of the locked authority. Therefore the capsule is a single executable with no duplicate.",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-12T16:13:40Z",
+      "verified_at_utc": "2026-09-12T16:13:40Z",
+      "verified_by": "kilo-agent / claude, under CENTRAL S3 release instruction",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h",
+        "bytes": 25427,
+        "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0",
+        "revision": "V2",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "16AWcy3PVOZ95DXfgjw7zxyokXr6eBnKt",
+        "bytes": 23003,
+        "sha256": "0dc14d71685d79558921507e5c5af866a1d4f847c7be3fa0942365f597d984ae",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT_BY_SIZE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Superseded V1 revision of the same track (23003 bytes, distinct SHA-256). Prior revision, not a same-content duplicate of the locked V2 authority. Recorded as SUPERSEDED / NOT_AUTHORITY per the duplicate ruling; no additional vocabulary value is introduced."
+      }
+    ],
+    "negative_claim": "Within the V2 authority folder, exactly one object carries an executable HTML and it is the locked authority. The V1 prior revision lives in a different revision folder with a distinct SHA-256 and is NOT a duplicate of the authority bytes. No same-content duplicate of 680c6ddb8e6e…dabe0 exists in the authority scope.",
+    "special_notes": [
+      "The four legacy memory-* media in the assets folder (memory-sphere.png, memory-bloom.webp, memory-trace.webp, memory-human.webp) are reference-only comparison assets from the pre-V2 lineage and are NOT Track18 V2 runtime dependencies; they are excluded from split/assets and MUST NOT be copied.",
+      "The source-local ../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html href is Track17 provenance only, never a repository route; it survives the mechanical split byte-exactly and is not rewritten (no Track17 repository adoption)."
+    ]
+  }
+}
