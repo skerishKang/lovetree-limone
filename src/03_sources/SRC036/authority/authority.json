@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-13T22:25:00Z",
+  "drive_folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+  "drive_file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+  "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+  "revision": "V3",
+  "mime_type": "text/html",
+  "bytes": 22561,
+  "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+  "md5": "adb6bf30632d37f38bdaa2d29d46f1ac",
+  "drive_modified_time_utc": "2026-08-06T17:13:17.799Z",
+  "rclone_remote": "gdrive:",
+  "identity_resolution": {
+    "superseded_v2": "1cgnr4G8rruhb6OTlFoslYfxSpP7WwLP_",
+    "superseded_v2_folder_id": "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf",
+    "superseded_v2_bytes": 27057,
+    "superseded_v2_sha256": "46aa6370529d087881d0fdd912dca356d64e45611eb202ce9b9ba6e151fb7b43",
+    "superseded_v1": "1sAy8b2OndatmihXsrkepeKZduLBxvCyq",
+    "superseded_v1_folder_id": "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf",
+    "superseded_v1_bytes": 35940,
+    "superseded_v1_sha256": "2fc0fd2f8af00bb3ddd08e3276d740b159298cd1bef5c5140bd4521b2cfce0fd",
+    "superseded_disposition": "SUPERSEDED_REVISION_NOT_AUTHORITY",
+    "rule": "Identity resolved by canonical Drive file id plus SHA-256 byte lock; filename alone never establishes identity. The only other HTML objects in the track sit inside the archival subfolder 90_이전HTML, are content-different earlier revisions (V1, V2), and are recorded as SUPERSEDED_REVISION, not competing V3 executables. The canonical 1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT is the sole authority."
+  },
+  "repository_snapshot": {
+    "path": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
+    "git_blob_sha1": "b33e4bc6a7868053315204034e10d3cecb25f3ff",
+    "relation": "BYTE_IDENTICAL"
+  },
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5655967612 (S2 acceptance / S3 release)"
+}
