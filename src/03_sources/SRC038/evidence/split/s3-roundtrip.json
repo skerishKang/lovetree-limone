@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC038",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-13T14:11:00.673Z",
+  "run_at": "2026-09-13T17:23:39.382Z",
   "authority": {
     "bytes": 35935,
     "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
@@ -138,12 +138,12 @@
     {
       "id": "T15",
       "pass": true,
-      "detail": "S3 split complete; S4 parity NOT claimed (stage false, parity_ref null); DUPLICATE_COPY_SAME_SHA recorded; mechanical-only policy"
+      "detail": "S3 split complete; S4 parity ACCEPTED (stage true, parity_ref -> accepted-parity.json); DUPLICATE_COPY_SAME_SHA recorded; mechanical-only policy"
     },
     {
       "id": "T16",
       "pass": true,
-      "detail": "materialization MATERIALIZED_PENDING_PARITY + PENDING_EXACT_HEAD_CAPTURE matches files on disk (bytes + sha256 + git_blob_sha1)"
+      "detail": "materialization ACCEPTED + PASS matches files on disk (bytes + sha256 + git_blob_sha1)"
     },
     {
       "id": "T17a",

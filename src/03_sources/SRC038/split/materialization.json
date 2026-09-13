@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC038",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "authority": {
     "bytes": 35935,
@@ -47,6 +47,6 @@
     "framework_conversion": false,
     "product_data_injection": false
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": null
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json"
 }

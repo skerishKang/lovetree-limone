@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolveAuthorityMode, validateDualVariantMechanicalSplit } from './dual-variant-mechanical.mjs';
+import { MOTION_AWARE_SCREENSHOT_POLICY, validateMotionAwareParityFields } from './source-capsule-validator.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -12,7 +13,7 @@ const fail = (message) => { throw new Error(message); };
 function validateAcceptedParityComparisons(sourceId, parity) {
   const comps = parity?.comparisons ?? {};
   const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
-  const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST', 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD'];
+  const allowedScreenshots = ['BYTE_IDENTICAL', 'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST', 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD', MOTION_AWARE_SCREENSHOT_POLICY];
   if (comps.dom !== 'EQUAL' || !allowedGeometry.includes(comps.geometry) || !allowedGeometry.includes(comps.computed_style) || comps.runtime_state !== 'EQUAL' || comps.interactions !== 'EQUAL' || !allowedScreenshots.includes(comps.screenshots)) fail(`${sourceId}: accepted parity result is not fully PASS`);
   if (comps.screenshots === 'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD') {
     const max = comps.canonical_pixel_hamming_max;
@@ -22,6 +23,9 @@ function validateAcceptedParityComparisons(sourceId, parity) {
     if (max > threshold) fail(`${sourceId}: parity canonical Hamming exceeds threshold`);
     if (parity?.visual_review?.central_direct_artifact_review !== true) fail(`${sourceId}: Hamming parity requires direct CENTRAL artifact review`);
     if (parity?.required_network_errors !== 0) fail(`${sourceId}: Hamming parity required-network errors present`);
+  }
+  if (comps.screenshots === MOTION_AWARE_SCREENSHOT_POLICY) {
+    for (const failure of validateMotionAwareParityFields(sourceId, parity)) fail(failure);
   }
   if (parity?.browser_errors !== 0) fail(`${sourceId}: accepted parity browser errors present`);
 }

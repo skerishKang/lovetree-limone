@@ -18,8 +18,8 @@
  *  - T12 D6 Escape-only keydown survives; D4 continuous rAF survives; no prefers-reduced-motion or onerror handler added
  *  - T13 no React/TS/TSX/JSX/Next/ESM import in split runtime files
  *  - T14 no backend/DB/auth markers and no product/MVP adapter wiring in split
- *  - T15 manifest truth: S3 split complete, S4 parity NOT claimed (stages false, parity_ref null)
- *  - T16 materialization record matches files on disk (bytes + sha256 + git_blob_sha1), status MATERIALIZED_PENDING_PARITY
+ *  - T15 manifest truth: S3 split complete + S4 parity ACCEPTED, parity_ref -> accepted-parity.json
+ *  - T16 materialization record matches files on disk (bytes + sha256 + git_blob_sha1), status ACCEPTED
  *  - T17 capture surface is CONTEXT_AWARE_ONLY per CENTRAL correction (#589 comment 5653391554): generic shared-harness fails closed to SKIP
  *
  * Writes evidence/split/s3-roundtrip.json as run evidence. No commits. No pushes.
@@ -127,19 +127,19 @@ console.log("\nManifest / materialization truth:");
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
 ok(
   manifest.stages.mechanical_split_complete === true &&
-    manifest.stages.source_split_parity_pass === false &&
-    manifest.parity_ref === null &&
+    manifest.stages.source_split_parity_pass === true &&
+    manifest.parity_ref === "evidence/parity/accepted-parity.json" &&
     manifest.duplicate_variant_status === "DUPLICATE_COPY_SAME_SHA" &&
     manifest.runtime_policy === "HTML_CSS_JS_MECHANICAL_ONLY" &&
     manifest.tsx_allowed_during_split === false,
   "T15",
-  "S3 split complete; S4 parity NOT claimed (stage false, parity_ref null); DUPLICATE_COPY_SAME_SHA recorded; mechanical-only policy"
+  "S3 split complete; S4 parity ACCEPTED (stage true, parity_ref -> accepted-parity.json); DUPLICATE_COPY_SAME_SHA recorded; mechanical-only policy"
 );
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
 let matOk =
-  mat.status === "MATERIALIZED_PENDING_PARITY" &&
-  mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE" &&
-  mat.parity_ref === null &&
+  mat.status === "ACCEPTED" &&
+  mat.parity_status === "PASS" &&
+  mat.parity_ref === "evidence/parity/accepted-parity.json" &&
   mat.authority.bytes === LOCK_BYTES &&
   mat.authority.sha256 === LOCK_SHA &&
   mat.contracts.exact_single_style_extraction === true &&
@@ -152,7 +152,7 @@ for (const [rel, meta] of Object.entries(mat.outputs)) {
   const b = fs.readFileSync(path.join(ROOT, rel));
   if (b.length !== meta.bytes || sha256(b) !== meta.sha256 || gitBlobSha1(b) !== meta.git_blob_sha1) matOk = false;
 }
-ok(matOk, "T16", "materialization MATERIALIZED_PENDING_PARITY + PENDING_EXACT_HEAD_CAPTURE matches files on disk (bytes + sha256 + git_blob_sha1)");
+ok(matOk, "T16", "materialization ACCEPTED + PASS matches files on disk (bytes + sha256 + git_blob_sha1)");
 
 console.log("\nCapture-surface contract (CENTRAL correction #589 comment 5653391554):");
 const cs = manifest.capture_surface;

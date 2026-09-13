@@ -141,13 +141,39 @@ export function validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs = 
   return failures;
 }
 
-function validateAcceptedParityComparisons(sourceId, parity, failures) {
+export const MOTION_AWARE_SCREENSHOT_POLICY = 'MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED';
+export const MOTION_AWARE_PARITY_CONTRACT = 'SOURCE_SPECIFIC_MOTION_AWARE';
+
+/**
+ * Fail-closed field contract for the motion-aware screenshot policy
+ * (issue #651 comment 5654750673 / PR #650 comment 5654751695). The policy
+ * asserts DOM/CSSOM state parity plus direct CENTRAL visual review of paired
+ * artifact evidence; it never asserts pixel equality, so every pixel/QA-patch
+ * mechanism must be explicitly attested as unused. Any missing or wrong field
+ * fails closed.
+ */
+export function validateMotionAwareParityFields(sourceId, parity) {
+  const failures = [];
+  const visualReview = parity?.visual_review ?? {};
+  if (visualReview.central_direct_artifact_review !== true) failures.push(`${sourceId}: motion-aware parity requires direct CENTRAL artifact review`);
+  if (visualReview.central_visual_pass !== true) failures.push(`${sourceId}: motion-aware parity requires CENTRAL visual pass`);
+  if (parity?.parity_contract !== MOTION_AWARE_PARITY_CONTRACT) failures.push(`${sourceId}: motion-aware parity requires parity_contract=${MOTION_AWARE_PARITY_CONTRACT}`);
+  for (const key of ['raw_png_equality_used', 'pixel_tolerance_used', 'qa_clock_patch_used', 'qa_raf_patch_used', 'qa_runtime_hook_used']) {
+    if (parity?.[key] !== false) failures.push(`${sourceId}: motion-aware parity requires ${key}=false`);
+  }
+  if (parity?.browser_errors !== 0) failures.push(`${sourceId}: motion-aware parity browser errors present`);
+  if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: motion-aware parity required-network errors present`);
+  return failures;
+}
+
+export function validateAcceptedParityComparisons(sourceId, parity, failures = []) {
   const comps = parity?.comparisons ?? {};
   const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
   const allowedScreenshots = [
     'BYTE_IDENTICAL',
     'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST',
     'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+    MOTION_AWARE_SCREENSHOT_POLICY,
   ];
 
   if (
@@ -171,7 +197,12 @@ function validateAcceptedParityComparisons(sourceId, parity, failures) {
     if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: Hamming parity required-network errors present`);
   }
 
+  if (comps.screenshots === MOTION_AWARE_SCREENSHOT_POLICY) {
+    failures.push(...validateMotionAwareParityFields(sourceId, parity));
+  }
+
   if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+  return failures;
 }
 
 /**
