@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "stage": "S2_BASELINE_CAPTURE",
+  "task": "CLEAN-108 SRC036 S2 context-aware baseline capture",
+  "status": "EXECUTED_ACCEPTED_BY_CENTRAL",
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5655967612 (S2 acceptance / S3 release)",
+  "captured_head": "251d27846bbd341f9d02041f74c749340a14dd4b",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "generic_harness_compatible": false,
+    "reason": "EXACT_FIRST_JOURNEY_SIBLING_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_FIRST_JOURNEY_CONTEXT",
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    }
+  },
+  "environment": {
+    "server": "node http on 127.0.0.1 temp virtual root; authority + first-journey sibling served at exact frozen bytes, hash-verified before capture",
+    "browser": "chromium (Playwright)",
+    "device_scale_factor": 1,
+    "viewports": ["1280x800", "390x844", "320x720"],
+    "contexts": ["normal", "reducedMotion=reduce", "hasTouch", "control-missing-sibling", "d7-html404", "d7-empty404"]
+  },
+  "states": [
+    "A initial-loading",
+    "B ready",
+    "C pointer-parallax",
+    "D enter-triggered",
+    "E entering-1600ms",
+    "F inside",
+    "G escape-exit",
+    "H return-exit",
+    "I global-enter",
+    "J reduced-motion",
+    "K dead-brand-link",
+    "L mobile-390-clipped",
+    "M mobile-320-clipped",
+    "N context-missing-warning/control"
+  ],
+  "measurements": [
+    "structural determinism: repeated same-state captures produce identical serialized DOM (outerHTML SHA-256 98f331cf3a48bfd504fc81cb2e4442092d134f8b445fea754511d365149e6b46, length 31320, 88 petals)",
+    "pixel determinism: not achieved and not required — SOURCE_NATIVE_ANIMATION_PHASE_VARIANCE (continuous CSS keyframe float)",
+    "iframe load false-positive probes (D7): HTML-body-404, empty-body-404, missing-root control — all fired load, set loaded=true, showed connected status, cancelled the 4800ms warning",
+    "reduced-motion probe (D8): CSS animations collapse to 0.01ms/1 iteration/none while JS transition timers (~3454ms inside arrival) remain",
+    "sub-980 probes (D1/D9): page width and docScrollWidth pinned to 980 at 390/320 viewports; overflow-x hidden makes the tail unreachable",
+    "keyboard probes (D4/D12): document-level Enter fires enter() regardless of focus; focused #returnButton Enter runs enter() then the button's default activation (exit) in the same event",
+    "Escape timer-race probe (D11): classes removed immediately, untracked enter() setTimeouts still re-add crossing (~1616ms) and inside+tabIndex (~3621ms)",
+    "touch probe (D5): pointermove updates parallax vars, tap does not; no touch-specific contract exists"
+  ],
+  "accepted_evidence": {
+    "drive_folder_id": "1H3s4GND26FPrgeHH2wOD5d9-wGOlJC0k",
+    "evidence_label": "CLEAN108-SRC036-S2-Candidate-260914",
+    "files": 49,
+    "screenshots": 33
+  },
+  "pass_rule": "structural determinism PASS + every frozen defect D1-D10 adjudicated with source-and-browser or static-only evidence + R1-R3 observations filed for CENTRAL classification",
+  "prohibitions": [
+    "no repo/Drive authority mutation",
+    "no fixes",
+    "no S3 actions"
+  ]
+}

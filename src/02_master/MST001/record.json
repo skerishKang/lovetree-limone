@@ -5,8 +5,36 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "36-1 Cinematic Memory Portal",
   "product_job": "HOME",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
+  "mapping_status": "RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "SRC",
+      "id": "SRC036",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
+  "explicit_ledger_provenance": {
+    "coverage_row": 1,
+    "coverage_row_title": "36-1 Cinematic Memory Portal",
+    "semantic_identity": "Drive Track36 Cinematic Memory Portal",
+    "coverage_state": "PARTIAL",
+    "github_issue": [284],
+    "github_pr": [287],
+    "reference_path": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/",
+    "manifest_path": null,
+    "source_runner_route": null,
+    "track36_donor_manifest": "design-intake/manifests/source-track-36-cinematic-memory-portal-v3.json",
+    "authority": {
+      "drive_file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+      "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+      "bytes": 22561,
+      "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+    },
+    "identity_disambiguation": "MST001 is resolved by exact row match on the authority ledger (coverage row 1, master_filename '36-1 Cinematic Memory Portal', semantic_identity 'Drive Track36 Cinematic Memory Portal', reference_path pointing at the snapshot directory that byte-identically contains the locked authority 01_시네마틱메모리포털_밝은로컬진입_v3.html), plus the S2/S3 CENTRAL chain on #589 (comment 5655967612: S2 accepted, S3 released with MST001 issuance authorized). The Track36 numeric label alone does not establish identity; the ledger row, the byte-locked Drive authority, and the repository snapshot path jointly do. V1/V2 HTML objects inside 90_이전HTML are superseded revisions, not competing masters. The Track36 donor manifest is cited separately as donor material; the coverage row itself records no manifest_path and no source_runner_route (honest nulls preserved).",
+    "capsule_ref": "src/03_sources/SRC036",
+    "issued_in_lane": "clean/src036-s3-mechanical-port (S3 mechanical split; CENTRAL S3 release with MST001 issuance authorized)",
+    "central_binding": "SRC036_S2 ACCEPT / S3 release = #589 comment 5655967612; MST_MAPPING = MST001 issued at S3 per SRC018->MST103 and SRC038->MST010 precedent"
+  },
   "family_ref": null,
   "relation": null,
   "notes": [
@@ -20,7 +48,8 @@
     "reference_path=reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/",
     "current_main_present=true",
     "github_issue=284",
-    "github_pr=287"
+    "github_pr=287",
+    "mapping_resolved_by=SRC036_S3_lane: identity_refs=[SRC036]; capsule back-references this row via master_rows=[MST001] (SRC018->MST103, SRC038->MST010 precedent)"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
