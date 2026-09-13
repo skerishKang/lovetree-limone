@@ -21,12 +21,16 @@
   "authority_context_required": true,
   "authority_context_ref": "authority-context.json",
   "capture_surface": {
-    "mode": "SINGLE_EXECUTABLE",
-    "reason": "STANDALONE_SINGLE_FILE_WITH_EXTERNAL_YOUTUBE_HOSTS",
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "SOURCE_SPECIFIC_CANVAS_RUNTIME_NO_GENERIC_WINDOW_CONTRACT",
     "required_serving": "SINGLE_EXECUTABLE_HTML",
     "repository_original_surface_runtime_equivalent": true,
     "repository_split_surface_runtime_equivalent": true,
-    "note": "SRC038 is a single self-contained HTML document with exactly one <style> and one <script> block and no local runtime assets; its only external runtime dependencies are the YouTube hosts i.ytimg.com (18 video-id thumbnails) and youtube.com/embed (player), preserved verbatim by the mechanical split. The shared single-executable baseline/parity harness surfaces are runtime-equivalent for this capsule."
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "SOURCE_SPECIFIC_CANVAS_MOTION_SURFACE"
+    }
   },
   "stages": {
     "identity_verified": true,

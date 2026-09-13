@@ -20,7 +20,7 @@
  *  - T14 no backend/DB/auth markers and no product/MVP adapter wiring in split
  *  - T15 manifest truth: S3 split complete, S4 parity NOT claimed (stages false, parity_ref null)
  *  - T16 materialization record matches files on disk (bytes + sha256 + git_blob_sha1), status MATERIALIZED_PENDING_PARITY
- *  - T17 capture surface is SINGLE_EXECUTABLE: shared-harness disposition is null (no SKIP)
+ *  - T17 capture surface is CONTEXT_AWARE_ONLY per CENTRAL correction (#589 comment 5653391554): generic shared-harness fails closed to SKIP
  *
  * Writes evidence/split/s3-roundtrip.json as run evidence. No commits. No pushes.
  */
@@ -154,11 +154,29 @@ for (const [rel, meta] of Object.entries(mat.outputs)) {
 }
 ok(matOk, "T16", "materialization MATERIALIZED_PENDING_PARITY + PENDING_EXACT_HEAD_CAPTURE matches files on disk (bytes + sha256 + git_blob_sha1)");
 
-console.log("\nCapture-surface contract:");
+console.log("\nCapture-surface contract (CENTRAL correction #589 comment 5653391554):");
 const cs = manifest.capture_surface;
-ok(cs?.mode === "SINGLE_EXECUTABLE" && cs?.reason === "STANDALONE_SINGLE_FILE_WITH_EXTERNAL_YOUTUBE_HOSTS", "T17a", "manifest declares SINGLE_EXECUTABLE capture surface");
+ok(
+  cs?.mode === "CONTEXT_AWARE_ONLY" &&
+    cs?.reason === "SOURCE_SPECIFIC_CANVAS_RUNTIME_NO_GENERIC_WINDOW_CONTRACT" &&
+    cs?.required_serving === "SINGLE_EXECUTABLE_HTML" &&
+    cs?.repository_original_surface_runtime_equivalent === true &&
+    cs?.repository_split_surface_runtime_equivalent === true &&
+    cs?.shared_harness_disposition?.["capture-source-baseline.mjs"] === "SKIP" &&
+    cs?.shared_harness_disposition?.["capture-source-parity.mjs"] === "SKIP" &&
+    cs?.shared_harness_disposition?.skip_reason === "SOURCE_SPECIFIC_CANVAS_MOTION_SURFACE",
+  "T17a",
+  "manifest declares CONTEXT_AWARE_ONLY capture surface with source-specific canvas runtime reason + both shared-harness SKIP dispositions (SRC038 exposes neither window.__lt nor window.__lovetreeStats by design)"
+);
 const disposition = getCaptureSurfaceDisposition({ manifest });
-ok(disposition === null || disposition === undefined, "T17b", `shared capture-harness disposition is ${disposition === null || disposition === undefined ? "null (generic harness applies)" : JSON.stringify(disposition)}`);
+ok(
+  disposition?.action === "SKIP" &&
+    disposition?.reason === "CONTEXT_AWARE_SURFACE_ONLY" &&
+    disposition?.mode === "CONTEXT_AWARE_ONLY" &&
+    disposition?.required_serving === "SINGLE_EXECUTABLE_HTML",
+  "T17b",
+  "existing getCaptureSurfaceDisposition fails SRC038 closed to SKIP (generic baseline/parity capture must not attempt it)"
+);
 
 const report = {
   schema_version: "1.0",

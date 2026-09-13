@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC038",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-13T12:25:30.248Z",
+  "run_at": "2026-09-13T14:11:00.673Z",
   "authority": {
     "bytes": 35935,
     "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
@@ -38,9 +38,14 @@
     "styles.css"
   ],
   "capture_surface": {
-    "mode": "SINGLE_EXECUTABLE",
-    "reason": "STANDALONE_SINGLE_FILE_WITH_EXTERNAL_YOUTUBE_HOSTS",
-    "disposition": null
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "SOURCE_SPECIFIC_CANVAS_RUNTIME_NO_GENERIC_WINDOW_CONTRACT",
+    "disposition": {
+      "action": "SKIP",
+      "reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "mode": "CONTEXT_AWARE_ONLY",
+      "required_serving": "SINGLE_EXECUTABLE_HTML"
+    }
   },
   "passed": 21,
   "failed": 0,
@@ -143,12 +148,12 @@
     {
       "id": "T17a",
       "pass": true,
-      "detail": "manifest declares SINGLE_EXECUTABLE capture surface"
+      "detail": "manifest declares CONTEXT_AWARE_ONLY capture surface with source-specific canvas runtime reason + both shared-harness SKIP dispositions (SRC038 exposes neither window.__lt nor window.__lovetreeStats by design)"
     },
     {
       "id": "T17b",
       "pass": true,
-      "detail": "shared capture-harness disposition is null (generic harness applies)"
+      "detail": "existing getCaptureSurfaceDisposition fails SRC038 closed to SKIP (generic baseline/parity capture must not attempt it)"
     }
   ]
 }
