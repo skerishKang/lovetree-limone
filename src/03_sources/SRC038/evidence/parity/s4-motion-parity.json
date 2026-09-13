@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "stage": "S4_MOTION_AWARE_PARITY",
+  "contract": "#589 comment 5654031252 / PR #650 comment 5654031586",
+  "generated_at": "2026-09-13T16:18:36.075Z",
+  "chromium_version": "140.0.7339.186",
+  "device_scale_factor": 1,
+  "viewports": [
+    "1280x800",
+    "390x844",
+    "320x720"
+  ],
+  "required_states": 21,
+  "matched_state_count": 62,
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "motion_policy": "SOURCE_NATIVE_TIME_WOBBLE_PRESERVED",
+  "camera_evidence_policy": "SOURCE_NATIVE_RESET_VIEW_DETERMINISTIC_ANCHOR_PLUS_BROWSER_OBSERVABLE_DELTAS",
+  "roots_file_sha256": {
+    "ORIGINAL_ROOT/index.html": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "SPLIT_ROOT/index.html": "f477e913cc49a5fd1b6c17afda561e84f0959746cddebaf145e6ec2ab48985d8",
+    "SPLIT_ROOT/styles.css": "abe653f1d58253053595d926565def71507f20158c8fa93ac1f3e337cc7eb837",
+    "SPLIT_ROOT/script.js": "4a7142dbfe0c8fd7b8b9b057ee96f17f26c977aa81c16fbf9a82540518c1f69a"
+  },
+  "static_facts": {
+    "original": {
+      "servedIndexBytes": 35935,
+      "htmlHasStatic551Literal": true,
+      "scriptHasEscapeOnlyKeydown": true,
+      "scriptHasNoImageOnerror": true,
+      "scriptHasThumbForm": true,
+      "scriptHasEmbedForm": true,
+      "cssTouchActionNone": true,
+      "scriptSha": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+    },
+    "split": {
+      "servedIndexBytes": 5595,
+      "htmlHasStatic551Literal": true,
+      "scriptHasEscapeOnlyKeydown": true,
+      "scriptHasNoImageOnerror": true,
+      "scriptHasThumbForm": true,
+      "scriptHasEmbedForm": true,
+      "cssTouchActionNone": true,
+      "scriptSha": "4a7142dbfe0c8fd7b8b9b057ee96f17f26c977aa81c16fbf9a82540518c1f69a"
+    }
+  },
+  "semantic": {
+    "original": {
+      "runtimeTopologyText": "454 notes, 543 links",
+      "runtimeStatsSub": "3 people · 18 videos · living memory graph",
+      "rootLabel": "나의 LoveTree 우주",
+      "hubLabel": "필릭스의 LoveTree",
+      "hubType": "person-lovetree",
+      "videoLabel": "처음 마음을 멈추게 한 神메뉴",
+      "videoPreviewSrc": "https://i.ytimg.com/vi/nOrDWTMSR0w/hqdefault.jpg",
+      "searchFiltered": "6 notes, 543 links",
+      "fragmentsOff": "22 notes, 543 links",
+      "scaleMax": "1.7×",
+      "embedSrc": "https://www.youtube.com/embed/nOrDWTMSR0w?autoplay=1&rel=0",
+      "embedClosedClear": true,
+      "invalidThumbNaturalW": 120,
+      "d4": true,
+      "d5": true,
+      "d6": true,
+      "d7": true,
+      "dragSuppressed": true,
+      "cameraEffects": {
+        "zoom_changed": true,
+        "drag_changed": true,
+        "turn_changed": true,
+        "layout_orbit_vs_timeline_changed": true,
+        "reset_changed": true
+      },
+      "pageErrors": 0,
+      "consoleErrors": 0
+    },
+    "split": {
+      "runtimeTopologyText": "454 notes, 543 links",
+      "runtimeStatsSub": "3 people · 18 videos · living memory graph",
+      "rootLabel": "나의 LoveTree 우주",
+      "hubLabel": "필릭스의 LoveTree",
+      "hubType": "person-lovetree",
+      "videoLabel": "처음 마음을 멈추게 한 神메뉴",
+      "videoPreviewSrc": "https://i.ytimg.com/vi/nOrDWTMSR0w/hqdefault.jpg",
+      "searchFiltered": "6 notes, 543 links",
+      "fragmentsOff": "22 notes, 543 links",
+      "scaleMax": "1.7×",
+      "embedSrc": "https://www.youtube.com/embed/nOrDWTMSR0w?autoplay=1&rel=0",
+      "embedClosedClear": true,
+      "invalidThumbNaturalW": 120,
+      "d4": true,
+      "d5": true,
+      "d6": true,
+      "d7": true,
+      "dragSuppressed": true,
+      "cameraEffects": {
+        "zoom_changed": true,
+        "drag_changed": true,
+        "turn_changed": true,
+        "layout_orbit_vs_timeline_changed": true,
+        "reset_changed": true
+      },
+      "pageErrors": 0,
+      "consoleErrors": 0
+    }
+  },
+  "d9_geometry": {
+    "original": {
+      "sw": 320,
+      "cw": 320,
+      "gearX": 480,
+      "gearW": 38,
+      "workspaceCols": "45px 487px"
+    },
+    "split": {
+      "sw": 320,
+      "cw": 320,
+      "gearX": 480,
+      "gearW": 38,
+      "workspaceCols": "45px 487px"
+    },
+    "identical": true
+  },
+  "health": {
+    "original": {
+      "localFailed": [],
+      "ytThumb404": [
+        "https://i.ytimg.com/vi/O3ptaX7-G8w/hqdefault.jpg"
+      ],
+      "abortedExternal": 29,
+      "thirdPartyFailed": 0
+    },
+    "split": {
+      "localFailed": [],
+      "ytThumb404": [
+        "https://i.ytimg.com/vi/O3ptaX7-G8w/hqdefault.jpg"
+      ],
+      "abortedExternal": 27,
+      "thirdPartyFailed": 0
+    }
+  },
+  "gate": {
+    "total": 27,
+    "failed": []
+  },
+  "comparison_summary": {
+    "all_dom_state_equal": true,
+    "per_viewport": {
+      "1280x800": {
+        "stateCount": 19,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      },
+      "390x844": {
+        "stateCount": 21,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      },
+      "320x720": {
+        "stateCount": 22,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      }
+    }
+  },
+  "side_by_side_pairs": 62,
+  "evidence_drive_folder": "LoveTree_Evidence/CLEAN108-SRC038-S4-Candidate-260913",
+  "parity_flags_written": false,
+  "worker_disposition": "READY_FOR_CENTRAL_S4_VISUAL_REVIEW",
+  "comparison": {
+    "all_dom_state_equal": true,
+    "per_viewport": {
+      "1280x800": {
+        "stateCount": 19,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      },
+      "390x844": {
+        "stateCount": 21,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      },
+      "320x720": {
+        "stateCount": 22,
+        "mismatchTotal": 0,
+        "actionSequenceIdentical": true,
+        "probesIdentical": true
+      }
+    }
+  }
+}

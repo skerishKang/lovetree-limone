@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC038",
+  "source_folder_name": "38_보이저_우주기억지도",
+  "source_path": "reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
+  "authority": {
+    "drive_folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+    "drive_file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+    "filename": "01_보이저_우주영상기억지도.html",
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "revision": "V1",
+    "status": "LOCKED"
+  },
+  "master_rows": ["MST010"],
+  "family_ref": null,
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "SOURCE_SPECIFIC_CANVAS_RUNTIME_NO_GENERIC_WINDOW_CONTRACT",
+    "required_serving": "SINGLE_EXECUTABLE_HTML",
+    "repository_original_surface_runtime_equivalent": true,
+    "repository_split_surface_runtime_equivalent": true,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "SOURCE_SPECIFIC_CANVAS_MOTION_SURFACE"
+    }
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "canvas-2d",
+    "scenario_id": "community",
+    "classification": "REFERENCE_CAPABILITY_ONLY",
+    "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+    "backend_scope": "BACKEND_FREE",
+    "asset_reference_form": "external hosts only: i.ytimg.com/vi/<id>/hqdefault.jpg thumbnails (18 ids) and youtube.com/embed/<id>?autoplay=1&rel=0 player; no local asset references",
+    "runtime_asset_count": 0,
+    "determinism": "seeded LCG rnd() seed 89317 reproduces topology 454 nodes / 543 edges / 75 cross-links; no Math.random or Date.now in topology code",
+    "source_specific_controls": ["node-selection-chain", "wheel-zoom", "drag-orbit", "turn-left", "reset-view", "settings-panel", "search-filter", "fragments-toggle", "links-toggle", "layout-orbit-timeline", "render-scale", "video-preview", "player-open-escape-close", "mobile-inspector-toggle"]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§5 vocabulary, §7 fail-closed gate) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418; schema in src/08_harness/source-capsule-validator.mjs validateDuplicateVariantGovernance",
+    "adjudicated_at_utc": "2026-09-13T00:00:00Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5652638608 (mirror correction) and #589 comment 5652849609 (S2 acceptance / S3 release; automation #611)",
+    "status_basis": "Two distinct Drive objects carry this executable HTML: the canonical authority 01_보이저_우주영상기억지도.html (1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-) in folder 13pwareFS4wAPo8qgGF-HdrjMUFel98YV, and a duplicate copy of the same filename (1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2) in folder 38_보이저_우주기억지도 (16XJ0hiis0t0GzBsqcA6j9PfRmjGnB6fV). Fresh S3 readback downloaded both objects byte-for-byte: identical 35935 bytes and identical SHA-256 9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526. CENTRAL explicitly directed (comment 5652638608): do NOT record as SINGLE_EXECUTABLE_NO_DUPLICATE; the mirror is a distinct object with same content/hash. Selector is NONE; the canonical file id remains the sole authority.",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-13T12:13:47Z",
+      "verified_at_utc": "2026-09-13T12:13:47Z",
+      "verified_by": "kilo-agent / qwen, under CENTRAL S3 release instruction",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "01_보이저_우주영상기억지도.html",
+        "drive_file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+        "drive_folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+        "bytes": 35935,
+        "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+        "revision": "V1",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "01_보이저_우주영상기억지도.html",
+        "drive_file_id": "1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2",
+        "drive_folder_id": "16XJ0hiis0t0GzBsqcA6j9PfRmjGnB6fV",
+        "bytes": 35935,
+        "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+        "revision": "V1",
+        "content_relation_to_authority": "SAME_SHA_DUPLICATE",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical duplicate object in a separate Drive folder, freshly downloaded and hash-verified at S3 (2026-09-13T12:09:48Z download). Distinct object id, same content/hash → DUPLICATE_COPY_SAME_SHA per the §5 vocabulary. No selector is applied; canonical id is the sole authority."
+      }
+    ],
+    "negative_claim": "No differing-content revision of the SRC038 executable HTML exists in either folder. Both folder enumerations (authority folder and duplicate folder) contain exactly the HTML plus a SHA256SUMS.txt sidecar, and both HTML objects hash to 9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526.",
+    "special_notes": [
+      "The 18 YouTube video ids, the i.ytimg.com thumbnail URLs, and the youtube.com/embed player URLs are external runtime dependencies and must survive the mechanical split byte-exactly; no proxying, localizing, or substitution (including the invalid id O3ptaX7-G8w) is authorized at S3.",
+      "MST010 resolution to SRC038 is recorded in src/02_master/MST010/record.json with EXPLICIT_LEDGER_PROVENANCE (design-intake/master-design-coverage.json row master_id=10, issue #284 / PR #287); it is not numeric inference from the folder name."
+    ]
+  }
+}

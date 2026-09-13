@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_PRODUCTION_OBSERVED_EVIDENCE",
+  "captured_head": "fa7c262d9654de1df10feba89d2b4dd07d5a98bc",
+  "central_acceptance": {
+    "issue": 589,
+    "comment_id": "5652849609",
+    "automation_issue": 611
+  },
+  "authority": {
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+  },
+  "runtime_assets": {
+    "count": 0,
+    "verification": "no local runtime assets; runtime depends only on external hosts i.ytimg.com and youtube.com/embed, which are preserved verbatim by the mechanical split",
+    "external_dependencies_preserved_verbatim": ["i.ytimg.com thumbnail URLs (18 video ids)", "youtube.com/embed player iframes"]
+  },
+  "evidence": {
+    "drive_folder_id": "1pjqWEDzbuGMgP6UgaFaqKiQ_buWCcLmt",
+    "evidence_label": "CLEAN108-SRC038-S2-Candidate-260913",
+    "screenshots": 26,
+    "matrix": "24/24",
+    "result": "ALL_PASS"
+  },
+  "reviewed_viewports": [
+    { "width": 1280, "height": 800, "states": ["INITIAL_AUTO_ORBIT", "STABILIZED_ORBIT_OFF", "NODE_SELECTED", "ZOOMED", "ORBITED", "SETTINGS_OPEN", "SEARCH_FILTERED", "VIDEO_PREVIEW", "PLAYER_OPEN", "PLAYER_CLOSED", "TOGGLES", "LAYOUTS", "TURN_LEFT", "RESET_VIEW"] },
+    { "width": 390, "height": 844, "states": ["INITIAL_AUTO_ORBIT", "INSPECTOR_TOGGLE", "TAP_SELECT", "DRAG"] },
+    { "width": 320, "height": 720, "states": ["INITIAL_AUTO_ORBIT", "LAYOUT_PROBE"] }
+  ],
+  "interaction_results": {
+    "proofs": ["selection_chain_root_hub_video", "camera_zoom_orbit_turn_reset", "settings_search_filter", "fragments_links_toggles", "layout_orbit_timeline", "render_scale", "player_open_escape_close", "mobile_inspector_tap_drag"],
+    "steps": 24,
+    "source_runtime_errors": 0
+  },
+  "accepted_defects": {
+    "SRC038_D1_SYNTHETIC_FIXTURES": "All graph content (454 nodes / 543 edges / 432 fragments) is synthetic fixture data embedded in the source; not product data. Must survive the split byte-exactly; not repaired during split.",
+    "SRC038_D2_IYTIMG_THUMBNAIL_DEPENDENCY": "Direct i.ytimg.com/vi/<id>/hqdefault.jpg thumbnail dependency (18 video ids). External host preserved verbatim; no proxying or localizing during split.",
+    "SRC038_D3_YOUTUBE_EMBED_DEPENDENCY": "Direct youtube.com/embed/<id>?autoplay=1&rel=0 player dependency. External host preserved verbatim; no rewrite during split.",
+    "SRC038_D4_CONTINUOUS_RAF_NO_REDUCED_MOTION": "Continuous requestAnimationFrame render loop with time-based sin wobble; no prefers-reduced-motion handling. Pixels are non-repeatable by design; frozen Source behavior.",
+    "SRC038_D5_CANVAS_NODES_NOT_KEYBOARD_FOCUSABLE": "Canvas-drawn graph nodes are not keyboard focus targets; selection is pointer-only. Frozen Source behavior.",
+    "SRC038_D6_ESCAPE_ONLY_KEYBOARD_PATH": "Escape is the only keydown handler (player close). Frozen Source behavior; must remain in split/script.js.",
+    "SRC038_D7_TOUCH_ACTION_WHEEL_PREVENTDEFAULT": "touch-action:none on canvas plus wheel preventDefault (passive:false) ownership. Frozen Source behavior; must remain in split outputs.",
+    "SRC038_D8_STALE_STATIC_STATS_LITERAL": "Static HTML literal says 454 notes, 551 links; runtime updateStats() overwrites to 543. Off-by-8 literal must survive the split byte-exactly; not repaired during split.",
+    "SRC038_D9_MOBILE_320_OVERFLOW_GEAR_UNREACHABLE": "At 320x720 the workspace grid computes 45px 487px (sum 532 > 320); settings gear at x=480 is off-screen and unreachable by touch. Frozen Source behavior.",
+    "SRC038_D10_INVALID_VIDEO_ID_O3PTAX7_G8W": "Video id O3ptaX7-G8w returns 404 from i.ytimg.com hqdefault.jpg (1 of 18 ids). Frozen Source data defect; id preserved verbatim.",
+    "SRC038_D11_NO_IMAGE_ERROR_HANDLER": "getImage has no img.onerror handler; canvas silently falls back to gradient. Frozen Source behavior; no handler added during split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}
