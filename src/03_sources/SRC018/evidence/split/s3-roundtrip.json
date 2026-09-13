@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC018",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-12T20:06:42.731Z",
+  "authority": {
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
+  },
+  "reconstructed": {
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
+  },
+  "roundtrip": true,
+  "assets": {
+    "referenced": true,
+    "byte_locked": true,
+    "count": 8,
+    "reference_only_excluded": true
+  },
+  "track17_provenance_preserved": true,
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_RUNTIME_ASSET_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS",
+    "disposition": {
+      "action": "SKIP",
+      "reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "mode": "CONTEXT_AWARE_ONLY",
+      "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_RUNTIME_ASSETS"
+    }
+  },
+  "passed": 18,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "original locked at 25427 bytes"
+    },
+    {
+      "id": "T01b",
+      "pass": true,
+      "detail": "exactly one style block and one script block"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "styles.css === authority style inner (12819 chars)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "script.js === authority script inner (8889 chars)"
+    },
+    {
+      "id": "T04",
+      "pass": true,
+      "detail": "reconstruction byte-identical to frozen authority"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "link + script src glue only"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "all eight cyber-0N assets referenced in split CSS/JS"
+    },
+    {
+      "id": "T07",
+      "pass": true,
+      "detail": "split/assets holds exactly the eight byte-locked cyber PNGs (8)"
+    },
+    {
+      "id": "T08",
+      "pass": true,
+      "detail": "no legacy memory-* reference-only media copied into split/assets"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "source-local Track17 href survives byte-exactly in split index (provenance only)"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "fixed 6800ms JS progression untouched"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no product/MVP adapter in split"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "S3 split complete + S4 parity ACCEPTED, parity_ref -> accepted-parity.json"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "materialization record matches files on disk (bytes + sha256 + git_blob_sha1)"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "manifest declares CONTEXT_AWARE_ONLY capture surface with exact-8-asset runtime reason + both shared-harness SKIP dispositions"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "existing getCaptureSurfaceDisposition fails SRC018 closed to SKIP (generic baseline/parity must not capture it)"
+    }
+  ]
+}

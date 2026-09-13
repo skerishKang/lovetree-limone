@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC018",
+  "drive": {
+    "folder_id": "1txQn5exaLf__Wj1kc3umugA7XBqtprN2",
+    "assets_folder_id": "1OKRb8ZwXhmR1kjsGCaVWVHFZvJ22MhVr",
+    "file_id": "1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h",
+    "filename": "최종본.html",
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0",
+    "superseded_v1_file_id": "16AWcy3PVOZ95DXfgjw7zxyokXr6eBnKt",
+    "superseded_v1_sha256": "0dc14d71685d79558921507e5c5af866a1d4f847c7be3fa0942365f597d984ae"
+  },
+  "runtime_context_required": true,
+  "runtime": {
+    "rendering": "dom-2d",
+    "scenario_id": "cinematic-brand",
+    "backend_scope": "BACKEND_FREE",
+    "webaudio": "presentation cues only, never navigation or product authority"
+  },
+  "runtime_assets": {
+    "count": 8,
+    "dir": "split/assets",
+    "files": ["cyber-01.png", "cyber-02.png", "cyber-03.png", "cyber-04.png", "cyber-05.png", "cyber-06.png", "cyber-07.png", "cyber-08.png"],
+    "reference_only_not_runtime": ["memory-sphere.png", "memory-bloom.webp", "memory-trace.webp", "memory-human.webp"]
+  },
+  "source_only_values": [
+    "../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html is source provenance, never a repository href",
+    "legacy memory-* files are comparison/reference-only, not Track18 V2 runtime dependencies",
+    "source WebAudio tones are presentation cues only and never navigation or product authority"
+  ],
+  "frozen_defects": [
+    "SRC018_SOURCE_LOCAL_TRACK17_HREF",
+    "SRC018_JS_FIXED_6800MS",
+    "SRC018_NO_FOCUS_VISIBLE"
+  ],
+  "self_contained": "Not self-contained: the runtime references eight relative assets/cyber-0N.png images that must be present under split/assets/ for the split surface to load. HTML/CSS/JS are mechanically split; assets are byte-exact copies with no re-encode."
+}

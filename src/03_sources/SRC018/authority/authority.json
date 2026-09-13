@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC018",
+  "authority_system": "Google Drive sibling source",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-12T16:13:40Z",
+  "drive_folder_id": "1txQn5exaLf__Wj1kc3umugA7XBqtprN2",
+  "assets_folder_id": "1OKRb8ZwXhmR1kjsGCaVWVHFZvJ22MhVr",
+  "drive_file_id": "1o_AcPiWXfqXYadFIJ11r9dKYVueLvK1h",
+  "filename": "최종본.html",
+  "revision": "V2",
+  "mime_type": "text/html",
+  "bytes": 25427,
+  "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0",
+  "drive_modified_time_utc": "2026-08-17T11:39:10.935Z",
+  "rclone_remote": "gdrive:",
+  "identity_resolution": {
+    "superseded_revision": "16AWcy3PVOZ95DXfgjw7zxyokXr6eBnKt",
+    "superseded_bytes": 23003,
+    "superseded_sha256": "0dc14d71685d79558921507e5c5af866a1d4f847c7be3fa0942365f597d984ae",
+    "superseded_disposition": "SUPERSEDED_NOT_AUTHORITY",
+    "rule": "Identity resolved by canonical Drive file id plus SHA-256 byte lock; filename alone never establishes identity. The V1 prior revision is a distinct SHA-256, not a duplicate of the locked V2 authority."
+  },
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5646928896 (S2 acceptance / S3 release; automation #611)"
+}
