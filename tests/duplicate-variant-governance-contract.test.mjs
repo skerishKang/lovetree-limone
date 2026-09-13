@@ -148,7 +148,7 @@ test('the SRC 108 harness gate passes with the §7 check wired in', () => {
   });
   assert.equal(result.status, 0, (result.stderr ?? '') + (result.stdout ?? ''));
   assert.match(result.stdout, /SRC_108_HARNESS_GATE=PASS/);
-  assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=12/);
+  assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=13/);
   assert.match(result.stdout, /ACTIVE_CODEX_COUNT=1/);
 });
 

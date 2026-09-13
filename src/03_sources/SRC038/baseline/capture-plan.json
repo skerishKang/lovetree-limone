@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC038",
+  "status": "ACCEPTED",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": [
+    "INITIAL_AUTO_ORBIT",
+    "STABILIZED_ORBIT_OFF",
+    "NODE_SELECTED",
+    "ZOOMED",
+    "PANNED_OR_ORBITED",
+    "SETTINGS_OPEN",
+    "SEARCH_FILTERED",
+    "VIDEO_PREVIEW",
+    "PLAYER_OPEN",
+    "PLAYER_CLOSED",
+    "FRAGMENTS_TOGGLE",
+    "LINKS_TOGGLE",
+    "LAYOUT_ORBIT",
+    "LAYOUT_TIMELINE",
+    "RENDER_SCALE_MAX",
+    "TURN_LEFT",
+    "RESET_VIEW",
+    "MOBILE_390",
+    "SMALL_320"
+  ],
+  "measurements": [
+    "statsText at load: 454 notes, 543 links (source's own counter; notes typo is source-native)",
+    "node breakdown 1 root + 3 hubs + 18 videos + 432 fragments; edges trunk 3 + branch 18 + timeline 15 + memory 432 + cross 75",
+    "seeded LCG (seed 89317) static simulation reproduction (nodes=454, cross=75, edges=543)",
+    "root connection button order (필릭스 / 이주연 / 이준혁 LoveTree)",
+    "cross-reload topology stability and pixel non-repeatability (time-based sin wobble)",
+    "wheel zoom preventDefault, drag orbit with moved>=7 select suppression, turnLeft, resetView",
+    "search filter counts, fragments/links toggle asymmetry (no updateStats on linksToggle)",
+    "video player open (dblclick / previewPlay) via youtube.com/embed iframe autoplay=1, Escape close",
+    "i.ytimg.com thumbnail network results incl. the 404 for O3ptaX7-G8w",
+    "320px grid overflow 45px+487px and settings gear off-screen",
+    "console/page errors"
+  ],
+  "accepted_evidence": "baseline/accepted-baseline.json",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority."
+}

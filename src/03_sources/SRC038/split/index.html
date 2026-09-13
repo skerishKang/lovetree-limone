@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LoveTree · Cosmic Video Memory Atlas</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <div class="app">
+    <header class="titlebar">
+      <div class="traffic"><span class="app-icon">✦</span></div>
+      <div class="tab"><b class="leaf">♥</b><span id="tabTitle">나의 LoveTree 우주</span><b>×</b></div><button class="new-tab" type="button">＋</button>
+      <div class="title-tools"><button type="button">↗</button><button type="button">◇</button><button type="button">☰</button><button type="button">▢</button></div>
+    </header>
+    <main class="workspace">
+      <nav class="rail" aria-label="LoveTree 도구"><button class="active" type="button" title="기억 지도">⌘</button><button type="button" title="검색">⌕</button><button type="button" title="사람별 트리">♧</button><button type="button" title="앨범">▦</button><button type="button" title="캘린더">□</button><button type="button" title="새 순간">＋</button><button class="bottom" type="button" title="도움말">✧</button></nav>
+      <aside class="inspector" id="inspector">
+        <div class="crumbs"><button type="button">←</button><span>LoveTree</span><span>/</span><strong id="crumbTitle">나의 LoveTree 우주</strong><button class="more" type="button">⋮</button></div>
+        <div class="note-scroll" id="noteScroll">
+          <h1 id="noteTitle">나의 LoveTree 우주</h1>
+          <h3 class="section-title">속성</h3>
+          <div class="properties">
+            <div class="property"><span class="ico">☰</span><span class="key">종류</span><span class="value" id="propType">memory-universe</span></div>
+            <div class="property"><span class="ico">◇</span><span class="key">태그</span><span class="value chips" id="propTags"></span></div>
+            <div class="property"><span class="ico">□</span><span class="key">시작일</span><span class="value" id="propDate">2026.08.03</span></div>
+          </div>
+          <button class="add-property" type="button">＋ 속성 추가</button><div class="divider"></div>
+          <h2 id="articleTitle">나의 LoveTree 우주</h2><p class="description" id="description">좋아하게 된 영상과 그때의 감정, 날짜와 다음 장면이 하나의 우주처럼 연결되어 있어요. 구형 영상을 눌러 기억을 열어보세요.</p>
+          <div class="video-preview" id="videoPreview"><img id="previewImage" alt=""><button id="previewPlay" type="button" aria-label="영상 재생">▶</button></div>
+          <h3 class="section-title">연결된 기억</h3><div class="connections" id="connections"></div>
+        </div><div class="panel-scrollbar"><i></i></div>
+      </aside>
+      <section class="space" id="space">
+        <button class="mobile-note" id="mobileNote" type="button">☰</button>
+        <canvas id="graph" aria-label="LoveTree 3D 영상 기억 지도"></canvas>
+        <div class="stats"><span id="statsText">454 notes, 551 links</span><small id="statsSub">3 people · 18 videos · living memory graph</small></div>
+        <div class="density-line"><i></i><span></span></div>
+        <button class="gear" id="gear" type="button" aria-label="지도 설정">⚙</button>
+        <div class="settings" id="settings">
+          <div class="settings-head"><span>Settings</span><button id="closeSettings" type="button">×</button></div>
+          <div class="setting"><label for="filterInput">Filter</label><input id="filterInput" type="search" placeholder="사람, 영상, 감정 검색"></div>
+          <div class="setting"><label><span>감정·메모 조각</span><button class="toggle on" id="tagsToggle" type="button" aria-pressed="true"></button></label></div>
+          <div class="setting"><label for="layoutSelect">Map layout</label><select id="layoutSelect"><option value="auto">Auto</option><option value="orbit">Orbit</option><option value="timeline">Timeline</option></select></div>
+          <div class="setting"><label for="scaleRange"><span>Render scale</span><span id="scaleValue">1.0×</span></label><input id="scaleRange" type="range" min="0.65" max="1.7" value="1" step="0.05"></div>
+          <div class="setting"><label><span>연결선 표시</span><button class="toggle on" id="linksToggle" type="button" aria-pressed="true"></button></label></div>
+          <div class="setting"><label><span>천천히 자동 회전</span><button class="toggle on" id="orbitToggle" type="button" aria-pressed="true"></button></label></div>
+        </div>
+        <div class="controls"><button class="turn" id="turnLeft" type="button" aria-label="왼쪽 회전">↶</button><button class="reset-view" id="resetView" type="button" aria-label="전체 보기">✣</button><button class="turn" id="turnRight" type="button" aria-label="오른쪽 회전">↷</button></div>
+        <div class="hint">드래그 회전 · 휠 확대/축소 · 노드 클릭 · 영상 더블클릭</div>
+      </section>
+    </main>
+  </div>
+
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-label="LoveTree 영상 플레이어"><div class="player-card"><div class="player-frame" id="playerFrame"></div><div class="player-foot"><div><small id="playerPerson">LOVETREE VIDEO MOMENT</small><strong id="playerTitle"></strong></div><button class="close-player" id="closePlayer" type="button" aria-label="영상 닫기">×</button></div></div></div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

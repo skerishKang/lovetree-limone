@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "verified_at_utc": "2026-09-13T12:13:47Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "fresh_drive": {
+    "folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+    "file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+    "filename": "01_보이저_우주영상기억지도.html",
+    "mime_type": "text/html",
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "modified_time_utc": "2026-08-22T16:12:43.157Z"
+  },
+  "readback_transport": {
+    "tool": "rclone v1.75.0 (Windows-native) + Google Drive v3 files.get metadata (rclone stored access token)",
+    "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+    "remote": "gdrive:",
+    "method": "lsjson folder enumeration via --drive-root-folder-id 13pwareFS4wAPo8qgGF-HdrjMUFel98YV; copy download of 01_보이저_우주영상기억지도.html at 2026-09-13T11:57:36Z; local Get-FileHash -Algorithm SHA256 verified 2026-09-13T12:13:47Z",
+    "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired during 2026. Emitted on every call; all reads succeeded.",
+    "byte_identity": "PASS",
+    "sha256_identity": "PASS"
+  },
+  "s2_crosscheck": {
+    "s2_authority_copy": "35935 bytes / 9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "result": "MATCH"
+  },
+  "repository_snapshot_crosscheck": {
+    "path": "reference/source-tracks-snapshot/38_보이저_우주기억지도/01_보이저_우주영상기억지도.html",
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "result": "BYTE_IDENTICAL"
+  },
+  "verified_by": "kilo-agent / qwen, under CENTRAL S3 release instruction (#589 comment 5652849609)",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1 and the §7 gate. Fresh S3 readback only.",
+    "reverified_at_utc": "2026-09-13T12:13:47Z",
+    "verified_by": "kilo-agent / qwen",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "authority_reverification": {
+      "drive_folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+      "drive_file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+      "filename": "01_보이저_우주영상기억지도.html",
+      "bytes": 35935,
+      "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+      "revision": "V1",
+      "modified_time_utc": "2026-08-22T16:12:43.157Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "candidate_table": [
+      {
+        "filename": "01_보이저_우주영상기억지도.html",
+        "drive_file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+        "drive_folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+        "bytes": 35935,
+        "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+        "revision": "V1",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY",
+        "fresh_readback": "downloaded 2026-09-13T11:57:36Z, SHA-256 verified 2026-09-13T12:13:47Z"
+      },
+      {
+        "filename": "01_보이저_우주영상기억지도.html",
+        "drive_file_id": "1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2",
+        "drive_folder_id": "16XJ0hiis0t0GzBsqcA6j9PfRmjGnB6fV",
+        "drive_folder_name": "38_보이저_우주기억지도",
+        "bytes": 35935,
+        "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+        "md5": "8313d7853fa6354f4c8b4d996158c9cb",
+        "revision": "V1",
+        "modified_time_utc": "2026-08-28T00:32:38.598Z",
+        "content_relation_to_authority": "SAME_SHA_DUPLICATE",
+        "disposition": "NOT_AUTHORITY",
+        "fresh_readback": "parent resolved via Drive v3 files.get (2026-09-13T12:07Z); folder enumerated via lsjson; downloaded 2026-09-13T12:09:48Z to D:/Temp/src038-s3/mirror; local Get-FileHash SHA256 = 9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526 → byte-identical to canonical authority",
+        "note": "Distinct Drive object with byte-identical content, per CENTRAL correction #589 comment 5652638608: record as DUPLICATE_COPY_SAME_SHA, NOT SINGLE_EXECUTABLE_NO_DUPLICATE. Selector NONE; canonical remains sole authority."
+      }
+    ],
+    "folder_enumerations": [
+      {
+        "folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+        "role": "canonical authority folder",
+        "contents": [
+          { "id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-", "name": "01_보이저_우주영상기억지도.html", "size": 35935 },
+          { "id": "1LK-N_t12brRECdIqVFDCCB90e79ikFUb", "name": "SHA256SUMS.txt", "size": 111, "content": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526  ./01_보이저_우주영상기억지도.html" }
+        ]
+      },
+      {
+        "folder_id": "16XJ0hiis0t0GzBsqcA6j9PfRmjGnB6fV",
+        "role": "duplicate mirror folder (38_보이저_우주기억지도)",
+        "contents": [
+          { "id": "1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2", "name": "01_보이저_우주영상기억지도.html", "size": 35935 },
+          { "id": "1RVha-3EB1DHGspuzlapawDjJHOG-uZcv", "name": "SHA256SUMS.txt", "size": 111 }
+        ]
+      }
+    ],
+    "negative_claim": "Exactly two Drive objects carry this executable HTML content: the canonical authority 1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq- and the byte-identical duplicate 1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2 (same 35935 bytes, same SHA-256 9d5b4b36…30526). No differing-content revision of this executable exists in either folder; both folders contain only the HTML plus a SHA256SUMS.txt sidecar.",
+    "conclusion": "DUPLICATE_COPY_SAME_SHA"
+  },
+  "identity_non_inference": {
+    "master_rows": ["MST010"],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  }
+}
