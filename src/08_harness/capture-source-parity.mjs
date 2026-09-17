@@ -9,9 +9,11 @@ import { captureTrack57Variant, track57SourceFiles } from './source057-driver.mj
 import { captureTrack60Variant, track60SourceFiles } from './source060-driver.mjs';
 import { captureSRC58Variant, src58SourceFiles } from './source058-driver.mjs';
 import { captureSRC62Variant } from './source062-driver.mjs';
+import { captureSRC66Baseline } from './source066-driver.mjs';
 import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
+import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -39,6 +41,11 @@ const sourceViewports = {
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
     { width: 320, height: 720 },
+  ],
+  SRC066: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
   ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
@@ -293,6 +300,16 @@ try {
       const disposition = getDualVariantParityDisposition({ manifest, acceptedBaseline });
       const reason = disposition?.reason ?? 'DUAL_VARIANT_S4_HOLD';
       console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${reason} authority_mode=DUAL_VARIANT variants=${variantKeys.join(',')} s4_hold_respected=true`);
+      continue;
+    }
+    // CONTEXT_AWARE_ONLY: the Source's own relative URLs only resolve from a
+    // canonical external directory depth, so neither repository surface is a
+    // valid runtime target here. Fail closed instead of capturing parity the
+    // Source cannot support. SINGLE sources with no capture_surface declaration
+    // are unaffected.
+    const surfaceDisposition = getCaptureSurfaceDisposition({ manifest });
+    if (surfaceDisposition) {
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${surfaceDisposition.reason} capture_surface=${surfaceDisposition.mode} required_serving=${surfaceDisposition.required_serving ?? 'UNKNOWN'}`);
       continue;
     }
     for (const required of ['split/index.html', 'split/styles.css', 'split/script.js']) {
@@ -588,6 +605,32 @@ try {
             ...Object.fromEntries(shotKeys.map((k) => [`${k.replace(/_sha256$/, '').toLowerCase()}_screenshot_sha_equal`, split.screenshots[k] === original.screenshots[k]])),
             original_screenshots: original.screenshots,
             split_screenshots: split.screenshots,
+          };
+          fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
+          summary.viewports.push(comparison);
+          continue;
+        }
+        if (sourceId === 'SRC066') {
+          // SRC066 is hook-less by frozen S1 defect D9 (0 window.__*,
+          // 0 console.*, 0 data-testid), so the generic captureVariant fallback
+          // below cannot represent it. S4 reuses the bounded S2-accepted
+          // DOM/geometry/scroll observer driver for each surface.
+          const original = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-original`, sourceId);
+          const split = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-split`, sourceId);
+          const stateKeys = Object.keys(original.states);
+          assert.deepStrictEqual(Object.keys(split.states).sort(), [...stateKeys].sort(), `${sourceId} ${viewport.width}x${viewport.height}: captured state set drift`);
+          for (const state of stateKeys) {
+            assert.deepStrictEqual(split.states[state].state, original.states[state].state, `${sourceId} ${viewport.width}x${viewport.height}: ${state} state drift`);
+          }
+          assert.deepStrictEqual(split.interaction, original.interaction, `${sourceId} ${viewport.width}x${viewport.height}: interaction drift`);
+          const screenshotDigests = (result) => Object.fromEntries(stateKeys.map((k) => [k, result.states[k].screenshot_sha256]));
+          const comparison = {
+            viewport,
+            ...Object.fromEntries(stateKeys.map((k) => [`${k.toLowerCase()}_state_equal`, true])),
+            interaction_equal: true,
+            ...Object.fromEntries(stateKeys.map((k) => [`${k.toLowerCase()}_screenshot_sha_equal`, split.states[k].screenshot_sha256 === original.states[k].screenshot_sha256])),
+            original_screenshots: screenshotDigests(original),
+            split_screenshots: screenshotDigests(split),
           };
           fs.writeFileSync(path.join(sourceOut, `${viewport.width}x${viewport.height}.json`), JSON.stringify({ original, split, comparison }, null, 2));
           summary.viewports.push(comparison);

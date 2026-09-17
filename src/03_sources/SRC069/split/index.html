@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+LOVETREE_HTML_ASSET
+AREA: portal
+SCREEN: full-viewport-multi-template-navigation
+VERSION: v3
+BASE_FILE: 69_v2_template_nav_portal.html
+STATUS: design-review
+SCOPE: repair broken source paths, make every menu/CTA open a different adopted template, add in-page viewer and WORKS navigator
+PRESERVE: full-viewport CloudFront video, Inter+basis33, locked viewport, mobile menu
+DATE: 2026-08-17
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoveTree - Multi Template Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<div class="page">
+  <video class="bg-video" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4" autoplay muted loop playsinline></video>
+  <div class="content">
+    <nav class="navbar">
+      <button class="logo-button" id="homeLogo" type="button" aria-label="Return to portal home">
+        <svg class="logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/><circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/></svg>
+      </button>
+      <div class="desktop-nav">
+        <button type="button" data-template="01">ABOUT</button>
+        <button type="button" data-template="03">JOURNEY</button>
+        <button type="button" data-template="04">MOMENTS</button>
+        <button type="button" data-template="06">TREE</button>
+        <button type="button" data-template="07">ARCHIVE</button>
+        <button type="button" data-template="08">DISCOVERY</button>
+        <button type="button" data-open-works>WORKS</button>
+      </div>
+      <button class="icon-btn mobile-menu-btn" id="menuOpen" aria-label="Open menu" type="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    </nav>
+
+    <section class="meta">
+      <div><h2><span>LOVE</span><span class="font-pixel pixel-line">TREE</span></h2><div class="asterisk">*</div><div class="font-pixel blurb">A living archive of<br>the exact moments that<br>moved your heart and<br>changed where you went next</div></div>
+      <div class="lg-left"><h2><span>MOMENT &amp;</span><span class="font-pixel pixel-line">PATHWAYS</span></h2></div>
+      <div><div class="font-pixel meta-label">What LoveTree Is</div><div class="meta-body">Save the moment that moved you, connect why you searched next, then replay the path that made you fall in love.</div></div>
+      <div class="lg-left"><div class="font-pixel meta-label">Core Journey</div><ul><li>Discover a Moment</li><li>Save the Exact Point</li><li>Leave the Feeling</li><li>Connect the Reason</li><li>Grow the Tree</li><li>Walk It Again</li></ul></div>
+    </section>
+
+    <div class="spacer"></div>
+
+    <section class="bottom">
+      <div class="row-a">
+        <h1 class="hero">SAVE THE<br><span class="font-pixel pixel-word">MOMENTS</span> THAT<br>GROW INTO<br><span class="font-pixel pixel-word">PATHS</span></h1>
+        <div class="right-col">
+          <button class="showreel template-action" type="button" data-template="09"><svg class="play-icon" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg><span>PLAY MEMORY PATHS</span></button>
+          <div class="chips">
+            <button class="chip template-action" type="button" data-template="02"><span class="chip-main">DISCOVER</span><span class="count">01</span></button>
+            <button class="chip template-action" type="button" data-template="05"><span class="chip-main">CONNECT</span><span class="count">02</span></button>
+            <button class="chip template-action" type="button" data-template="10"><span class="chip-wide">REPLAY</span><span class="count">03</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div>Your first moment can become a path someone else follows. <button type="button" data-template="11">Plant a moment</button></div><div class="right">Moment &bull; Emotion &bull; Connection &bull; Replay</div></div>
+    </section>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-header">
+      <svg class="logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 25V9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 15C10.5 13.8 8.1 11.5 6.7 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 12.2C17.3 11.2 19.8 8.9 21.3 5.9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.1C12.7 7.2 11 5.6 8.9 4.5C10.8 3.6 12.5 2.3 14 0.9C15.5 2.3 17.2 3.6 19.1 4.5C17 5.6 15.3 7.2 14 9.1Z" fill="white"/><circle cx="6.2" cy="7.7" r="1.8" fill="white"/><circle cx="21.8" cy="5.1" r="1.8" fill="white"/></svg>
+      <button class="icon-btn" id="menuClose" aria-label="Close menu" type="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="menu-nav" id="menuNav">
+      <button type="button" data-template="01">ABOUT</button><button type="button" data-template="03">JOURNEY</button><button type="button" data-template="04">MOMENTS</button><button type="button" data-template="06">TREE</button><button type="button" data-template="07">ARCHIVE</button><button type="button" data-template="08">DISCOVERY</button><button type="button" data-open-works>WORKS</button>
+    </div>
+  </div>
+  <div class="portal-hint">11 TEMPLATES / CLICK TO OPEN</div>
+
+  <div class="works-overlay" id="worksOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="worksTitle">
+    <section class="works-panel">
+      <header class="works-head"><strong id="worksTitle">WORKS_</strong><span>EXACT SOURCE TEMPLATE NAVIGATOR</span><div class="works-spacer"></div><button class="works-close" id="worksClose" type="button" aria-label="Close Works navigator">×</button></header>
+      <div class="works-list" id="worksList"></div>
+    </section>
+    <aside class="works-preview" aria-live="polite"><div class="preview-card"><div class="preview-no" id="previewNo">69</div><div class="preview-kicker">SELECTED TEMPLATE</div><div class="preview-title" id="previewTitle">FULL VIEWPORT PORTAL</div><div class="preview-copy" id="previewCopy">Track 69 V3 · all navigation repaired and each action mapped to a different adopted LoveTree template.</div></div></aside>
+  </div>
+
+  <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+    <header class="viewer-bar"><div class="viewer-index" id="viewerIndex">01</div><div class="viewer-meta"><strong id="viewerTitle">FIRST JOURNEY</strong><span id="viewerSource">Track 02</span></div><div class="viewer-spacer"></div><button class="viewer-btn viewer-open" id="viewerOpenExternal" type="button">OPEN WINDOW ↗</button><button class="viewer-btn viewer-close" id="viewerClose" type="button" aria-label="Close template">×</button></header>
+    <div class="viewer-stage"><iframe class="viewer-frame" id="viewerFrame" title="LoveTree selected template"></iframe><div class="viewer-loading" id="viewerLoading">LOADING SELECTED TEMPLATE…</div></div>
+  </div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

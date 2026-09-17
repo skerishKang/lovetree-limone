@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verified_at_utc": "2026-09-05T13:27:35Z",
+  "identity_source": "CENTRAL S2 ACCEPT with S3 release names file 1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ as the sole canonical SRC066 authority and supplies byte count and SHA-256 (bundle hashes verified).",
+  "verified_by": "CLEAN-108 SRC066 S3 implementer reproduced the CENTRAL identity against live Google Drive on 2026-09-05: fresh rclone re-download reproduced 166,996 bytes / MD5 6a0c98d77b31a72cf3e8ea0f05dde4b0 / SHA-256 b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6, and the Drive API file metadata returned the same MD5/SHA-256, size, and modified time for the live object.",
+  "fresh_drive": {
+    "folder_id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
+    "folder_name": "66_첫트리만들기_인터랙티브스크롤가이드",
+    "file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "filename": "현재후보.html",
+    "mime_type": "text/html",
+    "bytes": 166996,
+    "md5": "6a0c98d77b31a72cf3e8ea0f05dde4b0",
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "drive_api_sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "drive_modified_time": "2026-08-13T16:20:49.717Z"
+  },
+  "parent_chain": [
+    {
+      "id": "1Xb8lUU1RPo--npXQSrpObtMQj1OQoH3v",
+      "name": "버전1.2_제품목적·실제Moment체험강화_후보",
+      "role": "SOURCE_REVISION_FOLDER"
+    },
+    {
+      "id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
+      "name": "66_첫트리만들기_인터랙티브스크롤가이드",
+      "role": "SOURCE_TRACK_FOLDER"
+    }
+  ],
+  "superseded_copies_excluded": {
+    "disposition": "NOT_AUTHORITY",
+    "note": "Superseded copies V1.0 (320,169 B) and V1.1 (27,323 B) are not authority. Excluded from the capsule by design: never downloaded, served, or rendered in this lane."
+  }
+}

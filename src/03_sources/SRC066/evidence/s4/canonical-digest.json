@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S4_PARITY_CANDIDATE",
+  "method": "SRC047-proven canonical pixel digest: the PNG is drawn onto a 16x16 canvas with high-quality smoothing, each RGB channel is floored to /16 (v & 0xF0), alpha is kept exact; the 1024-byte buffer is SHA-256 hashed and compared. Stable against sub-2/255 antialiasing jitter yet sensitive to real layout/color drift.",
+  "canonical_bytes": 1024,
+  "hamming_threshold": 32,
+  "pair_count": 18,
+  "canonical_sha_equal_count": 18,
+  "max_canonical_hamming": 0,
+  "pairs": [
+    {
+      "viewport": "1440x900",
+      "state": "INITIAL",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "7b58742fcc5654c257c39002a56117799dd6688f4b4ab2921d108e960ca7c9c3",
+        "split": "7b58742fcc5654c257c39002a56117799dd6688f4b4ab2921d108e960ca7c9c3"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "STEP1",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "1b346f7e1968bcf21f40bb01f8037e3d1a67150f465d408f02029b30d0d93cfc",
+        "split": "1b346f7e1968bcf21f40bb01f8037e3d1a67150f465d408f02029b30d0d93cfc"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "STEP2",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "af1d83552c1e97753908fb2886adf0738145e265fae5f51caeb83f107537fb0f",
+        "split": "af1d83552c1e97753908fb2886adf0738145e265fae5f51caeb83f107537fb0f"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "STEP3",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "fd34175b4d6ba665bc365b96e63e388202a8b2dac63ffc138f04525ad15bfd10",
+        "split": "fd34175b4d6ba665bc365b96e63e388202a8b2dac63ffc138f04525ad15bfd10"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "MID_MORPH",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "41c234f9c7085ee2355f6bd31621b4eac1ed9a63a36681747aa52598d6d4a8ee",
+        "split": "41c234f9c7085ee2355f6bd31621b4eac1ed9a63a36681747aa52598d6d4a8ee"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "REVERSE_RETURN",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "7b58742fcc5654c257c39002a56117799dd6688f4b4ab2921d108e960ca7c9c3",
+        "split": "7b58742fcc5654c257c39002a56117799dd6688f4b4ab2921d108e960ca7c9c3"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "FAQ_OPEN",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "0a6bb1956a5eb56541ffeddfc9690aee614ac07d2908d85390f41e1616460b53",
+        "split": "0a6bb1956a5eb56541ffeddfc9690aee614ac07d2908d85390f41e1616460b53"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "1440x900",
+      "state": "FOOTER_REACHED",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "680307779d5c8ed2b10e129aa62c63df06c74957a622025c6189ac72f3388955",
+        "split": "680307779d5c8ed2b10e129aa62c63df06c74957a622025c6189ac72f3388955"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "430x932",
+      "state": "INITIAL",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "9de3ac39ae1b48f539f61a85118d947a0827cae6532b8d9d21262c1590a62511",
+        "split": "9de3ac39ae1b48f539f61a85118d947a0827cae6532b8d9d21262c1590a62511"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "430x932",
+      "state": "STEP_FIRST",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "ace9aa05e02de47c0abf0456d3dd458d12985051bff75dad5f286685bf2bdf92",
+        "split": "ace9aa05e02de47c0abf0456d3dd458d12985051bff75dad5f286685bf2bdf92"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "430x932",
+      "state": "STEP_LAST",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "8a6e88ad271656b4a5fbbe41b47cd6219b3377866d5ed7efbe2b870efa7daaaf",
+        "split": "8a6e88ad271656b4a5fbbe41b47cd6219b3377866d5ed7efbe2b870efa7daaaf"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "430x932",
+      "state": "FAQ_OPEN",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "563b045e9275ef293041997ed2417940d135045e07b82b00b423acad410af46e",
+        "split": "563b045e9275ef293041997ed2417940d135045e07b82b00b423acad410af46e"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "430x932",
+      "state": "FOOTER_REACHED",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "2175180e817464521500b8841fd2ffed7e0ef7a218cb38b42b6f4eb65b184cc2",
+        "split": "2175180e817464521500b8841fd2ffed7e0ef7a218cb38b42b6f4eb65b184cc2"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "390x844",
+      "state": "INITIAL",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "54d3ccc4aab7d2d2dfa1ce40992be194d71995053dc699a3126700d4de4a6c39",
+        "split": "54d3ccc4aab7d2d2dfa1ce40992be194d71995053dc699a3126700d4de4a6c39"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "390x844",
+      "state": "STEP_FIRST",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "966f99caf1e7122b55ed97b5e46be48875717b8f0074fb16aae4745b47510e72",
+        "split": "966f99caf1e7122b55ed97b5e46be48875717b8f0074fb16aae4745b47510e72"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "390x844",
+      "state": "STEP_LAST",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "e53b7a802565a34b67704782ebd437d9a21707a8747880cc087216bdf6f80e68",
+        "split": "e53b7a802565a34b67704782ebd437d9a21707a8747880cc087216bdf6f80e68"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "390x844",
+      "state": "FAQ_OPEN",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "999222df6dd3f115c353ef54d3edec82ef7a6f51969ddecfe4d502184022ebcf",
+        "split": "999222df6dd3f115c353ef54d3edec82ef7a6f51969ddecfe4d502184022ebcf"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    },
+    {
+      "viewport": "390x844",
+      "state": "FOOTER_REACHED",
+      "canonical_bytes": 2048,
+      "canonical_sha256": {
+        "original": "d9ecc7e39896aeaff81888dc4b9bd309ff0a5a47bdf7ed7988f9d7caeec24461",
+        "split": "d9ecc7e39896aeaff81888dc4b9bd309ff0a5a47bdf7ed7988f9d7caeec24461"
+      },
+      "canonical_sha_equal": true,
+      "canonical_hamming": 0
+    }
+  ]
+}

@@ -9,9 +9,12 @@ import { captureTrack57Baseline } from './source057-driver.mjs';
 import { captureTrack60Baseline } from './source060-driver.mjs';
 import { captureSRC58Baseline } from './source058-driver.mjs';
 import { captureSRC62Baseline } from './source062-driver.mjs';
+import { captureSRC66Baseline } from './source066-driver.mjs';
+import { captureSRC71Baseline } from './source071-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantBaselineDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
+import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -67,6 +70,16 @@ const sourceViewports = {
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
     { width: 320, height: 720 },
+  ],
+  SRC071: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
+  ],
+  SRC066: [
+    { width: 1440, height: 900 },
+    { width: 430, height: 932 },
+    { width: 390, height: 844 },
   ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
@@ -283,6 +296,16 @@ try {
       console.log(`SRC_BASELINE_CAPTURE_SKIP=${sourceId} reason=${dualBaselineDisposition.reason} authority_mode=DUAL_VARIANT variants=${variantKeys.join(',')}`);
       continue;
     }
+    // CONTEXT_AWARE_ONLY: the Source's own relative URLs only resolve from a
+    // canonical external directory depth, so its repository path is not a valid
+    // runtime surface. Fail closed instead of capturing a baseline the generic
+    // single-executable harness cannot represent. SINGLE sources with no
+    // capture_surface declaration are unaffected.
+    const surfaceDisposition = getCaptureSurfaceDisposition({ manifest });
+    if (surfaceDisposition) {
+      console.log(`SRC_BASELINE_CAPTURE_SKIP=${sourceId} reason=${surfaceDisposition.reason} capture_surface=${surfaceDisposition.mode} required_serving=${surfaceDisposition.required_serving ?? 'UNKNOWN'}`);
+      continue;
+    }
     const originalPath = path.join(sourceDir, 'original', 'original.html');
     const bytes = fs.readFileSync(originalPath);
     if (bytes.length !== manifest.authority.bytes) throw new Error(`${sourceId} original byte count drift`);
@@ -314,6 +337,31 @@ try {
           if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.D01_INITIAL_SCENE01.ids.length, elementCount: evidence.states.D01_INITIAL_SCENE01.elementCount });
+          continue;
+        }
+        if (sourceId === 'SRC071') {
+          // SRC071 exposes window.__LOVE_TREE_V7_R24__, not the legacy
+          // window.__lt/window.__lovetreeStats contract. Reuse its accepted
+          // V7 R2.4 S2/S4 interaction semantics rather than forcing the
+          // generic graph-source fallback.
+          const evidence = await captureSRC71Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
+          continue;
+        }
+        if (sourceId === 'SRC066') {
+          // SRC066 is hook-less by frozen S1 defect D9 (0 window.__*,
+          // 0 console.*, 0 data-testid), so the generic window.__lt fallback
+          // below cannot represent it. Route to its bounded S2-accepted
+          // DOM/geometry/scroll observer driver instead. No other Source is
+          // affected: every other sourceId keeps its existing route.
+          const evidence = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.INITIAL.state.ids.length, elementCount: evidence.states.INITIAL.state.elementCount });
           continue;
         }
         const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });

@@ -301,6 +301,21 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       if (stages[stage] === false) falseSeen = true;
     }
     if (stages.identity_verified !== true || stages.raw_authority_locked !== true) failures.push(`${sourceId}: S0/S1 incomplete`);
+    // CONTEXT_AWARE_ONLY is a manifest-maintained opt-in: the Source's own
+    // relative URLs only resolve from a canonical external directory depth, so
+    // its repository path is not a runtime surface and parity cannot be
+    // accepted by loading split/index.html directly. A CONTEXT_AWARE_ONLY
+    // source may therefore claim source_split_parity_pass only when CENTRAL
+    // has accepted the context-aware parity method and the claim is backed by
+    // a parity_ref pointing at the validated accepted-parity artifact.
+    if (manifest.capture_surface?.mode === 'CONTEXT_AWARE_ONLY') {
+      if (stages.source_split_parity_pass === true && manifest.parity_ref !== 'evidence/parity/accepted-parity.json') {
+        failures.push(`${sourceId}: CONTEXT_AWARE_ONLY capture surface may claim source_split_parity_pass only with parity_ref=evidence/parity/accepted-parity.json and validated accepted-parity evidence`);
+      }
+      if (stages.mechanical_split_complete === true && manifest.capture_surface?.shared_harness_disposition?.['capture-source-parity.mjs'] !== 'SKIP') {
+        failures.push(`${sourceId}: CONTEXT_AWARE_ONLY capsule must record the parity harness SKIP disposition`);
+      }
+    }
 
     if (stages.baseline_captured === true) {
       requirePath(repoRoot, `${base}/baseline/capture-plan.json`, failures);

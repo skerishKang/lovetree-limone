@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_DIRECT_DRIVE_S4_VISUAL_REVIEW",
+  "central_acceptance_comment": 5556645775,
+  "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+  "tier_authority": "skerishKang/lovetree-limone#589 comment 5556645775 (CENTRAL): 17 pairs BYTE_IDENTICAL, the one raw-differing pair CANONICAL_PIXEL_DIGEST at canonical Hamming 0",
+  "source_head": "288f355a9ab47b2ba94a2416a5876e54e46f2753",
+  "evidence_binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+  "authority": {
+    "file": "현재후보.html",
+    "drive_folder_id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
+    "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "revision": "V1.2_제품목적·실제Moment체험강화_후보",
+    "status": "LOCKED",
+    "canonical_virtual_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html"
+  },
+  "serving": {
+    "harness": "src/08_harness/capture-source-parity.mjs",
+    "driver": "src/08_harness/source066-driver.mjs (S2-accepted, byte-unchanged by this lane)",
+    "original": "src/03_sources/SRC066/original/original.html served at /SRC066/original.html over loopback HTTP",
+    "split": "src/03_sources/SRC066/split/index.html served at /SRC066/split/index.html, linked to ./styles.css and ./script.js by the mechanical-split glue",
+    "release": "The S3 BOUNDED_SKIP was released by deleting the SRC066 S4_PARITY_NOT_CLAIMED skip block and dispatching SRC066 to the same bounded observer #634 added for the S2 baseline. No new harness, no new driver, no generic-comparison rewrite.",
+    "network": "Loopback 127.0.0.1 only; the authority carries zero external references, so no mirroring or network access was required"
+  },
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "class": "DESKTOP",
+      "states": ["INITIAL", "STEP1", "STEP2", "STEP3", "MID_MORPH", "REVERSE_RETURN", "FAQ_OPEN", "FOOTER_REACHED"]
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "class": "MOBILE",
+      "states": ["INITIAL", "STEP_FIRST", "STEP_LAST", "FAQ_OPEN", "FOOTER_REACHED"]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "class": "SMALL_MOBILE",
+      "states": ["INITIAL", "STEP_FIRST", "STEP_LAST", "FAQ_OPEN", "FOOTER_REACHED"]
+    }
+  ],
+  "state_count": 18,
+  "pair_count": 18,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "state_set": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "comparison_policy": {
+    "aggregate_tier": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST",
+    "aggregate_tier_note": "The validator vocabulary offers BYTE_IDENTICAL, BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST and CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD. 17 of 18 pairs are raw PNG byte-identical and the remaining pair is canonical-digest byte-identical at canonical Hamming 0, so the aggregate is BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST. The Hamming tier is NOT used: its max would be 0, which is a digest identity, not a tolerance.",
+    "canonical16_used": true,
+    "canonical16_scope": "ALL_18_PAIRS",
+    "canonical16_technique": {
+      "name": "SRC047_CANONICAL16",
+      "downsample": "16x16",
+      "image_smoothing": "high",
+      "rgb_channel_mask": "0xF0",
+      "alpha": "unchanged",
+      "buffer_bytes": 1024,
+      "digest": "sha256 of the 1024-byte RGBA buffer; equality is exact, a normalization not a tolerance",
+      "provenance": "src/08_harness/source047-driver.mjs canonicalPixelDigest"
+    },
+    "pair_tiers": {
+      "BYTE_IDENTICAL": 17,
+      "CANONICAL_PIXEL_DIGEST": 1,
+      "note": "CANONICAL_PIXEL_DIGEST here means the 16x16 canonical digest is byte-identical (canonical Hamming 0 of 1024 bytes) while the raw PNG bytes differ. This is the CENTRAL-decided tier for the single differing pair, per #589 comment 5556645775."
+    },
+    "screenshot_pixel_tolerance": "REMOVED (the raw pixel measurement is retained only as a recording instrument for the one raw-differing pair; it never decides equality)",
+    "global_visual_tolerance": false,
+    "canonical16_result": {
+      "pairs_identical": 18,
+      "buffer_bytes": 1024,
+      "max_hamming": 0
+    },
+    "non_byte_identical_pair": {
+      "viewport": "1440x900",
+      "viewport_class": "DESKTOP",
+      "state": "FOOTER_REACHED",
+      "tier": "CANONICAL_PIXEL_DIGEST",
+      "canonical_hamming": 0,
+      "original_png": "1440x900-original-footer-reached.png",
+      "split_png": "1440x900-split-footer-reached.png",
+      "original_sha256": "7bd3fd9daf11b77938fe066f3a8230d4020d5a4c671865986536f140a7ee8852",
+      "split_sha256": "5c0d89074e7e9d5c9e6281cf8c8115ba228fa5f5f95cce1b470d193ff5974c3a",
+      "original_bytes": 27306,
+      "split_bytes": 27305,
+      "raw_difference": {
+        "differing_pixels": 14,
+        "total_pixels": 1296000,
+        "differing_ratio": 0.000010802469135802469,
+        "max_channel_delta_0_255": 1,
+        "diff_bbox": { "x0": 511, "y0": 777, "x1": 1033, "y1": 789 }
+      },
+      "geometry_result": "EQUAL (header/hero-copy/world-stage rects, h1 font-size, scroll progress, scrollHeight, activeStep, FAQ/footer state all deep-equal)",
+      "computed_style_result": "EQUAL (opacity, h1 fontSize, footer backgroundColor all deep-equal)",
+      "runtime_state_result": "EQUAL (footerInView true on both surfaces, zero broken images, identical sessionStorage snapshot)",
+      "canonical_digest_result": "BYTE_IDENTICAL (16x16 canonical pixel digest sha256 equal, Hamming 0 of 1024 bytes)",
+      "assessment": "ANTIALIASING_NOISE_ONLY: 14 pixels on one footer text row, maximum per-channel delta 1/255 (LSB rounding). No layout, text, color, geometry or structural difference. Both PNGs are committed and retained for CENTRAL review; neither was discarded, averaged or repaired."
+    }
+  },
+  "state_and_interaction_comparison": {
+    "method": "assert.deepStrictEqual on the full captured state object and the interaction record for every matched state on both surfaces (strict, no epsilon)",
+    "captured_per_state": [
+      "ids (all [id] attributes, order preserved)",
+      "elementCount",
+      "scroll position and scrollHeight",
+      "scroll progress ratio (6 decimals)",
+      "activeStep index",
+      "processCopy and treeLabel text",
+      "header / hero-copy / worldStage rects plus opacity",
+      "h1 computed font-size",
+      "faq open-item count",
+      "footer in-view flag and computed background color",
+      "sessionStorage key/value snapshot",
+      "imgCount and brokenImgCount",
+      "screenshot PNG sha256",
+      "16x16 canonical pixel digest"
+    ],
+    "state_drift": 0,
+    "interaction_drift": 0,
+    "viewport_normalization": "Rects rounded to 3 decimals and scroll progress to 6 decimals inside the shared S2 driver, identically for both surfaces. No additional normalization was applied for parity.",
+    "browser": {
+      "automation": "Playwright 1.55.1",
+      "channel": "chrome (branded Google Chrome, matching CI SRC_BROWSER_CHANNEL=chrome)",
+      "headless": true
+    }
+  },
+  "stability": {
+    "labeled_harness_runs_at_source_head": 2,
+    "corroborating_probe_run": 1,
+    "cross_run_output_identical": true,
+    "capture_command": "SRC_EXACT_HEAD=288f355a9ab47b2ba94a2416a5876e54e46f2753 SRC_BROWSER_CHANNEL=chrome node src/08_harness/capture-source-parity.mjs",
+    "note": "Two labeled harness runs at the capture head produced identical evidence, corroborated by one observer-only probe run. SRC066 carries no animated or remotely-served media, so the SRC069-style multi-run video determinism protocol does not apply."
+  },
+  "browser_errors": 0,
+  "console_errors": 0,
+  "page_errors": 0,
+  "unexpected_failed_requests": 0,
+  "required_network_errors": 0,
+  "external_requests": 0,
+  "drive_evidence": {
+    "folder": "LoveTree_Evidence",
+    "zip": "SRC066_S4_PARITY_CANDIDATE_288f355a.zip",
+    "bytes": 1243263,
+    "sha256": "92fdf73957cfc94ab7cb20dc620cc516d5945bfe4dcffb7dea825050b2d94f15",
+    "contents": "manifest.json, split-materialization.json and 44 S4 evidence files (36 PNGs, 3 per-viewport comparison JSONs, harness-summary.json, pixel-diff.json, canonical-digest.json, evidence-manifest.json, summary.json)",
+    "readback": "sha256 92fdf73957cfc94ab7cb20dc620cc516d5945bfe4dcffb7dea825050b2d94f15 on the 1243263-byte re-download: MATCH",
+    "file_id": "NOT CAPTURED: the installed rclone v1.75.0 build rejects both `rclone stat` and `rclone lsf --json`, so no Drive file id was recorded; identity is established by name, size and hash read-back",
+    "bundle_immutable": true,
+    "record": "src/03_sources/SRC066/evidence/s4/drive-handoff.json"
+  },
+  "frozen_defects_preserved": [
+    "D1_MANIFEST_DEAD_DRIVE_FOLDER_ID: FROZEN, preserved identically on both surfaces",
+    "D2_MANIFEST_SOURCE_LABEL_MISNAME: FROZEN, preserved identically on both surfaces",
+    "D3_MANIFEST_LOCALSTORAGE_CLAIM: FROZEN, preserved identically on both surfaces",
+    "D4_MANIFEST_CSS3D_DOM_CLAIM: FROZEN, preserved identically on both surfaces",
+    "D5_DUAL_ISSUE_NUMBERS_UNRELATED: FROZEN, preserved identically on both surfaces",
+    "D6_INERT_DEMO_URL_DEFAULT: FROZEN, preserved identically on both surfaces (the demo momentUrl input default lives on in split/index.html)",
+    "D7_ASSET_COUNT_DISCREPANCY: FROZEN, preserved identically on both surfaces",
+    "D8_SYNTHETIC_PERF_DATA: FROZEN, preserved identically on both surfaces",
+    "D9_NO_QA_HOOKS: FROZEN, preserved identically on both surfaces (0 window.__*, 0 console.*, 0 data-testid on both)",
+    "D10_NO_OWNER_APPROVAL_ON_DRIVE: FROZEN, preserved identically on both surfaces",
+    "D11_MST_LEDGER_UNLINKED: FROZEN in the split; resolved outside it via src/02_master/MST046/record.json",
+    "D12_MINOR_STYLE_LABEL_NITS: FROZEN, preserved identically on both surfaces"
+  ],
+  "frozen_defects_note": "Parity is an equality target, never a repair target: qa_hooks_added 0, source_bytes_changed 0. D9 (zero QA hooks) is why the driver is an out-of-band observer that reads no window.__* contract.",
+  "visual_review": {
+    "central_direct_drive_s4_visual_review": true,
+    "central_direct_artifact_review": true,
+    "central_acceptance_comment": 5556645775,
+    "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+    "source_native_observation": "The split renders the identical first-tree interactive scroll guide: initial hero and process copy, STEP1 to STEP3 progression, the scroll-driven world-stage morph with forward and reverse return, FAQ expansion, footer reach and the moment/candidate/why sessionStorage session; the only structural difference is the mechanical glue (one inline style block and one inline script block replaced by one stylesheet link and one script src)."
+  },
+  "notes": [
+    "Evidence was captured at exact head 288f355a9ab47b2ba94a2416a5876e54e46f2753 (base 6b651f93295f53a01d2f75b5b9b874aa0fe26b58) and accepted by CENTRAL direct Drive S4 visual review, issue #589 comment 5556645775; the accepted Drive bundle is immutable and was not rewritten by this metadata promotion.",
+    "17 of the 18 matched pairs are raw PNG byte-identical. The single raw-differing pair (1440x900 / FOOTER_REACHED) is canonical-pixel-digest byte-identical at canonical Hamming 0 of 1024 bytes, with 14 differing pixels (1.080e-5) at maximum per-channel delta 1/255 inside a single footer text row. Both PNGs are committed and retained; neither was repaired.",
+    "The mechanical split round-trips byte-identically to the frozen 166996-byte authority original (validator-enforced).",
+    "Runtime bytes (original/original.html, split/index.html, split/styles.css, split/script.js) were NOT modified by this promotion. No source repair, redesign, framework conversion, product-data injection or QA hook was introduced.",
+    "The shared parity harness release is bounded to one SRC066 dispatch site: capture-source-baseline.mjs and source066-driver.mjs are byte-identical to origin/main, all six legacy dispatch sites and the other SKIPs are intact, and tests/src066-hookless-driver-routing.test.mjs asserts that."
+  ],
+  "provenance": {
+    "evidence_source_head": "288f355a9ab47b2ba94a2416a5876e54e46f2753",
+    "capture_base_sha": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "harness_release_commits": {
+      "s4_parity_route_released": "9b043336598bab41d30258d39205293dc9117b4b",
+      "viewport_scoped_screenshots": "288f355a9ab47b2ba94a2416a5876e54e46f2753"
+    },
+    "candidate_evidence": "src/03_sources/SRC066/evidence/s4/ (summary.json, 3 per-viewport comparison JSONs, pixel-diff.json, canonical-digest.json, evidence-manifest.json, 36 PNGs)",
+    "final_metadata_commit_head": "NOT EMBEDDED / external CI authority"
+  }
+}

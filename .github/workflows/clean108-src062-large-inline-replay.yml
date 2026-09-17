@@ -1,0 +1,96 @@
+name: CLEAN-108 SRC062 LARGE_INLINE Replay
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'tests/clean108-src062-large-inline-replay.test.mjs'
+      - '.github/workflows/clean108-src062-large-inline-replay.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    name: SRC062 LARGE_INLINE Matched Replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact-head binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha }}'
+          actual="$(git rev-parse HEAD)"
+          echo "EXPECTED_HEAD=$expected"
+          echo "ACTUAL_HEAD=$actual"
+          test "$actual" = "$expected"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run SRC062 fail-closed contracts
+        run: node --test tests/clean108-src062-large-inline-replay.test.mjs
+
+      - name: Install Korean font
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f
+
+      - name: Install and verify branded Google Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v google-chrome >/dev/null 2>&1 && ! command -v google-chrome-stable >/dev/null 2>&1; then
+            wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq /tmp/google-chrome.deb
+          fi
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable)"
+          CHROME_VERSION="$("$CHROME_BIN" --version)"
+          echo "GOOGLE_CHROME_VERSION=$CHROME_VERSION"
+          test -n "$CHROME_VERSION"
+
+      - name: Prove SRC062 accepted large-inline matched replay
+        shell: bash
+        env:
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
+          SRC062_LARGE_INLINE_REPLAY_EVIDENCE_DIR: /tmp/src062-large-inline-replay
+        run: |
+          set -euo pipefail
+          rm -rf "$SRC062_LARGE_INLINE_REPLAY_EVIDENCE_DIR"
+          rm -f /tmp/src062-large-inline-replay.log
+          node src/08_harness/prove-src062-large-inline-replay.mjs | tee /tmp/src062-large-inline-replay.log
+          grep -q "SRC062_ACCEPTED_S4_POLICY_REUSED=PASS" /tmp/src062-large-inline-replay.log
+          grep -q "SRC062_VIEWPORT_COUNT=4" /tmp/src062-large-inline-replay.log
+          grep -q "SRC062_MATCHED_STATE_COUNT=24" /tmp/src062-large-inline-replay.log
+          grep -q "SRC062_PIXEL_PAIR_COUNT=24" /tmp/src062-large-inline-replay.log
+          grep -q "SRC062_LARGE_INLINE_REPLAY_PASS=${{ github.event.pull_request.head.sha }}" /tmp/src062-large-inline-replay.log
+
+      - name: Upload candidate replay proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: src062-large-inline-replay-${{ github.event.pull_request.head.sha }}
+          path: |
+            /tmp/src062-large-inline-replay.log
+            /tmp/src062-large-inline-replay/**
+          if-no-files-found: error
+          retention-days: 14

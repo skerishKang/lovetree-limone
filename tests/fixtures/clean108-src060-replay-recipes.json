@@ -20,7 +20,8 @@
     "Approved-state replay recipes for the SRC060 matched real-browser pilot (7 states x 3 viewports = 21 pair replays).",
     "State names and viewports come from the accepted parity record src/03_sources/SRC060/evidence/parity/accepted-parity.json.",
     "Every recipe is used UNCHANGED for both ORIGINAL and SPLIT; only the target entry URL differs per side.",
-    "Camera contract: CLUSTER_FOCUS reproduces the accepted cluster-1 pin via the deterministic natural focusCluster(1) fly end-state (reduced-motion 80ms fly; yaw/pitch default -0.18/0.10); node states reproduce the accepted node-0 pin through the source-owned __LT60_V12__.restore(snapshot) call with recipe DATA (no property-write script).",
+    "Camera contract: CLUSTER_FOCUS reproduces the accepted cluster-1 pin via the deterministic natural focusCluster(1) fly end-state (reduced-motion 80ms fly; yaw/pitch default -0.18/0.10); node states reproduce the accepted node-0 pin through the source-owned __LT60_V12__.restore(snapshot) call with recipe DATA (no property-write script); PATH_PREVIEW lands on the accepted frameRoute end-state (zoom clamp 1.58 + route centroid).",
+    "Every state ends with a deterministic waitForRuntime re-wait on the exact camera.zoom before capture.",
     "Screenshots request digest=canonical16 (byte-identical canonical pixel digest contract; raw PNG jitter from backdrop-filter blur is not the comparison channel).",
     "Cross-track navigation (openActualTarget / Track 55/56/59 routes) is NEVER called; those remain SOURCE_NATIVE HOLD.",
     "Recipes are DATA only: fixed module-owned readiness predicate, fixed assertions, no free-form JS."
@@ -63,6 +64,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -181,13 +188,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -322,7 +335,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -344,13 +357,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -489,7 +508,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -511,13 +530,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -529,6 +554,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -688,7 +719,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -710,13 +741,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -728,6 +765,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -887,7 +930,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -909,13 +952,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -927,6 +976,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1086,7 +1141,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1108,13 +1163,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1126,6 +1187,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1295,6 +1362,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1413,13 +1486,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1554,7 +1633,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1576,13 +1655,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1721,7 +1806,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1743,13 +1828,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1761,6 +1852,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -1920,7 +2017,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1942,13 +2039,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -1960,6 +2063,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2119,7 +2228,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2141,13 +2250,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2159,6 +2274,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2318,7 +2439,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2340,13 +2461,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2358,6 +2485,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2527,6 +2660,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 0.82,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2645,13 +2784,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.28,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2786,7 +2931,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2808,13 +2953,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -2953,7 +3104,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2975,13 +3126,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -2993,6 +3150,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -3152,7 +3315,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3174,13 +3337,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3192,6 +3361,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -3351,7 +3526,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3373,13 +3548,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3391,6 +3572,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [
@@ -3550,7 +3737,7 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 1.28,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3572,13 +3759,19 @@
             "type": "waitForRuntime",
             "path": "__LT60__.camera.zoom",
             "equals": 2.35,
-            "timeoutMs": 5000
+            "timeoutMs": 8000
           },
           {
             "type": "settle",
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 2.35,
+            "timeoutMs": 8000
           },
           {
             "type": "evaluateHook",
@@ -3590,6 +3783,12 @@
             "clearToast": "#toast",
             "waitMs": 450,
             "rAF": 2
+          },
+          {
+            "type": "waitForRuntime",
+            "path": "__LT60__.camera.zoom",
+            "equals": 1.58,
+            "timeoutMs": 8000
           }
         ],
         "assertions": [

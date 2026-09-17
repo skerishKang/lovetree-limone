@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "authority_system": "Google Drive",
+  "authority_status": "LOCKED",
+  "fresh_verified_at_utc": "2026-09-05T13:27:35Z",
+  "drive_folder_id": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
+  "drive_folder_name": "66_첫트리만들기_인터랙티브스크롤가이드",
+  "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+  "filename": "현재후보.html",
+  "revision": "V1.2_제품목적·실제Moment체험강화_후보",
+  "mime_type": "text/html",
+  "bytes": 166996,
+  "md5": "6a0c98d77b31a72cf3e8ea0f05dde4b0",
+  "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+  "drive_modified_time": "2026-08-13T16:20:49.717Z",
+  "drive_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+  "transport": {
+    "classification": "FRESH_DRIVE_EXACT",
+    "verification": "CENTRAL S2 ACCEPT (bundle hashes verified) names this file as the sole canonical SRC066 authority. This worker freshly re-downloaded file 1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ from live Drive on 2026-09-05 and reproduced 166,996 bytes / MD5 6a0c98d77b31a72cf3e8ea0f05dde4b0 / SHA-256 b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6 exactly. The Drive API returned the same MD5/SHA-256 for the live object, so the local copy, the Drive object, and the CENTRAL record agree. Frozen byte-exact; no BOM change, no line-ending normalization, no URL rewrite, no text edit."
+  },
+  "selection_note": "V1.2 (work-order chain 32->34->36, 설계팀장 11기 -> 디자인팀장 7기) is the owner-selected product-purpose/first-tree-experience candidate: a single self-contained executable (12 data: <img> URIs + 5 #anchors in markup, 1 data: fallback in script, zero external URLs, zero local file references). Superseded copies V1.0 (320,169 B) and V1.1 (27,323 B) are NOT authority and were never downloaded, served, or rendered in this lane.",
+  "runtime_context_required": false,
+  "runtime_context_note": "PATH_CONTEXT_SENSITIVE = NO. The authority is a single file with no relative asset or sibling dependencies; serving it from any loopback path is runtime-equivalent. No mirror directory is required and none is vendored."
+}

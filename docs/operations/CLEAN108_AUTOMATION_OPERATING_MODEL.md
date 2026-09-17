@@ -1,10 +1,11 @@
 # CLEAN-108 Automation Operating Model
 
-Status: **Standing operating document**  
-Owner lane: **CLEAN-108 / Issue #611**  
-Parent program: **#589**  
-Fidelity state machine: **#564**  
-Initial authority main: `1de4cb00fb0ec48466b4cce56d85ab1847c72d91`
+- Status: **Standing operating document — M1 pilot ACCEPTED, Stage-1 ACTIVE (4-6 workers)**
+- Owner lane: **CLEAN-108 / Issue #611**
+- Parent program: **#589**
+- Fidelity state machine: **#564**
+- Initial authority main: `1de4cb00fb0ec48466b4cce56d85ab1847c72d91`
+- M1 acceptance / Stage-1 release: **#611 comment 5546112083**
 
 ## 1. Purpose
 
@@ -114,17 +115,50 @@ The parent worker remains responsible for the coherent unit state and final repo
 
 Unlimited model availability does not imply unlimited safe concurrency.
 
-### Pilot
+### M1 Pilot — CLOSED / ACCEPTED
 
-Complete SRC062 and use the accumulated regression families to refine the common analyzer/replay harness.
+The M1 pilot is complete and CENTRAL-accepted.
 
-### Stage 1 — controlled parallelism
+```text
+M1 PILOT STATUS = ACCEPTED
+CENTRAL decision = #611 comment 5546112083
+```
 
-Release **4-6 concurrent units** only after the common harness has passed at least 3 materially different units without changing governing rules.
+Proof families (materially different units, not merely four Source IDs):
 
-### Stage 2 — scaled parallelism
+```text
+SRC056  SIMPLE          fixed surface, 2 states x 3 viewports, 6 matched pair replays
+SRC060  COMPLEX         canvas/graph runtime, 7 states x 3 viewports, 21 matched pair
+                        replays, deterministic accepted camera pins, canonical16 digests
+SRC068  DUAL_VARIANT    explicit A/B authority, plugin boundary, zero cross-contamination
+SRC047  MEDIA/VIEWER    media/viewer runtime, accepted Source-specific screenshot policy,
+                        N/A states remain N/A
+```
 
-Release **8-12 concurrent units** only after:
+SRC062's accepted capsule exists on main and a supplementary LARGE_INLINE matched
+replay proof (PR #627) has since merged; it is **not** a prerequisite for the M1
+acceptance recorded here.
+
+### Stage 1 — controlled parallelism = ACTIVE / RELEASED
+
+CENTRAL decision: **#611 comment 5546112083**
+
+```text
+Stage 1 = ACTIVE / RELEASED
+recommended concurrent independent unit workers = 4-6
+```
+
+This means **4-6 unit workers total**, not 4-6 new workers in addition to every existing
+lane. Unit lanes already running (for example current S3/S4 lanes) count toward the total.
+
+### Stage 2 — scaled parallelism = NOT RELEASED
+
+```text
+Stage 2 = NOT RELEASED
+8-12 concurrent unit workers = HOLD
+```
+
+Stage 2 may be released only after observed stable operation under Stage 1, including:
 
 - evidence schemas are stable
 - CI queue behavior is predictable
@@ -134,7 +168,80 @@ Release **8-12 concurrent units** only after:
 
 ### Stage 3 — high parallelism
 
-10-20+ concurrent units may be used only when measured bottlenecks show that the harness is stable and CENTRAL review capacity, not harness correctness, is the remaining constraint.
+```text
+10-20+ concurrent units = NOT RELEASED
+```
+
+Stage 3 may be considered only when measured bottlenecks show that the harness is stable and CENTRAL review capacity, not harness correctness, is the remaining constraint.
+
+## 5a. Standard Stage-1 worker contract
+
+Each Stage-1 unit worker must own exactly one unit through one isolated lane:
+
+```text
+ONE Source/Codex identity
+ONE worktree
+ONE branch
+ONE worker
+
+S0 -> S1 -> S2 -> S3 -> S4 strictly
+
+Draft PR
+then stop
+```
+
+CENTRAL owns:
+
+```text
+Ready transition
+merge
+```
+
+A worker does not mark Ready and does not merge its own lane.
+
+Unknown or Source-specific automation limitation => `HOLD`, never improvisation or
+harness generalization-by-guess inside a unit lane.
+
+## 5b. Shared harness isolation
+
+```text
+Unit lane != shared harness lane
+```
+
+A Source worker must not opportunistically modify shared automation while carrying a
+unit lane. Shared files include, at minimum:
+
+```text
+shared analyzer
+shared executor
+shared capture
+shared comparator
+shared workflow
+shared schema
+```
+
+A shared change requires a separately released, separately reviewed lane authorized by
+CENTRAL. Preferred pattern for a new Source:
+
+```text
+additive per-source runner/plugin
++
+separately reviewed registry/shared-gate update only when genuinely required
+```
+
+The following current files are the known high-collision surface. This does **not** mean
+every new Source must modify them:
+
+```text
+src/08_harness/auto-analyzer/analyze-html.mjs
+src/08_harness/state-replay/execute-state-recipe.mjs
+src/08_harness/state-replay/validate-executable-state-recipe.mjs
+src/08_harness/state-replay/capture-approved-state-recipe.mjs
+.github/workflows/src-108-harness-gate.yml
+```
+
+Unknown Source structures must fail closed (`HOLD`), not be force-fitted into a generic
+path by guessing.
 
 ## 6. Scale-down triggers
 
@@ -332,20 +439,40 @@ Scale worker count only when these metrics support it.
 ## 16. Current rollout sequence
 
 ```text
-1. Complete SRC062 under strict current process.
-2. Extract reusable state-recipe/analyzer lessons.
-3. Strengthen common Auto Analyzer + S2/S3/S4 replay harness.
-4. Replay against at least 3-5 materially different units/fixtures.
-5. Demonstrate no governing-rule exceptions.
-6. Release 4-6 independent workers.
-7. Scale to 8-12 only after stable operation.
+M1 pilot = COMPLETE / ACCEPTED (#611 comment 5546112083)
+
+Stage 1 (ACTIVE):
+  4-6 independent unit workers total
+  strict authority queue
+  unit-local branches/worktrees
+  shared harness changes separately released
+  CENTRAL final review
+
+Stage 2:
+  NOT RELEASED
+  measure Stage-1 stability first
 ```
+
+Specific Source lanes currently in flight (e.g. SRC069, SRC071 materialization) are
+**unit lanes**, not permanent architecture dependencies.
 
 ## 17. Related authority
 
-- #611 — automation/concurrency standing issue
+- #611 — automation/concurrency standing issue — remains OPEN as the standing
+  automation/concurrency authority; M1 pilot closure is not issue closure
 - #589 — CLEAN-108 corpus program
 - #564 — Source Porting V2 / fidelity state machine
 - #565 — Source Library → Adapter → MVP standing architecture
 
 This document does not authorize Product/MVP work and does not release any specific Source/Codex unit by itself.
+
+## 18. Issue #611 standing status
+
+```text
+#611 = standing automation/concurrency authority
+AUTO_CLOSE = NO
+ISSUE611_CLOSE = NO
+```
+
+M1 pilot acceptance and the Stage-1 release do **not** close #611. #611 remains standing
+while the CLEAN corpus is active.

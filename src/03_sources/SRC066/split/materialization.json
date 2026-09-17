@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "ACCEPTED",
+  "status_note": "The mechanical split is complete and byte-verified, and its S4 parity is now accepted. CENTRAL released the S4 BOUNDED_SKIP, the exact-head candidate was captured at evidence/s4/, and CENTRAL direct Drive visual review (skerishKang/lovetree-limone#589 comment 5556645775) accepted it: materialization.status is ACCEPTED with parity_ref and parity_evidence pointing at evidence/parity/accepted-parity.json, which validate-mechanical-split resolves and validates (status ACCEPTED, source_head an exact commit SHA equal to parity_evidence.exact_head, authority agreeing with the manifest, comparisons fully PASS, browser_errors 0).",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "branch": "clean/src066-s3-mechanical-port",
+    "branch_base_head": "c754767500073670d8e66bfa051c137218b0f91f",
+    "generation_input_head": "c754767500073670d8e66bfa051c137218b0f91f",
+    "provenance_field_note": "generation_input_head is the repository HEAD that was checked out when the mechanical split was generated locally. It is not the PR exact head and cannot be recorded here: the final PR head only exists after this file is committed, so embedding it would be self-referential and never true. The value is retained purely as historical generation provenance. Exact-head acceptance for this capsule is external to the capsule and is established by the GitHub PR record and CI at the PR head.",
+    "generation_method": "LOCAL_MECHANICAL_SPLITTER_REPRODUCTION",
+    "materializer": "ephemeral local splitter (logic independently re-derived and asserted by tests/s3-roundtrip.test.mjs; no shared harness used or modified)",
+    "glue_style": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "glue_script": "<script src=\"./script.js\"></script>",
+    "ci_exact_head_reproduction": "OUT_OF_SCOPE_SEE_PROVENANCE_FIELD_NOTE"
+  },
+  "authority": {
+    "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "filename": "현재후보.html",
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string. The authority carries 41 multibyte characters (bytes 166996 vs chars 166955); extraction and reconstruction operate on the lossless UTF-8 string, and byte identity is asserted on the re-encoded buffer.",
+    "style_open": 219,
+    "style_close": 19071,
+    "script_open": 148523,
+    "script_close": 166931,
+    "script_blocks": [
+      {
+        "open": 148523,
+        "close": 166931,
+        "length": 18400
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 129795,
+      "sha256": "00b6f6ac647ec5fc5f521ef355cf74501907b6adaffb4a9392e5e2cb3088be91",
+      "git_blob_sha1": "48358125ff94529acd385c7dca630264df74a7a8"
+    },
+    "split/styles.css": {
+      "bytes": 18845,
+      "sha256": "f215bc6d18dbbab3a42bfb3379461f488d01242b9dd863f6f58f656300bc7c0b",
+      "git_blob_sha1": "a560b53210b1e05854b5a85680df506fe48e99d8"
+    },
+    "split/script.js": {
+      "bytes": 18403,
+      "sha256": "149b9df94b1cb254f3c4a36e069bf0ea125bdc4fdec24b69bd68e7fe14459737",
+      "git_blob_sha1": "219b0aa16c8587649349f820f86a3b9c1f289c25"
+    }
+  },
+  "outputs_note": "No split/assets/** directory was created. The authority references zero local file assets and zero external URLs: markup carries 12 data: <img> URIs plus 5 #anchor hrefs, and the single inline script carries 1 data: fallback URI. Nothing is vendored and no relative URL is rewritten.",
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "local_assets_vendored": false,
+    "external_references_added": false,
+    "qa_hooks_added": false,
+    "a11y_or_focus_behavior_modified": false
+  },
+  "round_trip_evidence": {
+    "method": "src/03_sources/SRC066/tests/s3-roundtrip.test.mjs (source-local; no shared harness)",
+    "original_sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "reconstructed_sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6",
+    "original_bytes": 166996,
+    "reconstructed_bytes": 166996,
+    "byte_identical": true
+  },
+  "frozen_defects_preserved": {
+    "D1_MANIFEST_DEAD_DRIVE_FOLDER_ID": "PRESERVED_NOT_FIXED",
+    "D2_MANIFEST_SOURCE_LABEL_MISNAME": "PRESERVED_NOT_FIXED",
+    "D3_MANIFEST_LOCALSTORAGE_CLAIM": "PRESERVED_NOT_FIXED",
+    "D4_MANIFEST_CSS3D_DOM_CLAIM": "PRESERVED_NOT_FIXED",
+    "D5_DUAL_ISSUE_NUMBERS_UNRELATED": "PRESERVED_NOT_FIXED",
+    "D6_INERT_DEMO_URL_DEFAULT": "PRESERVED_NOT_FIXED",
+    "D7_ASSET_COUNT_DISCREPANCY": "PRESERVED_NOT_FIXED",
+    "D8_SYNTHETIC_PERF_DATA": "PRESERVED_NOT_FIXED",
+    "D9_NO_QA_HOOKS": "PRESERVED_NOT_FIXED",
+    "D10_NO_OWNER_APPROVAL_ON_DRIVE": "PRESERVED_NOT_FIXED",
+    "D11_MST_LEDGER_UNLINKED": "PRESERVED_NOT_FIXED",
+    "D12_MINOR_STYLE_LABEL_NITS": "PRESERVED_NOT_FIXED",
+    "note": "The mechanical split extracts the authority's inline style and script verbatim, so all twelve frozen defects survive into the split outputs unchanged (D6's demo momentUrl input default lives on in split/index.html). They are intentionally not repaired in this CLEAN lane. D11 ledger linkage is issued separately via src/02_master/MST046/record.json in this same lane; the split itself cannot link the ledger."
+  },
+  "verification_ref": "../evidence/s3/roundtrip.json",
+  "verification_test_ref": "../tests/s3-roundtrip.test.mjs",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "parity_evidence": {
+    "exact_head": "288f355a9ab47b2ba94a2416a5876e54e46f2753",
+    "capture_base_sha": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+    "central_acceptance_comment": 5556645775,
+    "candidate_bundle": "LoveTree_Evidence/SRC066_S4_PARITY_CANDIDATE_288f355a.zip",
+    "candidate_bundle_sha256": "92fdf73957cfc94ab7cb20dc620cc516d5945bfe4dcffb7dea825050b2d94f15",
+    "note": "The evidence head is the capture head, not this metadata commit's head: the final metadata commit head cannot be embedded here without self-reference and is established externally by the GitHub PR record and CI."
+  },
+  "parity_status": "PASS",
+  "parity_status_note": "S4 parity PASS, accepted by CENTRAL direct Drive S4 visual review (skerishKang/lovetree-limone#589 comment 5556645775). The exact-head capture exists at evidence/s4/ (harness release commits 9b043336598bab41d30258d39205293dc9117b4b and 288f355a9ab47b2ba94a2416a5876e54e46f2753, capture head 288f355a9ab47b2ba94a2416a5876e54e46f2753) and the accepted record is evidence/parity/accepted-parity.json: 18 matched original/split state pairs, 17 raw PNG byte-identical, 1 pair (1440x900/FOOTER_REACHED) canonical 16x16 pixel digest byte-identical at Hamming 0 of 1024 bytes with 14 differing raw pixels at maximum per-channel delta 1/255. PENDING_EXACT_HEAD_CAPTURE was replaced by PASS in the same commit that created the accepted artifact, as validate-mechanical-split requires.",
+  "next_stage": "ACCEPTED",
+  "next_stage_note": "S4 parity is accepted and promoted by evidence/parity/accepted-parity.json. Ready/merge transitions remain owned by CENTRAL."
+}

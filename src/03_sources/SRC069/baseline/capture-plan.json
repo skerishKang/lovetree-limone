@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "stage": "S2_BASELINE",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_S2_EVIDENCE_REVIEW",
+  "planned_surface": "original/original.html served from its canonical selected-D directory depth",
+  "surface_note": "SRC069 is path-context-sensitive. The runtime surface is NOT the repository file src/03_sources/SRC069/original/original.html served in place; that path would break the authority's own ../../ portal resolution. S2 was captured against a read-only temporary mirror that reproduced the canonical selected-D depth outside the repository. No mirror is vendored into this capsule.",
+  "viewports": [
+    { "width": 1440, "height": 900, "label": "DESKTOP" },
+    { "width": 430, "height": 932, "label": "MOBILE" },
+    { "width": 390, "height": 844, "label": "SMALL_MOBILE" }
+  ],
+  "states": [
+    "INITIAL",
+    "WORKS_OPEN",
+    "MENU_OPEN",
+    "VIEWER_TRACK02",
+    "VIEWER_TRACK59",
+    "ESC_FROM_VIEWER"
+  ],
+  "state_note": "MENU_OPEN is mobile-only (the desktop navigation bar is always visible at 1440x900). INITIAL/WORKS_OPEN/VIEWER_TRACK02/VIEWER_TRACK59 are captured at all three viewports; ESC_FROM_VIEWER is captured at desktop.",
+  "expected_state_count": 15,
+  "portal_targets_expected": 11,
+  "remote_dependencies": [
+    {
+      "kind": "video",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260725_114042_d2ed2a89-f2fa-449b-9609-da456344257b.mp4",
+      "expected": "load and render"
+    },
+    {
+      "kind": "font",
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
+      "expected": "load"
+    },
+    {
+      "kind": "font",
+      "url": "https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33",
+      "expected": "load"
+    }
+  ],
+  "frozen_defects_in_scope": [
+    "D1_FOCUS_FALLS_TO_BODY_ON_WORKS_ROW_VIEWER_CLOSE",
+    "D2_MOBILE_MENU_FOCUS_TRAPPED_ON_HIDDEN_MENU_CLOSE"
+  ],
+  "defect_policy": "RECORD_ONLY_NO_REPAIR",
+  "defect_policy_note": "D1 and D2 are frozen Source defects accepted into the baseline. The CLEAN mechanical-split lane must not fix, improve, or rewrite focus behavior. A later non-CLEAN lane may address them separately.",
+  "do_not": [
+    "recapture S2 in this lane",
+    "replace accepted S2 evidence",
+    "resolve portal links to repository-native paths",
+    "alter, repair, or substitute any of the 11 target pages",
+    "fix D1 or D2",
+    "improve accessibility"
+  ]
+}

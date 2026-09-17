@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC071",
+  "status": "ACCEPTED",
+  "surface": "original/original.html",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 430,
+      "height": 932
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "states": [
+    "INITIAL",
+    "THEME_BLACK",
+    "REEL_OFFSET_470",
+    "LENS_ACTIVATE_OPENING",
+    "MYTREE_404_SACRIFICIAL"
+  ],
+  "measurements": [
+    "id inventory",
+    "ROUTES array inventory (6 relative targets)",
+    "canvas 2D runtime state via window.__LOVE_TREE_V7_R24__",
+    "fitStage geometry (desktop 1920x1080 fit vs mobile w/1050 clip branch)",
+    "theme swap via .paper[data-theme]",
+    "endless reel wrap (REEL_CYCLE=940)",
+    "interaction outcomes (drag/wheel/hold-key/hover/theme-toggle)",
+    "console/page errors"
+  ],
+  "accepted_evidence": "baseline/accepted-baseline.json",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority."
+}

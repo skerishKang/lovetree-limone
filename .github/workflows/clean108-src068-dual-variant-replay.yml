@@ -1,0 +1,97 @@
+name: CLEAN-108 SRC068 DUAL_VARIANT Replay
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'tests/clean108-src068-dual-variant-replay.test.mjs'
+      - '.github/workflows/clean108-src068-dual-variant-replay.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    name: SRC068 DUAL_VARIANT Plugin Replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact-head binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha }}'
+          actual="$(git rev-parse HEAD)"
+          echo "EXPECTED_HEAD=$expected"
+          echo "ACTUAL_HEAD=$actual"
+          test "$actual" = "$expected"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run DUAL_VARIANT fail-closed contracts
+        run: node --test tests/clean108-src068-dual-variant-replay.test.mjs tests/dual-variant-harness-disposition.test.mjs
+
+      - name: Install Korean font
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f
+
+      - name: Install and verify branded Google Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v google-chrome >/dev/null 2>&1 && ! command -v google-chrome-stable >/dev/null 2>&1; then
+            wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq /tmp/google-chrome.deb
+          fi
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable)"
+          CHROME_VERSION="$("$CHROME_BIN" --version)"
+          echo "GOOGLE_CHROME_VERSION=$CHROME_VERSION"
+          test -n "$CHROME_VERSION"
+
+      - name: Prove SRC068 explicit A/B matched replay
+        shell: bash
+        env:
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
+          SRC068_DUAL_REPLAY_EVIDENCE_DIR: /tmp/src068-dual-variant-plugin-replay
+        run: |
+          set -euo pipefail
+          rm -rf "$SRC068_DUAL_REPLAY_EVIDENCE_DIR"
+          rm -f /tmp/src068-dual-variant-plugin-replay.log
+          node src/08_harness/prove-src068-dual-variant-replay.mjs | tee /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "DUAL_VARIANT_PLUGIN_BOUNDARY=PASS" /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "DUAL_VARIANT_EXPLICIT_SELECTION=PASS" /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "SRC068_A_REPLAY=PASS" /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "SRC068_B_REPLAY=PASS" /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "A_B_CROSS_CONTAMINATION=ZERO" /tmp/src068-dual-variant-plugin-replay.log
+          grep -q "SRC068_DUAL_VARIANT_PLUGIN_REPLAY_PASS=${{ github.event.pull_request.head.sha }}" /tmp/src068-dual-variant-plugin-replay.log
+
+      - name: Upload candidate replay proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: src068-dual-variant-plugin-replay-${{ github.event.pull_request.head.sha }}
+          path: |
+            /tmp/src068-dual-variant-plugin-replay.log
+            /tmp/src068-dual-variant-plugin-replay/**
+          if-no-files-found: error
+          retention-days: 14

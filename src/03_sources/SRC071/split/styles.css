@@ -1,0 +1,58 @@
+
+:root{
+  --paper:#fff;
+  --ink:#050505;
+  --muted:rgba(5,5,5,.52);
+  --panel:rgba(255,255,255,.76);
+  --edge:rgba(5,5,5,.16);
+  --ease:cubic-bezier(.2,.8,.2,1)
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:var(--ink)}
+body{font-family:Arial,Helvetica,sans-serif}
+button{font:inherit;color:inherit}
+.viewport{position:fixed;inset:0;background:#000;overflow:hidden}
+.stage{position:absolute;width:1920px;height:1080px;will-change:transform}
+.paper{
+  position:absolute;left:236px;top:71px;width:1448px;height:937px;
+  background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;
+  transition:background .46s var(--ease),color .46s var(--ease)
+}
+.paper[data-theme="black"]{
+  --paper:#050505;
+  --ink:#f8f8f4;
+  --muted:rgba(248,248,244,.52);
+  --panel:rgba(5,5,5,.72);
+  --edge:rgba(248,248,244,.18)
+}
+.left-ui{position:absolute;left:0;top:0;width:630px;height:100%;z-index:30;pointer-events:none;color:var(--ink)}
+.brand{position:absolute;left:20px;top:18px;margin:0;font-family:Georgia,'Times New Roman',serif;font-size:70px;line-height:1;font-weight:400;letter-spacing:-2.5px;pointer-events:auto}
+.copy{position:absolute;left:20px;top:410px;width:555px;min-height:84px;margin:0;font-size:24px;line-height:1.09;font-weight:800;letter-spacing:-.55px;white-space:pre-line}
+.copy::after{content:"";display:inline-block;width:2px;height:.86em;margin-left:4px;vertical-align:-.06em;background:currentColor;animation:caretBlink .8s steps(1,end) infinite}
+.copy.done::after{opacity:0;animation:none}
+@keyframes caretBlink{50%{opacity:0}}
+.meta{position:absolute;left:20px;top:528px;margin:0;font-size:11px;line-height:1;font-weight:800;letter-spacing:.28px;word-spacing:6px;opacity:.72}
+.cta{position:absolute;left:30px;top:808px;width:98px;height:98px;border:1px solid var(--ink);border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:12px;font-weight:800;cursor:pointer;pointer-events:auto;outline:0;transition:transform .26s var(--ease),box-shadow .26s ease,background .4s,color .4s,border-color .4s}
+.cta:hover{transform:translateY(-3px) scale(1.03)}
+.cta:active{transform:scale(.97)}
+.cta:focus-visible{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink)}
+.scene-wrap{position:absolute;inset:0;z-index:4}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.paper.dragging #scene{cursor:grabbing}
+.hit{position:absolute;border:0;background:transparent;padding:0;margin:0;outline:none;cursor:pointer;z-index:20;transform:translate(-50%,-50%);border-radius:48%;pointer-events:none}
+.hit:focus-visible{box-shadow:0 0 0 2px var(--ink),0 0 0 5px var(--paper),0 0 0 7px var(--ink)}
+.theme-toggle{position:absolute;right:20px;top:18px;z-index:40;display:flex;gap:4px;align-items:center;padding:4px;border:1px solid var(--edge);border-radius:999px;background:var(--panel);backdrop-filter:blur(12px);transition:background .4s,border-color .4s}
+.theme-toggle button{border:0;background:transparent;border-radius:999px;padding:7px 11px;font-size:10px;font-weight:800;letter-spacing:.08em;cursor:pointer;opacity:.48;transition:opacity .2s,background .2s,color .2s}
+.theme-toggle button[aria-pressed="true"]{background:var(--ink);color:var(--paper);opacity:1}
+.drag-hint{position:absolute;right:20px;bottom:14px;z-index:40;font-size:10px;font-weight:700;letter-spacing:.11em;color:var(--muted);pointer-events:none}
+.portal-status{position:absolute;left:50%;bottom:18px;z-index:45;transform:translateX(-50%) translateY(14px);padding:9px 14px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:10px;font-weight:800;letter-spacing:.08em;opacity:0;pointer-events:none;transition:opacity .18s,transform .28s var(--ease)}
+.portal-status.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.fade-cover{position:absolute;inset:0;z-index:80;background:var(--paper);opacity:0;pointer-events:none;transition:opacity .32s ease}
+.fade-cover.show{opacity:1}
+@media(max-width:700px){
+  .brand{font-size:74px}.copy{font-size:34px;width:590px;top:390px}.meta{display:none}
+  .cta{width:116px;height:116px;font-size:16px;top:785px}
+  .theme-toggle{right:18px;top:18px;transform:scale(1.15);transform-origin:100% 0}
+  .drag-hint{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.cta,.paper,.theme-toggle,.portal-status,.fade-cover{transition:none}.copy::after{animation:none;opacity:0}}

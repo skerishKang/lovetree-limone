@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC066",
+  "stage": "S4_PARITY_CANDIDATE",
+  "status": "CANDIDATE_PASS_CENTRAL_PENDING",
+  "parity_result": "CANDIDATE_PASS",
+  "lane": "CLEAN-108 SRC066 S4 SOURCE_PORT_PARITY (BOUNDED_SKIP RELEASE)",
+  "parent_issue": 589,
+  "operating_model": 611,
+  "base_sha": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+  "capture_head_sha": "288f355a9ab47b2ba94a2416a5876e54e46f2753",
+  "harness_release_commits": {
+    "s4_parity_route_released": "9b043336598bab41d30258d39205293dc9117b4b",
+    "viewport_scoped_screenshots": "288f355a9ab47b2ba94a2416a5876e54e46f2753"
+  },
+  "authority": {
+    "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+    "filename": "현재후보.html",
+    "bytes": 166996,
+    "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+  },
+  "split": {
+    "split/index.html": "00b6f6ac647ec5fc5f521ef355cf74501907b6adaffb4a9392e5e2cb3088be91",
+    "split/styles.css": "f215bc6d18dbbab3a42bfb3379461f488d01242b9dd863f6f58f656300bc7c0b",
+    "split/script.js": "149b9df94b1cb254f3c4a36e069bf0ea125bdc4fdec24b69bd68e7fe14459737"
+  },
+  "methodology": {
+    "release_method": "The S3 BOUNDED_SKIP was released by removing the SRC066 S4_PARITY_NOT_CLAIMED skip from capture-source-parity.mjs and routing SRC066 to the same bounded observer that #634 added for the S2 baseline. No new harness, no new driver, and no generic-comparison rewrite was introduced: the parity dispatch reuses captureSRC66Baseline once per surface, exactly as the baseline route does.",
+    "surfaces": {
+      "original": "src/03_sources/SRC066/original/original.html served at /SRC066/original.html over loopback HTTP",
+      "split": "src/03_sources/SRC066/split/index.html served at /SRC066/split/index.html, linked to ./styles.css and ./script.js by the mechanical-split glue"
+    },
+    "serving": "Loopback 127.0.0.1 HTTP from the existing harness server; zero external references in the authority, so no mirroring and no network access was required.",
+    "state_recipe": "The S2-accepted harness recipe, unchanged: desktop viewports walk INITIAL -> STEP1 -> STEP2 -> STEP3 -> MID_MORPH -> REVERSE_RETURN -> FAQ_OPEN -> FOOTER_REACHED; mobile viewports walk INITIAL -> STEP_FIRST -> STEP_LAST -> FAQ_OPEN -> FOOTER_REACHED. No state was added, dropped, or substituted for parity.",
+    "viewports": [
+      { "width": 1440, "height": 900, "label": "DESKTOP" },
+      { "width": 430, "height": 932, "label": "MOBILE" },
+      { "width": 390, "height": 844, "label": "SMALL_MOBILE" }
+    ],
+    "driver": "src/08_harness/source066-driver.mjs (S2-accepted, byte-unchanged by this lane). Hook-less observer: it reads only DOM structure, element geometry, computed styles, scroll progress, step/FAQ/footer state, sessionStorage and image load state. It reads zero window.__* hooks, matching frozen defect D9.",
+    "captured_per_state": [
+      "ids (all [id] attributes, order preserved)",
+      "elementCount",
+      "scroll position and scrollHeight",
+      "scroll progress ratio (6 decimals)",
+      "activeStep index",
+      "processCopy and treeLabel text",
+      "header / hero-copy / worldStage rects plus opacity",
+      "h1 computed font-size",
+      "faq open-item count",
+      "footer in-view flag and computed background color",
+      "sessionStorage key/value snapshot",
+      "imgCount and brokenImgCount",
+      "screenshot PNG sha256"
+    ],
+    "comparison": "For every matched state the full captured state object and the interaction record are compared with assert.deepStrictEqual on both surfaces (strict, no epsilon). Screenshot digests are recorded per state as evidence. Browser console/page errors and failed requests fail the capture.",
+    "viewport_normalization": "Rect values are rounded to 3 decimals and scroll progress to 6 decimals inside the shared S2 driver, identically for both surfaces. No additional normalization was applied for parity.",
+    "browser": {
+      "automation": "Playwright 1.55.1",
+      "channel": "chrome (branded Google Chrome, matching CI SRC_BROWSER_CHANNEL=chrome)",
+      "headless": true
+    },
+    "capture_command": "SRC_EXACT_HEAD=288f355a9ab47b2ba94a2416a5876e54e46f2753 SRC_BROWSER_CHANNEL=chrome node src/08_harness/capture-source-parity.mjs"
+  },
+  "viewports": [
+    "1440x900",
+    "430x932",
+    "390x844"
+  ],
+  "viewport_labels": {
+    "1440x900": "DESKTOP",
+    "430x932": "MOBILE",
+    "390x844": "SMALL_MOBILE"
+  },
+  "states_per_viewport": {
+    "1440x900": [
+      "INITIAL",
+      "STEP1",
+      "STEP2",
+      "STEP3",
+      "MID_MORPH",
+      "REVERSE_RETURN",
+      "FAQ_OPEN",
+      "FOOTER_REACHED"
+    ],
+    "430x932": [
+      "INITIAL",
+      "STEP_FIRST",
+      "STEP_LAST",
+      "FAQ_OPEN",
+      "FOOTER_REACHED"
+    ],
+    "390x844": [
+      "INITIAL",
+      "STEP_FIRST",
+      "STEP_LAST",
+      "FAQ_OPEN",
+      "FOOTER_REACHED"
+    ]
+  },
+  "pair_count": 18,
+  "dom_parity": "EQUAL",
+  "geometry_parity": "EQUAL",
+  "computed_style_parity": "EQUAL",
+  "runtime_state_parity": "EQUAL",
+  "interaction_parity": "EQUAL",
+  "state_set_parity": "EQUAL",
+  "console_errors": 0,
+  "page_errors": 0,
+  "failed_requests": 0,
+  "external_requests": 0,
+  "screenshots": {
+    "byte_identical_pairs": 17,
+    "non_identical_pairs": 1,
+    "canonical_digest_pairs_identical": 18,
+    "canonical_digest_bytes": 1024,
+    "canonical_digest_max_hamming": 0,
+    "max_nonidentical_differing_pixels": 14,
+    "max_channel_delta_0_255": 1,
+    "assessment": "ANTIALIASING_NOISE_ONLY",
+    "accounting_refs": [
+      "pixel-diff.json",
+      "canonical-digest.json"
+    ],
+    "non_identical": [
+      {
+        "viewport": "1440x900",
+        "viewport_label": "DESKTOP",
+        "state": "FOOTER_REACHED",
+        "original_png": "1440x900-original-footer-reached.png",
+        "split_png": "1440x900-split-footer-reached.png",
+        "original_sha256": "7bd3fd9daf11b77938fe066f3a8230d4020d5a4c671865986536f140a7ee8852",
+        "split_sha256": "5c0d89074e7e9d5c9e6281cf8c8115ba228fa5f5f95cce1b470d193ff5974c3a",
+        "original_bytes": 27306,
+        "split_bytes": 27305,
+        "visual_difference_result": {
+          "differing_pixels": 14,
+          "total_pixels": 1296000,
+          "differing_ratio": 0.000010802469135802469,
+          "max_channel_delta_0_255": 1,
+          "diff_bbox": { "x0": 511, "y0": 777, "x1": 1033, "y1": 789 },
+          "reviewer_assessment": "ANTIALIASING_NOISE_ONLY: 14 pixels on one footer text row, maximum per-channel delta 1/255 (LSB rounding). No layout, text, color, geometry, or structural difference. Both PNGs are retained for CENTRAL direct review."
+        },
+        "geometry_result": "EQUAL (header/hero-copy/world-stage rects, h1 font-size, scroll progress, scrollHeight, activeStep, FAQ/footer state all deep-equal)",
+        "computed_style_result": "EQUAL (opacity, h1 fontSize, footer backgroundColor all deep-equal)",
+        "runtime_state_result": "EQUAL (footerInView true on both surfaces, zero broken images, identical sessionStorage snapshot)",
+        "canonical_digest_result": "BYTE_IDENTICAL (16x16 canonical pixel digest sha256 equal, hamming 0 of 1024 bytes)"
+      }
+    ],
+    "note": "Screenshot SHA equality is evidence, not the sole truth: a PNG is a compressed raster whose last bit is not a semantic property of the Source. Both PNGs are retained for every pair, and the one non-byte-identical pair is accounted for at pixel level above. The canonical 16x16 pixel digest (SRC047-proven contract) is byte-identical for all 18 pairs, which is the visual truth used for the parity claim."
+  },
+  "frozen_defects": {
+    "disposition": "EQUALITY_TARGET_NOT_REPAIR_TARGET",
+    "note": "D1-D12 remain frozen. Parity asserts that both surfaces preserve them identically; no defect was repaired. D6 (inert demo momentUrl default) lives in the split markup and is preserved; D9 (zero QA hooks) holds on both surfaces, which is why the driver is an observer and reads no window.__* contract; D11 ledger linkage remains resolved via MST046 outside the split.",
+    "qa_hooks_added": 0,
+    "source_bytes_changed": 0
+  },
+  "coverage_boundary": {
+    "in_scope": "The 18 matched states of the S2-accepted harness recipe at the three S2 viewports: DOM structure, geometry, computed styles, scroll/step progress, FAQ/footer state, sessionStorage snapshot, image integrity, interaction record, screenshots.",
+    "out_of_scope": "The S2 lane's bespoke INTERACTION_* session-storage write states (seed submit, candidate/why/route selection) were accepted at S2 under a separate bespoke script and are not part of the harness state recipe, so this parity capture does not re-exercise them; the driver's observed storageKeysObserved is empty on both surfaces, which is identical on both sides. The split runtime bytes are independently byte-verified against the frozen authority by the S3 round-trip contract (tests/s3-roundtrip.test.mjs, 166996 bytes round-trip identical).",
+    "not_started": "No MVP composition, no adapter/bridge, no product wiring. S4 remains parity-only."
+  },
+  "harness_contract": {
+    "baseline_harness": "byte-unchanged from origin/main (asserted by tests/src066-hookless-driver-routing.test.mjs T4)",
+    "driver": "byte-unchanged from origin/main (asserted by T4)",
+    "parity_harness": "changed on purpose: SRC066 dispatch replaces the not-claimed SKIP; the capture gate, the DUAL_VARIANT skip, the CONTEXT_AWARE_ONLY skip, and every other Source's dispatch site are unchanged (asserted by T7)",
+    "routing_test_ref": "tests/src066-hookless-driver-routing.test.mjs",
+    "s4_contract_test_ref": "tests/clean108-src066-s4-parity.test.mjs"
+  },
+  "source_split_parity_pass": false,
+  "manifest_changed": false,
+  "central_visual_acceptance": "PENDING",
+  "next_action": "CENTRAL direct visual acceptance of the 18 original/split pairs (36 PNGs), then the S4 flag flip: manifest stages.source_split_parity_pass=true + parity_ref, split/materialization.json status ACCEPTED + parity_status PASS + parity_ref, and evidence/parity/accepted-parity.json.",
+  "artifact_refs": {
+    "per_viewport_comparison": [
+      "1440x900.json",
+      "430x932.json",
+      "390x844.json"
+    ],
+    "harness_output": "harness-summary.json",
+    "screenshots": "36 PNGs, 1440x900-/430x932-/390x844- prefixed original/split pairs",
+    "visual_accounting": [
+      "pixel-diff.json",
+      "canonical-digest.json"
+    ],
+    "inventory": "evidence-manifest.json"
+  }
+}

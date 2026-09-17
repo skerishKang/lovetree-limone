@@ -295,7 +295,9 @@ async function runAssertions(page, recipe) {
       const observed = await readRuntimePath(page, assertion.path, 'clean108-runtime-assertion-v1');
       const passed = observed.found && Object.is(observed.value, assertion.equals);
       results.push({ index, type: assertion.type, passed, path: assertion.path, observed: observed.value, expected: assertion.equals });
-      if (!passed) throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:runtime:${assertion.path}`);
+      if (!passed) {
+        throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:runtime:${assertion.path}:expected=${JSON.stringify(assertion.equals)}:observed=${JSON.stringify(observed.value)}`);
+      }
       continue;
     }
 
@@ -304,14 +306,14 @@ async function runAssertions(page, recipe) {
       const visible = await locator.isVisible();
       const passed = assertion.type === 'visible' ? visible : !visible;
       results.push({ index, type: assertion.type, passed, selector: assertion.selector, observedVisible: visible });
-      if (!passed) throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:${assertion.type}:${assertion.selector}`);
+      if (!passed) throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:${assertion.type}:${assertion.selector}:observedVisible=${visible}`);
       continue;
     }
 
     const observed = (await locator.textContent()) ?? '';
     const passed = observed === assertion.equals;
     results.push({ index, type: assertion.type, passed, selector: assertion.selector, observed, expected: assertion.equals });
-    if (!passed) throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:text:${assertion.selector}`);
+    if (!passed) throw new Error(`CAPTURE_ASSERTION_FAILED:assertions[${index}]:text:${assertion.selector}:expected=${JSON.stringify(assertion.equals)}:observed=${JSON.stringify(observed)}`);
   }
   return results;
 }

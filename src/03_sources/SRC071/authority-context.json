@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC071",
+  "drive": {
+    "design_root_folder_id": "1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN",
+    "v7_folder_id": "1NkwQWiqL7DKDzkIofO-YaWjr2XLlpokV",
+    "file_id": "1YWLz4gsIoqBi7TXINd5-IjR_mFg5VBtL",
+    "filename": "71_V7_FINAL_INTERACTIVE_R2.4.html",
+    "bytes": 24039,
+    "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a",
+    "noncanonical_same_name_file_ids": [
+      "17cCBo7cObMbytQ8pHrJACEkfIpGCbaCb"
+    ]
+  },
+  "canvas_runtime": "2D",
+  "runtime_context_required": true,
+  "qa_hooks": {
+    "url": [
+      "?paused",
+      "?qa"
+    ],
+    "global": "window.__LOVE_TREE_V7_R24__"
+  },
+  "reel_cycle": 940,
+  "portal_mapping_status": "MAPPING_HOLD",
+  "relative_route_count": 6,
+  "routes": [
+    {
+      "label": "FIRST · FIRST CLUE",
+      "path": "../../65_입덕단서_시네마틱에디토리얼/V18_디자인팀장15기_H3_EXTENDED_MOTION_EDITING_후보_선택/★_현재후보_65_V2.2.5_H3_EXTENDED_MOTION_EDITING_CINEMATIC.html"
+    },
+    {
+      "label": "MOMENTS · MEMORY TAPE",
+      "path": "../../67_메모리테이프_인터랙티브롤/07_V2.4.2_WORKS_COMPARE_MENU/track67_v2.4.2_works_compare_menu.html"
+    },
+    {
+      "label": "CONNECTION · MOTION ARCHIVE",
+      "path": "../../68_인물감정경로_모션아카이브/V7_C14_ASSET_PATH_FIX/68_V3.3.1_COMPARE_LAUNCHER.html"
+    },
+    {
+      "label": "REPLAY · MEMORY ORBIT",
+      "path": "../../../../코덱스/14_러브트리_로테이팅메모리인덱스_V1/v2/개발본.html"
+    },
+    {
+      "label": "MY TREE · BIOSPHERE",
+      "path": "../../../../코덱스/15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html"
+    },
+    {
+      "label": "RETURN · TEMPLATE PORTAL",
+      "path": "../../70_모먼트리빌_퓨처에디토리얼/선택1-70_V2.1_LOVETREE_PORTAL_NAV_RETURN_FIX.html"
+    }
+  ],
+  "frozen_defects": [
+    "SRC071_PORTAL_MAPPING_HOLD",
+    "SRC071_MOBILE_STAGE_CLIP"
+  ],
+  "self_contained": "All imagery is inline data URIs; zero remote asset dependencies; no assets/ directory is mechanically required."
+}

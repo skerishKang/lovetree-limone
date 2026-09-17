@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC069",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_DIRECT_DRIVE_S4_VISUAL_REVIEW",
+  "central_acceptance_comment": 5551812640,
+  "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+  "source_head": "ea5fbf0bdf1fcd290795641c56428fff5216ec37",
+  "evidence_binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+  "authority": {
+    "file": "69_v3_exact_source_multi_template_portal.html",
+    "drive_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+    "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "authority_location": "selected-D (V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL); root copy forbidden and NOT used",
+    "root_copy_used": false,
+    "canonical_virtual_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html"
+  },
+  "context": {
+    "capture_surface": "CONTEXT_AWARE_ONLY",
+    "serving": "both surfaces served from isolated mirrors at the canonical selected-D virtual depth; original and split entry files at identical relative depth; no URL rewriting",
+    "portal_targets": 11,
+    "portal_resolution": "11/11 on the original surface AND 11/11 on the split surface, each with status 200 and bytes matching the authority ledger",
+    "context_corpus": "the ~35.7 MB sibling portal corpus was downloaded for the capture and is NOT vendored into the capsule"
+  },
+  "viewports": [
+    { "width": 1440, "height": 900, "class": "desktop", "states": ["INITIAL", "WORKS_OPEN", "VIEWER_TRACK02", "VIEWER_TRACK59", "ESC_FROM_VIEWER"] },
+    { "width": 430, "height": 932, "class": "mobile", "states": ["INITIAL", "MENU_OPEN", "WORKS_OPEN", "VIEWER_TRACK02", "VIEWER_TRACK59"] },
+    { "width": 390, "height": 844, "class": "mobile", "states": ["INITIAL", "MENU_OPEN", "WORKS_OPEN", "VIEWER_TRACK02", "VIEWER_TRACK59"] }
+  ],
+  "state_count": 15,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "comparison_policy": {
+    "canonical16_used": true,
+    "canonical_scope": "VIDEO_VIEWER_STATES_ONLY",
+    "canonical16_states": [
+      { "viewport": "1440x900", "state": "VIEWER_TRACK59", "digest": "cfd610329f658219b8b2941e5b6757bbd522633e61f00d808d913661e75a6d06" },
+      { "viewport": "390x844", "state": "VIEWER_TRACK59", "digest": "f6b528c09324f8624e375cdc7d1c01f606ecc058886736ec8672c91a9e996abc" },
+      { "viewport": "430x932", "state": "VIEWER_TRACK02", "digest": "2c41c69f3534517fcb38e5c1ea7d34cc0acb6c481a38779e81198d1355ab1dd2" }
+    ],
+    "canonical16_technique": {
+      "name": "SRC060_CANONICAL16",
+      "downsample": "16x16",
+      "image_smoothing": "high",
+      "rgb_channel_mask": "0xF0",
+      "alpha": "unchanged",
+      "digest": "sha256 of the 256-byte result; equality is exact, a normalization not a tolerance",
+      "provenance": "src/08_harness/source060-driver.mjs canonicalPixelDigest (SRC060 precedent); canonical-Hamming normalization precedent SRC047"
+    },
+    "non_video_states": "RAW_PNG_BYTE_IDENTICAL",
+    "non_video_states_count": 12,
+    "screenshot_pixel_tolerance": "REMOVED (raw pixel measurement retained only as a recording instrument for video states whose bytes differ; it never decides equality)",
+    "global_visual_tolerance": false,
+    "bimodal_nondeterminism": {
+      "cause": "remote-video decoder frame selection under the frozen zero-motion/pause/seek determinism protocol; the video element is a remote CloudFront asset, not Source bytes",
+      "evidence": "run-stability-table.json + canonical16-hold-verification.json (Drive IDs in drive_evidence): flips observed only in the 3 enumerated video states (32 px / 15 px / 1269 px differing, max channel delta <= 8); canonical16 digests equal in every run"
+    }
+  },
+  "stability": {
+    "recapture_runs_at_source_head": 3,
+    "recapture_verdicts": ["READY_FOR_CENTRAL_S4_VISUAL_REVIEW", "READY_FOR_CENTRAL_S4_VISUAL_REVIEW", "READY_FOR_CENTRAL_S4_VISUAL_REVIEW"],
+    "recapture_blockers": "NONE in all 3 runs; 60 parity checks each",
+    "hold_runs_evidence": 4,
+    "cross_run_digest_identical": true,
+    "digests_identical_across_hold_and_recapture": true
+  },
+  "frozen_defects_preserved": [
+    "D1_FOCUS_FALLS_TO_BODY_ON_WORKS_ROW_VIEWER_CLOSE: FROZEN, preserved identically on both surfaces",
+    "D2_MOBILE_MENU_FOCUS_TRAPPED_ON_HIDDEN_MENU_CLOSE: FROZEN, preserved identically on both surfaces"
+  ],
+  "browser_errors": 0,
+  "console_errors": 0,
+  "unexpected_failed_requests": 0,
+  "failed_responses": 0,
+  "drive_evidence": {
+    "bundle": "LoveTree_Evidence/CLEAN108-SRC069-S4-Candidate-260905/ea5fbf0b/",
+    "folder_id": "1riwJjBgk0llGxqzzzG_O6dlYzBRTKM3h",
+    "report_id": "1YVTq7HygHC98VL8V36iWTZfZtVIEwnwy",
+    "target_lock_id": "1guMMZgl7UhakSXvgaEXqBbs53MaBPOys",
+    "policy_record_id": "1AW0HS3dTubTofgAsjxVC4HCye2z6Chm_",
+    "run_stability_table_id": "1SczYlg9Vh6JeHIovZeLkHPfvVpQExdCL",
+    "hold_verification_id": "1ZAkNZXcK6eK_lGjeyawi3Ue-2RcUBOS2",
+    "integrity": "117/117 files uploaded; rclone check 0 differences",
+    "bundle_immutable": true
+  },
+  "visual_review": {
+    "central_direct_drive_s4_visual_review": true,
+    "central_acceptance_comment": 5551812640,
+    "source_native_observation": "The split renders the identical V3 multi-template portal: full-viewport landing, works navigator, in-page iframe viewer for TRACK02/TRACK59, mobile menu, ESC priority chain and both frozen focus defects; the only structural difference is the mechanical glue (inline style + inline script replaced by one stylesheet link and one script src)."
+  },
+  "notes": [
+    "Evidence was captured at exact head ea5fbf0bdf1fcd290795641c56428fff5216ec37 and accepted by CENTRAL direct Drive S4 visual review; the accepted Drive bundle is immutable and was not rewritten by this metadata promotion.",
+    "The mechanical split round-trips byte-identically to the frozen 27600-byte selected-D authority (validator-enforced).",
+    "Runtime bytes (original/original.html, split/index.html, split/styles.css, split/script.js) were NOT modified by the canonical-policy application or this promotion.",
+    "No source repair, redesign, framework conversion or product data injection was introduced; the shared harness was not mutated."
+  ],
+  "provenance": {
+    "evidence_source_head": "ea5fbf0bdf1fcd290795641c56428fff5216ec37",
+    "final_metadata_commit_head": "NOT EMBEDDED / external CI authority"
+  }
+}

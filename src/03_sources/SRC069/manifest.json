@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC069",
+  "source_folder_name": "69_풀뷰포트폴리오_러브트리모션랜딩",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/69_v3_exact_source_multi_template_portal.html",
+  "authority": {
+    "drive_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+    "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+    "filename": "69_v3_exact_source_multi_template_portal.html",
+    "bytes": 27600,
+    "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+    "revision": "V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+    "status": "LOCKED"
+  },
+  "master_rows": [],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "authority_context_note": "SRC069 is path-context-sensitive. Serving src/03_sources/SRC069/original/original.html or split/index.html directly from their repository paths is NOT runtime-equivalent to the authority: the authority's own ../../ portal paths resolve only from the canonical selected-D directory depth. authority-context.json records that depth and all 11 sibling portal target identities as metadata only. The ~35.7 MB target corpus is NOT vendored into this capsule, and no relative URL is rewritten.",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
+    "required_serving": "CANONICAL_SELECTED_D_VIRTUAL_DEPTH",
+    "canonical_depth_ref": "authority-context.json#/canonical_runtime_depth",
+    "canonical_depth_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    },
+    "note": "Neither src/03_sources/SRC069/original/original.html nor split/index.html is a valid standalone runtime surface at its repository path. The authority's own ../../ portal URLs resolve only from the canonical selected-D directory depth recorded in authority-context.json. The shared single-executable baseline and parity harnesses therefore fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule instead of producing a green-but-wrong artifact or attempting a parity promotion the Source cannot support. This flag is a manifest-maintained opt-in: SINGLE Sources that do not declare capture_surface keep the existing generic capture behavior."
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "full-viewport-multi-template-portal",
+    "scenario_id": "full-viewport-multi-template-navigation",
+    "qa_hook": "window.lovetreePortal",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "interaction_surface": [
+      "DESKTOP_NAV_TEMPLATE_BUTTON",
+      "SHOWREEL_PLAY_MEMORY_PATHS",
+      "CHIP_DISCOVER_CONNECT_REPLAY",
+      "FOOTER_PLANT_A_MOMENT",
+      "MOBILE_MENU_OPEN_CLOSE",
+      "WORKS_NAVIGATOR_OPEN",
+      "WORKS_ROW_HOVER_PREVIEW",
+      "WORKS_ROW_FOCUS_PREVIEW",
+      "WORKS_ROW_CLICK_OPENS_VIEWER",
+      "WORKS_CLOSE_BUTTON",
+      "VIEWER_IN_PAGE_IFRAME",
+      "VIEWER_CLOSE_BUTTON",
+      "VIEWER_OPEN_EXTERNAL_WINDOW",
+      "HOME_LOGO_RESET_ALL_OVERLAYS",
+      "ESCAPE_PRIORITY_VIEWER_WORKS_MENU"
+    ],
+    "source_specific_controls": [
+      "homeLogo",
+      "menuOpen",
+      "menuClose",
+      "menuOverlay",
+      "menuNav",
+      "worksOverlay",
+      "worksTitle",
+      "worksClose",
+      "worksList",
+      "previewNo",
+      "previewTitle",
+      "previewCopy",
+      "viewer",
+      "viewerIndex",
+      "viewerTitle",
+      "viewerSource",
+      "viewerOpenExternal",
+      "viewerClose",
+      "viewerFrame",
+      "viewerLoading"
+    ],
+    "portal_context_contract": {
+      "semantic_portal_mapping_count": 11,
+      "relative_prefix": "../../",
+      "prefix_rewritten": false,
+      "runtime_target_vendored": false,
+      "s4_requirement": "CONTEXT_AWARE_SERVING_REQUIRED",
+      "s4_requirement_note": "S4 parity requires context-aware serving of BOTH original and split at the canonical selected-D virtual depth. It is NOT executable by loading the repository split path directly."
+    }
+  }
+}
