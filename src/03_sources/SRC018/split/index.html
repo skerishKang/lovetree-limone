@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#09080c">
+  <title>LoveTree — Identity Fragment Loader V2</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <main class="app" id="app" aria-label="LoveTree fragment loader prototype">
+    <div class="grain" aria-hidden="true"></div><div class="wash" aria-hidden="true"></div>
+    <header class="header">
+      <a class="brand" id="closeBtn" href="../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html" aria-label="Close loader and return to LoveTree"><span class="brand-mark" aria-hidden="true"></span><span>LOVETREE</span></a>
+      <div class="module-label">Module 18.2 / Identity Fragment Loader</div>
+      <div class="header-actions"><button class="pill about" id="aboutBtn" type="button">Identity study 08</button><button class="pill" id="soundBtn" type="button" aria-pressed="false"><span class="sound-dot"></span><span id="soundText">Sound off</span></button></div>
+    </header>
+
+    <section class="editorial" aria-live="polite">
+      <div class="eyebrow" id="eyebrow">A memory is gathering / 000</div>
+      <h1><span><i>Memory</i></span><span><i>becomes</i></span><span><i>a world.</i></span></h1>
+      <p class="editorial-copy">Eight identities, scattered signals and unfinished promises gather before the next memory world appears.</p>
+    </section>
+
+    <div class="portal-preview" aria-hidden="true"><div class="identity-grid"><div class="identity-cell" data-memory="Signal 02"><img src="assets/cyber-02.png" alt=""></div><div class="identity-cell" data-memory="Signal 05"><img src="assets/cyber-05.png" alt=""></div><div class="identity-cell" data-memory="Signal 04"><img src="assets/cyber-04.png" alt=""></div><div class="identity-cell" data-memory="Signal 08"><img src="assets/cyber-08.png" alt=""></div></div></div>
+    <div class="fragment-field" id="fragmentField" aria-hidden="true"></div>
+    <svg class="vein-layer" id="veinLayer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="veinGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4f861" stop-opacity=".1"/><stop offset=".45" stop-color="#ffc2e4" stop-opacity=".75"/><stop offset="1" stop-color="#9d83d1" stop-opacity=".18"/></linearGradient></defs><g id="veins"></g></svg>
+    <div id="seeds" aria-hidden="true"></div>
+    <aside class="stage-index" id="stageIndex" aria-label="Loading stages"><div class="stage active"><span>Signal</span><i></i></div><div class="stage"><span>Fragments</span><i></i></div><div class="stage"><span>Bloom</span><i></i></div><div class="stage"><span>Ready</span><i></i></div></aside>
+
+    <div class="progress-zone">
+      <div><div class="progress-meta"><span id="stageNo">01 / 04</span><div class="progress-track"><div class="progress-fill"></div></div><span class="count" id="count">000</span></div><div class="phase" id="phase">Locating memory signal</div></div>
+      <div class="cta-stack"><button class="replay" id="replayBtn" type="button">Replay fragments ↺</button><a class="enter" id="enterBtn" href="../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html">Enter memory <span>↗</span></a></div>
+    </div>
+
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+    <section class="intro" id="intro"><div class="intro-inner"><div class="intro-mark" aria-hidden="true"><i></i><i></i><i></i></div><button class="start" id="startBtn" type="button">Start with sound</button><div class="intro-note">Move slowly / fragments follow</div></div></section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>

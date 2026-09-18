@@ -1,0 +1,28 @@
+{
+  "frozen_defect": "D1",
+  "name": "auto-rotation not gated on prefers-reduced-motion",
+  "reduced_motion": "reduce",
+  "window_ms": 1500,
+  "surfaces": {
+    "original": {
+      "reduced_motion_matches": true,
+      "rotation_deg_t0": -8.52,
+      "rotation_deg_t1": 1.17,
+      "rotation_delta_deg": 9.69,
+      "rotates_under_reduced_motion": true
+    },
+    "split": {
+      "reduced_motion_matches": true,
+      "rotation_deg_t0": -8.65,
+      "rotation_deg_t1": 1.26,
+      "rotation_delta_deg": 9.91,
+      "rotates_under_reduced_motion": true
+    },
+    "no_preference_reference": {
+      "rotation_delta_deg": 9.69
+    }
+  },
+  "both_surfaces_rotate_under_reduced_motion": true,
+  "disposition": "PRESERVED_IDENTICALLY",
+  "note": "D1 is preserved, not fixed: both surfaces keep auto-rotating under prefers-reduced-motion: reduce."
+}

@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-18T00:43:03.400Z",
+  "authority": {
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+  },
+  "reconstructed": {
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+  },
+  "roundtrip": true,
+  "video_ids": {
+    "count": 18,
+    "verbatim": true
+  },
+  "external_hosts": {
+    "i_ytimg": true,
+    "youtube_embed": true,
+    "verbatim": true
+  },
+  "frozen_defects_preserved": {
+    "D8_stale_literal_551": true,
+    "D10_invalid_video_id": true,
+    "D7_touch_action": true,
+    "D7_wheel_preventDefault": true,
+    "D6_escape_only": true,
+    "D4_continuous_raf": true,
+    "no_reduced_motion_added": true,
+    "no_onerror_added": true
+  },
+  "split_files": [
+    "index.html",
+    "materialization.json",
+    "script.js",
+    "styles.css"
+  ],
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "SOURCE_SPECIFIC_CANVAS_RUNTIME_NO_GENERIC_WINDOW_CONTRACT",
+    "disposition": {
+      "action": "SKIP",
+      "reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "mode": "CONTEXT_AWARE_ONLY",
+      "required_serving": "SINGLE_EXECUTABLE_HTML"
+    }
+  },
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "original locked at 35935 bytes"
+    },
+    {
+      "id": "T01b",
+      "pass": true,
+      "detail": "exactly one style block and one plain script block, no attributed/external scripts"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "styles.css === authority style inner (10594 chars)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "script.js === authority script inner (18461 chars)"
+    },
+    {
+      "id": "T04",
+      "pass": true,
+      "detail": "reconstruction byte-identical to frozen authority"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "link + script src glue only"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "split/ holds exactly index.html + styles.css + script.js + materialization.json, no assets dir"
+    },
+    {
+      "id": "T07",
+      "pass": true,
+      "detail": "all 18 YouTube video ids survive verbatim in split/script.js"
+    },
+    {
+      "id": "T08",
+      "pass": true,
+      "detail": "i.ytimg.com thumbnail + youtube.com/embed autoplay=1&rel=0 URLs preserved verbatim, no proxy/localize"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "D8 stale static stats literal (551) survives byte-exactly in split index"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "D10 invalid video id O3ptaX7-G8w preserved verbatim (no substitution)"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "D7 touch-action:none + wheel preventDefault(passive:false) survive in split CSS/JS"
+    },
+    {
+      "id": "T12a",
+      "pass": true,
+      "detail": "D6 Escape-only keydown handler survives in split/script.js"
+    },
+    {
+      "id": "T12b",
+      "pass": true,
+      "detail": "D4 continuous rAF loop survives; no prefers-reduced-motion or onerror handler added (D6/D11 untouched)"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T14a",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split"
+    },
+    {
+      "id": "T14b",
+      "pass": true,
+      "detail": "no product/MVP adapter in split"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "S3 split complete; S4 parity ACCEPTED (stage true, parity_ref -> accepted-parity.json); DUPLICATE_COPY_SAME_SHA recorded; mechanical-only policy"
+    },
+    {
+      "id": "T16",
+      "pass": true,
+      "detail": "materialization ACCEPTED + PASS matches files on disk (bytes + sha256 + git_blob_sha1)"
+    },
+    {
+      "id": "T17a",
+      "pass": true,
+      "detail": "manifest declares CONTEXT_AWARE_ONLY capture surface with source-specific canvas runtime reason + both shared-harness SKIP dispositions (SRC038 exposes neither window.__lt nor window.__lovetreeStats by design)"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "existing getCaptureSurfaceDisposition fails SRC038 closed to SKIP (generic baseline/parity capture must not attempt it)"
+    }
+  ]
+}

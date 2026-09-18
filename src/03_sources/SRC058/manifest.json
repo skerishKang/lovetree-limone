@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -40,6 +40,70 @@
       "CINEMA_PREVIEW",
       "INSPECTOR_FOREGROUND",
       "ZOOM_FIT"
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA",
+    "closing_step_basis": "Step 1 of §2.3: the readback enumerates three file objects carrying the V1.2 authority bytes. Step 2: all three carry the identical SHA-256 9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5 (532697 B) and differ only in location and filename. Per §2.3 a byte-identical object is a duplicate COPY, not a variant. Question A closes as DUPLICATE_COPY_SAME_SHA; the V1.0 / V1.1 revision chain is otherwise clean (3 enumerated revision folders, V1.2 terminal).",
+    "authority_reverification": {
+      "drive_folder_id": "1SHLE4D4QpAo39eWBke12lYYUX9ilCz1F",
+      "drive_folder_name": "58_리빙메모리_핀보드_시네마틱",
+      "drive_file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+      "bytes": 532697,
+      "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+      "revision": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+      "modified_time_utc": "2026-08-11T10:07:31.440Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_at_utc": "2026-09-06T06:35:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "★_최종_58_리빙메모리_핀보드.html",
+        "drive_file_id": "1u83WpPC06BtPYtOvX1eBHUibn7L29ntk",
+        "bytes": 532697,
+        "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+        "revision": "V1.2_YOUTUBE_REAL_MEDIA_MOBILE_HARDGATE",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "166kedQn71FNYE1Pk2wniHd4a0G4w45uQ",
+        "bytes": 532697,
+        "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+        "revision": "V1.2",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held inside the V1.2 revision folder, uploaded 2026-08-11T08:48Z. The authority root copy was uploaded later at 2026-08-11T10:07Z. Location-only duplicate."
+      },
+      {
+        "filename": "이전_루트최종복사본_현재후보.html",
+        "drive_file_id": "1RHpymc_Sg3V8NQoXzQC4AK2ekax7lMW8",
+        "bytes": 532697,
+        "sha256": "9fd5b6e7b69bc14347cf3eb1905e7a118ad9bd7b62faa9d81f47b4389a7d3cb5",
+        "revision": "V1.2",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Third byte-identical copy of the authority. The filename itself declares it a preserved copy of the former root final artifact. modifiedTime not separately captured for this object in this pass."
+      }
+    ],
+    "negative_claim": "The V1.2 authority bytes occur exactly three times in the enumerated scope, all byte-identical and differing only in location and filename: the authority at the track root, one copy inside the V1.2 revision folder, and one explicitly-labelled preserved copy of the former root final artifact. No fourth object and no content-different variant carrying these bytes exists in the enumerated scope.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC058. The stale failure block recorded against SRC058 before this pass has been superseded by the enumeration.",
+    "special_notes": [
+      "Three-way duplicate: the authority at the track root, one copy inside the V1.2 revision folder, and one explicitly-labelled preserved copy of the former root final artifact (이전_루트최종복사본_현재후보.html). All three byte-identical.",
+      "The authority folder name is 58_리빙메모리_핀보드_시네마틱 while the manifest source folder name is 58_리빙메모리_핀보드_자료 — a folder-label difference with no byte effect. Recorded for completeness; not re-adjudicated in this edit."
     ]
   }
 }

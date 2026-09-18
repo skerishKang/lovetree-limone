@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX014",
+  "stage": "S4_CONTEXT_AWARE_SERVING_PARITY",
+  "remote": "gdrive:",
+  "path": "gdrive:LoveTree_Evidence/CDX014_S4_PARITY_CANDIDATE_a649d9bd.zip",
+  "artifact": "CDX014_S4_PARITY_CANDIDATE_a649d9bd.zip",
+  "bytes": 4218224,
+  "sha256": "3a6b88f9b6bc664f20adea1e8f29755feef8bc3336e104984b34d73ef44678da",
+  "hash_verified": true,
+  "hash_verification_method": "rclone copyto upload, then rclone copyto download to a local read-back path and SHA-256 both files with Windows Get-FileHash; byte length and SHA-256 identical on both sides",
+  "contents": [
+    "src/04_codex/CDX014/evidence/s4/comparison.json",
+    "src/04_codex/CDX014/evidence/s4/media-audit.json",
+    "src/04_codex/CDX014/evidence/s4/d1-reduced-motion.json",
+    "src/04_codex/CDX014/evidence/s4/contract.json",
+    "src/04_codex/CDX014/evidence/s4/screenshots/original-INITIAL-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/original-INDEX_DRAWER_OPEN-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/original-VIEWER_OPEN-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/original-PAUSED-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/split-INITIAL-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/split-INDEX_DRAWER_OPEN-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/split-VIEWER_OPEN-settled.png",
+    "src/04_codex/CDX014/evidence/s4/screenshots/split-PAUSED-settled.png",
+    "src/04_codex/CDX014/evidence/parity/s4-candidate-parity.json",
+    "src/04_codex/CDX014/tests/s4-context-parity.test.mjs"
+  ],
+  "content_count": 14,
+  "content_total_bytes": 4513131,
+  "heads": {
+    "capture_head": "6b651f93295f53a01d2f75b5b9b874aa0fe26b58",
+    "first_push_head": "a649d9bde268f8da1c16c88e8b9dfea3f1a0982d",
+    "branch_head_at_upload": "4da512e99334e334cd2a9bf53627f0bcc6f0ea78",
+    "base_main": "dd20c2c3e42e5289a402346b028c09f8d2076533"
+  },
+  "filename_note": "The filename uses a649d9bd, the first push head CENTRAL named in the handoff instruction. The evidence was captured at 6b651f93 and the branch head at upload time was 4da512e9. All four SHAs are recorded above so the artifact resolves to a commit regardless of which one is used to look it up.",
+  "tooling": {
+    "rclone": "v1.75.0 (Windows, rclone.exe)",
+    "upload_command": "rclone copyto <zip> gdrive:LoveTree_Evidence/CDX014_S4_PARITY_CANDIDATE_a649d9bd.zip",
+    "upload_result": "Copied (new); 4.023 MiB / 4.023 MiB, 100%, 1/1 objects, 2.9s"
+  },
+  "notices": [
+    "This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Create your own client_id to avoid interruption: https://rclone.org/drive/#making-your-own-client-id",
+    "The installed rclone v1.75.0 build does not implement `rclone sha256sum` (unknown command), so a remote-side hash could not be read directly. Same class of limitation as #637, which also could not run `rclone stat` or `rclone lsf --json`.",
+    "A Drive file id was not captured for the same reason. Verification is by download-and-hash instead: the object was downloaded back to a local read-back path and SHA-256 compared, which is stronger than a metadata-only check.",
+    "Verified size: rclone size reports Total objects: 1, Total size: 4.023 MiB (4218224 Byte), matching the local file exactly."
+  ],
+  "verdict": "STRUCTURAL_PARITY_ESTABLISHED_SCREENSHOT_CHANNEL_NOT_BYTE_IDENTICAL"
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_CONTEXT_AWARE_MOTION_AWARE_PARITY_EVIDENCE",
+  "source_head": "dc9f4fa5a988fa0f2812a9a6381d7fd7c2a59c41",
+  "evidence_binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+  "context_mode": "CONTEXT_AWARE_ONLY",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "motion_policy": "SOURCE_NATIVE_TIME_WOBBLE_PRESERVED",
+  "camera_evidence_policy": "SOURCE_NATIVE_RESET_VIEW_DETERMINISTIC_ANCHOR_PLUS_BROWSER_OBSERVABLE_DELTAS",
+  "central_acceptance": {
+    "issue": 589,
+    "issue_comment": 5654647629,
+    "pr": 650,
+    "pr_comment": 5654648027,
+    "central_visual_pass": true
+  },
+  "central_acceptance_issue_comment": 5654647629,
+  "central_acceptance_pr_comment": 5654648027,
+  "central_visual_pass": true,
+  "validator_extension_authority": {
+    "issue": 651,
+    "issue_comment": 5654750673,
+    "pr": 650,
+    "pr_comment": 5654751695,
+    "screenshots_enum": "MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED"
+  },
+  "evidence_folder_id": "1PDrIlgoZ-h49pCGdzbBioJClvLV_hutx",
+  "evidence_label": "LoveTree_Evidence/CLEAN108-SRC038-S4-Candidate-260913/",
+  "authority": {
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+  },
+  "authority_sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+  "matched_state_count": 62,
+  "matched_states": "62/62",
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "global_tolerance": false,
+  "canonical16_used": false,
+  "hamming_tolerance_used": false,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED"
+  },
+  "dom_state_parity": "PASS",
+  "interaction_parity": "PASS",
+  "structural_visual_parity": "PASS",
+  "external_runtime_parity": "PASS",
+  "browser_errors": 0,
+  "required_network_errors": 0,
+  "local_http_failed_requests": 0,
+  "expected_source_local_external_observations": [
+    "https://i.ytimg.com/vi/O3ptaX7-G8w/hqdefault.jpg answers HTTP 404 on both surfaces (frozen defect D10; not a required-network error)",
+    "third-party iframe unload produced abortedExternal classification counts 29 (original) vs 28 (split); external timing variance recorded, not gated"
+  ],
+  "visual_review": {
+    "central_direct_artifact_review": true,
+    "central_visual_pass": true,
+    "reviewed_representative_states": [
+      "1280x800 INITIAL_AUTO_ORBIT",
+      "1280x800 SETTINGS_OPEN",
+      "1280x800 PLAYER_OPEN",
+      "390x844 MOBILE_INSPECTOR_OPEN",
+      "320x720 320_OVERFLOW_GEAR_UNREACHABLE"
+    ]
+  },
+  "matrix": {
+    "viewports": ["1280x800", "390x844", "320x720"],
+    "states_per_viewport": {
+      "1280x800": 19,
+      "390x844": 21,
+      "320x720": 22
+    },
+    "pairs": 62,
+    "device_scale_factor": 1,
+    "motion": "SOURCE_NATIVE (no reduced-motion emulation, no clock/rAF patch; time-based wobble preserved on both surfaces)"
+  },
+  "topology": "454 nodes / 543 runtime links",
+  "static_551_literal": "PRESERVED",
+  "video_ids": 18,
+  "d9_320_overflow_parity": "PASS",
+  "d9_observation": "workspace grid computes 45px 487px, settings gear at x=480 (width 38) off-screen at 320px viewport, identical on both surfaces",
+  "invalid_video_id_404_parity": "PASS",
+  "invalid_video_id_observation": "O3ptaX7-G8w hqdefault 404 body renders as the 120x90 placeholder (naturalWidth=120) with no img.onerror handler, identical on both surfaces (D10/D11); supersedes the baseline 'gradient' wording with the observed placeholder behavior",
+  "frozen_defects": "D1-D11 PRESERVED",
+  "frozen_defects_preserved": {
+    "SRC038_D1_SYNTHETIC_FIXTURES": "454 nodes / 543 edges / 432 fragments synthetic fixture data preserved byte-exactly in split outputs",
+    "SRC038_D2_IYTIMG_THUMBNAIL_DEPENDENCY": "18 i.ytimg.com hqdefault.jpg thumbnail URLs preserved verbatim; no proxying or localizing",
+    "SRC038_D3_YOUTUBE_EMBED_DEPENDENCY": "youtube.com/embed/<id>?autoplay=1&rel=0 player URL preserved verbatim; embed URL contract equal on both surfaces",
+    "SRC038_D4_CONTINUOUS_RAF_NO_REDUCED_MOTION": "continuous rAF time-based wobble preserved; screenshot pairs are non-repeatable by design (7/68 byte-equal, 61/68 differ) — this is why no pixel-equality enum could be claimed",
+    "SRC038_D5_CANVAS_NODES_NOT_KEYBOARD_FOCUSABLE": "pointer-only selection preserved",
+    "SRC038_D6_ESCAPE_ONLY_KEYBOARD_PATH": "Escape-only keydown handler preserved and behaviorally verified on both surfaces",
+    "SRC038_D7_TOUCH_ACTION_WHEEL_PREVENTDEFAULT": "touch-action:none + wheel preventDefault ownership preserved and behaviorally verified",
+    "SRC038_D8_STALE_STATIC_STATS_LITERAL": "static 454 notes, 551 links literal present in served HTML on both surfaces; runtime overwrites to 543",
+    "SRC038_D9_MOBILE_320_OVERFLOW_GEAR_UNREACHABLE": "preserved; parity verified via workspace-cols + gear-rect observation (see d9_observation)",
+    "SRC038_D10_INVALID_VIDEO_ID_O3PTAX7_G8W": "id preserved verbatim; 404 observed identically on both surfaces",
+    "SRC038_D11_NO_IMAGE_ERROR_HANDLER": "no img.onerror handler added; identical degraded placeholder behavior verified on both surfaces"
+  },
+  "serving": {
+    "harness": "context-aware SRC038-local motion-aware runner (src/03_sources/SRC038/tests/s4-motion-parity.test.mjs + tests/lib/s4-motion-runner.mjs)",
+    "note": "Shared generic capture-source-baseline.mjs and capture-source-parity.mjs remain SKIP for this capsule (capture_surface.mode=CONTEXT_AWARE_ONLY). ORIGINAL (original/original.html) and SPLIT (split/index.html + styles.css + script.js) were served from isolated loopback virtual roots so both surfaces are runtime-equivalent; the same source-native interaction sequence (A00-A22) was driven on both and per-state DOM/CSSOM channels compared.",
+    "original": "original/original.html served verbatim from an isolated loopback virtual root",
+    "split": "split/index.html + styles.css + script.js served verbatim from an isolated loopback virtual root"
+  },
+  "gate_results": {
+    "named_gates": "27/27 PASS",
+    "repeat_runs": 2,
+    "determinism": "identical results across consecutive full runs",
+    "evidence_ref": "evidence/parity/s4-motion-parity.json"
+  },
+  "notes": [
+    "Parity evidence was captured by the SRC038-local context-aware motion-aware runner at exact source head dc9f4fa5a988fa0f2812a9a6381d7fd7c2a59c41 and accepted by CENTRAL (issue #589 comment 5654647629 / PR #650 comment 5654648027, CENTRAL_VISUAL_PASS=YES). The accepted Drive evidence folder 1PDrIlgoZ-h49pCGdzbBioJClvLV_hutx is immutable and was not rewritten by this metadata promotion.",
+    "The hard parity gate is per-state DOM/CSSOM state equality plus identical action sequences and identical probe observations across 62 matched states on 3 viewports (mismatchTotal=0). Raw PNG byte equality is NOT claimed and was NOT used: the source renders a continuous requestAnimationFrame time-based wobble (frozen defect D4), so canvas pixels are non-repeatable by design on both surfaces. No SSIM, perceptual metric, pixel tolerance, canonical-16 downsample, or Hamming threshold was used.",
+    "This record uses the MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED screenshots policy introduced by the bounded shared-validator extension authorized at issue #651 comment 5654750673 / PR #650 comment 5654751695. The three existing pixel enums and their semantics are unchanged; the new policy is fail-closed on every attestation field listed in validateMotionAwareParityFields.",
+    "This promotion changes acceptance metadata only. Source runtime bytes (original/original.html, split/index.html, split/styles.css, split/script.js) are unchanged; the mechanical split still round-trips byte-identically to the frozen 35935-byte authority (validator-enforced). No source repair, redesign, framework conversion, product-data injection, or QA clock/rAF/runtime hook was introduced. D1-D11 frozen defects are preserved identically on both surfaces.",
+    "capture_surface.mode remains CONTEXT_AWARE_ONLY and the shared baseline/parity harness dispositions remain SKIP. PR #650 stays DRAFT; no Ready or merge action is taken by this promotion."
+  ],
+  "next_stage_authorized": "CENTRAL_READY_MERGE_REVIEW"
+}

@@ -5,17 +5,28 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Codex-14 Rotating Memory Index",
   "product_job": "ARCHIVE",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
+  "mapping_status": "CODEX_RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "CDX",
+      "id": "CDX014",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
   "family_ref": null,
   "relation": null,
   "notes": [
     "semantic_identity=Codex-14 Rotating Memory Index",
-    "namespace_type=codex-source-local-unresolved",
+    "namespace_type=codex",
     "coverage_state=PARTIAL",
     "mvp_review_state=primary",
     "source_freshness=medium",
-    "github_issue=244"
+    "github_issue=244",
+    "mapping_basis=EXPLICIT_LEDGER_PROVENANCE",
+    "mapping_evidence=design-intake/master-design-coverage.json row 80 (master_id 80, Codex-14 Rotating Memory Index, product_job ARCHIVE)",
+    "mapping_evidence=design-intake/codex14-rotating-memory-index-archive-native.json (stableId codex14-rotating-memory-index-archive, file 1YKq2WiINn5MWhll8sSBq1azHMwaocIIP, 19631 B, sha 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361)",
+    "mapping_evidence=PR #502 adopted Codex14 Rotating Memory Index as ARCHIVE native lens (merged 2026-08-25, head f235fde38b5abda87c6ac2eecdcd4249f4930bc1)",
+    "mapping_evidence=CDX014 S0 live Drive readback MATCH + capsule src/04_codex/CDX014 (S3 mechanical port, authority-context.json)"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }

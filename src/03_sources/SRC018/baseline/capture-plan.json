@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC018",
+  "status": "ACCEPTED",
+  "surface": "original/original.html",
+  "viewports": [
+    { "width": 1280, "height": 800 },
+    { "width": 390, "height": 844 },
+    { "width": 320, "height": 720 }
+  ],
+  "states": [
+    "INITIAL",
+    "LOADING_MID",
+    "COMPLETE",
+    "DISMISS_X",
+    "ENTER_COMMIT",
+    "REDUCED_MOTION"
+  ],
+  "measurements": [
+    "id inventory",
+    "eight cyber-01..08 runtime asset references (CSS url() + JS string array)",
+    "loading progress display (fixed 6800ms source progression)",
+    "identity reveal sequence",
+    "X / Escape dismiss anchor (source-local Track17 href, provenance only)",
+    "Enter commit anchor (host callback in repo, source-local href in original)",
+    "WebAudio presentation cues",
+    "prefers-reduced-motion CSS truncation vs JS-owned 6800ms",
+    "console/page errors"
+  ],
+  "accepted_evidence": "baseline/accepted-baseline.json",
+  "pass_rule": "Baseline is accepted only from directly reviewed exact-head evidence whose frozen original remains byte-identical to locked authority."
+}

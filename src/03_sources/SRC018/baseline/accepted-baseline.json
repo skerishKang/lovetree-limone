@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC018",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_PRODUCTION_OBSERVED_EVIDENCE",
+  "captured_head": "9f7eab4d191d836eb7c83c008629b77ddac8dcbf",
+  "central_acceptance": {
+    "issue": 589,
+    "comment_id": "5646928896",
+    "automation_issue": 611
+  },
+  "authority": {
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
+  },
+  "runtime_assets": {
+    "count": 8,
+    "verification": "byte length + SHA-256 verified fresh from Drive at S3 readback (EXACT_GATE 8/8 PASS)",
+    "reference_only_excluded": ["memory-sphere.png", "memory-bloom.webp", "memory-trace.webp", "memory-human.webp"]
+  },
+  "evidence": {
+    "drive_folder_id": "1HhRsQ9EmOZ0uAry2ohSdyXz75pqVVT5Y",
+    "evidence_label": "CLEAN108-SRC018-S2-Candidate-260912",
+    "matrix": "15/15",
+    "result": "ALL_PASS"
+  },
+  "reviewed_viewports": [
+    { "width": 1280, "height": 800, "states": ["INITIAL", "LOADING_MID", "COMPLETE", "DISMISS_X", "ENTER_COMMIT", "REDUCED_MOTION"] },
+    { "width": 390, "height": 844, "states": ["INITIAL", "LOADING_MID", "COMPLETE", "DISMISS_X", "REDUCED_MOTION"] },
+    { "width": 320, "height": 720, "states": ["INITIAL", "LOADING_MID", "COMPLETE", "DISMISS_X", "REDUCED_MOTION"] }
+  ],
+  "interaction_results": {
+    "proofs": ["loading_progression", "identity_reveal", "x_dismiss", "enter_commit", "webaudio_cues", "reduced_motion_settle"],
+    "source_runtime_errors": 0,
+    "expected_provenance_holds": 1
+  },
+  "accepted_defects": {
+    "SRC018_SOURCE_LOCAL_TRACK17_HREF": "X and Enter anchors target ../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html, a source-local relative path with no repository route authority. Provenance only; repository execution uses host-owned dismiss and host-supplied canonical Enter callbacks. Must survive the split byte-exactly; not repaired during split.",
+    "SRC018_JS_FIXED_6800MS": "CSS reduced-motion truncates animation/transition durations but source JavaScript still owns a fixed 6800ms progression. Frozen Source behavior; must not be repaired during split.",
+    "SRC018_NO_FOCUS_VISIBLE": "No explicit focus-visible treatment or modal focus containment in the source HTML; progress display lacks native progressbar value semantics. Frozen Source behavior; native remediation is a later adapter-stage decision, not an S3 split change."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}

@@ -47,13 +47,133 @@ export function validateMechanicalSplitSurface({ repoRoot, roots = ['src/03_sour
   return failures;
 }
 
-function validateAcceptedParityComparisons(sourceId, parity, failures) {
+export const DUPLICATE_VARIANT_VALUES = Object.freeze([
+  'UNRESOLVED',
+  'SINGLE_EXECUTABLE_NO_DUPLICATE',
+  'DUPLICATE_COPY_SAME_SHA',
+  'PATH_CONTEXT_VARIANT_ONLY',
+  'DUAL_MEDIA_VARIANT',
+]);
+
+export const DUPLICATE_VARIANT_OPEN_VALUE = Object.freeze('UNRESOLVED');
+
+const DUPLICATE_VARIANT_READBACK_MODE = Object.freeze('CENTRAL_FRESH_DRIVE_READBACK');
+const FOLLOW_UP_ADJUDICATION_FIELDS = Object.freeze(['at_utc', 'by', 'basis', 'finding']);
+
+function nonEmptyString(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function hasFreshDriveReadbackReference(note) {
+  const reference = isObject(note?.readback) ? note.readback : null;
+  return (
+    reference !== null
+    && nonEmptyString(reference.ref)
+    && nonEmptyString(reference.verified_at_utc)
+    && nonEmptyString(reference.verified_by)
+    && reference.verification_mode === DUPLICATE_VARIANT_READBACK_MODE
+  );
+}
+
+function hasFollowUpAdjudication(note) {
+  const followUp = isObject(note?.follow_up_adjudication) ? note.follow_up_adjudication : null;
+  if (followUp === null) return false;
+  return FOLLOW_UP_ADJUDICATION_FIELDS.every((field) => nonEmptyString(followUp[field]));
+}
+
+/**
+ * §7 fail-closed governance gate for `duplicate_variant_status` /
+ * `duplicate_variant_note` — rule
+ * `docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md` §7,
+ * adopted by CENTRAL at `#589` comment `5557317485` (wearing confirmed after the
+ * batch pass, so every capsule now carries a note).
+ *
+ * Fail closed on exactly two shapes:
+ *   (a) a status outside the adopted five-value vocabulary;
+ *   (b) a non-`UNRESOLVED` status whose `duplicate_variant_note` is missing, or
+ *       whose note cites neither a `CENTRAL_FRESH_DRIVE_READBACK` readback
+ *       (`readback.ref` + `readback.verified_at_utc` + `readback.verified_by`)
+ *       nor a structurally valid `follow_up_adjudication` block.
+ *
+ * A structurally valid `follow_up_adjudication` block is accepted as the
+ * alternative evidence basis for a capsule whose authority record is not a Drive
+ * readback (CDX014: `authority-context.json`). The shape is verified only —
+ * `at_utc` / `by` / `basis` / `finding` non-empty strings — and the content is
+ * not re-adjudicated here.
+ *
+ * A manifest without the field carries no claim: it inherits the template
+ * default `UNRESOLVED` (rule §7 point 2) and stays in the open state.
+ */
+export function validateDuplicateVariantGovernance(manifest, sourceId) {
+  const failures = [];
+  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) return failures;
+  const fail = (message) => failures.push(`${sourceId}: ${message}`);
+
+  const status = manifest.duplicate_variant_status;
+  if (status === undefined) return failures;
+  if (typeof status !== 'string' || !DUPLICATE_VARIANT_VALUES.includes(status)) {
+    fail(`duplicate_variant_status "${status}" is outside the adopted vocabulary (${DUPLICATE_VARIANT_VALUES.join(' | ')})`);
+    return failures;
+  }
+  if (status === DUPLICATE_VARIANT_OPEN_VALUE) return failures;
+
+  const note = isObject(manifest.duplicate_variant_note) ? manifest.duplicate_variant_note : null;
+  if (note === null) {
+    fail(`duplicate_variant_status "${status}" requires duplicate_variant_note`);
+    return failures;
+  }
+  if (!hasFreshDriveReadbackReference(note) && !hasFollowUpAdjudication(note)) {
+    fail(`duplicate_variant_status "${status}" requires duplicate_variant_note citing a ${DUPLICATE_VARIANT_READBACK_MODE} readback (readback.ref + readback.verified_at_utc + readback.verified_by) or a structurally valid follow_up_adjudication block`);
+  }
+  return failures;
+}
+
+export function validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs = [] }) {
+  const failures = [];
+  for (const codexId of codexDirs) {
+    const manifest = readJson(repoRoot, `src/04_codex/${codexId}/manifest.json`, failures);
+    if (manifest) failures.push(...validateDuplicateVariantGovernance(manifest, codexId));
+  }
+  return failures;
+}
+
+export const MOTION_AWARE_SCREENSHOT_POLICY = 'MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED';
+export const MOTION_AWARE_PARITY_CONTRACT = 'SOURCE_SPECIFIC_MOTION_AWARE';
+
+/**
+ * Fail-closed field contract for the motion-aware screenshot policy
+ * (issue #651 comment 5654750673 / PR #650 comment 5654751695). The policy
+ * asserts DOM/CSSOM state parity plus direct CENTRAL visual review of paired
+ * artifact evidence; it never asserts pixel equality, so every pixel/QA-patch
+ * mechanism must be explicitly attested as unused. Any missing or wrong field
+ * fails closed.
+ */
+export function validateMotionAwareParityFields(sourceId, parity) {
+  const failures = [];
+  const visualReview = parity?.visual_review ?? {};
+  if (visualReview.central_direct_artifact_review !== true) failures.push(`${sourceId}: motion-aware parity requires direct CENTRAL artifact review`);
+  if (visualReview.central_visual_pass !== true) failures.push(`${sourceId}: motion-aware parity requires CENTRAL visual pass`);
+  if (parity?.parity_contract !== MOTION_AWARE_PARITY_CONTRACT) failures.push(`${sourceId}: motion-aware parity requires parity_contract=${MOTION_AWARE_PARITY_CONTRACT}`);
+  for (const key of ['raw_png_equality_used', 'pixel_tolerance_used', 'qa_clock_patch_used', 'qa_raf_patch_used', 'qa_runtime_hook_used']) {
+    if (parity?.[key] !== false) failures.push(`${sourceId}: motion-aware parity requires ${key}=false`);
+  }
+  if (parity?.browser_errors !== 0) failures.push(`${sourceId}: motion-aware parity browser errors present`);
+  if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: motion-aware parity required-network errors present`);
+  return failures;
+}
+
+export function validateAcceptedParityComparisons(sourceId, parity, failures = []) {
   const comps = parity?.comparisons ?? {};
   const allowedGeometry = ['EQUAL', 'EQUAL_FOR_STABLE_SOURCE_LANDMARKS'];
   const allowedScreenshots = [
     'BYTE_IDENTICAL',
     'BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST',
     'CANONICAL_PIXEL_HAMMING_WITHIN_THRESHOLD',
+    MOTION_AWARE_SCREENSHOT_POLICY,
   ];
 
   if (
@@ -77,7 +197,12 @@ function validateAcceptedParityComparisons(sourceId, parity, failures) {
     if (parity?.required_network_errors !== 0) failures.push(`${sourceId}: Hamming parity required-network errors present`);
   }
 
+  if (comps.screenshots === MOTION_AWARE_SCREENSHOT_POLICY) {
+    failures.push(...validateMotionAwareParityFields(sourceId, parity));
+  }
+
   if (parity?.browser_errors !== 0) failures.push(`${sourceId}: parity browser errors present`);
+  return failures;
 }
 
 /**
@@ -253,6 +378,8 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     const driveReadback = readJson(repoRoot, `${base}/evidence/source/drive-authority-readback.json`, failures);
     if (!manifest || !authority || !driveReadback) continue;
 
+    failures.push(...validateDuplicateVariantGovernance(manifest, sourceId));
+
     const { mode: authorityMode, agreement: authorityModeAgreement } = resolveAuthorityMode(manifest, authority);
     if (!authorityModeAgreement) {
       failures.push(`${sourceId}: authority_mode disagreement between manifest and authority`);
@@ -307,7 +434,10 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     // accepted by loading split/index.html directly. A CONTEXT_AWARE_ONLY
     // source may therefore claim source_split_parity_pass only when CENTRAL
     // has accepted the context-aware parity method and the claim is backed by
-    // a parity_ref pointing at the validated accepted-parity artifact.
+    // a parity_ref pointing at the validated accepted-parity artifact
+    // (issue #589 comment 5551812640 for SRC069). The artifact itself is
+    // re-validated fail-closed in the parity stage below; an unbacked claim
+    // still fails.
     if (manifest.capture_surface?.mode === 'CONTEXT_AWARE_ONLY') {
       if (stages.source_split_parity_pass === true && manifest.parity_ref !== 'evidence/parity/accepted-parity.json') {
         failures.push(`${sourceId}: CONTEXT_AWARE_ONLY capture surface may claim source_split_parity_pass only with parity_ref=evidence/parity/accepted-parity.json and validated accepted-parity evidence`);

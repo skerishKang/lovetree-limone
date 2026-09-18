@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC038",
+  "drive": {
+    "folder_id": "13pwareFS4wAPo8qgGF-HdrjMUFel98YV",
+    "file_id": "1HyqJgp_fuYg984av3ZhZj_-gfYGOzlq-",
+    "filename": "01_보이저_우주영상기억지도.html",
+    "bytes": 35935,
+    "sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526",
+    "duplicate_file_id": "1LQZIuyLhvMbEmX6xK8V9q9w0jtBQ4IL2",
+    "duplicate_folder_id": "16XJ0hiis0t0GzBsqcA6j9PfRmjGnB6fV",
+    "duplicate_sha256": "9d5b4b3682d2bba0118a4a7a6e9a37098442c4be4180f74009e4580c36130526"
+  },
+  "runtime_context_required": false,
+  "runtime": {
+    "rendering": "canvas-2d",
+    "scenario_id": "community",
+    "backend_scope": "BACKEND_FREE",
+    "external_hosts": ["i.ytimg.com", "youtube.com/embed (www.youtube.com)"],
+    "motion": "continuous rAF loop with time-based wobble; pixels non-repeatable; parity must target DOM facts + interaction semantics + structural visual features, not raw pixels"
+  },
+  "runtime_assets": {
+    "count": 0,
+    "dir": null,
+    "files": [],
+    "note": "No local runtime assets; the single HTML carries all CSS/JS inline and reaches only external YouTube hosts at runtime."
+  },
+  "source_only_values": [
+    "454 notes / 543 edges / 432 fragments and the 18-video roster are synthetic fixtures, never product data",
+    "the static literal 454 notes, 551 links (line 91) is a stale source-native literal overwritten at runtime to 543; preserved byte-exactly",
+    "seeded LCG rnd() seed 89317 reproduces the exact topology; no Math.random or Date.now in topology code",
+    "video id O3ptaX7-G8w is an invalid-but-pinned source datum (thumbnail 404); never substituted during split"
+  ],
+  "frozen_defects": [
+    "SRC038_D1_SYNTHETIC_FIXTURES",
+    "SRC038_D2_IYTIMG_THUMBNAIL_DEPENDENCY",
+    "SRC038_D3_YOUTUBE_EMBED_DEPENDENCY",
+    "SRC038_D4_CONTINUOUS_RAF_NO_REDUCED_MOTION",
+    "SRC038_D5_CANVAS_NODES_NOT_KEYBOARD_FOCUSABLE",
+    "SRC038_D6_ESCAPE_ONLY_KEYBOARD_PATH",
+    "SRC038_D7_TOUCH_ACTION_WHEEL_PREVENTDEFAULT",
+    "SRC038_D8_STALE_STATIC_STATS_LITERAL",
+    "SRC038_D9_MOBILE_320_OVERFLOW_GEAR_UNREACHABLE",
+    "SRC038_D10_INVALID_VIDEO_ID_O3PTAX7_G8W",
+    "SRC038_D11_NO_IMAGE_ERROR_HANDLER"
+  ],
+  "self_contained": "Self-contained except external YouTube hosts (i.ytimg.com thumbnails, youtube.com/embed player). HTML/CSS/JS are mechanically split; the 18 video ids and both external hosts survive byte-exactly in split outputs."
+}

@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
   "parity_ref": "evidence/parity/accepted-parity.json",
@@ -56,5 +56,83 @@
       "mobileNavSheet",
       "progressLabel"
     ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA",
+    "closing_step_basis": "Step 1 of §2.3: the readback enumerates more than one file object carrying the V1.1 authority bytes. Step 2: the copy 1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S carries the authority's SHA-256 bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8 unchanged (20728647 B). Per §2.3 a byte-identical object is a duplicate COPY, not a variant. The V1.0 / V1.1 revision chain is otherwise clean (2 enumerated revision folders, V1.1 terminal).",
+    "authority_reverification": {
+      "drive_folder_id": "1792L8WiaSaJjmBtll5i_uIvFRtzQp8N6",
+      "drive_folder_name": "62_기억조각상_원형레일전시",
+      "drive_file_id": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+      "bytes": 20728647,
+      "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+      "revision": "V1.1",
+      "modified_time_utc": "2026-08-16T14:16:27.496Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "reverified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_at_utc": "2026-09-06T06:41:00Z",
+      "verified_by": "kilo-agent / sensenova-6.8-flash-lite",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "62_기억조각상_원형레일전시.html",
+        "drive_file_id": "1Zivp0wDxNOw4Vg1ame8sjZLspHMdQPi-",
+        "bytes": 20728647,
+        "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+        "revision": "V1.1",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "현재후보.html",
+        "drive_file_id": "1Fu0Vorz5BjX2uEjlL2bujQvrP0gFVC9S",
+        "bytes": 20728647,
+        "sha256": "bc5484a1c545165feb57cd76cae49c8f1e7bb0b3f4a0e11fa9bc4e739a6987e8",
+        "revision": "V1.1",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical copy of the authority held inside the V1.1 revision folder. The 20728647-byte object was downloaded and hashed in the same run as the authority; SHA-256 matches exactly. Location-only duplicate."
+      },
+      {
+        "filename": "버전1.0_레퍼런스피델리티_재구축_후보.html",
+        "drive_file_id": "1kPi85a0_kw87OWNuVaf9MHTPNoEk9qgT",
+        "bytes": 5834579,
+        "sha256": "5e19f76ed72558464c9bfb1dab5f56839f9f34b48a42c54c5f5db99b21eaaf5f",
+        "revision": "V1.0",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Track-root V1.0 artifact alongside its V1.0 revision folder. Superseded by revision; content-different."
+      },
+      {
+        "filename": "버전1.0_레퍼런스피델리티_재구축_후보.html",
+        "drive_file_id": "1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp",
+        "bytes": 5834579,
+        "sha256": null,
+        "revision": "V1.0",
+        "content_relation_to_authority": "NOT_ASSESSED",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Same filename and same byte size as the track-root V1.0 artifact, so very likely a location-only duplicate of it. Not hashed in this pass because both are excluded by revision regardless; flagging the size coincidence explicitly rather than inferring identity."
+      }
+    ],
+    "negative_claim": "The V1.1 authority bytes occur exactly twice in the enumerated scope, both byte-identical and differing only in location: the authority at the track root under the canonical track filename, and one copy inside the V1.1 revision folder under the working filename 현재후보.html. No third object and no content-different variant carrying these bytes exists in the enumerated scope.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: verify that the two V1.0 objects (1kPi85a0_kw87OWNuVaf9MHTPNoEk9qgT 5834579 B sha256 5e19f76ed725… and 1LlK6lrDKpH97nnyVHfw6RoOayUt8SMvp 5834579 B, content_relation NOT_ASSESSED) are byte-distinct from each other. Both are excluded as revision history regardless of the outcome; this is completeness evidence only.",
+    "special_notes": [
+      "The byte-identical copy uses the working filename 현재후보.html inside the V1.1 revision folder while the authority uses the canonical track filename at the track root. The distinction is location and filename only."
+    ],
+    "revision_label_note": {
+      "manifest_revision": "V1.1",
+      "authority_filename_revision_label": null,
+      "note": "The authority HTML carries no revision label in its filename, while a revision folder named 버전1.1_조각상다양화·미디어뷰어·메뉴기능_후보 exists. The revision is established by manifest designation and folder structure, not by the authority filename."
+    }
   }
 }

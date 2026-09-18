@@ -14,7 +14,7 @@
   },
   "master_rows": [],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "authority_context_required": true,
   "authority_context_ref": "authority-context.json",
   "authority_context_note": "SRC069 is path-context-sensitive. Serving src/03_sources/SRC069/original/original.html or split/index.html directly from their repository paths is NOT runtime-equivalent to the authority: the authority's own ../../ portal paths resolve only from the canonical selected-D directory depth. authority-context.json records that depth and all 11 sibling portal target identities as metadata only. The ~35.7 MB target corpus is NOT vendored into this capsule, and no relative URL is rewritten.",
@@ -98,5 +98,60 @@
       "s4_requirement": "CONTEXT_AWARE_SERVING_REQUIRED",
       "s4_requirement_note": "S4 parity requires context-aware serving of BOTH original and split at the canonical selected-D virtual depth. It is NOT executable by loading the repository split path directly."
     }
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA",
+    "closing_step_basis": "Step 1 of §2.3: two file objects carry the authority bytes (the authority inside the canonical selected-D directory, and one copy at the Track 69 track-root depth). Step 2: they carry the identical SHA-256 64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3 (27600 B). Per §2.3 a byte-identical object is a duplicate COPY, not a variant. Question A closes as DUPLICATE_COPY_SAME_SHA.",
+    "authority_reverification": {
+      "drive_folder_id": "1oSbF3dd5p1yuk31-BMbXLRv7WoS7kXoK",
+      "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+      "filename": "69_v3_exact_source_multi_template_portal.html",
+      "bytes": 27600,
+      "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+      "revision": "V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL"
+    },
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-04T16:13:30Z",
+      "verified_by": "CLEAN-108 SRC069 S3 implementer reproduced the CENTRAL identity against live Google Drive; the Drive API SHA-256 for the live object matches the CENTRAL record and the materialized original.",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "root_copy_excluded"
+    },
+    "candidate_table": [
+      {
+        "filename": "69_v3_exact_source_multi_template_portal.html",
+        "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+        "bytes": 27600,
+        "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+        "revision": "V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": null,
+        "drive_file_id": "1WyiJtGv-EiBjA8Fih7XBbQRaE2hybNN7",
+        "bytes": 27600,
+        "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
+        "revision": null,
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical to the canonical authority but stored at the Track 69 track-root depth, where the authority's own ../../ portal paths do NOT resolve. Excluded from the capsule by design: it was never downloaded, served, or rendered in this lane."
+      }
+    ],
+    "revision_chain": [
+      "69_풀뷰포트폴리오_러브트리모션랜딩 [SOURCE_TRACK_FOLDER]",
+      "03_디자인채택본 [RELATIVE_ANCHOR_TARGET]",
+      "[01_러브트리] [PROJECT_FOLDER]"
+    ],
+    "negative_claim": "The authority bytes occur exactly twice: once at the canonical selected-D directory depth and once at the track-root depth. No third object carries these bytes.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for SRC069. Both objects are hashed and both hashes match.",
+    "special_notes": [
+      "PATH-CONTEXT EXCLUSION REASON (the special case for this capsule), recorded as the readback records it: the copy sits at the Track 69 track-root depth, where the authority's own ../../ portal paths do NOT resolve. Its exclusion is therefore also a serving-contract fact — but Question A classifies it on SHA-256 identity (step 2), while Question B stays in authority_context_required / capture_surface and is NOT adjudicated here.",
+      "SRC069 is one of only three capsules in the repository with an authority_context_ref (SRC069, SRC071, CDX014). Its capture_surface.mode is CONTEXT_AWARE_ONLY, so the shared single-executable harnesses SKIP this capsule by design."
+    ]
   }
 }

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f2f3ef">
+  <title>LoveTree — Rotating Memory Index</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <main class="stage" id="stage" aria-label="러브트리 회전 메모리 인덱스"><div class="scene"><div class="deck" id="deck"></div></div></main>
+  <div class="chrome" aria-hidden="true"><header class="topbar"><div class="brand"><span class="mark"></span>LoveTree</div><div class="top-meta">Rotating memory index · selected films · 2026</div></header><footer class="bottom"><div class="live">Live sculpture</div><div class="hint">Drag to rotate · Scroll to change · Click to open</div><div class="count"><span id="currentNo">001</span> / 089</div></footer></div>
+  <button class="index-btn" id="indexTrigger" aria-label="영상 목록 열기">Index 89</button><div class="controls"><button class="round-btn" id="prev" aria-label="이전 영상">←</button><button class="round-btn" id="pause" aria-label="자동 회전 일시정지">Ⅱ</button><button class="round-btn" id="next" aria-label="다음 영상">→</button></div>
+  <aside class="drawer" id="drawer" aria-label="전체 영상 목록"><button class="drawer-close" id="drawerClose" aria-label="목록 닫기">×</button><div class="drawer-head"><div class="eyebrow">LoveTree archive</div><div class="drawer-title">Moving Memory Index</div></div><div class="drawer-body"><div class="index-grid" id="indexGrid"></div></div></aside>
+  <section class="viewer" id="viewer" role="dialog" aria-modal="true" aria-hidden="true"><button class="viewer-close" id="viewerClose" aria-label="닫기">×</button><div class="viewer-media" id="viewerMedia"></div><div class="viewer-info"><small id="viewerMeta"></small><h2 id="viewerTitle"></h2><p>러브트리에 보관된 움직이는 기억입니다. 영상과 소리를 크게 열어 다시 감상할 수 있습니다.</p></div></section>
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.1",
+  "codex_id": "CDX014",
+  "codex_folder_name": "14_러브트리_로테이팅메모리인덱스_V1",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/코덱스/14_러브트리_로테이팅메모리인덱스_V1/v1/최종본.html",
+  "authority": {
+    "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+    "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+    "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+    "filename": "최종본.html",
+    "bytes": 19631,
+    "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+    "revision": "V1",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST080"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "authority_context_note": "CDX014 is path-context-sensitive (SRC069-class; path-context fact, not a duplicate-executable variant). Its runtime media prefix ../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/ refers to the AUTHORING-TIME sibling name; the live Drive sibling was renamed to 12-1_… on 2026-08-17. Serving original/original.html or split/index.html alone from the repository path is NOT runtime-equivalent (all 178 media would 404). Context-aware serving must reproduce the authoring-time sibling layout (junction/alias 12_… → 12-1 assets) with ZERO URL rewrites. authority-context.json records the rename fact, the fixture folder IDs, the serving contract, and all 178 media entries pinned (path/bytes/SHA256). No media byte is vendored into this capsule.",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "PATH_CONTEXT_SENSITIVE_SOURCE",
+    "required_serving": "AUTHORING_TIME_SIBLING_LAYOUT",
+    "canonical_layout_ref": "authority-context.json#/canonical_runtime_layout",
+    "canonical_layout_folder_ids": {
+      "family_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+      "media_sibling_folder_id": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
+      "videos_folder_id": "1hP6kA-ezQsqCfwMEIBhS_p9Xt1oyd1kg",
+      "posters_folder_id": "1k2FAbsLu3nh7Aes6bNwDEdaP41n_SMjK"
+    },
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY",
+      "s4_evidence_executor": "src/04_codex/CDX014/tests/s4-context-parity.test.mjs",
+      "disposition_note": "The SKIP is still valid and unchanged: CDX014's repository path is not a runtime surface, so neither shared single-executable harness can serve it. The S4 parity evidence was produced by the standalone context-aware harness named above, which reproduces the authoring-time sibling layout with zero URL rewrites. Accepted at evidence/parity/accepted-parity.json under tier STRUCTURAL_PARITY_DETERMINISM_ENVELOPE (issue #589 comment 5557368158)."
+    },
+    "note": "Neither src/04_codex/CDX014/original/original.html nor split/index.html is a valid standalone runtime surface at its repository path. The authority's own ../12_…/assets/ media prefix resolves only from the authoring-time sibling layout recorded in authority-context.json. The shared single-executable baseline and parity harnesses therefore fail closed with an explicit CONTEXT_AWARE_SURFACE_ONLY SKIP for this capsule instead of producing a green-but-wrong artifact. The S4 parity claim was executed and accepted through the standalone context-aware harness at src/04_codex/CDX014/tests/s4-context-parity.test.mjs, with the record at evidence/parity/accepted-parity.json."
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-rotating-memory-index",
+    "scenario_id": "rotating-memory-index-archive",
+    "qa_hook": null,
+    "qa_hook_note": "No source-native QA hook exists. S2 assertions were DOM/geometry/runtime-snapshot based. No test-only hook was invented or injected.",
+    "media_entries": 178,
+    "media_prefix": "../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "external_network_dependencies": 0,
+    "interaction_surface": [
+      "INITIAL",
+      "INDEX_DRAWER_OPEN",
+      "VIEWER_OPEN",
+      "PAUSED"
+    ],
+    "interaction_proofs": [
+      "PREV_NEXT_NAVIGATION_001_002_001_089_WRAP",
+      "PAUSE_TOGGLE",
+      "INDEX_DRAWER_OPEN_CLOSE_ESC",
+      "VIEWER_OPEN_CLOSE_ESC"
+    ],
+    "frozen_defects": [
+      {
+        "id": "D1",
+        "name": "auto-rotation not gated on prefers-reduced-motion",
+        "disposition": "PRESERVED",
+        "note": "rAF auto-rotation loop keeps rotating under prefers-reduced-motion: reduce. Re-proven in S2 (9.19 degrees / 1500 ms under reducedMotion:reduce). DO NOT FIX."
+      }
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 test, §3.1 criteria, §4.2 record location, §5 vocabulary) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418 (2026-09-06T02:15:19Z)",
+    "adjudicated_at_utc": "2026-09-06T08:01:51Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+    "closing_step": "step 2 — identical SHA-256 (authority twin counted; closed by re-adjudication 2026-09-06, see twin_re_adjudication)",
+    "closing_step_basis": "CENTRAL's ruling: step 1 of §2.3 fails — exactly one candidate object can serve as the executable authority, so Question A closes with no duplicate candidate. The 12_러브트리_리빙미디어스피어_인터랙티브대문_V1 → 12-1_… sibling folder rename is a path-context fact (§2.4), not a Question-A fact: a folder rename changes no file id and no byte.",
+    "follow_up_adjudication": {
+      "at_utc": "2026-09-06",
+      "by": "CENTRAL — #589 comment 5557899997, batch-pass ruling table (2026-09-06T08:01:51Z)",
+      "basis": "CDX014 has no evidence/source/drive-authority-readback.json artifact; its authority record is authority-context.json, which was computed from the accepted S2 read-only mirror (generated_at_utc 2026-09-05T21:15:00Z, sample-verified 6/6 during S2). The step-1 ruling rests on the family-folder enumeration recorded there, not on a CENTRAL_FRESH_DRIVE_READBACK. The byte-identical development twin 05_개발본.html (1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost, 19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361) is retained as evidence in candidate_table under disposition BYTE_IDENTICAL_REFERENCE_ONLY and is not counted in the step-1 basis above; whether it counts is CENTRAL's call, not this edit's.",
+      "finding": "CDX014 closes at step 1 of §2.3 with PATH_CONTEXT_VARIANT_ONLY. Because the cited authority record is authority-context.json rather than a CENTRAL_FRESH_DRIVE_READBACK readback, this block is the note's evidence basis for rule §7 check (b). The gate verifies this block's shape only — at_utc / by / basis / finding non-empty strings — and does not re-adjudicate its content.",
+      "basis_ref": "authority-context.json",
+      "supersedes": null
+    },
+    "authority_reverification": {
+      "drive_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+      "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+      "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+      "bytes": 19631,
+      "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+      "revision": "V1",
+      "modified_time_utc": "2026-08-16T13:45:04.987Z",
+      "version": "V1_CONFIRMED",
+      "status": "LOCKED"
+    },
+    "readback": {
+      "ref": "authority-context.json",
+      "generated_at_utc": "2026-09-05T21:15:00Z",
+      "record_type": "SOURCE_LOCAL_AUTHORITY_CONTEXT",
+      "generated_from": "original/original.html",
+      "verification_basis": "Every media entry path, byte count and SHA256 in this record was computed from the accepted S2 read-only mirror, which was copied byte-exact from live Drive and sample-verified 6/6 during S2. No URL was retyped, inferred, or rebased.",
+      "note": "CDX014 has no evidence/source/drive-authority-readback.json artifact; authority-context.json is its authority record and the readback cited by this note. It is asserted by src/04_codex/CDX014/tests/s3-roundtrip.test.mjs (T15g, sibling_rename_recorded.renamed === true)."
+    },
+    "path_context_record": {
+      "record_ref": "authority-context.json#/sibling_rename_recorded",
+      "renamed": true,
+      "authoring_name": "12_러브트리_리빙미디어스피어_인터랙티브대문_V1",
+      "live_name": "12-1_러브트리_리빙미디어스피어_인터랙티브대문_V1",
+      "live_folder_id": "14vX6gtGym5NZb0eDhlmH-azKMuwzNjS4",
+      "rename_fact": "Drive folder renamed on 2026-08-17, one day after v1 was authored (2026-08-16). Under today's natural layout all 178 media references would 404; the authoring-time layout is reproduced with a junction/alias (12_… → 12-1_…) and ZERO file rewrites.",
+      "capture_surface_mode": "CONTEXT_AWARE_ONLY",
+      "media_references": 178,
+      "url_rewrites": 0
+    },
+    "candidate_table": [
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1YKq2WiINn5MWhll8sSBq1azHMwaocIIP",
+        "bytes": 19631,
+        "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+        "revision": "V1",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "05_개발본.html",
+        "drive_file_id": "1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost",
+        "bytes": 19631,
+        "sha256": "0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361",
+        "revision": null,
+        "content_relation_to_authority": "DUPLICATE_COPY_SAME_SHA",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Recorded in authority-context.json#/authority/twin as: \"Byte-identical development twin; verified live during S0. Authority is the v1 최종본.html path.\" Recorded here as evidence for completeness of the candidate table; not re-adjudicated in this edit and not counted in the step-1 basis above."
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1F2cN40KjDAQjkPuYHVWF93He1JxNqORs",
+        "bytes": 28927,
+        "sha256": "1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b",
+        "revision": "V2 sibling",
+        "content_relation_to_authority": "REVISION_HISTORY",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-distinct newer sibling revision, recorded for direction only. Distinct SHA without a selector = revision history per §2.3 step 3 / §3.1 condition 4."
+      },
+      {
+        "filename": "개발본.html",
+        "drive_file_id": "18iExSBMdN4OytOL-E3BjxTXjWZNmPAqh",
+        "bytes": 28927,
+        "sha256": "1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b",
+        "revision": "V2 sibling",
+        "content_relation_to_authority": "REVISION_HISTORY",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Byte-identical to the V2 root_final object above; neither is the authority, neither was captured, and neither may be substituted."
+      }
+    ],
+    "negative_claim": "Within the family folder 14_러브트리_로테이팅메모리인덱스_V1/v1, the authority 최종본.html (19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361) is the sole captured and accepted executable. The V2 sibling revision is pinned for direction only and was never captured. [SUPERSEDED 2026-09-06 — see twin_re_adjudication: the v1 twin 05_개발본.html (1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost, 19,631 B, byte-identical) is a second candidate object; step 1 no longer fails and step 2 closes as a duplicate copy.]",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for CDX014. All recorded objects are hashed except the V2 sibling pair, which are pinned for direction only and are not candidates.",
+    "special_notes": [
+      "Question B is the governing question for this capsule: the authority's ../12_러브트리_리빙미디어스피어_인터랙티브대문_V1/assets/ media prefix resolves only from the authoring-time sibling layout (178 media pinned in authority-context.json, zero URL rewrites, no media vendored). Question A and Question B are answered independently, per §2.3.",
+      "The manifest authority_context_note wording \"(SRC069-class, Drive-rename variant)\" was reworded in this same edit to \"(SRC069-class; path-context fact, not a duplicate-executable variant)\", per CENTRAL's instruction and §2.4. That phrase is the only other field changed in this edit set; the rest of the note is verbatim.",
+      "CDX014 is S0–S4 COMPLETE (evidence/parity/accepted-parity.json, tier STRUCTURAL_PARITY_DETERMINISM_ENVELOPE, accepted at #589 comment 5557368158) and is the first CDX capsule in the CLEAN COMPLETE count."
+    ],
+    "twin_re_adjudication": {
+      "at_utc": "2026-09-06",
+      "by": "CENTRAL — #589 comment 5558632299",
+      "basis": "authority-context.json#/authority/twin — 05_개발본.html, drive_file_id 1M9tSt0TZdBdFbmdiOTnbh03g4H6xsost, 19,631 B, SHA-256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361, byte-identical to the authority at a distinct file id; on record since S3, flagged by LOCAL 2 in #644 and #647",
+      "finding": "Step 1 of §2.3 re-opens: two candidate objects exist. Step 2 closes: identical SHA-256 → duplicate copy, not a variant. Twin dispositioned NOT_AUTHORITY. The 12_…→12-1_… sibling rename remains a Question-B serving-contract fact in authority_context; PATH_CONTEXT_VARIANT_ONLY stays in the adopted vocabulary with no current instance.",
+      "supersedes": "closing_step 'step 1 — single candidate' and the negative_claim above (both pre-dated the twin count)"
+    }
+  }
+}

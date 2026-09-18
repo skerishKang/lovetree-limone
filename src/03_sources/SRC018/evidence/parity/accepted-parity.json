@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC018",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_CONTEXT_AWARE_ORIGINAL_SPLIT_PARITY_EVIDENCE",
+  "source_head": "0a6b2d6c5de101289008e6e359784477b9476d4b",
+  "evidence_binding": "DRIVE_S4_CANDIDATE_AT_SOURCE_HEAD",
+  "context_mode": "CONTEXT_AWARE_ONLY",
+  "central_acceptance": {
+    "issue": 589,
+    "issue_comment": 5648307780,
+    "pr": 648,
+    "pr_comment": 5648308177,
+    "automation_issue": 611,
+    "central_visual_pass": true
+  },
+  "central_acceptance_issue_comment": 5648307780,
+  "central_acceptance_pr_comment": 5648308177,
+  "evidence_folder_id": "1FVNmkHBI6wVVaKt1FPKoAaMRixxr3ZBr",
+  "evidence_label": "LoveTree_Evidence/CLEAN108-SRC018-S4-Candidate-260912/",
+  "authority": {
+    "bytes": 25427,
+    "sha256": "680c6ddb8e6ee7c252182f84523d4a66971e96fd6c177b3e72d1e0487b5dabe0"
+  },
+  "matched_states": "15/15",
+  "screenshot_policy": "RAW_PNG_BYTE_IDENTICAL",
+  "global_tolerance": false,
+  "canonical16_used": false,
+  "hamming_tolerance_used": false,
+  "runtime_assets": "8/8",
+  "Track17": "EXPECTED_SOURCE_LOCAL_MAPPING_HOLD",
+  "frozen_defects": "D1-D4 PRESERVED",
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL"
+  },
+  "browser_errors": 0,
+  "matrix": {
+    "viewports": ["1280x800", "390x844", "320x720"],
+    "states": ["INTRO", "SIGNAL", "FRAGMENTS", "BLOOM", "READY"],
+    "pairs": 15,
+    "device_scale_factor": 1,
+    "visual_capture_motion": "reduce",
+    "liveness_probe_motion": "no-preference"
+  },
+  "serving": {
+    "harness": "context-aware SRC018-local runner (src/03_sources/SRC018/tests/s4-parity.test.mjs + tests/lib/s4-context-runner.mjs)",
+    "note": "Shared generic capture-source-baseline.mjs and capture-source-parity.mjs remain SKIP for this capsule (CONTEXT_AWARE_SURFACE_ONLY). Both ORIGINAL (original/original.html) and SPLIT (split/index.html + styles.css + script.js) are served from isolated loopback virtual roots hydrated with the exact eight relative assets/cyber-0N.png, so the two surfaces are runtime-equivalent.",
+    "original": "original/original.html served from an isolated virtual root with assets/cyber-0N.png",
+    "split": "split/index.html served from an isolated virtual root with assets/cyber-0N.png and mechanical ./styles.css + ./script.js glue"
+  },
+  "interaction_results": {
+    "scrub": "EQUAL",
+    "start": "EQUAL",
+    "space": "EQUAL",
+    "replay": "EQUAL",
+    "settle_policy": "converge epsilon 1e-5 + animation-completion anchor (#app.ready) + progress rounded to 3 decimals; running-animation steps compare synchronous booleans only",
+    "source_runtime_errors": 0
+  },
+  "frozen_defects_preserved": {
+    "D1": "closeBtn/enterBtn Track17 hrefs intact on both surfaces (../../17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html)",
+    "D2": "JS fixed duration=6800 + CSS @media(prefers-reduced-motion:reduce) block preserved",
+    "D3": "no focus/outline treatment added (frozen)",
+    "D4": "no progressbar/role/aria-valuenow added (frozen)"
+  },
+  "notes": [
+    "Parity evidence was captured by the SRC018-local context-aware runner at exact source head 0a6b2d6c5de101289008e6e359784477b9476d4b and accepted by CENTRAL (issue #589 comment 5648307780 / PR #648 comment 5648308177, CENTRAL_VISUAL_PASS=YES). The accepted Drive evidence folder 1FVNmkHBI6wVVaKt1FPKoAaMRixxr3ZBr is immutable and was not rewritten by this metadata promotion.",
+    "All 15 matched original/split pairs are RAW PNG byte-identical (original SHA-256 == split SHA-256) with zero tolerance: no canonical-16 downsample and no Hamming threshold were used. Runtime/DOM/geometry/computed state are equal on every pair; 8/8 runtime assets load on both surfaces; console/page/request health is clean (browser_errors=0).",
+    "This promotion changes acceptance metadata only. Source runtime bytes (original/original.html, split/index.html, split/styles.css, split/script.js, split/assets/**) are unchanged; the mechanical split still round-trips byte-identically to the frozen 25427-byte authority (validator-enforced). No source repair, redesign, framework conversion, product-data injection, or QA hook was introduced. D1-D4 frozen defects are preserved identically on both surfaces.",
+    "capture_surface.mode remains CONTEXT_AWARE_ONLY and the shared baseline/parity harness dispositions remain SKIP. PR #648 stays DRAFT; no Ready or merge action is taken by this promotion."
+  ],
+  "next_stage_authorized": "CENTRAL_READY_MERGE_REVIEW"
+}
