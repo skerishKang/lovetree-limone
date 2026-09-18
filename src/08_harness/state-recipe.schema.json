@@ -33,7 +33,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["goto", "click", "fill", "select", "press", "wheel", "drag", "scrollTo", "seekHook", "setPhaseHook", "waitForFunction", "waitForRuntime", "waitForSelectorState", "settle", "evaluateHook"]
+            "enum": ["goto", "click", "fill", "select", "press", "wheel", "drag", "scrollTo", "seekHook", "setPhaseHook", "waitForFunction", "waitForRuntime", "waitForSelectorState", "settle", "evaluateHook", "setRuntime"]
           },
           "selector": { "type": "string", "minLength": 1, "maxLength": 512 },
           "value": {},
@@ -51,6 +51,7 @@
           "arg": {},
           "fn": { "type": "string", "minLength": 1, "maxLength": 2048 },
           "path": { "type": "string", "minLength": 1, "maxLength": 256 },
+          "fromPath": { "type": "string", "minLength": 1, "maxLength": 256 },
           "equals": {},
           "state": { "type": "string", "minLength": 1, "maxLength": 64 },
           "timeoutMs": { "type": "integer", "minimum": 100, "maximum": 120000 },

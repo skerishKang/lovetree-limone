@@ -42,6 +42,10 @@ const sourceViewports = {
     { width: 390, height: 844 },
     { width: 320, height: 720 },
   ],
+  // SRC066 parity replays the exact S2-accepted recipe and viewports
+  // (capture-source-baseline.mjs SRC066 entry + baseline/accepted-baseline.json):
+  // desktop 1440x900, mobile 430x932, small mobile 390x844. No viewport is added,
+  // dropped, or substituted for parity.
   SRC066: [
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
@@ -613,8 +617,16 @@ try {
         if (sourceId === 'SRC066') {
           // SRC066 is hook-less by frozen S1 defect D9 (0 window.__*,
           // 0 console.*, 0 data-testid), so the generic captureVariant fallback
-          // below cannot represent it. S4 reuses the bounded S2-accepted
-          // DOM/geometry/scroll observer driver for each surface.
+          // below cannot represent it. S4 releases the S3 not-claimed disposition
+          // by reusing the same bounded S2-accepted DOM/geometry/scroll observer
+          // the baseline harness routes for SRC066, invoked once per surface with
+          // the identical S2 state recipe and viewports. The driver is URL
+          // parameterized and owns its own browser context, so no driver edit and
+          // no shared-harness rewrite is required; the driver itself still throws
+          // on any browser error or failed request, keeping this path fail-closed.
+          // The label is viewport scoped because the parity out directory is flat:
+          // it yields 1440x900-original-<state>.png (SRC062's convention) rather
+          // than letting a later viewport overwrite an earlier one's screenshot.
           const original = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-original`, sourceId);
           const split = await captureSRC66Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/split/index.html`, viewport, sourceOut, `${viewport.width}x${viewport.height}-split`, sourceId);
           const stateKeys = Object.keys(original.states);

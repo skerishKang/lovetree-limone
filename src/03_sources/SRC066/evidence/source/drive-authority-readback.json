@@ -32,5 +32,44 @@
   "superseded_copies_excluded": {
     "disposition": "NOT_AUTHORITY",
     "note": "Superseded copies V1.0 (320,169 B) and V1.1 (27,323 B) are not authority. Excluded from the capsule by design: never downloaded, served, or rendered in this lane."
+  },
+  "mirror_sweep_2026_09_06": {
+    "sweep_id": "MIRROR_SWEEP_2026-09-06",
+    "sweep_record": "docs/design-intake/mirror-sweep-2026-09-06.json",
+    "access_mode": "READ_ONLY",
+    "swept_at_utc": "2026-09-06T09:35:00Z",
+    "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+    "purpose": "CENTRAL [LOCAL 1]: the SINGLE_EXECUTABLE_NO_DUPLICATE status for this capsule was adjudicated by a different path than any Drive enumeration - the identity came from CENTral's S2/S3 acceptance, not from a folder scan. Whatever path produced it, it could not have seen the parallel mirror root, which is not reachable from the canonical parent chain. This block records what the mirror sweep found for this capsule.",
+    "mirror_root": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "method": "rclone lsf -R --drive-root-folder-id over the mirror root for the full inventory; rclone copyto for the terminal HTML; local Get-FileHash -Algorithm SHA256; compared against fresh_drive.sha256 and against the mirror's own SHA256SUMS.txt",
+    "mirror_track_folder_present": true,
+    "mirror_path": "66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+    "authority": {
+      "drive_file_id": "1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ",
+      "filename": "현재후보.html",
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+    },
+    "mirror_object": {
+      "bytes": 166996,
+      "sha256": "b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6"
+    },
+    "content_relation_to_authority": "BYTE_IDENTICAL",
+    "same_filename_as_authority": true,
+    "same_revision_folder_relative_path": true,
+    "confirmation_count": 3,
+    "confirmations": [
+      "locally recomputed SHA-256 over the rclone copyto download of the mirror object",
+      "the mirror's own SHA256SUMS.txt asserts b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6 for ./버전1.2_제품목적·실제Moment체험강화_후보/현재후보.html",
+      "that digest equals the fresh_drive.sha256 authority pin"
+    ],
+    "finding": "The parallel mirror holds a byte-identical copy of the authority, reproducing the canonical track/revision nesting exactly (66_첫트리만들기_인터랙티브스크롤가이드/버전1.2_제품목적·실제Moment체험강화_후보/). The duplicate_variant_status SINGLE_EXECUTABLE_NO_DUPLICATE recorded in manifest.json at BASE does not survive contact with the mirror.",
+    "manifest_falsified": true,
+    "authority_unchanged": "The authority object is unchanged. fresh_drive is byte-for-byte identical to BASE.",
+    "adjudication": {
+      "performed": false,
+      "owner": "CENTRAL",
+      "note": "manifest.json was not touched. Re-adjudicating duplicate_variant_status is CENTRAL's action."
+    }
   }
 }

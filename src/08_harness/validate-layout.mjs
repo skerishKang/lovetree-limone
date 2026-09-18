@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { validateGenerationPhase } from './generation-phase-validator.mjs';
-import { validateMechanicalSplitSurface, validateSourceCapsules } from './source-capsule-validator.mjs';
+import { validateCodexDuplicateVariantGovernance, validateMechanicalSplitSurface, validateSourceCapsules } from './source-capsule-validator.mjs';
 
 const repoRoot = process.cwd();
 const root = path.join(repoRoot, 'src');
@@ -81,6 +81,12 @@ failures.push(...validateGenerationPhase({ state, sourceDirs, codexDirs, familyD
 if (state?.phase === 'CALIBRATION' || state?.phase === 'ROLLOUT') {
   failures.push(...validateSourceCapsules({ repoRoot, sourceDirs, phase: state.phase, calibrationSet }));
 }
+// duplicate_variant_status / duplicate_variant_note are governed corpus-wide by
+// rule docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §7.
+// SRC capsules reach the check through validateSourceCapsules above; Codex
+// capsules have no per-capsule validator, so their governance is checked here,
+// independently of the generation phase.
+failures.push(...validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs }));
 
 failures.push(...validateMechanicalSplitSurface({ repoRoot }));
 if (!fs.existsSync(root)) fail('src/ root missing');

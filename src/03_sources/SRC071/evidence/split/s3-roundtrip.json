@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC071",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-17T23:49:43.590Z",
+  "run_at": "2026-09-04T19:30:24.251Z",
   "authority": {
     "bytes": 24039,
     "sha256": "2a646b96e032f21ebc394dfa06ef4679cfdaee2c0ff7b0181f37d5143397452a"
@@ -118,7 +118,7 @@
     {
       "id": "T19",
       "pass": true,
-      "detail": "S3 asserted, parity accepted, parity_ref bound"
+      "detail": "S3 asserted, parity pending, no parity_ref"
     },
     {
       "id": "T20",

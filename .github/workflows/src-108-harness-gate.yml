@@ -172,6 +172,27 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Prove SRC060 COMPLEX approved-recipe matched replay
+        if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        shell: bash
+        env:
+          SRC_EXACT_HEAD: ${{ github.event.pull_request.head.sha }}
+          SRC_BROWSER_CHANNEL: chrome
+        run: |
+          set -euo pipefail
+          rm -f /tmp/src060-approved-recipe-complex-replay.log
+          node src/08_harness/prove-src060-approved-recipe-parity.mjs | tee /tmp/src060-approved-recipe-complex-replay.log
+          grep -q "SRC060_APPROVED_RECIPE_COMPLEX_REPLAY_PASS=${{ github.event.pull_request.head.sha }}" /tmp/src060-approved-recipe-complex-replay.log
+
+      - name: Upload SRC060 COMPLEX approved-recipe replay proof
+        if: always() && contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
+        uses: actions/upload-artifact@v4
+        with:
+          name: src060-approved-recipe-complex-replay-${{ github.event.pull_request.head.sha }}
+          path: /tmp/src060-approved-recipe-complex-replay.log
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Capture frozen Source baseline
         if: contains(fromJSON('["CALIBRATION", "ROLLOUT"]'), steps.generation.outputs.phase)
         env:

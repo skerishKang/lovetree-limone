@@ -41,6 +41,7 @@ export const ALLOWED_ACTION_TYPES = Object.freeze([
   'waitForSelectorState',
   'settle',
   'evaluateHook',
+  'setRuntime',
 ]);
 
 /**
@@ -181,6 +182,14 @@ export function validateStateRecipe(recipe) {
         case 'waitForSelectorState':
           if (typeof action.selector !== 'string' || !action.selector) errors.push(`${where} waitForSelectorState requires selector`);
           break;
+        case 'setRuntime': {
+          if (typeof action.path !== 'string' || !action.path) errors.push(`${where} setRuntime requires path`);
+          const hasValue = Object.prototype.hasOwnProperty.call(action, 'value');
+          const hasFromPath = Object.prototype.hasOwnProperty.call(action, 'fromPath');
+          if (hasValue === hasFromPath) errors.push(`${where} setRuntime requires exactly one of value/fromPath`);
+          if (hasFromPath && (typeof action.fromPath !== 'string' || !action.fromPath)) errors.push(`${where} setRuntime fromPath must be non-empty`);
+          break;
+        }
         case 'settle':
           break;
         default:

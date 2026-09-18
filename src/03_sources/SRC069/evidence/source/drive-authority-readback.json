@@ -40,5 +40,44 @@
     "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3",
     "disposition": "NOT_AUTHORITY",
     "note": "Byte-identical to the canonical authority but stored at the Track 69 track-root depth, where the authority's own ../../ portal paths do NOT resolve. Excluded from the capsule by design: it was never downloaded, served, or rendered in this lane."
+  },
+  "mirror_sweep_2026_09_06": {
+    "sweep_id": "MIRROR_SWEEP_2026-09-06",
+    "sweep_record": "docs/design-intake/mirror-sweep-2026-09-06.json",
+    "access_mode": "READ_ONLY",
+    "swept_at_utc": "2026-09-06T09:35:00Z",
+    "swept_by": "kilo-agent / sensenova-6.8-flash-lite, under CENTRAL [LOCAL 1] instruction",
+    "purpose": "CENTRAL [LOCAL 1] second priority: this capsule is already adjudicated DUPLICATE_COPY_SAME_SHA, so an additional mirror copy would not change the status value. Finding recorded only.",
+    "mirror_root": "1Rva_gSNWwiguJDmaWUODd926NStpLHlW",
+    "method": "rclone lsf -R --drive-root-folder-id over the mirror root for the full inventory; rclone copyto for the terminal HTML; local Get-FileHash -Algorithm SHA256; compared against fresh_drive.sha256 and against the mirror's own SHA256SUMS.txt",
+    "mirror_track_folder_present": true,
+    "mirror_path": "69_풀뷰포트폴리오_러브트리모션랜딩/E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html",
+    "authority": {
+      "drive_file_id": "1IFU5iXRrO06EoJVG6Sd4UdWu-wUYJh8C",
+      "filename": "69_v3_exact_source_multi_template_portal.html",
+      "bytes": 27600,
+      "sha256": "64d5a545a45013b12463f53af7d7be12b7c1c7b0de6f56cb82761fd469791fb3"
+    },
+    "mirror_object": {
+      "bytes": 11099,
+      "sha256": "208b556a28684afc96abb5d1a6a100c1c85c3853aba3f9cdeaa4c68bffff46a0"
+    },
+    "content_relation_to_authority": "DIFFERENT_CONTENT",
+    "same_filename_as_authority": false,
+    "byte_delta_vs_authority": -16501,
+    "confirmation_count": 2,
+    "confirmations": [
+      "locally recomputed SHA-256 over the rclone copyto download of the mirror object",
+      "the mirror's own SHA256SUMS.txt asserts 208b556a28684afc96abb5d1a6a100c1c85c3853aba3f9cdeaa4c68bffff46a0 for ./E_V4_A_PERSON_CINEMATIC_PORTAL/69_V4_A_PERSON_CINEMATIC_PORTAL.html"
+    ],
+    "finding": "The mirror's track-69 terminal deliverable is a different, smaller V4 artifact, not the v3 authority and not the already-recorded track-root byte-identical copy. No additional copy of the authority bytes exists in the mirror. Revision history only.",
+    "manifest_falsified": false,
+    "status_value_unchanged": true,
+    "authority_unchanged": "The authority object is unchanged. fresh_drive is byte-for-byte identical to BASE.",
+    "adjudication": {
+      "performed": false,
+      "owner": "CENTRAL",
+      "note": "manifest.json was not touched."
+    }
   }
 }

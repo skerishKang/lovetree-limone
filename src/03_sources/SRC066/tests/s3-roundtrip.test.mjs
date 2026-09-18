@@ -46,13 +46,15 @@
  *  - T22      accepted S2 baseline agrees with the frozen original
  *  - T23      frozen defects D1-D12 preserved, D6 demo URL intact
  *
- * Writes evidence/s3/roundtrip.json as S3 run evidence.
- * S4 is NOT executed here; S4 remains HOLD (forbidden in this lane).
+ * Writes S3 run evidence to an OS temp directory only; the committed
+ * evidence/s3/roundtrip.json record is never overwritten by a test run.
+ * S4 is NOT executed here; this file only reads the accepted parity record.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const ORIGINAL = path.join(ROOT, "original", "original.html");
@@ -401,9 +403,13 @@ const report = {
   failed,
   checks,
 };
-const outDir = path.join(ROOT, "evidence", "s3");
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+// Run evidence is written to a throwaway OS temp directory so that executing
+// this test never dirties the work tree or overwrites the committed capsule
+// record evidence/s3/roundtrip.json (same rule as the post-#637 SRC066,
+// post-#639 CDX014 and post-#642 SRC062 rebinds).
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "src066-s3-roundtrip-"));
+fs.writeFileSync(path.join(tmpDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+console.log(`Run evidence (temp, not committed): ${path.join(tmpDir, "roundtrip.json")}`);
 
 console.log(`\n=== Results: ${passed} passed, ${failed} failed ===\n`);
 process.exit(failed > 0 ? 1 : 0);

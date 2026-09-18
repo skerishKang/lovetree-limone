@@ -35,17 +35,19 @@
  *  - T18      authority-context.json records all 11 target identities without
  *             vendoring a single target byte
  *  - T19      materialization output hashes match on-disk files + git blobs
- *  - T20/T21/T22 stage flags: S3 complete, S4 parity NOT accepted, no parity
- *             artifact, capture_surface CONTEXT_AWARE_ONLY, frozen defects
- *             preserved
+ *  - T20/T21/T22 stage flags: S3 complete, S4 parity accepted and referenced
+ *             (accepted-parity.json), capture_surface CONTEXT_AWARE_ONLY,
+ *             frozen defects preserved
  *
- * Writes evidence/s3/roundtrip.json as S3 run evidence.
- * S4 is NOT executed here; S4 remains HOLD.
+ * Writes S3 run evidence to an OS temp directory only; the committed
+ * evidence/s3/roundtrip.json record is never overwritten by a test run.
+ * S4 is NOT executed here; this file only reads the accepted parity record.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const ORIGINAL = path.join(ROOT, "original", "original.html");
@@ -423,7 +425,8 @@ const report = {
     preservation_invariant: "The exact ordered set of portal relative URL strings in original/original.html equals the exact ordered set in split/script.js, byte for byte."
   },
   s4_executed: false,
-  s4_status: "HOLD",
+  s4_status: "ACCEPTED",
+  s4_status_note: "This file does not execute S4; it only reads the accepted parity record (evidence/parity/accepted-parity.json, CENTRAL-accepted via SRC069-shaped review).",
   capture_surface: {
     mode: manifest.capture_surface?.mode ?? null,
     reason: manifest.capture_surface?.reason ?? null,
@@ -434,9 +437,13 @@ const report = {
   failed,
   checks,
 };
-const outDir = path.join(ROOT, "evidence", "s3");
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+// Run evidence is written to a throwaway OS temp directory so that executing
+// this test never dirties the work tree or overwrites the committed capsule
+// record evidence/s3/roundtrip.json (same rule as the post-#637 SRC066,
+// post-#639 CDX014 and post-#642 SRC062 rebinds).
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "src069-s3-roundtrip-"));
+fs.writeFileSync(path.join(tmpDir, "roundtrip.json"), JSON.stringify(report, null, 2) + "\n");
+console.log(`Run evidence (temp, not committed): ${path.join(tmpDir, "roundtrip.json")}`);
 
 console.log(`\n=== Results: ${passed} passed, ${failed} failed ===\n`);
 process.exit(failed > 0 ? 1 : 0);
