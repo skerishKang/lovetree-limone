@@ -5,18 +5,19 @@
   "title": "First Tree Interactive Scroll Guide V1.2 — existing first-journey revision",
   "classification": "CANONICAL_OWNER_CAPABILITY",
   "lifecycle": "EXECUTABLE_AVAILABLE",
-  "rendering": "css3d-dom",
+  "rendering": "dom-2d",
   "scenarioId": "entry-onboarding",
   "productJob": "A new returning user (or a sample demo path) lands at LoveTree First Journey, experiences the continuous sticky-scroll V1.2 walkthrough, discovers the First Moment, scrolls forward to see three next candidates with editable WHY NEXT, decides MAIN or BRANCH, and sees YOUR FIRST TREE \u00b7 MAIN + BRANCH before completing the discovery flow. This is a presentation delta of the existing /v4/journey surface, not a new Lineage.",
-  "summary": "Track66 (\ud4e8\uc2a4\ud2b8\ud2b8\ub9ac \uc778\ud130\ub799\ud2f0\ube0c \uc2a4\ud06c\ub864\uac00\uc774\ub4dc V1.2 / First Tree Interactive Scroll Guide V1.2) is a CANONICAL_OWNER_CAPABILITY of the existing /v4/journey route. Unlike the V1 page-by-page wizard, V1.2 uses a continuous sticky-scroll paradigm: one same miniature morphs into a world view, forward/reverse scroll reveals the First Moment and three next candidates, editable WHY NEXT labels, MAIN/BRANCH routing, and YOUR FIRST TREE \u00b7 MAIN + BRANCH finale. API/DB/Auth = NON-SCOPE. State uses localStorage (source/presentation proof only, not durable persistence). Existing V1 journey regression tests remain unchanged.",
+  "summary": "Track66 (\ud4e8\uc2a4\ud2b8\ud2b8\ub9ac \uc778\ud130\ub799\ud2f0\ube0c \uc2a4\ud06c\ub864\uac00\uc774\ub4dc V1.2 / First Tree Interactive Scroll Guide V1.2) is a CANONICAL_OWNER_CAPABILITY of the existing /v4/journey route. Unlike the V1 page-by-page wizard, V1.2 uses a continuous sticky-scroll paradigm: one same miniature morphs into a world view, forward/reverse scroll reveals the First Moment and three next candidates, editable WHY NEXT labels, MAIN/BRANCH routing, and YOUR FIRST TREE \u00b7 MAIN + BRANCH finale. API/DB/Auth = NON-SCOPE. State uses sessionStorage (four keys: lt66:first, lt66:candidate, lt66:why, lt66:route — written on demand only, with no localStorage use). Existing V1 journey regression tests remain unchanged.",
   "provenance": {
-    "sourceLabel": "66_\ud4e8\uc2a4\ud2b8\ud2b8\ub9ac_\uc778\ud130\ub799\ud2f0\ube0c_\uc2a4\ud06c\ub864\uac00\uc774\ub4dc_V1.2 / Issue #177",
-    "driveFolderId": "1xHGY0_7xoh-FmryuFt8tEgqlC9X1GFXs",
+    "sourceLabel": "66_\uccab\ud2b8\ub9ac\ub9cc\ub4e4\uae30_\uc778\ud130\ub799\ud2f0\ube0c\uc2a4\ud06c\ub864\uac00\uc774\ub4dc / Issue #177",
+    "driveFolderId": "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs",
     "sourceFiles": [
       "\ud604\uc7ac\ud6c4\ubcf4.html (V1.2 interactive executable)",
       "\uac80\uc99d\uacb0\uacfc.json (QA artifact)"
     ],
-    "rightsStatus": "unlocked_design_contract"
+    "rightsStatus": "unlocked_design_contract",
+    "correctionNote": "Metadata corrected 2026-09-05 against the SRC066 S0/S1 authority verification in the Issue #589 CENTRAL lane (SRC066 capsule, Issue #611). A fresh CENTRAL_FRESH_DRIVE_READBACK at 2026-09-05T13:27:35Z returned Drive folder id 1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs named 66_\uccab\ud2b8\ub9ac\ub9cc\ub4e4\uae30_\uc778\ud130\ub799\ud2f0\ube0c\uc2a4\ud06c\ub864\uac00\uc774\ub4dc (role SOURCE_TRACK_FOLDER) containing file 1IV94ub-t9qFs37FfwamViNUYtq5UkvaZ \ud604\uc7ac\ud6c4\ubcf4.html (166,996 B, SHA-256 b50e16984774f3284be38b2b8609fd0a6d7ca9f3d51e3ce5bcd910995911ffc6) \u2014 the same object this manifest pins, which proves the prior driveFolderId 1xHGY0_7xoh-FmryuFt8tEgqlC9X1GFXs was dead. Corrections applied: D1_MANIFEST_DEAD_DRIVE_FOLDER_ID (live folder id), D2_MANIFEST_SOURCE_LABEL_MISNAME (verified folder name), D3_MANIFEST_LOCALSTORAGE_CLAIM (storage is sessionStorage with four lt66:* keys \u2014 lt66:first, lt66:candidate, lt66:why, lt66:route \u2014 and no localStorage use), D4_MANIFEST_CSS3D_DOM_CLAIM (rendering is 2D-css-transforms + inline-svg, 0 perspective / 0 preserve-3d, recorded as the closed-enum discriminator dom-2d). D5 (slotNotes.issue 142 vs 177/344) and D7/D8 (pinned QA artifact contents) are left unchanged \u2014 they require Drive-side evidence. No other fields rewritten."
   },
   "ownerRoute": "/v4/journey",
   "sourceSnapshot": {

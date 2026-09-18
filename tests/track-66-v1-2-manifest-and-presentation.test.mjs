@@ -11,8 +11,15 @@ test("Track66 V1.2 manifest exists and pins correct source fingerprint", () => {
   );
   assert.equal(manifest.classification, "CANONICAL_OWNER_CAPABILITY");
   assert.equal(manifest.lifecycle, "EXECUTABLE_AVAILABLE");
-  assert.equal(manifest.rendering, "css3d-dom");
+  assert.equal(manifest.rendering, "dom-2d");
   assert.equal(manifest.backendScope, "BACKEND_FREE");
+  assert.equal(manifest.provenance.driveFolderId, "1cC8htsACOK3AQeE8mjIsuKwCqM42nlqs");
+  assert.match(manifest.provenance.sourceLabel, /^66_첫트리만들기_인터랙티브스크롤가이드/);
+  assert.match(manifest.summary, /State uses sessionStorage/);
+  for (const key of ["lt66:first", "lt66:candidate", "lt66:why", "lt66:route"]) {
+    assert.match(manifest.summary, new RegExp(key));
+  }
+  assert.doesNotMatch(manifest.summary, /State uses localStorage/);
   assert.equal(manifest.sourceSnapshot.revisionLabel, "V1.2 (continuous-scroll interactive guide)");
   assert.equal(manifest.sourceSnapshot.sourceAuthorityState, "CURRENT_AT_OBSERVATION");
   assert.equal(manifest.ownerRoute, "/v4/journey");

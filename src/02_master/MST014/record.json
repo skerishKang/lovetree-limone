@@ -21,7 +21,8 @@
     "source_authority_version=V2",
     "source_freshness=unresolved",
     "current_main_present=false",
-    "github_issue=471"
+    "github_issue=471",
+    "anchor_decision=MST013 (relation.anchor_master): DUPLICATE_FAMILY retained; this row is carried with anchor MST013 (both coverage_state=MISSING, shared semantic_identity); no review decision is made on this row alone"
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
