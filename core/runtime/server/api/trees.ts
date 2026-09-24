@@ -6,6 +6,7 @@ import { requireAuthUser } from "./auth";
 import {
   getOwnedTree,
   getReadableTree,
+  isParentInSameTree,
   isTreeOwner,
   resolveMemoryVisibility,
   VISIBILITY_PUBLIC,
@@ -490,6 +491,7 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
 
   const now = new Date();
   const treeId = await deterministicId(user.uid, "tree", parsed.value.clientKey as string);
+  const parentId = (normalizedMemory.parentId as string | null | undefined) ?? null;
   const memoryId = await deterministicId(user.uid, "tree", treeId, parsed.value.clientKey as string);
 
   const tree = {
@@ -609,6 +611,14 @@ async function createTreeWithFirstMemory(ctx: ApiContext): Promise<Response> {
       "tree already exists without its first memory (legacy partial); refusing to auto-repair",
       409
     );
+  }
+
+  // A new Tree has no existing Moment that can be a valid parent. Validate
+  // this only after complete same-key replay and legacy-partial
+  // classification, so idempotent retries still return the original canonical
+  // rows rather than being rejected by a changed replay payload.
+  if (!(await isParentInSameTree(ctx, treeId, parentId))) {
+    return validationError("parentId must reference a memory in the same tree");
   }
 
   // ABSENT state (confirmed: no tree under the deterministic id, no tree
