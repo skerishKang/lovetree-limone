@@ -19,6 +19,7 @@ import {
   type MemoryRecord,
   type TreeRecord,
 } from "./tree-types";
+import { applyMomentMediaUpdate } from "./moment-media-update";
 
 export interface CreateMomentInput {
   title?: string;
@@ -205,16 +206,7 @@ export function useTreeMoments(
     if (input.memo !== undefined) payload.memo = input.memo.trim();
     if (input.sourceType !== undefined) payload.sourceType = input.sourceType;
     if (input.source !== undefined) payload.source = input.source.trim();
-    if (input.sourceUrl !== undefined) {
-      const url = input.sourceUrl.trim();
-      if (url) {
-        payload.sourceUrl = url;
-        const thumb = input.thumbnail || youtubeThumbnail(url);
-        if (thumb) payload.thumbnail = thumb;
-        const offset = input.videoOffsetSeconds ?? videoOffsetSecondsFromUrl(url);
-        if (offset !== undefined) payload.videoOffsetSeconds = offset;
-      }
-    }
+    applyMomentMediaUpdate(payload, input);
     const discoveryDate = input.discoveryDate ?? input.timestamp;
     if (discoveryDate !== undefined) payload.discoveryDate = discoveryDate;
     if (input.emotionTags !== undefined) payload.emotionTags = input.emotionTags;

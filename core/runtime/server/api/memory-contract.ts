@@ -75,8 +75,18 @@ export function normalizeMemoryUpdateInput(body: Record<string, unknown>): Recor
     const connectionReason = typeof body.connectionReason === "string" ? body.connectionReason.trim() : "";
     next.connectionReason = connectionReason || null;
   }
-  if (body.sourceUrl !== undefined && body.videoOffsetSeconds === undefined) {
-    next.videoOffsetSeconds = parseVideoOffsetSeconds(body.sourceUrl);
+  if (body.sourceUrl !== undefined) {
+    const sourceUrl = typeof body.sourceUrl === "string" ? body.sourceUrl.trim() : "";
+    next.sourceUrl = sourceUrl;
+    if (sourceUrl.length === 0) {
+      next.thumbnail = "";
+      next.videoOffsetSeconds = null;
+    } else {
+      if (body.thumbnail === undefined) next.thumbnail = "";
+      if (body.videoOffsetSeconds === undefined) {
+        next.videoOffsetSeconds = parseVideoOffsetSeconds(sourceUrl);
+      }
+    }
   }
   return next;
 }
