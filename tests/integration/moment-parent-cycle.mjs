@@ -148,6 +148,8 @@ async function seed() {
     ["c", "tree-a"],
     ["d", "tree-a"],
     ["move", "tree-a"],
+    ["legacy-a", "tree-a"],
+    ["legacy-b", "tree-a"],
     ["race-a", "tree-a"],
     ["race-b", "tree-a"],
     ["cross", "tree-b"],
@@ -180,6 +182,22 @@ async function createTreeWithFirstMemory(body) {
 async function main() {
   await setupSchema();
   await seed();
+
+  // A malformed legacy cycle elsewhere in the Tree must not make the
+  // recursive guard loop forever. UNION deduplication is what makes this
+  // bounded even when the candidate chain is already cyclic.
+  await pool.query(
+    "update memories set parent_id = $1 where id = $2",
+    ["legacy-b", "legacy-a"]
+  );
+  await pool.query(
+    "update memories set parent_id = $1 where id = $2",
+    ["legacy-a", "legacy-b"]
+  );
+  const malformedChain = await put("a", { parentId: "legacy-a" });
+  record("malformed unrelated legacy chain terminates", malformedChain.status, 200);
+  record("malformed-chain reparent persisted", await parentOf("a"), "legacy-a");
+  record("malformed-chain cleanup detach", (await put("a", { parentId: null })).status, 200);
 
   // Create contracts: valid same-tree parent succeeds; cross-tree parent is rejected before insert.
   const validCreate = await createNested("tree-a", { title: "created", parentId: "b" });
