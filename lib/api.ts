@@ -20,12 +20,27 @@ const firebaseAuthTokenProvider: AuthTokenProvider = {
   },
 };
 
+function bodyIsJsonString(body: BodyInit | null | undefined): body is string {
+  if (typeof body !== "string") return false;
+  try {
+    JSON.parse(body);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function buildApiHeaders(options: RequestInit = {}, token: string | null = null): Headers {
+  const headers = new Headers(options.headers);
+  if (!headers.has("content-type") && bodyIsJsonString(options.body)) {
+    headers.set("content-type", "application/json");
+  }
+  if (token) headers.set("authorization", `Bearer ${token}`);
+  return headers;
+}
+
 export async function apiFetch(path: string, options: RequestInit = {}): Promise<Response> {
   const token = await getBoundAccessToken(getAuthTokenProvider(firebaseAuthTokenProvider));
-  const headers: Record<string, string> = {
-    "content-type": "application/json",
-    ...(options.headers as Record<string, string> | undefined),
-  };
-  if (token) headers.authorization = `Bearer ${token}`;
+  const headers = buildApiHeaders(options, token);
   return fetch(path, { ...options, headers });
 }

@@ -119,12 +119,11 @@ function computeDepth(moments: Map<string, CanonicalMoment>, moment: CanonicalMo
   return depth;
 }
 
-export function toTreeMoment(
+function toTreeMomentWithMap(
   moment: CanonicalMoment,
-  allMoments: CanonicalMoment[]
+  momentMap: Map<string, CanonicalMoment>
 ): TreeMomentView {
-  const map = new Map(allMoments.map((m) => [m.id, m]));
-  const depth = computeDepth(map, moment);
+  const depth = computeDepth(momentMap, moment);
   return {
     id: moment.id,
     treeId: moment.treeId,
@@ -142,6 +141,14 @@ export function toTreeMoment(
     depth,
     createdAt: moment.createdAt,
   };
+}
+
+export function toTreeMoment(
+  moment: CanonicalMoment,
+  allMoments: CanonicalMoment[]
+): TreeMomentView {
+  const momentMap = new Map(allMoments.map((m) => [m.id, m]));
+  return toTreeMomentWithMap(moment, momentMap);
 }
 
 export function toTimelineMoment(moment: CanonicalMoment): TimelineMomentView {
@@ -193,7 +200,8 @@ export function sortMoments(moments: CanonicalMoment[]): CanonicalMoment[] {
 }
 
 export function selectTreeMoments(moments: CanonicalMoment[]): TreeMomentView[] {
-  return sortMoments(moments).map((m) => toTreeMoment(m, moments));
+  const momentMap = new Map(moments.map((m) => [m.id, m]));
+  return sortMoments(moments).map((m) => toTreeMomentWithMap(m, momentMap));
 }
 
 export function selectTimelineMoments(moments: CanonicalMoment[]): TimelineMomentView[] {
