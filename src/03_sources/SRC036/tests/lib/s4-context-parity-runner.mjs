@@ -133,7 +133,7 @@ export function startVirtualRootServer(rootDir) {
       return;
     }
     const segments = decoded.split("/").filter((part) => part.length > 0 && part !== ".");
-    const target = path.resolve(root, ...segments);
+    const target = path.resolve(root, ...(segments.length === 0 ? ["index.html"] : segments));
     if (target !== root && !target.startsWith(root + path.sep)) {
       res.statusCode = 403;
       res.end("forbidden");
