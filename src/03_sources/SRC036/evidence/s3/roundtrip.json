@@ -1,0 +1,464 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-13T22:47:37.345Z",
+  "authority": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "reconstructed": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "round_trip": true,
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 188,
+    "style_close": 16179,
+    "script_open": 18715,
+    "script_close": 22101,
+    "script_blocks": [
+      {
+        "open": 18715,
+        "close": 22101,
+        "length": 3378
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 3224,
+      "sha256": "fc43a5728917111b65e402ffc928d330db68b26ae483d1d672df2d3615e0cbda",
+      "git_blob_sha1": "24ffa063ad4edb1645725c974689efa3e173bc21"
+    },
+    "split/styles.css": {
+      "bytes": 15984,
+      "sha256": "c3a03f4934d47d2461536112e264afc0e819ea64429db86a7f4576dd6294dfa1",
+      "git_blob_sha1": "81ddb9de77c67f6d2a602e9f3107f1ad587e66e3"
+    },
+    "split/script.js": {
+      "bytes": 3400,
+      "sha256": "d02c48690fa901cf440f551a592d6893e7b9783099f6a27e783e541436386f7b",
+      "git_blob_sha1": "a8dccbb80ba73c6b5d060136099ca45ed07575ba"
+    }
+  },
+  "s4_executed": false,
+  "s4_status": "NOT_RELEASED",
+  "s4_status_note": "This file does not execute S4. S4 is NOT_RELEASED by CENTRAL (#589 comment 5655967612); parity capture requires the context-aware isolated virtual root serving the exact first-journey sibling, so both shared harnesses are SKIP.",
+  "passed": 82,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority byte size stable (22561)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "frozen input layout intact"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "authority/sha256.txt matches locked SHA-256"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one style block (1/1)"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script, no attributed/external script tags"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "source has no external stylesheet reference"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "exactly one iframe element (the first-journey portal frame)"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "no img/video elements; media is delegated to the sibling context"
+    },
+    {
+      "id": "T04f",
+      "pass": true,
+      "detail": "style span 188..16179"
+    },
+    {
+      "id": "T04g",
+      "pass": true,
+      "detail": "script span 18715..22101"
+    },
+    {
+      "id": "T04h",
+      "pass": true,
+      "detail": "style block precedes script block in document order"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "styles.css === authority style inner (15984 chars)"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "script.js === authority script inner (3378 chars)"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one stylesheet reference"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one external script reference"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "no inline style remains in split index"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "no inline/alternate script remains in split index"
+    },
+    {
+      "id": "T07e",
+      "pass": true,
+      "detail": "zero inline script bodies; single closing tag belongs to the external script src"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "materialization source_id = SRC036"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "style boundary matches independent derivation"
+    },
+    {
+      "id": "T08c",
+      "pass": true,
+      "detail": "script boundary matches independent derivation"
+    },
+    {
+      "id": "T08d",
+      "pass": true,
+      "detail": "single script block recorded"
+    },
+    {
+      "id": "T08e",
+      "pass": true,
+      "detail": "script block length 3378 matches extracted JS"
+    },
+    {
+      "id": "T08f",
+      "pass": true,
+      "detail": "zero inter-script gaps recorded"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reconstructed byte-identical to frozen authority (22561 bytes)"
+    },
+    {
+      "id": "T09b",
+      "pass": true,
+      "detail": "reconstructed SHA-256 equals authority SHA-256"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "rule/keyframe/property/z-index inventory unchanged ({\"rules\":141,\"keyframes\":12,\"media\":3,\"supports\":0,\"customProps\":64,\"zIndex\":15,\"position\":26,\"transitions\":12,\"animations\":18})"
+    },
+    {
+      "id": "T10b",
+      "pass": true,
+      "detail": "styles.css is a byte-exact copy of the authority style inner (rule order preserved)"
+    },
+    {
+      "id": "T11a",
+      "pass": true,
+      "detail": "script source text identical => identical event/timing/pointer behavior"
+    },
+    {
+      "id": "T11b",
+      "pass": true,
+      "detail": "no inline script terminator inside script.js"
+    },
+    {
+      "id": "T11c",
+      "pass": true,
+      "detail": "event/timer/DOM-call inventory unchanged ({\"addEventListener\":6,\"setTimeout\":3,\"clearTimeout\":1,\"requestAnimationFrame\":0,\"classListAdd\":6,\"classListRemove\":3,\"functions\":4})"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "split index is a pure positional splice of the authority (DOM order, ids, classes, attributes unchanged)"
+    },
+    {
+      "id": "T12b",
+      "pass": true,
+      "detail": "8 unique authority element ids all present in split shell"
+    },
+    {
+      "id": "T12c",
+      "pass": true,
+      "detail": "35 unique authority class attributes all preserved"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split runtime files"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no product/MVP/adapter wiring in split shell"
+    },
+    {
+      "id": "T15b",
+      "pass": true,
+      "detail": "no TS/TSX/JSX files in split surface (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T15c",
+      "pass": true,
+      "detail": "split surface contains exactly index.html, styles.css, script.js, materialization.json"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "D1 min-width:980px preserved exactly once in styles.css"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "D2 min-height:650px preserved exactly once in styles.css"
+    },
+    {
+      "id": "T16c",
+      "pass": true,
+      "detail": "D9 body overflow:hidden clipping shorthand preserved (5 occurrences, sub-980 tail unreachable)"
+    },
+    {
+      "id": "T16d",
+      "pass": true,
+      "detail": "D3 percent-encoded first-journey path literal preserved byte-exactly"
+    },
+    {
+      "id": "T16e",
+      "pass": true,
+      "detail": "D6 file:///D:/LoveTree-work/ hardcode preserved"
+    },
+    {
+      "id": "T16f",
+      "pass": true,
+      "detail": "D3 file/hosted branch preserved; no /v4 route introduced"
+    },
+    {
+      "id": "T16g",
+      "pass": true,
+      "detail": "D4 document-level keydown handler preserved"
+    },
+    {
+      "id": "T16h",
+      "pass": true,
+      "detail": "D5 pointermove-only parallax preserved; no touch contract added"
+    },
+    {
+      "id": "T16i",
+      "pass": true,
+      "detail": "timers 1600/3450/4800 preserved verbatim"
+    },
+    {
+      "id": "T16j",
+      "pass": true,
+      "detail": "D10 brand dead link href=\"#\" preserved without substitution"
+    },
+    {
+      "id": "T16k",
+      "pass": true,
+      "detail": "D7 iframe load->markLoaded wiring preserved verbatim"
+    },
+    {
+      "id": "T16l",
+      "pass": true,
+      "detail": "D8 reduced-motion CSS block preserved (JS timers intentionally ungated)"
+    },
+    {
+      "id": "T16m",
+      "pass": true,
+      "detail": "88-petal golden-angle (137.5) seeded field preserved; no Math.random/Date.now added: true"
+    },
+    {
+      "id": "T16n",
+      "pass": true,
+      "detail": "no nondeterminism introduced into split script.js"
+    },
+    {
+      "id": "T16o",
+      "pass": true,
+      "detail": "D11 exactly 3 setTimeout calls, only the 4800ms warning timer tracked; enter() timers remain untracked and uncancellable"
+    },
+    {
+      "id": "T16p",
+      "pass": true,
+      "detail": "D12 enter/return click bindings and document-keydown Enter ordering preserved exactly as authored"
+    },
+    {
+      "id": "T16q",
+      "pass": true,
+      "detail": "D13 'entering' class removed only inside exit(); no cleanup introduced"
+    },
+    {
+      "id": "T17",
+      "pass": true,
+      "detail": "all split outputs match recorded bytes + SHA-256 + Git blob SHA-1"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "materialization authority agrees with frozen original"
+    },
+    {
+      "id": "T17c",
+      "pass": true,
+      "detail": "materialization contracts complete and forbidden transformations unrecorded"
+    },
+    {
+      "id": "T17d",
+      "pass": true,
+      "detail": "generation = MECHANICAL_INLINE_EXTRACTION"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "S0/S1/S2 stages complete"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "mechanical_split_complete=true"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "source_split_parity_pass=false (S4 NOT_RELEASED)"
+    },
+    {
+      "id": "T18d",
+      "pass": true,
+      "detail": "mechanical_split_ref=\"split/materialization.json\""
+    },
+    {
+      "id": "T18e",
+      "pass": true,
+      "detail": "manifest parity_ref null"
+    },
+    {
+      "id": "T18f",
+      "pass": true,
+      "detail": "runtime policy unchanged (TSX forbidden)"
+    },
+    {
+      "id": "T18g",
+      "pass": true,
+      "detail": "manifest authority agrees with frozen original"
+    },
+    {
+      "id": "T18h",
+      "pass": true,
+      "detail": "duplicate variant status SINGLE_EXECUTABLE_NO_DUPLICATE"
+    },
+    {
+      "id": "T18i",
+      "pass": true,
+      "detail": "capture surface CONTEXT_AWARE_ONLY (exact first-journey sibling required)"
+    },
+    {
+      "id": "T18j",
+      "pass": true,
+      "detail": "both shared harnesses SKIP with CONTEXT_AWARE_SURFACE_ONLY"
+    },
+    {
+      "id": "T18k",
+      "pass": true,
+      "detail": "repository surfaces declared runtime-equivalent=false"
+    },
+    {
+      "id": "T18l",
+      "pass": true,
+      "detail": "authority context required and present"
+    },
+    {
+      "id": "T18m",
+      "pass": true,
+      "detail": "no parity evidence directory created at S3"
+    },
+    {
+      "id": "T18n",
+      "pass": true,
+      "detail": "accepted S2 baseline authority agrees with frozen original"
+    },
+    {
+      "id": "T18o",
+      "pass": true,
+      "detail": "S2 authorized exactly MECHANICAL_SPLIT"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "materialization status = MATERIALIZED_PENDING_PARITY"
+    },
+    {
+      "id": "T20",
+      "pass": true,
+      "detail": "parity_status = PENDING_EXACT_HEAD_CAPTURE with null parity_ref"
+    },
+    {
+      "id": "T21a",
+      "pass": true,
+      "detail": "MST001 exists and is RESOLVED"
+    },
+    {
+      "id": "T21b",
+      "pass": true,
+      "detail": "MST001 resolves to SRC036 via EXPLICIT_LEDGER_PROVENANCE only"
+    },
+    {
+      "id": "T21c",
+      "pass": true,
+      "detail": "ledger provenance pins coverage row 1 to the SRC036 capsule"
+    },
+    {
+      "id": "T21d",
+      "pass": true,
+      "detail": "SRC036 manifest master_rows = [MST001]"
+    }
+  ]
+}

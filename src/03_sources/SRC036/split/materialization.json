@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "exact_head": "251d27846bbd341f9d02041f74c749340a14dd4b",
+    "generation_method": "LOCAL_MATERIALIZER_REPRODUCTION",
+    "materializer": "src/08_harness/materialize-mechanical-split.mjs",
+    "artifact_path": "/src-mechanical-split-candidate/SRC036",
+    "ci_exact_head_reproduction": "PENDING"
+  },
+  "authority": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 188,
+    "style_close": 16179,
+    "script_open": 18715,
+    "script_close": 22101,
+    "script_blocks": [
+      {
+        "open": 18715,
+        "close": 22101,
+        "length": 3378
+      }
+    ],
+    "script_gaps": []
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 3224,
+      "sha256": "fc43a5728917111b65e402ffc928d330db68b26ae483d1d672df2d3615e0cbda",
+      "git_blob_sha1": "24ffa063ad4edb1645725c974689efa3e173bc21"
+    },
+    "split/styles.css": {
+      "bytes": 15984,
+      "sha256": "c3a03f4934d47d2461536112e264afc0e819ea64429db86a7f4576dd6294dfa1",
+      "git_blob_sha1": "81ddb9de77c67f6d2a602e9f3107f1ad587e66e3"
+    },
+    "split/script.js": {
+      "bytes": 3400,
+      "sha256": "d02c48690fa901cf440f551a592d6893e7b9783099f6a27e783e541436386f7b",
+      "git_blob_sha1": "a8dccbb80ba73c6b5d060136099ca45ed07575ba"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false
+  },
+  "round_trip_evidence": {
+    "method": "src/08_harness/validate-mechanical-split.mjs + src/03_sources/SRC036/tests/s3-roundtrip.test.mjs",
+    "original_sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+    "reconstructed_sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+    "original_bytes": 22561,
+    "reconstructed_bytes": 22561,
+    "byte_identical": true
+  },
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_ref": null,
+  "next_stage": "S4_EXACT_HEAD_PARITY",
+  "next_stage_note": "S3 materializes the byte-exact mechanical split only. S4 parity is NOT_RELEASED by CENTRAL (#589 comment 5655967612); the context-aware sibling surface requires an isolated virtual root serving the exact first-journey sibling, so both shared harnesses are SKIP and parity must be captured on that surface at an exact head."
+}

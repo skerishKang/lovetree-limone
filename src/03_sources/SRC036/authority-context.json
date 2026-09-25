@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "drive": {
+    "folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+    "file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+    "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "runtime_context_required": true,
+  "runtime": {
+    "rendering": "dom-2d-portal-overlay",
+    "scenario_id": "cinematic-memory-portal",
+    "backend_scope": "BACKEND_FREE",
+    "motion": "continuous CSS keyframe petal float (88 seeded petals, golden-angle 137.5 layout) plus transition-driven portal enter/inside sequence at JS timers 1600/3450ms; no rAF loop, no Math.random, no Date.now; pixels non-repeatable across capture phase — parity must target DOM facts + interaction semantics + structural visual features, not raw pixels",
+    "sibling_dependency": {
+      "role": "the page is a portal shell: its core function is loading the first-journey unified HTML into #journeyFrame and overlaying an enter/return transition; without the exact sibling served at the encoded path the surface cannot demonstrate its contract",
+      "runtime_paths": {
+        "file_protocol": "file:///D:/LoveTree-work/04_디자인-채택본/0.첫여정통합-3개html합본/lovetree-first-journey-unified-v1.html",
+        "hosted": "/04_디자인-채택본/0.첫여정통합-3개html합본/lovetree-first-journey-unified-v1.html",
+        "encoded_path_literal": "04_%EB%94%94%EC%9E%90%EC%9D%B8-%EC%B1%84%ED%83%9D%EB%B3%B8/0.%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9-3%EA%B0%9Chtml%ED%95%A9%EB%B3%B8/lovetree-first-journey-unified-v1.html"
+      },
+      "sibling_identity_metadata_only": {
+        "bytes": 111950,
+        "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468",
+        "md5": "b9d4f6d0750c9a4e0ed25092911f04f6",
+        "repository_equivalent": {
+          "path": "[보험]/lovetree-first-journey-unified-v1.html",
+          "git_blob_sha1": "be25af8874fdae60bae8d3a0edb8124f297d6428"
+        },
+        "accepted_drive_candidates": [
+          { "file_id": "1DBo9y2EeE1JGrrEx4qhnQVvLfV0crgCx", "path": "03_디자인채택본/02_첫여정통합-3개html합본/02_러브트리_첫여정통합_v1.html", "role": "adopted-family copy (selected as context source)" },
+          { "file_id": "182A3Buq1xUK7QN2O9FlXYb8yX2_lmPaB", "path": "02_디자인팀/01_웹GPT_디자인개발/00_기준문서/lovetree-first-journey-unified-v1.html", "role": "exact runtime filename match" },
+          { "file_id": "1ljWh8WPKBKdg__equ_j2LaybE4_mNkl8", "path": "03_디자인채택본/69_풀뷰포트폴리오_러브트리모션랜딩/선택-D_V3_EXACT_SOURCE_MULTI_TEMPLATE_PORTAL/works/01_first_journey.html", "role": "portfolio copy" }
+        ],
+        "excluded_variant": { "file_id": "1oGTnVX7bfJVjlmyxMexZ6kq6K1qHvjIr", "path": "02_디자인팀/01_웹GPT_디자인개발/01_첫여정_연결실험/lovetree-first-journey-unified-v1-linked.html", "bytes": 112499, "md5": "f409105b", "reason": "different filename (-linked) and bytes; EXCLUDED" },
+        "status": "UNAMBIGUOUS_BYTE_AUTHORITY (all exact-name candidates share one SHA)",
+        "note": "Metadata-only reference. The sibling's bytes are NOT copied into this capsule and MUST NOT be mutated, proxied, localized, or substituted by S3/S4; the S2 capture served it from its accepted Drive identity."
+      }
+    }
+  },
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_FIRST_JOURNEY_SIBLING_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_FIRST_JOURNEY_CONTEXT",
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+  },
+  "runtime_assets": {
+    "count": 0,
+    "dir": null,
+    "files": [],
+    "note": "No local runtime assets inside the capsule HTML; the single HTML carries all CSS/JS inline. The only runtime reach is the first-journey sibling (file:/// or hosted path) plus, inside that sibling, fonts.googleapis.com/fonts.gstatic.com and three img.youtube.com thumbnails."
+  },
+  "source_only_values": [
+    "the 88-petal field, golden-angle 137.5 layout, and per-petal CSS custom properties are source-native decoration, never product data",
+    "statusText '로그인 없이 첫 여정 연결됨' and the warning copy '첫 여정 파일을 찾지 못했어요.' are source-native strings preserved byte-exactly",
+    "timers 1600/3450/4800 ms are the source-native transition/warning constants; they must survive the split unchanged",
+    "the file:///D:/LoveTree-work/ hardcode and the percent-encoded Korean sibling path are frozen source facts, not to be rewritten to /v4 or any product route"
+  ],
+  "frozen_defects": [
+    "SRC036_D1_MIN_WIDTH_980_NO_FLUID_FALLBACK",
+    "SRC036_D2_MIN_HEIGHT_650_VIEWPORT_FLOOR",
+    "SRC036_D3_LOCAL_STATIC_HANDOFF_NO_V4_ROUTE",
+    "SRC036_D4_DOCUMENT_LEVEL_ENTER_KEYDOWN",
+    "SRC036_D5_POINTER_ONLY_PARALLAX_NO_TOUCH",
+    "SRC036_D6_FILE_PROTOCOL_D_LOVE_TREE_WORK_HARDCODE",
+    "SRC036_D7_IFRAME_LOAD_EVENT_FALSE_POSITIVE",
+    "SRC036_D8_REDUCED_MOTION_CSS_ONLY_JS_TIMERS_REMAIN",
+    "SRC036_D9_SUB_980_HORIZONTAL_CLIPPING",
+    "SRC036_D10_BRAND_DEAD_LINK_HASH",
+    "SRC036_D11_STALE_ENTER_TIMERS_AFTER_ESCAPE",
+    "SRC036_D12_RETURN_BUTTON_ENTER_EVENT_ORDERING",
+    "SRC036_D13_ENTERING_CLASS_PERSISTS_WITH_INSIDE"
+  ],
+  "frozen_defect_provenance": "D1-D10 measured and CONFIRMED at S2 (#589 comment 5655967612 ledger); D11-D13 are the promoted S2 observations R1-R3 (stale enter timers after Escape, return-button Enter event ordering, entering class persists while inside) recorded as source-structure facts for S3/S4 preservation. Numbers and scope are frozen; no repair is authorized at S3.",
+  "self_contained": "NOT self-sufficient: the portal is executable HTML/CSS/JS but its core behavior depends on the exact first-journey sibling being served at the encoded path under an isolated virtual root. HTML/CSS/JS are mechanically split; the encodedPath, file:///D:/LoveTree-work/ prefix, iframe wiring, and all timers survive byte-exactly in split outputs."
+}
