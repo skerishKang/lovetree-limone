@@ -541,10 +541,17 @@ function normalizeData(data) {
     delete clone.state.loaderOpacity;
   }
   if (clone.styles) {
-    // Transform/filter values are recorded in probes but are intentionally
-    // excluded from equality because S2 established CSS phase variance.
+    // Transform/filter/clip values are recorded in probes but are
+    // intentionally excluded from equality because S2 established CSS phase
+    // variance for the source-native transition.
     delete clone.styles.stageFilter;
     delete clone.styles.stageTransform;
+    delete clone.styles.stageClipPath;
+  }
+  if (clone.geometry) {
+    // The copy panel's x position is a transition-phase observation, not a
+    // stable DOM/geometry invariant; it remains present in each probe.
+    delete clone.geometry.copy;
   }
   if (clone.geometry) {
     for (const value of Object.values(clone.geometry)) {
@@ -756,7 +763,7 @@ export async function runContextParity({ capsuleDir, siblingPath, outDir, head }
     pixel_tolerance_used: false,
     ssim_used: false,
     structural_geometry_normalization: "whole-pixel measurement rounding; no screenshot/pixel acceptance threshold",
-    animation_phase_fields: "recorded in probes, excluded from equality by S2 phase-variance policy",
+    animation_phase_fields: "loader opacity, stage transform/filter/clip-path, and copy-panel x are recorded in probes but excluded from equality by S2 phase-variance policy",
     qa_clock_patch_used: false,
     qa_timer_patch_used: false,
     qa_event_patch_used: false,
