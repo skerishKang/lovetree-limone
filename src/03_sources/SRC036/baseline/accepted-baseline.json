@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_PRODUCTION_OBSERVED_EVIDENCE",
+  "captured_head": "251d27846bbd341f9d02041f74c749340a14dd4b",
+  "central_acceptance": {
+    "issue": 589,
+    "comment_id": "5655967612"
+  },
+  "authority": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_FIRST_JOURNEY_SIBLING_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_FIRST_JOURNEY_CONTEXT",
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    }
+  },
+  "runtime_assets": {
+    "count": 0,
+    "verification": "no local runtime assets inside the authority HTML; runtime reaches only the first-journey sibling via the file:///D:/LoveTree-work/ prefix or the hosted encoded path, both preserved verbatim by the mechanical split",
+    "external_dependencies_preserved_verbatim": [
+      "iframe target /04_디자인-채택본/0.첫여정통합-3개html합본/lovetree-first-journey-unified-v1.html (111950 bytes, sha256 3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468, metadata-only reference)",
+      "inside the sibling: fonts.googleapis.com css2, fonts.gstatic.com woff2 x24, img.youtube.com hqdefault.jpg x3"
+    ]
+  },
+  "evidence": {
+    "drive_folder_id": "1H3s4GND26FPrgeHH2wOD5d9-wGOlJC0k",
+    "evidence_label": "CLEAN108-SRC036-S2-Candidate-260914",
+    "files": 49,
+    "screenshots": 33,
+    "matrix": "states A-N x viewports 1280x800/390x844/320x720 + D7 probes + reduced-motion + control",
+    "result": "CAPTURE_COMPLETE_CENTRAL_ACCEPTED"
+  },
+  "determinism": {
+    "structural": "PASS — outerHTML SHA-256 98f331cf3a48bfd504fc81cb2e4442092d134f8b445fea754511d365149e6b46 (length 31320, 88 petals) reproduced across repeated same-state captures",
+    "pixel": "SOURCE_NATIVE_ANIMATION_PHASE_VARIANCE — continuous CSS keyframe float; raw-pixel equality is neither achievable nor required; S4 parity must target DOM facts + interaction semantics + structural visual features"
+  },
+  "reviewed_viewports": [
+    { "width": 1280, "height": 800, "states": ["A_initial_loading", "B_ready", "C_pointer_parallax", "D_enter_triggered", "E_entering_1600ms", "F_inside", "G_escape_exit", "H_return_exit", "I_global_enter", "J_reduced_motion", "K_dead_brand_link"] },
+    { "width": 390, "height": 844, "states": ["A_initial_loading", "L_mobile_390_clipped", "tap_parallax_probe"] },
+    { "width": 320, "height": 720, "states": ["A_initial_loading", "M_mobile_320_clipped"] },
+    { "width": 1280, "height": 800, "context": "control-missing-sibling / d7-html404 / d7-empty404", "states": ["N_context_missing_warning_control", "D7_false_positive_probes"] }
+  ],
+  "interaction_results": {
+    "proofs": ["enter_button_click", "return_button_click", "document_keydown_enter", "document_keydown_escape", "warning_click_dismiss", "pointermove_parallax", "iframe_load_markLoaded", "escape_timer_race", "return_button_enter_ordering", "reduced_motion_timer_probe", "sub_980_clipping"],
+    "source_runtime_errors": 0
+  },
+  "accepted_defects": {
+    "SRC036_D1_MIN_WIDTH_980_NO_FLUID_FALLBACK": "CONFIRMED_BY_SOURCE_AND_BROWSER — .page min-width:980px; at 390/320 viewports page width and docScrollWidth stay 980. Frozen; no fluid fallback may be added during split.",
+    "SRC036_D2_MIN_HEIGHT_650_VIEWPORT_FLOOR": "STATIC_CONFIRMED / BELOW_650_RUNTIME_NOT_EXERCISED — min-height:650px present; all captures were >=720 high so sub-650 failure was not measured. Frozen source fact preserved byte-exactly.",
+    "SRC036_D3_LOCAL_STATIC_HANDOFF_NO_V4_ROUTE": "CONFIRMED_BY_SOURCE_AND_BROWSER — the hosted iframe is the local Drive-mounted first-journey asset; there is no /v4 handoff. Split must not rewrite the target to any product route.",
+    "SRC036_D4_DOCUMENT_LEVEL_ENTER_KEYDOWN": "CONFIRMED_BY_SOURCE_AND_BROWSER — document keydown Enter calls enter() regardless of focus; with #returnButton focused, R2 ordering cancels itself. Frozen.",
+    "SRC036_D5_POINTER_ONLY_PARALLAX_NO_TOUCH": "CONFIRMED_BY_SOURCE_AND_BROWSER — window pointermove updates --mx/--my; tap does not; no touch-specific contract exists. Frozen.",
+    "SRC036_D6_FILE_PROTOCOL_D_LOVE_TREE_WORK_HARDCODE": "STATIC_CONFIRMED / FILE_PROTOCOL_RUNTIME_NOT_EXERCISED — file:///D:/LoveTree-work/ prefix hardcoded; the file: branch was not executed under capture. The literal survives byte-exactly; no runtime confirmation is claimed.",
+    "SRC036_D7_IFRAME_LOAD_EVENT_FALSE_POSITIVE": "CONFIRMED_BY_BROWSER — across HTML-404, empty-404, and missing-root probes the iframe load event still fired, setting loaded=true and '로그인 없이 첫 여정 연결됨' while the child body was 404/empty; the 4800ms warning timer is cancelled by markLoaded. load is NOT evidence the intended document loaded. Frozen.",
+    "SRC036_D8_REDUCED_MOTION_CSS_ONLY_JS_TIMERS_REMAIN": "CONFIRMED_BY_BROWSER — prefers-reduced-motion collapses CSS animations to 0.01ms/1 iteration/none, but the JS transition timers still land inside at ~3454ms. Frozen; the JS gate must remain in split/script.js.",
+    "SRC036_D9_SUB_980_HORIZONTAL_CLIPPING": "CONFIRMED_BY_BROWSER — body overflow:hidden shorthand with scrollWidth 980 makes the hidden tail unreachable below 980px. Frozen.",
+    "SRC036_D10_BRAND_DEAD_LINK_HASH": "CONFIRMED_BY_BROWSER — brand anchor href=\"#\" performs a meaningless navigation. Frozen; no href may be invented during split.",
+    "SRC036_D11_STALE_ENTER_TIMERS_AFTER_ESCAPE": "PROMOTED FROM S2 OBSERVATION R1 (SOURCE_NATIVE_ASYNC_TIMER_RACE_OBSERVATION) — enter()'s setTimeout(1600) and setTimeout(3450) are never tracked or cancelled (state.timer holds only the 4800ms warning); after Escape clears classes, crossing revives at ~1616ms and inside+tabIndex=0 at ~3621ms. Source-structure fact: the two untracked setTimeout calls in enter() must survive the split unchanged; no timer bookkeeping may be added.",
+    "SRC036_D12_RETURN_BUTTON_ENTER_EVENT_ORDERING": "PROMOTED FROM S2 OBSERVATION R2 — with #returnButton focused, Enter runs the document-level enter() first, then the button's default activation fires click -> exit(), so the entry self-cancels. Source-structure fact: document keydown handler and button click bindings remain exactly as authored.",
+    "SRC036_D13_ENTERING_CLASS_PERSISTS_WITH_INSIDE": "PROMOTED FROM S2 OBSERVATION R3 — on normal completed entry the observed class list is 'entering crossing inside'; the entering class is removed only by exit(). Source-structure fact: no classList.remove('entering') may be introduced in the split."
+  },
+  "next_stage_authorized": "MECHANICAL_SPLIT"
+}

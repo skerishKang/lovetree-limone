@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC036",
+  "source_folder_name": "36_시네마틱메모리포털_버전통합",
+  "source_path": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
+  "authority": {
+    "drive_folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+    "drive_file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+    "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+    "revision": "V3",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST001"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "capture_surface": {
+    "mode": "CONTEXT_AWARE_ONLY",
+    "reason": "EXACT_FIRST_JOURNEY_SIBLING_CONTEXT_REQUIRED",
+    "required_serving": "ISOLATED_VIRTUAL_ROOT_WITH_EXACT_FIRST_JOURNEY_CONTEXT",
+    "repository_original_surface_runtime_equivalent": false,
+    "repository_split_surface_runtime_equivalent": false,
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "SKIP",
+      "capture-source-parity.mjs": "SKIP",
+      "skip_reason": "CONTEXT_AWARE_SURFACE_ONLY"
+    }
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "dom-2d-portal-overlay",
+    "scenario_id": "cinematic-memory-portal",
+    "classification": "REFERENCE_CAPABILITY_ONLY",
+    "adoption": "SOURCE_REFERENCE_ONLY",
+    "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+    "backend_scope": "BACKEND_FREE",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "qa_hook": null,
+    "interaction_surface": [
+      "enterButton-click",
+      "returnButton-click",
+      "document-keydown-Enter",
+      "document-keydown-Escape",
+      "warning-click-dismiss",
+      "window-pointermove-parallax",
+      "iframe-load-markLoaded"
+    ],
+    "source_specific_controls": [
+      "portal-enter",
+      "portal-return",
+      "escape-exit",
+      "warning-dismiss",
+      "pointer-parallax"
+    ],
+    "asset_reference_form": "context-sibling only: iframe src set at runtime to file:///D:/LoveTree-work/<encodedPath> (file protocol) or new URL('/'+encodedPath, location.origin) (hosted), encodedPath = 04_%EB%94%94%EC%9E%90%EC%9D%B8-%EC%B1%84%ED%83%9D%EB%B3%B8/0.%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9-3%EA%B0%9Chtml%ED%95%A9%EB%B3%B8/lovetree-first-journey-unified-v1.html; no local runtime asset bytes inside the capsule HTML",
+    "runtime_asset_count": 0,
+    "determinism": "STRUCTURAL_ONLY: DOM/markup and 88-petal seeded geometry (i*137.5 golden-angle loop, no Math.random, no Date.now) reproduce identically; pixel output is subject to SOURCE_NATIVE_ANIMATION_PHASE_VARIANCE (continuous CSS keyframe animations, no seed control)",
+    "frozen_strings": [
+      "min-width:980px",
+      "min-height:650px",
+      "04_%EB%94%94%EC%9E%90%EC%9D%B8-%EC%B1%84%ED%83%9D%EB%B3%B8/0.%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9-3%EA%B0%9Chtml%ED%95%A9%EB%B3%B8/lovetree-first-journey-unified-v1.html",
+      "file:///D:/LoveTree-work/",
+      "keydown",
+      "pointermove",
+      "1600",
+      "3450",
+      "4800",
+      "href=\"#\""
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§5 vocabulary, §7 fail-closed gate) · rule proposed in PR #640, adopted by CENTRAL at #589 comment 5556293418; schema in src/08_harness/source-capsule-validator.mjs validateDuplicateVariantGovernance",
+    "adjudicated_at_utc": "2026-09-13T22:42:36Z",
+    "adjudicated_by": "CENTRAL — #589 comment 5655967612 (S2 acceptance / S3 release); fresh S3 readback by kilo-agent / qwen3.8-flash",
+    "status_basis": "The authority HTML 01_시네마틱메모리포털_밝은로컬진입_v3.html (1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT) is the only V3 executable in track 36_시네마틱메모리포털_버전통합. Fresh S3 readback re-downloaded and hashed it: 22561 bytes, SHA-256 b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927, byte-identical to the repository snapshot reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html. The track root holds no second HTML object. The only other HTML files in the track are the superseded revisions 01_시네마틱메모리포털_v1.html (1sAy8b2OndatmihXsrkepeKZduLBxvCyq, 35940 bytes, sha256 2fc0fd2f8af00bb3ddd08e3276d740b159298cd1bef5c5140bd4521b2cfce0fd) and 02_시네마틱메모리포털_깊은진입_v2.html (1cgnr4G8rruhb6OTlFoslYfxSpP7WwLP_, 27057 bytes, sha256 46aa6370529d087881d0fdd912dca356d64e45611eb202ce9b9ba6e151fb7b43), both inside the explicitly archival subfolder 90_이전HTML and both content-different from the authority; they are SUPERSEDED_REVISION history, not competing executables. No first-journey sibling object shares the authority bytes.",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-13T22:42:36Z",
+      "verified_by": "kilo-agent / qwen3.8-flash, under CENTRAL S3 release instruction",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+      "block": "duplicate_variant_enumeration"
+    },
+    "candidate_table": [
+      {
+        "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+        "drive_file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+        "drive_folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+        "bytes": 22561,
+        "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+        "revision": "V3",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "02_시네마틱메모리포털_깊은진입_v2.html",
+        "drive_file_id": "1cgnr4G8rruhb6OTlFoslYfxSpP7WwLP_",
+        "drive_folder_id": "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf",
+        "bytes": 27057,
+        "sha256": "46aa6370529d087881d0fdd912dca356d64e45611eb202ce9b9ba6e151fb7b43",
+        "revision": "V2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Inside the archival subfolder 90_이전HTML. SUPERSEDED_REVISION: an earlier deep-entry variant, not a competing V3 executable. Downloaded and hashed in the same fresh S3 readback run."
+      },
+      {
+        "filename": "01_시네마틱메모리포털_v1.html",
+        "drive_file_id": "1sAy8b2OndatmihXsrkepeKZduLBxvCyq",
+        "drive_folder_id": "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf",
+        "bytes": 35940,
+        "sha256": "2fc0fd2f8af00bb3ddd08e3276d740b159298cd1bef5c5140bd4521b2cfce0fd",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Inside the archival subfolder 90_이전HTML. SUPERSEDED_REVISION: the original portal version, not a competing V3 executable. Downloaded and hashed in the same fresh S3 readback run."
+      }
+    ],
+    "negative_claim": "The enumerated scope (track root 1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD and its subfolders 90_이전HTML 1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf and 10_이미지 1uilOwwwWR6UuEzbeeCn_HVonPG_2U2r2) contains exactly three HTML objects: the V3 authority and two content-different superseded revisions in 90_이전HTML. No second V3 object, no byte-identical mirror, and no COMPETING_V3 exists in the track. The remaining root objects are four MP4 review recordings and image assets, none executable HTML.",
+    "special_notes": [
+      "The first-journey sibling referenced at runtime (lovetree-first-journey-unified-v1.html, 111950 bytes, SHA-256 3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468) is a CONTEXT dependency, not a duplicate of this source: it never shares the authority bytes and is recorded metadata-only in authority-context.json. Its S2-central identity adjudication (UNAMBIGUOUS_BYTE_AUTHORITY; the -linked 112499-byte variant EXCLUDED) is preserved unchanged.",
+      "MST001 resolution to SRC036 is recorded in src/02_master/MST001/record.json with EXPLICIT_LEDGER_PROVENANCE (design-intake/master-design-coverage.json row master_id=1, Track 36 시네마틱 메모리 포털); it is not numeric inference from the folder name."
+    ]
+  }
+}

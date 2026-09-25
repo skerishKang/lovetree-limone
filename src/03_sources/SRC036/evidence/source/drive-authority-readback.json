@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verified_at_utc": "2026-09-13T22:42:36Z",
+  "fresh_drive": {
+    "folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+    "file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+    "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+    "mime_type": "text/html",
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+    "md5": "adb6bf30632d37f38bdaa2d29d46f1ac",
+    "created_time": null,
+    "modified_time": "2026-08-06T17:13:17.799Z"
+  },
+  "verified_by": "kilo-agent / qwen3.8-flash, under CENTRAL S3 release instruction (#589 comment 5655967612)",
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Fresh S3 readback: authority re-download + hash, full track enumeration, superseded-revision hashing, and sibling metadata re-confirmation.",
+    "reverified_at_utc": "2026-09-13T22:42:36Z",
+    "verified_by": "kilo-agent / qwen3.8-flash",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "transport": {
+      "tool": "rclone v1.75.0 (Windows-native)",
+      "config": "C:/Users/user/AppData/Roaming/rclone/rclone.conf",
+      "remote": "gdrive:",
+      "method": "lsjson folder enumeration; lsjson --stat for canonical UTC modifiedTime; copyto download; local Get-FileHash -Algorithm SHA256",
+      "advisory_notice": "gdrive: This remote uses rclone's shared Google Drive client_id, which is being retired and will stop working during 2026. Emitted on every call; all reads succeeded."
+    },
+    "authority_reverification": {
+      "drive_folder_id": "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD",
+      "drive_folder_name": "36_시네마틱메모리포털_버전통합",
+      "drive_file_id": "1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT",
+      "filename": "01_시네마틱메모리포털_밝은로컬진입_v3.html",
+      "bytes": 22561,
+      "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927",
+      "revision": "V3",
+      "modified_time_utc": "2026-08-06T17:13:17.799Z",
+      "byte_identity_vs_manifest": "MATCH",
+      "sha256_identity_vs_manifest": "MATCH",
+      "modified_time_vs_recorded": "MATCH"
+    },
+    "repository_snapshot_check": {
+      "path": "reference/source-tracks-snapshot/36_시네마틱메모리포털_버전통합/01_시네마틱메모리포털_밝은로컬진입_v3.html",
+      "git_blob_sha1": "b33e4bc6a7868053315204034e10d3cecb25f3ff",
+      "relation": "BYTE_IDENTICAL",
+      "note": "git cat-file blob of the snapshot path extracted with cmd redirection and hashed locally; digest equals the fresh Drive authority digest."
+    },
+    "revision_chain_enumeration": [
+      { "folder_id": "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf", "folder_name": "90_이전HTML", "revision": "V1,V2", "role": "SUPERSEDED_REVISION_ARCHIVE_FOLDER", "is_authority_scope": false }
+    ],
+    "revision_chain_termination": {
+      "highest_revision_present": "V3",
+      "higher_revision_exists": false,
+      "evidence": "Full lsjson listing of the track root returns 1 V3 HTML, 4 MP4 recordings, and 2 subfolders (90_이전HTML with exactly V1 and V2 HTML; 10_이미지 with 1 PNG). No V4+ object and no second V3 object exists in the track."
+    },
+    "superseded_revision_candidates": [
+      {
+        "drive_file_id": "1cgnr4G8rruhb6OTlFoslYfxSpP7WwLP_",
+        "filename": "02_시네마틱메모리포털_깊은진입_v2.html",
+        "location": "36_시네마틱메모리포털_버전통합/90_이전HTML/",
+        "bytes": 27057,
+        "md5": "6d9a83f1",
+        "sha256": "46aa6370529d087881d0fdd912dca356d64e45611eb202ce9b9ba6e151fb7b43",
+        "revision": "V2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this run. Deep-entry variant archived under 90_이전HTML; SUPERSEDED_REVISION."
+      },
+      {
+        "drive_file_id": "1sAy8b2OndatmihXsrkepeKZduLBxvCyq",
+        "filename": "01_시네마틱메모리포털_v1.html",
+        "location": "36_시네마틱메모리포털_버전통합/90_이전HTML/",
+        "bytes": 35940,
+        "md5": "0fd23b4c",
+        "sha256": "2fc0fd2f8af00bb3ddd08e3276d740b159298cd1bef5c5140bd4521b2cfce0fd",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this run. Original portal version archived under 90_이전HTML; SUPERSEDED_REVISION."
+      }
+    ],
+    "track_root_media_excluded": [
+      { "drive_file_id": "155CMz9EzG5Mzl3CEmtrsD_M9Atx7JoSF", "name": "02_녹화영상_시네마틱메모리포털.mp4", "bytes": 3631366, "disposition": "NOT_AUTHORITY", "note": "owner review recording" },
+      { "drive_file_id": "1vZuw-mfqy31n_nOCMvcvBUbYtdNgJojl", "name": "03_참고영상_시네마틱메모리포털_원본.mp4", "bytes": 10796048, "disposition": "NOT_AUTHORITY", "note": "reference video" },
+      { "drive_file_id": "1YUWRTV66ssVBYqy4Qu1Tcdpe5LcHfqfY", "name": "녹화_2026_08_14_01_52_44_865.mp4", "bytes": 10996271, "disposition": "NOT_AUTHORITY", "note": "owner review recording 2026-08-14" },
+      { "drive_file_id": "1aRm9xXIOZq2XbWVUS6x6LVRxwN6QwUZI", "name": "녹화_2026_08_14_01_53_31_891.mp4", "bytes": 4953106, "disposition": "NOT_AUTHORITY", "note": "owner review recording 2026-08-14" },
+      { "drive_file_id": "1ahcvX5MQRKt_q6OX0W78c3--BDu11LPK", "name": "90_자동생성_대표미리보기.png (in 10_이미지 1uilOwwwWR6UuEzbeeCn_HVonPG_2U2r2)", "bytes": 910786, "disposition": "NOT_AUTHORITY", "note": "auto-generated preview image, not executable HTML" }
+    ],
+    "sibling_context_reference": {
+      "role": "runtime context dependency, NOT a duplicate variant of SRC036",
+      "runtime_path": "/04_디자인-채택본/0.첫여정통합-3개html합본/lovetree-first-journey-unified-v1.html",
+      "bytes": 111950,
+      "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468",
+      "repository_equivalent": { "path": "[보험]/lovetree-first-journey-unified-v1.html", "git_blob_sha1": "be25af8874fdae60bae8d3a0edb8124f297d6428" },
+      "accepted_drive_candidates": ["1DBo9y2EeE1JGrrEx4qhnQVvLfV0crgCx", "182A3Buq1xUK7QN2O9FlXYb8yX2_lmPaB", "1ljWh8WPKBKdg__equ_j2LaybE4_mNkl8"],
+      "excluded_variant": { "file_id": "1oGTnVX7bfJVjlmyxMexZ6kq6K1qHvjIr", "name": "lovetree-first-journey-unified-v1-linked.html", "bytes": 112499, "md5": "f409105b" },
+      "status": "UNAMBIGUOUS_BYTE_AUTHORITY (S2 adjudication unchanged)",
+      "note": "No sibling object shares the authority bytes; identity adjudication carried from S2 dependency-authority evidence without re-litigation."
+    },
+    "negative_claim": {
+      "statement": "The V3 authority bytes occur exactly once in the enumerated scope: the authority object 1VB57CaARMbdBV1W5QF4QNx9_ki7-D0oT in folder 1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD. No byte-identical mirror, no second V3 object, and no COMPETING_V3 exists in the track. The only other HTML objects are content-different superseded revisions V1/V2 inside the archival folder 90_이전HTML.",
+      "enumerated_scope": [
+        "1IOPJcHrgu1Tc5y5IvmILR-NOxQj2shwD (track root: 1 HTML, 4 MP4, 2 subfolders)",
+        "1ve3o2BBsa4VyvyWfOKpsBA2eMgdD9ISf (90_이전HTML: 2 HTML, both hashed)",
+        "1uilOwwwWR6UuEzbeeCn_HVonPG_2U2r2 (10_이미지: 1 PNG, 0 HTML)"
+      ],
+      "hash_method": "local Get-FileHash -Algorithm SHA256 over rclone copyto downloads; the authority and both superseded HTML objects were downloaded and hashed in this run"
+    },
+    "gap": null
+  }
+}

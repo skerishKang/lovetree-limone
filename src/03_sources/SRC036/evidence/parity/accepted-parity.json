@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_DIRECT_GITHUB_S4_VISUAL_REVIEW",
+  "source_head": "a088b2e815595bc9a207e435eba745e2f29adc51",
+  "evidence_binding": "GITHUB_S4_CANDIDATE_AT_CAPTURE_HEAD",
+  "context_mode": "CONTEXT_AWARE_ONLY",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "motion_policy": "SOURCE_NATIVE_CSS_ANIMATION_PHASE_VARIANCE_PRESERVED",
+  "central_acceptance": {
+    "pr": 657,
+    "pr_comment": 5840216729,
+    "central_visual_pass": true
+  },
+  "authority": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "sibling_context": {
+    "bytes": 111950,
+    "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468",
+    "serving": "ORIGINAL and SPLIT served from isolated virtual roots with the exact same frozen first-journey sibling at the authority-encoded path"
+  },
+  "matched_state_count": 46,
+  "matched_states": "46/46",
+  "required_state_names": 20,
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_timer_patch_used": false,
+  "qa_event_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "global_tolerance": false,
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "computed_style": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "screenshots": "MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED"
+  },
+  "dom_state_parity": "PASS",
+  "interaction_parity": "PASS",
+  "structural_visual_parity": "PASS",
+  "external_runtime_parity": "PASS",
+  "browser_errors": 0,
+  "required_network_errors": 0,
+  "local_http_failed_requests": 0,
+  "gate_results": {
+    "named_gates": "17/17 PASS",
+    "state_mismatches": 0,
+    "health_mismatches": 0,
+    "evidence_ref": "evidence/s4/comparison.json"
+  },
+  "matrix": {
+    "viewports": [
+      "1280x800",
+      "390x844",
+      "320x720"
+    ],
+    "pairs": 46,
+    "device_scale_factor": 1,
+    "reduced_motion": true,
+    "context_missing_probe": true
+  },
+  "frozen_defects_preserved": [
+    "SRC036_D7_IFRAME_LOAD_EVENT_FALSE_POSITIVE",
+    "SRC036_D11_STALE_ENTER_TIMERS_AFTER_ESCAPE",
+    "SRC036_D12_RETURN_BUTTON_ENTER_EVENT_ORDERING",
+    "SRC036_D13_ENTERING_CLASS_PERSISTS_WITH_INSIDE"
+  ],
+  "visual_review": {
+    "central_direct_artifact_review": true,
+    "central_visual_pass": true,
+    "central_acceptance_pr_comment": 5840216729,
+    "artifact_branch": "evidence/657-src036-s4-png",
+    "artifact_commit": "cabd36c1064f81cbe71a2792a003ac0dda0eef8a",
+    "raw_png_files_verified": 12,
+    "byte_size_match": "12/12",
+    "sha256_match": "12/12",
+    "reviewed_representative_states": [
+      "1280x800 READY",
+      "1280x800 INSIDE",
+      "1280x800 D11_STALE_TIMER_AFTER_ESCAPE",
+      "1280x800 REDUCED_MOTION_INSIDE",
+      "390x844 MOBILE_390_READY_CLIPPED",
+      "320x720 MOBILE_320_INSIDE_CLIPPED"
+    ],
+    "source_native_observation": "Paired ORIGINAL/SPLIT captures preserve the same composition, typography, iframe/product surface, clipping, state-dependent layering, and frozen D11 behavior. Non-reduced capture differences are limited to the already-adjudicated source-native animation phase variance; reduced-motion INSIDE is raw-PNG byte-identical."
+  },
+  "evidence": {
+    "contract": "evidence/s4/contract.json",
+    "comparison": "evidence/s4/comparison.json",
+    "report": "evidence/s4/SRC036_S4_CONTEXT_PARITY_REPORT.md",
+    "workdiary_repo": "skerishKang/workdiary",
+    "workdiary_path": "lovetree-reports/2026-09-25/LOCAL1/657-src036-s4-context-parity.md",
+    "workdiary_commit": "7deb80d7b3751a8cd65b1d2592d44fdf348db4f8"
+  },
+  "notes": [
+    "The runtime Source bytes were not changed by S4 capture, evidence handoff, direct visual review, or this metadata promotion.",
+    "The S4 runner compared DOM/state/text/iframe/stable geometry/network-health channels over 46 matched pairs and separately gated D7/D11/D12/D13, reduced-motion, and mobile clipping.",
+    "Raw PNG equality is not the global acceptance contract because S2 established source-native CSS animation phase variance. No SSIM, perceptual metric, pixel tolerance, canonical downsample, Hamming threshold, clock patch, timer patch, event patch, or runtime QA hook was used.",
+    "This promotion changes acceptance metadata only; no source repair, redesign, framework conversion, Product wiring, backend/Auth/DB mutation, or shared-harness mutation is introduced."
+  ],
+  "next_stage_authorized": "CENTRAL_READY_MERGE_REVIEW"
+}
