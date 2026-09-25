@@ -48,8 +48,6 @@ const MIME = Object.freeze({
 });
 
 export const sha256 = (buffer) => crypto.createHash("sha256").update(buffer).digest("hex");
-const round = (value) => (typeof value === "number" && Number.isFinite(value) ? Math.round(value * 100) / 100 : value);
-const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const writeJson = (filePath, value) => {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
