@@ -529,6 +529,13 @@ function normalizeBodyHtml(value) {
 
 function normalizeData(data) {
   const clone = JSON.parse(JSON.stringify(data || {}));
+  if (clone.document) {
+    // The mechanical split intentionally changes only the <head> glue:
+    // inline style -> external link, inline script -> external script.
+    for (const key of ["styleTagCount", "linkCount", "scriptCount", "externalLinkHrefs", "externalScriptSources"]) {
+      delete clone.document[key];
+    }
+  }
   if (clone.iframe) {
     clone.iframe.srcAttribute = normalizeBodyHtml(clone.iframe.srcAttribute);
   }
@@ -608,6 +615,15 @@ function runGate(results, roots) {
   }
 
   check("sibling identity is exact", roots.sibling.bytes === SIBLING_BYTES && roots.sibling.sha256 === SIBLING_SHA256, roots.sibling);
+  const readyPair = comparisons.find((entry) => entry.key === "1280x800:READY:normal");
+  const originalHead = byKey.get("original:1280x800:READY:normal")?.data?.document;
+  const splitHead = byKey.get("split:1280x800:READY:normal")?.data?.document;
+  check(
+    "mechanical head glue is the only normalized document difference",
+    originalHead?.styleTagCount === 1 && originalHead?.linkCount === 0 && originalHead?.scriptCount === 1 &&
+      splitHead?.styleTagCount === 0 && splitHead?.linkCount === 1 && splitHead?.scriptCount === 1,
+    { original: originalHead, split: splitHead, pairEqual: readyPair?.equal }
+  );
   check("all required state pairs captured", comparisons.every((entry) => entry.present), `${comparisons.filter((entry) => entry.present).length}/${plan.length}`);
   check("all matched DOM/runtime/geometry/text channels equal", stateMismatches === 0, stateMismatches);
   check("all authority/sibling health classifications equal", healthMismatches === 0, healthMismatches);
