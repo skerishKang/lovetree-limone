@@ -550,12 +550,13 @@ function normalizeData(data) {
     delete clone.styles.stageBorderRadius;
   }
   if (clone.geometry) {
-    // The copy/window-label/frame positions and stage radius are
+    // The copy/window-label/frame/stage positions and stage radius are
     // transition-phase observations, not stable DOM/geometry invariants; they
     // remain present in each probe.
     delete clone.geometry.copy;
     delete clone.geometry.windowLabel;
     delete clone.geometry.frame;
+    delete clone.geometry.stage;
   }
   if (clone.geometry) {
     for (const value of Object.values(clone.geometry)) {
@@ -767,7 +768,7 @@ export async function runContextParity({ capsuleDir, siblingPath, outDir, head }
     pixel_tolerance_used: false,
     ssim_used: false,
     structural_geometry_normalization: "whole-pixel measurement rounding; no screenshot/pixel acceptance threshold",
-    animation_phase_fields: "loader opacity, stage transform/filter/clip-path/border-radius, and copy/window-label/frame positions are recorded in probes but excluded from equality by S2 phase-variance policy",
+    animation_phase_fields: "loader opacity, stage geometry/transform/filter/clip-path/border-radius, and copy/window-label/frame positions are recorded in probes but excluded from equality by S2 phase-variance policy",
     qa_clock_patch_used: false,
     qa_timer_patch_used: false,
     qa_event_patch_used: false,
