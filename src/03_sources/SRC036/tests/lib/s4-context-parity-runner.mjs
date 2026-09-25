@@ -248,11 +248,23 @@ export async function collectState(page) {
       try { return frame?.contentDocument || null; } catch { return null; }
     })();
     const key = (element) => element ? { tag: element.tagName.toLowerCase(), id: element.id || null, className: typeof element.className === "string" ? element.className : "" } : null;
+    const domSignature = (root) => {
+      const walk = (element) => ({
+        tag: element.tagName.toLowerCase(),
+        id: element.id || null,
+        attributes: [...element.attributes]
+          .filter((attribute) => !["class", "style", "src", "tabindex"].includes(attribute.name))
+          .map((attribute) => [attribute.name, attribute.value])
+          .sort(([a], [b]) => a.localeCompare(b)),
+        children: [...element.children].map(walk),
+      });
+      return walk(root);
+    };
     return {
       document: {
         title: document.title,
         lang: document.documentElement.lang,
-        bodyHtml: document.body.innerHTML,
+        bodyDomSignature: domSignature(document.body),
         elementCount: document.querySelectorAll("*").length,
         bodyElementCount: document.body.querySelectorAll("*").length,
         ids: [...document.querySelectorAll("[id]")].map((element) => element.id),
@@ -517,7 +529,6 @@ function normalizeBodyHtml(value) {
 
 function normalizeData(data) {
   const clone = JSON.parse(JSON.stringify(data || {}));
-  if (clone.document) clone.document.bodyHtml = normalizeBodyHtml(clone.document.bodyHtml);
   if (clone.iframe) {
     clone.iframe.srcAttribute = normalizeBodyHtml(clone.iframe.srcAttribute);
   }
