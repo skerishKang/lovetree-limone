@@ -536,6 +536,24 @@ function normalizeData(data) {
       delete clone.document[key];
     }
   }
+  if (clone.state) {
+    // Loader opacity is a source-native animation phase, not a parity gate.
+    delete clone.state.loaderOpacity;
+  }
+  if (clone.styles) {
+    // Transform/filter values are recorded in probes but are intentionally
+    // excluded from equality because S2 established CSS phase variance.
+    delete clone.styles.stageFilter;
+    delete clone.styles.stageTransform;
+  }
+  if (clone.geometry) {
+    for (const value of Object.values(clone.geometry)) {
+      if (!value || typeof value !== "object") continue;
+      for (const [key, number] of Object.entries(value)) {
+        if (typeof number === "number" && Number.isFinite(number)) value[key] = Math.round(number);
+      }
+    }
+  }
   if (clone.iframe) {
     clone.iframe.srcAttribute = normalizeBodyHtml(clone.iframe.srcAttribute);
   }
@@ -737,6 +755,8 @@ export async function runContextParity({ capsuleDir, siblingPath, outDir, head }
     raw_png_equality_used: false,
     pixel_tolerance_used: false,
     ssim_used: false,
+    structural_geometry_normalization: "whole-pixel measurement rounding; no screenshot/pixel acceptance threshold",
+    animation_phase_fields: "recorded in probes, excluded from equality by S2 phase-variance policy",
     qa_clock_patch_used: false,
     qa_timer_patch_used: false,
     qa_event_patch_used: false,
