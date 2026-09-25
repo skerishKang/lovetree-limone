@@ -12,12 +12,14 @@
     "revision": "V3",
     "status": "LOCKED"
   },
-  "master_rows": ["MST001"],
+  "master_rows": [
+    "MST001"
+  ],
   "family_ref": null,
   "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
   "baseline_ref": "baseline/accepted-baseline.json",
   "mechanical_split_ref": "split/materialization.json",
-  "parity_ref": null,
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "authority_context_required": true,
   "authority_context_ref": "authority-context.json",
   "capture_surface": {
@@ -37,7 +39,7 @@
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
@@ -51,8 +53,22 @@
     "inline_style_block_count": 1,
     "inline_script_block_count": 1,
     "qa_hook": null,
-    "interaction_surface": ["enterButton-click", "returnButton-click", "document-keydown-Enter", "document-keydown-Escape", "warning-click-dismiss", "window-pointermove-parallax", "iframe-load-markLoaded"],
-    "source_specific_controls": ["portal-enter", "portal-return", "escape-exit", "warning-dismiss", "pointer-parallax"],
+    "interaction_surface": [
+      "enterButton-click",
+      "returnButton-click",
+      "document-keydown-Enter",
+      "document-keydown-Escape",
+      "warning-click-dismiss",
+      "window-pointermove-parallax",
+      "iframe-load-markLoaded"
+    ],
+    "source_specific_controls": [
+      "portal-enter",
+      "portal-return",
+      "escape-exit",
+      "warning-dismiss",
+      "pointer-parallax"
+    ],
     "asset_reference_form": "context-sibling only: iframe src set at runtime to file:///D:/LoveTree-work/<encodedPath> (file protocol) or new URL('/'+encodedPath, location.origin) (hosted), encodedPath = 04_%EB%94%94%EC%9E%90%EC%9D%B8-%EC%B1%84%ED%83%9D%EB%B3%B8/0.%EC%B2%AB%EC%97%AC%EC%A0%95%ED%86%B5%ED%95%A9-3%EA%B0%9Chtml%ED%95%A9%EB%B3%B8/lovetree-first-journey-unified-v1.html; no local runtime asset bytes inside the capsule HTML",
     "runtime_asset_count": 0,
     "determinism": "STRUCTURAL_ONLY: DOM/markup and 88-petal seeded geometry (i*137.5 golden-angle loop, no Math.random, no Date.now) reproduce identically; pixel output is subject to SOURCE_NATIVE_ANIMATION_PHASE_VARIANCE (continuous CSS keyframe animations, no seed control)",

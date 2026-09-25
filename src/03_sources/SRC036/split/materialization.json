@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC036",
   "stage": "S3_MECHANICAL_SPLIT",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "source_candidate": {
     "exact_head": "251d27846bbd341f9d02041f74c749340a14dd4b",
@@ -64,8 +64,18 @@
     "reconstructed_bytes": 22561,
     "byte_identical": true
   },
-  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
-  "parity_ref": null,
-  "next_stage": "S4_EXACT_HEAD_PARITY",
-  "next_stage_note": "S3 materializes the byte-exact mechanical split only. S4 parity is NOT_RELEASED by CENTRAL (#589 comment 5655967612); the context-aware sibling surface requires an isolated virtual root serving the exact first-journey sibling, so both shared harnesses are SKIP and parity must be captured on that surface at an exact head."
+  "parity_status": "PASS",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "next_stage": "ACCEPTED",
+  "next_stage_note": "S4 parity is accepted and promoted by evidence/parity/accepted-parity.json. Ready/merge remain CENTRAL-owned.",
+  "parity_status_note": "S4 context-aware motion/state parity captured at exact head a088b2e815595bc9a207e435eba745e2f29adc51 with the exact 111950-byte first-journey sibling, 46/46 matched state pairs, 17/17 gates PASS, state/health mismatches 0, and accepted by CENTRAL direct GitHub paired-artifact visual review at PR #657 comment 5840216729. Source-native animation phase variance is preserved; no pixel/SSIM/perceptual tolerance or runtime clock/timer/event patch was used.",
+  "parity_evidence": {
+    "exact_head": "a088b2e815595bc9a207e435eba745e2f29adc51",
+    "binding": "GITHUB_S4_CANDIDATE_AT_CAPTURE_HEAD",
+    "candidate_evidence_ref": "evidence/s4/comparison.json",
+    "central_acceptance_comment": 5840216729,
+    "artifact_branch": "evidence/657-src036-s4-png",
+    "artifact_commit": "cabd36c1064f81cbe71a2792a003ac0dda0eef8a",
+    "note": "The evidence head is the S4 capture head. The later handoff and acceptance-metadata commits do not modify Source runtime bytes; their exact heads are established externally by the PR record and CI."
+  }
 }
