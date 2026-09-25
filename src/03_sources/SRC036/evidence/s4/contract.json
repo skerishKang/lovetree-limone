@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC036",
+  "stage": "S4_CONTEXT_AWARE_MOTION_STATE_PARITY",
+  "contract": "PR #657 latest CENTRAL S4 release comment",
+  "generated_at": "2026-09-25T06:03:36.175Z",
+  "exact_head": "a088b2e815595bc9a207e435eba745e2f29adc51",
+  "authority": {
+    "bytes": 22561,
+    "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+  },
+  "sibling": {
+    "bytes": 111950,
+    "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468",
+    "source": "CENTRAL-locked first-journey sibling; bytes staged outside Git"
+  },
+  "viewports": [
+    {
+      "key": "1280x800",
+      "width": 1280,
+      "height": 800,
+      "deviceScaleFactor": 1
+    },
+    {
+      "key": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1
+    },
+    {
+      "key": "320x720",
+      "width": 320,
+      "height": 720,
+      "deviceScaleFactor": 1
+    }
+  ],
+  "required_state_names": 20,
+  "captured_state_pairs": 46,
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "structural_geometry_normalization": "whole-pixel measurement rounding; no screenshot/pixel acceptance threshold",
+  "animation_phase_fields": "loader opacity, stage geometry/transform/filter/clip-path/border-radius, and copy/window-label/frame positions are recorded in probes but excluded from equality by S2 phase-variance policy",
+  "qa_clock_patch_used": false,
+  "qa_timer_patch_used": false,
+  "qa_event_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "roots": {
+    "original:sibling": {
+      "bytes": 111950,
+      "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468"
+    },
+    "original:index.html": {
+      "bytes": 22561,
+      "sha256": "b8be6b49ba8a736c369050eb4f669a51e07b7b1e56f3d683b25504b9aa383927"
+    },
+    "split:sibling": {
+      "bytes": 111950,
+      "sha256": "3b61fe4bfbbacb9d4bcff1c6da86d54ba28af60f29c12df44e0ebcc3bdf17468"
+    },
+    "split:index.html": {
+      "bytes": 3224,
+      "sha256": "fc43a5728917111b65e402ffc928d330db68b26ae483d1d672df2d3615e0cbda"
+    },
+    "split:styles.css": {
+      "bytes": 15984,
+      "sha256": "c3a03f4934d47d2461536112e264afc0e819ea64429db86a7f4576dd6294dfa1"
+    },
+    "split:script.js": {
+      "bytes": 3400,
+      "sha256": "d02c48690fa901cf440f551a592d6893e7b9783099f6a27e783e541436386f7b"
+    }
+  },
+  "gate": {
+    "total": 17,
+    "failed": []
+  },
+  "state_mismatches": 0,
+  "health_mismatches": 0,
+  "worker_disposition": "READY_FOR_CENTRAL_S4_VISUAL_REVIEW",
+  "parity_flags_written": false
+}
