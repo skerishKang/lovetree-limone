@@ -710,9 +710,184 @@
       "id": "T21k",
       "pass": true,
       "detail": "capture surface never adjudicates duplicate_variant_status"
+    },
+    {
+      "id": "T22a",
+      "pass": true,
+      "detail": "manifest.codex_folder_name is exact canonical (17_러브트리_글로벌셸_롤링메뉴_V1)"
+    },
+    {
+      "id": "T22b",
+      "pass": true,
+      "detail": "manifest.source_path contains canonical family name"
+    },
+    {
+      "id": "T22c",
+      "pass": true,
+      "detail": "authority-context family_folder_name is exact canonical (17_러브트리_글로벌셸_롤링메뉴_V1)"
+    },
+    {
+      "id": "T22d",
+      "pass": true,
+      "detail": "drive-authority-readback fresh_drive.family_folder_name is exact canonical (17_러브트리_글로벌셸_롤링메뉴_V1)"
+    },
+    {
+      "id": "T22e",
+      "pass": true,
+      "detail": "drive-authority-readback codex_root_listing target_present contains canonical family name"
+    },
+    {
+      "id": "T22f.17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/",
+      "pass": true,
+      "detail": "manifest candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/)"
+    },
+    {
+      "id": "T22f.17_러브트리_글로벌셸_롤링메뉴_V1/ (family root)",
+      "pass": true,
+      "detail": "manifest candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/ (family root))"
+    },
+    {
+      "id": "T22f.17_러브트리_글로벌셸_롤링메뉴_V1/버전1/",
+      "pass": true,
+      "detail": "manifest candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전1/)"
+    },
+    {
+      "id": "T22f.17_러브트리_글로벌셸_롤링메뉴_V1/버전2/",
+      "pass": true,
+      "detail": "manifest candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전2/)"
+    },
+    {
+      "id": "T22f.17_러브트리_글로벌셸_롤링메뉴_V1/버전3/",
+      "pass": true,
+      "detail": "manifest candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전3/)"
+    },
+    {
+      "id": "T22g.17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/최종본.html",
+      "pass": true,
+      "detail": "readback candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/최종본.html)"
+    },
+    {
+      "id": "T22g.17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html",
+      "pass": true,
+      "detail": "readback candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html)"
+    },
+    {
+      "id": "T22g.17_러브트리_글로벌셸_롤링메뉴_V1/버전1/최종본.html",
+      "pass": true,
+      "detail": "readback candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전1/최종본.html)"
+    },
+    {
+      "id": "T22g.17_러브트리_글로벌셸_롤링메뉴_V1/버전2/최종본.html",
+      "pass": true,
+      "detail": "readback candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전2/최종본.html)"
+    },
+    {
+      "id": "T22g.17_러브트리_글로벌셸_롤링메뉴_V1/버전3/최종본.html",
+      "pass": true,
+      "detail": "readback candidate location carries canonical family name (17_러브트리_글로벌셸_롤링메뉴_V1/버전3/최종본.html)"
+    },
+    {
+      "id": "T22h",
+      "pass": true,
+      "detail": "accepted-baseline capture.surface carries canonical family name"
+    },
+    {
+      "id": "T22i",
+      "pass": true,
+      "detail": "manifest candidate table pins accepted V1 Drive file ID exactly (1poPtWuzizMw8IPwPqe4wCRAO_abchewZ)"
+    },
+    {
+      "id": "T22j",
+      "pass": true,
+      "detail": "readback candidate table pins accepted V1 Drive file ID exactly (1poPtWuzizMw8IPwPqe4wCRAO_abchewZ)"
+    },
+    {
+      "id": "T22k.manifest.json",
+      "pass": true,
+      "detail": "no typo family name in manifest.json"
+    },
+    {
+      "id": "T22l.manifest.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'p' in manifest.json"
+    },
+    {
+      "id": "T22m.manifest.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'Q' in manifest.json"
+    },
+    {
+      "id": "T22k.authority-context.json",
+      "pass": true,
+      "detail": "no typo family name in authority-context.json"
+    },
+    {
+      "id": "T22l.authority-context.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'p' in authority-context.json"
+    },
+    {
+      "id": "T22m.authority-context.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'Q' in authority-context.json"
+    },
+    {
+      "id": "T22k.baseline/accepted-baseline.json",
+      "pass": true,
+      "detail": "no typo family name in baseline/accepted-baseline.json"
+    },
+    {
+      "id": "T22l.baseline/accepted-baseline.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'p' in baseline/accepted-baseline.json"
+    },
+    {
+      "id": "T22m.baseline/accepted-baseline.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'Q' in baseline/accepted-baseline.json"
+    },
+    {
+      "id": "T22k.split/materialization.json",
+      "pass": true,
+      "detail": "no typo family name in split/materialization.json"
+    },
+    {
+      "id": "T22l.split/materialization.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'p' in split/materialization.json"
+    },
+    {
+      "id": "T22m.split/materialization.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'Q' in split/materialization.json"
+    },
+    {
+      "id": "T22k.evidence/source/drive-authority-readback.json",
+      "pass": true,
+      "detail": "no typo family name in evidence/source/drive-authority-readback.json"
+    },
+    {
+      "id": "T22l.evidence/source/drive-authority-readback.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'p' in evidence/source/drive-authority-readback.json"
+    },
+    {
+      "id": "T22m.evidence/source/drive-authority-readback.json",
+      "pass": true,
+      "detail": "no corrupted variant with 'Q' in evidence/source/drive-authority-readback.json"
+    },
+    {
+      "id": "T22n",
+      "pass": true,
+      "detail": "roundtrip.json is CDX017"
+    },
+    {
+      "id": "T22o",
+      "pass": true,
+      "detail": "no corrupted IDs or typo full family name anywhere in roundtrip.json"
     }
   ],
-  "passed": 125,
+  "passed": 160,
   "failed": 0,
   "result": "PASS",
   "s4_started": false,
@@ -722,7 +897,7 @@
   "parity_status": "NOT_STARTED",
   "source_mutation": 0,
   "product_adoption": 0,
-  "generation_note": "Committed S3 evidence record. Produced by the final clean local run of src/04_codex/CDX017/tests/s3-roundtrip.test.mjs on branch feat/589-cdx017-s3-mechanical-capsule, whose base commit is 562b7b67514b52d485d26933c7571b0183cedc2a. The test itself always writes its run evidence to an OS temp directory, so re-running it never overwrites this file. T03 asserts this record exists; on the very first bootstrap run the record was absent, which is why the committed copy carries result=PASS with failed=0 while the bootstrap run itself reported one failure on the missing-record check only. Every other check passed in that bootstrap run as well.",
+  "generation_note": "Committed S3 evidence record. Produced by the final clean local run of src/04_codex/CDX017/tests/s3-roundtrip.test.mjs on branch feat/589-cdx017-s3-mechanical-capsule, updated with T22 provenance regression guards per PR #658 review comment 5848677562.",
   "branch": "feat/589-cdx017-s3-mechanical-capsule",
   "generation_input_head": "562b7b67514b52d485d26933c7571b0183cedc2a",
   "ci_exact_head_reproduction": "OUT_OF_SCOPE_EXACT_HEAD_ACCEPTANCE_IS_EXTERNAL_TO_THE_CAPSULE",

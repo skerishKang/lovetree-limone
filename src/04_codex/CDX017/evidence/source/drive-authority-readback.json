@@ -6,7 +6,7 @@
   "verified_by": "LOCAL1 - kilo-agent, under CENTRAL S3 release instruction (#589 comment 5845654192)",
   "fresh_drive": {
     "family_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
-    "family_folder_name": "17_러브트리_글로벌셈_롤링메뉴_V1",
+    "family_folder_name": "17_러브트리_글로벌셸_롤링메뉴_V1",
     "selected_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
     "selected_folder_name": "버전4-선택",
     "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
@@ -45,7 +45,7 @@
     "codex_root_listing": {
       "folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
       "subfolder_count": 28,
-      "target_present": "17_러브트리_글로벌셈_롤링메뉴_V1 = 1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+      "target_present": "17_러브트리_글로벌셸_롤링메뉴_V1 = 1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
       "note": "Enumerated to prove the family folder's position in the Codex tree and to confirm the 13/14/15/68 portal destination families exist as separate Codex folders. No other folder in the Codex root carries a CDX-17 identity."
     },
     "family_folder_listing": {
@@ -143,7 +143,7 @@
     },
     "html_candidates": [
       {
-        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/버전4-선택/최종본.html",
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/최종본.html",
         "file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
         "bytes": 50866,
         "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
@@ -165,7 +165,7 @@
       },
       {
         "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전1/최종본.html",
-        "file_id": "1poPtWuzizMw8IPQe4wCRAO_abchewZ",
+        "file_id": "1poPtWuzizMw8IPwPqe4wCRAO_abchewZ",
         "bytes": 28870,
         "sha256": "deeb0fdb954f40b7991d58e8c59447a508b23afb1676dbb7007fbe82ae381ca0",
         "md5": "80b7ae0eae9d90dae8a5e51e7b14845c",

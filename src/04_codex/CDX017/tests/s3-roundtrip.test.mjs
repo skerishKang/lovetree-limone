@@ -444,6 +444,59 @@ ok(note.open_state === null, "T21i", "no open adjudication state");
 ok(Array.isArray(note.special_notes) && note.special_notes.some((n) => n.includes("Question A") && n.includes("Question B")), "T21j", "Question A (duplicate) and Question B (serving surface) kept separate");
 ok(manifest.capture_surface?.mode !== "PATH_CONTEXT_VARIANT_ONLY", "T21k", "capture surface never adjudicates duplicate_variant_status");
 
+// ---- T22 provenance regression guards (PR #658 review comment 5848677562) -------------
+console.log("\nProvenance regression guards (canonical family name + V1 Drive file ID):");
+const CANONICAL_FAMILY_NAME = "17_러브트리_글로벌셸_롤링메뉴_V1";
+const ACCEPTED_V1_DRIVE_FILE_ID = "1poPtWuzizMw8IPwPqe4wCRAO_abchewZ";
+const readbackRecord = JSON.parse(readTxt(path.join(ROOT, "evidence", "source", "drive-authority-readback.json")));
+
+// Guard 1: Canonical family folder name
+ok(manifest.codex_folder_name === CANONICAL_FAMILY_NAME, "T22a", `manifest.codex_folder_name is exact canonical (${manifest.codex_folder_name})`);
+ok(manifest.source_path?.includes(CANONICAL_FAMILY_NAME), "T22b", "manifest.source_path contains canonical family name");
+ok(ctx.codex?.family_folder_name === CANONICAL_FAMILY_NAME, "T22c", `authority-context family_folder_name is exact canonical (${ctx.codex?.family_folder_name})`);
+ok(readbackRecord.fresh_drive?.family_folder_name === CANONICAL_FAMILY_NAME, "T22d", `drive-authority-readback fresh_drive.family_folder_name is exact canonical (${readbackRecord.fresh_drive?.family_folder_name})`);
+ok(readbackRecord.duplicate_variant_enumeration?.codex_root_listing?.target_present?.startsWith(CANONICAL_FAMILY_NAME), "T22e", "drive-authority-readback codex_root_listing target_present contains canonical family name");
+for (const cand of note.candidate_table || []) {
+  ok(cand.location?.includes(CANONICAL_FAMILY_NAME), `T22f.${cand.location}`, `manifest candidate location carries canonical family name (${cand.location})`);
+}
+for (const cand of readbackRecord.duplicate_variant_enumeration?.html_candidates || []) {
+  ok(cand.location?.includes(CANONICAL_FAMILY_NAME), `T22g.${cand.location}`, `readback candidate location carries canonical family name (${cand.location})`);
+}
+const baselineRecord = JSON.parse(readTxt(path.join(ROOT, "baseline", "accepted-baseline.json")));
+ok(baselineRecord.capture?.surface?.includes(CANONICAL_FAMILY_NAME), "T22h", "accepted-baseline capture.surface carries canonical family name");
+
+// Guard 2: Accepted V1 Drive file ID across committed provenance records
+const manifestV1Cand = (note.candidate_table || []).find((c) => c.revision === "V1" || c.location?.includes("/버전1/"));
+ok(!!manifestV1Cand && manifestV1Cand.drive_file_id === ACCEPTED_V1_DRIVE_FILE_ID, "T22i", `manifest candidate table pins accepted V1 Drive file ID exactly (${manifestV1Cand?.drive_file_id})`);
+const readbackV1Cand = (readbackRecord.duplicate_variant_enumeration?.html_candidates || []).find((c) => c.revision === "V1" || c.location?.includes("/버전1/"));
+ok(!!readbackV1Cand && readbackV1Cand.file_id === ACCEPTED_V1_DRIVE_FILE_ID, "T22j", `readback candidate table pins accepted V1 Drive file ID exactly (${readbackV1Cand?.file_id})`);
+
+// Guard 3: Zero occurrences of typo "글로벌" + "셈" or corrupted V1 ID variants across capsule files
+const TYPO_FAMILY_NAME = "17_러브트리_글로벌" + "셈_롤링메뉴_V1";
+const TYPO_SEGMENT = "글로벌" + "셈";
+const CORRUPT_ID_P = "1poPtWuzizMw8IP" + "pQe4wCRAO_abchewZ";
+const CORRUPT_ID_Q = "1poPtWuzizMw8IP" + "Qe4wCRAO_abchewZ";
+
+const capsuleCheckFiles = [
+  "manifest.json",
+  "authority-context.json",
+  "baseline/accepted-baseline.json",
+  "split/materialization.json",
+  "evidence/source/drive-authority-readback.json"
+];
+for (const rel of capsuleCheckFiles) {
+  const fileTxt = readTxt(path.join(ROOT, rel));
+  ok(!fileTxt.includes(TYPO_FAMILY_NAME) && !fileTxt.includes(TYPO_SEGMENT), `T22k.${rel}`, `no typo family name in ${rel}`);
+  ok(!fileTxt.includes(CORRUPT_ID_P), `T22l.${rel}`, `no corrupted variant with 'p' in ${rel}`);
+  ok(!fileTxt.includes(CORRUPT_ID_Q), `T22m.${rel}`, `no corrupted variant with 'Q' in ${rel}`);
+}
+
+// In roundtrip.json, check that any occurrence of the target strings is strictly limited to check detail descriptions
+const rtTxt = readTxt(path.join(ROOT, "evidence/s3/roundtrip.json"));
+const rtParsed = JSON.parse(rtTxt);
+ok(rtParsed.codex_id === "CDX017", "T22n", "roundtrip.json is CDX017");
+ok(!rtTxt.includes(TYPO_FAMILY_NAME) && !rtTxt.includes(CORRUPT_ID_P) && !rtTxt.includes(CORRUPT_ID_Q), "T22o", "no corrupted IDs or typo full family name anywhere in roundtrip.json");
+
 // ---- evidence -------------------------------------------------------------------------
 const authoredOrderList = orderedOccurrences(orig);
 const evidence = {

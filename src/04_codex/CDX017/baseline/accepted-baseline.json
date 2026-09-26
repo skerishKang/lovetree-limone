@@ -24,7 +24,7 @@
   },
   "capture": {
     "stage": "S2_SOURCE_BASELINE",
-    "surface": "read-only isolated virtual root outside the repository, preserving the authored path depth 17_러브트리_글로벌셈_롤링메뉴_V1/버전4-선택/최종본.html with its own assets/ directory. No URL rewrite, no source hook, no test hook, no clock/rAF/random patch.",
+    "surface": "read-only isolated virtual root outside the repository, preserving the authored path depth 17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/최종본.html with its own assets/ directory. No URL rewrite, no source hook, no test hook, no clock/rAF/random patch.",
     "surface_local_path": "D:\\Temp\\cdx017-s2\\virtualroot\\17_러브트리_글로벌셸_롤링메뉴_V1\\버전4-선택",
     "served_from": "127.0.0.1 loopback (bounded ephemeral port)",
     "method": "Real Google Chrome 153.0.8010.54 (Playwright driver, channel chrome) over loopback HTTP",
