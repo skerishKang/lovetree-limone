@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eceaf0">
+  <title>LoveTree — Global Shell</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <main class="app" id="app" aria-label="LoveTree global shell prototype">
+    <canvas class="water-canvas" id="waterCanvas" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="header">
+      <button class="brand" id="homeBtn" type="button" aria-label="LoveTree home"><span class="brand-mark" aria-hidden="true"></span><span>LOVETREE</span></button>
+      <button class="back-btn" id="backBtn" type="button"><span>←</span> Back</button>
+      <div class="header-actions">
+        <button class="pill" id="soundBtn" type="button"><span class="sound-led"></span><span id="soundText">Sound off</span></button>
+        <button class="pill enter-memory" id="talkBtn" type="button"><span class="enter-label" id="enterLabel">Enter Biosphere</span><span class="enter-orb">↗</span></button>
+        <button class="pill primary" id="menuBtn" type="button" aria-expanded="false"><span id="menuText">Menu</span><i class="menu-dots" aria-hidden="true"></i></button>
+      </div>
+    </header>
+
+    <section class="hero" aria-live="polite">
+      <div class="massive-word" aria-hidden="true">LOVETREE</div>
+      <div class="hero-copy">
+        <div class="chapter-no" id="chapterNo">CHAPTER 01 / 04</div>
+        <h1 id="chapterTitle">Memory becomes<br>a living world.</h1>
+        <p id="chapterCopy">A quiet entrance to every person, place and promise you want to keep alive.</p>
+      </div>
+      <div class="side-note"><b>GLOBAL SHELL / V3</b>One persistent frame connects every independent LoveTree template.</div>
+      <div class="media-window" id="mediaWindow">
+        <img class="media-layer active" style="--wide-position:50% 31%;--portrait-position:49% 35%" src="assets/sphere-final-v2.png" alt="Flowering LoveTree biosphere">
+        <img class="media-layer" style="--wide-position:50% 42%;--portrait-position:51% 38%" src="assets/human-final.webp" alt="LoveTree human memory portrait">
+        <img class="media-layer" style="--wide-position:50% 38%;--portrait-position:50% 34%" src="assets/bloom-final.webp" alt="LoveTree blooming memory portrait">
+        <img class="media-layer" style="--wide-position:50% 40%;--portrait-position:50% 36%" src="assets/trace-final.webp" alt="LoveTree trace portrait">
+        <div class="media-meta"><span>Living memory interface<strong id="mediaName">Biosphere</strong></span><span id="mediaIndex">01 — 04</span></div>
+      </div>
+      <div class="orbit-card orbit-a" aria-hidden="true"><img src="assets/bloom-final.webp" alt=""></div>
+      <div class="orbit-card orbit-b" aria-hidden="true"><img src="assets/trace-final.webp" alt=""></div>
+      <div class="scroll-hint">Scroll to change chapter</div>
+      <div class="chapter-nav">
+        <div class="chapter-status" id="chapterStatus">BIOSPHERE / ONLINE</div>
+        <div class="chapter-line"><i id="chapterProgress"></i></div>
+        <div class="chapter-dots" aria-label="LoveTree chapters">
+          <button class="chapter-dot active" type="button" data-chapter="0">01</button>
+          <button class="chapter-dot" type="button" data-chapter="1">02</button>
+          <button class="chapter-dot" type="button" data-chapter="2">03</button>
+          <button class="chapter-dot" type="button" data-chapter="3">04</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="menu-scrim" id="menuScrim"></div>
+    <aside class="menu-panel" id="menuPanel" aria-hidden="true" aria-label="LoveTree template menu">
+      <div class="menu-top"><span>Selected portals</span><i aria-hidden="true"></i><span>05 routes</span><button class="menu-close" id="menuCloseBtn" type="button" aria-label="Close menu">×</button></div>
+      <nav class="menu-links">
+        <button class="menu-link" type="button" data-action="home"><span class="menu-link-index">01</span><span class="menu-link-track"><span class="menu-link-label">Home</span><span class="menu-link-label clone">Home</span></span><span class="menu-link-arrow">↗</span></button>
+        <button class="menu-link" type="button" data-path="../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html"><span class="menu-link-index">02</span><span class="menu-link-track"><span class="menu-link-label">Biosphere</span><span class="menu-link-label clone">Biosphere</span></span><span class="menu-link-arrow">↗</span></button>
+        <button class="menu-link" type="button" data-path="../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html"><span class="menu-link-index">03</span><span class="menu-link-track"><span class="menu-link-label">Memory Orbit</span><span class="menu-link-label clone">Memory Orbit</span></span><span class="menu-link-arrow">↗</span></button>
+        <button class="menu-link" type="button" data-path="../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html"><span class="menu-link-index">04</span><span class="menu-link-track"><span class="menu-link-label">Motion Archive</span><span class="menu-link-label clone">Motion Archive</span></span><span class="menu-link-arrow">↗</span></button>
+        <button class="menu-link" type="button" data-action="chapters"><span class="menu-link-index">05</span><span class="menu-link-track"><span class="menu-link-label">Living Index</span><span class="menu-link-label clone">Living Index</span></span><span class="menu-link-arrow">↗</span></button>
+      </nav>
+      <div class="menu-preview">
+        <div class="menu-preview-image"><img src="assets/sphere-final-v2.png" alt="LoveTree flowering biosphere preview"></div>
+        <div class="menu-preview-copy"><small>Next template / 18</small><strong>Fragment Loader</strong><p>Leaves, images and seeds gather into the first LoveTree mark.</p></div>
+      </div>
+      <div class="menu-footer"><span>H / Codex collection</span><span>Esc to close</span></div>
+    </aside>
+
+    <section class="index-view" id="indexView" aria-hidden="true" aria-label="LoveTree living index">
+      <header class="index-header"><span>LOVETREE / LIVING INDEX</span><span>04 MEMORY WORLDS</span><button class="index-close" id="indexCloseBtn" type="button" aria-label="Close living index">×</button></header>
+      <div class="index-intro"><div><div class="index-kicker">Choose a living route · V3</div><h2>LIVING<br>INDEX</h2></div><p>Four different entrances for people, bloom, media and memory. Each card opens its own LoveTree world instead of returning to Home.</p></div>
+      <div class="index-grid">
+        <button class="index-card" type="button" data-index="0"><img src="assets/sphere-final-v2.png" alt="Biosphere portal"><span class="index-card-no">01 / 04</span><span class="index-card-copy"><small>Living world</small><strong>Biosphere</strong><span>Enter flowering memory <b>↗</b></span></span></button>
+        <button class="index-card" type="button" data-index="1"><img src="assets/human-final.webp" alt="People archive portal"><span class="index-card-no">02 / 04</span><span class="index-card-copy"><small>People archive</small><strong>Human Trace</strong><span>Enter motion archive <b>↗</b></span></span></button>
+        <button class="index-card" type="button" data-index="2"><img src="assets/bloom-final.webp" alt="Liquid video wall portal"><span class="index-card-no">03 / 04</span><span class="index-card-copy"><small>Living media</small><strong>Liquid Bloom</strong><span>Enter infinite video wall <b>↗</b></span></span></button>
+        <button class="index-card" type="button" data-index="3"><img src="assets/trace-final.webp" alt="Memory orbit portal"><span class="index-card-no">04 / 04</span><span class="index-card-copy"><small>Memory map</small><strong>Memory Orbit</strong><span>Enter rotating index <b>↗</b></span></span></button>
+      </div>
+    </section>
+
+    <section class="portal-view" id="portalView" aria-hidden="true" aria-label="Connected LoveTree template">
+      <div class="portal-toolbar">
+        <span class="portal-toolbar-label" id="portalTitle">LoveTree portal</span>
+        <div class="portal-toolbar-actions"><a id="portalNewWindow" href="#" target="_blank" rel="noopener">Open new ↗</a><button class="portal-close" id="portalCloseBtn" type="button" aria-label="Close portal">×</button></div>
+      </div>
+      <iframe class="portal-frame" id="portalFrame" title="LoveTree connected template"></iframe>
+    </section>
+
+    <div class="loader" id="loader" aria-label="Loading LoveTree"><div class="loader-core"><div class="loader-glyph" aria-hidden="true"><i></i><i></i><i></i></div><div class="loader-count" id="loaderCount">000</div><div class="loader-label">Growing global shell · V3</div></div></div>
+    <div class="page-transition" id="pageTransition" aria-hidden="true"><div class="transition-ripple" aria-hidden="true"></div><div class="transition-word">LOVETREE</div><div class="transition-meta"><span id="transitionLabel">Opening portal</span><span id="transitionCount">000</span></div></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX017",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verified_at_utc": "2026-09-26T20:10:00Z",
+  "verified_by": "LOCAL1 - kilo-agent, under CENTRAL S3 release instruction (#589 comment 5845654192)",
+  "fresh_drive": {
+    "family_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+    "family_folder_name": "17_러브트리_글로벌셈_롤링메뉴_V1",
+    "selected_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+    "selected_folder_name": "버전4-선택",
+    "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+    "file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "filename": "최종본.html",
+    "mime_type": "text/html",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "md5": "860e960b6295fe827753571dab06ba56",
+    "status": "LOCKED"
+  },
+  "transport": {
+    "tool": "rclone (Windows-native)",
+    "remote": "gdrive:",
+    "method": "lsjson folder enumeration by Drive folder id; copyto download by --drive-root-folder-id; local SHA-256 and MD5 over the downloaded bytes",
+    "advisory_notice": "gdrive: this remote uses rclone's shared Google Drive client_id, which is being retired during 2026. The notice is emitted on every call; every read in this run succeeded.",
+    "note": "Read-only. No Drive object was created, modified, moved, renamed or deleted in this run. DRIVE_MUTATION=0."
+  },
+  "authority_reverification": {
+    "drive_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+    "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "filename": "최종본.html",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "md5": "860e960b6295fe827753571dab06ba56",
+    "revision": "V4 (버전4-선택)",
+    "byte_identity_vs_s2_lock": "MATCH",
+    "sha256_identity_vs_s2_lock": "MATCH",
+    "sha256_identity_vs_capsule_original": "MATCH",
+    "authority_drift_since_s2": "NO"
+  },
+  "duplicate_variant_enumeration": {
+    "purpose": "Evidence bar per docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §4.1. Fresh S3 readback: authority re-download and re-hash, full family enumeration, every sibling HTML revision downloaded and hashed, and the four source-owned assets re-downloaded and re-hashed.",
+    "reverified_at_utc": "2026-09-26T20:10:00Z",
+    "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+    "codex_root_listing": {
+      "folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+      "subfolder_count": 28,
+      "target_present": "17_러브트리_글로벌셈_롤링메뉴_V1 = 1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+      "note": "Enumerated to prove the family folder's position in the Codex tree and to confirm the 13/14/15/68 portal destination families exist as separate Codex folders. No other folder in the Codex root carries a CDX-17 identity."
+    },
+    "family_folder_listing": {
+      "folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+      "object_count": 8,
+      "objects": [
+        {
+          "type": "FILE",
+          "name": "17_러브트리_글로벌셸_롤링메뉴_V1.mp4",
+          "file_id": "1BOEULvaBTZHIabzMNTKtcbt2NBqXRUkt",
+          "bytes": 36824716,
+          "disposition": "NOT_AUTHORITY",
+          "note": "owner review recording"
+        },
+        {
+          "type": "DIR",
+          "name": "버전1",
+          "folder_id": "1wrm087og9jFxZq-lh5qpi2RWCAK-IZHs",
+          "html_count": 1
+        },
+        {
+          "type": "DIR",
+          "name": "버전2",
+          "folder_id": "1Y7P641LNFGpMMF-n8gSQC4gl0WJgTwNM",
+          "html_count": 1
+        },
+        {
+          "type": "DIR",
+          "name": "버전3",
+          "folder_id": "1wD3_aORUzhyjbEgmZ7r5JTDvkCk8z75f",
+          "html_count": 1
+        },
+        {
+          "type": "DIR",
+          "name": "버전4-선택",
+          "folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+          "html_count": 1
+        },
+        {
+          "type": "FILE",
+          "name": "참고영상1.mp4",
+          "file_id": "1tyGENIeAoJAyjb4OH_FAJry6NkjAU08W",
+          "bytes": 355574061,
+          "disposition": "NOT_AUTHORITY",
+          "note": "reference recording"
+        },
+        {
+          "type": "FILE",
+          "name": "참고영상2-세로.mp4",
+          "file_id": "1dCtwvkKRNVTwjbplwdGwzI1F1tgeBT9I",
+          "bytes": 170736311,
+          "disposition": "NOT_AUTHORITY",
+          "note": "reference recording"
+        },
+        {
+          "type": "FILE",
+          "name": "최종본.html",
+          "file_id": "1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp",
+          "bytes": 50866,
+          "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+          "md5": "860e960b6295fe827753571dab06ba56",
+          "content_relation_to_authority": "BYTE_IDENTICAL",
+          "disposition": "NOT_AUTHORITY",
+          "note": "Family-root duplicate of the selected authority. Downloaded and hashed in this run. Never substituted for the selected-folder object."
+        }
+      ]
+    },
+    "selected_folder_listing": {
+      "folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+      "top_level_object_count": 20,
+      "recursive_object_count": 35,
+      "html_count": 1,
+      "source_owned_design_documents": [
+        "00_결과물설명.md",
+        "01_디자인설계.md",
+        "02_기능과포털연결.md",
+        "03_제작내용.md",
+        "04_QA.md",
+        "05_사운드비교분석.md"
+      ],
+      "qa_screenshots": 9,
+      "subfolders": [
+        "assets (1huZQWIA6BrnJ_nTwyMpy8H7daPtCm4qE)",
+        "검수영상 (1A04VuyxajkPaFIV8kbIqiJeI_GU2vWgL)",
+        "분석자료 (1WHBaZF7JCbyr-aqUlbkoXwd81_LThVbK)",
+        "참고영상 (1_5q51mZ7Z-gAkjs8CHSMrrXb8_jIs-Em)"
+      ],
+      "note": "Exactly one executable HTML object lives in the selected folder. The other HTML-like bytes in the family are the family-root duplicate and the three version siblings, all enumerated above."
+    },
+    "assets_folder_listing": {
+      "folder_id": "1huZQWIA6BrnJ_nTwyMpy8H7daPtCm4qE",
+      "object_count": 4,
+      "total_bytes": 2722226,
+      "note": "These four files are the complete set of runtime-required local assets for the authority. All four are source-owned (they live inside the authority's own selected folder), which is what makes this capsule STANDALONE_AUTHORITY_SURFACE rather than context-aware. All four were downloaded and hashed in this run."
+    },
+    "html_candidates": [
+      {
+        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/버전4-선택/최종본.html",
+        "file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+        "bytes": 50866,
+        "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+        "md5": "860e960b6295fe827753571dab06ba56",
+        "revision": "V4",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/최종본.html",
+        "file_id": "1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp",
+        "bytes": 50866,
+        "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+        "md5": "860e960b6295fe827753571dab06ba56",
+        "revision": "V4",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "DUPLICATE COPY per §3.1 (identical SHA-256 at a distinct file id). Counted as a second candidate, which is why §2.3 step 1 fails and step 2 closes the adjudication."
+      },
+      {
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전1/최종본.html",
+        "file_id": "1poPtWuzizMw8IPQe4wCRAO_abchewZ",
+        "bytes": 28870,
+        "sha256": "deeb0fdb954f40b7991d58e8c59447a508b23afb1676dbb7007fbe82ae381ca0",
+        "md5": "80b7ae0eae9d90dae8a5e51e7b14845c",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "SUPERSEDED_REVISION. Downloaded and hashed in this run."
+      },
+      {
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전2/최종본.html",
+        "file_id": "1xt3qcZeIhaPrFwQlwfV-C4jdT4W0rdRG",
+        "bytes": 42790,
+        "sha256": "c0389ee1f1b352aa998d54c8738ff5ea82a307c08c9ec00080472cb0b071b496",
+        "md5": "584d39d805a2f9bf1913a83873dd3691",
+        "revision": "V2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "SUPERSEDED_REVISION. Downloaded and hashed in this run."
+      },
+      {
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전3/최종본.html",
+        "file_id": "16_rFuz7e_Cfn8IWJglgNDDoh7ymwdYb7",
+        "bytes": 48368,
+        "sha256": "6a11833fcceb0320b46213f5f3e6fab5988c981aaa580fa79738307cf571f3c0",
+        "md5": "91758ffaf2350b647de23102127e0ca1",
+        "revision": "V3",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "SUPERSEDED_REVISION. Downloaded and hashed in this run."
+      }
+    ],
+    "source_owned_assets": [
+      {
+        "name": "sphere-final-v2.png",
+        "file_id": "1OqoStqs_713VrWXJOHmR4y5cvVTnj5kX",
+        "bytes": 2217886,
+        "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+        "md5": "16f351b388c6b4562abeb4b2a9f5ce47",
+        "disposition": "VENDORED_BYTE_EXACT",
+        "reference": "referenced 4x in the authority markup"
+      },
+      {
+        "name": "human-final.webp",
+        "file_id": "1fNFjekC7ftWt-Do32VUPD_9nAf8HOOdd",
+        "bytes": 144840,
+        "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+        "md5": "fdac62f2f1fc9096054977f1de242965",
+        "disposition": "VENDORED_BYTE_EXACT",
+        "reference": "referenced 2x in the authority markup"
+      },
+      {
+        "name": "bloom-final.webp",
+        "file_id": "1YJFwRjuEz-KiwMFhPicRJto_kDu7KN9T",
+        "bytes": 194886,
+        "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+        "md5": "530c2a84cc6e46c8ada762b34b921524",
+        "disposition": "VENDORED_BYTE_EXACT",
+        "reference": "referenced 3x in the authority markup"
+      },
+      {
+        "name": "trace-final.webp",
+        "file_id": "1hO0rC1KK1g9P-X1zGxWSVUbb0p5yxwXH",
+        "bytes": 164614,
+        "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+        "md5": "3dd8517cdddbd354b899026a65b0e5e9",
+        "disposition": "VENDORED_BYTE_EXACT",
+        "reference": "referenced 2x in the authority markup"
+      }
+    ],
+    "portal_destination_families": [
+      {
+        "path_authored": "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
+        "label": "Biosphere",
+        "family_folder_id": "11LDezfRzEddRPhIPNER3VZme1tsJkOOp",
+        "revision_folder_id": "1tz9t4_y-GC1zxE5OMVqgYMTpgPcxPkNC",
+        "file_id": "173b3LiSAIGx358fiMiCJFSXvYxCBMz7_",
+        "bytes": 26655,
+        "classification": "PORTAL_DESTINATION_ONLY",
+        "vendored": false
+      },
+      {
+        "path_authored": "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html",
+        "label": "Memory Orbit",
+        "family_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+        "location_detail": "family ROOT object (not the v1 subfolder CDX014 pins)",
+        "file_id": "1F2cN40KjDAQjkPuYHVWF93He1JxNqORs",
+        "bytes": 28927,
+        "sha256": "1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b",
+        "classification": "PORTAL_DESTINATION_ONLY",
+        "vendored": false
+      },
+      {
+        "path_authored": "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html",
+        "label": "Liquid Bloom",
+        "family_folder_id": "1dLoDw59NCFUn06VlCrjTmgSHsigyKgFf",
+        "classification": "PORTAL_DESTINATION_ONLY",
+        "vendored": false,
+        "note": "Contains a 최종본.html. Not re-hashed in this S3 lane; the shell never needs its bytes to render its own surface."
+      },
+      {
+        "path_authored": "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
+        "label": "Human Trace",
+        "classification": "PORTAL_DESTINATION_ONLY",
+        "vendored": false,
+        "note": "Existence on Drive was not independently re-read in this S3 lane; the source-owned 04_QA.md asserts all four destination files exist. This is the same honest gap recorded in S2 (HOLD-2) and it is a destination-side fact, not a CDX017 S3 blocker."
+      }
+    ],
+    "negative_claim": "The V4 authority bytes occur exactly twice in the enumerated scope: as the selected-folder object 1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M and as the byte-identical family-root copy 1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp. No third V4 object and no content-different V4 variant exists. The remaining three HTML objects are content-different superseded revisions V1, V2 and V3, each in its own version subfolder, and each downloaded and hashed in this run. Every non-HTML family object is a review/QA recording, a QA screenshot, a source-owned design document or a non-executable subfolder.",
+    "gap": null
+  },
+  "s2_capture_cross_check": {
+    "authority_sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "identical_to_s2_locked_authority": true,
+    "asset_hashes_identical_to_s2_capture_mirror": true,
+    "note": "All four asset digests recomputed here match the digests recorded in the accepted S2 evidence manifest (evidence-manifest.csv / state-records.json authoritySha256) exactly, so the S3 capsule bytes are the S2-accepted bytes."
+  }
+}

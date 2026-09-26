@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.1",
+  "codex_id": "CDX017",
+  "codex_folder_name": "17_러브트리_글로벌셈_롤링메뉴_V1",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/코덱스/17_러브트리_글로벌셈_롤링메뉴_V1/버전4-선택/최종본.html",
+  "authority": {
+    "drive_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+    "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+    "family_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+    "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "filename": "최종본.html",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "md5": "860e960b6295fe827753571dab06ba56",
+    "revision": "V4 (버전4-선택)",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST102"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "authority_context_note": "CDX017 is a STANDALONE_AUTHORITY_SURFACE capsule (S2-accepted classification, #589 comment 5845654192). Every source-defining state of the shell renders from the locked authority plus the four assets that live inside its own selected folder (버전4-선택/assets), so the capsule vendors exactly those four files byte-exact under original/assets/ and split/assets/ with ZERO URL rewrites. The four authored downstream portal destinations are PORTAL_DESTINATION_ONLY: their relative paths are preserved byte for byte and their target corpora are deliberately NOT vendored (CENTRAL: S3 does not need to vendor the four downstream portal target corpora). Consequently the shell-owned runtime surface at the repository path IS runtime-equivalent for the loader, all four chapters, wheel, keyboard, menu, Living Index, sound, pointer parallax, water, home and the portal transition/open/close chrome; the portal iframe body itself resolves to 404 at the repository path for BOTH original and split, exactly as it did in the accepted S2 capture where the four targets were intentionally left unhydrated. This is a recorded serving fact, not a source defect and not a parity claim.",
+  "capture_surface": {
+    "mode": "STANDALONE_AUTHORITY_SURFACE",
+    "reason": "SOURCE_OWNED_ASSETS_COMPLETE_IN_FAMILY_FOLDER",
+    "required_serving": "CAPSULE_LOCAL_ASSETS_DIRECTORY",
+    "canonical_layout_ref": "authority-context.json#/serving_contract",
+    "repository_original_surface_runtime_equivalent": true,
+    "repository_split_surface_runtime_equivalent": true,
+    "runtime_equivalence_scope": "SHELL_OWNED_SURFACE_ONLY",
+    "runtime_equivalence_exclusion": "The four authored portal destination documents are not vendored, so the portal iframe body is not available at the repository path. Shell-owned portal chrome (clip-path transition, rAF counter, toolbar title, Open new href, close and src reset) is fully in-surface and parity-comparable.",
+    "shared_harness_disposition": {
+      "capture-source-baseline.mjs": "OUT_OF_SCOPE",
+      "capture-source-parity.mjs": "OUT_OF_SCOPE",
+      "materialize-mechanical-split.mjs": "OUT_OF_SCOPE",
+      "validate-mechanical-split.mjs": "OUT_OF_SCOPE",
+      "reason": "NOT_A_FAIL_CLOSED_SKIP",
+      "detail": "All four shared scripts enumerate only src/03_sources directories matching ^SRC\\d{3}$ and therefore never address src/04_codex/CDX017. Unlike CDX014 (CONTEXT_AWARE_ONLY, whose repository path is NOT a runtime surface and which records an explicit SKIP), CDX017 needs no skip disposition: its repository original and split surfaces ARE runtime surfaces once served with their own assets/ directory. No shared harness file was modified and no skip was fabricated.",
+      "s3_evidence_executor": "src/04_codex/CDX017/tests/s3-roundtrip.test.mjs"
+    },
+    "note": "S4 parity is NOT started and NOT claimed by this capsule. Per the S2 nondeterminism contract (#589 comment 5845654192) raw PNG byte equality is not a valid S4 acceptance rule for this source, and no SSIM / perceptual / pixel threshold is proposed or recorded here. S4 will compare ORIGINAL vs SPLIT using source-specific structural/state/geometry parity plus a CENTRAL-approved bounded visual method, under a separate S4 release."
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "rendering": "css3d-four-chapter-rolling-global-shell-with-water-canvas",
+    "scenario_id": "global-shell-rolling-menu",
+    "classification": "REFERENCE_CAPABILITY_ONLY",
+    "adoption": "SOURCE_REFERENCE_ONLY",
+    "lifecycle": "EXECUTABLE_FINGERPRINT_PINNED",
+    "backend_scope": "BACKEND_FREE",
+    "qa_hook": null,
+    "qa_hook_note": "No source-native QA hook exists. S2 assertions were DOM / geometry / computed-style / runtime-snapshot based. No test-only hook, global animation disable, Date freeze, performance.now patch, requestAnimationFrame patch or Math.random override was used or injected.",
+    "inline_style_block_count": 1,
+    "inline_script_block_count": 1,
+    "attributed_or_external_script_tags": 0,
+    "external_stylesheet_tags": 0,
+    "external_network_dependencies": 0,
+    "external_network_dependencies_note": "The only http(s)-shaped string in the authority is the SVG namespace URI http://www.w3.org/2000/svg inside the inline data:-URI turbulence grain. There is no external font, script, stylesheet, XHR, fetch or media dependency.",
+    "source_owned_local_assets": 4,
+    "source_owned_local_asset_bytes": 2722226,
+    "source_owned_local_asset_refs_in_markup": 11,
+    "preview_helper_query_modes": [
+      "menu",
+      "index",
+      "water",
+      "portal",
+      "portalopen"
+    ],
+    "preview_helper_note": "Authoring aids only. They set loader.style.display='none' and, for preview=index, force inline transition:none plus immediate visibility, so they bypass the loader and produce a jump-cut. They are NOT S4 acceptance authority. Preserved unchanged; no cleanup performed.",
+    "interaction_surface": [
+      "wheel-chapter-nav",
+      "keydown-ArrowLeft-ArrowRight",
+      "keydown-Escape",
+      "keydown-m",
+      "menu-open-close",
+      "living-index-open-close",
+      "portal-transition-open-close",
+      "sound-toggle-persisted",
+      "home-reset",
+      "back-button",
+      "pointermove-parallax-and-water",
+      "pageshow-visibilitychange-sound-recovery"
+    ],
+    "frozen_defects": [
+      {
+        "id": "D1",
+        "name": "header Back button runs history.back() and can leave the shell",
+        "disposition": "PRESERVED",
+        "note": "When history.length>1 (a normal first tab load already has length 2 because of about:blank + the page), the Back button calls history.back() instead of the intended setChapter(0) fallback. S2 proved this: performance.timeOrigin changed and location.href became about:blank, destroying the shell document. The setChapter(0) fallback is unreachable through ordinary navigation. DO NOT FIX."
+      },
+      {
+        "id": "D2",
+        "name": "prefers-reduced-motion does not reduce loader, chapter, keyboard, portal-transition or sound timing",
+        "disposition": "PRESERVED",
+        "note": "Reduced motion is implemented in two places only: a CSS media block that collapses animation/transition durations to .01ms, and one JS guard inside addFlow(). Loader rAF timing, the 950ms+170ms gate, chapter navigation, keyboard input, the 900ms portal rAF tick, the 780/470ms timeouts and sound scheduling are all unaffected. S2 measured the reduced-motion portal rAF counter at 048 where the normal run read 049 at the same 430ms mark. DO NOT FIX."
+      },
+      {
+        "id": "D3",
+        "name": "pointermove pushes water ripples directly, bypassing the addFlow reduced-motion guard",
+        "disposition": "PRESERVED",
+        "note": "addFlow() returns early under reduced motion, but the pointermove handler pushes {kind:'ripple'} marks straight onto waterMarks, so residual animated water still draws. S2 measured 824 non-transparent canvas samples under prefers-reduced-motion:reduce versus 4900 in a normal-motion run. DO NOT FIX."
+      },
+      {
+        "id": "D4",
+        "name": "no focus management when menu, Living Index or portal opens",
+        "disposition": "PRESERVED",
+        "note": "Opening an overlay never moves focus into the panel, and Escape-driven closing leaves focus unchanged. S2 observed document.activeElement still on menuBtn, the menu link and talkBtn respectively at the open states. DO NOT FIX."
+      },
+      {
+        "id": "D5",
+        "name": "aria-hidden panels stay keyboard reachable (no inert, no focus trap)",
+        "disposition": "PRESERVED",
+        "note": "Closed panels carry aria-hidden=true while their buttons remain tabbable, and the document exposes 22 tabbable controls in every captured state. The authority declares no tabindex attributes at all. DO NOT FIX."
+      },
+      {
+        "id": "D6",
+        "name": "rolling-label duplication pollutes accessible names",
+        "disposition": "PRESERVED",
+        "note": "Each label is rendered twice for the rolling animation, so button accessible names read HomeHome, '01HomeHome' and '01 / 04Living worldBiosphere'. S2 captured the doubled label list verbatim. DO NOT FIX."
+      },
+      {
+        "id": "D7",
+        "name": "the back affordance disappears below 900px with no mobile alternative",
+        "disposition": "PRESERVED",
+        "note": "CSS media max-width:900px sets .back-btn display:none. S2 measured a 0x0 backBtn box at both 390x844 and 320x720. DO NOT FIX."
+      },
+      {
+        "id": "D8",
+        "name": "cursor:none is unconditional on fine pointers and the replacement tracks pointermove only",
+        "disposition": "PRESERVED",
+        "note": ".app{cursor:none} applies to every fine-pointer device, and the custom cursor element is driven only by pointer events, so a keyboard-only user gets no usable pointer affordance. pointer:coarse is the only escape. DO NOT FIX."
+      },
+      {
+        "id": "D9",
+        "name": "body user-select:none disables text selection everywhere",
+        "disposition": "PRESERVED",
+        "note": "Selection is disabled document-wide, including the Living Index descriptive copy. DO NOT FIX."
+      },
+      {
+        "id": "D10",
+        "name": "preview query helpers mutate inline styles and are not acceptance authority",
+        "disposition": "PRESERVED",
+        "note": "?preview=menu|index|water|portal|portalopen set loader.style.display='none' and preview=index also forces inline transition:none plus immediate visibility, so those states are jump-cuts that bypass the authored loader and transition. They are authoring aids; S4 must compare against the non-preview states. DO NOT FIX and DO NOT clean up."
+      }
+    ]
+  },
+  "duplicate_variant_note": {
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md (§2.3 ordered test, §3.1 criteria, §4.1 evidence, §4.2 record location, §5 vocabulary, §7 fail-closed gate)",
+    "adjudicated_at_utc": "2026-09-26T20:10:00Z",
+    "adjudicated_by": "LOCAL1 — S3 mechanical capsule lane, under CENTRAL S3 release (#589 comment 5845654192)",
+    "closing_step": "step 2 — identical SHA-256",
+    "closing_step_basis": "Step 1 of §2.3 fails: two candidate objects can serve as the executable authority, because a byte-identical copy of the authority exists at the family-folder root. Step 2 closes: the two objects share SHA-256 28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f at 50866 bytes, so per §3.1 the second object is a DUPLICATE COPY, not a variant and not a competing revision. The sibling folders 버전1 / 버전2 / 버전3 each contain a content-different 최종본.html and are REVISION_HISTORY, dispositioned NOT_AUTHORITY.",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-26T20:10:00Z",
+      "verified_by": "LOCAL1 — kilo-agent, under CENTRAL S3 release instruction (#589 comment 5845654192)",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK"
+    },
+    "authority_reverification": {
+      "drive_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+      "drive_folder_name": "버전4-선택",
+      "family_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+      "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+      "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+      "bytes": 50866,
+      "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+      "md5": "860e960b6295fe827753571dab06ba56",
+      "revision": "V4 (버전4-선택)",
+      "status": "LOCKED"
+    },
+    "candidate_table": [
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+        "drive_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/버전4-선택/",
+        "bytes": 50866,
+        "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+        "md5": "860e960b6295fe827753571dab06ba56",
+        "revision": "V4",
+        "content_relation_to_authority": "AUTHORITY",
+        "disposition": "AUTHORITY"
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp",
+        "drive_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/ (family root)",
+        "bytes": 50866,
+        "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+        "md5": "860e960b6295fe827753571dab06ba56",
+        "revision": "V4",
+        "content_relation_to_authority": "BYTE_IDENTICAL",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this same fresh S3 readback run. Byte-identical to the selected authority at a distinct Drive file id, so per §3.1 it is a duplicate copy. It is retained here as evidence and is never substituted for the selected-folder object, which remains the capture identity for the whole lane."
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1poPtWuzizMw8IPpQe4wCRAO_abchewZ",
+        "drive_folder_id": "1wrm087og9jFxZq-lh5qpi2RWCAK-IZHs",
+        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/버전1/",
+        "bytes": 28870,
+        "sha256": "deeb0fdb954f40b7991d58e8c59447a508b23afb1676dbb7007fbe82ae381ca0",
+        "md5": "80b7ae0eae9d90dae8a5e51e7b14845c",
+        "revision": "V1",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this fresh S3 readback run. SUPERSEDED_REVISION: an earlier version executable, not a competing V4 object."
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "1xt3qcZeIhaPrFwQlwfV-C4jdT4W0rdRG",
+        "drive_folder_id": "1Y7P641LNFGpMMF-n8gSQC4gl0WJgTwNM",
+        "location": "17_러브트리_글로벌셈_롤링메뉴_V1/버전2/",
+        "bytes": 42790,
+        "sha256": "c0389ee1f1b352aa998d54c8738ff5ea82a307c08c9ec00080472cb0b071b496",
+        "md5": "584d39d805a2f9bf1913a83873dd3691",
+        "revision": "V2",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this fresh S3 readback run. SUPERSEDED_REVISION."
+      },
+      {
+        "filename": "최종본.html",
+        "drive_file_id": "16_rFuz7e_Cfn8IWJglgNDDoh7ymwdYb7",
+        "drive_folder_id": "1wD3_aORUzhyjbEgmZ7r5JTDvkCk8z75f",
+        "location": "17_러브트리_글로벌셸_롤링메뉴_V1/버전3/",
+        "bytes": 48368,
+        "sha256": "6a11833fcceb0320b46213f5f3e6fab5988c981aaa580fa79738307cf571f3c0",
+        "md5": "91758ffaf2350b647de23102127e0ca1",
+        "revision": "V3",
+        "content_relation_to_authority": "DIFFERENT_CONTENT",
+        "disposition": "NOT_AUTHORITY",
+        "note": "Downloaded and hashed in this fresh S3 readback run. SUPERSEDED_REVISION."
+      }
+    ],
+    "negative_claim": "The enumerated scope is the Codex root 1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY (28 subfolders, 17_러브트리_글로벌셸_롤링메뉴_V1 present), the family folder 1KMOherrqWBDnts6adjImMDMs8NwMJAKv (8 objects), the selected folder 10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff (20 objects, 35 objects recursive) and its assets folder 1huZQWIA6BrnJ_nTwyMpy8H7daPtCm4qE (4 objects). Every HTML object in the family was downloaded and hashed in this run: exactly four distinct byte streams exist, and the V4 authority bytes occur exactly twice - once as the selected-folder object 1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M and once as the byte-identical family-root copy 1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp. No third V4 object, no content-different V4 variant and no COMPETING_V4 exists. The remaining family objects are three review/QA MP4 recordings, nine QA PNG screenshots, four source-owned design documents and three non-executable subfolders.",
+    "open_state": null,
+    "addendum_task": "LOCAL 1 addendum outstanding: none for CDX017. All five HTML candidates and all four source-owned assets are hashed in the committed readback record.",
+    "special_notes": [
+      "Two independent adjudications are kept separate on this manifest. duplicate_variant_status answers Question A (is the authority bytes duplicated?) and closes at step 2 with DUPLICATE_COPY_SAME_SHA. capture_surface answers Question B (is the repository path runtime-equivalent?) and closes STANDALONE_AUTHORITY_SURFACE, because unlike CDX014 the four runtime-required assets live inside the authority's own folder and are therefore vendored byte-exact. Per the governance rule, Question B never adjudicates duplicate_variant_status.",
+      "The source-owned document 04_QA.md records the author's own save path as 17_러브트리_글로벌셸_롤링메뉴_V1/버전4 while the live Drive object is the subfolder 버전4-선택. That is a naming variance inside the source's own documentation. It is recorded, not corrected, and it is not a duplicate-variant question.",
+      "The shell's 'Memory Orbit' Enter destination resolves to the 14_러브트리_로테이팅메모리인덱스_V1 family ROOT 최종본.html (drive_file_id 1F2cN40KjDAQjkPuYHVWF93He1JxNqORs, 28927 B, sha256 1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b), which is NOT the object CDX014 pins (13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ/v1/최종본.html, 19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361). Recorded for CENTRAL cross-lane awareness only. No action, no substitution, no adjudication in this lane.",
+      "MST102 resolution to CDX017 is recorded in src/02_master/MST102/record.json with EXPLICIT_LEDGER_PROVENANCE (design-intake/master-design-coverage.json row master_id=102, master_filename 'Codex-17 Global Shell Rolling Menu', product_job SHELL); it is not numeric inference from the folder name.",
+      "CDX017 is S0-S3 COMPLETE. S4 parity is NOT started, no parity evidence exists in this capsule, and no parity acceptance is claimed."
+    ]
+  },
+  "s2_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5845654192 (CDX017 S2 acceptance / S3 release)",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5845654192",
+  "s4_status": "NOT_RELEASED",
+  "product_adoption": false,
+  "product_canonical": false
+}

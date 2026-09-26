@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX017",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "source_candidate": {
+    "branch": "feat/589-cdx017-s3-mechanical-capsule",
+    "generation_input_head": "562b7b67514b52d485d26933c7571b0183cedc2a",
+    "provenance_field_note": "generation_input_head is the repository HEAD checked out from origin/main when this mechanical split was generated locally. It is not the PR exact head and cannot be recorded here: the final PR head only exists after this file is committed, so embedding it would be self-referential and never true. Exact-head acceptance is external to the capsule and is established by the GitHub PR record and CI at the PR head.",
+    "generation_method": "LOCAL_MATERIALIZER_ALGORITHM_REPRODUCTION",
+    "materializer_note": "The shared src/08_harness/materialize-mechanical-split.mjs enumerates only src/03_sources directories matching ^SRC\\d{3}$, so it cannot address src/04_codex/CDX017. This capsule was generated through the byte-for-byte identical algorithm (same glue strings <link rel=\"stylesheet\" href=\"./styles.css\"/> and <script src=\"./script.js\"></script>, same slice logic, same round-trip assertion) reproduced locally. No shared harness file was modified. The committed source-local tests/s3-roundtrip.test.mjs re-derives every boundary independently and proves the byte round-trip identity.",
+    "materializer_result": "LOCAL_ALGORITHM_REPRODUCTION - the shared materializer was NOT run for this capsule. The equivalent label from its output format would be SRC_MECHANICAL_SPLIT_CANDIDATE_PASS=CDX017.",
+    "artifact_path": "src/04_codex/CDX017/split",
+    "ci_exact_head_reproduction": "OUT_OF_SCOPE_SEE_PROVENANCE_FIELD_NOTE"
+  },
+  "authority": {
+    "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "filename": "최종본.html",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f"
+  },
+  "boundaries": {
+    "note": "character offsets into the UTF-8 string, identical to materializer contract",
+    "style_open": 259,
+    "style_close": 20872,
+    "script_open": 29831,
+    "script_close": 50507,
+    "script_blocks": [
+      {
+        "open": 29831,
+        "close": 50507,
+        "length": 20668
+      }
+    ],
+    "script_gaps": []
+  },
+  "glue": {
+    "css_link": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "script_src": "<script src=\"./script.js\"></script>"
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 9467,
+      "sha256": "b64220f1fd4ae547a93df9930a6d1364e9e23657d97366682f6c8fe2ddc22e22",
+      "git_blob_sha1": "86e4ce2314d34dc4fb418c1223835c23314208ee"
+    },
+    "split/styles.css": {
+      "bytes": 20606,
+      "sha256": "e20352d19a4fcd53b939b4c2b7866b3b77c86af8311387a44d1eb8d372610f1e",
+      "git_blob_sha1": "80249653d71ea41458767e2054d6a36713739f89"
+    },
+    "split/script.js": {
+      "bytes": 20840,
+      "sha256": "e141a9eeb5cedee051c2e870f4f9618c871a3ef89def949d6ee42fb278db5644",
+      "git_blob_sha1": "ad0dc4ead7fec9ab7589125259aeccf18e07da04"
+    }
+  },
+  "assets": {
+    "policy": "SOURCE_OWNED_RUNTIME_ASSETS_VENDORED_BYTE_EXACT",
+    "reason": "The four runtime-required local assets live inside the authority's own selected folder (버전4-선택/assets), so this capsule is STANDALONE_AUTHORITY_SURFACE. They are copied byte-for-byte with zero re-encoding, zero resizing, zero format change and zero URL rewrite. original/assets/ and split/assets/ are byte-identical to each other so that both the original and the split surface resolve their authored relative asset paths from the repository path without any rewrite.",
+    "referenced_filename_count": 4,
+    "markup_reference_count": 11,
+    "total_bytes": 2722226,
+    "entries": {
+      "sphere-final-v2.png": {
+        "bytes": 2217886,
+        "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+        "split": {
+          "bytes": 2217886,
+          "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+          "git_blob_sha1": "bbb5323a01c81d03cc08eedba13c4ac95b1952e1"
+        },
+        "split_original_copy": {
+          "bytes": 2217886,
+          "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+          "git_blob_sha1": "bbb5323a01c81d03cc08eedba13c4ac95b1952e1"
+        },
+        "original_equals_split": true
+      },
+      "human-final.webp": {
+        "bytes": 144840,
+        "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+        "split": {
+          "bytes": 144840,
+          "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+          "git_blob_sha1": "77bbd6af201861932d0b112736fb9ca9fa7edaa7"
+        },
+        "split_original_copy": {
+          "bytes": 144840,
+          "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+          "git_blob_sha1": "77bbd6af201861932d0b112736fb9ca9fa7edaa7"
+        },
+        "original_equals_split": true
+      },
+      "bloom-final.webp": {
+        "bytes": 194886,
+        "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+        "split": {
+          "bytes": 194886,
+          "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+          "git_blob_sha1": "d83af22406fe5262c2fe4cac24bebe208013b41c"
+        },
+        "split_original_copy": {
+          "bytes": 194886,
+          "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+          "git_blob_sha1": "d83af22406fe5262c2fe4cac24bebe208013b41c"
+        },
+        "original_equals_split": true
+      },
+      "trace-final.webp": {
+        "bytes": 164614,
+        "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+        "split": {
+          "bytes": 164614,
+          "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+          "git_blob_sha1": "f137a63e20c65966df0d6d378a19a76a329cd228"
+        },
+        "split_original_copy": {
+          "bytes": 164614,
+          "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+          "git_blob_sha1": "f137a63e20c65966df0d6d378a19a76a329cd228"
+        },
+        "original_equals_split": true
+      }
+    },
+    "vendored_into_repository": true,
+    "reencoded": false,
+    "rewritten": false
+  },
+  "round_trip_evidence": {
+    "method": "src/04_codex/CDX017/tests/s3-roundtrip.test.mjs (source-local, no browser)",
+    "original_sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "reconstructed_sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "original_bytes": 50866,
+    "reconstructed_bytes": 50866,
+    "byte_identical": true
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "portal_relative_path_rewritten": false,
+    "asset_url_rewritten": false,
+    "asset_reencoded": false,
+    "sibling_portal_authority_substituted": false,
+    "iframe_target_rewritten": false,
+    "a11y_or_focus_behavior_modified": false,
+    "reduced_motion_behavior_modified": false,
+    "back_history_behavior_modified": false,
+    "preview_helper_cleaned_up": false,
+    "source_defect_repaired": false,
+    "tsx_or_jsx_introduced": false,
+    "ts_or_jsx_file_in_split_surface": false
+  },
+  "context_contract": {
+    "authority_context_ref": "../authority-context.json",
+    "runtime_context_required": false,
+    "local_asset_prefix": "assets/",
+    "local_asset_entries_vendored": 4,
+    "local_asset_entries_pinned": 4,
+    "preservation_invariant": "The exact set of 11 authored img src strings in original/original.html must equal the exact set in split/index.html, byte for byte, and each must resolve against a vendored assets/ directory whose file bytes are SHA-256 identical to the authority's own Drive objects.",
+    "portal_relative_path_invariant": "The exact set of four authored portal relative HTML path strings in original/original.html must equal the exact set in split/script.js, byte for byte, in the same order. None may be rebased, shortened, absolutized or replaced.",
+    "verification_ref": "../evidence/s3/roundtrip.json"
+  },
+  "parity_status": "NOT_STARTED",
+  "parity_ref": null,
+  "next_stage": "S4_PARITY_PENDING_CENTRAL_RELEASE",
+  "next_stage_note": "S4 is NOT released for CDX017 and no parity evidence, comparison, verdict or acceptance metadata exists in this capsule. Per the S2 nondeterminism contract, raw PNG byte equality is not a valid S4 acceptance rule for this source and no pixel/SSIM/perceptual threshold is proposed or recorded here.",
+  "frozen_defect_ids_preserved": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D7",
+    "D8",
+    "D9",
+    "D10"
+  ]
+}
