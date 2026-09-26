@@ -716,18 +716,18 @@ async function goReady(page) {
 const LOADER_SELECTOR = "#loader";
 
 async function readSettleSample(page, predicates) {
-  return page.evaluate((wanted) => {
+  return page.evaluate(({ wanted, loaderSelector }) => {
     const out = {};
     for (const { selector, property } of wanted) {
       const element = document.querySelector(selector);
       out[`${selector}|${property}`] = element ? getComputedStyle(element)[property] : "ABSENT";
     }
-    const loader = document.querySelector(LOADER_SELECTOR);
-    out[`${LOADER_SELECTOR}|__terminal`] = loader
+    const loader = document.querySelector(loaderSelector);
+    out[`${loaderSelector}|__terminal`] = loader
       ? (getComputedStyle(loader).opacity === "0" && getComputedStyle(loader).visibility === "hidden" ? "DONE" : "BUSY")
       : "ABSENT";
     return out;
-  }, predicates);
+  }, { wanted: predicates, loaderSelector: LOADER_SELECTOR });
 }
 
 async function waitForStateSettled(page, stateId, timeoutMs = 8000) {
