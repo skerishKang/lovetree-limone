@@ -1,0 +1,730 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX017",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "generated_at_utc": "2026-09-26T20:26:00Z",
+  "authority": {
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f"
+  },
+  "round_trip_byte_identity": true,
+  "round_trip_bytes": 50866,
+  "round_trip_sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+  "boundaries": {
+    "style_open": 259,
+    "style_close": 20872,
+    "script_open": 29831,
+    "script_close": 50507
+  },
+  "local_asset_preservation": {
+    "prefix": "assets/",
+    "authored_img_ref_count": 11,
+    "distinct_asset_count": 4,
+    "entries": [
+      {
+        "name": "sphere-final-v2.png",
+        "bytes": 2217886,
+        "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785"
+      },
+      {
+        "name": "human-final.webp",
+        "bytes": 144840,
+        "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2"
+      },
+      {
+        "name": "bloom-final.webp",
+        "bytes": 194886,
+        "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8"
+      },
+      {
+        "name": "trace-final.webp",
+        "bytes": 164614,
+        "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b"
+      }
+    ],
+    "original_equals_split": true,
+    "reencoded": false,
+    "url_rewritten": false
+  },
+  "portal_relative_url_preservation": {
+    "paths": [
+      "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
+      "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html",
+      "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
+      "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
+      "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
+      "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html",
+      "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html"
+    ],
+    "count": 7,
+    "original_occurrences": 7,
+    "script_occurrences": 7,
+    "order_preserved": true,
+    "rewritten": false,
+    "substituted": false
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "portal_relative_path_rewritten": false,
+    "asset_url_rewritten": false,
+    "asset_reencoded": false,
+    "sibling_portal_authority_substituted": false,
+    "iframe_target_rewritten": false,
+    "a11y_or_focus_behavior_modified": false,
+    "reduced_motion_behavior_modified": false,
+    "back_history_behavior_modified": false,
+    "preview_helper_cleaned_up": false,
+    "source_defect_repaired": false,
+    "tsx_or_jsx_introduced": false,
+    "ts_or_jsx_file_in_split_surface": false
+  },
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority byte size stable (50866)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "frozen input layout intact"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "manifest authority lock matches frozen authority"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one style block (1/1)"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script, no attributed/external script tags"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "zero attributed script tags (0)"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "zero external stylesheet tags in the authority (0)"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "only the SVG namespace URI is http-shaped (1 occurrence(s))"
+    },
+    {
+      "id": "T04f.fetch(",
+      "pass": true,
+      "detail": "no fetch( dependency"
+    },
+    {
+      "id": "T04f.XMLHttpRequest",
+      "pass": true,
+      "detail": "no XMLHttpRequest dependency"
+    },
+    {
+      "id": "T04f.@import",
+      "pass": true,
+      "detail": "no @import dependency"
+    },
+    {
+      "id": "T04f.sessionStorage",
+      "pass": true,
+      "detail": "no sessionStorage dependency"
+    },
+    {
+      "id": "T04f.integrity=",
+      "pass": true,
+      "detail": "no integrity= dependency"
+    },
+    {
+      "id": "T04f.crossorigin",
+      "pass": true,
+      "detail": "no crossorigin dependency"
+    },
+    {
+      "id": "T04g",
+      "pass": true,
+      "detail": "style boundary ordered (259/20872)"
+    },
+    {
+      "id": "T04h",
+      "pass": true,
+      "detail": "script boundary ordered (29831/50507)"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "styles.css is the exact authority style inner slice"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "script.js is the exact authority script inner slice"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one stylesheet glue ref"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one script glue ref"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "no inline style block remains"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "no bare inline script open remains (only the script glue ref close tag exists)"
+    },
+    {
+      "id": "T07e",
+      "pass": true,
+      "detail": "glue refs appear exactly once each"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "materialization identity/generation"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "boundary metadata matches independent re-derivation"
+    },
+    {
+      "id": "T08c",
+      "pass": true,
+      "detail": "single script block length matches"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reconstructed HTML is byte-identical to the frozen authority (50866 B)"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "CSS byte-exact and recorded hash matches"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "JS byte-exact and recorded hash matches"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "shell is a pure positional splice of the authority around the two block regions"
+    },
+    {
+      "id": "T13a",
+      "pass": true,
+      "detail": "no framework/backend markers"
+    },
+    {
+      "id": "T13b",
+      "pass": true,
+      "detail": "no TS/TSX/JSX files in split surface (index.html, materialization.json, script.js, styles.css)"
+    },
+    {
+      "id": "T13c",
+      "pass": true,
+      "detail": "manifest runtime policy is HTML_CSS_JS_MECHANICAL_ONLY and TSX forbidden"
+    },
+    {
+      "id": "T14a",
+      "pass": true,
+      "detail": "authority carries 11 img refs (11)"
+    },
+    {
+      "id": "T14b",
+      "pass": true,
+      "detail": "the 11 authored img src strings survive byte-identically, in order"
+    },
+    {
+      "id": "T14c",
+      "pass": true,
+      "detail": "every distinct authored asset name is one of the four vendored pins"
+    },
+    {
+      "id": "T14d",
+      "pass": true,
+      "detail": "sphere-final-v2.png=2217886B human-final.webp=144840B bloom-final.webp=194886B trace-final.webp=164614B"
+    },
+    {
+      "id": "T14e",
+      "pass": true,
+      "detail": "materialization records no re-encode and no asset URL rewrite"
+    },
+    {
+      "id": "T14f",
+      "pass": true,
+      "detail": "asset vendoring disposition recorded: vendored, not re-encoded, not rewritten"
+    },
+    {
+      "id": "T14g",
+      "pass": true,
+      "detail": "both surfaces carry exactly the same 4 vendored assets, no extra file"
+    },
+    {
+      "id": "T15a",
+      "pass": true,
+      "detail": "all 4 authored portal paths present in the authority verbatim (4)"
+    },
+    {
+      "id": "T15b",
+      "pass": true,
+      "detail": "all 4 authored portal paths present in script.js verbatim (4)"
+    },
+    {
+      "id": "T15c",
+      "pass": true,
+      "detail": "portal path occurrence order preserved inside the script region (4 occurrence(s))"
+    },
+    {
+      "id": "T15c2",
+      "pass": true,
+      "detail": "every authored portal occurrence is accounted for by the split body + split script (7 = 3 + 4)"
+    },
+    {
+      "id": "T15d",
+      "pass": true,
+      "detail": "no portal target replaced by an about:blank stub in the split"
+    },
+    {
+      "id": "T15e",
+      "pass": true,
+      "detail": "materialization records no portal substitution and no iframe target rewrite"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "capture surface STANDALONE_AUTHORITY_SURFACE"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "no external runtime context required; repository path is a runtime surface"
+    },
+    {
+      "id": "T16c",
+      "pass": true,
+      "detail": "zero-rewrite serving contract recorded"
+    },
+    {
+      "id": "T16d",
+      "pass": true,
+      "detail": "portal iframe body unavailability recorded honestly as a serving fact"
+    },
+    {
+      "id": "T16e",
+      "pass": true,
+      "detail": "STANDALONE vs CDX014 CONTEXT_AWARE_ONLY distinction recorded"
+    },
+    {
+      "id": "T16f",
+      "pass": true,
+      "detail": "authority-context pins 4 assets (4)"
+    },
+    {
+      "id": "T16g",
+      "pass": true,
+      "detail": "every pinned asset carries path + bytes + sha256 + drive file id"
+    },
+    {
+      "id": "T16h",
+      "pass": true,
+      "detail": "all pinned asset paths unique"
+    },
+    {
+      "id": "T16i",
+      "pass": true,
+      "detail": "asset reference count and entry count recorded"
+    },
+    {
+      "id": "T16j",
+      "pass": true,
+      "detail": "authority-context records all 4 portal destinations (4)"
+    },
+    {
+      "id": "T16k",
+      "pass": true,
+      "detail": "each recorded destination matches an authored path string"
+    },
+    {
+      "id": "T16l",
+      "pass": true,
+      "detail": "portal dependencies recorded as not vendored, zero rewrites"
+    },
+    {
+      "id": "T16m",
+      "pass": true,
+      "detail": "raw PNG byte equality explicitly rejected as an S4 rule"
+    },
+    {
+      "id": "T16n",
+      "pass": true,
+      "detail": "no SSIM/perceptual/pixel threshold invented in S3"
+    },
+    {
+      "id": "T16o",
+      "pass": true,
+      "detail": "five nondeterminism classes recorded"
+    },
+    {
+      "id": "T16p",
+      "pass": true,
+      "detail": "fresh Drive readback record present and referenced"
+    },
+    {
+      "id": "T17.split/index.html",
+      "pass": true,
+      "detail": "split/index.html 9467 B sha256 + git blob match"
+    },
+    {
+      "id": "T17.split/styles.css",
+      "pass": true,
+      "detail": "split/styles.css 20606 B sha256 + git blob match"
+    },
+    {
+      "id": "T17.split/script.js",
+      "pass": true,
+      "detail": "split/script.js 20840 B sha256 + git blob match"
+    },
+    {
+      "id": "T17.asset.sphere-final-v2.png",
+      "pass": true,
+      "detail": "sphere-final-v2.png 2217886 B, original and split copies byte-identical"
+    },
+    {
+      "id": "T17.asset.human-final.webp",
+      "pass": true,
+      "detail": "human-final.webp 144840 B, original and split copies byte-identical"
+    },
+    {
+      "id": "T17.asset.bloom-final.webp",
+      "pass": true,
+      "detail": "bloom-final.webp 194886 B, original and split copies byte-identical"
+    },
+    {
+      "id": "T17.asset.trace-final.webp",
+      "pass": true,
+      "detail": "trace-final.webp 164614 B, original and split copies byte-identical"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "S0 identity verified"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "S1 raw authority locked"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "S2 baseline captured"
+    },
+    {
+      "id": "T18d",
+      "pass": true,
+      "detail": "S3 mechanical split complete"
+    },
+    {
+      "id": "T18e",
+      "pass": true,
+      "detail": "S4 parity NOT claimed (false)"
+    },
+    {
+      "id": "T18f",
+      "pass": true,
+      "detail": "stage refs point at the committed records"
+    },
+    {
+      "id": "T18g",
+      "pass": true,
+      "detail": "materialization is pending parity with no parity reference"
+    },
+    {
+      "id": "T18h",
+      "pass": true,
+      "detail": "S4 not released, no product adoption, no product canonical claim"
+    },
+    {
+      "id": "T18i",
+      "pass": true,
+      "detail": "manifest capture_surface STANDALONE_AUTHORITY_SURFACE"
+    },
+    {
+      "id": "T18j",
+      "pass": true,
+      "detail": "shared-harness out-of-scope disposition recorded (not a fabricated skip)"
+    },
+    {
+      "id": "T18k",
+      "pass": true,
+      "detail": "no fake SKIP claimed for a capsule whose surface is a runtime surface"
+    },
+    {
+      "id": "T18l",
+      "pass": true,
+      "detail": "runtime-equivalence scope is bounded to the shell-owned surface"
+    },
+    {
+      "id": "T18m",
+      "pass": true,
+      "detail": "ten frozen defects recorded (10)"
+    },
+    {
+      "id": "T18n",
+      "pass": true,
+      "detail": "every frozen defect is PRESERVED with an explanatory note"
+    },
+    {
+      "id": "T18o",
+      "pass": true,
+      "detail": "materialization carries the same frozen defect id set"
+    },
+    {
+      "id": "T18p.D1",
+      "pass": true,
+      "detail": "D1 records no repair"
+    },
+    {
+      "id": "T18p.D2",
+      "pass": true,
+      "detail": "D2 records no repair"
+    },
+    {
+      "id": "T18p.D3",
+      "pass": true,
+      "detail": "D3 records no repair"
+    },
+    {
+      "id": "T18p.D4",
+      "pass": true,
+      "detail": "D4 records no repair"
+    },
+    {
+      "id": "T18p.D5",
+      "pass": true,
+      "detail": "D5 records no repair"
+    },
+    {
+      "id": "T18p.D6",
+      "pass": true,
+      "detail": "D6 records no repair"
+    },
+    {
+      "id": "T18p.D7",
+      "pass": true,
+      "detail": "D7 records no repair"
+    },
+    {
+      "id": "T18p.D8",
+      "pass": true,
+      "detail": "D8 records no repair"
+    },
+    {
+      "id": "T18p.D9",
+      "pass": true,
+      "detail": "D9 records no repair"
+    },
+    {
+      "id": "T18p.D10",
+      "pass": true,
+      "detail": "D10 records no repair"
+    },
+    {
+      "id": "T18q",
+      "pass": true,
+      "detail": "no-repair / no-rewrite contract flags all false"
+    },
+    {
+      "id": "T18r",
+      "pass": true,
+      "detail": "the five authored preview helper modes recorded as authoring aids, not acceptance authority"
+    },
+    {
+      "id": "T18s",
+      "pass": true,
+      "detail": "no QA hook declared or injected"
+    },
+    {
+      "id": "T18t",
+      "pass": true,
+      "detail": "accepted baseline record present"
+    },
+    {
+      "id": "T18u",
+      "pass": true,
+      "detail": "source-owned local asset count recorded as 4"
+    },
+    {
+      "id": "T19a",
+      "pass": true,
+      "detail": "MST102 record found at the expected path"
+    },
+    {
+      "id": "T19b",
+      "pass": true,
+      "detail": "mapping_status CODEX_RESOLVED (CODEX_RESOLVED)"
+    },
+    {
+      "id": "T19c",
+      "pass": true,
+      "detail": "identity_refs contains CDX017 with EXPLICIT_LEDGER_PROVENANCE"
+    },
+    {
+      "id": "T19d",
+      "pass": true,
+      "detail": "notes cite the master-design-coverage ledger row as provenance"
+    },
+    {
+      "id": "T19e",
+      "pass": true,
+      "detail": "notes pin the authority digest"
+    },
+    {
+      "id": "T19f",
+      "pass": true,
+      "detail": "notes cite the canonical capsule path"
+    },
+    {
+      "id": "T19g",
+      "pass": true,
+      "detail": "namespace_type reclassified from codex-source-local to codex"
+    },
+    {
+      "id": "T20a",
+      "pass": true,
+      "detail": "capsule root is src/04_codex/CDX017 (src/04_codex/CDX017)"
+    },
+    {
+      "id": "T20b",
+      "pass": true,
+      "detail": "no legacy capsule-path residue"
+    },
+    {
+      "id": "T20c",
+      "pass": true,
+      "detail": "manifest uses CDX template identity keys, no Source-namespace key"
+    },
+    {
+      "id": "T20d",
+      "pass": true,
+      "detail": "materialization uses codex_id, no source_id key"
+    },
+    {
+      "id": "T20e",
+      "pass": true,
+      "detail": "authority-context uses codex_id, no source_id key"
+    },
+    {
+      "id": "T20f",
+      "pass": true,
+      "detail": "master_rows binds MST102 only"
+    },
+    {
+      "id": "T20g",
+      "pass": true,
+      "detail": "no CDX017 capsule exists under src/03_sources"
+    },
+    {
+      "id": "T21a",
+      "pass": true,
+      "detail": "status DUPLICATE_COPY_SAME_SHA (DUPLICATE_COPY_SAME_SHA)"
+    },
+    {
+      "id": "T21b",
+      "pass": true,
+      "detail": "note cites a structurally valid CENTRAL_FRESH_DRIVE_READBACK"
+    },
+    {
+      "id": "T21c",
+      "pass": true,
+      "detail": "candidate table covers all 5 HTML objects (5)"
+    },
+    {
+      "id": "T21d",
+      "pass": true,
+      "detail": "every candidate carries file id + bytes + sha256 + disposition"
+    },
+    {
+      "id": "T21e",
+      "pass": true,
+      "detail": "exactly one AUTHORITY candidate and it is the manifest authority object"
+    },
+    {
+      "id": "T21f",
+      "pass": true,
+      "detail": "the byte-identical twin is recorded at a distinct file id, which is why step 1 fails and step 2 closes"
+    },
+    {
+      "id": "T21g",
+      "pass": true,
+      "detail": "closing step recorded (step 2 — identical SHA-256)"
+    },
+    {
+      "id": "T21h",
+      "pass": true,
+      "detail": "negative claim recorded"
+    },
+    {
+      "id": "T21i",
+      "pass": true,
+      "detail": "no open adjudication state"
+    },
+    {
+      "id": "T21j",
+      "pass": true,
+      "detail": "Question A (duplicate) and Question B (serving surface) kept separate"
+    },
+    {
+      "id": "T21k",
+      "pass": true,
+      "detail": "capture surface never adjudicates duplicate_variant_status"
+    }
+  ],
+  "passed": 125,
+  "failed": 0,
+  "result": "PASS",
+  "s4_started": false,
+  "s4_executed_by": null,
+  "parity_acceptance_claimed": false,
+  "parity_ref": null,
+  "parity_status": "NOT_STARTED",
+  "source_mutation": 0,
+  "product_adoption": 0,
+  "generation_note": "Committed S3 evidence record. Produced by the final clean local run of src/04_codex/CDX017/tests/s3-roundtrip.test.mjs on branch feat/589-cdx017-s3-mechanical-capsule, whose base commit is 562b7b67514b52d485d26933c7571b0183cedc2a. The test itself always writes its run evidence to an OS temp directory, so re-running it never overwrites this file. T03 asserts this record exists; on the very first bootstrap run the record was absent, which is why the committed copy carries result=PASS with failed=0 while the bootstrap run itself reported one failure on the missing-record check only. Every other check passed in that bootstrap run as well.",
+  "branch": "feat/589-cdx017-s3-mechanical-capsule",
+  "generation_input_head": "562b7b67514b52d485d26933c7571b0183cedc2a",
+  "ci_exact_head_reproduction": "OUT_OF_SCOPE_EXACT_HEAD_ACCEPTANCE_IS_EXTERNAL_TO_THE_CAPSULE",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5845654192"
+}

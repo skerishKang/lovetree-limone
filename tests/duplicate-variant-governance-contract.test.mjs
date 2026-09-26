@@ -149,11 +149,17 @@ test('the SRC 108 harness gate passes with the §7 check wired in', () => {
   assert.equal(result.status, 0, (result.stderr ?? '') + (result.stdout ?? ''));
   assert.match(result.stdout, /SRC_108_HARNESS_GATE=PASS/);
   assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=14/);
-  assert.match(result.stdout, /ACTIVE_CODEX_COUNT=1/);
+  // Tree-state assertion: CDX014 (2026-09-06) + CDX017 (2026-09-26, S3
+  // mechanical capsule under #589 comment 5845654192). Each new Codex capsule
+  // lane must bump this count, exactly as the batch-pass expectation list above
+  // is bumped when a capsule joins that batch. The 12-capsule BATCH_CAPSULES
+  // list stays frozen: CDX017 was adjudicated individually through a fresh
+  // CENTRAL_FRESH_DRIVE_READBACK, not through the batch-pass ruling table.
+  assert.match(result.stdout, /ACTIVE_CODEX_COUNT=2/);
 });
 
 test('the Codex governance gate passes on the real tree', () => {
-  assert.deepEqual(validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs: ['CDX014'] }), []);
+  assert.deepEqual(validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs: ['CDX014', 'CDX017'] }), []);
 });
 
 test('both template defaults keep UNRESOLVED and still validate', () => {

@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX017",
+  "generated_at_utc": "2026-09-26T20:10:00Z",
+  "codex": {
+    "codex_root_folder_id": "1icvY-Wk5H4Dv7h-EUnY0eVlRRf2EK9hY",
+    "codex_root_folder_name": "[[지피티 작업]]/[01_러브트리]/코덱스",
+    "family_folder_id": "1KMOherrqWBDnts6adjImMDMs8NwMJAKv",
+    "family_folder_name": "17_러브트리_글로벌셈_롤링메뉴_V1",
+    "selected_folder_id": "10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff",
+    "selected_folder_name": "버전4-선택"
+  },
+  "authority": {
+    "file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "filename": "최종본.html",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "md5": "860e960b6295fe827753571dab06ba56",
+    "revision": "V4 (버전4-선택)",
+    "status": "LOCKED",
+    "identity_rule": "Identity is resolved by the canonical Drive file id plus a SHA-256 byte lock. Filename alone never establishes identity: 최종본.html occurs four times inside this family, at three different byte sizes plus one byte-identical copy. Each candidate is enumerated in manifest.json duplicate_variant_note.candidate_table with its own Drive id and digest.",
+    "selection_rule": "The selected-folder object 1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M is the capture identity for the whole lane. The family-root byte-identical copy 1Cn175tlXDqkQZjQMgqs8QmxB8BxE_qJp is dispositioned NOT_AUTHORITY and is never substituted. 버전1 / 버전2 / 버전3 are content-different SUPERSEDED_REVISION and are never substituted."
+  },
+  "source_owned_assets": {
+    "classification": "REQUIRED_FOR_INITIAL_RENDER",
+    "prefix": "assets/",
+    "asset_folder_id": "1huZQWIA6BrnJ_nTwyMpy8H7daPtCm4qE",
+    "entries": [
+      {
+        "path": "assets/sphere-final-v2.png",
+        "file_id": "1OqoStqs_713VrWXJOHmR4y5cvVTnj5kX",
+        "bytes": 2217886,
+        "sha256": "656773fbde73dcc318dbaf903e0708d62747038a6834f3b688f15ddfe5afa785",
+        "md5": "16f351b388c6b4562abeb4b2a9f5ce47",
+        "markup_reference_count": 4
+      },
+      {
+        "path": "assets/human-final.webp",
+        "file_id": "1fNFjekC7ftWt-Do32VUPD_9nAf8HOOdd",
+        "bytes": 144840,
+        "sha256": "29a570c405e630eab0a07d97d6643bff1eed7f4034d96ffad3aeb52341d326c2",
+        "md5": "fdac62f2f1fc9096054977f1de242965",
+        "markup_reference_count": 2
+      },
+      {
+        "path": "assets/bloom-final.webp",
+        "file_id": "1YJFwRjuEz-KiwMFhPicRJto_kDu7KN9T",
+        "bytes": 194886,
+        "sha256": "50c4d48bb381c616b361e6b78785932063ffd7bd415d6765867f7bb5d6b9b4f8",
+        "md5": "530c2a84cc6e46c8ada762b34b921524",
+        "markup_reference_count": 3
+      },
+      {
+        "path": "assets/trace-final.webp",
+        "file_id": "1hO0rC1KK1g9P-X1zGxWSVUbb0p5yxwXH",
+        "bytes": 164614,
+        "sha256": "e994dee09cfefe4bad2e8c9fd7bd07566211725acdc526c581d8ed347f53466b",
+        "md5": "3dd8517cdddbd354b899026a65b0e5e9",
+        "markup_reference_count": 2
+      }
+    ],
+    "total_entries": 4,
+    "total_bytes": 2722226,
+    "markup_reference_count": 11,
+    "pin_method": "S3_FRESH_DRIVE_READBACK_BYTE_EXACT",
+    "pin_verification": {
+      "download_count": 4,
+      "hash_verified": 4,
+      "mismatched": 0
+    },
+    "vendored_byte_exact": true,
+    "reencoded": false,
+    "written_to": "original/assets/ and split/assets/ (byte-identical to each other)"
+  },
+  "sibling_portal_dependencies": {
+    "classification": "PORTAL_DESTINATION_ONLY",
+    "vendored": false,
+    "vendored_reason": "CENTRAL S3 release (#589 comment 5845654192): because CAPTURE_SURFACE=STANDALONE_AUTHORITY_SURFACE, S3 does not need to vendor the four downstream portal target corpora. Their relative paths are preserved exactly; S4 will compare shell-owned behavior at the same source boundary.",
+    "zero_rewrites": true,
+    "url_resolution_note": "The authority resolves each destination at runtime with new URL(path, location.href) and assigns the result to both the Open new anchor href and the portal iframe src. Preservation therefore means: the four path strings stay byte-identical in split/script.js, and no target is replaced by about:blank, a stub page or a rewrite.",
+    "destinations": [
+      {
+        "label": "Biosphere",
+        "path": "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
+        "family_folder_id": "11LDezfRzEddRPhIPNER3VZme1tsJkOOp",
+        "revision_folder_id": "1tz9t4_y-GC1zxE5OMVqgYMTpgPcxPkNC",
+        "file_id": "173b3LiSAIGx358fiMiCJFSXvYxCBMz7_",
+        "bytes": 26655,
+        "classification": "PORTAL_DESTINATION_ONLY"
+      },
+      {
+        "label": "Human Trace",
+        "path": "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
+        "file_id": null,
+        "bytes": null,
+        "note": "On-Drive existence not independently re-read in this S3 lane; the source-owned 04_QA.md asserts all four destination files exist. Carried forward honestly from the S2 HOLD-2. Destination-side fact, not a CDX017 S3 blocker.",
+        "classification": "PORTAL_DESTINATION_ONLY"
+      },
+      {
+        "label": "Liquid Bloom",
+        "path": "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html",
+        "family_folder_id": "1dLoDw59NCFUn06VlCrjTmgSHsigyKgFf",
+        "file_id": null,
+        "bytes": null,
+        "note": "Folder confirmed to contain a 최종본.html. Bytes not re-hashed in this lane; not needed for the shell surface.",
+        "classification": "PORTAL_DESTINATION_ONLY"
+      },
+      {
+        "label": "Memory Orbit",
+        "path": "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html",
+        "family_folder_id": "13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ",
+        "file_id": "1F2cN40KjDAQjkPuYHVWF93He1JxNqORs",
+        "bytes": 28927,
+        "sha256": "1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b",
+        "cross_lane_note": "This is the family ROOT object, not the v1 subfolder object CDX014 pins (13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ/v1/최종본.html, 19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361). Recorded for CENTRAL cross-lane awareness. No substitution, no adjudication, no action in this lane.",
+        "classification": "PORTAL_DESTINATION_ONLY"
+      }
+    ]
+  },
+  "serving_contract": {
+    "capture_surface": "STANDALONE_AUTHORITY_SURFACE",
+    "capture_surface_accepted_at": "skerishKang/lovetree-limone#589 comment 5845654192",
+    "runtime_context_required": false,
+    "repository_path_runtime_equivalent": true,
+    "runtime_equivalence_scope": "SHELL_OWNED_SURFACE_ONLY",
+    "required_serving": "Serve original/original.html and split/index.html from their own capsule directories, each with its sibling assets/ directory. Nothing else is needed: there is no external CSS, JS, font, media, XHR, fetch or sessionStorage dependency.",
+    "portal_iframe_body_available_at_repository_path": false,
+    "portal_iframe_note": "The portal iframe body is not available at the repository path for either surface, because the four destination corpora are intentionally not vendored. This is identical to the accepted S2 capture, where the four targets were deliberately left unhydrated and the only 404s in the netlog were the four portal targets plus the harness favicon request. It is a recorded serving fact, not a source defect, and it is not a parity claim.",
+    "zero_rewrites": true,
+    "context_aware_serving_required": false,
+    "contrast_with_cdx014": "CDX014 (also a Codex capsule) is CONTEXT_AWARE_ONLY because its 178 runtime media files live in a sibling folder whose live Drive name was renamed after authoring, so its repository path is NOT a runtime surface and the shared harnesses record an explicit SKIP. CDX017 is the opposite case: its four runtime assets are source-owned and live inside its own folder, so the repository path IS a runtime surface and no SKIP disposition is needed. The two capsules must not be conflated."
+  },
+  "nondeterminism_contract": {
+    "accepted_at": "skerishKang/lovetree-limone#589 comment 5845654192",
+    "raw_png_byte_equality_is_a_valid_s4_rule": false,
+    "s4_comparison_contract": "ORIGINAL vs SPLIT via source-specific structural / DOM-state / geometry parity plus a CENTRAL-approved bounded visual method. No SSIM, perceptual or pixel threshold is proposed, recorded or implied by this capsule.",
+    "empirical_basis": "Three captures of the same logical ready state produced three different PNG digests in the accepted S2 run (1fee1d7d3a6e3935, 41d0d3e36be1324d, 15215d29bb48b90f), and the pointer-water pair differed again after a 520ms wait (ac4386ceb5635b38 vs aa55acfadf9696a0).",
+    "classes": {
+      "STRUCTURAL_STATE": "chapter identity, menu/index/portal open-close, aria values, geometry boxes, loader done, sound label and localStorage value",
+      "DETERMINISTIC_GEOMETRY": "header 94px, hero and media-window boxes, chapter-nav row, menu panel closed/open x, index and portal frames",
+      "MOTION_PHASE_VARIANCE": "loader counter value at a given instant, clip-path radius, rAF transition counter, menu/index/portal transition progress, cursor position",
+      "RANDOM_PARTICLE_VARIANCE": "water ribbon curves / hues / widths, ripple size and hue, addFlow phase taken from performance.now()",
+      "AUDIO_PRESENTATION_STATE": "tone scheduling and surface-noise generation, the latter seeded by Math.random() inside initAudio"
+    }
+  },
+  "s2_frozen_defects_ref": "manifest.json#/source_contract/frozen_defects (D1-D10, all disposition PRESERVED)",
+  "readback_ref": "evidence/source/drive-authority-readback.json"
+}
