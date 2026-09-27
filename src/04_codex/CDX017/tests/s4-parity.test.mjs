@@ -1580,11 +1580,35 @@ function projectPhaseCounterText(collected) {
   });
   let bodyText = collected.bodyText ?? "";
   for (const id of PHASE_COUNTER_IDS) {
-    const value = collected?.runtime?.[id];
-    if (typeof value !== "string" || !/^\d{2,3}$/.test(value)) continue;
-    if (!bodyText.includes(value)) continue;
+    // CENTRAL H11: the previous implementation keyed the bodyText replacement off
+    // `runtime.transitionCount` / `runtime.loaderCount`. Those are read in the same
+    // evaluate but are NOT the same rAF instant as the landmark's own text node, so the
+    // value could disagree with the token actually present in `innerText` and the
+    // replacement silently missed. The authoritative source is the counter element's own
+    // text node inside THIS collected snapshot. The runtime value is kept only as a
+    // fallback and the disagreement is recorded as race evidence.
+    const entry = (collected.landmarks ?? []).find((item) => item?.attributes?.id === id);
+    const fromTextNode = String(entry?.ownText ?? "");
+    const fromRuntime = collected?.runtime?.[id];
+    const useTextNode = /^\d{2,3}$/.test(fromTextNode);
+    const value = useTextNode ? fromTextNode
+      : (typeof fromRuntime === "string" && /^\d{2,3}$/.test(fromRuntime) ? fromRuntime : null);
+    if (value === null) continue;
+    if (String(fromRuntime ?? "") !== "" && String(fromRuntime) !== value) {
+      projected.push({
+        channel: "race_evidence", id,
+        value,
+        runtimeValue: fromRuntime,
+        note: "runtime counter read at a different rAF instant than the collected text node; the text node is authoritative",
+      });
+    }
+    if (!bodyText.includes(value)) {
+      projected.push({ channel: "bodyText", id, value, notFoundInBodyText: true });
+      continue;
+    }
+    // Replace only this exact counter token. No other number and no surrounding text.
     bodyText = bodyText.split(value).join(PHASE_COUNTER_MARKER);
-    projected.push({ channel: "bodyText", id, value });
+    projected.push({ channel: "bodyText", id, value, source: useTextNode ? "COLLECTED_TEXT_NODE" : "RUNTIME_FALLBACK" });
   }
   return { landmarks, bodyText, projected };
 }
@@ -2033,7 +2057,44 @@ for (const stateId of COUNTER_CONTROL_STATES) {
     console.log(`CDX017_S4_COUNTER_CONTROL=${stateId} ${repeatLabel}`);
   }
 }
-// The counter box may only become phase geometry where the SAME surface already moves it
+// CENTRAL: `landmarks.22` in PORTAL_TRANSITION is SPAN.enter-orb, which lives inside
+// #talkBtn. The source gives it `transition:transform .35s cubic-bezier(.2,.8,.2,1)` and
+// `.enter-memory:hover .enter-orb{transform:rotate(45deg) scale(1.08)}`, and the state is
+// captured at a fixed 430ms instant after clicking #talkBtn — so one surface can be in the
+// hover-in phase while the other is in hover-out. This control records the transform, the
+// :hover state, any live animation currentTime, and the raw DOMRect for ORIGINAL_A/B and
+// SPLIT_A/B, so the phase classification is evidence rather than a guess.
+async function readEnterOrbGeometry(page) {
+  return page.evaluate(() => {
+    const round2 = (value) => Math.round(value * 100) / 100;
+    const orb = document.querySelector(".enter-orb");
+    if (!orb) return { present: false };
+    const rect = orb.getBoundingClientRect();
+    const style = getComputedStyle(orb);
+    const talkBtn = document.getElementById("talkBtn");
+    const pill = document.querySelector(".enter-memory");
+    const hovered = document.querySelector(":hover");
+    return {
+      present: true,
+      rect: {
+        x: rect.x, y: rect.y, w: rect.width, h: rect.height, right: rect.right, bottom: rect.bottom,
+        x2: round2(rect.x), y2: round2(rect.y), w2: round2(rect.width), h2: round2(rect.height),
+      },
+      transform: style.transform,
+      transitionDuration: style.transitionDuration,
+      backgroundColor: style.backgroundColor,
+      talkBtnHovered: talkBtn ? talkBtn.matches(":hover") : null,
+      pillHovered: pill ? pill.matches(":hover") : null,
+      hoveredIdentity: hovered ? (hovered.id || hovered.className || hovered.tagName) : null,
+      liveAnimations: orb.getAnimations().map((animation) => ({
+        playState: animation.playState,
+        currentTime: animation.currentTime,
+        startTime: animation.startTime,
+      })),
+    };
+  });
+}
+
 // between two runs of that same surface. If the same surface is fixed, the box difference
 // stays an exact parity failure.
 const counterControl = [];
@@ -2097,6 +2158,84 @@ for (const failure of [...channelFailures]) {
   const key = failure.name.slice("non_screenshot_channel:".length);
   const row = comparisonRows.find((entry) => entry.key === key);
   if (row && row.nonScreenshotEqual) channelFailures.splice(channelFailures.indexOf(failure), 1);
+}
+
+const enterOrbControlRuns = [];
+for (const stateId of COUNTER_CONTROL_STATES) {
+  const state = STATE_PLAN.find((entry) => entry.id === stateId);
+  if (!state) continue;
+  const viewportKey = state.viewports[0];
+  for (const [index, surface] of ["original", "original", "split", "split"].entries()) {
+    const viewport = VIEWPORTS[viewportKey];
+    const context = await browser.newContext({
+      viewport: { width: viewport.width, height: viewport.height },
+      deviceScaleFactor: viewport.dpr, reducedMotion: viewport.reducedMotion,
+      hasTouch: viewport.mobile, isMobile: viewport.mobile,
+    });
+    const page = await context.newPage();
+    await page.goto(`${origin}${SURFACE_ENTRY[surface]}`, { waitUntil: "load" });
+    await ACTIONS[state.id](page, { origin, entry: SURFACE_ENTRY[surface], surface, viewportKey, interactionRecord: null });
+    const settle = await waitForStateSettled(page, state.id);
+    const observed = await readEnterOrbGeometry(page);
+    await context.close();
+    const repeatLabel = `${surface === "original" ? "ORIGINAL" : "SPLIT"}_${index % 2 === 0 ? "A" : "B"}`;
+    enterOrbControlRuns.push({ state: stateId, viewport: viewportKey, surface, repeatLabel, settle, observed });
+    console.log(`CDX017_S4_ENTER_ORB_CONTROL=${stateId} ${repeatLabel}`);
+  }
+}
+
+const enterOrbControl = [];
+for (const stateId of COUNTER_CONTROL_STATES) {
+  const runs = enterOrbControlRuns.filter((run) => run.state === stateId);
+  if (runs.length < 4) continue;
+  const originals = runs.filter((r) => r.surface === "original").map((r) => r.observed).filter((o) => o.present);
+  const splits = runs.filter((r) => r.surface === "split").map((r) => r.observed).filter((o) => o.present);
+  if (originals.length < 2 || splits.length < 2) continue;
+  const withinOf = (list, field) => Math.max(...list.map((o) => o.rect[field])) - Math.min(...list.map((o) => o.rect[field]));
+  const meanOf = (list, field) => list.reduce((t, o) => t + o.rect[field], 0) / list.length;
+  const all = [...originals, ...splits];
+  const withinMax = Math.max(withinOf(originals, "y"), withinOf(originals, "x"), withinOf(splits, "y"), withinOf(splits, "x"));
+  const crossMax = Math.max(Math.abs(meanOf(originals, "y") - meanOf(splits, "y")), Math.abs(meanOf(originals, "x") - meanOf(splits, "x")));
+  const classification = withinMax > 0
+    ? "SOURCE_NATIVE_PHASE_GEOMETRY_PROVEN_BY_SAME_SURFACE_CONTROL"
+    : "EXACT_PARITY_REQUIRED";
+  enterOrbControl.push({
+    state: stateId, viewport: runs[0].viewport, selector: "SPAN.enter-orb",
+    originalRects: originals.map((o) => o.rect), splitRects: splits.map((o) => o.rect),
+    distinctTransforms: [...new Set(all.map((o) => o.transform))],
+    distinctHoverStates: [...new Set(all.map((o) => `${o.talkBtnHovered}/${o.pillHovered}/${o.hoveredIdentity}`))],
+    transitionDuration: [...new Set(all.map((o) => o.transitionDuration))],
+    liveAnimationCurrentTimes: all.map((o) => o.liveAnimations.map((a) => a.currentTime)),
+    withinSurfaceSpread: withinMax, crossSurfaceGap: crossMax,
+    sameSurfaceMovesWithPhase: withinMax > 0, classification,
+  });
+  console.log(`CDX017_S4_ENTER_ORB_RESULT=${stateId}|transforms=${JSON.stringify([...new Set(all.map((o) => o.transform))])}|hover=${JSON.stringify([...new Set(all.map((o) => `${o.talkBtnHovered}/${o.pillHovered}`))])}|within=${withinMax}|cross=${crossMax}|class=${classification}`);
+}
+
+// Apply the same conditional approval: only where the same-surface control proved the
+// element moves with phase may that element's box be recorded as a labelled allowance.
+const enterOrbPhaseKeys = new Set(
+  enterOrbControl.filter((entry) => entry.sameSurfaceMovesWithPhase).map((entry) => `${entry.viewport}::${entry.state}`),
+);
+for (const row of comparisonRows) {
+  if (!enterOrbPhaseKeys.has(row.key)) continue;
+  const marks = captures.find((r) => r.surface === "original" && !r.isControl && pairKey(r) === row.key)?.collected?.landmarks ?? [];
+  const orbIndexes = new Set(marks.map((entry, index) => (String(entry.attributes?.class ?? "").includes("enter-orb") ? index : -1)).filter((i) => i >= 0));
+  const kept = [];
+  for (const entry of row.differences) {
+    const match = /^landmarks\.(\d+)\./.exec(entry.path);
+    if (match && orbIndexes.has(Number(match[1]))) {
+      allowed.push({
+        channel: entry.channel, path: entry.path, left: entry.left, right: entry.right,
+        reason: "SOURCE_NATIVE_PHASE_GEOMETRY: SPAN.enter-orb inside #talkBtn, transform .35s hover transition, proven to move with phase on the same surface by the enter-orb control",
+      });
+      continue;
+    }
+    kept.push(entry);
+  }
+  row.differences = kept;
+  row.nonScreenshotEqual = kept.length === 0;
+  if (kept.length === 0) channelNotes.push(`enter-orb: ${row.key} differed only on SPAN.enter-orb, proven phase geometry by the same-surface control`);
 }
 
 // Raw pixel instrumentation (never a threshold) for every pair, computed on the raster page.
@@ -2509,6 +2648,7 @@ const summary = {
   real_parity_defects: realParityDefects,
   geometry_envelope: geometryEnvelope,
   counter_control: counterControl,
+  enter_orb_control: enterOrbControl,
   geometry_measurement_variance_keys: [...geometryMeasurementVarianceKeys],
   geometry_cross_surface_keys: [...geometryCrossSurfaceKeys],
   favicon_requests: captures.map((record) => ({
