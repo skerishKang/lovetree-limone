@@ -2286,6 +2286,16 @@ for (const row of comparisonRows) {
   );
 }
 
+// Any row whose remaining differences were fully moved into a phase-allowance must also have
+// its already-recorded non_screenshot_channel failure withdrawn. This runs AFTER both the
+// counter and enter-orb allowances, because either may empty a row's difference set.
+for (const failure of [...channelFailures]) {
+  if (!failure.name.startsWith("non_screenshot_channel:")) continue;
+  const key = failure.name.slice("non_screenshot_channel:".length);
+  const row = comparisonRows.find((entry) => entry.key === key);
+  if (row && row.nonScreenshotEqual) channelFailures.splice(channelFailures.indexOf(failure), 1);
+}
+
 // Raw pixel instrumentation (never a threshold) for every pair, computed on the raster page.
 for (const row of comparisonRows) {
   const original = captures.find((record) => record.surface === "original" && !record.isControl && pairKey(record) === row.key);
