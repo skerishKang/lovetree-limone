@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX017",
+  "source_id": "CDX017",
+  "identity_key_note": "CDX capsules retain their CDX identity. source_id mirrors codex_id only for the shared accepted-parity validator; CDX017 is not converted into a Source identity.",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_EXACT_HEAD_S4_GATE_REVIEW_WITH_SOURCE_SPECIFIC_CANONICAL16_REQUIRED_PAIR_CONTRACT",
+  "central_acceptance_comment": 5852772691,
+  "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+  "pull_request": 658,
+  "source_head": "65a7f0d61c76253fc37bb74015c3f7dd13d0a619",
+  "capture_head": "65a7f0d61c76253fc37bb74015c3f7dd13d0a619",
+  "evidence_binding": "PR #658 exact-head S4 harness result at candidate head plus CENTRAL staged rulings and LOCAL preserved evidence directories; raw screenshots are not committed into the capsule.",
+  "authority": {
+    "file": "최종본.html",
+    "drive_file_id": "1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M",
+    "bytes": 50866,
+    "sha256": "28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f",
+    "revision": "V4 (버전4-선택)",
+    "status": "LOCKED",
+    "source_path": "[[지피티 작업]]/[01_러브트리]/코덱스/17_러브트리_글로벌셸_롤링메뉴_V1/버전4-선택/최종본.html"
+  },
+  "split": {
+    "index_sha256": "b64220f1fd4ae547a93df9930a6d1364e9e23657d97366682f6c8fe2ddc22e22",
+    "styles_sha256": "e20352d19a4fcd53b939b4c2b7866b3b77c86af8311387a44d1eb8d372610f1e",
+    "script_sha256": "e141a9eeb5cedee051c2e870f4f9618c871a3ef89def949d6ee42fb278db5644",
+    "round_trip_byte_identical": true
+  },
+  "context": {
+    "capture_surface": "STANDALONE_AUTHORITY_SURFACE",
+    "repository_original_surface_runtime_equivalent": true,
+    "repository_split_surface_runtime_equivalent": true,
+    "runtime_equivalence_scope": "SHELL_OWNED_SURFACE_ONLY",
+    "portal_destination_corpora_vendored": false,
+    "portal_shell_only_parity_scope": true
+  },
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "media_identity": "EQUAL",
+    "screenshots": "BYTE_IDENTICAL_CANONICAL_PIXEL_DIGEST"
+  },
+  "comparison_policy": {
+    "required_lane1_visual_pairs": "11/11",
+    "required_lane1_visual_gate": "EXACT_CANONICAL16_DIGEST_EQUALITY",
+    "canonical16_downsample": "16x16",
+    "canonical16_digest": "sha256 over repository quantized 16x16 buffer",
+    "visual_only_suppression": [
+      ".water-canvas",
+      ".cursor"
+    ],
+    "suppression_scope": "Lane-1 screenshot capture only, after non-screenshot channels are collected, immediately restored",
+    "raw_png_equality_used": false,
+    "pixel_tolerance_used": false,
+    "ssim_used": false,
+    "all_lane1_visual_instrumentation_final": "28/28",
+    "all_lane1_visual_instrumentation_gating": false,
+    "instrumentation_history_note": "Recent non-gating all-Lane-1 instrumentation varied 28/28, 26/28, 27/28, 26/28, 28/28. No best-of-run selection is used; acceptance is bound only to the 11 required settled pairs."
+  },
+  "bounded_phase_evidence": [
+    {
+      "state": "PORTAL_TRANSITION",
+      "scope": "Lane-2 evidence state",
+      "item": "#loaderCount/#transitionCount text",
+      "class": "SOURCE_NATIVE_PHASE",
+      "rule": "Only exact counter text nodes are projected; geometry remains exact."
+    },
+    {
+      "state": "PORTAL_TRANSITION and bounded portal phase states",
+      "item": "#pageTransition.clipPath",
+      "class": "SOURCE_NATIVE_PHASE_MOTION",
+      "rule": "Raw values preserved; portal shell class/visibility/opacity/aria/labels/terminal behavior remain exact."
+    },
+    {
+      "state": "desktop::PORTAL_TRANSITION",
+      "item": "SPAN.enter-orb geometry",
+      "class": "SOURCE_NATIVE_PHASE_GEOMETRY",
+      "rule": "Same-surface control proved phase movement; no numeric tolerance."
+    },
+    {
+      "state": "desktop::PORTAL_TRANSITION",
+      "item": "#talkBtn.backgroundColor",
+      "class": "SOURCE_NATIVE_PHASE_STYLE",
+      "rule": "Only this exact state/selector/property tuple is projected; raw values and authored terminals preserved."
+    },
+    {
+      "state": "all applicable",
+      "item": "/favicon.ico",
+      "class": "BROWSER_IMPLICIT_FAVICON_FETCH",
+      "rule": "Only undeclared browser-implicit favicon noise is excluded; all source-declared requests remain exact."
+    }
+  ],
+  "gates": {
+    "lane1_settled_visual_pairs": "11/11",
+    "lane1_canonical16_equal": "11/11",
+    "portal_shell_contract": "EQUAL",
+    "frozen_d1_d10": "PRESERVED",
+    "lane2_control_states": 3,
+    "geometry_4_states": "EQUAL",
+    "canonical16_technique_self_check": "PASS",
+    "non_screenshot_channels": "EQUAL",
+    "real_parity_defects": 0,
+    "lane2_deterministic_channel_residuals": 0,
+    "page_errors": 0
+  },
+  "frozen_defects_preserved": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D7",
+    "D8",
+    "D9",
+    "D10"
+  ],
+  "browser_errors": 0,
+  "required_network_errors": 0,
+  "unexpected_failed_requests": 0,
+  "candidate_exact_head_ci": {
+    "head": "65a7f0d61c76253fc37bb74015c3f7dd13d0a619",
+    "github_visible_pr_workflows": 8,
+    "github_visible_success": 8,
+    "github_visible_failed": 0,
+    "github_visible_pending": 0,
+    "base_main": "562b7b67514b52d485d26933c7571b0183cedc2a"
+  },
+  "visual_review": {
+    "central_direct_artifact_review": false,
+    "central_visual_pass": true,
+    "note": "CENTRAL accepted the contract result based on exact canonical16 required-pair equality plus structural/state/geometry/runtime evidence. No claim of manual inspection of the local screenshot corpus is made."
+  },
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "product_adoption": false,
+  "product_canonical": false,
+  "notes": [
+    "CDX017 S4 accepted by CENTRAL at PR #658 comment 5852772691.",
+    "The four downstream portal target corpora remain out of scope and are not vendored; only shell-owned portal behavior is parity-accepted.",
+    "No source/original/split/asset bytes were changed by S4 harness work.",
+    "No Product adoption is implied by S4 acceptance."
+  ]
+}

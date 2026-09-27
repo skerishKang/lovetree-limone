@@ -5,19 +5,31 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Codex-17 Global Shell Rolling Menu",
   "product_job": "SHELL",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
+  "mapping_status": "CODEX_RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "CDX",
+      "id": "CDX017",
+      "basis": "EXPLICIT_LEDGER_PROVENANCE"
+    }
+  ],
   "family_ref": null,
   "relation": null,
   "notes": [
     "semantic_identity=Codex-17 Global Shell",
-    "namespace_type=codex-source-local",
+    "namespace_type=codex",
     "coverage_state=PARTIAL",
     "mvp_review_state=shell_foundation",
     "source_authority_version=V4 source-local",
     "source_freshness=medium",
     "source_runner_route=selected source-local Track17 V4",
-    "github_issue=245"
+    "github_issue=245",
+    "mapping_basis=EXPLICIT_LEDGER_PROVENANCE",
+    "mapping_evidence=design-intake/master-design-coverage.json row 102 (master_id 102, Codex-17 Global Shell Rolling Menu, product_job SHELL, namespace_type codex-source-local)",
+    "mapping_evidence=CDX017 S1 live Drive readback MATCH (drive_file_id 1Es_KDVORF-kRDwQXvBEcHjYhdCf7_q2M, folder 10ADnxRktZ3ci71RqbLYlSeKwJCHGuLff 버전4-선택, 50866 B, sha256 28f08c8f479f43a7ae18cfd67e8d564d084bc0cb5fc1a2cabc9961ade6f3144f)",
+    "mapping_evidence=CDX017 S2 baseline capture accepted by CENTRAL at #589 comment 5845654192 (report skerishKang/workdiary@84ccb6a9c37f1d94f9987f83e62873be7ab7263e)",
+    "mapping_evidence=CDX017 S3 mechanical capsule at src/04_codex/CDX017 (byte-exact round-trip, original/original.html + split/index.html + split/styles.css + split/script.js + 4 source-owned assets)",
+    "mapping_note=Codex-17 is NOT renumbered into a Source slot and NOT merged with Track 17. namespaces.json codex_rule and cross_namespace_rule apply: numeric equality never establishes identity. MST103 remains untouched and MST103 -> SRC018 is not reinterpreted."
   ],
   "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
 }
