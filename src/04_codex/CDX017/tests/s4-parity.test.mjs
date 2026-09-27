@@ -1850,8 +1850,11 @@ for (const [key, records] of byKey) {
     const boundedStyle = projectBoundedPhaseStyle(
       original.state, original.viewport, dropSelectors(leftCollected.computedStyle, exclusions), leftCollected.computedStyle, rightCollected.computedStyle,
     );
+    const boundedStyleRight = projectBoundedPhaseStyle(
+      original.state, original.viewport, dropSelectors(rightCollected.computedStyle, exclusions), leftCollected.computedStyle, rightCollected.computedStyle,
+    );
     for (const entry of boundedStyle.evidence) boundedPhaseStyleEvidence.push(entry);
-    compare("computedStyle", projectClipPath(boundedStyle.projected), projectClipPath(dropSelectors(rightCollected.computedStyle, exclusions)));
+    compare("computedStyle", projectClipPath(boundedStyle.projected), projectClipPath(boundedStyleRight.projected));
     compare("geometry", dropSelectors(leftCollected.geometry, exclusions), dropSelectors(rightCollected.geometry, exclusions));
     compare("images", leftCollected.images, rightCollected.images);
     compare("portalLinks", leftCollected.portalLinks, rightCollected.portalLinks);
