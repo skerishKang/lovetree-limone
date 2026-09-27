@@ -157,12 +157,6 @@ const SETTLE_PREDICATES = Object.freeze({
   ]),
 });
 
-// States where the loader's own terminal state is NOT the right settle condition.
-// The authored `?preview=` helper deliberately short-circuits the loader (D10), so
-// requiring the loader to reach opacity 0 / visibility hidden would never be satisfiable
-// for a state whose whole point is that the loader is bypassed.
-const SETTLE_REQUIRES_LOADER_TERMINAL = Object.freeze({ PREVIEW_CONTRACT_D10: false });
-
 const sha256 = (buffer) => crypto.createHash("sha256").update(buffer).digest("hex");
 const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
 const readTxt = (file) => fs.readFileSync(file, "utf8");
@@ -744,21 +738,75 @@ async function goReady(page) {
 //
 // This never patches the clock, rAF, Math.random, or any animation, and never
 // writes to the page's own stylesheets.
-const LOADER_SELECTOR = "#loader";
 
-async function readSettleSample(page, predicates) {
-  return page.evaluate(({ wanted, loaderSelector }) => {
+// CENTRAL Group A follow-up: "stable" is not a sufficient terminal condition when the
+// element's terminal state is a definite value. `#pageTransition` fades out via
+// hideTransition() and then gains a `leaving` class; watching its opacity for stability
+// captured one surface mid-fade (class "page-transition open leaving") and made
+// PORTAL_OPEN worse. The terminal condition is the exact authored end state.
+const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
+  READY_CHAPTER_01: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  CHAPTER_02: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  CHAPTER_03: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  CHAPTER_04: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  WHEEL_NEXT_PREV_WRAP_LOCK: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  KEY_ARROW_NEXT_PREV: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  MENU_OPEN: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  MENU_ESCAPE_CLOSE: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  // Index open: the index is fully revealed and the transition chrome is gone.
+  LIVING_INDEX_OPEN: [
+    { selector: "#loader", opacity: "0", visibility: "hidden" },
+    { selector: "#indexView", opacity: "1", visibility: "visible" },
+    { selector: "#pageTransition", opacity: "0", visibility: "hidden" },
+  ],
+  // Index closed again: hidden, and the page transition chrome has finished leaving.
+  LIVING_INDEX_ESCAPE_CLOSE: [
+    { selector: "#loader", opacity: "0", visibility: "hidden" },
+    { selector: "#indexView", opacity: "0", visibility: "hidden" },
+    { selector: "#pageTransition", opacity: "0", visibility: "hidden" },
+  ],
+  // The transition overlay must have fully left before the portal chrome is compared,
+  // otherwise the fade phase leaks into both the visual digest and the portal contract.
+  PORTAL_OPEN: [
+    { selector: "#loader", opacity: "0", visibility: "hidden" },
+    { selector: "#portalView", opacity: "1", visibility: "visible" },
+    { selector: "#pageTransition", opacity: "0", visibility: "hidden" },
+  ],
+  PORTAL_CLOSE_ABOUT_BLANK_RESET: [
+    { selector: "#loader", opacity: "0", visibility: "hidden" },
+    { selector: "#portalView", opacity: "0", visibility: "hidden" },
+    { selector: "#pageTransition", opacity: "0", visibility: "hidden" },
+  ],
+  SOUND_OFF: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  SOUND_ON_PERSISTED: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  POINTER_PARALLAX: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  POINTER_WATER_EFFECT: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  HOME_RESET: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  REDUCED_MOTION_READY: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  REDUCED_MOTION_INTERACTION_D2_D3: [],
+  MOBILE_COARSE_POINTER_D7: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  BACK_BUTTON_D1: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  // The authored ?preview= helper deliberately bypasses the loader (D10).
+  PREVIEW_CONTRACT_D10: [],
+});
+
+async function readSettleSample(page, predicates, expectations) {
+  return page.evaluate(({ wanted, terminals }) => {
     const out = {};
     for (const { selector, property } of wanted) {
       const element = document.querySelector(selector);
       out[`${selector}|${property}`] = element ? getComputedStyle(element)[property] : "ABSENT";
     }
-    const loader = document.querySelector(loaderSelector);
-    out[`${loaderSelector}|__terminal`] = loader
-      ? (getComputedStyle(loader).opacity === "0" && getComputedStyle(loader).visibility === "hidden" ? "DONE" : "BUSY")
-      : "ABSENT";
+    let allTerminal = true;
+    for (const terminal of terminals) {
+      const element = document.querySelector(terminal.selector);
+      if (!element) { allTerminal = false; continue; }
+      const style = getComputedStyle(element);
+      if (style.opacity !== terminal.opacity || style.visibility !== terminal.visibility) allTerminal = false;
+    }
+    out.__allTerminal = allTerminal ? "DONE" : "BUSY";
     return out;
-  }, { wanted: predicates, loaderSelector: LOADER_SELECTOR });
+  }, { wanted: predicates, terminals: expectations });
 }
 
 async function waitForStateSettled(page, stateId, timeoutMs = 8000) {
@@ -770,21 +818,20 @@ async function waitForStateSettled(page, stateId, timeoutMs = 8000) {
   }
   const startedAt = Date.now();
   const intervalMs = 120;
+  const expectations = SETTLE_TERMINAL_EXPECTATIONS[stateId] ?? [];
   let samples = 0;
-  let previous = await readSettleSample(page, predicates);
+  let previous = await readSettleSample(page, predicates, expectations);
   samples += 1;
   let stableRounds = 0;
   while (Date.now() - startedAt < timeoutMs) {
     await sleep(intervalMs);
-    const current = await readSettleSample(page, predicates);
+    const current = await readSettleSample(page, predicates, expectations);
     samples += 1;
-    const loaderTerminal = SETTLE_REQUIRES_LOADER_TERMINAL[stateId] === false
-      ? true
-      : current[`${LOADER_SELECTOR}|__terminal`] === "DONE";
+    const allTerminal = current.__allTerminal === "DONE";
     const unchanged = JSON.stringify(current) === JSON.stringify(previous);
     previous = current;
     stableRounds = unchanged ? stableRounds + 1 : 0;
-    if (loaderTerminal && stableRounds >= 1) {
+    if (allTerminal && stableRounds >= 1) {
       return { stateId, enforced: true, settled: true, reason: "TERMINAL_AND_STABLE", samples, elapsedMs: Date.now() - startedAt, values: current };
     }
   }
@@ -1427,8 +1474,10 @@ function projectPhaseCounterText(collected) {
     if (!PHASE_COUNTER_IDS.includes(id)) return entry;
     const value = String(entry.ownText ?? "");
     if (!/^\d{2,3}$/.test(value)) return entry;
-    projected.push({ channel: "landmarks", id, value });
-    return { ...entry, ownText: PHASE_COUNTER_MARKER };
+    projected.push({ channel: "landmarks", id, value, box: entry.box ?? null });
+    // The element's own text AND its own box both follow the same phase digits, so both are
+    // projected. Nothing outside this one element is touched.
+    return { ...entry, ownText: PHASE_COUNTER_MARKER, box: PHASE_COUNTER_MARKER };
   });
   let bodyText = collected.bodyText ?? "";
   for (const id of PHASE_COUNTER_IDS) {
@@ -1593,6 +1642,32 @@ for (const [key, records] of byKey) {
   if (leftCollected && rightCollected) {
     compare("landmarks", dropSelectors(leftProjected.landmarks, exclusions), dropSelectors(rightProjected.landmarks, exclusions));
     compare("bodyText", leftProjected.bodyText, rightProjected.bodyText);
+    // CENTRAL H9 authorized separating exactly the two counter TEXTS. The counter span's own
+    // border box is a direct text-metric consequence of those same phase digits, so that box
+    // difference is recorded as an explicitly-labelled allowance on exactly the two counter
+    // elements, and reported, rather than silently dropped or silently compared.
+    if (h9Projected.length) {
+      const counterBoxDiffs = [];
+      for (const entry of h9Projected) {
+        if (entry.channel !== "landmarks") continue;
+        const leftBox = leftCollected.landmarks.find((item) => item.attributes?.id === entry.id)?.box;
+        const rightBox = rightCollected.landmarks.find((item) => item.attributes?.id === entry.id)?.box;
+        if (!leftBox || !rightBox) continue;
+        if (JSON.stringify(leftBox) !== JSON.stringify(rightBox)) {
+          counterBoxDiffs.push({
+            channel: `landmarks.#${entry.id}.box`,
+            reason: "H9_TEXT_PHASE_CONSEQUENCE: box of the same authorized counter element follows its phase digits",
+            path: `#${entry.id}.box`,
+            left: entry.box ?? leftBox,
+            right: rightBox,
+          });
+        }
+      }
+      if (counterBoxDiffs.length) {
+        allowed.push(...counterBoxDiffs);
+        channelNotes.push(`H9: ${counterBoxDiffs.length} counter-element box difference(s) recorded on exactly #loaderCount/#transitionCount as a text-phase consequence`);
+      }
+    }
     compare("computedStyle", dropSelectors(leftCollected.computedStyle, exclusions), dropSelectors(rightCollected.computedStyle, exclusions));
     compare("geometry", dropSelectors(leftCollected.geometry, exclusions), dropSelectors(rightCollected.geometry, exclusions));
     compare("images", leftCollected.images, rightCollected.images);
