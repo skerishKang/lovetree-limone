@@ -811,6 +811,24 @@ const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
   PREVIEW_CONTRACT_D10: [],
 });
 
+// CENTRAL H10: the media layer is present and animating in EVERY state that shows the media
+// window, not only the chapter states. Appending the media-layer terminals to every state
+// that has a deterministic terminal set closes the remaining gaps (PREVIEW_CONTRACT_D10 had
+// no media-layer settle at all, and the index close transition was still fading).
+const SETTLE_TERMINAL_EXPECTATIONS_FINAL = Object.freeze(
+  Object.fromEntries(Object.entries(SETTLE_TERMINAL_EXPECTATIONS).map(([state, list]) => [
+    state,
+    list.some((entry) => entry.mediaLayersIdle) || list.length === 0
+      ? list
+      : [...list, MEDIA_LAYER_TERMINAL, MEDIA_LAYERS_IDLE_TERMINAL],
+  ])),
+);
+// The index view has its own .52s opacity / .72s transform transition, so its close/open
+// terminal also requires no live CSS animation on the element.
+const INDEX_IDLE_TERMINAL = Object.freeze({
+  selector: "#indexView", opacity: null, visibility: null, idleAnimations: true,
+});
+
 async function readSettleSample(page, predicates, expectations) {
   return page.evaluate(({ wanted, terminals }) => {
     const out = {};
@@ -843,7 +861,9 @@ async function readSettleSample(page, predicates, expectations) {
       const element = document.querySelector(terminal.selector);
       if (!element) { allTerminal = false; continue; }
       const style = getComputedStyle(element);
-      if (style.opacity !== terminal.opacity || style.visibility !== terminal.visibility) allTerminal = false;
+      if (style.opacity !== terminal.opacity || style.visibility !== terminal.visibility) {
+        if (terminal.opacity !== null) allTerminal = false;
+      }
       if (terminal.transform !== undefined) {
         // The authored end state is the identity matrix. `none` is accepted as its
         // equivalent. Anything else means the 1.2s scale transition is still running.
@@ -875,14 +895,17 @@ async function waitForStateSettled(page, stateId, timeoutMs = 8000) {
   }
   const startedAt = Date.now();
   const intervalMs = 120;
-  const expectations = SETTLE_TERMINAL_EXPECTATIONS[stateId] ?? [];
+  const expectations = SETTLE_TERMINAL_EXPECTATIONS_FINAL[stateId] ?? [];
+  // The index overlay additionally requires its own transition to be idle.
+  const withIndexIdle = (stateId.startsWith("LIVING_INDEX") || stateId.startsWith("REDUCED_MOTION"))
+    ? [...expectations, INDEX_IDLE_TERMINAL] : expectations;
   let samples = 0;
-  let previous = await readSettleSample(page, predicates, expectations);
+  let previous = await readSettleSample(page, predicates, withIndexIdle);
   samples += 1;
   let stableRounds = 0;
   while (Date.now() - startedAt < timeoutMs) {
     await sleep(intervalMs);
-    const current = await readSettleSample(page, predicates, expectations);
+    const current = await readSettleSample(page, predicates, withIndexIdle);
     samples += 1;
     const allTerminal = current.__allTerminal === "DONE";
     const unchanged = JSON.stringify(current) === JSON.stringify(previous);
